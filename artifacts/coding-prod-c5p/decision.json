@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "card": "C5-P",
+  "wave": "C5-P",
+  "completionClass": "done (hard-gates+keep-off)",
+  "patchFlowDefault": false,
+  "meetsGate": false,
+  "recommendation": "keep-off",
+  "defaultsUnchanged": true,
+  "capabilityReady": true,
+  "residual": [
+    "runtime.coding.patchFlow.default remains false (recommend-only orchestration)",
+    "Default-on requires product soak + explicit config change out of band",
+    "productSoakApproved not set"
+  ],
+  "howToOptIn": "Call applyPatchProposalsSerial() / recommendIsolationMode() opt-in. Do NOT set runtime.coding.patchFlow.default=true without product approval after soak.",
+  "notes": [
+    "isolation matrix may recommend patch-flow mode; default flag stays false",
+    "C5-P pack never flips patchFlow.default",
+    "recommendation=keep-off",
+    "productSoakApproved=false: keep-off",
+    "criteria not green for default-on consideration"
+  ],
+  "checklist": [
+    {
+      "id": "capability-ready",
+      "ok": true,
+      "note": "serial apply + destructive hold surface"
+    },
+    {
+      "id": "default-false",
+      "ok": true,
+      "note": "patchFlow.default === false"
+    },
+    {
+      "id": "no-auto-flip",
+      "ok": true,
+      "note": "pack never writes default true"
+    },
+    {
+      "id": "product-soak",
+      "ok": false,
+      "note": "explicit product soak approval"
+    }
+  ]
+}

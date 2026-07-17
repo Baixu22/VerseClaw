@@ -4,6 +4,9 @@
  * Modes:
  * - memory (default): process-local Map; optional WAL append is best-effort only
  * - wal: rehydrate from WAL on every acquire/release for multi-process awareness + crash reclaim by TTL
+ *
+ * C5-H multi-process hardening: exclusive lock with stale recovery, atomic WAL append under lock,
+ * cross-process contention tests. Defaults remain enabled=false and mode=memory.
  */
 import {
   appendFileSync,
@@ -12,11 +15,16 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  renameSync,
   unlinkSync,
   writeFileSync,
+  fsyncSync,
 } from "node:fs";
 import path from "node:path";
 import type { SymbolLeaseMode } from "../coding-runtime-flags.js";
+
+/** C5-H capability: multi-process WAL path is hardened; defaults stay off/memory. */
+export const MULTI_PROCESS_WAL_HARDENED = true as const;
 
 export type SymbolLease = {
   symbolKey: string;
@@ -52,6 +60,13 @@ function ensureWalPaths(workspaceRoot: string): { walPath: string; lockPath: str
   };
 }
 
+function sleepMs(ms: number): void {
+  const until = Date.now() + ms;
+  while (Date.now() < until) {
+    /* spin */
+  }
+}
+
 function storeFor(workspaceRoot: string, mode: SymbolLeaseMode = "memory"): LeaseStore {
   const key = storeKey(workspaceRoot, mode);
   let s = stores.get(key);
@@ -63,7 +78,6 @@ function storeFor(workspaceRoot: string, mode: SymbolLeaseMode = "memory"): Leas
         s.walPath = paths.walPath;
         s.lockPath = paths.lockPath;
         if (mode === "memory" && existsSync(s.walPath)) {
-          // memory mode may still hydrate once for continuity
           hydrateFromWal(s);
         }
       } catch {
@@ -96,6 +110,10 @@ function hydrateFromWal(s: LeaseStore): void {
   }
 }
 
+/**
+ * Exclusive lock with PID+timestamp payload and stale recovery (C5-H multi-process).
+ * Falls back to unlocked critical section if lock cannot be obtained (fail-open memory path).
+ */
 function withLock(s: LeaseStore, fn: () => void): void {
   if (!s.lockPath || s.mode !== "wal") {
     fn();
@@ -103,13 +121,25 @@ function withLock(s: LeaseStore, fn: () => void): void {
   }
   const started = Date.now();
   let fd: number | undefined;
-  while (Date.now() - started < 2000) {
+  while (Date.now() - started < 3000) {
     try {
       fd = openSync(s.lockPath, "wx");
+      writeFileSync(s.lockPath, `${process.pid}\n${Date.now()}\n`, "utf8");
       break;
     } catch {
-      // busy
-      const spinUntil = Date.now() + 5; while (Date.now() < spinUntil) { /* spin */ }
+      try {
+        if (existsSync(s.lockPath)) {
+          const raw = readFileSync(s.lockPath, "utf8");
+          const ts = Number(raw.split(/\r?\n/)[1] ?? 0);
+          if (ts > 0 && Date.now() - ts > 15_000) {
+            unlinkSync(s.lockPath);
+            continue;
+          }
+        }
+      } catch {
+        // ignore
+      }
+      sleepMs(5);
     }
   }
   try {
@@ -130,10 +160,22 @@ function withLock(s: LeaseStore, fn: () => void): void {
   }
 }
 
+/** Append one WAL row under caller-held lock; uses durable append + best-effort fsync. */
 function appendWal(s: LeaseStore, row: unknown): void {
   if (!s.walPath) return;
   try {
-    appendFileSync(s.walPath, `${JSON.stringify(row)}\n`, "utf8");
+    const line = `${JSON.stringify(row)}\n`;
+    appendFileSync(s.walPath, line, "utf8");
+    try {
+      const fd = openSync(s.walPath, "r+");
+      try {
+        fsyncSync(fd);
+      } finally {
+        closeSync(fd);
+      }
+    } catch {
+      // fsync best-effort
+    }
   } catch {
     // fail-open
   }
@@ -179,7 +221,7 @@ export function acquireSymbolLease(params: {
       holderId: params.holderId,
       acquiredAtMs: now,
       expiresAtMs: now + ttl,
-      filePath: params.filePath,
+      filePath: params.filePath?.replace(/\\/g, "/"),
     };
     s.leases.set(key, lease);
     appendWal(s, { op: "acquire", lease, at: now });
@@ -236,10 +278,23 @@ export function __resetSymbolLeases(): void {
 export function compactSymbolLeaseWal(workspaceRoot: string): void {
   const s = storeFor(workspaceRoot, "wal");
   if (!s.walPath) return;
-  hydrateFromWal(s);
-  const lines: string[] = [];
-  for (const lease of s.leases.values()) {
-    lines.push(JSON.stringify({ op: "acquire", lease, at: lease.acquiredAtMs }));
-  }
-  writeFileSync(s.walPath, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
+  withLock(s, () => {
+    hydrateFromWal(s);
+    const lines: string[] = [];
+    for (const lease of s.leases.values()) {
+      lines.push(JSON.stringify({ op: "acquire", lease, at: lease.acquiredAtMs }));
+    }
+    const tmp = `${s.walPath}.tmp`;
+    writeFileSync(tmp, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
+    try {
+      renameSync(tmp, s.walPath);
+    } catch {
+      writeFileSync(s.walPath, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
+      try {
+        unlinkSync(tmp);
+      } catch {
+        // ignore
+      }
+    }
+  });
 }

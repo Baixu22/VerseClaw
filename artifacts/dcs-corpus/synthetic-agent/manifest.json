@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "kind": "synthetic-agent",
+  "live": false,
+  "seed": 42,
+  "taskCount": 32,
+  "entryCount": 96,
+  "fixturePath": "openclaw_runtime/src/context-engine/fixtures/dcs-corpus-synthetic-agent.json",
+  "artifactPath": "artifacts/dcs-corpus/synthetic-agent/corpus.json",
+  "ts": "2026-07-16T02:32:34.020Z"
+}

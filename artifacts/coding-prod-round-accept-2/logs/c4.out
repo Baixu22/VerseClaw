@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "card": "C4",
+  "completionClass": "done (hard)",
+  "createMergeCleanup": true,
+  "mergeQueueSerial": true,
+  "conflictHandled": true,
+  "handoffFields": true,
+  "defaultIsolationShared": true,
+  "backendDefault": "inprocess",
+  "gitHardenedOk": true,
+  "twoWorkerConflict": {
+    "first": "merged",
+    "second": "conflict",
+    "reason": "overlap_with_w1"
+  },
+  "rates": {
+    "mergeReworkRate": 0.3333333333333333
+  },
+  "windowsNotes": [
+    "Interface uses directory simulation under .openclaw/worktrees/<id> (inprocess).",
+    "Git backend is opt-in via createWorktreeService({ backend: 'git' }) / runtime.coding.worktree.backend.",
+    "Windows path separators normalized in tests; C4-H git lifecycle hardened (create/merge/cleanup + lock); pnpm hardlink install remains residual (C4-P).",
+    "C4-H: merge lock + cleanup retries + path normalize + Windows long-path aware roots landed; isolation default remains shared; backend default remains inprocess."
+  ],
+  "notC4H": false,
+  "productionGitWorktreeHardened": true,
+  "c4H": true,
+  "ts": "2026-07-17T01:46:13.768Z"
+}

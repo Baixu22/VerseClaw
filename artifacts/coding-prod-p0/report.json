@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "card": "P0",
+  "completionClass": "done (loop)",
+  "productionMode": "opt-in",
+  "defaultsUnchanged": true,
+  "readyForDefaultFlagGraduation": false,
+  "tipIncludesC4WriteFileFix": true,
+  "sha": "60061e335",
+  "ts": "2026-07-15T11:31:27.726Z",
+  "redLines": {
+    "viewToolsDefaultOff": true,
+    "staleWriteGuardDefaultFalse": true,
+    "isolationDefaultShared": true,
+    "worktreeBackendInprocess": true,
+    "symbolLeaseDefaultFalse": true,
+    "patchFlowDefaultFalse": true,
+    "routingMemoShadowDefaultFalse": true,
+    "sekbExperienceShadowDefaultFalse": true
+  },
+  "deliverables": {
+    "configSurface": "artifacts/coding-prod-p0/config-surface.json",
+    "observabilityExport": "artifacts/coding-prod-p0/observability-export.json",
+    "runbookEn": "docs/dcs-production-p0-runbook.md",
+    "runbookZh": "docs/dcs-production-p0-runbook.zh-CN.md",
+    "settingsPanel": "src/components/settings/DcsProdFlagsPanel.tsx",
+    "catalog": "shared/dcs/prod-flags-catalog.ts",
+    "smoke": "scripts/dcs-prod-p0-smoke.mjs"
+  },
+  "residuals": [
+    "C1 A/B avgReduction 4.5x < 5x - view tools stay default-off",
+    "C4-H real git worktree + Windows hardening pending",
+    "C5-H multi-process WAL pending",
+    "C6-H live 64K corpus + assembler flip gates pending",
+    "C7-H shadow stable window + cutover approval pending"
+  ]
+}

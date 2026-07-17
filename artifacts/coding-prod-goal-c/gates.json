@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "C1": {
+    "recommendation": "keep-off",
+    "liveReady": false,
+    "meetsGate": false
+  },
+  "C4P": {
+    "productionPnpmHardlinkInstall": true,
+    "backendDefault": "inprocess",
+    "installDefaultNone": true
+  },
+  "C5P": {
+    "patchFlowDefault": false,
+    "recommendation": "keep-off",
+    "meetsGate": false
+  }
+}

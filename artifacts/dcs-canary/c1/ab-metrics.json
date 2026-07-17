@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "kind": "synthetic-agent",
+  "live": false,
+  "seed": 42,
+  "taskCount": 32,
+  "entryCount": 96,
+  "ab": {
+    "ok": true,
+    "fixtureCount": 32,
+    "baselineAvgCalls": 5.125,
+    "factstoreAvgCalls": 1,
+    "reductionFactor": 5.125,
+    "baselinePassRate": 1,
+    "factstorePassRate": 1,
+    "meetsGate": true,
+    "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop",
+    "routingAccuracy": 1
+  },
+  "ts": "2026-07-16T02:32:34.355Z"
+}

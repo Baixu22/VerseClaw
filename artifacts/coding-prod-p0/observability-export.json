@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-07-15T11:31:27.662Z",
+  "coding": {
+    "snapshot": {
+      "factToolCalls": 0,
+      "factToolCallsByName": {},
+      "factStoreHits": 0,
+      "factStoreMisses": 0,
+      "schemaToolCount": 0,
+      "schemaChars": 0,
+      "touchCount": 0,
+      "touchLatencyMsSum": 0,
+      "touchLatencyMsMax": 0,
+      "parseOnWriteHits": 0,
+      "staleBlocks": 0,
+      "staleAllowances": 0,
+      "journalLatencyMsSum": 0,
+      "journalLatencyMsMax": 0,
+      "journalSnapshots": 0,
+      "journalFailures": 0,
+      "undoCount": 0,
+      "syntaxCheckHits": 0,
+      "syntaxCheckSilent": 0,
+      "verifyConsumeHits": 0,
+      "diagHits": 0,
+      "diagSilent": 0,
+      "approvalPrompts": 0,
+      "approvalSkips": 0,
+      "waveConflictChecks": 0,
+      "waveConflicts": 0,
+      "writeSetPredCorrect": 0,
+      "writeSetPredTotal": 0,
+      "writeSetNodesPopulated": 0,
+      "writeSetNodesTotal": 0,
+      "tokenBudgetAborts": 0,
+      "mergeSuccess": 0,
+      "mergeRework": 0,
+      "taskPass": 0,
+      "taskFail": 0,
+      "dupToolCalls": 0,
+      "tokenCost": 0,
+      "toolRoutingCorrect": 0,
+      "toolRoutingTotal": 0,
+      "compactionLayerHits": {},
+      "taskStateRewriteOk": 0,
+      "taskStateRewriteDrift": 0
+    },
+    "rates": {
+      "approvalPromptRate": 0,
+      "diagHitRate": 0,
+      "verifyHitRate": 0,
+      "falseBlockRate": 0,
+      "waveConflictRate": 0,
+      "writeSetPredAccuracy": 0,
+      "writeSetCoverageRate": 0,
+      "taskPassRate": 0,
+      "toolRoutingAccuracy": 0,
+      "mergeReworkRate": 0
+    },
+    "metricNames": {
+      "factToolCalls": "coding.read.factToolCalls",
+      "touchLatencyMs": "coding.read.touchLatencyMs",
+      "parseOnWriteHits": "coding.write.parseOnWriteHits",
+      "staleBlocks": "coding.write.staleBlocks",
+      "falseBlockRate": "coding.write.falseBlockRate",
+      "journalLatencyMs": "coding.write.journalLatencyMs",
+      "undoCount": "coding.write.undoCount",
+      "syntaxCheckHits": "coding.write.syntaxCheckHits",
+      "verifyHitRate": "coding.write.verifyHitRate",
+      "diagHitRate": "coding.write.diagHitRate",
+      "approvalPromptRate": "coding.write.approvalPromptRate",
+      "waveConflictRate": "coding.concurrent.waveConflictRate",
+      "writeSetPredAccuracy": "coding.concurrent.writeSetPredAccuracy",
+      "writeSetCoverageRate": "coding.concurrent.writeSetCoverageRate",
+      "tokenBudgetAborts": "coding.concurrent.tokenBudgetAborts",
+      "mergeReworkRate": "coding.concurrent.mergeReworkRate",
+      "dupToolCalls": "coding.read.dupToolCalls",
+      "tokenCost": "coding.read.tokenCost",
+      "taskPassRate": "coding.read.taskPassRate",
+      "toolRoutingAccuracy": "coding.read.toolRoutingAccuracy",
+      "compactionLayerDist": "coding.context.compactionLayerDist"
+    }
+  },
+  "dcs": {
+    "snapshot": {
+      "cvkSystemPromptAdditionCalls": 0,
+      "cvkSystemPromptAdditionChars": 0,
+      "dcsTransformContextCalls": 0,
+      "dcsTransformContextChars": 0,
+      "injectionDuplicateSuppressions": 0,
+      "workspaceScopeBound": 0,
+      "workspaceScopeInvalidated": 0,
+      "contextLadderActionHits": {}
+    }
+  },
+  "families": {
+    "writeSide": [
+      "coding.write.parseOnWriteHits",
+      "coding.write.staleBlocks",
+      "coding.write.falseBlockRate",
+      "coding.write.journalLatencyMs",
+      "coding.write.undoCount",
+      "coding.write.syntaxCheckHits",
+      "coding.write.verifyHitRate",
+      "coding.write.diagHitRate",
+      "coding.write.approvalPromptRate"
+    ],
+    "waveSide": [
+      "coding.concurrent.waveConflictRate",
+      "coding.concurrent.writeSetPredAccuracy",
+      "coding.concurrent.writeSetCoverageRate",
+      "coding.concurrent.tokenBudgetAborts",
+      "coding.concurrent.mergeReworkRate"
+    ],
+    "shadowSide": [
+      "dcs.injection.duplicateSuppressions",
+      "dcs.contextLadder.actionHits",
+      "coding.context.compactionLayerDist",
+      "coding.read.factToolCalls",
+      "coding.read.taskPassRate",
+      "coding.read.toolRoutingAccuracy"
+    ],
+    "sources": [
+      "openclaw_runtime/src/context-engine/coding-observability.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.ts"
+    ]
+  },
+  "note": "Process-local counters; export via packaging script. Not a live dashboard product."
+}

@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "productionPnpmHardlinkInstall": true,
+  "backendDefault": "inprocess",
+  "isolationDefaultShared": true,
+  "installDefaultNone": true,
+  "noDefaultFlagFlip": true
+}

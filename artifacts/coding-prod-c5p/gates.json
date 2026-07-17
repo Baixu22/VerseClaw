@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "patchFlowDefault": false,
+  "recommendation": "keep-off",
+  "meetsGate": false,
+  "noDefaultFlagFlip": true
+}

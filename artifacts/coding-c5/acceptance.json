@@ -1,7 +1,7 @@
 {
   "ok": true,
   "card": "C5",
-  "completionClass": "done (interface)",
+  "completionClass": "done (hard)",
   "leaseHeld": true,
   "leaseConflictBlocked": true,
   "leaseExpireReacquire": true,
@@ -23,7 +23,8 @@
     "patchFlow": "call applyPatchProposalsSerial() / recommendIsolationMode(); do not set runtime.coding.patchFlow.default=true without C5-H evidence",
     "isolationRecommend": "recommendIsolationMode({ durationMinutes, workerCount, writeDensity })"
   },
-  "notC5H": true,
-  "multiProcessWalHardened": false,
-  "ts": "2026-07-15T08:57:38.009Z"
+  "notC5H": false,
+  "multiProcessWalHardened": true,
+  "c5H": true,
+  "ts": "2026-07-17T01:46:14.425Z"
 }

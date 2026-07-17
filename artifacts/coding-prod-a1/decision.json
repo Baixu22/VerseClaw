@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "card": "A1",
+  "wave": "C1",
+  "completionClass": "done (sim)",
+  "meetsGate": false,
+  "recommendation": "keep-off",
+  "defaultsUnchanged": true,
+  "viewToolsDefaultOff": true,
+  "sim": {
+    "fixtureCount": 12,
+    "reductionFactor": 5.083,
+    "meetsSimGate": true,
+    "baselineAvgCalls": 5.083333333333333,
+    "factstoreAvgCalls": 1,
+    "factstorePassRate": 1,
+    "routingAccuracy": 1,
+    "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop"
+  },
+  "packagingMetricsSummary": {
+    "avgReduction": 4.5,
+    "meetsGate": false,
+    "judgment": "below_target"
+  },
+  "live": {
+    "ready": false,
+    "blockedReason": "Live A/B corpus + comms:replay binding + owner scorecard window missing (see reports/CODING-C1-LIVE-AB.md)"
+  },
+  "decisionRationale": "Keep view tools / tool-registry / working-memory default-off. Sim-only evidence is not enough for production default flip.",
+  "howToEnableOptIn": "Set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:44:47.511Z"
+}

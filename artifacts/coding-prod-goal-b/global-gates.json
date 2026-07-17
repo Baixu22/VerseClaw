@@ -1,0 +1,28 @@
+{
+  "phase": "global",
+  "ok": true,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "noAutoAssemblerFlip": true,
+  "noAutoCutover": true,
+  "commsTouched": false,
+  "units": {
+    "b1c6h": "4/4 coding-c6h-flip-decision",
+    "longChat": "1/1 coding-long-chat-curve",
+    "b2cutover": "3/3 experience-shadow-cutover-pack",
+    "c7shadow": "3/3 experience-shadow-product",
+    "directedC6C7": "25/25 (7 files)"
+  },
+  "acceptance": {
+    "b1": true,
+    "b2": true,
+    "c7": true,
+    "remaining": true,
+    "goalB": true
+  },
+  "e2e": {
+    "w5": "3/3 passed tests/e2e/dcs-production-wiring-w5.spec.ts (2.3m, no rebuild; UI untouched)"
+  },
+  "sha": "60061e335",
+  "ts": "2026-07-15T13:52:36.047Z"
+}

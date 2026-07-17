@@ -1,0 +1,73 @@
+{
+  "ok": true,
+  "card": "B2",
+  "wave": "C7-H",
+  "completionClass": "done (shadow+stable-window)",
+  "assessment": {
+    "eventCount": 20,
+    "windowDays": 15,
+    "hitRate": 1,
+    "harmEvents": 0,
+    "stableWindowMet": true,
+    "cutoverAllowed": false,
+    "notes": [
+      "shadow window metrics look healthy; product decision still required for cutover",
+      "default cutover remains OFF"
+    ]
+  },
+  "cutoverAllowed": false,
+  "cutoverRecommended": false,
+  "defaultsUnchanged": true,
+  "killSwitch": {
+    "experienceShadowFlag": "runtime.coding.sekb.experienceShadow",
+    "routingMemoFlag": "runtime.coding.routingMemo.shadow",
+    "howToDisable": "Set both flags false (or omit) and restart runtime/gateway. Delete or ignore .openclaw/memory/experience-shadow.jsonl and routing-memo.jsonl if needed."
+  },
+  "manualSteps": [
+    "1. Keep flags default-off in production until product owner approves.",
+    "2. Enable shadow only in a canary workspace: runtime.coding.sekb.experienceShadow=true.",
+    "3. Collect multi-day journal; re-run assessExperienceShadowWindow (requiredDays default 14).",
+    "4. Confirm stableWindowMet, hitRate>=0.8, harmEvents===0.",
+    "5. Product owner signs off; set productReviewRequested in this pack for advisory cutoverRecommended.",
+    "6. Manual cutover only (out of band config change). cutoverAllowed API remains false forever as a safety rail.",
+    "7. Kill switch: flip flags false immediately on harm or regression."
+  ],
+  "checklist": [
+    {
+      "id": "stable-window-met",
+      "ok": true,
+      "note": "windowDays=15.00 hitRate=1.000 harm=0"
+    },
+    {
+      "id": "cutover-allowed-hard-false",
+      "ok": true,
+      "note": "API cutoverAllowed always false"
+    },
+    {
+      "id": "no-auto-cutover",
+      "ok": true,
+      "note": "manual pack never writes production memory cutover"
+    },
+    {
+      "id": "defaults-off",
+      "ok": true,
+      "note": "shadow flags default false (verified by acceptance)"
+    },
+    {
+      "id": "product-review",
+      "ok": false,
+      "note": "human review request field"
+    }
+  ],
+  "residual": [
+    "Production dual-write/cutover requires explicit user approval after this pack",
+    "Default flags runtime.coding.routingMemo.shadow and runtime.coding.sekb.experienceShadow stay false",
+    "Product review not requested; cutoverRecommended stays false"
+  ],
+  "notes": [
+    "shadow window metrics look healthy; product decision still required for cutover",
+    "default cutover remains OFF",
+    "cutoverAllowed is hard-false (no auto cutover)",
+    "cutoverRecommended remains false until stable window + product review request"
+  ]
+}

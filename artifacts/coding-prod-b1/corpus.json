@@ -1,0 +1,26 @@
+{
+  "kind": "recorded",
+  "live64k": false,
+  "recorded64k": true,
+  "synthetic64k": false,
+  "sourcePath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\openclaw_runtime\\src\\context-engine\\fixtures\\c6h-recorded-64k.json",
+  "cumulativeRawChars": 64000,
+  "finalPromptCharsEstimate": 8022,
+  "flipGates": {
+    "promptNotLinearExploding": true,
+    "compactionLayersHit": true,
+    "passRateFloor": true,
+    "readyToConsiderAssemblerFlip": false,
+    "notes": [
+      "assembler production flags remain unflipped; this report is evidence only"
+    ]
+  },
+  "notes": [
+    "corpus loaded from C:\\Users\\27933\\Desktop\\clawx\\ClawX\\openclaw_runtime\\src\\context-engine\\fixtures\\c6h-recorded-64k.json",
+    "corpus kind=recorded (manifest.kind=recorded)",
+    "not live traffic; do not claim production 64K corpus",
+    "Deterministic recorded-style corpus fixture for C6-H flip-gate evidence",
+    "Not live production traffic; live64k remains false unless a live corpus is supplied via DCS_C6H_CORPUS_PATH",
+    "assembler production flags remain unflipped"
+  ]
+}

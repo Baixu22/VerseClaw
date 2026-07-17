@@ -97,6 +97,7 @@ const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => impor
 const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
 const settingsProjectRules = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ProjectRulesCenter').then((m) => ({ default: m.ProjectRulesCenter as ComponentType<Record<string, never>> })));
 const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/AgentDevWorkbenchPanel').then((m) => ({ default: m.AgentDevWorkbenchPanel as ComponentType<Record<string, never>> })));
+const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
 const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
 
 const SettingsModelsLazy = settingsModels.Component;
@@ -106,6 +107,7 @@ const SettingsSkillsLazy = settingsSkills.Component;
 const SettingsBillingLazy = settingsBilling.Component;
 const ProjectRulesCenterLazy = settingsProjectRules.Component;
 const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
+const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
   url: string;
@@ -121,7 +123,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'skills': settingsSkills.preload(); break;
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
-    case 'developer': settingsAgentDev.preload(); break;
+    case 'developer': settingsAgentDev.preload(); settingsDcsProdFlags.preload(); break;
     case 'storage': settingsStorage.preload(); break;
     default: break;
   }
@@ -2083,7 +2085,10 @@ export function Settings() {
                   </div>
 
                   <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
-                    <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><AgentDevWorkbenchPanelLazy /></div>
+                    <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
+                      <DcsProdFlagsPanelLazy />
+                      <AgentDevWorkbenchPanelLazy />
+                    </div>
                   </Suspense>
 
                   {showCliTools && (

@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "noAutoAssemblerFlip": true,
+  "noAutoCutover": true,
+  "B1": {
+    "live64k": false,
+    "recorded64k": true,
+    "readyToConsiderAssemblerFlip": false,
+    "autoAppliedAssemblerFlip": false,
+    "recommendation": "metrics-green-review-required",
+    "metricGatesGreen": true
+  },
+  "B2": {
+    "stableWindowMet": true,
+    "cutoverAllowed": false,
+    "cutoverRecommended": false,
+    "flagsDefaultOff": true
+  }
+}

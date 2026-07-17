@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "card": "B2",
+  "wave": "C7-H",
+  "completionClass": "done (shadow+stable-window)",
+  "stableWindowMet": true,
+  "cutoverAllowed": false,
+  "cutoverRecommended": false,
+  "defaultsUnchanged": true,
+  "flagsDefaultOff": {
+    "runtime.coding.routingMemo.shadow": false,
+    "runtime.coding.sekb.experienceShadow": false
+  },
+  "assessment": {
+    "eventCount": 20,
+    "windowDays": 15,
+    "hitRate": 1,
+    "harmEvents": 0,
+    "stableWindowMet": true,
+    "cutoverAllowed": false,
+    "notes": [
+      "shadow window metrics look healthy; product decision still required for cutover",
+      "default cutover remains OFF"
+    ]
+  },
+  "advisorySample": {
+    "cutoverAllowed": false,
+    "cutoverRecommended": true,
+    "note": "productReviewRequested=true yields advisory recommend only; cutoverAllowed still false"
+  },
+  "decisionPackageComplete": true,
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:16.335Z"
+}

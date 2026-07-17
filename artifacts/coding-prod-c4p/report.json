@@ -1,0 +1,57 @@
+{
+  "ok": true,
+  "card": "C4-P",
+  "completionClass": "done (hard)",
+  "productionPnpmHardlinkInstall": true,
+  "productionGitWorktreeHardened": true,
+  "defaultIsolationShared": true,
+  "backendDefault": "inprocess",
+  "installDefaultNone": true,
+  "hardlinkModulesWorks": true,
+  "pnpmPreferOfflinePath": true,
+  "defaultsUnchanged": true,
+  "residual": [
+    "worktree.backend remains inprocess by default",
+    "installStrategy default none (no auto pnpm on create)"
+  ],
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.187Z",
+  "samples": {
+    "none": {
+      "ok": true,
+      "strategy": "none",
+      "hardlinksCreated": 0,
+      "symlinksCreated": 0,
+      "filesCopied": 0,
+      "dirsCreated": 0,
+      "pnpmRan": false,
+      "notes": [
+        "strategy=none: no install performed (safe default)"
+      ]
+    },
+    "hl": {
+      "ok": true,
+      "strategy": "hardlink-modules",
+      "hardlinksCreated": 2,
+      "symlinksCreated": 0,
+      "filesCopied": 0,
+      "dirsCreated": 2,
+      "pnpmRan": false,
+      "notes": [
+        "hardlink-modules: hardlinks=2 copies=0 symlinks=0"
+      ]
+    },
+    "pnpm": {
+      "ok": true,
+      "strategy": "pnpm-install",
+      "hardlinksCreated": 0,
+      "symlinksCreated": 0,
+      "filesCopied": 0,
+      "dirsCreated": 0,
+      "pnpmRan": true,
+      "notes": [
+        "pnpm install --prefer-offline ok (store hardlinks when supported)"
+      ]
+    }
+  }
+}

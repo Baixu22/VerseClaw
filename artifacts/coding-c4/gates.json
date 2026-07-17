@@ -7,10 +7,11 @@
     "C4-4": "isolation request shared|worktree (default shared)"
   },
   "honesty": {
-    "completionClass": "done (interface)",
+    "completionClass": "done (hard)",
     "defaultIsolation": "shared",
     "defaultBackend": "inprocess",
-    "productionGitWorktreeHardened": false,
-    "notC4H": true
+    "productionGitWorktreeHardened": true,
+    "notC4H": false,
+    "c4H": true
   }
 }

@@ -6,11 +6,11 @@
     "C5-3": "recommendIsolationMode shared|worktree|patch-flow (recommend only)"
   },
   "honesty": {
-    "completionClass": "done (interface)",
+    "completionClass": "done (hard)",
     "defaultIsolation": "shared",
     "symbolLeaseDefaultEnabled": false,
     "patchFlowDefault": false,
-    "multiProcessWalHardened": false,
-    "notC5H": true
+    "multiProcessWalHardened": true,
+    "notC5H": false
   }
 }

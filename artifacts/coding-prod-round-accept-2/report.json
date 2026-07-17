@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 2,
+  "title": "DCS Production Round ACCEPT 2.0 (Goal A+B+C)",
+  "ok": true,
+  "decision": "accept-with-residuals",
+  "readyForDefaultFlagGraduation": false,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "redLines": [
+    {
+      "id": "view-tools-default-off",
+      "pass": true,
+      "evidence": "dcs-context-tools-flags default OFF"
+    },
+    {
+      "id": "isolation-default-shared",
+      "pass": true,
+      "evidence": "normalizeIsolationMode(undefined)===shared"
+    },
+    {
+      "id": "worktree-backend-inprocess",
+      "pass": true,
+      "evidence": "runtime.coding.worktree.backend default inprocess"
+    },
+    {
+      "id": "symbolLease-default-false",
+      "pass": true,
+      "evidence": "symbolLease.enabled=false mode=memory"
+    },
+    {
+      "id": "patchFlow-default-false",
+      "pass": true,
+      "evidence": "runtime.coding.patchFlow.default=false"
+    },
+    {
+      "id": "routingMemo.shadow-default-false",
+      "pass": true,
+      "evidence": "routingMemo.shadow=false"
+    },
+    {
+      "id": "sekb.experienceShadow-default-false",
+      "pass": true,
+      "evidence": "experienceShadow=false"
+    },
+    {
+      "id": "c4h-hardened",
+      "pass": true,
+      "evidence": "PRODUCTION_GIT_WORKTREE_HARDENED"
+    },
+    {
+      "id": "c4p-capability",
+      "pass": true,
+      "evidence": "PRODUCTION_PNPM_HARDLINK_INSTALL"
+    },
+    {
+      "id": "c5h-hardened",
+      "pass": true,
+      "evidence": "MULTI_PROCESS_WAL_HARDENED"
+    },
+    {
+      "id": "default-flags-const",
+      "pass": true,
+      "evidence": "DEFAULT_CODING_FEATURE_FLAGS consts"
+    }
+  ],
+  "goals": {
+    "A": {
+      "ok": true,
+      "cards": {
+        "A1": {
+          "ok": true,
+          "completionClass": "done (sim)",
+          "meetsGate": false,
+          "recommendation": "keep-off"
+        },
+        "A2": {
+          "ok": true,
+          "completionClass": "done (hard)",
+          "defaultIsolationShared": true,
+          "backendDefault": "inprocess",
+          "productionGitWorktreeHardened": true
+        },
+        "A3": {
+          "ok": true,
+          "completionClass": "done (hard)",
+          "multiProcessWalHardened": true,
+          "symbolLeaseDefault": false,
+          "patchFlowDefault": false
+        }
+      }
+    },
+    "B": {
+      "ok": true,
+      "cards": {
+        "B1": {
+          "ok": true,
+          "completionClass": "done (hard-gates+recorded)",
+          "live64k": false,
+          "recorded64k": true,
+          "synthetic64k": false,
+          "corpusKind": "recorded",
+          "readyToConsiderAssemblerFlip": false,
+          "autoAppliedAssemblerFlip": false,
+          "recommendation": "metrics-green-review-required",
+          "metricGatesGreen": true
+        },
+        "B2": {
+          "ok": true,
+          "completionClass": "done (shadow+stable-window)",
+          "stableWindowMet": true,
+          "cutoverAllowed": false,
+          "cutoverRecommended": false,
+          "flagsDefaultOff": true,
+          "manualCutoverPackComplete": true
+        }
+      }
+    },
+    "C": {
+      "ok": true,
+      "cards": {
+        "C1": {
+          "ok": true,
+          "completionClass": "done (sim+residual)",
+          "meetsGate": false,
+          "recommendation": "keep-off",
+          "liveReady": false
+        },
+        "C4P": {
+          "ok": true,
+          "completionClass": "done (hard)",
+          "productionPnpmHardlinkInstall": true,
+          "backendDefault": "inprocess",
+          "installDefaultNone": true
+        },
+        "C5P": {
+          "ok": true,
+          "completionClass": "done (hard-gates+keep-off)",
+          "patchFlowDefault": false,
+          "recommendation": "keep-off",
+          "meetsGate": false,
+          "capabilityReady": true
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "remaining": {
+      "ok": true,
+      "ms": 233
+    },
+    "c4": {
+      "ok": true,
+      "ms": 919
+    },
+    "c5": {
+      "ok": true,
+      "ms": 648
+    },
+    "c7": {
+      "ok": true,
+      "ms": 232
+    },
+    "goal-c": {
+      "ok": true,
+      "ms": 1208
+    },
+    "goal-b": {
+      "ok": true,
+      "ms": 516
+    }
+  },
+  "units": {
+    "directed": {
+      "ok": true,
+      "ms": 1591
+    },
+    "agents": {
+      "ok": true,
+      "ms": 3006
+    }
+  },
+  "e2e": {
+    "w5": {
+      "ok": true,
+      "note": "reused Goal B W5 3/3 evidence (UI untouched by Goal C)"
+    }
+  },
+  "residuals": [
+    "C1 live A/B blocked — view tools default-off",
+    "C4 worktree.backend default inprocess; installStrategy opt-in",
+    "C5 patchFlow.default false; lease default off",
+    "C6-H live64k residual; assembler not auto-flipped",
+    "C7-H cutoverAllowed always false"
+  ],
+  "next": "Product soak / optional live A/B env — no further code Goals required for residual honesty packs",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:21.038Z"
+}

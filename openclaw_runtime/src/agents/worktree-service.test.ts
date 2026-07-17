@@ -9,6 +9,9 @@ import {
   __resetWorktreeRegistry,
   createWorktreeService,
   listWorktreeDirs,
+  PRODUCTION_GIT_WORKTREE_HARDENED,
+  normalizeWorktreeRelPath,
+  writeWorktreeFile,
 } from "./worktree-service.js";
 import { buildChildHandoffPack } from "../context-engine/handlers/task-loop-handler.js";
 import { parseHandoffPack } from "../context-engine/block-store.js";
@@ -183,5 +186,60 @@ describe("C4 isolation request + HandoffPack coordinates", () => {
     expect(parsed).toBeDefined();
     expect(parsed?.writeSet).toBeUndefined();
     expect(normalizeIsolationMode(parsed?.isolation)).toBe("shared");
+  });
+});
+
+describe("worktree-service C4-H hardening", () => {
+  let root: string;
+  beforeEach(() => {
+    __resetWorktreeRegistry();
+    codingObservability.reset();
+    root = mkdtempSync(path.join(tmpdir(), "wt-h-"));
+    mkdirSync(path.join(root, "src"), { recursive: true });
+    writeFileSync(path.join(root, "src", "a.ts"), "export const a = 1;\n");
+  });
+  afterEach(() => {
+    __resetWorktreeRegistry();
+    codingObservability.reset();
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("exports PRODUCTION_GIT_WORKTREE_HARDENED without flipping defaults", () => {
+    expect(PRODUCTION_GIT_WORKTREE_HARDENED).toBe(true);
+    expect(resolveWorktreeBackend()).toBe("inprocess");
+    expect(normalizeIsolationMode(undefined)).toBe("shared");
+  });
+
+  it("normalizes Windows separators and rejects traversal", () => {
+    expect(normalizeWorktreeRelPath("src\\a.ts")).toBe("src/a.ts");
+    expect(() => normalizeWorktreeRelPath("../secret")).toThrow(/unsafe_worktree_rel_path/);
+  });
+
+  it("writeWorktreeFile accepts backslash rel paths", () => {
+    const svc = createWorktreeService(root);
+    const rec = svc.create("w1", { seedFiles: ["src/a.ts"] });
+    writeWorktreeFile(rec.root, "src\\nested\\b.ts", "export const b = 1;\n");
+    expect(readFileSync(path.join(rec.root, "src", "nested", "b.ts"), "utf8")).toContain("b = 1");
+  });
+
+  it("git backend concurrent create/merge/cleanup stays isolated (C4-H)", () => {
+    initGitRepo(root);
+    const svc = createWorktreeService(root, { backend: "git" });
+    expect(svc.backend).toBe("git");
+    const w1 = svc.create("g-a", { seedFiles: ["src/a.ts"], writeSet: ["src/a.ts"] });
+    const w2 = svc.create("g-b", { seedFiles: ["src/a.ts"], writeSet: ["src/a.ts"] });
+    expect(w1.backend).toBe("git");
+    expect(w2.backend).toBe("git");
+    writeFileSync(path.join(w1.root, "src", "a.ts"), "export const a = 2;\n");
+    writeFileSync(path.join(w2.root, "src", "a.ts"), "export const a = 3;\n");
+    svc.enqueueMerge({ worktreeId: "g-a", changedFiles: ["src\\a.ts"] });
+    svc.enqueueMerge({ worktreeId: "g-b", changedFiles: ["src/a.ts"] });
+    const results = svc.processMergeQueue();
+    expect(results[0]?.status).toBe("merged");
+    expect(results[1]?.status).toBe("conflict");
+    svc.cleanup("g-a");
+    svc.cleanup("g-b");
+    expect(listWorktreeDirs(root).includes("g-a")).toBe(false);
+    expect(listWorktreeDirs(root).includes("g-b")).toBe(false);
   });
 });

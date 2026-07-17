@@ -1,0 +1,77 @@
+{
+  "ok": true,
+  "card": "B1",
+  "wave": "C6-H",
+  "completionClass": "done (hard-gates+recorded)",
+  "live64k": false,
+  "recorded64k": true,
+  "synthetic64k": false,
+  "corpusKind": "recorded",
+  "metricGates": {
+    "promptNotLinearExploding": true,
+    "compactionLayersHit": true,
+    "passRateFloor": true,
+    "cumulativeRawGe64k": true,
+    "allMetricGatesGreen": true
+  },
+  "readyToConsiderAssemblerFlip": false,
+  "autoAppliedAssemblerFlip": false,
+  "recommendation": "metrics-green-review-required",
+  "productReviewApproved": false,
+  "defaultsUnchanged": true,
+  "checklist": [
+    {
+      "id": "metric-prompt-not-linear",
+      "ok": true,
+      "note": "final prompt estimate << cumulative raw"
+    },
+    {
+      "id": "metric-compaction-layers",
+      "ok": true,
+      "note": "tool compress / archive / pressure layers observed"
+    },
+    {
+      "id": "metric-pass-rate-floor",
+      "ok": true,
+      "note": "simulated pass-rate within baseline floor"
+    },
+    {
+      "id": "metric-64k-cumulative",
+      "ok": true,
+      "note": "cumulative raw chars >= 64K"
+    },
+    {
+      "id": "product-review-approved",
+      "ok": false,
+      "note": "explicit product review field (never inferred)"
+    },
+    {
+      "id": "no-auto-flip",
+      "ok": true,
+      "note": "autoAppliedAssemblerFlip always false"
+    },
+    {
+      "id": "live-corpus-optional",
+      "ok": true,
+      "note": "recorded 64K fixture (not live)"
+    }
+  ],
+  "notes": [
+    "corpus loaded from C:\\Users\\27933\\Desktop\\clawx\\ClawX\\openclaw_runtime\\src\\context-engine\\fixtures\\c6h-recorded-64k.json",
+    "corpus kind=recorded (manifest.kind=recorded)",
+    "not live traffic; do not claim production 64K corpus",
+    "Deterministic recorded-style corpus fixture for C6-H flip-gate evidence",
+    "Not live production traffic; live64k remains false unless a live corpus is supplied via DCS_C6H_CORPUS_PATH",
+    "assembler production flags remain unflipped",
+    "packaging run: productReviewApproved=false by design",
+    "readyToConsiderAssemblerFlip is never auto-true from metrics alone",
+    "applyContextLadder remains opt-in; assembler production flags unflipped",
+    "curve hard-gate readyToConsiderAssemblerFlip=false respected"
+  ],
+  "howToOptInLadder": "Call applyContextLadder({ blocks, tokenBudget }) opt-in from host code; do not flip assembler production defaults. Kill switch: stop calling ladder / leave defaults.",
+  "residual": [
+    "Live 64K production corpus still residual (supply DCS_C6H_CORPUS_PATH + DCS_C6H_CORPUS_KIND=live)",
+    "Product review approval not set; assembler flip stays consider-only/keep-off",
+    "No automatic assembler production default flip from this package"
+  ]
+}

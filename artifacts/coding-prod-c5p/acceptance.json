@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "card": "C5-P",
+  "completionClass": "done (hard-gates+keep-off)",
+  "patchFlowDefault": false,
+  "recommendation": "keep-off",
+  "meetsGate": false,
+  "capabilityReady": true,
+  "multiProcessWalHardened": true,
+  "symbolLeaseDefault": false,
+  "defaultsUnchanged": true,
+  "residual": [
+    "runtime.coding.patchFlow.default remains false (recommend-only orchestration)",
+    "Default-on requires product soak + explicit config change out of band",
+    "productSoakApproved not set"
+  ],
+  "howToOptIn": "Call applyPatchProposalsSerial() / recommendIsolationMode() opt-in. Do NOT set runtime.coding.patchFlow.default=true without product approval after soak.",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.813Z"
+}

@@ -447,7 +447,25 @@
     "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",
     "installTitle": "Install OpenClaw Command",
     "installMessage": "Install the \"openclaw\" command?",
-    "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally."
+    "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally.",
+    "dcsProdFlags": {
+      "title": "DCS Production Flags",
+      "description": "Read-only opt-in catalog for DCS coding runtime flags. Defaults stay off/shared/shadow until hardened evidence and product approval.",
+      "modeOptIn": "productionMode: opt-in",
+      "defaultLabel": "Default",
+      "enableLabel": "Enable",
+      "rollbackLabel": "Rollback",
+      "riskLabel": "Risk",
+      "readOnlyNote": "This panel does not flip flags. Edit env or OpenClaw config, then restart runtime. See docs/dcs-production-p0-runbook.md.",
+      "risk": {
+        "baseline-on": "baseline on",
+        "opt-in": "opt-in",
+        "shadow-only": "shadow only",
+        "api-only": "API only",
+        "request-only": "request only",
+        "read-only": "read-only"
+      }
+    }
   },
   "storage": {
     "title": "Storage & Memory",
@@ -464,14 +482,38 @@
       "notAvailable": "Not available"
     },
     "categories": {
-      "logs": { "label": "Logs", "description": "Application log files" },
-      "sessions": { "label": "Sessions", "description": "Conversation transcripts" },
-      "trajectories": { "label": "Trajectories", "description": "Agent run trajectories and flight records" },
-      "mediaOutbound": { "label": "Outbound Media", "description": "Generated media artifacts" },
-      "mediaThumbs": { "label": "Media Thumbnails", "description": "Cached media thumbnails (regenerable)" },
-      "uvCache": { "label": "UV Cache", "description": "Python uv tool cache (regenerable)" },
-      "electronCache": { "label": "Electron Cache", "description": "Electron runtime cache (regenerable)" },
-      "trash": { "label": "Trash", "description": "Soft-deleted items awaiting cleanup" }
+      "logs": {
+        "label": "Logs",
+        "description": "Application log files"
+      },
+      "sessions": {
+        "label": "Sessions",
+        "description": "Conversation transcripts"
+      },
+      "trajectories": {
+        "label": "Trajectories",
+        "description": "Agent run trajectories and flight records"
+      },
+      "mediaOutbound": {
+        "label": "Outbound Media",
+        "description": "Generated media artifacts"
+      },
+      "mediaThumbs": {
+        "label": "Media Thumbnails",
+        "description": "Cached media thumbnails (regenerable)"
+      },
+      "uvCache": {
+        "label": "UV Cache",
+        "description": "Python uv tool cache (regenerable)"
+      },
+      "electronCache": {
+        "label": "Electron Cache",
+        "description": "Electron runtime cache (regenerable)"
+      },
+      "trash": {
+        "label": "Trash",
+        "description": "Soft-deleted items awaiting cleanup"
+      }
     },
     "actions": {
       "refresh": "Refresh",

@@ -447,7 +447,25 @@
     "installCmdDesc": "Устанавливает ~/.local/bin/openclaw (без прав администратора)",
     "installTitle": "Установить команду OpenClaw",
     "installMessage": "Установить команду \"openclaw\"?",
-    "installDetail": "Это создаст ~/.local/bin/openclaw. Убедитесь, что ~/.local/bin в PATH, если хотите запускать глобально."
+    "installDetail": "Это создаст ~/.local/bin/openclaw. Убедитесь, что ~/.local/bin в PATH, если хотите запускать глобально.",
+    "dcsProdFlags": {
+      "title": "Флаги DCS Production",
+      "description": "Каталог opt-in флагов coding runtime (только чтение). По умолчанию off/shared/shadow до hardening evidence и product approval.",
+      "modeOptIn": "productionMode: opt-in",
+      "defaultLabel": "По умолчанию",
+      "enableLabel": "Включение",
+      "rollbackLabel": "Откат",
+      "riskLabel": "Риск",
+      "readOnlyNote": "Панель не переключает флаги. Меняйте env или конфиг OpenClaw и перезапустите runtime. См. docs/dcs-production-p0-runbook.md.",
+      "risk": {
+        "baseline-on": "baseline on",
+        "opt-in": "opt-in",
+        "shadow-only": "только shadow",
+        "api-only": "только API",
+        "request-only": "только request",
+        "read-only": "read-only"
+      }
+    }
   },
   "storage": {
     "title": "Хранилище и память",
@@ -464,14 +482,38 @@
       "notAvailable": "Недоступно"
     },
     "categories": {
-      "logs": { "label": "Журналы", "description": "Файлы журналов приложения" },
-      "sessions": { "label": "Сессии", "description": "Стенограммы разговоров" },
-      "trajectories": { "label": "Траектории", "description": "Траектории запуска агентов и бортовые самописцы" },
-      "mediaOutbound": { "label": "Исходящие медиа", "description": "Сгенерированные медиа-артефакты" },
-      "mediaThumbs": { "label": "Медиа-эскизы", "description": "Кэшированные эскизы медиа (восстановимо)" },
-      "uvCache": { "label": "UV-кэш", "description": "Кэш Python uv (восстановимо)" },
-      "electronCache": { "label": "Кэш Electron", "description": "Кэш среды выполнения Electron (восстановимо)" },
-      "trash": { "label": "Корзина", "description": "Мягко удалённые элементы ожидают очистки" }
+      "logs": {
+        "label": "Журналы",
+        "description": "Файлы журналов приложения"
+      },
+      "sessions": {
+        "label": "Сессии",
+        "description": "Стенограммы разговоров"
+      },
+      "trajectories": {
+        "label": "Траектории",
+        "description": "Траектории запуска агентов и бортовые самописцы"
+      },
+      "mediaOutbound": {
+        "label": "Исходящие медиа",
+        "description": "Сгенерированные медиа-артефакты"
+      },
+      "mediaThumbs": {
+        "label": "Медиа-эскизы",
+        "description": "Кэшированные эскизы медиа (восстановимо)"
+      },
+      "uvCache": {
+        "label": "UV-кэш",
+        "description": "Кэш Python uv (восстановимо)"
+      },
+      "electronCache": {
+        "label": "Кэш Electron",
+        "description": "Кэш среды выполнения Electron (восстановимо)"
+      },
+      "trash": {
+        "label": "Корзина",
+        "description": "Мягко удалённые элементы ожидают очистки"
+      }
     },
     "actions": {
       "refresh": "Обновить",
