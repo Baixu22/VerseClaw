@@ -8,7 +8,6 @@ import {
   resolveConfirmIntegrity,
   type ConfirmIntegrityLevel,
   type ConfirmProvenance,
-  type ConfirmSourceSystem,
 } from "./confirm-provenance.js";
 import { handleConfirmAndSave } from "./experience-block-bridge.js";
 import {
@@ -34,9 +33,9 @@ export type ConfirmAndSaveOptions = {
   contextBlockSink?: ContextBlockSink;
   sessionId?: string;
   /** Origin of the confirm action (unknown is capped to advisory integrity). */
-  sourceSystem?: ConfirmSourceSystem | string;
+  sourceSystem?: string;
   /** Client integrity claim; server resolves and may downgrade. */
-  integrityClaim?: ConfirmIntegrityLevel | string;
+  integrityClaim?: string;
   /**
    * When true, client attempted to elevate trust from summary text alone.
    * Summary-only claims cannot become high_trust (P3-002 A2).
@@ -240,7 +239,7 @@ export class DistillationTool {
     });
     const principle = this.#store.get_principle(principleId);
     const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
-    let dcsWrite: ConfirmAndSaveResult["dcsWrite"] = "not_attempted";
+    let dcsWrite: ConfirmAndSaveResult["dcsWrite"];
     if (options.contextBlockSink && sessionId) {
       try {
         const result = await handleConfirmAndSave({

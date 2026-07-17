@@ -1290,13 +1290,9 @@ export function Chat() {
     const resolved: SendOptions = {
       ...opts,
       knowledgeMode: opts?.knowledgeMode ?? knowledgeMode,
-      sessionUsage: opts?.sessionUsage ?? {
-        totalTokens: liveUsage?.totalTokens ?? null,
-        costUsd: liveUsage?.estimatedCostUsd ?? null,
-      },
     };
     return sendMessage(text, resolved);
-  }, [knowledgeMode, liveUsage?.estimatedCostUsd, liveUsage?.totalTokens, sendMessage]);
+  }, [knowledgeMode, sendMessage]);
 
   const handleSubmitInteractionResponse = useCallback((responseText: string) => {
     void handleSendMessage(responseText);

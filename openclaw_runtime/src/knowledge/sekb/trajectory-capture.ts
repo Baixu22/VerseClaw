@@ -1,4 +1,4 @@
-﻿import { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { extractErrorSignatureSync, type ErrorSignatureExtractor } from "./error-signature.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
 import { attachSekbShadowMetadata, evaluateTrajectoryShadowV1 } from "./shadow-evaluator.js";

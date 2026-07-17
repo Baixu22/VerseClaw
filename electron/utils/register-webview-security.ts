@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P2-004 / F-ISO-002: Register WebView attach/permission/navigation handlers
  * on the Electron app/session. Safe to call once during initialize().
  */

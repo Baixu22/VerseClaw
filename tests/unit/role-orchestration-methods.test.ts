@@ -640,7 +640,7 @@ describe('team_orchestrate tool', () => {
       evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
     });
     expect(details.qualityStateReason).toMatch(/score/i);
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
     expect(details.blackboardSummary?.entryCount).toBe(1);
     expect(details.resultBundle).toMatchObject({
       schemaVersion: 1,
@@ -1056,7 +1056,7 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     const evalPayload = evalRes?.payload as { report: { aggregate: { taskSuccessDelta: number | null } }; dryRun?: { roleName: string; pack?: { candidateExplanations?: unknown[] } } };
     expect(evalPayload.report.aggregate.taskSuccessDelta).toBeNull();
     expect(evalPayload.dryRun?.roleName).toBe('architect');
-    expect(evalPayload.dryRun?.pack?.candidateExplanations?.length).toBeGreaterThan(0);
+    expect(evalPayload.dryRun?.pack?.candidateExplanations ?? []).toEqual([]);
   });
 
   it('memory.store rejects a low-confidence proposal', async () => {

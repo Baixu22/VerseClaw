@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SEKB confirm provenance + integrity policy (P3-002 / F-DATA-002, F-DATA-004).
  *
  * Confirmed knowledge must carry session lineage, source system, integrity level,

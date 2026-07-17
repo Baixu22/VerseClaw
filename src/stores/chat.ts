@@ -29,12 +29,12 @@ import {
 import { loadSessionTranscriptFallback } from './chat/history-transcript-fallback';
 import {
   capMessagesForMemory,
-  evaluateTurnBudget,
+  capToolResultText,
   formatBudgetRejection,
   getAgentResourceLimits,
   isTurnTimedOut,
-  type SessionUsageSnapshot,
 } from '../../shared/agent-resource-limits';
+import i18n from '@/i18n';
 import { hydrateGatewayHistoryFromTranscript } from './chat/history-transcript-hydrate';
 import {
   LABEL_FETCH_RETRY_DELAYS_MS,
@@ -662,7 +662,17 @@ function compactProgressiveTextParts(parts: string[]): string[] {
 }
 
 function normalizeLiveContentBlocks(content: ContentBlock[]): ContentBlock[] {
-  return content.map((block) => ({ ...block }));
+  return content.map((block) => {
+    if (block.type !== 'tool_result' && block.type !== 'toolResult') return { ...block };
+    const next = { ...block };
+    if (typeof next.text === 'string') {
+      next.text = capToolResultText(next.text).text;
+    }
+    if (typeof next.content === 'string') {
+      next.content = capToolResultText(next.content).text;
+    }
+    return next;
+  });
 }
 
 function normalizeStreamingMessage(message: unknown): unknown {
@@ -670,7 +680,13 @@ function normalizeStreamingMessage(message: unknown): unknown {
 
   const rawMessage = message as RawMessage;
   const rawContent = rawMessage.content;
-  if (!Array.isArray(rawContent)) return rawMessage;
+  if (!Array.isArray(rawContent)) {
+    if (isToolResultRole(rawMessage.role) && typeof rawContent === 'string') {
+      const capped = capToolResultText(rawContent);
+      return capped.truncated ? { ...rawMessage, content: capped.text } : rawMessage;
+    }
+    return rawMessage;
+  }
 
   const normalizedContent = normalizeLiveContentBlocks(rawContent as ContentBlock[]);
   const didChange = normalizedContent.some((block, index) => block !== rawContent[index])
@@ -792,6 +808,18 @@ function rememberPendingOptimisticUserMessage(sessionKey: string, message: RawMe
     .filter((entry) => now - entry.createdAtMs <= OPTIMISTIC_USER_MESSAGE_TTL_MS);
   existing.push({ message, timestampMs, createdAtMs: now });
   _pendingOptimisticUserMessages.set(sessionKey, existing);
+}
+
+function forgetPendingOptimisticUserMessage(sessionKey: string, messageId: string | undefined): void {
+  if (!messageId) return;
+  const pending = _pendingOptimisticUserMessages.get(sessionKey);
+  if (!pending) return;
+  const next = pending.filter((entry) => entry.message.id !== messageId);
+  if (next.length === 0) {
+    _pendingOptimisticUserMessages.delete(sessionKey);
+  } else {
+    _pendingOptimisticUserMessages.set(sessionKey, next);
+  }
 }
 
 function clearPendingOptimisticUserMessages(sessionKey: string): void {
@@ -3784,6 +3812,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
           }
         } else {
           const errorKind = classifyHistoryStartupRetryError(lastError);
+          if (!isCurrentSession()) {
+            return;
+          }
           if (isCurrentSession() && isInitialForegroundLoad && errorKind) {
             console.warn('[chat.history] startup retry exhausted', {
               sessionKey: currentSessionKey,
@@ -4234,6 +4265,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
       console.log(`[sendMessage] RPC result: success=${result.success}, runId=${result.result?.runId || 'none'}`);
 
       if (!result.success) {
+        const denial = result.denial;
+        if (denial) {
+          clearTurnTimeoutTimer();
+          clearSendGenerationIfCurrent();
+          forgetPendingOptimisticUserMessage(currentSessionKey, userMsg.id);
+          set((state) => ({
+            messages: state.messages.filter((message) => message.id !== userMsg.id),
+            sending: false,
+            activeRunId: null,
+            pendingFinal: false,
+            lastUserMessageAt: null,
+            error: i18n.t(`chat:resourceLimits.${denial.code}`, {
+              used: denial.used,
+              limit: denial.limit,
+            }),
+          }));
+          return;
+        }
         const errorMsg = result.error || 'Failed to send message';
         if (isRecoverableChatSendTimeout(errorMsg)) {
           console.warn(`[sendMessage] Recoverable chat.send timeout, keeping poll alive: ${errorMsg}`);

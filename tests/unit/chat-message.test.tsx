@@ -28,8 +28,10 @@ describe('ChatMessage attachment dedupe', () => {
     );
 
     const avatar = screen.getByTestId('chat-assistant-avatar');
+    const image = avatar.querySelector('img');
     expect(avatar).toHaveClass('h-8', 'w-8', 'overflow-hidden', 'rounded-full');
-    expect(avatar.querySelector('img')).toHaveClass('h-full', 'w-full', 'object-cover');
+    expect(image?.parentElement).toHaveStyle({ width: '32px', height: '32px' });
+    expect(image).toHaveClass('h-full', 'w-full', 'object-cover');
   });
 
   it('keeps attachment-only assistant replies visible even when process attachments are suppressed', () => {

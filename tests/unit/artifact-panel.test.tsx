@@ -5,6 +5,7 @@ import { ARTIFACT_PANEL_DEFAULT_WIDTH, useArtifactPanel } from '@/stores/artifac
 import type { GeneratedFile } from '@/lib/generated-files';
 
 vi.mock('react-i18next', () => ({
+  initReactI18next: { type: '3rdParty', init: vi.fn() },
   useTranslation: () => ({
     t: (_key: string, defaultValue?: string) => defaultValue ?? '',
   }),

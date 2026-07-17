@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { gateEngine } from '../../openclaw_runtime/src/runtime-spine/gate-engine.js';
 import type { GateCheckRequest } from '../../openclaw_runtime/src/runtime-spine/types.js';

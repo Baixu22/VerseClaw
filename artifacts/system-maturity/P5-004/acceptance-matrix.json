@@ -1,39 +1,24 @@
 {
   "taskId": "P5-004",
-  "finding": "F-UX-001",
-  "checkedAt": "2026-07-17T09:14:36.276Z",
-  "implementation": {
-    "limits": "shared/agent-resource-limits.ts",
-    "chatStore": "src/stores/chat.ts",
-    "chatUi": "src/pages/Chat/index.tsx",
-    "sendOptions": "shared/chat/types.ts",
-    "tests": "tests/unit/agent-resource-limits-p5-004.test.ts"
-  },
-  "guarantees": [
-    "evaluateTurnBudget rejects over token/cost with visible [CODE] message",
-    "capMessagesForMemory enforces stable maxRenderedMessages ceiling (default 300)",
-    "selectMessageRenderWindow limits DOM rows (default 120)",
-    "turnTimeoutMs arms abortRun which clears activeRunId/streaming state",
-    "capToolResultText truncates tool result floods"
-  ],
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
   "acceptance": [
     {
       "id": "A1",
-      "title": "Budget exceed visible reject",
-      "status": "passed",
-      "evidence": "token/cost budget unit tests + sendMessage gate"
+      "statement": "预算超限可见拒绝",
+      "status": "passed"
     },
     {
       "id": "A2",
-      "title": "Large history stable memory cap",
-      "status": "passed",
-      "evidence": "capMessagesForMemory 10k/50k + DOM window tests"
+      "statement": "大历史有稳定内存上限",
+      "status": "passed"
     },
     {
       "id": "A3",
-      "title": "Timeout/cancel releases resources",
-      "status": "passed",
-      "evidence": "isTurnTimedOut + abortRun clears run state/timers"
+      "statement": "超时/取消释放资源",
+      "status": "passed"
     }
   ]
 }

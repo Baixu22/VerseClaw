@@ -1,36 +1,24 @@
 {
-  "A1": {
-    "id": "A1",
-    "statement": "Default does not open arbitrary senders",
-    "status": "passed",
-    "proof": [
-      "normalizeFeishuWecomAccessPolicy defaults dmPolicy=pairing and allowFrom=[]",
-      "transformChannelConfig(feishu/wecom) no longer forces open or allowFrom=['*']",
-      "authorizeInboundSender rejects unpaired/unlisted senders",
-      "unit: channels-p4-004-inbound-trust.test.ts A1"
-    ]
-  },
-  "A2": {
-    "id": "A2",
-    "statement": "Missing/replayed signature must be rejected",
-    "status": "passed",
-    "proof": [
-      "verifyWebhookHmacSha256 fails closed on missing/malformed/mismatched signatures",
-      "createWebhookReplayGuard rejects missing timestamp, outside window, and replayed event keys",
-      "admitInboundWebhookMessage combines sender+signature+replay gates",
-      "unit: A2 cases"
-    ]
-  },
-  "A3": {
-    "id": "A3",
-    "statement": "Inbound content enters prompt-injection fence",
-    "status": "passed",
-    "proof": [
-      "sanitizeInboundSystemTags neutralizes [System]/System: spoofs",
-      "fenceInboundUntrustedContent wraps body as untrusted channel content",
-      "admitInboundWebhookMessage returns fencedText only after admission",
-      "channel form credential redaction for Renderer (F-SEC-001 partial)",
-      "unit: A3 cases"
-    ]
-  }
+  "taskId": "P4-004",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
+  "acceptance": [
+    {
+      "id": "A1",
+      "statement": "默认不开放任意 sender",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "statement": "signature 缺失/重放必拒",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "statement": "入站内容进入 Prompt Injection 防线",
+      "status": "passed"
+    }
+  ]
 }

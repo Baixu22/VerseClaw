@@ -35,6 +35,33 @@ import type { BashExecutionMessage, CustomMessage } from "./messages.js";
 
 export { CURRENT_SESSION_VERSION };
 
+const MAX_PERSISTED_TOOL_RESULT_CHARS = 80_000;
+
+function capPersistedToolResultMessage(message: Message | CustomMessage | BashExecutionMessage) {
+  const candidate = message as AgentMessage;
+  if (candidate.role !== "toolResult" || !Array.isArray(candidate.content)) {
+    return message;
+  }
+  let remaining = MAX_PERSISTED_TOOL_RESULT_CHARS;
+  let truncated = false;
+  const content = candidate.content.map((block) => {
+    if (!block || typeof block !== "object" || block.type !== "text") {
+      return block;
+    }
+    const text = typeof block.text === "string" ? block.text : "";
+    if (text.length <= remaining) {
+      remaining -= text.length;
+      return block;
+    }
+    truncated = true;
+    const suffix = `\n...[tool result truncated before persistence; original block ${text.length} chars]`;
+    const keep = Math.max(0, remaining - suffix.length);
+    remaining = 0;
+    return { ...block, text: `${text.slice(0, keep)}${suffix}` };
+  });
+  return truncated ? ({ ...candidate, content } as AgentMessage) : message;
+}
+
 export interface SessionHeader {
   type: "session";
   version?: number; // v1 sessions don't have this
@@ -929,12 +956,13 @@ export class SessionManager {
    * These need to be appended via appendCompaction() and appendBranchSummary() methods.
    */
   appendMessage(message: Message | CustomMessage | BashExecutionMessage): string {
+    const boundedMessage = capPersistedToolResultMessage(message);
     const entry: SessionMessageEntry = {
       type: "message",
       id: generateId(this.byId),
       parentId: this.leafId,
       timestamp: new Date().toISOString(),
-      message,
+      message: boundedMessage as AgentMessage,
     };
     this.appendEntry(entry);
     return entry.id;

@@ -23,7 +23,7 @@ const tokenUsage = {
 };
 
 function makeTrace(overrides: Partial<ObservabilityTrace> = {}): ObservabilityTrace {
-  const startedAt = overrides.startedAt ?? Date.parse('2026-06-16T10:00:00.000Z');
+  const startedAt = overrides.startedAt ?? Date.now() - 24 * 60 * 60 * 1000;
   return {
     id: overrides.id ?? 'trace-index-1',
     name: overrides.name ?? 'Index trace',
@@ -123,12 +123,13 @@ describe('observability local trace index', () => {
   });
 
   it('queries status, tool calls, artifacts, keyword, pagination, and sort order', async () => {
-    await persistObservabilityTraceToIndex(makeTrace({ id: 'trace-ok', name: 'Alpha run', status: 'completed', updatedAt: 2000 }));
+    const now = Date.now();
+    await persistObservabilityTraceToIndex(makeTrace({ id: 'trace-ok', name: 'Alpha run', status: 'completed', updatedAt: now - 1000 }));
     await persistObservabilityTraceToIndex(makeTrace({
       id: 'trace-error',
       name: 'Beta failure',
       status: 'error',
-      updatedAt: 3000,
+      updatedAt: now,
       error: 'command failed',
       spans: [
         {

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Host-side session derivative cascade (P3-004 / F-DATA-005).
  * Complements file artefact sweep in session-files.ts with SEKB/memory/DCS journals.
  */

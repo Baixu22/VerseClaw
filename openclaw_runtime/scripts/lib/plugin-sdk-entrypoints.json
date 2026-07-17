@@ -50,6 +50,7 @@
   "agent-media-payload",
   "inbound-reply-dispatch",
   "inbound-envelope",
+  "inbound-trust",
   "channel-reply-pipeline",
   "channel-reply-options-runtime",
   "channel-runtime",
