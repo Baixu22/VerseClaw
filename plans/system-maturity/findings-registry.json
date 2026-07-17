@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
+      "Open": 10,
+      "Fixed": 22,
       "Partial": 2,
-      "Fixed": 18,
-      "Open": 14,
       "Unverified": 1
     },
-    "open": 14,
-    "fixed": 18
+    "open": 10,
+    "fixed": 22
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -396,8 +396,9 @@
         "P5-003",
         "P7-003"
       ],
-      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003.",
-      "updatedBy": "P3-004"
+      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003.",
+      "updatedBy": "P5-003",
+      "updatedAt": "2026-07-17T08:58:35.165Z"
     },
     {
       "id": "F-REL-001",
@@ -704,7 +705,7 @@
       "category": "REL",
       "severity": "Medium",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -712,7 +713,10 @@
       ],
       "tasks": [
         "P5-003"
-      ]
+      ],
+      "notes": "P5-003: logger size/day/total retention, getWriteHealth for write failures, secret/canary redaction before ring+disk.",
+      "updatedBy": "P5-003",
+      "updatedAt": "2026-07-17T08:58:35.165Z"
     },
     {
       "id": "F-SUPPLY-002",
