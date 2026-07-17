@@ -1,0 +1,39 @@
+{
+  "taskId": "P5-004",
+  "finding": "F-UX-001",
+  "checkedAt": "2026-07-17T09:14:36.276Z",
+  "implementation": {
+    "limits": "shared/agent-resource-limits.ts",
+    "chatStore": "src/stores/chat.ts",
+    "chatUi": "src/pages/Chat/index.tsx",
+    "sendOptions": "shared/chat/types.ts",
+    "tests": "tests/unit/agent-resource-limits-p5-004.test.ts"
+  },
+  "guarantees": [
+    "evaluateTurnBudget rejects over token/cost with visible [CODE] message",
+    "capMessagesForMemory enforces stable maxRenderedMessages ceiling (default 300)",
+    "selectMessageRenderWindow limits DOM rows (default 120)",
+    "turnTimeoutMs arms abortRun which clears activeRunId/streaming state",
+    "capToolResultText truncates tool result floods"
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "Budget exceed visible reject",
+      "status": "passed",
+      "evidence": "token/cost budget unit tests + sendMessage gate"
+    },
+    {
+      "id": "A2",
+      "title": "Large history stable memory cap",
+      "status": "passed",
+      "evidence": "capMessagesForMemory 10k/50k + DOM window tests"
+    },
+    {
+      "id": "A3",
+      "title": "Timeout/cancel releases resources",
+      "status": "passed",
+      "evidence": "isTurnTimedOut + abortRun clears run state/timers"
+    }
+  ]
+}
