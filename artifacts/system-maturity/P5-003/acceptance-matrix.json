@@ -1,0 +1,38 @@
+{
+  "taskId": "P5-003",
+  "finding": [
+    "F-REL-005",
+    "F-DATA-004"
+  ],
+  "checkedAt": "2026-07-17T08:58:35.165Z",
+  "implementation": {
+    "logger": "electron/utils/logger.ts",
+    "tests": "tests/unit/logger-p5-003.test.ts"
+  },
+  "guarantees": [
+    "size rotation when active log exceeds maxFileBytes (default 10MiB)",
+    "day retention maxRetentionDays (default 14) + total maxTotalBytes (default 200MiB)",
+    "getWriteHealth() exposes consecutiveFailures/lastWriteError/code",
+    "redactLogText applied before ring buffer and disk (canary/bearer/api keys)"
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "Size/day limits effective",
+      "status": "passed",
+      "evidence": "rotation + retention unit tests"
+    },
+    {
+      "id": "A2",
+      "title": "Write failure observable",
+      "status": "passed",
+      "evidence": "ENOSPC/EACCES getWriteHealth tests"
+    },
+    {
+      "id": "A3",
+      "title": "Logs free of secret/canary",
+      "status": "passed",
+      "evidence": "canary scan ring+disk test"
+    }
+  ]
+}

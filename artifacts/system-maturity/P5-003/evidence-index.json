@@ -1,0 +1,36 @@
+{
+  "taskId": "P5-003",
+  "createdAt": "2026-07-17T08:58:35.165Z",
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P5-003/vitest.stdout.txt",
+      "role": "unit-test-output"
+    },
+    {
+      "path": "artifacts/system-maturity/P5-003/acceptance-matrix.json",
+      "role": "acceptance"
+    },
+    {
+      "path": "artifacts/system-maturity/P5-003/evidence-index.json",
+      "role": "index"
+    },
+    {
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-003.delivery.md",
+      "role": "delivery"
+    }
+  ],
+  "tests": [
+    {
+      "command": "pnpm exec vitest run tests/unit/logger-p5-003.test.ts",
+      "result": "8/8 PASS"
+    }
+  ],
+  "changedFiles": [
+    "electron/utils/logger.ts",
+    "tests/unit/logger-p5-003.test.ts",
+    "plans/system-maturity/phase5-reliability-abuse/STATUS.json",
+    "plans/system-maturity/phase5-reliability-abuse/tasks/P5-003.md",
+    "plans/system-maturity/phase5-reliability-abuse/tasks/P5-003.delivery.md",
+    "plans/system-maturity/findings-registry.json"
+  ]
+}
