@@ -15,7 +15,7 @@ const activeWorkspace = vi.hoisted(() => ({
 
 vi.mock('electron', () => ({
   app: {
-    getPath: vi.fn(() => tmpdir()),
+    getPath: vi.fn(() => join(tmpdir(), 'clawx-user-data-mock')),
   },
   nativeImage: {
     createFromPath: vi.fn(() => ({
@@ -145,5 +145,33 @@ describe('files api permission approval flow', () => {
         decision: 'deny',
       }),
     ]));
+  });
+});
+
+
+describe('files api read allowlist (P1-003)', () => {
+  it('rejects arbitrary local path reads outside workspace and write roots', async () => {
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-ws-read-'));
+    const outsideDir = await mkdtemp(join(tmpdir(), 'clawx-out-read-'));
+    const secretPath = join(outsideDir, 'secret.txt');
+    await writeFile(secretPath, 'top-secret', 'utf8');
+    activeWorkspace.profile = workspace(workspaceDir);
+
+    const { createFilesApi } = await import('@electron/services/files-api');
+    const api = createFilesApi();
+    const result = await api.readText({ path: secretPath });
+    expect(result).toMatchObject({ ok: false, error: 'outsideSandbox' });
+  });
+
+  it('allows reading files inside the active workspace', async () => {
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-ws-in-'));
+    const filePath = join(workspaceDir, 'note.txt');
+    await writeFile(filePath, 'hello', 'utf8');
+    activeWorkspace.profile = workspace(workspaceDir);
+
+    const { createFilesApi } = await import('@electron/services/files-api');
+    const api = createFilesApi();
+    const result = await api.readText({ path: filePath });
+    expect(result).toMatchObject({ ok: true, content: 'hello' });
   });
 });
