@@ -1,0 +1,91 @@
+{
+  "taskId": "P2-004",
+  "generatedAt": "2026-07-17T06:34:06.025Z",
+  "files": [
+    {
+      "path": "electron/utils/sandbox-high-risk-gate.ts",
+      "sha256": "2d58247edac276a6e9e3b8495f0734d6a38a0b88397bf1c0e422fc216c77d64f",
+      "exists": true
+    },
+    {
+      "path": "electron/utils/active-sandbox-high-risk-policy.ts",
+      "sha256": "a6bbf5c49fc4f0b2bbb2af8aa461e7f5244f7d07a7dd5de4cc58d8ee1e05cf43",
+      "exists": true
+    },
+    {
+      "path": "electron/utils/webview-security.ts",
+      "sha256": "24b9cd168d390b6b0ff251b65df901514987df0082be87acb0391d50d2398f80",
+      "exists": true
+    },
+    {
+      "path": "electron/utils/register-webview-security.ts",
+      "sha256": "6db1e12511b6747c6d91fc66339c188582bc92e2ad1465654d81d8becc927222",
+      "exists": true
+    },
+    {
+      "path": "electron/services/sandbox-api.ts",
+      "sha256": "0ab8c68eba4aca3cec6e74b4fc72f1b0e2409893031d5c6bb9199cca4918ee50",
+      "exists": true
+    },
+    {
+      "path": "electron/services/terminal-api.ts",
+      "sha256": "b0be4f365c584539aed9e16786e86a43eec0bc773d01a9f5d08912fa871c8a75",
+      "exists": true
+    },
+    {
+      "path": "electron/services/gateway-api.ts",
+      "sha256": "9a707ea8fe79de924d9118be37896824c4c0f65a56ce8d65bf0a9b266c60d602",
+      "exists": true
+    },
+    {
+      "path": "electron/services/cron-api.ts",
+      "sha256": "8d808a438ad5595fb04d085c4d7b89d9bebca9faf4f60193ccd91d4f4ebdcbed",
+      "exists": true
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "a52f11707adbd04a787c7b9d429f5b6f35dff2b07062c241513cd56661adca94",
+      "exists": true
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "a74713a6865d8406fbf6706baab29b06af024eb691eca33510339a208afe45ff",
+      "exists": true
+    },
+    {
+      "path": "shared/product-semantics.ts",
+      "sha256": "b5256393eef26185eb18b725c098430eb8d71ed312b976309a43448c0fd0413b",
+      "exists": true
+    },
+    {
+      "path": "src/pages/Settings/index.tsx",
+      "sha256": "de73f93f053ae20197a4b5a83ba43d3015889640ab35652c196d3ff0164077d7",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+      "sha256": "f636d85c0ea7624f178ce4b885bd4fa4bc86492154df75c4bb6ddf7ec281efd5",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/webview-security-p2-004.test.ts",
+      "sha256": "c6549d8c4eb2aa9c7b93bbe273168cb8ad65364332a5338c6be729d0f269aca3",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-004/vitest.stdout.txt",
+      "sha256": "1e5edad2ff24df03ece795e9535c95f9bd3f986bbc1d402b903fca202554f48b",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-004/acceptance-matrix.json",
+      "sha256": "ab219d1399e1ae9a7b63fd5e1af9f57a06cf4e4a300f279e4a6fbe9e5d1216ca",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P2-004/P2-004.delivery.md",
+      "sha256": "d67c5235e9d145ea64a717f5177c1fe0cb73ee66bfd192900219a20f3919af60",
+      "exists": true
+    }
+  ]
+}

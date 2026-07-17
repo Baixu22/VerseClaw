@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
+
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const storeState = vi.hoisted(() => ({
@@ -69,6 +72,12 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 
 describe('gateway permission approval flow', () => {
   beforeEach(() => {
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: false,
+      requestedProviderId: 'policy-light',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+    }));
     storeState.approvals = [];
     storeState.decisionEvents = [];
     activeWorkspace.profile = workspace();

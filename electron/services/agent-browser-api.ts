@@ -1,8 +1,45 @@
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import { createPermissionDecisionEvent } from '@shared/product-semantics';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
+import {
+  classifyAgentBrowserAction,
+  decideSandboxHighRiskAction,
+  loadSandboxHighRiskPolicy,
+} from '@electron/utils/sandbox-high-risk-gate';
 import { createDefaultAgentBrowserCliRunner } from './agent-browser-cli-runner';
 import { AgentBrowserService } from './agent-browser-service';
 import { AgentBrowserTaskService } from './agent-browser-task-service';
 import { AgentBrowserVault } from './agent-browser-vault';
+import { recordPermissionDecisionEvent } from './permissions-api';
+import { getActiveWorkspaceProfile } from './workspaces-api';
+
+async function assertBrowserAllowedUnderSandbox(action: string): Promise<void> {
+  const actionClass = classifyAgentBrowserAction(action);
+  if (!actionClass) return;
+  const policy = await loadSandboxHighRiskPolicy();
+  // Fail-closed on agent-browser host API (no stepwise approval consumer here).
+  const decision = decideSandboxHighRiskAction(policy, actionClass, { allowApproval: false });
+  if (decision.allowed) return;
+  const workspace = await getActiveWorkspaceProfile();
+  void recordPermissionDecisionEvent(createPermissionDecisionEvent({
+    workspaceMode: workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE,
+    tool: `agentBrowser.${action}`,
+    boundary: 'sandbox-runtime',
+    decision: 'deny',
+    reason: decision.reason,
+  }));
+  throw new Error(decision.reason ?? 'Browser action denied under degraded sandbox');
+}
+
+function withBrowserSandboxGate<Args extends unknown[], R>(
+  action: string,
+  fn: (...args: Args) => R | Promise<R>,
+): (...args: Args) => Promise<R> {
+  return async (...args: Args) => {
+    await assertBrowserAllowedUnderSandbox(action);
+    return await fn(...args);
+  };
+}
 
 let defaultAgentBrowserService: AgentBrowserService | undefined;
 
@@ -18,6 +55,7 @@ export function createAgentBrowserApi(
   taskService = new AgentBrowserTaskService({
     execute: async (task, signal) => {
       signal.throwIfAborted();
+      await assertBrowserAllowedUnderSandbox('runTask');
       const opened = await service.open({
         url: task.url,
         profile: task.profile,
@@ -35,7 +73,7 @@ export function createAgentBrowserApi(
     return vaultService;
   };
 
-  return {
+  const api = {
     open: async (payload = {}) => ({
       success: true,
       ...(await service.open(payload)),
@@ -276,4 +314,16 @@ export function createAgentBrowserApi(
       ...service.validateExtractionRule(payload),
     }),
   };
+
+  // P2-004: fail-closed high-risk browser actions when sandbox is degraded.
+  return new Proxy(api, {
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof prop !== 'string' || typeof value !== 'function') {
+        return value;
+      }
+      const bound = value.bind(target);
+      return withBrowserSandboxGate(prop, bound as (...args: unknown[]) => unknown);
+    },
+  }) as CompleteHostServiceRegistry['agentBrowser'];
 }

@@ -1,0 +1,45 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "degraded status is force-visible before high-risk execution",
+    "status": "passed",
+    "proof": [
+      "buildSandboxExplanation always includes degraded yes/no item with danger tone when degraded",
+      "Settings UI shows degraded badge + force-visible degraded field grid",
+      "buildForcedDegradedVisibility always returns forceVisible=true",
+      "unit: force-visible degraded fields when docker-strong is unavailable (P2-004)"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "high-risk actions default deny or require stepwise approval under degraded sandbox",
+    "status": "passed",
+    "proof": [
+      "decideSandboxHighRiskAction requires approval (or fail-closes) when degraded for exec/browser/cron",
+      "terminal/gateway compose sandbox gate into workspace decisions with approval path",
+      "cron and agent-browser fail-close without approval consumer",
+      "unit: sandbox-high-risk-gate-p2-004 (approval + fail-closed matrix)"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "degraded high-risk reason is written to audit log",
+    "status": "passed",
+    "proof": [
+      "permission-decision events with boundary=sandbox-runtime for degraded high-risk denials",
+      "terminal/gateway/cron/browser record reason including degradeReason",
+      "PermissionDecisionBoundary adds sandbox-runtime and webview-security"
+    ]
+  },
+  "F_ISO_002": {
+    "id": "F-ISO-002",
+    "statement": "WebView attach/permission/navigation controls",
+    "status": "passed",
+    "proof": [
+      "will-attach-webview hardens prefs and enforces Gateway Control loopback src only",
+      "setPermissionRequestHandler/setPermissionCheckHandler default deny",
+      "will-navigate/will-redirect/window-open denied outside allowlist",
+      "unit: webview-security-p2-004"
+    ]
+  }
+}

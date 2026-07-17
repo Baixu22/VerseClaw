@@ -305,7 +305,9 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "Образ песочницы"
-    }
+    },
+    "degradedYes": "Да (сильный sandbox недоступен)",
+    "degradedNo": "Нет"
   },
   "remoteControl": {
     "title": "Удалённое управление Electron",

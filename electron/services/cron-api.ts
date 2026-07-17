@@ -22,6 +22,36 @@ import { resolveAgentIdFromChannel } from '../utils/agent-config';
 import { toOpenClawChannelType, toUiChannelType } from '../utils/channel-alias';
 import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
 import { isRecord } from './payload-utils';
+import {
+  classifyCronHostAction,
+  decideSandboxHighRiskAction,
+  loadSandboxHighRiskPolicy,
+} from '@electron/utils/sandbox-high-risk-gate';
+import {
+  recordPermissionDecisionEvent,
+} from './permissions-api';
+import { createPermissionDecisionEvent } from '@shared/product-semantics';
+import { getActiveWorkspaceProfile } from './workspaces-api';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
+
+async function assertCronAllowedUnderSandbox(action: string): Promise<void> {
+  const actionClass = classifyCronHostAction(action);
+  if (!actionClass) return;
+  const policy = await loadSandboxHighRiskPolicy();
+  // Fail-closed on cron host API (no stepwise approval UI on this path).
+  const decision = decideSandboxHighRiskAction(policy, actionClass, { allowApproval: false });
+  if (decision.allowed) return;
+  const workspace = await getActiveWorkspaceProfile();
+  void recordPermissionDecisionEvent(createPermissionDecisionEvent({
+    workspaceMode: workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE,
+    tool: `cron.${action}`,
+    boundary: 'sandbox-runtime',
+    decision: 'deny',
+    reason: decision.reason,
+  }));
+  throw new Error(decision.reason ?? 'Cron action denied under degraded sandbox');
+}
+
 
 interface GatewayCronJob {
   id: string;
@@ -562,6 +592,7 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
   return {
     list: async () => listCronJobs(gatewayManager),
     create: async (payload) => {
+      await assertCronAllowedUnderSandbox('create');
       const input = payload;
       const agentId = typeof input.agentId === 'string' && input.agentId.trim() ? input.agentId.trim() : 'main';
       const delivery = normalizeCronDelivery(input.delivery);
@@ -589,6 +620,7 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       return transformCronJob(result as GatewayCronJob);
     },
     update: async (payload) => {
+      await assertCronAllowedUnderSandbox('update');
       const body = payload;
       const id = getId(body);
       const input = isRecord(body.input) ? body.input : {};
@@ -614,15 +646,22 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       }
       return transformCronJob(result as GatewayCronJob);
     },
-    delete: async (payload) => gatewayManager.rpc('cron.remove', { id: getId(payload) }),
+    delete: async (payload) => {
+      await assertCronAllowedUnderSandbox('delete');
+      return gatewayManager.rpc('cron.remove', { id: getId(payload) });
+    },
     toggle: async (payload) => {
+      await assertCronAllowedUnderSandbox('toggle');
       const body = payload;
       return gatewayManager.rpc('cron.update', {
         id: getId(body),
         patch: { enabled: body.enabled === true },
       });
     },
-    trigger: async (payload) => gatewayManager.rpc('cron.run', { id: getId(payload), mode: 'force' }),
+    trigger: async (payload) => {
+      await assertCronAllowedUnderSandbox('trigger');
+      return gatewayManager.rpc('cron.run', { id: getId(payload), mode: 'force' });
+    },
     sessionHistory: async (payload) => {
       const body = payload;
       const sessionKey = typeof body.sessionKey === 'string' ? body.sessionKey.trim() : '';

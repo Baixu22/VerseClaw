@@ -305,7 +305,9 @@
       "cli": "Docker CLI",
       "daemon": "Docker daemon",
       "image": "沙盒镜像"
-    }
+    },
+    "degradedYes": "是（强沙箱不可用）",
+    "degradedNo": "否"
   },
   "remoteControl": {
     "title": "Electron 远程调控",

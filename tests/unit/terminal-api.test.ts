@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
+
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const storeState = vi.hoisted(() => ({
@@ -91,6 +94,12 @@ function gatewayManager(rpc = vi.fn()) {
 
 describe('terminal api OpenClaw exec integration', () => {
   beforeEach(() => {
+    setSandboxHighRiskPolicyLoader(async () => ({
+      degraded: false,
+      requestedProviderId: 'policy-light',
+      effectiveProviderId: 'policy-light',
+      runtimeLevel: 'policy',
+    }));
     storeState.approvals = [];
     storeState.decisionEvents = [];
     activeWorkspace.profile = workspace();
@@ -164,7 +173,7 @@ describe('terminal api OpenClaw exec integration', () => {
       success: false,
       blocked: true,
       approvalRequired: true,
-      reason: '接受修改模式需要先批准高风险命令',
+      reason: 'Accept-edits mode requires approval for high-risk commands',
     });
     expect(rpc).not.toHaveBeenCalled();
 
@@ -193,7 +202,7 @@ describe('terminal api OpenClaw exec integration', () => {
     await expect(api.run({ command: 'pnpm install' })).resolves.toMatchObject({
       success: false,
       blocked: true,
-      reason: '只读模式仅允许查看类命令',
+      reason: 'Read-only mode only allows inspection commands',
     });
 
     expect(rpc).not.toHaveBeenCalled();
