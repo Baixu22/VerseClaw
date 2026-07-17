@@ -1,0 +1,131 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+electron/services/agent-browser-api.ts(86,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(94,25): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(99,22): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(103,19): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(107,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(111,19): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(115,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(119,22): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(123,24): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(127,21): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(135,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(139,21): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(143,23): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(147,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(151,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(155,18): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(163,28): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(167,30): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(171,13): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(175,26): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(179,24): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(183,23): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(187,22): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(191,32): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(195,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(203,33): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(207,38): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(211,34): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(215,36): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(219,36): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(223,44): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(227,40): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(231,21): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(232,23): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(233,24): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(234,23): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(235,26): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(236,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(240,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(244,30): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(248,37): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(252,38): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(256,45): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(260,35): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(264,34): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(268,37): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(272,34): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(276,31): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(280,36): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(284,32): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(288,37): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(292,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(296,41): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(300,35): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(304,24): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(308,29): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-api.ts(312,30): error TS7006: Parameter 'payload' implicitly has an 'any' type.
+electron/services/agent-browser-service.ts(91,3): error TS6133: 'agentBrowserScreenshotDir' is declared but its value is never read.
+electron/services/knowledge-api.ts(274,25): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
+electron/services/knowledge-api.ts(4000,28): error TS2339: Property 'confirm_and_save_with_lineage' does not exist on type '{ suggest_principles_from_trajectories: (trajectoryIds?: string[] | null | undefined, minClusterSize?: number | undefined) => unknown[]; confirm_and_save: (suggestion: unknown, edits?: unknown) => string; reject_suggestion: (suggestion: unknown, reason?: string | undefined) => void; }'.
+electron/services/knowledge-api.ts(4001,31): error TS2339: Property 'confirm_and_save_with_lineage' does not exist on type '{ suggest_principles_from_trajectories: (trajectoryIds?: string[] | null | undefined, minClusterSize?: number | undefined) => unknown[]; confirm_and_save: (suggestion: unknown, edits?: unknown) => string; reject_suggestion: (suggestion: unknown, reason?: string | undefined) => void; }'.
+electron/services/knowledge-api.ts(4010,94): error TS2554: Expected 1-2 arguments, but got 3.
+electron/services/roles-api.ts(64,7): error TS6133: 'BUILT_IN_ROLE_NAMES' is declared but its value is never read.
+electron/utils/atomic-write.ts(601,19): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(fd: number, buffer: ArrayBufferView<ArrayBufferLike>, offset?: number | null | undefined, length?: number | null | undefined, position?: number | null | undefined): number', gave the following error.
+    Argument of type 'string | Buffer<ArrayBufferLike>' is not assignable to parameter of type 'ArrayBufferView<ArrayBufferLike>'.
+      Type 'string' is not assignable to type 'ArrayBufferView<ArrayBufferLike>'.
+  Overload 2 of 2, '(fd: number, string: string, position?: number | null | undefined, encoding?: BufferEncoding | null | undefined): number', gave the following error.
+    Argument of type 'string | Buffer<ArrayBufferLike>' is not assignable to parameter of type 'string'.
+      Type 'Buffer<ArrayBufferLike>' is not assignable to type 'string'.
+electron/utils/logger.ts(90,5): error TS6133: 'flushing' is declared but its value is never read.
+shared/types/mcp.ts(25,3): error TS2300: Duplicate identifier 'headers'.
+shared/types/mcp.ts(28,3): error TS2300: Duplicate identifier 'headers'.
+[ELIFECYCLE] Command failed with exit code 2.
+shared/types/mcp.ts(25,3): error TS2300: Duplicate identifier 'headers'.
+shared/types/mcp.ts(28,3): error TS2300: Duplicate identifier 'headers'.
+src/lib/capability-registry.ts(45,5): error TS2322: Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }> | undefined' is not assignable to type 'Record<string, string> | undefined'.
+  Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }>' is not assignable to type 'Record<string, string>'.
+    'string' index signatures are incompatible.
+      Type 'string | { kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+        Type '{ kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+src/pages/Skills/index.tsx(1499,28): error TS2345: Argument of type 'McpServerJsonPayload' is not assignable to parameter of type 'McpServerCreatePayload'.
+  Types of property 'env' are incompatible.
+    Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }> | undefined' is not assignable to type 'Record<string, string> | undefined'.
+      Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }>' is not assignable to type 'Record<string, string>'.
+        'string' index signatures are incompatible.
+          Type 'string | { kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+            Type '{ kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+src/pages/Skills/index.tsx(1589,26): error TS2345: Argument of type '{ url?: string | undefined; enabled: boolean; ownerId?: string | undefined; command?: string | undefined; scope: McpScope; transport: McpTransport; name: string; permissionMode?: WorkspacePermissionMode | undefined; ... 17 more ...; localAddress?: string; }' is not assignable to parameter of type 'McpServerUpdatePayload'.
+  Type '{ url?: string | undefined; enabled: boolean; ownerId?: string | undefined; command?: string | undefined; scope: McpScope; transport: McpTransport; name: string; permissionMode?: WorkspacePermissionMode | undefined; ... 17 more ...; localAddress?: string; }' is not assignable to type 'Partial<McpServerCreatePayload>'.
+    Types of property 'env' are incompatible.
+      Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }> | undefined' is not assignable to type 'Record<string, string> | undefined'.
+        Type 'Record<string, string | { kind: "secret-ref"; secretId: string; }>' is not assignable to type 'Record<string, string>'.
+          'string' index signatures are incompatible.
+            Type 'string | { kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+              Type '{ kind: "secret-ref"; secretId: string; }' is not assignable to type 'string'.
+src/stores/chat.ts(32,3): error TS6133: 'evaluateTurnBudget' is declared but its value is never read.
+src/stores/chat.ts(36,8): error TS6133: 'SessionUsageSnapshot' is declared but its value is never read.
+[ELIFECYCLE] Command failed with exit code 2.
+{
+  "success": false,
+  "mode": "parallel",
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "2cd6a6154c765018c7f5381b412310ce74cadf0bf7197f8d6298a9b1ed7901e4",
+    "inputCount": 676,
+    "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 17698,
+  "coverageNote": "Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 51
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 2,
+      "durationMs": 6642
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 2,
+      "durationMs": 17501
+    }
+  ]
+}
+[ELIFECYCLE] Command failed with exit code 1.

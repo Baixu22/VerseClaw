@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-002",
+  "finding": "F-SUPPLY-001",
+  "checkedAt": "2026-07-17T18:14:58.194Z",
+  "runs": [
+    {
+      "name": "vitest",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs exec vitest run tests/unit/windows-update-feed-p6-002.test.ts",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "policy-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:windows-update-policy",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "live-feed-probe",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:windows-update-policy:live",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "unknown-channel-deny",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/validate-windows-update-feed-policy.mts --version 1.0.0-rc.1",
+      "expectedExit": 1,
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "harness-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs harness validate --spec harness/specs/tasks/windows-update-feed-integrity.md --since 3d67e200e",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "comms-replay",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run comms:replay",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "comms-compare",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run comms:compare",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "workflow-yaml",
+      "command": "C:\\Program Files\\nodejs\\node.exe -e import('yaml').then(({parse})=>{const fs=require('fs');const doc=parse(fs.readFileSync('.github/workflows/release.yml','utf8'));const gate=doc.jobs?.['release-policy-gate'];const text=JSON.stringify(gate);if(!text.includes('validate-windows-update-feed-policy'))process.exit(2);console.log('release.yml P6-002 gate OK')})",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "full-test",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs test",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run typecheck",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "harness-ci",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run harness:ci",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "Client locates the correct feed",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "Tampered metadata/package is rejected",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "title": "Feed source and channel are auditable",
+      "status": "passed"
+    }
+  ],
+  "fullGateAssessment": {
+    "status": "baseline-fail-no-p6-signature",
+    "runs": [
+      {
+        "name": "full-test",
+        "exitCode": 1
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 1
+      },
+      {
+        "name": "harness-ci",
+        "exitCode": 0
+      }
+    ],
+    "note": "Repository-wide non-P6 failures remain P6-005 release-baseline work; a P6 signature fails this collector."
+  }
+}

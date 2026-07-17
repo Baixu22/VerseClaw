@@ -1,0 +1,15 @@
+[windows-update-feed] OK: 1.0.0 -> https://oss.intelli-spectrum.com/latest/latest.yml
+[windows-update-feed] OK: 1.0.0-alpha.1 -> https://oss.intelli-spectrum.com/alpha/latest.yml
+[windows-update-feed] OK: 1.0.0-beta.2 -> https://oss.intelli-spectrum.com/beta/latest.yml
+[windows-update-feed] OK: unknown prerelease channel rejected
+[windows-update-feed] OK: release workflow source/channel anchors match client policy
+{
+  "releaseChannel": "stable",
+  "channelDirectory": "latest",
+  "metadataChannel": "latest",
+  "metadataFile": "latest.yml",
+  "feedUrl": "https://oss.intelli-spectrum.com/latest/",
+  "metadataUrl": "https://oss.intelli-spectrum.com/latest/latest.yml",
+  "allowPrerelease": false
+}
+[windows-update-feed] OK: live metadata 0.5.0 files=1 fingerprint=520f78e82a3ce85108c59426c3b02796d62ca436a639a65e06153edcf5c53b27

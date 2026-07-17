@@ -1,0 +1,5 @@
+[windows-update-feed] OK: 1.0.0 -> https://oss.intelli-spectrum.com/latest/latest.yml
+[windows-update-feed] OK: 1.0.0-alpha.1 -> https://oss.intelli-spectrum.com/alpha/latest.yml
+[windows-update-feed] OK: 1.0.0-beta.2 -> https://oss.intelli-spectrum.com/beta/latest.yml
+[windows-update-feed] OK: unknown prerelease channel rejected
+[windows-update-feed] OK: release workflow source/channel anchors match client policy
