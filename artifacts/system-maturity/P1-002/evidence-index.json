@@ -1,0 +1,35 @@
+{
+  "task": "P1-002",
+  "generatedAt": "2026-07-17T04:30:52.697Z",
+  "acceptance": {
+    "A1": "unauthorized WebContents rejected via senderAuth allowlist",
+    "A2": "payload oversize/depth/prototype rejected",
+    "A3": "renderer errors sanitized (path/stack/secret redacted)"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/system-maturity/P1-002/vitest.stdout.txt",
+      "sha256": "d85b61fedd326e7561164994ac09c44dc84be05ac11a958711c94af5df93f35d"
+    },
+    {
+      "path": "artifacts/system-maturity/P1-002/sender-payload-matrix.json",
+      "sha256": "6763f9740dc43c85c7eac18063c84aaddaa096091b14b48aea331f7d68d542fa"
+    },
+    {
+      "path": "electron/main/ipc/host-invoke.ts",
+      "sha256": "1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0"
+    },
+    {
+      "path": "electron/main/ipc/host-invoke-security.ts",
+      "sha256": "0d94df899ab3f10a122c4b48e7e22facb58de8cf461f93071ef7e187bec86739"
+    },
+    {
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "1b4354c6ad18a6a2fb74ed59717804bb8b76f4cecf36f09ced914843ed477af5"
+    },
+    {
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "51489767ad78e7f73bf6ac9c39d90cdc3d8f3e6ee6c0cc8b150dd43bbb81d0b7"
+    }
+  ]
+}

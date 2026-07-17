@@ -253,8 +253,13 @@ function registerTypedHostHandlers(
     }
   });
 
-  registerHostInvokeHandler(hostApiRegistry);
+  registerHostInvokeHandler(hostApiRegistry, {
+    senderAuth: {
+      allowedWebContentsIds: new Set([mainWindow.webContents.id]),
+    },
+  });
 }
+
 
 function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
   const providerService = getProviderService();
