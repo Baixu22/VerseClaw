@@ -12,12 +12,32 @@ import { getOpenClawResolvedDir } from './paths';
 import * as logger from './logger';
 import { proxyAwareFetch } from './proxy-fetch';
 import { withConfigLock } from './config-mutex';
+import { normalizeFeishuWecomAccessPolicy } from '../../shared/channels/inbound-trust';
 import {
     OPENCLAW_WECHAT_CHANNEL_TYPE,
     isWechatChannelType,
     normalizeOpenClawAccountId,
     toOpenClawChannelType,
 } from './channel-alias';
+
+const CHANNEL_SECRET_FIELD_RE = /(secret|token|password|passwd|api[_-]?key|encryptkey|appsecret|bottoken|webhook)/i;
+
+/** Renderer-safe mask for channel credential fields (P4-004 / F-SEC-001). */
+export function redactChannelSecretValue(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (trimmed.length <= 4) return '????';
+  return `????${trimmed.slice(-4)}`;
+}
+
+export function redactChannelFormValues(values: Record<string, string>): Record<string, string> {
+  const next: Record<string, string> = {};
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value !== 'string') continue;
+    next[key] = CHANNEL_SECRET_FIELD_RE.test(key) ? redactChannelSecretValue(value) : value;
+  }
+  return next;
+}
 
 const OPENCLAW_DIR = join(homedir(), '.openclaw');
 const CONFIG_FILE = join(OPENCLAW_DIR, 'openclaw.json');
@@ -631,7 +651,7 @@ async function ensurePluginAllowlist(currentConfig: OpenClawConfig, channelType:
     }
 }
 
-function transformChannelConfig(
+export function transformChannelConfig(
     channelType: string,
     config: ChannelConfigData,
     existingAccountConfig: ChannelConfigData,
@@ -689,19 +709,16 @@ function transformChannelConfig(
     }
 
     if (channelType === 'feishu' || channelType === 'wecom') {
-        const existingDmPolicy = existingAccountConfig.dmPolicy === 'pairing' ? 'open' : existingAccountConfig.dmPolicy;
-        transformedConfig.dmPolicy = transformedConfig.dmPolicy ?? existingDmPolicy ?? 'open';
-
-        let allowFrom = (transformedConfig.allowFrom ?? existingAccountConfig.allowFrom ?? ['*']) as string[];
-        if (!Array.isArray(allowFrom)) {
-            allowFrom = [allowFrom] as string[];
-        }
-
-        if (transformedConfig.dmPolicy === 'open' && !allowFrom.includes('*')) {
-            allowFrom = [...allowFrom, '*'];
-        }
-
-        transformedConfig.allowFrom = allowFrom;
+        // P4-004 / F-AUTH-008: never auto-open or inject allowFrom=['*'].
+        // Default DM policy is pairing; existing explicit policies are preserved.
+        const access = normalizeFeishuWecomAccessPolicy({
+            dmPolicy: typeof transformedConfig.dmPolicy === 'string' ? transformedConfig.dmPolicy : null,
+            allowFrom: transformedConfig.allowFrom,
+            existingDmPolicy: typeof existingAccountConfig.dmPolicy === 'string' ? existingAccountConfig.dmPolicy : null,
+            existingAllowFrom: existingAccountConfig.allowFrom,
+        });
+        transformedConfig.dmPolicy = access.dmPolicy;
+        transformedConfig.allowFrom = access.allowFrom;
     }
 
     if (channelType === 'whatsapp') {
@@ -999,7 +1016,9 @@ export async function getChannelFormValues(channelType: string, accountId?: stri
     if (!saved) return undefined;
 
     const values = extractFormValues(channelType, saved);
-    return Object.keys(values).length > 0 ? values : undefined;
+    if (Object.keys(values).length === 0) return undefined;
+    // Never return channel credential plaintext to Renderer.
+    return redactChannelFormValues(values);
 }
 
 export async function deleteChannelAccountConfig(channelType: string, accountId: string): Promise<void> {
