@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setSandboxHighRiskPolicyLoader } from '@electron/utils/sandbox-high-risk-gate';
 
@@ -11,6 +11,18 @@ const storeState = vi.hoisted(() => ({
 
 const activeWorkspace = vi.hoisted(() => ({
   profile: null as WorkspaceProfile | null,
+}));
+
+vi.mock('electron', () => ({
+  app: {
+    getPath: vi.fn(() => process.cwd()),
+  },
+  nativeImage: {
+    createFromPath: vi.fn(() => ({
+      isEmpty: () => true,
+      getSize: () => ({ width: 0, height: 0 }),
+    })),
+  },
 }));
 
 vi.mock('electron-store', () => {

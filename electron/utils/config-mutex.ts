@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Async mutex for serializing read-modify-write operations on
  * ~/.openclaw/openclaw.json.
  *

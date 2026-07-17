@@ -88,7 +88,6 @@ import { getOriginFromUrl, type ToolAuthorizationContext } from '@shared/agent-b
 import {
   agentBrowserProfilePartition,
   agentBrowserRunArtifactDir,
-  agentBrowserScreenshotDir,
   sanitizeAgentBrowserPathSegment,
 } from '@shared/agent-browser/filesystem-boundary';
 import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';

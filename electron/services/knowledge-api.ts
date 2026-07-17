@@ -230,7 +230,35 @@ type SekbRuntimeModule = {
       trajectoryIds?: string[] | null,
       minClusterSize?: number,
     ) => unknown[];
-    confirm_and_save: (suggestion: unknown, edits?: unknown) => string;
+    confirm_and_save: (
+      suggestion: unknown,
+      edits?: unknown,
+      options?: {
+        sessionId?: string;
+        requireSession?: boolean;
+        sourceSystem?: unknown;
+        integrityClaim?: unknown;
+        summaryOnly?: boolean;
+        contextBlockSink?: ReturnType<typeof createHostExperienceJournalSink>;
+      },
+    ) => string;
+    confirm_and_save_with_lineage?: (
+      suggestion: unknown,
+      edits?: unknown,
+      options?: {
+        sessionId?: string;
+        requireSession?: boolean;
+        sourceSystem?: unknown;
+        integrityClaim?: unknown;
+        summaryOnly?: boolean;
+        contextBlockSink?: ReturnType<typeof createHostExperienceJournalSink>;
+      },
+    ) => Promise<{
+      principleId: string;
+      provenance?: KnowledgeSekbConfirmPrincipleResult['provenance'];
+      dcsWrite: 'written' | 'skipped' | 'rejected' | 'not_attempted';
+      highTrustEligible: boolean;
+    }>;
     reject_suggestion: (suggestion: unknown, reason?: string) => void;
   };
   SekbBatchDistillationAssistant: new (options: Record<string, unknown>) => {
@@ -271,7 +299,7 @@ async function loadSekbRuntimeModule(): Promise<SekbRuntimeModule | null> {
 
 
 function createHostExperienceJournalSink(stateDir: string) {
-  return async (writes: readonly Array<{
+  return async (writes: ReadonlyArray<{
     block: Record<string, unknown>;
     admission?: Record<string, unknown>;
   }>) => {

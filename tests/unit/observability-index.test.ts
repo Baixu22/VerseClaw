@@ -23,7 +23,7 @@ const tokenUsage = {
 };
 
 function makeTrace(overrides: Partial<ObservabilityTrace> = {}): ObservabilityTrace {
-  const startedAt = overrides.startedAt ?? Date.parse('2026-06-16T10:00:00.000Z');
+  const startedAt = overrides.startedAt ?? Date.now() - 1_000;
   return {
     id: overrides.id ?? 'trace-index-1',
     name: overrides.name ?? 'Index trace',

@@ -41,6 +41,7 @@ const chatState = vi.hoisted(() => ({
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
+  hydrateStartup: vi.fn(),
   lastUserMessageAt: null,
   sessionLastActivity: {},
 }));

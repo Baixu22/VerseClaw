@@ -314,7 +314,16 @@ describe("production confirm_and_save experience bridge", () => {
     expect(sink).toHaveBeenCalledTimes(1);
     const writeArg = (sink as ReturnType<typeof vi.fn>).mock.calls[0][0] as Array<{
       block: { block_type: string; source_system: string; session_id: string };
-      admission: { confirmed: boolean; confidence: number; write_origin: string };
+      admission: {
+        confirmed: boolean;
+        confidence: number;
+        write_origin: string;
+        high_trust_eligible: boolean;
+        integrity: string;
+        provenance_source: string;
+        session_id: string;
+        verification_status: string;
+      };
     }>;
     expect(writeArg[0]?.block.block_type).toBe("experience");
     expect(writeArg[0]?.block.source_system).toBe("sekb");
@@ -323,6 +332,11 @@ describe("production confirm_and_save experience bridge", () => {
       confirmed: true,
       confidence: 0.9,
       write_origin: "handler",
+      high_trust_eligible: true,
+      integrity: "confirmed",
+      provenance_source: "sekb",
+      session_id: "session-w4-prod",
+      verification_status: "confirmed",
     });
   });
 

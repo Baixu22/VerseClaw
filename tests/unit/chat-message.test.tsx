@@ -28,7 +28,9 @@ describe('ChatMessage attachment dedupe', () => {
     );
 
     const avatar = screen.getByTestId('chat-assistant-avatar');
-    expect(avatar).toHaveClass('h-8', 'w-8', 'overflow-hidden', 'rounded-full');
+    expect(avatar).toHaveClass('mt-0.5');
+    expect(avatar.firstElementChild).toHaveClass('overflow-hidden', 'rounded-full');
+    expect(avatar.firstElementChild).toHaveStyle({ width: '32px', height: '32px' });
     expect(avatar.querySelector('img')).toHaveClass('h-full', 'w-full', 'object-cover');
   });
 

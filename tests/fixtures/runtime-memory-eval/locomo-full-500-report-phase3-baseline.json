@@ -1,0 +1,18 @@
+{
+  "dataset": "locomo",
+  "version": "3.1-full-500-phase3-augment",
+  "totalQuestions": 500,
+  "metrics": {
+    "overall": {
+      "j_score": 0.452,
+      "recall_at_5": 0.4672499746973088
+    },
+    "byCategory": {
+      "temporal": { "jScore": 0.35333333333333333, "recallAt5": 0.6376666666666667, "count": 150 },
+      "multi_hop": { "jScore": 0.4270833333333333, "recallAt5": 0.1887906136261399, "count": 96 },
+      "single_hop": { "jScore": 0.5275590551181102, "recallAt5": 0.3726432410641586, "count": 127 },
+      "open_domain": { "jScore": 0.5118110236220472, "recallAt5": 0.5710661167354082, "count": 127 }
+    }
+  },
+  "generatedAt": "2026-07-01T17:43:26.579Z"
+}

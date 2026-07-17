@@ -5,10 +5,13 @@
     "node scripts/validate-system-maturity-plan.mjs",
     "node scripts/validate-test-gates.mjs",
     "pnpm contract:check",
+    "pnpm test",
+    "pnpm run lint:check",
     "pnpm run typecheck",
     "pnpm run harness:ci",
     "pnpm agent-dev:deep-test",
     "pnpm run test:e2e:agent-dev-quality",
+    "pnpm run maturity:validate",
     "pnpm run release:validate"
   ]
 }

@@ -1023,7 +1023,10 @@ async function checkMcpHeartbeat(server: McpServerConfig): Promise<{ message: st
   }
 }
 
-async function updateServerRuntimeFields(id: string, patch: Partial<McpServerConfig>): Promise<McpServerConfig | undefined> {
+async function updateServerRuntimeFields(
+  id: string,
+  patch: Partial<McpServerConfig>,
+): Promise<StoredMcpServer | undefined> {
   const servers = await readServers();
   const index = servers.findIndex((server) => server.id === id);
   if (index === -1) return undefined;
@@ -1033,7 +1036,7 @@ async function updateServerRuntimeFields(id: string, patch: Partial<McpServerCon
   return next[index];
 }
 
-async function findServer(id: string): Promise<McpServerConfig> {
+async function findServer(id: string): Promise<StoredMcpServer | McpServerConfig> {
   if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) return VERSE_CLAW_GIT_MCP_SERVER;
   if (id === VERSE_CLAW_STORAGE_MCP_SERVER_ID) return VERSE_CLAW_STORAGE_MCP_SERVER;
   const server = (await readServers()).find((entry) => entry.id === id);
@@ -1403,7 +1406,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
     testServer: async (payload) => {
       const body = parsePayload<{ id?: unknown; server?: unknown }>(payload);
       try {
-        let server: McpServerConfig | undefined;
+        let server: StoredMcpServer | McpServerConfig;
         const id = normalizeString(body.id);
         if (id) {
           server = await findServer(id);
@@ -1412,12 +1415,15 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         }
         const isBuiltin = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
           || server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID;
-        if (!isBuiltin) validateServer(server);
+        const runtimeServer = isBuiltin
+          ? server as McpServerConfig
+          : await toRuntimeServer(server, await readEnvVault());
+        if (!isBuiltin) validateServer(runtimeServer);
         const heartbeat = server.id === VERSE_CLAW_GIT_MCP_SERVER_ID
           ? { message: 'Verse Claw Git tools are available through the host Git service.', latencyMs: 0 }
           : server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID
             ? { message: 'Verse Claw Storage tools are available through the host System service.', latencyMs: 0 }
-            : await checkMcpHeartbeat(server);
+            : await checkMcpHeartbeat(runtimeServer);
         return {
           success: true,
           server: toRendererServer(server),
@@ -1476,7 +1482,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         return { ...runtime, server: toRendererServer((updated ?? server) as McpServerConfig) };
       }
       try {
-        const heartbeat = await checkMcpHeartbeat(server);
+        const runtimeServer = await toRuntimeServer(server, await readEnvVault());
+        const heartbeat = await checkMcpHeartbeat(runtimeServer);
         const updated = await updateServerRuntimeFields(id, {
           runtimeStatus: 'connected',
           lastHeartbeatAt: Date.now(),

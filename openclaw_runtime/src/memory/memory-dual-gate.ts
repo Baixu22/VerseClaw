@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Memory/COMPASS dual write/use gates + poison revoke (P3-003 / F-DATA-003, F-DATA-004).
  *
  * Write and use gates are independent: enabling one never implies the other.

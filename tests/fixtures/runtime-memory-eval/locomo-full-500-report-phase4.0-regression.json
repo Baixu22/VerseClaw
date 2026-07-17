@@ -1,0 +1,15 @@
+{
+  "dataset": "locomo",
+  "version": "4.0-full-500-phase4-query-rewrite",
+  "totalQuestions": 500,
+  "metrics": {
+    "overall": { "j_score": 0.386 },
+    "byCategory": {
+      "temporal": { "jScore": 0.3, "count": 150 },
+      "multi_hop": { "jScore": 0.3854166666666667, "count": 96 },
+      "single_hop": { "jScore": 0.4, "count": 127 },
+      "open_domain": { "jScore": 0.42, "count": 127 }
+    }
+  },
+  "generatedAt": "2026-07-02T00:00:00.000Z"
+}

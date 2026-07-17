@@ -73,7 +73,7 @@ export function createAgentBrowserApi(
     return vaultService;
   };
 
-  const api = {
+  const api: CompleteHostServiceRegistry['agentBrowser'] = {
     open: async (payload = {}) => ({
       success: true,
       ...(await service.open(payload)),
@@ -323,6 +323,7 @@ export function createAgentBrowserApi(
         return value;
       }
       const bound = value.bind(target);
+      if (!classifyAgentBrowserAction(prop)) return bound;
       return withBrowserSandboxGate(prop, bound as (...args: unknown[]) => unknown);
     },
   }) as CompleteHostServiceRegistry['agentBrowser'];

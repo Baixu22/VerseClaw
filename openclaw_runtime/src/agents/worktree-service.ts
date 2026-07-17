@@ -31,7 +31,6 @@ import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import {
   installWorktreeDependencies,
-  PRODUCTION_PNPM_HARDLINK_INSTALL,
   type WorktreeInstallStrategy,
   type WorktreeInstallResult,
 } from "./worktree-pnpm-install.js";

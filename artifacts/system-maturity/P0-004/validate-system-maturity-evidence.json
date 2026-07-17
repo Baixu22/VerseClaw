@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-17T04:04:09.601Z",
+  "checkedAt": "2026-07-17T23:23:33.080Z",
   "ok": true,
-  "recomputedCount": 33,
+  "recomputedCount": 158,
   "recomputed": [
     {
       "task": "P0-001",
@@ -13,12 +13,12 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "c644519a0cd5380d6e12123114f039af6c9347d39226fa3067a982be0dbab6ad"
+      "sha256": "2831f45d294d45eeee4d6a3695104e13d404537f5ad755cf2decb1fb0b4228e8"
     },
     {
       "task": "P0-001",
       "path": "scripts/audit-baseline-check.mjs",
-      "sha256": "d7e74e3e44875f553aff02fc88faa64aa5e8406793a5376515bc31a8e4e529af"
+      "sha256": "38239c87cb04b7ddfeadf9c924fc42463ed35dbc23cf5853751d5701d879292f"
     },
     {
       "task": "P0-001",
@@ -63,7 +63,7 @@
     {
       "task": "P0-003",
       "path": "plans/system-maturity/gates.json",
-      "sha256": "4c399cf891d2ce62f282503a47c5da996fa0141e08856781e4aae0c57e7d7e3a"
+      "sha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4"
     },
     {
       "task": "P0-003",
@@ -88,7 +88,7 @@
     {
       "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "e52afc540817c1c127a0e284ffd61aef2f9fb3c248e50836bf2da90728b7acfe"
+      "sha256": "8b5c2401971f7312b050cf9984d50ead149682e69a55ccf4b26367294b2e3f49"
     },
     {
       "task": "P0-003",
@@ -98,7 +98,7 @@
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "0cf5f34f66b1b40054f935dbb5c0e0cf176d49d77481ad669592639bb139e2cc"
+      "sha256": "eb30ee97eff4ec35cc82b867fa3721f545728426ff85dde01c1c99cd5e6c0777"
     },
     {
       "task": "P0-003",
@@ -108,7 +108,7 @@
     {
       "task": "P0-003",
       "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
-      "sha256": "2a21c2c0bb5306882f4daa0993aeebe153d98460a073794af0ca9b2f0bc79ed3"
+      "sha256": "a87c72640d35a5d264b8df5193e9c3a213e6a5e76d3e609d295f9fe815dabb59"
     },
     {
       "task": "P0-003",
@@ -138,7 +138,7 @@
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "0cf5f34f66b1b40054f935dbb5c0e0cf176d49d77481ad669592639bb139e2cc"
+      "sha256": "eb30ee97eff4ec35cc82b867fa3721f545728426ff85dde01c1c99cd5e6c0777"
     },
     {
       "task": "P0-004",
@@ -169,6 +169,631 @@
       "task": "P0-004",
       "path": "artifacts/system-maturity/P0-004/harness.stdout.txt",
       "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319"
+    },
+    {
+      "task": "P1-001",
+      "path": "artifacts/system-maturity/P1-001/canary-scan.json",
+      "sha256": "a99ccb30b7687e8119d4f6f52bbd5152baa5b8605800aef462875bf4154c9051"
+    },
+    {
+      "task": "P1-001",
+      "path": "artifacts/system-maturity/P1-001/vitest.stdout.txt",
+      "sha256": "8ac5cc074e82c54bec72d3a281c3a374a6a568add99f442c536c6161cdc1dd43"
+    },
+    {
+      "task": "P1-001",
+      "path": "artifacts/system-maturity/P1-001/evidence-index.json",
+      "sha256": "e86281125bdc1bae49577365c3ad9be91d67988b7988f84d967a81fdc520f66b"
+    },
+    {
+      "task": "P1-001",
+      "path": "electron/services/secrets/secret-store.ts",
+      "sha256": "717a43f06b9dc9da2bb5e36275a0f67e8a955ebb189e5b6fc2afdced309b866f"
+    },
+    {
+      "task": "P1-001",
+      "path": "shared/host-api/contract.ts",
+      "sha256": "9b651c61c1bf165502c18a15cc84df1cf683805854861d771490b1003af604fb"
+    },
+    {
+      "task": "P1-001",
+      "path": "src/lib/host-api.ts",
+      "sha256": "8b5c2401971f7312b050cf9984d50ead149682e69a55ccf4b26367294b2e3f49"
+    },
+    {
+      "task": "P1-001",
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918"
+    },
+    {
+      "task": "P1-001",
+      "path": "scripts/configure-deepseek-runtime.mjs",
+      "sha256": "463bdaab2823d7e24c0167a7c559a7f7b64bf68ac1fde4fc23b868eb5bef8930"
+    },
+    {
+      "task": "P1-002",
+      "path": "artifacts/system-maturity/P1-002/vitest.stdout.txt",
+      "sha256": "d85b61fedd326e7561164994ac09c44dc84be05ac11a958711c94af5df93f35d"
+    },
+    {
+      "task": "P1-002",
+      "path": "artifacts/system-maturity/P1-002/sender-payload-matrix.json",
+      "sha256": "6763f9740dc43c85c7eac18063c84aaddaa096091b14b48aea331f7d68d542fa"
+    },
+    {
+      "task": "P1-002",
+      "path": "electron/main/ipc/host-invoke.ts",
+      "sha256": "1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0"
+    },
+    {
+      "task": "P1-002",
+      "path": "electron/main/ipc/host-invoke-security.ts",
+      "sha256": "1acf7394180d75ad5948a508e2326155716f00299fa6d6c32a5c2ed831427908"
+    },
+    {
+      "task": "P1-002",
+      "path": "electron/main/ipc-handlers.ts",
+      "sha256": "b09c3329231dc516d657926af173ab95f46a8a0b7ee221271c6a52a9a34a6f7a"
+    },
+    {
+      "task": "P1-002",
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918"
+    },
+    {
+      "task": "P1-003",
+      "path": "artifacts/system-maturity/P1-003/vitest.stdout.txt",
+      "sha256": "ab2d73e64b6469d5ac5d3bb5a4238dba4a84153a758bb91f2565fcda4518b853"
+    },
+    {
+      "task": "P1-003",
+      "path": "artifacts/system-maturity/P1-003/path-matrix.json",
+      "sha256": "35a85f31de46f92b7059ef97698c1fb4cd635e102c7b507d6805627ea97f6ec9"
+    },
+    {
+      "task": "P1-003",
+      "path": "electron/services/path-broker.ts",
+      "sha256": "56cfd721fcc11fdcf0749c0e1425d93997afa9a762e798d884f321b4f922452f"
+    },
+    {
+      "task": "P1-003",
+      "path": "electron/services/files-api.ts",
+      "sha256": "4bec1b21649e5c63377633211d429f5cdd9b7f7bc90ba8f4dc2a17d9444da9ee"
+    },
+    {
+      "task": "P1-003",
+      "path": "electron/services/workspace-permissions.ts",
+      "sha256": "45c639fd11b8170872752cfe0ca128c0a3cf26af9a2f037ceb3872f5b1db2dce"
+    },
+    {
+      "task": "P1-003",
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918"
+    },
+    {
+      "task": "P1-004",
+      "path": "artifacts/system-maturity/P1-004/vitest.stdout.txt",
+      "sha256": "462193ab62e17dee281d9ea5b6e14e0ba852d43af50838892ef67fc1d23595ec"
+    },
+    {
+      "task": "P1-004",
+      "path": "artifacts/system-maturity/P1-004/url-policy-matrix.json",
+      "sha256": "ddffb3f5b4110d108fe7ce637ef0a7da2db8d6d60561c855bb8a2543157ff58f"
+    },
+    {
+      "task": "P1-004",
+      "path": "shared/security/url-policy.ts",
+      "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495"
+    },
+    {
+      "task": "P1-004",
+      "path": "electron/utils/safe-open-external.ts",
+      "sha256": "bdc6a2d26f402386c94f07b7ff51898dd12ef2d671134a1c4fe6d4e48e9462a9"
+    },
+    {
+      "task": "P1-004",
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918"
+    },
+    {
+      "task": "P2-001",
+      "path": "artifacts/system-maturity/P2-001/vitest.stdout.txt",
+      "sha256": "71b0ba78c9383f4be5e4efcae9b1e04d2202af49d6150dcf55a3b25ba5050eff"
+    },
+    {
+      "task": "P2-001",
+      "path": "artifacts/system-maturity/P2-001/evidence-index.json",
+      "sha256": "007e8b529f92a1f3ca4226835ea4432dd851f8e49ddcd3cf1c32378a6c4330ba"
+    },
+    {
+      "task": "P2-001",
+      "path": "artifacts/system-maturity/P2-001/acceptance-matrix.json",
+      "sha256": "c96f2258137f25d7b9e3f83badbe5c7c5bc8b431c4d00bfe7e6a95d9452d3d86"
+    },
+    {
+      "task": "P2-001",
+      "path": "shared/types/workspace.ts",
+      "sha256": "d000806b3dad9f7f8e75f66ea94864952ded94d4198c704a456e8f09aa236d90"
+    },
+    {
+      "task": "P2-001",
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "d4031397aed69e6da79357369978c110fc0663540656196366807a5aa65c71ba"
+    },
+    {
+      "task": "P2-001",
+      "path": "electron/services/workspace-permissions.ts",
+      "sha256": "45c639fd11b8170872752cfe0ca128c0a3cf26af9a2f037ceb3872f5b1db2dce"
+    },
+    {
+      "task": "P2-001",
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+    },
+    {
+      "task": "P2-002",
+      "path": "artifacts/system-maturity/P2-002/vitest.stdout.txt",
+      "sha256": "366fbf1351707992ba46f9f74d5ed362ce5aad13b2eb13d7c342dec5237e282d"
+    },
+    {
+      "task": "P2-002",
+      "path": "artifacts/system-maturity/P2-002/evidence-index.json",
+      "sha256": "111a448e83a1c024e97d614a04725ec8bb82bf4d6733a5253b001aedf98df859"
+    },
+    {
+      "task": "P2-002",
+      "path": "artifacts/system-maturity/P2-002/acceptance-matrix.json",
+      "sha256": "7dd290c64202443e9169479e80e682e0d7f859ffcc9884093dcf0fc0b23bab52"
+    },
+    {
+      "task": "P2-002",
+      "path": "electron/services/permissions-api.ts",
+      "sha256": "2a898c96b2b1f735adcdbd1f10d5e533c8935db75da40ed7dea461f42d18b952"
+    },
+    {
+      "task": "P2-002",
+      "path": "tests/unit/permissions-api.test.ts",
+      "sha256": "99e62e4277a9cc41a9aaec9451cd0e0588f66d4b9b484afeeec97ff582153bea"
+    },
+    {
+      "task": "P2-002",
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+    },
+    {
+      "task": "P2-003",
+      "path": "artifacts/system-maturity/P2-003/vitest.stdout.txt",
+      "sha256": "4fb3238e9959ae5f2f16daae41c8aa3e285e601c07a83146909de57f062f4b66"
+    },
+    {
+      "task": "P2-003",
+      "path": "artifacts/system-maturity/P2-003/evidence-index.json",
+      "sha256": "c16aef50ab9dc89a748fc439247c4cf48d81266460006d1017a8cdce7b9e2e9d"
+    },
+    {
+      "task": "P2-003",
+      "path": "artifacts/system-maturity/P2-003/acceptance-matrix.json",
+      "sha256": "806448dacc05dd81f2c0d40b0ea0a5d6d6ff48d8a0e67553c3ffe56cfaf65fbe"
+    },
+    {
+      "task": "P2-003",
+      "path": "openclaw_runtime/src/agents/role-contract.ts",
+      "sha256": "eaf4e3b6e91eec2fe0dc5350c221cdf53d096c45307781943b0c0fa5a18214ab"
+    },
+    {
+      "task": "P2-003",
+      "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
+      "sha256": "5a75fee6e39e4457b89d703001990bf6c7946b65b275f08e60e778fcfdcab7df"
+    },
+    {
+      "task": "P2-003",
+      "path": "openclaw_runtime/src/agents/role-spawn.ts",
+      "sha256": "81f8635b882eb42564edfcf3f0b2265866936256bbf39c12d6ae4782b131102d"
+    },
+    {
+      "task": "P2-003",
+      "path": "electron/services/roles-api.ts",
+      "sha256": "bb7aaac5d737204a3f6a35754ca5fcd7730809f2a003bc53232a7a5f360e0e58"
+    },
+    {
+      "task": "P2-003",
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f"
+    },
+    {
+      "task": "P2-004",
+      "path": "artifacts/system-maturity/P2-004/vitest.stdout.txt",
+      "sha256": "1e5edad2ff24df03ece795e9535c95f9bd3f986bbc1d402b903fca202554f48b"
+    },
+    {
+      "task": "P2-004",
+      "path": "artifacts/system-maturity/P2-004/evidence-index.json",
+      "sha256": "4ea68de86ed918b65622677d36bb8b1a429e9716a385837f1c30257cf4ed65f2"
+    },
+    {
+      "task": "P2-004",
+      "path": "artifacts/system-maturity/P2-004/acceptance-matrix.json",
+      "sha256": "ab219d1399e1ae9a7b63fd5e1af9f57a06cf4e4a300f279e4a6fbe9e5d1216ca"
+    },
+    {
+      "task": "P2-005",
+      "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+      "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa"
+    },
+    {
+      "task": "P2-005",
+      "path": "artifacts/system-maturity/P2-005/evidence-index.json",
+      "sha256": "d9af981c62dc082ddb6d18ed6df38f28fab5703aaf12e777a131086b356b175d"
+    },
+    {
+      "task": "P2-005",
+      "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+      "sha256": "4eafc7fb455327247b62e585abd4634d124c533c63ea6c817e0e52234034c424"
+    },
+    {
+      "task": "P3-001",
+      "path": "artifacts/system-maturity/P3-001/vitest-host.stdout.txt",
+      "sha256": "c254712aa333d2c344f7a49721f8014f8c975bdbfa07861d92a74b0e986a919b"
+    },
+    {
+      "task": "P3-001",
+      "path": "artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt",
+      "sha256": "38610e439951443ea948a3b057d7125e1146247fcf41361881d15fc99905fb0e"
+    },
+    {
+      "task": "P3-001",
+      "path": "artifacts/system-maturity/P3-001/acceptance-matrix.json",
+      "sha256": "da350bc7892db2355eca482106848b13726b69f47fb7a421e15c13f4c2803bdf"
+    },
+    {
+      "task": "P3-001",
+      "path": "artifacts/system-maturity/P3-001/evidence-index.json",
+      "sha256": "db5cb183fc625328617da2fcb1a0a4d9ef92587b5a4729da4e4c921ab9a4709b"
+    },
+    {
+      "task": "P3-002",
+      "path": "artifacts/system-maturity/P3-002/vitest-host.stdout.txt",
+      "sha256": "0f628f192383f9ebd8a6928124dbf6feed2eb1f88c2642cf731b2a1d20cf02e6"
+    },
+    {
+      "task": "P3-002",
+      "path": "artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt",
+      "sha256": "51f9eefdd027868c8db2262c15a8401675d722c3b0bd2bfada52e6ef798519c7"
+    },
+    {
+      "task": "P3-002",
+      "path": "artifacts/system-maturity/P3-002/acceptance-matrix.json",
+      "sha256": "0637fcf225cd7359a32de7cb047e9cea10c64f552d5d55f382505013842bf2a9"
+    },
+    {
+      "task": "P3-002",
+      "path": "artifacts/system-maturity/P3-002/evidence-index.json",
+      "sha256": "1b23993efcead13080752f5eed03960bbca7081a5955c7ae022e82adf352f72e"
+    },
+    {
+      "task": "P3-003",
+      "path": "artifacts/system-maturity/P3-003/vitest-host.stdout.txt",
+      "sha256": "ab4377393e571914934f9099576dbcac1a1620e9551e87e17a3226164d33631f"
+    },
+    {
+      "task": "P3-003",
+      "path": "artifacts/system-maturity/P3-003/acceptance-matrix.json",
+      "sha256": "40bc1053c099e13426489840cda60dd7b83da79166416d5014641e31f2736a38"
+    },
+    {
+      "task": "P3-003",
+      "path": "artifacts/system-maturity/P3-003/evidence-index.json",
+      "sha256": "ec7ec047fc667934438097bd51b634592226f8283754e65bd79d6788b3a1146d"
+    },
+    {
+      "task": "P3-004",
+      "path": "artifacts/system-maturity/P3-004/vitest-host.stdout.txt",
+      "sha256": "d4f15f259bdec14e112ccdb0f903640a283807cac4e6c9fe9c5b610c0aecbfee"
+    },
+    {
+      "task": "P3-004",
+      "path": "artifacts/system-maturity/P3-004/acceptance-matrix.json",
+      "sha256": "feb98060e6f84896db62f04a2dca25beabec1d625b11999542b72d19da47a8a5"
+    },
+    {
+      "task": "P3-004",
+      "path": "artifacts/system-maturity/P3-004/evidence-index.json",
+      "sha256": "1402ef6fd3be3fb529f15144043533d1969a44f088fbcef1d24be330dc3f6b53"
+    },
+    {
+      "task": "P4-001",
+      "path": "artifacts/system-maturity/P4-001/vitest.stdout.txt",
+      "sha256": "63dcdbb9d5b8595200e78ffe2b26cd2faa2abf6fed595f8a43e7250fad64e775"
+    },
+    {
+      "task": "P4-001",
+      "path": "artifacts/system-maturity/P4-001/acceptance-matrix.json",
+      "sha256": "37516181d865697f8081ac94290fa63c4b12823ba16a3f156a3a1901cb81559f"
+    },
+    {
+      "task": "P4-001",
+      "path": "artifacts/system-maturity/P4-001/evidence-index.json",
+      "sha256": "e4ace083a19ac2b399008b633e9aecfae2b505a7c44da82599a489388416ed24"
+    },
+    {
+      "task": "P4-002",
+      "path": "artifacts/system-maturity/P4-002/vitest.stdout.txt",
+      "sha256": "3d58f6f3f38f2c560a4f354f8cd2599f5c0fc9de69a23db617ba638ca8896f41"
+    },
+    {
+      "task": "P4-002",
+      "path": "artifacts/system-maturity/P4-002/acceptance-matrix.json",
+      "sha256": "5f0a3193b230b612c84e2062b99043231c6a80f546b2f84092958a273d1c54dd"
+    },
+    {
+      "task": "P4-002",
+      "path": "artifacts/system-maturity/P4-002/evidence-index.json",
+      "sha256": "13efe98f1eaf3c7102fa9cab75ab773f4f249efa112c99dcfea362988dfda5d0"
+    },
+    {
+      "task": "P4-003",
+      "path": "artifacts/system-maturity/P4-003/vitest.stdout.txt",
+      "sha256": "dc135e646acdc29fa31d5c37017ae3c4b42323f82872518f866029586cbdc774"
+    },
+    {
+      "task": "P4-003",
+      "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
+      "sha256": "1aea9e6824bde6585cc729e68163f34711659363add1f3f6d1a11736531a3495"
+    },
+    {
+      "task": "P4-003",
+      "path": "artifacts/system-maturity/P4-003/evidence-index.json",
+      "sha256": "804123f644e1bd8e17e9dce434eab9853353a9d6b0918afebca62abb1bfacb68"
+    },
+    {
+      "task": "P4-004",
+      "path": "artifacts/system-maturity/P4-004/vitest.stdout.txt",
+      "sha256": "f88a22ff4bc164087b4c8dfca96ba46037beaeb01f94ef4b60e2615707078cf4"
+    },
+    {
+      "task": "P4-004",
+      "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
+      "sha256": "1aa366e002c26399e1b19d37190618a0d6c24812e0548e274259efd6d66883b5"
+    },
+    {
+      "task": "P4-004",
+      "path": "artifacts/system-maturity/P4-004/evidence-index.json",
+      "sha256": "30cd535d0e3ac9ab42f5429170fb492e79de2b338fc4fb7f68440bb1f6842c5b"
+    },
+    {
+      "task": "P5-001",
+      "path": "artifacts/system-maturity/P5-001/vitest.stdout.txt",
+      "sha256": "e751260fc33b1b471a5541b692adb721d1d143101dd21dcc4ffcc23978c39ca0"
+    },
+    {
+      "task": "P5-001",
+      "path": "artifacts/system-maturity/P5-001/vitest-related.stdout.txt",
+      "sha256": "14ede84a9dedbbcae924672f29c590914f8916452030ed4746874cf3c756ecd1"
+    },
+    {
+      "task": "P5-001",
+      "path": "artifacts/system-maturity/P5-001/acceptance-matrix.json",
+      "sha256": "afa8b6bfa3012a1c59b14ad3de5f665da203d6d5874d844af813c0919987b569"
+    },
+    {
+      "task": "P5-001",
+      "path": "artifacts/system-maturity/P5-001/evidence-index.json",
+      "sha256": "76e5345cbe3c57a07fd230f7b2a9535fd3c649a1c44e047886ee2db8b1001753"
+    },
+    {
+      "task": "P5-002",
+      "path": "artifacts/system-maturity/P5-002/vitest.stdout.txt",
+      "sha256": "bb0403c2d3c617661aca4a77ab10dcb2e32a5570fd75078f9e5f1375e052f5c3"
+    },
+    {
+      "task": "P5-002",
+      "path": "artifacts/system-maturity/P5-002/acceptance-matrix.json",
+      "sha256": "f57794d140ff02d108ff5fd9660480174f0e4e35c08707edda2cf11bcff169f8"
+    },
+    {
+      "task": "P5-002",
+      "path": "artifacts/system-maturity/P5-002/evidence-index.json",
+      "sha256": "a596938a0eebe4551cfba152d7a97a0526ef53a8e042d037f929056c71007d2f"
+    },
+    {
+      "task": "P5-003",
+      "path": "artifacts/system-maturity/P5-003/vitest.stdout.txt",
+      "sha256": "ad99c2a03fa17df5bdc5e55d298675b0b6e18d0a20de6ca1caa299620151b053"
+    },
+    {
+      "task": "P5-003",
+      "path": "artifacts/system-maturity/P5-003/acceptance-matrix.json",
+      "sha256": "bd699b89fbad272b08fb0dad4cc1ef0fd598f29be2cb1b6e9db7871819a9fbcd"
+    },
+    {
+      "task": "P5-003",
+      "path": "artifacts/system-maturity/P5-003/evidence-index.json",
+      "sha256": "6cfc2e2048a21ae0a94e41c46acc256fa2278586267ce05295226303eee3cfe9"
+    },
+    {
+      "task": "P5-004",
+      "path": "artifacts/system-maturity/P5-004/vitest.stdout.txt",
+      "sha256": "98acfa87698625200f44656cb0857ce3767f7ea6c84ac98761b9387f63d221ce"
+    },
+    {
+      "task": "P5-004",
+      "path": "artifacts/system-maturity/P5-004/acceptance-matrix.json",
+      "sha256": "315bc2ac3aab966578b3f0154cadf53c2c894ff7e73e75b51f5e77fc7dac2ded"
+    },
+    {
+      "task": "P5-004",
+      "path": "artifacts/system-maturity/P5-004/evidence-index.json",
+      "sha256": "abf3cac4702d1e747d087770fbab78ebd241e90a9bb9ef41a353d2d78ddd5190"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/acceptance-matrix.json",
+      "sha256": "5c2d0362d677988bb2a55cf161bc1ed417fda9739634ee55d00282e8c71fda82"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/full-gate-assessment.json",
+      "sha256": "94d347d8bbf1a27e7c8aa33aa191f6e8fc6b25ce0be76b9e955f426b10a345ea"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/vitest.stdout.txt",
+      "sha256": "c877f6ef795cc1a466df547d50c0c86d45383f8b6ffb0f365ec250784e1b860c"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/policy-validate.stdout.txt",
+      "sha256": "81dbaa2d32b526c915888fed2456847285bcfcc99ef365aea67c9193607f1ffb"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/gate-deny-unsigned.stdout.txt",
+      "sha256": "b208496e43daf33b0354be00ddd250b9d1364485a99aa6ad768736ecfa4b9ad2"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/authenticode-probe.stdout.txt",
+      "sha256": "bf54ee4e1b98cf6455a44fb117d49ebcf1aba07774f305f4cf93956f6be6bc13"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/gate-allow-signed-attestation.stdout.txt",
+      "sha256": "f2b59d33c856bb75c4c1e3e555a1eba1ff640373bf51380df6b8ca22f7a396c4"
+    },
+    {
+      "task": "P6-001",
+      "path": "artifacts/system-maturity/P6-001/harness-ci.stdout.txt",
+      "sha256": "3dc812eb783a8b5d131ba0e2afb239dfd791ca60db0c4f15af9f8a03d13e29ce"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/acceptance-matrix.json",
+      "sha256": "7656bdc3a9433466e82a80c2dd9c4527e771517625288b7a5641483b0ac745be"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/full-gate-assessment.json",
+      "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/vitest.stdout.txt",
+      "sha256": "7d0a974747372187622eaf7fe95f885816536fa5e84abe223f1bd5710c64db03"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/policy-validate.stdout.txt",
+      "sha256": "7addbfef65dee86c96eb14c98e62aa6ff0ec0ce71699d4da68039278a2d16be2"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/live-feed-probe.stdout.txt",
+      "sha256": "356c5ee1f94e0543d8891323859edc9f09558db2959dcd45543380f6863c3108"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/unknown-channel-deny.stderr.txt",
+      "sha256": "93700929c774391cc4f9e1b8f13d3665e42fcd8ebdd55590aca6f43f0339e25e"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/harness-validate.stdout.txt",
+      "sha256": "3003970849879a3ff5a994a1a615cbec2a53423ab7f2bdd14e75b3d56e788bd6"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/comms-replay.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/comms-compare.exit.txt",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "task": "P6-002",
+      "path": "artifacts/system-maturity/P6-002/workflow-yaml.stdout.txt",
+      "sha256": "7e281e996db6f73cf360cdefe2c80c54b0e55e9cac9a9f2cfebe38edda893f0d"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/acceptance-matrix.json",
+      "sha256": "2bf412174ac53e0576bfd64417fba0380f4cb4b69a1b6ee4ce2068f5d71f54eb"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/full-gate-assessment.json",
+      "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/vitest.stdout.txt",
+      "sha256": "a9e15c7003a5937f868e63679e2890a223abb4e3988a4d964fbeab6f84df2fd3"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/policy-validate.stdout.txt",
+      "sha256": "587e4191668fb8bbeb22b51b5912729af2a2ce2a9f30fc13e5ba9dd4d3393532"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/live-source-probe.stdout.txt",
+      "sha256": "416a5a36379d9a5f80fd3a8ff4ec83561b20cb4370f3540912c88e0b3b2f46ea"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/checksum-mismatch-deny.stderr.txt",
+      "sha256": "0adf19df8d47464d2df404b543afc607e5d47d69cfea578427aa159635a95f7d"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/harness-validate.stdout.txt",
+      "sha256": "2edb4b61a013ef0292a9d5106516c55cd3734b2b4f75e1be9901522d002ab870"
+    },
+    {
+      "task": "P6-003",
+      "path": "artifacts/system-maturity/P6-003/workflow-yaml.stdout.txt",
+      "sha256": "bf7af0d727ed6a722dceb381fbaac81a326298722c51d6ab1115939c9388d1aa"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/acceptance-matrix.json",
+      "sha256": "cf1d7781439b551a72f7f5dd9858adf46768b2685fffec9d645db750461418fc"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/full-gate-assessment.json",
+      "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/vitest.stdout.txt",
+      "sha256": "c23d5d52f210db574bf636f614a6e53774bfaedab9d9de36081fbb8a468eff01"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/metadata-validate.stdout.txt",
+      "sha256": "2f6ebe366f3659117a231f0629f411291c9757a55a1aa3d0d3b7ccc78be4bedf"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/tamper-deny.stderr.txt",
+      "sha256": "42a96b0fa7e9de94ee7811080a120134233e0631a85d3de3520978d1556bcf03"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/win-electron-trust.json",
+      "sha256": "c34af1bb13bc0feaee31853d69fd2a715f966b33224044fa77258a7dc2669e1d"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt",
+      "sha256": "42ce317db2670f2e6f6063dab88d977e81050f3669a23e959d525a2dcc01f255"
+    },
+    {
+      "task": "P6-004",
+      "path": "artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
+      "sha256": "9bbcbf8094a18c4eb86b97db02ecb1eaeb5c48b5444b00d2dfd43092f9707fb5"
     }
   ],
   "fail": [],
@@ -207,6 +832,131 @@
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/baseline.stdout.txt",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/plan.stdout.txt",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/harness.stdout.txt",
+    "A2 P1-001 hash OK artifacts/system-maturity/P1-001/canary-scan.json",
+    "A2 P1-001 hash OK artifacts/system-maturity/P1-001/vitest.stdout.txt",
+    "A2 P1-001 hash OK artifacts/system-maturity/P1-001/evidence-index.json",
+    "A2 P1-001 hash OK electron/services/secrets/secret-store.ts",
+    "A2 P1-001 hash OK shared/host-api/contract.ts",
+    "A2 P1-001 hash OK src/lib/host-api.ts",
+    "A2 P1-001 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+    "A2 P1-001 hash OK scripts/configure-deepseek-runtime.mjs",
+    "A2 P1-002 hash OK artifacts/system-maturity/P1-002/vitest.stdout.txt",
+    "A2 P1-002 hash OK artifacts/system-maturity/P1-002/sender-payload-matrix.json",
+    "A2 P1-002 hash OK electron/main/ipc/host-invoke.ts",
+    "A2 P1-002 hash OK electron/main/ipc/host-invoke-security.ts",
+    "A2 P1-002 hash OK electron/main/ipc-handlers.ts",
+    "A2 P1-002 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+    "A2 P1-003 hash OK artifacts/system-maturity/P1-003/vitest.stdout.txt",
+    "A2 P1-003 hash OK artifacts/system-maturity/P1-003/path-matrix.json",
+    "A2 P1-003 hash OK electron/services/path-broker.ts",
+    "A2 P1-003 hash OK electron/services/files-api.ts",
+    "A2 P1-003 hash OK electron/services/workspace-permissions.ts",
+    "A2 P1-003 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+    "A2 P1-004 hash OK artifacts/system-maturity/P1-004/vitest.stdout.txt",
+    "A2 P1-004 hash OK artifacts/system-maturity/P1-004/url-policy-matrix.json",
+    "A2 P1-004 hash OK shared/security/url-policy.ts",
+    "A2 P1-004 hash OK electron/utils/safe-open-external.ts",
+    "A2 P1-004 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+    "A2 P2-001 hash OK artifacts/system-maturity/P2-001/vitest.stdout.txt",
+    "A2 P2-001 hash OK artifacts/system-maturity/P2-001/evidence-index.json",
+    "A2 P2-001 hash OK artifacts/system-maturity/P2-001/acceptance-matrix.json",
+    "A2 P2-001 hash OK shared/types/workspace.ts",
+    "A2 P2-001 hash OK electron/services/workspaces-api.ts",
+    "A2 P2-001 hash OK electron/services/workspace-permissions.ts",
+    "A2 P2-001 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+    "A2 P2-002 hash OK artifacts/system-maturity/P2-002/vitest.stdout.txt",
+    "A2 P2-002 hash OK artifacts/system-maturity/P2-002/evidence-index.json",
+    "A2 P2-002 hash OK artifacts/system-maturity/P2-002/acceptance-matrix.json",
+    "A2 P2-002 hash OK electron/services/permissions-api.ts",
+    "A2 P2-002 hash OK tests/unit/permissions-api.test.ts",
+    "A2 P2-002 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+    "A2 P2-003 hash OK artifacts/system-maturity/P2-003/vitest.stdout.txt",
+    "A2 P2-003 hash OK artifacts/system-maturity/P2-003/evidence-index.json",
+    "A2 P2-003 hash OK artifacts/system-maturity/P2-003/acceptance-matrix.json",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-contract.ts",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-permissions-policy.ts",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-spawn.ts",
+    "A2 P2-003 hash OK electron/services/roles-api.ts",
+    "A2 P2-003 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+    "A2 P2-004 hash OK artifacts/system-maturity/P2-004/vitest.stdout.txt",
+    "A2 P2-004 hash OK artifacts/system-maturity/P2-004/evidence-index.json",
+    "A2 P2-004 hash OK artifacts/system-maturity/P2-004/acceptance-matrix.json",
+    "A2 P2-005 hash OK artifacts/system-maturity/P2-005/vitest.stdout.txt",
+    "A2 P2-005 hash OK artifacts/system-maturity/P2-005/evidence-index.json",
+    "A2 P2-005 hash OK artifacts/system-maturity/P2-005/acceptance-matrix.json",
+    "A2 P3-001 hash OK artifacts/system-maturity/P3-001/vitest-host.stdout.txt",
+    "A2 P3-001 hash OK artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt",
+    "A2 P3-001 hash OK artifacts/system-maturity/P3-001/acceptance-matrix.json",
+    "A2 P3-001 hash OK artifacts/system-maturity/P3-001/evidence-index.json",
+    "A2 P3-002 hash OK artifacts/system-maturity/P3-002/vitest-host.stdout.txt",
+    "A2 P3-002 hash OK artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt",
+    "A2 P3-002 hash OK artifacts/system-maturity/P3-002/acceptance-matrix.json",
+    "A2 P3-002 hash OK artifacts/system-maturity/P3-002/evidence-index.json",
+    "A2 P3-003 hash OK artifacts/system-maturity/P3-003/vitest-host.stdout.txt",
+    "A2 P3-003 hash OK artifacts/system-maturity/P3-003/acceptance-matrix.json",
+    "A2 P3-003 hash OK artifacts/system-maturity/P3-003/evidence-index.json",
+    "A2 P3-004 hash OK artifacts/system-maturity/P3-004/vitest-host.stdout.txt",
+    "A2 P3-004 hash OK artifacts/system-maturity/P3-004/acceptance-matrix.json",
+    "A2 P3-004 hash OK artifacts/system-maturity/P3-004/evidence-index.json",
+    "A2 P4-001 hash OK artifacts/system-maturity/P4-001/vitest.stdout.txt",
+    "A2 P4-001 hash OK artifacts/system-maturity/P4-001/acceptance-matrix.json",
+    "A2 P4-001 hash OK artifacts/system-maturity/P4-001/evidence-index.json",
+    "A2 P4-002 hash OK artifacts/system-maturity/P4-002/vitest.stdout.txt",
+    "A2 P4-002 hash OK artifacts/system-maturity/P4-002/acceptance-matrix.json",
+    "A2 P4-002 hash OK artifacts/system-maturity/P4-002/evidence-index.json",
+    "A2 P4-003 hash OK artifacts/system-maturity/P4-003/vitest.stdout.txt",
+    "A2 P4-003 hash OK artifacts/system-maturity/P4-003/acceptance-matrix.json",
+    "A2 P4-003 hash OK artifacts/system-maturity/P4-003/evidence-index.json",
+    "A2 P4-004 hash OK artifacts/system-maturity/P4-004/vitest.stdout.txt",
+    "A2 P4-004 hash OK artifacts/system-maturity/P4-004/acceptance-matrix.json",
+    "A2 P4-004 hash OK artifacts/system-maturity/P4-004/evidence-index.json",
+    "A2 P5-001 hash OK artifacts/system-maturity/P5-001/vitest.stdout.txt",
+    "A2 P5-001 hash OK artifacts/system-maturity/P5-001/vitest-related.stdout.txt",
+    "A2 P5-001 hash OK artifacts/system-maturity/P5-001/acceptance-matrix.json",
+    "A2 P5-001 hash OK artifacts/system-maturity/P5-001/evidence-index.json",
+    "A2 P5-002 hash OK artifacts/system-maturity/P5-002/vitest.stdout.txt",
+    "A2 P5-002 hash OK artifacts/system-maturity/P5-002/acceptance-matrix.json",
+    "A2 P5-002 hash OK artifacts/system-maturity/P5-002/evidence-index.json",
+    "A2 P5-003 hash OK artifacts/system-maturity/P5-003/vitest.stdout.txt",
+    "A2 P5-003 hash OK artifacts/system-maturity/P5-003/acceptance-matrix.json",
+    "A2 P5-003 hash OK artifacts/system-maturity/P5-003/evidence-index.json",
+    "A2 P5-004 hash OK artifacts/system-maturity/P5-004/vitest.stdout.txt",
+    "A2 P5-004 hash OK artifacts/system-maturity/P5-004/acceptance-matrix.json",
+    "A2 P5-004 hash OK artifacts/system-maturity/P5-004/evidence-index.json",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/acceptance-matrix.json",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/full-gate-assessment.json",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/vitest.stdout.txt",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/policy-validate.stdout.txt",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/gate-deny-unsigned.stdout.txt",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/authenticode-probe.stdout.txt",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/gate-allow-signed-attestation.stdout.txt",
+    "A2 P6-001 hash OK artifacts/system-maturity/P6-001/harness-ci.stdout.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/acceptance-matrix.json",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/full-gate-assessment.json",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/vitest.stdout.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/policy-validate.stdout.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/live-feed-probe.stdout.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/unknown-channel-deny.stderr.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/harness-validate.stdout.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/comms-replay.exit.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/comms-compare.exit.txt",
+    "A2 P6-002 hash OK artifacts/system-maturity/P6-002/workflow-yaml.stdout.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/acceptance-matrix.json",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/full-gate-assessment.json",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/vitest.stdout.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/policy-validate.stdout.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/live-source-probe.stdout.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/checksum-mismatch-deny.stderr.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/harness-validate.stdout.txt",
+    "A2 P6-003 hash OK artifacts/system-maturity/P6-003/workflow-yaml.stdout.txt",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/acceptance-matrix.json",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/full-gate-assessment.json",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/vitest.stdout.txt",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/metadata-validate.stdout.txt",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/tamper-deny.stderr.txt",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/win-electron-trust.json",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt",
+    "A2 P6-004 hash OK artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
     "A1 regression probe: missing evidence path correctly detectable"
   ]
 }
