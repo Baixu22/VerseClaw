@@ -1,4 +1,3 @@
-import { isAbsolute, relative, resolve } from 'node:path';
 import { isPathInsideWorkspaceLexical, isResolvedPathInsideRoot } from './path-broker';
 import type { WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
 

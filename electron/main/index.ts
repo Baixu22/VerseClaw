@@ -2,7 +2,7 @@
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
-import { app, BrowserWindow, nativeTheme, session, shell } from 'electron';
+import { app, BrowserWindow, nativeTheme, session } from 'electron';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { GatewayManager } from '../gateway/manager';
