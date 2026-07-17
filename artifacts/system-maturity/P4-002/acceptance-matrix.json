@@ -1,0 +1,34 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "tab/profile/session are not serialized across isolation boundaries",
+    "status": "passed",
+    "proof": [
+      "AgentBrowserTabManager is per-session; multi-profile managers keep independent page maps",
+      "partition persist:agent-browser-<profile> via agentBrowserProfilePartition",
+      "unit: agent-browser-p4-002-isolation multi-profile isolation"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "grant bound to tab+origin+expiry",
+    "status": "passed",
+    "proof": [
+      "isBoundaryGrantUsable enforces tab/origin/expiry",
+      "FullAccessToolExecutor.canExpose requires expectedTabId+expectedOrigin (+expiresAt)",
+      "service wires expectedTabId/origin/expiresAt from active webContents + runtimeExpiresAt",
+      "unit: grant + full-access mismatch/expiry cases"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "download/upload/artifacts do not privilege-escalate outside agent-browser root",
+    "status": "passed",
+    "proof": [
+      "sanitizeAgentBrowserPathSegment rejects traversal",
+      "runArtifactRootDir uses agentBrowserRunArtifactDir",
+      "CLI screenshots use agentBrowserScreenshotDir under userData/agent-browser",
+      "unit: filesystem boundary matrix"
+    ]
+  }
+}

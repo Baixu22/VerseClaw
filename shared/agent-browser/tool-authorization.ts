@@ -135,3 +135,43 @@ function stableStringify(value: unknown): string {
   }
   return JSON.stringify(value);
 }
+
+
+/** True when a boundary grant is still valid for the active tab+origin at now. */
+export function isBoundaryGrantUsable(
+  grant: BoundaryGrantContext | undefined,
+  tabId: number | undefined,
+  origin: string | undefined,
+  now = Date.now(),
+): boolean {
+  if (!grant) return false;
+  if (typeof tabId !== "number") return false;
+  if (!origin) return false;
+  if (grant.tabId !== tabId) return false;
+  if (grant.origin !== origin) return false;
+  if (grant.expiresAt <= now) return false;
+  return true;
+}
+
+/**
+ * Full-access mode authorization with tab + origin + expiry binding.
+ * Fail-closed when any binding field is missing.
+ */
+export function isFullAccessContextAuthorized(params: {
+  modeOk: boolean;
+  tabId?: number;
+  origin?: string;
+  expectedTabId?: number;
+  expectedOrigin?: string;
+  expiresAt?: number;
+  now?: number;
+}): boolean {
+  const now = params.now ?? Date.now();
+  if (!params.modeOk) return false;
+  if (typeof params.tabId !== "number" || typeof params.expectedTabId !== "number") return false;
+  if (params.tabId !== params.expectedTabId) return false;
+  if (!params.origin || !params.expectedOrigin) return false;
+  if (params.origin !== params.expectedOrigin) return false;
+  if (params.expiresAt !== undefined && params.expiresAt <= now) return false;
+  return true;
+}

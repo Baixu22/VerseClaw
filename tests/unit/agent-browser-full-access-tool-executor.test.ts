@@ -19,7 +19,7 @@ describe('完全访问工具执行器', () => {
     const executor = new FullAccessToolExecutor(
       { evaluate: vi.fn() },
       { isEnabled: true, getDetails: vi.fn() },
-      () => ({ tabId: 7, origin: 'https://example.com', fullAccess: false }),
+      () => ({ tabId: 7, origin: 'https://example.com', expectedTabId: 7, expectedOrigin: 'https://example.com', fullAccess: false }),
       vi.fn(),
     );
 
@@ -169,7 +169,7 @@ describe('完全访问工具执行器', () => {
     const executor = new FullAccessToolExecutor(
       { evaluate: vi.fn() },
       { isEnabled: false, getDetails: vi.fn() },
-      () => ({ tabId: 7, origin: 'https://example.com', fullAccess: true }),
+      () => ({ tabId: 7, origin: 'https://example.com', expectedTabId: 7, expectedOrigin: 'https://example.com', fullAccess: true }),
       vi.fn(),
     );
 
@@ -185,7 +185,7 @@ function createExecutor(overrides: {
   return new FullAccessToolExecutor(
     { evaluate: overrides.evaluate ?? vi.fn(async () => ({ result: { value: true } })) },
     { isEnabled: true, getDetails: overrides.getDetails ?? vi.fn(async () => [] as NetworkRequestDetail[]) },
-    () => ({ tabId: 7, origin: 'https://example.com', fullAccess: true }),
+    () => ({ tabId: 7, origin: 'https://example.com', expectedTabId: 7, expectedOrigin: 'https://example.com', fullAccess: true }),
     overrides.revoke ?? vi.fn(),
   );
 }
