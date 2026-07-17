@@ -1,0 +1,34 @@
+{
+  "taskId": "P2-002",
+  "finding": "F-AUTH-006",
+  "generatedAt": "2026-07-17T05:48:24Z",
+  "summary": {
+    "atomicConsume": true,
+    "mutex": "withApprovalMutation serializes create/decide/consume/expire",
+    "timeoutDefaultDeny": true,
+    "strictBinding": "command/paths/requestHash required when stored on approval",
+    "tests": "7 passed in tests/unit/permissions-api.test.ts including Promise.all single-success"
+  },
+  "artifacts": [
+    {
+      "path": "electron/services/permissions-api.ts",
+      "bytes": 15111,
+      "sha256": "2a898c96b2b1f735adcdbd1f10d5e533c8935db75da40ed7dea461f42d18b952"
+    },
+    {
+      "path": "tests/unit/permissions-api.test.ts",
+      "bytes": 10027,
+      "sha256": "99e62e4277a9cc41a9aaec9451cd0e0588f66d4b9b484afeeec97ff582153bea"
+    },
+    {
+      "path": "artifacts/system-maturity/P2-002/vitest.stdout.txt",
+      "bytes": 993,
+      "sha256": "366fbf1351707992ba46f9f74d5ed362ce5aad13b2eb13d7c342dec5237e282d"
+    },
+    {
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "bytes": 244,
+      "sha256": "e0e736974795ba256689cf395401dddda250b8581417d9ac1c0326bb8cc828c8"
+    }
+  ]
+}

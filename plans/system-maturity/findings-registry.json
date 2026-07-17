@@ -592,7 +592,7 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
@@ -601,7 +601,10 @@
       "tasks": [
         "P2-002",
         "P7-002"
-      ]
+      ],
+      "updatedBy": "P2-002",
+      "updatedAt": "2026-07-17T05:48:24Z",
+      "notes": "P2-002: withApprovalMutation mutex + CAS consume; pending TTL expire default deny; strict requestHash/paths/command binding on consume."
     },
     {
       "id": "F-AUTH-008",

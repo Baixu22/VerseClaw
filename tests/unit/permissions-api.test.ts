@@ -186,4 +186,146 @@ describe('permissions api approvals', () => {
       },
     });
   });
+
+  it('P2-002: concurrent consumers only one succeeds (atomic single-use)', async () => {
+    const {
+      consumeApprovedPermissionApproval,
+      createPermissionApproval,
+      createPermissionsApi,
+    } = await import('@electron/services/permissions-api');
+    const approval = await createPermissionApproval({
+      workspace: workspace(),
+      source: 'terminal',
+      risk: 'dangerous',
+      command: 'git clean -fd',
+      cwd: 'C:/project',
+      requestHash: 'workspace-1:git clean -fd',
+      reason: 'dangerous command',
+    });
+    const api = createPermissionsApi();
+    await api.decideApproval({ id: approval.id, decision: 'approved' });
+
+    const results = await Promise.all([
+      consumeApprovedPermissionApproval({
+        id: approval.id,
+        workspaceId: 'workspace-1',
+        source: 'terminal',
+        command: 'git clean -fd',
+        requestHash: 'workspace-1:git clean -fd',
+      }),
+      consumeApprovedPermissionApproval({
+        id: approval.id,
+        workspaceId: 'workspace-1',
+        source: 'terminal',
+        command: 'git clean -fd',
+        requestHash: 'workspace-1:git clean -fd',
+      }),
+      consumeApprovedPermissionApproval({
+        id: approval.id,
+        workspaceId: 'workspace-1',
+        source: 'terminal',
+        command: 'git clean -fd',
+        requestHash: 'workspace-1:git clean -fd',
+      }),
+    ]);
+
+    const successes = results.filter((item) => item != null);
+    const failures = results.filter((item) => item == null);
+    expect(successes).toHaveLength(1);
+    expect(failures).toHaveLength(2);
+    expect(successes[0]).toMatchObject({
+      id: approval.id,
+      status: 'approved',
+    });
+  });
+
+  it('P2-002: parameter/path/hash mismatch must deny consume', async () => {
+    const {
+      consumeApprovedPermissionApproval,
+      createPermissionApproval,
+      createPermissionsApi,
+    } = await import('@electron/services/permissions-api');
+    const approval = await createPermissionApproval({
+      workspace: workspace(),
+      source: 'file',
+      risk: 'external-write',
+      command: 'files.writeText',
+      paths: ['C:/project/a.txt'],
+      requestHash: 'hash-a',
+      reason: 'external write',
+    });
+    const api = createPermissionsApi();
+    await api.decideApproval({ id: approval.id, decision: 'approved' });
+
+    await expect(consumeApprovedPermissionApproval({
+      id: approval.id,
+      workspaceId: 'workspace-1',
+      source: 'file',
+      command: 'files.writeText',
+      paths: ['C:/project/b.txt'],
+      requestHash: 'hash-a',
+    })).resolves.toBeNull();
+
+    await expect(consumeApprovedPermissionApproval({
+      id: approval.id,
+      workspaceId: 'workspace-1',
+      source: 'file',
+      command: 'files.writeText',
+      paths: ['C:/project/a.txt'],
+      requestHash: 'hash-b',
+    })).resolves.toBeNull();
+
+    await expect(consumeApprovedPermissionApproval({
+      id: approval.id,
+      workspaceId: 'workspace-1',
+      source: 'file',
+      paths: ['C:/project/a.txt'],
+    })).resolves.toBeNull();
+
+    await expect(consumeApprovedPermissionApproval({
+      id: approval.id,
+      workspaceId: 'workspace-1',
+      source: 'file',
+      command: 'files.writeText',
+      paths: ['C:/project/a.txt'],
+      requestHash: 'hash-a',
+    })).resolves.toMatchObject({ id: approval.id, status: 'approved' });
+  });
+
+  it('P2-002: timed-out pending approvals default deny and cannot be approved', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-08T00:00:00.000Z'));
+    const {
+      createPermissionApproval,
+      createPermissionsApi,
+      consumeApprovedPermissionApproval,
+    } = await import('@electron/services/permissions-api');
+    const approval = await createPermissionApproval({
+      workspace: workspace(),
+      source: 'terminal',
+      risk: 'dangerous',
+      command: 'rm -rf /',
+      requestHash: 'hash-timeout',
+      reason: 'dangerous command',
+    });
+    const api = createPermissionsApi();
+    vi.setSystemTime(new Date('2026-06-08T00:11:00.000Z'));
+
+    await expect(api.decideApproval({
+      id: approval.id,
+      decision: 'approved',
+    })).resolves.toMatchObject({
+      success: false,
+      approval: { id: approval.id, status: 'expired' },
+    });
+
+    await expect(consumeApprovedPermissionApproval({
+      id: approval.id,
+      workspaceId: 'workspace-1',
+      source: 'terminal',
+      command: 'rm -rf /',
+      requestHash: 'hash-timeout',
+    })).resolves.toBeNull();
+  });
 });
+

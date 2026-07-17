@@ -53,6 +53,33 @@ const VALID_SOURCES = new Set<PermissionApprovalEvent['source']>(['terminal', 'g
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let permissionStoreInstance: any = null;
 let permissionDecisionEventWriteQueue: Promise<void> = Promise.resolve();
+// P2-002 / F-AUTH-006: serialize approval create/decide/consume read-modify-write
+// so concurrent Promise.all consumers cannot both succeed.
+let approvalMutationQueue: Promise<void> = Promise.resolve();
+
+let approvalMutationDepth = 0;
+
+async function withApprovalMutation<T>(fn: () => Promise<T>): Promise<T> {
+  // Re-entrant: nested expire/read-modify-write inside an outer critical section must not deadlock.
+  if (approvalMutationDepth > 0) {
+    return await fn();
+  }
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const previous = approvalMutationQueue;
+  approvalMutationQueue = previous.then(() => gate, () => gate);
+  await previous.catch(() => undefined);
+  approvalMutationDepth += 1;
+  try {
+    return await fn();
+  } finally {
+    approvalMutationDepth -= 1;
+    release();
+  }
+}
+
 
 async function getPermissionStore() {
   if (!permissionStoreInstance) {
@@ -159,23 +186,26 @@ function isExpiredPendingApproval(approval: PermissionApprovalEvent, now = Date.
 }
 
 async function readApprovalsWithExpiredPendingMarked(): Promise<PermissionApprovalEvent[]> {
-  const approvals = await readApprovals();
-  let modified = false;
-  const now = Date.now();
-  const next = approvals.map((approval) => {
-    if (!isExpiredPendingApproval(approval, now)) return approval;
-    modified = true;
-    return {
-      ...approval,
-      status: 'expired' as const,
-      resolvedAt: now,
-      reason: approval.reason ?? '审批请求已过期',
-    };
+  // Expire under the same mutex as consume/decide so TTL deny cannot race a concurrent approve/consume.
+  return withApprovalMutation(async () => {
+    const approvals = await readApprovals();
+    let modified = false;
+    const now = Date.now();
+    const next = approvals.map((approval) => {
+      if (!isExpiredPendingApproval(approval, now)) return approval;
+      modified = true;
+      return {
+        ...approval,
+        status: 'expired' as const,
+        resolvedAt: now,
+        reason: approval.reason ?? 'Approval request expired; default deny',
+      };
+    });
+    if (modified) {
+      await writeApprovals(next);
+    }
+    return next;
   });
-  if (modified) {
-    await writeApprovals(next);
-  }
-  return next;
 }
 
 function matchesApprovalRequest(approval: PermissionApprovalEvent, input: CreateApprovalInput): boolean {
@@ -217,21 +247,59 @@ export async function listPermissionApprovals(): Promise<PermissionApprovalEvent
 }
 
 export async function createPermissionApproval(input: CreateApprovalInput): Promise<PermissionApprovalEvent> {
-  const approvals = await readApprovalsWithExpiredPendingMarked();
-  const existing = approvals.find((approval) => matchesApprovalRequest(approval, input));
-  if (existing) {
-    return existing;
-  }
-  const approval = buildApproval(input, 'pending');
-  await writeApprovals([approval, ...approvals]);
-  return approval;
+  return withApprovalMutation(async () => {
+    const approvals = await readApprovalsWithExpiredPendingMarked();
+    const existing = approvals.find((approval) => matchesApprovalRequest(approval, input));
+    if (existing) {
+      return existing;
+    }
+    const approval = buildApproval(input, 'pending');
+    await writeApprovals([approval, ...approvals]);
+    return approval;
+  });
 }
 
 export async function recordPermissionAudit(input: CreateApprovalInput): Promise<PermissionApprovalEvent> {
-  const approval = buildApproval(input, 'approved');
-  const approvals = await readApprovals();
-  await writeApprovals([approval, ...approvals]);
-  return approval;
+  return withApprovalMutation(async () => {
+    const approval = buildApproval(input, 'approved');
+    const approvals = await readApprovals();
+    await writeApprovals([approval, ...approvals]);
+    return approval;
+  });
+}
+
+function approvalMatchesConsumeRequest(
+  approval: PermissionApprovalEvent,
+  input: {
+    id: string;
+    workspaceId: string;
+    source: PermissionApprovalEvent['source'];
+    command?: string;
+    paths?: string[];
+    requestHash?: string;
+  },
+): boolean {
+  if (approval.id !== input.id) return false;
+  if (approval.workspaceId !== input.workspaceId) return false;
+  if (approval.source !== input.source) return false;
+  // P2-002 / F-AUTH-006: if the stored approval carries binding fields, consumers must match them.
+  // Optional consumer-only filters still apply when provided.
+  if (approval.command != null && approval.command !== '') {
+    if (input.command !== approval.command) return false;
+  } else if (input.command !== undefined && approval.command !== input.command) {
+    return false;
+  }
+  if (approval.requestHash != null && approval.requestHash !== '') {
+    if (input.requestHash !== approval.requestHash) return false;
+  } else if (input.requestHash !== undefined && approval.requestHash !== input.requestHash) {
+    return false;
+  }
+  if (Array.isArray(approval.paths) && approval.paths.length > 0) {
+    if (JSON.stringify(input.paths ?? []) !== JSON.stringify(approval.paths)) return false;
+  } else if (input.paths !== undefined && JSON.stringify(approval.paths ?? []) !== JSON.stringify(input.paths)) {
+    return false;
+  }
+  return true;
 }
 
 export async function consumeApprovedPermissionApproval(input: {
@@ -242,29 +310,30 @@ export async function consumeApprovedPermissionApproval(input: {
   paths?: string[];
   requestHash?: string;
 }): Promise<PermissionApprovalEvent | null> {
-  const approvals = await readApprovalsWithExpiredPendingMarked();
-  const index = approvals.findIndex((approval) => approval.id === input.id);
-  if (index === -1) return null;
-  const approval = approvals[index];
-  if (
-    approval.status !== 'approved'
-    || approval.workspaceId !== input.workspaceId
-    || approval.source !== input.source
-    || (input.command !== undefined && approval.command !== input.command)
-    || (input.requestHash !== undefined && approval.requestHash !== input.requestHash)
-    || (input.paths !== undefined && JSON.stringify(approval.paths ?? []) !== JSON.stringify(input.paths))
-  ) {
-    return null;
-  }
-  const consumed: PermissionApprovalEvent = {
-    ...approval,
-    status: 'expired',
-    resolvedAt: Date.now(),
-  };
-  const next = [...approvals];
-  next[index] = consumed;
-  await writeApprovals(next);
-  return approval;
+  return withApprovalMutation(async () => {
+    // Re-read under the mutex so concurrent Promise.all consumers CAS on the latest status.
+    const approvals = await readApprovalsWithExpiredPendingMarked();
+    const index = approvals.findIndex((approval) => approval.id === input.id);
+    if (index === -1) return null;
+    const approval = approvals[index];
+    if (approval.status !== 'approved') {
+      return null;
+    }
+    if (!approvalMatchesConsumeRequest(approval, input)) {
+      return null;
+    }
+    const consumed: PermissionApprovalEvent = {
+      ...approval,
+      status: 'expired',
+      resolvedAt: Date.now(),
+      reason: approval.reason ?? 'Approval consumed (single-use)',
+    };
+    const next = [...approvals];
+    next[index] = consumed;
+    await writeApprovals(next);
+    // Return the pre-consume approved snapshot for the single successful consumer.
+    return approval;
+  });
 }
 
 export function createPermissionsApi(): CompleteHostServiceRegistry['permissions'] {
@@ -301,29 +370,39 @@ export function createPermissionsApi(): CompleteHostServiceRegistry['permissions
       const body = isRecord(payload) ? payload as ApprovalDecisionBody : {};
       const id = requireId(body.id);
       const decision = normalizeDecision(body.decision);
-      const approvals = await readApprovalsWithExpiredPendingMarked();
-      const index = approvals.findIndex((approval) => approval.id === id);
-      if (index === -1) throw new Error(`Approval "${id}" not found`);
-      const current = approvals[index];
-      if (current.status !== 'pending') {
-        return {
-          success: false,
-          error: '该审批请求已经处理',
-          approval: current,
+      return withApprovalMutation(async () => {
+        const approvals = await readApprovalsWithExpiredPendingMarked();
+        const index = approvals.findIndex((approval) => approval.id === id);
+        if (index === -1) throw new Error(`Approval "${id}" not found`);
+        const current = approvals[index];
+        // P2-002 A2: timed-out pending approvals are expired and cannot flip to approved (default deny).
+        if (current.status === 'expired') {
+          return {
+            success: false,
+            error: 'Approval request expired; default deny',
+            approval: current,
+          };
+        }
+        if (current.status !== 'pending') {
+          return {
+            success: false,
+            error: 'Approval request already resolved',
+            approval: current,
+          };
+        }
+        const approval: PermissionApprovalEvent = {
+          ...current,
+          status: decision,
+          resolvedAt: Date.now(),
         };
-      }
-      const approval: PermissionApprovalEvent = {
-        ...current,
-        status: decision,
-        resolvedAt: Date.now(),
-      };
-      const next = [...approvals];
-      next[index] = approval;
-      await writeApprovals(next);
-      return {
-        success: true,
-        approval,
-      };
+        const next = [...approvals];
+        next[index] = approval;
+        await writeApprovals(next);
+        return {
+          success: true,
+          approval,
+        };
+      });
     },
   };
 }
