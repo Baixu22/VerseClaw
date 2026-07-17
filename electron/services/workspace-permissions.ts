@@ -1,4 +1,5 @@
 import { isAbsolute, relative, resolve } from 'node:path';
+import { isPathInsideWorkspaceLexical, isResolvedPathInsideRoot } from './path-broker';
 import type { WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
 
 export type WorkspaceCommandRisk = 'read' | 'write' | 'network' | 'destructive' | 'external-write';
@@ -133,10 +134,12 @@ export function isDevOnlyGatewayRpcEnabled(method: string): boolean {
 }
 
 export function isPathInsideWorkspace(path: string, workspaceRoot: string): boolean {
-  const child = resolve(path);
-  const parent = resolve(workspaceRoot);
-  const rel = relative(parent, child);
-  return rel === '' || (!!rel && !rel.startsWith('..') && !isAbsolute(rel));
+  // Lexical-only. For IO authorization use isPathInsideWorkspaceResolved().
+  return isPathInsideWorkspaceLexical(path, workspaceRoot);
+}
+
+export async function isPathInsideWorkspaceResolved(path: string, workspaceRoot: string): Promise<boolean> {
+  return isResolvedPathInsideRoot(path, workspaceRoot);
 }
 
 function normalizeCommand(command: string): string {
@@ -173,23 +176,23 @@ export function decideWorkspaceCommand(
   mode: WorkspacePermissionMode,
 ): WorkspacePermissionDecision {
   const risk = classifyWorkspaceCommand(command);
-  if (!command.trim()) return { allowed: false, risk, reason: '命令不能为空' };
+  if (!command.trim()) return { allowed: false, risk, reason: 'Command cannot be empty' };
 
   if (mode === 'fullAccess') return { allowed: true, risk };
   if (mode === 'plan') {
-    return { allowed: false, risk, reason: '计划模式下不会直接执行命令，请先完成方案确认' };
+    return { allowed: false, risk, reason: 'Plan mode does not execute commands directly' };
   }
   if (mode === 'readOnly') {
     return risk === 'read'
       ? { allowed: true, risk }
-      : { allowed: false, risk, reason: '只读模式仅允许查看类命令' };
+      : { allowed: false, risk, reason: 'Read-only mode only allows inspection commands' };
   }
   if (isApprovalRisk(risk)) {
     return {
       allowed: false,
       requiresApproval: true,
       risk,
-      reason: '接受修改模式需要先批准高风险命令',
+      reason: 'Accept-edits mode requires approval for high-risk commands',
     };
   }
   return { allowed: true, risk };
@@ -198,26 +201,35 @@ export function decideWorkspaceCommand(
 export function decideWorkspaceFileWrite(
   path: string,
   workspace: WorkspaceProfile,
+  options: { insideWorkspace?: boolean } = {},
 ): WorkspacePermissionDecision {
-  const insideWorkspace = isPathInsideWorkspace(path, workspace.rootPath);
+  const insideWorkspace = options.insideWorkspace ?? isPathInsideWorkspace(path, workspace.rootPath);
   if (workspace.permissionMode === 'fullAccess') {
     return { allowed: true, risk: insideWorkspace ? 'write' : 'external-write' };
   }
   if (workspace.permissionMode === 'plan') {
-    return { allowed: false, risk: 'write', reason: '计划模式下不会直接写入文件，请先完成方案确认' };
+    return { allowed: false, risk: 'write', reason: 'Plan mode does not write files directly' };
   }
   if (workspace.permissionMode === 'readOnly') {
-    return { allowed: false, risk: 'write', reason: '只读模式不允许写入文件' };
+    return { allowed: false, risk: 'write', reason: 'Read-only mode does not allow file writes' };
   }
   if (!insideWorkspace) {
     return {
       allowed: false,
       requiresApproval: true,
       risk: 'external-write',
-      reason: '写入工作区外文件需要批准',
+      reason: 'Writing outside the workspace requires approval',
     };
   }
   return { allowed: true, risk: 'write' };
+}
+
+export async function decideWorkspaceFileWriteResolved(
+  path: string,
+  workspace: WorkspaceProfile,
+): Promise<WorkspacePermissionDecision> {
+  const insideWorkspace = await isPathInsideWorkspaceResolved(path, workspace.rootPath);
+  return decideWorkspaceFileWrite(path, workspace, { insideWorkspace });
 }
 
 export function classifyGatewayRpcRisk(method: string, params?: unknown): WorkspaceCommandRisk {
@@ -248,16 +260,16 @@ export function decideGatewayRpc(
   if (risk === 'read') return { allowed: true, risk };
   if (mode === 'fullAccess') return { allowed: true, risk };
   if (mode === 'plan') {
-    return { allowed: false, risk, reason: '计划模式下不会直接执行 Gateway 修改请求' };
+    return { allowed: false, risk, reason: 'Plan mode does not execute Gateway mutations' };
   }
   if (mode === 'readOnly') {
-    return { allowed: false, risk, reason: '只读模式不允许 Gateway 修改请求' };
+    return { allowed: false, risk, reason: 'Read-only mode does not allow Gateway mutations' };
   }
   return {
     allowed: false,
     requiresApproval: true,
     risk,
-    reason: 'Gateway 修改请求需要批准',
+    reason: 'Gateway mutations require approval',
   };
 }
 

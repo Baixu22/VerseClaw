@@ -1,0 +1,31 @@
+﻿{
+    "tests":  {
+                  "filesPassed":  3,
+                  "processExitCode":  1,
+                  "command":  "pnpm exec vitest run tests/unit/path-broker.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts",
+                  "testsPassed":  9,
+                  "notes":  "All assertions passed; process exit non-zero due to pre-existing unhandled Electron binary path rejection after async imports in unit env (electron not fully installed)."
+              },
+    "task":  "P1-003",
+    "generatedAt":  "2026-07-17T04:43:27.1552572Z",
+    "cases":  [
+                  {
+                      "result":  "PASS",
+                      "name":  "junction/symlink write escape",
+                      "id":  "A1",
+                      "notes":  "write via junction denied; outside file unchanged"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "read allowlist",
+                      "id":  "A2",
+                      "notes":  "outside workspace+write-roots rejected; workspace read allowed"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "UNC/ADS/device paths",
+                      "id":  "A3",
+                      "notes":  "assertSafeHostFilePath rejects controlled failures"
+                  }
+              ]
+}

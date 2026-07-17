@@ -1,0 +1,47 @@
+{
+  "task": "P1-003",
+  "generatedAt": "2026-07-17T04:43:27.224Z",
+  "acceptance": {
+    "A1": "junction cannot write outside workspace",
+    "A2": "read path has explicit allowlist",
+    "A3": "oversized/device/special paths controlled fail"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/system-maturity/P1-003/vitest.stdout.txt",
+      "sha256": "ab2d73e64b6469d5ac5d3bb5a4238dba4a84153a758bb91f2565fcda4518b853"
+    },
+    {
+      "path": "artifacts/system-maturity/P1-003/path-matrix.json",
+      "sha256": "35a85f31de46f92b7059ef97698c1fb4cd635e102c7b507d6805627ea97f6ec9"
+    },
+    {
+      "path": "electron/services/path-broker.ts",
+      "sha256": "56cfd721fcc11fdcf0749c0e1425d93997afa9a762e798d884f321b4f922452f"
+    },
+    {
+      "path": "electron/services/files-api.ts",
+      "sha256": "1546e4082a3ab4a4c510772d01ccc146b859bcf141de9d12779f52e7a98dde26"
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "sha256": "2ca3b24d4bcbeba966d1d4811a4cb7086882288adf82e00143f3fad2865082aa"
+    },
+    {
+      "path": "tests/unit/path-broker.test.ts",
+      "sha256": "22e812c9096c5186a5abc8df3759dd58c796ad4fa26c096bd2f61ad81267ac2c"
+    },
+    {
+      "path": "tests/unit/path-broker-resolved.test.ts",
+      "sha256": "7755907da974d9b4aba76beb45e3cf42b1732ad7a55dab04901bf0a4e8eed1ed"
+    },
+    {
+      "path": "tests/unit/files-permissions-api.test.ts",
+      "sha256": "c211cd182f7c33695f8c5c99faa4830b69f5e833c72bcf6079d13cd39089d668"
+    },
+    {
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "e31a524714430384b1dc8ebf26b7445966c6e5ca391a8bd6a130ac1bc8b20697"
+    }
+  ]
+}

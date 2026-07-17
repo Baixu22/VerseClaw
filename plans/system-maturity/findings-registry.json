@@ -16,8 +16,8 @@
     },
     "byStatus": {
       "Partial": 3,
-      "Fixed": 2,
-      "Open": 29,
+      "Fixed": 4,
+      "Open": 27,
       "Unverified": 1
     }
   },
@@ -99,7 +99,7 @@
       "category": "SEC",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [
         "F-AUTH-002"
@@ -109,7 +109,10 @@
       ],
       "tasks": [
         "P1-003"
-      ]
+      ],
+      "updatedBy": "P1-003",
+      "updatedAt": "2026-07-17T04:43:27.224Z",
+      "notes": "P1-003: Host files read allowlist limited to write roots + active workspace root (realpath). Arbitrary local reads denied."
     },
     {
       "id": "F-SEC-005",
@@ -538,7 +541,7 @@
       "category": "SEC",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
@@ -548,7 +551,10 @@
       "tasks": [
         "P1-003",
         "P7-002"
-      ]
+      ],
+      "updatedBy": "P1-003",
+      "updatedAt": "2026-07-17T04:43:27.224Z",
+      "notes": "P1-003: path-broker realpath/junction membership + decideWorkspaceFileWriteResolved; post-realpath recheck blocks junction escape on files.writeText."
     },
     {
       "id": "F-SEC-007",

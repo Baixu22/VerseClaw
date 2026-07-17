@@ -18,7 +18,14 @@ import {
 } from './permissions-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
-import { decideWorkspaceFileWrite, isApprovalRisk } from './workspace-permissions';
+import { decideWorkspaceFileWriteResolved, isApprovalRisk } from './workspace-permissions';
+import {
+  PathBrokerError,
+  assertSafeHostFilePath,
+  isPathInsideLexical,
+  isResolvedPathInsideRoot,
+  realpathOrResolve,
+} from './path-broker';
 
 const EXT_MIME_MAP: Record<string, string> = {
   '.png': 'image/png',
@@ -143,14 +150,7 @@ function requirePath(payload: unknown): string {
 }
 
 function isPathInside(child: string, parent: string): boolean {
-  const c = resolve(child);
-  const p = resolve(parent);
-  if (process.platform === 'win32') {
-    const cl = c.toLowerCase();
-    const pl = p.toLowerCase();
-    return cl === pl || cl.startsWith(pl + sep);
-  }
-  return c === p || c.startsWith(p + sep);
+  return isPathInsideLexical(child, parent);
 }
 
 function getFilePreviewWriteRoots(): string[] {
@@ -165,6 +165,19 @@ function getFilePreviewWriteRoots(): string[] {
   return roots;
 }
 
+async function getReadAllowlistRoots(): Promise<string[]> {
+  const roots = getFilePreviewWriteRoots().map((root) => resolve(root));
+  try {
+    const workspace = await getActiveWorkspaceProfile();
+    if (workspace?.rootPath) {
+      roots.push(await realpathOrResolve(workspace.rootPath));
+    }
+  } catch {
+    // no active workspace
+  }
+  return roots;
+}
+
 async function resolveSandboxedPath(
   input: string,
   mode: 'read' | 'write' = 'read',
@@ -172,12 +185,22 @@ async function resolveSandboxedPath(
   if (!input.trim()) {
     throw new Error('outsideSandbox');
   }
-  const expanded = expandPath(input);
-  const fsP = await import('node:fs/promises');
+  let expanded: string;
+  try {
+    expanded = assertSafeHostFilePath(expandPath(input));
+  } catch (error) {
+    if (error instanceof PathBrokerError) {
+      throw new Error(error.code);
+    }
+    throw new Error('outsideSandbox');
+  }
   let real: string;
   try {
-    real = await fsP.realpath(expanded);
-  } catch {
+    real = await realpathOrResolve(expanded);
+  } catch (error) {
+    if (error instanceof PathBrokerError) {
+      throw new Error(error.code);
+    }
     real = resolve(expanded);
   }
   const writeRoots = getFilePreviewWriteRoots();
@@ -186,6 +209,11 @@ async function resolveSandboxedPath(
   }
   if (mode === 'write') {
     throw new Error('readOnlyRoot');
+  }
+  // P1-003 / F-SEC-004: reads limited to workspace + explicit write roots.
+  const readRoots = await getReadAllowlistRoots();
+  if (!readRoots.some((root) => isPathInside(real, root))) {
+    throw new Error('outsideSandbox');
   }
   return { realPath: real, readOnly: true };
 }
@@ -320,7 +348,7 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
+        if (message === 'outsideSandbox' || message === 'unsafePath' || message === 'devicePath' || message === 'uncPath' || message === 'adsPath' || message === 'pathTooLong') return { ok: false, error: message === 'outsideSandbox' ? 'outsideSandbox' : message };
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
@@ -347,7 +375,7 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
+        if (message === 'outsideSandbox' || message === 'unsafePath' || message === 'devicePath' || message === 'uncPath' || message === 'adsPath' || message === 'pathTooLong') return { ok: false, error: message === 'outsideSandbox' ? 'outsideSandbox' : message };
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
@@ -362,8 +390,10 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         const requestedPath = requirePath(payload);
         const approvalId = normalizeApprovalId(body.approvalId);
         const workspace = await getActiveWorkspaceProfile();
+        let approvedByRequest = false;
+        let decision: Awaited<ReturnType<typeof decideWorkspaceFileWriteResolved>> | null = null;
         if (workspace) {
-          const decision = decideWorkspaceFileWrite(requestedPath, workspace);
+          decision = await decideWorkspaceFileWriteResolved(requestedPath, workspace);
           void recordPermissionDecisionEvent(createWorkspacePermissionDecisionEvent({
             workspaceMode: workspace.permissionMode,
             tool: 'files.writeText',
@@ -371,7 +401,6 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
             requestId: approvalId ?? buildFileWriteRequestHash(requestedPath, body.content),
             decision,
           }));
-          let approvedByRequest = false;
           if (!decision.allowed) {
             if (decision.requiresApproval && isApprovalRisk(decision.risk)) {
               const requestHash = buildFileWriteRequestHash(requestedPath, body.content);
@@ -412,13 +441,37 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
               paths: [requestedPath],
               requestHash: buildFileWriteRequestHash(requestedPath, body.content),
               paramsPreview: `${requestedPath} (${Buffer.byteLength(body.content, 'utf8')} bytes)`,
-              reason: '完全访问模式下写入工作区外文件',
+              reason: 'External file write under fullAccess mode',
             });
           }
         }
-        const real = workspace
-          ? await resolveExistingWritableFilePath(requestedPath)
-          : (await resolveSandboxedPath(requestedPath, 'write')).realPath;
+        let real: string;
+        try {
+          assertSafeHostFilePath(expandPath(requestedPath));
+          real = workspace
+            ? await realpathOrResolve(requestedPath)
+            : (await resolveSandboxedPath(requestedPath, 'write')).realPath;
+        } catch (error) {
+          if (error instanceof PathBrokerError) {
+            return { ok: false, error: error.code };
+          }
+          throw error;
+        }
+        if (workspace) {
+          // Re-check after realpath so workspace junctions cannot escape (F-SEC-006).
+          // Do not re-open the approval prompt for intentional external writes that were
+          // already approved (or classified as external-write under fullAccess).
+          const stillInside = await isResolvedPathInsideRoot(real, workspace.rootPath);
+          if (!stillInside && workspace.permissionMode !== 'fullAccess') {
+            const authorizedExternal =
+              approvedByRequest
+              || decision?.risk === 'external-write';
+            if (!authorizedExternal) {
+              // Lexical/pre-check thought this was an in-workspace write, but realpath escaped.
+              return { ok: false, error: 'outsideSandbox' };
+            }
+          }
+        }
         const fsP = await import('node:fs/promises');
         let stat;
         try {
@@ -430,9 +483,21 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         await fsP.writeFile(real, body.content, 'utf8');
         return { ok: true };
       } catch (err) {
+        if (err instanceof PathBrokerError) {
+          return { ok: false, error: err.code };
+        }
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
-        if (message === 'readOnlyRoot') return { ok: false, error: 'readOnlyRoot' };
+        if (
+          message === 'outsideSandbox'
+          || message === 'unsafePath'
+          || message === 'devicePath'
+          || message === 'uncPath'
+          || message === 'adsPath'
+          || message === 'pathTooLong'
+          || message === 'readOnlyRoot'
+        ) {
+          return { ok: false, error: message };
+        }
         return { ok: false, error: message };
       }
     },
@@ -451,7 +516,7 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
+        if (message === 'outsideSandbox' || message === 'unsafePath' || message === 'devicePath' || message === 'uncPath' || message === 'adsPath' || message === 'pathTooLong') return { ok: false, error: message === 'outsideSandbox' ? 'outsideSandbox' : message };
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
@@ -479,7 +544,7 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         return { ok: true, entries };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
+        if (message === 'outsideSandbox' || message === 'unsafePath' || message === 'devicePath' || message === 'uncPath' || message === 'adsPath' || message === 'pathTooLong') return { ok: false, error: message === 'outsideSandbox' ? 'outsideSandbox' : message };
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
@@ -563,10 +628,11 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
         return { ok: true, root, truncated };
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        if (message === 'outsideSandbox') return { ok: false, error: 'outsideSandbox' };
+        if (message === 'outsideSandbox' || message === 'unsafePath' || message === 'devicePath' || message === 'uncPath' || message === 'adsPath' || message === 'pathTooLong') return { ok: false, error: message === 'outsideSandbox' ? 'outsideSandbox' : message };
         if (message.includes('ENOENT')) return { ok: false, error: 'notFound' };
         return { ok: false, error: message };
       }
     },
   };
 }
+
