@@ -1,0 +1,525 @@
+{
+  "schemaVersion": 1,
+  "documentIdentity": "source-evidence-snapshot/security-health-audit",
+  "auditDate": "2026-07-16",
+  "repository": "C:\\Users\\27933\\Desktop\\clawx\\ClawX",
+  "package": {
+    "name": "verse-claw",
+    "version": "0.4.9-alpha.0",
+    "packageManager": "pnpm@11.2.2"
+  },
+  "head": "60061e33554311ac3c9871195210df59fe1b5bf2",
+  "dirty": {
+    "statusEntries": 169,
+    "trackedChanges": 27,
+    "untrackedFiles": 142,
+    "countingRule": "git status --porcelain=v1 --untracked-files=all before audit outputs were generated",
+    "patchPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.dirty.patch",
+    "patchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
+    "patchBytes": 833074,
+    "patchRule": "alternate Git index; git add -A; git diff --cached --binary --full-index HEAD; audit outputs and tmp/audit-* excluded"
+  },
+  "environment": {
+    "os": "Microsoft Windows NT 10.0.26200.0",
+    "arch": "AMD64",
+    "node": "v24.15.0",
+    "pnpm": "11.2.2",
+    "tlsRejectUnauthorized": "0"
+  },
+  "sourceCounts": {
+    "openclaw_runtime/src": 4819,
+    "tests": 850,
+    "src": 330,
+    "electron": 221,
+    "shared": 137,
+    "electron/services top-level .ts": 77
+  },
+  "coverageModel": {
+    "L0": "known to exist, not inspected",
+    "L1": "structural/pattern scan",
+    "L2": "critical snippets inspected",
+    "L3": "whole or near-whole file read",
+    "L4": "dynamic/runtime/adversarial validation"
+  },
+  "scans": [
+    {
+      "target": "electron/services/*.ts",
+      "coverage": "L1",
+      "result": "77/77 top-level service files touched by security-pattern scan; not a pass"
+    },
+    {
+      "target": "openclaw_runtime/src",
+      "coverage": "mixed L0-L3",
+      "result": "selected security/secrets/SEKB/agents/gateway/sandbox paths inspected; no full-tree proof"
+    }
+  ],
+  "files": {
+    "electron/main/ipc/host-invoke.ts": {
+      "sha256": "03908a9c54ff97bf2be631450c3def04eb047f205479a5e27063694bd31d5726",
+      "bytes": 4571,
+      "coverage": "L3"
+    },
+    "electron/main/ipc/host-contract.ts": {
+      "sha256": "e443be4d73a1bbfd991bf40016f841df3f7fd356449c5b1ceaa4271a51e51192",
+      "bytes": 1726,
+      "coverage": "L3"
+    },
+    "electron/main/ipc/request-helpers.ts": {
+      "sha256": "28d85fa1143cd9a917a1be86c3e0b97465489313012c4963f88c3de01c8679e1",
+      "bytes": 1332,
+      "coverage": "L3"
+    },
+    "electron/preload/index.ts": {
+      "sha256": "8a79276e3ed6d6e55f4f2ab4660deefd7efe777bc464bdc2f876584e60710121",
+      "bytes": 4964,
+      "coverage": "L3"
+    },
+    "electron/services/shell-api.ts": {
+      "sha256": "712d2fc104309c862b681641cc981375b99a24526b9a523a3216d9991ebbb626",
+      "bytes": 1182,
+      "coverage": "L3"
+    },
+    "electron/services/secrets/secret-store.ts": {
+      "sha256": "2e512095603e856b9e2b04d462b683cc20bba4abdb1e4663d9423fa22520a787",
+      "bytes": 2739,
+      "coverage": "L3"
+    },
+    "electron/services/providers/store-instance.ts": {
+      "sha256": "c27dd53798e9c2ae2ec159ac7ce81a5daac9dd21df145fb802d43e2efd606fd6",
+      "bytes": 789,
+      "coverage": "L3"
+    },
+    "electron/services/agent-browser-vault.ts": {
+      "sha256": "587c18428d9e48d5d90bb9b7fea9dac7c2b154f2e63a4f7968f91da20acce8e6",
+      "bytes": 4885,
+      "coverage": "L3"
+    },
+    "electron/utils/secure-storage.ts": {
+      "sha256": "50c5664b45de8de002e05c9c574683d9f5770c245c50c04ff517072d02e93ba6",
+      "bytes": 9999,
+      "coverage": "L3"
+    },
+    "electron/utils/sandbox-policy-resolver.ts": {
+      "sha256": "4d37d5128f0fb886dac0b07c4803be41cc8cfcb2ceeecf59e02d76ded07aa310",
+      "bytes": 5058,
+      "coverage": "L3"
+    },
+    "electron/services/workspace-permissions.ts": {
+      "sha256": "6848e649461188f8bb157050ce02a18eeeed1bc3abab0f7fbffc30efbc9173a8",
+      "bytes": 9019,
+      "coverage": "L3"
+    },
+    "src/lib/host-api-client.ts": {
+      "sha256": "a86bd313a290e843b0bf7704a1f7a205f876628b6e0f62b1ecd712c2982b57f7",
+      "bytes": 6267,
+      "coverage": "L3"
+    },
+    "shared/sensitive-content-boundary.ts": {
+      "sha256": "e5649e9144fe9e32ad6de7cedb6540bc3bf35ccfc8481f720cdf9eae609bf18a",
+      "bytes": 6056,
+      "coverage": "L3"
+    },
+    "shared/agent-browser/tool-authorization.ts": {
+      "sha256": "635853859df317e6604733efe27df6e5c9dafd453cc979c90dc53ca908393a5a",
+      "bytes": 4020,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/knowledge/sekb/feature-flags.ts": {
+      "sha256": "b41baa455a34fcc06d5dafd1147dd4ff6834da962fb02a2822887849768b9a62",
+      "bytes": 3636,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts": {
+      "sha256": "ffa02d57bb5ece010a63d5f39587a00e0e64a056793ba8cd29ae7197c6fc2858",
+      "bytes": 5778,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/agents/role-permissions-policy.ts": {
+      "sha256": "799cf8c2827a479c7f17334b8cd74c94664cae136e28b6be898c223adc36bb9c",
+      "bytes": 4586,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/context-engine/coding-runtime-flags.ts": {
+      "sha256": "76cc7a2bcedc8ef2177b56d26e7918d1c8603fe03aec3d2492b15097b324f10b",
+      "bytes": 7885,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts": {
+      "sha256": "1e133d636864c5eeb964a79f991eb76eb9ac8854f12bd280eb02de9b25c3a4b0",
+      "bytes": 3792,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/runtime-spine/gate-engine.ts": {
+      "sha256": "0949296b95aef717c971b769cfd6cd8281c29c4f0cba373ba6eab038904edfc9",
+      "bytes": 5262,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/gateway/server-methods/agent-browser.ts": {
+      "sha256": "6dda23728856a5fa72bb2bcac4dd4cfdc782d5fbdc1005c6625b95693295e046",
+      "bytes": 3927,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/src/runtime-core/memory-runtime-config.ts": {
+      "sha256": "e74e172e510b7dcd8e0782ed5031e3644b63b85e29c36d1a7f3e0231a68dd1b8",
+      "bytes": 11223,
+      "coverage": "L3"
+    },
+    "openclaw_runtime/test/vitest/vitest.cron.config.ts": {
+      "sha256": "77a06bd1913ee4e44b12a7793ed233d5ab2c3a95df04a61571219804e3466749",
+      "bytes": 600,
+      "coverage": "L3"
+    },
+    "electron/main/index.ts": {
+      "sha256": "ce2766b31cfcde5c4c0d1bcbd5166e061c7c502c2bc43b5008d2015b1be0db6a",
+      "bytes": 49557,
+      "coverage": "L2"
+    },
+    "electron/main/ipc-handlers.ts": {
+      "sha256": "8740dab1b2ac0223004e1fda5b8f6dfb6f723a1e606430cf8b7b8c92e4e5bd15",
+      "bytes": 67442,
+      "coverage": "L2"
+    },
+    "electron/utils/channel-config.ts": {
+      "sha256": "0720c11fef898876800116d11b879de7cba75831014bb028e29e26be399dd6cb",
+      "bytes": 70036,
+      "coverage": "L2-L3"
+    },
+    "electron/services/cron-api.ts": {
+      "sha256": "88500e1b696b9a58be0d6948a4f3c5848188f7680076e0cb8df57089bd9bbf23",
+      "bytes": 25785,
+      "coverage": "L2"
+    },
+    "electron/services/knowledge-api.ts": {
+      "sha256": "78d23be40d97f252cd8f00ce996ee53f8ab0c945f180a0ae7fab2590bb645e26",
+      "bytes": 179541,
+      "coverage": "L2"
+    },
+    "electron/services/providers-api.ts": {
+      "sha256": "9828ca17a4dc59ef3ba45bbc54664cca86499728b8d168f7a0d433c341557f82",
+      "bytes": 22849,
+      "coverage": "L2"
+    },
+    "electron/services/providers/provider-service.ts": {
+      "sha256": "a561acbc25a73db8936d736d655168bac6580c6cdaf3c81b6b8823140a46f4b0",
+      "bytes": 21313,
+      "coverage": "L2"
+    },
+    "electron/services/files-api.ts": {
+      "sha256": "02a0d337057b73957897a0ed7ba52233886f7f16fcda6174573a6c91e3e4b836",
+      "bytes": 21317,
+      "coverage": "L2-L3"
+    },
+    "electron/services/workspaces-api.ts": {
+      "sha256": "0030a36be1611d9e2c92892e820a56be74b7c42167c622f5b1ea5d9e8a3bbbde",
+      "bytes": 32091,
+      "coverage": "L2"
+    },
+    "electron/services/sessions-api.ts": {
+      "sha256": "1fd9608da12f976af0ad4c39023b6cc010357c158b7f46b2b47c99135d512060",
+      "bytes": 86079,
+      "coverage": "L2"
+    },
+    "electron/services/roles-api.ts": {
+      "sha256": "0a4e30f6fea7d12563f1cf7ef05889ad5429ffe3f8191fb6e7146c280c7b62b7",
+      "bytes": 27175,
+      "coverage": "L2"
+    },
+    "electron/services/channels-api.ts": {
+      "sha256": "b1e5307db37b91754d883bd227dc380bf23a79958f5408dd18c28745401ba993",
+      "bytes": 65798,
+      "coverage": "L2"
+    },
+    "electron/services/observability-redaction.ts": {
+      "sha256": "25f5b7ba3d8922eabdb2b8d8e93ebabfd04c0025f993a5eec697d5e53fc80530",
+      "bytes": 4253,
+      "coverage": "L2"
+    },
+    "electron/services/terminal-api.ts": {
+      "sha256": "0d1dfaa562f04b6827ba02844252633ff381285faeec983755b121060dc8e340",
+      "bytes": 16390,
+      "coverage": "L2"
+    },
+    "electron/services/permissions-api.ts": {
+      "sha256": "765c7735cfd0dcb8f6f56b530351aaf71239890b7f4e30a08018e316288a5220",
+      "bytes": 12000,
+      "coverage": "L2-L3"
+    },
+    "electron/services/git-api.ts": {
+      "sha256": "87aee9d8d932d8631847119d0bc5816a2e377fd924f5eb63767c92391b7b1e8f",
+      "bytes": 41069,
+      "coverage": "L2"
+    },
+    "electron/services/office-tools-api.ts": {
+      "sha256": "9c09e741bdcba7b64f3922d3ece88274ebb1fb8e742049172857867bbac0a290",
+      "bytes": 44035,
+      "coverage": "L2"
+    },
+    "electron/services/terminal-session-manager.ts": {
+      "sha256": "166d62d0f4456be9455fa7313afa6aebefa7d87d9ec8418d483565d27c8db170",
+      "bytes": 12723,
+      "coverage": "L2"
+    },
+    "electron/services/agent-browser-service.ts": {
+      "sha256": "11531e7fa606e0c12e9d847d27c7c6d27033422c7c4cb24a578d0d7d730cf8f0",
+      "bytes": 99377,
+      "coverage": "L2-L3"
+    },
+    "electron/services/updates-api.ts": {
+      "sha256": "c215f9f377d2fc6b9b6b78de374799f765d237b306b812f6996bd6dadeafc876",
+      "bytes": 1415,
+      "coverage": "L2"
+    },
+    "electron/utils/store.ts": {
+      "sha256": "31c4060648fc7976642dad13dc2bed3220ffb2a386406c17140153ef2c0d71ec",
+      "bytes": 5153,
+      "coverage": "L2"
+    },
+    "electron/gateway/manager.ts": {
+      "sha256": "34ee52930bda08e46294295b5c6e5d08b30417de2f972231f3b4f32b086d8d31",
+      "bytes": 58666,
+      "coverage": "L2"
+    },
+    "src/lib/host-api.ts": {
+      "sha256": "96ac6898986b6f8ee0fb94b36f234ea6965877d102a46613fb4cc0b063efedd5",
+      "bytes": 79992,
+      "coverage": "L2"
+    },
+    "src/App.tsx": {
+      "sha256": "696a7359c6234bc3d2847c21cb8080c3d7643d094a7da12ed85152c09a35883f",
+      "bytes": 10105,
+      "coverage": "L2"
+    },
+    "src/pages/Chat/index.tsx": {
+      "sha256": "2c5390d68607a46ae4c159cae033a78f2d719cbfa5bb8a0873c9d52c428594ad",
+      "bytes": 145116,
+      "coverage": "L2"
+    },
+    "src/stores/chat.ts": {
+      "sha256": "ea8aaa8119ec4663e649fe20630d79754af72a493454b3a91977b00a0d85eca9",
+      "bytes": 195210,
+      "coverage": "L2"
+    },
+    "shared/host-api/contract.ts": {
+      "sha256": "d804a8e72810cfaeee0195312097b2f687857468a0605e64276e72cb39a2c16d",
+      "bytes": 170340,
+      "coverage": "L2"
+    },
+    "shared/cron-browser-automation.ts": {
+      "sha256": "e28e7bd62a728799c0e2a1ee6edf81d6a4dd2a9dcddd1789d2ee207ae19d2db8",
+      "bytes": 9995,
+      "coverage": "L2"
+    },
+    "shared/dcs/prod-flags-catalog.ts": {
+      "sha256": "986098c6583282fad14fa774b0565698b8ba1f614ad8bba3eaab7101064ff77b",
+      "bytes": 9251,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/knowledge/sekb/harness-integration.ts": {
+      "sha256": "c62a4cd146eeb6e9bead85d57d826965ba44d672c4beebb622008268d3c79bee",
+      "bytes": 17178,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts": {
+      "sha256": "e09272aa48f9ca8a527c1abfab5e159cb13db2ff797ca00b6bb22681ae1446b6",
+      "bytes": 28698,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts": {
+      "sha256": "8f922fb32bc727c6faee56124fa71a0c604869c5e07b21d202ec53ec8151fdae",
+      "bytes": 7651,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/role-contract.ts": {
+      "sha256": "15cb4579e78ee70cd6486c355109437ccfcb78032bb400ea6a6b5ad78d484c77",
+      "bytes": 16597,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/role-spawn.ts": {
+      "sha256": "33c3395b10ff4b6e1a107a1dc1f533048dc577a52afebb20051daf436724e3e7",
+      "bytes": 10048,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/subagent-registry.ts": {
+      "sha256": "3e997bf168f0120f2023e4148d5c214d7e844213b9d4ee529448191e5e6ad021",
+      "bytes": 58432,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/agent-steering-queue.ts": {
+      "sha256": "607c6f47c4e3f48154b63cd67accbb3509fc5f2cb448607fb746a9468340c6c2",
+      "bytes": 31254,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/transcript-redact.ts": {
+      "sha256": "a1a61dc8b2de91ada84cfa62626d4da21380df01aafe78c01777366277e27576",
+      "bytes": 9112,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/context-engine/assembler.ts": {
+      "sha256": "701a93631e49326e1071d79c0a52821880ad34a8343a19a6842f07708c2be59d",
+      "bytes": 12895,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/memory/gatekeeper.ts": {
+      "sha256": "9952e900f59033f82c78dbdee0f3dbd2f046748b4c53cb4d2f610884da10ae09",
+      "bytes": 14674,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/secrets/audit.ts": {
+      "sha256": "2dcbc4345b513ef2cacecea89f2aa518b1c50ebf5ee754adb777109936e84de6",
+      "bytes": 23624,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/secrets/channel-secret-basic-runtime.ts": {
+      "sha256": "c017cdb2db98a6c7d6c9e470e192c9b27ba6da8a4cdb6ff40ea853747059db08",
+      "bytes": 9643,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/cron/store.ts": {
+      "sha256": "2eb848011d1e4e53a5103c0eacc49db81ea1c2b9f292091182d286a1494bab3f",
+      "bytes": 9553,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/gateway/auth.ts": {
+      "sha256": "022917179ce1795c161f858de0abac73515ee1c4986d90821180f630d8992ca7",
+      "bytes": 19979,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/sandbox/backend.ts": {
+      "sha256": "fdc20e4d25a33afd83d4fdbb85400e271d7a10729fa3f1b18b273dfad039cc9f",
+      "bytes": 3815,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/security/dangerous-tools.ts": {
+      "sha256": "cd39e41ea2724af00a4f6d5521ecf9c22a209a0b85ec7e0b2eeb6524a2b8126f",
+      "bytes": 1699,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/test/vitest/vitest.scoped-config.ts": {
+      "sha256": "fd0673ddbdc637bcc00d4eca9cdeed7b341f5d64926ad76989c5affaca63536a",
+      "bytes": 8380,
+      "coverage": "L2"
+    },
+    "openclaw_runtime/src/agents/mcp-http-fetch.ts": {
+      "sha256": "b842b9d01ba1db52c30c0a81c51746d11b1fc306e4efc84b7a197c856379ff7c",
+      "bytes": 6640,
+      "coverage": "L2"
+    },
+    "electron-builder.yml": {
+      "sha256": "0e63899a1a8672f60734821e5198dda6d2d076fbffbe79d3983af756eb1b460b",
+      "bytes": 5408,
+      "coverage": "L2"
+    },
+    "package.json": {
+      "sha256": "8a533daaacc552777a679036d6133f8716b3b49f7dbe2a690a0c61c3cc9293cd",
+      "bytes": 24773,
+      "coverage": "L2"
+    },
+    "artifacts/agent-dev-audit/report.json": {
+      "sha256": "d5fab27eeea329fe292a489462a449a49697e4cdbe6ff700670bf66e286494bd",
+      "bytes": 10902,
+      "coverage": "L2"
+    },
+    "artifacts/agent-dev-deep-test/report.json": {
+      "sha256": "5c86b453cea3ec4c7ccfd11f6691633d19d9819f73cb352bf880f1e76ea9a5b7",
+      "bytes": 76075,
+      "coverage": "L2"
+    },
+    "electron/services/mcp-api.ts": {
+      "sha256": "b3757f373290f422fca3f7aee15a0fbb2791ba801ffe22011950a40d3fa29a7c",
+      "bytes": 53384,
+      "coverage": "L2-L3"
+    },
+    "shared/agent-browser/browser-control.ts": {
+      "sha256": "feb42d3d8ad8dad18ebd22bcce12aedf89ae67d258c2a8f629c41472c732cdb5",
+      "bytes": 5291,
+      "coverage": "L2-L3"
+    },
+    "electron/services/agent-browser/browser-control/tab-manager.ts": {
+      "sha256": "e2582ca36412e1e2e20290d270e7af28235b0477489b44712174411dd5bfe393",
+      "bytes": 11323,
+      "coverage": "L2-L3"
+    },
+    "electron/utils/logger.ts": {
+      "sha256": "a579037ad1a41415c96549f5bde172895f134715a5271d41524f294a926bbc58",
+      "bytes": 9800,
+      "coverage": "L2-L3"
+    },
+    ".github/workflows/release.yml": {
+      "sha256": "26a651f5b4819dedec5245361db82ac20341d8fa56260433db433c0ce6eaa9e8",
+      "bytes": 25337,
+      "coverage": "L2-L3"
+    },
+    "scripts/download-bundled-uv.mjs": {
+      "sha256": "ea0c81fbb85f7c2b5a7928bcb5c9f63d5628da98cd0cd599ae13c1e555525dc2",
+      "bytes": 5263,
+      "coverage": "L2-L3"
+    },
+    "scripts/download-bundled-agent-browser.mjs": {
+      "sha256": "f4d4a969c3a4652f917c246192347583979ade497082f83bb823e5c826c4bfa2",
+      "bytes": 5504,
+      "coverage": "L2-L3"
+    }
+  },
+  "commands": [
+    {
+      "command": "git rev-parse HEAD",
+      "result": "60061e33554311ac3c9871195210df59fe1b5bf2"
+    },
+    {
+      "command": "git status --porcelain=v1 --untracked-files=all",
+      "result": "169 entries before audit outputs: 27 tracked changes, 142 untracked files"
+    },
+    {
+      "command": "Get-ChildItem -Recurse -Include *.ts,*.tsx",
+      "result": "sourceCounts captured above"
+    },
+    {
+      "command": "Get-FileHash -Algorithm SHA256 <evidence files>",
+      "result": "74 L2/L3 files hashed"
+    },
+    {
+      "command": "pnpm run typecheck / lint / test / E2E",
+      "result": "NOT RUN in this report restructuring pass"
+    },
+    {
+      "command": "targeted security vitest set",
+      "exitCode": 0,
+      "result": "8 files / 82 tests passed"
+    },
+    {
+      "command": "temporary browser URL audit",
+      "exitCode": 0,
+      "result": "1/1 passed"
+    },
+    {
+      "command": "temporary permission/path audit",
+      "exitCode": 0,
+      "result": "2/2 passed"
+    },
+    {
+      "command": "pnpm audit --prod --json",
+      "exitCode": null,
+      "result": "BLOCKED: tool approval backend 404; not run"
+    }
+  ],
+  "dynamicValidation": {
+    "performed": true,
+    "coverage": "L4 partial",
+    "passed": [
+      "82 targeted tests",
+      "javascript/data URL acceptance",
+      "junction write escape",
+      "approval concurrent replay"
+    ],
+    "blocked": [
+      "Renderer compromise",
+      "SEKB canary",
+      "sandbox fail-closed",
+      "Cron corruption",
+      "update tamper",
+      "multi-window race"
+    ],
+    "consequence": "Only reproduced paths are upgraded to L4."
+  },
+  "conflicts": "The main report incorporates the former sections 10 and 11 correction patches. This manifest and the latest main-report edition supersede earlier prose."
+}

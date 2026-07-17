@@ -1,0 +1,11 @@
+{
+  "phase": "phase3-data-authority",
+  "phaseStatus": "planned",
+  "tasks": {
+    "P3-001": "todo",
+    "P3-002": "todo",
+    "P3-003": "todo",
+    "P3-004": "todo"
+  },
+  "allTasksDone": false
+}

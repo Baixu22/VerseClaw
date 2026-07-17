@@ -1,0 +1,1193 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-07-16",
+  "head": "60061e33554311ac3c9871195210df59fe1b5bf2",
+  "dirtyPatchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
+  "report": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.md",
+  "coverage": {
+    "dynamicValidationPerformed": true,
+    "model": {
+      "L0": "known to exist, not inspected",
+      "L1": "structural/pattern scan",
+      "L2": "critical snippets inspected",
+      "L3": "whole or near-whole file read",
+      "L4": "dynamic/runtime/adversarial validation"
+    }
+  },
+  "counts": {
+    "total": 35,
+    "bySeverity": {
+      "Critical": 2,
+      "High": 23,
+      "Medium": 9,
+      "Low": 1
+    },
+    "byStatus": {
+      "Open": 32,
+      "Partial": 2,
+      "Unverified": 1
+    }
+  },
+  "findings": [
+    {
+      "id": "F-SEC-001",
+      "title": "Provider / Channel / Gateway secrets 明文与 Provider 双写",
+      "category": "SEC",
+      "severity": "Critical",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2"
+      ],
+      "preconditions": "攻击者可读 userData/openclaw 配置，或先取得 Renderer 能力",
+      "radius": "Provider keys、channel tokens、gateway token；可扩展到账户接管",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/secrets/secret-store.ts:32-52",
+        "electron/utils/secure-storage.ts:35-52",
+        "electron/utils/channel-config.ts:493",
+        "electron/utils/store.ts:51,102"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02"
+      ],
+      "impact": "同一 Provider key 写入 providerSecrets 与 legacy apiKeys；Channel/Gateway 仍有明文路径。",
+      "acceptance": [
+        "T-SEC-001：canary secret 磁盘扫描无命中",
+        "删除 legacy apiKeys 回写与读取",
+        "Channel/Gateway secret 使用 OS 保护或 SecretRef"
+      ],
+      "related": [
+        "F-SEC-002"
+      ]
+    },
+    {
+      "id": "F-SEC-002",
+      "title": "Renderer host API 可返回 Provider 明文 API key",
+      "category": "SEC",
+      "severity": "Critical",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A2",
+        "A4"
+      ],
+      "preconditions": "Renderer compromise、恶意扩展贡献或可调用 host API 的注入路径",
+      "radius": "全部 Provider keys",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "src/lib/host-api.ts:1180-1181",
+        "shared/host-api/contract.ts（providers.getApiKey 返回 string|null）",
+        "electron/services/providers-api.ts / provider-service.ts"
+      ],
+      "attackChain": [
+        "AC-01"
+      ],
+      "impact": "Renderer 与 Main 的密钥边界失效；XSS 前提尚未 L4 证实。",
+      "acceptance": [
+        "T-SEC-002：host API 不再存在 getApiKey",
+        "Renderer 仅能得到 hasKey/credential handle",
+        "回归覆盖 Provider 编辑、验证与 OAuth"
+      ],
+      "related": [
+        "F-SEC-001",
+        "F-SEC-005",
+        "F-SEC-010"
+      ]
+    },
+    {
+      "id": "F-SEC-003",
+      "title": "openExternal 多入口且 IPC/Host 路径无协议白名单",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "preconditions": "攻击者控制 URL 参数；Windows 存在可利用协议或本地处理器",
+      "radius": "当前用户上下文中的外部协议处理器",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/main/ipc-handlers.ts:1107-1108",
+        "electron/services/shell-api.ts:21-31",
+        "electron/main/index.ts:862-872（窗口路径有 http/https 白名单，对照证据）",
+        "src/electron openExternal 调用点静态枚举：22 处"
+      ],
+      "attackChain": [
+        "AC-03"
+      ],
+      "impact": "同一能力存在不同强度实现；窗口路径安全策略未覆盖 IPC/Host/服务旁路。",
+      "acceptance": [
+        "T-SEC-003：scheme 矩阵仅 http/https 允许",
+        "所有 Renderer 调用收口到单一 broker",
+        "拒绝必须记录来源与协议"
+      ],
+      "related": [
+        "F-REL-004"
+      ]
+    },
+    {
+      "id": "F-SEC-004",
+      "title": "Files Host API 读模式允许任意本地路径",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "preconditions": "能够调用 files.read/list/stat；写权限不影响读路径",
+      "radius": "用户可读文件、SSH/config/browser data、工作区外 secrets",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/files-api.ts:168-191",
+        "electron/services/files-api.ts:307,332,441,461,491"
+      ],
+      "attackChain": [
+        "AC-02"
+      ],
+      "impact": "写入有 roots/审批，但读取不是 workspace 沙箱。Windows reparse/UNC/ADS 尚未 L4 验证。",
+      "acceptance": [
+        "T-SEC-004：Windows path escape 矩阵",
+        "读取限制到 workspace + 显式 allowlist roots",
+        "大文件、设备文件、UNC/reparse 拒绝或限流"
+      ],
+      "related": [
+        "F-AUTH-002"
+      ]
+    },
+    {
+      "id": "F-SEC-005",
+      "title": "Host IPC 仅校验请求外壳，缺每动作 payload schema 与 sender/session 绑定",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A2",
+        "A6"
+      ],
+      "preconditions": "攻击者控制已加载 Renderer/WebContents 或多窗口消息源",
+      "radius": "全部 HostServiceRegistry 动作，取决于具体 action",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/main/ipc/host-invoke.ts:78-139",
+        "electron/main/ipc/host-contract.ts（isHostRequest 仅验证请求形状）",
+        "electron/main/ipc/host-invoke.ts:133（_event 未使用）"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02"
+      ],
+      "impact": "存在基础 request shape 校验，但 payload 直接交给 action，且未绑定 senderFrame/webContents/session。",
+      "acceptance": [
+        "T-SEC-005：每 action schema 正反例",
+        "拒绝非主窗口/非授权 session sender",
+        "payload size、prototype、path fuzz"
+      ],
+      "related": [
+        "F-SEC-002",
+        "F-ISO-002"
+      ]
+    },
+    {
+      "id": "F-SEC-010",
+      "title": "Renderer lacks CSP; HTML Preview allows scripts/downloads/popup escape",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A2",
+        "A4"
+      ],
+      "preconditions": "需要找到脚本注入或危险 HTML 渲染原语",
+      "radius": "若成立，可联动 F-SEC-002/003/004/005",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "index.html: no CSP meta and inline script/style",
+        "src/components/file-preview/HtmlPreview.tsx: sandbox allow-scripts/allow-downloads/allow-popups-to-escape-sandbox",
+        "tests/unit/file-preview-body.test.tsx",
+        "tests/unit/workspace-browser-body.test.tsx"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02",
+        "AC-03"
+      ],
+      "impact": "Markdown raw HTML 原语未发现；但主 Renderer 无 CSP，HTML Preview 的危险 sandbox 权限已被现有测试固化。",
+      "acceptance": [
+        "T-SEC-010：恶意 Markdown/Tool UI/HTML corpus",
+        "模拟 Renderer compromise 后验证 broker 边界",
+        "CSP 与 Trusted Types/等价控制审计"
+      ],
+      "related": [
+        "F-ISO-002"
+      ]
+    },
+    {
+      "id": "F-ISO-001",
+      "title": "Strong sandbox 不可用时降级到 policy-light，强制可见性与高危阻断未验证",
+      "category": "ISO",
+      "severity": "Medium",
+      "decision": "Track",
+      "reachable": "条件可达",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "Docker/SSH strong backend 不可用或未选择",
+      "radius": "workspace、terminal、browser、cron 的本地用户权限面",
+      "evidenceLevel": "L3",
+      "status": "Partial",
+      "evidence": [
+        "electron/utils/sandbox-policy-resolver.ts:64-68,107-120",
+        "electron/utils/workspace-runtime-permissions.ts",
+        "openclaw_runtime/src/agents/sandbox/backend.ts"
+      ],
+      "attackChain": [
+        "AC-09"
+      ],
+      "impact": "降级信号、reason、warnings 存在；UI 是否强制展示以及是否阻断高危动作尚未验证。",
+      "acceptance": [
+        "T-ISO-001：backend 不可用故障注入",
+        "degraded 状态在执行前强制可见",
+        "高危动作 fail-closed 或逐次审批"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-ISO-002",
+      "title": "WebView 启用但缺少专用 attach/permission/navigation 管控证据",
+      "category": "ISO",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A2",
+        "A6"
+      ],
+      "preconditions": "OpenClaw Control UI 或嵌入内容可被控制/替换",
+      "radius": "WebView partition、权限、导航、preload 边界",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/main/index.ts:839-840",
+        "全仓未命中 will-attach-webview / setPermissionRequestHandler / setPermissionCheckHandler",
+        "electron/main/index.ts:1013-1029（Gateway Control UI frame 限制被放宽）"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-07"
+      ],
+      "impact": "webviewTag=true、主窗口 sandbox=false；未发现 will-attach-webview 或 permission request/check handler，Gateway UI frame policy 被放宽。",
+      "acceptance": [
+        "T-ISO-002：WebView preload/partition/permission/navigation 矩阵",
+        "禁止非预期 src 与新窗口",
+        "权限默认拒绝并记录"
+      ],
+      "related": [
+        "F-SEC-010",
+        "F-SEC-005"
+      ]
+    },
+    {
+      "id": "F-AUTH-001",
+      "title": "Workspace 默认 permission mode 为 acceptEdits",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "打开不可信 workspace 或接受模型驱动修改",
+      "radius": "当前 workspace 内文件与相关命令链",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/workspaces-api.ts:77",
+        "electron/services/workspace-permissions.ts"
+      ],
+      "attackChain": [
+        "AC-09"
+      ],
+      "impact": "规则/审批存在，但默认不是只读或受限模式。",
+      "acceptance": [
+        "T-AUTH-001：新 workspace 默认 restricted/ask",
+        "高风险编辑与命令必须显式批准",
+        "迁移现有配置不静默放宽"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-AUTH-002",
+      "title": "Role path 权限未硬执行且 Electron/Runtime built-in role 名漂移",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "选择角色或派生子 Agent",
+      "radius": "角色声明之外的文件路径；角色语义不一致",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/src/agents/role-permissions-policy.ts",
+        "openclaw_runtime/src/agents/role-contract.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "electron/services/roles-api.ts:59-68"
+      ],
+      "attackChain": [
+        "AC-02",
+        "AC-09"
+      ],
+      "impact": "Tool allow/deny 有硬执行；readPaths/writePaths 未进入同等硬约束，角色名双向各漂移 3 个。",
+      "acceptance": [
+        "T-AUTH-002：role × path × tool conformance",
+        "built-in role 单一注册表",
+        "子 Agent 权限不得超过父 Agent"
+      ],
+      "related": [
+        "F-REL-004"
+      ]
+    },
+    {
+      "id": "F-AUTH-003",
+      "title": "CVK 只有 report_only 类型，无 enforce 模式",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A4"
+      ],
+      "preconditions": "危险 tool call 到达 CVK",
+      "radius": "所有依赖 CVK 阻断的操作",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts:17"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "impact": "不是默认配置问题，而是类型/实现层尚无 enforce 分支。",
+      "acceptance": [
+        "T-AUTH-003：deny/ask/allow 行为测试",
+        "引入 enforce 模式与回滚开关",
+        "报告与阻断结果可审计"
+      ],
+      "related": [
+        "F-AUTH-004",
+        "F-AUTH-005"
+      ]
+    },
+    {
+      "id": "F-AUTH-004",
+      "title": "Runtime Spine diagnostic_only 下失败仍 approved",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A4"
+      ],
+      "preconditions": "危险动作依赖 Spine gate",
+      "radius": "运行时动作授权链",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/src/runtime-spine/gate-engine.ts:27,125"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "impact": "诊断结果不会形成硬阻断。",
+      "acceptance": [
+        "T-AUTH-004：blocking 模式失败即拒绝",
+        "诊断/阻断模式清晰可见",
+        "关键动作先试点再扩大"
+      ],
+      "related": [
+        "F-AUTH-003"
+      ]
+    },
+    {
+      "id": "F-AUTH-005",
+      "title": "Verifier 依赖 fail/refuted 等文本启发式",
+      "category": "AUTH",
+      "severity": "Medium",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A4"
+      ],
+      "preconditions": "模型或工具输出可影响 verifier 文本",
+      "radius": "编排正确性与错误放行",
+      "evidenceLevel": "L2",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/agent-steering-queue.ts"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "impact": "存在 deferred verifier 是正面事实，但裁决不是结构化证明。",
+      "acceptance": [
+        "T-AUTH-005：结构化 verdict schema",
+        "文本不直接决定授权",
+        "对抗性措辞 corpus"
+      ],
+      "related": [
+        "F-AUTH-003",
+        "F-AUTH-004"
+      ]
+    },
+    {
+      "id": "F-DATA-001",
+      "title": "SEKB 启用后 raw steps/details 可落库且未复用 redaction",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "开启 SEKB 并处理含 secret/path/env/tool args 的 trajectory",
+      "radius": "SEKB 数据库、检索上下文、后续模型回显",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+        "openclaw_runtime/src/knowledge/sekb/harness-integration.ts",
+        "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "electron/services/observability-redaction.ts（未接入对照）"
+      ],
+      "attackChain": [
+        "AC-05"
+      ],
+      "impact": "功能默认关闭降低默认可达性；一旦开启，raw 数据边界仍高风险。",
+      "acceptance": [
+        "T-DATA-001：canary secret 不落库/不可检索",
+        "写入前统一 redaction + provenance",
+        "存量数据迁移或清理"
+      ],
+      "related": [
+        "F-DATA-004"
+      ]
+    },
+    {
+      "id": "F-DATA-002",
+      "title": "sekbConfirmPrinciple 未向 DCS experience sink 传递上下文",
+      "category": "DATA",
+      "severity": "Medium",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A3"
+      ],
+      "preconditions": "用户在 UI 确认原则",
+      "radius": "用户期望的学习/经验闭环",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/knowledge-api.ts:3935",
+        "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts"
+      ],
+      "attackChain": [],
+      "impact": "UI 文案与真实持久化路径可能不一致。",
+      "acceptance": [
+        "T-DATA-002：确认后 DCS 可观测记录",
+        "若不写 DCS，UI 明确仅保存原则",
+        "失败不得显示已学习"
+      ],
+      "related": [
+        "F-GOV-002"
+      ]
+    },
+    {
+      "id": "F-DATA-003",
+      "title": "Memory/COMPASS 高级路径默认全关，写入与使用 gate 边界未闭环验证",
+      "category": "DATA",
+      "severity": "Medium",
+      "decision": "Attend",
+      "reachable": "否",
+      "attackers": [
+        "A4"
+      ],
+      "preconditions": "显式开启相关 flags",
+      "radius": "Memory 注入、污染传播与撤销",
+      "evidenceLevel": "L3",
+      "status": "Partial",
+      "evidence": [
+        "openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+        "openclaw_runtime/src/memory/gatekeeper.ts"
+      ],
+      "attackChain": [],
+      "impact": "默认关闭不是漏洞，也不能宣传为已生产生效；gatekeeper 对 secret-like 有正面拒绝。",
+      "acceptance": [
+        "T-DATA-003：write/use 双 gate",
+        "污染撤销与 TTL",
+        "UI/文档与 flag 状态一致"
+      ],
+      "related": [
+        "F-DATA-004"
+      ]
+    },
+    {
+      "id": "F-DATA-004",
+      "title": "敏感内容边界矩阵承认 raw/no-redaction 与 modelEcho 不保证",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Track",
+      "reachable": "条件可达",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "敏感内容进入 files/trajectory/SEKB/memory/model context",
+      "radius": "跨存储与跨模型传播",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "shared/sensitive-content-boundary.ts"
+      ],
+      "attackChain": [
+        "AC-02",
+        "AC-05"
+      ],
+      "impact": "项目已有边界自知，但缺统一 provenance/IFC enforcement。",
+      "acceptance": [
+        "T-DATA-004：source→sink policy matrix",
+        "每个 sink 有 redaction/provenance/TTL",
+        "删除操作覆盖衍生数据"
+      ],
+      "related": [
+        "F-DATA-001",
+        "F-DATA-003"
+      ]
+    },
+    {
+      "id": "F-REL-001",
+      "title": "Cron 存在 SQLite 与 cron.json fallback 双真相，list 可触发 repair 写",
+      "category": "REL",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A3",
+        "A4"
+      ],
+      "preconditions": "Runtime list 失败或状态不一致",
+      "radius": "计划任务定义与执行",
+      "evidenceLevel": "L2-L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/cron-api.ts",
+        "openclaw_runtime/src/cron/store.ts"
+      ],
+      "attackChain": [
+        "AC-06"
+      ],
+      "impact": "读失败路径带写副作用，可能把 fallback 状态回写成权威。",
+      "acceptance": [
+        "T-REL-001：失败注入下 list 只读",
+        "SQLite 单一权威或显式迁移事务",
+        "并发/lease/磁盘满测试"
+      ],
+      "related": [
+        "F-GOV-001"
+      ]
+    },
+    {
+      "id": "F-REL-002",
+      "title": "openclaw.json 等配置采用直接 writeFile，缺原子提交",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A3"
+      ],
+      "preconditions": "并发写、进程崩溃、磁盘满",
+      "radius": "Channel 与 OpenClaw 配置完整性",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/utils/channel-config.ts:234,493"
+      ],
+      "attackChain": [
+        "AC-06"
+      ],
+      "impact": "部分写入或竞态可能破坏配置。",
+      "acceptance": [
+        "T-REL-002：tmp+fsync+rename",
+        "并发写串行化/版本检查",
+        "故障注入后旧配置可恢复"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-REL-003",
+      "title": "Agent Browser Gateway bridge 使用 broadcast first-response",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Attend",
+      "reachable": "条件可达",
+      "attackers": [
+        "A6"
+      ],
+      "preconditions": "多窗口/多 profile 同时响应同一请求",
+      "radius": "浏览器动作路由、session 绑定",
+      "evidenceLevel": "L3",
+      "status": "Unverified",
+      "evidence": [
+        "openclaw_runtime/src/gateway/server-methods/agent-browser.ts"
+      ],
+      "attackChain": [
+        "AC-07"
+      ],
+      "impact": "first-response broadcast 静态存在；本轮缺多窗口 Gateway harness，抢答/串 session 仍是具体未验证项。",
+      "acceptance": [
+        "T-REL-003：多窗口并发 race",
+        "requestId+session+webContents 绑定",
+        "重复/迟到响应拒绝"
+      ],
+      "related": [
+        "F-ISO-002"
+      ]
+    },
+    {
+      "id": "F-REL-004",
+      "title": "同一安全能力存在多套实现与不同强度",
+      "category": "REL",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A2",
+        "A3"
+      ],
+      "preconditions": "调用方选择或遗留路径绕过更强实现",
+      "radius": "openExternal、Role、Secrets、Cron、Provider metadata",
+      "evidenceLevel": "L2-L3",
+      "status": "Open",
+      "evidence": [
+        "electron/main/index.ts vs ipc-handlers.ts/shell-api.ts",
+        "electron/services/roles-api.ts vs role-contract.ts",
+        "secret-store.ts legacy 双写"
+      ],
+      "attackChain": [
+        "AC-03",
+        "AC-06"
+      ],
+      "impact": "迁移中间态缺 exit criteria，旧路径会永久保留。",
+      "acceptance": [
+        "T-REL-004：能力单源 conformance",
+        "每次迁移定义旧路径删除条件",
+        "禁止新增旁路调用"
+      ],
+      "related": [
+        "F-SEC-003",
+        "F-AUTH-002"
+      ]
+    },
+    {
+      "id": "F-SUPPLY-001",
+      "title": "Windows stable uses SignPath; alpha/beta skip signing and updater feed injection is unproven",
+      "category": "SUPPLY",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "reachable": "条件可达",
+      "attackers": [
+        "A5"
+      ],
+      "preconditions": "发布 Windows 安装包或启用更新",
+      "radius": "安装包、更新包、最终用户主机",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron-builder.yml",
+        "electron/services/updates-api.ts:12,30,41"
+      ],
+      "attackChain": [
+        "AC-08"
+      ],
+      "impact": "stable 有 SignPath、产物计数和 latest.yml SHA512 重算；当前 0.4.9-alpha.0 属 unsigned prerelease；客户端未找到 setFeedURL/provider 注入。",
+      "acceptance": [
+        "T-SUPPLY-001：签名构建验证",
+        "update feed dry-run + 篡改包拒绝",
+        "SBOM/provenance/clean tag"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-GOV-001",
+      "title": "passWithNoTests 是 Vitest scoped 配置的系统性默认",
+      "category": "GOV",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A3",
+        "A5"
+      ],
+      "preconditions": "测试 glob 错误、测试移动或误删",
+      "radius": "所有依赖相关 shard 的回归门禁",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "openclaw_runtime/test/vitest/vitest.scoped-config.ts:269-272",
+        "openclaw_runtime/test/vitest 下约 70 个显式 true 配置"
+      ],
+      "attackChain": [
+        "AC-06"
+      ],
+      "impact": "门禁可在零测试时静默变绿，是其他修复的元风险。",
+      "acceptance": [
+        "T-GOV-001：默认 false",
+        "仅白名单 shard 可空跑并记录原因",
+        "CI 对 executedTests=0 fail"
+      ],
+      "related": [
+        "F-REL-001"
+      ]
+    },
+    {
+      "id": "F-GOV-002",
+      "title": "Agent Dev A 级与 releaseReady=false/证据陈旧不能外推全系统",
+      "category": "GOV",
+      "severity": "Medium",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A5"
+      ],
+      "preconditions": "使用旧 evidence 作为发布或安全证明",
+      "radius": "发布决策与对外声明",
+      "evidenceLevel": "L2",
+      "status": "Open",
+      "evidence": [
+        "artifacts/agent-dev-audit/report.json",
+        "artifacts/agent-dev-deep-test/report.json"
+      ],
+      "attackChain": [],
+      "impact": "A 级只覆盖控制面；deep-test 为 2026-07-03 且 needs-full-gate。",
+      "acceptance": [
+        "T-GOV-002：stale evidence 阻断外推",
+        "报告显示 requiredFullGates",
+        "对外文案绑定覆盖范围"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-GOV-003",
+      "title": "Dirty tree 无干净、可复现的发布基线",
+      "category": "GOV",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "reachable": "是",
+      "attackers": [
+        "A5"
+      ],
+      "preconditions": "从当前工作树打包或依据行号复核",
+      "radius": "可复现性、审计证据、供应链",
+      "evidenceLevel": "L1-L3",
+      "status": "Open",
+      "evidence": [
+        "HEAD 60061e33554311ac3c9871195210df59fe1b5bf2",
+        "snapshot dirty entries 169",
+        "dirty patch sha256:bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42"
+      ],
+      "attackChain": [
+        "AC-08"
+      ],
+      "impact": "报告已用 patch/hash 绑定证据，但当前树不应直接声明 release-ready。",
+      "acceptance": [
+        "T-GOV-003：clean tag 构建",
+        "构建 provenance 绑定 commit",
+        "审计输出不混入产品 patch"
+      ],
+      "related": [
+        "F-SUPPLY-001"
+      ]
+    },
+    {
+      "id": "F-UX-001",
+      "title": "前端巨型模块与伪虚拟化增加维护和 OOM 风险",
+      "category": "UX",
+      "severity": "Medium",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A3"
+      ],
+      "preconditions": "长会话、大消息量、频繁渲染",
+      "radius": "Chat/Knowledge/Store 可维护性与内存",
+      "evidenceLevel": "L2",
+      "status": "Open",
+      "evidence": [
+        "src/stores/chat.ts",
+        "src/pages/Chat/index.tsx",
+        "ChatInput/Knowledge 大文件扫描"
+      ],
+      "attackChain": [],
+      "impact": "属于工程债，不应污染安全 P0；但会放大 DoS 与回归成本。",
+      "acceptance": [
+        "T-UX-001：长会话性能预算",
+        "真实虚拟化",
+        "拆分高耦合模块"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-UX-002",
+      "title": "ErrorBoundary 向 UI 渲染 stack",
+      "category": "UX",
+      "severity": "Low",
+      "decision": "Track",
+      "reachable": "是",
+      "attackers": [
+        "A3"
+      ],
+      "preconditions": "触发 Renderer 异常",
+      "radius": "本地路径、实现细节、诊断信息",
+      "evidenceLevel": "L2",
+      "status": "Open",
+      "evidence": [
+        "src/App.tsx"
+      ],
+      "attackChain": [],
+      "impact": "主要是信息泄露与用户体验问题。",
+      "acceptance": [
+        "T-UX-002：生产模式错误页脱敏",
+        "详细 stack 仅写受控日志",
+        "E2E 覆盖异常页"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-SEC-006",
+      "title": "Workspace junction/reparse canonicalization permits external writes",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L4",
+      "status": "Open",
+      "evidence": [
+        "electron/services/workspace-permissions.ts:198-214",
+        "electron/services/files-api.ts:228-236,355-430",
+        "temporary L4 test: audit-b1b8-permission-path.test.ts"
+      ],
+      "attackChain": [
+        "AC-09",
+        "AC-11"
+      ],
+      "impact": "词法 workspace 判断先于 realpath；动态测试证明 workspace 内 junction 能修改 workspace 外文件。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-SEC-007",
+      "title": "Agent Browser multi-tab URL policy accepts javascript/data schemes",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L4",
+      "status": "Open",
+      "evidence": [
+        "shared/agent-browser/browser-control.ts:145-153",
+        "electron/services/agent-browser/browser-control/tab-manager.ts:170-175,281-293",
+        "electron/services/agent-browser-service.ts:1086-1097",
+        "temporary L4 test: audit-b1b8-browser-url.test.ts"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-11"
+      ],
+      "impact": "主 session 使用 http/https allowlist，但多标签页只走黑名单；动态测试确认 javascript/data 未被限制。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-AUTH-006",
+      "title": "Approval consumption is not atomic and can be replayed concurrently",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L4",
+      "status": "Open",
+      "evidence": [
+        "electron/services/permissions-api.ts:237-267",
+        "temporary L4 test: audit-b1b8-permission-path.test.ts"
+      ],
+      "attackChain": [
+        "AC-10"
+      ],
+      "impact": "consume 是无互斥的 read-modify-write；Promise.all 两个 consumer 均成功。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-AUTH-008",
+      "title": "Feishu/WeCom channel configuration broadens inbound access to open/*",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/utils/channel-config.ts:686-704",
+        "tests/unit/channel-config.test.ts"
+      ],
+      "attackChain": [
+        "AC-12"
+      ],
+      "impact": "pairing 被转换为 open；默认 dmPolicy=open、allowFrom=[*]，任意入站用户可触发 Agent。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-AUTH-009",
+      "title": "MCP permission/sandbox/network policy fields are not proven runtime-enforced",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "条件可达",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/mcp-api.ts:505-523,642-653,737-771,1153-1179,1470-1490"
+      ],
+      "attackChain": [
+        "AC-13"
+      ],
+      "impact": "MCP env 明文存储并返回 Renderer；permissionMode/sandboxProfileId/networkPolicy 未投影 runtime，reload 还是 best-effort。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-DATA-005",
+      "title": "Session hard delete does not cascade to SEKB/Memory/DCS derivatives",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/services/sessions-api.ts",
+        "openclaw_runtime/src/knowledge/sekb",
+        "openclaw_runtime/src/context-engine",
+        "openclaw_runtime/src/memory"
+      ],
+      "attackChain": [
+        "AC-05",
+        "AC-14"
+      ],
+      "impact": "hard delete 会清 transcript/trajectory/context archive，但未发现 SEKB、Memory、DCS 衍生数据的 lineage 级联删除。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-REL-005",
+      "title": "Electron logs have no rotation/retention limit and swallow write failures",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Act-now",
+      "reachable": "是",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "electron/utils/logger.ts"
+      ],
+      "attackChain": [
+        "AC-15"
+      ],
+      "impact": "每日 append 日志无容量/保留/轮转上限，写失败静默，存在磁盘耗尽与不可观测故障。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    },
+    {
+      "id": "F-SUPPLY-002",
+      "title": "Build-time executables and CI installer are not integrity-pinned",
+      "category": "SUPPLY",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "reachable": "发布时可达",
+      "attackers": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ],
+      "preconditions": "见主报告与证据路径",
+      "radius": "见影响",
+      "evidenceLevel": "L3",
+      "status": "Open",
+      "evidence": [
+        "scripts/download-bundled-uv.mjs",
+        "scripts/download-bundled-agent-browser.mjs",
+        ".github/workflows/release.yml"
+      ],
+      "attackChain": [
+        "AC-08",
+        "AC-16"
+      ],
+      "impact": "外部 archive/裸二进制无 checksum/signature；CI 有 curl|sudo bash 与浮动 Action tag；未见 SBOM/SLSA provenance。",
+      "acceptance": [
+        "增加对应 deny/allow 正反回归",
+        "删除弱旁路或定义可执行 exit criteria"
+      ],
+      "related": []
+    }
+  ],
+  "dynamicValidation": {
+    "performed": true,
+    "coverage": "L4 partial",
+    "commands": [
+      {
+        "command": "existing targeted vitest set",
+        "exitCode": 0,
+        "result": "8 files / 82 tests passed"
+      },
+      {
+        "command": "temporary browser URL audit",
+        "exitCode": 0,
+        "result": "1/1 passed; javascript/data accepted"
+      },
+      {
+        "command": "temporary permission/path audit",
+        "exitCode": 0,
+        "result": "2/2 passed; junction escape and concurrent replay reproduced"
+      }
+    ],
+    "notRun": [
+      "Renderer compromise end-to-end",
+      "SEKB canary",
+      "sandbox fail-closed",
+      "Cron corruption",
+      "Windows update tamper",
+      "multi-window first-response"
+    ],
+    "consequence": "只升级三项动态可达性；其余保留具体阻断。"
+  }
+}
