@@ -1,7 +1,7 @@
 # DCS 生产 P0 Runbook（opt-in 保守生产）
 
-**模式**：保守生产包装（`productionMode: opt-in`）  
-**默认 flag 毕业**：`false`（禁止为演示翻默认）  
+**模式**：保守生产包装（`productionMode: opt-in`）
+**默认 flag 毕业**：`false`（禁止为演示翻默认）
 **权威基线**：Round ACCEPT `accept-with-residuals`（含 C4 `writeFileSync` 修复 tip）
 
 ## 安全默认值（必须保持）
@@ -29,7 +29,7 @@
 6. **Context ladder（C6）**：代码中显式调用 `applyContextLadder({ blocks, tokenBudget })`；不翻 assembler 默认。
 7. **Shadows（C7）**：`routingMemo.shadow` / `sekb.experienceShadow=true` 仅用于双写采样。
 
-配置面导出：`artifacts/coding-prod-p0/config-surface.json`  
+配置面导出：`artifacts/coding-prod-p0/config-surface.json`
 应用内：设置 → 开发者 → DCS 生产 Flag（只读目录）
 
 ## 故障关闭顺序（Kill-switch）
