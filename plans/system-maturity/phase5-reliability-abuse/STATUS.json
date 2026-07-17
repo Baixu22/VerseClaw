@@ -1,0 +1,11 @@
+{
+  "phase": "phase5-reliability-abuse",
+  "phaseStatus": "planned",
+  "tasks": {
+    "P5-001": "todo",
+    "P5-002": "todo",
+    "P5-003": "todo",
+    "P5-004": "todo"
+  },
+  "allTasksDone": false
+}

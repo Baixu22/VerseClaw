@@ -1,0 +1,12 @@
+{
+  "phase": "phase6-supply-release",
+  "phaseStatus": "planned",
+  "tasks": {
+    "P6-001": "todo",
+    "P6-002": "todo",
+    "P6-003": "todo",
+    "P6-004": "todo",
+    "P6-005": "todo"
+  },
+  "allTasksDone": false
+}

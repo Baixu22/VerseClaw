@@ -1,0 +1,11 @@
+{
+  "phase": "phase7-continuous-governance",
+  "phaseStatus": "planned",
+  "tasks": {
+    "P7-001": "todo",
+    "P7-002": "todo",
+    "P7-003": "todo",
+    "P7-004": "todo"
+  },
+  "allTasksDone": false
+}
