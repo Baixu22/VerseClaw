@@ -1,0 +1,47 @@
+{
+  "taskId": "P4-002",
+  "status": "done",
+  "findings": [
+    "F-SEC-007",
+    "F-REL-003"
+  ],
+  "completedAt": "2026-07-17T08:51:13Z",
+  "tests": {
+    "command": "pnpm exec vitest run tests/unit/agent-browser-p4-002-isolation.test.ts tests/unit/agent-browser-full-access-tool-executor.test.ts tests/unit/agent-browser-boundary-choice-tool-executor.test.ts tests/unit/agent-browser-tab-manager.test.ts tests/unit/agent-browser-cli-runner.test.ts",
+    "result": "52 passed (5 files)"
+  },
+  "artifacts": {
+    "shared/agent-browser/filesystem-boundary.ts": {
+      "sha256": "9f917610c88a354a51b5a17e75293df4c7ce98f2e5b1288edcde39840ad3816a",
+      "bytes": 3117
+    },
+    "shared/agent-browser/tool-authorization.ts": {
+      "sha256": "af533645bdffa4e57a00a51be2eabaeb5005a085005282b3b4e1a40e8c93c282",
+      "bytes": 5370
+    },
+    "electron/services/agent-browser-service.ts": {
+      "sha256": "53a61c3553cba8b8deb60a6a912045561f11aac4e2a276bad4af774e366658b3",
+      "bytes": 100097
+    },
+    "electron/services/agent-browser-cli-runner.ts": {
+      "sha256": "3fb838c9f2b39dedf682fef16845e8025246ffa6f81ef6f003ba02926e832517",
+      "bytes": 13613
+    },
+    "electron/services/agent-browser/browser-control/tab-manager.ts": {
+      "sha256": "b7995f2577cfd5fc0337081606cdb2489ec6af35f1c466940f359e3690492407",
+      "bytes": 11417
+    },
+    "electron/services/agent-browser/browser-control/full-access-tool-executor.ts": {
+      "sha256": "f4267664a64faab9ac05cbba237c27639567925bbed0c56b9de4308dce00e986",
+      "bytes": 11685
+    },
+    "tests/unit/agent-browser-p4-002-isolation.test.ts": {
+      "sha256": "afdf1ddbf3b91b61b6094aef2cc2910b8ba5958b1b53de1a65561fb9d9738d53",
+      "bytes": 9061
+    },
+    "artifacts/system-maturity/P4-002/vitest.stdout.txt": {
+      "sha256": "3d58f6f3f38f2c560a4f354f8cd2599f5c0fc9de69a23db617ba638ca8896f41",
+      "bytes": 1990
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
+import { agentBrowserScreenshotDir } from '@shared/agent-browser/filesystem-boundary';
 import type { AgentBrowserConnectionSnapshot, AgentBrowserSession } from '@shared/host-api/contract';
 
 type ExecFile = typeof execFile;
@@ -170,9 +171,10 @@ export class AgentBrowserCliRunner {
   }
 
   async screenshot(session: AgentBrowserSession): Promise<{ session: Partial<AgentBrowserSession>; dataUrl: string }> {
-    const cwd = this.getCwd();
-    const screenshotPath = join(cwd, 'screenshots', `${session.id}-${randomUUID()}.png`);
-    await mkdir(join(cwd, 'screenshots'), { recursive: true });
+    // P4-002 A3: screenshots stay under agent-browser/screenshots/<sessionId>/ inside userData.
+    const shotDir = agentBrowserScreenshotDir(this.getUserDataPath(), session.id);
+    await mkdir(shotDir, { recursive: true });
+    const screenshotPath = join(shotDir, `${session.id}-${randomUUID()}.png`);
     await this.run(session, ['screenshot', screenshotPath], { timeoutMs: SCREENSHOT_TIMEOUT_MS });
     const buffer = await readFile(screenshotPath);
     await unlink(screenshotPath).catch(() => undefined);

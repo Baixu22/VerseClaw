@@ -29,6 +29,12 @@ export interface FullAccessContext {
   tabId?: number;
   origin?: string;
   fullAccess: boolean;
+  /** Binding: only this tabId may use full-access tools. */
+  expectedTabId?: number;
+  /** Binding: only this origin may use full-access tools. */
+  expectedOrigin?: string;
+  /** Absolute expiry epoch ms; missing means session-bound until revoke. */
+  expiresAt?: number;
 }
 
 export interface ExecuteScriptArgs {
@@ -61,7 +67,14 @@ export class FullAccessToolExecutor {
   ) {}
 
   canExpose(): boolean {
-    return this.getContext().fullAccess && this.isRecorderEnabled();
+    const ctx = this.getContext();
+    if (!ctx.fullAccess || !this.isRecorderEnabled()) return false;
+    // P4-002 A2: bind full-access to tab + origin (+ optional expiry).
+    if (typeof ctx.tabId !== 'number' || typeof ctx.expectedTabId !== 'number') return false;
+    if (ctx.tabId !== ctx.expectedTabId) return false;
+    if (!ctx.origin || !ctx.expectedOrigin || ctx.origin !== ctx.expectedOrigin) return false;
+    if (ctx.expiresAt !== undefined && ctx.expiresAt <= Date.now()) return false;
+    return true;
   }
 
   async executeScript(args: ExecuteScriptArgs): Promise<FullAccessResult> {

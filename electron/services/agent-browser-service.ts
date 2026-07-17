@@ -85,6 +85,12 @@ import type { BrowserControlToolCall, NetworkHeader, NetworkRequestDetail, Netwo
 import { redactNetworkRequestDetail, redactNetworkRequestMeta } from '@shared/agent-browser/network-context';
 import { truncateText } from '@shared/agent-browser/text';
 import { getOriginFromUrl, type ToolAuthorizationContext } from '@shared/agent-browser/tool-authorization';
+import {
+  agentBrowserProfilePartition,
+  agentBrowserRunArtifactDir,
+  agentBrowserScreenshotDir,
+  sanitizeAgentBrowserPathSegment,
+} from '@shared/agent-browser/filesystem-boundary';
 import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';
 import { BrowserControlActionExecutor } from './agent-browser/browser-control/actions';
 import { BoundaryChoiceToolExecutor } from './agent-browser/browser-control/boundary-choice-tool-executor';
@@ -209,8 +215,14 @@ function normalizeTimeoutMs(value: unknown): number | undefined {
 
 function normalizeProfile(value: unknown): string {
   if (typeof value !== 'string') return DEFAULT_PROFILE;
-  const normalized = value.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
-  return normalized || DEFAULT_PROFILE;
+  const normalized = value.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!normalized) return DEFAULT_PROFILE;
+  // Fail closed on residual path-like tokens after normalization.
+  try {
+    return sanitizeAgentBrowserPathSegment(normalized, 'profile');
+  } catch {
+    return DEFAULT_PROFILE;
+  }
 }
 
 function normalizeAuthStateName(value: unknown, profile: string): string | undefined {
@@ -629,7 +641,7 @@ export class AgentBrowserService {
         contextIsolation: true,
         javascript: true,
         nodeIntegration: false,
-        partition: `persist:agent-browser-${profile}`,
+        partition: agentBrowserProfilePartition(profile),
         sandbox: true,
       },
     });
@@ -1209,11 +1221,18 @@ export class AgentBrowserService {
     const fullAccessExecutor = new FullAccessToolExecutor(
       connection,
       networkRecorder,
-      () => ({
-        tabId: webContents.id,
-        origin: getOriginFromUrl(webContents.getURL()),
-        fullAccess: this.isFullAccess(record),
-      }),
+      () => {
+        this.refreshRuntimeModeExpiry(record);
+        const origin = getOriginFromUrl(webContents.getURL());
+        return {
+          tabId: webContents.id,
+          origin,
+          expectedTabId: webContents.id,
+          expectedOrigin: origin,
+          fullAccess: this.isFullAccess(record),
+          expiresAt: record.runtimeExpiresAt,
+        };
+      },
       () => this.revokeFullAccessRuntime(record),
     );
     const consoleRecorder = new BrowserConsoleRecorder(connection);
@@ -1497,7 +1516,8 @@ export class AgentBrowserService {
   }
 
   private runArtifactRootDir(runId: string): string {
-    return join(this.getUserDataPath(), 'agent-browser', 'run-artifacts', runId);
+    // P4-002 A3: refuse traversal/absolute runIds and stay under agent-browser root.
+    return agentBrowserRunArtifactDir(this.getUserDataPath(), runId);
   }
 
   private detectLoginState(params: {

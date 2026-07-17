@@ -18,6 +18,7 @@
 
 import type { BrowserWindow } from 'electron';
 import { isBrowserControlRestrictedUrl } from '@shared/agent-browser/browser-control';
+import { agentBrowserProfilePartition } from '@shared/agent-browser/filesystem-boundary';
 
 /**
  * BrowserWindow 的最小可用子集，与 agent-browser-service.ts 中的 AgentBrowserWindow 结构兼容。
@@ -183,7 +184,7 @@ export class AgentBrowserTabManager {
         contextIsolation: true,
         javascript: true,
         nodeIntegration: false,
-        partition: `persist:agent-browser-${this.profile}`,
+        partition: agentBrowserProfilePartition(this.profile),
         sandbox: true,
       },
     });
