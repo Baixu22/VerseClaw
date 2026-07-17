@@ -440,8 +440,8 @@
       "category": "REL",
       "severity": "Medium",
       "decision": "Attend",
-      "status": "Unverified",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-ISO-002"
       ],
@@ -451,7 +451,9 @@
       "tasks": [
         "P4-001",
         "P4-002"
-      ]
+      ],
+      "fixedBy": "P4-001",
+      "fixedAt": "2026-07-17"
     },
     {
       "id": "F-REL-004",

@@ -593,12 +593,23 @@ export type CodeReviewCreateTaskLedgerNodeResult = TaskLedgerSnapshotResult & {
   nodeId: string;
 };
 
-export type GatewayControlUiPayload = { view?: 'dreams' };
+export type GatewayControlUiPayload = {
+  view?: 'dreams';
+  /** When true (default), Main opens Control UI; token never returns to Renderer. */
+  open?: boolean;
+};
 export type GatewayControlUiResult = HostSuccess & {
+  /** @deprecated P4-001: never returned to Renderer (token-bearing URL stays in Main). */
   url?: string;
+  /** @deprecated P4-001: never returned to Renderer as plaintext. */
   token?: string;
   port?: number;
+  /** Whether Main successfully opened the system browser. */
+  opened?: boolean;
+  /** Whether a gateway token exists without revealing its value. */
+  hasToken?: boolean;
 };
+export type GatewayCopyTokenResult = HostSuccess;
 export type GatewayHealthPayload = { probe?: boolean };
 export type GatewayRpcPayload = {
   method: string;
@@ -4415,6 +4426,7 @@ export type HostApiContract = {
     restart: () => HostSuccess;
     health: (payload?: GatewayHealthPayload) => GatewayHealth;
     controlUi: (payload?: GatewayControlUiPayload) => GatewayControlUiResult;
+    copyGatewayToken: () => GatewayCopyTokenResult;
     rpc: (payload: GatewayRpcPayload) => unknown;
   };
   localControlPlane: {

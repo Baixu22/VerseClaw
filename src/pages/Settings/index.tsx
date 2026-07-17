@@ -110,9 +110,8 @@ const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
-  url: string;
-  token: string;
   port: number;
+  hasToken: boolean;
 };
 
 function preloadSettingsSection(section: SettingsSectionId) {
@@ -419,9 +418,13 @@ export function Settings() {
 
   const refreshControlUiInfo = async () => {
     try {
-      const result = await hostApi.gateway.controlUi();
-      if (result.success && result.url && result.token && typeof result.port === 'number') {
-        setControlUiInfo({ url: result.url, token: result.token, port: result.port });
+      // Meta-only: never request token plaintext into Renderer state.
+      const result = await hostApi.gateway.controlUi({ open: false });
+      if (result.success && typeof result.port === 'number') {
+        setControlUiInfo({
+          port: result.port,
+          hasToken: result.hasToken === true,
+        });
       }
     } catch {
       // Ignore refresh errors
@@ -531,9 +534,10 @@ export function Settings() {
   };
 
   const handleCopyGatewayToken = async () => {
-    if (!controlUiInfo?.token) return;
+    if (!controlUiInfo?.hasToken) return;
     try {
-      await navigator.clipboard.writeText(controlUiInfo.token);
+      // Main writes clipboard; Renderer never sees the secret.
+      await hostApi.gateway.copyGatewayToken();
       toast.success(t('developer.tokenCopied'));
     } catch (error) {
       toast.error(`Failed to copy token: ${String(error)}`);
@@ -2058,7 +2062,7 @@ export function Settings() {
                       <Input
                         data-testid="settings-developer-gateway-token"
                         readOnly
-                        value={controlUiInfo?.token || ''}
+                        value={controlUiInfo?.hasToken ? '••••••••••••••••' : ''}
                         placeholder={t('developer.tokenUnavailable')}
                         className="font-mono text-meta h-10 rounded-xl bg-black/5 dark:bg-white/5 border-transparent flex-1 min-w-[200px]"
                       />
@@ -2076,7 +2080,7 @@ export function Settings() {
                         type="button"
                         variant="outline"
                         onClick={handleCopyGatewayToken}
-                        disabled={!controlUiInfo?.token}
+                        disabled={!controlUiInfo?.hasToken}
                         className="rounded-xl h-10 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                       >
                         <Copy className="h-4 w-4 mr-2" />

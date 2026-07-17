@@ -376,10 +376,9 @@ export function Dreams() {
     setOpeningFullUi(true);
     setError(null);
     try {
-      const result = await hostApi.gateway.controlUi('dreams');
-      if (result.success && result.url) {
-        await window.electron.openExternal(result.url);
-      } else {
+      // P4-001: open in Main; no token/URL returned to Renderer.
+      const result = await hostApi.gateway.controlUi({ view: 'dreams', open: true });
+      if (!result.success || result.opened === false) {
         throw new Error(result.error || t('errors.openFullUi'));
       }
     } catch (err) {

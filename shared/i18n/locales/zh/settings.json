@@ -373,7 +373,7 @@
     "openConsole": "打开开发者控制台",
     "consoleNote": "使用注入的网关令牌打开控制台",
     "gatewayToken": "网关令牌",
-    "gatewayTokenDesc": "如果需要，将此粘贴到控制台设置中",
+    "gatewayTokenDesc": "令牌仅保存在 Main 进程。使用复制写入系统剪贴板，不会以明文返回到 Renderer。",
     "tokenUnavailable": "令牌不可用",
     "tokenCopied": "网关令牌已复制",
     "cli": "OpenClaw CLI",
@@ -467,7 +467,8 @@
         "request-only": "仅请求",
         "read-only": "只读说明"
       }
-    }
+    },
+    "tokenMasked": "令牌已加载（已掩码）"
   },
   "storage": {
     "title": "存储与内存",

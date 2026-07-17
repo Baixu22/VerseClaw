@@ -792,7 +792,13 @@ export const hostApi = {
     stop: () => invokeHost('gateway', 'stop'),
     restart: () => invokeHost('gateway', 'restart'),
     health: (probe = false) => invokeHost('gateway', 'health', { probe }),
-    controlUi: (view?: 'dreams') => invokeHost('gateway', 'controlUi', { view }),
+    controlUi: (viewOrPayload?: 'dreams' | { view?: 'dreams'; open?: boolean }) => {
+      const payload = typeof viewOrPayload === 'string'
+        ? { view: viewOrPayload }
+        : (viewOrPayload ?? {});
+      return invokeHost('gateway', 'controlUi', payload);
+    },
+    copyGatewayToken: () => invokeHost('gateway', 'copyGatewayToken'),
     rpc: <T = unknown>(method: string, params?: unknown, timeoutMs?: number, approvalId?: string) => (
       invokeHost('gateway', 'rpc', { method, params, timeoutMs, approvalId }) as Promise<T>
     ),

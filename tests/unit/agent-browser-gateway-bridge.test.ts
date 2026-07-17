@@ -11,8 +11,10 @@ describe('agent browser gateway bridge', () => {
       responses.push({ ok, payload, error });
     });
     const context = {
-      broadcast: vi.fn((event: string, payload: unknown) => {
+      broadcast: vi.fn(),
+      broadcastToConnIds: vi.fn((event: string, payload: unknown, connIds: ReadonlySet<string>) => {
         expect(event).toBe('agentBrowser.invoke.request');
+        expect(connIds).toEqual(new Set(['bridge-1']));
         broadcastPayload = payload as Record<string, unknown>;
         queueMicrotask(() => {
           void agentBrowserHandlers['agentBrowser.invoke.result']({
@@ -21,21 +23,45 @@ describe('agent browser gateway bridge', () => {
               ok: true,
               payload: { success: true, sessions: [] },
             },
+            client: {
+              connId: 'bridge-1',
+              connect: {
+                role: 'operator',
+                scopes: ['operator.admin'],
+                client: { id: 'gateway-client', mode: 'backend', version: '0.1.0', platform: 'test' },
+              },
+            },
             respond: vi.fn(),
+            context,
+            req: {} as never,
+            isWebchatConnect: () => false,
           } as never);
         });
       }),
+      getApprovalClientConnIds: () => new Set(['bridge-1']),
     };
 
     await agentBrowserHandlers['agentBrowser.invoke']({
       params: { action: 'status', payload: {} },
       respond,
       context,
+      client: {
+        connId: 'origin',
+        connect: {
+          role: 'operator',
+          scopes: ['operator.write'],
+          client: { id: 'cli', mode: 'cli', version: '1', platform: 'test' },
+        },
+      },
+      req: {} as never,
+      isWebchatConnect: () => false,
     } as never);
 
-    expect(context.broadcast).toHaveBeenCalledWith(
+    expect(context.broadcast).not.toHaveBeenCalled();
+    expect(context.broadcastToConnIds).toHaveBeenCalledWith(
       'agentBrowser.invoke.request',
       expect.objectContaining({ action: 'status', payload: {} }),
+      new Set(['bridge-1']),
       { dropIfSlow: false },
     );
     expect(responses).toEqual([
@@ -130,5 +156,4 @@ describe('agent browser gateway bridge', () => {
     });
     dispose();
   });
-
 });

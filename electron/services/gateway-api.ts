@@ -18,6 +18,8 @@ import type {
 import { PORTS } from '../utils/config';
 import { scheduleControlUiDeviceAutoApproval } from '../utils/control-ui-device-pairing';
 import { buildOpenClawControlUiUrl } from '../utils/openclaw-control-ui';
+import { openExternalSafe } from '../utils/safe-open-external';
+import { clipboard } from 'electron';
 import { getSetting } from '../utils/store';
 import { handleMockChatSend, handleMockSessionSend } from './mock-provider';
 import { isRecord } from './payload-utils';
@@ -364,14 +366,36 @@ export function createGatewayApi(
       return gatewayManager.checkHealth({ probe: body.probe === true });
     },
     controlUi: async (payload) => {
-      const body = isRecord(payload) ? payload as ControlUiPayload : {};
+      // P4-001 A2: never return gateway token (or token-bearing URL) to Renderer.
+      const body = isRecord(payload) ? payload as ControlUiPayload & { open?: unknown } : {};
       const status = gatewayManager.getStatus();
       const token = await getSetting('gatewayToken');
       const port = status.port || PORTS.OPENCLAW_GATEWAY;
       const view = body.view === 'dreams' ? 'dreams' : undefined;
-      const url = buildOpenClawControlUiUrl(port, token, { view });
+      const shouldOpen = body.open !== false;
       scheduleControlUiDeviceAutoApproval(gatewayManager);
-      return { success: true, url, token, port };
+      let opened = false;
+      if (shouldOpen) {
+        const url = buildOpenClawControlUiUrl(port, token, { view });
+        await openExternalSafe(url);
+        opened = true;
+      }
+      return {
+        success: true,
+        port,
+        opened,
+        hasToken: Boolean(typeof token === 'string' && token.trim()),
+      };
+    },
+    copyGatewayToken: async () => {
+      // Main-owned clipboard write — token never crosses the host-api response boundary.
+      const token = await getSetting('gatewayToken');
+      const trimmed = typeof token === 'string' ? token.trim() : '';
+      if (!trimmed) {
+        throw new Error('Gateway token unavailable');
+      }
+      clipboard.writeText(trimmed);
+      return { success: true };
     },
     rpc: async (payload) => {
       const body = isRecord(payload) ? payload as RpcPayload : {};
