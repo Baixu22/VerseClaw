@@ -18,6 +18,10 @@ import {
 import type { AgencyDraftRoleEntry } from '../../openclaw_runtime/src/agents/agency-draft-catalog';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import {
+  BUILT_IN_ROLE_NAMES as RUNTIME_BUILT_IN_ROLE_NAMES,
+  isBuiltInRoleName,
+} from '../../openclaw_runtime/src/agents/role-contract';
+import {
   createRolePromotionStore,
   type AnyStoredAgencyRolePromotionRecord,
   type LegacyStoredAgencyRolePromotionRecord,
@@ -56,16 +60,8 @@ type OpenClawConfigWithRoles = OpenClawConfig & {
 };
 
 const CONFIG_ROLE_NAME_PATTERN = /^[a-z][a-z0-9-]{1,63}$/;
-const BUILT_IN_ROLE_NAMES = new Set([
-  'architect',
-  'implementer',
-  'reviewer',
-  'tester',
-  'researcher',
-  'planner',
-  'documenter',
-  'devops',
-]);
+// P2-003 / F-AUTH-002: built-in role names are owned by runtime role-contract.ts
+const BUILT_IN_ROLE_NAMES = RUNTIME_BUILT_IN_ROLE_NAMES;
 
 function stringList(value: unknown): string[] {
   const raw = Array.isArray(value) ? value : [];
@@ -95,7 +91,7 @@ function validatePayload(payload: RoleUpsertConfigRolePayload): void {
   if (!CONFIG_ROLE_NAME_PATTERN.test(payload.name)) {
     throw new Error('Role name must match /^[a-z][a-z0-9-]{1,63}$/');
   }
-  if (BUILT_IN_ROLE_NAMES.has(payload.name)) {
+  if (isBuiltInRoleName(payload.name)) {
     throw new Error('Cannot overwrite built-in role');
   }
   if (!payload.displayName?.trim()) {
@@ -640,7 +636,7 @@ export function createRolesApi(): CompleteHostServiceRegistry['roles'] {
         };
       }
       if (
-        BUILT_IN_ROLE_NAMES.has(contract.name)
+        isBuiltInRoleName(contract.name)
         || (await hasConfigRoleName(contract.name)
           && !await hasEquivalentConfigRole(contract.name, digest))
       ) {

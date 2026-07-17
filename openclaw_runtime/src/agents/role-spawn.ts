@@ -20,7 +20,11 @@
 import { compileRoleContractToSoul, type RoleContract } from "./role-contract.js";
 import { roleEffortToThinking } from "./role-effort.js";
 import { resolveRoleContract, type RoleRegistryConfigCarrier } from "./role-registry.js";
-import { buildRolePermissionDenyPatches } from "./role-permissions-policy.js";
+import {
+  buildRolePermissionDenyPatches,
+  clampRolePermissionsToParent,
+  clampToolAllowlist,
+} from "./role-permissions-policy.js";
 import { buildRolePermissionDecisionEvents } from "./role-permission-audit.js";
 import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
 import { isInjectableMemoryCard } from "../memory/memory-card.js";
@@ -58,6 +62,8 @@ export type RoleSpawnContext = {
   workspaceDir?: string;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
+  /** Parent role contract used to hard-clamp child privileges (P2-003). */
+  parentRole?: RoleContract | null;
   permissionDecisionEvents?: PermissionDecisionEvent[];
   completionOwnerKey?: string;
 };
@@ -212,17 +218,21 @@ export function buildRoleSpawnContext(
   role: RoleContract,
   ctx: RoleSpawnContext,
 ): RoleSpawnContext {
-  // A non-empty allowlist is a true allowlist: any tool not listed is denied.
-  const allowlist = role.tools.length > 0 ? [...role.tools] : ctx.inheritedToolAllowlist;
+  // P2-003 / F-AUTH-002: child role privileges cannot exceed parent role/tool inheritance.
+  const effectiveRole = clampRolePermissionsToParent(role, ctx.parentRole ?? null);
+  const parentAllow = ctx.inheritedToolAllowlist;
+  const roleTools = effectiveRole.tools.length > 0 ? [...effectiveRole.tools] : undefined;
+  const allowlist = clampToolAllowlist(roleTools, parentAllow)
+    ?? (roleTools ?? parentAllow);
   // Build permission-derived deny lists (filesystem / network / commands).
-  const permissionPatches = buildRolePermissionDenyPatches(role, ctx.inheritedToolDenylist);
+  const permissionPatches = buildRolePermissionDenyPatches(effectiveRole, ctx.inheritedToolDenylist);
   const deniedTools = permissionPatches.inheritedToolDenylist ?? [];
   const permissionDecisionEvents = deniedTools.length > 0
     ? buildRolePermissionDecisionEvents({
-      roleName: role.name,
+      roleName: effectiveRole.name,
       deniedTools,
       requestId: ctx.agentSessionKey,
-      reason: `role permissions for ${role.name}`,
+      reason: `role permissions for ${effectiveRole.name}`,
     })
     : undefined;
   return {

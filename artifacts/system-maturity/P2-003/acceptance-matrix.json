@@ -1,0 +1,14 @@
+{
+  "A1": {
+    "status": "passed",
+    "proof": "read/write path matrix hard-enforced via isRolePathAllowed"
+  },
+  "A2": {
+    "status": "passed",
+    "proof": "child tools/fs/network/paths clamped under parent"
+  },
+  "A3": {
+    "status": "passed",
+    "proof": "Electron roles-api uses runtime BUILT_IN_ROLE_NAMES; knowledge-librarian restored to single registry"
+  }
+}

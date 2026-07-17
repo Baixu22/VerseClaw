@@ -224,8 +224,8 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-REL-004"
       ],
@@ -235,7 +235,10 @@
       ],
       "tasks": [
         "P2-003"
-      ]
+      ],
+      "updatedBy": "P2-003",
+      "updatedAt": "2026-07-17T05:56:28Z",
+      "notes": "P2-003: built-in role names single-sourced from role-contract; path hard gate; child spawn privilege clamp; knowledge-librarian restored to built-ins."
     },
     {
       "id": "F-AUTH-003",
