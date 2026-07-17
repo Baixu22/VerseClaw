@@ -1,5 +1,8 @@
 import { isPathInsideWorkspaceLexical, isResolvedPathInsideRoot } from './path-broker';
 import type { WorkspacePermissionMode, WorkspaceProfile } from '@shared/types/workspace';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
+
+export { DEFAULT_WORKSPACE_PERMISSION_MODE };
 
 export type WorkspaceCommandRisk = 'read' | 'write' | 'network' | 'destructive' | 'external-write';
 
@@ -220,7 +223,8 @@ export function decideWorkspaceFileWrite(
       reason: 'Writing outside the workspace requires approval',
     };
   }
-  return { allowed: true, risk: 'write' };
+  // acceptEdits: auto-accept in-workspace file edits only; high-risk shell/git remain gated elsewhere.
+  return { allowed: true, risk: 'write', reason: 'Accept-edits mode auto-accepts in-workspace file edits' };
 }
 
 export async function decideWorkspaceFileWriteResolved(

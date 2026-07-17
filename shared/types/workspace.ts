@@ -2,6 +2,24 @@ import type { WorkModeId } from './work-mode';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
 
+/** Safe default for new/untrusted workspaces and invalid/missing stored modes (P2-001 / F-AUTH-001). */
+export const DEFAULT_WORKSPACE_PERMISSION_MODE: WorkspacePermissionMode = 'readOnly';
+
+export const WORKSPACE_PERMISSION_MODES: readonly WorkspacePermissionMode[] = [
+  'readOnly',
+  'plan',
+  'acceptEdits',
+  'fullAccess',
+] as const;
+
+export function isWorkspacePermissionMode(value: unknown): value is WorkspacePermissionMode {
+  return typeof value === 'string' && (WORKSPACE_PERMISSION_MODES as readonly string[]).includes(value);
+}
+
+export function normalizeWorkspacePermissionMode(value: unknown): WorkspacePermissionMode {
+  return isWorkspacePermissionMode(value) ? value : DEFAULT_WORKSPACE_PERMISSION_MODE;
+}
+
 export type WorkspacePreviewMode = 'static' | 'devServer' | 'externalUrl';
 
 export type PermissionApprovalStatus = 'pending' | 'approved' | 'denied' | 'expired';

@@ -18,6 +18,12 @@ import type {
   WorkspaceUiState,
   SessionFolder,
 } from '@shared/types/workspace';
+import {
+  DEFAULT_WORKSPACE_PERMISSION_MODE,
+  normalizeWorkspacePermissionMode,
+} from '@shared/types/workspace';
+import { createPermissionDecisionEvent } from '@shared/product-semantics';
+import { recordPermissionDecisionEvent } from './permissions-api';
 
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
@@ -74,13 +80,7 @@ type WorkspaceFolderMoveSessionBody = {
 };
 
 const DEFAULT_SESSION_KEY = 'agent:main:main';
-const DEFAULT_PERMISSION_MODE: WorkspacePermissionMode = 'acceptEdits';
-const VALID_PERMISSION_MODES = new Set<WorkspacePermissionMode>([
-  'readOnly',
-  'acceptEdits',
-  'plan',
-  'fullAccess',
-]);
+const DEFAULT_PERMISSION_MODE: WorkspacePermissionMode = DEFAULT_WORKSPACE_PERMISSION_MODE;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let workspaceStoreInstance: any = null;
@@ -201,6 +201,7 @@ function normalizeWorkspaceProfile(profile: WorkspaceProfile): WorkspaceProfile 
     selectedAgentId,
     activeSessionKey: normalizedActiveSessionKey,
     agentBindings,
+    permissionMode: normalizePermissionMode(profile.permissionMode),
     state,
     sessionStates,
     sessionFolders,
@@ -241,10 +242,7 @@ function normalizeSessionFolderAssignments(
 }
 
 function normalizePermissionMode(value: unknown): WorkspacePermissionMode {
-  if (typeof value === 'string' && VALID_PERMISSION_MODES.has(value as WorkspacePermissionMode)) {
-    return value as WorkspacePermissionMode;
-  }
-  return DEFAULT_PERMISSION_MODE;
+  return normalizeWorkspacePermissionMode(value);
 }
 
 function normalizeUiState(value: unknown): WorkspaceUiState {
@@ -601,6 +599,17 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
         }
       } else if (permissionNowRestrictive && nextProfile.permissionMode !== current.permissionMode) {
         ctx.terminalManager?.unregisterWorkspace(id, 'permission-change');
+      }
+      if (nextProfile.permissionMode !== current.permissionMode) {
+        // P2-001 / F-AUTH-001: permission mode changes are visible and auditable.
+        void recordPermissionDecisionEvent(createPermissionDecisionEvent({
+          workspaceMode: nextProfile.permissionMode,
+          tool: 'workspaces.updatePermissionMode',
+          boundary: 'workspace-mode',
+          decision: 'allow',
+          reason: `permissionMode changed from ${current.permissionMode} to ${nextProfile.permissionMode}`,
+          requestId: `workspace-mode:${id}:${current.permissionMode}->${nextProfile.permissionMode}`,
+        })).catch(() => undefined);
       }
       if (document.activeWorkspaceId === id && nextProfile.permissionMode !== current.permissionMode) {
         await syncWorkspacePermissionBestEffort(ctx.gatewayManager);

@@ -2,12 +2,13 @@ import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config
 import { applyWorkspaceSandboxConfig } from '../utils/workspace-runtime-permissions';
 import { resolveActiveSandboxPolicyForMode } from './sandbox-api';
 import { getActiveWorkspaceProfile } from './workspaces-api';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 
 export async function syncActiveWorkspacePermissionToRuntime(
   _gatewayManager?: unknown,
 ): Promise<void> {
   const workspace = await getActiveWorkspaceProfile();
-  const permissionMode = workspace?.permissionMode ?? 'acceptEdits';
+  const permissionMode = workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE;
   const { policy } = await resolveActiveSandboxPolicyForMode(permissionMode);
   const config = await readOpenClawConfig() as Record<string, unknown>;
   const modified = applyWorkspaceSandboxConfig(

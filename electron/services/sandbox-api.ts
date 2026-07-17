@@ -5,6 +5,7 @@ import type {
   SandboxStatus,
 } from '@shared/types/sandbox';
 import type { WorkspacePermissionMode } from '@shared/types/workspace';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import {
   detectSandboxProviders as detectCachedSandboxProviders,
@@ -80,7 +81,7 @@ export async function resolveActiveSandboxPolicyForMode(permissionMode: Workspac
 
 export async function buildSandboxStatus(): Promise<SandboxStatus> {
   const workspace = await getActiveWorkspaceProfile();
-  const permissionMode = (workspace?.permissionMode ?? 'acceptEdits') as WorkspacePermissionMode;
+  const permissionMode = (workspace?.permissionMode ?? DEFAULT_WORKSPACE_PERMISSION_MODE) as WorkspacePermissionMode;
   const { providers, policy } = await resolveActiveSandboxPolicyForMode(permissionMode);
 
   return {

@@ -1,4 +1,5 @@
 import type { WorkspacePermissionMode } from '@shared/types/workspace';
+import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
 import type {
   SandboxExecPolicy,
   SandboxOpenClawConfig,
@@ -25,7 +26,7 @@ type SandboxStoreDocument = {
   }>;
 };
 
-const DEFAULT_MODE: WorkspacePermissionMode = 'acceptEdits';
+const DEFAULT_MODE: WorkspacePermissionMode = DEFAULT_WORKSPACE_PERMISSION_MODE;
 const DEFAULT_SANDBOX_PROVIDER: SandboxProviderId = 'policy-light';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

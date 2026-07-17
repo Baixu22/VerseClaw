@@ -500,6 +500,18 @@ async function enforcePermission(input: {
       requestHash,
       reason: 'Git write operation allowed in full-access workspace mode.',
     });
+  } else if (input.workspace.permissionMode === 'acceptEdits') {
+    // P2-001: keep acceptEdits write path explicit in the approval audit trail.
+    void recordPermissionAudit({
+      workspace: input.workspace,
+      source: 'git',
+      risk: 'write',
+      command: input.command,
+      cwd: input.workspace.rootPath,
+      paths: input.paths,
+      requestHash,
+      reason: 'Git write operation allowed under acceptEdits workspace mode.',
+    });
   }
   return null;
 }

@@ -205,15 +205,18 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
         "AC-09"
       ],
       "tasks": [
         "P2-001"
-      ]
+      ],
+      "updatedBy": "P2-001",
+      "updatedAt": "2026-07-17T05:42:38Z",
+      "notes": "P2-001: DEFAULT_WORKSPACE_PERMISSION_MODE=readOnly for new/missing/invalid modes; existing valid modes preserved (no silent loosen); mode changes audited via permission-decision boundary=workspace-mode; write decision helpers cover files/terminal/git/web-preview/gateway."
     },
     {
       "id": "F-AUTH-002",

@@ -146,8 +146,30 @@ describe('files api permission approval flow', () => {
       }),
     ]));
   });
-});
 
+  it('P2-001: readOnly default blocks files.writeText without silent acceptEdits', async () => {
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-ws-ro-'));
+    const filePath = join(workspaceDir, 'note.txt');
+    await writeFile(filePath, 'old', 'utf8');
+    activeWorkspace.profile = workspace(workspaceDir, 'readOnly');
+
+    const { createFilesApi } = await import('@electron/services/files-api');
+    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
+    const api = createFilesApi();
+
+    await expect(api.writeText({ path: filePath, content: 'new' })).resolves.toMatchObject({
+      ok: false,
+      error: 'permissionDenied',
+    });
+    await expect(listPermissionDecisionEvents(10)).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        workspaceMode: 'readOnly',
+        tool: 'files.writeText',
+        decision: 'deny',
+      }),
+    ]));
+  });
+});
 
 describe('files api read allowlist (P1-003)', () => {
   it('rejects arbitrary local path reads outside workspace and write roots', async () => {
