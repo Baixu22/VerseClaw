@@ -30,6 +30,51 @@ function generateToken(): string {
   return `verse-claw-${randomBytes(16).toString('hex')}`;
 }
 
+const GATEWAY_TOKEN_ENC_PREFIX = 'enc:safeStorage-v1:';
+
+type GatewayTokenCrypto = {
+  isEncryptionAvailable: () => boolean;
+  encryptString: (value: string) => Buffer;
+  decryptString: (value: Buffer) => string;
+};
+
+let gatewayTokenCrypto: GatewayTokenCrypto | null | undefined;
+
+async function resolveGatewayTokenCrypto(): Promise<GatewayTokenCrypto | null> {
+  if (gatewayTokenCrypto !== undefined) return gatewayTokenCrypto;
+  try {
+    const electron = await import('electron');
+    if (electron.safeStorage?.isEncryptionAvailable?.()) {
+      gatewayTokenCrypto = electron.safeStorage;
+      return gatewayTokenCrypto;
+    }
+  } catch {
+    // non-Electron contexts leave the token unsealed.
+  }
+  gatewayTokenCrypto = null;
+  return null;
+}
+
+function isEncryptedGatewayToken(value: string): boolean {
+  return typeof value === 'string' && value.startsWith(GATEWAY_TOKEN_ENC_PREFIX);
+}
+
+async function sealGatewayToken(plain: string): Promise<string> {
+  const crypto = await resolveGatewayTokenCrypto();
+  if (!crypto?.isEncryptionAvailable()) return plain;
+  return GATEWAY_TOKEN_ENC_PREFIX + crypto.encryptString(plain).toString('base64');
+}
+
+async function openGatewayToken(value: string): Promise<string> {
+  if (!isEncryptedGatewayToken(value)) return value;
+  const crypto = await resolveGatewayTokenCrypto();
+  if (!crypto?.isEncryptionAvailable()) {
+    throw new Error('Encrypted gateway token present but OS encryption is unavailable');
+  }
+  const b64 = value.slice(GATEWAY_TOKEN_ENC_PREFIX.length);
+  return crypto.decryptString(Buffer.from(b64, 'base64'));
+}
+
 /**
  * Application settings schema
  */

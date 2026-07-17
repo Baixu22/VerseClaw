@@ -1,0 +1,43 @@
+{
+  "task": "P1-001",
+  "generatedAt": "2026-07-17T04:27:32.775Z",
+  "acceptance": {
+    "A1": "no renderer getApiKey/getAccountApiKey",
+    "A2": "secret-store single source, no apiKeys dual-write",
+    "A3": "canary encrypted; unprotected path scan PASS"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/system-maturity/P1-001/canary-scan.json",
+      "sha256": "09a32355441d166c07cc8377e9188ff8b8e435c15f767c0de130f01147bda79f"
+    },
+    {
+      "path": "artifacts/system-maturity/P1-001/vitest.stdout.txt",
+      "sha256": "8ac5cc074e82c54bec72d3a281c3a374a6a568add99f442c536c6161cdc1dd43"
+    },
+    {
+      "path": "artifacts/system-maturity/P1-001/evidence-index.json",
+      "sha256": "d3d5449f9fcacf209012895f9ac1dce34d3126723e06f835df77d36397296e90"
+    },
+    {
+      "path": "electron/services/secrets/secret-store.ts",
+      "sha256": "717a43f06b9dc9da2bb5e36275a0f67e8a955ebb189e5b6fc2afdced309b866f"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "d4188bdddfbd35f8194445e2ab0c553d55e7028c3a0d4027d40801311dc7872f"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "c55cd0800c454f01c60d7c8062340a3c9c4124a5e2932c9bc3e5d7ae7071ff53"
+    },
+    {
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "4014f048d6e7acfc3d40501bf8fe5a85be50f170e66f85c2aa225792d869db97"
+    },
+    {
+      "path": "scripts/configure-deepseek-runtime.mjs",
+      "sha256": "463bdaab2823d7e24c0167a7c559a7f7b64bf68ac1fde4fc23b868eb5bef8930"
+    }
+  ]
+}

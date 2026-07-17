@@ -1,8 +1,8 @@
 {
   "phase": "phase1-direct-boundaries",
-  "phaseStatus": "planned",
+  "phaseStatus": "in_progress",
   "tasks": {
-    "P1-001": "todo",
+    "P1-001": "done",
     "P1-002": "todo",
     "P1-003": "todo",
     "P1-004": "todo"

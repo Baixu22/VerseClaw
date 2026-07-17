@@ -51,7 +51,12 @@ describe('configure-deepseek-runtime formal entry point', () => {
       expect(runtimeConfig.agents.defaults.model.primary).toBe('deepseek/deepseek-v4-flash');
       expect(runtimeConfig.agents.list[0].model.primary).toBe('deepseek/deepseek-v4-flash');
       expect(runtimeConfig.models.providers.deepseek.models[0].id).toBe('deepseek-v4-flash');
-      expect(providerStore.apiKeys.deepseek).toBe(fakeKey);
+      expect(providerStore.apiKeys?.deepseek).toBeUndefined();
+      expect(providerStore.providerSecrets.deepseek).toEqual({
+        type: 'api_key',
+        accountId: 'deepseek',
+        apiKey: fakeKey,
+      });
       expect(runtimeConfig.models.providers.deepseek.apiKey).toBe(fakeKey);
     } finally {
       await rm(appData, { recursive: true, force: true });

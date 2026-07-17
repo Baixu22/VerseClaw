@@ -23,6 +23,7 @@ import { getClawXProviderStore } from '../services/providers/store-instance';
 import {
   deleteProviderSecret,
   getProviderSecret,
+  listProviderSecretAccountIds,
   setProviderSecret,
 } from '../services/secrets/secret-store';
 import { getOpenClawProviderKeyForType } from './provider-keys';
@@ -35,10 +36,6 @@ import { getOpenClawProviderKeyForType } from './provider-keys';
 export async function storeApiKey(providerId: string, apiKey: string): Promise<boolean> {
   try {
     await ensureProviderStoreMigrated();
-    const s = await getClawXProviderStore();
-    const keys = (s.get('apiKeys') || {}) as Record<string, string>;
-    keys[providerId] = apiKey;
-    s.set('apiKeys', keys);
     await setProviderSecret({
       type: 'api_key',
       accountId: providerId,
@@ -64,10 +61,8 @@ export async function getApiKey(providerId: string): Promise<string | null> {
     if (secret?.type === 'local') {
       return secret.apiKey ?? null;
     }
-
-    const s = await getClawXProviderStore();
-    const keys = (s.get('apiKeys') || {}) as Record<string, string>;
-    return keys[providerId] || null;
+    // Main-only resolution via secret broker (migrates legacy apiKeys once).
+    return null;
   } catch (error) {
     console.error('Failed to retrieve API key:', error);
     return null;
@@ -80,10 +75,6 @@ export async function getApiKey(providerId: string): Promise<string | null> {
 export async function deleteApiKey(providerId: string): Promise<boolean> {
   try {
     await ensureProviderStoreMigrated();
-    const s = await getClawXProviderStore();
-    const keys = (s.get('apiKeys') || {}) as Record<string, string>;
-    delete keys[providerId];
-    s.set('apiKeys', keys);
     await deleteProviderSecret(providerId);
     return true;
   } catch (error) {
@@ -98,13 +89,10 @@ export async function deleteApiKey(providerId: string): Promise<boolean> {
 export async function hasApiKey(providerId: string): Promise<boolean> {
   await ensureProviderStoreMigrated();
   const secret = await getProviderSecret(providerId);
-  if (secret?.type === 'api_key') {
+  if (secret?.type === 'api_key' || secret?.type === 'local' || secret?.type === 'oauth') {
     return true;
   }
-
-  const s = await getClawXProviderStore();
-  const keys = (s.get('apiKeys') || {}) as Record<string, string>;
-  return providerId in keys;
+  return false;
 }
 
 /**
@@ -112,9 +100,7 @@ export async function hasApiKey(providerId: string): Promise<boolean> {
  */
 export async function listStoredKeyIds(): Promise<string[]> {
   await ensureProviderStoreMigrated();
-  const s = await getClawXProviderStore();
-  const keys = (s.get('apiKeys') || {}) as Record<string, string>;
-  return Object.keys(keys);
+  return listProviderSecretAccountIds();
 }
 
 // ==================== Provider Configuration ====================
