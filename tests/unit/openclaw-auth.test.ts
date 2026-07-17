@@ -726,7 +726,8 @@ describe('sanitizeOpenClawConfig', () => {
     const tools = config.tools as Record<string, unknown>;
     const exec = tools.exec as Record<string, unknown>;
     expect(exec.security).toBe('allowlist');
-    expect(exec.ask).toBe('on-miss');
+    // ask is re-synced from active workspace permission mode (default readOnly -> always).
+    expect(exec.ask).toBe('always');
   });
 
   it('removes missing external plugin ids from plugins.allow while preserving installed and configured plugins', async () => {
