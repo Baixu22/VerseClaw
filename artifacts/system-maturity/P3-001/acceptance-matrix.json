@@ -1,0 +1,32 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "canary does not appear in raw store",
+    "status": "passed",
+    "proof": [
+      "TrajectoryCapture + KnowledgeStore run sanitizeTrajectoryForPersistence before steps_json write",
+      "unit: sekb-trajectory-redaction-p3-001 A1 canary secrets absent from finished/stored JSON",
+      "unit: sekb.test.ts shadow path asserts rawSecret absent after finish_trajectory"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "redaction policy shared with logs/SEKB",
+    "status": "passed",
+    "proof": [
+      "trajectory-redaction imports redactSensitiveText/redactSecrets from openclaw_runtime/src/logging/redact.ts",
+      "unit: A2 task_intent equals logging redactSensitiveText output for same canary sample",
+      "sensitive-content-boundary sekb surface documents shared logging-redact policy"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "unclassified data defaults to quarantine",
+    "status": "passed",
+    "proof": [
+      "tool.* steps always quarantine input/output raw bodies; safe metadata keys may remain",
+      "classifySekbPayload returns unclassified for free-form blobs; sanitize quarantines non-safe classes",
+      "unit: A3 tool.call /etc/passwd body not in stored steps_json; steps.compressed safe metadata retained"
+    ]
+  }
+}

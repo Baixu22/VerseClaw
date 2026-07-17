@@ -31,6 +31,7 @@ import {
   type SekbBatchDistillationEvent,
   type SekbBatchDistillationFallbackReason,
 } from "./types.js";
+import { sanitizeTrajectoryForPersistence } from "./trajectory-redaction.js";
 
 type SekbDatabase = Pick<
   OpenClawStateKyselyDatabase,
@@ -252,6 +253,43 @@ export class KnowledgeStore {
     this.update_principle(id, { status: "archived" });
   }
 
+  /** Hard-delete a principle row (P3-004 session cascade). */
+  delete_principle(id: string): void {
+    runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      executeSqliteQuerySync(
+        database.db,
+        query.deleteFrom("sekb_principles").where("principle_id", "=", id),
+      );
+    }, this.#database);
+  }
+
+  /** Hard-delete a trajectory row (P3-004 session cascade / TTL). */
+  delete_trajectory(id: string): void {
+    runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      executeSqliteQuerySync(
+        database.db,
+        query.deleteFrom("sekb_trajectories").where("trajectory_id", "=", id),
+      );
+    }, this.#database);
+  }
+
+  /** Purge trajectories whose expires_at is in the past (P3-004 TTL). */
+  purge_expired_trajectories(now = this.#now()): string[] {
+    const expired = this.query_trajectories({}).filter((trajectory) => {
+      if (!trajectory.expires_at) return false;
+      const exp = Date.parse(trajectory.expires_at);
+      return Number.isFinite(exp) && exp <= now.getTime();
+    });
+    const deleted: string[] = [];
+    for (const trajectory of expired) {
+      this.delete_trajectory(trajectory.trajectory_id);
+      deleted.push(trajectory.trajectory_id);
+    }
+    return deleted;
+  }
+
   rebuild_index(): string {
     const active = this.query_principles({ status: "active" }).toSorted(compareIndexPrinciples);
     const header = `【知识库索引】共 ${active.length} 条原则（仅展示 active 状态）`;
@@ -445,20 +483,21 @@ export class KnowledgeStore {
 }
 
 function rowFromTrajectory(trajectory: Trajectory, updatedAtMs: number): SekbTrajectoryRow {
+  const safe = sanitizeTrajectoryForPersistence(trajectory);
   return {
-    trajectory_id: trajectory.trajectory_id,
-    created_at: trajectory.created_at,
-    task_intent: trajectory.task_intent,
-    task_type: normalizeTaskType(trajectory.task_type),
-    context_fingerprint_json: JSON.stringify(normalizeTags(trajectory.context_fingerprint)),
-    steps_json: JSON.stringify(trajectory.steps),
-    outcome: trajectory.outcome,
-    error_signature: trajectory.error_signature,
-    cost_json: JSON.stringify(trajectory.cost),
-    distilled: trajectory.distilled ? 1 : 0,
-    distilled_into_json: JSON.stringify(trajectory.distilled_into),
-    expires_at: trajectory.expires_at,
-    metadata_json: JSON.stringify(trajectory.metadata),
+    trajectory_id: safe.trajectory_id,
+    created_at: safe.created_at,
+    task_intent: safe.task_intent,
+    task_type: normalizeTaskType(safe.task_type),
+    context_fingerprint_json: JSON.stringify(normalizeTags(safe.context_fingerprint)),
+    steps_json: JSON.stringify(safe.steps),
+    outcome: safe.outcome,
+    error_signature: safe.error_signature,
+    cost_json: JSON.stringify(safe.cost),
+    distilled: safe.distilled ? 1 : 0,
+    distilled_into_json: JSON.stringify(safe.distilled_into),
+    expires_at: safe.expires_at,
+    metadata_json: JSON.stringify(safe.metadata),
     updated_at_ms: updatedAtMs,
   };
 }

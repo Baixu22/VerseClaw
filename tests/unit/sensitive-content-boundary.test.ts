@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 
 import {
   SENSITIVE_CONTENT_BOUNDARY_MATRIX,
@@ -33,6 +33,7 @@ describe('sensitive content boundary matrix', () => {
       'trace',
       'memory',
       'compaction',
+      'sekb',
       'modelEcho',
     ]);
 
@@ -55,7 +56,7 @@ describe('sensitive content boundary matrix', () => {
       relatedTaskIds: expect.arrayContaining(['P1-10', 'P1-14']),
     });
     expect(transcript?.safeClaim).toContain('redactTranscriptMessage');
-    expect(transcript?.noGuarantee).toContain('真实 chat 注入 E2E');
+    expect(transcript?.noGuarantee).toContain('鐪熷疄 chat 娉ㄥ叆 E2E');
     expect(transcript?.evidenceRefs).toEqual(expect.arrayContaining([
       'openclaw_runtime/src/agents/transcript-redact.ts',
       'openclaw_runtime/src/config/sessions/transcript-append.ts',

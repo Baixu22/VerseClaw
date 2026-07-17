@@ -1,0 +1,31 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "full-store canary search is zero after session cascade delete",
+    "status": "passed",
+    "proof": [
+      "executeSessionCascadeDelete removes SEKB principles/trajectories, memory cards, DCS journal ids for session",
+      "searchPlaintext(canary) empty after delete",
+      "unrelated session data retained"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "delete failures are retriable and visible",
+    "status": "passed",
+    "proof": [
+      "errors[].retryable === true on thrown deletePrinciple",
+      "report.success false and report.retryable true",
+      "partial removals still recorded in removed[]"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "derivative lineage is locatable",
+    "status": "passed",
+    "proof": [
+      "locateDerivativeLineage returns session/principle/trajectory chain",
+      "removed[].lineage present on cascade report"
+    ]
+  }
+}

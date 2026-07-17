@@ -1,0 +1,66 @@
+{
+  "taskId": "P3-001",
+  "generatedAt": "2026-07-17T07:05:59.085Z",
+  "files": [
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts",
+      "sha256": "df4022bbf8b26963cd14ad9ea1487c0c7f7eca8cc8ba79adf83f55aefaf023ce",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+      "sha256": "e41b5f4aee6ef7b5c2560a473c6c586780d4068882ba94064bd2773ed0d67485",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "f10babfc8e33d41cdfb0dda468cd222f60b3feb252a23e2e8907331022f15ddc",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/index.ts",
+      "sha256": "6a84a07cd6096d84c78753855346846153cd2c03ebe83e39d0f12b132b8aafac",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+      "sha256": "9a93a16db7451a61f15c374c6524dfc4a82a05eb79b809556304ce5259365109",
+      "exists": true
+    },
+    {
+      "path": "shared/sensitive-content-boundary.ts",
+      "sha256": "dc6fdf4a906383177b19569ad4d860bb60bf3e0c03e4b892aa7e7cb5949e12a1",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/sekb-trajectory-redaction-p3-001.test.ts",
+      "sha256": "8c8b527e6b72691aade6c559b8e6c0cec176f9104de9a1d1da921392c49b887f",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/sensitive-content-boundary.test.ts",
+      "sha256": "f272bf60ec10f47da2edd2f02fa6568bf058e85f199cff2d8d696d6cc524d094",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-001/vitest-host.stdout.txt",
+      "sha256": "c254712aa333d2c344f7a49721f8014f8c975bdbfa07861d92a74b0e986a919b",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt",
+      "sha256": "38610e439951443ea948a3b057d7125e1146247fcf41361881d15fc99905fb0e",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-001/acceptance-matrix.json",
+      "sha256": "da350bc7892db2355eca482106848b13726b69f47fb7a421e15c13f4c2803bdf",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-001/P3-001.delivery.md",
+      "sha256": "085b427b4111bbc65e57d7485918f1d301a084620e736619315903fbd7103fdd",
+      "exists": true
+    }
+  ]
+}

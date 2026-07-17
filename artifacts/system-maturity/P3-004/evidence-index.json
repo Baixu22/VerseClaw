@@ -1,0 +1,51 @@
+{
+  "taskId": "P3-004",
+  "generatedAt": "2026-07-17T07:51:49.551Z",
+  "files": [
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts",
+      "sha256": "a74db67ced3de031f416e492b3028054c661e66b8987312a64d5b406adad7524",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      "sha256": "16db63041878b03788ee5a5d352e457717f08446d8af5708916770647bdf3cf0",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/index.ts",
+      "sha256": "10c2b636595fb4f0fbadc0bf0b3f2121bcae907f1953575ca30aca1a1480def5",
+      "exists": true
+    },
+    {
+      "path": "electron/services/session-cascade-delete.ts",
+      "sha256": "fda33725131ef4609cc4c22c98e4f68920a0d63d65019ff3925946eedde1f72b",
+      "exists": true
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "054145bc954e5ad2066b5f7079ae9a203165a68a131e8548dc864fd8aec634d1",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/session-cascade-delete-p3-004.test.ts",
+      "sha256": "f1731db8a69bd96ff9dae6159bff2575ee3787b00c3ea48155aa50d91364fbfa",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-004/vitest-host.stdout.txt",
+      "sha256": "d4f15f259bdec14e112ccdb0f903640a283807cac4e6c9fe9c5b610c0aecbfee",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-004/acceptance-matrix.json",
+      "sha256": "feb98060e6f84896db62f04a2dca25beabec1d625b11999542b72d19da47a8a5",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-004/P3-004.delivery.md",
+      "sha256": "48d696e85ba014752e9270eed10f3f680bb313828d20bad0428a28a536271a9d",
+      "exists": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "taskId": "P3-003",
+  "generatedAt": "2026-07-17T07:36:46.899Z",
+  "files": [
+    {
+      "path": "openclaw_runtime/src/memory/memory-dual-gate.ts",
+      "sha256": "b8363d3d0a7c6e07d30d1bb4f17ec88f7fb5043c1da06f4766da8a34ef081693",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/memory/memory-store.ts",
+      "sha256": "24dbd7db456116de7b4d3080290e47961e3900b8d34bab1a3cee2fee3877b101",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/memory-dual-gate-p3-003.test.ts",
+      "sha256": "fa11756e6cb7578d8061d37c07e8dec69ec4b5632db955635ad8759a62719ab0",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-003/vitest-host.stdout.txt",
+      "sha256": "ab4377393e571914934f9099576dbcac1a1620e9551e87e17a3226164d33631f",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-003/acceptance-matrix.json",
+      "sha256": "40bc1053c099e13426489840cda60dd7b83da79166416d5014641e31f2736a38",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-003/P3-003.delivery.md",
+      "sha256": "4f0b4dab0470bce9ca44e1319e9440d402f0f4222435f4e5d0bd8790a4aa32ed",
+      "exists": true
+    }
+  ]
+}

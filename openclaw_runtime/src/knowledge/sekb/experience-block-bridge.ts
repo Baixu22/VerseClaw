@@ -3,6 +3,11 @@ import type {
   ContextBlockSink,
 } from "../../context-engine/block.js";
 import type { DistillationSuggestion, Principle } from "./types.js";
+import {
+  canEnterHighTrustContext,
+  type ConfirmIntegrityLevel,
+  type ConfirmProvenance,
+} from "./confirm-provenance.js";
 import { productizeExperienceShadow } from "./experience-shadow-product.js";
 
 /**
@@ -65,6 +70,9 @@ export interface HandleConfirmAndSaveParams {
   sessionId: string;
   contextBlockSink?: ContextBlockSink;
   now?: Date;
+  integrity?: ConfirmIntegrityLevel;
+  provenance?: ConfirmProvenance;
+  highTrustEligible?: boolean;
   /**
    * C7-2: optional experience shadow journal. Omitted / enabled:false = zero
    * shadow side effects (production default path unchanged).
@@ -106,13 +114,48 @@ export async function handleConfirmAndSave(
     sessionId: params.sessionId,
     now: params.now,
   });
+  const integrity = params.integrity ?? "confirmed";
+  const highTrust =
+    params.highTrustEligible === true ||
+    (params.provenance
+      ? canEnterHighTrustContext(params.provenance)
+      : false);
+  // A3: unknown / non-lineage content never gets high-trust always_on presence.
+  if (integrity === "high_trust" && !highTrust) {
+    return { accepted: false };
+  }
+  if (params.provenance && !params.sessionId?.trim()) {
+    return { accepted: false };
+  }
   const [result] = await params.contextBlockSink([
     {
-      block,
+      block: {
+        ...block,
+        // Never promote experience to always_on high-trust without eligibility.
+        presence: {
+          ...block.presence,
+          always_on: highTrust ? block.presence.always_on : false,
+          background: true,
+        },
+      },
       admission: {
         confirmed: true,
         confidence: params.suggestion.confidence,
         write_origin: "handler",
+        verification_status: integrity,
+        integrity,
+        session_id: params.sessionId,
+        provenance_source: params.provenance?.sourceSystem ?? "sekb",
+        high_trust_eligible: highTrust,
+      } as {
+        confirmed: boolean;
+        confidence: number;
+        write_origin: "handler";
+        verification_status: string;
+        integrity: ConfirmIntegrityLevel;
+        session_id: string;
+        provenance_source: string;
+        high_trust_eligible: boolean;
       },
     },
   ]);

@@ -1,0 +1,32 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "write gate independent from use gate",
+    "status": "passed",
+    "proof": [
+      "evaluateMemoryWriteGate ignores useEnabled",
+      "evaluateMemoryUseGate ignores writeEnabled",
+      "unit matrix writeOnly/useOnly"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "sensitive/poisoned content can be revoked",
+    "status": "passed",
+    "proof": [
+      "revokePoisonedMemory tombstones + poison labels",
+      "use gate denies poison/tombstone",
+      "filterCardsForModelInjection drops revoked"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "default off matches UI copy",
+    "status": "passed",
+    "proof": [
+      "DEFAULT_MEMORY_DUAL_GATE_CONFIG both false",
+      "COMPASS pre-reply/SSP default false",
+      "agents.json Role Memory is off / not injected copy"
+    ]
+  }
+}

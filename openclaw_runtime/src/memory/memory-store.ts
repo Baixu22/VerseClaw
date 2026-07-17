@@ -12,6 +12,11 @@ import { requireNodeSqlite } from "../infra/node-sqlite.js";
 import { resolveStateDir } from "../config/paths.js";
 import { redactSecrets } from "../logging/redact.js";
 import { normalizeMemoryProposal, reviewMemoryProposal } from "./gatekeeper.js";
+import {
+  filterCardsForModelInjection,
+  resolveMemoryDualGateConfig,
+  revokePoisonedMemory,
+} from "./memory-dual-gate.js";
 import { evaluateMemoryPolicy, evaluateRetentionCandidate, getMemoryPolicySnapshot, roleAppliesToCard } from "./memory-policy.js";
 import { buildContextPack } from "./context-pack.js";
 import type {
@@ -1602,14 +1607,41 @@ export function buildMemoryMergeDraft(params: {
   };
 }
 
+
+export function revokePoisonedMemoryCard(
+  id: string,
+  options?: { actor?: MemoryAuditActor; reason?: string },
+): MemoryCard | undefined {
+  const current = getMemoryCard(id);
+  if (!current) return undefined;
+  const revoked = revokePoisonedMemory(current, { reason: options?.reason });
+  storeMemoryCard(revoked, {
+    actor: options?.actor,
+    reason: options?.reason ?? "poison revoke (P3-003)",
+  });
+  insertAudit(
+    "tombstone",
+    id,
+    { poisonRevoked: true, reason: options?.reason ?? "poison revoke (P3-003)" },
+    options?.actor,
+    options?.reason ?? "poison revoke (P3-003)",
+  );
+  return revoked;
+}
+
 export function simulateMemoryInjection(params: {
   roleName: string;
   phase?: MemoryPhaseTag;
   task?: string;
   budget?: Partial<ContextPack["budget"]>;
+  dualGate?: Partial<import("./memory-dual-gate.js").MemoryDualGateConfig>;
 }): MemoryInjectionSimulation {
-  const memories = getMemoryCards({ roleName: params.roleName, status: "all" })
-    .filter((card) => card.status === "active" || card.status === "cold" || card.status === "archived" || card.status === "tombstone");
+  const dualGate = resolveMemoryDualGateConfig(params.dualGate ?? {});
+  const memories = filterCardsForModelInjection(
+    getMemoryCards({ roleName: params.roleName, status: "all" })
+      .filter((card) => card.status === "active" || card.status === "cold"),
+    dualGate,
+  );
   const openConflictRecords = listMemoryConflicts({ status: "open" });
   const pack = buildContextPack({
     memories,

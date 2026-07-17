@@ -1,0 +1,71 @@
+{
+  "taskId": "P3-002",
+  "generatedAt": "2026-07-17T07:25:20.572Z",
+  "files": [
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+      "sha256": "df3c57f2af9e74dd986c59d3e707121604b6d93cfbf24b293368aeb784cacc1f",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+      "sha256": "7c8a193fd158655b6264f227738cd3c7d78a0acc59b3e1e0456a2536016eb7ee",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+      "sha256": "0742e10405e9127c7dc000653eabd5354d7e37859ec8a490b168b71cd9dac805",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.test.ts",
+      "sha256": "01e891eb343292ddd3eeb641f1d609c0455e73d0169d0d0803f9436d3614eacc",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/index.ts",
+      "sha256": "db2dea849365c93a20bcae65c9b62fb392fc880751a32eb197c2abaf906a19e4",
+      "exists": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/block.ts",
+      "sha256": "d8e6dd6ee1d8d47b10bbe31f727674092418a553e22692b0ad78b790759f530f",
+      "exists": true
+    },
+    {
+      "path": "electron/services/knowledge-api.ts",
+      "sha256": "2fd002ad365ec811bf1164bd8e11540cefcf725e571936b22e5ac7279daa500c",
+      "exists": true
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "2ed6fd3e2efeba16fe7a50b5696d6c94bd6a20c3afe4261ac430d5b3f14b1c6a",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+      "sha256": "4b9e5fad939c79cc296be9d770550dc34b58a8b4afdd1be2d15f79477216206c",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-002/vitest-host.stdout.txt",
+      "sha256": "0f628f192383f9ebd8a6928124dbf6feed2eb1f88c2642cf731b2a1d20cf02e6",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt",
+      "sha256": "51f9eefdd027868c8db2262c15a8401675d722c3b0bd2bfada52e6ef798519c7",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-002/acceptance-matrix.json",
+      "sha256": "0637fcf225cd7359a32de7cb047e9cea10c64f552d5d55f382505013842bf2a9",
+      "exists": true
+    },
+    {
+      "path": "artifacts/system-maturity/P3-002/P3-002.delivery.md",
+      "sha256": "ed7b917f22e917899cfce2c555649892a88dbd25f406cf419186d3f389a0f7e1",
+      "exists": true
+    }
+  ]
+}
