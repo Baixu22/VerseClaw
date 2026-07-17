@@ -1,4 +1,4 @@
-export {
+﻿export {
   extractErrorSignature,
   extractErrorSignatureSync,
   rawErrorHash,
@@ -114,3 +114,46 @@ export type {
   TrajectoryStep,
 } from "./types.js";
 export { approxTokenCount, buildPrincipleFullContent, normalizeTags } from "./types.js";
+export {
+  classifySekbPayload,
+  isSekbQuarantinedPayload,
+  quarantineSekbPayload,
+  redactSekbValue,
+  sanitizeSekbStep,
+  sanitizeTrajectoryForPersistence,
+  sekbByteLength,
+  sekbContentFingerprint,
+  trajectoryContainsPlaintext,
+  SEKB_QUARANTINE_MARKER,
+  type SekbPayloadClassification,
+  type SekbQuarantinedPayload,
+} from "./trajectory-redaction.js";
+
+export {
+  assertConfirmSession,
+  buildConfirmProvenance,
+  canEnterHighTrustContext,
+  ConfirmProvenanceError,
+  normalizeConfirmIntegrityClaim,
+  normalizeConfirmSourceSystem,
+  resolveConfirmIntegrity,
+  type ConfirmIntegrityLevel,
+  type ConfirmProvenance,
+  type ConfirmProvenanceErrorCode,
+  type ConfirmSourceSystem,
+} from "./confirm-provenance.js";
+export type { ConfirmAndSaveOptions, ConfirmAndSaveResult } from "./distillation-tool.js";
+
+export {
+  collectSessionCascadeTargets,
+  createInMemoryCascadeStores,
+  createKnowledgeStoreCascadeAdapter,
+  executeSessionCascadeDelete,
+  locateDerivativeLineage,
+  purgeExpiredSekbTrajectories,
+  type CascadeError,
+  type CascadeTarget,
+  type CascadeTargetKind,
+  type SessionCascadeReport,
+  type SessionCascadeStores,
+} from "./session-cascade-delete.js";

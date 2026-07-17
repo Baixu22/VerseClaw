@@ -3014,12 +3014,37 @@ export type KnowledgeSekbBatchDistillSuggestResult = HostSuccess & {
 export type KnowledgeSekbConfirmPrinciplePayload = {
   suggestion: KnowledgeSekbDistillationSuggestion;
   edits?: Record<string, unknown> | null;
+  /** Required for P3-002 session lineage / DCS experience sink. */
+  sessionId?: string;
+  sourceSystem?: 'sekb' | 'ui-confirm' | 'batch-distiller' | 'unknown' | string;
+  integrityClaim?: 'advisory' | 'confirmed' | 'high_trust' | string;
+  /** When true, server rejects elevating summary-only text to high_trust. */
+  summaryOnly?: boolean;
+};
+
+export type KnowledgeSekbConfirmProvenance = {
+  schema: 'sekb-confirm-provenance.v1';
+  sessionId: string;
+  sourceSystem: string;
+  sourceTrajectoryIds: string[];
+  integrity: 'advisory' | 'confirmed' | 'high_trust';
+  confirmedAt: string;
+  revokeKey: string;
+  taskId: 'P3-002';
+  findingIds: Array<'F-DATA-002' | 'F-DATA-004'>;
+  summaryOnlyClaimDowngraded: boolean;
+  highTrustEligible: boolean;
 };
 
 export type KnowledgeSekbConfirmPrincipleResult = HostSuccess & {
   available: boolean;
-  reason?: 'runtimeUnavailable' | 'confirmFailed';
+  reason?: 'runtimeUnavailable' | 'confirmFailed' | 'missingSession';
   principleId?: string;
+  provenance?: KnowledgeSekbConfirmProvenance;
+  dcsWrite?: 'written' | 'skipped' | 'rejected' | 'not_attempted' | 'principle_only';
+  highTrustEligible?: boolean;
+  /** When true, only the SEKB principle was saved (no DCS experience record). */
+  principleOnly?: boolean;
 };
 
 export type KnowledgeSekbRejectSuggestionPayload = {

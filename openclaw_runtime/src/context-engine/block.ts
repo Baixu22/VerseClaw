@@ -90,6 +90,11 @@ export interface BlockAdmissionContext {
   audn_state?: string;
   hint_entities?: string[];
   write_origin?: "context_write" | "handler";
+  /** P3-002: resolved confirm integrity (never summary-elevated high_trust alone). */
+  integrity?: "advisory" | "confirmed" | "high_trust";
+  session_id?: string;
+  provenance_source?: string;
+  high_trust_eligible?: boolean;
 }
 
 export interface BlockWriteResult {

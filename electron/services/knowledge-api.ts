@@ -269,6 +269,52 @@ async function loadSekbRuntimeModule(): Promise<SekbRuntimeModule | null> {
   return import(pathToFileURL(entryPath).href) as Promise<SekbRuntimeModule>;
 }
 
+
+function createHostExperienceJournalSink(stateDir: string) {
+  return async (writes: readonly Array<{
+    block: Record<string, unknown>;
+    admission?: Record<string, unknown>;
+  }>) => {
+    const dir = join(stateDir, 'dcs-experience-journal');
+    await mkdir(dir, { recursive: true });
+    const results: Array<{ accepted: boolean; reason?: string }> = [];
+    for (const write of writes) {
+      const admission = write.admission ?? {};
+      const integrity = admission.integrity;
+      const source = admission.provenance_source;
+      const sessionId = typeof write.block.session_id === 'string' ? write.block.session_id : '';
+      if (integrity === 'high_trust' && (source === 'unknown' || !sessionId)) {
+        results.push({ accepted: false, reason: 'unknown_source_high_trust' });
+        continue;
+      }
+      if (!sessionId) {
+        results.push({ accepted: false, reason: 'missing_session' });
+        continue;
+      }
+      const blockId = typeof write.block.block_id === 'string' ? write.block.block_id : randomUUID();
+      const fileName = blockId.replace(/[:/\\]/g, '_') + '.json';
+      const filePath = join(dir, fileName);
+      await writeFile(
+        filePath,
+        JSON.stringify(
+          {
+            writtenAt: new Date().toISOString(),
+            taskId: 'P3-002',
+            findingIds: ['F-DATA-002', 'F-DATA-004'],
+            block: write.block,
+            admission,
+          },
+          null,
+          2,
+        ),
+        'utf8',
+      );
+      results.push({ accepted: true });
+    }
+    return results;
+  };
+}
+
 function createHostSekbStore(sekb: SekbRuntimeModule) {
   const stateDir = resolveHostOpenClawStateDir();
   return new sekb.KnowledgeStore({
@@ -3930,20 +3976,69 @@ export function createKnowledgeApi({
       }
       try {
         const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+        const sessionId =
+          typeof body.sessionId === 'string'
+            ? body.sessionId.trim()
+            : typeof payload?.sessionId === 'string'
+              ? payload.sessionId.trim()
+              : '';
+        if (!sessionId) {
+          return {
+            success: false,
+            available: true,
+            reason: 'missingSession',
+            error: 'sessionId is required to confirm a principle with DCS provenance (P3-002).',
+            dcsWrite: 'not_attempted',
+            principleOnly: true,
+          };
+        }
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
-        const principleId = distiller.confirm_and_save(body.suggestion, body.edits ?? null);
+        const stateDir = resolveHostOpenClawStateDir();
+        const sink = createHostExperienceJournalSink(stateDir);
+        const lineage =
+          typeof distiller.confirm_and_save_with_lineage === 'function'
+            ? await distiller.confirm_and_save_with_lineage(body.suggestion, body.edits ?? null, {
+                sessionId,
+                requireSession: true,
+                sourceSystem: body.sourceSystem ?? payload.sourceSystem ?? 'ui-confirm',
+                integrityClaim: body.integrityClaim ?? payload.integrityClaim ?? 'confirmed',
+                summaryOnly: body.summaryOnly === true || payload.summaryOnly === true,
+                contextBlockSink: sink,
+              })
+            : {
+                principleId: distiller.confirm_and_save(body.suggestion, body.edits ?? null, {
+                  sessionId,
+                  requireSession: true,
+                  sourceSystem: body.sourceSystem ?? 'ui-confirm',
+                  contextBlockSink: sink,
+                }),
+                provenance: undefined,
+                dcsWrite: 'skipped' as const,
+                highTrustEligible: false,
+              };
+        const dcsWrite = lineage.dcsWrite === 'written' ? 'written' : lineage.dcsWrite === 'rejected' ? 'rejected' : 'principle_only';
         return {
           success: true,
           available: true,
-          principleId,
+          principleId: lineage.principleId,
+          provenance: lineage.provenance,
+          dcsWrite,
+          highTrustEligible: lineage.highTrustEligible,
+          principleOnly: dcsWrite !== 'written',
         };
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const missingSession =
+          /sessionId/i.test(message) ||
+          (error && typeof error === 'object' && (error as { code?: string }).code === 'missing_session');
         return {
           success: false,
-          available: false,
-          reason: 'confirmFailed',
-          error: error instanceof Error ? error.message : String(error),
+          available: missingSession ? true : false,
+          reason: missingSession ? 'missingSession' : 'confirmFailed',
+          error: message,
+          dcsWrite: 'not_attempted',
+          principleOnly: true,
         };
       }
     },

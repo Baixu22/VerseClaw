@@ -1,7 +1,8 @@
-import { randomUUID } from "node:crypto";
+﻿import { randomUUID } from "node:crypto";
 import { extractErrorSignatureSync, type ErrorSignatureExtractor } from "./error-signature.js";
 import type { KnowledgeStore } from "./knowledge-store.js";
 import { attachSekbShadowMetadata, evaluateTrajectoryShadowV1 } from "./shadow-evaluator.js";
+import { sanitizeTrajectoryForPersistence } from "./trajectory-redaction.js";
 import { normalizeTags, type Trajectory, type TrajectoryOutcome, type TrajectoryStep } from "./types.js";
 
 export type TrajectoryCaptureOptions = {
@@ -105,9 +106,10 @@ export class TrajectoryCapture {
         evaluateTrajectoryShadowV1(trajectory, priorMatchingErrorSignatureCount),
       );
     }
-    this.#store.save_trajectory(trajectory);
+    const sanitized = sanitizeTrajectoryForPersistence(trajectory);
+    this.#store.save_trajectory(sanitized);
     this.#active.delete(trajectory_id);
-    return trajectory;
+    return sanitized;
   }
 
   extract_error_signature(raw_error: string): string {

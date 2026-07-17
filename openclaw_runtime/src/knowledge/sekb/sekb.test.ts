@@ -105,8 +105,21 @@ describe("SEKB-MVP", () => {
     on.log_step(onId, "tool.result", { token: rawSecret }, { isError: false, content: rawSecret });
     const onTrajectory = on.finish_trajectory(onId, "success");
 
-    expect(offTrajectory.metadata).toEqual({});
+    expect(offTrajectory.metadata).toMatchObject({
+      sekbPersistence: {
+        redacted: true,
+        policy: "logging-redact+quarantine",
+        taskId: "P3-001",
+      },
+    });
+    expect(JSON.stringify(offTrajectory)).not.toContain(rawSecret);
+    expect(JSON.stringify(onTrajectory)).not.toContain(rawSecret);
     expect(onTrajectory.metadata).toMatchObject({
+      sekbPersistence: {
+        redacted: true,
+        policy: "logging-redact+quarantine",
+        taskId: "P3-001",
+      },
       sekbShadow: {
         captureQuality: { schema: "sekb-capture-quality-shadow.v1" },
         completionEvidence: { schema: "sekb-completion-evidence.v1" },

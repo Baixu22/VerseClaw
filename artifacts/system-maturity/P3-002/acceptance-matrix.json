@@ -1,0 +1,31 @@
+{
+  "A1": {
+    "id": "A1",
+    "statement": "confirm does not drop session/provenance",
+    "status": "passed",
+    "proof": [
+      "confirm_and_save_with_lineage requires sessionId and stores confirmProvenance",
+      "host sekbConfirmPrinciple rejects missing session",
+      "unit: sekb-confirm-provenance-p3-002 A1"
+    ]
+  },
+  "A2": {
+    "id": "A2",
+    "statement": "summary does not auto-elevate integrity",
+    "status": "passed",
+    "proof": [
+      "resolveConfirmIntegrity downgrades summaryOnly high_trust",
+      "unit: A2"
+    ]
+  },
+  "A3": {
+    "id": "A3",
+    "statement": "unknown-source content cannot enter high-trust context",
+    "status": "passed",
+    "proof": [
+      "unknown source capped to advisory",
+      "handleConfirmAndSave rejects ineligible high_trust",
+      "unit: A3"
+    ]
+  }
+}

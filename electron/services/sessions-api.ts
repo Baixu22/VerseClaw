@@ -992,6 +992,18 @@ async function deleteSession(sessionKey: string): Promise<{ success: boolean; er
     logger.warn(`[session:delete] Failed to unlink ${failedPath}: ${String(error)}`);
   }
   logger.info(`[session:delete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
+  // P3-004: cascade SEKB / memory / DCS journal derivatives (best-effort, retriable report).
+  try {
+    const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
+    const cascade = await runHostSessionDerivativeCascade(sessionKey, baseId);
+    if (!cascade.success) {
+      logger.warn(`[session:delete] derivative cascade incomplete retryable=${cascade.retryable} errors=${cascade.errors.length}`);
+    } else {
+      logger.info(`[session:delete] derivative cascade removed ${cascade.removed.length} item(s)`);
+    }
+  } catch (error) {
+    logger.warn(`[session:delete] derivative cascade failed: ${String(error)}`);
+  }
   const archiveCleanup = await cleanupContextArchiveArtifacts({
     sessionIds: [baseId],
   });

@@ -1,10 +1,11 @@
-export type SensitiveContentSurface =
+﻿export type SensitiveContentSurface =
   | 'file'
   | 'transcript'
   | 'trace'
   | 'memory'
   | 'compaction'
-  | 'modelEcho';
+  | 'modelEcho'
+  | 'sekb'
 
 export type SensitiveContentGuaranteeLevel =
   | 'raw-no-redaction'
@@ -48,7 +49,7 @@ export const SENSITIVE_CONTENT_BOUNDARY_MATRIX = [
     label: 'Session transcripts',
     guaranteeLevel: 'local-policy',
     safeClaim: 'Session transcript persistence calls redactTranscriptMessage before append/write, and the local policy redacts fake key-shaped text unless logging.redactSensitive is off.',
-    noGuarantee: 'This is not 真实 chat 注入 E2E proof, and config/off or uncovered payload shapes can still leave raw transcript plaintext.',
+    noGuarantee: 'This is not 鐪熷疄 chat 娉ㄥ叆 E2E proof, and config/off or uncovered payload shapes can still leave raw transcript plaintext.',
     evidenceRefs: [
       'openclaw_runtime/src/agents/transcript-redact.ts',
       'openclaw_runtime/src/config/sessions/transcript.ts',
@@ -109,6 +110,23 @@ export const SENSITIVE_CONTENT_BOUNDARY_MATRIX = [
     ],
     relatedTaskIds: ['P1-12', 'P1-14'],
     rawPlaintextRisk: true,
+    fullPlaintextFreeGuarantee: false,
+  },
+    {
+    surface: 'sekb',
+    label: 'SEKB trajectories and steps_json',
+    guaranteeLevel: 'redacted-projection',
+    safeClaim: 'SEKB trajectory persistence runs sanitizeTrajectoryForPersistence before steps_json write: shared logging redaction plus default quarantine for unclassified tool input/output (P3-001).',
+    noGuarantee: 'This is SEKB store projection evidence, not a guarantee for provider payloads, model echoes, or pre-capture in-memory steps.',
+    evidenceRefs: [
+      'openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts',
+      'openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts',
+      'openclaw_runtime/src/knowledge/sekb/knowledge-store.ts',
+      'openclaw_runtime/src/logging/redact.ts',
+      'tests/unit/sekb-trajectory-redaction-p3-001.test.ts',
+    ],
+    relatedTaskIds: ['P3-001', 'P1-14'],
+    rawPlaintextRisk: false,
     fullPlaintextFreeGuarantee: false,
   },
   {

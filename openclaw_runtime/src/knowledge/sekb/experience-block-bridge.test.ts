@@ -183,10 +183,11 @@ describe("DCS Stage 5 experience-block-bridge", () => {
       }>;
       expect(writeArg[0].block.block_type).toBe("experience");
       expect(writeArg[0].block.source_system).toBe("sekb");
-      expect(writeArg[0].admission).toEqual({
+      expect(writeArg[0].admission).toMatchObject({
         confirmed: true,
         confidence: 0.85,
         write_origin: "handler",
+        verification_status: "confirmed",
       });
     });
 
@@ -320,10 +321,11 @@ describe("DCS Stage 5 experience-block-bridge", () => {
       expect(writeArg[0].block.block_type).toBe("experience");
       expect(writeArg[0].block.source_system).toBe("sekb");
       expect(writeArg[0].block.session_id).toBe("session-integ");
-      expect(writeArg[0].admission).toEqual({
+      expect(writeArg[0].admission).toMatchObject({
         confirmed: true,
         confidence: 0.9,
         write_origin: "handler",
+        verification_status: "confirmed",
       });
     });
 

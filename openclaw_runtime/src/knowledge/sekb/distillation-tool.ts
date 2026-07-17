@@ -1,5 +1,15 @@
 import { randomUUID } from "node:crypto";
 import type { ContextBlockSink } from "../../context-engine/block.js";
+import {
+  assertConfirmSession,
+  buildConfirmProvenance,
+  canEnterHighTrustContext,
+  normalizeConfirmSourceSystem,
+  resolveConfirmIntegrity,
+  type ConfirmIntegrityLevel,
+  type ConfirmProvenance,
+  type ConfirmSourceSystem,
+} from "./confirm-provenance.js";
 import { handleConfirmAndSave } from "./experience-block-bridge.js";
 import {
   getSekbBatchSuggestionProvenance,
@@ -23,12 +33,33 @@ export type DistillationToolOptions = {
 export type ConfirmAndSaveOptions = {
   contextBlockSink?: ContextBlockSink;
   sessionId?: string;
+  /** Origin of the confirm action (unknown is capped to advisory integrity). */
+  sourceSystem?: ConfirmSourceSystem | string;
+  /** Client integrity claim; server resolves and may downgrade. */
+  integrityClaim?: ConfirmIntegrityLevel | string;
+  /**
+   * When true, client attempted to elevate trust from summary text alone.
+   * Summary-only claims cannot become high_trust (P3-002 A2).
+   */
+  summaryOnly?: boolean;
+  /**
+   * When true (host UI path), missing sessionId throws ConfirmProvenanceError.
+   * Defaults false for internal SEKB unit callers that only persist principles.
+   */
+  requireSession?: boolean;
   /** C7-2: opt-in experience shadow journal (default off / omitted). */
   experienceShadow?: {
     workspaceRoot: string;
     enabled: boolean;
     dualWrite?: boolean;
   };
+};
+
+export type ConfirmAndSaveResult = {
+  principleId: string;
+  provenance?: ConfirmProvenance;
+  dcsWrite: "written" | "skipped" | "rejected" | "not_attempted";
+  highTrustEligible: boolean;
 };
 
 /** Manual SEKB distillation flow: suggestions are advisory until confirmed. */
@@ -85,6 +116,17 @@ export class DistillationTool {
   ): string {
     const now = this.#now();
     const sourceIds = [...new Set(suggestion.source_trajectory_ids)].toSorted();
+    const sessionId = assertConfirmSession(options.sessionId, {
+      requireSession: options.requireSession === true,
+    });
+    const sourceSystem = normalizeConfirmSourceSystem(options.sourceSystem ?? "sekb");
+    const integrityResolution = resolveConfirmIntegrity({
+      claimed: options.integrityClaim ?? "confirmed",
+      sourceSystem,
+      sessionId,
+      sourceTrajectoryIds: sourceIds,
+      summaryOnly: options.summaryOnly === true,
+    });
     const suggested = { ...suggestion.suggested_principle, ...edits };
     const condition = nonEmpty(suggested.condition) ?? "When a matching historical trajectory exists";
     const action = nonEmpty(suggested.action) ?? "Review the captured trajectory before continuing";
@@ -115,6 +157,25 @@ export class DistillationTool {
         cluster_summary: suggestion.cluster_summary,
       },
     };
+    // Attach provenance before first save when session lineage is present.
+    if (sessionId) {
+      const provisionalId = principle.principle_id;
+      principle.metadata = {
+        ...principle.metadata,
+        confirmProvenance: buildConfirmProvenance({
+          sessionId,
+          sourceSystem,
+          sourceTrajectoryIds: sourceIds,
+          integrity: integrityResolution.integrity,
+          confirmedAt: now.toISOString(),
+          principleId: provisionalId,
+          summaryOnlyClaimDowngraded: integrityResolution.summaryOnlyClaimDowngraded,
+          highTrustEligible: integrityResolution.highTrustEligible,
+        }),
+        confirmIntegrity: integrityResolution.integrity,
+        confirmIntegrityReasons: integrityResolution.reasons,
+      };
+    }
     const principleId = this.#store.save_principle(principle);
     const expiresAt = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1_000).toISOString();
     for (const trajectoryId of sourceIds) {
@@ -142,13 +203,17 @@ export class DistillationTool {
     // only confirm_and_save (here) writes experience Blocks.
     // Production BlockStore write when sink+session present (unchanged).
     // C7-2 experience shadow is opt-in only via options.experienceShadow.enabled.
-    if ((options.contextBlockSink && options.sessionId) || (options.experienceShadow?.enabled && options.sessionId)) {
+    if ((options.contextBlockSink && sessionId) || (options.experienceShadow?.enabled && sessionId)) {
+      const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
       void handleConfirmAndSave({
         principle,
         suggestion,
-        sessionId: options.sessionId!,
+        sessionId: sessionId!,
         contextBlockSink: options.contextBlockSink,
         now,
+        integrity: integrityResolution.integrity,
+        provenance,
+        highTrustEligible: integrityResolution.highTrustEligible,
         ...(options.experienceShadow ? { experienceShadow: options.experienceShadow } : {}),
       }).catch(() => {
         // Best-effort: sink/shadow failure does not block the SEKB save.
@@ -156,6 +221,60 @@ export class DistillationTool {
     }
 
     return principleId;
+  }
+
+  /**
+   * Strict confirm path for host UI: requires session, returns provenance + DCS write status.
+   */
+  async confirm_and_save_with_lineage(
+    suggestion: DistillationSuggestion,
+    edits: Partial<Principle> | null = null,
+    options: ConfirmAndSaveOptions = {},
+  ): Promise<ConfirmAndSaveResult> {
+    const sessionId = assertConfirmSession(options.sessionId, { requireSession: true });
+    const principleId = this.confirm_and_save(suggestion, edits, {
+      ...options,
+      sessionId,
+      requireSession: true,
+      sourceSystem: options.sourceSystem ?? "ui-confirm",
+    });
+    const principle = this.#store.get_principle(principleId);
+    const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
+    let dcsWrite: ConfirmAndSaveResult["dcsWrite"] = "not_attempted";
+    if (options.contextBlockSink && sessionId) {
+      try {
+        const result = await handleConfirmAndSave({
+          principle,
+          suggestion,
+          sessionId,
+          contextBlockSink: options.contextBlockSink,
+          integrity:
+            (principle.metadata.confirmIntegrity as ConfirmIntegrityLevel | undefined) ?? "confirmed",
+          provenance,
+          highTrustEligible: canEnterHighTrustContext(
+            provenance ?? {
+              integrity: "advisory",
+              sourceSystem: "unknown",
+              sessionId,
+              sourceTrajectoryIds: [],
+            },
+          ),
+          ...(options.experienceShadow ? { experienceShadow: options.experienceShadow } : {}),
+        });
+        if (!result) dcsWrite = "skipped";
+        else dcsWrite = result.accepted ? "written" : "rejected";
+      } catch {
+        dcsWrite = "skipped";
+      }
+    } else {
+      dcsWrite = "skipped";
+    }
+    return {
+      principleId,
+      provenance,
+      dcsWrite,
+      highTrustEligible: Boolean(provenance?.highTrustEligible),
+    };
   }
 
   reject_suggestion(suggestion: DistillationSuggestion, reason: string): void {
