@@ -1,7 +1,7 @@
 # DCS Production P0 Runbook (opt-in)
 
-**Mode**: conservative production packaging (`productionMode: opt-in`)  
-**Default flag graduation**: **false** (do not flip defaults for demos)  
+**Mode**: conservative production packaging (`productionMode: opt-in`)
+**Default flag graduation**: **false** (do not flip defaults for demos)
 **Authority**: Round ACCEPT `accept-with-residuals` on tip including C4 `writeFileSync` fix
 
 ## Safe defaults (must remain)
@@ -29,7 +29,7 @@
 6. **Context ladder (C6)** — call `applyContextLadder({ blocks, tokenBudget })` from library code; no assembler flip.
 7. **Shadows (C7)** — set `routingMemo.shadow` / `sekb.experienceShadow` true for dual-write sampling only.
 
-Config surface dump: `artifacts/coding-prod-p0/config-surface.json`  
+Config surface dump: `artifacts/coding-prod-p0/config-surface.json`
 In-app: Settings → Developer → DCS Production Flags (read-only catalog)
 
 ## Kill-switch / failure close order

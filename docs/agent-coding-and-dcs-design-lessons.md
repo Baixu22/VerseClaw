@@ -1,7 +1,7 @@
 # ClawX Agent Coding 与 DCS 设计吸收调研
 
-> 调研对象：Grok Build、Codex CLI、Gemini CLI、Letta legacy server（DCS 专项）  
-> 调研日期：2026-07-16  
+> 调研对象：Grok Build、Codex CLI、Gemini CLI、Letta legacy server（DCS 专项）
+> 调研日期：2026-07-16
 > 目标：识别 ClawX 可直接吸收的优秀设计，并形成不重复建设现有 Runtime 的落地路线。
 
 ## 1. 执行摘要
