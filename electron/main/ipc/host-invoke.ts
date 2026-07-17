@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 import {
   type HostApiContribution,
   type HostResponse,
@@ -6,10 +6,23 @@ import {
   type RuntimeHostAction,
   isHostRequest,
 } from './host-contract';
+import {
+  assertAuthorizedHostSender,
+  sanitizeHostErrorMessage,
+  validateHostPayload,
+  type HostSenderAuthorization,
+  type IpcEventLike,
+} from './host-invoke-security';
 
 type RegisteredHostAction = {
   action: RuntimeHostAction;
   ownerId: string;
+};
+
+export type HostInvokeDispatcherOptions = {
+  senderAuth?: HostSenderAuthorization;
+  /** When true, require an IPC event with authorized sender (production default). */
+  requireSender?: boolean;
 };
 
 function assertValidContributionKey(kind: 'module' | 'action', value: string): void {
@@ -85,18 +98,55 @@ function toHostApiRegistry(registryOrServices: HostApiRegistry | HostServiceRegi
   return registry;
 }
 
-export function createHostInvokeDispatcher(registryOrServices: HostApiRegistry | HostServiceRegistry) {
+export function createHostInvokeDispatcher(
+  registryOrServices: HostApiRegistry | HostServiceRegistry,
+  options: HostInvokeDispatcherOptions = {},
+) {
   const registry = toHostApiRegistry(registryOrServices);
-  return async function dispatchHostRequest(request: unknown): Promise<HostResponse> {
+  return async function dispatchHostRequest(
+    request: unknown,
+    event?: IpcEventLike,
+  ): Promise<HostResponse> {
     const requestId = request && typeof request === 'object'
       ? String((request as Record<string, unknown>).id ?? '')
       : undefined;
+
+    if (options.requireSender || options.senderAuth) {
+      const senderFailure = assertAuthorizedHostSender(event, options.senderAuth);
+      if (senderFailure) {
+        return {
+          id: requestId,
+          ok: false,
+          error: { code: 'VALIDATION', message: senderFailure.message },
+        };
+      }
+    }
 
     if (!isHostRequest(request)) {
       return {
         id: requestId,
         ok: false,
         error: { code: 'VALIDATION', message: 'Invalid host request format' },
+      };
+    }
+
+    // Reject polluted request shells (module/action only; payload checked next).
+    if (Object.prototype.hasOwnProperty.call(request, '__proto__')
+      || Object.prototype.hasOwnProperty.call(request, 'constructor')
+      || Object.prototype.hasOwnProperty.call(request, 'prototype')) {
+      return {
+        id: request.id,
+        ok: false,
+        error: { code: 'VALIDATION', message: 'Host request contains dangerous keys' },
+      };
+    }
+
+    const payloadFailure = validateHostPayload(request.payload);
+    if (payloadFailure) {
+      return {
+        id: request.id,
+        ok: false,
+        error: { code: 'VALIDATION', message: payloadFailure.message },
       };
     }
 
@@ -116,19 +166,28 @@ export function createHostInvokeDispatcher(registryOrServices: HostApiRegistry |
       const data = await action(request.payload);
       return { id: request.id, ok: true, data };
     } catch (error) {
+      const rawMessage = error instanceof Error ? error.message : String(error);
       return {
         id: request.id,
         ok: false,
         error: {
           code: 'INTERNAL',
-          message: error instanceof Error ? error.message : String(error),
+          message: sanitizeHostErrorMessage(rawMessage),
         },
       };
     }
   };
 }
 
-export function registerHostInvokeHandler(registry: HostApiRegistry): void {
-  const dispatch = createHostInvokeDispatcher(registry);
-  ipcMain.handle('host:invoke', async (_event, request: unknown) => dispatch(request));
+export function registerHostInvokeHandler(
+  registry: HostApiRegistry,
+  options: HostInvokeDispatcherOptions = {},
+): void {
+  const dispatch = createHostInvokeDispatcher(registry, {
+    requireSender: true,
+    ...options,
+  });
+  ipcMain.handle('host:invoke', async (event: IpcMainInvokeEvent, request: unknown) => (
+    dispatch(request, event)
+  ));
 }

@@ -151,3 +151,128 @@ describe('host invoke dispatcher', () => {
     }])).toThrow('Host API action already registered: settings.getAll');
   });
 });
+
+
+describe('host invoke security (P1-002)', () => {
+  it('rejects unauthorized senders when senderAuth is configured', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) },
+    }, {
+      senderAuth: { allowedWebContentsIds: new Set([42]) },
+    });
+
+    await expect(dispatch({
+      id: 'sec-1',
+      module: 'settings',
+      action: 'getAll',
+    }, { sender: { id: 99 } })).resolves.toMatchObject({
+      id: 'sec-1',
+      ok: false,
+      error: { code: 'VALIDATION', message: 'Host request sender is not authorized' },
+    });
+
+    await expect(dispatch({
+      id: 'sec-2',
+      module: 'settings',
+      action: 'getAll',
+    }, { sender: { id: 42 } })).resolves.toMatchObject({
+      id: 'sec-2',
+      ok: true,
+    });
+  });
+
+  it('rejects payloads that exceed size limits', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: { getAll: vi.fn(async () => ({})) },
+    });
+    const huge = 'x'.repeat(1_100_000);
+
+    await expect(dispatch({
+      id: 'sec-3',
+      module: 'settings',
+      action: 'getAll',
+      payload: { blob: huge },
+    })).resolves.toMatchObject({
+      id: 'sec-3',
+      ok: false,
+      error: { code: 'VALIDATION', message: 'Host request payload exceeds size limit' },
+    });
+  });
+
+  it('rejects prototype-polluting payload keys', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: { getAll: vi.fn(async () => ({})) },
+    });
+    const payload = JSON.parse('{"__proto__":{"polluted":true},"ok":1}');
+
+    await expect(dispatch({
+      id: 'sec-4',
+      module: 'settings',
+      action: 'getAll',
+      payload,
+    })).resolves.toMatchObject({
+      id: 'sec-4',
+      ok: false,
+      error: { code: 'VALIDATION', message: 'Host request payload contains dangerous keys' },
+    });
+  });
+
+  it('sanitizes internal errors so renderer does not see stack/path/secret', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: {
+        getAll: vi.fn(() => {
+          throw new Error('Failed at C:\\Users\\alice\\secret-project\\file.ts\n    at Object.handler (C:\\Users\\alice\\app\\main.js:10:5)\napiKey=sk-live-secret-value');
+        }),
+      },
+    });
+
+    const result = await dispatch({
+      id: 'sec-5',
+      module: 'settings',
+      action: 'getAll',
+    });
+
+    expect(result).toMatchObject({ id: 'sec-5', ok: false, error: { code: 'INTERNAL' } });
+    const message = (result as { error: { message: string } }).error.message;
+    expect(message).not.toMatch(/Users\\alice/);
+    expect(message).not.toMatch(/sk-live-secret-value/);
+    expect(message).not.toMatch(/\bat\s+Object\.handler\b/);
+    expect(message).toMatch(/redacted/i);
+  });
+
+  it('rejects unauthorized sender session URL prefixes when configured', async () => {
+    const dispatch = createHostInvokeDispatcher({
+      settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) },
+    }, {
+      senderAuth: {
+        allowedWebContentsIds: new Set([7]),
+        allowedUrlPrefixes: ['app://verse-claw/'],
+      },
+    });
+
+    await expect(dispatch({
+      id: 'sec-6',
+      module: 'settings',
+      action: 'getAll',
+    }, {
+      sender: { id: 7, getURL: () => 'https://evil.example/' },
+      senderFrame: { url: 'https://evil.example/' },
+    })).resolves.toMatchObject({
+      id: 'sec-6',
+      ok: false,
+      error: { code: 'VALIDATION', message: 'Host request sender session is not authorized' },
+    });
+
+    await expect(dispatch({
+      id: 'sec-7',
+      module: 'settings',
+      action: 'getAll',
+    }, {
+      sender: { id: 7, getURL: () => 'app://verse-claw/index.html' },
+      senderFrame: { url: 'app://verse-claw/index.html' },
+    })).resolves.toMatchObject({
+      id: 'sec-7',
+      ok: true,
+    });
+  });
+});
