@@ -16,8 +16,8 @@
     },
     "byStatus": {
       "Partial": 3,
-      "Fixed": 4,
-      "Open": 27,
+      "Fixed": 7,
+      "Open": 24,
       "Unverified": 1
     }
   },
@@ -80,7 +80,7 @@
       "category": "SEC",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [
         "F-REL-004"
@@ -91,7 +91,10 @@
       "tasks": [
         "P1-004",
         "P7-002"
-      ]
+      ],
+      "updatedBy": "P1-004",
+      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "notes": "P1-004: openExternalSafe + shared http/https allowlist wired through host shell API, legacy IPC, window.open handler, menu, oauth, git."
     },
     {
       "id": "F-SEC-004",
@@ -143,7 +146,7 @@
       "category": "SEC",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [
         "F-ISO-002"
@@ -155,7 +158,10 @@
       ],
       "tasks": [
         "P1-004"
-      ]
+      ],
+      "updatedBy": "P1-004",
+      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "notes": "P1-004: renderer CSP meta in index.html; HtmlPreview injects CSP and sandbox without popup-escape/downloads."
     },
     {
       "id": "F-ISO-001",
@@ -562,7 +568,7 @@
       "category": "SEC",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L4",
       "related": [],
       "attackChain": [
@@ -572,7 +578,10 @@
       "tasks": [
         "P1-004",
         "P4-002"
-      ]
+      ],
+      "updatedBy": "P1-004",
+      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "notes": "P1-004: isBrowserControlRestrictedUrl now requires http/https allowlist; javascript/data blocked for newPage/navigate."
     },
     {
       "id": "F-AUTH-006",

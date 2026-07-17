@@ -10,6 +10,7 @@
  */
 
 import type { BrowserAutomationGrant, BrowserAutomationMode } from "./tool-authorization";
+import { isAllowedExternalNavigationUrl } from "../security/url-policy";
 
 export const BROWSER_CONTROL_SET_ENABLED_MESSAGE_TYPE = "browserControl.setEnabled";
 export const BROWSER_CONTROL_DETACHED_MESSAGE_TYPE = "browserControl.detached";
@@ -148,6 +149,15 @@ export function isBrowserControlRestrictedUrl(urlRaw: string): boolean {
     return true;
   }
 
-  return RESTRICTED_URL_PREFIXES.some((prefix) => url.startsWith(prefix)) ||
-    RESTRICTED_URL_PREFIXES_EXACT.some((prefix) => url.startsWith(prefix));
+  // Prefix denylist (internal/browser pages + Chrome Web Store).
+  if (
+    RESTRICTED_URL_PREFIXES.some((prefix) => url.startsWith(prefix))
+    || RESTRICTED_URL_PREFIXES_EXACT.some((prefix) => url.startsWith(prefix))
+  ) {
+    return true;
+  }
+
+  // P1-004 / F-SEC-007: navigation allowlist is http/https only (blocks javascript/data/etc).
+  return !isAllowedExternalNavigationUrl(urlRaw);
 }
+
