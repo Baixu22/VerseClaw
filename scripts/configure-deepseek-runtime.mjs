@@ -83,7 +83,15 @@ function configureProviderStore() {
     }
   }
   if (apiKey) {
-    store.apiKeys[accountId] = apiKey.trim();
+    // P1-001: single-source secret store only - never dual-write legacy apiKeys.
+    store.providerSecrets[accountId] = {
+      type: 'api_key',
+      accountId,
+      apiKey: apiKey.trim(),
+    };
+    if (store.apiKeys && typeof store.apiKeys === 'object') {
+      delete store.apiKeys[accountId];
+    }
   }
   store.defaultProvider = providerId;
   store.defaultProviderAccountId = accountId;

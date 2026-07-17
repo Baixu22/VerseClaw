@@ -1,0 +1,18 @@
+﻿node.exe : (node:24840) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connect
+ions and HTTPS requests insecure by disabling certificate verification.
+At C:\Users\27933\AppData\Roaming\npm\pnpm.ps1:21 char:3
++   & $node "$basedir/node_modules/pnpm/bin/pnpm.mjs" $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:24840) Wa...e verification.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
+
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 12:27:11
+[2m   Duration [22m 1.16s[2m (transform 402ms, setup 327ms, import 97ms, tests 333ms, environment 1.73s)[22m
+

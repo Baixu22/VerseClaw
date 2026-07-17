@@ -318,12 +318,8 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
             data = await providerService.hasLegacyProviderApiKey(providerId);
             break;
           }
-          if (request.action === 'getApiKey') {
-            const payload = request.payload as { providerId?: string } | string | undefined;
-            const providerId = typeof payload === 'string' ? payload : payload?.providerId;
-            if (!providerId) throw new Error('Invalid provider.getApiKey payload');
-            data = await providerService.getLegacyProviderApiKey(providerId);
-            break;
+          if (request.action === 'getApiKey' || request.action === 'getAccountApiKey') {
+            throw new Error('providers.getApiKey was removed; use hasKey/keyMasked/accountKeyInfo only');
           }
           if (request.action === 'validateKey') {
             const payload = request.payload as
@@ -1021,10 +1017,10 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
     return await providerService.hasLegacyProviderApiKey(providerId);
   });
 
-  // Get the actual API key (for internal use only - be careful!)
-  ipcMain.handle('provider:getApiKey', async (_, providerId: string) => {
+  // provider:getApiKey removed (P1-001 Secret Broker). Renderer uses hasApiKey/accountKeyInfo only.
+  ipcMain.handle('provider:getApiKey', async () => {
     logLegacyProviderChannel('provider:getApiKey');
-    return await providerService.getLegacyProviderApiKey(providerId);
+    throw new Error('provider:getApiKey was removed; use provider:hasApiKey / accountKeyInfo');
   });
 
   // Set default provider and update OpenClaw default model

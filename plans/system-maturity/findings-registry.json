@@ -15,8 +15,9 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 32,
-      "Partial": 2,
+      "Partial": 3,
+      "Fixed": 1,
+      "Open": 30,
       "Unverified": 1
     }
   },
@@ -32,7 +33,7 @@
       "category": "SEC",
       "severity": "Critical",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Partial",
       "evidenceLevel": "L3",
       "related": [
         "F-SEC-002"
@@ -45,7 +46,10 @@
         "P1-001",
         "P4-003",
         "P4-004"
-      ]
+      ],
+      "notes": "P1-001: provider dual-write removed; encrypted secret-store single source; Channel/MCP remaining under P4-003/P4-004.",
+      "updatedBy": "P1-001",
+      "updatedAt": "2026-07-17T04:24:41.078Z"
     },
     {
       "id": "F-SEC-002",
@@ -53,7 +57,7 @@
       "category": "SEC",
       "severity": "Critical",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [
         "F-SEC-001",
@@ -65,7 +69,10 @@
       ],
       "tasks": [
         "P1-001"
-      ]
+      ],
+      "notes": "P1-001: removed providers.getApiKey/getAccountApiKey from host contract, host-api facade, providers-api, renderer store, and legacy IPC plaintext return.",
+      "updatedBy": "P1-001",
+      "updatedAt": "2026-07-17T04:24:41.079Z"
     },
     {
       "id": "F-SEC-003",

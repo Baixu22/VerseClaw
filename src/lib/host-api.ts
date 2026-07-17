@@ -1177,9 +1177,6 @@ export const hostApi = {
     hasApiKey: (providerId: string) => (
       invokeHost('providers', 'hasApiKey', { providerId })
     ),
-    getApiKey: (providerId: string) => (
-      invokeHost('providers', 'getApiKey', { providerId })
-    ),
     validateKey: (input: ProviderValidationPayload) => invokeHost('providers', 'validateKey', input),
     listModels: (input: ProviderModelListPayload): Promise<ProviderModelListResult> => (
       invokeHost('providers', 'listModels', input)
@@ -1202,9 +1199,6 @@ export const hostApi = {
     getDefaultAccount: () => invokeHost('providers', 'getDefaultAccount'),
     getAccount: (accountId: string) => (
       invokeHost('providers', 'getAccount', { accountId })
-    ),
-    getAccountApiKey: (accountId: string) => (
-      invokeHost('providers', 'getAccountApiKey', { accountId })
     ),
     hasAccountApiKey: (accountId: string) => (
       invokeHost('providers', 'hasAccountApiKey', { accountId })
