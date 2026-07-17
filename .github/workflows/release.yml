@@ -129,7 +129,7 @@ jobs:
         if: matrix.platform == 'win'
         run: pnpm run package:win
 
-      # Detect release channel from tag to skip code signing for alpha/beta builds
+      # P6-001: derive channel/signing/public-target outputs from the single policy module.
       - name: Detect Windows release channel
         if: matrix.platform == 'win'
         id: win-channel
@@ -140,16 +140,24 @@ jobs:
           else
             TAG="${{ github.event.inputs.version }}"
           fi
-          if [[ "$TAG" =~ (alpha|beta) ]]; then
-            echo "is_stable=false" >> $GITHUB_OUTPUT
-            echo "Channel: prerelease ($TAG) — skipping code signing"
+          node scripts/validate-windows-release-policy.mjs --github-output --version "$TAG"
+
+      # P6-001: codified channel policy must agree with this workflow
+      - name: P6-001 assert Windows signing policy for channel
+        if: matrix.platform == 'win'
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF#refs/tags/v}"
           else
-            echo "is_stable=true" >> $GITHUB_OUTPUT
-            echo "Channel: stable ($TAG) — will sign"
+            TAG="${{ github.event.inputs.version }}"
           fi
+          node scripts/validate-windows-release-policy.mjs --print-policy --version "$TAG"
+          # Self-check + workflow anchors (A1)
+          node scripts/validate-windows-release-policy.mjs
 
       - name: Validate unsigned Windows artifacts before SignPath
-        if: matrix.platform == 'win' && steps.win-channel.outputs.is_stable == 'true'
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         shell: pwsh
         run: |
           $unsignedExeFiles = Get-ChildItem -Path "release" -Filter *.exe -File
@@ -162,7 +170,7 @@ jobs:
           $unsignedExeFiles | ForEach-Object { Write-Host " - $($_.Name)" }
 
       - name: Upload unsigned Windows artifacts for SignPath
-        if: matrix.platform == 'win' && steps.win-channel.outputs.is_stable == 'true'
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         id: upload-unsigned-windows-artifact
         uses: actions/upload-artifact@v4
         with:
@@ -171,7 +179,7 @@ jobs:
           retention-days: 1
 
       - name: Sign Windows artifacts via SignPath
-        if: matrix.platform == 'win' && steps.win-channel.outputs.is_stable == 'true'
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         id: signpath-sign-windows
         uses: signpath/github-action-submit-signing-request@v2
         with:
@@ -184,7 +192,7 @@ jobs:
           output-artifact-directory: release/signed
 
       - name: Replace unsigned executables with signed ones
-        if: matrix.platform == 'win' && steps.win-channel.outputs.is_stable == 'true'
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         shell: pwsh
         run: |
           Write-Host "SignPath GitHub artifact ID: ${{ steps.upload-unsigned-windows-artifact.outputs.artifact-id }}"
@@ -219,7 +227,7 @@ jobs:
       #   sha512: <base64>
       #   releaseDate: '...'
       - name: Update latest.yml sha512 after code signing
-        if: matrix.platform == 'win' && steps.win-channel.outputs.is_stable == 'true'
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         shell: pwsh
         run: |
           $ymlFiles = Get-ChildItem -Path "release" -Filter "*.yml" -File | Where-Object { $_.Name -ne "builder-debug.yml" }
@@ -271,6 +279,83 @@ jobs:
             Write-Host ""
           }
 
+      # P6-001 A3: verify latest.yml hashes match on-disk signed artifacts
+      - name: P6-001 verify latest.yml sha512 after signing
+        if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for yml in release/*.yml; do
+            case "$(basename "$yml")" in
+              builder-debug.yml) continue ;;
+            esac
+            # Only verify yml files that reference .exe
+            if grep -q '\.exe' "$yml"; then
+              echo "Verifying $yml"
+              node scripts/validate-windows-release-policy.mjs --verify-yml "$yml" --artifact-dir release
+            fi
+          done
+
+      # P6-001 A2: validate Authenticode and write the attestation consumed by
+      # the pre-publish gate. The signed bit comes from real signature checks.
+      - name: P6-001 verify Authenticode and write signing attestation
+        if: matrix.platform == 'win'
+        shell: pwsh
+        run: |
+          $version = '${{ steps.win-channel.outputs.version }}'
+          $channel = '${{ steps.win-channel.outputs.channel }}'
+          $requiresSigning = '${{ steps.win-channel.outputs.requires_signing }}' -eq 'true'
+          $targetPublic = '${{ steps.win-channel.outputs.target_public }}' -eq 'true'
+          $exeFiles = @(Get-ChildItem -Path "release" -Filter *.exe -File -ErrorAction SilentlyContinue)
+          if ($exeFiles.Count -eq 0) {
+            throw "No Windows .exe artifacts found for signing attestation"
+          }
+
+          $signatures = @()
+          if ($requiresSigning) {
+            foreach ($exe in $exeFiles) {
+              $signature = Get-AuthenticodeSignature -FilePath $exe.FullName
+              if ($signature.Status -ne 'Valid' -or -not $signature.SignerCertificate) {
+                throw "Authenticode verification failed for $($exe.Name): $($signature.Status) $($signature.StatusMessage)"
+              }
+              $signatures += [ordered]@{
+                name = $exe.Name
+                status = $signature.Status.ToString()
+                signerSubject = $signature.SignerCertificate.Subject
+                signerThumbprint = $signature.SignerCertificate.Thumbprint
+                timestampSubject = if ($signature.TimeStamperCertificate) { $signature.TimeStamperCertificate.Subject } else { $null }
+              }
+            }
+          }
+
+          $verifiedNames = if ($requiresSigning) { @($signatures | ForEach-Object { $_.name }) } else { @() }
+          $att = [ordered]@{
+            schemaVersion = 1
+            task = 'P6-001'
+            platform = 'win'
+            version = $version
+            channel = $channel
+            requiresCodeSigning = $requiresSigning
+            targetPublicPublish = $targetPublic
+            isStable = $channel -eq 'stable'
+            windowsArtifactsSigned = $requiresSigning
+            exeCount = $exeFiles.Count
+            exeNames = @($exeFiles | ForEach-Object { $_.Name })
+            signatureVerification = [ordered]@{
+              status = if ($requiresSigning) { 'verified' } else { 'not-required' }
+              verifiedExeCount = $verifiedNames.Count
+              verifiedExeNames = $verifiedNames
+              signatures = $signatures
+            }
+            signedAt = (Get-Date).ToUniversalTime().ToString('o')
+            policy = 'shared/release-policy/windows-signing-policy.mjs'
+          }
+          if (-not (Test-Path "release")) { New-Item -ItemType Directory -Path "release" | Out-Null }
+          $att | ConvertTo-Json -Depth 5 | Set-Content -Path "release/windows-signing-attestation.json" -Encoding utf8
+          Write-Host "Wrote release/windows-signing-attestation.json"
+          Get-Content "release/windows-signing-attestation.json"
+
       # Linux specific steps
       - name: Build Linux
         if: matrix.platform == 'linux'
@@ -289,14 +374,52 @@ jobs:
             release/*.deb
             release/*.rpm
             release/*.yml
+            release/windows-signing-attestation.json
             !release/builder-debug.yml
           retention-days: 7
+
+  # P6-001 A2: no GitHub release or OSS upload may start until the Windows
+  # signing attestation has been validated against the codified policy.
+  release-policy-gate:
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Download release artifacts only
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          pattern: release-*
+
+      - name: P6-001 pre-publish Windows policy gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+
+          mapfile -t ATTESTATIONS < <(find release-artifacts -name 'windows-signing-attestation.json' -type f)
+          if [[ "${#ATTESTATIONS[@]}" -ne 1 ]]; then
+            echo "ERROR: expected exactly one Windows signing attestation, found ${#ATTESTATIONS[@]}"
+            printf '%s\n' "${ATTESTATIONS[@]:-}"
+            exit 1
+          fi
+
+          node scripts/validate-windows-release-policy.mjs \
+            --gate-attestation "${ATTESTATIONS[0]}" \
+            --version "$VERSION"
 
   # ──────────────────────────────────────────────────────────────
   # Job: Publish to GitHub Releases
   # ──────────────────────────────────────────────────────────────
   publish:
-    needs: release
+    needs: release-policy-gate
     runs-on: ubuntu-latest
     
     steps:
@@ -389,7 +512,7 @@ jobs:
   #   releases/vX.Y.Z/ → permanent archive, never deleted
   # ──────────────────────────────────────────────────────────────
   upload-oss:
-    needs: release
+    needs: release-policy-gate
     runs-on: ubuntu-latest
 
     steps:

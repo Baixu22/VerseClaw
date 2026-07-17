@@ -1,0 +1,8 @@
+[windows-release-policy] OK: policy 1.0.0 → stable sign=true public=true
+[windows-release-policy] OK: policy 0.4.9-alpha.0 → alpha sign=false public=false
+[windows-release-policy] OK: policy 1.2.0-beta.3 → beta sign=false public=false
+[windows-release-policy] OK: policy 2.0.0-rc.1 → other-prerelease sign=true public=false
+[windows-release-policy] OK: stable unsigned denied for public publish
+[windows-release-policy] OK: alpha prerelease unsigned allowed (non-public)
+[windows-release-policy] OK: release.yml anchors match windows signing policy (A1)
+[windows-release-policy] OK: P6-001 windows release policy validation passed

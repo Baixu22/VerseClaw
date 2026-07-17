@@ -1,0 +1,18 @@
+{
+  "status": "baseline-fail-no-p6-signature",
+  "note": "Repository-wide gates are recorded for status review. A nonzero gate with no P6 failure signature remains a release-baseline issue for P6-005, not a P6-001 acceptance failure.",
+  "runs": [
+    {
+      "name": "full-test",
+      "exitCode": 1
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 1
+    },
+    {
+      "name": "harness-ci",
+      "exitCode": 0
+    }
+  ]
+}

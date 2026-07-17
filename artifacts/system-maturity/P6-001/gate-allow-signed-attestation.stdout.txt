@@ -1,0 +1,32 @@
+{
+  "attestationPath": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-001\\stable-attestation-probe.json",
+  "version": "1.0.0",
+  "validation": {
+    "ok": true,
+    "reasons": [],
+    "policy": {
+      "channel": "stable",
+      "ossChannelDir": "latest",
+      "requireCodeSigning": true,
+      "allowPublicPublish": true,
+      "githubPrereleaseRequired": false,
+      "riskLevel": "high",
+      "summary": "Stable Windows builds MUST be SignPath-signed; unsigned artifacts cannot enter public publish (GitHub latest / OSS latest/)."
+    },
+    "expectedSigned": true
+  },
+  "publicReleaseGate": {
+    "allowed": true,
+    "policy": {
+      "channel": "stable",
+      "ossChannelDir": "latest",
+      "requireCodeSigning": true,
+      "allowPublicPublish": true,
+      "githubPrereleaseRequired": false,
+      "riskLevel": "high",
+      "summary": "Stable Windows builds MUST be SignPath-signed; unsigned artifacts cannot enter public publish (GitHub latest / OSS latest/)."
+    },
+    "reasons": []
+  }
+}
+[windows-release-policy] OK: pre-publish attestation gate passed for 1.0.0
