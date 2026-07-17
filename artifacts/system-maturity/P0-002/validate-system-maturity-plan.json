@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-17T04:26:44.938Z",
+  "checkedAt": "2026-07-17T05:05:21.066Z",
   "ok": true,
   "taskCount": 34,
   "statusFileCount": 8,
@@ -24,7 +24,7 @@
   "info": [
     "A1 unique task IDs: 34",
     "plans/system-maturity/phase0-foundation/STATUS.json phaseStatus=done",
-    "plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=in_progress",
+    "plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase2-authorization-isolation/STATUS.json phaseStatus=planned",
     "plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=planned",
     "plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=planned",
@@ -37,6 +37,9 @@
     "A3 P0-003 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-003.delivery.md)",
     "A3 P0-004 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-004.delivery.md)",
     "A3 P1-001 delivery+acceptance OK (plans\\system-maturity\\phase1-direct-boundaries\\tasks\\P1-001.delivery.md)",
+    "A3 P1-002 delivery+acceptance OK (plans\\system-maturity\\phase1-direct-boundaries\\tasks\\P1-002.delivery.md)",
+    "A3 P1-003 delivery+acceptance OK (plans\\system-maturity\\phase1-direct-boundaries\\tasks\\P1-003.delivery.md)",
+    "A3 P1-004 delivery+acceptance OK (plans\\system-maturity\\phase1-direct-boundaries\\tasks\\P1-004.delivery.md)",
     "task Finding refs resolve against findings-registry"
   ]
 }

@@ -125,7 +125,7 @@ export type IpcSenderLike = {
   id?: number;
   isDestroyed?: () => boolean;
   getURL?: () => string;
-  session?: { partition?: string };
+  session?: { partition?: string } | object | null;
 };
 
 export type IpcEventLike = {

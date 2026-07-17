@@ -194,7 +194,11 @@ async function getSettingsStore() {
  */
 export async function getSetting<K extends keyof AppSettings>(key: K): Promise<AppSettings[K]> {
   const store = await getSettingsStore();
-  return store.get(key);
+  const value = store.get(key);
+  if (key === 'gatewayToken' && typeof value === 'string') {
+    return (await openGatewayToken(value)) as AppSettings[K];
+  }
+  return value;
 }
 
 /**
@@ -205,6 +209,10 @@ export async function setSetting<K extends keyof AppSettings>(
   value: AppSettings[K]
 ): Promise<void> {
   const store = await getSettingsStore();
+  if (key === 'gatewayToken' && typeof value === 'string') {
+    store.set(key, (await sealGatewayToken(value)) as AppSettings[K]);
+    return;
+  }
   store.set(key, value);
 }
 

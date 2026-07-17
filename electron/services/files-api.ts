@@ -253,16 +253,6 @@ function buildFileWriteRequestHash(path: string, content: string): string {
   return `${resolve(path)}:${Buffer.byteLength(content, 'utf8')}`;
 }
 
-async function resolveExistingWritableFilePath(input: string): Promise<string> {
-  const fsP = await import('node:fs/promises');
-  const expanded = expandPath(input);
-  try {
-    return await fsP.realpath(expanded);
-  } catch {
-    return resolve(expanded);
-  }
-}
-
 export function createFilesApi(): CompleteHostServiceRegistry['files'] {
   return {
     stagePaths: async (payload) => {

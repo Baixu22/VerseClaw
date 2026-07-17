@@ -1,0 +1,135 @@
+﻿{
+    "phase":  "phase1-direct-boundaries",
+    "generatedAt":  "2026-07-17T05:10:07.8014320Z",
+    "branch":  "codex/maturity-p0",
+    "head":  "6e68564996161ef5d08945a2bc20ad8d852de54d",
+    "status":  "PASS",
+    "phaseStatus":  "done",
+    "allTasksDone":  true,
+    "tasks":  {
+                  "P1-001":  "done",
+                  "P1-002":  "done",
+                  "P1-003":  "done",
+                  "P1-004":  "done"
+              },
+    "exitCriteria":  [
+                         "Direct leak paths unified through brokers (secret/host invoke/files/url)",
+                         "Negative tests for protocol/path/key boundaries present and green"
+                     ],
+    "acceptance":  {
+                       "P1-001":  [
+                                      "A1",
+                                      "A2",
+                                      "A3"
+                                  ],
+                       "P1-002":  [
+                                      "A1",
+                                      "A2",
+                                      "A3"
+                                  ],
+                       "P1-003":  [
+                                      "A1",
+                                      "A2",
+                                      "A3"
+                                  ],
+                       "P1-004":  [
+                                      "A1",
+                                      "A2",
+                                      "A3"
+                                  ]
+                   },
+    "findings":  [
+                     {
+                         "status":  "Partial",
+                         "id":  "F-SEC-001",
+                         "notes":  "Provider dual-write cleared; Channel/MCP remain P4"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-002",
+                         "notes":  "Renderer getApiKey surfaces removed"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-003",
+                         "notes":  "openExternalSafe http/https allowlist"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-004",
+                         "notes":  "Files read allowlist"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-005",
+                         "notes":  "host:invoke sender/payload guards"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-006",
+                         "notes":  "Junction/realpath write escape blocked"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-007",
+                         "notes":  "Browser control http/https only"
+                     },
+                     {
+                         "status":  "Fixed",
+                         "id":  "F-SEC-010",
+                         "notes":  "Renderer CSP + HTML preview sandbox"
+                     }
+                 ],
+    "gates":  [
+                  {
+                      "id":  "20-git-diff-check",
+                      "required":  true,
+                      "exit":  "0"
+                  },
+                  {
+                      "id":  "21-plan-validate",
+                      "required":  true,
+                      "exit":  "0"
+                  },
+                  {
+                      "id":  "22-contract-check",
+                      "required":  true,
+                      "exit":  "0"
+                  },
+                  {
+                      "id":  "23-canary",
+                      "required":  true,
+                      "exit":  "0"
+                  },
+                  {
+                      "id":  "25-p1-unit-regression-clean",
+                      "required":  true,
+                      "exit":  "0"
+                  },
+                  {
+                      "id":  "26-typecheck",
+                      "required":  true,
+                      "exit":  "0"
+                  }
+              ],
+    "integrationGate":  {
+                            "gitDiffCheck":  0,
+                            "planValidate":  0,
+                            "contractCheck":  0,
+                            "canary":  0,
+                            "targetedUnit":  0,
+                            "typecheck":  0
+                        },
+    "unitRegression":  {
+                           "files":  13,
+                           "tests":  84,
+                           "assertionsPass":  true,
+                           "electronEnvUnhandledRejections":  2
+                       },
+    "phase2Advanced":  false,
+    "notes":  [
+                  "Full Phase 1 acceptance re-verified; no Phase 2 product work.",
+                  "F-SEC-001 Partial by design until P4 Channel/MCP secret paths.",
+                  "Typecheck cleanups included in acceptance closeout."
+              ]
+}
