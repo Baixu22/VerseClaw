@@ -1,0 +1,38 @@
+{
+  "taskId": "P5-004",
+  "createdAt": "2026-07-17T09:14:36.276Z",
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P5-004/vitest.stdout.txt",
+      "role": "unit-test-output"
+    },
+    {
+      "path": "artifacts/system-maturity/P5-004/acceptance-matrix.json",
+      "role": "acceptance"
+    },
+    {
+      "path": "artifacts/system-maturity/P5-004/evidence-index.json",
+      "role": "index"
+    },
+    {
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-004.delivery.md",
+      "role": "delivery"
+    }
+  ],
+  "tests": [
+    {
+      "command": "pnpm exec vitest run tests/unit/agent-resource-limits-p5-004.test.ts tests/unit/logger-p5-003.test.ts",
+      "result": "17/17 PASS"
+    }
+  ],
+  "changedFiles": [
+    "shared/agent-resource-limits.ts",
+    "shared/chat/types.ts",
+    "src/stores/chat.ts",
+    "src/pages/Chat/index.tsx",
+    "tests/unit/agent-resource-limits-p5-004.test.ts",
+    "plans/system-maturity/phase5-reliability-abuse/*",
+    "plans/system-maturity/findings-registry.json",
+    "artifacts/system-maturity/P5-004/*"
+  ]
+}

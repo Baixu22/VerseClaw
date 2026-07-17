@@ -9,6 +9,7 @@ import {
   failTaskRunByRunId,
 } from "../../tasks/detached-task-runtime.js";
 import { clearCronJobActive, markCronJobActive } from "../active-jobs.js";
+import { claimCronJobLease } from "../store/lease.js";
 import { resolveCronDeliveryPlan, resolveFailureDestination } from "../delivery-plan.js";
 import { createCronRunDiagnosticsFromError } from "../run-diagnostics.js";
 import { createCronExecutionId } from "../run-id.js";
@@ -154,17 +155,60 @@ function mergeManualRunSnapshotAfterReload(params: {
 }
 
 async function ensureLoadedForRead(state: CronServiceState) {
+  // P5-002 / F-REL-001: list/status/read paths must never rewrite the authority
+  // store. Maintenance recompute + persist is restricted to authorized
+  // start/timer/repair operations (see repairCronStoreAuthorized).
   await ensureLoaded(state, { skipRecompute: true });
-  if (!state.store) {
-    return;
-  }
-  // Use the maintenance-only version so that read-only operations never
-  // advance a past-due nextRunAtMs without executing the job (#16156).
-  const changed = recomputeNextRunsForMaintenance(state);
-  if (changed) {
-    await persist(state);
-  }
 }
+
+
+/**
+ * Explicit, authorized maintenance repair for the cron authority store.
+ * Unlike list/status, this path may recompute next-run markers and persist.
+ * Callers must pass `authorized: true` and an audit reason; every successful
+ * repair emits a structured log line for governance evidence.
+ */
+export async function repairCronStoreAuthorized(
+  state: CronServiceState,
+  opts: {
+    authorized: true;
+    reason: string;
+    recomputeExpired?: boolean;
+    repairFutureCronNextRunAtMs?: boolean;
+  },
+): Promise<{ repaired: boolean; reason: string }> {
+  if (opts.authorized !== true) {
+    throw new Error("cron repair requires explicit authorization (authorized: true)");
+  }
+  const reason = typeof opts.reason === "string" ? opts.reason.trim() : "";
+  if (!reason) {
+    throw new Error("cron repair requires a non-empty audit reason");
+  }
+  return await locked(state, async () => {
+    await ensureLoaded(state, { skipRecompute: true });
+    if (!state.store) {
+      return { repaired: false, reason };
+    }
+    const changed = recomputeNextRunsForMaintenance(state, {
+      recomputeExpired: opts.recomputeExpired ?? true,
+      repairFutureCronNextRunAtMs: opts.repairFutureCronNextRunAtMs ?? true,
+    });
+    if (changed) {
+      await persist(state);
+    }
+    state.deps.log.info(
+      {
+        storePath: state.deps.storePath,
+        reason,
+        repaired: changed,
+        jobCount: state.store.jobs.length,
+      },
+      "cron: authorized store repair completed",
+    );
+    return { repaired: changed, reason };
+  });
+}
+
 
 /** Starts the cron service, recovers interrupted runs, catches up missed jobs, and arms the timer. */
 export async function start(state: CronServiceState) {
@@ -771,11 +815,18 @@ async function prepareManualRun(
     if (typeof job.state.runningAtMs === "number") {
       return { ok: true, ran: false, reason: "already-running" as const };
     }
-    job.state.runningAtMs = preflight.now;
+    const lease = claimCronJobLease({
+      storePath: state.deps.storePath,
+      jobId: job.id,
+      nowMs: preflight.now,
+    });
+    if (!lease.claimed) {
+      return { ok: true, ran: false, reason: "already-running" as const };
+    }
+    job.state.runningAtMs = lease.runningAtMs;
     job.state.lastError = undefined;
-    // Persist the running marker before releasing lock so timer ticks that
-    // force-reload from disk cannot start the same job concurrently.
-    await persist(state);
+    // Persist remaining runtime fields after CAS lease claim.
+    await persist(state, { stateOnly: true });
     emit(state, { jobId: job.id, action: "started", job, runAtMs: preflight.now });
     const taskRunId = tryCreateManualTaskRun({
       state,

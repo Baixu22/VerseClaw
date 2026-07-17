@@ -4,7 +4,8 @@
  *
  * All file I/O uses async fs/promises to avoid blocking the main thread.
  */
-import { access, mkdir, readFile, writeFile, readdir, stat, rm } from 'fs/promises';
+import { access, mkdir, readFile, readdir, stat, rm } from 'fs/promises';
+import { writeJsonAtomic, readJsonAtomic, AtomicWriteError } from './atomic-write';
 import { constants } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
@@ -250,8 +251,7 @@ async function readWeChatAccountIndex(): Promise<string[]> {
 }
 
 async function writeWeChatAccountIndex(accountIds: string[]): Promise<void> {
-    await mkdir(WECHAT_STATE_DIR, { recursive: true });
-    await writeFile(WECHAT_ACCOUNT_INDEX_FILE, JSON.stringify(accountIds, null, 2), 'utf-8');
+    await writeJsonAtomic(WECHAT_ACCOUNT_INDEX_FILE, accountIds);
 }
 
 async function deleteWeChatAccountState(accountId: string): Promise<void> {
@@ -489,9 +489,18 @@ export async function readOpenClawConfig(): Promise<OpenClawConfig> {
     }
 
     try {
-        const content = await readFile(CONFIG_FILE, 'utf-8');
-        return JSON.parse(content) as OpenClawConfig;
+        const result = await readJsonAtomic<OpenClawConfig>(CONFIG_FILE);
+        if (result.recoveredFromBackup) {
+            logger.warn(result.recoveryNote ?? 'Recovered openclaw.json from backup');
+            console.warn(result.recoveryNote ?? 'Recovered openclaw.json from backup');
+        }
+        return result.data ?? {};
     } catch (error) {
+        if (error instanceof AtomicWriteError && error.code === 'CORRUPT') {
+            logger.error('Failed to read OpenClaw config (corrupt, no backup)', error);
+            console.error('Failed to read OpenClaw config (corrupt, no backup):', error);
+            return {};
+        }
         logger.error('Failed to read OpenClaw config', error);
         console.error('Failed to read OpenClaw config:', error);
         return {};
@@ -510,7 +519,8 @@ export async function writeOpenClawConfig(config: OpenClawConfig): Promise<void>
         commands.restart = true;
         config.commands = commands;
 
-        await writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+        // Atomic temp+fsync+rename with version sidecar and .bak retention.
+        await writeJsonAtomic(CONFIG_FILE, config);
     } catch (error) {
         logger.error('Failed to write OpenClaw config', error);
         console.error('Failed to write OpenClaw config:', error);

@@ -1,0 +1,26 @@
+﻿{
+    "artifacts":  [
+                      {
+                          "path":  "artifacts/system-maturity/P5-001/vitest.stdout.txt",
+                          "sha256":  "e751260fc33b1b471a5541b692adb721d1d143101dd21dcc4ffcc23978c39ca0",
+                          "role":  "primary-unit-tests"
+                      },
+                      {
+                          "path":  "artifacts/system-maturity/P5-001/vitest-related.stdout.txt",
+                          "sha256":  "14ede84a9dedbbcae924672f29c590914f8916452030ed4746874cf3c756ecd1",
+                          "role":  "related-regression"
+                      },
+                      {
+                          "path":  "artifacts/system-maturity/P5-001/acceptance-matrix.json",
+                          "role":  "acceptance"
+                      }
+                  ],
+    "tests":  {
+                  "related":  "pnpm exec vitest run tests/unit/atomic-config-write-p5-001.test.ts tests/unit/channel-config.test.ts tests/unit/openclaw-auth.test.ts",
+                  "primaryResult":  "11 passed",
+                  "primary":  "pnpm exec vitest run tests/unit/atomic-config-write-p5-001.test.ts",
+                  "relatedResult":  "83 passed"
+              },
+    "taskId":  "P5-001",
+    "createdAt":  "2026-07-17T08:31:03.374Z"
+}
