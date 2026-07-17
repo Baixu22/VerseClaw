@@ -117,3 +117,159 @@ export function buildRolePermissionDenyPatches(
     ...(mergedDeny.length > 0 ? { inheritedToolDenylist: mergedDeny } : {}),
   };
 }
+
+import { resolve, normalize, sep, isAbsolute, relative } from "node:path";
+
+export type RolePathAccessMode = "read" | "write";
+
+function normalizePathKey(value: string): string {
+  return normalize(value).replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
+}
+
+function isUnderRoot(candidate: string, root: string): boolean {
+  const rel = relative(root, candidate);
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+
+/**
+ * Resolve a role path pattern against a workspace root.
+ * Absolute patterns stay absolute; relative patterns are workspace-relative.
+ */
+export function resolveRolePathPattern(pattern: string, workspaceRoot?: string): string {
+  const trimmed = pattern.trim();
+  if (!trimmed) return "";
+  if (isAbsolute(trimmed) || /^[a-zA-Z]:[\\/]/.test(trimmed)) {
+    return normalizePathKey(resolve(trimmed));
+  }
+  const root = workspaceRoot ? resolve(workspaceRoot) : process.cwd();
+  return normalizePathKey(resolve(root, trimmed));
+}
+
+/**
+ * Hard path gate for role permissions (P2-003 / F-AUTH-002).
+ * - filesystem none => deny all path access
+ * - filesystem read => write denied; readPaths (if set) restrict reads
+ * - filesystem write/admin => writePaths (if set) restrict writes; readPaths restrict reads when set
+ * Empty path lists mean "no extra restriction beyond filesystem mode".
+ */
+export function isRolePathAllowed(
+  targetPath: string,
+  role: RoleContract,
+  mode: RolePathAccessMode,
+  workspaceRoot?: string,
+): boolean {
+  const fsMode = role.permissions.filesystem;
+  if (fsMode === "none") return false;
+  if (mode === "write" && (fsMode === "read")) return false;
+
+  const resolvedTarget = resolveRolePathPattern(targetPath, workspaceRoot);
+  if (!resolvedTarget) return false;
+
+  const readPaths = role.permissions.readPaths ?? [];
+  const writePaths = role.permissions.writePaths ?? [];
+
+  if (mode === "read") {
+    if (readPaths.length === 0) return true;
+    return readPaths.some((pattern) => {
+      const root = resolveRolePathPattern(pattern, workspaceRoot);
+      return root ? isUnderRoot(resolvedTarget, root) || resolvedTarget === root : false;
+    });
+  }
+
+  // write
+  if (writePaths.length === 0) {
+    // If only readPaths are declared, writes outside those roots are denied when filesystem is write
+    // but writePaths empty historically meant unrestricted within fs mode. Keep unrestricted when empty.
+    return true;
+  }
+  return writePaths.some((pattern) => {
+    const root = resolveRolePathPattern(pattern, workspaceRoot);
+    return root ? isUnderRoot(resolvedTarget, root) || resolvedTarget === root : false;
+  });
+}
+
+export function decideRolePathAccess(
+  targetPath: string,
+  role: RoleContract,
+  mode: RolePathAccessMode,
+  workspaceRoot?: string,
+): { allowed: boolean; reason?: string } {
+  const allowed = isRolePathAllowed(targetPath, role, mode, workspaceRoot);
+  if (allowed) return { allowed: true };
+  return {
+    allowed: false,
+    reason: `Role ${role.name} denies ${mode} for path under filesystem=${role.permissions.filesystem}`,
+  };
+}
+
+const FS_RANK: Record<string, number> = { none: 0, read: 1, write: 2, admin: 3 };
+const NET_RANK: Record<string, number> = { none: 0, limited: 1, full: 2 };
+
+export function clampFilesystemAccess(
+  child: RoleContract["permissions"]["filesystem"],
+  parent?: RoleContract["permissions"]["filesystem"],
+): RoleContract["permissions"]["filesystem"] {
+  if (!parent) return child;
+  return (FS_RANK[child] <= FS_RANK[parent] ? child : parent) as RoleContract["permissions"]["filesystem"];
+}
+
+export function clampNetworkAccess(
+  child: RoleContract["permissions"]["network"],
+  parent?: RoleContract["permissions"]["network"],
+): RoleContract["permissions"]["network"] {
+  if (!parent) return child;
+  return (NET_RANK[child] <= NET_RANK[parent] ? child : parent) as RoleContract["permissions"]["network"];
+}
+
+/**
+ * Intersect child path allowlist with parent. Parent empty => unrestricted (return child).
+ * Child empty with parent restricted => inherit parent.
+ */
+export function clampPathAllowlist(
+  childPaths: string[] | undefined,
+  parentPaths: string[] | undefined,
+): string[] | undefined {
+  const parent = (parentPaths ?? []).map((p) => p.trim()).filter(Boolean);
+  const child = (childPaths ?? []).map((p) => p.trim()).filter(Boolean);
+  if (parent.length === 0) return child.length > 0 ? child : undefined;
+  if (child.length === 0) return parent;
+  const parentResolved = parent.map((p) => resolveRolePathPattern(p));
+  return child.filter((entry) => {
+    const resolved = resolveRolePathPattern(entry);
+    return parentResolved.some((root) => isUnderRoot(resolved, root) || resolved === root);
+  });
+}
+
+/** Child tool allowlist cannot exceed parent allowlist when parent is set. */
+export function clampToolAllowlist(
+  childTools: string[] | undefined,
+  parentTools: string[] | undefined,
+): string[] | undefined {
+  if (!parentTools || parentTools.length === 0) return childTools;
+  if (!childTools || childTools.length === 0) return [...parentTools];
+  const parentSet = new Set(parentTools);
+  return childTools.filter((tool) => parentSet.has(tool));
+}
+
+export function clampRolePermissionsToParent(
+  child: RoleContract,
+  parent?: Pick<RoleContract, "permissions" | "tools"> | null,
+): RoleContract {
+  if (!parent) return child;
+  const filesystem = clampFilesystemAccess(child.permissions.filesystem, parent.permissions.filesystem);
+  const network = clampNetworkAccess(child.permissions.network, parent.permissions.network);
+  const readPaths = clampPathAllowlist(child.permissions.readPaths, parent.permissions.readPaths);
+  const writePaths = clampPathAllowlist(child.permissions.writePaths, parent.permissions.writePaths);
+  const tools = clampToolAllowlist(child.tools, parent.tools) ?? child.tools;
+  return {
+    ...child,
+    tools,
+    permissions: {
+      ...child.permissions,
+      filesystem,
+      network,
+      ...(readPaths && readPaths.length > 0 ? { readPaths } : {}),
+      ...(writePaths && writePaths.length > 0 ? { writePaths } : {}),
+    },
+  };
+}

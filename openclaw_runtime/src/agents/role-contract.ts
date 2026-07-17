@@ -370,6 +370,22 @@ export const BUILT_IN_ROLE_CONTRACTS: readonly RoleContract[] = [
     tags: ["docs"],
   }),
   role({
+    name: "knowledge-librarian",
+    displayName: "Knowledge Librarian",
+    rolePrompt: "Retrieve, ground, and cite knowledge base evidence. Prefer retrieval over speculation and surface unknowns clearly.",
+    tools: ["read", "glob", "grep", "knowledge.search", "knowledge.get"],
+    capabilities: ["task-analysis", "knowledge-retrieval", "citation"],
+    toolRequirements: ["knowledge.search", "knowledge.get"],
+    riskProfile: "low",
+    canModifyScope: false,
+    permissions: { filesystem: "read", network: "none", commands: [] },
+    model: { default: null, fallback: [] },
+    effort: "medium",
+    outputSchema: { format: "markdown", sections: ["Answer", "Sources", "Unknowns"] },
+    handoff: { to: ["researcher", "reviewer"], from: ["planner"] },
+    tags: ["knowledge", "retrieval"],
+  }),
+  role({
     name: "skeptic",
     displayName: "Skeptic",
     rolePrompt: "Try to refute the proposed solution, find missing evidence, and decide whether acceptance criteria are truly met.",
@@ -386,6 +402,14 @@ export const BUILT_IN_ROLE_CONTRACTS: readonly RoleContract[] = [
     tags: ["verification", "adversarial"],
   }),
 ] as const;
+
+export const BUILT_IN_ROLE_NAMES: ReadonlySet<string> = new Set(
+  BUILT_IN_ROLE_CONTRACTS.map((roleContract) => roleContract.name),
+);
+
+export function isBuiltInRoleName(name: string): boolean {
+  return BUILT_IN_ROLE_NAMES.has(name);
+}
 
 export function getBuiltInRoleContract(name: string): RoleContract | undefined {
   return BUILT_IN_ROLE_CONTRACTS.find((roleContract) => roleContract.name === name);

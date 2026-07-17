@@ -1,0 +1,48 @@
+{
+  "taskId": "P2-003",
+  "finding": "F-AUTH-002",
+  "generatedAt": "2026-07-17T05:56:28Z",
+  "summary": {
+    "builtInRoleSingleSource": "BUILT_IN_ROLE_NAMES from role-contract.ts",
+    "pathHardGate": "isRolePathAllowed/decideRolePathAccess",
+    "childPrivilegeClamp": "clampRolePermissionsToParent + buildRoleSpawnContext",
+    "tests": "34 passed (role-path-permissions-p2-003 + role-spawn + roles-api + role-contract-drift)"
+  },
+  "artifacts": [
+    {
+      "path": "openclaw_runtime/src/agents/role-contract.ts",
+      "bytes": 17672,
+      "sha256": "eaf4e3b6e91eec2fe0dc5350c221cdf53d096c45307781943b0c0fa5a18214ab"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
+      "bytes": 10911,
+      "sha256": "31748ed7026b7cdb877d477c86c822a368709e8d3af1d31304fa388a73be9d8a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-spawn.ts",
+      "bytes": 10500,
+      "sha256": "81f8635b882eb42564edfcf3f0b2265866936256bbf39c12d6ae4782b131102d"
+    },
+    {
+      "path": "electron/services/roles-api.ts",
+      "bytes": 27941,
+      "sha256": "ba644c04e06787ebb558d076a69b3255f6543d1dee047ab04e84fbfc3f1f24cf"
+    },
+    {
+      "path": "tests/unit/role-path-permissions-p2-003.test.ts",
+      "bytes": 4907,
+      "sha256": "ff3ac4e601c185b7a8abec25bf6a6e2ca6073495338b59ced7eb1a386c6ad5f9"
+    },
+    {
+      "path": "artifacts/system-maturity/P2-003/vitest.stdout.txt",
+      "bytes": 998,
+      "sha256": "4fb3238e9959ae5f2f16daae41c8aa3e285e601c07a83146909de57f062f4b66"
+    },
+    {
+      "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "bytes": 244,
+      "sha256": "e62b16ec9bfc04407b3bc0ddd6c37e892d005da75ed80be20082fed04ccad8e7"
+    }
+  ]
+}
