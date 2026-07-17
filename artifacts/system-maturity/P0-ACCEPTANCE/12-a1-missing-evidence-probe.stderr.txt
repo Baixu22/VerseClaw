@@ -1,0 +1,5 @@
+FAIL  A1 P0-001 evidence path missing: ACCEPTANCE: A1
+FAIL  A1 P0-001 evidence path missing: A2
+FAIL  A1 P0-001 evidence path missing: A3
+
+validate-system-maturity-evidence: FAILED (3)

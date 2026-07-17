@@ -1,0 +1,16 @@
+[PASS] 01-audit-baseline exit=0 86ms
+[PASS] 02-plan-validate exit=0 64ms
+[PASS] 03-gates-validate exit=0 57ms
+[PASS] 04-evidence-validate exit=0 71ms
+[PASS] 05-maturity-validate exit=0 3094ms
+[PASS] 06-harness-agent-dev exit=0 2223ms
+[PASS] 07-agent-dev-fast exit=0 7877ms
+[PASS] 08-harness-ci exit=0 8480ms
+[PASS] 09-typecheck exit=0 17256ms
+[PASS] 11-release-gates-list exit=0 52ms
+[FAIL] 12-a1-missing-evidence-probe exit=1 80ms
+[PASS] 12-a1-missing-evidence-probe expected-fail ok=true
+[PASS] 13-evidence-after-restore exit=0 65ms
+
+=== VERDICT: PASS ===
+Report: C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\artifacts\system-maturity\P0-ACCEPTANCE\ACCEPTANCE-REPORT.md

@@ -1,0 +1,31 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+{
+  "success": true,
+  "mode": "parallel",
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "41fe2e97e4ae65b96ff24826470048b064619cfbc43ae42410ab74edbd22ce8a",
+    "inputCount": 657,
+    "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 15328,
+  "coverageNote": "Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 46
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 5954
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 15147
+    }
+  ]
+}
