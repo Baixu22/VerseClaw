@@ -150,6 +150,8 @@ export type SendOptions = {
    * persisted to Agent.modelRef.
    */
   modelRefOverride?: string | null;
+  /** P5-004: session token/cost snapshot for pre-send budget enforcement. */
+  sessionUsage?: { totalTokens?: number | null; costUsd?: number | null };
 };
 
 export type ChatStartupPhase =

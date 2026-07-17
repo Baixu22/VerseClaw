@@ -27,6 +27,14 @@ import {
   getChatHistoryMaxChars,
 } from './chat/history-rpc-params';
 import { loadSessionTranscriptFallback } from './chat/history-transcript-fallback';
+import {
+  capMessagesForMemory,
+  evaluateTurnBudget,
+  formatBudgetRejection,
+  getAgentResourceLimits,
+  isTurnTimedOut,
+  type SessionUsageSnapshot,
+} from '../../shared/agent-resource-limits';
 import { hydrateGatewayHistoryFromTranscript } from './chat/history-transcript-hydrate';
 import {
   LABEL_FETCH_RETRY_DELAYS_MS,
@@ -94,6 +102,38 @@ let _historyPollTimer: ReturnType<typeof setTimeout> | null = null;
 // error (e.g. "terminated"), it may retry internally and recover. We wait
 // before committing the error to give the recovery path a chance.
 let _errorRecoveryTimer: ReturnType<typeof setTimeout> | null = null;
+let _turnTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
+function clearTurnTimeoutTimer(): void {
+  if (_turnTimeoutTimer) {
+    clearTimeout(_turnTimeoutTimer);
+    _turnTimeoutTimer = null;
+  }
+}
+function armTurnTimeoutTimer(
+  get: () => ChatState,
+  set: (partial: Partial<ChatState> | ((s: ChatState) => Partial<ChatState>)) => void,
+): void {
+  clearTurnTimeoutTimer();
+  const timeoutMs = getAgentResourceLimits().turnTimeoutMs;
+  if (!timeoutMs || timeoutMs <= 0) return;
+  _turnTimeoutTimer = setTimeout(() => {
+    _turnTimeoutTimer = null;
+    const state = get();
+    if (!state.sending && state.activeRunId == null && !state.pendingFinal) return;
+    if (!isTurnTimedOut(state.lastUserMessageAt, Date.now(), timeoutMs)) return;
+    set({
+      runError: formatBudgetRejection({
+        allowed: false,
+        code: 'TURN_TIMEOUT',
+        message: `Turn timed out after ${Math.round(timeoutMs / 1000)}s. Resources released.`,
+        limit: timeoutMs,
+        used: timeoutMs,
+      }),
+    });
+    void get().abortRun();
+  }, timeoutMs);
+  _turnTimeoutTimer.unref?.();
+}
 let _loadSessionsInFlight: Promise<void> | null = null;
 let _lastLoadSessionsAt = 0;
 let _startupHydrationInFlight: Promise<void> | null = null;
@@ -161,8 +201,12 @@ const _activeSendGenerationBySession = new Map<string, number>();
 const SESSION_LOAD_MIN_INTERVAL_MS = 1_200;
 const HISTORY_LOAD_MIN_INTERVAL_MS = 800;
 const CHAT_EVENT_DEDUPE_TTL_MS = 30_000;
-const HISTORY_PAGE_SIZE = 200;
-const HISTORY_MAX_RENDERED_MESSAGES = 300;
+const HISTORY_PAGE_SIZE = () => getAgentResourceLimits().historyPageSize;
+const HISTORY_MAX_RENDERED_MESSAGES = () => getAgentResourceLimits().maxRenderedMessages;
+/** Cap message arrays to the configured memory ceiling. */
+function applyHistoryMemoryCap(messages: RawMessage[]): RawMessage[] {
+  return capMessagesForMemory(messages, HISTORY_MAX_RENDERED_MESSAGES()).messages;
+}
 const _chatEventDedupe = new Map<string, number>();
 const OPTIMISTIC_USER_MESSAGE_TTL_MS = 30 * 60 * 1000;
 /** Max skew between the renderer optimistic send time and Gateway transcript timestamps. */
@@ -1884,7 +1928,7 @@ function buildSessionSwitchPatch(
     messages: cachedNextSession?.messages ?? [],
     loading: cachedNextSession == null,
     historyRefreshing: cachedNextSession != null,
-    hasMoreHistory: cachedNextSession ? cachedNextSession.messages.length >= HISTORY_PAGE_SIZE : false,
+    hasMoreHistory: cachedNextSession ? cachedNextSession.messages.length >= HISTORY_PAGE_SIZE() : false,
     loadingMoreHistory: false,
     thinkingLevel: cachedNextSession?.thinkingLevel ?? state.thinkingLevel ?? null,
     startupPhase: cachedNextSession ? 'ready' : 'loading-history',
@@ -3407,7 +3451,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       );
 
       set((state) => ({
-        messages: finalMessages,
+        messages: applyHistoryMemoryCap(finalMessages),
         thinkingLevel,
         loading: false,
         error: null,
@@ -3516,7 +3560,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         });
         if (recentAssistant) {
           clearHistoryPoll();
-          set({ sending: false, activeRunId: null, pendingFinal: false, runError: null });
+          clearTurnTimeoutTimer();
+        set({ sending: false, activeRunId: null, pendingFinal: false, runError: null });
           captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
         }
       }
@@ -3632,7 +3677,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (!applied) return false;
 
         localFallbackApplied = true;
-        set({ hasMoreHistory: fallbackMessages.length >= HISTORY_PAGE_SIZE });
+        set({ hasMoreHistory: fallbackMessages.length >= HISTORY_PAGE_SIZE() });
         if (isInitialForegroundLoad) {
           _foregroundHistoryLoadSeen.add(foregroundLoadKey);
           void refreshVisibleSessionSummaries(set, get);
@@ -3660,7 +3705,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const fallbackMessages: RawMessage[] = [];
         const chatHistoryParams = buildChatHistoryRpcParams(
           currentSessionKey,
-          HISTORY_PAGE_SIZE,
+          HISTORY_PAGE_SIZE(),
           getChatHistoryMaxChars(),
         );
 
@@ -3675,7 +3720,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           try {
             data = await fetchChatHistory(
               currentSessionKey,
-              HISTORY_PAGE_SIZE,
+              HISTORY_PAGE_SIZE(),
               chatHistoryParams.maxChars,
               historyTimeoutOverride,
             );
@@ -3719,7 +3764,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             rawMessages = await hydrateGatewayHistoryFromTranscript(
               currentSessionKey,
               rawMessages,
-              HISTORY_PAGE_SIZE,
+              HISTORY_PAGE_SIZE(),
               get().messages,
             );
           }
@@ -3731,7 +3776,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
           const applied = applyLoadedMessages(rawMessages, thinkingLevel);
           if (applied) {
-            set({ hasMoreHistory: rawMessages.length >= HISTORY_PAGE_SIZE });
+            set({ hasMoreHistory: rawMessages.length >= HISTORY_PAGE_SIZE() });
           }
           if (applied && isInitialForegroundLoad) {
             _foregroundHistoryLoadSeen.add(foregroundLoadKey);
@@ -3753,7 +3798,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           if (appliedLateFallback) {
             if (fallbackMessages.length > 0) {
               localFallbackApplied = true;
-              set({ hasMoreHistory: fallbackMessages.length >= HISTORY_PAGE_SIZE });
+              set({ hasMoreHistory: fallbackMessages.length >= HISTORY_PAGE_SIZE() });
               if (isInitialForegroundLoad) {
                 _foregroundHistoryLoadSeen.add(foregroundLoadKey);
                 void refreshVisibleSessionSummaries(set, get);
@@ -3832,7 +3877,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     set({ loadingMoreHistory: true, error: null });
     try {
-      const nextLimit = Math.min(messages.length + HISTORY_PAGE_SIZE, HISTORY_MAX_RENDERED_MESSAGES);
+      const nextLimit = Math.min(messages.length + HISTORY_PAGE_SIZE(), HISTORY_MAX_RENDERED_MESSAGES());
       const rawMessages = await loadLocalHistoryFallback(currentSessionKey, nextLimit);
       if (get().currentSessionKey !== currentSessionKey) return;
       if (rawMessages.length === 0) {
@@ -3850,9 +3895,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const filteredMessages = messagesWithToolAttachments.filter((msg) => !shouldDropMessageFromHistory(msg));
       const enrichedMessages = enrichWithCachedImages(filteredMessages);
       set({
-        messages: enrichedMessages,
+        messages: applyHistoryMemoryCap(enrichedMessages),
         loadingMoreHistory: false,
-        hasMoreHistory: rawMessages.length >= nextLimit && nextLimit < HISTORY_MAX_RENDERED_MESSAGES,
+        hasMoreHistory: rawMessages.length >= nextLimit && nextLimit < HISTORY_MAX_RENDERED_MESSAGES(),
       });
       cacheSessionHistory(currentSessionKey, enrichedMessages, get().thinkingLevel);
       void loadMissingPreviews(enrichedMessages).then((updated) => {
@@ -3994,7 +4039,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     };
     rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
     set((s) => ({
-      messages: [...s.messages, userMsg],
+      messages: applyHistoryMemoryCap([...s.messages, userMsg]),
       sending: true,
       error: null,
       runError: null,
@@ -4004,6 +4049,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       pendingFinal: false,
       lastUserMessageAt: nowMs,
     }));
+    armTurnTimeoutTimer(get, set);
 
     // Update session label with first user message text as soon as it's sent
     const { sessionLabels, messages } = get();
@@ -4215,7 +4261,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               id: returnedRunId,
             };
             set((s) => ({
-              messages: [...s.messages, assistantMsg],
+              messages: applyHistoryMemoryCap([...s.messages, assistantMsg]),
               sending: false,
               activeRunId: null,
               streamingText: '',
@@ -4255,9 +4301,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
   abortRun: async () => {
     clearHistoryPoll();
     clearErrorRecoveryTimer();
+    clearTurnTimeoutTimer();
     const { currentSessionKey } = get();
-    set({ sending: false, streamingText: '', streamingMessage: null, pendingFinal: false, lastUserMessageAt: null, pendingToolImages: [] });
-    set({ streamingTools: [] });
+    // Release all in-flight UI/run resources (P5-004 A3).
+    set({
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      pendingFinal: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+      streamingTools: [],
+    });
+    captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
 
     try {
       await abortChatRunViaHostApi(currentSessionKey);
@@ -4447,7 +4504,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               const currentStream = s.streamingMessage as RawMessage | null;
               const snapshotMsgs = snapshotStreamingAssistantMessage(currentStream, s.messages, runId);
               return {
-                messages: snapshotMsgs.length > 0 ? [...s.messages, ...snapshotMsgs] : s.messages,
+                messages: snapshotMsgs.length > 0 ? applyHistoryMemoryCap([...s.messages, ...snapshotMsgs]) : s.messages,
                 streamingText: '',
                 streamingMessage: null,
                 pendingFinal: true,
@@ -4522,14 +4579,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
               };
             }
             return toolOnly ? {
-              messages: [...s.messages, msgWithImages],
+              messages: applyHistoryMemoryCap([...s.messages, msgWithImages]),
               streamingText: '',
               streamingMessage: null,
               pendingFinal: true,
               streamingTools,
               ...clearPendingImages,
             } : {
-              messages: [...s.messages, msgWithImages],
+              messages: applyHistoryMemoryCap([...s.messages, msgWithImages]),
               streamingText: '',
               streamingMessage: null,
               sending: clearLifecycle ? false : s.sending,
@@ -4629,7 +4686,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           );
           if (errorSnapshot.length > 0) {
             set((s) => ({
-              messages: [...s.messages, ...errorSnapshot],
+              messages: applyHistoryMemoryCap([...s.messages, ...errorSnapshot]),
             }));
           }
 

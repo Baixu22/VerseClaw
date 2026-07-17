@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 10,
-      "Fixed": 22,
+      "Open": 9,
+      "Fixed": 23,
       "Partial": 2,
       "Unverified": 1
     },
-    "open": 10,
-    "fixed": 22
+    "open": 9,
+    "fixed": 23
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -561,13 +561,16 @@
       "category": "UX",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2",
       "related": [],
       "attackChain": [],
       "tasks": [
         "P5-004"
-      ]
+      ],
+      "notes": "P5-004: agent resource limits (token/cost budget reject, history memory cap, DOM window, tool-result cap, hard turn timeout + abort resource release).",
+      "updatedBy": "P5-004",
+      "updatedAt": "2026-07-17T09:14:36.276Z"
     },
     {
       "id": "F-UX-002",

@@ -34,6 +34,7 @@ import {
   useArtifactPanel,
 } from '@/stores/artifact-panel';
 import { hostApi } from '@/lib/host-api';
+import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ShimmerBlock } from '@/components/ai-elements/shimmer';
@@ -1289,9 +1290,13 @@ export function Chat() {
     const resolved: SendOptions = {
       ...opts,
       knowledgeMode: opts?.knowledgeMode ?? knowledgeMode,
+      sessionUsage: opts?.sessionUsage ?? {
+        totalTokens: liveUsage?.totalTokens ?? null,
+        costUsd: liveUsage?.estimatedCostUsd ?? null,
+      },
     };
     return sendMessage(text, resolved);
-  }, [knowledgeMode, sendMessage]);
+  }, [knowledgeMode, liveUsage?.estimatedCostUsd, liveUsage?.totalTokens, sendMessage]);
 
   const handleSubmitInteractionResponse = useCallback((responseText: string) => {
     void handleSendMessage(responseText);
@@ -2347,6 +2352,12 @@ export function Chat() {
     runSegmentMessageIndices,
     userRunCardsByTriggerIndex,
   ]);
+  const windowedMessageRenderRows = useMemo(() => {
+    const maxDom = getAgentResourceLimits().maxDomRenderMessages;
+    const { start, end, windowed } = selectMessageRenderWindow(messageRenderRows.length, { maxDomNodes: maxDom });
+    return { rows: messageRenderRows.slice(start, end), start, windowed, total: messageRenderRows.length };
+  }, [messageRenderRows]);
+
   const streamingToolsForMessage = useMemo(
     () => (streamingReplyText != null || hasActiveExecutionGraph ? [] : streamingTools),
     [hasActiveExecutionGraph, streamingReplyText, streamingTools],
@@ -2612,7 +2623,7 @@ export function Chat() {
                       </button>
                     </div>
                   )}
-                  {messageRenderRows.map((row) => {
+                  {windowedMessageRenderRows.rows.map((row) => {
                     if (row.hidden) return null;
                     return (
                     <div
