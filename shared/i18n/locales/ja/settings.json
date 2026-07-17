@@ -447,7 +447,25 @@
     "installCmdDesc": "~/.local/bin/openclaw をインストール（管理者権限不要）",
     "installTitle": "OpenClaw コマンドをインストール",
     "installMessage": "\"openclaw\" コマンドをインストールしますか？",
-    "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。"
+    "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。",
+    "dcsProdFlags": {
+      "title": "DCS 本番フラグ",
+      "description": "DCS coding runtime のオプトイン一覧（読み取り専用）。硬化証拠と製品承認があるまで default は off/shared/shadow のままです。",
+      "modeOptIn": "productionMode: opt-in",
+      "defaultLabel": "デフォルト",
+      "enableLabel": "有効化",
+      "rollbackLabel": "ロールバック",
+      "riskLabel": "リスク",
+      "readOnlyNote": "このパネルはフラグを変更しません。env または OpenClaw 設定を編集し runtime を再起動してください。docs/dcs-production-p0-runbook.md を参照。",
+      "risk": {
+        "baseline-on": "ベースライン ON",
+        "opt-in": "オプトイン",
+        "shadow-only": "シャドウのみ",
+        "api-only": "API のみ",
+        "request-only": "リクエストのみ",
+        "read-only": "読み取り専用"
+      }
+    }
   },
   "storage": {
     "title": "ストレージとメモリ",
@@ -464,14 +482,38 @@
       "notAvailable": "利用不可"
     },
     "categories": {
-      "logs": { "label": "ログ", "description": "アプリケーションログファイル" },
-      "sessions": { "label": "セッション", "description": "会話トランスクリプト" },
-      "trajectories": { "label": "軌跡", "description": "エージェント実行軌跡とフライトレコーダー" },
-      "mediaOutbound": { "label": "送信メディア", "description": "生成されたメディア成果物" },
-      "mediaThumbs": { "label": "メディアサムネイル", "description": "キャッシュされたメディアサムネイル（再生成可能）" },
-      "uvCache": { "label": "UV キャッシュ", "description": "Python uv ツールキャッシュ（再生成可能）" },
-      "electronCache": { "label": "Electron キャッシュ", "description": "Electron ランタイムキャッシュ（再生成可能）" },
-      "trash": { "label": "ゴミ箱", "description": "クリーンアップ待ちのソフト削除項目" }
+      "logs": {
+        "label": "ログ",
+        "description": "アプリケーションログファイル"
+      },
+      "sessions": {
+        "label": "セッション",
+        "description": "会話トランスクリプト"
+      },
+      "trajectories": {
+        "label": "軌跡",
+        "description": "エージェント実行軌跡とフライトレコーダー"
+      },
+      "mediaOutbound": {
+        "label": "送信メディア",
+        "description": "生成されたメディア成果物"
+      },
+      "mediaThumbs": {
+        "label": "メディアサムネイル",
+        "description": "キャッシュされたメディアサムネイル（再生成可能）"
+      },
+      "uvCache": {
+        "label": "UV キャッシュ",
+        "description": "Python uv ツールキャッシュ（再生成可能）"
+      },
+      "electronCache": {
+        "label": "Electron キャッシュ",
+        "description": "Electron ランタイムキャッシュ（再生成可能）"
+      },
+      "trash": {
+        "label": "ゴミ箱",
+        "description": "クリーンアップ待ちのソフト削除項目"
+      }
     },
     "actions": {
       "refresh": "更新",

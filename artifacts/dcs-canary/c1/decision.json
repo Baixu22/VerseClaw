@@ -1,0 +1,39 @@
+{
+  "flagId": "runtime.coding.contextViewTools",
+  "completionClass": "done (sim-canary+keep-off)",
+  "metrics": {
+    "fixtureCount": 32,
+    "reductionFactor": 5.125,
+    "baselineAvgCalls": 5.125,
+    "factstoreAvgCalls": 1,
+    "baselinePassRate": 1,
+    "factstorePassRate": 1,
+    "routingAccuracy": 1,
+    "corpusKind": "synthetic-agent",
+    "live": false
+  },
+  "meetsGate": false,
+  "recommendation": "keep-off",
+  "productApproved": false,
+  "defaultsUnchanged": true,
+  "killSwitch": "Unset OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / OPENCLAW_DCS_CONTEXT_TOOLS; leave runtime coding view-tools defaults false.",
+  "residual": [
+    "C1 canary uses synthetic-agent corpus only - not human live A/B",
+    "View tools / DEFAULT_* remain unchanged by this pack",
+    "liveReady=false - not production live A/B",
+    "productApproved=false - default-on blocked by hard rule",
+    "packaging path: defaultsUnchanged=true; no auto default flip"
+  ],
+  "howToEnable": "Opt-in only: set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime. Do not flip production defaults from this canary.",
+  "ts": "2026-07-16T02:32:34.355Z",
+  "liveReady": false,
+  "notes": [
+    "factstore arm reduces tool calls ≥5x with no pass-rate drop",
+    "recommendation must not be default-on without productApproved",
+    "liveReady forced false for synthetic canary"
+  ],
+  "ok": true,
+  "card": "C1-CANARY",
+  "wave": "C1",
+  "viewToolsDefaultUnchanged": true
+}

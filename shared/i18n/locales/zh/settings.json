@@ -447,7 +447,25 @@
     "installCmdDesc": "安装 ~/.local/bin/openclaw（无需管理员权限）",
     "installTitle": "安装 OpenClaw 命令",
     "installMessage": "安装 \"openclaw\" 命令？",
-    "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。"
+    "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。",
+    "dcsProdFlags": {
+      "title": "DCS 生产 Flag",
+      "description": "只读的 DCS coding runtime opt-in 目录。默认保持 off/shared/shadow，直至硬化证据与产品批准。",
+      "modeOptIn": "productionMode: opt-in",
+      "defaultLabel": "默认",
+      "enableLabel": "启用方式",
+      "rollbackLabel": "回滚",
+      "riskLabel": "风险",
+      "readOnlyNote": "此面板不会修改 flag。请编辑环境变量或 OpenClaw 配置后重启 runtime。见 docs/dcs-production-p0-runbook.zh-CN.md。",
+      "risk": {
+        "baseline-on": "基线开启",
+        "opt-in": "显式开启",
+        "shadow-only": "仅影子",
+        "api-only": "仅 API",
+        "request-only": "仅请求",
+        "read-only": "只读说明"
+      }
+    }
   },
   "storage": {
     "title": "存储与内存",
@@ -464,14 +482,38 @@
       "notAvailable": "不可用"
     },
     "categories": {
-      "logs": { "label": "日志", "description": "应用日志文件" },
-      "sessions": { "label": "会话", "description": "对话记录" },
-      "trajectories": { "label": "轨迹", "description": "Agent 运行轨迹和飞行记录" },
-      "mediaOutbound": { "label": "出站媒体", "description": "生成的媒体产物" },
-      "mediaThumbs": { "label": "媒体缩略图", "description": "缓存的媒体缩略图（可重建）" },
-      "uvCache": { "label": "UV 缓存", "description": "Python uv 工具缓存（可重建）" },
-      "electronCache": { "label": "Electron 缓存", "description": "Electron 运行时缓存（可重建）" },
-      "trash": { "label": "回收站", "description": "待清理的软删除项" }
+      "logs": {
+        "label": "日志",
+        "description": "应用日志文件"
+      },
+      "sessions": {
+        "label": "会话",
+        "description": "对话记录"
+      },
+      "trajectories": {
+        "label": "轨迹",
+        "description": "Agent 运行轨迹和飞行记录"
+      },
+      "mediaOutbound": {
+        "label": "出站媒体",
+        "description": "生成的媒体产物"
+      },
+      "mediaThumbs": {
+        "label": "媒体缩略图",
+        "description": "缓存的媒体缩略图（可重建）"
+      },
+      "uvCache": {
+        "label": "UV 缓存",
+        "description": "Python uv 工具缓存（可重建）"
+      },
+      "electronCache": {
+        "label": "Electron 缓存",
+        "description": "Electron 运行时缓存（可重建）"
+      },
+      "trash": {
+        "label": "回收站",
+        "description": "待清理的软删除项"
+      }
     },
     "actions": {
       "refresh": "刷新",

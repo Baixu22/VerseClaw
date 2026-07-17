@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "card": "C4-P",
+  "completionClass": "done (hard)",
+  "productionPnpmHardlinkInstall": true,
+  "productionGitWorktreeHardened": true,
+  "defaultIsolationShared": true,
+  "backendDefault": "inprocess",
+  "installDefaultNone": true,
+  "hardlinkModulesWorks": true,
+  "pnpmPreferOfflinePath": true,
+  "defaultsUnchanged": true,
+  "residual": [
+    "worktree.backend remains inprocess by default",
+    "installStrategy default none (no auto pnpm on create)"
+  ],
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.187Z"
+}

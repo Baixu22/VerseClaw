@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "card": "B1",
+  "wave": "C6-H",
+  "completionClass": "done (hard-gates+recorded)",
+  "live64k": false,
+  "recorded64k": true,
+  "synthetic64k": false,
+  "corpusKind": "recorded",
+  "readyToConsiderAssemblerFlip": false,
+  "autoAppliedAssemblerFlip": false,
+  "recommendation": "metrics-green-review-required",
+  "defaultsUnchanged": true,
+  "metricGates": {
+    "promptNotLinearExploding": true,
+    "compactionLayersHit": true,
+    "passRateFloor": true,
+    "cumulativeRawGe64k": true,
+    "allMetricGatesGreen": true
+  },
+  "decisionPackageComplete": true,
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:16.161Z"
+}

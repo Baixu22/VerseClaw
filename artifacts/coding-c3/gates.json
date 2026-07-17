@@ -1,27 +1,14 @@
 {
-    "ok":  true,
-    "gates":  {
-                  "lint_errors":  0,
-                  "vitest_c3_tests":  "16/16",
-                  "e2e_dcs_w5":  0,
-                  "e2e_tests":  "3/3",
-                  "openclaw_runtime_build":  0,
-                  "typecheck":  0,
-                  "vitest_c3":  0,
-                  "test:dcs":  0,
-                  "lint_warnings":  111,
-                  "lint:check":  0
-              },
-    "honesty":  {
-                    "impactRadiusDefault":  "off",
-                    "plannerFill":  "partial",
-                    "freeTextInvention":  false
-                },
-    "ts":  "2026-07-15T03:39:33.3425817Z",
-    "cards":  {
-                  "C3-2":  "same-wave non-overlap via buildExecutionWaves",
-                  "C3-4":  "token budget + concurrent metrics",
-                  "C3-1":  "writeSet field + partial planner fill",
-                  "C3-3":  "impact radius opt-in (impactByNodeId)"
-              }
+  "ok": true,
+  "cards": {
+    "C3-1": "writeSet field + partial planner fill",
+    "C3-2": "same-wave non-overlap via buildExecutionWaves",
+    "C3-3": "impact radius opt-in (impactByNodeId)",
+    "C3-4": "token budget + concurrent metrics"
+  },
+  "honesty": {
+    "plannerFill": "partial",
+    "freeTextInvention": false,
+    "impactRadiusDefault": "off"
+  }
 }

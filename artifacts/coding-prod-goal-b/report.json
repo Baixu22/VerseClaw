@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "goal": "B",
+  "title": "DCS production advancement B1+B2 (C6-H / C7-H)",
+  "defaultsUnchanged": true,
+  "cards": {
+    "B1": {
+      "ok": true,
+      "completionClass": "done (hard-gates+recorded)",
+      "live64k": false,
+      "recorded64k": true,
+      "synthetic64k": false,
+      "corpusKind": "recorded",
+      "readyToConsiderAssemblerFlip": false,
+      "autoAppliedAssemblerFlip": false,
+      "recommendation": "metrics-green-review-required",
+      "metricGatesGreen": true
+    },
+    "B2": {
+      "ok": true,
+      "completionClass": "done (shadow+stable-window)",
+      "stableWindowMet": true,
+      "cutoverAllowed": false,
+      "cutoverRecommended": false,
+      "flagsDefaultOff": true,
+      "manualCutoverPackComplete": true
+    }
+  },
+  "residuals": [
+    "C6-H live 64K production corpus still residual (recorded/synthetic evidence complete)",
+    "Assembler production flip remains out-of-band; readyToConsider requires product review",
+    "C7-H production dual-write/cutover requires explicit user approval (cutoverAllowed always false)",
+    "C1 live A/B still blocked — view tools stay default-off",
+    "C4-P pnpm hardlink worktree install not started",
+    "C5-P patch-flow default orchestration remains false (recommend-only)"
+  ],
+  "deliverables": {
+    "b1": "artifacts/coding-prod-b1/",
+    "b2": "artifacts/coding-prod-b2/",
+    "corpus": "openclaw_runtime/src/context-engine/coding-c6h-corpus.ts",
+    "flipDecision": "openclaw_runtime/src/context-engine/coding-c6h-flip-decision.ts",
+    "cutoverPack": "openclaw_runtime/src/knowledge/sekb/experience-shadow-cutover-pack.ts",
+    "recordedFixture": "openclaw_runtime/src/context-engine/fixtures/c6h-recorded-64k.json"
+  },
+  "next": "Goal C / Round ACCEPT 2.0: C1 live A/B residual, C4-P hardlink, C5-P patch-flow residual, or ACCEPT refresh",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:16.389Z"
+}

@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "c1_2": {
+    "ok": true,
+    "fixtureCount": 12,
+    "baselineAvgCalls": 5.083333333333333,
+    "factstoreAvgCalls": 1,
+    "reductionFactor": 5.083333333333333,
+    "baselinePassRate": 1,
+    "factstorePassRate": 1,
+    "meetsGate": true,
+    "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop",
+    "routingAccuracy": 1
+  },
+  "c3_4": {
+    "wave": [
+      "m1",
+      "m2",
+      "m3"
+    ],
+    "tokenBudgetAborts": 1,
+    "waveConflictRate": 0
+  },
+  "c4": {
+    "merge": [
+      "merged",
+      "conflict"
+    ],
+    "mergeReworkRate": 0.5
+  },
+  "c5": {
+    "leaseHeld": true,
+    "mode": "patch-flow"
+  },
+  "c6": {
+    "compaction": {
+      "archive": 1,
+      "tool_output_compress": 1,
+      "token_pressure_emergency": 1
+    }
+  },
+  "c7": {
+    "memoCount": 1,
+    "verifierNoSelfRepair": true
+  },
+  "rates": {
+    "approvalPromptRate": 0,
+    "diagHitRate": 0,
+    "verifyHitRate": 0,
+    "falseBlockRate": 0,
+    "waveConflictRate": 0,
+    "writeSetPredAccuracy": 0,
+    "writeSetCoverageRate": 1,
+    "taskPassRate": 1,
+    "toolRoutingAccuracy": 0.3333333333333333,
+    "mergeReworkRate": 0.5
+  }
+}

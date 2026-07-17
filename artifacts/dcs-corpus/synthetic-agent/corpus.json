@@ -1,0 +1,7257 @@
+{
+  "version": 1,
+  "kind": "synthetic-agent",
+  "source": "synthetic-agent/deterministic seed=42 tasks=32 arms=baseline,factstore,mcp_control",
+  "entries": [
+    {
+      "sessionId": "syn-42-nav-01-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-01/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 26,
+          "tokenEstimate": 7
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-01",
+      "category": "impact_callers",
+      "query": "Who calls login()?"
+    },
+    {
+      "sessionId": "syn-42-nav-01-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-01/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 26,
+          "tokenEstimate": 7
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-01",
+      "category": "impact_callers",
+      "query": "Who calls login()?"
+    },
+    {
+      "sessionId": "syn-42-nav-01-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-01/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 26,
+          "tokenEstimate": 7
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-01",
+      "category": "impact_callers",
+      "query": "Who calls login()?"
+    },
+    {
+      "sessionId": "syn-42-nav-02-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-02/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-02",
+      "category": "impact_callers",
+      "query": "Which functions call handleRequest?"
+    },
+    {
+      "sessionId": "syn-42-nav-02-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-02/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-02",
+      "category": "impact_callers",
+      "query": "Which functions call handleRequest?"
+    },
+    {
+      "sessionId": "syn-42-nav-02-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-02/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-02",
+      "category": "impact_callers",
+      "query": "Which functions call handleRequest?"
+    },
+    {
+      "sessionId": "syn-42-nav-03-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-03/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-03",
+      "category": "impact_radius",
+      "query": "What would change if we rename util?"
+    },
+    {
+      "sessionId": "syn-42-nav-03-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-03/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-03",
+      "category": "impact_radius",
+      "query": "What would change if we rename util?"
+    },
+    {
+      "sessionId": "syn-42-nav-03-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-03/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-03",
+      "category": "impact_radius",
+      "query": "What would change if we rename util?"
+    },
+    {
+      "sessionId": "syn-42-nav-04-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-04/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-04",
+      "category": "impact_radius",
+      "query": "Blast radius of editing auth.ts"
+    },
+    {
+      "sessionId": "syn-42-nav-04-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-04/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-04",
+      "category": "impact_radius",
+      "query": "Blast radius of editing auth.ts"
+    },
+    {
+      "sessionId": "syn-42-nav-04-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-04/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-04",
+      "category": "impact_radius",
+      "query": "Blast radius of editing auth.ts"
+    },
+    {
+      "sessionId": "syn-42-nav-05-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-05/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-05",
+      "category": "understand",
+      "query": "Where is authentication implemented?"
+    },
+    {
+      "sessionId": "syn-42-nav-05-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-05/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-05",
+      "category": "understand",
+      "query": "Where is authentication implemented?"
+    },
+    {
+      "sessionId": "syn-42-nav-05-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-05/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-05",
+      "category": "understand",
+      "query": "Where is authentication implemented?"
+    },
+    {
+      "sessionId": "syn-42-nav-06-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-06/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-06",
+      "category": "understand",
+      "query": "How does session write locking work?"
+    },
+    {
+      "sessionId": "syn-42-nav-06-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-06/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-06",
+      "category": "understand",
+      "query": "How does session write locking work?"
+    },
+    {
+      "sessionId": "syn-42-nav-06-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-06/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 44,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-06",
+      "category": "understand",
+      "query": "How does session write locking work?"
+    },
+    {
+      "sessionId": "syn-42-nav-07-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-07/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 59,
+          "tokenEstimate": 15
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-07",
+      "category": "reuse",
+      "query": "Is there an existing helper for path normalization?"
+    },
+    {
+      "sessionId": "syn-42-nav-07-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-07/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 59,
+          "tokenEstimate": 15
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-07",
+      "category": "reuse",
+      "query": "Is there an existing helper for path normalization?"
+    },
+    {
+      "sessionId": "syn-42-nav-07-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-07/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 59,
+          "tokenEstimate": 15
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-07",
+      "category": "reuse",
+      "query": "Is there an existing helper for path normalization?"
+    },
+    {
+      "sessionId": "syn-42-nav-08-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-08/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 36,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-08",
+      "category": "reuse",
+      "query": "Find reusable hash utilities"
+    },
+    {
+      "sessionId": "syn-42-nav-08-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-08/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 36,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-08",
+      "category": "reuse",
+      "query": "Find reusable hash utilities"
+    },
+    {
+      "sessionId": "syn-42-nav-08-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-08/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 36,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-08",
+      "category": "reuse",
+      "query": "Find reusable hash utilities"
+    },
+    {
+      "sessionId": "syn-42-nav-09-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-09/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 40,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-09",
+      "category": "verify",
+      "query": "Which tests cover login changes?"
+    },
+    {
+      "sessionId": "syn-42-nav-09-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-09/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 40,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-09",
+      "category": "verify",
+      "query": "Which tests cover login changes?"
+    },
+    {
+      "sessionId": "syn-42-nav-09-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-09/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 40,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-09",
+      "category": "verify",
+      "query": "Which tests cover login changes?"
+    },
+    {
+      "sessionId": "syn-42-nav-10-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-10/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 38,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-10",
+      "category": "verify",
+      "query": "Related tests for auth.ts diff"
+    },
+    {
+      "sessionId": "syn-42-nav-10-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-10/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 38,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-10",
+      "category": "verify",
+      "query": "Related tests for auth.ts diff"
+    },
+    {
+      "sessionId": "syn-42-nav-10-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-10/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 38,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-10",
+      "category": "verify",
+      "query": "Related tests for auth.ts diff"
+    },
+    {
+      "sessionId": "syn-42-nav-11-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-11/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 37,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-11",
+      "category": "impact_callers",
+      "query": "Callers of acquireSymbolLease"
+    },
+    {
+      "sessionId": "syn-42-nav-11-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-11/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 37,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-11",
+      "category": "impact_callers",
+      "query": "Callers of acquireSymbolLease"
+    },
+    {
+      "sessionId": "syn-42-nav-11-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-11/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 37,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-11",
+      "category": "impact_callers",
+      "query": "Callers of acquireSymbolLease"
+    },
+    {
+      "sessionId": "syn-42-nav-12-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-12/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 45,
+          "tokenEstimate": 12
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-12",
+      "category": "understand",
+      "query": "Explain the coding write kit pipeline"
+    },
+    {
+      "sessionId": "syn-42-nav-12-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-12/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 45,
+          "tokenEstimate": 12
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-12",
+      "category": "understand",
+      "query": "Explain the coding write kit pipeline"
+    },
+    {
+      "sessionId": "syn-42-nav-12-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-12/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 45,
+          "tokenEstimate": 12
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-12",
+      "category": "understand",
+      "query": "Explain the coding write kit pipeline"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-13-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-13/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-13",
+      "category": "understand",
+      "query": "[seed=42#12] understand task 13"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-13-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-13/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-13",
+      "category": "understand",
+      "query": "[seed=42#12] understand task 13"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-13-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-13/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-13",
+      "category": "understand",
+      "query": "[seed=42#12] understand task 13"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-14-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-14/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-14",
+      "category": "reuse",
+      "query": "[seed=42#13] reuse task 14"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-14-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-14/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-14",
+      "category": "reuse",
+      "query": "[seed=42#13] reuse task 14"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-14-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-14/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-14",
+      "category": "reuse",
+      "query": "[seed=42#13] reuse task 14"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-15-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-15/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-15",
+      "category": "verify",
+      "query": "[seed=42#14] verify task 15"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-15-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-15/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-15",
+      "category": "verify",
+      "query": "[seed=42#14] verify task 15"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-15-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-15/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-15",
+      "category": "verify",
+      "query": "[seed=42#14] verify task 15"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-16-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-16/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-16",
+      "category": "impact_callers",
+      "query": "[seed=42#15] impact callers task 16"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-16-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-16/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-16",
+      "category": "impact_callers",
+      "query": "[seed=42#15] impact callers task 16"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-16-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-16/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-16",
+      "category": "impact_callers",
+      "query": "[seed=42#15] impact callers task 16"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-17-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-17/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-17",
+      "category": "impact_radius",
+      "query": "[seed=42#16] impact radius task 17"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-17-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-17/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-17",
+      "category": "impact_radius",
+      "query": "[seed=42#16] impact radius task 17"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-17-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-17/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-17",
+      "category": "impact_radius",
+      "query": "[seed=42#16] impact radius task 17"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-18-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-18/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-18",
+      "category": "understand",
+      "query": "[seed=42#17] understand task 18"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-18-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-18/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-18",
+      "category": "understand",
+      "query": "[seed=42#17] understand task 18"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-18-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-18/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-18",
+      "category": "understand",
+      "query": "[seed=42#17] understand task 18"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-19-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-19/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-19",
+      "category": "reuse",
+      "query": "[seed=42#18] reuse task 19"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-19-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-19/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-19",
+      "category": "reuse",
+      "query": "[seed=42#18] reuse task 19"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-19-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-19/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-19",
+      "category": "reuse",
+      "query": "[seed=42#18] reuse task 19"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-20-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-20/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-20",
+      "category": "verify",
+      "query": "[seed=42#19] verify task 20"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-20-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-20/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-20",
+      "category": "verify",
+      "query": "[seed=42#19] verify task 20"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-20-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-20/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-20",
+      "category": "verify",
+      "query": "[seed=42#19] verify task 20"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-21-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-21/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-21",
+      "category": "impact_callers",
+      "query": "[seed=42#20] impact callers task 21"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-21-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-21/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-21",
+      "category": "impact_callers",
+      "query": "[seed=42#20] impact callers task 21"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-21-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-21/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-21",
+      "category": "impact_callers",
+      "query": "[seed=42#20] impact callers task 21"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-22-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-22/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-22",
+      "category": "impact_radius",
+      "query": "[seed=42#21] impact radius task 22"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-22-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-22/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-22",
+      "category": "impact_radius",
+      "query": "[seed=42#21] impact radius task 22"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-22-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-22/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-22",
+      "category": "impact_radius",
+      "query": "[seed=42#21] impact radius task 22"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-23-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-23/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-23",
+      "category": "understand",
+      "query": "[seed=42#22] understand task 23"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-23-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-23/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-23",
+      "category": "understand",
+      "query": "[seed=42#22] understand task 23"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-23-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-23/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-23",
+      "category": "understand",
+      "query": "[seed=42#22] understand task 23"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-24-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-24/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 15,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-24",
+      "category": "reuse",
+      "query": "[seed=42#23] reuse task 24"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-24-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-24/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-24",
+      "category": "reuse",
+      "query": "[seed=42#23] reuse task 24"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-24-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-24/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-24",
+      "category": "reuse",
+      "query": "[seed=42#23] reuse task 24"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-25-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-25/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-25",
+      "category": "verify",
+      "query": "[seed=42#24] verify task 25"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-25-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-25/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-25",
+      "category": "verify",
+      "query": "[seed=42#24] verify task 25"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-25-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-25/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-25",
+      "category": "verify",
+      "query": "[seed=42#24] verify task 25"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-26-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-26/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-26",
+      "category": "impact_callers",
+      "query": "[seed=42#25] impact callers task 26"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-26-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-26/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-26",
+      "category": "impact_callers",
+      "query": "[seed=42#25] impact callers task 26"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-26-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-26/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-26",
+      "category": "impact_callers",
+      "query": "[seed=42#25] impact callers task 26"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-27-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-27/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-27",
+      "category": "impact_radius",
+      "query": "[seed=42#26] impact radius task 27"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-27-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-27/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-27",
+      "category": "impact_radius",
+      "query": "[seed=42#26] impact radius task 27"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-27-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-27/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-27",
+      "category": "impact_radius",
+      "query": "[seed=42#26] impact radius task 27"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-28-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-28/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-28",
+      "category": "understand",
+      "query": "[seed=42#27] understand task 28"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-28-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-28/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 58,
+          "tokenEstimate": 15,
+          "toolCalls": [
+            {
+              "name": "context_understand",
+              "argsChars": 60,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-28",
+      "category": "understand",
+      "query": "[seed=42#27] understand task 28"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-28-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-28/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 39,
+          "tokenEstimate": 10
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-28",
+      "category": "understand",
+      "query": "[seed=42#27] understand task 28"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-29-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-29/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-29",
+      "category": "reuse",
+      "query": "[seed=42#28] reuse task 29"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-29-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-29/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 53,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_reuse",
+              "argsChars": 50,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-29",
+      "category": "reuse",
+      "query": "[seed=42#28] reuse task 29"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-29-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-29/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 34,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-29",
+      "category": "reuse",
+      "query": "[seed=42#28] reuse task 29"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-30-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-30/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 13,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-30",
+      "category": "verify",
+      "query": "[seed=42#29] verify task 30"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-30-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-30/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_verify",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-30",
+      "category": "verify",
+      "query": "[seed=42#29] verify task 30"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-30-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-30/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 35,
+          "tokenEstimate": 9
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-30",
+      "category": "verify",
+      "query": "[seed=42#29] verify task 30"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-31-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-31/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-31",
+      "category": "impact_callers",
+      "query": "[seed=42#30] impact callers task 31"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-31-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-31/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-31",
+      "category": "impact_callers",
+      "query": "[seed=42#30] impact callers task 31"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-31-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-31/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 43,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-31",
+      "category": "impact_callers",
+      "query": "[seed=42#30] impact callers task 31"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-32-baseline",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-32/baseline",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 7,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 9,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "grep",
+              "argsChars": 32,
+              "resultChars": 400
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "role": "tool",
+          "chars": 400,
+          "tokenEstimate": 100
+        },
+        {
+          "index": 11,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "baseline",
+      "taskId": "nav-syn-32",
+      "category": "impact_radius",
+      "query": "[seed=42#31] impact radius task 32"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-32-factstore",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-32/factstore",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 54,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 52,
+              "resultChars": 220
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 220,
+          "tokenEstimate": 55
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "factstore",
+      "taskId": "nav-syn-32",
+      "category": "impact_radius",
+      "query": "[seed=42#31] impact radius task 32"
+    },
+    {
+      "sessionId": "syn-42-nav-syn-32-mcp_control",
+      "kind": "synthetic-agent",
+      "source": "synthetic-agent/seed=42/nav-syn-32/mcp_control",
+      "pass": true,
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 42,
+          "tokenEstimate": 11
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 55,
+          "tokenEstimate": 14,
+          "toolCalls": [
+            {
+              "name": "codebase_search",
+              "argsChars": 54,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 3,
+          "role": "assistant",
+          "chars": 44,
+          "tokenEstimate": 11,
+          "toolCalls": [
+            {
+              "name": "read",
+              "argsChars": 32,
+              "resultChars": 300
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "role": "tool",
+          "chars": 300,
+          "tokenEstimate": 75
+        },
+        {
+          "index": 5,
+          "role": "assistant",
+          "chars": 120,
+          "tokenEstimate": 30
+        }
+      ],
+      "arm": "mcp_control",
+      "taskId": "nav-syn-32",
+      "category": "impact_radius",
+      "query": "[seed=42#31] impact radius task 32"
+    }
+  ],
+  "seed": 42,
+  "notes": [
+    "kind=synthetic-agent only; not live traffic",
+    "three arms: baseline / factstore / mcp_control for C1 canary A/B",
+    "seed=42 taskCount=32 entries=96"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "kind": "synthetic-agent",
+  "source": "openclaw_runtime/src/context-engine/fixtures/dcs-corpus-minimal.json",
+  "notes": [
+    "Minimal legal DCS corpus fixture for schema/loader tests",
+    "Not live traffic"
+  ],
+  "entries": [
+    {
+      "sessionId": "syn-min-001",
+      "kind": "synthetic-agent",
+      "source": "fixtures/dcs-corpus-minimal",
+      "pass": true,
+      "arm": "factstore",
+      "taskId": "nav-min-01",
+      "category": "impact_callers",
+      "query": "Who calls login()?",
+      "turns": [
+        {
+          "index": 0,
+          "role": "user",
+          "chars": 48,
+          "tokenEstimate": 12
+        },
+        {
+          "index": 1,
+          "role": "assistant",
+          "chars": 96,
+          "tokenEstimate": 24,
+          "toolCalls": [
+            {
+              "name": "context_impact",
+              "argsChars": 24,
+              "resultChars": 320
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "role": "tool",
+          "chars": 320,
+          "tokenEstimate": 80
+        }
+      ]
+    }
+  ]
+}

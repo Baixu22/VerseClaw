@@ -1,0 +1,114 @@
+{
+  "ok": true,
+  "card": "C1-R",
+  "wave": "C1",
+  "completionClass": "done (sim+residual)",
+  "meetsGate": false,
+  "recommendation": "keep-off",
+  "defaultsUnchanged": true,
+  "viewToolsDefaultOff": true,
+  "sim": {
+    "fixtureCount": 12,
+    "reductionFactor": 5.083,
+    "meetsSimGate": true,
+    "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop"
+  },
+  "live": {
+    "ready": false,
+    "blockedReason": "Live A/B corpus + comms:replay binding + owner scorecard window missing (CODING-C1-LIVE-AB.md)"
+  },
+  "residual": [
+    "Live A/B blocked — no production corpus in this environment",
+    "View tools / tool-registry / working-memory remain default-off"
+  ],
+  "howToEnableOptIn": "Set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.",
+  "priorA1": "keep-off",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:14.963Z"
+}
+{
+  "ok": true,
+  "card": "C4-P",
+  "completionClass": "done (hard)",
+  "productionPnpmHardlinkInstall": true,
+  "productionGitWorktreeHardened": true,
+  "defaultIsolationShared": true,
+  "backendDefault": "inprocess",
+  "installDefaultNone": true,
+  "hardlinkModulesWorks": true,
+  "pnpmPreferOfflinePath": true,
+  "defaultsUnchanged": true,
+  "residual": [
+    "worktree.backend remains inprocess by default",
+    "installStrategy default none (no auto pnpm on create)"
+  ],
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.187Z"
+}
+{
+  "ok": true,
+  "card": "C5-P",
+  "completionClass": "done (hard-gates+keep-off)",
+  "patchFlowDefault": false,
+  "recommendation": "keep-off",
+  "meetsGate": false,
+  "capabilityReady": true,
+  "multiProcessWalHardened": true,
+  "symbolLeaseDefault": false,
+  "defaultsUnchanged": true,
+  "residual": [
+    "runtime.coding.patchFlow.default remains false (recommend-only orchestration)",
+    "Default-on requires product soak + explicit config change out of band",
+    "productSoakApproved not set"
+  ],
+  "howToOptIn": "Call applyPatchProposalsSerial() / recommendIsolationMode() opt-in. Do NOT set runtime.coding.patchFlow.default=true without product approval after soak.",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.813Z"
+}
+{
+  "ok": true,
+  "goal": "C",
+  "title": "DCS production advancement C1 residual + C4-P + C5-P",
+  "defaultsUnchanged": true,
+  "cards": {
+    "C1": {
+      "ok": true,
+      "completionClass": "done (sim+residual)",
+      "meetsGate": false,
+      "recommendation": "keep-off",
+      "liveReady": false
+    },
+    "C4P": {
+      "ok": true,
+      "completionClass": "done (hard)",
+      "productionPnpmHardlinkInstall": true,
+      "backendDefault": "inprocess",
+      "installDefaultNone": true
+    },
+    "C5P": {
+      "ok": true,
+      "completionClass": "done (hard-gates+keep-off)",
+      "patchFlowDefault": false,
+      "recommendation": "keep-off",
+      "meetsGate": false,
+      "capabilityReady": true
+    }
+  },
+  "residuals": [
+    "C1 live A/B still blocked — view tools stay default-off",
+    "C4-P installStrategy opt-in only; backend default inprocess",
+    "C5-P patchFlow.default remains false (recommend-only)",
+    "C6-H live 64K production corpus residual",
+    "C7-H production cutover requires explicit user approval"
+  ],
+  "deliverables": {
+    "c1": "artifacts/coding-prod-c1/",
+    "c4p": "artifacts/coding-prod-c4p/",
+    "c5p": "artifacts/coding-prod-c5p/",
+    "worktreeInstall": "openclaw_runtime/src/agents/worktree-pnpm-install.ts",
+    "patchFlowGraduation": "openclaw_runtime/src/agents/patch-flow-graduation.ts"
+  },
+  "next": "Round ACCEPT 2.0 (refresh gates + honesty pack over Goal A/B/C)",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:15.872Z"
+}

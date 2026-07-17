@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "card": "C1-R",
+  "wave": "C1",
+  "completionClass": "done (sim+residual)",
+  "meetsGate": false,
+  "recommendation": "keep-off",
+  "defaultsUnchanged": true,
+  "viewToolsDefaultOff": true,
+  "sim": {
+    "fixtureCount": 12,
+    "reductionFactor": 5.083,
+    "meetsSimGate": true,
+    "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop"
+  },
+  "live": {
+    "ready": false,
+    "blockedReason": "Live A/B corpus + comms:replay binding + owner scorecard window missing (CODING-C1-LIVE-AB.md)"
+  },
+  "residual": [
+    "Live A/B blocked — no production corpus in this environment",
+    "View tools / tool-registry / working-memory remain default-off"
+  ],
+  "howToEnableOptIn": "Set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.",
+  "priorA1": "keep-off",
+  "sha": "60061e335",
+  "ts": "2026-07-17T01:46:14.963Z"
+}

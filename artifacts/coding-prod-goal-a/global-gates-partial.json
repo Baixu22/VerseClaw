@@ -1,0 +1,21 @@
+{
+    "ts":  "2026-07-15T13:30:28.1954170Z",
+    "ok":  true,
+    "defaultsUnchanged":  true,
+    "acceptance":  {
+                       "a1":  true,
+                       "c5h":  true,
+                       "c4h":  true,
+                       "remaining":  true,
+                       "goalA":  true
+                   },
+    "commsTouched":  false,
+    "phase":  "global",
+    "noDefaultFlagFlip":  true,
+    "units":  {
+                  "symbolLease":  "7/7",
+                  "abFixturesAndFlags":  "3/3",
+                  "worktreeService":  "15/15",
+                  "isolationMatrix":  "3/3"
+              }
+}

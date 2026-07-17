@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "card": "B2",
+  "cutoverAllowed": false,
+  "cutoverRecommended": false,
+  "stableWindowMet": true,
+  "defaultsUnchanged": true,
+  "flagsDefaultOff": true
+}

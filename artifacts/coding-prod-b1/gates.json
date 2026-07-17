@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "card": "B1",
+  "noAutoAssemblerFlip": true,
+  "readyToConsiderAssemblerFlip": false,
+  "defaultsUnchanged": true,
+  "cumulativeRawGe64k": true,
+  "live64k": false,
+  "recommendation": "metrics-green-review-required"
+}

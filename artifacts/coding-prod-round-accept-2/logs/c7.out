@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "routingMemoShadow": true,
+  "defaultInjectionUnchanged": true,
+  "sekbExperienceShadow": true,
+  "experienceHitRate": 0,
+  "verifierNoSelfRepair": true,
+  "failCreatesLeadFixTask": true,
+  "completionClass": "done (shadow)",
+  "cutoverRecommended": false,
+  "flags": {
+    "runtime.coding.routingMemo.shadow": false,
+    "runtime.coding.sekb.experienceShadow": false
+  },
+  "residual": [
+    "C7-2 productization partial: shadow journal + confirm hook exist; full production confirm chain metrics still fixture-level",
+    "No default COMPASS/role-memory/routing production prompt injection cutover",
+    "C7-H dual-write/cutover requires explicit user approval after stable window"
+  ],
+  "howToEnableShadow": {
+    "routingMemo": "runtime.coding.routingMemo.shadow=true or recordRoutingMemoShadow({enabled:true})",
+    "experience": "runtime.coding.sekb.experienceShadow=true or confirm options.experienceShadow.enabled=true",
+    "verifier": "verifierNoSelfRepair defaults true; set false only to opt out of lead fix factory"
+  },
+  "ts": "2026-07-17T01:46:14.658Z"
+}

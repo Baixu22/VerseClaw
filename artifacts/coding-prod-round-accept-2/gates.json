@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "redLinesPass": true,
+  "acceptanceAllOk": true,
+  "unitsOk": true,
+  "w5": {
+    "ok": true,
+    "note": "reused Goal B W5 3/3 evidence (UI untouched by Goal C)"
+  }
+}

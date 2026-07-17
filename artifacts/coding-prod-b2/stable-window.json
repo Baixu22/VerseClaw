@@ -1,0 +1,10 @@
+{
+  "eventCount": 20,
+  "windowDays": 15,
+  "hitRate": 1,
+  "harmEvents": 0,
+  "stableWindowMet": true,
+  "cutoverAllowed": false,
+  "journalPathPattern": ".openclaw/memory/experience-shadow.jsonl",
+  "seededEvents": 20
+}

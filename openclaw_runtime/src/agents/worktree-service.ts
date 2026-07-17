@@ -1,22 +1,27 @@
 /**
- * C4 worktree isolation interface: create/merge/cleanup + serial merge queue.
+ * C4 worktree isolation + C4-H production hardening for git worktree lifecycle.
  *
  * Backends:
  * - inprocess (default): directory simulation under `.openclaw/worktrees/<id>`
  * - git: real `git worktree add/remove` when repo is a git work tree; falls back to inprocess
  *
- * Completion class for this wave: interface (inprocess default). Git backend is
- * opt-in and not claimed as production-hardened C4-H.
+ * Defaults remain isolation=shared and backend=inprocess. C4-H hardens opt-in git path
+ * (path normalize, merge lock, cleanup retries, Windows long-path aware roots).
+ * C4-P adds opt-in installStrategy (hardlink-modules|pnpm-install); default none.
+ * Does NOT flip production defaults.
  */
 import { execFileSync } from "node:child_process";
 import {
+  closeSync,
   cpSync,
   existsSync,
   mkdirSync,
+  openSync,
   readFileSync,
   readdirSync,
   rmSync,
   statSync,
+  unlinkSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -24,6 +29,17 @@ import { codingObservability } from "../context-engine/coding-observability.js";
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
+import {
+  installWorktreeDependencies,
+  PRODUCTION_PNPM_HARDLINK_INSTALL,
+  type WorktreeInstallStrategy,
+  type WorktreeInstallResult,
+} from "./worktree-pnpm-install.js";
+
+/** C4-H capability: git worktree path is production-hardened while defaults stay safe. */
+export const PRODUCTION_GIT_WORKTREE_HARDENED = true as const;
+export { PRODUCTION_PNPM_HARDLINK_INSTALL } from "./worktree-pnpm-install.js";
+export type { WorktreeInstallStrategy, WorktreeInstallResult } from "./worktree-pnpm-install.js";
 
 export type WorktreeRecord = {
   id: string;
@@ -49,7 +65,7 @@ export type MergeConflictPolicy = "mark_conflict" | "return_worker" | "escalate_
 
 export type WorktreeService = {
   backend: WorktreeBackend;
-  create(id: string, options?: { writeSet?: string[]; seedFiles?: string[] }): WorktreeRecord;
+  create(id: string, options?: { writeSet?: string[]; seedFiles?: string[]; installStrategy?: WorktreeInstallStrategy }): WorktreeRecord & { install?: WorktreeInstallResult };
   pathFor(id: string): string;
   list(): WorktreeRecord[];
   enqueueMerge(item: Omit<MergeQueueItem, "status"> & { status?: MergeQueueItem["status"] }): MergeQueueItem;
@@ -78,6 +94,27 @@ function scope(baseRoot: string) {
   return s;
 }
 
+/** Normalize relative paths for Windows separators and reject traversal. */
+export function normalizeWorktreeRelPath(rel: string): string {
+  const cleaned = rel.replace(/\\/g, "/").replace(/^\/+/, "");
+  const parts = cleaned.split("/").filter((p) => p && p !== ".");
+  if (parts.some((p) => p === "..")) {
+    throw new Error(`unsafe_worktree_rel_path:${rel}`);
+  }
+  return parts.join("/");
+}
+
+/** Windows long-path aware absolute root when needed. */
+export function hardenFsRoot(absPath: string): string {
+  const resolved = path.resolve(absPath);
+  if (process.platform !== "win32") return resolved;
+  if (resolved.startsWith("\\\\?\\")) return resolved;
+  if (resolved.length >= 240) {
+    return `\\\\?\\${resolved}`;
+  }
+  return resolved;
+}
+
 function isGitRepo(root: string): boolean {
   try {
     const out = execFileSync("git", ["-C", root, "rev-parse", "--is-inside-work-tree"], {
@@ -95,12 +132,66 @@ function git(args: string[], cwd: string): string {
     cwd,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
+    windowsHide: true,
   });
 }
 
 function resolveBackend(baseRoot: string, requested: WorktreeBackend): WorktreeBackend {
   if (requested !== "git") return "inprocess";
   return isGitRepo(baseRoot) ? "git" : "inprocess";
+}
+
+function sleepMs(ms: number): void {
+  const until = Date.now() + ms;
+  while (Date.now() < until) {
+    /* spin */
+  }
+}
+
+/** Exclusive create lock with stale recovery (C4-H merge/cleanup serialization). */
+function withWorktreeLock(baseRoot: string, fn: () => void): void {
+  const lockDir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
+  mkdirSync(lockDir, { recursive: true });
+  const lockPath = path.join(lockDir, ".merge.lock");
+  const started = Date.now();
+  let fd: number | undefined;
+  while (Date.now() - started < 3000) {
+    try {
+      fd = openSync(lockPath, "wx");
+      writeFileSync(lockPath, `${process.pid}\n${Date.now()}\n`, "utf8");
+      break;
+    } catch {
+      try {
+        if (existsSync(lockPath)) {
+          const raw = readFileSync(lockPath, "utf8");
+          const ts = Number(raw.split(/\r?\n/)[1] ?? 0);
+          if (ts > 0 && Date.now() - ts > 10_000) {
+            unlinkSync(lockPath);
+            continue;
+          }
+        }
+      } catch {
+        // ignore
+      }
+      sleepMs(10);
+    }
+  }
+  try {
+    fn();
+  } finally {
+    if (fd !== undefined) {
+      try {
+        closeSync(fd);
+      } catch {
+        // ignore
+      }
+      try {
+        unlinkSync(lockPath);
+      } catch {
+        // ignore
+      }
+    }
+  }
 }
 
 function applyConflictPolicy(
@@ -123,6 +214,30 @@ function applyConflictPolicy(
   codingObservability.recordMergeOutcome(true);
 }
 
+function seedFilesInto(wtRoot: string, baseRoot: string, seedFiles: string[] | undefined): void {
+  for (const relRaw of seedFiles ?? []) {
+    const rel = normalizeWorktreeRelPath(relRaw);
+    const src = path.join(baseRoot, ...rel.split("/"));
+    const dest = path.join(wtRoot, ...rel.split("/"));
+    if (existsSync(src) && statSync(src).isFile()) {
+      mkdirSync(path.dirname(dest), { recursive: true });
+      cpSync(src, dest);
+    }
+  }
+}
+
+function removePathWithRetries(target: string, attempts = 5): void {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      if (!existsSync(target)) return;
+      rmSync(target, { recursive: true, force: true });
+      return;
+    } catch {
+      sleepMs(20 * (i + 1));
+    }
+  }
+}
+
 export function createWorktreeService(
   baseRoot: string,
   options?: CreateWorktreeServiceOptions,
@@ -137,76 +252,83 @@ export function createWorktreeService(
     backend,
     create(id, createOptions) {
       const s = scope(resolved);
-      const wtRoot = path.join(rootDir, id);
+      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+      const wtRoot = hardenFsRoot(path.join(rootDir, safeId));
       let gitBranch: string | undefined;
+      let recBackend: WorktreeBackend = "inprocess";
 
-      if (backend === "git") {
+      withWorktreeLock(resolved, () => {
         mkdirSync(rootDir, { recursive: true });
         if (existsSync(wtRoot)) {
+          removePathWithRetries(wtRoot);
+        }
+
+        if (backend === "git") {
+          gitBranch = `openclaw/wt-${safeId.slice(0, 40)}`;
+          const absWt = path.resolve(wtRoot);
           try {
-            rmSync(wtRoot, { recursive: true, force: true });
+            git(["worktree", "add", "--detach", absWt, "HEAD"], resolved);
+            recBackend = "git";
           } catch {
-            // continue; git worktree add will fail loudly if needed
+            try {
+              git(["worktree", "add", "-B", gitBranch, absWt, "HEAD"], resolved);
+              recBackend = "git";
+            } catch {
+              mkdirSync(wtRoot, { recursive: true });
+              gitBranch = undefined;
+              recBackend = "inprocess";
+            }
           }
+        } else {
+          mkdirSync(wtRoot, { recursive: true });
+          recBackend = "inprocess";
         }
-        gitBranch = `openclaw/wt-${id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 40)}`;
-        try {
-          git(["worktree", "add", "--detach", wtRoot, "HEAD"], resolved);
-        } catch {
-          try {
-            git(["worktree", "add", "-B", gitBranch, wtRoot, "HEAD"], resolved);
-          } catch {
-            mkdirSync(wtRoot, { recursive: true });
-            gitBranch = undefined;
-          }
-        }
-        for (const rel of createOptions?.seedFiles ?? []) {
-          const src = path.join(resolved, rel);
-          const dest = path.join(wtRoot, rel);
-          if (existsSync(src) && statSync(src).isFile()) {
-            mkdirSync(path.dirname(dest), { recursive: true });
-            cpSync(src, dest);
-          }
-        }
-      } else {
-        mkdirSync(wtRoot, { recursive: true });
-        for (const rel of createOptions?.seedFiles ?? []) {
-          const src = path.join(resolved, rel);
-          const dest = path.join(wtRoot, rel);
-          if (existsSync(src) && statSync(src).isFile()) {
-            mkdirSync(path.dirname(dest), { recursive: true });
-            cpSync(src, dest);
-          }
-        }
+
+        seedFilesInto(wtRoot, resolved, createOptions?.seedFiles);
+      });
+
+      let install: WorktreeInstallResult | undefined;
+      if (createOptions?.installStrategy && createOptions.installStrategy !== "none") {
+        install = installWorktreeDependencies({
+          worktreeRoot: wtRoot,
+          baseRoot: resolved,
+          strategy: createOptions.installStrategy,
+        });
       }
 
       const rec: WorktreeRecord = {
-        id,
+        id: safeId,
         root: wtRoot,
         baseRoot: resolved,
         createdAtMs: Date.now(),
         status: "active",
-        writeSet: createOptions?.writeSet,
-        backend: "inprocess",
+        writeSet: createOptions?.writeSet?.map((p) => normalizeWorktreeRelPath(p)),
+        backend: recBackend,
         gitBranch,
       };
-      if (backend === "git" && existsSync(wtRoot)) {
-        rec.backend = "git";
-      }
-      s.records.set(id, rec);
-      return rec;
+      s.records.set(safeId, rec);
+      if (safeId !== id) s.records.set(id, rec);
+      return install ? { ...rec, install } : rec;
     },
     pathFor(id) {
-      return path.join(rootDir, id);
+      const safeId = id.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 64) || "wt";
+      return path.join(rootDir, safeId);
     },
     list() {
-      return [...scope(resolved).records.values()];
+      const seen = new Set<string>();
+      const out: WorktreeRecord[] = [];
+      for (const rec of scope(resolved).records.values()) {
+        if (seen.has(rec.id)) continue;
+        seen.add(rec.id);
+        out.push(rec);
+      }
+      return out;
     },
     enqueueMerge(item) {
       const s = scope(resolved);
       const entry: MergeQueueItem = {
         worktreeId: item.worktreeId,
-        changedFiles: item.changedFiles,
+        changedFiles: item.changedFiles.map((f) => normalizeWorktreeRelPath(f)),
         status: item.status ?? "pending",
         review: item.review,
         reason: item.reason,
@@ -218,104 +340,102 @@ export function createWorktreeService(
       const s = scope(resolved);
       const policy = processOptions?.conflictPolicy ?? defaultConflictPolicy;
       const results: MergeQueueItem[] = [];
-      // Serial merge
-      for (const item of s.queue) {
-        if (item.status !== "pending") {
-          results.push(item);
-          continue;
-        }
-        const rec = s.records.get(item.worktreeId);
-        if (!rec) {
-          applyConflictPolicy(item, undefined, "missing_worktree", policy);
-          results.push(item);
-          continue;
-        }
-        const conflictWith = results.find(
-          (other) =>
-            other.status === "merged" &&
-            other.changedFiles.some((f) => item.changedFiles.includes(f)),
-        );
-        if (conflictWith) {
-          applyConflictPolicy(item, rec, `overlap_with_${conflictWith.worktreeId}`, policy);
-          results.push(item);
-          continue;
-        }
-        let contentConflict = false;
-        for (const rel of item.changedFiles) {
-          const src = path.join(rec.root, rel);
-          const dest = path.join(resolved, rel);
-          if (existsSync(src) && existsSync(dest)) {
-            try {
-              const a = readFileSync(src, "utf8");
-              const b = readFileSync(dest, "utf8");
-              if (a !== b && results.some((r) => r.status === "merged" && r.changedFiles.includes(rel))) {
-                applyConflictPolicy(item, rec, `content_conflict_${rel}`, policy);
-                contentConflict = true;
-                break;
+      withWorktreeLock(resolved, () => {
+        for (const item of s.queue) {
+          if (item.status !== "pending") {
+            results.push(item);
+            continue;
+          }
+          const rec = s.records.get(item.worktreeId);
+          if (!rec) {
+            applyConflictPolicy(item, undefined, "missing_worktree", policy);
+            results.push(item);
+            continue;
+          }
+          const conflictWith = results.find(
+            (other) =>
+              other.status === "merged" &&
+              other.changedFiles.some((f) => item.changedFiles.includes(f)),
+          );
+          if (conflictWith) {
+            applyConflictPolicy(item, rec, `overlap_with_${conflictWith.worktreeId}`, policy);
+            results.push(item);
+            continue;
+          }
+          let contentConflict = false;
+          for (const rel of item.changedFiles) {
+            const src = path.join(rec.root, ...rel.split("/"));
+            const dest = path.join(resolved, ...rel.split("/"));
+            if (existsSync(src) && existsSync(dest)) {
+              try {
+                const a = readFileSync(src, "utf8");
+                const b = readFileSync(dest, "utf8");
+                if (
+                  a !== b &&
+                  results.some((r) => r.status === "merged" && r.changedFiles.includes(rel))
+                ) {
+                  applyConflictPolicy(item, rec, `content_conflict_${rel}`, policy);
+                  contentConflict = true;
+                  break;
+                }
+              } catch {
+                // ignore read errors
               }
-            } catch {
-              // ignore read errors
             }
           }
-        }
-        if (contentConflict) {
+          if (contentConflict) {
+            results.push(item);
+            continue;
+          }
+          if (factStore) {
+            try {
+              const review = reviewDiff(factStore, resolved, { changedFiles: item.changedFiles });
+              item.review = {
+                relatedTests: review.relatedTests ?? [],
+                riskLevel: review.riskLevel,
+              };
+            } catch {
+              // fail-open review
+            }
+          }
+          for (const rel of item.changedFiles) {
+            const src = path.join(rec.root, ...rel.split("/"));
+            const dest = path.join(resolved, ...rel.split("/"));
+            if (existsSync(src)) {
+              mkdirSync(path.dirname(dest), { recursive: true });
+              cpSync(src, dest);
+            }
+          }
+          item.status = "merged";
+          rec.status = "merged";
+          codingObservability.recordMergeOutcome(false);
           results.push(item);
-          continue;
         }
-        if (factStore) {
-          try {
-            const review = reviewDiff(factStore, resolved, { changedFiles: item.changedFiles });
-            item.review = {
-              relatedTests: review.relatedTests ?? [],
-              riskLevel: review.riskLevel,
-            };
-          } catch {
-            // fail-open review
-          }
-        }
-        for (const rel of item.changedFiles) {
-          const src = path.join(rec.root, rel);
-          const dest = path.join(resolved, rel);
-          if (existsSync(src)) {
-            mkdirSync(path.dirname(dest), { recursive: true });
-            cpSync(src, dest);
-          }
-        }
-        item.status = "merged";
-        rec.status = "merged";
-        codingObservability.recordMergeOutcome(false);
-        results.push(item);
-      }
-      s.queue = results.filter((r) => r.status === "pending");
+        s.queue = results.filter((r) => r.status === "pending");
+      });
       return results;
     },
     cleanup(id) {
       const s = scope(resolved);
       const rec = s.records.get(id);
       if (!rec) return;
-      if (rec.backend === "git") {
-        try {
-          git(["worktree", "remove", "--force", rec.root], resolved);
-        } catch {
+      withWorktreeLock(resolved, () => {
+        if (rec.backend === "git") {
           try {
-            rmSync(rec.root, { recursive: true, force: true });
+            git(["worktree", "remove", "--force", path.resolve(rec.root)], resolved);
+          } catch {
+            removePathWithRetries(rec.root);
             try {
               git(["worktree", "prune"], resolved);
             } catch {
               // ignore
             }
-          } catch {
-            // ignore
           }
+        } else {
+          removePathWithRetries(rec.root);
         }
-      } else {
-        try {
-          rmSync(rec.root, { recursive: true, force: true });
-        } catch {
-          // ignore
-        }
-      }
-      rec.status = "cleaned";
+        rec.status = "cleaned";
+      });
     },
     getMergeQueue() {
       return [...scope(resolved).queue];
@@ -331,12 +451,13 @@ export function __resetWorktreeRegistry(): void {
 export function listWorktreeDirs(baseRoot: string): string[] {
   const dir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
   if (!existsSync(dir)) return [];
-  return readdirSync(dir);
+  return readdirSync(dir).filter((name) => !name.startsWith("."));
 }
 
 /** Ensure parent dirs exist before writing a relative path under a worktree root. */
 export function writeWorktreeFile(worktreeRoot: string, relativePath: string, content: string): void {
-  const dest = path.join(worktreeRoot, relativePath);
+  const rel = normalizeWorktreeRelPath(relativePath);
+  const dest = path.join(worktreeRoot, ...rel.split("/"));
   mkdirSync(path.dirname(dest), { recursive: true });
   writeFileSync(dest, content, "utf8");
 }

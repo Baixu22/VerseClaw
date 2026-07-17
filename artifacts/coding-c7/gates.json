@@ -1,56 +1,14 @@
-﻿{
-    "ok":  true,
-    "gates":  {
-                  "lint:check":  {
-                                     "budget":  111,
-                                     "ok":  true,
-                                     "errors":  0,
-                                     "warnings":  109,
-                                     "log":  "tmp/c7_lint2"
-                                 },
-                  "typecheck":  {
-                                    "ok":  true,
-                                    "log":  "tmp/c7_tc3",
-                                    "exit":  0
-                                },
-                  "coding-c7 acceptance":  {
-                                               "ok":  true,
-                                               "path":  "artifacts/coding-c7/acceptance.json",
-                                               "log":  "tmp/c7_accept2"
-                                           },
-                  "test:dcs":  {
-                                   "ok":  true,
-                                   "tests":  "168+10+73",
-                                   "log":  "tmp/c7_dcs"
-                               },
-                  "directedVitestC7":  {
-                                           "ok":  true,
-                                           "tests":  "23/23",
-                                           "log":  "tmp/c7_unit4"
-                                       },
-                  "openclaw_runtime build":  {
-                                                 "ok":  true,
-                                                 "log":  "tmp/c7_build3",
-                                                 "exit":  0
-                                             },
-                  "playwright dcs-production-wiring-w5":  {
-                                                              "duration":  "1.2m",
-                                                              "ok":  true,
-                                                              "tests":  "3/3",
-                                                              "log":  "tmp/c7_e2e8"
-                                                          }
-              },
-    "honesty":  {
-                    "defaultInjectionUnchanged":  true,
-                    "completionClass":  "done (shadow)",
-                    "cutoverRecommended":  false,
-                    "notC7H":  true
-                },
-    "ts":  "2026-07-15T10:09:22.7445958Z",
-    "cards":  {
-                  "C7-1":  "routing-memo JSONL dual-write shadow (default off)",
-                  "C7-3":  "verifierNoSelfRepair + lead fix task factory",
-                  "C7-2":  "SEKB experience confirm shadow journal (default off; cutoverAllowed always false)"
-              },
-    "sha":  "d5bd9fc189b3fd583fa872e292fb235b7d9887e3"
+{
+  "ok": true,
+  "cards": {
+    "C7-1": "routing-memo JSONL dual-write shadow (default off)",
+    "C7-2": "SEKB experience confirm shadow journal (default off; cutoverAllowed always false)",
+    "C7-3": "verifierNoSelfRepair + lead fix task factory"
+  },
+  "honesty": {
+    "completionClass": "done (shadow)",
+    "defaultInjectionUnchanged": true,
+    "cutoverRecommended": false,
+    "notC7H": true
+  }
 }

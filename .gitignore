@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 .pnp
 .pnp.js
@@ -94,6 +94,35 @@ artifacts/*
 !artifacts/coding-c6/**
 !artifacts/coding-c7/
 !artifacts/coding-c7/**
+!artifacts/coding-prod-p0/
+!artifacts/coding-prod-p0/**
+!artifacts/coding-prod-a1/
+!artifacts/coding-prod-a1/**
+!artifacts/coding-prod-goal-a/
+!artifacts/coding-prod-goal-a/**
+!artifacts/coding-prod-b1/
+!artifacts/coding-prod-b1/**
+!artifacts/coding-prod-b2/
+!artifacts/coding-prod-b2/**
+!artifacts/coding-prod-goal-b/
+!artifacts/coding-prod-goal-b/**
+!artifacts/coding-prod-c1/
+!artifacts/coding-prod-c1/**
+!artifacts/coding-prod-c4p/
+!artifacts/coding-prod-c4p/**
+!artifacts/coding-prod-c5p/
+!artifacts/coding-prod-c5p/**
+!artifacts/coding-prod-goal-c/
+!artifacts/coding-prod-goal-c/**
+!artifacts/coding-prod-round-accept-2/
+!artifacts/coding-prod-round-accept-2/**
+
+
+# DCS evidence factory corpus + C1 canary
+!artifacts/dcs-corpus/
+!artifacts/dcs-corpus/**
+!artifacts/dcs-canary/
+!artifacts/dcs-canary/**
 
 # SEKB Hermes Phase A5 acceptance evidence (Pass-D1 hold pack)
 !artifacts/sekb-hermes-phase-a5/

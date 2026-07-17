@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "honesty": {
+    "completionClass": "done (sim)",
+    "meetsGate": false,
+    "recommendation": "keep-off",
+    "liveReady": false,
+    "defaultsUnchanged": true
+  }
+}

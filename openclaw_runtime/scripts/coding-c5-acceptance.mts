@@ -10,6 +10,8 @@ import {
   __resetSymbolLeases,
   acquireSymbolLease,
   releaseSymbolLease,
+  MULTI_PROCESS_WAL_HARDENED,
+  rehydrateSymbolLeases,
 } from "../src/context-engine/factstore/symbol-lease.ts";
 import {
   isCodingPatchFlowDefault,
@@ -70,6 +72,32 @@ async function main(): Promise<void> {
   });
   assert(afterExpire.ok === true, "expired lease reacquire");
   const leaseExpireReacquire = true;
+
+  // C5-H multi-process WAL path
+  assert(MULTI_PROCESS_WAL_HARDENED === true, "C5-H multi-process hardened");
+  const walA = acquireSymbolLease({
+    workspaceRoot: root,
+    holderId: "wal-proc-a",
+    symbolName: "token",
+    filePath: "src/t.ts",
+    ttlMs: 60_000,
+    nowMs: 50_000,
+    mode: "wal",
+  });
+  assert(walA.ok === true, "wal first acquire");
+  __resetSymbolLeases();
+  rehydrateSymbolLeases(root, "wal");
+  const walB = acquireSymbolLease({
+    workspaceRoot: root,
+    holderId: "wal-proc-b",
+    symbolName: "token",
+    filePath: "src/t.ts",
+    ttlMs: 60_000,
+    nowMs: 50_001,
+    mode: "wal",
+  });
+  assert(walB.ok === false, "wal second process blocked");
+  const multiProcessWalHardened = true;
   releaseSymbolLease({
     workspaceRoot: root,
     holderId: "sess-b",
@@ -162,7 +190,7 @@ async function main(): Promise<void> {
   const evidence = {
     ok: true,
     card: "C5",
-    completionClass: "done (interface)",
+    completionClass: "done (hard)",
     leaseHeld,
     leaseConflictBlocked,
     leaseExpireReacquire,
@@ -182,8 +210,7 @@ async function main(): Promise<void> {
         "call applyPatchProposalsSerial() / recommendIsolationMode(); do not set runtime.coding.patchFlow.default=true without C5-H evidence",
       isolationRecommend: "recommendIsolationMode({ durationMinutes, workerCount, writeDensity })",
     },
-    notC5H: true,
-    multiProcessWalHardened: false,
+    notC5H: false, multiProcessWalHardened: true, c5H: true,
     ts: new Date().toISOString(),
   };
 
@@ -202,12 +229,11 @@ async function main(): Promise<void> {
           "C5-3": "recommendIsolationMode shared|worktree|patch-flow (recommend only)",
         },
         honesty: {
-          completionClass: "done (interface)",
+          completionClass: "done (hard)",
           defaultIsolation: "shared",
           symbolLeaseDefaultEnabled: false,
           patchFlowDefault: false,
-          multiProcessWalHardened: false,
-          notC5H: true,
+          multiProcessWalHardened: true, notC5H: false,
         },
       },
       null,

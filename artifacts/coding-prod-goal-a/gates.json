@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "defaultsUnchanged": true,
+  "noDefaultFlagFlip": true,
+  "A1": {
+    "meetsGate": false,
+    "recommendation": "keep-off"
+  },
+  "A2": {
+    "productionGitWorktreeHardened": true,
+    "defaultIsolationShared": true,
+    "backendDefault": "inprocess"
+  },
+  "A3": {
+    "multiProcessWalHardened": true,
+    "symbolLeaseDefault": false,
+    "patchFlowDefault": false
+  }
+}
