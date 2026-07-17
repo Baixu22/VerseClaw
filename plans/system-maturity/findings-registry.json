@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
+      "Open": 9,
+      "Fixed": 23,
       "Partial": 2,
-      "Fixed": 18,
-      "Open": 14,
       "Unverified": 1
     },
-    "open": 14,
-    "fixed": 18
+    "open": 9,
+    "fixed": 23
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -396,8 +396,9 @@
         "P5-003",
         "P7-003"
       ],
-      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003.",
-      "updatedBy": "P3-004"
+      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003.",
+      "updatedBy": "P5-003",
+      "updatedAt": "2026-07-17T08:58:35.165Z"
     },
     {
       "id": "F-REL-001",
@@ -405,7 +406,7 @@
       "category": "REL",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2-L3",
       "related": [
         "F-GOV-001"
@@ -416,7 +417,10 @@
       "tasks": [
         "P5-002",
         "P7-002"
-      ]
+      ],
+      "updatedBy": "P5-002",
+      "updatedAt": "2026-07-17T08:45:54.000Z",
+      "notes": "P5-002: list/status never rewrite authority store; SQLite CAS lease for job claim; authorized repair with audit reason."
     },
     {
       "id": "F-REL-002",
@@ -424,7 +428,7 @@
       "category": "REL",
       "severity": "Medium",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -432,7 +436,10 @@
       ],
       "tasks": [
         "P5-001"
-      ]
+      ],
+      "updatedBy": "P5-001",
+      "updatedAt": "2026-07-17T08:31:19.000Z",
+      "notes": "P5-001: atomic temp+fsync+rename for openclaw/channel/auth JSON; version sidecar CAS; cross-process lock; bak recovery."
     },
     {
       "id": "F-REL-003",
@@ -556,13 +563,16 @@
       "category": "UX",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2",
       "related": [],
       "attackChain": [],
       "tasks": [
         "P5-004"
-      ]
+      ],
+      "notes": "P5-004: agent resource limits (token/cost budget reject, history memory cap, DOM window, tool-result cap, hard turn timeout + abort resource release).",
+      "updatedBy": "P5-004",
+      "updatedAt": "2026-07-17T09:14:36.276Z"
     },
     {
       "id": "F-UX-002",
@@ -706,7 +716,7 @@
       "category": "REL",
       "severity": "Medium",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -714,7 +724,10 @@
       ],
       "tasks": [
         "P5-003"
-      ]
+      ],
+      "notes": "P5-003: logger size/day/total retention, getWriteHealth for write failures, secret/canary redaction before ring+disk.",
+      "updatedBy": "P5-003",
+      "updatedAt": "2026-07-17T08:58:35.165Z"
     },
     {
       "id": "F-SUPPLY-002",

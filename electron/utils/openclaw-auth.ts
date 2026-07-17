@@ -8,7 +8,7 @@
  * equivalents could stall for 500 ms – 2 s+ per call, causing "Not
  * Responding" hangs.
  */
-import { access, mkdir, readFile, readdir, writeFile } from 'fs/promises';
+import { access, mkdir, readFile, readdir } from 'fs/promises';
 import { constants, readdirSync, readFileSync, existsSync } from 'fs';
 import { dirname, isAbsolute, join } from 'path';
 import { homedir } from 'os';
@@ -28,6 +28,7 @@ import {
 } from './provider-keys';
 import { normalizePiAiModelCost, type PiAiModelCostRates } from '../shared/pi-ai-model-cost';
 import { withConfigLock } from './config-mutex';
+import { writeJsonAtomic } from './atomic-write';
 import { PORTS } from './config';
 import { getSetting } from './store';
 import {
@@ -304,10 +305,10 @@ async function readJsonFile<T>(filePath: string): Promise<T | null> {
   }
 }
 
-/** Write a JSON file, creating parent directories if needed. */
+/** Write a JSON file atomically (temp+fsync+rename), creating parent dirs. */
 async function writeJsonFile(filePath: string, data: unknown): Promise<void> {
   await ensureDir(join(filePath, '..'));
-  await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  await writeJsonAtomic(filePath, data);
 }
 
 // ── Types ────────────────────────────────────────────────────────
@@ -982,7 +983,7 @@ export async function removeProviderFromOpenClaw(provider: string): Promise<void
         const providers = data.providers as Record<string, unknown> | undefined;
         if (providers && providers[provider]) {
           delete providers[provider];
-          await writeFile(modelsPath, JSON.stringify(data, null, 2), 'utf-8');
+          await writeJsonAtomic(modelsPath, data);
           console.log(`Removed models.json entry for provider "${provider}" (agent "${id}")`);
         }
       }

@@ -1,0 +1,29 @@
+{
+  "taskId": "P5-002",
+  "finding": "F-REL-001",
+  "checkedAt": "2026-07-17T08:45:54.000Z",
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "list failure / list path does not rewrite authority store",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "same job same moment at most one owner (CAS lease)",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "title": "repair requires explicit authorization and audit",
+      "status": "passed"
+    }
+  ],
+  "implementation": {
+    "listReadOnly": "openclaw_runtime/src/cron/service/ops.ts ensureLoadedForRead",
+    "lease": "openclaw_runtime/src/cron/store/lease.ts",
+    "timerClaim": "openclaw_runtime/src/cron/service/timer.ts",
+    "manualClaim": "openclaw_runtime/src/cron/service/ops.ts prepareManualRun",
+    "repair": "repairCronStoreAuthorized + CronService.repairAuthorized"
+  }
+}
