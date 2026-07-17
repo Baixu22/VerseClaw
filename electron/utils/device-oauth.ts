@@ -15,8 +15,9 @@
  * We provide our own callbacks (openUrl/note/progress) that hook into
  * the Electron IPC system to display UI in the ClawX frontend.
  */
+import { openExternalSafe } from './safe-open-external';
 import { EventEmitter } from 'events';
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow } from 'electron';
 import { logger } from './logger';
 import { saveProvider, getProvider, ProviderConfig } from './secure-storage';
 import { getProviderDefaultModel } from './provider-registry';
@@ -113,7 +114,7 @@ class DeviceOAuthManager extends EventEmitter {
             openUrl: async (url: string) => {
                 logger.info(`[DeviceOAuth] MiniMax opening browser: ${url}`);
                 // Open the authorization URL in the system browser
-                shell.openExternal(url).catch((err: unknown) =>
+                openExternalSafe(url).catch((err: unknown) =>
                     logger.warn(`[DeviceOAuth] Failed to open browser:`, err)
                 );
             },

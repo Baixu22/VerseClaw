@@ -1,8 +1,8 @@
+import { openExternalSafe } from '../utils/safe-open-external';
 import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import { shell } from 'electron';
 import type {
   GitBranch,
   GitChangeBucket,
@@ -1029,7 +1029,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       if (number <= 0) throw new Error('number is required');
       const url = await getGhPrUrl(number, ctx.workspaceRoot);
       if (!url) return { success: false, stderr: 'Unable to resolve pull request URL' };
-      await shell.openExternal(url);
+      await openExternalSafe(url);
       return { success: true, stdout: url };
     },
   };

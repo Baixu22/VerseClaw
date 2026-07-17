@@ -1,0 +1,34 @@
+{
+  "task": "P1-004",
+  "generatedAt": "2026-07-17T04:48:22.590Z",
+  "cases": [
+    {
+      "id": "A1",
+      "name": "single allowlist across openExternal/browser/HTML preview CSP constants",
+      "result": "PASS"
+    },
+    {
+      "id": "A2",
+      "name": "javascript/data/file/custom schemes rejected",
+      "result": "PASS"
+    },
+    {
+      "id": "A3",
+      "name": "renderer CSP meta + HTML preview CSP/sandbox without popup escape",
+      "result": "PASS"
+    }
+  ],
+  "entrypoints": [
+    "electron/utils/safe-open-external.ts",
+    "electron/services/shell-api.ts",
+    "electron/main/ipc-handlers.ts shell:openExternal",
+    "electron/main/index.ts setWindowOpenHandler",
+    "electron/main/menu.ts",
+    "electron/utils/browser-oauth.ts",
+    "electron/utils/device-oauth.ts",
+    "electron/services/git-api.ts",
+    "shared/agent-browser/browser-control.ts isBrowserControlRestrictedUrl",
+    "src/components/file-preview/HtmlPreview.tsx",
+    "index.html Content-Security-Policy"
+  ]
+}

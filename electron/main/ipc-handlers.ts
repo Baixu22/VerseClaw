@@ -7,6 +7,7 @@ import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, extname, basename, resolve, sep, relative } from 'node:path';
 import { syncMacTrafficLightPosition } from './traffic-light-layout';
+import { openExternalSafe } from '../utils/safe-open-external';
 import { GatewayManager } from '../gateway/manager';
 import { registerAgentBrowserGatewayBridge } from '../gateway/agent-browser-bridge';
 import { ClawHubService } from '../gateway/clawhub';
@@ -1106,7 +1107,7 @@ function expandShellPath(input: string): string {
 function registerShellHandlers(): void {
   // Open external URL
   ipcMain.handle('shell:openExternal', async (_, url: string) => {
-    await shell.openExternal(url);
+    await openExternalSafe(url);
   });
 
   // Open path in file explorer

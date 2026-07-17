@@ -1,0 +1,51 @@
+{
+  "task": "P1-004",
+  "generatedAt": "2026-07-17T04:48:22.590Z",
+  "acceptance": {
+    "A1": "all entrypoints share http/https allowlist",
+    "A2": "javascript/data/file/custom schemes rejected",
+    "A3": "CSP and HTML preview sandbox controls effective"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/system-maturity/P1-004/vitest.stdout.txt",
+      "sha256": "462193ab62e17dee281d9ea5b6e14e0ba852d43af50838892ef67fc1d23595ec"
+    },
+    {
+      "path": "artifacts/system-maturity/P1-004/url-policy-matrix.json",
+      "sha256": "ddffb3f5b4110d108fe7ce637ef0a7da2db8d6d60561c855bb8a2543157ff58f"
+    },
+    {
+      "path": "shared/security/url-policy.ts",
+      "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495"
+    },
+    {
+      "path": "electron/utils/safe-open-external.ts",
+      "sha256": "bdc6a2d26f402386c94f07b7ff51898dd12ef2d671134a1c4fe6d4e48e9462a9"
+    },
+    {
+      "path": "shared/agent-browser/browser-control.ts",
+      "sha256": "637f5cba11652b22602e79dde9a19d09fdea561108a0b35492578c34696ae892"
+    },
+    {
+      "path": "src/components/file-preview/HtmlPreview.tsx",
+      "sha256": "f2a562df92be5cf2497e833f095b16d65148ab3a2115b3934cba8aa0371a9e8e"
+    },
+    {
+      "path": "index.html",
+      "sha256": "f7fa745b2302f36ea700d6e9de30f45fbd49bddb473b7aa5a829be0fa014fb2e"
+    },
+    {
+      "path": "tests/unit/url-policy.test.ts",
+      "sha256": "03fd8fbab335657a5a7ec6441db33229cecb591a7e6e1bbf338e9aee987b447f"
+    },
+    {
+      "path": "tests/unit/html-preview-security.test.tsx",
+      "sha256": "40928c9dedd62455dcbc15488c0e9eed1150973542d7743633dd7ca3eeb41319"
+    },
+    {
+      "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918"
+    }
+  ]
+}

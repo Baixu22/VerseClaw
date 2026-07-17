@@ -4,6 +4,7 @@
  */
 import { app, BrowserWindow, nativeTheme, session, shell } from 'electron';
 import { join } from 'path';
+import { openExternalSafe } from '../utils/safe-open-external';
 import { GatewayManager } from '../gateway/manager';
 import { registerIpcHandlers } from './ipc-handlers';
 import { HostApiRegistry } from './ipc/host-invoke';
@@ -861,16 +862,10 @@ async function createWindow(): Promise<BrowserWindow> {
   // Handle external links — only allow safe protocols to prevent arbitrary
   // command execution via shell.openExternal() (e.g. file://, ms-msdt:, etc.)
   win.webContents.setWindowOpenHandler(({ url }) => {
-    try {
-      const parsed = new URL(url);
-      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-        shell.openExternal(url);
-      } else {
-        logger.warn(`Blocked openExternal for disallowed protocol: ${parsed.protocol}`);
-      }
-    } catch {
-      logger.warn(`Blocked openExternal for malformed URL: ${url}`);
-    }
+    void openExternalSafe(url).catch((error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.warn(`Blocked openExternal: ${message} (${url})`);
+    });
     return { action: 'deny' };
   });
 
