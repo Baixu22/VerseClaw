@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 8,
-      "Fixed": 23,
-      "Partial": 3,
-      "Unverified": 1
+      "Open": 6,
+      "Fixed": 27,
+      "Partial": 2,
+      "Unverified": 0
     },
-    "open": 8,
-    "fixed": 23
+    "open": 6,
+    "fixed": 27
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -486,7 +486,7 @@
       "category": "SUPPLY",
       "severity": "High",
       "decision": "Publish-blocker",
-      "status": "Partial",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -497,9 +497,9 @@
         "P6-002",
         "P7-002"
       ],
-      "notes": "P6-001: channel/signing policy is single-sourced; signing-required builds verify Authenticode; post-sign latest.yml hashes are checked; GitHub and OSS publish jobs depend on a version-bound signing-attestation gate. Remaining updater feed/source/tamper closure is P6-002.",
-      "updatedBy": "P6-001",
-      "updatedAt": "2026-07-17T16:11:26.232Z"
+      "notes": "P6-001: channel/signing policy is single-sourced; signing-required builds verify Authenticode; post-sign latest.yml hashes are checked; GitHub and OSS publish jobs depend on a version-bound signing-attestation gate. P6-002: Main owns the fixed HTTPS feed and channel mapping; redirects/wrong origin/wrong channel are rejected; metadata and downloaded packages are verified by SHA512 and size before Windows install.",
+      "updatedBy": "P6-002",
+      "updatedAt": "2026-07-17T17:28:45.435Z"
     },
     {
       "id": "F-GOV-001",

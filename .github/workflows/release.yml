@@ -415,6 +415,17 @@ jobs:
             --gate-attestation "${ATTESTATIONS[0]}" \
             --version "$VERSION"
 
+      - name: P6-002 assert update feed source and channel policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          node scripts/validate-windows-update-feed-policy.mts --version "$VERSION"
+
   # ──────────────────────────────────────────────────────────────
   # Job: Publish to GitHub Releases
   # ──────────────────────────────────────────────────────────────
@@ -503,12 +514,12 @@ jobs:
   # Job: Upload to Alibaba Cloud OSS
   # Uploads all release artifacts to OSS for:
   #   - Official website downloads (via release-info.json)
-  #   - electron-updater auto-update (via {channel}-*.yml)
+  #   - electron-updater auto-update (via latest*.yml inside each channel directory)
   #
   # Directory structure on OSS (channel-separated):
   #   latest/          → stable releases (latest.yml, latest-mac.yml, …)
-  #   alpha/           → alpha  releases (alpha.yml,  alpha-mac.yml, …)
-  #   beta/            → beta   releases (beta.yml,   beta-mac.yml,  …)
+  #   alpha/           → alpha  releases (latest.yml, latest-mac.yml, …)
+  #   beta/            → beta   releases (latest.yml, latest-mac.yml, …)
   #   releases/vX.Y.Z/ → permanent archive, never deleted
   # ──────────────────────────────────────────────────────────────
   upload-oss:
@@ -569,11 +580,12 @@ jobs:
       # Note: Do NOT rename yml files. electron-updater (generic provider) always
       # requests "latest-mac.yml", "latest.yml", etc. regardless of feed URL.
       # Channel separation is achieved by directory: /alpha/, /beta/, /latest/.
-      - name: Verify yml files present
+      - name: Verify exact updater metadata is present
         run: |
           CHANNEL="${{ steps.version.outputs.channel }}"
           echo "=== staging/${CHANNEL}/ (update metadata) ==="
-          ls -la staging/${CHANNEL}/*.yml 2>/dev/null || echo "No yml files found (check electron-builder outputs)"
+          test -f "staging/${CHANNEL}/latest.yml"
+          ls -la "staging/${CHANNEL}/latest.yml"
 
       - name: Generate release-info.json
         run: |

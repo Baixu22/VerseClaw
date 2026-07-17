@@ -156,7 +156,11 @@
     "maturity:evidence": "node scripts/validate-system-maturity-evidence.mjs",
     "release:windows-policy": "node scripts/validate-windows-release-policy.mjs",
     "release:windows-policy:evidence": "node scripts/collect-p6-001-evidence.mjs",
-    "release:windows-policy:evidence:full": "node scripts/collect-p6-001-evidence.mjs --full"
+    "release:windows-policy:evidence:full": "node scripts/collect-p6-001-evidence.mjs --full",
+    "release:windows-update-policy": "node scripts/validate-windows-update-feed-policy.mts",
+    "release:windows-update-policy:live": "node scripts/validate-windows-update-feed-policy.mts --probe-live --version 1.0.0",
+    "release:windows-update-policy:evidence": "node scripts/collect-p6-002-evidence.mjs",
+    "release:windows-update-policy:evidence:full": "node scripts/collect-p6-002-evidence.mjs --full"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",
