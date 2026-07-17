@@ -19,7 +19,9 @@
       "Fixed": 7,
       "Open": 24,
       "Unverified": 1
-    }
+    },
+    "open": 17,
+    "fixed": 15
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -250,8 +252,8 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Track",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-AUTH-004",
         "F-AUTH-005"
@@ -261,7 +263,12 @@
       ],
       "tasks": [
         "P2-005"
-      ]
+      ],
+      "fixedBy": "P2-005",
+      "fixedAt": "2026-07-17",
+      "updatedBy": "P2-005",
+      "updatedAt": "2026-07-17T06:49:54.259Z",
+      "notes": "P2-005: CvkToolCallGateMode adds enforce; missing selectors severity=block, denied=true; engine option toolCallGateMode + OPENCLAW_CVK_TOOL_GATE_MODE."
     },
     {
       "id": "F-AUTH-004",
@@ -269,8 +276,8 @@
       "category": "AUTH",
       "severity": "High",
       "decision": "Track",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-AUTH-003"
       ],
@@ -279,7 +286,12 @@
       ],
       "tasks": [
         "P2-005"
-      ]
+      ],
+      "fixedBy": "P2-005",
+      "fixedAt": "2026-07-17",
+      "updatedBy": "P2-005",
+      "updatedAt": "2026-07-17T06:49:54.259Z",
+      "notes": "P2-005: destructive_op/pre_mutation default authorityOverrides=blocking; blocking fail-closes on checker errors; diagnostic_only non-mandatory remains approved."
     },
     {
       "id": "F-AUTH-005",
@@ -287,8 +299,8 @@
       "category": "AUTH",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Open",
-      "evidenceLevel": "L2",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-AUTH-003",
         "F-AUTH-004"
@@ -298,7 +310,12 @@
       ],
       "tasks": [
         "P2-005"
-      ]
+      ],
+      "fixedBy": "P2-005",
+      "fixedAt": "2026-07-17",
+      "updatedBy": "P2-005",
+      "updatedAt": "2026-07-17T06:49:54.259Z",
+      "notes": "P2-005: buildVerifierReport prefers orchestration.verificationVerdict / structured text / outcome.status; free-text alone cannot authorize pass; missing provenance fails closed."
     },
     {
       "id": "F-DATA-001",

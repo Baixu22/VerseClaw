@@ -25,7 +25,11 @@ type GateEngineConfigUpdate = Partial<GateEngineConfig>;
 
 const DEFAULT_CONFIG: GateEngineConfig = {
   defaultAuthority: 'diagnostic_only',
-  authorityOverrides: {},
+  // High-risk mandatory gates enforce blocking authority by default (F-AUTH-004).
+  authorityOverrides: {
+    destructive_op: 'blocking',
+    pre_mutation: 'blocking',
+  },
   samplingRate: 0.1,
   mandatoryGateTypes: ['destructive_op', 'pre_mutation'],
 };
@@ -122,7 +126,14 @@ class GateEngine {
     }
 
     const anyFailed = checkerResults.some((result) => !result.passed);
-    const status = authority === 'diagnostic_only' ? 'approved' : anyFailed ? 'blocked' : 'approved';
+    // diagnostic_only remains non-blocking; advisory/blocking deny on checker failure.
+    // blocking is fail-closed: swallowed checker errors also block (F-AUTH-004).
+    const status =
+      authority === 'diagnostic_only'
+        ? 'approved'
+        : anyFailed || (authority === 'blocking' && errors.length > 0)
+          ? 'blocked'
+          : 'approved';
     const decision: GateDecision = {
       gateId,
       gateType: request.gateType,
