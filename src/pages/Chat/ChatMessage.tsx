@@ -508,7 +508,7 @@ export const ChatMessage = memo(function ChatMessage({
           overflows ±4px above/below the line, which mirrors how chat avatars
           sit alongside a single line of text. */}
       {!isUser && (
-        <div className="mt-0.5" data-testid="chat-assistant-avatar">
+        <div className="mt-0.5 h-8 w-8 shrink-0 overflow-hidden rounded-full" data-testid="chat-assistant-avatar">
           <AgentAvatar
             agentId={agent?.id ?? 'main'}
             name={agent?.name ?? 'Verse'}

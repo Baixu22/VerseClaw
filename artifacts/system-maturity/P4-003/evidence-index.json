@@ -1,30 +1,52 @@
 {
+  "schemaVersion": 2,
   "taskId": "P4-003",
-  "generatedAt": "2026-07-17T09:15:47Z",
-  "artifacts": [
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "result": "passed",
+  "runs": [
     {
-      "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
-      "sha256": "1aea9e6824bde6585cc729e68163f34711659363add1f3f6d1a11736531a3495"
+      "command": "pnpm run lint && pnpm run typecheck && pnpm test",
+      "exitCode": 0,
+      "result": "passed"
     },
     {
-      "path": "artifacts/system-maturity/P4-003/vitest.stdout.txt",
-      "sha256": "dc135e646acdc29fa31d5c37017ae3c4b42323f82872518f866029586cbdc774"
+      "command": "pnpm run contract:check && pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "passed"
     },
     {
-      "path": "artifacts/system-maturity/P4-003/evidence-index.json",
-      "sha256": "3d7a0dcf6f030ac1e679b01d0d2377ae9dd10d5888c17f82b7d8769a313f85d3"
+      "command": "pnpm harness validate --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm harness run --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm run harness:ci",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "pnpm run build:vite && pnpm run test:e2e tests/e2e/system-maturity-p45.spec.ts",
+      "exitCode": 0,
+      "result": "5 passed"
     }
   ],
-  "commands": [
-    "pnpm exec vitest run tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/mcp-api.test.ts",
-    "pnpm contract:check"
-  ],
-  "results": {
-    "vitest": "21 passed (2 files)",
-    "contract:check": "passed"
-  },
-  "findings": {
-    "F-AUTH-009": "Fixed",
-    "F-SEC-001": "Partial (MCP env sealed; channel secrets remain for P4-004)"
-  }
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P4-003/final-validation.log",
+      "sha256": "159f4c633ae42ea6e17818fb62ca033d275fee43b1cd69b23be1169b73a860e4",
+      "bytes": 140444
+    },
+    {
+      "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
+      "sha256": "c86c697981fc41dbfbcaf8a47633ca01247338e7b08bfcdb6af924e668c7ae46",
+      "bytes": 658
+    },
+    {
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-003.md",
+      "sha256": "4ebbd66f2ce318ea78dcc5ad5297abd4c4bf143e96864657a703fa96337cf596",
+      "bytes": 739
+    },
+    {
+      "path": "plans/system-maturity/phase4-runtime-surfaces/STATUS.json",
+      "sha256": "4b0f74caec798a52862f4d138a9fb48b49cc587fb9f4de5c33524438501533df",
+      "bytes": 240
+    }
+  ]
 }

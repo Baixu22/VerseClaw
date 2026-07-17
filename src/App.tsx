@@ -33,6 +33,7 @@ const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
 const CodeReviewPage = lazy(() => import('./pages/CodeReview'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
+const BrowserWorkbench = lazy(() => import('./pages/Browser').then((m) => ({ default: m.BrowserWorkbench })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 
 function SetupRoute() {
@@ -248,6 +249,7 @@ function App() {
             <Route path="/clawgraph" element={<ClawGraphPage />} />
             <Route path="/code-review" element={<CodeReviewPage />} />
             <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/browser" element={<BrowserWorkbench />} />
             <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
             <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
             <Route path="/observability" element={<ObservabilityDashboard />} />

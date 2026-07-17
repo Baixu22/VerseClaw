@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P5-001: atomic config commit + cross-process lock + version protection.
  */
 import { existsSync } from 'fs';

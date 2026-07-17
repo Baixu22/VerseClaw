@@ -33,6 +33,7 @@ import {
   Inbox,
   Search,
   AlertTriangle,
+  Globe2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
@@ -612,6 +613,7 @@ export function Sidebar() {
     { to: '/clawgraph', icon: <Workflow className="h-4 w-4" strokeWidth={2} />, label: t('clawGraph:nav'), testId: 'sidebar-nav-clawgraph' },
     { to: '/code-review', icon: <GitCompare className="h-4 w-4" strokeWidth={2} />, label: t('codeReview:nav'), testId: 'sidebar-nav-code-review' },
     { to: '/knowledge', icon: <BookOpen className="h-4 w-4" strokeWidth={2} />, label: t('knowledge:nav'), testId: 'sidebar-nav-knowledge' },
+    { to: '/browser', icon: <Globe2 className="h-4 w-4" strokeWidth={2} />, label: t('common:sidebar.browser'), testId: 'sidebar-nav-browser' },
     ...(devModeUnlocked
       ? [
         { to: '/observability', icon: <Activity className="h-4 w-4" strokeWidth={2} />, label: 'Observability', testId: 'sidebar-nav-observability' },

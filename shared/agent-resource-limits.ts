@@ -50,8 +50,8 @@ export const DEFAULT_AGENT_RESOURCE_LIMITS: AgentResourceLimits = {
   historyPageSize: 200,
   maxDomRenderMessages: 120,
   maxToolResultChars: 80_000,
-  maxSessionTotalTokens: null,
-  maxSessionCostUsd: null,
+  maxSessionTotalTokens: 1_000_000,
+  maxSessionCostUsd: 100,
   turnTimeoutMs: 30 * 60 * 1000, // 30 minutes hard ceiling
 };
 

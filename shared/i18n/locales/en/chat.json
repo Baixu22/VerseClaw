@@ -1862,6 +1862,10 @@
       "other": "GitHub Link"
     }
   },
+  "resourceLimits": {
+    "TOKEN_BUDGET_EXCEEDED": "This session reached its token budget ({{used}} / {{limit}}). Start a new session or raise the limit.",
+    "COST_BUDGET_EXCEEDED": "This session reached its cost budget (${{used}} / ${{limit}}). Start a new session or raise the limit."
+  },
   "artifactView": {
     "title": "Artifacts",
     "empty": "No artifacts generated yet",

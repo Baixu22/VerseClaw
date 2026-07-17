@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P0-001 audit baseline validator.
  *
  * Verifies:

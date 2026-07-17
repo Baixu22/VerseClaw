@@ -1,13 +1,15 @@
 // Webhooks plugin module implements http behavior.
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import {
+  createWebhookReplayGuard,
+  verifyWebhookHmacSha256,
+} from "openclaw/plugin-sdk/inbound-trust";
 import { z } from "zod";
 import type { PluginRuntime } from "../api.js";
 import {
   createFixedWindowRateLimiter,
   createWebhookInFlightLimiter,
-  readJsonWebhookBodyOrReject,
+  readWebhookBodyOrReject,
   resolveRequestClientIp,
   resolveConfiguredSecretInputString,
   resolveWebhookTargetWithAuthOrReject,
@@ -310,20 +312,9 @@ function writeJson(res: ServerResponse, statusCode: number, body: unknown): void
   res.end(JSON.stringify(body));
 }
 
-function extractSharedSecret(req: IncomingMessage): string {
-  const authHeader = Array.isArray(req.headers.authorization)
-    ? (req.headers.authorization[0] ?? "")
-    : (req.headers.authorization ?? "");
-  if (normalizeLowercaseStringOrEmpty(authHeader).startsWith("bearer ")) {
-    return authHeader.slice("bearer ".length).trim();
-  }
-  const sharedHeader = req.headers["x-openclaw-webhook-secret"];
-  return Array.isArray(sharedHeader) ? (sharedHeader[0] ?? "").trim() : (sharedHeader ?? "").trim();
-}
-
-function timingSafeEquals(left: string, right: string): boolean {
-  // Reuse the shared helper so webhook auth semantics stay aligned across plugins.
-  return safeEqualSecret(left, right);
+function singleHeader(req: IncomingMessage, name: string): string {
+  const value = req.headers[name];
+  return Array.isArray(value) ? (value[0] ?? "").trim() : (value ?? "").trim();
 }
 
 function formatZodError(error: z.ZodError): string {
@@ -730,6 +721,7 @@ export function createTaskFlowWebhookRequestHandler(params: {
       maxInFlightPerKey: WEBHOOK_IN_FLIGHT_DEFAULTS.maxInFlightPerKey,
       maxTrackedKeys: WEBHOOK_IN_FLIGHT_DEFAULTS.maxTrackedKeys,
     });
+  const replayGuard = createWebhookReplayGuard();
   const resolveTargetSecret = async (
     target: TaskFlowWebhookTarget,
   ): Promise<string | undefined> => {
@@ -766,35 +758,48 @@ export function createTaskFlowWebhookRequestHandler(params: {
       })(),
       inFlightLimiter,
       handle: async ({ targets }) => {
-        const presentedSecret = extractSharedSecret(req);
+        const body = await readWebhookBodyOrReject({
+          req,
+          res,
+          maxBytes: 256 * 1024,
+          timeoutMs: 15_000,
+          invalidBodyMessage: "invalid request body",
+        });
+        if (!body.ok) return true;
+        const timestamp = singleHeader(req, "x-openclaw-webhook-timestamp");
+        const signature = singleHeader(req, "x-openclaw-webhook-signature");
+        const eventKey = singleHeader(req, "x-openclaw-webhook-event-id");
         const target = await resolveWebhookTargetWithAuthOrReject({
           targets,
           res,
           isMatch: async (candidate) => {
-            if (presentedSecret.length === 0) {
-              return false;
-            }
             const resolvedSecret = await resolveTargetSecret(candidate);
-            return Boolean(resolvedSecret && timingSafeEquals(resolvedSecret, presentedSecret));
+            if (!resolvedSecret) return false;
+            return verifyWebhookHmacSha256({
+              secret: resolvedSecret,
+              rawBody: body.value,
+              signature,
+              timestamp,
+            }).ok;
           },
         });
         if (!target) {
           return true;
         }
 
-        const body = await readJsonWebhookBodyOrReject({
-          req,
-          res,
-          maxBytes: 256 * 1024,
-          timeoutMs: 15_000,
-          emptyObjectOnEmpty: false,
-          invalidJsonMessage: "invalid request body",
-        });
-        if (!body.ok) {
+        const replay = replayGuard.checkAndRemember({ eventKey, timestamp });
+        if (!replay.ok) {
+          writeJson(res, 409, { ok: false, code: "replay_rejected", error: replay.reason });
           return true;
         }
-
-        const parsed = webhookActionSchema.safeParse(body.value);
+        let jsonBody: unknown;
+        try {
+          jsonBody = JSON.parse(body.value);
+        } catch {
+          writeJson(res, 400, { ok: false, code: "invalid_request", error: "invalid request body" });
+          return true;
+        }
+        const parsed = webhookActionSchema.safeParse(jsonBody);
         if (!parsed.success) {
           writeJson(res, 400, {
             ok: false,

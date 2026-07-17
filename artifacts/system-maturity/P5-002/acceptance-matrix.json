@@ -1,29 +1,24 @@
 {
   "taskId": "P5-002",
-  "finding": "F-REL-001",
-  "checkedAt": "2026-07-17T08:45:54.000Z",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
   "acceptance": [
     {
       "id": "A1",
-      "title": "list failure / list path does not rewrite authority store",
+      "statement": "list 失败不改写权威库",
       "status": "passed"
     },
     {
       "id": "A2",
-      "title": "same job same moment at most one owner (CAS lease)",
+      "statement": "同一任务同一时刻最多一个 owner",
       "status": "passed"
     },
     {
       "id": "A3",
-      "title": "repair requires explicit authorization and audit",
+      "statement": "repair 有显式授权和审计",
       "status": "passed"
     }
-  ],
-  "implementation": {
-    "listReadOnly": "openclaw_runtime/src/cron/service/ops.ts ensureLoadedForRead",
-    "lease": "openclaw_runtime/src/cron/store/lease.ts",
-    "timerClaim": "openclaw_runtime/src/cron/service/timer.ts",
-    "manualClaim": "openclaw_runtime/src/cron/service/ops.ts prepareManualRun",
-    "repair": "repairCronStoreAuthorized + CronService.repairAuthorized"
-  }
+  ]
 }

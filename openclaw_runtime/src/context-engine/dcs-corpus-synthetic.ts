@@ -148,7 +148,7 @@ export function buildArmTrajectory(
       tokenEstimate: estimateTokensFromChars(task.query.length + 8),
     },
   ];
-  let pass = true;
+  const pass = true;
   let nextIndex = 1;
 
   if (arm === "baseline") {

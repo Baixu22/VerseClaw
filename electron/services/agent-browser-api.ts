@@ -73,7 +73,7 @@ export function createAgentBrowserApi(
     return vaultService;
   };
 
-  const api = {
+  const api: CompleteHostServiceRegistry['agentBrowser'] = {
     open: async (payload = {}) => ({
       success: true,
       ...(await service.open(payload)),

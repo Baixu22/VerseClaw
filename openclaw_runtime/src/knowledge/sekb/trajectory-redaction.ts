@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SEKB trajectory redaction + quarantine (P3-001 / F-DATA-001, F-DATA-004).
  *
  * Reuses the same logging redaction policy (`redactSensitiveText` / `redactSecrets`)

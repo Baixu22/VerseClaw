@@ -1,38 +1,24 @@
 {
-  "A1": {
-    "id": "A1",
-    "statement": "Unauthorized / wrong-origin / rate-limited requests are rejected",
-    "status": "passed",
-    "proof": [
-      "authorizeOperatorScopesForMethod denies agentBrowser.invoke without write scope",
-      "checkBrowserOrigin rejects missing/evil origins",
-      "createAuthRateLimiter locks after max failures",
-      "consumeControlPlaneWriteBudget denies after 3 writes/window",
-      "unit: gateway-p4-001-auth-binding.test.ts auth matrix"
-    ]
-  },
-  "A2": {
-    "id": "A2",
-    "statement": "Gateway token is not returned as plaintext to Renderer",
-    "status": "passed",
-    "proof": [
-      "controlUi returns only {success,port,opened,hasToken} \u2014 no token/url",
-      "Main opens Control UI via openExternalSafe with fragment token in-process",
-      "copyGatewayToken writes clipboard in Main without response body secret",
-      "Settings shows masked placeholder; hostApi.gateway.copyGatewayToken",
-      "unit: gateway-control-ui-token-p4-001.test.ts"
-    ]
-  },
-  "A3": {
-    "id": "A3",
-    "statement": "Response bound to requestId/session/webContents (bridge connId)",
-    "status": "passed",
-    "proof": [
-      "agentBrowser.invoke uses broadcastToConnIds to trusted backend bridges only",
-      "pending invoke stores allowedConnIds + sessionKey + originConnId",
-      "claimAgentBrowserResult rejects wrong_source / session_mismatch / duplicate",
-      "multi-window race: first valid bridge wins; late/wrong replies ignored",
-      "unit: gateway-p4-001-auth-binding + agent-browser-gateway-bridge"
-    ]
-  }
+  "taskId": "P4-001",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
+  "acceptance": [
+    {
+      "id": "A1",
+      "statement": "未授权/错 origin/超限请求必拒",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "statement": "token 不返回 Renderer 明文",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "statement": "response 绑定 requestId/session/webContents",
+      "status": "passed"
+    }
+  ]
 }

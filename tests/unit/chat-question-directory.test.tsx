@@ -30,6 +30,7 @@ vi.mock('@/stores/gateway', () => ({
 }));
 
 const chatState = {
+  hydrateStartup: vi.fn(async () => {}),
   messages: [
     { role: 'user', content: 'hello' },
     { role: 'assistant', content: 'reply 1' },
@@ -40,6 +41,8 @@ const chatState = {
   currentAgentId: 'main',
   sessionLabels: {},
   loading: false,
+  startupPhase: 'ready',
+  startupError: null,
   loadingMoreHistory: false,
   hasMoreHistory: false,
   sending: false,

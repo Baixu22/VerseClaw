@@ -1,4 +1,4 @@
-﻿export type SensitiveContentSurface =
+export type SensitiveContentSurface =
   | 'file'
   | 'transcript'
   | 'trace'

@@ -22,7 +22,6 @@ export interface McpServerConfig {
   args?: string[];
   cwd?: string;
   url?: string;
-  headers?: Record<string, string>;
   /** Env values are SecretRef or legacy plaintext in Main store; Renderer always receives masked strings. */
   env?: Record<string, string | { kind: 'secret-ref'; secretId: string }>;
   headers?: Record<string, string>;

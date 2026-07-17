@@ -118,7 +118,7 @@ export function buildRolePermissionDenyPatches(
   };
 }
 
-import { resolve, normalize, sep, isAbsolute, relative } from "node:path";
+import { resolve, normalize, isAbsolute, relative } from "node:path";
 
 export type RolePathAccessMode = "read" | "write";
 

@@ -39,6 +39,10 @@ import {
   touchConversationBindingRecord,
 } from "../../bindings/records.js";
 import { normalizeChatType } from "../../channels/chat-type.js";
+import {
+  authorizeInboundSender,
+  fenceInboundUntrustedContent,
+} from "../../plugin-sdk/inbound-trust.js";
 import { resolveChannelModelOverride } from "../../channels/model-overrides.js";
 import { shouldSuppressLocalExecApprovalPrompt } from "../../channels/plugins/exec-approval-local.js";
 import { applyMergePatch } from "../../config/merge-patch.js";
@@ -1001,7 +1005,35 @@ export type {
 export async function dispatchReplyFromConfig(
   params: DispatchFromConfigParams,
 ): Promise<DispatchFromConfigResult> {
-  const { ctx, cfg, dispatcher } = params;
+  const { cfg, dispatcher } = params;
+  const originalCtx = params.ctx;
+  const inboundChannel = normalizeLowercaseStringOrEmpty(
+    originalCtx.Surface ?? originalCtx.Provider ?? "",
+  );
+  const protectedInboundChannels = new Set(["feishu", "wecom", "discord", "telegram", "webhooks"]);
+  const senderId = normalizeOptionalString(originalCtx.SenderId);
+  const senderAdmission = authorizeInboundSender({
+    dmPolicy: "pairing",
+    pairedSenderIds: originalCtx.CommandAuthorized && senderId ? [senderId] : [],
+    senderId: senderId ?? "",
+  });
+  if (protectedInboundChannels.has(inboundChannel) && !senderAdmission.allowed) {
+    return {
+      queuedFinal: false,
+      counts: dispatcher.getQueuedCounts(),
+    };
+  }
+  const ctx = protectedInboundChannels.has(inboundChannel)
+    ? {
+        ...originalCtx,
+        Body: fenceInboundUntrustedContent({
+          channel: inboundChannel,
+          senderId,
+          messageId: originalCtx.MessageSid,
+          text: originalCtx.Body ?? originalCtx.RawBody ?? "",
+        }),
+      }
+    : originalCtx;
   if (params.replyOptions?.abortSignal?.aborted) {
     return {
       queuedFinal: false,

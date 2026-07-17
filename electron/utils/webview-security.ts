@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P2-004 / F-ISO-002: WebView attach / permission / navigation controls.
  * Pure policy helpers live here so unit tests do not need Electron runtime.
  * Side-effect registration is in registerWebViewSecurity().

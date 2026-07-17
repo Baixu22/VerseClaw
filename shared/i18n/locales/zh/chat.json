@@ -1862,6 +1862,10 @@
       "other": "GitHub 链接"
     }
   },
+  "resourceLimits": {
+    "TOKEN_BUDGET_EXCEEDED": "此会话已达到 token 预算（{{used}} / {{limit}}）。请新建会话或提高限制。",
+    "COST_BUDGET_EXCEEDED": "此会话已达到费用预算（${{used}} / ${{limit}}）。请新建会话或提高限制。"
+  },
   "artifactView": {
     "title": "产物",
     "empty": "尚未生成产物",
