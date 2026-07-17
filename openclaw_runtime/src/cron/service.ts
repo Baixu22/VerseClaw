@@ -80,4 +80,18 @@ export class CronService implements CronServiceContract {
   wake(opts: { mode: CronWakeMode; text: string; sessionKey?: string }) {
     return ops.wakeNow(this.state, opts);
   }
+
+  /**
+   * Explicit authorized maintenance repair (P5-002 / F-REL-001).
+   * List/status never write; repair requires authorized:true + audit reason.
+   */
+  async repairAuthorized(opts: {
+    authorized: true;
+    reason: string;
+    recomputeExpired?: boolean;
+    repairFutureCronNextRunAtMs?: boolean;
+  }) {
+    return await ops.repairCronStoreAuthorized(this.state, opts);
+  }
 }
+

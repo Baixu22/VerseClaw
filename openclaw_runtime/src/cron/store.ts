@@ -24,6 +24,12 @@ import type {
   LoadedCronStore,
   QuarantinedCronConfigJob,
 } from "./store/types.js";
+export {
+  claimCronJobLease,
+  releaseCronJobLease,
+  CRON_LEASE_STALE_MS,
+  type CronLeaseClaimResult,
+} from "./store/lease.js";
 export type {
   CronConfigJobRuntimeEntry,
   CronQuarantineFile,

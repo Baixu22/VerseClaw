@@ -405,7 +405,7 @@
       "category": "REL",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2-L3",
       "related": [
         "F-GOV-001"
@@ -416,7 +416,10 @@
       "tasks": [
         "P5-002",
         "P7-002"
-      ]
+      ],
+      "updatedBy": "P5-002",
+      "updatedAt": "2026-07-17T08:45:54.000Z",
+      "notes": "P5-002: list/status never rewrite authority store; SQLite CAS lease for job claim; authorized repair with audit reason."
     },
     {
       "id": "F-REL-002",

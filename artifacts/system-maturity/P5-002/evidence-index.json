@@ -1,0 +1,19 @@
+{
+  "taskId": "P5-002",
+  "createdAt": "2026-07-17T08:45:54.000Z",
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P5-002/vitest.stdout.txt",
+      "sha256": "e200434eb28e9ef3b11eab15bd15dbab6df313359dbd5dda5217f4e9e8356a59",
+      "role": "primary-unit-tests"
+    },
+    {
+      "path": "artifacts/system-maturity/P5-002/acceptance-matrix.json",
+      "role": "acceptance"
+    }
+  ],
+  "tests": {
+    "primary": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts",
+    "result": "8 passed"
+  }
+}

@@ -17,6 +17,7 @@ import { registerActiveCronTaskRun } from "../../tasks/cron-task-cancel.js";
 import { deliveryContextFromSession } from "../../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../../utils/delivery-context.types.js";
 import { clearCronJobActive, markCronJobActive } from "../active-jobs.js";
+import { claimCronJobLease } from "../store/lease.js";
 import { resolveCronDeliveryPlan, resolveFailureDestination } from "../delivery-plan.js";
 import { resolveCronExecutionRetryHint } from "../retry-hint.js";
 import {
@@ -866,16 +867,31 @@ export async function onTimer(state: CronServiceState) {
       }
 
       const now = state.deps.nowMs();
+      // P5-002: cross-process CAS lease — only one owner may claim a due job.
+      const claimed: Array<{ id: string; job: (typeof due)[number] }> = [];
       for (const job of due) {
-        job.state.runningAtMs = now;
+        const lease = claimCronJobLease({
+          storePath: state.deps.storePath,
+          jobId: job.id,
+          nowMs: now,
+        });
+        if (!lease.claimed) {
+          state.deps.log.info(
+            { jobId: job.id, reason: lease.reason },
+            "cron: skip due job; lease not acquired",
+          );
+          continue;
+        }
+        job.state.runningAtMs = lease.runningAtMs;
         job.state.lastError = undefined;
+        claimed.push({ id: job.id, job });
       }
-      await persist(state);
+      if (claimed.length > 0) {
+        // Persist remaining runtime fields (nextRun etc.) after lease markers.
+        await persist(state, { stateOnly: true });
+      }
 
-      return due.map((j) => ({
-        id: j.id,
-        job: j,
-      }));
+      return claimed;
     });
 
     const runDueJob = async (params: {
@@ -1244,14 +1260,30 @@ async function planStartupCatchup(
         "cron: running missed jobs after restart",
       );
     }
+    const claimedStartup: typeof startupCandidates = [];
     for (const job of startupCandidates) {
-      job.state.runningAtMs = now;
+      const lease = claimCronJobLease({
+        storePath: state.deps.storePath,
+        jobId: job.id,
+        nowMs: now,
+      });
+      if (!lease.claimed) {
+        state.deps.log.info(
+          { jobId: job.id, reason: lease.reason },
+          "cron: skip startup catch-up job; lease not acquired",
+        );
+        continue;
+      }
+      job.state.runningAtMs = lease.runningAtMs;
       job.state.lastError = undefined;
+      claimedStartup.push(job);
     }
-    await persist(state);
+    if (claimedStartup.length > 0) {
+      await persist(state, { stateOnly: true });
+    }
 
     return {
-      candidates: startupCandidates.map((job) => ({ jobId: job.id, job })),
+      candidates: claimedStartup.map((job) => ({ jobId: job.id, job })),
       deferredJobs: deferred,
     };
   });
