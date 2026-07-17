@@ -424,7 +424,7 @@
       "category": "REL",
       "severity": "Medium",
       "decision": "Act-now",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -432,7 +432,10 @@
       ],
       "tasks": [
         "P5-001"
-      ]
+      ],
+      "updatedBy": "P5-001",
+      "updatedAt": "2026-07-17T08:31:19.000Z",
+      "notes": "P5-001: atomic temp+fsync+rename for openclaw/channel/auth JSON; version sidecar CAS; cross-process lock; bak recovery."
     },
     {
       "id": "F-REL-003",

@@ -1,0 +1,38 @@
+﻿{
+    "implementation":  {
+                           "configMutex":  "electron/utils/config-mutex.ts",
+                           "openclawAuth":  "electron/utils/openclaw-auth.ts",
+                           "atomicWrite":  "electron/utils/atomic-write.ts",
+                           "channelConfig":  "electron/utils/channel-config.ts"
+                       },
+    "acceptance":  [
+                       {
+                           "status":  "passed",
+                           "title":  "No truncated JSON",
+                           "evidence":  "crash-before-rename + bak recovery tests",
+                           "id":  "A1"
+                       },
+                       {
+                           "status":  "passed",
+                           "title":  "Concurrent writes do not lose updates",
+                           "evidence":  "withFileLock + withConfigLock concurrent RMW tests",
+                           "id":  "A2"
+                       },
+                       {
+                           "status":  "passed",
+                           "title":  "Recovery visible and retryable",
+                           "evidence":  "VERSION_CONFLICT/ENOSPC/EACCES/LOCK_TIMEOUT retryable + bak recovery note",
+                           "id":  "A3"
+                       }
+                   ],
+    "finding":  "F-REL-002",
+    "guarantees":  [
+                       "temp + fsync + rename for config JSON",
+                       "sidecar version meta (.clawx-write-meta) for CAS",
+                       "cross-process exclusive lockfile",
+                       ".bak previous-good retention + read recovery",
+                       "structured AtomicWriteError with retryable flag"
+                   ],
+    "taskId":  "P5-001",
+    "checkedAt":  "2026-07-17T08:31:03.374Z"
+}
