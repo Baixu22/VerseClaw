@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "title": "Phase 0 Complete Acceptance",
+  "checkedAt": "2026-07-17T04:08:12.408Z",
+  "branch": "codex/maturity-p0",
+  "head": "405e4a572347c94ec95cb687fb1c61caed70042e",
+  "productDevelopmentHead": "b1ff416dd162554f74e325fe77be5b5fba29387b",
+  "auditEvidenceHead": "60061e33554311ac3c9871195210df59fe1b5bf2",
+  "phase0Status": {
+    "phase": "phase0-foundation",
+    "phaseStatus": "done",
+    "tasks": {
+      "P0-001": "done",
+      "P0-002": "done",
+      "P0-003": "done",
+      "P0-004": "done"
+    },
+    "allTasksDone": true
+  },
+  "tasks": [
+    {
+      "id": "P0-001",
+      "status": "done",
+      "acceptance": [
+        {
+          "id": "A1",
+          "checked": true,
+          "text": "基线 hash 与报告一致"
+        },
+        {
+          "id": "A2",
+          "checked": true,
+          "text": "Finding ID 无重复/断链"
+        },
+        {
+          "id": "A3",
+          "checked": true,
+          "text": "命令退出码为 0"
+        }
+      ],
+      "allAcceptanceChecked": true,
+      "hasEvidence": true,
+      "hasTests": true,
+      "hasResults": true
+    },
+    {
+      "id": "P0-002",
+      "status": "done",
+      "acceptance": [
+        {
+          "id": "A1",
+          "checked": true,
+          "text": "所有任务均有唯一 ID"
+        },
+        {
+          "id": "A2",
+          "checked": true,
+          "text": "STATUS 只能出现 todo/in_progress/blocked/done"
+        },
+        {
+          "id": "A3",
+          "checked": true,
+          "text": "done 必须绑定验收证据"
+        }
+      ],
+      "allAcceptanceChecked": true,
+      "hasEvidence": true,
+      "hasTests": true,
+      "hasResults": true
+    },
+    {
+      "id": "P0-003",
+      "status": "done",
+      "acceptance": [
+        {
+          "id": "A1",
+          "checked": true,
+          "text": "空测试 shard 失败"
+        },
+        {
+          "id": "A2",
+          "checked": true,
+          "text": "快速循环不替代发布门禁"
+        },
+        {
+          "id": "A3",
+          "checked": true,
+          "text": "发布门禁清单可机器执行"
+        }
+      ],
+      "allAcceptanceChecked": true,
+      "hasEvidence": true,
+      "hasTests": true,
+      "hasResults": true
+    },
+    {
+      "id": "P0-004",
+      "status": "done",
+      "acceptance": [
+        {
+          "id": "A1",
+          "checked": true,
+          "text": "交付物缺证据时门禁失败"
+        },
+        {
+          "id": "A2",
+          "checked": true,
+          "text": "manifest hash 可重算"
+        },
+        {
+          "id": "A3",
+          "checked": true,
+          "text": "状态与验收结果一致"
+        }
+      ],
+      "allAcceptanceChecked": true,
+      "hasEvidence": true,
+      "hasTests": true,
+      "hasResults": true
+    }
+  ],
+  "gates": [
+    {
+      "name": "01-audit-baseline",
+      "command": "node scripts/audit-baseline-check.mjs",
+      "exitCode": 0,
+      "durationMs": 86,
+      "ok": true,
+      "stdoutBytes": 1076,
+      "stderrBytes": 0
+    },
+    {
+      "name": "02-plan-validate",
+      "command": "node scripts/validate-system-maturity-plan.mjs",
+      "exitCode": 0,
+      "durationMs": 64,
+      "ok": true,
+      "stdoutBytes": 1250,
+      "stderrBytes": 0
+    },
+    {
+      "name": "03-gates-validate",
+      "command": "node scripts/validate-test-gates.mjs",
+      "exitCode": 0,
+      "durationMs": 57,
+      "ok": true,
+      "stdoutBytes": 373,
+      "stderrBytes": 0
+    },
+    {
+      "name": "04-evidence-validate",
+      "command": "node scripts/validate-system-maturity-evidence.mjs",
+      "exitCode": 0,
+      "durationMs": 71,
+      "ok": true,
+      "stdoutBytes": 2385,
+      "stderrBytes": 0
+    },
+    {
+      "name": "05-maturity-validate",
+      "command": "pnpm maturity:validate",
+      "exitCode": 0,
+      "durationMs": 3094,
+      "ok": true,
+      "stdoutBytes": 5084,
+      "stderrBytes": 435
+    },
+    {
+      "name": "06-harness-agent-dev",
+      "command": "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+      "exitCode": 0,
+      "durationMs": 2223,
+      "ok": true,
+      "stdoutBytes": 73,
+      "stderrBytes": 481
+    },
+    {
+      "name": "07-agent-dev-fast",
+      "command": "pnpm agent-dev:fast",
+      "exitCode": 0,
+      "durationMs": 7877,
+      "ok": true,
+      "stdoutBytes": 1173,
+      "stderrBytes": 861
+    },
+    {
+      "name": "08-harness-ci",
+      "command": "pnpm run harness:ci",
+      "exitCode": 0,
+      "durationMs": 8480,
+      "ok": true,
+      "stdoutBytes": 5105,
+      "stderrBytes": 1465
+    },
+    {
+      "name": "09-typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "durationMs": 17256,
+      "ok": true,
+      "stdoutBytes": 954,
+      "stderrBytes": 400
+    },
+    {
+      "name": "11-release-gates-list",
+      "command": "node scripts/validate-test-gates.mjs --loop release --list --skip-empty-shard",
+      "exitCode": 0,
+      "durationMs": 52,
+      "ok": true,
+      "stdoutBytes": 694,
+      "stderrBytes": 0
+    },
+    {
+      "name": "12-a1-missing-evidence-probe",
+      "command": "node scripts/validate-system-maturity-evidence.mjs",
+      "exitCode": 1,
+      "durationMs": 80,
+      "ok": true,
+      "stdoutBytes": 1831,
+      "stderrBytes": 185,
+      "note": "expected non-zero exit"
+    },
+    {
+      "name": "13-evidence-after-restore",
+      "command": "node scripts/validate-system-maturity-evidence.mjs",
+      "exitCode": 0,
+      "durationMs": 65,
+      "ok": true,
+      "stdoutBytes": 2385,
+      "stderrBytes": 0
+    }
+  ],
+  "summary": {
+    "allGatesPass": true,
+    "phase0Done": true,
+    "tasksOk": true,
+    "verdict": "PASS"
+  }
+}

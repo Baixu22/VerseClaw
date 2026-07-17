@@ -1,0 +1,78 @@
+INFO  A1 findings.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2
+INFO  A1 manifest.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2
+INFO  A1 dirty patch hash OK (bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42) bytes=833074
+INFO  A1 productDevelopmentHead=b1ff416dd162554f74e325fe77be5b5fba29387b
+INFO  known post-audit content drift allowed: electron/services/roles-api.ts
+INFO  known post-audit content drift allowed: src/lib/host-api.ts
+INFO  known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts
+INFO  known post-audit content drift allowed: package.json
+INFO  manifest missing (allowlisted generated): artifacts/agent-dev-audit/report.json
+INFO  manifest missing (allowlisted generated): artifacts/agent-dev-deep-test/report.json
+INFO  known post-audit content drift allowed: electron/services/mcp-api.ts
+INFO  manifest files: matched=68 lfNorm=6 drift=5 missing=2
+INFO  A2 unique Finding IDs: 35
+INFO  A2 related links OK
+INFO  A2 task Finding refs resolve (34 tasks scanned)
+
+audit-baseline-check: OK
+INFO  A1 unique task IDs: 34
+INFO  plans/system-maturity/phase0-foundation/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase2-authorization-isolation/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=planned
+INFO  plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=planned
+INFO  dependency edges resolve
+INFO  A3 P0-001 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-001.delivery.md)
+INFO  A3 P0-002 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-002.delivery.md)
+INFO  A3 P0-003 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-003.delivery.md)
+INFO  A3 P0-004 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-004.delivery.md)
+INFO  task Finding refs resolve against findings-registry
+
+validate-system-maturity-plan: OK
+INFO  A2 daily/pr loops cannot substitute release
+INFO  A2 forbidden release evidence ids not present in release.commands
+INFO  vitest.config.ts passWithNoTests:false
+INFO  vitest.agent-dev.node.config.ts passWithNoTests:false
+INFO  vitest.runtime-effectiveness.config.ts passWithNoTests:false
+INFO  A1 empty test shard failed as required (exit=1)
+
+validate-test-gates: OK
+INFO  A2 P0-001 hash OK plans/system-maturity/BASELINE.json
+INFO  A2 P0-001 hash OK plans/system-maturity/findings-registry.json
+INFO  A2 P0-001 hash OK scripts/audit-baseline-check.mjs
+INFO  A2 P0-001 hash OK plans/system-maturity/EXECUTION-ORDER.md
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/harness-validate.stdout.txt
+INFO  A2 P0-002 hash OK scripts/validate-system-maturity-plan.mjs
+INFO  A2 P0-002 hash OK plans/system-maturity/README.md
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate-system-maturity-plan.frozen.json
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate.stdout.txt
+INFO  A2 P0-003 hash OK plans/system-maturity/gates.json
+INFO  A2 P0-003 hash OK scripts/validate-test-gates.mjs
+INFO  A2 P0-003 hash OK vitest.config.ts
+INFO  A2 P0-003 hash OK vitest.agent-dev.node.config.ts
+INFO  A2 P0-003 hash OK vitest.runtime-effectiveness.config.ts
+INFO  A2 P0-003 hash OK src/lib/host-api.ts
+INFO  A2 P0-003 hash OK tests/unit/host-api-facade.test.ts
+INFO  A2 P0-003 hash OK package.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/validate-test-gates.frozen.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/release-gates.commands.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/empty-shard.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/harness-ci.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/typecheck.stdout.txt
+INFO  A2 P0-004 hash OK scripts/validate-system-maturity-evidence.mjs
+INFO  A2 P0-004 hash OK package.json
+INFO  A2 P0-004 hash OK plans/system-maturity/BASELINE.json
+INFO  A2 P0-004 hash OK plans/system-maturity/phase0-foundation/STATUS.json
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/baseline.stdout.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/plan.stdout.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/harness.stdout.txt
+INFO  A1 regression probe: missing evidence path correctly detectable
+
+validate-system-maturity-evidence: OK
