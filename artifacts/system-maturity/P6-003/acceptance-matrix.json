@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-003",
+  "finding": "F-SUPPLY-002",
+  "checkedAt": "2026-07-17T19:21:00.512Z",
+  "runs": [
+    {
+      "name": "vitest",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs exec vitest run tests/unit/supply-chain-integrity-p6-003.test.ts",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "policy-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:supply-chain-policy",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "live-source-probe",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:supply-chain-policy:live",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "checksum-mismatch-deny",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/validate-supply-chain-integrity.mjs --self-test-mismatch",
+      "expectedExit": 1,
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "harness-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs harness validate --spec harness/specs/tasks/supply-chain-integrity-pinning.md --since 4e3c6eb58",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "workflow-yaml",
+      "command": "C:\\Program Files\\nodejs\\node.exe -e const fs=require('fs'),path=require('path'),yaml=require('yaml');for(const name of fs.readdirSync('.github/workflows').filter(n=>/\\.ya?ml$/.test(n))){yaml.parse(fs.readFileSync(path.join('.github/workflows',name),'utf8'));}console.log('workflow YAML parse OK')",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "full-test",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs test",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run typecheck",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "harness-ci",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run harness:ci",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "External binary hash/signature must match",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "Remote curl-to-shell installers are forbidden",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "title": "GitHub Actions use approved commit SHAs",
+      "status": "passed"
+    }
+  ],
+  "fullGateAssessment": {
+    "status": "baseline-fail-no-p6-signature",
+    "runs": [
+      {
+        "name": "full-test",
+        "exitCode": 1
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 1
+      },
+      {
+        "name": "harness-ci",
+        "exitCode": 0
+      }
+    ],
+    "note": "Repository-wide non-P6 failures remain P6-005 release-baseline work; a P6 signature fails this collector."
+  }
+}

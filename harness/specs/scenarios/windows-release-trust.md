@@ -3,8 +3,13 @@ id: windows-release-trust
 title: Windows Release Trust
 type: release-governance
 ownedPaths:
-  - .github/workflows/release.yml
+  - .github/workflows/**
   - shared/release-policy/**
+  - scripts/lib/verified-download.mjs
+  - scripts/release-integrity-manifest.mjs
+  - scripts/download-bundled-*.mjs
+  - scripts/install-pinned-ossutil.mjs
+  - scripts/validate-supply-chain-integrity.mjs
   - scripts/validate-windows-release-policy.mjs
   - tests/unit/windows-signing-policy-p6-001.test.ts
   - plans/system-maturity/phase6-supply-release/**
@@ -13,11 +18,16 @@ requiredProfiles:
   - fast
 requiredRules:
   - windows-release-signing-policy
+  - supply-chain-integrity-pinning
 ---
 
 Windows release trust covers the policy and evidence chain from release channel
 selection through SignPath, Authenticode verification, updater metadata hashing,
 and the final GitHub/OSS publish boundary.
+
+Build inputs are part of the same trust boundary. Bundled executables and CI
+installers require tracked SHA256 values before extraction or execution, and
+third-party GitHub Actions require immutable 40-character commit pins.
 
 Stable releases require verified Windows signatures before any public publish
 job can begin. Alpha and beta releases may remain unsigned only when they stay

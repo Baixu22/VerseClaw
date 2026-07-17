@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Assert tag matches package.json
         run: node scripts/assert-tag-matches-package.mjs
@@ -44,15 +44,15 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
           cache: 'pnpm'
@@ -172,7 +172,7 @@ jobs:
       - name: Upload unsigned Windows artifacts for SignPath
         if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         id: upload-unsigned-windows-artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: unsigned-win-exe-${{ github.run_id }}-${{ github.run_attempt }}
           path: release/*.exe
@@ -181,7 +181,7 @@ jobs:
       - name: Sign Windows artifacts via SignPath
         if: matrix.platform == 'win' && steps.win-channel.outputs.requires_signing == 'true'
         id: signpath-sign-windows
-        uses: signpath/github-action-submit-signing-request@v2
+        uses: signpath/github-action-submit-signing-request@b9d91eadd323de506c0c81cf0c7fe7438f3360fd # v2
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: "78e37079-23df-4800-b41c-33312ad7c1e3"
@@ -362,7 +362,7 @@ jobs:
         run: pnpm run package:linux
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-${{ matrix.platform }}
           path: |
@@ -386,10 +386,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Download release artifacts only
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: release-artifacts
           pattern: release-*
@@ -426,6 +426,9 @@ jobs:
           fi
           node scripts/validate-windows-update-feed-policy.mts --version "$VERSION"
 
+      - name: P6-003 assert pinned supply-chain inputs
+        run: node scripts/validate-supply-chain-integrity.mjs
+
   # ──────────────────────────────────────────────────────────────
   # Job: Publish to GitHub Releases
   # ──────────────────────────────────────────────────────────────
@@ -435,7 +438,7 @@ jobs:
     
     steps:
       - name: Download release artifacts only
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: release-artifacts
           pattern: release-*
@@ -454,7 +457,7 @@ jobs:
           find release-artifacts/ -name "builder-debug.yml" -delete -print || true
 
       - name: Create GitHub Release (as pre-release)
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
@@ -527,8 +530,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout pinned release tooling
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
       - name: Download release artifacts only
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: release-artifacts
           pattern: release-*
@@ -626,13 +632,16 @@ jobs:
           echo "=== release-info.json ==="
           cat staging/${CHANNEL}/release-info.json
 
-      - name: Install and configure ossutil
+      - name: Install pinned ossutil
+        run: |
+          node scripts/install-pinned-ossutil.mjs --output "$RUNNER_TEMP/ossutil-bin"
+          echo "$RUNNER_TEMP/ossutil-bin" >> "$GITHUB_PATH"
+
+      - name: Configure ossutil
         env:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
         run: |
-          curl -sL https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
-
           # Write config file for non-interactive use
           cat > $HOME/.ossutilconfig << EOF
           [Credentials]

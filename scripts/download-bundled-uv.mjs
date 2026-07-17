@@ -1,10 +1,11 @@
 #!/usr/bin/env zx
 
 import 'zx/globals';
+import { downloadVerifiedAssetToFile } from './lib/verified-download.mjs';
+import { getReleaseAsset, getReleaseComponent } from './release-integrity-manifest.mjs';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const UV_VERSION = '0.10.0';
-const BASE_URL = `https://github.com/astral-sh/uv/releases/download/${UV_VERSION}`;
+const UV_VERSION = getReleaseComponent('uv').version;
 const OUTPUT_BASE = path.join(ROOT_DIR, 'resources', 'bin');
 
 // Mapping Node platforms/archs to uv release naming
@@ -52,7 +53,8 @@ async function setupTarget(id) {
   const targetDir = path.join(OUTPUT_BASE, id);
   const tempDir = path.join(ROOT_DIR, 'temp_uv_extract');
   const archivePath = path.join(ROOT_DIR, target.filename);
-  const downloadUrl = `${BASE_URL}/${target.filename}`;
+  const integrityAsset = getReleaseAsset('uv', target.filename);
+  const downloadUrl = integrityAsset.url;
 
   echo(chalk.blue`\n📦 Setting up uv for ${id}...`);
 
@@ -65,10 +67,7 @@ async function setupTarget(id) {
   try {
     // Download
     echo`⬇️ Downloading: ${downloadUrl}`;
-    const response = await fetch(downloadUrl);
-    if (!response.ok) throw new Error(`Failed to download: ${response.statusText}`);
-    const buffer = await response.arrayBuffer();
-    await fs.writeFile(archivePath, Buffer.from(buffer));
+    await downloadVerifiedAssetToFile(integrityAsset, archivePath);
 
     // Extract
     echo`📂 Extracting...`;
