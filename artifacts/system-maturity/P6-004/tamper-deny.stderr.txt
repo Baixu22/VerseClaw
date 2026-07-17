@@ -1,0 +1,1 @@
+[release-trust] FAIL: inventory subjects do not match release artifacts

@@ -164,7 +164,10 @@
     "release:supply-chain-policy": "node scripts/validate-supply-chain-integrity.mjs",
     "release:supply-chain-policy:live": "node scripts/validate-supply-chain-integrity.mjs --probe-live",
     "release:supply-chain-policy:evidence": "node scripts/collect-p6-003-evidence.mjs",
-    "release:supply-chain-policy:evidence:full": "node scripts/collect-p6-003-evidence.mjs --full"
+    "release:supply-chain-policy:evidence:full": "node scripts/collect-p6-003-evidence.mjs --full",
+    "release:trust-policy": "node scripts/validate-release-trust-metadata.mjs --builder-config electron-builder.yml --workflow .github/workflows/release.yml",
+    "release:trust-policy:evidence": "node scripts/collect-p6-004-evidence.mjs",
+    "release:trust-policy:evidence:full": "node scripts/collect-p6-004-evidence.mjs --full"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",
@@ -197,6 +200,7 @@
   "devDependencies": {
     "@buape/carbon": "0.16.0",
     "@discordjs/voice": "^0.19.2",
+    "@electron/fuses": "1.8.0",
     "@eslint/js": "^10.0.1",
     "@grammyjs/runner": "^2.0.3",
     "@grammyjs/transformer-throttler": "^1.2.1",

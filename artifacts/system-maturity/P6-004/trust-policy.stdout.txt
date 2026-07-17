@@ -1,0 +1,1 @@
+[release-trust] OK: {"builder":{"asar":true,"enableEmbeddedAsarIntegrityValidation":true,"onlyLoadAppFromAsar":true},"releaseWorkflow":{"portableMetadata":true,"buildProvenanceAttestation":true,"sbomAttestation":true}}

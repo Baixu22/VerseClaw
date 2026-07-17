@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-004",
+  "finding": "F-SUPPLY-002",
+  "checkedAt": "2026-07-17T20:44:58.402Z",
+  "packagedAppDir": "release",
+  "runs": [
+    {
+      "name": "vitest",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs exec vitest run tests/unit/release-artifact-integrity-p6-004.test.ts tests/unit/supply-chain-integrity-p6-003.test.ts",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "trust-policy",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:trust-policy",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "supply-policy",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run release:supply-chain-policy",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "metadata-generate",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/generate-release-trust-metadata.mjs --artifacts C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\artifacts --out C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\trust --version 0.4.9-alpha.0 --commit 95e21e4eb58fb008590cd4169c7ee1d83f0db32d --repository IntelliSpectrum/ClawX --ref refs/heads/evidence --run-id local-p6-004 --run-attempt 1",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "metadata-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/validate-release-trust-metadata.mjs --artifacts C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\artifacts --inventory C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\trust\\release-artifact-inventory.json --sbom C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\trust\\release-sbom.cdx.json --provenance C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-fixture\\trust\\release-provenance.intoto.json --version 0.4.9-alpha.0 --commit 95e21e4eb58fb008590cd4169c7ee1d83f0db32d --repository IntelliSpectrum/ClawX --ref refs/heads/evidence",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "tamper-metadata-generate",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/generate-release-trust-metadata.mjs --artifacts C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\artifacts --out C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\trust --version 0.4.9-alpha.0 --commit 95e21e4eb58fb008590cd4169c7ee1d83f0db32d --repository IntelliSpectrum/ClawX --ref refs/heads/evidence --run-id local-p6-004 --run-attempt 1",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "tamper-deny",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/validate-release-trust-metadata.mjs --artifacts C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\artifacts --inventory C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\trust\\release-artifact-inventory.json --sbom C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\trust\\release-sbom.cdx.json --provenance C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\metadata-tamper-fixture\\trust\\release-provenance.intoto.json --version 0.4.9-alpha.0 --commit 95e21e4eb58fb008590cd4169c7ee1d83f0db32d --repository IntelliSpectrum/ClawX --ref refs/heads/evidence",
+      "expectedExit": 1,
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "packaged-trust-report",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/verify-packaged-electron-trust.mjs --app-dir C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\release --platform win --output C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\win-electron-trust.json",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "packaged-trust-replay",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/verify-packaged-electron-trust.mjs --app-dir C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\release --verify-report C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0\\artifacts\\system-maturity\\P6-004\\win-electron-trust.json",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "harness-validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs harness validate --spec harness/specs/tasks/release-artifact-attestation-integrity.md --since 95e21e4eb",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "workflow-yaml",
+      "command": "C:\\Program Files\\nodejs\\node.exe -e const fs=require('fs'),path=require('path'),yaml=require('yaml');for(const name of fs.readdirSync('.github/workflows').filter(n=>/\\.ya?ml$/.test(n))){yaml.parse(fs.readFileSync(path.join('.github/workflows',name),'utf8'));}console.log('workflow YAML parse OK')",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "focused-eslint",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs exec eslint scripts/generate-release-trust-metadata.mjs scripts/validate-release-trust-metadata.mjs scripts/verify-packaged-electron-trust.mjs scripts/collect-p6-004-evidence.mjs tests/unit/release-artifact-integrity-p6-004.test.ts",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    },
+    {
+      "name": "full-test",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs test",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run typecheck",
+      "expectedExit": [
+        0,
+        1
+      ],
+      "exitCode": 1,
+      "ok": true
+    },
+    {
+      "name": "harness-ci",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\11.2.2\\e33168da9f20c39744207ae93b38ad649d10a9feda3bbeea2d739ac9d0fd2d17\\node_modules\\pnpm\\bin\\pnpm.mjs run harness:ci",
+      "expectedExit": 0,
+      "exitCode": 0,
+      "ok": true
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "CycloneDX SBOM is bound to exact release artifact SHA256 subjects",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "SLSA provenance and GitHub attestations are independently verifiable",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "title": "Tampered metadata, ASAR bytes, or critical Electron fuses are denied",
+      "status": "passed"
+    }
+  ],
+  "fullGateAssessment": {
+    "status": "baseline-fail-no-p6-signature",
+    "runs": [
+      {
+        "name": "full-test",
+        "exitCode": 1
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 1
+      },
+      {
+        "name": "harness-ci",
+        "exitCode": 0
+      }
+    ],
+    "note": "Repository-wide non-P6 failures remain P6-005 release-baseline work; a P6 signature fails this collector."
+  }
+}

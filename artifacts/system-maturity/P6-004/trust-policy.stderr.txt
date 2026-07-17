@@ -1,0 +1,1 @@
+$ node scripts/validate-release-trust-metadata.mjs --builder-config electron-builder.yml --workflow .github/workflows/release.yml

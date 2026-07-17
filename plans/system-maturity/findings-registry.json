@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 5,
-      "Fixed": 27,
+      "Open": 4,
+      "Fixed": 28,
       "Partial": 3,
       "Unverified": 0
     },
-    "open": 5,
-    "fixed": 27
+    "open": 4,
+    "fixed": 28
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -738,7 +738,7 @@
       "category": "SUPPLY",
       "severity": "High",
       "decision": "Publish-blocker",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [
@@ -749,9 +749,9 @@
         "P6-003",
         "P6-004"
       ],
-      "notes": "P6-003: bundled uv, agent-browser, and Node downloads are version/size/SHA256 pinned; ossutil installs from a verified job-local archive without remote shell piping; all external GitHub Actions use manifest-approved commit SHAs. Remaining SBOM, provenance, ASAR integrity, and Electron fuse closure is P6-004.",
-      "updatedBy": "P6-003",
-      "updatedAt": "2026-07-17T19:08:24.984Z"
+      "notes": "P6-003 pinned bundled executables, the ossutil installer archive, and all external GitHub Actions. P6-004 binds a complete CycloneDX 1.6 SBOM and SLSA/in-toto provenance to exact release artifact SHA256 subjects, emits commit-pinned GitHub attestations, and verifies actual packaged Electron ASAR integrity plus OnlyLoadAppFromAsar fuses.",
+      "updatedBy": "P6-004",
+      "updatedAt": "2026-07-17T20:45:47.293Z"
     }
   ],
   "tasks": {

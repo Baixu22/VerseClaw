@@ -1,0 +1,56 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
+
+ [31m❯[39m tests/unit/chat-store-history-retry.test.ts [2m([22m[2m27 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1310[2mms[22m[39m
+[31m     [31m×[31m stops retrying once the user switches sessions mid-load[39m[32m 6[2mms[22m[39m
+ [31m❯[39m tests/unit/workspace-browser-body.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 435[2mms[22m[39m
+[31m     [31m×[31m renders html files as sandboxed HTML preview instead of raw source[39m[32m 183[2mms[22m[39m
+ [31m❯[39m tests/unit/chat-message.test.tsx [2m([22m[2m35 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1247[2mms[22m[39m
+[31m     [31m×[31m renders the assistant avatar in a fully clipped stable slot[39m[32m 62[2mms[22m[39m
+ [31m❯[39m tests/unit/role-memory-v2.test.ts [2m([22m[2m16 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 3337[2mms[22m[39m
+[31m     [31m×[31m checks evidence health without writing native memory and simulates injection with the real selector[39m[32m 236[2mms[22m[39m
+ [31m❯[39m tests/unit/gateway-permissions-api.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 125[2mms[22m[39m
+[31m     [31m×[31m requires approval for dangerous gateway RPC and consumes approval before replay[39m[32m 118[2mms[22m[39m
+ [31m❯[39m tests/unit/files-permissions-api.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 68[2mms[22m[39m
+[31m     [31m×[31m returns an approval event for workspace-external writes and consumes it once[39m[32m 58[2mms[22m[39m
+ [31m❯[39m tests/unit/agent-browser-service.test.ts [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 74[2mms[22m[39m
+[31m     [31m×[31m exposes the service through the host api adapter[39m[32m 32[2mms[22m[39m
+ [31m❯[39m tests/unit/chat-artifact-panel-layout.test.tsx [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 95[2mms[22m[39m
+[31m     [31m×[31m keeps the chat toolbar background draggable while actions remain clickable[39m[32m 52[2mms[22m[39m
+[31m     [31m×[31m stacks the chat page above the macOS main drag strip[39m[32m 12[2mms[22m[39m
+[31m     [31m×[31m layers the right artifact panel above the macOS drag strip[39m[32m 10[2mms[22m[39m
+[31m     [31m×[31m hides the chat assistive rail while the artifact panel is open[39m[32m 10[2mms[22m[39m
+[31m     [31m×[31m does not show the chat assistive rail before work starts[39m[32m 10[2mms[22m[39m
+ [31m❯[39m tests/unit/chat-save-to-knowledge.test.tsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 63[2mms[22m[39m
+[31m     [31m×[31m opens an editable draft and creates a pending proposal only after confirmation[39m[32m 61[2mms[22m[39m
+ [31m❯[39m tests/unit/path-broker-resolved.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 45[2mms[22m[39m
+[31m     [31m×[31m denies writes that realpath outside workspace via symlink/junction[39m[32m 44[2mms[22m[39m
+ [31m❯[39m tests/unit/observability-index.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 35[2mms[22m[39m
+[31m     [31m×[31m persists sanitized trace envelopes and rehydrates graph data[39m[32m 13[2mms[22m[39m
+[31m     [31m×[31m queries status, tool calls, artifacts, keyword, pagination, and sort order[39m[32m 14[2mms[22m[39m
+ [31m❯[39m tests/unit/chat-question-directory.test.tsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 64[2mms[22m[39m
+[31m     [31m×[31m keeps real repeated questions as separate directory entries[39m[32m 62[2mms[22m[39m
+ [31m❯[39m tests/unit/locomo-report-comparator.test.ts [2m([22m[2m38 tests[22m[2m | [22m[31m9 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+[31m     [31m×[31m 加载真实 phase3 baseline[39m[32m 3[2mms[22m[39m
+[31m     [31m×[31m 加载真实 phase4 regression baseline[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m 加载真实 current report (新 schema)[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m source 未指定时使用 path[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m 文件存在 → 返回 metrics, source = baselineName[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m phase3 → current: 大幅提升[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m phase3 → phase4: 回归 (历史回归基线)[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m phase4 → current: 大幅提升 (从回归中恢复)[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m 完整 pipeline: load → normalize → compare → markdown (无 throw)[39m[32m 0[2mms[22m[39m
+ [31m❯[39m tests/unit/dev-slice.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 9[2mms[22m[39m
+[31m     [31m×[31m uses the Stage 2 cache contract with retrieval scores and no profile augmentation[39m[32m 5[2mms[22m[39m
+ [31m❯[39m tests/unit/agent-browser-replay-tool-executor.test.ts [2m([22m[2m0 test[22m[2m)[22m
+ [31m❯[39m tests/unit/role-orchestration-methods.test.ts [2m([22m[2m48 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 5562[2mms[22m[39m
+[31m     [31m×[31m runs router-mode orchestration without a template and returns yield guidance[39m[32m 9[2mms[22m[39m
+[31m     [31m×[31m memory.feedback records real utility feedback and memory.utilityReport does not invent eval deltas[39m[32m 251[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m16 failed[39m[22m[2m | [22m[1m[32m633 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (652)[39m
+[2m      Tests [22m [1m[31m29 failed[39m[22m[2m | [22m[1m[32m5925 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6006)[39m
+[2m     Errors [22m [1m[31m22 errors[39m[22m
+[2m   Start at [22m 04:41:28
+[2m   Duration [22m 187.29s[2m (transform 25.49s, setup 47.94s, import 130.21s, tests 163.34s, environment 305.66s)[22m
+
+[ELIFECYCLE] Test failed. See above for more details.

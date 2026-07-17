@@ -1,0 +1,1 @@
+[release-trust] OK: {"artifacts":2,"dependencies":1655}

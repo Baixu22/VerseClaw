@@ -1,0 +1,1 @@
+[release-trust] generated artifacts=2 sbom=release-sbom.cdx.json provenance=release-provenance.intoto.json

@@ -1,0 +1,49 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "ClawX.exe",
+      "digest": {
+        "sha256": "fe2fca1a4b9cb639c7ef809d1b6b0bb21c38b69c4e37cae31bed8586a4dab80b"
+      }
+    },
+    {
+      "name": "latest.yml",
+      "digest": {
+        "sha256": "c4c0d8b1a2174210b3376fca22006a8dd6939bee2fd439d3e8a8604d0e1f10db"
+      }
+    }
+  ],
+  "predicateType": "https://slsa.dev/provenance/v1",
+  "predicate": {
+    "buildDefinition": {
+      "buildType": "https://github.com/IntelliSpectrum/ClawX/.github/workflows/release.yml@v1",
+      "externalParameters": {
+        "version": "0.4.9-alpha.0",
+        "ref": "refs/heads/evidence",
+        "repository": "IntelliSpectrum/ClawX"
+      },
+      "internalParameters": {
+        "pnpmLockSha256": "4bf846cf64fe05019eed1448c08a9d3dd617258a6623ebc289a1b2b6cbce0528"
+      },
+      "resolvedDependencies": [
+        {
+          "uri": "git+https://github.com/IntelliSpectrum/ClawX.git",
+          "digest": {
+            "gitCommit": "95e21e4eb58fb008590cd4169c7ee1d83f0db32d"
+          }
+        }
+      ]
+    },
+    "runDetails": {
+      "builder": {
+        "id": "https://github.com/IntelliSpectrum/ClawX/actions/runs/local-p6-004"
+      },
+      "metadata": {
+        "invocationId": "IntelliSpectrum/ClawX/local-p6-004/1",
+        "startedOn": "2026-07-17T20:41:22.336Z",
+        "finishedOn": "2026-07-17T20:41:22.336Z"
+      }
+    }
+  }
+}
