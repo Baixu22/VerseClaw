@@ -373,7 +373,7 @@
     "openConsole": "開発者コンソールを開く",
     "consoleNote": "ゲートウェイトークンを注入して Control UI を開きます",
     "gatewayToken": "ゲートウェイトークン",
-    "gatewayTokenDesc": "Control UI の設定に求められた場合、これを貼り付けてください",
+    "gatewayTokenDesc": "トークンは Main プロセスにのみ保持されます。Copy でクリップボードへ書き込み、Renderer には平文を返しません。",
     "tokenUnavailable": "トークンが利用できません",
     "tokenCopied": "ゲートウェイトークンをコピーしました",
     "cli": "OpenClaw CLI",
@@ -467,7 +467,8 @@
         "request-only": "リクエストのみ",
         "read-only": "読み取り専用"
       }
-    }
+    },
+    "tokenMasked": "トークン読込済（マスク）"
   },
   "storage": {
     "title": "ストレージとメモリ",

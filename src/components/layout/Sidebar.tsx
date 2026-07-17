@@ -450,11 +450,10 @@ export function Sidebar() {
 
   const openControlUi = async (view?: 'dreams', label = 'OpenClaw Page') => {
     try {
-      const result = await hostApi.gateway.controlUi(view);
-      if (result.success && result.url) {
-        await window.electron.openExternal(result.url);
-      } else {
-        console.error(`Failed to get ${label} URL:`, result.error);
+      // P4-001: Main opens Control UI with token in-process; Renderer never receives plaintext token/URL.
+      const result = await hostApi.gateway.controlUi(view ? { view, open: true } : { open: true });
+      if (!result.success || result.opened === false) {
+        console.error(`Failed to open ${label}:`, result.error);
       }
     } catch (err) {
       console.error(`Error opening ${label}:`, err);

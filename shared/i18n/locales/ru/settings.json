@@ -373,7 +373,7 @@
     "openConsole": "Открыть консоль разработчика",
     "consoleNote": "Открывает Control UI с токеном шлюза",
     "gatewayToken": "Токен шлюза",
-    "gatewayTokenDesc": "Вставьте это в настройки Control UI при запросе",
+    "gatewayTokenDesc": "Токен остаётся в Main. Copy записывает его в буфер обмена без передачи в Renderer.",
     "tokenUnavailable": "Токен недоступен",
     "tokenCopied": "Токен шлюза скопирован",
     "cli": "CLI OpenClaw",
@@ -467,7 +467,8 @@
         "request-only": "только request",
         "read-only": "read-only"
       }
-    }
+    },
+    "tokenMasked": "Токен загружен (скрыт)"
   },
   "storage": {
     "title": "Хранилище и память",
