@@ -174,3 +174,6 @@ tests/unit/.tmp-relations-*/
 
 # Local temporary logs, process markers, generated helpers, and audit drafts
 tmp/
+
+!artifacts/system-maturity/
+!artifacts/system-maturity/**

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "program": "clawx-system-maturity",
+  "task": "P0-003",
+  "notes": "cached/smoke/reuse evidence is daily-loop only and must never replace release or PR full gates.",
+  "loops": {
+    "dailyFast": {
+      "id": "daily-fast",
+      "substitutesForRelease": false,
+      "substitutesForPrFull": false,
+      "commands": [
+        { "id": "contract:check", "run": "pnpm contract:check" },
+        { "id": "i18n:lint", "run": "pnpm i18n:lint" },
+        { "id": "agent-dev:workbench", "run": "pnpm agent-dev:workbench" },
+        { "id": "agent-dev:unit:fast", "run": "pnpm agent-dev:unit:fast" }
+      ],
+      "alias": "pnpm agent-dev:fast"
+    },
+    "prFull": {
+      "id": "pr-full",
+      "substitutesForRelease": false,
+      "commands": [
+        { "id": "maturity:baseline", "run": "node scripts/audit-baseline-check.mjs" },
+        { "id": "maturity:plan", "run": "node scripts/validate-system-maturity-plan.mjs" },
+        { "id": "contract:check", "run": "pnpm contract:check" },
+        { "id": "typecheck", "run": "pnpm run typecheck" },
+        { "id": "harness:ci", "run": "pnpm run harness:ci" },
+        { "id": "agent-dev:fast", "run": "pnpm agent-dev:fast" }
+      ]
+    },
+    "release": {
+      "id": "release",
+      "substitutesForRelease": true,
+      "requiredPhasesDone": ["phase0-foundation", "phase1-direct-boundaries", "phase2-authorization-isolation", "phase6-supply-release", "phase7-continuous-governance"],
+      "forbiddenAsReleaseEvidence": ["typecheck:cached", "agent-dev:deep-test:reuse", "test:e2e:agent-dev-quality:smoke", "agent-dev:fast"],
+      "commands": [
+        { "id": "maturity:baseline", "run": "node scripts/audit-baseline-check.mjs" },
+        { "id": "maturity:plan", "run": "node scripts/validate-system-maturity-plan.mjs" },
+        { "id": "maturity:gates", "run": "node scripts/validate-test-gates.mjs" },
+        { "id": "contract:check", "run": "pnpm contract:check" },
+        { "id": "typecheck", "run": "pnpm run typecheck" },
+        { "id": "harness:ci", "run": "pnpm run harness:ci" },
+        { "id": "agent-dev:deep-test", "run": "pnpm agent-dev:deep-test" },
+        { "id": "test:e2e:agent-dev-quality", "run": "pnpm run test:e2e:agent-dev-quality" },
+        { "id": "release:validate", "run": "pnpm run release:validate" }
+      ]
+    }
+  },
+  "vitestPolicy": {
+    "passWithNoTests": false,
+    "configs": [
+      "vitest.config.ts",
+      "vitest.agent-dev.node.config.ts",
+      "vitest.runtime-effectiveness.config.ts"
+    ]
+  }
+}

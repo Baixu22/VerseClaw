@@ -1,0 +1,1142 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "findingsPath": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+    "auditHead": "60061e33554311ac3c9871195210df59fe1b5bf2",
+    "dirtyPatchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
+    "auditDate": "2026-07-16"
+  },
+  "counts": {
+    "total": 35,
+    "bySeverity": {
+      "Critical": 2,
+      "High": 23,
+      "Medium": 9,
+      "Low": 1
+    },
+    "byStatus": {
+      "Open": 32,
+      "Partial": 2,
+      "Unverified": 1
+    }
+  },
+  "intentionalIdGaps": {
+    "F-SEC-008": "not issued in audit; F-SEC-010 used",
+    "F-SEC-009": "not issued in audit; F-SEC-010 used",
+    "F-AUTH-007": "not issued in audit; F-AUTH-008/009 used"
+  },
+  "findings": [
+    {
+      "id": "F-SEC-001",
+      "title": "Provider / Channel / Gateway secrets 明文与 Provider 双写",
+      "category": "SEC",
+      "severity": "Critical",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-SEC-002"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02"
+      ],
+      "tasks": [
+        "P1-001",
+        "P4-003",
+        "P4-004"
+      ]
+    },
+    {
+      "id": "F-SEC-002",
+      "title": "Renderer host API 可返回 Provider 明文 API key",
+      "category": "SEC",
+      "severity": "Critical",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-SEC-001",
+        "F-SEC-005",
+        "F-SEC-010"
+      ],
+      "attackChain": [
+        "AC-01"
+      ],
+      "tasks": [
+        "P1-001"
+      ]
+    },
+    {
+      "id": "F-SEC-003",
+      "title": "openExternal 多入口且 IPC/Host 路径无协议白名单",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-REL-004"
+      ],
+      "attackChain": [
+        "AC-03"
+      ],
+      "tasks": [
+        "P1-004",
+        "P7-002"
+      ]
+    },
+    {
+      "id": "F-SEC-004",
+      "title": "Files Host API 读模式允许任意本地路径",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-AUTH-002"
+      ],
+      "attackChain": [
+        "AC-02"
+      ],
+      "tasks": [
+        "P1-003"
+      ]
+    },
+    {
+      "id": "F-SEC-005",
+      "title": "Host IPC 仅校验请求外壳，缺每动作 payload schema 与 sender/session 绑定",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-SEC-002",
+        "F-ISO-002"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02"
+      ],
+      "tasks": [
+        "P1-002"
+      ]
+    },
+    {
+      "id": "F-SEC-010",
+      "title": "Renderer lacks CSP; HTML Preview allows scripts/downloads/popup escape",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-ISO-002"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-02",
+        "AC-03"
+      ],
+      "tasks": [
+        "P1-004"
+      ]
+    },
+    {
+      "id": "F-ISO-001",
+      "title": "Strong sandbox 不可用时降级到 policy-light，强制可见性与高危阻断未验证",
+      "category": "ISO",
+      "severity": "Medium",
+      "decision": "Track",
+      "status": "Partial",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-09"
+      ],
+      "tasks": [
+        "P2-004"
+      ]
+    },
+    {
+      "id": "F-ISO-002",
+      "title": "WebView 启用但缺少专用 attach/permission/navigation 管控证据",
+      "category": "ISO",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-SEC-010",
+        "F-SEC-005"
+      ],
+      "attackChain": [
+        "AC-01",
+        "AC-07"
+      ],
+      "tasks": [
+        "P2-004"
+      ]
+    },
+    {
+      "id": "F-AUTH-001",
+      "title": "Workspace 默认 permission mode 为 acceptEdits",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-09"
+      ],
+      "tasks": [
+        "P2-001"
+      ]
+    },
+    {
+      "id": "F-AUTH-002",
+      "title": "Role path 权限未硬执行且 Electron/Runtime built-in role 名漂移",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-REL-004"
+      ],
+      "attackChain": [
+        "AC-02",
+        "AC-09"
+      ],
+      "tasks": [
+        "P2-003"
+      ]
+    },
+    {
+      "id": "F-AUTH-003",
+      "title": "CVK 只有 report_only 类型，无 enforce 模式",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-AUTH-004",
+        "F-AUTH-005"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "tasks": [
+        "P2-005"
+      ]
+    },
+    {
+      "id": "F-AUTH-004",
+      "title": "Runtime Spine diagnostic_only 下失败仍 approved",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-AUTH-003"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "tasks": [
+        "P2-005"
+      ]
+    },
+    {
+      "id": "F-AUTH-005",
+      "title": "Verifier 依赖 fail/refuted 等文本启发式",
+      "category": "AUTH",
+      "severity": "Medium",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L2",
+      "related": [
+        "F-AUTH-003",
+        "F-AUTH-004"
+      ],
+      "attackChain": [
+        "AC-04"
+      ],
+      "tasks": [
+        "P2-005"
+      ]
+    },
+    {
+      "id": "F-DATA-001",
+      "title": "SEKB 启用后 raw steps/details 可落库且未复用 redaction",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-DATA-004"
+      ],
+      "attackChain": [
+        "AC-05"
+      ],
+      "tasks": [
+        "P3-001"
+      ]
+    },
+    {
+      "id": "F-DATA-002",
+      "title": "sekbConfirmPrinciple 未向 DCS experience sink 传递上下文",
+      "category": "DATA",
+      "severity": "Medium",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-GOV-002"
+      ],
+      "attackChain": [],
+      "tasks": [
+        "P3-002"
+      ]
+    },
+    {
+      "id": "F-DATA-003",
+      "title": "Memory/COMPASS 高级路径默认全关，写入与使用 gate 边界未闭环验证",
+      "category": "DATA",
+      "severity": "Medium",
+      "decision": "Attend",
+      "status": "Partial",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-DATA-004"
+      ],
+      "attackChain": [],
+      "tasks": [
+        "P3-003"
+      ]
+    },
+    {
+      "id": "F-DATA-004",
+      "title": "敏感内容边界矩阵承认 raw/no-redaction 与 modelEcho 不保证",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-DATA-001",
+        "F-DATA-003"
+      ],
+      "attackChain": [
+        "AC-02",
+        "AC-05"
+      ],
+      "tasks": [
+        "P3-001",
+        "P3-002",
+        "P3-003",
+        "P5-003",
+        "P7-003"
+      ]
+    },
+    {
+      "id": "F-REL-001",
+      "title": "Cron 存在 SQLite 与 cron.json fallback 双真相，list 可触发 repair 写",
+      "category": "REL",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L2-L3",
+      "related": [
+        "F-GOV-001"
+      ],
+      "attackChain": [
+        "AC-06"
+      ],
+      "tasks": [
+        "P5-002",
+        "P7-002"
+      ]
+    },
+    {
+      "id": "F-REL-002",
+      "title": "openclaw.json 等配置采用直接 writeFile，缺原子提交",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-06"
+      ],
+      "tasks": [
+        "P5-001"
+      ]
+    },
+    {
+      "id": "F-REL-003",
+      "title": "Agent Browser Gateway bridge 使用 broadcast first-response",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Attend",
+      "status": "Unverified",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-ISO-002"
+      ],
+      "attackChain": [
+        "AC-07"
+      ],
+      "tasks": [
+        "P4-001",
+        "P4-002"
+      ]
+    },
+    {
+      "id": "F-REL-004",
+      "title": "同一安全能力存在多套实现与不同强度",
+      "category": "REL",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L2-L3",
+      "related": [
+        "F-SEC-003",
+        "F-AUTH-002"
+      ],
+      "attackChain": [
+        "AC-03",
+        "AC-06"
+      ],
+      "tasks": []
+    },
+    {
+      "id": "F-SUPPLY-001",
+      "title": "Windows stable uses SignPath; alpha/beta skip signing and updater feed injection is unproven",
+      "category": "SUPPLY",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-08"
+      ],
+      "tasks": [
+        "P6-001",
+        "P6-002",
+        "P7-002"
+      ]
+    },
+    {
+      "id": "F-GOV-001",
+      "title": "passWithNoTests 是 Vitest scoped 配置的系统性默认",
+      "category": "GOV",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [
+        "F-REL-001"
+      ],
+      "attackChain": [
+        "AC-06"
+      ],
+      "tasks": [
+        "P0-003",
+        "P7-001"
+      ]
+    },
+    {
+      "id": "F-GOV-002",
+      "title": "Agent Dev A 级与 releaseReady=false/证据陈旧不能外推全系统",
+      "category": "GOV",
+      "severity": "Medium",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L2",
+      "related": [],
+      "attackChain": [],
+      "tasks": [
+        "P0-001",
+        "P0-002",
+        "P0-003",
+        "P0-004",
+        "P7-001",
+        "P7-004"
+      ]
+    },
+    {
+      "id": "F-GOV-003",
+      "title": "Dirty tree 无干净、可复现的发布基线",
+      "category": "GOV",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "status": "Open",
+      "evidenceLevel": "L1-L3",
+      "related": [
+        "F-SUPPLY-001"
+      ],
+      "attackChain": [
+        "AC-08"
+      ],
+      "tasks": [
+        "P0-001",
+        "P0-004",
+        "P6-005",
+        "P7-004"
+      ]
+    },
+    {
+      "id": "F-UX-001",
+      "title": "前端巨型模块与伪虚拟化增加维护和 OOM 风险",
+      "category": "UX",
+      "severity": "Medium",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L2",
+      "related": [],
+      "attackChain": [],
+      "tasks": [
+        "P5-004"
+      ]
+    },
+    {
+      "id": "F-UX-002",
+      "title": "ErrorBoundary 向 UI 渲染 stack",
+      "category": "UX",
+      "severity": "Low",
+      "decision": "Track",
+      "status": "Open",
+      "evidenceLevel": "L2",
+      "related": [],
+      "attackChain": [],
+      "tasks": [
+        "P7-003"
+      ]
+    },
+    {
+      "id": "F-SEC-006",
+      "title": "Workspace junction/reparse canonicalization permits external writes",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L4",
+      "related": [],
+      "attackChain": [
+        "AC-09",
+        "AC-11"
+      ],
+      "tasks": [
+        "P1-003",
+        "P7-002"
+      ]
+    },
+    {
+      "id": "F-SEC-007",
+      "title": "Agent Browser multi-tab URL policy accepts javascript/data schemes",
+      "category": "SEC",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L4",
+      "related": [],
+      "attackChain": [
+        "AC-01",
+        "AC-11"
+      ],
+      "tasks": [
+        "P1-004",
+        "P4-002"
+      ]
+    },
+    {
+      "id": "F-AUTH-006",
+      "title": "Approval consumption is not atomic and can be replayed concurrently",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L4",
+      "related": [],
+      "attackChain": [
+        "AC-10"
+      ],
+      "tasks": [
+        "P2-002",
+        "P7-002"
+      ]
+    },
+    {
+      "id": "F-AUTH-008",
+      "title": "Feishu/WeCom channel configuration broadens inbound access to open/*",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-12"
+      ],
+      "tasks": [
+        "P4-004"
+      ]
+    },
+    {
+      "id": "F-AUTH-009",
+      "title": "MCP permission/sandbox/network policy fields are not proven runtime-enforced",
+      "category": "AUTH",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-13"
+      ],
+      "tasks": [
+        "P4-003"
+      ]
+    },
+    {
+      "id": "F-DATA-005",
+      "title": "Session hard delete does not cascade to SEKB/Memory/DCS derivatives",
+      "category": "DATA",
+      "severity": "High",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-05",
+        "AC-14"
+      ],
+      "tasks": [
+        "P3-004",
+        "P7-002",
+        "P7-003"
+      ]
+    },
+    {
+      "id": "F-REL-005",
+      "title": "Electron logs have no rotation/retention limit and swallow write failures",
+      "category": "REL",
+      "severity": "Medium",
+      "decision": "Act-now",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-15"
+      ],
+      "tasks": [
+        "P5-003"
+      ]
+    },
+    {
+      "id": "F-SUPPLY-002",
+      "title": "Build-time executables and CI installer are not integrity-pinned",
+      "category": "SUPPLY",
+      "severity": "High",
+      "decision": "Publish-blocker",
+      "status": "Open",
+      "evidenceLevel": "L3",
+      "related": [],
+      "attackChain": [
+        "AC-08",
+        "AC-16"
+      ],
+      "tasks": [
+        "P6-003",
+        "P6-004"
+      ]
+    }
+  ],
+  "tasks": {
+    "P0-001": {
+      "id": "P0-001",
+      "owner": "program-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-GOV-003",
+        "F-GOV-002"
+      ],
+      "dependsOn": [],
+      "path": "plans/system-maturity/phase0-foundation/tasks/P0-001.md"
+    },
+    "P0-002": {
+      "id": "P0-002",
+      "owner": "program-governance",
+      "reviewer": "qa-governance",
+      "findings": [
+        "F-GOV-002"
+      ],
+      "dependsOn": [
+        "P0-001"
+      ],
+      "path": "plans/system-maturity/phase0-foundation/tasks/P0-002.md"
+    },
+    "P0-003": {
+      "id": "P0-003",
+      "owner": "qa-governance",
+      "reviewer": "program-governance",
+      "findings": [
+        "F-GOV-001",
+        "F-GOV-002"
+      ],
+      "dependsOn": [
+        "P0-001"
+      ],
+      "path": "plans/system-maturity/phase0-foundation/tasks/P0-003.md"
+    },
+    "P0-004": {
+      "id": "P0-004",
+      "owner": "qa-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-GOV-002",
+        "F-GOV-003"
+      ],
+      "dependsOn": [
+        "P0-001",
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase0-foundation/tasks/P0-004.md"
+    },
+    "P1-001": {
+      "id": "P1-001",
+      "owner": "main-boundary",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-001",
+        "F-SEC-002"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase1-direct-boundaries/tasks/P1-001.md"
+    },
+    "P1-002": {
+      "id": "P1-002",
+      "owner": "main-boundary",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-005"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase1-direct-boundaries/tasks/P1-002.md"
+    },
+    "P1-003": {
+      "id": "P1-003",
+      "owner": "main-boundary",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-004",
+        "F-SEC-006"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase1-direct-boundaries/tasks/P1-003.md"
+    },
+    "P1-004": {
+      "id": "P1-004",
+      "owner": "main-boundary",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-003",
+        "F-SEC-007",
+        "F-SEC-010"
+      ],
+      "dependsOn": [
+        "P1-002"
+      ],
+      "path": "plans/system-maturity/phase1-direct-boundaries/tasks/P1-004.md"
+    },
+    "P2-001": {
+      "id": "P2-001",
+      "owner": "runtime-auth",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-AUTH-001"
+      ],
+      "dependsOn": [
+        "P1-003"
+      ],
+      "path": "plans/system-maturity/phase2-authorization-isolation/tasks/P2-001.md"
+    },
+    "P2-002": {
+      "id": "P2-002",
+      "owner": "runtime-auth",
+      "reviewer": "qa-governance",
+      "findings": [
+        "F-AUTH-006"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase2-authorization-isolation/tasks/P2-002.md"
+    },
+    "P2-003": {
+      "id": "P2-003",
+      "owner": "runtime-auth",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-AUTH-002"
+      ],
+      "dependsOn": [
+        "P1-002"
+      ],
+      "path": "plans/system-maturity/phase2-authorization-isolation/tasks/P2-003.md"
+    },
+    "P2-004": {
+      "id": "P2-004",
+      "owner": "runtime-auth",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-ISO-001",
+        "F-ISO-002"
+      ],
+      "dependsOn": [
+        "P2-001"
+      ],
+      "path": "plans/system-maturity/phase2-authorization-isolation/tasks/P2-004.md"
+    },
+    "P2-005": {
+      "id": "P2-005",
+      "owner": "runtime-auth",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-AUTH-003",
+        "F-AUTH-004",
+        "F-AUTH-005"
+      ],
+      "dependsOn": [
+        "P2-003",
+        "P2-004"
+      ],
+      "path": "plans/system-maturity/phase2-authorization-isolation/tasks/P2-005.md"
+    },
+    "P3-001": {
+      "id": "P3-001",
+      "owner": "data-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-DATA-001",
+        "F-DATA-004"
+      ],
+      "dependsOn": [
+        "P1-001"
+      ],
+      "path": "plans/system-maturity/phase3-data-authority/tasks/P3-001.md"
+    },
+    "P3-002": {
+      "id": "P3-002",
+      "owner": "data-governance",
+      "reviewer": "runtime-auth",
+      "findings": [
+        "F-DATA-002",
+        "F-DATA-004"
+      ],
+      "dependsOn": [
+        "P3-001"
+      ],
+      "path": "plans/system-maturity/phase3-data-authority/tasks/P3-002.md"
+    },
+    "P3-003": {
+      "id": "P3-003",
+      "owner": "data-governance",
+      "reviewer": "runtime-auth",
+      "findings": [
+        "F-DATA-003",
+        "F-DATA-004"
+      ],
+      "dependsOn": [
+        "P3-001",
+        "P3-002"
+      ],
+      "path": "plans/system-maturity/phase3-data-authority/tasks/P3-003.md"
+    },
+    "P3-004": {
+      "id": "P3-004",
+      "owner": "data-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-DATA-005"
+      ],
+      "dependsOn": [
+        "P3-001",
+        "P3-002",
+        "P3-003"
+      ],
+      "path": "plans/system-maturity/phase3-data-authority/tasks/P3-004.md"
+    },
+    "P4-001": {
+      "id": "P4-001",
+      "owner": "runtime-surfaces",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-REL-003"
+      ],
+      "dependsOn": [
+        "P2-005"
+      ],
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-001.md"
+    },
+    "P4-002": {
+      "id": "P4-002",
+      "owner": "runtime-surfaces",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-007",
+        "F-REL-003"
+      ],
+      "dependsOn": [
+        "P1-004",
+        "P2-004"
+      ],
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-002.md"
+    },
+    "P4-003": {
+      "id": "P4-003",
+      "owner": "runtime-surfaces",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-AUTH-009",
+        "F-SEC-001"
+      ],
+      "dependsOn": [
+        "P1-001",
+        "P2-005"
+      ],
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-003.md"
+    },
+    "P4-004": {
+      "id": "P4-004",
+      "owner": "runtime-surfaces",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-AUTH-008",
+        "F-SEC-001"
+      ],
+      "dependsOn": [
+        "P2-001",
+        "P2-005"
+      ],
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-004.md"
+    },
+    "P5-001": {
+      "id": "P5-001",
+      "owner": "reliability",
+      "reviewer": "qa-governance",
+      "findings": [
+        "F-REL-002"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-001.md"
+    },
+    "P5-002": {
+      "id": "P5-002",
+      "owner": "reliability",
+      "reviewer": "runtime-auth",
+      "findings": [
+        "F-REL-001"
+      ],
+      "dependsOn": [
+        "P5-001"
+      ],
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-002.md"
+    },
+    "P5-003": {
+      "id": "P5-003",
+      "owner": "reliability",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-REL-005",
+        "F-DATA-004"
+      ],
+      "dependsOn": [
+        "P3-001"
+      ],
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-003.md"
+    },
+    "P5-004": {
+      "id": "P5-004",
+      "owner": "reliability",
+      "reviewer": "qa-governance",
+      "findings": [
+        "F-UX-001"
+      ],
+      "dependsOn": [
+        "P2-005"
+      ],
+      "path": "plans/system-maturity/phase5-reliability-abuse/tasks/P5-004.md"
+    },
+    "P6-001": {
+      "id": "P6-001",
+      "owner": "supplychain-release",
+      "reviewer": "program-governance",
+      "findings": [
+        "F-SUPPLY-001"
+      ],
+      "dependsOn": [
+        "P0-001"
+      ],
+      "path": "plans/system-maturity/phase6-supply-release/tasks/P6-001.md"
+    },
+    "P6-002": {
+      "id": "P6-002",
+      "owner": "supplychain-release",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SUPPLY-001"
+      ],
+      "dependsOn": [
+        "P6-001"
+      ],
+      "path": "plans/system-maturity/phase6-supply-release/tasks/P6-002.md"
+    },
+    "P6-003": {
+      "id": "P6-003",
+      "owner": "supplychain-release",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SUPPLY-002"
+      ],
+      "dependsOn": [
+        "P0-001"
+      ],
+      "path": "plans/system-maturity/phase6-supply-release/tasks/P6-003.md"
+    },
+    "P6-004": {
+      "id": "P6-004",
+      "owner": "supplychain-release",
+      "reviewer": "program-governance",
+      "findings": [
+        "F-SUPPLY-002"
+      ],
+      "dependsOn": [
+        "P6-003"
+      ],
+      "path": "plans/system-maturity/phase6-supply-release/tasks/P6-004.md"
+    },
+    "P6-005": {
+      "id": "P6-005",
+      "owner": "program-governance",
+      "reviewer": "supplychain-release",
+      "findings": [
+        "F-GOV-003"
+      ],
+      "dependsOn": [
+        "P6-001",
+        "P6-004"
+      ],
+      "path": "plans/system-maturity/phase6-supply-release/tasks/P6-005.md"
+    },
+    "P7-001": {
+      "id": "P7-001",
+      "owner": "program-governance",
+      "reviewer": "qa-governance",
+      "findings": [
+        "F-GOV-001",
+        "F-GOV-002"
+      ],
+      "dependsOn": [
+        "P0-002"
+      ],
+      "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-001.md"
+    },
+    "P7-002": {
+      "id": "P7-002",
+      "owner": "qa-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-SEC-003",
+        "F-SEC-006",
+        "F-AUTH-006",
+        "F-DATA-005",
+        "F-REL-001",
+        "F-SUPPLY-001"
+      ],
+      "dependsOn": [],
+      "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-002.md"
+    },
+    "P7-003": {
+      "id": "P7-003",
+      "owner": "privacy-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-DATA-004",
+        "F-DATA-005",
+        "F-UX-002"
+      ],
+      "dependsOn": [],
+      "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-003.md"
+    },
+    "P7-004": {
+      "id": "P7-004",
+      "owner": "program-governance",
+      "reviewer": "security-lead",
+      "findings": [
+        "F-GOV-002",
+        "F-GOV-003"
+      ],
+      "dependsOn": [
+        "P7-001",
+        "P7-002",
+        "P7-003"
+      ],
+      "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-004.md"
+    }
+  },
+  "findingIds": [
+    "F-AUTH-001",
+    "F-AUTH-002",
+    "F-AUTH-003",
+    "F-AUTH-004",
+    "F-AUTH-005",
+    "F-AUTH-006",
+    "F-AUTH-008",
+    "F-AUTH-009",
+    "F-DATA-001",
+    "F-DATA-002",
+    "F-DATA-003",
+    "F-DATA-004",
+    "F-DATA-005",
+    "F-GOV-001",
+    "F-GOV-002",
+    "F-GOV-003",
+    "F-ISO-001",
+    "F-ISO-002",
+    "F-REL-001",
+    "F-REL-002",
+    "F-REL-003",
+    "F-REL-004",
+    "F-REL-005",
+    "F-SEC-001",
+    "F-SEC-002",
+    "F-SEC-003",
+    "F-SEC-004",
+    "F-SEC-005",
+    "F-SEC-006",
+    "F-SEC-007",
+    "F-SEC-010",
+    "F-SUPPLY-001",
+    "F-SUPPLY-002",
+    "F-UX-001",
+    "F-UX-002"
+  ]
+}

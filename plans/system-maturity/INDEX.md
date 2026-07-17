@@ -2,7 +2,7 @@
 
 | Phase | Tier | Owner | Findings | Dependencies | Status |
 |---|---|---|---|---|---|
-| phase0-foundation | M0→M1 | program-governance | F-GOV-001, F-GOV-002, F-GOV-003, F-REL-004 | none | planned |
+| phase0-foundation | M0→M1 | program-governance | F-GOV-001, F-GOV-002, F-GOV-003, F-REL-004 | none | done |
 | phase1-direct-boundaries | M1→M2 | main-boundary | F-SEC-001, F-SEC-002, F-SEC-003, F-SEC-004, F-SEC-005, F-SEC-006, F-SEC-007, F-SEC-010 | phase0-foundation | planned |
 | phase2-authorization-isolation | M2→M3 | runtime-auth | F-AUTH-001, F-AUTH-002, F-AUTH-003, F-AUTH-004, F-AUTH-005, F-AUTH-006, F-ISO-001, F-ISO-002, F-REL-003 | phase1-direct-boundaries | planned |
 | phase3-data-authority | M3→M4 | data-governance | F-DATA-001, F-DATA-002, F-DATA-003, F-DATA-004, F-DATA-005 | phase2-authorization-isolation | planned |

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "task": "P0-002",
+  "checkedAt": "2026-07-17T04:04:09.674Z",
+  "ok": true,
+  "taskCount": 34,
+  "statusFileCount": 8,
+  "enums": {
+    "taskStatus": [
+      "todo",
+      "in_progress",
+      "blocked",
+      "done"
+    ],
+    "phaseStatus": [
+      "planned",
+      "in_progress",
+      "blocked",
+      "done"
+    ]
+  },
+  "fail": [],
+  "warn": [],
+  "info": [
+    "A1 unique task IDs: 34",
+    "plans/system-maturity/phase0-foundation/STATUS.json phaseStatus=done",
+    "plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase2-authorization-isolation/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=planned",
+    "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=planned",
+    "dependency edges resolve",
+    "A3 P0-001 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-001.delivery.md)",
+    "A3 P0-002 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-002.delivery.md)",
+    "A3 P0-003 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-003.delivery.md)",
+    "A3 P0-004 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-004.delivery.md)",
+    "task Finding refs resolve against findings-registry"
+  ]
+}
