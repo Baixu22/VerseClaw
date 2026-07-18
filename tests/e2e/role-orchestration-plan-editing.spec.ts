@@ -45,7 +45,7 @@ test.describe('Role orchestration plan editing', () => {
               origin: 'built-in',
             }],
           },
-          [stableStringify(['orchestrator.plan', { task: 'Stabilize smoke tests' }])]: {
+          [stableStringify(['orchestrator.plan', { task: 'Stabilize smoke tests', agentId: 'main' }])]: {
             plan: {
               mode: 'lead-workers',
               leadRole: 'planner',
