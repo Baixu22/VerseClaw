@@ -13,6 +13,8 @@ export async function getClawXProviderStore() {
         providerAccounts: {} as Record<string, unknown>,
         apiKeys: {} as Record<string, string>,
         providerSecrets: {} as Record<string, unknown>,
+        // P8-002: Verse Claw managed channel credential vault (encrypted envelopes).
+        channelSecrets: {} as Record<string, unknown>,
         defaultProvider: null as string | null,
         defaultProviderAccountId: null as string | null,
       },

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-002 system maturity plan / status machine validator.
  *
  * Checks:
@@ -193,6 +193,45 @@ if (!/todo/.test(readme) || !/in_progress/.test(readme) || !/blocked/.test(readm
 }
 if (!/planned/.test(readme)) {
   fail('README.md missing phaseStatus value planned (required by STATUS.json / INDEX)');
+}
+
+
+// INDEX.md Status column must match each phase STATUS.json.phaseStatus
+{
+  const indexPath = path.join(planRoot, 'INDEX.md');
+  if (!fs.existsSync(indexPath)) {
+    fail('missing plans/system-maturity/INDEX.md');
+  } else {
+    const indexText = fs.readFileSync(indexPath, 'utf8');
+    const phaseDirs = [
+      'phase0-foundation',
+      'phase1-direct-boundaries',
+      'phase2-authorization-isolation',
+      'phase3-data-authority',
+      'phase4-runtime-surfaces',
+      'phase5-reliability-abuse',
+      'phase6-supply-release',
+      'phase7-continuous-governance',
+      'phase8-residual-closure',
+    ];
+    for (const dir of phaseDirs) {
+      const statusPath = path.join(planRoot, dir, 'STATUS.json');
+      if (!fs.existsSync(statusPath)) continue;
+      const phaseStatus = readJson(statusPath).phaseStatus || 'planned';
+      const row = indexText.split(/\r?\n/).find((line) => line.match(new RegExp(`\\|\\s*${dir}\\s*\\|`)));
+      if (!row) {
+        fail(`INDEX missing row for ${dir}`);
+        continue;
+      }
+      const cells = row.split('|').map((c) => c.trim()).filter(Boolean);
+      const indexStatus = cells[cells.length - 1];
+      if (indexStatus !== phaseStatus) {
+        fail(`INDEX status mismatch for ${dir}: INDEX=${indexStatus} STATUS.json=${phaseStatus}`);
+      } else {
+        info(`INDEX status OK ${dir}=${phaseStatus}`);
+      }
+    }
+  }
 }
 
 const report = {

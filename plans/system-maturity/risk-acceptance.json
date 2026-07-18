@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-18T08:00:00.000Z",
+  "policy": {
+    "decisionsRequiringAcceptance": [
+      "Track",
+      "Accept",
+      "Risk-accept"
+    ],
+    "reviewByRequired": true,
+    "expiredBlocksRelease": true
+  },
+  "items": [
+    {
+      "findingId": "F-ISO-001",
+      "decision": "Track",
+      "owner": "security-lead",
+      "reviewBy": "2026-10-18",
+      "rationale": "Sandbox strong-mode visibility residual re-audit each quarter after isolation fixes.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-AUTH-003",
+      "decision": "Track",
+      "owner": "security-lead",
+      "reviewBy": "2026-10-18",
+      "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-AUTH-004",
+      "decision": "Track",
+      "owner": "security-lead",
+      "reviewBy": "2026-10-18",
+      "rationale": "Runtime Spine diagnostic residual re-audit.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-AUTH-005",
+      "decision": "Track",
+      "owner": "security-lead",
+      "reviewBy": "2026-10-18",
+      "rationale": "Verifier heuristic residual re-audit.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-DATA-002",
+      "decision": "Track",
+      "owner": "data-governance",
+      "reviewBy": "2026-10-18",
+      "rationale": "SEKB/DCS context residual re-audit.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-DATA-004",
+      "decision": "Track",
+      "owner": "privacy-governance",
+      "reviewBy": "2026-10-18",
+      "rationale": "Sensitive content boundary residual after P7-003; modelEcho no-guarantee remains Track with review deadline.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-GOV-002",
+      "decision": "Track",
+      "owner": "program-governance",
+      "reviewBy": "2026-10-18",
+      "rationale": "Quarterly maturity scorecard separates Agent Dev grade from whole-system release; residual monitoring of agent-dev evidence freshness.",
+      "acceptedBy": "security-lead",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-UX-001",
+      "decision": "Track",
+      "owner": "frontend-lead",
+      "reviewBy": "2026-10-18",
+      "rationale": "Frontend module size residual re-audit after Fixed mitigation.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    },
+    {
+      "findingId": "F-UX-002",
+      "decision": "Track",
+      "owner": "privacy-governance",
+      "reviewBy": "2026-10-18",
+      "rationale": "ErrorBoundary stack sanitization residual re-audit after P7-003.",
+      "acceptedBy": "program-governance",
+      "acceptedAt": "2026-07-18"
+    }
+  ]
+}

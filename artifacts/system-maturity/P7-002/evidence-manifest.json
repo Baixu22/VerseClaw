@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-002",
+  "mode": "full",
+  "report": "artifacts/system-maturity/P7-002/security-regression-report.json",
+  "ok": true,
+  "validationErrors": []
+}

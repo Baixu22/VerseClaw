@@ -1,0 +1,13 @@
+$ node scripts/agent-dev-deep-test.mjs --reuse-build --cached-typecheck --smoke-e2e
+$ node scripts/typecheck-agent-dev.mjs --cache
+$ node scripts/contract-check.mjs
+$ node scripts/i18n-lint.mjs
+$ node scripts/agent-dev-workbench.mjs
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ pnpm agent-dev:unit:node && pnpm exec vitest run --maxWorkers=1 tests/unit/host-api-facade.test.ts
+$ pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts
+$ node scripts/comms/replay.mjs
+$ node scripts/comms/compare.mjs
+$ playwright test tests/e2e/agent-dev-quality.spec.ts --grep "loads the in-app Agent Dev Workbench"
+$ node scripts/agent-dev-workbench.mjs

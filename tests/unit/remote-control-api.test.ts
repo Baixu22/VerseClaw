@@ -66,6 +66,16 @@ vi.mock('@electron/utils/store', () => ({
   getAllSettings: (...args: unknown[]) => getAllSettingsMock(...args),
 }));
 
+vi.mock('@electron/services/sensitive-capture-gate', () => ({
+  assertSensitiveCaptureAllowed: vi.fn(async (channel: string) => ({
+    allowed: true,
+    code: 'allow',
+    reason: 'test-allow',
+    channel,
+  })),
+}));
+
+
 vi.mock('@electron/utils/remote-control', () => ({
   getRemoteControlLaunchState: () => launchState,
   normalizeRemoteDebuggingPort: (value: unknown) => {

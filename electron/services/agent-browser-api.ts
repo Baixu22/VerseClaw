@@ -1,3 +1,4 @@
+import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { DEFAULT_WORKSPACE_PERMISSION_MODE } from '@shared/types/workspace';
@@ -120,14 +121,20 @@ export function createAgentBrowserApi(
       success: true,
       ...(await service.evaluate(payload)),
     }),
-    screenshot: async (payload) => ({
-      success: true,
-      ...(await service.screenshot(payload)),
-    }),
-    command: async (payload) => ({
-      success: true,
-      ...(await service.command(payload)),
-    }),
+    screenshot: async (payload) => {
+      await assertSensitiveCaptureAllowed('screenshot', payload?.grantId);
+      return {
+        success: true,
+        ...(await service.screenshot(payload)),
+      };
+    },
+    command: async (payload) => {
+      await assertSensitiveCaptureAllowed('desktopAutomation', payload?.grantId);
+      return {
+        success: true,
+        ...(await service.command(payload)),
+      };
+    },
     tasks: () => ({
       success: true,
       tasks: taskService.list(),

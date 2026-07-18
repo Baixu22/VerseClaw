@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-003",
+  "generatedAt": "2026-07-18T06:50:28.367611Z",
+  "findings": [
+    "F-DATA-004",
+    "F-DATA-005",
+    "F-UX-002"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "Data flows and destinations visible",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/privacy-data-flow-inventory.json",
+        "artifacts/system-maturity/P7-003/validation-gates/privacy-validate.stdout.txt"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "Sensitive capture auth + kill switch",
+      "status": "pass",
+      "evidence": [
+        "shared/privacy/sensitive-capture-policy.ts",
+        "electron/services/sensitive-capture-gate.ts",
+        "artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "UI no stack/secret",
+      "status": "pass",
+      "evidence": [
+        "shared/privacy/ui-error-sanitize.ts",
+        "src/components/common/ErrorBoundary.tsx",
+        "artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt"
+      ]
+    }
+  ]
+}

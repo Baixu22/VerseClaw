@@ -22,6 +22,7 @@
       "commands": [
         { "id": "maturity:baseline", "run": "node scripts/audit-baseline-check.mjs" },
         { "id": "maturity:plan", "run": "node scripts/validate-system-maturity-plan.mjs" },
+        { "id": "maturity:security", "run": "pnpm maturity:security" },
         { "id": "contract:check", "run": "pnpm contract:check" },
         { "id": "typecheck", "run": "pnpm run typecheck" },
         { "id": "harness:ci", "run": "pnpm run harness:ci" },
@@ -37,6 +38,7 @@
         { "id": "maturity:baseline", "run": "node scripts/audit-baseline-check.mjs" },
         { "id": "maturity:plan", "run": "node scripts/validate-system-maturity-plan.mjs" },
         { "id": "maturity:gates", "run": "node scripts/validate-test-gates.mjs" },
+        { "id": "maturity:security:full", "run": "pnpm maturity:security:full" },
         { "id": "contract:check", "run": "pnpm contract:check" },
         { "id": "test", "run": "pnpm test" },
         { "id": "lint:check", "run": "pnpm run lint:check" },

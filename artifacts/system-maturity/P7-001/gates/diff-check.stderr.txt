@@ -1,0 +1,6 @@
+warning: in the working copy of 'artifacts/system-maturity/P7-001/acceptance-matrix.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'harness/specs/rules/system-maturity-traceability.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/STATUS.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-001.delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/collect-p7-001-evidence.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/validate-system-maturity-traceability.mjs', LF will be replaced by CRLF the next time Git touches it

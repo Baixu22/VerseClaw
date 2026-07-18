@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "task": "P0-003",
-  "checkedAt": "2026-07-18T01:50:02.160Z",
+  "checkedAt": "2026-07-18T08:38:49.816Z",
   "ok": true,
   "selectedLoop": "release",
   "releaseCommands": [
     "node scripts/audit-baseline-check.mjs",
     "node scripts/validate-system-maturity-plan.mjs",
     "node scripts/validate-test-gates.mjs",
+    "pnpm maturity:security:full",
     "pnpm contract:check",
     "pnpm test",
     "pnpm run lint:check",
@@ -21,6 +22,7 @@
   "prCommands": [
     "node scripts/audit-baseline-check.mjs",
     "node scripts/validate-system-maturity-plan.mjs",
+    "pnpm maturity:security",
     "pnpm contract:check",
     "pnpm run typecheck",
     "pnpm run harness:ci",
