@@ -396,9 +396,9 @@ export const PRODUCT_SEMANTIC_TASK_BOUNDARIES = [
     implementationStatus: 'done',
     lane: 'orchestration-quality',
     sourceOfTruth: 'ordinary orchestration shadow quality scorecard',
-    safeClaim: 'Ordinary orchestration reports a real shadow quality scorecard when evidence exists and keeps active routing gated.',
+    safeClaim: 'Ordinary orchestration reports a real shadow quality scorecard with explicit non-routing authority.',
     forbiddenClaim: 'Ordinary orchestration has active repair quality semantics or a complete quality product.',
-    nextAction: 'Keep ordinary quality shadow-only unless an explicit scorecard-backed active gate allows routing influence.',
+    nextAction: 'Keep ordinary quality shadow-only; only server-resolved Task Loop scorecard authority may influence routing.',
     boundaryRefs: [
       'openclaw_runtime/src/agents/orchestration-quality-scorecard.ts',
       'openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts',
@@ -441,10 +441,10 @@ export const PRODUCT_SEMANTIC_TASK_BOUNDARIES = [
     title: 'Routing Memo real quality input',
     implementationStatus: 'done',
     lane: 'routing-memo',
-    sourceOfTruth: 'scorecard-backed OrchestrationQualityState',
-    safeClaim: 'Routing Memo may become active only after scorecard-backed qualityOverall input exists.',
-    forbiddenClaim: 'Routing Memo learns from unreliable or unwired quality signals.',
-    nextAction: 'Keep ordinary orchestration quality in shadow unless an explicit scorecard authority input is provided.',
+    sourceOfTruth: 'same-session Task Loop run plus runtime observability scorecard',
+    safeClaim: 'Routing Memo may become active only from a server-resolved, same-session Task Loop scorecard authority reference.',
+    forbiddenClaim: 'Routing Memo trusts caller-supplied qualityState fields or ordinary orchestration shadow scores.',
+    nextAction: 'Keep raw client quality claims non-authoritative and fail closed when Task Loop or scorecard evidence is missing.',
     boundaryRefs: [
       'openclaw_runtime/src/agents/orchestrator.ts',
       'openclaw_runtime/src/agents/routing-memo.ts',
@@ -539,8 +539,16 @@ export type OrchestrationQualityState = null | 'shadow' | 'active';
 export function normalizeOrchestrationQualityState(value: unknown): OrchestrationQualityState {
   if (value === 'shadow' || value === 'active') return value;
   if (value && typeof value === 'object' && !Array.isArray(value)) {
-    const state = (value as { state?: unknown; status?: unknown }).state
-      ?? (value as { state?: unknown; status?: unknown }).status;
+    const record = value as {
+      state?: unknown;
+      status?: unknown;
+      result?: { state?: unknown };
+      qualityAuthority?: { state?: unknown };
+    };
+    const state = record.state
+      ?? record.status
+      ?? record.result?.state
+      ?? record.qualityAuthority?.state;
     if (state === 'shadow' || state === 'active') return state;
   }
   return null;

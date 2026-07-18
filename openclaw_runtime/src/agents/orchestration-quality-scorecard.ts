@@ -5,7 +5,42 @@ import {
   type WorkerQualityScore,
 } from "./orchestration-protocol.js";
 
-export type OrdinaryOrchestrationQualityState = null | "shadow" | "active";
+export type OrdinaryOrchestrationQualityState = null | "shadow";
+
+export type OrchestrationQualityAuthority =
+  | {
+      state: "unavailable";
+      source: "none";
+      qualityOverall: null;
+      scorecardBacked: false;
+      verified: false;
+      routingEligible: false;
+      reason: string;
+      evidenceRefs: string[];
+    }
+  | {
+      state: "shadow";
+      source: "ordinary_orchestration_scorecard";
+      qualityOverall: WorkerQualityScore["overall"];
+      scorecardBacked: true;
+      verified: false;
+      routingEligible: false;
+      reason: string;
+      evidenceRefs: string[];
+    }
+  | {
+      state: "active";
+      source: "task_loop_verified_scorecard";
+      qualityOverall: WorkerQualityScore["overall"];
+      scorecardBacked: true;
+      verified: true;
+      routingEligible: true;
+      reason: string;
+      evidenceRefs: string[];
+      loopRunId: string;
+      sessionKey: string;
+      traceId: string;
+    };
 
 export type OrdinaryOrchestrationQualityScorecard = {
   state: OrdinaryOrchestrationQualityState;
@@ -15,6 +50,7 @@ export type OrdinaryOrchestrationQualityScorecard = {
   evidenceRefs: string[];
   workerScores: WorkerQualityScore[];
   scorecardBacked: boolean;
+  authority: OrchestrationQualityAuthority;
   observabilityScore?: {
     traceId: string;
     grade: ObservabilityScorecard["grade"];
@@ -22,6 +58,21 @@ export type OrdinaryOrchestrationQualityScorecard = {
   };
   summary: ReturnType<typeof summarizeQuality>;
 };
+
+export function unavailableOrchestrationQualityAuthority(
+  reason: string,
+): Extract<OrchestrationQualityAuthority, { state: "unavailable" }> {
+  return {
+    state: "unavailable",
+    source: "none",
+    qualityOverall: null,
+    scorecardBacked: false,
+    verified: false,
+    routingEligible: false,
+    reason,
+    evidenceRefs: [],
+  };
+}
 
 const rank: Record<WorkerQualityScore["overall"], number> = {
   good: 0,
@@ -54,7 +105,6 @@ export function buildOrdinaryOrchestrationQualityScorecard(input: {
     verifierVerdict?: WorkerQualityScore["verifierVerdict"];
   }[];
   observabilityScorecard?: ObservabilityScorecard;
-  allowActive?: boolean;
 }): OrdinaryOrchestrationQualityScorecard | null {
   if (input.attempts.length === 0 && !input.observabilityScorecard) return null;
 
@@ -81,16 +131,31 @@ export function buildOrdinaryOrchestrationQualityScorecard(input: {
     ...workerScores.map((score) => `run:${score.childRunId}`),
   ];
 
+  const reason = scorecardBacked
+    ? `Ordinary orchestration scored from ${workerScores.length} worker attempt(s) and observability trace ${input.observabilityScorecard?.traceId}; this evidence is shadow-only and cannot change routing.`
+    : "Ordinary orchestration has worker evidence but no observability scorecard.";
+  const authority: OrchestrationQualityAuthority = scorecardBacked
+    ? {
+        state: "shadow",
+        source: "ordinary_orchestration_scorecard",
+        qualityOverall: overall,
+        scorecardBacked: true,
+        verified: false,
+        routingEligible: false,
+        reason,
+        evidenceRefs,
+      }
+    : unavailableOrchestrationQualityAuthority(reason);
+
   return {
-    state: scorecardBacked ? (input.allowActive ? "active" : "shadow") : null,
+    state: scorecardBacked ? "shadow" : null,
     overall,
     worst,
-    reason: scorecardBacked
-      ? `Ordinary orchestration scored from ${workerScores.length} worker attempt(s) and observability trace ${input.observabilityScorecard?.traceId}.`
-      : "Ordinary orchestration has worker evidence but no observability scorecard.",
+    reason,
     evidenceRefs,
     workerScores,
     scorecardBacked,
+    authority,
     observabilityScore: input.observabilityScorecard
       ? {
           traceId: input.observabilityScorecard.traceId,
@@ -99,5 +164,70 @@ export function buildOrdinaryOrchestrationQualityScorecard(input: {
         }
       : undefined,
     summary: summarizeQuality(workerScores),
+  };
+}
+
+export function buildTaskLoopVerifiedQualityAuthority(input: {
+  record: {
+    loopRunId: string;
+    sessionKey: string;
+    status: "running" | "complete" | "blocked" | "error";
+    traceId?: string;
+    evidenceGate?: { status: "pass" | "repair" | "blocked" };
+    roleQualitySummary: {
+      good: number;
+      needsAttention: number;
+      poorAttempt: number;
+    };
+    subagentEvidence: readonly { childRunId?: string }[];
+  };
+  scorecard?: ObservabilityScorecard;
+}): OrchestrationQualityAuthority {
+  const { record, scorecard } = input;
+  if (record.status === "running") {
+    return unavailableOrchestrationQualityAuthority("Task Loop quality is unavailable while the run is active.");
+  }
+  if (record.status === "error") {
+    return unavailableOrchestrationQualityAuthority("Task Loop quality is unavailable because the run ended in error.");
+  }
+  if (!record.evidenceGate || record.subagentEvidence.length === 0) {
+    return unavailableOrchestrationQualityAuthority(
+      "Task Loop quality is unavailable without bounded worker evidence and an evidence-gate result.",
+    );
+  }
+  if (!record.traceId || !scorecard || scorecard.traceId !== record.traceId) {
+    return unavailableOrchestrationQualityAuthority(
+      "Task Loop quality is unavailable without a matching runtime observability scorecard.",
+    );
+  }
+
+  const qualityOverall =
+    record.status === "blocked" ||
+    record.evidenceGate.status === "blocked" ||
+    record.roleQualitySummary.poorAttempt > 0
+      ? "poor_attempt"
+      : record.evidenceGate.status === "repair" || record.roleQualitySummary.needsAttention > 0
+        ? "needs_attention"
+        : "good";
+  const evidenceRefs = [
+    `task-loop:${record.loopRunId}`,
+    `trace:${record.traceId}`,
+    ...record.subagentEvidence.flatMap((entry) =>
+      entry.childRunId ? [`run:${entry.childRunId}`] : [],
+    ),
+  ];
+
+  return {
+    state: "active",
+    source: "task_loop_verified_scorecard",
+    qualityOverall,
+    scorecardBacked: true,
+    verified: true,
+    routingEligible: true,
+    reason: `Task Loop ${record.loopRunId} supplied terminal evidence and matching observability scorecard ${record.traceId}.`,
+    evidenceRefs,
+    loopRunId: record.loopRunId,
+    sessionKey: record.sessionKey,
+    traceId: record.traceId,
   };
 }

@@ -23,6 +23,7 @@ import {
   summarizeQuality,
 } from "../orchestration-protocol.js";
 import { synthesizeOrchestrationResult } from "../orchestration-synthesizer.js";
+import { unavailableOrchestrationQualityAuthority } from "../orchestration-quality-scorecard.js";
 import type { RoleRegistryConfigCarrier } from "../role-registry.js";
 import { listRoleContracts } from "../role-registry.js";
 import type { SpawnFn } from "../role-spawn.js";
@@ -124,7 +125,7 @@ function buildYieldMessage(orchestrationRunId: string): string {
 }
 
 export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): AnyAgentTool {
-  const deps = { ...defaultDeps, ...(opts?.deps ?? {}) };
+  const deps = { ...defaultDeps, ...opts?.deps };
   return {
     label: "Team Orchestrate",
     name: "team_orchestrate",
@@ -306,6 +307,12 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         qualityStateReason: qualityScorecard?.reason ?? TEAM_ORCHESTRATE_QUALITY_STATE_REASON,
         qualityScorecard,
         qualitySummary: qualityScorecard?.summary ?? summarizeQuality([]),
+        qualityDecision: {
+          result: qualityScorecard?.authority ?? unavailableOrchestrationQualityAuthority(
+            "Ordinary team_orchestrate produced no scorecard-backed quality evidence.",
+          ),
+          routing: result.plan.qualityRouting,
+        },
         followupCandidates: [],
         memoryCandidates: [],
         resultPolicy: {
@@ -313,7 +320,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           verifier: result.pendingVerifier ? "deferred_until_workers_terminal" : "none",
           workerCommunication,
           requestedWorkerCommunication,
-          boundedA2aEnabled: workerCommunication === "bounded_a2a",
+          boundedA2aEnabled: false,
           repairPolicy,
           qualityPolicy,
         },

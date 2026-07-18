@@ -19,6 +19,7 @@ import {
   type RoutingMemo,
   type RoutingMemoMatch,
 } from "../../openclaw_runtime/src/agents/routing-memo";
+import { buildTaskLoopVerifiedQualityAuthority } from "../../openclaw_runtime/src/agents/orchestration-quality-scorecard";
 
 function makeMemo(overrides: Partial<RoutingMemo> = {}): RoutingMemo {
   return {
@@ -479,30 +480,83 @@ describe("routing-memo (Area 3 §3.1)", () => {
   });
 
   describe("resolveRoutingMemoAuthority", () => {
-    it("keeps requested active mode in shadow without scorecard-backed quality", () => {
-      expect(resolveRoutingMemoAuthority({
-        pilotMode: "active",
-        qualityState: null,
-      })).toMatchObject({
-        authority: "shadow",
-        reason: "missing-scorecard-quality",
+    it("fails closed when terminal Task Loop evidence has no matching scorecard", () => {
+      const authority = buildTaskLoopVerifiedQualityAuthority({
+        record: {
+          loopRunId: "loop-no-scorecard",
+          sessionKey: "agent:main:main",
+          status: "complete",
+          traceId: "trace-missing",
+          evidenceGate: { status: "pass" },
+          roleQualitySummary: { good: 1, needsAttention: 0, poorAttempt: 0 },
+          subagentEvidence: [{ childRunId: "run-1" }],
+        },
       });
 
+      expect(authority).toMatchObject({
+        state: "unavailable",
+        source: "none",
+        scorecardBacked: false,
+        routingEligible: false,
+        reason: expect.stringMatching(/matching runtime observability scorecard/i),
+      });
       expect(resolveRoutingMemoAuthority({
         pilotMode: "active",
-        qualityState: { source: "ordinary_orchestration", qualityOverall: "good", scorecardBacked: false },
+        qualityAuthority: authority,
       })).toMatchObject({
         authority: "shadow",
         reason: "missing-scorecard-quality",
       });
     });
 
-    it("allows active authority only for scorecard-backed quality", () => {
+    it("keeps requested active mode in shadow without scorecard-backed quality", () => {
       expect(resolveRoutingMemoAuthority({
         pilotMode: "active",
-        qualityState: { source: "scorecard", qualityOverall: "good", scorecardBacked: true },
+        qualityAuthority: null,
+      })).toMatchObject({
+        authority: "shadow",
+        qualitySource: "none",
+        reason: "missing-scorecard-quality",
+      });
+
+      expect(resolveRoutingMemoAuthority({
+        pilotMode: "active",
+        qualityAuthority: {
+          state: "shadow",
+          source: "ordinary_orchestration_scorecard",
+          qualityOverall: "good",
+          scorecardBacked: true,
+          verified: false,
+          routingEligible: false,
+          reason: "ordinary quality is shadow-only",
+          evidenceRefs: ["trace:ordinary"],
+        },
+      })).toMatchObject({
+        authority: "shadow",
+        qualitySource: "ordinary_orchestration_scorecard",
+        reason: "missing-scorecard-quality",
+      });
+    });
+
+    it("allows active authority only for verified Task Loop scorecard quality", () => {
+      expect(resolveRoutingMemoAuthority({
+        pilotMode: "active",
+        qualityAuthority: {
+          state: "active",
+          source: "task_loop_verified_scorecard",
+          qualityOverall: "good",
+          scorecardBacked: true,
+          verified: true,
+          routingEligible: true,
+          reason: "verified",
+          evidenceRefs: ["task-loop:loop-1", "trace:trace-1"],
+          loopRunId: "loop-1",
+          sessionKey: "agent:main:main",
+          traceId: "trace-1",
+        },
       })).toMatchObject({
         authority: "active",
+        qualitySource: "task_loop_verified_scorecard",
         reason: "scorecard-quality-present",
       });
     });

@@ -24,12 +24,21 @@ import {
 } from "../../agents/orchestration-protocol.js";
 import {
   readRoutingMemoDashboard,
-  type OrchestrationQualityState,
 } from "../../agents/routing-memo.js";
+import {
+  buildTaskLoopVerifiedQualityAuthority,
+  unavailableOrchestrationQualityAuthority,
+  type OrchestrationQualityAuthority,
+} from "../../agents/orchestration-quality-scorecard.js";
 import { spawnSubagentDirect } from "../../agents/subagent-spawn.js";
 import { getTaskLoopRun, runTaskLoop, type TaskLoopLifecycleEvent } from "../../agents/task-loop-controller.js";
 import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limits.js";
-import { storeRuntimeTrace, getRuntimeTraceBuffer, getRuntimeScorecards } from "../../observability/trace-buffer.js";
+import {
+  storeRuntimeTrace,
+  getRuntimeTraceBuffer,
+  getRuntimeScorecard,
+  getRuntimeScorecards,
+} from "../../observability/trace-buffer.js";
 import type { ObservabilityTrace } from "../../observability/types.js";
 import {
   archiveMemoryCard,
@@ -87,21 +96,37 @@ function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
 }
 
-function readQualityState(value: unknown): OrchestrationQualityState | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const record = value as Record<string, unknown>;
-  const source = typeof record.source === "string" ? record.source : undefined;
-  const qualityOverall = record.qualityOverall === "good"
-    || record.qualityOverall === "needs_attention"
-    || record.qualityOverall === "poor_attempt"
-    ? record.qualityOverall
-    : undefined;
-  if (!source) return null;
-  return {
-    source,
-    qualityOverall: qualityOverall ?? null,
-    scorecardBacked: record.scorecardBacked === true,
-  };
+function resolveQualityAuthority(
+  params: Record<string, unknown>,
+  anchoredSessionKey?: string,
+): OrchestrationQualityAuthority {
+  const loopRunId = readString(params.qualityAuthorityRunId);
+  if (!loopRunId) {
+    return unavailableOrchestrationQualityAuthority(
+      Object.prototype.hasOwnProperty.call(params, "qualityState")
+        ? "Client-supplied qualityState is non-authoritative and was ignored."
+        : "No Task Loop quality authority reference was supplied.",
+    );
+  }
+  const sessionKey = anchoredSessionKey ?? readString(params.sessionKey);
+  if (!sessionKey) {
+    return unavailableOrchestrationQualityAuthority(
+      "Task Loop quality authority requires the originating sessionKey.",
+    );
+  }
+  const record = getTaskLoopRun(loopRunId);
+  if (!record) {
+    return unavailableOrchestrationQualityAuthority(`Task Loop run ${loopRunId} was not found.`);
+  }
+  if (record.sessionKey !== sessionKey) {
+    return unavailableOrchestrationQualityAuthority(
+      `Task Loop run ${loopRunId} belongs to a different session.`,
+    );
+  }
+  return buildTaskLoopVerifiedQualityAuthority({
+    record,
+    scorecard: record.traceId ? getRuntimeScorecard(record.traceId) : undefined,
+  });
 }
 
 function readMemoryFeedbackOutcome(value: unknown): MemoryFeedbackOutcome | undefined {
@@ -178,7 +203,7 @@ function respondRoleMemoryDisabled(
     respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, ROLE_MEMORY_DISABLED_MESSAGE));
     return true;
   }
-  respond(true, { disabled: true, ...(options.payload ?? {}) }, undefined);
+  respond(true, { disabled: true, ...options.payload }, undefined);
   return true;
 }
 
@@ -329,7 +354,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       workerCommunication: readWorkerCommunication(params.workerCommunication),
       allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
       workspaceDir: readString(params.workspaceDir),
-      qualityState: readQualityState(params.qualityState),
+      qualityAuthority: resolveQualityAuthority(params),
     });
     respond(true, {
       plan,
@@ -340,6 +365,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       estimatedRepairPolicy: plan.estimatedRepairPolicy,
       complexityDecision: plan.complexityDecision,
       runbookSelection: plan.runbookSelection,
+      qualityRouting: plan.qualityRouting,
     }, undefined);
   },
 
@@ -409,7 +435,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           patchRegistryMetadata: true,
           workspaceDir: readString(params.workspaceDir),
-          qualityState: readQualityState(params.qualityState),
+          qualityAuthority: resolveQualityAuthority(params, sessionKey),
         },
         {
           agentSessionKey: sessionKey,
@@ -471,6 +497,12 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           qualityStateReason: qualityScorecard?.reason ?? ORCHESTRATOR_RUN_QUALITY_STATE_REASON,
           qualityScorecard,
           qualitySummary: qualityScorecard?.summary ?? summarizeQuality([]),
+          qualityDecision: {
+            result: qualityScorecard?.authority ?? unavailableOrchestrationQualityAuthority(
+              "Ordinary orchestration produced no scorecard-backed quality evidence.",
+            ),
+            routing: result.plan.qualityRouting,
+          },
           followupCandidates: [],
           memoryCandidates: [],
           outcomes: result.outcomes.map((outcome) => ({
@@ -509,7 +541,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       readRoutingMemoDashboard(
         readString(params.workspaceDir),
         context.getRuntimeConfig(),
-        { qualityState: readQualityState(params.qualityState) },
+        { qualityAuthority: resolveQualityAuthority(params) },
       ),
       undefined,
     );

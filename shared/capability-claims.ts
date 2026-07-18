@@ -386,7 +386,7 @@ export const CAPABILITY_CLAIM_MATRIX = [
     title: 'Dynamic role elimination or learning from performance',
     classification: 'PARTIAL',
     claim: {
-      safe: 'Routing Memo has scoring scaffolding, but it is default-off and qualityOverall is not fully wired.',
+      safe: 'Routing Memo is default-off and accepts active quality only from same-session Task Loop scorecard authority; ordinary orchestration remains shadow-only.',
       unsafe: 'Roles are automatically eliminated or learned from live performance by default.',
     },
     evidence: [
@@ -400,12 +400,12 @@ export const CAPABILITY_CLAIM_MATRIX = [
     },
     runtimeProof: {
       status: 'partial',
-      summary: 'Scoring scaffold is tested; live automatic learning is not verified.',
-      refs: ['tests/unit/routing-memo.test.ts', MATRIX_REPORT],
+      summary: 'Authority gating and bounded scoring are tested; default automatic role learning is still not enabled.',
+      refs: ['tests/unit/routing-memo.test.ts', 'tests/integration/p1-orchestration-boundary.integration.test.ts', MATRIX_REPORT],
     },
     knownExclusions: [
       'No default automatic role elimination.',
-      'No fully wired qualityOverall producer for all role runs.',
+      'No cross-session or caller-forged quality authority.',
     ],
     relatedTaskIds: ['P1-06', 'P1-07'],
   }),

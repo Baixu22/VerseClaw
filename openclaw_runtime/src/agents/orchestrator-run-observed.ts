@@ -644,7 +644,6 @@ export async function runOrchestrationWithRecorder(
         })),
     ],
     observabilityScorecard: scorecard,
-    allowActive: false,
   });
 
   const pendingVerifier =
