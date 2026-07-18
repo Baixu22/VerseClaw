@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +16,7 @@ const phaseDirs = [
   'phase5-reliability-abuse',
   'phase6-supply-release',
   'phase7-continuous-governance',
+  'phase8-residual-closure',
 ];
 
 const statusByPhase = {};
@@ -49,3 +50,4 @@ console.log('sync-system-maturity-index: OK');
 for (const [phase, status] of Object.entries(statusByPhase)) {
   console.log(`  ${phase}=${status}`);
 }
+

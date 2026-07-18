@@ -157,7 +157,7 @@
     "maturity:security:evidence": "node scripts/collect-p7-002-evidence.mjs",
     "maturity:gates": "node scripts/validate-test-gates.mjs",
     "maturity:release-gates": "node scripts/validate-test-gates.mjs --loop release --list",
-    "maturity:validate": "node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/validate-system-maturity-traceability.mjs",
+    "maturity:validate": "node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/run-system-maturity-residual-audit.mjs && node scripts/validate-system-maturity-traceability.mjs",
     "maturity:evidence": "node scripts/validate-system-maturity-evidence.mjs",
     "release:windows-policy": "node scripts/validate-windows-release-policy.mjs",
     "release:windows-policy:evidence": "node scripts/collect-p6-001-evidence.mjs",
@@ -181,7 +181,9 @@
     "maturity:quarterly": "node scripts/run-system-maturity-quarterly-audit.mjs",
     "maturity:quarterly:evidence": "node scripts/collect-p7-004-evidence.mjs",
     "maturity:sync-index": "node scripts/sync-system-maturity-index.mjs",
-    "maturity:seal": "node scripts/seal-system-maturity.mjs"
+    "maturity:seal": "node scripts/seal-system-maturity.mjs",
+    "maturity:residual": "node scripts/run-system-maturity-residual-audit.mjs",
+    "maturity:capability-inventory": "node scripts/run-system-maturity-capability-inventory.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

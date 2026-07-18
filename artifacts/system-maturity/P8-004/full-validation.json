@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-004",
+  "generatedAt": "2026-07-18T09:27:07.265Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-GOV-002",
+    "F-DATA-004"
+  ],
+  "commands": [
+    {
+      "id": "unit",
+      "command": "pnpm exec vitest run tests/unit/*p8*.test.ts + quarterly",
+      "exitCode": 0
+    },
+    {
+      "id": "residual",
+      "command": "pnpm maturity:residual",
+      "exitCode": 0
+    },
+    {
+      "id": "capability",
+      "command": "pnpm maturity:capability-inventory",
+      "exitCode": 0
+    },
+    {
+      "id": "plan",
+      "command": "pnpm maturity:plan",
+      "exitCode": 0
+    },
+    {
+      "id": "quarterly",
+      "command": "pnpm maturity:quarterly -- --dry-run",
+      "exitCode": 0
+    }
+  ]
+}

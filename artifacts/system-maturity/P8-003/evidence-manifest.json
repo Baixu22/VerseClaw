@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-003",
+  "generatedAt": "2026-07-18T09:22:56.027Z",
+  "entries": [
+    {
+      "path": "artifacts/system-maturity/P8-003/vitest.stdout.txt",
+      "sha256": "ceab838894984d7a20fabee2ec3aac1e5ba528a2572ad8c75100a2e2829d292a"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-003/capability-inventory-report.json",
+      "sha256": "72230916c81d86ac8a749f4439f69236491d1083d01650e6475d0d6eb0a9488d"
+    },
+    {
+      "path": "plans/system-maturity/capability-inventory.json",
+      "sha256": "17d1af53208db09e89d6e79d2a56241cf2f6b9d931ea36b5d58f698043a04676"
+    },
+    {
+      "path": "scripts/lib/system-maturity-capability-inventory.mjs",
+      "sha256": "0854b7d40fa07937b7df09ef878a16978755652d49d9c7f8a3eee00263e62fa7"
+    },
+    {
+      "path": "scripts/run-system-maturity-capability-inventory.mjs",
+      "sha256": "7db068d30b77644c3367cb8b5ae549d09b45c905133c96a83d631d0d52956e63"
+    },
+    {
+      "path": "tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+      "sha256": "456a624fb2bdc4fe6fecc7bcdd9807059b27a2b57b2b6b253b2f6023fc6e5e21"
+    },
+    {
+      "path": "plans/system-maturity/security-regression-suite.json",
+      "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af"
+    },
+    {
+      "path": "plans/system-maturity/residual-register.json",
+      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+    },
+    {
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "84b63277fc73c64cd4c1a98a0810c0fff1dd5ef412c508ebe123d5d884709d6c"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6c5b4096b4e452e26e95a44a56993fc121d3c2b5cdd041b10ccfbfae0cad1d1f"
+    }
+  ]
+}

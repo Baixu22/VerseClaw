@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-002 system maturity plan / status machine validator.
  *
  * Checks:
@@ -212,6 +212,7 @@ if (!/planned/.test(readme)) {
       'phase5-reliability-abuse',
       'phase6-supply-release',
       'phase7-continuous-governance',
+      'phase8-residual-closure',
     ];
     for (const dir of phaseDirs) {
       const statusPath = path.join(planRoot, dir, 'STATUS.json');

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-001",
+  "generatedAt": "2026-07-18T09:12:53.729Z",
+  "findings": [
+    "F-SEC-001",
+    "F-REL-004",
+    "F-GOV-002"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "Partial+Act-now without residual-register fails residual gate",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/system-maturity-residual-p8-001.test.ts",
+        "scripts/lib/system-maturity-residual.mjs",
+        "artifacts/system-maturity/P8-001/vitest.stdout.txt"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "Residual register covers F-SEC-001 and F-REL-004 with non-expired reviewBy",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/residual-register.json",
+        "artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "Channel form redaction never returns plaintext canary to Renderer path",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/channel-secret-residual-p8-001.test.ts",
+        "electron/utils/channel-config.ts",
+        "artifacts/system-maturity/P8-001/vitest.stdout.txt"
+      ]
+    }
+  ]
+}

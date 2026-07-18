@@ -1,6 +1,7 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { evaluateResidualRegister } from './system-maturity-residual.mjs';
 
 export const PHASE_DIRS = [
   'phase0-foundation',
@@ -11,6 +12,7 @@ export const PHASE_DIRS = [
   'phase5-reliability-abuse',
   'phase6-supply-release',
   'phase7-continuous-governance',
+  'phase8-residual-closure',
 ];
 
 export function loadJson(filePath) {
@@ -99,7 +101,7 @@ export function evaluateRiskAcceptances({ findings, riskRegistry, nowMs = Date.n
   return { rows, errors, ok: errors.length === 0 };
 }
 
-export function evaluateReleaseDecision({ phases, riskOk, agentDevAudit = null }) {
+export function evaluateReleaseDecision({ phases, riskOk, residualOk = true, agentDevAudit = null }) {
   const blockers = [];
   const notes = [];
   const p0 = phases.find((p) => p.id === 'phase0-foundation');
@@ -115,6 +117,7 @@ export function evaluateReleaseDecision({ phases, riskOk, agentDevAudit = null }
     else if (!phase.consistent) blockers.push(`inconsistent STATUS for ${phase.id}`);
   }
   if (!riskOk) blockers.push('risk acceptance registry has missing or expired entries');
+  if (!residualOk) blockers.push('residual register has missing or expired Partial+Act-now entries');
 
   // F-GOV-002: Agent Dev grade/releaseReady must not be extrapolated to whole-system release.
   if (agentDevAudit) {
@@ -203,21 +206,32 @@ export function runSystemMaturityQuarterlyAudit({
   agentDevAudit = undefined,
   findingsPath = null,
   riskPath = null,
+  residualPath = null,
 }) {
   const resolvedFindingsPath = findingsPath || path.join(root, 'plans/system-maturity/findings-registry.json');
   const resolvedRiskPath = riskPath || path.join(root, 'plans/system-maturity/risk-acceptance.json');
+  const resolvedResidualPath = residualPath || path.join(root, 'plans/system-maturity/residual-register.json');
   const findingsDoc = loadJson(resolvedFindingsPath);
   const riskRegistry = fs.existsSync(resolvedRiskPath)
     ? loadJson(resolvedRiskPath)
     : { schemaVersion: 1, items: [] };
+  const residualRegistry = fs.existsSync(resolvedResidualPath)
+    ? loadJson(resolvedResidualPath)
+    : { schemaVersion: 1, items: [] };
   const phases = collectPhaseStatuses(root);
+  const findings = findingsDoc.findings || [];
   const risk = evaluateRiskAcceptances({
-    findings: findingsDoc.findings || [],
+    findings,
     riskRegistry,
     nowMs,
   });
+  const residual = evaluateResidualRegister({
+    findings,
+    residualRegistry,
+    nowMs,
+  });
   const resolvedAgentDev = agentDevAudit === undefined ? loadAgentDevAudit(root) : agentDevAudit;
-  const release = evaluateReleaseDecision({ phases, riskOk: risk.ok, agentDevAudit: resolvedAgentDev });
+  const release = evaluateReleaseDecision({ phases, riskOk: risk.ok, residualOk: residual.ok, agentDevAudit: resolvedAgentDev });
   const scorecard = buildMaturityScorecard({ phases, risk, release, agentDevAudit: resolvedAgentDev });
   const fail = [];
   for (const phase of phases) {
@@ -225,6 +239,7 @@ export function runSystemMaturityQuarterlyAudit({
     if (!phase.missing && !phase.consistent) fail.push(`inconsistent phase STATUS ${phase.id}`);
   }
   for (const error of risk.errors) fail.push(error);
+  for (const error of residual.errors) fail.push(error);
   if (!release.allowed) {
     for (const blocker of release.blockers) fail.push(blocker);
   }
@@ -248,6 +263,7 @@ export function runSystemMaturityQuarterlyAudit({
     primaryFindingIds: ['F-GOV-002', 'F-GOV-003'],
     phases: phaseTrace,
     riskAcceptance: risk,
+    residualRegister: residual,
     releaseDecision: release,
     scorecard,
     agentDevAudit: resolvedAgentDev,
@@ -259,6 +275,9 @@ export function runSystemMaturityQuarterlyAudit({
       riskActive: risk.rows.filter((r) => r.status === 'active').length,
       riskExpired: risk.rows.filter((r) => r.status === 'expired').length,
       riskMissing: risk.rows.filter((r) => r.status === 'missing-entry').length,
+      residualActive: residual.rows.filter((r) => r.status === 'active').length,
+      residualMissing: residual.rows.filter((r) => r.status === 'missing-entry').length,
+      residualOk: residual.ok,
       releaseAllowed: release.allowed,
       score: scorecard.total,
       grade: scorecard.grade,
@@ -291,3 +310,4 @@ export function validateQuarterlyAuditReport(report) {
   }
   return errors;
 }
+

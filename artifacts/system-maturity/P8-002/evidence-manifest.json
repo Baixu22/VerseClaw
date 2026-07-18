@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-002",
+  "generatedAt": "2026-07-18T09:17:23.328Z",
+  "entries": [
+    {
+      "path": "artifacts/system-maturity/P8-002/vitest.stdout.txt",
+      "sha256": "06f53fd6725962709f5d5086423256288261d4474e74b2bf85f8f1cf9a6443b0"
+    },
+    {
+      "path": "electron/services/secrets/channel-secret-broker.ts",
+      "sha256": "a02264e346c19fc950c01085dc8df3fcbd9bd561e88c9d3631f3928d59ef7583"
+    },
+    {
+      "path": "electron/services/providers/store-instance.ts",
+      "sha256": "ed5cc941c58d483049dcdbd3eab1fba4654e20e475de184b6c99055f8647bf7b"
+    },
+    {
+      "path": "electron/utils/channel-config.ts",
+      "sha256": "d98ba095e0e048b04b101c03e9e9e9a419a04b75b9f26537c3bd9645a9aabaa1"
+    },
+    {
+      "path": "tests/unit/channel-secret-broker-p8-002.test.ts",
+      "sha256": "49d3526306b45e22a5792d8ff646011c24f6e359df392b2921a9945ec12aaf1f"
+    },
+    {
+      "path": "plans/system-maturity/residual-register.json",
+      "sha256": "6399d43136e8ec04bc35a61ce7c9387b85d4892d6aae385eab9b2e9f1f9f72d5"
+    },
+    {
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "36011a5326f3eb36aaa436e9b2eb05d3210649e9f53573b2db496626d01bd158"
+    },
+    {
+      "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+      "sha256": "e68197f4c01cd9e7171e1d6552fbebc8a881ea497e31c6d4cb47ecdfc499ee6b"
+    },
+    {
+      "path": "plans/system-maturity/phase8-residual-closure/tasks/P8-002.md",
+      "sha256": "d2ce1d911a7502441c1ab203f1173a1c0485d29a9b8cef160280af272332d154"
+    }
+  ]
+}

@@ -42,6 +42,12 @@ function fixtureRoot(overrides: {
       'P7-003': 'done',
       'P7-004': p7Done ? 'done' : 'in_progress',
     }],
+    ['phase8-residual-closure', true, {
+      'P8-001': 'done',
+      'P8-002': 'done',
+      'P8-003': 'done',
+      'P8-004': 'done',
+    }],
   ] as const;
   for (const [id, done, tasks] of phases) {
     writeJson(root, `plans/system-maturity/${id}/STATUS.json`, {
@@ -69,6 +75,10 @@ function fixtureRoot(overrides: {
       },
     ],
   });
+  writeJson(root, 'plans/system-maturity/residual-register.json', {
+    schemaVersion: 1,
+    items: [],
+  });
   return root;
 }
 
@@ -76,7 +86,7 @@ describe('P7-004 quarterly maturity audit', () => {
   it('A1: traces every phase STATUS path and detects inconsistency', () => {
     const root = fixtureRoot({ p7Done: false });
     const phases = collectPhaseStatuses(root);
-    expect(phases).toHaveLength(8);
+    expect(phases).toHaveLength(9);
     expect(phases.every((phase) => Boolean(phase.statusPath))).toBe(true);
     expect(phases.find((phase) => phase.id === 'phase7-continuous-governance')?.consistent).toBe(true);
 
@@ -160,7 +170,7 @@ describe('P7-004 quarterly maturity audit', () => {
     });
     expect(validateQuarterlyAuditReport(report)).toEqual([]);
     expect(report.scorecard.total).toBeGreaterThanOrEqual(90);
-    expect(report.summary.phasesTraceable).toBe(8);
+    expect(report.summary.phasesTraceable).toBe(9);
 
     const release = evaluateReleaseDecision({
       phases: collectPhaseStatuses(root),
