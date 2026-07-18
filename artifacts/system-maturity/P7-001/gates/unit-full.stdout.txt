@@ -1,0 +1,44 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
+
+
+[2m Test Files [22m [1m[32m648 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (651)[39m
+[2m      Tests [22m [1m[32m5947 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (5999)[39m
+[2m   Start at [22m 12:07:22
+[2m   Duration [22m 362.70s[2m (transform 23.64s, setup 46.76s, import 126.95s, tests 152.75s, environment 299.70s)[22m
+
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
+
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+[2m   Start at [22m 12:13:27
+[2m   Duration [22m 18.68s[2m (transform 1.22s, setup 246ms, import 1.58s, tests 14.76s, environment 1.64s)[22m
+
+
+ RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
+
+
+ Test Files  17 passed (17)
+      Tests  169 passed (169)
+   Start at  12:13:47
+   Duration  2.62s (transform 883ms, setup 374ms, import 738ms, tests 1.17s, environment 0ms)
+
+
+ RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
+
+
+ Test Files  5 passed (5)
+      Tests  10 passed (10)
+   Start at  12:13:51
+   Duration  1.26s (transform 343ms, setup 53ms, import 885ms, tests 17ms, environment 0ms)
+
+
+ RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
+
+
+ Test Files  10 passed (10)
+      Tests  73 passed (73)
+   Start at  12:13:53
+   Duration  19.56s (transform 10.64s, setup 344ms, import 15.07s, tests 3.75s, environment 0ms)
