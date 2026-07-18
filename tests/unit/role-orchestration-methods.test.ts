@@ -641,7 +641,7 @@ describe('team_orchestrate tool', () => {
       evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
     });
     expect(details.qualityStateReason).toMatch(/score/i);
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
     expect(details.blackboardSummary?.entryCount).toBe(1);
     expect(details.resultBundle).toMatchObject({
       schemaVersion: 1,

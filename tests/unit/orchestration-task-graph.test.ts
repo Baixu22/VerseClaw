@@ -216,22 +216,12 @@ describe('orchestration task graph v4', () => {
       },
     });
 
-    const result = await tool.execute('call_1', {
+    await expect(tool.execute('call_1', {
       task: 'security audit',
       templateId: 'security-audit',
       graphMode: 'auto',
       maxWorkers: 2,
       workerCommunication: 'bounded_a2a',
-    });
-    const details = result.details as {
-      taskGraph: { nodes: Array<{ roleName: string }> };
-      executionWaves: Array<{ roles: string[] }>;
-      resultPolicy: { workerCommunication: string; boundedA2aEnabled: boolean };
-    };
-
-    expect(details.taskGraph.nodes.map((node) => node.roleName)).toContain('skeptic');
-    expect(details.executionWaves.every((wave) => wave.roles.length <= 2)).toBe(true);
-    expect(details.resultPolicy.workerCommunication).toBe('none');
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    })).rejects.toThrow(/bounded_a2a.*not supported/i);
   });
 });
