@@ -264,6 +264,9 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         routeDiagnostics: result.plan.routeDiagnostics,
         taskGraph: result.taskGraph,
         resultBundle: result.resultBundle,
+        handoffMode: result.handoffMode,
+        handoffState: result.handoffState,
+        handoffArtifacts: result.handoffArtifacts,
 
         blackboardState: result.blackboardState,
         blackboardSummary: result.blackboardSummary,
@@ -321,6 +324,12 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           workerCommunication,
           requestedWorkerCommunication,
           boundedA2aEnabled: false,
+          handoffArtifacts: {
+            mode: result.handoffMode,
+            state: result.handoffState,
+            ready: result.handoffArtifacts.filter((artifact) => artifact.state === "ready").length,
+            rejected: result.handoffArtifacts.filter((artifact) => artifact.state === "rejected").length,
+          },
           repairPolicy,
           qualityPolicy,
         },

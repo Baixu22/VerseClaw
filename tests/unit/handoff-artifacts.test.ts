@@ -1,332 +1,306 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildHandoffArtifactPrompt,
+  buildWorkerOutputHandoffArtifact,
+  captureRuntimeWorkerOutputUsing,
+  resolveHandoffArtifactPrompt,
+  resolveHandoffArtifactRuntimeState,
   resolveHandoffArtifactsPilotMode,
   DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE,
+  type CaptureRuntimeWorkerOutputInput,
+  type HandoffArtifactIdentity,
+  type WorkerOutputHandoffArtifact,
 } from "../../openclaw_runtime/src/agents/handoff-artifacts";
 import type { OrchestratorPlan } from "../../openclaw_runtime/src/agents/orchestrator";
 import type { OrchestrationTaskNode } from "../../openclaw_runtime/src/agents/orchestration-protocol";
-import type { RoleContract } from "../../openclaw_runtime/src/agents/role-contract";
+import type { SubagentRunRecord } from "../../openclaw_runtime/src/agents/subagent-registry.types";
 
-function makeNode(overrides: Partial<OrchestrationTaskNode> = {}): OrchestrationTaskNode {
+function node(taskNodeId: string, roleName: string, dependsOn: string[] = []): OrchestrationTaskNode {
   return {
-    taskNodeId: "node-b",
-    roleName: "tester",
-    task: "verify the implementation",
-    phase: "verification",
-    dependsOn: [],
-    scope: "verification scope",
+    taskNodeId,
+    roleName,
+    task: `${roleName} task`,
+    phase: roleName === "planner" ? "plan" : "implementation",
+    dependsOn,
+    scope: `${roleName} scope`,
     requiredCapabilities: [],
     attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
-    status: "planned",
-    ...overrides,
+    status: dependsOn.length > 0 ? "planned" : "ready",
   };
 }
 
-function makePlan(overrides: Partial<OrchestratorPlan> = {}): OrchestratorPlan {
+function plan(): OrchestratorPlan {
+  const planner = node("planner-1", "planner");
+  const implementer = node("implementer-1", "implementer", [planner.taskNodeId]);
   return {
     mode: "lead-workers",
-    leadRole: "implementer",
+    leadRole: "planner",
     workers: [],
     reasons: [],
     routeDiagnostics: {
       difficulty: "moderate",
       confidence: 0.7,
       reasons: [],
-      selectedRoles: [],
+      selectedRoles: ["planner", "implementer"],
       rejectedRoles: [],
       requiredCapabilities: [],
       capabilityGaps: [],
     },
     taskGraph: {
       graphRunId: "graph-1",
-      mode: "flat",
+      mode: "staged",
       status: "planned",
-      nodes: [],
-      edges: [],
+      nodes: [planner, implementer],
+      edges: [
+        { from: planner.taskNodeId, to: implementer.taskNodeId, type: "dependency" },
+        { from: planner.taskNodeId, to: implementer.taskNodeId, type: "handoff" },
+      ],
     },
     graphStatus: "planned",
     executionWaves: [],
     capabilityGaps: [],
     estimatedRepairPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1, maxFollowupRuns: 1 },
+    isolation: "shared",
+    verifierNoSelfRepair: true,
+    complexityDecision: {} as OrchestratorPlan["complexityDecision"],
+    runbookSelection: {} as OrchestratorPlan["runbookSelection"],
+    qualityRouting: {} as OrchestratorPlan["qualityRouting"],
+  };
+}
+
+function identity(overrides: Partial<HandoffArtifactIdentity> = {}): HandoffArtifactIdentity {
+  return {
+    orchestrationRunId: "orch-1",
+    taskGraphId: "graph-1",
+    ownerSessionKey: "agent:main:session-1",
+    fromTaskId: "planner-1",
+    fromRole: "planner",
+    fromRoleInstanceId: "role-instance-1",
+    toTaskId: "implementer-1",
+    toRole: "implementer",
+    attempt: 1,
+    childRunId: "child-run-1",
+    childSessionKey: "agent:planner:child-1",
     ...overrides,
   };
 }
 
-function makeRole(overrides: Partial<RoleContract> = {}): RoleContract {
-  return {
-    name: "implementer",
-    displayName: "Implementer",
-    rolePrompt: "Implement the task",
-    tools: [],
-    permissions: { filesystem: "read-write", network: "none" },
-    tags: [],
-    effort: "medium",
-    outputSchema: { format: "markdown", sections: ["Changes", "Verification"] },
-    ...overrides,
-  } as RoleContract;
+function readyArtifact(overrides: Partial<HandoffArtifactIdentity> = {}): WorkerOutputHandoffArtifact {
+  return buildWorkerOutputHandoffArtifact({
+    identity: identity(overrides),
+    capture: {
+      status: "captured",
+      output: "## Plan\nUse the verified implementation path.",
+      capturedAt: 20,
+      source: "injected_test_capture",
+    },
+  });
 }
 
-describe("handoff-artifacts (Area 3 §3.4)", () => {
-  describe("resolveHandoffArtifactsPilotMode", () => {
-    it("returns 'off' for undefined input", () => {
-      expect(resolveHandoffArtifactsPilotMode(undefined)).toBe(DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE);
-      expect(resolveHandoffArtifactsPilotMode("off")).toBe("off");
-    });
+function captureInput(overrides: Partial<CaptureRuntimeWorkerOutputInput> = {}): CaptureRuntimeWorkerOutputInput {
+  return {
+    orchestrationRunId: "orch-1",
+    ownerSessionKey: "agent:main:session-1",
+    fromTaskId: "planner-1",
+    fromRole: "planner",
+    attempt: 1,
+    childRunId: "child-run-1",
+    childSessionKey: "agent:planner:child-1",
+    timeoutMs: 5_000,
+    ...overrides,
+  };
+}
 
-    it("returns 'off' for non-record input", () => {
-      expect(resolveHandoffArtifactsPilotMode("on")).toBe("off");
-      expect(resolveHandoffArtifactsPilotMode(42)).toBe("off");
-      expect(resolveHandoffArtifactsPilotMode(null)).toBe("off");
-      expect(resolveHandoffArtifactsPilotMode([])).toBe("off");
-    });
+function registryRun(overrides: Partial<SubagentRunRecord> = {}): SubagentRunRecord {
+  return {
+    runId: "child-run-1",
+    childSessionKey: "agent:planner:child-1",
+    requesterSessionKey: "agent:main:session-1",
+    requesterDisplayKey: "main",
+    task: "plan",
+    cleanup: "delete",
+    createdAt: 1,
+    endedAt: 20,
+    outcome: { status: "ok" },
+    completion: { required: true, resultText: "real registry output", capturedAt: 20 },
+    orchestration: {
+      orchestrationRunId: "orch-1",
+      roleName: "planner",
+      phase: "worker",
+      taskId: "planner-1",
+      taskNodeId: "planner-1",
+      attempt: 1,
+    },
+    ...overrides,
+  };
+}
 
-    it("reads runtime.orchestration.handoffArtifacts = 'on'", () => {
-      const cfg = { runtime: { orchestration: { handoffArtifacts: "on" } } };
-      expect(resolveHandoffArtifactsPilotMode(cfg)).toBe("on");
-    });
+describe("handoff artifacts", () => {
+  it("stays default-off and only enables the explicit config value", () => {
+    expect(DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE).toBe("off");
+    expect(resolveHandoffArtifactsPilotMode(undefined)).toBe("off");
+    expect(resolveHandoffArtifactsPilotMode({ runtime: { orchestration: { handoffArtifacts: "on" } } })).toBe("on");
+    expect(resolveHandoffArtifactsPilotMode({ runtime: { orchestration: { handoffArtifacts: "shadow" } } })).toBe("off");
+  });
 
-    it("falls back to 'off' for unknown pilot values", () => {
-      const cfg = { runtime: { orchestration: { handoffArtifacts: "experimental" } } };
-      expect(resolveHandoffArtifactsPilotMode(cfg)).toBe("off");
+  it("builds a provenance-bound artifact from real worker output", () => {
+    const artifact = readyArtifact();
+    expect(artifact).toMatchObject({
+      state: "ready",
+      orchestrationRunId: "orch-1",
+      taskGraphId: "graph-1",
+      ownerSessionKey: "agent:main:session-1",
+      fromTaskId: "planner-1",
+      toTaskId: "implementer-1",
+      childRunId: "child-run-1",
+      childSessionKey: "agent:planner:child-1",
+      attempt: 1,
+      source: "injected_test_capture",
     });
+    if (artifact.state !== "ready") throw new Error("expected ready artifact");
+    expect(artifact.outputText).toContain("verified implementation path");
+    expect(artifact.outputSha256).toMatch(/^[a-f0-9]{64}$/);
+  });
 
-    it("falls back to 'off' when orchestration block is missing", () => {
-      const cfg = { runtime: { features: { foo: true } } };
-      expect(resolveHandoffArtifactsPilotMode(cfg)).toBe("off");
+  it("redacts secrets before hashing or delivery", () => {
+    const secret = "sk-1234567890abcdefghijklmnop";
+    const artifact = buildWorkerOutputHandoffArtifact({
+      identity: identity(),
+      capture: {
+        status: "captured",
+        output: `API_KEY=${secret}\nSafe finding`,
+        capturedAt: 20,
+        source: "injected_test_capture",
+      },
     });
+    expect(artifact.state).toBe("ready");
+    if (artifact.state !== "ready") throw new Error("expected ready artifact");
+    expect(artifact.redacted).toBe(true);
+    expect(artifact.outputText).not.toContain(secret);
+    expect(artifact.outputText).toContain("Safe finding");
+  });
 
-    it("falls back to 'off' when runtime block is missing", () => {
-      const cfg = { agents: { defaults: {} } };
-      expect(resolveHandoffArtifactsPilotMode(cfg)).toBe("off");
+  it("truncates oversized output to the explicit bound", () => {
+    const artifact = buildWorkerOutputHandoffArtifact({
+      identity: identity(),
+      capture: {
+        status: "captured",
+        output: "x".repeat(200),
+        capturedAt: 20,
+        source: "injected_test_capture",
+      },
+      maxChars: 32,
     });
+    expect(artifact).toMatchObject({ state: "ready", originalChars: 200, deliveredChars: 32, truncated: true });
+  });
 
-    it("DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE is 'off' (default-off)", () => {
-      expect(DEFAULT_HANDOFF_ARTIFACTS_PILOT_MODE).toBe("off");
+  it.each([
+    [42, "invalid-output-type"],
+    [" \u0000 ", "empty-output-after-sanitization"],
+  ])("rejects malformed output %#", (output, reason) => {
+    expect(buildWorkerOutputHandoffArtifact({
+      identity: identity(),
+      capture: { status: "captured", output, capturedAt: 20, source: "injected_test_capture" },
+    })).toMatchObject({ state: "rejected", reason });
+  });
+
+  it("captures only the matching terminal registry record", async () => {
+    const result = await captureRuntimeWorkerOutputUsing(captureInput(), {
+      waitForRun: async () => ({ status: "ok" }),
+      getRunById: () => registryRun(),
+    });
+    expect(result).toEqual({
+      status: "captured",
+      output: "real registry output",
+      capturedAt: 20,
+      source: "subagent_registry_completion",
     });
   });
 
-  describe("buildHandoffArtifactPrompt", () => {
-    it("returns undefined when node is undefined", () => {
-      const plan = makePlan();
-      const result = buildHandoffArtifactPrompt({
-        node: undefined,
-        plan,
-        resolveRole: () => undefined,
-      });
-      expect(result).toBeUndefined();
+  it.each([
+    ["run", captureInput({ orchestrationRunId: "orch-2" })],
+    ["session", captureInput({ ownerSessionKey: "agent:main:session-2" })],
+    ["task", captureInput({ fromTaskId: "planner-2" })],
+    ["role", captureInput({ fromRole: "architect" })],
+    ["attempt", captureInput({ attempt: 2 })],
+    ["child session", captureInput({ childSessionKey: "agent:planner:child-2" })],
+  ])("rejects cross-identity %s leakage", async (_field, input) => {
+    const result = await captureRuntimeWorkerOutputUsing(input, {
+      waitForRun: async () => ({ status: "ok" }),
+      getRunById: () => registryRun(),
     });
+    expect(result).toEqual({ status: "unavailable", reason: "identity-mismatch" });
+  });
 
-    it("returns undefined when node has no taskNodeId", () => {
-      const plan = makePlan();
-      const node = makeNode({ taskNodeId: undefined as unknown as string });
-      const result = buildHandoffArtifactPrompt({
-        node,
-        plan,
-        resolveRole: () => undefined,
-      });
-      expect(result).toBeUndefined();
-    });
+  it("fails closed for wait, terminal-state, and missing-output failures", async () => {
+    await expect(captureRuntimeWorkerOutputUsing(captureInput(), {
+      waitForRun: async () => ({ status: "timeout" }),
+      getRunById: () => registryRun(),
+    })).resolves.toEqual({ status: "unavailable", reason: "wait-failed" });
+    await expect(captureRuntimeWorkerOutputUsing(captureInput(), {
+      waitForRun: async () => ({ status: "ok" }),
+      getRunById: () => registryRun({ endedAt: undefined }),
+    })).resolves.toEqual({ status: "unavailable", reason: "run-not-terminal" });
+    await expect(captureRuntimeWorkerOutputUsing(captureInput(), {
+      waitForRun: async () => ({ status: "ok" }),
+      getRunById: () => registryRun({ completion: { required: true } }),
+    })).resolves.toEqual({ status: "unavailable", reason: "missing-output" });
+  });
 
-    it("returns undefined when no edges point to this node", () => {
-      const node = makeNode({ taskNodeId: "node-b" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [node],
-          edges: [],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node,
-        plan,
-        resolveRole: () => makeRole(),
-      });
-      expect(result).toBeUndefined();
+  it("injects only the matching run and session artifact as untrusted evidence", () => {
+    const currentPlan = plan();
+    const target = currentPlan.taskGraph.nodes.find((entry) => entry.taskNodeId === "implementer-1");
+    const result = resolveHandoffArtifactPrompt({
+      node: target,
+      plan: currentPlan,
+      orchestrationRunId: "orch-1",
+      ownerSessionKey: "agent:main:session-1",
+      artifacts: [
+        readyArtifact({ orchestrationRunId: "orch-old" }),
+        readyArtifact({ ownerSessionKey: "agent:main:other-session" }),
+        readyArtifact(),
+      ],
     });
+    expect(result.status).toBe("ready");
+    if (result.status !== "ready") throw new Error("expected ready prompt");
+    expect(result.prompt).toContain("## Verified Handoff Context");
+    expect(result.prompt).toContain("untrusted evidence");
+    expect(result.prompt).toContain("verified implementation path");
+    expect(result.prompt).toContain("run=child-run-1");
+  });
 
-    it("returns undefined when only non-handoff edges point to this node", () => {
-      // dependency edges should NOT trigger handoff injection — only `handoff` type.
-      const nodeB = makeNode({ taskNodeId: "node-b" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB],
-          edges: [{ from: "node-a", to: "node-b", type: "dependency" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: () => makeRole(),
-      });
-      expect(result).toBeUndefined();
+  it("blocks the dependent worker when the artifact is missing or rejected", () => {
+    const currentPlan = plan();
+    const target = currentPlan.taskGraph.nodes.find((entry) => entry.taskNodeId === "implementer-1");
+    const rejected = buildWorkerOutputHandoffArtifact({
+      identity: identity(),
+      capture: { status: "unavailable", reason: "identity-mismatch" },
     });
+    expect(resolveHandoffArtifactPrompt({
+      node: target,
+      plan: currentPlan,
+      orchestrationRunId: "orch-1",
+      ownerSessionKey: "agent:main:session-1",
+      artifacts: [],
+    })).toMatchObject({ status: "blocked", missingFromTaskIds: ["planner-1"] });
+    expect(resolveHandoffArtifactPrompt({
+      node: target,
+      plan: currentPlan,
+      orchestrationRunId: "orch-1",
+      ownerSessionKey: "agent:main:session-1",
+      artifacts: [rejected],
+    })).toMatchObject({ status: "blocked", missingFromTaskIds: ["planner-1"] });
+  });
 
-    it("returns prompt with predecessor sections when a handoff edge exists", () => {
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB],
-          edges: [{ from: "node-a", to: "node-b", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: (name) => name === "implementer"
-          ? makeRole({ name: "implementer", outputSchema: { format: "markdown", sections: ["Changes", "Verification"] } })
-          : undefined,
-      });
-      expect(result).toBeDefined();
-      expect(result).toContain("## Handoff Context");
-      expect(result).toContain("From implementer: Changes, Verification");
-    });
-
-    it("includes multiple predecessors when multiple handoff edges exist", () => {
-      const nodeC = makeNode({ taskNodeId: "node-c", roleName: "reviewer" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "architect" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB, nodeC],
-          edges: [
-            { from: "node-a", to: "node-c", type: "handoff" },
-            { from: "node-b", to: "node-c", type: "handoff" },
-          ],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeC,
-        plan,
-        resolveRole: (name) => {
-          if (name === "implementer") return makeRole({ name, outputSchema: { format: "markdown", sections: ["Changes"] } });
-          if (name === "architect") return makeRole({ name, outputSchema: { format: "markdown", sections: ["Design", "Tradeoffs"] } });
-          return undefined;
-        },
-      });
-      expect(result).toBeDefined();
-      expect(result).toContain("From implementer: Changes");
-      expect(result).toContain("From architect: Design, Tradeoffs");
-    });
-
-    it("skips predecessors whose role contract cannot be resolved", () => {
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "unknown-role" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB],
-          edges: [{ from: "node-a", to: "node-b", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: () => undefined,
-      });
-      expect(result).toBeUndefined();
-    });
-
-    it("skips predecessors whose role has no outputSchema.sections", () => {
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB],
-          edges: [{ from: "node-a", to: "node-b", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: (name) => name === "implementer"
-          ? makeRole({ name, outputSchema: { format: "markdown", sections: [] } })
-          : undefined,
-      });
-      expect(result).toBeUndefined();
-    });
-
-    it("skips edges whose predecessor node is missing from the graph", () => {
-      // Edge references a `from` node that doesn't exist in taskGraph.nodes
-      // (corrupt graph or post-compaction drift). Should not throw.
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeB],
-          edges: [{ from: "node-ghost", to: "node-b", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: () => makeRole(),
-      });
-      expect(result).toBeUndefined();
-    });
-
-    it("only matches edges where `to` equals this node's taskNodeId", () => {
-      // An edge node-a → node-c (handoff) should not affect node-b's prompt.
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const nodeC = makeNode({ taskNodeId: "node-c", roleName: "reviewer" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB, nodeC],
-          edges: [{ from: "node-a", to: "node-c", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: () => makeRole(),
-      });
-      expect(result).toBeUndefined();
-    });
-
-    it("prompt contains the §3.4 header and guidance text", () => {
-      const nodeB = makeNode({ taskNodeId: "node-b", roleName: "tester" });
-      const nodeA = makeNode({ taskNodeId: "node-a", roleName: "implementer" });
-      const plan = makePlan({
-        taskGraph: {
-          graphRunId: "g1",
-          mode: "flat",
-          status: "planned",
-          nodes: [nodeA, nodeB],
-          edges: [{ from: "node-a", to: "node-b", type: "handoff" }],
-        },
-      });
-      const result = buildHandoffArtifactPrompt({
-        node: nodeB,
-        plan,
-        resolveRole: () => makeRole({ outputSchema: { format: "markdown", sections: ["Changes"] } }),
-      });
-      expect(result).toContain("## Handoff Context (Area 3 §3.4)");
-      expect(result).toContain("Treat their output as evidence");
-      expect(result).toContain("Do not block waiting for their output");
-    });
+  it("reports disabled, idle, ready, and blocked runtime states", () => {
+    expect(resolveHandoffArtifactRuntimeState({ mode: "off", artifacts: [] })).toBe("disabled");
+    expect(resolveHandoffArtifactRuntimeState({ mode: "on", artifacts: [] })).toBe("idle");
+    expect(resolveHandoffArtifactRuntimeState({ mode: "on", artifacts: [readyArtifact()] })).toBe("ready");
+    expect(resolveHandoffArtifactRuntimeState({
+      mode: "on",
+      artifacts: [buildWorkerOutputHandoffArtifact({
+        identity: identity(),
+        capture: { status: "unavailable", reason: "missing-output" },
+      })],
+    })).toBe("blocked");
   });
 });

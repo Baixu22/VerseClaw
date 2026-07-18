@@ -314,11 +314,11 @@ export type RuntimeFeatureConfig = {
      */
     routingMemoPilot?: "off" | "shadow" | "active";
     /**
-     * Handoff artifacts pilot (Area 3 §3.4). When 'on', dependent workers
-     * receive their predecessor's expected outputSchema sections in
-     * `extraSystemPrompt` along `handoff` graph edges. Adds prompt text only
-     * — never tools or permissions (§9 boundary). Default-off for one release
-     * alongside the memo pilot.
+     * Handoff artifacts pilot (Area 3 §3.4). When 'on', orchestration waits for
+     * predecessor terminal state, verifies run/session/task/attempt/role identity,
+     * and injects redacted, bounded real output as untrusted evidence. Missing or
+     * mismatched output blocks the dependent spawn. Never grants tools, permissions,
+     * memory writes, or scope. Default-off.
      */
     handoffArtifacts?: "off" | "on";
   };

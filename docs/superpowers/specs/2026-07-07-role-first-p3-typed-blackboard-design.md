@@ -71,6 +71,8 @@ Bounded A2A is blackboard-mediated coordination:
 - the system can create conflict entries,
 - a verifier can cite blackboard evidence.
 
+When the default-off runtime handoff pilot is enabled, a handoff edge may carry a predecessor's real completion output only after the subagent registry reports a successful terminal record whose orchestration run, owner session, task, attempt, role, child run, and child session identities match. The orchestrator redacts and bounds that output, hashes the delivered bytes, marks it untrusted, and injects it only into the dependent worker. Missing or mismatched output blocks the dependent spawn; expected schemas, latest-session fallbacks, and synthetic success are not valid handoffs.
+
 P3 explicitly excludes direct worker-to-worker message streams. There is no open chat channel between workers.
 
 ## Conflict Semantics
@@ -95,6 +97,7 @@ P3 implementation should add:
 - untrusted content propagation tests,
 - verifier evidence read tests,
 - trace replay reconstruction tests,
+- registry-backed handoff redaction, provenance, fail-closed, and cross-run isolation tests,
 - regression proof for P0/P1/P2 suites.
 
 ## Review Gates

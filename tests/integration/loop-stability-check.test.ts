@@ -28,6 +28,10 @@ import type {
   MissionRunRecord,
 } from "../../openclaw_runtime/src/agents/mission-control/types.js";
 import type { TaskLoopRunResult } from "../../openclaw_runtime/src/agents/task-loop-controller.js";
+import { runOrchestrationObserved } from "../../openclaw_runtime/src/agents/orchestrator-run-observed.js";
+import { replayBlackboardTrace } from "../../openclaw_runtime/src/agents/orchestration-blackboard-trace.js";
+import type { RoleSpawnParams, RoleSpawnResultShape } from "../../openclaw_runtime/src/agents/role-spawn.js";
+import type { CaptureRuntimeWorkerOutput } from "../../openclaw_runtime/src/agents/handoff-artifacts.js";
 
 type FakePlan = {
   mode: "router" | "lead-workers" | "adversarial-review";
@@ -784,5 +788,102 @@ describe("Integration: Mission Control stability", () => {
     expect(resumed.status).toBe("sleeping");
     const cancelled = cancelMission(created.missionId, deps);
     expect(cancelled.status).toBe("cancelled");
+  });
+});
+
+describe("Integration: handoff replay isolation", () => {
+  async function runHandoff(
+    orchestrationRunId: string,
+    marker: string,
+    captureStatus: "captured" | "rejected" = "captured",
+  ) {
+    const spawned: RoleSpawnParams[] = [];
+    const spawn = async (params: RoleSpawnParams): Promise<RoleSpawnResultShape> => {
+      spawned.push(params);
+      const taskNodeId = params.orchestration?.taskNodeId ?? params.orchestration?.taskId ?? "unknown";
+      return {
+        status: "accepted",
+        runId: `${orchestrationRunId}:${taskNodeId}`,
+        childSessionKey: `agent:child:${orchestrationRunId}:${taskNodeId}`,
+      };
+    };
+    const captureHandoffOutput: CaptureRuntimeWorkerOutput = async (input) =>
+      captureStatus === "captured"
+        ? {
+            status: "captured",
+            output: `${marker} from ${input.orchestrationRunId}`,
+            capturedAt: 20,
+            source: "injected_test_capture",
+          }
+        : { status: "unavailable", reason: "identity-mismatch" };
+    const result = await runOrchestrationObserved(
+      {
+        task: "plan and implement a replay-isolated change",
+        workers: [
+          { roleName: "planner", task: "plan the isolated change" },
+          { roleName: "implementer", task: "implement the isolated change" },
+        ],
+        preferredLeadRole: "planner",
+        includeVerifier: false,
+        graphMode: "staged",
+        orchestrationRunId,
+        patchRegistryMetadata: false,
+        cfg: { runtime: { orchestration: { handoffArtifacts: "on" } } } as never,
+      },
+      { agentSessionKey: "agent:main:handoff-isolation" },
+      {
+        spawn,
+        captureHandoffOutput,
+      },
+      { runId: orchestrationRunId, sessionKey: "agent:main:handoff-isolation" },
+    );
+    return { result, spawned };
+  }
+
+  it("keeps two consecutive run traces and downstream prompts isolated", async () => {
+    const runA = await runHandoff("orch-handoff-a", "RUN_A_ONLY");
+    const runB = await runHandoff("orch-handoff-b", "RUN_B_ONLY");
+
+    const implementerPromptA = runA.spawned.find(
+      (params) => params.orchestration?.taskNodeId === "implementer-1",
+    )?.roleSystemPrompt;
+    const implementerPromptB = runB.spawned.find(
+      (params) => params.orchestration?.taskNodeId === "implementer-1",
+    )?.roleSystemPrompt;
+    expect(implementerPromptA).toContain("RUN_A_ONLY");
+    expect(implementerPromptA).not.toContain("RUN_B_ONLY");
+    expect(implementerPromptB).toContain("RUN_B_ONLY");
+    expect(implementerPromptB).not.toContain("RUN_A_ONLY");
+
+    const replayB = replayBlackboardTrace(
+      runB.result.blackboardTraceEvents,
+      runB.result.taskGraph.nodes.map((node) => node.roleName),
+    );
+    expect(replayB.issues).toEqual([]);
+    const replayText = JSON.stringify(replayB.state.entries);
+    expect(replayText).toContain("RUN_B_ONLY");
+    expect(replayText).not.toContain("RUN_A_ONLY");
+    expect(runB.result.handoffArtifacts).toMatchObject([
+      {
+        state: "ready",
+        orchestrationRunId: "orch-handoff-b",
+        ownerSessionKey: "agent:main:handoff-isolation",
+        fromTaskId: "planner-1",
+        toTaskId: "implementer-1",
+      },
+    ]);
+  });
+
+  it("blocks the dependent spawn when verified predecessor output is rejected", async () => {
+    const blocked = await runHandoff("orch-handoff-blocked", "NEVER_DELIVERED", "rejected");
+
+    expect(blocked.spawned.map((params) => params.orchestration?.taskNodeId)).toEqual(["planner-1"]);
+    expect(blocked.result.handoffState).toBe("blocked");
+    expect(blocked.result.handoffArtifacts).toMatchObject([
+      { state: "rejected", reason: "identity-mismatch", fromTaskId: "planner-1", toTaskId: "implementer-1" },
+    ]);
+    expect(blocked.result.failures).toEqual(expect.arrayContaining([
+      expect.objectContaining({ roleName: "implementer", status: "handoff-blocked" }),
+    ]));
   });
 });

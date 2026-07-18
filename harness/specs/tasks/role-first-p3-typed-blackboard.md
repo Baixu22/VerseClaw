@@ -6,6 +6,9 @@ taskType: runtime-bridge
 intent: Add a typed orchestration blackboard and bounded blackboard-mediated A2A coordination on top of P0/P1/P2 while preserving RoleContract, scheduler, runbook, verification gates, memory, and Gateway communication ownership.
 ownedPaths:
   - harness/specs/tasks/role-first-p3-typed-blackboard.md
+  - plans/system-maturity/orchestration-gap-closure/ORCH-002.delivery.md
+  - plans/system-maturity/orchestration-gap-closure/ORCHESTRATION_STATUS.json
+  - artifacts/system-maturity/orchestration-gap-closure/ORCH-002/**
   - docs/multi-agent-orchestration/phase-constraints/p3-typed-blackboard.md
   - docs/multi-agent-orchestration/goal-mode-start-prompt-p3.md
   - docs/superpowers/specs/2026-07-07-role-first-p3-typed-blackboard-design.md
@@ -28,6 +31,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/orchestration-blackboard.ts
   - openclaw_runtime/src/agents/orchestration-blackboard-verifier.ts
   - openclaw_runtime/src/agents/orchestration-blackboard-trace.ts
+  - openclaw_runtime/src/agents/handoff-artifacts.ts
   - openclaw_runtime/src/agents/agent-steering-queue.ts
   - openclaw_runtime/src/agents/agency-draft-catalog.ts
   - openclaw_runtime/src/agents/agency-role-importer.ts
@@ -37,12 +41,16 @@ touchedAreas:
   - openclaw_runtime/src/agents/orchestrator-run-observed.ts
   - openclaw_runtime/src/agents/orchestration-protocol.ts
   - openclaw_runtime/src/agents/orchestration-result-bundle.ts
+  - openclaw_runtime/src/agents/orchestration-runtime-blackboard.ts
   - openclaw_runtime/src/agents/orchestration-gates.ts
   - openclaw_runtime/src/agents/orchestration-resource-scheduler.ts
   - openclaw_runtime/src/agents/runbook-registry.ts
   - openclaw_runtime/src/agents/runbook-template.ts
   - openclaw_runtime/src/agents/runbook-task-graph.ts
+  - openclaw_runtime/src/agents/subagent-registry.types.ts
   - openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts
+  - openclaw_runtime/src/config/schema.help.ts
+  - openclaw_runtime/src/config/types.openclaw.ts
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
   - tests/unit/orchestration-blackboard.test.ts
   - tests/unit/orchestration-blackboard-verifier.test.ts
@@ -59,6 +67,9 @@ touchedAreas:
   - tests/unit/orchestration-result-bundle.test.ts
   - tests/unit/agent-steering-team-bundle.test.ts
   - tests/unit/orchestration-protocol-v3.test.ts
+  - tests/unit/handoff-artifacts.test.ts
+  - tests/unit/orchestration-runtime-blackboard.test.ts
+  - tests/integration/loop-stability-check.test.ts
 expectedUserBehavior:
   - Multi-role orchestration can share structured facts, claims, risks, questions, artifacts, handoffs, conflicts, and memory proposals.
   - Conflicting claims remain visible as conflict entries instead of being silently overwritten.
@@ -73,6 +84,7 @@ requiredRules:
   - comms-regression
   - workspace-harness-single-source
   - docs-sync
+  - system-maturity-status-gate
 forbiddenPatterns:
   - Synthesizer implementation
   - Role Catalog UI implementation
@@ -89,9 +101,12 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/role-first-p3-typed-blackboard.md --no-diff
   - pnpm harness validate --spec harness/specs/tasks/role-first-p3-typed-blackboard.md
   - pnpm exec vitest run tests/unit/orchestration-blackboard.test.ts tests/unit/orchestration-blackboard-verifier.test.ts tests/unit/orchestration-blackboard-trace.test.ts
+  - pnpm exec vitest run tests/unit/handoff-artifacts.test.ts tests/unit/orchestration-runtime-blackboard.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-protocol-v3.test.ts tests/unit/runbook-task-graph.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/integration/loop-stability-check.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/complexity-gate.test.ts tests/unit/runbook-template.test.ts tests/unit/runbook-task-graph.test.ts tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-gates.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-protocol-v3.test.ts
   - pnpm run comms:replay
   - pnpm run comms:compare
+  - node scripts/validate-system-maturity-plan.mjs
+  - node scripts/validate-orchestration-gap-status.mjs
 acceptance:
   - Blackboard entry validation covers fact, claim, question, risk, decision, artifact, conflict, handoff, and memory_proposal.
   - Validation rejects unknown roles, invalid confidence, missing required evidence, invalid visibility/status, unsafe permission fields, and direct memory writes.
@@ -101,6 +116,11 @@ acceptance:
   - Untrusted content is stored as data and marked with trust-boundary metadata.
   - Verifier evidence helpers read blackboard evidence without bypassing P0 gates.
   - Trace replay reconstructs blackboard history from append/update/conflict events.
+  - ORCH-002 handoffs use only successful terminal registry-backed worker output; output-schema-only injection is not accepted as success.
+  - Handoff artifacts are redacted, bounded, hashed, and bound to orchestration run, task graph, owner session, task, attempt, role, child run, and child session provenance.
+  - Missing, malformed, cross-run, cross-session, or identity-mismatched handoff output blocks dependent spawn instead of falling back to another session or synthetic content.
+  - Spawn and completion result bundles expose handoff artifacts, runtime blackboard projection records ready handoffs and rejected risks, and trace replay remains reconstructable without long-term memory writes.
+  - ORCH-002 can move to done only after fresh tests, validation evidence, two traceable commits, and status-gate success.
   - Existing P0, P1, and P2 tests remain green.
   - The implementation does not include P4/UI/open-chat/memory-persistence deliverables.
 docs:

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildRuntimeBlackboard } from '../../openclaw_runtime/src/agents/orchestration-runtime-blackboard';
 import type { OrchestrationResultBundle } from '../../openclaw_runtime/src/agents/orchestration-result-bundle';
+import { buildWorkerOutputHandoffArtifact } from '../../openclaw_runtime/src/agents/handoff-artifacts';
 
 function bundle(): OrchestrationResultBundle {
   return {
@@ -25,6 +26,38 @@ function bundle(): OrchestrationResultBundle {
         outputText: 'Implemented blackboard projection.',
       },
     ],
+    handoffArtifacts: [
+      buildWorkerOutputHandoffArtifact({
+        identity: {
+          orchestrationRunId: 'orch_runtime_bb',
+          taskGraphId: 'graph_runtime_bb',
+          ownerSessionKey: 'agent:main:blackboard',
+          fromTaskId: 'impl-1',
+          fromRole: 'implementer',
+          toTaskId: 'test-1',
+          toRole: 'tester',
+          attempt: 1,
+          childRunId: 'run_impl',
+          childSessionKey: 'child_impl',
+        },
+        capture: { status: 'captured', output: 'Bounded implementation evidence.', capturedAt: 1, source: 'injected_test_capture' },
+      }),
+      buildWorkerOutputHandoffArtifact({
+        identity: {
+          orchestrationRunId: 'orch_runtime_bb',
+          taskGraphId: 'graph_runtime_bb',
+          ownerSessionKey: 'agent:main:blackboard',
+          fromTaskId: 'test-1',
+          fromRole: 'tester',
+          toTaskId: 'plan-1',
+          toRole: 'planner',
+          attempt: 1,
+          childRunId: 'run_test',
+          childSessionKey: 'child_test',
+        },
+        capture: { status: 'unavailable', reason: 'identity-mismatch' },
+      }),
+    ],
     artifacts: [],
     evidenceRefs: [{ type: 'trace', ref: 'trace:impl', roleName: 'implementer', taskId: 'impl-1' }],
     permissionEvents: [],
@@ -43,14 +76,14 @@ describe('runtime orchestration blackboard projection', () => {
       now: '2026-07-08T00:00:00.000Z',
     });
 
-    expect(result.state.entries.map((entry) => entry.type)).toEqual(['claim', 'risk']);
+    expect(result.state.entries.map((entry) => entry.type)).toEqual(['handoff', 'risk', 'claim', 'risk']);
     expect(result.summary).toMatchObject({
-      entryCount: 2,
-      openRisks: 1,
+      entryCount: 4,
+      openRisks: 2,
       unresolvedConflicts: 0,
       trustBoundaries: ['role-output'],
     });
-    expect(result.traceEvents).toHaveLength(2);
+    expect(result.traceEvents).toHaveLength(4);
     expect(result.state.entries.every((entry) => entry.trustBoundary === 'role-output')).toBe(true);
     expect(JSON.stringify(result.state.entries)).not.toContain('"tools"');
     expect(JSON.stringify(result.state.entries)).not.toContain('"permissions"');

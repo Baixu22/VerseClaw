@@ -47,6 +47,7 @@ describe("runbook to task graph conversion", () => {
       graphRunId: "runbook-test-repair-1",
       knownRoleNames: [...knownRoleNames],
       selectionTrace: selection,
+      includeHandoffEdges: true,
     });
 
     const verifier = taskGraphVerifierNode(result.graph);
@@ -58,8 +59,13 @@ describe("runbook to task graph conversion", () => {
     expect(result.graph.edges).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ from: "test-repair-diagnose", to: "test-repair-repair", type: "dependency" }),
+        expect.objectContaining({ from: "test-repair-diagnose", to: "test-repair-repair", type: "handoff" }),
+        expect.objectContaining({ from: "test-repair-repair", to: "test-repair-verify", type: "handoff" }),
         expect.objectContaining({ from: "test-repair-verify", to: "test-repair-review", type: "verification" }),
       ]),
+    );
+    expect(result.graph.edges).not.toContainEqual(
+      expect.objectContaining({ to: "test-repair-review", type: "handoff" }),
     );
     expect(result.trace.unselected.length).toBeGreaterThan(0);
   });

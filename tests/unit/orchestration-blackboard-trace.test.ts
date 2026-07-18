@@ -139,6 +139,7 @@ describe('orchestration blackboard trace replay', () => {
           status: 'completed',
           evidenceRefs: [{ type: 'trace', ref: 'trace:impl-replay' }],
         }],
+        handoffArtifacts: [],
         artifacts: [],
         evidenceRefs: [{ type: 'trace', ref: 'trace:impl-replay' }],
         permissionEvents: [],

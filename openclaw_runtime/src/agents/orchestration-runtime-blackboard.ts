@@ -50,6 +50,73 @@ export function buildRuntimeBlackboard(input: RuntimeBlackboardInput): RuntimeBl
   const traceEvents: BlackboardTraceEvent[] = [];
   const knownRoles = [...new Set([...input.knownRoleNames, ...input.resultBundle.selectedRoles, input.resultBundle.leadRole])];
 
+  for (const artifact of input.resultBundle.handoffArtifacts) {
+    const appended = appendBlackboardEntry(
+      state,
+      artifact.state === "ready"
+        ? {
+            id: blackboardId("bb", artifact.artifactId),
+            type: "handoff",
+            authorRole: artifact.fromRole,
+            taskId: artifact.toTaskId,
+            content: {
+              fromRole: artifact.fromRole,
+              toRole: artifact.toRole,
+              summary: `Bounded predecessor output captured for ${artifact.toTaskId}.`,
+              artifactId: artifact.artifactId,
+              fromTaskId: artifact.fromTaskId,
+              toTaskId: artifact.toTaskId,
+              childRunId: artifact.childRunId,
+              childSessionKey: artifact.childSessionKey,
+              attempt: artifact.attempt,
+              outputSha256: artifact.outputSha256,
+              redacted: artifact.redacted,
+              truncated: artifact.truncated,
+              outputPreview: artifact.outputText.slice(0, 240),
+            },
+            confidence: 0.9,
+            evidenceRefs: [artifact.artifactId, artifact.childRunId],
+            visibility: "role",
+            status: "resolved",
+            trustBoundary: "role-output",
+          }
+        : {
+            id: blackboardId("bb", artifact.artifactId, "rejected"),
+            type: "risk",
+            authorRole: artifact.fromRole,
+            taskId: artifact.toTaskId,
+            content: {
+              subject: "handoff output rejected",
+              artifactId: artifact.artifactId,
+              fromRole: artifact.fromRole,
+              toRole: artifact.toRole,
+              fromTaskId: artifact.fromTaskId,
+              toTaskId: artifact.toTaskId,
+              childRunId: artifact.childRunId,
+              childSessionKey: artifact.childSessionKey,
+              attempt: artifact.attempt,
+              reason: artifact.reason,
+            },
+            confidence: 0.95,
+            evidenceRefs: [artifact.artifactId, artifact.childRunId],
+            visibility: "verifier",
+            status: "open",
+            trustBoundary: "role-output",
+          },
+      knownRoles,
+      input.now,
+    );
+    state = appended.state;
+    if (appended.entry) {
+      traceEvents.push({
+        sequence: traceEvents.length + 1,
+        kind: "append",
+        occurredAt: input.now,
+        entry: appended.entry,
+      });
+    }
+  }
+
   for (const outcome of input.resultBundle.roleOutcomes) {
     const evidenceRefs = outcome.evidenceRefs.map((ref) => ref.ref);
     const appended = appendBlackboardEntry(

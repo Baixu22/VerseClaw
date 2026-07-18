@@ -26,6 +26,7 @@ export type BuildTaskGraphFromRunbookInput = {
   selectionTrace?: RunbookSelectionResult;
   /** Optional file scope; applied only to writer-like runbook nodes. */
   fileHints?: readonly string[];
+  includeHandoffEdges?: boolean;
 };
 
 function phaseForRunbookNode(node: RunbookTemplateNode): OrchestrationTaskNodePhase {
@@ -58,16 +59,23 @@ function prefixedNodeId(template: RunbookTemplate, nodeId: string): string {
   return `${template.id}-${nodeId}`;
 }
 
-function buildEdges(nodes: readonly OrchestrationTaskNode[]): OrchestrationTaskEdge[] {
-  return nodes.flatMap((node) =>
-    node.dependsOn.map((dependency) => ({
+function buildEdges(
+  nodes: readonly OrchestrationTaskNode[],
+  includeHandoffEdges: boolean,
+): OrchestrationTaskEdge[] {
+  return nodes.flatMap((node) => node.dependsOn.flatMap((dependency) => {
+    const type = node.isVerifier || node.phase === "verification" || node.phase === "review"
+      ? "verification"
+      : "dependency";
+    const dependencyEdge = {
       from: dependency,
       to: node.taskNodeId,
-      type: node.isVerifier || node.phase === "verification" || node.phase === "review"
-        ? "verification"
-        : "dependency",
-    } satisfies OrchestrationTaskEdge))
-  );
+      type,
+    } satisfies OrchestrationTaskEdge;
+    return includeHandoffEdges && !node.isVerifier
+      ? [dependencyEdge, { from: dependency, to: node.taskNodeId, type: "handoff" as const }]
+      : [dependencyEdge];
+  }));
 }
 
 function selectedTrace(params: {
@@ -137,7 +145,7 @@ export function buildTaskGraphFromRunbook(
       mode: "staged",
       status: "planned",
       nodes,
-      edges: buildEdges(nodes),
+      edges: buildEdges(nodes, input.includeHandoffEdges === true),
     },
     trace: selectedTrace({ template: input.template, selectionTrace: input.selectionTrace }),
   };

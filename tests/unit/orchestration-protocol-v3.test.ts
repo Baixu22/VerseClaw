@@ -39,6 +39,7 @@ import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator
 import {
   extractFollowupCandidates,
   extractMemoryCandidates,
+  buildTaskGraph,
   normalizeWorkerCommunication,
   recommendRepairAction,
   scoreWorkerQuality,
@@ -182,6 +183,48 @@ describe('role-first orchestration v3 protocol', () => {
         expect.objectContaining({ roleName: 'planner', missing: expect.arrayContaining(['code-change']) }),
       ]),
     );
+  });
+
+  it('adds handoff edges for every non-verifier worker dependency', () => {
+    const graph = buildTaskGraph({
+      graphRunId: 'graph_handoff',
+      mode: 'lead-workers',
+      graphMode: 'staged',
+      workers: [
+        { roleName: 'planner', task: 'plan' },
+        { roleName: 'implementer', task: 'implement' },
+        { roleName: 'tester', task: 'test' },
+        { roleName: 'reviewer', task: 'review' },
+      ],
+      verifierRole: 'skeptic',
+      requiredCapabilities: [],
+      includeHandoffEdges: true,
+    });
+
+    expect(graph.edges).toEqual(expect.arrayContaining([
+      expect.objectContaining({ from: 'planner-1', to: 'implementer-1', type: 'handoff' }),
+      expect.objectContaining({ from: 'implementer-1', to: 'tester-1', type: 'handoff' }),
+      expect.objectContaining({ from: 'tester-1', to: 'reviewer-1', type: 'handoff' }),
+    ]));
+    expect(graph.edges).not.toContainEqual(expect.objectContaining({ to: 'skeptic-1', type: 'handoff' }));
+  });
+
+  it('keeps task graph handoff edges absent when the pilot is not enabled', () => {
+    const graph = buildTaskGraph({
+      graphRunId: 'graph_handoff_off',
+      mode: 'lead-workers',
+      graphMode: 'staged',
+      workers: [
+        { roleName: 'planner', task: 'plan' },
+        { roleName: 'implementer', task: 'implement' },
+      ],
+      requiredCapabilities: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({ from: 'planner-1', to: 'implementer-1', type: 'dependency' }),
+    );
+    expect(graph.edges.some((edge) => edge.type === 'handoff')).toBe(false);
   });
 
   it('normalizes bounded A2A as a recorded request while team_orchestrate keeps effective communication closed', async () => {

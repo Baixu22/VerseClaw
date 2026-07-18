@@ -463,6 +463,9 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           orchestrationRunId,
           plan: result.plan,
           resultBundle: result.resultBundle,
+          handoffMode: result.handoffMode,
+          handoffState: result.handoffState,
+          handoffArtifacts: result.handoffArtifacts,
 
           blackboardState: result.blackboardState,
           blackboardSummary: result.blackboardSummary,

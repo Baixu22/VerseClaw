@@ -4,6 +4,7 @@ import {
   buildSpawnPhaseResultBundle,
   renderOrchestrationResultBundleForPrompt,
 } from '../../openclaw_runtime/src/agents/orchestration-result-bundle';
+import { buildWorkerOutputHandoffArtifact } from '../../openclaw_runtime/src/agents/handoff-artifacts';
 
 describe('orchestration result bundle', () => {
   it('builds a spawn-phase bundle with task graph, outcomes, failures, and trace refs', () => {
@@ -12,6 +13,26 @@ describe('orchestration result bundle', () => {
       taskGraphId: 'graph_p0',
       leadRole: 'planner',
       selectedRoles: ['tester', 'reviewer'],
+      handoffArtifacts: [buildWorkerOutputHandoffArtifact({
+        identity: {
+          orchestrationRunId: 'orch_p0',
+          taskGraphId: 'graph_p0',
+          ownerSessionKey: 'agent:main:bundle',
+          fromTaskId: 'tester-1',
+          fromRole: 'tester',
+          toTaskId: 'reviewer-1',
+          toRole: 'reviewer',
+          attempt: 1,
+          childRunId: 'run_worker',
+          childSessionKey: 'child_worker',
+        },
+        capture: {
+          status: 'captured',
+          output: 'Verified predecessor output.',
+          capturedAt: 1,
+          source: 'injected_test_capture',
+        },
+      })],
       traceIds: ['trace_p0'],
       outcomes: [{
         roleName: 'tester',
@@ -37,6 +58,7 @@ describe('orchestration result bundle', () => {
       traceIds: ['trace_p0'],
     });
     expect(bundle.roleOutcomes).toHaveLength(1);
+    expect(bundle.handoffArtifacts).toMatchObject([{ state: 'ready', fromTaskId: 'tester-1', toTaskId: 'reviewer-1' }]);
     expect(bundle.failures[0]).toMatchObject({ roleName: 'reviewer', status: 'forbidden' });
   });
 
@@ -92,6 +114,7 @@ describe('orchestration result bundle', () => {
       leadRole: 'planner',
       selectedRoles: ['tester'],
       roleOutcomes: [],
+      handoffArtifacts: [],
       artifacts: [],
       evidenceRefs: [],
       permissionEvents: [],

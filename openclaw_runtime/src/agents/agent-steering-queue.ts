@@ -30,6 +30,11 @@ import {
   type GateResult,
 } from "./orchestration-gates.js";
 import { buildVerifierReport } from "./orchestration-verifier-report.js";
+import {
+  buildWorkerOutputHandoffArtifact,
+  type HandoffOutputCapture,
+  type WorkerOutputHandoffArtifact,
+} from "./handoff-artifacts.js";
 
 // Steering queue utilities for delivering completed subagent results back into
 // the requester session. Items are leased before injection to avoid duplicate
@@ -326,6 +331,7 @@ function roleOutcomeFromItem(item: AgentSteeringQueueItem): RoleOutcomeBundle {
     task: item.payload.task,
     phase: itemMeta?.phase === "verifier" ? "verifier" : "worker",
     ...(taskId ? { taskId } : {}),
+    ...(itemMeta?.taskNodeId ? { taskNodeId: itemMeta.taskNodeId } : {}),
     ...(itemMeta?.roleInstanceId ? { roleInstanceId: itemMeta.roleInstanceId } : {}),
     attempt: itemMeta?.attempt ?? 1,
     status: roleOutcomeStatus(item),
@@ -348,6 +354,74 @@ function roleOutcomeFromItem(item: AgentSteeringQueueItem): RoleOutcomeBundle {
   };
 }
 
+function buildCompletionHandoffArtifacts(
+  items: readonly AgentSteeringQueueItem[],
+): WorkerOutputHandoffArtifact[] {
+  const meta = items[0]?.payload.orchestration;
+  const graph = meta?.taskGraph;
+  const ownerSessionKey = items[0]?.payload.requesterSessionKey;
+  if (meta?.handoffArtifactsMode !== "on" || !graph || !ownerSessionKey) return [];
+
+  return graph.edges.flatMap((edge) => {
+    if (edge.type !== "handoff") return [];
+    const fromNode = graph.nodes.find((node) => node.taskNodeId === edge.from);
+    const toNode = graph.nodes.find((node) => node.taskNodeId === edge.to);
+    const item = items.find((candidate) => {
+      const candidateMeta = candidate.payload.orchestration;
+      return (
+        candidate.payload.requesterSessionKey === ownerSessionKey &&
+        candidateMeta?.orchestrationRunId === meta.orchestrationRunId &&
+        (candidateMeta.taskNodeId ?? candidateMeta.taskId) === edge.from
+      );
+    });
+    if (!fromNode || !toNode || !item) return [];
+
+    const itemMeta = item.payload.orchestration;
+    const identityMatches =
+      itemMeta?.roleName === fromNode.roleName &&
+      (itemMeta.graphRunId ?? itemMeta.taskGraph?.graphRunId) === graph.graphRunId;
+    const terminalSuccess =
+      typeof item.entry.endedAt === "number" && item.payload.outcome?.status === "ok";
+    const output = selectResultText(item.payload);
+    let capture: HandoffOutputCapture;
+    if (!identityMatches) {
+      capture = { status: "unavailable", reason: "identity-mismatch" };
+    } else if (!terminalSuccess) {
+      capture = { status: "unavailable", reason: "run-not-terminal" };
+    } else if (!output) {
+      capture = { status: "unavailable", reason: "missing-output" };
+    } else {
+      capture = {
+        status: "captured",
+        output,
+        capturedAt:
+          item.entry.completion?.capturedAt ??
+          item.entry.completion?.fallbackCapturedAt ??
+          item.payload.endedAt ??
+          item.entry.endedAt ??
+          item.entry.createdAt,
+        source: "completion_delivery_payload",
+      };
+    }
+    return [buildWorkerOutputHandoffArtifact({
+      identity: {
+        orchestrationRunId: meta.orchestrationRunId,
+        taskGraphId: graph.graphRunId,
+        ownerSessionKey,
+        fromTaskId: fromNode.taskNodeId,
+        fromRole: fromNode.roleName,
+        fromRoleInstanceId: itemMeta?.roleInstanceId,
+        toTaskId: toNode.taskNodeId,
+        toRole: toNode.roleName,
+        attempt: itemMeta?.attempt ?? 1,
+        childRunId: item.payload.childRunId,
+        childSessionKey: item.payload.childSessionKey,
+      },
+      capture,
+    })];
+  });
+}
+
 function buildCompletionBundleForTeam(params: {
   items: readonly AgentSteeringQueueItem[];
   workers: readonly AgentSteeringQueueItem[];
@@ -361,6 +435,7 @@ function buildCompletionBundleForTeam(params: {
 } {
   const meta = params.items[0]?.payload.orchestration;
   const roleOutcomes = [...params.workers, ...(params.verifier ? [params.verifier] : [])].map(roleOutcomeFromItem);
+  const handoffArtifacts = buildCompletionHandoffArtifacts(params.items);
   const verifierReport = verifierReportFor(params.verifier);
   const bundle = buildCompletionPhaseResultBundle({
     orchestrationRunId: meta?.orchestrationRunId ?? "unknown",
@@ -368,6 +443,7 @@ function buildCompletionBundleForTeam(params: {
     leadRole: meta?.leadRole ?? "unknown",
     selectedRoles: [...new Set(roleOutcomes.map((outcome) => outcome.roleName))],
     roleOutcomes,
+    handoffArtifacts,
     evidenceRefs: roleOutcomes.flatMap((outcome) => outcome.evidenceRefs),
     failures: params.failures.map((item) => ({
       roleName: item.payload.orchestration?.roleName ?? item.payload.label ?? "unknown",

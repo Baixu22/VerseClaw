@@ -130,6 +130,7 @@ Bounded A2A means roles coordinate through structured blackboard entries. It doe
 P3 may support:
 
 - handoff entries from one role/task to another,
+- default-off runtime handoff projection that waits for a predecessor's successful terminal registry record, verifies run/session/task/attempt/role identity, and passes only redacted, bounded real output to a dependent worker,
 - question entries addressed to a role or verifier,
 - artifact references shared by visibility scope,
 - conflict entries for incompatible claims,
@@ -142,6 +143,8 @@ P3 must not support:
 - worker mutation of another worker's entry without versioned update rules,
 - hidden prompt channels derived from blackboard text,
 - permission transfer through handoff text.
+
+The runtime handoff pilot must fail closed. It must not substitute expected output schemas, the latest text from another session, synthetic success, or cross-run output when the verified predecessor completion is unavailable. Rejected handoffs remain visible as result-bundle/blackboard risk evidence, and the dependent worker is not spawned.
 
 ## 7. Trust And Prompt-Injection Boundary
 
@@ -166,6 +169,7 @@ P3 is accepted only when all of these pass:
 - Untrusted content tests prove prompt-injection text is stored as data and marked untrusted.
 - Verifier evidence tests prove verifier reads blackboard evidence refs without bypassing P0 gates.
 - Trace replay tests prove blackboard history can be reconstructed from append/update/conflict events.
+- Runtime handoff tests prove redaction, size bounds, provenance binding, dependent-spawn blocking, and two-run replay isolation.
 - Existing P0/P1/P2 tests remain green.
 - Harness validation for `role-first-p3-typed-blackboard` passes.
 

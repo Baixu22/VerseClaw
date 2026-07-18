@@ -386,6 +386,9 @@ describe('orchestrator.run handler', () => {
         schemaVersion: 1,
         phase: 'spawn',
       },
+      handoffMode: 'off',
+      handoffState: 'disabled',
+      handoffArtifacts: [],
       qualityDecision: {
         result: {
           state: 'shadow',
