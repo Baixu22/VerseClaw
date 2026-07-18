@@ -1,3 +1,4 @@
+import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import WebSocket from 'ws';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { getAllSettings } from '../utils/store';
@@ -317,6 +318,7 @@ export function createRemoteControlApi(): CompleteHostServiceRegistry['remoteCon
       }
     },
     screenshot: async (payload = {}) => {
+      await assertSensitiveCaptureAllowed('screenshot', typeof payload.grantId === 'string' ? payload.grantId : undefined);
       const format = payload.format ?? 'png';
       try {
         const target = await resolveTarget(payload);

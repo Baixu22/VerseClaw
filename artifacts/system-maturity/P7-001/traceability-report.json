@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-18T04:16:20.000Z",
+  "evaluatedAt": "2026-07-18T05:39:50.000Z",
   "ok": true,
   "summary": {
     "findingCount": 35,
@@ -18,7 +18,8 @@
     "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
     "globalEvidence": [
       "artifacts/system-maturity/P7-001/full-validation.json",
-      "artifacts/system-maturity/P7-002/security-regression-report.json"
+      "artifacts/system-maturity/P7-002/security-regression-report.json",
+      "artifacts/system-maturity/P7-003/full-validation.json"
     ],
     "reviewCycleDaysBySeverity": {
       "Critical": 14,
@@ -130,7 +131,7 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "4681bdc1f2036eab656401a33cca78f03e6e26e3d0549714805ec7e1b054b353",
+          "sha256": "2c13489225ab3103c8353f479cbdbfd6cb1b7bbb9f864be9cfe26cff9bb1f614",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -193,12 +194,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-01T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-01T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -281,7 +288,7 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "4681bdc1f2036eab656401a33cca78f03e6e26e3d0549714805ec7e1b054b353",
+          "sha256": "2c13489225ab3103c8353f479cbdbfd6cb1b7bbb9f864be9cfe26cff9bb1f614",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -308,12 +315,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-17T09:16:33.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-01T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-01T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -533,12 +546,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -623,12 +642,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -713,12 +738,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T05:12:30.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -808,12 +839,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -895,12 +932,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -979,12 +1022,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1081,12 +1130,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T06:34:42.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1185,12 +1240,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1261,12 +1322,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1337,12 +1404,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1414,12 +1487,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1497,12 +1576,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1577,12 +1662,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1648,12 +1739,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1688,9 +1785,14 @@
         "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/experience-block-bridge.test.ts",
         "pnpm exec vitest run tests/unit/memory-dual-gate-p3-003.test.ts",
         "pnpm exec vitest run tests/unit/logger-p5-003.test.ts",
-        "privacy data-flow review",
-        "OS permission E2E",
-        "sensitive capture retention test"
+        "pnpm maturity:privacy",
+        "pnpm exec vitest run tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-privacy-controls.md",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate",
+        "pnpm maturity:privacy:evidence"
       ],
       "acceptanceIds": [
         "P3-001:A1",
@@ -1729,7 +1831,12 @@
         "openclaw_runtime/src/memory/memory-store.ts",
         "tests/unit/memory-dual-gate-p3-003.test.ts",
         "electron/utils/logger.ts",
-        "tests/unit/logger-p5-003.test.ts"
+        "tests/unit/logger-p5-003.test.ts",
+        "electron/services/sensitive-capture-gate.ts",
+        "electron/utils/store.ts",
+        "src/components/common/ErrorBoundary.tsx",
+        "tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "harness/specs/tasks/system-maturity-privacy-controls.md"
       ],
       "evidence": [
         {
@@ -1823,16 +1930,184 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt",
+          "sha256": "0904677f9943b2ddc4e2718b6c021070593705a9af4cd50d60697a75ac451008",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/privacy-validate.stdout.txt",
+          "sha256": "62644076327ab24514cc3432ec2d13fc20f30de12db0ce6becca0b0ff6091881",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/harness-task.stdout.txt",
+          "sha256": "3b25a36538bdaa6004c23c669ef05aae8fc66e5d32ef8fc1f5510f745ac91c05",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/lint-check.stdout.txt",
+          "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/typecheck.stdout.txt",
+          "sha256": "1401fcd4bd2408258afd0c9483c35b036c4d4191bfee9ca1471c81c8ddf7c6ba",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/unit-full.stdout.txt",
+          "sha256": "acabda94ba1813cffbb28ce6602565e227b9bb184a2aa5ec7c7fcebb4b32efca",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "16b7e0d5eeb03f28c04dd053110afbb6145bb2057d13c0adbd4246295465f721",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/privacy-data-flow-inventory.json",
+          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/sensitive-capture-policy.ts",
+          "sha256": "6541aceeb2fbcff6da60e7d3f72849bf56cd8ccf7620475731443cd8c9fab7c0",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/ui-error-sanitize.ts",
+          "sha256": "f961bb710d797ab75efe88f5fb84bfe830f5fb21daf84767ac2000c593cd9135",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/sensitive-capture-gate.ts",
+          "sha256": "932a3bd6156363222ee9b4c0023e979bc5538a977a78114fae17d21e0cb73c72",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-privacy.mjs",
+          "sha256": "fc85d84f82df86201e9c7b12b054bec3e93450d47077dd93d84681b8448496fa",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-privacy.mjs",
+          "sha256": "60bc45b2f10ad3aabb47b3e6a22fbae17d0177bf6e0607e719f748047db71ba6",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/collect-p7-003-evidence.mjs",
+          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-privacy-p7-003.test.ts",
+          "sha256": "d42ba88eca656b94d18c2e172cde40f35887460dc77c5ba9df79544692c1653c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
+          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "src/components/common/ErrorBoundary.tsx",
+          "sha256": "42208bd352c26c068cf26945829d46110edc6c506c19582df41ea65ed48a2153",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "2c13489225ab3103c8353f479cbdbfd6cb1b7bbb9f864be9cfe26cff9bb1f614",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/remote-control-api.ts",
+          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/gateway-api.ts",
+          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/store.ts",
+          "sha256": "cd9087bd0d80ed2d0dd7d2622b3f3dba275593c94218be7e11e2e5496b309214",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/evidence-manifest.json",
+          "sha256": "2f4010a5559411920a46757c8eb3469788115b8ec30232a51f78b04513f5640c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/acceptance-matrix.json",
+          "sha256": "e3cc53029c090dea93894cf07cebff4142759f0877efd8f671d684b4283a22f7",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:21:18.675Z",
+      "latestEvidenceAt": "2026-07-18T06:50:28.367Z",
+      "nextReviewAt": "2026-08-17T06:50:28.367Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2032,12 +2307,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2111,12 +2392,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2223,12 +2510,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:18:47.977Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2398,12 +2691,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2715,12 +3014,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2844,7 +3149,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3056,12 +3361,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:37:47.997Z",
-      "nextReviewAt": "2026-08-17T05:37:47.997Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3175,7 +3486,7 @@
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "cba303b4a40a75184de685c517a26cd50bf3ab763f984d9ba70243b97e99ea3c",
+          "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -3277,7 +3588,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3325,7 +3636,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -3537,12 +3848,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:37:47.997Z",
-      "nextReviewAt": "2026-09-16T05:37:47.997Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3639,7 +3956,7 @@
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "cba303b4a40a75184de685c517a26cd50bf3ab763f984d9ba70243b97e99ea3c",
+          "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -3681,7 +3998,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -3792,12 +4109,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T01:27:51.000Z",
-      "latestEvidenceAt": "2026-07-18T04:57:53.801Z",
-      "nextReviewAt": "2026-08-17T04:57:53.801Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3864,18 +4187,24 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
     {
       "id": "F-UX-002",
-      "status": "Open",
+      "status": "Fixed",
       "severity": "Low",
       "owner": "privacy-governance",
       "owners": [
@@ -3891,9 +4220,14 @@
         "T-UX-002"
       ],
       "testCommands": [
-        "privacy data-flow review",
-        "OS permission E2E",
-        "sensitive capture retention test"
+        "pnpm maturity:privacy",
+        "pnpm exec vitest run tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-privacy-controls.md",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate",
+        "pnpm maturity:privacy:evidence"
       ],
       "acceptanceIds": [
         "P7-003:A1",
@@ -3901,7 +4235,13 @@
         "P7-003:A3"
       ],
       "codePaths": [
-        "src/App.tsx"
+        "src/App.tsx",
+        "shared/host-api/contract.ts",
+        "electron/services/sensitive-capture-gate.ts",
+        "electron/utils/store.ts",
+        "src/components/common/ErrorBoundary.tsx",
+        "tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "harness/specs/tasks/system-maturity-privacy-controls.md"
       ],
       "evidence": [
         {
@@ -3911,16 +4251,184 @@
           "kind": "frozen-audit"
         },
         {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt",
+          "sha256": "0904677f9943b2ddc4e2718b6c021070593705a9af4cd50d60697a75ac451008",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/privacy-validate.stdout.txt",
+          "sha256": "62644076327ab24514cc3432ec2d13fc20f30de12db0ce6becca0b0ff6091881",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/harness-task.stdout.txt",
+          "sha256": "3b25a36538bdaa6004c23c669ef05aae8fc66e5d32ef8fc1f5510f745ac91c05",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/lint-check.stdout.txt",
+          "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/typecheck.stdout.txt",
+          "sha256": "1401fcd4bd2408258afd0c9483c35b036c4d4191bfee9ca1471c81c8ddf7c6ba",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/unit-full.stdout.txt",
+          "sha256": "acabda94ba1813cffbb28ce6602565e227b9bb184a2aa5ec7c7fcebb4b32efca",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "16b7e0d5eeb03f28c04dd053110afbb6145bb2057d13c0adbd4246295465f721",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/privacy-data-flow-inventory.json",
+          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/sensitive-capture-policy.ts",
+          "sha256": "6541aceeb2fbcff6da60e7d3f72849bf56cd8ccf7620475731443cd8c9fab7c0",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/ui-error-sanitize.ts",
+          "sha256": "f961bb710d797ab75efe88f5fb84bfe830f5fb21daf84767ac2000c593cd9135",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/sensitive-capture-gate.ts",
+          "sha256": "932a3bd6156363222ee9b4c0023e979bc5538a977a78114fae17d21e0cb73c72",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-privacy.mjs",
+          "sha256": "fc85d84f82df86201e9c7b12b054bec3e93450d47077dd93d84681b8448496fa",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-privacy.mjs",
+          "sha256": "60bc45b2f10ad3aabb47b3e6a22fbae17d0177bf6e0607e719f748047db71ba6",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/collect-p7-003-evidence.mjs",
+          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-privacy-p7-003.test.ts",
+          "sha256": "d42ba88eca656b94d18c2e172cde40f35887460dc77c5ba9df79544692c1653c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
+          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "src/components/common/ErrorBoundary.tsx",
+          "sha256": "42208bd352c26c068cf26945829d46110edc6c506c19582df41ea65ed48a2153",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "2c13489225ab3103c8353f479cbdbfd6cb1b7bbb9f864be9cfe26cff9bb1f614",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/remote-control-api.ts",
+          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/gateway-api.ts",
+          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/store.ts",
+          "sha256": "cd9087bd0d80ed2d0dd7d2622b3f3dba275593c94218be7e11e2e5496b309214",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/evidence-manifest.json",
+          "sha256": "2f4010a5559411920a46757c8eb3469788115b8ec30232a51f78b04513f5640c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/acceptance-matrix.json",
+          "sha256": "e3cc53029c090dea93894cf07cebff4142759f0877efd8f671d684b4283a22f7",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 90,
-      "latestSourceAt": "2026-07-14T18:05:47.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-10-16T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:21:18.675Z",
+      "latestEvidenceAt": "2026-07-18T06:50:28.367Z",
+      "nextReviewAt": "2026-10-16T06:50:28.367Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4136,12 +4644,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4264,12 +4778,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4482,12 +5002,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T05:39:50.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4552,12 +5078,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4629,12 +5161,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestSourceAt": "2026-07-18T06:01:28.533Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4670,9 +5208,10 @@
         "pnpm run typecheck",
         "pnpm test",
         "pnpm maturity:validate",
-        "privacy data-flow review",
-        "OS permission E2E",
-        "sensitive capture retention test"
+        "pnpm maturity:privacy",
+        "pnpm exec vitest run tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-privacy-controls.md",
+        "pnpm maturity:privacy:evidence"
       ],
       "acceptanceIds": [
         "P3-004:A1",
@@ -4701,7 +5240,13 @@
         "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
         ".github/workflows/system-maturity-security.yml",
         "harness/specs/rules/system-maturity-security-regression.md",
-        "harness/specs/tasks/system-maturity-security-regression.md"
+        "harness/specs/tasks/system-maturity-security-regression.md",
+        "shared/host-api/contract.ts",
+        "electron/services/sensitive-capture-gate.ts",
+        "electron/utils/store.ts",
+        "src/components/common/ErrorBoundary.tsx",
+        "tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "harness/specs/tasks/system-maturity-privacy-controls.md"
       ],
       "evidence": [
         {
@@ -4819,6 +5364,168 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt",
+          "sha256": "0904677f9943b2ddc4e2718b6c021070593705a9af4cd50d60697a75ac451008",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/privacy-validate.stdout.txt",
+          "sha256": "62644076327ab24514cc3432ec2d13fc20f30de12db0ce6becca0b0ff6091881",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/harness-task.stdout.txt",
+          "sha256": "3b25a36538bdaa6004c23c669ef05aae8fc66e5d32ef8fc1f5510f745ac91c05",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/lint-check.stdout.txt",
+          "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/typecheck.stdout.txt",
+          "sha256": "1401fcd4bd2408258afd0c9483c35b036c4d4191bfee9ca1471c81c8ddf7c6ba",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/unit-full.stdout.txt",
+          "sha256": "acabda94ba1813cffbb28ce6602565e227b9bb184a2aa5ec7c7fcebb4b32efca",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "16b7e0d5eeb03f28c04dd053110afbb6145bb2057d13c0adbd4246295465f721",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/privacy-data-flow-inventory.json",
+          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/sensitive-capture-policy.ts",
+          "sha256": "6541aceeb2fbcff6da60e7d3f72849bf56cd8ccf7620475731443cd8c9fab7c0",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/privacy/ui-error-sanitize.ts",
+          "sha256": "f961bb710d797ab75efe88f5fb84bfe830f5fb21daf84767ac2000c593cd9135",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/sensitive-capture-gate.ts",
+          "sha256": "932a3bd6156363222ee9b4c0023e979bc5538a977a78114fae17d21e0cb73c72",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-privacy.mjs",
+          "sha256": "fc85d84f82df86201e9c7b12b054bec3e93450d47077dd93d84681b8448496fa",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-privacy.mjs",
+          "sha256": "60bc45b2f10ad3aabb47b3e6a22fbae17d0177bf6e0607e719f748047db71ba6",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/collect-p7-003-evidence.mjs",
+          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-privacy-p7-003.test.ts",
+          "sha256": "d42ba88eca656b94d18c2e172cde40f35887460dc77c5ba9df79544692c1653c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
+          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "src/components/common/ErrorBoundary.tsx",
+          "sha256": "42208bd352c26c068cf26945829d46110edc6c506c19582df41ea65ed48a2153",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "2c13489225ab3103c8353f479cbdbfd6cb1b7bbb9f864be9cfe26cff9bb1f614",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/agent-browser-api.ts",
+          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/remote-control-api.ts",
+          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/gateway-api.ts",
+          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/store.ts",
+          "sha256": "cd9087bd0d80ed2d0dd7d2622b3f3dba275593c94218be7e11e2e5496b309214",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/evidence-manifest.json",
+          "sha256": "2f4010a5559411920a46757c8eb3469788115b8ec30232a51f78b04513f5640c",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/acceptance-matrix.json",
+          "sha256": "e3cc53029c090dea93894cf07cebff4142759f0877efd8f671d684b4283a22f7",
+          "taskId": "P7-003",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
@@ -4840,12 +5547,18 @@
             "F-SEC-006",
             "F-SUPPLY-001"
           ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:18:46.757Z",
-      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
-      "nextReviewAt": "2026-08-17T05:34:54.818Z",
+      "latestSourceAt": "2026-07-18T06:21:18.675Z",
+      "latestEvidenceAt": "2026-07-18T06:50:28.367Z",
+      "nextReviewAt": "2026-08-17T06:50:28.367Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4908,12 +5621,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-09-16T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-09-16T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5095,12 +5814,18 @@
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "c89a42f3193775b98fb62ef0cf924ea497b608970d556a12c6a72413ec43f0da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T00:43:36.000Z",
-      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
-      "nextReviewAt": "2026-08-17T04:16:20.000Z",
+      "latestEvidenceAt": "2026-07-18T06:41:02.719Z",
+      "nextReviewAt": "2026-08-17T06:41:02.719Z",
       "freshness": "fresh",
       "failures": []
     }

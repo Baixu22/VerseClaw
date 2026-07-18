@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-18T05:38:56.910Z",
+  "checkedAt": "2026-07-18T06:51:47.044Z",
   "ok": true,
   "taskCount": 34,
   "statusFileCount": 8,
@@ -64,6 +64,7 @@
     "A3 P6-005 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-005.delivery.md)",
     "A3 P7-001 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-001.delivery.md)",
     "A3 P7-002 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-002.delivery.md)",
+    "A3 P7-003 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-003.delivery.md)",
     "task Finding refs resolve against findings-registry"
   ]
 }

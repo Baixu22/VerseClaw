@@ -1,11 +1,12 @@
 /**
  * Error Boundary Component
- * Catches and displays errors in the component tree
+ * Catches and displays errors in the component tree without stack/secret leakage.
  */
 import { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { sanitizeUiErrorText } from '@shared/privacy/ui-error-sanitize';
 
 interface Props {
   children: ReactNode;
@@ -14,33 +15,39 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error: Error | null;
+  safeMessage: string | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, safeMessage: null };
   }
-  
+
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return {
+      hasError: true,
+      safeMessage: sanitizeUiErrorText(error),
+    };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    // Keep diagnostics in developer console only — never re-render stack/secret content.
+    console.error('Error caught by boundary:', sanitizeUiErrorText(error), {
+      componentStack: errorInfo.componentStack ? '[omitted-from-ui]' : undefined,
+    });
   }
-  
+
   handleReset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, safeMessage: null });
   };
-  
+
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-      
+
       return (
         <div className="flex h-full items-center justify-center p-6">
           <Card className="max-w-md">
@@ -54,9 +61,9 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {this.state.error && (
+              {this.state.safeMessage && (
                 <pre className="rounded-lg bg-surface-input p-4 text-sm overflow-auto max-h-40">
-                  {this.state.error.message}
+                  {this.state.safeMessage}
                 </pre>
               )}
               <Button onClick={this.handleReset} className="w-full">
@@ -68,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-    
+
     return this.props.children;
   }
 }

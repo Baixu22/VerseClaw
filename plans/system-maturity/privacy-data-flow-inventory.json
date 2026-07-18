@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-003",
+  "program": "clawx-system-maturity",
+  "generatedFor": "privacy-data-flow-review",
+  "flows": [
+    {
+      "id": "DF-MODEL-INFERENCE",
+      "category": "model",
+      "source": "Renderer chat / agent runtime prompts",
+      "destination": "Configured AI provider endpoints (OpenAI/Anthropic/etc via Main secret broker)",
+      "dataClasses": ["prompt-text", "tool-results", "optional-attachments"],
+      "minimization": "Secrets redacted by transcript/SEKB policies before durable stores; raw provider traffic uses Main-owned keys",
+      "userControl": "Provider keys in Settings > AI Providers; session delete cascade",
+      "retention": "Provider-side per vendor policy; local transcripts subject to session hard-delete cascade",
+      "evidenceRefs": [
+        "shared/sensitive-content-boundary.ts",
+        "electron/services/secrets/secret-store.ts",
+        "plans/system-maturity/phase3-data-authority/tasks/P3-001.md"
+      ]
+    },
+    {
+      "id": "DF-OAUTH-DEVICE",
+      "category": "oauth",
+      "source": "OAuth / device-code provider login",
+      "destination": "Provider OAuth token endpoints and local OS keychain/secret store",
+      "dataClasses": ["oauth-code", "refresh-token", "access-token"],
+      "minimization": "Tokens stored via secret store; never rendered in ErrorBoundary or host-api responses",
+      "userControl": "Disconnect provider / clear credentials in Settings",
+      "retention": "Until user revocation or secret-store delete",
+      "evidenceRefs": [
+        "electron/utils/secure-storage.ts",
+        "electron/services/secrets/secret-store.ts"
+      ]
+    },
+    {
+      "id": "DF-MCP-TOOLS",
+      "category": "mcp",
+      "source": "MCP server tool invocations",
+      "destination": "Configured MCP server processes / remote MCP endpoints",
+      "dataClasses": ["tool-arguments", "workspace-paths", "tool-results"],
+      "minimization": "Host-api boundary + path broker; SEKB redaction on durable trajectory capture",
+      "userControl": "MCP enablement and server allowlist in Settings",
+      "retention": "Server-local; local trajectories redacted/cascade-deleted",
+      "evidenceRefs": [
+        "shared/mcp",
+        "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-003.md"
+      ]
+    },
+    {
+      "id": "DF-UPDATE-TELEMETRY",
+      "category": "update",
+      "source": "Auto-update feed checks and download integrity",
+      "destination": "Pinned update feed hosts + local download cache",
+      "dataClasses": ["app-version", "platform", "download-checksums"],
+      "minimization": "No chat content; feed must pass integrity/provenance gates",
+      "userControl": "Update channel / auto-download settings",
+      "retention": "Installer artifacts until replaced; feed metadata ephemeral",
+      "evidenceRefs": [
+        "plans/system-maturity/phase6-supply-release/tasks/P6-002.md",
+        "plans/system-maturity/phase6-supply-release/tasks/P6-004.md",
+        "electron/utils/store.ts"
+      ]
+    },
+    {
+      "id": "DF-SENSITIVE-CAPTURE",
+      "category": "sensitive-capture",
+      "source": "Clipboard write, agent-browser/remote-control screenshots, desktop automation",
+      "destination": "Local OS clipboard / local screenshot artifacts under userData (session-scoped)",
+      "dataClasses": ["clipboard-text", "screenshot-png", "automation-diagnostics"],
+      "minimization": "Sensitive capture policy kill switch + per-channel enable/grant + retention max hours",
+      "userControl": "sensitiveCapturePolicy killSwitch and channel toggles",
+      "retention": "Bounded by retentionMaxHours; session cascade for browser artifacts",
+      "evidenceRefs": [
+        "shared/privacy/sensitive-capture-policy.ts",
+        "electron/services/agent-browser-service.ts",
+        "electron/services/remote-control-api.ts",
+        "electron/services/gateway-api.ts"
+      ]
+    },
+    {
+      "id": "DF-UI-TELEMETRY",
+      "category": "telemetry",
+      "source": "Renderer UI metrics",
+      "destination": "Local in-memory history + optional install/report when telemetryEnabled",
+      "dataClasses": ["ui-event-names", "durations", "non-secret counters"],
+      "minimization": "Local-only by default; telemetryEnabled setting; no secret fields in trackUiEvent contract",
+      "userControl": "telemetryEnabled setting",
+      "retention": "In-memory ring (500 entries) until process exit",
+      "evidenceRefs": [
+        "src/lib/telemetry.ts",
+        "electron/utils/telemetry.ts",
+        "electron/utils/store.ts"
+      ]
+    }
+  ],
+  "requiredCategories": ["model", "oauth", "mcp", "update", "sensitive-capture", "telemetry"]
+}
