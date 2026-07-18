@@ -12,6 +12,11 @@ function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
+export function canonicalReleaseConfigText(value) {
+  const text = String(value).replace(/^\uFEFF/u, '').replace(/\r\n?/gu, '\n');
+  return text.endsWith('\n') ? text : `${text}\n`;
+}
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/u, ''));
 }
@@ -50,7 +55,7 @@ export function validateReleaseGateEvidence({ evidencePath, gatesPath, manifestT
   if (evidence.manifestSha256 !== sha256(manifestText)) {
     throw new Error('release gate evidence manifest digest mismatch');
   }
-  if (evidence.gatesConfigSha256 !== sha256(gatesText)) {
+  if (evidence.gatesConfigSha256 !== sha256(canonicalReleaseConfigText(gatesText))) {
     throw new Error('release gate evidence gates.json digest mismatch');
   }
   if (evidence.gates.length !== required.length) {

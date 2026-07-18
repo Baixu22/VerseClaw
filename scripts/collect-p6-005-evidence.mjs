@@ -9,7 +9,10 @@ import {
   createReleaseBaselineManifest,
   resolveReleaseIdentity,
 } from './release-baseline-manifest.mjs';
-import { validateReleaseBaseline } from './validate-release-baseline.mjs';
+import {
+  canonicalReleaseConfigText,
+  validateReleaseBaseline,
+} from './validate-release-baseline.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = resolve(readArg('--out') || join(root, 'artifacts/system-maturity/P6-005'));
@@ -91,7 +94,7 @@ writeFileSync(
       commit: identity.commit,
       tree: identity.tree,
       manifestSha256: sha256(firstManifest),
-      gatesConfigSha256: sha256(gatesText),
+      gatesConfigSha256: sha256(canonicalReleaseConfigText(gatesText)),
       gates: gateRuns,
     },
     null,
