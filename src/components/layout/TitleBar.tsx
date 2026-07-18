@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react';
 import { Minus, Square, X, Copy } from 'lucide-react';
 import { hostApi } from '@/lib/host-api';
+import { useTranslation } from 'react-i18next';
 
 export function TitleBar() {
   const platform = window.electron?.platform;
@@ -26,6 +27,7 @@ export function TitleBar() {
 }
 
 function WindowsTitleBar() {
+  const { t } = useTranslation('common');
   const [maximized, setMaximized] = useState(false);
 
   useEffect(() => {
@@ -54,28 +56,31 @@ function WindowsTitleBar() {
   return (
     <div
       data-testid="windows-titlebar"
-      className="drag-region flex h-10 shrink-0 items-center justify-end bg-surface-sidebar"
+      className="drag-region relative z-[120] flex h-10 shrink-0 items-center justify-end border-b border-white/55 bg-surface-sidebar/92 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:border-white/5 dark:bg-surface-sidebar/82"
     >
       {/* Right: Window Controls */}
       <div className="no-drag flex h-full">
         <button
           onClick={handleMinimize}
           className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 transition-colors"
-          title="Minimize"
+          aria-label={t('window.minimize')}
+          title={t('window.minimize')}
         >
           <Minus className="h-4 w-4" />
         </button>
         <button
           onClick={handleMaximize}
           className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 transition-colors"
-          title={maximized ? 'Restore' : 'Maximize'}
+          aria-label={maximized ? t('window.restore') : t('window.maximize')}
+          title={maximized ? t('window.restore') : t('window.maximize')}
         >
           {maximized ? <Copy className="h-3.5 w-3.5" /> : <Square className="h-3.5 w-3.5" />}
         </button>
         <button
           onClick={handleClose}
           className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-red-500 hover:text-white transition-colors"
-          title="Close"
+          aria-label={t('window.close')}
+          title={t('window.close')}
         >
           <X className="h-4 w-4" />
         </button>

@@ -83,6 +83,8 @@ module.exports = {
        * ────────────────────────────────────────────────────────────── */
       fontFamily: {
         sans: [
+          '"Segoe UI Variable Text"',
+          '"Segoe UI Variable"',
           '-apple-system',
           'BlinkMacSystemFont',
           '"Segoe UI"',
@@ -253,6 +255,15 @@ module.exports = {
           modal: 'hsl(var(--surface-modal) / <alpha-value>)',
           input: 'hsl(var(--surface-input) / <alpha-value>)',
           sidebar: 'hsl(var(--surface-sidebar) / <alpha-value>)',
+        },
+
+        material: {
+          canvas: 'hsl(var(--material-canvas) / <alpha-value>)',
+          sidebar: 'hsl(var(--material-sidebar) / <alpha-value>)',
+          panel: 'hsl(var(--material-panel) / <alpha-value>)',
+          elevated: 'hsl(var(--material-elevated) / <alpha-value>)',
+          control: 'hsl(var(--material-control) / <alpha-value>)',
+          scrim: 'hsl(var(--material-scrim) / <alpha-value>)',
         },
 
         // ── D. ClawX usage accents ──────────────────────────────────
