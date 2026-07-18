@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-003",
+  "generatedAt": "2026-07-18T09:22:56.026Z",
+  "findings": [
+    "F-REL-004"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "Multi-impl residual has inventory + suite mapping",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/capability-inventory.json",
+        "artifacts/system-maturity/P8-003/capability-inventory-report.json"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "F-REL-004 residual governed via residual-register",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/residual-register.json"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "Capability inventory validation passes",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+        "artifacts/system-maturity/P8-003/vitest.stdout.txt"
+      ]
+    }
+  ]
+}

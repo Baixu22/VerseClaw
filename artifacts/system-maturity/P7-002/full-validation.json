@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-002",
+  "generatedAt": "2026-07-18T05:34:11.951Z",
+  "ok": true,
+  "findingIds": [
+    "F-AUTH-006",
+    "F-DATA-005",
+    "F-GOV-001",
+    "F-GOV-002",
+    "F-REL-001",
+    "F-REL-004",
+    "F-SEC-003",
+    "F-SEC-006",
+    "F-SUPPLY-001"
+  ],
+  "commands": [
+    {
+      "id": "diff-check",
+      "command": "git diff --check",
+      "startedAt": "2026-07-18T05:22:15.265Z",
+      "durationMs": 281,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/diff-check.stdout.txt",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrPath": "validation-gates/diff-check.stderr.txt",
+      "stderrSha256": "798a5acecb233f09326ea5e23a35af9d7fd724e76854fe358187adb6cd950a80"
+    },
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/system-maturity-traceability-p7-001.test.ts tests/unit/system-maturity-security-suite-p7-002.test.ts",
+      "startedAt": "2026-07-18T05:22:15.547Z",
+      "durationMs": 3592,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/focused-unit.stdout.txt",
+      "stdoutSha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+      "stderrPath": "validation-gates/focused-unit.stderr.txt",
+      "stderrSha256": "7b84ef8cf31065092b5b30c663c678ad3517450636fd82c0707663447d781962"
+    },
+    {
+      "id": "harness-task",
+      "command": "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+      "startedAt": "2026-07-18T05:22:19.139Z",
+      "durationMs": 3715,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/harness-task.stdout.txt",
+      "stdoutSha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+      "stderrPath": "validation-gates/harness-task.stderr.txt",
+      "stderrSha256": "bcb8533e60e22704f8d2f1ae2a5e83ba1ae968933c0bf6d66e6906672efd4cea"
+    },
+    {
+      "id": "security-full",
+      "command": "pnpm maturity:security:full",
+      "startedAt": "2026-07-18T05:22:22.854Z",
+      "durationMs": 89063,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/security-full.stdout.txt",
+      "stdoutSha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+      "stderrPath": "validation-gates/security-full.stderr.txt",
+      "stderrSha256": "2fb8cfd0ff027d06f8903232a2b52dcbfb20522c7d3efe8c9549213687b96262"
+    },
+    {
+      "id": "lint-check",
+      "command": "pnpm run lint:check",
+      "startedAt": "2026-07-18T05:23:51.917Z",
+      "durationMs": 200227,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/lint-check.stdout.txt",
+      "stdoutSha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+      "stderrPath": "validation-gates/lint-check.stderr.txt",
+      "stderrSha256": "7ce8cdfd739a0066670c45dc57b0319dbae8c903bca2db43b924b3b09ddaa173"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "startedAt": "2026-07-18T05:27:12.144Z",
+      "durationMs": 20724,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/typecheck.stdout.txt",
+      "stdoutSha256": "7e01c94d330002816812167446696b00cf910546ebc193b7485b8bfdba5ad77b",
+      "stderrPath": "validation-gates/typecheck.stderr.txt",
+      "stderrSha256": "91913f6026123d77bae6f8d317340b81322e9ea2e4c76c607fa70aa7068973ab"
+    },
+    {
+      "id": "unit-full",
+      "command": "pnpm test",
+      "startedAt": "2026-07-18T05:27:32.868Z",
+      "durationMs": 383128,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/unit-full.stdout.txt",
+      "stdoutSha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+      "stderrPath": "validation-gates/unit-full.stderr.txt",
+      "stderrSha256": "a3354aff81a07215ea99aacbda196052e99a5456d5fae07ea4323575cb5d9051"
+    },
+    {
+      "id": "maturity-validate",
+      "command": "pnpm maturity:validate",
+      "startedAt": "2026-07-18T05:33:55.997Z",
+      "durationMs": 15953,
+      "exitCode": 0,
+      "signal": null,
+      "spawnError": null,
+      "stdoutPath": "validation-gates/maturity-validate.stdout.txt",
+      "stdoutSha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+      "stderrPath": "validation-gates/maturity-validate.stderr.txt",
+      "stderrSha256": "4d472db02a1345bc6ca7872c453fb9c71126a8d5f62ba5c77fa13d2cfa7546c8"
+    }
+  ]
+}

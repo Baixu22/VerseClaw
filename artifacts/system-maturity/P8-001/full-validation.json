@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-001",
+  "generatedAt": "2026-07-18T09:12:53.729Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-SEC-001",
+    "F-REL-004",
+    "F-GOV-002"
+  ],
+  "commands": [
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/system-maturity-residual-p8-001.test.ts tests/unit/channel-secret-residual-p8-001.test.ts tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+      "exitCode": 0
+    },
+    {
+      "id": "residual",
+      "command": "pnpm maturity:residual",
+      "exitCode": 0
+    },
+    {
+      "id": "plan",
+      "command": "pnpm maturity:plan",
+      "exitCode": 0
+    },
+    {
+      "id": "quarterly-dry-run",
+      "command": "pnpm maturity:quarterly -- --dry-run",
+      "exitCode": 0
+    }
+  ]
+}

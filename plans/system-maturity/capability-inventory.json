@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-003",
+  "generatedAt": "2026-07-18T10:30:00.000Z",
+  "findingId": "F-REL-004",
+  "capabilities": [
+    {
+      "id": "sender-binding",
+      "title": "Renderer/Main sender binding",
+      "implementations": ["host-invoke security gate", "gateway auth binding"],
+      "strength": "strong-fail-closed",
+      "scenarioIds": ["SM-SEC-P0-RENDERER-SENDER", "SM-SEC-P1-BROWSER-MULTI-WINDOW"],
+      "residual": "none"
+    },
+    {
+      "id": "url-and-inbound-trust",
+      "title": "URL policy + inbound channel trust",
+      "implementations": ["url-policy", "channels inbound-trust"],
+      "strength": "strong-fail-closed",
+      "scenarioIds": ["SM-SEC-P0-PROMPT-URL"],
+      "residual": "none"
+    },
+    {
+      "id": "path-broker",
+      "title": "Filesystem path broker",
+      "implementations": ["path-broker-resolved", "files-permissions-api"],
+      "strength": "strong-fail-closed",
+      "scenarioIds": ["SM-SEC-P0-PATH-ESCAPE"],
+      "residual": "none"
+    },
+    {
+      "id": "approval-replay",
+      "title": "Permission approval single-use binding",
+      "implementations": ["permissions-api", "workspace-permissions"],
+      "strength": "strong-fail-closed",
+      "scenarioIds": ["SM-SEC-P0-APPROVAL-REPLAY"],
+      "residual": "none"
+    },
+    {
+      "id": "browser-window-isolation",
+      "title": "Agent browser multi-window isolation",
+      "implementations": ["agent-browser isolation", "gateway auth binding"],
+      "strength": "strong-fail-closed",
+      "scenarioIds": ["SM-SEC-P1-BROWSER-MULTI-WINDOW"],
+      "residual": "monitor"
+    },
+    {
+      "id": "secret-handling",
+      "title": "Secret storage strength across Provider/MCP/Channel",
+      "implementations": ["provider secret-store", "mcp-env-broker", "channel-secret-broker", "openclaw.json co-read"],
+      "strength": "mixed",
+      "scenarioIds": ["SM-SEC-P0-RENDERER-SENDER"],
+      "residual": "channel openclaw plaintext co-read (F-SEC-001 / residual-register)"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-003",
+  "generatedAt": "2026-07-18T11:09:49.495Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-REL-004"
+  ],
+  "result": {
+    "rows": [
+      {
+        "id": "sender-binding",
+        "strength": "strong-fail-closed",
+        "residual": "none",
+        "scenarioIds": [
+          "SM-SEC-P0-RENDERER-SENDER",
+          "SM-SEC-P1-BROWSER-MULTI-WINDOW"
+        ],
+        "ok": true
+      },
+      {
+        "id": "url-and-inbound-trust",
+        "strength": "strong-fail-closed",
+        "residual": "none",
+        "scenarioIds": [
+          "SM-SEC-P0-PROMPT-URL"
+        ],
+        "ok": true
+      },
+      {
+        "id": "path-broker",
+        "strength": "strong-fail-closed",
+        "residual": "none",
+        "scenarioIds": [
+          "SM-SEC-P0-PATH-ESCAPE"
+        ],
+        "ok": true
+      },
+      {
+        "id": "approval-replay",
+        "strength": "strong-fail-closed",
+        "residual": "none",
+        "scenarioIds": [
+          "SM-SEC-P0-APPROVAL-REPLAY"
+        ],
+        "ok": true
+      },
+      {
+        "id": "browser-window-isolation",
+        "strength": "strong-fail-closed",
+        "residual": "monitor",
+        "scenarioIds": [
+          "SM-SEC-P1-BROWSER-MULTI-WINDOW"
+        ],
+        "ok": true
+      },
+      {
+        "id": "secret-handling",
+        "strength": "mixed",
+        "residual": "channel openclaw plaintext co-read (F-SEC-001 / residual-register)",
+        "scenarioIds": [
+          "SM-SEC-P0-RENDERER-SENDER"
+        ],
+        "ok": true
+      }
+    ],
+    "errors": [],
+    "ok": true
+  },
+  "fail": []
+}

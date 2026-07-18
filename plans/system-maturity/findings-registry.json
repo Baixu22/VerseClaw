@@ -6,6 +6,23 @@
     "dirtyPatchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
     "auditDate": "2026-07-16"
   },
+  "traceabilityPolicy": {
+    "stableTestId": "replace the F- prefix with T-",
+    "ownerResolution": "first registered task owner; all task owners remain visible in the report",
+    "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
+    "globalEvidence": [
+      "artifacts/system-maturity/P7-001/full-validation.json",
+      "artifacts/system-maturity/P7-002/security-regression-report.json",
+      "artifacts/system-maturity/P7-003/full-validation.json",
+      "artifacts/system-maturity/P7-004/full-validation.json"
+    ],
+    "reviewCycleDaysBySeverity": {
+      "Critical": 14,
+      "High": 30,
+      "Medium": 60,
+      "Low": 90
+    }
+  },
   "counts": {
     "total": 35,
     "bySeverity": {
@@ -15,13 +32,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 3,
-      "Fixed": 29,
-      "Partial": 3,
+      "Open": 1,
+      "Fixed": 30,
+      "Partial": 4,
       "Unverified": 0
     },
-    "open": 3,
-    "fixed": 29
+    "open": 1,
+    "fixed": 30
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -47,11 +64,13 @@
       "tasks": [
         "P1-001",
         "P4-003",
-        "P4-004"
+        "P4-004",
+        "P8-001",
+        "P8-002"
       ],
-      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain.",
-      "updatedBy": "P4-004",
-      "updatedAt": "2026-07-17T09:24:01.000Z"
+      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain. P8-001: residual-register entry + Renderer redaction residual locks; vault continues P8-002. P8-002: channelSecrets vault sealed on saveChannelConfig.",
+      "updatedBy": "P8-002",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-SEC-002",
@@ -396,9 +415,9 @@
         "P5-003",
         "P7-003"
       ],
-      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003.",
-      "updatedBy": "P5-003",
-      "updatedAt": "2026-07-17T08:58:35.165Z"
+      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003. P7-003: privacy inventory + sensitive capture kill switch + ErrorBoundary sanitize.",
+      "updatedBy": "P7-003",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-REL-001",
@@ -478,7 +497,14 @@
         "AC-03",
         "AC-06"
       ],
-      "tasks": []
+      "tasks": [
+        "P7-002",
+        "P8-001",
+        "P8-003"
+      ],
+      "notes": "P8-003: capability-inventory maps multi-impl surfaces to security regression scenarios; residual secret-handling strength mixed with F-SEC-001.",
+      "updatedBy": "P8-003",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-SUPPLY-001",
@@ -507,8 +533,8 @@
       "category": "GOV",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-REL-001"
       ],
@@ -517,8 +543,14 @@
       ],
       "tasks": [
         "P0-003",
-        "P7-001"
-      ]
+        "P7-001",
+        "P7-002"
+      ],
+      "fixedBy": "P7-001",
+      "fixedAt": "2026-07-18",
+      "updatedBy": "P7-001",
+      "updatedAt": "2026-07-18T11:38:00+08:00",
+      "notes": "P7-001: stable Finding test IDs, orphan-link denial, negative no-acceptance probes, hash-verified full-gate evidence, and serialization of the native runtime-memory operator inspection shard remove empty/unstable test extrapolation."
     },
     {
       "id": "F-GOV-002",
@@ -526,8 +558,8 @@
       "category": "GOV",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Open",
-      "evidenceLevel": "L2",
+      "status": "Fixed",
+      "evidenceLevel": "L3",
       "related": [],
       "attackChain": [],
       "tasks": [
@@ -536,8 +568,14 @@
         "P0-003",
         "P0-004",
         "P7-001",
+        "P7-002",
         "P7-004"
-      ]
+      ],
+      "updatedBy": "P7-004",
+      "updatedAt": "2026-07-18T16:30:00+08:00",
+      "notes": "P7-004: quarterly maturity scorecard traces all phase STATUS.json paths, requires risk-acceptance reviewBy deadlines for Track/Accept findings, and auto-blocks release when P0/P1 are incomplete. Agent Dev audit score/grade/releaseReady is captured as a non-extrapolation caveat only (F-GOV-002). Residual monitoring continues via risk-acceptance.json reviewBy=2026-10-18. True-close residual (P7-004 repair): harness must pass on committed tree; Agent Dev totalScore mapped without whole-system extrapolation; deep-test:reuse evidence must include requiredFullGates (typecheck + agent-dev e2e quality); use maturity:seal after validate rewrites.",
+      "fixedBy": "P7-004",
+      "fixedAt": "2026-07-18"
     },
     {
       "id": "F-GOV-003",
@@ -561,9 +599,9 @@
       ],
       "fixedBy": "P6-005",
       "fixedAt": "2026-07-18",
-      "updatedBy": "P6-005",
-      "updatedAt": "2026-07-18T09:47:44.069+08:00",
-      "notes": "P6-005: release baseline denies dirty or identity-mismatched sources, preserves native gate failures, installs and verifies Electron before release tests, produces a deterministic Git-blob manifest, canonicalizes cross-worktree text evidence hashes, and requires packaging jobs to revalidate hash-addressed zero-exit evidence from every required release gate."
+      "updatedBy": "P7-004",
+      "updatedAt": "2026-07-18T15:10:00+08:00",
+      "notes": "P6-005: release baseline denies dirty or identity-mismatched sources, preserves native gate failures, installs and verifies Electron before release tests, produces a deterministic Git-blob manifest, canonicalizes cross-worktree text evidence hashes, and requires packaging jobs to revalidate hash-addressed zero-exit evidence from every required release gate. P7-004: quarterly phase-review mechanism re-validates STATUS consistency and incomplete-phase release blocking as continuous governance."
     },
     {
       "id": "F-UX-001",
@@ -588,13 +626,17 @@
       "category": "UX",
       "severity": "Low",
       "decision": "Track",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2",
       "related": [],
       "attackChain": [],
       "tasks": [
         "P7-003"
-      ]
+      ],
+      "updatedBy": "P7-003",
+      "updatedAt": "2026-07-18",
+      "fixedBy": "P7-003",
+      "fixedAt": "2026-07-18"
     },
     {
       "id": "F-SEC-006",
@@ -714,9 +756,10 @@
         "P7-002",
         "P7-003"
       ],
-      "updatedBy": "P3-004",
+      "updatedBy": "P7-003",
       "notes": "Session hard-delete cascades SEKB principles/trajectories, session-scoped memory, DCS experience journal via executeSessionCascadeDelete + host runHostSessionDerivativeCascade; TTL purge_expired_trajectories; retriable errors in report.",
-      "fixedAt": "2026-07-17T07:51:49.551Z"
+      "fixedAt": "2026-07-17T07:51:49.551Z",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-REL-005",
@@ -1167,7 +1210,10 @@
         "F-AUTH-006",
         "F-DATA-005",
         "F-REL-001",
-        "F-SUPPLY-001"
+        "F-REL-004",
+        "F-SUPPLY-001",
+        "F-GOV-001",
+        "F-GOV-002"
       ],
       "dependsOn": [],
       "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-002.md"

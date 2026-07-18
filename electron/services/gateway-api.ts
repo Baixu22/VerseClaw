@@ -1,3 +1,4 @@
+import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { GatewayManager } from '../gateway/manager';
 import type { GatewayRpcBackpressure } from '../gateway/rpc-backpressure';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
@@ -394,6 +395,7 @@ export function createGatewayApi(
       if (!trimmed) {
         throw new Error('Gateway token unavailable');
       }
+      await assertSensitiveCaptureAllowed('clipboard');
       clipboard.writeText(trimmed);
       return { success: true };
     },

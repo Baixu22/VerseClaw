@@ -1,0 +1,58 @@
+(node:37700) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/validate-system-maturity-traceability.mjs
+WARN  manifest hash mismatch (non-strict): electron/main/ipc/host-invoke.ts
+WARN  manifest hash mismatch (non-strict): electron/preload/index.ts
+WARN  manifest hash mismatch (non-strict): electron/services/shell-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/secrets/secret-store.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/secure-storage.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspace-permissions.ts
+WARN  manifest hash mismatch (non-strict): shared/sensitive-content-boundary.ts
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/tool-authorization.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-permissions-policy.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/runtime-spine/gate-engine.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/gateway/server-methods/agent-browser.ts
+WARN  manifest hash mismatch (non-strict): electron/main/index.ts
+WARN  manifest hash mismatch (non-strict): electron/main/ipc-handlers.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/channel-config.ts
+WARN  manifest hash mismatch (non-strict): electron/services/cron-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/knowledge-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/providers-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/files-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspaces-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/sessions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/terminal-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/permissions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/git-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser-service.ts
+WARN  manifest hash mismatch (non-strict): electron/services/updates-api.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/store.ts
+WARN  manifest hash mismatch (non-strict): src/pages/Chat/index.tsx
+WARN  manifest hash mismatch (non-strict): src/stores/chat.ts
+WARN  manifest hash mismatch (non-strict): shared/host-api/contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/knowledge-store.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/distillation-tool.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-spawn.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/agent-steering-queue.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts
+WARN  manifest hash mismatch (non-strict): electron-builder.yml
+WARN  manifest hash mismatch (non-strict): artifacts/agent-dev-audit/report.json
+WARN  manifest hash mismatch (non-strict): artifacts/agent-dev-deep-test/report.json
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/browser-control.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser/browser-control/tab-manager.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/logger.ts
+WARN  manifest hash mismatch (non-strict): .github/workflows/release.yml
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-uv.mjs
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-agent-browser.mjs
+(node:20832) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/validate-system-maturity-evidence.mjs
+FAIL  A2 P7-001 evidence hash mismatch for artifacts/system-maturity/P7-001/traceability-report.json: expected 36dfa6e5f51ca17c2f82dcb35205122b263f2e3a4ba00df30558c25df278993f got 9fe99468090070949463f7340aa93fe31816a143167b31a53c105d974cbbdeba
+
+validate-system-maturity-evidence: FAILED (1)
+(node:24992) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/run-system-maturity-quarterly-audit.mjs

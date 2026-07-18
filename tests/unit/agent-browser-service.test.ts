@@ -6,6 +6,16 @@ import { join } from 'node:path';
 import { AgentBrowserService } from '@electron/services/agent-browser-service';
 import { createAgentBrowserApi } from '@electron/services/agent-browser-api';
 
+vi.mock('@electron/services/sensitive-capture-gate', () => ({
+  assertSensitiveCaptureAllowed: vi.fn(async (channel: string) => ({
+    allowed: true,
+    code: 'allow',
+    reason: 'test-allow',
+    channel,
+  })),
+}));
+
+
 /**
  * 模拟 Electron webContents.debugger。
  *

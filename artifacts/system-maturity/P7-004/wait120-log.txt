@@ -1,0 +1,10 @@
+diff-check: exit=0
+focused-unit: exit=0
+quarterly-dry-run: exit=0
+agent-dev-audit: exit=0
+agent-dev-deep-test: exit=0
+typecheck: exit=0
+e2e-agent-dev-quality: exit=0
+lint-check: exit=0
+unit-full: exit=1
+[ELIFECYCLE] Command failed with exit code 1.

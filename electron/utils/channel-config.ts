@@ -14,6 +14,7 @@ import * as logger from './logger';
 import { proxyAwareFetch } from './proxy-fetch';
 import { withConfigLock } from './config-mutex';
 import { normalizeFeishuWecomAccessPolicy } from '../../shared/channels/inbound-trust';
+import { sealChannelSecrets } from '../services/secrets/channel-secret-broker';
 import {
     OPENCLAW_WECHAT_CHANNEL_TYPE,
     isWechatChannelType,
@@ -947,6 +948,13 @@ export async function saveChannelConfig(
         }
 
         sanitizeChannelSectionsBeforeWrite(currentConfig);
+        // P8-002: seal Verse Claw-managed channel secrets into encrypted vault.
+        // OpenClaw co-read of openclaw.json plaintext remains residual (see residual-register).
+        await sealChannelSecrets({
+            channelType: resolvedChannelType,
+            accountId: resolvedAccountId,
+            values: { ...accounts[resolvedAccountId] },
+        });
         await writeOpenClawConfig(currentConfig);
         logger.info('Channel config saved', {
             channelType: resolvedChannelType,

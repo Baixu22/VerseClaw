@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-002",
+  "generatedAt": "2026-07-18T09:17:23.328Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-SEC-001"
+  ],
+  "commands": [
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/channel-secret-broker-p8-002.test.ts",
+      "exitCode": 0
+    }
+  ]
+}

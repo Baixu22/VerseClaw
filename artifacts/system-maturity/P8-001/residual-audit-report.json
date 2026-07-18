@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-001",
+  "generatedAt": "2026-07-18T11:08:45.644Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-SEC-001",
+    "F-REL-004",
+    "F-GOV-002"
+  ],
+  "residual": {
+    "rows": [
+      {
+        "findingId": "F-SEC-001",
+        "decision": "Act-now",
+        "owner": "main-boundary",
+        "reviewBy": "2026-10-18",
+        "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-SEC-001",
+          "status": "Partial",
+          "decision": "Act-now",
+          "owner": "main-boundary",
+          "reviewBy": "2026-10-18",
+          "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
+          "mitigation": "Renderer redaction locks + residual gate + channel secret vault (P8-002 sealed); OpenClaw co-read residual remains",
+          "acceptedBy": "security-lead",
+          "acceptedAt": "2026-07-18",
+          "tasks": [
+            "P8-001",
+            "P8-002"
+          ]
+        }
+      },
+      {
+        "findingId": "F-REL-004",
+        "decision": "Act-now",
+        "owner": "qa-governance",
+        "reviewBy": "2026-10-18",
+        "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-REL-004",
+          "status": "Partial",
+          "decision": "Act-now",
+          "owner": "qa-governance",
+          "reviewBy": "2026-10-18",
+          "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
+          "mitigation": "Security regression suite + capability inventory (P8-003) + residual register",
+          "acceptedBy": "security-lead",
+          "acceptedAt": "2026-07-18",
+          "tasks": [
+            "P8-001",
+            "P8-003"
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "ok": true
+  },
+  "fail": [],
+  "summary": {
+    "residualActive": 2,
+    "residualExpired": 0,
+    "residualMissing": 0,
+    "residualOk": true
+  }
+}

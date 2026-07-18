@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-004",
+  "generatedAt": "2026-07-18T09:27:07.264Z",
+  "entries": [
+    {
+      "path": "artifacts/system-maturity/P8-004/validation-gates/unit.stdout.txt",
+      "sha256": "93eb0ae6e2e6be0f08027e98c5bcd0df08a7d75ec3990662cee9ecd7ce2004ba"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-004/validation-gates/residual.stdout.txt",
+      "sha256": "4bb30424620cf5c4b065aab357a37672eb20532da0ea6c410bcd2d66e1ac8ab0"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-004/validation-gates/capability.stdout.txt",
+      "sha256": "6be6c3d36daf0a4d6a519d0707ae9b1ad3c8f8ee8ccbb6c18542dd72b1d6b05f"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-004/validation-gates/plan.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-004/validation-gates/quarterly.stdout.txt",
+      "sha256": "5a236a549111b61609b9fa196fad35d403b9f433ee0ff41a4cd088bcc8a86814"
+    },
+    {
+      "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+      "sha256": "3ba63249fd9f7a1704779f5bd4720b6bae1ade2ea1a569e58b44916ae7e7a206"
+    },
+    {
+      "path": "plans/system-maturity/INDEX.md",
+      "sha256": "32ea4fe3f4651a0b7ae9f961bbacaa8ebc06a2bc08e2a034eda4623f9be5eefb"
+    },
+    {
+      "path": "plans/system-maturity/residual-register.json",
+      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+    },
+    {
+      "path": "plans/system-maturity/capability-inventory.json",
+      "sha256": "17d1af53208db09e89d6e79d2a56241cf2f6b9d931ea36b5d58f698043a04676"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6c5b4096b4e452e26e95a44a56993fc121d3c2b5cdd041b10ccfbfae0cad1d1f"
+    }
+  ]
+}
