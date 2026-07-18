@@ -14,6 +14,7 @@ import {
   validateReleaseBaseline,
   validateReleaseWorkflowBaselinePolicy,
 } from '../../scripts/validate-release-baseline.mjs';
+import { runReleaseGateCommand } from '../../scripts/lib/run-release-gate-command.mjs';
 
 const roots: string[] = [];
 const sha256 = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
@@ -76,6 +77,13 @@ async function evidenceFixture(base: Awaited<ReturnType<typeof fixture>>) {
 }
 
 describe('P6-005 clean release baseline', () => {
+  it('A2 preserves native release gate exit codes on the host shell', () => {
+    const passed = runReleaseGateCommand('node -e "process.exit(0)"', { cwd: process.cwd() });
+    const failed = runReleaseGateCommand('node -e "process.exit(7)"', { cwd: process.cwd() });
+    expect(passed.status).toBe(0);
+    expect(failed.status).toBe(7);
+  });
+
   it('A1 denies modified, staged, and untracked source state', async () => {
     const clean = await fixture();
     expect(assertCleanReleaseTree(clean.root)).toBe(true);
