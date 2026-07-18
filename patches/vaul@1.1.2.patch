@@ -1,0 +1,59 @@
+diff --git a/dist/index.js b/dist/index.js
+index 7f343be1fafe1cf302ee6afc7268c29490895e34..07ea62d7e0ea4ef1a26ba9654e4fe08f2a3127c8 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -457,7 +457,7 @@ function assignStyle(element, style) {
+ }
+ 
+ const TRANSITIONS = {
+-    DURATION: 0.5,
++    DURATION: 0.42,
+     EASE: [
+         0.32,
+         0.72,
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 0dbbce5526681925a81804ced237a045a53c0355..88b0eb8969186628169187a3d823d1e409a0ce87 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -435,7 +435,7 @@ function assignStyle(element, style) {
+ }
+ 
+ const TRANSITIONS = {
+-    DURATION: 0.5,
++    DURATION: 0.42,
+     EASE: [
+         0.32,
+         0.72,
+diff --git a/style.css b/style.css
+index 9d7c6bf22013d888051243badb4197301cdffe46..f450eb9a5dba880da18a7a99466bf45a4ed8bcf9 100644
+--- a/style.css
++++ b/style.css
+@@ -1,8 +1,8 @@
+ [data-vaul-drawer] {
+   touch-action: none;
+   will-change: transform;
+-  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+-  animation-duration: 0.5s;
++  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
++  animation-duration: 0.42s;
+   animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+ }
+ 
+@@ -67,7 +67,7 @@
+ }
+ 
+ [data-vaul-overlay][data-vaul-snap-points='false'] {
+-  animation-duration: 0.5s;
++  animation-duration: 0.42s;
+   animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+ }
+ [data-vaul-overlay][data-vaul-snap-points='false'][data-state='open'] {
+@@ -83,7 +83,7 @@
+ 
+ [data-vaul-overlay][data-vaul-snap-points='true'] {
+   opacity: 0;
+-  transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
++  transition: opacity 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+ }
+ 
+ [data-vaul-overlay][data-vaul-snap-points='true'] {

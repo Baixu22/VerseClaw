@@ -32,6 +32,7 @@ describe('agent dev scenario composer', () => {
 
   it('keeps the required scenario registry ids available', () => {
     expect(AGENT_DEV_SCENARIO_IDS).toEqual([
+      'ui-v2-showcase',
       'chat-empty',
       'chat-streaming',
       'models-heavy-usage',

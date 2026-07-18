@@ -9,6 +9,14 @@ export type AgentDevScenarioDefinition = {
 
 export const AGENT_DEV_SCENARIOS = [
   {
+    id: 'ui-v2-showcase',
+    route: '/ui-v2-showcase',
+    description: 'Interactive Apple-inspired material and motion reference for Windows UI v2.',
+    seed: { uiVersion: 'v2', visualMode: true },
+    slices: ['ui'],
+    tags: ['ui-v2', 'visual', 'motion'],
+  },
+  {
     id: 'chat-empty',
     route: '/',
     description: 'Empty chat session with setup skipped and no provider key.',

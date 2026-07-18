@@ -2,7 +2,24 @@
 
 > Scope: A complete walk-through of the Verse Claw desktop app and the OpenClaw runtime it ships with, as of 2026-06-25.
 > Sandbox update: section 7.1 documents the Verse Claw lightweight layered sandbox control model implemented on 2026-06-17.
+> Windows UI v2 update (2026-07-17): Windows now defaults to the Apple-inspired split-view shell and route-driven Vaul Settings drawer described below; macOS/Linux retain the legacy shell.
 > Basis: codegraph index (10,026 files / 158,358 nodes / 470,892 edges) + source review of `electron/`, `src/`, `shared/`, `openclaw_runtime/src/`, and `openclaw_runtime/extensions/`. Updated with role-first runtime architecture (section 11), Lightweight Subagent Runner (sections 11.2 / 11.13), ClawGraph Runtime v1 (section 11.15), the long-task stability stack (section 8.5.3), Human Intervention / Resume Control (section 8.5.4), Mission Control / Mission Loop MVP+ (section 8.5.5), Knowledge Hub role-first governance (section 8.6), Chat slimming and legacy Work Mode compatibility (section 8.7), Work Provider v1 Office/Search orchestration (section 8.7), Task Ledger chat projection + explicit `/loop` root contract (section 8.5.0 - 2026-06-24), runtime-level Agent Browser automation for Cron-driven web tasks (section 6.6 - 2026-06-25), and Local Runtime Control Plane MVP observe-only diagnostics (section 8.4.1 - 2026-06-26).
+
+---
+
+## Windows UI v2 shell and overlay routing
+
+- `UiVersion` resolves from `?uiVersion=legacy|v2`; Windows defaults to `v2`, while macOS/Linux default to `legacy`.
+- The Windows titlebar stays outside the animated `AppContentStage`. Opening Settings recesses only the sidebar/content stage, leaving native window controls interactive.
+- `/settings/*` is an overlay route. The last non-Settings location remains rendered as the background, direct deep links fall back to `/`, and category changes do not remount the drawer.
+- `AppleDrawer` is the only renderer wrapper allowed to import `vaul`. The project pins and patches `vaul@1.1.2` so its internal lifecycle duration matches the 420 ms material animation.
+- X, ESC, scrim, and drag dismissal share one close state machine. Navigation and focus restoration happen only after the exit animation completes.
+- Radix Select, Tooltip, Dialog, and Sheet portals inherit the active overlay host, preventing nested controls from escaping the drawer or being treated as outside interactions.
+- Light UI v2 materials share one warm-neutral hue family across semantic surfaces and `canvas/sidebar/panel/elevated/control`; light-only overrides explicitly exclude `.dark` to prevent mixed themes.
+- Reduced motion removes large transform/spring effects and keeps only 160 ms opacity/color feedback.
+- This renderer-only architecture does not change IPC, host-api, Gateway transport, permissions, or persisted business schemas.
+
+The durable acceptance contract lives in `harness/specs/tasks/windows-ui-v2-apple-motion.md`, with the reusable motion/material rule in `harness/specs/rules/ui-motion-material-system.md`.
 
 ---
 

@@ -60,6 +60,7 @@ import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
 import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
 import { resolveSettingsSection, type SettingsSectionId } from './route-config';
+import type { SettingsPresentation } from './SettingsRoute';
 
 function getE2ESectionDelayMs(): number {
   const params = new URLSearchParams(window.location.search);
@@ -129,17 +130,29 @@ function preloadSettingsSection(section: SettingsSectionId) {
   }
 }
 
-function SettingsPageShell({ children }: { children: ReactNode }) {
+function SettingsPageShell({ children, presentation }: { children: ReactNode; presentation: SettingsPresentation }) {
   return (
-    <div data-testid="settings-page" className="-m-6 flex h-[calc(100vh-2.5rem)] flex-col overflow-hidden bg-background">
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
+    <div
+      data-testid="settings-page"
+      data-presentation={presentation}
+      className={cn(
+        'flex flex-col overflow-hidden',
+        presentation === 'drawer'
+          ? 'settings-drawer-shell h-full bg-transparent'
+          : '-m-6 h-[calc(100vh-2.5rem)] bg-background',
+      )}
+    >
+      <div className={cn(
+        'flex h-full w-full flex-col',
+        presentation === 'drawer' ? 'px-5 py-5 sm:px-6' : 'mx-auto max-w-6xl px-5 py-6 sm:px-8 lg:px-10',
+      )}>
         {children}
       </div>
     </div>
   );
 }
 
-export function Settings() {
+export function Settings({ presentation = 'page' }: { presentation?: SettingsPresentation }) {
   const { t, i18n } = useTranslation('settings');
   const location = useLocation();
   const navigate = useNavigate();
@@ -1400,12 +1413,16 @@ export function Settings() {
       : undefined;
 
   return (
-    <SettingsPageShell>
+    <SettingsPageShell presentation={presentation}>
 
         {/* Header */}
-        <div className="mb-6 flex shrink-0 flex-col justify-between gap-3 border-b border-border pb-5 md:flex-row md:items-start">
+        <div className={cn(
+          'flex shrink-0 flex-col justify-between gap-3 border-b border-border md:flex-row md:items-start',
+          presentation === 'drawer' ? 'mb-4 pb-4' : 'mb-6 pb-5',
+          presentation === 'drawer' && currentSection === 'overview' && 'hidden',
+        )}>
           <div>
-            {currentSection !== 'overview' && (
+            {presentation === 'page' && currentSection !== 'overview' && (
               <Button
                 type="button"
                 variant="outline"
@@ -1419,7 +1436,9 @@ export function Settings() {
             )}
             <h1 className={cn(
               'font-serif font-normal tracking-tight text-foreground',
-              currentSection === 'overview' ? 'mb-1.5 text-3xl' : 'mb-1 text-2xl',
+              presentation === 'drawer'
+                ? 'mb-1 text-xl font-semibold'
+                : currentSection === 'overview' ? 'mb-1.5 text-3xl' : 'mb-1 text-2xl',
             )}
               data-testid={pageTitleTestId}
             >
@@ -1432,7 +1451,10 @@ export function Settings() {
         </div>
 
         {/* Content Area */}
-        <div className="-mr-2 min-h-0 flex-1 space-y-8 overflow-y-auto pb-10 pr-2">
+        <div className={cn(
+          '-mr-2 min-h-0 flex-1 overflow-y-auto pb-10 pr-2',
+          presentation === 'drawer' ? 'space-y-6' : 'space-y-8',
+        )}>
           {currentSection === 'overview' && (
             <div data-testid="settings-overview" className="space-y-6">
               {settingsSectionGroups.map((group) => (
@@ -1448,7 +1470,7 @@ export function Settings() {
                       >
                         <Link
                           to={section.to}
-                          data-testid={section.testId}
+                          data-testid={presentation === 'drawer' ? undefined : section.testId}
                           onPointerEnter={() => preloadSettingsSection(section.id)}
                           onFocus={() => preloadSettingsSection(section.id)}
                           className="flex min-h-20 h-full items-center gap-3 px-4 py-3"
