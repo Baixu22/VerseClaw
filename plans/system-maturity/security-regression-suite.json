@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-002",
+  "modes": ["pr", "full"],
+  "scenarios": [
+    {
+      "id": "SM-GOV-P0-SUITE-FAIL-CLOSED",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-GOV-001", "F-GOV-002"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/system-maturity-security-suite-p7-002.test.ts", "tests/unit/system-maturity-traceability-p7-001.test.ts"],
+      "expected": "missing commands, empty selections, non-zero gates, and tampered evidence fail the suite"
+    },
+    {
+      "id": "SM-SEC-P0-RENDERER-SENDER",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-SEC-003", "F-REL-004"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/host-invoke-security.test.ts", "tests/unit/gateway-p4-001-auth-binding.test.ts"],
+      "expected": "untrusted or cross-window senders fail closed before privileged Main/Gateway actions"
+    },
+    {
+      "id": "SM-SEC-P0-PROMPT-URL",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-SEC-003", "F-REL-004"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/url-policy.test.ts", "tests/unit/channels-p4-004-inbound-trust.test.ts"],
+      "expected": "unsafe schemes and inbound prompt injection remain denied or fenced"
+    },
+    {
+      "id": "SM-SEC-P0-PATH-ESCAPE",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-SEC-006"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/path-broker-resolved.test.ts", "tests/unit/files-permissions-api.test.ts"],
+      "expected": "junction, reparse, ADS, UNC, and workspace escape writes fail closed"
+    },
+    {
+      "id": "SM-SEC-P0-APPROVAL-REPLAY",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-AUTH-006"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/permissions-api.test.ts", "tests/unit/workspace-permissions.test.ts"],
+      "expected": "approval consumption is atomic, bound, expiring, and non-replayable"
+    },
+    {
+      "id": "SM-SEC-P1-DATA-QUARANTINE-DELETE",
+      "priority": "P1",
+      "owner": "qa-governance",
+      "findings": ["F-DATA-005"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/sekb-trajectory-redaction-p3-001.test.ts", "tests/unit/session-cascade-delete-p3-004.test.ts"],
+      "expected": "sensitive capture is redacted and session delete cascades through derivatives"
+    },
+    {
+      "id": "SM-SEC-P0-CRON-LEASE-FAULT",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-REL-001"],
+      "commandIds": ["runtime-security-unit"],
+      "testFiles": ["openclaw_runtime/src/cron/p5-002-lease-authority.test.ts"],
+      "expected": "concurrent Cron workers cannot duplicate or steal an active lease"
+    },
+    {
+      "id": "SM-SEC-P0-UPDATE-TAMPER",
+      "priority": "P0",
+      "owner": "qa-governance",
+      "findings": ["F-SUPPLY-001"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/windows-update-feed-p6-002.test.ts", "tests/unit/release-artifact-integrity-p6-004.test.ts"],
+      "expected": "unknown feeds, hash mismatch, provenance mismatch, and packaged trust tamper fail closed"
+    },
+    {
+      "id": "SM-SEC-P1-BROWSER-MULTI-WINDOW",
+      "priority": "P1",
+      "owner": "qa-governance",
+      "findings": ["F-SEC-003", "F-SEC-006", "F-REL-004"],
+      "commandIds": ["root-security-unit"],
+      "testFiles": ["tests/unit/agent-browser-p4-002-isolation.test.ts", "tests/unit/gateway-p4-001-auth-binding.test.ts"],
+      "expected": "tab, origin, grant, sender, and filesystem authority do not cross sessions or windows"
+    }
+  ],
+  "commands": [
+    {
+      "id": "root-security-unit",
+      "modes": ["pr", "full"],
+      "kind": "unit",
+      "run": "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts tests/unit/host-invoke-security.test.ts tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/url-policy.test.ts tests/unit/channels-p4-004-inbound-trust.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts tests/unit/permissions-api.test.ts tests/unit/workspace-permissions.test.ts tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/session-cascade-delete-p3-004.test.ts tests/unit/windows-update-feed-p6-002.test.ts tests/unit/release-artifact-integrity-p6-004.test.ts tests/unit/agent-browser-p4-002-isolation.test.ts --maxWorkers=1"
+    },
+    {
+      "id": "runtime-security-unit",
+      "modes": ["pr", "full"],
+      "kind": "unit",
+      "run": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts"
+    },
+    {
+      "id": "comms-replay",
+      "modes": ["full"],
+      "kind": "comms-replay",
+      "run": "pnpm run comms:replay"
+    },
+    {
+      "id": "comms-compare",
+      "modes": ["full"],
+      "kind": "comms-compare",
+      "run": "pnpm run comms:compare"
+    },
+    {
+      "id": "electron-e2e-build",
+      "modes": ["full"],
+      "kind": "electron-e2e-build",
+      "run": "pnpm run build:vite"
+    },
+    {
+      "id": "electron-security-e2e",
+      "modes": ["full"],
+      "kind": "electron-e2e",
+      "run": "pnpm run test:e2e:run tests/e2e/cron-browser-automation.spec.ts tests/e2e/chat-plan-mode-write-challenge.spec.ts --workers=1"
+    },
+    {
+      "id": "electron-gateway-e2e",
+      "modes": ["full"],
+      "kind": "electron-e2e",
+      "run": "pnpm run test:e2e:run tests/e2e/gateway-lifecycle.spec.ts --grep \"app remains fully navigable|gateway status indicator updates|shows gateway restart progress\" --workers=1"
+    }
+  ]
+}

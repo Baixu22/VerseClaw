@@ -12,7 +12,7 @@ Dependencies: phase6-supply-release
 ## Task list
 
 - P7-001 — Finding 到测试、代码、证据的双向追踪 — program-governance — F-GOV-001,F-GOV-002
-- P7-002 — 安全红队与故障注入长期套件 — qa-governance — F-SEC-003,F-SEC-006,F-AUTH-006,F-DATA-005,F-REL-001,F-REL-004,F-SUPPLY-001
+- P7-002 — 安全红队与故障注入长期套件 — qa-governance — F-SEC-003,F-SEC-006,F-AUTH-006,F-DATA-005,F-REL-001,F-REL-004,F-SUPPLY-001,F-GOV-001,F-GOV-002
 - P7-003 — 隐私、遥测、clipboard/screenshot/desktop automation 控制 — privacy-governance — F-DATA-004,F-DATA-005,F-UX-002
 - P7-004 — 季度成熟度审计与阶段复审机制 — program-governance — F-GOV-002,F-GOV-003
 

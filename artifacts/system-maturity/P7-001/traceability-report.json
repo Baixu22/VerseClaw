@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-18T01:51:35.000Z",
+  "evaluatedAt": "2026-07-18T04:16:20.000Z",
   "ok": true,
   "summary": {
     "findingCount": 35,
@@ -17,7 +17,8 @@
     "ownerResolution": "first registered task owner; all task owners remain visible in the report",
     "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
     "globalEvidence": [
-      "artifacts/system-maturity/P7-001/full-validation.json"
+      "artifacts/system-maturity/P7-001/full-validation.json",
+      "artifacts/system-maturity/P7-002/security-regression-report.json"
     ],
     "reviewCycleDaysBySeverity": {
       "Critical": 14,
@@ -196,8 +197,8 @@
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-01T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-01T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -311,8 +312,8 @@
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-17T09:16:33.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-01T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-01T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -337,9 +338,15 @@
       ],
       "testCommands": [
         "pnpm exec vitest run tests/unit/url-policy.test.ts tests/unit/html-preview-security.test.tsx tests/unit/file-preview-body.test.tsx tests/unit/agent-browser-cdp-lifecycle.test.ts tests/unit/agent-browser-tab-manager.test.ts",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P1-004:A1",
@@ -364,6 +371,16 @@
         "tests/unit/url-policy.test.ts",
         "tests/unit/html-preview-security.test.tsx",
         "tests/unit/file-preview-body.test.tsx",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md",
         "tests/unit/agent-browser-cdp-lifecycle.test.ts",
         "tests/unit/agent-browser-tab-manager.test.ts"
       ],
@@ -405,16 +422,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T06:34:42.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -503,8 +627,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -593,8 +717,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T05:12:30.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -688,8 +812,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -775,8 +899,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -859,8 +983,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -961,8 +1085,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T06:34:42.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1065,8 +1189,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1141,8 +1265,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1217,8 +1341,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1294,8 +1418,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1377,8 +1501,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1457,8 +1581,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1528,8 +1652,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1605,8 +1729,7 @@
         "openclaw_runtime/src/memory/memory-store.ts",
         "tests/unit/memory-dual-gate-p3-003.test.ts",
         "electron/utils/logger.ts",
-        "tests/unit/logger-p5-003.test.ts",
-        "plans/system-maturity/findings-registry.json"
+        "tests/unit/logger-p5-003.test.ts"
       ],
       "evidence": [
         {
@@ -1707,9 +1830,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1735,9 +1858,15 @@
       ],
       "testCommands": [
         "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P5-002:A1",
@@ -1754,7 +1883,17 @@
         "openclaw_runtime/src/cron/service/timer.ts",
         "openclaw_runtime/src/cron/service.ts",
         "openclaw_runtime/src/cron/store/lease.ts",
-        "openclaw_runtime/src/cron/p5-002-lease-authority.test.ts"
+        "openclaw_runtime/src/cron/p5-002-lease-authority.test.ts",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -1782,16 +1921,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T08:46:04.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1869,8 +2115,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1981,8 +2227,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2004,9 +2250,15 @@
         "T-REL-004"
       ],
       "testCommands": [
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P7-002:A1",
@@ -2015,7 +2267,17 @@
       ],
       "codePaths": [
         "electron/main/index.ts",
-        "electron/services/roles-api.ts"
+        "electron/services/roles-api.ts",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -2025,16 +2287,123 @@
           "kind": "frozen-audit"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2073,9 +2442,13 @@
         "pnpm run comms:replay",
         "pnpm run comms:compare",
         "workflow YAML parse",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P6-001:A1",
@@ -2098,13 +2471,22 @@
         "harness/specs/scenarios/windows-release-trust.md",
         "harness/specs/rules/windows-release-signing-policy.md",
         "harness/specs/tasks/windows-release-signing-policy.md",
-        "plans/system-maturity/findings-registry.json",
         "shared/release-policy/windows-update-feed-policy.ts",
         "scripts/validate-windows-update-feed-policy.mts",
         "scripts/collect-p6-002-evidence.mjs",
         "tests/unit/windows-update-feed-p6-002.test.ts",
         "harness/specs/rules/windows-update-feed-integrity.md",
-        "harness/specs/tasks/windows-update-feed-integrity.md"
+        "harness/specs/tasks/windows-update-feed-integrity.md",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -2222,16 +2604,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2246,11 +2735,13 @@
       ],
       "reviewers": [
         "program-governance",
-        "qa-governance"
+        "qa-governance",
+        "security-lead"
       ],
       "taskIds": [
         "P0-003",
-        "P7-001"
+        "P7-001",
+        "P7-002"
       ],
       "testIds": [
         "T-GOV-001"
@@ -2265,7 +2756,12 @@
         "pnpm maturity:traceability:evidence",
         "pnpm run lint:check",
         "pnpm test",
-        "pnpm maturity:validate"
+        "pnpm maturity:validate",
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence"
       ],
       "acceptanceIds": [
         "P0-003:A1",
@@ -2273,11 +2769,13 @@
         "P0-003:A3",
         "P7-001:A1",
         "P7-001:A2",
-        "P7-001:A3"
+        "P7-001:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
       ],
       "codePaths": [
         "openclaw_runtime/test/vitest/vitest.scoped-config.ts",
-        "plans/system-maturity/findings-registry.json",
         "scripts/lib/system-maturity-traceability.mjs",
         "scripts/validate-system-maturity-traceability.mjs",
         "scripts/collect-p7-001-evidence.mjs",
@@ -2285,6 +2783,14 @@
         "harness/specs/scenarios/system-maturity-traceability.md",
         "harness/specs/rules/system-maturity-traceability.md",
         "harness/specs/tasks/system-maturity-traceability.md",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md",
         "scripts/validate-test-gates.mjs"
       ],
       "evidence": [
@@ -2296,7 +2802,7 @@
         },
         {
           "path": "plans/system-maturity/gates.json",
-          "sha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+          "sha256": "fa002bad3d7a130b39144a53efb02588e449f443ba64f6e52e85d8970b4810f9",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2338,7 +2844,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2350,7 +2856,7 @@
         },
         {
           "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
-          "sha256": "a87c72640d35a5d264b8df5193e9c3a213e6a5e76d3e609d295f9fe815dabb59",
+          "sha256": "90272b005e838d1530272b8f9b9aa58a0a054a6da0551599ae16482751001e2e",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2428,7 +2934,7 @@
         },
         {
           "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-          "sha256": "dbdc273027a26b5371bbc9ad364cb194f313b31dc4047b2bd398aac34642fe7e",
+          "sha256": "95dc24dcf76a4fe4df25b715299040a247a5d232a776d6d4925f69f2118d9ea4",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -2439,16 +2945,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T04:00:43.745Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:37:47.997Z",
+      "nextReviewAt": "2026-08-17T05:37:47.997Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2472,6 +3085,7 @@
         "P0-003",
         "P0-004",
         "P7-001",
+        "P7-002",
         "P7-004"
       ],
       "testIds": [
@@ -2492,6 +3106,11 @@
         "pnpm run lint:check",
         "pnpm test",
         "pnpm maturity:validate",
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
         "pnpm agent-dev:audit",
         "pnpm agent-dev:deep-test",
         "quarterly audit dry-run"
@@ -2512,12 +3131,14 @@
         "P7-001:A1",
         "P7-001:A2",
         "P7-001:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3",
         "P7-004:A1",
         "P7-004:A2",
         "P7-004:A3"
       ],
       "codePaths": [
-        "plans/system-maturity/findings-registry.json",
         "scripts/lib/system-maturity-traceability.mjs",
         "scripts/validate-system-maturity-traceability.mjs",
         "scripts/collect-p7-001-evidence.mjs",
@@ -2525,6 +3146,14 @@
         "harness/specs/scenarios/system-maturity-traceability.md",
         "harness/specs/rules/system-maturity-traceability.md",
         "harness/specs/tasks/system-maturity-traceability.md",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md",
         "scripts/audit-baseline-check.mjs",
         "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
         "scripts/validate-system-maturity-plan.mjs",
@@ -2546,7 +3175,7 @@
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "b5c1b4c3656feca4171dd9e99cfb58ec88a3ffa5b85bf8b1aa86f623cbc70907",
+          "sha256": "cba303b4a40a75184de685c517a26cd50bf3ab763f984d9ba70243b97e99ea3c",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -2606,7 +3235,7 @@
         },
         {
           "path": "plans/system-maturity/gates.json",
-          "sha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+          "sha256": "fa002bad3d7a130b39144a53efb02588e449f443ba64f6e52e85d8970b4810f9",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2648,7 +3277,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2660,7 +3289,7 @@
         },
         {
           "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
-          "sha256": "a87c72640d35a5d264b8df5193e9c3a213e6a5e76d3e609d295f9fe815dabb59",
+          "sha256": "90272b005e838d1530272b8f9b9aa58a0a054a6da0551599ae16482751001e2e",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -2696,7 +3325,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -2786,7 +3415,7 @@
         },
         {
           "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-          "sha256": "dbdc273027a26b5371bbc9ad364cb194f313b31dc4047b2bd398aac34642fe7e",
+          "sha256": "95dc24dcf76a4fe4df25b715299040a247a5d232a776d6d4925f69f2118d9ea4",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -2797,16 +3426,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T04:00:43.745Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:37:47.997Z",
+      "nextReviewAt": "2026-09-16T05:37:47.997Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2873,7 +3609,6 @@
       ],
       "codePaths": [
         ".github/workflows/release.yml",
-        "plans/system-maturity/gates.json",
         "scripts/release-baseline-manifest.mjs",
         "scripts/validate-release-baseline.mjs",
         "scripts/collect-p6-005-evidence.mjs",
@@ -2885,7 +3620,6 @@
         "tests/e2e/agent-dev-quality.spec.ts",
         "harness/specs/rules/clean-release-baseline-reproducibility.md",
         "harness/specs/tasks/clean-release-baseline-reproducibility.md",
-        "plans/system-maturity/findings-registry.json",
         "scripts/audit-baseline-check.mjs",
         "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
         "scripts/validate-system-maturity-plan.mjs"
@@ -2905,7 +3639,7 @@
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "b5c1b4c3656feca4171dd9e99cfb58ec88a3ffa5b85bf8b1aa86f623cbc70907",
+          "sha256": "cba303b4a40a75184de685c517a26cd50bf3ab763f984d9ba70243b97e99ea3c",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -2947,7 +3681,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "sha256": "e4fb90050308db6eb9c0e46c58ac2250e0ff159d342921d4f776a839d6af9dd9",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -3061,9 +3795,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T01:27:51.000Z",
+      "latestEvidenceAt": "2026-07-18T04:57:53.801Z",
+      "nextReviewAt": "2026-08-17T04:57:53.801Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3098,7 +3832,6 @@
         "shared/agent-resource-limits.ts",
         "shared/chat/types.ts",
         "tests/unit/agent-resource-limits-p5-004.test.ts",
-        "plans/system-maturity/findings-registry.json",
         "tests/unit/logger-p5-003.test.ts"
       ],
       "evidence": [
@@ -3134,9 +3867,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3186,8 +3919,8 @@
       ],
       "reviewCycleDays": 90,
       "latestSourceAt": "2026-07-14T18:05:47.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-10-16T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-10-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3212,9 +3945,15 @@
       ],
       "testCommands": [
         "pnpm exec vitest run tests/unit/path-broker.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P1-003:A1",
@@ -3230,7 +3969,17 @@
         "electron/services/path-broker.ts",
         "tests/unit/path-broker.test.ts",
         "tests/unit/path-broker-resolved.test.ts",
-        "tests/unit/files-permissions-api.test.ts"
+        "tests/unit/files-permissions-api.test.ts",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -3276,16 +4025,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3412,8 +4268,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3439,9 +4295,15 @@
       ],
       "testCommands": [
         "pnpm exec vitest run tests/unit/permissions-api.test.ts",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite"
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate"
       ],
       "acceptanceIds": [
         "P2-002:A1",
@@ -3453,7 +4315,17 @@
       ],
       "codePaths": [
         "electron/services/permissions-api.ts",
-        "tests/unit/permissions-api.test.ts"
+        "tests/unit/permissions-api.test.ts",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -3499,16 +4371,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T05:48:37.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3577,8 +4556,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3654,8 +4633,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3682,9 +4661,15 @@
       ],
       "testCommands": [
         "pnpm exec vitest run tests/unit/session-cascade-delete-p3-004.test.ts",
-        "pnpm run test:e2e",
-        "security red-team suite",
-        "fault injection suite",
+        "pnpm maturity:security",
+        "pnpm maturity:security:full",
+        "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm harness validate --spec harness/specs/tasks/system-maturity-security-regression.md",
+        "pnpm maturity:security:evidence",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm test",
+        "pnpm maturity:validate",
         "privacy data-flow review",
         "OS permission E2E",
         "sensitive capture retention test"
@@ -3706,7 +4691,17 @@
         "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
         "openclaw_runtime/src/knowledge/sekb/index.ts",
         "electron/services/session-cascade-delete.ts",
-        "tests/unit/session-cascade-delete-p3-004.test.ts"
+        "tests/unit/session-cascade-delete-p3-004.test.ts",
+        "scripts/lib/system-maturity-security-suite.mjs",
+        "scripts/run-system-maturity-security-suite.mjs",
+        "scripts/collect-p7-002-evidence.mjs",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
+        ".github/workflows/system-maturity-security.yml",
+        "harness/specs/rules/system-maturity-security-regression.md",
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -3734,16 +4729,123 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P7-002/full-validation.json",
+          "sha256": "83f4971fa408687b631ae88f7d2abc1d72ad71da0387dcca04ff96f0c1ba125d",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/acceptance-matrix.json",
+          "sha256": "310dc4e6ec9421f7fc74408dd0fc4b4879c76f88f065d96e106186006446f006",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/focused-unit.stdout.txt",
+          "sha256": "b16f995f91697b634a6874daf54ec5fd3ca8a731b6b7745fdc4794fab2fbeb3f",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/security-full.stdout.txt",
+          "sha256": "15cf6bf5a8a9e2f487e2244f70eccdea051c4dd80dc2540bbdf0758fe93788f7",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
+          "sha256": "3da0a557d79d465fce085bacb751ba65e1dd25d00d47da0e71aa2b67ca0a06ee",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
+          "sha256": "2f5751322beb081f91696483f67b9dbdd22c8ebdef32efff3e4bb6b030af15bf",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+          "sha256": "857eb3a3d452782ae874bd4c30626dab864c1da7b89cc8032ab3a591c08b3932",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-security-suite.mjs",
+          "sha256": "e7f0a257fea74986664933b296adcb47f5b9e35e0886f3c97681ef9f52d5bf20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-security-suite.mjs",
+          "sha256": "49317d694af65fc8032a0036923f9ba399a9dc10e6544f5d864f6d9abd258f20",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-security-suite-p7-002.test.ts",
+          "sha256": "80cd0835810a7a142f539e5c554318d883e5bbd5d27e08ed68e9159bcb77e6f9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-security-regression.md",
+          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
+          "path": ".github/workflows/system-maturity-security.yml",
+          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "taskId": "P7-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
           "taskId": "P7-001",
           "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "75b64644b6f0624ed07584cfdf0760eccf189e063d646bc02a1afbcc26fe69de",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T05:18:46.757Z",
+      "latestEvidenceAt": "2026-07-18T05:34:54.818Z",
+      "nextReviewAt": "2026-08-17T05:34:54.818Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3774,8 +4876,7 @@
       ],
       "codePaths": [
         "electron/utils/logger.ts",
-        "tests/unit/logger-p5-003.test.ts",
-        "plans/system-maturity/findings-registry.json"
+        "tests/unit/logger-p5-003.test.ts"
       ],
       "evidence": [
         {
@@ -3810,9 +4911,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-09-16T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3878,7 +4979,6 @@
         "harness/specs/scenarios/windows-release-trust.md",
         "harness/specs/rules/supply-chain-integrity-pinning.md",
         "harness/specs/tasks/supply-chain-integrity-pinning.md",
-        "plans/system-maturity/findings-registry.json",
         "scripts/generate-release-trust-metadata.mjs",
         "scripts/validate-release-trust-metadata.mjs",
         "scripts/verify-packaged-electron-trust.mjs",
@@ -3998,9 +5098,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T03:43:40.558Z",
-      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
-      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "latestSourceAt": "2026-07-18T00:43:36.000Z",
+      "latestEvidenceAt": "2026-07-18T04:16:20.000Z",
+      "nextReviewAt": "2026-08-17T04:16:20.000Z",
       "freshness": "fresh",
       "failures": []
     }

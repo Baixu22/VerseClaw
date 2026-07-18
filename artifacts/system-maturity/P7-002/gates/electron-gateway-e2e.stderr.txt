@@ -1,0 +1,1 @@
+$ playwright test "tests/e2e/gateway-lifecycle.spec.ts" "--grep" "app remains fully navigable|gateway status indicator updates|shows gateway restart progress" "--workers=1"

@@ -1,0 +1,254 @@
+INFO  A1 findings.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2
+INFO  A1 manifest.head matches baseline: 60061e33554311ac3c9871195210df59fe1b5bf2
+INFO  A1 dirty patch hash OK (bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42) bytes=833074
+INFO  A1 productDevelopmentHead=b1ff416dd162554f74e325fe77be5b5fba29387b
+INFO  known post-audit content drift allowed: electron/services/roles-api.ts
+INFO  known post-audit content drift allowed: src/lib/host-api.ts
+INFO  known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts
+INFO  known post-audit content drift allowed: package.json
+INFO  manifest missing (allowlisted generated): artifacts/agent-dev-audit/report.json
+INFO  manifest missing (allowlisted generated): artifacts/agent-dev-deep-test/report.json
+INFO  known post-audit content drift allowed: electron/services/mcp-api.ts
+INFO  manifest files: matched=26 lfNorm=4 drift=49 missing=2
+INFO  A2 unique Finding IDs: 35
+INFO  A2 related links OK
+INFO  A2 task Finding refs resolve (34 tasks scanned)
+
+audit-baseline-check: OK
+INFO  A1 unique task IDs: 34
+INFO  plans/system-maturity/phase0-foundation/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase2-authorization-isolation/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=in_progress
+INFO  dependency edges resolve
+INFO  A3 P0-001 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-001.delivery.md)
+INFO  A3 P0-002 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-002.delivery.md)
+INFO  A3 P0-003 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-003.delivery.md)
+INFO  A3 P0-004 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-004.delivery.md)
+INFO  A3 P1-001 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-001.delivery.md)
+INFO  A3 P1-002 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-002.delivery.md)
+INFO  A3 P1-003 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-003.delivery.md)
+INFO  A3 P1-004 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-004.delivery.md)
+INFO  A3 P2-001 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-001.delivery.md)
+INFO  A3 P2-002 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-002.delivery.md)
+INFO  A3 P2-003 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-003.delivery.md)
+INFO  A3 P2-004 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-004.delivery.md)
+INFO  A3 P2-005 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-005.delivery.md)
+INFO  A3 P3-001 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-001.delivery.md)
+INFO  A3 P3-002 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-002.delivery.md)
+INFO  A3 P3-003 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-003.delivery.md)
+INFO  A3 P3-004 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-004.delivery.md)
+INFO  A3 P4-001 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-001.delivery.md)
+INFO  A3 P4-002 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-002.delivery.md)
+INFO  A3 P4-003 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-003.delivery.md)
+INFO  A3 P4-004 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-004.delivery.md)
+INFO  A3 P5-001 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-001.delivery.md)
+INFO  A3 P5-002 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-002.delivery.md)
+INFO  A3 P5-003 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-003.delivery.md)
+INFO  A3 P5-004 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-004.delivery.md)
+INFO  A3 P6-001 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-001.delivery.md)
+INFO  A3 P6-002 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-002.delivery.md)
+INFO  A3 P6-003 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-003.delivery.md)
+INFO  A3 P6-004 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-004.delivery.md)
+INFO  A3 P6-005 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-005.delivery.md)
+INFO  A3 P7-001 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-001.delivery.md)
+INFO  task Finding refs resolve against findings-registry
+
+validate-system-maturity-plan: OK
+INFO  A2 daily/pr loops cannot substitute release
+INFO  A2 forbidden release evidence ids not present in release.commands
+INFO  vitest.config.ts passWithNoTests:false
+INFO  vitest.agent-dev.node.config.ts passWithNoTests:false
+INFO  vitest.runtime-effectiveness.config.ts passWithNoTests:false
+INFO  A1 empty test shard failed as required (exit=1)
+
+validate-test-gates: OK
+INFO  A2 P0-001 hash OK plans/system-maturity/BASELINE.json
+INFO  A2 P0-001 hash OK plans/system-maturity/findings-registry.json
+INFO  A2 P0-001 hash OK scripts/audit-baseline-check.mjs
+INFO  A2 P0-001 hash OK plans/system-maturity/EXECUTION-ORDER.md
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt
+INFO  A2 P0-001 hash OK artifacts/system-maturity/P0-001/harness-validate.stdout.txt
+INFO  A2 P0-002 hash OK scripts/validate-system-maturity-plan.mjs
+INFO  A2 P0-002 hash OK plans/system-maturity/README.md
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate-system-maturity-plan.frozen.json
+INFO  A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate.stdout.txt
+INFO  A2 P0-003 hash OK plans/system-maturity/gates.json
+INFO  A2 P0-003 hash OK scripts/validate-test-gates.mjs
+INFO  A2 P0-003 hash OK vitest.config.ts
+INFO  A2 P0-003 hash OK vitest.agent-dev.node.config.ts
+INFO  A2 P0-003 hash OK vitest.runtime-effectiveness.config.ts
+INFO  A2 P0-003 hash OK src/lib/host-api.ts
+INFO  A2 P0-003 hash OK tests/unit/host-api-facade.test.ts
+INFO  A2 P0-003 hash OK package.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/validate-test-gates.frozen.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/release-gates.commands.json
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/empty-shard.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/harness-ci.stdout.txt
+INFO  A2 P0-003 hash OK artifacts/system-maturity/P0-003/typecheck.stdout.txt
+INFO  A2 P0-004 hash OK scripts/validate-system-maturity-evidence.mjs
+INFO  A2 P0-004 hash OK package.json
+INFO  A2 P0-004 hash OK plans/system-maturity/BASELINE.json
+INFO  A2 P0-004 hash OK plans/system-maturity/phase0-foundation/STATUS.json
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/baseline.stdout.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/plan.stdout.txt
+INFO  A2 P0-004 hash OK artifacts/system-maturity/P0-004/harness.stdout.txt
+INFO  A2 P1-001 hash OK artifacts/system-maturity/P1-001/canary-scan.json
+INFO  A2 P1-001 hash OK artifacts/system-maturity/P1-001/vitest.stdout.txt
+INFO  A2 P1-001 hash OK artifacts/system-maturity/P1-001/evidence-index.json
+INFO  A2 P1-001 hash OK electron/services/secrets/secret-store.ts
+INFO  A2 P1-001 hash OK shared/host-api/contract.ts
+INFO  A2 P1-001 hash OK src/lib/host-api.ts
+INFO  A2 P1-001 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json
+INFO  A2 P1-001 hash OK scripts/configure-deepseek-runtime.mjs
+INFO  A2 P1-002 hash OK artifacts/system-maturity/P1-002/vitest.stdout.txt
+INFO  A2 P1-002 hash OK artifacts/system-maturity/P1-002/sender-payload-matrix.json
+INFO  A2 P1-002 hash OK electron/main/ipc/host-invoke.ts
+INFO  A2 P1-002 hash OK electron/main/ipc/host-invoke-security.ts
+INFO  A2 P1-002 hash OK electron/main/ipc-handlers.ts
+INFO  A2 P1-002 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json
+INFO  A2 P1-003 hash OK artifacts/system-maturity/P1-003/vitest.stdout.txt
+INFO  A2 P1-003 hash OK artifacts/system-maturity/P1-003/path-matrix.json
+INFO  A2 P1-003 hash OK electron/services/path-broker.ts
+INFO  A2 P1-003 hash OK electron/services/files-api.ts
+INFO  A2 P1-003 hash OK electron/services/workspace-permissions.ts
+INFO  A2 P1-003 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json
+INFO  A2 P1-004 hash OK artifacts/system-maturity/P1-004/vitest.stdout.txt
+INFO  A2 P1-004 hash OK artifacts/system-maturity/P1-004/url-policy-matrix.json
+INFO  A2 P1-004 hash OK shared/security/url-policy.ts
+INFO  A2 P1-004 hash OK electron/utils/safe-open-external.ts
+INFO  A2 P1-004 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json
+INFO  A2 P2-001 hash OK artifacts/system-maturity/P2-001/vitest.stdout.txt
+INFO  A2 P2-001 hash OK artifacts/system-maturity/P2-001/evidence-index.json
+INFO  A2 P2-001 hash OK artifacts/system-maturity/P2-001/acceptance-matrix.json
+INFO  A2 P2-001 hash OK shared/types/workspace.ts
+INFO  A2 P2-001 hash OK electron/services/workspaces-api.ts
+INFO  A2 P2-001 hash OK electron/services/workspace-permissions.ts
+INFO  A2 P2-001 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json
+INFO  A2 P2-002 hash OK artifacts/system-maturity/P2-002/vitest.stdout.txt
+INFO  A2 P2-002 hash OK artifacts/system-maturity/P2-002/evidence-index.json
+INFO  A2 P2-002 hash OK artifacts/system-maturity/P2-002/acceptance-matrix.json
+INFO  A2 P2-002 hash OK electron/services/permissions-api.ts
+INFO  A2 P2-002 hash OK tests/unit/permissions-api.test.ts
+INFO  A2 P2-002 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json
+INFO  A2 P2-003 hash OK artifacts/system-maturity/P2-003/vitest.stdout.txt
+INFO  A2 P2-003 hash OK artifacts/system-maturity/P2-003/evidence-index.json
+INFO  A2 P2-003 hash OK artifacts/system-maturity/P2-003/acceptance-matrix.json
+INFO  A2 P2-003 hash OK openclaw_runtime/src/agents/role-contract.ts
+INFO  A2 P2-003 hash OK openclaw_runtime/src/agents/role-permissions-policy.ts
+INFO  A2 P2-003 hash OK openclaw_runtime/src/agents/role-spawn.ts
+INFO  A2 P2-003 hash OK electron/services/roles-api.ts
+INFO  A2 P2-003 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json
+INFO  A2 P2-004 hash OK artifacts/system-maturity/P2-004/vitest.stdout.txt
+INFO  A2 P2-004 hash OK artifacts/system-maturity/P2-004/evidence-index.json
+INFO  A2 P2-004 hash OK artifacts/system-maturity/P2-004/acceptance-matrix.json
+INFO  A2 P2-005 hash OK artifacts/system-maturity/P2-005/vitest.stdout.txt
+INFO  A2 P2-005 hash OK artifacts/system-maturity/P2-005/evidence-index.json
+INFO  A2 P2-005 hash OK artifacts/system-maturity/P2-005/acceptance-matrix.json
+INFO  A2 P3-001 hash OK artifacts/system-maturity/P3-001/vitest-host.stdout.txt
+INFO  A2 P3-001 hash OK artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt
+INFO  A2 P3-001 hash OK artifacts/system-maturity/P3-001/acceptance-matrix.json
+INFO  A2 P3-001 hash OK artifacts/system-maturity/P3-001/evidence-index.json
+INFO  A2 P3-002 hash OK artifacts/system-maturity/P3-002/vitest-host.stdout.txt
+INFO  A2 P3-002 hash OK artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt
+INFO  A2 P3-002 hash OK artifacts/system-maturity/P3-002/acceptance-matrix.json
+INFO  A2 P3-002 hash OK artifacts/system-maturity/P3-002/evidence-index.json
+INFO  A2 P3-003 hash OK artifacts/system-maturity/P3-003/vitest-host.stdout.txt
+INFO  A2 P3-003 hash OK artifacts/system-maturity/P3-003/acceptance-matrix.json
+INFO  A2 P3-003 hash OK artifacts/system-maturity/P3-003/evidence-index.json
+INFO  A2 P3-004 hash OK artifacts/system-maturity/P3-004/vitest-host.stdout.txt
+INFO  A2 P3-004 hash OK artifacts/system-maturity/P3-004/acceptance-matrix.json
+INFO  A2 P3-004 hash OK artifacts/system-maturity/P3-004/evidence-index.json
+INFO  A2 P4-001 hash OK artifacts/system-maturity/P4-001/vitest.stdout.txt
+INFO  A2 P4-001 hash OK artifacts/system-maturity/P4-001/acceptance-matrix.json
+INFO  A2 P4-001 hash OK artifacts/system-maturity/P4-001/evidence-index.json
+INFO  A2 P4-002 hash OK artifacts/system-maturity/P4-002/vitest.stdout.txt
+INFO  A2 P4-002 hash OK artifacts/system-maturity/P4-002/acceptance-matrix.json
+INFO  A2 P4-002 hash OK artifacts/system-maturity/P4-002/evidence-index.json
+INFO  A2 P4-003 hash OK artifacts/system-maturity/P4-003/vitest.stdout.txt
+INFO  A2 P4-003 hash OK artifacts/system-maturity/P4-003/acceptance-matrix.json
+INFO  A2 P4-003 hash OK artifacts/system-maturity/P4-003/evidence-index.json
+INFO  A2 P4-004 hash OK artifacts/system-maturity/P4-004/vitest.stdout.txt
+INFO  A2 P4-004 hash OK artifacts/system-maturity/P4-004/acceptance-matrix.json
+INFO  A2 P4-004 hash OK artifacts/system-maturity/P4-004/evidence-index.json
+INFO  A2 P5-001 hash OK artifacts/system-maturity/P5-001/vitest.stdout.txt
+INFO  A2 P5-001 hash OK artifacts/system-maturity/P5-001/vitest-related.stdout.txt
+INFO  A2 P5-001 hash OK artifacts/system-maturity/P5-001/acceptance-matrix.json
+INFO  A2 P5-001 hash OK artifacts/system-maturity/P5-001/evidence-index.json
+INFO  A2 P5-002 hash OK artifacts/system-maturity/P5-002/vitest.stdout.txt
+INFO  A2 P5-002 hash OK artifacts/system-maturity/P5-002/acceptance-matrix.json
+INFO  A2 P5-002 hash OK artifacts/system-maturity/P5-002/evidence-index.json
+INFO  A2 P5-003 hash OK artifacts/system-maturity/P5-003/vitest.stdout.txt
+INFO  A2 P5-003 hash OK artifacts/system-maturity/P5-003/acceptance-matrix.json
+INFO  A2 P5-003 hash OK artifacts/system-maturity/P5-003/evidence-index.json
+INFO  A2 P5-004 hash OK artifacts/system-maturity/P5-004/vitest.stdout.txt
+INFO  A2 P5-004 hash OK artifacts/system-maturity/P5-004/acceptance-matrix.json
+INFO  A2 P5-004 hash OK artifacts/system-maturity/P5-004/evidence-index.json
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/acceptance-matrix.json
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/full-gate-assessment.json
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/vitest.stdout.txt
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/policy-validate.stdout.txt
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/gate-deny-unsigned.stdout.txt
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/authenticode-probe.stdout.txt
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/gate-allow-signed-attestation.stdout.txt
+INFO  A2 P6-001 hash OK artifacts/system-maturity/P6-001/harness-ci.stdout.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/acceptance-matrix.json
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/full-gate-assessment.json
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/vitest.stdout.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/policy-validate.stdout.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/live-feed-probe.stdout.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/unknown-channel-deny.stderr.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/harness-validate.stdout.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/comms-replay.exit.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/comms-compare.exit.txt
+INFO  A2 P6-002 hash OK artifacts/system-maturity/P6-002/workflow-yaml.stdout.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/acceptance-matrix.json
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/full-gate-assessment.json
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/vitest.stdout.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/policy-validate.stdout.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/live-source-probe.stdout.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/checksum-mismatch-deny.stderr.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/harness-validate.stdout.txt
+INFO  A2 P6-003 hash OK artifacts/system-maturity/P6-003/workflow-yaml.stdout.txt
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/acceptance-matrix.json
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/full-gate-assessment.json
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/vitest.stdout.txt
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/metadata-validate.stdout.txt
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/tamper-deny.stderr.txt
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/win-electron-trust.json
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt
+INFO  A2 P6-004 hash OK artifacts/system-maturity/P6-004/harness-validate.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/acceptance-matrix.json
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/release-gate-evidence.json
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/release-source-manifest.json
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/evidence-index.json
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/full-electron-e2e-audit.json
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/test.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt
+INFO  A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/full-validation.json
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/traceability-report.json
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/acceptance-matrix.json
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt
+INFO  A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt
+INFO  A2 P7-001 hash OK scripts/validate-system-maturity-traceability.mjs
+INFO  A2 P7-001 hash OK tests/unit/system-maturity-traceability-p7-001.test.ts
+INFO  A2 P7-001 hash OK harness/specs/tasks/system-maturity-traceability.md
+INFO  A1 regression probe: missing evidence path correctly detectable
+
+validate-system-maturity-evidence: OK
+traceability: findings=35 tasks=34 tests=35 fresh=35 stale=0
+validate-system-maturity-traceability: OK

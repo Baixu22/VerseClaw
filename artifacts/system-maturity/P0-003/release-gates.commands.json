@@ -4,6 +4,7 @@
     "node scripts/audit-baseline-check.mjs",
     "node scripts/validate-system-maturity-plan.mjs",
     "node scripts/validate-test-gates.mjs",
+    "pnpm maturity:security:full",
     "pnpm contract:check",
     "pnpm test",
     "pnpm run lint:check",
