@@ -199,20 +199,10 @@ describe('role-first orchestration v3 protocol', () => {
       },
     });
 
-    const result = await tool.execute('call_1', {
+    await expect(tool.execute('call_1', {
       task: 'explain this function',
       workerCommunication: 'bounded_a2a',
-    });
-    const details = result.details as {
-      resultPolicy: {
-        workerCommunication: string;
-        requestedWorkerCommunication: string;
-        boundedA2aEnabled: boolean;
-      };
-    };
-    expect(details.resultPolicy.requestedWorkerCommunication).toBe('bounded_a2a');
-    expect(details.resultPolicy.workerCommunication).toBe('none');
-    expect(details.resultPolicy.boundedA2aEnabled).toBe(true);
+    })).rejects.toThrow(/bounded_a2a.*not supported/i);
   });
 
   it('classifies poor worker output and recommends redo for no-output failures', () => {

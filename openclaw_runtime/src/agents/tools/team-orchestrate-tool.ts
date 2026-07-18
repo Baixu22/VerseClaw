@@ -184,8 +184,12 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       const qualityPolicy = normalizeQualityPolicy(params.qualityPolicy);
       const repairPolicy = normalizeRepairPolicy(params.repairPolicy);
       const requestedWorkerCommunication = normalizeWorkerCommunication(params.workerCommunication);
-      const workerCommunication =
-        requestedWorkerCommunication === "bounded_a2a" ? "none" : requestedWorkerCommunication;
+      if (requestedWorkerCommunication === "bounded_a2a") {
+        throw new ToolInputError(
+          "workerCommunication=bounded_a2a is not supported by the current runtime; use lead_mediated or none",
+        );
+      }
+      const workerCommunication = requestedWorkerCommunication;
       const request: ObservedOrchestrationRunRequest = {
         task,
         fileHints: readStringArray(params.fileHints),
@@ -309,7 +313,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           verifier: result.pendingVerifier ? "deferred_until_workers_terminal" : "none",
           workerCommunication,
           requestedWorkerCommunication,
-          boundedA2aEnabled: true,
+          boundedA2aEnabled: workerCommunication === "bounded_a2a",
           repairPolicy,
           qualityPolicy,
         },
