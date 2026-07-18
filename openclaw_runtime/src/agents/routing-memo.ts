@@ -22,6 +22,7 @@
 
 import { mkdirSync, readFileSync, appendFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import type { OrchestrationQualityAuthority } from "./orchestration-quality-scorecard.js";
 import type { RoleRouteMode } from "./role-router.js";
 
 export type RoutingMemoGraphStatus = "pending" | "completed" | "partial" | "failed";
@@ -66,15 +67,10 @@ export type RoutingMemoMatch = {
 export type RoutingMemoPilotMode = "off" | "shadow" | "active";
 export type RoutingMemoAuthority = "off" | "shadow" | "active";
 
-export type OrchestrationQualityState = {
-  source: "scorecard" | "ordinary_orchestration" | "shadow" | string;
-  qualityOverall?: RoutingMemoQuality | null;
-  scorecardBacked?: boolean;
-};
-
 export type RoutingMemoAuthorityResult = {
   pilotMode: RoutingMemoPilotMode;
   authority: RoutingMemoAuthority;
+  qualitySource: OrchestrationQualityAuthority["source"];
   reason: "pilot-off" | "pilot-shadow" | "missing-scorecard-quality" | "scorecard-quality-present";
 };
 
@@ -82,6 +78,7 @@ export type RoutingMemoDashboard = {
   pilotMode: RoutingMemoPilotMode;
   authority: RoutingMemoAuthority;
   authorityReason: RoutingMemoAuthorityResult["reason"];
+  qualitySource: OrchestrationQualityAuthority["source"];
   storagePath?: string;
   sampleCount: number;
   outcomes: {
@@ -145,19 +142,36 @@ export function resolveRoutingMemoPilotMode(value: unknown): RoutingMemoPilotMod
 
 export function resolveRoutingMemoAuthority(params: {
   pilotMode: RoutingMemoPilotMode;
-  qualityState?: OrchestrationQualityState | null;
+  qualityAuthority?: OrchestrationQualityAuthority | null;
 }): RoutingMemoAuthorityResult {
+  const qualitySource = params.qualityAuthority?.source ?? "none";
   if (params.pilotMode === "off") {
-    return { pilotMode: params.pilotMode, authority: "off", reason: "pilot-off" };
+    return { pilotMode: params.pilotMode, authority: "off", qualitySource, reason: "pilot-off" };
   }
   if (params.pilotMode === "shadow") {
-    return { pilotMode: params.pilotMode, authority: "shadow", reason: "pilot-shadow" };
+    return { pilotMode: params.pilotMode, authority: "shadow", qualitySource, reason: "pilot-shadow" };
   }
-  const quality = params.qualityState;
-  if (quality?.scorecardBacked === true && quality.source === "scorecard" && quality.qualityOverall) {
-    return { pilotMode: params.pilotMode, authority: "active", reason: "scorecard-quality-present" };
+  const quality = params.qualityAuthority;
+  if (
+    quality?.state === "active" &&
+    quality.source === "task_loop_verified_scorecard" &&
+    quality.scorecardBacked &&
+    quality.verified &&
+    quality.routingEligible
+  ) {
+    return {
+      pilotMode: params.pilotMode,
+      authority: "active",
+      qualitySource,
+      reason: "scorecard-quality-present",
+    };
   }
-  return { pilotMode: params.pilotMode, authority: "shadow", reason: "missing-scorecard-quality" };
+  return {
+    pilotMode: params.pilotMode,
+    authority: "shadow",
+    qualitySource,
+    reason: "missing-scorecard-quality",
+  };
 }
 
 /**
@@ -262,10 +276,13 @@ export function recallRoutingMemos(
 export function readRoutingMemoDashboard(
   workspaceDir: string | undefined,
   cfg: unknown,
-  options: { qualityState?: OrchestrationQualityState | null; limit?: number } = {},
+  options: { qualityAuthority?: OrchestrationQualityAuthority | null; limit?: number } = {},
 ): RoutingMemoDashboard {
   const pilotMode = resolveRoutingMemoPilotMode(cfg);
-  const authority = resolveRoutingMemoAuthority({ pilotMode, qualityState: options.qualityState ?? null });
+  const authority = resolveRoutingMemoAuthority({
+    pilotMode,
+    qualityAuthority: options.qualityAuthority ?? null,
+  });
   const memos = readAllRoutingMemos(workspaceDir);
   const graphStatus = zeroGraphStatusCounts();
   const qualityOverall = zeroQualityCounts();
@@ -325,6 +342,7 @@ export function readRoutingMemoDashboard(
     pilotMode,
     authority: authority.authority,
     authorityReason: authority.reason,
+    qualitySource: authority.qualitySource,
     storagePath: workspaceDir ? resolveMemoFilePath(workspaceDir) : undefined,
     sampleCount: memos.length,
     outcomes: { graphStatus, qualityOverall },

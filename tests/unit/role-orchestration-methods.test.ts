@@ -386,6 +386,18 @@ describe('orchestrator.run handler', () => {
         schemaVersion: 1,
         phase: 'spawn',
       },
+      qualityDecision: {
+        result: {
+          state: 'shadow',
+          source: 'ordinary_orchestration_scorecard',
+          verified: false,
+          routingEligible: false,
+        },
+        routing: {
+          affected: false,
+          authority: { state: 'unavailable', source: 'none' },
+        },
+      },
     });
   });
 
@@ -618,6 +630,10 @@ describe('team_orchestrate tool', () => {
         scorecardBacked: boolean;
         evidenceRefs: string[];
       };
+      qualityDecision?: {
+        result: { state: string; source: string; verified: boolean; routingEligible: boolean };
+        routing: { affected: boolean; reason: string; authority: { state: string; source: string } };
+      };
       resultPolicy: { completion: string; boundedA2aEnabled: boolean };
       resultBundle?: unknown;
       blackboardSummary?: { entryCount: number };
@@ -641,6 +657,18 @@ describe('team_orchestrate tool', () => {
       evidenceRefs: expect.arrayContaining([expect.stringMatching(/trace:|run:|orchestration:/)]),
     });
     expect(details.qualityStateReason).toMatch(/score/i);
+    expect(details.qualityDecision).toMatchObject({
+      result: {
+        state: 'shadow',
+        source: 'ordinary_orchestration_scorecard',
+        verified: false,
+        routingEligible: false,
+      },
+      routing: {
+        affected: false,
+        authority: { state: 'unavailable', source: 'none' },
+      },
+    });
     expect(details.resultPolicy.boundedA2aEnabled).toBe(false);
     expect(details.blackboardSummary?.entryCount).toBe(1);
     expect(details.resultBundle).toMatchObject({
@@ -696,6 +724,10 @@ describe('team_orchestrate tool', () => {
         worst: string;
         scorecardBacked: boolean;
       };
+      qualityDecision?: {
+        result: { state: string; source: string };
+        routing: { affected: boolean };
+      };
     };
     expect(details.status).toBe('partial');
     expect(details.plan.templateId).toBe('security-audit');
@@ -721,6 +753,10 @@ describe('team_orchestrate tool', () => {
       overall: 'needs_attention',
       worst: 'poor_attempt',
       scorecardBacked: true,
+    });
+    expect(details.qualityDecision).toMatchObject({
+      result: { state: 'shadow', source: 'ordinary_orchestration_scorecard' },
+      routing: { affected: false },
     });
     expect(details).not.toHaveProperty('repairNodes');
     expect(details).not.toHaveProperty('blocked');
@@ -1055,10 +1091,18 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
 
     process.env.OPENCLAW_MEMORY_USE_GATE = '1';
     const evalRes = await callHandler('memory.evalReport', { roleName: 'architect', task: 'evaluate role memory feedback' });
-    const evalPayload = evalRes?.payload as { report: { aggregate: { taskSuccessDelta: number | null } }; dryRun?: { roleName: string; pack?: { candidateExplanations?: unknown[] } } };
+    const evalPayload = evalRes?.payload as {
+      report: { aggregate: { taskSuccessDelta: number | null } };
+      dryRun?: {
+        roleName: string;
+        pack?: { candidateExplanations?: Array<{ cardId: string; selected: boolean }> };
+      };
+    };
     expect(evalPayload.report.aggregate.taskSuccessDelta).toBeNull();
     expect(evalPayload.dryRun?.roleName).toBe('architect');
-    expect(evalPayload.dryRun?.pack?.candidateExplanations ?? []).toEqual([]);
+    expect(evalPayload.dryRun?.pack?.candidateExplanations).toEqual(expect.arrayContaining([
+      expect.objectContaining({ cardId: card!.id, selected: true }),
+    ]));
   });
 
   it('memory.store rejects a low-confidence proposal', async () => {

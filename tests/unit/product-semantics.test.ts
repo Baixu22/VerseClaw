@@ -42,6 +42,7 @@ describe('ClawX product semantics', () => {
     expect(normalizeOrchestrationQualityState([])).toBeNull();
     expect(normalizeOrchestrationQualityState('shadow')).toBe('shadow');
     expect(normalizeOrchestrationQualityState({ state: 'active' })).toBe('active');
+    expect(normalizeOrchestrationQualityState({ result: { state: 'shadow' } })).toBe('shadow');
 
     expect(orchestrationQualityAffectsRouting(null)).toBe(false);
     expect(orchestrationQualityAffectsRouting('shadow')).toBe(false);
@@ -209,8 +210,8 @@ describe('ClawX product semantics', () => {
     expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-07')).toMatchObject({
       implementationStatus: 'done',
       lane: 'routing-memo',
-      safeClaim: expect.stringContaining('scorecard-backed'),
-      forbiddenClaim: expect.stringContaining('unreliable'),
+      safeClaim: expect.stringContaining('same-session Task Loop scorecard authority'),
+      forbiddenClaim: expect.stringContaining('caller-supplied qualityState'),
     });
     expect(PRODUCT_SEMANTIC_TASK_BOUNDARIES.find((task) => task.id === 'P1-08')).toMatchObject({
       implementationStatus: 'done',

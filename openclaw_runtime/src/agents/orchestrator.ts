@@ -27,8 +27,11 @@ import {
   recallRoutingMemos,
   resolveRoutingMemoAuthority,
   resolveRoutingMemoPilotMode,
-  type OrchestrationQualityState,
 } from "./routing-memo.js";
+import {
+  unavailableOrchestrationQualityAuthority,
+  type OrchestrationQualityAuthority,
+} from "./orchestration-quality-scorecard.js";
 import { selectRunbookCandidates, type RunbookSelectionResult } from "./runbook-registry.js";
 import { buildTaskGraphFromRunbook } from "./runbook-task-graph.js";
 import { DEFAULT_VERIFIER_DISCIPLINE } from "./verifier-discipline.js";
@@ -62,7 +65,7 @@ export type OrchestratorRequest = {
   /** Config carrier used to resolve config-defined team templates. */
   cfg?: { agents?: { teams?: unknown } };
   qualityPolicy?: OrchestrationQualityPolicy;
-  qualityState?: OrchestrationQualityState | null;
+  qualityAuthority?: OrchestrationQualityAuthority | null;
   repairPolicy?: OrchestrationRepairPolicy;
   workerCommunication?: WorkerCommunicationPolicy;
   allowFollowupPlanning?: boolean;
@@ -119,7 +122,21 @@ export type OrchestratorPlan = {
   verifierNoSelfRepair: boolean;
   complexityDecision: ComplexityGateDecision;
   runbookSelection: RunbookSelectionResult;
+  qualityRouting: {
+    authority: OrchestrationQualityAuthority;
+    affected: boolean;
+    reason:
+      | "explicit-plan"
+      | "template-plan"
+      | "runbook-plan"
+      | "pilot-off"
+      | "authority-shadow"
+      | "no-routing-memo-match"
+      | "active-routing-memo";
+  };
 };
+
+type OrchestratorPlanBase = Omit<OrchestratorPlan, "qualityRouting">;
 
 function taskForRole(roleName: string, task: string): string {
   switch (roleName) {
@@ -258,13 +275,13 @@ function buildP2Metadata(request: OrchestratorRequest): {
 }
 
 function attachP2Metadata(
-  plan: Omit<OrchestratorPlan, "complexityDecision" | "runbookSelection" | "isolation" | "verifierNoSelfRepair"> & {
+  plan: Omit<OrchestratorPlanBase, "complexityDecision" | "runbookSelection" | "isolation" | "verifierNoSelfRepair"> & {
     isolation?: CodingIsolationMode;
     verifierNoSelfRepair?: boolean;
   },
   metadata: ReturnType<typeof buildP2Metadata>,
   request?: OrchestratorRequest,
-): OrchestratorPlan {
+): OrchestratorPlanBase {
   const isolation = normalizeIsolationMode(plan.isolation ?? request?.isolation);
   const verifierNoSelfRepair =
     plan.verifierNoSelfRepair ??
@@ -276,7 +293,7 @@ function attachP2Metadata(
 function createRunbookPlan(
   request: OrchestratorRequest,
   metadata: ReturnType<typeof buildP2Metadata>,
-): OrchestratorPlan | null {
+): OrchestratorPlanBase | null {
   const selected = metadata.runbookSelection.selected;
   if (!selected) {
     return null;
@@ -333,7 +350,7 @@ function createRunbookPlan(
   );
 }
 
-function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPlan | null {
+function createExplicitWorkersPlan(request: OrchestratorRequest): OrchestratorPlanBase | null {
   const metadata = buildP2Metadata(request);
   const requestedWorkers =
     request.workers?.filter((worker) => worker.roleName.trim() && worker.task.trim()) ?? [];
@@ -411,7 +428,7 @@ function templateRoleKnown(
 function createTemplatePlan(
   request: OrchestratorRequest,
   template: TeamTemplate,
-): OrchestratorPlan {
+): OrchestratorPlanBase {
   const metadata = buildP2Metadata(request);
   const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
   const preferredLead = request.preferredLeadRole?.trim();
@@ -485,17 +502,41 @@ function createTemplatePlan(
   );
 }
 
+function attachQualityRouting(
+  plan: OrchestratorPlanBase,
+  authority: OrchestrationQualityAuthority,
+  affected: boolean,
+  reason: OrchestratorPlan["qualityRouting"]["reason"],
+): OrchestratorPlan {
+  return {
+    ...plan,
+    qualityRouting: {
+      authority,
+      affected,
+      reason,
+    },
+  };
+}
+
 export function createOrchestratorPlan(request: OrchestratorRequest): OrchestratorPlan {
   const availableRoles = request.roles ?? BUILT_IN_ROLE_CONTRACTS;
   const metadata = buildP2Metadata(request);
+  const qualityAuthority =
+    request.qualityAuthority ??
+    unavailableOrchestrationQualityAuthority("No verified quality authority was supplied for routing.");
   const explicitPlan = createExplicitWorkersPlan(request);
   if (explicitPlan) {
-    return explicitPlan;
+    return attachQualityRouting(explicitPlan, qualityAuthority, false, "explicit-plan");
   }
   const templateId = request.templateId?.trim() || request.teamTemplateId?.trim();
   const template = resolveTeamTemplate(templateId, request.cfg);
   if (template) {
-    return createTemplatePlan(request, template);
+    return attachQualityRouting(
+      createTemplatePlan(request, template),
+      qualityAuthority,
+      false,
+      "template-plan",
+    );
   }
   // Area 3 §3.1: recall routing memos for similar tasks. Shadow phase writes
   // `memo-shadow:...` reasons only (scores unchanged, byte-identical routing);
@@ -505,7 +546,7 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   const memoPilotMode = resolveRoutingMemoPilotMode(request.cfg);
   const memoAuthority = resolveRoutingMemoAuthority({
     pilotMode: memoPilotMode,
-    qualityState: request.qualityState ?? null,
+    qualityAuthority,
   });
   const effectiveMemoMode = memoAuthority.authority;
   const memoMatches =
@@ -521,7 +562,7 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       : undefined;
   const runbookPlan = createRunbookPlan(request, metadata);
   if (runbookPlan) {
-    return runbookPlan;
+    return attachQualityRouting(runbookPlan, qualityAuthority, false, "runbook-plan");
   }
   const route = routeRole({
     task: request.task,
@@ -533,6 +574,15 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
   // Shadow phase: append `memo-shadow:...` reasons (scores already unchanged).
   const memoShadowReasons =
     effectiveMemoMode === "shadow" ? memoMatches.map((match) => buildMemoShadowReason(match)) : [];
+  const routingAffected = effectiveMemoMode === "active" && memoMatches.length > 0;
+  const qualityRoutingReason: OrchestratorPlan["qualityRouting"]["reason"] =
+    effectiveMemoMode === "off"
+      ? "pilot-off"
+      : effectiveMemoMode === "shadow"
+        ? "authority-shadow"
+        : memoMatches.length === 0
+          ? "no-routing-memo-match"
+          : "active-routing-memo";
   // Honor a caller-pinned lead role when it exists in the available pool.
   // In router mode it replaces the primary worker; in team mode it only
   // overrides the leadRole attribution (workers stay as routed).
@@ -570,22 +620,27 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
       routeDiagnostics,
       graphRunId: "router",
     });
-    return attachP2Metadata(
-      {
-        mode: route.mode,
-        leadRole: leadName,
-        workers: graph.projectedWorkers,
-        reasons,
-        routeDiagnostics,
-        taskGraph: graph.taskGraph,
-        graphStatus: graph.taskGraph.status,
-        executionWaves: graph.executionWaves,
-        capabilityGaps: routeDiagnostics.capabilityGaps,
-        estimatedRepairPolicy: graph.estimatedRepairPolicy,
-        isolation: graph.isolation,
-      },
-      metadata,
-      request,
+    return attachQualityRouting(
+      attachP2Metadata(
+        {
+          mode: route.mode,
+          leadRole: leadName,
+          workers: graph.projectedWorkers,
+          reasons,
+          routeDiagnostics,
+          taskGraph: graph.taskGraph,
+          graphStatus: graph.taskGraph.status,
+          executionWaves: graph.executionWaves,
+          capabilityGaps: routeDiagnostics.capabilityGaps,
+          estimatedRepairPolicy: graph.estimatedRepairPolicy,
+          isolation: graph.isolation,
+        },
+        metadata,
+        request,
+      ),
+      qualityAuthority,
+      routingAffected,
+      qualityRoutingReason,
     );
   }
   const workerNames = [...new Set(route.supporting.map((match) => match.role.name))];
@@ -619,23 +674,28 @@ export function createOrchestratorPlan(request: OrchestratorRequest): Orchestrat
     routeDiagnostics,
     graphRunId: route.mode,
   });
-  return attachP2Metadata(
-    {
-      mode: route.mode,
-      leadRole,
-      workers: graph.projectedWorkers,
-      verifierRole,
-      reasons: finalReasons,
-      routeDiagnostics,
-      taskGraph: graph.taskGraph,
-      graphStatus: graph.taskGraph.status,
-      executionWaves: graph.executionWaves,
-      capabilityGaps: routeDiagnostics.capabilityGaps,
-      estimatedRepairPolicy: graph.estimatedRepairPolicy,
-      isolation: graph.isolation,
-    },
-    metadata,
-    request,
+  return attachQualityRouting(
+    attachP2Metadata(
+      {
+        mode: route.mode,
+        leadRole,
+        workers: graph.projectedWorkers,
+        verifierRole,
+        reasons: finalReasons,
+        routeDiagnostics,
+        taskGraph: graph.taskGraph,
+        graphStatus: graph.taskGraph.status,
+        executionWaves: graph.executionWaves,
+        capabilityGaps: routeDiagnostics.capabilityGaps,
+        estimatedRepairPolicy: graph.estimatedRepairPolicy,
+        isolation: graph.isolation,
+      },
+      metadata,
+      request,
+    ),
+    qualityAuthority,
+    routingAffected,
+    qualityRoutingReason,
   );
 }
 
