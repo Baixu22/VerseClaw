@@ -15,6 +15,7 @@ import {
   validateReleaseWorkflowBaselinePolicy,
 } from '../../scripts/validate-release-baseline.mjs';
 import { runReleaseGateCommand } from '../../scripts/lib/run-release-gate-command.mjs';
+import { sha256CanonicalEvidenceFile } from '../../scripts/lib/canonical-evidence-hash.mjs';
 
 const roots: string[] = [];
 const sha256 = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
@@ -82,6 +83,16 @@ describe('P6-005 clean release baseline', () => {
     const failed = runReleaseGateCommand('node -e "process.exit(7)"', { cwd: process.cwd() });
     expect(passed.status).toBe(0);
     expect(failed.status).toBe(7);
+  });
+
+  it('A2 hashes text evidence identically across LF and CRLF worktrees', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'clawx-evidence-lines-'));
+    roots.push(root);
+    const lf = join(root, 'lf.txt');
+    const crlf = join(root, 'crlf.txt');
+    await writeFile(lf, 'first\nsecond\n');
+    await writeFile(crlf, 'first\r\nsecond\r\n');
+    expect(sha256CanonicalEvidenceFile(crlf)).toBe(sha256CanonicalEvidenceFile(lf));
   });
 
   it('A1 denies modified, staged, and untracked source state', async () => {
