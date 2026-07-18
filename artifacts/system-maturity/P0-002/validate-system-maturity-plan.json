@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-18T06:51:47.044Z",
+  "checkedAt": "2026-07-18T07:28:21.229Z",
   "ok": true,
   "taskCount": 34,
   "statusFileCount": 8,
@@ -30,7 +30,7 @@
     "plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done",
-    "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=in_progress",
+    "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=done",
     "dependency edges resolve",
     "A3 P0-001 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-001.delivery.md)",
     "A3 P0-002 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-002.delivery.md)",
@@ -65,6 +65,7 @@
     "A3 P7-001 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-001.delivery.md)",
     "A3 P7-002 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-002.delivery.md)",
     "A3 P7-003 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-003.delivery.md)",
+    "A3 P7-004 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-004.delivery.md)",
     "task Finding refs resolve against findings-registry"
   ]
 }

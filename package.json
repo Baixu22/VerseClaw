@@ -177,7 +177,9 @@
     "release:baseline:validate": "node scripts/validate-release-baseline.mjs",
     "release:baseline:evidence": "node scripts/collect-p6-005-evidence.mjs",
     "maturity:privacy": "node scripts/validate-system-maturity-privacy.mjs",
-    "maturity:privacy:evidence": "node scripts/collect-p7-003-evidence.mjs"
+    "maturity:privacy:evidence": "node scripts/collect-p7-003-evidence.mjs",
+    "maturity:quarterly": "node scripts/run-system-maturity-quarterly-audit.mjs",
+    "maturity:quarterly:evidence": "node scripts/collect-p7-004-evidence.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

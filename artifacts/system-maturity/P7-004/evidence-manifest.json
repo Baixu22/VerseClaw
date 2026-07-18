@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-004",
+  "generatedAt": "2026-07-18T07:33:14.034847Z",
+  "files": [
+    {
+      "path": "artifacts/system-maturity/P7-004/full-validation.json",
+      "sha256": "ce3bbee0d9413793304dfa849c42ccab1f14cb00b2da36d655db14539b37f0a9"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
+      "sha256": "338ad6ec4fa9f8abeced7f168a55937767c06e6e7aca87fcc4c87ec7572b6f39"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/quarterly-audit-dry-run.json",
+      "sha256": "ed5a5d622555daabbf6df22d68be601785cf044342fddc54c56c150aae36e720"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/acceptance-matrix.json",
+      "sha256": "e870b8a68ffc106838665add1fee4ada517351ac62d5da675b9a60d7321368d7"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt",
+      "sha256": "baa1a438f68a369d70d2649eded7e6c8443eb4b4c7f25d9a05a282dfcd1f80f8"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt",
+      "sha256": "015cb7b8aa14ddad835e495cca0b6f1368d5b56ee703fb19a2aaaa0283abf592"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stdout.txt",
+      "sha256": "41e6c55a333e43fc7b93dc3fe527de17c47b596bf61baa8cb06f5ee0dcde1be6"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/agent-dev-deep-test.stdout.txt",
+      "sha256": "05226470ffe9224d954e73bff8470112805ea6abe8eb699427e75a908d3412a2"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/harness-task.stdout.txt",
+      "sha256": "7a083f48108b541589bf28be221b3be9062c50e359cf8e5866d01e067ace98c4"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/lint-check.stdout.txt",
+      "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/typecheck.stdout.txt",
+      "sha256": "08ef44c9d54c9bdf4ffc2a60a0d0923cb24077a77f925a70de11b449646ca0cd"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/unit-full.stdout.txt",
+      "sha256": "6b9ced8d28a573bc43da7fd859fb039668da623442a55112408651c0ca5ac40b"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stdout.txt",
+      "sha256": "a17bed40bc37901d122436f810565db84e7cb4b51815d4b8682225a2ca07ef26"
+    },
+    {
+      "path": "artifacts/system-maturity/P7-004/validation-gates/quarterly-final.stdout.txt",
+      "sha256": "6c1144978fb8b1059f4eff3662e64be45664bc9e45c29b33e6cb6d1d69b21886"
+    },
+    {
+      "path": "plans/system-maturity/risk-acceptance.json",
+      "sha256": "323089048338a1b07232898a6e1e6e087f551369cd8a50e4610e360f376f3e29"
+    },
+    {
+      "path": "scripts/lib/system-maturity-quarterly-audit.mjs",
+      "sha256": "d00a6e92210976584a80f33161c994ee6a39bac41183ab25ad38087b06cbba82"
+    },
+    {
+      "path": "scripts/run-system-maturity-quarterly-audit.mjs",
+      "sha256": "bccc1c22b6e12c3829243f46e6337456c8e92c6d37fe0e32ca94f1f0bad30d3e"
+    },
+    {
+      "path": "scripts/collect-p7-004-evidence.mjs",
+      "sha256": "3eebc120f11e9013a1e11c47c689238f6d3e45b2352185bf775ed17a02c87eda"
+    },
+    {
+      "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+      "sha256": "c144ddf72c6501dc9f5ca252e5a816ff59d3f092f9517eb86374965c52793f1d"
+    },
+    {
+      "path": "harness/specs/tasks/system-maturity-quarterly-audit.md",
+      "sha256": "4ac9b53976cf1495b52c0f8917742a8eee47e5987959a6b2b270db29c97bfb40"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6d097242fafbb145bf4b83f466c4c7b922d8710a24c1f4df75491483d90b97e7"
+    },
+    {
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "ae6529f6a817c308e409eecebc79c61b1656f897eb24aa6e2a5775655ab8e43c"
+    }
+  ]
+}

@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-004",
+  "generatedAt": "2026-07-18T07:29:59.757Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-GOV-002",
+    "F-GOV-003"
+  ],
+  "phases": [
+    {
+      "phase": "phase0-foundation",
+      "statusPath": "plans/system-maturity/phase0-foundation/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P0-001": "done",
+        "P0-002": "done",
+        "P0-003": "done",
+        "P0-004": "done"
+      }
+    },
+    {
+      "phase": "phase1-direct-boundaries",
+      "statusPath": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P1-001": "done",
+        "P1-002": "done",
+        "P1-003": "done",
+        "P1-004": "done"
+      }
+    },
+    {
+      "phase": "phase2-authorization-isolation",
+      "statusPath": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P2-001": "done",
+        "P2-002": "done",
+        "P2-003": "done",
+        "P2-004": "done",
+        "P2-005": "done"
+      }
+    },
+    {
+      "phase": "phase3-data-authority",
+      "statusPath": "plans/system-maturity/phase3-data-authority/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P3-001": "done",
+        "P3-002": "done",
+        "P3-003": "done",
+        "P3-004": "done"
+      }
+    },
+    {
+      "phase": "phase4-runtime-surfaces",
+      "statusPath": "plans/system-maturity/phase4-runtime-surfaces/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P4-001": "done",
+        "P4-002": "done",
+        "P4-003": "done",
+        "P4-004": "done"
+      }
+    },
+    {
+      "phase": "phase5-reliability-abuse",
+      "statusPath": "plans/system-maturity/phase5-reliability-abuse/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P5-001": "done",
+        "P5-002": "done",
+        "P5-003": "done",
+        "P5-004": "done"
+      }
+    },
+    {
+      "phase": "phase6-supply-release",
+      "statusPath": "plans/system-maturity/phase6-supply-release/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P6-001": "done",
+        "P6-002": "done",
+        "P6-003": "done",
+        "P6-004": "done",
+        "P6-005": "done"
+      }
+    },
+    {
+      "phase": "phase7-continuous-governance",
+      "statusPath": "plans/system-maturity/phase7-continuous-governance/STATUS.json",
+      "phaseStatus": "done",
+      "allTasksDone": true,
+      "consistent": true,
+      "missing": false,
+      "tasks": {
+        "P7-001": "done",
+        "P7-002": "done",
+        "P7-003": "done",
+        "P7-004": "done"
+      }
+    }
+  ],
+  "riskAcceptance": {
+    "rows": [
+      {
+        "findingId": "F-ISO-001",
+        "decision": "Track",
+        "owner": "security-lead",
+        "reviewBy": "2026-10-18",
+        "rationale": "Sandbox strong-mode visibility residual re-audit each quarter after isolation fixes.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-ISO-001",
+          "decision": "Track",
+          "owner": "security-lead",
+          "reviewBy": "2026-10-18",
+          "rationale": "Sandbox strong-mode visibility residual re-audit each quarter after isolation fixes.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-AUTH-003",
+        "decision": "Track",
+        "owner": "security-lead",
+        "reviewBy": "2026-10-18",
+        "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-AUTH-003",
+          "decision": "Track",
+          "owner": "security-lead",
+          "reviewBy": "2026-10-18",
+          "rationale": "CVK enforce-mode roadmap tracked; Fixed baseline re-reviewed quarterly.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-AUTH-004",
+        "decision": "Track",
+        "owner": "security-lead",
+        "reviewBy": "2026-10-18",
+        "rationale": "Runtime Spine diagnostic residual re-audit.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-AUTH-004",
+          "decision": "Track",
+          "owner": "security-lead",
+          "reviewBy": "2026-10-18",
+          "rationale": "Runtime Spine diagnostic residual re-audit.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-AUTH-005",
+        "decision": "Track",
+        "owner": "security-lead",
+        "reviewBy": "2026-10-18",
+        "rationale": "Verifier heuristic residual re-audit.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-AUTH-005",
+          "decision": "Track",
+          "owner": "security-lead",
+          "reviewBy": "2026-10-18",
+          "rationale": "Verifier heuristic residual re-audit.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-DATA-002",
+        "decision": "Track",
+        "owner": "data-governance",
+        "reviewBy": "2026-10-18",
+        "rationale": "SEKB/DCS context residual re-audit.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-DATA-002",
+          "decision": "Track",
+          "owner": "data-governance",
+          "reviewBy": "2026-10-18",
+          "rationale": "SEKB/DCS context residual re-audit.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-DATA-004",
+        "decision": "Track",
+        "owner": "privacy-governance",
+        "reviewBy": "2026-10-18",
+        "rationale": "Sensitive content boundary residual after P7-003; modelEcho no-guarantee remains Track with review deadline.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-DATA-004",
+          "decision": "Track",
+          "owner": "privacy-governance",
+          "reviewBy": "2026-10-18",
+          "rationale": "Sensitive content boundary residual after P7-003; modelEcho no-guarantee remains Track with review deadline.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-GOV-002",
+        "decision": "Track",
+        "owner": "program-governance",
+        "reviewBy": "2026-10-18",
+        "rationale": "Quarterly maturity scorecard separates Agent Dev grade from whole-system release; residual monitoring of agent-dev evidence freshness.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-GOV-002",
+          "decision": "Track",
+          "owner": "program-governance",
+          "reviewBy": "2026-10-18",
+          "rationale": "Quarterly maturity scorecard separates Agent Dev grade from whole-system release; residual monitoring of agent-dev evidence freshness.",
+          "acceptedBy": "security-lead",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-UX-001",
+        "decision": "Track",
+        "owner": "frontend-lead",
+        "reviewBy": "2026-10-18",
+        "rationale": "Frontend module size residual re-audit after Fixed mitigation.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-UX-001",
+          "decision": "Track",
+          "owner": "frontend-lead",
+          "reviewBy": "2026-10-18",
+          "rationale": "Frontend module size residual re-audit after Fixed mitigation.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      },
+      {
+        "findingId": "F-UX-002",
+        "decision": "Track",
+        "owner": "privacy-governance",
+        "reviewBy": "2026-10-18",
+        "rationale": "ErrorBoundary stack sanitization residual re-audit after P7-003.",
+        "status": "active",
+        "ok": true,
+        "entry": {
+          "findingId": "F-UX-002",
+          "decision": "Track",
+          "owner": "privacy-governance",
+          "reviewBy": "2026-10-18",
+          "rationale": "ErrorBoundary stack sanitization residual re-audit after P7-003.",
+          "acceptedBy": "program-governance",
+          "acceptedAt": "2026-07-18"
+        }
+      }
+    ],
+    "errors": [],
+    "ok": true
+  },
+  "releaseDecision": {
+    "allowed": true,
+    "blockers": [],
+    "notes": [
+      {
+        "code": "agent-dev-not-system-release",
+        "message": "Agent Dev audit score/grade/releaseReady must not be extrapolated to whole-system release readiness",
+        "status": "pass",
+        "releaseReady": null,
+        "score": null
+      }
+    ],
+    "code": "release-eligible"
+  },
+  "scorecard": {
+    "dimensions": [
+      {
+        "id": "phase-completion",
+        "score": 40,
+        "max": 40
+      },
+      {
+        "id": "status-consistency",
+        "score": 20,
+        "max": 20
+      },
+      {
+        "id": "risk-acceptance",
+        "score": 20,
+        "max": 20
+      },
+      {
+        "id": "release-gate",
+        "score": 20,
+        "max": 20
+      }
+    ],
+    "total": 100,
+    "max": 100,
+    "grade": "A",
+    "agentDevNote": {
+      "status": "pass",
+      "releaseReady": null,
+      "score": null,
+      "grade": "A",
+      "caveat": "Agent Dev A-grade must not be extrapolated to whole-system release readiness (F-GOV-002)"
+    }
+  },
+  "agentDevAudit": {
+    "path": "artifacts/agent-dev-audit/report.json",
+    "status": "pass",
+    "releaseReady": null,
+    "score": null,
+    "grade": "A",
+    "generatedAt": "2026-07-18T07:08:22.326Z"
+  },
+  "fail": [],
+  "summary": {
+    "phaseCount": 8,
+    "phasesDone": 8,
+    "phasesTraceable": 8,
+    "riskActive": 9,
+    "riskExpired": 0,
+    "riskMissing": 0,
+    "releaseAllowed": true,
+    "score": 100,
+    "grade": "A"
+  }
+}

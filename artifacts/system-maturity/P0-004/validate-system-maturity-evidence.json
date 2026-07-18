@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-18T06:53:43.932Z",
+  "checkedAt": "2026-07-18T07:33:16.306Z",
   "ok": true,
-  "recomputedCount": 222,
+  "recomputedCount": 243,
   "recomputed": [
     {
       "task": "P0-001",
@@ -13,7 +13,7 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e"
+      "sha256": "ae6529f6a817c308e409eecebc79c61b1656f897eb24aa6e2a5775655ab8e43c"
     },
     {
       "task": "P0-001",
@@ -98,7 +98,7 @@
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16"
+      "sha256": "6d097242fafbb145bf4b83f466c4c7b922d8710a24c1f4df75491483d90b97e7"
     },
     {
       "task": "P0-003",
@@ -138,7 +138,7 @@
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16"
+      "sha256": "6d097242fafbb145bf4b83f466c4c7b922d8710a24c1f4df75491483d90b97e7"
     },
     {
       "task": "P0-004",
@@ -858,7 +858,7 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "1123a95b87c222cee870ab738d7f419caa977ba7ea9d167964a20a2fd3f7e965"
+      "sha256": "08b46db059c2fa810947dd9dd78f9bc451292d17ae050c2d83bd5b0afd8025b0"
     },
     {
       "task": "P7-001",
@@ -1098,12 +1098,12 @@
     {
       "task": "P7-003",
       "path": "package.json",
-      "sha256": "338ef6a34ef9ad073bc28b5d95c6517f9d99f23a3da06723e8fa34b0d02a7a16"
+      "sha256": "6d097242fafbb145bf4b83f466c4c7b922d8710a24c1f4df75491483d90b97e7"
     },
     {
       "task": "P7-003",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e"
+      "sha256": "ae6529f6a817c308e409eecebc79c61b1656f897eb24aa6e2a5775655ab8e43c"
     },
     {
       "task": "P7-003",
@@ -1114,6 +1114,111 @@
       "task": "P7-003",
       "path": "artifacts/system-maturity/P7-003/acceptance-matrix.json",
       "sha256": "e3cc53029c090dea93894cf07cebff4142759f0877efd8f671d684b4283a22f7"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/full-validation.json",
+      "sha256": "ce3bbee0d9413793304dfa849c42ccab1f14cb00b2da36d655db14539b37f0a9"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
+      "sha256": "338ad6ec4fa9f8abeced7f168a55937767c06e6e7aca87fcc4c87ec7572b6f39"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/acceptance-matrix.json",
+      "sha256": "e870b8a68ffc106838665add1fee4ada517351ac62d5da675b9a60d7321368d7"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/evidence-manifest.json",
+      "sha256": "2a958d7a0c9f7f2500ac64237e4fe5a59582746a01053a2def78bbcce9a73807"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt",
+      "sha256": "baa1a438f68a369d70d2649eded7e6c8443eb4b4c7f25d9a05a282dfcd1f80f8"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt",
+      "sha256": "015cb7b8aa14ddad835e495cca0b6f1368d5b56ee703fb19a2aaaa0283abf592"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stdout.txt",
+      "sha256": "41e6c55a333e43fc7b93dc3fe527de17c47b596bf61baa8cb06f5ee0dcde1be6"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/agent-dev-deep-test.stdout.txt",
+      "sha256": "05226470ffe9224d954e73bff8470112805ea6abe8eb699427e75a908d3412a2"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/harness-task.stdout.txt",
+      "sha256": "7a083f48108b541589bf28be221b3be9062c50e359cf8e5866d01e067ace98c4"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/lint-check.stdout.txt",
+      "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/typecheck.stdout.txt",
+      "sha256": "08ef44c9d54c9bdf4ffc2a60a0d0923cb24077a77f925a70de11b449646ca0cd"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/unit-full.stdout.txt",
+      "sha256": "6b9ced8d28a573bc43da7fd859fb039668da623442a55112408651c0ca5ac40b"
+    },
+    {
+      "task": "P7-004",
+      "path": "artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stdout.txt",
+      "sha256": "a17bed40bc37901d122436f810565db84e7cb4b51815d4b8682225a2ca07ef26"
+    },
+    {
+      "task": "P7-004",
+      "path": "plans/system-maturity/risk-acceptance.json",
+      "sha256": "323089048338a1b07232898a6e1e6e087f551369cd8a50e4610e360f376f3e29"
+    },
+    {
+      "task": "P7-004",
+      "path": "scripts/lib/system-maturity-quarterly-audit.mjs",
+      "sha256": "d00a6e92210976584a80f33161c994ee6a39bac41183ab25ad38087b06cbba82"
+    },
+    {
+      "task": "P7-004",
+      "path": "scripts/run-system-maturity-quarterly-audit.mjs",
+      "sha256": "bccc1c22b6e12c3829243f46e6337456c8e92c6d37fe0e32ca94f1f0bad30d3e"
+    },
+    {
+      "task": "P7-004",
+      "path": "scripts/collect-p7-004-evidence.mjs",
+      "sha256": "3eebc120f11e9013a1e11c47c689238f6d3e45b2352185bf775ed17a02c87eda"
+    },
+    {
+      "task": "P7-004",
+      "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+      "sha256": "c144ddf72c6501dc9f5ca252e5a816ff59d3f092f9517eb86374965c52793f1d"
+    },
+    {
+      "task": "P7-004",
+      "path": "harness/specs/tasks/system-maturity-quarterly-audit.md",
+      "sha256": "4ac9b53976cf1495b52c0f8917742a8eee47e5987959a6b2b270db29c97bfb40"
+    },
+    {
+      "task": "P7-004",
+      "path": "package.json",
+      "sha256": "6d097242fafbb145bf4b83f466c4c7b922d8710a24c1f4df75491483d90b97e7"
+    },
+    {
+      "task": "P7-004",
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "ae6529f6a817c308e409eecebc79c61b1656f897eb24aa6e2a5775655ab8e43c"
     }
   ],
   "fail": [],
@@ -1341,6 +1446,27 @@
     "A2 P7-003 hash OK plans/system-maturity/findings-registry.json",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/evidence-manifest.json",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/acceptance-matrix.json",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/full-validation.json",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/quarterly-audit-report.json",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/acceptance-matrix.json",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/evidence-manifest.json",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/agent-dev-deep-test.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/harness-task.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/lint-check.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/typecheck.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/unit-full.stdout.txt",
+    "A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stdout.txt",
+    "A2 P7-004 hash OK plans/system-maturity/risk-acceptance.json",
+    "A2 P7-004 hash OK scripts/lib/system-maturity-quarterly-audit.mjs",
+    "A2 P7-004 hash OK scripts/run-system-maturity-quarterly-audit.mjs",
+    "A2 P7-004 hash OK scripts/collect-p7-004-evidence.mjs",
+    "A2 P7-004 hash OK tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+    "A2 P7-004 hash OK harness/specs/tasks/system-maturity-quarterly-audit.md",
+    "A2 P7-004 hash OK package.json",
+    "A2 P7-004 hash OK plans/system-maturity/findings-registry.json",
     "A1 regression probe: missing evidence path correctly detectable"
   ]
 }
