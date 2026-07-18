@@ -54,7 +54,7 @@ export function BranchPicker({
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/60 p-1 text-xs text-muted-foreground shadow-sm"
+      className="inline-flex items-center gap-1 rounded-md border border-black/[0.07] bg-background/70 p-1 text-xs text-muted-foreground shadow-sm shadow-black/[0.04] dark:border-white/[0.09] dark:shadow-black/20"
       data-testid="assistant-branch-picker"
     >
       <GitBranch className="h-3.5 w-3.5" />
@@ -86,20 +86,20 @@ export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
   const [open, setOpen] = useState(false);
   if (items.length === 0) return null;
   return (
-    <div className="w-full rounded-md border border-border/70 bg-background/60 text-muted-foreground shadow-sm" data-testid="assistant-reasoning-panel">
+    <div className="w-full rounded-lg border border-black/[0.07] bg-background/60 text-muted-foreground shadow-sm shadow-black/[0.04] dark:border-white/[0.09] dark:shadow-black/20" data-testid="assistant-reasoning-panel">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+        className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[13px] text-muted-foreground transition-colors duration-150 hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
         onClick={() => setOpen((value) => !value)}
       >
         <span className="flex min-w-0 items-center gap-2">
-          <Brain className="h-3.5 w-3.5 shrink-0" />
+          <Brain className="h-3.5 w-3.5 shrink-0 opacity-70" />
           <span className="truncate">{items[0]?.title || t('assistantRender.reasoning.title')}</span>
         </span>
-        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform duration-150', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="space-y-2 border-t border-border/70 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+        <div className="space-y-2 border-t border-black/[0.06] px-3 py-2.5 text-[13px] leading-[1.65] text-muted-foreground dark:border-white/[0.08]">
           {items.map((item) => (
             <p key={item.id} className="whitespace-pre-wrap break-words">{item.summary}</p>
           ))}
@@ -118,16 +118,16 @@ export function ToolFallbackCard({ tools }: { tools: AssistantToolFallback[] }) 
         <div
           key={tool.id}
           className={cn(
-            'rounded-md border px-3 py-2 text-xs shadow-sm',
-            tool.status === 'error' && 'border-destructive/30 bg-destructive/5 text-destructive',
-            tool.status === 'running' && 'border-primary/30 bg-background/60 text-foreground',
-            tool.status === 'completed' && 'border-border/70 bg-background/60 text-muted-foreground',
+            'rounded-lg border px-3 py-2 text-[13px] shadow-sm shadow-black/[0.04] dark:shadow-black/20',
+            tool.status === 'error' && 'border-destructive/25 bg-destructive/[0.04] text-destructive',
+            tool.status === 'running' && 'border-primary/25 bg-background/60 text-foreground',
+            tool.status === 'completed' && 'border-black/[0.07] bg-background/60 text-muted-foreground dark:border-white/[0.09]',
           )}
         >
           <div className="flex items-center gap-2">
-            <Wrench className="h-3.5 w-3.5 shrink-0" />
+            <Wrench className="h-3.5 w-3.5 shrink-0 opacity-70" />
             <span className="min-w-0 truncate font-mono font-medium">{tool.name}</span>
-            <span className="ml-auto shrink-0 rounded-md bg-black/5 px-1.5 py-0.5 text-[10px] uppercase dark:bg-white/10">
+            <span className="ml-auto shrink-0 rounded-md border border-black/[0.05] bg-black/[0.04] px-1.5 py-0.5 text-[10px] uppercase tracking-wide dark:border-white/[0.07] dark:bg-white/[0.07]">
               {t(`assistantRender.tool.${tool.status}`)}
             </span>
           </div>

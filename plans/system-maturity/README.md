@@ -24,3 +24,5 @@ STATUS.json 只保存 phaseStatus、task status、allTasksDone，不写解释。
 ## Execution
 
 执行顺序、worktree 并行边界、串行依赖和首个启动任务见 [EXECUTION-ORDER.md](./EXECUTION-ORDER.md)。
+
+可直接交给 AI Coding Agent 的持续执行、指定任务、续跑、审计、Wave 集成和发布审查提示词见 [AI-EXECUTION-PROMPTS.md](./AI-EXECUTION-PROMPTS.md)。

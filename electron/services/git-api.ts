@@ -6,6 +6,7 @@ import { shell } from 'electron';
 import type {
   GitBranch,
   GitChangeBucket,
+  GitCommitInfo,
   GitDiffMode,
   GitFileChange,
   GitOperationResult,
@@ -21,6 +22,7 @@ import type {
   GitCommitPayload,
   GitFetchPayload,
   GitFileDiffPayload,
+  GitLogPayload,
   GitPathPayload,
   GitPathsPayload,
   GitPullPayload,
@@ -538,6 +540,32 @@ function parseJson<T>(value: string, fallback: T): T {
   }
 }
 
+const SAFE_GIT_REF_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
+
+function isSafeGitRef(ref: string): boolean {
+  return SAFE_GIT_REF_PATTERN.test(ref)
+    && !ref.includes('..')
+    && !ref.includes('//')
+    && !ref.endsWith('/')
+    && !ref.endsWith('.lock')
+    && ref.length <= 250;
+}
+
+function parseCommitLog(output: string): GitCommitInfo[] {
+  return output.split(/\r?\n/).filter(Boolean).flatMap((line) => {
+    const [hash, shortHash, timestamp, author, ...subjectParts] = line.split('\t');
+    if (!hash || !shortHash) return [];
+    const seconds = parseNum(timestamp ?? '');
+    return [{
+      hash,
+      shortHash,
+      subject: subjectParts.join('\t') || '',
+      author: author || undefined,
+      date: seconds == null ? undefined : seconds * 1000,
+    }];
+  });
+}
+
 function parseBranches(output: string): GitBranch[] {
   return output.split(/\r?\n/).filter(Boolean).map((line) => {
     const [name, marker, upstream, commit, updatedAt] = line.split('\t');
@@ -781,6 +809,39 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         '--sort=-committerdate',
       ], ctx.workspaceRoot);
       return { success: result.exitCode === 0, branches: parseBranches(result.stdout), error: result.exitCode === 0 ? undefined : result.stderr };
+    },
+    log: async (payload) => {
+      const ctx = await requireRepoContext();
+      const body = (isRecord(payload) ? payload : {}) as GitLogPayload;
+      const rawRef = normalizeString(body.ref);
+      const ref = rawRef && rawRef !== 'HEAD' ? rawRef : 'HEAD';
+      if (ref !== 'HEAD' && !isSafeGitRef(ref)) {
+        throw new Error(`Invalid git ref: ${ref}`);
+      }
+      const limit = typeof body.limit === 'number' && Number.isFinite(body.limit)
+        ? Math.max(1, Math.min(Math.floor(body.limit), 100))
+        : 20;
+      const result = await git([
+        'log',
+        ref,
+        `--max-count=${limit}`,
+        '--format=%H%x09%h%x09%ct%x09%an%x09%s',
+        '--',
+      ], ctx.workspaceRoot);
+      if (result.exitCode !== 0) {
+        return { success: false, commits: [], ref, error: result.stderr || result.stdout };
+      }
+      let ahead: number | undefined;
+      let behind: number | undefined;
+      if (ref !== 'HEAD') {
+        const counts = await git(['rev-list', '--left-right', '--count', `${ref}...HEAD`, '--'], ctx.workspaceRoot);
+        if (counts.exitCode === 0) {
+          const [left, right] = counts.stdout.trim().split(/\s+/);
+          ahead = parseNum(left ?? '') ?? undefined;
+          behind = parseNum(right ?? '') ?? undefined;
+        }
+      }
+      return { success: true, commits: parseCommitLog(result.stdout), ref, ahead, behind };
     },
     checkoutBranch: async (payload: GitBranchCheckoutPayload) => {
       const ctx = await requireRepoContext();
