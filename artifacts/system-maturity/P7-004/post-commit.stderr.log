@@ -1,0 +1,10 @@
+(node:29788) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/system-maturity-quarterly-audit.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/system-maturity-quarterly-audit.md"
+(node:36600) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/validate-system-maturity-evidence.mjs
+(node:1636) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/run-system-maturity-quarterly-audit.mjs "--" "--dry-run"
