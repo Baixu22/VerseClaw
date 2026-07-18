@@ -17,14 +17,19 @@ async function hostInvoke<T>(
   payload: Record<string, unknown> | null = null,
 ): Promise<T> {
   const response = await app.evaluate(async (_electron, request) => {
-    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+    const { BrowserWindow, ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
     const handlers = (ipcMain as unknown as {
       _invokeHandlers?: Map<string, (event: unknown, request: Record<string, unknown>) => Promise<unknown>>;
     })._invokeHandlers;
     const handler = handlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
+    const window = BrowserWindow.getAllWindows()[0];
+    if (!window) throw new Error('main BrowserWindow is not available');
 
-    return await handler({}, {
+    return await handler({
+      sender: window.webContents,
+      senderFrame: { url: window.webContents.getURL() },
+    }, {
       id: `p0-12-${Date.now()}`,
       module: request.module,
       action: request.action,

@@ -1,0 +1,17 @@
+warning: in the working copy of 'artifacts/system-maturity/P0-001/audit-baseline-check.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-002/validate-system-maturity-plan.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-003/release-gates.commands.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-003/validate-test-gates.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-004/evidence-index.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-001/traceability-report.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/findings-registry.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/gates.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/PLAN.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/STATUS.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-001.delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-002.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/lib/system-maturity-traceability.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/e2e/chat-plan-mode-write-challenge.spec.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/unit/system-maturity-traceability-p7-001.test.ts', LF will be replaced by CRLF the next time Git touches it

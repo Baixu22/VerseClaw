@@ -99,6 +99,7 @@ function extractPathCandidates(root, values) {
     for (const raw of matches) {
       const candidate = raw.replace(/[),:]+$/gu, '');
       if (candidate.includes('*') || candidate.includes('{') || candidate.includes('}')) continue;
+      if (candidate.startsWith('plans/system-maturity/') || candidate.startsWith('artifacts/system-maturity/')) continue;
       const absolute = path.join(root, candidate);
       if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) output.push(toPosix(candidate));
     }
@@ -245,9 +246,13 @@ export function validateSystemMaturityTraceability(options) {
       continue;
     }
     let valid = true;
+    const reportDir = toPosix(path.dirname(evidencePath));
     for (const command of document.commands) {
       for (const stream of ['stdout', 'stderr']) {
-        const streamPath = toPosix(command[stream] || '');
+        const declaredPath = command[stream] || command[`${stream}Path`] || '';
+        const streamPath = command[stream]
+          ? toPosix(declaredPath)
+          : toPosix(path.join(reportDir, declaredPath));
         const expected = String(command[`${stream}Sha256`] || '').toLowerCase();
         const actual = streamPath ? evidenceHash(streamPath) : null;
         if (!streamPath || !expected || !actual || expected !== actual) {
@@ -260,8 +265,9 @@ export function validateSystemMaturityTraceability(options) {
       globalEvidence.push({
         path: evidencePath,
         expectedSha256: evidenceHash(evidencePath),
-        taskId: 'P7-001',
+        taskId: document.task || 'P7-001',
         kind: 'global-validation',
+        findingIds: Array.isArray(document.findingIds) ? document.findingIds : null,
       });
     }
   }
@@ -347,12 +353,13 @@ export function validateSystemMaturityTraceability(options) {
     }
 
     const auditEvidencePath = toPosix(path.relative(root, auditPath));
+    const scopedGlobalEvidence = globalEvidence.filter((item) => !item.findingIds?.length || item.findingIds.includes(finding.id));
     const evidence = [{
       path: auditEvidencePath,
       expectedSha256: sha256CanonicalEvidenceFile(auditPath),
       taskId: 'P0-001',
       kind: 'frozen-audit',
-    }, ...deliveryEvidence, ...globalEvidence];
+    }, ...deliveryEvidence, ...scopedGlobalEvidence];
     const evidencePaths = unique(evidence.map((item) => item.path));
     if (!evidencePaths.length) findingFail.push('no evidence');
 
@@ -401,6 +408,7 @@ export function validateSystemMaturityTraceability(options) {
         sha256: item.expectedSha256,
         taskId: item.taskId,
         kind: item.kind,
+        findingIds: item.findingIds || undefined,
       })),
       reviewCycleDays: Number.isFinite(cycleDays) ? cycleDays : null,
       latestSourceAt: iso(latestSourceAt),

@@ -11,7 +11,8 @@
     "ownerResolution": "first registered task owner; all task owners remain visible in the report",
     "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
     "globalEvidence": [
-      "artifacts/system-maturity/P7-001/full-validation.json"
+      "artifacts/system-maturity/P7-001/full-validation.json",
+      "artifacts/system-maturity/P7-002/security-regression-report.json"
     ],
     "reviewCycleDaysBySeverity": {
       "Critical": 14,
@@ -533,7 +534,8 @@
       ],
       "tasks": [
         "P0-003",
-        "P7-001"
+        "P7-001",
+        "P7-002"
       ],
       "fixedBy": "P7-001",
       "fixedAt": "2026-07-18",
@@ -557,6 +559,7 @@
         "P0-003",
         "P0-004",
         "P7-001",
+        "P7-002",
         "P7-004"
       ],
       "updatedBy": "P7-001",
@@ -1192,7 +1195,9 @@
         "F-DATA-005",
         "F-REL-001",
         "F-REL-004",
-        "F-SUPPLY-001"
+        "F-SUPPLY-001",
+        "F-GOV-001",
+        "F-GOV-002"
       ],
       "dependsOn": [],
       "path": "plans/system-maturity/phase7-continuous-governance/tasks/P7-002.md"

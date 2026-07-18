@@ -22,6 +22,7 @@ function fixture(options: {
   evidenceTime?: number;
   globalEvidenceOk?: boolean;
   tamperGlobalLog?: boolean;
+  globalFindingIds?: string[];
 } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'clawx-p7-traceability-'));
   const taskId = options.taskId ?? 'P0-001';
@@ -37,6 +38,7 @@ function fixture(options: {
     write(root, 'artifacts/system-maturity/P7-001/gates/global.stderr.txt', stderr);
     write(root, 'artifacts/system-maturity/P7-001/full-validation.json', `${JSON.stringify({
       ok: options.globalEvidenceOk,
+      findingIds: options.globalFindingIds,
       commands: [{
         id: 'global',
         exitCode: options.globalEvidenceOk ? 0 : 1,
@@ -165,6 +167,18 @@ describe('P7-001 System Maturity traceability', () => {
     expect(report.ok).toBe(false);
     expect(report.fail.join('\n')).toContain('global.stdout hash mismatch or missing');
     expect(report.findings[0].freshness).toBe('stale');
+  });
+
+  it('does not use scoped global evidence for an unrelated Finding', () => {
+    const report = fixture({
+      sourceTime: 5_000,
+      evidenceTime: 300,
+      globalEvidenceOk: true,
+      globalFindingIds: ['F-OTHER-001'],
+    }).run();
+    expect(report.ok).toBe(false);
+    expect(report.findings[0].freshness).toBe('stale');
+    expect(report.findings[0].evidence.some((item) => item.kind === 'global-validation')).toBe(false);
   });
 
   it('fails a done task without checked acceptance evidence', () => {
