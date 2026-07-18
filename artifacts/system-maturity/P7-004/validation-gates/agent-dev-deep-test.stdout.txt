@@ -1,0 +1,166 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+{
+  "success": true,
+  "mode": "parallel",
+  "cache": {
+    "enabled": true,
+    "status": "hit",
+    "key": "2a4745471c4f8a72291908f0fdcb6b97865dcd7070832d258abf71c0633542d6",
+    "inputCount": 679,
+    "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\typecheck-cache\\report.json",
+    "cachedAt": "2026-07-18T07:05:34.552Z"
+  },
+  "totalDurationMs": 273,
+  "coverageNote": "Reused a previous successful node/web TypeScript check because the typecheck input fingerprint is unchanged; run pnpm run typecheck for an uncached full gate.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 62
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 0,
+      "skipped": true,
+      "cacheHit": true,
+      "cachedDurationMs": 9687,
+      "cachedAt": "2026-07-18T07:05:34.552Z"
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 0,
+      "skipped": true,
+      "cacheHit": true,
+      "cachedDurationMs": 27936,
+      "cachedAt": "2026-07-18T07:05:34.552Z"
+    }
+  ]
+}
+Contract check passed.
+i18n lint passed.
+{
+  "success": true,
+  "scenarioCount": 14,
+  "reports": {
+    "quality": true,
+    "channelConformance": false,
+    "scenarioRecordings": true
+  },
+  "output": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-workbench\\index.html",
+  "evidence": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-workbench\\evidence.json"
+}
+Spec is valid: harness\specs\tasks\agent-dev-ecosystem-regularization.md
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
+
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m41 passed[39m[22m[90m (41)[39m
+[2m   Start at [22m 15:08:28
+[2m   Duration [22m 1.04s[2m (transform 537ms, setup 254ms, import 779ms, tests 879ms, environment 1ms)[22m
+
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
+
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m39 passed[39m[22m[90m (39)[39m
+[2m   Start at [22m 15:08:31
+[2m   Duration [22m 1.35s[2m (transform 136ms, setup 138ms, import 56ms, tests 243ms, environment 689ms)[22m
+
+{"skipped":true,"id":"e2e-build","reuseStatus":"reused","commandLine":"reuse existing build"}
+
+Running 1 test using 1 worker
+
+  ok 1 tests\e2e\agent-dev-quality.spec.ts:70:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (7.0s)
+
+  1 passed (7.7s)
+{
+  "success": true,
+  "scenarioCount": 14,
+  "reports": {
+    "quality": true,
+    "channelConformance": false,
+    "scenarioRecordings": true
+  },
+  "output": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-workbench\\index.html",
+  "evidence": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-workbench\\evidence.json"
+}
+{
+  "success": true,
+  "totalDurationMs": 20140,
+  "output": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-deep-test\\report.json",
+  "markdown": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-deep-test\\report.md",
+  "buildReuse": {
+    "mode": "reuse",
+    "status": "reused",
+    "reusable": true,
+    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
+    "oldestArtifact": "dist/index.html",
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "mtimeMs": 1784358381776.9053
+      },
+      {
+        "path": "dist-electron/main/index.js",
+        "mtimeMs": 1784358384750.183
+      },
+      {
+        "path": "dist-electron/preload/index.js",
+        "mtimeMs": 1784358384775.58
+      }
+    ],
+    "requiredArtifacts": [
+      "dist/index.html",
+      "dist-electron/main/index.js",
+      "dist-electron/preload/index.js"
+    ],
+    "sourcePaths": [
+      "src",
+      "electron",
+      "shared",
+      "index.html",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "unitMode": "full",
+  "typecheckMode": "cached",
+  "e2eMode": "smoke",
+  "bottlenecks": [
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 8995,
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+      "skipped": false
+    },
+    {
+      "id": "vitest-agent-dev",
+      "durationMs": 5759,
+      "commandLine": "pnpm agent-dev:unit",
+      "skipped": false
+    },
+    {
+      "id": "harness-agent-dev",
+      "durationMs": 1016,
+      "commandLine": "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+      "skipped": false
+    },
+    {
+      "id": "typecheck",
+      "durationMs": 783,
+      "commandLine": "pnpm run typecheck:cached",
+      "skipped": false
+    },
+    {
+      "id": "i18n",
+      "durationMs": 698,
+      "commandLine": "pnpm i18n:lint",
+      "skipped": false
+    }
+  ]
+}

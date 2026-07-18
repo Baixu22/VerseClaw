@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-004",
+  "generatedAt": "2026-07-18T07:24:31.349848Z",
+  "findings": [
+    "F-GOV-002",
+    "F-GOV-003"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "All phase statuses traceable",
+      "status": "pass",
+      "evidence": [
+        "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
+        "scripts/lib/system-maturity-quarterly-audit.mjs",
+        "artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "Risk acceptance has deadlines",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/risk-acceptance.json",
+        "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
+        "artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "Incomplete P0/P1 auto-blocks release",
+      "status": "pass",
+      "evidence": [
+        "scripts/lib/system-maturity-quarterly-audit.mjs",
+        "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt"
+      ]
+    }
+  ]
+}

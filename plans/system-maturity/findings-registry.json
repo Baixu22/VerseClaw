@@ -550,7 +550,7 @@
       "category": "GOV",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Partial",
+      "status": "Fixed",
       "evidenceLevel": "L3",
       "related": [],
       "attackChain": [],
@@ -563,9 +563,11 @@
         "P7-002",
         "P7-004"
       ],
-      "updatedBy": "P7-001",
-      "updatedAt": "2026-07-18T11:38:00+08:00",
-      "notes": "P7-001: evidence freshness now fails closed when linked code/tests are newer, full-validation logs are hash-reverified, and all Findings resolve to owner/task/test/code/evidence/review cadence. Residual quarterly maturity/release scorecard work remains assigned to P7-004."
+      "updatedBy": "P7-004",
+      "updatedAt": "2026-07-18T15:10:00+08:00",
+      "notes": "P7-004: quarterly maturity scorecard traces all phase STATUS.json paths, requires risk-acceptance reviewBy deadlines for Track/Accept findings, and auto-blocks release when P0/P1 are incomplete. Agent Dev audit score/grade/releaseReady is captured as a non-extrapolation caveat only (F-GOV-002). Residual monitoring continues via risk-acceptance.json reviewBy=2026-10-18.",
+      "fixedBy": "P7-004",
+      "fixedAt": "2026-07-18"
     },
     {
       "id": "F-GOV-003",
@@ -589,9 +591,9 @@
       ],
       "fixedBy": "P6-005",
       "fixedAt": "2026-07-18",
-      "updatedBy": "P6-005",
-      "updatedAt": "2026-07-18T09:47:44.069+08:00",
-      "notes": "P6-005: release baseline denies dirty or identity-mismatched sources, preserves native gate failures, installs and verifies Electron before release tests, produces a deterministic Git-blob manifest, canonicalizes cross-worktree text evidence hashes, and requires packaging jobs to revalidate hash-addressed zero-exit evidence from every required release gate."
+      "updatedBy": "P7-004",
+      "updatedAt": "2026-07-18T15:10:00+08:00",
+      "notes": "P6-005: release baseline denies dirty or identity-mismatched sources, preserves native gate failures, installs and verifies Electron before release tests, produces a deterministic Git-blob manifest, canonicalizes cross-worktree text evidence hashes, and requires packaging jobs to revalidate hash-addressed zero-exit evidence from every required release gate. P7-004: quarterly phase-review mechanism re-validates STATUS consistency and incomplete-phase release blocking as continuous governance."
     },
     {
       "id": "F-UX-001",
