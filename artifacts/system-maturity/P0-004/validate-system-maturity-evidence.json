@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-17T23:23:33.080Z",
+  "checkedAt": "2026-07-18T01:26:00.386Z",
   "ok": true,
   "recomputedCount": 158,
   "recomputed": [
@@ -13,17 +13,17 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "2831f45d294d45eeee4d6a3695104e13d404537f5ad755cf2decb1fb0b4228e8"
+      "sha256": "f909503bb82708ceee1c45e8916b9245f9f435af9dda7ea784bd9fcf87ac4266"
     },
     {
       "task": "P0-001",
       "path": "scripts/audit-baseline-check.mjs",
-      "sha256": "38239c87cb04b7ddfeadf9c924fc42463ed35dbc23cf5853751d5701d879292f"
+      "sha256": "b9c06004823bb54cc00fabbcc64a3b47f8b5dab374850f5e8b2f0400d87e95c1"
     },
     {
       "task": "P0-001",
       "path": "plans/system-maturity/EXECUTION-ORDER.md",
-      "sha256": "54207381825bdcfa67a3524b3e8fa4cde9b448b858020fa6e18ae91c8b45b7ed"
+      "sha256": "97b4bc69af606f9eaf79459856928d1effbe22ff48976921e00ca11f54e3770c"
     },
     {
       "task": "P0-001",
@@ -48,7 +48,7 @@
     {
       "task": "P0-002",
       "path": "plans/system-maturity/README.md",
-      "sha256": "61179483b8114379d9e3ab3b44277ee49aabd103c5c8568f8d012024873a245a"
+      "sha256": "69d3315c0cf5cee6321b7833167eb2c2f0f7421ae26569f44b7940b68a228c88"
     },
     {
       "task": "P0-002",
@@ -73,32 +73,32 @@
     {
       "task": "P0-003",
       "path": "vitest.config.ts",
-      "sha256": "5921adc4d7c09671ec2d42560cfb3acac226fe5dd4ddb310ee6dd5650a5e5231"
+      "sha256": "5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3"
     },
     {
       "task": "P0-003",
       "path": "vitest.agent-dev.node.config.ts",
-      "sha256": "3f22193832c75ed40b7d76f74258f1fd6f5aca918daf934f98412c2a7a46fdef"
+      "sha256": "92dd6b1470b899df8d09d6bbd47e12a1c327c4d43a86707eadd89dba245b51eb"
     },
     {
       "task": "P0-003",
       "path": "vitest.runtime-effectiveness.config.ts",
-      "sha256": "94d96bd2f2ffcc8c6754fbfdd111ae2ac3f0de4b92826ac869d9e797cca926c6"
+      "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a"
     },
     {
       "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "8b5c2401971f7312b050cf9984d50ead149682e69a55ccf4b26367294b2e3f49"
+      "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa"
     },
     {
       "task": "P0-003",
       "path": "tests/unit/host-api-facade.test.ts",
-      "sha256": "106345ca9edfd87d17bc2c6e9cb7f9369adbd5b6411f1109319be2f7305357d7"
+      "sha256": "9cd04ffdd94871585459eddb3fb0dbf25c8ae414dc56ed82316dfb9a7d69aad2"
     },
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "eb30ee97eff4ec35cc82b867fa3721f545728426ff85dde01c1c99cd5e6c0777"
+      "sha256": "ae45d4e988a0d453cb382856a156294c9d6f1dfde46f8674691a43a33055c2e6"
     },
     {
       "task": "P0-003",
@@ -133,12 +133,12 @@
     {
       "task": "P0-004",
       "path": "scripts/validate-system-maturity-evidence.mjs",
-      "sha256": "6bbc44b04f821e2ae42a984133d8775f6af3d398d6767748735b451e739db702"
+      "sha256": "e09c5c9b1affaef7df2c33e5bd5bfbfbf4f50e45210a0b4ba441827497a46f94"
     },
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "eb30ee97eff4ec35cc82b867fa3721f545728426ff85dde01c1c99cd5e6c0777"
+      "sha256": "ae45d4e988a0d453cb382856a156294c9d6f1dfde46f8674691a43a33055c2e6"
     },
     {
       "task": "P0-004",
@@ -178,7 +178,7 @@
     {
       "task": "P1-001",
       "path": "artifacts/system-maturity/P1-001/vitest.stdout.txt",
-      "sha256": "8ac5cc074e82c54bec72d3a281c3a374a6a568add99f442c536c6161cdc1dd43"
+      "sha256": "f0a426c997196ab5fc2b132abc7c2d367ca1e01ea75676913453eadada9586fa"
     },
     {
       "task": "P1-001",
@@ -188,17 +188,17 @@
     {
       "task": "P1-001",
       "path": "electron/services/secrets/secret-store.ts",
-      "sha256": "717a43f06b9dc9da2bb5e36275a0f67e8a955ebb189e5b6fc2afdced309b866f"
+      "sha256": "e522a9bc232adddb06c862bfecb6530aacf4a65f30e23aa7a2cb13d873b27f7c"
     },
     {
       "task": "P1-001",
       "path": "shared/host-api/contract.ts",
-      "sha256": "9b651c61c1bf165502c18a15cc84df1cf683805854861d771490b1003af604fb"
+      "sha256": "4681bdc1f2036eab656401a33cca78f03e6e26e3d0549714805ec7e1b054b353"
     },
     {
       "task": "P1-001",
       "path": "src/lib/host-api.ts",
-      "sha256": "8b5c2401971f7312b050cf9984d50ead149682e69a55ccf4b26367294b2e3f49"
+      "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa"
     },
     {
       "task": "P1-001",
@@ -208,7 +208,7 @@
     {
       "task": "P1-001",
       "path": "scripts/configure-deepseek-runtime.mjs",
-      "sha256": "463bdaab2823d7e24c0167a7c559a7f7b64bf68ac1fde4fc23b868eb5bef8930"
+      "sha256": "8ee70cc99d5cd69bfc344d6c51ecf1a4485a524b58b551484d6d727ae54dcba5"
     },
     {
       "task": "P1-002",
@@ -233,7 +233,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc-handlers.ts",
-      "sha256": "b09c3329231dc516d657926af173ab95f46a8a0b7ee221271c6a52a9a34a6f7a"
+      "sha256": "16c597a58c24a2c581ed5cd792d2c3de23f0eb4ecd5141716b766859688c4dd6"
     },
     {
       "task": "P1-002",
@@ -248,7 +248,7 @@
     {
       "task": "P1-003",
       "path": "artifacts/system-maturity/P1-003/path-matrix.json",
-      "sha256": "35a85f31de46f92b7059ef97698c1fb4cd635e102c7b507d6805627ea97f6ec9"
+      "sha256": "03010e95737d05c906a92e6612bc054ea785b66899a7338111269f5052ea9d3f"
     },
     {
       "task": "P1-003",
@@ -258,12 +258,12 @@
     {
       "task": "P1-003",
       "path": "electron/services/files-api.ts",
-      "sha256": "4bec1b21649e5c63377633211d429f5cdd9b7f7bc90ba8f4dc2a17d9444da9ee"
+      "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295"
     },
     {
       "task": "P1-003",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "45c639fd11b8170872752cfe0ca128c0a3cf26af9a2f037ceb3872f5b1db2dce"
+      "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882"
     },
     {
       "task": "P1-003",
@@ -298,32 +298,32 @@
     {
       "task": "P2-001",
       "path": "artifacts/system-maturity/P2-001/vitest.stdout.txt",
-      "sha256": "71b0ba78c9383f4be5e4efcae9b1e04d2202af49d6150dcf55a3b25ba5050eff"
+      "sha256": "9234ae944b3deda04baa08e59cd0131a95e4e43afb7731202c511bd91764908c"
     },
     {
       "task": "P2-001",
       "path": "artifacts/system-maturity/P2-001/evidence-index.json",
-      "sha256": "007e8b529f92a1f3ca4226835ea4432dd851f8e49ddcd3cf1c32378a6c4330ba"
+      "sha256": "ffc5be9e1888a9057cc40de285414c51a37f77d6b5e23efb433763623419d0e3"
     },
     {
       "task": "P2-001",
       "path": "artifacts/system-maturity/P2-001/acceptance-matrix.json",
-      "sha256": "c96f2258137f25d7b9e3f83badbe5c7c5bc8b431c4d00bfe7e6a95d9452d3d86"
+      "sha256": "208e3f68b3c120af3b363ca5d37396db9b7aee1ccfc27bc1d23777a5d5fc4f01"
     },
     {
       "task": "P2-001",
       "path": "shared/types/workspace.ts",
-      "sha256": "d000806b3dad9f7f8e75f66ea94864952ded94d4198c704a456e8f09aa236d90"
+      "sha256": "32536334d593bc0b50ce8ab461247a24b4f6e2dc95d3cce8651e6d01e8b2154c"
     },
     {
       "task": "P2-001",
       "path": "electron/services/workspaces-api.ts",
-      "sha256": "d4031397aed69e6da79357369978c110fc0663540656196366807a5aa65c71ba"
+      "sha256": "ef8015f1838f3060b6f59fe57a90baf1274d7e6f906f7a19a4b3791f5ca68380"
     },
     {
       "task": "P2-001",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "45c639fd11b8170872752cfe0ca128c0a3cf26af9a2f037ceb3872f5b1db2dce"
+      "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882"
     },
     {
       "task": "P2-001",
@@ -333,27 +333,27 @@
     {
       "task": "P2-002",
       "path": "artifacts/system-maturity/P2-002/vitest.stdout.txt",
-      "sha256": "366fbf1351707992ba46f9f74d5ed362ce5aad13b2eb13d7c342dec5237e282d"
+      "sha256": "c60e4f011c2dc301a5e9cdbd5ec3411741a2aae2acdffaa954a91b02486e4677"
     },
     {
       "task": "P2-002",
       "path": "artifacts/system-maturity/P2-002/evidence-index.json",
-      "sha256": "111a448e83a1c024e97d614a04725ec8bb82bf4d6733a5253b001aedf98df859"
+      "sha256": "2b08fa46dd26699d98e2ca63d381b78e2afa3bbf9ddb25214afa07c72aa1da93"
     },
     {
       "task": "P2-002",
       "path": "artifacts/system-maturity/P2-002/acceptance-matrix.json",
-      "sha256": "7dd290c64202443e9169479e80e682e0d7f859ffcc9884093dcf0fc0b23bab52"
+      "sha256": "b7f80468ab875e30ae1361a3314ab5592b3553c97abea401a9291e1ae4a3c78d"
     },
     {
       "task": "P2-002",
       "path": "electron/services/permissions-api.ts",
-      "sha256": "2a898c96b2b1f735adcdbd1f10d5e533c8935db75da40ed7dea461f42d18b952"
+      "sha256": "df34ff23990dd5ccf6ee4c6920a8ce9f6074f549f409d83bdf31c92c1960869e"
     },
     {
       "task": "P2-002",
       "path": "tests/unit/permissions-api.test.ts",
-      "sha256": "99e62e4277a9cc41a9aaec9451cd0e0588f66d4b9b484afeeec97ff582153bea"
+      "sha256": "25443aa199fe2d529ea37fbe1e26258c0517f5f2ddc13363a7cf2eecfe56c7f5"
     },
     {
       "task": "P2-002",
@@ -363,37 +363,37 @@
     {
       "task": "P2-003",
       "path": "artifacts/system-maturity/P2-003/vitest.stdout.txt",
-      "sha256": "4fb3238e9959ae5f2f16daae41c8aa3e285e601c07a83146909de57f062f4b66"
+      "sha256": "5d6d2bfb02b19a605b7b3089a71211cf329fdf4e84af733a91fd61abd845956c"
     },
     {
       "task": "P2-003",
       "path": "artifacts/system-maturity/P2-003/evidence-index.json",
-      "sha256": "c16aef50ab9dc89a748fc439247c4cf48d81266460006d1017a8cdce7b9e2e9d"
+      "sha256": "c36be65e01b6436f39520024b831e9cee79d7832a26d5b6f2bd930cefcabc000"
     },
     {
       "task": "P2-003",
       "path": "artifacts/system-maturity/P2-003/acceptance-matrix.json",
-      "sha256": "806448dacc05dd81f2c0d40b0ea0a5d6d6ff48d8a0e67553c3ffe56cfaf65fbe"
+      "sha256": "885d827e47305393e43e5b19ab637a0a8a9f557fb1d394002d3b466b03f19e34"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-contract.ts",
-      "sha256": "eaf4e3b6e91eec2fe0dc5350c221cdf53d096c45307781943b0c0fa5a18214ab"
+      "sha256": "691aeb78d20282a1815e9f8d3957ac152000b41f8176a15522b080a353369ad6"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
-      "sha256": "5a75fee6e39e4457b89d703001990bf6c7946b65b275f08e60e778fcfdcab7df"
+      "sha256": "3caae086de53b130b0f9dee357e1969867c26b140c40db861d47fa2e4d9413c8"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-spawn.ts",
-      "sha256": "81f8635b882eb42564edfcf3f0b2265866936256bbf39c12d6ae4782b131102d"
+      "sha256": "69cf86731e99e5d307bb6cb6459820c89e2b2c6ddf5c9d0f974c65530a18128d"
     },
     {
       "task": "P2-003",
       "path": "electron/services/roles-api.ts",
-      "sha256": "bb7aaac5d737204a3f6a35754ca5fcd7730809f2a003bc53232a7a5f360e0e58"
+      "sha256": "fb391cf4b2594ea5058fd960501fa81f618964745ad5bac2dd01e1166dbbb0dd"
     },
     {
       "task": "P2-003",
@@ -508,12 +508,12 @@
     {
       "task": "P4-001",
       "path": "artifacts/system-maturity/P4-001/acceptance-matrix.json",
-      "sha256": "37516181d865697f8081ac94290fa63c4b12823ba16a3f156a3a1901cb81559f"
+      "sha256": "3b6be778007d9126d6c4a713808f279b8a4cceb2d1eb70738b946dcf7df1dce7"
     },
     {
       "task": "P4-001",
       "path": "artifacts/system-maturity/P4-001/evidence-index.json",
-      "sha256": "e4ace083a19ac2b399008b633e9aecfae2b505a7c44da82599a489388416ed24"
+      "sha256": "f46b3848226854174a1aa79ec32415cd919758eeed4557160f58f02127ced6bc"
     },
     {
       "task": "P4-002",
@@ -523,12 +523,12 @@
     {
       "task": "P4-002",
       "path": "artifacts/system-maturity/P4-002/acceptance-matrix.json",
-      "sha256": "5f0a3193b230b612c84e2062b99043231c6a80f546b2f84092958a273d1c54dd"
+      "sha256": "60b7398ce53e4393d7cb1d492bf3b86715bc720abba78e83777d7bd2319a00c0"
     },
     {
       "task": "P4-002",
       "path": "artifacts/system-maturity/P4-002/evidence-index.json",
-      "sha256": "13efe98f1eaf3c7102fa9cab75ab773f4f249efa112c99dcfea362988dfda5d0"
+      "sha256": "1287c374ce2dc7d050077f71aa4188d1fbc52b5d738c2872450116578341fda7"
     },
     {
       "task": "P4-003",
@@ -538,12 +538,12 @@
     {
       "task": "P4-003",
       "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
-      "sha256": "1aea9e6824bde6585cc729e68163f34711659363add1f3f6d1a11736531a3495"
+      "sha256": "8b96029aefe0713e1b66b44d87f317d010845f6de212674d7a6d856127cb4cec"
     },
     {
       "task": "P4-003",
       "path": "artifacts/system-maturity/P4-003/evidence-index.json",
-      "sha256": "804123f644e1bd8e17e9dce434eab9853353a9d6b0918afebca62abb1bfacb68"
+      "sha256": "0d11e1eab3f806943680f683d92dd1cbfc2902ec920d43897d071a8c215b19e0"
     },
     {
       "task": "P4-004",
@@ -553,17 +553,17 @@
     {
       "task": "P4-004",
       "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
-      "sha256": "1aa366e002c26399e1b19d37190618a0d6c24812e0548e274259efd6d66883b5"
+      "sha256": "0578ec1def1410ef42674baa9e9b99e94ed2b83b2d92e0bdc78347dd1556f458"
     },
     {
       "task": "P4-004",
       "path": "artifacts/system-maturity/P4-004/evidence-index.json",
-      "sha256": "30cd535d0e3ac9ab42f5429170fb492e79de2b338fc4fb7f68440bb1f6842c5b"
+      "sha256": "35f28fcbc620d579811058b6038c1845b725da0c6a234733c688d89c09d57a58"
     },
     {
       "task": "P5-001",
       "path": "artifacts/system-maturity/P5-001/vitest.stdout.txt",
-      "sha256": "e751260fc33b1b471a5541b692adb721d1d143101dd21dcc4ffcc23978c39ca0"
+      "sha256": "456c3d3cd54c4f8cf319eb45f061aa7dd41cf1f4b3a1713e3baf50e361bebd73"
     },
     {
       "task": "P5-001",
@@ -573,27 +573,27 @@
     {
       "task": "P5-001",
       "path": "artifacts/system-maturity/P5-001/acceptance-matrix.json",
-      "sha256": "afa8b6bfa3012a1c59b14ad3de5f665da203d6d5874d844af813c0919987b569"
+      "sha256": "de1fe11b182e7aa35518dc4e9b4acd963522665923561d176323037f2faee483"
     },
     {
       "task": "P5-001",
       "path": "artifacts/system-maturity/P5-001/evidence-index.json",
-      "sha256": "76e5345cbe3c57a07fd230f7b2a9535fd3c649a1c44e047886ee2db8b1001753"
+      "sha256": "68c1fb9b32a20b932a37d986e13f01bcbf42346845706884f676497bc6a89c17"
     },
     {
       "task": "P5-002",
       "path": "artifacts/system-maturity/P5-002/vitest.stdout.txt",
-      "sha256": "bb0403c2d3c617661aca4a77ab10dcb2e32a5570fd75078f9e5f1375e052f5c3"
+      "sha256": "e200434eb28e9ef3b11eab15bd15dbab6df313359dbd5dda5217f4e9e8356a59"
     },
     {
       "task": "P5-002",
       "path": "artifacts/system-maturity/P5-002/acceptance-matrix.json",
-      "sha256": "f57794d140ff02d108ff5fd9660480174f0e4e35c08707edda2cf11bcff169f8"
+      "sha256": "8f9366b9808aa1a03b8946c47322a2d938542dc8c42ac8b1b318df90718fee31"
     },
     {
       "task": "P5-002",
       "path": "artifacts/system-maturity/P5-002/evidence-index.json",
-      "sha256": "a596938a0eebe4551cfba152d7a97a0526ef53a8e042d037f929056c71007d2f"
+      "sha256": "60f03a5249eade51d5fb146a792deb28c03177951929ffd84dc1195f4ee05dc5"
     },
     {
       "task": "P5-003",
@@ -603,12 +603,12 @@
     {
       "task": "P5-003",
       "path": "artifacts/system-maturity/P5-003/acceptance-matrix.json",
-      "sha256": "bd699b89fbad272b08fb0dad4cc1ef0fd598f29be2cb1b6e9db7871819a9fbcd"
+      "sha256": "4c641b274707731eefe01386f20f5bad001c8b2d180c3da0a48a6cd0a617e310"
     },
     {
       "task": "P5-003",
       "path": "artifacts/system-maturity/P5-003/evidence-index.json",
-      "sha256": "6cfc2e2048a21ae0a94e41c46acc256fa2278586267ce05295226303eee3cfe9"
+      "sha256": "39a421b7b4b0f36b636fbb9fb27de09f2546edfcddfaaf5efad690bb7bf39cdf"
     },
     {
       "task": "P5-004",
@@ -618,12 +618,12 @@
     {
       "task": "P5-004",
       "path": "artifacts/system-maturity/P5-004/acceptance-matrix.json",
-      "sha256": "315bc2ac3aab966578b3f0154cadf53c2c894ff7e73e75b51f5e77fc7dac2ded"
+      "sha256": "3caf47ffe7ac047281389b41402374e57469ba04d231dbab23457adf0259d4ef"
     },
     {
       "task": "P5-004",
       "path": "artifacts/system-maturity/P5-004/evidence-index.json",
-      "sha256": "abf3cac4702d1e747d087770fbab78ebd241e90a9bb9ef41a353d2d78ddd5190"
+      "sha256": "f703c541e42cba4f373505c88e4580ac0644370ea3ba8eeae09f13995e012a4c"
     },
     {
       "task": "P6-001",

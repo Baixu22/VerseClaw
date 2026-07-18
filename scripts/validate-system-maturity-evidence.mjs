@@ -7,8 +7,8 @@
  */
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
 import { fileURLToPath } from 'url';
+import { sha256CanonicalEvidenceFile } from './lib/canonical-evidence-hash.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -29,10 +29,6 @@ function walk(dir, pred, out = []) {
     else if (pred(e.name, p)) out.push(p);
   }
   return out;
-}
-
-function sha256File(abs) {
-  return crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex');
 }
 
 function parseDelivery(text) {
@@ -133,7 +129,7 @@ for (const tf of taskFiles) {
         fail(`A1 ${id} evidence path missing: ${e.path}`);
         continue;
       }
-      const actual = sha256File(abs);
+      const actual = sha256CanonicalEvidenceFile(abs);
       recomputed.push({ task: id, path: e.path.replace(/\\/g, '/'), sha256: actual });
       if (!e.expectedSha) {
         fail(`A2 ${id} evidence missing #sha256= for ${e.path}`);
