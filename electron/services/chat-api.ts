@@ -6,6 +6,8 @@ import { findStewardNotesForReferences } from './knowledge-api';
 import { isRecord } from './payload-utils';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { getResourceTracker } from './resource-tracker';
+import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
+import { getSessionTokenUsageSummary } from '../utils/token-usage';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -344,6 +346,26 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
       }
 
       try {
+        const usage = await getSessionTokenUsageSummary(sessionKey);
+        const budget = evaluateTurnBudget({
+          totalTokens: usage.totalTokens,
+          costUsd: usage.estimatedCostUsd,
+        });
+        if (!budget.allowed && budget.code !== 'TURN_TIMEOUT') {
+          logger.warn(
+            `[chat:sendWithMedia] Rejected before Gateway send: code=${budget.code} sessionKey=${sessionKey} used=${budget.used} limit=${budget.limit}`,
+          );
+          return {
+            success: false,
+            error: budget.code,
+            denial: {
+              code: budget.code,
+              limit: budget.limit,
+              used: budget.used,
+            },
+          };
+        }
+
         const earlyMockResult = handleMockChatSend({
           sessionKey,
           message: typeof body.message === 'string' ? body.message : '',

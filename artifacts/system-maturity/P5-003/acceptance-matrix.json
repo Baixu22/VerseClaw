@@ -1,38 +1,24 @@
 {
   "taskId": "P5-003",
-  "finding": [
-    "F-REL-005",
-    "F-DATA-004"
-  ],
-  "checkedAt": "2026-07-17T08:58:35.165Z",
-  "implementation": {
-    "logger": "electron/utils/logger.ts",
-    "tests": "tests/unit/logger-p5-003.test.ts"
-  },
-  "guarantees": [
-    "size rotation when active log exceeds maxFileBytes (default 10MiB)",
-    "day retention maxRetentionDays (default 14) + total maxTotalBytes (default 200MiB)",
-    "getWriteHealth() exposes consecutiveFailures/lastWriteError/code",
-    "redactLogText applied before ring buffer and disk (canary/bearer/api keys)"
-  ],
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
   "acceptance": [
     {
       "id": "A1",
-      "title": "Size/day limits effective",
-      "status": "passed",
-      "evidence": "rotation + retention unit tests"
+      "statement": "大小/天数上限生效",
+      "status": "passed"
     },
     {
       "id": "A2",
-      "title": "Write failure observable",
-      "status": "passed",
-      "evidence": "ENOSPC/EACCES getWriteHealth tests"
+      "statement": "写失败有可观测状态",
+      "status": "passed"
     },
     {
       "id": "A3",
-      "title": "Logs free of secret/canary",
-      "status": "passed",
-      "evidence": "canary scan ring+disk test"
+      "statement": "日志无 secret/canary",
+      "status": "passed"
     }
   ]
 }

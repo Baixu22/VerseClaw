@@ -13,6 +13,14 @@ import { sha256CanonicalEvidenceFile } from './lib/canonical-evidence-hash.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const planRoot = path.join(root, 'plans/system-maturity');
+const taskPrefixArg = process.argv.find((arg) => arg.startsWith('--task-prefix='));
+const selectedTaskPrefixes = taskPrefixArg
+  ? taskPrefixArg.slice('--task-prefix='.length).split(',').map((value) => value.trim()).filter(Boolean)
+  : [];
+const probeArg = process.argv.find((arg) => arg.startsWith('--probe='));
+const integrityProbe = probeArg?.slice('--probe='.length) ?? '';
+const taskSelected = (taskId) => selectedTaskPrefixes.length === 0
+  || selectedTaskPrefixes.some((prefix) => taskId.startsWith(prefix));
 
 const FAIL = [];
 const WARN = [];
@@ -77,8 +85,93 @@ for (const sp of statusFiles) {
 const taskFiles = walk(planRoot, (n) => /^P\d+-\d+\.md$/.test(n));
 const recomputed = [];
 
+function validateEvidenceIndex(indexPath) {
+  const relIndex = path.relative(root, indexPath).replace(/\\/g, '/');
+  const taskId = path.basename(path.dirname(indexPath));
+  let doc;
+  try {
+    doc = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  } catch (error) {
+    fail(`${taskId} invalid evidence-index JSON: ${String(error)}`);
+    return;
+  }
+  if (integrityProbe && taskId === 'P4-001') {
+    const artifacts = Array.isArray(doc.artifacts)
+      ? doc.artifacts
+      : Object.entries(doc.artifacts || {}).map(([artifactPath, value]) => ({ path: artifactPath, ...value }));
+    if (artifacts.length > 0) {
+      if (integrityProbe === 'missing-file') artifacts[0].path = 'artifacts/system-maturity/__missing_probe__/missing.txt';
+      if (integrityProbe === 'hash-tamper') artifacts[0].sha256 = '0'.repeat(64);
+      if (integrityProbe === 'self-reference') artifacts[0].path = relIndex;
+      doc.artifacts = artifacts;
+    }
+  }
+  if (doc.taskId !== taskId) fail(`${taskId} evidence-index taskId mismatch`);
+  if (!doc.generatedAt && !doc.createdAt && !doc.completedAt) {
+    fail(`${taskId} evidence-index missing generatedAt`);
+  }
+  const commandEntries = Array.isArray(doc.runs)
+    ? doc.runs
+    : Array.isArray(doc.commands)
+      ? doc.commands.map((command) => ({ command }))
+      : doc.tests?.command || doc.tests?.primary
+        ? [{ command: doc.tests.command ?? doc.tests.primary }]
+        : [];
+  if (commandEntries.length === 0) fail(`${taskId} evidence-index missing command`);
+  for (const run of commandEntries) {
+    if (!run.command) fail(`${taskId} evidence-index run missing command`);
+    if (Array.isArray(doc.runs)) {
+      if (!Number.isInteger(run.exitCode)) fail(`${taskId} evidence-index run missing integer exitCode`);
+      if (typeof run.result !== 'string' || !run.result.trim()) fail(`${taskId} evidence-index run missing result`);
+    }
+  }
+  if (!doc.commit && !doc.base) fail(`${taskId} evidence-index missing commit/base`);
+  const artifacts = Array.isArray(doc.artifacts)
+    ? doc.artifacts
+    : doc.artifacts && typeof doc.artifacts === 'object'
+      ? Object.entries(doc.artifacts).map(([artifactPath, value]) => ({ path: artifactPath, ...value }))
+      : [];
+  if (artifacts.length === 0) fail(`${taskId} evidence-index missing artifacts`);
+  for (const artifact of artifacts) {
+    const artifactPath = String(artifact.path ?? '').replace(/\\/g, '/');
+    if (!artifactPath) {
+      fail(`${taskId} evidence-index artifact missing path`);
+      continue;
+    }
+    if (artifactPath === relIndex) {
+      fail(`${taskId} evidence-index must not hash itself: ${artifactPath}`);
+      continue;
+    }
+    if (!/^[a-f0-9]{64}$/i.test(String(artifact.sha256 ?? ''))) {
+      fail(`${taskId} evidence-index artifact missing sha256: ${artifactPath}`);
+      continue;
+    }
+    const abs = path.join(root, artifactPath);
+    if (!fs.existsSync(abs)) {
+      fail(`${taskId} evidence-index artifact missing: ${artifactPath}`);
+      continue;
+    }
+    const actual = sha256File(abs);
+    if (actual !== String(artifact.sha256).toLowerCase()) {
+      fail(`${taskId} evidence-index hash mismatch for ${artifactPath}: expected ${artifact.sha256} got ${actual}`);
+    }
+  }
+}
+
+for (const phase of ['phase4-runtime-surfaces', 'phase5-reliability-abuse']) {
+  const artifactPrefix = phase.startsWith('phase4') ? 'P4-' : 'P5-';
+  const artifactRoot = path.join(root, 'artifacts/system-maturity');
+  for (const entry of fs.readdirSync(artifactRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !entry.name.startsWith(artifactPrefix)) continue;
+    const indexPath = path.join(artifactRoot, entry.name, 'evidence-index.json');
+    if (!fs.existsSync(indexPath)) fail(`${entry.name} missing evidence-index.json`);
+    else validateEvidenceIndex(indexPath);
+  }
+}
+
 for (const tf of taskFiles) {
   const id = path.basename(tf, '.md');
+  if (!taskSelected(id)) continue;
   const text = fs.readFileSync(tf, 'utf8');
   const acceptance = [...text.matchAll(/- \[( |x|X)\]\s*(A\d+)\b/g)].map((m) => ({
     id: m[2],
@@ -158,7 +251,7 @@ if (fs.existsSync(syntheticAbs)) {
 
 const report = {
   schemaVersion: 1,
-  task: 'P0-004',
+  task: selectedTaskPrefixes.length > 0 ? selectedTaskPrefixes.join(',') : 'P0-004',
   checkedAt: new Date().toISOString(),
   ok: FAIL.length === 0,
   recomputedCount: recomputed.length,
@@ -168,7 +261,12 @@ const report = {
   info: INFO,
 };
 
-const outDir = path.join(root, 'artifacts/system-maturity/P0-004');
+const outDir = path.join(
+  root,
+  selectedTaskPrefixes.length > 0
+    ? `artifacts/system-maturity/${selectedTaskPrefixes.join('').replace(/[^A-Za-z0-9-]/g, '')}-EVIDENCE`
+    : 'artifacts/system-maturity/P0-004',
+);
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'validate-system-maturity-evidence.json'), JSON.stringify(report, null, 2) + '\n');
 

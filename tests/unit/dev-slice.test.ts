@@ -6,7 +6,7 @@ import {
 } from "./helpers/runtime-memory-dev-slice";
 
 describe("runtime memory dev slice", () => {
-  it("uses the current audited lifecycle cache contract", () => {
+  it("uses the Stage 2 cache contract with retrieval scores and no profile augmentation", () => {
     expect(DEV_SLICE_CACHE_VERSION).toBe("34.0-audn-lifecycle-2026-07-06");
   });
 

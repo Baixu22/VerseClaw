@@ -13,9 +13,13 @@ const { gatewayState, agentsState } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@/stores/gateway', () => ({
-  useGatewayStore: (selector: (state: typeof gatewayState) => unknown) => selector(gatewayState),
-}));
+vi.mock('@/stores/gateway', () => {
+  const useGatewayStore = Object.assign(
+    (selector: (state: typeof gatewayState) => unknown) => selector(gatewayState),
+    { getState: () => gatewayState },
+  );
+  return { useGatewayStore };
+});
 
 vi.mock('@/stores/agents', () => ({
   useAgentsStore: (selector: (state: typeof agentsState) => unknown) => selector(agentsState),

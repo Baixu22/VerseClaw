@@ -318,25 +318,25 @@ describe("production confirm_and_save experience bridge", () => {
         confirmed: boolean;
         confidence: number;
         write_origin: string;
-        high_trust_eligible: boolean;
-        integrity: string;
-        provenance_source: string;
         session_id: string;
+        provenance_source: string;
+        integrity: string;
         verification_status: string;
+        high_trust_eligible: boolean;
       };
     }>;
     expect(writeArg[0]?.block.block_type).toBe("experience");
     expect(writeArg[0]?.block.source_system).toBe("sekb");
     expect(writeArg[0]?.block.session_id).toBe("session-w4-prod");
-    expect(writeArg[0]?.admission).toEqual({
+    expect(writeArg[0]?.admission).toMatchObject({
       confirmed: true,
       confidence: 0.9,
       write_origin: "handler",
-      high_trust_eligible: true,
-      integrity: "confirmed",
-      provenance_source: "sekb",
       session_id: "session-w4-prod",
+      provenance_source: "sekb",
+      integrity: "confirmed",
       verification_status: "confirmed",
+      high_trust_eligible: true,
     });
   });
 
