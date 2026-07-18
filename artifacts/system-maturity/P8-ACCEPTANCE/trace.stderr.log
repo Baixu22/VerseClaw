@@ -1,0 +1,82 @@
+FAIL  orphan task file P8-001 missing from findings-registry.tasks
+FAIL  orphan task file P8-002 missing from findings-registry.tasks
+FAIL  orphan task file P8-003 missing from findings-registry.tasks
+FAIL  orphan task file P8-004 missing from findings-registry.tasks
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: electron/utils/channel-config.ts
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: package.json
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: electron/services/secrets/channel-secret-broker.ts
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: electron/services/providers/store-instance.ts
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: electron/utils/channel-config.ts
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: tests/unit/channel-secret-broker-p8-002.test.ts
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/residual-register.json
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json
+FAIL  F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-002.md
+FAIL  F-SEC-002: stale evidence: linked source is newer than evidence
+FAIL  F-DATA-004: task P8-004 links to F-DATA-004 but Finding does not link back
+FAIL  F-DATA-004: task P7-003 evidence hash mismatch: package.json
+FAIL  F-DATA-004: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-REL-002: stale evidence: linked source is newer than evidence
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: electron/utils/channel-config.ts
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: package.json
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md
+FAIL  F-REL-004: task P8-003 evidence hash mismatch: artifacts/system-maturity/P8-003/capability-inventory-report.json
+FAIL  F-REL-004: task P8-003 evidence hash mismatch: plans/system-maturity/capability-inventory.json
+FAIL  F-REL-004: task P8-003 evidence hash mismatch: scripts/lib/system-maturity-capability-inventory.mjs
+FAIL  F-REL-004: task P8-003 evidence hash mismatch: scripts/run-system-maturity-capability-inventory.mjs
+FAIL  F-REL-004: task P8-003 evidence hash mismatch: tests/unit/system-maturity-capability-inventory-p8-003.test.ts
+FAIL  F-GOV-001: task P0-003 evidence hash mismatch: package.json
+FAIL  F-GOV-002: task P8-001 links to F-GOV-002 but Finding does not link back
+FAIL  F-GOV-002: task P8-004 links to F-GOV-002 but Finding does not link back
+FAIL  F-GOV-002: task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-GOV-002: task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md
+FAIL  F-GOV-002: task P0-002 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs
+FAIL  F-GOV-002: task P0-002 evidence hash mismatch: plans/system-maturity/README.md
+FAIL  F-GOV-002: task P0-003 evidence hash mismatch: package.json
+FAIL  F-GOV-002: task P0-004 evidence hash mismatch: package.json
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: package.json
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/README.md
+FAIL  F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md
+FAIL  F-GOV-003: task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-GOV-003: task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md
+FAIL  F-GOV-003: task P0-004 evidence hash mismatch: package.json
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: package.json
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/README.md
+FAIL  F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md
+FAIL  F-UX-002: task P7-003 evidence hash mismatch: package.json
+FAIL  F-UX-002: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json
+FAIL  F-AUTH-008: stale evidence: linked source is newer than evidence
+FAIL  F-DATA-005: task P7-003 evidence hash mismatch: package.json
+FAIL  F-DATA-005: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json
+validate-system-maturity-traceability: FAILED (81)

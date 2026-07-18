@@ -1,0 +1,11 @@
+present
+refreshed artifacts/system-maturity/P7-001/full-validation.json
+refreshed artifacts/system-maturity/P7-003/full-validation.json
+updated maturity delivery hashes: files=2 entries=243
+{
+  "ok": false,
+  "stale": 0,
+  "fail": [
+    "global evidence artifacts/system-maturity/P7-004/full-validation.json is not a zero-exit successful report"
+  ]
+}

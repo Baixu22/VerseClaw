@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-18T07:33:33.000Z",
-  "ok": true,
+  "evaluatedAt": "2026-07-18T09:31:50.000Z",
+  "ok": false,
   "summary": {
     "findingCount": 35,
-    "taskCount": 34,
+    "taskCount": 38,
     "testCount": 35,
-    "freshCount": 35,
-    "staleCount": 0,
-    "failureCount": 0,
+    "freshCount": 32,
+    "staleCount": 3,
+    "failureCount": 81,
     "warningCount": 0
   },
   "policy": {
@@ -37,7 +37,8 @@
       "owner": "main-boundary",
       "owners": [
         "main-boundary",
-        "runtime-surfaces"
+        "runtime-surfaces",
+        "program-governance"
       ],
       "reviewers": [
         "security-lead"
@@ -45,7 +46,9 @@
       "taskIds": [
         "P1-001",
         "P4-003",
-        "P4-004"
+        "P4-004",
+        "P8-001",
+        "P8-002"
       ],
       "testIds": [
         "T-SEC-001"
@@ -56,7 +59,12 @@
         "pnpm contract:check",
         "node scripts/validate-system-maturity-plan.mjs",
         "pnpm exec vitest run tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/mcp-api.test.ts",
-        "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts"
+        "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts",
+        "pnpm exec vitest run tests/unit/system-maturity-residual-p8-001.test.ts tests/unit/channel-secret-residual-p8-001.test.ts tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "pnpm maturity:residual",
+        "pnpm maturity:plan",
+        "pnpm maturity:quarterly -- --dry-run",
+        "pnpm exec vitest run tests/unit/channel-secret-broker-p8-002.test.ts"
       ],
       "acceptanceIds": [
         "P1-001:A1",
@@ -68,7 +76,13 @@
         "P4-003:A4",
         "P4-004:A1",
         "P4-004:A2",
-        "P4-004:A3"
+        "P4-004:A3",
+        "P8-001:A1",
+        "P8-001:A2",
+        "P8-001:A3",
+        "P8-002:A1",
+        "P8-002:A2",
+        "P8-002:A3"
       ],
       "codePaths": [
         "electron/services/secrets/secret-store.ts",
@@ -93,11 +107,21 @@
         "tests/unit/mcp-api.test.ts",
         "shared/channels/inbound-trust.ts",
         "tests/unit/channels-p4-004-inbound-trust.test.ts",
+        "scripts/lib/system-maturity-residual.mjs",
+        "scripts/run-system-maturity-residual-audit.mjs",
+        "scripts/lib/system-maturity-quarterly-audit.mjs",
+        "scripts/sync-system-maturity-index.mjs",
+        "scripts/validate-system-maturity-plan.mjs",
+        "tests/unit/system-maturity-residual-p8-001.test.ts",
+        "tests/unit/channel-secret-residual-p8-001.test.ts",
+        "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "electron/services/secrets/channel-secret-broker.ts",
+        "electron/services/providers/store-instance.ts",
+        "tests/unit/channel-secret-broker-p8-002.test.ts",
         "tests/unit/host-invoke.test.ts",
         "tests/unit/providers-api.test.ts",
         "tests/unit/secret-store-broker.test.ts",
-        "tests/unit/configure-deepseek-runtime.test.ts",
-        "scripts/validate-system-maturity-plan.mjs"
+        "tests/unit/configure-deepseek-runtime.test.ts"
       ],
       "evidence": [
         {
@@ -191,6 +215,168 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P8-001/vitest.stdout.txt",
+          "sha256": "b6474d06cb52b4512ba6b0507c012f7f7fc988985516aef25d558c6b28c7a86d",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
+          "sha256": "7ba780652cebc3c78046992305d77953aa4616831999d24bbf9920b7607161e4",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
+          "sha256": "d8659c2f56ef1b189639dd6c5f8871452feb6f882cf1516f5802adb66fc16b23",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/maturity-plan.stdout.txt",
+          "sha256": "6514f688c9902e286f0e2628a265157e5858eecba2eb739ff26157699b77a31f",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt",
+          "sha256": "40b9064857a49e2e57cf35cf6e475848b409b5e36f846a3480be2c4237a03cd9",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/residual-register.json",
+          "sha256": "81dadfd42afef3507e75b364c74d90fe36bc5a609670163964ce092eb4c72864",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-residual.mjs",
+          "sha256": "25aa00a91e3123d3a02be537af47ea02c52eabc3df576db3ed83055d1a814506",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-residual-audit.mjs",
+          "sha256": "15897db34b88ec01e88248379106aaf1aaff191b8843ff1e181465ddf9cfd009",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-quarterly-audit.mjs",
+          "sha256": "01600c47c3fdbcc78797c9fa5101691318351a6879c2b5f4717ea0f3d50baccb",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
+          "sha256": "36a33f63637eb64b8a9fdf9388a1e989c47ff79d30131e4f158c8601b648d6b8",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/channel-secret-residual-p8-001.test.ts",
+          "sha256": "922f05b1983e72c0117a5b87e56225b33a0a368421ad01ef63c060ba4acbf641",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/channel-config.ts",
+          "sha256": "20e32b3c9fa1ca3109cd0ba78c471d486d23c70412c9dd7b16f7921f08f01831",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "4b65317b20c2c9c3ba44f57a05db935510870f7c8901c8a741973481a6cd8178",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "30534f808bf2d20333bf1f3f07321340c93b657d44fa3647ea0bc33f6d28169f",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+          "sha256": "88e8694ef85e1f2026cf96b2a8be1dad59ea5629722abd63bdfb1b4b1ed64931",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+          "sha256": "768d9b472708b3f9aca1efd568485589384a06650decec9c8d5fc0e350c2b2f4",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/INDEX.md",
+          "sha256": "91eb297ed8f148113753f0376e66125d93a52036621356d5e992f30e1d296713",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-002/vitest.stdout.txt",
+          "sha256": "06f53fd6725962709f5d5086423256288261d4474e74b2bf85f8f1cf9a6443b0",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/secrets/channel-secret-broker.ts",
+          "sha256": "a02264e346c19fc950c01085dc8df3fcbd9bd561e88c9d3631f3928d59ef7583",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/providers/store-instance.ts",
+          "sha256": "ed5cc941c58d483049dcdbd3eab1fba4654e20e475de184b6c99055f8647bf7b",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/channel-config.ts",
+          "sha256": "20e32b3c9fa1ca3109cd0ba78c471d486d23c70412c9dd7b16f7921f08f01831",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/channel-secret-broker-p8-002.test.ts",
+          "sha256": "49d3526306b45e22a5792d8ff646011c24f6e359df392b2921a9945ec12aaf1f",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/residual-register.json",
+          "sha256": "6399d43136e8ec04bc35a61ce7c9387b85d4892d6aae385eab9b2e9f1f9f72d5",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "36011a5326f3eb36aaa436e9b2eb05d3210649e9f53573b2db496626d01bd158",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+          "sha256": "e68197f4c01cd9e7171e1d6552fbebc8a881ea497e31c6d4cb47ecdfc499ee6b",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/tasks/P8-002.md",
+          "sha256": "d2ce1d911a7502441c1ab203f1173a1c0485d29a9b8cef160280af272332d154",
+          "taskId": "P8-002",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "1f3e4c871cc551ea90ebe6421c641272963d3c4543d4de1f2d857f0388da24b0",
           "taskId": "P7-001",
@@ -210,11 +396,33 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-18T07:56:36.245Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-01T08:35:45.472Z",
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T11:08:45.646Z",
+      "nextReviewAt": "2026-08-01T11:08:45.646Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json",
+        "task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs",
+        "task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs",
+        "task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+        "task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts",
+        "task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts",
+        "task P8-001 evidence hash mismatch: electron/utils/channel-config.ts",
+        "task P8-001 evidence hash mismatch: package.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md",
+        "task P8-002 evidence hash mismatch: electron/services/secrets/channel-secret-broker.ts",
+        "task P8-002 evidence hash mismatch: electron/services/providers/store-instance.ts",
+        "task P8-002 evidence hash mismatch: electron/utils/channel-config.ts",
+        "task P8-002 evidence hash mismatch: tests/unit/channel-secret-broker-p8-002.test.ts",
+        "task P8-002 evidence hash mismatch: plans/system-maturity/residual-register.json",
+        "task P8-002 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+        "task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-002.md"
+      ]
     },
     {
       "id": "F-SEC-002",
@@ -337,11 +545,13 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-18T07:56:36.245Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-01T08:35:45.472Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-01T08:40:51.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-SEC-003",
@@ -575,8 +785,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -677,8 +887,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -779,8 +989,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T05:12:30.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -886,8 +1096,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -985,8 +1195,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1081,8 +1291,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1195,8 +1405,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T06:34:42.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1311,8 +1521,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1399,8 +1609,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1487,8 +1697,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1576,8 +1786,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1671,8 +1881,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1763,8 +1973,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1846,8 +2056,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2209,10 +2419,14 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:38:45.341Z",
-      "nextReviewAt": "2026-08-17T08:38:45.341Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-08-17T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-004 links to F-DATA-004 but Finding does not link back",
+        "task P7-003 evidence hash mismatch: package.json",
+        "task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json"
+      ]
     },
     {
       "id": "F-REL-001",
@@ -2426,8 +2640,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2516,11 +2730,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-REL-003",
@@ -2641,8 +2857,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2652,13 +2868,16 @@
       "severity": "High",
       "owner": "qa-governance",
       "owners": [
-        "qa-governance"
+        "qa-governance",
+        "program-governance"
       ],
       "reviewers": [
         "security-lead"
       ],
       "taskIds": [
-        "P7-002"
+        "P7-002",
+        "P8-001",
+        "P8-003"
       ],
       "testIds": [
         "T-REL-004"
@@ -2672,12 +2891,24 @@
         "pnpm run lint:check",
         "pnpm run typecheck",
         "pnpm test",
-        "pnpm maturity:validate"
+        "pnpm maturity:validate",
+        "pnpm exec vitest run tests/unit/system-maturity-residual-p8-001.test.ts tests/unit/channel-secret-residual-p8-001.test.ts tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "pnpm maturity:residual",
+        "pnpm maturity:plan",
+        "pnpm maturity:quarterly -- --dry-run",
+        "pnpm exec vitest run tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+        "pnpm maturity:capability-inventory"
       ],
       "acceptanceIds": [
         "P7-002:A1",
         "P7-002:A2",
-        "P7-002:A3"
+        "P7-002:A3",
+        "P8-001:A1",
+        "P8-001:A2",
+        "P8-001:A3",
+        "P8-003:A1",
+        "P8-003:A2",
+        "P8-003:A3"
       ],
       "codePaths": [
         "electron/main/index.ts",
@@ -2691,7 +2922,18 @@
         "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
         ".github/workflows/system-maturity-security.yml",
         "harness/specs/rules/system-maturity-security-regression.md",
-        "harness/specs/tasks/system-maturity-security-regression.md"
+        "harness/specs/tasks/system-maturity-security-regression.md",
+        "scripts/lib/system-maturity-residual.mjs",
+        "scripts/run-system-maturity-residual-audit.mjs",
+        "scripts/lib/system-maturity-quarterly-audit.mjs",
+        "scripts/sync-system-maturity-index.mjs",
+        "scripts/validate-system-maturity-plan.mjs",
+        "tests/unit/system-maturity-residual-p8-001.test.ts",
+        "tests/unit/channel-secret-residual-p8-001.test.ts",
+        "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "scripts/lib/system-maturity-capability-inventory.mjs",
+        "scripts/run-system-maturity-capability-inventory.mjs",
+        "tests/unit/system-maturity-capability-inventory-p8-003.test.ts"
       ],
       "evidence": [
         {
@@ -2791,6 +3033,174 @@
           "kind": "task"
         },
         {
+          "path": "artifacts/system-maturity/P8-001/vitest.stdout.txt",
+          "sha256": "b6474d06cb52b4512ba6b0507c012f7f7fc988985516aef25d558c6b28c7a86d",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
+          "sha256": "7ba780652cebc3c78046992305d77953aa4616831999d24bbf9920b7607161e4",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
+          "sha256": "d8659c2f56ef1b189639dd6c5f8871452feb6f882cf1516f5802adb66fc16b23",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/maturity-plan.stdout.txt",
+          "sha256": "6514f688c9902e286f0e2628a265157e5858eecba2eb739ff26157699b77a31f",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt",
+          "sha256": "40b9064857a49e2e57cf35cf6e475848b409b5e36f846a3480be2c4237a03cd9",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/residual-register.json",
+          "sha256": "81dadfd42afef3507e75b364c74d90fe36bc5a609670163964ce092eb4c72864",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-residual.mjs",
+          "sha256": "25aa00a91e3123d3a02be537af47ea02c52eabc3df576db3ed83055d1a814506",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-residual-audit.mjs",
+          "sha256": "15897db34b88ec01e88248379106aaf1aaff191b8843ff1e181465ddf9cfd009",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-quarterly-audit.mjs",
+          "sha256": "01600c47c3fdbcc78797c9fa5101691318351a6879c2b5f4717ea0f3d50baccb",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
+          "sha256": "36a33f63637eb64b8a9fdf9388a1e989c47ff79d30131e4f158c8601b648d6b8",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/channel-secret-residual-p8-001.test.ts",
+          "sha256": "922f05b1983e72c0117a5b87e56225b33a0a368421ad01ef63c060ba4acbf641",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/channel-config.ts",
+          "sha256": "20e32b3c9fa1ca3109cd0ba78c471d486d23c70412c9dd7b16f7921f08f01831",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "4b65317b20c2c9c3ba44f57a05db935510870f7c8901c8a741973481a6cd8178",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "30534f808bf2d20333bf1f3f07321340c93b657d44fa3647ea0bc33f6d28169f",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+          "sha256": "88e8694ef85e1f2026cf96b2a8be1dad59ea5629722abd63bdfb1b4b1ed64931",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+          "sha256": "768d9b472708b3f9aca1efd568485589384a06650decec9c8d5fc0e350c2b2f4",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/INDEX.md",
+          "sha256": "91eb297ed8f148113753f0376e66125d93a52036621356d5e992f30e1d296713",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-003/vitest.stdout.txt",
+          "sha256": "ceab838894984d7a20fabee2ec3aac1e5ba528a2572ad8c75100a2e2829d292a",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-003/capability-inventory-report.json",
+          "sha256": "72230916c81d86ac8a749f4439f69236491d1083d01650e6475d0d6eb0a9488d",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/capability-inventory.json",
+          "sha256": "17d1af53208db09e89d6e79d2a56241cf2f6b9d931ea36b5d58f698043a04676",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/lib/system-maturity-capability-inventory.mjs",
+          "sha256": "0854b7d40fa07937b7df09ef878a16978755652d49d9c7f8a3eee00263e62fa7",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/run-system-maturity-capability-inventory.mjs",
+          "sha256": "7db068d30b77644c3367cb8b5ae549d09b45c905133c96a83d631d0d52956e63",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+          "sha256": "456a624fb2bdc4fe6fecc7bcdd9807059b27a2b57b2b6b253b2f6023fc6e5e21",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/security-regression-suite.json",
+          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/residual-register.json",
+          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "84b63277fc73c64cd4c1a98a0810c0fff1dd5ef412c508ebe123d5d884709d6c",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "6c5b4096b4e452e26e95a44a56993fc121d3c2b5cdd041b10ccfbfae0cad1d1f",
+          "taskId": "P8-003",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
           "sha256": "1f3e4c871cc551ea90ebe6421c641272963d3c4543d4de1f2d857f0388da24b0",
           "taskId": "P7-001",
@@ -2827,11 +3237,30 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T11:09:49.496Z",
+      "nextReviewAt": "2026-08-17T11:09:49.496Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json",
+        "task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs",
+        "task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs",
+        "task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+        "task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts",
+        "task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts",
+        "task P8-001 evidence hash mismatch: electron/utils/channel-config.ts",
+        "task P8-001 evidence hash mismatch: package.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+        "task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md",
+        "task P8-003 evidence hash mismatch: artifacts/system-maturity/P8-003/capability-inventory-report.json",
+        "task P8-003 evidence hash mismatch: plans/system-maturity/capability-inventory.json",
+        "task P8-003 evidence hash mismatch: scripts/lib/system-maturity-capability-inventory.mjs",
+        "task P8-003 evidence hash mismatch: scripts/run-system-maturity-capability-inventory.mjs",
+        "task P8-003 evidence hash mismatch: tests/unit/system-maturity-capability-inventory-p8-003.test.ts"
+      ]
     },
     {
       "id": "F-SUPPLY-001",
@@ -3157,8 +3586,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3510,10 +3939,12 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-08-17T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P0-003 evidence hash mismatch: package.json"
+      ]
     },
     {
       "id": "F-GOV-002",
@@ -3991,7 +4422,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
-          "sha256": "d798281ca42f4ed050e36f900ac173144ed339d1b1b622aaf574ec8e918c0267",
+          "sha256": "2a167fe335680a02a7ac8aeabed0e6f347f35fa220986c6127ed5b769482acad",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4212,11 +4643,28 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T08:32:51.126Z",
-      "latestEvidenceAt": "2026-07-18T08:38:45.473Z",
-      "nextReviewAt": "2026-09-16T08:38:45.473Z",
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-09-16T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 links to F-GOV-002 but Finding does not link back",
+        "task P8-004 links to F-GOV-002 but Finding does not link back",
+        "task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md",
+        "task P0-002 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+        "task P0-002 evidence hash mismatch: plans/system-maturity/README.md",
+        "task P0-003 evidence hash mismatch: package.json",
+        "task P0-004 evidence hash mismatch: package.json",
+        "task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+        "task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs",
+        "task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+        "task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "task P7-004 evidence hash mismatch: package.json",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/README.md",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md"
+      ]
     },
     {
       "id": "F-GOV-003",
@@ -4483,7 +4931,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-004/quarterly-audit-report.json",
-          "sha256": "d798281ca42f4ed050e36f900ac173144ed339d1b1b622aaf574ec8e918c0267",
+          "sha256": "2a167fe335680a02a7ac8aeabed0e6f347f35fa220986c6127ed5b769482acad",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4687,11 +5135,23 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T08:32:51.126Z",
-      "latestEvidenceAt": "2026-07-18T08:38:45.473Z",
-      "nextReviewAt": "2026-08-17T08:38:45.473Z",
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-08-17T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md",
+        "task P0-004 evidence hash mismatch: package.json",
+        "task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+        "task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs",
+        "task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+        "task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+        "task P7-004 evidence hash mismatch: package.json",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/README.md",
+        "task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md"
+      ]
     },
     {
       "id": "F-UX-001",
@@ -4772,8 +5232,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5008,10 +5468,13 @@
       ],
       "reviewCycleDays": 90,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:38:45.341Z",
-      "nextReviewAt": "2026-10-16T08:38:45.341Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-10-16T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P7-003 evidence hash mismatch: package.json",
+        "task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json"
+      ]
     },
     {
       "id": "F-SEC-006",
@@ -5241,8 +5704,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5381,8 +5844,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5611,8 +6074,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5692,11 +6155,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-AUTH-009",
@@ -5782,8 +6247,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6174,10 +6639,13 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T06:54:20.000Z",
-      "latestEvidenceAt": "2026-07-18T08:38:45.341Z",
-      "nextReviewAt": "2026-08-17T08:38:45.341Z",
+      "latestEvidenceAt": "2026-07-18T09:31:50.000Z",
+      "nextReviewAt": "2026-08-17T09:31:50.000Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P7-003 evidence hash mismatch: package.json",
+        "task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json"
+      ]
     },
     {
       "id": "F-REL-005",
@@ -6254,8 +6722,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-09-16T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-09-16T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6453,12 +6921,94 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T00:43:36.000Z",
-      "latestEvidenceAt": "2026-07-18T08:35:45.472Z",
-      "nextReviewAt": "2026-08-17T08:35:45.472Z",
+      "latestEvidenceAt": "2026-07-18T08:40:51.000Z",
+      "nextReviewAt": "2026-08-17T08:40:51.000Z",
       "freshness": "fresh",
       "failures": []
     }
   ],
-  "fail": [],
+  "fail": [
+    "orphan task file P8-001 missing from findings-registry.tasks",
+    "orphan task file P8-002 missing from findings-registry.tasks",
+    "orphan task file P8-003 missing from findings-registry.tasks",
+    "orphan task file P8-004 missing from findings-registry.tasks",
+    "F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+    "F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json",
+    "F-SEC-001: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs",
+    "F-SEC-001: task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs",
+    "F-SEC-001: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+    "F-SEC-001: task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts",
+    "F-SEC-001: task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts",
+    "F-SEC-001: task P8-001 evidence hash mismatch: electron/utils/channel-config.ts",
+    "F-SEC-001: task P8-001 evidence hash mismatch: package.json",
+    "F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+    "F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+    "F-SEC-001: task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md",
+    "F-SEC-001: task P8-002 evidence hash mismatch: electron/services/secrets/channel-secret-broker.ts",
+    "F-SEC-001: task P8-002 evidence hash mismatch: electron/services/providers/store-instance.ts",
+    "F-SEC-001: task P8-002 evidence hash mismatch: electron/utils/channel-config.ts",
+    "F-SEC-001: task P8-002 evidence hash mismatch: tests/unit/channel-secret-broker-p8-002.test.ts",
+    "F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/residual-register.json",
+    "F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+    "F-SEC-001: task P8-002 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-002.md",
+    "F-SEC-002: stale evidence: linked source is newer than evidence",
+    "F-DATA-004: task P8-004 links to F-DATA-004 but Finding does not link back",
+    "F-DATA-004: task P7-003 evidence hash mismatch: package.json",
+    "F-DATA-004: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-REL-002: stale evidence: linked source is newer than evidence",
+    "F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+    "F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/residual-register.json",
+    "F-REL-004: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-residual.mjs",
+    "F-REL-004: task P8-001 evidence hash mismatch: scripts/run-system-maturity-residual-audit.mjs",
+    "F-REL-004: task P8-001 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+    "F-REL-004: task P8-001 evidence hash mismatch: tests/unit/system-maturity-residual-p8-001.test.ts",
+    "F-REL-004: task P8-001 evidence hash mismatch: tests/unit/channel-secret-residual-p8-001.test.ts",
+    "F-REL-004: task P8-001 evidence hash mismatch: electron/utils/channel-config.ts",
+    "F-REL-004: task P8-001 evidence hash mismatch: package.json",
+    "F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/STATUS.json",
+    "F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+    "F-REL-004: task P8-001 evidence hash mismatch: plans/system-maturity/INDEX.md",
+    "F-REL-004: task P8-003 evidence hash mismatch: artifacts/system-maturity/P8-003/capability-inventory-report.json",
+    "F-REL-004: task P8-003 evidence hash mismatch: plans/system-maturity/capability-inventory.json",
+    "F-REL-004: task P8-003 evidence hash mismatch: scripts/lib/system-maturity-capability-inventory.mjs",
+    "F-REL-004: task P8-003 evidence hash mismatch: scripts/run-system-maturity-capability-inventory.mjs",
+    "F-REL-004: task P8-003 evidence hash mismatch: tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+    "F-GOV-001: task P0-003 evidence hash mismatch: package.json",
+    "F-GOV-002: task P8-001 links to F-GOV-002 but Finding does not link back",
+    "F-GOV-002: task P8-004 links to F-GOV-002 but Finding does not link back",
+    "F-GOV-002: task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-GOV-002: task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md",
+    "F-GOV-002: task P0-002 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+    "F-GOV-002: task P0-002 evidence hash mismatch: plans/system-maturity/README.md",
+    "F-GOV-002: task P0-003 evidence hash mismatch: package.json",
+    "F-GOV-002: task P0-004 evidence hash mismatch: package.json",
+    "F-GOV-002: task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+    "F-GOV-002: task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs",
+    "F-GOV-002: task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+    "F-GOV-002: task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+    "F-GOV-002: task P7-004 evidence hash mismatch: package.json",
+    "F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/README.md",
+    "F-GOV-002: task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md",
+    "F-GOV-003: task P0-001 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-GOV-003: task P0-001 evidence hash mismatch: plans/system-maturity/EXECUTION-ORDER.md",
+    "F-GOV-003: task P0-004 evidence hash mismatch: package.json",
+    "F-GOV-003: task P7-004 evidence hash mismatch: scripts/lib/system-maturity-quarterly-audit.mjs",
+    "F-GOV-003: task P7-004 evidence hash mismatch: scripts/sync-system-maturity-index.mjs",
+    "F-GOV-003: task P7-004 evidence hash mismatch: scripts/validate-system-maturity-plan.mjs",
+    "F-GOV-003: task P7-004 evidence hash mismatch: tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+    "F-GOV-003: task P7-004 evidence hash mismatch: package.json",
+    "F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/README.md",
+    "F-GOV-003: task P7-004 evidence hash mismatch: plans/system-maturity/INDEX.md",
+    "F-UX-002: task P7-003 evidence hash mismatch: package.json",
+    "F-UX-002: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json",
+    "F-AUTH-008: stale evidence: linked source is newer than evidence",
+    "F-DATA-005: task P7-003 evidence hash mismatch: package.json",
+    "F-DATA-005: task P7-003 evidence hash mismatch: plans/system-maturity/findings-registry.json"
+  ],
   "warn": []
 }

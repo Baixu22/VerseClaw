@@ -1,0 +1,80 @@
+
+[maturity:plan] exit=0 ms=2191
+(node:28708) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/validate-system-maturity-plan.mjs
+INFO  A1 unique task IDs: 38
+INFO  plans/system-maturity/phase0-foundation/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase1-direct-boundaries/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase2-authorization-isolation/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase8-residual-closure/STATUS.json phaseStatus=done
+INFO  dependency edges resolve
+INFO  A3 P0-001 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-001.delivery.md)
+INFO  A3 P0-002 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-002.delivery.md)
+INFO  A3 P0-003 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-003.delivery.md)
+INFO  A3 P0-004 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-004.delivery.md)
+INFO  A3 P1-001 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-001.delivery.md)
+INFO  A3 P1-002 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-002.delivery.md)
+INFO  A3 P1-003 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-003.delivery.md)
+INFO  A3 P1-004 delivery+acceptance OK (plans\system-maturity\phase1-direct-boundaries\tasks\P1-004.delivery.md)
+INFO  A3 P2-001 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-001.delivery.md)
+INFO  A3 P2-002 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-002.delivery.md)
+INFO  A3 P2-003 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-003.delivery.md)
+INFO  A3 P2-004 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-004.delivery.md)
+INFO  A3 P2-005 delivery+acceptance OK (plans\system-maturity\phase2-authorization-isolation\tasks\P2-005.delivery.md)
+INFO  A3 P3-001 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-001.delivery.md)
+INFO  A3 P3-002 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-002.delivery.md)
+INFO  A3 P3-003 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-003.delivery.md)
+INFO  A3 P3-004 delivery+acceptance OK (plans\system-maturity\phase3-data-authority\tasks\P3-004.delivery.md)
+INFO  A3 P4-001 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-001.delivery.md)
+INFO  A3 P4-002 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-002.delivery.md)
+INFO  A3 P4-003 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-003.delivery.md)
+INFO  A3 P4-004 delivery+acceptance OK (plans\system-maturity\phase4-runtime-surfaces\tasks\P4-004.delivery.md)
+INFO  A3 P5-001 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-001.delivery.md)
+INFO  A3 P5-002 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-002.delivery.md)
+INFO  A3 P5-003 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-003.delivery.md)
+INFO  A3 P5-004 delivery+acceptance OK (plans\system-maturity\phase5-reliability-abuse\tasks\P5-004.delivery.md)
+INFO  A3 P6-001 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-001.delivery.md)
+INFO  A3 P6-002 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-002.delivery.md)
+INFO  A3 P6-003 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-003.delivery.md)
+INFO  A3 P6-004 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-004.delivery.md)
+INFO  A3 P6-005 delivery+acceptance OK (plans\system-maturity\phase6-supply-release\tasks\P6-005.delivery.md)
+INFO  A3 P7-001 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-001.delivery.md)
+INFO  A3 P7-002 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-002.delivery.md)
+INFO  A3 P7-003 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-003.delivery.md)
+INFO  A3 P7-004 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-004.delivery.md)
+INFO  A3 P8-001 delivery+acceptance OK (plans\system-maturity\phase8-residual-closure\tasks\P8-001.delivery.md)
+INFO  A3 P8-002 delivery+acceptance OK (plans\system-maturity\phase8-residual-closure\tasks\P8-002.delivery.md)
+INFO  A3 P8-003 delivery+acceptance OK (plans\system-maturity\phase8-residual-closure\tasks\P8-003.delivery.md)
+INFO  A3 P8-004 delivery+acceptance OK (plans\system-maturity\phase8-residual-closure\tasks\P8-004.delivery.md)
+INFO  task Finding refs resolve against findings-registry
+INFO  INDEX status OK phase0-foundation=done
+INFO  INDEX status OK phase1-direct-boundaries=done
+INFO  INDEX status OK phase2-authorization-isolation=done
+INFO  INDEX status OK phase3-data-authority=done
+INFO  INDEX status OK phase4-runtime-surfaces=done
+INFO  INDEX status OK phase5-reliability-abuse=done
+INFO  INDEX status OK phase6-supply-release=done
+INFO  INDEX status OK phase7-continuous-governance=done
+INFO  INDEX status OK phase8-residual-closure=done
+
+validate-system-maturity-plan: OK
+[maturity:residual] exit=0 ms=1815
+(node:10140) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/run-system-maturity-residual-audit.mjs
+residual audit: ok=true active=2 missing=0 expired=0
+report: artifacts/system-maturity/P8-001/residual-audit-report.json
+validate-system-maturity-residual: OK
+[maturity:capability-inventory] exit=0 ms=2627
+(node:4380) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/run-system-maturity-capability-inventory.mjs
+capability inventory: ok=true caps=6
+report: artifacts/system-maturity/P8-003/capability-inventory-report.json
+validate-system-maturity-capability-inventory: OK

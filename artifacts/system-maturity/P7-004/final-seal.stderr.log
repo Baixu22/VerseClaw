@@ -1,0 +1,99 @@
+(node:39620) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/validate-system-maturity-traceability.mjs
+WARN  manifest hash mismatch (non-strict): electron/main/ipc/host-invoke.ts
+WARN  manifest hash mismatch (non-strict): electron/preload/index.ts
+WARN  manifest hash mismatch (non-strict): electron/services/shell-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/secrets/secret-store.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/secure-storage.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspace-permissions.ts
+WARN  manifest hash mismatch (non-strict): shared/sensitive-content-boundary.ts
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/tool-authorization.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-permissions-policy.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/runtime-spine/gate-engine.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/gateway/server-methods/agent-browser.ts
+WARN  manifest hash mismatch (non-strict): electron/main/index.ts
+WARN  manifest hash mismatch (non-strict): electron/main/ipc-handlers.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/channel-config.ts
+WARN  manifest hash mismatch (non-strict): electron/services/cron-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/knowledge-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/providers-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/files-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/workspaces-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/sessions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/terminal-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/permissions-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/git-api.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser-service.ts
+WARN  manifest hash mismatch (non-strict): electron/services/updates-api.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/store.ts
+WARN  manifest hash mismatch (non-strict): src/pages/Chat/index.tsx
+WARN  manifest hash mismatch (non-strict): src/stores/chat.ts
+WARN  manifest hash mismatch (non-strict): shared/host-api/contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/knowledge-store.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/knowledge/sekb/distillation-tool.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-contract.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-spawn.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/agents/agent-steering-queue.ts
+WARN  manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts
+WARN  manifest hash mismatch (non-strict): electron-builder.yml
+WARN  manifest hash mismatch (non-strict): artifacts/agent-dev-audit/report.json
+WARN  manifest hash mismatch (non-strict): artifacts/agent-dev-deep-test/report.json
+WARN  manifest hash mismatch (non-strict): shared/agent-browser/browser-control.ts
+WARN  manifest hash mismatch (non-strict): electron/services/agent-browser/browser-control/tab-manager.ts
+WARN  manifest hash mismatch (non-strict): electron/utils/logger.ts
+WARN  manifest hash mismatch (non-strict): .github/workflows/release.yml
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-uv.mjs
+WARN  manifest hash mismatch (non-strict): scripts/download-bundled-agent-browser.mjs
+(node:25224) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/validate-system-maturity-evidence.mjs
+(node:14636) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/system-maturity-quarterly-audit.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/system-maturity-quarterly-audit.md"
+(node:28580) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ node scripts/run-system-maturity-quarterly-audit.mjs "--" "--dry-run"
+warning: in the working copy of 'artifacts/system-maturity/P0-001/audit-baseline-check.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-002/validate-system-maturity-plan.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-003/validate-test-gates.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-004/evidence-index.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-001/full-validation.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-001/traceability-report.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/acceptance-matrix.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/evidence-manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/full-validation.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/quarterly-audit-dry-run.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/quarterly-audit-report.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/agent-dev-deep-test.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/diff-check.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/quarterly-final.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/quarterly-final.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/typecheck.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/typecheck.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/unit-full.stderr.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/system-maturity/P7-004/validation-gates/unit-full.stdout.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'harness/specs/tasks/system-maturity-quarterly-audit.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/DELIVERY-FORMAT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/INDEX.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/findings-registry.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-001.delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-003.delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-004.delivery.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-004.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/collect-p7-004-evidence.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/lib/system-maturity-quarterly-audit.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/validate-system-maturity-plan.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/unit/system-maturity-quarterly-audit-p7-004.test.ts', LF will be replaced by CRLF the next time Git touches it
