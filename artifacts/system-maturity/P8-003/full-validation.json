@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-003",
+  "generatedAt": "2026-07-18T09:22:56.027Z",
+  "ok": true,
+  "primaryFindingIds": [
+    "F-REL-004"
+  ],
+  "commands": [
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+      "exitCode": 0
+    },
+    {
+      "id": "capability-inventory",
+      "command": "pnpm maturity:capability-inventory",
+      "exitCode": 0
+    }
+  ]
+}

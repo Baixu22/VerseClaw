@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-002",
+  "generatedAt": "2026-07-18T09:17:23.326Z",
+  "findings": [
+    "F-SEC-001"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "Sealed vault stores no plaintext canary",
+      "status": "pass",
+      "evidence": [
+        "tests/unit/channel-secret-broker-p8-002.test.ts",
+        "artifacts/system-maturity/P8-002/vitest.stdout.txt"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "Main resolve returns plaintext",
+      "status": "pass",
+      "evidence": [
+        "electron/services/secrets/channel-secret-broker.ts",
+        "tests/unit/channel-secret-broker-p8-002.test.ts"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "OpenClaw co-read residual documented",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/residual-register.json",
+        "electron/utils/channel-config.ts"
+      ]
+    }
+  ]
+}

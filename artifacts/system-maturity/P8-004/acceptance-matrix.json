@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-004",
+  "generatedAt": "2026-07-18T09:27:07.264Z",
+  "findings": [
+    "F-GOV-002",
+    "F-DATA-004"
+  ],
+  "items": [
+    {
+      "id": "A1",
+      "title": "phase8 all tasks done and INDEX matches",
+      "status": "pass",
+      "evidence": [
+        "plans/system-maturity/phase8-residual-closure/STATUS.json",
+        "plans/system-maturity/INDEX.md"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "quarterly residual gate green",
+      "status": "pass",
+      "evidence": [
+        "artifacts/system-maturity/P8-004/validation-gates/quarterly.stdout.txt",
+        "artifacts/system-maturity/P8-004/validation-gates/residual.stdout.txt"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "seal/evidence hashes consistent",
+      "status": "pass",
+      "evidence": [
+        "artifacts/system-maturity/P8-004/evidence-manifest.json"
+      ]
+    }
+  ]
+}

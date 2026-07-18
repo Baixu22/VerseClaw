@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "task": "P8-001",
+  "generatedAt": "2026-07-18T09:12:53.730Z",
+  "entries": [
+    {
+      "path": "artifacts/system-maturity/P8-001/vitest.stdout.txt",
+      "sha256": "b6474d06cb52b4512ba6b0507c012f7f7fc988985516aef25d558c6b28c7a86d"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
+      "sha256": "7ba780652cebc3c78046992305d77953aa4616831999d24bbf9920b7607161e4"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
+      "sha256": "d8659c2f56ef1b189639dd6c5f8871452feb6f882cf1516f5802adb66fc16b23"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-001/maturity-plan.stdout.txt",
+      "sha256": "6514f688c9902e286f0e2628a265157e5858eecba2eb739ff26157699b77a31f"
+    },
+    {
+      "path": "artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt",
+      "sha256": "40b9064857a49e2e57cf35cf6e475848b409b5e36f846a3480be2c4237a03cd9"
+    },
+    {
+      "path": "plans/system-maturity/residual-register.json",
+      "sha256": "81dadfd42afef3507e75b364c74d90fe36bc5a609670163964ce092eb4c72864"
+    },
+    {
+      "path": "scripts/lib/system-maturity-residual.mjs",
+      "sha256": "25aa00a91e3123d3a02be537af47ea02c52eabc3df576db3ed83055d1a814506"
+    },
+    {
+      "path": "scripts/run-system-maturity-residual-audit.mjs",
+      "sha256": "15897db34b88ec01e88248379106aaf1aaff191b8843ff1e181465ddf9cfd009"
+    },
+    {
+      "path": "scripts/lib/system-maturity-quarterly-audit.mjs",
+      "sha256": "01600c47c3fdbcc78797c9fa5101691318351a6879c2b5f4717ea0f3d50baccb"
+    },
+    {
+      "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
+      "sha256": "36a33f63637eb64b8a9fdf9388a1e989c47ff79d30131e4f158c8601b648d6b8"
+    },
+    {
+      "path": "tests/unit/channel-secret-residual-p8-001.test.ts",
+      "sha256": "922f05b1983e72c0117a5b87e56225b33a0a368421ad01ef63c060ba4acbf641"
+    },
+    {
+      "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+      "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27"
+    },
+    {
+      "path": "electron/utils/channel-config.ts",
+      "sha256": "20e32b3c9fa1ca3109cd0ba78c471d486d23c70412c9dd7b16f7921f08f01831"
+    },
+    {
+      "path": "package.json",
+      "sha256": "4b65317b20c2c9c3ba44f57a05db935510870f7c8901c8a741973481a6cd8178"
+    },
+    {
+      "path": "plans/system-maturity/findings-registry.json",
+      "sha256": "30534f808bf2d20333bf1f3f07321340c93b657d44fa3647ea0bc33f6d28169f"
+    },
+    {
+      "path": "plans/system-maturity/phase8-residual-closure/STATUS.json",
+      "sha256": "88e8694ef85e1f2026cf96b2a8be1dad59ea5629722abd63bdfb1b4b1ed64931"
+    },
+    {
+      "path": "plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
+      "sha256": "768d9b472708b3f9aca1efd568485589384a06650decec9c8d5fc0e350c2b2f4"
+    },
+    {
+      "path": "plans/system-maturity/INDEX.md",
+      "sha256": "91eb297ed8f148113753f0376e66125d93a52036621356d5e992f30e1d296713"
+    }
+  ]
+}

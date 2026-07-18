@@ -64,11 +64,13 @@
       "tasks": [
         "P1-001",
         "P4-003",
-        "P4-004"
+        "P4-004",
+        "P8-001",
+        "P8-002"
       ],
-      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain.",
-      "updatedBy": "P4-004",
-      "updatedAt": "2026-07-17T09:24:01.000Z"
+      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain. P8-001: residual-register entry + Renderer redaction residual locks; vault continues P8-002. P8-002: channelSecrets vault sealed on saveChannelConfig.",
+      "updatedBy": "P8-002",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-SEC-002",
@@ -496,8 +498,13 @@
         "AC-06"
       ],
       "tasks": [
-        "P7-002"
-      ]
+        "P7-002",
+        "P8-001",
+        "P8-003"
+      ],
+      "notes": "P8-003: capability-inventory maps multi-impl surfaces to security regression scenarios; residual secret-handling strength mixed with F-SEC-001.",
+      "updatedBy": "P8-003",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-SUPPLY-001",
