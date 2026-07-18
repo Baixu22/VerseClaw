@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 
 import { cn } from "@/lib/utils"
+import { useOverlayPortalContainer } from "@/components/ui/overlay-portal"
 
 const Sheet = SheetPrimitive.Root
 
@@ -13,7 +14,10 @@ const SheetTrigger = SheetPrimitive.Trigger
 
 const SheetClose = SheetPrimitive.Close
 
-const SheetPortal = SheetPrimitive.Portal
+const SheetPortal = ({ children, ...props }: React.ComponentProps<typeof SheetPrimitive.Portal>) => {
+  const container = useOverlayPortalContainer()
+  return <SheetPrimitive.Portal container={container ?? undefined} {...props}>{children}</SheetPrimitive.Portal>
+}
 
 const SheetOverlay = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Overlay>,
@@ -21,7 +25,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/30 dark:bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none",
+      "fixed inset-0 z-[80] bg-black/24 backdrop-blur-[2px] dark:bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none",
       className
     )}
     {...props}
@@ -31,7 +35,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-surface-modal p-6 shadow-2xl transition ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:duration-[250ms] motion-reduce:animate-none motion-reduce:transition-none",
+  "fixed z-[90] gap-4 bg-surface-modal/94 p-6 shadow-2xl backdrop-blur-[20px] transition duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none motion-reduce:transition-none",
   {
     variants: {
       side: {

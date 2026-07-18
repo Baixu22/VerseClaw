@@ -91,6 +91,7 @@ import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { buildTurnSummaryModel } from '@/components/assistant-render/turn-summary-model';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -773,6 +774,7 @@ function KnowledgeErrorAdvisoryCard({
 
 export function Chat() {
   const { t } = useTranslation(['chat', 'common']);
+  const { uiVersion } = useUiOverlay();
   const navigate = useNavigate();
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
@@ -2479,6 +2481,7 @@ export function Chat() {
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
   const isWindows = platform === 'win32';
+  const isUiV2 = isWindows && uiVersion === 'v2';
 
   return (
     <TooltipProvider>
@@ -2486,20 +2489,23 @@ export function Chat() {
       ref={splitContainerRef}
       data-testid="chat-page"
       className={cn(
-        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-500 motion-reduce:transition-none',
+        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-200 motion-reduce:transition-none',
         'bg-background',
         // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
         // artifact/preview pane stays clickable; window drag is handled by the
         // sidebar + chat-toolbar drag strips instead.
         isMac && 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]',
-        isWindows && 'rounded-tl-2xl',
+        isUiV2 && 'rounded-tl-[20px] bg-material-canvas',
       )}
       style={{ height: isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
     >
       {/* Left column: chat */}
       <div data-testid="chat-conversation-column" className="flex min-w-0 flex-1 flex-col">
       {/* Toolbar */}
-      <div className="relative flex shrink-0 items-center justify-between gap-3 px-4 py-2">
+      <div className={cn(
+        'relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
+        isUiV2 && 'mx-3 mt-2 min-h-11 rounded-[14px] border border-white/65 bg-material-panel/90 shadow-sm backdrop-blur-[18px] backdrop-saturate-[1.22] dark:border-white/8 dark:bg-material-panel/72',
+      )}>
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
         <div className="no-drag relative z-10 min-w-0">
           {!isEmpty && (
@@ -2559,7 +2565,7 @@ export function Chat() {
       </div>
 
       {/* Messages Area */}
-      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-4">
+      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         <div
           className={cn(
@@ -2573,7 +2579,7 @@ export function Chat() {
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
-                isEmpty ? "w-full max-w-3xl" : "max-w-4xl",
+                isEmpty ? "w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
               {messageAreaLoading ? (
@@ -3002,7 +3008,7 @@ export function Chat() {
             className={cn(
               'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 bg-surface-modal shadow-2xl dark:border-white/10',
               panelExpanded && 'xl:relative xl:z-20 xl:shadow-none',
-              'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-[250ms] motion-reduce:transition-none',
+              'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-200 motion-reduce:transition-none',
               isMac && 'no-drag',
             )}
             style={{ width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}
@@ -3352,13 +3358,16 @@ function WelcomeScreen({ disabled = false, onSend }: WelcomeScreenProps) {
   ], [t]);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center h-[60vh]">
-      <h1 className="text-4xl md:text-5xl font-serif text-foreground/80 mb-8 font-normal tracking-tight">
+    <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/55 bg-material-elevated/72 text-primary shadow-lg backdrop-blur-[18px] dark:border-white/10">
+        <Sparkles className="h-5 w-5" />
+      </div>
+      <h1 className="chat-brand-heading mb-7 text-4xl font-normal tracking-[-0.035em] text-foreground/82 md:text-5xl font-serif">
         {t('welcome.subtitle')}
       </h1>
 
       <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
-        <div className="grid w-full max-w-2xl grid-cols-1 gap-2 sm:grid-cols-2" data-testid="chat-welcome-suggestions">
+        <div className="grid w-full max-w-[680px] grid-cols-1 gap-2.5 sm:grid-cols-2" data-testid="chat-welcome-suggestions">
           <ThreadPrimitive.Suggestions>
             {() => <SuggestionItem disabled={disabled} />}
           </ThreadPrimitive.Suggestions>
@@ -3374,8 +3383,8 @@ function SuggestionItem({ disabled = false }: { disabled?: boolean }) {
       send
       disabled={disabled}
       className={cn(
-        'flex min-h-[84px] flex-col items-start gap-1 rounded-2xl border border-border bg-surface-input/70 px-4 py-3 text-left text-sm transition-colors',
-        'hover:bg-black/5 dark:hover:bg-white/10',
+        'flex min-h-[82px] flex-col items-start gap-1 rounded-[14px] border border-white/55 bg-material-panel/72 px-4 py-3 text-left text-sm shadow-sm backdrop-blur-[16px]',
+        'transition-[background-color,border-color,box-shadow,transform] duration-150 hover:bg-material-elevated/80 active:scale-[0.985] dark:border-white/10',
         'disabled:cursor-not-allowed disabled:opacity-60',
       )}
     >

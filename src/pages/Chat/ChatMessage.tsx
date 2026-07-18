@@ -32,6 +32,7 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
+import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import type { AgentSummary } from '@/types/agent';
 
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
@@ -1143,8 +1144,18 @@ function UserMessageBubble({
 }: {
   text: string;
 }) {
+  const { uiVersion } = useUiOverlay();
+  const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
   return (
-    <div className="relative rounded-2xl bg-surface-input px-3.5 py-2.5 text-foreground transition-colors duration-150" data-testid="chat-user-message-bubble">
+    <div
+      className={cn(
+        'relative px-3.5 py-2.5 text-foreground transition-colors duration-150',
+        isUiV2
+          ? 'rounded-[16px] border border-primary/10 bg-primary/[0.07] shadow-sm backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10'
+          : 'rounded-2xl bg-surface-input',
+      )}
+      data-testid="chat-user-message-bubble"
+    >
       <p className="whitespace-pre-wrap break-words text-sm">{text}</p>
     </div>
   );

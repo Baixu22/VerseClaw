@@ -7,6 +7,9 @@ settings:
 overrides:
   isbinaryfile: ^5.0.0
 
+patchedDependencies:
+  vaul@1.1.2: 64e2c29a60758f5fd89383b0e23dcdcda894c4b566937308e076661a51083888
+
 importers:
 
   .:
@@ -396,6 +399,9 @@ importers:
       use-stick-to-bottom:
         specifier: ^1.1.3
         version: 1.1.3(react@19.2.4)
+      vaul:
+        specifier: 1.1.2
+        version: 1.1.2(patch_hash=64e2c29a60758f5fd89383b0e23dcdcda894c4b566937308e076661a51083888)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.9.0)
@@ -7767,6 +7773,12 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vaul@1.1.2:
+    resolution: {integrity: sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
 
   verror@1.10.1:
     resolution: {integrity: sha512-veufcmxri4e3XSrT0xwfUR7kguIkaxBeosDg00yDWhk49wdwkSUrvvsm7nc75e1PUyvIeZj6nS8VQRYz2/S4Xg==}
@@ -16615,6 +16627,15 @@ snapshots:
   uuid@8.3.2: {}
 
   vary@1.1.2: {}
+
+  vaul@1.1.2(patch_hash=64e2c29a60758f5fd89383b0e23dcdcda894c4b566937308e076661a51083888)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.17(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
 
   verror@1.10.1:
     dependencies:

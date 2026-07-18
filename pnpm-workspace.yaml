@@ -34,3 +34,6 @@ allowBuilds:
 # Debt: upgrade baileys >=7.0.0-rc12 (GHSA-qvv5-jq5g-4cgg) then drop this flag.
 # Tracked as production-readiness backlog; not fixed in this change set.
 blockExoticSubdeps: false
+
+patchedDependencies:
+  vaul@1.1.2: patches/vaul@1.1.2.patch

@@ -44,17 +44,31 @@ function preloadSettingsModule() {
 
 const SettingsImplementation = lazy(loadSettingsModule);
 
-function SettingsPageShell({ children }: { children: ReactNode }) {
+export type SettingsPresentation = 'page' | 'drawer';
+
+function SettingsPageShell({ children, presentation }: { children: ReactNode; presentation: SettingsPresentation }) {
   return (
-    <div data-testid="settings-page" className="-m-6 flex h-[calc(100vh-2.5rem)] flex-col overflow-hidden bg-background">
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
+    <div
+      data-testid="settings-page"
+      data-presentation={presentation}
+      className={cn(
+        'flex flex-col overflow-hidden',
+        presentation === 'drawer'
+          ? 'settings-drawer-shell h-full bg-transparent'
+          : '-m-6 h-[calc(100vh-2.5rem)] bg-background',
+      )}
+    >
+      <div className={cn(
+        'flex h-full w-full flex-col',
+        presentation === 'drawer' ? 'px-5 py-5 sm:px-6' : 'mx-auto max-w-6xl px-5 py-6 sm:px-8 lg:px-10',
+      )}>
         {children}
       </div>
     </div>
   );
 }
 
-export function SettingsRoute() {
+export function SettingsRoute({ presentation = 'page' }: { presentation?: SettingsPresentation }) {
   const { t } = useTranslation('settings');
   const location = useLocation();
   const navigate = useNavigate();
@@ -95,7 +109,7 @@ export function SettingsRoute() {
       : currentSection === 'billing' ? 'billing-page-title' : undefined;
     return (
       <Suspense fallback={(
-        <SettingsPageShell>
+        <SettingsPageShell presentation={presentation}>
           <div className="mb-6 flex shrink-0 flex-col justify-between gap-3 border-b border-border pb-5 md:flex-row md:items-start">
             <div>
               <Button
@@ -119,15 +133,17 @@ export function SettingsRoute() {
           </div>
         </SettingsPageShell>
       )}>
-        <SettingsImplementation />
+        <SettingsImplementation presentation={presentation} />
       </Suspense>
     );
   }
 
   return (
-    <SettingsPageShell>
-      <div className="mb-6 shrink-0 border-b border-border pb-5">
-        <h1 className="mb-1.5 font-serif text-3xl font-normal tracking-tight text-foreground">{t('title')}</h1>
+    <SettingsPageShell presentation={presentation}>
+      <div className={cn('shrink-0 border-b border-border pb-5', presentation === 'drawer' ? 'mb-4' : 'mb-6')}>
+        <h1 className="mb-1.5 font-serif text-3xl font-normal tracking-tight text-foreground">
+          {presentation === 'drawer' ? t('overviewTitle') : t('title')}
+        </h1>
         <p className="max-w-3xl text-sm leading-5 text-muted-foreground">{t('subtitle')}</p>
       </div>
       <div className="-mr-2 min-h-0 flex-1 overflow-y-auto pb-10 pr-2">
@@ -135,12 +151,12 @@ export function SettingsRoute() {
           {groups.map((group) => (
             <section key={group.id} className="space-y-3">
               <h2 className="text-sm font-semibold text-foreground/70">{group.title}</h2>
-              <div className="grid overflow-hidden rounded-lg border border-border md:grid-cols-2">
+              <div className="grid overflow-hidden rounded-[14px] border border-border md:grid-cols-2">
                 {group.sections.map((section) => (
                   <Card key={section.id} className="group rounded-none border-0 border-b border-border bg-surface-modal shadow-none transition-colors last:border-b-0 hover:bg-black/[0.03] motion-reduce:transition-none md:odd:border-r dark:hover:bg-white/[0.05]">
                     <Link
                       to={section.to}
-                      data-testid={section.testId}
+                      data-testid={presentation === 'drawer' ? undefined : section.testId}
                       onPointerEnter={preloadSettingsModule}
                       onFocus={preloadSettingsModule}
                       className="flex h-full min-h-20 items-center gap-3 px-4 py-3"

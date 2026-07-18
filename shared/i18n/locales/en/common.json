@@ -1,4 +1,30 @@
 {
+  "uiV2Showcase": {
+    "title": "Windows UI v2 Showcase",
+    "description": "Material, motion, controls, overlays, and feedback states for the Apple-inspired desktop system.",
+    "materials": "Materials",
+    "controls": "Controls",
+    "feedback": "Feedback",
+    "canvas": "Canvas",
+    "sidebar": "Sidebar",
+    "panel": "Panel",
+    "elevated": "Elevated",
+    "control": "Control",
+    "segmented": "Segmented control",
+    "sampleInput": "Sample input",
+    "openDialog": "Open dialog",
+    "openDrawer": "Open drawer",
+    "dialogTitle": "Material dialog",
+    "dialogDescription": "Centered confirmations remain dialogs while spatial detail uses AppleDrawer.",
+    "drawerTitle": "Material drawer",
+    "drawerDescription": "Right-side surface with the shared 420 ms motion lifecycle.",
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error",
+    "loading": "Loading",
+    "motionNormal": "Motion enabled",
+    "motionReduced": "Reduced motion"
+  },
     "sidebar": {
         "chat": "Chat",
         "newChat": "New Chat",
@@ -48,6 +74,12 @@
         "show": "Show",
         "hide": "Hide",
         "clear": "Clear"
+    },
+    "window": {
+        "minimize": "Minimize window",
+        "maximize": "Maximize window",
+        "restore": "Restore window",
+        "close": "Close window"
     },
     "status": {
         "running": "Running",
