@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-18T07:28:21.229Z",
+  "checkedAt": "2026-07-18T08:38:49.774Z",
   "ok": true,
   "taskCount": 34,
   "statusFileCount": 8,
@@ -66,6 +66,14 @@
     "A3 P7-002 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-002.delivery.md)",
     "A3 P7-003 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-003.delivery.md)",
     "A3 P7-004 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-004.delivery.md)",
-    "task Finding refs resolve against findings-registry"
+    "task Finding refs resolve against findings-registry",
+    "INDEX status OK phase0-foundation=done",
+    "INDEX status OK phase1-direct-boundaries=done",
+    "INDEX status OK phase2-authorization-isolation=done",
+    "INDEX status OK phase3-data-authority=done",
+    "INDEX status OK phase4-runtime-surfaces=done",
+    "INDEX status OK phase5-reliability-abuse=done",
+    "INDEX status OK phase6-supply-release=done",
+    "INDEX status OK phase7-continuous-governance=done"
   ]
 }

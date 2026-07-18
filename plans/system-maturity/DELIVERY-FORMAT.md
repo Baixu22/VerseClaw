@@ -17,3 +17,9 @@ NEXT: <next task or none>
 - STATUS=done 时，TESTS、RESULTS、EVIDENCE、ACCEPTANCE 不得为空。
 - 任一验收项失败，STATUS 只能为 in_progress 或 blocked。
 - 不提交解释性长文；只提交上述字段。
+
+## True-close constraints
+
+- STATUS=done requires post-commit reproducible gates: harness (when present), evidence hashes, and declared TESTS.
+- TESTS in delivery must match full-validation command list (no silent downgrade such as audit:report instead of audit).
+- INDEX.md must stay synchronized with STATUS.json via `pnpm maturity:sync-index` before seal/close.

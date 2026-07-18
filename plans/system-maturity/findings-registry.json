@@ -13,7 +13,8 @@
     "globalEvidence": [
       "artifacts/system-maturity/P7-001/full-validation.json",
       "artifacts/system-maturity/P7-002/security-regression-report.json",
-      "artifacts/system-maturity/P7-003/full-validation.json"
+      "artifacts/system-maturity/P7-003/full-validation.json",
+      "artifacts/system-maturity/P7-004/full-validation.json"
     ],
     "reviewCycleDaysBySeverity": {
       "Critical": 14,
@@ -564,8 +565,8 @@
         "P7-004"
       ],
       "updatedBy": "P7-004",
-      "updatedAt": "2026-07-18T15:10:00+08:00",
-      "notes": "P7-004: quarterly maturity scorecard traces all phase STATUS.json paths, requires risk-acceptance reviewBy deadlines for Track/Accept findings, and auto-blocks release when P0/P1 are incomplete. Agent Dev audit score/grade/releaseReady is captured as a non-extrapolation caveat only (F-GOV-002). Residual monitoring continues via risk-acceptance.json reviewBy=2026-10-18.",
+      "updatedAt": "2026-07-18T16:30:00+08:00",
+      "notes": "P7-004: quarterly maturity scorecard traces all phase STATUS.json paths, requires risk-acceptance reviewBy deadlines for Track/Accept findings, and auto-blocks release when P0/P1 are incomplete. Agent Dev audit score/grade/releaseReady is captured as a non-extrapolation caveat only (F-GOV-002). Residual monitoring continues via risk-acceptance.json reviewBy=2026-10-18. True-close residual (P7-004 repair): harness must pass on committed tree; Agent Dev totalScore mapped without whole-system extrapolation; deep-test:reuse evidence must include requiredFullGates (typecheck + agent-dev e2e quality); use maturity:seal after validate rewrites.",
       "fixedBy": "P7-004",
       "fixedAt": "2026-07-18"
     },

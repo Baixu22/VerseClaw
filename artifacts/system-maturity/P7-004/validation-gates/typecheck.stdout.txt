@@ -5,27 +5,27 @@
   "cache": {
     "enabled": false,
     "status": "disabled",
-    "key": "2a4745471c4f8a72291908f0fdcb6b97865dcd7070832d258abf71c0633542d6",
+    "key": "cab1faba26331c29886a7bc7de468c80c322f83bc33147d65fc71ca6b863ac03",
     "inputCount": 679,
     "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\typecheck-cache\\report.json"
   },
-  "totalDurationMs": 22898,
+  "totalDurationMs": 16291,
   "coverageNote": "Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 60
+      "durationMs": 48
     },
     {
       "commandLine": "pnpm run typecheck:node",
       "exitCode": 0,
-      "durationMs": 9429
+      "durationMs": 6187
     },
     {
       "commandLine": "pnpm run typecheck:web",
       "exitCode": 0,
-      "durationMs": 22554
+      "durationMs": 16105
     }
   ]
 }

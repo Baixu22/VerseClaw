@@ -177,6 +177,22 @@ describe('P7-004 quarterly maturity audit', () => {
     expect(scorecard.max).toBe(100);
   });
 
+  it('maps Agent Dev totalScore into quarterly scorecard without whole-system release extrapolation', () => {
+    const root = fixtureRoot({ p7Done: true });
+    const report = runSystemMaturityQuarterlyAudit({
+      root,
+      nowMs: Date.parse('2026-07-18T00:00:00.000Z'),
+      agentDevAudit: {
+        status: 'pass',
+        releaseReady: false,
+        score: 97,
+        grade: 'A',
+      },
+    });
+    expect(report.scorecard.agentDevNote?.score).toBe(97);
+    expect(report.releaseDecision.allowed).toBe(true);
+  });
+
   it('keeps the checked-in risk-acceptance registry covering Track findings', () => {
     const findings = JSON.parse(
       readFileSync(join(process.cwd(), 'plans/system-maturity/findings-registry.json'), 'utf8'),

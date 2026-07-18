@@ -5,18 +5,18 @@
   "cache": {
     "enabled": true,
     "status": "hit",
-    "key": "2a4745471c4f8a72291908f0fdcb6b97865dcd7070832d258abf71c0633542d6",
+    "key": "cab1faba26331c29886a7bc7de468c80c322f83bc33147d65fc71ca6b863ac03",
     "inputCount": 679,
     "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\typecheck-cache\\report.json",
-    "cachedAt": "2026-07-18T07:05:34.552Z"
+    "cachedAt": "2026-07-18T08:01:01.710Z"
   },
-  "totalDurationMs": 273,
+  "totalDurationMs": 176,
   "coverageNote": "Reused a previous successful node/web TypeScript check because the typecheck input fingerprint is unchanged; run pnpm run typecheck for an uncached full gate.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 62
+      "durationMs": 45
     },
     {
       "commandLine": "pnpm run typecheck:node",
@@ -24,8 +24,8 @@
       "durationMs": 0,
       "skipped": true,
       "cacheHit": true,
-      "cachedDurationMs": 9687,
-      "cachedAt": "2026-07-18T07:05:34.552Z"
+      "cachedDurationMs": 8146,
+      "cachedAt": "2026-07-18T08:01:01.710Z"
     },
     {
       "commandLine": "pnpm run typecheck:web",
@@ -33,8 +33,8 @@
       "durationMs": 0,
       "skipped": true,
       "cacheHit": true,
-      "cachedDurationMs": 27936,
-      "cachedAt": "2026-07-18T07:05:34.552Z"
+      "cachedDurationMs": 19150,
+      "cachedAt": "2026-07-18T08:01:01.710Z"
     }
   ]
 }
@@ -58,8 +58,8 @@ Spec is valid: harness\specs\tasks\agent-dev-ecosystem-regularization.md
 
 [2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
 [2m      Tests [22m [1m[32m41 passed[39m[22m[90m (41)[39m
-[2m   Start at [22m 15:08:28
-[2m   Duration [22m 1.04s[2m (transform 537ms, setup 254ms, import 779ms, tests 879ms, environment 1ms)[22m
+[2m   Start at [22m 16:14:02
+[2m   Duration [22m 642ms[2m (transform 237ms, setup 121ms, import 422ms, tests 543ms, environment 1ms)[22m
 
 
 [1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
@@ -67,16 +67,16 @@ Spec is valid: harness\specs\tasks\agent-dev-ecosystem-regularization.md
 
 [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[32m39 passed[39m[22m[90m (39)[39m
-[2m   Start at [22m 15:08:31
-[2m   Duration [22m 1.35s[2m (transform 136ms, setup 138ms, import 56ms, tests 243ms, environment 689ms)[22m
+[2m   Start at [22m 16:14:04
+[2m   Duration [22m 959ms[2m (transform 96ms, setup 105ms, import 42ms, tests 176ms, environment 500ms)[22m
 
 {"skipped":true,"id":"e2e-build","reuseStatus":"reused","commandLine":"reuse existing build"}
 
 Running 1 test using 1 worker
 
-  ok 1 tests\e2e\agent-dev-quality.spec.ts:70:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (7.0s)
+  ok 1 tests\e2e\agent-dev-quality.spec.ts:70:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (7.1s)
 
-  1 passed (7.7s)
+  1 passed (7.6s)
 {
   "success": true,
   "scenarioCount": 14,
@@ -90,7 +90,7 @@ Running 1 test using 1 worker
 }
 {
   "success": true,
-  "totalDurationMs": 20140,
+  "totalDurationMs": 16718,
   "output": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-deep-test\\report.json",
   "markdown": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p7\\artifacts\\agent-dev-deep-test\\report.md",
   "buildReuse": {
@@ -102,15 +102,15 @@ Running 1 test using 1 worker
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1784358381776.9053
+        "mtimeMs": 1784361694599.1143
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1784358384750.183
+        "mtimeMs": 1784361696855.757
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1784358384775.58
+        "mtimeMs": 1784361696872.5552
       }
     ],
     "requiredArtifacts": [
@@ -134,31 +134,31 @@ Running 1 test using 1 worker
   "bottlenecks": [
     {
       "id": "playwright-agent-dev",
-      "durationMs": 8995,
+      "durationMs": 8675,
       "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
       "skipped": false
     },
     {
       "id": "vitest-agent-dev",
-      "durationMs": 5759,
+      "durationMs": 4226,
       "commandLine": "pnpm agent-dev:unit",
       "skipped": false
     },
     {
       "id": "harness-agent-dev",
-      "durationMs": 1016,
+      "durationMs": 744,
       "commandLine": "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
       "skipped": false
     },
     {
       "id": "typecheck",
-      "durationMs": 783,
+      "durationMs": 575,
       "commandLine": "pnpm run typecheck:cached",
       "skipped": false
     },
     {
       "id": "i18n",
-      "durationMs": 698,
+      "durationMs": 511,
       "commandLine": "pnpm i18n:lint",
       "skipped": false
     }

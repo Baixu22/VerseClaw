@@ -3,9 +3,9 @@
 
 
 [2m Test Files [22m [1m[32m651 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (654)[39m
-[2m      Tests [22m [1m[32m5964 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6016)[39m
-[2m   Start at [22m 15:14:43
-[2m   Duration [22m 356.03s[2m (transform 24.43s, setup 46.11s, import 125.00s, tests 146.93s, environment 296.65s)[22m
+[2m      Tests [22m [1m[32m5965 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6017)[39m
+[2m   Start at [22m 16:18:02
+[2m   Duration [22m 396.55s[2m (transform 25.22s, setup 51.80s, import 142.22s, tests 156.21s, environment 333.31s)[22m
 
 
 [1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
@@ -13,8 +13,8 @@
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
 [2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
-[2m   Start at [22m 15:20:40
-[2m   Duration [22m 22.02s[2m (transform 1.07s, setup 238ms, import 1.38s, tests 18.28s, environment 1.68s)[22m
+[2m   Start at [22m 16:24:40
+[2m   Duration [22m 18.47s[2m (transform 1.13s, setup 254ms, import 1.47s, tests 14.73s, environment 1.56s)[22m
 
 
  RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
@@ -22,8 +22,8 @@
 
  Test Files  17 passed (17)
       Tests  169 passed (169)
-   Start at  15:21:04
-   Duration  1.93s (transform 1.25s, setup 707ms, import 1.10s, tests 1.31s, environment 1ms)
+   Start at  16:24:59
+   Duration  2.51s (transform 798ms, setup 372ms, import 691ms, tests 1.09s, environment 0ms)
 
 
  RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
@@ -31,8 +31,8 @@
 
  Test Files  5 passed (5)
       Tests  10 passed (10)
-   Start at  15:21:06
-   Duration  1.19s (transform 598ms, setup 81ms, import 1.44s, tests 42ms, environment 0ms)
+   Start at  16:25:03
+   Duration  1.21s (transform 309ms, setup 50ms, import 831ms, tests 15ms, environment 0ms)
 
 
  RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p7/openclaw_runtime
@@ -40,5 +40,5 @@
 
  Test Files  10 passed (10)
       Tests  73 passed (73)
-   Start at  15:21:09
-   Duration  15.16s (transform 12.76s, setup 644ms, import 19.35s, tests 3.67s, environment 1ms)
+   Start at  16:25:05
+   Duration  17.70s (transform 9.59s, setup 332ms, import 13.32s, tests 3.68s, environment 0ms)
