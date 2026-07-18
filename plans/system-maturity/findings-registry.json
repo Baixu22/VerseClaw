@@ -6,6 +6,20 @@
     "dirtyPatchSha256": "bf430bf565518462e04a84392e547ffe02656569a1a3be1c227073cc13d68e42",
     "auditDate": "2026-07-16"
   },
+  "traceabilityPolicy": {
+    "stableTestId": "replace the F- prefix with T-",
+    "ownerResolution": "first registered task owner; all task owners remain visible in the report",
+    "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
+    "globalEvidence": [
+      "artifacts/system-maturity/P7-001/full-validation.json"
+    ],
+    "reviewCycleDaysBySeverity": {
+      "Critical": 14,
+      "High": 30,
+      "Medium": 60,
+      "Low": 90
+    }
+  },
   "counts": {
     "total": 35,
     "bySeverity": {
@@ -15,13 +29,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 3,
-      "Fixed": 29,
-      "Partial": 3,
+      "Open": 1,
+      "Fixed": 30,
+      "Partial": 4,
       "Unverified": 0
     },
-    "open": 3,
-    "fixed": 29
+    "open": 1,
+    "fixed": 30
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -478,7 +492,9 @@
         "AC-03",
         "AC-06"
       ],
-      "tasks": []
+      "tasks": [
+        "P7-002"
+      ]
     },
     {
       "id": "F-SUPPLY-001",
@@ -507,8 +523,8 @@
       "category": "GOV",
       "severity": "High",
       "decision": "Act-now",
-      "status": "Open",
-      "evidenceLevel": "L3",
+      "status": "Fixed",
+      "evidenceLevel": "L4",
       "related": [
         "F-REL-001"
       ],
@@ -518,7 +534,12 @@
       "tasks": [
         "P0-003",
         "P7-001"
-      ]
+      ],
+      "fixedBy": "P7-001",
+      "fixedAt": "2026-07-18",
+      "updatedBy": "P7-001",
+      "updatedAt": "2026-07-18T11:38:00+08:00",
+      "notes": "P7-001: stable Finding test IDs, orphan-link denial, negative no-acceptance probes, hash-verified full-gate evidence, and serialization of the native runtime-memory operator inspection shard remove empty/unstable test extrapolation."
     },
     {
       "id": "F-GOV-002",
@@ -526,8 +547,8 @@
       "category": "GOV",
       "severity": "Medium",
       "decision": "Track",
-      "status": "Open",
-      "evidenceLevel": "L2",
+      "status": "Partial",
+      "evidenceLevel": "L3",
       "related": [],
       "attackChain": [],
       "tasks": [
@@ -537,7 +558,10 @@
         "P0-004",
         "P7-001",
         "P7-004"
-      ]
+      ],
+      "updatedBy": "P7-001",
+      "updatedAt": "2026-07-18T11:38:00+08:00",
+      "notes": "P7-001: evidence freshness now fails closed when linked code/tests are newer, full-validation logs are hash-reverified, and all Findings resolve to owner/task/test/code/evidence/review cadence. Residual quarterly maturity/release scorecard work remains assigned to P7-004."
     },
     {
       "id": "F-GOV-003",
@@ -1167,6 +1191,7 @@
         "F-AUTH-006",
         "F-DATA-005",
         "F-REL-001",
+        "F-REL-004",
         "F-SUPPLY-001"
       ],
       "dependsOn": [],

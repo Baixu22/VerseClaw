@@ -1,0 +1,4010 @@
+{
+  "schemaVersion": 1,
+  "task": "P7-001",
+  "evaluatedAt": "2026-07-18T01:51:35.000Z",
+  "ok": true,
+  "summary": {
+    "findingCount": 35,
+    "taskCount": 34,
+    "testCount": 35,
+    "freshCount": 35,
+    "staleCount": 0,
+    "failureCount": 0,
+    "warningCount": 0
+  },
+  "policy": {
+    "stableTestId": "replace the F- prefix with T-",
+    "ownerResolution": "first registered task owner; all task owners remain visible in the report",
+    "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
+    "globalEvidence": [
+      "artifacts/system-maturity/P7-001/full-validation.json"
+    ],
+    "reviewCycleDaysBySeverity": {
+      "Critical": 14,
+      "High": 30,
+      "Medium": 60,
+      "Low": 90
+    }
+  },
+  "findings": [
+    {
+      "id": "F-SEC-001",
+      "status": "Partial",
+      "severity": "Critical",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary",
+        "runtime-surfaces"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-001",
+        "P4-003",
+        "P4-004"
+      ],
+      "testIds": [
+        "T-SEC-001"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/host-invoke.test.ts tests/unit/providers-api.test.ts tests/unit/secret-store-broker.test.ts tests/unit/configure-deepseek-runtime.test.ts",
+        "node scripts/p1-001-canary-scan.cjs",
+        "pnpm contract:check",
+        "node scripts/validate-system-maturity-plan.mjs",
+        "pnpm exec vitest run tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/mcp-api.test.ts",
+        "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts"
+      ],
+      "acceptanceIds": [
+        "P1-001:A1",
+        "P1-001:A2",
+        "P1-001:A3",
+        "P4-003:A1",
+        "P4-003:A2",
+        "P4-003:A3",
+        "P4-003:A4",
+        "P4-004:A1",
+        "P4-004:A2",
+        "P4-004:A3"
+      ],
+      "codePaths": [
+        "electron/services/secrets/secret-store.ts",
+        "electron/utils/secure-storage.ts",
+        "electron/utils/channel-config.ts",
+        "electron/utils/store.ts",
+        "electron/services/providers-api.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/preload/index.ts",
+        "shared/host-api/contract.ts",
+        "src/lib/host-api.ts",
+        "src/stores/providers.ts",
+        "scripts/configure-deepseek-runtime.mjs",
+        "scripts/p1-001-canary-scan.cjs",
+        "shared/mcp/secret-ref.ts",
+        "shared/mcp/tool-schema.ts",
+        "shared/mcp/runtime-projection.ts",
+        "electron/services/secrets/mcp-env-broker.ts",
+        "electron/services/mcp-api.ts",
+        "shared/types/mcp.ts",
+        "tests/unit/mcp-p4-003-runtime-surface.test.ts",
+        "tests/unit/mcp-api.test.ts",
+        "shared/channels/inbound-trust.ts",
+        "tests/unit/channels-p4-004-inbound-trust.test.ts",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/providers-api.test.ts",
+        "tests/unit/secret-store-broker.test.ts",
+        "tests/unit/configure-deepseek-runtime.test.ts",
+        "scripts/validate-system-maturity-plan.mjs"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/canary-scan.json",
+          "sha256": "a99ccb30b7687e8119d4f6f52bbd5152baa5b8605800aef462875bf4154c9051",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/vitest.stdout.txt",
+          "sha256": "f0a426c997196ab5fc2b132abc7c2d367ca1e01ea75676913453eadada9586fa",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/evidence-index.json",
+          "sha256": "e86281125bdc1bae49577365c3ad9be91d67988b7988f84d967a81fdc520f66b",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/secrets/secret-store.ts",
+          "sha256": "e522a9bc232adddb06c862bfecb6530aacf4a65f30e23aa7a2cb13d873b27f7c",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "4681bdc1f2036eab656401a33cca78f03e6e26e3d0549714805ec7e1b054b353",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/configure-deepseek-runtime.mjs",
+          "sha256": "8ee70cc99d5cd69bfc344d6c51ecf1a4485a524b58b551484d6d727ae54dcba5",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/vitest.stdout.txt",
+          "sha256": "dc135e646acdc29fa31d5c37017ae3c4b42323f82872518f866029586cbdc774",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
+          "sha256": "8b96029aefe0713e1b66b44d87f317d010845f6de212674d7a6d856127cb4cec",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/evidence-index.json",
+          "sha256": "0d11e1eab3f806943680f683d92dd1cbfc2902ec920d43897d071a8c215b19e0",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/vitest.stdout.txt",
+          "sha256": "f88a22ff4bc164087b4c8dfca96ba46037beaeb01f94ef4b60e2615707078cf4",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
+          "sha256": "0578ec1def1410ef42674baa9e9b99e94ed2b83b2d92e0bdc78347dd1556f458",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/evidence-index.json",
+          "sha256": "35f28fcbc620d579811058b6038c1845b725da0c6a234733c688d89c09d57a58",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 14,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-01T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-002",
+      "status": "Fixed",
+      "severity": "Critical",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-001"
+      ],
+      "testIds": [
+        "T-SEC-002"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/host-invoke.test.ts tests/unit/providers-api.test.ts tests/unit/secret-store-broker.test.ts tests/unit/configure-deepseek-runtime.test.ts",
+        "node scripts/p1-001-canary-scan.cjs",
+        "pnpm contract:check",
+        "node scripts/validate-system-maturity-plan.mjs"
+      ],
+      "acceptanceIds": [
+        "P1-001:A1",
+        "P1-001:A2",
+        "P1-001:A3"
+      ],
+      "codePaths": [
+        "src/lib/host-api.ts",
+        "shared/host-api/contract.ts",
+        "electron/services/providers-api.ts",
+        "electron/services/secrets/secret-store.ts",
+        "electron/utils/secure-storage.ts",
+        "electron/utils/store.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/preload/index.ts",
+        "src/stores/providers.ts",
+        "scripts/configure-deepseek-runtime.mjs",
+        "scripts/p1-001-canary-scan.cjs",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/providers-api.test.ts",
+        "tests/unit/secret-store-broker.test.ts",
+        "tests/unit/configure-deepseek-runtime.test.ts",
+        "scripts/validate-system-maturity-plan.mjs"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/canary-scan.json",
+          "sha256": "a99ccb30b7687e8119d4f6f52bbd5152baa5b8605800aef462875bf4154c9051",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/vitest.stdout.txt",
+          "sha256": "f0a426c997196ab5fc2b132abc7c2d367ca1e01ea75676913453eadada9586fa",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-001/evidence-index.json",
+          "sha256": "e86281125bdc1bae49577365c3ad9be91d67988b7988f84d967a81fdc520f66b",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/secrets/secret-store.ts",
+          "sha256": "e522a9bc232adddb06c862bfecb6530aacf4a65f30e23aa7a2cb13d873b27f7c",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "shared/host-api/contract.ts",
+          "sha256": "4681bdc1f2036eab656401a33cca78f03e6e26e3d0549714805ec7e1b054b353",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/configure-deepseek-runtime.mjs",
+          "sha256": "8ee70cc99d5cd69bfc344d6c51ecf1a4485a524b58b551484d6d727ae54dcba5",
+          "taskId": "P1-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 14,
+      "latestSourceAt": "2026-07-17T09:16:33.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-01T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-003",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-004",
+        "P7-002"
+      ],
+      "testIds": [
+        "T-SEC-003"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/url-policy.test.ts tests/unit/html-preview-security.test.tsx tests/unit/file-preview-body.test.tsx tests/unit/agent-browser-cdp-lifecycle.test.ts tests/unit/agent-browser-tab-manager.test.ts",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P1-004:A1",
+        "P1-004:A2",
+        "P1-004:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/main/ipc-handlers.ts",
+        "electron/services/shell-api.ts",
+        "electron/main/index.ts",
+        "shared/security/url-policy.ts",
+        "electron/utils/safe-open-external.ts",
+        "electron/main/menu.ts",
+        "electron/utils/browser-oauth.ts",
+        "electron/utils/device-oauth.ts",
+        "electron/services/git-api.ts",
+        "shared/agent-browser/browser-control.ts",
+        "src/components/file-preview/HtmlPreview.tsx",
+        "tests/unit/url-policy.test.ts",
+        "tests/unit/html-preview-security.test.tsx",
+        "tests/unit/file-preview-body.test.tsx",
+        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
+        "tests/unit/agent-browser-tab-manager.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/vitest.stdout.txt",
+          "sha256": "462193ab62e17dee281d9ea5b6e14e0ba852d43af50838892ef67fc1d23595ec",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/url-policy-matrix.json",
+          "sha256": "ddffb3f5b4110d108fe7ce637ef0a7da2db8d6d60561c855bb8a2543157ff58f",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "shared/security/url-policy.ts",
+          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/safe-open-external.ts",
+          "sha256": "bdc6a2d26f402386c94f07b7ff51898dd12ef2d671134a1c4fe6d4e48e9462a9",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T06:34:42.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-004",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-003"
+      ],
+      "testIds": [
+        "T-SEC-004"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/path-broker.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts"
+      ],
+      "acceptanceIds": [
+        "P1-003:A1",
+        "P1-003:A2",
+        "P1-003:A3"
+      ],
+      "codePaths": [
+        "electron/services/files-api.ts",
+        "electron/services/path-broker.ts",
+        "electron/services/workspace-permissions.ts",
+        "tests/unit/path-broker.test.ts",
+        "tests/unit/path-broker-resolved.test.ts",
+        "tests/unit/files-permissions-api.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-003/vitest.stdout.txt",
+          "sha256": "ab2d73e64b6469d5ac5d3bb5a4238dba4a84153a758bb91f2565fcda4518b853",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-003/path-matrix.json",
+          "sha256": "03010e95737d05c906a92e6612bc054ea785b66899a7338111269f5052ea9d3f",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/path-broker.ts",
+          "sha256": "56cfd721fcc11fdcf0749c0e1425d93997afa9a762e798d884f321b4f922452f",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/files-api.ts",
+          "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/workspace-permissions.ts",
+          "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-005",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-002"
+      ],
+      "testIds": [
+        "T-SEC-005"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/host-invoke.test.ts tests/unit/host-invoke-security.test.ts"
+      ],
+      "acceptanceIds": [
+        "P1-002:A1",
+        "P1-002:A2",
+        "P1-002:A3"
+      ],
+      "codePaths": [
+        "electron/main/ipc/host-invoke.ts",
+        "electron/main/ipc/host-contract.ts",
+        "electron/main/ipc/host-invoke-security.ts",
+        "electron/main/ipc-handlers.ts",
+        "tests/unit/host-invoke.test.ts",
+        "tests/unit/host-invoke-security.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-002/vitest.stdout.txt",
+          "sha256": "d85b61fedd326e7561164994ac09c44dc84be05ac11a958711c94af5df93f35d",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-002/sender-payload-matrix.json",
+          "sha256": "6763f9740dc43c85c7eac18063c84aaddaa096091b14b48aea331f7d68d542fa",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/main/ipc/host-invoke.ts",
+          "sha256": "1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/main/ipc/host-invoke-security.ts",
+          "sha256": "1acf7394180d75ad5948a508e2326155716f00299fa6d6c32a5c2ed831427908",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/main/ipc-handlers.ts",
+          "sha256": "16c597a58c24a2c581ed5cd792d2c3de23f0eb4ecd5141716b766859688c4dd6",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T05:12:30.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-010",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-004"
+      ],
+      "testIds": [
+        "T-SEC-010"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/url-policy.test.ts tests/unit/html-preview-security.test.tsx tests/unit/file-preview-body.test.tsx tests/unit/agent-browser-cdp-lifecycle.test.ts tests/unit/agent-browser-tab-manager.test.ts"
+      ],
+      "acceptanceIds": [
+        "P1-004:A1",
+        "P1-004:A2",
+        "P1-004:A3"
+      ],
+      "codePaths": [
+        "src/components/file-preview/HtmlPreview.tsx",
+        "tests/unit/file-preview-body.test.tsx",
+        "tests/unit/workspace-browser-body.test.tsx",
+        "shared/security/url-policy.ts",
+        "electron/utils/safe-open-external.ts",
+        "electron/services/shell-api.ts",
+        "electron/main/index.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/main/menu.ts",
+        "electron/utils/browser-oauth.ts",
+        "electron/utils/device-oauth.ts",
+        "electron/services/git-api.ts",
+        "shared/agent-browser/browser-control.ts",
+        "tests/unit/url-policy.test.ts",
+        "tests/unit/html-preview-security.test.tsx",
+        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
+        "tests/unit/agent-browser-tab-manager.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/vitest.stdout.txt",
+          "sha256": "462193ab62e17dee281d9ea5b6e14e0ba852d43af50838892ef67fc1d23595ec",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/url-policy-matrix.json",
+          "sha256": "ddffb3f5b4110d108fe7ce637ef0a7da2db8d6d60561c855bb8a2543157ff58f",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "shared/security/url-policy.ts",
+          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/safe-open-external.ts",
+          "sha256": "bdc6a2d26f402386c94f07b7ff51898dd12ef2d671134a1c4fe6d4e48e9462a9",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-ISO-001",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-004"
+      ],
+      "testIds": [
+        "T-ISO-001"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/sandbox-high-risk-gate-p2-004.test.ts tests/unit/webview-security-p2-004.test.ts tests/unit/sandbox-api.test.ts tests/unit/terminal-api.test.ts tests/unit/permission-decision-audit.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-004:A1",
+        "P2-004:A2",
+        "P2-004:A3"
+      ],
+      "codePaths": [
+        "electron/utils/sandbox-policy-resolver.ts",
+        "electron/utils/workspace-runtime-permissions.ts",
+        "openclaw_runtime/src/agents/sandbox/backend.ts",
+        "electron/utils/sandbox-high-risk-gate.ts",
+        "electron/utils/active-sandbox-high-risk-policy.ts",
+        "electron/utils/webview-security.ts",
+        "electron/utils/register-webview-security.ts",
+        "electron/services/sandbox-api.ts",
+        "electron/services/terminal-api.ts",
+        "electron/services/gateway-api.ts",
+        "electron/services/cron-api.ts",
+        "electron/services/agent-browser-api.ts",
+        "electron/main/index.ts",
+        "shared/product-semantics.ts",
+        "src/pages/Settings/index.tsx",
+        "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+        "tests/unit/webview-security-p2-004.test.ts",
+        "tests/unit/sandbox-api.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/permission-decision-audit.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/vitest.stdout.txt",
+          "sha256": "1e5edad2ff24df03ece795e9535c95f9bd3f986bbc1d402b903fca202554f48b",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/evidence-index.json",
+          "sha256": "4ea68de86ed918b65622677d36bb8b1a429e9716a385837f1c30257cf4ed65f2",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/acceptance-matrix.json",
+          "sha256": "ab219d1399e1ae9a7b63fd5e1af9f57a06cf4e4a300f279e4a6fbe9e5d1216ca",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-ISO-002",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-004"
+      ],
+      "testIds": [
+        "T-ISO-002"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/sandbox-high-risk-gate-p2-004.test.ts tests/unit/webview-security-p2-004.test.ts tests/unit/sandbox-api.test.ts tests/unit/terminal-api.test.ts tests/unit/permission-decision-audit.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-004:A1",
+        "P2-004:A2",
+        "P2-004:A3"
+      ],
+      "codePaths": [
+        "electron/main/index.ts",
+        "electron/utils/sandbox-high-risk-gate.ts",
+        "electron/utils/active-sandbox-high-risk-policy.ts",
+        "electron/utils/webview-security.ts",
+        "electron/utils/register-webview-security.ts",
+        "electron/services/sandbox-api.ts",
+        "electron/services/terminal-api.ts",
+        "electron/services/gateway-api.ts",
+        "electron/services/cron-api.ts",
+        "electron/services/agent-browser-api.ts",
+        "shared/product-semantics.ts",
+        "src/pages/Settings/index.tsx",
+        "tests/unit/sandbox-high-risk-gate-p2-004.test.ts",
+        "tests/unit/webview-security-p2-004.test.ts",
+        "tests/unit/sandbox-api.test.ts",
+        "tests/unit/terminal-api.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/permission-decision-audit.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/vitest.stdout.txt",
+          "sha256": "1e5edad2ff24df03ece795e9535c95f9bd3f986bbc1d402b903fca202554f48b",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/evidence-index.json",
+          "sha256": "4ea68de86ed918b65622677d36bb8b1a429e9716a385837f1c30257cf4ed65f2",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-004/acceptance-matrix.json",
+          "sha256": "ab219d1399e1ae9a7b63fd5e1af9f57a06cf4e4a300f279e4a6fbe9e5d1216ca",
+          "taskId": "P2-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-001",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-001"
+      ],
+      "testIds": [
+        "T-AUTH-001"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/workspace-permissions.test.ts tests/unit/files-permissions-api.test.ts tests/unit/workspaces-api.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-001:A1",
+        "P2-001:A2",
+        "P2-001:A3"
+      ],
+      "codePaths": [
+        "electron/services/workspaces-api.ts",
+        "electron/services/workspace-permissions.ts",
+        "shared/types/workspace.ts",
+        "shared/product-semantics.ts",
+        "electron/services/workspace-runtime-sync.ts",
+        "electron/services/sandbox-api.ts",
+        "electron/services/git-api.ts",
+        "electron/utils/workspace-runtime-permissions.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/unit/files-permissions-api.test.ts",
+        "tests/unit/workspaces-api.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-001/vitest.stdout.txt",
+          "sha256": "9234ae944b3deda04baa08e59cd0131a95e4e43afb7731202c511bd91764908c",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-001/evidence-index.json",
+          "sha256": "ffc5be9e1888a9057cc40de285414c51a37f77d6b5e23efb433763623419d0e3",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-001/acceptance-matrix.json",
+          "sha256": "208e3f68b3c120af3b363ca5d37396db9b7aee1ccfc27bc1d23777a5d5fc4f01",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "shared/types/workspace.ts",
+          "sha256": "32536334d593bc0b50ce8ab461247a24b4f6e2dc95d3cce8651e6d01e8b2154c",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/workspaces-api.ts",
+          "sha256": "ef8015f1838f3060b6f59fe57a90baf1274d7e6f906f7a19a4b3791f5ca68380",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/workspace-permissions.ts",
+          "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "taskId": "P2-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T06:34:42.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-002",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-003"
+      ],
+      "testIds": [
+        "T-AUTH-002"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/role-path-permissions-p2-003.test.ts tests/unit/role-spawn.test.ts tests/unit/roles-api.test.ts tests/unit/role-contract-drift.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-003:A1",
+        "P2-003:A2",
+        "P2-003:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/agents/role-permissions-policy.ts",
+        "openclaw_runtime/src/agents/role-contract.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "electron/services/roles-api.ts",
+        "tests/unit/role-path-permissions-p2-003.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/roles-api.test.ts",
+        "tests/unit/role-contract-drift.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-003/vitest.stdout.txt",
+          "sha256": "5d6d2bfb02b19a605b7b3089a71211cf329fdf4e84af733a91fd61abd845956c",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-003/evidence-index.json",
+          "sha256": "c36be65e01b6436f39520024b831e9cee79d7832a26d5b6f2bd930cefcabc000",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-003/acceptance-matrix.json",
+          "sha256": "885d827e47305393e43e5b19ab637a0a8a9f557fb1d394002d3b466b03f19e34",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/role-contract.ts",
+          "sha256": "691aeb78d20282a1815e9f8d3957ac152000b41f8176a15522b080a353369ad6",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
+          "sha256": "3caae086de53b130b0f9dee357e1969867c26b140c40db861d47fa2e4d9413c8",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/role-spawn.ts",
+          "sha256": "69cf86731e99e5d307bb6cb6459820c89e2b2c6ddf5c9d0f974c65530a18128d",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/roles-api.ts",
+          "sha256": "fb391cf4b2594ea5058fd960501fa81f618964745ad5bac2dd01e1166dbbb0dd",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "taskId": "P2-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-003",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-005"
+      ],
+      "testIds": [
+        "T-AUTH-003"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/context-runtime-kit-tool-call-gate.test.ts tests/unit/runtime-spine-gate-engine-p2-005.test.ts tests/unit/orchestration-verifier-report-p2-005.test.ts tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-005:A1",
+        "P2-005:A2",
+        "P2-005:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts",
+        "openclaw_runtime/src/context-engine/cvk/engine.ts",
+        "openclaw_runtime/src/runtime-spine/gate-engine.ts",
+        "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+        "openclaw_runtime/src/agents/agent-steering-queue.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "tests/unit/context-runtime-kit-tool-call-gate.test.ts",
+        "tests/unit/runtime-spine-gate-engine-p2-005.test.ts",
+        "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+        "tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+          "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/evidence-index.json",
+          "sha256": "d9af981c62dc082ddb6d18ed6df38f28fab5703aaf12e777a131086b356b175d",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+          "sha256": "4eafc7fb455327247b62e585abd4634d124c533c63ea6c817e0e52234034c424",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-004",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-005"
+      ],
+      "testIds": [
+        "T-AUTH-004"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/context-runtime-kit-tool-call-gate.test.ts tests/unit/runtime-spine-gate-engine-p2-005.test.ts tests/unit/orchestration-verifier-report-p2-005.test.ts tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-005:A1",
+        "P2-005:A2",
+        "P2-005:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/runtime-spine/gate-engine.ts",
+        "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts",
+        "openclaw_runtime/src/context-engine/cvk/engine.ts",
+        "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+        "openclaw_runtime/src/agents/agent-steering-queue.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "tests/unit/context-runtime-kit-tool-call-gate.test.ts",
+        "tests/unit/runtime-spine-gate-engine-p2-005.test.ts",
+        "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+        "tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+          "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/evidence-index.json",
+          "sha256": "d9af981c62dc082ddb6d18ed6df38f28fab5703aaf12e777a131086b356b175d",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+          "sha256": "4eafc7fb455327247b62e585abd4634d124c533c63ea6c817e0e52234034c424",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-005",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-005"
+      ],
+      "testIds": [
+        "T-AUTH-005"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/context-runtime-kit-tool-call-gate.test.ts tests/unit/runtime-spine-gate-engine-p2-005.test.ts tests/unit/orchestration-verifier-report-p2-005.test.ts tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "acceptanceIds": [
+        "P2-005:A1",
+        "P2-005:A2",
+        "P2-005:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/agents/subagent-registry.ts",
+        "openclaw_runtime/src/agents/agent-steering-queue.ts",
+        "openclaw_runtime/src/context-engine/cvk/tool-call-gate.ts",
+        "openclaw_runtime/src/context-engine/cvk/engine.ts",
+        "openclaw_runtime/src/runtime-spine/gate-engine.ts",
+        "openclaw_runtime/src/agents/orchestration-verifier-report.ts",
+        "openclaw_runtime/src/agents/subagent-registry.types.ts",
+        "tests/unit/context-runtime-kit-tool-call-gate.test.ts",
+        "tests/unit/runtime-spine-gate-engine-p2-005.test.ts",
+        "tests/unit/orchestration-verifier-report-p2-005.test.ts",
+        "tests/unit/agent-steering-team-bundle.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/vitest.stdout.txt",
+          "sha256": "14581a2fa31acc7676ce72c45132cbaf16b75f882c0c519ca93bc68af2a023aa",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/evidence-index.json",
+          "sha256": "d9af981c62dc082ddb6d18ed6df38f28fab5703aaf12e777a131086b356b175d",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-005/acceptance-matrix.json",
+          "sha256": "4eafc7fb455327247b62e585abd4634d124c533c63ea6c817e0e52234034c424",
+          "taskId": "P2-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-DATA-001",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "data-governance",
+      "owners": [
+        "data-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P3-001"
+      ],
+      "testIds": [
+        "T-DATA-001"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/sensitive-content-boundary.test.ts",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/sekb.test.ts"
+      ],
+      "acceptanceIds": [
+        "P3-001:A1",
+        "P3-001:A2",
+        "P3-001:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+        "openclaw_runtime/src/knowledge/sekb/harness-integration.ts",
+        "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "electron/services/observability-redaction.ts",
+        "openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts",
+        "openclaw_runtime/src/knowledge/sekb/index.ts",
+        "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+        "shared/sensitive-content-boundary.ts",
+        "tests/unit/sekb-trajectory-redaction-p3-001.test.ts",
+        "tests/unit/sensitive-content-boundary.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/vitest-host.stdout.txt",
+          "sha256": "c254712aa333d2c344f7a49721f8014f8c975bdbfa07861d92a74b0e986a919b",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt",
+          "sha256": "38610e439951443ea948a3b057d7125e1146247fcf41361881d15fc99905fb0e",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/acceptance-matrix.json",
+          "sha256": "da350bc7892db2355eca482106848b13726b69f47fb7a421e15c13f4c2803bdf",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/evidence-index.json",
+          "sha256": "db5cb183fc625328617da2fcb1a0a4d9ef92587b5a4729da4e4c921ab9a4709b",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-DATA-002",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "data-governance",
+      "owners": [
+        "data-governance"
+      ],
+      "reviewers": [
+        "runtime-auth"
+      ],
+      "taskIds": [
+        "P3-002"
+      ],
+      "testIds": [
+        "T-DATA-002"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/experience-block-bridge.test.ts"
+      ],
+      "acceptanceIds": [
+        "P3-002:A1",
+        "P3-002:A2",
+        "P3-002:A3"
+      ],
+      "codePaths": [
+        "electron/services/knowledge-api.ts",
+        "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+        "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+        "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+        "openclaw_runtime/src/context-engine/block.ts",
+        "shared/host-api/contract.ts",
+        "tests/unit/sekb-confirm-provenance-p3-002.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/vitest-host.stdout.txt",
+          "sha256": "0f628f192383f9ebd8a6928124dbf6feed2eb1f88c2642cf731b2a1d20cf02e6",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt",
+          "sha256": "51f9eefdd027868c8db2262c15a8401675d722c3b0bd2bfada52e6ef798519c7",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/acceptance-matrix.json",
+          "sha256": "0637fcf225cd7359a32de7cb047e9cea10c64f552d5d55f382505013842bf2a9",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/evidence-index.json",
+          "sha256": "1b23993efcead13080752f5eed03960bbca7081a5955c7ae022e82adf352f72e",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-DATA-003",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "data-governance",
+      "owners": [
+        "data-governance"
+      ],
+      "reviewers": [
+        "runtime-auth"
+      ],
+      "taskIds": [
+        "P3-003"
+      ],
+      "testIds": [
+        "T-DATA-003"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/memory-dual-gate-p3-003.test.ts"
+      ],
+      "acceptanceIds": [
+        "P3-003:A1",
+        "P3-003:A2",
+        "P3-003:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+        "openclaw_runtime/src/memory/gatekeeper.ts",
+        "openclaw_runtime/src/memory/memory-dual-gate.ts",
+        "openclaw_runtime/src/memory/memory-store.ts",
+        "tests/unit/memory-dual-gate-p3-003.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/vitest-host.stdout.txt",
+          "sha256": "ab4377393e571914934f9099576dbcac1a1620e9551e87e17a3226164d33631f",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/acceptance-matrix.json",
+          "sha256": "40bc1053c099e13426489840cda60dd7b83da79166416d5014641e31f2736a38",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/evidence-index.json",
+          "sha256": "ec7ec047fc667934438097bd51b634592226f8283754e65bd79d6788b3a1146d",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-DATA-004",
+      "status": "Partial",
+      "severity": "High",
+      "owner": "data-governance",
+      "owners": [
+        "data-governance",
+        "reliability",
+        "privacy-governance"
+      ],
+      "reviewers": [
+        "security-lead",
+        "runtime-auth"
+      ],
+      "taskIds": [
+        "P3-001",
+        "P3-002",
+        "P3-003",
+        "P5-003",
+        "P7-003"
+      ],
+      "testIds": [
+        "T-DATA-004"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/sensitive-content-boundary.test.ts",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/sekb.test.ts",
+        "pnpm exec vitest run tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/knowledge/sekb/experience-block-bridge.test.ts",
+        "pnpm exec vitest run tests/unit/memory-dual-gate-p3-003.test.ts",
+        "pnpm exec vitest run tests/unit/logger-p5-003.test.ts",
+        "privacy data-flow review",
+        "OS permission E2E",
+        "sensitive capture retention test"
+      ],
+      "acceptanceIds": [
+        "P3-001:A1",
+        "P3-001:A2",
+        "P3-001:A3",
+        "P3-002:A1",
+        "P3-002:A2",
+        "P3-002:A3",
+        "P3-003:A1",
+        "P3-003:A2",
+        "P3-003:A3",
+        "P5-003:A1",
+        "P5-003:A2",
+        "P5-003:A3",
+        "P7-003:A1",
+        "P7-003:A2",
+        "P7-003:A3"
+      ],
+      "codePaths": [
+        "shared/sensitive-content-boundary.ts",
+        "openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts",
+        "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+        "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "openclaw_runtime/src/knowledge/sekb/index.ts",
+        "openclaw_runtime/src/knowledge/sekb/sekb.test.ts",
+        "tests/unit/sekb-trajectory-redaction-p3-001.test.ts",
+        "tests/unit/sensitive-content-boundary.test.ts",
+        "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+        "openclaw_runtime/src/knowledge/sekb/distillation-tool.ts",
+        "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+        "openclaw_runtime/src/context-engine/block.ts",
+        "electron/services/knowledge-api.ts",
+        "shared/host-api/contract.ts",
+        "tests/unit/sekb-confirm-provenance-p3-002.test.ts",
+        "openclaw_runtime/src/memory/memory-dual-gate.ts",
+        "openclaw_runtime/src/memory/memory-store.ts",
+        "tests/unit/memory-dual-gate-p3-003.test.ts",
+        "electron/utils/logger.ts",
+        "tests/unit/logger-p5-003.test.ts",
+        "plans/system-maturity/findings-registry.json"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/vitest-host.stdout.txt",
+          "sha256": "c254712aa333d2c344f7a49721f8014f8c975bdbfa07861d92a74b0e986a919b",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/vitest-sekb.stdout.txt",
+          "sha256": "38610e439951443ea948a3b057d7125e1146247fcf41361881d15fc99905fb0e",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/acceptance-matrix.json",
+          "sha256": "da350bc7892db2355eca482106848b13726b69f47fb7a421e15c13f4c2803bdf",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-001/evidence-index.json",
+          "sha256": "db5cb183fc625328617da2fcb1a0a4d9ef92587b5a4729da4e4c921ab9a4709b",
+          "taskId": "P3-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/vitest-host.stdout.txt",
+          "sha256": "0f628f192383f9ebd8a6928124dbf6feed2eb1f88c2642cf731b2a1d20cf02e6",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/vitest-bridge.stdout.txt",
+          "sha256": "51f9eefdd027868c8db2262c15a8401675d722c3b0bd2bfada52e6ef798519c7",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/acceptance-matrix.json",
+          "sha256": "0637fcf225cd7359a32de7cb047e9cea10c64f552d5d55f382505013842bf2a9",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-002/evidence-index.json",
+          "sha256": "1b23993efcead13080752f5eed03960bbca7081a5955c7ae022e82adf352f72e",
+          "taskId": "P3-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/vitest-host.stdout.txt",
+          "sha256": "ab4377393e571914934f9099576dbcac1a1620e9551e87e17a3226164d33631f",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/acceptance-matrix.json",
+          "sha256": "40bc1053c099e13426489840cda60dd7b83da79166416d5014641e31f2736a38",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-003/evidence-index.json",
+          "sha256": "ec7ec047fc667934438097bd51b634592226f8283754e65bd79d6788b3a1146d",
+          "taskId": "P3-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/vitest.stdout.txt",
+          "sha256": "ad99c2a03fa17df5bdc5e55d298675b0b6e18d0a20de6ca1caa299620151b053",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/acceptance-matrix.json",
+          "sha256": "4c641b274707731eefe01386f20f5bad001c8b2d180c3da0a48a6cd0a617e310",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/evidence-index.json",
+          "sha256": "39a421b7b4b0f36b636fbb9fb27de09f2546edfcddfaaf5efad690bb7bf39cdf",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-REL-001",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "reliability",
+      "owners": [
+        "reliability",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "runtime-auth",
+        "security-lead"
+      ],
+      "taskIds": [
+        "P5-002",
+        "P7-002"
+      ],
+      "testIds": [
+        "T-REL-001"
+      ],
+      "testCommands": [
+        "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P5-002:A1",
+        "P5-002:A2",
+        "P5-002:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/services/cron-api.ts",
+        "openclaw_runtime/src/cron/store.ts",
+        "openclaw_runtime/src/cron/service/ops.ts",
+        "openclaw_runtime/src/cron/service/timer.ts",
+        "openclaw_runtime/src/cron/service.ts",
+        "openclaw_runtime/src/cron/store/lease.ts",
+        "openclaw_runtime/src/cron/p5-002-lease-authority.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-002/vitest.stdout.txt",
+          "sha256": "e200434eb28e9ef3b11eab15bd15dbab6df313359dbd5dda5217f4e9e8356a59",
+          "taskId": "P5-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-002/acceptance-matrix.json",
+          "sha256": "8f9366b9808aa1a03b8946c47322a2d938542dc8c42ac8b1b318df90718fee31",
+          "taskId": "P5-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-002/evidence-index.json",
+          "sha256": "60f03a5249eade51d5fb146a792deb28c03177951929ffd84dc1195f4ee05dc5",
+          "taskId": "P5-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T08:46:04.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-REL-002",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "reliability",
+      "owners": [
+        "reliability"
+      ],
+      "reviewers": [
+        "qa-governance"
+      ],
+      "taskIds": [
+        "P5-001"
+      ],
+      "testIds": [
+        "T-REL-002"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/atomic-config-write-p5-001.test.ts tests/unit/channel-config.test.ts tests/unit/openclaw-auth.test.ts"
+      ],
+      "acceptanceIds": [
+        "P5-001:A1",
+        "P5-001:A2",
+        "P5-001:A3"
+      ],
+      "codePaths": [
+        "electron/utils/channel-config.ts",
+        "electron/utils/atomic-write.ts",
+        "electron/utils/config-mutex.ts",
+        "electron/utils/openclaw-auth.ts",
+        "tests/unit/atomic-config-write-p5-001.test.ts",
+        "tests/unit/openclaw-auth.test.ts",
+        "tests/unit/channel-config.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-001/vitest.stdout.txt",
+          "sha256": "456c3d3cd54c4f8cf319eb45f061aa7dd41cf1f4b3a1713e3baf50e361bebd73",
+          "taskId": "P5-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-001/vitest-related.stdout.txt",
+          "sha256": "14ede84a9dedbbcae924672f29c590914f8916452030ed4746874cf3c756ecd1",
+          "taskId": "P5-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-001/acceptance-matrix.json",
+          "sha256": "de1fe11b182e7aa35518dc4e9b4acd963522665923561d176323037f2faee483",
+          "taskId": "P5-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-001/evidence-index.json",
+          "sha256": "68c1fb9b32a20b932a37d986e13f01bcbf42346845706884f676497bc6a89c17",
+          "taskId": "P5-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-REL-003",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "runtime-surfaces",
+      "owners": [
+        "runtime-surfaces"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P4-001",
+        "P4-002"
+      ],
+      "testIds": [
+        "T-REL-003"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/gateway-control-ui-token-p4-001.test.ts tests/unit/openclaw-control-ui.test.ts",
+        "pnpm contract:check",
+        "pnpm exec vitest run tests/unit/agent-browser-p4-002-isolation.test.ts tests/unit/agent-browser-full-access-tool-executor.test.ts tests/unit/agent-browser-boundary-choice-tool-executor.test.ts tests/unit/agent-browser-tab-manager.test.ts tests/unit/agent-browser-cli-runner.test.ts"
+      ],
+      "acceptanceIds": [
+        "P4-001:A1",
+        "P4-001:A2",
+        "P4-001:A3",
+        "P4-002:A1",
+        "P4-002:A2",
+        "P4-002:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/src/gateway/server-methods/agent-browser.ts",
+        "electron/services/gateway-api.ts",
+        "shared/host-api/contract.ts",
+        "src/lib/host-api.ts",
+        "src/components/layout/Sidebar.tsx",
+        "src/pages/Dreams/index.tsx",
+        "src/pages/Settings/index.tsx",
+        "tests/unit/gateway-p4-001-auth-binding.test.ts",
+        "tests/unit/gateway-control-ui-token-p4-001.test.ts",
+        "tests/unit/agent-browser-gateway-bridge.test.ts",
+        "shared/agent-browser/filesystem-boundary.ts",
+        "shared/agent-browser/tool-authorization.ts",
+        "electron/services/agent-browser-service.ts",
+        "electron/services/agent-browser-cli-runner.ts",
+        "electron/services/agent-browser/browser-control/tab-manager.ts",
+        "electron/services/agent-browser/browser-control/full-access-tool-executor.ts",
+        "tests/unit/agent-browser-p4-002-isolation.test.ts",
+        "tests/unit/openclaw-control-ui.test.ts",
+        "tests/unit/agent-browser-full-access-tool-executor.test.ts",
+        "tests/unit/agent-browser-boundary-choice-tool-executor.test.ts",
+        "tests/unit/agent-browser-tab-manager.test.ts",
+        "tests/unit/agent-browser-cli-runner.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-001/vitest.stdout.txt",
+          "sha256": "63dcdbb9d5b8595200e78ffe2b26cd2faa2abf6fed595f8a43e7250fad64e775",
+          "taskId": "P4-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-001/acceptance-matrix.json",
+          "sha256": "3b6be778007d9126d6c4a713808f279b8a4cceb2d1eb70738b946dcf7df1dce7",
+          "taskId": "P4-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-001/evidence-index.json",
+          "sha256": "f46b3848226854174a1aa79ec32415cd919758eeed4557160f58f02127ced6bc",
+          "taskId": "P4-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/vitest.stdout.txt",
+          "sha256": "3d58f6f3f38f2c560a4f354f8cd2599f5c0fc9de69a23db617ba638ca8896f41",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/acceptance-matrix.json",
+          "sha256": "60b7398ce53e4393d7cb1d492bf3b86715bc720abba78e83777d7bd2319a00c0",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/evidence-index.json",
+          "sha256": "1287c374ce2dc7d050077f71aa4188d1fbc52b5d738c2872450116578341fda7",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-REL-004",
+      "status": "Partial",
+      "severity": "High",
+      "owner": "qa-governance",
+      "owners": [
+        "qa-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P7-002"
+      ],
+      "testIds": [
+        "T-REL-004"
+      ],
+      "testCommands": [
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/main/index.ts",
+        "electron/services/roles-api.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SUPPLY-001",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "supplychain-release",
+      "owners": [
+        "supplychain-release",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "program-governance",
+        "security-lead"
+      ],
+      "taskIds": [
+        "P6-001",
+        "P6-002",
+        "P7-002"
+      ],
+      "testIds": [
+        "T-SUPPLY-001"
+      ],
+      "testCommands": [
+        "pnpm run release:windows-policy:evidence:full",
+        "pnpm run harness:ci",
+        "pnpm test",
+        "pnpm run typecheck",
+        "git diff --check",
+        "pnpm run release:windows-update-policy:evidence:full",
+        "pnpm exec vitest run tests/unit/windows-update-feed-p6-002.test.ts",
+        "pnpm run release:windows-update-policy",
+        "pnpm run release:windows-update-policy:live",
+        "pnpm harness validate --spec harness/specs/tasks/windows-update-feed-integrity.md --since 3d67e200e",
+        "pnpm run comms:replay",
+        "pnpm run comms:compare",
+        "workflow YAML parse",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P6-001:A1",
+        "P6-001:A2",
+        "P6-001:A3",
+        "P6-002:A1",
+        "P6-002:A2",
+        "P6-002:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/services/updates-api.ts",
+        ".github/workflows/release.yml",
+        "shared/release-policy/windows-signing-policy.mjs",
+        "scripts/validate-windows-release-policy.mjs",
+        "scripts/collect-p6-001-evidence.mjs",
+        "tests/unit/windows-signing-policy-p6-001.test.ts",
+        "harness/specs/scenarios/windows-release-trust.md",
+        "harness/specs/rules/windows-release-signing-policy.md",
+        "harness/specs/tasks/windows-release-signing-policy.md",
+        "plans/system-maturity/findings-registry.json",
+        "shared/release-policy/windows-update-feed-policy.ts",
+        "scripts/validate-windows-update-feed-policy.mts",
+        "scripts/collect-p6-002-evidence.mjs",
+        "tests/unit/windows-update-feed-p6-002.test.ts",
+        "harness/specs/rules/windows-update-feed-integrity.md",
+        "harness/specs/tasks/windows-update-feed-integrity.md"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/acceptance-matrix.json",
+          "sha256": "5c2d0362d677988bb2a55cf161bc1ed417fda9739634ee55d00282e8c71fda82",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/full-gate-assessment.json",
+          "sha256": "94d347d8bbf1a27e7c8aa33aa191f6e8fc6b25ce0be76b9e955f426b10a345ea",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/vitest.stdout.txt",
+          "sha256": "c877f6ef795cc1a466df547d50c0c86d45383f8b6ffb0f365ec250784e1b860c",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/policy-validate.stdout.txt",
+          "sha256": "81dbaa2d32b526c915888fed2456847285bcfcc99ef365aea67c9193607f1ffb",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/gate-deny-unsigned.stdout.txt",
+          "sha256": "b208496e43daf33b0354be00ddd250b9d1364485a99aa6ad768736ecfa4b9ad2",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/authenticode-probe.stdout.txt",
+          "sha256": "bf54ee4e1b98cf6455a44fb117d49ebcf1aba07774f305f4cf93956f6be6bc13",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/gate-allow-signed-attestation.stdout.txt",
+          "sha256": "f2b59d33c856bb75c4c1e3e555a1eba1ff640373bf51380df6b8ca22f7a396c4",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-001/harness-ci.stdout.txt",
+          "sha256": "3dc812eb783a8b5d131ba0e2afb239dfd791ca60db0c4f15af9f8a03d13e29ce",
+          "taskId": "P6-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/acceptance-matrix.json",
+          "sha256": "7656bdc3a9433466e82a80c2dd9c4527e771517625288b7a5641483b0ac745be",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/full-gate-assessment.json",
+          "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/vitest.stdout.txt",
+          "sha256": "7d0a974747372187622eaf7fe95f885816536fa5e84abe223f1bd5710c64db03",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/policy-validate.stdout.txt",
+          "sha256": "7addbfef65dee86c96eb14c98e62aa6ff0ec0ce71699d4da68039278a2d16be2",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/live-feed-probe.stdout.txt",
+          "sha256": "356c5ee1f94e0543d8891323859edc9f09558db2959dcd45543380f6863c3108",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/unknown-channel-deny.stderr.txt",
+          "sha256": "93700929c774391cc4f9e1b8f13d3665e42fcd8ebdd55590aca6f43f0339e25e",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/harness-validate.stdout.txt",
+          "sha256": "3003970849879a3ff5a994a1a615cbec2a53423ab7f2bdd14e75b3d56e788bd6",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/comms-replay.exit.txt",
+          "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/comms-compare.exit.txt",
+          "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-002/workflow-yaml.stdout.txt",
+          "sha256": "7e281e996db6f73cf360cdefe2c80c54b0e55e9cac9a9f2cfebe38edda893f0d",
+          "taskId": "P6-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-GOV-001",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "qa-governance",
+      "owners": [
+        "qa-governance",
+        "program-governance"
+      ],
+      "reviewers": [
+        "program-governance",
+        "qa-governance"
+      ],
+      "taskIds": [
+        "P0-003",
+        "P7-001"
+      ],
+      "testIds": [
+        "T-GOV-001"
+      ],
+      "testCommands": [
+        "node scripts/validate-test-gates.mjs",
+        "pnpm agent-dev:fast",
+        "pnpm run harness:ci",
+        "pnpm run typecheck",
+        "pnpm maturity:traceability",
+        "pnpm exec vitest run tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm maturity:traceability:evidence",
+        "pnpm run lint:check",
+        "pnpm test",
+        "pnpm maturity:validate"
+      ],
+      "acceptanceIds": [
+        "P0-003:A1",
+        "P0-003:A2",
+        "P0-003:A3",
+        "P7-001:A1",
+        "P7-001:A2",
+        "P7-001:A3"
+      ],
+      "codePaths": [
+        "openclaw_runtime/test/vitest/vitest.scoped-config.ts",
+        "plans/system-maturity/findings-registry.json",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "scripts/validate-system-maturity-traceability.mjs",
+        "scripts/collect-p7-001-evidence.mjs",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "harness/specs/scenarios/system-maturity-traceability.md",
+        "harness/specs/rules/system-maturity-traceability.md",
+        "harness/specs/tasks/system-maturity-traceability.md",
+        "scripts/validate-test-gates.mjs"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "plans/system-maturity/gates.json",
+          "sha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-test-gates.mjs",
+          "sha256": "317c91d240487f256b3649f396733982cb84afb64dc80a540e21630fe6ad0580",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.config.ts",
+          "sha256": "5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.agent-dev.node.config.ts",
+          "sha256": "92dd6b1470b899df8d09d6bbd47e12a1c327c4d43a86707eadd89dba245b51eb",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.runtime-effectiveness.config.ts",
+          "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/host-api-facade.test.ts",
+          "sha256": "9cd04ffdd94871585459eddb3fb0dbf25c8ae414dc56ed82316dfb9a7d69aad2",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/validate-test-gates.frozen.json",
+          "sha256": "bc10458525f54b1c7712ce695f5644e70efd70b22f880426711ae98e627d6f4d",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
+          "sha256": "a87c72640d35a5d264b8df5193e9c3a213e6a5e76d3e609d295f9fe815dabb59",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/empty-shard.stdout.txt",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt",
+          "sha256": "b3899ecf132858468b6b6ff95b61917ace221f36abb467ae7b294dda176f65df",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/harness-ci.stdout.txt",
+          "sha256": "6c03b685505a221ec69b5599e265d2dba77855cd31b5f83f12a8f462459a84b5",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/typecheck.stdout.txt",
+          "sha256": "dbfa562e65b3c17b7df5849e56c72a843fc31554e6138df67b2e032c84926b4c",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/acceptance-matrix.json",
+          "sha256": "b9b8a6ff2f19596fc75cc8a2d69b6a9b16fdf13c1ed545750bf60fb14bd59319",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
+          "sha256": "e28278ef3b5dccf671a335510dfd0b2377f217ad5104b1d2aea089f8fd57d75a",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
+          "sha256": "d4b5de6dccf0f80f98bcf28b49ccd90d291d470e4b17a38d29a5e18fea60c25d",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
+          "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
+          "sha256": "54ba24405665f674415e4a8bb3eb9ff139abf18a9de9dc34e02cc1b91d4155d6",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
+          "sha256": "e0ee279d54c5f67a3e169769bbd3eb244698a9d26ee83737368758e2d3539fb8",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-traceability.mjs",
+          "sha256": "624c65a7b6638bfc6fa8edaedb7ba9d71f16d65fce1c62f0dbbf45e788050968",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
+          "sha256": "dbdc273027a26b5371bbc9ad364cb194f313b31dc4047b2bd398aac34642fe7e",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-traceability.md",
+          "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-18T04:00:43.745Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-GOV-002",
+      "status": "Partial",
+      "severity": "Medium",
+      "owner": "program-governance",
+      "owners": [
+        "program-governance",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "security-lead",
+        "qa-governance",
+        "program-governance"
+      ],
+      "taskIds": [
+        "P0-001",
+        "P0-002",
+        "P0-003",
+        "P0-004",
+        "P7-001",
+        "P7-004"
+      ],
+      "testIds": [
+        "T-GOV-002"
+      ],
+      "testCommands": [
+        "node scripts/audit-baseline-check.mjs",
+        "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+        "node scripts/validate-system-maturity-plan.mjs",
+        "node scripts/validate-test-gates.mjs",
+        "pnpm agent-dev:fast",
+        "pnpm run harness:ci",
+        "pnpm run typecheck",
+        "node scripts/validate-system-maturity-evidence.mjs",
+        "pnpm maturity:traceability",
+        "pnpm exec vitest run tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "pnpm maturity:traceability:evidence",
+        "pnpm run lint:check",
+        "pnpm test",
+        "pnpm maturity:validate",
+        "pnpm agent-dev:audit",
+        "pnpm agent-dev:deep-test",
+        "quarterly audit dry-run"
+      ],
+      "acceptanceIds": [
+        "P0-001:A1",
+        "P0-001:A2",
+        "P0-001:A3",
+        "P0-002:A1",
+        "P0-002:A2",
+        "P0-002:A3",
+        "P0-003:A1",
+        "P0-003:A2",
+        "P0-003:A3",
+        "P0-004:A1",
+        "P0-004:A2",
+        "P0-004:A3",
+        "P7-001:A1",
+        "P7-001:A2",
+        "P7-001:A3",
+        "P7-004:A1",
+        "P7-004:A2",
+        "P7-004:A3"
+      ],
+      "codePaths": [
+        "plans/system-maturity/findings-registry.json",
+        "scripts/lib/system-maturity-traceability.mjs",
+        "scripts/validate-system-maturity-traceability.mjs",
+        "scripts/collect-p7-001-evidence.mjs",
+        "tests/unit/system-maturity-traceability-p7-001.test.ts",
+        "harness/specs/scenarios/system-maturity-traceability.md",
+        "harness/specs/rules/system-maturity-traceability.md",
+        "harness/specs/tasks/system-maturity-traceability.md",
+        "scripts/audit-baseline-check.mjs",
+        "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+        "scripts/validate-system-maturity-plan.mjs",
+        "scripts/validate-test-gates.mjs",
+        "scripts/validate-system-maturity-evidence.mjs"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "plans/system-maturity/BASELINE.json",
+          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "b5c1b4c3656feca4171dd9e99cfb58ec88a3ffa5b85bf8b1aa86f623cbc70907",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/audit-baseline-check.mjs",
+          "sha256": "b9c06004823bb54cc00fabbcc64a3b47f8b5dab374850f5e8b2f0400d87e95c1",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/EXECUTION-ORDER.md",
+          "sha256": "97b4bc69af606f9eaf79459856928d1effbe22ff48976921e00ca11f54e3770c",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json",
+          "sha256": "e8e1420a3aaeb22bfacb63305f58b3cfe67ee21cfa06a921bdd778606d6f5a4d",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt",
+          "sha256": "e8b1090ddcf78e7800aa647bc5db0b750143d2f0e1403a76f72f48d2ffd4b716",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/harness-validate.stdout.txt",
+          "sha256": "bfcbabd108c46cfcb541c7421fdd02610d8efa0701db3a602e18c4413252f743",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-plan.mjs",
+          "sha256": "6528863708939d23308f77f3d39985b33dc6316ce0fa7499e57ac88ca0818d32",
+          "taskId": "P0-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/README.md",
+          "sha256": "69d3315c0cf5cee6321b7833167eb2c2f0f7421ae26569f44b7940b68a228c88",
+          "taskId": "P0-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-002/validate-system-maturity-plan.frozen.json",
+          "sha256": "f1338c2c8e8a895857c3580a1bc5bacacc88e8c14961918800b322a570398f6c",
+          "taskId": "P0-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-002/validate.stdout.txt",
+          "sha256": "b108fc8cb1a6e1a70513153456ed87b045288caca0e2db3f73da74bccf8444ca",
+          "taskId": "P0-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/gates.json",
+          "sha256": "1c6b440d42831d40d1fb0b4c3310df2dc544ec2b0b7ff138a5b2cdf7db19eaa4",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-test-gates.mjs",
+          "sha256": "317c91d240487f256b3649f396733982cb84afb64dc80a540e21630fe6ad0580",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.config.ts",
+          "sha256": "5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.agent-dev.node.config.ts",
+          "sha256": "92dd6b1470b899df8d09d6bbd47e12a1c327c4d43a86707eadd89dba245b51eb",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "vitest.runtime-effectiveness.config.ts",
+          "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "src/lib/host-api.ts",
+          "sha256": "c8ceb15a028a1cad254e6c8089fd06d10d89cf2c3f837491012a2e10848d44fa",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/host-api-facade.test.ts",
+          "sha256": "9cd04ffdd94871585459eddb3fb0dbf25c8ae414dc56ed82316dfb9a7d69aad2",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/validate-test-gates.frozen.json",
+          "sha256": "bc10458525f54b1c7712ce695f5644e70efd70b22f880426711ae98e627d6f4d",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
+          "sha256": "a87c72640d35a5d264b8df5193e9c3a213e6a5e76d3e609d295f9fe815dabb59",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/empty-shard.stdout.txt",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/agent-dev-fast.stdout.txt",
+          "sha256": "b3899ecf132858468b6b6ff95b61917ace221f36abb467ae7b294dda176f65df",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/harness-ci.stdout.txt",
+          "sha256": "6c03b685505a221ec69b5599e265d2dba77855cd31b5f83f12a8f462459a84b5",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-003/typecheck.stdout.txt",
+          "sha256": "dbfa562e65b3c17b7df5849e56c72a843fc31554e6138df67b2e032c84926b4c",
+          "taskId": "P0-003",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-evidence.mjs",
+          "sha256": "e09c5c9b1affaef7df2c33e5bd5bfbfbf4f50e45210a0b4ba441827497a46f94",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/BASELINE.json",
+          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase0-foundation/STATUS.json",
+          "sha256": "c9f4e1df2ee9dddb39a43ad6fb0fd25bd44e9c60cd6956a7a2d3c747ad9d69f6",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt",
+          "sha256": "33d844b0003332db2d8a699331c6944ccbcfd1847819ecd148556f3cdf78f316",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/baseline.stdout.txt",
+          "sha256": "a4bd4ff89a18d4f050c42c52304d3eead6255690810012aa7952f4892979989a",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/plan.stdout.txt",
+          "sha256": "b161d10bab1dbab0856e4a3f8bafedf9ed0600740b1df072f0cb47e315161ac7",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/harness.stdout.txt",
+          "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/acceptance-matrix.json",
+          "sha256": "b9b8a6ff2f19596fc75cc8a2d69b6a9b16fdf13c1ed545750bf60fb14bd59319",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
+          "sha256": "e28278ef3b5dccf671a335510dfd0b2377f217ad5104b1d2aea089f8fd57d75a",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
+          "sha256": "d4b5de6dccf0f80f98bcf28b49ccd90d291d470e4b17a38d29a5e18fea60c25d",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
+          "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
+          "sha256": "54ba24405665f674415e4a8bb3eb9ff139abf18a9de9dc34e02cc1b91d4155d6",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
+          "sha256": "e0ee279d54c5f67a3e169769bbd3eb244698a9d26ee83737368758e2d3539fb8",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-traceability.mjs",
+          "sha256": "624c65a7b6638bfc6fa8edaedb7ba9d71f16d65fce1c62f0dbbf45e788050968",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
+          "sha256": "dbdc273027a26b5371bbc9ad364cb194f313b31dc4047b2bd398aac34642fe7e",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/tasks/system-maturity-traceability.md",
+          "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0",
+          "taskId": "P7-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-18T04:00:43.745Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-GOV-003",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "program-governance",
+      "owners": [
+        "program-governance",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "security-lead",
+        "supplychain-release"
+      ],
+      "taskIds": [
+        "P0-001",
+        "P0-004",
+        "P6-005",
+        "P7-004"
+      ],
+      "testIds": [
+        "T-GOV-003"
+      ],
+      "testCommands": [
+        "node scripts/audit-baseline-check.mjs",
+        "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+        "node scripts/validate-system-maturity-evidence.mjs",
+        "node scripts/validate-system-maturity-plan.mjs",
+        "clean detached checkout evidence collection at df7c2f7a602c34d487caa10e1eead2529ce95be4",
+        "pnpm test",
+        "pnpm run lint:check",
+        "pnpm run typecheck",
+        "pnpm run harness:ci",
+        "pnpm agent-dev:deep-test",
+        "pnpm run test:e2e:agent-dev-quality",
+        "pnpm run maturity:validate",
+        "pnpm run release:validate",
+        "cross-worktree CRLF evidence replay",
+        "native nonzero gate exit regression",
+        "pnpm harness context --spec harness/specs/tasks/clean-release-baseline-reproducibility.md",
+        "pnpm harness validate --spec harness/specs/tasks/clean-release-baseline-reproducibility.md --since 85c2652b7184cf847d2439e41e76c0c46f42ae2b",
+        "workflow YAML parse",
+        "fresh manifest replay",
+        "git diff --check",
+        "extra four-shard full Electron Playwright diagnostic",
+        "pnpm agent-dev:audit",
+        "quarterly audit dry-run"
+      ],
+      "acceptanceIds": [
+        "P0-001:A1",
+        "P0-001:A2",
+        "P0-001:A3",
+        "P0-004:A1",
+        "P0-004:A2",
+        "P0-004:A3",
+        "P6-005:A1",
+        "P6-005:A2",
+        "P6-005:A3",
+        "P7-004:A1",
+        "P7-004:A2",
+        "P7-004:A3"
+      ],
+      "codePaths": [
+        ".github/workflows/release.yml",
+        "plans/system-maturity/gates.json",
+        "scripts/release-baseline-manifest.mjs",
+        "scripts/validate-release-baseline.mjs",
+        "scripts/collect-p6-005-evidence.mjs",
+        "scripts/lib/run-release-gate-command.mjs",
+        "scripts/lib/canonical-evidence-hash.mjs",
+        "scripts/update-system-maturity-delivery-hashes.mjs",
+        "scripts/validate-system-maturity-evidence.mjs",
+        "tests/unit/release-baseline-p6-005.test.ts",
+        "tests/e2e/agent-dev-quality.spec.ts",
+        "harness/specs/rules/clean-release-baseline-reproducibility.md",
+        "harness/specs/tasks/clean-release-baseline-reproducibility.md",
+        "plans/system-maturity/findings-registry.json",
+        "scripts/audit-baseline-check.mjs",
+        "harness/specs/tasks/agent-dev-ecosystem-regularization.md",
+        "scripts/validate-system-maturity-plan.mjs"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "plans/system-maturity/BASELINE.json",
+          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/findings-registry.json",
+          "sha256": "b5c1b4c3656feca4171dd9e99cfb58ec88a3ffa5b85bf8b1aa86f623cbc70907",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/audit-baseline-check.mjs",
+          "sha256": "b9c06004823bb54cc00fabbcc64a3b47f8b5dab374850f5e8b2f0400d87e95c1",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/EXECUTION-ORDER.md",
+          "sha256": "97b4bc69af606f9eaf79459856928d1effbe22ff48976921e00ca11f54e3770c",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/audit-baseline-check.frozen.json",
+          "sha256": "e8e1420a3aaeb22bfacb63305f58b3cfe67ee21cfa06a921bdd778606d6f5a4d",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/audit-baseline-check.stdout.txt",
+          "sha256": "e8b1090ddcf78e7800aa647bc5db0b750143d2f0e1403a76f72f48d2ffd4b716",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-001/harness-validate.stdout.txt",
+          "sha256": "bfcbabd108c46cfcb541c7421fdd02610d8efa0701db3a602e18c4413252f743",
+          "taskId": "P0-001",
+          "kind": "task"
+        },
+        {
+          "path": "scripts/validate-system-maturity-evidence.mjs",
+          "sha256": "e09c5c9b1affaef7df2c33e5bd5bfbfbf4f50e45210a0b4ba441827497a46f94",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "package.json",
+          "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/BASELINE.json",
+          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase0-foundation/STATUS.json",
+          "sha256": "c9f4e1df2ee9dddb39a43ad6fb0fd25bd44e9c60cd6956a7a2d3c747ad9d69f6",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt",
+          "sha256": "33d844b0003332db2d8a699331c6944ccbcfd1847819ecd148556f3cdf78f316",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/baseline.stdout.txt",
+          "sha256": "a4bd4ff89a18d4f050c42c52304d3eead6255690810012aa7952f4892979989a",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/plan.stdout.txt",
+          "sha256": "b161d10bab1dbab0856e4a3f8bafedf9ed0600740b1df072f0cb47e315161ac7",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P0-004/harness.stdout.txt",
+          "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/acceptance-matrix.json",
+          "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/release-gate-evidence.json",
+          "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/release-source-manifest.json",
+          "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/evidence-index.json",
+          "sha256": "193de198d18b7c82a915ba683a2d8e415454f2ec5b3f8fb47dbc5f72e2b27e99",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/full-electron-e2e-audit.json",
+          "sha256": "bca96b8ae8f763daef8497ed5623466ad085762eb229797d8b00d08242d2f572",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/test.stdout.txt",
+          "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt",
+          "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt",
+          "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt",
+          "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt",
+          "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
+          "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011",
+          "taskId": "P6-005",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-UX-001",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "reliability",
+      "owners": [
+        "reliability"
+      ],
+      "reviewers": [
+        "qa-governance"
+      ],
+      "taskIds": [
+        "P5-004"
+      ],
+      "testIds": [
+        "T-UX-001"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/agent-resource-limits-p5-004.test.ts tests/unit/logger-p5-003.test.ts"
+      ],
+      "acceptanceIds": [
+        "P5-004:A1",
+        "P5-004:A2",
+        "P5-004:A3"
+      ],
+      "codePaths": [
+        "src/stores/chat.ts",
+        "src/pages/Chat/index.tsx",
+        "shared/agent-resource-limits.ts",
+        "shared/chat/types.ts",
+        "tests/unit/agent-resource-limits-p5-004.test.ts",
+        "plans/system-maturity/findings-registry.json",
+        "tests/unit/logger-p5-003.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-004/vitest.stdout.txt",
+          "sha256": "98acfa87698625200f44656cb0857ce3767f7ea6c84ac98761b9387f63d221ce",
+          "taskId": "P5-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-004/acceptance-matrix.json",
+          "sha256": "3caf47ffe7ac047281389b41402374e57469ba04d231dbab23457adf0259d4ef",
+          "taskId": "P5-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-004/evidence-index.json",
+          "sha256": "f703c541e42cba4f373505c88e4580ac0644370ea3ba8eeae09f13995e012a4c",
+          "taskId": "P5-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-UX-002",
+      "status": "Open",
+      "severity": "Low",
+      "owner": "privacy-governance",
+      "owners": [
+        "privacy-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P7-003"
+      ],
+      "testIds": [
+        "T-UX-002"
+      ],
+      "testCommands": [
+        "privacy data-flow review",
+        "OS permission E2E",
+        "sensitive capture retention test"
+      ],
+      "acceptanceIds": [
+        "P7-003:A1",
+        "P7-003:A2",
+        "P7-003:A3"
+      ],
+      "codePaths": [
+        "src/App.tsx"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 90,
+      "latestSourceAt": "2026-07-14T18:05:47.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-10-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-006",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-003",
+        "P7-002"
+      ],
+      "testIds": [
+        "T-SEC-006"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/path-broker.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P1-003:A1",
+        "P1-003:A2",
+        "P1-003:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/services/workspace-permissions.ts",
+        "electron/services/files-api.ts",
+        "electron/services/path-broker.ts",
+        "tests/unit/path-broker.test.ts",
+        "tests/unit/path-broker-resolved.test.ts",
+        "tests/unit/files-permissions-api.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-003/vitest.stdout.txt",
+          "sha256": "ab2d73e64b6469d5ac5d3bb5a4238dba4a84153a758bb91f2565fcda4518b853",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-003/path-matrix.json",
+          "sha256": "03010e95737d05c906a92e6612bc054ea785b66899a7338111269f5052ea9d3f",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/path-broker.ts",
+          "sha256": "56cfd721fcc11fdcf0749c0e1425d93997afa9a762e798d884f321b4f922452f",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/files-api.ts",
+          "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/workspace-permissions.ts",
+          "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SEC-007",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "main-boundary",
+      "owners": [
+        "main-boundary",
+        "runtime-surfaces"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P1-004",
+        "P4-002"
+      ],
+      "testIds": [
+        "T-SEC-007"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/url-policy.test.ts tests/unit/html-preview-security.test.tsx tests/unit/file-preview-body.test.tsx tests/unit/agent-browser-cdp-lifecycle.test.ts tests/unit/agent-browser-tab-manager.test.ts",
+        "pnpm exec vitest run tests/unit/agent-browser-p4-002-isolation.test.ts tests/unit/agent-browser-full-access-tool-executor.test.ts tests/unit/agent-browser-boundary-choice-tool-executor.test.ts tests/unit/agent-browser-tab-manager.test.ts tests/unit/agent-browser-cli-runner.test.ts"
+      ],
+      "acceptanceIds": [
+        "P1-004:A1",
+        "P1-004:A2",
+        "P1-004:A3",
+        "P4-002:A1",
+        "P4-002:A2",
+        "P4-002:A3"
+      ],
+      "codePaths": [
+        "shared/agent-browser/browser-control.ts",
+        "electron/services/agent-browser/browser-control/tab-manager.ts",
+        "electron/services/agent-browser-service.ts",
+        "shared/security/url-policy.ts",
+        "electron/utils/safe-open-external.ts",
+        "electron/services/shell-api.ts",
+        "electron/main/index.ts",
+        "electron/main/ipc-handlers.ts",
+        "electron/main/menu.ts",
+        "electron/utils/browser-oauth.ts",
+        "electron/utils/device-oauth.ts",
+        "electron/services/git-api.ts",
+        "src/components/file-preview/HtmlPreview.tsx",
+        "tests/unit/url-policy.test.ts",
+        "tests/unit/html-preview-security.test.tsx",
+        "tests/unit/file-preview-body.test.tsx",
+        "shared/agent-browser/filesystem-boundary.ts",
+        "shared/agent-browser/tool-authorization.ts",
+        "electron/services/agent-browser-cli-runner.ts",
+        "electron/services/agent-browser/browser-control/full-access-tool-executor.ts",
+        "tests/unit/agent-browser-p4-002-isolation.test.ts",
+        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
+        "tests/unit/agent-browser-tab-manager.test.ts",
+        "tests/unit/agent-browser-full-access-tool-executor.test.ts",
+        "tests/unit/agent-browser-boundary-choice-tool-executor.test.ts",
+        "tests/unit/agent-browser-cli-runner.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/vitest.stdout.txt",
+          "sha256": "462193ab62e17dee281d9ea5b6e14e0ba852d43af50838892ef67fc1d23595ec",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P1-004/url-policy-matrix.json",
+          "sha256": "ddffb3f5b4110d108fe7ce637ef0a7da2db8d6d60561c855bb8a2543157ff58f",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "shared/security/url-policy.ts",
+          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "electron/utils/safe-open-external.ts",
+          "sha256": "bdc6a2d26f402386c94f07b7ff51898dd12ef2d671134a1c4fe6d4e48e9462a9",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase1-direct-boundaries/STATUS.json",
+          "sha256": "55935100ab7e1a866c79fba23bf47f3c664aa41d80b6f55d5e54be7c80322918",
+          "taskId": "P1-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/vitest.stdout.txt",
+          "sha256": "3d58f6f3f38f2c560a4f354f8cd2599f5c0fc9de69a23db617ba638ca8896f41",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/acceptance-matrix.json",
+          "sha256": "60b7398ce53e4393d7cb1d492bf3b86715bc720abba78e83777d7bd2319a00c0",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-002/evidence-index.json",
+          "sha256": "1287c374ce2dc7d050077f71aa4188d1fbc52b5d738c2872450116578341fda7",
+          "taskId": "P4-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-006",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-auth",
+      "owners": [
+        "runtime-auth",
+        "qa-governance"
+      ],
+      "reviewers": [
+        "qa-governance",
+        "security-lead"
+      ],
+      "taskIds": [
+        "P2-002",
+        "P7-002"
+      ],
+      "testIds": [
+        "T-AUTH-006"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/permissions-api.test.ts",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite"
+      ],
+      "acceptanceIds": [
+        "P2-002:A1",
+        "P2-002:A2",
+        "P2-002:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3"
+      ],
+      "codePaths": [
+        "electron/services/permissions-api.ts",
+        "tests/unit/permissions-api.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-002/vitest.stdout.txt",
+          "sha256": "c60e4f011c2dc301a5e9cdbd5ec3411741a2aae2acdffaa954a91b02486e4677",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-002/evidence-index.json",
+          "sha256": "2b08fa46dd26699d98e2ca63d381b78e2afa3bbf9ddb25214afa07c72aa1da93",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P2-002/acceptance-matrix.json",
+          "sha256": "b7f80468ab875e30ae1361a3314ab5592b3553c97abea401a9291e1ae4a3c78d",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "electron/services/permissions-api.ts",
+          "sha256": "df34ff23990dd5ccf6ee4c6920a8ce9f6074f549f409d83bdf31c92c1960869e",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "tests/unit/permissions-api.test.ts",
+          "sha256": "25443aa199fe2d529ea37fbe1e26258c0517f5f2ddc13363a7cf2eecfe56c7f5",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
+          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "taskId": "P2-002",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T05:48:37.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-008",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-surfaces",
+      "owners": [
+        "runtime-surfaces"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P4-004"
+      ],
+      "testIds": [
+        "T-AUTH-008"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts"
+      ],
+      "acceptanceIds": [
+        "P4-004:A1",
+        "P4-004:A2",
+        "P4-004:A3"
+      ],
+      "codePaths": [
+        "electron/utils/channel-config.ts",
+        "tests/unit/channel-config.test.ts",
+        "shared/channels/inbound-trust.ts",
+        "tests/unit/channels-p4-004-inbound-trust.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/vitest.stdout.txt",
+          "sha256": "f88a22ff4bc164087b4c8dfca96ba46037beaeb01f94ef4b60e2615707078cf4",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
+          "sha256": "0578ec1def1410ef42674baa9e9b99e94ed2b83b2d92e0bdc78347dd1556f458",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-004/evidence-index.json",
+          "sha256": "35f28fcbc620d579811058b6038c1845b725da0c6a234733c688d89c09d57a58",
+          "taskId": "P4-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-AUTH-009",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "runtime-surfaces",
+      "owners": [
+        "runtime-surfaces"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P4-003"
+      ],
+      "testIds": [
+        "T-AUTH-009"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/mcp-p4-003-runtime-surface.test.ts tests/unit/mcp-api.test.ts",
+        "pnpm contract:check"
+      ],
+      "acceptanceIds": [
+        "P4-003:A1",
+        "P4-003:A2",
+        "P4-003:A3",
+        "P4-003:A4"
+      ],
+      "codePaths": [
+        "electron/services/mcp-api.ts",
+        "shared/mcp/secret-ref.ts",
+        "shared/mcp/tool-schema.ts",
+        "shared/mcp/runtime-projection.ts",
+        "electron/services/secrets/mcp-env-broker.ts",
+        "shared/types/mcp.ts",
+        "shared/host-api/contract.ts",
+        "tests/unit/mcp-p4-003-runtime-surface.test.ts",
+        "tests/unit/mcp-api.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/vitest.stdout.txt",
+          "sha256": "dc135e646acdc29fa31d5c37017ae3c4b42323f82872518f866029586cbdc774",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
+          "sha256": "8b96029aefe0713e1b66b44d87f317d010845f6de212674d7a6d856127cb4cec",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P4-003/evidence-index.json",
+          "sha256": "0d11e1eab3f806943680f683d92dd1cbfc2902ec920d43897d071a8c215b19e0",
+          "taskId": "P4-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-DATA-005",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "data-governance",
+      "owners": [
+        "data-governance",
+        "qa-governance",
+        "privacy-governance"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P3-004",
+        "P7-002",
+        "P7-003"
+      ],
+      "testIds": [
+        "T-DATA-005"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/session-cascade-delete-p3-004.test.ts",
+        "pnpm run test:e2e",
+        "security red-team suite",
+        "fault injection suite",
+        "privacy data-flow review",
+        "OS permission E2E",
+        "sensitive capture retention test"
+      ],
+      "acceptanceIds": [
+        "P3-004:A1",
+        "P3-004:A2",
+        "P3-004:A3",
+        "P7-002:A1",
+        "P7-002:A2",
+        "P7-002:A3",
+        "P7-003:A1",
+        "P7-003:A2",
+        "P7-003:A3"
+      ],
+      "codePaths": [
+        "electron/services/sessions-api.ts",
+        "openclaw_runtime/src/knowledge/sekb/session-cascade-delete.ts",
+        "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "openclaw_runtime/src/knowledge/sekb/index.ts",
+        "electron/services/session-cascade-delete.ts",
+        "tests/unit/session-cascade-delete-p3-004.test.ts"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-004/vitest-host.stdout.txt",
+          "sha256": "d4f15f259bdec14e112ccdb0f903640a283807cac4e6c9fe9c5b610c0aecbfee",
+          "taskId": "P3-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-004/acceptance-matrix.json",
+          "sha256": "feb98060e6f84896db62f04a2dca25beabec1d625b11999542b72d19da47a8a5",
+          "taskId": "P3-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P3-004/evidence-index.json",
+          "sha256": "1402ef6fd3be3fb529f15144043533d1969a44f088fbcef1d24be330dc3f6b53",
+          "taskId": "P3-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-REL-005",
+      "status": "Fixed",
+      "severity": "Medium",
+      "owner": "reliability",
+      "owners": [
+        "reliability"
+      ],
+      "reviewers": [
+        "security-lead"
+      ],
+      "taskIds": [
+        "P5-003"
+      ],
+      "testIds": [
+        "T-REL-005"
+      ],
+      "testCommands": [
+        "pnpm exec vitest run tests/unit/logger-p5-003.test.ts"
+      ],
+      "acceptanceIds": [
+        "P5-003:A1",
+        "P5-003:A2",
+        "P5-003:A3"
+      ],
+      "codePaths": [
+        "electron/utils/logger.ts",
+        "tests/unit/logger-p5-003.test.ts",
+        "plans/system-maturity/findings-registry.json"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/vitest.stdout.txt",
+          "sha256": "ad99c2a03fa17df5bdc5e55d298675b0b6e18d0a20de6ca1caa299620151b053",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/acceptance-matrix.json",
+          "sha256": "4c641b274707731eefe01386f20f5bad001c8b2d180c3da0a48a6cd0a617e310",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P5-003/evidence-index.json",
+          "sha256": "39a421b7b4b0f36b636fbb9fb27de09f2546edfcddfaaf5efad690bb7bf39cdf",
+          "taskId": "P5-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 60,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-09-16T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    },
+    {
+      "id": "F-SUPPLY-002",
+      "status": "Fixed",
+      "severity": "High",
+      "owner": "supplychain-release",
+      "owners": [
+        "supplychain-release"
+      ],
+      "reviewers": [
+        "security-lead",
+        "program-governance"
+      ],
+      "taskIds": [
+        "P6-003",
+        "P6-004"
+      ],
+      "testIds": [
+        "T-SUPPLY-002"
+      ],
+      "testCommands": [
+        "pnpm run release:supply-chain-policy:evidence:full",
+        "pnpm exec vitest run tests/unit/supply-chain-integrity-p6-003.test.ts",
+        "pnpm run release:supply-chain-policy",
+        "pnpm run release:supply-chain-policy:live",
+        "node scripts/validate-supply-chain-integrity.mjs --self-test-mismatch",
+        "pnpm harness validate --spec harness/specs/tasks/supply-chain-integrity-pinning.md --since 4e3c6eb58",
+        "workflow YAML parse",
+        "focused ESLint",
+        "node --check",
+        "pnpm test",
+        "pnpm run typecheck",
+        "pnpm run harness:ci",
+        "git diff --check",
+        "pnpm run release:trust-policy:evidence:full",
+        "pnpm exec vitest run tests/unit/release-artifact-integrity-p6-004.test.ts tests/unit/supply-chain-integrity-p6-003.test.ts",
+        "pnpm run release:trust-policy",
+        "actual Windows unpacked electron-builder package with local signAndEditExecutable=false validation override",
+        "node scripts/verify-packaged-electron-trust.mjs report and replay",
+        "pnpm harness validate --spec harness/specs/tasks/release-artifact-attestation-integrity.md --since 95e21e4eb"
+      ],
+      "acceptanceIds": [
+        "P6-003:A1",
+        "P6-003:A2",
+        "P6-003:A3",
+        "P6-004:A1",
+        "P6-004:A2",
+        "P6-004:A3"
+      ],
+      "codePaths": [
+        "scripts/download-bundled-uv.mjs",
+        "scripts/download-bundled-agent-browser.mjs",
+        ".github/workflows/release.yml",
+        "scripts/release-integrity-manifest.mjs",
+        "scripts/lib/verified-download.mjs",
+        "scripts/download-bundled-node.mjs",
+        "scripts/install-pinned-ossutil.mjs",
+        "scripts/validate-supply-chain-integrity.mjs",
+        "scripts/collect-p6-003-evidence.mjs",
+        "tests/unit/supply-chain-integrity-p6-003.test.ts",
+        "harness/specs/scenarios/windows-release-trust.md",
+        "harness/specs/rules/supply-chain-integrity-pinning.md",
+        "harness/specs/tasks/supply-chain-integrity-pinning.md",
+        "plans/system-maturity/findings-registry.json",
+        "scripts/generate-release-trust-metadata.mjs",
+        "scripts/validate-release-trust-metadata.mjs",
+        "scripts/verify-packaged-electron-trust.mjs",
+        "scripts/collect-p6-004-evidence.mjs",
+        "tests/unit/release-artifact-integrity-p6-004.test.ts",
+        "harness/specs/rules/release-artifact-attestation-integrity.md",
+        "harness/specs/tasks/release-artifact-attestation-integrity.md"
+      ],
+      "evidence": [
+        {
+          "path": "reports/CLAWX-UNIFIED-SYSTEM-HEALTH-AUDIT-2026-07-16.findings.json",
+          "sha256": "67daab8e5e298e220d53b4bea7d973d000ab1feed58edc7a6183a31611ee33b6",
+          "taskId": "P0-001",
+          "kind": "frozen-audit"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/acceptance-matrix.json",
+          "sha256": "2bf412174ac53e0576bfd64417fba0380f4cb4b69a1b6ee4ce2068f5d71f54eb",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/full-gate-assessment.json",
+          "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/vitest.stdout.txt",
+          "sha256": "a9e15c7003a5937f868e63679e2890a223abb4e3988a4d964fbeab6f84df2fd3",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/policy-validate.stdout.txt",
+          "sha256": "587e4191668fb8bbeb22b51b5912729af2a2ce2a9f30fc13e5ba9dd4d3393532",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/live-source-probe.stdout.txt",
+          "sha256": "416a5a36379d9a5f80fd3a8ff4ec83561b20cb4370f3540912c88e0b3b2f46ea",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/checksum-mismatch-deny.stderr.txt",
+          "sha256": "0adf19df8d47464d2df404b543afc607e5d47d69cfea578427aa159635a95f7d",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/harness-validate.stdout.txt",
+          "sha256": "2edb4b61a013ef0292a9d5106516c55cd3734b2b4f75e1be9901522d002ab870",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-003/workflow-yaml.stdout.txt",
+          "sha256": "bf7af0d727ed6a722dceb381fbaac81a326298722c51d6ab1115939c9388d1aa",
+          "taskId": "P6-003",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/acceptance-matrix.json",
+          "sha256": "cf1d7781439b551a72f7f5dd9858adf46768b2685fffec9d645db750461418fc",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/full-gate-assessment.json",
+          "sha256": "994e2f33f5c4aff4c2e28f5c84c44e5b4c666f231c8ed1020dff08723c76e8c3",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/vitest.stdout.txt",
+          "sha256": "c23d5d52f210db574bf636f614a6e53774bfaedab9d9de36081fbb8a468eff01",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/metadata-validate.stdout.txt",
+          "sha256": "2f6ebe366f3659117a231f0629f411291c9757a55a1aa3d0d3b7ccc78be4bedf",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/tamper-deny.stderr.txt",
+          "sha256": "42a96b0fa7e9de94ee7811080a120134233e0631a85d3de3520978d1556bcf03",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/win-electron-trust.json",
+          "sha256": "c34af1bb13bc0feaee31853d69fd2a715f966b33224044fa77258a7dc2669e1d",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt",
+          "sha256": "42ce317db2670f2e6f6063dab88d977e81050f3669a23e959d525a2dcc01f255",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
+          "sha256": "9bbcbf8094a18c4eb86b97db02ecb1eaeb5c48b5444b00d2dfd43092f9707fb5",
+          "taskId": "P6-004",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-001/full-validation.json",
+          "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f",
+          "taskId": "P7-001",
+          "kind": "global-validation"
+        }
+      ],
+      "reviewCycleDays": 30,
+      "latestSourceAt": "2026-07-18T03:43:40.558Z",
+      "latestEvidenceAt": "2026-07-18T04:14:13.306Z",
+      "nextReviewAt": "2026-08-17T04:14:13.306Z",
+      "freshness": "fresh",
+      "failures": []
+    }
+  ],
+  "fail": [],
+  "warn": []
+}

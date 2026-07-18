@@ -1,0 +1,86 @@
+Profiles:
+- fast
+- comms
+- e2e
+
+Scenario specs:
+- agent-dev-composable-scenarios: harness\specs\scenarios\agent-dev-composable-scenarios.md
+- context-family: harness\specs\scenarios\context-family.md
+- context-runtime-kit: harness\specs\scenarios\context-runtime-kit.md
+- gateway-backend-communication: harness\specs\scenarios\gateway-backend-communication.md
+- gateway-startup-diagnostics: harness\specs\scenarios\gateway-startup-diagnostics.md
+- plugin-lifecycle-management: harness\specs\scenarios\plugin-lifecycle-management.md
+- system-maturity-traceability: harness\specs\scenarios\system-maturity-traceability.md
+- windows-release-trust: harness\specs\scenarios\windows-release-trust.md
+- workspace-harness-bootstrap: harness\specs\scenarios\workspace-harness-bootstrap.md
+
+Rule specs:
+- active-config-guards: harness\specs\rules\active-config-guards.md
+- agency-role-memory-import-boundary: harness\specs\rules\agency-role-memory-import-boundary.md
+- agency-role-package-boundary: harness\specs\rules\agency-role-package-boundary.md
+- agency-role-promotion-boundary: harness\specs\rules\agency-role-promotion-boundary.md
+- agent-browser-multi-tab: harness\specs\rules\agent-browser-multi-tab.md
+- agent-browser-tool-interception: harness\specs\rules\agent-browser-tool-interception.md
+- agent-dev-conformance-evidence: harness\specs\rules\agent-dev-conformance-evidence.md
+- api-client-transport-policy: harness\specs\rules\api-client-transport-policy.md
+- backend-communication-boundary: harness\specs\rules\backend-communication-boundary.md
+- capability-owner-resolution: harness\specs\rules\capability-owner-resolution.md
+- channel-plugin-migration-guards: harness\specs\rules\channel-plugin-migration-guards.md
+- chat-loop-boundary: harness\specs\rules\chat-loop-boundary.md
+- clean-release-baseline-reproducibility: harness\specs\rules\clean-release-baseline-reproducibility.md
+- coding-runtime-workspace-dcs-producer-boundary: harness\specs\rules\coding-runtime-workspace-dcs-producer-boundary.md
+- comms-regression: harness\specs\rules\comms-regression.md
+- context-family-boundary: harness\specs\rules\context-family-boundary.md
+- context-runtime-kit-boundary: harness\specs\rules\context-runtime-kit-boundary.md
+- contract-first-boundary: harness\specs\rules\contract-first-boundary.md
+- dcs-stage2-handoff-boundary: harness\specs\rules\dcs-stage2-handoff-boundary.md
+- dcs-stage3-tool-registry-boundary: harness\specs\rules\dcs-stage3-tool-registry-boundary.md
+- dcs-stage4-knowledge-unification-boundary: harness\specs\rules\dcs-stage4-knowledge-unification-boundary.md
+- dcs-stage5-sekb-closure-boundary: harness\specs\rules\dcs-stage5-sekb-closure-boundary.md
+- docs-sync: harness\specs\rules\docs-sync.md
+- gateway-readiness-policy: harness\specs\rules\gateway-readiness-policy.md
+- host-api-fallback-policy: harness\specs\rules\host-api-fallback-policy.md
+- host-events-fallback-policy: harness\specs\rules\host-events-fallback-policy.md
+- i18n-locale-coverage: harness\specs\rules\i18n-locale-coverage.md
+- packaged-runtime-pruning-guards: harness\specs\rules\packaged-runtime-pruning-guards.md
+- reach-readers-credential-hygiene: harness\specs\rules\reach-readers-credential-hygiene.md
+- reach-readers-readonly-network-boundary: harness\specs\rules\reach-readers-readonly-network-boundary.md
+- reach-readers-upstream-integrity: harness\specs\rules\reach-readers-upstream-integrity.md
+- release-artifact-attestation-integrity: harness\specs\rules\release-artifact-attestation-integrity.md
+- renderer-loading-experience: harness\specs\rules\renderer-loading-experience.md
+- renderer-main-boundary: harness\specs\rules\renderer-main-boundary.md
+- runtime-local-ecosystem-boundary: harness\specs\rules\runtime-local-ecosystem-boundary.md
+- sekb-hermes-default-off-boundary: harness\specs\rules\sekb-hermes-default-off-boundary.md
+- sekb-hermes-promotion-boundary: harness\specs\rules\sekb-hermes-promotion-boundary.md
+- sekb-hermes-tier-d-boundary: harness\specs\rules\sekb-hermes-tier-d-boundary.md
+- sekb-hermes-write-path-boundary: harness\specs\rules\sekb-hermes-write-path-boundary.md
+- sekb-runtime-development-loop: harness\specs\rules\sekb-runtime-development-loop.md
+- supply-chain-integrity-pinning: harness\specs\rules\supply-chain-integrity-pinning.md
+- system-maturity-traceability: harness\specs\rules\system-maturity-traceability.md
+- windows-release-signing-policy: harness\specs\rules\windows-release-signing-policy.md
+- windows-update-feed-integrity: harness\specs\rules\windows-update-feed-integrity.md
+- workspace-harness-single-source: harness\specs\rules\workspace-harness-single-source.md
+
+Guide specs:
+- agent-harness-routing: harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration: harness\specs\guides\pretext-text-measurement-integration.md
+- sekb-long-task-stages: harness\specs\guides\sekb-long-task-stages.md
+- spec-update: harness\specs\guides\spec-update.md
+
+Layer specs:
+- electron-main: harness\specs\layers\electron-main.md
+- harness: harness\specs\layers\harness.md
+- openclaw-runtime: harness\specs\layers\openclaw-runtime.md
+- plugins: harness\specs\layers\plugins.md
+- renderer: harness\specs\layers\renderer.md
+Spec is valid: harness\specs\scenarios\gateway-backend-communication.md
+Spec is valid: harness\specs\tasks\fix-chat-history-gateway-timeout.example.md
+Harness report: C:\Users\27933\Desktop\clawx\ClawX-maturity-p7\artifacts\harness\latest.md
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p7[39m
+
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 12:03:16
+[2m   Duration [22m 1.89s[2m (transform 138ms, setup 260ms, import 94ms, tests 523ms, environment 1.41s)[22m

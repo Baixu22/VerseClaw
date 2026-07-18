@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-18T01:50:02.254Z",
+  "generatedAt": "2026-07-18T04:15:52.110Z",
   "entries": [
     {
       "task": "P0-001",
@@ -10,7 +10,7 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "3527fead603bf8f9cb12b1c731264d78e7fce2d0ec8fe0bb81021acfb0f9ab45"
+      "sha256": "b5c1b4c3656feca4171dd9e99cfb58ec88a3ffa5b85bf8b1aa86f623cbc70907"
     },
     {
       "task": "P0-001",
@@ -95,7 +95,7 @@
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "ae45d4e988a0d453cb382856a156294c9d6f1dfde46f8674691a43a33055c2e6"
+      "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822"
     },
     {
       "task": "P0-003",
@@ -135,7 +135,7 @@
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "ae45d4e988a0d453cb382856a156294c9d6f1dfde46f8674691a43a33055c2e6"
+      "sha256": "528454f0521d4a1936f3e3a1d94e14f34c7cb41009c4cff1053fe6cdd6dd0822"
     },
     {
       "task": "P0-004",
@@ -846,6 +846,61 @@
       "task": "P6-005",
       "path": "artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
       "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/full-validation.json",
+      "sha256": "7511ea308559f0791423b70e75b5d17804a97c78664636bb53fe3df2f50da56f"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/traceability-report.json",
+      "sha256": "7403addcb08c6185021b5b97943f6d7838bd936a2fe8ae6a0aae9e833f543d7d"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/acceptance-matrix.json",
+      "sha256": "b9b8a6ff2f19596fc75cc8a2d69b6a9b16fdf13c1ed545750bf60fb14bd59319"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
+      "sha256": "e28278ef3b5dccf671a335510dfd0b2377f217ad5104b1d2aea089f8fd57d75a"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
+      "sha256": "d4b5de6dccf0f80f98bcf28b49ccd90d291d470e4b17a38d29a5e18fea60c25d"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
+      "sha256": "949d2d19bb4678c8f5b7afccc88b11c1fb95b587fb9dcbb130ef4f1b6e64c988"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
+      "sha256": "54ba24405665f674415e4a8bb3eb9ff139abf18a9de9dc34e02cc1b91d4155d6"
+    },
+    {
+      "task": "P7-001",
+      "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
+      "sha256": "e0ee279d54c5f67a3e169769bbd3eb244698a9d26ee83737368758e2d3539fb8"
+    },
+    {
+      "task": "P7-001",
+      "path": "scripts/validate-system-maturity-traceability.mjs",
+      "sha256": "624c65a7b6638bfc6fa8edaedb7ba9d71f16d65fce1c62f0dbbf45e788050968"
+    },
+    {
+      "task": "P7-001",
+      "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
+      "sha256": "dbdc273027a26b5371bbc9ad364cb194f313b31dc4047b2bd398aac34642fe7e"
+    },
+    {
+      "task": "P7-001",
+      "path": "harness/specs/tasks/system-maturity-traceability.md",
+      "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0"
     }
   ]
 }
