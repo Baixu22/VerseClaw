@@ -10,6 +10,7 @@ import {
   resolveReleaseIdentity,
 } from '../../scripts/release-baseline-manifest.mjs';
 import {
+  canonicalReleaseConfigText,
   validateReleaseBaseline,
   validateReleaseWorkflowBaselinePolicy,
 } from '../../scripts/validate-release-baseline.mjs';
@@ -63,7 +64,7 @@ async function evidenceFixture(base: Awaited<ReturnType<typeof fixture>>) {
       schemaVersion: 1,
       ...base,
       manifestSha256: sha256(manifestText),
-      gatesConfigSha256: sha256(gatesText),
+      gatesConfigSha256: sha256(canonicalReleaseConfigText(gatesText)),
       gates: [{
         id: 'full', command: 'pnpm test', exitCode: 0,
         stdoutPath: 'gates/full.stdout.txt', stdoutSha256: sha256(stdout),
@@ -110,6 +111,9 @@ describe('P6-005 clean release baseline', () => {
   it('A2 denies missing, tampered, or nonzero full-gate evidence', async () => {
     const clean = await fixture();
     const evidence = await evidenceFixture(clean);
+    expect(() => validateReleaseBaseline({ ...clean, ...evidence, evidenceOnly: true })).not.toThrow();
+    const gatesText = await readFile(evidence.gatesPath, 'utf8');
+    await writeFile(evidence.gatesPath, gatesText.replace(/\n/g, '\r\n'));
     expect(() => validateReleaseBaseline({ ...clean, ...evidence, evidenceOnly: true })).not.toThrow();
     const doc = JSON.parse(await readFile(evidence.evidencePath, 'utf8'));
     doc.gates[0].exitCode = 1;
