@@ -1,14 +1,14 @@
 {
   "wave": "orchestration-gap-closure",
-  "waveStatus": "in_progress",
+  "waveStatus": "done",
   "statusPolicy": "gate-v2",
   "tasks": {
     "ORCH-001": "done",
-    "ORCH-002": "todo",
+    "ORCH-002": "done",
     "ORCH-003": "done",
     "ORCH-004": "done"
   },
-  "allTasksDone": false,
+  "allTasksDone": true,
   "updatedBy": "codex",
   "updatedAt": "2026-07-19"
 }

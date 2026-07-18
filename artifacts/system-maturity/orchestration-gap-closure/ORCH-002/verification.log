@@ -1,0 +1,37 @@
+ORCH-002 final verification
+validatedAt=2026-07-19T02:42:55.3330828+08:00
+implementationCommit=e80bb3da5939cb57ee70c68be15bedfd28510112
+
+PASS exit=0 pnpm exec vitest run tests/unit/handoff-artifacts.test.ts tests/unit/orchestration-runtime-blackboard.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-protocol-v3.test.ts tests/unit/runbook-task-graph.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/integration/loop-stability-check.test.ts --maxWorkers=1
+RESULT 7 files passed; 59 tests passed
+
+PASS exit=0 pnpm exec vitest run tests/unit/orchestration-blackboard.test.ts tests/unit/orchestration-blackboard-verifier.test.ts tests/unit/orchestration-blackboard-trace.test.ts tests/unit/complexity-gate.test.ts tests/unit/runbook-template.test.ts tests/unit/orchestration-resource-scheduler.test.ts tests/unit/orchestration-gates.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/orchestration-task-graph.test.ts tests/integration/p1-orchestration-boundary.integration.test.ts --maxWorkers=1
+RESULT 10 files passed; 109 tests passed
+
+PASS exit=0 pnpm run typecheck
+RESULT node and web TypeScript projects passed
+
+PASS exit=0 pnpm --dir openclaw_runtime exec oxlint --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings src/agents/agent-steering-queue.ts src/agents/handoff-artifacts.ts src/agents/orchestration-protocol.ts src/agents/orchestration-result-bundle.ts src/agents/orchestration-runtime-blackboard.ts src/agents/orchestrator-run-observed.ts src/agents/orchestrator.ts src/agents/runbook-task-graph.ts src/agents/subagent-registry.types.ts src/agents/tools/team-orchestrate-tool.ts src/config/schema.help.ts src/config/types.openclaw.ts src/gateway/server-methods/role-orchestration-methods.ts
+PASS exit=0 pnpm exec eslint tests/integration/loop-stability-check.test.ts tests/unit/agent-steering-team-bundle.test.ts tests/unit/handoff-artifacts.test.ts tests/unit/orchestration-blackboard-trace.test.ts tests/unit/orchestration-blackboard-verifier.test.ts tests/unit/orchestration-protocol-v3.test.ts tests/unit/orchestration-result-bundle.test.ts tests/unit/orchestration-runtime-blackboard.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/runbook-task-graph.test.ts
+PASS exit=0 pnpm run build:vite
+RESULT renderer, Electron main, and preload builds passed; existing chunk-size/circular-chunk warnings remained non-fatal
+PASS exit=0 pnpm run comms:replay
+PASS exit=0 pnpm run comms:compare
+PASS exit=0 pnpm harness validate --spec harness/specs/tasks/role-first-p3-typed-blackboard.md --since e80bb3da5^
+PASS exit=0 pnpm harness run --spec harness/specs/tasks/role-first-p3-typed-blackboard.md --since e80bb3da5^ --dry-run
+PASS exit=0 node scripts/validate-system-maturity-plan.mjs
+PASS exit=0 node scripts/validate-orchestration-gap-status.mjs before status transition
+PASS exit=0 node scripts/validate-orchestration-gap-status.mjs after ORCH-002 status=done and allTasksDone=true
+PASS exit=0 git merge-base --is-ancestor e80bb3da5 HEAD
+
+Manual review:
+- Read the full real-output capture, observed-wave execution, completion delivery, result bundle, blackboard, graph construction, Gateway/tool projection, config, and test paths.
+- Confirmed pilot-off plans do not generate handoff edges, capture output, or emit handoff artifacts.
+- Confirmed capture uses run-id registry reads only and never falls back to latest session text.
+- Confirmed prompt projection is bounded, redacted, hashed, provenance-bound, and wrapped as untrusted data.
+- Confirmed no renderer interaction changed, no direct worker chat was added, and no handoff output is written to long-term memory.
+
+Resolved/known baseline attempts:
+- The first scoped harness validation identified orchestration-runtime-blackboard.ts as missing from touchedAreas; the task spec was corrected and validation passed.
+- OpenClaw tsgo:core remains red on broad pre-existing integration-worktree errors (missing test helpers, rootDir crossings, CVK imports, and unrelated existing type errors). No ORCH-002 touched-file error remained; the repository's established touched-file type-aware oxlint gate and root typecheck both passed.
+- Unconfigured oxfmt --check reported every selected OpenClaw file because this checkout has no oxfmt config. No formatter rewrite was run, per the handoff warning against unconfigured whole-file reformatting; git diff --check and both linters passed.
