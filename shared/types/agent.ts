@@ -1,4 +1,4 @@
-export type AgentReasoningEffort = 'auto' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
+export type AgentReasoningEffort = 'auto' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
 export const AGENT_AVATAR_STYLES = [
   'lorelei-neutral',

@@ -32,11 +32,12 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { CommitSummary, type CommitOperationState } from '@/components/ai-elements/commit';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
-import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, pathEquals } from '@/lib/git-ui';
+import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, formatRelativeTime, pathEquals } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type {
   GitBranch as GitBranchInfo,
   GitChangeBucket,
+  GitCommitInfo,
   GitDiffMode,
   GitDiffResult,
   GitFileChange,
@@ -115,7 +116,7 @@ export function WorkspaceGitPanel({
   onSelectedPathChange,
   onDiffModeChange,
 }: WorkspaceGitPanelProps) {
-  const { t } = useTranslation('chat');
+  const { t, i18n } = useTranslation('chat');
   const [status, setStatus] = useState<GitRepositoryStatus | null>(null);
   const [branches, setBranches] = useState<GitBranchInfo[]>([]);
   const [worktrees, setWorktrees] = useState<GitWorktree[]>([]);
@@ -148,6 +149,11 @@ export function WorkspaceGitPanel({
   const [prHead, setPrHead] = useState('');
   const [prDraft, setPrDraft] = useState(false);
   const [revertPath, setRevertPath] = useState<string | null>(null);
+  const [selectedLogBranch, setSelectedLogBranch] = useState<string | null>(null);
+  const [branchCommits, setBranchCommits] = useState<GitCommitInfo[]>([]);
+  const [commitsLoading, setCommitsLoading] = useState(false);
+  const [commitsError, setCommitsError] = useState<string | null>(null);
+  const [logMeta, setLogMeta] = useState<{ ref: string; ahead?: number; behind?: number } | null>(null);
   const createWorkspace = useWorkspacesStore((state) => state.createWorkspace);
   const switchWorkspace = useWorkspacesStore((state) => state.switchWorkspace);
 
@@ -243,6 +249,40 @@ export function WorkspaceGitPanel({
       disposed = true;
     };
   }, [effectiveDiffMode, effectiveSelectedPath, status?.isRepository]);
+
+  const currentBranchName = status?.detached ? null : status?.branch ?? null;
+  const effectiveLogRef = selectedLogBranch ?? currentBranchName ?? 'HEAD';
+  const isCurrentLogRef = effectiveLogRef === 'HEAD' || effectiveLogRef === currentBranchName;
+
+  useEffect(() => {
+    if (!status?.isRepository) {
+      setBranchCommits([]);
+      setLogMeta(null);
+      setCommitsError(null);
+      return;
+    }
+    let disposed = false;
+    setCommitsLoading(true);
+    hostApi.git.log({ ref: effectiveLogRef, limit: 20 })
+      .then((result) => {
+        if (disposed) return;
+        setBranchCommits(result.commits ?? []);
+        setLogMeta({ ref: result.ref ?? effectiveLogRef, ahead: result.ahead, behind: result.behind });
+        setCommitsError(result.success ? null : result.error ?? null);
+      })
+      .catch((err) => {
+        if (disposed) return;
+        setBranchCommits([]);
+        setLogMeta(null);
+        setCommitsError(err instanceof Error ? err.message : String(err));
+      })
+      .finally(() => {
+        if (!disposed) setCommitsLoading(false);
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [effectiveLogRef, status]);
 
   useEffect(() => {
     if (!prBase && githubRepo?.defaultBranch) {
@@ -742,60 +782,156 @@ export function WorkspaceGitPanel({
       ) : null}
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden p-2 min-[980px]:grid-cols-[minmax(220px,0.38fr)_minmax(360px,0.62fr)]">
-        <section className="min-h-0 overflow-hidden rounded-md border border-black/10 bg-surface-modal dark:border-white/10">
-          <div className="flex items-center justify-between border-b border-black/5 px-3 py-1.5 dark:border-white/10">
-            <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('artifactPanel.tabs.changes')}</span>
-            <Badge variant="outline" className="px-1.5 py-0 text-2xs">{totalChanges}</Badge>
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-md border border-black/[0.07] bg-surface-modal dark:border-white/[0.09]">
+          {/* Status — working tree changes */}
+          <div className="flex min-h-0 flex-[1.15] flex-col">
+            <div className="flex shrink-0 items-center justify-between border-b border-black/[0.07] px-3 py-1.5 dark:border-white/[0.09]">
+              <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('artifactPanel.tabs.changes')}</span>
+              <Badge variant="outline" className="px-1.5 py-0 text-2xs">{totalChanges}</Badge>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              {loading && changes.length === 0 ? (
+                <div className="flex h-24 items-center justify-center text-xs text-muted-foreground">
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  {t('workspace.git.loading')}
+                </div>
+              ) : changes.length === 0 ? (
+                <div className="flex h-24 items-center justify-center px-4 text-center text-xs text-muted-foreground">
+                  <CheckCircle2 className="mr-2 h-3.5 w-3.5 text-green-700 dark:text-green-400" />
+                  {t('workspace.git.clean')}
+                </div>
+              ) : (
+                <div className="divide-y divide-black/[0.07] dark:divide-white/[0.09]">
+                  {groupedChanges.map((group) => (
+                    <div key={group.bucket}>
+                      <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1 text-2xs font-medium uppercase tracking-wide text-muted-foreground/70 backdrop-blur">
+                        {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
+                      </div>
+                      <div className="space-y-0.5 px-1.5 pb-1.5">
+                        {group.changes.length === 0 ? (
+                          <p className="px-2 py-1.5 text-2xs text-muted-foreground">
+                            {t('workspace.git.groups.empty')}
+                          </p>
+                        ) : group.changes.map((change) => {
+                          const badge = changeBadge(change);
+                          const changeStats = formatChangeStats(change);
+                          return (
+                            <button
+                              key={`${change.bucket}:${change.path}`}
+                              type="button"
+                              className={cn(
+                                'flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                                effectiveSelectedPath === change.path && 'bg-black/5 dark:bg-white/10',
+                              )}
+                              onClick={() => selectChange(change)}
+                            >
+                              <span className="min-w-0 flex-1 truncate font-mono text-foreground">{change.path}</span>
+                              {changeStats ? (
+                                <span className="shrink-0 font-mono text-2xs text-muted-foreground">{changeStats}</span>
+                              ) : null}
+                              <Badge variant={badge.variant} className="shrink-0 px-1.5 py-0 text-2xs">{badge.label}</Badge>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="h-full min-h-0 overflow-y-auto pb-10">
-            {loading && changes.length === 0 ? (
-              <div className="flex h-36 items-center justify-center text-xs text-muted-foreground">
-                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                {t('workspace.git.loading')}
-              </div>
-            ) : changes.length === 0 ? (
-              <div className="flex h-36 items-center justify-center px-4 text-center text-xs text-muted-foreground">
-                <CheckCircle2 className="mr-2 h-3.5 w-3.5 text-green-700 dark:text-green-400" />
-                {t('workspace.git.clean')}
-              </div>
-            ) : (
-              <div className="divide-y divide-black/5 dark:divide-white/10">
-                {groupedChanges.map((group) => (
-                  <div key={group.bucket}>
-                    <div className="sticky top-0 z-10 bg-surface-modal/95 px-3 py-1 text-2xs font-medium uppercase tracking-wide text-muted-foreground/70 backdrop-blur">
-                      {t(`workspace.git.groups.${group.bucket}`, { count: group.changes.length })}
-                    </div>
-                    <div className="space-y-0.5 px-1.5 pb-1.5">
-                      {group.changes.length === 0 ? (
-                        <p className="px-2 py-1.5 text-2xs text-muted-foreground">
-                          {t('workspace.git.groups.empty')}
-                        </p>
-                      ) : group.changes.map((change) => {
-                        const badge = changeBadge(change);
-                        const changeStats = formatChangeStats(change);
-                        return (
-                          <button
-                            key={`${change.bucket}:${change.path}`}
-                            type="button"
-                            className={cn(
-                              'flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-black/5 dark:hover:bg-white/10',
-                              effectiveSelectedPath === change.path && 'bg-black/5 dark:bg-white/10',
-                            )}
-                            onClick={() => selectChange(change)}
-                          >
-                            <span className="min-w-0 flex-1 truncate font-mono text-foreground">{change.path}</span>
-                            {changeStats ? (
-                              <span className="shrink-0 font-mono text-2xs text-muted-foreground">{changeStats}</span>
-                            ) : null}
-                            <Badge variant={badge.variant} className="shrink-0 px-1.5 py-0 text-2xs">{badge.label}</Badge>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+
+          {/* Branches — click a branch to inspect its history */}
+          <div className="flex min-h-0 flex-none flex-col border-t border-black/[0.07] dark:border-white/[0.09]" data-testid="workspace-git-branches">
+            <div className="flex shrink-0 items-center justify-between px-3 py-1.5">
+              <span className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">{t('workspace.git.branches.title', 'Branches')}</span>
+              <Badge variant="outline" className="px-1.5 py-0 text-2xs">{branches.length}</Badge>
+            </div>
+            <div className="max-h-[128px] min-h-0 overflow-y-auto px-1.5 pb-1.5">
+              {branches.length === 0 ? (
+                <p className="px-2 py-1 text-2xs text-muted-foreground">{t('workspace.git.branches.empty', 'No local branches')}</p>
+              ) : branches.map((branch) => {
+                const isSelected = branch.name === effectiveLogRef;
+                return (
+                  <button
+                    key={branch.name}
+                    type="button"
+                    data-testid="workspace-git-branch-row"
+                    className={cn(
+                      'flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                      isSelected && 'bg-black/5 dark:bg-white/10',
+                    )}
+                    onClick={() => setSelectedLogBranch(branch.name)}
+                    title={branch.upstream ? `${branch.name} → ${branch.upstream}` : branch.name}
+                  >
+                    <span
+                      className={cn(
+                        'h-1.5 w-1.5 shrink-0 rounded-full',
+                        branch.current
+                          ? 'bg-blue-500 dark:bg-blue-400'
+                          : 'bg-transparent ring-1 ring-inset ring-black/20 dark:ring-white/25',
+                      )}
+                      aria-hidden
+                    />
+                    <span className={cn('min-w-0 flex-1 truncate text-[13px] leading-5 text-foreground', branch.current && 'font-medium')}>
+                      {branch.name}
+                    </span>
+                    {branch.commit ? (
+                      <span className="shrink-0 rounded border border-black/[0.07] bg-black/[0.03] px-1 font-mono text-2xs leading-4 text-muted-foreground dark:border-white/[0.09] dark:bg-white/[0.06]">
+                        {compactCommit(branch.commit)}
+                      </span>
+                    ) : null}
+                    {branch.updatedAt ? (
+                      <span className="shrink-0 text-2xs tabular-nums text-muted-foreground">{formatRelativeTime(branch.updatedAt, i18n.language)}</span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Commits — history of the selected branch */}
+          <div className="flex min-h-0 flex-1 flex-col border-t border-black/[0.07] dark:border-white/[0.09]" data-testid="workspace-git-commits">
+            <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-1.5">
+              <span className="min-w-0 truncate text-2xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t('workspace.git.commits.title', 'Commits')}
+                {effectiveLogRef !== 'HEAD' ? <span className="ml-1.5 font-mono normal-case tracking-normal text-muted-foreground/80">{effectiveLogRef}</span> : null}
+              </span>
+              {logMeta && logMeta.ref !== 'HEAD' && !isCurrentLogRef && (typeof logMeta.ahead === 'number' || typeof logMeta.behind === 'number') ? (
+                <span className="shrink-0 text-2xs tabular-nums text-muted-foreground" title={t('workspace.git.commits.aheadBehind', 'Ahead / behind current branch')}>
+                  ↑{logMeta.ahead ?? 0} ↓{logMeta.behind ?? 0}
+                </span>
+              ) : null}
+            </div>
+            <div className="min-h-[96px] flex-1 overflow-y-auto px-1.5 pb-2">
+              {commitsLoading && branchCommits.length === 0 ? (
+                <div className="flex h-20 items-center justify-center text-xs text-muted-foreground">
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  {t('workspace.git.loading')}
+                </div>
+              ) : commitsError ? (
+                <p className="px-2 py-1.5 text-2xs text-muted-foreground">{commitsError}</p>
+              ) : branchCommits.length === 0 ? (
+                <p className="px-2 py-1.5 text-2xs text-muted-foreground">{t('workspace.git.commits.empty', 'No commits')}</p>
+              ) : branchCommits.map((commit) => (
+                <div
+                  key={commit.hash}
+                  data-testid="workspace-git-commit-row"
+                  className="flex items-center gap-2 rounded px-2 py-1 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                >
+                  <span className="shrink-0 rounded border border-black/[0.07] bg-black/[0.03] px-1 font-mono text-2xs leading-4 text-muted-foreground dark:border-white/[0.09] dark:bg-white/[0.06]">
+                    {commit.shortHash}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[13px] leading-5 text-foreground" title={commit.subject}>
+                    {commit.subject}
+                  </span>
+                  {commit.author ? (
+                    <span className="max-w-[88px] shrink-0 truncate text-2xs text-muted-foreground">{commit.author}</span>
+                  ) : null}
+                  <span className="shrink-0 text-2xs tabular-nums text-muted-foreground">{formatRelativeTime(commit.date, i18n.language)}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

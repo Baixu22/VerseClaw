@@ -32,3 +32,26 @@ export function pathEquals(left: string | null | undefined, right: string | null
 export function compactCommit(value: string | undefined): string {
   return value ? value.slice(0, 7) : 'HEAD';
 }
+
+const RELATIVE_TIME_STEPS: Array<{ limit: number; divisor: number; unit: Intl.RelativeTimeFormatUnit }> = [
+  { limit: 60_000, divisor: 1_000, unit: 'second' },
+  { limit: 3_600_000, divisor: 60_000, unit: 'minute' },
+  { limit: 86_400_000, divisor: 3_600_000, unit: 'hour' },
+  { limit: 604_800_000, divisor: 86_400_000, unit: 'day' },
+  { limit: 2_629_800_000, divisor: 604_800_000, unit: 'week' },
+  { limit: 31_557_600_000, divisor: 2_629_800_000, unit: 'month' },
+  { limit: Number.POSITIVE_INFINITY, divisor: 31_557_600_000, unit: 'year' },
+];
+
+export function formatRelativeTime(timestamp: number | undefined, locale?: string): string {
+  if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) return '';
+  const delta = timestamp - Date.now();
+  const magnitude = Math.abs(delta);
+  const step = RELATIVE_TIME_STEPS.find((entry) => magnitude < entry.limit) ?? RELATIVE_TIME_STEPS[RELATIVE_TIME_STEPS.length - 1];
+  const value = Math.round(delta / step.divisor);
+  try {
+    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'narrow' }).format(value, step.unit);
+  } catch {
+    return new Date(timestamp).toLocaleDateString();
+  }
+}

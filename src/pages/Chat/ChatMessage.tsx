@@ -810,17 +810,17 @@ function ToolStatusBar({
           <div
             key={tool.toolCallId || tool.id || tool.name}
             className={cn(
-              'flex items-center gap-2 rounded-lg border px-3 py-2 text-xs transition-colors',
-              isRunning && 'border-primary/30 bg-primary/5 text-foreground',
-              !isRunning && !isError && 'border-border/50 bg-surface-input/20 text-muted-foreground',
-              isError && 'border-destructive/30 bg-destructive/5 text-destructive',
+              'flex items-center gap-2 rounded-lg border px-3 py-2 text-[13px] shadow-sm shadow-black/[0.03] transition-colors dark:shadow-black/20',
+              isRunning && 'border-primary/25 bg-primary/[0.04] text-foreground',
+              !isRunning && !isError && 'border-black/[0.07] bg-surface-input/25 text-muted-foreground dark:border-white/[0.09]',
+              isError && 'border-destructive/25 bg-destructive/[0.04] text-destructive',
             )}
           >
             {isRunning && <DotMatrix state="syncing" label={tool.name} className="size-3.5 text-primary" />}
             {!isRunning && !isError && <DotMatrix state="success" label={tool.name} className="size-3.5" />}
             {isError && <DotMatrix state="error" label={tool.name} className="size-3.5" />}
             <Wrench className="h-3 w-3 shrink-0 opacity-60" />
-            <span className="font-mono text-xs font-medium">{tool.name}</span>
+            <span className="font-mono text-[13px] font-medium">{tool.name}</span>
             {duration && <span className="text-tiny opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
             {tool.summary && (
               <span className="truncate text-tiny opacity-70">{tool.summary}</span>
@@ -1096,7 +1096,7 @@ function UserMessageEditor({
 
   return (
     <form
-      className="w-[min(72vw,48rem)] max-w-full rounded-2xl border border-black/10 bg-surface-input px-3 py-2.5 transition-colors duration-150 focus-within:border-black/20 dark:border-white/10 dark:focus-within:border-white/20"
+      className="w-[min(72vw,48rem)] max-w-full rounded-2xl border border-black/[0.07] bg-surface-input px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_2px_6px_rgba(0,0,0,0.03)] transition-colors duration-150 focus-within:border-black/20 dark:border-white/[0.09] dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:focus-within:border-white/20"
       data-testid="chat-user-message-editor"
       onSubmit={(event) => {
         event.preventDefault();
@@ -1144,8 +1144,11 @@ function UserMessageBubble({
   text: string;
 }) {
   return (
-    <div className="relative rounded-2xl bg-surface-input px-3.5 py-2.5 text-foreground transition-colors duration-150" data-testid="chat-user-message-bubble">
-      <p className="whitespace-pre-wrap break-words text-sm">{text}</p>
+    <div
+      className="relative rounded-2xl border border-black/[0.07] bg-gradient-to-b from-surface-input to-surface-input/80 px-4 py-2.5 text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.04),0_2px_6px_rgba(0,0,0,0.03)] transition-colors duration-150 dark:border-white/[0.09] dark:from-surface-input dark:to-surface-input/90 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
+      data-testid="chat-user-message-bubble"
+    >
+      <p className="whitespace-pre-wrap break-words text-sm leading-[1.6]">{text}</p>
     </div>
   );
 }
@@ -1165,7 +1168,7 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
 
   return (
     <div
-      className="mt-4 flex items-center justify-between gap-3 rounded-t-lg border border-black/5 bg-black/[0.04] px-3 py-2 text-xs text-muted-foreground dark:border-white/10 dark:bg-white/[0.06]"
+      className="mt-4 flex items-center justify-between gap-3 rounded-t-lg border border-b-0 border-black/[0.07] bg-black/[0.035] px-3 py-1.5 text-[11px] text-muted-foreground shadow-[inset_0_-1px_0_rgba(0,0,0,0.03)] dark:border-white/[0.09] dark:bg-white/[0.05] dark:shadow-[inset_0_-1px_0_rgba(255,255,255,0.04)]"
       data-testid="assistant-code-header"
     >
       <span className="min-w-0 truncate font-mono uppercase tracking-wide">{label}</span>
@@ -1194,7 +1197,7 @@ function AssistantMarkdown({
     <>
       <TextMessagePartProvider text={text} isRunning={isStreaming}>
         <MarkdownTextPrimitive
-          className="prose prose-sm dark:prose-invert w-full max-w-none break-words text-foreground"
+          className="prose prose-sm dark:prose-invert w-full max-w-none break-words text-foreground prose-p:leading-[1.65] prose-li:leading-[1.6] prose-p:my-2.5 prose-ul:my-2.5 prose-ol:my-2.5 prose-li:my-1"
           smooth={false}
           defer={isStreaming}
           preprocess={normalizeLatexDelimiters}
@@ -1212,13 +1215,13 @@ function AssistantMarkdown({
               const isInline = !match && !className;
               if (isInline) {
                 return (
-                  <code className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-sm font-mono break-words break-all" {...props}>
+                  <code className="rounded-md border border-black/[0.07] bg-black/[0.04] px-[0.4em] py-[0.15em] font-mono text-[0.875em] break-words break-all dark:border-white/[0.09] dark:bg-white/[0.06]" {...props}>
                     {children}
                   </code>
                 );
               }
               return (
-                <code className={cn('text-sm font-mono', className)} {...props}>
+                <code className={cn('text-[13px] leading-relaxed font-mono', className)} {...props}>
                   {children}
                 </code>
               );
@@ -1233,7 +1236,7 @@ function AssistantMarkdown({
                     overflowWrap: 'break-word',
                   }}
                   className={cn(
-                    'rounded-b-lg rounded-t-none border border-t-0 border-black/5 bg-black/5 p-4 overflow-x-auto whitespace-pre-wrap break-words dark:border-white/10 dark:bg-white/5',
+                    'rounded-b-lg rounded-t-none border border-t-0 border-black/[0.07] bg-black/[0.025] p-4 overflow-x-auto whitespace-pre-wrap break-words shadow-sm shadow-black/[0.03] dark:border-white/[0.09] dark:bg-white/[0.035] dark:shadow-black/20',
                     className,
                   )}
                 >
@@ -1249,18 +1252,18 @@ function AssistantMarkdown({
             },
             CodeHeader: MarkdownCodeHeader,
             h1({ children, ...props }) {
-              return <h1 className="mb-3 mt-4 font-serif text-2xl font-normal tracking-tight text-foreground first:mt-0" {...props}>{children}</h1>;
+              return <h1 className="mb-3 mt-5 font-serif text-2xl font-normal leading-snug tracking-[-0.015em] text-foreground first:mt-0" {...props}>{children}</h1>;
             },
             h2({ children, ...props }) {
-              return <h2 className="mb-2.5 mt-4 font-serif text-xl font-normal tracking-tight text-foreground first:mt-0" {...props}>{children}</h2>;
+              return <h2 className="mb-2.5 mt-5 font-serif text-xl font-normal leading-snug tracking-[-0.01em] text-foreground first:mt-0" {...props}>{children}</h2>;
             },
             h3({ children, ...props }) {
-              return <h3 className="mb-2 mt-3 text-base font-semibold text-foreground first:mt-0" {...props}>{children}</h3>;
+              return <h3 className="mb-2 mt-4 text-base font-semibold leading-snug tracking-[-0.01em] text-foreground first:mt-0" {...props}>{children}</h3>;
             },
             blockquote({ children, ...props }) {
               return (
                 <blockquote
-                  className="my-3 border-l-2 border-primary/40 bg-black/[0.025] py-2 pl-4 pr-3 text-muted-foreground dark:bg-white/[0.035]"
+                  className="my-3 rounded-r-md border-l-2 border-primary/50 bg-black/[0.02] py-1.5 pl-4 pr-3 not-italic text-muted-foreground dark:bg-white/[0.03]"
                   {...props}
                 >
                   {children}
@@ -1269,7 +1272,7 @@ function AssistantMarkdown({
             },
             table({ children, ...props }) {
               return (
-                <div className="my-4 max-w-full overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+                <div className="my-4 max-w-full overflow-x-auto rounded-lg border border-black/[0.07] shadow-sm shadow-black/[0.03] dark:border-white/[0.09] dark:shadow-black/20">
                   <table className="my-0 w-full min-w-max border-collapse text-sm" {...props}>
                     {children}
                   </table>
@@ -1278,20 +1281,20 @@ function AssistantMarkdown({
             },
             th({ children, ...props }) {
               return (
-                <th className="border-b border-black/10 bg-black/[0.035] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/10 dark:bg-white/[0.05]" {...props}>
+                <th className="border-b border-black/[0.07] bg-black/[0.025] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/[0.09] dark:bg-white/[0.04]" {...props}>
                   {children}
                 </th>
               );
             },
             td({ children, ...props }) {
               return (
-                <td className="border-t border-black/5 px-3 py-2 align-top text-foreground dark:border-white/10" {...props}>
+                <td className="border-t border-black/[0.05] px-3 py-2 align-top text-foreground dark:border-white/[0.07]" {...props}>
                   {children}
                 </td>
               );
             },
             hr(props) {
-              return <hr className="my-5 border-black/10 dark:border-white/10" {...props} />;
+              return <hr className="my-6 border-black/[0.07] dark:border-white/[0.09]" {...props} />;
             },
             input({ type, checked, ...props }) {
               if (type !== 'checkbox') return <input type={type} checked={checked} {...props} />;

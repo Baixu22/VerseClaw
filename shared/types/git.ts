@@ -66,6 +66,15 @@ export type GitBranch = {
   updatedAt?: number;
 };
 
+export type GitCommitInfo = {
+  hash: string;
+  shortHash: string;
+  subject: string;
+  author?: string;
+  /** Committer date in epoch milliseconds. */
+  date?: number;
+};
+
 export type GitWorktree = {
   path: string;
   branch?: string;
