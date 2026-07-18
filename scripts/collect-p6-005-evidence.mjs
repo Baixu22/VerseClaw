@@ -2,7 +2,6 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
-import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   assertCleanReleaseTree,
@@ -13,6 +12,7 @@ import {
   canonicalReleaseConfigText,
   validateReleaseBaseline,
 } from './validate-release-baseline.mjs';
+import { runReleaseGateCommand } from './lib/run-release-gate-command.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = resolve(readArg('--out') || join(root, 'artifacts/system-maturity/P6-005'));
@@ -52,11 +52,9 @@ const required = JSON.parse(gatesText).loops.release.commands;
 const gateRuns = [];
 for (const gate of required) {
   console.log(`[P6-005 evidence] RUN ${gate.id}: ${gate.run}`);
-  const result = spawnSync(gate.run, {
+  const result = runReleaseGateCommand(gate.run, {
     cwd: root,
     env: childEnv,
-    encoding: 'utf8',
-    shell: true,
     timeout: 60 * 60 * 1000,
     maxBuffer: 256 * 1024 * 1024,
   });
