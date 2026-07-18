@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "identity": {
+    "version": "0.4.9-alpha.0",
+    "ref": "refs/heads/codex/maturity-p4",
+    "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
+    "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5"
+  },
+  "acceptance": [
+    {
+      "id": "A1",
+      "title": "clean tree and ref/commit binding are enforced",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "title": "all required full release gates have zero-exit hash-addressed evidence",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "title": "release source manifest regenerates byte-for-byte",
+      "status": "passed"
+    }
+  ],
+  "validation": {
+    "version": "0.4.9-alpha.0",
+    "ref": "refs/heads/codex/maturity-p4",
+    "commit": "df7c2f7a602c34d487caa10e1eead2529ce95be4",
+    "tree": "aaf4a2b9272f7664043426155266afa5fd2b22a5",
+    "manifestSha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
+    "gateCount": 12,
+    "workflow": {
+      "baselineJob": true,
+      "packagingDependency": true,
+      "evidenceTransfer": true
+    }
+  }
+}

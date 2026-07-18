@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-18T01:26:00.386Z",
+  "checkedAt": "2026-07-18T01:50:02.254Z",
   "ok": true,
-  "recomputedCount": 158,
+  "recomputedCount": 169,
   "recomputed": [
     {
       "task": "P0-001",
@@ -13,7 +13,7 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "f909503bb82708ceee1c45e8916b9245f9f435af9dda7ea784bd9fcf87ac4266"
+      "sha256": "3527fead603bf8f9cb12b1c731264d78e7fce2d0ec8fe0bb81021acfb0f9ab45"
     },
     {
       "task": "P0-001",
@@ -794,6 +794,61 @@
       "task": "P6-004",
       "path": "artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
       "sha256": "9bbcbf8094a18c4eb86b97db02ecb1eaeb5c48b5444b00d2dfd43092f9707fb5"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/acceptance-matrix.json",
+      "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/release-gate-evidence.json",
+      "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/release-source-manifest.json",
+      "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/evidence-index.json",
+      "sha256": "193de198d18b7c82a915ba683a2d8e415454f2ec5b3f8fb47dbc5f72e2b27e99"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/full-electron-e2e-audit.json",
+      "sha256": "bca96b8ae8f763daef8497ed5623466ad085762eb229797d8b00d08242d2f572"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/test.stdout.txt",
+      "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt",
+      "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt",
+      "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt",
+      "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt",
+      "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850"
+    },
+    {
+      "task": "P6-005",
+      "path": "artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
+      "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011"
     }
   ],
   "fail": [],
@@ -957,6 +1012,17 @@
     "A2 P6-004 hash OK artifacts/system-maturity/P6-004/win-electron-trust.json",
     "A2 P6-004 hash OK artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt",
     "A2 P6-004 hash OK artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/acceptance-matrix.json",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/release-gate-evidence.json",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/release-source-manifest.json",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/evidence-index.json",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/full-electron-e2e-audit.json",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/test.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt",
+    "A2 P6-005 hash OK artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
     "A1 regression probe: missing evidence path correctly detectable"
   ]
 }

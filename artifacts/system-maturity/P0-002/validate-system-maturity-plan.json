@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-18T01:25:58.202Z",
+  "checkedAt": "2026-07-18T01:50:02.113Z",
   "ok": true,
   "taskCount": 34,
   "statusFileCount": 8,
@@ -29,7 +29,7 @@
     "plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done",
-    "plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=in_progress",
+    "plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=planned",
     "dependency edges resolve",
     "A3 P0-001 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-001.delivery.md)",
@@ -61,6 +61,7 @@
     "A3 P6-002 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-002.delivery.md)",
     "A3 P6-003 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-003.delivery.md)",
     "A3 P6-004 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-004.delivery.md)",
+    "A3 P6-005 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-005.delivery.md)",
     "task Finding refs resolve against findings-registry"
   ]
 }

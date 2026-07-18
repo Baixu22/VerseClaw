@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "root": "../ClawX-maturity-p0/artifacts/system-maturity/P6-005",
+  "files": {
+    "release-source-manifest.json": {
+      "bytes": 3527377,
+      "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284"
+    },
+    "release-gate-evidence.json": {
+      "bytes": 5228,
+      "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e"
+    },
+    "acceptance-matrix.json": {
+      "bytes": 1108,
+      "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd"
+    },
+    "gates/maturity-baseline.stdout.txt": {
+      "bytes": 1077,
+      "sha256": "142d8ca865e99f6b0f146a23d77a716d4c547e961d3fdcf9b302b032e4023ebd"
+    },
+    "gates/maturity-baseline.stderr.txt": {
+      "bytes": 3561,
+      "sha256": "66208b56f81e1692ff30c67ab40f65c0fb36654b864724f48d18190e0aba8586"
+    },
+    "gates/maturity-plan.stdout.txt": {
+      "bytes": 4066,
+      "sha256": "e079f509b068351007a960d063c3a04295b8e1e8fb54c095188308370c5488e7"
+    },
+    "gates/maturity-plan.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/maturity-gates.stdout.txt": {
+      "bytes": 373,
+      "sha256": "97c7410bace7ce087bacaec057d0e7daf7be4d8f351331fee44367da500625a0"
+    },
+    "gates/maturity-gates.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/contract-check.stdout.txt": {
+      "bytes": 23,
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    "gates/contract-check.stderr.txt": {
+      "bytes": 34,
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    },
+    "gates/test.stdout.txt": {
+      "bytes": 1673,
+      "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15"
+    },
+    "gates/test.stderr.txt": {
+      "bytes": 6072,
+      "sha256": "f3010fc1230b50dc37be053a8a91eae03cd87215a9179a132ee28f646505a9fc"
+    },
+    "gates/lint-check.stdout.txt": {
+      "bytes": 19730,
+      "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10"
+    },
+    "gates/lint-check.stderr.txt": {
+      "bytes": 3211,
+      "sha256": "d93d152e20a5003c1cac09588ed745d085e38e2f41ebd11257a6ac80f3907d4c"
+    },
+    "gates/typecheck.stdout.txt": {
+      "bytes": 969,
+      "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e"
+    },
+    "gates/typecheck.stderr.txt": {
+      "bytes": 148,
+      "sha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58"
+    },
+    "gates/harness-ci.stdout.txt": {
+      "bytes": 5680,
+      "sha256": "ec63e92e78c3df44e766028632feab94b5cbdd832d3a698bc2e0b971a6ccf65f"
+    },
+    "gates/harness-ci.stderr.txt": {
+      "bytes": 1213,
+      "sha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f"
+    },
+    "gates/agent-dev-deep-test.stdout.txt": {
+      "bytes": 57786,
+      "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638"
+    },
+    "gates/agent-dev-deep-test.stderr.txt": {
+      "bytes": 8137,
+      "sha256": "f08bb279c9976a35a8a35182c36708e2775a9aec50efda8d9466abc49d354265"
+    },
+    "gates/test-e2e-agent-dev-quality.stdout.txt": {
+      "bytes": 53476,
+      "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850"
+    },
+    "gates/test-e2e-agent-dev-quality.stderr.txt": {
+      "bytes": 7149,
+      "sha256": "05659bd086d398c7d36c6c8cbf29f140c20295c131bc0fcce28eb11fa872e480"
+    },
+    "gates/maturity-validate.stdout.txt": {
+      "bytes": 17390,
+      "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011"
+    },
+    "gates/maturity-validate.stderr.txt": {
+      "bytes": 3830,
+      "sha256": "c1c123cc0af66d9b59b7fce233b194b6f460c0fdea869a9846f3b605f0b7e7ba"
+    },
+    "gates/release-validate.stdout.txt": {
+      "bytes": 98,
+      "sha256": "6be6c6d06ec94eb4bd8f5259c0432a4dbeb0fd6a868c13d1d58cf7c99eba9cb3"
+    },
+    "gates/release-validate.stderr.txt": {
+      "bytes": 46,
+      "sha256": "43e6b2f2502cfdc1f7c971b1b6a37b77abbf600a5340255c8661b20cacee975b"
+    }
+  }
+}

@@ -1,14 +1,14 @@
 {
   "phase": "phase6-supply-release",
-  "phaseStatus": "in_progress",
+  "phaseStatus": "done",
   "tasks": {
     "P6-001": "done",
     "P6-002": "done",
     "P6-003": "done",
     "P6-004": "done",
-    "P6-005": "in_progress"
+    "P6-005": "done"
   },
-  "allTasksDone": false,
-  "updatedAt": "2026-07-17T20:54:08.972Z",
+  "allTasksDone": true,
+  "updatedAt": "2026-07-18T09:47:44.069+08:00",
   "updatedBy": "P6-005"
 }
