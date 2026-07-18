@@ -21,7 +21,7 @@ INFO  plans/system-maturity/phase3-data-authority/STATUS.json phaseStatus=done
 INFO  plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done
 INFO  plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done
 INFO  plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done
-INFO  plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=done
+INFO  plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=in_progress
 INFO  dependency edges resolve
 INFO  A3 P0-001 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-001.delivery.md)
 INFO  A3 P0-002 delivery+acceptance OK (plans\system-maturity\phase0-foundation\tasks\P0-002.delivery.md)
@@ -56,8 +56,15 @@ INFO  A3 P6-005 delivery+acceptance OK (plans\system-maturity\phase6-supply-rele
 INFO  A3 P7-001 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-001.delivery.md)
 INFO  A3 P7-002 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-002.delivery.md)
 INFO  A3 P7-003 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-003.delivery.md)
-INFO  A3 P7-004 delivery+acceptance OK (plans\system-maturity\phase7-continuous-governance\tasks\P7-004.delivery.md)
 INFO  task Finding refs resolve against findings-registry
+INFO  INDEX status OK phase0-foundation=done
+INFO  INDEX status OK phase1-direct-boundaries=done
+INFO  INDEX status OK phase2-authorization-isolation=done
+INFO  INDEX status OK phase3-data-authority=done
+INFO  INDEX status OK phase4-runtime-surfaces=done
+INFO  INDEX status OK phase5-reliability-abuse=done
+INFO  INDEX status OK phase6-supply-release=done
+INFO  INDEX status OK phase7-continuous-governance=in_progress
 
 validate-system-maturity-plan: OK
 INFO  A2 daily/pr loops cannot substitute release
@@ -290,27 +297,6 @@ INFO  A2 P7-003 hash OK package.json
 INFO  A2 P7-003 hash OK plans/system-maturity/findings-registry.json
 INFO  A2 P7-003 hash OK artifacts/system-maturity/P7-003/evidence-manifest.json
 INFO  A2 P7-003 hash OK artifacts/system-maturity/P7-003/acceptance-matrix.json
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/full-validation.json
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/quarterly-audit-report.json
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/acceptance-matrix.json
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/evidence-manifest.json
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/focused-unit.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/quarterly-dry-run.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/agent-dev-audit.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/agent-dev-deep-test.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/harness-task.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/lint-check.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/typecheck.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/unit-full.stdout.txt
-INFO  A2 P7-004 hash OK artifacts/system-maturity/P7-004/validation-gates/maturity-validate.stdout.txt
-INFO  A2 P7-004 hash OK plans/system-maturity/risk-acceptance.json
-INFO  A2 P7-004 hash OK scripts/lib/system-maturity-quarterly-audit.mjs
-INFO  A2 P7-004 hash OK scripts/run-system-maturity-quarterly-audit.mjs
-INFO  A2 P7-004 hash OK scripts/collect-p7-004-evidence.mjs
-INFO  A2 P7-004 hash OK tests/unit/system-maturity-quarterly-audit-p7-004.test.ts
-INFO  A2 P7-004 hash OK harness/specs/tasks/system-maturity-quarterly-audit.md
-INFO  A2 P7-004 hash OK package.json
-INFO  A2 P7-004 hash OK plans/system-maturity/findings-registry.json
 INFO  A1 regression probe: missing evidence path correctly detectable
 
 validate-system-maturity-evidence: OK

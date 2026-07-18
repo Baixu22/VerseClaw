@@ -10,17 +10,26 @@ const outDir = path.join(root, 'artifacts/system-maturity/P7-004');
 const gatesDir = path.join(outDir, 'validation-gates');
 fs.mkdirSync(gatesDir, { recursive: true });
 
+// Order: logic gates first; harness near end after files land; seal last.
 const commands = [
   ['diff-check', 'git diff --check'],
   ['focused-unit', 'pnpm exec vitest run tests/unit/system-maturity-quarterly-audit-p7-004.test.ts'],
   ['quarterly-dry-run', 'pnpm maturity:quarterly -- --dry-run'],
-  ['agent-dev-audit', 'pnpm agent-dev:audit:report'],
+  ['agent-dev-audit', 'pnpm agent-dev:audit'],
   ['agent-dev-deep-test', 'pnpm agent-dev:deep-test:reuse'],
-  ['harness-task', 'pnpm harness validate --spec harness/specs/tasks/system-maturity-quarterly-audit.md'],
-  ['lint-check', 'pnpm run lint:check'],
   ['typecheck', 'pnpm run typecheck'],
+  ['e2e-agent-dev-quality', ensureE2eQualityCommand()],
+  ['lint-check', 'pnpm run lint:check'],
   ['unit-full', 'pnpm test'],
+  // harness after product/plan file changes are already on disk from this collector's prior steps
+  ['harness-task', 'pnpm harness validate --spec harness/specs/tasks/system-maturity-quarterly-audit.md'],
+  // hash-sync before validate: maturity:validate includes evidence hash checks
+  ['maturity-hash-sync-pre', 'node scripts/update-system-maturity-delivery-hashes.mjs'],
   ['maturity-validate', 'pnpm maturity:validate'],
+  ['maturity-hash-sync', 'node scripts/update-system-maturity-delivery-hashes.mjs'],
+  ['maturity-evidence', 'pnpm maturity:evidence'],
+  ['harness-recheck', 'pnpm harness validate --spec harness/specs/tasks/system-maturity-quarterly-audit.md'],
+  ['quarterly-final', 'pnpm maturity:quarterly'],
 ];
 
 const results = [];
@@ -53,45 +62,44 @@ for (const [id, command] of commands) {
     stderrSha256: sha256(stderr),
   });
   console.log(`${id}: exit=${result.status ?? 1}`);
+  if ((result.status ?? 1) !== 0) {
+    // Keep writing partial report for diagnosis, but fail closed.
+    writeReport(results, false);
+    process.exit(1);
+  }
 }
 
-// Refresh quarterly report after status/evidence settle (non-dry).
-const finalQuarterly = runReleaseGateCommand('pnpm maturity:quarterly', {
-  cwd: root,
-  env: process.env,
-  timeout: 10 * 60 * 1000,
-  maxBuffer: 32 * 1024 * 1024,
-});
-const finalStdout = normalize(finalQuarterly.stdout);
-const finalStderr = normalize(finalQuarterly.stderr || '');
-fs.writeFileSync(path.join(outDir, 'validation-gates/quarterly-final.stdout.txt'), finalStdout);
-fs.writeFileSync(path.join(outDir, 'validation-gates/quarterly-final.stderr.txt'), finalStderr);
-results.push({
-  id: 'quarterly-final',
-  command: 'pnpm maturity:quarterly',
-  startedAt: new Date().toISOString(),
-  durationMs: 0,
-  exitCode: finalQuarterly.status ?? 1,
-  signal: finalQuarterly.signal || null,
-  spawnError: finalQuarterly.error?.message || null,
-  stdoutPath: 'validation-gates/quarterly-final.stdout.txt',
-  stdoutSha256: sha256(finalStdout),
-  stderrPath: 'validation-gates/quarterly-final.stderr.txt',
-  stderrSha256: sha256(finalStderr),
-});
-console.log(`quarterly-final: exit=${finalQuarterly.status ?? 1}`);
+writeReport(results, true);
 
-const report = {
-  schemaVersion: 1,
-  task: 'P7-004',
-  generatedAt: new Date().toISOString(),
-  ok: results.every((result) => result.exitCode === 0),
-  // Intentional: omit findingIds so this full gate report refreshes global traceability.
-  primaryFindingIds: ['F-GOV-002', 'F-GOV-003'],
-  commands: results,
-};
-fs.writeFileSync(path.join(outDir, 'full-validation.json'), `${JSON.stringify(report, null, 2)}\n`);
-if (!report.ok) process.exit(1);
+function writeReport(commands, ok) {
+  const report = {
+    schemaVersion: 1,
+    task: 'P7-004',
+    generatedAt: new Date().toISOString(),
+    ok,
+    primaryFindingIds: ['F-GOV-002', 'F-GOV-003'],
+    gatePolicy: {
+      agentDevAudit: 'pnpm agent-dev:audit',
+      deepTest: 'pnpm agent-dev:deep-test:reuse',
+      requiredFullGates: [
+        'pnpm run typecheck',
+        'pnpm run test:e2e:agent-dev-quality:run',
+      ],
+    },
+    commands,
+  };
+  fs.writeFileSync(path.join(outDir, 'full-validation.json'), `${JSON.stringify(report, null, 2)}\n`);
+}
+
+function ensureE2eQualityCommand() {
+  const distIndex = path.join(root, 'dist', 'index.html');
+  const distElectron = path.join(root, 'dist-electron', 'main');
+  if (fs.existsSync(distIndex) && fs.existsSync(distElectron)) {
+    return 'pnpm run test:e2e:agent-dev-quality:run';
+  }
+  // build:vite produces renderer + electron bundles required by Playwright Electron e2e
+  return 'pnpm run build:vite && pnpm run test:e2e:agent-dev-quality:run';
+}
 
 function normalize(value) {
   const text = String(value || '').replace(/\r\n?/gu, '\n').replace(/[\t ]+$/gmu, '').replace(/\n*$/u, '');

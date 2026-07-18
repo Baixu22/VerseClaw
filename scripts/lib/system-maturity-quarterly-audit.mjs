@@ -188,7 +188,7 @@ export function loadAgentDevAudit(root) {
       path: path.relative(root, reportPath).replace(/\\/gu, '/'),
       status: report.status ?? report.decision?.status ?? null,
       releaseReady: report.releaseReady ?? report.decision?.releaseReady ?? null,
-      score: report.score ?? report.decision?.score ?? null,
+      score: report.totalScore ?? report.score ?? report.decision?.score ?? report.decision?.totalScore ?? null,
       grade: report.grade ?? report.decision?.grade ?? null,
       generatedAt: report.generatedAt ?? null,
     };

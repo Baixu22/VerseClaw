@@ -1,1 +1,1 @@
-$ node scripts/agent-dev-audit.mjs --no-fail
+$ node scripts/agent-dev-audit.mjs

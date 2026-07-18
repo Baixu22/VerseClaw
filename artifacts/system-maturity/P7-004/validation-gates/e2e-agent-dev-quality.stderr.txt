@@ -1,0 +1,1 @@
+$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2

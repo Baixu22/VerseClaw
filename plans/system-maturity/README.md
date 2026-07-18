@@ -36,3 +36,11 @@ STATUS.json 只保存 phaseStatus、task status、allTasksDone，不写解释。
 ## Execution
 
 执行顺序、worktree 并行边界、串行依赖和首个启动任务见 [EXECUTION-ORDER.md](./EXECUTION-ORDER.md)。
+
+
+## True-close rules (mandatory)
+
+1. A task may be marked `done` only when its harness (if any) passes on the **committed** tree, not only mid-collection.
+2. Delivery `TESTS` must match the commands recorded in that task's full-validation evidence; silent gate downgrades are forbidden.
+3. `INDEX.md` Status must match each phase `STATUS.json.phaseStatus` (run `pnpm maturity:sync-index` before seal).
+4. After any `maturity:validate` rewrite of reports, run `pnpm maturity:seal` so delivery hashes stay consistent.
