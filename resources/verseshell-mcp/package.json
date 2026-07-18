@@ -1,7 +1,7 @@
 {
   "name": "verseshell-mcp-server",
-  "version": "0.3.0",
-  "description": "MCP server that bridges VerseShell (typed functional shell) to ClawX AI agents",
+  "version": "0.3.1",
+  "description": "MCP server that bridges VerseShell (typed functional shell) to ClawX AI agents — aligned with verseshell v0.3.0 ae-mcp capabilities (health/transpile_bash/list_commands + smart error hints + compact protocol)",
   "type": "module",
   "main": "src/index.js",
   "bin": {
