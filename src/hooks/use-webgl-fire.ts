@@ -149,6 +149,7 @@ export function useWebglFire(
     resizeDebounce: 0,
     loopRunning: false,
     idleFrames: 0,
+    frameCount: 0,
     wasActive: false,
     ultraStart: 0,
     simProg: null as WebGLProgram | null,
@@ -177,8 +178,28 @@ export function useWebglFire(
     if (active) ensureLoopRef.current();
   }, [active, slider01]);
 
+  // Some hosts (Electron windows mid-animation) report a stale rect at init
+  // and the ResizeObserver path can miss it — reconcile the backing store
+  // against the live rect whenever the loop (re)starts and periodically while
+  // it runs, so the sim never stays at the wrong resolution.
+  function syncSize(): boolean {
+    const s = stateRef.current;
+    const canvas = canvasRef.current;
+    if (!s.gl || !canvas) return false;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+    const dpr = window.devicePixelRatio;
+    const w = Math.round(rect.width * dpr);
+    const h = Math.round(rect.height * dpr);
+    if (canvas.width !== w || canvas.height !== h || !s.simA) {
+      resize();
+    }
+    return true;
+  }
+
   function ensureLoop() {
     const s = stateRef.current;
+    syncSize();
     if (!s.gl || !s.simA || !s.simB) {
       resize();
       if (!s.simA || !s.simB) return;
@@ -218,6 +239,9 @@ export function useWebglFire(
       gl.clear(gl.COLOR_BUFFER_BIT);
     }
     s.wasActive = a;
+    // Periodic size reconciliation (see syncSize) — cheap, every 30 frames.
+    s.frameCount += 1;
+    if (s.frameCount % 30 === 0) syncSize();
     const elapsed = a ? (performance.now() - (s.ultraStart || 0)) / 1000 : -1.0;
     const sv = s.cachedSlider;
     gl.viewport(0, 0, canvas.width, canvas.height);

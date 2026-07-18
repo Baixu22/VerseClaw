@@ -1,18 +1,30 @@
 #!/usr/bin/env node
 /**
- * VerseShell MCP Server �?bridges VerseShell (ae --serve) to MCP-compatible AI agents.
+ * VerseShell MCP Server — bridges VerseShell (ae --serve) to MCP-compatible AI agents.
  *
  * Usage:
- *   node verseshell-mcp-server.js [--ae-path <path>] [--workspace <dir>]
+ *   node verseshell-mcp-server.js [--ae-path <path>] [--workspace <dir>] [--cap <caps>] [--no-compact]
  *
- * The server spawns `ae --serve --json` as a child process and forwards
- * MCP tool calls to it via JSON-RPC over stdin/stdout.
+ * The server spawns `ae --serve --format compact` as a child process and forwards
+ * MCP tool calls to it via JSON-RPC over stdin/stdout. Compact protocol saves
+ * 50-70% tokens vs JSON. Pass --no-compact to fall back to JSON.
+ *
+ * Capabilities (v2 security model, 27 granular caps) can be granted via --cap:
+ *   --cap all                                  (default: grant everything)
+ *   --cap file.read,file.write,net.http.get    (grant specific caps)
  *
  * Configure in ClawX's openclaw.json:
  *   "mcp": { "servers": { "verseshell": {
  *     "command": "node",
  *     "args": ["resources/verseshell-mcp/src/index.js", "--ae-path", "./verseshell/ae"]
  *   }}}
+ *
+ * Aligned with verseshell v0.3.0 native ae-mcp capabilities:
+ *   - verseshell_health tool (protocol/runtime metadata)
+ *   - verseshell_transpile_bash tool (bash → verseshell)
+ *   - verseshell_list_commands tool (enumerate 650+ builtins)
+ *   - Smart error hint system for common LLM API mistakes
+ *   - Compact token-efficient protocol (parity with TS bridge)
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -39,8 +51,18 @@ const WORKSPACE = process.argv.includes("--workspace")
   : process.env.VERSESHELL_WORKSPACE || process.cwd();
 
 const AGENT_MODE = process.argv.includes("--agent") || process.env.VERSESHELL_AGENT === "1";
+
+// Capability grants (v2 security model). Default: all. Pass --cap to restrict.
+const CAP_FLAG_INDEX = process.argv.indexOf("--cap");
+const CAPS = CAP_FLAG_INDEX >= 0 ? process.argv[CAP_FLAG_INDEX + 1] : (process.env.VERSESHELL_CAPS || "all");
+
+// Compact protocol toggle (parity with TS bridge). Pass --no-compact to disable.
+const USE_COMPACT = !process.argv.includes("--no-compact") && process.env.VERSESHELL_NO_COMPACT !== "1";
+
 const DEFAULT_TOOL_TIMEOUT_MS = 30_000;
 const MAX_TOOL_TIMEOUT_MS = 10 * 60_000;
+
+const MCP_SERVER_VERSION = "0.3.1";
 
 function clampTimeoutMs(value, fallback = DEFAULT_TOOL_TIMEOUT_MS) {
   const n = Number(value);
@@ -137,6 +159,231 @@ function toolErrorPayload(error, cmd) {
   };
 }
 
+// ── Compact Protocol Parser ───────────────────────────────────────────
+//
+// VerseShell `--format compact` encodes responses as positional tokens with
+// single-char type tags. Saves 50-70% tokens vs JSON. Format:
+//
+//   D <id> <ok:T|F> <value> <elapsed_ms> <cache:T|F|N> <session_age_ms>
+//   E <id> <code> <message> <recoverable:T|F>
+//
+// Value encoding:
+//   N              → null
+//   T | F          → boolean
+//   <number>       → int or float
+//   S<len>:<content> → string
+//   L<len> <items>   → array
+//   R<len> <k1> <v1> ... → record
+//
+// Mirrors the parser in openclaw_runtime/src/agents/verseshell-runtime.ts
+// so both paths stay in sync.
+
+function splitCompactTokens(line) {
+  const tokens = [];
+  let i = 0;
+  while (i < line.length) {
+    while (i < line.length && line[i] === " ") i++;
+    if (i >= line.length) break;
+
+    if (line[i] === "S") {
+      i++;
+      let lenStr = "";
+      while (i < line.length && line[i] >= "0" && line[i] <= "9") {
+        lenStr += line[i];
+        i++;
+      }
+      if (line[i] === ":") i++;
+      const len = parseInt(lenStr, 10);
+      if (isNaN(len) || i + len > line.length) {
+        tokens.push(line.slice(i - 1 - lenStr.length));
+        break;
+      }
+      tokens.push(line.slice(i, i + len));
+      i += len;
+    } else if (line[i] === "R" || line[i] === "L") {
+      const tag = line[i];
+      i++;
+      let countStr = "";
+      while (i < line.length && line[i] >= "0" && line[i] <= "9") {
+        countStr += line[i];
+        i++;
+      }
+      tokens.push(tag + countStr);
+    } else {
+      let token = "";
+      while (i < line.length && line[i] !== " ") {
+        token += line[i];
+        i++;
+      }
+      tokens.push(token);
+    }
+  }
+  return tokens;
+}
+
+function parseCompactValue(parts, idx) {
+  if (idx >= parts.length) return null;
+  const token = parts[idx];
+
+  if (token === "N") return { value: null, nextIndex: idx + 1 };
+  if (token === "T") return { value: true, nextIndex: idx + 1 };
+  if (token === "F") return { value: false, nextIndex: idx + 1 };
+  if (token.startsWith("S")) return { value: token, nextIndex: idx + 1 };
+
+  if (token.startsWith("L")) {
+    const len = parseInt(token.slice(1), 10);
+    if (isNaN(len)) return { value: [], nextIndex: idx + 1 };
+    const arr = [];
+    let next = idx + 1;
+    for (let i = 0; i < len; i++) {
+      const r = parseCompactValue(parts, next);
+      if (!r) break;
+      arr.push(r.value);
+      next = r.nextIndex;
+    }
+    return { value: arr, nextIndex: next };
+  }
+
+  if (token.startsWith("R")) {
+    const len = parseInt(token.slice(1), 10);
+    if (isNaN(len)) return { value: {}, nextIndex: idx + 1 };
+    const rec = {};
+    let next = idx + 1;
+    for (let i = 0; i < len; i++) {
+      if (next >= parts.length) break;
+      const key = parts[next];
+      next++;
+      const r = parseCompactValue(parts, next);
+      if (!r) break;
+      rec[key] = r.value;
+      next = r.nextIndex;
+    }
+    return { value: rec, nextIndex: next };
+  }
+
+  const n = Number(token);
+  if (!isNaN(n)) return { value: n, nextIndex: idx + 1 };
+
+  return { value: token, nextIndex: idx + 1 };
+}
+
+function parseCompactDone(parts) {
+  if (parts.length < 6) return null;
+  const id = parts[1];
+  const ok = parts[2] === "T";
+  const elapsedMs = parseInt(parts[4], 10) || 0;
+  const cacheTag = parts[5];
+  const sessionAgeMs = parseInt(parts[6], 10) || 0;
+  const valueResult = parseCompactValue(parts, 3);
+  const value = valueResult ? valueResult.value : null;
+  return {
+    id,
+    ok,
+    value,
+    meta: {
+      elapsed_ms: elapsedMs,
+      cache_hit: cacheTag === "T" ? true : cacheTag === "F" ? false : undefined,
+      session_age_ms: sessionAgeMs,
+    },
+  };
+}
+
+function parseCompactError(parts) {
+  if (parts.length < 5) return null;
+  const id = parts[1];
+  const code = parts[2];
+  const message = parts[3].replace(/\\s/g, " ");
+  const recoverable = parts[4] === "T";
+  return {
+    id,
+    ok: false,
+    error: { code, message, recoverable },
+    meta: { elapsed_ms: 0, session_age_ms: 0 },
+  };
+}
+
+function parseCompactLine(line) {
+  const trimmed = line.trim();
+  if (!trimmed) return null;
+  const parts = splitCompactTokens(trimmed);
+  if (parts.length === 0) return null;
+  if (parts[0] === "D") return parseCompactDone(parts);
+  if (parts[0] === "E") return parseCompactError(parts);
+  return null;
+}
+
+function normalizeJsonResponse(obj) {
+  if (!obj || typeof obj !== "object") return null;
+  if (obj.type === "done") {
+    return {
+      id: String(obj.id ?? ""),
+      ok: obj.ok !== false,
+      value: obj.value,
+      error: obj.ok === false ? {
+        code: String(obj.error?.code ?? "E_UNKNOWN"),
+        message: String(obj.error?.message ?? "Unknown error"),
+        recoverable: obj.error?.recoverable !== false,
+      } : undefined,
+      meta: {
+        elapsed_ms: obj.meta?.elapsed_ms ?? 0,
+        cache_hit: obj.meta?.cache_hit,
+        session_age_ms: obj.meta?.session_age_ms ?? 0,
+      },
+    };
+  }
+  if (obj.type === "error" || obj.ok === false) {
+    return {
+      id: String(obj.id ?? ""),
+      ok: false,
+      error: {
+        code: String(obj.error?.code ?? "E_UNKNOWN"),
+        message: String(obj.error?.message ?? "Unknown error"),
+        recoverable: obj.error?.recoverable !== false,
+      },
+      meta: { elapsed_ms: 0, session_age_ms: 0 },
+    };
+  }
+  return null;
+}
+
+// ── Smart Error Hint System ───────────────────────────────────────────
+//
+// Catches common verseshell API mistakes and suggests corrections to save
+// LLM token spend on retries. Mirrors ae-mcp's suggest_hint in mcp.rs.
+
+function suggestHint(code, error) {
+  const err = String(error ?? "");
+  if (err.includes("field 'env' not found")) {
+    return "sys.env(KEY) not available. Use sys.env_all() to get all env vars";
+  }
+  if (err.includes("field 'map' not found")) {
+    return "arr.map() not available. Use arr.filter(list, fn(x)=>condition) or arr.each(list, fn(x)=>action)";
+  }
+  if (err.includes("field 'ls' not found") && code.includes("fs.ls")) {
+    return "fs.ls() not available. Use file.ls(path) for directory listing";
+  }
+  if (err.includes("field 'size' not found") && code.includes("file.size")) {
+    return "file.size() not available. Use file.stat(path) for file metadata including size";
+  }
+  if (err.includes("field 'len' not found") && code.includes("str.len")) {
+    return "str.len() not available. Use str.length(s) for string length";
+  }
+  if (err.includes("field '") && err.includes("not found")) {
+    const m = err.match(/field '([^']+)'/);
+    if (m && m[1]) {
+      return `'${m[1]}' not found in that module. Use verseshell_list_commands to see available functions`;
+    }
+  }
+  if (err.includes("cannot call non-function value") && code.includes("({")) {
+    return "Cannot wrap record in parens. Use {a:1}.a instead of ({a:1}).a";
+  }
+  if (err.includes("cat: no file specified") ||
+      (err.includes("no file specified") && code.includes("file.read("))) {
+    return 'file.read(path) needs a path: file.read("C:\\\\path\\\\to\\\\file.txt")';
+  }
+  return null;
+}
+
 // ── VerseShell Process Manager ────────────────────────────────────────
 
 let aeProcess = null;
@@ -146,16 +393,24 @@ let aeReady = false;
 const readyWaiters = [];
 
 function startAeShell() {
-  const args = ["--serve", "--json"];
+  const args = ["--serve"];
+  if (USE_COMPACT) {
+    args.push("--format", "compact");
+  } else {
+    args.push("--json");
+  }
   if (AGENT_MODE) args.push("--agent");
   if (WORKSPACE) args.push("--workspace", WORKSPACE);
+  if (CAPS) args.push("--cap", CAPS);
 
   console.error(`[verseshell-mcp] Starting: ${AE_PATH} ${args.join(" ")}`);
+  console.error(`[verseshell-mcp] Protocol: ${USE_COMPACT ? "compact" : "json"} | Caps: ${CAPS}`);
 
   aeProcess = spawn(AE_PATH, args, {
     stdio: ["pipe", "pipe", "pipe"],
     cwd: WORKSPACE,
     env: sanitizeProcessEnv({
+      AE_FORMAT: USE_COMPACT ? "compact" : "json",
       AETHER_WORKSPACE: WORKSPACE,
       VERSESHELL_WORKSPACE: WORKSPACE,
     }),
@@ -164,24 +419,58 @@ function startAeShell() {
 
   const rl = createInterface({ input: aeProcess.stdout });
 
-  rl.on("line", (line) => {
-    try {
-      const msg = JSON.parse(line);
-      if (msg.type === "done" && responseResolvers.has(msg.id)) {
-        const { resolve, timer } = responseResolvers.get(msg.id);
+  rl.on("line", (rawLine) => {
+    const line = String(rawLine || "").trim();
+    if (!line) return;
+
+    // Control responses from STATS/GC/REFRESH arrive as JSON without a type tag.
+    if (line.startsWith("{")) {
+      try {
+        const obj = JSON.parse(line);
+        if (obj.id === "__gc__" || obj.id === "__refresh__") return;
+        const normalized = normalizeJsonResponse(obj);
+        if (normalized && responseResolvers.has(normalized.id)) {
+          const { resolve, timer } = responseResolvers.get(normalized.id);
+          clearTimeout(timer);
+          responseResolvers.delete(normalized.id);
+          resolve(normalized);
+          if (!aeReady) {
+            aeReady = true;
+            readyWaiters.forEach((r) => r());
+            readyWaiters.length = 0;
+            console.error(`[verseshell-mcp] VerseShell server ready`);
+          }
+          return;
+        }
+      } catch {
+        // fall through to compact parse
+      }
+    }
+
+    // Primary path when USE_COMPACT: parse compact D/E lines.
+    if (USE_COMPACT) {
+      const compactResult = parseCompactLine(line);
+      if (compactResult && responseResolvers.has(compactResult.id)) {
+        const { resolve, timer } = responseResolvers.get(compactResult.id);
         clearTimeout(timer);
-        responseResolvers.delete(msg.id);
-        resolve({ ok: msg.ok !== false, value: msg.value, error: msg.error, meta: msg.meta });
+        responseResolvers.delete(compactResult.id);
+        resolve(compactResult);
+        if (!aeReady) {
+          aeReady = true;
+          readyWaiters.forEach((r) => r());
+          readyWaiters.length = 0;
+          console.error(`[verseshell-mcp] VerseShell server ready (compact)`);
+        }
+        return;
       }
-      // Check if this is the first response (server ready)
-      if (!aeReady) {
-        aeReady = true;
-        readyWaiters.forEach((r) => r());
-        readyWaiters.length = 0;
-        console.error(`[verseshell-mcp] VerseShell server ready`);
-      }
-    } catch (e) {
-      console.error(`[verseshell-mcp] Parse error: ${e.message}`);
+    }
+
+    // Mark ready on first parseable line regardless of pending map.
+    if (!aeReady) {
+      aeReady = true;
+      readyWaiters.forEach((r) => r());
+      readyWaiters.length = 0;
+      console.error(`[verseshell-mcp] VerseShell server ready`);
     }
   });
 
@@ -264,9 +553,26 @@ function killAeTree() {
   } catch {}
 }
 
+// ── Known Module Names ────────────────────────────────────────────────
+//
+// Used by verseshell_list_commands to enumerate builtins across all
+// registered modules. Matches the module list documented in verseshell v0.3.0
+// README. Missing modules are silently skipped (try/catch on the ae side).
+
+const KNOWN_MODULES = [
+  "sys", "file", "arr", "win", "str", "math", "shell",
+  "crypto", "json", "http", "proc", "net", "hw", "platform",
+  "git", "db", "archive", "clip", "svc", "cron", "user", "perm", "pkg", "input",
+];
+
 // ── Tool Definitions ──────────────────────────────────────────────────
 
 const TOOLS = [
+  // ── Aligned with verseshell v0.3.0 native ae-mcp ──────────────────────
+  { name: "verseshell_health", description: "Check whether the VerseShell MCP server is responsive and report protocol/runtime metadata (modules, commands, protocol version).", parameters: { type: "object", properties: {} } },
+  { name: "verseshell_transpile_bash", description: "Transpile a bash script into VerseShell syntax using the ae --bash transpiler. Useful for migrating shell scripts to typed pipelines.", parameters: { type: "object", properties: { bash_code: { type: "string", description: "Bash script to transpile into verseshell" } }, required: ["bash_code"] } },
+  { name: "verseshell_list_commands", description: "List all available VerseShell built-in commands grouped by module (e.g. sys.hostname, file.read, arr.map). Use this to discover available functions when composing verseshell_eval calls.", parameters: { type: "object", properties: {} } },
+
   // System
   { name: "verseshell_sys_info", description: "Get system info (OS, arch, CPU, memory, disks, load)", parameters: { type: "object", properties: {} } },
   { name: "verseshell_sys_cpu", description: "Get CPU info: name, cores, frequency", parameters: { type: "object", properties: {} } },
@@ -378,7 +684,18 @@ const TOOLS = [
   { name: "verseshell_clipboard_write", description: "Write text to the clipboard", parameters: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
 ];
 
-// ── Tool �?Command Mapping ────────────────────────────────────────────
+// ── Tool → Command Mapping ────────────────────────────────────────────
+//
+// Tools marked with `__special__: true` in the map value are handled by
+// the tool dispatcher directly rather than via a single ae eval call.
+// This covers health (local metadata), transpile_bash (ae -b one-shot),
+// and list_commands (parallel arr.keys() across modules).
+
+const SPECIAL_HANDLERS = {
+  verseshell_health: "health",
+  verseshell_transpile_bash: "transpile_bash",
+  verseshell_list_commands: "list_commands",
+};
 
 const COMMAND_MAP = {
   "verseshell_sys_info": 'sys.info()',
@@ -478,14 +795,15 @@ const COMMAND_MAP = {
 // ── MCP Server ────────────────────────────────────────────────────────
 
 async function main() {
-  console.error(`[verseshell-mcp] VerseShell MCP Server v0.3.1`);
+  console.error(`[verseshell-mcp] VerseShell MCP Server v${MCP_SERVER_VERSION}`);
   console.error(`[verseshell-mcp] AE_PATH: ${AE_PATH}`);
   console.error(`[verseshell-mcp] WORKSPACE: ${WORKSPACE}`);
+  console.error(`[verseshell-mcp] Protocol: ${USE_COMPACT ? "compact" : "json"} | Caps: ${CAPS}`);
 
   startAeShell();
 
   const server = new Server(
-    { name: "verseshell", version: "0.3.1" },
+    { name: "verseshell", version: MCP_SERVER_VERSION },
     { capabilities: { tools: {} } }
   );
 
@@ -495,6 +813,23 @@ async function main() {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
+    const toolArgs = args || {};
+
+    // ── Special handlers (aligned with verseshell v0.3.0 ae-mcp) ──────────
+    if (SPECIAL_HANDLERS[name]) {
+      try {
+        const handlerResult = await runSpecialHandler(SPECIAL_HANDLERS[name], toolArgs);
+        return {
+          content: [{ type: "text", text: typeof handlerResult === "string" ? handlerResult : JSON.stringify(handlerResult, null, 2) }],
+        };
+      } catch (e) {
+        return {
+          content: [{ type: "text", text: JSON.stringify(toolErrorPayload(e, name)) }],
+          isError: true,
+        };
+      }
+    }
+
     const cmdBuilder = COMMAND_MAP[name];
 
     if (!cmdBuilder) {
@@ -504,7 +839,6 @@ async function main() {
       };
     }
 
-    const toolArgs = args || {};
     const cmd = typeof cmdBuilder === "function" ? cmdBuilder(toolArgs) : cmdBuilder;
 
     try {
@@ -515,17 +849,22 @@ async function main() {
           content: [{ type: "text", text: JSON.stringify(result.value, null, 2) }],
         };
       } else {
+        // Smart hint: catch common LLM API mistakes to save retry tokens.
+        const errMsg = result.error?.message || "";
+        const hint = suggestHint(cmd, errMsg);
+        const payload = { error: result.error, cmd };
+        if (hint) payload.hint = hint;
         return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({ error: result.error, cmd }),
-          }],
+          content: [{ type: "text", text: JSON.stringify(payload) }],
           isError: true,
         };
       }
     } catch (e) {
+      const hint = suggestHint(cmd, e?.message || "");
+      const payload = toolErrorPayload(e, cmd);
+      if (hint) payload.hint = hint;
       return {
-        content: [{ type: "text", text: JSON.stringify(toolErrorPayload(e, cmd)) }],
+        content: [{ type: "text", text: JSON.stringify(payload) }],
         isError: true,
       };
     }
@@ -534,6 +873,139 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("[verseshell-mcp] MCP server ready (stdio transport)");
+}
+
+// ── Special Tool Handlers ─────────────────────────────────────────────
+//
+// These three handlers mirror verseshell v0.3.0's native ae-mcp tools:
+// health, transpile_bash, list_commands. They are dispatched directly
+// rather than via a single ae eval call.
+
+async function runSpecialHandler(kind, args) {
+  switch (kind) {
+    case "health":
+      return healthPayload();
+
+    case "transpile_bash": {
+      const bashCode = String(args.bash_code ?? "");
+      if (!bashCode) {
+        const err = new Error("Missing 'bash_code' argument");
+        err.code = "E_ARG";
+        throw err;
+      }
+      return transpileBash(bashCode, args.timeoutMs);
+    }
+
+    case "list_commands":
+      return listCommands();
+
+    default: {
+      const err = new Error(`Unknown special handler: ${kind}`);
+      err.code = "E_UNKNOWN_HANDLER";
+      throw err;
+    }
+  }
+}
+
+function healthPayload() {
+  return {
+    ok: true,
+    server: "verseshell-mcp",
+    version: MCP_SERVER_VERSION,
+    protocol: USE_COMPACT ? "compact" : "json",
+    capabilities_granted: CAPS,
+    agent_mode: AGENT_MODE,
+    workspace: WORKSPACE,
+    ae_path: AE_PATH,
+    ae_ready: aeReady,
+    tools: TOOLS.length,
+    known_modules: KNOWN_MODULES.length,
+    mcp_transport: "stdio",
+    aligned_with: "verseshell v0.3.0 ae-mcp",
+  };
+}
+
+/**
+ * Transpile bash → verseshell via the `ae -b <code>` one-shot CLI flag.
+ * The serve protocol does not expose the transpiler as a builtin, so we
+ * spawn a one-shot ae process. Mirrors `transpile_bash` in ae-mcp.
+ */
+async function transpileBash(bashCode, timeoutMs) {
+  const effectiveTimeoutMs = clampTimeoutMs(timeoutMs);
+  return new Promise((resolve, reject) => {
+    const proc = spawn(AE_PATH, ["-b", bashCode], {
+      stdio: ["ignore", "pipe", "pipe"],
+      cwd: WORKSPACE,
+      env: sanitizeProcessEnv({
+        AETHER_WORKSPACE: WORKSPACE,
+        VERSESHELL_WORKSPACE: WORKSPACE,
+      }),
+      windowsHide: true,
+    });
+
+    let stdout = "";
+    let stderr = "";
+    const timer = setTimeout(() => {
+      try { proc.kill("SIGKILL"); } catch {}
+      const err = new Error(`transpile_bash timed out after ${effectiveTimeoutMs}ms`);
+      err.code = "E_TIMEOUT";
+      err.timedOut = true;
+      reject(err);
+    }, effectiveTimeoutMs + 250);
+
+    proc.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
+    proc.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+
+    proc.on("close", (code) => {
+      clearTimeout(timer);
+      if (code === 0) {
+        resolve(stdout.trim());
+      } else {
+        const err = new Error(`transpile_bash failed (exit ${code}): ${stderr.trim()}`);
+        err.code = "E_TRANSPILE";
+        err.exitCode = code;
+        err.stderr = stderr;
+        reject(err);
+      }
+    });
+
+    proc.on("error", (e) => {
+      clearTimeout(timer);
+      reject(e);
+    });
+  });
+}
+
+/**
+ * List all available verseshell builtins grouped by module.
+ * Sends parallel `arr.keys(<module>)` requests for each known module
+ * and aggregates the results. Missing modules are silently skipped
+ * (their request returns an error which we ignore).
+ *
+ * Mirrors `list_commands` in ae-mcp.
+ */
+async function listCommands() {
+  const results = await Promise.all(
+    KNOWN_MODULES.map(async (modName) => {
+      try {
+        const r = await sendRequest(`arr.keys(${modName})`, 10_000);
+        if (r.ok && Array.isArray(r.value)) {
+          return { module: modName, fns: r.value };
+        }
+        return null;
+      } catch {
+        return null;
+      }
+    })
+  );
+  const present = results.filter(Boolean);
+  const totalFns = present.reduce((acc, r) => acc + r.fns.length, 0);
+  return {
+    modules: present,
+    module_count: present.length,
+    total_functions: totalFns,
+    note: "Use verseshell_eval with module.function(args) syntax to call any listed function.",
+  };
 }
 
 main().catch((e) => {

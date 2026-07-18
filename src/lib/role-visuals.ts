@@ -45,6 +45,7 @@ export function roleTone(roleName: string | undefined | null): RoleTone {
  */
 export function effortTone(effort: string | undefined | null): RoleTone {
   switch (effort) {
+    case 'max':
     case 'xhigh':
       return 'violet';
     case 'high':

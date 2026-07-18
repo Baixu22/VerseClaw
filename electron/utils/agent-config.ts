@@ -44,6 +44,7 @@ const AGENT_REASONING_EFFORTS = new Set<AgentReasoningEffort>([
   'medium',
   'high',
   'xhigh',
+  'max',
 ]);
 
 interface AgentModelConfig {

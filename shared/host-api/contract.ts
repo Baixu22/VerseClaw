@@ -20,6 +20,7 @@ import type {
 import type {
   GitBranch,
   GitCapabilities,
+  GitCommitInfo,
   GitCommitResult,
   GitDiffMode,
   GitDiffResult,
@@ -3870,6 +3871,13 @@ export type GitStatusResult = HostSuccess & { status: GitRepositoryStatus };
 export type GitDiffListResult = HostSuccess & { changes: GitRepositoryStatus['changes']; patch?: string };
 export type GitFileDiffResult = HostSuccess & GitDiffResult;
 export type GitBranchListResult = HostSuccess & { branches: GitBranch[] };
+export type GitLogPayload = { ref?: string; limit?: number };
+export type GitLogResult = HostSuccess & {
+  commits: GitCommitInfo[];
+  ref?: string;
+  ahead?: number;
+  behind?: number;
+};
 export type GitStashListResult = HostSuccess & { stashes: GitStashEntry[] };
 export type GitWorktreeListResult = HostSuccess & { worktrees: GitWorktree[] };
 export type GithubAuthStatusResult = HostSuccess & GithubAuthStatus;
@@ -4395,6 +4403,7 @@ export type HostApiContract = {
     revertFile: (payload: GitPathPayload) => GitOperationResult;
     commit: (payload: GitCommitPayload) => GitCommitResult;
     branches: () => GitBranchListResult;
+    log: (payload?: GitLogPayload) => GitLogResult;
     checkoutBranch: (payload: GitBranchCheckoutPayload) => GitOperationResult;
     createBranch: (payload: GitBranchCreatePayload) => GitOperationResult;
     stashList: () => GitStashListResult;

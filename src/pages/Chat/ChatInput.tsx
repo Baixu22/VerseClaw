@@ -159,11 +159,19 @@ type PendingCapabilitySend = {
 type KnowledgeSearchRow = Record<string, unknown>;
 
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
+// Mode accent is expressed as a small leading dot + tinted icon (macOS-style),
+// not as a full-color chip. PERMISSION_MODE_STYLES tints the icon/dot only.
 const PERMISSION_MODE_STYLES: Record<WorkspacePermissionMode, string> = {
-  readOnly: 'border-sky-500/25 bg-sky-500/10 text-sky-700 hover:bg-sky-500/15 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-300 dark:hover:bg-sky-400/15',
-  plan: 'border-amber-500/25 bg-amber-500/10 text-amber-700 hover:bg-amber-500/15 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300 dark:hover:bg-amber-400/15',
-  acceptEdits: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-300 dark:hover:bg-emerald-400/15',
-  fullAccess: 'border-rose-500/30 bg-rose-500/10 text-rose-700 hover:bg-rose-500/15 dark:border-rose-400/25 dark:bg-rose-400/10 dark:text-rose-300 dark:hover:bg-rose-400/15',
+  readOnly: 'text-sky-600 dark:text-sky-400',
+  plan: 'text-amber-600 dark:text-amber-400',
+  acceptEdits: 'text-emerald-600 dark:text-emerald-400',
+  fullAccess: 'text-rose-600 dark:text-rose-400',
+};
+const PERMISSION_MODE_DOTS: Record<WorkspacePermissionMode, string> = {
+  readOnly: 'bg-sky-500 dark:bg-sky-400',
+  plan: 'bg-amber-500 dark:bg-amber-400',
+  acceptEdits: 'bg-emerald-500 dark:bg-emerald-400',
+  fullAccess: 'bg-rose-500 dark:bg-rose-400',
 };
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
 const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
@@ -397,12 +405,12 @@ function SlashCommandPalette({
       aria-label={t('composer.slashCommands.menuLabel')}
       data-testid="chat-slash-command-menu"
       data-layout="compact-command-list"
-      className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(480px,calc(100vh-168px))] overflow-hidden rounded-lg border border-border bg-surface-modal shadow-xl motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none sm:right-auto sm:w-[min(680px,calc(100vw-3rem))]"
+      className="absolute bottom-full left-0 right-0 z-30 mb-2 max-h-[min(480px,calc(100vh-168px))] overflow-hidden rounded-xl border border-black/[0.08] bg-surface-modal shadow-lg shadow-black/[0.1] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none dark:border-white/[0.08] dark:shadow-black/40 sm:right-auto sm:w-[min(680px,calc(100vw-3rem))]"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-2">
+      <div className="flex items-center justify-between gap-3 border-b border-black/[0.06] px-3 py-2 dark:border-white/[0.06]">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface-input text-muted-foreground">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-black/[0.06] bg-black/[0.03] text-muted-foreground shadow-sm dark:border-white/[0.08] dark:bg-white/[0.06]">
               <Wrench className="h-3.5 w-3.5" />
             </span>
             <p className="truncate text-xs font-medium text-foreground">{t('composer.slashCommands.title')}</p>
@@ -411,7 +419,7 @@ function SlashCommandPalette({
             {t('composer.slashCommands.subtitle')}
           </p>
         </div>
-        <code className="shrink-0 rounded-md bg-surface-input px-1.5 py-1 font-mono text-2xs text-muted-foreground">
+        <code className="shrink-0 rounded-md border border-black/[0.06] bg-black/[0.03] px-1.5 py-1 font-mono text-2xs text-muted-foreground dark:border-white/[0.08] dark:bg-white/[0.06]">
           /{slashInput.commandText || ''}
         </code>
       </div>
@@ -428,7 +436,7 @@ function SlashCommandPalette({
           {showSkillFeedback && (
             <div>
               <div className="px-2 pb-1 pt-2" data-testid="chat-slash-command-group-skills">
-                <div className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground/70">
+                <div className="text-tiny font-semibold uppercase tracking-wide text-muted-foreground/70">
                   {t('composer.slashCommands.groups.skills')}
                 </div>
                 <div className="mt-0.5 truncate text-2xs leading-4 text-muted-foreground/55">
@@ -455,7 +463,7 @@ function SlashCommandPalette({
               <div key={item.id}>
                 {showGroup && (
                   <div className="sticky top-0 z-10 bg-surface-modal/95 px-2 pb-1 pt-2 backdrop-blur-sm" data-testid={`chat-slash-command-group-${item.group}`}>
-                    <div className="text-2xs font-medium text-muted-foreground">
+                    <div className="text-tiny font-semibold uppercase tracking-wide text-muted-foreground/70">
                       {t(`composer.slashCommands.groups.${item.group}`)}
                     </div>
                     <div className="sr-only">
@@ -476,8 +484,10 @@ function SlashCommandPalette({
                       aria-selected={selected}
                       data-testid={`chat-slash-command-option-${command.id}`}
                       className={cn(
-                        'flex min-h-10 w-full items-center gap-3 rounded-md px-2.5 py-1.5 text-left transition-[background-color,color] duration-150',
-                        selected ? 'bg-black/[0.07] text-foreground dark:bg-white/[0.11]' : 'text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                        'flex min-h-10 w-full items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-[background-color,color,box-shadow] duration-150',
+                        selected
+                          ? 'bg-primary/[0.07] text-foreground ring-1 ring-inset ring-primary/[0.12] dark:bg-primary/[0.12] dark:ring-primary/[0.18]'
+                          : 'text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
                       )}
                       onMouseEnter={() => onHover(index)}
                       onMouseDown={(event) => event.preventDefault()}
@@ -486,18 +496,18 @@ function SlashCommandPalette({
                       <span
                         data-testid={`chat-slash-command-icon-${command.id}`}
                         className={cn(
-                          'flex h-7 w-7 shrink-0 items-center justify-center text-muted-foreground',
-                          selected && 'text-primary',
+                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-black/[0.03] text-muted-foreground transition-colors duration-150 dark:border-white/[0.08] dark:bg-white/[0.06]',
+                          selected && 'border-primary/20 bg-primary/[0.08] text-primary dark:bg-primary/[0.14]',
                         )}
                       >
                         <SlashCommandIcon command={command} />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex min-w-0 items-baseline gap-2">
-                          <span className="min-w-0 shrink-0 truncate text-sm font-medium text-foreground">
+                          <span className="min-w-0 shrink-0 truncate text-[13px] font-medium leading-5 text-foreground">
                             {t(`composer.slashCommands.commands.${command.id}.label`)}
                           </span>
-                          <code className="shrink-0 font-mono text-2xs text-muted-foreground">
+                          <code className="shrink-0 rounded border border-black/[0.06] bg-black/[0.03] px-1 py-px font-mono text-2xs text-muted-foreground dark:border-white/[0.08] dark:bg-white/[0.06]">
                             /{command.id}
                           </code>
                           {argumentHint && (
@@ -506,12 +516,12 @@ function SlashCommandPalette({
                             </span>
                           )}
                         </span>
-                        <span className="block truncate text-xs leading-4 text-muted-foreground">
+                        <span className="block truncate text-tiny leading-4 text-muted-foreground">
                           {t(`composer.slashCommands.commands.${command.id}.description`)}
                         </span>
                       </span>
                       {status && (
-                        <span className="max-w-[120px] shrink-0 truncate rounded-md bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground">
+                        <span className="max-w-[120px] shrink-0 truncate rounded-md border border-black/[0.06] bg-black/[0.03] px-1.5 py-0.5 text-2xs text-muted-foreground dark:border-white/[0.08] dark:bg-white/[0.06]">
                           {status}
                         </span>
                       )}
@@ -525,8 +535,10 @@ function SlashCommandPalette({
                     data-testid={`chat-composer-skill-option-${item.skill.name}`}
                     title={item.skill.description}
                     className={cn(
-                      'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors',
-                      selected ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                      'flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-[background-color,color,box-shadow] duration-150',
+                      selected
+                        ? 'bg-primary/[0.07] text-foreground ring-1 ring-inset ring-primary/[0.12] dark:bg-primary/[0.12] dark:ring-primary/[0.18]'
+                        : 'text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
                     )}
                     onMouseEnter={() => onHover(index)}
                     onMouseDown={(event) => event.preventDefault()}
@@ -535,26 +547,26 @@ function SlashCommandPalette({
                     <span
                       data-testid={`chat-slash-skill-icon-${item.skill.name}`}
                       className={cn(
-                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground',
-                        selected && 'text-primary',
+                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-black/[0.03] text-muted-foreground transition-colors duration-150 dark:border-white/[0.08] dark:bg-white/[0.06]',
+                        selected && 'border-primary/20 bg-primary/[0.08] text-primary dark:bg-primary/[0.14]',
                       )}
                     >
                       <Wrench className="h-3.5 w-3.5" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex min-w-0 items-center gap-1.5">
-                        <code className="shrink-0 rounded bg-surface-input px-1 py-0.5 font-mono text-2xs text-foreground">
+                        <code className="shrink-0 rounded border border-black/[0.06] bg-black/[0.03] px-1 py-px font-mono text-2xs text-foreground/80 dark:border-white/[0.08] dark:bg-white/[0.06]">
                           /{item.skill.name}
                         </code>
-                        <span className="min-w-0 truncate text-xs font-medium text-foreground">
+                        <span className="min-w-0 truncate text-[13px] font-medium leading-5 text-foreground">
                           {item.skill.sourceLabel}
                         </span>
                       </span>
-                      <span className="mt-0.5 block truncate text-2xs leading-4 text-muted-foreground">
+                      <span className="mt-0.5 block truncate text-tiny leading-4 text-muted-foreground">
                         {item.skill.description}
                       </span>
                     </span>
-                    <span className="max-w-[120px] shrink-0 truncate rounded-md bg-surface-input px-1.5 py-0.5 text-2xs text-muted-foreground">
+                    <span className="max-w-[120px] shrink-0 truncate rounded-md border border-black/[0.06] bg-black/[0.03] px-1.5 py-0.5 text-2xs text-muted-foreground dark:border-white/[0.08] dark:bg-white/[0.06]">
                       {item.skill.sourceLabel}
                     </span>
                   </button>
@@ -2966,8 +2978,8 @@ export function ChatInput({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  'shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground transition-colors',
-                  actionMenuOpen && 'bg-black/5 text-foreground dark:bg-white/10',
+                  'h-8 w-8 shrink-0 rounded-full border border-black/[0.08] bg-gradient-to-b from-white/[0.06] to-black/[0.03] text-muted-foreground shadow-sm transition-[background-color,color,transform] duration-150 hover:from-white/[0.09] hover:to-black/[0.05] hover:text-foreground active:scale-95 dark:border-white/[0.08] dark:from-white/[0.08] dark:to-white/[0.02] dark:hover:from-white/[0.12] dark:hover:to-white/[0.05]',
+                  actionMenuOpen && 'text-foreground from-white/[0.09] to-black/[0.05] dark:from-white/[0.12] dark:to-white/[0.05]',
                 )}
                 onClick={() => {
                   const nextOpen = !actionMenuOpen;
@@ -3110,9 +3122,9 @@ export function ChatInput({
                       type="button"
                       data-testid="chat-composer-permission-mode"
                       className={cn(
-                        'inline-flex h-8 max-w-[220px] items-center gap-1.5 rounded-lg border px-2 text-2xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
+                        'inline-flex h-8 max-w-[220px] items-center gap-1.5 rounded-full border px-2.5 text-2xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
                         workspace && onPermissionModeChange
-                          ? PERMISSION_MODE_STYLES[activePermissionMode]
+                          ? 'border-black/[0.08] bg-black/[0.03] text-foreground/80 shadow-sm hover:bg-black/[0.06] hover:text-foreground dark:border-white/[0.08] dark:bg-white/[0.06] dark:hover:bg-white/[0.09]'
                           : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
                         workspaceMenuOpen && 'ring-1 ring-primary/20',
                       )}
@@ -3129,12 +3141,18 @@ export function ChatInput({
                       aria-expanded={workspaceMenuOpen}
                     >
                       {workspace && onPermissionModeChange ? (
-                        <Shield className="h-3.5 w-3.5 shrink-0" />
+                        <>
+                          <span
+                            aria-hidden="true"
+                            className={cn('h-1.5 w-1.5 shrink-0 rounded-full', PERMISSION_MODE_DOTS[activePermissionMode])}
+                          />
+                          <Shield className={cn('h-3.5 w-3.5 shrink-0', PERMISSION_MODE_STYLES[activePermissionMode])} />
+                        </>
                       ) : (
                         <Briefcase className="h-3.5 w-3.5 shrink-0" />
                       )}
                       <span className="truncate">{workspaceMenuLabel}</span>
-                      <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', workspaceMenuOpen && 'rotate-180')} />
+                      <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 text-muted-foreground/70 transition-transform duration-150', workspaceMenuOpen && 'rotate-180')} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-xs text-xs">
@@ -3145,7 +3163,7 @@ export function ChatInput({
                 {workspaceMenuOpen && (
                   <div
                     data-testid="chat-composer-permission-menu"
-                    className="absolute bottom-full left-0 z-30 mb-2 w-[min(336px,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                    className="absolute bottom-full left-0 z-30 mb-2 w-[min(336px,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/[0.08] bg-surface-modal p-1.5 shadow-lg shadow-black/[0.08] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none dark:border-white/[0.08] dark:shadow-black/40"
                   >
                     {workspace && (
                       <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
@@ -3173,16 +3191,27 @@ export function ChatInput({
                               key={mode}
                               type="button"
                               className={cn(
-                                'flex w-full items-center justify-between gap-3 rounded-lg border border-transparent px-2.5 py-2 text-left text-xs font-medium transition-colors',
+                                'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors duration-150',
                                 selected
-                                  ? PERMISSION_MODE_STYLES[mode]
-                                  : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                                  ? 'bg-black/[0.05] dark:bg-white/[0.08]'
+                                  : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
                               )}
                               data-testid={`chat-composer-permission-option-${mode}`}
                               onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
                             >
-                              <span className="truncate">{t(`composer.permissionMode.${mode}`)}</span>
-                              {selected && <Check className="h-3.5 w-3.5 shrink-0" />}
+                              <span
+                                aria-hidden="true"
+                                className={cn('h-1.5 w-1.5 shrink-0 rounded-full', PERMISSION_MODE_DOTS[mode], !selected && 'opacity-60')}
+                              />
+                              <span
+                                className={cn(
+                                  'min-w-0 flex-1 truncate text-[13px] font-medium leading-5',
+                                  selected ? 'text-foreground' : 'text-foreground/75',
+                                )}
+                              >
+                                {t(`composer.permissionMode.${mode}`)}
+                              </span>
+                              {selected && <Check className="h-3.5 w-3.5 shrink-0 text-foreground/70" />}
                             </button>
                           );
                         })}
