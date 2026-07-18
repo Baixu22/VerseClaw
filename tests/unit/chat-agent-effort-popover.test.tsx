@@ -87,12 +87,11 @@ describe('ChatAgentEffortButton', () => {
     });
     const [agentId, value] = updateAgentReasoningEffort.mock.calls[0]!;
     expect(agentId).toBe('main');
-    // Index 5 should resolve to one of the persisted values — never 'max'.
-    expect(value).not.toBe('max');
-    expect(['auto', 'minimal', 'low', 'medium', 'high', 'xhigh']).toContain(value);
+    // Index 5 is the xhigh slot.
+    expect(value).toBe('xhigh');
   });
 
-  it('maps the top slider slot to the existing xhigh API value', async () => {
+  it('maps the top slider slot to the runtime max thinking level', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const slider = await screen.findByTestId('chat-agent-effort-slider');
@@ -101,45 +100,42 @@ describe('ChatAgentEffortButton', () => {
       expect(updateAgentReasoningEffort).toHaveBeenCalled();
     });
     const [, value] = updateAgentReasoningEffort.mock.calls.at(-1)!;
-    expect(value).toBe('xhigh');
+    expect(value).toBe('max');
   });
 
-  it('uses a theme-aware rounded popover card', async () => {
+  it('uses the reference-style black squircle card', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const card = popover.querySelector('.effort-card') as HTMLElement;
     expect(card).toBeTruthy();
-    expect(card.className).toContain('rounded-lg');
-    expect(card.className).toContain('bg-surface-modal');
-    expect(card.className).not.toContain('bg-[#18181b]');
+    expect(card.className).toContain('bg-black');
+    expect(card.style.clipPath).toContain('effort-squircle');
   });
 
-  it('does not render legacy squircle clip-path definitions', async () => {
+  it('renders squircle clip-path definitions for card and track', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const clipPaths = popover.querySelectorAll('clipPath');
-    expect(clipPaths).toHaveLength(0);
+    expect(clipPaths).toHaveLength(2);
   });
 
-  it('keeps the card as a normal rounded rectangle', async () => {
-    renderButton();
-    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
-    const popover = await screen.findByTestId('chat-agent-effort-popover');
-    const card = popover.querySelector('.effort-card') as HTMLElement;
-    expect(card.style.clipPath).toBe('');
-  });
-
-  it('mounts the theme-aware fire trail on the real effort track', async () => {
+  it('only ignites the fire trail at max effort', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const track = await screen.findByTestId('chat-agent-effort-track');
     const canvas = screen.getByTestId('chat-agent-effort-fire');
 
-    expect(track).toHaveClass('h-9', 'sm:h-10', 'effort-track-active');
-    expect(canvas).toHaveClass('mix-blend-multiply', 'dark:mix-blend-screen', 'motion-reduce:hidden');
+    // Agent starts at 'high' — flame not yet active (shader gates at 100%).
+    expect(track.className).not.toContain('effort-track-active');
+    expect(canvas).toHaveClass('mix-blend-screen', 'motion-reduce:hidden');
     expect(canvas.style.maskImage).toContain('linear-gradient');
+
+    const slider = screen.getByTestId('chat-agent-effort-slider');
+    fireEvent.change(slider, { target: { value: '6' } });
+    expect(track.className).toContain('effort-track-active');
+    expect(track.className).toContain('effort-track-full');
   });
 
   it('shows all 7 tick labels under the track', async () => {
@@ -160,7 +156,7 @@ describe('ChatAgentEffortButton', () => {
     const ticks = tickContainer.querySelectorAll('span');
     // The agent starts at 'high' (index 4), so tick 4 should be active.
     const activeTick = ticks[4];
-    expect(activeTick.className).toContain('text-primary');
+    expect(activeTick.className).toContain('effort-tick-active');
   });
 
   it('closes the popover on Escape key', async () => {

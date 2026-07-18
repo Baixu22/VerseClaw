@@ -1,12 +1,13 @@
 /**
  * Chat Agent Effort Popover
  *
- * Compact reasoning-effort control for the chat composer. It mirrors the
- * composer control style: a ghost trigger plus a small theme-aware popover.
+ * Reasoning-effort control for the chat composer, visually aligned 1:1 with
+ * the claude-range-slider reference: black squircle card, glossy white thumb,
+ * dot track, and a WebGL purple flame tail that ignites at max effort.
  * Slider movement is local-first and saved with a short debounce so dragging
  * stays smooth while the persisted agent setting remains up to date.
  */
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Flame, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -15,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { useWebglFire } from '@/hooks/use-webgl-fire';
 import type { AgentReasoningEffort } from '@/types/agent';
 
-const EFFORT_OPTIONS: ReadonlyArray<AgentReasoningEffort | 'max'> = [
+const EFFORT_OPTIONS: ReadonlyArray<AgentReasoningEffort> = [
   'auto',
   'minimal',
   'low',
@@ -25,7 +26,7 @@ const EFFORT_OPTIONS: ReadonlyArray<AgentReasoningEffort | 'max'> = [
   'max',
 ] as const;
 
-const EFFORT_LABEL_KEY: Record<AgentReasoningEffort | 'max', string> = {
+const EFFORT_LABEL_KEY: Record<AgentReasoningEffort, string> = {
   auto: 'composer.effortStatusAuto',
   minimal: 'composer.effortStatusMinimal',
   low: 'composer.effortStatusLow',
@@ -35,34 +36,24 @@ const EFFORT_LABEL_KEY: Record<AgentReasoningEffort | 'max', string> = {
   max: 'composer.effortStatusMax',
 };
 
-type DisplayEffort = AgentReasoningEffort | 'max';
+type DisplayEffort = AgentReasoningEffort;
 type SavedEffort = AgentReasoningEffort;
 
 const MAX_SLIDER_VALUE = EFFORT_OPTIONS.length - 1;
 const HIGH_INDEX = EFFORT_OPTIONS.indexOf('high');
 const SAVE_DEBOUNCE_MS = 140;
-
-const EFFORT_TONE_CLASSES: Record<DisplayEffort, string> = {
-  auto: 'border-black/10 bg-black/[0.03] text-muted-foreground dark:border-white/10 dark:bg-white/[0.05]',
-  minimal: 'border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300',
-  low: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300',
-  medium: 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-  high: 'border-orange-500/25 bg-orange-500/10 text-orange-700 dark:text-orange-300',
-  xhigh: 'border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-300',
-  max: 'border-fuchsia-500/25 bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300',
-};
+// Thumb geometry — must match the CSS below so dots/flame stay aligned to stops.
+const THUMB_W = 29;
 
 function toSliderIndex(effort: SavedEffort | undefined | null): number {
   if (!effort) return 0;
-  if (effort === 'xhigh') return MAX_SLIDER_VALUE;
   const idx = EFFORT_OPTIONS.indexOf(effort);
   return idx < 0 ? 0 : idx;
 }
 
 function fromSliderIndex(idx: number): SavedEffort {
   const safe = Math.max(0, Math.min(MAX_SLIDER_VALUE, Math.round(idx)));
-  const opt = EFFORT_OPTIONS[safe];
-  return opt === 'max' ? 'xhigh' : (opt as SavedEffort);
+  return EFFORT_OPTIONS[safe];
 }
 
 export interface ChatAgentEffortPopoverProps {
@@ -117,15 +108,46 @@ function ChatAgentEffortPopoverBody({
   const { t } = useTranslation('chat');
   const updateAgentReasoningEffort = useAgentsStore((s) => s.updateAgentReasoningEffort);
   const [draftIndex, setDraftIndex] = useState<number>(() => toSliderIndex(initialEffort));
+  const [isFlipping, setIsFlipping] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fireCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const initialRef = useRef<SavedEffort>(initialEffort ?? 'auto');
   const commitTimerRef = useRef<number | null>(null);
+  const flipTimerRef = useRef<number | null>(null);
+  const wasMaxRef = useRef<boolean>(toSliderIndex(initialEffort) >= MAX_SLIDER_VALUE);
+
+  const rawId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const clipId = `effort-squircle-${rawId}`;
+  const clipTrackId = `effort-squircle-track-${rawId}`;
 
   const statusEffort: DisplayEffort = EFFORT_OPTIONS[draftIndex] ?? 'auto';
   const fillPercent = (draftIndex / MAX_SLIDER_VALUE) * 100;
-  const fireActive = draftIndex >= HIGH_INDEX;
+  // Reference behavior: the flame only ignites at Ultracode (slider = 100%);
+  // the shader gates on smoothstep(0.95, 1.0, u_slider) so earlier activation
+  // renders nothing anyway.
+  const fireActive = draftIndex >= MAX_SLIDER_VALUE;
+  const isHighZone = draftIndex >= HIGH_INDEX;
   useWebglFire(fireCanvasRef, draftIndex / MAX_SLIDER_VALUE, fireActive);
+
+  // Flip-up animation when entering max, mirroring the reference status text.
+  useEffect(() => {
+    const isMax = draftIndex >= MAX_SLIDER_VALUE;
+    if (isMax && !wasMaxRef.current) {
+      setIsFlipping(true);
+      if (flipTimerRef.current != null) window.clearTimeout(flipTimerRef.current);
+      flipTimerRef.current = window.setTimeout(() => {
+        flipTimerRef.current = null;
+        setIsFlipping(false);
+      }, 460);
+    } else if (!isMax && wasMaxRef.current) {
+      if (flipTimerRef.current != null) {
+        window.clearTimeout(flipTimerRef.current);
+        flipTimerRef.current = null;
+      }
+      setIsFlipping(false);
+    }
+    wasMaxRef.current = isMax;
+  }, [draftIndex]);
 
   const commit = useCallback(
     (idx: number) => {
@@ -175,6 +197,9 @@ function ChatAgentEffortPopoverBody({
       if (commitTimerRef.current != null) {
         window.clearTimeout(commitTimerRef.current);
       }
+      if (flipTimerRef.current != null) {
+        window.clearTimeout(flipTimerRef.current);
+      }
     };
   }, []);
 
@@ -208,98 +233,117 @@ function ChatAgentEffortPopoverBody({
   }, [anchorRect, onClose]);
 
   const left = anchorRect
-    ? Math.min(Math.max(8, anchorRect.left), Math.max(8, window.innerWidth - 328))
+    ? Math.min(Math.max(8, anchorRect.left), Math.max(8, window.innerWidth - 400))
     : 16;
   const positionStyle: CSSProperties = anchorRect
     ? { left, bottom: window.innerHeight - anchorRect.top + 8 }
     : { left: 16, bottom: 96 };
 
+  const maskPercent = Math.min(fillPercent + 2, 100);
+
   return (
     <div
       ref={containerRef}
       data-testid="chat-agent-effort-popover"
-      className="fixed z-50 w-[min(344px,calc(100vw-24px))] select-none sm:w-[min(344px,calc(100vw-32px))]"
+      className="fixed z-50 w-[min(376px,calc(100vw-24px))] select-none"
       style={positionStyle}
     >
-      <div className="effort-card rounded-lg border border-black/10 bg-surface-modal p-3 text-foreground shadow-xl motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
+      {/* Squircle clip paths (objectBoundingBox units — reference geometry). */}
+      <svg className="pointer-events-none absolute h-0 w-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.053,0 C 0.029,0 0.012,0.008 0.005,0.02 C 0.002,0.028 0,0.038 0,0.053 L 0,0.947 C 0,0.962 0.002,0.972 0.005,0.98 C 0.012,0.992 0.029,1 0.053,1 L 0.947,1 C 0.971,1 0.988,0.992 0.995,0.98 C 0.998,0.972 1,0.962 1,0.947 L 1,0.053 C 1,0.038 0.998,0.028 0.995,0.02 C 0.988,0.008 0.971,0 0.947,0 Z" />
+          </clipPath>
+          <clipPath id={clipTrackId} clipPathUnits="objectBoundingBox">
+            <path d="M 0.033,0 C 0.018,0 0.007,0.012 0.003,0.035 C 0.001,0.055 0,0.1 0,0.15 L 0,0.85 C 0,0.9 0.001,0.945 0.003,0.965 C 0.007,0.988 0.018,1 0.033,1 L 0.967,1 C 0.982,1 0.993,0.988 0.997,0.965 C 0.999,0.945 1,0.9 1,0.85 L 1,0.15 C 1,0.1 0.999,0.055 0.997,0.035 C 0.993,0.012 0.982,0 0.967,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <div className="effort-card-shadow motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:zoom-in-95 motion-safe:duration-150">
+        <div
+          className="effort-card bg-[#fbfaf8] px-5 pb-4 pt-[18px] text-zinc-900 dark:bg-black dark:text-white"
+          style={{ clipPath: `url(#${clipId})` }}
+        >
+          <div className="mb-3.5 flex items-center justify-between">
+            <div className="effort-header-left flex items-center gap-[7px] text-[15px] font-medium">
               <Flame
                 className={cn(
-                  'h-4 w-4 text-muted-foreground transition-[color,filter] duration-200',
-                  fireActive && 'text-fuchsia-600 drop-shadow-[0_0_6px_rgba(192,38,211,0.45)] dark:text-fuchsia-300',
+                  'h-4 w-4 text-zinc-400 transition-[color,filter] duration-300 dark:text-[#a1a1aa]',
+                  isHighZone && 'text-fuchsia-500 dark:text-fuchsia-400',
+                  fireActive && 'text-purple-600 drop-shadow-[0_0_8px_rgba(147,51,234,0.45)] dark:text-[#c084fc] dark:drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]',
                 )}
                 aria-hidden="true"
               />
-              <p className="text-xs font-medium text-foreground">{t('composer.effortTitle')}</p>
+              <span className="font-bold leading-[1.3] text-zinc-600 dark:text-[#b0b0c7]">{t('composer.effortTitle')}</span>
               <span
                 className={cn(
-                  'inline-flex h-5 items-center rounded-md border px-1.5 text-[11px] font-medium leading-none',
-                  EFFORT_TONE_CLASSES[statusEffort],
+                  'effort-status inline-block align-middle text-zinc-500 dark:text-[#a1a1aa]',
+                  fireActive && 'effort-status-glowing',
+                  isFlipping && 'effort-status-flip',
                 )}
               >
                 {t(EFFORT_LABEL_KEY[statusEffort])}
               </span>
             </div>
-            <div className="mt-1 flex items-center gap-2 text-tiny text-muted-foreground">
-              <span>{t('composer.effortFaster')}</span>
-              <span aria-hidden="true" className="h-px w-5 bg-border" />
-              <span>{t('composer.effortSmarter')}</span>
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={t('composer.effortHelpTooltip')}
+                  className="flex items-center justify-center p-0 leading-none text-zinc-400 transition-colors hover:text-zinc-600 dark:text-[#a1a1aa] dark:hover:text-[#d4d4d8]"
+                >
+                  <HelpCircle className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <p className="max-w-[220px] text-xs">{t('composer.effortHelpTooltip')}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                aria-label={t('composer.effortHelpTooltip')}
-                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-              >
-                <HelpCircle className="h-3.5 w-3.5" strokeWidth={1.8} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p className="max-w-[220px] text-xs">{t('composer.effortHelpTooltip')}</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
 
-        <div className="mt-3">
+          <div className="mb-[7px] flex items-center justify-between text-[13px] font-extrabold tracking-[0.04em] text-zinc-500 dark:text-[#b0b0b8]">
+            <span>{t('composer.effortFaster')}</span>
+            <span>{t('composer.effortSmarter')}</span>
+          </div>
+
           <div
             className={cn(
-              'effort-track relative h-9 overflow-hidden rounded-lg border border-black/10 bg-surface-input isolation-isolate sm:h-10 dark:border-white/10',
+              'effort-track relative h-[30px] overflow-hidden bg-[#0c0c0c]',
               fireActive && 'effort-track-active',
               draftIndex >= MAX_SLIDER_VALUE && 'effort-track-full',
             )}
+            style={{ clipPath: `url(#${clipTrackId})`, isolation: 'isolate' }}
             data-testid="chat-agent-effort-track"
           >
             <div
               aria-hidden="true"
-              className="absolute inset-y-0 left-0 z-0 rounded-lg bg-fuchsia-500/10 transition-[width] duration-100 dark:bg-fuchsia-400/10"
-              style={{ width: `${fillPercent}%` }}
+              className="absolute inset-0 z-0 bg-gradient-to-br from-[#111113] to-[#0a0a0b]"
             />
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1]">
+              {EFFORT_OPTIONS.map((option, i) => {
+                const frac = i / MAX_SLIDER_VALUE;
+                return (
+                  <span
+                    key={option}
+                    className="effort-dot"
+                    style={{
+                      left: `calc(${frac * 100}% + ${THUMB_W / 2 - frac * THUMB_W}px)`,
+                    }}
+                  />
+                );
+              })}
+            </div>
             <canvas
               ref={fireCanvasRef}
               aria-hidden="true"
               data-testid="chat-agent-effort-fire"
-              className="effort-fire-canvas pointer-events-none absolute inset-0 z-[2] h-full w-full opacity-0 mix-blend-multiply transition-opacity duration-300 motion-reduce:hidden dark:mix-blend-screen"
+              className="effort-fire-canvas pointer-events-none absolute inset-0 h-full w-full opacity-0 mix-blend-screen transition-opacity duration-300 motion-reduce:hidden"
               style={{
-                maskImage: `linear-gradient(to right, black 0%, black ${Math.min(fillPercent + 2, 100)}%, transparent ${Math.min(fillPercent + 2, 100)}%)`,
-                WebkitMaskImage: `linear-gradient(to right, black 0%, black ${Math.min(fillPercent + 2, 100)}%, transparent ${Math.min(fillPercent + 2, 100)}%)`,
+                maskImage: `linear-gradient(to right, black 0%, black ${maskPercent}%, transparent ${maskPercent}%)`,
+                WebkitMaskImage: `linear-gradient(to right, black 0%, black ${maskPercent}%, transparent ${maskPercent}%)`,
               }}
             />
-            <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-between px-3">
-              {EFFORT_OPTIONS.map((option) => (
-                <span
-                  key={option}
-                  className={cn(
-                    'h-1 w-1 rounded-full bg-muted-foreground/35 transition-[background-color,opacity] duration-200',
-                    fireActive && 'opacity-30',
-                    EFFORT_OPTIONS[draftIndex] === option && 'bg-fuchsia-600 opacity-100 dark:bg-fuchsia-300',
-                  )}
-                />
-              ))}
-            </div>
             <input
               type="range"
               min={0}
@@ -316,21 +360,24 @@ function ChatAgentEffortPopoverBody({
               onBlur={commitDraft}
               disabled={disabled}
               data-testid="chat-agent-effort-slider"
-              className="effort-range"
+              className={cn('effort-range', fireActive && 'effort-range-glowing')}
               aria-label={t('composer.effortTitle')}
             />
           </div>
 
           <div
-            className="mt-2 grid grid-cols-7 gap-1 text-center text-[10px] leading-3 text-muted-foreground"
+            className="mt-2 grid grid-cols-7 gap-1 text-center text-[10px] leading-3 text-zinc-400 dark:text-[#6b6b74]"
             data-testid="chat-agent-effort-ticks"
           >
-            {EFFORT_OPTIONS.map((opt) => (
+            {EFFORT_OPTIONS.map((opt, i) => (
               <span
                 key={opt}
                 className={cn(
-                  'truncate transition-colors',
-                  EFFORT_OPTIONS[draftIndex] === opt && 'font-medium text-primary',
+                  'truncate transition-colors duration-200',
+                  draftIndex === i
+                    && (i >= MAX_SLIDER_VALUE
+                      ? 'effort-tick-active font-semibold text-purple-600 dark:text-[#c084fc]'
+                      : 'effort-tick-active font-medium text-zinc-900 dark:text-[#e4e4e7]'),
                 )}
               >
                 {t(EFFORT_LABEL_KEY[opt])}
@@ -338,18 +385,68 @@ function ChatAgentEffortPopoverBody({
             ))}
           </div>
         </div>
-        <style>{EFFORT_CSS}</style>
       </div>
+      <style>{EFFORT_CSS}</style>
     </div>
   );
 }
 
 const EFFORT_CSS = `
-  .effort-track-active .effort-fire-canvas {
-    opacity: 0.92;
+  .effort-card-shadow {
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.2)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
   }
-  .effort-track-full .effort-fire-canvas {
+  .effort-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
+  .dark .effort-card {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .effort-header-left {
+    perspective: 280px;
+    perspective-origin: center 120%;
+  }
+  .effort-status {
+    transition: color 0.3s, text-shadow 0.3s;
+    will-change: transform, opacity, filter;
+    transform-origin: center bottom;
+    transform: rotateX(0deg) translateY(0);
+  }
+  .effort-status-glowing {
+    color: #7c3aed;
+    text-shadow: 0 0 12px rgba(147, 51, 234, 0.35);
+    font-weight: 600;
+  }
+  .dark .effort-status-glowing {
+    color: #c084fc;
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+  }
+  @keyframes effortFlipUp {
+    0% { opacity: 0; transform: translateY(18px) rotateX(-80deg); filter: blur(4px); }
+    100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+  }
+  .effort-status-flip {
+    animation: effortFlipUp 0.42s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  }
+  .effort-track {
+    border: 1px solid #1a1a1e;
+  }
+  .effort-dot {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #494950;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.6s;
+  }
+  .effort-track-active .effort-dot { opacity: 0.25; }
+  .effort-track-full .effort-dot { opacity: 0; }
+  .effort-fire-canvas { z-index: 2; }
+  .effort-track-active .effort-fire-canvas {
     opacity: 1;
+    z-index: 4;
   }
   .effort-range {
     position: absolute;
@@ -357,68 +454,89 @@ const EFFORT_CSS = `
     width: 100%;
     height: 100%;
     margin: 0;
+    padding: 0;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
     background: transparent;
     outline: none;
+    z-index: 5;
   }
-  .effort-range:disabled {
-    cursor: not-allowed;
-  }
+  .effort-range:disabled { cursor: not-allowed; }
   .effort-range::-webkit-slider-runnable-track {
     height: 100%;
     background: transparent;
   }
   .effort-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    margin-top: 8px;
-    border-radius: 7px;
-    border: 1px solid hsl(var(--border));
-    background: linear-gradient(170deg, hsl(var(--background)) 0%, hsl(var(--surface-modal)) 100%);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-    transition: transform 120ms ease, box-shadow 120ms ease;
+    width: 29px;
+    height: 29px;
+    border-radius: 10px;
+    background: linear-gradient(170deg, #ffffff 0%, #f0f0f2 40%, #e4e4e6 100%);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.25), 0 6px 16px rgba(0, 0, 0, 0.12),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -0.5px 0 rgba(0, 0, 0, 0.06);
+    cursor: grab;
+    transition: box-shadow 0.4s ease, transform 0.15s ease;
   }
   .effort-range::-webkit-slider-thumb:active {
-    transform: scale(0.94);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+    cursor: grabbing;
+    transform: scale(0.95);
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  }
+  .effort-range-glowing::-webkit-slider-thumb {
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.25), 0 6px 16px rgba(0, 0, 0, 0.12),
+      0 0 28px rgba(168, 85, 247, 0.5),
+      0 0 50px rgba(168, 85, 247, 0.25),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -0.5px 0 rgba(0, 0, 0, 0.06);
+  }
+  .effort-range-glowing::-webkit-slider-thumb:active {
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2),
+      0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.15),
+      0 0 32px rgba(168, 85, 247, 0.55),
+      0 0 56px rgba(168, 85, 247, 0.3),
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
   }
   .effort-range::-moz-range-track {
-    height: 100%;
+    height: 30px;
     background: transparent;
-    border: 0;
+    border: none;
   }
   .effort-range::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 7px;
-    border: 1px solid hsl(var(--border));
-    background: hsl(var(--background));
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
+    background: linear-gradient(170deg, #ffffff 0%, #f0f0f2 40%, #e4e4e6 100%);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.25), 0 6px 16px rgba(0, 0, 0, 0.12);
+    cursor: grab;
+    transition: box-shadow 0.4s ease;
   }
-  .effort-track-active .effort-range::-webkit-slider-thumb {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 22px rgba(192, 38, 211, 0.42);
+  .effort-range::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(0.95);
   }
-  .effort-track-active .effort-range::-moz-range-thumb {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 22px rgba(192, 38, 211, 0.42);
-  }
-  @media (min-width: 640px) {
-    .effort-range::-webkit-slider-thumb {
-      width: 20px;
-      height: 20px;
-      margin-top: 9px;
-    }
-    .effort-range::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-    }
+  .effort-range-glowing::-moz-range-thumb {
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.25), 0 6px 16px rgba(0, 0, 0, 0.12),
+      0 0 28px rgba(168, 85, 247, 0.5),
+      0 0 50px rgba(168, 85, 247, 0.25);
   }
   @media (prefers-reduced-motion: reduce) {
     .effort-range::-webkit-slider-thumb,
-    .effort-range::-moz-range-thumb {
+    .effort-range::-moz-range-thumb,
+    .effort-status {
       transition: none;
+      animation: none;
     }
   }
 `;
