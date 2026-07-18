@@ -12,6 +12,7 @@ import {
   type OrchestratorRequest,
 } from "./orchestrator.js";
 import type { RoleRegistryConfigCarrier } from "./role-registry.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import {
   spawnRoleSubagent,
   type RoleSpawnContext,
@@ -50,6 +51,19 @@ import {
   type OrchestrationResultBundle,
   type RoleOutcomeBundle,
 } from "./orchestration-result-bundle.js";
+import {
+  buildWorkerOutputHandoffArtifact,
+  captureRuntimeWorkerOutput,
+  resolveHandoffArtifactPrompt,
+  resolveHandoffArtifactRuntimeState,
+  resolveHandoffArtifactsPilotMode,
+  resolveHandoffCaptureTimeoutMs,
+  type CaptureRuntimeWorkerOutput,
+  type HandoffArtifactRuntimeState,
+  type HandoffArtifactsPilotMode,
+  type HandoffOutputCapture,
+  type WorkerOutputHandoffArtifact,
+} from "./handoff-artifacts.js";
 
 import type { BlackboardState } from "./orchestration-blackboard.js";
 import type { BlackboardTraceEvent } from "./orchestration-blackboard-trace.js";
@@ -97,6 +111,9 @@ export type OrchestrationRunResult = {
   qualityScorecard?: OrdinaryOrchestrationQualityScorecard | null;
   /** Worker tasks that failed to spawn (status !== "accepted"). */
   failures: Array<{ roleName: string; status: string; error?: string }>;
+  handoffMode: HandoffArtifactsPilotMode;
+  handoffState: HandoffArtifactRuntimeState;
+  handoffArtifacts: WorkerOutputHandoffArtifact[];
   resultBundle: OrchestrationResultBundle;
 
   blackboardState: BlackboardState;
@@ -130,6 +147,11 @@ export type OrchestrationLifecycleEvent = {
 
 /** Optional callback invoked at each worker lifecycle transition. */
 export type OrchestrationLifecycleFn = (event: OrchestrationLifecycleEvent) => void;
+
+type ObservedOrchestrationDeps = {
+  spawn: SpawnFn;
+  captureHandoffOutput?: CaptureRuntimeWorkerOutput;
+};
 
 /** Build the orchestration-context system prompt fragment injected into each worker. */
 function resolvePlanRole(
@@ -304,7 +326,7 @@ async function patchExpectedWorkerRunIds(
 export async function runOrchestrationObserved(
   request: ObservedOrchestrationRunRequest,
   ctx: RoleSpawnContext,
-  deps: { spawn: SpawnFn },
+  deps: ObservedOrchestrationDeps,
   traceAttrs?: ObservedOrchestrationTraceAttrs,
   lifecycle?: OrchestrationLifecycleFn,
 ): Promise<OrchestrationRunResult> {
@@ -329,7 +351,7 @@ export async function runOrchestrationObserved(
 export async function runOrchestrationWithRecorder(
   request: ObservedOrchestrationRunRequest,
   ctx: RoleSpawnContext,
-  deps: { spawn: SpawnFn },
+  deps: ObservedOrchestrationDeps,
   recorder: ObservabilityTraceRecorder,
   lifecycle?: OrchestrationLifecycleFn,
 ): Promise<OrchestrationRunResult> {
@@ -337,7 +359,26 @@ export async function runOrchestrationWithRecorder(
   const spawnedRunIds: string[] = [];
   const expectedWorkerRunIds: string[] = [];
   const failures: OrchestrationRunResult["failures"] = [];
+  const handoffArtifacts: WorkerOutputHandoffArtifact[] = [];
   const orchestrationRunId = request.orchestrationRunId ?? `orch_${Date.now().toString(36)}`;
+  const handoffMode = resolveHandoffArtifactsPilotMode(request.cfg);
+  const rawOwnerSessionKey = handoffMode === "on"
+    ? (ctx.completionOwnerKey ?? ctx.agentSessionKey)?.trim()
+    : undefined;
+  let ownerSessionKey = rawOwnerSessionKey;
+  if (rawOwnerSessionKey && request.cfg) {
+    try {
+      const { resolveSubagentSpawnOwnership } = await import("./subagent-spawn-ownership.js");
+      ownerSessionKey = resolveSubagentSpawnOwnership({
+        cfg: request.cfg as OpenClawConfig,
+        agentSessionKey: ctx.agentSessionKey,
+        completionOwnerKey: ctx.completionOwnerKey,
+      }).completionRequesterSessionKey;
+    } catch {
+      ownerSessionKey = undefined;
+    }
+  }
+  const captureHandoffOutput = deps.captureHandoffOutput ?? captureRuntimeWorkerOutput;
 
   let plan: OrchestratorPlan;
   let schedule: ReturnType<typeof scheduleResourceAwareWaves>;
@@ -409,6 +450,15 @@ export async function runOrchestrationWithRecorder(
       status: "planned",
       startedAt: Date.now(),
     });
+    const handoffPrompt = handoffMode === "on"
+      ? resolveHandoffArtifactPrompt({
+          node,
+          plan,
+          orchestrationRunId,
+          ownerSessionKey: ownerSessionKey ?? "",
+          artifacts: handoffArtifacts,
+        })
+      : { status: "not-required" as const };
     // Stable node and role-instance ids let renderer projections keep duplicate
     // roles separate while the asynchronous spawn is still in flight.
     try {
@@ -427,7 +477,47 @@ export async function runOrchestrationWithRecorder(
       /* lifecycle callback is best-effort */
     }
     try {
+      if (handoffPrompt.status === "blocked") {
+        const message = ownerSessionKey
+          ? handoffPrompt.reason
+          : "Verified handoff output requires an owner session identity; downstream spawn was blocked.";
+        const spawn: RoleSpawnResult = { status: "error", error: message };
+        const endedLedger: OrchestrationTaskLedgerEntry = {
+          ...ledger,
+          status: "failed",
+          endedAt: Date.now(),
+        };
+        outcomes.push({ roleName, agentId: request.agentId, task, isVerifier, ledger: endedLedger, spawn });
+        failures.push({ roleName, status: "handoff-blocked", error: message });
+        recorder.endSpan(span.id, {
+          status: "error",
+          error: message,
+          attributes: {
+            ledger: endedLedger,
+            handoffState: "blocked",
+            missingFromTaskIds: handoffPrompt.missingFromTaskIds,
+          },
+        });
+        try {
+          lifecycle?.({
+            status: "error",
+            orchestrationRunId,
+            taskNodeId: endedLedger.taskNodeId,
+            roleInstanceId: endedLedger.roleInstanceId,
+            agentId: request.agentId,
+            roleName,
+            task,
+            isVerifier,
+            error: message,
+            ts: Date.now(),
+          });
+        } catch {
+          /* best-effort */
+        }
+        return;
+      }
       const role = resolvePlanRole(roleName, request);
+      const framing = orchestrationFraming(plan, request.task, roleName, isVerifier, role);
       const spawn = await spawnRoleSubagent(
         {
           role: roleName,
@@ -436,7 +526,9 @@ export async function runOrchestrationWithRecorder(
           agentId: request.agentId,
           modelOverride: modelRef ?? undefined,
           runTimeoutSeconds: request.runTimeoutSeconds,
-          extraSystemPrompt: orchestrationFraming(plan, request.task, roleName, isVerifier, role),
+          extraSystemPrompt: handoffPrompt.status === "ready"
+            ? `${framing}\n\n${handoffPrompt.prompt}`
+            : framing,
           ...(orchestrationRunId
             ? {
                 orchestration: {
@@ -468,6 +560,7 @@ export async function runOrchestrationWithRecorder(
                   qualityPolicy: request.qualityPolicy,
                   repairPolicy: request.repairPolicy,
                   workerCommunication: request.workerCommunication ?? "none",
+                  handoffArtifactsMode: handoffMode,
                   allowFollowupPlanning: request.allowFollowupPlanning ?? false,
                 },
               }
@@ -570,6 +663,95 @@ export async function runOrchestrationWithRecorder(
   const workerNodes = taskGraphWorkerNodes(plan.taskGraph);
   const workerNodeById = new Map(workerNodes.map((node) => [node.taskNodeId, node]));
   const fallbackIndex = new Map(workerNodes.map((node, index) => [node.taskNodeId, index]));
+  const captureWaveHandoffs = async (nodes: readonly OrchestrationTaskNode[]): Promise<void> => {
+    if (handoffMode !== "on") return;
+    const artifactBatches = await Promise.all(nodes.map(async (node) => {
+      const outgoing = plan.taskGraph.edges.filter(
+        (edge) => edge.type === "handoff" && edge.from === node.taskNodeId,
+      );
+      if (outgoing.length === 0) return [];
+      const outcome = outcomes.find((candidate) => candidate.ledger.taskNodeId === node.taskNodeId);
+      const childRunId = outcome?.spawn.result?.runId;
+      const childSessionKey = outcome?.spawn.result?.childSessionKey;
+      if (
+        !ownerSessionKey ||
+        outcome?.spawn.status !== "accepted" ||
+        !childRunId ||
+        !childSessionKey
+      ) {
+        recorder.recordEvent("orchestration.handoff.rejected", "Handoff Capture Rejected", {
+          attributes: {
+            orchestrationRunId,
+            fromTaskId: node.taskNodeId,
+            fromRole: node.roleName,
+            reason: !ownerSessionKey ? "owner-session-unavailable" : "child-identity-unavailable",
+          },
+        });
+        return [];
+      }
+      let capture: HandoffOutputCapture;
+      try {
+        capture = await captureHandoffOutput({
+          orchestrationRunId,
+          ownerSessionKey,
+          fromTaskId: node.taskNodeId,
+          fromRole: node.roleName,
+          attempt: outcome.ledger.attempt,
+          childRunId,
+          childSessionKey,
+          timeoutMs: resolveHandoffCaptureTimeoutMs(request.runTimeoutSeconds),
+        });
+      } catch {
+        capture = { status: "unavailable" as const, reason: "wait-failed" as const };
+      }
+      return outgoing.flatMap((edge) => {
+        const target = workerNodeById.get(edge.to);
+        if (!target) return [];
+        return [buildWorkerOutputHandoffArtifact({
+          identity: {
+            orchestrationRunId,
+            taskGraphId: plan.taskGraph.graphRunId,
+            ownerSessionKey,
+            fromTaskId: node.taskNodeId,
+            fromRole: node.roleName,
+            fromRoleInstanceId: outcome.ledger.roleInstanceId,
+            toTaskId: target.taskNodeId,
+            toRole: target.roleName,
+            attempt: outcome.ledger.attempt,
+            childRunId,
+            childSessionKey,
+          },
+          capture,
+        })];
+      });
+    }));
+    for (const artifact of artifactBatches.flat()) {
+      handoffArtifacts.push(artifact);
+      recorder.recordEvent(
+        artifact.state === "ready"
+          ? "orchestration.handoff.captured"
+          : "orchestration.handoff.rejected",
+        artifact.state === "ready" ? "Handoff Output Captured" : "Handoff Capture Rejected",
+        {
+          attributes: {
+            orchestrationRunId,
+            artifactId: artifact.artifactId,
+            fromTaskId: artifact.fromTaskId,
+            toTaskId: artifact.toTaskId,
+            childRunId: artifact.childRunId,
+            state: artifact.state,
+            ...(artifact.state === "ready"
+              ? {
+                  outputSha256: artifact.outputSha256,
+                  redacted: artifact.redacted,
+                  truncated: artifact.truncated,
+                }
+              : { reason: artifact.reason }),
+          },
+        },
+      );
+    }
+  };
   for (const wave of schedule.waves) {
     const nodes = wave.taskNodeIds
       .map((taskNodeId) => workerNodeById.get(taskNodeId))
@@ -594,6 +776,7 @@ export async function runOrchestrationWithRecorder(
         ),
       ),
     );
+    await captureWaveHandoffs(nodes);
   }
 
   if (
@@ -683,6 +866,7 @@ export async function runOrchestrationWithRecorder(
     leadRole: plan.leadRole,
     selectedRoles: plan.routeDiagnostics.selectedRoles,
     outcomes: outcomes.map(bundleOutcome),
+    handoffArtifacts,
     failures: failures.map((failure) => ({ ...failure })),
     permissionEvents: permissionEventsFromFailures(failures),
     traceIds: [trace.id],
@@ -694,6 +878,13 @@ export async function runOrchestrationWithRecorder(
     knownRoleNames: plan.taskGraph.nodes.map((node) => node.roleName),
     now: new Date().toISOString(),
   });
+  const resolvedHandoffState = resolveHandoffArtifactRuntimeState({
+    mode: handoffMode,
+    artifacts: handoffArtifacts,
+  });
+  const handoffState = failures.some((failure) => failure.status === "handoff-blocked")
+    ? "blocked"
+    : resolvedHandoffState;
   return {
     plan,
     outcomes,
@@ -711,6 +902,9 @@ export async function runOrchestrationWithRecorder(
     orchestrationDiagnostics,
     qualityScorecard,
     failures,
+    handoffMode,
+    handoffState,
+    handoffArtifacts,
     resultBundle,
 
     blackboardState: blackboard.state,

@@ -63,7 +63,10 @@ export type OrchestratorRequest = {
   /** Max non-verifier workers to plan. Existing subagent depth/children limits still apply at spawn time. */
   maxWorkers?: number;
   /** Config carrier used to resolve config-defined team templates. */
-  cfg?: { agents?: { teams?: unknown } };
+  cfg?: {
+    agents?: { teams?: unknown };
+    runtime?: { orchestration?: { handoffArtifacts?: "off" | "on" } };
+  };
   qualityPolicy?: OrchestrationQualityPolicy;
   qualityAuthority?: OrchestrationQualityAuthority | null;
   repairPolicy?: OrchestrationRepairPolicy;
@@ -165,6 +168,10 @@ function normalizeMaxWorkers(value: unknown): number | undefined {
   return next > 0 ? next : undefined;
 }
 
+function handoffArtifactsEnabled(request: OrchestratorRequest): boolean {
+  return request.cfg?.runtime?.orchestration?.handoffArtifacts === "on";
+}
+
 function capWorkers(
   workers: OrchestratorWorkerPlan[],
   maxWorkers: number | undefined,
@@ -219,6 +226,7 @@ function buildPlanGraph(params: {
     verifierModelRef: params.verifierModelRef,
     requiredCapabilities: params.routeDiagnostics.requiredCapabilities,
     repairPolicy,
+    includeHandoffEdges: handoffArtifactsEnabled(params.request),
   });
   const executionWaves = buildExecutionWaves(
     taskGraph,
@@ -306,6 +314,7 @@ function createRunbookPlan(
     knownRoleNames: availableRoles.map((role) => role.name),
     selectionTrace: metadata.runbookSelection,
     fileHints: request.fileHints,
+    includeHandoffEdges: handoffArtifactsEnabled(request),
   });
   const taskGraph = request.agentId
     ? { ...graphResult.graph, nodes: graphResult.graph.nodes.map((node) => ({ ...node, agentId: request.agentId })) }

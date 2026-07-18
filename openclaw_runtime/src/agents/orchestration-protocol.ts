@@ -338,17 +338,24 @@ function inferDependencies(params: {
   }
 }
 
-function buildEdges(nodes: readonly OrchestrationTaskNode[]): OrchestrationTaskEdge[] {
+function buildEdges(
+  nodes: readonly OrchestrationTaskNode[],
+  includeHandoffEdges: boolean,
+): OrchestrationTaskEdge[] {
   const edges: OrchestrationTaskEdge[] = [];
   for (const node of nodes) {
     for (const dep of node.dependsOn) {
+      const type = node.phase === "verification" || node.phase === "review" || node.phase === "verifier"
+        ? "verification"
+        : "dependency";
       edges.push({
         from: dep,
         to: node.taskNodeId,
-        type: node.phase === "verification" || node.phase === "review" || node.phase === "verifier"
-          ? "verification"
-          : "dependency",
+        type,
       });
+      if (includeHandoffEdges && !node.isVerifier && node.phase !== "verifier") {
+        edges.push({ from: dep, to: node.taskNodeId, type: "handoff" });
+      }
     }
     if (node.repairOf) {
       edges.push({ from: node.repairOf, to: node.taskNodeId, type: "repair_of" });
@@ -371,6 +378,7 @@ export function buildTaskGraph(params: {
   verifierModelRef?: string | null;
   requiredCapabilities: readonly string[];
   repairPolicy?: OrchestrationRepairPolicy;
+  includeHandoffEdges?: boolean;
 }): OrchestrationTaskGraph {
   const graphMode = params.graphMode ?? "auto";
   const effectiveMode = graphMode === "auto" && params.mode !== "router" ? "staged" : graphMode;
@@ -429,7 +437,7 @@ export function buildTaskGraph(params: {
     mode: graphMode,
     status: "planned",
     nodes,
-    edges: buildEdges(nodes),
+    edges: buildEdges(nodes, params.includeHandoffEdges === true),
   };
 }
 

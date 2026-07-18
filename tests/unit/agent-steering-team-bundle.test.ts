@@ -33,6 +33,7 @@ function runRecord(params: {
   resultText?: string;
   outcome?: SubagentRunRecord['outcome'];
   verifierStartedRunId?: string;
+  meta?: Partial<TeamOrchestrationMetadata>;
 }): SubagentRunRecord {
   const isVerifier = params.phase === 'verifier';
   const meta = orchestration({
@@ -40,6 +41,7 @@ function runRecord(params: {
     isVerifier,
     phase: isVerifier ? 'verifier' : 'worker',
     verifierStartedRunId: params.verifierStartedRunId,
+    ...params.meta,
   });
   return {
     runId: params.runId,
@@ -97,6 +99,39 @@ describe('agent steering team result bundles', () => {
   });
 
   it('leases a single Team Result Bundle once verifier completion is pending', () => {
+    const taskGraph: NonNullable<TeamOrchestrationMetadata['taskGraph']> = {
+      graphRunId: 'graph_bundle',
+      mode: 'staged',
+      status: 'completed',
+      nodes: [
+        {
+          taskNodeId: 'implementer-1',
+          roleName: 'implementer',
+          task: 'implementer task',
+          phase: 'implementation',
+          dependsOn: [],
+          scope: 'implementation',
+          requiredCapabilities: [],
+          attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
+          status: 'completed',
+        },
+        {
+          taskNodeId: 'tester-1',
+          roleName: 'tester',
+          task: 'tester task',
+          phase: 'verification',
+          dependsOn: ['implementer-1'],
+          scope: 'verification',
+          requiredCapabilities: [],
+          attemptPolicy: { maxRepairAttempts: 1, maxRedoAttempts: 1 },
+          status: 'completed',
+        },
+      ],
+      edges: [
+        { from: 'implementer-1', to: 'tester-1', type: 'verification' },
+        { from: 'implementer-1', to: 'tester-1', type: 'handoff' },
+      ],
+    };
     const runs = new Map<string, SubagentRunRecord>();
     runs.set(
       'run_worker_1',
@@ -104,6 +139,7 @@ describe('agent steering team result bundles', () => {
         runId: 'run_worker_1',
         roleName: 'implementer',
         verifierStartedRunId: 'run_verifier',
+        meta: { taskId: 'implementer-1', taskNodeId: 'implementer-1', graphRunId: 'graph_bundle', taskGraph, handoffArtifactsMode: 'on' },
       }),
     );
     runs.set(
@@ -113,6 +149,7 @@ describe('agent steering team result bundles', () => {
         roleName: 'tester',
         resultText: 'tests passed',
         verifierStartedRunId: 'run_verifier',
+        meta: { taskId: 'tester-1', taskNodeId: 'tester-1', graphRunId: 'graph_bundle', taskGraph, handoffArtifactsMode: 'on' },
       }),
     );
     runs.set(
@@ -123,6 +160,7 @@ describe('agent steering team result bundles', () => {
         phase: 'verifier',
         resultText: 'verified with caveats',
         verifierStartedRunId: 'run_verifier',
+        meta: { taskId: 'reviewer-1', taskNodeId: 'reviewer-1', graphRunId: 'graph_bundle', taskGraph, handoffArtifactsMode: 'on' },
       }),
     );
 
@@ -143,6 +181,8 @@ describe('agent steering team result bundles', () => {
     expect(leased?.prompt).toContain('schemaGate:');
     expect(leased?.prompt).toContain('verifierGate:');
     expect(leased?.prompt).toContain('memoryProposals:');
+    expect(leased?.prompt).toContain('handoffArtifacts: 1');
+    expect(leased?.prompt).toContain('ready; implementer-1 -> tester-1');
   });
 
   it('renders schema gate failure when successful worker evidence is missing', () => {

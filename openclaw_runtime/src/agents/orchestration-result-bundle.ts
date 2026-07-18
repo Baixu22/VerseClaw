@@ -1,3 +1,5 @@
+import type { WorkerOutputHandoffArtifact } from "./handoff-artifacts.js";
+
 export type OrchestrationBundlePhase = "spawn" | "completion";
 
 export type OrchestrationBundleStatus =
@@ -77,6 +79,7 @@ export type OrchestrationResultBundle = {
   leadRole: string;
   selectedRoles: string[];
   roleOutcomes: RoleOutcomeBundle[];
+  handoffArtifacts: WorkerOutputHandoffArtifact[];
   artifacts: Array<{ id: string; type: string; ref: string; roleName?: string }>;
   evidenceRefs: BundleEvidenceRef[];
   permissionEvents: Array<{ roleName: string; tool?: string; decision: "allowed" | "denied"; reason: string }>;
@@ -95,6 +98,7 @@ export type SpawnPhaseBundleInput = {
   leadRole: string;
   selectedRoles: readonly string[];
   outcomes?: readonly RoleOutcomeBundle[];
+  handoffArtifacts?: readonly WorkerOutputHandoffArtifact[];
   artifacts?: OrchestrationResultBundle["artifacts"];
   evidenceRefs?: readonly BundleEvidenceRef[];
   permissionEvents?: OrchestrationResultBundle["permissionEvents"];
@@ -111,6 +115,7 @@ export type CompletionPhaseBundleInput = {
   leadRole: string;
   selectedRoles: readonly string[];
   roleOutcomes?: readonly RoleOutcomeBundle[];
+  handoffArtifacts?: readonly WorkerOutputHandoffArtifact[];
   artifacts?: OrchestrationResultBundle["artifacts"];
   evidenceRefs?: readonly BundleEvidenceRef[];
   permissionEvents?: OrchestrationResultBundle["permissionEvents"];
@@ -131,6 +136,10 @@ function copyOutcome(outcome: RoleOutcomeBundle): RoleOutcomeBundle {
     ...outcome,
     evidenceRefs: copyEvidence(outcome.evidenceRefs),
   };
+}
+
+function copyHandoffArtifact(artifact: WorkerOutputHandoffArtifact): WorkerOutputHandoffArtifact {
+  return { ...artifact };
 }
 
 function copyVerifierReport(report: VerificationReport | undefined): VerificationReport | undefined {
@@ -212,6 +221,7 @@ export function buildSpawnPhaseResultBundle(input: SpawnPhaseBundleInput): Orche
     leadRole: input.leadRole,
     selectedRoles: [...input.selectedRoles],
     roleOutcomes: outcomes,
+    handoffArtifacts: (input.handoffArtifacts ?? []).map(copyHandoffArtifact),
     artifacts: (input.artifacts ?? []).map((artifact) => ({ ...artifact })),
     evidenceRefs: copyEvidence(input.evidenceRefs),
     permissionEvents: (input.permissionEvents ?? []).map((event) => ({ ...event })),
@@ -243,6 +253,7 @@ export function buildCompletionPhaseResultBundle(input: CompletionPhaseBundleInp
     leadRole: input.leadRole,
     selectedRoles: [...input.selectedRoles],
     roleOutcomes: outcomes,
+    handoffArtifacts: (input.handoffArtifacts ?? []).map(copyHandoffArtifact),
     artifacts: (input.artifacts ?? []).map((artifact) => ({ ...artifact })),
     evidenceRefs: copyEvidence(input.evidenceRefs),
     permissionEvents: (input.permissionEvents ?? []).map((event) => ({ ...event })),
@@ -276,6 +287,15 @@ export function renderOrchestrationResultBundleForPrompt(bundle: OrchestrationRe
     `evidenceRefs: ${renderEvidenceRefs(bundle.evidenceRefs)}`,
     `permissionEvents: ${bundle.permissionEvents.length}`,
     `failures: ${bundle.failures.length}`,
+    `handoffArtifacts: ${bundle.handoffArtifacts.length}`,
+    "handoffArtifactRefs:",
+    ...(bundle.handoffArtifacts.length
+      ? bundle.handoffArtifacts.map((artifact) =>
+          artifact.state === "ready"
+            ? `- ${artifact.artifactId}: ready; ${artifact.fromTaskId} -> ${artifact.toTaskId}; sha256=${artifact.outputSha256}`
+            : `- ${artifact.artifactId}: rejected; ${artifact.fromTaskId} -> ${artifact.toTaskId}; reason=${artifact.reason}`,
+        )
+      : ["- none"]),
     `memoryProposals: ${bundle.memoryProposals.length}`,
     `verifierDecision: ${bundle.verifierReport?.decision ?? "not_required"}`,
     "memoryProposalRefs:",

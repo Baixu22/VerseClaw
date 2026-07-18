@@ -54,6 +54,7 @@ export type TeamOrchestrationMetadata = {
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;
   workerCommunication?: WorkerCommunicationPolicy;
+  handoffArtifactsMode?: "off" | "on";
   allowFollowupPlanning?: boolean;
 };
 
