@@ -1,0 +1,30 @@
+ORCH-001 final verification
+validatedAt=2026-07-19T01:36:26.8519274+08:00
+implementationCommit=e0841a7f80e0822bc594cb3dad5d2dd731eb0947
+
+PASS exit=0 pnpm exec vitest run tests/unit/role-orchestration-methods.test.ts tests/unit/routing-memo.test.ts tests/unit/product-semantics.test.ts tests/unit/capability-claims.test.ts tests/integration/p1-orchestration-boundary.integration.test.ts --maxWorkers=1
+RESULT 5 files passed; 114 tests passed
+
+PASS exit=0 pnpm exec vitest run tests/unit/role-spawn.test.ts tests/unit/agent-steering-team-bundle.test.ts --maxWorkers=1
+RESULT 2 files passed; 20 tests passed
+
+PASS exit=0 pnpm run typecheck
+RESULT node and web TypeScript projects passed
+
+PASS exit=0 pnpm --dir openclaw_runtime exec oxlint --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings src/agents/orchestration-quality-scorecard.ts src/agents/orchestrator-run-observed.ts src/agents/orchestrator.ts src/agents/routing-memo.ts src/agents/tools/team-orchestrate-tool.ts src/gateway/server-methods/role-orchestration-methods.ts
+
+PASS exit=0 pnpm exec eslint shared/capability-claims.ts shared/product-semantics.ts tests/integration/p1-orchestration-boundary.integration.test.ts tests/unit/product-semantics.test.ts tests/unit/role-orchestration-methods.test.ts tests/unit/routing-memo.test.ts
+
+PASS exit=0 pnpm run comms:replay
+PASS exit=0 pnpm run comms:compare
+PASS exit=0 pnpm harness validate --spec harness/specs/tasks/role-first-team-orchestrate-tool.md --since e0841a7f8^
+PASS exit=0 pnpm harness run --spec harness/specs/tasks/role-first-team-orchestrate-tool.md --since e0841a7f8^ --dry-run
+PASS exit=0 node scripts/validate-system-maturity-plan.mjs
+PASS exit=0 node scripts/validate-orchestration-gap-status.mjs before status transition
+PASS exit=0 node scripts/validate-orchestration-gap-status.mjs after ORCH-001 status=done
+PASS exit=0 git merge-base --is-ancestor e0841a7f8 HEAD
+
+Resolved attempts:
+- The first role-orchestration-methods run exposed a stale memory dry-run expectation; the test now asserts the real selected candidate and the full file passes.
+- A single seven-file Vitest invocation exited 1 without diagnostics; the same seven files passed when split into the recorded 5-file and 2-file commands.
+- Unscoped harness validation compared the consolidated branch against its historical default base; scoped validation with --since e0841a7f8^ passed and covers this implementation commit.

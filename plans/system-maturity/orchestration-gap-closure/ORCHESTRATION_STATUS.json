@@ -3,7 +3,7 @@
   "waveStatus": "in_progress",
   "statusPolicy": "gate-v2",
   "tasks": {
-    "ORCH-001": "todo",
+    "ORCH-001": "done",
     "ORCH-002": "todo",
     "ORCH-003": "done",
     "ORCH-004": "done"
