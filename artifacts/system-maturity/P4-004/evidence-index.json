@@ -1,28 +1,52 @@
 {
+  "schemaVersion": 2,
   "taskId": "P4-004",
-  "generatedAt": "2026-07-17T09:24:01Z",
-  "commands": [
-    "pnpm exec vitest run tests/unit/channels-p4-004-inbound-trust.test.ts"
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "result": "passed",
+  "runs": [
+    {
+      "command": "pnpm run lint && pnpm run typecheck && pnpm test",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "pnpm run contract:check && pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm harness run --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm run harness:ci",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "pnpm run build:vite && pnpm run test:e2e tests/e2e/system-maturity-p45.spec.ts",
+      "exitCode": 0,
+      "result": "5 passed"
+    }
   ],
-  "results": {
-    "vitest": "7 passed (1 file)"
-  },
-  "findings": {
-    "F-AUTH-008": "Fixed",
-    "F-SEC-001": "Partial (MCP env + channel form redaction)"
-  },
   "artifacts": [
     {
+      "path": "artifacts/system-maturity/P4-004/final-validation.log",
+      "sha256": "159f4c633ae42ea6e17818fb62ca033d275fee43b1cd69b23be1169b73a860e4",
+      "bytes": 140444
+    },
+    {
       "path": "artifacts/system-maturity/P4-004/acceptance-matrix.json",
-      "sha256": "1aa366e002c26399e1b19d37190618a0d6c24812e0548e274259efd6d66883b5"
+      "sha256": "68fff7f434935b69c942d2b52847061fc38451721e34fa7f633894ce2bc184d7",
+      "bytes": 560
     },
     {
-      "path": "artifacts/system-maturity/P4-004/vitest.stdout.txt",
-      "sha256": "f88a22ff4bc164087b4c8dfca96ba46037beaeb01f94ef4b60e2615707078cf4"
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-004.md",
+      "sha256": "8ffa110709c5cb4917ded58732d394e8fc71ec5b7b6692882d45834ebf36c013",
+      "bytes": 680
     },
     {
-      "path": "artifacts/system-maturity/P4-004/evidence-index.json",
-      "sha256": "154fb8c090019fcb6a607feabc0e7c54d008b6e5a4fc698b051f61412bd8ba89"
+      "path": "plans/system-maturity/phase4-runtime-surfaces/STATUS.json",
+      "sha256": "4b0f74caec798a52862f4d138a9fb48b49cc587fb9f4de5c33524438501533df",
+      "bytes": 240
     }
   ]
 }

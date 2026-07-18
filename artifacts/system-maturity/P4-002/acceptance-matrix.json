@@ -1,34 +1,24 @@
 {
-  "A1": {
-    "id": "A1",
-    "statement": "tab/profile/session are not serialized across isolation boundaries",
-    "status": "passed",
-    "proof": [
-      "AgentBrowserTabManager is per-session; multi-profile managers keep independent page maps",
-      "partition persist:agent-browser-<profile> via agentBrowserProfilePartition",
-      "unit: agent-browser-p4-002-isolation multi-profile isolation"
-    ]
-  },
-  "A2": {
-    "id": "A2",
-    "statement": "grant bound to tab+origin+expiry",
-    "status": "passed",
-    "proof": [
-      "isBoundaryGrantUsable enforces tab/origin/expiry",
-      "FullAccessToolExecutor.canExpose requires expectedTabId+expectedOrigin (+expiresAt)",
-      "service wires expectedTabId/origin/expiresAt from active webContents + runtimeExpiresAt",
-      "unit: grant + full-access mismatch/expiry cases"
-    ]
-  },
-  "A3": {
-    "id": "A3",
-    "statement": "download/upload/artifacts do not privilege-escalate outside agent-browser root",
-    "status": "passed",
-    "proof": [
-      "sanitizeAgentBrowserPathSegment rejects traversal",
-      "runArtifactRootDir uses agentBrowserRunArtifactDir",
-      "CLI screenshots use agentBrowserScreenshotDir under userData/agent-browser",
-      "unit: filesystem boundary matrix"
-    ]
-  }
+  "taskId": "P4-002",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
+  "acceptance": [
+    {
+      "id": "A1",
+      "statement": "tab/profile/session 不串线",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "statement": "grant 绑定 tab+origin+expiry",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "statement": "下载/上传不越权",
+      "status": "passed"
+    }
+  ]
 }

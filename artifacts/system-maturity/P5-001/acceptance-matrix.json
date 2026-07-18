@@ -1,38 +1,24 @@
-﻿{
-    "implementation":  {
-                           "configMutex":  "electron/utils/config-mutex.ts",
-                           "openclawAuth":  "electron/utils/openclaw-auth.ts",
-                           "atomicWrite":  "electron/utils/atomic-write.ts",
-                           "channelConfig":  "electron/utils/channel-config.ts"
-                       },
-    "acceptance":  [
-                       {
-                           "status":  "passed",
-                           "title":  "No truncated JSON",
-                           "evidence":  "crash-before-rename + bak recovery tests",
-                           "id":  "A1"
-                       },
-                       {
-                           "status":  "passed",
-                           "title":  "Concurrent writes do not lose updates",
-                           "evidence":  "withFileLock + withConfigLock concurrent RMW tests",
-                           "id":  "A2"
-                       },
-                       {
-                           "status":  "passed",
-                           "title":  "Recovery visible and retryable",
-                           "evidence":  "VERSION_CONFLICT/ENOSPC/EACCES/LOCK_TIMEOUT retryable + bak recovery note",
-                           "id":  "A3"
-                       }
-                   ],
-    "finding":  "F-REL-002",
-    "guarantees":  [
-                       "temp + fsync + rename for config JSON",
-                       "sidecar version meta (.clawx-write-meta) for CAS",
-                       "cross-process exclusive lockfile",
-                       ".bak previous-good retention + read recovery",
-                       "structured AtomicWriteError with retryable flag"
-                   ],
-    "taskId":  "P5-001",
-    "checkedAt":  "2026-07-17T08:31:03.374Z"
+{
+  "taskId": "P5-001",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "result": "passed",
+  "acceptance": [
+    {
+      "id": "A1",
+      "statement": "不会产生截断 JSON",
+      "status": "passed"
+    },
+    {
+      "id": "A2",
+      "statement": "并发写不丢更新",
+      "status": "passed"
+    },
+    {
+      "id": "A3",
+      "statement": "恢复策略可见且可重试",
+      "status": "passed"
+    }
+  ]
 }

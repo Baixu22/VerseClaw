@@ -1,66 +1,52 @@
 {
+  "schemaVersion": 2,
   "taskId": "P4-001",
-  "status": "done",
-  "finding": "F-REL-003",
-  "findingStatus": "Fixed",
-  "completedAt": "2026-07-17T08:39:55Z",
-  "tests": {
-    "command": "pnpm exec vitest run tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/agent-browser-gateway-bridge.test.ts tests/unit/gateway-control-ui-token-p4-001.test.ts tests/unit/openclaw-control-ui.test.ts",
-    "result": "24 passed (4 files)",
-    "contractCheck": "passed"
-  },
-  "artifacts": {
-    "openclaw_runtime/src/gateway/server-methods/agent-browser.ts": {
-      "sha256": "e2b021e8f63a0ce2a62b0b75d5695dccbe2de25cd6cdafbb2448afbaf34e6b22",
-      "bytes": 9318
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "result": "passed",
+  "runs": [
+    {
+      "command": "pnpm run lint && pnpm run typecheck && pnpm test",
+      "exitCode": 0,
+      "result": "passed"
     },
-    "electron/services/gateway-api.ts": {
-      "sha256": "3797a9c45d0b846be2de89ee4abaa8cd04975e71c81367aff6fe63ad9b4b4fa0",
-      "bytes": 21812
+    {
+      "command": "pnpm run contract:check && pnpm run comms:replay && pnpm run comms:compare",
+      "exitCode": 0,
+      "result": "passed"
     },
-    "shared/host-api/contract.ts": {
-      "sha256": "aea21b6230a39caec0f1415b2f4c8084281f0ab2e909c3a0f60629f02f32a289",
-      "bytes": 171821
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm harness run --spec harness/specs/tasks/system-maturity-p45-runtime-repair.md && pnpm run harness:ci",
+      "exitCode": 0,
+      "result": "passed"
     },
-    "src/lib/host-api.ts": {
-      "sha256": "8b5c2401971f7312b050cf9984d50ead149682e69a55ccf4b26367294b2e3f49",
-      "bytes": 80024
-    },
-    "src/components/layout/Sidebar.tsx": {
-      "sha256": "a353029b00bc3f7685d4592e29aab5be7c5b05ecaabeff49b338828a22a0e064",
-      "bytes": 45284
-    },
-    "src/pages/Dreams/index.tsx": {
-      "sha256": "5b7e97b8f83894ee764aa0f2ae1c9fe7674fa4f6c3485d7e0c1f63db0bd7a2fe",
-      "bytes": 27529
-    },
-    "src/pages/Settings/index.tsx": {
-      "sha256": "9d58808d7b1a321ad6e4af491eb2f3e751ba7480e4df005f5cfa29ed4e5c4b99",
-      "bytes": 112475
-    },
-    "tests/unit/gateway-p4-001-auth-binding.test.ts": {
-      "sha256": "0b57dd994e1bccbd12771004ff88e4b0f19909f28db8903acb7975e15f53dcb1",
-      "bytes": 11750
-    },
-    "tests/unit/gateway-control-ui-token-p4-001.test.ts": {
-      "sha256": "1236d9bc90191e4606702b8dfabcfcec9e0db47abe7c938d87fb5958d252a9cb",
-      "bytes": 4346
-    },
-    "tests/unit/agent-browser-gateway-bridge.test.ts": {
-      "sha256": "4803ec9e90ce5b7a69963c0020632b933579e8c66f706a49f478bba6c7328991",
-      "bytes": 5588
-    },
-    "artifacts/system-maturity/P4-001/vitest.stdout.txt": {
-      "sha256": "63dcdbb9d5b8595200e78ffe2b26cd2faa2abf6fed595f8a43e7250fad64e775",
-      "bytes": 1992
-    },
-    "artifacts/system-maturity/P4-001/contract-check.stdout.txt": {
-      "sha256": "94be0e8f054c1ed6ae655590583e2ba34f06e949e5a3acd2d4c794a7b52ca372",
-      "bytes": 1336
-    },
-    "plans/system-maturity/phase4-runtime-surfaces/STATUS.json": {
-      "sha256": "6e74745208a569ece387a480c9bf56a54e9fbef703766b51e12e3e0f3d4dc1d9",
-      "bytes": 257
+    {
+      "command": "pnpm run build:vite && pnpm run test:e2e tests/e2e/system-maturity-p45.spec.ts",
+      "exitCode": 0,
+      "result": "5 passed"
     }
-  }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/system-maturity/P4-001/final-validation.log",
+      "sha256": "159f4c633ae42ea6e17818fb62ca033d275fee43b1cd69b23be1169b73a860e4",
+      "bytes": 140444
+    },
+    {
+      "path": "artifacts/system-maturity/P4-001/acceptance-matrix.json",
+      "sha256": "64917bd1b7a800afabf12674d295f9d82071b3eeaef96de5a8f3711490bcd626",
+      "bytes": 576
+    },
+    {
+      "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-001.md",
+      "sha256": "ba0a858362a98f05930b9468cd2b6ac984e8f4f63e10283539b4bcf9f6c00907",
+      "bytes": 684
+    },
+    {
+      "path": "plans/system-maturity/phase4-runtime-surfaces/STATUS.json",
+      "sha256": "4b0f74caec798a52862f4d138a9fb48b49cc587fb9f4de5c33524438501533df",
+      "bytes": 240
+    }
+  ]
 }

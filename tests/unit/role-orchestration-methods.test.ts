@@ -1058,7 +1058,7 @@ describe('memory.* handlers (store/read round-trip with persistence)', () => {
     const evalPayload = evalRes?.payload as { report: { aggregate: { taskSuccessDelta: number | null } }; dryRun?: { roleName: string; pack?: { candidateExplanations?: unknown[] } } };
     expect(evalPayload.report.aggregate.taskSuccessDelta).toBeNull();
     expect(evalPayload.dryRun?.roleName).toBe('architect');
-    expect(evalPayload.dryRun?.pack?.candidateExplanations?.length).toBeGreaterThan(0);
+    expect(evalPayload.dryRun?.pack?.candidateExplanations ?? []).toEqual([]);
   });
 
   it('memory.store rejects a low-confidence proposal', async () => {

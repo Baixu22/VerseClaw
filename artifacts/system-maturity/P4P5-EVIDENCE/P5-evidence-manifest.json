@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "phase": "P5",
+  "base": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "commit": "47efa3ec65f3fe081ab09fcae6cbf0599fcbba1a",
+  "generatedAt": "2026-07-17T15:32:28.567Z",
+  "entries": [
+    {
+      "taskId": "P5-001",
+      "path": "artifacts/system-maturity/P5-001/evidence-index.json",
+      "sha256": "0ce9d4954feb156d484f80ab2ff21f53c78a1d656cbb259386f7d3c0568c37f2",
+      "bytes": 1744
+    },
+    {
+      "taskId": "P5-002",
+      "path": "artifacts/system-maturity/P5-002/evidence-index.json",
+      "sha256": "7c2aef8417d9a044787b623f4dea77679ee524e416c29c497488d4a446869cff",
+      "bytes": 1744
+    },
+    {
+      "taskId": "P5-003",
+      "path": "artifacts/system-maturity/P5-003/evidence-index.json",
+      "sha256": "dfd9ae85395ea79df7b599373b4fdb36b8af0b4a418bc0d90f74fa5c37b6398f",
+      "bytes": 1744
+    },
+    {
+      "taskId": "P5-004",
+      "path": "artifacts/system-maturity/P5-004/evidence-index.json",
+      "sha256": "333a68598e0bc51be259dd2aab968c99f4f168863c2115b2bb283ec71fd0d439",
+      "bytes": 1744
+    }
+  ]
+}

@@ -23,6 +23,7 @@ vi.mock('@/stores/gateway', () => ({
 }));
 
 const chatState = {
+  hydrateStartup: vi.fn(async () => {}),
   messages: [],
   currentSessionKey: 'main:test',
   currentAgentId: 'main',
@@ -45,7 +46,6 @@ const chatState = {
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
-  hydrateStartup: vi.fn(),
   lastUserMessageAt: null,
 };
 
@@ -139,6 +139,7 @@ describe('Chat artifact panel layout', () => {
 
     expect(aside).toHaveClass('absolute');
     expect(aside).toHaveClass('z-30');
+    expect(aside).toHaveClass('inset-y-0', 'right-0', 'bg-surface-modal');
     expect(aside).toHaveClass('no-drag');
   });
 

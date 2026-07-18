@@ -11,6 +11,7 @@ const hostApiMock = vi.hoisted(() => ({
 }));
 
 const chatState = vi.hoisted(() => ({
+  hydrateStartup: vi.fn(async () => {}),
   messages: [
     { role: 'user', id: 'u1', content: 'We decided to keep Obsidian optional.' },
     { role: 'assistant', id: 'a1', content: 'Use the native Verse Claw-managed wiki for the MVP.' },

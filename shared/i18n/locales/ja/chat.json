@@ -1862,6 +1862,10 @@
       "other": "GitHub リンク"
     }
   },
+  "resourceLimits": {
+    "TOKEN_BUDGET_EXCEEDED": "このセッションはトークン上限に達しました（{{used}} / {{limit}}）。新しいセッションを開始するか、上限を引き上げてください。",
+    "COST_BUDGET_EXCEEDED": "このセッションはコスト上限に達しました（${{used}} / ${{limit}}）。新しいセッションを開始するか、上限を引き上げてください。"
+  },
   "artifactView": {
     "title": "アーティファクト",
     "empty": "まだ生成されていません",

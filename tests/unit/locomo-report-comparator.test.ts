@@ -7,7 +7,9 @@
 //   - formatRegressionMarkdown() markdown 输出格式
 //   - 集成测试: 真实 phase3/phase4/current baseline reports
 
-import { describe, it, expect } from "vitest";
+import { afterAll, beforeAll, describe, it, expect } from "vitest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   normalizeReportMetrics,
@@ -71,7 +73,40 @@ const currentReport = {
   generatedAt: "2026-07-04T08:00:00.000Z",
 };
 
-const ARTIFACT_DIR = join(process.cwd(), "tests", "fixtures", "runtime-memory-eval");
+const phase4Report = {
+  ...legacyReport,
+  version: "4.0-full-500-phase4-query-rewrite",
+  metrics: {
+    ...legacyReport.metrics,
+    overall: { j_score: 0.386, recall_at_5: 0.4 },
+    byCategory: {
+      ...legacyReport.metrics.byCategory,
+      temporal: { ...legacyReport.metrics.byCategory.temporal, jScore: 0.3 },
+      multi_hop: { ...legacyReport.metrics.byCategory.multi_hop, jScore: 0.3854166666666667 },
+    },
+  },
+};
+const currentFixture = {
+  ...currentReport,
+  metrics: {
+    ...currentReport.metrics,
+    overall: { ...currentReport.metrics.overall, j_score: 0.752 },
+    byCategory: {
+      ...currentReport.metrics.byCategory,
+      temporal: { ...currentReport.metrics.byCategory.temporal, j_score: 0.8066666666666666 },
+      multi_hop: { ...currentReport.metrics.byCategory.multi_hop, j_score: 0.6145833333333334 },
+    },
+  },
+};
+const ARTIFACT_DIR = mkdtempSync(join(tmpdir(), "locomo-report-fixtures-"));
+
+beforeAll(() => {
+  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report-phase3-baseline.json"), JSON.stringify(legacyReport));
+  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report-phase4.0-regression.json"), JSON.stringify(phase4Report));
+  writeFileSync(join(ARTIFACT_DIR, "locomo-full-500-report.json"), JSON.stringify(currentFixture));
+});
+
+afterAll(() => rmSync(ARTIFACT_DIR, { recursive: true, force: true }));
 
 // === normalizeReportMetrics ===
 

@@ -598,8 +598,11 @@ export function writeFileAtomicSync(
   let fd = -1;
   try {
     fd = openSync(tmpPath, 'w', options.mode ?? 0o600);
-    if (Buffer.isBuffer(content)) writeSync(fd, content);
-    else writeSync(fd, content, null, 'utf8');
+    if (Buffer.isBuffer(content)) {
+      writeSync(fd, content);
+    } else {
+      writeSync(fd, content, null, 'utf8');
+    }
     fsyncSync(fd);
     closeSync(fd);
     fd = -1;

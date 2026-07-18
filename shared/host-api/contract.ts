@@ -1350,7 +1350,7 @@ export type McpServerCreatePayload = {
   args?: string[];
   cwd?: string;
   url?: string;
-  env?: Record<string, string>;
+  env?: Record<string, string | { kind: 'secret-ref'; secretId: string }>;
   headers?: Record<string, string>;
   sslVerify?: boolean;
   enabled?: boolean;
@@ -2790,6 +2790,11 @@ export type ChatSendWithMediaPayload = {
 };
 export type ChatSendWithMediaResult = HostSuccess & {
   result?: { runId?: string };
+  denial?: {
+    code: 'TOKEN_BUDGET_EXCEEDED' | 'COST_BUDGET_EXCEEDED';
+    limit: number;
+    used: number;
+  };
 };
 
 export type ChatKnowledgeReference = {
