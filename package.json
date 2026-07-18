@@ -159,6 +159,7 @@
     "maturity:release-gates": "node scripts/validate-test-gates.mjs --loop release --list",
     "maturity:validate": "node scripts/audit-baseline-check.mjs && node scripts/validate-system-maturity-plan.mjs && node scripts/validate-test-gates.mjs && node scripts/validate-system-maturity-evidence.mjs && node scripts/run-system-maturity-residual-audit.mjs && node scripts/validate-system-maturity-traceability.mjs",
     "maturity:evidence": "node scripts/validate-system-maturity-evidence.mjs",
+    "maturity:orchestration-status": "node scripts/validate-orchestration-gap-status.mjs",
     "release:windows-policy": "node scripts/validate-windows-release-policy.mjs",
     "release:windows-policy:evidence": "node scripts/collect-p6-001-evidence.mjs",
     "release:windows-policy:evidence:full": "node scripts/collect-p6-001-evidence.mjs --full",
