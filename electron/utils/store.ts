@@ -8,6 +8,8 @@ import { app } from 'electron';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { PromptCacheRiskEvent } from '@shared/types/workspace';
 import type { WorkProviderConfig } from '@shared/types/work-provider';
+import type { SensitiveCapturePolicy } from '@shared/privacy/sensitive-capture-policy';
+import { DEFAULT_SENSITIVE_CAPTURE_POLICY, normalizeSensitiveCapturePolicy } from '@shared/privacy/sensitive-capture-policy';
 
 // Lazy-load electron-store (ESM module)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,6 +115,8 @@ export interface AppSettings {
   disabledSkills: string[];
   workProviders: WorkProviderConfig;
   promptCacheRiskLedger: PromptCacheRiskEvent[];
+  // Privacy / sensitive capture (P7-003)
+  sensitiveCapturePolicy: SensitiveCapturePolicy;
 }
 
 /**
@@ -164,6 +168,7 @@ function createDefaultSettings(): AppSettings {
     disabledSkills: [],
     workProviders: {},
     promptCacheRiskLedger: [],
+    sensitiveCapturePolicy: DEFAULT_SENSITIVE_CAPTURE_POLICY,
   };
 }
 
@@ -251,4 +256,20 @@ export async function importSettings(json: string): Promise<void> {
   } catch {
     throw new Error('Invalid settings JSON');
   }
+}
+
+/**
+ * Load normalized sensitive capture policy for Main-process gates.
+ */
+export async function getSensitiveCapturePolicy(): Promise<SensitiveCapturePolicy> {
+  const raw = await getSetting('sensitiveCapturePolicy');
+  return normalizeSensitiveCapturePolicy(raw ?? DEFAULT_SENSITIVE_CAPTURE_POLICY);
+}
+
+export async function setSensitiveCapturePolicy(
+  policy: SensitiveCapturePolicy,
+): Promise<SensitiveCapturePolicy> {
+  const normalized = normalizeSensitiveCapturePolicy(policy);
+  await setSetting('sensitiveCapturePolicy', normalized);
+  return normalized;
 }

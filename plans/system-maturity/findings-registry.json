@@ -12,7 +12,8 @@
     "freshnessBasis": "latest hash-addressed task evidence or frozen audit evidence must not predate linked code/test sources",
     "globalEvidence": [
       "artifacts/system-maturity/P7-001/full-validation.json",
-      "artifacts/system-maturity/P7-002/security-regression-report.json"
+      "artifacts/system-maturity/P7-002/security-regression-report.json",
+      "artifacts/system-maturity/P7-003/full-validation.json"
     ],
     "reviewCycleDaysBySeverity": {
       "Critical": 14,
@@ -411,9 +412,9 @@
         "P5-003",
         "P7-003"
       ],
-      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003.",
-      "updatedBy": "P5-003",
-      "updatedAt": "2026-07-17T08:58:35.165Z"
+      "notes": "SEKB+confirm+memory gates + session cascade done in Phase 3; remaining boundary matrix items tracked under P5-003/P7-003. P5-003: Electron logger redacts canary/secret-shaped content before ring buffer and disk; remaining boundary matrix items under P7-003. P7-003: privacy inventory + sensitive capture kill switch + ErrorBoundary sanitize.",
+      "updatedBy": "P7-003",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-REL-001",
@@ -615,13 +616,17 @@
       "category": "UX",
       "severity": "Low",
       "decision": "Track",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L2",
       "related": [],
       "attackChain": [],
       "tasks": [
         "P7-003"
-      ]
+      ],
+      "updatedBy": "P7-003",
+      "updatedAt": "2026-07-18",
+      "fixedBy": "P7-003",
+      "fixedAt": "2026-07-18"
     },
     {
       "id": "F-SEC-006",
@@ -741,9 +746,10 @@
         "P7-002",
         "P7-003"
       ],
-      "updatedBy": "P3-004",
+      "updatedBy": "P7-003",
       "notes": "Session hard-delete cascades SEKB principles/trajectories, session-scoped memory, DCS experience journal via executeSessionCascadeDelete + host runHostSessionDerivativeCascade; TTL purge_expired_trajectories; retriable errors in report.",
-      "fixedAt": "2026-07-17T07:51:49.551Z"
+      "fixedAt": "2026-07-17T07:51:49.551Z",
+      "updatedAt": "2026-07-18"
     },
     {
       "id": "F-REL-005",

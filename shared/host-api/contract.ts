@@ -773,6 +773,8 @@ export type RemoteControlScreenshotPayload = RemoteControlTargetPayload & {
   quality?: number;
   /** Optional viewport sub-rect (CSS pixels) to capture instead of the full page. */
   clip?: { x: number; y: number; width: number; height: number; scale?: number };
+  /** Optional one-time sensitive-capture grant id (P7-003). */
+  grantId?: string;
 };
 export type RemoteControlPageInfoResult = HostSuccess & {
   target?: RemoteControlInspectTarget;
@@ -856,6 +858,8 @@ export type AgentBrowserEvaluatePayload = AgentBrowserSessionPayload & {
 };
 export type AgentBrowserScreenshotPayload = AgentBrowserSessionPayload & {
   fullPage?: boolean;
+  /** Optional one-time sensitive-capture grant id (P7-003). */
+  grantId?: string;
 };
 export type AgentBrowserTakeSnapshotPayload = AgentBrowserSessionPayload;
 export type AgentBrowserClickByUidPayload = AgentBrowserSessionPayload & {
@@ -893,6 +897,8 @@ export type AgentBrowserCommandPayload = Partial<AgentBrowserSessionPayload> & {
   mode?: AgentBrowserSessionMode;
   timeoutMs?: number;
   maxOutput?: number;
+  /** Optional one-time sensitive-capture grant id (P7-003). */
+  grantId?: string;
 } & AgentBrowserSecurityPayload;
 export type AgentBrowserProfileEntry = {
   profile: string;

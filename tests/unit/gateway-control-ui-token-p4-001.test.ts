@@ -7,6 +7,16 @@ const scheduleControlUiDeviceAutoApproval = vi.hoisted(() => vi.fn());
 
 vi.mock('@electron/utils/safe-open-external', () => ({ openExternalSafe }));
 vi.mock('@electron/utils/store', () => ({ getSetting }));
+
+vi.mock('@electron/services/sensitive-capture-gate', () => ({
+  assertSensitiveCaptureAllowed: vi.fn(async (channel: string) => ({
+    allowed: true,
+    code: 'allow',
+    reason: 'test-allow',
+    channel,
+  })),
+}));
+
 vi.mock('@electron/utils/control-ui-device-pairing', () => ({
   scheduleControlUiDeviceAutoApproval,
 }));

@@ -175,7 +175,9 @@
     "release:trust-policy:evidence:full": "node scripts/collect-p6-004-evidence.mjs --full",
     "release:baseline:manifest": "node scripts/release-baseline-manifest.mjs",
     "release:baseline:validate": "node scripts/validate-release-baseline.mjs",
-    "release:baseline:evidence": "node scripts/collect-p6-005-evidence.mjs"
+    "release:baseline:evidence": "node scripts/collect-p6-005-evidence.mjs",
+    "maturity:privacy": "node scripts/validate-system-maturity-privacy.mjs",
+    "maturity:privacy:evidence": "node scripts/collect-p7-003-evidence.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",
