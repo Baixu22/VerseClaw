@@ -1,0 +1,41 @@
+$ node scripts/agent-dev-deep-test.mjs
+$ node scripts/typecheck-agent-dev.mjs
+$ tsc --noEmit -p tsconfig.node.json --composite false
+$ tsc --noEmit -p tsconfig.web.json --composite false
+$ node scripts/contract-check.mjs
+$ node scripts/i18n-lint.mjs
+$ node scripts/agent-dev-workbench.mjs
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/agent-dev-ecosystem-regularization.md"
+$ pnpm agent-dev:unit:node && pnpm exec vitest run --maxWorkers=1 tests/unit/host-api-facade.test.ts
+$ pnpm exec vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts
+$ node scripts/comms/replay.mjs
+$ node scripts/comms/compare.mjs
+$ node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build
+
+[1m[33mwarn[39m[22m - The class `data-[state=open]:duration-[250ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `data-&lsqb;state=open&rsqb;:duration-[250ms]` to silence this warning.
+
+[1m[33mwarn[39m[22m - The class `motion-safe:duration-[250ms]` is ambiguous and matches multiple utilities.
+[1m[33mwarn[39m[22m - If this is content and not a class, replace it with `motion-safe:duration-&lsqb;250ms&rsqb;` to silence this warning.
+[33mCircular chunk: index -> react-vendor -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "react-vendor" to be bundled into the chunk "index".[39m
+[33mCircular chunk: App -> ui-vendor -> App. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "ui-vendor" to be bundled into the chunk "App".[39m
+[33mCircular chunk: App -> settings-overview -> App. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "settings-overview" to be bundled into the chunk "App".[39m
+[33mCircular chunk: index -> markdown-rendering -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "markdown-rendering" to be bundled into the chunk "index".[39m
+[33mCircular chunk: index -> markdown-rendering -> index -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "index".[39m
+[33mCircular chunk: markdown-rendering -> index -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "markdown-rendering".[39m
+[33mCircular chunk: markdown-rendering -> turn-summary-model -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "turn-summary-model" to be bundled into the chunk "markdown-rendering".[39m
+[33mCircular chunk: markdown-rendering -> FilePreviewBody -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "FilePreviewBody" to be bundled into the chunk "markdown-rendering".[39m
+[33m[plugin vite:reporter]
+(!) C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/chat.ts is dynamically imported by C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/gateway.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/gateway.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/gateway.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/gateway.ts but also statically imported by C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/components/file-preview/WorkspaceTerminalPanel.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/components/layout/ArchiveModal.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/components/layout/Sidebar.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/components/task-ledger/TaskNodeSelector.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/lib/workspace-session.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Chat/ChatInput.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Chat/ChatToolbar.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Chat/TeamOrchestrationCard.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Chat/index.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/ClawGraph/index.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Cron/index.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/Settings/sections/StorageCleanerSection.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/pages/TaskLedger/index.tsx, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/src/stores/cron.ts, dynamic import will not move module into another chunk.
+[39m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[33m[plugin vite:reporter]
+(!) C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/utils/store.ts is dynamically imported by C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/gateway/manager.ts but also statically imported by C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/gateway/config-sync.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/gateway/manager.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/main/index.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/main/ipc-handlers.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/main/launch-at-startup.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/main/menu.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/main/proxy.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/agent-dev-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/gateway-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/remote-control-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/remote-tasks-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/settings-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/usage-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/services/work-providers-api.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/utils/control-ui-device-pairing.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/utils/openclaw-auth.ts, C:/Users/27933/Desktop/clawx/ClawX-maturity-p0-p6-005-clean-v6/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.
+[39m
+$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2
+$ node scripts/agent-dev-workbench.mjs

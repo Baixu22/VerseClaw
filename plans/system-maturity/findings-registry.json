@@ -15,13 +15,13 @@
       "Low": 1
     },
     "byStatus": {
-      "Open": 4,
-      "Fixed": 28,
+      "Open": 3,
+      "Fixed": 29,
       "Partial": 3,
       "Unverified": 0
     },
-    "open": 4,
-    "fixed": 28
+    "open": 3,
+    "fixed": 29
   },
   "intentionalIdGaps": {
     "F-SEC-008": "not issued in audit; F-SEC-010 used",
@@ -545,7 +545,7 @@
       "category": "GOV",
       "severity": "High",
       "decision": "Publish-blocker",
-      "status": "Open",
+      "status": "Fixed",
       "evidenceLevel": "L1-L3",
       "related": [
         "F-SUPPLY-001"
@@ -558,7 +558,12 @@
         "P0-004",
         "P6-005",
         "P7-004"
-      ]
+      ],
+      "fixedBy": "P6-005",
+      "fixedAt": "2026-07-18",
+      "updatedBy": "P6-005",
+      "updatedAt": "2026-07-18T09:47:44.069+08:00",
+      "notes": "P6-005: release baseline denies dirty or identity-mismatched sources, preserves native gate failures, installs and verifies Electron before release tests, produces a deterministic Git-blob manifest, canonicalizes cross-worktree text evidence hashes, and requires packaging jobs to revalidate hash-addressed zero-exit evidence from every required release gate."
     },
     {
       "id": "F-UX-001",

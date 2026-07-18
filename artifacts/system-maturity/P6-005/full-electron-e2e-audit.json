@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "taskId": "P6-005",
+  "classification": "extra-diagnostic-not-required-release-gate",
+  "passed": false,
+  "command": "pnpm run build:vite followed by four pnpm run test:e2e:run Playwright shards",
+  "shards": [
+    "pnpm run test:e2e:run -- --shard=1/4",
+    "pnpm run test:e2e:run -- --shard=2/4",
+    "pnpm run test:e2e:run -- --shard=3/4",
+    "pnpm run test:e2e:run -- --shard=4/4"
+  ],
+  "results": {
+    "total": 228,
+    "passed": 174,
+    "skipped": 4,
+    "failed": 50
+  },
+  "releaseGateImpact": "none",
+  "reason": "This additional full-application Playwright audit is outside the checked-in P6 release gate list. Failures span pre-existing cross-phase product E2E drift including legacy startup assumptions, visual snapshots, Gateway and plugin integration, layout selectors, and historical UI assertions. They are retained as diagnostic evidence and are not reported as passing."
+}
