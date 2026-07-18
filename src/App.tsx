@@ -3,7 +3,7 @@
  * Handles routing and global providers
  */
 import { Navigate, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Component, lazy, Suspense, useEffect } from 'react';
+import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import i18n from './i18n';
@@ -22,6 +22,11 @@ import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery
 import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
 import { applyDocumentTheme } from './lib/theme';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
+import { SettingsDrawerRoute } from './pages/Settings/SettingsDrawerRoute';
+import { resolveUiVersion } from './lib/ui-version';
+import { UiOverlayProvider } from './components/layout/ui-overlay-context';
+import { toRoutePath } from './lib/settings-overlay-routing';
+import { OverlayPortalProvider } from './components/ui/overlay-portal';
 
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
@@ -35,6 +40,7 @@ const CodeReviewPage = lazy(() => import('./pages/CodeReview'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
 const BrowserWorkbench = lazy(() => import('./pages/Browser').then((m) => ({ default: m.BrowserWorkbench })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
+const UiV2Showcase = lazy(() => import('./pages/UiV2Showcase').then((m) => ({ default: m.UiV2Showcase })));
 
 function SetupRoute() {
   return (
@@ -130,6 +136,70 @@ function App() {
   const initProviders = useProviderStore((state) => state.init);
   const initStorageHealth = useStorageHealthStore((state) => state.init);
   const handleNewChat = useNewChatAction();
+  const uiVersion = resolveUiVersion(window.electron?.platform, window.location.search);
+  const settingsOpen = uiVersion === 'v2' && location.pathname.startsWith('/settings');
+  const [appOverlayHost, setAppOverlayHost] = useState<HTMLDivElement | null>(null);
+  const settingsCloseDestinationRef = useRef<string | null>(null);
+  const settingsFocusRestoreRef = useRef<HTMLElement | null>(null);
+  const [overlayRouteState, setOverlayRouteState] = useState(() => ({
+    observedLocationKey: location.key,
+    backgroundLocation: location.pathname.startsWith('/settings')
+      ? { ...location, pathname: '/', search: '', hash: '' }
+      : location,
+    drawerOpen: settingsOpen,
+  }));
+  let currentOverlayRouteState = overlayRouteState;
+  if (overlayRouteState.observedLocationKey !== location.key) {
+    currentOverlayRouteState = {
+      observedLocationKey: location.key,
+      backgroundLocation: location.pathname.startsWith('/settings')
+        ? overlayRouteState.backgroundLocation
+        : location,
+      drawerOpen: settingsOpen ? true : overlayRouteState.drawerOpen,
+    };
+    setOverlayRouteState(currentOverlayRouteState);
+  }
+
+  const backgroundLocation = settingsOpen ? currentOverlayRouteState.backgroundLocation : location;
+  const backgroundPath = toRoutePath(backgroundLocation);
+
+  useEffect(() => {
+    document.documentElement.dataset.uiVersion = uiVersion;
+  }, [uiVersion]);
+
+  const openSettings = useCallback((path = '/settings') => {
+    const destination = path.startsWith('/settings') ? path : `/settings/${path.replace(/^\//, '')}`;
+    if (document.activeElement instanceof HTMLElement) {
+      settingsFocusRestoreRef.current = document.activeElement;
+    }
+    settingsCloseDestinationRef.current = null;
+    navigate(destination);
+  }, [navigate]);
+
+  const requestCloseSettings = useCallback((destination?: string) => {
+    settingsCloseDestinationRef.current = destination ?? null;
+    setOverlayRouteState((current) => ({ ...current, drawerOpen: false }));
+  }, []);
+
+  const handleSettingsClosed = useCallback(() => {
+    const destination = settingsCloseDestinationRef.current ?? backgroundPath;
+    settingsCloseDestinationRef.current = null;
+    navigate(destination, { replace: true });
+    window.requestAnimationFrame(() => {
+      const storedTarget = settingsFocusRestoreRef.current;
+      const fallbackTarget = document.querySelector<HTMLElement>('[data-testid="sidebar-nav-settings"]');
+      (storedTarget?.isConnected ? storedTarget : fallbackTarget)?.focus();
+      settingsFocusRestoreRef.current = null;
+    });
+  }, [backgroundPath, navigate]);
+
+  const overlayContextValue = useMemo(() => ({
+    uiVersion,
+    settingsOpen,
+    backgroundLocation: backgroundPath,
+    openSettings,
+    requestCloseSettings,
+  }), [backgroundPath, openSettings, requestCloseSettings, settingsOpen, uiVersion]);
 
   useEffect(() => {
     installAgentDevTestSurface({
@@ -231,8 +301,10 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <OverlayPortalProvider container={appOverlayHost}>
       <TooltipProvider delayDuration={300}>
-        <Routes>
+        <UiOverlayProvider value={overlayContextValue}>
+        <Routes location={settingsOpen ? backgroundLocation : location}>
           {/* Setup wizard (shown on first launch) */}
           <Route path="/setup/*" element={<SetupRoute />} />
 
@@ -253,12 +325,25 @@ function App() {
             <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
             <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
             <Route path="/observability" element={<ObservabilityDashboard />} />
+            <Route path="/ui-v2-showcase" element={<UiV2Showcase />} />
             <Route path="/settings/*" element={<SettingsRoute />} />
             {extraRoutes.map((r) => (
               <Route key={r.path} path={r.path} element={<r.component />} />
             ))}
           </Route>
         </Routes>
+
+        {settingsOpen && (
+          <Routes>
+            <Route
+              path="/settings/*"
+              element={<SettingsDrawerRoute open={currentOverlayRouteState.drawerOpen} onClosed={handleSettingsClosed} />}
+            />
+          </Routes>
+        )}
+        </UiOverlayProvider>
+
+        <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" />
 
         {/* Global toast notifications */}
         <Toaster
@@ -269,6 +354,7 @@ function App() {
           style={{ zIndex: 99999 }}
         />
       </TooltipProvider>
+      </OverlayPortalProvider>
     </ErrorBoundary>
   );
 }

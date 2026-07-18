@@ -1,4 +1,30 @@
 {
+  "uiV2Showcase": {
+    "title": "Windows UI v2 展示",
+    "description": "用于 Apple 风格桌面系统的材质、动效、控件、浮层和反馈状态参考。",
+    "materials": "材质",
+    "controls": "控件",
+    "feedback": "反馈",
+    "canvas": "画布",
+    "sidebar": "侧栏",
+    "panel": "面板",
+    "elevated": "浮层",
+    "control": "控件层",
+    "segmented": "分段控件",
+    "sampleInput": "示例输入",
+    "openDialog": "打开对话框",
+    "openDrawer": "打开抽屉",
+    "dialogTitle": "材质对话框",
+    "dialogDescription": "居中确认继续使用 Dialog，空间型详情统一使用 AppleDrawer。",
+    "drawerTitle": "材质抽屉",
+    "drawerDescription": "使用共享 420ms 动效生命周期的右侧表面。",
+    "success": "成功",
+    "warning": "警告",
+    "error": "错误",
+    "loading": "加载中",
+    "motionNormal": "动效已启用",
+    "motionReduced": "减少动态效果"
+  },
     "sidebar": {
         "chat": "聊天",
         "newChat": "新对话",
@@ -48,6 +74,12 @@
         "show": "显示",
         "hide": "隐藏",
         "clear": "清空"
+    },
+    "window": {
+        "minimize": "最小化窗口",
+        "maximize": "最大化窗口",
+        "restore": "还原窗口",
+        "close": "关闭窗口"
     },
     "status": {
         "running": "运行中",

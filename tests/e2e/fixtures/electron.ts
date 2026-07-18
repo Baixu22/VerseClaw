@@ -1,6 +1,6 @@
 import electronBinaryPath from 'electron';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Page } from '@playwright/test';
-import { access, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -13,6 +13,7 @@ type LaunchElectronOptions = {
   devScenario?: string;
   bootHoldMs?: number;
   settingsSectionDelayMs?: number;
+  theme?: 'light' | 'dark' | 'system';
 };
 
 type IpcMockConfig = {
@@ -121,17 +122,19 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Pr
   }
 }
 
-async function seedE2eSettings(userDataDir: string): Promise<void> {
+async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {
   const settingsPath = join(userDataDir, 'settings.json');
+  let existing: Record<string, unknown> = {};
   try {
     await access(settingsPath);
-    return;
+    existing = JSON.parse(await readFile(settingsPath, 'utf-8')) as Record<string, unknown>;
+    if (!theme) return;
   } catch {
     // Seed only once per isolated profile. Tests that switch language should
     // keep their persisted setting across relaunches in the same profile.
   }
 
-  await writeFile(settingsPath, JSON.stringify({ language: 'en' }, null, 2), 'utf-8');
+  await writeFile(settingsPath, JSON.stringify({ language: 'en', ...existing, ...(theme ? { theme } : {}) }, null, 2), 'utf-8');
 }
 
 async function cleanupTempDir(path: string): Promise<void> {
@@ -155,7 +158,7 @@ async function launchVerseClawElectron(
   userDataDir: string,
   options: LaunchElectronOptions = {},
 ): Promise<ElectronApplication> {
-  await seedE2eSettings(userDataDir);
+  await seedE2eSettings(userDataDir, options.theme);
   const hostApiPort = await allocatePort();
   const cdpPort = await allocatePort();
   const electronEnv = process.platform === 'linux'

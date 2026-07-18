@@ -4,12 +4,16 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 
 import { cn } from "@/lib/utils"
+import { useOverlayPortalContainer } from "@/components/ui/overlay-portal"
 
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
 
-const DialogPortal = DialogPrimitive.Portal
+const DialogPortal = ({ children, ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
+  const container = useOverlayPortalContainer()
+  return <DialogPrimitive.Portal container={container ?? undefined} {...props}>{children}</DialogPrimitive.Portal>
+}
 
 const DialogClose = DialogPrimitive.Close
 

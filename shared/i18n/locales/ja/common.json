@@ -1,4 +1,30 @@
 {
+  "uiV2Showcase": {
+    "title": "Windows UI v2 ショーケース",
+    "description": "Apple 風デスクトップシステムのマテリアル、モーション、コントロール、オーバーレイ、状態表示です。",
+    "materials": "マテリアル",
+    "controls": "コントロール",
+    "feedback": "フィードバック",
+    "canvas": "キャンバス",
+    "sidebar": "サイドバー",
+    "panel": "パネル",
+    "elevated": "フローティング",
+    "control": "コントロール面",
+    "segmented": "セグメント",
+    "sampleInput": "入力サンプル",
+    "openDialog": "ダイアログを開く",
+    "openDrawer": "Drawer を開く",
+    "dialogTitle": "マテリアルダイアログ",
+    "dialogDescription": "中央の確認は Dialog、空間的な詳細は AppleDrawer を使用します。",
+    "drawerTitle": "マテリアル Drawer",
+    "drawerDescription": "共通の 420ms モーションライフサイクルを使う右側サーフェスです。",
+    "success": "成功",
+    "warning": "警告",
+    "error": "エラー",
+    "loading": "読み込み中",
+    "motionNormal": "モーション有効",
+    "motionReduced": "視差効果を減らす"
+  },
     "sidebar": {
         "chat": "チャット",
         "newChat": "新しいチャット",
@@ -48,6 +74,12 @@
         "show": "表示",
         "hide": "非表示",
         "clear": "クリア"
+    },
+    "window": {
+        "minimize": "ウィンドウを最小化",
+        "maximize": "ウィンドウを最大化",
+        "restore": "ウィンドウを元に戻す",
+        "close": "ウィンドウを閉じる"
     },
     "status": {
         "running": "実行中",

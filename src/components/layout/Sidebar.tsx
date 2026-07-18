@@ -40,6 +40,7 @@ import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-ma
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
+import { useUiOverlay } from './ui-overlay-context';
 import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -389,6 +390,8 @@ function getAgentIdFromSessionKey(sessionKey: string): string {
 
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
+  const { uiVersion, settingsOpen, openSettings } = useUiOverlay();
+  const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
   const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
     setSidebarCollapsed: state.setSidebarCollapsed,
@@ -715,9 +718,10 @@ export function Sidebar() {
       data-testid="sidebar"
       className={cn(
         'relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
-        isResizing ? 'transition-none' : 'transition-[width] duration-300',
+        isUiV2 && 'border-r border-white/55 bg-surface-sidebar/90 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:border-white/5 dark:bg-surface-sidebar/76',
+        isResizing ? 'transition-none' : 'transition-[width] duration-200 ease-out',
       )}
-      style={{ width: sidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH : sidebarWidth }}
+      style={{ width: sidebarCollapsed ? (isUiV2 ? 64 : SIDEBAR_COLLAPSED_WIDTH) : (isUiV2 ? Math.min(360, Math.max(240, sidebarWidth)) : sidebarWidth) }}
     >
       {isMac && (
         <div
@@ -803,7 +807,7 @@ export function Sidebar() {
                 className={cn(
                   'flex-1 rounded-md py-1 text-2xs font-medium transition-colors',
                   sessionView === view
-                    ? 'bg-white text-foreground shadow-sm dark:bg-white/10'
+                    ? 'bg-material-elevated/92 text-foreground shadow-sm dark:bg-white/10'
                     : 'text-muted-foreground/60 hover:text-muted-foreground',
                 )}
               >
@@ -975,11 +979,15 @@ export function Sidebar() {
         <NavLink
             to="/settings"
             data-testid="sidebar-nav-settings"
+            onClick={(event) => {
+              event.preventDefault();
+              openSettings('/settings');
+            }}
             className={({ isActive }) =>
               cn(
                 'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
                 'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-                isActive && 'bg-black/5 dark:bg-white/10 text-foreground',
+                (isActive || settingsOpen) && 'bg-material-elevated/84 shadow-sm dark:bg-white/10 text-foreground',
                 sidebarCollapsed ? 'justify-center px-0' : ''
               )
             }

@@ -52,6 +52,12 @@
  *     bg-surface-modal = raised cream  panels, popovers, inputs, cards
  *     bg-surface-input = recessed cream  code/log <pre>, segmented track
  *
+ *     Windows UI v2 material order:
+ *       bg-material-canvas -> bg-material-sidebar -> bg-material-panel
+ *       -> bg-material-elevated; controls use bg-material-control.
+ *     Light v2 values must stay in one warm-neutral hue family and must be
+ *     scoped with :not(.dark), so system dark mode cannot inherit light glass.
+ *
  *     Never write `dark:bg-card` / `dark:bg-muted` companion classes —
  *     the surface tokens already redirect in dark mode.
  *
@@ -140,6 +146,26 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
+    /* Windows UI v2 material and motion primitives. */
+    --material-canvas: 45 30% 96.6%;
+    --material-sidebar: 42 20% 94%;
+    --material-panel: 45 38% 98%;
+    --material-elevated: 0 0% 100%;
+    --material-control: 42 18% 93%;
+    --material-scrim: 222 28% 9%;
+    --motion-fast: 120ms;
+    --motion-control: 180ms;
+    --motion-surface: 240ms;
+    --motion-drawer: 420ms;
+    --ease-ui-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-ui-move: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --radius-control: 8px;
+    --radius-card: 12px;
+    --radius-popover: 14px;
+    --radius-panel: 20px;
+    --shadow-floating: 0 24px 80px rgba(15, 23, 42, 0.18), 0 2px 12px rgba(15, 23, 42, 0.08), inset 0 1px rgba(255, 255, 255, 0.62);
+
     /* ── Verse Claw cream surfaces (light) ────────────────────────────
      *
      * Three stacked cream layers — think "a cream paper laid on top
@@ -181,6 +207,36 @@
     --usage-cache: 48 96% 53%;
   }
 
+  /* Windows UI v2 uses one warm-neutral family for every light material.
+   * Keeping semantic and material tokens on the same hue avoids the visible
+   * blue-gray / yellow / pure-white seams that appear when glass layers blend. */
+  :root[data-ui-version='v2']:not(.dark) {
+    --background: 42 32% 97.2%;
+    --foreground: 220 16% 10%;
+    --card: 42 42% 98.4%;
+    --card-foreground: 220 16% 10%;
+    --popover: 42 44% 98.7%;
+    --popover-foreground: 220 16% 10%;
+    --secondary: 42 22% 95.2%;
+    --secondary-foreground: 220 14% 16%;
+    --muted: 42 20% 95%;
+    --muted-foreground: 220 8% 43%;
+    --accent: 42 24% 94.8%;
+    --accent-foreground: 220 14% 16%;
+    --border: 42 16% 87.5%;
+    --input: 42 16% 86%;
+
+    --material-canvas: 42 32% 97.2%;
+    --material-sidebar: 42 28% 96.1%;
+    --material-panel: 42 40% 98.1%;
+    --material-elevated: 42 48% 99%;
+    --material-control: 42 22% 95.1%;
+
+    --surface-modal: 42 40% 98.1%;
+    --surface-input: 42 22% 95.1%;
+    --surface-sidebar: 42 28% 96.1%;
+  }
+
   /* Neutral deep-gray dark palette */
   .dark {
     --background: 240 4% 11%;
@@ -202,6 +258,14 @@
     --border: 240 3% 24%;
     --input: 240 3% 18%;
     --ring: 217.2 91.2% 59.8%;
+
+    --material-canvas: 240 4% 10.5%;
+    --material-sidebar: 240 4% 13%;
+    --material-panel: 240 4% 16%;
+    --material-elevated: 240 4% 18%;
+    --material-control: 240 3% 20%;
+    --material-scrim: 240 8% 3%;
+    --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.5), 0 2px 14px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.08);
 
     /* In dark mode the three cream surfaces collapse onto existing
      * shadcn tokens:
@@ -233,6 +297,10 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  :root[data-ui-version='v2'] body {
+    font-family: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  }
 }
 
 @layer components {
@@ -241,11 +309,13 @@
   }
 
   .verse-claw-dialog-overlay {
-    @apply fixed inset-0 z-50 bg-black/30 dark:bg-black/60;
+    @apply fixed inset-0 bg-black/30 dark:bg-black/60;
+    z-index: 80;
   }
 
   .verse-claw-dialog-content {
-    @apply fixed left-1/2 top-1/2 z-50 w-full outline-none;
+    @apply fixed left-1/2 top-1/2 w-full outline-none;
+    z-index: 90;
     transform: translate(-50%, -50%);
     transform-origin: center;
     will-change: opacity, transform;
@@ -256,7 +326,7 @@
   }
 
   .verse-claw-dialog-overlay[data-state='closed'] {
-    animation: verse-claw-dialog-overlay-out 80ms ease-in both;
+    animation: verse-claw-dialog-overlay-out 100ms var(--ease-ui-out) both;
   }
 
   .verse-claw-dialog-content[data-state='open'] {
@@ -264,7 +334,111 @@
   }
 
   .verse-claw-dialog-content[data-state='closed'] {
-    animation: verse-claw-dialog-content-out 80ms ease-in both;
+    animation: verse-claw-dialog-content-out 100ms var(--ease-ui-out) both;
+  }
+
+  .app-content-stage-v2 {
+    isolation: isolate;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.45);
+  }
+
+  [data-ui-version='v2'] [data-testid='main-content'] {
+    background:
+      radial-gradient(circle at 80% -10%, hsl(var(--primary) / 0.055), transparent 34%),
+      hsl(var(--material-canvas));
+  }
+
+  [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading),
+  [data-ui-version='v2'] [data-testid='main-content'] h2.font-serif:not(.chat-brand-heading) {
+    font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading) {
+    font-size: 1.5rem;
+    line-height: 1.875rem;
+  }
+
+  .apple-drawer-overlay[data-state='open'] {
+    animation: apple-drawer-fade-in 180ms var(--ease-ui-out) both;
+  }
+
+  .apple-drawer-overlay[data-state='closed'] {
+    animation: apple-drawer-fade-out 160ms var(--ease-ui-out) both;
+  }
+
+  .apple-drawer-content {
+    --initial-transform: 102%;
+    box-shadow: var(--shadow-floating);
+    will-change: transform;
+    transition: transform var(--motion-drawer) var(--ease-drawer);
+    animation-duration: var(--motion-drawer);
+    animation-timing-function: var(--ease-drawer);
+  }
+
+  .apple-drawer-content[data-state='open'] {
+    animation-name: apple-drawer-slide-from-right;
+  }
+
+  .apple-drawer-content[data-state='closed'] {
+    animation-name: apple-drawer-slide-to-right;
+  }
+
+  .apple-drawer-content [data-vaul-handle] {
+    position: relative;
+    display: block;
+    touch-action: none;
+  }
+
+  .apple-drawer-content [data-vaul-handle-hitarea] {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  .settings-drawer-shell h1.font-serif,
+  .settings-drawer-shell h2.font-serif,
+  .settings-drawer-shell .font-serif {
+    font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif !important;
+  }
+
+  .settings-drawer-shell h1.text-3xl,
+  .settings-drawer-shell h2.text-3xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .settings-drawer-shell h1.text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apple-drawer-content[data-state],
+    .apple-drawer-overlay[data-state] {
+      animation-duration: 160ms !important;
+      animation-timing-function: var(--ease-ui-out) !important;
+    }
+
+    .apple-drawer-content[data-state] {
+      transform: translate3d(0, 0, 0) !important;
+    }
+
+    .apple-drawer-content[data-state='open'] {
+      animation-name: apple-drawer-content-fade-in;
+    }
+
+    .apple-drawer-content[data-state='closed'] {
+      animation-name: apple-drawer-content-fade-out;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -273,6 +447,33 @@
       animation: none;
     }
   }
+}
+
+@keyframes apple-drawer-slide-from-right {
+  from { transform: translate3d(var(--initial-transform, 102%), 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes apple-drawer-slide-to-right {
+  to { transform: translate3d(var(--initial-transform, 102%), 0, 0); }
+}
+
+@keyframes apple-drawer-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes apple-drawer-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes apple-drawer-content-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes apple-drawer-content-fade-out {
+  to { opacity: 0; }
 }
 
 @keyframes verse-claw-dialog-overlay-in {

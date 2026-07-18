@@ -44,6 +44,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
 import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
+import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
@@ -853,6 +854,8 @@ export function ChatInput({
   taskLoopUpgradeBusy = false,
   onConfirmTaskLoopUpgrade,
 }: ChatInputProps) {
+  const { uiVersion } = useUiOverlay();
+  const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
   const { t } = useTranslation('chat');
   const uiDepthMode = useSettingsStore((state) => state.uiDepthMode);
   const showAdvancedDetails = uiDepthMode === 'advanced';
@@ -2652,7 +2655,7 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        "p-4 pb-6 w-full mx-auto max-w-3xl"
+        isUiV2 ? 'mx-auto w-full max-w-[820px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl'
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -2673,7 +2676,14 @@ export function ChatInput({
         )}
 
         {/* Input Container */}
-        <div className={`relative bg-surface-modal rounded-2xl shadow-sm border px-3 pt-2.5 pb-1.5 transition-all ${dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10'}`}>
+        <div className={cn(
+          'relative rounded-2xl border px-3 pb-1.5 pt-2.5',
+          'transition-[border-color,box-shadow,background-color,transform] duration-180',
+          isUiV2
+            ? 'border-white/70 bg-material-elevated/94 shadow-[0_16px_46px_rgba(31,27,20,0.10),0_1px_4px_rgba(31,27,20,0.06),inset_0_1px_0_rgba(255,255,255,0.74)] backdrop-blur-[22px] backdrop-saturate-[1.24] dark:border-white/10 dark:bg-material-elevated/82'
+            : 'bg-surface-modal shadow-sm',
+          dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10',
+        )}>
           {slashMenuOpen && (
             <SlashCommandPalette
               items={slashItems}
