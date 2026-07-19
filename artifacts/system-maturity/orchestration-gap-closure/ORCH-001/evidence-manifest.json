@@ -1,54 +1,23 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "taskId": "ORCH-001",
-  "generatedAt": "2026-07-19T01:36:26.8519274+08:00",
+  "generatedAt": "2026-07-19T01:19:31.721Z",
   "implementationCommit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947",
+  "deliveryCommit": "df8a9057991323fa98723d9faf92bd64e03fc6a0",
   "commitReachableFromHead": true,
   "hashAlgorithm": "sha256",
+  "contentSource": "git-blob",
   "files": [
-    {
-      "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/acceptance.json",
-      "sha256": "90348016960cb5fcd988222646248451778ba881b4d8e906caaa1ef20da20ee4"
-    },
-    {
-      "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/verification.log",
-      "sha256": "923b76d3a7cd18197255d3d8651bc5598ba6a473539bca9e93f07ce7381afa0a"
-    },
-    {
-      "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/verification.exit.txt",
-      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts",
-      "sha256": "dfa72435ea5889b76c938837e1fa8869c637b6e10845bea4a8459017d00f13c2"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/orchestrator.ts",
-      "sha256": "b82620ab5822498e08263ea3b3509686d6bd002b6c616071c5b0a6d4cc11ef94"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/routing-memo.ts",
-      "sha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea"
-    },
-    {
-      "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
-      "sha256": "cbdf6fbf1685fddb328e44dbfdc28c3a6673b149bc7e30c36ea166d6333a2dd3"
-    },
-    {
-      "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
-      "sha256": "007e9362fce31554568f819c5896054df6507c2e97a9e66c141d14449ae30636"
-    },
-    {
-      "path": "tests/integration/p1-orchestration-boundary.integration.test.ts",
-      "sha256": "f5885840c192f2c5d406ea4734ff78cdf60909e686203eca78ec11d62133c6d2"
-    },
-    {
-      "path": "tests/unit/role-orchestration-methods.test.ts",
-      "sha256": "fc25b1ad194dd31b5850d42ab4374989f609e09c40a6a785423991fd8571e6bd"
-    },
-    {
-      "path": "tests/unit/routing-memo.test.ts",
-      "sha256": "24f580055f67b13c8ea52d3babd7c804d061e935ac436a2d59e2085cbe74268d"
-    }
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/acceptance.json", "commit": "df8a9057991323fa98723d9faf92bd64e03fc6a0", "sha256": "90348016960cb5fcd988222646248451778ba881b4d8e906caaa1ef20da20ee4" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/verification.log", "commit": "df8a9057991323fa98723d9faf92bd64e03fc6a0", "sha256": "923b76d3a7cd18197255d3d8651bc5598ba6a473539bca9e93f07ce7381afa0a" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-001/verification.exit.txt", "commit": "df8a9057991323fa98723d9faf92bd64e03fc6a0", "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa" },
+    { "path": "openclaw_runtime/src/agents/orchestration-quality-scorecard.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "dfa72435ea5889b76c938837e1fa8869c637b6e10845bea4a8459017d00f13c2" },
+    { "path": "openclaw_runtime/src/agents/orchestrator.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "b82620ab5822498e08263ea3b3509686d6bd002b6c616071c5b0a6d4cc11ef94" },
+    { "path": "openclaw_runtime/src/agents/routing-memo.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "93dd3fde6d1ce1145e5d22657a193974816f7578a0cbf2e279cf6cef3b0eb7ea" },
+    { "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "cbdf6fbf1685fddb328e44dbfdc28c3a6673b149bc7e30c36ea166d6333a2dd3" },
+    { "path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "007e9362fce31554568f819c5896054df6507c2e97a9e66c141d14449ae30636" },
+    { "path": "tests/integration/p1-orchestration-boundary.integration.test.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "894e060d9084c89ca6941e6ed1833fa754956c2070bc4315b67698f53d23f5a0" },
+    { "path": "tests/unit/role-orchestration-methods.test.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "e3075f40d3c7ca97e00f4c03b299756601db278ee4565bad4083712b0cfcfce0" },
+    { "path": "tests/unit/routing-memo.test.ts", "commit": "e0841a7f80e0822bc594cb3dad5d2dd731eb0947", "sha256": "e16840383a9302c478e467bece5708b0f8a4d14f9fe4b27691bb9ee1c72b068b" }
   ]
 }

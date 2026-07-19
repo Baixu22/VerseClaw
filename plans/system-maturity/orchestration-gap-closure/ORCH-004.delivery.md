@@ -3,7 +3,7 @@ STATUS: done
 IMPLEMENTATION: tests/e2e/role-orchestration-plan-editing.spec.ts
 TESTS: artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.log; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.exit.txt
 ACCEPTANCE: artifacts/system-maturity/orchestration-gap-closure/ORCH-004/acceptance.json
-EVIDENCE: artifacts/system-maturity/orchestration-gap-closure/ORCH-004/acceptance.json; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.log; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.exit.txt
+EVIDENCE: artifacts/system-maturity/orchestration-gap-closure/ORCH-004/evidence-manifest.json; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/acceptance.json; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.log; artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.exit.txt
 RESULTS: Playwright plan-editing Electron test passed with exit code 0 after aligning the mock with the agent-bound orchestrator.plan payload.
 COMMIT: 6035723de
 VALIDATED_AT: 2026-07-19

@@ -5,8 +5,10 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Add and deepen a runtime-first model-callable team_orchestrate tool that uses role contracts, team templates, existing subagent spawn/announce mechanics, completion-aware orchestration closure, and observability without adding a parallel communication channel.
 touchedAreas:
+  - artifacts/system-maturity/orchestration-gap-closure/**
   - artifacts/system-maturity/orchestration-gap-closure/ORCH-001/**
   - artifacts/system-maturity/orchestration-gap-closure/status-gate.json
+  - harness/specs/rules/system-maturity-status-gate.md
   - harness/specs/tasks/role-first-team-orchestrate-tool.md
   - openclaw_runtime/src/agents/orchestrator.ts
   - openclaw_runtime/src/agents/orchestrator-run.ts
@@ -23,7 +25,10 @@ touchedAreas:
   - openclaw_runtime/src/agents/tool-mutation.ts
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
   - plans/system-maturity/orchestration-gap-closure/ORCH-001.delivery.md
+  - plans/system-maturity/orchestration-gap-closure/ORCH-003.delivery.md
+  - plans/system-maturity/orchestration-gap-closure/ORCH-004.delivery.md
   - plans/system-maturity/orchestration-gap-closure/ORCHESTRATION_STATUS.json
+  - scripts/validate-orchestration-gap-status.mjs
   - shared/capability-claims.ts
   - shared/product-semantics.ts
   - tests/unit/role-spawn.test.ts
