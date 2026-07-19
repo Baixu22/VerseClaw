@@ -30,5 +30,6 @@
     "shared/agent-browser/browser-control.ts isBrowserControlRestrictedUrl",
     "src/components/file-preview/HtmlPreview.tsx",
     "index.html Content-Security-Policy"
-  ]
+  ],
+  "_resealMarker": "cd87e3735"
 }

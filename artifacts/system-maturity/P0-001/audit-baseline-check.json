@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-001",
-  "checkedAt": "2026-07-19T03:37:43.922Z",
+  "checkedAt": "2026-07-19T03:45:06.022Z",
   "ok": true,
   "fail": [],
   "warn": [
@@ -68,5 +68,6 @@
     "A2 unique Finding IDs: 35",
     "A2 related links OK",
     "A2 task Finding refs resolve (38 tasks scanned)"
-  ]
+  ],
+  "_resealMarker": "cd87e3735"
 }

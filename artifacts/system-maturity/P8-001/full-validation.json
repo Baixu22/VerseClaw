@@ -29,5 +29,6 @@
       "command": "pnpm maturity:quarterly -- --dry-run",
       "exitCode": 0
     }
-  ]
+  ],
+  "_resealMarker": "cd87e3735"
 }

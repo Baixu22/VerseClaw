@@ -9,3 +9,5 @@ echo HARNESS=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\seal5.stdout.log
 call pnpm maturity:quarterly -- --dry-run >> artifacts\system-maturity\P7-004\seal5.stdout.log 2>> artifacts\system-maturity\P7-004\seal5.stderr.log
 echo QDRY=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\seal5.stdout.log
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\seal5.exit.txt
+
+/* reseal-marker:cd87e3735 */

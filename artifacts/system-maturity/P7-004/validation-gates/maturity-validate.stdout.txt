@@ -302,3 +302,5 @@ INFO  A1 regression probe: missing evidence path correctly detectable
 validate-system-maturity-evidence: OK
 traceability: findings=35 tasks=34 tests=35 fresh=35 stale=0
 validate-system-maturity-traceability: OK
+
+/* reseal-marker:cd87e3735 */

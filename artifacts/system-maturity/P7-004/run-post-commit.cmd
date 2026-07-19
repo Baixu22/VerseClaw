@@ -11,3 +11,5 @@ echo EVIDENCE=%ERRORLEVEL% >> %LOG%
 call pnpm maturity:quarterly -- --dry-run >> %LOG% 2>> %ERR%
 echo QDRY=%ERRORLEVEL% >> %LOG%
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\post-commit.exit.txt
+
+/* reseal-marker:cd87e3735 */

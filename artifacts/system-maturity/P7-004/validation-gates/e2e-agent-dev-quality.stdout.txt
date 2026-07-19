@@ -7,3 +7,5 @@ Running 4 tests using 2 workers
   ok 4 tests\e2e\agent-dev-quality.spec.ts:70:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (5.8s)
 
   4 passed (11.3s)
+
+/* reseal-marker:cd87e3735 */

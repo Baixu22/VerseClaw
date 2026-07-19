@@ -41,3 +41,5 @@ INFO  A3 P6-005 delivery+acceptance OK (plans\system-maturity\phase6-supply-rele
 INFO  task Finding refs resolve against findings-registry
 
 validate-system-maturity-plan: OK
+
+/* reseal-marker:cd87e3735 */

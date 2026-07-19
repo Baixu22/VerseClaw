@@ -1,1 +1,383 @@
-{"numTotalTestSuites":7,"numPassedTestSuites":7,"numFailedTestSuites":0,"numPendingTestSuites":0,"numTotalTests":27,"numPassedTests":27,"numFailedTests":0,"numPendingTests":0,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1784266823864,"success":true,"testResults":[{"assertionResults":[{"ancestorTitles":["files api permission approval flow"],"fullName":"files api permission approval flow returns an approval event for workspace-external writes and consumes it once","status":"passed","title":"returns an approval event for workspace-external writes and consumes it once","duration":95.0018,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["files api permission approval flow"],"fullName":"files api permission approval flow blocks writes outright in plan mode","status":"passed","title":"blocks writes outright in plan mode","duration":1.4642000000000053,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["files api permission approval flow"],"fullName":"files api permission approval flow P2-001: readOnly default blocks files.writeText without silent acceptEdits","status":"passed","title":"P2-001: readOnly default blocks files.writeText without silent acceptEdits","duration":1.2029999999999745,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["files api read allowlist (P1-003)"],"fullName":"files api read allowlist (P1-003) rejects arbitrary local path reads outside workspace and write roots","status":"passed","title":"rejects arbitrary local path reads outside workspace and write roots","duration":1.6352000000000544,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["files api read allowlist (P1-003)"],"fullName":"files api read allowlist (P1-003) allows reading files inside the active workspace","status":"passed","title":"allows reading files inside the active workspace","duration":1.5357999999999947,"failureMessages":[],"meta":{},"tags":[]}],"startTime":1784266824905,"endTime":1784266825006.536,"status":"passed","message":"","name":"C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/files-permissions-api.test.ts"},{"assertionResults":[{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy classifies common read, write, network, and destructive commands","status":"passed","title":"classifies common read, write, network, and destructive commands","duration":2.282600000000002,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy blocks mutating commands in read-only mode","status":"passed","title":"blocks mutating commands in read-only mode","duration":0.7608999999999924,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy requires approval for risky commands in accept-edits mode","status":"passed","title":"requires approval for risky commands in accept-edits mode","duration":0.24909999999999854,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy maps workspace modes to OpenClaw exec approval config","status":"passed","title":"maps workspace modes to OpenClaw exec approval config","duration":0.3228000000000293,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy checks whether a path stays inside the workspace","status":"passed","title":"checks whether a path stays inside the workspace","duration":0.23849999999993088,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy applies workspace modes to file writes","status":"passed","title":"applies workspace modes to file writes","duration":0.27760000000000673,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy classifies gateway RPC methods conservatively","status":"passed","title":"classifies gateway RPC methods conservatively","duration":0.4175000000000182,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy keeps the dev/test-only gateway RPC guard mechanism with an empty method set","status":"passed","title":"keeps the dev/test-only gateway RPC guard mechanism with an empty method set","duration":0.49729999999999563,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)","status":"passed","title":"defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)","duration":0.19860000000005584,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspace permission policy"],"fullName":"workspace permission policy covers write decisions across permission modes for files and commands","status":"passed","title":"covers write decisions across permission modes for files and commands","duration":0.3491999999999962,"failureMessages":[],"meta":{},"tags":[]}],"startTime":1784266824973,"endTime":1784266824979.349,"status":"passed","message":"","name":"C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/workspace-permissions.test.ts"},{"assertionResults":[{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings","status":"passed","title":"hydrates old agentId/session fields into selectedAgentId and agentBindings","duration":67.11239999999998,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration creates the default workspace from list when no workspace exists","status":"passed","title":"creates the default workspace from list when no workspace exists","duration":0.8030999999999722,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration falls back to the default workspace when the stored active id is missing","status":"passed","title":"falls back to the default workspace when the stored active id is missing","duration":0.6216000000000577,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration keeps independent UI state for each session inside a workspace","status":"passed","title":"keeps independent UI state for each session inside a workspace","duration":0.61850000000004,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session","status":"passed","title":"does not copy the previous active session state into a newly selected empty session","duration":0.49689999999998236,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration keeps each agent binding session independent within the same workspace","status":"passed","title":"keeps each agent binding session independent within the same workspace","duration":0.5897999999999683,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding","status":"passed","title":"does not inherit the previous agent state when switching to a new agent binding","duration":0.371599999999944,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile","status":"passed","title":"seeds the Verse Claw harness when creating a workspace profile","duration":1.8447999999999638,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state","status":"passed","title":"switches workspaces without rewriting the target workspace session or state","duration":1.411299999999983,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default","status":"passed","title":"P2-001: creates new workspaces with readOnly permission mode by default","duration":1.289600000000064,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes","status":"passed","title":"P2-001: preserves explicit acceptEdits and audits permission mode changes","duration":56.09649999999999,"failureMessages":[],"meta":{},"tags":[]},{"ancestorTitles":["workspaces api compatibility migration"],"fullName":"workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits","status":"passed","title":"P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits","duration":1.2013000000000602,"failureMessages":[],"meta":{},"tags":[]}],"startTime":1784266824910,"endTime":1784266825042.2014,"status":"passed","message":"","name":"C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/workspaces-api.test.ts"}]}
+{
+  "numTotalTestSuites": 7,
+  "numPassedTestSuites": 7,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 27,
+  "numPassedTests": 27,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1784266823864,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "files api permission approval flow"
+          ],
+          "fullName": "files api permission approval flow returns an approval event for workspace-external writes and consumes it once",
+          "status": "passed",
+          "title": "returns an approval event for workspace-external writes and consumes it once",
+          "duration": 95.0018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "files api permission approval flow"
+          ],
+          "fullName": "files api permission approval flow blocks writes outright in plan mode",
+          "status": "passed",
+          "title": "blocks writes outright in plan mode",
+          "duration": 1.4642000000000053,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "files api permission approval flow"
+          ],
+          "fullName": "files api permission approval flow P2-001: readOnly default blocks files.writeText without silent acceptEdits",
+          "status": "passed",
+          "title": "P2-001: readOnly default blocks files.writeText without silent acceptEdits",
+          "duration": 1.2029999999999745,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "files api read allowlist (P1-003)"
+          ],
+          "fullName": "files api read allowlist (P1-003) rejects arbitrary local path reads outside workspace and write roots",
+          "status": "passed",
+          "title": "rejects arbitrary local path reads outside workspace and write roots",
+          "duration": 1.6352000000000544,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "files api read allowlist (P1-003)"
+          ],
+          "fullName": "files api read allowlist (P1-003) allows reading files inside the active workspace",
+          "status": "passed",
+          "title": "allows reading files inside the active workspace",
+          "duration": 1.5357999999999947,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1784266824905,
+      "endTime": 1784266825006.536,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/files-permissions-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy classifies common read, write, network, and destructive commands",
+          "status": "passed",
+          "title": "classifies common read, write, network, and destructive commands",
+          "duration": 2.282600000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy blocks mutating commands in read-only mode",
+          "status": "passed",
+          "title": "blocks mutating commands in read-only mode",
+          "duration": 0.7608999999999924,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy requires approval for risky commands in accept-edits mode",
+          "status": "passed",
+          "title": "requires approval for risky commands in accept-edits mode",
+          "duration": 0.24909999999999854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy maps workspace modes to OpenClaw exec approval config",
+          "status": "passed",
+          "title": "maps workspace modes to OpenClaw exec approval config",
+          "duration": 0.3228000000000293,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy checks whether a path stays inside the workspace",
+          "status": "passed",
+          "title": "checks whether a path stays inside the workspace",
+          "duration": 0.23849999999993088,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy applies workspace modes to file writes",
+          "status": "passed",
+          "title": "applies workspace modes to file writes",
+          "duration": 0.27760000000000673,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy classifies gateway RPC methods conservatively",
+          "status": "passed",
+          "title": "classifies gateway RPC methods conservatively",
+          "duration": 0.4175000000000182,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy keeps the dev/test-only gateway RPC guard mechanism with an empty method set",
+          "status": "passed",
+          "title": "keeps the dev/test-only gateway RPC guard mechanism with an empty method set",
+          "duration": 0.49729999999999563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)",
+          "status": "passed",
+          "title": "defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)",
+          "duration": 0.19860000000005584,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy covers write decisions across permission modes for files and commands",
+          "status": "passed",
+          "title": "covers write decisions across permission modes for files and commands",
+          "duration": 0.3491999999999962,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1784266824973,
+      "endTime": 1784266824979.349,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/workspace-permissions.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed",
+          "title": "hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "duration": 67.11239999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed",
+          "title": "creates the default workspace from list when no workspace exists",
+          "duration": 0.8030999999999722,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed",
+          "title": "falls back to the default workspace when the stored active id is missing",
+          "duration": 0.6216000000000577,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed",
+          "title": "keeps independent UI state for each session inside a workspace",
+          "duration": 0.61850000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed",
+          "title": "does not copy the previous active session state into a newly selected empty session",
+          "duration": 0.49689999999998236,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed",
+          "title": "keeps each agent binding session independent within the same workspace",
+          "duration": 0.5897999999999683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed",
+          "title": "does not inherit the previous agent state when switching to a new agent binding",
+          "duration": 0.371599999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed",
+          "title": "seeds the Verse Claw harness when creating a workspace profile",
+          "duration": 1.8447999999999638,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed",
+          "title": "switches workspaces without rewriting the target workspace session or state",
+          "duration": 1.411299999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed",
+          "title": "P2-001: creates new workspaces with readOnly permission mode by default",
+          "duration": 1.289600000000064,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed",
+          "title": "P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "duration": 56.09649999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed",
+          "title": "P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "duration": 1.2013000000000602,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1784266824910,
+      "endTime": 1784266825042.2014,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/tests/unit/workspaces-api.test.ts"
+    }
+  ],
+  "_resealMarker": "cd87e3735"
+}

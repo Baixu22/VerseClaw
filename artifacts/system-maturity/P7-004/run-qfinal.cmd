@@ -6,3 +6,5 @@ node scripts/update-system-maturity-delivery-hashes.mjs >> artifacts\system-matu
 echo H=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\qfinal.exit.txt
 call pnpm maturity:evidence >> artifacts\system-maturity\P7-004\qfinal.stdout.log 2>> artifacts\system-maturity\P7-004\qfinal.stderr.log
 echo E=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\qfinal.exit.txt
+
+/* reseal-marker:cd87e3735 */

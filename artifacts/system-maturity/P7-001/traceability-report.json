@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-19T02:05:27.000Z",
+  "evaluatedAt": "2026-07-19T03:44:56.000Z",
   "ok": false,
   "summary": {
     "findingCount": 35,
@@ -9,7 +9,7 @@
     "testCount": 35,
     "freshCount": 26,
     "staleCount": 9,
-    "failureCount": 9,
+    "failureCount": 12,
     "warningCount": 0
   },
   "policy": {
@@ -393,10 +393,12 @@
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.732Z",
-      "nextReviewAt": "2026-08-02T03:41:35.732Z",
+      "latestEvidenceAt": "2026-07-19T03:45:05.943Z",
+      "nextReviewAt": "2026-08-02T03:45:05.943Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-SEC-002",
@@ -759,8 +761,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2489,8 +2491,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.737Z",
-      "nextReviewAt": "2026-08-18T03:41:35.737Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2708,8 +2710,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.737Z",
-      "nextReviewAt": "2026-08-18T03:41:35.737Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2794,8 +2796,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.734Z",
-      "nextReviewAt": "2026-09-17T03:41:35.734Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-09-17T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2902,8 +2904,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T08:41:38.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.729Z",
-      "nextReviewAt": "2026-09-17T03:41:35.729Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-09-17T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3283,10 +3285,12 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.533Z",
-      "nextReviewAt": "2026-08-18T03:41:35.533Z",
+      "latestEvidenceAt": "2026-07-19T03:45:05.943Z",
+      "nextReviewAt": "2026-08-18T03:45:05.943Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-SUPPLY-001",
@@ -3612,8 +3616,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3965,8 +3969,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4853,11 +4857,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-19T03:36:46.309Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.533Z",
-      "nextReviewAt": "2026-09-17T03:41:35.533Z",
+      "latestSourceAt": "2026-07-19T03:44:56.000Z",
+      "latestEvidenceAt": "2026-07-19T03:45:05.943Z",
+      "nextReviewAt": "2026-09-17T03:45:05.943Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-GOV-003",
@@ -5328,9 +5334,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-19T03:36:46.309Z",
-      "latestEvidenceAt": "2026-07-19T03:41:17.917Z",
-      "nextReviewAt": "2026-08-18T03:41:17.917Z",
+      "latestSourceAt": "2026-07-19T03:44:56.000Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5416,8 +5422,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T16:28:32.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.738Z",
-      "nextReviewAt": "2026-09-17T03:41:35.738Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-09-17T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5652,8 +5658,8 @@
       ],
       "reviewCycleDays": 90,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:08.100Z",
-      "nextReviewAt": "2026-10-17T03:41:08.100Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-10-17T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5885,8 +5891,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6024,8 +6030,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.729Z",
-      "nextReviewAt": "2026-08-18T03:41:35.729Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6254,8 +6260,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6341,8 +6347,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.732Z",
-      "nextReviewAt": "2026-08-18T03:41:35.732Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6428,8 +6434,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.732Z",
-      "nextReviewAt": "2026-08-18T03:41:35.732Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6820,8 +6826,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.284Z",
-      "nextReviewAt": "2026-08-18T03:41:35.284Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-08-18T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6906,8 +6912,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:41:35.737Z",
-      "nextReviewAt": "2026-09-17T03:41:35.737Z",
+      "latestEvidenceAt": "2026-07-19T03:44:56.000Z",
+      "nextReviewAt": "2026-09-17T03:44:56.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -7112,6 +7118,7 @@
     }
   ],
   "fail": [
+    "F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
     "F-SEC-002: stale evidence: linked source is newer than evidence",
     "F-SEC-010: stale evidence: linked source is newer than evidence",
     "F-ISO-001: stale evidence: linked source is newer than evidence",
@@ -7120,7 +7127,10 @@
     "F-AUTH-003: stale evidence: linked source is newer than evidence",
     "F-AUTH-004: stale evidence: linked source is newer than evidence",
     "F-AUTH-005: stale evidence: linked source is newer than evidence",
-    "F-DATA-002: stale evidence: linked source is newer than evidence"
+    "F-DATA-002: stale evidence: linked source is newer than evidence",
+    "F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+    "F-GOV-002: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
   ],
-  "warn": []
+  "warn": [],
+  "_resealMarker": "cd87e3735"
 }

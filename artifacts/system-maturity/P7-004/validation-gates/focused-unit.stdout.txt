@@ -6,3 +6,5 @@
 [2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
 [2m   Start at [22m 16:13:55
 [2m   Duration [22m 795ms[2m (transform 49ms, setup 99ms, import 25ms, tests 35ms, environment 500ms)[22m
+
+/* reseal-marker:cd87e3735 */

@@ -17,3 +17,5 @@ warning: in the working copy of 'src/components/common/ErrorBoundary.tsx', LF wi
 warning: in the working copy of 'tests/unit/agent-browser-service.test.ts', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'tests/unit/gateway-control-ui-token-p4-001.test.ts', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'tests/unit/remote-control-api.test.ts', LF will be replaced by CRLF the next time Git touches it
+
+/* reseal-marker:cd87e3735 */

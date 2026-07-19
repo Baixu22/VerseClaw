@@ -1,23 +1,24 @@
 {
-    "ok":  true,
-    "generatedAt":  "2026-07-18T05:34:54.786Z",
-    "schemaVersion":  1,
-    "task":  "P7-002",
-    "acceptance":  [
-                       {
-                           "status":  "pass",
-                           "evidence":  "plans/system-maturity/security-regression-suite.json; pnpm maturity:security (PR mode covers all P0/P1 scenarios)",
-                           "id":  "A1"
-                       },
-                       {
-                           "status":  "pass",
-                           "evidence":  "scripts/lib/system-maturity-security-suite.mjs fail-closed + gates.json prFull/release include maturity:security*; unit negative tests",
-                           "id":  "A2"
-                       },
-                       {
-                           "status":  "pass",
-                           "evidence":  "artifacts/system-maturity/P7-002/security-regression-report.json; evidence-manifest.json; full-validation.json",
-                           "id":  "A3"
-                       }
-                   ]
+  "ok": true,
+  "generatedAt": "2026-07-18T05:34:54.786Z",
+  "schemaVersion": 1,
+  "task": "P7-002",
+  "acceptance": [
+    {
+      "status": "pass",
+      "evidence": "plans/system-maturity/security-regression-suite.json; pnpm maturity:security (PR mode covers all P0/P1 scenarios)",
+      "id": "A1"
+    },
+    {
+      "status": "pass",
+      "evidence": "scripts/lib/system-maturity-security-suite.mjs fail-closed + gates.json prFull/release include maturity:security*; unit negative tests",
+      "id": "A2"
+    },
+    {
+      "status": "pass",
+      "evidence": "artifacts/system-maturity/P7-002/security-regression-report.json; evidence-manifest.json; full-validation.json",
+      "id": "A3"
+    }
+  ],
+  "_resealMarker": "cd87e3735"
 }

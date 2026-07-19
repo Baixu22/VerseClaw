@@ -97,3 +97,5 @@ warning: in the working copy of 'scripts/collect-p7-004-evidence.mjs', LF will b
 warning: in the working copy of 'scripts/lib/system-maturity-quarterly-audit.mjs', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'scripts/validate-system-maturity-plan.mjs', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'tests/unit/system-maturity-quarterly-audit-p7-004.test.ts', LF will be replaced by CRLF the next time Git touches it
+
+/* reseal-marker:cd87e3735 */

@@ -1,0 +1,3 @@
+FAIL  A2 P8-001 evidence hash mismatch for artifacts/system-maturity/P8-001/residual-audit-report.json: expected e2b14d7990433fc85dc81cb4c3de2f87beb8edb6eae5c53f7389e0122a323301 got 67fba111c5b836e7882cf882c515cb4541c0126ecac67216dd317b0f7a1adb40
+
+validate-system-maturity-evidence: FAILED (1)
