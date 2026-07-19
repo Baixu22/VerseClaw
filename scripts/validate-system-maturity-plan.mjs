@@ -1,4 +1,4 @@
-﻿/**
+/**
  * P0-002 system maturity plan / status machine validator.
  *
  * Checks:
