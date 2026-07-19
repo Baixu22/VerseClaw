@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "PR-FULL",
   "generatedAt": "2026-07-19T04:00:00.562Z",
-  "head": "067579cbafd0e891e66b584d21fce866d242cd94",
+  "head": "12b193f6c7d568dd0e95f8ec6ff8e0fa9bce16f4",
   "branch": "codex/maturity-p4",
   "ok": true,
   "p45RepairAncestor": true,
@@ -98,5 +98,15 @@
       "ok": true,
       "evidence": "artifacts/system-maturity/PR-FULL/maturity-residual.stdout.txt"
     }
+  },
+  "postCommitVerifiedAt": "2026-07-19T04:01:57.715Z",
+  "postCommitCodes": {
+    "baseline": 0,
+    "plan": 0,
+    "orch": 0,
+    "evidence": 0,
+    "residual": 0,
+    "trace": 0,
+    "gates": 0
   }
 }
