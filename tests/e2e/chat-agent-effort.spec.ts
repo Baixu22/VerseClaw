@@ -23,7 +23,7 @@ const WORKSPACE_SNAPSHOT = {
 };
 
 test.describe('Verse Claw chat agent effort popover', () => {
-  test('opens the effort popover, slides to max, and commits xhigh', async ({ launchElectronApp }) => {
+  test('opens the effort popover, slides to max, and commits max', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -166,7 +166,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
       // Slide to max (index 6)
       await slider.fill('6');
 
-      // The commit should fire with xhigh (never 'max')
+      // Max is a first-class persisted effort value in the shared agent contract.
       await expect.poll(async () => {
         return await app.evaluate(() => {
           const requests = (globalThis as unknown as {
@@ -174,7 +174,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
           }).__clawxEffortRequests ?? [];
           return requests.at(-1)?.effort;
         });
-      }).toBe('xhigh');
+      }).toBe('max');
 
       // Close popover with Escape
       await page.keyboard.press('Escape');
@@ -291,7 +291,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
       expect(cardBg).not.toBe('rgb(0, 0, 0)');
 
       const clipPathCount = await popover.locator('clipPath').count();
-      expect(clipPathCount).toBe(0);
+      expect(clipPathCount).toBe(2);
 
       const radius = await popover.locator('.effort-card').evaluate((el) => {
         return window.getComputedStyle(el).borderRadius;
