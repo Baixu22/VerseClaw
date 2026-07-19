@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "task": "PR-FULL",
+  "generatedAt": "2026-07-19T04:00:00.562Z",
+  "head": "067579cbafd0e891e66b584d21fce866d242cd94",
+  "branch": "codex/maturity-p4",
+  "ok": true,
+  "p45RepairAncestor": true,
+  "phaseStatus": {
+    "phase0": "done",
+    "phase1": "done",
+    "phase2": "done",
+    "phase3": "done",
+    "phase4": "done",
+    "phase5": "done",
+    "phase6": "done",
+    "phase7": "done",
+    "phase8": "done",
+    "orchestrationGapClosure": "done"
+  },
+  "residuals": [
+    "F-SEC-001 Partial+Act-now (OpenClaw secret-input co-read; governed residual, no migration in this PR)",
+    "F-REL-004 Partial+Act-now (multi-impl surface; governed residual)"
+  ],
+  "notInScope": [
+    "merge main",
+    "release full loop (full test/lint:check/cold deep-test/full e2e quality)",
+    "OpenClaw secret-input migration"
+  ],
+  "finalLocalChecks": {
+    "hash1": 0,
+    "evidence": 0,
+    "residual": 0,
+    "hash2": 0,
+    "evidence2": 0,
+    "orch": 0,
+    "plan": 0,
+    "baseline": 0
+  },
+  "results": {
+    "maturity:baseline": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-baseline.stdout.txt"
+    },
+    "maturity:plan": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-plan.stdout.txt"
+    },
+    "maturity:security": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-security.stdout.txt"
+    },
+    "contract:check": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-contract.stdout.txt"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-typecheck.stdout.txt"
+    },
+    "harness:ci": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-harness-ci.stdout.txt"
+    },
+    "agent-dev:fast": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-agent-dev-fast.stdout.txt"
+    },
+    "maturity:seal": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/maturity-seal.stdout.txt"
+    },
+    "maturity:validate": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/maturity-validate.stdout.txt"
+    },
+    "maturity:orchestration-status": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/pr-orch.stdout.txt"
+    },
+    "maturity:evidence": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/maturity-evidence.stdout.txt"
+    },
+    "maturity:residual": {
+      "exitCode": 0,
+      "ok": true,
+      "evidence": "artifacts/system-maturity/PR-FULL/maturity-residual.stdout.txt"
+    }
+  }
+}
