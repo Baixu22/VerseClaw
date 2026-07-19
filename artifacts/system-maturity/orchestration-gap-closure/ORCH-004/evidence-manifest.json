@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "taskId": "ORCH-004",
+  "generatedAt": "2026-07-19T01:19:32.930Z",
+  "implementationCommit": "6035723de8dca8c80210d01363846475fc2938b7",
+  "deliveryCommit": "5340c56978625debad4e665021f6c78f1fa83dc6",
+  "commitReachableFromHead": true,
+  "hashAlgorithm": "sha256",
+  "contentSource": "git-blob",
+  "files": [
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-004/acceptance.json", "commit": "5340c56978625debad4e665021f6c78f1fa83dc6", "sha256": "a25bd79e05412bb9af34575510e20e22a55f310e6548af849cd0bf2c173f190f" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.log", "commit": "5340c56978625debad4e665021f6c78f1fa83dc6", "sha256": "502c4fa9074756ed3bd8c0ec1d38a0036f12782966882042a7d17282184faf73" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-004/plan-editing.e2e.exit.txt", "commit": "5340c56978625debad4e665021f6c78f1fa83dc6", "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa" },
+    { "path": "tests/e2e/role-orchestration-plan-editing.spec.ts", "commit": "6035723de8dca8c80210d01363846475fc2938b7", "sha256": "47ce9b5e16e60e393104129994a93caba54a27e0ac95d1e80aa3922dfaa94606" }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "taskId": "ORCH-003",
+  "generatedAt": "2026-07-19T01:19:32.722Z",
+  "implementationCommit": "78955cf9e73e068f86b5f3dd1783b931be522bef",
+  "deliveryCommit": "0d88ae04d9c2c702b97b24fb08db4503aa30564e",
+  "commitReachableFromHead": true,
+  "hashAlgorithm": "sha256",
+  "contentSource": "git-blob",
+  "files": [
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-003/acceptance.json", "commit": "0d88ae04d9c2c702b97b24fb08db4503aa30564e", "sha256": "f265eb7cda9e161f513ad080a0c74fec0e64a20980fb05b4d3c44c8bb9b41864" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-003/orchestration.tests.log", "commit": "0d88ae04d9c2c702b97b24fb08db4503aa30564e", "sha256": "2b2212f62cf631a7ea2352e292709698a3fe443fae227c3a7e0e76fb5b75f7cc" },
+    { "path": "artifacts/system-maturity/orchestration-gap-closure/ORCH-003/orchestration.tests.exit.txt", "commit": "0d88ae04d9c2c702b97b24fb08db4503aa30564e", "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa" },
+    { "path": "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts", "commit": "78955cf9e73e068f86b5f3dd1783b931be522bef", "sha256": "96429bb03f4810ad85decfb7fb8368ff0f324bd29ef34a935bfc273940f1b8ce" },
+    { "path": "tests/unit/orchestration-protocol-v3.test.ts", "commit": "78955cf9e73e068f86b5f3dd1783b931be522bef", "sha256": "3b387451018706e135bb1efbdbf1cbce9b3cb8418ef25725e6d2d71a231209b2" },
+    { "path": "tests/unit/orchestration-task-graph.test.ts", "commit": "78955cf9e73e068f86b5f3dd1783b931be522bef", "sha256": "18897697f1edf80d4a014f683fd9dbb8786d60929f88c38388b7612196a81c62" },
+    { "path": "tests/unit/role-orchestration-methods.test.ts", "commit": "78955cf9e73e068f86b5f3dd1783b931be522bef", "sha256": "df33150b6918ebfcb7366d767571863a676911ea25047897a7f3fde618b7694f" }
+  ]
+}

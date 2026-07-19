@@ -13,3 +13,8 @@ Every gated task must have a delivery record with explicit `IMPLEMENTATION`, `TE
 `EVIDENCE`, `RESULTS`, `COMMIT`, and `VALIDATED_AT` fields. A green unit test with a failing Electron
 or integration acceptance test is not a completed task. Historical delivery text cannot be reused as
 fresh proof without rerunning the declared commands.
+
+Every `done` delivery must reference exactly one schema-version-2 evidence manifest. Manifest hashes
+must be SHA-256 digests of committed Git blobs, with an explicit commit for every entry; implementation,
+delivery, and entry commits must all be reachable from the current HEAD. Hashing mutable working-tree
+bytes is not sufficient because later tasks and platform line-ending filters make those bytes unstable.
