@@ -151,7 +151,7 @@ function validateEvidenceIndex(indexPath) {
       fail(`${taskId} evidence-index artifact missing: ${artifactPath}`);
       continue;
     }
-    const actual = sha256File(abs);
+    const actual = sha256CanonicalEvidenceFile(abs);
     if (actual !== String(artifact.sha256).toLowerCase()) {
       fail(`${taskId} evidence-index hash mismatch for ${artifactPath}: expected ${artifact.sha256} got ${actual}`);
     }

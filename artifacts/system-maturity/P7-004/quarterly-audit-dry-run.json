@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-004",
-  "generatedAt": "2026-07-18T09:28:32.372Z",
+  "generatedAt": "2026-07-19T03:38:46.760Z",
   "ok": true,
   "primaryFindingIds": [
     "F-GOV-002",
@@ -111,29 +111,29 @@
     {
       "phase": "phase7-continuous-governance",
       "statusPath": "plans/system-maturity/phase7-continuous-governance/STATUS.json",
-      "phaseStatus": "done",
-      "allTasksDone": true,
+      "phaseStatus": "in_progress",
+      "allTasksDone": false,
       "consistent": true,
       "missing": false,
       "tasks": {
-        "P7-001": "done",
-        "P7-002": "done",
-        "P7-003": "done",
-        "P7-004": "done"
+        "P7-001": "in_progress",
+        "P7-002": "in_progress",
+        "P7-003": "in_progress",
+        "P7-004": "in_progress"
       }
     },
     {
       "phase": "phase8-residual-closure",
       "statusPath": "plans/system-maturity/phase8-residual-closure/STATUS.json",
-      "phaseStatus": "done",
-      "allTasksDone": true,
+      "phaseStatus": "in_progress",
+      "allTasksDone": false,
       "consistent": true,
       "missing": false,
       "tasks": {
-        "P8-001": "done",
-        "P8-002": "done",
-        "P8-003": "done",
-        "P8-004": "done"
+        "P8-001": "in_progress",
+        "P8-002": "in_progress",
+        "P8-003": "in_progress",
+        "P8-004": "in_progress"
       }
     }
   ],
@@ -362,22 +362,14 @@
   "releaseDecision": {
     "allowed": true,
     "blockers": [],
-    "notes": [
-      {
-        "code": "agent-dev-not-system-release",
-        "message": "Agent Dev audit score/grade/releaseReady must not be extrapolated to whole-system release readiness",
-        "status": "pass",
-        "releaseReady": null,
-        "score": 94
-      }
-    ],
+    "notes": [],
     "code": "release-eligible"
   },
   "scorecard": {
     "dimensions": [
       {
         "id": "phase-completion",
-        "score": 40,
+        "score": 31,
         "max": 40
       },
       {
@@ -396,29 +388,16 @@
         "max": 20
       }
     ],
-    "total": 100,
+    "total": 91,
     "max": 100,
     "grade": "A",
-    "agentDevNote": {
-      "status": "pass",
-      "releaseReady": null,
-      "score": 94,
-      "grade": "A",
-      "caveat": "Agent Dev A-grade must not be extrapolated to whole-system release readiness (F-GOV-002)"
-    }
+    "agentDevNote": null
   },
-  "agentDevAudit": {
-    "path": "artifacts/agent-dev-audit/report.json",
-    "status": "pass",
-    "releaseReady": null,
-    "score": 94,
-    "grade": "A",
-    "generatedAt": "2026-07-18T08:13:57.888Z"
-  },
+  "agentDevAudit": null,
   "fail": [],
   "summary": {
     "phaseCount": 9,
-    "phasesDone": 9,
+    "phasesDone": 7,
     "phasesTraceable": 9,
     "riskActive": 9,
     "riskExpired": 0,
@@ -427,7 +406,7 @@
     "residualMissing": 0,
     "residualOk": true,
     "releaseAllowed": true,
-    "score": 100,
+    "score": 91,
     "grade": "A"
   }
 }
