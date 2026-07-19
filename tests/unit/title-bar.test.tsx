@@ -18,6 +18,10 @@ vi.mock('@/lib/host-api', () => ({
   },
 }));
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
+
 describe('TitleBar platform behavior', () => {
   beforeEach(() => {
     isMaximizedMock.mockReset();
@@ -45,12 +49,12 @@ describe('TitleBar platform behavior', () => {
 
     render(<TitleBar />);
 
-    expect(screen.getByTitle('Minimize')).toBeInTheDocument();
-    expect(screen.getByTitle('Maximize')).toBeInTheDocument();
-    expect(screen.getByTitle('Close')).toBeInTheDocument();
+    expect(screen.getByTitle('window.minimize')).toBeInTheDocument();
+    expect(screen.getByTitle('window.maximize')).toBeInTheDocument();
+    expect(screen.getByTitle('window.close')).toBeInTheDocument();
     const bar = screen.getByTestId('windows-titlebar');
-    expect(bar).toHaveClass('bg-surface-sidebar');
-    expect(bar).not.toHaveClass('border-b');
+    expect(bar).toHaveClass('bg-surface-sidebar/92');
+    expect(bar).toHaveClass('border-b');
 
     await waitFor(() => {
       expect(isMaximizedMock).toHaveBeenCalled();
