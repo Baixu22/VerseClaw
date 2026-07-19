@@ -1,0 +1,827 @@
+{
+  "questions": [
+    {
+      "qid": "api_auth_q1_def",
+      "doc": "api_auth",
+      "qtype": "def",
+      "prompt": "auth.overview 是什么？请说明其定义、描述与示例。",
+      "target": "auth.overview",
+      "resolve_tokens": 119,
+      "full_tokens": 687,
+      "ratio": 0.17321688500727803,
+      "resolve_output": "[#auth.overview:DEF] JWT 认证模块，负责 token 签发与验证\n[#auth.overview:DESC] 支持 RS256 和 HS256 两种算法\n[#auth.token_ttl:RULE] access token 有效期不得超过 15 分钟\n[#auth.token_ttl:EX] 测试用例：access_token_ttl=900 不通过；899 通过\n[#auth.ex_1:EX] 浏览器登录：access token 存内存，refresh token 存 cookie",
+      "expected_ids": [
+        "auth.overview",
+        "auth.overview",
+        "auth.overview",
+        "auth.overview",
+        "auth.overview",
+        "auth.overview"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "api_auth_q2_rule",
+      "doc": "api_auth",
+      "qtype": "rule",
+      "prompt": "auth.overview 模块有哪些规则约束？请逐条列出。",
+      "target": "auth.overview",
+      "resolve_tokens": 180,
+      "full_tokens": 687,
+      "ratio": 0.26200873362445415,
+      "resolve_output": "[#auth.overview:DEF] JWT 认证模块，负责 token 签发与验证\n[#auth.token_ttl:RULE] access token 有效期不得超过 15 分钟\n[#auth.rotate:RULE] 密钥轮换时旧密钥保留 7 天用于平滑过渡\n[#auth.audit:RULE] 审计日志保留 365 天，敏感字段脱敏\n[#auth.rate_limit:RULE] 登录端点限流：单 IP 5 次/分钟，超出返回 429\n[#auth.refresh_ttl:RULE] refresh token 有效期不得超过 7 天\n[#auth.storage:RULE] refresh token 必须存于 httpOnly cookie",
+      "expected_ids": [
+        "auth.audit",
+        "auth.rate_limit",
+        "auth.refresh_ttl",
+        "auth.rotate",
+        "auth.storage",
+        "auth.token_ttl"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "api_auth_q3_deps",
+      "doc": "api_auth",
+      "qtype": "deps",
+      "prompt": "auth.overview 依赖哪些节点？请列出边关系。",
+      "target": "auth.overview",
+      "resolve_tokens": 360,
+      "full_tokens": 687,
+      "ratio": 0.5240174672489083,
+      "resolve_output": "[#auth.overview:DEF] JWT 认证模块，负责 token 签发与验证\n[#auth.token_ttl:RULE] access token 有效期不得超过 15 分钟\n[#auth.ex_1:EX] 浏览器登录：access token 存内存，refresh token 存 cookie\n[#auth.rotate:DEF] 密钥轮换流程：每 90 天由 auth 服务生成新密钥对\n[#auth.audit:DEF] 审计日志：所有 token 签发与验证事件记录到 audit-log\n[#auth.rate_limit:RULE] 登录端点限流：单 IP 5 次/分钟，超出返回 429\n[#auth.refresh_ttl:RULE] refresh token 有效期不得超过 7 天\n[#auth.storage:RULE] refresh token 必须存于 httpOnly cookie\n[#auth.jwt_secret:VAR] env:JWT_SECRET_KEY type:string minlen:32\n[#auth.overview] --DEPENDS--> [#auth.token_ttl]\n[#auth.overview] ~~ [#auth.ex_1]\n[#auth.rotate] --DEPENDS--> [#auth.overview]\n[#auth.audit] --DEPENDS--> [#auth.overview]\n[#auth.rate_limit] --DEPENDS--> [#auth.overview]\n[#auth.token_ttl] --DEPENDS--> [#auth.overview]\n[#auth.refresh_ttl] --DEPENDS--> [#auth.overview]\n[#auth.storage] --DEPENDS--> [#auth.overview]\n[#auth.token_ttl] --ENFORCED-BY--> [#auth.refresh_ttl]\n[#auth.rotate] --DEPENDS--> [#auth.jwt_secret]",
+      "expected_ids": [
+        "auth.audit",
+        "auth.ex_1",
+        "auth.overview",
+        "auth.rate_limit",
+        "auth.refresh_ttl",
+        "auth.rotate",
+        "auth.storage",
+        "auth.token_ttl"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "api_auth_q4_trace",
+      "doc": "api_auth",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 auth.overview？",
+      "target": "auth.overview",
+      "resolve_tokens": 163,
+      "full_tokens": 687,
+      "ratio": 0.23726346433770015,
+      "resolve_output": "[#auth.overview:DEF] JWT 认证模块，负责 token 签发与验证\n[#auth.token_ttl:RULE] access token 有效期不得超过 15 分钟\n[#auth.ex_1:EX] 浏览器登录：access token 存内存，refresh token 存 cookie\n[#auth.rotate:DEF] 密钥轮换流程：每 90 天由 auth 服务生成新密钥对\n[#auth.audit:DEF] 审计日志：所有 token 签发与验证事件记录到 audit-log\n[#auth.rate_limit:RULE] 登录端点限流：单 IP 5 次/分钟，超出返回 429",
+      "expected_ids": [
+        "auth.rotate",
+        "auth.overview"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "arch_split_q1_def",
+      "doc": "arch_split",
+      "qtype": "def",
+      "prompt": "svc.context 是什么？请说明其定义、描述与示例。",
+      "target": "svc.context",
+      "resolve_tokens": 180,
+      "full_tokens": 707,
+      "ratio": 0.2545968882602546,
+      "resolve_output": "[#svc.context:DEF] 订单域从单体应用拆分为 4 个微服务\n[#svc.context:DESC] 拆分动机：研发团队扩到 12 人，trunk-based 频繁冲突\n[#svc.order:DEF] 订单服务：负责订单创建与状态流转\n[#svc.order:DESC] 技术栈：Go 1.21 + gin + PostgreSQL 15\n[#svc.observability:DEF] 可观测性：每服务必须暴露 /metrics 与 /healthz\n[#svc.observability:RULE] P99 延迟指标必须打点到 Prometheus，报警阈值 500ms",
+      "expected_ids": [
+        "svc.context",
+        "svc.context",
+        "svc.context",
+        "svc.context",
+        "svc.context"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "arch_split_q2_rule",
+      "doc": "arch_split",
+      "qtype": "rule",
+      "prompt": "svc.context 模块有哪些规则约束？请逐条列出。",
+      "target": "svc.context",
+      "resolve_tokens": 157,
+      "full_tokens": 707,
+      "ratio": 0.22206506364922207,
+      "resolve_output": "[#svc.context:DEF] 订单域从单体应用拆分为 4 个微服务\n[#svc.observability:RULE] P99 延迟指标必须打点到 Prometheus，报警阈值 500ms\n[#svc.boundary:RULE] 每个服务拥有独立数据库，禁止跨库 JOIN\n[#svc.sync:RULE] 服务间同步调用超时统一 3s，重试 2 次后转异步补偿\n[#svc.idempotency:RULE] 幂等键缓存 24 小时，命中后返回原响应",
+      "expected_ids": [
+        "svc.boundary",
+        "svc.idempotency",
+        "svc.observability",
+        "svc.sync"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "arch_split_q3_deps",
+      "doc": "arch_split",
+      "qtype": "deps",
+      "prompt": "svc.context 依赖哪些节点？请列出边关系。",
+      "target": "svc.context",
+      "resolve_tokens": 270,
+      "full_tokens": 707,
+      "ratio": 0.38189533239038187,
+      "resolve_output": "[#svc.context:DEF] 订单域从单体应用拆分为 4 个微服务\n[#svc.order:DEF] 订单服务：负责订单创建与状态流转\n[#svc.observability:DEF] 可观测性：每服务必须暴露 /metrics 与 /healthz\n[#svc.boundary:RULE] 每个服务拥有独立数据库，禁止跨库 JOIN\n[#svc.sync:RULE] 服务间同步调用超时统一 3s，重试 2 次后转异步补偿\n[#svc.payment:DEF] 支付服务：对接第三方渠道，幂等保证\n[#svc.inventory:DEF] 库存服务：扣减、预占、回滚\n[#svc.context] --DEPENDS--> [#svc.order]\n[#svc.observability] --DEPENDS--> [#svc.context]\n[#svc.boundary] --DEPENDS--> [#svc.context]\n[#svc.sync] --DEPENDS--> [#svc.context]\n[#svc.order] --DEPENDS--> [#svc.payment]\n[#svc.order] --DEPENDS--> [#svc.inventory]",
+      "expected_ids": [
+        "svc.boundary",
+        "svc.context",
+        "svc.observability",
+        "svc.order",
+        "svc.sync"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "arch_split_q4_trace",
+      "doc": "arch_split",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 svc.context？",
+      "target": "svc.context",
+      "resolve_tokens": 170,
+      "full_tokens": 707,
+      "ratio": 0.24045261669024046,
+      "resolve_output": "[#svc.context:DEF] 订单域从单体应用拆分为 4 个微服务\n[#svc.order:DEF] 订单服务：负责订单创建与状态流转\n[#svc.observability:DEF] 可观测性：每服务必须暴露 /metrics 与 /healthz\n[#svc.boundary:RULE] 每个服务拥有独立数据库，禁止跨库 JOIN\n[#svc.sync:RULE] 服务间同步调用超时统一 3s，重试 2 次后转异步补偿\n[#svc.payment:DEF] 支付服务：对接第三方渠道，幂等保证",
+      "expected_ids": [
+        "svc.observability",
+        "svc.context"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "db_users_q1_def",
+      "doc": "db_users",
+      "qtype": "def",
+      "prompt": "db.users 是什么？请说明其定义、描述与示例。",
+      "target": "db.users",
+      "resolve_tokens": 150,
+      "full_tokens": 539,
+      "ratio": 0.2782931354359926,
+      "resolve_output": "[#db.users:DEF] 用户主表，存储账号与基础资料\n[#db.users:DESC] 引擎 InnoDB，字符集 utf8mb4，行格式 DYNAMIC\n[#db.idx_email:RULE] 索引必须覆盖 email 列以支持登录查询\n[#db.idx_email:EX] CREATE UNIQUE INDEX idx_users_email ON users(email)\n[#db.no_pii:RULE] 不在主表存储手机号、身份证号等 PII\n[#db.no_pii:EX] PII 字段独立表 user_pii，加密存储，访问需审计",
+      "expected_ids": [
+        "db.users",
+        "db.users",
+        "db.users",
+        "db.users",
+        "db.users"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "db_users_q2_rule",
+      "doc": "db_users",
+      "qtype": "rule",
+      "prompt": "db.users 模块有哪些规则约束？请逐条列出。",
+      "target": "db.users",
+      "resolve_tokens": 132,
+      "full_tokens": 539,
+      "ratio": 0.24489795918367346,
+      "resolve_output": "[#db.users:DEF] 用户主表，存储账号与基础资料\n[#db.idx_email:RULE] 索引必须覆盖 email 列以支持登录查询\n[#db.no_pii:RULE] 不在主表存储手机号、身份证号等 PII\n[#db.soft_delete:RULE] 软删除字段必须有索引，避免全表扫描\n[#db.audit_log:RULE] 审计日志只追加不修改，保留期 5 年",
+      "expected_ids": [
+        "db.audit_log",
+        "db.idx_email",
+        "db.no_pii",
+        "db.soft_delete"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "db_users_q3_deps",
+      "doc": "db_users",
+      "qtype": "deps",
+      "prompt": "db.users 依赖哪些节点？请列出边关系。",
+      "target": "db.users",
+      "resolve_tokens": 202,
+      "full_tokens": 539,
+      "ratio": 0.3747680890538033,
+      "resolve_output": "[#db.users:DEF] 用户主表，存储账号与基础资料\n[#db.idx_email:RULE] 索引必须覆盖 email 列以支持登录查询\n[#db.no_pii:RULE] 不在主表存储手机号、身份证号等 PII\n[#db.soft_delete:DEF] 软删除：deleted_at TIMESTAMP NULL，查询时过滤\n[#db.audit_log:DEF] 审计日志表：记录所有 user 表的 INSERT/UPDATE/DELETE\n[#db.users] --DEPENDS--> [#db.idx_email]\n[#db.users] ~~ [#db.no_pii]\n[#db.soft_delete] --DEPENDS--> [#db.users]\n[#db.audit_log] --DEPENDS--> [#db.users]\n[#db.no_pii] --DEPENDS--> [#db.users]\n[#db.idx_email] --DEPENDS--> [#db.users]",
+      "expected_ids": [
+        "db.audit_log",
+        "db.idx_email",
+        "db.no_pii",
+        "db.soft_delete",
+        "db.users"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "db_users_q4_trace",
+      "doc": "db_users",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 db.users？",
+      "target": "db.users",
+      "resolve_tokens": 123,
+      "full_tokens": 539,
+      "ratio": 0.22820037105751392,
+      "resolve_output": "[#db.users:DEF] 用户主表，存储账号与基础资料\n[#db.idx_email:RULE] 索引必须覆盖 email 列以支持登录查询\n[#db.no_pii:RULE] 不在主表存储手机号、身份证号等 PII\n[#db.soft_delete:DEF] 软删除：deleted_at TIMESTAMP NULL，查询时过滤\n[#db.audit_log:DEF] 审计日志表：记录所有 user 表的 INSERT/UPDATE/DELETE",
+      "expected_ids": [
+        "db.soft_delete",
+        "db.users"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "dep_runbook_q1_def",
+      "doc": "dep_runbook",
+      "qtype": "def",
+      "prompt": "dep.goal 是什么？请说明其定义、描述与示例。",
+      "target": "dep.goal",
+      "resolve_tokens": 168,
+      "full_tokens": 643,
+      "ratio": 0.26127527216174184,
+      "resolve_output": "[#dep.goal:DEF] 将 v3.0 发布到生产环境\n[#dep.goal:DESC] 影响范围：网关、订单服务、库存服务\n[#dep.step1:DEF] 拉取最新 main 分支并构建镜像：docker build -t order:v3.0 .\n[#dep.step1:DESC] 构建用 buildx multi-arch：amd64 + arm64，镜像签名 cosign\n[#dep.preflight:DEF] 发布前检查清单：测试通过 + 代码审查通过 + owner 签字\n[#dep.preflight:RULE] preflight 任一项未满足禁止发布，自动门禁",
+      "expected_ids": [
+        "dep.goal",
+        "dep.goal",
+        "dep.goal",
+        "dep.goal",
+        "dep.goal"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "dep_runbook_q2_rule",
+      "doc": "dep_runbook",
+      "qtype": "rule",
+      "prompt": "dep.goal 模块有哪些规则约束？请逐条列出。",
+      "target": "dep.goal",
+      "resolve_tokens": 149,
+      "full_tokens": 643,
+      "ratio": 0.2317262830482115,
+      "resolve_output": "[#dep.goal:DEF] 将 v3.0 发布到生产环境\n[#dep.preflight:RULE] preflight 任一项未满足禁止发布，自动门禁\n[#dep.notify:RULE] 通知模板包含：版本号、影响范围、回滚命令、值班人\n[#dep.canary:RULE] 先切 10% 流量观察 5 分钟再全量\n[#dep.rollback:RULE] 若 5xx 错误率 >1% 持续 1 分钟，立即 kubectl rollout undo",
+      "expected_ids": [
+        "dep.canary",
+        "dep.notify",
+        "dep.preflight",
+        "dep.rollback"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "dep_runbook_q3_deps",
+      "doc": "dep_runbook",
+      "qtype": "deps",
+      "prompt": "dep.goal 依赖哪些节点？请列出边关系。",
+      "target": "dep.goal",
+      "resolve_tokens": 317,
+      "full_tokens": 643,
+      "ratio": 0.49300155520995337,
+      "resolve_output": "[#dep.goal:DEF] 将 v3.0 发布到生产环境\n[#dep.step1:DEF] 拉取最新 main 分支并构建镜像：docker build -t order:v3.0 .\n[#dep.preflight:DEF] 发布前检查清单：测试通过 + 代码审查通过 + owner 签字\n[#dep.notify:DEF] 发布通知：在 #deploys 频道发 rolling-update 状态\n[#dep.canary:RULE] 先切 10% 流量观察 5 分钟再全量\n[#dep.rollback:RULE] 若 5xx 错误率 >1% 持续 1 分钟，立即 kubectl rollout undo\n[#dep.step2:DEF] 推送镜像：docker push registry.cn-beijing.aliyuncs.com/prod/order:v3.0\n[#dep.step4:DEF] 等待 rollout：kubectl rollout status deployment/order --timeout=300s\n[#dep.goal] --DEPENDS--> [#dep.step1]\n[#dep.preflight] --DEPENDS--> [#dep.goal]\n[#dep.notify] --DEPENDS--> [#dep.goal]\n[#dep.canary] --DEPENDS--> [#dep.goal]\n[#dep.rollback] --DEPENDS--> [#dep.goal]\n[#dep.step1] --DEPENDS--> [#dep.step2]\n[#dep.step4] ~~ [#dep.canary]",
+      "expected_ids": [
+        "dep.canary",
+        "dep.goal",
+        "dep.notify",
+        "dep.preflight",
+        "dep.rollback",
+        "dep.step1"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "dep_runbook_q4_trace",
+      "doc": "dep_runbook",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 dep.goal？",
+      "target": "dep.goal",
+      "resolve_tokens": 171,
+      "full_tokens": 643,
+      "ratio": 0.26594090202177295,
+      "resolve_output": "[#dep.goal:DEF] 将 v3.0 发布到生产环境\n[#dep.step1:DEF] 拉取最新 main 分支并构建镜像：docker build -t order:v3.0 .\n[#dep.preflight:DEF] 发布前检查清单：测试通过 + 代码审查通过 + owner 签字\n[#dep.notify:DEF] 发布通知：在 #deploys 频道发 rolling-update 状态\n[#dep.canary:RULE] 先切 10% 流量观察 5 分钟再全量\n[#dep.rollback:RULE] 若 5xx 错误率 >1% 持续 1 分钟，立即 kubectl rollout undo",
+      "expected_ids": [
+        "dep.preflight",
+        "dep.goal"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "sec_rules_q1_def",
+      "doc": "sec_rules",
+      "qtype": "def",
+      "prompt": "sec.scope 是什么？请说明其定义、描述与示例。",
+      "target": "sec.scope",
+      "resolve_tokens": 145,
+      "full_tokens": 586,
+      "ratio": 0.24744027303754265,
+      "resolve_output": "[#sec.scope:DEF] 适用于所有面向公网的 API 与 Web 服务\n[#sec.scope:DESC] 范围包含所有 *.example.com 域名与移动端 API\n[#sec.password:RULE] 密码至少 12 位，含大小写字母、数字、特殊字符\n[#sec.password:EX] 合规密码示例：Correct$Battery42; 不合规：password123\n[#sec.cors:RULE] 跨域允许列表仅 *.example.com\n[#sec.cors:EX] Access-Control-Allow-Origin: https://app.example.com",
+      "expected_ids": [
+        "sec.scope",
+        "sec.scope",
+        "sec.scope",
+        "sec.scope"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "sec_rules_q2_rule",
+      "doc": "sec_rules",
+      "qtype": "rule",
+      "prompt": "sec.scope 模块有哪些规则约束？请逐条列出。",
+      "target": "sec.scope",
+      "resolve_tokens": 242,
+      "full_tokens": 586,
+      "ratio": 0.4129692832764505,
+      "resolve_output": "[#sec.scope:DEF] 适用于所有面向公网的 API 与 Web 服务\n[#sec.password:RULE] 密码至少 12 位，含大小写字母、数字、特殊字符\n[#sec.cors:RULE] 跨域允许列表仅 *.example.com\n[#sec.secrets:RULE] 禁止将密钥写入 git、镜像 env、K8s Secret 明文\n[#sec.rate_limit:RULE] 默认 100 req/min/IP，超出返回 429 + Retry-After 头\n[#sec.bcrypt:RULE] 密码必须经 bcrypt cost=12 哈希后存储\n[#sec.token:RULE] token 必须使用 RS256 签名，私钥仅 auth 服务持有\n[#sec.csp:RULE] Content-Security-Policy 必须禁用 unsafe-inline\n[#sec.audit:RULE] 所有写操作必须记录审计日志，保留 180 天",
+      "expected_ids": [
+        "sec.audit",
+        "sec.bcrypt",
+        "sec.cors",
+        "sec.csp",
+        "sec.password",
+        "sec.rate_limit",
+        "sec.secrets",
+        "sec.token"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "sec_rules_q3_deps",
+      "doc": "sec_rules",
+      "qtype": "deps",
+      "prompt": "sec.scope 依赖哪些节点？请列出边关系。",
+      "target": "sec.scope",
+      "resolve_tokens": 370,
+      "full_tokens": 586,
+      "ratio": 0.6313993174061433,
+      "resolve_output": "[#sec.scope:DEF] 适用于所有面向公网的 API 与 Web 服务\n[#sec.password:RULE] 密码至少 12 位，含大小写字母、数字、特殊字符\n[#sec.cors:RULE] 跨域允许列表仅 *.example.com\n[#sec.secrets:DEF] 密钥管理：所有密钥存 Vault，应用启动时拉取\n[#sec.rate_limit:DEF] 限流：所有公网 API 必须配置限流\n[#sec.bcrypt:RULE] 密码必须经 bcrypt cost=12 哈希后存储\n[#sec.token:RULE] token 必须使用 RS256 签名，私钥仅 auth 服务持有\n[#sec.csp:RULE] Content-Security-Policy 必须禁用 unsafe-inline\n[#sec.audit:RULE] 所有写操作必须记录审计日志，保留 180 天\n[#sec.scope] --DEPENDS--> [#sec.password]\n[#sec.scope] ~~ [#sec.cors]\n[#sec.secrets] --DEPENDS--> [#sec.scope]\n[#sec.rate_limit] --DEPENDS--> [#sec.scope]\n[#sec.password] --DEPENDS--> [#sec.scope]\n[#sec.bcrypt] --DEPENDS--> [#sec.scope]\n[#sec.token] --DEPENDS--> [#sec.scope]\n[#sec.cors] --DEPENDS--> [#sec.scope]\n[#sec.csp] --DEPENDS--> [#sec.scope]\n[#sec.audit] --DEPENDS--> [#sec.scope]\n[#sec.password] ~~ [#sec.bcrypt]",
+      "expected_ids": [
+        "sec.audit",
+        "sec.bcrypt",
+        "sec.cors",
+        "sec.csp",
+        "sec.password",
+        "sec.rate_limit",
+        "sec.scope",
+        "sec.secrets",
+        "sec.token"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "sec_rules_q4_trace",
+      "doc": "sec_rules",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 sec.scope？",
+      "target": "sec.scope",
+      "resolve_tokens": 154,
+      "full_tokens": 586,
+      "ratio": 0.2627986348122867,
+      "resolve_output": "[#sec.scope:DEF] 适用于所有面向公网的 API 与 Web 服务\n[#sec.password:RULE] 密码至少 12 位，含大小写字母、数字、特殊字符\n[#sec.cors:RULE] 跨域允许列表仅 *.example.com\n[#sec.secrets:DEF] 密钥管理：所有密钥存 Vault，应用启动时拉取\n[#sec.rate_limit:DEF] 限流：所有公网 API 必须配置限流\n[#sec.bcrypt:RULE] 密码必须经 bcrypt cost=12 哈希后存储",
+      "expected_ids": [
+        "sec.secrets",
+        "sec.scope"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "task_sprint_q1_def",
+      "doc": "task_sprint",
+      "qtype": "def",
+      "prompt": "task.goal 是什么？请说明其定义、描述与示例。",
+      "target": "task.goal",
+      "resolve_tokens": 183,
+      "full_tokens": 619,
+      "ratio": 0.2956381260096931,
+      "resolve_output": "[#task.goal:DEF] Sprint 23 目标：完成支付幂等性重构\n[#task.goal:DESC] Sprint 周期：2024-07-15 ~ 2024-07-26，10 个工作日\n[#task.t1:DEF] 重构 PaymentService.charge 加幂等键\n[#task.t1:DESC] 实现细节：Idempotency-Key 头解析 + Redis SETNX 缓存\n[#task.estimation:DEF] 工时估算：t1=3d, t2=1d, t3=2d, t4=0.5d，总计 6.5d\n[#task.estimation:RULE] 估算偏差 >30% 必须在 standup 上升级",
+      "expected_ids": [
+        "task.goal",
+        "task.goal",
+        "task.goal",
+        "task.goal"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "task_sprint_q2_rule",
+      "doc": "task_sprint",
+      "qtype": "rule",
+      "prompt": "task.goal 模块有哪些规则约束？请逐条列出。",
+      "target": "task.goal",
+      "resolve_tokens": 120,
+      "full_tokens": 619,
+      "ratio": 0.1938610662358643,
+      "resolve_output": "[#task.goal:DEF] Sprint 23 目标：完成支付幂等性重构\n[#task.estimation:RULE] 估算偏差 >30% 必须在 standup 上升级\n[#task.risk:RULE] 风险缓解：t3 提前 2 天与 SRE 协调环境准备\n[#task.dod:RULE] DoD = 代码合并 + 单测覆盖 >85% + 文档更新",
+      "expected_ids": [
+        "task.dod",
+        "task.estimation",
+        "task.risk"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "task_sprint_q3_deps",
+      "doc": "task_sprint",
+      "qtype": "deps",
+      "prompt": "task.goal 依赖哪些节点？请列出边关系。",
+      "target": "task.goal",
+      "resolve_tokens": 292,
+      "full_tokens": 619,
+      "ratio": 0.4717285945072698,
+      "resolve_output": "[#task.goal:DEF] Sprint 23 目标：完成支付幂等性重构\n[#task.t1:DEF] 重构 PaymentService.charge 加幂等键\n[#task.estimation:DEF] 工时估算：t1=3d, t2=1d, t3=2d, t4=0.5d，总计 6.5d\n[#task.risk:DEF] 风险：t3 压测环境可能在 Sprint 中期才就绪\n[#task.dod:RULE] DoD = 代码合并 + 单测覆盖 >85% + 文档更新\n[#task.t2:DEF] 编写幂等键冲突的单测，覆盖并发场景\n[#task.t4:DEF] 文档：更新 API 规范加入 Idempotency-Key 头\n[#task.goal] --DEPENDS--> [#task.t1]\n[#task.estimation] --DEPENDS--> [#task.goal]\n[#task.risk] --DEPENDS--> [#task.goal]\n[#task.dod] --DEPENDS--> [#task.goal]\n[#task.t1] --DEPENDS--> [#task.t2]\n[#task.t1] ~~ [#task.t4]",
+      "expected_ids": [
+        "task.dod",
+        "task.estimation",
+        "task.goal",
+        "task.risk",
+        "task.t1"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "task_sprint_q4_trace",
+      "doc": "task_sprint",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 task.goal？",
+      "target": "task.goal",
+      "resolve_tokens": 187,
+      "full_tokens": 619,
+      "ratio": 0.30210016155088854,
+      "resolve_output": "[#task.goal:DEF] Sprint 23 目标：完成支付幂等性重构\n[#task.t1:DEF] 重构 PaymentService.charge 加幂等键\n[#task.estimation:DEF] 工时估算：t1=3d, t2=1d, t3=2d, t4=0.5d，总计 6.5d\n[#task.risk:DEF] 风险：t3 压测环境可能在 Sprint 中期才就绪\n[#task.dod:RULE] DoD = 代码合并 + 单测覆盖 >85% + 文档更新\n[#task.t2:DEF] 编写幂等键冲突的单测，覆盖并发场景",
+      "expected_ids": [
+        "task.estimation",
+        "task.goal"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "res_queue_q1_def",
+      "doc": "res_queue",
+      "qtype": "def",
+      "prompt": "res.topic 是什么？请说明其定义、描述与示例。",
+      "target": "res.topic",
+      "resolve_tokens": 207,
+      "full_tokens": 633,
+      "ratio": 0.32701421800947866,
+      "resolve_output": "[#res.topic:DEF] 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\n[#res.topic:DESC] 评估维度：吞吐、延迟、可靠性、运维成本、客户端成熟度\n[#res.kafka:DEF] Kafka：单分区 100k/s，延迟 5–50ms，依赖 KRaft\n[#res.kafka:DESC] 运维成本：需要 3 节点集群 + KRaft，每月 ~¥3000\n[#res.rabbit:DEF] RabbitMQ：经典 AMQP，吞吐 20k/s，延迟 <5ms，路由灵活\n[#res.rabbit:DESC] 运维成本：单节点即可，每月 ~¥500，镜像队列提供 HA",
+      "expected_ids": [
+        "res.topic",
+        "res.topic",
+        "res.topic",
+        "res.topic",
+        "res.topic"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "res_queue_q2_rule",
+      "doc": "res_queue",
+      "qtype": "rule",
+      "prompt": "res.topic 模块有哪些规则约束？请逐条列出。",
+      "target": "res.topic",
+      "resolve_tokens": 112,
+      "full_tokens": 633,
+      "ratio": 0.1769352290679305,
+      "resolve_output": "[#res.topic:DEF] 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\n[#res.choice:RULE] 吞吐 >50k/s 选 Kafka，否则选 RabbitMQ\n[#res.fallback:RULE] 降级触发条件：连续 3 次连接失败或 lag >10k\n[#res.monitor:RULE] 队列深度 >5000 触发告警，>50000 触发降级",
+      "expected_ids": [
+        "res.choice",
+        "res.fallback",
+        "res.monitor"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "res_queue_q3_deps",
+      "doc": "res_queue",
+      "qtype": "deps",
+      "prompt": "res.topic 依赖哪些节点？请列出边关系。",
+      "target": "res.topic",
+      "resolve_tokens": 293,
+      "full_tokens": 633,
+      "ratio": 0.4628751974723539,
+      "resolve_output": "[#res.topic:DEF] 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\n[#res.kafka:DEF] Kafka：单分区 100k/s，延迟 5–50ms，依赖 KRaft\n[#res.rabbit:DEF] RabbitMQ：经典 AMQP，吞吐 20k/s，延迟 <5ms，路由灵活\n[#res.redis:DEF] Redis Streams：单实例 50k/s，延迟 <5ms，依赖持久化策略\n[#res.choice:RULE] 吞吐 >50k/s 选 Kafka，否则选 RabbitMQ\n[#res.fallback:DEF] 降级方案：队列不可用时退化为同步调用 + 重试\n[#res.monitor:DEF] 监控指标：队列深度、消费速率、错误率\n[#res.topic] ~~ [#res.kafka]\n[#res.topic] ~~ [#res.rabbit]\n[#res.topic] ~~ [#res.redis]\n[#res.topic] --DEPENDS--> [#res.choice]\n[#res.fallback] --DEPENDS--> [#res.topic]\n[#res.monitor] --DEPENDS--> [#res.topic]\n[#res.choice] --DEPENDS--> [#res.topic]",
+      "expected_ids": [
+        "res.choice",
+        "res.fallback",
+        "res.kafka",
+        "res.monitor",
+        "res.rabbit",
+        "res.redis",
+        "res.topic"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "res_queue_q4_trace",
+      "doc": "res_queue",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 res.topic？",
+      "target": "res.topic",
+      "resolve_tokens": 189,
+      "full_tokens": 633,
+      "ratio": 0.2985781990521327,
+      "resolve_output": "[#res.topic:DEF] 异步任务队列选型：Kafka vs RabbitMQ vs Redis Streams\n[#res.kafka:DEF] Kafka：单分区 100k/s，延迟 5–50ms，依赖 KRaft\n[#res.rabbit:DEF] RabbitMQ：经典 AMQP，吞吐 20k/s，延迟 <5ms，路由灵活\n[#res.redis:DEF] Redis Streams：单实例 50k/s，延迟 <5ms，依赖持久化策略\n[#res.choice:RULE] 吞吐 >50k/s 选 Kafka，否则选 RabbitMQ\n[#res.fallback:DEF] 降级方案：队列不可用时退化为同步调用 + 重试",
+      "expected_ids": [
+        "res.fallback",
+        "res.topic"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "pref_dev_q1_def",
+      "doc": "pref_dev",
+      "qtype": "def",
+      "prompt": "pref.context 是什么？请说明其定义、描述与示例。",
+      "target": "pref.context",
+      "resolve_tokens": 134,
+      "full_tokens": 508,
+      "ratio": 0.2637795275590551,
+      "resolve_output": "[#pref.context:DEF] 用户开发偏好，用于 agent 自我约束\n[#pref.context:DESC] 本偏好适用于所有由 agent 生成的代码、文档、提交\n[#pref.lang:RULE] 代码注释一律使用中文\n[#pref.lang:EX] 合规：# 计算总数；不合规：# calculate total\n[#pref.commit:RULE] 提交信息使用 Conventional Commits 风格\n[#pref.commit:EX] 合规：feat(auth): add jwt rotation；不合规：update auth",
+      "expected_ids": [
+        "pref.context",
+        "pref.context",
+        "pref.context",
+        "pref.context"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "pref_dev_q2_rule",
+      "doc": "pref_dev",
+      "qtype": "rule",
+      "prompt": "pref.context 模块有哪些规则约束？请逐条列出。",
+      "target": "pref.context",
+      "resolve_tokens": 149,
+      "full_tokens": 508,
+      "ratio": 0.2933070866141732,
+      "resolve_output": "[#pref.context:DEF] 用户开发偏好，用于 agent 自我约束\n[#pref.lang:RULE] 代码注释一律使用中文\n[#pref.commit:RULE] 提交信息使用 Conventional Commits 风格\n[#pref.test:RULE] 新增功能必须同时新增对应单测\n[#pref.error:RULE] except Exception: pass 是反模式，必须至少 log\n[#pref.naming:RULE] 禁止缩写：user_list 不是 ul，configuration 不是 cfg\n[#pref.style:RULE] 优先函数式风格，避免 class 继承",
+      "expected_ids": [
+        "pref.commit",
+        "pref.error",
+        "pref.lang",
+        "pref.naming",
+        "pref.style",
+        "pref.test"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "pref_dev_q3_deps",
+      "doc": "pref_dev",
+      "qtype": "deps",
+      "prompt": "pref.context 依赖哪些节点？请列出边关系。",
+      "target": "pref.context",
+      "resolve_tokens": 265,
+      "full_tokens": 508,
+      "ratio": 0.5216535433070866,
+      "resolve_output": "[#pref.context:DEF] 用户开发偏好，用于 agent 自我约束\n[#pref.lang:RULE] 代码注释一律使用中文\n[#pref.commit:RULE] 提交信息使用 Conventional Commits 风格\n[#pref.test:RULE] 新增功能必须同时新增对应单测\n[#pref.error:DEF] 错误处理：失败时显式 raise，不静默吞异常\n[#pref.naming:DEF] 命名：变量名小写下划线，类名驼峰，常量全大写\n[#pref.style:RULE] 优先函数式风格，避免 class 继承\n[#pref.context] ~~ [#pref.lang]\n[#pref.context] ~~ [#pref.commit]\n[#pref.context] ~~ [#pref.test]\n[#pref.error] --DEPENDS--> [#pref.context]\n[#pref.naming] --DEPENDS--> [#pref.context]\n[#pref.lang] --DEPENDS--> [#pref.context]\n[#pref.commit] --DEPENDS--> [#pref.context]\n[#pref.test] --DEPENDS--> [#pref.context]\n[#pref.style] --DEPENDS--> [#pref.context]",
+      "expected_ids": [
+        "pref.commit",
+        "pref.context",
+        "pref.error",
+        "pref.lang",
+        "pref.naming",
+        "pref.style",
+        "pref.test"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "pref_dev_q4_trace",
+      "doc": "pref_dev",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 pref.context？",
+      "target": "pref.context",
+      "resolve_tokens": 139,
+      "full_tokens": 508,
+      "ratio": 0.2736220472440945,
+      "resolve_output": "[#pref.context:DEF] 用户开发偏好，用于 agent 自我约束\n[#pref.lang:RULE] 代码注释一律使用中文\n[#pref.commit:RULE] 提交信息使用 Conventional Commits 风格\n[#pref.test:RULE] 新增功能必须同时新增对应单测\n[#pref.error:DEF] 错误处理：失败时显式 raise，不静默吞异常\n[#pref.naming:DEF] 命名：变量名小写下划线，类名驼峰，常量全大写",
+      "expected_ids": [
+        "pref.error",
+        "pref.context"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "err_codes_q1_def",
+      "doc": "err_codes",
+      "qtype": "def",
+      "prompt": "err.range 是什么？请说明其定义、描述与示例。",
+      "target": "err.range",
+      "resolve_tokens": 135,
+      "full_tokens": 577,
+      "ratio": 0.2339688041594454,
+      "resolve_output": "[#err.range:DEF] 业务错误码区间 40000–49999\n[#err.range:DESC] 区间分配：40000–40999 用户域，41000–41999 订单域，42000–42999 支付域\n[#err.e40001:DEF] 40001 用户不存在\n[#err.e40001:DESC] HTTP 状态：404；触发：登录时邮箱不存在\n[#err.e40002:DEF] 40002 密码错误\n[#err.e40002:DESC] HTTP 状态：401；触发：密码错误",
+      "expected_ids": [
+        "err.range",
+        "err.range",
+        "err.range",
+        "err.range"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "err_codes_q2_rule",
+      "doc": "err_codes",
+      "qtype": "rule",
+      "prompt": "err.range 模块有哪些规则约束？请逐条列出。",
+      "target": "err.range",
+      "resolve_tokens": 134,
+      "full_tokens": 577,
+      "ratio": 0.2322357019064125,
+      "resolve_output": "[#err.range:DEF] 业务错误码区间 40000–49999\n[#err.retry:RULE] 重试策略：指数退避，base=1s, max=30s, max_retries=3\n[#err.log:RULE] 4xx 默认打 INFO 日志，401/403 额外打 WARN 用于风控\n[#err.format:RULE] 错误响应统一格式 {code, message, request_id}\n[#err.i18n:RULE] message 字段必须支持 zh/en 两种语言",
+      "expected_ids": [
+        "err.format",
+        "err.i18n",
+        "err.log",
+        "err.retry"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "err_codes_q3_deps",
+      "doc": "err_codes",
+      "qtype": "deps",
+      "prompt": "err.range 依赖哪些节点？请列出边关系。",
+      "target": "err.range",
+      "resolve_tokens": 313,
+      "full_tokens": 577,
+      "ratio": 0.5424610051993067,
+      "resolve_output": "[#err.range:DEF] 业务错误码区间 40000–49999\n[#err.e40001:DEF] 40001 用户不存在\n[#err.e40002:DEF] 40002 密码错误\n[#err.e40003:DEF] 40003 token 过期\n[#err.e40004:DEF] 40004 余额不足\n[#err.e40005:DEF] 40005 库存不足\n[#err.retry:DEF] 可重试错误：5xx 与 429 可重试，4xx 不可重试\n[#err.log:DEF] 错误日志：所有 5xx 必须打 ERROR 日志 + 上报 Sentry\n[#err.format:RULE] 错误响应统一格式 {code, message, request_id}\n[#err.i18n:RULE] message 字段必须支持 zh/en 两种语言\n[#err.range] ~~ [#err.e40001]\n[#err.range] ~~ [#err.e40002]\n[#err.range] ~~ [#err.e40003]\n[#err.range] ~~ [#err.e40004]\n[#err.range] ~~ [#err.e40005]\n[#err.retry] --DEPENDS--> [#err.range]\n[#err.log] --DEPENDS--> [#err.range]\n[#err.format] --DEPENDS--> [#err.range]\n[#err.i18n] --DEPENDS--> [#err.range]",
+      "expected_ids": [
+        "err.e40001",
+        "err.e40002",
+        "err.e40003",
+        "err.e40004",
+        "err.e40005",
+        "err.format",
+        "err.i18n",
+        "err.log",
+        "err.range",
+        "err.retry"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "err_codes_q4_trace",
+      "doc": "err_codes",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 err.range？",
+      "target": "err.range",
+      "resolve_tokens": 131,
+      "full_tokens": 577,
+      "ratio": 0.2270363951473137,
+      "resolve_output": "[#err.range:DEF] 业务错误码区间 40000–49999\n[#err.e40001:DEF] 40001 用户不存在\n[#err.e40002:DEF] 40002 密码错误\n[#err.e40003:DEF] 40003 token 过期\n[#err.e40004:DEF] 40004 余额不足\n[#err.e40005:DEF] 40005 库存不足\n[#err.retry:DEF] 可重试错误：5xx 与 429 可重试，4xx 不可重试",
+      "expected_ids": [
+        "err.retry",
+        "err.range"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "log_v031_q1_def",
+      "doc": "log_v031",
+      "qtype": "def",
+      "prompt": "log.v031 是什么？请说明其定义、描述与示例。",
+      "target": "log.v031",
+      "resolve_tokens": 173,
+      "full_tokens": 630,
+      "ratio": 0.2746031746031746,
+      "resolve_output": "[#log.v031:DEF] v0.3.1 发布于 2024-07-18\n[#log.v031:DESC] 本次发布包含 4 个新特性、1 个修复、1 个破坏性变更\n[#log.feat1:DEF] 新增 .vt HIR 层与 .vtg SIR 层\n[#log.feat1:DESC] HIR 层用 .vt 文件，SIR 层用 .vtg JSON，TIR 层用 resolve 输出\n[#log.feat2:DEF] 新增 vt.resolve 双向 BFS 检索\n[#log.feat2:DESC] resolve 用双向 BFS，depth=2 默认，支持 type_filter 与 include_edges",
+      "expected_ids": [
+        "log.v031",
+        "log.v031",
+        "log.v031",
+        "log.v031"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "log_v031_q2_rule",
+      "doc": "log_v031",
+      "qtype": "rule",
+      "prompt": "log.v031 模块有哪些规则约束？请逐条列出。",
+      "target": "log.v031",
+      "resolve_tokens": 80,
+      "full_tokens": 630,
+      "ratio": 0.12698412698412698,
+      "resolve_output": "[#log.v031:DEF] v0.3.1 发布于 2024-07-18\n[#log.known:RULE] Windows 用户可降级 durability=flush，但失去掉电保护\n[#log.compat:RULE] 兼容 Python 3.10+，未引入第三方运行时依赖",
+      "expected_ids": [
+        "log.compat",
+        "log.known"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "log_v031_q3_deps",
+      "doc": "log_v031",
+      "qtype": "deps",
+      "prompt": "log.v031 依赖哪些节点？请列出边关系。",
+      "target": "log.v031",
+      "resolve_tokens": 340,
+      "full_tokens": 630,
+      "ratio": 0.5396825396825397,
+      "resolve_output": "[#log.v031:DEF] v0.3.1 发布于 2024-07-18\n[#log.feat1:DEF] 新增 .vt HIR 层与 .vtg SIR 层\n[#log.feat2:DEF] 新增 vt.resolve 双向 BFS 检索\n[#log.feat3:DEF] 新增 %mode mem 运行时与崩溃恢复\n[#log.fix1:DEF] 修复 doc 编译器在多 facet 节点上的 SHA 不稳定\n[#log.break:DEF] 删除 vt lint --fix（规格 §8.3 永久删除）\n[#log.known:DEF] 已知问题：Windows 上 fsync 延迟偶发 >5ms\n[#log.test:DEF] 测试覆盖：72 passed，含崩溃恢复与跨文件合图\n[#log.compat:RULE] 兼容 Python 3.10+，未引入第三方运行时依赖\n[#log.v031] ~~ [#log.feat1]\n[#log.v031] ~~ [#log.feat2]\n[#log.v031] ~~ [#log.feat3]\n[#log.v031] ~~ [#log.fix1]\n[#log.v031] ~~ [#log.break]\n[#log.known] --DEPENDS--> [#log.v031]\n[#log.test] --DEPENDS--> [#log.v031]\n[#log.compat] --DEPENDS--> [#log.v031]",
+      "expected_ids": [
+        "log.break",
+        "log.compat",
+        "log.feat1",
+        "log.feat2",
+        "log.feat3",
+        "log.fix1",
+        "log.known",
+        "log.test",
+        "log.v031"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    },
+    {
+      "qid": "log_v031_q4_trace",
+      "doc": "log_v031",
+      "qtype": "trace",
+      "prompt": "哪些节点会引用或依赖 log.v031？",
+      "target": "log.v031",
+      "resolve_tokens": 180,
+      "full_tokens": 630,
+      "ratio": 0.2857142857142857,
+      "resolve_output": "[#log.v031:DEF] v0.3.1 发布于 2024-07-18\n[#log.feat1:DEF] 新增 .vt HIR 层与 .vtg SIR 层\n[#log.feat2:DEF] 新增 vt.resolve 双向 BFS 检索\n[#log.feat3:DEF] 新增 %mode mem 运行时与崩溃恢复\n[#log.fix1:DEF] 修复 doc 编译器在多 facet 节点上的 SHA 不稳定\n[#log.break:DEF] 删除 vt lint --fix（规格 §8.3 永久删除）\n[#log.known:DEF] 已知问题：Windows 上 fsync 延迟偶发 >5ms",
+      "expected_ids": [
+        "log.known",
+        "log.v031"
+      ],
+      "missing_ids": [],
+      "resolve_correct": true,
+      "full_correct": true
+    }
+  ],
+  "n_questions": 40,
+  "n_docs": 10
+}

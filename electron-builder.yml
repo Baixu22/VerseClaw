@@ -34,6 +34,14 @@ extraResources:
   # Pre-bundled third-party skills (full directories, not only SKILL.md)
   - from: build/preinstalled-skills/
     to: resources/preinstalled-skills/
+  # Verse Token Python foundation (Working Context assembly engine).
+  # Bridge sets PYTHONPATH to resources/vtoken/src at runtime.
+  - from: packages/vtoken/src
+    to: vtoken/src
+    filter:
+      - "**/*"
+      - "!**/__pycache__/**"
+      - "!**/*.pyc"
   # NOTE: OpenClaw plugin mirrors (dingtalk, etc.) are bundled by the
   # afterPack hook (after-pack.cjs) directly from node_modules, so they
   # don't need an extraResources entry here.

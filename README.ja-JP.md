@@ -474,6 +474,8 @@ pnpm run test:e2e:agent-dev-quality:smoke  # Workbench E2E smoke ループのみ
 pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
 pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
 pnpm agent-dev:validate
+pnpm vtoken:test
+pnpm vtoken:worker
 
 # ビルド＆パッケージ
 pnpm run build:vite       # フロントエンドのみビルド

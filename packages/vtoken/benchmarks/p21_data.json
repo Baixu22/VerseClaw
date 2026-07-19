@@ -1,0 +1,334 @@
+{
+  "rows": [
+    {
+      "scenario": "api_auth",
+      "title": "API 约束 — JWT 认证",
+      "nodes": 10,
+      "edges": 3,
+      "content_tokens": 148,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 251,
+          "overhead": 0.6959459459459459
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 233,
+          "overhead": 0.5743243243243243
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 325,
+          "overhead": 1.195945945945946
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 272,
+          "overhead": 0.8378378378378378
+        }
+      }
+    },
+    {
+      "scenario": "arch_split",
+      "title": "架构决策 — 服务拆分",
+      "nodes": 9,
+      "edges": 4,
+      "content_tokens": 188,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 288,
+          "overhead": 0.5319148936170213
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 273,
+          "overhead": 0.4521276595744681
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 346,
+          "overhead": 0.8404255319148937
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 309,
+          "overhead": 0.6436170212765957
+        }
+      }
+    },
+    {
+      "scenario": "db_users",
+      "title": "DB schema — 用户表",
+      "nodes": 9,
+      "edges": 2,
+      "content_tokens": 127,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 206,
+          "overhead": 0.6220472440944882
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 197,
+          "overhead": 0.5511811023622047
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 271,
+          "overhead": 1.1338582677165354
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 222,
+          "overhead": 0.7480314960629921
+        }
+      }
+    },
+    {
+      "scenario": "dep_runbook",
+      "title": "部署 runbook — v3.0 发布",
+      "nodes": 9,
+      "edges": 5,
+      "content_tokens": 178,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 302,
+          "overhead": 0.6966292134831461
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 287,
+          "overhead": 0.6123595505617978
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 361,
+          "overhead": 1.0280898876404494
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 323,
+          "overhead": 0.8146067415730337
+        }
+      }
+    },
+    {
+      "scenario": "sec_rules",
+      "title": "安全规则 — 公网服务",
+      "nodes": 8,
+      "edges": 3,
+      "content_tokens": 150,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 237,
+          "overhead": 0.58
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 220,
+          "overhead": 0.4666666666666667
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 289,
+          "overhead": 0.9266666666666666
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 254,
+          "overhead": 0.6933333333333334
+        }
+      }
+    },
+    {
+      "scenario": "task_sprint",
+      "title": "任务清单 — Sprint 23",
+      "nodes": 7,
+      "edges": 5,
+      "content_tokens": 139,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 249,
+          "overhead": 0.7913669064748201
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 235,
+          "overhead": 0.6906474820143885
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 300,
+          "overhead": 1.158273381294964
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 259,
+          "overhead": 0.8633093525179856
+        }
+      }
+    },
+    {
+      "scenario": "res_queue",
+      "title": "研究笔记 — 队列选型",
+      "nodes": 8,
+      "edges": 4,
+      "content_tokens": 211,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 290,
+          "overhead": 0.3744075829383886
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 278,
+          "overhead": 0.3175355450236967
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 353,
+          "overhead": 0.6729857819905213
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 312,
+          "overhead": 0.4786729857819905
+        }
+      }
+    },
+    {
+      "scenario": "pref_dev",
+      "title": "用户偏好 — 开发风格",
+      "nodes": 7,
+      "edges": 3,
+      "content_tokens": 105,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 176,
+          "overhead": 0.6761904761904762
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 167,
+          "overhead": 0.5904761904761905
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 223,
+          "overhead": 1.1238095238095238
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 191,
+          "overhead": 0.819047619047619
+        }
+      }
+    },
+    {
+      "scenario": "err_codes",
+      "title": "错误码表 — 业务 API",
+      "nodes": 9,
+      "edges": 5,
+      "content_tokens": 99,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 213,
+          "overhead": 1.1515151515151516
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 198,
+          "overhead": 1.0
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 287,
+          "overhead": 1.898989898989899
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 234,
+          "overhead": 1.3636363636363635
+        }
+      }
+    },
+    {
+      "scenario": "log_v031",
+      "title": "变更日志 — v0.3.1",
+      "nodes": 8,
+      "edges": 5,
+      "content_tokens": 146,
+      "formats": {
+        "vt_full": {
+          "label": "vt",
+          "desc": "完整 ID 的 .vt",
+          "total_tokens": 254,
+          "overhead": 0.7397260273972602
+        },
+        "vt_ns": {
+          "label": "vt+ns",
+          "desc": "%ns 短 ID 的 .vt",
+          "total_tokens": 234,
+          "overhead": 0.6027397260273972
+        },
+        "jsonl": {
+          "label": "jsonl",
+          "desc": "JSONL（节点 + 边）",
+          "total_tokens": 319,
+          "overhead": 1.1849315068493151
+        },
+        "md": {
+          "label": "md",
+          "desc": "朴素 Markdown（无装饰）",
+          "total_tokens": 274,
+          "overhead": 0.8767123287671232
+        }
+      }
+    }
+  ]
+}

@@ -469,7 +469,40 @@
         "read-only": "read-only"
       }
     },
-    "tokenMasked": "Токен загружен (скрыт)"
+    "tokenMasked": "Токен загружен (скрыт)",
+    "vtokenBridge": {
+      "title": "Мост Verse Token",
+      "description": "Сборка Working Context (Verse Token). По умолчанию ВКЛ: на ходах агента упаковывает workspace md/tools/memory в ## Working Context. Не заменяет markdown на диске и DCS BlockStore. Отключение: VERSE_VTOKEN_ASSEMBLY_ENABLED=0.",
+      "badgeEnabled": "включено",
+      "badgeDisabled": "выключен",
+      "badgeRunning": "worker запущен",
+      "badgeStopped": "worker остановлен",
+      "enableLabel": "Включить мост VT",
+      "enableHelp": "Диагностический host-api мост. Продакшен-сборка по умолчанию в gateway.",
+      "version": "Версия",
+      "pid": "PID worker",
+      "opened": "Store открыт",
+      "packageRoot": "Корень пакета",
+      "lastAssemble": "Последний assemble",
+      "lastAssembleDetail": "{{used}} / {{budget}} tokens · включено {{included}} · вытеснено {{evicted}} · {{ms}}ms",
+      "error": "Последняя ошибка",
+      "yes": "да",
+      "no": "нет",
+      "ensureStarted": "Запустить worker",
+      "smokeAssemble": "Smoke assemble",
+      "boundaryNote": "VT использует md/jsonl как источники для Working Context. Не заменяет markdown на диске и DCS ContextBlock/BlockStore/compaction.",
+      "loadFailed": "Не удалось загрузить статус VT: {{error}}",
+      "toggleFailed": "Не удалось переключить VT",
+      "toggleFailedDetail": "Не удалось переключить VT: {{error}}",
+      "enabledToast": "VT включён (worker стартует лениво при первом вызове)",
+      "disabledToast": "VT выключен",
+      "startFailed": "Не удалось запустить VT worker",
+      "startFailedDetail": "Не удалось запустить VT worker: {{error}}",
+      "startedToast": "VT worker запущен",
+      "assembleFailed": "Smoke assemble не удался",
+      "assembleFailedDetail": "Smoke assemble не удался: {{error}}",
+      "assembleOk": "Smoke assemble ок: {{used}} / {{budget}} tokens"
+    }
   },
   "storage": {
     "title": "Хранилище и память",

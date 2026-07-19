@@ -1,4 +1,21 @@
 import type { RawMessage } from '../chat/types';
+import type {
+  VtokenAssembleHostResult,
+  VtokenAssemblePayload,
+  VtokenCloseResult,
+  VtokenIngestMarkdownPayload,
+  VtokenIngestMemoryPayload,
+  VtokenIngestPathPayload,
+  VtokenIngestResult,
+  VtokenIngestToolsPayload,
+  VtokenOpenPayload,
+  VtokenOpenResult,
+  VtokenPingResult,
+  VtokenSetEnabledPayload,
+  VtokenSetEnabledResult,
+  VtokenStatsResult,
+  VtokenStatusResult,
+} from '../vtoken/types';
 import type { PermissionDecisionEvent } from '../product-semantics';
 import type { AgentAvatarPreset, AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
@@ -4355,6 +4372,20 @@ export type HostApiContract = {
   };
   uv: {
     installAll: () => HostSuccess;
+  };
+  vtoken: {
+    ping: () => VtokenPingResult;
+    open: (payload?: VtokenOpenPayload) => VtokenOpenResult;
+    ingestPath: (payload: VtokenIngestPathPayload) => VtokenIngestResult;
+    ingestMarkdown: (payload: VtokenIngestMarkdownPayload) => VtokenIngestResult;
+    ingestTools: (payload: VtokenIngestToolsPayload) => VtokenIngestResult;
+    ingestMemory: (payload: VtokenIngestMemoryPayload) => VtokenIngestResult;
+    assemble: (payload: VtokenAssemblePayload) => VtokenAssembleHostResult;
+    stats: () => VtokenStatsResult;
+    close: () => VtokenCloseResult;
+    getStatus: () => VtokenStatusResult;
+    setEnabled: (payload: VtokenSetEnabledPayload) => VtokenSetEnabledResult;
+    ensureStarted: () => VtokenStatusResult;
   };
   settings: {
     getAll: () => SettingsSnapshot;

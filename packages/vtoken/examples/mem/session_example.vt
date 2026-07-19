@@ -1,0 +1,10 @@
+%vt 0.3.1
+%mode mem
+%session task_20240718_auth_impl
+
+- 用户确认使用 RS256，原因是微服务间需要公钥分发
+- 已完成 JWT 签发逻辑
+- 待完成：refresh token 轮换机制
+#blocker 需确认 JWT_SECRET_KEY 的最小长度要求，用户暂未回复
+#pref 用户偏好简洁回复，不需要示例代码
+- 当前对话轮次：第 7 轮

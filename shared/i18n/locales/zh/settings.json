@@ -469,7 +469,40 @@
         "read-only": "只读说明"
       }
     },
-    "tokenMasked": "令牌已加载（已掩码）"
+    "tokenMasked": "令牌已加载（已掩码）",
+    "vtokenBridge": {
+      "title": "Verse Token 桥接",
+      "description": "Working Context 装配层（Verse Token）。产品默认开启：在 agent 回合从工作区 md/tools/memory 源装配 ## Working Context。不替换磁盘上的 markdown，也不替换 DCS BlockStore。关闭：VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
+      "badgeEnabled": "已启用",
+      "badgeDisabled": "已禁用",
+      "badgeRunning": "worker 运行中",
+      "badgeStopped": "worker 未运行",
+      "enableLabel": "启用 VT 桥接",
+      "enableHelp": "进程内 host-api 诊断桥接。生产装配默认在 gateway 热路径执行。",
+      "version": "版本",
+      "pid": "Worker PID",
+      "opened": "Store 已打开",
+      "packageRoot": "包路径",
+      "lastAssemble": "最近 assemble",
+      "lastAssembleDetail": "{{used}} / {{budget}} tokens · 纳入 {{included}} · 裁剪 {{evicted}} · {{ms}}ms",
+      "error": "最近错误",
+      "yes": "是",
+      "no": "否",
+      "ensureStarted": "启动 worker",
+      "smokeAssemble": "冒烟 assemble",
+      "boundaryNote": "VT 以 md/jsonl 为源装配 Working Context，不替代磁盘 markdown，也不替代 DCS ContextBlock/BlockStore/compaction。",
+      "loadFailed": "加载 VT 桥接状态失败：{{error}}",
+      "toggleFailed": "切换 VT 桥接失败",
+      "toggleFailedDetail": "切换 VT 桥接失败：{{error}}",
+      "enabledToast": "已启用 VT 桥接（首次使用时懒启动 worker）",
+      "disabledToast": "已禁用 VT 桥接",
+      "startFailed": "启动 VT worker 失败",
+      "startFailedDetail": "启动 VT worker 失败：{{error}}",
+      "startedToast": "VT worker 已启动",
+      "assembleFailed": "冒烟 assemble 失败",
+      "assembleFailedDetail": "冒烟 assemble 失败：{{error}}",
+      "assembleOk": "冒烟 assemble 成功：{{used}} / {{budget}} tokens"
+    }
   },
   "storage": {
     "title": "存储与内存",

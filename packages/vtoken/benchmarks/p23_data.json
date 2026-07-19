@@ -1,0 +1,1867 @@
+{
+  "rows": [
+    {
+      "sid": "h001",
+      "category": "header",
+      "description": "完全漏掉 %vt / %mode 头部",
+      "expected_types": [
+        "missing_version",
+        "missing_mode"
+      ],
+      "actual_types": [
+        "missing_mode",
+        "missing_version"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 92,
+      "patch_tokens": 50,
+      "fix_overhead": 142,
+      "ratio": 4.896551724137931,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"first line must be '%vt <version>'\", \"type\": \"missing_version\"}, {\"line\": 1, \"message\": \"missing required directive %mode\", \"type\": \"missing_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h002",
+      "category": "header",
+      "description": "第一行漏掉 %",
+      "expected_types": [
+        "missing_version"
+      ],
+      "actual_types": [
+        "directive_after_body",
+        "missing_mode",
+        "missing_version"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 150,
+      "patch_tokens": 59,
+      "fix_overhead": 209,
+      "ratio": 7.464285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"first line must be '%vt <version>'\", \"type\": \"missing_version\"}, {\"line\": 2, \"message\": \"directive %mode must appear before the first content line\", \"type\": \"directive_after_body\"}, {\"line\": 3, \"message\": \"directive %id must appear before the first content line\", \"type\": \"directive_after_body\"}, {\"line\": 1, \"message\": \"missing required directive %mode\", \"type\": \"missing_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h003",
+      "category": "header",
+      "description": "%vt 不在物理第一行",
+      "expected_types": [
+        "missing_version",
+        "misplaced_version"
+      ],
+      "actual_types": [
+        "misplaced_version",
+        "missing_version"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 96,
+      "patch_tokens": 51,
+      "fix_overhead": 147,
+      "ratio": 5.25,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"first line must be '%vt <version>'\", \"type\": \"missing_version\"}, {\"line\": 2, \"message\": \"'%vt' must be the first line\", \"type\": \"misplaced_version\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h004",
+      "category": "header",
+      "description": "版本号带 v 前缀",
+      "expected_types": [
+        "invalid_version"
+      ],
+      "actual_types": [
+        "invalid_version"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 69,
+      "patch_tokens": 59,
+      "fix_overhead": 128,
+      "ratio": 4.571428571428571,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"bad version 'v0.3.1'\", \"type\": \"invalid_version\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h005",
+      "category": "header",
+      "description": "版本号四段",
+      "expected_types": [
+        "invalid_version"
+      ],
+      "actual_types": [
+        "invalid_version"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 70,
+      "patch_tokens": 61,
+      "fix_overhead": 131,
+      "ratio": 4.678571428571429,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"bad version '0.3.1.0'\", \"type\": \"invalid_version\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h006",
+      "category": "header",
+      "description": "%mode 大小写错",
+      "expected_types": [
+        "invalid_mode"
+      ],
+      "actual_types": [
+        "invalid_mode"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 73,
+      "patch_tokens": 54,
+      "fix_overhead": 127,
+      "ratio": 4.535714285714286,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 2, \"message\": \"%mode must be 'doc' or 'mem', got 'Doc'\", \"type\": \"invalid_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h006.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h007",
+      "category": "header",
+      "description": "%mode 值拼写错",
+      "expected_types": [
+        "invalid_mode"
+      ],
+      "actual_types": [
+        "invalid_mode"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 73,
+      "patch_tokens": 54,
+      "fix_overhead": 127,
+      "ratio": 4.535714285714286,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 2, \"message\": \"%mode must be 'doc' or 'mem', got 'document'\", \"type\": \"invalid_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h008",
+      "category": "header",
+      "description": "doc 模式漏 %id",
+      "expected_types": [
+        "missing_id_directive"
+      ],
+      "actual_types": [
+        "missing_id_directive"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 67,
+      "patch_tokens": 50,
+      "fix_overhead": 117,
+      "ratio": 4.178571428571429,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode doc requires %id\", \"type\": \"missing_id_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h008.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h009",
+      "category": "header",
+      "description": "mem 模式漏 %session",
+      "expected_types": [
+        "missing_session_directive"
+      ],
+      "actual_types": [
+        "missing_session_directive"
+      ],
+      "write_tokens": 23,
+      "report_tokens": 67,
+      "patch_tokens": 45,
+      "fix_overhead": 112,
+      "ratio": 4.869565217391305,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode mem requires %session\", \"type\": \"missing_session_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h009.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h010",
+      "category": "header",
+      "description": "%lang 出现在 DEF 之后",
+      "expected_types": [
+        "directive_after_body"
+      ],
+      "actual_types": [
+        "directive_after_body"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.178571428571429,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"directive %lang must appear before the first content line\", \"type\": \"directive_after_body\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h010.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h011",
+      "category": "header",
+      "description": "%mode 在 body 之后重复出现（parser 仅报 directive_after_body）",
+      "expected_types": [
+        "directive_after_body"
+      ],
+      "actual_types": [
+        "directive_after_body"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 71,
+      "patch_tokens": 35,
+      "fix_overhead": 106,
+      "ratio": 3.7857142857142856,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"directive %mode must appear before the first content line\", \"type\": \"directive_after_body\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h011.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h012",
+      "category": "header",
+      "description": "杜撰的 %author 指令",
+      "expected_types": [
+        "unknown_directive"
+      ],
+      "actual_types": [
+        "unknown_directive"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 71,
+      "patch_tokens": 54,
+      "fix_overhead": 125,
+      "ratio": 4.464285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 4, \"message\": \"unknown directive %author\", \"symbol\": \"%author\", \"type\": \"unknown_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h012.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h013",
+      "category": "header",
+      "description": "%ns 值含点",
+      "expected_types": [
+        "invalid_ns"
+      ],
+      "actual_types": [
+        "invalid_ns"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 73,
+      "patch_tokens": 55,
+      "fix_overhead": 128,
+      "ratio": 4.571428571428571,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 4, \"message\": \"%ns must be a single dot-free identifier, got 'auth.x'\", \"type\": \"invalid_ns\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h013.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h014",
+      "category": "header",
+      "description": "%ns 值不以字母/下划线开头",
+      "expected_types": [
+        "invalid_ns"
+      ],
+      "actual_types": [
+        "invalid_ns"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 73,
+      "patch_tokens": 56,
+      "fix_overhead": 129,
+      "ratio": 4.607142857142857,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 4, \"message\": \"%ns must be a single dot-free identifier, got '123abc'\", \"type\": \"invalid_ns\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h014.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h015",
+      "category": "header",
+      "description": "%mode 用等号",
+      "expected_types": [
+        "invalid_directive"
+      ],
+      "actual_types": [
+        "invalid_directive",
+        "missing_mode"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 92,
+      "patch_tokens": 55,
+      "fix_overhead": 147,
+      "ratio": 5.25,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 2, \"message\": \"malformed directive: '%mode=doc'\", \"type\": \"invalid_directive\"}, {\"line\": 1, \"message\": \"missing required directive %mode\", \"type\": \"missing_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h015.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h016",
+      "category": "header",
+      "description": "%mode 后无值（parser 报 invalid_mode 值）",
+      "expected_types": [
+        "invalid_mode"
+      ],
+      "actual_types": [
+        "invalid_mode"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 72,
+      "patch_tokens": 53,
+      "fix_overhead": 125,
+      "ratio": 4.464285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 2, \"message\": \"%mode must be 'doc' or 'mem', got ''\", \"type\": \"invalid_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h016.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h017",
+      "category": "header",
+      "description": "%id 重复声明",
+      "expected_types": [
+        "duplicate_directive"
+      ],
+      "actual_types": [
+        "duplicate_directive"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 70,
+      "patch_tokens": 57,
+      "fix_overhead": 127,
+      "ratio": 4.535714285714286,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 4, \"message\": \"%id declared twice\", \"symbol\": \"%id\", \"type\": \"duplicate_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h017.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h018",
+      "category": "header",
+      "description": "%lang 重复声明",
+      "expected_types": [
+        "duplicate_directive"
+      ],
+      "actual_types": [
+        "duplicate_directive"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 70,
+      "patch_tokens": 45,
+      "fix_overhead": 115,
+      "ratio": 4.107142857142857,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"%lang declared twice\", \"symbol\": \"%lang\", \"type\": \"duplicate_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h018.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h019",
+      "category": "header",
+      "description": "未知 %future 指令",
+      "expected_types": [
+        "unknown_directive"
+      ],
+      "actual_types": [
+        "unknown_directive"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 71,
+      "patch_tokens": 54,
+      "fix_overhead": 125,
+      "ratio": 4.464285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 4, \"message\": \"unknown directive %future\", \"symbol\": \"%future\", \"type\": \"unknown_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h019.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "h020",
+      "category": "header",
+      "description": "%vt 在 body 中重复出现（parser 仅报 directive_after_body）",
+      "expected_types": [
+        "directive_after_body"
+      ],
+      "actual_types": [
+        "directive_after_body"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 71,
+      "patch_tokens": 40,
+      "fix_overhead": 111,
+      "ratio": 3.9642857142857144,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"directive %vt must appear before the first content line\", \"type\": \"directive_after_body\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\h020.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n001",
+      "category": "node",
+      "description": "Def 大小写错",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'Def'\", \"symbol\": \"Def\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n002",
+      "category": "node",
+      "description": "def 全小写",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 45,
+      "fix_overhead": 116,
+      "ratio": 4.0,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'def'\", \"symbol\": \"def\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n003",
+      "category": "node",
+      "description": "拼错为 DEFINITION",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 75,
+      "patch_tokens": 48,
+      "fix_overhead": 123,
+      "ratio": 4.241379310344827,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'DEFINITION'\", \"symbol\": \"DEFINITION\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n004",
+      "category": "node",
+      "description": "使用了 schema 未定义的 INFO 类型",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'INFO'\", \"symbol\": \"INFO\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n005",
+      "category": "node",
+      "description": "TODO 不在 core schema 中",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'TODO'\", \"symbol\": \"TODO\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n006",
+      "category": "node",
+      "description": "NOTE 不在 core schema 中",
+      "expected_types": [
+        "unknown_type"
+      ],
+      "actual_types": [
+        "unknown_type"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'NOTE'\", \"symbol\": \"NOTE\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n006.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n007",
+      "category": "node",
+      "description": "DEF 后漏 id",
+      "expected_types": [
+        "missing_id"
+      ],
+      "actual_types": [
+        "missing_id"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 66,
+      "patch_tokens": 42,
+      "fix_overhead": 108,
+      "ratio": 3.7241379310344827,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"DEF line requires a node id\", \"type\": \"missing_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n008",
+      "category": "node",
+      "description": "RULE 后漏 id",
+      "expected_types": [
+        "missing_id"
+      ],
+      "actual_types": [
+        "missing_id"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 66,
+      "patch_tokens": 42,
+      "fix_overhead": 108,
+      "ratio": 3.7241379310344827,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"RULE line requires a node id\", \"type\": \"missing_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n008.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n009",
+      "category": "node",
+      "description": "id 以数字开头",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 73,
+      "patch_tokens": 46,
+      "fix_overhead": 119,
+      "ratio": 4.25,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"1abc\", \"line\": 6, \"message\": \"invalid node id '1abc'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n009.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n010",
+      "category": "node",
+      "description": "合法：DEF a b first node 中 a 是 id、b first node 是 content",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 29,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.4827586206896552,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n010.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "n011",
+      "category": "node",
+      "description": "id 含逗号",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 73,
+      "patch_tokens": 46,
+      "fix_overhead": 119,
+      "ratio": 4.103448275862069,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a,b\", \"line\": 6, \"message\": \"invalid node id 'a,b'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n011.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n012",
+      "category": "node",
+      "description": "id 以 @ 开头",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 71,
+      "patch_tokens": 46,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"@x\", \"line\": 6, \"message\": \"invalid node id '@x'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n012.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n013",
+      "category": "node",
+      "description": "id 含 $",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 73,
+      "patch_tokens": 46,
+      "fix_overhead": 119,
+      "ratio": 4.103448275862069,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a$x\", \"line\": 6, \"message\": \"invalid node id 'a$x'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n013.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n014",
+      "category": "node",
+      "description": "DEF 后漏 content",
+      "expected_types": [
+        "missing_content"
+      ],
+      "actual_types": [
+        "missing_content"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 73,
+      "patch_tokens": 44,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 6, \"message\": \"DEF a.x has no content\", \"type\": \"missing_content\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n014.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n015",
+      "category": "node",
+      "description": "RULE 后漏 content",
+      "expected_types": [
+        "missing_content"
+      ],
+      "actual_types": [
+        "missing_content"
+      ],
+      "write_tokens": 29,
+      "report_tokens": 73,
+      "patch_tokens": 44,
+      "fix_overhead": 117,
+      "ratio": 4.0344827586206895,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 6, \"message\": \"RULE a.x has no content\", \"type\": \"missing_content\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n015.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n016",
+      "category": "node",
+      "description": "DEF 同 id 重复定义",
+      "expected_types": [
+        "duplicate_id"
+      ],
+      "actual_types": [
+        "duplicate_id"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 99,
+      "patch_tokens": 43,
+      "fix_overhead": 142,
+      "ratio": 4.303030303030303,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 7, \"message\": \"node id 'a.x' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n016.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n017",
+      "category": "node",
+      "description": "DEF 后 RULE 同 id",
+      "expected_types": [
+        "duplicate_id"
+      ],
+      "actual_types": [
+        "duplicate_id"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 99,
+      "patch_tokens": 43,
+      "fix_overhead": 142,
+      "ratio": 4.303030303030303,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 7, \"message\": \"node id 'a.x' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n017.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n018",
+      "category": "node",
+      "description": "VAR 后 DEF 同 id",
+      "expected_types": [
+        "duplicate_id"
+      ],
+      "actual_types": [
+        "duplicate_id"
+      ],
+      "write_tokens": 34,
+      "report_tokens": 99,
+      "patch_tokens": 44,
+      "fix_overhead": 143,
+      "ratio": 4.205882352941177,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 7, \"message\": \"node id 'a.x' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n018.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n019",
+      "category": "node",
+      "description": "%ns 下 overview 与 auth.overview 撞 id",
+      "expected_types": [
+        "duplicate_id"
+      ],
+      "actual_types": [
+        "duplicate_id"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 101,
+      "patch_tokens": 44,
+      "fix_overhead": 145,
+      "ratio": 4.393939393939394,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"auth.overview\", \"line\": 7, \"message\": \"node id 'auth.overview' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n019.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "n020",
+      "category": "node",
+      "description": "DEF 后 OPEN 同 id",
+      "expected_types": [
+        "duplicate_id"
+      ],
+      "actual_types": [
+        "duplicate_id"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 99,
+      "patch_tokens": 43,
+      "fix_overhead": 142,
+      "ratio": 4.303030303030303,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 7, \"message\": \"node id 'a.x' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\n020.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r001",
+      "category": "ref",
+      "description": "REF 漏 relspec",
+      "expected_types": [
+        "invalid_ref"
+      ],
+      "actual_types": [
+        "invalid_ref"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 84,
+      "patch_tokens": 51,
+      "fix_overhead": 135,
+      "ratio": 3.13953488372093,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r002",
+      "category": "ref",
+      "description": "REF 多 token",
+      "expected_types": [
+        "invalid_ref"
+      ],
+      "actual_types": [
+        "invalid_ref"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 84,
+      "patch_tokens": 56,
+      "fix_overhead": 140,
+      "ratio": 3.255813953488372,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r003",
+      "category": "ref",
+      "description": "REF 漏 dst",
+      "expected_types": [
+        "invalid_ref"
+      ],
+      "actual_types": [
+        "invalid_ref"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 84,
+      "patch_tokens": 56,
+      "fix_overhead": 140,
+      "ratio": 3.255813953488372,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r004",
+      "category": "ref",
+      "description": "relspec 少一个 -",
+      "expected_types": [
+        "invalid_relation"
+      ],
+      "actual_types": [
+        "invalid_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 75,
+      "patch_tokens": 55,
+      "fix_overhead": 130,
+      "ratio": 3.0232558139534884,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"bad relation syntax '-DEPENDS->'\", \"symbol\": \"-DEPENDS->\", \"type\": \"invalid_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r005",
+      "category": "ref",
+      "description": "relspec 小写",
+      "expected_types": [
+        "invalid_relation"
+      ],
+      "actual_types": [
+        "invalid_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 74,
+      "patch_tokens": 54,
+      "fix_overhead": 128,
+      "ratio": 2.9767441860465116,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"bad relation syntax '--depends-->'\", \"symbol\": \"--depends-->\", \"type\": \"invalid_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r006",
+      "category": "ref",
+      "description": "relspec 多空格（parser 报 invalid_ref）",
+      "expected_types": [
+        "invalid_ref"
+      ],
+      "actual_types": [
+        "invalid_ref"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 84,
+      "patch_tokens": 56,
+      "fix_overhead": 140,
+      "ratio": 3.255813953488372,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r006.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r007",
+      "category": "ref",
+      "description": "relspec 末尾少一个 -",
+      "expected_types": [
+        "invalid_relation"
+      ],
+      "actual_types": [
+        "invalid_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 75,
+      "patch_tokens": 55,
+      "fix_overhead": 130,
+      "ratio": 3.0232558139534884,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"bad relation syntax '--DEPENDS->'\", \"symbol\": \"--DEPENDS->\", \"type\": \"invalid_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r008",
+      "category": "ref",
+      "description": "schema 未定义的关系",
+      "expected_types": [
+        "unknown_relation"
+      ],
+      "actual_types": [
+        "unknown_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 84,
+      "patch_tokens": 57,
+      "fix_overhead": 141,
+      "ratio": 3.2790697674418605,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"relation 'NOT-A-REL' is not defined in schema 'core'\", \"symbol\": \"--NOT-A-REL-->\", \"type\": \"unknown_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r008.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r009",
+      "category": "ref",
+      "description": "拼错 DEPENDS",
+      "expected_types": [
+        "unknown_relation"
+      ],
+      "actual_types": [
+        "unknown_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 78,
+      "patch_tokens": 54,
+      "fix_overhead": 132,
+      "ratio": 3.0697674418604652,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"relation 'DEPEND' is not defined in schema 'core'\", \"symbol\": \"--DEPEND-->\", \"type\": \"unknown_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r009.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r010",
+      "category": "ref",
+      "description": "拼错 IMPLEMENTS",
+      "expected_types": [
+        "unknown_relation"
+      ],
+      "actual_types": [
+        "unknown_relation"
+      ],
+      "write_tokens": 44,
+      "report_tokens": 82,
+      "patch_tokens": 57,
+      "fix_overhead": 139,
+      "ratio": 3.159090909090909,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"relation 'IMPLEM' is not defined in schema 'core'\", \"symbol\": \"--IMPLEM-->\", \"type\": \"unknown_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r010.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r011",
+      "category": "ref",
+      "description": "REF src id 非法",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 42,
+      "report_tokens": 73,
+      "patch_tokens": 55,
+      "fix_overhead": 128,
+      "ratio": 3.0476190476190474,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"1abc\", \"line\": 8, \"message\": \"invalid source id '1abc'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r011.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r012",
+      "category": "ref",
+      "description": "REF dst id 非法",
+      "expected_types": [
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 71,
+      "patch_tokens": 55,
+      "fix_overhead": 126,
+      "ratio": 2.9302325581395348,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"@b\", \"line\": 8, \"message\": \"invalid target id '@b'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r012.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r013",
+      "category": "ref",
+      "description": "REF dst 悬空（warning 非 error）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 43,
+      "report_tokens": 80,
+      "patch_tokens": 47,
+      "fix_overhead": 127,
+      "ratio": 2.953488372093023,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r013.vt\", \"status\": \"ok\", \"warnings\": [{\"id\": \"b.y\", \"line\": 7, \"message\": \"REF target 'b.y' is not defined in this file\", \"type\": \"dangling_ref\"}]}"
+    },
+    {
+      "sid": "r014",
+      "category": "ref",
+      "description": "REF src 悬空（warning 非 error）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 43,
+      "report_tokens": 80,
+      "patch_tokens": 47,
+      "fix_overhead": 127,
+      "ratio": 2.953488372093023,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r014.vt\", \"status\": \"ok\", \"warnings\": [{\"id\": \"b.y\", \"line\": 7, \"message\": \"REF source 'b.y' is not defined in this file\", \"type\": \"dangling_ref\"}]}"
+    },
+    {
+      "sid": "r015",
+      "category": "ref",
+      "description": "拼错 BLOCKS",
+      "expected_types": [
+        "unknown_relation"
+      ],
+      "actual_types": [
+        "unknown_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 78,
+      "patch_tokens": 54,
+      "fix_overhead": 132,
+      "ratio": 3.0697674418604652,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"relation 'BLOCK' is not defined in schema 'core'\", \"symbol\": \"--BLOCK-->\", \"type\": \"unknown_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r015.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r016",
+      "category": "ref",
+      "description": "relspec 内有空格（parser 报 invalid_ref）",
+      "expected_types": [
+        "invalid_ref"
+      ],
+      "actual_types": [
+        "invalid_ref"
+      ],
+      "write_tokens": 42,
+      "report_tokens": 84,
+      "patch_tokens": 54,
+      "fix_overhead": 138,
+      "ratio": 3.2857142857142856,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r016.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r017",
+      "category": "ref",
+      "description": "relspec 小写 extends",
+      "expected_types": [
+        "invalid_relation"
+      ],
+      "actual_types": [
+        "invalid_relation"
+      ],
+      "write_tokens": 44,
+      "report_tokens": 74,
+      "patch_tokens": 55,
+      "fix_overhead": 129,
+      "ratio": 2.9318181818181817,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"bad relation syntax '--extends-->'\", \"symbol\": \"--extends-->\", \"type\": \"invalid_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r017.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "r018",
+      "category": "ref",
+      "description": "拼错 CONFLICTS",
+      "expected_types": [
+        "unknown_relation"
+      ],
+      "actual_types": [
+        "unknown_relation"
+      ],
+      "write_tokens": 44,
+      "report_tokens": 80,
+      "patch_tokens": 56,
+      "fix_overhead": 136,
+      "ratio": 3.090909090909091,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 8, \"message\": \"relation 'CONFLICT' is not defined in schema 'core'\", \"symbol\": \"--CONFLICT-->\", \"type\": \"unknown_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\r018.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m001",
+      "category": "mem",
+      "description": "mem 行漏 - 前缀",
+      "expected_types": [
+        "invalid_mem_line"
+      ],
+      "actual_types": [
+        "invalid_mem_line"
+      ],
+      "write_tokens": 25,
+      "report_tokens": 77,
+      "patch_tokens": 44,
+      "fix_overhead": 121,
+      "ratio": 4.84,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"mem lines must start with '- ' or '#tag ': 'plain line without dash'\", \"type\": \"invalid_mem_line\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m002",
+      "category": "mem",
+      "description": "mem 行只有 -（parser 报 invalid_mem_line）",
+      "expected_types": [
+        "invalid_mem_line"
+      ],
+      "actual_types": [
+        "invalid_mem_line"
+      ],
+      "write_tokens": 23,
+      "report_tokens": 73,
+      "patch_tokens": 37,
+      "fix_overhead": 110,
+      "ratio": 4.782608695652174,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"mem lines must start with '- ' or '#tag ': '-'\", \"type\": \"invalid_mem_line\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m003",
+      "category": "mem",
+      "description": "mem #tag 后无内容",
+      "expected_types": [
+        "missing_content"
+      ],
+      "actual_types": [
+        "missing_content"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 67,
+      "patch_tokens": 46,
+      "fix_overhead": 113,
+      "ratio": 4.035714285714286,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"tag #blocker has no content\", \"type\": \"missing_content\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m004",
+      "category": "mem",
+      "description": "合法：tag 以数字开头（parser 接受）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 24,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.7916666666666667,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m004.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "m005",
+      "category": "mem",
+      "description": "tag 含冒号",
+      "expected_types": [
+        "invalid_mem_line"
+      ],
+      "actual_types": [
+        "invalid_mem_line"
+      ],
+      "write_tokens": 25,
+      "report_tokens": 74,
+      "patch_tokens": 46,
+      "fix_overhead": 120,
+      "ratio": 4.8,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"bad tag '#blocker:'\", \"symbol\": \"#blocker:\", \"type\": \"invalid_mem_line\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m006",
+      "category": "mem",
+      "description": "合法：空白行被 parser 跳过",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 20,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 2.15,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m006.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "m007",
+      "category": "mem",
+      "description": "#blocker 后无内容",
+      "expected_types": [
+        "missing_content"
+      ],
+      "actual_types": [
+        "missing_content"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 67,
+      "patch_tokens": 52,
+      "fix_overhead": 119,
+      "ratio": 4.25,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"tag #blocker has no content\", \"type\": \"missing_content\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "m008",
+      "category": "mem",
+      "description": "合法：tag 大写（parser 接受）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 24,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.7916666666666667,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m008.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "m009",
+      "category": "mem",
+      "description": "合法：tag 含连字符（parser 接受）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 26,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.6538461538461537,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m009.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "m010",
+      "category": "mem",
+      "description": "两行裸文本",
+      "expected_types": [
+        "invalid_mem_line"
+      ],
+      "actual_types": [
+        "invalid_mem_line"
+      ],
+      "write_tokens": 31,
+      "report_tokens": 112,
+      "patch_tokens": 56,
+      "fix_overhead": 168,
+      "ratio": 5.419354838709677,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 5, \"message\": \"mem lines must start with '- ' or '#tag ': 'raw text line one'\", \"type\": \"invalid_mem_line\"}, {\"line\": 6, \"message\": \"mem lines must start with '- ' or '#tag ': 'raw text line two'\", \"type\": \"invalid_mem_line\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\m010.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s001",
+      "category": "schema",
+      "description": "%schema 指定的文件不存在",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 109,
+      "patch_tokens": 54,
+      "fix_overhead": 163,
+      "ratio": 5.821428571428571,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'nonexistent': schema_not_found: schema 'nonexistent' not found (expected C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\nonexistent.vtschema)\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s002",
+      "category": "schema",
+      "description": "%schema core 引用内置 schema（应通过）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 28,
+      "report_tokens": 43,
+      "patch_tokens": 54,
+      "fix_overhead": 97,
+      "ratio": 3.4642857142857144,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s002.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "s003",
+      "category": "schema",
+      "description": "vtschema 文件内 %schema 名与请求名不一致",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 88,
+      "patch_tokens": 55,
+      "fix_overhead": 143,
+      "ratio": 5.107142857142857,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'badname': schema_name_mismatch: file declares schema 'wrongname' but '%schema badname' was requested\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s004",
+      "category": "schema",
+      "description": "vtschema 文件头格式错",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 99,
+      "patch_tokens": 55,
+      "fix_overhead": 154,
+      "ratio": 5.5,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'badheader': invalid_schema_line: unrecognized schema line: 'this is not a schema header'; missing_schema_header: first declaration must be '%schema <name> extends core'\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s005",
+      "category": "schema",
+      "description": "extends 后面不是 core",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 82,
+      "patch_tokens": 55,
+      "fix_overhead": 137,
+      "ratio": 4.892857142857143,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'badparent': unsupported_parent: only 'extends core' is supported in Phase 1\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s006",
+      "category": "schema",
+      "description": "type symbol 不合法",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 96,
+      "patch_tokens": 55,
+      "fix_overhead": 151,
+      "ratio": 5.392857142857143,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'badtype': invalid_type_symbol: type symbol 'Task-1' must be UPPERCASE [A-Z][A-Z0-9_]*\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s006.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s007",
+      "category": "schema",
+      "description": "relation symbol 不合法",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 84,
+      "patch_tokens": 55,
+      "fix_overhead": 139,
+      "ratio": 4.964285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'badrel': invalid_relation_symbol: '--BAD-REL->' must look like --NAME-->\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "s008",
+      "category": "schema",
+      "description": "试图重定义 core 的 RULE type",
+      "expected_types": [
+        "schema_error"
+      ],
+      "actual_types": [
+        "schema_error"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 89,
+      "patch_tokens": 55,
+      "fix_overhead": 144,
+      "ratio": 5.142857142857143,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"failed to load schema 'redef': redefined_symbol: type 'RULE' is already defined by the parent schema (spec §7.2)\", \"type\": \"schema_error\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\s008.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "c001",
+      "category": "compile",
+      "description": "对 mem 文件调用 compile",
+      "expected_types": [
+        "mem_not_compilable"
+      ],
+      "actual_types": [
+        "mem_not_compilable"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 85,
+      "patch_tokens": 65,
+      "fix_overhead": 150,
+      "ratio": 5.357142857142857,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode mem files are not compiled; use MemStore.write()/import_vt() (spec §10.3)\", \"type\": \"mem_not_compilable\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\c001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "c002",
+      "category": "compile",
+      "description": "对多行 mem 文件调用 compile",
+      "expected_types": [
+        "mem_not_compilable"
+      ],
+      "actual_types": [
+        "mem_not_compilable"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 85,
+      "patch_tokens": 75,
+      "fix_overhead": 160,
+      "ratio": 4.848484848484849,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode mem files are not compiled; use MemStore.write()/import_vt() (spec §10.3)\", \"type\": \"mem_not_compilable\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\c002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "c003",
+      "category": "compile",
+      "description": "对带 tag 的 mem 文件调用 compile",
+      "expected_types": [
+        "mem_not_compilable"
+      ],
+      "actual_types": [
+        "mem_not_compilable"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 85,
+      "patch_tokens": 66,
+      "fix_overhead": 151,
+      "ratio": 5.392857142857143,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode mem files are not compiled; use MemStore.write()/import_vt() (spec §10.3)\", \"type\": \"mem_not_compilable\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\c003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "c004",
+      "category": "compile",
+      "description": "对三行 mem 文件调用 compile",
+      "expected_types": [
+        "mem_not_compilable"
+      ],
+      "actual_types": [
+        "mem_not_compilable"
+      ],
+      "write_tokens": 38,
+      "report_tokens": 85,
+      "patch_tokens": 82,
+      "fix_overhead": 167,
+      "ratio": 4.394736842105263,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"%mode mem files are not compiled; use MemStore.write()/import_vt() (spec §10.3)\", \"type\": \"mem_not_compilable\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\c004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x001",
+      "category": "compound",
+      "description": "无头三联（header 错误时 body 不再深扫，仅报 missing_version+missing_mode）",
+      "expected_types": [
+        "missing_version",
+        "missing_mode"
+      ],
+      "actual_types": [
+        "missing_mode",
+        "missing_version"
+      ],
+      "write_tokens": 38,
+      "report_tokens": 92,
+      "patch_tokens": 75,
+      "fix_overhead": 167,
+      "ratio": 4.394736842105263,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"first line must be '%vt <version>'\", \"type\": \"missing_version\"}, {\"line\": 1, \"message\": \"missing required directive %mode\", \"type\": \"missing_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x001.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x002",
+      "category": "compound",
+      "description": "invalid_mode + duplicate_directive",
+      "expected_types": [
+        "invalid_mode",
+        "duplicate_directive"
+      ],
+      "actual_types": [
+        "duplicate_directive",
+        "invalid_mode"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 101,
+      "patch_tokens": 54,
+      "fix_overhead": 155,
+      "ratio": 5.535714285714286,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 2, \"message\": \"%mode must be 'doc' or 'mem', got 'yaml'\", \"type\": \"invalid_mode\"}, {\"line\": 3, \"message\": \"%mode declared twice\", \"symbol\": \"%mode\", \"type\": \"duplicate_directive\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x002.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x003",
+      "category": "compound",
+      "description": "Def 行触发 unknown_type 后不计 duplicate_id + DEF 漏 id 触发 missing_id",
+      "expected_types": [
+        "unknown_type",
+        "missing_id"
+      ],
+      "actual_types": [
+        "missing_id",
+        "unknown_type"
+      ],
+      "write_tokens": 38,
+      "report_tokens": 95,
+      "patch_tokens": 52,
+      "fix_overhead": 147,
+      "ratio": 3.8684210526315788,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"unknown type symbol 'Def'\", \"symbol\": \"Def\", \"type\": \"unknown_type\"}, {\"line\": 8, \"message\": \"DEF line requires a node id\", \"type\": \"missing_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x003.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x004",
+      "category": "compound",
+      "description": "两条 REF 都错",
+      "expected_types": [
+        "invalid_ref",
+        "invalid_relation"
+      ],
+      "actual_types": [
+        "invalid_ref",
+        "invalid_relation"
+      ],
+      "write_tokens": 43,
+      "report_tokens": 117,
+      "patch_tokens": 66,
+      "fix_overhead": 183,
+      "ratio": 4.255813953488372,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}, {\"line\": 8, \"message\": \"bad relation syntax '-DEPENDS->'\", \"symbol\": \"-DEPENDS->\", \"type\": \"invalid_relation\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x004.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x005",
+      "category": "compound",
+      "description": "unknown_type + invalid_id",
+      "expected_types": [
+        "unknown_type",
+        "invalid_id"
+      ],
+      "actual_types": [
+        "invalid_id",
+        "unknown_type"
+      ],
+      "write_tokens": 32,
+      "report_tokens": 102,
+      "patch_tokens": 56,
+      "fix_overhead": 158,
+      "ratio": 4.9375,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 6, \"message\": \"unknown type symbol 'Def'\", \"symbol\": \"Def\", \"type\": \"unknown_type\"}, {\"id\": \"1abc\", \"line\": 7, \"message\": \"invalid node id '1abc'\", \"type\": \"invalid_id\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x005.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x006",
+      "category": "compound",
+      "description": "body 后多个错误指令（parser 统一报 directive_after_body）",
+      "expected_types": [
+        "directive_after_body"
+      ],
+      "actual_types": [
+        "directive_after_body"
+      ],
+      "write_tokens": 28,
+      "report_tokens": 100,
+      "patch_tokens": 39,
+      "fix_overhead": 139,
+      "ratio": 4.964285714285714,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 7, \"message\": \"directive %author must appear before the first content line\", \"type\": \"directive_after_body\"}, {\"line\": 8, \"message\": \"directive %lang must appear before the first content line\", \"type\": \"directive_after_body\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x006.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x007",
+      "category": "compound",
+      "description": "duplicate_id + unknown_type",
+      "expected_types": [
+        "duplicate_id",
+        "unknown_type"
+      ],
+      "actual_types": [
+        "duplicate_id",
+        "unknown_type"
+      ],
+      "write_tokens": 38,
+      "report_tokens": 128,
+      "patch_tokens": 55,
+      "fix_overhead": 183,
+      "ratio": 4.815789473684211,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"id\": \"a.x\", \"line\": 7, \"message\": \"node id 'a.x' already defined at line 6 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}, {\"line\": 8, \"message\": \"unknown type symbol 'Def'\", \"symbol\": \"Def\", \"type\": \"unknown_type\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x007.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "x008",
+      "category": "compound",
+      "description": "version + mode 错误（header 错误时 body 的 duplicate_id 不深扫）",
+      "expected_types": [
+        "invalid_version",
+        "invalid_mode"
+      ],
+      "actual_types": [
+        "invalid_mode",
+        "invalid_version"
+      ],
+      "write_tokens": 33,
+      "report_tokens": 98,
+      "patch_tokens": 73,
+      "fix_overhead": 171,
+      "ratio": 5.181818181818182,
+      "accuracy_correct": true,
+      "report_status": "error",
+      "report_json": "{\"errors\": [{\"line\": 1, \"message\": \"bad version 'v0.3'\", \"type\": \"invalid_version\"}, {\"line\": 2, \"message\": \"%mode must be 'doc' or 'mem', got 'Doc'\", \"type\": \"invalid_mode\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\x008.vt\", \"status\": \"error\"}"
+    },
+    {
+      "sid": "z001",
+      "category": "node",
+      "description": "合法：DESC 同 id 重复（注解类型）",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 39,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.1025641025641026,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z001.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z002",
+      "category": "node",
+      "description": "合法：多注解追加",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 38,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.131578947368421,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z002.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z003",
+      "category": "node",
+      "description": "合法：长内容节点",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 37,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.162162162162162,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z003.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z004",
+      "category": "ref",
+      "description": "合法：循环 REF",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 53,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 0.8113207547169812,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z004.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z005",
+      "category": "node",
+      "description": "合法：SRC 行带 URL",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 37,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.162162162162162,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z005.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z006",
+      "category": "node",
+      "description": "合法：行首注释",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 39,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.1025641025641026,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z006.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z007",
+      "category": "node",
+      "description": "合法：id 含连字符",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 30,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.4333333333333333,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z007.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z008",
+      "category": "node",
+      "description": "合法：VAR 行带冒号内容",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 37,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.162162162162162,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z008.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z009",
+      "category": "ref",
+      "description": "合法：无类型边 ~~",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 40,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.075,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z009.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z010",
+      "category": "node",
+      "description": "合法：节点全 4 类注解追加",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 59,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 0.7288135593220338,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z010.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z011",
+      "category": "node",
+      "description": "合法：多段命名空间 id",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 32,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 1.34375,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z011.vt\", \"status\": \"ok\", \"warnings\": []}"
+    },
+    {
+      "sid": "z012",
+      "category": "ref",
+      "description": "合法：REF 使用 IMPLEMENTS 关系",
+      "expected_types": [],
+      "actual_types": [],
+      "write_tokens": 44,
+      "report_tokens": 43,
+      "patch_tokens": 0,
+      "fix_overhead": 43,
+      "ratio": 0.9772727272727273,
+      "accuracy_correct": true,
+      "report_status": "ok",
+      "report_json": "{\"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23_pvcz6l40\\\\z012.vt\", \"status\": \"ok\", \"warnings\": []}"
+    }
+  ],
+  "n": 100,
+  "redline": {
+    "n_nodes": 100,
+    "n_injected_errors": 5,
+    "n_diff_lines": 5,
+    "write_tokens": 4391,
+    "report_tokens": 239,
+    "patch_tokens": 159,
+    "fix_overhead": 398,
+    "ratio": 0.09063994534274653,
+    "n_reported_errors": 5,
+    "error_types": [
+      "invalid_relation",
+      "duplicate_id",
+      "unknown_type",
+      "invalid_ref",
+      "missing_content"
+    ],
+    "report_status": "error",
+    "report_json": "{\"errors\": [{\"line\": 14, \"message\": \"bad relation syntax '-DEPENDS->'\", \"symbol\": \"-DEPENDS->\", \"type\": \"invalid_relation\"}, {\"id\": \"bill.overview\", \"line\": 59, \"message\": \"node id 'bill.overview' already defined at line 58 (only annotation types ['DESC', 'EX', 'META', 'SRC'] may repeat an id)\", \"type\": \"duplicate_id\"}, {\"line\": 113, \"message\": \"unknown type symbol 'TODO'\", \"symbol\": \"TODO\", \"type\": \"unknown_type\"}, {\"line\": 165, \"message\": \"REF must be 'REF <src> --REL--> <dst>' or 'REF <src> ~~ <dst>'\", \"type\": \"invalid_ref\"}, {\"id\": \"cache.overview\", \"line\": 211, \"message\": \"DEF cache.overview has no content\", \"type\": \"missing_content\"}], \"file\": \"C:\\\\Users\\\\27933\\\\AppData\\\\Local\\\\Temp\\\\p23rl_af0es47v\\\\redline100.vt\", \"status\": \"error\"}",
+    "patch_text": "- REF auth.rule_02 -DEPENDS-> auth.overview\n+ REF auth.rule_02 --DEPENDS--> auth.overview\n- DEF bill.overview 重复定义覆盖原 DEF\n+ DESC bill.overview 包含规则、变量与开放问题三部分\n- TODO rate.rule_01 rate 规则 1：约束条件 1 生效\n+ RULE rate.rule_01 rate 规则 1：约束条件 1 生效\n- REF log.rule_01 --DEPENDS-->\n+ REF log.rule_01 --DEPENDS--> log.overview\n- DEF cache.overview\n+ DEF cache.overview cache 模块总览：提供 cache 子系统能力"
+  }
+}

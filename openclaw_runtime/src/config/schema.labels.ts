@@ -774,6 +774,16 @@ export const FIELD_LABELS: Record<string, string> = {
   "runtime.memory.injectPilot.totalTokenBudget":
     "Runtime Memory Injection Pilot Total Token Budget",
   "runtime.memory.injectPilot.sessions": "Runtime Memory Injection Pilot Session Scope",
+  "runtime.vtoken": "Verse Token Working Context",
+  "runtime.vtoken.assembly": "Verse Token Assembly",
+  "runtime.vtoken.assembly.enabled": "Verse Token Assembly Enabled",
+  "runtime.vtoken.assembly.budgetTokens": "Verse Token Budget Tokens",
+  "runtime.vtoken.assembly.renderMode": "Verse Token Render Mode",
+  "runtime.vtoken.assembly.sessions": "Verse Token Session Scope",
+  "runtime.vtoken.assembly.timeoutMs": "Verse Token Timeout Ms",
+  "runtime.vtoken.assembly.maxSourceFiles": "Verse Token Max Source Files",
+  "runtime.vtoken.assembly.maxSourceChars": "Verse Token Max Source Chars",
+
   "runtime.agentMap": "Runtime AgentMap",
   "runtime.agentMap.provider": "Runtime AgentMap Provider",
   "runtime.agentMap.promptAssemblyExperiment": "Runtime AgentMap Prompt Assembly Experiment",

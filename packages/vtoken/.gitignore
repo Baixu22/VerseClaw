@@ -1,0 +1,23 @@
+# Verse Token 缂栬瘧浜х墿鍜岃繍琛屾椂鏂囦欢锛屼笉杩涘叆鐗堟湰鎺у埗锛堣鏍?搂9.1锛?*.vtg
+*.vtg.new
+*.vtwal
+.vt_cache/
+
+# %mode mem 鐨勮繍琛屾椂浼氳瘽鏁版嵁
+sessions/
+examples/.sessions/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# T1 鍩哄噯锛歵iktoken 璇嶈〃绂荤嚎缂撳瓨锛堢害 1.7MB锛屼笉鍏ュ簱锛?.tiktoken_cache/
+
+# 鍩哄噯浜х墿
+benchmarks/*.tmp/
+benchmarks/_work/
+.venv/
