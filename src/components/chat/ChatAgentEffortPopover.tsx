@@ -129,9 +129,8 @@ function ChatAgentEffortPopoverBody({
   const isHighZone = draftIndex >= HIGH_INDEX;
   useWebglFire(fireCanvasRef, draftIndex / MAX_SLIDER_VALUE, fireActive);
 
-  // Flip-up animation when entering max, mirroring the reference status text.
-  useEffect(() => {
-    const isMax = draftIndex >= MAX_SLIDER_VALUE;
+  const updateFlipAnimation = useCallback((nextIndex: number) => {
+    const isMax = nextIndex >= MAX_SLIDER_VALUE;
     if (isMax && !wasMaxRef.current) {
       setIsFlipping(true);
       if (flipTimerRef.current != null) window.clearTimeout(flipTimerRef.current);
@@ -147,7 +146,7 @@ function ChatAgentEffortPopoverBody({
       setIsFlipping(false);
     }
     wasMaxRef.current = isMax;
-  }, [draftIndex]);
+  }, []);
 
   const commit = useCallback(
     (idx: number) => {
@@ -186,10 +185,11 @@ function ChatAgentEffortPopoverBody({
   const onSliderInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const next = Number(e.target.value);
+      updateFlipAnimation(next);
       setDraftIndex(next);
       scheduleCommit(next);
     },
-    [scheduleCommit],
+    [scheduleCommit, updateFlipAnimation],
   );
 
   useEffect(() => {
