@@ -525,7 +525,7 @@ describe('agent browser service', () => {
       success: true,
       session: { id: 's1' },
     });
-    await expect(api.status()).resolves.toMatchObject({ success: true, sessions: [{ id: 's1' }] });
+    expect(api.status()).toMatchObject({ success: true, sessions: [{ id: 's1' }] });
     await expect(api.profiles()).resolves.toMatchObject({
       success: true,
       profiles: [{ profile: 'default' }],
@@ -547,7 +547,7 @@ describe('agent browser service', () => {
       success: true,
       data: { ok: true },
     });
-    await expect(api.close({ sessionId: 's1' })).resolves.toEqual({ success: true });
+    expect(api.close({ sessionId: 's1' })).toEqual({ success: true });
     expect(service.command).toHaveBeenCalledWith({ sessionId: 's1', args: ['snapshot'] });
     expect(service.saveProfile).toHaveBeenCalledWith({ profile: 'Work' });
     expect(service.validate).toHaveBeenCalledWith({ url: 'https://example.com' });

@@ -6,6 +6,7 @@ const hostApiMock = vi.hoisted(() => ({
   git: {
     status: vi.fn(),
     branches: vi.fn(),
+    log: vi.fn(),
     worktrees: vi.fn(),
     stashList: vi.fn(),
     githubAuthStatus: vi.fn(),
@@ -232,6 +233,13 @@ describe('WorkspaceGitPanel', () => {
         { name: 'feature/git-panel', current: true },
         { name: 'main', current: false },
       ],
+    });
+    hostApiMock.git.log.mockResolvedValue({
+      success: true,
+      ref: 'feature/git-panel',
+      ahead: 1,
+      behind: 0,
+      commits: [],
     });
     hostApiMock.git.worktrees.mockResolvedValue({
       worktrees: [
