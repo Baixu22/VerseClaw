@@ -36,17 +36,19 @@
     {
       "path": "artifacts/system-maturity/P4-003/acceptance-matrix.json",
       "sha256": "c86c697981fc41dbfbcaf8a47633ca01247338e7b08bfcdb6af924e668c7ae46",
-      "bytes": 658
+      "bytes": 687
     },
     {
       "path": "plans/system-maturity/phase4-runtime-surfaces/tasks/P4-003.md",
-      "sha256": "4ebbd66f2ce318ea78dcc5ad5297abd4c4bf143e96864657a703fa96337cf596",
-      "bytes": 739
+      "sha256": "e8ef615fc05fada67d827f3244e3898356b69517b80be74349c4b5c8059f4a24",
+      "bytes": 743
     },
     {
       "path": "plans/system-maturity/phase4-runtime-surfaces/STATUS.json",
-      "sha256": "4b0f74caec798a52862f4d138a9fb48b49cc587fb9f4de5c33524438501533df",
-      "bytes": 240
+      "sha256": "fa84b4bfdef7857e08d8854dc14efb46e5f406b7a1e19fc8a4605df59d7e19d5",
+      "bytes": 250
     }
-  ]
+  ],
+  "refreshedAt": "2026-07-19T03:37:10.670Z",
+  "refreshedReason": "reseal-post-orch evidence-index hash refresh"
 }

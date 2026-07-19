@@ -38,10 +38,14 @@ function isReachable(commit, head) {
   }
 }
 
+function stripEvidenceRef(ref) {
+  return String(ref).replace(/#sha256=[a-f0-9]{64}$/iu, '').trim();
+}
+
 function splitRefs(value) {
   return value
     .split(';')
-    .map((ref) => ref.trim())
+    .map((ref) => stripEvidenceRef(ref.trim()))
     .filter(Boolean);
 }
 

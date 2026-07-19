@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-002",
-  "checkedAt": "2026-07-18T16:46:46.900Z",
+  "checkedAt": "2026-07-19T03:41:35.944Z",
   "ok": true,
   "taskCount": 38,
   "statusFileCount": 9,
@@ -30,8 +30,8 @@
     "plans/system-maturity/phase4-runtime-surfaces/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase5-reliability-abuse/STATUS.json phaseStatus=done",
     "plans/system-maturity/phase6-supply-release/STATUS.json phaseStatus=done",
-    "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=in_progress",
-    "plans/system-maturity/phase8-residual-closure/STATUS.json phaseStatus=in_progress",
+    "plans/system-maturity/phase7-continuous-governance/STATUS.json phaseStatus=done",
+    "plans/system-maturity/phase8-residual-closure/STATUS.json phaseStatus=done",
     "dependency edges resolve",
     "A3 P0-001 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-001.delivery.md)",
     "A3 P0-002 delivery+acceptance OK (plans\\system-maturity\\phase0-foundation\\tasks\\P0-002.delivery.md)",
@@ -63,6 +63,14 @@
     "A3 P6-003 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-003.delivery.md)",
     "A3 P6-004 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-004.delivery.md)",
     "A3 P6-005 delivery+acceptance OK (plans\\system-maturity\\phase6-supply-release\\tasks\\P6-005.delivery.md)",
+    "A3 P7-003 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-003.delivery.md)",
+    "A3 P7-004 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-004.delivery.md)",
+    "A3 P7-002 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-002.delivery.md)",
+    "A3 P7-001 delivery+acceptance OK (plans\\system-maturity\\phase7-continuous-governance\\tasks\\P7-001.delivery.md)",
+    "A3 P8-003 delivery+acceptance OK (plans\\system-maturity\\phase8-residual-closure\\tasks\\P8-003.delivery.md)",
+    "A3 P8-001 delivery+acceptance OK (plans\\system-maturity\\phase8-residual-closure\\tasks\\P8-001.delivery.md)",
+    "A3 P8-002 delivery+acceptance OK (plans\\system-maturity\\phase8-residual-closure\\tasks\\P8-002.delivery.md)",
+    "A3 P8-004 delivery+acceptance OK (plans\\system-maturity\\phase8-residual-closure\\tasks\\P8-004.delivery.md)",
     "task Finding refs resolve against findings-registry",
     "INDEX status OK phase0-foundation=done",
     "INDEX status OK phase1-direct-boundaries=done",
@@ -71,7 +79,7 @@
     "INDEX status OK phase4-runtime-surfaces=done",
     "INDEX status OK phase5-reliability-abuse=done",
     "INDEX status OK phase6-supply-release=done",
-    "INDEX status OK phase7-continuous-governance=in_progress",
-    "INDEX status OK phase8-residual-closure=in_progress"
+    "INDEX status OK phase7-continuous-governance=done",
+    "INDEX status OK phase8-residual-closure=done"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-001",
-  "checkedAt": "2026-07-18T08:38:49.717Z",
+  "checkedAt": "2026-07-19T03:37:43.922Z",
   "ok": true,
   "fail": [],
   "warn": [
@@ -9,6 +9,7 @@
     "manifest hash mismatch (non-strict): electron/preload/index.ts",
     "manifest hash mismatch (non-strict): electron/services/shell-api.ts",
     "manifest hash mismatch (non-strict): electron/services/secrets/secret-store.ts",
+    "manifest hash mismatch (non-strict): electron/services/providers/store-instance.ts",
     "manifest hash mismatch (non-strict): electron/utils/secure-storage.ts",
     "manifest hash mismatch (non-strict): electron/services/workspace-permissions.ts",
     "manifest hash mismatch (non-strict): shared/sensitive-content-boundary.ts",
@@ -33,6 +34,7 @@
     "manifest hash mismatch (non-strict): electron/services/agent-browser-service.ts",
     "manifest hash mismatch (non-strict): electron/services/updates-api.ts",
     "manifest hash mismatch (non-strict): electron/utils/store.ts",
+    "manifest hash mismatch (non-strict): src/App.tsx",
     "manifest hash mismatch (non-strict): src/pages/Chat/index.tsx",
     "manifest hash mismatch (non-strict): src/stores/chat.ts",
     "manifest hash mismatch (non-strict): shared/host-api/contract.ts",
@@ -43,7 +45,6 @@
     "manifest hash mismatch (non-strict): openclaw_runtime/src/agents/agent-steering-queue.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts",
     "manifest hash mismatch (non-strict): electron-builder.yml",
-    "manifest hash mismatch (non-strict): artifacts/agent-dev-audit/report.json",
     "manifest hash mismatch (non-strict): artifacts/agent-dev-deep-test/report.json",
     "manifest hash mismatch (non-strict): shared/agent-browser/browser-control.ts",
     "manifest hash mismatch (non-strict): electron/services/agent-browser/browser-control/tab-manager.ts",
@@ -61,10 +62,11 @@
     "known post-audit content drift allowed: src/lib/host-api.ts",
     "known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts",
     "known post-audit content drift allowed: package.json",
+    "manifest missing (allowlisted generated): artifacts/agent-dev-audit/report.json",
     "known post-audit content drift allowed: electron/services/mcp-api.ts",
-    "manifest files: matched=26 lfNorm=4 drift=51 missing=0",
+    "manifest files: matched=24 lfNorm=4 drift=52 missing=1",
     "A2 unique Finding IDs: 35",
     "A2 related links OK",
-    "A2 task Finding refs resolve (34 tasks scanned)"
+    "A2 task Finding refs resolve (38 tasks scanned)"
   ]
 }

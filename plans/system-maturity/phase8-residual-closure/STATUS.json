@@ -1,14 +1,14 @@
 {
-  "phase": "phase8-residual-closure",
-  "phaseStatus": "in_progress",
-  "tasks": {
-    "P8-001": "in_progress",
-    "P8-002": "in_progress",
-    "P8-003": "in_progress",
-    "P8-004": "in_progress"
-  },
-  "allTasksDone": false,
-  "statusPolicy": "gate-v2",
-  "updatedAt": "2026-07-19",
-  "updatedBy": "codex"
+    "statusPolicy":  "gate-v2",
+    "tasks":  {
+                  "P8-003":  "done",
+                  "P8-001":  "done",
+                  "P8-002":  "done",
+                  "P8-004":  "done"
+              },
+    "updatedBy":  "reseal-post-orch",
+    "updatedAt":  "2026-07-19T04:00:00.000Z",
+    "phase":  "phase8-residual-closure",
+    "phaseStatus":  "done",
+    "allTasksDone":  true
 }
