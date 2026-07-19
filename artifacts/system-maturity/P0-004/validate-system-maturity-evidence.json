@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-19T03:41:36.022Z",
+  "checkedAt": "2026-07-19T03:45:06.013Z",
   "ok": false,
   "recomputedCount": 300,
   "recomputed": [
@@ -853,7 +853,7 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "dfffc8f6442d5b37caceb7d2a150b8dde7699162889eff8663267eebdd37cd54"
+      "sha256": "a5d8e0cd733f4bced582f0dc9f46128a1c2ec7791e0ac02d94493d67747a3a57"
     },
     {
       "task": "P7-001",
@@ -1278,7 +1278,7 @@
     {
       "task": "P8-001",
       "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-      "sha256": "e2b14d7990433fc85dc81cb4c3de2f87beb8edb6eae5c53f7389e0122a323301"
+      "sha256": "67fba111c5b836e7882cf882c515cb4541c0126ecac67216dd317b0f7a1adb40"
     },
     {
       "task": "P8-001",
@@ -1507,10 +1507,7 @@
     }
   ],
   "fail": [
-    "P4--EVIDENCE evidence-index taskId mismatch",
-    "P4--EVIDENCE evidence-index missing command",
-    "P4--EVIDENCE evidence-index missing commit/base",
-    "P4--EVIDENCE evidence-index missing artifacts"
+    "A2 P8-001 evidence hash mismatch for artifacts/system-maturity/P8-001/residual-audit-report.json: expected e2b14d7990433fc85dc81cb4c3de2f87beb8edb6eae5c53f7389e0122a323301 got 67fba111c5b836e7882cf882c515cb4541c0126ecac67216dd317b0f7a1adb40"
   ],
   "warn": [],
   "info": [
@@ -1768,7 +1765,6 @@
     "A2 P7-004 hash OK plans/system-maturity/INDEX.md",
     "A2 P7-004 hash OK .github/workflows/system-maturity-quarterly.yml",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/vitest.stdout.txt",
-    "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-report.json",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/maturity-plan.stdout.txt",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt",

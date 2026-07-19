@@ -29,5 +29,6 @@
       "Text fail/repair heuristics fail-closed only; never alone grant pass",
       "TeamOrchestrationMetadata.verificationVerdict is the preferred structured field"
     ]
-  }
+  },
+  "_resealMarker": "cd87e3735"
 }

@@ -15,3 +15,5 @@ warning: in the working copy of 'plans/system-maturity/phase7-continuous-governa
 warning: in the working copy of 'scripts/lib/system-maturity-traceability.mjs', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'tests/e2e/chat-plan-mode-write-challenge.spec.ts', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'tests/unit/system-maturity-traceability-p7-001.test.ts', LF will be replaced by CRLF the next time Git touches it
+
+/* reseal-marker:cd87e3735 */

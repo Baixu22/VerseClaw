@@ -1,3 +1,5 @@
 $ node scripts/typecheck-agent-dev.mjs
 $ tsc --noEmit -p tsconfig.web.json --composite false
 $ tsc --noEmit -p tsconfig.node.json --composite false
+
+/* reseal-marker:cd87e3735 */

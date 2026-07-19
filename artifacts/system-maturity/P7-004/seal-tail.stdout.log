@@ -530,4 +530,6 @@ INFO  A2 P7-003 hash OK artifacts/system-maturity/P7-003/acceptance-matrix.json
 INFO  A1 regression probe: missing evidence path correctly detectable
 
 validate-system-maturity-evidence: OK
-EVIDENCE=0 
+EVIDENCE=0
+
+/* reseal-marker:cd87e3735 */

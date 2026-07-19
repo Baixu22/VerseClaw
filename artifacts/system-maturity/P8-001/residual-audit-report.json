@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P8-001",
-  "generatedAt": "2026-07-19T03:41:35.520Z",
+  "generatedAt": "2026-07-19T03:46:13.763Z",
   "ok": true,
   "primaryFindingIds": [
     "F-SEC-001",
@@ -68,5 +68,6 @@
     "residualExpired": 0,
     "residualMissing": 0,
     "residualOk": true
-  }
+  },
+  "_resealMarker": "cd87e3735"
 }

@@ -38,3 +38,5 @@ jobs:
 """
 Path('.github/workflows/system-maturity-quarterly.yml').write_text(content, encoding='utf-8', newline='\n')
 print('ok', Path('.github/workflows/system-maturity-quarterly.yml').stat().st_size)
+
+/* reseal-marker:cd87e3735 */

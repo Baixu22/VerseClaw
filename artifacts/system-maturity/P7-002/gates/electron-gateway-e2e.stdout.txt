@@ -6,3 +6,5 @@ Running 3 tests using 1 worker
   ok 3 tests\e2e\gateway-lifecycle.spec.ts:131:7 › Verse Claw gateway lifecycle resilience › shows gateway restart progress in the sidebar instead of page-level warnings (6.5s)
 
   3 passed (21.8s)
+
+/* reseal-marker:cd87e3735 */

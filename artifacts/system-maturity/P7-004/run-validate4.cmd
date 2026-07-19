@@ -9,3 +9,5 @@ echo EVIDENCE=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\validate4.stdout.
 call pnpm maturity:quarterly >> artifacts\system-maturity\P7-004\validate4.stdout.log 2>> artifacts\system-maturity\P7-004\validate4.stderr.log
 echo QUARTERLY=%ERRORLEVEL% >> artifacts\system-maturity\P7-004\validate4.stdout.log
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\validate4.exit.txt
+
+/* reseal-marker:cd87e3735 */

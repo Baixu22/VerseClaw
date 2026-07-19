@@ -39,5 +39,6 @@
       "path": "scripts/configure-deepseek-runtime.mjs",
       "sha256": "463bdaab2823d7e24c0167a7c559a7f7b64bf68ac1fde4fc23b868eb5bef8930"
     }
-  ]
+  ],
+  "_resealMarker": "cd87e3735"
 }

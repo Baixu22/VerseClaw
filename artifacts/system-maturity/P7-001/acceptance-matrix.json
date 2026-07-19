@@ -28,5 +28,6 @@
       "Configured global evidence is accepted only when every command exits zero and every captured stdout/stderr hash recomputes exactly.",
       "The traceability report excludes its own delivery reference to avoid a self-referential evidence hash cycle; the independent maturity evidence validator verifies that delivery hash."
     ]
-  }
+  },
+  "_resealMarker": "cd87e3735"
 }

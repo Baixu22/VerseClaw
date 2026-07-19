@@ -47,3 +47,5 @@ WARN  manifest hash mismatch (non-strict): electron/utils/logger.ts
 WARN  manifest hash mismatch (non-strict): .github/workflows/release.yml
 WARN  manifest hash mismatch (non-strict): scripts/download-bundled-uv.mjs
 WARN  manifest hash mismatch (non-strict): scripts/download-bundled-agent-browser.mjs
+
+/* reseal-marker:cd87e3735 */

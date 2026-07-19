@@ -4,3 +4,5 @@ warning: in the working copy of 'plans/system-maturity/phase7-continuous-governa
 warning: in the working copy of 'plans/system-maturity/phase7-continuous-governance/tasks/P7-001.delivery.md', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'scripts/collect-p7-001-evidence.mjs', LF will be replaced by CRLF the next time Git touches it
 warning: in the working copy of 'scripts/validate-system-maturity-traceability.mjs', LF will be replaced by CRLF the next time Git touches it
+
+/* reseal-marker:cd87e3735 */

@@ -103,5 +103,6 @@
       "path": "plans/system-maturity/findings-registry.json",
       "sha256": "1bf58f3c606d802d01488330adb97d70de2c1f70a20d84effcaaf817a4673e7e"
     }
-  ]
+  ],
+  "_resealMarker": "cd87e3735"
 }

@@ -28,5 +28,6 @@
       "git enforces readOnly/plan deny and audits acceptEdits writes",
       "unit matrix for files/commands/gateway across modes"
     ]
-  }
+  },
+  "_resealMarker": "cd87e3735"
 }

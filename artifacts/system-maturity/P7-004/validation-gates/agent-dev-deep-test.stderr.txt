@@ -11,3 +11,5 @@ $ node scripts/comms/replay.mjs
 $ node scripts/comms/compare.mjs
 $ playwright test tests/e2e/agent-dev-quality.spec.ts --grep "loads the in-app Agent Dev Workbench"
 $ node scripts/agent-dev-workbench.mjs
+
+/* reseal-marker:cd87e3735 */

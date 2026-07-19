@@ -1,0 +1,13 @@
+FAIL  F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json
+FAIL  F-SEC-002: stale evidence: linked source is newer than evidence
+FAIL  F-SEC-010: stale evidence: linked source is newer than evidence
+FAIL  F-ISO-001: stale evidence: linked source is newer than evidence
+FAIL  F-ISO-002: stale evidence: linked source is newer than evidence
+FAIL  F-AUTH-001: stale evidence: linked source is newer than evidence
+FAIL  F-AUTH-003: stale evidence: linked source is newer than evidence
+FAIL  F-AUTH-004: stale evidence: linked source is newer than evidence
+FAIL  F-AUTH-005: stale evidence: linked source is newer than evidence
+FAIL  F-DATA-002: stale evidence: linked source is newer than evidence
+FAIL  F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json
+FAIL  F-GOV-002: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json
+validate-system-maturity-traceability: FAILED (12)

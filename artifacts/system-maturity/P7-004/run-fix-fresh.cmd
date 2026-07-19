@@ -5,3 +5,5 @@ node --input-type=module -e "import fs from 'fs'; for (const rel of ['artifacts/
 node scripts/update-system-maturity-delivery-hashes.mjs >> artifacts\system-maturity\P7-004\fix-fresh.stdout.log 2>> artifacts\system-maturity\P7-004\fix-fresh.stderr.log
 node --input-type=module -e "import { validateSystemMaturityTraceability } from './scripts/lib/system-maturity-traceability.mjs'; const report=validateSystemMaturityTraceability({root:process.cwd()}); console.log(JSON.stringify({ok:report.ok,stale:report.summary.staleCount,fail:report.fail},null,2));" >> artifacts\system-maturity\P7-004\fix-fresh.stdout.log 2>> artifacts\system-maturity\P7-004\fix-fresh.stderr.log
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\fix-fresh.exit.txt
+
+/* reseal-marker:cd87e3735 */

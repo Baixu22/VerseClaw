@@ -171,3 +171,5 @@ C:\Users\27933\Desktop\clawx\ClawX-maturity-p7\tests\unit\workspaces-api.test.ts
   511:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 ✖ 110 problems (0 errors, 110 warnings)
+
+/* reseal-marker:cd87e3735 */

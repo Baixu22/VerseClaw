@@ -18,3 +18,5 @@ echo QDRY=%ERRORLEVEL% >> %LOG%
 call pnpm maturity:quarterly >> %LOG% 2>> %ERR%
 echo QUARTERLY=%ERRORLEVEL% >> %LOG%
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\close6.exit.txt
+
+/* reseal-marker:cd87e3735 */

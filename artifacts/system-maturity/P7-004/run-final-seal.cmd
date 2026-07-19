@@ -20,3 +20,5 @@ echo QDRY=%ERRORLEVEL% >> %LOG%
 call git diff --check >> %LOG% 2>> %ERR%
 echo DIFFCHECK=%ERRORLEVEL% >> %LOG%
 echo EXIT=%ERRORLEVEL% > artifacts\system-maturity\P7-004\final-seal.exit.txt
+
+/* reseal-marker:cd87e3735 */
