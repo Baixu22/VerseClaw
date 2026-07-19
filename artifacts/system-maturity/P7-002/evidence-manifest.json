@@ -4,6 +4,5 @@
   "mode": "pr",
   "report": "artifacts/system-maturity/P7-002/security-regression-report.json",
   "ok": true,
-  "validationErrors": [],
-  "_resealMarker": "cd87e3735"
+  "validationErrors": []
 }

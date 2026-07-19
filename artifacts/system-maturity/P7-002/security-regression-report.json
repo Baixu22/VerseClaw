@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-002",
-  "generatedAt": "2026-07-19T03:39:36.452Z",
+  "generatedAt": "2026-07-19T03:59:05.081Z",
   "mode": "pr",
   "ok": true,
   "scenarioIds": [
@@ -31,33 +31,31 @@
       "id": "root-security-unit",
       "kind": "unit",
       "run": "pnpm exec vitest run tests/unit/system-maturity-security-suite-p7-002.test.ts tests/unit/system-maturity-traceability-p7-001.test.ts tests/unit/host-invoke-security.test.ts tests/unit/gateway-p4-001-auth-binding.test.ts tests/unit/url-policy.test.ts tests/unit/channels-p4-004-inbound-trust.test.ts tests/unit/path-broker-resolved.test.ts tests/unit/files-permissions-api.test.ts tests/unit/permissions-api.test.ts tests/unit/workspace-permissions.test.ts tests/unit/sekb-trajectory-redaction-p3-001.test.ts tests/unit/session-cascade-delete-p3-004.test.ts tests/unit/windows-update-feed-p6-002.test.ts tests/unit/release-artifact-integrity-p6-004.test.ts tests/unit/agent-browser-p4-002-isolation.test.ts --maxWorkers=1",
-      "startedAt": "2026-07-19T03:38:47.497Z",
-      "durationMs": 35458,
+      "startedAt": "2026-07-19T03:58:03.833Z",
+      "durationMs": 40854,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdoutPath": "gates/root-security-unit.stdout.txt",
-      "stdoutSha256": "416100982b1638b73ef67b32c1cbee925dc5d2f932cf9f0a4d03c60b8915a99b",
+      "stdoutSha256": "c658612dce7d9bc404766f8ff3529317a9aa4b33c64ba164df7427f696ca1b8b",
       "stderrPath": "gates/root-security-unit.stderr.txt",
-      "stderrSha256": "e8a8d354d42e013506484ed0429e7ad4146837abf91e34574d84f11214461ee1"
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "id": "runtime-security-unit",
       "kind": "unit",
       "run": "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.cron.config.ts src/cron/p5-002-lease-authority.test.ts",
-      "startedAt": "2026-07-19T03:39:22.957Z",
-      "durationMs": 13495,
+      "startedAt": "2026-07-19T03:58:44.689Z",
+      "durationMs": 20392,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdoutPath": "gates/runtime-security-unit.stdout.txt",
-      "stdoutSha256": "3ed24a53f6ac04b2f7b5859730906606ffd008bcf3d0628e85752cc73d178a0b",
+      "stdoutSha256": "37017799f37159300a9ea8fd63aed7907fc391f64f9cc525312ec7103914ef91",
       "stderrPath": "gates/runtime-security-unit.stderr.txt",
-      "stderrSha256": "e8a8d354d42e013506484ed0429e7ad4146837abf91e34574d84f11214461ee1"
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ],
   "failedCommandIds": [],
-  "errors": [],
-  "_resealMarker": "cd87e3735",
-  "rehashedAt": "2026-07-19T03:48:03.236Z"
+  "errors": []
 }

@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-19T03:46:59.000Z",
-  "ok": false,
+  "evaluatedAt": "2026-07-19T03:48:47.000Z",
+  "ok": true,
   "summary": {
     "findingCount": 35,
     "taskCount": 38,
     "testCount": 35,
     "freshCount": 35,
     "staleCount": 0,
-    "failureCount": 55,
+    "failureCount": 0,
     "warningCount": 0
   },
   "policy": {
@@ -218,7 +218,7 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "883f7d2df34998eda127dd65c0de19257cebe71d3cc69d55f306cef44d6d506e",
+          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -254,7 +254,7 @@
         },
         {
           "path": "scripts/run-system-maturity-residual-audit.mjs",
-          "sha256": "34cf496c9dc8201cbb47366ead0eb776108b13b4e9980d53314f8fe531e9bf93",
+          "sha256": "69b6b68f8fec2738a858327f15773f697ece9636c457c02320ab209d1773baae",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -374,19 +374,29 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:47:07.262Z",
-      "nextReviewAt": "2026-08-02T03:47:07.262Z",
+      "latestSourceAt": "2026-07-19T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-02T03:48:47.000Z",
       "freshness": "fresh",
-      "failures": [
-        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
-      ]
+      "failures": []
     },
     {
       "id": "F-SEC-002",
@@ -491,15 +501,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-02T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-02T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -615,13 +637,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -699,15 +721,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -789,15 +840,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -879,15 +942,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T05:12:30.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -974,15 +1049,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1061,15 +1148,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1145,15 +1244,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1247,15 +1358,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1351,15 +1474,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1427,15 +1562,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1503,15 +1650,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1580,15 +1739,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1663,15 +1834,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1743,15 +1926,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1814,15 +2009,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2023,7 +2230,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-003/full-validation.json",
-          "sha256": "f1db89e079fde2559bb6895a670bb91b7e055dcf66c0f0eb694060e75cd540a3",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2245,15 +2452,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2351,13 +2570,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -2435,15 +2654,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2509,15 +2757,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2605,15 +2865,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T08:41:38.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2705,13 +2977,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -2795,7 +3067,7 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "883f7d2df34998eda127dd65c0de19257cebe71d3cc69d55f306cef44d6d506e",
+          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -2831,7 +3103,7 @@
         },
         {
           "path": "scripts/run-system-maturity-residual-audit.mjs",
-          "sha256": "34cf496c9dc8201cbb47366ead0eb776108b13b4e9980d53314f8fe531e9bf93",
+          "sha256": "69b6b68f8fec2738a858327f15773f697ece9636c457c02320ab209d1773baae",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -2957,19 +3229,46 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:47:07.262Z",
-      "nextReviewAt": "2026-08-18T03:47:07.262Z",
+      "latestSourceAt": "2026-07-19T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
-      "failures": [
-        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
-      ]
+      "failures": []
     },
     {
       "id": "F-SUPPLY-001",
@@ -3175,13 +3474,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3259,15 +3558,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3433,7 +3761,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3499,13 +3827,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3583,15 +3911,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:47:07.276Z",
-      "nextReviewAt": "2026-08-18T03:47:07.276Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3933,7 +4290,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3999,13 +4356,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -4083,7 +4440,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-004/full-validation.json",
-          "sha256": "a951fdb2c155198b255a03710173512d5e2fcfdb1665e8159a001f76dfc98081",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4281,7 +4638,7 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "883f7d2df34998eda127dd65c0de19257cebe71d3cc69d55f306cef44d6d506e",
+          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4317,7 +4674,7 @@
         },
         {
           "path": "scripts/run-system-maturity-residual-audit.mjs",
-          "sha256": "34cf496c9dc8201cbb47366ead0eb776108b13b4e9980d53314f8fe531e9bf93",
+          "sha256": "69b6b68f8fec2738a858327f15773f697ece9636c457c02320ab209d1773baae",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4443,19 +4800,46 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-19T03:44:56.000Z",
-      "latestEvidenceAt": "2026-07-19T03:47:07.276Z",
-      "nextReviewAt": "2026-09-17T03:47:07.276Z",
+      "latestSourceAt": "2026-07-19T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-09-17T03:51:08.512Z",
       "freshness": "fresh",
-      "failures": [
-        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
-      ]
+      "failures": []
     },
     {
       "id": "F-GOV-003",
@@ -4716,7 +5100,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-004/full-validation.json",
-          "sha256": "a951fdb2c155198b255a03710173512d5e2fcfdb1665e8159a001f76dfc98081",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4908,15 +5292,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-19T03:44:56.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4983,15 +5379,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T16:28:32.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5045,7 +5453,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-003/full-validation.json",
-          "sha256": "f1db89e079fde2559bb6895a670bb91b7e055dcf66c0f0eb694060e75cd540a3",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5207,15 +5615,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 90,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-10-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-10-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5327,13 +5747,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -5411,15 +5831,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5538,15 +5987,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5655,13 +6116,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -5739,15 +6200,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5814,15 +6304,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5889,15 +6391,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6006,13 +6520,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4",
+          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6090,7 +6604,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-003/full-validation.json",
-          "sha256": "f1db89e079fde2559bb6895a670bb91b7e055dcf66c0f0eb694060e75cd540a3",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6252,15 +6766,44 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
+          "sha256": "25d19a3d18f5f82d8039de5bf08da1059c94923683ac78ba0dc5700c9ebd62c5",
+          "taskId": "P7-002",
+          "kind": "global-validation",
+          "findingIds": [
+            "F-AUTH-006",
+            "F-DATA-005",
+            "F-GOV-001",
+            "F-GOV-002",
+            "F-REL-001",
+            "F-REL-004",
+            "F-SEC-003",
+            "F-SEC-006",
+            "F-SUPPLY-001"
+          ]
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:51:08.512Z",
+      "nextReviewAt": "2026-08-18T03:51:08.512Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6326,15 +6869,27 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-09-17T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-09-17T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6513,75 +7068,31 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36",
+          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
           "taskId": "P7-001",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-003/full-validation.json",
+          "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da",
+          "taskId": "P7-003",
+          "kind": "global-validation"
+        },
+        {
+          "path": "artifacts/system-maturity/P7-004/full-validation.json",
+          "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8",
+          "taskId": "P7-004",
           "kind": "global-validation"
         }
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T00:43:36.000Z",
-      "latestEvidenceAt": "2026-07-19T03:46:59.000Z",
-      "nextReviewAt": "2026-08-18T03:46:59.000Z",
+      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
+      "nextReviewAt": "2026-08-18T03:48:47.000Z",
       "freshness": "fresh",
       "failures": []
     }
   ],
-  "fail": [
-    "global evidence artifacts/system-maturity/P7-002/security-regression-report.json root-security-unit.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-002/security-regression-report.json root-security-unit.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-002/security-regression-report.json runtime-security-unit.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-002/security-regression-report.json runtime-security-unit.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json diff-check.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json diff-check.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json focused-unit.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json focused-unit.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json privacy-validate.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json privacy-validate.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json harness-task.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json harness-task.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json lint-check.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json lint-check.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json typecheck.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json typecheck.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json unit-full.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json unit-full.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json maturity-validate.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-003/full-validation.json maturity-validate.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json diff-check.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json diff-check.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json focused-unit.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json focused-unit.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json quarterly-dry-run.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json quarterly-dry-run.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json agent-dev-audit.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json agent-dev-audit.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json agent-dev-deep-test.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json agent-dev-deep-test.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json typecheck.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json typecheck.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json e2e-agent-dev-quality.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json e2e-agent-dev-quality.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json lint-check.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json lint-check.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json unit-full.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json unit-full.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json harness-task.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json harness-task.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-hash-sync-pre.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-hash-sync-pre.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-validate.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-validate.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-hash-sync.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-hash-sync.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-evidence.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json maturity-evidence.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json harness-recheck.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json harness-recheck.stderr hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json quarterly-final.stdout hash mismatch or missing",
-    "global evidence artifacts/system-maturity/P7-004/full-validation.json quarterly-final.stderr hash mismatch or missing",
-    "F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
-    "F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
-    "F-GOV-002: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
-  ],
+  "fail": [],
   "warn": []
 }

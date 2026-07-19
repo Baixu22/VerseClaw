@@ -252,6 +252,7 @@ INFO  A2 P7-004 hash OK plans/system-maturity/DELIVERY-FORMAT.md
 INFO  A2 P7-004 hash OK plans/system-maturity/INDEX.md
 INFO  A2 P7-004 hash OK .github/workflows/system-maturity-quarterly.yml
 INFO  A2 P8-001 hash OK artifacts/system-maturity/P8-001/vitest.stdout.txt
+INFO  A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-report.json
 INFO  A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-dry-run.json
 INFO  A2 P8-001 hash OK artifacts/system-maturity/P8-001/maturity-plan.stdout.txt
 INFO  A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt
@@ -298,3 +299,5 @@ INFO  A2 P8-004 hash OK plans/system-maturity/residual-register.json
 INFO  A2 P8-004 hash OK plans/system-maturity/capability-inventory.json
 INFO  A2 P8-004 hash OK package.json
 INFO  A1 regression probe: missing evidence path correctly detectable
+
+validate-system-maturity-evidence: OK

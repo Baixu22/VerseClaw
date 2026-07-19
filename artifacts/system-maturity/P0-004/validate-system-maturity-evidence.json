@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-07-19T03:47:07.345Z",
-  "ok": false,
+  "checkedAt": "2026-07-19T03:59:48.867Z",
+  "ok": true,
   "recomputedCount": 300,
   "recomputed": [
     {
@@ -848,12 +848,12 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/full-validation.json",
-      "sha256": "b0eb4829979f5b9c518c4462b7600b8bac9a2f6bc03bca91f4f66b253fe1fb36"
+      "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "49b0efeb950bf75807d1903b8e236ad552f24860b9a462a8d6b18a08afd4b491"
+      "sha256": "6a1a25f15df44410f68e47ff6ee8c2a31cf073238c7ccbcc507e6bb50efae398"
     },
     {
       "task": "P7-001",
@@ -908,12 +908,12 @@
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-      "sha256": "6b529a773a0a06864d24c5e7d01ffc0e480c3abde18b6084ff0db648661b3634"
+      "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a"
     },
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-      "sha256": "0bba8a5d05b884610f05f491f0ecbb7080e6578f801bc55aa89488853a9ed4f4"
+      "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae"
     },
     {
       "task": "P7-002",
@@ -978,7 +978,7 @@
     {
       "task": "P7-003",
       "path": "artifacts/system-maturity/P7-003/full-validation.json",
-      "sha256": "f1db89e079fde2559bb6895a670bb91b7e055dcf66c0f0eb694060e75cd540a3"
+      "sha256": "e481e9ca57c8abb16c2eb36e9aab48ac2a2354b8c5d623741748a959d690b2da"
     },
     {
       "task": "P7-003",
@@ -1113,7 +1113,7 @@
     {
       "task": "P7-004",
       "path": "artifacts/system-maturity/P7-004/full-validation.json",
-      "sha256": "a951fdb2c155198b255a03710173512d5e2fcfdb1665e8159a001f76dfc98081"
+      "sha256": "bf83a8c8136153c4d82f5a6c1ecf59ed251538f9fc6f0b784f418bef4a6b99d8"
     },
     {
       "task": "P7-004",
@@ -1278,7 +1278,7 @@
     {
       "task": "P8-001",
       "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-      "sha256": "aaba763fe2a39882d6476c98eadd78f265c1f6d7c1076b7ed92d5bd411ad1441"
+      "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84"
     },
     {
       "task": "P8-001",
@@ -1308,7 +1308,7 @@
     {
       "task": "P8-001",
       "path": "scripts/run-system-maturity-residual-audit.mjs",
-      "sha256": "34cf496c9dc8201cbb47366ead0eb776108b13b4e9980d53314f8fe531e9bf93"
+      "sha256": "69b6b68f8fec2738a858327f15773f697ece9636c457c02320ab209d1773baae"
     },
     {
       "task": "P8-001",
@@ -1506,9 +1506,7 @@
       "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8"
     }
   ],
-  "fail": [
-    "A2 P8-001 evidence hash mismatch for artifacts/system-maturity/P8-001/residual-audit-report.json: expected 883f7d2df34998eda127dd65c0de19257cebe71d3cc69d55f306cef44d6d506e got aaba763fe2a39882d6476c98eadd78f265c1f6d7c1076b7ed92d5bd411ad1441"
-  ],
+  "fail": [],
   "warn": [],
   "info": [
     "A2 P0-001 hash OK plans/system-maturity/BASELINE.json",
@@ -1765,6 +1763,7 @@
     "A2 P7-004 hash OK plans/system-maturity/INDEX.md",
     "A2 P7-004 hash OK .github/workflows/system-maturity-quarterly.yml",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/vitest.stdout.txt",
+    "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-report.json",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/maturity-plan.stdout.txt",
     "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-dry-run.stdout.txt",
