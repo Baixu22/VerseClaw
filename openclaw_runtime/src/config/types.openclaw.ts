@@ -270,6 +270,32 @@ export type RuntimeFeatureConfig = {
       sessions?: "all" | "main-only";
     };
   };
+  /**
+   * Verse Token Working Context assembly (product default ON).
+   * Consumes workspace markdown / tools / memory outputs as sources and
+   * appends a budgeted `## Working Context` section to extraSystemPrompt.
+   * Does not replace md/jsonl storage, BlockStore, or compaction.
+   * Kill-switch: runtime.vtoken.assembly.enabled=false or
+   * VERSE_VTOKEN_ASSEMBLY_ENABLED=0.
+   */
+  vtoken?: {
+    assembly?: {
+      /** Explicit false disables; omitted defaults to enabled. */
+      enabled?: boolean;
+      /** Token budget for assemble (default 600). */
+      budgetTokens?: number;
+      /** Render density (default compact). */
+      renderMode?: "compact" | "dense" | "verbose";
+      /** Session scope (default all). */
+      sessions?: "all" | "main-only";
+      /** RPC timeout ms (default 12000). */
+      timeoutMs?: number;
+      /** Max bootstrap md files per turn (default 12). */
+      maxSourceFiles?: number;
+      /** Max chars per source file (default 24000). */
+      maxSourceChars?: number;
+    };
+  };
   /** Runtime AgentMap shadow/provider flags. Defaults are off. */
   agentMap?: {
     /** Allow readonly AgentMap context provider output only when explicitly registered. */

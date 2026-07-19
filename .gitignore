@@ -177,3 +177,12 @@ tmp/
 
 !artifacts/system-maturity/
 !artifacts/system-maturity/**
+
+# Verse Token local runtime artifacts
+packages/vtoken/**/__pycache__/
+packages/vtoken/**/*.pyc
+packages/vtoken/.pytest_cache/
+packages/vtoken/**/*.vtg
+packages/vtoken/**/*.vtwal
+packages/vtoken/sessions/
+packages/vtoken/.venv/

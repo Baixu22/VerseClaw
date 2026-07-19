@@ -469,7 +469,40 @@
         "read-only": "読み取り専用"
       }
     },
-    "tokenMasked": "トークン読込済（マスク）"
+    "tokenMasked": "トークン読込済（マスク）",
+    "vtokenBridge": {
+      "title": "Verse Token ブリッジ",
+      "description": "Working Context 組み立て（Verse Token）。製品デフォルト ON：エージェントターンでワークスペース md/tools/memory を ## Working Context に組み立てます。markdown 保存や DCS BlockStore は置き換えません。無効化: VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
+      "badgeEnabled": "有効",
+      "badgeDisabled": "無効",
+      "badgeRunning": "worker 実行中",
+      "badgeStopped": "worker 停止",
+      "enableLabel": "VT ブリッジを有効化",
+      "enableHelp": "診断用 host-api ブリッジ。本番組み立ては gateway で既定有効です。",
+      "version": "バージョン",
+      "pid": "Worker PID",
+      "opened": "Store オープン",
+      "packageRoot": "パッケージ root",
+      "lastAssemble": "直近 assemble",
+      "lastAssembleDetail": "{{used}} / {{budget}} tokens · 採用 {{included}} · 除外 {{evicted}} · {{ms}}ms",
+      "error": "直近エラー",
+      "yes": "はい",
+      "no": "いいえ",
+      "ensureStarted": "worker を起動",
+      "smokeAssemble": "スモーク assemble",
+      "boundaryNote": "VT は md/jsonl をソースとして Working Context を組み立てます。ディスク上の markdown や DCS ContextBlock/BlockStore/compaction は置き換えません。",
+      "loadFailed": "VT ブリッジ状態の読み込みに失敗: {{error}}",
+      "toggleFailed": "VT ブリッジの切替に失敗",
+      "toggleFailedDetail": "VT ブリッジの切替に失敗: {{error}}",
+      "enabledToast": "VT ブリッジを有効化しました（初回利用時に worker を遅延起動）",
+      "disabledToast": "VT ブリッジを無効化しました",
+      "startFailed": "VT worker の起動に失敗",
+      "startFailedDetail": "VT worker の起動に失敗: {{error}}",
+      "startedToast": "VT worker を起動しました",
+      "assembleFailed": "スモーク assemble に失敗",
+      "assembleFailedDetail": "スモーク assemble に失敗: {{error}}",
+      "assembleOk": "スモーク assemble 成功: {{used}} / {{budget}} tokens"
+    }
   },
   "storage": {
     "title": "ストレージとメモリ",

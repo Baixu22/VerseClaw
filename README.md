@@ -491,6 +491,8 @@ Verse Claw also seeds workspace-local `.clawx/harness/` docs for active project 
 
 Agent-authored page and functional tests can use the typed `hostApi.agentDev` control plane for state seeds, `?devScenario=...`, host-api record/replay, diagnostics snapshots, transport traces, trace timelines, Workbench evidence, cost reports, skill sandbox reports, visual presets, selector contracts, redacted scenario recordings, and reviewed scenario promotion. Settings > Developer includes the in-app Agent Dev Workbench panel, and deep-test reports now include machine-readable `decision` and rolling timing history evidence. See [`docs/agent-dev-control-plane.md`](docs/agent-dev-control-plane.md).
 
+Verse Token (`packages/vtoken`) is an opt-in Working Context assembly foundation exposed via host-api (`hostApi.vtoken.*`) and Settings > Developer > Verse Token Bridge. It is disabled by default and does not replace the production DCS ContextEngine path. Host integration notes live in [`packages/vtoken/README.HOST.md`](packages/vtoken/README.HOST.md). Local commands: `pnpm vtoken:test`, `pnpm vtoken:worker`.
+
 On headless Linux, run Electron tests under a display server such as `xvfb-run -a pnpm run test:e2e`.
 
 ### Communication Regression Checks

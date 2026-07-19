@@ -235,6 +235,10 @@ import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
 import { dcsObservability } from "../../../context-engine/dcs-observability.js";
 import {
+  computeVtokenExtraSystemPrompt,
+  loadVtokenDcsMemoryEntries,
+} from "../../../context-engine/chat-turn-vtoken-injection.js";
+import {
   bindSessionWorkspaceFingerprint,
   computeWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
@@ -1957,7 +1961,40 @@ export async function runEmbeddedAttempt(
       runtimeIntensityPolicy.systemPromptLines.length > 0
         ? ["## Runtime Intensity", ...runtimeIntensityPolicy.systemPromptLines].join("\n")
         : undefined;
-    const effectiveExtraSystemPrompt = [params.extraSystemPrompt, runtimeIntensitySystemPrompt]
+    const toolEntries = mapToolsToToolRegistryEntries(effectiveTools);
+    const vtokenMemoryEntries = await loadVtokenDcsMemoryEntries(
+      dcsExtensionDeps?.workingMemoryStore,
+      params.sessionId,
+      params.config,
+    );
+    const vtokenExtraSystemPrompt = await computeVtokenExtraSystemPrompt(
+      params.extraSystemPrompt,
+      params.config,
+      {
+        sessionKey: params.sessionKey,
+        taskHint: params.prompt,
+        workspaceDir: effectiveWorkspace,
+        markdownSources: hookAdjustedBootstrapFiles
+          .filter((file) => !file.missing && typeof file.content === "string")
+          .map((file) => ({
+            sourcePath: file.path || file.name,
+            text: file.content ?? "",
+          })),
+        toolSchemas: toolEntries.map((entry) => ({
+          name: entry.resourceId,
+          description: entry.purpose,
+          ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
+        })),
+        memoryEntries: vtokenMemoryEntries,
+      },
+      (message, context) =>
+        log.warn(
+          context && Object.keys(context).length > 0
+            ? `${message} ${JSON.stringify(context)}`
+            : message,
+        ),
+    );
+    const effectiveExtraSystemPrompt = [vtokenExtraSystemPrompt, runtimeIntensitySystemPrompt]
       .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
       .join("\n\n");
     const attemptSystemPrompt = buildAttemptSystemPrompt({
@@ -2235,7 +2272,6 @@ export async function runEmbeddedAttempt(
       // task-state factory can set TaskStateHandlerConfig for phase producer writes.
       // DCS Stage 3 / W3: pass this attempt's real agent tool list so tool_registry
       // can be produced from production tools when the feature flag is on.
-      const toolEntries = mapToolsToToolRegistryEntries(effectiveTools);
       const extensionFactories = buildEmbeddedExtensionFactories({
         cfg: params.config,
         sessionManager,

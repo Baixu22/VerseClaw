@@ -52,6 +52,7 @@ import { createDialogApi } from '../services/dialog-api';
 import { createWindowApi } from '../services/window-api';
 import { createUpdatesApi } from '../services/updates-api';
 import { createUvApi } from '../services/uv-api';
+import { createVtokenApi } from '../services/vtoken-api';
 import { createGatewayApi } from '../services/gateway-api';
 import { createLocalControlPlaneApi } from '../services/local-control-plane-api';
 import { createCapabilitiesApi } from '../services/capabilities-api';
@@ -188,6 +189,7 @@ function registerTypedHostHandlers(
     window: createWindowApi(mainWindow),
     updates: createUpdatesApi(),
     uv: createUvApi(),
+    vtoken: createVtokenApi(),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
     terminal: createTerminalApi({ gatewayManager, terminalManager }),

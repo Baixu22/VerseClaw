@@ -118,6 +118,10 @@ export function buildGatewayRuntimeEnv(
   // pre-existing value inherited from the user shell cannot re-enable it.
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
+  // Verse Token assembly default ON unless operator set kill-switch.
+  if (!runtimeEnv.VERSE_VTOKEN_ASSEMBLY_ENABLED?.trim()) {
+    runtimeEnv.VERSE_VTOKEN_ASSEMBLY_ENABLED = '1';
+  }
 
   return runtimeEnv;
 }

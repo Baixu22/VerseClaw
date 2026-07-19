@@ -478,6 +478,8 @@ pnpm run test:e2e:agent-dev-quality:smoke  # 仅 Workbench E2E 冒烟循环
 pnpm run typecheck:cached          # Fingerprint-cached repeat typecheck for local diagnosis
 pnpm run typecheck:force           # Force a fresh uncached typecheck cache refresh
 pnpm agent-dev:validate
+pnpm vtoken:test
+pnpm vtoken:worker
 
 # 构建与打包
 pnpm run build:vite       # 仅构建前端

@@ -56,6 +56,7 @@ import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { syncAllProviderAuthToRuntime } from '../services/providers/provider-runtime-sync';
 import { applyChatRuntimeEvent, enrichTraceTokenUsage } from '../services/observability-adapter';
 import { stopAllOfficeWatches } from '../services/office-tools-api';
+import { disposeVtokenBridge } from '../services/vtoken-api';
 import { resolveRemoteDebuggingLaunchPort } from '../utils/remote-control';
 import { appendTaskLedgerEvents } from '../services/task-ledger-service';
 import type { TaskLedgerEventInput, TaskLedgerNodeStatus } from '../../shared/types/task-ledger';
@@ -1280,6 +1281,7 @@ if (gotTheLock) {
   process.once('SIGTERM', () => requestQuitOnSignal('SIGTERM'));
 
   app.on('will-quit', () => {
+    disposeVtokenBridge();
     stopAllOfficeWatches();
     getResourceTracker().stop();
     releaseProcessInstanceFileLock();

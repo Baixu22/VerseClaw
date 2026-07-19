@@ -469,7 +469,40 @@
         "read-only": "read-only"
       }
     },
-    "tokenMasked": "Token loaded (masked)"
+    "tokenMasked": "Token loaded (masked)",
+    "vtokenBridge": {
+      "title": "Verse Token Bridge",
+      "description": "Working Context assembly (Verse Token). Product default ON: packs workspace md/tools/memory into ## Working Context on agent turns. Does not replace markdown storage or DCS BlockStore. Kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0.",
+      "badgeEnabled": "enabled",
+      "badgeDisabled": "disabled",
+      "badgeRunning": "worker running",
+      "badgeStopped": "worker stopped",
+      "enableLabel": "Enable VT bridge",
+      "enableHelp": "Process-local host-api bridge for diagnostics. Production assembly runs in the gateway by default.",
+      "version": "Version",
+      "pid": "Worker PID",
+      "opened": "Store open",
+      "packageRoot": "Package root",
+      "lastAssemble": "Last assemble",
+      "lastAssembleDetail": "{{used}} / {{budget}} tokens · included {{included}} · evicted {{evicted}} · {{ms}}ms",
+      "error": "Last error",
+      "yes": "yes",
+      "no": "no",
+      "ensureStarted": "Start worker",
+      "smokeAssemble": "Smoke assemble",
+      "boundaryNote": "VT consumes md/jsonl as sources and assembles Working Context. It does not replace on-disk markdown or DCS ContextBlock/BlockStore/compaction.",
+      "loadFailed": "Failed to load VT bridge status: {{error}}",
+      "toggleFailed": "Failed to toggle VT bridge",
+      "toggleFailedDetail": "Failed to toggle VT bridge: {{error}}",
+      "enabledToast": "VT bridge enabled (worker still lazy-starts on first use)",
+      "disabledToast": "VT bridge disabled",
+      "startFailed": "Failed to start VT worker",
+      "startFailedDetail": "Failed to start VT worker: {{error}}",
+      "startedToast": "VT worker started",
+      "assembleFailed": "Smoke assemble failed",
+      "assembleFailedDetail": "Smoke assemble failed: {{error}}",
+      "assembleOk": "Smoke assemble ok: {{used}} / {{budget}} tokens"
+    }
   },
   "storage": {
     "title": "Storage & Memory",

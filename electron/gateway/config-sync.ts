@@ -995,6 +995,26 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   const baseEnvPatched = runtimeMode === 'source' && existsSync(fsPath(sourceRuntimeBinPath))
     ? prependPathEntry(baseEnvWithBin, sourceRuntimeBinPath).env
     : baseEnvWithBin;
+  // Verse Token Working Context assembly (gateway production path).
+  // Package root points the gateway stdio worker at packages/vtoken (or packaged resources).
+  const vtokenPackageRoot = (() => {
+    try {
+      // Prefer monorepo packages/vtoken in dev; packaged resources/vtoken in production.
+      const { app } = require('electron') as typeof import('electron');
+      const { existsSync } = require('node:fs') as typeof import('node:fs');
+      const { join } = require('node:path') as typeof import('node:path');
+      if (app?.isPackaged) {
+        const packaged = join(process.resourcesPath, 'vtoken');
+        if (existsSync(join(packaged, 'src', 'vtoken'))) return packaged;
+      }
+      const dev = join(process.cwd(), 'packages', 'vtoken');
+      if (existsSync(join(dev, 'src', 'vtoken'))) return dev;
+    } catch {
+      // ignore
+    }
+    return process.env.VERSE_VTOKEN_PACKAGE_ROOT?.trim() || '';
+  })();
+
   const forkEnv: Record<string, string | undefined> = {
     ...stripSystemdSupervisorEnv(baseEnvPatched),
     ...(sourceRuntimeIsolation?.env ?? {}),
@@ -1007,6 +1027,15 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : '',
     CLAWDBOT_SKIP_CHANNELS: skipChannels ? '1' : '',
     OPENCLAW_NO_RESPAWN: '1',
+    // Product default ON for VT assembly; honor explicit env kill-switch if set.
+    VERSE_VTOKEN_ASSEMBLY_ENABLED:
+      process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED?.trim() || '1',
+    ...(vtokenPackageRoot
+      ? { VERSE_VTOKEN_PACKAGE_ROOT: vtokenPackageRoot }
+      : {}),
+    ...(process.resourcesPath
+      ? { VERSE_RESOURCES_PATH: process.resourcesPath }
+      : {}),
   };
 
   // Ensure extension-specific packages (e.g. grammy from the telegram

@@ -30,4 +30,22 @@ describe("DCS dual-injection observability (D7)", () => {
     a.cvkSystemPromptAdditionChars = 999;
     expect(dcsObservability.snapshot().cvkSystemPromptAdditionChars).toBe(10);
   });
+
+  it("records Verse Token assembly in the existing DCS registry", () => {
+    dcsObservability.recordVtokenAssembly({
+      success: true,
+      chars: 120,
+      tokens: 32,
+      sourcesIngested: 4,
+    });
+    dcsObservability.recordVtokenAssembly({ success: false });
+    expect(dcsObservability.snapshot()).toMatchObject({
+      vtokenAssemblyCalls: 2,
+      vtokenAssemblySuccesses: 1,
+      vtokenAssemblyErrors: 1,
+      vtokenAssemblyChars: 120,
+      vtokenAssemblyTokens: 32,
+      vtokenSourcesIngested: 4,
+    });
+  });
 });

@@ -429,6 +429,15 @@ import type {
 } from '@shared/host-api/contract';
 import type { CronJobCreateInput, CronJobUpdateInput } from '@shared/types/cron';
 import type {
+  VtokenAssemblePayload,
+  VtokenIngestMarkdownPayload,
+  VtokenIngestMemoryPayload,
+  VtokenIngestPathPayload,
+  VtokenIngestToolsPayload,
+  VtokenOpenPayload,
+  VtokenSetEnabledPayload,
+} from '@shared/vtoken/types';
+import type {
   ObservabilityDashboardSnapshot,
   ObservabilityNodeDiagnostics,
   ObservabilityTrace,
@@ -687,6 +696,20 @@ export const hostApi = {
   },
   uv: {
     installAll: () => invokeHost('uv', 'installAll'),
+  },
+  vtoken: {
+    ping: () => invokeHost('vtoken', 'ping'),
+    open: (payload?: VtokenOpenPayload) => invokeHost('vtoken', 'open', payload),
+    ingestPath: (payload: VtokenIngestPathPayload) => invokeHost('vtoken', 'ingestPath', payload),
+    ingestMarkdown: (payload: VtokenIngestMarkdownPayload) => invokeHost('vtoken', 'ingestMarkdown', payload),
+    ingestTools: (payload: VtokenIngestToolsPayload) => invokeHost('vtoken', 'ingestTools', payload),
+    ingestMemory: (payload: VtokenIngestMemoryPayload) => invokeHost('vtoken', 'ingestMemory', payload),
+    assemble: (payload: VtokenAssemblePayload) => invokeHost('vtoken', 'assemble', payload),
+    stats: () => invokeHost('vtoken', 'stats'),
+    close: () => invokeHost('vtoken', 'close'),
+    getStatus: () => invokeHost('vtoken', 'getStatus'),
+    setEnabled: (payload: VtokenSetEnabledPayload) => invokeHost('vtoken', 'setEnabled', payload),
+    ensureStarted: () => invokeHost('vtoken', 'ensureStarted'),
   },
   settings: {
     getAll: () => invokeHost('settings', 'getAll'),

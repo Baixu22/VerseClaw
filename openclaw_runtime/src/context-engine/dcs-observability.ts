@@ -16,6 +16,12 @@ export type DcsObservabilitySnapshot = {
   workspaceScopeBound: number;
   workspaceScopeInvalidated: number;
   contextLadderActionHits: Record<string, number>;
+  vtokenAssemblyCalls: number;
+  vtokenAssemblySuccesses: number;
+  vtokenAssemblyErrors: number;
+  vtokenAssemblyChars: number;
+  vtokenAssemblyTokens: number;
+  vtokenSourcesIngested: number;
 };
 
 const ZERO: DcsObservabilitySnapshot = {
@@ -27,6 +33,12 @@ const ZERO: DcsObservabilitySnapshot = {
   workspaceScopeBound: 0,
   workspaceScopeInvalidated: 0,
   contextLadderActionHits: {},
+  vtokenAssemblyCalls: 0,
+  vtokenAssemblySuccesses: 0,
+  vtokenAssemblyErrors: 0,
+  vtokenAssemblyChars: 0,
+  vtokenAssemblyTokens: 0,
+  vtokenSourcesIngested: 0,
 };
 
 class DcsObservabilityRegistry {
@@ -70,6 +82,26 @@ class DcsObservabilityRegistry {
     const key = action.trim() || "unknown";
     this.#counters.contextLadderActionHits[key] =
       (this.#counters.contextLadderActionHits[key] ?? 0) + 1;
+  }
+
+  recordVtokenAssembly(params: {
+    success: boolean;
+    chars?: number;
+    tokens?: number;
+    sourcesIngested?: number;
+  }): void {
+    this.#counters.vtokenAssemblyCalls += 1;
+    if (!params.success) {
+      this.#counters.vtokenAssemblyErrors += 1;
+      return;
+    }
+    this.#counters.vtokenAssemblySuccesses += 1;
+    this.#counters.vtokenAssemblyChars += Math.max(0, Math.floor(params.chars ?? 0));
+    this.#counters.vtokenAssemblyTokens += Math.max(0, Math.floor(params.tokens ?? 0));
+    this.#counters.vtokenSourcesIngested += Math.max(
+      0,
+      Math.floor(params.sourcesIngested ?? 0),
+    );
   }
 
   snapshot(): DcsObservabilitySnapshot {

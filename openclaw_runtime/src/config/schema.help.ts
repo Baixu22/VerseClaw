@@ -2070,6 +2070,25 @@ export const FIELD_HELP: Record<string, string> = {
     "Total token budget across all injected providers for a single chat turn (default: 768). Providers cannot exceed this budget, preserving the context engine's budget discipline.",
   "runtime.memory.injectPilot.sessions":
     "Session scope for the injection pilot (default: 'main-only'). 'main-only' injects only into agent:<id>:main sessions; 'all' injects into every session. Subagent sessions already receive role-memory via role-spawn.ts, so 'main-only' avoids double-injection during the pilot.",
+  "runtime.vtoken":
+    "Verse Token Working Context assembly. Packs workspace md/tools/memory sources into a budgeted ## Working Context block on agent turns (default ON). Does not replace md storage.",
+  "runtime.vtoken.assembly":
+    "Working Context assembly controls for Verse Token (default enabled).",
+  "runtime.vtoken.assembly.enabled":
+    "Explicit false disables VT Working Context injection (default: true). Env kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0.",
+  "runtime.vtoken.assembly.budgetTokens":
+    "Token budget for VT assemble (default: 600).",
+  "runtime.vtoken.assembly.renderMode":
+    "VT render density: compact | dense | verbose (default: compact).",
+  "runtime.vtoken.assembly.sessions":
+    "Session scope for VT assembly: all | main-only (default: all).",
+  "runtime.vtoken.assembly.timeoutMs":
+    "VT RPC timeout in ms (default: 12000).",
+  "runtime.vtoken.assembly.maxSourceFiles":
+    "Max workspace bootstrap md files ingested per turn (default: 12).",
+  "runtime.vtoken.assembly.maxSourceChars":
+    "Max characters per source file when ingesting (default: 24000).",
+
   "runtime.agentMap":
     "Default-off AgentMap readiness flags for explicit readonly shadow provider validation and prompt assembly experiments. These flags do not register AgentMap by default, change provider ordering, alter prompts, replace read/grep/find/ls, or grant runtime authority.",
   "runtime.agentMap.provider":

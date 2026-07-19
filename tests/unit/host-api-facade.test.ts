@@ -256,6 +256,51 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('routes vtoken methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: false, disabled: true } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, enabled: true } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, ok: true } })
+      .mockResolvedValueOnce({
+        id: 'req-4',
+        ok: true,
+        data: {
+          success: true,
+          result: {
+            prompt: 'x',
+            tokens_used: 1,
+            tokens_budget: 100,
+            slot_breakdown: {},
+            nodes_included: [],
+            nodes_evicted: [],
+            dedup_count: 0,
+          },
+        },
+      })
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: true, enabled: false, running: false, workerPid: null, opened: false } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.vtoken.ping()).resolves.toEqual({ success: false, disabled: true });
+    await expect(hostApi.vtoken.setEnabled({ enabled: true })).resolves.toEqual({ success: true, enabled: true });
+    await expect(hostApi.vtoken.open({})).resolves.toEqual({ success: true, ok: true });
+    await hostApi.vtoken.assemble({ taskHint: 'auth', budgetTokens: 100 });
+    await hostApi.vtoken.getStatus();
+
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({ module: 'vtoken', action: 'ping' }));
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'vtoken',
+      action: 'setEnabled',
+      payload: { enabled: true },
+    }));
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({ module: 'vtoken', action: 'open' }));
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'vtoken',
+      action: 'assemble',
+      payload: { taskHint: 'auth', budgetTokens: 100 },
+    }));
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({ module: 'vtoken', action: 'getStatus' }));
+  });
+
   it('routes git methods through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, status: { isRepository: true, changes: [] } } })

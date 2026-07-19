@@ -1,0 +1,12 @@
+%vt 0.3.1
+%mode doc
+%id system/middleware
+%lang zh
+
+DEF middleware.jwt_verify   JWT 校验中间件，拦截未授权请求
+DESC middleware.jwt_verify  校验签名、过期时间与 issuer
+DEF db.user_table           用户表，存储凭证哈希与角色
+DEF api.endpoint.login      登录端点 POST /api/login
+
+REF middleware.jwt_verify --DEPENDS--> auth.jwt_secret
+REF api.endpoint.login --DEPENDS--> middleware.jwt_verify
