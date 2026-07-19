@@ -14,6 +14,10 @@ ownedPaths:
   - docs/superpowers/specs/2026-07-07-role-first-p3-typed-blackboard-design.md
   - docs/superpowers/plans/2026-07-07-role-first-p3-typed-blackboard.md
 touchedAreas:
+  - artifacts/system-maturity/orchestration-gap-closure/ORCH-002/**
+  - artifacts/system-maturity/orchestration-gap-closure/status-gate.json
+  - plans/system-maturity/orchestration-gap-closure/ORCH-002.delivery.md
+  - plans/system-maturity/orchestration-gap-closure/ORCHESTRATION_STATUS.json
   - docs/multi-agent-orchestration-development-plan.md
   - docs/role-first-design.md
   - docs/multi-agent-orchestration/**
