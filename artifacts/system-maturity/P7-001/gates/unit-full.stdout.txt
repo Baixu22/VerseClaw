@@ -3,9 +3,9 @@
 
 
 [2m Test Files [22m [1m[32m691 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (694)[39m
-[2m      Tests [22m [1m[32m6397 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6449)[39m
-[2m   Start at [22m 23:43:37
-[2m   Duration [22m 538.75s[2m (transform 35.92s, setup 69.41s, import 192.18s, tests 227.08s, environment 440.21s)[22m
+[2m      Tests [22m [1m[32m6398 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6450)[39m
+[2m   Start at [22m 00:32:03
+[2m   Duration [22m 479.80s[2m (transform 31.77s, setup 62.32s, import 168.68s, tests 202.02s, environment 394.56s)[22m
 
 
 [1m[46m RUN [49m[22m [36mv4.1.1 [39m[90m[workspace][39m
@@ -13,8 +13,8 @@
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
 [2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
-[2m   Start at [22m 23:52:36
-[2m   Duration [22m 22.30s[2m (transform 1.26s, setup 263ms, import 1.64s, tests 17.79s, environment 1.78s)[22m
+[2m   Start at [22m 00:40:04
+[2m   Duration [22m 21.41s[2m (transform 2.09s, setup 320ms, import 2.49s, tests 15.43s, environment 2.16s)[22m
 
 
  RUN  v4.1.7 [workspace]/openclaw_runtime
@@ -22,8 +22,8 @@
 
  Test Files  20 passed (20)
       Tests  227 passed (227)
-   Start at  23:53:00
-   Duration  3.09s (transform 2.63s, setup 720ms, import 3.14s, tests 1.48s, environment 2ms)
+   Start at  00:40:27
+   Duration  4.03s (transform 1.60s, setup 446ms, import 1.82s, tests 1.35s, environment 0ms)
 
 
  RUN  v4.1.7 [workspace]/openclaw_runtime
@@ -31,8 +31,8 @@
 
  Test Files  5 passed (5)
       Tests  10 passed (10)
-   Start at  23:53:04
-   Duration  1.19s (transform 693ms, setup 85ms, import 1.45s, tests 25ms, environment 0ms)
+   Start at  00:40:32
+   Duration  1.37s (transform 400ms, setup 53ms, import 948ms, tests 17ms, environment 0ms)
 
 
  RUN  v4.1.7 [workspace]/openclaw_runtime
@@ -40,5 +40,5 @@
 
  Test Files  10 passed (10)
       Tests  77 passed (77)
-   Start at  23:53:07
-   Duration  16.80s (transform 13.65s, setup 706ms, import 20.51s, tests 4.27s, environment 1ms)
+   Start at  00:40:35
+   Duration  22.72s (transform 12.16s, setup 341ms, import 16.80s, tests 5.17s, environment 0ms)

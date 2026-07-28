@@ -1,40 +1,40 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "generatedAt": "2026-07-28T15:53:24.102Z",
+  "generatedAt": "2026-07-28T16:40:58.385Z",
   "ok": true,
   "commands": [
     {
       "id": "diff-check",
       "command": "git diff --check",
-      "startedAt": "2026-07-28T15:37:44.387Z",
-      "durationMs": 120,
+      "startedAt": "2026-07-28T16:27:36.757Z",
+      "durationMs": 51,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdout": "artifacts/system-maturity/P7-001/gates/diff-check.stdout.txt",
       "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr": "artifacts/system-maturity/P7-001/gates/diff-check.stderr.txt",
-      "stderrSha256": "c8630e32313e5f805534a524afab1edc3d96bc874a4ed1b9a67a5eb1e00fc0a2"
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "id": "focused-unit",
       "command": "pnpm exec vitest run tests/unit/system-maturity-traceability-p7-001.test.ts",
-      "startedAt": "2026-07-28T15:37:44.510Z",
-      "durationMs": 1794,
+      "startedAt": "2026-07-28T16:27:36.811Z",
+      "durationMs": 1983,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdout": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-      "stdoutSha256": "433ca1211e676851a6094e23eec1fa27318e2f59746aecc92dfa2f9ce63cd2cf",
+      "stdoutSha256": "73d76b4bef9b2029e767989a4e8c25d7049693a42bbcabe8efcbcfe44d485b68",
       "stderr": "artifacts/system-maturity/P7-001/gates/focused-unit.stderr.txt",
       "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "id": "plan-validate",
       "command": "node scripts/validate-system-maturity-plan.mjs",
-      "startedAt": "2026-07-28T15:37:46.304Z",
-      "durationMs": 75,
+      "startedAt": "2026-07-28T16:27:38.794Z",
+      "durationMs": 58,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
@@ -46,8 +46,8 @@
     {
       "id": "delivery-hash-sync",
       "command": "node scripts/update-system-maturity-delivery-hashes.mjs",
-      "startedAt": "2026-07-28T15:37:46.379Z",
-      "durationMs": 191,
+      "startedAt": "2026-07-28T16:27:38.852Z",
+      "durationMs": 147,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
@@ -59,8 +59,8 @@
     {
       "id": "evidence-validate",
       "command": "node scripts/validate-system-maturity-evidence.mjs",
-      "startedAt": "2026-07-28T15:37:46.570Z",
-      "durationMs": 147,
+      "startedAt": "2026-07-28T16:27:38.999Z",
+      "durationMs": 177,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
@@ -72,8 +72,8 @@
     {
       "id": "harness-task",
       "command": "pnpm harness validate --spec harness/specs/tasks/system-maturity-traceability.md",
-      "startedAt": "2026-07-28T15:37:46.717Z",
-      "durationMs": 1196,
+      "startedAt": "2026-07-28T16:27:39.176Z",
+      "durationMs": 1141,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
@@ -85,21 +85,21 @@
     {
       "id": "harness-ci",
       "command": "pnpm run harness:ci",
-      "startedAt": "2026-07-28T15:37:47.914Z",
-      "durationMs": 6699,
+      "startedAt": "2026-07-28T16:27:40.318Z",
+      "durationMs": 6355,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdout": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-      "stdoutSha256": "a17bdcaef1c6fe2131e0abda5752b8a9a49aa76d4bb19f356f875a2b93c04451",
+      "stdoutSha256": "0e3c7887beb4d06ff73b317ba5310190a520b1371d272edb8c52cbc2db7b2c85",
       "stderr": "artifacts/system-maturity/P7-001/gates/harness-ci.stderr.txt",
       "stderrSha256": "66836381b700446b14fe14633ce20eb1db5174909e7da87bacf94df62b16501f"
     },
     {
       "id": "lint-check",
       "command": "pnpm run lint:check",
-      "startedAt": "2026-07-28T15:37:54.613Z",
-      "durationMs": 317042,
+      "startedAt": "2026-07-28T16:27:46.673Z",
+      "durationMs": 236827,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
@@ -111,28 +111,28 @@
     {
       "id": "typecheck",
       "command": "pnpm run typecheck",
-      "startedAt": "2026-07-28T15:43:11.656Z",
-      "durationMs": 23953,
+      "startedAt": "2026-07-28T16:31:43.501Z",
+      "durationMs": 19330,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdout": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-      "stdoutSha256": "c6ee4a1d0e9cedc40dddd1505b3d3c98a5a84288598eadf23a9e3dfe2056ee82",
+      "stdoutSha256": "e9b6159d60e3593effe02ec3ca239e62f1237a00af167e65ad9f7fe300bc4e12",
       "stderr": "artifacts/system-maturity/P7-001/gates/typecheck.stderr.txt",
-      "stderrSha256": "be1ebc65a0901acc4e2114967871344ba66472895f45500cc473b7b3bfcfc1e0"
+      "stderrSha256": "b9dc801248da3af9eef9021d08d90bc326bd4a354a8147813f5d5a2cbece6b58"
     },
     {
       "id": "unit-full",
       "command": "pnpm test",
-      "startedAt": "2026-07-28T15:43:35.609Z",
-      "durationMs": 588490,
+      "startedAt": "2026-07-28T16:32:02.831Z",
+      "durationMs": 535550,
       "exitCode": 0,
       "signal": null,
       "spawnError": null,
       "stdout": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-      "stdoutSha256": "be44e89968fda6f74355fd19cbe5292574e492139d23ef5f49ba72bc3a8380a7",
+      "stdoutSha256": "d8a4d17a7cd176787032c134473e76fd6f2cbf713055ae9108ab5368337d7487",
       "stderr": "artifacts/system-maturity/P7-001/gates/unit-full.stderr.txt",
-      "stderrSha256": "33f98cce322afdfcc32029e1ea8b5ab261ea9220772f11edcc0fa593f46b8de8"
+      "stderrSha256": "f4fac5fd77454fd9df5d8b79eed4e90d20fa0978f044522df16a6482751cacf7"
     }
   ]
 }
