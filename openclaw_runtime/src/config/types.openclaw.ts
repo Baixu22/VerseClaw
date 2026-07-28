@@ -174,6 +174,14 @@ export type RuntimeFeatureConfig = {
     parseOnTouch?: { enabled?: boolean };
     staleWriteGuard?: { enabled?: boolean };
     writeJournal?: { enabled?: boolean };
+    /** Default-off post-write test execution through the canonical exec tool. */
+    autoVerify?: {
+      enabled?: boolean;
+      /** Per-runner timeout in seconds (1-90, default 90). */
+      timeoutSeconds?: number;
+      /** Optional workspace-level command used instead of automatic detection. */
+      command?: string;
+    };
     worktree?: { backend?: "inprocess" | "git" };
     symbolLease?: { enabled?: boolean; mode?: "memory" | "wal" };
     patchFlow?: { default?: boolean; enabled?: boolean };

@@ -68,6 +68,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
     parseOnTouch: { enabled: true },
     staleWriteGuard: { enabled: true },
     writeJournal: { enabled: true },
+    autoVerify: { enabled: true, timeoutSeconds: 30, command: "pnpm test" },
     worktree: { backend: "inprocess" },
     symbolLease: { enabled: true, mode: "memory" },
     patchFlow: { default: false, enabled: true },

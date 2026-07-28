@@ -120,6 +120,259 @@ describe("write-journal (C2-8)", () => {
     expect(readFileSync(file, "utf8")).toBe("v0\n");
   });
 
+  it("projects an existing full-file write from the journal snapshot and verified after content", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    const base = makeWriteTool(async (_id, args) => {
+      writeFileSync(file, String((args as { content?: string }).content ?? ""), "utf8");
+      return { content: [{ type: "text", text: "ok" }], details: {} };
+    });
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("write-existing", {
+      path: "f.ts",
+      content: "const value = 2;\n",
+    });
+
+    expect(result.details).toMatchObject({
+      patch: expect.stringContaining("+const value = 2;"),
+      patchArtifacts: [{
+        schema: "GitPatchArtifact/v1",
+        file: "f.ts",
+        status: "modified",
+        contentKind: "text",
+        completeness: "complete",
+        lineage: {
+          requestId: "write-existing",
+          journalEntryId: "write-journal:sess-journal:1",
+        },
+      }],
+      write_journal: {
+        snapshots: [{
+          path: "f.ts",
+          journalEntryId: "write-journal:sess-journal:1",
+          hadPrior: true,
+        }],
+      },
+    });
+  });
+
+  it("projects a new full-file write as an added artifact", async () => {
+    const file = path.join(repoRoot, "new.ts");
+    const base = makeWriteTool(async (_id, args) => {
+      writeFileSync(file, String((args as { content?: string }).content ?? ""), "utf8");
+      return { content: [{ type: "text", text: "ok" }], details: {} };
+    });
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("write-new", {
+      path: "new.ts",
+      content: "export const created = true;\n",
+    });
+
+    expect(result.details).toMatchObject({
+      patchArtifacts: [{
+        file: "new.ts",
+        status: "added",
+        contentKind: "text",
+        completeness: "complete",
+        lineage: {
+          requestId: "write-new",
+          journalEntryId: "write-journal:sess-journal:1",
+        },
+      }],
+      write_journal: { snapshots: [{ path: "new.ts", hadPrior: false }] },
+    });
+  });
+
+  it("represents a newly created empty file as a complete metadata artifact", async () => {
+    const file = path.join(repoRoot, "empty.txt");
+    const base = makeWriteTool(async () => {
+      writeFileSync(file, "", "utf8");
+      return { content: [{ type: "text", text: "ok" }], details: {} };
+    });
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("write-empty", { path: "empty.txt", content: "" });
+
+    expect(result.details).toMatchObject({
+      patchArtifacts: [{
+        file: "empty.txt",
+        status: "added",
+        contentKind: "metadata",
+        hunks: [],
+        completeness: "complete",
+        lineage: {
+          requestId: "write-empty",
+          journalEntryId: "write-journal:sess-journal:1",
+        },
+      }],
+    });
+  });
+
+  it("keeps CRLF content verified while projecting normalized logical lines", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    writeFileSync(file, "const value = 1;\r\n", "utf8");
+    const base = makeWriteTool(async (_id, args) => {
+      writeFileSync(file, String((args as { content?: string }).content ?? ""), "utf8");
+      return { content: [{ type: "text", text: "ok" }], details: {} };
+    });
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("write-crlf", {
+      path: "f.ts",
+      content: "const value = 2;\r\n",
+    });
+    const details = result.details as {
+      patchArtifacts?: Array<{ hunks?: Array<{ lines?: Array<{ text?: string }> }> }>;
+    };
+
+    expect(readFileSync(file, "utf8")).toBe("const value = 2;\r\n");
+    expect(details.patchArtifacts?.[0]?.hunks?.[0]?.lines).toEqual(expect.arrayContaining([
+      expect.objectContaining({ text: "const value = 1;" }),
+      expect.objectContaining({ text: "const value = 2;" }),
+    ]));
+  });
+
+  it("fails closed when the workspace after content cannot be verified", async () => {
+    const base = makeWriteTool(async () => ({
+      content: [{ type: "text", text: "reported success" }],
+      details: {},
+    }));
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("write-mismatch", {
+      path: "f.ts",
+      content: "claimed content\n",
+    });
+
+    expect(result.details).toMatchObject({
+      patchArtifacts: [],
+      patchArtifactError: expect.objectContaining({
+        schema: "RemoteForgeError/v1",
+        code: "incomplete_response",
+        retryable: false,
+        requestId: "write-mismatch",
+      }),
+      write_journal: { undoable: true },
+    });
+  });
+
+  it("binds patch artifact lineage to the same request and journal snapshot", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    const base = makeWriteTool(async (_id, args) => {
+      const content = String((args as { content?: string }).content ?? "");
+      writeFileSync(file, content, "utf8");
+      return {
+        content: [{ type: "text", text: "ok" }],
+        details: {
+          patchArtifacts: [{
+            schema: "GitPatchArtifact/v1",
+            file: "f.ts",
+            status: "modified",
+            contentKind: "text",
+            hunks: [{
+              oldStart: 1,
+              oldLines: 1,
+              newStart: 1,
+              newLines: 1,
+              lines: [
+                { kind: "deletion", text: "v0", oldLine: 1, newLine: null },
+                { kind: "addition", text: "v1", oldLine: null, newLine: 1 },
+              ],
+            }],
+            patch: "diff --git a/f.ts b/f.ts\n--- a/f.ts\n+++ b/f.ts\n@@ -1 +1 @@\n-v0\n+v1",
+            completeness: "complete",
+            lineage: { requestId: "call-1" },
+          }],
+        },
+      };
+    });
+    base.name = "edit";
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("call-1", { path: "f.ts", content: "v1\n" });
+    const details = result.details as {
+      patchArtifacts?: Array<{ lineage?: { requestId?: string; journalEntryId?: string } }>;
+      write_journal?: { snapshots?: Array<{ journalEntryId?: string }> };
+    };
+    const snapshotId = details.write_journal?.snapshots?.[0]?.journalEntryId;
+    expect(snapshotId).toBe("write-journal:sess-journal:1");
+    expect(details.patchArtifacts?.[0]?.lineage).toEqual({
+      requestId: "call-1",
+      journalEntryId: snapshotId,
+    });
+  });
+
+  it("fails closed when patch artifact lineage has no matching journal snapshot", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    const base = makeWriteTool(async (_id, args) => {
+      writeFileSync(file, String((args as { content?: string }).content ?? ""), "utf8");
+      return {
+        content: [{ type: "text", text: "ok" }],
+        details: {
+          patchArtifacts: [{
+            schema: "GitPatchArtifact/v1",
+            file: "other.ts",
+            status: "added",
+            contentKind: "text",
+            hunks: [{
+              oldStart: 0,
+              oldLines: 0,
+              newStart: 1,
+              newLines: 1,
+              lines: [{ kind: "addition", text: "v1", oldLine: null, newLine: 1 }],
+            }],
+            patch: "diff --git a/other.ts b/other.ts\n--- /dev/null\n+++ b/other.ts\n@@ -0,0 +1 @@\n+v1",
+            completeness: "complete",
+            lineage: { requestId: "call-1" },
+          }],
+        },
+      };
+    });
+    base.name = "edit";
+    const wrapped = wrapToolWithWriteJournal(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+
+    const result = await wrapped.execute("call-1", { path: "f.ts", content: "v1\n" });
+    expect(result.details).toMatchObject({
+      patchArtifacts: [],
+      patchArtifactError: expect.objectContaining({
+        schema: "RemoteForgeError/v1",
+        code: "incomplete_response",
+        retryable: false,
+        requestId: "call-1",
+      }),
+      write_journal: { undoable: true },
+    });
+  });
+
   it("session clear removes journal dir", () => {
     snapshotBeforeWrite({
       workspaceRoot: repoRoot,

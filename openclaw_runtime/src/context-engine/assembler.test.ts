@@ -10,6 +10,12 @@ import {
   selectHandlers,
 } from "./assembler.js";
 import { dcsObservability } from "./dcs-observability.js";
+import {
+  beginTurnInjectionBudget,
+  endTurnInjectionBudget,
+  getTurnInjectionBudget,
+  summarizeTurnInjection,
+} from "./turn-injection-budget.js";
 
 describe("DCS Assembler", () => {
   it("使用共享谓词窄化 main session", () => {
@@ -693,5 +699,248 @@ describe("DCS Stage 4: knowledge Assembler injection", () => {
     }>;
     expect(writeArg[0].block.block_type).toBe("knowledge");
     expect(writeArg[0].block.source_system).toBe("compass");
+  });
+});
+
+describe("FP-P2-06 DCS turn-ledger attribution", () => {
+  const sessionId = "agent:alpha:main";
+  const knowledgeBlock: ContextBlock = {
+    block_id: `knowledge:compass:${sessionId}`,
+    block_type: "knowledge",
+    source_system: "compass",
+    session_id: sessionId,
+    presence: { always_on: false, background: true },
+    entities: [],
+    valid_at: new Date("2026-07-28T00:00:00.000Z"),
+    mutability: "system_managed",
+    summary: "Controlled fixture knowledge",
+    full_content: "objective: preserve the frozen first-product boundaries",
+    compression_depth: 0,
+    entity_extraction_status: "empty",
+  };
+  const workingMemoryBlock: ContextBlock = {
+    block_id: `working-memory:${sessionId}`,
+    block_type: "working_memory",
+    source_system: "working-memory",
+    session_id: sessionId,
+    presence: { always_on: false, background: true },
+    entities: [],
+    valid_at: new Date("2026-07-28T00:00:00.000Z"),
+    mutability: "system_managed",
+    summary: "Recent actions",
+    full_content: JSON.stringify({
+      actions: [
+        {
+          tool: "write",
+          result_summary: "Updated the shared turn ledger",
+          significance: "high",
+        },
+      ],
+    }),
+    compression_depth: 0,
+    entity_extraction_status: "empty",
+  };
+  const toolRegistryBlock: ContextBlock = {
+    block_id: `tool-registry:${sessionId}`,
+    block_type: "tool_registry",
+    source_system: "cvk",
+    session_id: sessionId,
+    presence: { always_on: true, token_budget: 200, priority: 7 },
+    entities: [],
+    valid_at: new Date("2026-07-28T00:00:00.000Z"),
+    mutability: "system_managed",
+    summary: "Tool registry",
+    full_content: JSON.stringify({
+      entries: [
+        { resourceId: "read", kind: "toolset", title: "Read", purpose: "Read a file" },
+        { resourceId: "edit", kind: "toolset", title: "Edit", purpose: "Edit a file" },
+      ],
+    }),
+    compression_depth: 0,
+    entity_extraction_status: "empty",
+  };
+  const flags = {
+    "runtime.contextBlock.compass.enabled": true,
+    "runtime.contextBlock.working_memory.enabled": true,
+    "runtime.contextBlock.tool_registry.enabled": true,
+  } as const;
+
+  function createThreeChannelAssembler(blocks: ContextBlock[] = [
+    knowledgeBlock,
+    workingMemoryBlock,
+    toolRegistryBlock,
+  ]) {
+    const store = {
+      query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
+        blocks.filter((block) =>
+          (params.block_types?.includes(block.block_type) ?? true) &&
+          (params.source_systems?.includes(block.source_system) ?? true),
+        )),
+      upsert: vi.fn(),
+    };
+    return { assembler: new Assembler({ workingMemoryStore: store }), store };
+  }
+
+  function appendedContents(
+    output: unknown,
+    initialCount = 1,
+  ): string[] {
+    if (!Array.isArray(output)) return [];
+    return output.slice(initialCount).flatMap((message) => {
+      const content = (message as { content?: unknown }).content;
+      return typeof content === "string" ? [content] : [];
+    });
+  }
+
+  function contentByChannel(contents: string[]): Record<string, string | undefined> {
+    return {
+      knowledge: contents.find((content) => /^## Knowledge$/m.test(content)),
+      working_memory: contents.find((content) => /^## Recent Actions$/m.test(content)),
+      tool_registry: contents.find((content) => /^## Tools \(\d+ available\)$/m.test(content)),
+    };
+  }
+
+  it("charges all three real projections and independently balances appended characters", async () => {
+    const turnId = "fp-p2-06-three-channel";
+    const { assembler } = createThreeChannelAssembler();
+    const initial = [{ role: "user" as const, content: "next" }];
+
+    try {
+      const result = await assembler.assemble(
+        { session_id: sessionId, turnId },
+        { existing_output: initial },
+        flags,
+      );
+      const contents = appendedContents(result.output, initial.length);
+      const projected = contentByChannel(contents);
+      const ledger = getTurnInjectionBudget(turnId);
+      expect(ledger).toBeDefined();
+      const accounting = summarizeTurnInjection(ledger!);
+
+      expect(Object.keys(accounting.byChannel).sort()).toEqual([
+        "knowledge",
+        "tool_registry",
+        "working_memory",
+      ]);
+      for (const channel of Object.keys(projected)) {
+        const text = projected[channel];
+        expect(text, channel).toBeDefined();
+        expect(accounting.byChannel[channel as keyof typeof accounting.byChannel]?.applied)
+          .toBe(text!.length);
+      }
+      expect(contents.reduce((sum, content) => sum + content.length, 0))
+        .toBe(accounting.charsApplied);
+      expect(accounting.charsApplied + accounting.charsDropped + accounting.charsTruncated)
+        .toBe(accounting.charsRequested);
+    } finally {
+      endTurnInjectionBudget(turnId);
+    }
+  });
+
+  it("preserves knowledge, truncates working memory, then drops tool registry", async () => {
+    const { assembler } = createThreeChannelAssembler();
+    const initial = [{ role: "user" as const, content: "next" }];
+    const baseline = await assembler.assemble(
+      { session_id: sessionId },
+      { existing_output: initial },
+      flags,
+    );
+    const baselineByChannel = contentByChannel(appendedContents(baseline.output, initial.length));
+    const knowledgeChars = baselineByChannel.knowledge!.length;
+    const workingMemoryChars = baselineByChannel.working_memory!.length;
+    const turnId = "fp-p2-06-degradation";
+    const total = knowledgeChars + Math.max(2, Math.floor(workingMemoryChars / 2));
+    beginTurnInjectionBudget({ turnId, total });
+
+    try {
+      const result = await assembler.assemble(
+        { session_id: sessionId, turnId },
+        { existing_output: initial },
+        flags,
+      );
+      const contents = appendedContents(result.output, initial.length);
+      const ledger = getTurnInjectionBudget(turnId);
+      expect(ledger).toBeDefined();
+      const accounting = summarizeTurnInjection(ledger!);
+
+      expect(accounting.byChannel.knowledge).toEqual({
+        requested: knowledgeChars,
+        applied: knowledgeChars,
+        disposition: "applied",
+      });
+      expect(accounting.byChannel.working_memory?.requested).toBe(workingMemoryChars);
+      expect(accounting.byChannel.working_memory?.disposition).toBe("truncate");
+      expect(accounting.byChannel.tool_registry?.applied).toBe(0);
+      expect(accounting.byChannel.tool_registry?.disposition).toBe("drop");
+      expect(accounting.degradationOrder).toEqual([
+        { channel: "working_memory", disposition: "truncate" },
+        { channel: "tool_registry", disposition: "drop" },
+      ]);
+      expect(contents.reduce((sum, content) => sum + content.length, 0))
+        .toBe(accounting.charsApplied);
+      expect(contents[0]).toBe(baselineByChannel.knowledge);
+      expect(contents).toHaveLength(2);
+    } finally {
+      endTurnInjectionBudget(turnId);
+    }
+  });
+
+  it("does not invent charges for empty blocks, disabled flags, or a killed turn", async () => {
+    const cases = [
+      {
+        turnId: "fp-p2-06-empty",
+        assembler: createThreeChannelAssembler([]).assembler,
+        flags,
+        cfg: undefined,
+      },
+      {
+        turnId: "fp-p2-06-flags-off",
+        assembler: createThreeChannelAssembler().assembler,
+        flags: {},
+        cfg: undefined,
+      },
+      {
+        turnId: "fp-p2-06-killed",
+        assembler: createThreeChannelAssembler().assembler,
+        flags,
+        cfg: { runtime: { contextEnhancement: { killSwitch: true } } },
+      },
+    ];
+
+    for (const testCase of cases) {
+      try {
+        const result = await testCase.assembler.assemble(
+          {
+            session_id: sessionId,
+            turnId: testCase.turnId,
+            ...(testCase.cfg ? { cfg: testCase.cfg } : {}),
+          },
+          { existing_output: [{ role: "user" as const, content: "next" }] },
+          testCase.flags,
+        );
+        expect(appendedContents(result.output)).toEqual([]);
+        const ledger = getTurnInjectionBudget(testCase.turnId);
+        expect(ledger?.entries).toEqual([]);
+        expect(summarizeTurnInjection(ledger!).byChannel).toEqual({});
+      } finally {
+        endTurnInjectionBudget(testCase.turnId);
+      }
+    }
+  });
+
+  it("keeps the legacy private 2000-character budget when turnId is absent", async () => {
+    const { assembler } = createThreeChannelAssembler();
+    const initial = [{ role: "user" as const, content: "next" }];
+    const result = await assembler.assemble(
+      { session_id: sessionId },
+      { existing_output: initial },
+      flags,
+    );
+
+    const contents = appendedContents(result.output, initial.length);
+    expect(contents).toHaveLength(3);
+    expect(contents.reduce((sum, content) => sum + content.length, 0))
+      .toBeLessThanOrEqual(KNOWLEDGE_INJECTION_CHAR_BUDGET);
+    expect(getTurnInjectionBudget("undefined")).toBeUndefined();
   });
 });

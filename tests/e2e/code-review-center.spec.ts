@@ -29,6 +29,7 @@ const baseReview = {
   target: { kind: 'baseBranch', baseBranch: 'origin/main', label: 'origin/main', baseCommit: 'base', headCommit: 'head' },
   summary: 'Base branch review completed.',
   diffStats: { files: 1, additions: 3, deletions: 1, patchBytes: 120, truncated: false },
+  patchArtifacts: [],
   findings: [
     {
       id: 'finding-base-1',
@@ -51,6 +52,7 @@ const uncommittedReview = {
   target: { kind: 'uncommitted', label: 'Uncommitted changes' },
   summary: 'Two findings in uncommitted changes.',
   diffStats: { files: 2, additions: 8, deletions: 2, patchBytes: 320, truncated: false },
+  patchArtifacts: [],
   findings: [
     {
       id: 'finding-high',
@@ -75,6 +77,21 @@ const uncommittedReview = {
   ],
   startedAt: '2026-01-01T00:00:00.000Z',
   endedAt: '2026-01-01T00:00:01.000Z',
+};
+
+const truncatedReview = {
+  runId: 'code-review-truncated',
+  readonly: true,
+  status: 'error',
+  target: { kind: 'commit', commit: 'large123', label: 'large123', resolvedCommit: 'large123' },
+  summary: 'Code review patch is truncated; model review is blocked.',
+  diffStats: { files: 1, additions: 0, deletions: 0, patchBytes: 120_018, truncated: true },
+  patchArtifacts: [],
+  findings: [],
+  evidenceRefs: [],
+  startedAt: '2026-01-01T00:00:00.000Z',
+  endedAt: '2026-01-01T00:00:01.000Z',
+  error: 'Code review patch is truncated; model review is blocked.',
 };
 
 test.describe('Code Review Center', () => {
@@ -144,6 +161,14 @@ test.describe('Code Review Center', () => {
             success: true,
             review: baseReview,
           },
+          [stableStringify(['codeReview', 'run', {
+            focus: 'renderer/Main boundary',
+            target: { kind: 'commit', commit: 'large123' },
+          }])]: {
+            success: false,
+            error: truncatedReview.error,
+            review: truncatedReview,
+          },
           [stableStringify(['codeReview', 'createTaskLedgerNode', {
             runId: 'code-review-uncommitted',
             findingId: 'finding-high',
@@ -164,7 +189,7 @@ test.describe('Code Review Center', () => {
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
       await app.evaluate(() => {
-        (globalThis as unknown as { __clawxE2eHostCalls?: unknown[] }).__clawxE2eHostCalls = [];
+        (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls = [];
       });
       await page.getByTestId('sidebar-nav-code-review').click();
       await expect(page.getByTestId('code-review-page')).toBeVisible();
@@ -193,9 +218,16 @@ test.describe('Code Review Center', () => {
       await expect(page.getByTestId('code-review-target-label')).toContainText('origin/main');
       await expect(page.getByTestId('code-review-finding')).toHaveCount(1);
 
+      await page.getByTestId('code-review-target-commit').click();
+      await page.getByTestId('code-review-commit-input').fill('large123');
+      await page.getByTestId('code-review-run').click();
+      await expect(page.getByTestId('code-review-error')).toContainText(
+        'The Git diff exceeded the review limit, so AI review was not started.',
+      );
+
       const hostCalls = await app.evaluate(() => (
-        globalThis as unknown as { __clawxE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }
-      ).__clawxE2eHostCalls ?? []);
+        globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }
+      ).__verseClawE2eHostCalls ?? []);
       expect(hostCalls).toEqual(expect.arrayContaining([
         expect.objectContaining({ module: 'codeReview', action: 'run' }),
         expect.objectContaining({ module: 'codeReview', action: 'createTaskLedgerNode' }),

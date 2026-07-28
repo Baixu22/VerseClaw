@@ -43,6 +43,10 @@ Product capability statements must be checked against the canonical matrix in `s
 
 当前首产品验证目标是 **Verse Claw Windows x64 - DCS Coding Controlled Preview**。该路径仅用于内部、单一 workspace，并要求显式 `opt-in`；范围包括 Provider/Model 验证、受控读写与测试、undo、runtime acknowledgement、重启恢复、kill/rollback 和脱敏 support bundle。
 
+写入后的自动验证同样需要显式开启，默认关闭。开启后，Verse Claw 只探测一个有界项目测试命令，并通过现有 effective `exec` 的 policy、审批、沙箱和超时路径执行；通过、失败、跳过原因和有界输出尾部会留在会话中，验证失败不会回滚已成功的写入。
+
+启用 DCS 的编码 turn 会通过既有共享注入账本分别记录 knowledge、recent actions 与 tool registry 的真实 provider 可见 prompt 增长。固定预算不会因此放大：启用的 DCS 投影保留既有有界容量，截断和丢弃仍作为显式账目证据。
+
 本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
 
 ## 概述
@@ -169,7 +173,7 @@ Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化
 Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消息、OpenClaw Doctor 和设置补丁任务。设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新。
 
 ### Code Review Center
-Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。
+Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。Git patch 会先经过共享结构化 patch contract 验证；malformed 或 producer-truncated diff 会在模型审查启动前停止。在 Chat 中，成功且有 write journal 支撑的 `edit` 与全文件 `write` 会显示富 diff，并可复制同一文本 patch；mutation lineage 缺失、过期或不完整时，不会用 Renderer 状态推断重建。Remote PR 标签页通过 Main-owned host API 有界读取 GitHub PR detail、commits、files、结构化 diff、checks、reviews、branch protection 和指定文件内容。完整性、能力与 readiness 会显式展示；缺失、截断、未授权或未知证据不会被解释为 ready。整体评审、行评论、线程回复和白名单 metadata 修改默认只生成草稿，只有精确匹配的一次性 action-bound approval 被消费后才会发布；head/version 漂移会 fail closed，partial 或 ambiguous 结果会显示 reconciliation，避免盲目重试。受控合并复用同一 Main-owned policy：动作前即时重读 head/readiness，消费绑定精确策略与 policy 证据的短时单次审批，并携带 expected head SHA。生产仓库不在 allowlist 中，Agent merge 默认关闭；合并后的 refresh 或 audit 失败会显示 reconciliation，而不会提示重试合并。
 
 ### Knowledge Hub
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。

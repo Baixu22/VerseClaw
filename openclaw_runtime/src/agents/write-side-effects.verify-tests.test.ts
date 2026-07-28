@@ -3,13 +3,16 @@
  * the tool result, so "no tests were run" is a sentence the user can read and
  * not an absence they have to infer.
  */
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../context-engine/coding-observability.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
-import { wrapToolWithWriteSideEffects } from "./write-side-effects.js";
+import {
+  type WriteSideEffectsOptions,
+  wrapToolWithWriteSideEffects,
+} from "./write-side-effects.js";
 
 const roots: string[] = [];
 afterAll(() => {
@@ -38,7 +41,12 @@ function editTool(): AnyAgentTool {
   } as unknown as AnyAgentTool;
 }
 
-async function runEdit(workspaceRoot: string): Promise<Record<string, unknown>> {
+type VerifyOverrides = Partial<Omit<WriteSideEffectsOptions, "workspaceRoot">>;
+
+async function runEdit(
+  workspaceRoot: string,
+  overrides: VerifyOverrides = {},
+): Promise<Record<string, unknown>> {
   const wrapped = wrapToolWithWriteSideEffects(editTool(), {
     workspaceRoot,
     // Isolate the verify段: the other side effects need a materializer/factStore.
@@ -46,6 +54,7 @@ async function runEdit(workspaceRoot: string): Promise<Record<string, unknown>> 
     syntaxCheckEnabled: false,
     diagEnabled: false,
     verifyConsumeEnabled: false,
+    ...overrides,
   });
   const result = (await wrapped.execute("call-1", { path: "a.js" }, undefined, undefined)) as {
     details?: Record<string, unknown>;
@@ -63,7 +72,8 @@ describe("FP-P1-04 write-side verify段 (test-runner detection)", () => {
     const verify = details.verify_tests as Record<string, unknown>;
     expect(verify.detected).toBe(true);
     expect(verify.command).toBe("npm test");
-    expect(String(verify.rendered)).toMatch(/^detected\(node\/npm\)/);
+    expect(verify.execution).toMatchObject({ status: "disabled" });
+    expect(String(verify.rendered)).toMatch(/^disabled\(node\/npm\)/);
     // The pre-existing diff is preserved, not clobbered.
     expect(details.diff).toBe("- old\n+ new");
   });
@@ -104,6 +114,118 @@ describe("FP-P1-04 write-side verify段 (test-runner detection)", () => {
     };
     expect(result.details?.verify_tests).toBeUndefined();
   });
+
+  it("executes through the injected canonical exec bridge and records pass output", async () => {
+    const executeTestCommand = vi.fn(async () => ({
+      content: [{ type: "text", text: "AUTO_VERIFY_PASS" }],
+      details: {
+        status: "completed",
+        exitCode: 0,
+        durationMs: 24,
+        aggregated: "AUTO_VERIFY_PASS\n",
+      },
+    }));
+    const root = workspace({
+      "a.js": "x\n",
+      "package.json": JSON.stringify({ scripts: { test: "vitest run" } }),
+    });
+    const details = await runEdit(root, {
+      autoVerifyEnabled: true,
+      autoVerifyTimeoutSeconds: 17,
+      executeTestCommand,
+    });
+    expect(executeTestCommand).toHaveBeenCalledWith(
+      expect.objectContaining({ command: "npm test", workdir: root, timeoutSeconds: 17 }),
+    );
+    expect((details.verify_tests as Record<string, unknown>).execution).toMatchObject({
+      status: "passed",
+      exitCode: 0,
+      durationMs: 24,
+      outputTail: "AUTO_VERIFY_PASS",
+    });
+  });
+
+  it.each([
+    {
+      name: "failure",
+      exec: {
+        details: {
+          status: "failed",
+          exitCode: 2,
+          durationMs: 30,
+          aggregated: "one test failed",
+        },
+      },
+      status: "failed",
+    },
+    {
+      name: "timeout",
+      exec: {
+        details: {
+          status: "failed",
+          exitCode: null,
+          durationMs: 90_000,
+          aggregated: "timed out",
+          timedOut: true,
+        },
+      },
+      status: "timed_out",
+    },
+    {
+      name: "approval denial",
+      exec: {
+        details: {
+          status: "failed",
+          exitCode: null,
+          durationMs: 0,
+          aggregated: "Exec denied (gateway id=x, user-denied): npm test",
+        },
+      },
+      status: "denied",
+    },
+    {
+      name: "approval required",
+      exec: {
+        details: {
+          status: "approval-pending",
+          approvalId: "approval-1",
+        },
+      },
+      status: "approval_required",
+    },
+  ])("reports $name without reclassifying the successful write", async ({ exec, status }) => {
+    const root = workspace({
+      "a.js": "x\n",
+      "package.json": JSON.stringify({ scripts: { test: "vitest run" } }),
+    });
+    const details = await runEdit(root, {
+      autoVerifyEnabled: true,
+      executeTestCommand: async () => exec,
+    });
+    expect((details.verify_tests as Record<string, unknown>).execution).toMatchObject({ status });
+    expect(details.diff).toBe("- old\n+ new");
+  });
+
+  it("reports runner crashes and missing exec surfaces without breaking the write", async () => {
+    const root = workspace({
+      "a.js": "x\n",
+      "package.json": JSON.stringify({ scripts: { test: "vitest run" } }),
+    });
+    const crashed = await runEdit(root, {
+      autoVerifyEnabled: true,
+      executeTestCommand: async () => {
+        throw new Error("runner exploded");
+      },
+    });
+    expect((crashed.verify_tests as Record<string, unknown>).execution).toMatchObject({
+      status: "crashed",
+      reason: "runner exploded",
+    });
+    const unavailable = await runEdit(root, { autoVerifyEnabled: true });
+    expect((unavailable.verify_tests as Record<string, unknown>).execution).toMatchObject({
+      status: "unavailable",
+    });
+  });
 });
 
 describe("FP-P1-04 diff段/verify段 reach the user (content, not details)", () => {
@@ -143,7 +265,36 @@ describe("FP-P1-04 diff段/verify段 reach the user (content, not details)", () 
     const detected = await runEditWithContent(
       workspace({ "a.js": "x\n", "package.json": JSON.stringify({ scripts: { test: "vitest" } }) }),
     );
-    expect(detected).toMatch(/verify_tests: detected\(node\/npm\): npm test/);
+    expect(detected).toMatch(/verify_tests: disabled\(node\/npm\): npm test/);
+  });
+
+  it("appends bounded automatic verification output", async () => {
+    const root = workspace({
+      "a.js": "x\n",
+      "package.json": JSON.stringify({ scripts: { test: "vitest" } }),
+    });
+    const wrapped = wrapToolWithWriteSideEffects(editTool(), {
+      workspaceRoot: root,
+      parseOnWriteEnabled: false,
+      syntaxCheckEnabled: false,
+      diagEnabled: false,
+      verifyConsumeEnabled: false,
+      autoVerifyEnabled: true,
+      executeTestCommand: async () => ({
+        details: {
+          status: "completed",
+          exitCode: 0,
+          durationMs: 12,
+          aggregated: "AUTO_VERIFY_PASS",
+        },
+      }),
+    });
+    const result = (await wrapped.execute("call-1", { path: "a.js" })) as {
+      content?: Array<{ type: string; text: string }>;
+    };
+    const text = (result.content ?? []).map((block) => block.text).join("\n");
+    expect(text).toContain("verify_tests: passed(node/npm)");
+    expect(text).toContain("verify_output_tail:\nAUTO_VERIFY_PASS");
   });
 
   it("leaves a result with no coding evidence untouched", async () => {

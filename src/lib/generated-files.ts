@@ -9,6 +9,11 @@
  */
 import { diffLines } from 'diff';
 import type { ContentBlock, RawMessage } from '@/stores/chat';
+import {
+  isGitPatchArtifactV1,
+  type GitPatchArtifactV1,
+} from '@shared/types/remote-forge';
+import { normalizeRemoteForgeErrorV1 } from '@shared/remote-forge/error-envelope';
 
 export type FileContentType =
   | 'snapshot'
@@ -27,6 +32,11 @@ export interface FileEditOp {
 export type GeneratedFileBaseline =
   | { status: 'ok'; content: string }
   | { status: 'missing' }
+  | { status: 'unavailable'; reason: string };
+
+export type GeneratedFilePatchProjection =
+  | { status: 'ok'; artifact: GitPatchArtifactV1 }
+  | { status: 'pending' }
   | { status: 'unavailable'; reason: string };
 
 export interface FileLineStats {
@@ -61,6 +71,8 @@ export interface GeneratedFile {
    * trustworthy before/after diff (outside sandbox, binary, too large, ...).
    */
   baseline?: GeneratedFileBaseline;
+  /** Journal-linked artifact for DCS edit/write. Presence disables inferred diff fallback. */
+  patchProjection?: GeneratedFilePatchProjection;
   /** Index of the latest tool call that touched this file (for stable ordering). */
   lastSeenIndex: number;
 }
@@ -73,7 +85,10 @@ const SNIPPET_SEPARATOR = '\n\n';
  * diff (Write `fullContent` and/or non-empty Edit ops). Entries without
  * this should not appear in generated-file UIs.
  */
-export function generatedFileHasDiffPayload(file: Pick<GeneratedFile, 'fullContent' | 'edits'>): boolean {
+export function generatedFileHasDiffPayload(
+  file: Pick<GeneratedFile, 'fullContent' | 'edits' | 'patchProjection'>,
+): boolean {
+  if (file.patchProjection) return file.patchProjection.status === 'ok';
   if (file.fullContent != null) return true;
   if (file.edits?.length) {
     return file.edits.some((op) => (op.old ?? '') !== '' || (op.new ?? '') !== '');
@@ -335,7 +350,12 @@ function determineWriteAction(
 function buildGeneratedFile(
   filePath: string,
   action: 'created' | 'modified',
-  parts: { fullContent?: string; edits?: FileEditOp[]; baseline?: GeneratedFileBaseline } | undefined,
+  parts: {
+    fullContent?: string;
+    edits?: FileEditOp[];
+    baseline?: GeneratedFileBaseline;
+    patchProjection?: GeneratedFilePatchProjection;
+  } | undefined,
   index: number,
 ): GeneratedFile {
   const fileName = basenameOf(filePath);
@@ -350,8 +370,57 @@ function buildGeneratedFile(
     fullContent: parts?.fullContent,
     edits: parts?.edits,
     baseline: parts?.baseline,
+    patchProjection: parts?.patchProjection,
     lastSeenIndex: index,
   };
+}
+
+function unavailablePatchProjection(reason: string): GeneratedFilePatchProjection {
+  return { status: 'unavailable', reason };
+}
+
+function mutationPatchProjection(
+  message: RawMessage,
+  toolCallId: string | undefined,
+): GeneratedFilePatchProjection {
+  if (!toolCallId) return unavailablePatchProjection('Mutation tool call has no request id.');
+  const matches = (message._toolResults ?? []).filter((result) => result.toolCallId === toolCallId);
+  if (matches.length === 0) return { status: 'pending' };
+  if (matches.length !== 1) return unavailablePatchProjection('Mutation tool result is ambiguous.');
+  const details = asRecord(matches[0]?.result);
+  if (!details) return unavailablePatchProjection('Mutation tool result details are unavailable.');
+  if (details.patchArtifactError !== undefined) {
+    const error = normalizeRemoteForgeErrorV1(details.patchArtifactError, {
+      requestId: toolCallId,
+      code: 'incomplete_response',
+    });
+    return unavailablePatchProjection(error.safeMessage);
+  }
+  if (!Array.isArray(details.patchArtifacts) || details.patchArtifacts.length !== 1) {
+    return unavailablePatchProjection('Mutation tool result has no single patch artifact.');
+  }
+  const artifact = details.patchArtifacts[0];
+  if (!isGitPatchArtifactV1(artifact)) {
+    return unavailablePatchProjection('Mutation patch artifact failed strict validation.');
+  }
+  if (artifact.completeness !== 'complete') {
+    return unavailablePatchProjection('Mutation patch artifact is not complete.');
+  }
+  if (artifact.lineage?.requestId !== toolCallId || !artifact.lineage.journalEntryId) {
+    return unavailablePatchProjection('Mutation patch artifact lineage is stale or missing.');
+  }
+  const journal = asRecord(details.write_journal);
+  const snapshots = Array.isArray(journal?.snapshots) ? journal.snapshots : [];
+  const matchingSnapshot = snapshots
+    .map(asRecord)
+    .find((snapshot) =>
+      snapshot != null
+      && snapshot.journalEntryId === artifact.lineage?.journalEntryId
+      && snapshot.path === artifact.file);
+  if (!matchingSnapshot) {
+    return unavailablePatchProjection('Mutation patch artifact does not match its journal snapshot.');
+  }
+  return { status: 'ok', artifact };
 }
 
 function normaliseEol(text: string): string {
@@ -383,6 +452,19 @@ function diffLineStats(oldText: string, newText: string): FileLineStats {
 
 export function computeLineStats(file: GeneratedFile): FileLineStats | null {
   if (!supportsInlineDiff(file)) return null;
+
+  if (file.patchProjection) {
+    if (file.patchProjection.status !== 'ok') return null;
+    let added = 0;
+    let removed = 0;
+    for (const hunk of file.patchProjection.artifact.hunks) {
+      for (const line of hunk.lines) {
+        if (line.kind === 'addition') added += 1;
+        if (line.kind === 'deletion') removed += 1;
+      }
+    }
+    return { added, removed };
+  }
 
   if (file.edits?.length) {
     return diffLineStats(joinEditText(file.edits, 'old'), joinEditText(file.edits, 'new'));
@@ -446,6 +528,9 @@ export function extractGeneratedFiles(
       if (!isWrite && !isEdit && !looksLikeFile) continue;
 
       const existing = map.get(filePath);
+      const patchProjection = isWrite || isEdit
+        ? mutationPatchProjection(message, block.id)
+        : undefined;
 
       if (isWrite) {
         const newContent = pickWriteContent(input);
@@ -453,7 +538,7 @@ export function extractGeneratedFiles(
         const next = buildGeneratedFile(
           filePath,
           determineWriteAction(existing, baseline),
-          { fullContent: newContent, edits: undefined, baseline },
+          { fullContent: newContent, edits: undefined, baseline, patchProjection },
           i,
         );
         map.set(filePath, next);
@@ -469,6 +554,7 @@ export function extractGeneratedFiles(
             fullContent: existing?.fullContent,
             edits: [...(existing?.edits ?? []), ...newOps],
             baseline: existing?.baseline,
+            patchProjection,
           },
           i,
         );

@@ -9,8 +9,9 @@
  * agent calls next; whether those tools actually work is what this spec proves.
  *
  * Turns:
- *  T1 happy loop: read → edit (journal snapshot + diff) → bash syntax check → done
- *  T2 undo: undo_write restores the pre-edit content, journal drains
+ *  T1 happy loop: read → edit → full-file write (journal snapshots + rich diffs)
+ *     → bash syntax check → done
+ *  T2 undo: undo_write restores both pre-images and drains the journal
  *  T3 failure paths: read-miss (explicit not-found) + edit-mismatch (explicit error)
  *  T4 partial-undo hard lock: edit again, snapshot sabotaged on disk → undo
  *     reports failure + journalDir retained (never silent partial restore)
@@ -20,6 +21,7 @@ import { createServer as createHttpServer, type Server } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
@@ -30,13 +32,23 @@ type HostSuccess = { success: boolean };
 const MODEL_ID = 'mock-coder';
 const BUGGY = 'function add(a, b) {\n  return a - b;\n}\nmodule.exports = { add };\n';
 const FIXED_LINE = '  return a + b;';
+const SUMMARY_BEFORE = 'status: pending\n';
+const SUMMARY_AFTER = 'status: fixed\n';
 
 type ToolCallSpec = { id: string; name: string; args: Record<string, unknown> };
+type DcsProjectionChannel = 'knowledge' | 'working_memory' | 'tool_registry';
 
 type LlmRequestLog = {
   turn: string;
   toolResults: Record<string, string>;
   issued: string | null;
+  projections: Record<DcsProjectionChannel, string[]>;
+};
+
+const DCS_PROJECTION_PATTERNS: Record<DcsProjectionChannel, RegExp> = {
+  knowledge: /^## Knowledge$/m,
+  working_memory: /^## Recent Actions$/m,
+  tool_registry: /^## Tools \(\d+ available\)$/m,
 };
 
 /**
@@ -120,6 +132,15 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           },
         };
       }
+      if (!hasResult(results, 'callwrite')) {
+        return {
+          toolCall: {
+            id: 'callwrite',
+            name: 'write',
+            args: { path: 'summary.txt', content: SUMMARY_AFTER },
+          },
+        };
+      }
       if (!hasResult(results, 'callbash')) {
         return {
           toolCall: {
@@ -129,11 +150,11 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           },
         };
       }
-      return { text: 'Fixed add() to use a + b; syntax check ran. Review the diff above.' };
+      return { text: 'Fixed add() and rewrote summary.txt; syntax check ran. Review both diffs above.' };
     }
     if (marker === 'UNDO-THE-CHANGE') {
       if (!hasResult(results, 'callundoone')) {
-        return { toolCall: { id: 'callundoone', name: 'undo_write', args: { steps: 1 } } };
+        return { toolCall: { id: 'callundoone', name: 'undo_write', args: { steps: 2 } } };
       }
       return { text: `Undo outcome: ${resultFor(results, 'callundoone') ?? 'unknown'}` };
     }
@@ -227,8 +248,18 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           }
         }
         const action = nextAction(userText, toolResults);
+        const projections = Object.fromEntries(
+          Object.entries(DCS_PROJECTION_PATTERNS).map(([channel, pattern]) => [
+            channel,
+            messages.flatMap((message) =>
+              typeof message.content === 'string' && pattern.test(message.content)
+                ? [message.content]
+                : [],
+            ),
+          ]),
+        ) as Record<DcsProjectionChannel, string[]>;
         if (log.length < 3) {
-          // eslint-disable-next-line no-console -- diagnostic: real transcript shape
+
           console.log('[fp-p1-04-transcript]', JSON.stringify(
             messages.map((m) => ({
               role: m.role,
@@ -244,6 +275,7 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
           turn: userText.slice(0, 60),
           toolResults,
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
+          projections,
         });
 
         const usage = { prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 };
@@ -326,7 +358,7 @@ function startScriptedLlm(): Promise<{ server: Server; port: number; log: LlmReq
 function toolResultFor(log: LlmRequestLog[], callId: string): string {
   const wanted = callId.replace(/[^a-zA-Z0-9]/g, '');
   const matches = (key: string): boolean =>
-    key === wanted || new RegExp(`^${wanted}\d+$`).test(key);
+    key === wanted || new RegExp(`^${wanted}\\d+$`).test(key);
   for (const entry of log) {
     const key = Object.keys(entry.toolResults).find(matches);
     if (key) return entry.toolResults[key] ?? '';
@@ -385,20 +417,89 @@ async function startGateway(app: ElectronApplication): Promise<void> {
   await hostInvoke<HostSuccess>(app, 'settings', 'set', { key: 'gatewayPort', value: port });
   const deadline = Date.now() + 240_000;
   let attempts = 0;
+  let lastStatus: GatewayStatus | undefined;
+  let lastError: string | undefined;
   while (Date.now() < deadline) {
     try {
-      const status = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
-      if (status.gatewayReady === true || status.state === 'running') return;
-      if (status.state !== 'starting' && attempts < 10) {
+      lastStatus = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+      if (lastStatus.gatewayReady === true || lastStatus.state === 'running') return;
+      if (lastStatus.state !== 'starting' && attempts < 10) {
         attempts += 1;
-        await hostInvoke<HostSuccess>(app, 'gateway', 'start').catch(() => undefined);
+        try {
+          await hostInvoke<HostSuccess>(app, 'gateway', 'start');
+        } catch (error) {
+          lastError = error instanceof Error ? error.message : String(error);
+        }
       }
-    } catch {
-      // retry
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
     }
     await new Promise((resolve) => setTimeout(resolve, 2_000));
   }
-  throw new Error('gateway never became ready');
+  const snapshot = await hostInvoke<Record<string, unknown>>(
+    app,
+    'diagnostics',
+    'gatewaySnapshot',
+  ).catch((error) => ({ diagnosticError: error instanceof Error ? error.message : String(error) }));
+  throw new Error(`gateway never became ready: ${JSON.stringify({
+    port,
+    attempts,
+    lastStatus,
+    lastError,
+    snapshot,
+  }).slice(0, 12_000)}`);
+}
+
+function seedCompassKnowledgeFixture(userDataDir: string): void {
+  const databasePath = join(
+    userDataDir,
+    'openclaw-source-state',
+    'state',
+    'openclaw.sqlite',
+  );
+  const db = new DatabaseSync(databasePath);
+  const now = Date.now();
+  try {
+    db.exec('PRAGMA busy_timeout = 30000;');
+    db.prepare(`INSERT INTO context_blocks (
+      block_id, block_type, source_system, session_id, summary, full_content,
+      presence_json, mutability, role_scope, entities_json, entity_extraction_status,
+      compression_depth, fallback_mode, retention_confidence, valid_at, invalid_at, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      'fixture:fp-p2-06:knowledge:agent:main:main',
+      'knowledge',
+      'compass',
+      'agent:main:main',
+      'FP-P2-06 controlled fixture knowledge',
+      'fixture: preserve the frozen controlled-preview boundaries',
+      JSON.stringify({ always_on: false, background: true }),
+      'system_managed',
+      null,
+      '[]',
+      'empty',
+      0,
+      null,
+      null,
+      now - 1_000,
+      null,
+      now,
+    );
+  } finally {
+    db.close();
+  }
+}
+
+function measuredProjectionChars(
+  log: LlmRequestLog[],
+  channel: DcsProjectionChannel,
+): { requestCount: number; messageCount: number; chars: number } {
+  const requests = log.filter((entry) => entry.projections[channel].length > 0);
+  const messages = requests.flatMap((entry) => entry.projections[channel]);
+  return {
+    requestCount: requests.length,
+    messageCount: messages.length,
+    chars: messages.reduce((sum, message) => sum + message.length, 0),
+  };
 }
 
 async function sendTurn(
@@ -412,7 +513,7 @@ async function sendTurn(
     message,
     idempotencyKey: `fp-p1-04-${Date.now()}-${Math.random()}`,
   });
-  // eslint-disable-next-line no-console -- diagnostic: proves the send was accepted
+
   console.log('[fp-p1-04-send]', JSON.stringify(sendResult).slice(0, 400));
   const deadline = Date.now() + 180_000;
   while (Date.now() < deadline) {
@@ -424,7 +525,7 @@ async function sendTurn(
     }
     await new Promise((resolve) => setTimeout(resolve, 1_000));
   }
-  // eslint-disable-next-line no-console -- diagnostic: what the LLM actually saw
+
   console.log('[fp-p1-04-stall]', JSON.stringify({
     llmRequests: log.length,
     issued: log.map((entry) => entry.issued),
@@ -433,7 +534,7 @@ async function sendTurn(
 }
 
 test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () => {
-  test('read → edit(diff+journal) → verify → undo, plus explicit failure paths', async ({
+  test('read → edit/write rich diffs → verify → undo, plus explicit failure paths', async ({
     homeDir,
     userDataDir,
     launchElectronApp,
@@ -442,6 +543,25 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
     const llm = await startScriptedLlm();
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-fp-p1-04-'));
     await writeFile(join(workspaceDir, 'util.js'), BUGGY, 'utf8');
+    await writeFile(join(workspaceDir, 'summary.txt'), SUMMARY_BEFORE, 'utf8');
+    await writeFile(
+      join(workspaceDir, 'auto-verify.cjs'),
+      [
+        "const { appendFileSync, readFileSync } = require('node:fs');",
+        "const source = readFileSync('util.js', 'utf8');",
+        "const passed = source.includes('return a + b;');",
+        "appendFileSync('auto-verify-runs.log', passed ? 'pass\\n' : 'fail\\n');",
+        "console.log(passed ? 'AUTO_VERIFY_PASS' : 'AUTO_VERIFY_FAIL');",
+        "if (!passed) process.exit(3);",
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    await writeFile(
+      join(workspaceDir, 'package.json'),
+      `${JSON.stringify({ scripts: { test: 'node auto-verify.cjs' } }, null, 2)}\n`,
+      'utf8',
+    );
 
     const config = {
       gateway: { mode: 'local', controlUi: { enabled: false } },
@@ -467,10 +587,18 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       },
       runtime: {
         contextBlock: {
+          'compass': { enabled: true },
           'working-memory': { enabled: true },
           'tool-registry': { enabled: true },
         },
-        coding: { staleWriteGuard: { enabled: true } },
+        coding: {
+          staleWriteGuard: { enabled: true },
+          autoVerify: { enabled: true, timeoutSeconds: 30 },
+        },
+      },
+      tools: {
+        profile: 'full',
+        exec: { host: 'gateway', security: 'full', ask: 'off' },
       },
       agents: {
         defaults: {
@@ -495,6 +623,11 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
       await startGateway(app);
+      // The production Compass producer requires a legacy pre-reply payload that
+      // this scripted provider does not create before its first request. Seed one
+      // explicitly labelled Block in the real child state DB; working memory and
+      // tool registry remain production-generated by real tool/agent events.
+      seedCompassKnowledgeFixture(userDataDir);
 
       // ---- T1: happy loop ----
       await sendTurn(app, llm.log, 'FIX-THE-BUG in util.js: add() subtracts.', 'Fixed add()');
@@ -506,35 +639,47 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       // edit produced a diff for the model/UI (write segment evidence):
       const editResult = toolResultFor(llm.log, 'calledit');
       expect(editResult.length).toBeGreaterThan(0);
+      const writeResult = toolResultFor(llm.log, 'callwrite');
+      expect(writeResult.length).toBeGreaterThan(0);
+      expect(await readFile(join(workspaceDir, 'summary.txt'), 'utf8')).toBe(SUMMARY_AFTER);
+      // FP-P2-05: both successful mutations synchronously ran the detected npm
+      // test through the canonical exec tool. The marker is written by the real
+      // child process, not by the scripted model or test harness.
+      expect(editResult).toMatch(/verify_tests: passed\(node\/npm\): npm test/);
+      expect(editResult).toContain('AUTO_VERIFY_PASS');
+      expect(writeResult).toMatch(/verify_tests: passed\(node\/npm\): npm test/);
+      const automaticRuns = await readFile(join(workspaceDir, 'auto-verify-runs.log'), 'utf8');
+      expect(automaticRuns.trim().split('\n')).toEqual(['pass', 'pass']);
       // verify segment ran and reported something (success or explainable denial):
       const bashResult = toolResultFor(llm.log, 'callbash');
       expect(bashResult.length).toBeGreaterThan(0);
-      // journal holds exactly the edit's snapshot, with lineage:
+      // journal holds both mutation snapshots, with lineage:
       const journalRoot = join(workspaceDir, '.openclaw', 'journal');
       const sessions = await readdir(journalRoot);
       expect(sessions.length).toBeGreaterThan(0);
       const sessionDir = join(journalRoot, sessions[0]);
       const metaFiles = (await readdir(sessionDir)).filter((name) => name.endsWith('.meta.json'));
-      expect(metaFiles.length).toBeGreaterThan(0);
-      const meta = JSON.parse(await readFile(join(sessionDir, metaFiles[0]), 'utf8')) as {
+      expect(metaFiles).toHaveLength(2);
+      const metas = await Promise.all(metaFiles.map(async (metaFile) => JSON.parse(
+        await readFile(join(sessionDir, metaFile), 'utf8'),
+      ) as {
         relPath?: string; lineage?: { sessionId?: string; workspaceRoot?: string };
-      };
-      expect(meta.relPath).toBe('util.js');
-      expect(meta.lineage?.sessionId?.length ?? 0).toBeGreaterThan(0);
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04 T1
+      }));
+      expect(metas.map((meta) => meta.relPath).sort()).toEqual(['summary.txt', 'util.js']);
+      expect(metas.every((meta) => (meta.lineage?.sessionId?.length ?? 0) > 0)).toBe(true);
+
       console.log('[fp-p1-04-t1]', JSON.stringify({
         fixedApplied: fixed.includes('return a + b;'),
         editResultPreview: editResult.slice(0, 200),
         bashResultPreview: bashResult.slice(0, 200),
-        journalMeta: meta,
+        writeResultPreview: writeResult.slice(0, 200),
+        journalMetas: metas,
       }));
 
       // ---- T1b: diff段 + verify段 are USER-VISIBLE, not just in logs ----
-      // The edit tool's own `content` is one sentence ("Successfully replaced
-      // N block(s)"); the diff and the test-runner verdict are appended to that
-      // content by write-side-effects. `details` cannot be used for this —
-      // gateway/chat-display-projection.ts deletes it from chat history.
-      // Assert on the turn's work panel, which renders per-tool detail.
+      // Ordinary tool details remain private. The display projection preserves
+      // only strictly validated mutation artifacts and journal lineage, which
+      // drive the CodeDiff surfaces below.
       // The turn summary card collapses its details by default; open it so the
       // per-tool work panel (which carries the diff/verify text) is rendered.
       const summaryToggle = page.getByTestId('chat-turn-summary-toggle').first();
@@ -542,23 +687,51 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
         await summaryToggle.click().catch(() => undefined);
       }
       const workPanel = page.getByTestId('turn-work-panel').first();
+      if (await workPanel.count() > 0) {
+        const showMore = workPanel.getByRole('button', { name: /^Show \d+ more$/ });
+        if (await showMore.count() > 0) {
+          await showMore.click();
+        }
+      }
       const panelText = (await workPanel.count()) > 0 ? await workPanel.innerText() : '<no-panel>';
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04 T1b
+
       console.log('[fp-p1-04-workpanel]', JSON.stringify(panelText).slice(0, 2500));
       const chatText = await page.getByTestId('chat-message-layout').innerText();
-      // eslint-disable-next-line no-console -- diagnostic: what the user sees
+
       console.log('[fp-p1-04-chatdom]', JSON.stringify(chatText).slice(0, 3000));
 
       // The evidence the model received is the same text the product renders;
       // assert on the tool result that actually carried it.
       expect(editResult).toContain('diff:');
       expect(editResult).toContain('return a + b;');
-      // verify段: this workspace has no package.json, so the correct product
-      // behaviour is an EXPLAINED skip — never silence that reads as "passed".
-      expect(editResult).toMatch(/verify_tests: skipped\(no-manifest\)/);
+      // verify段: the automatic test result and bounded output tail are carried
+      // by the successful edit result, rather than relying on the later manual
+      // bash call retained above for FP-P1-04 compatibility coverage.
+      expect(editResult).toMatch(/verify_tests: passed\(node\/npm\)/);
+      expect(editResult).toContain('verify_output_tail:');
       // ...and it is present in the rendered transcript, not only in the log.
       const rendered = `${panelText}\n${chatText}`;
       expect(rendered).toContain('util.js');
+      expect(rendered).toContain('AUTO_VERIFY_PASS');
+
+      const mutationDiffs = page.getByTestId('chat-mutation-code-diff');
+      await expect(mutationDiffs).toHaveCount(2, { timeout: 30_000 });
+      await expect(mutationDiffs.nth(0)).toContainText('util.js');
+      await expect(mutationDiffs.nth(1)).toContainText('summary.txt');
+      await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {
+            writeText: async (value: string) => {
+              (window as unknown as { __fpP2PatchCopy?: string }).__fpP2PatchCopy = value;
+            },
+          },
+        });
+      });
+      await mutationDiffs.nth(0).getByRole('button', { name: 'Copy patch' }).click();
+      await expect.poll(() => page.evaluate(
+        () => (window as unknown as { __fpP2PatchCopy?: string }).__fpP2PatchCopy ?? '',
+      )).toContain('+  return a + b;');
 
       // Shared injection budget accounting after a REAL turn (FP-P1-11).
       const ack = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
@@ -579,7 +752,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
           } | null;
         };
       }).injectionBudget;
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04/FP-P1-11
+
       console.log('[fp-p1-04-budget]', JSON.stringify(budget));
 
       // FP-P1-11 AC1: a real turn produced non-zero accounting.
@@ -593,28 +766,35 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
         (counters.appliedChars ?? 0) + (counters.droppedChars ?? 0) + (counters.truncatedChars ?? 0),
       ).toBe(counters.requestedChars ?? -1);
 
-      // FP-P1-11 AC4: which sources charged this turn.
-      //
-      // FINDING (recorded, not worked around): in the coding path exactly ONE
-      // channel charges — `cvk_addition`. The DCS blocks (working memory, tool
-      // registry, knowledge) are assembled upstream into a single
-      // `systemPromptAddition` (attempt.ts) and charged as that one line, and
-      // only `memory_pilot` / `vtoken` have separate charge sites, both of
-      // which are off for the first product. So the declared 7-entry precedence
-      // is only partly exercised at runtime. Asserting `>= 2` here would mean
-      // switching on an excluded component purely to satisfy a test, which the
-      // hard locks forbid — the honest assertion is that accounting is real and
-      // balanced, with per-block attribution tracked as a residual.
+      // FP-P2-06: all three DCS projections now charge the same real attempt
+      // ledger. The scripted endpoint measured every provider request
+      // independently, so this comparison does not reuse the charge return value.
       const lastTurn = budget?.lastTurn ?? null;
       expect(lastTurn).not.toBeNull();
       const channels = Object.keys(lastTurn?.byChannel ?? {});
-      // eslint-disable-next-line no-console -- evidence for FP-P1-11 per-channel
+      const measured = Object.fromEntries(
+        (Object.keys(DCS_PROJECTION_PATTERNS) as DcsProjectionChannel[]).map((channel) => [
+          channel,
+          measuredProjectionChars(llm.log, channel),
+        ]),
+      ) as Record<DcsProjectionChannel, ReturnType<typeof measuredProjectionChars>>;
+
       console.log('[fp-p1-11-bychannel]', JSON.stringify({
         channels,
         byChannel: lastTurn?.byChannel,
         degradationOrder: lastTurn?.degradationOrder,
+        measured,
       }));
-      expect(channels.length).toBeGreaterThanOrEqual(1);
+      expect(channels).toEqual(expect.arrayContaining([
+        'knowledge',
+        'working_memory',
+        'tool_registry',
+      ]));
+      for (const channel of Object.keys(measured) as DcsProjectionChannel[]) {
+        expect(measured[channel].requestCount, channel).toBeGreaterThan(0);
+        expect(measured[channel].messageCount, channel).toBeGreaterThan(0);
+        expect(lastTurn?.byChannel?.[channel]?.applied, channel).toBe(measured[channel].chars);
+      }
       // Every charged channel must be a declared precedence entry — an unknown
       // channel would mean the ledger and the precedence table have drifted.
       for (const channel of channels) {
@@ -650,8 +830,9 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       await sendTurn(app, llm.log, 'UNDO-THE-CHANGE please.', 'Undo outcome');
       const reverted = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(reverted).toBe(BUGGY);
+      expect(await readFile(join(workspaceDir, 'summary.txt'), 'utf8')).toBe(SUMMARY_BEFORE);
       const undoResult = toolResultFor(llm.log, 'callundoone');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04 T2
+
       console.log('[fp-p1-04-t2]', JSON.stringify({
         reverted: reverted === BUGGY,
         undoResult: undoResult.slice(0, 400),
@@ -665,7 +846,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       await sendTurn(app, llm.log, 'FAILURE-PATHS demo.', 'Both failure paths');
       const missResult = toolResultFor(llm.log, 'callreadmiss');
       const badEditResult = toolResultFor(llm.log, 'calleditbad');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04 T3
+
       console.log('[fp-p1-04-t3]', JSON.stringify({
         missResult: missResult.slice(0, 200),
         badEditResult: badEditResult.slice(0, 200),
@@ -679,6 +860,12 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       await sendTurn(app, llm.log, 'EDIT-AGAIN please.', 'Edited again');
       const afterEditAgain = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(afterEditAgain).toContain('return a * b;');
+      const editAgainResult = toolResultFor(llm.log, 'calleditagain');
+      expect(editAgainResult).toMatch(/verify_tests: failed\(node\/npm\): npm test/);
+      expect(editAgainResult).toContain('AUTO_VERIFY_FAIL');
+      // A failed verify is evidence, not a transaction rollback: the successful
+      // edit and its journal entry remain authoritative.
+      expect(await readFile(join(workspaceDir, 'util.js'), 'utf8')).toContain('return a * b;');
       // Sabotage: remove the newest snapshot from disk (simulates snapshot loss).
       const sessionsNow = await readdir(journalRoot);
       const sessionDirNow = join(journalRoot, sessionsNow[0]);
@@ -689,7 +876,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
 
       await sendTurn(app, llm.log, 'UNDO-AFTER-SABOTAGE now.', 'Second undo outcome');
       const undo2Result = toolResultFor(llm.log, 'callundotwo');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-04 T4 (hard lock)
+
       console.log('[fp-p1-04-t4]', JSON.stringify({ undo2Result: undo2Result.slice(0, 300) }));
       // HARD LOCK: partial restore is a reported FAILURE with recovery pointers.
       // Whitespace-insensitive on the JSON shape only; the failure itself, the
@@ -711,12 +898,12 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
         );
         const tail = (value: unknown): string =>
           typeof value === 'string' ? value.split('\n').slice(-40).join('\n') : '';
-        // eslint-disable-next-line no-console -- diagnostic evidence
+
         console.log('[fp-p1-04-gateway-log]', tail(snapshot.gatewayLogTail).slice(-3000));
-        // eslint-disable-next-line no-console -- diagnostic evidence
+
         console.log('[fp-p1-04-gateway-err]', tail(snapshot.gatewayErrLogTail).slice(-3000));
       } catch (error) {
-        // eslint-disable-next-line no-console -- diagnostic evidence
+
         console.log('[fp-p1-04-gateway-log-unavailable]', String(error).slice(0, 300));
       }
       await closeElectronApp(app);

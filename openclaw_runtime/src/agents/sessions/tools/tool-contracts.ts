@@ -5,6 +5,7 @@
  */
 import type { Edit } from "./edit-diff.js";
 import type { TruncationResult } from "./truncate.js";
+import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from "../../../../../shared/types/remote-forge.js";
 
 /**
  * DCS working-memory producer envelope.
@@ -41,6 +42,9 @@ export interface EditToolDetails {
   diff: string;
   /** Standard unified patch of the changes made */
   patch: string;
+  /** Shared read-only patch projection; mutation ownership stays with the tool and journal. */
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
   /** Line number of the first change in the new file (for editor navigation) */
   firstChangedLine?: number;
   /** DCS working-memory producer envelope (emitted only by mutation tools) */
@@ -100,6 +104,11 @@ export interface WriteToolInput {
 }
 
 export interface WriteToolDetails {
+  /** Standard unified patch generated from the journal-owned before snapshot. */
+  patch?: string;
+  /** Shared read-only patch projection; mutation ownership stays with the tool and journal. */
+  patchArtifacts?: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
   /** DCS working-memory producer envelope (emitted only by mutation tools) */
   working_memory?: WorkingMemoryEnvelope;
 }

@@ -22,6 +22,8 @@ import { isOpenClawDeliveryMirrorAssistantMessage } from "../shared/transcript-o
 import { stripInlineDirectiveTagsForDisplay } from "../utils/directive-tags.js";
 import { stripEnvelopeFromMessages } from "./chat-sanitize.js";
 import { isSuppressedControlReplyText } from "./control-reply-text.js";
+import { isGitPatchArtifactV1 } from "../../../shared/types/remote-forge.js";
+import { GIT_PATCH_ADAPTER_LIMITS } from "../../../shared/remote-forge/unified-diff-adapter.js";
 
 export const DEFAULT_CHAT_HISTORY_TEXT_MAX_CHARS = 8_000;
 
@@ -449,6 +451,216 @@ function sanitizeUsage(raw: unknown): Record<string, number> | undefined {
   return Object.keys(out).length > 0 ? out : undefined;
 }
 
+const VERIFY_EXECUTION_STATUSES = new Set([
+  "passed",
+  "failed",
+  "timed_out",
+  "denied",
+  "approval_required",
+  "crashed",
+  "unavailable",
+  "disabled",
+]);
+const VERIFY_SKIP_REASONS = new Set([
+  "no-workspace",
+  "no-manifest",
+  "no-test-script",
+  "placeholder-test-script",
+  "unsupported-ecosystem",
+  "outside-workspace",
+  "cross-project-changes",
+]);
+const VERIFY_ECOSYSTEMS = new Set(["node", "python", "rust", "go", "custom"]);
+const VERIFY_RUNNERS = new Set(["npm", "pnpm", "yarn", "bun", "pytest", "cargo", "go", "custom"]);
+const VERIFY_DISPLAY_LIMITS = {
+  command: 2_000,
+  workdir: 512,
+  evidence: 512,
+  message: 2_000,
+  reason: 2_000,
+  rendered: 3_000,
+  outputTail: 2_400,
+} as const;
+
+function boundedVerifyString(value: unknown, maxChars: number, tail = false): string | undefined {
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  if (value.length <= maxChars) return value;
+  const marker = "...(truncated)...\n";
+  const remaining = Math.max(0, maxChars - marker.length);
+  return tail ? `${marker}${value.slice(-remaining)}` : `${value.slice(0, remaining)}${marker}`;
+}
+
+function isSafeRelativeVerifyPath(value: string): boolean {
+  const normalized = value.replaceAll("\\", "/");
+  return (
+    normalized === "."
+    || (
+      !normalized.startsWith("/")
+      && !/^[a-zA-Z]:\//.test(normalized)
+      && normalized.split("/").every((segment) => segment !== "..")
+    )
+  );
+}
+
+function projectVerifyExecution(
+  raw: unknown,
+  detection: { command: string; workdir: string },
+): Record<string, unknown> | undefined {
+  const execution = readRecord(raw);
+  const status = execution?.status;
+  const command = boundedVerifyString(execution?.command, VERIFY_DISPLAY_LIMITS.command);
+  const workdir = boundedVerifyString(execution?.workdir, VERIFY_DISPLAY_LIMITS.workdir);
+  if (
+    !execution
+    || typeof status !== "string"
+    || !VERIFY_EXECUTION_STATUSES.has(status)
+    || !command
+    || !workdir
+    || command !== boundedVerifyString(detection.command, VERIFY_DISPLAY_LIMITS.command)
+    || workdir !== detection.workdir
+    || !isSafeRelativeVerifyPath(workdir)
+  ) {
+    return undefined;
+  }
+
+  const projected: Record<string, unknown> = { status, command, workdir };
+  if (execution.exitCode !== undefined) {
+    if (
+      execution.exitCode !== null
+      && (!Number.isSafeInteger(execution.exitCode) || typeof execution.exitCode !== "number")
+    ) {
+      return undefined;
+    }
+    projected.exitCode = execution.exitCode;
+  }
+  if (execution.durationMs !== undefined) {
+    if (
+      typeof execution.durationMs !== "number"
+      || !Number.isFinite(execution.durationMs)
+      || execution.durationMs < 0
+    ) {
+      return undefined;
+    }
+    projected.durationMs = execution.durationMs;
+  }
+  if (execution.reason !== undefined) {
+    const reason = boundedVerifyString(execution.reason, VERIFY_DISPLAY_LIMITS.reason);
+    if (!reason) return undefined;
+    projected.reason = reason;
+  }
+  if (execution.outputTail !== undefined) {
+    const outputTail = boundedVerifyString(
+      execution.outputTail,
+      VERIFY_DISPLAY_LIMITS.outputTail,
+      true,
+    );
+    if (!outputTail) return undefined;
+    projected.outputTail = outputTail;
+  }
+  return projected;
+}
+
+function projectVerifyTests(raw: unknown): Record<string, unknown> | undefined {
+  const verify = readRecord(raw);
+  const rendered = boundedVerifyString(verify?.rendered, VERIFY_DISPLAY_LIMITS.rendered);
+  if (!verify || typeof verify.detected !== "boolean" || !rendered) return undefined;
+
+  if (!verify.detected) {
+    const skipReason = verify.skipReason;
+    const message = boundedVerifyString(verify.message, VERIFY_DISPLAY_LIMITS.message);
+    if (
+      typeof skipReason !== "string"
+      || !VERIFY_SKIP_REASONS.has(skipReason)
+      || !message
+      || verify.execution !== undefined
+    ) {
+      return undefined;
+    }
+    return { detected: false, skipReason, message, rendered };
+  }
+
+  const ecosystem = verify.ecosystem;
+  const runner = verify.runner;
+  const command = boundedVerifyString(verify.command, VERIFY_DISPLAY_LIMITS.command);
+  const evidence = boundedVerifyString(verify.evidence, VERIFY_DISPLAY_LIMITS.evidence);
+  const workdir = boundedVerifyString(verify.workdir, VERIFY_DISPLAY_LIMITS.workdir);
+  if (
+    typeof ecosystem !== "string"
+    || !VERIFY_ECOSYSTEMS.has(ecosystem)
+    || typeof runner !== "string"
+    || !VERIFY_RUNNERS.has(runner)
+    || !command
+    || !evidence
+    || !workdir
+    || !isSafeRelativeVerifyPath(workdir)
+  ) {
+    return undefined;
+  }
+  const execution = projectVerifyExecution(verify.execution, { command, workdir });
+  if (!execution) return undefined;
+  return {
+    detected: true,
+    ecosystem,
+    runner,
+    command,
+    evidence,
+    workdir,
+    execution,
+    rendered,
+  };
+}
+
+function projectMutationPatchDetails(entry: Record<string, unknown>): Record<string, unknown> | undefined {
+  const toolName = normalizeOptionalString(entry.toolName ?? entry.tool_name)?.toLowerCase();
+  if (toolName !== "edit" && toolName !== "write") return undefined;
+  const toolCallId = normalizeOptionalString(entry.toolCallId ?? entry.tool_call_id);
+  const details = readRecord(entry.details);
+  if (!toolCallId || !details || details.patchArtifactError !== undefined) return undefined;
+  if (!Array.isArray(details.patchArtifacts) || details.patchArtifacts.length !== 1) return undefined;
+  const artifact = details.patchArtifacts[0];
+  if (!isGitPatchArtifactV1(artifact) || artifact.completeness !== "complete") return undefined;
+  if (
+    artifact.lineage?.requestId !== toolCallId
+    || !artifact.lineage.journalEntryId
+    || !artifact.patch
+  ) {
+    return undefined;
+  }
+  const journal = readRecord(details.write_journal);
+  if (!journal || !Array.isArray(journal.snapshots)) return undefined;
+  const snapshot = journal.snapshots
+    .map((value) => readRecord(value))
+    .find((value) =>
+      value?.journalEntryId === artifact.lineage?.journalEntryId
+      && value.path === artifact.file);
+  if (!snapshot) return undefined;
+
+  const patchProjection = {
+    patchArtifacts: [artifact],
+    write_journal: {
+      undoable: journal.undoable === true,
+      snapshots: [{
+        ...(typeof snapshot.seq === "number" ? { seq: snapshot.seq } : {}),
+        journalEntryId: artifact.lineage.journalEntryId,
+        path: artifact.file,
+        hadPrior: snapshot.hadPrior === true,
+      }],
+    },
+  };
+  if (
+    Buffer.byteLength(JSON.stringify(patchProjection), "utf8")
+    > GIT_PATCH_ADAPTER_LIMITS.maxInputBytes
+  ) {
+    return undefined;
+  }
+  const verifyTests = projectVerifyTests(details.verify_tests);
+  if (!verifyTests) return patchProjection;
+  const combined = { ...patchProjection, verify_tests: verifyTests };
+  return Buffer.byteLength(JSON.stringify(combined), "utf8") <= GIT_PATCH_ADAPTER_LIMITS.maxInputBytes
+    ? combined
+    : patchProjection;
+}
+
 function sanitizeChatHistoryMessage(
   message: unknown,
   maxChars: number = DEFAULT_CHAT_HISTORY_TEXT_MAX_CHARS,
@@ -469,9 +681,13 @@ function sanitizeChatHistoryMessage(
     typeof entry.toolCallId === "string" ||
     typeof entry.tool_call_id === "string";
 
+  const mutationPatchDetails = projectMutationPatchDetails(entry);
   if ("details" in entry) {
     delete entry.details;
     changed = true;
+  }
+  if (mutationPatchDetails) {
+    entry.details = mutationPatchDetails;
   }
 
   if (entry.role !== "assistant") {

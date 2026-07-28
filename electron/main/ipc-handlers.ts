@@ -65,6 +65,7 @@ import { createAgentsApi } from '../services/agents-api';
 import { createRolesApi } from '../services/roles-api';
 import { createChatApi } from '../services/chat-api';
 import { createCodeReviewApi } from '../services/code-review-api';
+import { createRemoteForgeApi } from '../services/remote-forge-api';
 import { createWorkProvidersApi } from '../services/work-providers-api';
 import { createKnowledgeApi } from '../services/knowledge-api';
 import { createCronApi } from '../services/cron-api';
@@ -181,6 +182,7 @@ function registerTypedHostHandlers(
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
   registerAgentBrowserGatewayBridge(gatewayManager);
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
+  const remoteForgeApi = createRemoteForgeApi();
 
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
@@ -208,7 +210,7 @@ function registerTypedHostHandlers(
     agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
     agentBrowser: createAgentBrowserApi(),
-    mcp: createMcpApiWithContext({ gatewayManager }),
+    mcp: createMcpApiWithContext({ gatewayManager, remoteForgeApi }),
     sandbox: createSandboxApi(),
     logs: createLogsApi(),
     channels: createChannelsApi({ gatewayManager, mainWindow }),
@@ -220,6 +222,7 @@ function registerTypedHostHandlers(
     sessions: createSessionsApi({ gatewayManager }),
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
+    remoteForge: remoteForgeApi,
     workProviders: createWorkProvidersApi(),
     knowledge: knowledgeApi,
     cron: createCronApi({ gatewayManager }),

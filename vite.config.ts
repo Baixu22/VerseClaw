@@ -33,7 +33,9 @@ export const localOpenClawRuntimeAliases = {
   '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
 };
 const bundledMainRuntimeDependencies = new Set([
+  '@pierre/diffs',
   'json5',
+  'shiki',
 ]);
 const alias = {
   '@': resolve(__dirname, 'src'),

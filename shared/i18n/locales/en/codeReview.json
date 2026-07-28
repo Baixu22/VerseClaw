@@ -3,6 +3,10 @@
   "title": "Review Center",
   "subtitle": "Run a read-only AI review over Git changes, normalize findings, and send review items to Task Ledger.",
   "readonly": "Read-only review",
+  "views": {
+    "local": "Local changes",
+    "remote": "Remote PR"
+  },
   "yes": "Yes",
   "no": "No",
   "empty": "Choose a review target, add an optional focus, then run review.",
@@ -46,9 +50,235 @@
     "low": "Low",
     "info": "Info"
   },
+  "remote": {
+    "owner": "Owner",
+    "ownerPlaceholder": "octocat",
+    "repository": "Repository",
+    "repositoryPlaceholder": "hello-world",
+    "number": "PR number",
+    "numberPlaceholder": "42",
+    "read": "Read pull request",
+    "loading": "Reading remote evidence...",
+    "empty": "Enter a GitHub repository and pull request number to inspect bounded, read-only evidence.",
+    "evidence": "Pull request evidence",
+    "head": "Head {{sha}}",
+    "missing": "missing",
+    "counts": {
+      "commits": "Commits",
+      "files": "Files",
+      "checks": "Checks",
+      "reviews": "Reviews"
+    },
+    "readiness": {
+      "ready": "Ready",
+      "blocked": "Blocked",
+      "pending": "Pending",
+      "unknown": "Unknown readiness"
+    },
+    "completeness": {
+      "complete": "Complete evidence",
+      "incomplete": "Incomplete evidence",
+      "truncated": "Truncated evidence",
+      "unavailable": "Evidence unavailable"
+    },
+    "reasons": {
+      "draft": "Draft pull request",
+      "conflict": "Merge conflict",
+      "behind": "Head is behind",
+      "checks_pending": "Checks pending",
+      "checks_failed": "Checks failed",
+      "approvals_missing": "Approvals missing",
+      "changes_requested": "Changes requested",
+      "discussion_state_unknown": "Discussion state unknown",
+      "missing_head": "Head SHA missing",
+      "mergeability_unknown": "Mergeability unknown",
+      "protection_unknown": "Branch protection unknown",
+      "incomplete_evidence": "Evidence incomplete"
+    },
+    "capabilities": {
+      "title": "Provider capabilities",
+      "pullRequestRead": "Pull request",
+      "commitsRead": "Commits",
+      "filesRead": "Files",
+      "diffRead": "Diff",
+      "checksRead": "Checks",
+      "reviewsRead": "Reviews",
+      "contentRead": "Content",
+      "protectionRead": "Protection"
+    },
+    "capabilityState": {
+      "supported": "Supported",
+      "unauthorized": "Unauthorized",
+      "unavailable": "Unavailable",
+      "unknown": "Unknown"
+    },
+    "content": {
+      "utf8": "UTF-8 text",
+      "binary": "Binary content",
+      "base64": "Provider-encoded content",
+      "truncated": "Content exceeded the preview limit",
+      "unavailable": "Content unavailable"
+    },
+    "errors": {
+      "required": "Enter a valid owner, repository, and pull request number.",
+      "readFailed": "The remote pull request could not be read safely.",
+      "incomplete": "Some remote evidence is incomplete. Readiness remains fail-closed.",
+      "contentFailed": "The selected file could not be read safely.",
+      "contentIncomplete": "The selected file is incomplete or unavailable."
+    },
+    "merge": {
+      "title": "Controlled merge",
+      "sandboxOnly": "Only a Main-approved sandbox repository can request this action.",
+      "agentOff": "Agent merge off",
+      "strategy": "Strategy",
+      "strategies": { "merge": "Merge commit", "squash": "Squash", "rebase": "Rebase" },
+      "commitTitle": "Commit title (optional)",
+      "commitMessage": "Commit message (optional)",
+      "requestApproval": "Request merge approval",
+      "approvalTitle": "One-time merge approval required",
+      "head": "Expected head",
+      "deny": "Deny",
+      "approveAndMerge": "Approve and merge",
+      "states": {
+        "succeeded": "Merged",
+        "partial": "Merged with reconciliation required",
+        "failed": "Not merged",
+        "unknown": "Merge outcome unknown"
+      },
+      "effects": {
+        "primary": "Merge",
+        "labels": "Labels",
+        "reviewers": "Reviewers",
+        "refresh": "Refresh",
+        "audit": "Audit"
+      },
+      "effectStates": {
+        "not_attempted": "Not attempted",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "unknown": "Unknown"
+      },
+      "reconciliation": {
+        "not_needed": "No reconciliation needed",
+        "refresh_required": "Refresh the provider before taking another action",
+        "manual_check_required": "Check the provider before retrying"
+      },
+      "policy": {
+        "allowed": "Sandbox policy allows this request.",
+        "repository_not_allowed": "This repository is not in the Main-owned sandbox allowlist.",
+        "agent_merge_disabled": "Agent merge is disabled by Main policy."
+      },
+      "errors": {
+        "missingHead": "The pull request head is unavailable.",
+        "notReady": "Current readiness blocks merge. Refresh after resolving every veto.",
+        "requestFailed": "Merge approval could not be requested.",
+        "approvalFailed": "The merge approval decision could not be recorded.",
+        "mergeFailed": "The approved merge could not be completed safely.",
+        "invalid_request": "The merge request contains invalid or oversized fields.",
+        "authentication_required": "GitHub authentication is required.",
+        "permission_denied": "Sandbox policy, approval, or GitHub permission is missing.",
+        "not_found": "The pull request resource was not found.",
+        "rate_limited": "GitHub rate limit reached. Retry later.",
+        "conflict": "Readiness, strategy, or provider state changed. Refresh before continuing.",
+        "stale_head": "The pull request head changed. Request a new approval.",
+        "incomplete_response": "Readiness evidence is incomplete, so merge remains blocked.",
+        "truncated_response": "Readiness evidence exceeded a safety limit.",
+        "upstream_unavailable": "GitHub is unavailable. Check provider state before retrying.",
+        "network_error": "Merge outcome is unknown. Check GitHub before retrying.",
+        "timeout": "Merge timed out. Check GitHub before retrying.",
+        "cancelled": "The merge was cancelled.",
+        "internal": "The merge failed safely.",
+        "unknown": "The merge returned an unrecognized result."
+      }
+    },
+    "mutation": {
+      "title": "Review draft",
+      "draftState": "Draft only",
+      "action": "Action",
+      "actions": {
+        "review_submit": "Submit review",
+        "line_comment_create": "Add line comment",
+        "comment_edit": "Edit comment",
+        "thread_reply": "Reply to thread",
+        "metadata_update": "Update metadata"
+      },
+      "reviewEvent": "Review decision",
+      "events": {
+        "comment": "Comment",
+        "approve": "Approve",
+        "request_changes": "Request changes"
+      },
+      "path": "File",
+      "selectFile": "Select a changed file",
+      "line": "Line",
+      "side": "Diff side",
+      "sides": { "LEFT": "Old", "RIGHT": "New" },
+      "commentId": "Comment ID",
+      "metadataTitle": "Title",
+      "metadataBody": "Description",
+      "labels": "Labels",
+      "reviewers": "Reviewers",
+      "body": "Draft text",
+      "requestApproval": "Request approval",
+      "approvalTitle": "One-time approval required",
+      "head": "Head",
+      "deny": "Deny",
+      "approveAndPublish": "Approve and publish",
+      "states": {
+        "succeeded": "Published",
+        "partial": "Published with follow-up failures",
+        "failed": "Not published",
+        "unknown": "Delivery unknown"
+      },
+      "effects": {
+        "primary": "Primary effect",
+        "labels": "Labels",
+        "reviewers": "Reviewers",
+        "refresh": "Refresh"
+      },
+      "effectStates": {
+        "not_attempted": "Not attempted",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "unknown": "Unknown"
+      },
+      "reconciliation": {
+        "not_needed": "No reconciliation needed",
+        "refresh_required": "Refresh remote state before continuing",
+        "manual_check_required": "Check the remote pull request before retrying"
+      },
+      "errors": {
+        "missingHead": "The pull request head is unavailable.",
+        "bodyRequired": "Enter draft text.",
+        "lineRequired": "Select a file and enter a valid line and draft text.",
+        "commentRequired": "Enter a valid comment ID and draft text.",
+        "metadataRequired": "The pull request version and metadata changes are required.",
+        "requestFailed": "Approval could not be requested.",
+        "approvalFailed": "The approval decision could not be recorded.",
+        "publishFailed": "The approved action could not be completed safely.",
+        "invalid_request": "The draft contains invalid or oversized fields.",
+        "authentication_required": "GitHub authentication is required.",
+        "permission_denied": "Approval or GitHub permission is missing.",
+        "not_found": "The pull request resource was not found.",
+        "rate_limited": "GitHub rate limit reached. Retry later.",
+        "conflict": "The pull request version changed. Refresh the draft.",
+        "stale_head": "The pull request head changed. Refresh the draft.",
+        "incomplete_response": "GitHub returned an incomplete result.",
+        "truncated_response": "GitHub returned an oversized result.",
+        "upstream_unavailable": "GitHub is unavailable. Check remote state before retrying.",
+        "network_error": "Delivery is unknown. Check the pull request before retrying.",
+        "timeout": "Delivery timed out. Check the pull request before retrying.",
+        "cancelled": "The action was cancelled.",
+        "internal": "The action failed safely.",
+        "unknown": "The remote result is unknown."
+      }
+    }
+  },
   "errors": {
     "baseBranchRequired": "Enter a base branch before running review.",
     "commitRequired": "Enter a commit before running review.",
+    "patchTruncated": "The Git diff exceeded the review limit, so AI review was not started.",
+    "patchUnavailable": "The Git diff could not be verified safely, so AI review was not started.",
     "reviewFailed": "Review failed.",
     "ledgerFailed": "Could not create the Task Ledger review node."
   }

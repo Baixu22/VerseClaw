@@ -15,6 +15,8 @@ describe('vite Electron OpenClaw runtime aliases', () => {
     expect(viteConfig.isMainProcessExternal!('@openclaw/acp-core')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('@openclaw/acp-core/runtime/session-identifiers')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('json5')).toBe(false);
+    expect(viteConfig.isMainProcessExternal!('@pierre/diffs')).toBe(false);
+    expect(viteConfig.isMainProcessExternal!('shiki')).toBe(false);
   });
 
   it('maps local OpenClaw package imports to checked-in runtime sources', async () => {

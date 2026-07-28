@@ -43,6 +43,7 @@ expectedUserBehavior:
   - Successful production edit, write, and apply_patch results emit an explicit producer-owned working-memory envelope. Read, search, CodeGraph, and generic exec/process results do not.
   - With working memory enabled, the next LLM call shows exactly one transient `## Recent Actions` block derived from accepted persisted actions; repeated LLM calls do not accumulate it and transcripts do not contain it.
   - With the flag disabled or an absent envelope, the run remains a no-op for DCS working memory and preserves existing output identity.
+  - When `runtime.coding.autoVerify.enabled` is explicitly enabled, a successful mutation runs one bounded project test command through the final effective exec tool and appends the outcome to the same visible tool result. The default remains disabled.
 requiredProfiles:
   - fast
   - comms
@@ -64,6 +65,7 @@ requiredTests:
   - pnpm run harness:ci
   - pnpm harness run --spec harness/specs/tasks/coding-runtime-workspace-dcs-producer-vertical-slice.md
   - pnpm contract:check
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/test-runner-detect.test.ts src/agents/write-side-effects.verify-tests.test.ts src/agents/agent-tools.auto-verify.test.ts
   - pnpm run comms:replay
   - pnpm run comms:compare
   - pnpm --dir openclaw_runtime build
@@ -83,6 +85,8 @@ acceptance:
   - Flag-off and no-envelope paths prove zero BlockStore construction/query/write and exact existing-output identity. No producer metadata dependency leaks into those paths.
   - Generate machine-readable matched off/on replay evidence for workspace/cwd consistency, producer coverage, next-call visibility, duplicate-injection count, verification pass rate, task pass rate, tokens, latency, repeated tool calls, and wrong-workspace access. Do not claim positive uplift without the matched comparison.
   - No DCS Stage 2 task_state/handoff, AgentMap, AST, SEKB, COMPASS, LSP, CodeGraph algorithm, new event bus/store, always-on promotion, or Renderer direct transport is introduced.
+  - Auto verify calls the canonical exec tool only after the complete tool-policy and hook pipeline. A removed or unavailable exec surface reports `unavailable`; approval, denial, timeout, crash, and non-zero exit outcomes remain visible and never roll back or reclassify a successful write.
+  - Changed paths resolve to one nearest project root. Cross-project changes fail closed unless an explicit workspace-level custom command is configured. Custom commands and timeouts remain bounded, config-validated, and default-off.
   - Final report lists path-map evidence, RED/GREEN evidence, all gates and exit codes, off/on evidence, ownership/prohibition scans, untracked-file results, and independent review Critical 0 / Important 0.
 docs:
   required: true
@@ -123,3 +127,12 @@ transport, an inferred cwd, or a synthetic producer.
 Only update DCS documentation after all production, Electron E2E, contract,
 comms, Runtime build, and independent-review gates are green. The following DCS
 Stage 2 task may begin only after this task has its own COMPLETE report.
+
+## FP-P2-05 Auto Verify Extension
+
+The write side owns detection and result composition only. Process execution is
+injected from `agent-tools.ts` after the effective exec tool has passed profile,
+provider, sandbox, subagent, allow/deny, hook, and abort wrapping. The write path
+must never spawn directly or construct a second approval, sandbox, or timeout
+plane. Verification is post-mutation evidence: its failure cannot undo, hide, or
+change the successful mutation or write-journal record.

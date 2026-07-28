@@ -21,6 +21,7 @@ This matrix is the single source of truth for **product defaults**. It must stay
 | **SEKB shadow evaluation** | runtime.contextBlock.sekb.shadowEvaluation.enabled | **false** | SEKB master + explicit true | flags off |
 | **Browser private network** | browser.ssrfPolicy.dangerouslyAllowPrivateNetwork (+ alias allowPrivateNetwork) | **false** (deny) | true AND ack (dangerouslyAllowPrivateNetworkAcknowledged or VERSE_BROWSER_ALLOW_PRIVATE_NETWORK=1) | set false; unacked legacy true auto-migrates |
 | **Context enhancement kill switch** | runtime.contextEnhancement.killSwitch / VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH | **false** | N/A | true/env=1 cuts VToken + memory + DCS flags + CVK addition |
+| **Coding auto verify** | runtime.coding.autoVerify.enabled | **false** (opt-in) | enabled:true; optional bounded command / timeoutSeconds (max 90) | set enabled:false |
 
 ## Semantics
 
@@ -29,6 +30,7 @@ This matrix is the single source of truth for **product defaults**. It must stay
 3. Kill switch is fail-closed: enhancement paths no-op (including CVK addition); the agent turn continues without the extra context.
 4. Do not graduate defaults to true while human-canary, soak, and joint-system release gates remain incomplete.
 5. SEKB automatic experience writeback remains forbidden (TF-0004 is human-gated golden path only).
+6. Coding auto verify is default-off. When enabled it reuses the effective `exec` tool and never creates a second process, approval, sandbox, or timeout authority.
 
 ## Code anchors
 

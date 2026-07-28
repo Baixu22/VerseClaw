@@ -234,6 +234,7 @@ import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
 import { dcsObservability } from "../../../context-engine/dcs-observability.js";
+import { KNOWLEDGE_INJECTION_CHAR_BUDGET } from "../../../context-engine/assembler.js";
 import { loadVtokenDcsMemoryEntries } from "../../../context-engine/chat-turn-vtoken-injection.js";
 import { computeContextExtraSystemPrompt } from "../../../context-engine/context-orchestrator.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
@@ -241,6 +242,7 @@ import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
   endTurnInjectionBudget,
+  reserveTurnInjectionCapacity,
 } from "../../../context-engine/turn-injection-budget.js";
 import {
   createMemoryContextProviders,
@@ -251,7 +253,10 @@ import {
   resolveTrustedWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
 import { invalidateWorkspaceFactServiceByFingerprint } from "../../../context-engine/factstore/workspace-fact-service.js";
-import { buildEmbeddedExtensionFactories } from "../extensions.js";
+import {
+  buildEmbeddedExtensionFactories,
+  isContextBlockProjectionEnabled,
+} from "../extensions.js";
 import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
   applyExtraParamsToAgent,
@@ -1993,6 +1998,19 @@ export async function runEmbeddedAttempt(
     const injectionTurnId = `${params.sessionKey ?? params.sessionId ?? "session"}::${
       params.runId ?? `attempt-${Date.now()}`
     }`;
+    // FP-P2-06: context-engine assembly runs before the SDK context hook, so
+    // protect the established DCS 2000-char pool from lower-precedence sources
+    // without increasing the 6000-char turn total or creating synthetic charges.
+    if (isContextBlockProjectionEnabled(params.config)) {
+      reserveTurnInjectionCapacity(
+        beginTurnInjectionBudget({
+          turnId: injectionTurnId,
+          killed: isContextEnhancementKillSwitchEngaged(params.config),
+        }),
+        ["knowledge", "working_memory", "tool_registry"],
+        KNOWLEDGE_INJECTION_CHAR_BUDGET,
+      );
+    }
     // TF-0002: single Context Orchestrator entry for memory inject + VToken.
     const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
@@ -2323,6 +2341,7 @@ export async function runEmbeddedAttempt(
         model: params.model,
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        injectionTurnId,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,

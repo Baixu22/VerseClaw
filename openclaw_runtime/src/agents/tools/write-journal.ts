@@ -18,8 +18,19 @@ import { Type } from "typebox";
 import { codingObservability } from "../../context-engine/coding-observability.js";
 import { getToolParamsRecord } from "../agent-tools.params.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
+import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
 import { jsonResult } from "./common.js";
 import { toFactRelPath } from "../fact-rel-path.js";
+import {
+  isGitPatchArtifactV1,
+  type GitPatchArtifactV1,
+} from "../../../../shared/types/remote-forge.js";
+import {
+  adaptUnifiedDiffToGitPatchArtifacts,
+  GIT_PATCH_ADAPTER_LIMITS,
+} from "../../../../shared/remote-forge/unified-diff-adapter.js";
+import { createRemoteForgeErrorV1 } from "../../../../shared/remote-forge/error-envelope.js";
+import type { RemoteForgeErrorCode, RemoteForgeErrorV1 } from "../../../../shared/types/remote-forge.js";
 
 export const UNDO_WRITE_TOOL_NAME = "undo_write";
 
@@ -52,6 +63,141 @@ export type WriteJournal = {
 };
 
 const journals = new Map<string, WriteJournal>();
+
+function journalEntryId(sessionId: string, seq: number): string {
+  return `write-journal:${sessionId}:${seq}`;
+}
+
+function bindPatchArtifactLineage(params: {
+  details: Record<string, unknown>;
+  snapshots: WriteJournalEntry[];
+  requestId: string;
+}): { patchArtifacts?: GitPatchArtifactV1[]; patchArtifactError?: RemoteForgeErrorV1 } {
+  if (!Array.isArray(params.details.patchArtifacts)) return {};
+  if (!params.details.patchArtifacts.every(isGitPatchArtifactV1)) {
+    return {
+      patchArtifacts: [],
+      patchArtifactError: createRemoteForgeErrorV1({
+        code: "incomplete_response",
+        requestId: params.requestId,
+      }),
+    };
+  }
+
+  const patchArtifacts = params.details.patchArtifacts.map((artifact) => {
+    if (artifact.lineage?.requestId && artifact.lineage.requestId !== params.requestId) {
+      return null;
+    }
+    const snapshot = params.snapshots.find((entry) => entry.relPath === artifact.file);
+    if (!snapshot) return null;
+    const next: GitPatchArtifactV1 = {
+      ...artifact,
+      lineage: {
+        ...artifact.lineage,
+        requestId: params.requestId,
+        journalEntryId: journalEntryId(snapshot.lineage?.sessionId ?? "default", snapshot.seq),
+      },
+    };
+    return isGitPatchArtifactV1(next) ? next : null;
+  });
+  if (patchArtifacts.some((artifact) => artifact === null)) {
+    return {
+      patchArtifacts: [],
+      patchArtifactError: createRemoteForgeErrorV1({
+        code: "incomplete_response",
+        requestId: params.requestId,
+      }),
+    };
+  }
+  return { patchArtifacts: patchArtifacts as GitPatchArtifactV1[] };
+}
+
+type FullFileWriteProjection = {
+  patch?: string;
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
+};
+
+function unavailableFullFileWrite(
+  code: RemoteForgeErrorCode,
+  requestId: string | undefined,
+): FullFileWriteProjection {
+  return {
+    patchArtifacts: [],
+    patchArtifactError: createRemoteForgeErrorV1({ code, requestId }),
+  };
+}
+
+function decodeUtf8Strict(value: Buffer): string | undefined {
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(value);
+  } catch {
+    return undefined;
+  }
+}
+
+function projectFullFileWrite(params: {
+  args: unknown;
+  requestId?: string;
+  snapshots: WriteJournalEntry[];
+}): FullFileWriteProjection {
+  if (!params.requestId) {
+    return unavailableFullFileWrite("incomplete_response", params.requestId);
+  }
+  if (params.snapshots.length !== 1) {
+    return unavailableFullFileWrite("incomplete_response", params.requestId);
+  }
+  const snapshot = params.snapshots[0]!;
+  const record = getToolParamsRecord(params.args);
+  const expectedContent = typeof record?.content === "string" ? record.content : undefined;
+  if (expectedContent === undefined) {
+    return unavailableFullFileWrite("invalid_request", params.requestId);
+  }
+
+  try {
+    if (!existsSync(snapshot.absPath) || !statSync(snapshot.absPath).isFile()) {
+      return unavailableFullFileWrite("incomplete_response", params.requestId);
+    }
+    const beforeBytes = readFileSync(snapshot.snapshotPath);
+    const afterBytes = readFileSync(snapshot.absPath);
+    const expectedBytes = Buffer.from(expectedContent, "utf8");
+    if (!afterBytes.equals(expectedBytes)) {
+      return unavailableFullFileWrite("incomplete_response", params.requestId);
+    }
+    if (beforeBytes.byteLength + afterBytes.byteLength > GIT_PATCH_ADAPTER_LIMITS.maxInputBytes) {
+      return unavailableFullFileWrite("truncated_response", params.requestId);
+    }
+    const beforeContent = decodeUtf8Strict(beforeBytes);
+    if (beforeContent === undefined) {
+      return unavailableFullFileWrite("incomplete_response", params.requestId);
+    }
+    if (snapshot.hadPrior && beforeBytes.equals(afterBytes)) {
+      return unavailableFullFileWrite("conflict", params.requestId);
+    }
+
+    const patch = generateUnifiedPatch(
+      snapshot.relPath,
+      snapshot.hadPrior ? beforeContent : "",
+      expectedContent,
+      4,
+      snapshot.hadPrior ? "modified" : "added",
+    );
+    const projection = adaptUnifiedDiffToGitPatchArtifacts({
+      patch,
+      sourceCompleteness: "complete",
+      lineage: { requestId: params.requestId },
+    });
+    if (projection.kind === "unavailable") {
+      return unavailableFullFileWrite("incomplete_response", params.requestId);
+    }
+    if (projection.artifacts.some((artifact) => artifact.completeness !== "complete")) {
+      return unavailableFullFileWrite("incomplete_response", params.requestId);
+    }
+    return { patch, patchArtifacts: projection.artifacts };
+  } catch {
+    return unavailableFullFileWrite("incomplete_response", params.requestId);
+  }
+}
 
 export function journalDirFor(workspaceRoot: string, sessionId: string): string {
   return path.join(workspaceRoot, ".openclaw", "journal", sessionId);
@@ -347,14 +493,33 @@ export function wrapToolWithWriteJournal(
         result.details && typeof result.details === "object" && !Array.isArray(result.details)
           ? (result.details as Record<string, unknown>)
           : {};
+      const detailsForLineage = tool.name === "write"
+        ? (() => {
+            const {
+              patch: _untrustedPatch,
+              patchArtifacts: _untrustedArtifacts,
+              patchArtifactError: _untrustedError,
+              ...otherDetails
+            } = prevDetails;
+            return {
+              ...otherDetails,
+              ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
+            };
+          })()
+        : prevDetails;
+      const patchLineage = toolCallId
+        ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
+        : {};
       return {
         ...result,
         details: {
-          ...prevDetails,
+          ...detailsForLineage,
+          ...patchLineage,
           write_journal: {
             undoable: true,
             snapshots: snapshots.map((s) => ({
               seq: s.seq,
+              journalEntryId: journalEntryId(s.lineage?.sessionId ?? "default", s.seq),
               path: s.relPath,
               hadPrior: s.hadPrior,
             })),

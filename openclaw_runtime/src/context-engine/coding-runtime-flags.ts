@@ -15,6 +15,8 @@ export const DEFAULT_CODING_FEATURE_FLAGS = {
   "runtime.coding.parseOnTouch.enabled": true,
   "runtime.coding.staleWriteGuard.enabled": false,
   "runtime.coding.writeJournal.enabled": true,
+  /** FP-P2-05: post-write execution remains explicit opt-in. */
+  "runtime.coding.autoVerify.enabled": false,
   /** C4-H: inprocess until git backend ACCEPT evidence. */
   "runtime.coding.worktree.backend": "inprocess" as const,
   /** C5-H: memory until multi-process WAL ACCEPT evidence. */
@@ -35,6 +37,15 @@ export type WorktreeBackend = "inprocess" | "git";
 export type SymbolLeaseMode = "memory" | "wal";
 
 type CodingFlagLeaf = { enabled?: boolean; backend?: string; mode?: string; default?: boolean; shadow?: boolean };
+
+export const DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
+export const MAX_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
+
+export type CodingAutoVerifyConfig = {
+  enabled: boolean;
+  timeoutSeconds: number;
+  command?: string;
+};
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -103,6 +114,27 @@ export function isCodingWriteJournalEnabled(
   }
   const fromConfig = readCodingLeaf(codingConfigFrom(cfg), "writeJournal");
   return fromConfig ?? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.writeJournal.enabled"];
+}
+
+/** Resolve bounded post-write test execution. Default off. */
+export function resolveCodingAutoVerifyConfig(cfg?: OpenClawConfig): CodingAutoVerifyConfig {
+  const leaf = asRecord(codingConfigFrom(cfg)?.autoVerify);
+  const timeoutSeconds =
+    typeof leaf?.timeoutSeconds === "number" &&
+    Number.isInteger(leaf.timeoutSeconds) &&
+    leaf.timeoutSeconds >= 1 &&
+    leaf.timeoutSeconds <= MAX_CODING_AUTO_VERIFY_TIMEOUT_SECONDS
+      ? leaf.timeoutSeconds
+      : DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS;
+  const command = typeof leaf?.command === "string" ? leaf.command.trim() : "";
+  return {
+    enabled:
+      typeof leaf?.enabled === "boolean"
+        ? leaf.enabled
+        : DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"],
+    timeoutSeconds,
+    ...(command ? { command } : {}),
+  };
 }
 
 /** C4-H worktree backend. Default inprocess (safe). */

@@ -69,12 +69,16 @@ import {
   isCodingStaleWriteGuardEnabled,
   isCodingWriteJournalEnabled,
   isCodingSymbolLeaseEnabled,
+  resolveCodingAutoVerifyConfig,
   resolveSymbolLeaseMode,
 } from "../context-engine/coding-runtime-flags.js";
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
-import { wrapToolWithWriteSideEffects } from "./write-side-effects.js";
+import {
+  type TestRunnerExecutor,
+  wrapToolWithWriteSideEffects,
+} from "./write-side-effects.js";
 import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
 import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
 import {
@@ -766,6 +770,23 @@ export function createOpenClawCodingTools(options?: {
     symbolLeaseEnabled: options?.symbolLeaseEnabled,
   });
   const symbolLeaseMode = resolveSymbolLeaseMode(options?.config);
+  const autoVerifyConfig = resolveCodingAutoVerifyConfig(options?.config);
+  // Filled only after the complete policy/hook pipeline. The write wrapper's
+  // closure therefore cannot bypass an exec tool removed from the final surface.
+  const autoVerifyExecToolRef: { current?: AnyAgentTool } = {};
+  const executeTestCommand: TestRunnerExecutor = async (params) =>
+    await autoVerifyExecToolRef.current?.execute(
+      params.toolCallId,
+      {
+        command: params.command,
+        workdir: params.workdir,
+        timeout: params.timeoutSeconds,
+        yieldMs: Math.min(params.timeoutSeconds * 1000 + 1000, 120_000),
+        background: false,
+      },
+      params.signal,
+      undefined,
+    );
   const codingSessionId = options?.sessionId;
   const applyParseOnTouch = (tool: AnyAgentTool): AnyAgentTool =>
     wrapToolWithParseOnTouch(tool, {
@@ -815,6 +836,10 @@ export function createOpenClawCodingTools(options?: {
       parseOnWriteEnabled: parseOnTouchEnabled,
       syntaxCheckEnabled: true,
       verifyConsumeEnabled: true,
+      autoVerifyEnabled: autoVerifyConfig.enabled,
+      autoVerifyTimeoutSeconds: autoVerifyConfig.timeoutSeconds,
+      autoVerifyCommand: autoVerifyConfig.command,
+      executeTestCommand,
     });
     // C2-4 / C2-7 soft warnings (never hard-block)
     next = wrapToolWithSoftWriteGates(next, {
@@ -1345,6 +1370,9 @@ export function createOpenClawCodingTools(options?: {
   const withDeferredFollowupDescriptions = applyDeferredFollowupToolDescriptions(withAbort, {
     agentId,
   });
+  autoVerifyExecToolRef.current = withDeferredFollowupDescriptions.find(
+    (tool) => tool.name === "exec",
+  );
   options?.recordToolPrepStage?.("deferred-followup-descriptions");
 
   // NOTE: Keep canonical (lowercase) tool names here.

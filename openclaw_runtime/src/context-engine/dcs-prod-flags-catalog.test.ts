@@ -7,6 +7,7 @@ import {
   isCodingSekbExperienceShadowEnabled,
   isCodingStaleWriteGuardEnabled,
   isCodingSymbolLeaseEnabled,
+  resolveCodingAutoVerifyConfig,
   resolveWorktreeBackend,
 } from "./coding-runtime-flags.js";
 import { DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS } from "./assembler.js";
@@ -27,6 +28,7 @@ describe("dcs prod p0 safe defaults", () => {
     expect(isCodingPatchFlowDefault()).toBe(false);
     expect(isCodingRoutingMemoShadowEnabled()).toBe(false);
     expect(isCodingSekbExperienceShadowEnabled()).toBe(false);
+    expect(resolveCodingAutoVerifyConfig()).toEqual({ enabled: false, timeoutSeconds: 90 });
 
     expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.staleWriteGuard.enabled"]).toBe(false);
     expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.worktree.backend"]).toBe("inprocess");
@@ -34,6 +36,7 @@ describe("dcs prod p0 safe defaults", () => {
     expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.patchFlow.default"]).toBe(false);
     expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.routingMemo.shadow"]).toBe(false);
     expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.sekb.experienceShadow"]).toBe(false);
+    expect(DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"]).toBe(false);
   });
 
   it("TASK-P0-02: factViews is not a default-true coding flag; deprecated helper is fail-closed", () => {

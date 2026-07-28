@@ -6,6 +6,7 @@ import {
   Files,
   GitBranch,
   GitCommit,
+  GitPullRequest,
   Loader2,
   PlusCircle,
   ShieldCheck,
@@ -14,6 +15,7 @@ import { hostApi } from '@/lib/host-api';
 import { cn } from '@/lib/utils';
 import type { CodeReviewFinding, CodeReviewRun, CodeReviewTarget } from '@shared/types/code-review';
 import type { GitBranch as GitBranchInfo } from '@shared/types/git';
+import { RemoteForgePanel } from './RemoteForgePanel';
 
 type TargetKind = CodeReviewTarget['kind'];
 
@@ -46,6 +48,7 @@ function defaultBaseBranch(branches: GitBranchInfo[]): string {
 
 export default function CodeReviewPage() {
   const { t } = useTranslation('codeReview');
+  const [viewMode, setViewMode] = useState<'local' | 'remote'>('local');
   const [targetKind, setTargetKind] = useState<TargetKind>('uncommitted');
   const [branches, setBranches] = useState<GitBranchInfo[]>([]);
   const [baseBranch, setBaseBranch] = useState('');
@@ -99,7 +102,11 @@ export default function CodeReviewPage() {
       });
       setReview(result.review);
       if (!result.success) {
-        setError(result.error ?? result.review.error ?? t('errors.reviewFailed'));
+        setError(result.review.diffStats.truncated
+          ? t('errors.patchTruncated')
+          : result.review.patchArtifactError
+            ? t('errors.patchUnavailable')
+            : result.error?.safeMessage ?? result.review.error?.safeMessage ?? t('errors.reviewFailed'));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -144,16 +151,45 @@ export default function CodeReviewPage() {
               {t('subtitle')}
             </p>
           </div>
-          <div
-            data-testid="code-review-readonly"
-            className="inline-flex items-center gap-2 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400"
-          >
-            <ShieldCheck className="h-4 w-4" />
-            <span>{t('readonly')}</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-md border border-border bg-surface-modal p-1" data-testid="code-review-view-tabs">
+              <button
+                type="button"
+                data-testid="code-review-view-local"
+                onClick={() => setViewMode('local')}
+                className={cn(
+                  'inline-flex h-8 items-center gap-2 rounded px-3 text-sm transition-colors',
+                  viewMode === 'local' ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground',
+                )}
+              >
+                <GitBranch className="h-4 w-4" />
+                <span>{t('views.local')}</span>
+              </button>
+              <button
+                type="button"
+                data-testid="code-review-view-remote"
+                onClick={() => setViewMode('remote')}
+                className={cn(
+                  'inline-flex h-8 items-center gap-2 rounded px-3 text-sm transition-colors',
+                  viewMode === 'remote' ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground',
+                )}
+              >
+                <GitPullRequest className="h-4 w-4" />
+                <span>{t('views.remote')}</span>
+              </button>
+            </div>
+            <div
+              data-testid="code-review-readonly"
+              className="inline-flex items-center gap-2 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span>{t('readonly')}</span>
+            </div>
           </div>
         </div>
       </header>
 
+      {viewMode === 'remote' ? <RemoteForgePanel /> : (
       <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[360px_minmax(0,1fr)]">
         <section className="border-b border-border/60 p-4 lg:border-b-0 lg:border-r">
           <div className="space-y-5">
@@ -363,6 +399,7 @@ export default function CodeReviewPage() {
           )}
         </section>
       </main>
+      )}
     </div>
   );
 }

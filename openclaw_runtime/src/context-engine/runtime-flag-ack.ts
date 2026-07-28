@@ -28,6 +28,7 @@ import {
   isCodingStaleWriteGuardEnabled,
   isCodingSymbolLeaseEnabled,
   isCodingWriteJournalEnabled,
+  resolveCodingAutoVerifyConfig,
   resolveSymbolLeaseMode,
   resolveWorktreeBackend,
 } from "./coding-runtime-flags.js";
@@ -39,6 +40,8 @@ import { dcsObservability } from "./dcs-observability.js";
 import {
   TURN_INJECTION_CHAR_BUDGET,
   TURN_INJECTION_DROP_ALERT_RATIO,
+  getEffectiveTurnInjectionCharBudget,
+  getEffectiveDropAlertRatio,
   TURN_INJECTION_PRECEDENCE,
 } from "./turn-injection-budget.js";
 
@@ -184,12 +187,13 @@ function resolveConfigSource(env: NodeJS.ProcessEnv): RuntimeFlagAckConfigSource
   } catch {
     return { path: "", exists: false, origin };
   }
-  let exists = false;
-  try {
-    exists = fs.existsSync(resolved);
-  } catch {
-    exists = false;
-  }
+  const exists = (() => {
+    try {
+      return fs.existsSync(resolved);
+    } catch {
+      return false;
+    }
+  })();
   return { path: resolved, exists, origin };
 }
 
@@ -266,6 +270,7 @@ export function resolveEffectiveRuntimeFlagsWithSources(
     "runtime.coding.parseOnTouch.enabled": isCodingParseOnTouchEnabled(cfg),
     "runtime.coding.staleWriteGuard.enabled": isCodingStaleWriteGuardEnabled(cfg),
     "runtime.coding.writeJournal.enabled": isCodingWriteJournalEnabled(cfg),
+    "runtime.coding.autoVerify.enabled": resolveCodingAutoVerifyConfig(cfg).enabled,
     "runtime.coding.worktree.backend": resolveWorktreeBackend(cfg),
     "runtime.coding.symbolLease.enabled": isCodingSymbolLeaseEnabled(cfg),
     "runtime.coding.symbolLease.mode": resolveSymbolLeaseMode(cfg),
@@ -387,9 +392,9 @@ function buildTurnEffectProbe(
 function readInjectionBudgetEvidence(): RuntimeFlagAckPayload["injectionBudget"] {
   const counters = dcsObservability.snapshot();
   return {
-    totalChars: TURN_INJECTION_CHAR_BUDGET,
+    totalChars: getEffectiveTurnInjectionCharBudget(),
     precedence: [...TURN_INJECTION_PRECEDENCE],
-    dropAlertRatio: TURN_INJECTION_DROP_ALERT_RATIO,
+    dropAlertRatio: getEffectiveDropAlertRatio(),
     counters: {
       turns: counters.turnInjectionTurns,
       killedTurns: counters.turnInjectionKilledTurns,

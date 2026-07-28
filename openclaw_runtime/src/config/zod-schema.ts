@@ -143,6 +143,17 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        // FP-P2-04: config overrides for the turn injection budget. Defaults remain
+        // the FP-P0-05 starting-line values (6000 / 0.1); these leaves let operators
+        // adjust based on real canary distributions without code changes. Widening
+        // the total to eliminate degradation is prohibited by FP-P2-04 Hard locks.
+        injectionBudget: z
+          .object({
+            totalChars: z.number().int().min(1).max(1_000_000).optional(),
+            dropAlertRatio: z.number().min(0).max(1).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
@@ -283,6 +294,14 @@ const RuntimeFeatureSchema = z
         parseOnTouch: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         staleWriteGuard: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         writeJournal: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+        autoVerify: z
+          .object({
+            enabled: z.boolean().optional(),
+            timeoutSeconds: z.number().int().min(1).max(90).optional(),
+            command: z.string().trim().min(1).max(2000).optional(),
+          })
+          .strict()
+          .optional(),
         worktree: z
           .object({
             backend: z.union([z.literal("inprocess"), z.literal("git")]).optional(),

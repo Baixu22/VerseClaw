@@ -400,6 +400,16 @@ import type {
   SessionResumeCheckpointsResult,
   SessionTruncatePayload,
   SessionTruncateResult,
+  RemoteForgeCapabilitiesResult,
+  RemoteForgeContentReadPayload,
+  RemoteForgeContentReadResult,
+  RemoteForgeMergePayload,
+  RemoteForgeMergeResult,
+  RemoteForgeMutationPayload,
+  RemoteForgeMutationResult,
+  RemoteForgePullRequestReadPayload,
+  RemoteForgePullRequestReadResult,
+  RemoteForgeRepositoryPayload,
   WorkProviderRunPayload,
   WorkProviderRunResult,
   WorkProviderStatusSnapshot,
@@ -636,6 +646,16 @@ export type {
   TaskLedgerExportHtmlResult,
   TaskLedgerSnapshotResult,
   PromptCacheRiskAssessment,
+  RemoteForgeCapabilitiesResult,
+  RemoteForgeContentReadPayload,
+  RemoteForgeContentReadResult,
+  RemoteForgeMergePayload,
+  RemoteForgeMergeResult,
+  RemoteForgeMutationPayload,
+  RemoteForgeMutationResult,
+  RemoteForgePullRequestReadPayload,
+  RemoteForgePullRequestReadResult,
+  RemoteForgeRepositoryPayload,
   UsageHistoryEntry,
   WorkspaceActiveResult,
   WorkspaceContextRangeResult,
@@ -1401,6 +1421,23 @@ export const hostApi = {
       input: CodeReviewCreateTaskLedgerNodePayload,
     ): Promise<CodeReviewCreateTaskLedgerNodeResult> => (
       invokeHost('codeReview', 'createTaskLedgerNode', input)
+    ),
+  },
+  remoteForge: {
+    capabilities: (input: RemoteForgeRepositoryPayload): Promise<RemoteForgeCapabilitiesResult> => (
+      invokeHost('remoteForge', 'capabilities', input)
+    ),
+    readPullRequest: (input: RemoteForgePullRequestReadPayload): Promise<RemoteForgePullRequestReadResult> => (
+      invokeHost('remoteForge', 'readPullRequest', input)
+    ),
+    readContents: (input: RemoteForgeContentReadPayload): Promise<RemoteForgeContentReadResult> => (
+      invokeHost('remoteForge', 'readContents', input)
+    ),
+    mutatePullRequest: (input: RemoteForgeMutationPayload): Promise<RemoteForgeMutationResult> => (
+      invokeHost('remoteForge', 'mutatePullRequest', input)
+    ),
+    mergePullRequest: (input: RemoteForgeMergePayload): Promise<RemoteForgeMergeResult> => (
+      invokeHost('remoteForge', 'mergePullRequest', input)
     ),
   },
   workProviders: {

@@ -1,4 +1,5 @@
 import type { TaskLedgerEvidenceRef } from './task-ledger';
+import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from './remote-forge';
 
 export type CodeReviewSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
@@ -41,6 +42,8 @@ export type CodeReviewRun = {
   focus?: string;
   summary: string;
   diffStats: CodeReviewDiffStats;
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
   findings: CodeReviewFinding[];
   evidenceRefs: TaskLedgerEvidenceRef[];
   startedAt: string;
@@ -48,5 +51,5 @@ export type CodeReviewRun = {
   modelRunId?: string;
   sessionKey?: string;
   traceId?: string;
-  error?: string;
+  error?: RemoteForgeErrorV1;
 };

@@ -16,6 +16,7 @@
     "noEmitOnError": true,
     "noUncheckedSideEffectImports": true,
     "outDir": "dist",
+    "rootDir": "..",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

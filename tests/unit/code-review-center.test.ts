@@ -125,7 +125,19 @@ describe('code review center service', () => {
       if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: `${process.cwd()}\n` };
       if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'headsha\n' };
       if (args[0] === 'merge-base') return { stdout: 'basesha\n' };
-      if (args[0] === 'diff') return { stdout: 'diff --git a/src/app.ts b/src/app.ts\n-old\n+new\n' };
+      if (args[0] === 'diff') {
+        return {
+          stdout: [
+            'diff --git a/src/app.ts b/src/app.ts',
+            '--- a/src/app.ts',
+            '+++ b/src/app.ts',
+            '@@ -1 +1 @@',
+            '-old',
+            '+new',
+            '',
+          ].join('\n'),
+        };
+      }
       return { stdout: '' };
     });
     const { collectCodeReviewDiffForTarget } = await import('@electron/services/code-review-api');
@@ -133,9 +145,81 @@ describe('code review center service', () => {
     await expect(collectCodeReviewDiffForTarget({ kind: 'baseBranch', baseBranch: 'origin/main' })).resolves.toMatchObject({
       target: { kind: 'baseBranch', baseBranch: 'origin/main', baseCommit: 'basesha', headCommit: 'headsha' },
       stats: { files: 1, additions: 1, deletions: 1 },
+      patchArtifacts: [expect.objectContaining({
+        schema: 'GitPatchArtifact/v1',
+        file: 'src/app.ts',
+        completeness: 'complete',
+      })],
     });
     expect(calls.map((args) => args[0])).toEqual(['rev-parse', 'rev-parse', 'merge-base', 'diff']);
     expect(calls.flat()).not.toEqual(expect.arrayContaining(['add', 'commit', 'clean', 'restore', 'checkout', 'push', 'pull']));
+  });
+
+  it('preserves producer truncation and blocks model review of a partial patch', async () => {
+    const additions = Array.from({ length: 30_000 }, (_, index) => `+line-${index}`).join('\n');
+    const patch = [
+      'diff --git a/src/large.ts b/src/large.ts',
+      '--- a/src/large.ts',
+      '+++ b/src/large.ts',
+      '@@ -0,0 +1,30000 @@',
+      additions,
+      '',
+    ].join('\n');
+    mockRepoWithPatch(patch);
+    const gatewayManager = new EventEmitter() as EventEmitter & { rpc: ReturnType<typeof vi.fn> };
+    gatewayManager.rpc = vi.fn();
+    const { createCodeReviewApi } = await import('@electron/services/code-review-api');
+
+    const result = await createCodeReviewApi({ gatewayManager: gatewayManager as never })
+      .run({ target: { kind: 'uncommitted' } });
+
+    expect(result).toMatchObject({
+      success: false,
+      review: {
+        status: 'error',
+        diffStats: { truncated: true },
+        patchArtifacts: [expect.objectContaining({
+          schema: 'GitPatchArtifact/v1',
+          file: 'src/large.ts',
+          completeness: 'truncated',
+        })],
+      },
+    });
+    expect(result.error).toMatchObject({
+      schema: 'RemoteForgeError/v1',
+      code: 'truncated_response',
+      retryable: false,
+      requestId: expect.stringMatching(/^code-review-/),
+    });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
+
+  it('blocks model review when a malformed patch only yields unavailable evidence', async () => {
+    mockRepoWithPatch('diff --git a/src/app.ts b/src/app.ts\nnot-a-valid-patch-line\n');
+    const gatewayManager = new EventEmitter() as EventEmitter & { rpc: ReturnType<typeof vi.fn> };
+    gatewayManager.rpc = vi.fn();
+    const { createCodeReviewApi } = await import('@electron/services/code-review-api');
+
+    const result = await createCodeReviewApi({ gatewayManager: gatewayManager as never })
+      .run({ target: { kind: 'uncommitted' } });
+
+    expect(result).toMatchObject({
+      success: false,
+      review: {
+        status: 'error',
+        patchArtifactError: expect.objectContaining({
+          schema: 'RemoteForgeError/v1',
+          code: 'incomplete_response',
+          retryable: false,
+          requestId: expect.stringMatching(/^code-review-/),
+        }),
+        patchArtifacts: [expect.objectContaining({
+          file: 'src/app.ts',
+          completeness: 'unavailable',
+        })],
+      },
+    });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
   it('runs review, normalizes findings, and creates a Task Ledger review node', async () => {

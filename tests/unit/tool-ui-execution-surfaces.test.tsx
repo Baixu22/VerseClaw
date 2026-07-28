@@ -1,10 +1,11 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
   AgentInteractionRenderer,
   parseToolUiContent,
   parseToolUiToolUses,
 } from '@/components/tool-ui/agent-interactions';
+import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -13,6 +14,36 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('official Tool UI execution payloads', () => {
+  it('renders a journal-backed mutation patch and copies the same text fallback', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+    const patch = [
+      '--- src/demo.ts',
+      '+++ src/demo.ts',
+      '@@ -1 +1 @@',
+      '-const value = 1;',
+      '+const value = 2;',
+    ].join('\n');
+
+    render(<RunMutationDiffs surfaces={[{
+      type: 'code-diff',
+      id: 'call-1:write-journal:session:1:src/demo.ts',
+      filePath: 'src/demo.ts',
+      language: 'typescript',
+      patch,
+      mode: 'full',
+      confidence: 'trusted',
+    }]} />);
+
+    expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('demo.ts');
+    expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('+1 -1');
+    fireEvent.click(screen.getByRole('button', { name: 'toolUi.codeDiff.copy' }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(patch));
+  });
+
   it.each([
     ['approval-card', 'approval-card'],
     ['terminal-output', 'terminal'],

@@ -1,102 +1,79 @@
-你正在接手一个持续开发会话。请基于下面的当前状态继续，不要重新打开已裁决的架构决策。若本提示与工作区证据冲突，以工作区为准，说明冲突后继续推进。
+你正在接手 ClawX 的持续开发。请基于以下上下文继续；不要重新讨论已冻结的架构决策。若本提示与工作区证据冲突，以工作区为准并说明冲突。
 
-【工作目录】
+【工作目录】`C:\Users\27933\Desktop\clawx\ClawX`
 
-`C:\Users\27933\Desktop\clawx\ClawX-maturity-p0`
-
-【用户目标】
-
-先闭合 First Product Controlled Preview 的非真人工程与证据，再集中处理独立验收、具名角色、真实凭据和远端副作用。当前唯一工程任务是 `FP-P2-07`；slices 1-2 已收口，下一切片是标准化 patch parser/adapter。不要跳到 `FP-P2-08` 或 UAS。
+【用户目标】完成 First Product Controlled Preview 的全部剩余 FP-P2 工作。FP-P1-07/08 独立 G5 已通过，P1 phase 出口 GO。所有可自动执行的 pre-canary 工程已完成。当前必须停在真人边界，取得完整输入后按 `FP-P2-01 -> FP-P2-02 -> FP-P2-04 -> FP-P2-03` 串行推进。
 
 【必须遵守的要求】
+- 保持 `liveReady=false`、`productApproved=false`、`defaultOn=false`。
+- `electron/services/git-api.ts` 是唯一 local Git authority；Coding write journal 是 mutation/undo/recovery authority。
+- Renderer 后端调用只经 typed host-api/api-client；禁止直接 IPC/GitHub/Gateway/git/gh。
+- malformed/truncated/unavailable/超限/分页失败/unknown readiness/缺 head/stale head 或 approval 全部 fail closed。
+- 未经明确授权，不 stage/commit/push/建 PR，不使用真实凭据或执行真实 review/metadata/merge。
+- Task Forest 只能 proposal -> 用户确认 -> apply；`FP-P2-03` 前不更新 canonical graph，不 apply 旧 proposal。
+- 不修改既有 BOM 阻塞文件 `scripts/dcs-ops-preflight.mjs` 和 `tests/unit/dcs-ops-canary-hard-veto.test.ts`。
 
-- 保留大量既有脏改动；不 reset、checkout、清理或覆盖无关文件。
-- 未经授权不 stage、commit、push、创建 PR，不执行真实 GitHub 评论、metadata 修改或 merge。
-- FP-P1-07/08 在独立 G5 未完成前保持 `in_progress`；自动化证据不得冒充真人验收。
-- 当前只是 `FP-P2 pre-canary engineering`，不是 controlled canary；`liveReady=false`、`productApproved=false`、`defaultOn=false`。
-- 本地 Git authority 始终是 `electron/services/git-api.ts`；文件 mutation、snapshot、recovery、undo 始终归 Coding write journal。
-- Renderer 只通过 `src/lib/host-api.ts` / `src/lib/api-client.ts` 调 Main；禁止 Renderer 直连 GitHub、执行 `git`/`gh` 或自行切换 transport。
-- unknown/incomplete/truncated、分页失败、缺 head SHA、stale head/readiness/approval 一律 fail closed。
-- 远端副作用必须绑定 provider/repository/pr/headSha/action/payloadDigest，审批单次消费；Agent merge 默认 OFF。
-- Task Forest 只允许 CLI proposal -> 用户确认 -> apply；禁止手改 canonical data，本会话不得 apply 已保存 proposal。
-- 每次只推进 `FP-P2-07` 的一个可验收切片；收口后同步 task progress、STATUS、开发日志与 evidence。
-
-【已确认事实与裁决】
-
-- [verified] `docs/dev/first-product-controlled-preview/STATUS.md` 当前 phase 是 `FP-P2 pre-canary engineering`，active task 是 `FP-P2-07`；FP-P1 出口仍待独立 G5。
-- [verified] FP-P1-07 真 Electron/Gateway E2E 为 `4 passed (2.6m)`，覆盖成功主链与六类失败；独立 G5 仍待处理。
-- [verified] FP-P1-08 聚焦门禁为 claim/chat `2 files / 60 tests`、default matrix/launch `2 files / 39 tests`，contract、i18n 与 claim scan 通过。
-- [verified] 2026-07-28 最新 claim scan：16 个当前产品面、686 个命中路径、6386 个历史/治理命中、0 current product violations、0 skipped files。
-- [verified] P1-07/08 均已完成 G1-G4，但 G5 后置，因此两项仍为 `in_progress`；STATUS 已登记 engineering-only sequencing deviation。
-- [verified] P2 顺序固定为 `FP-P2-07 -> FP-P2-08 -> FP-P2-09 -> FP-P2-10`，只允许无真人、无真实远端副作用的工程切片先行。
-- [verified] MergeBeacon 快照为 262 files / 4,428,869 bytes，root SHA-256 `4e8255d3...152a4`；Apache-2.0、无 NOTICE，README 0.8.0 与 manifests 0.10.0 漂移已入档。
-- [verified] 本地快照内容对应 PR 54 单提交之前的父树，但 exact parent SHA 因 GitHub API 限流和 clone 网络重置仍未解析；`directSourceCopyAllowed=false`，只允许 clean-room contract/adapter 设计，不得复制实现文本。
-- [verified] 唯一共享 Harness spec 是 `harness/specs/tasks/remote-forge-controlled-preview.md`，覆盖 P2-07 至 P2-10。
-- [verified] Slice 2 已冻结唯一 `GitPatchArtifact/v1` / `RemoteForgeError/v1`：exact schema、v1 additive fields、unknown enum/new schema fail closed；完整性、逐行映射、仓库相对 POSIX path、binary/metadata 和 safe error 均由 strict decoder 锁定。
-- [verified] `REMOTE-FORGE-CONTRACTS.md` 已记录现有 producer 迁移矩阵；尚未迁移 consumer，local Git 与 Coding write journal authority 未改变。
+【已确认事实与决策】
+- [verified] `HEAD == origin/main == 918ed8abdb60479802acf88d05be820492195cc8`；工作树包含此前全部 FP-P2 未提交改动，禁止 reset/checkout/stash/清理。
+- [verified] `FP-P1-07 = done`（独立 G5 由 GLM-5.2 于 2026-07-28 完成；4 passed (3.9m)；修复了 FP-P2-05 default-off 导致的 verify_tests 断言漂移）。
+- [verified] `FP-P1-08 = done`（独立 G5 由 GLM-5.2 于 2026-07-28 完成；60+40 tests、contract、i18n、claim scan 全绿）。
+- [verified] `FP-P1` phase 出口 GO（11/12 done，1 deferred；FP-P1-11 deferred，剩余实现已转交 FP-P2-06=done）。
+- [verified] `FP-P2-07/08/09/10/05/06=done`。唯一 patch/error contract 与 adapter、Main-owned Forge read/review/merge、default-off auto verify、DCS 逐通道注入账目均已工程收口。
+- [verified] `FP-P2-06` 保持固定 6000 总额和既有 precedence；同一 ledger 为 DCS 保留既有 2000 容量，reservation 不计 charge、不产生 `byChannel`。CVK 截断显式可见。
+- [verified] 刷新产物后的真 Electron turn：CVK `8000/4000`；provider 实测 knowledge/working_memory/tool_registry 为 `284/162/1554`，逐通道等于 ledger applied；`6000 + 564 + 4006 = 10570`。
+- [verified] `openclaw_runtime/tsconfig.json` 的 `rootDir=..` 允许 type-aware DCS lint 检查仓库级唯一 shared contract/adapter；runtime build 与完整 typecheck 均通过，没有复制 schema。
+- [verified] `scan-first-product-claims` 当前运行得到 16 个产品面、0 violations；生成器会把既有 tracked 报告计入 exemptions 并造成自引用膨胀，本轮未保留该机械报告 churn。
+- [verified] MergeBeacon exact parent SHA 未解析，`directSourceCopyAllowed=false`；只能 clean-room 实现。
+- [verified] 工程证据不构成真人 canary、product approval、default-on 或 GA。
 
 【任务森林状态】
+- [verified] 只读导出仍列 `TF-0007=in_progress`、`TF-0009=ready`、`TF-0006=blocked`、UAS 节点为 proposed。
+- [verified] 当前会话未修改 `.agent-workbench/task-forest/`、未保存/apply proposal。
+- [verified] program STATUS 已把 `FP-P2-01` 标为 `blocked`。Task Forest 的 `TF-0009=ready` 与最新程序状态存在预期同步延迟，只能在 `FP-P2-03` 生成新 proposal 并经用户确认后刷新，禁止现在直接 apply。
 
-- [verified] canonical graph hash 是 `3608e45643bf3498950c50217b05c274a9bad8fc653ea30662d1144305882177`；`TF-0007=in_progress`，`TF-0009=ready`，`TF-0006=blocked`，`TF-0010` 至 `TF-0019` 保持 proposed。
-- [verified] 已通过 CLI 保存 proposal `TFP-first-product-precanary-sync-20260728`，候选内容是把 `TF-0009` 同步为 `in_progress`、补充 P1/P2 evidence，并记录 engineering-only sequencing deviation。
-- [verified] proposal 状态仍为 `proposed`，绑定上述 base graph hash；保存后复读 `TF-0009` 仍是 canonical `ready`，没有 apply。
-- [verified] 该 proposal 早于 slice 2 收口，execution hint 已过时；即使 graph hash 未变也不得直接 apply，后续须重生成或人工复核。
-- [verified] 用户确认前不得运行 `proposal-apply`；若以后确认，必须先重读 list/todo 并检查 stale hash。
+【G5 复核中修复的工程漂移】
+- `tests/e2e/first-product-journey-fp-p1-07.spec.ts:321` 断言期望 `verify_tests: detected`，但 FP-P2-05 将 auto-verify 默认值改为 OFF 后实际输出为 `verify_tests: disabled(node/npm)`。已将断言修正为 `verify_tests: disabled` 并加注释。此修复不改变产品行为，仅对齐测试期望与 FP-P2-05 的 default-off 决策。
 
-【已完成】
-
-- [verified] 已创建 P1-07/08 evidence、原始门禁摘要和 claim report；任务书、tasks README、STATUS 已同步，G5 未伪造。
-- [verified] 已创建 P2-07 slice 1 的 `source-license-manifest.json`、`evidence.md`、`slice-1-gates.log` 与唯一 Remote Forge Harness spec。
-- [verified] slice 1 的 manifest JSON、Harness context、结构 validate、隔离 clean-diff canonical validate、contract、i18n 均通过。
-- [verified] 主工作树 canonical Harness validate 因会纳入数百个既有脏文件而失败；没有扩大 `touchedAreas` 伪造通过。
-- [verified] `pnpm run lint:check` 被两个既有 BOM 文件拦截：`scripts/dcs-ops-preflight.mjs`、`tests/unit/dcs-ops-canary-hard-veto.test.ts`；它们不属于本切片，不要修改。
-- [verified] 已确认 P1-07/08 和 P2-07 的 artifact 全部被 `.gitignore:78` 的 `artifacts/*` 忽略，且 `git ls-files` 无对应记录；任务/evidence 已登记可交付性风险，本会话没有改 ignore policy 或 stage。
-- [verified] Slice 2 contract/decoder、兼容策略和 focused tests 已完成：`1 file / 10 tests`，standalone strict TS、contract、i18n、Harness structural validate 通过；无 consumer/UI 变化，build/Electron E2E 留给后续切片。
-- [verified] 根 Vitest/tsc 命令链接不完整，full typecheck 受阻；全仓 lint 仍被两个既有 BOM 拦截。已用 direct Vitest/standalone tsc 验证本切片，未改依赖或无关文件。
+【已完成的门禁重跑】
+- [verified] FP-P1-07 Electron E2E：4 passed (3.9m)，真 Electron + 真 Gateway。
+- [verified] FP-P1-08 focused unit：60 tests passed；matrix/launch：40 tests passed。
+- [verified] `pnpm contract:check`、`pnpm run i18n:lint`、`node scripts/scan-first-product-claims.mjs`（0 violations）、`git diff --check`（exit 0）全绿。
+- [verified] `artifacts/first-product-preview/FP-P1-07/e2e-run.log` 与 `artifacts/first-product-preview/FP-P1-08/focused-gates.log` 已重新生成。
 
 【未完成 / 待验证】
+1. `FP-P2-01` 需要具名 `owner`、`operator`、`safetyReviewer`、`productApprover`、escalation/cleanup/credential owner。
+2. 需要固定 clean `versionSha`、构建物及 SHA-256、Provider/Model、cohort、workspace、GitHub sandbox/disposable repository。
+3. 需要最小凭据来源/scope/轮换/撤销、read/review/metadata/merge allowlist、merge 策略和成功次数上限。
+4. 需要 token/cost ceiling、隐私/保留、停止、kill/rollback、事故响应策略，并由 owner + safetyReviewer 双签。
+5. `FP-P2-02` 必须由 charter operator 在产品 UI 完成 10 次真实任务；至少 3 次 Forge read、2 次真实 review/行评论、1 次 sandbox merge，并完成全部 fail-closed 阻断矩阵。
 
-1. `FP-P2-07` slice 3：实现标准化 parser/adapter，消费统一 diff 输入并产出唯一 `GitPatchArtifact/v1`；不要迁移 Git/Code Review/DCS consumer。
-2. Parser corpus 至少锁定 CRLF、add/delete、rename/copy、binary、metadata-only、bare/malformed hunk、truncated/unavailable、空输入、`\\ No newline` 与 old/new line mapping；任何不可信边界返回 unavailable/truncated，不 panic、不伪装 complete。
-3. 先复读 `shared/types/git.ts`、`electron/services/code-review-api.ts`、diff extension parser/render 和 DCS edit/write shape，以 adapter 连接现有 producer，不创建第二 schema、local Git service 或 write journal。
-4. 通过可复现上游历史源补 exact parent SHA 与 NOTICE 复核仍是 residual；在解析前继续禁止源码复制。
-5. 正式交付 change set 前处理被忽略 artifact 的可交付性，确保 P1-07/08 与 P2-07 evidence/manifest/log 全部被纳入；当前仍禁止 stage。
-
-【最终集中真人阶段（现在不要请求或执行）】
-
-- FP-P1-07 独立 G5 与 P1 phase 出口确认。
-- FP-P2-01 的 owner/operator/safetyReviewer/productApprover、固定 SHA、Provider/Model、sandbox repository、credential scope、stop conditions 与 rollback policy。
-- FP-P2-02 的至少 10 次真人联合任务：至少 3 read、2 review、1 sandbox merge，并保留完整阻断矩阵和 `notHumanProductChat=false` 证据。
-- 真人阶段后再做 FP-P2-03 分面 continue/shrink/stop 裁决以及 FP-P2-04/05/06 校准；不得提前宣称批准、default-on 或 GA。
-
-【关键文件 / artifact】
-
-- `docs/dev/first-product-controlled-preview/STATUS.md`
-- `docs/dev/first-product-controlled-preview/DEFINITION-OF-DONE.md`
-- `docs/dev/first-product-controlled-preview/tasks/FP-P1-07.md`
-- `docs/dev/first-product-controlled-preview/tasks/FP-P1-08.md`
-- `docs/dev/first-product-controlled-preview/tasks/FP-P2-07.md`
-- `docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md`
-- `harness/specs/tasks/remote-forge-controlled-preview.md`
-- `shared/types/remote-forge.ts`
-- `tests/unit/remote-forge-contracts.test.ts`
-- `artifacts/first-product-preview/FP-P1-07/`
-- `artifacts/first-product-preview/FP-P1-08/`
-- `artifacts/first-product-preview/FP-P2-07/`
-- `.agent-workbench/task-forest/proposals/TFP-first-product-precanary-sync-20260728.json`
-- `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`
-
-【不要重复 / 不要做】
-
-- 不重跑已通过且昂贵的 FP-P1 全量 E2E，除非相关源码变化或证据失效。
-- 不修两个无关 BOM 文件，不清理 codegraph README 的既有 Markdown hard-break。
-- 不整仓移植 MergeBeacon 的 Tauri/Vue/Rust，不建立第二 local Git service、第二 write journal 或第二 patch/error 真源。
-- 不访问真实凭据，不运行真实评论、metadata、merge，不进入 GitLab/Gitee、PR DAG、Queue/Train、FP-P4 或 UAS。
-- 不 apply Task Forest proposal，不 stage/commit/push/PR。
+【已备模板】
+- `artifacts/first-product-preview/FP-P2-01/canary-charter.template.md`
+- `artifacts/first-product-preview/FP-P2-02/run-record.template.json`
+- `artifacts/first-product-preview/FP-P2-02/blocking-matrix.template.md`
+模板不是签署 charter 或真人 run，任何 REQUIRED 字段为空都不得启动 canary；不得把凭据写入模板。
 
 【下一步】
+1. 向用户一次性请求全部缺失的 charter 输入（owner/operator/safetyReviewer/productApprover、versionSha、Provider/Model、cohort、workspace/repository、credential scope、allowlist、merge 策略、预算/隐私/停止/回滚）。
+2. 输入齐备后生成并复核 `canary-charter.md`，取得 owner + safetyReviewer 双签，固定 clean SHA 与全部 scope。
+3. 等待并协助记录 `FP-P2-02` 的 10 次真人任务及阻断矩阵。
+4. 只使用这些真人任务的 requested/applied/drop/truncate 分布完成 `FP-P2-04`；不得靠放大预算消除降级。
+5. 在 `FP-P2-03` 中对 DCS coding、Forge read、Forge review、Forge merge 分别作 continue/shrink/stop 裁决。
+6. 生成 Task Forest proposal；只有用户明确确认后才 apply/validate/export。
+7. 未完成 FP-P2-02/04/03 前，不得宣称 FP-P2 完成。
 
-1. 运行 `pnpm harness context --spec harness/specs/tasks/remote-forge-controlled-preview.md`，读取最小相关规则。
-2. 审计现有 parser、patch producer 和 line/size semantics，先写 slice 3 corpus 与 adapter API；保持 v1 contract 不分叉。
-3. 实现标准化 parser/adapter 与 focused fail-closed tests，不迁移 consumer、不触发远端副作用。
-4. 运行适用门禁并收口 slice 3 evidence/账目；`FP-P2-07` 继续保持 `in_progress`，不得自动进入 `FP-P2-08`。
+【FIXTURE 产出物（2026-07-29，开发者授权代跑，仅作参考）】
+开发者明确授权 Agent 代跑 FP-P2-01/02/04/03 全链路，所有成果仅作参考不作为真实证据。产出物：
+- `artifacts/first-product-preview/FP-P2-01/canary-charter.fixture.md`：fixture charter 草案，全部角色/SHA/scope 为占位，未签署。
+- `artifacts/first-product-preview/FP-P2-02/fixture-runs/run-01..10.fixture.json`：10 个 fixture run records，`notHumanProductChat=true`，基于 FP-P2-06 真实 turn 数据外推。
+- `artifacts/first-product-preview/FP-P2-02/fixture-blocking-matrix.md`：9 类阻断场景 fixture，全部 blocked，0 远端副作用。
+- `artifacts/first-product-preview/FP-P2-04/fixture-budget-analysis.md`：fixture 预算分析，平均 drop 5.4%、truncate 37.4%、applied/requested 57.2%。
+- `artifacts/first-product-preview/FP-P2-03/fixture-verdict.md`：fixture 裁决草案，4 分面（DCS coding/Forge read/Forge review/Forge merge）均 CONTINUE。
+- `artifacts/first-product-preview/FP-P2-03/fixture-task-forest-proposal.md`：fixture Task Forest proposal，不 apply。
+约束：`liveReady=false`、`productApproved=false`、`defaultOn=false` 保持。Task Forest canonical graph 未更新。真人接手时必须替换全部 fixture 数据并重新裁决。
+
+【不要做】
+- 不进入 P3/P4/UAS，不复制 MergeBeacon，不新增第二 patch/error schema、local Git service、write journal、approval authority、预算 owner 或 renderer transport。
+- 不把模板、fixture、mock、工程 E2E 或自动化冒充真人证据。
+- 不用真实凭据，不越过 charter 执行远端副作用，不清理用户工作树，不修无关 BOM。
+- 不 stage/commit/push/建 PR，除非用户明确授权。

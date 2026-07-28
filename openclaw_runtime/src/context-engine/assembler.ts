@@ -22,7 +22,12 @@ import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js"
 import { dcsObservability } from "./dcs-observability.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { resolveKillSwitchConfig } from "./kill-switch-config-source.js";
-import { beginTurnInjectionBudget } from "./turn-injection-budget.js";
+import {
+  beginTurnInjectionBudget,
+  chargeTurnInjection,
+  type TurnInjectionChannel,
+  type TurnInjectionLedger,
+} from "./turn-injection-budget.js";
 import {
   applyInjectionBudget,
   createInjectionBudget,
@@ -120,6 +125,17 @@ export interface AssemblerDependencies {
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   /** DCS Stage 4: sink for writing knowledge Blocks after legacy builder calls. */
   contextBlockSink?: ContextBlockSink;
+}
+
+function chargeAssemblerInjection(
+  budget: InjectionBudgetState,
+  turnLedger: TurnInjectionLedger | undefined,
+  channel: TurnInjectionChannel,
+  text: string,
+) {
+  return turnLedger
+    ? chargeTurnInjection(turnLedger, channel, text)
+    : applyInjectionBudget(budget, text, channel);
 }
 
 /**
@@ -242,25 +258,10 @@ export class Assembler {
       }
     }
 
-    if (resolvedFlags["runtime.contextBlock.working_memory.enabled"]) {
-      result.output = (await this.#appendWorkingMemory(
-        request,
-        result.output,
-        injectionBudget,
-        killCfg,
-      )) as TExistingOutput;
-    }
-
-    if (resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
-      result.output = (await this.#appendToolRegistry(
-        request,
-        result.output,
-        injectionBudget,
-        killCfg,
-      )) as TExistingOutput;
-    }
-
     // DCS Stage 4: knowledge Block injection (compass for main, role-memory for subagent).
+    // FP-P2-06: DCS projection order is the frozen turn-ledger precedence, not
+    // the historical handler order. Later channels are therefore the first to
+    // degrade when this shared pool runs out.
     if (
       resolvedFlags["runtime.contextBlock.compass.enabled"] ||
       resolvedFlags["runtime.contextBlock.role_memory.enabled"]
@@ -271,6 +272,27 @@ export class Assembler {
         eligibleHandlers,
         resolvedFlags,
         injectionBudget,
+        turnLedger,
+        killCfg,
+      )) as TExistingOutput;
+    }
+
+    if (resolvedFlags["runtime.contextBlock.working_memory.enabled"]) {
+      result.output = (await this.#appendWorkingMemory(
+        request,
+        result.output,
+        injectionBudget,
+        turnLedger,
+        killCfg,
+      )) as TExistingOutput;
+    }
+
+    if (resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
+      result.output = (await this.#appendToolRegistry(
+        request,
+        result.output,
+        injectionBudget,
+        turnLedger,
         killCfg,
       )) as TExistingOutput;
     }
@@ -282,6 +304,7 @@ export class Assembler {
     request: AssembleRequest,
     output: TExistingOutput,
     budget: InjectionBudgetState,
+    turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
@@ -312,7 +335,12 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    const applied = applyInjectionBudget(budget, injection, "working_memory");
+    const applied = chargeAssemblerInjection(
+      budget,
+      turnLedger,
+      "working_memory",
+      injection,
+    );
     if (!applied.text) {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
@@ -325,6 +353,7 @@ export class Assembler {
     request: AssembleRequest,
     output: TExistingOutput,
     budget: InjectionBudgetState,
+    turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
@@ -353,7 +382,12 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    const applied = applyInjectionBudget(budget, injection, "tool_registry");
+    const applied = chargeAssemblerInjection(
+      budget,
+      turnLedger,
+      "tool_registry",
+      injection,
+    );
     if (!applied.text) {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
@@ -375,6 +409,7 @@ export class Assembler {
     eligibleHandlers: Set<LegacyHandlerId>,
     flags: ContextBlockFeatureFlags,
     budget: InjectionBudgetState,
+    turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
@@ -414,7 +449,7 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    const applied = applyInjectionBudget(budget, injection, "knowledge");
+    const applied = chargeAssemblerInjection(budget, turnLedger, "knowledge", injection);
     if (!applied.text) {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
