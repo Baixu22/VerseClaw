@@ -1,89 +1,79 @@
-你正在接手 ClawX 的持续开发。请基于以下上下文继续；不要重新讨论已冻结的架构决策。若本提示与工作区证据冲突，以工作区为准并说明冲突。
+你正在接手 ClawX 的持续开发与独立验收。请从以下状态继续，不要重新讨论已冻结边界。若本提示与当前工作区或 fresh release evidence 冲突，以当前证据为准，记录冲突并 fail closed。
 
-【工作目录】`C:\Users\27933\Desktop\clawx\ClawX`
+【工作目录】
+`C:\Users\27933\Desktop\clawx\ClawX`
 
-【用户目标】完成 First Product Controlled Preview 的全部剩余 FP-P2 工作。FP-P1-07/08 独立 G5 已通过，P1 phase 出口 GO。所有可自动执行的 pre-canary 工程已完成。当前必须停在真人边界，取得完整输入后按 `FP-P2-01 -> FP-P2-02 -> FP-P2-04 -> FP-P2-03` 串行推进。
+【用户目标】
+First Product Controlled Preview 的 `FP-P3-01` 已按 fixture-grade 工程卫生范围收口：发布树分类、Forge 源码覆盖、MergeBeacon 来源/许可证证明、clean ref-bound source manifest/full-gate evidence、Windows x64 fresh packaging、app.asar/fuse、installer/feed/release-info、git/gh/gh-auth 与泄漏验证。
+
+这不是 `FP-P3-03/04` 真人验收，不是 public release、default-on、product approval、GA 或 UAS 开工。
 
 【必须遵守的要求】
-- 保持 `liveReady=false`、`productApproved=false`、`defaultOn=false`。
-- `electron/services/git-api.ts` 是唯一 local Git authority；Coding write journal 是 mutation/undo/recovery authority。
-- Renderer 后端调用只经 typed host-api/api-client；禁止直接 IPC/GitHub/Gateway/git/gh。
-- malformed/truncated/unavailable/超限/分页失败/unknown readiness/缺 head/stale head 或 approval 全部 fail closed。
-- 未经明确授权，不 stage/commit/push/建 PR，不使用真实凭据或执行真实 review/metadata/merge。
-- Task Forest 只能 proposal -> 用户确认 -> apply；`FP-P2-03` 前不更新 canonical graph，不 apply 旧 proposal。
-- 不修改既有 BOM 阻塞文件 `scripts/dcs-ops-preflight.mjs` 和 `tests/unit/dcs-ops-canary-hard-veto.test.ts`。
+- `liveReady=false`、`productApproved=false`、`defaultOn=false`、Agent merge OFF 保持。
+- P3 phase 保持 `in_progress`；`FP-P3-03/04` 保持 `engineering-validation-only`。
+- 未签名 `0.4.9-alpha.0` 仅限内部 fixture-grade 验证，不进入 public latest。
+- 不执行 clean VM 13 场景、不伪造出闸签字、不做远端 mutation、不使用真实凭据。
+- 不修改 `.agent-workbench/task-forest/`，不 apply proposal，不进入 P4、TF-0011 或 UAS。
+- 不 push、不建 PR、不 reset/checkout/stash/清理用户工作。
+- 任何 dirty tree、stale HEAD/ref、缺 full gate、manifest/evidence/hash mismatch、credential finding 都必须 fail closed；cached/smoke/reuse 不能替代 full release gates。
 
-【已确认事实与决策】
-- [verified] `HEAD == origin/main == 918ed8abdb60479802acf88d05be820492195cc8`；工作树包含此前全部 FP-P2 未提交改动，禁止 reset/checkout/stash/清理。
-- [verified] `FP-P1-07 = done`（独立 G5 由 GLM-5.2 于 2026-07-28 完成；4 passed (3.9m)；修复了 FP-P2-05 default-off 导致的 verify_tests 断言漂移）。
-- [verified] `FP-P1-08 = done`（独立 G5 由 GLM-5.2 于 2026-07-28 完成；60+40 tests、contract、i18n、claim scan 全绿）。
-- [verified] `FP-P1` phase 出口 GO（11/12 done，1 deferred；FP-P1-11 deferred，剩余实现已转交 FP-P2-06=done）。
-- [verified] `FP-P2-07/08/09/10/05/06=done`。唯一 patch/error contract 与 adapter、Main-owned Forge read/review/merge、default-off auto verify、DCS 逐通道注入账目均已工程收口。
-- [verified] `FP-P2-06` 保持固定 6000 总额和既有 precedence；同一 ledger 为 DCS 保留既有 2000 容量，reservation 不计 charge、不产生 `byChannel`。CVK 截断显式可见。
-- [verified] 刷新产物后的真 Electron turn：CVK `8000/4000`；provider 实测 knowledge/working_memory/tool_registry 为 `284/162/1554`，逐通道等于 ledger applied；`6000 + 564 + 4006 = 10570`。
-- [verified] `openclaw_runtime/tsconfig.json` 的 `rootDir=..` 允许 type-aware DCS lint 检查仓库级唯一 shared contract/adapter；runtime build 与完整 typecheck 均通过，没有复制 schema。
-- [verified] `scan-first-product-claims` 当前运行得到 16 个产品面、0 violations；生成器会把既有 tracked 报告计入 exemptions 并造成自引用膨胀，本轮未保留该机械报告 churn。
-- [verified] MergeBeacon exact parent SHA 未解析，`directSourceCopyAllowed=false`；只能 clean-room 实现。
-- [verified] 工程证据不构成真人 canary、product approval、default-on 或 GA。
+【已完成】
+- [verified] 任务前分支是 `main`，任务前 HEAD `32839d1e36fa6d7b9d1c8c720208b3a683b76c20`，相对 `origin/main` ahead 3；本轮不 push。
+- [verified] STATUS 原 `codeBaseline=bfa764b32` 已改为 `refs/heads/main` + fresh evidence `commit` 的无循环表达。最终 SHA 必须从当前 `git rev-parse HEAD` 与 evidence 读取，不能把提交自己的 SHA 硬编码进自身。
+- [verified] 发布源码无 untracked；`dist/`、`release/`、测试输出和历史本地日志为 ignored build/evidence output。只纳入 FP-P3-01 必需源码、脚本、文档和机器证据。
+- [verified] `artifacts/first-product-preview/FP-P3-01/required-release-sources.json` 列出 42 个 FP-P2-07–10 provenance/contract/provider/Main/host-api/MCP/UI/i18n/test 文件；RC validator 要求 source manifest 42/42。
+- [verified] MergeBeacon PR 54 head `3383256585d91668980349f0ea24abe17d0f01b2` 的唯一父提交是 `14a17c7ecb821af4bdb645d5f492e7cf72bcd293`，tree `95fddba4593a879352a59de157db92c63afa819f`。
+- [verified] 该父提交 recursive tree 为 262 blobs，LICENSE 存在、NOTICE 缺失；codeload archive 与本机快照均为 262 files / 4,428,869 bytes / ordinal inventory SHA-256 `4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4`。
+- [verified] 现有 Remote Forge 是 clean-room TypeScript 实现，没有复制/修改上游 Tauri/Vue/Rust 实现文本；`directSourceCopyAllowed=false` 继续保持。
+- [verified] `scripts/validate-first-product-release-candidate.mjs` 固化 source coverage/provenance、baseline evidence、x64 installer/latest.yml/release-info、fresh app.asar/fuses、git/gh/gh-auth、credential/private-path/source-body 检查。
+- [verified] 新 validator 的 focused test 为 1 file / 6 tests passed；targeted ESLint 与 Node syntax check 通过。
+- [verified] fixture charter 的 `versionSha=FIXTURE_VERSION_SHA_REQUIRED`，不是签署 SHA。最终 RC 是重新计数的 fixture-grade engineering SHA，不能声称真人 charter 已固定。
 
 【任务森林状态】
-- [verified] 只读导出仍列 `TF-0007=in_progress`、`TF-0009=ready`、`TF-0006=blocked`、UAS 节点为 proposed。
-- [verified] 当前会话未修改 `.agent-workbench/task-forest/`、未保存/apply proposal。
-- [verified] program STATUS 已把 `FP-P2-01` 标为 `blocked`。Task Forest 的 `TF-0009=ready` 与最新程序状态存在预期同步延迟，只能在 `FP-P2-03` 生成新 proposal 并经用户确认后刷新，禁止现在直接 apply。
+- [verified] 只读 exports 存在；当前 todo 首项仍为 `TF-0009`，`TF-0007` 为关联全局任务，`TF-0006` 仍是延后证据升级，`TF-0010/0011...` 仍属于 UAS 后继。
+- [verified] 本轮没有修改 canonical graph、保存/apply proposal 或解锁 TF-0011。
+- [inferred] Program STATUS 与 Task Forest 仍有既定同步延迟；FP-P3-01 完成不授权刷新 TF-0009 或启动 UAS。
 
-【G5 复核中修复的工程漂移】
-- `tests/e2e/first-product-journey-fp-p1-07.spec.ts:321` 断言期望 `verify_tests: detected`，但 FP-P2-05 将 auto-verify 默认值改为 OFF 后实际输出为 `verify_tests: disabled(node/npm)`。已将断言修正为 `verify_tests: disabled` 并加注释。此修复不改变产品行为，仅对齐测试期望与 FP-P2-05 的 default-off 决策。
-
-【已完成的门禁重跑】
-- [verified] FP-P1-07 Electron E2E：4 passed (3.9m)，真 Electron + 真 Gateway。
-- [verified] FP-P1-08 focused unit：60 tests passed；matrix/launch：40 tests passed。
-- [verified] `pnpm contract:check`、`pnpm run i18n:lint`、`node scripts/scan-first-product-claims.mjs`（0 violations）、`git diff --check`（exit 0）全绿。
-- [verified] `artifacts/first-product-preview/FP-P1-07/e2e-run.log` 与 `artifacts/first-product-preview/FP-P1-08/focused-gates.log` 已重新生成。
+【关键文件】
+- `docs/dev/first-product-controlled-preview/STATUS.md`
+- `docs/dev/first-product-controlled-preview/tasks/FP-P3-01.md`
+- `artifacts/first-product-preview/FP-P3-01/required-release-sources.json`
+- `artifacts/first-product-preview/FP-P2-07/source-license-manifest.json`
+- `scripts/validate-first-product-release-candidate.mjs`
+- `tests/unit/first-product-release-candidate.test.ts`
+- `harness/specs/tasks/clean-release-baseline-reproducibility.md`
 
 【未完成 / 待验证】
-1. `FP-P2-01` 需要具名 `owner`、`operator`、`safetyReviewer`、`productApprover`、escalation/cleanup/credential owner。
-2. 需要固定 clean `versionSha`、构建物及 SHA-256、Provider/Model、cohort、workspace、GitHub sandbox/disposable repository。
-3. 需要最小凭据来源/scope/轮换/撤销、read/review/metadata/merge allowlist、merge 策略和成功次数上限。
-4. 需要 token/cost ceiling、隐私/保留、停止、kill/rollback、事故响应策略，并由 owner + safetyReviewer 双签。
-5. `FP-P2-02` 必须由 charter operator 在产品 UI 完成 10 次真实任务；至少 3 次 Forge read、2 次真实 review/行评论、1 次 sandbox merge，并完成全部 fail-closed 阻断矩阵。
+最终 tracked commit 之后不再修改 tracked 文件。fresh evidence 位于：
 
-【已备模板】
-- `artifacts/first-product-preview/FP-P2-01/canary-charter.template.md`
-- `artifacts/first-product-preview/FP-P2-02/run-record.template.json`
-- `artifacts/first-product-preview/FP-P2-02/blocking-matrix.template.md`
-模板不是签署 charter 或真人 run，任何 REQUIRED 字段为空都不得启动 canary；不得把凭据写入模板。
+`%TEMP%\clawx-fp-p3-01-<full HEAD SHA>\`
+
+应包含：
+- `release-source-manifest.json`
+- `release-gate-evidence.json`
+- `acceptance-matrix.json`
+- `evidence-index.json`
+- `release-info.json`
+- `fp-p3-01-release-candidate.json`
+- `package-win.log`
+- `packaged-smoke.log`
+- `support-bundle-gate.log`
+
+- [unverified until read from disk] 当前最终 HEAD、manifest/evidence/report 的 `commit/ref/version`、installer SHA-256、latest.yml/release-info、app.asar digest/fuses 和 scan 计数。下一会话必须先读这些文件再引用具体值。
+- [unverified until read from disk] 最终 full release gates、Windows packaging 与 packaged smoke 的 exit code。缺文件、非零、旧 SHA 或工作树非 clean 均表示 FP-P3-01 不能继续宣称完成。
 
 【下一步】
-1. 向用户一次性请求全部缺失的 charter 输入（owner/operator/safetyReviewer/productApprover、versionSha、Provider/Model、cohort、workspace/repository、credential scope、allowlist、merge 策略、预算/隐私/停止/回滚）。
-2. 输入齐备后生成并复核 `canary-charter.md`，取得 owner + safetyReviewer 双签，固定 clean SHA 与全部 scope。
-3. 等待并协助记录 `FP-P2-02` 的 10 次真人任务及阻断矩阵。
-4. 只使用这些真人任务的 requested/applied/drop/truncate 分布完成 `FP-P2-04`；不得靠放大预算消除降级。
-5. 在 `FP-P2-03` 中对 DCS coding、Forge read、Forge review、Forge merge 分别作 continue/shrink/stop 裁决。
-6. 生成 Task Forest proposal；只有用户明确确认后才 apply/validate/export。
-7. 未完成 FP-P2-02/04/03 前，不得宣称 FP-P2 完成。
-
-【FIXTURE 产出物（2026-07-29，开发者授权代跑，仅作参考）】
-开发者明确授权 Agent 代跑 FP-P2-01/02/04/03 全链路，所有成果仅作参考不作为真实证据。产出物：
-- `artifacts/first-product-preview/FP-P2-01/canary-charter.fixture.md`：fixture charter 草案，全部角色/SHA/scope 为占位，未签署。
-- `artifacts/first-product-preview/FP-P2-02/fixture-runs/run-01..10.fixture.json`：10 个 fixture run records，`notHumanProductChat=true`，基于 FP-P2-06 真实 turn 数据外推。
-- `artifacts/first-product-preview/FP-P2-02/fixture-blocking-matrix.md`：9 类阻断场景 fixture，全部 blocked，0 远端副作用。
-- `artifacts/first-product-preview/FP-P2-04/fixture-budget-analysis.md`：fixture 预算分析，平均 drop 5.4%、truncate 37.4%、applied/requested 57.2%。
-- `artifacts/first-product-preview/FP-P2-03/fixture-verdict.md`：fixture 裁决草案，4 分面（DCS coding/Forge read/Forge review/Forge merge）均 CONTINUE。
-- `artifacts/first-product-preview/FP-P2-03/fixture-task-forest-proposal.md`：fixture Task Forest proposal，不 apply。
-约束：`liveReady=false`、`productApproved=false`、`defaultOn=false` 保持。Task Forest canonical graph 未更新。真人接手时必须替换全部 fixture 数据并重新裁决。
-
-【FP-P2 engineering-validation-only 收口（2026-07-29）】
-独立开发者决策：safetyReviewer/productApprover 无法独立于实现，不追求真人双签/10 次任务/裁决签字。
-- FP-P2-01/02/03 标记为 `engineering-validation-only`，fixture 产出物作为工程结构参考。
-- FP-P2-04 配置化工程完成（zod-schema + getter + ack + 4 新测试），默认值 6000/0.1 未变。
-- clean SHA `bfa764b32` 已固定（含 FP-P1-07/08 G5 + FP-P2 全部工程改动），已 commit，未 push。
-- `liveReady=false`、`productApproved=false`、`defaultOn=false` 保持。
-- Task Forest canonical graph 未更新，无 proposal 被 apply。
-- 若未来引入外部 reviewer，可重新激活真人 canary 路径。
-- FP-P2 工程验证已收口；真人 canary 路径需引入外部 reviewer 才能激活。
+1. 运行 `git status --porcelain=v1 -uall`、`git rev-parse HEAD`、`git rev-list --left-right --count origin/main...HEAD`，确认 clean、仅本地未 push。
+2. 用当前 full SHA 定位 `%TEMP%\clawx-fp-p3-01-<SHA>`，读取三份 JSON，确认 manifest/evidence/RC report 的 commit=`HEAD`、ref=`refs/heads/main`、version=`0.4.9-alpha.0`。
+3. 核对 `acceptance-matrix.json` 全 passed、每个 release gate exit=0、installer/latest.yml/release-info/app.asar/fuses/source coverage/scans 全绿。
+4. 若证据缺失或 mismatch：不要复用旧 evidence；修复后新提交，并从新 SHA 重新运行完整 release gates -> package:win -> packaged smoke/RC validator。
+5. 若证据全绿：保持停点，不进入 P3-03/04 真人路径、P4、Task Forest proposal 或 UAS，等待新的明确授权。
 
 【不要做】
-- 不进入 P3/P4/UAS，不复制 MergeBeacon，不新增第二 patch/error schema、local Git service、write journal、approval authority、预算 owner 或 renderer transport。
-- 不把模板、fixture、mock、工程 E2E 或自动化冒充真人证据。
-- 不用真实凭据，不越过 charter 执行远端副作用，不清理用户工作树，不修无关 BOM。
-- 不 stage/commit/push/建 PR，除非用户明确授权。
+- 不把 fixture/mock/自动化/开发机启动冒充真人或 clean VM 证据。
+- 不把旧 `artifacts/system-maturity/P6-005`、旧 `release/` 或旧 app.asar 复用为当前 RC。
+- 不把本机 gh auth、Token、Authorization、私有 URL、绝对用户路径或源码正文写入 artifact/log/support bundle/evidence。
+- 不放宽 release/readiness/head/approval/secret scan 断言换绿灯。
+- 不公开发布、不签名、不 push、不建 PR、不修改 Task Forest。
+
+模式：`full`。隐私：`local`。来源：当前对话、AGENTS/Harness、First Product STATUS/任务书、Git 状态、只读 Task Forest exports、MergeBeacon GitHub commit/tree/codeload 验证、focused tests。限制：最终 post-commit evidence 不能写回其自身提交；因此本交接要求下一会话从外部 SHA-bound evidence 复核具体最终值。

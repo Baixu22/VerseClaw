@@ -38,8 +38,6 @@ import { isDcsContextViewToolsEnabled } from "./dcs-context-tools-flags.js";
 import { resolveVtokenAssemblyConfig } from "./chat-turn-vtoken-injection.js";
 import { dcsObservability } from "./dcs-observability.js";
 import {
-  TURN_INJECTION_CHAR_BUDGET,
-  TURN_INJECTION_DROP_ALERT_RATIO,
   getEffectiveTurnInjectionCharBudget,
   getEffectiveDropAlertRatio,
   TURN_INJECTION_PRECEDENCE,

@@ -13,11 +13,11 @@
 | **sourceAudit** | Codex 只读审计 2026-07-26（证据水位 L0–L5、组件缺口表、Phase 0–4 建议） |
 | **forgeAudit** | `MERGEBEACON-GIT-CAPABILITY-ADOPTION.md`（2026-07-27；核心链 `FP-P2-07`–`10`，联合验收 `FP-P2-01/02/03`，扩围 `FP-P4-08`） |
 | **downstreamRoadmap** | `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`（`TF-0010`/`TF-0011`–`TF-0019`，当前均 proposed） |
-| **codeBaseline** | `main` / `bfa764b32`（含 FP-P1-07/08 G5 + FP-P2 全部工程改动；未 push） |
+| **codeBaseline** | `refs/heads/main`（FP-P3-01 最终 clean SHA 由 fresh `release-gate-evidence.json.commit` 固定并必须等于该 ref；任务前基线 `32839d1e3`；未 push） |
 | **createdAt** | 2026-07-26 |
 | **updatedAt** | 2026-07-29 |
-| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3` 工程部分推进（02/05 done，03/04 降级 engineering-validation-only，01 fixture-grade 待推进） |
-| **activeTaskId** | `FP-P3-01`（fixture-grade 工程卫生部分可推进，versionSha 关联挂 fixture） |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3` 工程可自动化部分已收口（01/02/05 done，03/04 保持 engineering-validation-only），phase 出口仍未满足 |
+| **activeTaskId** | —（FP-P3 fixture-grade 可自动化任务已完成；不得进入 P4/UAS） |
 | **nextTaskId** | —（FP-P3 工程可推进部分完成后，P3 phase 出口受 P3-03/04 真人证据阻塞） |
 | **owner** | —（独立开发者；safetyReviewer/productApprover 角色无法独立于实现，已标记 engineering-validation-only） |
 | **liveReady** | `false` |
@@ -105,7 +105,7 @@
 | FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | done | — | FP-P2-07 | Codex | 2026-07-28 | Main-owned GitHub read、typed completeness/capability/readiness、bounded content、host-api/MCP/四语 UI 与 fake-provider Main-path E2E 全绿 |
 | FP-P2-09 | PR 评审写操作与乐观并发保护 | FP-P2 | P1 | done | — | FP-P2-08 | Codex | 2026-07-28 | action-bound approval、head SHA/version guard、partial/unknown reconciliation、四语 UI 与 fake-provider E2E 全绿；G4 转 P2-02 |
 | FP-P2-10 | Merge readiness 硬门禁与受控合并实现 | FP-P2 | P1 | done | — | FP-P2-09 | Codex | 2026-07-28 | Main 即时复查、hard veto、五分钟单次 approval、expected-head sandbox merge、partial reconciliation 与 fake-provider E2E 全绿；G4 转 P2-02 |
-| FP-P3-01 | 发布树卫生与 fresh manifest | FP-P3 | P0 | backlog | — | FP-P2-03 | — | 2026-07-29 | fixture-grade：工程卫生可推进，versionSha 关联挂 fixture；含 Forge 源码/来源/许可证/secret scan |
+| FP-P3-01 | 发布树卫生与 fresh manifest | FP-P3 | P0 | done | — | FP-P2-03（真人路径；fixture-grade 工程卫生例外已授权） | Codex | 2026-07-29 | clean ref-bound source/gate evidence + fresh Windows x64 package；42 个 Forge 关键源码覆盖；MergeBeacon exact parent/Apache-2.0/NOTICE；artifact/feed/release-info/secret/gh-auth 校验；versionSha 仍为 fixture residual |
 | FP-P3-02 | 平台声明纠正（去 Windows ARM64） | FP-P3 | P0 | done | — | — | — | 2026-07-29 | release.yml/release-info/package-win-manual.yml/validate 脚本全绿；README 三语无 ARM64 声明 |
 | FP-P3-03 | Clean Windows VM 安装/升级/回滚 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-01, FP-P3-02 | — | 2026-07-29 | G4/G5 降级；13 场景 checklist/VM 模板/证据目录结构保留；Hard lock 不解除；clean VM 不允许 fixture 代跑 |
 | FP-P3-04 | DCS + GitHub Forge Controlled Preview 产物出闸 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-03 | — | 2026-07-29 | G5 降级；出闸前置清单 9 项/随包文档骨架/hash 核对脚本保留；Hard lock 不解除；出闸门禁不允许 fixture 代跑 |
@@ -125,12 +125,12 @@
 |--------|------:|
 | tasks total | 43 |
 | ready | 1 |
-| backlog | 7 |
+| backlog | 6 |
 | in_progress | 0 |
 | blocked | 1 |
 | engineering-validation-only | 2 |
 | deferred | 6 |
-| done | 26 |
+| done | 27 |
 
 ---
 
@@ -226,6 +226,7 @@ Wave 5 (FP-P4): 各组件独立门禁；FP-P4-08 只裁决 GitLab/Gitee/PR DAG �
 | 2026-07-29 | FP-P2-01/02/03 | engineering-validation-only 收口 | G2 (fixture structure) | engineering-validation-only | 独立开发者决策：safetyReviewer/productApprover 无法独立于实现，不追求真人双签/10 次任务/裁决签字。fixture charter/runs/blocking matrix/verdict/proposal 作为工程结构参考。clean SHA `bfa764b32` 已固定（含 FP-P2 全部工程改动）。`liveReady`/`productApproved`/`defaultOn` 保持 false。若未来引入外部 reviewer，可重新激活真人 canary 路径 |
 | 2026-07-29 | FP-P3-02/05 | 工程任务收口 | G1,G2,G5 | done | FP-P3-02 上一轮已实施完成，本轮 status 对齐 done（release.yml/release-info/package-win-manual.yml/validate 脚本全绿）；FP-P3-05 本轮实施完成（`assertRuntimeDistFresh` 在 electronApp fixture 启动前调用，touch src 反向验证 fail-fast 报错，恢复后 app-smoke 1 passed 5.4s 守卫零开销） |
 | 2026-07-29 | FP-P3-03/04 | 真人验收降级 | — | engineering-validation-only | 独立开发者决策：clean VM 13 场景（P3-03）与出闸门禁（P3-04）真人不可替代，G4/G5 从 required 降级为 engineering-validation-only；13 场景 checklist/VM 模板/证据目录结构/出闸前置清单 9 项/随包文档骨架/hash 核对脚本全部保留，不作 fixture 代跑（Hard lock 禁止）。P3 phase 出口仍受 03/04 真人证据阻塞 |
+| 2026-07-29 | FP-P3-01 | fixture-grade release hygiene / fresh RC | G1,G2,G3,G4(n/a),G5 | done | baseline 改为 ref-bound clean SHA；42 个 FP-P2-07–10 Forge 关键源码进入 source manifest；MergeBeacon parent `14a17c7e...cd293`、snapshot SHA-256 `4e8255d3...152a4`、Apache-2.0/NOTICE/clean-room 声明已固化；完整 release gates 先于 fresh Windows x64 packaging；RC validator 核对 installer/latest.yml/release-info/app.asar/fuses、git/gh/gh-auth、credential/private-path/source-body。仅 fixture-grade，不改变 P3-03/04、P3 phase 或三个 false 开关 |
 
 ---
 

@@ -1,0 +1,63 @@
+{
+  "schema": "verse-claw-first-product-release-sources/1",
+  "taskId": "FP-P3-01",
+  "scope": "FP-P2-07 through FP-P2-10 Forge implementation and provenance",
+  "categories": {
+    "provenance": [
+      "artifacts/first-product-preview/FP-P2-07/evidence.md",
+      "artifacts/first-product-preview/FP-P2-07/source-license-manifest.json",
+      "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md",
+      "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md",
+      "harness/specs/tasks/remote-forge-controlled-preview.md"
+    ],
+    "contracts": [
+      "shared/host-api/contract.ts",
+      "shared/remote-forge/error-envelope.ts",
+      "shared/remote-forge/unified-diff-adapter.ts",
+      "shared/types/code-review.ts",
+      "shared/types/git.ts",
+      "shared/types/remote-forge.ts"
+    ],
+    "mainAndProviders": [
+      "electron/main/ipc-handlers.ts",
+      "electron/services/code-review-api.ts",
+      "electron/services/git-api.ts",
+      "electron/services/mcp-api.ts",
+      "electron/services/remote-forge-api.ts"
+    ],
+    "rendererBoundary": [
+      "src/lib/host-api.ts"
+    ],
+    "ui": [
+      "src/components/file-preview/WorkspaceGitPanel.tsx",
+      "src/components/tool-ui/RunMutationDiffs.tsx",
+      "src/components/tool-ui/run-surfaces.ts",
+      "src/pages/Chat/index.tsx",
+      "src/pages/CodeReview/index.tsx",
+      "src/pages/CodeReview/RemoteForgeMergePanel.tsx",
+      "src/pages/CodeReview/RemoteForgeMutationPanel.tsx",
+      "src/pages/CodeReview/RemoteForgePanel.tsx"
+    ],
+    "localization": [
+      "shared/i18n/locales/en/codeReview.json",
+      "shared/i18n/locales/ja/codeReview.json",
+      "shared/i18n/locales/ru/codeReview.json",
+      "shared/i18n/locales/zh/codeReview.json"
+    ],
+    "tests": [
+      "tests/e2e/code-review-center.spec.ts",
+      "tests/e2e/remote-forge-controlled-preview.spec.ts",
+      "tests/fixtures/remote-forge-unified-diff-corpus.ts",
+      "tests/unit/code-review-center.test.ts",
+      "tests/unit/generated-files.test.ts",
+      "tests/unit/git-api.test.ts",
+      "tests/unit/host-api-facade.test.ts",
+      "tests/unit/mcp-api.test.ts",
+      "tests/unit/remote-forge-api.test.ts",
+      "tests/unit/remote-forge-contracts.test.ts",
+      "tests/unit/remote-forge-patch-adapter.test.ts",
+      "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "tests/unit/tool-ui-run-surfaces.test.ts"
+    ]
+  }
+}
