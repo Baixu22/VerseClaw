@@ -661,22 +661,12 @@ jobs:
             
             ### 📦 Downloads
             
-            Please select the appropriate installer for your operating system and architecture:
-            
-            #### macOS
-            - **Apple Silicon (M1/M2/M3/M4)**: `Verse Claw-*-mac-arm64.dmg`
-            - **Intel (x64)**: `Verse Claw-*-mac-x64.dmg`
+            This is a **Controlled Preview** build. Only **Windows x64** is published in this channel.
             
             #### Windows
             - **Installer (x64)**: `Verse Claw-*-win-x64.exe`
-            - **Installer (ARM64)**: `Verse Claw-*-win-arm64.exe`
             
-            #### Linux
-            - **AppImage (x64)**: `Verse Claw-*-linux-x86_64.AppImage` (Universal format, recommended)
-            - **AppImage (ARM64)**: `Verse Claw-*-linux-arm64.AppImage`
-            - **Debian/Ubuntu (x64)**: `Verse Claw-*-linux-amd64.deb`
-            - **Debian/Ubuntu (ARM64)**: `Verse Claw-*-linux-arm64.deb`
-            - **RPM (x64)**: `Verse Claw-*-linux-x86_64.rpm`
+            > macOS, Linux, and Windows ARM64 installers are **not** published in this preview channel. They will be added in a future release once their validation is complete (see FP-P3-02).
             
             ### 📝 Release Notes
             
@@ -792,20 +782,8 @@ jobs:
               channel: $channel,
               releaseDate: $date,
               downloads: {
-                mac: {
-                  x64: ($base + "/Verse Claw-" + $version + "-mac-x64.dmg"),
-                  arm64: ($base + "/Verse Claw-" + $version + "-mac-arm64.dmg")
-                },
                 win: {
-                  x64: ($base + "/Verse Claw-" + $version + "-win-x64.exe"),
-                  arm64: ($base + "/Verse Claw-" + $version + "-win-arm64.exe")
-                },
-                linux: {
-                  deb_amd64: ($base + "/Verse Claw-" + $version + "-linux-amd64.deb"),
-                  deb_arm64: ($base + "/Verse Claw-" + $version + "-linux-arm64.deb"),
-                  appimage_x64: ($base + "/Verse Claw-" + $version + "-linux-x86_64.AppImage"),
-                  appimage_arm64: ($base + "/Verse Claw-" + $version + "-linux-arm64.AppImage"),
-                  rpm_x64: ($base + "/Verse Claw-" + $version + "-linux-x86_64.rpm")
+                  x64: ($base + "/Verse Claw-" + $version + "-win-x64.exe")
                 }
               },
               changelog: $changelog

@@ -1,6 +1,6 @@
 import electronBinaryPath from 'electron';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Page } from '@playwright/test';
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -34,6 +34,53 @@ type ElectronFixtures = {
 const repoRoot = resolve(process.cwd());
 const electronEntry = join(repoRoot, 'dist-electron/main/index.js');
 const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toString();
+
+// FP-P3-05: openclaw_runtime dist freshness guard.
+// E2E must test the current source build, not a stale dist/entry.js bundle.
+// If any src file is newer than dist/entry.js, fail-fast with a readable hint.
+const runtimeSrcDir = join(repoRoot, 'openclaw_runtime', 'src');
+const runtimeDistEntry = join(repoRoot, 'openclaw_runtime', 'dist', 'entry.js');
+
+let freshnessChecked = false;
+async function assertRuntimeDistFresh(): Promise<void> {
+  if (freshnessChecked) return; // check once per process
+  freshnessChecked = true;
+  let distMtimeMs: number;
+  try {
+    const st = await stat(runtimeDistEntry);
+    distMtimeMs = st.mtimeMs;
+  } catch {
+    return; // dist missing → let the runtime path fall back to tsx; no staleness to check
+  }
+  const stale: string[] = [];
+  async function walk(dir: string): Promise<void> {
+    const { readdir } = await import('node:fs/promises');
+    const entries = await readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'test') continue;
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+      } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.js')) {
+        const st = await stat(full);
+        if (st.mtimeMs > distMtimeMs) stale.push(full);
+      }
+    }
+  }
+  try {
+    await walk(runtimeSrcDir);
+  } catch {
+    return; // src dir missing or unreadable → skip (not our job to fail here)
+  }
+  if (stale.length > 0) {
+    const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\', ''));
+    throw new Error(
+      `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\n` +
+        `Run \`pnpm build:runtime\` before E2E to avoid testing a stale bundle.\n` +
+        `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,
+    );
+  }
+}
 
 async function allocatePort(): Promise<number> {
   return await new Promise((resolvePort, reject) => {
@@ -238,6 +285,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {
+    await assertRuntimeDistFresh();
     const app = await launchElectronApp();
     let appClosed = false;
     app.once('close', () => {

@@ -226,11 +226,44 @@ function main() {
     fail('missing .github/workflows/release.yml');
     failed = true;
   } else {
-    const cons = checkWorkflowPolicyConsistency(readFileSync(wfPath, 'utf8'));
+    const wfText = readFileSync(wfPath, 'utf8');
+    const cons = checkWorkflowPolicyConsistency(wfText);
     if (!cons.ok) {
       for (const m of cons.missing) fail(`workflow missing anchor ${m.id}: ${m.meaning}`);
       failed = true;
     } else ok('release.yml anchors match windows signing policy (A1)');
+
+    // FP-P3-02: release notes must not advertise artifacts that are not built.
+    // First product controlled preview publishes only Windows x64.
+    const forbiddenArtifacts = [
+      'win-arm64.exe',
+      'mac-arm64.dmg',
+      'mac-x64.dmg',
+      'linux-arm64.AppImage',
+      'linux-arm64.deb',
+      'linux-amd64.deb',
+      'linux-x86_64.AppImage',
+      'linux-x86_64.rpm',
+    ];
+    const bodyMatch = wfText.match(/body:\s*\|[\s\S]*?(?=\n\s{8,}\w)/);
+    const bodyText = bodyMatch ? bodyMatch[0] : wfText;
+    const offending = forbiddenArtifacts.filter((a) => bodyText.includes(a));
+    if (offending.length > 0) {
+      fail(
+        `release.yml body advertises artifacts not built in this preview: ${offending.join(', ')}`,
+      );
+      failed = true;
+    } else ok('release.yml body only lists Windows x64 installer (FP-P3-02)');
+
+    // release-info.json must only reference win.x64
+    const releaseInfoMatch = wfText.match(/downloads:\s*\{[^}]*win:\s*\{[^}]*\}/);
+    if (releaseInfoMatch) {
+      const winBlock = releaseInfoMatch[0];
+      if (winBlock.includes('arm64')) {
+        fail('release-info.json win block still references arm64');
+        failed = true;
+      } else ok('release-info.json only includes win.x64 (FP-P3-02)');
+    }
   }
 
   if (failed) process.exit(1);

@@ -16,9 +16,9 @@
 | **codeBaseline** | `main` / `bfa764b32`（含 FP-P1-07/08 G5 + FP-P2 全部工程改动；未 push） |
 | **createdAt** | 2026-07-26 |
 | **updatedAt** | 2026-07-29 |
-| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；controlled canary 受真人输入阻塞 |
-| **activeTaskId** | `FP-P2-01`（`engineering-validation-only`：独立开发者路径，不追求真人双签） |
-| **nextTaskId** | —（FP-P2 工程验证已收口；真人 canary 路径需引入外部 reviewer 才能激活） |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3` 工程部分推进（02/05 done，03/04 降级 engineering-validation-only，01 fixture-grade 待推进） |
+| **activeTaskId** | `FP-P3-01`（fixture-grade 工程卫生部分可推进，versionSha 关联挂 fixture） |
+| **nextTaskId** | —（FP-P3 工程可推进部分完成后，P3 phase 出口受 P3-03/04 真人证据阻塞） |
 | **owner** | —（独立开发者；safetyReviewer/productApprover 角色无法独立于实现，已标记 engineering-validation-only） |
 | **liveReady** | `false` |
 | **productApproved** | `false` |
@@ -64,7 +64,7 @@
 | `FP-P0` runtime-contract | 启动层默认值与 runtime/docs/tests 一致；kill 可证明切断；runtime ack 状态机上线 | **GO**（2026-07-26，self-accept；结论见 [FP-P0-EXIT-ACCEPTANCE.md](./FP-P0-EXIT-ACCEPTANCE.md)） |
 | `FP-P1` vertical-slice | 安装→首次成功编码任务→undo/restart/kill/support bundle 全通（E2E + 手工） | **GO**（2026-07-28，独立 G5 由 GLM-5.2 完成；11/12 done，1 deferred） |
 | `FP-P2` controlled-canary | GitHub Forge 核心开发完成；≥10 真人 DCS + Forge 联合任务；DCS/read/review/merge 分面裁决 | `blocked`（pre-canary engineering 已完成；FP-P1-07/08 独立 G5 已通过；controlled canary 等待 charter 与真人 operator） |
-| `FP-P3` release-candidate | clean SHA/manifest + Windows x64 安装升级回滚 + `git/gh` 缺失/认证/凭据安全证据 | `backlog` |
+| `FP-P3` release-candidate | clean SHA/manifest + Windows x64 安装升级回滚 + `git/gh` 缺失/认证/凭据安全证据 | `in_progress`（02/05 done；03/04 engineering-validation-only；01 fixture-grade 待推进；phase 出口受 03/04 真人证据阻塞） |
 | `FP-P4` component-graduation | SEKB / Browser / VToken / RM 独立门禁；GitLab/Gitee/PR DAG 仅做扩围裁决 | `backlog` |
 
 ---
@@ -105,11 +105,11 @@
 | FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | done | — | FP-P2-07 | Codex | 2026-07-28 | Main-owned GitHub read、typed completeness/capability/readiness、bounded content、host-api/MCP/四语 UI 与 fake-provider Main-path E2E 全绿 |
 | FP-P2-09 | PR 评审写操作与乐观并发保护 | FP-P2 | P1 | done | — | FP-P2-08 | Codex | 2026-07-28 | action-bound approval、head SHA/version guard、partial/unknown reconciliation、四语 UI 与 fake-provider E2E 全绿；G4 转 P2-02 |
 | FP-P2-10 | Merge readiness 硬门禁与受控合并实现 | FP-P2 | P1 | done | — | FP-P2-09 | Codex | 2026-07-28 | Main 即时复查、hard veto、五分钟单次 approval、expected-head sandbox merge、partial reconciliation 与 fake-provider E2E 全绿；G4 转 P2-02 |
-| FP-P3-01 | 发布树卫生与 fresh manifest | FP-P3 | P0 | backlog | — | FP-P2-03 | — | 2026-07-27 | 含 Forge 源码/来源/许可证/secret scan；`git diff --check` 与 release baseline 当前失败 |
-| FP-P3-02 | 平台声明纠正（去 Windows ARM64） | FP-P3 | P0 | backlog | — | — | — | 2026-07-26 | `release.yml:670` 等虚假声明与 URL |
-| FP-P3-03 | Clean Windows VM 安装/升级/回滚 | FP-P3 | P0 | backlog | ✅ | FP-P3-01, FP-P3-02 | — | 2026-07-27 | 13 场景；含 git/gh 缺失降级、sandbox Forge、凭据与旧 approval 不复用 |
-| FP-P3-04 | DCS + GitHub Forge Controlled Preview 产物出闸 | FP-P3 | P0 | backlog | — | FP-P3-03 | — | 2026-07-27 | P2 分面裁决投影；全绿才产包；内部 Alpha 不进 public latest |
-| FP-P3-05 | openclaw_runtime dist 新鲜度守卫 | FP-P3 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-06：E2E 优先吃 dist/entry.js，src 改动不重建会测旧 bundle（曾致一次假失败，也可能假成功） |
+| FP-P3-01 | 发布树卫生与 fresh manifest | FP-P3 | P0 | backlog | — | FP-P2-03 | — | 2026-07-29 | fixture-grade：工程卫生可推进，versionSha 关联挂 fixture；含 Forge 源码/来源/许可证/secret scan |
+| FP-P3-02 | 平台声明纠正（去 Windows ARM64） | FP-P3 | P0 | done | — | — | — | 2026-07-29 | release.yml/release-info/package-win-manual.yml/validate 脚本全绿；README 三语无 ARM64 声明 |
+| FP-P3-03 | Clean Windows VM 安装/升级/回滚 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-01, FP-P3-02 | — | 2026-07-29 | G4/G5 降级；13 场景 checklist/VM 模板/证据目录结构保留；Hard lock 不解除；clean VM 不允许 fixture 代跑 |
+| FP-P3-04 | DCS + GitHub Forge Controlled Preview 产物出闸 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-03 | — | 2026-07-29 | G5 降级；出闸前置清单 9 项/随包文档骨架/hash 核对脚本保留；Hard lock 不解除；出闸门禁不允许 fixture 代跑 |
+| FP-P3-05 | openclaw_runtime dist 新鲜度守卫 | FP-P3 | P2 | done | — | — | — | 2026-07-29 | `assertRuntimeDistFresh` 在 electronApp fixture 启动前调用；touch src 反向验证 fail-fast 报错；恢复后 app-smoke 1 passed 5.4s |
 | FP-P4-01 | SEKB assisted UI 独立毕业 | FP-P4 | P2 | deferred | ✅ | FP-P3-04 | — | 2026-07-26 | suggest→review→confirm/reject→retrieve 页面缺失 |
 | FP-P4-02 | Browser supervised 独立毕业 | FP-P4 | P2 | deferred | ✅ | FP-P3-04 | — | 2026-07-26 | approval UI + objective executor + success verify |
 | FP-P4-03 | VToken opt-in 毕业 | FP-P4 | P2 | deferred | — | FP-P0-01, TF-0014 | — | 2026-07-27 | `TF-0014/UAS-03` 先完成无状态装箱化；本任务只做产品 opt-in 毕业 |
@@ -125,11 +125,12 @@
 |--------|------:|
 | tasks total | 43 |
 | ready | 1 |
-| backlog | 13 |
+| backlog | 7 |
 | in_progress | 0 |
 | blocked | 1 |
+| engineering-validation-only | 2 |
 | deferred | 6 |
-| done | 22 |
+| done | 26 |
 
 ---
 
@@ -223,6 +224,8 @@ Wave 5 (FP-P4): 各组件独立门禁；FP-P4-08 只裁决 GitLab/Gitee/PR DAG �
 | 2026-07-29 | FP-P2-01/02/04/03 | FIXTURE 全链路模拟 | — | blocked (fixture) | 开发者授权 Agent 代跑，所有成果仅作参考不作为真实证据。生成 fixture charter 草案、10 个 fixture run records（notHumanProductChat=true）、fixture blocking matrix（9 类）、fixture 预算分析、fixture 裁决草案（4 分面 CONTINUE）、fixture Task Forest proposal（不 apply）。liveReady/productApproved/defaultOn 保持 false。真人接手时必须替换全部 fixture 数据并重新裁决 |
 | 2026-07-29 | FP-P2-04 | 配置化工程完成 | G1,G2 | partial | zod-schema.ts 添加 `contextBlock.injectionBudget.{totalChars,dropAlertRatio}`；turn-injection-budget.ts 添加 `setTurnInjectionBudgetConfig`/getter；runtime-flag-ack.ts 使用 getter；17 tests passed（新增 4 配置覆盖测试）；contract:check + ClawX typecheck 全绿。默认值 6000/0.1 未变（Hard lock：待真人分布推导）。取值推导和真实分布仍待 FP-P2-02 真人数据 |
 | 2026-07-29 | FP-P2-01/02/03 | engineering-validation-only 收口 | G2 (fixture structure) | engineering-validation-only | 独立开发者决策：safetyReviewer/productApprover 无法独立于实现，不追求真人双签/10 次任务/裁决签字。fixture charter/runs/blocking matrix/verdict/proposal 作为工程结构参考。clean SHA `bfa764b32` 已固定（含 FP-P2 全部工程改动）。`liveReady`/`productApproved`/`defaultOn` 保持 false。若未来引入外部 reviewer，可重新激活真人 canary 路径 |
+| 2026-07-29 | FP-P3-02/05 | 工程任务收口 | G1,G2,G5 | done | FP-P3-02 上一轮已实施完成，本轮 status 对齐 done（release.yml/release-info/package-win-manual.yml/validate 脚本全绿）；FP-P3-05 本轮实施完成（`assertRuntimeDistFresh` 在 electronApp fixture 启动前调用，touch src 反向验证 fail-fast 报错，恢复后 app-smoke 1 passed 5.4s 守卫零开销） |
+| 2026-07-29 | FP-P3-03/04 | 真人验收降级 | — | engineering-validation-only | 独立开发者决策：clean VM 13 场景（P3-03）与出闸门禁（P3-04）真人不可替代，G4/G5 从 required 降级为 engineering-validation-only；13 场景 checklist/VM 模板/证据目录结构/出闸前置清单 9 项/随包文档骨架/hash 核对脚本全部保留，不作 fixture 代跑（Hard lock 禁止）。P3 phase 出口仍受 03/04 真人证据阻塞 |
 
 ---
 
