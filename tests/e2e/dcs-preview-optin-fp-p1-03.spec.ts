@@ -14,7 +14,7 @@
  * This also closes the FP-P0-04 residual "E2E asserted control-plane returns,
  * not the Settings DOM".
  */
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

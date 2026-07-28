@@ -34,11 +34,11 @@
 | FP-P2-08 | [FP-P2-08.md](./FP-P2-08.md) | FP-P2 | P1 | n/a | backlog |
 | FP-P2-09 | [FP-P2-09.md](./FP-P2-09.md) | FP-P2 | P1 | n/a | backlog |
 | FP-P2-10 | [FP-P2-10.md](./FP-P2-10.md) | FP-P2 | P1 | n/a | backlog |
-| FP-P3-01 | [FP-P3-01.md](./FP-P3-01.md) | FP-P3 | P0 | n/a | backlog |
-| FP-P3-02 | [FP-P3-02.md](./FP-P3-02.md) | FP-P3 | P0 | n/a | backlog |
-| FP-P3-03 | [FP-P3-03.md](./FP-P3-03.md) | FP-P3 | P0 | **required** | backlog |
-| FP-P3-04 | [FP-P3-04.md](./FP-P3-04.md) | FP-P3 | P0 | n/a | backlog |
-| FP-P3-05 | [FP-P3-05.md](./FP-P3-05.md) | FP-P3 | P2 | n/a | backlog |
+| FP-P3-01 | [FP-P3-01.md](./FP-P3-01.md) | FP-P3 | P0 | n/a | done |
+| FP-P3-02 | [FP-P3-02.md](./FP-P3-02.md) | FP-P3 | P0 | n/a | done |
+| FP-P3-03 | [FP-P3-03.md](./FP-P3-03.md) | FP-P3 | P0 | **engineering-validation-only** | engineering-validation-only |
+| FP-P3-04 | [FP-P3-04.md](./FP-P3-04.md) | FP-P3 | P0 | **engineering-validation-only** | engineering-validation-only |
+| FP-P3-05 | [FP-P3-05.md](./FP-P3-05.md) | FP-P3 | P2 | n/a | done |
 | FP-P4-01 | [FP-P4-01.md](./FP-P4-01.md) | FP-P4 | P2 | **required** | deferred |
 | FP-P4-02 | [FP-P4-02.md](./FP-P4-02.md) | FP-P4 | P2 | **required** | deferred |
 | FP-P4-03 | [FP-P4-03.md](./FP-P4-03.md) | FP-P4 | P2 | n/a | deferred |

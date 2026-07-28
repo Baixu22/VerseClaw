@@ -6,7 +6,7 @@
 | slice | 1 - 来源/许可证 manifest + Remote Forge Harness task spec |
 | source inventory | 262 files / 4,428,869 bytes / root SHA-256 `4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4` |
 | license | Apache-2.0；LICENSE SHA-256 `f6ca6d410b1858cdec5d3f502c7ad7f01646b9947d0a6504a0422fbb2d659835`；snapshot 无 NOTICE |
-| provenance | upstream/ref/tag 已记录；本地树对应 PR 54 单提交的父树内容，但 exact parent SHA 尚未解析 |
+| provenance | upstream/ref/tag 已记录；PR 54 单提交的父提交已解析为 `14a17c7ecb821af4bdb645d5f492e7cf72bcd293`，远程归档与本地快照全量 hash 一致 |
 | adoption | `directSourceCopyAllowed=false`；只允许 clean-room contract/adapter 设计与边界语料重建 |
 | Harness | context 通过；结构 validate 通过；隔离 clean-diff canonical validate 通过 |
 | baseline gates | contract / i18n 通过；lint 被两个无关既有 BOM 拦截 |
@@ -21,7 +21,7 @@
 - 本地快照无 `.git`，README 声明 0.8.0，而 package/Cargo 声明 0.10.0；
 - Apache-2.0 的复制、修改声明和归属保留义务；
 - 全量快照 hash，不采用仅覆盖 31 个文件的内嵌 `.merkle-snapshot.json` 冒充全量；
-- exact parent SHA 未解析，因此任何实现文本复制均 fail closed。
+- exact parent SHA 已在 FP-P3-01 收口时解析；远程 262-blob tree 与 codeload archive 均确认无 NOTICE，且 archive inventory root SHA-256 与本地快照同为 `4e8255d3...152a4`。
 
 网络审计中，`git ls-remote`、codeload commit archives 和 PR 54 patch 可用；匿名 GitHub REST 达到速率上限，三次 filtered/shallow clone 被网络路径重置。临时 ZIP、展开目录与 detached validation worktree 均已删除，不留在工作区。
 
@@ -47,7 +47,14 @@
 
 ## Residuals
 
-- 通过可复现上游历史源补齐 PR 54 exact parent SHA，并再次检查该 commit 的 NOTICE 状态；在此之前禁止源码复制。
+- PR 54 exact parent SHA 与 NOTICE 状态已由 FP-P3-01 补齐；`directSourceCopyAllowed=false` 继续保留，因为现有实现为 clean-room，后续复制仍需独立许可证复核。
 - `GitPatchArtifact/v1`、`RemoteForgeError/v1`、parser/adapter、consumer 和 DCS rich diff 仍归后续 slices。
 - 全仓 lint 的两个无关 BOM 不在本任务授权范围；不得为本切片绿灯修改它们。
 - 本目录当前被 `.gitignore` 的 `artifacts/*` 命中且未被跟踪；当前会话不改 ignore policy、不 stage，正式交付前必须显式纳入并验证三个证据文件均可交付。
+
+## FP-P3-01 provenance resolution (2026-07-28)
+
+- GitHub commit API: PR 54 head `3383256585d91668980349f0ea24abe17d0f01b2` has the single parent `14a17c7ecb821af4bdb645d5f492e7cf72bcd293`.
+- Resolved parent tree: `95fddba4593a879352a59de157db92c63afa819f`; 262 blobs; `LICENSE` present; `NOTICE` absent.
+- Codeload archive: 262 files / 4,428,869 bytes / ordinal inventory root SHA-256 `4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4`, byte-identical to the local snapshot under the recorded algorithm.
+- Attribution/modification disposition: Apache-2.0 source and resolved commit are recorded; Verse Claw's implementation remains clean-room TypeScript with no upstream implementation text copied or modified.

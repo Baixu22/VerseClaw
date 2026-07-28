@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DCS ops canary preflight (TF-0009).
  * Runs hard-veto checks + optional gate suite. Never flips defaults.
  *
