@@ -26,7 +26,9 @@ touchedAreas:
   - docs/dev/handoffs/LATEST.md
 expectedUserBehavior:
   - A release cannot begin from a dirty tree or from a commit that is not bound to the requested tag/ref.
+  - The release collector rebuilds the OpenClaw runtime before Electron-dependent gates and records that preflight with captured output digests.
   - Every command classified as a required release gate has zero-exit, hash-addressed evidence before packaging begins.
+  - Captured release evidence redacts workspace and user-home absolute paths before hashing or persistence.
   - The same commit and release inputs regenerate the same source manifest bytes.
   - The fixture-grade Windows x64 candidate proves updater metadata, release-info, ASAR integrity, source coverage, provenance, and credential boundaries without entering public latest.
 requiredProfiles:
@@ -36,7 +38,9 @@ requiredTests:
   - tests/unit/first-product-release-candidate.test.ts
 acceptance:
   - Dirty, unbound, or tag-mismatched release sources fail closed.
+  - A missing, failed, or tampered runtime-build preflight fails before release evidence can pass.
   - All required full release gates pass and are represented in evidence.
+  - Release preflight and gate streams contain no workspace or user-home absolute paths.
   - Source manifests are byte-for-byte reproducible for the same commit and inputs.
   - Release packaging jobs depend on the clean baseline gate.
   - The packaged Windows x64 candidate is newer than its build outputs, contains no bundled git/gh or GitHub CLI auth state, and matches latest.yml plus release-info.
