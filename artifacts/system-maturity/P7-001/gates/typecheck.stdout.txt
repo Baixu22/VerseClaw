@@ -9,23 +9,23 @@
     "inputCount": 723,
     "report": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\artifacts\\typecheck-cache\\report.json"
   },
-  "totalDurationMs": 23404,
+  "totalDurationMs": 18826,
   "coverageNote": "Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.",
   "results": [
     {
       "commandLine": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "durationMs": 59
+      "durationMs": 57
     },
     {
       "commandLine": "pnpm run typecheck:node",
       "exitCode": 0,
-      "durationMs": 9482
+      "durationMs": 7981
     },
     {
       "commandLine": "pnpm run typecheck:web",
       "exitCode": 0,
-      "durationMs": 23049
+      "durationMs": 18588
     }
   ]
 }

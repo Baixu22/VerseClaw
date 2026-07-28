@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-28T13:46:59.000Z",
+  "evaluatedAt": "2026-07-28T16:27:23.000Z",
   "ok": true,
   "summary": {
     "findingCount": 35,
@@ -374,7 +374,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -393,8 +393,8 @@
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:56:49.837Z",
-      "nextReviewAt": "2026-08-11T15:56:49.837Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-11T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -501,7 +501,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -520,8 +520,8 @@
       ],
       "reviewCycleDays": 14,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-11T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-11T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -721,7 +721,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -756,9 +756,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -840,7 +840,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -859,8 +859,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T00:33:18.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -942,7 +942,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -961,8 +961,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1049,7 +1049,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1068,8 +1068,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1148,7 +1148,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1167,8 +1167,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-28T00:33:18.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1244,7 +1244,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1263,8 +1263,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T00:33:18.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1358,7 +1358,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1377,8 +1377,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1474,7 +1474,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1493,8 +1493,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1562,7 +1562,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1581,8 +1581,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1650,7 +1650,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1669,8 +1669,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1739,7 +1739,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1758,8 +1758,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1834,7 +1834,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1853,8 +1853,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T00:33:18.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1926,7 +1926,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1945,8 +1945,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2009,7 +2009,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2028,8 +2028,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2452,7 +2452,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2471,8 +2471,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:56:49.837Z",
-      "nextReviewAt": "2026-08-27T15:56:49.837Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2654,7 +2654,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2689,9 +2689,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2757,7 +2757,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2776,8 +2776,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2865,7 +2865,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2884,8 +2884,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T08:41:38.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3229,7 +3229,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3264,9 +3264,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:56:49.837Z",
-      "nextReviewAt": "2026-08-27T15:56:49.837Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3558,7 +3558,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3593,9 +3593,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3762,7 +3762,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3774,13 +3774,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-          "sha256": "433ca1211e676851a6094e23eec1fa27318e2f59746aecc92dfa2f9ce63cd2cf",
+          "sha256": "73d76b4bef9b2029e767989a4e8c25d7049693a42bbcabe8efcbcfe44d485b68",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-          "sha256": "a17bdcaef1c6fe2131e0abda5752b8a9a49aa76d4bb19f356f875a2b93c04451",
+          "sha256": "0e3c7887beb4d06ff73b317ba5310190a520b1371d272edb8c52cbc2db7b2c85",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3792,13 +3792,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-          "sha256": "c6ee4a1d0e9cedc40dddd1505b3d3c98a5a84288598eadf23a9e3dfe2056ee82",
+          "sha256": "e9b6159d60e3593effe02ec3ca239e62f1237a00af167e65ad9f7fe300bc4e12",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-          "sha256": "be44e89968fda6f74355fd19cbe5292574e492139d23ef5f49ba72bc3a8380a7",
+          "sha256": "d8a4d17a7cd176787032c134473e76fd6f2cbf713055ae9108ab5368337d7487",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3912,7 +3912,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3947,9 +3947,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:56:50.707Z",
-      "nextReviewAt": "2026-08-27T15:56:50.707Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4293,7 +4293,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4305,13 +4305,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-          "sha256": "433ca1211e676851a6094e23eec1fa27318e2f59746aecc92dfa2f9ce63cd2cf",
+          "sha256": "73d76b4bef9b2029e767989a4e8c25d7049693a42bbcabe8efcbcfe44d485b68",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-          "sha256": "a17bdcaef1c6fe2131e0abda5752b8a9a49aa76d4bb19f356f875a2b93c04451",
+          "sha256": "0e3c7887beb4d06ff73b317ba5310190a520b1371d272edb8c52cbc2db7b2c85",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4323,13 +4323,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-          "sha256": "c6ee4a1d0e9cedc40dddd1505b3d3c98a5a84288598eadf23a9e3dfe2056ee82",
+          "sha256": "e9b6159d60e3593effe02ec3ca239e62f1237a00af167e65ad9f7fe300bc4e12",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-          "sha256": "be44e89968fda6f74355fd19cbe5292574e492139d23ef5f49ba72bc3a8380a7",
+          "sha256": "d8a4d17a7cd176787032c134473e76fd6f2cbf713055ae9108ab5368337d7487",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4803,7 +4803,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -4838,9 +4838,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:56:50.707Z",
-      "nextReviewAt": "2026-09-26T15:56:50.707Z",
+      "latestSourceAt": "2026-07-28T16:25:14.004Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5295,7 +5295,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5313,9 +5313,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T14:14:16.704Z",
-      "latestEvidenceAt": "2026-07-28T15:56:49.837Z",
-      "nextReviewAt": "2026-08-27T15:56:49.837Z",
+      "latestSourceAt": "2026-07-28T16:27:23.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5382,7 +5382,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5401,8 +5401,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5618,7 +5618,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5637,8 +5637,8 @@
       ],
       "reviewCycleDays": 90,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-10-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-10-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5834,7 +5834,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5869,9 +5869,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5990,7 +5990,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6009,8 +6009,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6203,7 +6203,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6238,9 +6238,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6307,7 +6307,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6326,8 +6326,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6394,7 +6394,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6413,8 +6413,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6769,7 +6769,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6804,9 +6804,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:36:58.206Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestSourceAt": "2026-07-28T15:58:34.000Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6872,7 +6872,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6891,8 +6891,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-09-26T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-09-26T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -7071,7 +7071,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4a1313eb3590345eca0ada2be9164295bf71eccf3ba9551ba74242d4c04ed154",
+          "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -7090,8 +7090,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T12:54:31.000Z",
-      "latestEvidenceAt": "2026-07-28T15:53:24.104Z",
-      "nextReviewAt": "2026-08-27T15:53:24.104Z",
+      "latestEvidenceAt": "2026-07-28T16:40:58.389Z",
+      "nextReviewAt": "2026-08-27T16:40:58.389Z",
       "freshness": "fresh",
       "failures": []
     }
