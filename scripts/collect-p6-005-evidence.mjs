@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -12,6 +13,7 @@ import {
   canonicalReleaseConfigText,
   validateReleaseBaseline,
 } from './validate-release-baseline.mjs';
+import { normalizeCapturedOutput } from './lib/captured-output-redaction.mjs';
 import { runReleaseGateCommand } from './lib/run-release-gate-command.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -29,7 +31,10 @@ function sha256(value) {
 
 function normalize(value) {
   const text = String(value || '').replace(/\r\n/g, '\n').replace(/[\t ]+$/gmu, '').replace(/\n*$/u, '');
-  return text ? `${text}\n` : '';
+  return normalizeCapturedOutput(text, {
+    workspaceRoot: root,
+    userHome: process.env.USERPROFILE || homedir(),
+  });
 }
 
 function safeName(id) {
@@ -47,12 +52,9 @@ mkdirSync(join(outDir, 'gates'), { recursive: true });
 const manifestPath = join(outDir, 'release-source-manifest.json');
 writeFileSync(manifestPath, firstManifest);
 
-const gatesText = readFileSync(gatesPath, 'utf8');
-const required = JSON.parse(gatesText).loops.release.commands;
-const gateRuns = [];
-for (const gate of required) {
-  console.log(`[P6-005 evidence] RUN ${gate.id}: ${gate.run}`);
-  const result = runReleaseGateCommand(gate.run, {
+function captureCommand(id, command) {
+  console.log(`[P6-005 evidence] RUN ${id}: ${command}`);
+  const result = runReleaseGateCommand(command, {
     cwd: root,
     env: childEnv,
     timeout: 60 * 60 * 1000,
@@ -62,22 +64,32 @@ for (const gate of required) {
   const stderr = normalize(
     [result.stderr || '', result.error ? `${result.error.stack || result.error}\n` : ''].join(''),
   );
-  const name = safeName(gate.id);
+  const name = safeName(id);
   const stdoutPath = `gates/${name}.stdout.txt`;
   const stderrPath = `gates/${name}.stderr.txt`;
   writeFileSync(join(outDir, stdoutPath), stdout);
   writeFileSync(join(outDir, stderrPath), stderr);
   const exitCode = result.status ?? 1;
-  gateRuns.push({
-    id: gate.id,
-    command: gate.run,
+  console.log(`[P6-005 evidence] ${exitCode === 0 ? 'PASS' : 'FAIL'} ${id} exit=${exitCode}`);
+  return {
+    id,
+    command,
     exitCode,
     stdoutPath,
     stdoutSha256: sha256(stdout),
     stderrPath,
     stderrSha256: sha256(stderr),
-  });
-  console.log(`[P6-005 evidence] ${exitCode === 0 ? 'PASS' : 'FAIL'} ${gate.id} exit=${exitCode}`);
+  };
+}
+
+const preflight = captureCommand('runtime-build-preflight', 'pnpm build:runtime');
+assertCleanReleaseTree(root);
+
+const gatesText = readFileSync(gatesPath, 'utf8');
+const required = JSON.parse(gatesText).loops.release.commands;
+const gateRuns = [];
+for (const gate of required) {
+  gateRuns.push(captureCommand(gate.id, gate.run));
 }
 
 const evidencePath = join(outDir, 'release-gate-evidence.json');
@@ -93,6 +105,7 @@ writeFileSync(
       tree: identity.tree,
       manifestSha256: sha256(firstManifest),
       gatesConfigSha256: sha256(canonicalReleaseConfigText(gatesText)),
+      preflight,
       gates: gateRuns,
     },
     null,
@@ -118,8 +131,12 @@ const acceptance = [
   { id: 'A1', title: 'clean tree and ref/commit binding are enforced', status: 'passed' },
   {
     id: 'A2',
-    title: 'all required full release gates have zero-exit hash-addressed evidence',
-    status: gateRuns.every((gate) => gate.exitCode === 0) && !validation.error ? 'passed' : 'failed',
+    title: 'runtime preflight and all required full release gates have zero-exit hash-addressed evidence',
+    status: preflight.exitCode === 0
+      && gateRuns.every((gate) => gate.exitCode === 0)
+      && !validation.error
+      ? 'passed'
+      : 'failed',
   },
   {
     id: 'A3',
@@ -137,6 +154,8 @@ for (const path of [
   'release-source-manifest.json',
   'release-gate-evidence.json',
   'acceptance-matrix.json',
+  preflight.stdoutPath,
+  preflight.stderrPath,
   ...gateRuns.flatMap((gate) => [gate.stdoutPath, gate.stderrPath]),
 ]) {
   const bytes = readFileSync(join(outDir, path));

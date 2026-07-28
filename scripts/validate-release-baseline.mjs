@@ -63,27 +63,41 @@ export function validateReleaseGateEvidence({ evidencePath, gatesPath, manifestT
   }
 
   const evidenceDir = dirname(evidencePath);
-  for (let index = 0; index < required.length; index += 1) {
-    const expected = required[index];
-    const actual = evidence.gates[index];
-    if (actual.id !== expected.id || actual.command !== expected.run) {
-      throw new Error(`release gate evidence mismatch at index ${index}`);
+  const validateCapturedCommand = (actual, expected, label) => {
+    if (actual?.id !== expected.id || actual?.command !== expected.command) {
+      throw new Error(`${label} evidence mismatch`);
     }
-    if (actual.exitCode !== 0) throw new Error(`release gate ${actual.id} failed with exit ${actual.exitCode}`);
+    if (actual.exitCode !== 0) throw new Error(`${label} failed with exit ${actual.exitCode}`);
     for (const stream of ['stdout', 'stderr']) {
       const relativePath = actual[`${stream}Path`];
       const expectedDigest = actual[`${stream}Sha256`];
       const absolutePath = join(evidenceDir, relativePath || '');
       if (!relativePath || !existsSync(absolutePath)) {
-        throw new Error(`release gate ${actual.id} missing ${stream} evidence`);
+        throw new Error(`${label} missing ${stream} evidence`);
       }
       const bytes = readFileSync(absolutePath);
       if (sha256(bytes) !== expectedDigest) {
-        throw new Error(`release gate ${actual.id} ${stream} digest mismatch`);
+        throw new Error(`${label} ${stream} digest mismatch`);
       }
     }
+  };
+
+  validateCapturedCommand(
+    evidence.preflight,
+    { id: 'runtime-build-preflight', command: 'pnpm build:runtime' },
+    'release runtime preflight',
+  );
+
+  for (let index = 0; index < required.length; index += 1) {
+    const expected = required[index];
+    const actual = evidence.gates[index];
+    validateCapturedCommand(
+      actual,
+      { id: expected.id, command: expected.run },
+      `release gate ${expected.id} at index ${index}`,
+    );
   }
-  return { gateCount: required.length };
+  return { preflightCount: 1, gateCount: required.length };
 }
 
 export function validateReleaseWorkflowBaselinePolicy(text) {

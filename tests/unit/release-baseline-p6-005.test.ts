@@ -55,6 +55,8 @@ async function evidenceFixture(base: Awaited<ReturnType<typeof fixture>>) {
   );
   const stdout = 'passed\n';
   const stderr = '';
+  await writeFile(join(gatesDir, 'runtime-build-preflight.stdout.txt'), stdout);
+  await writeFile(join(gatesDir, 'runtime-build-preflight.stderr.txt'), stderr);
   await writeFile(join(gatesDir, 'full.stdout.txt'), stdout);
   await writeFile(join(gatesDir, 'full.stderr.txt'), stderr);
   const manifestPath = join(evidenceDir, 'manifest.json');
@@ -67,6 +69,11 @@ async function evidenceFixture(base: Awaited<ReturnType<typeof fixture>>) {
       ...base,
       manifestSha256: sha256(manifestText),
       gatesConfigSha256: sha256(canonicalReleaseConfigText(gatesText)),
+      preflight: {
+        id: 'runtime-build-preflight', command: 'pnpm build:runtime', exitCode: 0,
+        stdoutPath: 'gates/runtime-build-preflight.stdout.txt', stdoutSha256: sha256(stdout),
+        stderrPath: 'gates/runtime-build-preflight.stderr.txt', stderrSha256: sha256(stderr),
+      },
       gates: [{
         id: 'full', command: 'pnpm test', exitCode: 0,
         stdoutPath: 'gates/full.stdout.txt', stdoutSha256: sha256(stdout),
@@ -78,6 +85,17 @@ async function evidenceFixture(base: Awaited<ReturnType<typeof fixture>>) {
 }
 
 describe('P6-005 clean release baseline', () => {
+  it('A2 rebuilds runtime and redacts local paths before collecting release gates', async () => {
+    const collector = await readFile(join(process.cwd(), 'scripts/collect-p6-005-evidence.mjs'), 'utf8');
+    const preflightIndex = collector.indexOf("captureCommand('runtime-build-preflight'");
+    const releaseGateIndex = collector.indexOf('for (const gate of required)');
+    expect(preflightIndex).toBeGreaterThan(-1);
+    expect(releaseGateIndex).toBeGreaterThan(preflightIndex);
+    expect(collector).toContain('normalizeCapturedOutput(text');
+    expect(collector).toContain('workspaceRoot: root');
+    expect(collector).toContain('userHome: process.env.USERPROFILE || homedir()');
+  });
+
   it('A2 preserves native release gate exit codes on the host shell', () => {
     const passed = runReleaseGateCommand('node -e "process.exit(0)"', { cwd: process.cwd() });
     const failed = runReleaseGateCommand('node -e "process.exit(7)"', { cwd: process.cwd() });
@@ -135,6 +153,10 @@ describe('P6-005 clean release baseline', () => {
     await writeFile(evidence.gatesPath, gatesText.replace(/\n/g, '\r\n'));
     expect(() => validateReleaseBaseline({ ...clean, ...evidence, evidenceOnly: true })).not.toThrow();
     const doc = JSON.parse(await readFile(evidence.evidencePath, 'utf8'));
+    doc.preflight.exitCode = 1;
+    await writeFile(evidence.evidencePath, JSON.stringify(doc));
+    expect(() => validateReleaseBaseline({ ...clean, ...evidence, evidenceOnly: true })).toThrow(/runtime preflight failed/i);
+    doc.preflight.exitCode = 0;
     doc.gates[0].exitCode = 1;
     await writeFile(evidence.evidencePath, JSON.stringify(doc));
     expect(() => validateReleaseBaseline({ ...clean, ...evidence, evidenceOnly: true })).toThrow(/failed/i);
