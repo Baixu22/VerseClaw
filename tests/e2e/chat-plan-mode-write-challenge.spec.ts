@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
-import { closeElectronApp, expect, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
 type HostResponse<T> = {
   ok: boolean;
@@ -61,6 +61,7 @@ test.describe('Plan mode real write challenge', () => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
+      await getStableWindow(app);
       await hostInvoke(app, 'workspaces', 'create', {
         name: 'Plan Mode Challenge',
         rootPath: workspaceDir,

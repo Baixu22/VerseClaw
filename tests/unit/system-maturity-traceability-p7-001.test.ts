@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { normalizeCapturedOutput } from '../../scripts/lib/captured-output-redaction.mjs';
 import { validateSystemMaturityTraceability } from '../../scripts/lib/system-maturity-traceability.mjs';
 
 const digest = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -117,6 +118,36 @@ function fixture(options: {
 }
 
 describe('P7-001 System Maturity traceability', () => {
+  it('redacts Windows workspace and user-home paths before collector logs are hashed', () => {
+    const workspaceRoot = 'C:\\Users\\fixture-user\\Desktop\\clawx\\ClawX';
+    const userHome = 'C:\\Users\\fixture-user';
+    const output = normalizeCapturedOutput([
+      `${workspaceRoot}\\tests\\unit\\traceability.test.ts`,
+      'C:/Users/fixture-user/Desktop/clawx/ClawX/artifacts/report.json',
+      `${userHome}\\AppData\\Local\\Temp\\collector.log`,
+      'C:/Users/fixture-user/.cache/pnpm/store',
+      '',
+    ].join('\n'), { workspaceRoot, userHome });
+
+    expect(output).toBe([
+      '[workspace]\\tests\\unit\\traceability.test.ts',
+      '[workspace]/artifacts/report.json',
+      '[user-home]\\AppData\\Local\\Temp\\collector.log',
+      '[user-home]/.cache/pnpm/store',
+      '',
+    ].join('\n'));
+    expect(output).not.toMatch(/C:\\Users\\/iu);
+    expect(output).not.toMatch(/C:\/Users\//iu);
+  });
+
+  it('synchronizes delivery hashes before validating evidence in the collector', () => {
+    const collector = readFileSync(join(process.cwd(), 'scripts/collect-p7-001-evidence.mjs'), 'utf8');
+    const hashSyncIndex = collector.indexOf("['delivery-hash-sync'");
+    const evidenceValidateIndex = collector.indexOf("['evidence-validate'");
+    expect(hashSyncIndex).toBeGreaterThan(-1);
+    expect(evidenceValidateIndex).toBeGreaterThan(hashSyncIndex);
+  });
+
   it('serializes native operator inspection outside the parallel unit shard', () => {
     const scripts = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')).scripts;
     expect(scripts.test).toContain('--exclude tests/unit/runtime-memory-operator-inspection.test.ts');

@@ -48,7 +48,7 @@
     "cargo_metadata": {
       "package_name": "verseshell",
       "package_version": "1.0.0",
-      "target_directory": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target"
+      "target_directory": "[build-source]/target"
     },
     "cargo_toml_sha256": "8f1f5f34ba6db98903d971dd23b5771347b008b51c4fb44f09c0262b9146bf1a",
     "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
@@ -88,7 +88,7 @@
     "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
     "dirty": false,
     "build_input": {
-      "source_directory": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell",
+      "source_directory": "[build-source]",
       "status_porcelain": [],
       "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "dirty_entry_count": 0

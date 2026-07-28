@@ -266,7 +266,11 @@ function parseCargoMetadata(source) {
   const pkg = metadata.packages?.find((candidate) => String(candidate.manifest_path).replace(/\\/g, '/') === manifestPath)
     ?? metadata.packages?.[0];
   if (!pkg || pkg.name !== 'verseshell' || !cleanString(pkg.version)) fail('cargo metadata did not identify verseshell.');
-  return { package_name: pkg.name, package_version: pkg.version, target_directory: metadata.target_directory };
+  return {
+    package_name: pkg.name,
+    package_version: pkg.version,
+    target_directory: '[build-source]/target',
+  };
 }
 
 function sourceProvenance(source, args) {
@@ -291,7 +295,7 @@ function sourceProvenance(source, args) {
     commit,
     dirty,
     build_input: {
-      source_directory: source,
+      source_directory: '[build-source]',
       status_porcelain: statusPorcelain,
       diff_sha256: sha256(diff),
       dirty_entry_count: statusPorcelain.length,

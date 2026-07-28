@@ -32,7 +32,10 @@ afterEach(async () => {
 });
 
 describe('VerseShell manifest validation', () => {
-  it('accepts the synchronized clean bundle in development and packaging modes', () => {
+  it('accepts the synchronized clean bundle in development and packaging modes', async () => {
+    const manifestText = await readFile(join(root, 'resources/verseshell/manifest.json'), 'utf8');
+    expect(manifestText).not.toMatch(/[A-Za-z]:\\Users\\/u);
+    expect(manifestText).toContain('[build-source]');
     expect(validateVerseShellManifest({ root, mode: 'dev' })).toEqual({
       ok: true,
       mode: 'dev',
@@ -135,7 +138,7 @@ describe('VerseShell manifest validation', () => {
     await writeFile(
       facadePath,
       source.replace(
-        "name: 'read_file',\n    canonical_op: 'file.view'",
+        /name: 'read_file',\r?\n {4}canonical_op: 'file\.view'/u,
         "name: 'read_file',\n    canonical_op: 'repo.search'",
       ),
     );

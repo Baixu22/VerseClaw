@@ -1,44 +1,44 @@
 
-[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90m[workspace][39m
 
 
-[2m Test Files [22m [1m[32m668 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (671)[39m
-[2m      Tests [22m [1m[32m6040 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6092)[39m
-[2m   Start at [22m 03:19:17
-[2m   Duration [22m 406.44s[2m (transform 29.48s, setup 53.13s, import 145.28s, tests 161.66s, environment 339.46s)[22m
+[2m Test Files [22m [1m[32m691 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (694)[39m
+[2m      Tests [22m [1m[32m6397 passed[39m[22m[2m | [22m[33m52 skipped[39m[90m (6449)[39m
+[2m   Start at [22m 23:43:37
+[2m   Duration [22m 538.75s[2m (transform 35.92s, setup 69.41s, import 192.18s, tests 227.08s, environment 440.21s)[22m
 
 
-[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mC:/Users/27933/Desktop/clawx/ClawX-maturity-p0[39m
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90m[workspace][39m
 
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
 [2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
-[2m   Start at [22m 03:26:04
-[2m   Duration [22m 17.34s[2m (transform 1.22s, setup 256ms, import 1.57s, tests 13.35s, environment 1.67s)[22m
+[2m   Start at [22m 23:52:36
+[2m   Duration [22m 22.30s[2m (transform 1.26s, setup 263ms, import 1.64s, tests 17.79s, environment 1.78s)[22m
 
 
- RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/openclaw_runtime
+ RUN  v4.1.7 [workspace]/openclaw_runtime
 
 
- Test Files  17 passed (17)
-      Tests  170 passed (170)
-   Start at  03:26:23
-   Duration  2.69s (transform 1.91s, setup 779ms, import 2.01s, tests 1.29s, environment 5ms)
+ Test Files  20 passed (20)
+      Tests  227 passed (227)
+   Start at  23:53:00
+   Duration  3.09s (transform 2.63s, setup 720ms, import 3.14s, tests 1.48s, environment 2ms)
 
 
- RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/openclaw_runtime
+ RUN  v4.1.7 [workspace]/openclaw_runtime
 
 
  Test Files  5 passed (5)
       Tests  10 passed (10)
-   Start at  03:26:26
-   Duration  1.19s (transform 676ms, setup 87ms, import 1.47s, tests 27ms, environment 0ms)
+   Start at  23:53:04
+   Duration  1.19s (transform 693ms, setup 85ms, import 1.45s, tests 25ms, environment 0ms)
 
 
- RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/openclaw_runtime
+ RUN  v4.1.7 [workspace]/openclaw_runtime
 
 
  Test Files  10 passed (10)
-      Tests  73 passed (73)
-   Start at  03:26:29
-   Duration  17.18s (transform 13.91s, setup 686ms, import 20.93s, tests 4.59s, environment 1ms)
+      Tests  77 passed (77)
+   Start at  23:53:07
+   Duration  16.80s (transform 13.65s, setup 706ms, import 20.51s, tests 4.27s, environment 1ms)
