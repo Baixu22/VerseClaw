@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "results": [
+    {
+      "scenarioId": "small-read",
+      "runId": "anthropic-small-read-cold",
+      "provider": "anthropic",
+      "model": "saved-anthropic-eval",
+      "cacheState": "cold",
+      "toolDefinitions": { "count": 8, "bytes": 4096, "fingerprint": "tools-v1" },
+      "call": { "bytes": 640, "resultBytes": 320, "toolTurns": 1, "latencyMs": 120 },
+      "task": { "completed": true, "outcome": "complete" },
+      "usage": {
+        "source": "anthropic-response-usage",
+        "inputTokens": 1000,
+        "outputTokens": 200,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 500,
+        "totalTokens": 1700
+      },
+      "artifacts": { "created": 0, "bytes": 0, "queries": 0, "expiries": 0 },
+      "recovery": { "truncations": 0, "attempts": 0, "successes": 0, "bytesRecovered": 0 }
+    },
+    {
+      "scenarioId": "small-read",
+      "runId": "anthropic-small-read-warm",
+      "provider": "anthropic",
+      "model": "saved-anthropic-eval",
+      "cacheState": "warm",
+      "toolDefinitions": { "count": 8, "bytes": 4096, "fingerprint": "tools-v1" },
+      "call": { "bytes": 640, "resultBytes": 320, "toolTurns": 1, "latencyMs": 80 },
+      "task": { "completed": true, "outcome": "complete" },
+      "usage": {
+        "source": "verseshell-heuristic",
+        "inputTokens": 300,
+        "outputTokens": 100,
+        "totalTokens": 400
+      },
+      "artifacts": { "created": 0, "bytes": 0, "queries": 0, "expiries": 0 },
+      "recovery": { "truncations": 0, "attempts": 0, "successes": 0, "bytesRecovered": 0 }
+    },
+    {
+      "scenarioId": "artifact-recovery",
+      "runId": "openai-artifact-cold",
+      "provider": "openai-compatible",
+      "model": "saved-openai-eval",
+      "cacheState": "cold",
+      "toolDefinitions": { "count": 8, "bytes": 4096, "fingerprint": "tools-v1" },
+      "call": { "bytes": 720, "resultBytes": 8192, "toolTurns": 3, "latencyMs": 250 },
+      "task": { "completed": true, "outcome": "recovered" },
+      "usage": {
+        "source": "openai-response-usage",
+        "inputTokens": 1400,
+        "outputTokens": 350,
+        "totalTokens": 1750
+      },
+      "artifacts": { "created": 1, "bytes": 8192, "queries": 2, "expiries": 0 },
+      "recovery": { "truncations": 1, "attempts": 1, "successes": 1, "bytesRecovered": 8192 }
+    },
+    {
+      "scenarioId": "approval-denial",
+      "runId": "openai-denial-warm",
+      "provider": "openai-compatible",
+      "model": "saved-openai-eval",
+      "cacheState": "warm",
+      "toolDefinitions": { "count": 8, "bytes": 4096, "fingerprint": "tools-v1" },
+      "call": { "bytes": 500, "resultBytes": 120, "toolTurns": 1, "latencyMs": 45 },
+      "task": { "completed": true, "outcome": "denied" },
+      "usage": {
+        "source": "four-chars-per-token",
+        "inputTokens": 125,
+        "outputTokens": 30,
+        "totalTokens": 155
+      },
+      "artifacts": { "created": 0, "bytes": 0, "queries": 0, "expiries": 0 },
+      "recovery": { "truncations": 0, "attempts": 0, "successes": 0, "bytesRecovered": 0 }
+    }
+  ]
+}

@@ -39,6 +39,18 @@ test.describe('Agent Browser workbench', () => {
             createdAt: '2026-07-11T08:00:00.000Z',
             updatedAt: '2026-07-11T08:01:00.000Z',
             sessionId: 'session-1',
+          }, {
+            id: 'task-2',
+            name: 'Resume interrupted audit',
+            url: 'https://example.com/audit',
+            objective: 'Continue after app restart',
+            profile: 'work',
+            mode: 'headless',
+            status: 'interrupted',
+            statusExplain: 'Interrupted by app restart while task was running',
+            retryCount: 0,
+            createdAt: '2026-07-11T08:02:00.000Z',
+            updatedAt: '2026-07-11T08:03:00.000Z',
           }],
         },
         [stableStringify(['agentBrowser', 'profiles', null])]: {
@@ -67,6 +79,9 @@ test.describe('Agent Browser workbench', () => {
 
     await page.getByRole('tab', { name: /Tasks|任务|タスク|Задачи/ }).click();
     await expect(page.getByText('Check dashboard')).toBeVisible();
+    await expect(page.getByText('Resume interrupted audit')).toBeVisible();
+    await expect(page.getByText('Interrupted', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
     await page.getByRole('tab', { name: /Vault|凭据库|保管庫|Хранилище/ }).click();
     await expect(page.getByText('ada@example.com')).toBeVisible();
     await expect(page.locator('body')).not.toContainText('password');

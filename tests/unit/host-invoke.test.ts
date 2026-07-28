@@ -154,11 +154,21 @@ describe('host invoke dispatcher', () => {
 
 
 describe('host invoke security (P1-002)', () => {
-  it('rejects unauthorized senders when senderAuth is configured', async () => {
+  it('rejects missing and unauthorized senders when senderAuth is configured', async () => {
     const dispatch = createHostInvokeDispatcher({
       settings: { getAll: vi.fn(async () => ({ theme: 'dark' })) },
     }, {
       senderAuth: { allowedWebContentsIds: new Set([42]) },
+    });
+
+    await expect(dispatch({
+      id: 'sec-0',
+      module: 'settings',
+      action: 'getAll',
+    })).resolves.toMatchObject({
+      id: 'sec-0',
+      ok: false,
+      error: { code: 'VALIDATION', message: 'Host request missing sender' },
     });
 
     await expect(dispatch({

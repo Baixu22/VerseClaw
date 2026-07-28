@@ -9,7 +9,7 @@
   "tasks": { "name": "Название задачи", "url": "Целевой URL", "objective": "Цель", "runNow": "Запустить", "empty": "Задач браузера пока нет" },
   "profiles": { "localState": "Постоянные данные сайтов Electron", "active": "Активных: {{count}}" },
   "vault": { "protected": "Пароли защищены операционной системой и не показываются агентам.", "empty": "Нет сохраненных учетных данных" },
-  "status": { "queued": "В очереди", "running": "Выполняется", "waiting-approval": "Ожидает подтверждения", "paused": "Приостановлено", "completed": "Завершено", "failed": "Ошибка", "cancelled": "Отменено" },
+  "status": { "queued": "В очереди", "running": "Выполняется", "waiting-approval": "Ожидает подтверждения", "interrupted": "Прервано", "paused": "Приостановлено", "completed": "Завершено", "failed": "Ошибка", "cancelled": "Отменено" },
   "runtimeMode": {
     "label": "Режим выполнения",
     "normalRestricted": "Стандартный ограниченный",

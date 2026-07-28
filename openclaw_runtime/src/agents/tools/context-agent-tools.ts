@@ -292,6 +292,10 @@ export function createContextReadTool(options: DcsContextAgentToolOptions): AnyA
         blockStore,
         ...(category ? { category } : {}),
       });
+      // FP-P1-04 read段: hit count must be observable. Previously only the 4
+      // view tools were instrumented, so a Block read was invisible.
+      codingObservability.recordFactToolCall(CONTEXT_READ_TOOL_NAME);
+      codingObservability.recordFactStoreHit(result.ok && result.count > 0);
       return jsonResult({
         ...result,
         supported_block_types: CONTEXT_READ_BLOCK_TYPES,
@@ -326,6 +330,10 @@ export function createContextSearchTool(options: DcsContextAgentToolOptions): An
         blockStore: blockStore as BlockStoreApi,
         ...(limit !== undefined ? { limit } : {}),
       });
+      // FP-P1-04 read段: a search that finds nothing must be a recorded miss,
+      // not an unobserved no-op.
+      codingObservability.recordFactToolCall(CONTEXT_SEARCH_TOOL_NAME);
+      codingObservability.recordFactStoreHit(blocks.length > 0);
       return jsonResult({
         ok: true,
         count: blocks.length,

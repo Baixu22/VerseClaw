@@ -1,9 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render as testingLibraryRender, screen, waitFor, within } from '@testing-library/react';
+import { HashRouter } from 'react-router-dom';
 import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+
+function render(ui: ReactElement) {
+  return testingLibraryRender(ui, { wrapper: HashRouter });
+}
+
 const hostApiFetchMock = vi.hoisted(() => vi.fn());
 const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks, taskLedgerMocks, settingsState } = vi.hoisted(() => ({
   agentsState: {
@@ -45,6 +51,33 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
     uiDepthMode: 'basic' as 'basic' | 'advanced',
   },
 }));
+
+function setProviderReady() {
+  const now = '2026-01-01T00:00:00.000Z';
+  providersState.accounts = [{
+    id: 'test-provider',
+    vendorId: 'custom',
+    label: 'Test Provider',
+    authMode: 'api_key',
+    baseUrl: 'http://127.0.0.1:1/v1',
+    model: 'custom-test-provider/test-model',
+    enabled: true,
+    isDefault: true,
+    createdAt: now,
+    updatedAt: now,
+  }];
+  providersState.statuses = [{
+    id: 'test-provider',
+    name: 'Test Provider',
+    type: 'custom',
+    hasKey: true,
+    keyMasked: 'sk-***',
+    enabled: true,
+    createdAt: now,
+    updatedAt: now,
+  }];
+  providersState.defaultAccountId = 'test-provider';
+}
 
 vi.mock('@/stores/agents', () => ({
   useAgentsStore: (selector: (state: typeof agentsState) => unknown) => selector(agentsState),
@@ -672,9 +705,7 @@ describe('ChatInput draft persistence', () => {
     agentsState.agents = [];
     chatState.currentAgentId = 'main';
     gatewayState.status = { state: 'running', port: 18789 };
-    providersState.accounts = [];
-    providersState.statuses = [];
-    providersState.defaultAccountId = null;
+    setProviderReady();
     providersState.refreshProviderSnapshot.mockReset();
     vi.mocked(hostApiFetchMock).mockReset();
     permissionMocks.approvals.mockReset();
@@ -1384,9 +1415,7 @@ describe('ChatInput capability action preflight', () => {
     agentsState.agents = [];
     chatState.currentAgentId = 'main';
     gatewayState.status = { state: 'running', port: 18789 };
-    providersState.accounts = [];
-    providersState.statuses = [];
-    providersState.defaultAccountId = null;
+    setProviderReady();
     providersState.refreshProviderSnapshot.mockReset();
     vi.mocked(hostApiFetchMock).mockReset();
     permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
@@ -1587,9 +1616,7 @@ describe('ChatInput read-only context status', () => {
     agentsState.agents = [];
     chatState.currentAgentId = 'main';
     gatewayState.status = { state: 'running', port: 18789 };
-    providersState.accounts = [];
-    providersState.statuses = [];
-    providersState.defaultAccountId = null;
+    setProviderReady();
     providersState.refreshProviderSnapshot.mockReset();
     vi.mocked(hostApiFetchMock).mockReset();
     permissionMocks.approvals.mockReset();
@@ -1935,9 +1962,7 @@ describe('ChatInput agent targeting', () => {
     agentsState.updateAgentModel.mockReset();
     chatState.currentAgentId = 'main';
     gatewayState.status = { state: 'running', port: 18789 };
-    providersState.accounts = [];
-    providersState.statuses = [];
-    providersState.defaultAccountId = null;
+    setProviderReady();
     providersState.refreshProviderSnapshot.mockReset();
     vi.mocked(hostApiFetchMock).mockReset();
     permissionMocks.approvals.mockReset();

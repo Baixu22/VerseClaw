@@ -8,6 +8,10 @@ import i18n from '@/i18n';
 import { hostApi } from '@/lib/host-api';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
+import {
+  DEFAULT_SETUP_PROVIDER_VERIFICATION,
+  type SetupProviderVerification,
+} from '@/lib/setup-provider';
 
 type Theme = 'light' | 'dark' | 'system';
 export type UiDepthMode = 'basic' | 'advanced';
@@ -43,6 +47,8 @@ interface SettingsState {
 
   // Setup
   setupComplete: boolean;
+  /** FP-P1-01: sanitized provider verification state (no key material). */
+  setupProviderVerification: SetupProviderVerification;
 
   // Actions
   init: () => Promise<void>;
@@ -69,6 +75,7 @@ interface SettingsState {
   setUiDepthMode: (value: UiDepthMode) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   markSetupComplete: () => void;
+  setSetupProviderVerification: (verification: SetupProviderVerification) => void;
   resetSettings: () => void;
 }
 
@@ -96,6 +103,7 @@ const defaultSettings = {
   uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,
   setupComplete: false,
+  setupProviderVerification: DEFAULT_SETUP_PROVIDER_VERIFICATION,
 };
 
 const clampSidebarWidth = (value: number) => Math.min(420, Math.max(220, Math.round(value)));
@@ -199,6 +207,12 @@ export const useSettingsStore = create<SettingsState>()(
         });
       },
       markSetupComplete: () => set({ setupComplete: true }),
+      setSetupProviderVerification: (verification) => {
+        set({ setupProviderVerification: verification });
+        // Persist to the main-process store so the gateway host and support
+        // bundle (FP-P1-06) see the same sanitized state.
+        void hostApi.settings.set('setupProviderVerification', verification).catch(() => { });
+      },
       resetSettings: () => set(defaultSettings),
     }),
     {

@@ -26,12 +26,30 @@ export type StaleWriteGuardOptions = {
 
 export class StaleWriteError extends Error {
   readonly code = "STALE_WRITE";
+  readonly relPath: string;
   constructor(relPath: string) {
     super(
-      `Stale write blocked for ${relPath}: file changed since last read in this session. Re-read the file before writing.`,
+      `Stale write blocked for ${relPath}: file changed since last read in this session. ` +
+        `Re-read the file before writing, or pass force=true / allowStaleWrite=true to override (recorded as allowance).`,
     );
     this.name = "StaleWriteError";
+    this.relPath = relPath;
   }
+}
+
+/** Explicit operator/agent override keys (TASK-P1-07). */
+export function isStaleWriteOverrideRequested(args: unknown): boolean {
+  const record = getToolParamsRecord(args);
+  if (!record) return false;
+  for (const key of ["force", "allowStaleWrite", "allow_stale_write"] as const) {
+    const v = record[key];
+    if (v === true) return true;
+    if (typeof v === "string") {
+      const raw = v.trim().toLowerCase();
+      if (raw === "1" || raw === "true" || raw === "yes" || raw === "on") return true;
+    }
+  }
+  return false;
 }
 
 export function shouldBlockStaleWrite(params: {
@@ -99,6 +117,11 @@ export function wrapToolWithStaleWriteGuard(
           readDiskHash: options.readDiskHash,
         });
         if (decision.block) {
+          // TASK-P1-07: explicit override path (force/allowStaleWrite) — still counts as allowance for metrics.
+          if (isStaleWriteOverrideRequested(args)) {
+            codingObservability.recordStaleAllowance();
+            return tool.execute(toolCallId, args, signal, onUpdate);
+          }
           codingObservability.recordStaleBlock();
           throw new StaleWriteError(decision.relPath ?? filePath);
         }

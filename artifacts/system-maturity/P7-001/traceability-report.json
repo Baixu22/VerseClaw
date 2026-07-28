@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-19T04:01:03.000Z",
+  "evaluatedAt": "2026-07-19T06:57:09.000Z",
   "ok": true,
   "summary": {
     "findingCount": 35,
@@ -152,13 +152,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "1b4266e3caa4724c728d41c87a46dcd0c258b68f8bd891e84ed062dfa9cd99d6",
+          "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "cbebb25b0988a468cb64244abead84e5894fa52828e6cd0d6f60cb1647a14cac",
+          "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -290,7 +290,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -374,7 +374,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -392,9 +392,9 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-19T03:48:47.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-02T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-02T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -477,13 +477,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "1b4266e3caa4724c728d41c87a46dcd0c258b68f8bd891e84ed062dfa9cd99d6",
+          "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "cbebb25b0988a468cb64244abead84e5894fa52828e6cd0d6f60cb1647a14cac",
+          "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -501,7 +501,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -519,9 +519,9 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-19T01:51:00.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-02T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-02T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -721,7 +721,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -756,9 +756,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestSourceAt": "2026-07-19T06:57:09.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -840,7 +840,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -859,8 +859,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -930,7 +930,7 @@
         },
         {
           "path": "electron/main/ipc-handlers.ts",
-          "sha256": "16c597a58c24a2c581ed5cd792d2c3de23f0eb4ecd5141716b766859688c4dd6",
+          "sha256": "0f5854455e9b4758bf7e5aa1b1685f45570378f8cfbc10f4cb80993c56c9a0cc",
           "taskId": "P1-002",
           "kind": "task"
         },
@@ -942,7 +942,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -960,9 +960,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T05:12:30.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T17:33:14.206Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1049,7 +1049,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1067,9 +1067,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T06:57:09.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1148,7 +1148,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1166,9 +1166,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T09:53:16.401Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1244,7 +1244,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1262,9 +1262,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T09:53:16.401Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1358,7 +1358,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1377,8 +1377,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T17:32:42.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1474,7 +1474,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1493,8 +1493,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1562,7 +1562,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1581,8 +1581,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1650,7 +1650,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1669,8 +1669,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1739,7 +1739,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1758,8 +1758,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T18:39:44.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1834,7 +1834,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1852,9 +1852,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T09:38:07.410Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1926,7 +1926,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -1944,9 +1944,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2009,7 +2009,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2028,8 +2028,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2338,13 +2338,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "1b4266e3caa4724c728d41c87a46dcd0c258b68f8bd891e84ed062dfa9cd99d6",
+          "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2368,7 +2368,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2446,13 +2446,13 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-004",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2470,9 +2470,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-18T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2654,7 +2654,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2690,8 +2690,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2757,7 +2757,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2776,8 +2776,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2865,7 +2865,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -2884,8 +2884,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T08:41:38.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3139,7 +3139,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3175,7 +3175,7 @@
         },
         {
           "path": "artifacts/system-maturity/P8-003/capability-inventory-report.json",
-          "sha256": "f76f8a2a28d0334a08c4fedc234f28c96dd60e35f8a6bcfa60e211ffe8cb2cf1",
+          "sha256": "6712d6e4dfdfaff85a9a1c4d49b9e264eaea94a012a5e19c3aeeb7eceb76f083",
           "taskId": "P8-003",
           "kind": "task"
         },
@@ -3223,13 +3223,13 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-003",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3264,9 +3264,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-19T03:48:47.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestSourceAt": "2026-07-19T06:57:09.000Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-18T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3558,7 +3558,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3594,8 +3594,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3707,19 +3707,19 @@
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "cbebb25b0988a468cb64244abead84e5894fa52828e6cd0d6f60cb1647a14cac",
+          "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "tests/unit/host-api-facade.test.ts",
-          "sha256": "9cd04ffdd94871585459eddb3fb0dbf25c8ae414dc56ed82316dfb9a7d69aad2",
+          "sha256": "b29c5e37c4731d561b6261b40d886e10cebe4c3e4c8622d3e737ec04f10caa39",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3761,7 +3761,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3773,31 +3773,31 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-          "sha256": "dc82d5d3abdc0d74af2a650b06bef6e00156f8bb67d1e6ad6e4b7aa5d5253be6",
+          "sha256": "ff81b54e267187a955e01d59c543c7227103b1e77bdc475c4b02df8f0e150b98",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-          "sha256": "b2ad37d37d543f374131629690198ec2a465462f5c5d6505175d89983703651b",
+          "sha256": "5e52d65790b50f796164d518a046289d459e3e4b6042563a8b44c68012e84296",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
-          "sha256": "492891145f0e2cd4c29cfdf427110ddf41aea8d3b1b583a5856a4dfa0f047446",
+          "sha256": "4435c82d47c0073ab5365b048dbd6a3c51a7b593227d888c9aebafc3467af656",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-          "sha256": "505c2c3497ce4c171cebbb4dc3c32080d8548c0525819f5158647e2e38789a4a",
+          "sha256": "2a60de71d2a661be448de9fc5d2ec42f2930135601426bf489b3e1e88453589f",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-          "sha256": "59606747fcacab9eca808fb52dde84eb9202ef8c21354a38b320e966837618b7",
+          "sha256": "6d49390da8b5808351b6a764d3d38bd9875ca0f8e7c741bc6adcead39a8d5fac",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3911,7 +3911,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -3947,8 +3947,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-18T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4188,19 +4188,19 @@
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "cbebb25b0988a468cb64244abead84e5894fa52828e6cd0d6f60cb1647a14cac",
+          "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "tests/unit/host-api-facade.test.ts",
-          "sha256": "9cd04ffdd94871585459eddb3fb0dbf25c8ae414dc56ed82316dfb9a7d69aad2",
+          "sha256": "b29c5e37c4731d561b6261b40d886e10cebe4c3e4c8622d3e737ec04f10caa39",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4248,7 +4248,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -4290,7 +4290,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4302,31 +4302,31 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-          "sha256": "dc82d5d3abdc0d74af2a650b06bef6e00156f8bb67d1e6ad6e4b7aa5d5253be6",
+          "sha256": "ff81b54e267187a955e01d59c543c7227103b1e77bdc475c4b02df8f0e150b98",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-          "sha256": "b2ad37d37d543f374131629690198ec2a465462f5c5d6505175d89983703651b",
+          "sha256": "5e52d65790b50f796164d518a046289d459e3e4b6042563a8b44c68012e84296",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
-          "sha256": "492891145f0e2cd4c29cfdf427110ddf41aea8d3b1b583a5856a4dfa0f047446",
+          "sha256": "4435c82d47c0073ab5365b048dbd6a3c51a7b593227d888c9aebafc3467af656",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-          "sha256": "505c2c3497ce4c171cebbb4dc3c32080d8548c0525819f5158647e2e38789a4a",
+          "sha256": "2a60de71d2a661be448de9fc5d2ec42f2930135601426bf489b3e1e88453589f",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-          "sha256": "59606747fcacab9eca808fb52dde84eb9202ef8c21354a38b320e966837618b7",
+          "sha256": "6d49390da8b5808351b6a764d3d38bd9875ca0f8e7c741bc6adcead39a8d5fac",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4590,7 +4590,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4710,7 +4710,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4794,13 +4794,13 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P8-004",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -4836,8 +4836,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-19T03:48:47.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-09-17T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-09-17T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4992,7 +4992,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -5250,7 +5250,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -5292,7 +5292,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5311,8 +5311,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-19T03:44:56.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-18T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5379,7 +5379,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5398,8 +5398,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-18T16:28:32.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5561,13 +5561,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "1b4266e3caa4724c728d41c87a46dcd0c258b68f8bd891e84ed062dfa9cd99d6",
+          "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5591,7 +5591,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5615,7 +5615,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5633,9 +5633,9 @@
         }
       ],
       "reviewCycleDays": 90,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-10-17T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-10-17T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5831,7 +5831,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -5867,8 +5867,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5987,7 +5987,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6005,9 +6005,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestSourceAt": "2026-07-19T09:52:46.399Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6200,7 +6200,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6236,8 +6236,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T05:39:50.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6304,7 +6304,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6323,8 +6323,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T09:31:50.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6391,7 +6391,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6410,8 +6410,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6712,13 +6712,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "1b4266e3caa4724c728d41c87a46dcd0c258b68f8bd891e84ed062dfa9cd99d6",
+          "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "b466c6b9375ab64cbe75c8d1578e8fdd197ecff128d90615f633e8357d006044",
+          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6742,7 +6742,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "518655f78129e32991580361084c146823f4decb9d3fa22ae46c376cdee324f8",
+          "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6766,7 +6766,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6801,9 +6801,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T16:29:49.000Z",
-      "latestEvidenceAt": "2026-07-19T04:01:03.000Z",
-      "nextReviewAt": "2026-08-18T04:01:03.000Z",
+      "latestSourceAt": "2026-07-19T19:00:24.666Z",
+      "latestEvidenceAt": "2026-07-19T19:55:24.931Z",
+      "nextReviewAt": "2026-08-18T19:55:24.931Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6869,7 +6869,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -6888,8 +6888,8 @@
       ],
       "reviewCycleDays": 60,
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-09-17T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-09-17T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -7068,7 +7068,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-001/full-validation.json",
-          "sha256": "4433809e9fe1af817d5b247a86b68c1eab59e2adea528cad4a019d417a2fda49",
+          "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d",
           "taskId": "P7-001",
           "kind": "global-validation"
         },
@@ -7087,8 +7087,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-18T00:43:36.000Z",
-      "latestEvidenceAt": "2026-07-19T03:48:47.000Z",
-      "nextReviewAt": "2026-08-18T03:48:47.000Z",
+      "latestEvidenceAt": "2026-07-19T19:28:23.577Z",
+      "nextReviewAt": "2026-08-18T19:28:23.577Z",
       "freshness": "fresh",
       "failures": []
     }

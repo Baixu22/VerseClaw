@@ -17,5 +17,15 @@
     "reason": "factstore arm reduces tool calls ≥5x with no pass-rate drop",
     "routingAccuracy": 1
   },
-  "ts": "2026-07-16T02:32:34.355Z"
+  "reductionDefinition": {
+    "note": "FP-P0-05 accounting reconciliation. Do not compare this figure to artifacts/coding-c1 (4.5x) without reading the corpus field: same formula, different corpus. Synthetic only - not live A/B.",
+    "formula": "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+    "corpus": "synthetic-agent generated corpus, seed 42",
+    "fixtureCount": 32,
+    "meanOffCalls": 5.125,
+    "meanOnCalls": 1,
+    "live": false,
+    "reconciliation": "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md"
+  },
+  "ts": "2026-07-22T09:32:06.344Z"
 }

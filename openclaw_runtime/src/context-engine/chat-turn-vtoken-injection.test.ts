@@ -49,10 +49,12 @@ function createMockClient(overrides: Partial<VtokenRpcClient> = {}): VtokenRpcCl
 describe("resolveVtokenAssemblyConfig", () => {
   const prev = process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED;
   const prevBridge = process.env.VERSE_VTOKEN_BRIDGE_ENABLED;
+  const prevKill = process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH;
 
   beforeEach(() => {
     delete process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED;
     delete process.env.VERSE_VTOKEN_BRIDGE_ENABLED;
+    delete process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH;
   });
 
   afterEach(() => {
@@ -60,13 +62,22 @@ describe("resolveVtokenAssemblyConfig", () => {
     else process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED = prev;
     if (prevBridge === undefined) delete process.env.VERSE_VTOKEN_BRIDGE_ENABLED;
     else process.env.VERSE_VTOKEN_BRIDGE_ENABLED = prevBridge;
+    if (prevKill === undefined) delete process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH;
+    else process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH = prevKill;
   });
 
-  it("defaults to enabled with product budget", () => {
+  it("defaults to disabled (opt-in) with product budget", () => {
     const cfg = resolveVtokenAssemblyConfig({});
-    expect(cfg.enabled).toBe(true);
+    expect(cfg.enabled).toBe(false);
     expect(cfg.budgetTokens).toBe(DEFAULT_VTOKEN_ASSEMBLY_CONFIG.budgetTokens);
     expect(cfg.renderMode).toBe("compact");
+  });
+
+  it("enables only with runtime.vtoken.assembly.enabled=true", () => {
+    const cfg = resolveVtokenAssemblyConfig({
+      runtime: { vtoken: { assembly: { enabled: true } } },
+    });
+    expect(cfg.enabled).toBe(true);
   });
 
   it("honors runtime.vtoken.assembly.enabled=false", () => {
@@ -76,8 +87,22 @@ describe("resolveVtokenAssemblyConfig", () => {
     expect(cfg.enabled).toBe(false);
   });
 
+  it("honors env canary VERSE_VTOKEN_ASSEMBLY_ENABLED=1", () => {
+    process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED = "1";
+    const cfg = resolveVtokenAssemblyConfig({});
+    expect(cfg.enabled).toBe(true);
+  });
+
   it("honors env kill-switch VERSE_VTOKEN_ASSEMBLY_ENABLED=0", () => {
     process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED = "0";
+    const cfg = resolveVtokenAssemblyConfig({
+      runtime: { vtoken: { assembly: { enabled: true } } },
+    });
+    expect(cfg.enabled).toBe(false);
+  });
+
+  it("honors enhancement kill switch over canary enable", () => {
+    process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH = "1";
     const cfg = resolveVtokenAssemblyConfig({
       runtime: { vtoken: { assembly: { enabled: true } } },
     });
@@ -89,14 +114,14 @@ describe("shouldAssembleVtokenWorkingContext", () => {
   it("allows all sessions by default", () => {
     expect(
       shouldAssembleVtokenWorkingContext(
-        { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, sessions: "all" },
+        { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: true, sessions: "all" },
         "agent:main:work",
       ),
     ).toBe(true);
   });
 
   it("restricts main-only sessions", () => {
-    const cfg = { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, sessions: "main-only" as const };
+    const cfg = { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: true, sessions: "main-only" as const };
     expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:main")).toBe(true);
     expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:sub")).toBe(false);
   });

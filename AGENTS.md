@@ -1,4 +1,4 @@
-﻿# AGENTS.md
+# AGENTS.md
 
 ## Cursor Cloud specific instructions
 
@@ -144,3 +144,14 @@ E2E 测试需要 Electron（Win32 进程），必须从 Windows 环境执行：
 - 构建：pnpm run build:vite（同时构建前端 + Electron）
 - 测试：pnpm run test:e2e tests/e2e/<spec>.ts
 - 测试文件支持在 WSL 中编写（POSIX 引号），在 Windows 中执行
+
+## Sustained Development Continuity (COMPASS)
+
+Long-running maturity work must not rely on chat memory alone.
+
+- Playbook (required entry): `docs/dev/Sustained-Development-Playbook.md`
+- Session handoff: `docs/dev/handoffs/LATEST.md`
+- Task forest (progress source of truth): `.agent-workbench/task-forest/` and HTML export under `exports/task-forest.html`
+- Skills: `task-forest`, `session-handoff-prompt`, `task-clarifier`, `user-profile-keeper` (installed under `%USERPROFILE%\.codex\skills\` from https://github.com/dongshuyan/compass-skills)
+
+Default policy: one ready TF node per session; no parallel mega-surfaces; do not treat Agent Dev green as joint-system GA.

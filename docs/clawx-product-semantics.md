@@ -1,12 +1,35 @@
 # ClawX Product Semantics
 
-Last updated: 2026-07-06
+Last updated: 2026-07-27
 
 Evidence boundary: this document is a product-semantics guardrail that complements `shared/capability-claims.ts` and `artifacts/capability-claims/status-table.json`.
 
 ## Positioning
 
 ClawX is an agent workbench, not an automatic project manager. Ordinary Chat is for immediate collaboration. Durable task facts belong to Task Ledger. High-constraint execution belongs to explicit Task Loop runs. Runtime/plugin scheduling belongs to Workboard. Routing Memo stays shadow until scorecard-backed quality input can safely affect routing.
+
+## Windows x64 Controlled Preview
+
+The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. It is an internal, single-workspace path with explicit opt-in, runtime acknowledgement, controlled writes, undo, restart recovery, kill/rollback, and a redacted support bundle. FP-P1 evidence is engineering and real-process evidence; human canary evidence and release approval remain pending.
+
+The table below is the canonical component classification for this preview. Each component appears exactly once and has exactly one label. Other documents should link here instead of assigning another label.
+
+<!-- FP-P1-08-COMPONENT-STATUS-START -->
+| Component | Canonical label | Boundary |
+| --- | --- | --- |
+| DCS coding loop | `opt-in` | The first-product switch is off by default and requires verified provider, model, workspace, and permission prerequisites. |
+| DCS Fact view and tool registry | `opt-in` | Available only after explicit flags and runtime acknowledgement; not part of the baseline tool catalog. |
+| VToken turn assembly | `opt-in` | Explicit Developer/config enable only; the enhancement kill switch wins. |
+| SEKB automatic writeback | `deferred` | Human-confirmed review remains the only allowed write path. |
+| C6 automatic context ladder | `deferred` | No automatic assembler activation in this preview. |
+| C7 knowledge/routing cutover | `deferred` | Shadow evidence does not grant routing authority. |
+| Coding WAL | `deferred` | Write journal remains the recovery authority for this preview. |
+| Browser supervised workflows | `experimental` | Supervised use only; unsupervised and private-network expansion are excluded. |
+| Runtime Memory injection | `diagnostics-only` | May expose diagnostics, but does not enter the first-product production injection path. |
+| Surfaces listed in RETIRED-SURFACES.md | `retired` | Removed surfaces stay removed and cannot be used as current capability evidence. |
+<!-- FP-P1-08-COMPONENT-STATUS-END -->
+
+No component is classified above `opt-in` during FP-P1 because the program still has zero human product runs. The excluded and default-off details are locked by `docs/dev/default-config-matrix.md` and `docs/dev/first-product-controlled-preview/STATUS.md`.
 
 ## Concept Boundaries
 

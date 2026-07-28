@@ -5,6 +5,7 @@
  */
 import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { describeInterpreterInlineEval } from "../infra/command-analysis/inline-eval.js";
 import { detectPolicyInlineEval } from "../infra/command-analysis/policy.js";
 import {
@@ -63,6 +64,9 @@ import type { AgentToolResult } from "./runtime/index.js";
 
 /** Full input bundle for gateway-host allowlist and approval processing. */
 export type ProcessGatewayAllowlistParams = {
+  /** Execution backend after this Gateway-owned approval policy resolves. */
+  executionHost?: "gateway" | "verseshell";
+  config?: OpenClawConfig;
   command: string;
   workdir: string;
   env: Record<string, string>;
@@ -743,6 +747,9 @@ export async function processGatewayAllowlist(
         run = await runExecProcess({
           command: params.command,
           execCommand: enforcedCommand,
+          execHost: params.executionHost,
+          hostPolicyApproved: params.executionHost === "verseshell",
+          config: params.config,
           workdir: params.workdir,
           env: params.env,
           pathPrepend: params.pathPrepend,

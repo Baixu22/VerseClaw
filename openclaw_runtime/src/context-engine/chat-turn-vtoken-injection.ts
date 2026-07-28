@@ -8,18 +8,24 @@
  * Does NOT replace md/jsonl storage, BlockStore, compaction, or business
  * memory stores. VT is the packing/assembly layer for Working Context.
  *
- * Default: ON (product path). Kill-switch:
+ * Default: OFF (opt-in / canary). Enable via:
+ *   - runtime.vtoken.assembly.enabled=true
+ *   - env VERSE_VTOKEN_ASSEMBLY_ENABLED=1 (canary force-on)
+ * Kill-switch (instant):
  *   - env VERSE_VTOKEN_ASSEMBLY_ENABLED=0
  *   - runtime.vtoken.assembly.enabled=false
+ *   - VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1 / runtime.contextEnhancement.killSwitch
  */
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isRecord } from "../runtime-core/index.js";
 import type { BlockStoreApi, ContextBlock, SourceSystem } from "./block.js";
 import { dcsObservability } from "./dcs-observability.js";
+import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import {
   getSharedVtokenRpcClient,
   isVtokenAssemblyEnvEnabled,
+  isVtokenAssemblyEnvForcedOn,
   resolveDefaultVtokenSessionDir,
   type VtokenRpcAssembleResult,
   type VtokenRpcClient,
@@ -28,7 +34,7 @@ import {
 export type VtokenRenderMode = "compact" | "dense" | "verbose";
 
 export type VtokenAssemblyConfig = {
-  /** Product default ON. Explicit false disables injection. */
+  /** Product default OFF (opt-in). Explicit true enables canary injection. */
   enabled: boolean;
   budgetTokens: number;
   renderMode: VtokenRenderMode;
@@ -41,7 +47,7 @@ export type VtokenAssemblyConfig = {
 };
 
 export const DEFAULT_VTOKEN_ASSEMBLY_CONFIG: VtokenAssemblyConfig = {
-  enabled: true,
+  enabled: false,
   budgetTokens: 600,
   renderMode: "compact",
   sessions: "all",
@@ -131,11 +137,15 @@ function resolveContextBlockConfig(value: unknown): Record<string, unknown> | un
 }
 
 /**
- * Resolve assembly config from runtime config + env kill-switch.
- * Default enabled=true unless config sets enabled:false or env disables.
+ * Resolve assembly config from runtime config + env.
+ * Default enabled=false (opt-in). Enable only via explicit config true or env canary.
+ * Kill-switch and enhancement kill switch always win (fail-closed).
  */
 export function resolveVtokenAssemblyConfig(value: unknown): VtokenAssemblyConfig {
   if (!isVtokenAssemblyEnvEnabled()) {
+    return { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: false };
+  }
+  if (isContextEnhancementKillSwitchEngaged(value)) {
     return { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: false };
   }
 
@@ -143,8 +153,8 @@ export function resolveVtokenAssemblyConfig(value: unknown): VtokenAssemblyConfi
   const vtoken = isRecord(runtime?.vtoken) ? runtime.vtoken : undefined;
   const assembly = isRecord(vtoken?.assembly) ? vtoken.assembly : undefined;
 
-  // Default ON: only explicit false disables.
-  const enabled = assembly?.enabled === false ? false : true;
+  // Opt-in: explicit config true OR env canary force-on.
+  const enabled = assembly?.enabled === true || isVtokenAssemblyEnvForcedOn();
   const budgetTokens = resolvePositiveInt(
     assembly?.budgetTokens,
     DEFAULT_VTOKEN_ASSEMBLY_CONFIG.budgetTokens,

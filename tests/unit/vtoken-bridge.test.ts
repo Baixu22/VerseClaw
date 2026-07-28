@@ -45,13 +45,20 @@ describe('vtoken-bridge', () => {
     else process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED = prevAssembly;
   });
 
-  it('defaults to enabled (product) but does not claim running worker until started', async () => {
+  it('defaults to disabled (opt-in) and does not claim running worker', async () => {
     const mod = await import('../../electron/services/vtoken-bridge');
-    expect(mod.isVtokenBridgeEnabled()).toBe(true);
+    expect(mod.isVtokenBridgeEnabled()).toBe(false);
     const status = await mod.vtokenGetStatus();
-    expect(status.enabled).toBe(true);
+    expect(status.enabled).toBe(false);
     expect(status.running).toBe(false);
     expect(status.success).toBe(true);
+  });
+
+  it('enables via env canary VERSE_VTOKEN_BRIDGE_ENABLED=1', async () => {
+    process.env.VERSE_VTOKEN_BRIDGE_ENABLED = '1';
+    const mod = await import('../../electron/services/vtoken-bridge');
+    expect(mod.readVtokenBridgeEnabledFromEnv()).toBe(true);
+    expect(mod.isVtokenBridgeEnabled()).toBe(true);
   });
 
   it('reads kill-switch from env', async () => {

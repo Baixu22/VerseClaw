@@ -2,7 +2,7 @@
   "id": "codegraph",
   "enabledByDefault": false,
   "name": "CodeGraph",
-  "description": "RETIRED (context-engine rebuild Task I): superseded by the in-process FactStore context engine (context.understand/impact/reuse/verify capabilities). Vendored dist retained solely as the impact-parity baseline harness. Semantic code intelligence: auto-indexes codebase, provides decision boundaries, source-reading plans, symbol search, call graph traversal, entry point detection, business flow tracing, minimal context generation, git history analysis, incremental sync, and freshness metadata.",
+  "description": "RETIRED — do not enable for product use. Superseded by DCS FactStore view tools (context_understand/impact/reuse/verify; Settings → Developer → DCS Production Flags). Vendored dist retained only as impact-parity harness. enabledByDefault remains false.",
   "contracts": {
     "tools": [
       "codegraph_decide",

@@ -8,6 +8,7 @@ import type {
   AgentBrowserCredentialPayload,
   AgentBrowserCredentialResult,
   AgentBrowserCredentialSavePayload,
+  AgentBrowserVaultHealthResult,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
   AgentBrowserFillByUidPayload,
@@ -260,6 +261,10 @@ import type {
   KnowledgeSekbShadowEvaluationExportResult,
   KnowledgeSekbShadowEvaluationExportPayload,
   KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbCaptureTrajectoryResult,
+  KnowledgeSekbCaptureTrajectoryPayload,
+  KnowledgeSekbRetrieveForTaskResult,
+  KnowledgeSekbRetrieveForTaskPayload,
   KnowledgeSekbRejectSuggestionPayload,
   KnowledgeSekbConfirmPrincipleResult,
   KnowledgeSekbConfirmPrinciplePayload,
@@ -438,6 +443,10 @@ import type {
   VtokenSetEnabledPayload,
 } from '@shared/vtoken/types';
 import type {
+  DcsProdFlagSetPayload,
+  DcsProdFlagsSnapshot,
+} from '@shared/dcs/prod-flags-control';
+import type {
   ObservabilityDashboardSnapshot,
   ObservabilityNodeDiagnostics,
   ObservabilityTrace,
@@ -552,6 +561,10 @@ export type {
   KnowledgeSekbShadowEvaluationExportResult,
   KnowledgeSekbShadowEvaluationExportPayload,
   KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbCaptureTrajectoryResult,
+  KnowledgeSekbCaptureTrajectoryPayload,
+  KnowledgeSekbRetrieveForTaskResult,
+  KnowledgeSekbRetrieveForTaskPayload,
   KnowledgeSekbRejectSuggestionPayload,
   KnowledgeSekbConfirmPrincipleResult,
   KnowledgeSekbConfirmPrinciplePayload,
@@ -711,6 +724,15 @@ export const hostApi = {
     setEnabled: (payload: VtokenSetEnabledPayload) => invokeHost('vtoken', 'setEnabled', payload),
     ensureStarted: () => invokeHost('vtoken', 'ensureStarted'),
   },
+  dcsProdFlags: {
+    getFlags: (): Promise<DcsProdFlagsSnapshot> => invokeHost('dcsProdFlags', 'getFlags'),
+    setFlag: (payload: DcsProdFlagSetPayload) => invokeHost('dcsProdFlags', 'setFlag', payload),
+    requeryAck: () => invokeHost('dcsProdFlags', 'requeryAck'),
+    getPreview: () => invokeHost('dcsProdFlags', 'getPreview'),
+    setPreview: (payload: { enabled: boolean; restartGateway?: boolean }) => (
+      invokeHost('dcsProdFlags', 'setPreview', payload)
+    ),
+  },
   settings: {
     getAll: () => invokeHost('settings', 'getAll'),
     get: (key: SettingsKey) => invokeHost('settings', 'get', { key }),
@@ -729,6 +751,7 @@ export const hostApi = {
     ),
     delete: (id: string) => invokeHost('workspaces', 'delete', { id }),
     switch: (id: string) => invokeHost('workspaces', 'switch', { id }),
+    preflight: (rootPath: string) => invokeHost('workspaces', 'preflight', { rootPath }),
     saveState: (input: WorkspaceSaveStatePayload) => invokeHost('workspaces', 'saveState', input),
     createFolder: (input: WorkspaceFolderCreatePayload) => (
       invokeHost('workspaces', 'createFolder', input)
@@ -890,11 +913,16 @@ export const hostApi = {
       invokeHost('agentBrowser', 'retryTask', input),
     cancelTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
       invokeHost('agentBrowser', 'cancelTask', input),
+    requestTaskApproval: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'requestTaskApproval', input),
+    approveTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'approveTask', input),
     show: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'show', input),
     hide: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'hide', input),
     vault: (): Promise<AgentBrowserVaultResult> => invokeHost('agentBrowser', 'vault'),
+    vaultHealth: (): Promise<AgentBrowserVaultHealthResult> => invokeHost('agentBrowser', 'vaultHealth'),
     saveCredential: (input: AgentBrowserCredentialSavePayload): Promise<AgentBrowserCredentialResult> =>
       invokeHost('agentBrowser', 'saveCredential', input),
     deleteCredential: (input: AgentBrowserCredentialPayload) =>
@@ -1154,6 +1182,7 @@ export const hostApi = {
   },
   diagnostics: {
     gatewaySnapshot: () => invokeHost('diagnostics', 'gatewaySnapshot'),
+    exportSupportBundle: () => invokeHost('diagnostics', 'exportSupportBundle'),
   },
   agentDev: {
     status: () => invokeHost('agentDev', 'status'),
@@ -1494,6 +1523,12 @@ export const hostApi = {
     ),
     sekbRejectSuggestion: (input: KnowledgeSekbRejectSuggestionPayload): Promise<KnowledgeSekbRejectSuggestionResult> => (
       invokeHost('knowledge', 'sekbRejectSuggestion', input)
+    ),
+    sekbCaptureTrajectory: (input: KnowledgeSekbCaptureTrajectoryPayload): Promise<KnowledgeSekbCaptureTrajectoryResult> => (
+      invokeHost('knowledge', 'sekbCaptureTrajectory', input)
+    ),
+    sekbRetrieveForTask: (input: KnowledgeSekbRetrieveForTaskPayload): Promise<KnowledgeSekbRetrieveForTaskResult> => (
+      invokeHost('knowledge', 'sekbRetrieveForTask', input)
     ),
     matchErrorExperience: (input: KnowledgeMatchErrorExperiencePayload): Promise<KnowledgeMatchErrorExperienceResult> => (
       invokeHost('knowledge', 'matchErrorExperience', input)

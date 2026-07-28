@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -7,9 +8,13 @@ import type { ElectronApplication } from '@playwright/test';
 import { startQaMockOpenAiServer } from '../../openclaw_runtime/extensions/qa-lab/src/providers/mock-openai/server';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
-type HostResponse<T> = { ok: boolean; data?: T; error?: { message?: string } };
+type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type ProviderRequest = Record<string, unknown>;
 type SessionsListResult = { sessions?: Array<{ key?: string; agentId?: string }> };
+type AgentRunResult = { runId?: string; status?: string };
+type AgentWaitResult = { runId?: string; status?: string; error?: string; stopReason?: string };
+type HostSuccess = { success: boolean };
+type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean; error?: string };
 
 type ContextBlockRow = {
   block_id: string;
@@ -35,26 +40,29 @@ const MAIN_PROMPT = 'DCS_W5_MAIN: execute the scripted production wiring proof.'
 const READ_ONLY_PROMPT = 'DCS_W5_READ_ONLY: read notes without modifying context.';
 const DCS_TOOL_NAMES = ['context_read', 'context_search', 'context_write'] as const;
 
+async function allocateGatewayPort(): Promise<number> {
+  return await new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        server.close(() => reject(new Error('Failed to allocate an ephemeral Gateway port')));
+        return;
+      }
+      server.close((error) => {
+        if (error) reject(error);
+        else resolvePort(address.port);
+      });
+    });
+  });
+}
+
 async function readProviderRequests(baseUrl: string): Promise<ProviderRequest[]> {
   const response = await fetch(`${baseUrl}/debug/requests`);
   if (!response.ok) throw new Error(`provider debug requests failed: ${response.status}`);
   const snapshots = await response.json() as Array<{ body?: ProviderRequest }>;
   return snapshots.map((snapshot) => snapshot.body ?? {});
-}
-
-function providerRequestDiagnostics(requests: ProviderRequest[]): string {
-  const recent = requests.slice(-4).map((request) => ({
-    model: request.model,
-    stream: request.stream,
-    instructions: typeof request.instructions === 'string'
-      ? request.instructions.slice(-2_000)
-      : undefined,
-    input: Array.isArray(request.input) ? request.input : undefined,
-    toolNames: Array.isArray(request.tools)
-      ? request.tools.map((tool) => (tool && typeof tool === 'object' ? (tool as Record<string, unknown>).name : undefined))
-      : undefined,
-  }));
-  return JSON.stringify(recent, null, 2).slice(-12_000);
 }
 
 function buildOpenClawConfig(workspaceDir: string, baseUrl: string, enabled: boolean): Record<string, unknown> {
@@ -156,25 +164,51 @@ async function seedOpenClaw(
 
 async function hostInvoke<T>(app: ElectronApplication, module: string, action: string, payload: Record<string, unknown> | null = null): Promise<T> {
   const response = await app.evaluate(async (_electron, request) => {
-    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+    const { ipcMain, BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
     const handler = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
     if (!handler) throw new Error('host:invoke handler is not registered');
-    return await handler({}, { id: `w5-${Date.now()}-${Math.random()}`, ...request });
+    const win = BrowserWindow.getAllWindows().find((candidate) => !candidate.isDestroyed());
+    if (!win) throw new Error('No BrowserWindow available for host:invoke sender auth');
+    const sender = win.webContents;
+    const event = {
+      sender,
+      senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
+    };
+    return await handler(event, { id: `w5-${Date.now()}-${Math.random()}`, ...request });
   }, { module, action, payload }) as HostResponse<T>;
-  if (!response.ok) throw new Error(response.error?.message ?? `host invoke failed: ${module}.${action}`);
+  if (!response.ok) {
+    const code = response.error?.code ?? 'HOST';
+    throw new Error(`[${code}] ${response.error?.message ?? `host invoke failed: ${module}.${action}`}`);
+  }
   return response.data as T;
 }
 
-async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
+async function configureIsolatedGatewayPort(app: ElectronApplication): Promise<number> {
+  const gatewayPort = await allocateGatewayPort();
+  const result = await hostInvoke<HostSuccess>(app, 'settings', 'set', {
+    key: 'gatewayPort',
+    value: gatewayPort,
+  });
+  expect(result.success).toBe(true);
+  return gatewayPort;
+}
+
+async function ensureGatewayReady(app: ElectronApplication, expectedPort?: number): Promise<void> {
   const deadline = Date.now() + 180_000;
   let startAttempts = 0;
-  let lastStatus: { state?: string; gatewayReady?: boolean } | undefined;
+  let lastStatus: GatewayStatus | undefined;
+  let lastStatusError: string | undefined;
+  let lastStartError: string | undefined;
   let lastStartAt = 0;
 
   while (Date.now() < deadline) {
     try {
-      lastStatus = await hostInvoke<{ state?: string; gatewayReady?: boolean }>(app, 'gateway', 'status');
-      if (lastStatus.gatewayReady === true || lastStatus.state === 'running') return;
+      lastStatus = await hostInvoke<GatewayStatus>(app, 'gateway', 'status');
+      lastStatusError = undefined;
+      if (
+        (lastStatus.gatewayReady === true || lastStatus.state === 'running')
+        && (expectedPort === undefined || lastStatus.port === expectedPort)
+      ) return;
       if (
         lastStatus.state !== 'starting'
         && startAttempts < 3
@@ -182,15 +216,48 @@ async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
       ) {
         startAttempts += 1;
         lastStartAt = Date.now();
-        await hostInvoke(app, 'gateway', 'start').catch(() => undefined);
+        try {
+          await hostInvoke(app, 'gateway', 'start');
+          lastStartError = undefined;
+        } catch (error) {
+          lastStartError = error instanceof Error ? error.message : String(error);
+          if (lastStartError.startsWith('[VALIDATION]')) throw error;
+        }
       }
-    } catch {
+    } catch (error) {
+      lastStatusError = error instanceof Error ? error.message : String(error);
+      if (lastStatusError.startsWith('[VALIDATION]')) throw error;
       // The next poll reports whether the Electron-owned host route recovers.
     }
     await new Promise((resolve) => setTimeout(resolve, 2_000));
   }
 
-  throw new Error(`Gateway did not become ready: ${JSON.stringify({ lastStatus, startAttempts })}`);
+  throw new Error(`Gateway did not become ready: ${JSON.stringify({
+    lastStatus,
+    lastStatusError,
+    lastStartError,
+    startAttempts,
+    expectedPort,
+  })}`);
+}
+
+async function restartGatewayForW5(app: ElectronApplication, expectedPort: number): Promise<void> {
+  let restartError: string | undefined;
+  try {
+    const restarted = await hostInvoke<HostSuccess>(app, 'gateway', 'restart');
+    expect(restarted.success).toBe(true);
+  } catch (error) {
+    restartError = error instanceof Error ? error.message : String(error);
+    const started = await hostInvoke<HostSuccess>(app, 'gateway', 'start');
+    expect(started.success).toBe(true);
+  }
+  try {
+    await ensureGatewayReady(app, expectedPort);
+  } catch (error) {
+    throw new Error(`W5 Gateway restart failed: ${JSON.stringify({ restartError, expectedPort })}; ${
+      error instanceof Error ? error.message : String(error)
+    }`, { cause: error });
+  }
 }
 
 async function createSession(app: ElectronApplication, label: string): Promise<string> {
@@ -235,37 +302,31 @@ async function runAgent(
   app: ElectronApplication,
   sessionKey: string,
   message: string,
-  providerBaseUrl: string,
 ): Promise<Record<string, unknown>> {
-  // Reuse QA Lab's proven real Gateway coding-chat surface. This still runs
-  // through the Electron-owned Gateway and embedded agent, while avoiding a
-  // second test-only RPC loop around model tool continuations.
-  const endpoint = await hostInvoke<{ token?: string; port?: number }>(app, 'gateway', 'controlUi');
-  expect(endpoint.token).toBeTruthy();
-  expect(endpoint.port).toBeTruthy();
-  const response = await fetch(`http://127.0.0.1:${endpoint.port}/v1/responses`, {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${endpoint.token}`,
-      'content-type': 'application/json',
-      'x-openclaw-agent': 'main',
-      'x-openclaw-session-key': sessionKey,
+  // Exercise the real embedded-agent tool loop through the Main-owned Gateway
+  // RPC boundary. The host controlUi action intentionally never returns tokens.
+  const run = await hostInvoke<AgentRunResult>(app, 'gateway', 'rpc', {
+    method: 'chat.send',
+    params: {
+      message,
+      agentId: 'main',
+      sessionKey,
+      deliver: false,
+      promptMode: 'full',
+      timeoutMs: 240_000,
+      idempotencyKey: `dcs-w5-${Date.now()}-${Math.random()}`,
     },
-    body: JSON.stringify({
-      model: 'openclaw/main',
-      input: [{
-        type: 'message',
-        role: 'user',
-        content: [{ type: 'input_text', text: message }],
-      }],
-      max_output_tokens: 512,
-      stream: false,
-    }),
+    timeoutMs: 30_000,
   });
-  const text = await response.text();
-  const diagnostics = response.ok ? '' : `\nmock provider requests:\n${providerRequestDiagnostics(await readProviderRequests(providerBaseUrl))}`;
-  expect(response.ok, `${text}${diagnostics}`).toBe(true);
-  return JSON.parse(text) as Record<string, unknown>;
+  expect(run.runId, JSON.stringify(run)).toBeTruthy();
+
+  const wait = await hostInvoke<AgentWaitResult>(app, 'gateway', 'rpc', {
+    method: 'agent.wait',
+    params: { runId: run.runId, timeoutMs: 240_000 },
+    timeoutMs: 250_000,
+  });
+  expect(wait.status, JSON.stringify(wait)).toBe('ok');
+  return { runId: run.runId, status: wait.status, stopReason: wait.stopReason };
 }
 
 function readContextRows(userDataDir: string): ContextBlockRow[] {
@@ -362,10 +423,11 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      const gatewayPort = await configureIsolatedGatewayPort(app);
       await hostInvoke(app, 'workspaces', 'create', { name: 'DCS W5 Off', rootPath: workspaceDir, permissionMode: 'fullAccess' });
-      await ensureGatewayReady(app);
+      await restartGatewayForW5(app, gatewayPort);
       const sessionKey = await createSession(app, 'dcs-w5-off');
-      await runAgent(app, sessionKey, OFF_PROMPT, provider.baseUrl);
+      await runAgent(app, sessionKey, OFF_PROMPT);
 
       const providerRequests = await readProviderRequests(provider.baseUrl);
       const metrics = toolMetrics(providerRequests);
@@ -407,10 +469,11 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      const gatewayPort = await configureIsolatedGatewayPort(app);
       await hostInvoke(app, 'workspaces', 'create', { name: 'DCS W5 On', rootPath: workspaceDir, permissionMode: 'fullAccess' });
-      await ensureGatewayReady(app);
+      await restartGatewayForW5(app, gatewayPort);
       const sessionKey = await createSession(app, 'dcs-w5-on');
-      await runAgent(app, sessionKey, MAIN_PROMPT, provider.baseUrl);
+      await runAgent(app, sessionKey, MAIN_PROMPT);
 
       let providerRequests = await readProviderRequests(provider.baseUrl);
       const metrics = toolMetrics(providerRequests);
@@ -440,7 +503,7 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
       expect(rows.filter((row) => row.source_system === 'agent-notes').every((row) => row.block_type === 'notes')).toBe(true);
 
       const before = rows.filter((row) => row.block_type === 'notes');
-      await runAgent(app, sessionKey, READ_ONLY_PROMPT, provider.baseUrl);
+      await runAgent(app, sessionKey, READ_ONLY_PROMPT);
       providerRequests = await readProviderRequests(provider.baseUrl);
       const after = readContextRows(userDataDir).filter((row) => row.block_type === 'notes');
       expect(after).toEqual(before);
@@ -475,8 +538,9 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      const gatewayPort = await configureIsolatedGatewayPort(app);
       // Gateway launch runs prepareSourceRuntimeIsolation which must merge runtime.
-      await ensureGatewayReady(app);
+      await restartGatewayForW5(app, gatewayPort);
 
       const isolatedPath = join(userDataDir, 'openclaw-source-state', 'openclaw.json');
       const isolated = JSON.parse(await readFile(isolatedPath, 'utf8')) as {

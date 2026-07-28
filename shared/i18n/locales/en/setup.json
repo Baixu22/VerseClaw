@@ -1,152 +1,261 @@
 {
-    "steps": {
-        "welcome": {
-            "title": "Welcome to Verse Claw",
-            "description": "Your AI assistant is ready to be configured"
-        },
-        "runtime": {
-            "title": "Environment Check",
-            "description": "Verifying system requirements"
-        },
-        "provider": {
-            "title": "AI Provider",
-            "description": "Configure your AI service"
-        },
-        "channel": {
-            "title": "Connect a Channel",
-            "description": "Connect a messaging platform (optional)"
-        },
-        "installing": {
-            "title": "Setting Up",
-            "description": "Installing essential components"
-        },
-        "complete": {
-            "title": "All Set!",
-            "description": "Verse Claw is ready to use"
-        }
-    },
+  "steps": {
     "welcome": {
-        "title": "Welcome to Verse Claw",
-        "description": "Verse Claw is a graphical interface for OpenClaw, making it easy to use AI assistants across your favorite messaging platforms.",
-        "features": {
-            "noCommand": "Zero command-line required",
-            "modernUI": "Modern, beautiful interface",
-            "bundles": "Pre-installed skill bundles",
-            "crossPlatform": "Cross-platform support"
-        }
+      "title": "Welcome to Verse Claw",
+      "description": "Configure the Windows x64 controlled preview"
     },
     "runtime": {
-        "title": "Checking Environment",
-        "viewLogs": "View Logs",
-        "recheck": "Re-check",
-        "nodejs": "Node.js Runtime",
-        "openclaw": "OpenClaw Package",
-        "gateway": "Gateway Service",
-        "startGateway": "Start Gateway",
-        "status": {
-            "checking": "Checking...",
-            "success": "Node.js is available",
-            "error": "Failed",
-            "gatewayRunning": "Running on port {{port}}",
-            "packageReady": "OpenClaw package ready"
-        },
-        "issue": {
-            "title": "Environment issue detected",
-            "desc": "Please ensure OpenClaw is properly installed. Check the logs for details."
-        },
-        "logs": {
-            "title": "Application Logs",
-            "openFolder": "Open Log Folder",
-            "close": "Close",
-            "noLogs": "(No logs available yet)"
-        }
+      "title": "Environment Check",
+      "description": "Verifying system requirements"
     },
     "provider": {
-        "label": "Model Provider",
-        "selectPlaceholder": "Select a provider...",
-        "baseUrl": "Base URL",
-        "modelId": "Model ID",
-        "modelIdDesc": "The model identifier from your provider (e.g. deepseek-ai/DeepSeek-V3)",
-        "codePlanPreset": "Code Plan Preset",
-        "codePlanMode": "Code Plan",
-        "useCodePlanPreset": "Use Ark Code Plan Preset",
-        "codePlanPresetDesc": "Code Plan uses https://ark.cn-beijing.volces.com/api/coding/v3 and model ark-code-latest. Do not use /api/v3 for Code Plan traffic.",
-        "codePlanDoc": "Code Plan docs",
-        "protocol": "Protocol",
-        "protocols": {
-            "openaiCompletions": "OpenAI Completions",
-            "openaiResponses": "OpenAI Responses",
-            "anthropic": "Anthropic Compatible"
-        },
-        "apiKey": "API Key",
-        "save": "Save",
-        "validateSave": "Validate & Save",
-        "valid": "Provider configured successfully",
-        "invalid": "Invalid API key",
-        "storedLocally": "Your API key is stored locally on your machine."
+      "title": "AI Provider",
+      "description": "Configure your AI service"
     },
     "channel": {
-        "title": "Connect a Messaging Channel",
-        "subtitle": "Choose a platform to connect your AI assistant to. You can add more channels later in Settings.",
-        "configure": "Configure {{name}}",
-        "howTo": "How to connect:",
-        "viewDocs": "View docs",
-        "validationError": "Validation failed",
-        "connected": "{{name}} Connected",
-        "connectedDesc": "Your channel has been configured. It will connect when the Gateway starts.",
-        "configureAnother": "Configure another channel"
+      "title": "Connect a Channel",
+      "description": "Connect a messaging platform (optional)"
     },
     "installing": {
-        "title": "Installing Essential Components",
-        "subtitle": "Setting up the tools needed to power your AI assistant",
-        "progress": "Progress",
-        "status": {
-            "pending": "Pending",
-            "installing": "Installing...",
-            "installed": "Installed",
-            "failed": "Failed"
-        },
-        "error": "Setup Error:",
-        "restart": "Try restarting the app",
-        "wait": "This may take a few moments...",
-        "skip": "Skip this step"
+      "title": "Setting Up",
+      "description": "Installing essential components"
     },
     "complete": {
-        "title": "Setup Complete!",
-        "subtitle": "Verse Claw is configured and ready to use. You can now start chatting with your AI assistant.",
-        "provider": "AI Provider",
-        "components": "Components",
-        "gateway": "Gateway",
-        "running": "Running",
-        "footer": "You can customize skills and connect channels in Settings"
+      "title": "All Set!",
+      "description": "The opt-in DCS Coding preview is configured"
     },
-    "nav": {
-        "next": "Next",
-        "back": "Back",
-        "skipStep": "Skip this step",
-        "skipSetup": "Skip Setup",
-        "getStarted": "Get Started"
+    "model": {
+      "title": "Model",
+      "description": "Pick a model that is actually available"
     },
-    "defaultSkills": {
-        "opencode": {
-            "name": "OpenCode",
-            "description": "AI coding assistant backend"
-        },
-        "python-env": {
-            "name": "Python Environment",
-            "description": "Python runtime for skills"
-        },
-        "code-assist": {
-            "name": "Code Assist",
-            "description": "Code analysis and suggestions"
-        },
-        "file-tools": {
-            "name": "File Tools",
-            "description": "File operations and management"
-        },
-        "terminal": {
-            "name": "Terminal",
-            "description": "Shell command execution"
-        }
+    "workspace": {
+      "title": "Workspace",
+      "description": "Choose the one folder the agent may work in"
     }
+  },
+  "welcome": {
+    "title": "Welcome to Verse Claw",
+    "description": "Verse Claw is an OpenClaw desktop interface. This setup configures the Windows x64 controlled preview for one-workspace coding.",
+    "features": {
+      "noCommand": "Zero command-line required",
+      "modernUI": "Modern, beautiful interface",
+      "bundles": "Pre-installed skill bundles",
+      "crossPlatform": "Windows x64 controlled preview"
+    }
+  },
+  "runtime": {
+    "title": "Checking Environment",
+    "viewLogs": "View Logs",
+    "recheck": "Re-check",
+    "nodejs": "Node.js Runtime",
+    "openclaw": "OpenClaw Package",
+    "gateway": "Gateway Service",
+    "startGateway": "Start Gateway",
+    "status": {
+      "checking": "Checking...",
+      "success": "Node.js is available",
+      "error": "Failed",
+      "gatewayRunning": "Running on port {{port}}",
+      "gatewayStopped": "Gateway is not running. Start it to continue.",
+      "gatewayStarting": "Starting Gateway...",
+      "packageReady": "OpenClaw package ready"
+    },
+    "issue": {
+      "title": "Environment issue detected",
+      "desc": "Please ensure OpenClaw is properly installed. Check the logs for details."
+    },
+    "logs": {
+      "title": "Application Logs",
+      "openFolder": "Open Log Folder",
+      "close": "Close",
+      "noLogs": "(No logs available yet)"
+    }
+  },
+  "provider": {
+    "label": "Model Provider",
+    "selectPlaceholder": "Select a provider...",
+    "baseUrl": "Base URL",
+    "modelId": "Model ID",
+    "modelIdDesc": "The model identifier from your provider (e.g. deepseek-ai/DeepSeek-V3)",
+    "codePlanPreset": "Code Plan Preset",
+    "codePlanMode": "Code Plan",
+    "useCodePlanPreset": "Use Ark Code Plan Preset",
+    "codePlanPresetDesc": "Code Plan uses https://ark.cn-beijing.volces.com/api/coding/v3 and model ark-code-latest. Do not use /api/v3 for Code Plan traffic.",
+    "codePlanDoc": "Code Plan docs",
+    "protocol": "Protocol",
+    "protocols": {
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Anthropic Compatible"
+    },
+    "apiKey": "API Key",
+    "save": "Save",
+    "validateSave": "Validate & Save",
+    "valid": "Provider configured successfully",
+    "invalid": "Invalid API key",
+    "storedLocally": "Your API key is stored locally on your machine.",
+    "stepIntro": "Connect an AI provider. Your credentials are validated with a real request before setup can finish.",
+    "getKey": "Get an API key",
+    "validateButton": "Validate",
+    "validating": "Validating…",
+    "validated": "Credentials verified",
+    "readyHint": "{{label}} is verified. Continue to pick a model.",
+    "existing": {
+      "title": "Already configured",
+      "useThis": "Validate & use",
+      "orNew": "or add a new provider below"
+    },
+    "errors": {
+      "not-filled": {
+        "title": "API key required",
+        "action": "Enter the API key for this provider. You can create one from the provider's console (link above)."
+      },
+      "credentials": {
+        "title": "Credentials rejected",
+        "action": "The provider rejected this key. Check for typos or expired/revoked keys, then paste a fresh key and validate again."
+      },
+      "network": {
+        "title": "Provider unreachable",
+        "action": "Could not reach the provider endpoint. Check your network/proxy settings, or the Base URL if you changed it, then retry."
+      },
+      "service": {
+        "title": "Provider returned an unexpected response",
+        "action": "The endpoint answered but not the way we expected. Verify the Base URL points at a compatible API, then retry."
+      }
+    }
+  },
+  "channel": {
+    "title": "Connect a Messaging Channel",
+    "subtitle": "Choose a platform to connect your AI assistant to. You can add more channels later in Settings.",
+    "configure": "Configure {{name}}",
+    "howTo": "How to connect:",
+    "viewDocs": "View docs",
+    "validationError": "Validation failed",
+    "connected": "{{name}} Connected",
+    "connectedDesc": "Your channel has been configured. It will connect when the Gateway starts.",
+    "configureAnother": "Configure another channel"
+  },
+  "installing": {
+    "title": "Installing Essential Components",
+    "subtitle": "Setting up the tools needed to power your AI assistant",
+    "progress": "Progress",
+    "status": {
+      "pending": "Pending",
+      "installing": "Installing...",
+      "installed": "Installed",
+      "failed": "Failed"
+    },
+    "error": "Setup Error:",
+    "restart": "Try restarting the app",
+    "wait": "This may take a few moments...",
+    "skip": "Skip this step"
+  },
+  "complete": {
+    "title": "Setup Complete!",
+    "subtitle": "Setup is complete. DCS Coding remains opt-in under Settings > Developer, and requires runtime acknowledgement when enabled.",
+    "provider": "AI Provider",
+    "components": "Components",
+    "gateway": "Gateway",
+    "running": "Running",
+    "footer": "You can customize skills and connect channels in Settings",
+    "providerUnverified": "Not verified",
+    "limitedMode": {
+      "title": "Setup finished without a verified provider",
+      "desc": "Chat and coding tasks will not work until a provider is configured. You will be guided to Settings on your first message."
+    },
+    "workspace": "Workspace",
+    "workspaceUnset": "Not selected"
+  },
+  "nav": {
+    "next": "Next",
+    "back": "Back",
+    "skipStep": "Skip this step",
+    "skipSetup": "Skip Setup",
+    "getStarted": "Get Started"
+  },
+  "defaultSkills": {
+    "opencode": {
+      "name": "OpenCode",
+      "description": "AI coding assistant backend"
+    },
+    "python-env": {
+      "name": "Python Environment",
+      "description": "Python runtime for skills"
+    },
+    "code-assist": {
+      "name": "Code Assist",
+      "description": "Code analysis and suggestions"
+    },
+    "file-tools": {
+      "name": "File Tools",
+      "description": "File operations and management"
+    },
+    "terminal": {
+      "name": "Terminal",
+      "description": "Shell command execution"
+    }
+  },
+  "model": {
+    "stepIntro": "Models listed live from {{label}}. Picking one confirms it is actually available to your account.",
+    "loading": "Fetching available models…",
+    "noProvider": "Validate a provider first (previous step).",
+    "empty": "The provider returned no models for this account.",
+    "listFailed": {
+      "title": "Could not list models",
+      "action": "The provider's model listing failed. Retry, or go back and check the provider configuration."
+    },
+    "retry": "Retry",
+    "confirm": "Use this model",
+    "confirming": "Confirming…",
+    "verifiedAs": "Verified: {{model}}"
+  },
+  "workspace": {
+    "stepIntro": "Pick the single folder this preview may read (and, if you allow it, write). Writes outside this folder are rejected at runtime.",
+    "pickTitle": "Choose workspace folder",
+    "pickButton": "Choose folder…",
+    "blocked": "This folder cannot be used as a workspace. Fix the failed checks or pick another folder.",
+    "readOnlyFallback": "This folder is not writable. It can only be used in read-only mode.",
+    "permissionTitle": "What may the agent do here?",
+    "confirmButton": "Use this workspace",
+    "confirming": "Setting up…",
+    "confirmedAs": "Workspace active · {{mode}}",
+    "checks": {
+      "exists": "Folder exists",
+      "readable": "Readable",
+      "writable": "Writable",
+      "git": "Git repository",
+      "sensitivePath": "Sensitive location",
+      "diskSpace": "Disk space"
+    },
+    "details": {
+      "directory": "OK",
+      "missing": "does not exist",
+      "notADirectory": "not a folder",
+      "readable": "OK",
+      "notReadable": "cannot read",
+      "writable": "OK",
+      "notWritable": "cannot write",
+      "gitRepo": "yes — undo can lean on git",
+      "notGitRepo": "no — undo relies on the write journal",
+      "clear": "OK",
+      "driveRoot": "drive root is not allowed",
+      "homeRoot": "home folder root is not allowed",
+      "systemDir": "system folder is not allowed",
+      "credentialDir": "credential folder is not allowed",
+      "containsCredentialMaterial": "contains credential material ({{extra}})",
+      "sufficient": "OK",
+      "lowDiskSpace": "low ({{extra}} free)",
+      "unknown": "could not determine"
+    },
+    "modes": {
+      "readOnly": {
+        "title": "Read-only",
+        "desc": "The agent can read and analyze, but never writes files."
+      },
+      "acceptEdits": {
+        "title": "Controlled write",
+        "desc": "File edits inside this workspace are allowed; anything outside, and risky commands, still require approval."
+      }
+    }
+  }
 }

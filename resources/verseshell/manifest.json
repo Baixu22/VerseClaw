@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "component": "verseshell",
+  "upstream": {
+    "cargo_repository": "https://github.com/nervosys/verseshell",
+    "source_repository": "https://github.com/Baixu22/VerseShell.git",
+    "pinned_commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
+    "pinned_commit_status": "clean_build_input"
+  },
+  "license": "AGPL-3.0-or-later",
+  "crate": {
+    "name": "verseshell",
+    "version": "1.0.0",
+    "rust_version": "1.75",
+    "edition": "2021"
+  },
+  "protocol": {
+    "observation_schema": "verseshell.observation/v1",
+    "mcp_protocol_version": "2024-11-05",
+    "expected_server_protocol": "verseshell.jsonl/v1",
+    "operation_catalog_schema": "verseshell.operation-catalog/v1",
+    "operation_catalog_digest": "sha256:857eb12ca6b83da190764263a4e4a0181d3cd047926f0d404fc3a4c93c9f4848",
+    "operation_catalog_count": 26,
+    "handshake_operation": "runtime.handshake",
+    "server_name": "ae-mcp",
+    "server_version": "1.0.0"
+  },
+  "compliance": {
+    "license_file": "LICENSE-AGPL-3.0-or-later.txt",
+    "notice_file": "NOTICE.md",
+    "source_file": "SOURCE.md",
+    "build_file": "BUILD.md",
+    "notice_path": "resources/verseshell/NOTICE.md",
+    "source_instructions_path": "resources/verseshell/SOURCE.md",
+    "build_instructions_path": "resources/verseshell/BUILD.md",
+    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283",
+    "corresponding_source_path": null,
+    "corresponding_source_status": "identified_by_repository_and_commit"
+  },
+  "build": {
+    "instructions_path": "resources/verseshell/BUILD.md",
+    "command": "cargo build --release --bin ae",
+    "primary_binary": "ae",
+    "mcp_binary": "not_packaged",
+    "cargo_version": "cargo 1.94.0 (85eff7c80 2026-01-15)",
+    "rustc_version": "rustc 1.94.0 (4a4ef493e 2026-03-02)\nbinary: rustc\ncommit-hash: 4a4ef493e3a1488c6e321570238084b38948f6db\ncommit-date: 2026-03-02\nhost: x86_64-pc-windows-msvc\nrelease: 1.94.0\nLLVM version: 21.1.8",
+    "cargo_target": "x86_64-pc-windows-msvc",
+    "cargo_metadata": {
+      "package_name": "verseshell",
+      "package_version": "1.0.0",
+      "target_directory": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell\\target"
+    },
+    "cargo_toml_sha256": "8f1f5f34ba6db98903d971dd23b5771347b008b51c4fb44f09c0262b9146bf1a",
+    "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
+    "synchronized_at": "2026-07-27T04:03:42.623Z"
+  },
+  "artifacts": {
+    "win32-x64": {
+      "path": "resources/bin/win32-x64/ae.exe",
+      "packaged_path": "bin/ae.exe",
+      "sha256": "63716c3f0589c0291443f770a0ede97d728fb842aa39f50ac230ee7b5175e884",
+      "bytes": 14446592,
+      "version": "1.0.0"
+    },
+    "darwin-x64": {
+      "path": null,
+      "sha256": null,
+      "bytes": null
+    },
+    "darwin-arm64": {
+      "path": null,
+      "sha256": null,
+      "bytes": null
+    },
+    "linux-x64": {
+      "path": null,
+      "sha256": null,
+      "bytes": null
+    },
+    "linux-arm64": {
+      "path": null,
+      "sha256": null,
+      "bytes": null
+    }
+  },
+  "provenance": {
+    "repository": "https://github.com/Baixu22/VerseShell.git",
+    "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
+    "dirty": false,
+    "build_input": {
+      "source_directory": "C:\\Users\\27933\\Desktop\\verseshell\\verseshell",
+      "status_porcelain": [],
+      "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "dirty_entry_count": 0
+    },
+    "corresponding_source": {
+      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283",
+      "patch_instructions": null
+    },
+    "dirty_build_override": {
+      "approved": false,
+      "source_snapshot": null,
+      "patch_instructions": null
+    }
+  }
+}

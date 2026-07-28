@@ -1623,6 +1623,12 @@
         "reviewNotice": "Review-only recovery memory proposal. Do not apply durable memory until the user verifies the facts, scope, and source evidence.",
         "emptyBody": "Session {{sessionKey}} has no rendered recovery transcript yet. Capture only verified recovery facts, decisions, blockers, and evidence references before applying."
       }
+    },
+    "providerGate": {
+      "title": "No AI provider configured",
+      "desc": "Your message cannot be sent because no validated AI provider is configured. Set one up in Settings → AI Providers.",
+      "configure": "Configure provider",
+      "dismiss": "Not now"
     }
   },
   "historyBuckets": {

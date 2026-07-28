@@ -26,6 +26,13 @@ const { patchNsisExtractTemplate } = require('./patch-nsis-extract.mjs');
 const { patchNsisInstallSectionTemplate } = require('./patch-nsis-install-section.mjs');
 const { patchNsisUninstallTemplate } = require('./patch-nsis-uninstall.mjs');
 
+async function verifyVerseShellBundle(resourcesDir, platform, arch) {
+  if (platform !== 'win32') return;
+  const { validatePackagedBundle } = await import('./verseshell-bundle.mjs');
+  await validatePackagedBundle({ resourcesPath: resourcesDir, platform, arch, mode: 'package' });
+  console.log('[after-pack] ✅ VerseShell ae.exe checksum, target, protocol, provenance, and AGPL payload verified.');
+}
+
 // On Windows, paths in pnpm's virtual store can exceed the default MAX_PATH
 // limit (260 chars). Node.js 18.17+ respects the system LongPathsEnabled
 // registry key, but as a safety net we normalize paths to use the \\?\ prefix
@@ -992,7 +999,12 @@ exports.default = async function afterPack(context) {
       console.log(`[after-pack] 🩹 Patched ${asarLruCount} lru-cache instance(s) in app.asar.unpacked`);
     }
   }
-  // 6. [Windows only] Ensure NSIS templates are patched (also done pre-build in package:win).
+  // 6. Verify the target-specific VerseShell binary and compliance payload only
+  // after electron-builder has copied all resources. This is intentionally
+  // outside OpenClaw cleanup roots so LICENSE/NOTICE/SOURCE/BUILD cannot be pruned.
+  await verifyVerseShellBundle(resourcesDir, platform, arch);
+
+  // 7. [Windows only] Ensure NSIS templates are patched (also done pre-build in package:win).
   if (platform === 'win32') {
     const extractOk = patchNsisExtractTemplate();
     const installSectionOk = patchNsisInstallSectionTemplate();

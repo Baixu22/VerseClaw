@@ -1363,6 +1363,12 @@ export class AgentBrowserService {
   ): Promise<Omit<AgentBrowserRequestModeUpgradeResult, 'success'>> {
     const record = this.getRecord(payload.sessionId);
     const targetMode = normalizeRuntimeMode(payload.targetMode);
+    // TF-0005: upgrades (not downgrades) require an explicit user approval gate.
+    if (targetMode !== 'normal_restricted' && payload.userApproval !== true) {
+      throw new Error(
+        'Agent browser mode upgrade requires explicit userApproval: true (approval gate)',
+      );
+    }
     if (targetMode === 'normal_restricted') {
       // 降级回 normal_restricted：清理 grant context 与过期时间
       record.runtimeMode = 'normal_restricted';

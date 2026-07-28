@@ -39,6 +39,12 @@
 
 Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
 
+## Windows x64 Controlled Preview の範囲
+
+現在の first-product 検証対象は **Verse Claw Windows x64 - DCS Coding Controlled Preview** です。内部利用、単一 workspace、明示的な `opt-in` に限定し、Provider/Model 検証、制御された読み書きとテスト、undo、runtime acknowledgement、再起動後の復旧、kill/rollback、秘匿化 support bundle を対象にします。
+
+Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。
+
 ## 概要
 
 **Verse Claw**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[OpenClaw](https://github.com/OpenClaw)をベースに構築されており、コマンドラインによるAIオーケストレーションを、アクセスしやすく美しいデスクトップ体験に変換します。ターミナルは不要です。
@@ -375,6 +381,35 @@ Verse Clawは、**デュアルプロセス + Host API 統一アクセス**構成
   - macOS/Linux: `lsof -nP -iTCP:18789 -sTCP:LISTEN`
   - Windows (PowerShell): `Get-NetTCPConnection -LocalPort 18789 -State Listen`
 - ウィンドウの閉じるボタン（`X`）は既定でトレイへ最小化する動作で、完全終了ではありません。完全終了する場合はトレイメニューの **Quit Verse Claw** を使用してください。
+
+### VerseShell typed ACI の制御付き canary
+
+VerseShell は Windows x64 の内部 canary 向けに限定した任意の実行バックエンドです。既定では無効であり、正式リリースやネイティブ shell の無条件な代替を意味しません。明示的に有効化しても、Agent の `exec` は最初に OpenClaw の allowlist/approval を通過する必要があります。その後、検証済みの同梱 `ae.exe` が workspace jail、リポジトリ所有の strict policy、唯一の `shell.exec` capability、アクションに束縛された一回限りの approval token で実行します。runtime、protocol、catalog、workspace、capability、policy の不一致は fail-closed となり、governed 経路はネイティブ shell へフォールバックしません。
+
+保守的な `openclaw.json` 設定は次のとおりです。
+
+```json
+{
+  "tools": {
+    "exec": {
+      "host": "verseshell",
+      "security": "allowlist",
+      "ask": "on-miss"
+    }
+  },
+  "runtime": {
+    "verseShellFoundation": {
+      "verifiedRuntime": true,
+      "typedAci": true,
+      "facade": true,
+      "governedExec": true,
+      "artifactResults": true
+    }
+  }
+}
+```
+
+設定がオーバーライドを許可している場合、セッション指令 `/exec host=verseshell security=allowlist ask=on-miss` でも同じバックエンドを選択できます。大きな出力は `result://sha256/...` handle を返し、Agent は `verseshell_result` で範囲を制限した断片を取得できます。`legacyEval`、`mcpCompatibility`、`compatibilityNativeFallback` は無効のままにしてください。緊急停止は `runtime.verseShellFoundation.killSwitch` を `true` にするか、`VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1` を設定して Gateway を再起動します。
 
 ---
 

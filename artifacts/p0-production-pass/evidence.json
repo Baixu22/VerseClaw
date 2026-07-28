@@ -1,0 +1,54 @@
+{
+  "remainingNonDebt": [
+    "TF-0006 blocked: real corpus + human live A/B required for default-on discussion",
+    "Full CVK/assembler stage unification is future architecture (flags default off + kill switch cuts addition)",
+    "agent-browser CLI open may flake in some E2E hosts (unit recovery locked)"
+  ],
+  "scope": "TF-0001..TF-0005 controlled-operable production pass (NOT joint-system GA)",
+  "verdict": {
+    "jointSystemGa": "NO-GO",
+    "readyForDefaultFlagGraduation": false,
+    "liveReady": false,
+    "productionControlledOperable": true,
+    "productApproved": false,
+    "decision": "accept-with-residuals-cleared-for-p0-debt"
+  },
+  "schema": "p0-production-pass/v1",
+  "generatedAt": "2026-07-19T11:23:18.595Z",
+  "fixes": [
+    "private-network unacked legacy true migrated to false on sync",
+    "allowPrivateNetwork alias also migrated when unacked",
+    "canary allow requires dangerouslyAllowPrivateNetworkAcknowledged or VERSE_BROWSER_ALLOW_PRIVATE_NETWORK=1",
+    "CVK systemPromptAddition suppressed when enhancement kill switch engaged",
+    "static entry scan forbids low-level injectors + SEKB autoWriteback=true workers",
+    "unified P0 production acceptance unit gate"
+  ],
+  "gates": {
+    "openclaw_runtime_unit": [
+      "src/context-engine/context-orchestrator.test.ts",
+      "src/context-engine/enhancement-kill-switch.test.ts",
+      "src/knowledge/sekb/golden-path.test.ts"
+    ],
+    "contract": "pnpm contract:check",
+    "e2e": [
+      "tests/e2e/sekb-golden-path.spec.ts",
+      "tests/e2e/browser-security-recovery.spec.ts"
+    ],
+    "unit": [
+      "tests/unit/p0-production-acceptance.test.ts",
+      "tests/unit/default-config-matrix.test.ts",
+      "tests/unit/openclaw-auth.test.ts",
+      "tests/unit/context-orchestrator-entry-scan.test.ts",
+      "tests/unit/tf0001-controlled-operable-closeout.test.ts",
+      "tests/unit/agent-browser-task-service.test.ts",
+      "tests/unit/agent-browser-vault.test.ts",
+      "tests/unit/agent-browser-runtime-mode.test.ts"
+    ]
+  },
+  "verified": {
+    "p0:accept": "8 files / 106 tests passed",
+    "openclaw_runtime_unit": "3 files / 12 tests passed",
+    "contract": "pnpm contract:check passed",
+    "e2e": "not re-run this pass (unit-sealed; optional host-dependent)"
+  }
+}

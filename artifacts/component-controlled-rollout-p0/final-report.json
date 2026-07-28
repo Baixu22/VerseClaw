@@ -1,0 +1,490 @@
+{
+  "schema": "component-controlled-rollout-p0-final/v1",
+  "generatedAt": "2026-07-20T05:24:21.6026934+08:00",
+  "workspace": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0",
+  "verdict": {
+    "status": "p0-closed-p1-canary-ready",
+    "controlledInternalUseCandidate": true,
+    "p1CanaryReady": true,
+    "p1CanaryExecuted": false,
+    "defaultOn": false,
+    "liveReady": false,
+    "productApproved": false,
+    "readyForDefaultFlagGraduation": false,
+    "jointSystemGa": false
+  },
+  "safetyBoundaries": {
+    "dcsDefaultOff": true,
+    "workingMemoryDefaultOff": true,
+    "vtokenDefaultOff": true,
+    "runtimeMemoryInjectDefaultOff": true,
+    "runtimeMemoryDiagnosticsOnly": true,
+    "sekbDefaultOff": true,
+    "sekbHumanConfirmationRequired": true,
+    "browserPrivateNetworkDefaultDeny": true,
+    "browserModeUpgradeRequiresApproval": true,
+    "senderAuthWeakened": false,
+    "productionTestBackdoorAdded": false,
+    "tf0006Status": "blocked"
+  },
+  "w5": {
+    "rootCause": "The E2E helper invoked the private host:invoke handler with an empty IPC event; senderAuth correctly rejected the missing sender, and Gateway readiness failed through the same path.",
+    "fix": [
+      "construct the authorized IPC sender from real BrowserWindow.webContents",
+      "preserve sender id, frame URL, and session binding",
+      "use Main-owned gateway.rpc -> chat.send -> agent.wait",
+      "use a dedicated Gateway port and explicit restart per test",
+      "preserve validation/start/status root causes in ensureGatewayReady",
+      "lock missing sender, bad sender id, and bad URL as fail-closed unit cases"
+    ],
+    "mainWorkspace": {
+      "ok": true,
+      "passed": 3,
+      "failed": 0
+    },
+    "selectedSuiteMainWorkspace": {
+      "ok": true,
+      "passed": 6,
+      "failed": 0,
+      "durationSeconds": 592.9
+    },
+    "selectedSuiteShadow": {
+      "ok": true,
+      "passed": 6,
+      "failed": 0,
+      "durationSeconds": 643.7,
+      "earlierPassingDurationSeconds": 671.4
+    },
+    "defaultOffToolCount": 32
+  },
+  "gates": [
+    {
+      "command": "pnpm harness context --spec harness/specs/tasks/component-controlled-rollout-readiness.md",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run p0:accept",
+      "exitCode": 0,
+      "result": "8 files / 107 tests"
+    },
+    {
+      "command": "pnpm test:dcs",
+      "exitCode": 0,
+      "result": "32 files / 253 tests"
+    },
+    {
+      "command": "pnpm lint:dcs",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm contract:check",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/vtoken-bridge.test.ts tests/unit/host-api-facade.test.ts tests/unit/knowledge-api.test.ts",
+      "exitCode": 0,
+      "result": "3 files / 70 tests"
+    },
+    {
+      "command": "pnpm run eval:runtime-memory:enhanced",
+      "exitCode": 0,
+      "result": "17 files / 159 tests; scripted-synthetic"
+    },
+    {
+      "command": "pnpm run dcs:prod-p0:smoke",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run build:vite",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run lint:check",
+      "exitCode": 0,
+      "result": "112 non-blocking warnings"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm exec vitest run tests/unit/agent-browser-task-service.test.ts tests/unit/agent-browser-vault.test.ts tests/unit/agent-browser-runtime-mode.test.ts",
+      "exitCode": 0,
+      "result": "3 files / 24 tests"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/agent-browser-workbench.spec.ts --workers=1",
+      "exitCode": 0,
+      "result": "1/1"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/dcs-production-wiring-w5.spec.ts --workers=1",
+      "exitCode": 0,
+      "result": "3/3"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts --workers=1",
+      "exitCode": 0,
+      "result": "6/6 main workspace"
+    },
+    {
+      "command": "node scripts/build-openclaw-runtime.mjs",
+      "exitCode": 0,
+      "result": "shadow runtime build"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts --workers=1",
+      "exitCode": 0,
+      "result": "6/6 final current staged shadow, 643.7s; earlier round 671.4s"
+    },
+    {
+      "command": "pnpm run maturity:validate",
+      "exitCode": 0,
+      "result": "35 findings fresh / 0 stale"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0
+    },
+    {
+      "command": "final staged shadow: npm run build:vite && node scripts/build-openclaw-runtime.mjs && npm run p0:accept && npm run contract:check && npm run maturity:validate && Harness validate",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/component-controlled-rollout-readiness.md",
+      "exitCode": 1,
+      "result": "expected inventory-boundary failure on exactly four excluded paths: .tmp-compass-skills/, AGENTS.md, _acc.py, compass-skills.zip"
+    },
+    {
+      "command": "pnpm harness validate --spec harness/specs/tasks/component-controlled-rollout-readiness.md --no-diff",
+      "exitCode": 0,
+      "result": "structural validation passed"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "result": "passed after final staging"
+    }
+  ],
+  "maturity": {
+    "initialEvidenceHashFailures": 14,
+    "handling": [
+      "mapped drift to intentional host-api, Browser, contract, IPC, and package changes",
+      "ran the existing traceability evidence collector",
+      "resumed after the collector updated its own focused hash",
+      "used scripts/update-system-maturity-delivery-hashes.mjs",
+      "did not manually edit frozen hashes",
+      "did not broaden a drift allowlist"
+    ],
+    "final": {
+      "ok": true,
+      "findings": 35,
+      "fresh": 35,
+      "stale": 0
+    }
+  },
+  "reproducibility": {
+    "firstShadow": {
+      "frozenInstall": true,
+      "nonElectronP0Gates": "passed",
+      "electronDownload": "Electron 40.8.4 downloaded independently via ELECTRON_MIRROR after default source timeout"
+    },
+    "shortPathShadow": {
+      "sourceBasis": "HEAD plus staged patch",
+      "viteBuild": "passed",
+      "openclawRuntimeBuild": "passed",
+      "selectedElectronE2E": "6/6 passed on the final current staged snapshot in 643.7s; an earlier staged-source round also passed in 671.4s",
+      "dependencyProjection": [
+        "root and openclaw_runtime node_modules reused via local junctions",
+        "ipaddr.js and markdown-it projected for esbuild resolution",
+        "Electron dist reused from the independently downloaded first shadow"
+      ]
+    },
+    "limitation": "The final Electron E2E reused the machine's pnpm dependency cache/junctions because a temporary copied node_modules tree had missing package files. This is staged-source/runtime reproducibility evidence, not a fully isolated empty-cache supply-chain proof.",
+    "finalCurrentStagedSnapshot": {
+      "status": "passed",
+      "path": "C:\\cxp0-final-20260720-0530",
+      "sourceBasis": "HEAD plus the current staged patch",
+      "dependencyMode": "local pnpm cache/node_modules junction reuse; Electron 40.8.4 dist reused from independent shadow download",
+      "checks": [
+        {
+          "name": "git diff --cached --check",
+          "ok": true
+        },
+        {
+          "name": "npm run build:vite (including prebuild:vite ext bridge generation)",
+          "ok": true
+        },
+        {
+          "name": "node scripts/build-openclaw-runtime.mjs",
+          "ok": true
+        },
+        {
+          "name": "npm run p0:accept",
+          "ok": true,
+          "result": "8 files / 107 tests"
+        },
+        {
+          "name": "npm run contract:check",
+          "ok": true
+        },
+        {
+          "name": "npm run dcs:prod-p0:smoke",
+          "ok": true,
+          "note": "smoke returned ok/defaults unchanged; junction mode printed a non-fatal pnpm no-TTY dependency-status error"
+        },
+        {
+          "name": "npm run maturity:validate",
+          "ok": true
+        },
+        {
+          "name": "node harness/src/cli.mjs validate --spec harness/specs/tasks/component-controlled-rollout-readiness.md",
+          "ok": true
+        },
+        {
+          "name": "selected Windows Electron E2E",
+          "ok": true,
+          "result": "6/6 in 643.7s"
+        }
+      ]
+    }
+  },
+  "git": {
+    "stagingMethod": "precise path staging; git add -A not used",
+    "modifiedFiles": [
+      ".agent-workbench/task-forest/alignments/alignments.jsonl",
+      ".agent-workbench/task-forest/config.json",
+      ".agent-workbench/task-forest/events/events.jsonl",
+      ".agent-workbench/task-forest/exports/task-forest.graph.json",
+      ".agent-workbench/task-forest/exports/task-forest.html",
+      ".agent-workbench/task-forest/exports/task-forest.timeline.json",
+      ".agent-workbench/task-forest/exports/task-forest.todos.json",
+      ".agent-workbench/task-forest/graph/edges.json",
+      ".agent-workbench/task-forest/graph/forest.json",
+      ".agent-workbench/task-forest/graph/nodes.json",
+      ".agent-workbench/task-forest/proposals/TFP-component-controlled-rollout-20260720.json",
+      ".agent-workbench/task-forest/proposals/TFP-component-controlled-rollout-p0-closeout-20260720.json",
+      ".agent-workbench/task-forest/proposals/TFP-component-controlled-rollout-p0-closeout-fix-20260720.json",
+      ".agent-workbench/task-forest/proposals/TFP-p0-production-pass.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0001-controlled-operable-closeout.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0003-defaults-complete.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0004-sekb-golden-path.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0005-browser-security-recovery.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0005-graph-fields-fix.json",
+      ".agent-workbench/task-forest/proposals/TFP-tf0006-blocked-clarify.json",
+      ".agent-workbench/task-forest/proposals/fields-TF-0001.json",
+      ".agent-workbench/task-forest/proposals/fields-m23.json",
+      ".agent-workbench/task-forest/proposals/fields-p01.json",
+      ".agent-workbench/task-forest/proposals/fields-p02.json",
+      ".agent-workbench/task-forest/proposals/fields-p03.json",
+      ".agent-workbench/task-forest/proposals/fields-p04.json",
+      ".agent-workbench/task-forest/proposals/seed-maturity-p0.json",
+      ".agent-workbench/task-forest/snapshots/0001.json",
+      ".agent-workbench/task-forest/snapshots/0002.json",
+      ".agent-workbench/task-forest/snapshots/0003.json",
+      ".agent-workbench/task-forest/snapshots/0004.json",
+      ".agent-workbench/task-forest/snapshots/0005.json",
+      ".agent-workbench/task-forest/snapshots/0006.json",
+      ".agent-workbench/task-forest/snapshots/0007.json",
+      ".agent-workbench/task-forest/snapshots/0008.json",
+      ".agent-workbench/task-forest/snapshots/0009.json",
+      ".agent-workbench/task-forest/snapshots/0010.json",
+      ".agent-workbench/task-forest/snapshots/0011.json",
+      ".agent-workbench/task-forest/snapshots/0012.json",
+      ".agent-workbench/task-forest/snapshots/0013.json",
+      ".agent-workbench/task-forest/snapshots/0014.json",
+      ".agent-workbench/task-forest/snapshots/0015.json",
+      ".agent-workbench/task-forest/snapshots/0016.json",
+      ".agent-workbench/task-forest/snapshots/0017.json",
+      ".agent-workbench/task-forest/snapshots/0018.json",
+      ".agent-workbench/task-forest/snapshots/0019.json",
+      ".agent-workbench/task-forest/todos/todos.json",
+      "artifacts/browser-security-recovery/evidence.json",
+      "artifacts/coding-prod-p0/COMPLETE.md",
+      "artifacts/coding-prod-p0/config-surface.json",
+      "artifacts/coding-prod-p0/observability-export.json",
+      "artifacts/coding-prod-p0/report.json",
+      "artifacts/component-controlled-rollout-p0/final-report.json",
+      "artifacts/component-controlled-rollout-p0/task-forest-closeout-proposal.json",
+      "artifacts/component-readiness-audit-2026-07-20/report.json",
+      "artifacts/component-readiness-audit-2026-07-20/task-forest-proposal.json",
+      "artifacts/p0-production-pass/evidence.json",
+      "artifacts/sekb-golden-path/evidence.json",
+      "artifacts/system-maturity/P0-001/audit-baseline-check.json",
+      "artifacts/system-maturity/P0-002/validate-system-maturity-plan.json",
+      "artifacts/system-maturity/P0-003/validate-test-gates.json",
+      "artifacts/system-maturity/P0-004/evidence-index.json",
+      "artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json",
+      "artifacts/system-maturity/P7-001/full-validation.json",
+      "artifacts/system-maturity/P7-001/gates/diff-check.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/diff-check.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/evidence-validate.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/evidence-validate.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/focused-unit.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/harness-ci.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/harness-task.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/harness-task.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/lint-check.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/plan-validate.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/plan-validate.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/typecheck.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
+      "artifacts/system-maturity/P7-001/gates/unit-full.stderr.txt",
+      "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
+      "artifacts/system-maturity/P7-001/traceability-report.json",
+      "artifacts/system-maturity/P8-003/capability-inventory-report.json",
+      "artifacts/tf0001-closeout/evidence.json",
+      "artifacts/tf0006-evidence-upgrade/status.json",
+      "docs/dev/Sustained-Development-Playbook.md",
+      "docs/dev/browser-security-recovery.md",
+      "docs/dev/component-controlled-rollout-p0-closeout.md",
+      "docs/dev/component-controlled-rollout-plan.md",
+      "docs/dev/component-operational-readiness-checklist.md",
+      "docs/dev/component-operationalization-index.md",
+      "docs/dev/component-readiness-audit-2026-07-20.md",
+      "docs/dev/context-orchestrator.md",
+      "docs/dev/default-config-matrix.md",
+      "docs/dev/handoffs/LATEST.md",
+      "docs/dev/handoffs/NEXT-GOAL.md",
+      "docs/dev/sekb-golden-path.md",
+      "docs/dev/tf0001-controlled-operable-closeout.md",
+      "docs/dev/tf0006-evidence-upgrade-unblock.md",
+      "electron/gateway/config-sync.ts",
+      "electron/services/agent-browser-api.ts",
+      "electron/services/agent-browser-service.ts",
+      "electron/services/agent-browser-task-service.ts",
+      "electron/services/agent-browser-vault.ts",
+      "electron/services/knowledge-api.ts",
+      "electron/services/vtoken-bridge.ts",
+      "electron/utils/openclaw-auth.ts",
+      "harness/specs/guides/sustained-development-continuity.md",
+      "harness/specs/rules/vtoken-foundation-boundary.md",
+      "harness/specs/tasks/component-controlled-rollout-readiness.md",
+      "openclaw_runtime/CODING-PROD-P0-COMPLETE.md",
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "openclaw_runtime/src/config/schema.help.ts",
+      "openclaw_runtime/src/config/schema.labels.ts",
+      "openclaw_runtime/src/config/types.openclaw.ts",
+      "openclaw_runtime/src/context-engine/assembler.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-memory-injection.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.test.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.ts",
+      "openclaw_runtime/src/context-engine/enhancement-kill-switch.test.ts",
+      "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+      "openclaw_runtime/src/context-engine/vtoken-rpc-client.ts",
+      "openclaw_runtime/src/gateway/server-methods/agent.ts",
+      "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts",
+      "openclaw_runtime/src/knowledge/sekb/golden-path.ts",
+      "openclaw_runtime/src/knowledge/sekb/index.ts",
+      "package.json",
+      "packages/vtoken/README.HOST.md",
+      "plans/system-maturity/phase0-foundation/tasks/P0-003.delivery.md",
+      "plans/system-maturity/phase0-foundation/tasks/P0-004.delivery.md",
+      "plans/system-maturity/phase1-direct-boundaries/tasks/P1-001.delivery.md",
+      "plans/system-maturity/phase1-direct-boundaries/tasks/P1-002.delivery.md",
+      "plans/system-maturity/phase7-continuous-governance/tasks/P7-001.delivery.md",
+      "plans/system-maturity/phase7-continuous-governance/tasks/P7-003.delivery.md",
+      "plans/system-maturity/phase7-continuous-governance/tasks/P7-004.delivery.md",
+      "plans/system-maturity/phase8-residual-closure/tasks/P8-001.delivery.md",
+      "plans/system-maturity/phase8-residual-closure/tasks/P8-003.delivery.md",
+      "plans/system-maturity/phase8-residual-closure/tasks/P8-004.delivery.md",
+      "shared/host-api/contract.ts",
+      "shared/i18n/locales/en/browser.json",
+      "shared/i18n/locales/ja/browser.json",
+      "shared/i18n/locales/ru/browser.json",
+      "shared/i18n/locales/zh/browser.json",
+      "src/lib/host-api.ts",
+      "src/pages/Browser/index.tsx",
+      "tests/e2e/agent-browser-workbench.spec.ts",
+      "tests/e2e/browser-security-recovery.spec.ts",
+      "tests/e2e/dcs-production-wiring-w5.spec.ts",
+      "tests/e2e/sekb-golden-path.spec.ts",
+      "tests/e2e/vtoken-bridge-settings.spec.ts",
+      "tests/unit/agent-browser-runtime-mode.test.ts",
+      "tests/unit/agent-browser-task-service.test.ts",
+      "tests/unit/agent-browser-vault.test.ts",
+      "tests/unit/context-orchestrator-entry-scan.test.ts",
+      "tests/unit/default-config-matrix.test.ts",
+      "tests/unit/host-api-facade.test.ts",
+      "tests/unit/host-invoke.test.ts",
+      "tests/unit/openclaw-auth.test.ts",
+      "tests/unit/p0-production-acceptance.test.ts",
+      "tests/unit/system-maturity-evidence-validator.test.ts",
+      "tests/unit/tf0001-controlled-operable-closeout.test.ts",
+      "tests/unit/tf0006-evidence-upgrade-blocked.test.ts",
+      "tests/unit/vtoken-bridge.test.ts"
+    ],
+    "modifiedFileCount": 167,
+    "explicitlyExcludedUnstaged": [
+      "AGENTS.md",
+      ".tmp-compass-skills/",
+      "compass-skills.zip",
+      "_acc.py"
+    ],
+    "commitCreated": false,
+    "pushed": false,
+    "pullRequestCreated": false,
+    "published": false,
+    "finalUnstagedTracked": [
+      "AGENTS.md"
+    ],
+    "finalUntracked": [
+      ".tmp-compass-skills/",
+      "_acc.py",
+      "compass-skills.zip"
+    ]
+  },
+  "readmeReview": {
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "updated": false,
+    "reason": "No user-facing product flow, external interface, or default behavior changed."
+  },
+  "residuals": [
+    "P1 canary has not been executed; owner, cohort, budget, metrics, privacy, kill, rollback, and real run records remain.",
+    "Runtime Memory remains diagnostics-only and lacks real corpus, human live A/B, soak, and product approval.",
+    "TF-0006 remains blocked and continues to block default-on/liveReady/productApproved/GA claims.",
+    "A fully isolated empty-cache Electron dependency installation remains a supply-chain hardening item."
+  ],
+  "taskForest": {
+    "tf0007": "in_progress",
+    "tf0008": "done",
+    "tf0009": "ready",
+    "tf0006": "blocked",
+    "html": ".agent-workbench/task-forest/exports/task-forest.html",
+    "schemaDriftNote": "The first closeout proposal used the documented node field, while the current CLI implementation reads fields; a second non-stale corrective proposal applied the intended statuses."
+  },
+  "harness": {
+    "context": {
+      "ok": true
+    },
+    "structuralNoDiff": {
+      "ok": true,
+      "exitCode": 0
+    },
+    "formalMainWorkspace": {
+      "ok": false,
+      "exitCode": 1,
+      "reason": "Exactly four explicitly excluded non-Goal paths are outside touchedAreas: .tmp-compass-skills/, AGENTS.md, _acc.py, compass-skills.zip"
+    },
+    "stagedPatchShadow": {
+      "ok": true,
+      "exitCode": 0
+    },
+    "interpretation": "The formal main-workspace failure is an inventory boundary signal, not a product/test failure; the staged-only shadow contains none of the four excluded paths."
+  }
+}

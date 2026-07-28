@@ -163,13 +163,7 @@ import type {
   GatewayRequestHandlers,
 } from "./types.js";
 // Area 4 §3.4: chat-turn memory injection pilot seam (default-off).
-// When the pilot is off, computeMemoryExtraSystemPrompt returns the original
-// extraSystemPrompt unchanged — prompt bytes are byte-identical (comms parity).
-import { computeMemoryExtraSystemPrompt } from "../../context-engine/chat-turn-memory-injection.js";
-import {
-  createMemoryContextProviders,
-  defaultMainSessionRoleResolver,
-} from "../../context-engine/register-memory-providers.js";
+// TF-0002: memory/context enhancement is owned by Context Orchestrator on the embedded attempt path.
 
 const RESET_COMMAND_RE = /^\/(new|reset)(?:\s+([\s\S]*))?$/i;
 
@@ -2530,24 +2524,9 @@ export const agentHandlers: GatewayRequestHandlers = {
           const execApprovalFollowupElevatedDefaults =
             execApprovalFollowupRuntimeHandoff?.bashElevated;
 
-          // Area 4 §3.4: chat-turn memory injection pilot (default-off).
-          // When the pilot is off (default), computeMemoryExtraSystemPrompt
-          // returns the original extraSystemPrompt unchanged — prompt bytes are
-          // byte-identical (comms replay parity, §8). The providerFactory is
-          // only called when the flag is on, so construction is lazy.
-          const memoryExtraSystemPrompt = await computeMemoryExtraSystemPrompt(
-            request.extraSystemPrompt,
-            cfgForAgent ?? cfg,
-            resolvedSessionKey,
-            () =>
-              createMemoryContextProviders({
-                roleMemory: {
-                  resolveRoleName: defaultMainSessionRoleResolver,
-                },
-              }),
-            (message, ctx) => context.logGateway.warn(message, ctx),
-          );
-
+          // TF-0002: Context Orchestrator (memory + VToken) runs on embedded attempt.
+          // Gateway passes base extraSystemPrompt through unchanged (flag-off parity).
+          const memoryExtraSystemPrompt = request.extraSystemPrompt;
           dispatchAgentRunFromGateway({
             ingressOpts: {
               message,

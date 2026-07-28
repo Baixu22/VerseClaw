@@ -9,7 +9,7 @@
   "tasks": { "name": "タスク名", "url": "対象 URL", "objective": "目的", "runNow": "今すぐ実行", "empty": "ブラウザタスクはありません" },
   "profiles": { "localState": "永続 Electron サイト状態", "active": "{{count}} 件アクティブ" },
   "vault": { "protected": "パスワードは OS により保護され、Agent には表示されません。", "empty": "保存された認証情報はありません" },
-  "status": { "queued": "待機中", "running": "実行中", "waiting-approval": "承認待ち", "paused": "一時停止", "completed": "完了", "failed": "失敗", "cancelled": "キャンセル済み" },
+  "status": { "queued": "待機中", "running": "実行中", "waiting-approval": "承認待ち", "interrupted": "中断済み", "paused": "一時停止", "completed": "完了", "failed": "失敗", "cancelled": "キャンセル済み" },
   "runtimeMode": {
     "label": "ランタイムモード",
     "normalRestricted": "標準制限",

@@ -3,11 +3,15 @@
  *
  * Defaults match CODING-OPTIMIZATION-EDD section 0.3. Config path:
  *   runtime.coding.<flag>...
+ *
+ * TASK-P0-02: Fact view tool gating is NOT here. Single source of truth is
+ * `isDcsContextViewToolsEnabled` (env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / Settings
+ * control plane). The former `runtime.coding.factViews.enabled` default-true
+ * leaf was a dead config with zero production callers and has been removed.
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 
 export const DEFAULT_CODING_FEATURE_FLAGS = {
-  "runtime.coding.factViews.enabled": true,
   "runtime.coding.parseOnTouch.enabled": true,
   "runtime.coding.staleWriteGuard.enabled": false,
   "runtime.coding.writeJournal.enabled": true,
@@ -53,16 +57,16 @@ function readCodingLeaf(
   return leaf.enabled;
 }
 
-/** FactStore view tools (context_impact/understand/reuse/verify). Default true. */
+/**
+ * @deprecated TASK-P0-02: always `false`. Fact view tools are gated only by
+ * `isDcsContextViewToolsEnabled` (env/Settings). Kept as a named no-op so
+ * accidental imports fail closed instead of reintroducing a true default.
+ */
 export function isCodingFactViewsEnabled(
-  cfg?: OpenClawConfig,
-  overrides?: { factViewsEnabled?: boolean },
+  _cfg?: OpenClawConfig,
+  _overrides?: { factViewsEnabled?: boolean },
 ): boolean {
-  if (typeof overrides?.factViewsEnabled === "boolean") {
-    return overrides.factViewsEnabled;
-  }
-  const fromConfig = readCodingLeaf(codingConfigFrom(cfg), "factViews");
-  return fromConfig ?? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.factViews.enabled"];
+  return false;
 }
 
 /** parse-on-touch after successful read/grep. Default true. */

@@ -1,0 +1,35 @@
+{
+  "schema": "tf0006-evidence-upgrade/status/v1",
+  "taskForestNode": "TF-0006",
+  "generatedAt": "2026-07-22T12:59:36.311106+00:00",
+  "status": "blocked",
+  "decision": "keep-blocked",
+  "reason": "Missing real corpus + human live A/B + soak + product approval. P0/synthetic evidence is insufficient for liveReady or default-on graduation.",
+  "gates": {
+    "liveReady": false,
+    "productApproved": false,
+    "readyForDefaultFlagGraduation": false,
+    "jointSystemGa": "NO-GO"
+  },
+  "requiredEvidence": {
+    "artifacts/tf0006-evidence-upgrade/corpus-manifest.json": false,
+    "artifacts/tf0006-evidence-upgrade/live-ab-report.json": false,
+    "artifacts/tf0006-evidence-upgrade/soak-report.json": false,
+    "artifacts/tf0006-evidence-upgrade/product-approval.json": false
+  },
+  "allRequiredEvidencePresent": false,
+  "note": "No required evidence files present; blocked is correct. Staging supervised/synthetic pack under staging-supervised-only/ does NOT satisfy unblock criteria.",
+  "unblockDoc": "docs/dev/tf0006-evidence-upgrade-unblock.md",
+  "forbiddenWhileBlocked": [
+    "Set liveReady=true from P0 green alone",
+    "Flip default-on flags",
+    "Enable SEKB auto writeback",
+    "Mark TF-0006 done without four evidence files"
+  ],
+  "stagingPack": {
+    "path": "artifacts/tf0006-evidence-upgrade/staging-supervised-only",
+    "live": false,
+    "unblocks": false,
+    "updatedAt": "2026-07-22T12:59:36.311106+00:00"
+  }
+}

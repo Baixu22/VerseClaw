@@ -33,6 +33,7 @@ import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToPro
 import { isQuitting, setQuitting } from './app-state';
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
+import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
 import { applyProxySettings } from './proxy';
 import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
 import {
@@ -960,6 +961,10 @@ async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
   logger.info('=== Verse Claw Application Starting ===');
+
+  // FP-P1-05: reconcile a persisted newer-version marker before a gateway
+  // child can observe any preview flags from settings or openclaw.json.
+  await reconcileAppVersionRollback();
 
   // P2-004 / F-ISO-002: install WebView attach/permission/navigation controls
   // before any BrowserWindow or guest <webview> is created.

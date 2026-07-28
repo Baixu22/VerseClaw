@@ -452,14 +452,14 @@
     "installMessage": "\"openclaw\" コマンドをインストールしますか？",
     "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。",
     "dcsProdFlags": {
-      "title": "DCS 本番フラグ",
-      "description": "DCS coding runtime のオプトイン一覧（読み取り専用）。硬化証拠と製品承認があるまで default は off/shared/shadow のままです。",
-      "modeOptIn": "productionMode: opt-in",
+      "title": "DCS Controlled Preview フラグ",
+      "description": "working memory、context tools、関連フラグ向けの高度な opt-in DCS (BlockStore) control plane です。default は off/shared/shadow のままで、このパネル自体は release approval を意味しません。書き込み可能な switch は app settings と config flags の openclaw.json を保存し、実行中の Gateway を再起動します。",
+      "modeOptIn": "status: opt-in",
       "defaultLabel": "デフォルト",
       "enableLabel": "有効化",
       "rollbackLabel": "ロールバック",
       "riskLabel": "リスク",
-      "readOnlyNote": "このパネルはフラグを変更しません。env または OpenClaw 設定を編集し runtime を再起動してください。docs/dcs-production-p0-runbook.md を参照。",
+      "readOnlyNote": "この行だけが api/request/baseline の読み取り専用説明です。書き込み可能な opt-in flag は switch を使用し、高度な env/config 手順は docs/dcs-production-p0-runbook.md を参照してください。",
       "risk": {
         "baseline-on": "ベースライン ON",
         "opt-in": "オプトイン",
@@ -467,18 +467,75 @@
         "api-only": "API のみ",
         "request-only": "リクエストのみ",
         "read-only": "読み取り専用"
-      }
+      },
+      "enableViaSettings": "Use the switch above (Settings control plane). Advanced: env/config as in runbook.",
+      "rollbackViaSettings": "Turn the switch off (Settings). Gateway restarts when running.",
+      "toggleLabel": "Enable (opt-in)",
+      "on": "on",
+      "off": "off",
+      "refresh": "Refresh",
+      "loadFailed": "Failed to load DCS flags: {{error}}",
+      "toggleFailed": "Failed to toggle {{id}}",
+      "toggleFailedDetail": "Failed to toggle flag: {{error}}",
+      "enabledToast": "Enabled {{id}}",
+      "disabledToast": "Disabled {{id}}",
+      "pendingRestartToast": "Saved. Gateway restart pending or failed — flag may apply on next start.",
+      "status": {
+        "applied": "applied",
+        "pending-restart": "pending restart",
+        "error": "error",
+        "read-only": "read-only",
+        "unsupported": "unsupported",
+        "saved": "saved",
+        "restarting": "restarting",
+        "runtime-acknowledged": "runtime acknowledged",
+        "failed": "failed"
+      },
+      "ackHint": {
+        "gatewayNotRunning": "Saved. The gateway is not running, so no child could confirm it. Start the gateway to apply.",
+        "restartFailed": "Saved, but the gateway restart failed. Restart the gateway manually, then refresh.",
+        "ackTimeoutRunning": "Saved and restarted, but the runtime did not confirm in time. Refresh, or restart the gateway again.",
+        "ackTimeoutStopped": "The gateway stopped before confirming. Check the gateway logs, then start it again.",
+        "ackIncomplete": "The runtime replied with an incomplete acknowledgement, so this is not confirmed as applied. Check the gateway version and logs.",
+        "staleGeneration": "Only the previous gateway process answered. The new process has not confirmed — restart again and refresh.",
+        "flagRejected": "The runtime did not adopt every requested flag. Open the details to see which ones and why."
+      },
+      "viewToolsDiscover": {
+        "disabledTitle": "Fact view tools are hidden from the agent catalog",
+        "disabledBody": "Off by default: {{tools}}. Enable to add them for the next coding session (requires workspace FactService).",
+        "enabledTitle": "Fact view tools are enabled (opt-in)",
+        "enabledBody": "Catalog may include: {{tools}}. New agent turns after gateway apply will see them when FactService is available.",
+        "enableCta": "Enable view tools",
+        "focusSwitch": "Show switch",
+        "afterEnableHint": "View tools enabled. Start a new agent turn after gateway apply to use them in the catalog.",
+        "detailDisabled": "These tools stay out of the default tool list until enabled: {{tools}}.",
+        "detailEnabled": "View tools are on for this install. They still require a coding workspace with FactService."
+      },
+      "layerRole": "DCS — working memory & context blocks — Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Default…",
+      "taskLoopNote": "Task state / phase / SEKB trajectory features require a TaskLoop (multi-step task) path — not single-turn chat alone. See docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md.",
+      "observability": {
+        "title": "DCS observability (product keys)",
+        "killOn": "enhancement kill switch ON",
+        "killOff": "enhancement kill switch off",
+        "viewEnvOn": "view-tools env engaged",
+        "viewEnvOff": "view-tools env off",
+        "enabledCount": "{{count}} writable flags on",
+        "note": "Gateway process counters (codingObservability / dcsObservability) are not mirrored here. Use these keys in runtime logs/exports. falseBlockRate = staleBlocks / (staleBlocks + staleAllowances).",
+        "metricKeys": "Metric key catalog (export / scrape)"
+      },
+      "requeryAck": "Re-check acknowledgement",
+      "requerying": "Re-checking…"
     },
     "tokenMasked": "トークン読込済（マスク）",
     "vtokenBridge": {
       "title": "Verse Token ブリッジ",
-      "description": "Working Context 組み立て（Verse Token）。製品デフォルト ON：エージェントターンでワークスペース md/tools/memory を ## Working Context に組み立てます。markdown 保存や DCS BlockStore は置き換えません。無効化: VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
+      "description": "opt-in の Verse Token Working Context 組み立てです。明示的に有効化した場合のみ、agent turn で workspace md/tools/memory を ## Working Context にまとめます。markdown 保存や DCS BlockStore は置き換えません。kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
       "badgeEnabled": "有効",
       "badgeDisabled": "無効",
       "badgeRunning": "worker 実行中",
       "badgeStopped": "worker 停止",
       "enableLabel": "VT ブリッジを有効化",
-      "enableHelp": "診断用 host-api ブリッジ。本番組み立ては gateway で既定有効です。",
+      "enableHelp": "診断用の process-local host-api bridge です。turn assembly は既定で無効で、明示的に有効化した場合は gateway が実行経路を担当します。",
       "version": "バージョン",
       "pid": "Worker PID",
       "opened": "Store オープン",
@@ -502,6 +559,38 @@
       "assembleFailed": "スモーク assemble に失敗",
       "assembleFailedDetail": "スモーク assemble に失敗: {{error}}",
       "assembleOk": "スモーク assemble 成功: {{used}} / {{budget}} tokens"
+    },
+    "contextLayers": {
+      "title": "How context layers differ (do not confuse)",
+      "cvkTitle": "Context Runtime Kit (CVK) — navigation shell",
+      "cvkBody": "Default context engine shell: injects routing / tool-navigation metadata into the system prompt. It does **not** mean working memory or long-term knowledge is on. Turning DCS or VToken off does not remove this shell unless you change the context-engine slot.",
+      "dcsTitle": "DCS — working memory & context blocks",
+      "dcsBody": "Opt-in BlockStore spine: working-memory injection, tool_registry summary, knowledge blocks, and context_* tools. Defaults stay fail-closed until you enable flags here. This is real memory/content plumbing — not the CVK navigation shell.",
+      "vtokenTitle": "Verse Token — Working Context packing",
+      "vtokenBody": "Assembles workspace md/tools/memory into a ## Working Context pack for the turn. Source packaging only: it does **not** replace DCS BlockStore, on-disk markdown, or claim that “the context engine remembered everything.”",
+      "footer": "If only CVK is active, the model may see navigation chrome without your DCS/VToken content. Enable DCS flags and/or VToken deliberately after reading each panel."
+    },
+    "dcsPreview": {
+      "title": "DCS Coding Controlled Preview",
+      "description": "Status: opt-in. first-product capability combo 用の単一 switch です。context read/search/view tools、working-memory と tool-registry context blocks、stale-write guard をまとめます。Write journal と undo は常時有効です。default は off で、upgrade により自動有効化されません。",
+      "prereqTitle": "Before enabling, finish setup:",
+      "prereqs": {
+        "providerVerified": "Verify an AI provider (Settings → AI Providers, or re-run Setup)",
+        "workspaceSelected": "Select a workspace folder",
+        "permissionChosen": "Choose the workspace permission level"
+      },
+      "partial": "Expert drift: some combo flags are on individually. The switch shows off until all are on.",
+      "setFailed": "Could not change the preview switch",
+      "appliedOn": "Preview enabled — runtime confirmed",
+      "appliedOff": "Preview disabled — runtime back to baseline",
+      "killed": "killed",
+      "killSwitchNote": "The context-enhancement kill switch is engaged: requested flags stay OFF in the runtime regardless of this switch.",
+      "origin": {
+        "env": "from env",
+        "config": "from config",
+        "default": "default",
+        "kill": "kill switch"
+      }
     }
   },
   "storage": {
@@ -767,5 +856,14 @@
     "runs": "{{count}} ?",
     "tokens": "{{count}} tokens",
     "dayTitle": "{{date}}: {{count}} ??{{tokens}} tokens"
+  },
+  "supportBundle": {
+    "title": "Support bundle",
+    "desc": "Export a sanitized diagnostics archive (versions, gateway state, flags, counters, lineage). Provider keys, file contents and diffs are never included; the redaction report is part of the bundle. Nothing is uploaded — you choose where to send the file.",
+    "export": "Export diagnostics bundle",
+    "exporting": "Exporting…",
+    "success": "Support bundle exported",
+    "failed": "Support bundle export failed: {{error}}",
+    "savedTo": "Saved to {{path}} · redaction hits: {{hits}}"
   }
 }

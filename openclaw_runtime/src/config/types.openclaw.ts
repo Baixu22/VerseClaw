@@ -88,6 +88,21 @@ export type SurfaceConfigEntry = {
 };
 
 export type RuntimeFeatureConfig = {
+  /** VerseShell typed ACI rollout. Every leaf is default-off and independently gated. */
+  verseShellFoundation?: {
+    /** Emergency fail-closed cut for every VerseShell foundation capability. */
+    killSwitch?: boolean;
+    verifiedRuntime?: boolean;
+    typedAci?: boolean;
+    facade?: boolean;
+    deferredOps?: boolean;
+    governedExec?: boolean;
+    artifactResults?: boolean;
+    mcpCompatibility?: boolean;
+    legacyEval?: boolean;
+    compatibilityNativeFallback?: boolean;
+    readOnlyShadow?: boolean;
+  };
   /** Master flag for the Phase-3 registry pilot. Defaults off; legacy paths stay authoritative. */
   registryPilot?: {
     /** Enable registry pilot diagnostics only. This must not cut over default behavior. */
@@ -150,6 +165,11 @@ export type RuntimeFeatureConfig = {
    * Advanced backends stay opt-in with safe defaults.
    */
   coding?: {
+    /**
+     * @deprecated TASK-P0-02: ignored. Fact view tools are gated by
+     * OPENCLAW_DCS_CONTEXT_VIEW_TOOLS / Settings dcsContextViewToolsEnabled
+     * via isDcsContextViewToolsEnabled — not this leaf.
+     */
     factViews?: { enabled?: boolean };
     parseOnTouch?: { enabled?: boolean };
     staleWriteGuard?: { enabled?: boolean };
@@ -271,16 +291,27 @@ export type RuntimeFeatureConfig = {
     };
   };
   /**
-   * Verse Token Working Context assembly (product default ON).
+   * Master cut for memory/context enhancement paths (default: not engaged).
+   * When killSwitch is true (or VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1),
+   * VToken assembly, chat-turn memory inject, and DCS context-block flags
+   * are forced off fail-closed without aborting the agent turn.
+   */
+  contextEnhancement?: {
+    /** Instant kill switch for all memory/context enhancement. Default false. */
+    killSwitch?: boolean;
+  };
+  /**
+   * Verse Token Working Context assembly (product default OFF — opt-in / canary).
    * Consumes workspace markdown / tools / memory outputs as sources and
    * appends a budgeted `## Working Context` section to extraSystemPrompt.
    * Does not replace md/jsonl storage, BlockStore, or compaction.
-   * Kill-switch: runtime.vtoken.assembly.enabled=false or
-   * VERSE_VTOKEN_ASSEMBLY_ENABLED=0.
+   * Enable: runtime.vtoken.assembly.enabled=true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1.
+   * Kill-switch: runtime.vtoken.assembly.enabled=false,
+   * VERSE_VTOKEN_ASSEMBLY_ENABLED=0, or contextEnhancement.killSwitch.
    */
   vtoken?: {
     assembly?: {
-      /** Explicit false disables; omitted defaults to enabled. */
+      /** Explicit true enables canary; omitted defaults to disabled. */
       enabled?: boolean;
       /** Token budget for assemble (default 600). */
       budgetTokens?: number;

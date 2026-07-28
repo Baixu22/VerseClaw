@@ -16,6 +16,15 @@ import type {
   VtokenStatsResult,
   VtokenStatusResult,
 } from '../vtoken/types';
+import type {
+  DcsProdFlagSetPayload,
+  DcsProdFlagSetResult,
+  DcsProdFlagAckRequeryResult,
+  DcsPreviewSetPayload,
+  DcsPreviewSetResult,
+  DcsPreviewState,
+  DcsProdFlagsSnapshot,
+} from '../dcs/prod-flags-control';
 import type { PermissionDecisionEvent } from '../product-semantics';
 import type { AgentAvatarPreset, AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
@@ -318,6 +327,18 @@ export type SettingsSnapshot = Partial<{
   sidebarWidth: number;
   devModeUnlocked: boolean;
   setupComplete: boolean;
+  /**
+   * FP-P1-01: sanitized Setup provider verification state (no key material).
+   * 'verified' requires a real credential validation + model check during Setup;
+   * 'skipped' marks limited mode until a provider is configured in Settings.
+   */
+  setupProviderVerification: {
+    status: 'unverified' | 'verified' | 'skipped';
+    accountId?: string;
+    vendorId?: string;
+    model?: string;
+    checkedAt?: string;
+  };
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
   workProviders: WorkProviderConfig;
@@ -330,6 +351,24 @@ export type SettingsSetManyPayload = { patch: Partial<SettingsSnapshot> };
 export type SettingsResetResult = HostSuccess & { settings: SettingsSnapshot };
 
 export type WorkspaceSnapshotResult = HostSuccess & WorkspaceSnapshot;
+
+/** FP-P1-02: workspace preflight (run before accepting a directory as workspace). */
+export type WorkspacePreflightPayload = { rootPath: string };
+export type WorkspacePreflightCheckResult = {
+  id: 'exists' | 'readable' | 'writable' | 'git' | 'sensitivePath' | 'diskSpace';
+  status: 'ok' | 'warn' | 'fail' | 'info';
+  detail: string;
+};
+export type WorkspacePreflightResult = {
+  success: boolean;
+  rootPath: string;
+  resolvedPath: string;
+  ok: boolean;
+  readOnlyOnly: boolean;
+  isGitRepo: boolean;
+  checks: WorkspacePreflightCheckResult[];
+  error?: string;
+};
 export type WorkspaceCreatePayload = {
   name?: string;
   rootPath: string;
@@ -895,6 +934,8 @@ export type AgentBrowserRequestModeUpgradePayload = AgentBrowserSessionPayload &
   targetMode: AgentBrowserRuntimeMode;
   reason?: string;
   expiresInMs?: number;
+  /** Required true for upgrades above normal_restricted (user approval gate). */
+  userApproval?: boolean;
 };
 export type AgentBrowserRequestModeUpgradeResult = AgentBrowserActionResult & {
   runtimeMode: AgentBrowserRuntimeMode;
@@ -1315,7 +1356,13 @@ export type AgentBrowserTaskStatus =
   | 'paused'
   | 'completed'
   | 'failed'
-  | 'cancelled';
+  | 'cancelled'
+  | 'interrupted';
+export type AgentBrowserTaskRecovery = {
+  recoveredFrom: AgentBrowserTaskStatus;
+  reason: 'app-restart-while-running';
+  recoveredAt: string;
+};
 export type AgentBrowserTask = {
   id: string;
   name: string;
@@ -1326,12 +1373,14 @@ export type AgentBrowserTask = {
   mode: AgentBrowserSessionMode;
   allowedDomains?: string[];
   status: AgentBrowserTaskStatus;
+  statusExplain?: string;
   retryCount: number;
   createdAt: string;
   updatedAt: string;
   sessionId?: string;
   runId?: string;
   error?: string;
+  recovery?: AgentBrowserTaskRecovery;
 };
 export type AgentBrowserTaskCreatePayload = Pick<
   AgentBrowserTask,
@@ -1347,6 +1396,21 @@ export type AgentBrowserCredentialMetadata = {
   username: string;
   createdAt: string;
   updatedAt: string;
+};
+export type AgentBrowserVaultState =
+  | 'not_configured'
+  | 'ready'
+  | 'corrupted'
+  | 'encryption_unavailable';
+export type AgentBrowserVaultHealth = {
+  state: AgentBrowserVaultState;
+  path: string;
+  credentialCount: number;
+  errorCode?: 'VAULT_NOT_CONFIGURED' | 'VAULT_CORRUPTED' | 'VAULT_ENCRYPTION_UNAVAILABLE';
+  errorMessage?: string;
+};
+export type AgentBrowserVaultHealthResult = HostSuccess & {
+  health: AgentBrowserVaultHealth;
 };
 export type AgentBrowserCredentialSavePayload = {
   id?: string;
@@ -1823,6 +1887,19 @@ export type AgentBootstrapUpdatePayload = {
 
 export type DiagnosticsGatewaySnapshotResult = JsonRecord;
 
+/** FP-P1-06: sanitized support bundle export result. */
+export type SupportBundleExportResult = {
+  success: boolean;
+  path?: string;
+  redaction?: {
+    findings: Array<{ type: string; hits: number }>;
+    totalHits: number;
+    verified: boolean;
+  };
+  truncated?: string[];
+  error?: string;
+};
+
 export type { AgentDevScenarioId } from '../agent-dev/scenarios';
 export type AgentDevScenario = AgentDevScenarioDefinition;
 export type AgentDevSeedConversation = {
@@ -2111,6 +2188,13 @@ export type ProviderAccount = {
     email?: string;
     resourceUrl?: string;
     customModels?: string[];
+    /** FP-P1-01: sanitized validation record (never contains key material). */
+    validation?: {
+      status: 'valid' | 'invalid' | 'network-error' | 'unchecked';
+      checkedAt: string;
+      model?: string;
+      source: 'setup' | 'settings';
+    };
   };
   createdAt: string;
   updatedAt: string;
@@ -3097,6 +3181,45 @@ export type KnowledgeSekbRejectSuggestionPayload = {
 export type KnowledgeSekbRejectSuggestionResult = HostSuccess & {
   available: boolean;
   reason?: 'runtimeUnavailable' | 'rejectFailed';
+};
+
+
+export type KnowledgeSekbCaptureTrajectoryPayload = {
+  taskIntent: string;
+  taskType: string;
+  contextTags?: string[];
+  steps?: Array<{ action: string; input?: unknown; output?: unknown }>;
+  outcome: 'success' | 'failure' | 'partial';
+  rawError?: string | null;
+};
+
+export type KnowledgeSekbCaptureTrajectoryResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'captureFailed' | 'invalidInput';
+  trajectoryId?: string;
+  stepCount?: number;
+  compressed?: boolean;
+};
+
+export type KnowledgeSekbRetrieveForTaskPayload = {
+  taskIntent: string;
+  taskType: string;
+  contextTags?: string[];
+  topK?: number;
+};
+
+export type KnowledgeSekbRetrieveForTaskResult = HostSuccess & {
+  available: boolean;
+  reason?: 'runtimeUnavailable' | 'retrieveFailed';
+  principles: Array<{
+    principle_id: string;
+    title: string;
+    condition: string;
+    action: string;
+    reason: string;
+    retrieval_count: number;
+  }>;
+  injection: string;
 };
 
 export type KnowledgeConfigurePayload = {
@@ -4387,6 +4510,14 @@ export type HostApiContract = {
     setEnabled: (payload: VtokenSetEnabledPayload) => VtokenSetEnabledResult;
     ensureStarted: () => VtokenStatusResult;
   };
+  /** TASK-P0-01: writable DCS production flag control plane (opt-in, fail-closed defaults). */
+  dcsProdFlags: {
+    getFlags: () => DcsProdFlagsSnapshot;
+    setFlag: (payload: DcsProdFlagSetPayload) => DcsProdFlagSetResult;
+    requeryAck: () => DcsProdFlagAckRequeryResult;
+    getPreview: () => DcsPreviewState;
+    setPreview: (payload: DcsPreviewSetPayload) => DcsPreviewSetResult;
+  };
   settings: {
     getAll: () => SettingsSnapshot;
     get: (payload: SettingsGetPayload) => SettingsValue;
@@ -4401,6 +4532,7 @@ export type HostApiContract = {
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;
     delete: (payload: WorkspaceDeletePayload) => WorkspaceSnapshotResult;
     switch: (payload: WorkspaceSwitchPayload) => WorkspaceActiveResult;
+    preflight: (payload: WorkspacePreflightPayload) => WorkspacePreflightResult;
     saveState: (payload: WorkspaceSaveStatePayload) => HostSuccess;
     createFolder: (payload: WorkspaceFolderCreatePayload) => WorkspaceSnapshotResult & { folder?: SessionFolder };
     renameFolder: (payload: WorkspaceFolderRenamePayload) => WorkspaceSnapshotResult;
@@ -4519,9 +4651,12 @@ export type HostApiContract = {
     runTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     retryTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     cancelTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    requestTaskApproval: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    approveTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     show: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
     hide: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
     vault: () => AgentBrowserVaultResult;
+    vaultHealth: () => AgentBrowserVaultHealthResult;
     saveCredential: (payload: AgentBrowserCredentialSavePayload) => AgentBrowserCredentialResult;
     deleteCredential: (payload: AgentBrowserCredentialPayload) => HostSuccess;
     close: (payload: AgentBrowserSessionPayload) => HostSuccess;
@@ -4634,6 +4769,7 @@ export type HostApiContract = {
   };
   diagnostics: {
     gatewaySnapshot: () => DiagnosticsGatewaySnapshotResult;
+    exportSupportBundle: () => SupportBundleExportResult;
   };
   agentDev: {
     status: () => AgentDevStatusResult;
@@ -4781,6 +4917,8 @@ export type HostApiContract = {
     sekbBatchDistillSuggest: (payload?: KnowledgeSekbBatchDistillSuggestPayload) => KnowledgeSekbBatchDistillSuggestResult;
     sekbConfirmPrinciple: (payload: KnowledgeSekbConfirmPrinciplePayload) => KnowledgeSekbConfirmPrincipleResult;
     sekbRejectSuggestion: (payload: KnowledgeSekbRejectSuggestionPayload) => KnowledgeSekbRejectSuggestionResult;
+    sekbCaptureTrajectory: (payload: KnowledgeSekbCaptureTrajectoryPayload) => KnowledgeSekbCaptureTrajectoryResult;
+    sekbRetrieveForTask: (payload: KnowledgeSekbRetrieveForTaskPayload) => KnowledgeSekbRetrieveForTaskResult;
     matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
     updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;

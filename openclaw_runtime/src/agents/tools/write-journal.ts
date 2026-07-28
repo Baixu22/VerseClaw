@@ -7,6 +7,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   rmSync,
   statSync,
   unlinkSync,
@@ -31,6 +32,16 @@ export type WriteJournalEntry = {
   hadPrior: boolean;
   toolName: string;
   createdAtMs: number;
+  /** FP-P1-04: lineage — which request/session/workspace/flags produced this write. */
+  lineage?: {
+    sessionId: string;
+    workspaceRoot: string;
+    gatewayGeneration?: string;
+    /** Tool call id of the write that created this entry. */
+    requestId?: string;
+    /** Coding flags in force at write time (AC: lineage carries flags). */
+    flags?: Record<string, boolean | string>;
+  };
 };
 
 export type WriteJournal = {
@@ -46,6 +57,49 @@ export function journalDirFor(workspaceRoot: string, sessionId: string): string 
   return path.join(workspaceRoot, ".openclaw", "journal", sessionId);
 }
 
+/**
+ * FP-P1-04/FP-P1-05: rebuild the in-memory journal from the on-disk sidecar
+ * metas so undo survives a gateway/app restart. Disk is the source of truth;
+ * entries are ordered by seq.
+ */
+function rehydrateJournalFromDisk(journal: WriteJournal): void {
+  try {
+    if (!existsSync(journal.rootDir)) return;
+    const metas = readdirSync(journal.rootDir).filter((name) => name.endsWith(".meta.json"));
+    const entries: WriteJournalEntry[] = [];
+    for (const metaName of metas) {
+      try {
+        const raw = readFileSync(path.join(journal.rootDir, metaName), "utf8");
+        const parsed = JSON.parse(raw) as Partial<WriteJournalEntry>;
+        const snapshotPath = path.join(journal.rootDir, metaName.replace(/\.meta\.json$/, ""));
+        if (
+          typeof parsed.seq === "number" &&
+          typeof parsed.relPath === "string" &&
+          typeof parsed.absPath === "string"
+        ) {
+          entries.push({
+            seq: parsed.seq,
+            relPath: parsed.relPath,
+            absPath: parsed.absPath,
+            snapshotPath,
+            hadPrior: parsed.hadPrior === true,
+            toolName: typeof parsed.toolName === "string" ? parsed.toolName : "unknown",
+            createdAtMs: typeof parsed.createdAtMs === "number" ? parsed.createdAtMs : 0,
+            ...(parsed.lineage ? { lineage: parsed.lineage } : {}),
+          });
+        }
+      } catch {
+        // Unreadable sidecar: skip it; the snapshot stays on disk for manual recovery.
+      }
+    }
+    entries.sort((a, b) => a.seq - b.seq);
+    journal.entries = entries;
+    journal.nextSeq = entries.length > 0 ? entries[entries.length - 1]!.seq + 1 : 1;
+  } catch {
+    // Fail-open: an unreadable journal dir must not block tool creation.
+  }
+}
+
 export function getOrCreateWriteJournal(
   workspaceRoot: string,
   sessionId: string,
@@ -56,6 +110,7 @@ export function getOrCreateWriteJournal(
   if (!journal) {
     const rootDir = journalDirFor(workspaceRoot, sid);
     journal = { sessionId: sid, rootDir, entries: [], nextSeq: 1 };
+    rehydrateJournalFromDisk(journal);
     journals.set(key, journal);
   }
   return journal;
@@ -73,6 +128,10 @@ export function snapshotBeforeWrite(params: {
   sessionId?: string;
   filePath: string;
   toolName: string;
+  /** FP-P1-04: tool call id, recorded as the write's requestId. */
+  requestId?: string;
+  /** FP-P1-04: coding flags in force at write time. */
+  flags?: Record<string, boolean | string>;
 }): WriteJournalEntry | null {
   const sessionId = params.sessionId?.trim() || "default";
   const started = performance.now();
@@ -105,6 +164,15 @@ export function snapshotBeforeWrite(params: {
       hadPrior,
       toolName: params.toolName,
       createdAtMs: Date.now(),
+      lineage: {
+        sessionId,
+        workspaceRoot: path.resolve(params.workspaceRoot),
+        ...(process.env.VERSE_CLAW_GATEWAY_GENERATION
+          ? { gatewayGeneration: process.env.VERSE_CLAW_GATEWAY_GENERATION }
+          : {}),
+        ...(params.requestId ? { requestId: params.requestId } : {}),
+        ...(params.flags ? { flags: params.flags } : {}),
+      },
     };
     // meta sidecar
     writeFileSync(
@@ -116,6 +184,7 @@ export function snapshotBeforeWrite(params: {
         hadPrior,
         toolName: params.toolName,
         createdAtMs: entry.createdAtMs,
+        lineage: entry.lineage,
       }),
       "utf8",
     );
@@ -128,18 +197,26 @@ export function snapshotBeforeWrite(params: {
   }
 }
 
+/**
+ * Undo the last N journal steps.
+ *
+ * FP-P1-04 hard lock: undo is NOT best-effort. On the first restore failure the
+ * loop STOPS, the failed entry (and everything older) STAYS in the journal, and
+ * the outcome reports failure with the journal directory preserved for manual
+ * recovery. A partially restored batch is a failure, never a success.
+ */
 export function undoLastWrites(params: {
   workspaceRoot: string;
   sessionId?: string;
   steps?: number;
-}): { restored: string[]; errors: string[] } {
+}): { restored: string[]; errors: string[]; journalDir: string; remainingEntries: number } {
   const sessionId = params.sessionId?.trim() || "default";
   const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
   const steps = Math.max(1, Math.floor(params.steps ?? 1));
   const restored: string[] = [];
   const errors: string[] = [];
   for (let i = 0; i < steps; i += 1) {
-    const entry = journal.entries.pop();
+    const entry = journal.entries[journal.entries.length - 1];
     if (!entry) {
       break;
     }
@@ -147,11 +224,23 @@ export function undoLastWrites(params: {
       if (entry.hadPrior && existsSync(entry.snapshotPath)) {
         mkdirSync(path.dirname(entry.absPath), { recursive: true });
         copyFileSync(entry.snapshotPath, entry.absPath);
+      } else if (entry.hadPrior) {
+        // The snapshot vanished: restoring is impossible. This must surface as
+        // a failure, not silently skip the entry.
+        throw new Error(`journal snapshot missing: ${entry.snapshotPath}`);
       } else {
         // Was a create: remove the file if present.
         if (existsSync(entry.absPath)) {
           unlinkSync(entry.absPath);
         }
+      }
+      // Only a fully successful restore removes the entry from the journal.
+      journal.entries.pop();
+      try {
+        rmSync(`${entry.snapshotPath}.meta.json`, { force: true });
+        rmSync(entry.snapshotPath, { force: true });
+      } catch {
+        // Snapshot cleanup is best-effort; the restore already succeeded.
       }
       restored.push(entry.relPath);
       codingObservability.recordUndo();
@@ -159,9 +248,17 @@ export function undoLastWrites(params: {
       errors.push(
         `${entry.relPath}: ${error instanceof Error ? error.message : String(error)}`,
       );
+      // Stop immediately: continuing would leave an inconsistent mix while
+      // discarding the evidence needed to recover.
+      break;
     }
   }
-  return { restored, errors };
+  return {
+    restored,
+    errors,
+    journalDir: journal.rootDir,
+    remainingEntries: journal.entries.length,
+  };
 }
 
 export function clearWriteJournal(params: {
@@ -210,6 +307,8 @@ export function wrapToolWithWriteJournal(
     workspaceRoot: string;
     sessionId?: string;
     enabled?: boolean;
+    /** FP-P1-04: coding flags in force, recorded into each entry's lineage. */
+    flags?: Record<string, boolean | string>;
   },
 ): AnyAgentTool {
   if (options.enabled === false) {
@@ -233,6 +332,8 @@ export function wrapToolWithWriteJournal(
           sessionId: options.sessionId,
           filePath,
           toolName: tool.name,
+          ...(toolCallId ? { requestId: toolCallId } : {}),
+          ...(options.flags ? { flags: options.flags } : {}),
         });
         if (entry) {
           snapshots.push(entry);
@@ -292,10 +393,20 @@ export function createUndoWriteTool(options: {
         sessionId: options.sessionId,
         steps,
       });
+      // FP-P1-04: partial restore is a FAILURE; the journal dir is reported so
+      // a human can recover from the preserved snapshots.
       return jsonResult({
         ok: outcome.errors.length === 0,
         restored: outcome.restored,
         errors: outcome.errors,
+        journalDir: outcome.journalDir,
+        remainingEntries: outcome.remainingEntries,
+        ...(outcome.errors.length > 0
+          ? {
+              recovery:
+                "Undo stopped at the first failure. Nothing was discarded: snapshots and metadata remain in journalDir for manual restore.",
+            }
+          : {}),
       });
     },
   } as AnyAgentTool;

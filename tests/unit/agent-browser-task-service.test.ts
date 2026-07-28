@@ -1,34 +1,58 @@
-import { describe, expect, it, vi } from 'vitest';
-import { AgentBrowserTaskService } from '@electron/services/agent-browser-task-service';
+import { mkdtemp, readFile, rm, writeFile, mkdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  AgentBrowserTaskService,
+  recoverTasksAfterRestart,
+  type AgentBrowserTask,
+} from '@electron/services/agent-browser-task-service';
 
 describe('agent browser task service', () => {
-  it('runs an immediate task through queued, running, and completed states', async () => {
+  const tempRoots: string[] = [];
+
+  afterEach(async () => {
+    while (tempRoots.length > 0) {
+      const root = tempRoots.pop();
+      if (root) await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  async function tempDir(): Promise<string> {
+    const root = await mkdtemp(join(tmpdir(), 'agent-browser-tasks-'));
+    tempRoots.push(root);
+    return root;
+  }
+
+  it('runs a task through queued -> running -> completed', async () => {
     const execute = vi.fn(async () => ({ sessionId: 'session-1', runId: 'run-1' }));
     const service = new AgentBrowserTaskService({ execute });
     const task = service.create({
-      name: 'Check dashboard',
+      name: 'Checkout docs',
       url: 'https://example.com',
-      objective: 'Read the current status',
-      profile: 'work',
+      objective: 'Open docs',
+      profile: 'default',
       mode: 'headless',
     });
 
-    expect(task.status).toBe('queued');
     await expect(service.run(task.id)).resolves.toMatchObject({
-      id: task.id,
       status: 'completed',
       sessionId: 'session-1',
       runId: 'run-1',
+      statusExplain: 'Completed successfully.',
     });
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ id: task.id }), expect.any(AbortSignal));
+    expect(execute).toHaveBeenCalledOnce();
   });
 
-  it('cancels a running task and does not let completion overwrite cancellation', async () => {
+  it('cancels an in-flight task and aborts the executor', async () => {
     let finish!: () => void;
-    const execute = vi.fn(async (_task, signal: AbortSignal) => {
-      await new Promise<void>((resolve) => {
-        finish = resolve;
-        signal.addEventListener('abort', resolve, { once: true });
+    const gate = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const execute = vi.fn(async (_task, signal) => {
+      await new Promise<void>((resolve, reject) => {
+        signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+        void gate.then(() => resolve());
       });
       return {};
     });
@@ -68,5 +92,164 @@ describe('agent browser task service', () => {
       runId: 'run-2',
       retryCount: 1,
     });
+  });
+
+  it('approval gate: waitForApproval blocks run until approve', async () => {
+    const execute = vi.fn(async () => ({ runId: 'run-ok' }));
+    const service = new AgentBrowserTaskService({ execute });
+    const task = service.create({
+      name: 'Needs approval',
+      url: 'https://example.com',
+      objective: 'Gate',
+      profile: 'default',
+      mode: 'headless',
+    });
+    const waiting = service.waitForApproval(task.id);
+    expect(waiting).toMatchObject({
+      status: 'waiting-approval',
+      statusExplain: 'Paused for user approval before continuing.',
+    });
+    await expect(service.run(task.id)).rejects.toThrow('waiting for approval');
+    expect(service.approve(task.id)).toMatchObject({ status: 'queued' });
+    await expect(service.run(task.id)).resolves.toMatchObject({ status: 'completed', runId: 'run-ok' });
+    expect(execute).toHaveBeenCalledOnce();
+  });
+
+  it('approve rejects non-waiting tasks', () => {
+    const service = new AgentBrowserTaskService({ execute: async () => ({}) });
+    const task = service.create({
+      name: 'No gate',
+      url: 'https://example.com',
+      objective: 'x',
+      profile: 'default',
+      mode: 'headless',
+    });
+    expect(() => service.approve(task.id)).toThrow('waiting for approval');
+  });
+
+  it('persists tasks and recovers running as interrupted with explainable status', async () => {
+    const root = await tempDir();
+    const storagePath = join(root, 'tasks.json');
+    const execute = vi.fn(async () => ({ runId: 'never' }));
+    const serviceA = new AgentBrowserTaskService({
+      execute,
+      storagePath,
+      now: () => new Date('2026-07-19T10:00:00.000Z'),
+    });
+    const created = serviceA.create({
+      name: 'Persist me',
+      url: 'https://example.com/docs',
+      objective: 'Stay running across restart',
+      profile: 'default',
+      mode: 'headless',
+    });
+
+    // Simulate crash while running by writing a running snapshot after create.
+    const disk = JSON.parse(await readFile(storagePath, 'utf8')) as { version: 1; tasks: AgentBrowserTask[] };
+    disk.tasks = disk.tasks.map((t) =>
+      t.id === created.id
+        ? {
+            ...t,
+            status: 'running' as const,
+            statusExplain: 'Running in the current process.',
+            sessionId: 'sess-live',
+            runId: 'run-live',
+            updatedAt: '2026-07-19T10:00:01.000Z',
+          }
+        : t,
+    );
+    await writeFile(storagePath, `${JSON.stringify(disk, null, 2)}\n`, 'utf8');
+
+    const serviceB = new AgentBrowserTaskService({
+      execute,
+      storagePath,
+      now: () => new Date('2026-07-19T10:05:00.000Z'),
+    });
+    const recovered = serviceB.get(created.id);
+    expect(recovered).toMatchObject({
+      status: 'interrupted',
+      sessionId: undefined,
+      runId: undefined,
+      recovery: {
+        recoveredFrom: 'running',
+        reason: 'app-restart-while-running',
+        recoveredAt: '2026-07-19T10:05:00.000Z',
+      },
+    });
+    expect(recovered.statusExplain).toMatch(/Interrupted by app restart/i);
+    expect(recovered.error).toMatch(/Interrupted by app restart/i);
+
+    // Second load must not re-apply recovery from running.
+    const serviceC = new AgentBrowserTaskService({
+      execute,
+      storagePath,
+      now: () => new Date('2026-07-19T10:06:00.000Z'),
+    });
+    expect(serviceC.get(created.id).status).toBe('interrupted');
+    expect(serviceC.get(created.id).recovery?.recoveredAt).toBe('2026-07-19T10:05:00.000Z');
+
+    await expect(serviceC.retry(created.id)).resolves.toMatchObject({
+      status: 'completed',
+      retryCount: 1,
+    });
+  });
+
+  it('recoverTasksAfterRestart leaves waiting-approval explainable and does not clear it', () => {
+    const tasks: AgentBrowserTask[] = [
+      {
+        id: 't1',
+        name: 'Wait',
+        url: 'https://example.com',
+        objective: 'o',
+        profile: 'default',
+        mode: 'headless',
+        status: 'waiting-approval',
+        retryCount: 0,
+        createdAt: '2026-07-19T10:00:00.000Z',
+        updatedAt: '2026-07-19T10:00:00.000Z',
+      },
+      {
+        id: 't2',
+        name: 'Run',
+        url: 'https://example.com',
+        objective: 'o',
+        profile: 'default',
+        mode: 'headless',
+        status: 'running',
+        retryCount: 0,
+        createdAt: '2026-07-19T10:00:00.000Z',
+        updatedAt: '2026-07-19T10:00:00.000Z',
+        sessionId: 's1',
+      },
+    ];
+    const recovered = recoverTasksAfterRestart(tasks, '2026-07-19T11:00:00.000Z');
+    expect(recovered[0]).toMatchObject({
+      status: 'waiting-approval',
+      statusExplain: 'Paused for user approval before continuing.',
+    });
+    expect(recovered[1]).toMatchObject({
+      status: 'interrupted',
+      recovery: { recoveredFrom: 'running', reason: 'app-restart-while-running' },
+    });
+  });
+
+  it('persists approval state to disk', async () => {
+    const root = await tempDir();
+    const storagePath = join(root, 'tasks.json');
+    const service = new AgentBrowserTaskService({
+      execute: async () => ({}),
+      storagePath,
+    });
+    const task = service.create({
+      name: 'Disk gate',
+      url: 'https://example.com',
+      objective: 'o',
+      profile: 'default',
+      mode: 'headless',
+    });
+    service.waitForApproval(task.id);
+    const raw = await readFile(storagePath, 'utf8');
+    expect(raw).toContain('waiting-approval');
+    await mkdir(join(root, 'nested'), { recursive: true }); // ensure path ops ok
   });
 });

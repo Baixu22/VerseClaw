@@ -79,6 +79,12 @@ export function buildEmbeddedRunBaseParams(params: {
     sessionFile: params.run.sessionFile,
     workspaceDir: params.run.workspaceDir,
     cwd: params.run.cwd,
+    // D3 closeout (consumer side): forward the trusted workspace authority
+    // fingerprint (set by Gateway chat.send from Main-produced
+    // params.workspaceFingerprint) into RunEmbeddedAgentParams so embedded
+    // attempt can prefer it over the locally computed `effectiveWorkspace`
+    // fingerprint. Absent → agent-config fallback path uses the local compute.
+    workspaceFingerprint: params.run.workspaceFingerprint,
     agentDir: params.run.agentDir,
     config,
     skillsSnapshot: params.run.skillsSnapshot,

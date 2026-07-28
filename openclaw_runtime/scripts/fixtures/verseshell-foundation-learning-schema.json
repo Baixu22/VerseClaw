@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:openclaw:verseshell-foundation:learning-cost:v1",
+  "title": "VerseShell Foundation Offline Learning-Cost Inputs",
+  "oneOf": [{ "$ref": "#/$defs/scenarioDocument" }, { "$ref": "#/$defs/resultDocument" }],
+  "$defs": {
+    "nonNegativeNumber": {
+      "type": "number",
+      "minimum": 0
+    },
+    "scenarioDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "scenarios"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "scenarios": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/scenario" }
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "sizeClass", "expectedOutcome"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "file-read",
+            "repo-search",
+            "governed-command",
+            "artifact-recovery",
+            "approval",
+            "runtime-outage"
+          ]
+        },
+        "sizeClass": { "type": "string", "minLength": 1 },
+        "expectedOutcome": { "type": "string", "minLength": 1 }
+      }
+    },
+    "resultDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "results"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "results": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/result" }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenarioId",
+        "runId",
+        "provider",
+        "cacheState",
+        "toolDefinitions",
+        "call",
+        "task",
+        "usage",
+        "artifacts",
+        "recovery"
+      ],
+      "properties": {
+        "scenarioId": { "type": "string", "minLength": 1 },
+        "runId": { "type": "string", "minLength": 1 },
+        "provider": { "enum": ["anthropic", "openai-compatible"] },
+        "model": { "type": "string" },
+        "cacheState": { "enum": ["cold", "warm"] },
+        "toolDefinitions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "bytes", "fingerprint"],
+          "properties": {
+            "count": { "$ref": "#/$defs/nonNegativeNumber" },
+            "bytes": { "$ref": "#/$defs/nonNegativeNumber" },
+            "fingerprint": { "type": "string" }
+          }
+        },
+        "call": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bytes", "resultBytes", "toolTurns", "latencyMs"],
+          "properties": {
+            "bytes": { "$ref": "#/$defs/nonNegativeNumber" },
+            "resultBytes": { "$ref": "#/$defs/nonNegativeNumber" },
+            "toolTurns": { "$ref": "#/$defs/nonNegativeNumber" },
+            "latencyMs": { "$ref": "#/$defs/nonNegativeNumber" }
+          }
+        },
+        "task": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["completed", "outcome"],
+          "properties": {
+            "completed": { "type": "boolean" },
+            "outcome": { "type": "string" }
+          }
+        },
+        "usage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source"],
+          "properties": {
+            "source": {
+              "enum": [
+                "anthropic-response-usage",
+                "openai-response-usage",
+                "provider-billing-export",
+                "verseshell-heuristic",
+                "four-chars-per-token",
+                "provider-count-endpoint",
+                "other-estimate"
+              ]
+            },
+            "inputTokens": { "$ref": "#/$defs/nonNegativeNumber" },
+            "outputTokens": { "$ref": "#/$defs/nonNegativeNumber" },
+            "cacheReadInputTokens": { "$ref": "#/$defs/nonNegativeNumber" },
+            "cacheCreationInputTokens": { "$ref": "#/$defs/nonNegativeNumber" },
+            "totalTokens": { "$ref": "#/$defs/nonNegativeNumber" }
+          }
+        },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["created", "bytes", "queries", "expiries"],
+          "properties": {
+            "created": { "$ref": "#/$defs/nonNegativeNumber" },
+            "bytes": { "$ref": "#/$defs/nonNegativeNumber" },
+            "queries": { "$ref": "#/$defs/nonNegativeNumber" },
+            "expiries": { "$ref": "#/$defs/nonNegativeNumber" }
+          }
+        },
+        "recovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["truncations", "attempts", "successes", "bytesRecovered"],
+          "properties": {
+            "truncations": { "$ref": "#/$defs/nonNegativeNumber" },
+            "attempts": { "$ref": "#/$defs/nonNegativeNumber" },
+            "successes": { "$ref": "#/$defs/nonNegativeNumber" },
+            "bytesRecovered": { "$ref": "#/$defs/nonNegativeNumber" }
+          }
+        }
+      }
+    }
+  }
+}

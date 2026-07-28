@@ -256,6 +256,49 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('routes dcsProdFlags methods through hostInvoke', async () => {
+    hostInvoke
+      .mockResolvedValueOnce({
+        id: 'req-1',
+        ok: true,
+        data: {
+          productionMode: 'opt-in',
+          flags: [],
+          updatedAt: '2026-07-22T00:00:00.000Z',
+        },
+      })
+      .mockResolvedValueOnce({
+        id: 'req-2',
+        ok: true,
+        data: {
+          success: true,
+          id: 'context-view-tools',
+          enabled: true,
+          status: 'applied',
+          restartedGateway: false,
+        },
+      });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.dcsProdFlags.getFlags()).resolves.toMatchObject({
+      productionMode: 'opt-in',
+    });
+    await expect(
+      hostApi.dcsProdFlags.setFlag({ id: 'context-view-tools', enabled: true }),
+    ).resolves.toMatchObject({ success: true, id: 'context-view-tools', enabled: true });
+
+    expect(hostInvoke).toHaveBeenCalledWith(
+      expect.objectContaining({ module: 'dcsProdFlags', action: 'getFlags' }),
+    );
+    expect(hostInvoke).toHaveBeenCalledWith(
+      expect.objectContaining({
+        module: 'dcsProdFlags',
+        action: 'setFlag',
+        payload: { id: 'context-view-tools', enabled: true },
+      }),
+    );
+  });
+
   it('routes vtoken methods through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: false, disabled: true } })
@@ -545,6 +588,17 @@ describe('hostApi facade', () => {
       },
       reason: 'nope',
     });
+    await hostApi.knowledge.sekbCaptureTrajectory({
+      taskIntent: 'connect db',
+      taskType: 'config/db',
+      outcome: 'failure',
+      rawError: 'Connection refused',
+    });
+    await hostApi.knowledge.sekbRetrieveForTask({
+      taskIntent: 'connect db',
+      taskType: 'config/db',
+      contextTags: ['postgresql'],
+    });
 
     expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
       module: 'knowledge',
@@ -616,6 +670,14 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenNthCalledWith(15, expect.objectContaining({
       module: 'knowledge',
       action: 'sekbRejectSuggestion',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(16, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbCaptureTrajectory',
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(17, expect.objectContaining({
+      module: 'knowledge',
+      action: 'sekbRetrieveForTask',
     }));
   });
 

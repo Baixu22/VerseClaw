@@ -319,6 +319,15 @@ export type MsgContext = {
    * Used for hook confirmation messages like "Session context saved to memory".
    */
   HookMessages?: string[];
+  /**
+   * Trusted workspace authority fingerprint forwarded by Gateway chat.send
+   * (produced by Main from the workspace's normalized rootPath). Embedded
+   * attempt reads this via FollowupRun.run.workspaceFingerprint and prefers
+   * it over the locally computed `effectiveWorkspace` fingerprint so the
+   * Chat→Main→Gateway chain drives `bindSessionWorkspaceFingerprint`'s
+   * mismatch-invalidate semantics. Absent → agent-config fallback path.
+   */
+  WorkspaceFingerprint?: string;
 };
 
 export type FinalizedMsgContext = Omit<MsgContext, "CommandAuthorized"> & {

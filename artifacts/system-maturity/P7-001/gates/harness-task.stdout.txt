@@ -1,3 +1,1 @@
 Spec is valid: harness\specs\tasks\system-maturity-traceability.md
-
-/* reseal-marker:cd87e3735 */

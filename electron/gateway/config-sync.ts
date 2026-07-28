@@ -37,6 +37,13 @@ import { sanitizeOpenClawConfig, batchSyncConfigFields } from '../utils/openclaw
 import { buildProxyEnv, resolveProxySettings } from '../utils/proxy';
 import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
 import { logger } from '../utils/logger';
+import { applyDcsProdFlagsToGatewayEnv } from '../utils/dcs-prod-flags-env';
+import {
+  VERSESHELL_DEV_OVERRIDE_FLAG,
+  VERSESHELL_DEV_OVERRIDE_PATH,
+  buildVerseShellRuntimeEnv,
+  resolveVerseShellRuntimeForLaunch,
+} from '../utils/verseshell-runtime-bundle';
 import { prependPathEntry } from '../utils/env-path';
 import { copyPluginFromNodeModules, fixupPluginManifest, cpSyncSafe, buildCandidateSources } from '../utils/plugin-install';
 import { VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
@@ -905,6 +912,16 @@ function prepareSourceRuntimeIsolation(): {
   };
 }
 
+async function readEffectiveGatewayConfig(sourceRuntimeConfigPath?: string): Promise<Record<string, unknown>> {
+  if (!sourceRuntimeConfigPath) return await readOpenClawConfig();
+  try {
+    return JSON.parse(readFileSync(fsPath(sourceRuntimeConfigPath), 'utf-8')) as Record<string, unknown>;
+  } catch (error) {
+    logger.warn('Failed to read the effective source runtime config for VerseShell resolution:', error);
+    return {};
+  }
+}
+
 export async function prepareGatewayLaunchContext(port: number): Promise<GatewayLaunchContext> {
   const timingsMs: Record<string, number> = {};
   const totalStartedAt = Date.now();
@@ -980,6 +997,26 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   const uvEnv = await measureAsync(timingsMs, 'uvEnvMs', getUvMirrorEnv);
   const mcpEnv = await measureAsync(timingsMs, 'mcpEnvMs', loadMcpRuntimeEnv);
   const sourceRuntimeIsolation = runtimeMode === 'source' ? prepareSourceRuntimeIsolation() : null;
+  const verseShellDevOverrideRequested =
+    ['1', 'true', 'yes', 'on'].includes(
+      process.env[VERSESHELL_DEV_OVERRIDE_FLAG]?.trim().toLowerCase() ?? '',
+    )
+    || Boolean(process.env[VERSESHELL_DEV_OVERRIDE_PATH]?.trim());
+  const effectiveGatewayConfig = await measureAsync(timingsMs, 'runtimeConfigReadMs', () => (
+    readEffectiveGatewayConfig(sourceRuntimeIsolation?.configPath)
+  ));
+  const verseShellRuntime = await measureAsync(timingsMs, 'verseShellBundleMs', () => (
+    resolveVerseShellRuntimeForLaunch({
+      isPackaged: app.isPackaged,
+      resourcesPath: process.resourcesPath,
+      cwd: process.cwd(),
+      platform,
+      arch,
+      env: process.env,
+      rolloutConfig: effectiveGatewayConfig,
+      devOverrideRequested: verseShellDevOverrideRequested,
+    })
+  ));
   const proxyEnv = buildProxyEnv(appSettings);
   const resolvedProxy = resolveProxySettings(appSettings);
   const proxySummary = appSettings.proxyEnabled
@@ -1000,9 +1037,6 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   const vtokenPackageRoot = (() => {
     try {
       // Prefer monorepo packages/vtoken in dev; packaged resources/vtoken in production.
-      const { app } = require('electron') as typeof import('electron');
-      const { existsSync } = require('node:fs') as typeof import('node:fs');
-      const { join } = require('node:path') as typeof import('node:path');
       if (app?.isPackaged) {
         const packaged = join(process.resourcesPath, 'vtoken');
         if (existsSync(join(packaged, 'src', 'vtoken'))) return packaged;
@@ -1015,7 +1049,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     return process.env.VERSE_VTOKEN_PACKAGE_ROOT?.trim() || '';
   })();
 
-  const forkEnv: Record<string, string | undefined> = {
+  const forkEnvBase: Record<string, string | undefined> = {
     ...stripSystemdSupervisorEnv(baseEnvPatched),
     ...(sourceRuntimeIsolation?.env ?? {}),
     ...providerEnv,
@@ -1027,9 +1061,13 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : '',
     CLAWDBOT_SKIP_CHANNELS: skipChannels ? '1' : '',
     OPENCLAW_NO_RESPAWN: '1',
-    // Product default ON for VT assembly; honor explicit env kill-switch if set.
-    VERSE_VTOKEN_ASSEMBLY_ENABLED:
-      process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED?.trim() || '1',
+    ...(verseShellRuntime ? buildVerseShellRuntimeEnv(verseShellRuntime) : {}),
+    // FP-P0-01: VERSE_VTOKEN_ASSEMBLY_ENABLED is intentionally NOT set here.
+    // Product default is OFF (opt-in) per docs/dev/default-config-matrix.md; the
+    // runtime resolver reads unset as OFF, explicit truthy as canary opt-in and
+    // explicit 0/false/off as a kill that outranks config opt-in.  Whatever the
+    // operator exported in the shell is inherited verbatim through the
+    // `baseEnvPatched` spread above, so both opt-in and kill still work.
     ...(vtokenPackageRoot
       ? { VERSE_VTOKEN_PACKAGE_ROOT: vtokenPackageRoot }
       : {}),
@@ -1037,6 +1075,8 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
       ? { VERSE_RESOURCES_PATH: process.resourcesPath }
       : {}),
   };
+  // TASK-P0-01: Settings-controlled DCS env flags (view tools, etc.)
+  const forkEnv = applyDcsProdFlagsToGatewayEnv(forkEnvBase, appSettings);
 
   // Ensure extension-specific packages (e.g. grammy from the telegram
   // extension) are resolvable by shared dist/ chunks via symlinks in

@@ -1587,8 +1587,9 @@ export function createExecTool(
       });
       const host: ExecHost = target.effectiveHost;
 
-      // When host is "verseshell", bypass approval pipeline — VerseShell has
-      // its own capability-based security model (27 granular caps).
+      // VerseShell remains inside the standard OpenClaw exec policy/approval pipeline.
+      // Typed ACI adds an independent strict shell.exec capability and an action-bound
+      // retry token; it does not replace host authorization.
       const explicitSecurity = defaults?.security;
       const configuredSecurity =
         explicitSecurity ??
@@ -1599,7 +1600,7 @@ export function createExecTool(
         ask: defaults?.ask ?? "off",
       });
       const approvalPolicy =
-        host === "sandbox" || host === "verseshell"
+        host === "sandbox"
           ? undefined
           : resolveExecApprovalsFromFile({
               file: loadExecApprovals(),
@@ -1643,6 +1644,7 @@ export function createExecTool(
       if (bypassApprovals) {
         ask = "off";
       }
+      let hostPolicyApproved = host === "verseshell" && bypassApprovals;
       const autoReview = modePolicy.autoReview && ask === modePolicy.ask && !bypassApprovals;
 
       const sandbox = host === "sandbox" ? defaults?.sandbox : undefined;
@@ -1798,8 +1800,10 @@ export function createExecTool(
         throw new Error("exec internal error: local execution requires a resolved workdir");
       }
 
-      if (host === "gateway" && !bypassApprovals) {
+      if ((host === "gateway" || host === "verseshell") && !bypassApprovals) {
         const gatewayResult = await processGatewayAllowlist({
+          executionHost: host,
+          config: defaults?.config,
           command: params.command,
           workdir,
           env,
@@ -1847,6 +1851,7 @@ export function createExecTool(
         if (gatewayResult.allowWithoutEnforcedCommand) {
           execCommandOverride = undefined;
         }
+        hostPolicyApproved = host === "verseshell";
       }
 
       const explicitTimeoutSec = typeof params.timeout === "number" ? params.timeout : null;
@@ -1864,6 +1869,8 @@ export function createExecTool(
         command: params.command,
         execCommand: execCommandOverride,
         execHost: host,
+        hostPolicyApproved,
+        config: defaults?.config,
         workdir,
         env,
         pathPrepend: defaultPathPrepend,

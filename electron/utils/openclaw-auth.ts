@@ -2114,6 +2114,76 @@ function ensureWebFetchSsrfPolicyInConfig(config: Record<string, unknown>): bool
   return true;
 }
 
+
+/**
+ * Env canary for private-network allow (must be combined with explicit true in config).
+ * TF-0003/P0 production: legacy true without ack is migrated to deny.
+ * Covers both `dangerouslyAllowPrivateNetwork` and legacy alias `allowPrivateNetwork`.
+ */
+export const BROWSER_PRIVATE_NETWORK_ACK_ENV = 'VERSE_BROWSER_ALLOW_PRIVATE_NETWORK';
+
+/**
+ * True only when canary explicitly acknowledged (config flag or env).
+ * Unacknowledged private-network allow is treated as legacy debt.
+ */
+export function isBrowserPrivateNetworkAllowAcknowledged(
+  ssrfPolicy: Record<string, unknown> | undefined,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  const fromEnv = env[BROWSER_PRIVATE_NETWORK_ACK_ENV];
+  if (fromEnv === '1' || fromEnv === 'true' || fromEnv === 'yes' || fromEnv === 'on') {
+    return true;
+  }
+  return ssrfPolicy?.dangerouslyAllowPrivateNetworkAcknowledged === true;
+}
+
+function isPrivateNetworkAllowTrue(policy: Record<string, unknown>): boolean {
+  return policy.dangerouslyAllowPrivateNetwork === true || policy.allowPrivateNetwork === true;
+}
+
+/**
+ * Apply fail-closed private-network policy on a browser config object.
+ * - Missing policy / undefined flag → dangerouslyAllowPrivateNetwork: false
+ * - true without acknowledgement (either alias) → migrate both aliases to false
+ * - true with acknowledgement (config or env) → keep allow (canary opt-in)
+ * Returns whether the object was mutated.
+ */
+export function applyBrowserPrivateNetworkDefault(
+  browser: Record<string, unknown>,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  if (browser.ssrfPolicy == null || typeof browser.ssrfPolicy !== 'object' || Array.isArray(browser.ssrfPolicy)) {
+    browser.ssrfPolicy = { dangerouslyAllowPrivateNetwork: false };
+    return true;
+  }
+  const policy = browser.ssrfPolicy as Record<string, unknown>;
+  let changed = false;
+
+  if (isPrivateNetworkAllowTrue(policy) && !isBrowserPrivateNetworkAllowAcknowledged(policy, env)) {
+    // Production fail-closed: strip unacknowledged private-network allow (both aliases).
+    if (policy.dangerouslyAllowPrivateNetwork === true) {
+      policy.dangerouslyAllowPrivateNetwork = false;
+      changed = true;
+    }
+    if (policy.allowPrivateNetwork === true) {
+      policy.allowPrivateNetwork = false;
+      changed = true;
+    }
+    if (policy.privateNetworkLegacyAllowMigratedAt === undefined) {
+      policy.privateNetworkLegacyAllowMigratedAt = new Date().toISOString();
+      changed = true;
+    }
+  }
+
+  // Always materialize explicit deny so browser redirect inspection is strict.
+  if (policy.dangerouslyAllowPrivateNetwork === undefined) {
+    policy.dangerouslyAllowPrivateNetwork = false;
+    changed = true;
+  }
+
+  return changed;
+}
+
 /**
  * Ensure browser automation is enabled in ~/.openclaw/openclaw.json.
  */
@@ -2139,15 +2209,8 @@ export async function syncBrowserConfigToOpenClaw(): Promise<void> {
       changed = true;
     }
 
-    // Default ssrfPolicy to allow private network access for enterprise/internal use
-    if (browser.ssrfPolicy == null) {
-      browser.ssrfPolicy = { dangerouslyAllowPrivateNetwork: true };
-      changed = true;
-    } else if (
-      typeof browser.ssrfPolicy === 'object' &&
-      (browser.ssrfPolicy as Record<string, unknown>).dangerouslyAllowPrivateNetwork === undefined
-    ) {
-      (browser.ssrfPolicy as Record<string, unknown>).dangerouslyAllowPrivateNetwork = true;
+    // Default ssrfPolicy: private network DENIED (fail-closed). Explicit true required.
+    if (applyBrowserPrivateNetworkDefault(browser)) {
       changed = true;
     }
 
@@ -2255,16 +2318,8 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
       config.browser = browser;
       modified = true;
     }
-    // Default ssrfPolicy to allow private network access for enterprise/internal use
-    if (browser.ssrfPolicy == null) {
-      browser.ssrfPolicy = { dangerouslyAllowPrivateNetwork: true };
-      config.browser = browser;
-      modified = true;
-    } else if (
-      typeof browser.ssrfPolicy === 'object' &&
-      (browser.ssrfPolicy as Record<string, unknown>).dangerouslyAllowPrivateNetwork === undefined
-    ) {
-      (browser.ssrfPolicy as Record<string, unknown>).dangerouslyAllowPrivateNetwork = true;
+    // Default ssrfPolicy: private network DENIED (fail-closed). Explicit true required.
+    if (applyBrowserPrivateNetworkDefault(browser)) {
       config.browser = browser;
       modified = true;
     }

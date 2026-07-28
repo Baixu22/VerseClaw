@@ -28,9 +28,9 @@ test.describe('Verse Token bridge developer surface', () => {
     await expect(page.getByTestId('settings-vtoken-bridge-ensure')).toBeVisible();
     await expect(page.getByTestId('settings-vtoken-bridge-smoke')).toBeVisible();
 
-    // Product default ON: badge should indicate enabled unless kill-switch is set.
+    // Product default OFF (opt-in): badge should indicate disabled unless canary is set.
     await expect(page.getByTestId('settings-vtoken-bridge-enabled-badge')).toContainText(
-      /enabled|已启用|有効|включен/i,
+      /disabled|off/i,
     );
   });
 });

@@ -7,7 +7,8 @@ import type { GatewayManager } from '../gateway/manager';
 import { expandPath } from '../utils/paths';
 import { ensureVerseClawWorkspaceHarness } from '../utils/clawx-harness-template';
 import { isRecord } from './payload-utils';
-import { syncActiveWorkspacePermissionToRuntime } from './workspace-runtime-sync';
+import { syncActiveWorkspacePermissionToRuntime, syncActiveWorkspaceRootToRuntime } from './workspace-runtime-sync';
+import { runWorkspacePreflight } from './workspace-preflight';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import type { WebPreviewManager } from './web-preview-manager';
 import type {
@@ -453,6 +454,32 @@ export async function getActiveWorkspaceProfile(): Promise<WorkspaceProfile | nu
   return document.profiles.find((profile) => profile.id === document.activeWorkspaceId) ?? null;
 }
 
+/**
+ * D3 closeout: resolve a workspace's rootPath by id without activating it.
+ *
+ * Used by `chat-api.ts` to compute the trusted `workspaceFingerprint` from
+ * the workspace's normalized rootPath before forwarding it to Gateway via
+ * `chat.send`. Returns `undefined` when the workspace id is unknown or the
+ * profile has no rootPath; the caller must treat that as "no fingerprint"
+ * (workspaceId is still forwarded for Task Ledger continuity).
+ *
+ * Reads only persisted state — never mutates the active workspace, never
+ * triggers harness/terminal/web-preview side effects. Best-effort: errors
+ * resolve to `undefined` so the chat-send path cannot throw from a stale
+ * workspace store.
+ */
+export async function getWorkspaceRootPathById(workspaceId: string): Promise<string | undefined> {
+  const id = typeof workspaceId === 'string' ? workspaceId.trim() : '';
+  if (!id) return undefined;
+  try {
+    const document = await readDocument();
+    const profile = document.profiles.find((entry) => entry.id === id);
+    return profile?.rootPath || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 type WorkspacesApiContext = {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
@@ -464,6 +491,13 @@ async function syncWorkspacePermissionBestEffort(gatewayManager: GatewayManager 
     await syncActiveWorkspacePermissionToRuntime(gatewayManager);
   } catch (error) {
     console.warn('[workspaces] Failed to sync workspace permission to runtime:', error);
+  }
+  // FP-P1-02: also pin the gateway's agents.defaults.workspace to the active
+  // profile so there is exactly one workspace authority.
+  try {
+    await syncActiveWorkspaceRootToRuntime();
+  } catch (error) {
+    console.warn('[workspaces] Failed to sync workspace root to runtime:', error);
   }
 }
 
@@ -638,6 +672,38 @@ export function createWorkspacesApi(ctx: WorkspacesApiContext = {}): CompleteHos
         await syncWorkspacePermissionBestEffort(ctx.gatewayManager);
       }
       return successSnapshot(nextDocument);
+    },
+    // FP-P1-02: preflight a directory before accepting it as the workspace.
+    preflight: async (payload) => {
+      const body = isRecord(payload) ? payload as { rootPath?: unknown } : {};
+      const rootPath = typeof body.rootPath === 'string' ? body.rootPath.trim() : '';
+      if (!rootPath) {
+        return {
+          success: false,
+          rootPath: '',
+          resolvedPath: '',
+          ok: false,
+          readOnlyOnly: false,
+          isGitRepo: false,
+          checks: [],
+          error: 'rootPath is required',
+        };
+      }
+      try {
+        const result = await runWorkspacePreflight(rootPath);
+        return { success: true, ...result };
+      } catch (error) {
+        return {
+          success: false,
+          rootPath,
+          resolvedPath: rootPath,
+          ok: false,
+          readOnlyOnly: false,
+          isGitRepo: false,
+          checks: [],
+          error: String(error),
+        };
+      }
     },
     switch: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};

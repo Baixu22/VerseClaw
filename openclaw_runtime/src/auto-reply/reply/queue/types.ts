@@ -103,6 +103,15 @@ export type FollowupRun = {
     workspaceDir: string;
     /** Task working directory for runtime execution. Defaults to workspaceDir. */
     cwd?: string;
+    /**
+     * Trusted workspace authority fingerprint forwarded by Gateway chat.send
+     * (produced by Main from the workspace's normalized rootPath). Embedded
+     * attempt prefers this over the locally computed `effectiveWorkspace`
+     * fingerprint so the Chat→Main→Gateway chain drives
+     * `bindSessionWorkspaceFingerprint`'s mismatch-invalidate semantics.
+     * Absent → agent-config fallback path uses the local compute.
+     */
+    workspaceFingerprint?: string;
     config: OpenClawConfig;
     skillsSnapshot?: SkillSnapshot;
     provider: string;

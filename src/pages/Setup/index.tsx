@@ -28,6 +28,13 @@ import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { toast } from 'sonner';
 import { hostApi } from '@/lib/host-api';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import {
+  ModelStepContent,
+  ProviderStepContent,
+  type PendingProviderSetup,
+} from './ProviderModelSteps';
+import { WorkspaceStepContent, type WorkspaceSetupOutcome } from './WorkspaceStep';
+import { isSetupVerificationComplete } from '@/lib/setup-provider';
 
 interface SetupStep {
   id: string;
@@ -35,11 +42,18 @@ interface SetupStep {
   description: string;
 }
 
+// FP-P1-01/FP-P1-02: Provider + Model verification and Workspace preflight are
+// part of first-run setup. Setup can only declare Complete as "verified" after
+// live credential/model checks and an explicit workspace+permission choice;
+// Skip records status 'skipped' (limited mode).
 const STEP = {
   WELCOME: 0,
   RUNTIME: 1,
   INSTALLING: 2,
-  COMPLETE: 3,
+  PROVIDER: 3,
+  MODEL: 4,
+  WORKSPACE: 5,
+  COMPLETE: 6,
 } as const;
 
 const getSteps = (t: TFunction): SetupStep[] => [
@@ -57,6 +71,21 @@ const getSteps = (t: TFunction): SetupStep[] => [
     id: 'installing',
     title: t('steps.installing.title'),
     description: t('steps.installing.description'),
+  },
+  {
+    id: 'provider',
+    title: t('steps.provider.title'),
+    description: t('steps.provider.description'),
+  },
+  {
+    id: 'model',
+    title: t('steps.model.title'),
+    description: t('steps.model.description'),
+  },
+  {
+    id: 'workspace',
+    title: t('steps.workspace.title'),
+    description: t('steps.workspace.description'),
   },
   {
     id: 'complete',
@@ -93,6 +122,11 @@ export function Setup() {
   const [installedSkills, setInstalledSkills] = useState<string[]>([]);
   // Runtime check status
   const [runtimeChecksPassed, setRuntimeChecksPassed] = useState(false);
+  // FP-P1-01: provider/model verification state
+  const [pendingProvider, setPendingProvider] = useState<PendingProviderSetup | null>(null);
+  const [modelVerified, setModelVerified] = useState<{ model: string } | null>(null);
+  // FP-P1-02: explicit workspace + permission choice
+  const [workspaceConfirmed, setWorkspaceConfirmed] = useState<WorkspaceSetupOutcome | null>(null);
 
   const steps = getSteps(t);
   const safeStepIndex = Number.isInteger(currentStep)
@@ -103,6 +137,12 @@ export function Setup() {
   const isLastStep = safeStepIndex === steps.length - 1;
 
   const markSetupComplete = useSettingsStore((state) => state.markSetupComplete);
+  const setSetupProviderVerification = useSettingsStore(
+    (state) => state.setSetupProviderVerification,
+  );
+  const setupProviderVerification = useSettingsStore(
+    (state) => state.setupProviderVerification,
+  );
 
   // Derive canProceed based on current step - computed directly to avoid useEffect
   const canProceed = useMemo(() => {
@@ -113,16 +153,23 @@ export function Setup() {
         return runtimeChecksPassed;
       case STEP.INSTALLING:
         return false; // Cannot manually proceed, auto-proceeds when done
+      case STEP.PROVIDER:
+        return pendingProvider !== null;
+      case STEP.MODEL:
+        return modelVerified !== null;
+      case STEP.WORKSPACE:
+        return workspaceConfirmed !== null;
       case STEP.COMPLETE:
         return true;
       default:
         return true;
     }
-  }, [safeStepIndex, runtimeChecksPassed]);
+  }, [safeStepIndex, runtimeChecksPassed, pendingProvider, modelVerified, workspaceConfirmed]);
 
   const handleNext = async () => {
     if (isLastStep) {
-      // Complete setup
+      // FP-P1-01: Complete is only reachable as 'verified' (provider+model both
+      // live-checked) or via the explicit Skip path which records 'skipped'.
       markSetupComplete();
       toast.success(t('complete.title'));
       navigate('/');
@@ -136,6 +183,11 @@ export function Setup() {
   };
 
   const handleSkip = () => {
+    // FP-P1-01: skipping is allowed but never silently equivalent to verified.
+    // The Complete page and the chat first-send gate both key off this state.
+    if (!isSetupVerificationComplete(setupProviderVerification)) {
+      setSetupProviderVerification({ status: 'skipped' });
+    }
     markSetupComplete();
     navigate('/');
   };
@@ -213,9 +265,28 @@ export function Setup() {
                   onSkip={() => setCurrentStep((i) => i + 1)}
                 />
               )}
+              {safeStepIndex === STEP.PROVIDER && (
+                <ProviderStepContent
+                  pending={pendingProvider}
+                  onValidated={(pending) => {
+                    setPendingProvider(pending);
+                    if (!pending) setModelVerified(null);
+                  }}
+                />
+              )}
+              {safeStepIndex === STEP.MODEL && (
+                <ModelStepContent pending={pendingProvider} onVerified={setModelVerified} />
+              )}
+              {safeStepIndex === STEP.WORKSPACE && (
+                <WorkspaceStepContent
+                  confirmed={workspaceConfirmed}
+                  onConfirmed={setWorkspaceConfirmed}
+                />
+              )}
               {safeStepIndex === STEP.COMPLETE && (
                 <CompleteContent
                   installedSkills={installedSkills}
+                  workspace={workspaceConfirmed}
                 />
               )}
             </div>
@@ -400,14 +471,17 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
         ...prev,
         gateway: { status: 'error', message: currentGateway.error || t('runtime.status.error') },
       }));
+    } else if (currentGateway.state === 'stopped') {
+      setChecks((prev) => ({
+        ...prev,
+        gateway: { status: 'error', message: t('runtime.status.gatewayStopped') },
+      }));
     } else {
-      // Gateway is 'stopped', 'starting', or 'reconnecting'
-      // Keep as 'checking' — the dedicated useEffect will update when status changes
       setChecks((prev) => ({
         ...prev,
         gateway: {
           status: 'checking',
-          message: currentGateway.state === 'starting' ? t('runtime.status.checking') : 'Waiting for gateway...'
+          message: t('runtime.status.gatewayStarting'),
         },
       }));
     }
@@ -437,13 +511,17 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
         ...prev,
         gateway: { status: 'error', message: gatewayStatus.error || 'Failed to start' },
       }));
+    } else if (gatewayStatus.state === 'stopped') {
+      setChecks((prev) => ({
+        ...prev,
+        gateway: { status: 'error', message: t('runtime.status.gatewayStopped') },
+      }));
     } else if (gatewayStatus.state === 'starting' || gatewayStatus.state === 'reconnecting') {
       setChecks((prev) => ({
         ...prev,
-        gateway: { status: 'checking', message: 'Starting...' },
+        gateway: { status: 'checking', message: t('runtime.status.gatewayStarting') },
       }));
     }
-    // 'stopped' state: keep current check status (likely 'checking') to allow startup time
   }, [gatewayStatus, t]);
 
   // Gateway startup timeout — show error only after giving enough time to initialize
@@ -549,7 +627,7 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div data-testid="setup-runtime-step" className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-serif font-normal tracking-tight">{t('runtime.title')}</h2>
         <div className="flex gap-2">
@@ -586,12 +664,17 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
           <div className="flex items-center gap-2 text-left">
             <span>{t('runtime.gateway')}</span>
             {checks.gateway.status === 'error' && (
-              <Button variant="outline" size="sm" onClick={handleStartGateway}>
+              <Button
+                data-testid="setup-runtime-start-gateway"
+                variant="outline"
+                size="sm"
+                onClick={handleStartGateway}
+              >
                 {t('runtime.startGateway')}
               </Button>
             )}
           </div>
-          <div className="flex justify-end">
+          <div data-testid="setup-runtime-gateway-status" className="flex justify-end">
             {renderStatus(checks.gateway.status, checks.gateway.message)}
           </div>
         </div>
@@ -807,6 +890,7 @@ function InstallingContent({ skills, onComplete, onSkip }: InstallingContentProp
       )}
       <div className="flex justify-end">
         <Button
+          data-testid="setup-installing-skip"
           variant="ghost"
           className="text-muted-foreground"
           onClick={onSkip}
@@ -819,11 +903,16 @@ function InstallingContent({ skills, onComplete, onSkip }: InstallingContentProp
 }
 interface CompleteContentProps {
   installedSkills: string[];
+  workspace?: WorkspaceSetupOutcome | null;
 }
 
-function CompleteContent({ installedSkills }: CompleteContentProps) {
+function CompleteContent({ installedSkills, workspace }: CompleteContentProps) {
   const { t } = useTranslation(['setup', 'settings']);
   const gatewayStatus = useGatewayStore((state) => state.status);
+  const setupProviderVerification = useSettingsStore(
+    (state) => state.setupProviderVerification,
+  );
+  const verified = isSetupVerificationComplete(setupProviderVerification);
 
   const installedSkillNames = getDefaultSkills(t)
     .filter((s: DefaultSkill) => installedSkills.includes(s.id))
@@ -838,12 +927,63 @@ function CompleteContent({ installedSkills }: CompleteContentProps) {
         {t('complete.subtitle')}
       </p>
 
+      {/* FP-P1-01: never present a skipped setup as a working one. */}
+      {!verified && (
+        <div
+          data-testid="setup-complete-unverified"
+          className="mx-auto max-w-md rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-left"
+        >
+          <div className="flex items-start gap-2">
+            <AlertCircle className="mt-0.5 h-5 w-5 text-yellow-700 dark:text-yellow-400" />
+            <div>
+              <p className="font-medium text-yellow-800 dark:text-yellow-300">
+                {t('complete.limitedMode.title')}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t('complete.limitedMode.desc')}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3 text-left max-w-md mx-auto">
         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-input/50">
           <span>{t('complete.components')}</span>
           <span className="text-green-700 dark:text-green-400">
             {installedSkillNames || `${installedSkills.length} ${t('installing.status.installed')}`}
           </span>
+        </div>
+        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-input/50">
+          <span>{t('complete.provider')}</span>
+          {verified ? (
+            <span
+              data-testid="setup-complete-provider-verified"
+              className="text-green-700 dark:text-green-400"
+            >
+              ✓ {setupProviderVerification.vendorId} · {setupProviderVerification.model}
+            </span>
+          ) : (
+            <span className="text-yellow-700 dark:text-yellow-400">
+              {t('complete.providerUnverified')}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center justify-between p-3 rounded-lg bg-surface-input/50">
+          <span>{t('complete.workspace')}</span>
+          {workspace ? (
+            <span
+              data-testid="setup-complete-workspace"
+              className="max-w-[240px] truncate text-green-700 dark:text-green-400"
+              title={workspace.rootPath}
+            >
+              ✓ {workspace.rootPath} · {t(`workspace.modes.${workspace.permissionMode}.title`)}
+            </span>
+          ) : (
+            <span className="text-yellow-700 dark:text-yellow-400">
+              {t('complete.workspaceUnset')}
+            </span>
+          )}
         </div>
         <div className="flex items-center justify-between p-3 rounded-lg bg-surface-input/50">
           <span>{t('complete.gateway')}</span>

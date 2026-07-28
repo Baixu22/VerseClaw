@@ -100,6 +100,7 @@ const settingsProjectRules = createPreloadableLazy<Record<string, never>>(() => 
 const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/AgentDevWorkbenchPanel').then((m) => ({ default: m.AgentDevWorkbenchPanel as ComponentType<Record<string, never>> })));
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
+const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
 const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
 
 const SettingsModelsLazy = settingsModels.Component;
@@ -111,6 +112,7 @@ const ProjectRulesCenterLazy = settingsProjectRules.Component;
 const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
+const ContextLayersExplainerLazy = settingsContextLayers.Component;
 const StorageCleanerSectionLazy = settingsStorage.Component;
 type ControlUiInfo = {
   port: number;
@@ -556,6 +558,34 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
       toast.success(t('developer.tokenCopied'));
     } catch (error) {
       toast.error(`Failed to copy token: ${String(error)}`);
+    }
+  };
+
+  // FP-P1-06: sanitized support bundle export (local file; user sends it manually).
+  const [supportBundleBusy, setSupportBundleBusy] = useState(false);
+  const [supportBundleResult, setSupportBundleResult] = useState<string | null>(null);
+  const handleExportSupportBundle = async () => {
+    setSupportBundleBusy(true);
+    setSupportBundleResult(null);
+    try {
+      const result = await hostApi.diagnostics.exportSupportBundle();
+      if (result.success && result.path) {
+        setSupportBundleResult(
+          t('supportBundle.savedTo', {
+            path: result.path,
+            hits: result.redaction?.totalHits ?? 0,
+          }),
+        );
+        toast.success(t('supportBundle.success'));
+      } else {
+        setSupportBundleResult(result.error || 'export failed');
+        toast.error(t('supportBundle.failed', { error: result.error ?? '' }));
+      }
+    } catch (error) {
+      setSupportBundleResult(String(error));
+      toast.error(t('supportBundle.failed', { error: String(error) }));
+    } finally {
+      setSupportBundleBusy(false);
     }
   };
 
@@ -1619,6 +1649,35 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
             <>
           <Separator className="bg-black/5 dark:bg-white/5" />
 
+          {/* FP-P1-06: sanitized support bundle export */}
+          <div className="mb-8" data-testid="settings-support-bundle">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <Label className="text-sm font-medium text-foreground">{t('supportBundle.title')}</Label>
+                <p className="text-meta text-muted-foreground mt-1">
+                  {t('supportBundle.desc')}
+                </p>
+                {supportBundleResult && (
+                  <p
+                    className="mt-2 break-all font-mono text-tiny text-muted-foreground"
+                    data-testid="settings-support-bundle-result"
+                  >
+                    {supportBundleResult}
+                  </p>
+                )}
+              </div>
+              <Button
+                data-testid="settings-support-bundle-export"
+                variant="outline"
+                disabled={supportBundleBusy}
+                onClick={() => void handleExportSupportBundle()}
+                className="rounded-xl h-10 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                {supportBundleBusy ? t('supportBundle.exporting') : t('supportBundle.export')}
+              </Button>
+            </div>
+          </div>
+
           {/* Gateway */}
           <div>
             <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
@@ -2115,6 +2174,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
 
                   <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
                     <div className="space-y-4 animate-in fade-in duration-150 motion-reduce:animate-none">
+                      <ContextLayersExplainerLazy />
                       <DcsProdFlagsPanelLazy />
                       <VtokenBridgePanelLazy />
                       <AgentDevWorkbenchPanelLazy />

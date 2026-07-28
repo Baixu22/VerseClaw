@@ -39,6 +39,12 @@
 
 Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
 
+## Windows x64 Controlled Preview 范围
+
+当前首产品验证目标是 **Verse Claw Windows x64 - DCS Coding Controlled Preview**。该路径仅用于内部、单一 workspace，并要求显式 `opt-in`；范围包括 Provider/Model 验证、受控读写与测试、undo、runtime acknowledgement、重启恢复、kill/rollback 和脱敏 support bundle。
+
+本范围不包含 Runtime Memory 注入、SEKB 自动写回、Browser 无监督或私网访问、C6/C7 自动切换、Coding WAL、生产仓库自动合并及多 Forge/DAG 扩围。当前只有工程与真实进程测试证据，真人 canary 与发布审批仍未完成。组件唯一标注见 [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview)。
+
 ## 概述
 
 **Verse Claw** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [OpenClaw](https://github.com/OpenClaw) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
@@ -379,6 +385,35 @@ Verse Claw 采用 **双进程 + Host API 统一接入架构**。渲染进程只�
   - macOS/Linux：`lsof -nP -iTCP:18789 -sTCP:LISTEN`
   - Windows（PowerShell）：`Get-NetTCPConnection -LocalPort 18789 -State Listen`
 - 点击窗口关闭按钮（`X`）默认只是最小化到托盘，并不会完全退出应用。请在托盘菜单中选择 **Quit Verse Claw** 执行完整退出。
+
+### VerseShell 类型化 ACI 受控内测
+
+VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认关闭，不代表正式发布，也不是原生 shell 的无条件替代。显式开启后，Agent 的 `exec` 调用仍须先通过 OpenClaw allowlist/approval；随后才由已验证的内置 `ae.exe` 在 workspace jail、仓库自有严格策略、唯一 `shell.exec` capability 和一次性动作绑定 approval token 下执行。runtime、protocol、catalog、workspace、capability 或 policy 任一漂移都会失败关闭；governed 路径绝不回退到原生 shell。
+
+推荐使用以下保守的 `openclaw.json` 配置：
+
+```json
+{
+  "tools": {
+    "exec": {
+      "host": "verseshell",
+      "security": "allowlist",
+      "ask": "on-miss"
+    }
+  },
+  "runtime": {
+    "verseShellFoundation": {
+      "verifiedRuntime": true,
+      "typedAci": true,
+      "facade": true,
+      "governedExec": true,
+      "artifactResults": true
+    }
+  }
+}
+```
+
+配置允许覆盖时，可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。
 
 ---
 

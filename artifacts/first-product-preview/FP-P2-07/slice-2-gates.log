@@ -1,0 +1,47 @@
+$ pnpm harness context --spec harness/specs/tasks/remote-forge-controlled-preview.md
+
+Context loaded successfully. The selected read set includes the gateway-backend-communication scenario, Main/Renderer layers, typed boundary/transport/readiness rules, Coding producer boundary, contract-first, docs sync, and continuity guidance.
+
+$ node node_modules/.pnpm/vitest@4.1.1_@types+node@25_0445f3589c30cde59a513a4a646d5f21/node_modules/vitest/vitest.mjs run --config vitest.agent-dev.node.config.ts tests/unit/remote-forge-contracts.test.ts --maxWorkers=1
+
+Test Files  1 passed (1)
+Tests       10 passed (10)
+Duration    558ms (final rerun; the first direct-entry run also passed in 426ms)
+
+The direct package entry was used because the current root node_modules has no working pnpm/vitest executable link. No dependency installation or manifest mutation was performed.
+
+$ node node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/bin/tsc --noEmit --strict --target ES2023 --module ESNext --moduleResolution bundler --skipLibCheck --typeRoots .codex-tools/empty-types shared/types/remote-forge.ts
+
+Exit 0. The contract source passes standalone strict TypeScript without relying on the incomplete root ambient type links.
+
+$ pnpm contract:check
+
+Contract check passed.
+
+$ pnpm run i18n:lint
+
+i18n lint passed.
+
+$ pnpm harness validate --spec harness/specs/tasks/remote-forge-controlled-preview.md --no-diff
+
+Spec is valid: harness/specs/tasks/remote-forge-controlled-preview.md
+
+An earlier isolated canonical Harness run exposed only the shared spec and slice 2 files and passed. The final line/path tightening stayed inside the same declared touched areas; the latest structural validation above passed. The primary dirty-worktree canonical run remains non-attributable because it includes hundreds of unrelated changed/untracked files, so touchedAreas was not broadened.
+
+$ pnpm run lint:check
+
+Exit 1 before ESLint due to pre-existing UTF-8 BOMs in:
+- scripts/dcs-ops-preflight.mjs
+- tests/unit/dcs-ops-canary-hard-veto.test.ts
+
+The unrelated files were not modified. An earlier targeted ESLint fallback was also unavailable because the partial dependency tree could not resolve zod/v4.
+
+$ pnpm run typecheck
+
+Exit 1. The wrapper generated the extension bridge, then both project commands failed because the root tsc executable link is missing:
+- pnpm run typecheck:node -> 'tsc' is not recognized
+- pnpm run typecheck:web -> 'tsc' is not recognized
+
+The standalone strict contract check above passed. A direct full-project fallback still lacks the root React ambient types, so no full-project green result is claimed.
+
+Build and Electron E2E are not applicable to this contract-only slice: no runtime consumer, host-api, renderer, or user-visible behavior changed. The Remote Forge Electron E2E remains required for the later consumer/rich-diff slices.

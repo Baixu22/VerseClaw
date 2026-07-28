@@ -151,6 +151,12 @@ export function VtokenBridgePanel() {
           <p className="mt-1 text-meta text-muted-foreground">
             {t('developer.vtokenBridge.description')}
           </p>
+          <p
+            className="mt-2 text-tiny text-muted-foreground"
+            data-testid="settings-vtoken-bridge-layer-role"
+          >
+            {t('developer.contextLayers.vtokenTitle')}
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge

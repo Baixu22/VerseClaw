@@ -1,0 +1,49 @@
+(node:33108) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+$ playwright test "tests/e2e/dcs-preview-optin-fp-p1-03.spec.ts" "--workers=1"
+
+Running 1 test using 1 worker
+
+[fp-p1-03-refused] {"success":false,"enabled":false,"status":"error","restartedGateway":false,"comboFlagIds":["context-view-tools","working-memory","tool-registry","stale-write-guard"],"missingPrereqs":["providerVerified","workspaceSelected","permissionChosen"],"error":"Preview prerequisites missing: providerVerified, workspaceSelected, permissionChosen"}
+[fp-p1-03-on] applied
+  x  1 tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 › FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) › prereq gating → applied via child ack → baseline parity on off → kill shows killed (1.0m)
+
+
+  1) tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 › FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) › prereq gating → applied via child ack → baseline parity on off → kill shows killed 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('settings-dcs-preview-ack')
+    Expected: [32m"[7mappli[27med"[39m
+    Received: [31m"[7mfail[27med"[39m
+    Timeout:  30000ms
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 30000ms[22m
+    [2m  - waiting for getByTestId('settings-dcs-preview-ack')[22m
+    [2m    33 × locator resolved to <div class="space-y-1.5" data-ack-state="failed" data-testid="settings-dcs-preview-ack">…</div>[22m
+    [2m       - unexpected value "failed"[22m
+
+
+      185 |       await expect(page.getByTestId('settings-dcs-preview-switch')).toBeDisabled();
+      186 |       await expect(page.getByTestId('settings-dcs-preview-switch')).toBeEnabled({ timeout: 400_000 });
+    > 187 |       await expect(ack).toHaveAttribute('data-ack-state', 'applied', { timeout: 30_000 });
+          |                         ^
+      188 |       for (const key of [
+      189 |         'dcs.contextViewTools.enabled',
+      190 |         'runtime.contextBlock.working_memory.enabled',
+        at C:\Users\27933\Desktop\clawx\ClawX-maturity-p0\tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:187:25
+
+    Error Context: test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-→-kill-shows-killed\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-→-kill-shows-killed\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\dcs-preview-optin-fp-p1-03-d3e17--on-off-→-kill-shows-killed\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\dcs-preview-optin-fp-p1-03.spec.ts:96:7 › FP-P1-03 DCS Coding Preview switch (real Settings DOM + real child) › prereq gating → applied via child ack → baseline parity on off → kill shows killed 
+[ELIFECYCLE] Command failed with exit code 1.

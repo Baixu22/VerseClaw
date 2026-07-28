@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { createRequire } from 'module';
+import { spawnSync } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { rmSync, mkdirSync, existsSync, readFileSync, readdirSync, statSync } from 'fs';
@@ -9,6 +10,38 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const RUNTIME_ROOT = join(ROOT, 'openclaw_runtime');
 const DIST = join(RUNTIME_ROOT, 'dist');
+
+const targetedOnlyArgs = [
+  '--memory-operator-inspection-only',
+  '--event-log-operator-inspection-only',
+  '--memory-read-hydration-shadow-only',
+  '--sekb-only',
+];
+const isTargetedOnlyBuild = targetedOnlyArgs.some((arg) => process.argv.includes(arg));
+
+function runNodeScript(scriptPath, args, cwd) {
+  const result = spawnSync(process.execPath, [scriptPath, ...args], {
+    cwd,
+    env: process.env,
+    stdio: 'inherit',
+    windowsHide: true,
+  });
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
+}
+
+if (!isTargetedOnlyBuild) {
+  // The runtime's build profile owns the complete dist graph. In particular,
+  // dist-runtime extension wrappers import public artifacts from
+  // dist/extensions, so a core-only clean build leaves a non-bootable tree.
+  runNodeScript(join(RUNTIME_ROOT, 'scripts', 'build-all.mjs'), ['cliStartup'], RUNTIME_ROOT);
+  runNodeScript(join(ROOT, 'scripts', 'smoke-openclaw-runtime.mjs'), [], ROOT);
+  process.exit(0);
+}
 
 const esbuildRequire = createRequire(join(RUNTIME_ROOT, 'node_modules', 'esbuild', 'package.json'));
 const esbuild = esbuildRequire('esbuild');
@@ -204,12 +237,6 @@ console.log(`  Output: ${DIST}`);
 // Full builds start from a clean dist. Targeted only-mode builds must not wipe
 // sibling entry outputs: unit tests run concurrent only-mode builds that each
 // need their own dist artifact to remain available for package-script checks.
-const isTargetedOnlyBuild =
-  process.argv.includes('--memory-operator-inspection-only') ||
-  process.argv.includes('--event-log-operator-inspection-only') ||
-  process.argv.includes('--memory-read-hydration-shadow-only') ||
-  process.argv.includes('--sekb-only');
-
 mkdirSync(DIST, { recursive: true });
 if (isTargetedOnlyBuild) {
   for (const entryName of Object.keys(selectedRuntimeEntryPoints)) {

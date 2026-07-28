@@ -1,0 +1,141 @@
+{
+  "schema": "sekb-golden-path.v1",
+  "taskId": "TF-0004",
+  "ok": true,
+  "autoWriteback": false,
+  "writtenAt": "2026-07-22T09:43:34.909Z",
+  "surface": "electron-host-api",
+  "stages": [
+    {
+      "stage": "execute",
+      "ok": true,
+      "detail": {
+        "trajectoryIds": [
+          "ccd47eba-477b-4577-849b-e471913b27b4",
+          "347a258d-460b-422e-94a3-32a78f8dab9b"
+        ],
+        "stepCounts": [
+          2,
+          2
+        ]
+      }
+    },
+    {
+      "stage": "compress",
+      "ok": true,
+      "detail": {
+        "compressed": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "stage": "candidate",
+      "ok": true,
+      "detail": {
+        "suggestions": 1,
+        "mode": "deterministic"
+      }
+    },
+    {
+      "stage": "filter",
+      "ok": true,
+      "detail": {
+        "selectedCluster": "Similar config/db trajectories (2)",
+        "confidence": 0.5
+      }
+    },
+    {
+      "stage": "confirm",
+      "ok": true,
+      "detail": {
+        "principleId": "37ff4ecc-a596-4c55-874a-f9ed51dd73e0",
+        "dcsWrite": "written",
+        "sessionId": "session:tf-0004:e2e-golden"
+      }
+    },
+    {
+      "stage": "persist",
+      "ok": true,
+      "detail": {
+        "principleId": "37ff4ecc-a596-4c55-874a-f9ed51dd73e0"
+      }
+    },
+    {
+      "stage": "recall",
+      "ok": true,
+      "detail": {
+        "hitIds": [
+          "37ff4ecc-a596-4c55-874a-f9ed51dd73e0"
+        ],
+        "matched": true
+      }
+    },
+    {
+      "stage": "behavior_delta",
+      "ok": true,
+      "detail": {
+        "beforeChars": 0,
+        "afterChars": 378,
+        "deltaChars": 378
+      }
+    },
+    {
+      "stage": "evaluate",
+      "ok": true,
+      "detail": {
+        "writeOccurredOnlyAfterConfirm": true,
+        "noAutoWriteback": true
+      }
+    }
+  ],
+  "lineage": {
+    "sessionId": "session:tf-0004:e2e-golden",
+    "sourceTrajectoryIds": [
+      "347a258d-460b-422e-94a3-32a78f8dab9b",
+      "ccd47eba-477b-4577-849b-e471913b27b4"
+    ],
+    "principleId": "37ff4ecc-a596-4c55-874a-f9ed51dd73e0",
+    "provenance": {
+      "schema": "sekb-confirm-provenance.v1",
+      "sessionId": "session:tf-0004:e2e-golden",
+      "sourceSystem": "ui-confirm",
+      "sourceTrajectoryIds": [
+        "347a258d-460b-422e-94a3-32a78f8dab9b",
+        "ccd47eba-477b-4577-849b-e471913b27b4"
+      ],
+      "integrity": "confirmed",
+      "confirmedAt": "2026-07-22T09:43:34.891Z",
+      "revokeKey": "revoke:sekb-principle:37ff4ecc-a596-4c55-874a-f9ed51dd73e0",
+      "taskId": "P3-002",
+      "findingIds": [
+        "F-DATA-002",
+        "F-DATA-004"
+      ],
+      "summaryOnlyClaimDowngraded": false,
+      "highTrustEligible": true
+    },
+    "dcsWrite": "written",
+    "highTrustEligible": true
+  },
+  "behaviorDelta": {
+    "beforeInjection": "",
+    "afterInjection": "[Relevant SEKB principle 1] Check PostgreSQL access before retrying (golden-path e2e)\nCondition: When PostgreSQL reports Connection refused during config/db tasks\nAction: Verify service is running, pg_hba.conf allows the client, and firewall rules permit port 5432\nReason: Repeated connection refusals across similar trajectories indicate environment/config before code bugs\n---",
+    "changed": true,
+    "deltaChars": 378
+  },
+  "evaluation": {
+    "chainComplete": true,
+    "writeOccurredOnlyAfterConfirm": true,
+    "recallMatchedConfirmedPrinciple": true,
+    "behaviorChangedAfterPersist": true,
+    "noAutoWriteback": true
+  },
+  "policy": {
+    "autoWriteback": false,
+    "humanConfirmRequired": true,
+    "defaultOn": false,
+    "jointSystemGa": false
+  }
+}

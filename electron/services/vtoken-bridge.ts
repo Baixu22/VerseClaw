@@ -55,10 +55,16 @@ let lastWorkerError: string | undefined;
 
 /**
  * Bridge enablement (diagnostics host-api).
- * Product default ON. Kill-switch: VERSE_VTOKEN_BRIDGE_ENABLED=0|false|off.
- * Also disabled when VERSE_VTOKEN_ASSEMBLY_ENABLED is explicitly 0/false/off.
+ * Product default OFF (opt-in canary). Enable: VERSE_VTOKEN_BRIDGE_ENABLED=1 or setEnabled(true).
+ * Kill-switch: VERSE_VTOKEN_BRIDGE_ENABLED=0|false|off.
+ * Also disabled when VERSE_VTOKEN_ASSEMBLY_ENABLED is explicitly 0/false/off,
+ * or when VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH is engaged.
  */
 export function readVtokenBridgeEnabledFromEnv(): boolean {
+  const enhancement = (process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH ?? '').trim().toLowerCase();
+  if (enhancement === '1' || enhancement === 'true' || enhancement === 'yes' || enhancement === 'on') {
+    return false;
+  }
   const assembly = (process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED ?? '').trim().toLowerCase();
   if (assembly === '0' || assembly === 'false' || assembly === 'no' || assembly === 'off') {
     return false;
@@ -66,10 +72,10 @@ export function readVtokenBridgeEnabledFromEnv(): boolean {
   const raw = (process.env.VERSE_VTOKEN_BRIDGE_ENABLED ?? '').trim().toLowerCase();
   // Explicit disable
   if (raw === '0' || raw === 'false' || raw === 'no' || raw === 'off') return false;
-  // Explicit enable
+  // Explicit enable (opt-in canary)
   if (raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on') return true;
-  // Product default: enabled
-  return true;
+  // Product default: disabled (opt-in)
+  return false;
 }
 
 export function isVtokenBridgeEnabled(): boolean {

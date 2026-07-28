@@ -1,0 +1,32 @@
+{
+  "schema": "browser-security-recovery/v1",
+  "taskForestNode": "TF-0005",
+  "generatedAt": "2026-07-22T09:53:22.120Z",
+  "hostWorkflow": {
+    "vaultHealth": "not_configured",
+    "createStatus": "queued",
+    "waitingStatus": "waiting-approval",
+    "runWhileWaitingBlocked": true,
+    "approvedStatus": "queued",
+    "listedStatus": "queued",
+    "statusExplainPresent": true
+  },
+  "vaultHealth": {
+    "state": "not_configured",
+    "path": "C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-Zo0pX7\\agent-browser\\vault.json",
+    "credentialCount": 0,
+    "errorCode": "VAULT_NOT_CONFIGURED",
+    "errorMessage": "Agent browser vault has not been configured yet"
+  },
+  "unitLocks": {
+    "modeUpgradeUserApproval": "tests/unit/agent-browser-runtime-mode.test.ts",
+    "taskPersistRestartInterrupted": "tests/unit/agent-browser-task-service.test.ts",
+    "vaultNotConfiguredVsCorrupted": "tests/unit/agent-browser-vault.test.ts",
+    "privateNetworkDefaultFalse": "tests/unit/default-config-matrix.test.ts"
+  },
+  "acceptance": {
+    "securityDefaultRegression": true,
+    "workflowE2E": true,
+    "restartStatusExplainable": "unit-locked recoverTasksAfterRestart"
+  }
+}

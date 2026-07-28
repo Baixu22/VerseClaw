@@ -39,6 +39,12 @@
 
 Product capability statements must be checked against the canonical matrix in `shared/capability-claims.ts` and the generated status table in `artifacts/capability-claims/status-table.json` before being described as implemented, productized, stable, or end-to-end verified. The local gate `node scripts/check-capability-claims.mjs <files>` warns when high-confidence claims lack matrix, E2E, or real-runtime evidence.
 
+## Windows x64 Controlled Preview Scope
+
+The current first-product validation target is **Verse Claw Windows x64 - DCS Coding Controlled Preview**. The path is internal, single-workspace, explicitly `opt-in`, and includes provider/model verification, controlled read/write/test/undo, runtime acknowledgement, restart recovery, kill/rollback, and a redacted support bundle.
+
+This scope does not include Runtime Memory injection, SEKB automatic writeback, unsupervised or private-network Browser use, automatic C6/C7 cutover, Coding WAL, automatic repository merge, or multi-forge/DAG expansion. Engineering and real-process tests are available; human canary evidence and release approval are still pending. The canonical one-label component inventory is in [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview).
+
 ## Overview
 
 **Verse Claw** bridges the gap between powerful AI agents and everyday users. Built on top of [OpenClaw](https://github.com/OpenClaw), it transforms command-line AI orchestration into an accessible, beautiful desktop experience鈥攏o terminal required.
@@ -378,6 +384,35 @@ Verse Claw employs a **dual-process architecture** with a unified host API layer
   - macOS/Linux: `lsof -nP -iTCP:18789 -sTCP:LISTEN`
   - Windows (PowerShell): `Get-NetTCPConnection -LocalPort 18789 -State Listen`
 - Clicking the window close button (`X`) hides Verse Claw to tray; it does **not** fully quit the app. Use tray menu **Quit Verse Claw** for complete shutdown.
+
+### Controlled VerseShell typed ACI canary
+
+VerseShell is an optional Windows x64 execution backend for internal canaries. It is disabled by default and is not a general-availability or native-shell replacement. When explicitly enabled, Agent `exec` calls still pass OpenClaw's allowlist/approval policy, then run through the verified bundled `ae.exe` with a workspace jail, strict repository-owned policy, only the `shell.exec` capability, and an action-bound one-time approval token. Runtime, protocol, catalog, workspace, capability, or policy drift fails closed; governed execution never falls back to the native shell.
+
+Use this conservative `openclaw.json` configuration:
+
+```json
+{
+  "tools": {
+    "exec": {
+      "host": "verseshell",
+      "security": "allowlist",
+      "ask": "on-miss"
+    }
+  },
+  "runtime": {
+    "verseShellFoundation": {
+      "verifiedRuntime": true,
+      "typedAci": true,
+      "facade": true,
+      "governedExec": true,
+      "artifactResults": true
+    }
+  }
+}
+```
+
+The session directive `/exec host=verseshell security=allowlist ask=on-miss` may select the same host when configuration allows the override. Large outputs return `result://sha256/...` handles; the Agent can inspect bounded slices with `verseshell_result`. Keep `legacyEval`, `mcpCompatibility`, and `compatibilityNativeFallback` disabled. For immediate rollback, set `runtime.verseShellFoundation.killSwitch` to `true` or export `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`, then restart the Gateway.
 
 ---
 
