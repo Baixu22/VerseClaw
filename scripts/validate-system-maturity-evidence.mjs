@@ -162,7 +162,11 @@ for (const phase of ['phase4-runtime-surfaces', 'phase5-reliability-abuse']) {
   const artifactPrefix = phase.startsWith('phase4') ? 'P4-' : 'P5-';
   const artifactRoot = path.join(root, 'artifacts/system-maturity');
   for (const entry of fs.readdirSync(artifactRoot, { withFileTypes: true })) {
-    if (!entry.isDirectory() || !entry.name.startsWith(artifactPrefix)) continue;
+    if (
+      !entry.isDirectory()
+      || !entry.name.startsWith(artifactPrefix)
+      || entry.name.endsWith('-EVIDENCE')
+    ) continue;
     const indexPath = path.join(artifactRoot, entry.name, 'evidence-index.json');
     if (!fs.existsSync(indexPath)) fail(`${entry.name} missing evidence-index.json`);
     else validateEvidenceIndex(indexPath);
@@ -261,28 +265,30 @@ const report = {
   info: INFO,
 };
 
-const outDir = path.join(
-  root,
-  selectedTaskPrefixes.length > 0
-    ? `artifacts/system-maturity/${selectedTaskPrefixes.join('').replace(/[^A-Za-z0-9-]/g, '')}-EVIDENCE`
-    : 'artifacts/system-maturity/P0-004',
-);
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, 'validate-system-maturity-evidence.json'), JSON.stringify(report, null, 2) + '\n');
+if (!integrityProbe) {
+  const outDir = path.join(
+    root,
+    selectedTaskPrefixes.length > 0
+      ? `artifacts/system-maturity/${selectedTaskPrefixes.join('').replace(/[^A-Za-z0-9-]/g, '')}-EVIDENCE`
+      : 'artifacts/system-maturity/P0-004',
+  );
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, 'validate-system-maturity-evidence.json'), JSON.stringify(report, null, 2) + '\n');
 
-// Also write a stable evidence index of all recomputed hashes
-fs.writeFileSync(
-  path.join(outDir, 'evidence-index.json'),
-  JSON.stringify(
-    {
-      schemaVersion: 1,
-      generatedAt: report.checkedAt,
-      entries: recomputed,
-    },
-    null,
-    2,
-  ) + '\n',
-);
+  // Also write a stable evidence index of all recomputed hashes.
+  fs.writeFileSync(
+    path.join(outDir, 'evidence-index.json'),
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        generatedAt: report.checkedAt,
+        entries: recomputed,
+      },
+      null,
+      2,
+    ) + '\n',
+  );
+}
 
 for (const m of INFO) console.log(`INFO  ${m}`);
 for (const m of WARN) console.warn(`WARN  ${m}`);
