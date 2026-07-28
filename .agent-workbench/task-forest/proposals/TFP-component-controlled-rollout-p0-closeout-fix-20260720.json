@@ -1,0 +1,93 @@
+{
+  "applied_at": "2026-07-19T21:05:19.362034Z",
+  "base_graph_hash": "07f1119330076f82845cadfff7a531f24bcfc511722d1ac0eac8f6f01b7f468f",
+  "base_summary": {
+    "edge_count": 10,
+    "node_count": 9,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/component-controlled-rollout-p0-closeout.md",
+          "artifacts/component-controlled-rollout-p0/final-report.json",
+          "tests/e2e/dcs-production-wiring-w5.spec.ts",
+          "tests/unit/host-invoke.test.ts",
+          "harness/specs/tasks/component-controlled-rollout-readiness.md",
+          "主工作区关键 Electron 6/6；shadow 关键 Electron 6/6（671.4s）",
+          "pnpm run maturity:validate exit 0；traceability 35 fresh / 0 stale"
+        ],
+        "execution_hints": [
+          "P0 已完成；后续不要重开 W5/maturity，除非新证据显示回归",
+          "shadow Electron 复用了本机 pnpm 依赖缓存/junction，不能写成完全离线供应链复现"
+        ],
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "P0 交付基线已闭合：Goal inventory 精准 staged；W5 在授权 sender/Main-owned Gateway 路径下 3/3；关键 Electron 6/6；maturity exit 0；shadow staged patch runtime build 与关键 6/6 复现通过。"
+      },
+      "id": "TF-0008"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0008",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "先固化 owner/cohort/budget/privacy/metrics/kill/rollback，再运行真实任务",
+          "Runtime Memory 保持 diagnostics-only；不得扩大到 default-on 或 TF-0006"
+        ],
+        "summary": "P0 依赖已满足；可开始准备并执行 DCS coding、SEKB assisted、Browser supervised 的小范围 opt-in canary。实际 canary 尚未执行。"
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0009",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "TF-0008 done：docs/dev/component-controlled-rollout-p0-closeout.md",
+          "TF-0009 ready：docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包"
+        ],
+        "summary": "P0 交付与真实集成证据已完成；下一阶段为 TF-0009 小范围受控 canary。因真实 canary 尚未执行，全局任务继续 in_progress。"
+      },
+      "id": "TF-0007"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0007",
+      "progress": 50,
+      "status": "in_progress"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "继续 blocked：缺真实 corpus、human live A/B、soak 与 product approval；P0/shadow/synthetic 绿灯均不构成解阻证据。"
+      },
+      "id": "TF-0006"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0006",
+      "progress": 10,
+      "status": "blocked"
+    }
+  ],
+  "created_at": "2026-07-19T21:05:19.199915Z",
+  "notes": "首次 TFP-component-controlled-rollout-p0-closeout-20260720 使用 schema 文档示例的 node 字段，但当前 CLI 实现只读取 fields，因此成为无状态变化的 applied proposal。本 proposal 使用当前 CLI 权威实现要求的 fields/set_status。",
+  "proposal_id": "TFP-component-controlled-rollout-p0-closeout-fix-20260720",
+  "rationale": "纠正 task-forest CLI 与 schema 文档的字段差异。P0 staged delivery、授权 sender Windows Electron 6/6、maturity evidence 与 shadow checkout 复现均已闭合；TF-0008 应为 done，TF-0009 应为 ready，TF-0007 保持 in_progress，TF-0006 保持 blocked。",
+  "session_id": "session-2026-07-20-component-rollout-p0-closeout",
+  "status": "applied"
+}

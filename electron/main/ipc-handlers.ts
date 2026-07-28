@@ -53,6 +53,7 @@ import { createWindowApi } from '../services/window-api';
 import { createUpdatesApi } from '../services/updates-api';
 import { createUvApi } from '../services/uv-api';
 import { createVtokenApi } from '../services/vtoken-api';
+import { createDcsProdFlagsApi } from '../services/dcs-prod-flags-api';
 import { createGatewayApi } from '../services/gateway-api';
 import { createLocalControlPlaneApi } from '../services/local-control-plane-api';
 import { createCapabilitiesApi } from '../services/capabilities-api';
@@ -190,6 +191,7 @@ function registerTypedHostHandlers(
     updates: createUpdatesApi(),
     uv: createUvApi(),
     vtoken: createVtokenApi(),
+    dcsProdFlags: createDcsProdFlagsApi(gatewayManager),
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
     terminal: createTerminalApi({ gatewayManager, terminalManager }),

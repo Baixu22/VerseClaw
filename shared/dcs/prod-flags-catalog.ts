@@ -40,7 +40,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
       'Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.',
     rollback: 'Unset env or set to 0/false and restart. View tools leave the default catalog.',
     riskNote:
-      'A/B avgReduction still below 5x gate; keep default-off until C1 graduation + product approval.',
+      'Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). runtime.coding.factViews is deprecated/ignored (TASK-P0-02). Keep default-off until C1 graduation + product approval.',
   },
   {
     id: 'context-tools-alias',
@@ -56,6 +56,34 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     riskNote: 'Alias only; do not treat as a separate graduation path.',
   },
   {
+    id: 'working-memory',
+    wave: 'DCS-S1',
+    kind: 'config',
+    key: 'runtime.contextBlock.working-memory.enabled',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable:
+      'Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.',
+    rollback: 'Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.',
+    riskNote:
+      'TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak.',
+  },
+  {
+    id: 'tool-registry',
+    wave: 'DCS-S3',
+    kind: 'config',
+    key: 'runtime.contextBlock.tool-registry.enabled',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable:
+      'Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.',
+    rollback: 'Set enabled=false or Settings off; restart if needed. Tool summary injection stops.',
+    riskNote:
+      'TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode.',
+  },
+  {
     id: 'stale-write-guard',
     wave: 'C2',
     kind: 'config',
@@ -66,9 +94,8 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'Set openclaw config runtime.coding.staleWriteGuard.enabled=true (or override in process).',
     rollback: 'Set enabled=false or remove leaf; process restart if config is file-backed.',
     riskNote:
-      'Can block full-file writes that look stale; monitor coding.write.falseBlockRate.',
-  },
-  {
+      'Can block full-file writes that look stale; monitor coding.write.falseBlockRate. Override: force=true or allowStaleWrite=true on write (TASK-P1-07). Keep default-off until live false-block corpus passes.',
+  },  {
     id: 'write-journal',
     wave: 'C2',
     kind: 'info',
@@ -234,6 +261,8 @@ export function listEnhancementFlagsDefaultOff(): DcsProdFlagEntry[] {
 export function assertCatalogDefaultHonesty(): { ok: true } {
   const mustStayOff = [
     'context-view-tools',
+    'working-memory',
+    'tool-registry',
     'stale-write-guard',
     'symbol-lease',
     'patch-flow',

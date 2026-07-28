@@ -148,6 +148,7 @@ describe('agent browser runtime mode', () => {
       sessionId,
       targetMode: 'controlled_enhanced',
       reason: 'test',
+      userApproval: true,
     });
     expect(upgraded.runtimeMode).toBe('controlled_enhanced');
     expect(upgraded.session.runtimeMode).toBe('controlled_enhanced');
@@ -171,6 +172,7 @@ describe('agent browser runtime mode', () => {
     await service.requestModeUpgrade({
       sessionId,
       targetMode: 'full_access',
+      userApproval: true,
     });
 
     const snap = await service.takeSnapshot({ sessionId });
@@ -194,6 +196,7 @@ describe('agent browser runtime mode', () => {
         sessionId,
         targetMode: 'controlled_enhanced',
         expiresInMs: 10_000,
+        userApproval: true,
       });
 
       // 时间推进 30 秒，超过 10 秒过期时间
@@ -218,6 +221,7 @@ describe('agent browser runtime mode', () => {
       sessionId,
       targetMode: 'controlled_enhanced',
       expiresInMs: 60_000,
+      userApproval: true,
     });
 
     // 降级
@@ -275,4 +279,22 @@ describe('agent browser runtime mode', () => {
 
     service.close(opened.session.id);
   });
+
+  it('requestModeUpgrade without userApproval is rejected (approval gate)', async () => {
+    const { service } = createService();
+    const opened = await service.open({ url: 'example.com', profile: 'Test', mode: 'headless' });
+    const sessionId = opened.session.id;
+    service.setEnabled(true);
+    await expect(service.requestModeUpgrade({
+      sessionId,
+      targetMode: 'controlled_enhanced',
+    })).rejects.toThrow('userApproval');
+    // downgrade does not require approval
+    await expect(service.requestModeUpgrade({
+      sessionId,
+      targetMode: 'normal_restricted',
+    })).resolves.toMatchObject({ runtimeMode: 'normal_restricted' });
+    service.close(sessionId);
+  });
+
 });

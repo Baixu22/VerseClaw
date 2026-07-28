@@ -2006,6 +2006,75 @@ describe('batchSyncConfigFields', () => {
     expect(ssrfPolicy.allowIpv6UniqueLocalRange).toBe(true);
   });
 
+  it('seeds browser private network default to false (deny)', async () => {
+    await writeOpenClawJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
+
+    const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
+    await batchSyncConfigFields('new-token');
+
+    const config = await readOpenClawJson();
+    const browser = config.browser as Record<string, unknown>;
+    const ssrfPolicy = browser.ssrfPolicy as Record<string, unknown>;
+    expect(ssrfPolicy.dangerouslyAllowPrivateNetwork).toBe(false);
+  });
+
+  it('migrates unacknowledged private network allow to deny (fail-closed)', async () => {
+    await writeOpenClawJson({
+      gateway: { auth: { mode: 'token', token: 'old' } },
+      browser: {
+        ssrfPolicy: { dangerouslyAllowPrivateNetwork: true },
+      },
+    });
+
+    const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
+    await batchSyncConfigFields('new-token');
+
+    const config = await readOpenClawJson();
+    const browser = config.browser as Record<string, unknown>;
+    const ssrfPolicy = browser.ssrfPolicy as Record<string, unknown>;
+    expect(ssrfPolicy.dangerouslyAllowPrivateNetwork).toBe(false);
+    expect(ssrfPolicy.privateNetworkLegacyAllowMigratedAt).toEqual(expect.any(String));
+  });
+
+  it('keeps acknowledged private network allow (canary opt-in)', async () => {
+    await writeOpenClawJson({
+      gateway: { auth: { mode: 'token', token: 'old' } },
+      browser: {
+        ssrfPolicy: {
+          dangerouslyAllowPrivateNetwork: true,
+          dangerouslyAllowPrivateNetworkAcknowledged: true,
+        },
+      },
+    });
+
+    const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
+    await batchSyncConfigFields('new-token');
+
+    const config = await readOpenClawJson();
+    const browser = config.browser as Record<string, unknown>;
+    const ssrfPolicy = browser.ssrfPolicy as Record<string, unknown>;
+    expect(ssrfPolicy.dangerouslyAllowPrivateNetwork).toBe(true);
+  });
+
+  it('migrates unacknowledged allowPrivateNetwork alias to deny (fail-closed)', async () => {
+    await writeOpenClawJson({
+      gateway: { auth: { mode: 'token', token: 'old' } },
+      browser: {
+        ssrfPolicy: { allowPrivateNetwork: true },
+      },
+    });
+
+    const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
+    await batchSyncConfigFields('new-token');
+
+    const config = await readOpenClawJson();
+    const browser = config.browser as Record<string, unknown>;
+    const ssrfPolicy = browser.ssrfPolicy as Record<string, unknown>;
+    expect(ssrfPolicy.allowPrivateNetwork).toBe(false);
+    expect(ssrfPolicy.dangerouslyAllowPrivateNetwork).toBe(false);
+    expect(ssrfPolicy.privateNetworkLegacyAllowMigratedAt).toEqual(expect.any(String));
+  });
+
   it('does not override explicit web_fetch SSRF policy opt-outs', async () => {
     await writeOpenClawJson({
       gateway: { auth: { mode: 'token', token: 'old' } },

@@ -1,0 +1,17 @@
+{
+  "kind": "subtask",
+  "status": "ready",
+  "priority": 1,
+  "purpose": "消除 VToken 默认ON 与 DCS memory 默认OFF 的矛盾，修复 Browser 不安全默认",
+  "requirements": [
+    "VToken 灰度或 opt-in，保留 kill switch",
+    "working-memory canary opt-in",
+    "Runtime Memory 与 SEKB writeback 默认 off",
+    "dangerouslyAllowPrivateNetwork 默认 false"
+  ],
+  "acceptance_criteria": [
+    "默认配置矩阵文档与测试锁定",
+    "kill switch 可切断全部 memory/context 增强",
+    "private network 默认拦截有回归"
+  ]
+}

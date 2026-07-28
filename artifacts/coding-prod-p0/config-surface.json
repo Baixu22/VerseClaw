@@ -12,7 +12,7 @@
       "risk": "opt-in",
       "enable": "Set env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime.",
       "rollback": "Unset env or set to 0/false and restart. View tools leave the default catalog.",
-      "riskNote": "A/B avgReduction still below 5x gate; keep default-off until C1 graduation + product approval."
+      "riskNote": "Single source of truth: env OPENCLAW_DCS_CONTEXT_VIEW_TOOLS (or Settings switch). runtime.coding.factViews is deprecated/ignored (TASK-P0-02). Keep default-off until C1 graduation + product approval."
     },
     {
       "id": "context-tools-alias",
@@ -27,6 +27,30 @@
       "riskNote": "Alias only; do not treat as a separate graduation path."
     },
     {
+      "id": "working-memory",
+      "wave": "DCS-S1",
+      "kind": "config",
+      "key": "runtime.contextBlock.working-memory.enabled",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "opt-in",
+      "enable": "Settings switch or openclaw config runtime.contextBlock.working-memory.enabled=true; restart gateway/runtime so config-sync applies.",
+      "rollback": "Set enabled=false or Settings off; restart if needed. Injection stops; producers may still emit envelopes unused.",
+      "riskNote": "TASK-P1-02: when on, Assembler injects ## Recent Actions once per context (exactly-once). Default remains off until product soak."
+    },
+    {
+      "id": "tool-registry",
+      "wave": "DCS-S3",
+      "kind": "config",
+      "key": "runtime.contextBlock.tool-registry.enabled",
+      "defaultDisplay": "false",
+      "defaultValue": false,
+      "risk": "opt-in",
+      "enable": "Settings switch or openclaw config runtime.contextBlock.tool-registry.enabled=true; restart gateway/runtime.",
+      "rollback": "Set enabled=false or Settings off; restart if needed. Tool summary injection stops.",
+      "riskNote": "TASK-P1-03: when on, before_agent_start writes tool_registry Block and Assembler injects ## Tools summary (exactly-once). Aligns with C1 on_demand schema mode."
+    },
+    {
       "id": "stale-write-guard",
       "wave": "C2",
       "kind": "config",
@@ -36,7 +60,7 @@
       "risk": "opt-in",
       "enable": "Set openclaw config runtime.coding.staleWriteGuard.enabled=true (or override in process).",
       "rollback": "Set enabled=false or remove leaf; process restart if config is file-backed.",
-      "riskNote": "Can block full-file writes that look stale; monitor coding.write.falseBlockRate."
+      "riskNote": "Can block full-file writes that look stale; monitor coding.write.falseBlockRate. Override: force=true or allowStaleWrite=true on write (TASK-P1-07). Keep default-off until live false-block corpus passes."
     },
     {
       "id": "write-journal",
@@ -60,7 +84,7 @@
       "risk": "opt-in",
       "enable": "Set runtime.coding.worktree.backend=git OR createWorktreeService({ backend: \"git\" }). Requires isolation=worktree on the request/plan.",
       "rollback": "Set backend=inprocess. Isolation request default remains shared.",
-      "riskNote": "Not C4-H hardened; Windows path/lock/install residuals remain. Do not change isolation default."
+      "riskNote": "C4-H git lifecycle hardened (lock/path/cleanup); backend default remains inprocess. Do not change isolation default. C4-P hardlink install residual."
     },
     {
       "id": "isolation-request",
@@ -72,7 +96,7 @@
       "risk": "request-only",
       "enable": "Pass isolation: \"worktree\" on orchestrator request/plan (or worker) when multi-worker writes need isolation.",
       "rollback": "Omit isolation or set \"shared\". Unknown values normalize to shared.",
-      "riskNote": "normalizeIsolationMode defaults shared; production default must stay shared until C4-H + approval."
+      "riskNote": "normalizeIsolationMode defaults shared; C4-H landed but production default stays shared until product approval."
     },
     {
       "id": "symbol-lease",
@@ -84,7 +108,7 @@
       "risk": "opt-in",
       "enable": "runtime.coding.symbolLease.enabled=true; optional mode=memory|wal (default memory).",
       "rollback": "enabled=false. Shared write path is unperturbed when off.",
-      "riskNote": "Multi-process WAL not production-hardened (C5-H residual). Prefer mode=memory until C5-H."
+      "riskNote": "C5-H multi-process WAL hardened (opt-in mode=wal). Prefer mode=memory default; keep enabled=false until product approval."
     },
     {
       "id": "symbol-lease-mode",
@@ -96,7 +120,7 @@
       "risk": "opt-in",
       "enable": "runtime.coding.symbolLease.mode=wal only after multi-process WAL acceptance.",
       "rollback": "mode=memory.",
-      "riskNote": "wal is experimental until C5-H multiProcessWalHardened=true."
+      "riskNote": "wal multi-process hardened (C5-H); still opt-in; default mode remains memory."
     },
     {
       "id": "patch-flow",
@@ -147,5 +171,5 @@
       "riskNote": "Shadow journal only; experienceHitRate still fixture-level. No default knowledge injection."
     }
   ],
-  "enhancementDefaultOffCount": 11
+  "enhancementDefaultOffCount": 13
 }

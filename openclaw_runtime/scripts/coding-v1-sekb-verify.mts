@@ -36,11 +36,12 @@ async function main(): Promise<void> {
   const env = process.env;
   const sekbEnabled = isSekbEnabled(undefined, env);
   const runtime = resolveEmbeddedSekbRuntime({ env });
-  const deps = resolveEmbeddedDcsExtensionDeps({
+  const depsResolution = resolveEmbeddedDcsExtensionDeps({
     prompt: "V-1 verify terminal phase capture",
     env,
     workspaceRoot: process.cwd(),
   });
+  const deps = depsResolution.deps;
 
   const anchors = [
     "openclaw_runtime/src/agents/embedded-agent-runner/dcs-extension-deps.ts:resolveEmbeddedSekbRuntime",

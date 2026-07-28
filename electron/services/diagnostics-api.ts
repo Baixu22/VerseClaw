@@ -7,6 +7,7 @@ import { getOpenClawConfigDir } from '../utils/paths';
 import { buildGatewayHealthSummary } from '../utils/gateway-health';
 import { buildChannelAccountsView, getChannelStatusDiagnostics } from './channels-api';
 import { buildSandboxStatus } from './sandbox-api';
+import { exportSupportBundle } from './support-bundle';
 
 const DEFAULT_TAIL_LINES = 200;
 
@@ -82,5 +83,7 @@ export function createDiagnosticsApi(ctx: DiagnosticsApiContext): CompleteHostSe
         gatewayErrLogTail: await readTail(join(openClawDir, 'logs', 'gateway.err.log')),
       };
     },
+    // FP-P1-06: sanitized support bundle export (local file, never auto-sent).
+    exportSupportBundle: async () => exportSupportBundle({ gatewayManager: ctx.gatewayManager }),
   };
 }

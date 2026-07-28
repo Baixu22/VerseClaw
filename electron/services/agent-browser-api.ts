@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
@@ -7,6 +8,7 @@ import {
   decideSandboxHighRiskAction,
   loadSandboxHighRiskPolicy,
 } from '@electron/utils/sandbox-high-risk-gate';
+import { getDataDir } from '../utils/paths';
 import { createDefaultAgentBrowserCliRunner } from './agent-browser-cli-runner';
 import { AgentBrowserService } from './agent-browser-service';
 import { AgentBrowserTaskService } from './agent-browser-task-service';
@@ -65,6 +67,7 @@ export function createAgentBrowserApi(
       signal.throwIfAborted();
       return { sessionId: opened.session.id, runId: task.id };
     },
+    storagePath: join(getDataDir(), 'agent-browser', 'tasks.json'),
   }),
   vault?: AgentBrowserVault,
 ): CompleteHostServiceRegistry['agentBrowser'] {
@@ -155,6 +158,14 @@ export function createAgentBrowserApi(
       success: true,
       task: taskService.cancel(payload.taskId),
     }),
+    requestTaskApproval: (payload) => ({
+      success: true,
+      task: taskService.waitForApproval(payload.taskId),
+    }),
+    approveTask: (payload) => ({
+      success: true,
+      task: taskService.approve(payload.taskId),
+    }),
     show: async (payload) => ({
       success: true,
       session: await service.show(payload.sessionId),
@@ -166,6 +177,10 @@ export function createAgentBrowserApi(
     vault: async () => ({
       success: true,
       credentials: await getVault().list(),
+    }),
+    vaultHealth: async () => ({
+      success: true,
+      health: await getVault().health(),
     }),
     saveCredential: async (payload) => ({
       success: true,

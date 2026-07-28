@@ -20,6 +20,7 @@ import {
 } from "./post-write-diag.js";
 import { extractPatchTargetPaths } from "./tools/write-journal.js";
 import { toFactRelPath } from "./fact-rel-path.js";
+import { detectTestRunner, formatTestRunnerDetection } from "./test-runner-detect.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 
@@ -37,6 +38,8 @@ export type WriteSideEffectsOptions = {
   diagTimeoutMs?: number;
   /** C2-3: attach related-tests verify evidence after write (default true when factStore present). */
   verifyConsumeEnabled?: boolean;
+  /** FP-P1-04: attach project test-runner detection after write (default true). */
+  testRunnerDetectEnabled?: boolean;
 };
 
 function collectTargetPaths(toolName: string, args: unknown, result: unknown): string[] {
@@ -95,7 +98,8 @@ export function wrapToolWithWriteSideEffects(
   const diagEnabled = options.diagEnabled !== false;
   const verifyConsume =
     options.verifyConsumeEnabled !== false && Boolean(options.factStore);
-  if (!parseOnWrite && !syntaxCheck && !diagEnabled && !verifyConsume) {
+  const testRunnerDetect = options.testRunnerDetectEnabled !== false;
+  if (!parseOnWrite && !syntaxCheck && !diagEnabled && !verifyConsume && !testRunnerDetect) {
     return tool;
   }
 
@@ -213,7 +217,85 @@ export function wrapToolWithWriteSideEffects(
           // fail-open
         }
       }
+
+      // FP-P1-04 verify段: say which test command applies — or why none
+      // does. A skip must be explainable, never silence that reads as "passed".
+      if (testRunnerDetect) {
+        try {
+          const detection = detectTestRunner(options.workspaceRoot);
+          const prev =
+            nextResult.details &&
+            typeof nextResult.details === "object" &&
+            !Array.isArray(nextResult.details)
+              ? (nextResult.details as Record<string, unknown>)
+              : {};
+          nextResult = {
+            ...nextResult,
+            details: {
+              ...prev,
+              verify_tests: {
+                ...detection,
+                rendered: formatTestRunnerDetection(detection),
+              },
+            },
+          };
+          codingObservability.recordTestRunnerDetect(detection.detected);
+        } catch {
+          // fail-open: detection must never break a successful write
+        }
+      }
+
+      // FP-P1-04 diff段 + verify段 visibility. `details` is stripped from chat
+      // history by the gateway projection (chat-display-projection.ts deletes
+      // it), so evidence that only lives there never reaches the user — an
+      // `edit` would render as nothing but "Successfully replaced 1 block(s)".
+      // `content` survives the projection, so append it there.
+      nextResult = appendCodingEvidenceToContent(nextResult);
       return nextResult;
     },
   };
+}
+
+const WRITE_DIFF_MAX_CHARS = 4000;
+
+/**
+ * Append the diff, syntax check, and test-runner verdict to the tool result's
+ * text content so the coding loop's diff段/verify段 are visible in the product,
+ * not just in `details` (which chat history drops).
+ */
+function appendCodingEvidenceToContent<T extends { details?: unknown; content?: unknown }>(
+  result: T,
+): T {
+  const details =
+    result.details && typeof result.details === "object" && !Array.isArray(result.details)
+      ? (result.details as Record<string, unknown>)
+      : undefined;
+  if (!details) {
+    return result;
+  }
+  const sections: string[] = [];
+  const diff = typeof details.diff === "string" ? details.diff : "";
+  if (diff.trim().length > 0) {
+    const body =
+      diff.length > WRITE_DIFF_MAX_CHARS
+        ? `${diff.slice(0, WRITE_DIFF_MAX_CHARS)}\n...(diff truncated)...`
+        : diff;
+    sections.push(`diff:\n${body}`);
+  }
+  if (typeof details.syntax_check === "string") {
+    sections.push(`syntax_check: ${details.syntax_check}`);
+  }
+  const verifyTests =
+    details.verify_tests && typeof details.verify_tests === "object"
+      ? (details.verify_tests as Record<string, unknown>)
+      : undefined;
+  if (typeof verifyTests?.rendered === "string") {
+    sections.push(`verify_tests: ${verifyTests.rendered}`);
+  }
+  if (sections.length === 0) {
+    return result;
+  }
+  const block = { type: "text" as const, text: sections.join("\n") };
+  const content = Array.isArray(result.content) ? [...result.content, block] : [block];
+  return { ...result, content };
 }

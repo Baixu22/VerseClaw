@@ -126,3 +126,39 @@ describe('workspace runtime permission sync', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// FP-P1-02: single workspace authority — agents.defaults.workspace follows the
+// active profile rootPath so the gateway agent and the UI judge one boundary.
+// ---------------------------------------------------------------------------
+import { syncActiveWorkspaceRootToRuntime } from '@electron/services/workspace-runtime-sync';
+
+describe('FP-P1-02 syncActiveWorkspaceRootToRuntime', () => {
+  beforeEach(() => {
+    state.config = {};
+    state.writes = [];
+  });
+
+  it('writes the active rootPath into agents.defaults.workspace', async () => {
+    state.config = { agents: { defaults: { workspace: '~/.openclaw/workspace' } } };
+    const modified = await syncActiveWorkspaceRootToRuntime();
+    expect(modified).toBe(true);
+    const written = state.writes.at(-1) as { agents?: { defaults?: { workspace?: string } } };
+    expect(written?.agents?.defaults?.workspace).toBe('C:/project');
+  });
+
+  it('is idempotent when the config already points at the active workspace', async () => {
+    state.config = { agents: { defaults: { workspace: 'C:/project' } } };
+    const modified = await syncActiveWorkspaceRootToRuntime();
+    expect(modified).toBe(false);
+    expect(state.writes).toHaveLength(0);
+  });
+
+  it('creates the agents.defaults chain when missing', async () => {
+    state.config = {};
+    const modified = await syncActiveWorkspaceRootToRuntime();
+    expect(modified).toBe(true);
+    const written = state.writes.at(-1) as { agents?: { defaults?: { workspace?: string } } };
+    expect(written?.agents?.defaults?.workspace).toBe('C:/project');
+  });
+});

@@ -1,0 +1,59 @@
+{
+  "applied_at": "2026-07-19T10:35:59.248553Z",
+  "base_graph_hash": "69746ffcc11dbd4d6e751e6c14bc8b836aca0bfa333b14eadc5f498d11d6fcb1",
+  "base_summary": {
+    "edge_count": 5,
+    "node_count": 6,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0005",
+      "node": {
+        "confidence": 0.9,
+        "evidence": [
+          "electron/services/agent-browser-task-service.ts (persist + recoverTasksAfterRestart)",
+          "electron/services/agent-browser-vault.ts (health not_configured|ready|corrupted|encryption_unavailable)",
+          "electron/services/agent-browser-service.ts (requestModeUpgrade userApproval gate)",
+          "electron/services/agent-browser-api.ts (tasks storagePath + requestTaskApproval/approveTask/vaultHealth)",
+          "shared/host-api/contract.ts + src/lib/host-api.ts",
+          "tests/unit/agent-browser-task-service.test.ts",
+          "tests/unit/agent-browser-vault.test.ts",
+          "tests/unit/agent-browser-runtime-mode.test.ts",
+          "tests/unit/default-config-matrix.test.ts",
+          "tests/e2e/browser-security-recovery.spec.ts",
+          "artifacts/browser-security-recovery/evidence.json",
+          "docs/dev/browser-security-recovery.md",
+          "vitest 30 passed (4 files); contract:check ok; playwright browser-security-recovery 1 passed (7.2s)"
+        ],
+        "execution_hints": [
+          "下一会话：对齐 TF-0004 图状态（若仍 ready/0% 则 re-apply TFP-tf0004）后收口 TF-0001；TF-0006 仍 blocked",
+          "残留：openclaw.json 中已有 private-network=true 不自动迁移；agent-browser CLI open 在部分 E2E 环境失败（unit 覆盖 restart）"
+        ],
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "Browser 内部金丝雀门禁已落地：mode upgrade 需 userApproval；任务磁盘持久化且 running→interrupted 可解释；Vault health 区分未配置/损坏；私网默认 false 回归锁定；Electron host E2E 绿。"
+      }
+    },
+    {
+      "action": "update_node",
+      "id": "TF-0001",
+      "node": {
+        "evidence": [
+          "TF-0005 done: artifacts/browser-security-recovery/evidence.json + tests/e2e/browser-security-recovery.spec.ts"
+        ],
+        "progress": 80,
+        "progress_source": "manual",
+        "summary": "P0-1 编排收口 + P0-2 默认策略 + P0-3 SEKB 闭环 + P0-4 Browser 安全恢复均已落地代码与证据；仍非联合系统 GA；TF-0006 证据升级 blocked。"
+      }
+    }
+  ],
+  "created_at": "2026-07-19T10:07:42.891700Z",
+  "notes": "不开启 Browser 无监督 GA；不翻转 private-network default-on；不触碰 TF-0002 大改与 SEKB 自动写回；不讨论联合系统 GA。",
+  "proposal_id": "TFP-tf0005-browser-security-recovery",
+  "rationale": "本会话完成 TF-0005：Browser 安全默认与任务恢复可验收（mode upgrade 用户批准门、任务持久化与重启 interrupted 可解释、Vault not_configured vs corrupted 可区分、私网默认关闭回归、至少 1 条 host-path Electron E2E）。",
+  "session_id": "session-2026-07-19-tf0005",
+  "status": "applied"
+}

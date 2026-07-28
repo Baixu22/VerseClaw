@@ -1,0 +1,124 @@
+{
+  "schema": "verse-claw-remote-forge-source-manifest/1",
+  "generatedAt": "2026-07-27T17:45:04.418Z",
+  "taskId": "FP-P2-07",
+  "source": {
+    "name": "MergeBeacon",
+    "upstreamUrl": "https://github.com/tisrop/mergebeacon.git",
+    "upstreamWebUrl": "https://github.com/tisrop/mergebeacon",
+    "localSnapshotPath": "C:/Users/27933/Desktop/verseshell/MergeBeacon-main",
+    "localSnapshotObservedAt": "2026-07-28",
+    "containsGitMetadata": false,
+    "snapshotInventory": {
+      "fileCount": 262,
+      "byteSize": 4428869,
+      "algorithm": "sha256(utf8(join(ordinalSort(files), fileSha256 + SP + byteSize + SP + posixRelativePath + LF)))",
+      "rootHash": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+      "embeddedMerkleSnapshot": {
+        "path": ".merkle-snapshot.json",
+        "sha256": "0243d0ec88ce88c175a41f9f9d62639853371f2d9e8ce99f8d981b0e533bdfb5",
+        "declaredRootHash": "c02c122b2ec4959582e0b82bb1a25bd0578a67d27509a085cbd1d023496dd51f",
+        "declaredFileCount": 31,
+        "coversFullSnapshot": false
+      }
+    },
+    "versionClaims": {
+      "readme": "0.8.0",
+      "packageJson": "0.10.0",
+      "cargoToml": "0.10.0",
+      "status": "drift",
+      "disposition": "Treat 0.10.0 as build metadata and the README claim as stale until upstream commit provenance is resolved; neither value authorizes source copying."
+    },
+    "license": {
+      "spdx": "Apache-2.0",
+      "declaredByPackageJson": true,
+      "declaredByCargoToml": true,
+      "licenseFile": "LICENSE",
+      "licenseFileSha256": "f6ca6d410b1858cdec5d3f502c7ad7f01646b9947d0a6504a0422fbb2d659835",
+      "noticeFilePresent": false,
+      "redistributionRequirements": [
+        "Provide a copy of Apache-2.0 when distributing copied or derivative source.",
+        "Mark modified copied files with prominent change notices.",
+        "Retain applicable copyright, patent, trademark, and attribution notices.",
+        "Re-check the resolved upstream commit for NOTICE before any source copy."
+      ]
+    },
+    "anchorHashes": {
+      "README.md": "811c11e78638b9ea8c472b4ae0f1a08e551dfbfb2f7c0db4b7a9f9564d7fbb38",
+      "package.json": "3652d14139e341faac7a59b40cbe3655a9a439e73e67f38a057a6b077c220598",
+      "src-tauri/Cargo.toml": "8fec841c0f452b80b672cf229f8d9c39d34a6b50574e20aadbea61d706a392e6"
+    }
+  },
+  "upstreamResolution": {
+    "status": "exact_parent_commit_unresolved",
+    "observedRefs": {
+      "main": "ba9fca80eae1f474f3cfb84b36d485991733655e",
+      "release/0.10.0": "6407a8f9168f6f2520ca1c8861bb9411aac5e6a0",
+      "v0.10.0TagObject": "070233c07e1d6c860d9858b71d0c4674689c17a4",
+      "v0.10.0Commit": "8c8c2f63d65711cc801bc039e34033f144462496",
+      "prDiffCommitScopeHead": "3383256585d91668980349f0ea24abe17d0f01b2",
+      "pullRequest54Head": "3383256585d91668980349f0ea24abe17d0f01b2"
+    },
+    "contentComparisons": [
+      {
+        "candidate": "main@ba9fca80eae1f474f3cfb84b36d485991733655e",
+        "remoteFileCount": 266,
+        "localMissingCount": 4,
+        "differentCount": 2,
+        "missing": [
+          ".github/release.yml",
+          ".github/checks/release-download-guide.mjs",
+          ".github/checks/__tests__/release-config.spec.ts",
+          ".github/checks/__tests__/release-download-guide.spec.ts"
+        ],
+        "different": [
+          ".github/checks/__tests__/release-smoke.spec.ts",
+          ".github/workflows/release.yml"
+        ]
+      },
+      {
+        "candidate": "release/0.10.0@6407a8f9168f6f2520ca1c8861bb9411aac5e6a0",
+        "remoteFileCount": 254,
+        "localExtraCount": 8,
+        "differentCount": 23,
+        "summary": "The local snapshot contains the later commit-range/diff-selector work."
+      },
+      {
+        "candidate": "v0.10.0@8c8c2f63d65711cc801bc039e34033f144462496",
+        "remoteFileCount": 254,
+        "localExtraCount": 8,
+        "differentCount": 23,
+        "summary": "The local snapshot is newer than the v0.10.0 release tree."
+      }
+    ],
+    "pullRequest54Evidence": {
+      "subject": "feat(release): add categorized device download guides",
+      "singleCommit": "3383256585d91668980349f0ea24abe17d0f01b2",
+      "filesChanged": 6,
+      "addedLines": 345,
+      "deletedLines": 2,
+      "relationToSnapshot": "All six local-to-head deltas are exactly the files changed by this single commit, so the snapshot matches its parent tree by content; the parent commit SHA remains unresolved."
+    },
+    "diagnostics": [
+      "Anonymous GitHub REST requests were rate-limited during the audit.",
+      "Three filtered or shallow git clone attempts were reset or timed out by the network path.",
+      "git ls-remote, codeload commit archives, and the PR 54 patch remained available and supplied the recorded evidence."
+    ]
+  },
+  "adoptionPolicy": {
+    "directSourceCopyAllowed": false,
+    "reason": "The exact parent commit SHA is unresolved. No copied implementation may enter Verse Claw until the commit and NOTICE state are frozen.",
+    "allowedNow": [
+      "Study behavior and boundary cases.",
+      "Write Verse Claw-owned TypeScript contracts and adapters from the accepted requirements.",
+      "Recreate test corpus cases without copying implementation text."
+    ],
+    "forbidden": [
+      "Copy Tauri, Vue, or Rust implementation files into Verse Claw.",
+      "Treat README version 0.8.0 or package version 0.10.0 as proof of the snapshot commit.",
+      "Create a second local Git service, patch schema, or write journal.",
+      "Use this source record as authorization for real remote mutations."
+    ]
+  }
+}
+

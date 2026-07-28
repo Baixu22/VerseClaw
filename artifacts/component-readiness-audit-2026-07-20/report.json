@@ -1,0 +1,114 @@
+{
+  "schema": "component-readiness-audit/v2",
+  "generatedAt": "2026-07-20T05:06:32.8817874+08:00",
+  "verdict": {
+    "status": "p0-closed-p1-canary-ready",
+    "controlledInternalUseCandidate": true,
+    "p1CanaryReady": true,
+    "p1CanaryExecuted": false,
+    "defaultOn": false,
+    "liveReady": false,
+    "productApproved": false,
+    "readyForDefaultFlagGraduation": false,
+    "jointSystemGa": false
+  },
+  "components": [
+    {
+      "id": "dcs-core",
+      "status": "p1-canary-ready",
+      "defaultOff": true
+    },
+    {
+      "id": "context-orchestrator",
+      "status": "tracked-opt-in-kill-switchable"
+    },
+    {
+      "id": "blockstore-working-memory",
+      "status": "controlled-canary-candidate",
+      "defaultOff": true
+    },
+    {
+      "id": "vtoken",
+      "status": "controlled-canary-candidate",
+      "defaultOff": true
+    },
+    {
+      "id": "runtime-memory",
+      "status": "diagnostics-only",
+      "evidenceClass": "scripted-synthetic",
+      "liveReady": false
+    },
+    {
+      "id": "sekb",
+      "status": "human-confirm-canary-ready",
+      "autoWriteback": false
+    },
+    {
+      "id": "browser",
+      "status": "approval-gated-canary-ready",
+      "privateNetworkDefaultDeny": true
+    },
+    {
+      "id": "delivery-evidence",
+      "status": "p0-closed",
+      "staged": true
+    }
+  ],
+  "gates": {
+    "p0Accept": {
+      "ok": true,
+      "files": 8,
+      "tests": 107
+    },
+    "dcsTests": {
+      "ok": true,
+      "files": 32,
+      "tests": 253
+    },
+    "focusedUnit": {
+      "ok": true,
+      "files": 3,
+      "tests": 70
+    },
+    "runtimeMemoryEnhancedEval": {
+      "ok": true,
+      "files": 17,
+      "tests": 159,
+      "evidenceClass": "scripted-synthetic"
+    },
+    "selectedElectronE2E": {
+      "ok": true,
+      "passed": 6,
+      "failed": 0,
+      "shadowPassed": 6,
+      "shadowFailed": 0
+    },
+    "maturityValidate": {
+      "ok": true,
+      "findings": 35,
+      "fresh": 35,
+      "stale": 0
+    },
+    "shadowRuntimeBuild": {
+      "ok": true
+    },
+    "diffCheck": {
+      "ok": true
+    }
+  },
+  "residuals": [
+    "P1 canary has not been executed; owner, cohort, budget, metrics, privacy, kill, rollback, and real run records remain.",
+    "Runtime Memory remains diagnostics-only and lacks real corpus, human live A/B, soak, and product approval.",
+    "TF-0006 remains blocked and continues to block default-on/liveReady/productApproved/GA claims.",
+    "A fully isolated empty-cache Electron dependency installation remains a supply-chain hardening item."
+  ],
+  "documents": [
+    "docs/dev/component-controlled-rollout-p0-closeout.md",
+    "docs/dev/component-operationalization-index.md",
+    "docs/dev/component-readiness-audit-2026-07-20.md",
+    "docs/dev/component-controlled-rollout-plan.md",
+    "docs/dev/component-operational-readiness-checklist.md",
+    "docs/dev/handoffs/LATEST.md",
+    "artifacts/component-controlled-rollout-p0/final-report.json"
+  ]
+}

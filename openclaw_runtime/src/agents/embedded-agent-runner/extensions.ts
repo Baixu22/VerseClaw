@@ -237,6 +237,11 @@ function buildWorkingMemoryFactory(params: {
       await enqueue(async () => undefined);
       const store = getBlockStore();
       const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
+      // FP-P0-02: `cfg` is intentionally omitted, NOT forgotten. The factory only
+      // holds a construction-time config snapshot, and a snapshot would pin the
+      // config-form kill switch to whatever was true when the agent started.
+      // Omitting it makes assemble() resolve config per-request through
+      // `resolveAssembleKillSwitchConfig`, so a mid-session kill takes effect.
       const result = await assembler.assemble(
         { session_id: sessionId },
         { existing_output: messages },

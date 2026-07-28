@@ -104,6 +104,11 @@ const SAFE_GATEWAY_METHODS = new Set([
   'memory.previewProposal',
   'memory.feedbackList',
   'observability.traces',
+  // FP-P0-04: child-runtime flag acknowledgement. Pure read — the child reports its
+  // own resolved flags, pid, config source and turn-effect probe. It mutates
+  // nothing, and the control plane must be able to read it in every permission mode
+  // (an operator in readOnly still needs to see whether a flag actually applied).
+  'runtime.flags.ack',
   'security.health',
   'security.policy.get',
   'security.policy.simulate',
@@ -220,7 +225,8 @@ export function decideWorkspaceFileWrite(
       allowed: false,
       requiresApproval: true,
       risk: 'external-write',
-      reason: 'Writing outside the workspace requires approval',
+      // FP-P1-02: name the actual boundary so the denial is self-explaining.
+      reason: `Write target is outside the workspace boundary (${workspace.rootPath}); external writes require approval`,
     };
   }
   // acceptEdits: auto-accept in-workspace file edits only; high-risk shell/git remain gated elsewhere.

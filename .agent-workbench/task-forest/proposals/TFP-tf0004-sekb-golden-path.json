@@ -1,0 +1,55 @@
+{
+  "applied_at": "2026-07-19T09:50:01.608208Z",
+  "base_graph_hash": "c4699f388e58bd81ce418b239aff1b5ef20e3e227b1213341b780e5c5f3177ed",
+  "base_summary": {
+    "edge_count": 5,
+    "node_count": 6,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0004",
+      "node": {
+        "confidence": 0.9,
+        "evidence": [
+          "openclaw_runtime/src/knowledge/sekb/golden-path.ts",
+          "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts",
+          "tests/e2e/sekb-golden-path.spec.ts",
+          "artifacts/sekb-golden-path/evidence.json",
+          "docs/dev/sekb-golden-path.md",
+          "electron/services/knowledge-api.ts (sekbCaptureTrajectory / sekbRetrieveForTask / sekbConfirmPrinciple)",
+          "shared/host-api/contract.ts",
+          "src/lib/host-api.ts",
+          "vitest: golden-path 2 passed; host-api-facade+knowledge-api 64 passed; contract:check ok; playwright sekb-golden-path 1 passed"
+        ],
+        "execution_hints": [
+          "下一会话优先 TF-0005 Browser 安全与任务恢复",
+          "残留：完整 live agent 对话中的 SEKB 注入仍受 feature flag 约束，本节点证明半自动闭环而非全量 GA"
+        ],
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "SEKB 半自动黄金路径已落地：runSekbGoldenPath + host capture/suggest/confirm/retrieve + Electron E2E 绿；证据含 lineage，确认前不写 principle（无 auto writeback）。"
+      }
+    },
+    {
+      "action": "update_node",
+      "id": "TF-0001",
+      "node": {
+        "evidence": [
+          "TF-0004 done: artifacts/sekb-golden-path/evidence.json + tests/e2e/sekb-golden-path.spec.ts"
+        ],
+        "progress": 60,
+        "progress_source": "manual",
+        "summary": "P0-1 编排收口 + P0-2 默认策略 + P0-3 SEKB 黄金闭环已完成；仍待 Browser 任务恢复（TF-0005）与延后证据升级（TF-0006）。"
+      }
+    }
+  ],
+  "created_at": "2026-07-19T09:47:56.491036Z",
+  "notes": "不触及 TF-0005 大改；不开启 SEKB 自动写回；不翻转 default-on / 联合系统 GA。新增 host API sekbCaptureTrajectory / sekbRetrieveForTask 仅服务半自动闭环与诊断。",
+  "proposal_id": "TFP-tf0004-sekb-golden-path",
+  "rationale": "本会话完成 TF-0004：SEKB 半自动黄金闭环（execute→compress→candidate→filter→human confirm→persist→recall→behavior delta）已用单元测试 + Electron E2E 锁定，并写入 lineage 证据；无自动写回 worker。",
+  "session_id": "session-2026-07-19-tf0004",
+  "status": "applied"
+}

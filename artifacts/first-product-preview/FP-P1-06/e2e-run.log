@@ -1,0 +1,6 @@
+$ playwright test "tests/e2e/support-bundle-fp-p1-06.spec.ts" "--workers=1"
+[fp-p1-06-ui] Saved to C:\Users\27933\AppData\Local\Temp\verse-claw-e2e-user-data-0ovJu9\support-bundles\verse-claw-support-2026-07-27T08-54-44-929Z.json · redaction hits: 5
+[fp-p1-06-export] {"success":true,"path":"C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-0ovJu9\\support-bundles\\verse-claw-support-2026-07-27T08-54-45-099Z.json","redaction":{"findings":[{"type":"windows-user-path","hits":5}],"totalHits":5,"verified":true}}
+[fp-p1-06-size] {"sizeBytes":12289,"truncated":["verseClawLogTail:300-lines"]}
+  ok 1 tests\e2e\support-bundle-fp-p1-06.spec.ts:97:7 › FP-P1-06 support bundle export (real Electron + real child) › one-click export is sanitized, child-mirrored, and self-reporting (29.3s)
+  1 passed (30.4s)

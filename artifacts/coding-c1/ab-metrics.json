@@ -3,6 +3,16 @@
   "wave": "C1-2",
   "targetReduction": 5,
   "avgReduction": 4.5,
+  "reductionDefinition": {
+    "note": "FP-P0-05 accounting reconciliation. Do not compare this figure to artifacts/dcs-canary/c1 (5.125x) without reading the corpus field: same formula, different corpus.",
+    "formula": "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+    "corpus": "hand-authored C1-2 navigation fixtures (impact/understand/verify/registration)",
+    "fixtureCount": 4,
+    "meanOffCalls": 4.5,
+    "meanOnCalls": 1,
+    "live": false,
+    "reconciliation": "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md"
+  },
   "meetsGate": false,
   "judgment": "below_target",
   "defaultFlipRecommendation": "KEEP shadow/default-off; see gaps",

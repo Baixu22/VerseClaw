@@ -20,6 +20,14 @@ import { handleRoleMemoryKnowledge } from "./handlers/role-memory-handler.js";
 import { formatToolRegistryInjection } from "./handlers/tool-registry-handler.js";
 import { parseWorkingMemoryActions } from "./handlers/working-memory-handler.js";
 import { dcsObservability } from "./dcs-observability.js";
+import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
+import { resolveKillSwitchConfig } from "./kill-switch-config-source.js";
+import { beginTurnInjectionBudget } from "./turn-injection-budget.js";
+import {
+  applyInjectionBudget,
+  createInjectionBudget,
+  type InjectionBudgetState,
+} from "./injection-budget.js";
 
 export interface AssembleRequest {
   session_id: string;
@@ -27,6 +35,23 @@ export interface AssembleRequest {
   role_name?: string;
   /** DCS v1.6.1 addendum 4: config-aware mainKey for session classification. */
   mainKey?: string;
+  /**
+   * FP-P0-02: request-level runtime config so the enhancement kill switch can
+   * see the *config* form (`runtime.contextEnhancement.killSwitch`), not just the
+   * env form. Deliberately per-request rather than a constructor snapshot: the
+   * Assembler is long-lived and a snapshot would go stale after a config write,
+   * making the config kill switch silently ineffective.
+   *
+   * Omitting it degrades to env-only kill, which is why every production caller
+   * must pass it (see the call-site table in FP-P0-02).
+   */
+  cfg?: unknown;
+  /**
+   * FP-P0-05: identifier of the agent turn this assemble() belongs to. When set,
+   * DCS injections charge the turn-wide shared budget instead of a private
+   * per-assemble one, so all injection sources appear on the same account.
+   */
+  turnId?: string;
 }
 
 export type LegacyHandlerId = "compass" | "role_memory";
@@ -97,6 +122,18 @@ export interface AssemblerDependencies {
   contextBlockSink?: ContextBlockSink;
 }
 
+/**
+ * FP-P0-02: resolve the config the kill switch evaluates for one assemble().
+ *
+ * An explicit `request.cfg` wins (callers that already hold a fresh config, and
+ * tests). Otherwise read the on-disk config through the mtime-keyed source so a
+ * config-form kill engaged mid-session takes effect on the next turn rather than
+ * being pinned to whatever was true when the Assembler was constructed.
+ */
+export function resolveAssembleKillSwitchConfig(request: AssembleRequest): unknown {
+  return request.cfg !== undefined ? request.cfg : resolveKillSwitchConfig();
+}
+
 export function selectHandlers(request: AssembleRequest): LegacyHandlerId[] {
   if (isMainSessionKey(request.session_id, request.mainKey)) {
     return ["compass"];
@@ -128,15 +165,35 @@ export class Assembler {
     inputs: AssemblerLegacyInputs<TExistingOutput>,
     flags: ContextBlockFeatureFlags = DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS,
   ): Promise<AssemblerResult<TExistingOutput>> {
-    const resolvedFlags = {
-      ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS,
-      ...flags,
-    };
+    // Master kill switch forces all context-block enhancements off (fail-closed).
+    // FP-P0-02: `request.cfg` is forwarded so the config-form kill switch is a
+    // real switch, not an empty one. An unparseable cfg makes the helper throw
+    // internally and return true (fail-closed), which is the intended behavior.
+    const killCfg = resolveAssembleKillSwitchConfig(request);
+    const killed = isContextEnhancementKillSwitchEngaged(killCfg);
+    const resolvedFlags = killed
+      ? { ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS }
+      : {
+          ...DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS,
+          ...flags,
+        };
     const eligibleHandlers = new Set(selectHandlers(request));
     const result: AssemblerResult<TExistingOutput> = {
       output: inputs.existing_output,
       selected_handlers: [],
     };
+    // TASK-P2-03: one shared budget for all DCS transformContext injections.
+    // FP-P0-05: when the caller supplies a `turnId`, the DCS channels charge the
+    // turn-wide ledger that VToken / memory-pilot / CVK also charge, so the
+    // accounting sums to the turn's real prompt growth. Without a turnId we fall
+    // back to a per-assemble budget (the pre-FP-P0-05 behavior) rather than
+    // silently sharing state between unrelated turns.
+    const turnLedger = request.turnId
+      ? beginTurnInjectionBudget({ turnId: request.turnId, killed })
+      : undefined;
+    const injectionBudget = turnLedger
+      ? turnLedger.budget
+      : createInjectionBudget(KNOWLEDGE_INJECTION_CHAR_BUDGET);
 
     if (
       eligibleHandlers.has("compass") &&
@@ -186,11 +243,21 @@ export class Assembler {
     }
 
     if (resolvedFlags["runtime.contextBlock.working_memory.enabled"]) {
-      result.output = (await this.#appendWorkingMemory(request, result.output)) as TExistingOutput;
+      result.output = (await this.#appendWorkingMemory(
+        request,
+        result.output,
+        injectionBudget,
+        killCfg,
+      )) as TExistingOutput;
     }
 
     if (resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
-      result.output = (await this.#appendToolRegistry(request, result.output)) as TExistingOutput;
+      result.output = (await this.#appendToolRegistry(
+        request,
+        result.output,
+        injectionBudget,
+        killCfg,
+      )) as TExistingOutput;
     }
 
     // DCS Stage 4: knowledge Block injection (compass for main, role-memory for subagent).
@@ -203,6 +270,8 @@ export class Assembler {
         result.output,
         eligibleHandlers,
         resolvedFlags,
+        injectionBudget,
+        killCfg,
       )) as TExistingOutput;
     }
 
@@ -212,9 +281,17 @@ export class Assembler {
   async #appendWorkingMemory<TExistingOutput>(
     request: AssembleRequest,
     output: TExistingOutput,
+    budget: InjectionBudgetState,
+    killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      return output;
+    }
+    // FP-P0-02: the kill switch must cut the BlockStore *query* too, not only the
+    // injection. assemble() already zeroes the flags when killed, so this is a
+    // second fail-closed fence for any future direct caller.
+    if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
     if (hasRecentActionsHeading(output)) {
@@ -235,16 +312,27 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
-    return [...output, { role: "user", content: injection }] as TExistingOutput;
+    const applied = applyInjectionBudget(budget, injection, "working_memory");
+    if (!applied.text) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      return output;
+    }
+    dcsObservability.recordDcsTransformContextInjection({ chars: applied.charsApplied });
+    return [...output, { role: "user", content: applied.text }] as TExistingOutput;
   }
 
   async #appendToolRegistry<TExistingOutput>(
     request: AssembleRequest,
     output: TExistingOutput,
+    budget: InjectionBudgetState,
+    killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      return output;
+    }
+    // FP-P0-02: same fail-closed fence on the tool-registry query segment.
+    if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
     if (hasToolsHeading(output)) {
@@ -265,8 +353,13 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
-    return [...output, { role: "user", content: injection }] as TExistingOutput;
+    const applied = applyInjectionBudget(budget, injection, "tool_registry");
+    if (!applied.text) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      return output;
+    }
+    dcsObservability.recordDcsTransformContextInjection({ chars: applied.charsApplied });
+    return [...output, { role: "user", content: applied.text }] as TExistingOutput;
   }
 
   /**
@@ -281,9 +374,15 @@ export class Assembler {
     output: TExistingOutput,
     eligibleHandlers: Set<LegacyHandlerId>,
     flags: ContextBlockFeatureFlags,
+    budget: InjectionBudgetState,
+    killCfg: unknown,
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      return output;
+    }
+    // FP-P0-02: same fail-closed fence on the knowledge query segment.
+    if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
     if (hasKnowledgeHeading(output)) {
@@ -291,8 +390,8 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
     }
-    // ANTI-3: main 鈫?compass only; subagent 鈫?role-memory only.
-    // Flags must also be ON 鈥?a flag-off source must never be injected.
+    // ANTI-3: main -> compass only; subagent -> role-memory only.
+    // Flags must also be ON - a flag-off source must never be injected.
     const sourceSystems: SourceSystem[] = [];
     if (eligibleHandlers.has("compass") && flags["runtime.contextBlock.compass.enabled"]) {
       sourceSystems.push("compass");
@@ -315,8 +414,13 @@ export class Assembler {
       dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
       return output;
     }
-    dcsObservability.recordDcsTransformContextInjection({ chars: injection.length });
-    return [...output, { role: "user", content: injection }] as TExistingOutput;
+    const applied = applyInjectionBudget(budget, injection, "knowledge");
+    if (!applied.text) {
+      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      return output;
+    }
+    dcsObservability.recordDcsTransformContextInjection({ chars: applied.charsApplied });
+    return [...output, { role: "user", content: applied.text }] as TExistingOutput;
   }
 }
 

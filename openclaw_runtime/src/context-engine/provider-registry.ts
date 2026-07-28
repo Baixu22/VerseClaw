@@ -62,7 +62,7 @@ function diagnostic(params: {
     reason: params.reason,
     message: params.message,
     evidenceRefs: params.providerId
-      ? [{ type: "other", ref: params.providerId, label: "Context provider registry pilot" }]
+      ? [{ type: "other", ref: params.providerId, label: "Context provider registry" }]
       : [],
     metadata: params.metadata,
   };

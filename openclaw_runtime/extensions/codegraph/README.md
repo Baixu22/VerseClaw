@@ -1,58 +1,44 @@
-# CodeGraph Runtime Base
+# CodeGraph — RETIRED (do not use as a product feature)
 
-CodeGraph is vendored into OpenClaw Runtime as a narrow project-cognition base
-layer. It should answer only:
+> **Status:** RETIRED (context-engine rebuild Task I).  
+> **Superseded by:** in-process FactStore / DCS view tools  
+> (`context_understand` / `context_impact` / `context_reuse` / `context_verify` — opt-in via Settings → Developer → DCS Production Flags).  
+> **Default:** `enabledByDefault: false` in `openclaw.plugin.json`.  
+> **Retained for:** impact-parity harness / historical dist only.  
+> **Not:** a default coding tool surface, Settings feature, or recommended agent path.
 
-- where task-relevant code probably lives,
-- which files/symbols should be read first,
-- whether the index is fresh enough to use for navigation.
+## What users should use instead
 
-It is not the final fact source. Any edit or behavior claim must be verified by
-reading the real source files.
+| Need | Use |
+|------|-----|
+| Symbol / impact / understand | DCS Fact view tools (opt-in, TASK-P0-01+) |
+| Working memory | DCS `working_memory` flags (opt-in) |
+| Working Context packing | Verse Token (Settings → Developer) |
+| Navigation shell | CVK (default engine shell — not memory) |
 
-## Runtime contract
+## Runtime contract (historical only)
 
-Recommended flow:
+The flow below is **legacy documentation** for the retired plugin. Prefer FactStore tools.
 
 ```text
-codegraph_decide
-  -> codegraph_context_plan
-  -> direct source read of planned files
-  -> edit / validate / test
+(retired) codegraph_decide -> codegraph_context_plan -> direct source read
 ```
 
-Hard boundaries:
+Hard boundaries if someone force-enables the plugin:
 
-- If the user already named files, read those files directly first.
-- Use CodeGraph for location, call-chain, flow, impact, or large-context
-  narrowing.
-- Use `strict` freshness for high-risk runtime/security/protocol/state tasks.
-- Treat `stale`, `unchecked`, low confidence, or missing live files as a signal
-  to fall back to grep/search plus direct source reads.
-- Do not use CodeGraph as an AST refactoring or quality-governance platform in
-  this Runtime base layer.
+- Still verify claims by reading real source.
+- Prefer FactStore / direct reads over CodeGraph for product work.
+- Treat stale/unchecked index as untrusted.
 
-## Quality gate
-
-Run from `openclaw_runtime/`:
+## Quality gate (harness only)
 
 ```bash
+# from openclaw_runtime/ — parity harness, not product enablement
 pnpm test:codegraph-runtime
 ```
 
-The gate verifies:
+## Related
 
-- native tool registration count and manifest contract match,
-- vendored `dist/` static assets and CommonJS boundary are present,
-- temporary TypeScript project indexing works,
-- `codegraph_decide` and `codegraph_context_plan` enforce the source-read
-  boundary,
-- search works,
-- fast mode surfaces dirty workspace staleness,
-- balanced mode refreshes and recovers high-confidence retrieval.
-
-Metrics are written to:
-
-```text
-.artifacts/codegraph-runtime-e2e-metrics.json
-```
+- `openclaw.plugin.json` — `enabledByDefault: false`, description starts with RETIRED  
+- TASK-P0-06 — hide/retire dead surfaces  
+- Settings Context layers explainer (TASK-P0-05)

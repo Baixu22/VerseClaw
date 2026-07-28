@@ -157,3 +157,14 @@ export {
   type SessionCascadeReport,
   type SessionCascadeStores,
 } from "./session-cascade-delete.js";
+
+export {
+  defaultSekbGoldenPathArtifactPath,
+  runSekbGoldenPath,
+  SEKB_GOLDEN_PATH_SCHEMA,
+  SEKB_GOLDEN_PATH_TASK_ID,
+  type SekbGoldenPathOptions,
+  type SekbGoldenPathResult,
+  type SekbGoldenPathStage,
+  type SekbGoldenPathStageRecord,
+} from "./golden-path.js";

@@ -1623,6 +1623,12 @@
         "pitfalls": "????",
         "rules": "??"
       }
+    },
+    "providerGate": {
+      "title": "尚未配置 AI Provider",
+      "desc": "当前没有已验证的 AI Provider，消息无法发送。请在 设置 → AI Providers 中完成配置。",
+      "configure": "去配置 Provider",
+      "dismiss": "暂不"
     }
   },
   "historyBuckets": {

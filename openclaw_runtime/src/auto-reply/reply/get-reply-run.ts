@@ -1323,6 +1323,12 @@ export async function runPreparedReply(
       sessionFile: preparedSessionState.sessionFile,
       workspaceDir,
       cwd: normalizeOptionalString(sessionEntry?.spawnedCwd),
+      // D3 closeout (consumer side): carry the trusted workspace authority
+      // fingerprint from ctx (set by Gateway chat.send from Main-produced
+      // params.workspaceFingerprint) into FollowupRun.run so embedded attempt
+      // can prefer it over the locally computed `effectiveWorkspace` fingerprint.
+      // Absent → agent-config fallback path uses the local compute.
+      workspaceFingerprint: normalizeOptionalString(ctx.WorkspaceFingerprint),
       config: cfg,
       skillsSnapshot,
       provider,

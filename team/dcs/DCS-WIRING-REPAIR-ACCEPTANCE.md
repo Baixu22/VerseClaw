@@ -11,7 +11,7 @@
 |----|-------|--------|--------|
 | D1 | Fake tool names / missing context_* agent tools | **CONFIRMED closed** | W2 |
 | D2 | Phase producer never called; attempt DCS deps missing | **CONFIRMED closed** | W1 |
-| D3 | workspace fingerprint / invalidate | **CONFIRMED closed (slice)** + residual chain | W6 |
+| D3 | workspace fingerprint / invalidate | **CONFIRMED closed** (slice + Chat→Main→Gateway producer chain + consumer-side attempt trusted-fingerprint wiring) | W6 |
 | D4 | SEKB island | **CONFIRMED closed (flag-gated)** | W4 |
 | D5 | empty toolEntries | **CONFIRMED closed** | W3 |
 | D6 | flags default false / no real E2E | **CONFIRMED closed (E2E)**; defaults remain false | W5 |
@@ -31,19 +31,39 @@
 - Attempt/compact pass sink/store into `buildEmbeddedExtensionFactories` via `resolveEmbeddedDcsExtensionDeps`.
 - Evidence: `DCS-W1-COMPLETE.md`; `task-loop-controller.ts` emit path; `dcs-extension-deps.ts`.
 
-### D3 - CONFIRMED closed (vertical slice) + residual
+### D3 - CONFIRMED closed (vertical slice + Chat→Main→Gateway producer chain + consumer-side attempt wiring)
 
-**Closed:**
+**Closed (vertical slice, W6):**
 
 - `computeWorkspaceFingerprint` + in-memory session bind + invalidate `working-memory:${sessionId}` on mismatch.
 - Production embedded attempt call site: `run/attempt.ts:1244-1264`.
 - Counters: `workspaceScopeInvalidated` / `workspaceScopeBound` in `dcs-observability.ts`.
 - Tests: `workspace-fingerprint.test.ts`.
 
-**Residual (not closed):**
+**Closed (Chat→Main→Gateway chain, D3 closeout 2026-07-25):**
 
-- Chat->Main `normalizeRootPath` fingerprint producer not wired (`electron/services/workspaces-api.ts` path).
-- No Gateway `chat.send` fingerprint field; attempt uses `effectiveWorkspace` local authority.
+- Chat→Main `normalizeRootPath` fingerprint producer wired: Main now looks up the workspace's rootPath via `getWorkspaceRootPathById` (`electron/services/workspaces-api.ts:470`) and produces the trusted authority fingerprint via the shared `computeWorkspaceFingerprint` helper (`shared/workspace-fingerprint.ts:30`, imported at `electron/services/chat-api.ts:11-12`). The runtime mirrors the same pure function locally at `openclaw_runtime/src/context-engine/workspace-fingerprint.ts:44` so no cross-package CJS/ESM import is introduced; both copies are pinned byte-identical by tests.
+- Main forwards both `workspaceId` and `workspaceFingerprint` into `chat.send` rpcParams (`electron/services/chat-api.ts:448-457`). When rootPath lookup fails, `workspaceId` is still forwarded for Task Ledger continuity but no fingerprint is produced (agent-config fallback path, no false invalidation).
+- Gateway `chat.send` schema accepts `workspaceFingerprint` (`openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts:92`, `Type.Optional(Type.String())` under `additionalProperties: false`).
+- Tests: `tests/unit/chat-api-workspace-fingerprint.test.ts` (5 cases — workspaceId forwarding, fingerprint generation/forwarding, absence when no workspaceId, absence when rootPath lookup fails, no lookup call when workspaceId absent) + `openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.test.ts` (4 cases — schema accepts fingerprint with/without workspaceId, accepts absence, rejects unknown fields).
+- TDD: RED phase first (tests committed before the chat-api/schema wiring), then GREEN.
+- No flag defaults changed; no new config surface; root `pnpm run typecheck:node` + `typecheck:web` green; runtime `tsgo:core` pre-existing `shared/*.ts` CommonJS/`verbatimModuleSyntax` errors unchanged and unrelated to this change.
+
+**Closed (consumer side, D3 closeout 2026-07-25):**
+
+- Gateway `chat.send` handler reads `params.workspaceFingerprint` and forwards it into `ctx.WorkspaceFingerprint` (`openclaw_runtime/src/gateway/server-methods/chat.ts:3243` extract, `:4033` ctx injection). Absent → agent-config fallback path (no false invalidation).
+- `MsgContext` carries the trusted fingerprint field (`openclaw_runtime/src/auto-reply/templating.ts:330`, `WorkspaceFingerprint?: string`).
+- `FollowupRun.run` carries the trusted fingerprint field (`openclaw_runtime/src/auto-reply/reply/queue/types.ts:114`, `workspaceFingerprint?: string`).
+- `runPreparedReply` injects `ctx.WorkspaceFingerprint` into `FollowupRun.run.workspaceFingerprint` (`openclaw_runtime/src/auto-reply/reply/get-reply-run.ts:1331`).
+- `buildEmbeddedRunBaseParams` forwards `run.workspaceFingerprint` into `RunEmbeddedAgentParams` (`openclaw_runtime/src/auto-reply/reply/agent-runner-run-params.ts:87`).
+- `RunEmbeddedAgentParams` carries the trusted fingerprint field (`openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts:122`, `workspaceFingerprint?: string`).
+- Embedded attempt prefers the trusted fingerprint over the locally computed `effectiveWorkspace` fingerprint via `resolveTrustedWorkspaceFingerprint` (`openclaw_runtime/src/context-engine/workspace-fingerprint.ts:82`, consumed at `openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts:1267`). `bindSessionWorkspaceFingerprint` semantics unchanged: compare against the previous session-scoped binding and invalidate `working-memory:${sessionId}` on mismatch, counting `workspaceScopeInvalidated`.
+- Tests: `openclaw_runtime/src/context-engine/workspace-fingerprint.test.ts` adds 5 consumer-side cases (trusted fingerprint preferred, fallback to local compute on undefined/empty, empty-on-empty, trusted fingerprint driving invalidate on mismatch with previous binding). Total 12 cases (7 pre-existing + 5 new) all green.
+- TDD: RED phase first (5 new tests failed with `resolveTrustedWorkspaceFingerprint is not a function`), then GREEN after implementing the pure helper + the ctx → FollowupRun → RunEmbeddedAgentParams → attempt wiring.
+- No flag defaults changed; no new config surface; runtime `tsgo:core` shows no new errors in touched files; root `pnpm run typecheck:node` green; DCS regression suite (`workspace-fingerprint` / `chat-api-workspace-fingerprint` / `logs-chat` / `dcs-observability` / `dcs-extension-deps` / `extensions.working-memory`) all green.
+
+**Residual (deferred, not blocking):**
+
 - ACP `acp_cwd_passthrough` label not instrumented.
 - No dedicated workspace A/B isolation E2E in this repair series.
 
@@ -82,7 +102,7 @@
 | Infrastructure ready | TRUE |
 | Stage 2/5 product revenue ready | FALSE (flags default off; no Settings control plane) |
 | Fatal D1/D2 | CLOSED |
-| High D3 | SLICE LIVE; full Chat authority chain residual |
+| High D3 | CLOSED (slice + Chat→Main→Gateway producer chain + consumer-side attempt trusted-fingerprint wiring, 2026-07-25) |
 | High D4/D5/D6 | CLOSED as above |
 | Med D7 | CLOSED |
 | Low D8 over-claims | CORRECTED |

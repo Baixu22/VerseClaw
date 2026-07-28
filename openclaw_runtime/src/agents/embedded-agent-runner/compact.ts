@@ -850,11 +850,18 @@ async function compactEmbeddedAgentSessionDirectOnce(
 
     const runAbortController = new AbortController();
     // DCS Stage 5 / W2: resolve BlockStore + sink once for context_* tools and extension factories.
-    const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+    // TASK-P0-04: degradationNotice available when storage fails (logged; compact has no prompt inject).
+    const dcsDepsResolution = resolveEmbeddedDcsExtensionDeps({
       spawnedBy: params.spawnedBy,
       cfg: params.config,
       workspaceRoot: effectiveWorkspace,
     });
+    const dcsExtensionDeps = dcsDepsResolution.deps;
+    if (dcsDepsResolution.degradationNotice) {
+      log.warn(
+        `dcs storage degraded during compact: ${dcsDepsResolution.failureCode ?? "unknown"}`,
+      );
+    }
     const toolsRaw = createOpenClawCodingTools({
       exec: {
         ...params.execOverrides,

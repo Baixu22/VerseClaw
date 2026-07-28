@@ -24,6 +24,10 @@ import type {
   KnowledgeSekbConfirmPrincipleResult,
   KnowledgeSekbRejectSuggestionPayload,
   KnowledgeSekbRejectSuggestionResult,
+  KnowledgeSekbCaptureTrajectoryPayload,
+  KnowledgeSekbCaptureTrajectoryResult,
+  KnowledgeSekbRetrieveForTaskPayload,
+  KnowledgeSekbRetrieveForTaskResult,
   KnowledgeSekbShadowEvaluationExportPayload,
   KnowledgeSekbShadowEvaluationExportResult,
   KnowledgeSekbShadowEvaluationProtocolPayload,
@@ -260,6 +264,31 @@ type SekbRuntimeModule = {
       highTrustEligible: boolean;
     }>;
     reject_suggestion: (suggestion: unknown, reason?: string) => void;
+  };
+TrajectoryCapture: new (options: { store: unknown }) => {
+    start_trajectory: (taskIntent: string, taskType: string, contextTags: string[]) => string;
+    log_step: (trajectoryId: string, action: string, input: unknown, output: unknown) => void;
+    finish_trajectory: (
+      trajectoryId: string,
+      outcome: 'success' | 'failure' | 'partial',
+      rawError?: string | null,
+    ) => { trajectory_id: string; steps: unknown[] };
+  };
+  RetrievalEngine: new (options: { store: unknown }) => {
+    retrieve_for_task: (
+      taskIntent: string,
+      taskType: string,
+      contextTags: string[],
+      topK?: number,
+    ) => Array<{
+      principle_id: string;
+      title: string;
+      condition: string;
+      action: string;
+      reason: string;
+      retrieval_count: number;
+    }>;
+    format_for_injection: (principles: Array<{ principle_id: string; title: string }>) => string;
   };
   SekbBatchDistillationAssistant: new (options: Record<string, unknown>) => {
     suggest: (input: Record<string, unknown>) => Promise<{
@@ -4099,6 +4128,120 @@ export function createKnowledgeApi({
           success: false,
           available: false,
           reason: 'rejectFailed',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbCaptureTrajectory: async (
+      payload: KnowledgeSekbCaptureTrajectoryPayload,
+    ): Promise<KnowledgeSekbCaptureTrajectoryResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb || typeof sekb.TrajectoryCapture !== 'function') {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+        };
+      }
+      try {
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+        const taskIntent = typeof body.taskIntent === 'string' ? body.taskIntent.trim() : '';
+        const taskType = typeof body.taskType === 'string' ? body.taskType.trim() : '';
+        const outcome = body.outcome;
+        if (!taskIntent || !taskType || (outcome !== 'success' && outcome !== 'failure' && outcome !== 'partial')) {
+          return {
+            success: false,
+            available: true,
+            reason: 'invalidInput',
+            error: 'taskIntent, taskType, and outcome are required',
+          };
+        }
+        if (outcome === 'failure' && !(typeof body.rawError === 'string' && body.rawError.trim())) {
+          return {
+            success: false,
+            available: true,
+            reason: 'invalidInput',
+            error: 'rawError is required when outcome is failure',
+          };
+        }
+        const contextTags = Array.isArray(body.contextTags)
+          ? body.contextTags.filter((tag): tag is string => typeof tag === 'string')
+          : [];
+        const steps = Array.isArray(body.steps) ? body.steps : [];
+        const store = createHostSekbStore(sekb);
+        const capture = new sekb.TrajectoryCapture({ store });
+        const trajectoryId = capture.start_trajectory(taskIntent, taskType, contextTags);
+        for (const step of steps) {
+          if (!isRecord(step) || typeof step.action !== 'string') continue;
+          capture.log_step(trajectoryId, step.action, step.input ?? null, step.output ?? null);
+        }
+        const finished = capture.finish_trajectory(
+          trajectoryId,
+          outcome,
+          typeof body.rawError === 'string' ? body.rawError : null,
+        );
+        return {
+          success: true,
+          available: true,
+          trajectoryId: finished.trajectory_id,
+          stepCount: Array.isArray(finished.steps) ? finished.steps.length : 0,
+          compressed: true,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'captureFailed',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+
+    sekbRetrieveForTask: async (
+      payload: KnowledgeSekbRetrieveForTaskPayload,
+    ): Promise<KnowledgeSekbRetrieveForTaskResult> => {
+      const sekb = await loadSekbRuntimeModule();
+      if (!sekb || typeof sekb.RetrievalEngine !== 'function') {
+        return {
+          success: true,
+          available: false,
+          reason: 'runtimeUnavailable',
+          principles: [],
+          injection: '',
+        };
+      }
+      try {
+        const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+        const taskIntent = typeof body.taskIntent === 'string' ? body.taskIntent : '';
+        const taskType = typeof body.taskType === 'string' ? body.taskType : '';
+        const contextTags = Array.isArray(body.contextTags)
+          ? body.contextTags.filter((tag): tag is string => typeof tag === 'string')
+          : [];
+        const topK = typeof body.topK === 'number' ? body.topK : 5;
+        const store = createHostSekbStore(sekb);
+        const engine = new sekb.RetrievalEngine({ store });
+        const principles = engine.retrieve_for_task(taskIntent, taskType, contextTags, topK).map((p) => ({
+          principle_id: p.principle_id,
+          title: p.title,
+          condition: p.condition,
+          action: p.action,
+          reason: p.reason,
+          retrieval_count: p.retrieval_count,
+        }));
+        return {
+          success: true,
+          available: true,
+          principles,
+          injection: engine.format_for_injection(principles),
+        };
+      } catch (error) {
+        return {
+          success: false,
+          available: false,
+          reason: 'retrieveFailed',
+          principles: [],
+          injection: '',
           error: error instanceof Error ? error.message : String(error),
         };
       }

@@ -1,0 +1,536 @@
+[
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "构建成熟统一 Agent 产品系统",
+      "validation_plan": [
+        "逐节点 Harness 与测试证据",
+        "Windows 生命周期矩阵",
+        "真实 cohort paired A/B 与 soak"
+      ],
+      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
+      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
+    },
+    "blocked_by": [],
+    "confidence": 0.7,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0009",
+    "kind": "task",
+    "next_action": "先固化 owner/cohort/budget/privacy/metrics/kill/rollback，再运行真实任务",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "把通过门禁的组件转化为可运营的内部工具。",
+    "ready": true,
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 360,
+    "status": "ready",
+    "success_metrics": [
+      "安全或隐私泄漏 0",
+      "未授权持久化 0",
+      "关键失败均可解释"
+    ],
+    "title": "P1 组件小范围受控内测运行包"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "构建成熟统一 Agent 产品系统",
+      "validation_plan": [
+        "逐节点 Harness 与测试证据",
+        "Windows 生命周期矩阵",
+        "真实 cohort paired A/B 与 soak"
+      ],
+      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
+      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
+    },
+    "blocked_by": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "desired_outcomes": [
+      "关键实现、测试、文档与证据可在 clean checkout 复现",
+      "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
+      "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
+    ],
+    "difficulty": "high",
+    "id": "TF-0007",
+    "kind": "global_task",
+    "next_action": "一次只推进一个 ready 节点",
+    "priority": 1,
+    "progress": 50.0,
+    "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
+    "ready": true,
+    "remaining_minutes_max": 1440,
+    "remaining_minutes_min": 720,
+    "status": "in_progress",
+    "success_metrics": [
+      "未授权写入 0",
+      "SEKB 未确认写入 0",
+      "Browser 私网绕过 0",
+      "kill switch 演练成功率 100%"
+    ],
+    "title": "DCS 与关联组件受控内测投用收口（非GA）"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "把现有 Agent 组件融合为成熟、统一、可持续开发的产品系统",
+      "validation_plan": [
+        "逐节点 Harness、单元、类型和通信门禁",
+        "Windows process lifecycle 与 crash/replay 测试",
+        "受控 cohort paired A/B 和 soak"
+      ],
+      "why_not_enough": "完成该主线仍不自动提供全量 default-on 或 GA 资格。",
+      "why_this_task": "该主线直接解决审计识别的唯一执行路径、唯一 context authority、恢复语义和真实收益证据缺口。"
+    },
+    "blocked_by": [],
+    "confidence": 0.58,
+    "context_tags": [
+      "unified-agent",
+      "verseshell",
+      "context",
+      "vtoken",
+      "coding",
+      "memory"
+    ],
+    "desired_outcomes": [
+      "合格本地 exec/process 在 canary cohort 中 100% 经过 VerseShell",
+      "所有 prompt 增量由唯一 Context Orchestrator 选择、去重和计费",
+      "文件 mutation、进程执行和 Memory 写入均有明确失败与恢复语义",
+      "统一 trace 能关联 plan、policy、execution、observation、context 和 memory candidate"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0010",
+    "kind": "global_task",
+    "next_action": "只解锁依赖链中的首个未完成节点",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "将 VerseShell、VerseToken、Coding、Context/DCS 和 Memory 从可用组件收口为可审计、可恢复、可验证的统一 Agent 系统。",
+    "ready": true,
+    "remaining_minutes_max": 24000,
+    "remaining_minutes_min": 14400,
+    "status": "proposed",
+    "success_metrics": [
+      "重复进程创建 0",
+      "静默 partial mutation 0",
+      "未计费或重复 context 注入 0",
+      "未授权 Memory/SEKB 持久化 0",
+      "kill switch 与 rollback 演练成功率 100%"
+    ],
+    "title": "统一 Agent 基础设施主路径收口（非GA）"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "构建成熟统一 Agent 产品系统",
+      "validation_plan": [
+        "逐节点 Harness 与测试证据",
+        "Windows 生命周期矩阵",
+        "真实 cohort paired A/B 与 soak"
+      ],
+      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
+      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "unknown",
+    "id": "TF-0006",
+    "kind": "subtask",
+    "next_action": "澄清阻塞原因并决定解除或废止",
+    "priority": 3,
+    "progress": 10.0,
+    "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "blocked",
+    "success_metrics": [],
+    "title": "M2/M3 证据升级（延后）"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.86,
+      "user_goal": "让 Agent 在长期任务中积累可靠记忆而非重复工作",
+      "validation_plan": [
+        "memory lifecycle state tests",
+        "correction/deletion E2E",
+        "cross-scope isolation tests",
+        "human-confirmed SEKB E2E"
+      ],
+      "why_not_enough": "真实收益和毕业仍需 UAS-08。",
+      "why_this_task": "它在已有统一证据链上增加受治理长期事实和经验复用。"
+    },
+    "blocked_by": [
+      "TF-0017"
+    ],
+    "confidence": 0.5,
+    "context_tags": [],
+    "desired_outcomes": [
+      "MemoryCandidate 经验证和批准后进入唯一目标 store",
+      "事实支持 TTL、纠正、冲突、supersede 和 revoke",
+      "SEKB 始终人工确认"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0018",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0017",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "让 Runtime Memory 与 SEKB 提供长期价值，同时避免错误、越权和重复 authority。",
+    "ready": false,
+    "remaining_minutes_max": 4800,
+    "remaining_minutes_min": 2400,
+    "status": "proposed",
+    "success_metrics": [
+      "未授权持久化 0",
+      "无法追溯 Memory 0",
+      "错误纠正未生效 0",
+      "SEKB 未确认写入 0"
+    ],
+    "title": "UAS-07 长期 Memory 治理闭环"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "判断统一 Agent 系统是否达到成熟产品投入价值",
+      "validation_plan": [
+        "预注册协议审阅",
+        "paired A/B reproducibility check",
+        "soak hard-veto audit",
+        "product decision review"
+      ],
+      "why_not_enough": "实验通过后仍需单独的 TF-0006/product approval 决策。",
+      "why_this_task": "它把架构完成转化为真实收益、安全和运营毕业证据。"
+    },
+    "blocked_by": [
+      "TF-0018"
+    ],
+    "confidence": 0.46,
+    "context_tags": [],
+    "desired_outcomes": [
+      "完成预注册实验协议",
+      "获得实际 provider、执行、恢复、运营和维护成本",
+      "形成产品负责人签署的毕业决定"
+    ],
+    "difficulty": "high",
+    "id": "TF-0019",
+    "kind": "milestone",
+    "next_action": "先完成依赖：TF-0018",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "用真实产品证据判断统一 Agent 系统是否回本，并为 TF-0006 提供候选证据而非自动解阻。",
+    "ready": false,
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "status": "proposed",
+    "success_metrics": [
+      "实际 provider usage 覆盖率 100%",
+      "实验任务与结果可追溯率 100%",
+      "硬性安全 veto 0",
+      "产品决定有明确 owner 和日期"
+    ],
+    "title": "UAS-08 真实 ROI、soak 与毕业裁决"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.93,
+      "user_goal": "保持 Coding 熟悉工具面的同时达到成熟产品写入可靠性",
+      "validation_plan": [
+        "multi-file failure tests",
+        "concurrent patch tests",
+        "wrapper order tests",
+        "crash recovery tests"
+      ],
+      "why_not_enough": "不提供本地进程生命周期等价。",
+      "why_this_task": "Coding 是文件 mutation authority，必须在执行平面迁移前闭合失败语义。"
+    },
+    "blocked_by": [
+      "TF-0014"
+    ],
+    "confidence": 0.64,
+    "context_tags": [],
+    "desired_outcomes": [
+      "同文件并发 mutation 不交错",
+      "失败状态可证明",
+      "journal/undo 对 partial failure 可见"
+    ],
+    "difficulty": "high",
+    "id": "TF-0015",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0014",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "消除多文件 patch 抛错后静默保留 partial mutation 的不确定性。",
+    "ready": false,
+    "remaining_minutes_max": 3360,
+    "remaining_minutes_min": 1920,
+    "status": "proposed",
+    "success_metrics": [
+      "静默 partial mutation 0",
+      "同文件写入交错 0",
+      "无法定位恢复材料的失败 0"
+    ],
+    "title": "UAS-04 Coding 写入一致性与恢复"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.91,
+      "user_goal": "最终用 VerseShell 替代 PowerShell/Git Bash 作为本地执行控制平面",
+      "validation_plan": [
+        "Windows command matrix",
+        "PTY/stdin/cancel tests",
+        "crash/reconcile tests",
+        "real ae.exe E2E",
+        "comms replay/compare"
+      ],
+      "why_not_enough": "完成能力不等于允许扩大 cohort，仍需 UAS-06 canary。",
+      "why_this_task": "这是本地执行单一路径切换前的核心功能等价门槛。"
+    },
+    "blocked_by": [
+      "TF-0015"
+    ],
+    "confidence": 0.48,
+    "context_tags": [],
+    "desired_outcomes": [
+      "前台、后台、PTY 和 stdin 路径功能等价",
+      "进程状态可跨运行时重启解释",
+      "输出有单调 cursor 和 artifact lineage"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0016",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0015",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "使 VerseShell 具备替代现有本地 exec/process 的完整语义，而不仅是 shell string 包装。",
+    "ready": false,
+    "remaining_minutes_max": 7200,
+    "remaining_minutes_min": 4800,
+    "status": "proposed",
+    "success_metrics": [
+      "重复进程 0",
+      "孤立进程树 0",
+      "丢失输出 cursor 0",
+      "隐式 fallback 0"
+    ],
+    "title": "UAS-05 VerseShell 进程生命周期等价"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "让统一基础设施真正被 Agent 全量使用，而不是长期双轨",
+      "validation_plan": [
+        "paired canary runs",
+        "hard-veto review",
+        "kill/rollback drill",
+        "support bundle inspection"
+      ],
+      "why_not_enough": "仍不构成全产品 default-on 或 GA。",
+      "why_this_task": "cohort 级固定路径可以验证全量使用，同时避免额外模型路由。"
+    },
+    "blocked_by": [
+      "TF-0016"
+    ],
+    "confidence": 0.56,
+    "context_tags": [],
+    "desired_outcomes": [
+      "cohort 内合格本地执行覆盖率 100%",
+      "verseshell_result 合并回既有 process 体验",
+      "形成对照基线和可解释失败分类"
+    ],
+    "difficulty": "high",
+    "id": "TF-0017",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0016",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "以真实任务验证单一路径的正确性、安全性、运营性和回滚能力。",
+    "ready": false,
+    "remaining_minutes_max": 3840,
+    "remaining_minutes_min": 2400,
+    "status": "proposed",
+    "success_metrics": [
+      "本地执行覆盖率 100%",
+      "native fallback 0",
+      "关键生命周期成功率 100%",
+      "安全违规观测 0"
+    ],
+    "title": "UAS-06 单一本地执行平面 canary"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "让统一 Agent 开发可持续且不依赖聊天记忆",
+      "validation_plan": [
+        "运行 task-forest validate/export",
+        "运行 Harness context/validate",
+        "在冻结快照核对 manifest"
+      ],
+      "why_not_enough": "只建立治理和证据，不修复运行时缺口。",
+      "why_this_task": "它建立后续每个开发任务都能复现和审查的权威入口。"
+    },
+    "blocked_by": [
+      "TF-0009"
+    ],
+    "confidence": 0.78,
+    "context_tags": [],
+    "desired_outcomes": [
+      "每项已确认事实可追溯到源码快照、命令和输出",
+      "统一 Agent 改动获得唯一 Harness 与 Task Forest 入口"
+    ],
+    "difficulty": "medium",
+    "id": "TF-0011",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0009",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "避免在 344 条工作区状态和未跟踪审计文档上直接实施跨层改造。",
+    "ready": false,
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 480,
+    "status": "proposed",
+    "success_metrics": [
+      "未绑定源码快照的审计结论 0",
+      "已知 spec drift 0"
+    ],
+    "title": "UAS-00 证据冻结与治理登记"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "构建成熟、可恢复的统一 Agent 控制面",
+      "validation_plan": [
+        "schema compatibility tests",
+        "crash/replay tests",
+        "contract drift check",
+        "comms replay/compare"
+      ],
+      "why_not_enough": "只建立主干，不收口具体 context 或 execution 实现。",
+      "why_this_task": "恢复、审计和后续单一路径迁移都依赖稳定事件与幂等契约。"
+    },
+    "blocked_by": [
+      "TF-0011"
+    ],
+    "confidence": 0.68,
+    "context_tags": [],
+    "desired_outcomes": [
+      "统一 plan/handle/observation/artifact/event schema",
+      "重放能够还原 run、turn、process 与 policy decision"
+    ],
+    "difficulty": "high",
+    "id": "TF-0012",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0011",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让执行、上下文和 Memory 状态具备因果关系、幂等和重启恢复语义。",
+    "ready": false,
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "status": "proposed",
+    "success_metrics": [
+      "重复执行副作用 0",
+      "无法归因事件 0",
+      "第二 run journal 0"
+    ],
+    "title": "UAS-01 统一 Contract 与持久事件主干"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "实现统一而不重复的 Context 主路径",
+      "validation_plan": [
+        "entry scan",
+        "candidate ordering/dedup tests",
+        "combined provider integration tests",
+        "lineage assertions"
+      ],
+      "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
+      "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
+    },
+    "blocked_by": [
+      "TF-0012"
+    ],
+    "confidence": 0.72,
+    "context_tags": [],
+    "desired_outcomes": [
+      "所有 context source 先产出 ContextCandidate",
+      "先排序去重再收费",
+      "最终 lineage 完整记录保留、截断和丢弃原因"
+    ],
+    "difficulty": "high",
+    "id": "TF-0013",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0012",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
+    "ready": false,
+    "remaining_minutes_max": 2880,
+    "remaining_minutes_min": 1920,
+    "status": "proposed",
+    "success_metrics": [
+      "私有 context budget 0",
+      "重复 authority object 注入 0",
+      "声明和实际优先级偏差 0"
+    ],
+    "title": "UAS-02 Context Orchestrator residual 收口"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "降低统一 Context 主路径的复杂度和跨语言维护成本",
+      "validation_plan": [
+        "filesystem side-effect tests",
+        "multi-workspace concurrency tests",
+        "token estimate schema tests",
+        "pnpm vtoken:test"
+      ],
+      "why_not_enough": "不修复 Coding 写入或 VerseShell 生命周期。",
+      "why_this_task": "它保留 VerseToken 核心价值，同时删除生产不需要的状态 authority。"
+    },
+    "blocked_by": [
+      "TF-0013"
+    ],
+    "confidence": 0.7,
+    "context_tags": [],
+    "desired_outcomes": [
+      "只读 pack 零业务持久副作用",
+      "多 workspace/session 并发互不 reopen",
+      "estimate 与 provider actual usage 明确区分"
+    ],
+    "difficulty": "high",
+    "id": "TF-0014",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0013",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "移除只读 assembly 的无用 MemStore/WAL/lock 和全局无关串行。",
+    "ready": false,
+    "remaining_minutes_max": 2400,
+    "remaining_minutes_min": 1440,
+    "status": "proposed",
+    "success_metrics": [
+      "只读持久副作用 0",
+      "无关 session 锁竞争 0",
+      "estimate 冒充 actual 0"
+    ],
+    "title": "UAS-03 VerseToken 无状态装箱化"
+  }
+]

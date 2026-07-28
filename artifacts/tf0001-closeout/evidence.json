@@ -1,0 +1,114 @@
+{
+  "schema": "tf0001-controlled-operable-closeout/v1",
+  "taskForestNode": "TF-0001",
+  "generatedAt": "2026-07-19T11:19:29.506Z",
+  "verdict": {
+    "controlledOperableNonGa": true,
+    "liveReady": false,
+    "productApproved": false,
+    "readyForDefaultFlagGraduation": false,
+    "jointSystemGa": "NO-GO",
+    "decision": "accept-with-residuals"
+  },
+  "acceptance": {
+    "1_context_orchestrator": {
+      "met": true,
+      "node": "TF-0002"
+    },
+    "2_default_policy_matrix": {
+      "met": true,
+      "node": "TF-0003"
+    },
+    "3_sekb_golden_path_e2e": {
+      "met": true,
+      "node": "TF-0004"
+    },
+    "4_browser_security_recovery": {
+      "met": true,
+      "node": "TF-0005"
+    },
+    "5_honest_residuals_liveReady_false": {
+      "met": true,
+      "node": "TF-0001-closeout"
+    }
+  },
+  "children": {
+    "TF-0002": "done",
+    "TF-0003": "done",
+    "TF-0004": "done",
+    "TF-0005": "done",
+    "TF-0006": "blocked"
+  },
+  "residuals": [
+    "TF-0006 blocked: real corpus + human live A/B",
+    "Assembler/CVK dual path remains architecture residual (kill-switch gated; not open P0 debt)",
+    "agent-browser CLI open can flake in some E2E environments",
+    "SEKB inject remains feature-flag gated in full live agent turns",
+    "No unsupervised browsing GA"
+  ],
+  "evidenceInventory": [
+    {
+      "path": "docs/dev/context-orchestrator.md",
+      "exists": true
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "exists": true
+    },
+    {
+      "path": "docs/dev/sekb-golden-path.md",
+      "exists": true
+    },
+    {
+      "path": "docs/dev/browser-security-recovery.md",
+      "exists": true
+    },
+    {
+      "path": "docs/dev/tf0001-controlled-operable-closeout.md",
+      "exists": true
+    },
+    {
+      "path": "artifacts/sekb-golden-path/evidence.json",
+      "exists": true
+    },
+    {
+      "path": "artifacts/browser-security-recovery/evidence.json",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/default-config-matrix.test.ts",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/context-orchestrator-entry-scan.test.ts",
+      "exists": true
+    },
+    {
+      "path": "tests/e2e/sekb-golden-path.spec.ts",
+      "exists": true
+    },
+    {
+      "path": "tests/e2e/browser-security-recovery.spec.ts",
+      "exists": true
+    },
+    {
+      "path": "artifacts/p0-production-pass/evidence.json",
+      "exists": true
+    },
+    {
+      "path": "tests/unit/p0-production-acceptance.test.ts",
+      "exists": true
+    }
+  ],
+  "allEvidencePresent": true,
+  "docs": {
+    "closeout": "docs/dev/tf0001-controlled-operable-closeout.md",
+    "playbook": "docs/dev/Sustained-Development-Playbook.md"
+  },
+  "p0ProductionPass": {
+    "evidence": "artifacts/p0-production-pass/evidence.json",
+    "privateNetworkLegacyMigration": true,
+    "allowPrivateNetworkAliasMigration": true,
+    "cvkKillSwitchGate": true
+  }
+}

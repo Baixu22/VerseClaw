@@ -223,6 +223,13 @@ export interface GatewayManagerEvents {
  * Gateway Manager
  * Handles starting, stopping, and communicating with the OpenClaw Gateway
  */
+/**
+ * FP-P1-12: how long `restart()` will wait out a cooldown before giving up.
+ * Sized just above the governor's 2500ms cooldown; needing longer would mean
+ * something other than the cooldown is wrong.
+ */
+const RESTART_COOLDOWN_MAX_WAIT_MS = 5_000;
+
 export class GatewayManager extends EventEmitter {
   private process: Electron.UtilityProcess | null = null;
   private processExitCode: number | null = null; // set by exit event, replaces exitCode/signalCode
@@ -714,6 +721,18 @@ export class GatewayManager extends EventEmitter {
       };
       trackMetric('gateway.restart.suppressed', props);
       captureTelemetryEvent('gateway_restart_suppressed', props);
+      // FP-P1-12: a suppressed restart used to `return` — indistinguishable
+      // from a successful one. The caller then read flags from a child that
+      // never picked up the new config and surfaced an unexplainable `failed`.
+      // A cooldown is rate-limiting, not rejection: wait it out and restart, so
+      // a legitimate config change is delayed, never silently dropped. (Same
+      // failure mode that got the old circuit-breaker removed — see the comment
+      // in restart-governor.ts.)
+      const waitMs = Math.max(0, decision.retryAfterMs);
+      if (waitMs > 0 && waitMs <= RESTART_COOLDOWN_MAX_WAIT_MS) {
+        await new Promise((resolve) => setTimeout(resolve, waitMs + 50));
+        await this.restart();
+      }
       return;
     }
 

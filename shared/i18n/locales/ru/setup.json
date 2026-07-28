@@ -1,152 +1,261 @@
 {
-    "steps": {
-        "welcome": {
-            "title": "Добро пожаловать",
-            "description": "Ваш AI-ассистент готов к настройке"
-        },
-        "runtime": {
-            "title": "Проверка окружения",
-            "description": "Проверка системных требований"
-        },
-        "provider": {
-            "title": "AI-провайдер",
-            "description": "Настройте ваш AI-сервис"
-        },
-        "channel": {
-            "title": "Подключить канал",
-            "description": "Подключите платформу обмена сообщениями (опционально)"
-        },
-        "installing": {
-            "title": "Настройка",
-            "description": "Установка необходимых компонентов"
-        },
-        "complete": {
-            "title": "Готово!",
-            "description": "Verse Claw готов к использованию"
-        }
-    },
+  "steps": {
     "welcome": {
-        "title": "Добро пожаловать в Verse Claw",
-        "description": "Verse Claw — это графический интерфейс для OpenClaw, упрощающий использование AI-ассистентов через ваши любимые платформы обмена сообщениями.",
-        "features": {
-            "noCommand": "Без командной строки",
-            "modernUI": "Современный красивый интерфейс",
-            "bundles": "Предварительно установленные наборы навыков",
-            "crossPlatform": "Кроссплатформенная поддержка"
-        }
+      "title": "Добро пожаловать",
+      "description": "Настройка Windows x64 Controlled Preview"
     },
     "runtime": {
-        "title": "Проверка окружения",
-        "viewLogs": "Просмотреть журналы",
-        "recheck": "Перепроверить",
-        "nodejs": "Среда выполнения Node.js",
-        "openclaw": "Пакет OpenClaw",
-        "gateway": "Служба шлюза",
-        "startGateway": "Запустить шлюз",
-        "status": {
-            "checking": "Проверка...",
-            "success": "Node.js доступен",
-            "error": "Ошибка",
-            "gatewayRunning": "Запущен на порту {{port}}",
-            "packageReady": "Пакет OpenClaw готов"
-        },
-        "issue": {
-            "title": "Обнаружена проблема с окружением",
-            "desc": "Пожалуйста, убедитесь, что OpenClaw установлен правильно. Проверьте журналы для получения подробной информации."
-        },
-        "logs": {
-            "title": "Журналы приложения",
-            "openFolder": "Открыть папку журналов",
-            "close": "Закрыть",
-            "noLogs": "(Журналы ещё недоступны)"
-        }
+      "title": "Проверка окружения",
+      "description": "Проверка системных требований"
     },
     "provider": {
-        "label": "Провайдер модели",
-        "selectPlaceholder": "Выберите провайдера...",
-        "baseUrl": "Базовый URL",
-        "modelId": "ID модели",
-        "modelIdDesc": "Идентификатор модели от вашего провайдера (напр. deepseek-ai/DeepSeek-V3)",
-        "codePlanPreset": "Пресет Code Plan",
-        "codePlanMode": "Code Plan",
-        "useCodePlanPreset": "Использовать пресет Ark Code Plan",
-        "codePlanPresetDesc": "Code Plan использует https://ark.cn-beijing.volces.com/api/coding/v3 и модель ark-code-latest. Не используйте /api/v3 для трафика Code Plan.",
-        "codePlanDoc": "Документация Code Plan",
-        "protocol": "Протокол",
-        "protocols": {
-            "openaiCompletions": "OpenAI Completions",
-            "openaiResponses": "OpenAI Responses",
-            "anthropic": "Совместимый с Anthropic"
-        },
-        "apiKey": "API-ключ",
-        "save": "Сохранить",
-        "validateSave": "Проверить и сохранить",
-        "valid": "Провайдер успешно настроен",
-        "invalid": "Неверный API-ключ",
-        "storedLocally": "Ваш API-ключ хранится локально на вашем компьютере."
+      "title": "AI-провайдер",
+      "description": "Настройте ваш AI-сервис"
     },
     "channel": {
-        "title": "Подключить канал сообщений",
-        "subtitle": "Выберите платформу для подключения вашего AI-ассистента. Вы можете добавить больше каналов позже в Настройках.",
-        "configure": "Настроить {{name}}",
-        "howTo": "Как подключить:",
-        "viewDocs": "Просмотреть документацию",
-        "validationError": "Ошибка проверки",
-        "connected": "{{name}} подключён",
-        "connectedDesc": "Ваш канал настроен. Он подключится при запуске шлюза.",
-        "configureAnother": "Настроить другой канал"
+      "title": "Подключить канал",
+      "description": "Подключите платформу обмена сообщениями (опционально)"
     },
     "installing": {
-        "title": "Установка необходимых компонентов",
-        "subtitle": "Настройка инструментов для вашего AI-ассистента",
-        "progress": "Прогресс",
-        "status": {
-            "pending": "Ожидание",
-            "installing": "Установка...",
-            "installed": "Установлено",
-            "failed": "Ошибка"
-        },
-        "error": "Ошибка настройки:",
-        "restart": "Попробуйте перезапустить приложение",
-        "wait": "Это может занять несколько моментов...",
-        "skip": "Пропустить этот шаг"
+      "title": "Настройка",
+      "description": "Установка необходимых компонентов"
     },
     "complete": {
-        "title": "Настройка завершена!",
-        "subtitle": "Verse Claw настроен и готов к использованию. Теперь вы можете начать общение с вашим AI-ассистентом.",
-        "provider": "AI-провайдер",
-        "components": "Компоненты",
-        "gateway": "Шлюз",
-        "running": "Запущен",
-        "footer": "Вы можете настраивать навыки и подключать каналы в Настройках"
+      "title": "Готово!",
+      "description": "Настроен opt-in DCS Coding Preview"
     },
-    "nav": {
-        "next": "Далее",
-        "back": "Назад",
-        "skipStep": "Пропустить этот шаг",
-        "skipSetup": "Пропустить настройку",
-        "getStarted": "Начать"
+    "model": {
+      "title": "Model",
+      "description": "Pick a model that is actually available"
     },
-    "defaultSkills": {
-        "opencode": {
-            "name": "OpenCode",
-            "description": "AI-помощник по программированию"
-        },
-        "python-env": {
-            "name": "Python-среда",
-            "description": "Python runtime для навыков"
-        },
-        "code-assist": {
-            "name": "Помощник по коду",
-            "description": "Анализ и предложения по коду"
-        },
-        "file-tools": {
-            "name": "Инструменты файлов",
-            "description": "Операции с файлами и управление"
-        },
-        "terminal": {
-            "name": "Терминал",
-            "description": "Выполнение shell-команд"
-        }
+    "workspace": {
+      "title": "Workspace",
+      "description": "Choose the one folder the agent may work in"
     }
+  },
+  "welcome": {
+    "title": "Добро пожаловать в Verse Claw",
+    "description": "Verse Claw - десктоп-интерфейс OpenClaw. Этот мастер настраивает Windows x64 Controlled Preview для одного workspace.",
+    "features": {
+      "noCommand": "Без командной строки",
+      "modernUI": "Современный красивый интерфейс",
+      "bundles": "Предварительно установленные наборы навыков",
+      "crossPlatform": "Windows x64 Controlled Preview"
+    }
+  },
+  "runtime": {
+    "title": "Проверка окружения",
+    "viewLogs": "Просмотреть журналы",
+    "recheck": "Перепроверить",
+    "nodejs": "Среда выполнения Node.js",
+    "openclaw": "Пакет OpenClaw",
+    "gateway": "Служба шлюза",
+    "startGateway": "Запустить шлюз",
+    "status": {
+      "checking": "Проверка...",
+      "success": "Node.js доступен",
+      "error": "Ошибка",
+      "gatewayRunning": "Запущен на порту {{port}}",
+      "gatewayStopped": "Gateway не запущен. Запустите его, чтобы продолжить.",
+      "gatewayStarting": "Gateway запускается...",
+      "packageReady": "Пакет OpenClaw готов"
+    },
+    "issue": {
+      "title": "Обнаружена проблема с окружением",
+      "desc": "Пожалуйста, убедитесь, что OpenClaw установлен правильно. Проверьте журналы для получения подробной информации."
+    },
+    "logs": {
+      "title": "Журналы приложения",
+      "openFolder": "Открыть папку журналов",
+      "close": "Закрыть",
+      "noLogs": "(Журналы ещё недоступны)"
+    }
+  },
+  "provider": {
+    "label": "Провайдер модели",
+    "selectPlaceholder": "Выберите провайдера...",
+    "baseUrl": "Базовый URL",
+    "modelId": "ID модели",
+    "modelIdDesc": "Идентификатор модели от вашего провайдера (напр. deepseek-ai/DeepSeek-V3)",
+    "codePlanPreset": "Пресет Code Plan",
+    "codePlanMode": "Code Plan",
+    "useCodePlanPreset": "Использовать пресет Ark Code Plan",
+    "codePlanPresetDesc": "Code Plan использует https://ark.cn-beijing.volces.com/api/coding/v3 и модель ark-code-latest. Не используйте /api/v3 для трафика Code Plan.",
+    "codePlanDoc": "Документация Code Plan",
+    "protocol": "Протокол",
+    "protocols": {
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Совместимый с Anthropic"
+    },
+    "apiKey": "API-ключ",
+    "save": "Сохранить",
+    "validateSave": "Проверить и сохранить",
+    "valid": "Провайдер успешно настроен",
+    "invalid": "Неверный API-ключ",
+    "storedLocally": "Ваш API-ключ хранится локально на вашем компьютере.",
+    "stepIntro": "Connect an AI provider. Your credentials are validated with a real request before setup can finish.",
+    "getKey": "Get an API key",
+    "validateButton": "Validate",
+    "validating": "Validating…",
+    "validated": "Credentials verified",
+    "readyHint": "{{label}} is verified. Continue to pick a model.",
+    "existing": {
+      "title": "Already configured",
+      "useThis": "Validate & use",
+      "orNew": "or add a new provider below"
+    },
+    "errors": {
+      "not-filled": {
+        "title": "API key required",
+        "action": "Enter the API key for this provider. You can create one from the provider's console (link above)."
+      },
+      "credentials": {
+        "title": "Credentials rejected",
+        "action": "The provider rejected this key. Check for typos or expired/revoked keys, then paste a fresh key and validate again."
+      },
+      "network": {
+        "title": "Provider unreachable",
+        "action": "Could not reach the provider endpoint. Check your network/proxy settings, or the Base URL if you changed it, then retry."
+      },
+      "service": {
+        "title": "Provider returned an unexpected response",
+        "action": "The endpoint answered but not the way we expected. Verify the Base URL points at a compatible API, then retry."
+      }
+    }
+  },
+  "channel": {
+    "title": "Подключить канал сообщений",
+    "subtitle": "Выберите платформу для подключения вашего AI-ассистента. Вы можете добавить больше каналов позже в Настройках.",
+    "configure": "Настроить {{name}}",
+    "howTo": "Как подключить:",
+    "viewDocs": "Просмотреть документацию",
+    "validationError": "Ошибка проверки",
+    "connected": "{{name}} подключён",
+    "connectedDesc": "Ваш канал настроен. Он подключится при запуске шлюза.",
+    "configureAnother": "Настроить другой канал"
+  },
+  "installing": {
+    "title": "Установка необходимых компонентов",
+    "subtitle": "Настройка инструментов для вашего AI-ассистента",
+    "progress": "Прогресс",
+    "status": {
+      "pending": "Ожидание",
+      "installing": "Установка...",
+      "installed": "Установлено",
+      "failed": "Ошибка"
+    },
+    "error": "Ошибка настройки:",
+    "restart": "Попробуйте перезапустить приложение",
+    "wait": "Это может занять несколько моментов...",
+    "skip": "Пропустить этот шаг"
+  },
+  "complete": {
+    "title": "Настройка завершена!",
+    "subtitle": "Настройка завершена. DCS Coding включается явно в Настройки > Разработчик и требует runtime acknowledgement.",
+    "provider": "AI Provider",
+    "components": "Компоненты",
+    "gateway": "Шлюз",
+    "running": "Запущен",
+    "footer": "Вы можете настраивать навыки и подключать каналы в Настройках",
+    "providerUnverified": "Not verified",
+    "limitedMode": {
+      "title": "Setup finished without a verified provider",
+      "desc": "Chat and coding tasks will not work until a provider is configured. You will be guided to Settings on your first message."
+    },
+    "workspace": "Workspace",
+    "workspaceUnset": "Not selected"
+  },
+  "nav": {
+    "next": "Далее",
+    "back": "Назад",
+    "skipStep": "Пропустить этот шаг",
+    "skipSetup": "Пропустить настройку",
+    "getStarted": "Начать"
+  },
+  "defaultSkills": {
+    "opencode": {
+      "name": "OpenCode",
+      "description": "AI-помощник по программированию"
+    },
+    "python-env": {
+      "name": "Python-среда",
+      "description": "Python runtime для навыков"
+    },
+    "code-assist": {
+      "name": "Помощник по коду",
+      "description": "Анализ и предложения по коду"
+    },
+    "file-tools": {
+      "name": "Инструменты файлов",
+      "description": "Операции с файлами и управление"
+    },
+    "terminal": {
+      "name": "Терминал",
+      "description": "Выполнение shell-команд"
+    }
+  },
+  "model": {
+    "stepIntro": "Models listed live from {{label}}. Picking one confirms it is actually available to your account.",
+    "loading": "Fetching available models…",
+    "noProvider": "Validate a provider first (previous step).",
+    "empty": "The provider returned no models for this account.",
+    "listFailed": {
+      "title": "Could not list models",
+      "action": "The provider's model listing failed. Retry, or go back and check the provider configuration."
+    },
+    "retry": "Retry",
+    "confirm": "Use this model",
+    "confirming": "Confirming…",
+    "verifiedAs": "Verified: {{model}}"
+  },
+  "workspace": {
+    "stepIntro": "Pick the single folder this preview may read (and, if you allow it, write). Writes outside this folder are rejected at runtime.",
+    "pickTitle": "Choose workspace folder",
+    "pickButton": "Choose folder…",
+    "blocked": "This folder cannot be used as a workspace. Fix the failed checks or pick another folder.",
+    "readOnlyFallback": "This folder is not writable. It can only be used in read-only mode.",
+    "permissionTitle": "What may the agent do here?",
+    "confirmButton": "Use this workspace",
+    "confirming": "Setting up…",
+    "confirmedAs": "Workspace active · {{mode}}",
+    "checks": {
+      "exists": "Folder exists",
+      "readable": "Readable",
+      "writable": "Writable",
+      "git": "Git repository",
+      "sensitivePath": "Sensitive location",
+      "diskSpace": "Disk space"
+    },
+    "details": {
+      "directory": "OK",
+      "missing": "does not exist",
+      "notADirectory": "not a folder",
+      "readable": "OK",
+      "notReadable": "cannot read",
+      "writable": "OK",
+      "notWritable": "cannot write",
+      "gitRepo": "yes — undo can lean on git",
+      "notGitRepo": "no — undo relies on the write journal",
+      "clear": "OK",
+      "driveRoot": "drive root is not allowed",
+      "homeRoot": "home folder root is not allowed",
+      "systemDir": "system folder is not allowed",
+      "credentialDir": "credential folder is not allowed",
+      "containsCredentialMaterial": "contains credential material ({{extra}})",
+      "sufficient": "OK",
+      "lowDiskSpace": "low ({{extra}} free)",
+      "unknown": "could not determine"
+    },
+    "modes": {
+      "readOnly": {
+        "title": "Read-only",
+        "desc": "The agent can read and analyze, but never writes files."
+      },
+      "acceptEdits": {
+        "title": "Controlled write",
+        "desc": "File edits inside this workspace are allowed; anything outside, and risky commands, still require approval."
+      }
+    }
+  }
 }

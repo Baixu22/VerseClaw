@@ -16,25 +16,30 @@ Host data (md / tools / memory outputs)
 **Does not** replace markdown/jsonl storage, `ContextBlock`, BlockStore, compaction, or business memory stores.
 Markdown files remain authoritative on disk; VT packs a budgeted, task-relevant Working Context section.
 
-## Production path (default ON)
+## Production path (default OFF - opt-in / canary)
 
-- Embedded runner injects on attempts via `computeVtokenExtraSystemPrompt`
+- Embedded runner injects on attempts via computeVtokenExtraSystemPrompt
   after bootstrap hooks and effective tool policy have resolved
-  (`openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts`).
+  (openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts).
 - Sources: hook-adjusted workspace bootstrap files, effective post-policy tool
   schemas, and enabled DCS BlockStore projections for working-memory /
   compass / role-memory.
-- Kill-switch: env `VERSE_VTOKEN_ASSEMBLY_ENABLED=0` or config `runtime.vtoken.assembly.enabled=false`.
+- Enable canary:
+untime.vtoken.assembly.enabled=true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1.
+- Kill-switch: env VERSE_VTOKEN_ASSEMBLY_ENABLED=0, config
+untime.vtoken.assembly.enabled=false,
+  or VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1.
 
-## Diagnostics host-api (default ON)
+## Diagnostics host-api (default OFF - opt-in)
 
-- Long-lived Python worker: `python -m vtoken.host_rpc`
+- Long-lived Python worker: python -m vtoken.host_rpc
 - Transport: line-delimited JSON-RPC 2.0 over stdio
-- Electron Main bridge: `electron/services/vtoken-bridge.ts`
-- Renderer must call `hostApi.vtoken.*` only (never spawn Python)
-- Kill-switch: `VERSE_VTOKEN_BRIDGE_ENABLED=0` or `hostApi.vtoken.setEnabled({ enabled: false })`
+- Electron Main bridge: electron/services/vtoken-bridge.ts
+- Renderer must call hostApi.vtoken.* only (never spawn Python)
+- Enable: VERSE_VTOKEN_BRIDGE_ENABLED=1 or hostApi.vtoken.setEnabled({ enabled: true })
+- Kill-switch: VERSE_VTOKEN_BRIDGE_ENABLED=0 or hostApi.vtoken.setEnabled({ enabled: false })
 
-When disabled, APIs return `{ success: false, disabled: true }` and **do not** start Python.
+When disabled, APIs return { success: false, disabled: true } and **do not** start Python.
 
 ## Methods
 

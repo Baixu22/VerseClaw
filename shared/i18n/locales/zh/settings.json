@@ -452,14 +452,46 @@
     "installMessage": "安装 \"openclaw\" 命令？",
     "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。",
     "dcsProdFlags": {
-      "title": "DCS 生产 Flag",
-      "description": "只读的 DCS coding runtime opt-in 目录。默认保持 off/shared/shadow，直至硬化证据与产品批准。",
-      "modeOptIn": "productionMode: opt-in",
+      "title": "DCS Controlled Preview Flag",
+      "description": "DCS（BlockStore）的高级 opt-in 控制面，用于工作记忆、context 工具及相关 flag。默认保持 off/shared/shadow；本面板不代表发布审批。可写开关写入应用设置；config 类同时写入 openclaw.json，并在 Gateway 运行时尝试重启。",
+      "modeOptIn": "status: opt-in",
       "defaultLabel": "默认",
       "enableLabel": "启用方式",
       "rollbackLabel": "回滚",
       "riskLabel": "风险",
-      "readOnlyNote": "此面板不会修改 flag。请编辑环境变量或 OpenClaw 配置后重启 runtime。见 docs/dcs-production-p0-runbook.zh-CN.md。",
+      "readOnlyNote": "此行为只读说明（api/request/baseline）。可写项请用上方开关；高级路径见 docs/dcs-production-p0-runbook.zh-CN.md。",
+      "enableViaSettings": "使用上方开关（Settings 控制面）。高级：按 runbook 改 env/config。",
+      "rollbackViaSettings": "关闭开关（Settings）。Gateway 运行中会尝试重启。",
+      "toggleLabel": "启用（opt-in）",
+      "on": "开",
+      "off": "关",
+      "refresh": "刷新",
+      "loadFailed": "加载 DCS flag 失败：{{error}}",
+      "toggleFailed": "切换 {{id}} 失败",
+      "toggleFailedDetail": "切换 flag 失败：{{error}}",
+      "enabledToast": "已启用 {{id}}",
+      "disabledToast": "已关闭 {{id}}",
+      "pendingRestartToast": "已保存。Gateway 重启待定或失败 — 可能在下次启动生效。",
+      "status": {
+        "applied": "已生效",
+        "pending-restart": "待重启",
+        "error": "错误",
+        "read-only": "只读",
+        "unsupported": "不支持",
+        "saved": "已保存",
+        "restarting": "重启中",
+        "runtime-acknowledged": "运行时已确认",
+        "failed": "失败"
+      },
+      "ackHint": {
+        "gatewayNotRunning": "已保存。Gateway 未运行，没有子进程可以确认。启动 Gateway 后才会生效。",
+        "restartFailed": "已保存，但 Gateway 重启失败。请手动重启 Gateway 后刷新。",
+        "ackTimeoutRunning": "已保存并重启，但运行时未在时限内确认。请刷新，或再次重启 Gateway。",
+        "ackTimeoutStopped": "Gateway 在确认前已停止。请查看 Gateway 日志后重新启动。",
+        "ackIncomplete": "运行时返回的确认信息不完整，因此不能判定为已生效。请检查 Gateway 版本与日志。",
+        "staleGeneration": "只有上一个 Gateway 进程作出了应答，新进程尚未确认。请再次重启并刷新。",
+        "flagRejected": "运行时未采纳全部请求的 flag。展开详情查看具体项与原因。"
+      },
       "risk": {
         "baseline-on": "基线开启",
         "opt-in": "显式开启",
@@ -467,18 +499,43 @@
         "api-only": "仅 API",
         "request-only": "仅请求",
         "read-only": "只读说明"
-      }
+      },
+      "viewToolsDiscover": {
+        "disabledTitle": "Fact 视图工具当前不在 agent 工具表中",
+        "disabledBody": "默认关闭：{{tools}}。开启后，下一轮 coding 会话可进入工具表（需 workspace FactService）。",
+        "enabledTitle": "Fact 视图工具已启用（opt-in）",
+        "enabledBody": "工具表可包含：{{tools}}。Gateway 生效后的新 agent 回合，在 FactService 可用时可见。",
+        "enableCta": "启用视图工具",
+        "focusSwitch": "定位开关",
+        "afterEnableHint": "已启用视图工具。Gateway 应用后，请开启新的 agent 回合以在工具表中使用。",
+        "detailDisabled": "启用前这些工具不会出现在默认工具表：{{tools}}。",
+        "detailEnabled": "本机已开启视图工具。仍需具备 FactService 的 coding 工作区。"
+      },
+      "layerRole": "DCS — 工作记忆与 Context Blocks — 可选的 BlockStore 脊柱：working-memory 注入、tool_registry 摘要、knowledge 块与 context_* 工具。默认 fail-closed，需在本面板显式开启。这是真实记忆/内容管线，不是 C…",
+      "taskLoopNote": "task_state / phase / SEKB 轨迹类能力需要 TaskLoop（多步任务）路径，不能仅靠单轮聊天。见 docs/dev/dcs-visible-production/TASKLOOP-ACCEPTANCE.md。",
+      "observability": {
+        "title": "DCS 观测（产品键）",
+        "killOn": "增强 kill switch 已开",
+        "killOff": "增强 kill switch 关",
+        "viewEnvOn": "view-tools 环境变量已开",
+        "viewEnvOff": "view-tools 环境变量关",
+        "enabledCount": "{{count}} 个可写 flag 已开",
+        "note": "Gateway 进程内计数器未镜像到此面板。请在 runtime 日志/导出中使用下列键。falseBlockRate = staleBlocks / (staleBlocks + staleAllowances)。",
+        "metricKeys": "指标键目录（导出/抓取）"
+      },
+      "requeryAck": "重查确认（不重翻开关）",
+      "requerying": "重查中…"
     },
     "tokenMasked": "令牌已加载（已掩码）",
     "vtokenBridge": {
       "title": "Verse Token 桥接",
-      "description": "Working Context 装配层（Verse Token）。产品默认开启：在 agent 回合从工作区 md/tools/memory 源装配 ## Working Context。不替换磁盘上的 markdown，也不替换 DCS BlockStore。关闭：VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
+      "description": "Verse Token Working Context 的 opt-in 源装配。显式开启后，才会在 agent 回合把工作区 md/tools/memory 装入 ## Working Context；它不替代磁盘 markdown 或 DCS BlockStore。关闭：VERSE_VTOKEN_ASSEMBLY_ENABLED=0。",
       "badgeEnabled": "已启用",
       "badgeDisabled": "已禁用",
       "badgeRunning": "worker 运行中",
       "badgeStopped": "worker 未运行",
       "enableLabel": "启用 VT 桥接",
-      "enableHelp": "进程内 host-api 诊断桥接。生产装配默认在 gateway 热路径执行。",
+      "enableHelp": "进程内 host-api 诊断桥接。回合装配默认关闭；显式开启后由 gateway 承担运行路径。",
       "version": "版本",
       "pid": "Worker PID",
       "opened": "Store 已打开",
@@ -490,7 +547,7 @@
       "no": "否",
       "ensureStarted": "启动 worker",
       "smokeAssemble": "冒烟 assemble",
-      "boundaryNote": "VT 以 md/jsonl 为源装配 Working Context，不替代磁盘 markdown，也不替代 DCS ContextBlock/BlockStore/compaction。",
+      "boundaryNote": "分层：CVK = 导航壳 · DCS = BlockStore 记忆/工具 · VT = Working Context 打包。VT 仅以 md/jsonl 为源装配，不替代 DCS ContextBlock/BlockStore/compaction。",
       "loadFailed": "加载 VT 桥接状态失败：{{error}}",
       "toggleFailed": "切换 VT 桥接失败",
       "toggleFailedDetail": "切换 VT 桥接失败：{{error}}",
@@ -502,6 +559,38 @@
       "assembleFailed": "冒烟 assemble 失败",
       "assembleFailedDetail": "冒烟 assemble 失败：{{error}}",
       "assembleOk": "冒烟 assemble 成功：{{used}} / {{budget}} tokens"
+    },
+    "contextLayers": {
+      "title": "上下文三层请勿混淆",
+      "cvkTitle": "Context Runtime Kit（CVK）— 导航壳",
+      "cvkBody": "默认上下文引擎壳：向 system prompt 注入路由/工具导航元数据。**不等于**工作记忆或长期知识已开启。关闭 DCS/VToken 并不会去掉该壳，除非改 context-engine 插槽。",
+      "dcsTitle": "DCS — 工作记忆与 Context Blocks",
+      "dcsBody": "可选的 BlockStore 脊柱：working-memory 注入、tool_registry 摘要、knowledge 块与 context_* 工具。默认 fail-closed，需在本面板显式开启。这是真实记忆/内容管线，不是 CVK 导航壳。",
+      "vtokenTitle": "Verse Token — Working Context 打包",
+      "vtokenBody": "把工作区 md/tools/memory 装配成当轮 ## Working Context。仅源打包：**不**替代 DCS BlockStore 或磁盘 markdown，也**不**表示「上下文引擎已经记住一切」。",
+      "footer": "若仅 CVK 生效，模型可能只看到导航壳而没有 DCS/VToken 内容。请阅读各面板后有意开启。"
+    },
+    "dcsPreview": {
+      "title": "DCS Coding Controlled Preview",
+      "description": "状态：opt-in。首发能力组合的唯一开关：context 读取/检索/查看工具、working-memory 与 tool-registry 上下文块、stale-write 守卫。写入日志与 undo 恒开。默认关闭；升级不会自动打开。",
+      "prereqTitle": "开启前需先完成：",
+      "prereqs": {
+        "providerVerified": "验证一个 AI Provider（设置 → AI Providers，或重跑 Setup）",
+        "workspaceSelected": "选定 workspace 目录",
+        "permissionChosen": "选定 workspace 权限档位"
+      },
+      "partial": "专家漂移：部分组合 flag 被单独打开。全部打开前此开关显示为关。",
+      "setFailed": "Preview 开关切换失败",
+      "appliedOn": "Preview 已开启 —— runtime 已确认",
+      "appliedOff": "Preview 已关闭 —— runtime 已回到基线",
+      "killed": "已被 kill",
+      "killSwitchNote": "context-enhancement kill switch 处于生效状态：无论此开关如何，请求的 flag 在 runtime 中保持关闭。",
+      "origin": {
+        "env": "来自环境变量",
+        "config": "来自配置",
+        "default": "默认值",
+        "kill": "被 kill 开关压制"
+      }
     }
   },
   "storage": {
@@ -767,5 +856,14 @@
     "runs": "{{count}} ???",
     "tokens": "{{count}} tokens",
     "dayTitle": "{{date}}?{{count}} ????{{tokens}} tokens"
+  },
+  "supportBundle": {
+    "title": "诊断支持包",
+    "desc": "导出脱敏诊断归档（版本、gateway 状态、flags、计数器、lineage）。绝不包含 Provider 密钥、文件内容或 diff 正文；脱敏检查结果本身随包附带。不会自动上传 —— 文件发给谁由你决定。",
+    "export": "导出诊断包",
+    "exporting": "导出中…",
+    "success": "诊断支持包已导出",
+    "failed": "诊断包导出失败：{{error}}",
+    "savedTo": "已保存到 {{path}} · 脱敏命中：{{hits}}"
   }
 }

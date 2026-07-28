@@ -1,0 +1,17 @@
+{
+  "kind": "subtask",
+  "status": "ready",
+  "priority": 2,
+  "purpose": "让 Browser 适合内部灰度，而不是扩展更多能力面",
+  "requirements": [
+    "私网默认关闭与分层策略",
+    "mode upgrade 用户批准门",
+    "任务持久化，重启后状态可解释",
+    "Vault 损坏与未配置可区分"
+  ],
+  "acceptance_criteria": [
+    "安全默认回归测试",
+    "至少1条真实 workflow E2E",
+    "重启后任务状态可解释"
+  ]
+}

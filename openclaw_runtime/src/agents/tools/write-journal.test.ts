@@ -131,3 +131,97 @@ describe("write-journal (C2-8)", () => {
     // no throw
   });
 });
+
+// ---------------------------------------------------------------------------
+// FP-P1-04: undo is not best-effort; journal survives restarts; lineage.
+// ---------------------------------------------------------------------------
+import { existsSync, readdirSync } from "node:fs";
+import { getOrCreateWriteJournal, journalDirFor, listJournalSnapshotFiles } from "./write-journal.js";
+
+describe("write-journal FP-P1-04 semantics", () => {
+  let repoRoot: string;
+  const sessionId = "sess-fp-p1-04";
+
+  beforeEach(() => {
+    __resetWriteJournals();
+    codingObservability.reset();
+    repoRoot = mkdtempSync(path.join(tmpdir(), "write-journal-fp104-"));
+    writeFileSync(path.join(repoRoot, "a.ts"), "a0\n", "utf8");
+    writeFileSync(path.join(repoRoot, "b.ts"), "b0\n", "utf8");
+  });
+
+  afterEach(() => {
+    __resetWriteJournals();
+    codingObservability.reset();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  function write(file: string, content: string) {
+    snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: file, toolName: "write" });
+    writeFileSync(path.join(repoRoot, file), content, "utf8");
+  }
+
+  it("multi-file batch undo restores everything (create + modify)", () => {
+    write("a.ts", "a1\n");
+    write("b.ts", "b1\n");
+    snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: "new.ts", toolName: "write" });
+    writeFileSync(path.join(repoRoot, "new.ts"), "n1\n", "utf8");
+
+    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 3 });
+    expect(outcome.errors).toEqual([]);
+    expect(outcome.restored.sort()).toEqual(["a.ts", "b.ts", "new.ts"].sort());
+    expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a0\n");
+    expect(readFileSync(path.join(repoRoot, "b.ts"), "utf8")).toBe("b0\n");
+    expect(existsSync(path.join(repoRoot, "new.ts"))).toBe(false);
+    expect(outcome.remainingEntries).toBe(0);
+  });
+
+  it("HARD LOCK: partial restore is a failure — stops at first error, journal retained", () => {
+    write("a.ts", "a1\n");
+    write("b.ts", "b1\n");
+    const journal = getOrCreateWriteJournal(repoRoot, sessionId);
+    const newest = journal.entries[journal.entries.length - 1]!;
+    rmSync(newest.snapshotPath, { force: true });
+
+    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
+    expect(outcome.errors).toHaveLength(1);
+    expect(outcome.errors[0]).toContain("journal snapshot missing");
+    expect(outcome.restored).toEqual([]);
+    expect(outcome.remainingEntries).toBe(2);
+    expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a1\n");
+    expect(readFileSync(path.join(repoRoot, "b.ts"), "utf8")).toBe("b1\n");
+    expect(existsSync(outcome.journalDir)).toBe(true);
+  });
+
+  it("journal rehydrates from disk after a restart (fresh in-memory state)", () => {
+    write("a.ts", "a1\n");
+    write("a.ts", "a2\n");
+    __resetWriteJournals();
+    const journal = getOrCreateWriteJournal(repoRoot, sessionId);
+    expect(journal.entries).toHaveLength(2);
+    expect(journal.nextSeq).toBe(3);
+    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
+    expect(outcome.errors).toEqual([]);
+    expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a0\n");
+  });
+
+  it("every snapshot meta carries lineage (session/workspace)", () => {
+    write("a.ts", "a1\n");
+    const dir = journalDirFor(repoRoot, sessionId);
+    const meta = readdirSync(dir).find((name) => name.endsWith(".meta.json"))!;
+    const parsed = JSON.parse(readFileSync(path.join(dir, meta), "utf8")) as {
+      lineage?: { sessionId?: string; workspaceRoot?: string };
+    };
+    expect(parsed.lineage?.sessionId).toBe(sessionId);
+    expect(parsed.lineage?.workspaceRoot).toBe(path.resolve(repoRoot));
+  });
+
+  it("successful undo cleans consumed snapshots; journal stays consistent with disk", () => {
+    write("a.ts", "a1\n");
+    expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(1);
+    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
+    expect(outcome.errors).toEqual([]);
+    expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(0);
+    expect(getOrCreateWriteJournal(repoRoot, sessionId).entries).toHaveLength(0);
+  });
+});

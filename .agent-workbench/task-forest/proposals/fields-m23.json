@@ -1,0 +1,14 @@
+{
+  "kind": "subtask",
+  "status": "blocked",
+  "priority": 3,
+  "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
+  "requirements": [
+    "真实64K corpus 与 human live A/B",
+    "soak 与 productApproved 流程"
+  ],
+  "acceptance_criteria": [
+    "非 synthetic 的 liveReady 路径就绪",
+    "可讨论分系统 default-on"
+  ]
+}

@@ -1,0 +1,36 @@
+$ pnpm harness context --spec harness/specs/tasks/remote-forge-controlled-preview.md
+
+Context loaded successfully. The selected read set included the gateway-backend-communication scenario, Main/Renderer layers, typed host-api/transport/readiness rules, the Coding producer boundary, comms regression, docs sync, and continuity guidance.
+
+$ pnpm harness validate --spec harness/specs/tasks/remote-forge-controlled-preview.md
+
+Exit 1 in the primary dirty worktree: hundreds of pre-existing changed and untracked files were outside this task's touchedAreas. The task spec was not broadened to claim those unrelated files.
+
+$ pnpm harness validate --spec harness/specs/tasks/remote-forge-controlled-preview.md --no-diff
+
+Spec is valid: harness/specs/tasks/remote-forge-controlled-preview.md
+
+$ pnpm harness validate --spec harness/specs/tasks/remote-forge-controlled-preview.md
+
+Run from the primary dependency environment with GIT_DIR/GIT_WORK_TREE scoped to a detached clean worktree containing only this task spec:
+
+Isolated changed files:
+?? harness/specs/tasks/remote-forge-controlled-preview.md
+Spec is valid: harness/specs/tasks/remote-forge-controlled-preview.md
+
+$ pnpm contract:check
+
+Contract check passed.
+
+$ pnpm run i18n:lint
+
+i18n lint passed.
+
+$ pnpm run lint:check
+
+Exit 1 before ESLint due to pre-existing UTF-8 BOMs in:
+- scripts/dcs-ops-preflight.mjs
+- tests/unit/dcs-ops-canary-hard-veto.test.ts
+
+The unrelated files were not modified. Typecheck, Vite build, and remote-forge Electron E2E are not applicable to this source/spec-only slice: no TypeScript/runtime/UI behavior changed and tests/e2e/remote-forge-controlled-preview.spec.ts does not exist yet.
+

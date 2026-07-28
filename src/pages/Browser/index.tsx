@@ -30,6 +30,7 @@ const statusStyles: Record<AgentBrowserTask['status'], string> = {
   queued: 'text-zinc-700 dark:text-zinc-300',
   running: 'text-blue-700 dark:text-blue-400',
   'waiting-approval': 'text-amber-700 dark:text-amber-400',
+  interrupted: 'text-amber-700 dark:text-amber-400',
   paused: 'text-amber-700 dark:text-amber-400',
   completed: 'text-emerald-700 dark:text-emerald-400',
   failed: 'text-red-700 dark:text-red-400',
@@ -242,7 +243,7 @@ function TaskList({ tasks, t, refresh }: { tasks: AgentBrowserTask[]; t: (key: s
         <p className="truncate text-xs text-muted-foreground">{task.objective}</p>
         <p className="truncate font-mono text-[11px] text-muted-foreground">{task.url}</p>
       </div>
-      {(task.status === 'failed' || task.status === 'cancelled') && <Button variant="ghost" size="icon" aria-label={t('actions.retry')} onClick={async () => { await hostApi.agentBrowser.retryTask({ taskId: task.id }); await refresh(); }}><RefreshCw className="h-4 w-4" /></Button>}
+      {(task.status === 'failed' || task.status === 'cancelled' || task.status === 'interrupted') && <Button variant="ghost" size="icon" aria-label={t('actions.retry')} onClick={async () => { await hostApi.agentBrowser.retryTask({ taskId: task.id }); await refresh(); }}><RefreshCw className="h-4 w-4" /></Button>}
       {task.status === 'running' && <Button variant="ghost" size="icon" aria-label={t('actions.cancel')} onClick={async () => { await hostApi.agentBrowser.cancelTask({ taskId: task.id }); await refresh(); }}><CircleStop className="h-4 w-4" /></Button>}
     </div>
   ))}</div>;

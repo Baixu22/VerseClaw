@@ -21,6 +21,8 @@ type CoreGatewayMethodSpec = {
 export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "health", scope: "operator.read" },
   { name: "diagnostics.stability", scope: "operator.read" },
+  // FP-P0-04: child-runtime flag acknowledgement read by the Electron control plane.
+  { name: "runtime.flags.ack", scope: "operator.read" },
   { name: "doctor.memory.status", scope: "operator.read" },
   { name: "doctor.memory.dreamDiary", scope: "operator.read" },
   { name: "doctor.memory.backfillDreamDiary", scope: "operator.write" },

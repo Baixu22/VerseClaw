@@ -107,4 +107,60 @@ describe("stale-write-guard (C2-2)", () => {
     await wrapped.execute("1", { path: "a.ts", content: "x" });
     expect(codingObservability.snapshot().staleBlocks).toBe(0);
   });
+
+  it("TASK-P1-07: force/allowStaleWrite override bypasses block and records allowance", async () => {
+    const original = "export const a = 1;\n";
+    recordSessionReadHash(sessionId, "a.ts", hashFileContent(original));
+    writeFileSync(path.join(repoRoot, "a.ts"), "export const a = 2;\n", "utf8");
+    const base = makeWriteTool(async () => ({
+      content: [{ type: "text", text: "forced" }],
+      details: {},
+    }));
+    const wrapped = wrapToolWithStaleWriteGuard(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+    const result = await wrapped.execute("1", {
+      path: "a.ts",
+      content: "export const a = 3;\n",
+      force: true,
+    });
+    expect(result.content[0]).toMatchObject({ type: "text", text: "forced" });
+    expect(codingObservability.snapshot().staleBlocks).toBe(0);
+    expect(codingObservability.snapshot().staleAllowances).toBe(1);
+
+    // allowStaleWrite alias
+    writeFileSync(path.join(repoRoot, "a.ts"), "export const a = 9;\n", "utf8");
+    await wrapped.execute("2", {
+      path: "a.ts",
+      content: "x",
+      allowStaleWrite: true,
+    });
+    expect(codingObservability.snapshot().staleAllowances).toBe(2);
+  });
+
+  it("TASK-P1-07: error message is explainable and mentions override", async () => {
+    recordSessionReadHash(sessionId, "a.ts", hashFileContent("export const a = 1;\n"));
+    writeFileSync(path.join(repoRoot, "a.ts"), "changed", "utf8");
+    const base = makeWriteTool(async () => ({
+      content: [{ type: "text", text: "ok" }],
+      details: {},
+    }));
+    const wrapped = wrapToolWithStaleWriteGuard(base, {
+      workspaceRoot: repoRoot,
+      sessionId,
+      enabled: true,
+    });
+    try {
+      await wrapped.execute("1", { path: "a.ts", content: "x" });
+      expect.unreachable("should throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(StaleWriteError);
+      const msg = String((error as Error).message);
+      expect(msg).toMatch(/Stale write blocked/i);
+      expect(msg).toMatch(/force=true|allowStaleWrite/i);
+      expect(msg).toMatch(/Re-read/i);
+    }
+  });
 });

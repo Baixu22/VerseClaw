@@ -1,6 +1,7 @@
 import { app, safeStorage } from 'electron';
 import { randomUUID } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
 import { join } from 'node:path';
 
 export type AgentBrowserCredentialMetadata = {
@@ -19,6 +20,31 @@ export type AgentBrowserCredentialSavePayload = {
   username: string;
   password: string;
 };
+
+export type AgentBrowserVaultState =
+  | 'not_configured'
+  | 'ready'
+  | 'corrupted'
+  | 'encryption_unavailable';
+
+export type AgentBrowserVaultHealth = {
+  state: AgentBrowserVaultState;
+  path: string;
+  credentialCount: number;
+  /** Machine-readable error code when not ready. */
+  errorCode?: 'VAULT_NOT_CONFIGURED' | 'VAULT_CORRUPTED' | 'VAULT_ENCRYPTION_UNAVAILABLE';
+  errorMessage?: string;
+};
+
+export class AgentBrowserVaultError extends Error {
+  readonly code: NonNullable<AgentBrowserVaultHealth['errorCode']>;
+
+  constructor(code: NonNullable<AgentBrowserVaultHealth['errorCode']>, message: string) {
+    super(message);
+    this.name = 'AgentBrowserVaultError';
+    this.code = code;
+  }
+}
 
 type StoredCredential = AgentBrowserCredentialMetadata & {
   encryptedPassword: string;
@@ -55,6 +81,10 @@ function normalizeHttpsOrigin(value: string): string {
   return parsed.origin;
 }
 
+function isNodeErrno(error: unknown, code: string): boolean {
+  return Boolean(error && typeof error === 'object' && (error as { code?: string }).code === code);
+}
+
 export class AgentBrowserVault {
   private readonly userDataPath?: string;
   private readonly crypto: VaultCrypto;
@@ -66,13 +96,82 @@ export class AgentBrowserVault {
     this.now = options.now ?? (() => new Date());
   }
 
+  /**
+   * Distinguish vault not configured vs corrupted vs ready.
+   * Fail-closed: corruption never masquerades as empty/not configured.
+   */
+  async health(): Promise<AgentBrowserVaultHealth> {
+    const path = this.path();
+    if (!this.crypto.isEncryptionAvailable()) {
+      return {
+        state: 'encryption_unavailable',
+        path,
+        credentialCount: 0,
+        errorCode: 'VAULT_ENCRYPTION_UNAVAILABLE',
+        errorMessage: 'OS-protected encryption is unavailable',
+      };
+    }
+    try {
+      await access(path, fsConstants.F_OK);
+    } catch (error) {
+      if (isNodeErrno(error, 'ENOENT')) {
+        return {
+          state: 'not_configured',
+          path,
+          credentialCount: 0,
+          errorCode: 'VAULT_NOT_CONFIGURED',
+          errorMessage: 'Agent browser vault has not been configured yet',
+        };
+      }
+      return {
+        state: 'corrupted',
+        path,
+        credentialCount: 0,
+        errorCode: 'VAULT_CORRUPTED',
+        errorMessage: error instanceof Error ? error.message : String(error),
+      };
+    }
+
+    try {
+      const file = await this.read({ allowMissing: false });
+      return {
+        state: 'ready',
+        path,
+        credentialCount: file.credentials.length,
+      };
+    } catch (error) {
+      if (error instanceof AgentBrowserVaultError && error.code === 'VAULT_NOT_CONFIGURED') {
+        return {
+          state: 'not_configured',
+          path,
+          credentialCount: 0,
+          errorCode: 'VAULT_NOT_CONFIGURED',
+          errorMessage: error.message,
+        };
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        state: 'corrupted',
+        path,
+        credentialCount: 0,
+        errorCode: 'VAULT_CORRUPTED',
+        errorMessage: message,
+      };
+    }
+  }
+
   async list(): Promise<AgentBrowserCredentialMetadata[]> {
-    return (await this.read()).credentials.map(({ encryptedPassword: _secret, ...metadata }) => metadata);
+    return (await this.read({ allowMissing: true })).credentials.map(
+      ({ encryptedPassword: _secret, ...metadata }) => metadata,
+    );
   }
 
   async save(payload: AgentBrowserCredentialSavePayload): Promise<AgentBrowserCredentialMetadata> {
     if (!this.crypto.isEncryptionAvailable()) {
-      throw new Error('OS-protected encryption is unavailable');
+      throw new AgentBrowserVaultError(
+        'VAULT_ENCRYPTION_UNAVAILABLE',
+        'OS-protected encryption is unavailable',
+      );
     }
     const profile = normalizeProfile(payload.profile);
     const origin = normalizeHttpsOrigin(payload.origin);
@@ -80,7 +179,7 @@ export class AgentBrowserVault {
     if (!username) throw new Error('Credential username is required');
     if (!payload.password) throw new Error('Credential password is required');
 
-    const file = await this.read();
+    const file = await this.read({ allowMissing: true });
     const existing = file.credentials.find((entry) => (
       (payload.id ? entry.id === payload.id : false)
       || (entry.profile === profile && entry.origin === origin && entry.username === username)
@@ -105,7 +204,7 @@ export class AgentBrowserVault {
   }
 
   async delete(credentialId: string): Promise<void> {
-    const file = await this.read();
+    const file = await this.read({ allowMissing: true });
     file.credentials = file.credentials.filter((entry) => entry.id !== credentialId);
     await this.write(file);
   }
@@ -116,11 +215,16 @@ export class AgentBrowserVault {
     origin: string;
   }): Promise<string> {
     if (!this.crypto.isEncryptionAvailable()) {
-      throw new Error('OS-protected encryption is unavailable');
+      throw new AgentBrowserVaultError(
+        'VAULT_ENCRYPTION_UNAVAILABLE',
+        'OS-protected encryption is unavailable',
+      );
     }
     const profile = normalizeProfile(payload.profile);
     const origin = normalizeHttpsOrigin(payload.origin);
-    const entry = (await this.read()).credentials.find((item) => item.id === payload.credentialId);
+    const entry = (await this.read({ allowMissing: true })).credentials.find(
+      (item) => item.id === payload.credentialId,
+    );
     if (!entry || entry.profile !== profile || entry.origin !== origin) {
       throw new Error('Credential does not match the requested profile and origin');
     }
@@ -131,15 +235,56 @@ export class AgentBrowserVault {
     return join(this.userDataPath ?? app.getPath('userData'), 'agent-browser', 'vault.json');
   }
 
-  private async read(): Promise<VaultFile> {
+  private async read(options: { allowMissing: boolean }): Promise<VaultFile> {
     try {
-      const parsed = JSON.parse(await readFile(this.path(), 'utf8')) as Partial<VaultFile>;
+      const raw = await readFile(this.path(), 'utf8');
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        throw new AgentBrowserVaultError(
+          'VAULT_CORRUPTED',
+          'Agent browser vault is corrupted (invalid JSON)',
+        );
+      }
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new AgentBrowserVaultError(
+          'VAULT_CORRUPTED',
+          'Agent browser vault is corrupted (invalid shape)',
+        );
+      }
+      const record = parsed as Partial<VaultFile>;
+      if (record.version !== 1 && record.version !== undefined) {
+        throw new AgentBrowserVaultError(
+          'VAULT_CORRUPTED',
+          `Agent browser vault is corrupted (unsupported version ${String(record.version)})`,
+        );
+      }
+      if (record.credentials !== undefined && !Array.isArray(record.credentials)) {
+        throw new AgentBrowserVaultError(
+          'VAULT_CORRUPTED',
+          'Agent browser vault is corrupted (credentials is not an array)',
+        );
+      }
       return {
         version: 1,
-        credentials: Array.isArray(parsed.credentials) ? parsed.credentials : [],
+        credentials: Array.isArray(record.credentials) ? record.credentials as StoredCredential[] : [],
       };
-    } catch {
-      return { version: 1, credentials: [] };
+    } catch (error) {
+      if (error instanceof AgentBrowserVaultError) throw error;
+      if (isNodeErrno(error, 'ENOENT')) {
+        if (options.allowMissing) {
+          return { version: 1, credentials: [] };
+        }
+        throw new AgentBrowserVaultError(
+          'VAULT_NOT_CONFIGURED',
+          'Agent browser vault has not been configured yet',
+        );
+      }
+      throw new AgentBrowserVaultError(
+        'VAULT_CORRUPTED',
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 

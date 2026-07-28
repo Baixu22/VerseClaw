@@ -1,0 +1,1127 @@
+{
+  "created_at": "2026-07-19T17:29:59.652018Z",
+  "graph": {
+    "cross_edges": [
+      "TFE-0008",
+      "TFE-0009",
+      "TFE-0010"
+    ],
+    "edge_index": {
+      "TF-0001": {
+        "blocking_edges": [],
+        "cross_edges": [
+          "TFE-0009"
+        ],
+        "incoming": [
+          "TFE-0001",
+          "TFE-0002",
+          "TFE-0003",
+          "TFE-0004",
+          "TFE-0005",
+          "TFE-0009"
+        ],
+        "outgoing": [],
+        "tree_child_edges": [
+          "TFE-0001",
+          "TFE-0002",
+          "TFE-0003",
+          "TFE-0004",
+          "TFE-0005"
+        ],
+        "tree_parent_edge": null
+      },
+      "TF-0002": {
+        "blocking_edges": [
+          "TFE-0001"
+        ],
+        "cross_edges": [],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0001"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0001"
+      },
+      "TF-0003": {
+        "blocking_edges": [
+          "TFE-0002"
+        ],
+        "cross_edges": [],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0002"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0002"
+      },
+      "TF-0004": {
+        "blocking_edges": [
+          "TFE-0003"
+        ],
+        "cross_edges": [],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0003"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0003"
+      },
+      "TF-0005": {
+        "blocking_edges": [
+          "TFE-0004"
+        ],
+        "cross_edges": [],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0004"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0004"
+      },
+      "TF-0006": {
+        "blocking_edges": [
+          "TFE-0005"
+        ],
+        "cross_edges": [
+          "TFE-0010"
+        ],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0005",
+          "TFE-0010"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0005"
+      },
+      "TF-0007": {
+        "blocking_edges": [],
+        "cross_edges": [
+          "TFE-0009",
+          "TFE-0010"
+        ],
+        "incoming": [
+          "TFE-0006",
+          "TFE-0007",
+          "TFE-0010"
+        ],
+        "outgoing": [
+          "TFE-0009"
+        ],
+        "tree_child_edges": [
+          "TFE-0006",
+          "TFE-0007"
+        ],
+        "tree_parent_edge": null
+      },
+      "TF-0008": {
+        "blocking_edges": [
+          "TFE-0006"
+        ],
+        "cross_edges": [
+          "TFE-0008"
+        ],
+        "incoming": [
+          "TFE-0008"
+        ],
+        "outgoing": [
+          "TFE-0006"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0006"
+      },
+      "TF-0009": {
+        "blocking_edges": [
+          "TFE-0007",
+          "TFE-0008"
+        ],
+        "cross_edges": [
+          "TFE-0008"
+        ],
+        "incoming": [],
+        "outgoing": [
+          "TFE-0007",
+          "TFE-0008"
+        ],
+        "tree_child_edges": [],
+        "tree_parent_edge": "TFE-0007"
+      }
+    },
+    "edge_type_counts": {
+      "child_of": 7,
+      "clarifies": 0,
+      "contributes_to": 1,
+      "depends_on": 1,
+      "derived_from": 0,
+      "duplicates": 0,
+      "related_to": 1,
+      "supersedes": 0
+    },
+    "edge_type_legend": {
+      "child_of": "子任务关系：起点任务是目标任务的子任务，构成默认树/森林",
+      "clarifies": "澄清边，起点任务澄清目标任务的要求或问题",
+      "contributes_to": "多目标贡献边，不改变主父节点",
+      "depends_on": "执行依赖边，起点任务必须等待目标任务完成",
+      "derived_from": "来源边，起点任务从目标任务拆解或派生",
+      "duplicates": "重复语义边，通常应合并或废止其中一个节点",
+      "related_to": "弱相关边，不影响 ready 或进度判断",
+      "supersedes": "替代边，from 替代 to"
+    },
+    "edges": {
+      "TFE-0001": {
+        "blocking": true,
+        "confidence": 0.6,
+        "created_at": "2026-07-19T08:58:00.180073Z",
+        "created_from_session": null,
+        "from": "TF-0002",
+        "id": "TFE-0001",
+        "reason": "CLI add-node --parent",
+        "to": "TF-0001",
+        "type": "child_of",
+        "updated_at": "2026-07-19T08:58:00.180073Z"
+      },
+      "TFE-0002": {
+        "blocking": true,
+        "confidence": 0.6,
+        "created_at": "2026-07-19T08:58:00.333089Z",
+        "created_from_session": null,
+        "from": "TF-0003",
+        "id": "TFE-0002",
+        "reason": "CLI add-node --parent",
+        "to": "TF-0001",
+        "type": "child_of",
+        "updated_at": "2026-07-19T08:58:00.333089Z"
+      },
+      "TFE-0003": {
+        "blocking": true,
+        "confidence": 0.6,
+        "created_at": "2026-07-19T08:58:00.485328Z",
+        "created_from_session": null,
+        "from": "TF-0004",
+        "id": "TFE-0003",
+        "reason": "CLI add-node --parent",
+        "to": "TF-0001",
+        "type": "child_of",
+        "updated_at": "2026-07-19T08:58:00.485328Z"
+      },
+      "TFE-0004": {
+        "blocking": true,
+        "confidence": 0.6,
+        "created_at": "2026-07-19T08:58:00.643584Z",
+        "created_from_session": null,
+        "from": "TF-0005",
+        "id": "TFE-0004",
+        "reason": "CLI add-node --parent",
+        "to": "TF-0001",
+        "type": "child_of",
+        "updated_at": "2026-07-19T08:58:00.643584Z"
+      },
+      "TFE-0005": {
+        "blocking": true,
+        "confidence": 0.6,
+        "created_at": "2026-07-19T08:58:00.813415Z",
+        "created_from_session": null,
+        "from": "TF-0006",
+        "id": "TFE-0005",
+        "reason": "CLI add-node --parent",
+        "to": "TF-0001",
+        "type": "child_of",
+        "updated_at": "2026-07-19T08:58:00.813415Z"
+      },
+      "TFE-0006": {
+        "blocking": true,
+        "confidence": 0.95,
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "created_from_session": null,
+        "from": "TF-0008",
+        "id": "TFE-0006",
+        "reason": "交付与证据恢复是受控投用目标的第一阶段。",
+        "to": "TF-0007",
+        "type": "child_of",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TFE-0007": {
+        "blocking": true,
+        "confidence": 0.95,
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "created_from_session": null,
+        "from": "TF-0009",
+        "id": "TFE-0007",
+        "reason": "受控 canary 是目标的运营化阶段。",
+        "to": "TF-0007",
+        "type": "child_of",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TFE-0008": {
+        "blocking": true,
+        "confidence": 0.98,
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "created_from_session": null,
+        "from": "TF-0009",
+        "id": "TFE-0008",
+        "reason": "真实内测必须等待可交付基线、W5 与 maturity evidence 全绿。",
+        "to": "TF-0008",
+        "type": "depends_on",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TFE-0009": {
+        "blocking": false,
+        "confidence": 0.9,
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "created_from_session": null,
+        "from": "TF-0007",
+        "id": "TFE-0009",
+        "reason": "把已完成的受控可运营技术基线转化为实际内部使用。",
+        "to": "TF-0001",
+        "type": "contributes_to",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TFE-0010": {
+        "blocking": false,
+        "confidence": 0.95,
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "created_from_session": null,
+        "from": "TF-0006",
+        "id": "TFE-0010",
+        "reason": "TF-0006 决定未来 default-on/毕业证据，但不阻塞当前受控内测。",
+        "to": "TF-0007",
+        "type": "related_to",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      }
+    },
+    "event_id": "tfevt_b1338ca8a2a6465bb0d9",
+    "generated_at": "2026-07-19T17:29:59.652018Z",
+    "nodes": {
+      "TF-0001": {
+        "acceptance_criteria": [
+          "1) 唯一 Context Orchestrator 接入生产 turn；2) 默认策略矩阵锁定且 VToken/DCS/Browser 不互斥矛盾；3) SEKB 半自动闭环 E2E 绿；4) Browser private network 默认 false + 任务可恢复；5) liveReady/productApproved 仍可保持 false 但 residual 诚实。"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "尽快把 DCS 和关联组件投入使用",
+          "validation_plan": [
+            "P0 门禁全绿",
+            "受控 canary 与 rollback 记录",
+            "保持 TF-0006 blocked"
+          ],
+          "why_not_enough": "不解决 TF-0006 的 default-on/GA 证据。",
+          "why_this_task": "聚焦唯一硬阻塞并用受控 canary 验证真实运营性。"
+        },
+        "alignment_records": [
+          "TFA-4a4979781c"
+        ],
+        "assumptions": [],
+        "children": [
+          "TF-0002",
+          "TF-0003",
+          "TF-0004",
+          "TF-0005",
+          "TF-0006"
+        ],
+        "confidence": 0.85,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:57:16.728332Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "docs/dev/tf0001-controlled-operable-closeout.md",
+          "artifacts/tf0001-closeout/evidence.json",
+          "tests/unit/tf0001-controlled-operable-closeout.test.ts",
+          "docs/dev/context-orchestrator.md (TF-0002)",
+          "docs/dev/default-config-matrix.md (TF-0003)",
+          "artifacts/sekb-golden-path/evidence.json (TF-0004)",
+          "artifacts/browser-security-recovery/evidence.json (TF-0005)",
+          "docs/dev/Sustained-Development-Playbook.md §7"
+        ],
+        "execution_hints": [
+          "下一会话仅当用户明确要求 residual 加固，或推进 TF-0006（仍需真实 corpus/live A/B）",
+          "禁止：default-on 毕业、SEKB 自动写回、联合系统 GA 话术"
+        ],
+        "id": "TF-0001",
+        "kind": "global_task",
+        "non_goals": [],
+        "primary_parent": null,
+        "priority": 3,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "不以联合系统全量 default-on 为目标；交付统一编排、安全默认、一条经验闭环E2E、Browser安全可恢复，并维持 canary 证据诚实。"
+        ],
+        "source_sessions": [],
+        "status": "done",
+        "success_metrics": [],
+        "summary": "P0 受控可运营基线已验收（非全量 GA）：编排收口+默认策略+SEKB 半自动闭环+Browser 安全恢复均已证据锁定；liveReady/productApproved=false；accept-with-residuals；TF-0006 仍 blocked。",
+        "title": "记忆-上下文-工具-经验联合系统受控可运营（非全量GA）",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TF-0002": {
+        "acceptance_criteria": [
+          "生产路径静态扫描仅1个编排入口",
+          "flag off 零注入零副作用",
+          "组合矩阵单测通过",
+          "诊断面板可见本 turn sources+token"
+        ],
+        "alignment": {
+          "fit": "unknown",
+          "fit_confidence": 0.0,
+          "user_goal": "",
+          "validation_plan": [],
+          "why_not_enough": "",
+          "why_this_task": ""
+        },
+        "alignment_records": [],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.9,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:58:00.180073Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "docs/dev/context-orchestrator.md",
+          "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+          "openclaw_runtime/src/gateway/server-methods/agent.ts (pass-through)",
+          "openclaw_runtime/src/context-engine/context-orchestrator.test.ts (6 passed)",
+          "tests/unit/context-orchestrator-entry-scan.test.ts",
+          "tests/unit/chat-turn-memory-injection.test.ts (30 passed)",
+          "openclaw_runtime chat-turn-vtoken + dcs-observability (21 passed)"
+        ],
+        "execution_hints": [
+          "下一会话：TF-0004 SEKB 半自动闭环 或 TF-0005 Browser 任务恢复",
+          "残留：Assembler/CVK dual-injection 仍非 orchestrator 统一（flag 默认 off）"
+        ],
+        "id": "TF-0002",
+        "kind": "subtask",
+        "non_goals": [],
+        "primary_parent": "TF-0001",
+        "priority": 1,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "拆除最大组件孤岛：统一 memory/context 生产注入入口",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "收口 computeMemoryExtraSystemPrompt 与 VToken attempt 注入到单一入口",
+          "统一消费 BlockStore/WM/VToken/Runtime Memory/SEKB/FactStore/压缩摘要",
+          "输出 lineage: sessionId/runId/requestId/workspace/sources/budget"
+        ],
+        "source_sessions": [],
+        "status": "done",
+        "success_metrics": [],
+        "summary": "统一 Context Orchestrator 已落地：computeContextExtraSystemPrompt 为唯一生产入口；attempt 接线 memory+VToken；gateway 透传；flag 矩阵/kill switch/lineage/静态扫描单测绿。",
+        "title": "P0-1 统一 Context Orchestrator",
+        "updated_at": "2026-07-19T09:32:28.319854Z"
+      },
+      "TF-0003": {
+        "acceptance_criteria": [
+          "默认配置矩阵文档与测试锁定",
+          "kill switch 可切断全部 memory/context 增强",
+          "private network 默认拦截有回归"
+        ],
+        "alignment": {
+          "fit": "unknown",
+          "fit_confidence": 0.0,
+          "user_goal": "",
+          "validation_plan": [],
+          "why_not_enough": "",
+          "why_this_task": ""
+        },
+        "alignment_records": [],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.9,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:58:00.333089Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "docs/dev/default-config-matrix.md",
+          "tests/unit/default-config-matrix.test.ts",
+          "tests/unit/openclaw-auth.test.ts (private network defaults)",
+          "tests/unit/vtoken-bridge.test.ts",
+          "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+          "openclaw_runtime/src/context-engine/enhancement-kill-switch.test.ts",
+          "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+          "electron/utils/openclaw-auth.ts",
+          "electron/services/vtoken-bridge.ts",
+          "harness/specs/rules/vtoken-foundation-boundary.md",
+          "vitest: default-config-matrix + vtoken-bridge 12 passed; openclaw-auth private network 4 passed; openclaw_runtime vtoken+kill-switch 21 passed; chat-turn-memory 30 passed"
+        ],
+        "execution_hints": [
+          "下一会话优先 TF-0002 Context Orchestrator 统一入口",
+          "残留：既有 openclaw.json 若曾写入 dangerouslyAllowPrivateNetwork=true 不会被自动覆写；仅 undefined 种子 false"
+        ],
+        "id": "TF-0003",
+        "kind": "subtask",
+        "non_goals": [],
+        "primary_parent": "TF-0001",
+        "priority": 1,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "消除 VToken 默认ON 与 DCS memory 默认OFF 的矛盾，修复 Browser 不安全默认",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "VToken 灰度或 opt-in，保留 kill switch",
+          "working-memory canary opt-in",
+          "Runtime Memory 与 SEKB writeback 默认 off",
+          "dangerouslyAllowPrivateNetwork 默认 false"
+        ],
+        "source_sessions": [],
+        "status": "done",
+        "success_metrics": [],
+        "summary": "默认策略已对齐为 fail-closed/opt-in：Browser 私网默认 false；VToken assembly/bridge 默认 false；working-memory / Runtime Memory inject / SEKB 保持默认 off；新增 context enhancement kill switch。",
+        "title": "P0-2 默认策略对齐与熔断",
+        "updated_at": "2026-07-19T09:24:02.163862Z"
+      },
+      "TF-0004": {
+        "acceptance_criteria": [
+          "至少1条 Electron/Playwright E2E 稳定绿",
+          "artifact 含 lineage",
+          "无无人审批自动写回"
+        ],
+        "alignment": {
+          "fit": "unknown",
+          "fit_confidence": 0.0,
+          "user_goal": "",
+          "validation_plan": [],
+          "why_not_enough": "",
+          "why_this_task": ""
+        },
+        "alignment_records": [],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.9,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:58:00.485328Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "openclaw_runtime/src/knowledge/sekb/golden-path.ts",
+          "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts",
+          "tests/e2e/sekb-golden-path.spec.ts",
+          "artifacts/sekb-golden-path/evidence.json",
+          "docs/dev/sekb-golden-path.md",
+          "electron/services/knowledge-api.ts",
+          "shared/host-api/contract.ts",
+          "src/lib/host-api.ts"
+        ],
+        "execution_hints": [
+          "残留：完整 live agent 对话中的 SEKB 注入仍受 feature flag 约束；本节点证明半自动闭环而非全量 GA"
+        ],
+        "id": "TF-0004",
+        "kind": "subtask",
+        "non_goals": [],
+        "primary_parent": "TF-0001",
+        "priority": 2,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "证明经验闭环不是半程，而是可验收的一条黄金路径",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "执行→压缩→候选→过滤→确认→持久化→召回→行为变化→评估",
+          "仍需人工 confirm，不做全自动写回"
+        ],
+        "source_sessions": [],
+        "status": "done",
+        "success_metrics": [],
+        "summary": "SEKB 半自动黄金路径已落地：runSekbGoldenPath + host capture/suggest/confirm/retrieve + Electron E2E；证据含 lineage；确认前不写 principle（无 auto writeback）。",
+        "title": "P0-3 SEKB 半自动黄金闭环 E2E",
+        "updated_at": "2026-07-19T10:37:03.875577Z"
+      },
+      "TF-0005": {
+        "acceptance_criteria": [
+          "安全默认回归测试",
+          "至少1条真实 workflow E2E",
+          "重启后任务状态可解释"
+        ],
+        "alignment": {
+          "fit": "unknown",
+          "fit_confidence": 0.0,
+          "user_goal": "",
+          "validation_plan": [],
+          "why_not_enough": "",
+          "why_this_task": ""
+        },
+        "alignment_records": [],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.9,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:58:00.643584Z",
+        "deprecated_at": null,
+        "derived_progress": 100.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "electron/services/agent-browser-task-service.ts (persist + recoverTasksAfterRestart)",
+          "electron/services/agent-browser-vault.ts (health states)",
+          "electron/services/agent-browser-service.ts (requestModeUpgrade userApproval gate)",
+          "electron/services/agent-browser-api.ts (tasks storagePath + approval/vaultHealth)",
+          "shared/host-api/contract.ts + src/lib/host-api.ts",
+          "tests/unit/agent-browser-task-service.test.ts",
+          "tests/unit/agent-browser-vault.test.ts",
+          "tests/unit/agent-browser-runtime-mode.test.ts",
+          "tests/unit/default-config-matrix.test.ts",
+          "tests/e2e/browser-security-recovery.spec.ts",
+          "artifacts/browser-security-recovery/evidence.json",
+          "docs/dev/browser-security-recovery.md",
+          "vitest 30 passed; contract:check ok; playwright 1 passed (7.2s)"
+        ],
+        "execution_hints": [
+          "下一会话：若 TF-0001 收口，先确认 TF-0002/3/4/5 均为 done；TF-0006 仍 blocked",
+          "残留：openclaw.json private-network=true 不自动迁移；CLI open 在部分 E2E 环境失败（restart 由 unit 锁定）"
+        ],
+        "id": "TF-0005",
+        "kind": "subtask",
+        "non_goals": [],
+        "primary_parent": "TF-0001",
+        "priority": 2,
+        "progress": 100.0,
+        "progress_source": "manual",
+        "purpose": "让 Browser 适合内部灰度，而不是扩展更多能力面",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "私网默认关闭与分层策略",
+          "mode upgrade 用户批准门",
+          "任务持久化，重启后状态可解释",
+          "Vault 损坏与未配置可区分"
+        ],
+        "source_sessions": [],
+        "status": "done",
+        "success_metrics": [],
+        "summary": "Browser 内部金丝雀门禁已落地：mode upgrade 需 userApproval；任务磁盘持久化且 running→interrupted 可解释；Vault health 区分未配置/损坏；私网默认 false 回归锁定；Electron host E2E 绿。",
+        "title": "P0-4 Browser 安全与任务恢复",
+        "updated_at": "2026-07-19T10:37:03.875577Z"
+      },
+      "TF-0006": {
+        "acceptance_criteria": [
+          "非 synthetic 的 liveReady 路径就绪",
+          "可讨论分系统 default-on"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "尽快把 DCS 和关联组件投入使用",
+          "validation_plan": [
+            "P0 门禁全绿",
+            "受控 canary 与 rollback 记录",
+            "保持 TF-0006 blocked"
+          ],
+          "why_not_enough": "不解决 TF-0006 的 default-on/GA 证据。",
+          "why_this_task": "聚焦唯一硬阻塞并用受控 canary 验证真实运营性。"
+        },
+        "alignment_records": [
+          "TFA-4a4979781c"
+        ],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.9,
+        "context_tags": [],
+        "created_at": "2026-07-19T08:58:00.813415Z",
+        "deprecated_at": null,
+        "derived_progress": 10.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "unknown",
+        "estimated_total_minutes": null,
+        "evidence": [
+          "docs/dev/tf0006-evidence-upgrade-unblock.md",
+          "artifacts/tf0006-evidence-upgrade/status.json",
+          "tests/unit/tf0006-evidence-upgrade-blocked.test.ts",
+          "docs/dev/Sustained-Development-Playbook.md §8",
+          "docs/dev/tf0001-controlled-operable-closeout.md (liveReady=false)"
+        ],
+        "execution_hints": [
+          "解除前必须四份证据齐备：corpus-manifest / live-ab-report / soak-report / product-approval",
+          "若产品放弃 M2/M3 default-on：改为 deprecated 并保留 readyForDefaultFlagGraduation=false",
+          "禁止：因 Agent Dev/P0 E2E 绿灯将 liveReady 设为 true"
+        ],
+        "id": "TF-0006",
+        "kind": "subtask",
+        "non_goals": [],
+        "primary_parent": "TF-0001",
+        "priority": 3,
+        "progress": 10.0,
+        "progress_source": "manual",
+        "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "真实64K corpus 与 human live A/B",
+          "soak 与 productApproved 流程"
+        ],
+        "source_sessions": [],
+        "status": "blocked",
+        "success_metrics": [],
+        "summary": "阻塞原因已澄清并文档化：缺真实 corpus + human live A/B + soak + product approval。决策 keep-blocked；P0/synthetic 不足以 liveReady 或 default-on。",
+        "title": "M2/M3 证据升级（延后）",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TF-0007": {
+        "acceptance_criteria": [
+          "关键文件全部被 Git 跟踪",
+          "maturity:validate exit 0",
+          "关键 Electron E2E 6/6 通过",
+          "完成一轮有记录的受控内部 canary 与 rollback 演练"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "尽快把 DCS 和关联组件投入实际使用",
+          "validation_plan": [
+            "运行 component-controlled-rollout-readiness Harness spec",
+            "通过关键 6/6 Electron E2E",
+            "通过 maturity:validate",
+            "审阅 canary 与 rollback 记录"
+          ],
+          "why_not_enough": "不提供 default-on/GA 资格；该部分仍由 TF-0006 的真实 corpus、live A/B、soak 与产品批准决定。",
+          "why_this_task": "先恢复真实集成证据和可交付性，再做有回滚的小范围内测，是当前最快且不牺牲安全边界的路径。"
+        },
+        "alignment_records": [],
+        "assumptions": [
+          "当前工作区改动代表计划交付的组件基线",
+          "内部 canary 可使用显式 feature flags 与有限 cohort"
+        ],
+        "children": [
+          "TF-0008",
+          "TF-0009"
+        ],
+        "confidence": 0.75,
+        "context_tags": [],
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "deprecated_at": null,
+        "derived_progress": 0.0,
+        "desired_outcomes": [
+          "关键实现、测试、文档与证据可在 clean checkout 复现",
+          "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
+          "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
+        ],
+        "deviations": [],
+        "difficulty": "high",
+        "estimated_total_minutes": 960,
+        "evidence": [
+          "docs/dev/component-readiness-audit-2026-07-20.md",
+          "artifacts/component-readiness-audit-2026-07-20/report.json"
+        ],
+        "execution_hints": [
+          "一次只推进一个 ready 节点",
+          "先封装交付基线，不扩组件能力"
+        ],
+        "id": "TF-0007",
+        "kind": "global_task",
+        "non_goals": [
+          "default-on",
+          "联合系统 GA",
+          "SEKB 自动写回",
+          "无监督 Browser",
+          "扩大多 agent 自动修改面"
+        ],
+        "primary_parent": null,
+        "priority": 1,
+        "progress": 0.0,
+        "progress_source": "manual",
+        "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "默认策略保持 fail-closed/opt-in",
+          "不降低 host sender/workspace/approval 安全边界",
+          "不解除 TF-0006 或宣称 joint-system GA"
+        ],
+        "source_sessions": [],
+        "status": "in_progress",
+        "success_metrics": [
+          "未授权写入 0",
+          "SEKB 未确认写入 0",
+          "Browser 私网绕过 0",
+          "kill switch 演练成功率 100%"
+        ],
+        "summary": "恢复可交付变更集、DCS 真实接线 E2E 与成熟度证据后，启动小范围可回滚内部 canary。",
+        "title": "DCS 与关联组件受控内测投用收口（非GA）",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TF-0008": {
+        "acceptance_criteria": [
+          "关键 Electron E2E 6/6 通过",
+          "maturity:validate exit 0",
+          "关键锚点无 UNTRACKED",
+          "git diff --check 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "尽快把组件投入使用",
+          "validation_plan": [
+            "运行 Harness task spec 全部门禁",
+            "在 clean checkout 重跑 E2E 与 maturity validation"
+          ],
+          "why_not_enough": "只恢复投用资格，不提供真实效果毕业证据。",
+          "why_this_task": "这是进入任何稳定 canary 前唯一的硬阻塞集合。"
+        },
+        "alignment_records": [],
+        "assumptions": [
+          "W5 三个失败共享测试 helper 的 sender 根因"
+        ],
+        "children": [],
+        "confidence": 0.8,
+        "context_tags": [],
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "deprecated_at": null,
+        "derived_progress": 0.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "medium",
+        "estimated_total_minutes": 480,
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p0交付基线与真实集成证据恢复",
+          "harness/specs/tasks/component-controlled-rollout-readiness.md"
+        ],
+        "execution_hints": [],
+        "id": "TF-0008",
+        "kind": "task",
+        "non_goals": [
+          "功能扩张",
+          "默认值翻转",
+          "完整 CVK/assembler 重构"
+        ],
+        "primary_parent": "TF-0007",
+        "priority": 1,
+        "progress": 0.0,
+        "progress_source": "manual",
+        "purpose": "把本机绿灯转化为可审查、可合并、可复现的受控投用基线。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "不得放宽 senderAuth 或增加生产测试后门",
+          "所有核心实现/E2E/docs/evidence 纳入同一 change set",
+          "按 collector 刷新 evidence，不手改 frozen hash"
+        ],
+        "source_sessions": [],
+        "status": "ready",
+        "success_metrics": [
+          "DCS W5 3/3 通过",
+          "evidence hash failure 0"
+        ],
+        "summary": "跟踪关键文件，修复 W5 授权 sender 测试接线，刷新 maturity evidence。",
+        "title": "P0 交付基线与 DCS 真实集成证据恢复",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      },
+      "TF-0009": {
+        "acceptance_criteria": [
+          "每个 profile 至少 10 次有记录内部任务",
+          "未授权写入与安全泄漏为 0",
+          "kill switch 演练成功率 100%",
+          "负责人给出继续/缩小/停止决定"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.88,
+          "user_goal": "尽快把组件投入使用",
+          "validation_plan": [
+            "审阅 canary 运行记录",
+            "审阅 rollback drill",
+            "确认硬性 NO-GO 未触发"
+          ],
+          "why_not_enough": "仍不是产品 GA 或默认开启批准。",
+          "why_this_task": "通过小范围真实任务验证运营性，比继续写合成报告更接近实际使用。"
+        },
+        "alignment_records": [],
+        "assumptions": [],
+        "children": [],
+        "confidence": 0.7,
+        "context_tags": [],
+        "created_at": "2026-07-19T17:29:59.646228Z",
+        "deprecated_at": null,
+        "derived_progress": 0.0,
+        "desired_outcomes": [],
+        "deviations": [],
+        "difficulty": "medium",
+        "estimated_total_minutes": 480,
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md"
+        ],
+        "execution_hints": [],
+        "id": "TF-0009",
+        "kind": "task",
+        "non_goals": [
+          "default-on",
+          "无界 cohort",
+          "TF-0006 解阻"
+        ],
+        "primary_parent": "TF-0007",
+        "priority": 2,
+        "progress": 0.0,
+        "progress_source": "manual",
+        "purpose": "把通过门禁的组件转化为可运营的内部工具。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "P0 全绿后才开始",
+          "每个 profile 明确 owner/cohort/budget/privacy/rollback",
+          "Runtime Memory 保持 diagnostics-only"
+        ],
+        "source_sessions": [],
+        "status": "proposed",
+        "success_metrics": [
+          "安全或隐私泄漏 0",
+          "未授权持久化 0",
+          "关键失败均可解释"
+        ],
+        "summary": "为 DCS、SEKB、Browser 建立 owner、cohort、metrics、kill 与 rollback，并执行最小真实场景。",
+        "title": "P1 组件小范围受控内测运行包",
+        "updated_at": "2026-07-19T17:29:59.646228Z"
+      }
+    },
+    "reason": "proposal_applied",
+    "roots": [
+      "TF-0001",
+      "TF-0007"
+    ],
+    "schema_version": 1,
+    "status_legend": {
+      "archived": "已归档，通常不参与当前 todo",
+      "blocked": "被依赖、信息或外部条件阻塞",
+      "deprecated": "已废止但保留历史",
+      "done": "已完成并通过验收",
+      "in_progress": "正在推进或作为长期目标持续演进",
+      "proposed": "已提出但尚未确认或排期",
+      "ready": "可开始执行，当前没有未满足依赖",
+      "review_needed": "产物或判断已到可检查阶段，但需要复核验收标准、证据、不足风险和实际结果后，才能标为已完成。"
+    },
+    "status_queues": {
+      "actionable_todos": [
+        "TF-0007",
+        "TF-0008",
+        "TF-0006",
+        "TF-0009"
+      ],
+      "blocked": [
+        "TF-0006"
+      ],
+      "by_status": {
+        "archived": [],
+        "blocked": [
+          "TF-0006"
+        ],
+        "deprecated": [],
+        "done": [
+          "TF-0001",
+          "TF-0002",
+          "TF-0003",
+          "TF-0004",
+          "TF-0005"
+        ],
+        "in_progress": [
+          "TF-0007"
+        ],
+        "proposed": [
+          "TF-0009"
+        ],
+        "ready": [
+          "TF-0008"
+        ],
+        "review_needed": []
+      },
+      "evergreen_open_goals": [],
+      "open": [
+        "TF-0006",
+        "TF-0007",
+        "TF-0008",
+        "TF-0009"
+      ],
+      "ready": [
+        "TF-0008"
+      ],
+      "review_needed": []
+    },
+    "summary": {
+      "blocked_count": 1,
+      "done_count": 5,
+      "edge_count": 10,
+      "node_count": 9,
+      "open_count": 4,
+      "review_needed_count": 0
+    },
+    "tree_edges": [
+      "TFE-0001",
+      "TFE-0002",
+      "TFE-0003",
+      "TFE-0004",
+      "TFE-0005",
+      "TFE-0006",
+      "TFE-0007"
+    ],
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "snapshot_id": "0017",
+  "todos": [
+    {
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.9,
+        "user_goal": "尽快把 DCS 和关联组件投入实际使用",
+        "validation_plan": [
+          "运行 component-controlled-rollout-readiness Harness spec",
+          "通过关键 6/6 Electron E2E",
+          "通过 maturity:validate",
+          "审阅 canary 与 rollback 记录"
+        ],
+        "why_not_enough": "不提供 default-on/GA 资格；该部分仍由 TF-0006 的真实 corpus、live A/B、soak 与产品批准决定。",
+        "why_this_task": "先恢复真实集成证据和可交付性，再做有回滚的小范围内测，是当前最快且不牺牲安全边界的路径。"
+      },
+      "blocked_by": [],
+      "confidence": 0.75,
+      "context_tags": [],
+      "desired_outcomes": [
+        "关键实现、测试、文档与证据可在 clean checkout 复现",
+        "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
+        "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
+      ],
+      "difficulty": "high",
+      "id": "TF-0007",
+      "kind": "global_task",
+      "next_action": "一次只推进一个 ready 节点",
+      "priority": 1,
+      "progress": 0.0,
+      "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
+      "ready": true,
+      "remaining_minutes_max": 1440,
+      "remaining_minutes_min": 720,
+      "status": "in_progress",
+      "success_metrics": [
+        "未授权写入 0",
+        "SEKB 未确认写入 0",
+        "Browser 私网绕过 0",
+        "kill switch 演练成功率 100%"
+      ],
+      "title": "DCS 与关联组件受控内测投用收口（非GA）"
+    },
+    {
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.95,
+        "user_goal": "尽快把组件投入使用",
+        "validation_plan": [
+          "运行 Harness task spec 全部门禁",
+          "在 clean checkout 重跑 E2E 与 maturity validation"
+        ],
+        "why_not_enough": "只恢复投用资格，不提供真实效果毕业证据。",
+        "why_this_task": "这是进入任何稳定 canary 前唯一的硬阻塞集合。"
+      },
+      "blocked_by": [],
+      "confidence": 0.8,
+      "context_tags": [],
+      "desired_outcomes": [],
+      "difficulty": "medium",
+      "id": "TF-0008",
+      "kind": "task",
+      "next_action": "关键 Electron E2E 6/6 通过",
+      "priority": 1,
+      "progress": 0.0,
+      "purpose": "把本机绿灯转化为可审查、可合并、可复现的受控投用基线。",
+      "ready": true,
+      "remaining_minutes_max": 720,
+      "remaining_minutes_min": 360,
+      "status": "ready",
+      "success_metrics": [
+        "DCS W5 3/3 通过",
+        "evidence hash failure 0"
+      ],
+      "title": "P0 交付基线与 DCS 真实集成证据恢复"
+    },
+    {
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.9,
+        "user_goal": "尽快把 DCS 和关联组件投入使用",
+        "validation_plan": [
+          "P0 门禁全绿",
+          "受控 canary 与 rollback 记录",
+          "保持 TF-0006 blocked"
+        ],
+        "why_not_enough": "不解决 TF-0006 的 default-on/GA 证据。",
+        "why_this_task": "聚焦唯一硬阻塞并用受控 canary 验证真实运营性。"
+      },
+      "blocked_by": [],
+      "confidence": 0.9,
+      "context_tags": [],
+      "desired_outcomes": [],
+      "difficulty": "unknown",
+      "id": "TF-0006",
+      "kind": "subtask",
+      "next_action": "澄清阻塞原因并决定解除或废止",
+      "priority": 3,
+      "progress": 10.0,
+      "purpose": "用真实 corpus 与 live A/B 支撑 default-on 讨论，不靠再写 honesty pack",
+      "ready": false,
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "status": "blocked",
+      "success_metrics": [],
+      "title": "M2/M3 证据升级（延后）"
+    },
+    {
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.88,
+        "user_goal": "尽快把组件投入使用",
+        "validation_plan": [
+          "审阅 canary 运行记录",
+          "审阅 rollback drill",
+          "确认硬性 NO-GO 未触发"
+        ],
+        "why_not_enough": "仍不是产品 GA 或默认开启批准。",
+        "why_this_task": "通过小范围真实任务验证运营性，比继续写合成报告更接近实际使用。"
+      },
+      "blocked_by": [
+        "TF-0008"
+      ],
+      "confidence": 0.7,
+      "context_tags": [],
+      "desired_outcomes": [],
+      "difficulty": "medium",
+      "id": "TF-0009",
+      "kind": "task",
+      "next_action": "先完成依赖：TF-0008",
+      "priority": 2,
+      "progress": 0.0,
+      "purpose": "把通过门禁的组件转化为可运营的内部工具。",
+      "ready": false,
+      "remaining_minutes_max": 720,
+      "remaining_minutes_min": 360,
+      "status": "proposed",
+      "success_metrics": [
+        "安全或隐私泄漏 0",
+        "未授权持久化 0",
+        "关键失败均可解释"
+      ],
+      "title": "P1 组件小范围受控内测运行包"
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "applied_at": "2026-07-19T17:29:59.650961Z",
+  "base_graph_hash": "c195ddea728cea086cfff6e2f29e1e02797b778589c97e94998d2f22d5df7ef1",
+  "base_summary": {
+    "edge_count": 5,
+    "node_count": 6,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "controlled-rollout-goal",
+      "node": {
+        "acceptance_criteria": [
+          "关键文件全部被 Git 跟踪",
+          "maturity:validate exit 0",
+          "关键 Electron E2E 6/6 通过",
+          "完成一轮有记录的受控内部 canary 与 rollback 演练"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "尽快把 DCS 和关联组件投入实际使用",
+          "validation_plan": [
+            "运行 component-controlled-rollout-readiness Harness spec",
+            "通过关键 6/6 Electron E2E",
+            "通过 maturity:validate",
+            "审阅 canary 与 rollback 记录"
+          ],
+          "why_not_enough": "不提供 default-on/GA 资格；该部分仍由 TF-0006 的真实 corpus、live A/B、soak 与产品批准决定。",
+          "why_this_task": "先恢复真实集成证据和可交付性，再做有回滚的小范围内测，是当前最快且不牺牲安全边界的路径。"
+        },
+        "assumptions": [
+          "当前工作区改动代表计划交付的组件基线",
+          "内部 canary 可使用显式 feature flags 与有限 cohort"
+        ],
+        "confidence": 0.75,
+        "desired_outcomes": [
+          "关键实现、测试、文档与证据可在 clean checkout 复现",
+          "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
+          "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 960,
+        "evidence": [
+          "docs/dev/component-readiness-audit-2026-07-20.md",
+          "artifacts/component-readiness-audit-2026-07-20/report.json"
+        ],
+        "execution_hints": [
+          "一次只推进一个 ready 节点",
+          "先封装交付基线，不扩组件能力"
+        ],
+        "kind": "global_task",
+        "non_goals": [
+          "default-on",
+          "联合系统 GA",
+          "SEKB 自动写回",
+          "无监督 Browser",
+          "扩大多 agent 自动修改面"
+        ],
+        "priority": 1,
+        "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "默认策略保持 fail-closed/opt-in",
+          "不降低 host sender/workspace/approval 安全边界",
+          "不解除 TF-0006 或宣称 joint-system GA"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "未授权写入 0",
+          "SEKB 未确认写入 0",
+          "Browser 私网绕过 0",
+          "kill switch 演练成功率 100%"
+        ],
+        "summary": "恢复可交付变更集、DCS 真实接线 E2E 与成熟度证据后，启动小范围可回滚内部 canary。",
+        "title": "DCS 与关联组件受控内测投用收口（非GA）"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "p0-delivery-evidence",
+      "node": {
+        "acceptance_criteria": [
+          "关键 Electron E2E 6/6 通过",
+          "maturity:validate exit 0",
+          "关键锚点无 UNTRACKED",
+          "git diff --check 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "尽快把组件投入使用",
+          "validation_plan": [
+            "运行 Harness task spec 全部门禁",
+            "在 clean checkout 重跑 E2E 与 maturity validation"
+          ],
+          "why_not_enough": "只恢复投用资格，不提供真实效果毕业证据。",
+          "why_this_task": "这是进入任何稳定 canary 前唯一的硬阻塞集合。"
+        },
+        "assumptions": [
+          "W5 三个失败共享测试 helper 的 sender 根因"
+        ],
+        "confidence": 0.8,
+        "difficulty": "medium",
+        "estimated_total_minutes": 480,
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p0交付基线与真实集成证据恢复",
+          "harness/specs/tasks/component-controlled-rollout-readiness.md"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "功能扩张",
+          "默认值翻转",
+          "完整 CVK/assembler 重构"
+        ],
+        "priority": 1,
+        "purpose": "把本机绿灯转化为可审查、可合并、可复现的受控投用基线。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "不得放宽 senderAuth 或增加生产测试后门",
+          "所有核心实现/E2E/docs/evidence 纳入同一 change set",
+          "按 collector 刷新 evidence，不手改 frozen hash"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "DCS W5 3/3 通过",
+          "evidence hash failure 0"
+        ],
+        "summary": "跟踪关键文件，修复 W5 授权 sender 测试接线，刷新 maturity evidence。",
+        "title": "P0 交付基线与 DCS 真实集成证据恢复"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "p1-controlled-canary",
+      "node": {
+        "acceptance_criteria": [
+          "每个 profile 至少 10 次有记录内部任务",
+          "未授权写入与安全泄漏为 0",
+          "kill switch 演练成功率 100%",
+          "负责人给出继续/缩小/停止决定"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.88,
+          "user_goal": "尽快把组件投入使用",
+          "validation_plan": [
+            "审阅 canary 运行记录",
+            "审阅 rollback drill",
+            "确认硬性 NO-GO 未触发"
+          ],
+          "why_not_enough": "仍不是产品 GA 或默认开启批准。",
+          "why_this_task": "通过小范围真实任务验证运营性，比继续写合成报告更接近实际使用。"
+        },
+        "confidence": 0.7,
+        "difficulty": "medium",
+        "estimated_total_minutes": 480,
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "default-on",
+          "无界 cohort",
+          "TF-0006 解阻"
+        ],
+        "priority": 2,
+        "purpose": "把通过门禁的组件转化为可运营的内部工具。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "P0 全绿后才开始",
+          "每个 profile 明确 owner/cohort/budget/privacy/rollback",
+          "Runtime Memory 保持 diagnostics-only"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "安全或隐私泄漏 0",
+          "未授权持久化 0",
+          "关键失败均可解释"
+        ],
+        "summary": "为 DCS、SEKB、Browser 建立 owner、cohort、metrics、kill 与 rollback，并执行最小真实场景。",
+        "title": "P1 组件小范围受控内测运行包"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "交付与证据恢复是受控投用目标的第一阶段。"
+      },
+      "from": "p0-delivery-evidence",
+      "to": "controlled-rollout-goal",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "受控 canary 是目标的运营化阶段。"
+      },
+      "from": "p1-controlled-canary",
+      "to": "controlled-rollout-goal",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "真实内测必须等待可交付基线、W5 与 maturity evidence 全绿。"
+      },
+      "from": "p1-controlled-canary",
+      "to": "p0-delivery-evidence",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "把已完成的受控可运营技术基线转化为实际内部使用。"
+      },
+      "from": "controlled-rollout-goal",
+      "to": "TF-0001",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "TF-0006 决定未来 default-on/毕业证据，但不阻塞当前受控内测。"
+      },
+      "from": "TF-0006",
+      "to": "controlled-rollout-goal",
+      "type": "related_to"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "选择先恢复交付/真实集成证据，再做小范围可回滚内测；不选择直接 default-on，也不继续横向扩组件。",
+        "confidence": 0.9,
+        "created_at": "2026-07-19T17:14:19.250687Z",
+        "id": "TFA-4a4979781c",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "尽快把 DCS 和关联组件投入使用",
+          "validation_plan": [
+            "P0 门禁全绿",
+            "受控 canary 与 rollback 记录",
+            "保持 TF-0006 blocked"
+          ],
+          "why_not_enough": "不解决 TF-0006 的 default-on/GA 证据。",
+          "why_this_task": "聚焦唯一硬阻塞并用受控 canary 验证真实运营性。"
+        },
+        "reason": "当前核心逻辑已绿，最短板是可交付性、W5 集成证据和成熟度证据漂移。",
+        "rejected_options": [
+          "直接 default-on/GA",
+          "继续扩展组件能力"
+        ],
+        "related_task_ids": [
+          "TF-0001",
+          "TF-0006"
+        ],
+        "selected_option": "受控内部投用收口",
+        "user_goal": "尽快把 DCS 和关联组件投入使用"
+      }
+    }
+  ],
+  "created_at": "2026-07-19T17:14:19.249608Z",
+  "notes": "Only one ready execution node. Controlled internal use only; no default-on, no joint-system GA, no SEKB auto writeback.",
+  "proposal_id": "TFP-component-controlled-rollout-20260720",
+  "rationale": "复核确认组件核心功能大体可用，但 DCS W5 集成证据、成熟度 evidence hash 与 Git 可交付性未闭合。以最短路径建立受控内测投用收口，不改变 default-off、不解除 TF-0006。",
+  "session_id": "session-2026-07-20-component-readiness-reaudit",
+  "status": "applied"
+}

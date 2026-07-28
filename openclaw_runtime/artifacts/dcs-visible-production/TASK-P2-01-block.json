@@ -1,0 +1,7 @@
+{
+  "taskId": "TASK-P2-01",
+  "status": "blocked",
+  "reason": "Requires real corpus-manifest, human live-ab, soak, product-approval; cannot fabricate",
+  "p1DepsMet": true,
+  "engineeringReady": true
+}

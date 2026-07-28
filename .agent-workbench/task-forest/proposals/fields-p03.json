@@ -1,0 +1,15 @@
+{
+  "kind": "subtask",
+  "status": "ready",
+  "priority": 2,
+  "purpose": "证明经验闭环不是半程，而是可验收的一条黄金路径",
+  "requirements": [
+    "执行→压缩→候选→过滤→确认→持久化→召回→行为变化→评估",
+    "仍需人工 confirm，不做全自动写回"
+  ],
+  "acceptance_criteria": [
+    "至少1条 Electron/Playwright E2E 稳定绿",
+    "artifact 含 lineage",
+    "无无人审批自动写回"
+  ]
+}

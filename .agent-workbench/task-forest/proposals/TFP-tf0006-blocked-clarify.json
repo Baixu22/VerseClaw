@@ -1,0 +1,40 @@
+{
+  "applied_at": "2026-07-19T10:51:24.619674Z",
+  "base_graph_hash": "ed573f3a5eb9368e751aa62eae702ba94c0f5da6b1134f8a33c530190b20adcc",
+  "base_summary": {
+    "edge_count": 5,
+    "node_count": 6,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.9,
+        "evidence": [
+          "docs/dev/tf0006-evidence-upgrade-unblock.md",
+          "artifacts/tf0006-evidence-upgrade/status.json",
+          "tests/unit/tf0006-evidence-upgrade-blocked.test.ts",
+          "docs/dev/Sustained-Development-Playbook.md §8",
+          "docs/dev/tf0001-controlled-operable-closeout.md (liveReady=false)"
+        ],
+        "execution_hints": [
+          "解除前必须四份证据齐备：corpus-manifest / live-ab-report / soak-report / product-approval",
+          "若产品放弃 M2/M3 default-on：改为 deprecated 并保留 readyForDefaultFlagGraduation=false",
+          "禁止：因 Agent Dev/P0 E2E 绿灯将 liveReady 设为 true"
+        ],
+        "progress": 10,
+        "progress_source": "manual",
+        "status": "blocked",
+        "summary": "阻塞原因已澄清并文档化：缺真实 corpus + human live A/B + soak + product approval。决策 keep-blocked；P0/synthetic 不足以 liveReady 或 default-on。"
+      },
+      "id": "TF-0006"
+    }
+  ],
+  "created_at": "2026-07-19T10:51:24.471805Z",
+  "notes": "不解除 blocked；不设置 liveReady；不翻转 default-on；不开启 SEKB 自动写回。使用 fields schema。",
+  "proposal_id": "TFP-tf0006-blocked-clarify",
+  "rationale": "澄清 TF-0006 阻塞原因并书面锁定解除条件：无真实 corpus / human live A/B / soak / product approval 前保持 blocked；明确不因 P0 绿灯解除。",
+  "session_id": "session-2026-07-19-tf0006-clarify",
+  "status": "applied"
+}

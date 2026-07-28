@@ -3152,6 +3152,16 @@ export const chatHandlers: GatewayRequestHandlers = {
       }>;
       timeoutMs?: number;
       workspaceId?: string;
+      /**
+       * Trusted workspace authority fingerprint (D3 closeout consumer side).
+       * Produced by Main (`electron/services/chat-api.ts`) from the workspace's
+       * normalized rootPath via `computeWorkspaceFingerprint`. Embedded attempt
+       * reads this via ctx → FollowupRun.run → RunEmbeddedAgentParams and
+       * prefers it over the locally computed `effectiveWorkspace` fingerprint
+       * so the Chat→Main→Gateway chain drives `bindSessionWorkspaceFingerprint`'s
+       * mismatch-invalidate semantics. Absent → agent-config fallback path.
+       */
+      workspaceFingerprint?: string;
       inputMode?: unknown;
       promptMode?: "full" | "minimal" | "none";
       systemInputProvenance?: InputProvenance;
@@ -3225,6 +3235,12 @@ export const chatHandlers: GatewayRequestHandlers = {
     const agentIdOverride = normalizeOptionalText(p.agentId);
     const clientRunId = p.idempotencyKey;
     const workspaceId = normalizeOptionalText(p.workspaceId);
+    // D3 closeout (consumer side): read the trusted workspace authority
+    // fingerprint forwarded by Main. Embedded attempt prefers this over the
+    // locally computed `effectiveWorkspace` fingerprint so the
+    // Chat→Main→Gateway chain drives `bindSessionWorkspaceFingerprint`'s
+    // mismatch-invalidate semantics. Empty/absent → agent-config fallback.
+    const workspaceFingerprint = normalizeOptionalText(p.workspaceFingerprint);
     const requestedAgentId = resolveRequestedChatAgentId({
       cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
       requestedSessionKey: rawSessionKey,
@@ -4010,6 +4026,11 @@ export const chatHandlers: GatewayRequestHandlers = {
             }
           : {}),
         GatewayClientScopes: client?.connect?.scopes ?? [],
+        // D3 closeout (consumer side): forward the trusted workspace authority
+        // fingerprint so embedded attempt can prefer it over the locally
+        // computed `effectiveWorkspace` fingerprint. Absent → agent-config
+        // fallback path (no false invalidation).
+        ...(workspaceFingerprint ? { WorkspaceFingerprint: workspaceFingerprint } : {}),
       };
       if (mediaPathOffloadPaths.length > 0) {
         // Inject offloads via the same MsgContext fields the channel

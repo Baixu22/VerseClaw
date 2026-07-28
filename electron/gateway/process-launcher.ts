@@ -9,6 +9,7 @@ import {
   prependOfficeCliPathToEnv,
   type OfficeCliPathOptions,
 } from '../utils/officecli-path';
+import { nextGatewayGeneration, stampGatewayGeneration } from './generation';
 
 const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
 (function () {
@@ -118,10 +119,14 @@ export function buildGatewayRuntimeEnv(
   // pre-existing value inherited from the user shell cannot re-enable it.
   runtimeEnv.OPENCLAW_DISABLE_BONJOUR = '1';
   runtimeEnv.CLAWX_AGENT_BROWSER_BRIDGE = '1';
-  // Verse Token assembly default ON unless operator set kill-switch.
-  if (!runtimeEnv.VERSE_VTOKEN_ASSEMBLY_ENABLED?.trim()) {
-    runtimeEnv.VERSE_VTOKEN_ASSEMBLY_ENABLED = '1';
-  }
+  // FP-P0-01: Verse Token assembly is an opt-in product default (OFF).  The
+  // launcher must NOT synthesize a value here: the runtime resolver
+  // (`vtoken-rpc-client.ts` `isVtokenAssemblyEnvEnabled` /
+  // `isVtokenAssemblyEnvForcedOn`) treats unset as OFF, explicit truthy as
+  // canary opt-in, and explicit `0`/`false`/`off` as a kill that outranks every
+  // enable source.  Writing a default would erase the unset state and make
+  // `docs/dev/default-config-matrix.md` ("false (opt-in)") false.  Any
+  // inherited user-shell value passes through the `forkEnv` spread untouched.
 
   return runtimeEnv;
 }
@@ -160,6 +165,10 @@ export async function launchGatewayProcess(options: {
   const lastSpawnSummary = `mode=${mode}, runtime=${runtimeMode}, entry="${entryScript}", args="${sanitizedArgs.join(' ')}", execArgv="${execArgv.join(' ')}", cwd="${openclawDir}"`;
 
   const runtimeEnv = buildGatewayRuntimeEnv(forkEnv);
+  // FP-P0-04: stamp the generation so a runtime acknowledgement can be matched to
+  // *this* child. An ack carrying an older generation is discarded by the control
+  // plane instead of being read as proof that a flag applied.
+  stampGatewayGeneration(runtimeEnv, nextGatewayGeneration());
 
   // Only apply the fetch/child_process preload in dev mode.
   // In packaged builds Electron's UtilityProcess rejects NODE_OPTIONS

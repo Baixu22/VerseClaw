@@ -19,6 +19,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createInterface } from "node:readline";
 import { logWarn, logInfo } from "../logger.js";
+import { resolveVerseShellCommandArgv } from "./verseshell/shell-command.js";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -153,26 +154,6 @@ function shellExecArgvExpression(argv: string[]): string {
   return `shell.exec([${argv.map((arg) => aeString(arg)).join(", ")}])`;
 }
 
-function quoteCmdPath(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`;
-}
-
-function cmdCdPath(value: string): string {
-  const slashPath = value.replace(/\\/g, "/");
-  if (/^[A-Za-z]:\/[^\s&|<>^"]+$/.test(slashPath)) {
-    return slashPath;
-  }
-  return quoteCmdPath(value);
-}
-
-function quotePowerShellLiteral(value: string): string {
-  return `'${value.replace(/'/g, "''")}'`;
-}
-
-function quotePosix(value: string): string {
-  return `'${value.replace(/'/g, "'\\''")}'`;
-}
-
 function normalizeToolPath(inputPath: string, fallback = "."): string {
   let s = String(inputPath ?? fallback).trim();
   if (!s) s = fallback;
@@ -182,29 +163,6 @@ function normalizeToolPath(inputPath: string, fallback = "."): string {
     s = s.replace(/^([A-Za-z]):(?!\/)/, "$1:/");
   }
   return s;
-}
-
-function shellArgvForCommand(command: string, cwd?: string): string[] {
-  const requested = (process.env.VERSESHELL_OS_SHELL || "").toLowerCase();
-  const windowsCmd = process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe";
-  if (requested === "git-bash" || requested === "bash") {
-    const prefix = cwd ? `cd ${quotePosix(cwd.replace(/\\/g, "/"))} && ` : "";
-    return ["C:\\Program Files\\Git\\bin\\bash.exe", "-lc", `${prefix}${command}`];
-  }
-  if (requested === "powershell") {
-    const prefix = cwd ? `Set-Location -LiteralPath ${quotePowerShellLiteral(cwd)}; ` : "";
-    return ["powershell", "-NoProfile", "-Command", `${prefix}${command}`];
-  }
-  if (requested === "pwsh") {
-    const prefix = cwd ? `Set-Location -LiteralPath ${quotePowerShellLiteral(cwd)}; ` : "";
-    return ["pwsh", "-NoProfile", "-Command", `${prefix}${command}`];
-  }
-  if (process.platform === "win32" || requested === "cmd") {
-    const prefix = cwd ? `cd /d ${cmdCdPath(cwd)} && ` : "";
-    return [windowsCmd, "/D", "/C", `${prefix}${command}`];
-  }
-  const prefix = cwd ? `cd ${quotePosix(cwd)} && ` : "";
-  return ["sh", "-lc", `${prefix}${command}`];
 }
 
 // ── State ─────────────────────────────────────────────────────────────────
@@ -856,7 +814,7 @@ export async function verseshellExec(
   // Route through an explicit OS shell argv. This preserves pipes,
   // redirection, quoting, and Windows paths instead of relying on
   // VerseShell's whitespace splitter for `shell.exec("...")`.
-  const cmd = shellExecArgvExpression(shellArgvForCommand(command, opts?.cwd));
+  const cmd = shellExecArgvExpression(resolveVerseShellCommandArgv(command, opts?.cwd));
   const result = await verseshellEval(cmd, opts);
 
   if (!result.ok) {

@@ -1,0 +1,28 @@
+$ pnpm exec vitest run tests/unit/first-product-claims.test.ts tests/unit/chat-input.test.tsx --maxWorkers=1
+
+Test Files  2 passed (2)
+Tests       60 passed (60)
+Duration    10.91s
+
+$ pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/launch-contract-matrix.test.ts --maxWorkers=1
+
+Test Files  2 passed (2)
+Tests       39 passed (39)
+Duration    3.99s
+
+$ pnpm contract:check
+
+Contract check passed.
+
+$ pnpm run i18n:lint
+
+i18n lint passed.
+
+$ node scripts/scan-first-product-claims.mjs
+
+[first-product-claims] scanned 16 current product surfaces
+[first-product-claims] repository matches 6386 across 686 paths
+[first-product-claims] current product violations 0
+[first-product-claims] report artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
+
+The scanner was rerun after the P2 source/spec, handoff, Task Forest proposal, and governance bookkeeping edits; those fields increased the exempt historical/governance total from 6381 to 6386 and the matched path count from 683 to 686 without changing product violations or skipped files. All commands exited 0. Node also emitted the inherited NODE_TLS_REJECT_UNAUTHORIZED=0 warning during Vitest/contract/i18n; no command treated the warning as a pass condition.

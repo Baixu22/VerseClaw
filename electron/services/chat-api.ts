@@ -8,6 +8,8 @@ import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
+import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
+import { getWorkspaceRootPathById } from './workspaces-api';
 
 const VISION_MIME_TYPES = new Set([
   'image/png',
@@ -435,6 +437,25 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           deliver: body.deliver ?? false,
           idempotencyKey,
         };
+        // D3 closeout: forward `workspaceId` and a trusted `workspaceFingerprint`
+        // produced from the workspace's normalized rootPath. Gateway uses the
+        // fingerprint as the workspace authority field; embedded attempt binds
+        // the same fingerprint via `bindSessionWorkspaceFingerprint` so mismatch
+        // invalidates `working-memory:${sessionId}` consistently across the
+        // Chat→Main→Gateway chain. When rootPath lookup fails, workspaceId is
+        // still forwarded for Task Ledger continuity, but no fingerprint is
+        // produced (agent-config fallback path, no false invalidation).
+        const workspaceId = typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '';
+        if (workspaceId) {
+          rpcParams.workspaceId = workspaceId;
+          const rootPath = await getWorkspaceRootPathById(workspaceId);
+          if (rootPath) {
+            const workspaceFingerprint = computeWorkspaceFingerprint(rootPath);
+            if (workspaceFingerprint) {
+              rpcParams.workspaceFingerprint = workspaceFingerprint;
+            }
+          }
+        }
         if (typeof body.inputMode === 'string' && ['interrupt', 'guide', 'queue', 'revise-goal'].includes(body.inputMode)) {
           rpcParams.inputMode = body.inputMode;
         }

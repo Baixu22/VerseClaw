@@ -55,6 +55,22 @@ const NodeHostSchema = z
 
 const RuntimeFeatureSchema = z
   .object({
+    verseShellFoundation: z
+      .object({
+        killSwitch: z.boolean().optional(),
+        verifiedRuntime: z.boolean().optional(),
+        typedAci: z.boolean().optional(),
+        facade: z.boolean().optional(),
+        deferredOps: z.boolean().optional(),
+        governedExec: z.boolean().optional(),
+        artifactResults: z.boolean().optional(),
+        mcpCompatibility: z.boolean().optional(),
+        legacyEval: z.boolean().optional(),
+        compatibilityNativeFallback: z.boolean().optional(),
+        readOnlyShadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
     registryPilot: z
       .object({
         enabled: z.boolean().optional(),
@@ -127,6 +143,17 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+      })
+      .strict()
+      .optional(),
+    // FP-P0-02: master kill switch for memory/context enhancement. This leaf existed
+    // in types.openclaw.ts and was read by isContextEnhancementKillSwitchEngaged, but
+    // was missing from this strict schema — so writing it made config validation fail
+    // and the gateway refused to start. The config form of the kill switch was
+    // therefore unusable in production, not merely ineffective.
+    contextEnhancement: z
+      .object({
+        killSwitch: z.boolean().optional(),
       })
       .strict()
       .optional(),
@@ -229,6 +256,102 @@ const RuntimeFeatureSchema = z
         provider: z.boolean().optional(),
         proposeFacts: z.boolean().optional(),
         persist: z.boolean().optional(),
+        // FP-P0-06: existed in types.openclaw.ts + schema.labels/help but was missing
+        // from this strict schema, so writing the documented pilot config made the
+        // gateway exit code=1 (same class as the contextEnhancement defect).
+        injectPilot: z
+          .object({
+            enabled: z.boolean().optional(),
+            providers: z
+              .array(z.union([z.literal("role-memory"), z.literal("runtime-memory")]))
+              .optional(),
+            totalTokenBudget: z.number().int().min(1).max(100_000).optional(),
+            sessions: z.union([z.literal("all"), z.literal("main-only")]).optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
+    // FP-P0-06: coding/vtoken/orchestration/resilience are read by production code
+    // (coding-runtime-flags.ts, chat-turn-vtoken-injection.ts, orchestrator.ts,
+    // mission reviewer) and documented in schema.labels/help, but were absent here —
+    // any documented opt-in under these keys previously killed the gateway on start.
+    coding: z
+      .object({
+        factViews: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+        parseOnTouch: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+        staleWriteGuard: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+        writeJournal: z.object({ enabled: z.boolean().optional() }).strict().optional(),
+        worktree: z
+          .object({
+            backend: z.union([z.literal("inprocess"), z.literal("git")]).optional(),
+          })
+          .strict()
+          .optional(),
+        symbolLease: z
+          .object({
+            enabled: z.boolean().optional(),
+            mode: z.union([z.literal("memory"), z.literal("wal")]).optional(),
+          })
+          .strict()
+          .optional(),
+        patchFlow: z
+          .object({
+            default: z.boolean().optional(),
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        sekb: z
+          .object({
+            enabled: z.boolean().optional(),
+            experienceShadow: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        routingMemo: z
+          .object({
+            shadow: z.boolean().optional(),
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        verifier: z.object({ noSelfRepair: z.boolean().optional() }).strict().optional(),
+      })
+      .strict()
+      .optional(),
+    vtoken: z
+      .object({
+        assembly: z
+          .object({
+            enabled: z.boolean().optional(),
+            budgetTokens: z.number().int().min(1).max(1_000_000).optional(),
+            renderMode: z
+              .union([z.literal("compact"), z.literal("dense"), z.literal("verbose")])
+              .optional(),
+            sessions: z.union([z.literal("all"), z.literal("main-only")]).optional(),
+            timeoutMs: z.number().int().min(1).max(600_000).optional(),
+            maxSourceFiles: z.number().int().min(1).max(1_000).optional(),
+            maxSourceChars: z.number().int().min(1).max(10_000_000).optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
+    orchestration: z
+      .object({
+        routingMemoPilot: z
+          .union([z.literal("off"), z.literal("shadow"), z.literal("active")])
+          .optional(),
+        handoffArtifacts: z.union([z.literal("off"), z.literal("on")]).optional(),
+      })
+      .strict()
+      .optional(),
+    resilience: z
+      .object({
+        anomalyClassifierPilot: z.union([z.literal("off"), z.literal("shadow")]).optional(),
       })
       .strict()
       .optional(),

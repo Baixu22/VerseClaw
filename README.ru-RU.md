@@ -35,6 +35,12 @@
 
 ---
 
+## Область Windows x64 Controlled Preview
+
+Текущая цель проверки первого продукта - **Verse Claw Windows x64 - DCS Coding Controlled Preview**. Это внутренний сценарий для одного workspace с явным `opt-in`: проверка провайдера и модели, контролируемые чтение, запись, тесты и undo, подтверждение runtime, восстановление после перезапуска, kill/rollback и support bundle с удалением секретов.
+
+В область не входят инъекция Runtime Memory, автоматическая запись SEKB, Browser без контроля или с доступом к частной сети, автоматическое переключение C6/C7, Coding WAL, автоматический merge в рабочий repository и расширение на несколько Forge/DAG. Сейчас доступны инженерные проверки и тесты реальных процессов; human canary и release approval еще не завершены. Единственная классификация компонентов приведена в [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview).
+
 ## Обзор
 
 **Verse Claw** — это мост между мощными AI-агентами и повседневными пользователями. Построенный на базе [OpenClaw](https://github.com/OpenClaw), он превращает управление AI через командную строку в доступный и красивый десктоп-опыт — терминал не нужен.

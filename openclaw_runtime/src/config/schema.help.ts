@@ -2070,12 +2070,38 @@ export const FIELD_HELP: Record<string, string> = {
     "Total token budget across all injected providers for a single chat turn (default: 768). Providers cannot exceed this budget, preserving the context engine's budget discipline.",
   "runtime.memory.injectPilot.sessions":
     "Session scope for the injection pilot (default: 'main-only'). 'main-only' injects only into agent:<id>:main sessions; 'all' injects into every session. Subagent sessions already receive role-memory via role-spawn.ts, so 'main-only' avoids double-injection during the pilot.",
+  "runtime.verseShellFoundation":
+    "Default-off VerseShell rollout. Enable only reviewed canary leaves; governed execution still requires Electron-verified runtime identity and OpenClaw command approval.",
+  "runtime.verseShellFoundation.killSwitch":
+    "Emergency fail-closed cut for every VerseShell foundation leaf (default: false). Environment override: VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1.",
+  "runtime.verseShellFoundation.verifiedRuntime":
+    "Allow use of the Electron-verified pinned VerseShell binary identity (default: false).",
+  "runtime.verseShellFoundation.typedAci":
+    "Enable the typed JSONL ACI client gate (default: false). Does not expose legacy eval.",
+  "runtime.verseShellFoundation.facade":
+    "Enable the bounded ClawX VerseShell facade gate (default: false).",
+  "runtime.verseShellFoundation.deferredOps":
+    "Enable reviewed deferred-operation foundation surfaces (default: false).",
+  "runtime.verseShellFoundation.governedExec":
+    "Route host=verseshell exec through strict typed exec.run after OpenClaw approval (default: false; no native fallback).",
+  "runtime.verseShellFoundation.artifactResults":
+    "Expose the bounded verseshell_result artifact query tool after all typed governed gates are enabled (default: false).",
+  "runtime.verseShellFoundation.mcpCompatibility":
+    "Enable optional external MCP compatibility only (default: false). Internal callers continue to use typed ACI.",
+  "runtime.verseShellFoundation.legacyEval":
+    "Enable the deprecated, non-governed VerseShell eval compatibility bridge (default: false; not for production canaries).",
+  "runtime.verseShellFoundation.compatibilityNativeFallback":
+    "Allow native fallback only from the deprecated legacy bridge (default: false). Governed exec never falls back.",
+  "runtime.verseShellFoundation.readOnlyShadow":
+    "Enable only the reviewed read-only shadow allowlist (default: false). Never grants write or exec effects.",
   "runtime.vtoken":
-    "Verse Token Working Context assembly. Packs workspace md/tools/memory sources into a budgeted ## Working Context block on agent turns (default ON). Does not replace md storage.",
+    "Verse Token Working Context assembly. Packs workspace md/tools/memory sources into a budgeted ## Working Context block on agent turns (default OFF, opt-in). Does not replace md storage.",
   "runtime.vtoken.assembly":
-    "Working Context assembly controls for Verse Token (default enabled).",
+    "Working Context assembly controls for Verse Token (default disabled; opt-in canary).",
   "runtime.vtoken.assembly.enabled":
-    "Explicit false disables VT Working Context injection (default: true). Env kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0.",
+    "Explicit true enables VT Working Context injection (default: false). Canary env: VERSE_VTOKEN_ASSEMBLY_ENABLED=1. Kill-switch: VERSE_VTOKEN_ASSEMBLY_ENABLED=0 or runtime.contextEnhancement.killSwitch.",
+  "runtime.contextEnhancement.killSwitch":
+    "Instant fail-closed cut for memory/context enhancement paths (VToken, chat-turn memory inject, DCS context-block flags). Env: VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1. Default false.",
   "runtime.vtoken.assembly.budgetTokens":
     "Token budget for VT assemble (default: 600).",
   "runtime.vtoken.assembly.renderMode":

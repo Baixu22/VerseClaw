@@ -405,11 +405,23 @@ export async function resetSharedVtokenRpcClientForTests(): Promise<void> {
 }
 
 /** Env kill-switch for production assembly path (default enabled). */
+/**
+ * Env kill-switch for VT assembly. Explicit 0/false/off disables.
+ * Unset does NOT mean product default ON — product default is opt-in via
+ * `runtime.vtoken.assembly.enabled=true` or {@link isVtokenAssemblyEnvForcedOn}.
+ */
 export function isVtokenAssemblyEnvEnabled(
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   const raw = envTruthy(env.VERSE_VTOKEN_ASSEMBLY_ENABLED);
-  // Only explicit 0/false/off disables. Unset or truthy => enabled.
+  // Only explicit 0/false/off disables. Unset leaves config-level opt-in free.
   if (raw === false) return false;
   return true;
+}
+
+/** Explicit env canary: VERSE_VTOKEN_ASSEMBLY_ENABLED=1|true|on|yes. */
+export function isVtokenAssemblyEnvForcedOn(
+  env: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return envTruthy(env.VERSE_VTOKEN_ASSEMBLY_ENABLED) === true;
 }

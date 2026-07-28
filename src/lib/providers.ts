@@ -138,6 +138,13 @@ export interface ProviderAccount {
     email?: string;
     resourceUrl?: string;
     customModels?: string[];
+    /** FP-P1-01: sanitized validation record (never contains key material). */
+    validation?: {
+      status: 'valid' | 'invalid' | 'network-error' | 'unchecked';
+      checkedAt: string;
+      model?: string;
+      source: 'setup' | 'settings';
+    };
   };
   createdAt: string;
   updatedAt: string;

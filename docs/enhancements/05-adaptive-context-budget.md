@@ -322,7 +322,7 @@ export type BudgetShadowRecord = {
 };
 ```
 
-**Persistence (reuse, additive):** the record is attached as a new OPTIONAL field `budgetShadow?: BudgetShadowRecord` on `CompactionDetails` (details are an untyped JSON blob on compaction entries — an additive optional key is not a schema change), and per-session rollups ride the existing diagnostics channel used by the provider-registry pilot (`RuntimeRegistryDiagnostic`-shaped, `surface: "context"`), which the observability sub-domain (§5.2) already transports. Sessions that never compact emit the rollup diagnostic only.
+**Persistence (reuse, additive):** the record is attached as a new OPTIONAL field `budgetShadow?: BudgetShadowRecord` on `CompactionDetails` (details are an untyped JSON blob on compaction entries — an additive optional key is not a schema change), and per-session rollups ride the existing diagnostics channel used by context-provider registry diagnostics (`RuntimeRegistryDiagnostic`-shaped, `surface: "context"`; historical “provider-registry pilot” production path was removed in T1), which the observability sub-domain (§5.2) already transports. Sessions that never compact emit the rollup diagnostic only.
 
 **Lifecycle.** Subscribes at the same extension seams the safeguard already uses (`compactionSafeguardExtension(api: ExtensionAPI)` registration style, compaction-safeguard.ts:880): after-turn for pressure sampling, compaction-complete for firing capture. Flushes at session end.
 

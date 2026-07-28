@@ -234,13 +234,21 @@ import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
 import { dcsObservability } from "../../../context-engine/dcs-observability.js";
+import { loadVtokenDcsMemoryEntries } from "../../../context-engine/chat-turn-vtoken-injection.js";
+import { computeContextExtraSystemPrompt } from "../../../context-engine/context-orchestrator.js";
+import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
 import {
-  computeVtokenExtraSystemPrompt,
-  loadVtokenDcsMemoryEntries,
-} from "../../../context-engine/chat-turn-vtoken-injection.js";
+  beginTurnInjectionBudget,
+  chargeTurnInjection,
+  endTurnInjectionBudget,
+} from "../../../context-engine/turn-injection-budget.js";
+import {
+  createMemoryContextProviders,
+  defaultMainSessionRoleResolver,
+} from "../../../context-engine/register-memory-providers.js";
 import {
   bindSessionWorkspaceFingerprint,
-  computeWorkspaceFingerprint,
+  resolveTrustedWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
 import { invalidateWorkspaceFactServiceByFingerprint } from "../../../context-engine/factstore/workspace-fact-service.js";
 import { buildEmbeddedExtensionFactories } from "../extensions.js";
@@ -1241,18 +1249,30 @@ export async function runEmbeddedAttempt(
     });
     // DCS Stage 5 / W2: resolve BlockStore + sink once for both context_* agent tools
     // and later extension factories (task-state). Best-effort; undefined is safe.
-    const dcsExtensionDeps = resolveEmbeddedDcsExtensionDeps({
+    // TASK-P0-04: surface storage failures as degradationNotice (not silent omit).
+    const dcsDepsResolution = resolveEmbeddedDcsExtensionDeps({
       prompt: params.prompt,
       spawnedBy: params.spawnedBy,
       cfg: params.config,
       workspaceRoot: effectiveWorkspace,
     });
-    // D3 minimal slice: in-memory session↔workspace fingerprint; mismatch invalidates
-    // working-memory scope before tools/injection read. Full Chat→Main trusted-root
-    // propagation remains residual (see team/dcs/DCS-W6-COMPLETE.md).
+    const dcsExtensionDeps = dcsDepsResolution.deps;
+    // D3 closeout (consumer side): in-memory session↔workspace fingerprint;
+    // mismatch invalidates working-memory scope before tools/injection read.
+    // The trusted authority fingerprint is forwarded by Gateway chat.send
+    // (produced by Main from the workspace's normalized rootPath) via
+    // ctx.WorkspaceFingerprint → FollowupRun.run.workspaceFingerprint →
+    // RunEmbeddedAgentParams.workspaceFingerprint. When present, prefer it
+    // over the locally computed `effectiveWorkspace` fingerprint so the
+    // Chat→Main→Gateway chain drives bindSessionWorkspaceFingerprint's
+    // mismatch-invalidate semantics. Absent → agent-config fallback path
+    // uses the local compute (no false invalidation).
     {
       const sessionScopeKey = params.sessionKey?.trim() || params.sessionId;
-      const fingerprint = computeWorkspaceFingerprint(effectiveWorkspace);
+      const fingerprint = resolveTrustedWorkspaceFingerprint({
+        trustedFingerprint: params.workspaceFingerprint,
+        localWorkspace: effectiveWorkspace,
+      });
       if (sessionScopeKey && fingerprint) {
         try {
           const bindResult = await bindSessionWorkspaceFingerprint({
@@ -1967,13 +1987,23 @@ export async function runEmbeddedAttempt(
       params.sessionId,
       params.config,
     );
-    const vtokenExtraSystemPrompt = await computeVtokenExtraSystemPrompt(
+    // FP-P0-05: identify this turn so every injection source (memory pilot,
+    // VToken, CVK addition, DCS assembler) charges one shared budget instead of
+    // each growing the prompt on its own account.
+    const injectionTurnId = `${params.sessionKey ?? params.sessionId ?? "session"}::${
+      params.runId ?? `attempt-${Date.now()}`
+    }`;
+    // TF-0002: single Context Orchestrator entry for memory inject + VToken.
+    const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
       params.config,
       {
+        turnId: injectionTurnId,
         sessionKey: params.sessionKey,
-        taskHint: params.prompt,
+        sessionId: params.sessionId,
+        runId: params.runId,
         workspaceDir: effectiveWorkspace,
+        taskHint: params.prompt,
         markdownSources: hookAdjustedBootstrapFiles
           .filter((file) => !file.missing && typeof file.content === "string")
           .map((file) => ({
@@ -1986,15 +2016,28 @@ export async function runEmbeddedAttempt(
           ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
         })),
         memoryEntries: vtokenMemoryEntries,
+        memoryProviderFactory: () =>
+          createMemoryContextProviders({
+            roleMemory: {
+              resolveRoleName: defaultMainSessionRoleResolver,
+            },
+          }),
       },
-      (message, context) =>
-        log.warn(
-          context && Object.keys(context).length > 0
-            ? `${message} ${JSON.stringify(context)}`
-            : message,
-        ),
+      {
+        log: (message, context) =>
+          log.warn(
+            context && Object.keys(context).length > 0
+              ? `${message} ${JSON.stringify(context)}`
+              : message,
+          ),
+      },
     );
-    const effectiveExtraSystemPrompt = [vtokenExtraSystemPrompt, runtimeIntensitySystemPrompt]
+    const orchestratedExtraSystemPrompt = contextOrchestration.extraSystemPrompt;
+    const effectiveExtraSystemPrompt = [
+      orchestratedExtraSystemPrompt,
+      runtimeIntensitySystemPrompt,
+      dcsDepsResolution.degradationNotice,
+    ]
       .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
       .join("\n\n");
     const attemptSystemPrompt = buildAttemptSystemPrompt({
@@ -3216,18 +3259,43 @@ export async function runEmbeddedAttempt(
                 preassemblyContextEngineMessagesForPrecheck;
             }
             // D7: record CVK systemPromptAddition actual chars (addendum 6).
-            dcsObservability.recordCvkSystemPromptAddition(
-              assembled.systemPromptAddition?.length ?? 0,
-            );
-            if (assembled.systemPromptAddition) {
+            // TF-0002/P0: enhancement kill switch also cuts CVK dual-injection addition.
+            const suppressCvkAddition = isContextEnhancementKillSwitchEngaged(params.config);
+            // FP-P0-05: the CVK addition is now on the same account as every other
+            // injection source. It sits after DCS/VToken in the precedence order, so
+            // under pressure it truncates before working memory or knowledge do.
+            const cvkLedger = beginTurnInjectionBudget({
+              turnId: injectionTurnId,
+              killed: suppressCvkAddition,
+            });
+            const cvkCharged = suppressCvkAddition
+              ? undefined
+              : chargeTurnInjection(cvkLedger, "cvk_addition", assembled.systemPromptAddition)
+                  .text;
+            const cvkAdditionChars = cvkCharged?.length ?? 0;
+            dcsObservability.recordCvkSystemPromptAddition(cvkAdditionChars);
+            if (cvkCharged) {
               setActiveSessionSystemPrompt(
                 prependSystemPromptAddition({
                   systemPrompt: systemPromptText,
-                  systemPromptAddition: assembled.systemPromptAddition,
+                  systemPromptAddition: cvkCharged,
                 }),
               );
               log.debug(
-                `context engine: prepended system prompt addition (${assembled.systemPromptAddition.length} chars)`,
+                `context engine: prepended system prompt addition (${cvkCharged.length} chars`
+                  + `${
+                    cvkCharged.length !== (assembled.systemPromptAddition?.length ?? 0)
+                      ? `, truncated from ${assembled.systemPromptAddition?.length ?? 0} by shared injection budget`
+                      : ""
+                  })`,
+              );
+            } else if (assembled.systemPromptAddition && !suppressCvkAddition) {
+              log.debug(
+                `context engine: dropped system prompt addition (${assembled.systemPromptAddition.length} chars; shared injection budget exhausted)`,
+              );
+            } else if (assembled.systemPromptAddition && suppressCvkAddition) {
+              log.debug(
+                `context engine: suppressed system prompt addition (${assembled.systemPromptAddition.length} chars; enhancement kill switch)`,
               );
             }
           } catch (assembleErr) {
@@ -5519,6 +5587,10 @@ export async function runEmbeddedAttempt(
         yieldDetected: yieldDetected || undefined,
       };
     } finally {
+      // FP-P0-05: close the turn's shared injection ledger exactly once. This emits
+      // the summable accounting and frees the entry so ledgers cannot leak across
+      // turns. Safe when no source ever charged it (returns undefined).
+      endTurnInjectionBudget(injectionTurnId);
       if (trajectoryRecorder && !trajectoryEndRecorded) {
         trajectoryRecorder.recordEvent("session.ended", {
           status: promptError ? "error" : aborted || timedOut ? "interrupted" : "cleanup",

@@ -77,10 +77,20 @@ export type ChatMessageGetResult = Static<typeof ChatMessageGetResultSchema>;
 /** User-to-agent send request; idempotency key lets clients safely retry transport failures. */
 export const ChatSendParamsSchema = Type.Object(
   {
-    sessionKey: ChatSendSessionKeyString, 
-    agentId: Type.Optional(NonEmptyString), 
+    sessionKey: ChatSendSessionKeyString,
+    agentId: Type.Optional(NonEmptyString),
     workspaceId: Type.Optional(Type.String()),
-    sessionId: Type.Optional(NonEmptyString), 
+    /**
+     * D3 closeout: trusted workspace authority fingerprint
+     * (sha256(normalized absolute rootPath).slice(0, 16)) produced by Main
+     * from the workspace's normalized rootPath. Embedded attempt binds this
+     * via `bindSessionWorkspaceFingerprint` so workspace switches invalidate
+     * `working-memory:${sessionId}` consistently across the Chat→Main→Gateway
+     * chain. Optional; absent when workspaceId is missing or rootPath lookup
+     * fails (agent-config fallback path, no false invalidation).
+     */
+    workspaceFingerprint: Type.Optional(Type.String()),
+    sessionId: Type.Optional(NonEmptyString),
     message: Type.String(),
     thinking: Type.Optional(Type.String()),
     fastMode: Type.Optional(Type.Boolean()),
@@ -95,14 +105,14 @@ export const ChatSendParamsSchema = Type.Object(
     timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
     systemInputProvenance: Type.Optional(InputProvenanceSchema),
     systemProvenanceReceipt: Type.Optional(Type.String()),
-    suppressCommandInterpretation: Type.Optional(Type.Boolean()), 
+    suppressCommandInterpretation: Type.Optional(Type.Boolean()),
     inputMode: Type.Optional(Type.Union([
       Type.Literal('interrupt'),
       Type.Literal('guide'),
       Type.Literal('queue'),
       Type.Literal('revise-goal'),
     ])),
-    idempotencyKey: NonEmptyString, 
+    idempotencyKey: NonEmptyString,
     promptMode: Type.Optional(Type.Union([
       Type.Literal('full'),
       Type.Literal('minimal'),

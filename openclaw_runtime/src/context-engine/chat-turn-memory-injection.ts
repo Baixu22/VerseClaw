@@ -16,6 +16,7 @@
 // byte-identical prompts.
 
 import { isRecord } from "../runtime-core/index.js";
+import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import type {
   ContextItem,
   RuntimeContextProvider,
@@ -67,6 +68,11 @@ export type ChatTurnMemoryInjectionResult = {
 export function resolveMemoryInjectPilotConfig(
   value: unknown,
 ): MemoryInjectPilotConfig {
+  // Fail-closed master cut for all memory/context enhancement.
+  if (isContextEnhancementKillSwitchEngaged(value)) {
+    return { ...DEFAULT_MEMORY_INJECT_PILOT_CONFIG, enabled: false };
+  }
+
   const runtime = runtimeConfigFrom(value);
   const memory = isRecord(runtime?.memory) ? runtime.memory : undefined;
   const injectPilot = isRecord(memory?.injectPilot)

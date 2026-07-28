@@ -5,6 +5,7 @@
  */
 import path from "node:path";
 import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { emitDiagnosticEvent } from "../infra/diagnostic-events.js";
 import {
   type EventSessionRoutingPolicy,
@@ -60,7 +61,9 @@ import {
 import { buildCursorPositionResponse, stripDsrRequests } from "./pty-dsr.js";
 import { maybeWrapCommandWithShellSnapshot } from "./shell-snapshot.js";
 import { getShellConfig, sanitizeBinaryOutput } from "./shell-utils.js";
+import { resolveVerseShellFoundationRollout } from "./verseshell-foundation-flags.js";
 import { verseshellExec } from "./verseshell-runtime.js";
+import { executeGovernedVerseShell } from "./verseshell/governed-exec.js";
 
 export { execSchema } from "./bash-tools.schemas.js";
 
@@ -668,6 +671,9 @@ export async function runExecProcess(opts: {
   execCommand?: string;
   /** The execution host to use. "verseshell" routes through ae --serve. */
   execHost?: ExecHost;
+  /** Set only after the OpenClaw exec policy allowed this exact command. */
+  hostPolicyApproved?: boolean;
+  config?: OpenClawConfig;
   workdir: string;
   env: Record<string, string>;
   pathPrepend?: string[];
@@ -812,53 +818,23 @@ export async function runExecProcess(opts: {
   // the ae --serve JSON-RPC bridge instead of spawning a native shell.
   // Falls back to native shell if VerseShell is unavailable.
   if (opts.execHost === "verseshell") {
-    try {
-      const vsResult = await verseshellExec(execCommand, {
-        timeoutMs: opts.timeoutSec ? opts.timeoutSec * 1000 : undefined,
-        cwd: opts.workdir,
-      });
-
-      const aggregated = [vsResult.stdout, vsResult.stderr]
-        .filter(Boolean)
-        .join("\n");
-
-      for (const chunk of chunkString(vsResult.stdout)) {
-        appendOutput(session, "stdout", chunk);
-      }
-      for (const chunk of chunkString(vsResult.stderr)) {
+    // The legacy bridge is not a governed ACI route: it historically starts
+    // `ae --serve --policy permissive --cap all`. Keep it explicitly opt-in
+    // while the typed process manager is default-off. Failure on the selected
+    // VerseShell host is fail-closed unless a separate compatibility flag opts in.
+    const rollout = resolveVerseShellFoundationRollout({ config: opts.config });
+    const failClosedVerseShell = (error: unknown): ExecProcessHandle => {
+      const message = String(error);
+      for (const chunk of chunkString(message)) {
         appendOutput(session, "stderr", chunk);
       }
-
-      const durationMs = Date.now() - startedAt;
-      const exitCode = vsResult.exitCode;
-      const exitSignal: NodeJS.Signals | number | null = null;
-      const status: "completed" | "failed" =
-        vsResult.success && exitCode === 0 ? "completed" : "failed";
-
-      markExited(session, exitCode, exitSignal, status, "exit");
-      maybeNotifyOnExit(session, status);
-
-      const outcome: ExecProcessOutcome =
-        status === "completed"
-          ? {
-              status: "completed",
-              exitCode,
-              exitSignal,
-              durationMs,
-              aggregated: aggregated.trim(),
-              timedOut: false,
-            }
-          : {
-              status: "failed",
-              exitCode,
-              exitSignal,
-              durationMs,
-              aggregated: aggregated.trim(),
-              timedOut: false,
-              failureKind: "aborted",
-              reason: `Command exited with code ${exitCode}`,
-            };
-
+      markExited(session, null, null, "failed");
+      maybeNotifyOnExit(session, "failed");
+      const outcome = buildExecRuntimeErrorOutcome({
+        error,
+        aggregated: session.aggregated.trim(),
+        durationMs: Date.now() - startedAt,
+      });
       emitExecProcessCompleted({
         command: opts.command,
         mode: "child",
@@ -866,7 +842,6 @@ export async function runExecProcess(opts: {
         sessionKey: opts.sessionKey,
         target: "host",
       });
-
       return {
         session,
         startedAt,
@@ -875,11 +850,106 @@ export async function runExecProcess(opts: {
         kill: () => {},
         disableUpdates: () => {},
       };
-    } catch (err) {
-      logWarn(
-        `exec: VerseShell exec failed (${String(err)}); falling back to native shell for "${opts.command.slice(0, 80)}".`,
+    };
+    const completeVerseShell = (vsResult: {
+      stdout: string;
+      stderr: string;
+      success: boolean;
+      exitCode: number;
+      timedOut?: boolean;
+    }): ExecProcessHandle => {
+      const aggregated = [vsResult.stdout, vsResult.stderr].filter(Boolean).join("\n");
+      for (const chunk of chunkString(vsResult.stdout)) appendOutput(session, "stdout", chunk);
+      for (const chunk of chunkString(vsResult.stderr)) appendOutput(session, "stderr", chunk);
+
+      const durationMs = Date.now() - startedAt;
+      const exitSignal: NodeJS.Signals | number | null = null;
+      const status: "completed" | "failed" =
+        vsResult.success && vsResult.exitCode === 0 ? "completed" : "failed";
+      markExited(session, vsResult.exitCode, exitSignal, status, "exit");
+      maybeNotifyOnExit(session, status);
+      const outcome: ExecProcessOutcome =
+        status === "completed"
+          ? {
+              status,
+              exitCode: vsResult.exitCode,
+              exitSignal,
+              durationMs,
+              aggregated: aggregated.trim(),
+              timedOut: false,
+            }
+          : {
+              status,
+              exitCode: vsResult.exitCode,
+              exitSignal,
+              durationMs,
+              aggregated: aggregated.trim(),
+              timedOut: vsResult.timedOut === true,
+              failureKind: vsResult.timedOut ? "overall-timeout" : "aborted",
+              reason: vsResult.timedOut
+                ? "VerseShell command timed out"
+                : `Command exited with code ${vsResult.exitCode}`,
+            };
+      emitExecProcessCompleted({
+        command: opts.command,
+        mode: "child",
+        outcome,
+        sessionKey: opts.sessionKey,
+        target: "host",
+      });
+      return {
+        session,
+        startedAt,
+        pid: undefined,
+        promise: Promise.resolve(outcome),
+        kill: () => {},
+        disableUpdates: () => {},
+      };
+    };
+    if (rollout.enabled.governedExec) {
+      const required = ["verifiedRuntime", "typedAci", "facade"] as const;
+      const missing = required.filter((flag) => !rollout.enabled[flag]);
+      if (missing.length > 0) {
+        return failClosedVerseShell(
+          Object.assign(
+            new Error(`VerseShell governed execution requires enabled flags: ${missing.join(", ")}`),
+            { code: "E_VERSESHELL_GOVERNED_FLAGS" },
+          ),
+        );
+      }
+      try {
+        const result = await executeGovernedVerseShell({
+          command: execCommand,
+          cwd: opts.workdir,
+          timeoutMs,
+          hostPolicyApproved: opts.hostPolicyApproved === true,
+        });
+        return completeVerseShell(result);
+      } catch (error) {
+        return failClosedVerseShell(error);
+      }
+    }
+    if (!rollout.enabled.legacyEval) {
+      const error = Object.assign(
+        new Error("VerseShell governed ACI and legacy eval are disabled"),
+        { code: "E_VERSESHELL_DISABLED" },
       );
-      // Fall through to native shell spawn below.
+      return failClosedVerseShell(error);
+    }
+    try {
+      const vsResult = await verseshellExec(execCommand, {
+        timeoutMs,
+        cwd: opts.workdir,
+      });
+      return completeVerseShell(vsResult);
+    } catch (err) {
+      if (!rollout.enabled.compatibilityNativeFallback) {
+        return failClosedVerseShell(err);
+      }
+      logWarn(
+        `exec: VerseShell legacy exec failed (${String(err)}); explicit compatibility fallback is enabled for "${opts.command.slice(0, 80)}".`,
+      );
+      // The compatibility fallback is explicitly default-off.
     }
   }
 

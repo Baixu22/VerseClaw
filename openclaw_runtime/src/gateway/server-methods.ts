@@ -121,6 +121,10 @@ const loadDiagnosticsHandlers = lazyHandlerModule(
   () => import("./server-methods/diagnostics.js"),
   (module) => module.diagnosticsHandlers,
 );
+const loadRuntimeFlagAckHandlers = lazyHandlerModule(
+  () => import("./server-methods/runtime-flag-ack.js"),
+  (module) => module.runtimeFlagAckHandlers,
+);
 const loadDoctorHandlers = lazyHandlerModule(
   () => import("./server-methods/doctor.js"),
   (module) => module.doctorHandlers,
@@ -359,6 +363,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["diagnostics.stability"],
     loadHandlers: loadDiagnosticsHandlers,
+  }),
+  ...createLazyCoreHandlers({
+    methods: ["runtime.flags.ack"],
+    loadHandlers: loadRuntimeFlagAckHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [

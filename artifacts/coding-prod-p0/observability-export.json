@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T11:31:27.662Z",
+  "generatedAt": "2026-07-22T15:43:43.670Z",
   "coding": {
     "snapshot": {
       "factToolCalls": 0,
@@ -90,7 +90,22 @@
       "injectionDuplicateSuppressions": 0,
       "workspaceScopeBound": 0,
       "workspaceScopeInvalidated": 0,
-      "contextLadderActionHits": {}
+      "contextLadderActionHits": {},
+      "vtokenAssemblyCalls": 0,
+      "vtokenAssemblySuccesses": 0,
+      "vtokenAssemblyErrors": 0,
+      "vtokenAssemblyChars": 0,
+      "vtokenAssemblyTokens": 0,
+      "vtokenSourcesIngested": 0,
+      "contextOrchestratorCalls": 0,
+      "contextOrchestratorKillSwitchHits": 0,
+      "contextOrchestratorErrors": 0,
+      "contextOrchestratorCharsAdded": 0,
+      "injectionBudgetOverflows": 0,
+      "injectionBudgetTruncations": 0,
+      "injectionBudgetDrops": 0,
+      "injectionBudgetRequestedChars": 0,
+      "injectionBudgetAppliedChars": 0
     }
   },
   "families": {

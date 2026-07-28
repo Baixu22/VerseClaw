@@ -23,6 +23,9 @@ export type CodingObservabilitySnapshot = {
   syntaxCheckHits: number;
   syntaxCheckSilent: number;
   verifyConsumeHits: number;
+  /** FP-P1-04: project test-runner detection outcomes on the write path. */
+  testRunnerDetected: number;
+  testRunnerSkipped: number;
   diagHits: number;
   diagSilent: number;
   approvalPrompts: number;
@@ -68,6 +71,8 @@ const ZERO: CodingObservabilitySnapshot = {
   syntaxCheckHits: 0,
   syntaxCheckSilent: 0,
   verifyConsumeHits: 0,
+  testRunnerDetected: 0,
+  testRunnerSkipped: 0,
   diagHits: 0,
   diagSilent: 0,
   approvalPrompts: 0,
@@ -140,6 +145,10 @@ class CodingObservabilityRegistry {
     else this.#counters.syntaxCheckSilent += 1;
   }
   recordVerifyConsumeHit(): void { this.#counters.verifyConsumeHits += 1; }
+  recordTestRunnerDetect(detected: boolean): void {
+    if (detected) this.#counters.testRunnerDetected += 1;
+    else this.#counters.testRunnerSkipped += 1;
+  }
   recordDiagHit(): void { this.#counters.diagHits += 1; }
   recordDiagSilent(): void { this.#counters.diagSilent += 1; }
   recordApprovalPrompt(): void { this.#counters.approvalPrompts += 1; }
@@ -246,6 +255,8 @@ export const CODING_METRIC_NAMES = {
   undoCount: "coding.write.undoCount",
   syntaxCheckHits: "coding.write.syntaxCheckHits",
   verifyHitRate: "coding.write.verifyHitRate",
+  testRunnerDetected: "coding.write.testRunnerDetected",
+  testRunnerSkipped: "coding.write.testRunnerSkipped",
   diagHitRate: "coding.write.diagHitRate",
   approvalPromptRate: "coding.write.approvalPromptRate",
   waveConflictRate: "coding.concurrent.waveConflictRate",

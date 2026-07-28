@@ -10,7 +10,14 @@
     "factstorePassRate": 1,
     "routingAccuracy": 1,
     "corpusKind": "synthetic-agent",
-    "live": false
+    "live": false,
+    "reductionDefinition": {
+      "note": "FP-P0-05 accounting reconciliation. artifacts/coding-c1 reports 4.5x for the same C1 work: same formula, different corpus (4 hand-authored fixtures vs 32 synthetic). Neither supersedes the other.",
+      "formula": "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+      "corpus": "synthetic-agent generated corpus, seed 42",
+      "fixtureCount": 32,
+      "reconciliation": "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md"
+    }
   },
   "meetsGate": false,
   "recommendation": "keep-off",
@@ -25,7 +32,7 @@
     "packaging path: defaultsUnchanged=true; no auto default flip"
   ],
   "howToEnable": "Opt-in only: set OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (or OPENCLAW_DCS_CONTEXT_TOOLS=1) and restart gateway/runtime. Do not flip production defaults from this canary.",
-  "ts": "2026-07-16T02:32:34.355Z",
+  "ts": "2026-07-22T09:32:06.344Z",
   "liveReady": false,
   "notes": [
     "factstore arm reduces tool calls ≥5x with no pass-rate drop",

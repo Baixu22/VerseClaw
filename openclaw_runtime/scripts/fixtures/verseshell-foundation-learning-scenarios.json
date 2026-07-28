@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "scenarios": [
+    {
+      "id": "small-read",
+      "kind": "file-read",
+      "sizeClass": "small",
+      "expectedOutcome": "complete"
+    },
+    {
+      "id": "large-read",
+      "kind": "file-read",
+      "sizeClass": "large",
+      "expectedOutcome": "artifact-or-bounded-result"
+    },
+    {
+      "id": "repo-search",
+      "kind": "repo-search",
+      "sizeClass": "representative",
+      "expectedOutcome": "complete"
+    },
+    {
+      "id": "short-command",
+      "kind": "governed-command",
+      "sizeClass": "small",
+      "expectedOutcome": "complete"
+    },
+    {
+      "id": "large-command",
+      "kind": "governed-command",
+      "sizeClass": "large-output",
+      "expectedOutcome": "artifact-or-bounded-result"
+    },
+    {
+      "id": "artifact-recovery",
+      "kind": "artifact-recovery",
+      "sizeClass": "large",
+      "expectedOutcome": "recovered"
+    },
+    {
+      "id": "approval-denial",
+      "kind": "approval",
+      "sizeClass": "small",
+      "expectedOutcome": "denied"
+    },
+    {
+      "id": "runtime-outage",
+      "kind": "runtime-outage",
+      "sizeClass": "small",
+      "expectedOutcome": "unavailable"
+    }
+  ]
+}

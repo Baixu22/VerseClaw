@@ -1623,6 +1623,12 @@
         "pitfalls": "???????",
         "rules": "???"
       }
+    },
+    "providerGate": {
+      "title": "No AI provider configured",
+      "desc": "Your message cannot be sent because no validated AI provider is configured. Set one up in Settings → AI Providers.",
+      "configure": "Configure provider",
+      "dismiss": "Not now"
     }
   },
   "historyBuckets": {

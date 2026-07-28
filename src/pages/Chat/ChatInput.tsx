@@ -7,6 +7,7 @@
  * are sent with the message (no base64 over WebSocket).
  */
 import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Archive,
   AtSign,
@@ -90,6 +91,7 @@ import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
 import { OFFICE_ACTIONS, findOfficeSkill, type OfficeAction } from './composer-actions';
 import { detectTaskLoopUpgradeSuggestion } from './task-loop-upgrade';
+import { isProviderRuntimeReady } from '@/lib/setup-provider';
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -942,6 +944,19 @@ export function ChatInput({
     () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId),
     [providerAccounts, providerDefaultAccountId, providerStatuses],
   );
+  // FP-P1-01: first-send gate. When no usable provider exists (e.g. Setup was
+  // skipped), intercept the send with guidance instead of failing downstream.
+  const providerRuntimeReady = useMemo(
+    () =>
+      isProviderRuntimeReady({
+        accounts: providerAccounts,
+        statuses: providerStatuses,
+        defaultAccountId: providerDefaultAccountId,
+      }),
+    [providerAccounts, providerStatuses, providerDefaultAccountId],
+  );
+  const [providerGateOpen, setProviderGateOpen] = useState(false);
+  const navigate = useNavigate();
   const effectiveModelRef = optimisticModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
@@ -2325,6 +2340,13 @@ export function ChatInput({
     }
 
     if (!canSend) return;
+    // FP-P1-01: block the send when no provider can actually serve it and
+    // guide the user to configuration (Setup skip must not fail silently).
+    if (!providerRuntimeReady) {
+      setProviderGateOpen(true);
+      void refreshProviderSnapshot();
+      return;
+    }
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
     const baseTextToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
@@ -2414,7 +2436,7 @@ export function ChatInput({
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem]);
+  }, [input, attachments, canSend, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -3971,6 +3993,34 @@ export function ChatInput({
             >
               {capabilityExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('composer.capability.confirm')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* FP-P1-01: first-send provider gate — no usable provider configured. */}
+      <Dialog open={providerGateOpen} onOpenChange={setProviderGateOpen}>
+        <DialogContent
+          className="max-w-md rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
+          data-testid="chat-provider-gate-dialog"
+        >
+          <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">
+            {t('composer.providerGate.title')}
+          </DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            {t('composer.providerGate.desc')}
+          </DialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setProviderGateOpen(false)}>
+              {t('composer.providerGate.dismiss')}
+            </Button>
+            <Button
+              data-testid="chat-provider-gate-configure"
+              onClick={() => {
+                setProviderGateOpen(false);
+                navigate('/settings/models');
+              }}
+            >
+              {t('composer.providerGate.configure')}
             </Button>
           </div>
         </DialogContent>

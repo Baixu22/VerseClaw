@@ -136,6 +136,7 @@ import {
   type ToolSearchCatalogToolExecutor,
 } from "./tool-search.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
+import { createVerseShellResultTool } from "./verseshell/result-tool.js";
 
 const MEMORY_FLUSH_ALLOWED_TOOL_NAMES = new Set(["read", "write"]);
 
@@ -788,6 +789,14 @@ export function createOpenClawCodingTools(options?: {
       workspaceRoot: codingRoot,
       sessionId: codingSessionId,
       enabled: writeJournalEnabled,
+      // FP-P1-04: lineage carries the flags in force when the write happened,
+      // so a journal entry explains itself without the original session.
+      flags: {
+        parseOnTouch: parseOnTouchEnabled,
+        staleWriteGuard: staleWriteGuardEnabled,
+        writeJournal: writeJournalEnabled,
+        symbolLease: symbolLeaseEnabled,
+      },
     });
     // C2-2 stale guard only for full-file write
     if (kind === "write") {
@@ -1024,6 +1033,13 @@ export function createOpenClawCodingTools(options?: {
         scopeKey,
       })
     : null;
+  const verseShellResultTool = includeShellTools
+    ? createVerseShellResultTool({
+        cwd: codingRoot,
+        agentId,
+        config: options?.config,
+      })
+    : null;
   const applyPatchToolRaw =
     !includeShellTools || !applyPatchEnabled || (sandboxRoot && !allowWorkspaceWrites)
       ? null
@@ -1137,6 +1153,7 @@ export function createOpenClawCodingTools(options?: {
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
+    ...(verseShellResultTool ? [verseShellResultTool] : []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...(includeChannelTools ? listChannelAgentTools({ cfg: options?.config }) : []),
     ...(includeOpenClawTools

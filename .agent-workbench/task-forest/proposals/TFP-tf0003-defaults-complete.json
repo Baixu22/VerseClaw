@@ -1,0 +1,57 @@
+{
+  "applied_at": "2026-07-19T09:22:47.384253Z",
+  "base_graph_hash": "882b706fc1c2371a9bda080991a24c295240726e5c8d9ba29f15b336cbb38209",
+  "base_summary": {
+    "edge_count": 5,
+    "node_count": 6,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "id": "TF-0003",
+      "node": {
+        "confidence": 0.9,
+        "evidence": [
+          "docs/dev/default-config-matrix.md",
+          "tests/unit/default-config-matrix.test.ts",
+          "tests/unit/openclaw-auth.test.ts (private network defaults)",
+          "tests/unit/vtoken-bridge.test.ts",
+          "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+          "openclaw_runtime/src/context-engine/enhancement-kill-switch.test.ts",
+          "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+          "electron/utils/openclaw-auth.ts",
+          "electron/services/vtoken-bridge.ts",
+          "harness/specs/rules/vtoken-foundation-boundary.md",
+          "vitest: default-config-matrix + vtoken-bridge 12 passed; openclaw-auth private network 4 passed; openclaw_runtime vtoken+kill-switch 21 passed; chat-turn-memory 30 passed"
+        ],
+        "execution_hints": [
+          "下一会话优先 TF-0002 Context Orchestrator 统一入口",
+          "残留：既有 openclaw.json 若曾写入 dangerouslyAllowPrivateNetwork=true 不会被自动覆写；仅 undefined 种子 false"
+        ],
+        "progress": 100,
+        "progress_source": "manual",
+        "status": "done",
+        "summary": "默认策略已对齐为 fail-closed/opt-in：Browser 私网默认 false；VToken assembly/bridge 默认 false；working-memory / Runtime Memory inject / SEKB 保持默认 off；新增 context enhancement kill switch。"
+      }
+    },
+    {
+      "action": "update_node",
+      "id": "TF-0001",
+      "node": {
+        "evidence": [
+          "TF-0003 done: docs/dev/default-config-matrix.md + unit locks"
+        ],
+        "progress": 20,
+        "progress_source": "manual",
+        "summary": "P0-2 默认策略对齐与熔断已完成；仍待 P0-1 编排收口、SEKB 闭环、Browser 任务恢复。"
+      }
+    }
+  ],
+  "created_at": "2026-07-19T09:17:17.199738Z",
+  "notes": "不触及 TF-0002/0004/0005 实现；不翻转任何 default-on 到生产全量 GA。",
+  "proposal_id": "TFP-tf0003-defaults-complete",
+  "rationale": "本会话完成 TF-0003：私网默认拒绝、VToken 改为 opt-in/canary、默认配置矩阵文档与测试锁定、memory/context 增强一键熔断 fail-closed。",
+  "session_id": "session-2026-07-19-tf0003",
+  "status": "applied"
+}

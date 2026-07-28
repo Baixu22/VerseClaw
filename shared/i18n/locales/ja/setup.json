@@ -1,152 +1,261 @@
 {
-    "steps": {
-        "welcome": {
-            "title": "Verse Clawへようこそ",
-            "description": "AIアシスタントの設定準備が整いました"
-        },
-        "runtime": {
-            "title": "環境チェック",
-            "description": "システム要件を確認中"
-        },
-        "provider": {
-            "title": "AIプロバイダー",
-            "description": "AIサービスを構成"
-        },
-        "channel": {
-            "title": "チャンネル接続",
-            "description": "メッセージングプラットフォームを接続（オプション）"
-        },
-        "installing": {
-            "title": "セットアップ中",
-            "description": "必須コンポーネントをインストール中"
-        },
-        "complete": {
-            "title": "完了！",
-            "description": "Verse Clawを使用する準備が整いました"
-        }
-    },
+  "steps": {
     "welcome": {
-        "title": "Verse Clawへようこそ",
-        "description": "Verse ClawはOpenClawのグラフィカルインターフェースで、お気に入りのメッセージングプラットフォームでAIアシスタントを簡単に使用できます。",
-        "features": {
-            "noCommand": "コマンドライン不要",
-            "modernUI": "モダンで美しいインターフェース",
-            "bundles": "プリインストールされたスキルバンドル",
-            "crossPlatform": "クロスプラットフォーム対応"
-        }
+      "title": "Verse Clawへようこそ",
+      "description": "Windows x64 Controlled Preview を設定"
     },
     "runtime": {
-        "title": "環境をチェック中",
-        "viewLogs": "ログを表示",
-        "recheck": "再チェック",
-        "nodejs": "Node.js ランタイム",
-        "openclaw": "OpenClaw パッケージ",
-        "gateway": "ゲートウェイサービス",
-        "startGateway": "ゲートウェイを起動",
-        "status": {
-            "checking": "確認中...",
-            "success": "Node.js は利用可能です",
-            "error": "失敗",
-            "gatewayRunning": "ポート {{port}} で実行中",
-            "packageReady": "OpenClaw パッケージ準備完了"
-        },
-        "issue": {
-            "title": "環境の問題が検出されました",
-            "desc": "OpenClawが正しくインストールされていることを確認してください。詳細はログを確認してください。"
-        },
-        "logs": {
-            "title": "アプリケーションログ",
-            "openFolder": "ログフォルダを開く",
-            "close": "閉じる",
-            "noLogs": "（ログはまだありません）"
-        }
+      "title": "環境チェック",
+      "description": "システム要件を確認中"
     },
     "provider": {
-        "label": "モデルプロバイダー",
-        "selectPlaceholder": "プロバイダーを選択...",
-        "baseUrl": "ベース URL",
-        "modelId": "モデル ID",
-        "modelIdDesc": "プロバイダーのモデル識別子（例：deepseek-ai/DeepSeek-V3）",
-        "codePlanPreset": "Code Plan プリセット",
-        "codePlanMode": "Code Plan",
-        "useCodePlanPreset": "Ark Code Plan プリセットを使用",
-        "codePlanPresetDesc": "Code Plan は https://ark.cn-beijing.volces.com/api/coding/v3 と model ark-code-latest を使います。Code Plan 通信に /api/v3 を使わないでください。",
-        "codePlanDoc": "Code Plan ドキュメント",
-        "protocol": "プロトコル",
-        "protocols": {
-            "openaiCompletions": "OpenAI Completions",
-            "openaiResponses": "OpenAI Responses",
-            "anthropic": "Anthropic 互換"
-        },
-        "apiKey": "API キー",
-        "save": "保存",
-        "validateSave": "検証して保存",
-        "valid": "プロバイダーが正常に構成されました",
-        "invalid": "無効な API キー",
-        "storedLocally": "API キーはローカルマシンに保存されます。"
+      "title": "AIプロバイダー",
+      "description": "AIサービスを構成"
     },
     "channel": {
-        "title": "メッセージングチャンネルを接続",
-        "subtitle": "AIアシスタントを接続するプラットフォームを選択してください。チャンネルは後で設定で追加できます。",
-        "configure": "{{name}} を構成",
-        "howTo": "接続方法：",
-        "viewDocs": "ドキュメントを表示",
-        "validationError": "検証に失敗しました",
-        "connected": "{{name}} 接続済み",
-        "connectedDesc": "チャンネルが構成されました。ゲートウェイ起動時に接続されます。",
-        "configureAnother": "別のチャンネルを構成"
+      "title": "チャンネル接続",
+      "description": "メッセージングプラットフォームを接続（オプション）"
     },
     "installing": {
-        "title": "必須コンポーネントをインストール中",
-        "subtitle": "AIアシスタントに必要なツールをセットアップしています",
-        "progress": "進捗",
-        "status": {
-            "pending": "待機中",
-            "installing": "インストール中...",
-            "installed": "インストール済み",
-            "failed": "失敗"
-        },
-        "error": "セットアップエラー：",
-        "restart": "アプリを再起動してください",
-        "wait": "これには少し時間がかかる場合があります...",
-        "skip": "この手順をスキップ"
+      "title": "セットアップ中",
+      "description": "必須コンポーネントをインストール中"
     },
     "complete": {
-        "title": "セットアップ完了！",
-        "subtitle": "Verse Clawの構成が完了し、使用準備が整いました。AIアシスタントとのチャットを開始できます。",
-        "provider": "AI プロバイダー",
-        "components": "コンポーネント",
-        "gateway": "ゲートウェイ",
-        "running": "実行中",
-        "footer": "設定でスキルをカスタマイズしたり、チャンネルを接続したりできます"
+      "title": "完了！",
+      "description": "opt-in の DCS Coding Preview を設定しました"
     },
-    "nav": {
-        "next": "次へ",
-        "back": "戻る",
-        "skipStep": "この手順をスキップ",
-        "skipSetup": "セットアップをスキップ",
-        "getStarted": "始める"
+    "model": {
+      "title": "Model",
+      "description": "Pick a model that is actually available"
     },
-    "defaultSkills": {
-        "opencode": {
-            "name": "OpenCode",
-            "description": "AI コーディングアシスタントのバックエンド"
-        },
-        "python-env": {
-            "name": "Python 環境",
-            "description": "スキルのための Python ランタイム"
-        },
-        "code-assist": {
-            "name": "コードアシスト",
-            "description": "コードの分析と提案"
-        },
-        "file-tools": {
-            "name": "ファイルツール",
-            "description": "ファイルの操作と管理"
-        },
-        "terminal": {
-            "name": "ターミナル",
-            "description": "シェルコマンドの実行"
-        }
+    "workspace": {
+      "title": "Workspace",
+      "description": "Choose the one folder the agent may work in"
     }
+  },
+  "welcome": {
+    "title": "Verse Clawへようこそ",
+    "description": "Verse Claw は OpenClaw のデスクトップインターフェースです。このセットアップでは Windows x64 の単一 workspace 向け Controlled Preview を構成します。",
+    "features": {
+      "noCommand": "コマンドライン不要",
+      "modernUI": "モダンで美しいインターフェース",
+      "bundles": "プリインストールされたスキルバンドル",
+      "crossPlatform": "Windows x64 Controlled Preview"
+    }
+  },
+  "runtime": {
+    "title": "環境をチェック中",
+    "viewLogs": "ログを表示",
+    "recheck": "再チェック",
+    "nodejs": "Node.js ランタイム",
+    "openclaw": "OpenClaw パッケージ",
+    "gateway": "ゲートウェイサービス",
+    "startGateway": "ゲートウェイを起動",
+    "status": {
+      "checking": "確認中...",
+      "success": "Node.js は利用可能です",
+      "error": "失敗",
+      "gatewayRunning": "ポート {{port}} で実行中",
+      "gatewayStopped": "Gateway が停止しています。起動してから続行してください。",
+      "gatewayStarting": "Gateway を起動しています...",
+      "packageReady": "OpenClaw パッケージ準備完了"
+    },
+    "issue": {
+      "title": "環境の問題が検出されました",
+      "desc": "OpenClawが正しくインストールされていることを確認してください。詳細はログを確認してください。"
+    },
+    "logs": {
+      "title": "アプリケーションログ",
+      "openFolder": "ログフォルダを開く",
+      "close": "閉じる",
+      "noLogs": "（ログはまだありません）"
+    }
+  },
+  "provider": {
+    "label": "モデルプロバイダー",
+    "selectPlaceholder": "プロバイダーを選択...",
+    "baseUrl": "ベース URL",
+    "modelId": "モデル ID",
+    "modelIdDesc": "プロバイダーのモデル識別子（例：deepseek-ai/DeepSeek-V3）",
+    "codePlanPreset": "Code Plan プリセット",
+    "codePlanMode": "Code Plan",
+    "useCodePlanPreset": "Ark Code Plan プリセットを使用",
+    "codePlanPresetDesc": "Code Plan は https://ark.cn-beijing.volces.com/api/coding/v3 と model ark-code-latest を使います。Code Plan 通信に /api/v3 を使わないでください。",
+    "codePlanDoc": "Code Plan ドキュメント",
+    "protocol": "プロトコル",
+    "protocols": {
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Anthropic 互換"
+    },
+    "apiKey": "API キー",
+    "save": "保存",
+    "validateSave": "検証して保存",
+    "valid": "プロバイダーが正常に構成されました",
+    "invalid": "無効な API キー",
+    "storedLocally": "API キーはローカルマシンに保存されます。",
+    "stepIntro": "Connect an AI provider. Your credentials are validated with a real request before setup can finish.",
+    "getKey": "Get an API key",
+    "validateButton": "Validate",
+    "validating": "Validating…",
+    "validated": "Credentials verified",
+    "readyHint": "{{label}} is verified. Continue to pick a model.",
+    "existing": {
+      "title": "Already configured",
+      "useThis": "Validate & use",
+      "orNew": "or add a new provider below"
+    },
+    "errors": {
+      "not-filled": {
+        "title": "API key required",
+        "action": "Enter the API key for this provider. You can create one from the provider's console (link above)."
+      },
+      "credentials": {
+        "title": "Credentials rejected",
+        "action": "The provider rejected this key. Check for typos or expired/revoked keys, then paste a fresh key and validate again."
+      },
+      "network": {
+        "title": "Provider unreachable",
+        "action": "Could not reach the provider endpoint. Check your network/proxy settings, or the Base URL if you changed it, then retry."
+      },
+      "service": {
+        "title": "Provider returned an unexpected response",
+        "action": "The endpoint answered but not the way we expected. Verify the Base URL points at a compatible API, then retry."
+      }
+    }
+  },
+  "channel": {
+    "title": "メッセージングチャンネルを接続",
+    "subtitle": "AIアシスタントを接続するプラットフォームを選択してください。チャンネルは後で設定で追加できます。",
+    "configure": "{{name}} を構成",
+    "howTo": "接続方法：",
+    "viewDocs": "ドキュメントを表示",
+    "validationError": "検証に失敗しました",
+    "connected": "{{name}} 接続済み",
+    "connectedDesc": "チャンネルが構成されました。ゲートウェイ起動時に接続されます。",
+    "configureAnother": "別のチャンネルを構成"
+  },
+  "installing": {
+    "title": "必須コンポーネントをインストール中",
+    "subtitle": "AIアシスタントに必要なツールをセットアップしています",
+    "progress": "進捗",
+    "status": {
+      "pending": "待機中",
+      "installing": "インストール中...",
+      "installed": "インストール済み",
+      "failed": "失敗"
+    },
+    "error": "セットアップエラー：",
+    "restart": "アプリを再起動してください",
+    "wait": "これには少し時間がかかる場合があります...",
+    "skip": "この手順をスキップ"
+  },
+  "complete": {
+    "title": "セットアップ完了！",
+    "subtitle": "セットアップが完了しました。DCS Coding は設定 > 開発者で明示的に有効化し、runtime acknowledgement を確認する必要があります。",
+    "provider": "AI Provider",
+    "components": "コンポーネント",
+    "gateway": "ゲートウェイ",
+    "running": "実行中",
+    "footer": "設定でスキルをカスタマイズしたり、チャンネルを接続したりできます",
+    "providerUnverified": "Not verified",
+    "limitedMode": {
+      "title": "Setup finished without a verified provider",
+      "desc": "Chat and coding tasks will not work until a provider is configured. You will be guided to Settings on your first message."
+    },
+    "workspace": "Workspace",
+    "workspaceUnset": "Not selected"
+  },
+  "nav": {
+    "next": "次へ",
+    "back": "戻る",
+    "skipStep": "この手順をスキップ",
+    "skipSetup": "セットアップをスキップ",
+    "getStarted": "始める"
+  },
+  "defaultSkills": {
+    "opencode": {
+      "name": "OpenCode",
+      "description": "AI コーディングアシスタントのバックエンド"
+    },
+    "python-env": {
+      "name": "Python 環境",
+      "description": "スキルのための Python ランタイム"
+    },
+    "code-assist": {
+      "name": "コードアシスト",
+      "description": "コードの分析と提案"
+    },
+    "file-tools": {
+      "name": "ファイルツール",
+      "description": "ファイルの操作と管理"
+    },
+    "terminal": {
+      "name": "ターミナル",
+      "description": "シェルコマンドの実行"
+    }
+  },
+  "model": {
+    "stepIntro": "Models listed live from {{label}}. Picking one confirms it is actually available to your account.",
+    "loading": "Fetching available models…",
+    "noProvider": "Validate a provider first (previous step).",
+    "empty": "The provider returned no models for this account.",
+    "listFailed": {
+      "title": "Could not list models",
+      "action": "The provider's model listing failed. Retry, or go back and check the provider configuration."
+    },
+    "retry": "Retry",
+    "confirm": "Use this model",
+    "confirming": "Confirming…",
+    "verifiedAs": "Verified: {{model}}"
+  },
+  "workspace": {
+    "stepIntro": "Pick the single folder this preview may read (and, if you allow it, write). Writes outside this folder are rejected at runtime.",
+    "pickTitle": "Choose workspace folder",
+    "pickButton": "Choose folder…",
+    "blocked": "This folder cannot be used as a workspace. Fix the failed checks or pick another folder.",
+    "readOnlyFallback": "This folder is not writable. It can only be used in read-only mode.",
+    "permissionTitle": "What may the agent do here?",
+    "confirmButton": "Use this workspace",
+    "confirming": "Setting up…",
+    "confirmedAs": "Workspace active · {{mode}}",
+    "checks": {
+      "exists": "Folder exists",
+      "readable": "Readable",
+      "writable": "Writable",
+      "git": "Git repository",
+      "sensitivePath": "Sensitive location",
+      "diskSpace": "Disk space"
+    },
+    "details": {
+      "directory": "OK",
+      "missing": "does not exist",
+      "notADirectory": "not a folder",
+      "readable": "OK",
+      "notReadable": "cannot read",
+      "writable": "OK",
+      "notWritable": "cannot write",
+      "gitRepo": "yes — undo can lean on git",
+      "notGitRepo": "no — undo relies on the write journal",
+      "clear": "OK",
+      "driveRoot": "drive root is not allowed",
+      "homeRoot": "home folder root is not allowed",
+      "systemDir": "system folder is not allowed",
+      "credentialDir": "credential folder is not allowed",
+      "containsCredentialMaterial": "contains credential material ({{extra}})",
+      "sufficient": "OK",
+      "lowDiskSpace": "low ({{extra}} free)",
+      "unknown": "could not determine"
+    },
+    "modes": {
+      "readOnly": {
+        "title": "Read-only",
+        "desc": "The agent can read and analyze, but never writes files."
+      },
+      "acceptEdits": {
+        "title": "Controlled write",
+        "desc": "File edits inside this workspace are allowed; anything outside, and risky commands, still require approval."
+      }
+    }
+  }
 }

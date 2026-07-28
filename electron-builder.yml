@@ -21,7 +21,18 @@ extraResources:
       - "!icons/*.md"
       - "!icons/*.svg"
       - "!bin/**"
+      - "!verseshell/**"
       - "!screenshot/**"
+  # VerseShell AGPL compliance/provenance payload. The binary itself is copied
+  # by the target-specific win.extraResources mapping below.
+  - from: resources/verseshell/
+    to: resources/verseshell/
+    filter:
+      - "manifest.json"
+      - "LICENSE-AGPL-3.0-or-later.txt"
+      - "NOTICE.md"
+      - "SOURCE.md"
+      - "BUILD.md"
   # OpenClaw package (node_modules copied separately by afterPack hook
   # because electron-builder respects .gitignore which excludes node_modules/)
   - from: build/openclaw/

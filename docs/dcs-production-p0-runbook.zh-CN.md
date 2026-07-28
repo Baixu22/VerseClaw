@@ -1,8 +1,9 @@
-# DCS 生产 P0 Runbook（opt-in 保守生产）
+# DCS Coding Controlled Preview Runbook（显式 opt-in）
 
-**模式**：保守生产包装（`productionMode: opt-in`）
+**平台**：Windows x64 Controlled Preview
+**模式**：内部、单 workspace、显式 opt-in
 **默认 flag 毕业**：`false`（禁止为演示翻默认）
-**权威基线**：Round ACCEPT `accept-with-residuals`（含 C4 `writeFileSync` 修复 tip）
+**证据边界**：FP-P1 工程与真实进程门禁；真人 canary 与发布审批仍未完成
 
 ## 安全默认值（必须保持）
 
@@ -21,29 +22,58 @@
 
 ## 显式启用方式
 
-1. **View tools（C1）**：环境变量 `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1`，重启 gateway/runtime。
-2. **Stale write guard（C2）**：配置 `runtime.coding.staleWriteGuard.enabled=true`。
-3. **Git worktree backend（C4）**：`runtime.coding.worktree.backend=git` **且** 请求 `isolation: "worktree"`。
-4. **Symbol lease（C5）**：`runtime.coding.symbolLease.enabled=true`（C5-H 前保持 `mode=memory`）。
+### 最简：一个开关的 DCS Coding Preview（FP-P1-03）
+
+**设置 → Developer → DCS Coding Preview** 是产品路径。一个开关组合首发能力集 ——
+`context-view-tools` + `working-memory` + `tool-registry` + `stale-write-guard` ——
+一次 gateway 重启、一次覆盖全部组合项的 child 确认。前置强制校验（已验证 Provider、
+已选定带显式权限档位的 workspace）；缺项时开关禁用并列出缺什么。`applied` 只可能来自
+child 的 runtime 确认；kill switch 生效时显示为 **killed**，绝不显示 applied。
+排除项（VToken、RM 注入、SEKB 写回、Browser、shadow 类、symbol-lease）不属于此开关、
+不会被它连带打开。默认关闭；升级不会自动打开。
+
+### 按 flag：高级 Settings 控制面（TASK-P0-01）
+
+**设置 → 开发者 → DCS Controlled Preview Flag** 对 allowlist 项提供高级开关（默认 off）。上方的一个开关仍是正常产品路径：
+
+| UI id | 效果 |
+|-------|------|
+| context-view-tools | 写入 AppSettings + 注入 gateway env `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS` |
+| stale-write-guard | AppSettings + `runtime.coding.staleWriteGuard.enabled`（openclaw.json） |
+| symbol-lease | AppSettings + `runtime.coding.symbolLease.enabled` |
+| routing-memo-shadow | AppSettings + `runtime.coding.routingMemo.shadow` |
+| sekb-experience-shadow | AppSettings + `runtime.coding.sekb.experienceShadow` |
+
+开关保存后，产品路径会在 Gateway 运行时尝试重启以应用；状态徽章：`applied` / `pending-restart` / `error` / `read-only`。
+
+api-only / request-only / baseline 行仍为说明，无开关。
+
+### 高级：env / 手改配置（专家路径）
+
+1. **View tools（C1）**：`OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1`（或 Settings 开关），重启 gateway/runtime。显式 env=`0/false/off` 仍覆盖 Settings 开启（kill）。
+2. **Stale write guard（C2）**：`runtime.coding.staleWriteGuard.enabled=true` 或 Settings。
+3. **Git worktree backend（C4）**：`runtime.coding.worktree.backend=git` **且** 请求 `isolation: "worktree"`（仍无 Settings 默认翻）。
+4. **Symbol lease（C5）**：`runtime.coding.symbolLease.enabled=true` 或 Settings（mode 默认 `memory`）。
 5. **Patch-flow（C5）**：调用 `applyPatchProposalsSerial()` / `recommendIsolationMode()`；**不要**把 `patchFlow.default` 设为 true。
 6. **Context ladder（C6）**：代码中显式调用 `applyContextLadder({ blocks, tokenBudget })`；不翻 assembler 默认。
-7. **Shadows（C7）**：`routingMemo.shadow` / `sekb.experienceShadow=true` 仅用于双写采样。
+7. **Shadows（C7）**：Settings 或 `routingMemo.shadow` / `sekb.experienceShadow=true` 仅双写采样。
 
 配置面导出：`artifacts/coding-prod-p0/config-surface.json`
-应用内：设置 → 开发者 → DCS 生产 Flag（只读目录）
+
+应用内：**设置 → 开发者 → DCS Controlled Preview Flag（高级可写控制面 + 只读说明行）**
 
 ## 故障关闭顺序（Kill-switch）
 
 先关增强、保留基线：
 
-1. 取消 `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS` / `OPENCLAW_DCS_CONTEXT_TOOLS`
-2. `staleWriteGuard.enabled=false`
+1. Settings 关闭对应开关；或取消 `OPENCLAW_DCS_CONTEXT_VIEW_TOOLS` / `OPENCLAW_DCS_CONTEXT_TOOLS`
+2. `staleWriteGuard.enabled=false`（Settings 或配置）
 3. `symbolLease.enabled=false`（或 `mode=memory`）
 4. 停止 patch-flow / ladder 调用方；确保 `patchFlow.default=false`
 5. `worktree.backend=inprocess`；隔离改为 `shared` 或省略
 6. `routingMemo.shadow=false` 与 `sekb.experienceShadow=false`
 7. 仅当日记 I/O 故障时临时 `writeJournal.enabled=false`（会丢失 undo）
-8. 环境/配置变更后重启 gateway/runtime
+8. 环境/配置变更后重启 gateway/runtime（Settings 开关在产品路径会尝试自动重启）
 
 ## Windows 注意点
 

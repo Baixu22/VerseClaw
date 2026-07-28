@@ -109,6 +109,39 @@ export interface AppSettings {
   sidebarCollapsed: boolean;
   devModeUnlocked: boolean;
 
+  /**
+   * FP-P1-01: sanitized Setup provider verification state (no key material).
+   * Consumed by the Setup completion gate, the chat first-send gate, and the
+   * FP-P1-06 support bundle (provider type + verification status, never keys).
+   */
+  setupProviderVerification: {
+    status: 'unverified' | 'verified' | 'skipped';
+    accountId?: string;
+    vendorId?: string;
+    model?: string;
+    checkedAt?: string;
+  };
+
+  /**
+   * DCS production opt-in flags (TASK-P0-01). Product defaults remain false.
+   * Env-class flags are injected into gateway forkEnv; config-class flags also
+   * write ~/.openclaw/openclaw.json and rely on config-sync whole-key runtime.
+   */
+  dcsContextViewToolsEnabled: boolean;
+  dcsWorkingMemoryEnabled: boolean;
+  dcsToolRegistryEnabled: boolean;
+  dcsStaleWriteGuardEnabled: boolean;
+  dcsSymbolLeaseEnabled: boolean;
+  dcsRoutingMemoShadowEnabled: boolean;
+  dcsSekbExperienceShadowEnabled: boolean;
+
+  /**
+   * FP-P1-09: DCS flag-ack tuning overrides. 0 (default) = use the measured
+   * defaults in electron/services/dcs-flag-ack.ts. Values are clamped there.
+   */
+  dcsFlagAckTimeoutMs: number;
+  dcsFlagAckPollInitialMs: number;
+
   // Presets
   selectedBundles: string[];
   enabledSkills: string[];
@@ -161,6 +194,18 @@ function createDefaultSettings(): AppSettings {
     // UI State
     sidebarCollapsed: false,
     devModeUnlocked: false,
+    setupProviderVerification: { status: 'unverified' },
+
+    // DCS production opt-in (default off / fail-closed)
+    dcsContextViewToolsEnabled: false,
+    dcsWorkingMemoryEnabled: false,
+    dcsToolRegistryEnabled: false,
+    dcsStaleWriteGuardEnabled: false,
+    dcsSymbolLeaseEnabled: false,
+    dcsRoutingMemoShadowEnabled: false,
+    dcsSekbExperienceShadowEnabled: false,
+    dcsFlagAckTimeoutMs: 0,
+    dcsFlagAckPollInitialMs: 0,
 
     // Presets
     selectedBundles: ['productivity', 'developer'],
