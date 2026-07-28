@@ -72,6 +72,16 @@
 - `artifacts/first-product-preview/FP-P2-03/fixture-task-forest-proposal.md`：fixture Task Forest proposal，不 apply。
 约束：`liveReady=false`、`productApproved=false`、`defaultOn=false` 保持。Task Forest canonical graph 未更新。真人接手时必须替换全部 fixture 数据并重新裁决。
 
+【FP-P2 engineering-validation-only 收口（2026-07-29）】
+独立开发者决策：safetyReviewer/productApprover 无法独立于实现，不追求真人双签/10 次任务/裁决签字。
+- FP-P2-01/02/03 标记为 `engineering-validation-only`，fixture 产出物作为工程结构参考。
+- FP-P2-04 配置化工程完成（zod-schema + getter + ack + 4 新测试），默认值 6000/0.1 未变。
+- clean SHA `bfa764b32` 已固定（含 FP-P1-07/08 G5 + FP-P2 全部工程改动），已 commit，未 push。
+- `liveReady=false`、`productApproved=false`、`defaultOn=false` 保持。
+- Task Forest canonical graph 未更新，无 proposal 被 apply。
+- 若未来引入外部 reviewer，可重新激活真人 canary 路径。
+- FP-P2 工程验证已收口；真人 canary 路径需引入外部 reviewer 才能激活。
+
 【不要做】
 - 不进入 P3/P4/UAS，不复制 MergeBeacon，不新增第二 patch/error schema、local Git service、write journal、approval authority、预算 owner 或 renderer transport。
 - 不把模板、fixture、mock、工程 E2E 或自动化冒充真人证据。

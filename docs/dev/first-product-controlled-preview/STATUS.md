@@ -13,13 +13,13 @@
 | **sourceAudit** | Codex 只读审计 2026-07-26（证据水位 L0–L5、组件缺口表、Phase 0–4 建议） |
 | **forgeAudit** | `MERGEBEACON-GIT-CAPABILITY-ADOPTION.md`（2026-07-27；核心链 `FP-P2-07`–`10`，联合验收 `FP-P2-01/02/03`，扩围 `FP-P4-08`） |
 | **downstreamRoadmap** | `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`（`TF-0010`/`TF-0011`–`TF-0019`，当前均 proposed） |
-| **codeBaseline** | `main` / `918ed8abdb60479802acf88d05be820492195cc8`（等于 `origin/main`；当前 FP-P2 工作树未提交） |
+| **codeBaseline** | `main` / `bfa764b32`（含 FP-P1-07/08 G5 + FP-P2 全部工程改动；未 push） |
 | **createdAt** | 2026-07-26 |
-| **updatedAt** | 2026-07-28 |
-| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 pre-canary engineering` 已完成；controlled canary 受真人输入阻塞 |
-| **activeTaskId** | `FP-P2-01`（`blocked`：等待 canary charter 真人输入；FP-P1-07/08 独立 G5 已通过） |
-| **nextTaskId** | `FP-P2-02`（仅在 FP-P2-01 charter 双签并固定版本/范围后） |
-| **owner** | —（等待具名真人 owner / operator / safetyReviewer / productApprover） |
+| **updatedAt** | 2026-07-29 |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；controlled canary 受真人输入阻塞 |
+| **activeTaskId** | `FP-P2-01`（`engineering-validation-only`：独立开发者路径，不追求真人双签） |
+| **nextTaskId** | —（FP-P2 工程验证已收口；真人 canary 路径需引入外部 reviewer 才能激活） |
+| **owner** | —（独立开发者；safetyReviewer/productApprover 角色无法独立于实现，已标记 engineering-validation-only） |
 | **liveReady** | `false` |
 | **productApproved** | `false` |
 | **defaultOn** | `false`（硬锁） |
@@ -222,6 +222,7 @@ Wave 5 (FP-P4): 各组件独立门禁；FP-P4-08 只裁决 GitLab/Gitee/PR DAG �
 | 2026-07-28 | FP-P1-07/08 | 独立 G5 验收 | G1,G2,G3,G4(n/a),G5 | done | 独立 reviewer GLM-5.2（≠ 实现人 Codex/Claude）重跑全部门禁：FP-P1-07 E2E 4 passed (3.9m)、FP-P1-08 60+40 tests + contract + i18n + claim scan 全绿。修复 FP-P2-05 default-off 导致的 verify_tests 断言漂移。e2e-run.log 与 focused-gates.log 重新生成。P1 phase 出口 GO；不等于真人 canary/productApproved/default-on |
 | 2026-07-29 | FP-P2-01/02/04/03 | FIXTURE 全链路模拟 | — | blocked (fixture) | 开发者授权 Agent 代跑，所有成果仅作参考不作为真实证据。生成 fixture charter 草案、10 个 fixture run records（notHumanProductChat=true）、fixture blocking matrix（9 类）、fixture 预算分析、fixture 裁决草案（4 分面 CONTINUE）、fixture Task Forest proposal（不 apply）。liveReady/productApproved/defaultOn 保持 false。真人接手时必须替换全部 fixture 数据并重新裁决 |
 | 2026-07-29 | FP-P2-04 | 配置化工程完成 | G1,G2 | partial | zod-schema.ts 添加 `contextBlock.injectionBudget.{totalChars,dropAlertRatio}`；turn-injection-budget.ts 添加 `setTurnInjectionBudgetConfig`/getter；runtime-flag-ack.ts 使用 getter；17 tests passed（新增 4 配置覆盖测试）；contract:check + ClawX typecheck 全绿。默认值 6000/0.1 未变（Hard lock：待真人分布推导）。取值推导和真实分布仍待 FP-P2-02 真人数据 |
+| 2026-07-29 | FP-P2-01/02/03 | engineering-validation-only 收口 | G2 (fixture structure) | engineering-validation-only | 独立开发者决策：safetyReviewer/productApprover 无法独立于实现，不追求真人双签/10 次任务/裁决签字。fixture charter/runs/blocking matrix/verdict/proposal 作为工程结构参考。clean SHA `bfa764b32` 已固定（含 FP-P2 全部工程改动）。`liveReady`/`productApproved`/`defaultOn` 保持 false。若未来引入外部 reviewer，可重新激活真人 canary 路径 |
 
 ---
 
