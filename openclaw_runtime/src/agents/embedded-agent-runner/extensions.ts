@@ -4,7 +4,11 @@
 import { randomUUID } from "node:crypto";
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import { Assembler, contextBlockFlagNameForSourceSystem } from "../../context-engine/assembler.js";
+import {
+  Assembler,
+  contextBlockFlagNameForSourceSystem,
+  type ContextBlockFeatureFlags,
+} from "../../context-engine/assembler.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
@@ -112,6 +116,27 @@ function isToolRegistryEnabled(cfg: OpenClawConfig | undefined): boolean {
   return cfg?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
 }
 
+export function resolveContextBlockProjectionFlags(
+  cfg: OpenClawConfig | undefined,
+): ContextBlockFeatureFlags {
+  return {
+    [contextBlockFlagNameForSourceSystem("compass")]:
+      cfg?.runtime?.contextBlock?.compass?.enabled === true,
+    [contextBlockFlagNameForSourceSystem("role-memory")]:
+      cfg?.runtime?.contextBlock?.["role-memory"]?.enabled === true,
+    [contextBlockFlagNameForSourceSystem("working-memory")]: isWorkingMemoryEnabled(cfg),
+    [contextBlockFlagNameForSourceSystem("cvk")]: isToolRegistryEnabled(cfg),
+  };
+}
+
+function hasContextBlockProjection(flags: ContextBlockFeatureFlags): boolean {
+  return Object.values(flags).some((enabled) => enabled === true);
+}
+
+export function isContextBlockProjectionEnabled(cfg: OpenClawConfig | undefined): boolean {
+  return hasContextBlockProjection(resolveContextBlockProjectionFlags(cfg));
+}
+
 function readWorkingMemoryEnvelope(details: unknown):
   | { result_summary: string; significance: "high" | "medium" | "low" }
   | undefined {
@@ -131,9 +156,11 @@ function readWorkingMemoryEnvelope(details: unknown):
   };
 }
 
-function buildWorkingMemoryFactory(params: {
+function buildContextBlockFactory(params: {
   sessionId?: string;
   sessionKey?: string;
+  injectionTurnId?: string;
+  projectionFlags: ContextBlockFeatureFlags;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
 }): ExtensionFactory {
@@ -165,64 +192,66 @@ function buildWorkingMemoryFactory(params: {
   let baselineLoaded = false;
   let acceptedBaseline: ContextBlock | undefined;
   return (agent) => {
-    agent.on("tool_result", (rawEvent: unknown) => {
-      if (!sessionId) {
-        return undefined;
-      }
-      const event = recordFromUnknown(rawEvent) as AgentToolResultEvent;
-      const envelope = readWorkingMemoryEnvelope(event.details);
-      if (!envelope || envelope.significance === "low") {
-        return undefined;
-      }
-      const significance: "high" | "medium" = envelope.significance;
-      return enqueue(async () => {
-        const store = getBlockStore();
-        const sink = params.contextBlockSink ?? (store
-          ? async (writes: Parameters<ContextBlockSink>[0]) => {
-              const results = [];
-              for (const write of writes) {
-                results.push(await store.upsert(write.block, write.admission));
-              }
-              return results;
-            }
-          : undefined);
-        if (!sink) {
+    if (params.projectionFlags[contextBlockFlagNameForSourceSystem("working-memory")]) {
+      agent.on("tool_result", (rawEvent: unknown) => {
+        if (!sessionId) {
           return undefined;
         }
-        if (!baselineLoaded) {
-          baselineLoaded = true;
-          const [persistedBlock] = store
-            ? await store.query({
-                requester_session_id: sessionId,
-                session_id: sessionId,
-                block_types: ["working_memory"],
-                source_systems: ["working-memory"],
-                limit: 1,
-              })
-            : [];
-          acceptedBaseline = persistedBlock;
+        const event = recordFromUnknown(rawEvent) as AgentToolResultEvent;
+        const envelope = readWorkingMemoryEnvelope(event.details);
+        if (!envelope || envelope.significance === "low") {
+          return undefined;
         }
-        const block = handleWorkingMemoryAction({
-          sessionId,
-          existingBlock: acceptedBaseline,
-          action: {
-            tool: event.toolName ?? "tool",
-            result_summary: envelope.result_summary,
-            significance,
-          },
+        const significance: "high" | "medium" = envelope.significance;
+        return enqueue(async () => {
+          const store = getBlockStore();
+          const sink = params.contextBlockSink ?? (store
+            ? async (writes: Parameters<ContextBlockSink>[0]) => {
+                const results = [];
+                for (const write of writes) {
+                  results.push(await store.upsert(write.block, write.admission));
+                }
+                return results;
+              }
+            : undefined);
+          if (!sink) {
+            return undefined;
+          }
+          if (!baselineLoaded) {
+            baselineLoaded = true;
+            const [persistedBlock] = store
+              ? await store.query({
+                  requester_session_id: sessionId,
+                  session_id: sessionId,
+                  block_types: ["working_memory"],
+                  source_systems: ["working-memory"],
+                  limit: 1,
+                })
+              : [];
+            acceptedBaseline = persistedBlock;
+          }
+          const block = handleWorkingMemoryAction({
+            sessionId,
+            existingBlock: acceptedBaseline,
+            action: {
+              tool: event.toolName ?? "tool",
+              result_summary: envelope.result_summary,
+              significance,
+            },
+          });
+          const [writeResult] = await sink([
+            {
+              block,
+              admission: { significance, write_origin: "handler" },
+            },
+          ]);
+          if (writeResult?.accepted) {
+            acceptedBaseline = block;
+          }
+          return undefined;
         });
-        const [writeResult] = await sink([
-          {
-            block,
-            admission: { significance, write_origin: "handler" },
-          },
-        ]);
-        if (writeResult?.accepted) {
-          acceptedBaseline = block;
-        }
-        return undefined;
       });
-    });
+    }
 
     agent.on("context", async (event: unknown) => {
       if (!sessionId) {
@@ -243,9 +272,12 @@ function buildWorkingMemoryFactory(params: {
       // Omitting it makes assemble() resolve config per-request through
       // `resolveAssembleKillSwitchConfig`, so a mid-session kill takes effect.
       const result = await assembler.assemble(
-        { session_id: sessionId },
+        {
+          session_id: sessionId,
+          ...(params.injectionTurnId ? { turnId: params.injectionTurnId } : {}),
+        },
         { existing_output: messages },
-        { [contextBlockFlagNameForSourceSystem("working-memory")]: true },
+        params.projectionFlags,
       );
       return { messages: result.output };
     });
@@ -489,6 +521,7 @@ export function buildEmbeddedExtensionFactories(params: {
   model: ProviderRuntimeModel | undefined;
   sessionId?: string;
   sessionKey?: string;
+  injectionTurnId?: string;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   trajectoryCapture?: TrajectoryCapture;
@@ -525,8 +558,9 @@ export function buildEmbeddedExtensionFactories(params: {
     });
     factories.push(compactionSafeguardExtension);
   }
-  if (isWorkingMemoryEnabled(params.cfg)) {
-    factories.push(buildWorkingMemoryFactory(params));
+  const projectionFlags = resolveContextBlockProjectionFlags(params.cfg);
+  if (hasContextBlockProjection(projectionFlags)) {
+    factories.push(buildContextBlockFactory({ ...params, projectionFlags }));
   }
   // DCS Stage 3: tool-registry Block producer on before_agent_start.
   if (isToolRegistryEnabled(params.cfg)) {

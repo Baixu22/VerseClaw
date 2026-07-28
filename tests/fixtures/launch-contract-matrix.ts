@@ -222,4 +222,10 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
     declaredDefault: 'false',
     assertedBy: 'enhancement-kill-switch-default',
   },
+  {
+    mdLabel: 'Coding auto verify',
+    mdDefaultCell: '**false** (opt-in)',
+    declaredDefault: 'false',
+    assertedBy: 'coding-auto-verify-default',
+  },
 ] as const;

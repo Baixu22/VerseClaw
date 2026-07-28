@@ -12,6 +12,8 @@ import {
 import { Box, Container, Spacer, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { renderDiff } from "../../modes/interactive/components/diff.js";
+import { adaptUnifiedDiffToGitPatchArtifacts } from "../../../../../shared/remote-forge/unified-diff-adapter.js";
+import { createRemoteForgeErrorV1 } from "../../../../../shared/remote-forge/error-envelope.js";
 import type { AgentTool } from "../../runtime/index.js";
 import type { ToolDefinition } from "../extensions/types.js";
 import {
@@ -382,7 +384,6 @@ export function createEditToolDefinition(
     renderShell: "self",
     prepareArguments: prepareEditArguments,
     async execute(toolCallId, input: EditToolInput, signal?: AbortSignal, onUpdate?, ctx?) {
-      void toolCallId;
       void onUpdate;
       void ctx;
       const { path, edits } = validateEditInput(input);
@@ -435,6 +436,11 @@ export function createEditToolDefinition(
 
           const diffResult = generateDiffString(baseContent, newContent);
           const patch = generateUnifiedPatch(path, baseContent, newContent);
+          const projection = adaptUnifiedDiffToGitPatchArtifacts({
+            patch,
+            sourceCompleteness: "complete",
+            ...(toolCallId ? { lineage: { requestId: toolCallId } } : {}),
+          });
           return {
             content: [
               {
@@ -445,6 +451,15 @@ export function createEditToolDefinition(
             details: {
               diff: diffResult.diff,
               patch,
+              patchArtifacts: projection.artifacts,
+              ...(projection.kind === "unavailable"
+                ? {
+                    patchArtifactError: createRemoteForgeErrorV1({
+                      code: "incomplete_response",
+                      requestId: toolCallId,
+                    }),
+                  }
+                : {}),
               firstChangedLine: diffResult.firstChangedLine,
               working_memory: {
                 result_summary: `Edited ${path}: ${edits.length} block(s)`.slice(0, 100),
@@ -466,7 +481,15 @@ export function createEditToolDefinition(
                   text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
                 },
               ],
-              details: { diff: "", patch: "" },
+              details: {
+                diff: "",
+                patch: "",
+                patchArtifacts: [],
+                patchArtifactError: createRemoteForgeErrorV1({
+                  code: "incomplete_response",
+                  requestId: toolCallId,
+                }),
+              },
             };
           }
           if (normalizedError.message.includes(EDIT_MISMATCH_MESSAGE)) {

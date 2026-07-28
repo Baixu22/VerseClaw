@@ -76,6 +76,34 @@ export const TURN_INJECTION_CHAR_BUDGET = 6000;
 export const TURN_INJECTION_DROP_ALERT_RATIO = 0.1;
 
 /**
+ * FP-P2-04: config overrides for the two budget numbers. The defaults
+ * (`TURN_INJECTION_CHAR_BUDGET` / `TURN_INJECTION_DROP_ALERT_RATIO`) remain
+ * the starting-line values from FP-P0-05; `setTurnInjectionBudgetConfig`
+ * lets the runtime apply `runtime.contextBlock.injectionBudget.*` overrides
+ * without changing code. Values must come from real canary distributions
+ * (see FP-P2-04 Hard locks); widening the total to eliminate degradation
+ * is prohibited.
+ */
+let configuredTotalChars: number | undefined;
+let configuredDropAlertRatio: number | undefined;
+
+export function setTurnInjectionBudgetConfig(params: {
+  totalChars?: number;
+  dropAlertRatio?: number;
+}): void {
+  configuredTotalChars = params.totalChars;
+  configuredDropAlertRatio = params.dropAlertRatio;
+}
+
+export function getEffectiveTurnInjectionCharBudget(): number {
+  return configuredTotalChars ?? TURN_INJECTION_CHAR_BUDGET;
+}
+
+export function getEffectiveDropAlertRatio(): number {
+  return configuredDropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO;
+}
+
+/**
  * Decision 3 — degraded semantics, distinguishable in observation:
  *   `skip`     — the source was never charged (flag off, kill switch, nothing to
  *                inject). Not a degradation; `requested` is 0.
@@ -99,8 +127,15 @@ export type TurnInjectionLedger = {
   turnId: string;
   budget: InjectionBudgetState;
   entries: TurnInjectionEntry[];
+  /** Capacity held for enabled higher-precedence channels that charge later. */
+  reservations: TurnInjectionReservation[];
   /** True once the kill switch zeroed this turn; every entry is then `skip`/0. */
   killed: boolean;
+};
+
+export type TurnInjectionReservation = {
+  channels: TurnInjectionChannel[];
+  remaining: number;
 };
 
 export type TurnInjectionAccounting = {
@@ -144,8 +179,9 @@ export function beginTurnInjectionBudget(params: {
   const killed = params.killed === true;
   const ledger: TurnInjectionLedger = {
     turnId: params.turnId,
-    budget: createInjectionBudget(killed ? 0 : (params.total ?? TURN_INJECTION_CHAR_BUDGET)),
+    budget: createInjectionBudget(killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget())),
     entries: [],
+    reservations: [],
     killed,
   };
   ledgers.set(params.turnId, ledger);
@@ -155,6 +191,51 @@ export function beginTurnInjectionBudget(params: {
 /** Look up an existing ledger without creating one. */
 export function getTurnInjectionBudget(turnId: string): TurnInjectionLedger | undefined {
   return ledgers.get(turnId);
+}
+
+/**
+ * Protect capacity for higher-precedence sources that are enabled but charge
+ * later in the runtime lifecycle. A reservation is not a charge and therefore
+ * never creates a synthetic byChannel entry.
+ */
+export function reserveTurnInjectionCapacity(
+  ledger: TurnInjectionLedger,
+  channels: readonly TurnInjectionChannel[],
+  chars: number,
+): void {
+  if (ledger.killed) return;
+  const uniqueChannels = [...new Set(channels)].toSorted(
+    (left, right) => precedenceIndexOf(left) - precedenceIndexOf(right),
+  );
+  const requested = Math.min(
+    ledger.budget.total,
+    Math.max(0, Math.floor(Number.isFinite(chars) ? chars : 0)),
+  );
+  if (uniqueChannels.length === 0 || requested === 0) return;
+  const existing = ledger.reservations.find((reservation) =>
+    reservation.channels.length === uniqueChannels.length &&
+    reservation.channels.every((channel, index) => channel === uniqueChannels[index]),
+  );
+  if (existing) {
+    existing.remaining = Math.max(existing.remaining, requested);
+    return;
+  }
+  ledger.reservations.push({ channels: uniqueChannels, remaining: requested });
+}
+
+function capacityReservedForHigherPrecedence(
+  ledger: TurnInjectionLedger,
+  channel: TurnInjectionChannel,
+): number {
+  const channelOrder = precedenceIndexOf(channel);
+  return ledger.reservations.reduce((total, reservation) => {
+    if (reservation.channels.includes(channel)) return total;
+    return reservation.channels.some(
+      (reservedChannel) => precedenceIndexOf(reservedChannel) < channelOrder,
+    )
+      ? total + reservation.remaining
+      : total;
+  }, 0);
 }
 
 /**
@@ -190,7 +271,17 @@ export function chargeTurnInjection(
     };
   }
 
-  const result = applyInjectionBudget(ledger.budget, text, channel);
+  const reservedForHigherPrecedence = capacityReservedForHigherPrecedence(ledger, channel);
+  const chargeLimit = Math.max(
+    0,
+    remainingBudget(ledger.budget) - reservedForHigherPrecedence,
+  );
+  const result = applyInjectionBudget(ledger.budget, text, channel, chargeLimit);
+  for (const reservation of ledger.reservations) {
+    if (reservation.channels.includes(channel)) {
+      reservation.remaining = Math.max(0, reservation.remaining - result.charsApplied);
+    }
+  }
   const disposition: TurnInjectionDisposition = result.charsApplied === 0
     ? "drop"
     : result.truncated
@@ -261,7 +352,7 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
     charsTruncated,
     remaining: remainingBudget(ledger.budget),
     dropRatio,
-    alert: dropRatio > TURN_INJECTION_DROP_ALERT_RATIO,
+    alert: dropRatio > getEffectiveDropAlertRatio(),
     killed: ledger.killed,
     byChannel,
     degradationOrder,
@@ -284,7 +375,9 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
   return accounting;
 }
 
-/** Test helper: drop every in-flight ledger. */
+/** Test helper: drop every in-flight ledger and reset config overrides. */
 export function resetTurnInjectionBudgetsForTests(): void {
   ledgers.clear();
+  configuredTotalChars = undefined;
+  configuredDropAlertRatio = undefined;
 }

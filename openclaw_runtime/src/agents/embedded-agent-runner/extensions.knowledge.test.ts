@@ -1,9 +1,8 @@
 /**
  * DCS Stage 4 knowledge extension wiring tests.
  *
- * Verifies that buildEmbeddedExtensionFactories does NOT register a separate
- * knowledge factory — knowledge Block production happens inside the Assembler
- * (via contextBlockSink) and injection happens via Assembler #appendKnowledge.
+ * Verifies that buildEmbeddedExtensionFactories registers the shared context
+ * projection factory for knowledge without adding another Block producer.
  *
  * The extension layer only needs to pass contextBlockSink through to the
  * Assembler so that compass/role-memory handlers can write knowledge Blocks.
@@ -16,6 +15,11 @@ import type {
   ContextBlockSink,
 } from "../../context-engine/block.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
+import {
+  endTurnInjectionBudget,
+  getTurnInjectionBudget,
+  summarizeTurnInjection,
+} from "../../context-engine/turn-injection-budget.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
 
 function createAgentRecorder() {
@@ -47,7 +51,7 @@ function baseFactoryParams(
 }
 
 describe("DCS Stage 4 knowledge extension wiring", () => {
-  it("compass flag on: does not register a separate knowledge factory (production in assembler)", () => {
+  it("compass flag on: registers the shared context projection factory", () => {
     const compassCfg: OpenClawConfig = {
       runtime: { contextBlock: { "compass": { enabled: true } } },
     } as OpenClawConfig;
@@ -64,11 +68,10 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
       baseFactoryParams({} as OpenClawConfig, sink, store),
     );
 
-    // compass/role-memory do not add a new factory; production is in assembler.
-    expect(factoriesWithCompass.length).toBe(factoriesWithoutCompass.length);
+    expect(factoriesWithCompass.length).toBe(factoriesWithoutCompass.length + 1);
   });
 
-  it("role-memory flag on: does not register a separate knowledge factory", () => {
+  it("role-memory flag on: registers the shared context projection factory", () => {
     const roleMemoryCfg: OpenClawConfig = {
       runtime: { contextBlock: { "role-memory": { enabled: true } } },
     } as OpenClawConfig;
@@ -85,7 +88,63 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
       baseFactoryParams({} as OpenClawConfig, sink, store),
     );
 
-    expect(factoriesWithRoleMemory.length).toBe(factoriesWithoutRoleMemory.length);
+    expect(factoriesWithRoleMemory.length).toBe(factoriesWithoutRoleMemory.length + 1);
+  });
+
+  it("passes compass projection and injectionTurnId into the shared ledger", async () => {
+    const turnId = "extension-knowledge-turn";
+    const compassCfg: OpenClawConfig = {
+      runtime: { contextBlock: { "compass": { enabled: true } } },
+    } as OpenClawConfig;
+    const content = "objective: test the production projection path";
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
+        params.block_types?.includes("knowledge") && params.source_systems?.includes("compass")
+          ? [{
+              block_id: "knowledge:compass:agent:test:main",
+              block_type: "knowledge" as const,
+              source_system: "compass" as const,
+              session_id: "agent:test:main",
+              presence: { always_on: false, background: true },
+              entities: [],
+              valid_at: new Date("2026-07-28T00:00:00.000Z"),
+              mutability: "system_managed" as const,
+              summary: "Fixture knowledge",
+              full_content: content,
+              compression_depth: 0 as const,
+              entity_extraction_status: "empty" as const,
+            }]
+          : []),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories({
+      ...baseFactoryParams(compassCfg, undefined, store),
+      injectionTurnId: turnId,
+    })) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+
+    try {
+      expect(agent.handlers.context).toHaveLength(1);
+      const result = await agent.handlers.context?.[0]?.(
+        { type: "context", messages: [{ role: "user", content: "next" }] },
+        {},
+      ) as { messages?: Array<{ content?: unknown }> };
+      const injected = result.messages?.find((message) =>
+        typeof message.content === "string" && /^## Knowledge$/m.test(message.content),
+      )?.content as string | undefined;
+      expect(injected).toBe(`## Knowledge\n${content}`);
+
+      const ledger = getTurnInjectionBudget(turnId);
+      expect(ledger).toBeDefined();
+      const accounting = summarizeTurnInjection(ledger!);
+      expect(accounting.byChannel.knowledge?.applied).toBe(injected?.length);
+      expect(accounting.byChannel.working_memory).toBeUndefined();
+      expect(accounting.byChannel.tool_registry).toBeUndefined();
+    } finally {
+      endTurnInjectionBudget(turnId);
+    }
   });
 
   it("compass flag on + sink: no before_agent_start handler writes a knowledge Block (assembler owns production)", async () => {

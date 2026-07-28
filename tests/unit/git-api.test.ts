@@ -131,7 +131,17 @@ describe('git api', () => {
         };
       }
       if (args[0] === 'diff' && args[1] === '--cached') {
-        return { stdout: 'diff --git a/src/app.ts b/src/app.ts\n-old\n+new\n' };
+        return {
+          stdout: [
+            'diff --git a/src/app.ts b/src/app.ts',
+            '--- a/src/app.ts',
+            '+++ b/src/app.ts',
+            '@@ -1 +1 @@',
+            '-old',
+            '+new',
+            '',
+          ].join('\n'),
+        };
       }
       if (args[0] === 'show' && args[1] === 'HEAD:src/app.ts') return { stdout: 'old\n' };
       if (args[0] === 'show' && args[1] === ':src/app.ts') return { stdout: 'new\n' };
@@ -146,6 +156,90 @@ describe('git api', () => {
       patch: expect.stringContaining('+new'),
       original: 'old\n',
       modified: 'new\n',
+      patchArtifacts: [expect.objectContaining({
+        schema: 'GitPatchArtifact/v1',
+        file: 'src/app.ts',
+        status: 'modified',
+        contentKind: 'text',
+        completeness: 'complete',
+      })],
+    });
+  });
+
+  it('fails closed when a file diff exceeds the local Git patch limit', async () => {
+    const oversizedPatch = [
+      'diff --git a/src/app.ts b/src/app.ts',
+      '--- a/src/app.ts',
+      '+++ b/src/app.ts',
+      '@@ -1 +1 @@',
+      `-${'a'.repeat(180_000)}`,
+      '+new',
+      '',
+    ].join('\n');
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') {
+        return {
+          stdout: [
+            '# branch.head main',
+            '1 .M N... 100644 100644 100644 abc def src/app.ts',
+            '',
+          ].join('\0'),
+        };
+      }
+      if (args[0] === 'diff' && !args.includes('--numstat')) return { stdout: oversizedPatch };
+      if (args[0] === 'show') return { stdout: 'old\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().fileDiff({ path: 'src/app.ts', mode: 'unstaged' })).resolves.toMatchObject({
+      success: true,
+      path: 'src/app.ts',
+      tooLarge: true,
+      original: undefined,
+      modified: undefined,
+      patchArtifacts: [expect.objectContaining({
+        schema: 'GitPatchArtifact/v1',
+        file: 'src/app.ts',
+        status: 'modified',
+        contentKind: 'unknown',
+        hunks: [],
+        completeness: 'unavailable',
+      })],
+    });
+  });
+
+  it('downgrades a parsed file patch when trusted Git status is missing', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') return { stdout: '# branch.head main\0' };
+      if (args[0] === 'diff' && !args.includes('--numstat')) {
+        return {
+          stdout: [
+            'diff --git a/src/app.ts b/src/app.ts',
+            '--- a/src/app.ts',
+            '+++ b/src/app.ts',
+            '@@ -1 +1 @@',
+            '-old',
+            '+new',
+            '',
+          ].join('\n'),
+        };
+      }
+      if (args[0] === 'show') return { stdout: 'old\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().fileDiff({ path: 'src/app.ts', mode: 'unstaged' })).resolves.toMatchObject({
+      success: true,
+      patchArtifacts: [expect.objectContaining({
+        file: 'src/app.ts',
+        status: 'unknown',
+        contentKind: 'unknown',
+        completeness: 'unavailable',
+      })],
     });
   });
 

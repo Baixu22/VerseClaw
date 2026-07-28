@@ -87,6 +87,8 @@ import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistan
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
 import { TurnWorkPanel } from '@/components/assistant-render/TurnWorkPanel';
 import { buildTurnWorkModel } from '@/components/assistant-render/turn-work-model';
+import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
+import { projectGeneratedFileDiff } from '@/components/tool-ui/run-surfaces';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { buildTurnSummaryModel } from '@/components/assistant-render/turn-summary-model';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -2666,6 +2668,9 @@ export function Chat() {
                             ? userOverride
                             : !autoCollapsedRunKeys.has(runKey);
                           const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
+                          const mutationDiffs = generatedFiles
+                            .map(projectGeneratedFileDiff)
+                            .filter((surface) => surface != null);
                           const turnWorkModel = buildTurnWorkModel({
                             id: runKey,
                             active: card.active,
@@ -2697,6 +2702,7 @@ export function Chat() {
                                   openChanges(target);
                                 }}
                               />
+                              <RunMutationDiffs surfaces={mutationDiffs} />
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}

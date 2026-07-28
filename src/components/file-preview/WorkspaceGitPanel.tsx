@@ -32,6 +32,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { CommitSummary, type CommitOperationState } from '@/components/ai-elements/commit';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
+import { createRemoteForgeErrorV1 } from '@shared/remote-forge/error-envelope';
 import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, formatRelativeTime, pathEquals } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type {
@@ -239,6 +240,11 @@ export function WorkspaceGitPanel({
             path: effectiveSelectedPath,
             mode: effectiveDiffMode,
             patch: err instanceof Error ? err.message : String(err),
+            patchArtifacts: [],
+            patchArtifactError: createRemoteForgeErrorV1({
+              code: 'internal',
+              requestId: 'workspace-git-file-diff',
+            }),
           });
         }
       })

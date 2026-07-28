@@ -8,10 +8,15 @@ import {
   chargeTurnInjection,
   endTurnInjectionBudget,
   getTurnInjectionBudget,
+  getEffectiveDropAlertRatio,
+  getEffectiveTurnInjectionCharBudget,
   precedenceIndexOf,
   resetTurnInjectionBudgetsForTests,
+  reserveTurnInjectionCapacity,
+  setTurnInjectionBudgetConfig,
   skipTurnInjection,
   summarizeTurnInjection,
+  TURN_INJECTION_CHAR_BUDGET,
   TURN_INJECTION_DROP_ALERT_RATIO,
   TURN_INJECTION_PRECEDENCE,
 } from "./turn-injection-budget.js";
@@ -79,6 +84,28 @@ describe("FP-P0-05 shared budget", () => {
     expect(first.byChannel.working_memory?.applied).toBe(40);
     expect(first.byChannel.tool_registry?.disposition).toBe("truncate");
     expect(first.byChannel.vtoken?.disposition).toBe("drop");
+  });
+
+  it("protects later-charging DCS capacity from an earlier CVK charge without fake entries", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-reserved", total: 100 });
+    reserveTurnInjectionCapacity(
+      ledger,
+      ["knowledge", "working_memory", "tool_registry"],
+      40,
+    );
+
+    const cvk = chargeTurnInjection(ledger, "cvk_addition", "c".repeat(100));
+    expect(cvk.charsApplied).toBe(60);
+    expect(cvk.truncated).toBe(true);
+    expect(ledger.entries).toHaveLength(1);
+    expect(summarizeTurnInjection(ledger).byChannel).not.toHaveProperty("knowledge");
+
+    expect(chargeTurnInjection(ledger, "knowledge", "k".repeat(20)).charsApplied).toBe(20);
+    expect(chargeTurnInjection(ledger, "working_memory", "w".repeat(20)).charsApplied).toBe(20);
+    const accounting = summarizeTurnInjection(ledger);
+    expect(accounting.charsApplied).toBe(100);
+    expect(accounting.byChannel.knowledge?.disposition).toBe("applied");
+    expect(accounting.byChannel.working_memory?.disposition).toBe("applied");
   });
 
   it("distinguishes drop / truncate / skip in observation", () => {
@@ -149,5 +176,37 @@ describe("FP-P0-05 shared budget", () => {
     expect(acc?.turnId).toBe("turn-end");
     expect(getTurnInjectionBudget("turn-end")).toBeUndefined();
     expect(endTurnInjectionBudget("turn-end")).toBeUndefined();
+  });
+});
+
+describe("FP-P2-04 config overrides", () => {
+  it("defaults to the FP-P0-05 starting-line values", () => {
+    expect(getEffectiveTurnInjectionCharBudget()).toBe(TURN_INJECTION_CHAR_BUDGET);
+    expect(getEffectiveDropAlertRatio()).toBe(TURN_INJECTION_DROP_ALERT_RATIO);
+  });
+
+  it("setTurnInjectionBudgetConfig overrides the effective total", () => {
+    setTurnInjectionBudgetConfig({ totalChars: 8000 });
+    expect(getEffectiveTurnInjectionCharBudget()).toBe(8000);
+    // A turn started without an explicit `total` now uses the override.
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-cfg-total" });
+    expect(ledger.budget.total).toBe(8000);
+  });
+
+  it("setTurnInjectionBudgetConfig overrides the effective drop alert ratio", () => {
+    setTurnInjectionBudgetConfig({ dropAlertRatio: 0.05 });
+    expect(getEffectiveDropAlertRatio()).toBe(0.05);
+    // A 6% drop now trips the alert at the tighter 5% threshold.
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-cfg-ratio", total: 1000 });
+    chargeTurnInjection(ledger, "knowledge", "k".repeat(1000));
+    chargeTurnInjection(ledger, "vtoken", "v".repeat(60)); // fully dropped = 6%
+    expect(summarizeTurnInjection(ledger).alert).toBe(true);
+  });
+
+  it("resetTurnInjectionBudgetsForTests restores the FP-P0-05 defaults", () => {
+    setTurnInjectionBudgetConfig({ totalChars: 9999, dropAlertRatio: 0.42 });
+    resetTurnInjectionBudgetsForTests();
+    expect(getEffectiveTurnInjectionCharBudget()).toBe(TURN_INJECTION_CHAR_BUDGET);
+    expect(getEffectiveDropAlertRatio()).toBe(TURN_INJECTION_DROP_ALERT_RATIO);
   });
 });

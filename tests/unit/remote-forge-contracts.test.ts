@@ -10,6 +10,10 @@ import {
   isRemoteForgeErrorV1,
   type GitPatchArtifactV1,
 } from '@shared/types/remote-forge';
+import {
+  createRemoteForgeErrorV1,
+  normalizeRemoteForgeErrorV1,
+} from '@shared/remote-forge/error-envelope';
 
 function completeTextArtifact(): GitPatchArtifactV1 {
   return {
@@ -199,7 +203,7 @@ describe('RemoteForgeError/v1', () => {
     retryable: true,
     requestId: 'request-2',
     httpStatus: 429,
-    safeMessage: 'The forge rate limit was reached. Retry later.',
+    safeMessage: 'The service rate limit was reached. Retry later.',
   } as const;
 
   it('accepts the stable safe error envelope and additive v1 fields', () => {
@@ -212,6 +216,57 @@ describe('RemoteForgeError/v1', () => {
     expect(isRemoteForgeErrorV1({ ...error, code: 'raw_github_error' })).toBe(false);
     expect(isRemoteForgeErrorV1({ ...error, safeMessage: 'safe\nraw response body' })).toBe(false);
     expect(isRemoteForgeErrorV1({ ...error, httpStatus: 42 })).toBe(false);
+    expect(isRemoteForgeErrorV1({ ...error, httpStatus: 404 })).toBe(false);
+    expect(isRemoteForgeErrorV1({ ...error, retryable: false })).toBe(false);
+    expect(isRemoteForgeErrorV1({ ...error, requestId: 'C:/private/repo' })).toBe(false);
+  });
+
+  it('only accepts the canonical safe message for each code', () => {
+    const secrets = [
+      'Authorization: Bearer ghp_super_secret',
+      '{"message":"raw response body"}',
+      'repository content: const privateValue = true',
+      'https://10.0.0.12/private/repository?token=secret',
+      'C:/Users/alice/private/repository/src/app.ts',
+    ];
+    for (const safeMessage of secrets) {
+      expect(isRemoteForgeErrorV1({ ...error, safeMessage })).toBe(false);
+    }
+  });
+
+  it('rebuilds trusted metadata and strips nested, cyclic, and additive producer data', () => {
+    const payload: Record<string, unknown> = {
+      ...error,
+      credential: 'ghp_super_secret',
+      authorization: 'Bearer private',
+      response: { body: 'raw response body' },
+      repositoryContent: 'const privateValue = true',
+      url: 'https://192.168.1.7/private?token=secret',
+      absolutePath: 'C:/Users/alice/private/repository/src/app.ts',
+    };
+    payload.self = payload;
+
+    expect(normalizeRemoteForgeErrorV1(payload)).toEqual(error);
+    expect(JSON.stringify(normalizeRemoteForgeErrorV1(payload))).not.toMatch(
+      /ghp_|Bearer|raw response|privateValue|192\.168|Users\/alice/i,
+    );
+  });
+
+  it('fails closed on malformed, oversize, unknown schema/code, and invalid lineage metadata', () => {
+    const invalidPayloads = [
+      null,
+      'not-an-envelope',
+      { ...error, schema: 'RemoteForgeError/v2' },
+      { ...error, code: 'future_code' },
+      { ...error, requestId: 'request\nprivate' },
+      { ...error, safeMessage: 'x'.repeat(10_000) },
+      { ...error, httpStatus: 404 },
+    ];
+    for (const payload of invalidPayloads) {
+      expect(normalizeRemoteForgeErrorV1(payload, { requestId: 'fallback-1' })).toEqual(
+        createRemoteForgeErrorV1({ code: 'unknown', requestId: 'fallback-1' }),
+      );
+    }
   });
 
   it('fails closed on unsupported schemas instead of treating them as v1', () => {

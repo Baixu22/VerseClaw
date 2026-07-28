@@ -53,6 +53,7 @@ export function applyInjectionBudget(
   state: InjectionBudgetState,
   text: string | undefined,
   channel: InjectionChannel = "other",
+  maxChars: number = Number.POSITIVE_INFINITY,
 ): ApplyBudgetResult {
   if (!text || text.length === 0) {
     return {
@@ -64,7 +65,10 @@ export function applyInjectionBudget(
       remainingAfter: remainingBudget(state),
     };
   }
-  const rem = remainingBudget(state);
+  const rem = Math.min(
+    remainingBudget(state),
+    Number.isFinite(maxChars) ? Math.max(0, Math.floor(maxChars)) : Number.POSITIVE_INFINITY,
+  );
   if (rem <= 0) {
     state.overflows += 1;
     state.drops += 1;
@@ -80,7 +84,7 @@ export function applyInjectionBudget(
       truncated: false,
       dropped: true,
       charsApplied: 0,
-      remainingAfter: 0,
+      remainingAfter: remainingBudget(state),
     };
   }
   if (text.length <= rem) {
@@ -110,7 +114,7 @@ export function applyInjectionBudget(
       truncated: true,
       dropped: true,
       charsApplied: 0,
-      remainingAfter: rem,
+      remainingAfter: remainingBudget(state),
     };
   }
   const sliced = `${text.slice(0, rem - 1)}…`;

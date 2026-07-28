@@ -40,7 +40,197 @@ export type WriteSideEffectsOptions = {
   verifyConsumeEnabled?: boolean;
   /** FP-P1-04: attach project test-runner detection after write (default true). */
   testRunnerDetectEnabled?: boolean;
+  /** FP-P2-05: execute the detected runner. Explicit opt-in; default false. */
+  autoVerifyEnabled?: boolean;
+  /** Bounded timeout passed to the canonical exec tool. */
+  autoVerifyTimeoutSeconds?: number;
+  /** Explicit workspace-level runner for unsupported or multi-package projects. */
+  autoVerifyCommand?: string;
+  /** Canonical exec-tool bridge injected by agent-tools after final policy filtering. */
+  executeTestCommand?: TestRunnerExecutor;
 };
+
+export type TestRunnerExecutionStatus =
+  | "passed"
+  | "failed"
+  | "timed_out"
+  | "denied"
+  | "approval_required"
+  | "crashed"
+  | "unavailable"
+  | "disabled";
+
+export type TestRunnerExecution = {
+  status: TestRunnerExecutionStatus;
+  command: string;
+  workdir: string;
+  exitCode?: number | null;
+  durationMs?: number;
+  reason?: string;
+  outputTail?: string;
+};
+
+export type TestRunnerExecutor = (params: {
+  toolCallId: string;
+  command: string;
+  workdir: string;
+  timeoutSeconds: number;
+  signal?: AbortSignal;
+}) => Promise<unknown>;
+
+const VERIFY_OUTPUT_TAIL_MAX_CHARS = 2400;
+
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+function resultText(result: unknown): string {
+  const content = asRecord(result)?.content;
+  if (!Array.isArray(content)) {
+    return "";
+  }
+  return content
+    .map((block) => asRecord(block)?.text)
+    .filter((text): text is string => typeof text === "string")
+    .join("\n");
+}
+
+function boundedTail(value: string): string | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  return trimmed.length <= VERIFY_OUTPUT_TAIL_MAX_CHARS
+    ? trimmed
+    : `...(output truncated)...\n${trimmed.slice(-VERIFY_OUTPUT_TAIL_MAX_CHARS)}`;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function normalizeTestExecutionResult(params: {
+  result: unknown;
+  command: string;
+  workdir: string;
+}): TestRunnerExecution {
+  const resultRecord = asRecord(params.result);
+  const details = asRecord(resultRecord?.details);
+  const status = details?.status;
+  const aggregated = typeof details?.aggregated === "string" ? details.aggregated : resultText(params.result);
+  const outputTail = boundedTail(aggregated);
+  const base = {
+    command: params.command,
+    workdir: params.workdir,
+    ...(typeof details?.durationMs === "number" ? { durationMs: details.durationMs } : {}),
+    ...(typeof details?.exitCode === "number" || details?.exitCode === null
+      ? { exitCode: details.exitCode }
+      : {}),
+    ...(outputTail ? { outputTail } : {}),
+  };
+  if (status === "approval-pending") {
+    return {
+      ...base,
+      status: "approval_required",
+      reason: "The exec policy requires approval before the test command can run.",
+    };
+  }
+  if (status === "approval-unavailable") {
+    const reason = typeof details.reason === "string" ? details.reason : "no approval route";
+    return {
+      ...base,
+      status: "unavailable",
+      reason: `Exec approval is unavailable (${reason}).`,
+    };
+  }
+  if (status === "running") {
+    return {
+      ...base,
+      status: "unavailable",
+      reason: "The exec tool backgrounded unexpectedly before the bounded verify timeout.",
+    };
+  }
+  if (status === "completed" || status === "failed") {
+    if (/^exec denied\b/i.test(aggregated.trim())) {
+      return { ...base, status: "denied", reason: aggregated.split(/\r?\n/, 1)[0] };
+    }
+    if (details.timedOut === true) {
+      return { ...base, status: "timed_out", reason: "The test command exceeded its timeout." };
+    }
+    if (status === "completed" && details.exitCode === 0) {
+      return { ...base, status: "passed" };
+    }
+    return { ...base, status: "failed", reason: "The test command exited unsuccessfully." };
+  }
+  return {
+    ...base,
+    status: "unavailable",
+    reason: "The canonical exec tool returned no completed verification outcome.",
+  };
+}
+
+async function executeDetectedTests(params: {
+  detection: Extract<ReturnType<typeof detectTestRunner>, { detected: true }>;
+  options: WriteSideEffectsOptions;
+  toolCallId: string;
+  signal?: AbortSignal;
+}): Promise<TestRunnerExecution> {
+  const { detection, options } = params;
+  const workdir = path.resolve(options.workspaceRoot, detection.workdir);
+  if (options.autoVerifyEnabled !== true) {
+    return {
+      status: "disabled",
+      command: detection.command,
+      workdir: detection.workdir,
+      reason: "Automatic test execution is disabled by runtime.coding.autoVerify.enabled.",
+    };
+  }
+  if (!options.executeTestCommand) {
+    return {
+      status: "unavailable",
+      command: detection.command,
+      workdir: detection.workdir,
+      reason: "The canonical exec tool is unavailable on this run's effective tool surface.",
+    };
+  }
+  try {
+    const result = await options.executeTestCommand({
+      toolCallId: `autoverify${params.toolCallId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 80)}`,
+      command: detection.command,
+      workdir,
+      timeoutSeconds: options.autoVerifyTimeoutSeconds ?? 90,
+      signal: params.signal,
+    });
+    return normalizeTestExecutionResult({
+      result,
+      command: detection.command,
+      workdir: detection.workdir,
+    });
+  } catch (error) {
+    const message = errorMessage(error);
+    return {
+      status: /^exec denied\b/i.test(message) ? "denied" : "crashed",
+      command: detection.command,
+      workdir: detection.workdir,
+      reason: message || "The test runner crashed without an error message.",
+    };
+  }
+}
+
+function formatTestExecution(
+  detection: Extract<ReturnType<typeof detectTestRunner>, { detected: true }>,
+  execution: TestRunnerExecution,
+): string {
+  const facts = [
+    `cwd=${detection.workdir}`,
+    execution.exitCode !== undefined ? `exit=${execution.exitCode ?? "none"}` : undefined,
+    execution.durationMs !== undefined ? `${Math.round(execution.durationMs)}ms` : undefined,
+  ].filter((entry): entry is string => Boolean(entry));
+  const reason = execution.reason ? `: ${execution.reason}` : "";
+  return `${execution.status}(${detection.ecosystem}/${detection.runner}): ${detection.command} [${facts.join("; ")}]${reason}`;
+}
 
 function collectTargetPaths(toolName: string, args: unknown, result: unknown): string[] {
   const record = getToolParamsRecord(args);
@@ -222,7 +412,13 @@ export function wrapToolWithWriteSideEffects(
       // does. A skip must be explainable, never silence that reads as "passed".
       if (testRunnerDetect) {
         try {
-          const detection = detectTestRunner(options.workspaceRoot);
+          const detection = detectTestRunner(options.workspaceRoot, {
+            changedPaths: paths,
+            customCommand: options.autoVerifyCommand,
+          });
+          const execution = detection.detected
+            ? await executeDetectedTests({ detection, options, toolCallId, signal })
+            : undefined;
           const prev =
             nextResult.details &&
             typeof nextResult.details === "object" &&
@@ -235,7 +431,11 @@ export function wrapToolWithWriteSideEffects(
               ...prev,
               verify_tests: {
                 ...detection,
-                rendered: formatTestRunnerDetection(detection),
+                ...(execution ? { execution } : {}),
+                rendered:
+                  detection.detected && execution
+                    ? formatTestExecution(detection, execution)
+                    : formatTestRunnerDetection(detection),
               },
             },
           };
@@ -291,6 +491,10 @@ function appendCodingEvidenceToContent<T extends { details?: unknown; content?: 
       : undefined;
   if (typeof verifyTests?.rendered === "string") {
     sections.push(`verify_tests: ${verifyTests.rendered}`);
+  }
+  const execution = asRecord(verifyTests?.execution);
+  if (typeof execution?.outputTail === "string") {
+    sections.push(`verify_output_tail:\n${execution.outputTail}`);
   }
   if (sections.length === 0) {
     return result;

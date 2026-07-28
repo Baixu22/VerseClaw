@@ -13,13 +13,13 @@
 | **sourceAudit** | Codex 只读审计 2026-07-26（证据水位 L0–L5、组件缺口表、Phase 0–4 建议） |
 | **forgeAudit** | `MERGEBEACON-GIT-CAPABILITY-ADOPTION.md`（2026-07-27；核心链 `FP-P2-07`–`10`，联合验收 `FP-P2-01/02/03`，扩围 `FP-P4-08`） |
 | **downstreamRoadmap** | `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`（`TF-0010`/`TF-0011`–`TF-0019`，当前均 proposed） |
-| **codeBaseline** | `ClawX-maturity-p0` @ `main` / `60931957b`（开工时复核 HEAD） |
+| **codeBaseline** | `main` / `918ed8abdb60479802acf88d05be820492195cc8`（等于 `origin/main`；当前 FP-P2 工作树未提交） |
 | **createdAt** | 2026-07-26 |
 | **updatedAt** | 2026-07-28 |
-| **phase** | `FP-P2 pre-canary engineering` 进行中；`FP-P1` 出口仍待独立 G5（P1 为 9/12 done，1 deferred，2 in_progress） |
-| **activeTaskId** | `FP-P2-07` |
-| **nextTaskId** | `FP-P2-08`（仅在 FP-P2-07 全任务收口后） |
-| **owner** | Codex |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 pre-canary engineering` 已完成；controlled canary 受真人输入阻塞 |
+| **activeTaskId** | `FP-P2-01`（`blocked`：等待 canary charter 真人输入；FP-P1-07/08 独立 G5 已通过） |
+| **nextTaskId** | `FP-P2-02`（仅在 FP-P2-01 charter 双签并固定版本/范围后） |
+| **owner** | —（等待具名真人 owner / operator / safetyReviewer / productApprover） |
 | **liveReady** | `false` |
 | **productApproved** | `false` |
 | **defaultOn** | `false`（硬锁） |
@@ -38,7 +38,7 @@
 
 ## Engineering-only sequencing deviation（2026-07-28）
 
-用户明确把 FP-P1-07 独立 G5、P1 phase 出口和 P2 真人阶段集中后置处理。P1-07/08 在 G5 未完成时继续保持 `in_progress`；完成其非真人证据与账目后，可按 `FP-P2-07 -> FP-P2-08 -> FP-P2-09 -> FP-P2-10` 严格串行开展 **pre-canary engineering**。
+用户明确把 FP-P1-07 独立 G5、P1 phase 出口和 P2 真人阶段集中后置处理。P1-07/08 在 G5 未完成时继续保持 `in_progress`；非真人链已按 `FP-P2-07 -> FP-P2-08 -> FP-P2-09 -> FP-P2-10 -> FP-P2-05 -> FP-P2-06` 严格串行完成。
 
 该偏差不表示 controlled canary 已开始，不授权真实凭据、真实 GitHub 评论、metadata 修改或 merge，不改变 `liveReady=false`、`productApproved=false`、`defaultOn=false`，也不解除任何 hard lock。
 
@@ -50,7 +50,7 @@
 |----|------|------|------|
 | L0 | 工程门禁 | ✅ `contract:check` 通过；root unit 6108 passed / DCS 304 passed（FP-P0 后重测） | 保持 |
 | L1 | 合成 canary | ⚠️ C1 32 synthetic，`live=false`，`keep-off` | 保持（不冒充 live） |
-| L2 | Electron 路径 | ✅ 关键组合 6/6；+ FP-P0 新增 3 条真 gateway child E2E（启动契约 / config-kill / flag ack） | 扩到首产品纵向链路 E2E |
+| L2 | Electron 路径 | ✅ 关键组合 6/6；FP-P0 3 条真 gateway child E2E；FP-P2-06 真 turn 三通道 provider 独立计量与账目平衡；FP-P1-07/08 独立 G5 已通过 | 保持并由真人任务消费 |
 | L3 | 真人任务 | ❌ 0（6 run 全 `notHumanProductChat=true`）**FP-P0 未改变此水位** | ≥10 真人 DCS coding |
 | L4 | Kill/Rollback | ✅ FP-P1-05 真 Electron 七场景全绿：真实 undo、Gateway/Electron restart、kill `6980ms`、N->N-1 fail-closed、restart failure/recovery；长时真人 soak 仍归 FP-P2-02 | live 长时增强会话 rollback |
 | L5 | Soak / Approval | ❌ corpus / human A/B / soak / approval 全缺 | 仍可为空，但需显式登记为 deferred |
@@ -62,8 +62,8 @@
 | phase | 出口条件 | 状态 |
 |-------|----------|------|
 | `FP-P0` runtime-contract | 启动层默认值与 runtime/docs/tests 一致；kill 可证明切断；runtime ack 状态机上线 | **GO**（2026-07-26，self-accept；结论见 [FP-P0-EXIT-ACCEPTANCE.md](./FP-P0-EXIT-ACCEPTANCE.md)） |
-| `FP-P1` vertical-slice | 安装→首次成功编码任务→undo/restart/kill/support bundle 全通（E2E + 手工） | `in_progress` |
-| `FP-P2` controlled-canary | GitHub Forge 核心开发完成；≥10 真人 DCS + Forge 联合任务；DCS/read/review/merge 分面裁决 | `in_progress`（仅 pre-canary engineering；controlled canary 未开始） |
+| `FP-P1` vertical-slice | 安装→首次成功编码任务→undo/restart/kill/support bundle 全通（E2E + 手工） | **GO**（2026-07-28，独立 G5 由 GLM-5.2 完成；11/12 done，1 deferred） |
+| `FP-P2` controlled-canary | GitHub Forge 核心开发完成；≥10 真人 DCS + Forge 联合任务；DCS/read/review/merge 分面裁决 | `blocked`（pre-canary engineering 已完成；FP-P1-07/08 独立 G5 已通过；controlled canary 等待 charter 与真人 operator） |
 | `FP-P3` release-candidate | clean SHA/manifest + Windows x64 安装升级回滚 + `git/gh` 缺失/认证/凭据安全证据 | `backlog` |
 | `FP-P4` component-graduation | SEKB / Browser / VToken / RM 独立门禁；GitLab/Gitee/PR DAG 仅做扩围裁决 | `backlog` |
 
@@ -89,22 +89,22 @@
 | FP-P1-04 | 编码任务闭环：read→write→diff→test→undo | FP-P1 | P0 | done | — | FP-P1-03 | Claude | 2026-07-27 | 补三处真缺口：verify 段 test-runner 探测（全仓此前零实现）、diff 证据改走 content（投影层删 details 致用户看不到 diff）、read 观测+lineage requestId/flags；真 agent turn E2E 4 轮 1 passed 32.1s（undo ok:true/部分还原 ok:false 硬锁双证） |
 | FP-P1-05 | restart/recovery + live kill/rollback | FP-P1 | P0 | done | — | FP-P1-04 | Codex | 2026-07-27 | 真 Electron 七场景 1 passed (1.9m)：Gateway/Electron restart、真实 journal+undo、kill 6980ms、baseline parity、N->N-1 强制关 7 flags、restart-failed 可解释并恢复；另修 clean runtime build 缺扩展产物并加 boot smoke |
 | FP-P1-06 | 脱敏 support bundle 导出 | FP-P1 | P0 | done | — | FP-P1-03 | Claude | 2026-07-27 | 真 UI 按钮导出 E2E 1 passed 30.4s；种两类泄漏向量（存储 key 结构性排除 + label 内 key 靠脱敏）真断言搜不到；补齐源码正文不外泄与体积上限具名截断；反向注入改坏正则→3 failed 证守卫非空转 |
-| FP-P1-07 | 首次任务 Electron E2E（含失败路径） | FP-P1 | P0 | in_progress | — | FP-P1-04, FP-P1-05, FP-P1-06 | Codex | 2026-07-28 | 真 Electron + 真 Gateway 精确 spec 4 passed (2.6m)；成功主链与六类失败均有证据；G1-G4 绿，独立 G5 待非实现人 |
-| FP-P1-08 | 产品叙事与文档同步 | FP-P1 | P1 | in_progress | — | FP-P1-07 G5（验收依赖） | Codex | 2026-07-28 | README/semantics/runbook/四语 UI 收敛；60+39 tests、contract/i18n/claim scan 全绿；G1-G4 绿，G5 后置 |
+| FP-P1-07 | 首次任务 Electron E2E（含失败路径） | FP-P1 | P0 | done | — | FP-P1-04, FP-P1-05, FP-P1-06 | Codex | 2026-07-28 | 独立 G5 由 GLM-5.2 完成：4 passed (3.9m)，修复 verify_tests 断言漂移；G1-G5 全绿 |
+| FP-P1-08 | 产品叙事与文档同步 | FP-P1 | P1 | done | — | FP-P1-07 G5 | Codex | 2026-07-28 | 独立 G5 由 GLM-5.2 完成：60+40 tests、contract/i18n/claim scan 全绿；G1-G5 全绿 |
 | FP-P1-09 | ack 超时参数化与调参 | FP-P1 | P2 | done | — | FP-P0-04 | Claude | 2026-07-26 | 实测 5 真 child 冷启动 11.6-12.7s→默认 60s(4.7×max)；退避 RPC 120→19；requeryAck 全链新增（E2E 证不重启可重查）；AppSettings 双键覆盖 |
 | FP-P1-10 | 逐 flag configSource 归因 | FP-P1 | P2 | done | — | FP-P0-04 | Claude | 2026-07-27 | 旁路新增 WithSources（旧函数薄封装，既有 17 单测零改全绿）；flagAttribution 刻意不进 REQUIRED_FIELDS 免旧 child 被判 incomplete；真 child 实证 compass=default vs working_memory=config 同值不同源。UI 徽章+四语 i18n 已落地但 E2E 未稳定断言→FP-P1-08 |
 | FP-P1-11 | 真实 turn 内共享预算非零账目核对 | FP-P1 | P1 | deferred | — | FP-P1-04 | Claude | 2026-07-27 | 已保留真 turn 非零账目与 lastTurn 证据；AC3/4/5 未达成且剩余实现完整转交 FP-P2-06，故不标 done、不再占用 P1 active |
 | FP-P1-12 | 预览开关 E2E Phase C 抖动治理（重启冷却竞态） | FP-P1 | P1 | done | — | — | Claude | 2026-07-27 | 根因证实=冷却抑制分支 return 与成功同形→配置静默丢弃→child 跑旧配置→ack 判 failed（真人快速开关同路径）。改为等冷却后真重启（上界 5s，未动冷却时长）。反向注入证用例非空转；E2E 5 跑 3 败→3 跑 3 绿，耗时 65s→47s |
-| FP-P2-01 | DCS + Forge Canary 治理包 | FP-P2 | P0 | backlog | — | FP-P1-08, FP-P2-10 | — | 2026-07-27 | 固定 SHA/Provider/Model/workspace/repository/credential/action/merge policy/retention |
+| FP-P2-01 | DCS + Forge Canary 治理包 | FP-P2 | P0 | blocked | — | FP-P2-10 | — | 2026-07-28 | FP-P1-07/08 独立 G5 已通过；模板已备；缺具名角色、fixed clean SHA、Provider/Model、workspace/repository、credential/action/merge/budget/privacy/stop/rollback 真人裁定 |
 | FP-P2-02 | 10 次真人 DCS coding + GitHub Forge 联合执行 | FP-P2 | P0 | backlog | ✅ | FP-P2-01 | — | 2026-07-27 | ≥3 read、≥2 review、1 sandbox merge + 阻断矩阵；`notHumanProductChat=false` |
 | FP-P2-03 | DCS + GitHub Forge 联合裁决与账目刷新 | FP-P2 | P0 | backlog | — | FP-P2-02, FP-P2-04, FP-P2-05, FP-P2-06 | — | 2026-07-27 | DCS/read/review/merge 分面 continue/shrink/stop；统一刷新 TF-0009/日志/handoff/evidence |
 | FP-P2-04 | 预算总额与 drop 告警线复核+配置化 | FP-P2 | P1 | backlog | — | FP-P2-02 | — | 2026-07-26 | 源自 FP-P0-05：0.1/6000 为起始线非经验值；禁止靠放大总额消除告警 |
-| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | backlog | — | FP-P1-04 | — | 2026-07-27 | 源自 FP-P1-04：现只探测不执行；另含 monorepo 子包/自定义 runner 未覆盖 |
-| FP-P2-06 | 注入预算逐通道归因补全 | FP-P2 | P1 | backlog | — | FP-P1-04 | — | 2026-07-27 | 消费 deferred FP-P1-11 的阶段证据：knowledge/working_memory/tool_registry 三通道无 charge 点；含 prompt 增长独立比对、多通道降级顺序验证 |
-| FP-P2-07 | MergeBeacon 来源冻结与结构化 Patch/Error 契约 | FP-P2 | P1 | in_progress | — | FP-P1-08 G5（验收依赖） | Codex | 2026-07-28 | Slices 1-2 已完成：source/license + 唯一 Harness spec + shared patch/error v1；exact parent SHA 未解析，源码复制 fail closed；下一切片 parser/adapter；artifact 仍被忽略且未跟踪 |
-| FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | backlog | — | FP-P2-07 | — | 2026-07-27 | PR detail/commits/diff/checks/reviews/readiness + complete/incomplete 语义 |
-| FP-P2-09 | PR 评审写操作与乐观并发保护 | FP-P2 | P1 | backlog | — | FP-P2-08 | — | 2026-07-27 | action-bound approval、head SHA/version guard、partial success；G4 转 P2-02 |
-| FP-P2-10 | Merge readiness 硬门禁与受控合并实现 | FP-P2 | P1 | backlog | — | FP-P2-09 | — | 2026-07-27 | Main 强制复查 readiness；unknown/truncated fail closed；G4 转 P2-02 |
+| FP-P2-05 | verify 段自动执行与结果回填 | FP-P2 | P2 | done | — | FP-P1-04 | Codex | 2026-07-28 | default-off；最终 effective exec 复用、nearest project/custom runner、八类结果与真 child 可见回填全绿；失败不回滚 write journal |
+| FP-P2-06 | 注入预算逐通道归因补全 | FP-P2 | P1 | done | — | FP-P1-04 | Codex | 2026-07-28 | 三通道真实 charge、同 ledger DCS 2000 容量 reservation、provider 独立比对与显式 CVK 截断全绿；总额仍 6000 |
+| FP-P2-07 | MergeBeacon 来源冻结与结构化 Patch/Error 契约 | FP-P2 | P1 | done | — | FP-P1-08 G5（验收依赖） | Codex | 2026-07-28 | 六切片收口：source/license、唯一 contract/adapter、Git/Code Review/DCS rich diff、canonical error envelope、脱敏与反向测试；真实 Electron E2E 全绿 |
+| FP-P2-08 | GitHub Remote Forge 只读控制面 | FP-P2 | P1 | done | — | FP-P2-07 | Codex | 2026-07-28 | Main-owned GitHub read、typed completeness/capability/readiness、bounded content、host-api/MCP/四语 UI 与 fake-provider Main-path E2E 全绿 |
+| FP-P2-09 | PR 评审写操作与乐观并发保护 | FP-P2 | P1 | done | — | FP-P2-08 | Codex | 2026-07-28 | action-bound approval、head SHA/version guard、partial/unknown reconciliation、四语 UI 与 fake-provider E2E 全绿；G4 转 P2-02 |
+| FP-P2-10 | Merge readiness 硬门禁与受控合并实现 | FP-P2 | P1 | done | — | FP-P2-09 | Codex | 2026-07-28 | Main 即时复查、hard veto、五分钟单次 approval、expected-head sandbox merge、partial reconciliation 与 fake-provider E2E 全绿；G4 转 P2-02 |
 | FP-P3-01 | 发布树卫生与 fresh manifest | FP-P3 | P0 | backlog | — | FP-P2-03 | — | 2026-07-27 | 含 Forge 源码/来源/许可证/secret scan；`git diff --check` 与 release baseline 当前失败 |
 | FP-P3-02 | 平台声明纠正（去 Windows ARM64） | FP-P3 | P0 | backlog | — | — | — | 2026-07-26 | `release.yml:670` 等虚假声明与 URL |
 | FP-P3-03 | Clean Windows VM 安装/升级/回滚 | FP-P3 | P0 | backlog | ✅ | FP-P3-01, FP-P3-02 | — | 2026-07-27 | 13 场景；含 git/gh 缺失降级、sandbox Forge、凭据与旧 approval 不复用 |
@@ -125,11 +125,11 @@
 |--------|------:|
 | tasks total | 43 |
 | ready | 1 |
-| backlog | 17 |
-| in_progress | 3 |
-| blocked | 0 |
+| backlog | 13 |
+| in_progress | 0 |
+| blocked | 1 |
 | deferred | 6 |
-| done | 16 |
+| done | 22 |
 
 ---
 
@@ -208,6 +208,20 @@ Wave 5 (FP-P4): 各组件独立门禁；FP-P4-08 只裁决 GitLab/Gitee/PR DAG �
 | 2026-07-28 | FP-P1-08 | claim scan 收账复核 | G2 | in_progress | P2 spec/handoff/Task Forest proposal/治理字段加入后基线刷新为 16 current surfaces、686 paths、6386 historical/governance matches；0 current violations / 0 skipped，G5 状态不变 |
 | 2026-07-28 | FP-P2-07 | slice 1 可交付性复核 | — | in_progress | `artifacts/*` 当前忽略 P2-07 manifest/evidence/log 且三者未跟踪；已登记风险，不改 ignore policy、不 stage；正式 change set 前必须显式纳入 |
 | 2026-07-28 | FP-P2-07 | 2 Contract 与兼容策略 | G1(partial),G2(partial) | in_progress | 唯一 `GitPatchArtifact/v1` / `RemoteForgeError/v1`、strict decoder 与迁移矩阵落地；10 focused tests、standalone strict TS、contract、i18n、Harness structural validate 通过。无 consumer/UI/远端副作用；下一切片 parser/adapter |
+| 2026-07-28 | FP-P2-07 | consolidation 可交付性复核 | — | in_progress | 42 个 First Product evidence 文件已显式纳入提交 `918ed8abd` 并推送至 `origin/main`；其中 P1-07/08 与 P2-07 的 10 个重点 artifact 均已跟踪。下一切片仍为 parser/adapter |
+| 2026-07-28 | FP-P2-07 | 3 标准化 parser/adapter | G1(partial),G2(partial) | in_progress | 显式 source completeness、1 MiB/128 files/4096 hunks/120k lines 上限、唯一 v1 映射和边界 corpus 落地；12 focused / 22 contract+adapter tests、targeted ESLint、standalone strict TS 通过。无 consumer/UI/远端副作用；下一切片为 consumer migration |
+| 2026-07-28 | FP-P2-07 | 4 consumer migration | G1(partial),G2(partial),G3(partial) | in_progress | Git/Code Review/DCS edit 接入唯一 adapter；超限、malformed、truncated、status/lineage mismatch fail closed；48 root + 54 runtime tests、build、Code Review E2E、contract/i18n/comms/Harness 全绿。无远端副作用；下一切片 rich diff/text fallback |
+| 2026-07-28 | FP-P2-07 | 5 edit/write rich diff + text fallback | G1(partial),G2(partial),G3(partial) | in_progress | full-file write 以 journal before + verified after 生成真实 diff；Gateway/Renderer 对 missing、stale、truncated、unknown schema/lineage fail closed；26 root + 50 runtime tests、runtime/Vite build、真实 Gateway Electron E2E、contract/i18n/comms/Harness 全绿。无远端副作用；下一切片 error envelope/redaction/negative tests |
+| 2026-07-28 | FP-P2-07 | 6 error envelope / redaction / negative tests | G1,G2,G3,G4(n/a),G5 | done | Git/Code Review/DCS/Renderer 统一 canonical `RemoteForgeError/v1`；敏感 payload、malformed/unknown/oversize/status/retryability/requestId 反向测试全绿；runtime/Vite/Electron/Harness/comms 全绿。active 转 FP-P2-08 |
+| 2026-07-28 | FP-P2-08 | 1-5 GitHub read control plane | G1,G2,G3,G4(n/a),G5 | done | Main-owned bounded read、typed completeness/capability/readiness、host-api/MCP、四语 Code Review UI 与 fake-provider Main-path E2E 收口；unknown 不升级为 supported/ready。active 转 FP-P2-09 |
+| 2026-07-28 | FP-P2-09 | 1-5 review/comment/metadata mutation | G1,G2,G3,G4(n/a),G5 | done | 一次性 action-bound approval、head/version OCC、最小 comment snapshot、partial/unknown reconciliation、四语 draft-first UI 与 fake-provider Main-path E2E 收口；99 focused tests 与全门禁通过。active 转 FP-P2-10 |
+| 2026-07-28 | FP-P2-10 | 1-5 readiness hard-veto / controlled merge | G1,G2,G3,G4(n/a),G5 | done | Main 动作前即时重读、五分钟单次 approval、expected-head sandbox merge、Agent default-off、partial reconciliation 与四语 UI 收口；114 focused tests、fresh runtime/Vite build、fake-provider E2E 3/3、Code Review E2E 1/1 及全门禁通过。active 转 FP-P2-05 |
+| 2026-07-28 | FP-P2-05 | 1-4 auto verify execution / visible projection | G1,G2,G3,G4(n/a),G5 | done | 最终 effective exec 复用既有 policy/approval/sandbox/timeout；nearest project/custom runner 与八类结果收口；101 runtime + 20 root focused tests、fresh builds、真 child E2E 可见 `AUTO_VERIFY_PASS` 全绿。active 转 FP-P2-06 |
+| 2026-07-28 | FP-P2-06 | 1-6 三通道归因与显式降级 | G1,G2,G3,G4(n/a),G5 | done | knowledge/working_memory/tool_registry 进入同一真实 turn ledger；固定 6000 内为 DCS 保留既有 2000，CVK 显式截断到 4000；provider 实测 284/162/1554 与逐通道账目一致，fresh runtime/Electron E2E 与全门禁通过 |
+| 2026-07-28 | FP-P2-01/02 | 真人阶段模板与阻塞收口 | — | blocked | charter、run record 与 Forge blocking matrix 模板已备；独立 G5、具名角色、fixed clean SHA、Provider/Model、sandbox/credential scope、预算/隐私/停止/回滚及 10 次真人执行不得代填 |
+| 2026-07-28 | FP-P1-07/08 | 独立 G5 验收 | G1,G2,G3,G4(n/a),G5 | done | 独立 reviewer GLM-5.2（≠ 实现人 Codex/Claude）重跑全部门禁：FP-P1-07 E2E 4 passed (3.9m)、FP-P1-08 60+40 tests + contract + i18n + claim scan 全绿。修复 FP-P2-05 default-off 导致的 verify_tests 断言漂移。e2e-run.log 与 focused-gates.log 重新生成。P1 phase 出口 GO；不等于真人 canary/productApproved/default-on |
+| 2026-07-29 | FP-P2-01/02/04/03 | FIXTURE 全链路模拟 | — | blocked (fixture) | 开发者授权 Agent 代跑，所有成果仅作参考不作为真实证据。生成 fixture charter 草案、10 个 fixture run records（notHumanProductChat=true）、fixture blocking matrix（9 类）、fixture 预算分析、fixture 裁决草案（4 分面 CONTINUE）、fixture Task Forest proposal（不 apply）。liveReady/productApproved/defaultOn 保持 false。真人接手时必须替换全部 fixture 数据并重新裁决 |
+| 2026-07-29 | FP-P2-04 | 配置化工程完成 | G1,G2 | partial | zod-schema.ts 添加 `contextBlock.injectionBudget.{totalChars,dropAlertRatio}`；turn-injection-budget.ts 添加 `setTurnInjectionBudgetConfig`/getter；runtime-flag-ack.ts 使用 getter；17 tests passed（新增 4 配置覆盖测试）；contract:check + ClawX typecheck 全绿。默认值 6000/0.1 未变（Hard lock：待真人分布推导）。取值推导和真实分布仍待 FP-P2-02 真人数据 |
 
 ---
 

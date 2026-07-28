@@ -18,8 +18,8 @@
 | FP-P1-04 | [FP-P1-04.md](./FP-P1-04.md) | FP-P1 | P0 | n/a | done |
 | FP-P1-05 | [FP-P1-05.md](./FP-P1-05.md) | FP-P1 | P0 | n/a | done |
 | FP-P1-06 | [FP-P1-06.md](./FP-P1-06.md) | FP-P1 | P0 | n/a | done |
-| FP-P1-07 | [FP-P1-07.md](./FP-P1-07.md) | FP-P1 | P0 | n/a | in_progress |
-| FP-P1-08 | [FP-P1-08.md](./FP-P1-08.md) | FP-P1 | P1 | n/a | in_progress |
+| FP-P1-07 | [FP-P1-07.md](./FP-P1-07.md) | FP-P1 | P0 | n/a | done |
+| FP-P1-08 | [FP-P1-08.md](./FP-P1-08.md) | FP-P1 | P1 | n/a | done |
 | FP-P1-09 | [FP-P1-09.md](./FP-P1-09.md) | FP-P1 | P2 | n/a | done |
 | FP-P1-10 | [FP-P1-10.md](./FP-P1-10.md) | FP-P1 | P2 | n/a | done |
 | FP-P1-11 | [FP-P1-11.md](./FP-P1-11.md) | FP-P1 | P1 | n/a | deferred |

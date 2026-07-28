@@ -43,6 +43,10 @@ Product capability statements must be checked against the canonical matrix in `s
 
 現在の first-product 検証対象は **Verse Claw Windows x64 - DCS Coding Controlled Preview** です。内部利用、単一 workspace、明示的な `opt-in` に限定し、Provider/Model 検証、制御された読み書きとテスト、undo、runtime acknowledgement、再起動後の復旧、kill/rollback、秘匿化 support bundle を対象にします。
 
+書き込み後の自動検証も明示的な opt-in で、既定では無効です。有効化すると、Verse Claw は有界なプロジェクトテストコマンドを 1 つ検出し、既存の effective `exec` の policy、approval、sandbox、timeout 経路で実行します。成功、失敗、skip 理由、有界な出力末尾は会話に表示され、検証失敗によって成功済みの書き込みが rollback されることはありません。
+
+DCS を有効にした coding turn では、knowledge、recent actions、tool registry の実際の provider-visible prompt 増加量を、既存の共有 turn-injection ledger に個別記録します。固定予算は拡大せず、有効な DCS projection には既存の有界容量を確保し、truncate と drop は明示的な会計証拠として残します。
+
 Runtime Memory 注入、SEKB 自動 writeback、Browser の無監督または private-network 利用、C6/C7 自動切替、Coding WAL、本番 repository の自動 merge、複数 Forge/DAG 拡張は対象外です。現時点の証拠は engineering と実プロセステストであり、human canary と release approval は未完了です。コンポーネントごとの唯一の分類は [`docs/clawx-product-semantics.md`](docs/clawx-product-semantics.md#windows-x64-controlled-preview) を参照してください。
 
 ## 概要
@@ -168,7 +172,7 @@ Task Ledger ページは、長期作業のために workspace 単位かつ Agent
 Remote Tasks ページは、メッセージ、OpenClaw Doctor、設定パッチの構造化タスクを扱うローカル優先の受信箱です。設定パッチは変更プレビューを表示し、ユーザーが明示的に承認した後にだけ Main プロセスが許可リスト内の設定更新を適用します。
 
 ### Code Review Center
-Review Center は、未コミット変更、ベースブランチとの差分、または指定 commit に対して読み取り専用の AI review を実行します。severity 付きの findings、file/line アンカー、サニタイズ済み review trace を生成し、finding または review 全体を Task Ledger review node に変換できます。stage、commit、ファイル編集は行いません。
+Review Center は、未コミット変更、ベースブランチとの差分、または指定 commit に対して読み取り専用の AI review を実行します。severity 付きの findings、file/line アンカー、サニタイズ済み review trace を生成し、finding または review 全体を Task Ledger review node に変換できます。stage、commit、ファイル編集は行いません。Git patch は共有の構造化 patch contract で検証され、malformed または producer-truncated の diff はモデルレビュー開始前に停止します。Chat では、write journal で裏付けられた成功済みの `edit` とファイル全体の `write` に rich diff と同一 text patch のコピー操作を表示します。mutation lineage が欠落、古い、または不完全な場合、Renderer の状態から diff を推測して再構築しません。Remote PR タブは Main-owned host API を通じて GitHub PR の detail、commits、files、構造化 diff、checks、reviews、branch protection、および指定ファイル内容を上限付きで読み取ります。完全性、capability、readiness は明示され、不足、truncated、unauthorized、unknown の証拠が ready と解釈されることはありません。review、line comment、thread reply、許可リスト内の metadata 更新は既定で draft に留まり、完全一致する一回限りの action-bound approval を消費した場合だけ公開されます。head/version drift は fail closed となり、partial または ambiguous な結果は無条件再試行ではなく reconciliation を表示します。制御された merge も同じ Main-owned policy を使い、実行直前に head と readiness を再取得し、正確な strategy と policy 証拠に結び付いた短時間・一回限りの approval を消費して expected head SHA を送信します。本番 repository は allowlist 外、Agent merge は既定で無効であり、merge 後の refresh または audit の失敗は merge 再試行ではなく reconciliation として表示されます。
 
 ### Knowledge Hub
 Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki コンテキストを管理します。既定では Verse Claw 管理の隔離 native vault を使い、unsafe local-vault モードへ切り替えずに、制限されたテキストファイルやフォルダーを取り込めます。また、ローカル OKF v0.1 Markdown bundle を検証して `wiki.ingest` 上の薄い互換アダプターとしてインポートできます。状態確認、検索、結果確認、compile、lint、Knowledge Inbox、draft/proposal レビュー、provenance、ガバナンスの流れを備えています。Inbox は Chat、Task Ledger、ファイル、OKF、ClawGraph、agent 由来の候補知識を正式な wiki の外に保持し、ユーザーがドラフトへ昇格または破棄するまで書き込みません。provenance は出典参照と読み取り/参照イベントだけを記録し、wiki ページを変更しません。Chat の知識範囲（`None`、`Memory`、`Wiki`、`All`）は読み取り範囲だけを表します。Agent は search/get で文脈を読めますが、scope が有効でも書き込み、更新、アーカイブ、削除、マージ、apply はできません。Chat では `/wiki` で検索し、明示的な wiki 参照を visible chip として添付してから送信できます。`/memory`、`/all`、`/none`、`/scope` は読み取り範囲だけを変更し、書き込み権限にはなりません。知識呼び出しモードの既定は Suggest で、関連知識は任意の chip として表示されます。Auto-read は明示的に有効化した場合のみ、少数の新しく高信頼な読み取り専用参照を添付します。セッション由来の知識や agent/Knowledge Steward の提案は編集可能な draft/proposal に入り、ユーザーの明示的な確認後にだけ wiki へ適用されます。Obsidian は任意の拡張であり、必須依存ではありません。ガバナンスダッシュボードはオンデマンドの健全性チェックにより矛盾、陳腐化、未解決参照を可視化します。監視ディレクトリはプロジェクト文書を pending Inbox にだけ入れ、正式な wiki への direct-ingest や synthesis 作成は自動実行しません。

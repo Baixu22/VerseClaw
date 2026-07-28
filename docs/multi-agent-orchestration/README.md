@@ -1,5 +1,11 @@
 # Multi-Agent Orchestration Goal Control Pack
 
+> 文件性质: Role-First Multi-Agent 长开发的控制包索引。
+>
+> 当前状态（2026-07-28）: P0-P4 baseline 已完成并有审计证据。当前后续规划入口是 `runtime-v2-p3-p5-allocation.md`,开发工作已分配到 P3-R、P4-R、P5,但这些新增能力尚未实现。
+>
+> 边界: P3-R/P4-R 是 residual lane,不重开原 P3/P4。任何新一轮只启动一个依赖已满足的 `MA-*` work item,不得一次启动整条 Runtime V2 路线。
+
 ## Agency Role Promotion Control Pack
 
 The controlled Agency draft review and config-role materialization project uses:
@@ -11,15 +17,9 @@ The controlled Agency draft review and config-role materialization project uses:
 - `harness/specs/tasks/agency-role-promotion-control-plane.md`
 - `harness/specs/rules/agency-role-promotion-boundary.md`
 
-Use the dedicated start prompt for this project. It runs R0-R5 in order and
-requires a ClawX/Agency Agents/Letta reference ledger in every round report.
+Use the dedicated start prompt for this project. It runs R0-R5 in order and requires a ClawX/Agency Agents/Letta reference ledger in every round report.
 
-The delivered control plane lets an operator select an Agency Agents checkout,
-review an immutable candidate, explicitly map or waive every tool hint, attach
-evidence, and approve a separate config-backed `RoleContract`. The source draft
-never becomes runnable. Retry reconciles exact contract identity, while
-retirement removes only that exact config role and preserves the review audit
-history.
+The delivered control plane lets an operator select an Agency Agents checkout, review an immutable candidate, explicitly map or waive every tool hint, attach evidence, and approve a separate config-backed `RoleContract`. The source draft never becomes runnable. Retry reconciles exact contract identity, while retirement removes only that exact config role and preserves the review audit history.
 
 The package-localization extension uses:
 
@@ -28,10 +28,7 @@ The package-localization extension uses:
 - `harness/specs/tasks/agency-role-package-localization.md`
 - `harness/specs/rules/agency-role-package-boundary.md`
 
-It imports one selected draft into an immutable app-owned package. Review,
-approval, retry, and retirement then operate without the external checkout.
-Changed upstream content creates a linked package version and a new review;
-the package itself remains independent of Role Memory.
+It imports one selected draft into an immutable app-owned package. Review, approval, retry, and retirement then operate without the external checkout. Changed upstream content creates a linked package version and a new review; the package itself remains independent of Role Memory.
 
 The separately gated memory-import extension uses:
 
@@ -39,230 +36,80 @@ The separately gated memory-import extension uses:
 - `harness/specs/tasks/agency-role-memory-import.md`
 - `harness/specs/rules/agency-role-memory-import-boundary.md`
 
-It parses only complete active package snapshots with a Markdown AST and
-offers recognized governance sections as confidence `0.6` proposals. Selected
-items use the existing Memory preview, duplicate/conflict, proposal, and human
-review path; no Agency source text can directly create an active card or grant
-runtime authority.
-
-> 文件性质: Goal 模式开发前置控制包索引。
->
-> 适用范围: Role-First 多 Agent 编排 P0-P4 的长开发轮次。当前只允许启动 P0: 验证闭环硬化。
-> 适用范围: Role-First 多 Agent 编排 P0-P4 的长开发轮次。P0/P1/P2/P3 已完成并提交;当前准备启动 P4: Synthesizer 与局部动态 DAG。
+It parses only complete active package snapshots with a Markdown AST and offers recognized governance sections as confidence `0.6` proposals. Selected items use the existing Memory preview, duplicate/conflict, proposal, and human review path; no Agency source text can directly create an active card or grant runtime authority.
 
 ## 1. 使用方式
 
-启动 Goal 前,先确认本目录与根约束文档存在:
+开始 Multi-Agent 长开发前,按以下顺序读取:
 
-- `docs/multi-agent-orchestration-development-plan.md`
-- `docs/role-first-design.md`
-- `docs/multi-agent-orchestration/README.md`
-- `docs/multi-agent-orchestration/goal-mode-start-prompt.md`
-- `docs/multi-agent-orchestration/goal-mode-development-protocol.md`
-- `docs/multi-agent-orchestration/acceptance-and-test-matrix.md`
-- `docs/multi-agent-orchestration/phase-constraints/p0-verification-loop.md`
-- `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md`
-- `harness/specs/tasks/role-first-p0-verification-loop.md`
+1. `docs/role-first-design.md`: 当前 Role-First runtime 事实基线。
+2. `docs/multi-agent-orchestration-development-plan.md`: 长期架构、硬约束与阶段历史。
+3. `docs/multi-agent-orchestration/2026-07-08-role-first-completion-audit.md`: P0-P4 完成证据。
+4. `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md`: P3-R/P4-R/P5 的当前工作分配、依赖和毕业条件。
+5. 当前 `MA-*` work item 对应的 task spec、required rules 和最小 harness context。
 
-Goal 启动时使用 `goal-mode-start-prompt.md` 里的完整提示。该提示会要求 worker 先读完整控制包,再进入实现。
-- `docs/multi-agent-orchestration/goal-mode-start-prompt-p1.md`
-- `docs/multi-agent-orchestration/goal-mode-start-prompt-p2.md`
-- `docs/multi-agent-orchestration/goal-mode-start-prompt-p3.md`
-- `docs/multi-agent-orchestration/goal-mode-start-prompt-p4.md`
-- `docs/multi-agent-orchestration/goal-mode-development-protocol.md`
-- `docs/multi-agent-orchestration/acceptance-and-test-matrix.md`
-- `docs/multi-agent-orchestration/phase-constraints/p0-verification-loop.md`
-- `docs/multi-agent-orchestration/phase-constraints/p1-resource-aware-scheduler.md`
-- `docs/multi-agent-orchestration/phase-constraints/p2-runbook-complexity-gate.md`
-- `docs/multi-agent-orchestration/phase-constraints/p3-typed-blackboard.md`
-- `docs/multi-agent-orchestration/phase-constraints/p4-synthesizer-dynamic-dag.md`
-- `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md`
-- `docs/superpowers/specs/2026-07-07-role-first-p1-resource-aware-scheduler-design.md`
-- `docs/superpowers/plans/2026-07-07-role-first-p1-resource-aware-scheduler.md`
-- `docs/superpowers/specs/2026-07-07-role-first-p2-runbook-complexity-gate-design.md`
-- `docs/superpowers/plans/2026-07-07-role-first-p2-runbook-complexity-gate.md`
-- `docs/superpowers/specs/2026-07-07-role-first-p3-typed-blackboard-design.md`
-- `docs/superpowers/plans/2026-07-07-role-first-p3-typed-blackboard.md`
-- `docs/superpowers/specs/2026-07-08-role-first-p4-synthesizer-dynamic-dag-design.md`
-- `docs/superpowers/plans/2026-07-08-role-first-p4-synthesizer-dynamic-dag.md`
-- `harness/specs/tasks/role-first-p0-verification-loop.md`
-- `harness/specs/tasks/role-first-p1-resource-aware-scheduler.md`
-- `harness/specs/tasks/role-first-p2-runbook-complexity-gate.md`
-- `harness/specs/tasks/role-first-p3-typed-blackboard.md`
-- `harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md`
+旧的 `goal-mode-start-prompt-p1.md` 到 `goal-mode-start-prompt-p4.md`、phase constraints、specs 和 plans 继续保留,用于解释 P0-P4 baseline 及运行回归,不再作为“当前阶段”入口。
 
-P0 Goal 启动时使用 `goal-mode-start-prompt.md`。P1/P2/P3/P4 Goal 启动时分别使用 `goal-mode-start-prompt-p1.md`、`goal-mode-start-prompt-p2.md`、`goal-mode-start-prompt-p3.md`、`goal-mode-start-prompt-p4.md`。启动提示会要求 worker 先读完整控制包,再进入实现。
+本控制包不会覆盖 Sustained Development Playbook、`docs/dev/handoffs/LATEST.md` 或 canonical Task Forest 的 active node。把分配项写入 Task Forest 时仍须走 proposal -> 用户确认 -> apply。
 
 ## 2. 文档分工
 
 | 文件 | 责任 |
 | --- | --- |
-| `docs/multi-agent-orchestration-development-plan.md` | 长期路线图、P0-P4 阶段边界、全局硬约束、Agency 吸收原则 |
-| `docs/role-first-design.md` | 当前 role-first runtime 事实基线,包括 RoleContract、权限、记忆、路由、团队模板和 UI 锚点 |
-| `docs/multi-agent-orchestration/goal-mode-start-prompt.md` | 可直接复制进 Goal 模式的启动提示 |
-| `docs/multi-agent-orchestration/goal-mode-development-protocol.md` | Goal 执行纪律: 一轮一个阶段、TDD、证据、脏工作区、最终报告 |
-| `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` | P0 验收项到测试/证据的映射 |
-| `docs/multi-agent-orchestration/phase-constraints/p0-verification-loop.md` | P0 允许做什么、禁止做什么、如何判断完成 |
-| `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md` | P0 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `harness/specs/tasks/role-first-p0-verification-loop.md` | harness 可读取的 P0 task spec |
+| `docs/multi-agent-orchestration-development-plan.md` | 长期路线、全局硬约束、P0-P4 历史阶段与 Runtime V2 总入口 |
+| `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md` | P3-R/P4-R/P5 工作 ID、依赖、主责生态位、交付物、验收、禁区和 CRAFT 取舍 |
+| `docs/multi-agent-orchestration/2026-07-08-role-first-completion-audit.md` | P0-P4 baseline 的完成证据 |
+| `docs/role-first-design.md` | 当前 runtime 的 RoleContract、权限、记忆、路由、团队模板和 UI 锚点 |
+| `docs/multi-agent-orchestration/goal-mode-development-protocol.md` | 长开发纪律: 一轮一个 ready item、TDD、证据、脏工作区和最终报告 |
+| `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` | P0-P4 历史验收与回归映射 |
+| `docs/multi-agent-orchestration/phase-constraints/p0-verification-loop.md` | P0 历史边界 |
+| `docs/multi-agent-orchestration/phase-constraints/p1-resource-aware-scheduler.md` | P1 历史边界 |
+| `docs/multi-agent-orchestration/phase-constraints/p2-runbook-complexity-gate.md` | P2 历史边界 |
+| `docs/multi-agent-orchestration/phase-constraints/p3-typed-blackboard.md` | P3 Typed Blackboard 历史边界 |
+| `docs/multi-agent-orchestration/phase-constraints/p4-synthesizer-dynamic-dag.md` | P4 Synthesizer / local DAG 历史边界 |
+| `harness/specs/tasks/phase-5-evidence-verifier*.md` | 已存在的 P5 Evidence Verifier default-off / shadow 工作及证据 |
 
-## 3. 当前阶段
+## 3. 当前开发分配
 
-当前阶段固定为 P0: 验证闭环硬化。
+| 阶段 | 分配 ID | 当前含义 | 启动条件 |
+| --- | --- | --- | --- |
+| P3-R | `MA-P3-01` - `MA-P3-04` | WorkPackage/WorkResult、terminal handoff、artifact provenance、context fault、隔离与 replay | 从 `MA-P3-01` 顺序推进;不得开放直接 A2A 或新权限 |
+| P4-R | `MA-P4-01` - `MA-P4-06` | 持久 Runtime Kernel、completion-driven DAG、admission/backpressure、多维预算、恢复和 policy profiles | P3-R 毕业后启动;ordinary orchestration 与 Task Loop 迁移必须 shadow/parity/cutover/rollback |
+| P5 | `MA-P5-01` - `MA-P5-07` | Evidence Verifier 统一接线、条件趋势/校准、Routing Memo v2、审计队列、可验证缓存与受控激活 | P4-R 的相关 Kernel contract 稳定;始终 default-off / shadow-first |
 
-P0 只允许实现:
-| `docs/multi-agent-orchestration/goal-mode-start-prompt-p1.md` | P1 可直接复制进 Goal 模式的启动提示 |
-| `docs/multi-agent-orchestration/goal-mode-start-prompt-p2.md` | P2 可直接复制进 Goal 模式的启动提示 |
-| `docs/multi-agent-orchestration/goal-mode-start-prompt-p3.md` | P3 可直接复制进 Goal 模式的启动提示 |
-| `docs/multi-agent-orchestration/goal-mode-start-prompt-p4.md` | P4 可直接复制进 Goal 模式的启动提示 |
-| `docs/multi-agent-orchestration/goal-mode-development-protocol.md` | Goal 执行纪律: 一轮一个阶段、TDD、证据、脏工作区、最终报告 |
-| `docs/multi-agent-orchestration/acceptance-and-test-matrix.md` | P0-P3 验收项到测试/证据的映射 |
-| `docs/multi-agent-orchestration/phase-constraints/p0-verification-loop.md` | P0 允许做什么、禁止做什么、如何判断完成 |
-| `docs/multi-agent-orchestration/phase-constraints/p1-resource-aware-scheduler.md` | P1 允许做什么、禁止做什么、如何判断完成 |
-| `docs/multi-agent-orchestration/phase-constraints/p2-runbook-complexity-gate.md` | P2 允许做什么、禁止做什么、如何判断完成 |
-| `docs/multi-agent-orchestration/phase-constraints/p3-typed-blackboard.md` | P3 允许做什么、禁止做什么、如何判断完成 |
-| `docs/multi-agent-orchestration/phase-constraints/p4-synthesizer-dynamic-dag.md` | P4 允许做什么、禁止做什么、如何判断完成 |
-| `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md` | P0 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `docs/superpowers/specs/2026-07-07-role-first-p1-resource-aware-scheduler-design.md` | P1 设计说明,约束 scheduler 和 Agency draft catalog 边界 |
-| `docs/superpowers/plans/2026-07-07-role-first-p1-resource-aware-scheduler.md` | P1 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `docs/superpowers/specs/2026-07-07-role-first-p2-runbook-complexity-gate-design.md` | P2 设计说明,约束 ComplexityGate 和 RunbookTemplate 边界 |
-| `docs/superpowers/plans/2026-07-07-role-first-p2-runbook-complexity-gate.md` | P2 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `docs/superpowers/specs/2026-07-07-role-first-p3-typed-blackboard-design.md` | P3 设计说明,约束 typed blackboard 和 bounded A2A 边界 |
-| `docs/superpowers/plans/2026-07-07-role-first-p3-typed-blackboard.md` | P3 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `docs/superpowers/specs/2026-07-08-role-first-p4-synthesizer-dynamic-dag-design.md` | P4 设计说明,约束 synthesizer 和 local dynamic DAG 边界 |
-| `docs/superpowers/plans/2026-07-08-role-first-p4-synthesizer-dynamic-dag.md` | P4 详细实施计划,分任务列出文件、接口、测试和命令 |
-| `harness/specs/tasks/role-first-p0-verification-loop.md` | harness 可读取的 P0 task spec |
-| `harness/specs/tasks/role-first-p1-resource-aware-scheduler.md` | harness 可读取的 P1 task spec |
-| `harness/specs/tasks/role-first-p2-runbook-complexity-gate.md` | harness 可读取的 P2 task spec |
-| `harness/specs/tasks/role-first-p3-typed-blackboard.md` | harness 可读取的 P3 task spec |
-| `harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md` | harness 可读取的 P4 task spec |
+关键路径:
 
-## 3. 当前阶段
-
-当前阶段准备进入 P4: Synthesizer 与局部动态 DAG。
-
-P0 已完成并提交,其交付物保持为后续阶段依赖:
-
-- `OrchestrationResultBundle`
-- `SchemaComplianceGate`
-- `VerifierGate`
-- max-one `Replan/Repair` 决策与 attempt 记录
-- P0 eval/test scenarios
-- trace/bundle 中记录 gate、权限拒绝、memory proposal、repair attempt
-
-P0 明确禁止:
-
-- `ResourceAwareWaveScheduler`
-- `AgencyRoleImporter`
-- Role Catalog UI
-- typed blackboard
-- synthesizer
-- 新长期记忆策略
-- open mesh A2A
-- 直接把 Agency markdown agent 变成 runtime role
-
-## 4. 推荐启动顺序
-
-1. 确认工作区: `C:\Users\27933\Desktop\clawx\ClawX`
-2. 复制 `goal-mode-start-prompt.md` 的提示进入 Goal 模式。
-3. Goal worker 先运行结构校验。当前工作区如果有 unrelated dirty files,先使用 `--no-diff` 验证 spec 本身;完整 diff 校验留到阶段结束或隔离 worktree 中运行:
-
-```powershell
-pnpm harness context --spec harness/specs/tasks/role-first-p0-verification-loop.md
-pnpm harness validate --spec harness/specs/tasks/role-first-p0-verification-loop.md --no-diff
+```text
+P3-R protocol contracts
+  -> P4-R unified Orchestration Runtime Kernel
+  -> P5 evidence intelligence and controlled optimization
 ```
 
-4. Goal worker 按 `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md` 任务顺序执行。
-5. 每个任务遵守 RED -> GREEN: 先写失败测试,运行确认失败,再实现最小代码,再运行通过。
-6. 阶段结束时对照 `acceptance-and-test-matrix.md` 和 `phase-constraints/p0-verification-loop.md` 汇报。
-7. 阶段结束时,在只包含 P0-owned files 的 diff 或隔离 worktree 中运行完整 `pnpm harness validate --spec harness/specs/tasks/role-first-p0-verification-loop.md`。
+`MA-P5-06` 的 batch、Token CFS、Petri validator 是证据触发的可选实验,不属于默认关键路径。
 
-## 5. 成功标准
+## 4. 单项启动协议
 
-P0 可以进入人工评审的最低标准:
+每次只启动一个 ready work item:
 
-- structured bundle 存在,并覆盖 spawn-phase 与 completion-phase 的核心证据。
-- schema gate 能拒绝 malformed 或 evidence 缺失的 role outcome。
-- verifier gate 能产生 `pass`, `fail`, `repair_required` 中的明确决策。
-- repair/replan 自动决策最多一次,第二次失败停止并返回解释性失败。
-- trace 或 bundle 中能看到 gate 决策、权限拒绝、memory proposal、repair attempt。
-- 没有引入 P1-P4 功能。
-- gate、权限拒绝、memory proposal、repair attempt 的 trace/bundle 表达
+1. 确认该项在 `runtime-v2-p3-p5-allocation.md` 中的依赖全部满足。
+2. 建立独立 `harness/specs/tasks/` task spec,声明 owned paths、required rules、tests、feature flags 和 rollback。
+3. 运行 `pnpm harness context --spec <task-spec>`;涉及 backend communication 时引用 `gateway-backend-communication`。
+4. 先写 contract/fixture 失败测试,再实现最小行为,然后执行 targeted tests 和相关回归。
+5. runtime 接线或决策权变化必须按 `off -> shadow -> controlled active` 推进,提供 flag-off parity 与 rollback 证据。
+6. 通信路径变化运行 comms replay/compare;用户可见变化补四语 i18n 和 Electron E2E。
+7. 功能或架构变化后检查 `README.md`、`README.zh-CN.md`、`README.ja-JP.md`。
+8. 阶段报告必须列出成功和失败 trace、预算/权限/证据决策、未实现的非目标及剩余 full gates。
 
-P1 已完成并提交,其交付物保持为 P2/P3 的依赖:
+## 5. 跨阶段硬边界
 
-- `ResourceAwareWaveScheduler`
-- scheduler metrics: queued/running/completed/skipped、concurrency cap、budget estimate、role cost summary
-- runtime max active roles enforcement
-- tool contention separation
-- draft-only `AgencyRoleImporter`
-- draft/reviewed/active catalog state data and validation guards
+- `RoleContract` 仍是唯一合法 runtime role 通道;prompt、handoff、blackboard、memo 或历史质量不能授予权限。
+- worker 不能直接写 Task Graph、Kernel state、长期记忆或 trace 历史。
+- 不建设开放 Agent Mesh、直接 worker chat、四类常驻 Supervisor 或第二 runtime service。
+- Strict 的审批、审计和 evidence obligation 不能因预算、背压、缓存或历史表现自动降低。
+- Evidence Verifier、Routing Memo、趋势校准和缓存必须先 shadow、可解释、可关闭、可回滚。
+- 不自动修改角色定义、协议结构、模板拓扑或工具权限。
+- 规划分配不等于 runtime 能力完成;只有代码、测试、evidence 和人工 gate 都满足后才能更新状态。
 
-P2 已完成并提交,其交付物保持为 P3 的依赖:
+## 6. 下一入口
 
-- `ComplexityGate`
-- `RunbookTemplate`
-- built-in runbook registry
-- runbook-to-task-graph conversion
-- structured runbook selection metadata
-
-P3 只允许实现:
-
-- `OrchestrationBlackboard`
-- typed entries: `fact`, `claim`, `question`, `risk`, `decision`, `artifact`, `conflict`, `handoff`, `memory_proposal`
-- append/versioned update API
-- conflict detection and resolution metadata
-- untrusted content propagation and prompt-injection defense metadata
-- verifier blackboard evidence read helpers
-- trace replay reconstruction helpers
-
-P4 只允许实现:
-
-- `OrchestrationSynthesizer`
-- local dynamic DAG refinement helper
-- synthesis policy and visible failure preservation
-- existing gateway/tool synthesis projection
-- dual-column UI result view with evidence/verifier/trace detail
-
-P4 明确禁止:
-
-- synthesizer tool access
-- synthesizer overriding verifier failure
-- unauthorized dynamic DAG roles or tools
-- scheduler bypass
-- 新长期记忆策略
-- open mesh A2A
-- direct worker-to-worker chat
-- worker direct long-term memory writes
-- blackboard entries automatically becoming memory
-- 直接把 Agency markdown agent 变成 runtime role
-- prompt、Agency text、handoff prose 或 blackboard prose 授予真实工具/权限
-
-## 4. 推荐启动顺序
-
-1. 确认工作区: `C:\Users\27933\Desktop\clawx\ClawX-p0-main`
-2. 复制 `goal-mode-start-prompt-p4.md` 的提示进入 Goal 模式。
-3. Goal worker 先运行结构校验。当前工作区如果有 unrelated dirty files,先使用 `--no-diff` 验证 spec 本身;完整 diff 校验留到阶段结束或隔离 worktree 中运行:
-
-```powershell
-corepack pnpm harness context --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md
-corepack pnpm harness validate --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md --no-diff
-```
-
-4. Goal worker 按 `docs/superpowers/plans/2026-07-08-role-first-p4-synthesizer-dynamic-dag.md` 任务顺序执行。
-5. 每个任务遵守 RED -> GREEN: 先写失败测试,运行确认失败,再实现最小代码,再运行通过。
-6. 阶段结束时对照 `acceptance-and-test-matrix.md` 和 `phase-constraints/p4-synthesizer-dynamic-dag.md` 汇报。
-7. 阶段结束时,在只包含 P4-owned files 的 diff 或隔离 worktree 中运行完整 `corepack pnpm harness validate --spec harness/specs/tasks/role-first-p4-synthesizer-dynamic-dag.md`。
-
-## 5. 成功标准
-
-P4 可以进入人工评审的最低标准:
-
-- synthesis 输出稳定,并保留 role outcomes、evidence、artifact、verifier、trace 和 blackboard summary。
-- verifier fail/repair_required 不会被包装为成功。
-- synthesizer 明确没有 tool access。
-- local dynamic DAG refinement 记录 source/reason/scope/attempt,并拒绝未授权 role/tool/capability。
-- dynamic DAG refinement 通过 P1 scheduler 计算,不会绕过 max active roles。
-- UI 显示 synthesis 与 evidence/verifier/trace detail,失败保持可见。
-- P0/P1/P2/P3 回归测试仍然通过。
-- 没有引入 open chat、新长期记忆策略或 Agency runtime activation。
+在不改变当前产品开发 active node 的前提下,Runtime V2 的第一个候选实现项是 `MA-P3-01: WorkPackage/v2 + WorkResult/v2`。正式开工前应先把该单项转换为 task spec 和 Task Forest proposal,而不是直接启动整个 P3-R。

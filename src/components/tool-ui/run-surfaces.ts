@@ -38,8 +38,9 @@ export type RunCodeDiffSurface = {
   id: string;
   filePath: string;
   language: string;
-  original: string;
-  modified: string;
+  patch?: string;
+  original?: string;
+  modified?: string;
   mode: 'full' | 'snippet';
   confidence: 'trusted';
 };
@@ -180,6 +181,28 @@ function joinEditSide(file: GeneratedFile, side: 'old' | 'new'): string {
 
 export function projectGeneratedFileDiff(file: GeneratedFile): RunCodeDiffSurface | null {
   if (!supportsInlineDiff(file)) return null;
+
+  if (file.patchProjection) {
+    if (file.patchProjection.status !== 'ok') return null;
+    const artifact = file.patchProjection.artifact;
+    if (
+      artifact.completeness !== 'complete'
+      || artifact.contentKind !== 'text'
+      || !artifact.patch
+      || artifact.patch.length > MAX_CODE_DIFF_CHARS
+    ) {
+      return null;
+    }
+    return {
+      type: 'code-diff',
+      id: `${artifact.lineage?.requestId}:${artifact.lineage?.journalEntryId}:${artifact.file}`,
+      filePath: artifact.file,
+      language: languageFromFile(file),
+      patch: artifact.patch,
+      mode: 'full',
+      confidence: 'trusted',
+    };
+  }
 
   let original: string;
   let modified: string;

@@ -123,6 +123,45 @@ describe('Tool UI runtime surface projection', () => {
 
   it('projects only trustworthy generated-file diffs', () => {
     expect(projectGeneratedFileDiff(generatedFile({
+      patchProjection: {
+        status: 'ok',
+        artifact: {
+          schema: 'GitPatchArtifact/v1',
+          file: 'src/demo.ts',
+          status: 'modified',
+          contentKind: 'text',
+          hunks: [{
+            oldStart: 1,
+            oldLines: 1,
+            newStart: 1,
+            newLines: 1,
+            lines: [
+              { kind: 'deletion', text: 'const value = 1;', oldLine: 1, newLine: null },
+              { kind: 'addition', text: 'const value = 2;', oldLine: null, newLine: 1 },
+            ],
+          }],
+          patch: '--- src/demo.ts\n+++ src/demo.ts\n@@ -1 +1 @@\n-const value = 1;\n+const value = 2;',
+          completeness: 'complete',
+          lineage: {
+            requestId: 'edit-1',
+            journalEntryId: 'write-journal:session:1',
+          },
+        },
+      },
+    }))).toMatchObject({
+      type: 'code-diff',
+      patch: expect.stringContaining('+const value = 2;'),
+      filePath: 'src/demo.ts',
+      confidence: 'trusted',
+    });
+
+    expect(projectGeneratedFileDiff(generatedFile({
+      patchProjection: { status: 'unavailable', reason: 'stale lineage' },
+      baseline: { status: 'ok', content: 'const value = 1;\n' },
+      fullContent: 'const value = 2;\n',
+    }))).toBeNull();
+
+    expect(projectGeneratedFileDiff(generatedFile({
       baseline: { status: 'ok', content: 'const value = 1;\n' },
       fullContent: 'const value = 2;\n',
     }))).toMatchObject({

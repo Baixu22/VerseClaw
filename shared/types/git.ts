@@ -1,4 +1,5 @@
 import type { PermissionApprovalEvent } from './workspace';
+import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from './remote-forge';
 
 export type GitChangeBucket = 'staged' | 'unstaged' | 'untracked' | 'conflicted';
 export type GitDiffMode = 'unstaged' | 'staged';
@@ -52,6 +53,8 @@ export type GitDiffResult = {
   path?: string;
   mode: GitDiffMode;
   patch: string;
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
   original?: string;
   modified?: string;
   tooLarge?: boolean;

@@ -1,5 +1,6 @@
 import { openExternalSafe } from '../utils/safe-open-external';
 import { execFile } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -15,6 +16,14 @@ import type {
   GitWorktree,
   GithubPrSummary,
 } from '@shared/types/git';
+import {
+  GIT_PATCH_ARTIFACT_SCHEMA,
+  isGitPatchArtifactV1,
+  type GitPatchArtifactV1,
+  type GitPatchFileStatus,
+} from '@shared/types/remote-forge';
+import { adaptUnifiedDiffToGitPatchArtifacts } from '@shared/remote-forge/unified-diff-adapter';
+import { createRemoteForgeErrorV1 } from '@shared/remote-forge/error-envelope';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 import type {
   GitBranchCreatePayload,
@@ -162,6 +171,12 @@ function diffContent(value: string, tooLarge: boolean): string | undefined {
 
 function untrackedPatch(gitPath: string, modified: string): string {
   const lines = modified.length > 0 ? modified.split(/\r?\n/) : [];
+  if (lines.length === 0) {
+    return [
+      `diff --git a/${gitPath} b/${gitPath}`,
+      'new file mode 100644',
+    ].join('\n');
+  }
   const body = lines.map((line) => `+${line}`).join('\n');
   return [
     `diff --git a/${gitPath} b/${gitPath}`,
@@ -171,6 +186,130 @@ function untrackedPatch(gitPath: string, modified: string): string {
     `@@ -0,0 +1,${Math.max(lines.length, 1)} @@`,
     body,
   ].filter((line, index) => index < 5 || line.length > 0).join('\n');
+}
+
+function statusForPatch(change: GitFileChange, mode: GitDiffMode): GitPatchFileStatus {
+  if (change.conflicted) return 'unmerged';
+  if (change.untracked) return 'added';
+  const code = change.status[mode === 'staged' ? 0 : 1];
+  if (code === 'A') return 'added';
+  if (code === 'D') return 'deleted';
+  if (code === 'R') return change.originalPath ? 'renamed' : 'unknown';
+  if (code === 'C') return change.originalPath ? 'copied' : 'unknown';
+  if (code === 'U') return 'unmerged';
+  if (code === 'M' || code === 'T') return 'modified';
+  return 'unknown';
+}
+
+function unavailablePatchArtifact(params: {
+  change?: GitFileChange;
+  file: string;
+  mode: GitDiffMode;
+  message: string;
+}): GitPatchArtifactV1 {
+  const status = params.change ? statusForPatch(params.change, params.mode) : 'unknown';
+  const artifact: GitPatchArtifactV1 = {
+    schema: GIT_PATCH_ARTIFACT_SCHEMA,
+    file: params.file,
+    status,
+    ...(status === 'renamed' || status === 'copied'
+      ? { oldPath: params.change?.originalPath, newPath: params.change?.path }
+      : {}),
+    contentKind: 'unknown',
+    hunks: [],
+    completeness: 'unavailable',
+    message: params.message,
+  };
+  if (isGitPatchArtifactV1(artifact)) return artifact;
+  return {
+    schema: GIT_PATCH_ARTIFACT_SCHEMA,
+    file: params.file,
+    status: 'unknown',
+    contentKind: 'unknown',
+    hunks: [],
+    completeness: 'unavailable',
+    message: params.message,
+  };
+}
+
+function relevantChanges(changes: GitFileChange[], mode: GitDiffMode): GitFileChange[] {
+  return changes.filter((change) => mode === 'staged'
+    ? change.staged || change.conflicted
+    : change.unstaged || change.untracked || change.conflicted);
+}
+
+function findTrustedChange(artifact: GitPatchArtifactV1, changes: GitFileChange[]): GitFileChange | undefined {
+  return changes.find((change) => change.path === artifact.file
+    || change.path === artifact.newPath
+    || change.path === artifact.oldPath);
+}
+
+function projectGitPatch(params: {
+  patch: string;
+  mode: GitDiffMode;
+  changes: GitFileChange[];
+  tooLarge: boolean;
+  requestedPath?: string;
+}): { patchArtifacts: GitPatchArtifactV1[]; patchArtifactError?: import('@shared/types/remote-forge').RemoteForgeErrorV1 } {
+  const requestId = `git-patch-${randomUUID()}`;
+  const changes = relevantChanges(params.changes, params.mode);
+  const fallbackChanges = params.requestedPath
+    ? changes.filter((change) => change.path === params.requestedPath)
+    : changes;
+  const unavailableMessage = params.tooLarge
+    ? 'Local Git patch exceeds the producer limit.'
+    : 'Local Git patch could not be parsed safely.';
+
+  if (!params.patch.trim()) return { patchArtifacts: [] };
+  if (params.tooLarge) {
+    const patchArtifacts = fallbackChanges.map((change) => unavailablePatchArtifact({
+      change,
+      file: change.path,
+      mode: params.mode,
+      message: unavailableMessage,
+    }));
+    return patchArtifacts.length > 0
+      ? { patchArtifacts }
+      : {
+          patchArtifacts: [],
+          patchArtifactError: createRemoteForgeErrorV1({ code: 'truncated_response', requestId }),
+        };
+  }
+
+  const adapted = adaptUnifiedDiffToGitPatchArtifacts({
+    patch: params.patch,
+    sourceCompleteness: 'complete',
+  });
+  if (adapted.kind === 'unavailable') {
+    const patchArtifacts = fallbackChanges.map((change) => unavailablePatchArtifact({
+      change,
+      file: change.path,
+      mode: params.mode,
+      message: unavailableMessage,
+    }));
+    return patchArtifacts.length > 0
+      ? { patchArtifacts }
+      : {
+          patchArtifacts: [],
+          patchArtifactError: createRemoteForgeErrorV1({ code: 'incomplete_response', requestId }),
+        };
+  }
+
+  return {
+    patchArtifacts: adapted.artifacts.map((artifact) => {
+      const trusted = findTrustedChange(artifact, changes);
+      const trustedStatus = trusted ? statusForPatch(trusted, params.mode) : 'unknown';
+      if (!trusted || trustedStatus === 'unknown' || trustedStatus !== artifact.status) {
+        return unavailablePatchArtifact({
+          change: trusted,
+          file: artifact.file,
+          mode: params.mode,
+          message: 'Local Git status does not match the parsed patch.',
+        });
+      }
+      return artifact;
+    }),
+  };
 }
 
 async function requireRepoContext(): Promise<RepoContext> {
@@ -699,10 +838,15 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const mode = isRecord(payload) && payload.mode === 'staged' ? 'staged' : 'unstaged';
       const args = mode === 'staged' ? ['diff', '--cached'] : ['diff'];
       const result = await git(args, ctx.workspaceRoot);
+      const changes = (await readCurrentGitStatus()).changes;
+      const tooLarge = result.stdout.length > MAX_PATCH_CHARS;
+      const patch = trimOutput(result.stdout, MAX_PATCH_CHARS);
       return {
         success: result.exitCode === 0,
-        changes: (await readCurrentGitStatus()).changes,
-        patch: trimOutput(result.stdout, MAX_PATCH_CHARS),
+        changes,
+        patch,
+        tooLarge,
+        ...projectGitPatch({ patch, mode, changes, tooLarge }),
         error: result.exitCode === 0 ? undefined : result.stderr,
       };
     },
@@ -718,11 +862,19 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         const modified = await workingTreeText(path.absolutePath);
         const patch = untrackedPatch(path.gitPath, modified);
         const tooLarge = patch.length > MAX_PATCH_CHARS || modified.length > MAX_PATCH_CHARS;
+        const changes = status?.changes ?? [];
         return {
           success: true,
           path: path.gitPath,
           mode,
           patch: trimOutput(patch, MAX_PATCH_CHARS),
+          ...projectGitPatch({
+            patch,
+            mode,
+            changes,
+            tooLarge,
+            requestedPath: path.gitPath,
+          }),
           original: '',
           modified: diffContent(modified, tooLarge),
           tooLarge,
@@ -742,11 +894,19 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const modified = mode === 'staged'
         ? await gitTextAt(ctx, 'INDEX', path.gitPath)
         : await workingTreeText(path.absolutePath);
+      const changes = status?.changes ?? [];
       return {
         success: result.exitCode === 0,
         path: path.gitPath,
         mode,
         patch: trimOutput(result.stdout, MAX_PATCH_CHARS),
+        ...projectGitPatch({
+          patch: result.stdout,
+          mode,
+          changes,
+          tooLarge,
+          requestedPath: path.gitPath,
+        }),
         original: binary ? undefined : diffContent(original, tooLarge),
         modified: binary ? undefined : diffContent(modified, tooLarge),
         tooLarge,

@@ -206,6 +206,70 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('routes Remote Forge reads through the typed host facade', async () => {
+    const capability = {
+      protocol: 'github-rest',
+      authentication: 'token',
+      pullRequestRead: 'supported',
+      commitsRead: 'supported',
+      filesRead: 'supported',
+      diffRead: 'supported',
+      checksRead: 'supported',
+      reviewsRead: 'supported',
+      contentRead: 'supported',
+      protectionRead: 'supported',
+    };
+    hostInvoke
+      .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { success: true, capability } })
+      .mockResolvedValueOnce({ id: 'req-2', ok: true, data: { success: true, pullRequest: { requestId: 'forge-1' } } })
+      .mockResolvedValueOnce({ id: 'req-3', ok: true, data: { success: true, contents: [{ path: 'src/app.ts', kind: 'utf8' }] } })
+      .mockResolvedValueOnce({ id: 'req-4', ok: true, data: { success: false, blocked: true, approvalRequired: true } })
+      .mockResolvedValueOnce({ id: 'req-5', ok: true, data: { success: false, blocked: true, approvalRequired: true } });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(hostApi.remoteForge.capabilities({
+      provider: 'github', owner: 'acme', repository: 'demo',
+    })).resolves.toMatchObject({ success: true, capability: { protocol: 'github-rest' } });
+    await expect(hostApi.remoteForge.readPullRequest({
+      provider: 'github', owner: 'acme', repository: 'demo', number: 7,
+    })).resolves.toMatchObject({ success: true, pullRequest: { requestId: 'forge-1' } });
+    await expect(hostApi.remoteForge.readContents({
+      provider: 'github', owner: 'acme', repository: 'demo', ref: 'head-sha', paths: ['src/app.ts'],
+    })).resolves.toMatchObject({ success: true, contents: [{ path: 'src/app.ts' }] });
+    await expect(hostApi.remoteForge.mutatePullRequest({
+      provider: 'github', owner: 'acme', repository: 'demo', number: 7,
+      action: 'review_submit', expectedHeadSha: 'head-sha', event: 'comment', body: 'Draft review',
+    })).resolves.toMatchObject({ success: false, approvalRequired: true });
+    await expect(hostApi.remoteForge.mergePullRequest({
+      provider: 'github', owner: 'acme', repository: 'demo', number: 7,
+      expectedHeadSha: 'head-sha', strategy: 'squash',
+    })).resolves.toMatchObject({ success: false, approvalRequired: true });
+
+    expect(hostInvoke).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      module: 'remoteForge', action: 'capabilities', payload: { provider: 'github', owner: 'acme', repository: 'demo' },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      module: 'remoteForge', action: 'readPullRequest', payload: { provider: 'github', owner: 'acme', repository: 'demo', number: 7 },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(3, expect.objectContaining({
+      module: 'remoteForge', action: 'readContents', payload: {
+        provider: 'github', owner: 'acme', repository: 'demo', ref: 'head-sha', paths: ['src/app.ts'],
+      },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(4, expect.objectContaining({
+      module: 'remoteForge', action: 'mutatePullRequest', payload: {
+        provider: 'github', owner: 'acme', repository: 'demo', number: 7,
+        action: 'review_submit', expectedHeadSha: 'head-sha', event: 'comment', body: 'Draft review',
+      },
+    }));
+    expect(hostInvoke).toHaveBeenNthCalledWith(5, expect.objectContaining({
+      module: 'remoteForge', action: 'mergePullRequest', payload: {
+        provider: 'github', owner: 'acme', repository: 'demo', number: 7,
+        expectedHeadSha: 'head-sha', strategy: 'squash',
+      },
+    }));
+  });
+
   it('routes openclaw, shell, dialog, window, and updates methods through hostInvoke', async () => {
     hostInvoke
       .mockResolvedValueOnce({ id: 'req-1', ok: true, data: { packageExists: true, isBuilt: true, entryPath: '/openclaw/openclaw.mjs', dir: '/openclaw' } })

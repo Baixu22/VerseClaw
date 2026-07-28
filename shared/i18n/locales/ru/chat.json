@@ -230,6 +230,10 @@
       "copy": "Копировать",
       "copied": "Скопировано"
     },
+    "codeDiff": {
+      "copy": "Копировать патч",
+      "copied": "Патч скопирован"
+    },
     "testResults": {
       "label": "Test results",
       "total": "total",

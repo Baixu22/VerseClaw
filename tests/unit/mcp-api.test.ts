@@ -574,8 +574,70 @@ describe('mcp api registry', () => {
         expect.objectContaining({ name: 'github_auth_status' }),
         expect.objectContaining({ name: 'github_pr_view' }),
         expect.objectContaining({ name: 'github_pr_create' }),
+        expect.objectContaining({ name: 'remote_forge_capabilities' }),
+        expect.objectContaining({ name: 'remote_forge_pull_request_read' }),
+        expect.objectContaining({ name: 'remote_forge_content_read' }),
+        expect.objectContaining({ name: 'remote_forge_pull_request_merge' }),
       ]),
     });
+  });
+
+  it('routes built-in Remote Forge MCP reads through the shared Main service instance', async () => {
+    const remoteForgeApi = {
+      capabilities: vi.fn().mockResolvedValue({ success: true, capability: { protocol: 'github-rest' } }),
+      readPullRequest: vi.fn().mockResolvedValue({ success: true, pullRequest: { requestId: 'forge-1' } }),
+      readContents: vi.fn().mockResolvedValue({ success: true, contents: [{ path: 'src/app.ts', kind: 'utf8' }] }),
+      mergePullRequest: vi.fn().mockResolvedValue({ success: false, blocked: true, approvalRequired: true }),
+    };
+    const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const api = createMcpApiWithContext({ remoteForgeApi: remoteForgeApi as never });
+
+    await expect(api.callTool({
+      serverId: 'clawx-git',
+      toolName: 'remote_forge_capabilities',
+      args: { owner: 'acme', repository: 'demo' },
+    })).resolves.toMatchObject({ success: true, result: { success: true } });
+    await expect(api.callTool({
+      serverId: 'clawx-git',
+      toolName: 'remote_forge_pull_request_read',
+      args: { owner: 'acme', repository: 'demo', number: 7 },
+    })).resolves.toMatchObject({ success: true, result: { pullRequest: { requestId: 'forge-1' } } });
+    await expect(api.callTool({
+      serverId: 'clawx-git',
+      toolName: 'remote_forge_content_read',
+      args: { owner: 'acme', repository: 'demo', ref: 'head-sha', paths: ['src/app.ts'] },
+    })).resolves.toMatchObject({ success: true, result: { contents: [{ path: 'src/app.ts' }] } });
+    await expect(api.callTool({
+      serverId: 'clawx-git',
+      toolName: 'remote_forge_pull_request_merge',
+      approvalId: 'approval-merge',
+      args: {
+        owner: 'acme',
+        repository: 'demo',
+        number: 7,
+        expectedHeadSha: 'head-sha',
+        strategy: 'squash',
+        expectedReadinessDigest: 'readiness-digest',
+        expectedPolicyDigest: 'policy-digest',
+      },
+    })).resolves.toMatchObject({ success: true, result: { approvalRequired: true } });
+
+    expect(remoteForgeApi.capabilities).toHaveBeenCalledWith({ provider: 'github', owner: 'acme', repository: 'demo' });
+    expect(remoteForgeApi.readPullRequest).toHaveBeenCalledWith({ provider: 'github', owner: 'acme', repository: 'demo', number: 7 });
+    expect(remoteForgeApi.readContents).toHaveBeenCalledWith({
+      provider: 'github', owner: 'acme', repository: 'demo', ref: 'head-sha', paths: ['src/app.ts'],
+    });
+    expect(remoteForgeApi.mergePullRequest).toHaveBeenCalledWith({
+      provider: 'github',
+      owner: 'acme',
+      repository: 'demo',
+      number: 7,
+      expectedHeadSha: 'head-sha',
+      strategy: 'squash',
+      approvalId: 'approval-merge',
+      expectedReadinessDigest: 'readiness-digest',
+      expectedPolicyDigest: 'policy-digest',
+    }, { initiator: 'agent' });
   });
 
   it('routes built-in Git MCP calls through the host Git service', async () => {

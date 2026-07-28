@@ -46,6 +46,20 @@ appliesTo:
   are reference/byte-level no-ops with no BlockStore construction, query,
   write, or producer-metadata dependency.
 
+## Post-Write Verification Boundary
+
+- Automatic test execution is explicit opt-in and default false through
+  `runtime.coding.autoVerify.enabled`.
+- Detection may select one nearest project root for the changed paths. Changes
+  spanning multiple project roots must skip with a visible reason unless an
+  explicit workspace-level custom command is configured.
+- Execution must call the final effective `exec` tool after tool-policy and hook
+  wrapping. Do not spawn from write-side effects or create another approval,
+  sandbox, process, or timeout service.
+- Pass, failure, timeout, denial, approval-required, crash, unavailable, and
+  disabled outcomes are bounded and visible. No verify outcome may roll back or
+  reclassify a successful mutation or its write-journal record.
+
 ## Prohibitions
 
 - Do not implement DCS Stage 2 task_state/handoff, COMPASS, AgentMap, AST,

@@ -24,6 +24,48 @@ function makeWriteFile(overrides: Partial<GeneratedFile> = {}): GeneratedFile {
 }
 
 describe('generated-files utilities', () => {
+  const trustedPatchResult = {
+    toolCallId: 'write-1',
+    toolName: 'write',
+    result: {
+      patchArtifacts: [{
+        schema: 'GitPatchArtifact/v1',
+        file: 'src/example.ts',
+        status: 'modified',
+        contentKind: 'text',
+        hunks: [{
+          oldStart: 1,
+          oldLines: 1,
+          newStart: 1,
+          newLines: 1,
+          lines: [
+            { kind: 'deletion', text: 'const value = 1', oldLine: 1, newLine: null },
+            { kind: 'addition', text: 'const value = 2', oldLine: null, newLine: 1 },
+          ],
+        }],
+        patch: [
+          '--- src/example.ts',
+          '+++ src/example.ts',
+          '@@ -1,1 +1,1 @@',
+          '-const value = 1',
+          '+const value = 2',
+        ].join('\n'),
+        completeness: 'complete',
+        lineage: {
+          requestId: 'write-1',
+          journalEntryId: 'write-journal:session:1',
+        },
+      }],
+      write_journal: {
+        snapshots: [{
+          path: 'src/example.ts',
+          journalEntryId: 'write-journal:session:1',
+          hadPrior: true,
+        }],
+      },
+    },
+  };
+
   it('computes write line stats from an existing-file baseline', () => {
     const stats = computeLineStats(
       makeWriteFile({
@@ -120,6 +162,74 @@ describe('generated-files utilities', () => {
       action: 'modified',
       baseline: { status: 'ok', content: 'const value = 1\n' },
     });
+  });
+
+  it('prefers the strictly linked mutation artifact over renderer baseline inference', () => {
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'update file', timestamp: 1 },
+      {
+        role: 'assistant',
+        content: [{
+          type: 'tool_use',
+          id: 'write-1',
+          name: 'write',
+          input: { path: 'src/example.ts', content: 'const value = 2\n' },
+        }],
+        _toolResults: [trustedPatchResult],
+      },
+    ];
+
+    const files = extractGeneratedFiles(messages, 0, 1, () => ({
+      status: 'ok',
+      content: 'stale renderer baseline\n',
+    }));
+
+    expect(files[0]?.patchProjection).toMatchObject({
+      status: 'ok',
+      artifact: {
+        file: 'src/example.ts',
+        lineage: {
+          requestId: 'write-1',
+          journalEntryId: 'write-journal:session:1',
+        },
+      },
+    });
+    expect(computeLineStats(files[0]!)).toEqual({ added: 1, removed: 1 });
+  });
+
+  it.each([
+    ['stale request', { lineage: { requestId: 'other', journalEntryId: 'write-journal:session:1' } }],
+    ['missing journal entry', { lineage: { requestId: 'write-1' } }],
+    ['truncated evidence', { completeness: 'truncated' }],
+    ['unknown schema', { schema: 'GitPatchArtifact/v2' }],
+  ])('fails closed for %s instead of falling back to inferred diff content', (_label, artifactOverride) => {
+    const artifact = {
+      ...(trustedPatchResult.result.patchArtifacts[0] as Record<string, unknown>),
+      ...artifactOverride,
+    };
+    const messages: RawMessage[] = [
+      { role: 'user', content: 'update file', timestamp: 1 },
+      {
+        role: 'assistant',
+        content: [{
+          type: 'tool_use',
+          id: 'write-1',
+          name: 'write',
+          input: { path: 'src/example.ts', content: 'const value = 2\n' },
+        }],
+        _toolResults: [{
+          ...trustedPatchResult,
+          result: { ...trustedPatchResult.result, patchArtifacts: [artifact] },
+        }],
+      },
+    ];
+
+    const files = extractGeneratedFiles(messages, 0, 1, () => ({
+      status: 'ok',
+      content: 'const value = 1\n',
+    }));
+
+    expect(files[0]?.patchProjection).toMatchObject({ status: 'unavailable' });
   });
 
   it('keeps new-file writes marked as created when the baseline says missing', () => {

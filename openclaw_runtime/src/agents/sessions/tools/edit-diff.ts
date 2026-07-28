@@ -334,11 +334,29 @@ export function generateUnifiedPatch(
   oldContent: string,
   newContent: string,
   contextLines = 4,
+  fileStatus: "modified" | "added" = "modified",
 ): string {
-  return Diff.createTwoFilesPatch(path, path, oldContent, newContent, undefined, undefined, {
+  if (fileStatus === "added" && newContent.length === 0) {
+    const quotePath = (value: string): string =>
+      /[\s"\\]/u.test(value) ? JSON.stringify(value) : value;
+    return [
+      `diff --git ${quotePath(`a/${path}`)} ${quotePath(`b/${path}`)}`,
+      "new file mode 100644",
+      "index 0000000..e69de29",
+    ].join("\n");
+  }
+  return Diff.createTwoFilesPatch(
+    fileStatus === "added" ? "/dev/null" : path,
+    path,
+    oldContent,
+    newContent,
+    undefined,
+    undefined,
+    {
     context: contextLines,
     headerOptions: Diff.FILE_HEADERS_ONLY,
-  });
+    },
+  );
 }
 
 /**

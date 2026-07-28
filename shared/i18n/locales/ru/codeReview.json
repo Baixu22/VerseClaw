@@ -3,6 +3,10 @@
   "title": "Review Center",
   "subtitle": "Запускайте read-only AI review для Git-изменений, получайте структурированные findings и отправляйте review items в Task Ledger.",
   "readonly": "Read-only review",
+  "views": {
+    "local": "Локальные изменения",
+    "remote": "Удалённый PR"
+  },
   "yes": "Да",
   "no": "Нет",
   "empty": "Выберите цель review, при необходимости добавьте focus и запустите проверку.",
@@ -46,9 +50,235 @@
     "low": "Low",
     "info": "Info"
   },
+  "remote": {
+    "owner": "Владелец",
+    "ownerPlaceholder": "octocat",
+    "repository": "Репозиторий",
+    "repositoryPlaceholder": "hello-world",
+    "number": "Номер PR",
+    "numberPlaceholder": "42",
+    "read": "Прочитать Pull Request",
+    "loading": "Читаем удалённые данные...",
+    "empty": "Укажите GitHub-репозиторий и номер Pull Request, чтобы проверить ограниченные данные в режиме чтения.",
+    "evidence": "Данные Pull Request",
+    "head": "Head {{sha}}",
+    "missing": "отсутствует",
+    "counts": {
+      "commits": "Коммиты",
+      "files": "Файлы",
+      "checks": "Проверки",
+      "reviews": "Ревью"
+    },
+    "readiness": {
+      "ready": "Готово",
+      "blocked": "Заблокировано",
+      "pending": "Ожидание",
+      "unknown": "Готовность неизвестна"
+    },
+    "completeness": {
+      "complete": "Данные полные",
+      "incomplete": "Данные неполные",
+      "truncated": "Данные усечены",
+      "unavailable": "Данные недоступны"
+    },
+    "reasons": {
+      "draft": "Черновик Pull Request",
+      "conflict": "Конфликт слияния",
+      "behind": "Head отстаёт",
+      "checks_pending": "Проверки не завершены",
+      "checks_failed": "Проверки не пройдены",
+      "approvals_missing": "Недостаточно одобрений",
+      "changes_requested": "Запрошены изменения",
+      "discussion_state_unknown": "Статус обсуждений неизвестен",
+      "missing_head": "Отсутствует Head SHA",
+      "mergeability_unknown": "Возможность слияния неизвестна",
+      "protection_unknown": "Защита ветки неизвестна",
+      "incomplete_evidence": "Данные неполные"
+    },
+    "capabilities": {
+      "title": "Возможности Provider",
+      "pullRequestRead": "Pull Request",
+      "commitsRead": "Коммиты",
+      "filesRead": "Файлы",
+      "diffRead": "Diff",
+      "checksRead": "Проверки",
+      "reviewsRead": "Ревью",
+      "contentRead": "Содержимое",
+      "protectionRead": "Защита"
+    },
+    "capabilityState": {
+      "supported": "Поддерживается",
+      "unauthorized": "Нет доступа",
+      "unavailable": "Недоступно",
+      "unknown": "Неизвестно"
+    },
+    "content": {
+      "utf8": "Текст UTF-8",
+      "binary": "Двоичное содержимое",
+      "base64": "Содержимое в кодировке Provider",
+      "truncated": "Содержимое превысило лимит просмотра",
+      "unavailable": "Содержимое недоступно"
+    },
+    "errors": {
+      "required": "Введите корректные владельца, репозиторий и номер Pull Request.",
+      "readFailed": "Не удалось безопасно прочитать удалённый Pull Request.",
+      "incomplete": "Часть удалённых данных неполна. Готовность остаётся закрытой.",
+      "contentFailed": "Не удалось безопасно прочитать выбранный файл.",
+      "contentIncomplete": "Выбранный файл неполон или недоступен."
+    },
+    "merge": {
+      "title": "Контролируемое слияние",
+      "sandboxOnly": "Запрос доступен только для sandbox-репозитория, разрешённого Main.",
+      "agentOff": "Слияние Agent отключено",
+      "strategy": "Стратегия",
+      "strategies": { "merge": "Merge commit", "squash": "Squash", "rebase": "Rebase" },
+      "commitTitle": "Заголовок коммита (необязательно)",
+      "commitMessage": "Сообщение коммита (необязательно)",
+      "requestApproval": "Запросить разрешение на слияние",
+      "approvalTitle": "Требуется одноразовое разрешение",
+      "head": "Ожидаемый head",
+      "deny": "Отклонить",
+      "approveAndMerge": "Разрешить и слить",
+      "states": {
+        "succeeded": "Слито",
+        "partial": "Слито, требуется сверка",
+        "failed": "Не слито",
+        "unknown": "Результат слияния неизвестен"
+      },
+      "effects": {
+        "primary": "Слияние",
+        "labels": "Метки",
+        "reviewers": "Рецензенты",
+        "refresh": "Обновление",
+        "audit": "Аудит"
+      },
+      "effectStates": {
+        "not_attempted": "Не выполнялось",
+        "succeeded": "Успешно",
+        "failed": "Ошибка",
+        "unknown": "Неизвестно"
+      },
+      "reconciliation": {
+        "not_needed": "Сверка не требуется",
+        "refresh_required": "Обновите удалённое состояние перед следующим действием",
+        "manual_check_required": "Проверьте провайдера перед повтором"
+      },
+      "policy": {
+        "allowed": "Sandbox-политика разрешает запрос.",
+        "repository_not_allowed": "Репозиторий отсутствует в sandbox allowlist, управляемом Main.",
+        "agent_merge_disabled": "Слияние Agent отключено политикой Main."
+      },
+      "errors": {
+        "missingHead": "Head pull request недоступен.",
+        "notReady": "Текущая готовность блокирует слияние. Устраните все veto и обновите данные.",
+        "requestFailed": "Не удалось запросить разрешение на слияние.",
+        "approvalFailed": "Не удалось записать решение о разрешении.",
+        "mergeFailed": "Не удалось безопасно выполнить разрешённое слияние.",
+        "invalid_request": "Запрос содержит недопустимые или слишком большие поля.",
+        "authentication_required": "Требуется аутентификация GitHub.",
+        "permission_denied": "Отсутствует sandbox-политика, разрешение или право GitHub.",
+        "not_found": "Ресурс pull request не найден.",
+        "rate_limited": "Достигнут лимит GitHub. Повторите позже.",
+        "conflict": "Готовность, стратегия или состояние провайдера изменились. Обновите данные.",
+        "stale_head": "Head pull request изменился. Запросите новое разрешение.",
+        "incomplete_response": "Данные готовности неполны, поэтому слияние заблокировано.",
+        "truncated_response": "Данные готовности превысили безопасный предел.",
+        "upstream_unavailable": "GitHub недоступен. Проверьте состояние перед повтором.",
+        "network_error": "Результат слияния неизвестен. Проверьте GitHub перед повтором.",
+        "timeout": "Слияние истекло по времени. Проверьте GitHub перед повтором.",
+        "cancelled": "Слияние отменено.",
+        "internal": "Слияние безопасно завершилось ошибкой.",
+        "unknown": "Слияние вернуло неизвестный результат."
+      }
+    },
+    "mutation": {
+      "title": "Черновик ревью",
+      "draftState": "Только черновик",
+      "action": "Действие",
+      "actions": {
+        "review_submit": "Опубликовать ревью",
+        "line_comment_create": "Добавить комментарий к строке",
+        "comment_edit": "Изменить комментарий",
+        "thread_reply": "Ответить в обсуждении",
+        "metadata_update": "Обновить метаданные"
+      },
+      "reviewEvent": "Решение ревью",
+      "events": {
+        "comment": "Комментарий",
+        "approve": "Одобрить",
+        "request_changes": "Запросить изменения"
+      },
+      "path": "Файл",
+      "selectFile": "Выберите изменённый файл",
+      "line": "Строка",
+      "side": "Сторона diff",
+      "sides": { "LEFT": "Старая", "RIGHT": "Новая" },
+      "commentId": "ID комментария",
+      "metadataTitle": "Заголовок",
+      "metadataBody": "Описание",
+      "labels": "Метки",
+      "reviewers": "Ревьюеры",
+      "body": "Текст черновика",
+      "requestApproval": "Запросить одобрение",
+      "approvalTitle": "Требуется одноразовое одобрение",
+      "head": "Head",
+      "deny": "Отклонить",
+      "approveAndPublish": "Одобрить и опубликовать",
+      "states": {
+        "succeeded": "Опубликовано",
+        "partial": "Опубликовано, последующие действия не выполнены",
+        "failed": "Не опубликовано",
+        "unknown": "Результат доставки неизвестен"
+      },
+      "effects": {
+        "primary": "Основное действие",
+        "labels": "Метки",
+        "reviewers": "Ревьюеры",
+        "refresh": "Обновление"
+      },
+      "effectStates": {
+        "not_attempted": "Не выполнялось",
+        "succeeded": "Успешно",
+        "failed": "Ошибка",
+        "unknown": "Неизвестно"
+      },
+      "reconciliation": {
+        "not_needed": "Сверка не требуется",
+        "refresh_required": "Обновите удалённое состояние перед продолжением",
+        "manual_check_required": "Проверьте Pull Request перед повтором"
+      },
+      "errors": {
+        "missingHead": "Head Pull Request недоступен.",
+        "bodyRequired": "Введите текст черновика.",
+        "lineRequired": "Выберите файл и укажите корректную строку и текст.",
+        "commentRequired": "Введите корректный ID комментария и текст.",
+        "metadataRequired": "Нужны версия Pull Request и изменения метаданных.",
+        "requestFailed": "Не удалось запросить одобрение.",
+        "approvalFailed": "Не удалось записать решение об одобрении.",
+        "publishFailed": "Не удалось безопасно завершить одобренное действие.",
+        "invalid_request": "Черновик содержит недопустимые или слишком большие поля.",
+        "authentication_required": "Требуется аутентификация GitHub.",
+        "permission_denied": "Нет одобрения или разрешения GitHub.",
+        "not_found": "Ресурс Pull Request не найден.",
+        "rate_limited": "Достигнут лимит GitHub. Повторите позже.",
+        "conflict": "Версия Pull Request изменилась. Обновите черновик.",
+        "stale_head": "Head Pull Request изменился. Обновите черновик.",
+        "incomplete_response": "GitHub вернул неполный результат.",
+        "truncated_response": "Результат GitHub превысил лимит.",
+        "upstream_unavailable": "GitHub недоступен. Проверьте состояние перед повтором.",
+        "network_error": "Результат доставки неизвестен. Проверьте Pull Request перед повтором.",
+        "timeout": "Доставка превысила время ожидания. Проверьте Pull Request перед повтором.",
+        "cancelled": "Действие отменено.",
+        "internal": "Действие завершилось безопасной ошибкой.",
+        "unknown": "Удалённый результат неизвестен."
+      }
+    }
+  },
   "errors": {
     "baseBranchRequired": "Введите base branch перед запуском review.",
     "commitRequired": "Введите commit перед запуском review.",
+    "patchTruncated": "Git diff превысил лимит review, поэтому AI review не был запущен.",
+    "patchUnavailable": "Не удалось безопасно проверить Git diff, поэтому AI review не был запущен.",
     "reviewFailed": "Review failed.",
     "ledgerFailed": "Не удалось создать Task Ledger review node."
   }

@@ -26,6 +26,7 @@ import {
   isSekbEnabled,
   isSekbShadowEvaluationEnabled,
 } from '../../openclaw_runtime/src/knowledge/sekb/feature-flags';
+import { resolveCodingAutoVerifyConfig } from '../../openclaw_runtime/src/context-engine/coding-runtime-flags';
 import {
   applyBrowserPrivateNetworkDefault,
   isBrowserPrivateNetworkAllowAcknowledged,
@@ -199,6 +200,8 @@ describe('TF-0003 default configuration matrix', () => {
         },
         'Context enhancement kill switch': () =>
           isContextEnhancementKillSwitchEngaged({}) === false ? 'false' : 'true',
+        'Coding auto verify': () =>
+          resolveCodingAutoVerifyConfig({}).enabled === false ? 'false' : 'true',
       };
       for (const row of MD_MATRIX_ROWS) {
         const probe = implProbes[row.mdLabel];
@@ -394,6 +397,19 @@ describe('TF-0003 default configuration matrix', () => {
     // Env form.
     process.env[CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV] = '1';
     expect(isContextEnhancementKillSwitchEngaged({})).toBe(true);
+  });
+
+  it('locks coding auto verify default OFF and bounds explicit opt-in [coding-auto-verify-default]', () => {
+    expect(resolveCodingAutoVerifyConfig({})).toEqual({ enabled: false, timeoutSeconds: 90 });
+    expect(
+      resolveCodingAutoVerifyConfig({
+        runtime: {
+          coding: {
+            autoVerify: { enabled: true, timeoutSeconds: 30, command: 'pnpm test:changed' },
+          },
+        },
+      }),
+    ).toEqual({ enabled: true, timeoutSeconds: 30, command: 'pnpm test:changed' });
   });
 
   it('kill switch cuts VToken + memory inject fail-closed without requiring throw', () => {

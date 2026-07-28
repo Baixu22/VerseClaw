@@ -3,6 +3,10 @@
   "title": "Review Center",
   "subtitle": "Git 変更に対して読み取り専用の AI レビューを実行し、findings を構造化して Task Ledger に送れます。",
   "readonly": "読み取り専用レビュー",
+  "views": {
+    "local": "ローカル変更",
+    "remote": "リモート PR"
+  },
   "yes": "はい",
   "no": "いいえ",
   "empty": "レビュー対象を選び、必要なら focus を入力してからレビューを実行します。",
@@ -46,9 +50,235 @@
     "low": "Low",
     "info": "Info"
   },
+  "remote": {
+    "owner": "オーナー",
+    "ownerPlaceholder": "octocat",
+    "repository": "リポジトリ",
+    "repositoryPlaceholder": "hello-world",
+    "number": "PR 番号",
+    "numberPlaceholder": "42",
+    "read": "Pull Request を読み取る",
+    "loading": "リモート証拠を読み取っています...",
+    "empty": "GitHub リポジトリと Pull Request 番号を入力して、上限付きの読み取り専用証拠を確認します。",
+    "evidence": "Pull Request の証拠",
+    "head": "Head {{sha}}",
+    "missing": "欠落",
+    "counts": {
+      "commits": "コミット",
+      "files": "ファイル",
+      "checks": "チェック",
+      "reviews": "レビュー"
+    },
+    "readiness": {
+      "ready": "準備完了",
+      "blocked": "ブロック中",
+      "pending": "保留中",
+      "unknown": "準備状態不明"
+    },
+    "completeness": {
+      "complete": "証拠は完全",
+      "incomplete": "証拠は不完全",
+      "truncated": "証拠は切り捨て済み",
+      "unavailable": "証拠を利用不可"
+    },
+    "reasons": {
+      "draft": "ドラフト Pull Request",
+      "conflict": "マージ競合",
+      "behind": "Head が遅れています",
+      "checks_pending": "チェック保留中",
+      "checks_failed": "チェック失敗",
+      "approvals_missing": "承認不足",
+      "changes_requested": "変更要求あり",
+      "discussion_state_unknown": "議論状態不明",
+      "missing_head": "Head SHA 欠落",
+      "mergeability_unknown": "マージ可否不明",
+      "protection_unknown": "ブランチ保護不明",
+      "incomplete_evidence": "証拠が不完全"
+    },
+    "capabilities": {
+      "title": "Provider 機能",
+      "pullRequestRead": "Pull Request",
+      "commitsRead": "コミット",
+      "filesRead": "ファイル",
+      "diffRead": "Diff",
+      "checksRead": "チェック",
+      "reviewsRead": "レビュー",
+      "contentRead": "内容",
+      "protectionRead": "保護"
+    },
+    "capabilityState": {
+      "supported": "対応",
+      "unauthorized": "未承認",
+      "unavailable": "利用不可",
+      "unknown": "不明"
+    },
+    "content": {
+      "utf8": "UTF-8 テキスト",
+      "binary": "バイナリ内容",
+      "base64": "Provider エンコード内容",
+      "truncated": "内容がプレビュー上限を超えました",
+      "unavailable": "内容を利用不可"
+    },
+    "errors": {
+      "required": "有効なオーナー、リポジトリ、Pull Request 番号を入力してください。",
+      "readFailed": "リモート Pull Request を安全に読み取れませんでした。",
+      "incomplete": "一部のリモート証拠が不完全です。準備状態は fail-closed のままです。",
+      "contentFailed": "選択したファイルを安全に読み取れませんでした。",
+      "contentIncomplete": "選択したファイルは不完全または利用できません。"
+    },
+    "merge": {
+      "title": "制御付きマージ",
+      "sandboxOnly": "Main が承認した sandbox リポジトリだけがこの操作を要求できます。",
+      "agentOff": "Agent マージはオフ",
+      "strategy": "戦略",
+      "strategies": { "merge": "マージコミット", "squash": "Squash", "rebase": "Rebase" },
+      "commitTitle": "コミットタイトル（任意）",
+      "commitMessage": "コミットメッセージ（任意）",
+      "requestApproval": "マージ承認を要求",
+      "approvalTitle": "一回限りのマージ承認が必要です",
+      "head": "期待する head",
+      "deny": "拒否",
+      "approveAndMerge": "承認してマージ",
+      "states": {
+        "succeeded": "マージ済み",
+        "partial": "マージ済み、reconciliation が必要",
+        "failed": "未マージ",
+        "unknown": "マージ結果は不明"
+      },
+      "effects": {
+        "primary": "マージ",
+        "labels": "ラベル",
+        "reviewers": "レビュアー",
+        "refresh": "更新",
+        "audit": "監査"
+      },
+      "effectStates": {
+        "not_attempted": "未実行",
+        "succeeded": "成功",
+        "failed": "失敗",
+        "unknown": "不明"
+      },
+      "reconciliation": {
+        "not_needed": "Reconciliation は不要です",
+        "refresh_required": "次の操作前にリモート状態を更新してください",
+        "manual_check_required": "再試行前にプロバイダーを確認してください"
+      },
+      "policy": {
+        "allowed": "Sandbox ポリシーはこの要求を許可します。",
+        "repository_not_allowed": "このリポジトリは Main 管理の sandbox allowlist にありません。",
+        "agent_merge_disabled": "Main ポリシーで Agent マージが無効です。"
+      },
+      "errors": {
+        "missingHead": "PR head を取得できません。",
+        "notReady": "現在の readiness がマージを拒否しています。すべての veto を解消して更新してください。",
+        "requestFailed": "マージ承認を要求できませんでした。",
+        "approvalFailed": "マージ承認の決定を記録できませんでした。",
+        "mergeFailed": "承認済みマージを安全に完了できませんでした。",
+        "invalid_request": "マージ要求に無効または上限超過のフィールドがあります。",
+        "authentication_required": "GitHub 認証が必要です。",
+        "permission_denied": "Sandbox ポリシー、承認、または GitHub 権限が不足しています。",
+        "not_found": "PR リソースが見つかりません。",
+        "rate_limited": "GitHub のレート上限に達しました。後で再試行してください。",
+        "conflict": "Readiness、戦略、またはプロバイダー状態が変わりました。更新してください。",
+        "stale_head": "PR head が変わりました。新しい承認を要求してください。",
+        "incomplete_response": "Readiness 証拠が不完全なため、マージは拒否されます。",
+        "truncated_response": "Readiness 証拠が安全上限を超えました。",
+        "upstream_unavailable": "GitHub を利用できません。再試行前に状態を確認してください。",
+        "network_error": "マージ結果は不明です。再試行前に GitHub を確認してください。",
+        "timeout": "マージがタイムアウトしました。再試行前に GitHub を確認してください。",
+        "cancelled": "マージはキャンセルされました。",
+        "internal": "マージは安全に失敗しました。",
+        "unknown": "マージが認識できない結果を返しました。"
+      }
+    },
+    "mutation": {
+      "title": "レビュードラフト",
+      "draftState": "ドラフトのみ",
+      "action": "操作",
+      "actions": {
+        "review_submit": "レビューを送信",
+        "line_comment_create": "行コメントを追加",
+        "comment_edit": "コメントを編集",
+        "thread_reply": "スレッドに返信",
+        "metadata_update": "メタデータを更新"
+      },
+      "reviewEvent": "レビュー判定",
+      "events": {
+        "comment": "コメント",
+        "approve": "承認",
+        "request_changes": "変更を要求"
+      },
+      "path": "ファイル",
+      "selectFile": "変更ファイルを選択",
+      "line": "行",
+      "side": "Diff 側",
+      "sides": { "LEFT": "旧", "RIGHT": "新" },
+      "commentId": "コメント ID",
+      "metadataTitle": "タイトル",
+      "metadataBody": "説明",
+      "labels": "ラベル",
+      "reviewers": "レビュアー",
+      "body": "ドラフト本文",
+      "requestApproval": "承認を要求",
+      "approvalTitle": "一回限りの承認が必要です",
+      "head": "Head",
+      "deny": "拒否",
+      "approveAndPublish": "承認して公開",
+      "states": {
+        "succeeded": "公開済み",
+        "partial": "公開済み（後続処理に失敗）",
+        "failed": "未公開",
+        "unknown": "配信結果不明"
+      },
+      "effects": {
+        "primary": "主操作",
+        "labels": "ラベル",
+        "reviewers": "レビュアー",
+        "refresh": "更新"
+      },
+      "effectStates": {
+        "not_attempted": "未実行",
+        "succeeded": "成功",
+        "failed": "失敗",
+        "unknown": "不明"
+      },
+      "reconciliation": {
+        "not_needed": "照合不要",
+        "refresh_required": "続行前にリモート状態を更新してください",
+        "manual_check_required": "再試行前に Pull Request を確認してください"
+      },
+      "errors": {
+        "missingHead": "Pull Request head を利用できません。",
+        "bodyRequired": "ドラフト本文を入力してください。",
+        "lineRequired": "ファイル、有効な行、ドラフト本文を指定してください。",
+        "commentRequired": "有効なコメント ID とドラフト本文を入力してください。",
+        "metadataRequired": "Pull Request のバージョンとメタデータ変更が必要です。",
+        "requestFailed": "承認を要求できませんでした。",
+        "approvalFailed": "承認判定を記録できませんでした。",
+        "publishFailed": "承認済み操作を安全に完了できませんでした。",
+        "invalid_request": "ドラフトに無効または上限超過の項目があります。",
+        "authentication_required": "GitHub 認証が必要です。",
+        "permission_denied": "承認または GitHub 権限がありません。",
+        "not_found": "Pull Request リソースが見つかりません。",
+        "rate_limited": "GitHub のレート制限に達しました。後で再試行してください。",
+        "conflict": "Pull Request のバージョンが変わりました。ドラフトを更新してください。",
+        "stale_head": "Pull Request head が変わりました。ドラフトを更新してください。",
+        "incomplete_response": "GitHub が不完全な結果を返しました。",
+        "truncated_response": "GitHub の結果が上限を超えました。",
+        "upstream_unavailable": "GitHub を利用できません。再試行前にリモート状態を確認してください。",
+        "network_error": "配信結果が不明です。再試行前に Pull Request を確認してください。",
+        "timeout": "配信がタイムアウトしました。再試行前に Pull Request を確認してください。",
+        "cancelled": "操作はキャンセルされました。",
+        "internal": "操作は安全に失敗しました。",
+        "unknown": "リモート結果は不明です。"
+      }
+    }
+  },
   "errors": {
     "baseBranchRequired": "レビュー前にベースブランチを入力してください。",
     "commitRequired": "レビュー前にコミットを入力してください。",
+    "patchTruncated": "Git diff がレビュー上限を超えたため、AI レビューは開始されませんでした。",
+    "patchUnavailable": "Git diff を安全に検証できなかったため、AI レビューは開始されませんでした。",
     "reviewFailed": "レビューに失敗しました。",
     "ledgerFailed": "Task Ledger review node を作成できませんでした。"
   }

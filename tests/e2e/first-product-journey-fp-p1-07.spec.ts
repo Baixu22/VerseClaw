@@ -318,7 +318,8 @@ test.describe('FP-P1-07 first-product journey (real Electron + real Gateway)', (
       expect(await readFile(join(workspaceDir, 'journey.js'), 'utf8')).toBe(FIXED);
       expect(toolResultFor(llm.log, 'journey-read')).toContain('return a - b;');
       expect(toolResultFor(llm.log, 'journey-edit')).toContain('diff:');
-      expect(toolResultFor(llm.log, 'journey-edit')).toContain('verify_tests: detected');
+      // FP-P2-05 turned auto-verify default OFF; edit still detects the runner but reports disabled.
+      expect(toolResultFor(llm.log, 'journey-edit')).toContain('verify_tests: disabled');
       expect(toolResultFor(llm.log, 'journey-test')).toMatch(/pass|passed|tests? 1/i);
 
       await sendUiTurn(page, llm.log, 'JOURNEY-UNDO undo that edit.', 'JOURNEY-UNDO complete');

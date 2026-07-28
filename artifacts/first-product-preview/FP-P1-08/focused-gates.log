@@ -1,28 +1,48 @@
+# FP-P1-08 focused gates log
+# Re-run by independent reviewer (GLM-5.2) on 2026-07-28
+# HEAD = 918ed8abdb60479802acf88d05be820492195cc8 (== origin/main)
+
+## Command 1: claim + chat-input unit tests
 $ pnpm exec vitest run tests/unit/first-product-claims.test.ts tests/unit/chat-input.test.tsx --maxWorkers=1
 
-Test Files  2 passed (2)
-Tests       60 passed (60)
-Duration    10.91s
+Result: 2 files / 60 tests passed (9.67s)
+- tests/unit/chat-input.test.tsx (57 tests) 5652ms
+- tests/unit/first-product-claims.test.ts (3 tests) 20ms
 
+## Command 2: matrix + launch contract tests
 $ pnpm exec vitest run tests/unit/default-config-matrix.test.ts tests/unit/launch-contract-matrix.test.ts --maxWorkers=1
 
-Test Files  2 passed (2)
-Tests       39 passed (39)
-Duration    3.99s
+Result: 2 files / 40 tests passed (4.43s)
+- tests/unit/default-config-matrix.test.ts (18 tests) 47ms
+- tests/unit/launch-contract-matrix.test.ts (22 tests) 830ms
 
+Note: Task book recorded 39 tests; current count is 40 (one test added since last record). Coverage increased, AC still met.
+
+## Command 3: contract check
 $ pnpm contract:check
 
-Contract check passed.
+Result: Contract check passed.
 
+## Command 4: i18n lint
 $ pnpm run i18n:lint
 
-i18n lint passed.
+Result: i18n lint passed.
 
+## Command 5: forbidden claims scan
 $ node scripts/scan-first-product-claims.mjs
 
-[first-product-claims] scanned 16 current product surfaces
-[first-product-claims] repository matches 6386 across 686 paths
-[first-product-claims] current product violations 0
-[first-product-claims] report artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
+Result:
+- scanned 16 current product surfaces
+- repository matches 8973 across 689 paths
+- current product violations 0
+- report: artifacts/first-product-preview/FP-P1-08/forbidden-claims-scan.json
 
-The scanner was rerun after the P2 source/spec, handoff, Task Forest proposal, and governance bookkeeping edits; those fields increased the exempt historical/governance total from 6381 to 6386 and the matched path count from 683 to 686 without changing product violations or skipped files. All commands exited 0. Node also emitted the inherited NODE_TLS_REJECT_UNAUTHORIZED=0 warning during Vitest/contract/i18n; no command treated the warning as a pass condition.
+## Command 6: git diff --check
+$ git diff --check
+
+Result: exit 0 (only LF→CRLF normalization warnings on Windows, no trailing whitespace or conflict markers)
+
+## Summary
+- All focused gates: PASS
+- 0 current product violations / 0 skipped files
+- claim scan: 16 surfaces, 689 paths, 0 violations

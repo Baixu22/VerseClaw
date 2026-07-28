@@ -25,6 +25,7 @@ import { withConfigLock } from '../utils/config-mutex';
 import { getDataDir } from '../utils/paths';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createGitApi } from './git-api';
+import type { RemoteForgeApi } from './remote-forge-api';
 import { createSystemApi } from './system-api';
 import {
   createMcpToolCallRequestShadow,
@@ -67,6 +68,7 @@ type StoredMcpServer = Omit<McpServerConfig, 'env'> & {
 
 type McpApiContext = {
   gatewayManager?: GatewayManager;
+  remoteForgeApi?: RemoteForgeApi;
   runtime?: {
     toolProtocol?: {
       mcpShadow?: boolean;
@@ -97,7 +99,7 @@ const VERSE_CLAW_GIT_MCP_SERVER: McpServerConfig = {
   ownerId: '*',
   networkPolicy: 'disabled',
   runtimeStatus: 'connected',
-  toolCount: 27,
+  toolCount: 30,
   createdAt: 1,
   updatedAt: 1,
 };
@@ -432,6 +434,73 @@ const VERSE_CLAW_GIT_MCP_TOOLS = [
         number: { type: 'number' },
       },
       required: ['number'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'remote_forge_capabilities',
+    description: 'Read GitHub Remote Forge protocol, authentication, permission, and resource capability state.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repository: { type: 'string' },
+      },
+      required: ['owner', 'repository'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'remote_forge_pull_request_read',
+    description: 'Read bounded GitHub pull request detail, commits, files, diff, checks, reviews, protection, and readiness.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repository: { type: 'string' },
+        number: { type: 'number' },
+      },
+      required: ['owner', 'repository', 'number'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'remote_forge_content_read',
+    description: 'Read bounded repository file content from GitHub Remote Forge.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repository: { type: 'string' },
+        ref: { type: 'string' },
+        paths: { type: 'array', items: { type: 'string' }, maxItems: 16 },
+      },
+      required: ['owner', 'repository', 'ref', 'paths'],
+      additionalProperties: false,
+    },
+    serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
+  },
+  {
+    name: 'remote_forge_pull_request_merge',
+    description: 'Request or consume an externally decided one-time approval for a fail-closed sandbox pull request merge. Agent merge is disabled unless Main policy explicitly enables it.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string' },
+        repository: { type: 'string' },
+        number: { type: 'number' },
+        expectedHeadSha: { type: 'string' },
+        strategy: { type: 'string', enum: ['merge', 'squash', 'rebase'] },
+        commitTitle: { type: 'string' },
+        commitMessage: { type: 'string' },
+        approvalId: { type: 'string' },
+        expectedReadinessDigest: { type: 'string' },
+        expectedPolicyDigest: { type: 'string' },
+      },
+      required: ['owner', 'repository', 'number', 'expectedHeadSha', 'strategy'],
       additionalProperties: false,
     },
     serverId: VERSE_CLAW_GIT_MCP_SERVER_ID,
@@ -1044,7 +1113,11 @@ async function findServer(id: string): Promise<StoredMcpServer | McpServerConfig
   return server;
 }
 
-async function callClawxGitTool(toolName: string, args: Record<string, unknown>) {
+async function callClawxGitTool(
+  toolName: string,
+  args: Record<string, unknown>,
+  remoteForgeApi?: RemoteForgeApi,
+) {
   const gitApi = createGitApi();
   switch (toolName) {
     case 'git_status':
@@ -1174,6 +1247,53 @@ async function callClawxGitTool(toolName: string, args: Record<string, unknown>)
       return await gitApi.openPr({
         number: typeof args.number === 'number' ? args.number : 0,
       });
+    case 'remote_forge_capabilities':
+      if (!remoteForgeApi) throw new Error('Remote Forge host service is unavailable');
+      return await remoteForgeApi.capabilities({
+        provider: 'github',
+        owner: typeof args.owner === 'string' ? args.owner : '',
+        repository: typeof args.repository === 'string' ? args.repository : '',
+      });
+    case 'remote_forge_pull_request_read':
+      if (!remoteForgeApi) throw new Error('Remote Forge host service is unavailable');
+      return await remoteForgeApi.readPullRequest({
+        provider: 'github',
+        owner: typeof args.owner === 'string' ? args.owner : '',
+        repository: typeof args.repository === 'string' ? args.repository : '',
+        number: typeof args.number === 'number' ? args.number : 0,
+      });
+    case 'remote_forge_content_read':
+      if (!remoteForgeApi) throw new Error('Remote Forge host service is unavailable');
+      return await remoteForgeApi.readContents({
+        provider: 'github',
+        owner: typeof args.owner === 'string' ? args.owner : '',
+        repository: typeof args.repository === 'string' ? args.repository : '',
+        ref: typeof args.ref === 'string' ? args.ref : '',
+        paths: Array.isArray(args.paths)
+          ? args.paths.filter((entry): entry is string => typeof entry === 'string')
+          : [],
+      });
+    case 'remote_forge_pull_request_merge':
+      if (!remoteForgeApi) throw new Error('Remote Forge host service is unavailable');
+      return await remoteForgeApi.mergePullRequest({
+        provider: 'github',
+        owner: typeof args.owner === 'string' ? args.owner : '',
+        repository: typeof args.repository === 'string' ? args.repository : '',
+        number: typeof args.number === 'number' ? args.number : 0,
+        expectedHeadSha: typeof args.expectedHeadSha === 'string' ? args.expectedHeadSha : '',
+        strategy: args.strategy === 'merge' || args.strategy === 'squash' || args.strategy === 'rebase'
+          ? args.strategy
+          : 'merge',
+        ...(typeof args.commitTitle === 'string' ? { commitTitle: args.commitTitle } : {}),
+        ...(typeof args.commitMessage === 'string' ? { commitMessage: args.commitMessage } : {}),
+        ...(typeof args.approvalId === 'string' ? { approvalId: args.approvalId } : {}),
+        ...(typeof args.expectedReadinessDigest === 'string'
+          ? { expectedReadinessDigest: args.expectedReadinessDigest }
+          : {}),
+        ...(typeof args.expectedPolicyDigest === 'string'
+          ? { expectedPolicyDigest: args.expectedPolicyDigest }
+          : {}),
+      }, { initiator: 'agent' });
     default:
       throw new Error(`Unknown Verse Claw Git tool "${toolName}"`);
   }
@@ -1670,7 +1790,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
             success: true,
             serverId,
             toolName,
-            result: await callClawxGitTool(toolName, gitArgs),
+            result: await callClawxGitTool(toolName, gitArgs, ctx.remoteForgeApi),
           });
         } catch (error) {
           return finish({

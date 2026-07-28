@@ -2,6 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 import type { ExtensionAPI, SessionManager } from "../sessions/index.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { BlockStoreApi, ContextBlockSink, ContextBlockWrite } from "../../context-engine/block.js";
+import {
+  endTurnInjectionBudget,
+  getTurnInjectionBudget,
+  summarizeTurnInjection,
+} from "../../context-engine/turn-injection-budget.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
 
@@ -85,13 +90,15 @@ describe("DCS Stage 1 embedded working-memory extension", () => {
   });
 
   it("registers a context handler that awaits assembler injection", async () => {
+    const turnId = "extension-working-memory-turn";
     const agent = createAgentRecorder();
     const cfg: OpenClawConfig = {
       runtime: { contextBlock: { "working-memory": { enabled: true } } },
     };
     const messages = [{ role: "user" as const, content: "next" }];
 
-    for (const factory of buildEmbeddedExtensionFactories(baseFactoryParams(cfg, undefined, {
+    for (const factory of buildEmbeddedExtensionFactories({
+      ...baseFactoryParams(cfg, undefined, {
         query: async () => [
           {
             block_id: "working-memory:agent:alpha:main",
@@ -111,16 +118,31 @@ describe("DCS Stage 1 embedded working-memory extension", () => {
           },
         ],
         upsert: async () => ({ accepted: true }),
-      }))) {
+      }),
+      injectionTurnId: turnId,
+    })) {
       void factory(agent as unknown as ExtensionAPI);
     }
 
-    expect(agent.handlers.context).toHaveLength(1);
-    await expect(agent.handlers.context?.[0]?.({ type: "context", messages }, {})).resolves.toEqual({
-      messages: expect.arrayContaining([
-        expect.objectContaining({ content: expect.stringContaining("## Recent Actions") }),
-      ]),
-    });
+    try {
+      expect(agent.handlers.context).toHaveLength(1);
+      const resultPromise = agent.handlers.context?.[0]?.({ type: "context", messages }, {});
+      await expect(resultPromise).resolves.toEqual({
+        messages: expect.arrayContaining([
+          expect.objectContaining({ content: expect.stringContaining("## Recent Actions") }),
+        ]),
+      });
+      const result = await resultPromise as { messages?: Array<{ content?: unknown }> };
+      const injected = result.messages?.find((message) =>
+        typeof message.content === "string" && /^## Recent Actions$/m.test(message.content),
+      )?.content as string | undefined;
+      const ledger = getTurnInjectionBudget(turnId);
+      expect(ledger).toBeDefined();
+      expect(summarizeTurnInjection(ledger!).byChannel.working_memory?.applied)
+        .toBe(injected?.length);
+    } finally {
+      endTurnInjectionBudget(turnId);
+    }
   });
 });
 

@@ -5,8 +5,10 @@
 > 依赖基线: `docs/role-first-design.md` 是当前 Role-First 结构说明,本文不替代它;本文描述如何在现有 role-first runtime 上继续演进多 Agent 编排。
 >
 > 最新判断: ClawX 应从 "lead-mediated fan-out/fan-in" 演进为 "role-first + bounded multi-agent orchestration"。Agency Agents 应作为 catalog、runbook、handoff、测试方法论来源被吸收,不能直接作为运行时 agent 群导入。
+>
+> 当前状态（2026-07-28）: P0-P4 baseline 已完成,证据见 `docs/multi-agent-orchestration/2026-07-08-role-first-completion-audit.md`。后续能力补全已分配到 P3-R、P4-R 与 P5,详见 `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md`。P3-R/P4-R 是 residual lane,不覆盖原 P3/P4 的完成结论。
 
-> Goal 控制包: 启动长开发前先阅读 `docs/multi-agent-orchestration/README.md`。P0 的 Goal 启动提示、阶段约束、验收矩阵和详细实施计划已经拆分到 `docs/multi-agent-orchestration/**` 与 `docs/superpowers/plans/2026-07-07-role-first-p0-verification-loop.md`。
+> Goal 控制包: 启动长开发前先阅读 `docs/multi-agent-orchestration/README.md`。P0-P4 的历史启动提示与阶段约束保留为完成基线;新的开发轮次从 Runtime V2 分配书中的单个 ready work item 建立独立 task spec,不得直接重跑整个旧阶段。
 
 ## 1. 架构定位
 
@@ -22,21 +24,26 @@ ClawX 的多 Agent 编排不应走开放群聊式 A2A,也不应把大量 prompt 
 
 ## 2. 当前基线
 
-当前系统已有以下基础:
+当前系统已有以下已验收基础:
 
 - RoleContract 类型、校验、SOUL 编译和内置角色: `openclaw_runtime/src/agents/role-contract.ts`
 - 角色注册表与自定义角色合并: `openclaw_runtime/src/agents/role-registry.ts`
 - 权限到 denylist 的硬映射: `openclaw_runtime/src/agents/role-permissions-policy.ts`
 - 角色 spawn 与权限继承点: `openclaw_runtime/src/agents/role-spawn.ts`
 - role router、team template、task graph、execution waves: `openclaw_runtime/src/agents/role-router.ts`, `openclaw_runtime/src/agents/team-template.ts`, `openclaw_runtime/src/agents/orchestration-protocol.ts`
+- `OrchestrationResultBundle`、schema/verifier gate、max-one repair、resource scheduler、Complexity Gate 与 RunbookTemplate。
+- Typed Blackboard、trace replay、verifier evidence projection、Synthesizer 与局部动态 DAG。
+- Routing Memo 的 `off -> shadow -> active` 权限模型和 Phase 5 Evidence Verifier 的 default-off/shadow 规格与实现脚手架。
 - Role Memory 控制平面、Gatekeeper、Context Pack: `openclaw_runtime/src/memory/*.ts`
 - 用户入口和可观测 UI: `src/components/agents/RolesOrchestrationPanel.tsx`
 
 当前短板:
 
-- worker 输出尚未被统一收敛成强 schema 的 `OrchestrationResultBundle`。
-- verifier 仍偏流程节点,缺少足够硬的合规 gate、证据 gate 和一次性 repair/replan 闭环。
-- 调度、runbook、blackboard、synthesizer 的概念已具备方向,但需要按阶段进入,不能在 P0 混入。
+- ordinary orchestration 仍按 wave dispatch/settle 组织,缺少 completion-driven、持久、可恢复的统一 `OrchestrationRunState` 权威。
+- ordinary orchestration 与 Task Loop 尚未共用同一个 Runtime Kernel、事件状态机、admission、预算和恢复协议。
+- token/time/cost/effect/evidence budget、verifier backpressure 和 provider/tool/workspace lease 尚未完整接入生产调度。
+- 工作包、terminal-bound handoff、artifact provenance 与 `context_fault` 协议尚未统一。
+- 质量趋势、置信度校准和 Routing Memo 优化仍需基于 verified evidence 走 shadow-first 的受控毕业路径。
 - Agency Agents 内容很丰富,但如果直接导入为运行时 prompt,会破坏 RoleContract 和权限边界。
 
 ## 3. 目标执行流水线
@@ -46,18 +53,20 @@ ClawX 的多 Agent 编排不应走开放群聊式 A2A,也不应把大量 prompt 
 ```text
 Complexity Gate
   -> Role Router / TeamTemplate / RunbookTemplate
-  -> Task Graph / DAG
-  -> ResourceAwareWaveScheduler
-  -> Isolated Role Subagents
-  -> OrchestrationResultBundle
-  -> SchemaComplianceGate
-  -> VerifierGate
-  -> max-one Replan / Repair
+  -> WorkPackage/v2 + Task Graph / DAG
+  -> Orchestration Runtime Kernel
+       -> persistent event state machine
+       -> completion-driven DAG
+       -> adaptive admission + multidimensional budget
+       -> isolated Role Subagents / Task Loop
+       -> WorkResult/v2 + terminal-bound handoff
+  -> SchemaComplianceGate + Evidence Verifier
+  -> bounded Replan / Repair
   -> Synthesizer
-  -> UI + Trace + MemoryProposal
+  -> UI + Trace + MemoryProposal + Routing Memo
 ```
 
-阶段推进时允许前置组件先缺省:
+P0-P4 的历史推进边界如下,均已完成并保留作为回归基线:
 
 - P0 不引入 `Complexity Gate`,不引入 `ResourceAwareWaveScheduler`,不引入 `RunbookTemplate`,不引入 `Synthesizer`。
 - P0 只硬化 `OrchestrationResultBundle -> SchemaComplianceGate -> VerifierGate -> max-one Replan/Repair`。
@@ -65,6 +74,9 @@ Complexity Gate
 - P2 才进入 runbook 和复杂度入口。
 - P3 才进入 typed blackboard。
 - P4 才进入 synthesizer 和局部动态 DAG。
+- P3-R 补全版本化工作包、handoff/provenance 和 context fault 协议。
+- P4-R 建立 ordinary orchestration 与 Task Loop 共用的 Runtime Kernel。
+- P5 只在 verified evidence 上建设审计智能与受控优化,先 shadow 后 controlled activation。
 
 ## 4. 全局硬约束
 
@@ -82,10 +94,13 @@ Complexity Gate
 10. trace 必须 append-only,关键事件至少包含 role、taskId、attempt、tool/permission 摘要、gate 决策和证据引用。
 11. renderer 不直接调用 Gateway HTTP 或裸 IPC;前端仍通过 `src/lib/host-api.ts`、`src/lib/api-client.ts` 或既有受控 host route。
 12. 任何通信路径变更必须遵守 harness 规则,必要时先建立 `harness/specs/tasks/` 任务 spec。
+13. Strict policy 的审批、审计和证据义务不能因预算、队列压力、历史质量或模型建议自动降级。
+14. 路由、趋势、缓存和历史质量信号只提供受控参数建议,不能授予角色、工具、memory 或状态写权限。
+15. Runtime V2 必须复用现有 runtime 与 observability,不得创建并行 daemon、Agent Mesh service 或第二状态权威。
 
 ## 5. 状态权威源
 
-状态边界必须先清楚,否则多 Agent 会退化成并发写状态:
+状态边界必须先清楚,否则多 Agent 会退化成并发写状态。下表同时标注 P0-P4 当前权威和 Runtime V2 尚未实现的目标权威:
 
 | 状态 | 权威源 | 允许写入者 | worker 权限 |
 | --- | --- | --- | --- |
@@ -94,6 +109,9 @@ Complexity Gate
 | RunbookTemplate | runbook registry | 受控导入、人工确认、版本化配置 | 只读 |
 | TaskGraph / DAG | orchestrator | orchestrator、一次性 replan 流程 | 提交建议 |
 | ExecutionWave | scheduler/orchestrator | scheduler | 无直接写入 |
+| WorkPackage / WorkResult（P3-R 目标） | versioned protocol + Runtime Kernel | protocol builder / Kernel collector | 消费 work package、提交 work result |
+| HandoffArtifact（P3-R 目标） | terminal-bound artifact ledger | Runtime Kernel 在有效终态提交 | 提交候选 handoff,不能直接推进依赖 |
+| OrchestrationRunState（P4-R 目标） | Kernel event log + deterministic reducer | Runtime Kernel | 只提交结构化事件输入 |
 | OrchestrationResultBundle | orchestrator result collector | result collector | 提交 role outcome |
 | VerificationReport | verifier gate | verifier gate | 无直接写入 |
 | BlackboardEntry | blackboard service | authorized append/update API | append proposal 或 scoped entry |
@@ -307,6 +325,30 @@ P4 边界:
 - local DAG refinement boundary tests。
 - UI E2E,覆盖成功、失败、repair 后成功三种路径。
 
+### P3-R / P4-R / P5: Runtime V2 后续分配
+
+原 P3/P4 的阶段定义和完成审计保持不变。后续能力不以“补做旧阶段”的名义混入,而按 residual lane 和新增 P5 分配:
+
+| 阶段 | 工作项 | 目标 | 阶段关系 |
+| --- | --- | --- | --- |
+| P3-R | `MA-P3-01` - `MA-P3-04` | `WorkPackage/v2` / `WorkResult/v2`、terminal-bound handoff、artifact provenance、context fault bridge、trust/replay/isolation hardening | 在原 P3 Typed Blackboard 上补协议,不开放 A2A |
+| P4-R | `MA-P4-01` - `MA-P4-06` | 持久事件状态机、completion-driven DAG、adaptive admission、多维预算、cancel/recovery/idempotency、统一 policy profiles | 在原 P4 DAG 能力上建立统一 Runtime Kernel |
+| P5 | `MA-P5-01` - `MA-P5-07` | Evidence Verifier 统一接线、条件质量趋势、Routing Memo v2、审计背压、可验证缓存、可选效率实验、controlled activation | 只消费已验证终态,保持 default-off/shadow-first |
+
+完整依赖、主责生态位、交付物、验收、禁区和 CRAFT V2 取舍见:
+
+- `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md`
+
+后续关键顺序固定为:
+
+```text
+P3-R protocol contracts
+  -> P4-R unified Runtime Kernel
+  -> P5 evidence intelligence and controlled optimization
+```
+
+不得把三个阶段并成一个 mega PR。`MA-P5-06` 的 provider batch、Token CFS、Petri validator 不是默认关键路径,只有真实性能/公平性证据达到立项条件后才启动。
+
 ## 7. Agency Agents 吸收决策
 
 Agency Agents 的价值很高,但进入 ClawX 的形态必须受控:
@@ -399,9 +441,9 @@ Agency Agents 的价值很高,但进入 ClawX 的形态必须受控:
 
 解决方案: P3 只引入 typed blackboard;entry 带 trust boundary、authorRole、evidenceRefs 和 version,冲突不覆盖。
 
-## 12. 第一轮推荐开发方案
+## 12. 历史第一轮开发方案（已完成）
 
-第一轮只做 P0,并拆成四个可独立评审的小块:
+以下内容记录 P0 的原始切分,当前已完成,仅作为历史验收基线:
 
 1. 定义 `OrchestrationResultBundle`、`RoleOutcome`、`VerificationReport`、`RepairSummary` 类型,补 schema/fixture 测试。
 2. 实现 `SchemaComplianceGate`,在 verifier 前拒绝 malformed 或 evidence 缺失的 worker outcome。
@@ -425,14 +467,19 @@ Agency Agents 的价值很高,但进入 ClawX 的形态必须受控:
 - 一个权限拒绝事件能在 trace 或 bundle 中看到。
 - 一个 memory proposal 留在提案路径,没有直接落长期记忆。
 
+当前后续开发不再从 P0 开始。应从 `docs/multi-agent-orchestration/runtime-v2-p3-p5-allocation.md` 中选择一个依赖已满足的 `MA-*` work item,先建立独立 task spec,再进入实现。默认第一个候选是 `MA-P3-01`,但 canonical Task Forest 仍须遵守 proposal -> 用户确认 -> apply,且当前产品开发 handoff 的 active node 优先级不由本文改写。
+
 ## 13. 给外部 AI 评审的问题
 
 把本文交给其他 AI 评审时,建议重点让它检查:
 
-- P0 是否仍然过大,是否混入了 scheduler、UI、Agency 或 blackboard。
 - 全局硬约束是否足以防止 prompt/persona 绕过 RoleContract。
 - 状态权威源是否还有多人写同一状态的漏洞。
 - verifier 是否有足够非 LLM 的 schema/evidence/trace 支撑。
 - Agency 吸收路径是否足够保守,是否会把 prompt zoo 变成 runtime zoo。
-- P1-P4 顺序是否符合依赖关系,是否存在必须提前的基础设施。
+- P3-R 是否只补协议而没有暗中开放 A2A、memory write 或新权限。
+- P4-R 是否真正统一 ordinary orchestration 与 Task Loop,而不是新增第二套状态机或 Supervisor 服务。
+- P5 是否只消费 verified evidence,并保持 default-off、shadow-first、operator approval 和可回滚。
+- P3-R -> P4-R -> P5 的依赖是否被 task spec 和测试强制,是否存在跨阶段抢跑。
+- 预算、背压或历史质量信号是否可能静默降低 Strict 审计等级。
 - 验收标准是否能被自动化测试或 eval fixture 证明。

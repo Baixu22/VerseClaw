@@ -14,6 +14,7 @@ type LaunchElectronOptions = {
   bootHoldMs?: number;
   settingsSectionDelayMs?: number;
   theme?: 'light' | 'dark' | 'system';
+  env?: Record<string, string>;
 };
 
 type IpcMockConfig = {
@@ -181,6 +182,7 @@ async function launchVerseClawElectron(
     env: {
       ...process.env,
       ...electronEnv,
+      ...options.env,
       HOME: homeDir,
       USERPROFILE: homeDir,
       APPDATA: join(homeDir, 'AppData', 'Roaming'),

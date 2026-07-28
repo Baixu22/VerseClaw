@@ -59,6 +59,18 @@ import type {
   GithubPrSummary,
   GithubRepository,
 } from '../types/git';
+import type {
+  GitPatchArtifactV1,
+  RemoteForgeCapabilityMatrix,
+  RemoteForgeContent,
+  RemoteForgeErrorV1,
+  RemoteForgeMergePolicyDecision,
+  RemoteForgeMergeStrategy,
+  RemoteForgeMutationBinding,
+  RemoteForgeMutationV1,
+  RemoteForgePullRequestReadV1,
+  RemoteForgeReadiness,
+} from '../types/remote-forge';
 export type { GitCommitResult, GitOperationResult, GithubPrCreateInput } from '../types/git';
 import type {
   McpCallToolResult,
@@ -639,7 +651,9 @@ export type CodeReviewRunPayload = {
   focus?: string;
   timeoutMs?: number;
 };
-export type CodeReviewRunResult = HostSuccess & {
+export type CodeReviewRunResult = {
+  success: boolean;
+  error?: RemoteForgeErrorV1;
   review: CodeReviewRun;
 };
 export type CodeReviewCreateTaskLedgerNodePayload = TaskLedgerWorkspacePayload & {
@@ -648,6 +662,104 @@ export type CodeReviewCreateTaskLedgerNodePayload = TaskLedgerWorkspacePayload &
 };
 export type CodeReviewCreateTaskLedgerNodeResult = TaskLedgerSnapshotResult & {
   nodeId: string;
+};
+
+export type RemoteForgeRepositoryPayload = {
+  provider: 'github';
+  owner: string;
+  repository: string;
+};
+export type RemoteForgePullRequestReadPayload = RemoteForgeRepositoryPayload & {
+  number: number;
+};
+export type RemoteForgeContentReadPayload = RemoteForgeRepositoryPayload & {
+  ref: string;
+  paths: string[];
+};
+export type RemoteForgeMutationBasePayload = RemoteForgePullRequestReadPayload & {
+  expectedHeadSha: string;
+  approvalId?: string;
+};
+export type RemoteForgeReviewSubmitPayload = RemoteForgeMutationBasePayload & {
+  action: 'review_submit';
+  event: 'comment' | 'approve' | 'request_changes';
+  body: string;
+};
+export type RemoteForgeLineCommentCreatePayload = RemoteForgeMutationBasePayload & {
+  action: 'line_comment_create';
+  path: string;
+  side: 'LEFT' | 'RIGHT';
+  line: number;
+  body: string;
+  diffHunk?: string;
+};
+export type RemoteForgeCommentEditPayload = RemoteForgeMutationBasePayload & {
+  action: 'comment_edit';
+  commentId: number;
+  body: string;
+};
+export type RemoteForgeThreadReplyPayload = RemoteForgeMutationBasePayload & {
+  action: 'thread_reply';
+  commentId: number;
+  body: string;
+};
+export type RemoteForgeMetadataUpdatePayload = RemoteForgeMutationBasePayload & {
+  action: 'metadata_update';
+  expectedUpdatedAt: string;
+  title?: string;
+  body?: string;
+  labels?: string[];
+  reviewers?: string[];
+};
+export type RemoteForgeMutationPayload =
+  | RemoteForgeReviewSubmitPayload
+  | RemoteForgeLineCommentCreatePayload
+  | RemoteForgeCommentEditPayload
+  | RemoteForgeThreadReplyPayload
+  | RemoteForgeMetadataUpdatePayload;
+export type RemoteForgeCapabilitiesResult = {
+  success: boolean;
+  capability: RemoteForgeCapabilityMatrix;
+  error?: RemoteForgeErrorV1;
+};
+export type RemoteForgePullRequestReadResult = {
+  success: boolean;
+  pullRequest?: RemoteForgePullRequestReadV1;
+  error?: RemoteForgeErrorV1;
+};
+export type RemoteForgeContentReadResult = {
+  success: boolean;
+  contents: RemoteForgeContent[];
+  error?: RemoteForgeErrorV1;
+};
+export type RemoteForgeMutationResult = {
+  success: boolean;
+  blocked?: boolean;
+  approvalRequired?: boolean;
+  approval?: PermissionApprovalEvent;
+  binding?: RemoteForgeMutationBinding;
+  mutation?: RemoteForgeMutationV1;
+  error?: RemoteForgeErrorV1;
+};
+export type RemoteForgeMergePayload = RemoteForgePullRequestReadPayload & {
+  expectedHeadSha: string;
+  strategy: RemoteForgeMergeStrategy;
+  commitTitle?: string;
+  commitMessage?: string;
+  approvalId?: string;
+  expectedReadinessDigest?: string;
+  expectedPolicyDigest?: string;
+};
+export type RemoteForgeMergeResult = {
+  success: boolean;
+  blocked?: boolean;
+  approvalRequired?: boolean;
+  approval?: PermissionApprovalEvent;
+  binding?: RemoteForgeMutationBinding;
+  mutation?: RemoteForgeMutationV1;
+  readiness?: RemoteForgeReadiness;
+  policy?: RemoteForgeMergePolicyDecision;
+  error?: RemoteForgeErrorV1;
 };
 
 export type GatewayControlUiPayload = {
@@ -4008,7 +4120,13 @@ export type GithubPrViewPayload = { number: number };
 export type GithubPrOpenPayload = { number: number };
 export type GitCapabilitiesResult = HostSuccess & GitCapabilities;
 export type GitStatusResult = HostSuccess & { status: GitRepositoryStatus };
-export type GitDiffListResult = HostSuccess & { changes: GitRepositoryStatus['changes']; patch?: string };
+export type GitDiffListResult = HostSuccess & {
+  changes: GitRepositoryStatus['changes'];
+  patch?: string;
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
+  tooLarge?: boolean;
+};
 export type GitFileDiffResult = HostSuccess & GitDiffResult;
 export type GitBranchListResult = HostSuccess & { branches: GitBranch[] };
 export type GitLogPayload = { ref?: string; limit?: number };
@@ -4546,6 +4664,13 @@ export type HostApiContract = {
   codeReview: {
     run: (payload: CodeReviewRunPayload) => CodeReviewRunResult;
     createTaskLedgerNode: (payload: CodeReviewCreateTaskLedgerNodePayload) => CodeReviewCreateTaskLedgerNodeResult;
+  };
+  remoteForge: {
+    capabilities: (payload: RemoteForgeRepositoryPayload) => RemoteForgeCapabilitiesResult;
+    readPullRequest: (payload: RemoteForgePullRequestReadPayload) => RemoteForgePullRequestReadResult;
+    readContents: (payload: RemoteForgeContentReadPayload) => RemoteForgeContentReadResult;
+    mutatePullRequest: (payload: RemoteForgeMutationPayload) => RemoteForgeMutationResult;
+    mergePullRequest: (payload: RemoteForgeMergePayload) => RemoteForgeMergeResult;
   };
   terminal: {
     run: (payload: WorkspaceTerminalRunPayload) => WorkspaceTerminalRunResult;

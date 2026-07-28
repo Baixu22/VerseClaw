@@ -50,6 +50,7 @@ describe("FP-P1-04 test-runner detection (verify segment)", () => {
     expect(pnpm.runner).toBe("pnpm");
     expect(pnpm.command).toBe("pnpm test");
     expect(pnpm.evidence).toBe("pnpm-lock.yaml");
+    expect(pnpm.workdir).toBe(".");
 
     const npmRoot = ws({ "package.json": JSON.stringify({ scripts: { test: "jest" } }) });
     const npm = expectDetected(detectTestRunner(npmRoot));
@@ -168,5 +169,62 @@ describe("FP-P1-04 test-runner detection (verify segment)", () => {
     );
     expect(detection.detected).toBe(false);
     expect(detection.detected === false && detection.skipReason).toBe("no-test-script");
+  });
+
+  it("selects the nearest monorepo package and runs from that package", () => {
+    const root = ws({
+      "package.json": JSON.stringify({ private: true, scripts: { test: "root-suite" } }),
+      "pnpm-lock.yaml": "lockfileVersion: 9\n",
+      "packages/api/package.json": JSON.stringify({ scripts: { test: "vitest run" } }),
+      "packages/api/src/index.ts": "export const value = 1;\n",
+    });
+    const detection = expectDetected(
+      detectTestRunner(root, { changedPaths: ["packages/api/src/index.ts"] }),
+    );
+    expect(detection.command).toBe("pnpm test");
+    expect(detection.workdir).toBe("packages/api");
+    expect(detection.evidence).toBe("pnpm-lock.yaml");
+    expect(formatTestRunnerDetection(detection)).toContain("cwd=packages/api");
+  });
+
+  it("fails closed for cross-package changes without one bounded runner", () => {
+    const root = ws({
+      "pnpm-lock.yaml": "lockfileVersion: 9\n",
+      "packages/a/package.json": JSON.stringify({ scripts: { test: "vitest" } }),
+      "packages/a/a.ts": "a\n",
+      "packages/b/package.json": JSON.stringify({ scripts: { test: "vitest" } }),
+      "packages/b/b.ts": "b\n",
+    });
+    const detection = detectTestRunner(root, {
+      changedPaths: ["packages/a/a.ts", "packages/b/b.ts"],
+    });
+    expect(detection.detected).toBe(false);
+    expect(detection.detected === false && detection.skipReason).toBe("cross-project-changes");
+    expect(detection.detected === false && detection.message).toMatch(/no single bounded/i);
+  });
+
+  it("uses an explicit workspace runner for cross-package changes", () => {
+    const root = ws({
+      "packages/a/package.json": JSON.stringify({ scripts: { test: "vitest" } }),
+      "packages/a/a.ts": "a\n",
+      "packages/b/package.json": JSON.stringify({ scripts: { test: "vitest" } }),
+      "packages/b/b.ts": "b\n",
+    });
+    const detection = expectDetected(
+      detectTestRunner(root, {
+        changedPaths: ["packages/a/a.ts", "packages/b/b.ts"],
+        customCommand: "pnpm test:changed",
+      }),
+    );
+    expect(detection.ecosystem).toBe("custom");
+    expect(detection.command).toBe("pnpm test:changed");
+    expect(detection.workdir).toBe(".");
+  });
+
+  it("rejects changed paths outside the bound workspace", () => {
+    const root = ws({ "package.json": JSON.stringify({ scripts: { test: "vitest" } }) });
+    const detection = detectTestRunner(root, { changedPaths: [path.join(root, "..", "escape.ts")] });
+    expect(detection.detected).toBe(false);
+    expect(detection.detected === false && detection.skipReason).toBe("outside-workspace");
   });
 });

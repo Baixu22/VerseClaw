@@ -53,6 +53,16 @@ describe("edit tool: successful replacement", () => {
       patch: expect.stringContaining("+TWO"),
       firstChangedLine: 2,
       working_memory: { significance: "high" },
+      patchArtifacts: [
+        expect.objectContaining({
+          schema: "GitPatchArtifact/v1",
+          file: "f.txt",
+          status: "modified",
+          contentKind: "text",
+          completeness: "complete",
+          lineage: { requestId: "test-call" },
+        }),
+      ],
     });
     expect(await readFile(join(dir, "f.txt"), "utf-8")).toBe("one\nTWO\nthree\n");
   });

@@ -3,6 +3,10 @@
   "title": "Review Center",
   "subtitle": "对 Git 改动运行只读 AI 审查，结构化 findings，并把复核项写入 Task Ledger。",
   "readonly": "只读审查",
+  "views": {
+    "local": "本地改动",
+    "remote": "远程 PR"
+  },
   "yes": "是",
   "no": "否",
   "empty": "选择审查目标，按需填写 focus，然后运行审查。",
@@ -46,9 +50,235 @@
     "low": "Low",
     "info": "Info"
   },
+  "remote": {
+    "owner": "所有者",
+    "ownerPlaceholder": "octocat",
+    "repository": "仓库",
+    "repositoryPlaceholder": "hello-world",
+    "number": "PR 编号",
+    "numberPlaceholder": "42",
+    "read": "读取 Pull Request",
+    "loading": "正在读取远程证据...",
+    "empty": "输入 GitHub 仓库和 Pull Request 编号，检查有界的只读证据。",
+    "evidence": "Pull Request 证据",
+    "head": "Head {{sha}}",
+    "missing": "缺失",
+    "counts": {
+      "commits": "提交",
+      "files": "文件",
+      "checks": "检查",
+      "reviews": "审查"
+    },
+    "readiness": {
+      "ready": "就绪",
+      "blocked": "已阻止",
+      "pending": "等待中",
+      "unknown": "就绪状态未知"
+    },
+    "completeness": {
+      "complete": "证据完整",
+      "incomplete": "证据不完整",
+      "truncated": "证据已截断",
+      "unavailable": "证据不可用"
+    },
+    "reasons": {
+      "draft": "草稿 Pull Request",
+      "conflict": "存在合并冲突",
+      "behind": "Head 落后",
+      "checks_pending": "检查未结束",
+      "checks_failed": "检查失败",
+      "approvals_missing": "缺少批准",
+      "changes_requested": "已要求修改",
+      "discussion_state_unknown": "讨论状态未知",
+      "missing_head": "缺少 Head SHA",
+      "mergeability_unknown": "可合并性未知",
+      "protection_unknown": "分支保护未知",
+      "incomplete_evidence": "证据不完整"
+    },
+    "capabilities": {
+      "title": "Provider 能力",
+      "pullRequestRead": "Pull Request",
+      "commitsRead": "提交",
+      "filesRead": "文件",
+      "diffRead": "Diff",
+      "checksRead": "检查",
+      "reviewsRead": "审查",
+      "contentRead": "内容",
+      "protectionRead": "分支保护"
+    },
+    "capabilityState": {
+      "supported": "支持",
+      "unauthorized": "未授权",
+      "unavailable": "不可用",
+      "unknown": "未知"
+    },
+    "content": {
+      "utf8": "UTF-8 文本",
+      "binary": "二进制内容",
+      "base64": "Provider 编码内容",
+      "truncated": "内容超出预览上限",
+      "unavailable": "内容不可用"
+    },
+    "errors": {
+      "required": "请输入有效的所有者、仓库和 Pull Request 编号。",
+      "readFailed": "无法安全读取远程 Pull Request。",
+      "incomplete": "部分远程证据不完整；就绪状态保持关闭。",
+      "contentFailed": "无法安全读取所选文件。",
+      "contentIncomplete": "所选文件不完整或不可用。"
+    },
+    "merge": {
+      "title": "受控合并",
+      "sandboxOnly": "仅 Main 批准的 sandbox 仓库可以请求此操作。",
+      "agentOff": "Agent 合并已关闭",
+      "strategy": "合并策略",
+      "strategies": { "merge": "合并提交", "squash": "压缩合并", "rebase": "变基合并" },
+      "commitTitle": "提交标题（可选）",
+      "commitMessage": "提交说明（可选）",
+      "requestApproval": "请求合并审批",
+      "approvalTitle": "需要一次性合并审批",
+      "head": "预期 head",
+      "deny": "拒绝",
+      "approveAndMerge": "批准并合并",
+      "states": {
+        "succeeded": "已合并",
+        "partial": "已合并，需要 reconciliation",
+        "failed": "未合并",
+        "unknown": "合并结果未知"
+      },
+      "effects": {
+        "primary": "合并",
+        "labels": "标签",
+        "reviewers": "评审人",
+        "refresh": "刷新",
+        "audit": "审计"
+      },
+      "effectStates": {
+        "not_attempted": "未尝试",
+        "succeeded": "成功",
+        "failed": "失败",
+        "unknown": "未知"
+      },
+      "reconciliation": {
+        "not_needed": "无需 reconciliation",
+        "refresh_required": "执行其他操作前先刷新远端状态",
+        "manual_check_required": "重试前先在远端人工核对"
+      },
+      "policy": {
+        "allowed": "Sandbox 策略允许该请求。",
+        "repository_not_allowed": "该仓库不在 Main 持有的 sandbox allowlist 中。",
+        "agent_merge_disabled": "Main 策略已关闭 Agent 合并。"
+      },
+      "errors": {
+        "missingHead": "PR head 不可用。",
+        "notReady": "当前 readiness 禁止合并；解决全部 veto 后刷新。",
+        "requestFailed": "无法请求合并审批。",
+        "approvalFailed": "无法记录合并审批决定。",
+        "mergeFailed": "无法安全完成已批准的合并。",
+        "invalid_request": "合并请求包含无效或超限字段。",
+        "authentication_required": "需要 GitHub 认证。",
+        "permission_denied": "缺少 sandbox 策略、审批或 GitHub 权限。",
+        "not_found": "未找到 PR 资源。",
+        "rate_limited": "已达到 GitHub 速率限制，请稍后重试。",
+        "conflict": "Readiness、策略或远端状态已变化，请刷新。",
+        "stale_head": "PR head 已变化，请重新请求审批。",
+        "incomplete_response": "Readiness 证据不完整，合并保持关闭。",
+        "truncated_response": "Readiness 证据超过安全上限。",
+        "upstream_unavailable": "GitHub 不可用；重试前先核对远端状态。",
+        "network_error": "合并结果未知；重试前先检查 GitHub。",
+        "timeout": "合并超时；重试前先检查 GitHub。",
+        "cancelled": "合并已取消。",
+        "internal": "合并已安全失败。",
+        "unknown": "合并返回了无法识别的结果。"
+      }
+    },
+    "mutation": {
+      "title": "评审草稿",
+      "draftState": "仅草稿",
+      "action": "操作",
+      "actions": {
+        "review_submit": "发布评审",
+        "line_comment_create": "添加行评论",
+        "comment_edit": "编辑评论",
+        "thread_reply": "回复讨论",
+        "metadata_update": "更新元数据"
+      },
+      "reviewEvent": "评审结论",
+      "events": {
+        "comment": "评论",
+        "approve": "批准",
+        "request_changes": "请求修改"
+      },
+      "path": "文件",
+      "selectFile": "请选择改动文件",
+      "line": "行号",
+      "side": "Diff 侧",
+      "sides": { "LEFT": "旧侧", "RIGHT": "新侧" },
+      "commentId": "评论 ID",
+      "metadataTitle": "标题",
+      "metadataBody": "描述",
+      "labels": "标签",
+      "reviewers": "评审人",
+      "body": "草稿正文",
+      "requestApproval": "请求审批",
+      "approvalTitle": "需要一次性审批",
+      "head": "Head",
+      "deny": "拒绝",
+      "approveAndPublish": "批准并发布",
+      "states": {
+        "succeeded": "已发布",
+        "partial": "已发布，后续操作失败",
+        "failed": "未发布",
+        "unknown": "投递结果未知"
+      },
+      "effects": {
+        "primary": "主操作",
+        "labels": "标签",
+        "reviewers": "评审人",
+        "refresh": "刷新"
+      },
+      "effectStates": {
+        "not_attempted": "未尝试",
+        "succeeded": "成功",
+        "failed": "失败",
+        "unknown": "未知"
+      },
+      "reconciliation": {
+        "not_needed": "无需核对",
+        "refresh_required": "继续前请刷新远程状态",
+        "manual_check_required": "重试前请检查远程 Pull Request"
+      },
+      "errors": {
+        "missingHead": "Pull Request head 不可用。",
+        "bodyRequired": "请输入草稿正文。",
+        "lineRequired": "请选择文件，并填写有效行号和草稿正文。",
+        "commentRequired": "请输入有效评论 ID 和草稿正文。",
+        "metadataRequired": "需要 Pull Request 版本和元数据改动。",
+        "requestFailed": "无法请求审批。",
+        "approvalFailed": "无法记录审批决定。",
+        "publishFailed": "无法安全完成已批准操作。",
+        "invalid_request": "草稿包含无效或超限字段。",
+        "authentication_required": "需要 GitHub 身份验证。",
+        "permission_denied": "缺少审批或 GitHub 权限。",
+        "not_found": "未找到 Pull Request 资源。",
+        "rate_limited": "GitHub 已限流，请稍后重试。",
+        "conflict": "Pull Request 版本已变化，请刷新草稿。",
+        "stale_head": "Pull Request head 已变化，请刷新草稿。",
+        "incomplete_response": "GitHub 返回了不完整结果。",
+        "truncated_response": "GitHub 返回结果超出上限。",
+        "upstream_unavailable": "GitHub 不可用，重试前请核对远程状态。",
+        "network_error": "投递结果未知，重试前请检查 Pull Request。",
+        "timeout": "投递超时，重试前请检查 Pull Request。",
+        "cancelled": "操作已取消。",
+        "internal": "操作已安全失败。",
+        "unknown": "远程结果未知。"
+      }
+    }
+  },
   "errors": {
     "baseBranchRequired": "请先填写基准分支。",
     "commitRequired": "请先填写提交。",
+    "patchTruncated": "Git diff 超出审查上限，因此未启动 AI 审查。",
+    "patchUnavailable": "无法安全验证 Git diff，因此未启动 AI 审查。",
     "reviewFailed": "审查失败。",
     "ledgerFailed": "无法创建 Task Ledger review node。"
   }

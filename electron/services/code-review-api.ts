@@ -17,6 +17,9 @@ import type {
   CodeReviewTarget,
   CodeReviewTargetSummary,
 } from '@shared/types/code-review';
+import type { GitPatchArtifactV1, RemoteForgeErrorCode, RemoteForgeErrorV1 } from '@shared/types/remote-forge';
+import { adaptUnifiedDiffToGitPatchArtifacts } from '@shared/remote-forge/unified-diff-adapter';
+import { createRemoteForgeErrorV1 } from '@shared/remote-forge/error-envelope';
 import type {
   ObservabilityTokenUsage,
   ObservabilityTrace,
@@ -49,6 +52,8 @@ type RepoContext = {
 type ReviewDiffBundle = {
   target: CodeReviewTargetSummary;
   patch: string;
+  patchArtifacts: GitPatchArtifactV1[];
+  patchArtifactError?: RemoteForgeErrorV1;
   files: string[];
   stats: CodeReviewDiffStats;
   evidenceRefs: TaskLedgerEvidenceRef[];
@@ -72,9 +77,24 @@ const SEVERITY_ORDER: Record<CodeReviewSeverity, number> = {
 
 const reviewRuns = new Map<string, CodeReviewRun>();
 
-function trimOutput(value: string, limit = MAX_PATCH_CHARS): { text: string; truncated: boolean } {
-  if (value.length <= limit) return { text: value, truncated: false };
-  return { text: `${value.slice(0, limit)}\n[patch truncated]`, truncated: true };
+class CodeReviewSafeError extends Error {
+  constructor(readonly envelope: RemoteForgeErrorV1) {
+    super(envelope.safeMessage);
+  }
+}
+
+function safeReviewError(code: RemoteForgeErrorCode, requestId: string): CodeReviewSafeError {
+  return new CodeReviewSafeError(createRemoteForgeErrorV1({ code, requestId }));
+}
+
+function trimOutput(value: string, limit = MAX_PATCH_CHARS): {
+  text: string;
+  adapterText: string;
+  truncated: boolean;
+} {
+  if (value.length <= limit) return { text: value, adapterText: value, truncated: false };
+  const adapterText = value.slice(0, limit);
+  return { text: `${adapterText}\n[patch truncated]`, adapterText, truncated: true };
 }
 
 function normalizeString(value: unknown): string | undefined {
@@ -177,13 +197,34 @@ function diffStatsFromPatch(patch: string, truncated: boolean): CodeReviewDiffSt
   };
 }
 
-function filesFromPatch(patch: string): string[] {
-  const files = new Set<string>();
-  for (const line of patch.split(/\r?\n/)) {
-    const match = /^diff --git a\/(.+?) b\/(.+)$/.exec(line);
-    if (match?.[2]) files.add(match[2]);
+function projectReviewPatch(
+  patch: string,
+  truncated: boolean,
+  requestId: string,
+): { patchArtifacts: GitPatchArtifactV1[]; patchArtifactError?: RemoteForgeErrorV1 } {
+  if (!patch.trim()) return { patchArtifacts: [] };
+  const adapted = adaptUnifiedDiffToGitPatchArtifacts({
+    patch,
+    sourceCompleteness: truncated ? 'truncated' : 'complete',
+  });
+  if (adapted.kind === 'unavailable') {
+    return {
+      patchArtifacts: [],
+      patchArtifactError: createRemoteForgeErrorV1({ code: 'incomplete_response', requestId }),
+    };
   }
-  return [...files].sort((left, right) => left.localeCompare(right));
+  const unavailable = adapted.artifacts.find((artifact) => artifact.completeness === 'unavailable');
+  return {
+    patchArtifacts: adapted.artifacts,
+    ...(unavailable?.message
+      ? { patchArtifactError: createRemoteForgeErrorV1({ code: 'incomplete_response', requestId }) }
+      : {}),
+  };
+}
+
+function filesFromArtifacts(artifacts: GitPatchArtifactV1[]): string[] {
+  return [...new Set(artifacts.map((artifact) => artifact.file))]
+    .sort((left, right) => left.localeCompare(right));
 }
 
 function evidenceRefsForFiles(files: string[]): TaskLedgerEvidenceRef[] {
@@ -194,7 +235,7 @@ function evidenceRefsForFiles(files: string[]): TaskLedgerEvidenceRef[] {
   }));
 }
 
-async function collectUncommittedDiff(ctx: RepoContext): Promise<ReviewDiffBundle> {
+async function collectUncommittedDiff(ctx: RepoContext, requestId: string): Promise<ReviewDiffBundle> {
   const status = await readCurrentGitStatus();
   const staged = await git(['diff', '--cached'], ctx.workspaceRoot);
   const unstaged = await git(['diff'], ctx.workspaceRoot);
@@ -213,17 +254,19 @@ async function collectUncommittedDiff(ctx: RepoContext): Promise<ReviewDiffBundl
     .filter(Boolean)
     .join('\n');
   const limited = trimOutput(rawPatch);
-  const files = filesFromPatch(limited.text);
+  const projection = projectReviewPatch(limited.adapterText, limited.truncated, requestId);
+  const files = filesFromArtifacts(projection.patchArtifacts);
   return {
     target: { kind: 'uncommitted', label: 'Uncommitted changes' },
     patch: limited.text,
+    ...projection,
     files,
     stats: diffStatsFromPatch(limited.text, limited.truncated),
     evidenceRefs: evidenceRefsForFiles(files),
   };
 }
 
-async function collectBaseBranchDiff(ctx: RepoContext, baseBranch: string): Promise<ReviewDiffBundle> {
+async function collectBaseBranchDiff(ctx: RepoContext, baseBranch: string, requestId: string): Promise<ReviewDiffBundle> {
   const base = normalizeString(baseBranch);
   if (!base) throw new Error('Base branch is required');
   const head = await git(['rev-parse', '--verify', 'HEAD'], ctx.workspaceRoot);
@@ -237,17 +280,19 @@ async function collectBaseBranchDiff(ctx: RepoContext, baseBranch: string): Prom
   const diff = await git(['diff', `${baseCommit}...HEAD`], ctx.workspaceRoot);
   if (diff.exitCode !== 0) throw new Error(diff.stderr.trim() || `Failed to diff against ${base}`);
   const limited = trimOutput(diff.stdout);
-  const files = filesFromPatch(limited.text);
+  const projection = projectReviewPatch(limited.adapterText, limited.truncated, requestId);
+  const files = filesFromArtifacts(projection.patchArtifacts);
   return {
     target: { kind: 'baseBranch', baseBranch: base, label: base, baseCommit, headCommit },
     patch: limited.text,
+    ...projection,
     files,
     stats: diffStatsFromPatch(limited.text, limited.truncated),
     evidenceRefs: evidenceRefsForFiles(files),
   };
 }
 
-async function collectCommitDiff(ctx: RepoContext, commit: string): Promise<ReviewDiffBundle> {
+async function collectCommitDiff(ctx: RepoContext, commit: string, requestId: string): Promise<ReviewDiffBundle> {
   const input = normalizeString(commit);
   if (!input) throw new Error('Commit is required');
   const resolved = await git(['rev-parse', '--verify', `${input}^{commit}`], ctx.workspaceRoot);
@@ -258,21 +303,26 @@ async function collectCommitDiff(ctx: RepoContext, commit: string): Promise<Revi
   const show = await git(['show', '--format=', '--patch', resolvedCommit], ctx.workspaceRoot);
   if (show.exitCode !== 0) throw new Error(show.stderr.trim() || `Failed to read commit ${input}`);
   const limited = trimOutput(show.stdout);
-  const files = filesFromPatch(limited.text);
+  const projection = projectReviewPatch(limited.adapterText, limited.truncated, requestId);
+  const files = filesFromArtifacts(projection.patchArtifacts);
   return {
     target: { kind: 'commit', commit: input, label: input, resolvedCommit },
     patch: limited.text,
+    ...projection,
     files,
     stats: diffStatsFromPatch(limited.text, limited.truncated),
     evidenceRefs: evidenceRefsForFiles(files),
   };
 }
 
-export async function collectCodeReviewDiffForTarget(target: CodeReviewTarget): Promise<ReviewDiffBundle> {
+export async function collectCodeReviewDiffForTarget(
+  target: CodeReviewTarget,
+  requestId = `code-review-${randomUUID()}`,
+): Promise<ReviewDiffBundle> {
   const ctx = await requireRepoContext();
-  if (target.kind === 'baseBranch') return collectBaseBranchDiff(ctx, target.baseBranch);
-  if (target.kind === 'commit') return collectCommitDiff(ctx, target.commit);
-  return collectUncommittedDiff(ctx);
+  if (target.kind === 'baseBranch') return collectBaseBranchDiff(ctx, target.baseBranch, requestId);
+  if (target.kind === 'commit') return collectCommitDiff(ctx, target.commit, requestId);
+  return collectUncommittedDiff(ctx, requestId);
 }
 
 function buildReviewPrompt(bundle: ReviewDiffBundle, focus?: string): string {
@@ -474,7 +524,7 @@ function recordReviewTrace(review: CodeReviewRun): void {
         findings: review.findings.length,
         readonly: true,
       },
-      error: review.error,
+      error: review.error?.safeMessage,
     }],
     events: [{
       id: `event_${review.runId}`,
@@ -496,7 +546,7 @@ function recordReviewTrace(review: CodeReviewRun): void {
       files: review.diffStats.files,
     },
     tags: ['code-review', 'review-center', review.target.kind],
-    error: review.error,
+    error: review.error?.safeMessage,
   };
   upsertObservabilityTrace(trace);
 }
@@ -588,6 +638,8 @@ function completedReview(params: {
     focus: normalizeString(params.focus),
     summary: params.summary,
     diffStats: params.bundle.stats,
+    patchArtifacts: params.bundle.patchArtifacts,
+    patchArtifactError: params.bundle.patchArtifactError,
     findings: params.findings,
     evidenceRefs: params.bundle.evidenceRefs,
     startedAt: params.startedAt,
@@ -604,7 +656,7 @@ function failedReview(params: {
   target: CodeReviewTarget;
   focus?: string;
   startedAt: string;
-  error: string;
+  error: RemoteForgeErrorV1;
 }): CodeReviewRun {
   const endedAt = nowIso();
   return {
@@ -613,8 +665,10 @@ function failedReview(params: {
     status: 'error',
     target: params.bundle?.target ?? { ...params.target, label: params.target.kind },
     focus: normalizeString(params.focus),
-    summary: params.error,
+    summary: params.error.safeMessage,
     diffStats: params.bundle?.stats ?? { files: 0, additions: 0, deletions: 0, patchBytes: 0, truncated: false },
+    patchArtifacts: params.bundle?.patchArtifacts ?? [],
+    patchArtifactError: params.bundle?.patchArtifactError,
     findings: [],
     evidenceRefs: params.bundle?.evidenceRefs ?? [],
     startedAt: params.startedAt,
@@ -631,7 +685,7 @@ export function createCodeReviewApi({ gatewayManager }: { gatewayManager: Gatewa
       const runId = `code-review-${randomUUID()}`;
       let bundle: ReviewDiffBundle | undefined;
       try {
-        bundle = await collectCodeReviewDiffForTarget(payload.target);
+        bundle = await collectCodeReviewDiffForTarget(payload.target, runId);
         if (!bundle.patch.trim()) {
           const review = completedReview({
             runId,
@@ -645,6 +699,12 @@ export function createCodeReviewApi({ gatewayManager }: { gatewayManager: Gatewa
           recordReviewTrace(review);
           return { success: true, review };
         }
+        if (bundle.patchArtifactError) {
+          throw new CodeReviewSafeError(bundle.patchArtifactError);
+        }
+        if (bundle.stats.truncated) {
+          throw safeReviewError('truncated_response', runId);
+        }
 
         const output = await runModelReview(
           gatewayManager,
@@ -655,7 +715,7 @@ export function createCodeReviewApi({ gatewayManager }: { gatewayManager: Gatewa
             ? Math.max(5_000, Math.floor(payload.timeoutMs))
             : DEFAULT_REVIEW_TIMEOUT_MS,
         );
-        if (!output.text?.trim()) throw new Error('Code review produced no assistant output');
+        if (!output.text?.trim()) throw safeReviewError('incomplete_response', runId);
         const parsed = parseCodeReviewFindings(output.text, bundle.files);
         const review = completedReview({
           runId,
@@ -676,7 +736,12 @@ export function createCodeReviewApi({ gatewayManager }: { gatewayManager: Gatewa
           target: payload.target,
           focus: payload.focus,
           startedAt,
-          error: error instanceof Error ? error.message : String(error),
+          error: error instanceof CodeReviewSafeError
+            ? error.envelope
+            : createRemoteForgeErrorV1({
+                code: error instanceof Error && /timed out/i.test(error.message) ? 'timeout' : 'internal',
+                requestId: runId,
+              }),
         });
         reviewRuns.set(runId, review);
         recordReviewTrace(review);

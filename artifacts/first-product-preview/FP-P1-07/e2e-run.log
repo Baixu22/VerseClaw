@@ -1,17 +1,13 @@
-$ pnpm exec playwright test tests/e2e/first-product-journey-fp-p1-07.spec.ts --workers=1
-
+﻿
 Running 4 tests using 1 worker
 
-[fp-p1-07-success] {"model":"mock-coder","dcsAck":"applied","read":true,"edit":true,"test":true,"undoBeforeRestart":true,"undoAfterRestart":true,"supportBundle":"C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-YO00yM\\support-bundles\\verse-claw-support-2026-07-27T17-28-27-854Z.json"}
-  ok 1 tests\e2e\first-product-journey-fp-p1-07.spec.ts:290:7 - FP-P1-07 first-product journey (real Electron + real Gateway) - clean setup through coding, undo, restart recovery, and support bundle (1.5m)
+[fp-p1-07-success] {"model":"mock-coder","dcsAck":"applied","read":true,"edit":true,"test":true,"undoBeforeRestart":true,"undoAfterRestart":true,"supportBundle":"C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-IZupvG\\support-bundles\\verse-claw-support-2026-07-28T10-38-03-934Z.json"}
+  ok 1 tests\e2e\first-product-journey-fp-p1-07.spec.ts:290:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › clean setup through coding, undo, restart recovery, and support bundle (2.2m)
 [fp-p1-07-failure] {"gatewayNotReady":"start-gateway action shown and recovered","noProvider":"configure-provider action shown"}
-  ok 2 tests\e2e\first-product-journey-fp-p1-07.spec.ts:396:7 - FP-P1-07 first-product journey (real Electron + real Gateway) - gateway-not-ready and no-provider failures both give an operator action (15.7s)
+  ok 2 tests\e2e\first-product-journey-fp-p1-07.spec.ts:397:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › gateway-not-ready and no-provider failures both give an operator action (25.9s)
 [fp-p1-07-failure] {"invalidCredentials":"fresh-key retry guidance","modelUnavailable":"model-list failure with retry guidance blocks Next"}
-  ok 3 tests\e2e\first-product-journey-fp-p1-07.spec.ts:435:7 - FP-P1-07 first-product journey (real Electron + real Gateway) - invalid credentials and unavailable model stay blocked with retry guidance (17.2s)
+  ok 3 tests\e2e\first-product-journey-fp-p1-07.spec.ts:436:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › invalid credentials and unavailable model stay blocked with retry guidance (26.5s)
 [fp-p1-07-failure] {"workspaceDenied":"C:\\Windows","kill":"failed/killed with kill-switch explanation"}
-  ok 4 tests\e2e\first-product-journey-fp-p1-07.spec.ts:475:7 - FP-P1-07 first-product journey (real Electron + real Gateway) - workspace denial and kill refusal fail closed without silent fallback (34.0s)
+  ok 4 tests\e2e\first-product-journey-fp-p1-07.spec.ts:476:7 › FP-P1-07 first-product journey (real Electron + real Gateway) › workspace denial and kill refusal fail closed without silent fallback (49.8s)
 
-  4 passed (2.6m)
-(node:16228) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
-(Use `node --trace-warnings ...` to show where the warning was created)
-
+  4 passed (3.9m)
