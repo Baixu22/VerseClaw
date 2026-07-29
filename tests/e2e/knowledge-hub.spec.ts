@@ -109,6 +109,32 @@ async function installKnowledgeGovernanceRecorder(app: ElectronApplication): Pro
 
 test.describe('Knowledge Hub MVP', () => {
   test('initializes, imports, searches, inspects, and applies an editable draft', async ({ electronApp, page }) => {
+    const runtimeSuggestionToConfirm = {
+      cluster_summary: 'Keep knowledge changes reviewable.',
+      source_trajectory_ids: ['traj-e2e-1'],
+      suggested_principle: {
+        title: 'Review before durable knowledge writes',
+        condition: 'A runtime lesson is proposed for reuse.',
+        action: 'Show the proposal and require explicit confirmation.',
+        reason: 'Suggestion generation is not durable approval.',
+        task_types: ['knowledge-ui'],
+        context_tags: ['knowledge', 'review'],
+        criticality: 'high',
+      },
+      confidence: 0.91,
+    };
+    const runtimeSuggestionToReject = {
+      cluster_summary: 'Reject low-value candidates.',
+      source_trajectory_ids: ['traj-e2e-2'],
+      suggested_principle: {
+        title: 'Reject sparse runtime lessons',
+        condition: 'A candidate lacks reusable evidence.',
+        action: 'Reject it without promotion.',
+        reason: 'Sparse evidence should not enter durable knowledge.',
+      },
+      confidence: 0.72,
+    };
+
     await installIpcMocks(electronApp, {
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       gatewayRpc: {
@@ -134,7 +160,7 @@ test.describe('Knowledge Hub MVP', () => {
         [typed('knowledge', 'runtimeLessonsReport')]: {
           success: true,
           available: true,
-          counts: { trajectories: 4, undistilledTrajectories: 1, activePrinciples: 1 },
+          counts: { trajectories: 4, undistilledTrajectories: 2, activePrinciples: 1 },
           undistilled: [{
             trajectory_id: 'traj-e2e-1',
             created_at: '2026-07-06T00:00:00.000Z',
@@ -142,6 +168,14 @@ test.describe('Knowledge Hub MVP', () => {
             task_type: 'knowledge-ui',
             context_fingerprint: ['knowledge', 'runtime-lessons'],
             outcome: 'success',
+            error_signature: null,
+          }, {
+            trajectory_id: 'traj-e2e-2',
+            created_at: '2026-07-06T00:01:00.000Z',
+            task_intent: 'Discard a sparse lesson',
+            task_type: 'knowledge-ui',
+            context_fingerprint: ['knowledge', 'review'],
+            outcome: 'partial',
             error_signature: null,
           }],
           activePrinciples: [{
@@ -154,6 +188,46 @@ test.describe('Knowledge Hub MVP', () => {
             adoption_count: 1,
           }],
           indexPreview: 'E2E runtime lesson index',
+        },
+        [typed('knowledge', 'sekbSuggestPrinciples', { trajectoryIds: ['traj-e2e-1', 'traj-e2e-2'] })]: {
+          success: true,
+          available: true,
+          mode: 'deterministic',
+          suggestions: [runtimeSuggestionToConfirm, runtimeSuggestionToReject],
+        },
+        [typed('knowledge', 'sekbConfirmPrinciple', {
+          suggestion: runtimeSuggestionToConfirm,
+          sessionId: 'session-e2e-runtime-1',
+          sourceSystem: 'ui-confirm',
+          integrityClaim: 'confirmed',
+        })]: {
+          success: true,
+          available: true,
+          principleId: 'principle-e2e-confirmed',
+          dcsWrite: 'written',
+          principleOnly: false,
+        },
+        [typed('knowledge', 'sekbRejectSuggestion', { suggestion: runtimeSuggestionToReject })]: {
+          success: true,
+          available: true,
+        },
+        [typed('knowledge', 'sekbRetrieveForTask', {
+          taskIntent: 'Review a runtime lesson',
+          taskType: 'knowledge-ui',
+          contextTags: ['knowledge', 'review'],
+          topK: 5,
+        })]: {
+          success: true,
+          available: true,
+          principles: [{
+            principle_id: 'principle-e2e-confirmed',
+            title: 'Review before durable knowledge writes',
+            condition: 'A runtime lesson is proposed for reuse.',
+            action: 'Show the proposal and require explicit confirmation.',
+            reason: 'Suggestion generation is not durable approval.',
+            retrieval_count: 1,
+          }],
+          injection: '## Runtime Lessons\n- Review before durable knowledge writes',
         },
         [typed('knowledge', 'init')]: { success: true },
         [typed('knowledge', 'ingestFiles', { paths: ['C:/notes/decision.md'] })]: {
@@ -411,6 +485,37 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('Keep Runtime Lessons review-only in Phase 1');
     await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('E2E runtime lesson index');
     await expect(page.getByTestId('knowledge-runtime-lessons')).not.toContainText('Approve and Apply');
+
+    await page.getByTestId('knowledge-runtime-suggest').click();
+    await expect(page.getByTestId('knowledge-runtime-suggestion-list')).toContainText('Review before durable knowledge writes');
+    const preConfirmKnowledgeActions = await electronApp.evaluate(() => (
+      (globalThis as unknown as { __clawxKnowledgeRequests?: Array<{ action?: string }> }).__clawxKnowledgeRequests ?? []
+    ).map((request) => request.action));
+    expect(preConfirmKnowledgeActions).toContain('sekbSuggestPrinciples');
+    expect(preConfirmKnowledgeActions).not.toContain('sekbConfirmPrinciple');
+
+    await expect(page.getByTestId('knowledge-runtime-confirm')).toBeDisabled();
+    await page.getByTestId('knowledge-runtime-session-id').fill('session-e2e-runtime-1');
+    await page.getByTestId('knowledge-runtime-confirm').click();
+    await expect(page.getByTestId('knowledge-runtime-confirm-result')).toContainText('principle-e2e-confirmed');
+
+    await page.getByTestId('knowledge-runtime-suggestion-0').click();
+    await page.getByTestId('knowledge-runtime-reject').click();
+    await expect(page.getByTestId('knowledge-runtime-suggestion-list')).not.toBeVisible();
+
+    await page.getByTestId('knowledge-runtime-retrieve-intent').fill('Review a runtime lesson');
+    await page.getByTestId('knowledge-runtime-retrieve-type').fill('knowledge-ui');
+    await page.getByTestId('knowledge-runtime-retrieve-tags').fill('knowledge, review');
+    await page.getByTestId('knowledge-runtime-retrieve').click();
+    await expect(page.getByTestId('knowledge-runtime-retrieve-result')).toContainText('Review before durable knowledge writes');
+    await expect(page.getByTestId('knowledge-runtime-injection')).toContainText('Runtime Lessons');
+
+    const postReviewKnowledgeActions = await electronApp.evaluate(() => (
+      (globalThis as unknown as { __clawxKnowledgeRequests?: Array<{ action?: string }> }).__clawxKnowledgeRequests ?? []
+    ).map((request) => request.action));
+    expect(postReviewKnowledgeActions.filter((action) => action === 'sekbConfirmPrinciple')).toHaveLength(1);
+    expect(postReviewKnowledgeActions).toContain('sekbRejectSuggestion');
+    expect(postReviewKnowledgeActions).toContain('sekbRetrieveForTask');
 
     await page.getByRole('button', { name: /Initialize/ }).click();
     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();

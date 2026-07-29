@@ -181,7 +181,7 @@ Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki �
 
 任意の `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` も既定ではオフで、SEKB の主ゲートが必要です。`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` はこの assistant のフラグだけを上書きします。operator は明示的に手動実行する必要があります。Host/CLI は DEEPSEEK_API_KEY があればそれを使い、なければ deterministic fallback になります。この assistant が送信するのは、有界かつ秘匿化した trajectory projection と有界な既存 principle summary だけです。可観測な 30 秒の retry は一度だけで、provider unavailable、timeout、無効な JSON/schema、または上限到達時には既存の決定的な distillation suggestion を返します。安全な集約 trace/cost evidence だけを記録し、既存の `confirm_and_save` 確認パスより前に Principle、Memory、ContextBlock、index、trajectory state を書き換えることはありません。
 
-SEKB Hermes の運用入口は CLI と Host API のみです（SEKB 運用 GUI なし）。すべて既定オフで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。耐久的な確認パスは引き続き `confirm_and_save` のみです。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
+Knowledge > Runtime Lessons は既存の typed 経路を使い、決定的な提案、正確な候補レビュー、明示的な確認または却下、確認済み原則の取得を提供します。提案とレビューは書き込みを行いません。確認には可視のセッション系譜が必要で、引き続き `confirm_and_save` を使います。取得結果は有界な助言テキストとして表示するだけで、Chat へ自動添付しません。Hermes の shadow export/protocol/report と batch 運用は引き続き CLI/Host 専用です。すべての feature flag は既定オフのままで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
 
 ローカル CLI/Host ops は `openclaw_runtime/dist/knowledge/sekb/index.js` を読み込みます。`pnpm build:runtime` または `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only` で構築してください。dist がない場合 Host は `runtimeUnavailable` に降格し、CLI はビルド案内を出します。`pnpm sekb:hermes:gate` に dist は不要です。
 
@@ -194,7 +194,7 @@ CLI:
 - `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既存 DistillationTool 境界
 - `pnpm sekb:hermes:gate` - focused tests + contract + harness validate
 
-Host API（`knowledge.*`）: `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`。
+Host API（`knowledge.*`）: `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`, `sekbRetrieveForTask`。
 
 Shadow V1 のスコアリングと閾値 50 は凍結。ラベリング kit の準備完了は昇格準備完了を意味しません。Phase C/D の filtering / scheduling は延期です。
 

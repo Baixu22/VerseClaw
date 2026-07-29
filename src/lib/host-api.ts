@@ -469,7 +469,7 @@ import { invokeHost } from './host-api-client';
 type PromptCacheStatusFn = HostApiContract['usage']['promptCacheStatus'];
 type PromptCacheRiskEventFn = HostApiContract['usage']['recordPromptCacheRiskEvent'];
 
-export type { ChatKnowledgeReference } from '@shared/host-api/contract';
+export type { ChatKnowledgeReference, KnowledgeSekbDistillationSuggestion } from '@shared/host-api/contract';
 
 export type {
   ChannelAccountsResult,

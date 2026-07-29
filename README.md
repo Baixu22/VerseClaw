@@ -180,7 +180,7 @@ For advanced SEKB diagnostics, `runtime.contextBlock.sekb.shadowEvaluation.enabl
 
 The optional `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` is also default-off and requires the SEKB master gate; `OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` overrides only this assistant flag. An operator must explicitly invoke it; Host/CLI may use DEEPSEEK_API_KEY when present, otherwise the caller supplies a provider. It sends only bounded redacted trajectory projections and bounded existing-principle summaries, allows one observable 30-second retry, then returns the existing deterministic distillation suggestions on provider, timeout, JSON, schema, or limit failure. It records safe aggregate trace/cost evidence only; it never writes a principle, memory, ContextBlock, index, or trajectory state before the existing `confirm_and_save` confirmation path.
 
-SEKB Hermes operator surfaces are CLI and Host API only (no SEKB ops GUI). All features remain default-off and never auto-write principles, memory, ContextBlock, indexes, or trajectory state; `confirm_and_save` is still the only durable confirmation path. Offline artifacts under `artifacts/sekb-hermes-phase-a5/` are non-authoritative evaluation evidence.
+Knowledge > Runtime Lessons exposes the existing typed assisted path for deterministic suggest, exact-candidate review, explicit confirm or reject, and retrieval of confirmed principles. Suggestion and review are mutation-free; confirm requires visible session lineage and still uses `confirm_and_save`, while retrieval is displayed as bounded advisory text and is never attached to Chat automatically. Hermes shadow export/protocol/report and batch operations remain CLI/Host-only. All feature flags remain default-off and never auto-write principles, memory, ContextBlock, indexes, or trajectory state. Offline artifacts under `artifacts/sekb-hermes-phase-a5/` are non-authoritative evaluation evidence.
 
 Local CLI/Host ops load `openclaw_runtime/dist/knowledge/sekb/index.js`. Build it with `pnpm build:runtime` or the targeted `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`. Without that dist, Host routes degrade to `runtimeUnavailable` and CLI commands exit with a build hint; `pnpm sekb:hermes:gate` does not need dist.
 
@@ -193,7 +193,7 @@ CLI:
 - `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - existing DistillationTool boundaries
 - `pnpm sekb:hermes:gate` - focused tests + contract + harness validate
 
-Host API (`knowledge.*`): `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`.
+Host API (`knowledge.*`): `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`, `sekbRetrieveForTask`.
 
 Shadow V1 scoring and threshold 50 are frozen; labeling kit readiness is not promotion readiness. Phase C/D filtering and scheduling remain deferred.
 
