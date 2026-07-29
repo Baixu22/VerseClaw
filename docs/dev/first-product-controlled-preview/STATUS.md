@@ -16,9 +16,9 @@
 | **codeBaseline** | `refs/heads/main`（FP-P3-01 最终 clean SHA 由 fresh `release-gate-evidence.json.commit` 固定并必须等于该 ref；任务前基线 `32839d1e3`；未 push） |
 | **createdAt** | 2026-07-26 |
 | **updatedAt** | 2026-07-29 |
-| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3 engineering-validation-only` 已收口（01/02/05 done；03/04 engineering-validation-only 经用户授权视作满足 phase 出口）；`FP-P4` in_progress（01/02 done，08 ready，03/04 deferred） |
-| **activeTaskId** | `FP-P4-08`（多平台/DAG 扩围裁决；仅作 continue/shrink/stop 决策，不实现 adapter） |
-| **nextTaskId** | —（完成 FP-P4-08 裁决后再从 FP-P4-05/06/07 backlog 选择，保持单任务串行） |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3 engineering-validation-only` 已收口（01/02/05 done；03/04 engineering-validation-only 经用户授权视作满足 phase 出口）；`FP-P4` in_progress（01/02/08 done，03/04 deferred） |
+| **activeTaskId** | —（FP-P4-08 已完成，仅作裁决，未实现 adapter） |
+| **nextTaskId** | `FP-P4-05`（统一 C1 门禁语料；下一会话保持单任务串行） |
 | **owner** | —（独立开发者；safetyReviewer/productApprover 角色无法独立于实现，已标记 engineering-validation-only） |
 | **liveReady** | `false` |
 | **productApproved** | `false` |
@@ -119,7 +119,7 @@
 | FP-P4-05 | 统一 C1 门禁语料 | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-05：4 条手写 vs 32 条合成并存，C1 无单一 reduction 数字 |
 | FP-P4-06 | 前序 program 文档勘误（去 VToken default-ON） | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-01：`TASK-P1-04.md:36,70` 仍记「default 1」 |
 | FP-P4-07 | ja/ru 本地化补齐 | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-04：ack 五态与 hint 在 ja/ru 为英文占位（键位齐） |
-| FP-P4-08 | 多平台与 PR 依赖图扩围裁决 | FP-P4 | P3 | ready | `engineering-validation-only` | — | — | 2026-07-29 | P3-04 降级后解阻；基于 P2/P3 证据对 GitLab/Gitee/DAG/Queue 分别 continue/shrink/stop；不实现 adapter；G4/G5 engineering-validation-only |
+| FP-P4-08 | 多平台与 PR 依赖图扩围裁决 | FP-P4 | P3 | done | `engineering-validation-only` | — | Codex | 2026-07-29 | GitLab/DAG/Queue-Train shrink，Gitee stop；五维证据和客观复审触发条件已固化；无 adapter、Task Forest apply 或远端副作用 |
 
 ### 计数
 
@@ -234,6 +234,7 @@ Wave 5 (FP-P4): FP-P4-02 建议先开（Browser supervised）；FP-P4-01/FP-P4-0
 | 2026-07-29 | FP-P2-01/02/03 + FP-P3-03/04 + P4 进入 | 真人任务统一降级 + P4 解阻 | — | engineering-validation-only | 用户授权：所有真人任务（P2-01/02/03、P3-03/04）统一降级为 engineering-validation-only，phase P2/P3 出口 GO。P4-01/02/08 解阻转 ready，G4/G5 同步降级；P4-03/04 仍 deferred（TF-0006/TF-0014）。`liveReady`/`productApproved`/`defaultOn` 保持 false；所有 Hard lock 不解除；真实 canary/clean VM/出闸等待外部 reviewer 接手。active 转 FP-P4-02 |
 | 2026-07-29 | FP-P4-02 | supervised Browser 实现与工程验证 | G1,G2,G3,G4,G5 | done | 审批、多步执行、typed verification、私网/特殊地址与 popup deny、四语 UI 已落地；full test 6749、Browser 375、fresh Electron E2E 2/2、lint/typecheck/contract/comms、repository `git diff --check` 与共享工作树 Harness diff-coverage 全绿；G4/G5 为 engineering-validation-only，三个 false 开关与 Agent merge OFF 不变 |
 | 2026-07-29 | FP-P4-01 | SEKB assisted UI 实现与工程验证 | G1,G2,G3,G4,G5 | done | Knowledge > Runtime Lessons 完成 suggest→review→confirm/reject→retrieve；确认要求 session lineage 且确认前零写回，retrieve 仅 advisory 预览；74 focused tests、fresh Electron 1/1 与正式 Harness 全 profile pass；G4/G5 为 engineering-validation-only，三个 false 开关与所有 SEKB default-off 边界不变 |
+| 2026-07-29 | FP-P4-08 | 多平台/DAG 扩围裁决 | G1,G2,G3(n/a),G4,G5 | done | GitLab、stacked PR DAG、Queue/Train 均 shrink，Gitee stop；机器可读 evidence 锁定需求/API/权限/成本/安全五维与客观复审条件；无 continue、adapter、Task Forest proposal/apply 或远端副作用；三个 false 开关与 Agent merge OFF 不变 |
 
 ---
 
