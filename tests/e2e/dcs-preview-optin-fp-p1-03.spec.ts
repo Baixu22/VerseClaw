@@ -136,7 +136,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       const refused = await hostInvoke<Record<string, unknown>>(app, 'dcsProdFlags', 'setPreview', {
         enabled: true, restartGateway: true,
       });
-      // eslint-disable-next-line no-console -- evidence for FP-P1-03 phase A
+
       console.log('[fp-p1-03-refused]', JSON.stringify(refused));
       expect(refused.success).toBe(false);
 
@@ -176,7 +176,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
           `${key}: true`,
         );
       }
-      // eslint-disable-next-line no-console -- evidence for FP-P1-03 phase B
+
       console.log('[fp-p1-03-on]', await ack.getAttribute('data-ack-state'));
 
       // ---- Phase C: disable → baseline parity ----
@@ -199,7 +199,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
         method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000,
       });
       const probe = (parity as { turnEffectProbe?: { wouldChangeTurn?: boolean } }).turnEffectProbe;
-      // eslint-disable-next-line no-console -- evidence for FP-P1-03 phase C
+
       console.log('[fp-p1-03-parity]', JSON.stringify({
         wouldChangeTurn: probe?.wouldChangeTurn,
         effectiveFlags: (parity as { effectiveFlags?: Record<string, unknown> }).effectiveFlags,
@@ -214,7 +214,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       const attribution = (parity as {
         flagAttribution?: Record<string, { value: unknown; origin: string; key?: string }>;
       }).flagAttribution;
-      // eslint-disable-next-line no-console -- evidence for FP-P1-10
+
       console.log('[fp-p1-10-attribution]', JSON.stringify(attribution));
       expect(attribution).toBeDefined();
       const effective = (parity as { effectiveFlags?: Record<string, unknown> }).effectiveFlags ?? {};
@@ -238,7 +238,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       // noise, not signal — the attribution CONTRACT is asserted above against
       // the child, and in runtime-flag-attribution.test.ts.
       const effectiveList = page.getByTestId('settings-dcs-preview-effective');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-10 UI surface
+
       console.log('[fp-p1-10-ui-dom]', JSON.stringify(await effectiveList.innerText()));
 
       // ---- Phase D: kill switch suppresses the switch (killed, not applied) ----
@@ -256,7 +256,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       await expect(ack).toHaveAttribute('data-ack-state', 'failed', { timeout: 30_000 });
       await expect(page.getByTestId('settings-dcs-preview-ack-state')).toHaveText(/killed/i);
       await expect(page.getByTestId('settings-dcs-preview-killswitch')).toBeVisible();
-      // eslint-disable-next-line no-console -- evidence for FP-P1-03 phase D
+
       console.log('[fp-p1-03-killed]', await ack.getAttribute('data-ack-state'));
     } finally {
       await closeElectronApp(app);

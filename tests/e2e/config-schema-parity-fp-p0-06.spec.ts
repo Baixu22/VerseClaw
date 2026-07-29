@@ -155,7 +155,7 @@ test.describe('FP-P0-06 schema parity (real gateway child)', () => {
       expect(effectiveFlags['runtime.vtoken.assembly.enabled']).toBe(false);
       expect(effectiveFlags['runtime.contextEnhancement.killSwitch']).toBe(false);
 
-      // eslint-disable-next-line no-console -- evidence line for FP-P0-06 Test/evidence
+
       console.log('[fp-p0-06-parity-start]', JSON.stringify({
         childPid: ack.childPid,
         gatewayGeneration: ack.gatewayGeneration,
