@@ -1,8 +1,8 @@
 
- RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX-maturity-p0/openclaw_runtime
+ RUN  v4.1.7 C:/Users/27933/Desktop/clawx/ClawX/openclaw_runtime
 
 
  Test Files  1 passed (1)
       Tests  8 passed (8)
-   Start at  11:58:46
-   Duration  18.00s (transform 12.81s, setup 1.22s, import 15.33s, tests 798ms, environment 0ms)
+   Start at  00:43:49
+   Duration  4.90s (transform 2.90s, setup 309ms, import 3.75s, tests 438ms, environment 0ms)
