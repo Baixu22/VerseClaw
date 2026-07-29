@@ -191,7 +191,7 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
       const verification = await hostInvoke<Record<string, unknown>>(app, 'settings', 'get', {
         key: 'setupProviderVerification',
       });
-      // eslint-disable-next-line no-console -- evidence line for FP-P1-01 Test/evidence
+
       console.log('[fp-p1-01-verification]', JSON.stringify(verification));
       expect(verification.status).toBe('verified');
       expect(verification.model).toBe(MOCK_MODELS[0]);
@@ -223,7 +223,7 @@ test.describe('FP-P1-01 Setup provider/model verification (real Electron + real 
       const verification = await hostInvoke<Record<string, unknown>>(app, 'settings', 'get', {
         key: 'setupProviderVerification',
       });
-      // eslint-disable-next-line no-console -- evidence line for FP-P1-01 Test/evidence
+
       console.log('[fp-p1-01-skip]', JSON.stringify(verification));
       expect(verification.status).toBe('skipped');
 

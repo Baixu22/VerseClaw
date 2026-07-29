@@ -144,7 +144,7 @@ export const x = 1;
         timeout: 120_000,
       });
       const uiResultText = await page.getByTestId('settings-support-bundle-result').textContent();
-      // eslint-disable-next-line no-console -- evidence for FP-P1-06 UI path
+
       console.log('[fp-p1-06-ui]', uiResultText);
       expect(uiResultText ?? '').toContain('support-bundles');
 
@@ -153,7 +153,7 @@ export const x = 1;
         success: boolean; path?: string;
         redaction?: { totalHits: number; verified: boolean; findings: Array<{ type: string; hits: number }> };
       }>(app, 'diagnostics', 'exportSupportBundle');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-06
+
       console.log('[fp-p1-06-export]', JSON.stringify({
         success: result.success, path: result.path, redaction: result.redaction,
       }));
@@ -216,7 +216,7 @@ export const x = 1;
       // AC: size cap + truncation policy is explicit, not silent.
       const sizeBytes = Buffer.byteLength(raw, 'utf8');
       const truncated = bundle.truncated as string[] | undefined;
-      // eslint-disable-next-line no-console -- evidence for FP-P1-06 size policy
+
       console.log('[fp-p1-06-size]', JSON.stringify({ sizeBytes, truncated }));
       expect(sizeBytes).toBeLessThanOrEqual(6 * 1024 * 1024);
       expect(Array.isArray(truncated)).toBe(true);
