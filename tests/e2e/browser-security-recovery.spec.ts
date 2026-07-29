@@ -3,8 +3,8 @@
  *
  * Host path only (authorized BrowserWindow sender):
  *   vaultHealth
- *   → createTask → requestTaskApproval → runTask blocked
- *   → approveTask → tasks list (statusExplain)
+ *   → createTask waiting-approval → runTask blocked
+ *   → rejectTask → tasks list (statusExplain)
  *   → artifacts/browser-security-recovery/evidence.json
  *
  * Mode upgrade userApproval gate is unit-locked in
@@ -122,7 +122,7 @@ test.describe('Browser security + task recovery (TF-0005)', () => {
         profile: 'default',
         mode: 'headless',
       });
-      expect(created.task.status).toBe('queued');
+      expect(created.task.status).toBe('waiting-approval');
       expect(created.task.statusExplain).toBeTruthy();
 
       const waiting = await hostInvoke<TaskResult>(app, 'agentBrowser', 'requestTaskApproval', {
@@ -137,16 +137,16 @@ test.describe('Browser security + task recovery (TF-0005)', () => {
       expect(runBlocked.ok).toBe(false);
       expect(String(runBlocked.error?.message ?? '')).toMatch(/approval/i);
 
-      const approved = await hostInvoke<TaskResult>(app, 'agentBrowser', 'approveTask', {
+      const rejected = await hostInvoke<TaskResult>(app, 'agentBrowser', 'rejectTask', {
         taskId: created.task.id,
       });
-      expect(approved.task.status).toBe('queued');
-      expect(approved.task.statusExplain).toBeTruthy();
+      expect(rejected.task.status).toBe('cancelled');
+      expect(rejected.task.statusExplain).toBeTruthy();
 
       const listed = await hostInvoke<TasksResult>(app, 'agentBrowser', 'tasks', null);
       const found = listed.tasks.find((t) => t.id === created.task.id);
       expect(found).toBeTruthy();
-      expect(found?.status).toBe('queued');
+      expect(found?.status).toBe('cancelled');
       expect(found?.statusExplain).toBeTruthy();
 
       await mkdir(ARTIFACT_DIR, { recursive: true });
@@ -159,7 +159,7 @@ test.describe('Browser security + task recovery (TF-0005)', () => {
           createStatus: created.task.status,
           waitingStatus: waiting.task.status,
           runWhileWaitingBlocked: true,
-          approvedStatus: approved.task.status,
+          rejectedStatus: rejected.task.status,
           listedStatus: found?.status,
           statusExplainPresent: Boolean(found?.statusExplain),
         },

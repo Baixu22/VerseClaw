@@ -937,6 +937,8 @@ export const hostApi = {
       invokeHost('agentBrowser', 'requestTaskApproval', input),
     approveTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
       invokeHost('agentBrowser', 'approveTask', input),
+    rejectTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'rejectTask', input),
     show: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'show', input),
     hide: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
