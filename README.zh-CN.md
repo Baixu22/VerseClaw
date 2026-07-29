@@ -217,6 +217,8 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 
 侧边栏的 Agent Browser 工作台通过 Main 进程运行时提供相互隔离的 profile、标签页和会话。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
 
+监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
+
 Verse Claw 还内置默认启用的只读 Reach Readers 插件，覆盖 Web、RSS、V2EX、雪球、哔哩哔哩、YouTube、GitHub、Twitter 和小红书。平台 API/CLI 始终优先；现有 Agent Browser profile 只作为安全页面兜底或可见登录接力，并且不会向模型暴露 Cookie 或 token。
 
 

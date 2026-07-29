@@ -215,6 +215,8 @@ Scheduled tasks can also run Agent Browser automations: choose a URL, a browser 
 
 The sidebar Agent Browser workbench exposes isolated profiles, tabs, and sessions through the Main-owned runtime. Chat also enforces transcript token/cost budgets before dispatch, bounds persisted/rendered tool output, and aborts the underlying run on cancel or hard timeout.
 
+Supervised Browser tasks are persisted in a waiting-for-approval state before any browser effect. The approval view shows the objective, target, approved domains, mode, action scope, and ordered plan; after explicit approval, Main executes bounded navigate, wait, and click steps and reports a typed success or failure result. This does not enable unattended browsing or private-network access, and credentials remain Main-owned Vault references.
+
 Verse Claw also includes the readonly Reach Readers plugin for Web, RSS, V2EX, Xueqiu, Bilibili, YouTube, GitHub, Twitter, and Xiaohongshu. Platform API/CLI readers run first; the existing Agent Browser profile provides a guarded page fallback or visible login handoff without exposing cookies or tokens to the model.
 
 

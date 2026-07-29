@@ -1,19 +1,19 @@
 {
   "schema": "browser-security-recovery/v1",
   "taskForestNode": "TF-0005",
-  "generatedAt": "2026-07-22T09:53:22.120Z",
+  "generatedAt": "2026-07-28T18:16:25.703Z",
   "hostWorkflow": {
     "vaultHealth": "not_configured",
-    "createStatus": "queued",
+    "createStatus": "waiting-approval",
     "waitingStatus": "waiting-approval",
     "runWhileWaitingBlocked": true,
-    "approvedStatus": "queued",
-    "listedStatus": "queued",
+    "rejectedStatus": "cancelled",
+    "listedStatus": "cancelled",
     "statusExplainPresent": true
   },
   "vaultHealth": {
     "state": "not_configured",
-    "path": "C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-Zo0pX7\\agent-browser\\vault.json",
+    "path": "C:\\Users\\27933\\AppData\\Local\\Temp\\verse-claw-e2e-user-data-umI3bf\\agent-browser\\vault.json",
     "credentialCount": 0,
     "errorCode": "VAULT_NOT_CONFIGURED",
     "errorMessage": "Agent browser vault has not been configured yet"
