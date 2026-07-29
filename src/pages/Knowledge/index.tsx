@@ -22,7 +22,11 @@ import {
   type KnowledgeOkfValidationResult,
   type KnowledgeProvenanceRecord,
   type KnowledgeQualityMetrics,
+  type KnowledgeRuntimeLessonsReportResult,
   type KnowledgeSearchResult,
+  type KnowledgeSekbConfirmPrincipleResult,
+  type KnowledgeSekbDistillationSuggestion,
+  type KnowledgeSekbRetrieveForTaskResult,
   type KnowledgeSourceSet,
   type KnowledgeStatusResult,
   type KnowledgeStewardConfigGetResult,
@@ -39,7 +43,7 @@ import {
 import { cn } from '@/lib/utils';
 
 type SearchRow = Record<string, unknown>;
-type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
+type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'runtime' | 'governance';
 type MarkdownEditorMode = 'edit' | 'preview' | 'split';
 type KnowledgeLibrarianCitation = {
   lookup: string;
@@ -99,7 +103,7 @@ const WORKSPACE_CHROME_CLASS = 'overflow-hidden rounded-xl border border-black/1
 const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-input/70 dark:bg-surface-input/80';
 const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
-const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review'];
+const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'runtime'];
 const QUALITY_METRIC_KINDS: KnowledgeQualityMetricKind[] = [
   'stale_cards',
   'duplicate_clusters',
@@ -120,6 +124,7 @@ const TAB_ICONS: Record<WorkbenchTab, React.ComponentType<{ className?: string }
   inbox: Inbox,
   drafts: Edit3,
   review: ShieldCheck,
+  runtime: History,
   governance: Database,
 };
 
@@ -799,6 +804,13 @@ function inboxSourceDisplays(item: KnowledgeInboxItem): InboxSourceDisplay[] {
   return item.sourceIds.map((id) => ({ id, kind: 'manual' as const, label: id }));
 }
 
+function runtimePrincipleField(suggestion: KnowledgeSekbDistillationSuggestion, key: string): string {
+  const value = suggestion.suggested_principle[key];
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === 'string').join(', ');
+  return '';
+}
+
 export function Knowledge() {
   const { t } = useTranslation(['knowledge', 'common']);
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
@@ -860,6 +872,18 @@ export function Knowledge() {
   const [governanceQualityMetrics, setGovernanceQualityMetrics] = useState<KnowledgeQualityMetrics | null>(null);
   const [governanceLastChecked, setGovernanceLastChecked] = useState<string | null>(null);
   const [, setDismissedIssueIds] = useState<Set<string>>(() => new Set());
+  const [runtimeLessons, setRuntimeLessons] = useState<KnowledgeRuntimeLessonsReportResult | null>(null);
+  const [runtimeLessonsLoading, setRuntimeLessonsLoading] = useState(false);
+  const [runtimeLessonsRequested, setRuntimeLessonsRequested] = useState(false);
+  const [runtimeSuggestions, setRuntimeSuggestions] = useState<KnowledgeSekbDistillationSuggestion[]>([]);
+  const [selectedRuntimeSuggestionIndex, setSelectedRuntimeSuggestionIndex] = useState(0);
+  const [runtimeSessionId, setRuntimeSessionId] = useState('');
+  const [runtimeRejectReason, setRuntimeRejectReason] = useState('');
+  const [runtimeConfirmResult, setRuntimeConfirmResult] = useState<KnowledgeSekbConfirmPrincipleResult | null>(null);
+  const [runtimeRetrieveIntent, setRuntimeRetrieveIntent] = useState('');
+  const [runtimeRetrieveType, setRuntimeRetrieveType] = useState('');
+  const [runtimeRetrieveTags, setRuntimeRetrieveTags] = useState('');
+  const [runtimeRetrieveResult, setRuntimeRetrieveResult] = useState<KnowledgeSekbRetrieveForTaskResult | null>(null);
 
   const rows = useMemo(() => getSearchRows(searchResult), [searchResult]);
   const pageCounts = (status?.pageCounts ?? {}) as Record<string, number>;
@@ -902,6 +926,7 @@ export function Knowledge() {
   const selectedOkfCount = selectedOkfConceptIds.size;
   const okfCanImport = Boolean(okfValidation?.success && okfPath && selectedOkfCount > 0);
   const okfAllSelected = okfConcepts.length > 0 && okfConcepts.every((concept) => selectedOkfConceptIds.has(concept.conceptId));
+  const selectedRuntimeSuggestion = runtimeSuggestions[selectedRuntimeSuggestionIndex] ?? null;
   const editorSummary = useMemo(() => markdownSummary(editorBody), [editorBody]);
   const editorSourceIds = useMemo(() => {
     const explicit = editorSource.trim();
@@ -1016,6 +1041,132 @@ export function Knowledge() {
   useEffect(() => {
     void refreshGovernance();
   }, [refreshGovernance]);
+
+  const refreshRuntimeLessons = useCallback(async () => {
+    setRuntimeLessonsRequested(true);
+    setRuntimeLessonsLoading(true);
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.runtimeLessonsReport();
+      if (!result.success) throw new Error(result.error || t('runtime.errors.report'));
+      setRuntimeLessons(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setRuntimeLessonsLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (workbenchTab === 'runtime' && !runtimeLessonsRequested) {
+      void refreshRuntimeLessons();
+    }
+  }, [refreshRuntimeLessons, runtimeLessonsRequested, workbenchTab]);
+
+  const requestRuntimeSuggestions = useCallback(async () => {
+    const trajectoryIds = (runtimeLessons?.undistilled ?? []).map((entry) => entry.trajectory_id);
+    setRunning('runtimeSuggest');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbSuggestPrinciples({ trajectoryIds });
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.suggest'));
+      }
+      setRuntimeSuggestions(result.suggestions);
+      setSelectedRuntimeSuggestionIndex(0);
+      setRuntimeConfirmResult(null);
+      toast.success(t('runtime.toasts.suggested', { count: result.suggestions.length }));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [runtimeLessons?.undistilled, t]);
+
+  const confirmRuntimeSuggestion = useCallback(async () => {
+    if (!selectedRuntimeSuggestion || !runtimeSessionId.trim()) return;
+    const confirmedIndex = selectedRuntimeSuggestionIndex;
+    setRunning('runtimeConfirm');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbConfirmPrinciple({
+        suggestion: selectedRuntimeSuggestion,
+        sessionId: runtimeSessionId.trim(),
+        sourceSystem: 'ui-confirm',
+        integrityClaim: 'confirmed',
+      });
+      if (!result.success || !result.available || !result.principleId) {
+        throw new Error(result.error || t('runtime.errors.confirm'));
+      }
+      setRuntimeConfirmResult(result);
+      setRuntimeSuggestions((current) => current.filter((_, index) => index !== confirmedIndex));
+      setSelectedRuntimeSuggestionIndex(0);
+      setRuntimeSessionId('');
+      toast.success(t('runtime.toasts.confirmed'));
+      await refreshRuntimeLessons();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshRuntimeLessons, runtimeSessionId, selectedRuntimeSuggestion, selectedRuntimeSuggestionIndex, t]);
+
+  const rejectRuntimeSuggestion = useCallback(async () => {
+    if (!selectedRuntimeSuggestion) return;
+    const rejectedIndex = selectedRuntimeSuggestionIndex;
+    setRunning('runtimeReject');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbRejectSuggestion({
+        suggestion: selectedRuntimeSuggestion,
+        ...(runtimeRejectReason.trim() ? { reason: runtimeRejectReason.trim() } : {}),
+      });
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.reject'));
+      }
+      setRuntimeSuggestions((current) => current.filter((_, index) => index !== rejectedIndex));
+      setSelectedRuntimeSuggestionIndex(0);
+      setRuntimeRejectReason('');
+      toast.success(t('runtime.toasts.rejected'));
+      await refreshRuntimeLessons();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [refreshRuntimeLessons, runtimeRejectReason, selectedRuntimeSuggestion, selectedRuntimeSuggestionIndex, t]);
+
+  const retrieveRuntimePrinciples = useCallback(async () => {
+    if (!runtimeRetrieveIntent.trim() || !runtimeRetrieveType.trim()) return;
+    setRunning('runtimeRetrieve');
+    setError(null);
+    try {
+      const contextTags = runtimeRetrieveTags.split(',').map((tag) => tag.trim()).filter(Boolean);
+      const result = await hostApi.knowledge.sekbRetrieveForTask({
+        taskIntent: runtimeRetrieveIntent.trim(),
+        taskType: runtimeRetrieveType.trim(),
+        contextTags,
+        topK: 5,
+      });
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.retrieve'));
+      }
+      setRuntimeRetrieveResult(result);
+      toast.success(t('runtime.toasts.retrieved', { count: result.principles.length }));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [runtimeRetrieveIntent, runtimeRetrieveTags, runtimeRetrieveType, t]);
 
   const runGovernanceChecks = useCallback(async () => {
     setGovernanceRunning(true);
@@ -2059,7 +2210,7 @@ export function Knowledge() {
           })}
         </div>
 
-        <div className="mt-4 grid gap-1 rounded-xl border border-black/10 bg-surface-modal p-1 shadow-sm dark:border-white/10 md:grid-cols-4" data-testid="knowledge-workbench-tabs">
+        <div className="mt-4 grid gap-1 rounded-xl border border-black/10 bg-surface-modal p-1 shadow-sm dark:border-white/10 md:grid-cols-5" data-testid="knowledge-workbench-tabs">
           {PRIMARY_WORKBENCH_TABS.map((tab) => {
             const TabIcon = TAB_ICONS[tab];
             const isActive = workbenchTab === tab;
@@ -2233,7 +2384,7 @@ export function Knowledge() {
                   const ActiveIcon = TAB_ICONS[workbenchTab];
                   return ActiveIcon ? <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" /> : null;
                 })()}
-                <span className="truncate">{t(workbenchTab === 'library' ? 'sources.title' : workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : 'governance.title')}</span>
+                <span className="truncate">{t(workbenchTab === 'library' ? 'sources.title' : workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : workbenchTab === 'runtime' ? 'runtime.title' : 'governance.title')}</span>
               </span>
               <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
                 {t('governance.readOnlyBadge')}
@@ -2936,6 +3087,256 @@ export function Knowledge() {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {workbenchTab === 'runtime' && (
+              <div className="space-y-5" data-testid="knowledge-runtime-lessons">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/10 pb-4 dark:border-white/10">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
+                      <Badge variant="outline" className="border-yellow-500/30 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
+                        {t('runtime.reviewOnlyBadge')}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('runtime.subtitle')}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className={QUIET_BUTTON_CLASS}
+                    onClick={() => void refreshRuntimeLessons()}
+                    disabled={runtimeLessonsLoading}
+                    data-testid="knowledge-runtime-refresh"
+                  >
+                    {runtimeLessonsLoading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="mr-1.5 h-3.5 w-3.5" />}
+                    {t('runtime.refresh')}
+                  </Button>
+                </div>
+
+                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-5 text-yellow-700 dark:text-yellow-400">
+                  {t('runtime.reviewBoundary')}
+                </div>
+
+                {runtimeLessonsLoading && !runtimeLessons ? (
+                  <div className="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t('runtime.loading')}
+                  </div>
+                ) : null}
+
+                {!runtimeLessonsLoading && runtimeLessons && !runtimeLessons.available ? (
+                  <div className="rounded-lg border border-black/10 bg-surface-input p-5 text-sm text-muted-foreground dark:border-white/10">
+                    {t('runtime.unavailable')}
+                  </div>
+                ) : null}
+
+                {runtimeLessons?.available ? (
+                  <>
+                    <div className="grid gap-2 sm:grid-cols-3">
+                      {([
+                        ['trajectories', runtimeLessons.counts.trajectories],
+                        ['undistilled', runtimeLessons.counts.undistilledTrajectories],
+                        ['principles', runtimeLessons.counts.activePrinciples],
+                      ] as const).map(([key, value]) => (
+                        <div key={key} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                          <div className="text-xl font-semibold tabular-nums">{value}</div>
+                          <div className="mt-1 text-xs text-muted-foreground">{t(`runtime.metrics.${key}`)}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid gap-4 xl:grid-cols-2">
+                      <section className="space-y-3" aria-labelledby="runtime-undistilled-title">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h4 id="runtime-undistilled-title" className="text-sm font-semibold">{t('runtime.undistilledTitle')}</h4>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => void requestRuntimeSuggestions()}
+                            disabled={busy || runtimeLessons.undistilled.length === 0}
+                            data-testid="knowledge-runtime-suggest"
+                          >
+                            {running === 'runtimeSuggest' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1.5 h-3.5 w-3.5" />}
+                            {t(running === 'runtimeSuggest' ? 'runtime.suggesting' : 'runtime.requestSuggestions')}
+                          </Button>
+                        </div>
+                        <div className="space-y-2">
+                          {runtimeLessons.undistilled.map((entry) => (
+                            <div key={entry.trajectory_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                              <div className="flex flex-wrap items-start justify-between gap-2">
+                                <span className="text-sm font-medium">{entry.task_intent}</span>
+                                <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">{entry.outcome}</Badge>
+                              </div>
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                <Badge variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{entry.trajectory_id}</Badge>
+                                <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{t('runtime.taskType')}: {entry.task_type}</Badge>
+                                {entry.context_fingerprint.map((tag) => <Badge key={tag} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
+                              </div>
+                              {entry.error_signature ? <p className="mt-2 break-words text-xs text-red-700 dark:text-red-400">{t('runtime.errorSignature')}: {entry.error_signature}</p> : null}
+                            </div>
+                          ))}
+                          {runtimeLessons.undistilled.length === 0 ? <p className="rounded-lg bg-surface-input p-3 text-sm text-muted-foreground">{t('runtime.emptyUndistilled')}</p> : null}
+                        </div>
+                      </section>
+
+                      <section className="space-y-3" aria-labelledby="runtime-principles-title">
+                        <h4 id="runtime-principles-title" className="text-sm font-semibold">{t('runtime.principlesTitle')}</h4>
+                        <div className="space-y-2">
+                          {runtimeLessons.activePrinciples.map((principle) => (
+                            <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                              <div className="flex flex-wrap items-start justify-between gap-2">
+                                <span className="text-sm font-medium">{principle.title}</span>
+                                <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400">{principle.criticality}</Badge>
+                              </div>
+                              <p className="mt-1 truncate font-mono text-[10px] text-muted-foreground">{principle.principle_id}</p>
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                {principle.task_types.map((type) => <Badge key={`type:${type}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{type}</Badge>)}
+                                {principle.context_tags.map((tag) => <Badge key={`tag:${tag}`} variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{tag}</Badge>)}
+                              </div>
+                              <p className="mt-2 text-xs text-muted-foreground">{t('runtime.retrievals')}: {principle.retrieval_count} · {t('runtime.adoptions')}: {principle.adoption_count}</p>
+                            </div>
+                          ))}
+                          {runtimeLessons.activePrinciples.length === 0 ? <p className="rounded-lg bg-surface-input p-3 text-sm text-muted-foreground">{t('runtime.emptyPrinciples')}</p> : null}
+                        </div>
+                      </section>
+                    </div>
+
+                    <section className="space-y-2" aria-labelledby="runtime-index-title">
+                      <h4 id="runtime-index-title" className="text-sm font-semibold">{t('runtime.indexTitle')}</h4>
+                      <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">{runtimeLessons.indexPreview || t('runtime.emptyIndex')}</pre>
+                    </section>
+
+                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-suggestions-title">
+                      <div>
+                        <h4 id="runtime-suggestions-title" className="text-sm font-semibold">{t('runtime.suggestionsTitle')}</h4>
+                        <p className="mt-1 text-xs text-muted-foreground">{t('runtime.suggestionsDescription')}</p>
+                      </div>
+                      {runtimeSuggestions.length > 0 ? (
+                        <div className="grid gap-4 xl:grid-cols-[minmax(240px,0.75fr)_minmax(0,1.25fr)]">
+                          <div className="space-y-2" data-testid="knowledge-runtime-suggestion-list">
+                            {runtimeSuggestions.map((suggestion, index) => (
+                              <button
+                                key={`${suggestion.source_trajectory_ids.join(':')}:${index}`}
+                                type="button"
+                                className={cn(
+                                  'w-full rounded-lg border p-3 text-left transition-colors',
+                                  selectedRuntimeSuggestionIndex === index
+                                    ? 'border-primary/30 bg-primary/5'
+                                    : 'border-black/10 bg-surface-input hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5',
+                                )}
+                                onClick={() => setSelectedRuntimeSuggestionIndex(index)}
+                                data-testid={`knowledge-runtime-suggestion-${index}`}
+                              >
+                                <span className="block text-sm font-medium">{runtimePrincipleField(suggestion, 'title') || suggestion.cluster_summary}</span>
+                                <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">{suggestion.cluster_summary}</span>
+                                <span className="mt-2 block text-[10px] font-medium text-primary">{t('runtime.confidence')}: {Math.round(suggestion.confidence * 100)}%</span>
+                              </button>
+                            ))}
+                          </div>
+
+                          {selectedRuntimeSuggestion ? (
+                            <div className="space-y-4 rounded-lg border border-black/10 bg-surface-input p-4 dark:border-white/10" data-testid="knowledge-runtime-suggestion-review">
+                              <div className="space-y-2">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                  <h5 className="text-sm font-semibold">{runtimePrincipleField(selectedRuntimeSuggestion, 'title') || t('runtime.untitledSuggestion')}</h5>
+                                  <Badge variant="outline" className="border-primary/30 bg-primary/5 text-primary">{Math.round(selectedRuntimeSuggestion.confidence * 100)}%</Badge>
+                                </div>
+                                <p className="text-xs leading-5 text-muted-foreground">{selectedRuntimeSuggestion.cluster_summary}</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {selectedRuntimeSuggestion.source_trajectory_ids.map((id) => <Badge key={id} variant="outline" className="border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{id}</Badge>)}
+                                </div>
+                              </div>
+                              {(['condition', 'action', 'reason', 'task_types', 'context_tags', 'criticality'] as const).map((field) => {
+                                const value = runtimePrincipleField(selectedRuntimeSuggestion, field);
+                                return value ? (
+                                  <div key={field}>
+                                    <div className="text-[11px] font-medium text-muted-foreground">{t(`runtime.fields.${field}`)}</div>
+                                    <p className="mt-1 text-sm leading-5">{value}</p>
+                                  </div>
+                                ) : null;
+                              })}
+
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="space-y-1.5">
+                                  <Label htmlFor="runtime-session-id">{t('runtime.sessionId')}</Label>
+                                  <Input id="runtime-session-id" value={runtimeSessionId} onChange={(event) => setRuntimeSessionId(event.target.value)} placeholder={t('runtime.sessionPlaceholder')} data-testid="knowledge-runtime-session-id" />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <Label htmlFor="runtime-reject-reason">{t('runtime.rejectReason')}</Label>
+                                  <Input id="runtime-reject-reason" value={runtimeRejectReason} onChange={(event) => setRuntimeRejectReason(event.target.value)} placeholder={t('runtime.rejectPlaceholder')} data-testid="knowledge-runtime-reject-reason" />
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                <Button type="button" onClick={() => void confirmRuntimeSuggestion()} disabled={busy || !runtimeSessionId.trim()} data-testid="knowledge-runtime-confirm">
+                                  {running === 'runtimeConfirm' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
+                                  {t(running === 'runtimeConfirm' ? 'runtime.confirming' : 'runtime.confirm')}
+                                </Button>
+                                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void rejectRuntimeSuggestion()} disabled={busy} data-testid="knowledge-runtime-reject">
+                                  {running === 'runtimeReject' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <X className="mr-1.5 h-3.5 w-3.5" />}
+                                  {t(running === 'runtimeReject' ? 'runtime.rejecting' : 'runtime.reject')}
+                                </Button>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <p className="rounded-lg bg-surface-input p-3 text-sm text-muted-foreground">{t('runtime.noSuggestions')}</p>
+                      )}
+
+                      {runtimeConfirmResult?.principleId ? (
+                        <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400" data-testid="knowledge-runtime-confirm-result">
+                          {t('runtime.confirmResult')}: <span className="font-mono">{runtimeConfirmResult.principleId}</span>
+                        </div>
+                      ) : null}
+                    </section>
+
+                    <section className="space-y-4 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-retrieve-title">
+                      <div>
+                        <h4 id="runtime-retrieve-title" className="text-sm font-semibold">{t('runtime.retrieveTitle')}</h4>
+                        <p className="mt-1 text-xs text-muted-foreground">{t('runtime.retrieveDescription')}</p>
+                      </div>
+                      <div className="grid gap-3 lg:grid-cols-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-retrieve-intent">{t('runtime.taskIntent')}</Label>
+                          <Input id="runtime-retrieve-intent" value={runtimeRetrieveIntent} onChange={(event) => setRuntimeRetrieveIntent(event.target.value)} placeholder={t('runtime.taskIntentPlaceholder')} data-testid="knowledge-runtime-retrieve-intent" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-retrieve-type">{t('runtime.taskType')}</Label>
+                          <Input id="runtime-retrieve-type" value={runtimeRetrieveType} onChange={(event) => setRuntimeRetrieveType(event.target.value)} placeholder={t('runtime.taskTypePlaceholder')} data-testid="knowledge-runtime-retrieve-type" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-retrieve-tags">{t('runtime.contextTags')}</Label>
+                          <Input id="runtime-retrieve-tags" value={runtimeRetrieveTags} onChange={(event) => setRuntimeRetrieveTags(event.target.value)} placeholder={t('runtime.contextTagsPlaceholder')} data-testid="knowledge-runtime-retrieve-tags" />
+                        </div>
+                      </div>
+                      <Button type="button" onClick={() => void retrieveRuntimePrinciples()} disabled={busy || !runtimeRetrieveIntent.trim() || !runtimeRetrieveType.trim()} data-testid="knowledge-runtime-retrieve">
+                        {running === 'runtimeRetrieve' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Search className="mr-1.5 h-3.5 w-3.5" />}
+                        {t(running === 'runtimeRetrieve' ? 'runtime.retrieving' : 'runtime.retrieve')}
+                      </Button>
+
+                      {runtimeRetrieveResult ? (
+                        <div className="grid gap-3 lg:grid-cols-2" data-testid="knowledge-runtime-retrieve-result">
+                          <div className="space-y-2">
+                            {runtimeRetrieveResult.principles.map((principle) => (
+                              <div key={principle.principle_id} className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
+                                <div className="text-sm font-medium">{principle.title}</div>
+                                <p className="mt-1 text-xs leading-5 text-muted-foreground">{principle.action}</p>
+                              </div>
+                            ))}
+                            {runtimeRetrieveResult.principles.length === 0 ? <p className="rounded-lg bg-surface-input p-3 text-sm text-muted-foreground">{t('runtime.noRetrieved')}</p> : null}
+                          </div>
+                          <div className="rounded-lg border border-sky-500/20 bg-sky-500/10 p-3">
+                            <div className="text-xs font-semibold text-sky-700 dark:text-sky-400">{t('runtime.advisoryTitle')}</div>
+                            <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-words text-xs leading-5 text-foreground" data-testid="knowledge-runtime-injection">{runtimeRetrieveResult.injection || t('runtime.emptyAdvisory')}</pre>
+                          </div>
+                        </div>
+                      ) : null}
+                    </section>
+                  </>
+                ) : null}
               </div>
             )}
 

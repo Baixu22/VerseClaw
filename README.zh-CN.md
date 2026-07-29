@@ -182,7 +182,7 @@ Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上�
 
 可选的 `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` 同样默认关闭，并依赖 SEKB 主开关；`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` 只覆盖该建议器开关。操作员必须显式手动调用；Host/CLI 在存在 DEEPSEEK_API_KEY 时可用其作为 provider，否则回退 deterministic。它仅发送有界、脱敏的轨迹投影和有界的既有原则摘要，最多进行一次可观测的 30 秒重试；provider 不可用、超时、JSON 或 schema 无效、或触发限额时，都会返回现有确定性蒸馏建议。它只记录安全的聚合 trace/cost 证据；在既有 `confirm_and_save` 确认路径之前，绝不写入 Principle、Memory、ContextBlock、索引或 trajectory 状态。
 
-SEKB Hermes 运营入口仅为 CLI 与 Host API（无 SEKB 运营 GUI）。全部能力默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`confirm_and_save` 仍是唯一持久确认路径。`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
+Knowledge > 运行经验通过既有 typed 路径提供确定性建议、精确候选审查、显式确认或拒绝，以及已确认原则检索。生成建议和审查不产生写入；确认要求可见会话谱系并继续使用 `confirm_and_save`，检索仅显示有界辅助文本，绝不会自动附加到 Chat。Hermes shadow 导出/协议/报告与 batch 运维仍仅限 CLI/Host。全部功能开关继续默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
 
 本地 CLI/Host 运维入口依赖 `openclaw_runtime/dist/knowledge/sekb/index.js`。请先执行 `pnpm build:runtime`，或定向构建 `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`。缺少 dist 时 Host 会诚实降级为 `runtimeUnavailable`，CLI 会提示构建；`pnpm sekb:hermes:gate` 不需要 dist。
 
@@ -195,7 +195,7 @@ CLI：
 - `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既有 DistillationTool 边界
 - `pnpm sekb:hermes:gate` - 聚焦测试 + contract + harness validate
 
-Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`。
+Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`、`sekbRetrieveForTask`。
 
 Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。Phase C/D 过滤与调度仍延期。
 
