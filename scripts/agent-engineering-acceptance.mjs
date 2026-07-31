@@ -10,6 +10,8 @@ import {
   loadManifest,
   readAcceptanceStatus,
   runAcceptance,
+  sha256,
+  stableJson,
   verifyAcceptance,
   writePlan,
 } from './lib/agent-engineering-acceptance.mjs';
@@ -186,8 +188,10 @@ function runFull(args) {
         engineeringAcceptedByAgent: false,
       },
       failures: [...(executor.failures ?? []), 'executor did not pass; verifier rerun not attempted'],
+      reportDigest: undefined,
     };
-    writeFileSync(join(outputDir, 'final-report.json'), JSON.stringify(finalReport, null, 2));
+    finalReport.reportDigest = sha256(stableJson({ ...finalReport, reportDigest: undefined }));
+    writeFileSync(join(outputDir, 'final-report.json'), `${JSON.stringify(finalReport, null, 2)}\n`);
     printJson({ plan: { runId: manifest.runId, manifestDigest: manifest.manifestDigest }, executor: summary(executor) });
     return 1;
   }
