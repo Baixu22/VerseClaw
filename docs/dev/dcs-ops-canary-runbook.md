@@ -30,6 +30,23 @@ Expect: exit 0, prints gate table, hard veto all safe, canary recommendation ≠
 
 If fail: follow printed **next step** (do not dig only in raw logs).
 
+### Agent-surrogate engineering track
+
+When human canary staffing is unavailable, the user may authorize the bounded downgraded track:
+
+```powershell
+pnpm run tf0009:agent-surrogate
+pnpm run dcs:ops:preflight
+```
+
+Expected split result: `agentSurrogateReady=true`, `l3Ready=false`. The report contains 10
+agent records for each profile and an agent kill/rollback drill. It must keep human counts at
+zero and may only recommend `review_needed` / `degraded-agent-complete`, never `done`.
+
+The SEKB agent track stops at reject/cancel and zero principle writes; an agent must not impersonate
+the human-confirm path. The Browser agent track uses an isolated page runtime and is not real
+public-network evidence.
+
 Manual equivalent:
 
 ```powershell
@@ -141,9 +158,12 @@ Update `artifacts/dcs-deep-test-week1/decision.md` and `summary.json`.
 - E2E needs display/session; headless cloud may show dbus noise (harmless for non-UI gates).
 - Prefer:
   ```powershell
+  pnpm build:runtime
   pnpm run build:vite
   pnpm exec playwright test tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts
   ```
+- `build:vite` does not build `openclaw_runtime/dist/knowledge/sekb/index.js`. A cold L2 run
+  must run `build:runtime` first; `runtimeUnavailable` is a failed gate, not a skip.
 - TLS `NODE_TLS_REJECT_UNAUTHORIZED=0` warnings may appear from local env; do not treat as gate failure unless tests fail.
 - Git Bash path if POSIX needed: `C:\Program Files\Git\bin\bash.exe` (not WSL `bash`).
 

@@ -229,6 +229,7 @@ export async function computeMemoryExtraSystemPrompt(
   sessionKey: string | undefined,
   providerFactory: () => readonly RuntimeContextProvider[],
   log?: (message: string, context?: Record<string, unknown>) => void,
+  scope?: { workspace?: string; taskId?: string },
 ): Promise<string | undefined> {
   let result = extraSystemPrompt;
   try {
@@ -236,7 +237,12 @@ export async function computeMemoryExtraSystemPrompt(
     if (pilotConfig.enabled && sessionKey) {
       const providers = providerFactory();
       const memoryResult = await assembleChatTurnMemoryInjection(
-        { sessionKey, metadata: { roleName: "main" } },
+        {
+          sessionKey,
+          workspace: scope?.workspace,
+          taskId: scope?.taskId,
+          metadata: { roleName: "main", sessionKey },
+        },
         providers,
         pilotConfig,
       );

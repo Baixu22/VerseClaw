@@ -1,5 +1,14 @@
 # TASK-P1-04: VToken vs DCS primary-path product decision
 
+> **FP-P4-06 correction (2026-07-29):** this historical task intentionally keeps
+> its original `default 1` / `already on` / `default on unless killed` wording below
+> as a record of the launch-layer drift that existed at the time. The current and
+> authoritative product default is **OFF (opt-in)**. See
+> `docs/dev/default-config-matrix.md`,
+> `docs/dev/first-product-controlled-preview/tasks/FP-P0-01.md`, and
+> `harness/specs/rules/vtoken-foundation-boundary.md`. None of the historical
+> default-on lines below describe current behavior.
+
 | field | value |
 |-------|-------|
 | **id** | `TASK-P1-04` |

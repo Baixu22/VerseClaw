@@ -1,0 +1,80 @@
+{
+  "applied_at": "2026-07-29T16:35:03.576543Z",
+  "base_graph_hash": "2f25000d3e1b74d3c3663d60e85002af186b70d9ca12d001bccb9b14bb594614",
+  "base_summary": {
+    "edge_count": 31,
+    "node_count": 19,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "harness/specs/tasks/uas-01-unified-contract-event-spine.md",
+          "openclaw_runtime/src/runtime-core/agent-run-contracts.ts",
+          "openclaw_runtime/src/runtime-core/agent-run-event-spine.ts",
+          "openclaw_runtime/src/runtime-core/index.ts",
+          "tests/unit/agent-run-contracts.test.ts",
+          "tests/unit/agent-run-event-spine.test.ts",
+          "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#12-tf-0012uas-01-工程实现与待确认收口2026-07-30",
+          "pnpm exec vitest run: 6 files / 59 tests passed",
+          "pnpm run typecheck; targeted ESLint; comms replay/compare; UAS-01 scoped diff check: passed"
+        ],
+        "execution_hints": [
+          "本节点只建立 contract 与持久事件主干，不授权 TaskLoop cutover、event-log-first resume 或 replay side effects",
+          "long_task_checkpoints 继续是默认恢复真源；runtime_task_event_log_records 是唯一持久 UAS event-log owner",
+          "既有 Kysely/generated 与 shared dirty Harness residual 保持显式，不通过扩 ownership 或无关重生成隐藏",
+          "正式 apply 后下一会话只能推进 TF-0013/UAS-02；禁止越级 TF-0014 或 FP-P4-03/04"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "UAS-01 工程实现完成：统一版本化 plan/process/observation/artifact/policy/event contract 只投影到既有 RuntimeTaskEventLog SQLite owner；同 task 幂等键不重复副作用，纯 replay 与在线状态一致，checkpoint/trajectory/diagnostics authority 均保持原边界。"
+      },
+      "id": "TF-0012"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0012",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "仅在 TF-0012 closeout proposal 获用户确认并 apply 后，下一会话建立 UAS-02 Harness task spec、运行 harness context，并只推进 Context Orchestrator residual 收口。"
+      },
+      "id": "TF-0013"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0013",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-07-29T16:32:49.990120Z",
+        "evidence": "harness/specs/tasks/uas-01-unified-contract-event-spine.md#validation-notes；命令输出已在 2026-07-29/30 UAS-01 会话复核",
+        "expected_requirement": "UAS-01 task spec 列出的数据库与 diff-aware Harness 命令应在收口时全部绿色。",
+        "id": "TFD-tf0012-repository-baseline-gates-20260730",
+        "observed_action_or_result": "UAS-01 scoped 实现门禁通过，但 db:kysely:check 报既有 generated 文件 stale，lint:kysely 报既有 FactStore/raw node:sqlite guardrail；完整 diff-aware Harness 将共享脏工作树的大量无关文件纳入 touchedAreas。",
+        "recommendation": "保持残留显式并由对应数据库/仓库基线 owner 后续处理；不扩大 UAS-01 ownedPaths、不重生成无关文件。用户确认本 proposal 时即确认 scoped engineering closeout 不等于这些仓库基线问题已修复。",
+        "related_task_ids": [
+          "TF-0012"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-07-29T16:32:49.988119Z",
+  "notes": "本 proposal 不补真人/live/soak/product approval，不改变 liveReady/productApproved/defaultOn=false、C1 4.5x keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 或 SEKB auto-writeback=false；不开始 TF-0013/14、FP-P4-03/04。未经用户明确确认不得 apply。",
+  "proposal_id": "TFP-tf0012-unified-contract-event-spine-closeout-20260730",
+  "rationale": "TF-0012/UAS-01 已完成版本化 AgentRun contract family、既有 RuntimeTaskEventLog SQLite 投影、幂等副作用守卫、纯状态重放、脱敏与 bounded retention，并通过 6 files/59 tests、typecheck、targeted ESLint、comms 和 scoped diff check。仓库既有 Kysely/generated 与共享 dirty diff-aware Harness 残留已显式披露，未伪造为通过。按严格串行链，仅在用户确认后收口 TF-0012 并释放 TF-0013。",
+  "session_id": "session-2026-07-30-tf0012-unified-contract-event-spine",
+  "status": "applied"
+}

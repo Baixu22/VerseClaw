@@ -3,8 +3,8 @@
  *
  * VT is a foundation library hosted as a long-lived Python worker.
  * It does NOT replace DCS ContextBlock / BlockStore / compaction / memory stores.
- * Production assembly injects ## Working Context on agent turns (default ON).
- * Host-api remains available for diagnostics / smoke.
+ * Opt-in production assembly can inject ## Working Context on agent turns (default OFF).
+ * The host-api bridge is also default OFF and remains available for diagnostics / smoke.
  */
 
 

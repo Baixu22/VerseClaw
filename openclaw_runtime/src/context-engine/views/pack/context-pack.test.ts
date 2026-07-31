@@ -138,6 +138,27 @@ describe("context pack view (gate E)", () => {
     expect(notEnough.missingEvidence.some((entry) => entry.includes("No indexed evidence matched"))).toBe(true);
   });
 
+  it("declares a ripgrep fallback failure instead of silently reporting an index miss", async () => {
+    const failingMaterializer: Materializer = {
+      ...materializer,
+      ensureTextFacts: async () => ({
+        chunks: [],
+        backfilled: [],
+        truncated: false,
+        error: "ripgrep emitted unparseable output",
+      }),
+    };
+
+    const pack = await buildContextPack(store, failingMaterializer, {
+      query: "zz_totally_unknown_symbol_qq",
+    });
+
+    expect(pack.answerable).toBe(false);
+    expect(pack.missingEvidence).toContain(
+      "ripgrep fallback failed: ripgrep emitted unparseable output",
+    );
+  });
+
   it("truncates to budget and declares it via context_budget_truncated (gate E-3)", async () => {
     const pack = await buildContextPack(store, materializer, {
       query: "auth config full source 完整",

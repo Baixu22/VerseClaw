@@ -8,6 +8,8 @@ import { finalizeCompressionTelemetry } from "../../../packages/agent-core/src/h
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import { resolveAgentModelFallbackValues } from "../../config/model-input.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { endContextOrchestratorTurn } from "../../context-engine/context-orchestrator.js";
+import { endTurnInjectionBudget } from "../../context-engine/turn-injection-budget.js";
 import {
   createContextItemId,
   createTransformationLifecycleEvents,
@@ -547,6 +549,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
   const attempt = params.attempt ?? 1;
   const maxAttempts = params.maxAttempts ?? 1;
   const runId = params.runId ?? params.sessionId;
+  const injectionTurnId = `${params.sessionKey ?? params.sessionId}::${runId}::compaction`;
   const resolvedWorkspace = resolveUserPath(params.workspaceDir);
   ensureRuntimePluginsLoaded({
     config: params.config,
@@ -1237,6 +1240,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
         model,
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        injectionTurnId,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,
@@ -1693,6 +1697,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
     });
     return fail(reason, err);
   } finally {
+    endContextOrchestratorTurn(injectionTurnId);
+    endTurnInjectionBudget(injectionTurnId);
     if (!checkpointSnapshotRetained) {
       await cleanupCompactionCheckpointSnapshot(checkpointSnapshot);
     }

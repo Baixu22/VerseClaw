@@ -12,13 +12,13 @@
 | **predecessor** | `docs/dev/dcs-visible-production/STATUS.md`（M0/M1 已闭环，P2-01 human-blocked） |
 | **sourceAudit** | Codex 只读审计 2026-07-26（证据水位 L0–L5、组件缺口表、Phase 0–4 建议） |
 | **forgeAudit** | `MERGEBEACON-GIT-CAPABILITY-ADOPTION.md`（2026-07-27；核心链 `FP-P2-07`–`10`，联合验收 `FP-P2-01/02/03`，扩围 `FP-P4-08`） |
-| **downstreamRoadmap** | `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`（`TF-0010`/`TF-0011`–`TF-0019`，当前均 proposed） |
+| **downstreamRoadmap** | `docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md`（`TF-0011/12/13=done`；`TF-0014/UAS-03=ready` 但未开始；`TF-0015`–`TF-0019` 仍 proposed） |
 | **codeBaseline** | `refs/heads/main`（FP-P3-01 最终 clean SHA 由 fresh `release-gate-evidence.json.commit` 固定并必须等于该 ref；任务前基线 `32839d1e3`；未 push） |
 | **createdAt** | 2026-07-26 |
-| **updatedAt** | 2026-07-29 |
-| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3 engineering-validation-only` 已收口（01/02/05 done；03/04 engineering-validation-only 经用户授权视作满足 phase 出口）；`FP-P4` in_progress（01/02/08 done，03/04 deferred） |
-| **activeTaskId** | —（FP-P4-08 已完成，仅作裁决，未实现 adapter） |
-| **nextTaskId** | `FP-P4-05`（统一 C1 门禁语料；下一会话保持单任务串行） |
+| **updatedAt** | 2026-07-30 |
+| **phase** | `FP-P1` 出口 GO（11/12 done，1 deferred）；`FP-P2 engineering-validation-only` 已收口；`FP-P3 engineering-validation-only` 已收口（01/02/05 done；03/04 engineering-validation-only 经用户授权视作满足 phase 出口）；`FP-P4` in_progress（05/06/07 done；01/02/08 degraded-agent-complete + review_needed；03/04 deferred） |
+| **activeTaskId** | `TF-0014/UAS-03`（下一唯一工程叶节点；ready，尚未开始） |
+| **nextTaskId** | `TF-0015`（仅在 TF-0014 正式收口后通过 proposal 释放） |
 | **owner** | —（独立开发者；safetyReviewer/productApprover 角色无法独立于实现，已标记 engineering-validation-only） |
 | **liveReady** | `false` |
 | **productApproved** | `false` |
@@ -42,6 +42,8 @@
 
 **2026-07-29 扩展授权**：用户进一步把所有真人任务（P2-01/02/03、P3-03/04）统一降级为 engineering-validation-only。P3 phase 出口据此视作满足，进入 P4。P4-01/02/08 的 G4/G5 同步降级为 engineering-validation-only；P4-03/04 仍 deferred（卡在 `TF-0006`/`TF-0014`，不由本 program 解阻）。
 
+**2026-07-29 TF-0009 agent-surrogate 授权**：因没有真人测试成本，三 profile 改由 agent 完成工程流程。DCS/SEKB/Browser 各 `10/10`、agent kill/rollback 通过，但真人合格计数仍为 `0/10`。证据标签为 `degraded-agent-complete`，TF-0009 只能保持 `review_needed`、不可标 `done`。agent 报告本身不得自授权释放下游；随后用户另行确认并应用 `TFP-tf0011-engineering-chain-release-20260729`，仅把纯工程 TF-0011 链与真人 residual 解耦，不改变 TF-0009 或任何产品锁。
+
 该偏差不表示 controlled canary 已开始，不授权真实凭据、真实 GitHub 评论、metadata 修改或 merge，不改变 `liveReady=false`、`productApproved=false`、`defaultOn=false`，也不解除任何 hard lock。
 
 ---
@@ -53,8 +55,8 @@
 | L0 | 工程门禁 | ✅ `contract:check` 通过；root unit 6108 passed / DCS 304 passed（FP-P0 后重测） | 保持 |
 | L1 | 合成 canary | ⚠️ C1 32 synthetic，`live=false`，`keep-off` | 保持（不冒充 live） |
 | L2 | Electron 路径 | ✅ 关键组合 6/6；FP-P0 3 条真 gateway child E2E；FP-P2-06 真 turn 三通道 provider 独立计量与账目平衡；FP-P1-07/08 独立 G5 已通过 | 保持并由真人任务消费 |
-| L3 | 真人任务 | ❌ 0（6 run 全 `notHumanProductChat=true`）**FP-P0 未改变此水位**；P2-02 fixture-grade 已降级为 engineering-validation-only | ≥10 真人 DCS coding（engineering-validation-only 路径下不要求） |
-| L4 | Kill/Rollback | ✅ FP-P1-05 真 Electron 七场景全绿：真实 undo、Gateway/Electron restart、kill `6980ms`、N->N-1 fail-closed、restart failure/recovery；长时真人 soak 仍归 FP-P2-02 | live 长时增强会话 rollback |
+| L3 | 真人任务 | ❌ 真人 `0/10`；另有 DCS/SEKB/Browser agent-surrogate 各 `10/10`，固定非 human/live | 真人路径留给后续开发，不从 agent 数量外推 |
+| L4 | Kill/Rollback | ✅ FP-P1-05 真 Electron 机制证据 + TF-0009 agent drill 通过；真人 canary-period drill 仍缺 | live 长时增强会话 rollback |
 | L5 | Soak / Approval | ⚠️ FP-P4-02 已有 20/20 synthetic approval/execution soak 与 Electron E2E；无真人、真实公网、human A/B 或产品审批，仍只属 engineering-validation-only | 真实证据仍 deferred，不得外推 live/product readiness |
 
 ---
@@ -67,7 +69,7 @@
 | `FP-P1` vertical-slice | 安装→首次成功编码任务→undo/restart/kill/support bundle 全通（E2E + 手工） | **GO**（2026-07-28，独立 G5 由 GLM-5.2 完成；11/12 done，1 deferred） |
 | `FP-P2` controlled-canary | GitHub Forge 核心开发完成；≥10 真人 DCS + Forge 联合任务；DCS/read/review/merge 分面裁决 | **GO**（2026-07-29，engineering-validation-only 路径；pre-canary engineering 完成；07-10 + 05/06 done；01/02/03/04 fixture-grade + engineering-validation-only 经用户授权视作满足出口；真实 canary 等待外部 reviewer 接手） |
 | `FP-P3` release-candidate | clean SHA/manifest + Windows x64 安装升级回滚 + `git/gh` 缺失/认证/凭据安全证据 | **GO**（2026-07-29，engineering-validation-only 路径；01/02/05 done；03/04 engineering-validation-only 经用户授权视作满足出口；`liveReady`/`productApproved`/`defaultOn` 保持 false） |
-| `FP-P4` component-graduation | SEKB / Browser / VToken / RM 独立门禁；GitLab/Gitee/PR DAG 仅做扩围裁决 | `in_progress`（01/02/08 ready，G4/G5 engineering-validation-only；03/04 deferred 卡在 TF-0006/TF-0014） |
+| `FP-P4` component-graduation | SEKB / Browser / VToken / RM 独立门禁；GitLab/Gitee/PR DAG 仅做扩围裁决 | `in_progress`（05/06/07 done；01/02/08 为 `degraded-agent-complete` + `review_needed`；03 deferred 于 TF-0014；04 待 diagnostics-only 规格纠偏） |
 
 ---
 
@@ -112,14 +114,14 @@
 | FP-P3-03 | Clean Windows VM 安装/升级/回滚 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-01, FP-P3-02 | — | 2026-07-29 | G4/G5 降级；13 场景 checklist/VM 模板/证据目录结构保留；Hard lock 不解除；clean VM 不允许 fixture 代跑 |
 | FP-P3-04 | DCS + GitHub Forge Controlled Preview 产物出闸 | FP-P3 | P0 | engineering-validation-only | `engineering-validation-only` | FP-P3-03 | — | 2026-07-29 | G5 降级；出闸前置清单 9 项/随包文档骨架/hash 核对脚本保留；Hard lock 不解除；出闸门禁不允许 fixture 代跑 |
 | FP-P3-05 | openclaw_runtime dist 新鲜度守卫 | FP-P3 | P2 | done | — | — | — | 2026-07-29 | `assertRuntimeDistFresh` 在 electronApp fixture 启动前调用；touch src 反向验证 fail-fast 报错；恢复后 app-smoke 1 passed 5.4s |
-| FP-P4-01 | SEKB assisted UI 独立毕业 | FP-P4 | P2 | done | `engineering-validation-only` | — | Codex | 2026-07-29 | Knowledge > Runtime Lessons typed assisted 闭环、确认前零写回、session lineage、reject-only action、advisory retrieval、四语与正式 Harness 全绿；不改变自动写回/default-on/live/product 边界 |
-| FP-P4-02 | Browser supervised 独立毕业 | FP-P4 | P2 | done | `engineering-validation-only` | — | Codex | 2026-07-29 | 功能、full tests、fresh Electron E2E、20/20 synthetic soak、repository `git diff --check` 与共享工作树 Harness diff-coverage 全绿；G4/G5 保持 engineering-validation-only，三个 false 开关与 Agent merge OFF 不变 |
+| FP-P4-01 | SEKB assisted UI 独立毕业 | FP-P4 | P2 | review_needed | `degraded-agent-complete` | — | Codex | 2026-07-29 | 工程闭环、四语与 Harness 已完成；真人 10 次与独立验收缺失，按最新治理不得标 done |
+| FP-P4-02 | Browser supervised 独立毕业 | FP-P4 | P2 | review_needed | `degraded-agent-complete` | — | Codex | 2026-07-29 | 工程功能、E2E 与 20/20 synthetic soak 已完成；无真人/真实公网/独立安全验收，按最新治理不得标 done |
 | FP-P4-03 | VToken opt-in 毕业 | FP-P4 | P2 | deferred | — | FP-P0-01, TF-0014 | — | 2026-07-27 | `TF-0014/UAS-03` 先完成无状态装箱化；本任务只做产品 opt-in 毕业；不由本 program 解阻 |
 | FP-P4-04 | Runtime Memory 保持 diagnostics-only | FP-P4 | P2 | deferred | — | TF-0006 | — | 2026-07-26 | 四件套齐备前不进生产注入；不由本 program 解阻 |
-| FP-P4-05 | 统一 C1 门禁语料 | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-05：4 条手写 vs 32 条合成并存，C1 无单一 reduction 数字 |
-| FP-P4-06 | 前序 program 文档勘误（去 VToken default-ON） | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-01：`TASK-P1-04.md:36,70` 仍记「default 1」 |
-| FP-P4-07 | ja/ru 本地化补齐 | FP-P4 | P2 | backlog | — | — | — | 2026-07-26 | 源自 FP-P0-04：ack 五态与 hint 在 ja/ru 为英文占位（键位齐） |
-| FP-P4-08 | 多平台与 PR 依赖图扩围裁决 | FP-P4 | P3 | done | `engineering-validation-only` | — | Codex | 2026-07-29 | GitLab/DAG/Queue-Train shrink，Gitee stop；五维证据和客观复审触发条件已固化；无 adapter、Task Forest apply 或远端副作用 |
+| FP-P4-05 | 统一 C1 门禁语料 | FP-P4 | P2 | done | — | — | Codex | 2026-07-29 | 4 条 real-tool fixture 的 4.5x 为唯一 authority；32 条 synthetic 5.125x 仅 reference；keep-off 与三个 false 产品锁不变 |
+| FP-P4-06 | 前序 program 文档勘误（去 VToken default-ON） | FP-P4 | P2 | done | — | — | Codex | 2026-07-29 | active spec/comment 全部 default OFF；TASK-P1-04 历史原文保留并加权威勘误；21 focused tests 通过，运行时默认未变 |
+| FP-P4-07 | ja/ru 本地化补齐 | FP-P4 | P2 | done | — | — | Codex | 2026-07-29 | DCS 同屏三树 87 叶子/locale 补齐；193 focused tests、i18n lint、build、Electron 4/4 通过；母语审校为非阻塞 residual |
+| FP-P4-08 | 多平台与 PR 依赖图扩围裁决 | FP-P4 | P3 | review_needed | `degraded-agent-complete` | — | Codex | 2026-07-29 | 工程裁决包已完成；需求 owner/平台 owner 真人签字缺失，按最新治理不得标 done |
 
 ### 计数
 
@@ -127,12 +129,12 @@
 |--------|------:|
 | tasks total | 43 |
 | ready | 2 |
-| backlog | 4 |
+| backlog | 1 |
 | in_progress | 0 |
 | blocked | 0 |
 | engineering-validation-only | 5 |
 | deferred | 3 |
-| done | 29 |
+| done | 32 |
 
 ---
 
@@ -160,10 +162,13 @@ Wave 5 (FP-P4): FP-P4-02 建议先开（Browser supervised）；FP-P4-01/FP-P4-0
 | forest node | 关系 |
 |-------------|------|
 | `TF-0007` (in_progress, 50%) | 本 program 是其落地编排 |
-| `TF-0009` (ready, 0%) | 对应 FP-P1/FP-P2 DCS + GitHub Forge 受控内测；在 `FP-P2-03` 用 proposal 统一刷新分面裁决和证据 |
+| `TF-0009` (`review_needed`, 50%) | agent-surrogate 工程流程已 `10/10/10`；正式语义为 `degraded-agent-complete`，不得 done |
 | `TF-0006` (blocked) | 保持 blocked；不由本 program 解阻 |
 | `TF-0010` (proposed) | 统一 Agent 后继全局任务；不由本 program 改为 in_progress |
-| `TF-0011` (proposed) | 已 `depends_on TF-0009`；仅在 `FP-P3-04` 完成或用户正式暂停 P3 后另提 proposal 转 ready |
+| `TF-0011` (done) | UAS-00 证据冻结与治理登记已收口；以非阻塞 `derived_from TF-0009` 消费 agent 工程基线，不表示 TF-0009 真人完成 |
+| `TF-0012` (done) | UAS-01 Contract 与持久事件主干已正式收口；既有数据库/Harness 基线 deviation 保持显式，不表示产品毕业 |
+| `TF-0013` (done) | UAS-02 单一 Context authority 已完成实现、全部工程门禁和 Task Forest closeout；不改变产品锁或长期 Memory authority |
+| `TF-0014` (ready) | 下一唯一工程叶节点；UAS-03 尚未开始，必须在新会话先完成文档与 Harness context 入口 |
 | `TF-0013` / `TF-0014` / `TF-0018` | 分别消费 `FP-P2-06` / `FP-P4-03` / `FP-P4-04` 的证据；禁止重复建立第二主线 |
 | `TF-0011` / `TF-0012` | 在 P3 出闸后消费 `FP-P2-07` 来源/contract 证据；不得复制第二 patch/error 真源 |
 | `FP-P4-08` | 任何 GitLab/Gitee/DAG continue 项只生成待确认 Task Forest proposal，不直接写正式图 |
@@ -232,9 +237,20 @@ Wave 5 (FP-P4): FP-P4-02 建议先开（Browser supervised）；FP-P4-01/FP-P4-0
 | 2026-07-29 | FP-P3-03/04 | 真人验收降级 | — | engineering-validation-only | 独立开发者决策：clean VM 13 场景（P3-03）与出闸门禁（P3-04）真人不可替代，G4/G5 从 required 降级为 engineering-validation-only；13 场景 checklist/VM 模板/证据目录结构/出闸前置清单 9 项/随包文档骨架/hash 核对脚本全部保留，不作 fixture 代跑（Hard lock 禁止）。P3 phase 出口仍受 03/04 真人证据阻塞 |
 | 2026-07-29 | FP-P3-01 | fixture-grade release hygiene / fresh RC | G1,G2,G3,G4(n/a),G5 | done | baseline 改为 ref-bound clean SHA；42 个 FP-P2-07–10 Forge 关键源码进入 source manifest；MergeBeacon parent `14a17c7e...cd293`、snapshot SHA-256 `4e8255d3...152a4`、Apache-2.0/NOTICE/clean-room 声明已固化；完整 release gates 先于 fresh Windows x64 packaging；RC validator 核对 installer/latest.yml/release-info/app.asar/fuses、git/gh/gh-auth、credential/private-path/source-body。仅 fixture-grade，不改变 P3-03/04、P3 phase 或三个 false 开关 |
 | 2026-07-29 | FP-P2-01/02/03 + FP-P3-03/04 + P4 进入 | 真人任务统一降级 + P4 解阻 | — | engineering-validation-only | 用户授权：所有真人任务（P2-01/02/03、P3-03/04）统一降级为 engineering-validation-only，phase P2/P3 出口 GO。P4-01/02/08 解阻转 ready，G4/G5 同步降级；P4-03/04 仍 deferred（TF-0006/TF-0014）。`liveReady`/`productApproved`/`defaultOn` 保持 false；所有 Hard lock 不解除；真实 canary/clean VM/出闸等待外部 reviewer 接手。active 转 FP-P4-02 |
-| 2026-07-29 | FP-P4-02 | supervised Browser 实现与工程验证 | G1,G2,G3,G4,G5 | done | 审批、多步执行、typed verification、私网/特殊地址与 popup deny、四语 UI 已落地；full test 6749、Browser 375、fresh Electron E2E 2/2、lint/typecheck/contract/comms、repository `git diff --check` 与共享工作树 Harness diff-coverage 全绿；G4/G5 为 engineering-validation-only，三个 false 开关与 Agent merge OFF 不变 |
-| 2026-07-29 | FP-P4-01 | SEKB assisted UI 实现与工程验证 | G1,G2,G3,G4,G5 | done | Knowledge > Runtime Lessons 完成 suggest→review→confirm/reject→retrieve；确认要求 session lineage 且确认前零写回，retrieve 仅 advisory 预览；74 focused tests、fresh Electron 1/1 与正式 Harness 全 profile pass；G4/G5 为 engineering-validation-only，三个 false 开关与所有 SEKB default-off 边界不变 |
-| 2026-07-29 | FP-P4-08 | 多平台/DAG 扩围裁决 | G1,G2,G3(n/a),G4,G5 | done | GitLab、stacked PR DAG、Queue/Train 均 shrink，Gitee stop；机器可读 evidence 锁定需求/API/权限/成本/安全五维与客观复审条件；无 continue、adapter、Task Forest proposal/apply 或远端副作用；三个 false 开关与 Agent merge OFF 不变 |
+| 2026-07-29 | FP-P4-02 | supervised Browser 实现与工程验证 | G1,G2,G3 | degraded-agent-complete | 工程实现与自动化证据全绿；G4/G5 真人/独立验收缺失，正式状态纠正为 review_needed；三个 false 开关与 Agent merge OFF 不变 |
+| 2026-07-29 | FP-P4-01 | SEKB assisted UI 实现与工程验证 | G1,G2,G3 | degraded-agent-complete | 工程闭环与自动化证据全绿；G4/G5 真人/独立验收缺失，正式状态纠正为 review_needed；SEKB default-off/零自动写回不变 |
+| 2026-07-29 | FP-P4-08 | 多平台/DAG 扩围裁决 | G1,G2,G3(n/a) | degraded-agent-complete | 工程裁决包已完成；G4/G5 真人 owner 签字缺失，正式状态纠正为 review_needed；无 adapter 或远端副作用 |
+| 2026-07-29 | FP-P4-05 | 统一 C1 门禁语料 | G1,G2,G3(n/a),G4(n/a),G5 | done | 4 条真实 context-tool fixture 的 4.5x 设为唯一 gate authority；32 条 synthetic 5.125x 保留为 reference-only；generator、stale check、预检硬拒绝与 15 focused tests 全绿；keep-off、liveReady/productApproved/defaultOn=false 不变；下一任务 FP-P4-06 |
+| 2026-07-29 | FP-P4-06 | VToken default-OFF authority 勘误 | G1,G2,G3(n/a),G4(n/a),G5 | done | active Harness spec 与开发者注释改为 default OFF；前序 TASK-P1-04 原文保留并加顶部勘误；全仓命中分类入档，21 focused tests 通过；不解阻 FP-P4-03，不改变三个 false 产品锁 |
+| 2026-07-29 | FP-P4-07 | ja/ru DCS 本地化补齐 | G1,G2,G3,G4(n/a),G5 | done | contextLayers/dcsPreview/dcsProdFlags 共 87 叶子/locale 完成本地化；193 focused tests、i18n lint、build、真实 Electron 4/4 与 aggregate Harness 全 profile 通过；CRLF/key order 保持；母语审校不冒充已完成 |
+| 2026-07-29 | TF-0009 | agent-surrogate 工程降级收口 | engineering-only | degraded-agent-complete | DCS/SEKB/Browser 各 10 条；真人 `0/10`；TF-0009 保持 review_needed。该报告不自授权下游；后续独立 proposal 仅释放 TF-0011 工程链，不解阻真人/live/product 门 |
+| 2026-07-29 | TF-0011 | 工程链与真人 residual 解耦 | governance | ready | `TFP-tf0011-engineering-chain-release-20260729` 已确认、apply、validate、export；TF-0011 成为唯一 status=ready 工程叶节点，TF-0009 仍 review_needed/50% |
+| 2026-07-29 | TF-0011 | UAS-00 证据冻结与治理验收 | engineering | ready (closeout pending) | dirty baseline manifest + stale check、5 files/35 focused tests、Harness rules/lint/typecheck/full unit/comms 全绿；closeout proposal 待确认，未 apply，TF-0012 未开始 |
+| 2026-07-29 | TF-0011 -> TF-0012 | UAS-00 正式收口与下一叶节点释放 | governance | done -> ready | `TFP-tf0011-evidence-freeze-closeout-20260729` 已 apply、validate、export；TF-0011=done/100%，TF-0012=ready/0%；未开始 TF-0012 实现 |
+| 2026-07-30 | TF-0012 | UAS-01 Contract 与持久事件主干 | engineering | ready (closeout pending) | 五类版本化 contract、PolicyDecision 与纯 replay state 落地；只投影到既有 SQLite event-log owner，checkpoint authority 不变；6 files/59 tests、typecheck、targeted ESLint、comms 与 scoped diff check 通过。既有 Kysely/generated 与 shared dirty diff-aware Harness 缺口显式保留；proposal 只保存不 apply，TF-0013 未开始 |
+| 2026-07-30 | TF-0012 -> TF-0013 | UAS-01 正式收口与下一叶节点释放 | governance | done -> ready | `TFP-tf0012-unified-contract-event-spine-closeout-20260730` 已明确确认并通过 CLI apply、validate、export；TF-0012=done/100%，TF-0013=ready/0%。数据库/Harness deviation 仍 open；未开始 TF-0013 实现，产品锁未变 |
+| 2026-07-30 | TF-0013 | UAS-02 单一 Context authority 工程实现与门禁 | G1,G2 | ready (closeout pending) | Memory/VToken/CVK/DCS 统一产出 ContextCandidate/v1；最终去重、precedence、单账本、system/message 投影与 lineage 收回 Orchestrator；runtime 71、agent 20、静态 6 项、typecheck、静态检查、comms、隔离 diff-aware Harness 全部通过。仅 Task Forest closeout 待完成；不改变三个 false 产品锁 |
+| 2026-07-30 | TF-0013 -> TF-0014 | UAS-02 正式收口与下一叶节点释放 | governance | done -> ready | `TFP-tf0013-context-orchestrator-authority-closeout-20260730` 已通过 CLI apply、validate、export；TF-0013=done/100%，TF-0014=ready/0%。仅释放 UAS-03，未开始实现；产品锁、C1 keep-off、TF-0006、Runtime Memory 与 SEKB 边界未变 |
 
 ---
 

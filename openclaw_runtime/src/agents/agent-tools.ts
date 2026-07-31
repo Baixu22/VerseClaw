@@ -75,16 +75,10 @@ import {
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
-import {
-  type TestRunnerExecutor,
-  wrapToolWithWriteSideEffects,
-} from "./write-side-effects.js";
+import { type TestRunnerExecutor, wrapToolWithWriteSideEffects } from "./write-side-effects.js";
 import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
 import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
-import {
-  createUndoWriteTool,
-  wrapToolWithWriteJournal,
-} from "./tools/write-journal.js";
+import { createUndoWriteTool, wrapToolWithWriteJournal } from "./tools/write-journal.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { describeExecTool, describeProcessTool } from "./bash-tools.descriptions.js";
 import type { ExecToolDefaults } from "./bash-tools.exec-types.js";
@@ -796,7 +790,16 @@ export function createOpenClawCodingTools(options?: {
       sessionId: codingSessionId,
       trackReadHashes: true,
     });
-  const applyWriteKit = (tool: AnyAgentTool, kind: "edit" | "write" | "apply_patch"): AnyAgentTool => {
+  const writeJournalFlags = {
+    parseOnTouch: parseOnTouchEnabled,
+    staleWriteGuard: staleWriteGuardEnabled,
+    writeJournal: writeJournalEnabled,
+    symbolLease: symbolLeaseEnabled,
+  };
+  const applyWriteKit = (
+    tool: AnyAgentTool,
+    kind: "edit" | "write" | "apply_patch",
+  ): AnyAgentTool => {
     let next = tool;
     // C5-1 symbol lease (default off): acquire before other write kit layers
     next = wrapToolWithSymbolLease(next, {
@@ -805,20 +808,16 @@ export function createOpenClawCodingTools(options?: {
       enabled: symbolLeaseEnabled,
       mode: symbolLeaseMode,
     });
-    // C2-8 journal first (pre-write snapshot)
-    next = wrapToolWithWriteJournal(next, {
-      workspaceRoot: codingRoot,
-      sessionId: codingSessionId,
-      enabled: writeJournalEnabled,
-      // FP-P1-04: lineage carries the flags in force when the write happened,
-      // so a journal entry explains itself without the original session.
-      flags: {
-        parseOnTouch: parseOnTouchEnabled,
-        staleWriteGuard: staleWriteGuardEnabled,
-        writeJournal: writeJournalEnabled,
-        symbolLease: symbolLeaseEnabled,
-      },
-    });
+    // apply_patch journals inside its batch lease so the snapshot and preflight
+    // cannot race another overlapping patch. Other writes keep the outer wrapper.
+    if (kind !== "apply_patch") {
+      next = wrapToolWithWriteJournal(next, {
+        workspaceRoot: codingRoot,
+        sessionId: codingSessionId,
+        enabled: writeJournalEnabled,
+        flags: writeJournalFlags,
+      });
+    }
     // C2-2 stale guard only for full-file write
     if (kind === "write") {
       next = wrapToolWithStaleWriteGuard(next, {
@@ -1075,6 +1074,12 @@ export function createOpenClawCodingTools(options?: {
               ? { root: sandboxRoot, bridge: sandboxFsBridge! }
               : undefined,
           workspaceOnly: applyPatchWorkspaceOnly,
+          journal: {
+            workspaceRoot: codingRoot,
+            sessionId: codingSessionId,
+            enabled: writeJournalEnabled,
+            flags: writeJournalFlags,
+          },
         });
   const applyPatchTool = applyPatchToolRaw
     ? applyWriteKit(applyPatchToolRaw as unknown as AnyAgentTool, "apply_patch")

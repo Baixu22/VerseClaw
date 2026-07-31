@@ -9,6 +9,11 @@ import {
   contextBlockFlagNameForSourceSystem,
   type ContextBlockFeatureFlags,
 } from "../../context-engine/assembler.js";
+import {
+  finalizeContextOrchestratorTurn,
+  getContextOrchestratorCollection,
+} from "../../context-engine/context-orchestrator.js";
+import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
@@ -36,7 +41,7 @@ import {
 import { resolveContextWindowInfo } from "../context-window-guard.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../defaults.js";
 import { createAgentToolResultMiddlewareRunner } from "../harness/tool-result-middleware.js";
-import type { AgentToolResult } from "../runtime/index.js";
+import type { AgentMessage, AgentToolResult } from "../runtime/index.js";
 import type { ExtensionFactory, SessionManager } from "../sessions/index.js";
 import { resolveTranscriptPolicy } from "../transcript-policy.js";
 import { isCacheTtlEligibleProvider, readLastCacheTtlTimestamp } from "./cache-ttl.js";
@@ -106,7 +111,6 @@ function buildAgentToolResultMiddlewareFactory(): ExtensionFactory {
     });
   };
 }
-
 
 function isWorkingMemoryEnabled(cfg: OpenClawConfig | undefined): boolean {
   return cfg?.runtime?.contextBlock?.["working-memory"]?.enabled === true;
@@ -191,6 +195,41 @@ function buildContextBlockFactory(params: {
   // write never poisons the next merge baseline.
   let baselineLoaded = false;
   let acceptedBaseline: ContextBlock | undefined;
+  let projectionObservabilityRecorded = false;
+  async function finalizeCandidates(messages: AgentMessage[]) {
+    const turnId = params.injectionTurnId;
+    if (!turnId) return undefined;
+    await enqueue(async () => undefined);
+    const existingCollection = getContextOrchestratorCollection(turnId);
+    if (!existingCollection?.diagnostics.finalized) {
+      const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
+      const store = hasProjectionSource ? getBlockStore() : undefined;
+      const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
+      await assembler.assemble(
+        { session_id: sessionId ?? "", turnId, deferProjection: true },
+        { existing_output: messages },
+        params.projectionFlags,
+      );
+    }
+    const finalized = finalizeContextOrchestratorTurn({ turnId, messages });
+    if (!projectionObservabilityRecorded) {
+      projectionObservabilityRecorded = true;
+      const dcsChars = finalized.projection.lineage
+        .filter(
+          (entry) =>
+            entry.channel === "knowledge" ||
+            entry.channel === "working_memory" ||
+            entry.channel === "tool_registry",
+        )
+        .reduce((total, entry) => total + entry.charsApplied, 0);
+      const cvkChars = finalized.projection.lineage
+        .filter((entry) => entry.channel === "cvk_addition")
+        .reduce((total, entry) => total + entry.charsApplied, 0);
+      dcsObservability.recordDcsTransformContextInjection({ chars: dcsChars });
+      dcsObservability.recordCvkSystemPromptAddition(cvkChars);
+    }
+    return finalized;
+  }
   return (agent) => {
     if (params.projectionFlags[contextBlockFlagNameForSourceSystem("working-memory")]) {
       agent.on("tool_result", (rawEvent: unknown) => {
@@ -253,6 +292,19 @@ function buildContextBlockFactory(params: {
       });
     }
 
+    if (params.injectionTurnId) {
+      agent.on("before_agent_start", async (event: unknown) => {
+        if (!sessionId) return undefined;
+        const finalized = await finalizeCandidates([]);
+        const addition = finalized?.projection.systemPromptAddition;
+        if (!addition) return undefined;
+        const base = recordFromUnknown(event).systemPrompt;
+        const systemPrompt =
+          typeof base === "string" && base.length > 0 ? `${base}\n\n${addition}` : addition;
+        return { systemPrompt };
+      });
+    }
+
     agent.on("context", async (event: unknown) => {
       if (!sessionId) {
         return undefined;
@@ -261,8 +313,11 @@ function buildContextBlockFactory(params: {
       if (!Array.isArray(messages)) {
         return undefined;
       }
-      // S1-B: the pre-LLM projection waits for already queued synchronous
-      // tool-result writes before querying BlockStore.
+      if (params.injectionTurnId) {
+        const finalized = await finalizeCandidates(messages as AgentMessage[]);
+        return { messages: finalized?.messages ?? messages };
+      }
+      // Legacy callers without a turn id retain the direct Assembler path.
       await enqueue(async () => undefined);
       const store = getBlockStore();
       const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
@@ -272,10 +327,7 @@ function buildContextBlockFactory(params: {
       // Omitting it makes assemble() resolve config per-request through
       // `resolveAssembleKillSwitchConfig`, so a mid-session kill takes effect.
       const result = await assembler.assemble(
-        {
-          session_id: sessionId,
-          ...(params.injectionTurnId ? { turnId: params.injectionTurnId } : {}),
-        },
+        { session_id: sessionId },
         { existing_output: messages },
         params.projectionFlags,
       );
@@ -559,15 +611,15 @@ export function buildEmbeddedExtensionFactories(params: {
     factories.push(compactionSafeguardExtension);
   }
   const projectionFlags = resolveContextBlockProjectionFlags(params.cfg);
-  if (hasContextBlockProjection(projectionFlags)) {
-    factories.push(buildContextBlockFactory({ ...params, projectionFlags }));
-  }
   // DCS Stage 3: tool-registry Block producer on before_agent_start.
   if (isToolRegistryEnabled(params.cfg)) {
     const toolRegistryFactory = buildToolRegistryFactory(params);
     if (toolRegistryFactory) {
       factories.push(toolRegistryFactory);
     }
+  }
+  if (params.injectionTurnId || hasContextBlockProjection(projectionFlags)) {
+    factories.push(buildContextBlockFactory({ ...params, projectionFlags }));
   }
   const pruningFactory = buildContextPruningFactory(params);
   if (pruningFactory) {

@@ -4,30 +4,35 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   computeContextExtraSystemPrompt,
+  endContextOrchestratorTurn,
+  finalizeContextOrchestratorTurn,
+  getContextOrchestratorCollection,
   getLastContextOrchestratorLineage,
   resetContextOrchestratorLineageForTests,
 } from "./context-orchestrator.js";
+import { resetContextCandidateCollectionsForTests } from "./context-candidate.js";
+import {
+  endTurnInjectionBudget,
+  resetTurnInjectionBudgetsForTests,
+} from "./turn-injection-budget.js";
 import { dcsObservability } from "./dcs-observability.js";
 import type { VtokenRpcClient } from "./vtoken-rpc-client.js";
 import type { RuntimeContextProvider } from "../runtime-core/index.js";
 
 function createMockVtokenClient(prompt = "packed working context"): VtokenRpcClient {
   return {
-    open: vi.fn(async () => undefined),
-    close: vi.fn(async () => undefined),
-    ingestMarkdown: vi.fn(async () => undefined),
-    ingestTools: vi.fn(async () => undefined),
-    ingestMemory: vi.fn(async () => undefined),
-    assemble: vi.fn(async () => ({
+    pack: vi.fn(async () => ({
+      schema: "VtokenPackResult/v1",
       prompt,
-      tokens_used: 12,
-      tokens_budget: 600,
+      estimatedTokens: 12,
+      allowanceTokens: 600,
+      estimateMethod: "chars_div_4",
       slot_breakdown: {},
       nodes_included: ["a"],
       nodes_evicted: [],
       dedup_count: 0,
+      candidateCount: 1,
     })),
-    runExclusive: vi.fn(async (fn: () => Promise<unknown>) => fn()),
   } as unknown as VtokenRpcClient;
 }
 
@@ -76,6 +81,8 @@ describe("computeContextExtraSystemPrompt", () => {
     delete process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED;
     delete process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH;
     resetContextOrchestratorLineageForTests();
+    resetContextCandidateCollectionsForTests();
+    resetTurnInjectionBudgetsForTests();
     dcsObservability.reset();
   });
 
@@ -85,6 +92,8 @@ describe("computeContextExtraSystemPrompt", () => {
     if (prevKill === undefined) delete process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH;
     else process.env.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH = prevKill;
     resetContextOrchestratorLineageForTests();
+    resetContextCandidateCollectionsForTests();
+    resetTurnInjectionBudgetsForTests();
     dcsObservability.reset();
   });
 
@@ -191,7 +200,8 @@ describe("computeContextExtraSystemPrompt", () => {
     expect(extraSystemPrompt).toBe("base");
     expect(lineage.killSwitchEngaged).toBe(true);
     expect(lineage.sources.every((s) => !s.applied)).toBe(true);
-    expect(client.assemble).not.toHaveBeenCalled();
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).not.toHaveBeenCalled();
   });
 
   it("records lineage for diagnostics (session/run/sources/budget)", async () => {
@@ -218,5 +228,108 @@ describe("computeContextExtraSystemPrompt", () => {
     expect(last?.budget.vtokenBudgetTokens).toBe(400);
     expect(last?.sources[0]?.id).toBe("vtoken-assembly");
     expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(1);
+  });
+
+  it("defers both stages, then projects declared precedence instead of lifecycle order", async () => {
+    const turnId = "orchestrator-deferred-order";
+    const { extraSystemPrompt } = await computeContextExtraSystemPrompt(
+      "base",
+      {
+        runtime: {
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        sessionKey: "agent:main:main",
+        taskHint: "x",
+        markdownSources: [{ sourcePath: "AGENTS.md", text: "rules" }],
+        memoryProviderFactory: () => [createMemoryProvider("memory candidate")],
+        vtokenClient: createMockVtokenClient("vtoken candidate"),
+      },
+    );
+    expect(extraSystemPrompt).toBe("base");
+    expect(getContextOrchestratorCollection(turnId)?.diagnostics).toMatchObject({
+      finalized: false,
+      collected: 2,
+    });
+    expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(0);
+
+    const finalized = finalizeContextOrchestratorTurn({ turnId, messages: [] });
+    const addition = finalized.projection.systemPromptAddition ?? "";
+    expect(addition.indexOf("## Working Context")).toBeLessThan(
+      addition.indexOf("## Memory Context"),
+    );
+    expect(getLastContextOrchestratorLineage()).toMatchObject({
+      turnId,
+      candidateDiagnostics: { finalized: true, unique: 2 },
+    });
+    expect(dcsObservability.snapshot().contextOrchestratorCalls).toBe(1);
+    expect(dcsObservability.snapshot().contextOrchestratorCharsAdded).toBe(
+      finalized.projection.lineage.reduce((total, entry) => total + entry.charsApplied, 0),
+    );
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
+  });
+
+  it("does not query lazy VToken memory inputs while its flag is off", async () => {
+    const turnId = "orchestrator-vtoken-off";
+    const memoryEntriesFactory = vi.fn(async () => [{ id: "must-not-load" }]);
+    const client = createMockVtokenClient();
+    await computeContextExtraSystemPrompt(
+      undefined,
+      {},
+      {
+        turnId,
+        deferProjection: true,
+        memoryEntriesFactory,
+        vtokenClient: client,
+      },
+      { stages: ["vtoken"] },
+    );
+    expect(memoryEntriesFactory).not.toHaveBeenCalled();
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).not.toHaveBeenCalled();
+    expect(getContextOrchestratorCollection(turnId)?.lineage).toEqual([
+      expect.objectContaining({
+        sourceId: "vtoken-assembly",
+        reason: "flag-off",
+        charsApplied: 0,
+      }),
+    ]);
+  });
+
+  it("does not construct Memory providers or query VToken when the kill switch is on", async () => {
+    const turnId = "orchestrator-killed-query-gate";
+    const memoryProviderFactory = vi.fn(() => [createMemoryProvider()]);
+    const memoryEntriesFactory = vi.fn(async () => [{ id: "must-not-load" }]);
+    const client = createMockVtokenClient();
+    await computeContextExtraSystemPrompt(
+      undefined,
+      {
+        runtime: {
+          contextEnhancement: { killSwitch: true },
+          memory: { injectPilot: { enabled: true } },
+          vtoken: { assembly: { enabled: true } },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        memoryProviderFactory,
+        memoryEntriesFactory,
+        vtokenClient: client,
+      },
+    );
+    expect(memoryProviderFactory).not.toHaveBeenCalled();
+    expect(memoryEntriesFactory).not.toHaveBeenCalled();
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).not.toHaveBeenCalled();
+    expect(getContextOrchestratorCollection(turnId)?.lineage.map((entry) => entry.reason)).toEqual([
+      "kill-switch",
+      "kill-switch",
+    ]);
   });
 });

@@ -4,6 +4,7 @@
 - 改 .vt → compile → 不重建 store，下次 resolve 看到新内容
 - 含并发读切换测试
 """
+
 from __future__ import annotations
 
 import os
@@ -12,22 +13,23 @@ import time
 
 import pytest
 
-from vtoken import MemStore, UnifiedStore
+from vtoken import UnifiedStore
 from vtoken.compiler import compile_file
-from vtoken.store import GraphHolder
 
 
 # ---------------------------------------------------------------------------
 # helpers — write a minimal doc .vt to a path
 # ---------------------------------------------------------------------------
 
+
 def _write_vt(path: str, content: str = "") -> None:
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
 
 
-def _make_minimal_doc(overview_content: str = "JWT 认证模块",
-                      extra_node: str | None = None) -> str:
+def _make_minimal_doc(
+    overview_content: str = "JWT 认证模块", extra_node: str | None = None
+) -> str:
     lines = [
         "%vt 0.3.1",
         "%mode doc",
@@ -52,6 +54,7 @@ def _bump_mtime(path: str, delta_ns: int = 10_000_000) -> None:
 # ---------------------------------------------------------------------------
 # T5.1 unit tests
 # ---------------------------------------------------------------------------
+
 
 class TestHotReloadVt:
     """Reload from .vt source (recompile on change)."""
@@ -86,9 +89,11 @@ class TestHotReloadVt:
             store.resolve("auth.sec_1", depth=0)
 
         # Add RULE auth.sec_1 + link it to overview via REF (so BFS depth=2 finds it)
-        new_doc = _make_minimal_doc("overview A",
-                                    extra_node="RULE auth.sec_1  token 24h\n"
-                                               "REF auth.overview --DEPENDS--> auth.sec_1")
+        new_doc = _make_minimal_doc(
+            "overview A",
+            extra_node="RULE auth.sec_1  token 24h\n"
+            "REF auth.overview --DEPENDS--> auth.sec_1",
+        )
         _write_vt(str(vt), new_doc)
         _bump_mtime(str(vt))
 
@@ -182,10 +187,7 @@ class TestHotReloadMultiSource:
             "RULE a.rule  first rule\n"
         )
         # b.vt: %id system/b, node b.overview
-        b_content = (
-            "%vt 0.3.1\n%mode doc\n%id system/b\n\n"
-            "DEF b.overview  B content\n"
-        )
+        b_content = "%vt 0.3.1\n%mode doc\n%id system/b\n\nDEF b.overview  B content\n"
         _write_vt(str(a_vt), a_content)
         _write_vt(str(b_vt), b_content)
         store = UnifiedStore.open(doc_sources=[str(a_vt), str(b_vt)])
@@ -241,6 +243,17 @@ class TestHotReloadConcurrent:
             time.sleep(0.01)
             _write_vt(str(vt), _make_minimal_doc(f"concurrent v{i}"))
             _bump_mtime(str(vt))
+
+        # A synchronous refresh is the completion barrier: after it returns,
+        # the published graph must reflect the final source version.
+        store.refresh_doc_sources()
+        assert "concurrent v5" in store.resolve("auth.overview", depth=0)
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            with seen_lock:
+                if any("concurrent v5" in value for value in seen_versions):
+                    break
+            time.sleep(0.001)
 
         stop.set()
         for t in threads:

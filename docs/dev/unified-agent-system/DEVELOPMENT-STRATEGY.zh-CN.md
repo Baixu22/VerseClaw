@@ -51,11 +51,11 @@
 
 ### 3.1 VerseShell
 
-- ClawX 内置 `ae.exe` 与上游 release binary 完全一致，不是裁剪版；
-- 上游 typed catalog 有 26 个 operation；
-- ClawX Agent 主路径实际只使用 `runtime.handshake`、`exec.run` 和 `result.query`；
-- 当前 `exec.run` 仍通过 `cmd /C`、PowerShell、Git Bash 或 `sh -lc` 包装 command string；
-- 上游缺少 stdin、后台生命周期、PTY/ConPTY、主动取消和 process start/read/write/kill；
+- ClawX 内置 `ae.exe` 由固定上游 commit 加受跟踪 UAS-05 patch 构建，不是裁剪版；
+- typed catalog 有 31 个 operation，新增 `process.start/poll/write/kill/list` 只供 host JSONL 使用并从 MCP 隐藏；
+- ClawX Agent 仍只面对现有 `exec/process`；governed route 内部使用 handshake/result 和 process lifecycle；
+- UAS-05 已补齐显式 argv/env/PATH/PATHEXT、pipe stdin、后台生命周期、ConPTY、主动取消、cursor/retention 和 restart reconcile；
+- shell 管道/重定向兼容仍可将 `cmd.exe`、PowerShell、Git Bash 或 `sh` 作为显式 payload，默认 plane 迁移归 UAS-06；
 - VerseShell workspace jail 不是 OS filesystem sandbox；
 - transaction/test 等状态型能力存在进程级共享和 authority 冲突，当前不应接入。
 
@@ -69,21 +69,28 @@
 
 ### 3.3 VerseToken 与 Coding
 
+UAS-03 前审计基线：
+
 - VerseToken `0.4.3` 的生产 worker 是单例，完整 assembly 通过 `runExclusive` 全局串行；
 - 生产每回合重建临时 graph，却额外打开空 MemStore/WAL/lock，host RPC 不暴露 `vt.write`；
-- 默认 token counter 是 `len(text) // 4`，只能作为 estimate；
+- 默认 token counter 是 `len(text) // 4`，只能作为 estimate。
+
+UAS-03 已将生产调用收口为一次无状态 `vt.pack`：每请求独立内存 graph、无 `sessionDir/session`、无生产 MemStore/WAL/lock、无全局 `runExclusive`。Context Orchestrator 显式拥有 allowance；结果只报告 `estimatedTokens` 与 `chars_div_4`，stateful API 仅保留给 package consumer 和默认关闭的 diagnostics。
+
+Coding 的 UAS-04 收口结果：
+
 - Coding 是分布式模型工具门面和治理层，不是单一待迁移包；
-- Coding 已拥有 journal、undo、stale guard、lease 和写后验证，但 `apply_patch` 缺多文件 mutation queue/原子失败语义；
-- write wrapper 的实际执行顺序与“lease first”的注释意图不一致。
+- Coding 继续拥有 journal、undo、stale guard、lease 和写后验证；
+- `apply_patch` 已用排序批次 lease、全批 preflight、`committed/rolled_back/recovery_required` 和唯一 write-journal recovery ref 闭合多文件失败语义。
 
 ### 3.4 Task Forest
 
 - `TF-0007` 是“DCS 与关联组件受控内测投用收口（非 GA）”；
-- 当前 ready 节点是 `TF-0009`；
+- `TF-0009` 已完成 agent-surrogate 工程流，但保持 `review_needed/50%`，真人 residual 未完成；
 - `TF-0006` 仍 blocked，不能因本研究解除；
 - proposal `TFP-unified-agent-system-roadmap-20260727` 已获确认并应用；
-- `TF-0010` 是统一 Agent 主线全局容器，`TF-0011` 至 `TF-0019` 为串行节点，当前全部 proposed；
-- `TF-0011 depends_on TF-0009`，因此不得跳过现有受控内测直接实现统一主线。
+- `TF-0010` 是统一 Agent 主线全局容器；`TF-0011` 至 `TF-0016` 已 done；`TF-0017/UAS-06` 已完成工程路由与本地证据矩阵但仍缺真实 canary，canonical 状态为 `in_progress/35%`；`TF-0018` 至 `TF-0019` 仍 proposed；
+- 用户已确认独立治理 proposal，将 `TF-0011 depends_on TF-0009` 改为非阻塞 `derived_from`。该解耦只允许消费 agent 工程基线，不把 TF-0009 变成 done。
 
 ## 4. 已裁决目标架构
 
@@ -210,7 +217,7 @@ R1-R4 的架构产物已在融合审计中交付；Task Forest proposal 已应�
 
 - 未读源码就宣布 VerseToken/Coding 已完成融合；
 - 把 DCS/Memory 迁入 VerseShell 形成运行时单体；
-- 暴露全部 26 个 VerseShell operation 给模型；
+- 暴露全部 31 个 VerseShell operation 给模型；
 - 新增内部 MCP 主路径；
 - 用智能模型路由解决固定执行平面问题；
 - 在 process 生命周期未等价前全量切换；
@@ -227,7 +234,7 @@ R1-R4 的架构产物已在融合审计中交付；Task Forest proposal 已应�
 
 ```text
 Workspace:
-C:\Users\27933\Desktop\clawx\ClawX-maturity-p0
+C:\Users\27933\Desktop\clawx\ClawX
 
 Goal:
 将 VerseShell、VerseToken、Coding、DCS/Working Memory/长期 Memory 收敛为统一 contract 和唯一主路径；不增加模型工具学习和 LLM 路由成本。
@@ -240,13 +247,13 @@ Final architecture decision:
 - VerseToken is a pure packer/renderer with no business Memory/WAL authority.
 - BlockStore owns working context; Runtime Memory owns governed facts; SEKB owns human-confirmed reusable experience.
 
-Key audit:
+Key audit at the pre-UAS-03 baseline:
 - VerseShell binary is complete, but exec/process lifecycle parity is not.
 - VToken production opens an unused MemStore/WAL and globally serializes assembly.
 - agent.on("context") Assembler omits turnId, so it does not share the attempt ledger.
 - TURN_INJECTION_PRECEDENCE records order but does not schedule by that order.
 - apply_patch lacks multi-file mutation queue/atomic failure semantics.
-- vtoken-foundation-bridge task spec says default ON, while rule/code/tests say default OFF.
+- 审计时 vtoken-foundation-bridge task spec 曾写 default ON，而 rule/code/tests 为 default OFF；该漂移已由 `FP-P4-06` 修正并增加守卫，历史问题保留在审计记录中。
 
 Evidence:
 - docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md
@@ -255,7 +262,45 @@ Evidence:
 - focused OpenClaw Vitest: 147 passed
 - root Orchestrator/VToken tests: 18 passed
 
-Registered sequence, only after TF-0009:
+UAS-03 update (2026-07-30): production now uses one stateless `vt.pack` request with an
+Orchestrator-owned allowance, per-request in-memory graph isolation, concurrent JSON-RPC response
+correlation, and explicit `chars_div_4` estimate metadata. The stateful package/diagnostics API is
+retained. Focused regressions, type/static checks, comms gates, and structural Harness validation
+pass; the confirmed Task Forest closeout is applied and TF-0014 is done.
+
+UAS-04 update (2026-07-30): `apply_patch` now acquires a path-sorted batch lease before reading
+and precomputing every target, applies one prepared mutation plan, and reports
+`committed/rolled_back/recovery_required`. Failed batches restore every touched path from the
+prepared original; incomplete rollback retains the existing write-journal entries and exposes a
+recovery reference. The same sidecar records prepared and terminal state, so restart detection adds
+no second journal authority. Focused regressions, root typecheck, static checks, comms gates, and
+structural Harness validation pass; the explicitly confirmed Task Forest closeout is applied and
+TF-0015 is done.
+
+UAS-05 update (2026-07-30): the pinned base plus tracked source patch adds internal
+`process.start/poll/write/kill/list`, Windows PATH/PATHEXT and batch resolution, pipe stdin,
+ConPTY, monotonic cursor/retention, artifact lineage, Job Object tree cleanup, timeout, idempotent
+kill, and restart `lost` reconciliation. OpenClaw governed exec/process use this lifecycle owner and
+forbid native PID fallback; MCP hides every lifecycle operation. Rust real-binary, focused runtime,
+manifest/supply-chain, type, comms, and Harness gates are the acceptance set. Task Forest closeout
+is confirmed and applied, so TF-0016 is done.
+
+UAS-06 update (2026-07-30): strict configuration now accepts operator-owned
+`tools.exec.host=verseshell` at global and per-agent scope while the model-facing host enum remains
+unchanged. Eligible local calls in a selected scope resolve deterministically to the governed
+VerseShell lifecycle; sandbox, node, remote/provider-native, and elevated paths retain their owners.
+Diagnostics expose selected/actual host, lifecycle owner, cohort route, fallback, and recovery
+state without command contents. The nine-scenario engineering matrix reports 100% governed
+coverage, zero native fallback, and no engineering hard veto, but remains `engineering-only` and
+`needs-real-canary`: all live cohort, paired-task, actual-provider-usage, human-recovery, and soak
+counts are zero. TF-0017 cannot close and UAS-07 cannot start before reviewed real evidence exists.
+
+Reviewed live evidence now has a separate versioned input and report. It requires an undropped,
+sanitized diagnostic route window, a provider receipt digest, and human recovery/rollback
+attestation. The importer does not start a Gateway or provider call, and its result can only become
+a candidate for separate Task Forest closeout review.
+
+Registered sequence after the explicit engineering/human evidence split:
 TF-0011/UAS-00 evidence freeze + Harness/spec drift correction
 TF-0012/UAS-01 unified contracts and durable event spine
 TF-0013/UAS-02 Context Orchestrator authority closure
@@ -270,7 +315,7 @@ Do not:
 - bypass Task Forest proposal workflow, modify default-on, or change TF-0006 without confirmation;
 - put DCS/Memory into VerseShell;
 - add LLM routing, internal MCP, cap all, legacy eval main path or native fallback;
-- expose 26 VerseShell operations to the model;
+- expose 31 VerseShell operations to the model;
 - claim provider cost savings from heuristic token counts.
 ```
 

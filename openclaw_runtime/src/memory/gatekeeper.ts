@@ -139,6 +139,43 @@ function normalizedContent(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
+function normalizedScopeKey(value: string | null | undefined): string | null {
+  const normalized = value?.trim();
+  return normalized ? normalized : null;
+}
+
+function hasSameScopeIdentity(proposal: MemoryProposal, card: MemoryCard): boolean {
+  return card.scope === proposal.scope && normalizedScopeKey(card.scopeKey) === normalizedScopeKey(proposal.scopeKey);
+}
+
+function scopesCanOverlapForConflict(proposal: MemoryProposal, card: MemoryCard): boolean {
+  if (hasSameScopeIdentity(proposal, card)) return true;
+  if (proposal.scope === "global" || card.scope === "global") return true;
+  const proposalScopeKey = normalizedScopeKey(proposal.scopeKey);
+  return Boolean(proposalScopeKey && proposalScopeKey === normalizedScopeKey(card.scopeKey));
+}
+
+function removeExplicitNegation(value: string): string {
+  return value
+    .replace(/\bdoes not use\b/g, "uses")
+    .replace(/\bdo not use\b/g, "use")
+    .replace(/\bdid not use\b/g, "used")
+    .replace(/\b(is|are|was|were|has|have|can|will|should|must) not\b/g, "$1")
+    .replace(/^not\s+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isExplicitNegationCounterpart(left: string, right: string): boolean {
+  if (left === right) return false;
+  const leftWithoutNegation = removeExplicitNegation(left);
+  const rightWithoutNegation = removeExplicitNegation(right);
+  return (
+    leftWithoutNegation === rightWithoutNegation &&
+    (leftWithoutNegation !== left || rightWithoutNegation !== right)
+  );
+}
+
 function hasEvidence(proposal: MemoryProposal): boolean {
   return (proposal.evidence?.length ?? 0) > 0 || (proposal.evidenceRefs?.length ?? 0) > 0;
 }
@@ -194,8 +231,7 @@ function findDuplicate(proposal: MemoryProposal, existing: readonly MemoryCard[]
   const normalized = normalizedContent(proposal.content);
   return existing.find((card) =>
     card.status === "active" &&
-    card.scope === proposal.scope &&
-    (card.scopeKey ?? null) === (proposal.scopeKey ?? null) &&
+    hasSameScopeIdentity(proposal, card) &&
     card.type === proposal.type &&
     normalizedContent(card.content) === normalized,
   );
@@ -203,16 +239,11 @@ function findDuplicate(proposal: MemoryProposal, existing: readonly MemoryCard[]
 
 function detectContradiction(proposal: MemoryProposal, existing: readonly MemoryCard[]): MemoryCard | undefined {
   const normalized = normalizedContent(proposal.content);
-  const negated = normalized
-    .replace(/\bis\b/g, "is not")
-    .replace(/\buses\b/g, "does not use");
   return existing.find((card) =>
     card.status === "active" &&
-    card.scope === proposal.scope &&
+    hasSameScopeIdentity(proposal, card) &&
     card.type === proposal.type &&
-    (normalizedContent(card.content).includes(`not ${normalized}`) ||
-      normalizedContent(card.content) === negated ||
-      normalized.includes(`not ${normalizedContent(card.content)}`)),
+    isExplicitNegationCounterpart(normalized, normalizedContent(card.content)),
   );
 }
 
@@ -222,7 +253,7 @@ function detectRoleConflict(proposal: MemoryProposal, existing: readonly MemoryC
   return existing.find((card) =>
     card.status === "active" &&
     card.type === proposal.type &&
-    card.scope === proposal.scope &&
+    hasSameScopeIdentity(proposal, card) &&
     (card.applicableRoles?.length ?? card.roleTags.length) > 0 &&
     !(card.applicableRoles?.length ? card.applicableRoles : card.roleTags).some((role) => roleTags.has(role) || role === "*" || roleTags.has("*")) &&
     normalizedContent(card.content) === normalizedContent(proposal.content),
@@ -250,6 +281,7 @@ function detectScopeConflict(proposal: MemoryProposal, existing: readonly Memory
     card.status === "active" &&
     card.type === proposal.type &&
     card.scope !== proposal.scope &&
+    scopesCanOverlapForConflict(proposal, card) &&
     normalizedContent(card.content) === normalizedContent(proposal.content),
   );
 }

@@ -27,7 +27,7 @@ import {
 } from "./role-permissions-policy.js";
 import { buildRolePermissionDecisionEvents } from "./role-permission-audit.js";
 import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
-import { isInjectableMemoryCard } from "../memory/memory-card.js";
+import { isInjectableMemoryCard, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
 import type { MemoryCard } from "../memory/types.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
@@ -135,7 +135,10 @@ export function buildRoleSystemPrompt(
       isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
     );
     if (injectable.length > 0) {
-      const openConflictRecords = listMemoryConflicts({ status: "open" });
+      const injectableIds = new Set(injectable.map((card) => card.id));
+      const openConflictRecords = listMemoryConflicts({ status: "open" }).filter((conflict) =>
+        conflict.cardIds.some((cardId) => injectableIds.has(cardId)),
+      );
       const openConflicts = openConflictRecords.map((conflict) => `${conflict.type}: ${conflict.reason}`);
       const pack = buildContextPack({
         memories: injectable,
@@ -168,7 +171,10 @@ export function buildRoleSystemPrompt(
 }
 
 /** Resolve role-tagged memory cards for injection into a role-spawned prompt. */
-export function resolveRoleMemoryCards(role: RoleContract): MemoryCard[] {
+export function resolveRoleMemoryCards(
+  role: RoleContract,
+  scopeContext: MemoryCardScopeContext = {},
+): MemoryCard[] {
   try {
     if (!isRoleMemoryEnabled()) {
       return [];
@@ -182,7 +188,8 @@ export function resolveRoleMemoryCards(role: RoleContract): MemoryCard[] {
     return [];
   }
   return getMemoryCards({ roleName: role.name, status: "all" })
-    .filter((card) => card.status === "active" || card.status === "cold");
+    .filter((card) => card.status === "active" || card.status === "cold")
+    .filter((card) => isMemoryCardInContextScope(card, scopeContext));
 }
 
 /** Build the spawn params for a role contract (model, thinking, role SOUL). */
@@ -193,7 +200,10 @@ export function buildRoleSpawnParams(
 ): RoleSpawnParams {
   const model = request.modelOverride?.trim() || role.model.default || undefined;
   const thinking = roleEffortToThinking(role.effort);
-  const memoryCards = resolveRoleMemoryCards(role);
+  const memoryCards = resolveRoleMemoryCards(role, {
+    workspace: ctx?.workspaceDir ?? request.cwd,
+    sessionKey: ctx?.agentSessionKey,
+  });
   return {
     task: request.task,
     label: request.label ?? role.displayName ?? role.name,

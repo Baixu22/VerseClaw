@@ -10,6 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RUNTIME_ROOT = join(ROOT, 'openclaw_runtime');
 const ENTRY = join(RUNTIME_ROOT, 'dist', 'entry.js');
+const SEKB_ENTRY = join(RUNTIME_ROOT, 'dist', 'knowledge', 'sekb', 'index.js');
 const PROVIDER_WRAPPER = join(
   RUNTIME_ROOT,
   'dist-runtime',
@@ -85,7 +86,7 @@ async function waitForReady(port, child, output) {
   throw new Error(`gateway did not become ready within ${TIMEOUT_MS}ms\n${output()}`);
 }
 
-for (const artifact of [ENTRY, PROVIDER_WRAPPER, PROVIDER_ARTIFACT]) {
+for (const artifact of [ENTRY, SEKB_ENTRY, PROVIDER_WRAPPER, PROVIDER_ARTIFACT]) {
   if (!existsSync(artifact)) {
     throw new Error(`required runtime build artifact is missing: ${artifact}`);
   }
@@ -94,6 +95,12 @@ for (const artifact of [ENTRY, PROVIDER_WRAPPER, PROVIDER_ARTIFACT]) {
 // This wrapper is the exact boundary that a core-only clean build broke: it
 // resolves through dist-runtime into the public bundled-provider artifact.
 await import(pathToFileURL(PROVIDER_WRAPPER).href);
+const sekbRuntime = await import(pathToFileURL(SEKB_ENTRY).href);
+for (const exportName of ['KnowledgeStore', 'DistillationTool', 'TrajectoryCapture', 'RetrievalEngine']) {
+  if (typeof sekbRuntime[exportName] !== 'function') {
+    throw new Error(`required SEKB runtime export is missing: ${exportName}`);
+  }
+}
 
 const tempRoot = mkdtempSync(join(tmpdir(), 'clawx-runtime-smoke-'));
 const stateDir = join(tempRoot, 'state');

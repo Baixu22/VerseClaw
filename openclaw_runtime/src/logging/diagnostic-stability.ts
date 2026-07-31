@@ -22,6 +22,12 @@ export type DiagnosticStabilityEventRecord = {
   pluginId?: string;
   source?: string;
   target?: string;
+  selectedHost?: string;
+  executionHost?: string;
+  lifecycleOwner?: string;
+  cohortRoute?: string;
+  nativeFallback?: boolean;
+  recoveryState?: string;
   surface?: string;
   action?: string;
   reason?: string;
@@ -422,6 +428,12 @@ function sanitizeDiagnosticEvent(event: DiagnosticEventPayload): DiagnosticStabi
       break;
     case "exec.process.completed":
       record.target = event.target;
+      record.selectedHost = event.selectedHost;
+      record.executionHost = event.executionHost;
+      record.lifecycleOwner = event.lifecycleOwner;
+      record.cohortRoute = event.cohortRoute;
+      record.nativeFallback = event.nativeFallback;
+      record.recoveryState = event.recoveryState;
       record.mode = event.mode;
       record.outcome = event.outcome;
       record.durationMs = event.durationMs;

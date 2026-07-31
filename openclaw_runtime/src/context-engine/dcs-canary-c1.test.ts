@@ -15,6 +15,15 @@ describe("dcs-canary-c1", () => {
     expect(abMetrics.live).toBe(false);
     expect(abMetrics.taskCount).toBeGreaterThanOrEqual(30);
     expect(abMetrics.ab.fixtureCount).toBeGreaterThanOrEqual(30);
+    expect(abMetrics.reductionDefinition).toMatchObject({
+      formula: "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+      corpusId: "dcs-canary-c1-synthetic-seed-42",
+      fixtureCount: 32,
+      live: false,
+      evidenceClass: "simulated-arm-synthetic",
+      role: "reference-only",
+      eligibleForGateAuthority: false,
+    });
 
     expect(decision.productApproved).toBe(false);
     expect(decision.meetsGate).toBe(false);
@@ -26,6 +35,7 @@ describe("dcs-canary-c1", () => {
     expect(decision.killSwitch).toBeTruthy();
     expect(decision.howToEnable).toBeTruthy();
     expect(decision.ts).toBeTruthy();
+    expect(decision.metrics.reductionDefinition).toEqual(abMetrics.reductionDefinition);
   });
 
   it("even with productApproved still packaging meetsGate false / no default-on", () => {

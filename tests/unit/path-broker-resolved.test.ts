@@ -23,12 +23,20 @@ vi.mock('electron-store', () => {
   return { default: MockStore };
 });
 
+vi.mock('@electron/services/permissions-api', () => ({
+  consumeApprovedPermissionApproval: vi.fn(async () => false),
+  createPermissionApproval: vi.fn(async () => ({ id: 'approval-1' })),
+  recordPermissionDecisionEvent: vi.fn(async () => undefined),
+  recordPermissionAudit: vi.fn(async () => undefined),
+}));
+
 vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
 }));
 
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (value: string) => value,
+  getOpenClawConfigDir: () => join(tmpdir(), 'clawx-openclaw-config-mock'),
 }));
 
 function workspace(rootPath: string): WorkspaceProfile {

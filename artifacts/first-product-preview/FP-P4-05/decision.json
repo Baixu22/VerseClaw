@@ -1,0 +1,62 @@
+{
+  "schema": "first-product-preview/fp-p4-05-c1-authoritative-decision/v1",
+  "taskId": "FP-P4-05",
+  "generatedAt": "2026-07-31T02:52:44.259Z",
+  "flagId": "runtime.coding.contextViewTools",
+  "metric": {
+    "formula": "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+    "threshold": 5,
+    "thresholdUnit": "x tool-call reduction"
+  },
+  "authority": {
+    "source": "artifacts/coding-c1/ab-metrics.json",
+    "corpusId": "coding-c1-hand-authored-real-tools",
+    "corpus": "hand-authored C1-2 navigation fixtures (impact/understand/verify/registration)",
+    "role": "gate-authority",
+    "selectionReason": "The on-arm executes real context view tools; execution fidelity outranks the larger simulated corpus.",
+    "rejectedAlternative": "The 32-task synthetic corpus improves scale coverage but its arms are simulated, so it is reference-only.",
+    "fixtureCount": 4,
+    "meanOffCalls": 4.5,
+    "meanOnCalls": 1,
+    "reductionFactor": 4.5,
+    "allOnArmPassed": true,
+    "live": false,
+    "meetsMetricThreshold": false
+  },
+  "references": [
+    {
+      "source": "artifacts/dcs-canary/c1/ab-metrics.json",
+      "decisionSource": "artifacts/dcs-canary/c1/decision.json",
+      "corpusId": "dcs-canary-c1-synthetic-seed-42",
+      "role": "reference-only",
+      "evidenceClass": "simulated-arm-synthetic",
+      "fixtureCount": 32,
+      "reductionFactor": 5.125,
+      "meetsSimulationThreshold": true,
+      "eligibleForGateAuthority": false,
+      "live": false
+    }
+  ],
+  "decision": {
+    "meetsGate": false,
+    "recommendation": "keep-off",
+    "defaultOn": false,
+    "defaultsUnchanged": true,
+    "liveReady": false,
+    "productApproved": false,
+    "reason": "Authoritative reduction 4.500x is below the unchanged 5x threshold."
+  },
+  "historicalEvidence": {
+    "valuesPreserved": true,
+    "codingRealToolReduction": 4.5,
+    "syntheticScaleReduction": 5.125,
+    "reconciliation": "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md"
+  },
+  "evidenceLimits": {
+    "humanRuns": 0,
+    "live": false,
+    "syntheticReferenceIsProductEvidence": false,
+    "unblocksTf0006": false,
+    "authorizesGa": false
+  }
+}

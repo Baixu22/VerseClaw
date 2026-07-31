@@ -45,7 +45,7 @@ VerseShell 是 Rust 编写的 Agent-Computer Interface 运行时。它提供：
 
 引入 VerseShell 的原始目的不是再增加一个 shell 工具，而是逐步替代 PowerShell、Git Bash 等原生 shell 作为 Agent 本地执行的**控制平面和进程承载层**。ClawX 仍然拥有用户授权和产品策略，VerseShell 拥有进程执行、生命周期、输出约束和底层审计。
 
-目标不是让模型学习 26 个新工具，而是保持模型面对 `exec` / `process`，在内部统一进入 VerseShell。
+目标不是让模型学习 31 个 operation，而是保持模型面对 `exec` / `process`，在内部统一进入 VerseShell。
 
 ## 3. 当前架构与已实现范围
 
@@ -55,7 +55,7 @@ flowchart LR
     B --> C["ClawX VerseShell Adapter"]
     C --> D["ae.exe --serve / typed ACI"]
     D --> E["Windows 进程与结果 artifact"]
-    C -. "当前仅接 exec.run/result.query" .-> D
+    C -. "typed exec/result + process lifecycle" .-> D
 ```
 
 当前已经实现：
@@ -68,71 +68,74 @@ flowchart LR
 - governed 路径失败关闭，不回退 native shell；
 - `exec.run` 返回有界 observation；
 - `result.query`/`verseshell_result` 可以恢复有界 artifact 片段；
+- UAS-05 新增内部 `process.start/poll/write/kill/list`，并由现有 `exec/process` 工具消费；
+- lifecycle owner 按 runtime/workspace/agent/session 隔离，使用单调 cursor、有界保留、artifact lineage 和显式 restart `lost`；
+- Windows 已覆盖 PATH/PATHEXT、batch shim、pipe stdin、ConPTY、Job Object 整树 kill、timeout 和 runtime crash cleanup；
+- 五个 lifecycle operation 明确不注册到 MCP，也不形成新的模型工具；
 - 所有生产相关 flag 默认关闭，并有总 kill switch。
 
 当前并未实现：
 
 - VerseShell 作为所有本地命令的默认执行平面；
-- 直接 argv 作为 ClawX 主路径；
-- 请求级环境变量和 PATH prepend 的完整传递；
-- stdin、后台进程、PTY/ConPTY、流式读取、主动取消和进程恢复；
+- 所有 shell-string 兼容命令都迁移为无需解释器的直接 argv；
 - VerseShell 事务与 ClawX write journal 的统一；
-- 26 个 operation 的全量模型侧暴露。
+- 31 个 operation 的全量模型侧暴露。
 
 ## 4. 版本与完整性审计
 
 ### 4.1 二进制结论
 
-VerseShell 源码目录的 `target/release/ae.exe` 与 ClawX 的 `resources/bin/win32-x64/ae.exe` 完全相同：
+ClawX 的 `resources/bin/win32-x64/ae.exe` 由固定上游 commit 加受跟踪 UAS-05 patch 构建：
 
 | 项目 | 值 |
 |---|---|
-| 大小 | `14,446,592` bytes |
-| SHA-256 | `63716c3f0589c0291443f770a0ede97d728fb842aa39f50ac230ee7b5175e884` |
+| 大小 | `14,880,256` bytes |
+| SHA-256 | `19ca598916077f677722b4f82d8dfc1c24c4e88ace9809abe681255370702699` |
+| base commit | `c3983694407a9ddb23505e05fad4a9eae653b283` |
+| source patch SHA-256 | `cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098` |
 | Cargo 默认 feature | `native` |
 | 协议 | `verseshell.jsonl/v1` |
 | catalog schema | `verseshell.operation-catalog/v1` |
-| catalog count | `26` |
-| catalog digest | `sha256:857eb12ca6b83da190764263a4e4a0181d3cd047926f0d404fc3a4c93c9f4848` |
+| catalog count | `31` |
+| catalog digest | `sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7` |
 
-结论：**ClawX 没有使用裁剪版二进制。问题在接入层，不在打包层。**
+结论：**ClawX 没有使用裁剪版二进制；UAS-05 通过显式 base+patch 对应源码扩展了生命周期，不能再把该 binary 描述为 clean upstream build。**
 
 ### 4.2 本轮重新核验的证据
 
-- 上游 `operation_protocol_tests`、`aci_1_0_ops_tests`、`aci_1_0_closed_loop_acceptance` 共 22 项通过；
-- 实际调用 `runtime.handshake` 和 `ops.list` 成功；
-- 实际调用 `file.view`、`repo.summary` 成功，证明相关 operation 不是占位；
-- `node --version` 直接 argv 成功；
-- `pnpm --version` 裸命令直接 argv 返回 `E_EXEC_SPAWN`；
-- `pnpm.cmd --version` 绝对路径直接 argv 成功；
-- VerseShell 上游工作树在审计结束时保持干净。
+- Rust `process_lifecycle_tests` 3/3、`operation_protocol_tests` 9/9 通过，release `ae.exe` 构建成功；
+- 真实 Windows 测试覆盖 PATH/PATHEXT shim、env、pipe stdin write/submit/EOF、ConPTY 输入、cursor、owner mismatch、重复 kill、timeout、整树清理、runtime crash reconciliation 和 12-byte retention；
+- focused OpenClaw VerseShell suite 8 files / 47 tests 通过；manifest/UAS-05 根测试 2 files / 12 tests 通过；
+- bundle script 8/8 和 package manifest validation 通过；patch、binary、catalog identity 可机器校验；
+- VerseShell 工作树有 13 项 UAS-05 build inputs，完整 diff 与 untracked source 已采集到对应源码 patch。
 
 ### 4.3 继承的项目证据
 
 `STATUS.md` 已记录 `pnpm verseshell:test`、focused OpenClaw tests、typecheck、manifest/package、comms replay/compare 等结果。本文不把这些历史证据冒充成本轮重新执行的结果。
 
-当前仍缺少：已安装 Electron 包的真实启动、provider-backed Agent canary、长期运行、故障恢复和操作员 rollback 证据。
+当前仍缺少：已安装 Electron 包的真实启动、provider-backed Agent canary、长期运行和操作员 rollback 证据。这些属于 UAS-06/后续产品门禁，不影响 UAS-05 的本地生命周期等价结论。
 
 ## 5. “残血版本”判定
 
 准确描述是：
 
-> **完整二进制、受限接入、上游生命周期能力未完成。**
+> **完整 base+patch 二进制、生命周期等价已实现、默认执行平面尚未迁移。**
 
 具体分三层：
 
-1. **上游有且 ClawX 已用**：`runtime.handshake`、`exec.run`、`result.query` 的主要契约；
+1. **上游有且 ClawX 已用**：`runtime.handshake`、`exec.run`、`result.query` 和内部 `process.*` 生命周期契约；
 2. **上游有但 ClawX 未用**：大部分 typed file/repo/test/transaction/meta operation；
-3. **上游本身没有**：ConPTY、stdin 流式输入、后台进程生命周期、`start/poll/read/write/kill`、流式 observation。
+3. **尚未迁移**：默认本地执行 plane、cohort canary、真实 ROI/soak，以及部分 shell-string 到直接 argv 的后续收敛。
 
-因此不能通过“把 26 个 operation 全部打开”解决问题。真正阻止全量替代的是第三层，以及第一层仍存在的命令契约缺口。
+因此不能通过“把 31 个 operation 全部打开”解决问题。UAS-05 只关闭生命周期等价缺口；默认路径迁移和真实 canary 仍分别归 UAS-06 与后续节点。
 
-## 6. 26 项能力处置矩阵
+## 6. 31 项能力处置矩阵
 
 | 类别 | Operation | 当前状态 | 裁决 |
 |---|---|---|---|
 | 核心执行 | `exec.run` | 已接入，但仍包装原生 shell | 必须补全 |
 | 结果恢复 | `result.query` | 已接入、flag 控制 | 保留并统一到现有工具体验 |
+| 进程生命周期 | `process.start/poll/write/kill/list` | UAS-05 已由现有 `exec/process` 内部接入，MCP 隐藏 | 保留为 host-owned 内部 ACI，不暴露给模型 |
 | 运行时契约 | `runtime.handshake` | 进程启动时内部使用 | 必须保留，不暴露给模型 |
 | catalog | `ops.list` | 能调用，主路径未作为诊断面使用 | 接 Workbench/启动诊断，不暴露给模型 |
 | observation | `ops.observation_recent`、`ops.observation_open_errors` | 未接入 | 解决 agent 隔离后内部接 telemetry |
@@ -142,11 +145,11 @@ VerseShell 源码目录的 `target/release/ae.exe` 与 ClawX 的 `resources/bin/
 | Test | 3 个 test operation | 未接入 | 不引入；发现规则过窄且 last-test 状态进程全局 |
 | Transaction | `tx.begin/commit/rollback/status` | 未接入 | 上游完成 session 隔离且覆盖统一写入前禁止启用 |
 
-数量核对：4 个核心/契约 + 2 个 observation + 2 个删除恢复 + 8 个普通 file + 3 个 repo + 3 个 test + 4 个 transaction = 26。
+数量核对：原 26 个 catalog operation + 5 个内部 process lifecycle operation = 31。
 
 ## 7. 主要问题与风险
 
-### P0-1：当前 typed exec 仍是 shell-string 执行
+### P0-1：shell-string 兼容仍存在，但生命周期 owner 已收口
 
 `openclaw_runtime/src/agents/verseshell/shell-command.ts` 把命令包装为：
 
@@ -154,11 +157,11 @@ VerseShell 源码目录的 `target/release/ae.exe` 与 ClawX 的 `resources/bin/
 - PowerShell/pwsh `-Command`；
 - Git Bash 或 `sh -lc`。
 
-因此当前收益主要是二次授权、Job Object、输出压缩和 artifact，而不是 argv 隔离。shell quoting、管道、重定向和字符串解析风险依然存在。
+UAS-05 将解析结果固化为显式 argv 后提交 `process.start`，VerseShell 不再重新解释命令；但为保持既有 shell 管道/重定向语义，兼容计划仍可能把 `cmd.exe`、PowerShell 或 `sh` 作为显式 payload。把普通命令进一步迁移为无解释器 direct argv 属于后续单一执行平面收敛，不影响 lifecycle owner 等价。
 
-### P0-2：Windows 命令解析不完整
+### P0-2：Windows 命令解析已闭合 UAS-05 矩阵
 
-上游直接使用 Rust `Command::new(argv[0])`。实测裸 `pnpm` 无法启动，而绝对 `pnpm.cmd` 可以。全量切换前必须支持：
+UAS-05 已在 VerseShell 内实现并测试：
 
 - `PATH` 搜索；
 - `PATHEXT`；
@@ -167,25 +170,15 @@ VerseShell 源码目录的 `target/release/ae.exe` 与 ClawX 的 `resources/bin/
 - npm/pnpm/yarn/corepack shim；
 - 明确的可执行文件解析结果和审计记录。
 
-`.cmd/.bat` 本质仍需要 Windows batch interpreter。目标应是让它成为 VerseShell 管理的显式子进程，而不是安全和调度控制平面；常用包管理器可进一步解析到 `corepack` 或底层 Node 入口。
+`.cmd/.bat` 由已解析和审计的 `cmd.exe` 作为显式子进程承载；它不是安全和调度控制平面。PATH/PATHEXT、shim、空格、Unicode、cwd 和 env override 已由真实 Windows lifecycle test 覆盖。
 
-### P0-3：请求级环境没有进入 exec.run
+### P0-3：请求级环境已进入 process.start
 
-ClawX 当前会构造清洗后的 `env` 和 `pathPrepend`，但 governed VerseShell 调用没有把它们发送给 `exec.run`；上游 `ExecArgs` 也没有 `env` 字段。插件环境 hook 对 `host=verseshell` 还会被跳过。
+OpenClaw 继续拥有环境清洗；governed lifecycle 将批准后的 `processEnv` 作为有界 env map 提交 `process.start`。VerseShell 用该 map 解析 executable/PATH/PATHEXT 并构造子进程环境。UAS-05 不新增 renderer 或模型配置面。
 
-这会导致同一条命令在 gateway host 和 VerseShell host 上行为不同，是全量切换的硬阻塞。
+### P0-4：现有 exec/process 生命周期已达到本地等价
 
-### P0-4：现有 exec/process 功能会倒退
-
-VerseShell 1.0 的进程路径是 stdin=null、stdout/stderr pipe、`CREATE_NO_WINDOW`，不是 ConPTY。当前 ClawX VerseShell branch：
-
-- 等待 `exec.run` 完成后才返回；
-- 不能真正 background/yield；
-- 没有实时 `onUpdate`；
-- `kill` 是 no-op；
-- 无法通过 `process` 写 stdin、发送按键、轮询日志或终止任务。
-
-在这些能力补齐之前把 VerseShell 设为默认 host，会造成明确的产品功能回归。
+UAS-05 的 governed branch 使用 `process.start + poll`，支持前台等待、后台/yield、实时输出、pipe/ConPTY stdin、submit/EOF、主动 kill、timeout 和整树清理。现有 `process` tool 识别 `lifecycleOwner=verseshell`，禁止以 PID native fallback 绕过 owner。该等价结果不等于把 VerseShell 设为默认 host；默认迁移仍由 UAS-06 单独验证。
 
 ### P0-5：workspace jail 不能被描述成进程沙箱
 
@@ -207,7 +200,7 @@ ClawX 已有按 session 持久化的 write journal、stale-write guard、逐文�
 
 ### P2：工具面膨胀与学习成本
 
-向模型暴露全部 26 个 operation 会增加工具定义 token、工具选择错误和调用轮次。多数 file/repo/test operation 弱于或重复 ClawX 已有工具。收益不足以覆盖学习和维护成本。
+向模型暴露全部 31 个 operation 会增加工具定义 token、工具选择错误和调用轮次。多数 file/repo/test operation 弱于或重复 ClawX 已有工具；五个 process operation 也明确保持 host-owned/MCP-hidden。
 
 ## 8. 我的理解与目标架构
 
@@ -215,7 +208,7 @@ ClawX 已有按 session 持久化的 write journal、stale-write guard、逐文�
 
 全量使用应定义为：
 
-> 所有本地进程创建、生命周期、输入输出、超时终止和 artifact 都经过 VerseShell；Agent 仍只使用 ClawX 的 `exec` 与 `process`，不需要在多个 host 或 26 个 operation 之间路由。
+> 所有本地进程创建、生命周期、输入输出、超时终止和 artifact 都经过 VerseShell；Agent 仍只使用 ClawX 的 `exec` 与 `process`，不需要在多个 host 或 31 个 operation 之间路由。
 
 它不等于：
 
@@ -299,6 +292,12 @@ ClawX：
 
 退出条件：ClawX 当前 exec/process E2E 行为在 VerseShell host 上达到功能等价。
 
+2026-07-30 更新：G2 对应的 UAS-05 工程退出条件已闭合。实际 API 为
+`process.start/poll/write/kill/list`，poll 同时承担有界 read；Windows ConPTY、stdin、cursor、
+retention、owner mismatch、timeout、重复 kill、整树清理和 restart `lost` 均有真实 binary
+证据。Task Forest closeout 已确认并应用，canonical 状态为 `TF-0016=done/100%`、
+`TF-0017=ready/0%`；本次 closeout 未启动 G3/UAS-06。
+
 ### G3：ClawX 单一执行平面切换
 
 目标：所有本地 gateway 执行统一进入 VerseShell，模型不承担 host 路由。
@@ -311,6 +310,8 @@ ClawX：
 - native gateway shell 只作为开发期可显式选择的回滚基线，不在 governed 路径自动 fallback。
 
 退出条件：真实 Agent 不需要选择 `host=verseshell`，且功能、授权和可恢复性无回归。该条件仍不自动授予 default-on。
+
+2026-07-30 更新：UAS-06 已实现 cohort 级确定性路由。操作员可在 global、agent 或 session scope 选择 `tools.exec.host=verseshell`，模型侧不能按调用选择该 host。合格本地路径固定由 governed VerseShell lifecycle 拥有；sandbox、node、remote/provider-native 和 elevated 路径保留原 owner。工程矩阵九场景覆盖率 100%、native fallback 0，但真实 cohort、paired task、provider usage、人工恢复和 soak 均为 0，因此 G3 只达到 engineering qualification，尚未达到退出条件。
 
 ### G4：真实 canary 与收益门禁
 
@@ -398,32 +399,19 @@ ClawX：
 - 重复的普通 file/repo/test 模型工具；
 - 在事务隔离和 authority 未统一前启用 tx operation。
 
-## 13. Task Forest 候选提案
+## 13. Task Forest 登记状态
 
-建议但尚未写入：
-
-| 字段 | 建议值 |
-|---|---|
-| parent | `TF-0007` |
-| title | `VerseShell 单一执行平面与能力补全` |
-| kind | `task` |
-| initial status | `review_needed` |
-| purpose | 让所有本地 Agent 进程在不增加模型工具学习成本的前提下，经由安全、可审计、可恢复的 VerseShell 执行平面运行 |
-| desired outcomes | argv/env 契约完整；exec/process 生命周期等价；单一执行平面；真实 canary 证据 |
-| non-goals | 26 工具暴露、MCP 主路径、legacy eval、default-on、GA、解除 TF-0006 |
-| fit | `aligned`，建议置信度 `0.90` |
-| why this task | 直接服务于 TF-0007 的受控内部投用目标，并减少 native shell 和双执行平面的长期维护成本 |
-| why not enough | 不提供联合系统 GA，也不替代 TF-0006 所需真实 corpus/live A/B/soak/product approval |
-| validation | G1-G4 分阶段门禁、真实 package/provider canary、kill-switch rollback |
-
-为遵守“一次只推进一个 ready 节点”，确认该提案时还需要决定：继续先执行当前 ready 的 `TF-0009`，还是把 VerseShell 节点提升为下一优先节点。未确认前保持 `review_needed`。
+`TF-0016/UAS-05` closeout 已确认并应用，正式状态为 `done/100%`。`TF-0017/UAS-06`
+工程路由与本地矩阵已完成，但真实 canary residual 未完成；其状态只能通过 Task Forest
+proposal 提议推进为 `in_progress`，未获确认前 canonical 仍保持 `ready/0%`。`TF-0018/UAS-07`
+与 `TF-0019/UAS-08` 继续 `proposed/0%`，不得用工程矩阵替代真实 cohort 证据来释放。
 
 ## 14. 审计裁决
 
-1. ClawX 使用的是完整 VerseShell 二进制，不需要重新引入另一份“完整版”。
-2. 当前安全适配是有效的 canary foundation，但还不是原生 shell 的功能等价替代。
+1. ClawX 使用的是完整 base+patch VerseShell 二进制，不需要重新引入另一份“完整版”。
+2. UAS-05 已达到受控 governed host 的进程生命周期等价，但还没有迁移默认本地执行 plane。
 3. 最大价值在统一进程执行、输出压缩、artifact 和生命周期，不在复制 file/repo/test 工具。
-4. 最大阻塞是 execution plan、Windows resolver、env、stdin/PTY/background/cancel，不是 operation 数量。
-5. 正确路线是扩展 VerseShell 的执行内核，再让 ClawX 现有 `exec/process` 无感全量使用。
+4. Windows resolver、env、stdin/PTY/background/cancel 已闭合；下一阻塞是独立 UAS-06 cohort canary 和真实产品证据，不是 operation 数量。
+5. 下一阶段是对已建立的单一路由收集受控真实 cohort、paired baseline、actual provider usage、人工恢复和操作员 rollback 证据；证据审阅前不得启动 UAS-07。
 6. 事务和删除恢复只有在 journal authority 统一后才值得引入。
-7. 先完成 G1，再讨论 G2；禁止同时铺开 26 项能力。
+7. 禁止同时铺开 31 项能力；lifecycle operation 继续保持内部、MCP-hidden、default-off。

@@ -1,16 +1,20 @@
 """Host-facing JSON-RPC 2.0 over stdio for the Verse Token foundation bridge.
 
 Protocol: one JSON object per line on stdin; one JSON response per line on stdout.
-Process holds a single long-lived UnifiedStore (P0). Methods are serial.
+Stateful diagnostics methods share one long-lived UnifiedStore. Production
+``vt.pack`` requests own an in-memory graph and may complete out of order.
 
 This is intentionally lighter than mcp_server.py — no MCP handshake.
 """
+
 from __future__ import annotations
 
 import json
 import sys
+import threading
 import traceback
-from typing import Any
+from concurrent.futures import Future, ThreadPoolExecutor
+from typing import Any, Callable, TextIO
 
 from . import __version__
 from .errors import VTError, VTStoreError
@@ -24,6 +28,11 @@ _INVALID_REQUEST = -32600
 _METHOD_NOT_FOUND = -32601
 _INVALID_PARAMS = -32602
 _INTERNAL_ERROR = -32603
+
+_PACK_REQUEST_SCHEMA = "VtokenPackRequest/v1"
+_PACK_RESULT_SCHEMA = "VtokenPackResult/v1"
+_PACK_ESTIMATE_METHOD = "chars_div_4"
+_PACK_WORKERS = 4
 
 _store: UnifiedStore | None = None
 _opened = False
@@ -68,6 +77,91 @@ def _serialize_assemble(result: Any) -> dict[str, Any]:
     }
 
 
+def _pack_candidate_graph(candidate: dict[str, Any]) -> SIRGraph:
+    kind = candidate.get("kind")
+    if kind == "markdown":
+        text = candidate.get("text")
+        source_path = candidate.get("source_path")
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("markdown candidate text must be a non-empty string")
+        if not isinstance(source_path, str) or not source_path.strip():
+            raise ValueError(
+                "markdown candidate source_path must be a non-empty string"
+            )
+        return ingest_markdown(text, source_path=source_path)
+    if kind == "tool_schema":
+        schema = candidate.get("tool_schema")
+        server_name = candidate.get("server_name", "host")
+        if not isinstance(schema, dict):
+            raise ValueError("tool_schema candidate must carry a tool_schema object")
+        if not isinstance(server_name, str) or not server_name.strip():
+            raise ValueError(
+                "tool_schema candidate server_name must be a non-empty string"
+            )
+        return ingest_tool_schemas([schema], server_name=server_name)
+    if kind == "memory":
+        entry = candidate.get("entry")
+        if not isinstance(entry, dict):
+            raise ValueError("memory candidate must carry an entry object")
+        return ingest_memory([entry])
+    raise ValueError("candidate kind must be markdown|tool_schema|memory")
+
+
+def _pack_stateless(params: dict[str, Any]) -> dict[str, Any]:
+    if params.get("schema") != _PACK_REQUEST_SCHEMA:
+        raise ValueError(f"schema must be {_PACK_REQUEST_SCHEMA}")
+    if params.get("estimate_method") != _PACK_ESTIMATE_METHOD:
+        raise ValueError(f"estimate_method must be {_PACK_ESTIMATE_METHOD}")
+
+    task_hint = params.get("task_hint", "")
+    if not isinstance(task_hint, str):
+        raise ValueError("task_hint must be a string")
+    render_mode = params.get("render_mode", "compact")
+    if render_mode not in ("compact", "dense", "verbose"):
+        raise ValueError("render_mode must be compact|dense|verbose")
+    try:
+        allowance_tokens = int(params.get("allowance_tokens"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("allowance_tokens must be an integer") from exc
+    if allowance_tokens <= 0:
+        raise ValueError("allowance_tokens must be greater than zero")
+
+    candidates = params.get("candidates")
+    if not isinstance(candidates, list):
+        raise ValueError("candidates must be a list")
+    candidate_ids: set[str] = set()
+    store = UnifiedStore(doc_graph=SIRGraph("doc"), mem_store=None)
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            raise ValueError("each candidate must be an object")
+        candidate_id = candidate.get("candidate_id")
+        if not isinstance(candidate_id, str) or not candidate_id.strip():
+            raise ValueError("candidate_id must be a non-empty string")
+        if candidate_id in candidate_ids:
+            raise ValueError(f"duplicate candidate_id: {candidate_id}")
+        candidate_ids.add(candidate_id)
+        _merge_graph(store, _pack_candidate_graph(candidate))
+
+    result = store.assemble(
+        task_hint,
+        allowance_tokens,
+        render_mode=str(render_mode),
+    )
+    return {
+        "schema": _PACK_RESULT_SCHEMA,
+        "ok": True,
+        "prompt": result.prompt,
+        "estimated_tokens": int(result.tokens_used),
+        "allowance_tokens": allowance_tokens,
+        "estimate_method": _PACK_ESTIMATE_METHOD,
+        "slot_breakdown": result.slot_breakdown,
+        "nodes_included": list(result.nodes_included),
+        "nodes_evicted": list(result.nodes_evicted),
+        "dedup_count": int(result.dedup_count),
+        "candidate_count": len(candidate_ids),
+    }
+
+
 def dispatch(method: str, params: dict[str, Any] | None) -> Any:
     """Dispatch one RPC method. Raises VTError / ValueError / TypeError on failure."""
     global _store, _opened
@@ -79,6 +173,9 @@ def dispatch(method: str, params: dict[str, Any] | None) -> Any:
             "version": __version__,
             "opened": bool(_opened and _store is not None),
         }
+
+    if method == "vt.pack":
+        return _pack_stateless(p)
 
     if method == "vt.open":
         # Close previous store cleanly if re-opening.
@@ -161,7 +258,11 @@ def dispatch(method: str, params: dict[str, Any] | None) -> Any:
         task_hint = p.get("task_hint") or p.get("taskHint") or ""
         if not isinstance(task_hint, str):
             raise ValueError("task_hint must be a string")
-        budget = p.get("budget_tokens") if "budget_tokens" in p else p.get("budgetTokens", 32000)
+        budget = (
+            p.get("budget_tokens")
+            if "budget_tokens" in p
+            else p.get("budgetTokens", 32000)
+        )
         try:
             budget_tokens = int(budget)
         except (TypeError, ValueError) as exc:
@@ -237,6 +338,46 @@ def reset_for_tests() -> None:
     _opened = False
 
 
+def serve(
+    input_stream: TextIO,
+    output_stream: TextIO,
+    *,
+    handler: Callable[[Any], dict[str, Any]] = handle_request,
+    pack_workers: int = _PACK_WORKERS,
+) -> None:
+    """Serve JSON-RPC lines; stateless pack requests run independently."""
+    write_lock = threading.Lock()
+
+    def emit(response: dict[str, Any]) -> None:
+        with write_lock:
+            output_stream.write(json.dumps(response, ensure_ascii=False) + "\n")
+            output_stream.flush()
+
+    def emit_future(future: Future[dict[str, Any]], request_id: Any) -> None:
+        try:
+            emit(future.result())
+        except Exception as exc:  # noqa: BLE001
+            emit(_err(request_id, _INTERNAL_ERROR, str(exc) or type(exc).__name__))
+
+    with ThreadPoolExecutor(max_workers=max(1, pack_workers)) as executor:
+        for raw in input_stream:
+            line = raw.strip()
+            if not line:
+                continue
+            try:
+                req = json.loads(line)
+            except json.JSONDecodeError as exc:
+                emit(_err(None, _INVALID_REQUEST, f"invalid JSON: {exc}"))
+                continue
+            if isinstance(req, dict) and req.get("method") == "vt.pack":
+                future = executor.submit(handler, req)
+                future.add_done_callback(
+                    lambda done, request_id=req.get("id"): emit_future(done, request_id)
+                )
+                continue
+            emit(handler(req))
+
+
 def main() -> int:
     # Line-buffered stdout for timely host reads.
     try:
@@ -244,18 +385,7 @@ def main() -> int:
     except Exception:  # noqa: BLE001
         pass
 
-    for raw in sys.stdin:
-        line = raw.strip()
-        if not line:
-            continue
-        try:
-            req = json.loads(line)
-        except json.JSONDecodeError as exc:
-            resp = _err(None, _INVALID_REQUEST, f"invalid JSON: {exc}")
-        else:
-            resp = handle_request(req)
-        sys.stdout.write(json.dumps(resp, ensure_ascii=False) + "\n")
-        sys.stdout.flush()
+    serve(sys.stdin, sys.stdout)
     return 0
 
 

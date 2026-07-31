@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-001",
-  "checkedAt": "2026-07-28T16:43:10.579Z",
+  "checkedAt": "2026-07-31T06:58:01.384Z",
   "ok": true,
   "fail": [],
   "warn": [
@@ -47,6 +47,7 @@
     "manifest hash mismatch (non-strict): openclaw_runtime/src/agents/role-spawn.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/agents/agent-steering-queue.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/assembler.ts",
+    "manifest hash mismatch (non-strict): openclaw_runtime/src/memory/gatekeeper.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts",
     "manifest hash mismatch (non-strict): electron-builder.yml",
     "manifest hash mismatch (non-strict): artifacts/agent-dev-deep-test/report.json",
@@ -67,7 +68,7 @@
     "known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts",
     "known post-audit content drift allowed: package.json",
     "known post-audit content drift allowed: electron/services/mcp-api.ts",
-    "manifest files: matched=25 lfNorm=0 drift=56 missing=0",
+    "manifest files: matched=24 lfNorm=0 drift=57 missing=0",
     "A2 unique Finding IDs: 35",
     "A2 related links OK",
     "A2 task Finding refs resolve (38 tasks scanned)"

@@ -2,6 +2,12 @@ import type { MemoryCard, MemoryScoreInput } from "./types.js";
 
 export type { MemoryCard, MemoryCardStatus, MemoryCardType, MemoryCardScope } from "./types.js";
 
+export type MemoryCardScopeContext = {
+  workspace?: string;
+  sessionKey?: string;
+  taskId?: string;
+};
+
 function clamp01(value: number | undefined, fallback = 0): number {
   if (typeof value !== "number" || Number.isNaN(value)) {
     return fallback;
@@ -27,6 +33,26 @@ export function isMemoryCardExpired(card: MemoryCard, now = new Date()): boolean
 
 export function isInjectableMemoryCard(card: MemoryCard, now = new Date()): boolean {
   return card.status === "active" && !isMemoryCardExpired(card, now) && !card.supersededBy;
+}
+
+export function isMemoryCardInContextScope(
+  card: MemoryCard,
+  context: MemoryCardScopeContext,
+): boolean {
+  const scopeKey = card.scopeKey?.trim();
+  if (card.scope === "workspace") {
+    return Boolean(scopeKey && context.workspace?.trim() === scopeKey);
+  }
+  if (card.scope === "session") {
+    return Boolean(scopeKey && context.sessionKey?.trim() === scopeKey);
+  }
+  if (card.scope === "task") {
+    return Boolean(scopeKey && context.taskId?.trim() === scopeKey);
+  }
+  if (card.scope === "project" && scopeKey) {
+    return context.workspace?.trim() === scopeKey;
+  }
+  return true;
 }
 
 export function touchMemoryCard(card: MemoryCard, at = new Date()): MemoryCard {

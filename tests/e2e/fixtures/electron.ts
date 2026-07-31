@@ -281,7 +281,13 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   launchElectronApp: async ({ homeDir, userDataDir }, provideLauncher) => {
-    await provideLauncher(async (options?: LaunchElectronOptions) => await launchVerseClawElectron(homeDir, userDataDir, options));
+    await provideLauncher(async (options?: LaunchElectronOptions) => {
+      // Most production-path specs use this explicit launcher instead of the
+      // `electronApp` fixture. Keep the FP-P3-05 stale-runtime guard on both
+      // paths so a direct launch cannot silently test an older child bundle.
+      await assertRuntimeDistFresh();
+      return await launchVerseClawElectron(homeDir, userDataDir, options);
+    });
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {

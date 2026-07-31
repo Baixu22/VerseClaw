@@ -13,6 +13,16 @@ const activeWorkspace = vi.hoisted(() => ({
   profile: null as WorkspaceProfile | null,
 }));
 
+vi.mock('@electron/services/permissions-api', async () => {
+  const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+  return permissionsApiTestDouble.module();
+});
+
+vi.mock('../../electron/services/permissions-api', async () => {
+  const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+  return permissionsApiTestDouble.module();
+});
+
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(() => process.cwd()),
@@ -59,12 +69,25 @@ vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
 }));
 
+vi.mock('../../electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+}));
+
 vi.mock('@electron/utils/store', () => ({
   getSetting: vi.fn(async () => 'token'),
 }));
 
 vi.mock('@electron/utils/control-ui-device-pairing', () => ({
   scheduleControlUiDeviceAutoApproval: vi.fn(),
+}));
+
+vi.mock('@electron/utils/active-sandbox-high-risk-policy', () => ({
+  getActiveSandboxHighRiskPolicy: vi.fn(async () => ({
+    degraded: false,
+    requestedProviderId: 'policy-light',
+    effectiveProviderId: 'policy-light',
+    runtimeLevel: 'policy',
+  })),
 }));
 
 function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptEdits'): WorkspaceProfile {
@@ -83,7 +106,7 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     setSandboxHighRiskPolicyLoader(async () => ({
       degraded: false,
       requestedProviderId: 'policy-light',
@@ -92,6 +115,8 @@ describe('gateway permission approval flow', () => {
     }));
     storeState.approvals = [];
     storeState.decisionEvents = [];
+    const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+    permissionsApiTestDouble.reset();
     activeWorkspace.profile = workspace();
   });
 
@@ -103,8 +128,8 @@ describe('gateway permission approval flow', () => {
     const backpressure = {
       run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
     };
-    const { createGatewayApi } = await import('../../electron/services/gateway-api');
     const { createPermissionsApi, listPermissionDecisionEvents } = await import('../../electron/services/permissions-api');
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
     const api = createGatewayApi(gatewayManager as never, backpressure as never);
     const permissions = createPermissionsApi();
 
@@ -157,8 +182,8 @@ describe('gateway permission approval flow', () => {
     const backpressure = {
       run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)),
     };
-    const { createGatewayApi } = await import('../../electron/services/gateway-api');
     const { createPermissionsApi } = await import('../../electron/services/permissions-api');
+    const { createGatewayApi } = await import('../../electron/services/gateway-api');
     const api = createGatewayApi(gatewayManager as never, backpressure as never);
     const permissions = createPermissionsApi();
 

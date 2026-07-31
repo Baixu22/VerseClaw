@@ -295,6 +295,7 @@ vi.mock('@electron/utils/whatsapp-login', () => ({
 
 vi.mock('@electron/utils/paths', () => ({
   getOpenClawConfigDir: () => testOpenClawConfigDir,
+  getOpenClawConfigPath: () => join(testOpenClawConfigDir, 'openclaw.json'),
   getOpenClawDir: () => testOpenClawConfigDir,
   getOpenClawResolvedDir: () => testOpenClawConfigDir,
   getDataDir: () => testOpenClawConfigDir,

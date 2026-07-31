@@ -1,0 +1,137 @@
+{
+  "applied_at": "2026-07-29T14:55:37.646151Z",
+  "base_graph_hash": "93d90b633045df5767c97dc811a746aaf049b933f258de0522af6134fdcb810b",
+  "base_summary": {
+    "edge_count": 31,
+    "node_count": 19,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "复跑 pnpm run tf0009:agent-surrogate，再跑 pnpm run dcs:ops:preflight；预期 agentSurrogateReady=true 且 l3Ready=false",
+          "把 review_needed 解释为 degraded-agent-complete，不得解释为真人 canary 完成",
+          "未来只有补齐每 profile 10 次具名真人任务、真人 drill 与 owner 裁决后才可另提 done proposal",
+          "TF-0011 仅可消费 agent-surrogate 工程证据；其推进不得增加 TF-0009 真人计数、liveReady 或 productApproved",
+          "保持 liveReady=false、productApproved=false、defaultOn=false；C1 4.5x/keep-off；TF-0006 blocked"
+        ],
+        "success_metrics": [
+          "agent-surrogate 记录 30/30 通过",
+          "agent campaign 未确认 SEKB principle 写入 0",
+          "agent campaign Browser 私网允许与审批绕过 0",
+          "真人计数误增 0",
+          "TF-0009 非法 done 或产品锁漂移 0"
+        ],
+        "summary": "agent-surrogate 工程流程已完成：DCS、SEKB、Browser 各 10/10，agent kill/rollback 通过；所有记录固定非 human/live。真人三 profile 仍为 0/10，真人 canary drill 与具名 owner 裁决延后。语义为 degraded-agent-complete，保持 review_needed；纯工程 UAS 链可消费其工程证据继续，但这不构成 TF-0009 done。"
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "让统一 Agent 开发可持续且不依赖聊天记忆",
+          "validation_plan": [
+            "运行 task-forest validate/export",
+            "运行 Harness context/validate",
+            "在冻结快照核对 manifest"
+          ],
+          "why_not_enough": "只建立治理和证据，不修复运行时缺口，也不补齐 TF-0009 真人证据。",
+          "why_this_task": "它建立后续每个开发任务都能复现和审查的权威入口，并隔离 agent 工程证据与真人 residual。"
+        },
+        "assumptions": [
+          "TF-0009 agent-surrogate 工程流已完成并提供改造前工程基线",
+          "TF-0009 真人/live residual 继续独立保留为 review_needed"
+        ],
+        "execution_hints": [
+          "只处理证据、规格和治理冲突",
+          "消费 TF-0009 agent-surrogate 工程证据时必须保留 humanEquivalent=false/liveEvidence=false",
+          "禁止修改生产默认值、三个产品锁或 TF-0006 状态"
+        ]
+      },
+      "id": "TF-0011"
+    },
+    {
+      "action": "remove_edge",
+      "id": "TFE-0020"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": false,
+        "confidence": 0.99,
+        "created_from_session": "session-2026-07-29-p4-03-04-start",
+        "reason": "TF-0011 消费 TF-0009 的 agent-surrogate 工程基线；TF-0009 的真人/live residual 保持 review_needed，但不再阻塞纯工程证据冻结。"
+      },
+      "from": "TF-0011",
+      "to": "TF-0009",
+      "type": "derived_from"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0011",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-07-29T14:53:33.607771Z",
+        "evidence": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json；artifacts/first-product-preview/TF-0009/agent-surrogate-report.json；用户 2026-07-29 治理指令",
+        "expected_requirement": "原严格链要求 TF-0009 完整 done 后才释放 TF-0011。",
+        "id": "TFD-tf0009-human-engineering-dependency-split-20260729",
+        "observed_action_or_result": "用户已将无法承担成本的真人测试降级为 agent-surrogate，并要求真人 residual 留给后续、当前保证工程流程与任务实现完整；TF-0009 agent 工程流已完成但真人验收不可等价。",
+        "recommendation": "TF-0009 保持 review_needed 且不得 done；移除其对 TF-0011 的执行阻塞，只保留 derived_from 工程证据关系。",
+        "related_task_ids": [
+          "TF-0009",
+          "TF-0011"
+        ],
+        "severity": "medium",
+        "status": "accepted_by_user_direction"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "保留 TF-0009 review_needed，同时把 TF-0011 从真人 canary 完成条件中解耦，继续严格的 TF-0011→TF-0014 工程链。",
+        "confidence": 0.99,
+        "created_at": "2026-07-29T14:53:33.607771Z",
+        "id": "TFA-tf0011-engineering-chain-release-20260729",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "让统一 Agent 开发可持续且不依赖聊天记忆",
+          "validation_plan": [
+            "运行 task-forest validate/export",
+            "运行 Harness context/validate",
+            "在冻结快照核对 manifest"
+          ],
+          "why_not_enough": "只建立治理和证据，不修复运行时缺口，也不补齐 TF-0009 真人证据。",
+          "why_this_task": "它建立后续每个开发任务都能复现和审查的权威入口，并隔离 agent 工程证据与真人 residual。"
+        },
+        "reason": "该方案同时满足实现完整、依赖串行和证据诚实三项约束。",
+        "rejected_options": [
+          "把 TF-0009 伪标 done 后释放下游",
+          "继续永久阻塞 TF-0011，导致任务实现无法推进",
+          "绕过 TF-0011→TF-0014 直接实施 FP-P4-03"
+        ],
+        "related_task_ids": [
+          "TF-0011"
+        ],
+        "selected_option": "工程链与真人 residual 分离",
+        "user_goal": "在不伪造真人证据的前提下完成 P4-03/04 的工程实现与流程收口"
+      }
+    }
+  ],
+  "created_at": "2026-07-29T14:54:26.786638Z",
+  "notes": "本 proposal 不把 TF-0009 标 done，不增加真人/live 计数，不解阻 TF-0006，不改变 liveReady/productApproved/defaultOn=false，也不直接启动 FP-P4-03/04。应用后唯一 status=ready 的叶节点应为 TF-0011；旧 alignment-only proposal 将被本 proposal 的同等修复覆盖。",
+  "proposal_id": "TFP-tf0011-engineering-chain-release-20260729",
+  "rationale": "用户要求开始 FP-P4-03 与 FP-P4-04，并明确真人证据缺失时采用 agent-surrogate 完成工程流程、真人 residual 留给后续且不得冒充 done。TF-0009 已完成 10/10/10 agent 工程流并保持 review_needed，但旧 depends_on 仍把纯工程 UAS 链永久锁住。为保证实现流程可继续且不伪造真人完成，需要将真人验收 residual 与 TF-0011 的工程执行依赖解耦。",
+  "session_id": "session-2026-07-29-p4-03-04-start",
+  "status": "applied"
+}

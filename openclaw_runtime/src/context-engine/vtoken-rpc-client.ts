@@ -7,17 +7,33 @@
  */
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { existsSync } from "node:fs";
-import os from "node:os";
 import path from "node:path";
 
-export type VtokenRpcAssembleResult = {
+export const VTOKEN_PACK_REQUEST_SCHEMA = "VtokenPackRequest/v1" as const;
+export const VTOKEN_PACK_RESULT_SCHEMA = "VtokenPackResult/v1" as const;
+export const VTOKEN_PACK_ESTIMATE_METHOD = "chars_div_4" as const;
+
+export type VtokenPackCandidate =
+  | { candidateId: string; kind: "markdown"; sourcePath: string; text: string }
+  | {
+      candidateId: string;
+      kind: "tool_schema";
+      serverName: string;
+      toolSchema: Record<string, unknown>;
+    }
+  | { candidateId: string; kind: "memory"; entry: Record<string, unknown> };
+
+export type VtokenRpcPackResult = {
+  schema: typeof VTOKEN_PACK_RESULT_SCHEMA;
   prompt: string;
-  tokens_used: number;
-  tokens_budget: number;
+  estimatedTokens: number;
+  allowanceTokens: number;
+  estimateMethod: typeof VTOKEN_PACK_ESTIMATE_METHOD;
   slot_breakdown: Record<string, unknown>;
   nodes_included: string[];
   nodes_evicted: string[];
   dedup_count: number;
+  candidateCount: number;
 };
 
 export type VtokenRpcClientOptions = {
@@ -34,6 +50,60 @@ type Pending = {
   timer: NodeJS.Timeout;
   method: string;
 };
+
+type VtokenPackWireResult = {
+  schema: typeof VTOKEN_PACK_RESULT_SCHEMA;
+  prompt: string;
+  estimated_tokens: number;
+  allowance_tokens: number;
+  estimate_method: typeof VTOKEN_PACK_ESTIMATE_METHOD;
+  slot_breakdown: Record<string, unknown>;
+  nodes_included: string[];
+  nodes_evicted: string[];
+  dedup_count: number;
+  candidate_count: number;
+};
+
+function toWireCandidate(candidate: VtokenPackCandidate): Record<string, unknown> {
+  if (candidate.kind === "markdown") {
+    return {
+      candidate_id: candidate.candidateId,
+      kind: candidate.kind,
+      source_path: candidate.sourcePath,
+      text: candidate.text,
+    };
+  }
+  if (candidate.kind === "tool_schema") {
+    return {
+      candidate_id: candidate.candidateId,
+      kind: candidate.kind,
+      server_name: candidate.serverName,
+      tool_schema: candidate.toolSchema,
+    };
+  }
+  return {
+    candidate_id: candidate.candidateId,
+    kind: candidate.kind,
+    entry: candidate.entry,
+  };
+}
+
+function isPackWireResult(value: unknown): value is VtokenPackWireResult {
+  if (!value || typeof value !== "object") return false;
+  const result = value as Partial<VtokenPackWireResult>;
+  return (
+    result.schema === VTOKEN_PACK_RESULT_SCHEMA &&
+    result.estimate_method === VTOKEN_PACK_ESTIMATE_METHOD &&
+    typeof result.prompt === "string" &&
+    typeof result.estimated_tokens === "number" &&
+    typeof result.allowance_tokens === "number" &&
+    typeof result.slot_breakdown === "object" &&
+    Array.isArray(result.nodes_included) &&
+    Array.isArray(result.nodes_evicted) &&
+    typeof result.dedup_count === "number" &&
+    typeof result.candidate_count === "number"
+  );
+}
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
@@ -62,27 +132,13 @@ export function resolveVtokenPackageRootFromEnv(
     path.join(cwd, "..", "..", "packages", "vtoken"),
     // Packaged extraResources layout: resources/vtoken
     path.join(cwd, "vtoken"),
-    env.VERSE_RESOURCES_PATH
-      ? path.join(env.VERSE_RESOURCES_PATH, "vtoken")
-      : "",
+    env.VERSE_RESOURCES_PATH ? path.join(env.VERSE_RESOURCES_PATH, "vtoken") : "",
   ].filter(Boolean);
 
   for (const root of candidates) {
     if (existsSync(path.join(root, "src", "vtoken"))) return root;
   }
   return null;
-}
-
-export function resolveDefaultVtokenSessionDir(
-  env: NodeJS.ProcessEnv = process.env,
-): string {
-  const fromEnv = env.VERSE_VTOKEN_SESSION_DIR?.trim();
-  if (fromEnv) return fromEnv;
-  const state =
-    env.OPENCLAW_STATE_DIR?.trim() ||
-    env.CLAWDBOT_STATE_DIR?.trim() ||
-    path.join(os.homedir(), ".openclaw");
-  return path.join(state, "vtoken-sessions");
 }
 
 function resolveUvBin(env: NodeJS.ProcessEnv): string {
@@ -101,16 +157,10 @@ export class VtokenRpcClient {
   #nextId = 1;
   #pending = new Map<number, Pending>();
   #startPromise: Promise<void> | null = null;
-  #opened = false;
   #options: VtokenRpcClientOptions;
-  #exclusiveTail: Promise<void> = Promise.resolve();
 
   constructor(options: VtokenRpcClientOptions = {}) {
     this.#options = options;
-  }
-
-  get opened(): boolean {
-    return this.#opened;
   }
 
   get running(): boolean {
@@ -121,30 +171,13 @@ export class VtokenRpcClient {
     return this.#child?.pid ?? null;
   }
 
-  /**
-   * Serialize a complete store transaction (open -> ingest* -> assemble).
-   *
-   * The Python host currently owns one active UnifiedStore per worker. Agent
-   * turns can arrive concurrently, so individual RPC ordering is insufficient:
-   * another turn could reopen the store between this turn's ingest calls.
-   */
-  async runExclusive<T>(operation: () => Promise<T>): Promise<T> {
-    const run = this.#exclusiveTail.then(operation, operation);
-    this.#exclusiveTail = run.then(
-      () => undefined,
-      () => undefined,
-    );
-    return run;
-  }
-
   async ensureStarted(): Promise<void> {
     if (this.#child && !this.#child.killed) return;
     if (this.#startPromise) return this.#startPromise;
 
     this.#startPromise = (async () => {
       const env = this.#options.env ?? process.env;
-      const packageRoot =
-        this.#options.packageRoot ?? resolveVtokenPackageRootFromEnv(env);
+      const packageRoot = this.#options.packageRoot ?? resolveVtokenPackageRootFromEnv(env);
       if (!packageRoot) {
         throw new Error(
           "vtoken package not found (set VERSE_VTOKEN_PACKAGE_ROOT or install packages/vtoken)",
@@ -165,9 +198,7 @@ export class VtokenRpcClient {
         PYTHONIOENCODING: "utf-8",
       };
 
-      this.#options.log?.(
-        `[vtoken-rpc] starting worker packageRoot=${packageRoot} uv=${uvBin}`,
-      );
+      this.#options.log?.(`[vtoken-rpc] starting worker packageRoot=${packageRoot} uv=${uvBin}`);
 
       const child = spawn(uvBin, args, {
         cwd: packageRoot,
@@ -191,12 +222,9 @@ export class VtokenRpcClient {
         this.#options.log?.(`[vtoken-rpc] spawn error: ${err.message}`);
       });
       child.on("exit", (code, signal) => {
-        this.#options.log?.(
-          `[vtoken-rpc] worker exited code=${code} signal=${signal}`,
-        );
+        this.#options.log?.(`[vtoken-rpc] worker exited code=${code} signal=${signal}`);
         this.#child = null;
         this.#stdoutBuf = "";
-        this.#opened = false;
         this.#rejectAll(`vtoken worker exited (code=${code}, signal=${signal})`);
         this.#startPromise = null;
       });
@@ -221,14 +249,8 @@ export class VtokenRpcClient {
     const proc = this.#child;
     this.#child = null;
     this.#stdoutBuf = "";
-    this.#opened = false;
     if (!proc) return;
     try {
-      try {
-        await this.#callOnProcess(proc, "vt.close", {}, 2_000);
-      } catch {
-        // ignore
-      }
       proc.stdin.end();
       proc.kill();
     } catch {
@@ -236,70 +258,40 @@ export class VtokenRpcClient {
     }
   }
 
-  async open(params: {
-    docSources?: string[];
-    sessionDir?: string;
-    session?: string;
-  } = {}): Promise<Record<string, unknown>> {
-    await this.ensureStarted();
-    const result = (await this.call("vt.open", {
-      doc_sources: params.docSources ?? [],
-      session_dir: params.sessionDir,
-      session: params.session,
-    })) as Record<string, unknown>;
-    this.#opened = Boolean(result.ok);
-    return result;
-  }
-
-  async ingestMarkdown(text: string, sourcePath = "inline.md"): Promise<void> {
-    await this.ensureStarted();
-    if (!this.#opened) await this.open();
-    await this.call("vt.ingest_markdown", {
-      text,
-      source_path: sourcePath,
-    });
-  }
-
-  async ingestTools(
-    schemas: Array<Record<string, unknown>>,
-    serverName = "default",
-  ): Promise<void> {
-    await this.ensureStarted();
-    if (!this.#opened) await this.open();
-    await this.call("vt.ingest_tools", {
-      schemas,
-      server_name: serverName,
-    });
-  }
-
-  async ingestMemory(
-    entries: Array<Record<string, unknown>>,
-  ): Promise<void> {
-    await this.ensureStarted();
-    if (!this.#opened) await this.open();
-    await this.call("vt.ingest_memory", { entries });
-  }
-
-  async assemble(params: {
+  async pack(params: {
     taskHint: string;
-    budgetTokens?: number;
+    allowanceTokens: number;
     renderMode?: "compact" | "dense" | "verbose";
-  }): Promise<VtokenRpcAssembleResult> {
+    candidates: VtokenPackCandidate[];
+  }): Promise<VtokenRpcPackResult> {
     await this.ensureStarted();
-    if (!this.#opened) await this.open();
     const result = (await this.call(
-      "vt.assemble",
+      "vt.pack",
       {
+        schema: VTOKEN_PACK_REQUEST_SCHEMA,
         task_hint: params.taskHint,
-        budget_tokens: params.budgetTokens ?? 600,
+        allowance_tokens: params.allowanceTokens,
+        estimate_method: VTOKEN_PACK_ESTIMATE_METHOD,
         render_mode: params.renderMode ?? "compact",
+        candidates: params.candidates.map(toWireCandidate),
       },
       this.#options.requestTimeoutMs ?? DEFAULT_TIMEOUT_MS,
-    )) as { ok?: boolean; result?: VtokenRpcAssembleResult };
-    if (!result?.result) {
-      throw new Error("vt.assemble returned no result");
+    )) as unknown;
+    if (!isPackWireResult(result)) {
+      throw new Error("vt.pack returned an invalid VtokenPackResult/v1");
     }
-    return result.result;
+    return {
+      schema: VTOKEN_PACK_RESULT_SCHEMA,
+      prompt: result.prompt,
+      estimatedTokens: result.estimated_tokens,
+      allowanceTokens: result.allowance_tokens,
+      estimateMethod: VTOKEN_PACK_ESTIMATE_METHOD,
+      slot_breakdown: result.slot_breakdown,
+      nodes_included: result.nodes_included,
+      nodes_evicted: result.nodes_evicted,
+      dedup_count: result.dedup_count,
+      candidateCount: result.candidate_count,
+    };
   }
 
   async call(
@@ -384,9 +376,7 @@ export class VtokenRpcClient {
 
 let sharedClient: VtokenRpcClient | null = null;
 
-export function getSharedVtokenRpcClient(
-  options?: VtokenRpcClientOptions,
-): VtokenRpcClient {
+export function getSharedVtokenRpcClient(options?: VtokenRpcClientOptions): VtokenRpcClient {
   if (!sharedClient) {
     sharedClient = new VtokenRpcClient(options);
   }
@@ -410,9 +400,7 @@ export async function resetSharedVtokenRpcClientForTests(): Promise<void> {
  * Unset does NOT mean product default ON — product default is opt-in via
  * `runtime.vtoken.assembly.enabled=true` or {@link isVtokenAssemblyEnvForcedOn}.
  */
-export function isVtokenAssemblyEnvEnabled(
-  env: NodeJS.ProcessEnv = process.env,
-): boolean {
+export function isVtokenAssemblyEnvEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   const raw = envTruthy(env.VERSE_VTOKEN_ASSEMBLY_ENABLED);
   // Only explicit 0/false/off disables. Unset leaves config-level opt-in free.
   if (raw === false) return false;
@@ -420,8 +408,6 @@ export function isVtokenAssemblyEnvEnabled(
 }
 
 /** Explicit env canary: VERSE_VTOKEN_ASSEMBLY_ENABLED=1|true|on|yes. */
-export function isVtokenAssemblyEnvForcedOn(
-  env: NodeJS.ProcessEnv = process.env,
-): boolean {
+export function isVtokenAssemblyEnvForcedOn(env: NodeJS.ProcessEnv = process.env): boolean {
   return envTruthy(env.VERSE_VTOKEN_ASSEMBLY_ENABLED) === true;
 }

@@ -232,7 +232,11 @@ async function main(): Promise<void> {
       const reduction = off.toolCalls / Math.max(on.toolCalls, 1);
       return { fixture, offCalls: off.toolCalls, onCalls: on.toolCalls, reduction, onPass: on.pass };
     });
-    const avgReduction = pairs.reduce((sum, p) => sum + p.reduction, 0) / Math.max(pairs.length, 1);
+    const meanOffCalls =
+      pairs.reduce((sum, pair) => sum + pair.offCalls, 0) / Math.max(pairs.length, 1);
+    const meanOnCalls =
+      pairs.reduce((sum, pair) => sum + pair.onCalls, 0) / Math.max(pairs.length, 1);
+    const avgReduction = meanOnCalls > 0 ? meanOffCalls / meanOnCalls : 0;
     const targetReduction = 5;
     const meetsGate = avgReduction >= targetReduction && pairs.every((p) => p.onPass);
 
@@ -241,10 +245,26 @@ async function main(): Promise<void> {
       wave: "C1-2",
       targetReduction,
       avgReduction: Number(avgReduction.toFixed(3)),
+      reductionDefinition: {
+        formula: "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+        corpusId: "coding-c1-hand-authored-real-tools",
+        corpus:
+          "hand-authored C1-2 navigation fixtures (impact/understand/verify/registration)",
+        fixtureCount: pairs.length,
+        meanOffCalls: Number(meanOffCalls.toFixed(4)),
+        meanOnCalls: Number(meanOnCalls.toFixed(4)),
+        live: false,
+        evidenceClass: "real-tool-execution-fixture",
+        role: "gate-authority",
+        authoritativeDecision:
+          "artifacts/first-product-preview/FP-P4-05/decision.json",
+        reconciliation:
+          "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md",
+      },
       meetsGate,
       judgment: meetsGate ? "meets_target" : "below_target",
       defaultFlipRecommendation: meetsGate
-        ? "RECOMMEND flip default OPENCLAW_DCS_CONTEXT_VIEW_TOOLS=1 (pending user decision; not flipped this wave)"
+        ? "KEEP default-off; metric threshold alone cannot authorize a default flip"
         : "KEEP shadow/default-off; see gaps",
       gaps: meetsGate
         ? []

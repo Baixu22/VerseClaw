@@ -71,6 +71,7 @@ export type MemoryCard = {
   source?: MemoryCardSource;
   supersedes?: string | null;
   supersededBy?: string | null;
+  correctionRef?: string | null;
   expiresAt?: string | null;
   retentionLabels?: string[];
 };

@@ -39,14 +39,14 @@
 | FP-P3-03 | [FP-P3-03.md](./FP-P3-03.md) | FP-P3 | P0 | **engineering-validation-only** | engineering-validation-only |
 | FP-P3-04 | [FP-P3-04.md](./FP-P3-04.md) | FP-P3 | P0 | **engineering-validation-only** | engineering-validation-only |
 | FP-P3-05 | [FP-P3-05.md](./FP-P3-05.md) | FP-P3 | P2 | n/a | done |
-| FP-P4-01 | [FP-P4-01.md](./FP-P4-01.md) | FP-P4 | P2 | **engineering-validation-only** | done |
-| FP-P4-02 | [FP-P4-02.md](./FP-P4-02.md) | FP-P4 | P2 | **engineering-validation-only** | done |
+| FP-P4-01 | [FP-P4-01.md](./FP-P4-01.md) | FP-P4 | P2 | **degraded-agent-complete** | review_needed |
+| FP-P4-02 | [FP-P4-02.md](./FP-P4-02.md) | FP-P4 | P2 | **degraded-agent-complete** | review_needed |
 | FP-P4-03 | [FP-P4-03.md](./FP-P4-03.md) | FP-P4 | P2 | n/a | deferred |
 | FP-P4-04 | [FP-P4-04.md](./FP-P4-04.md) | FP-P4 | P2 | n/a | deferred |
-| FP-P4-05 | [FP-P4-05.md](./FP-P4-05.md) | FP-P4 | P2 | n/a | backlog |
-| FP-P4-06 | [FP-P4-06.md](./FP-P4-06.md) | FP-P4 | P2 | n/a | backlog |
-| FP-P4-07 | [FP-P4-07.md](./FP-P4-07.md) | FP-P4 | P2 | n/a | backlog |
-| FP-P4-08 | [FP-P4-08.md](./FP-P4-08.md) | FP-P4 | P3 | **engineering-validation-only** | done |
+| FP-P4-05 | [FP-P4-05.md](./FP-P4-05.md) | FP-P4 | P2 | n/a | done |
+| FP-P4-06 | [FP-P4-06.md](./FP-P4-06.md) | FP-P4 | P2 | n/a | done |
+| FP-P4-07 | [FP-P4-07.md](./FP-P4-07.md) | FP-P4 | P2 | n/a | done |
+| FP-P4-08 | [FP-P4-08.md](./FP-P4-08.md) | FP-P4 | P3 | **degraded-agent-complete** | review_needed |
 
 ## 与统一 Agent 主线的交接
 

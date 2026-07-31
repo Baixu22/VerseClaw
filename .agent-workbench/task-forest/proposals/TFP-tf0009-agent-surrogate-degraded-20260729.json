@@ -1,0 +1,138 @@
+{
+  "applied_at": "2026-07-29T14:32:28.262603Z",
+  "base_graph_hash": "3608e45643bf3498950c50217b05c274a9bad8fc653ea30662d1144305882177",
+  "base_summary": {
+    "edge_count": 31,
+    "node_count": 19,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "agent-surrogate：DCS、SEKB、Browser 各 10/10 且账本可复验（已满足）",
+          "agent-surrogate：未授权写入 0，agent kill/rollback 成功率 100%（已满足）",
+          "human/live：每个 profile 至少 10 次具名真人产品路径任务（deferred，当前 0/10）",
+          "human/live：真人总体安全率、canary drill 与具名 owner continue/shrink/stop 裁决（deferred）"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "在无真人测试成本时保证流程与任务实现完整，并把不可替代的人证降级留给后续开发",
+          "validation_plan": [
+            "复跑 30 条 agent-surrogate campaign",
+            "验证 preflight 双状态和反向篡改测试",
+            "检查 Task Forest 状态为 review_needed 且 TF-0011 仍 blocked",
+            "未来补齐具名真人 ledger、drill 与 owner 裁决"
+          ],
+          "why_not_enough": "agent 不能提供真人满意度、真实公网、human live A/B、soak 或产品批准，因此不能 done 或释放下游。",
+          "why_this_task": "TF-0009 正是三 profile 内测流程 owner；agent campaign 完成其工程部分并保留原安全边界。"
+        },
+        "desired_outcomes": [
+          "工程实现与三 profile 流程可由 agent 在 clean checkout 重复执行",
+          "agent 与 human/live 证据在 schema、计数和结论上完全隔离",
+          "后续真人开发能从明确 residual 继续，而不重做工程流程"
+        ],
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md",
+          "docs/dev/tf0009-engineering-evidence-audit.md",
+          "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+          "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+          "harness/specs/rules/tf0009-real-canary-authority.md",
+          "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+          "artifacts/dcs-deep-test-week1/day1-gates.json",
+          "docs/dev/handoffs/LATEST.md"
+        ],
+        "execution_hints": [
+          "复跑 pnpm run tf0009:agent-surrogate，再跑 pnpm run dcs:ops:preflight；预期 agentSurrogateReady=true 且 l3Ready=false",
+          "把 review_needed 解释为 degraded-agent-complete，不得解释为真人 canary 完成",
+          "未来只有补齐每 profile 10 次具名真人任务、真人 drill 与 owner 裁决后才可另提 done proposal",
+          "TF-0011 depends_on TF-0009 保持不变；本 proposal 应用后不得自行推进 TF-0011",
+          "保持 liveReady=false、productApproved=false、defaultOn=false；C1 4.5x/keep-off；TF-0006 blocked"
+        ],
+        "progress_source": "agent-surrogate-plus-residual-audit",
+        "purpose": "在没有真人测试成本时先完成三组件的 agent 工程流程、账本和回滚闭环，同时把不可替代的人证留作明确 residual。",
+        "requirements": [
+          "P0 与 Day-1 L0/L1/L2 工程门保持全绿",
+          "agent-surrogate 每个 profile 恰好 10 条，必须有真实组件入口 lineage，且 humanEquivalent=false、liveEvidence=false",
+          "SEKB agent 不得执行 positive human-confirm write；Browser agent 不得冒充真实公网或真人批准",
+          "真人 owner/cohort/budget/privacy/rollback 与真人合格 run 继续作为后续 residual",
+          "Runtime Memory 保持 diagnostics-only；三个产品锁和 TF-0006 状态不变"
+        ],
+        "success_metrics": [
+          "agent-surrogate 记录 30/30 通过",
+          "agent campaign 未确认 SEKB principle 写入 0",
+          "agent campaign Browser 私网允许与审批绕过 0",
+          "真人计数误增 0",
+          "非法 done 或 TF-0011 release 0"
+        ],
+        "summary": "agent-surrogate 工程流程已完成：DCS、SEKB、Browser 各 10/10，agent kill/rollback 通过；所有记录固定非 human/live。真人三 profile 仍为 0/10，真人 canary drill 与具名 owner 裁决延后。语义为 degraded-agent-complete，不得 done 或释放 TF-0011。"
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0009",
+      "progress": 50,
+      "status": "review_needed"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-07-29T14:09:59.525554Z",
+        "evidence": "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json；docs/dev/tf0009-engineering-evidence-audit.md；node scripts/dcs-ops-preflight.mjs",
+        "expected_requirement": "原 TF-0009 需要每 profile 10 次具名真人产品路径任务、真人 canary kill/rollback 和 accountable owner 裁决。",
+        "id": "TFD-tf0009-agent-surrogate-downgrade-20260729",
+        "observed_action_or_result": "用户因没有真人测试成本，授权 agent 代理工程轨道；30 条 agent 组件记录和 agent drill 已完成，但真人计数仍为 0/10。",
+        "recommendation": "以 review_needed/degraded-agent-complete 保存工程成果；保留真人 residual，禁止 done 和 TF-0011 release。",
+        "related_task_ids": [
+          "TF-0009"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "保留原 human-only 阻塞、伪造 human done、或采用 agent-surrogate 独立证据层并标 review_needed。",
+        "confidence": 0.98,
+        "created_at": "2026-07-29T14:09:59.525554Z",
+        "id": "TFA-782616115f",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "在无真人测试成本时保证流程与实现完整",
+          "validation_plan": [
+            "agent campaign 10/10/10",
+            "preflight agent true/human L3 false",
+            "Task Forest 下游保持 blocked"
+          ],
+          "why_not_enough": "review_needed 仍不等于 human/live/product 完成。",
+          "why_this_task": "TF-0009 是三 profile 工程流程和 canary 证据的现有 owner。"
+        },
+        "reason": "该方案完成工程过程，同时不破坏证据权威和下游依赖。",
+        "rejected_options": [
+          "继续等待未提供的真人角色与成本",
+          "把 agent/fixture 证据改名为真人证据并标 done"
+        ],
+        "related_task_ids": [
+          "TF-0009",
+          "TF-0011"
+        ],
+        "selected_option": "agent-surrogate 独立证据层 + review_needed",
+        "user_goal": "在无真人成本下完成工程流程和任务实现，把不可替代验证显式降级留后续"
+      }
+    }
+  ],
+  "created_at": "2026-07-29T14:09:59.522550Z",
+  "notes": "本 proposal supersedes 未应用的 TFP-tf0009-engineering-evidence-audit-20260729。它不修改依赖边，不释放 TF-0011，不授权 FP-P4-03/04、Task Forest apply、default-on、liveReady、productApproved 或 GA。",
+  "proposal_id": "TFP-tf0009-agent-surrogate-degraded-20260729",
+  "rationale": "用户明确要求在没有真人测试成本时，用 agent 完成可复验的工程流程；不可由 agent 等价提供的真人、live、soak 和产品证据必须降级标注、留给后续开发，节点不得 done。三 profile agent-surrogate 各 10/10，agent kill/rollback 已通过，真人合格记录仍为 0/10。因此提议将 TF-0009 映射为 review_needed/degraded-agent-complete，不改变 TF-0011 依赖。",
+  "session_id": "session-2026-07-29-tf0009-agent-surrogate",
+  "status": "applied"
+}

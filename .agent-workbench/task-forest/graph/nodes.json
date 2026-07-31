@@ -382,18 +382,19 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.92,
-      "user_goal": "构建成熟统一 Agent 产品系统",
+      "fit_confidence": 0.96,
+      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
       "validation_plan": [
-        "逐节点 Harness 与测试证据",
-        "Windows 生命周期矩阵",
-        "真实 cohort paired A/B 与 soak"
+        "Verifier 重跑全量 profile",
+        "检查报告 SHA/日志完整性",
+        "确认产品锁持续关闭"
       ],
-      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
-      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
+      "why_not_enough": "不替代真人/live/product 证据",
+      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
     },
     "alignment_records": [
-      "TFA-0026758811"
+      "TFA-0026758811",
+      "TFA-32a1af6c38"
     ],
     "assumptions": [
       "当前工作区改动代表计划交付的组件基线",
@@ -408,7 +409,9 @@
       "DCS/SEKB/Browser 关键 Electron 路径 6/6 通过",
       "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-94c0816e91"
+    ],
     "difficulty": "high",
     "estimated_total_minutes": 960,
     "evidence": [
@@ -449,7 +452,7 @@
     ],
     "summary": "P0 交付与真实集成证据已完成；下一阶段为 TF-0009 小范围受控 canary。因真实 canary 尚未执行，全局任务继续 in_progress。",
     "title": "DCS 与关联组件受控内测投用收口（非GA）",
-    "updated_at": "2026-07-27T13:16:29.660683Z"
+    "updated_at": "2026-07-31T06:14:56.840368Z"
   },
   "TF-0008": {
     "acceptance_criteria": [
@@ -524,42 +527,61 @@
   },
   "TF-0009": {
     "acceptance_criteria": [
-      "每个 profile 至少 10 次有记录内部任务",
-      "未授权写入与安全泄漏为 0",
-      "kill switch 演练成功率 100%",
-      "负责人给出继续/缩小/停止决定"
+      "agent-surrogate：DCS、SEKB、Browser 各 10/10 且账本可复验（已满足）",
+      "agent-surrogate：未授权写入 0，agent kill/rollback 成功率 100%（已满足）",
+      "human/live：每个 profile 至少 10 次具名真人产品路径任务（deferred，当前 0/10）",
+      "human/live：真人总体安全率、canary drill 与具名 owner continue/shrink/stop 裁决（deferred）"
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.92,
-      "user_goal": "构建成熟统一 Agent 产品系统",
+      "fit_confidence": 0.98,
+      "user_goal": "在无真人测试成本时保证流程与实现完整",
       "validation_plan": [
-        "逐节点 Harness 与测试证据",
-        "Windows 生命周期矩阵",
-        "真实 cohort paired A/B 与 soak"
+        "agent campaign 10/10/10",
+        "preflight agent true/human L3 false",
+        "Task Forest 下游保持 blocked"
       ],
-      "why_not_enough": "仍不自动提供 default-on、TF-0006 解阻或 GA 授权。",
-      "why_this_task": "任务链覆盖审计识别的所有阻断级和高风险缺口。"
+      "why_not_enough": "review_needed 仍不等于 human/live/product 完成。",
+      "why_this_task": "TF-0009 是三 profile 工程流程和 canary 证据的现有 owner。"
     },
     "alignment_records": [
-      "TFA-0026758811"
+      "TFA-0026758811",
+      "TFA-782616115f"
     ],
     "assumptions": [],
     "confidence": 0.7,
     "context_tags": [],
     "created_at": "2026-07-19T17:29:59.646228Z",
     "deprecated_at": null,
-    "desired_outcomes": [],
-    "deviations": [],
+    "desired_outcomes": [
+      "工程实现与三 profile 流程可由 agent 在 clean checkout 重复执行",
+      "agent 与 human/live 证据在 schema、计数和结论上完全隔离",
+      "后续真人开发能从明确 residual 继续，而不重做工程流程"
+    ],
+    "deviations": [
+      "TFD-tf0009-agent-surrogate-downgrade-20260729",
+      "TFD-tf0009-human-engineering-dependency-split-20260729"
+    ],
     "difficulty": "medium",
     "estimated_total_minutes": 480,
     "evidence": [
       "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
-      "docs/dev/component-operational-readiness-checklist.md"
+      "docs/dev/component-operational-readiness-checklist.md",
+      "docs/dev/tf0009-engineering-evidence-audit.md",
+      "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+      "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+      "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+      "harness/specs/rules/tf0009-real-canary-authority.md",
+      "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+      "artifacts/dcs-deep-test-week1/day1-gates.json",
+      "docs/dev/handoffs/LATEST.md"
     ],
     "execution_hints": [
-      "先固化 owner/cohort/budget/privacy/metrics/kill/rollback，再运行真实任务",
-      "Runtime Memory 保持 diagnostics-only；不得扩大到 default-on 或 TF-0006"
+      "复跑 pnpm run tf0009:agent-surrogate，再跑 pnpm run dcs:ops:preflight；预期 agentSurrogateReady=true 且 l3Ready=false",
+      "把 review_needed 解释为 degraded-agent-complete，不得解释为真人 canary 完成",
+      "未来只有补齐每 profile 10 次具名真人任务、真人 drill 与 owner 裁决后才可另提 done proposal",
+      "TF-0011 仅可消费 agent-surrogate 工程证据；其推进不得增加 TF-0009 真人计数、liveReady 或 productApproved",
+      "保持 liveReady=false、productApproved=false、defaultOn=false；C1 4.5x/keep-off；TF-0006 blocked"
     ],
     "id": "TF-0009",
     "kind": "task",
@@ -569,26 +591,30 @@
       "TF-0006 解阻"
     ],
     "priority": 2,
-    "progress": 0.0,
-    "progress_source": "manual",
-    "purpose": "把通过门禁的组件转化为可运营的内部工具。",
+    "progress": 50.0,
+    "progress_source": "agent-surrogate-plus-residual-audit",
+    "purpose": "在没有真人测试成本时先完成三组件的 agent 工程流程、账本和回滚闭环，同时把不可替代的人证留作明确 residual。",
     "remaining_minutes_max": 720,
     "remaining_minutes_min": 360,
     "requirements": [
-      "P0 全绿后才开始",
-      "每个 profile 明确 owner/cohort/budget/privacy/rollback",
-      "Runtime Memory 保持 diagnostics-only"
+      "P0 与 Day-1 L0/L1/L2 工程门保持全绿",
+      "agent-surrogate 每个 profile 恰好 10 条，必须有真实组件入口 lineage，且 humanEquivalent=false、liveEvidence=false",
+      "SEKB agent 不得执行 positive human-confirm write；Browser agent 不得冒充真实公网或真人批准",
+      "真人 owner/cohort/budget/privacy/rollback 与真人合格 run 继续作为后续 residual",
+      "Runtime Memory 保持 diagnostics-only；三个产品锁和 TF-0006 状态不变"
     ],
     "source_sessions": [],
-    "status": "ready",
+    "status": "review_needed",
     "success_metrics": [
-      "安全或隐私泄漏 0",
-      "未授权持久化 0",
-      "关键失败均可解释"
+      "agent-surrogate 记录 30/30 通过",
+      "agent campaign 未确认 SEKB principle 写入 0",
+      "agent campaign Browser 私网允许与审批绕过 0",
+      "真人计数误增 0",
+      "TF-0009 非法 done 或产品锁漂移 0"
     ],
-    "summary": "P0 依赖已满足；可开始准备并执行 DCS coding、SEKB assisted、Browser supervised 的小范围 opt-in canary。实际 canary 尚未执行。",
+    "summary": "agent-surrogate 工程流程已完成：DCS、SEKB、Browser 各 10/10，agent kill/rollback 通过；所有记录固定非 human/live。真人三 profile 仍为 0/10，真人 canary drill 与具名 owner 裁决延后。语义为 degraded-agent-complete，保持 review_needed；纯工程 UAS 链可消费其工程证据继续，但这不构成 TF-0009 done。",
     "title": "P1 组件小范围受控内测运行包",
-    "updated_at": "2026-07-27T13:16:29.660683Z"
+    "updated_at": "2026-07-29T14:55:37.638857Z"
   },
   "TF-0010": {
     "acceptance_criteria": [
@@ -599,17 +625,19 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.92,
-      "user_goal": "把现有 Agent 组件融合为成熟、统一、可持续开发的产品系统",
+      "fit_confidence": 0.96,
+      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
       "validation_plan": [
-        "逐节点 Harness、单元、类型和通信门禁",
-        "Windows process lifecycle 与 crash/replay 测试",
-        "受控 cohort paired A/B 和 soak"
+        "Verifier 重跑全量 profile",
+        "检查报告 SHA/日志完整性",
+        "确认产品锁持续关闭"
       ],
-      "why_not_enough": "完成该主线仍不自动提供全量 default-on 或 GA 资格。",
-      "why_this_task": "该主线直接解决审计识别的唯一执行路径、唯一 context authority、恢复语义和真实收益证据缺口。"
+      "why_not_enough": "不替代真人/live/product 证据",
+      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-32a1af6c38"
+    ],
     "assumptions": [
       "TF-0009 将提供改造前真实 canary 基线",
       "VerseShell 上游允许扩展 typed execution 和 process lifecycle contract",
@@ -632,7 +660,9 @@
       "文件 mutation、进程执行和 Memory 写入均有明确失败与恢复语义",
       "统一 trace 能关联 plan、policy、execution、observation、context 和 memory candidate"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-94c0816e91"
+    ],
     "difficulty": "very_high",
     "estimated_total_minutes": 19200,
     "evidence": [
@@ -676,7 +706,7 @@
     ],
     "summary": "在保持模型工具面和各域唯一 authority 的前提下，统一执行、上下文、写入恢复和长期证据主路径。",
     "title": "统一 Agent 基础设施主路径收口（非GA）",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-31T06:14:56.840368Z"
   },
   "TF-0011": {
     "acceptance_criteria": [
@@ -693,14 +723,18 @@
         "运行 Harness context/validate",
         "在冻结快照核对 manifest"
       ],
-      "why_not_enough": "只建立治理和证据，不修复运行时缺口。",
-      "why_this_task": "它建立后续每个开发任务都能复现和审查的权威入口。"
+      "why_not_enough": "只建立治理和证据，不修复运行时缺口，也不补齐 TF-0009 真人证据。",
+      "why_this_task": "它建立后续每个开发任务都能复现和审查的权威入口，并隔离 agent 工程证据与真人 residual。"
     },
-    "alignment_records": [],
-    "assumptions": [
-      "TF-0009 先完成并提供改造前基线"
+    "alignment_records": [
+      "TFA-782616115f",
+      "TFA-tf0011-engineering-chain-release-20260729"
     ],
-    "confidence": 0.78,
+    "assumptions": [
+      "TF-0009 agent-surrogate 工程流已完成并提供改造前工程基线",
+      "TF-0009 真人/live residual 继续独立保留为 review_needed"
+    ],
+    "confidence": 0.95,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -708,15 +742,27 @@
       "每项已确认事实可追溯到源码快照、命令和输出",
       "统一 Agent 改动获得唯一 Harness 与 Task Forest 入口"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-tf0009-human-engineering-dependency-split-20260729",
+      "TFD-tf0011-historical-workspace-metadata-20260729"
+    ],
     "difficulty": "medium",
     "estimated_total_minutes": 720,
     "evidence": [
+      "artifacts/unified-agent-system/TF-0011/audit-manifest.json",
+      "artifacts/harness/latest.md",
+      "harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+      "harness/specs/rules/uas-00-evidence-freeze-boundary.md",
+      "scripts/uas-00-evidence-freeze.mjs",
+      "tests/unit/uas-00-evidence-freeze.test.ts",
+      "docs/dev/handoffs/LATEST.md",
       "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#3-研究方法和证据等级"
     ],
     "execution_hints": [
-      "先完成 TF-0009",
-      "只处理证据、规格和治理冲突"
+      "TF-0011 只冻结证据，不授予 live/product/default-on 权限",
+      "TF-0009 保持 review_needed/50%，真人三 profile 仍为 0/10",
+      "下一会话只推进 TF-0012/UAS-01，并先建立引用 gateway-backend-communication 的 Harness task spec",
+      "禁止越级实施 TF-0013/14、FP-P4-03/04"
     ],
     "id": "TF-0011",
     "kind": "task",
@@ -725,25 +771,25 @@
       "启用任何默认 flag"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "避免在 344 条工作区状态和未跟踪审计文档上直接实施跨层改造。",
-    "remaining_minutes_max": 960,
-    "remaining_minutes_min": 480,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "记录 HEAD、dirty diff hash、环境、二进制 hash 和精确命令",
       "Harness spec 引用 gateway-backend-communication",
       "修复 VToken default-ON spec drift"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "未绑定源码快照的审计结论 0",
       "已知 spec drift 0"
     ],
-    "summary": "冻结可复现审计快照，登记 Harness spec、owner matrix 和默认策略。",
+    "summary": "UAS-00 工程收口完成：机器可读 manifest 冻结 HEAD、dirty diff、untracked files、环境与二进制；Harness/Task Forest/默认矩阵/owner matrix 治理一致，agent 与真人/live 证据严格隔离。",
     "title": "UAS-00 证据冻结与治理登记",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-29T15:49:51.013110Z"
   },
   "TF-0012": {
     "acceptance_criteria": [
@@ -768,7 +814,7 @@
     "assumptions": [
       "现有 trajectory/event 可作为唯一持久事件 owner"
     ],
-    "confidence": 0.68,
+    "confidence": 0.95,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -776,43 +822,56 @@
       "统一 plan/handle/observation/artifact/event schema",
       "重放能够还原 run、turn、process 与 policy decision"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-tf0012-repository-baseline-gates-20260730"
+    ],
     "difficulty": "high",
     "estimated_total_minutes": 1440,
     "evidence": [
-      "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#10-目标-contract-family"
+      "harness/specs/tasks/uas-01-unified-contract-event-spine.md",
+      "openclaw_runtime/src/runtime-core/agent-run-contracts.ts",
+      "openclaw_runtime/src/runtime-core/agent-run-event-spine.ts",
+      "openclaw_runtime/src/runtime-core/index.ts",
+      "tests/unit/agent-run-contracts.test.ts",
+      "tests/unit/agent-run-event-spine.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#12-tf-0012uas-01-工程实现与待确认收口2026-07-30",
+      "pnpm exec vitest run: 6 files / 59 tests passed",
+      "pnpm run typecheck; targeted ESLint; comms replay/compare; UAS-01 scoped diff check: passed"
     ],
     "execution_hints": [
-      "先审计既有 trajectory/event owner",
-      "只允许一个持久事件主干"
+      "本节点只建立 contract 与持久事件主干，不授权 TaskLoop cutover、event-log-first resume 或 replay side effects",
+      "long_task_checkpoints 继续是默认恢复真源；runtime_task_event_log_records 是唯一持久 UAS event-log owner",
+      "既有 Kysely/generated 与 shared dirty Harness residual 保持显式，不通过扩 ownership 或无关重生成隐藏",
+      "正式 apply 后下一会话只能推进 TF-0013/UAS-02；禁止越级 TF-0014 或 FP-P4-03/04"
     ],
     "id": "TF-0012",
     "kind": "task",
+    "next_action": "下一会话先建立 UAS-01 Harness task spec、运行 harness context，并只实现统一 Contract 与持久事件主干。",
     "non_goals": [
       "切换 VerseShell 默认路径",
       "引入分布式工作流框架"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "让执行、上下文和 Memory 状态具备因果关系、幂等和重启恢复语义。",
-    "remaining_minutes_max": 1920,
-    "remaining_minutes_min": 960,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "定义 AgentRunEvent/v1、ExecutionPlan/v1、ProcessHandle/v1、Observation/v2、ArtifactRef/v1",
       "包含 eventId、causationId、idempotencyKey、schemaVersion、redaction 和 retention",
       "复用现有 trajectory/event，不创建第二 run journal"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "重复执行副作用 0",
       "无法归因事件 0",
       "第二 run journal 0"
     ],
-    "summary": "冻结跨层 contract，并在现有 trajectory/event 基础上建立单一可重放事件主干。",
+    "summary": "UAS-01 工程实现完成：统一版本化 plan/process/observation/artifact/policy/event contract 只投影到既有 RuntimeTaskEventLog SQLite owner；同 task 幂等键不重复副作用，纯 replay 与在线状态一致，checkpoint/trajectory/diagnostics authority 均保持原边界。",
     "title": "UAS-01 统一 Contract 与持久事件主干",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-29T16:35:03.568177Z"
   },
   "TF-0013": {
     "acceptance_criteria": [
@@ -838,7 +897,7 @@
     "assumptions": [
       "现有 TF-0002 保留历史 done，本任务只闭合 residual"
     ],
-    "confidence": 0.72,
+    "confidence": 0.98,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -851,41 +910,57 @@
     "difficulty": "high",
     "estimated_total_minutes": 2400,
     "evidence": [
+      "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+      "openclaw_runtime/src/context-engine/context-candidate.ts",
       "openclaw_runtime/src/context-engine/context-orchestrator.ts",
-      "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
-      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts"
+      "openclaw_runtime/src/context-engine/assembler.ts",
+      "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+      "openclaw_runtime/src/context-engine/context-candidate.test.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+      "openclaw_runtime/src/context-engine/assembler.test.ts",
+      "openclaw_runtime/src/agents/embedded-agent-runner/extensions.knowledge.test.ts",
+      "tests/unit/context-orchestrator-entry-scan.test.ts",
+      "docs/dev/context-orchestrator.md",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#13-tf-0013uas-02-工程实现与最终门禁2026-07-30",
+      "runtime 4 files / 71 tests; agent 3 files / 20 tests; root scan 1 file / 6 tests: passed",
+      "typecheck; targeted type-aware oxlint; root ESLint; comms replay/compare; isolated diff-aware Harness: passed"
     ],
     "execution_hints": [
-      "标记为 TF-0002 residual closure",
-      "禁止新增第二总预算"
+      "Context Orchestrator 是最终 selection、dedup、budget、projection 与 lineage authority；禁止恢复私有生产预算或调用顺序优先级",
+      "无 turnId 私有预算只保留兼容路径，不得重新接入 attempt 或 compaction 生产入口",
+      "三个产品锁、C1 keep-off、TF-0006 blocked、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+      "下一会话只可从 TF-0014/UAS-03 开始，并先读取路线文档、建立或确认 Harness task spec、运行 harness context"
     ],
     "id": "TF-0013",
     "kind": "task",
+    "next_action": "本节点已完成；后续仅在回归发现 authority 绕过、重复注入或预算/lineage 漂移时重开。",
     "non_goals": [
       "learned context manager",
       "自动 Memory 写回"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
-    "remaining_minutes_max": 2880,
-    "remaining_minutes_min": 1920,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "纳入 working-memory、CVK、role/runtime memory 和 VToken",
       "使用稳定 candidateId/dedupKey",
       "P0 去重使用 authority object identity/version/content digest，不引入模型语义去重"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "私有 context budget 0",
       "重复 authority object 注入 0",
       "声明和实际优先级偏差 0"
     ],
-    "summary": "补齐 TF-0002 已记录的 Assembler/CVK residual，使 Orchestrator 成为真正最终 authority。",
+    "summary": "UAS-02 工程收口完成：Memory、VToken、CVK 与 DCS context-block 统一产出 ContextCandidate/v1；Context Orchestrator 按固定 precedence 去重后使用单 turn ledger 扣费，并在 provider 请求快照前完成 system/message 投影和 disposition lineage。",
     "title": "UAS-02 Context Orchestrator residual 收口",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-29T18:12:26.811007Z"
   },
   "TF-0014": {
     "acceptance_criteria": [
@@ -911,7 +986,7 @@
     "assumptions": [
       "parser、graph selection 和 renderer 可独立复用"
     ],
-    "confidence": 0.7,
+    "confidence": 0.98,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -924,42 +999,60 @@
     "difficulty": "high",
     "estimated_total_minutes": 1920,
     "evidence": [
+      "harness/specs/tasks/uas-03-vtoken-stateless-packing.md",
+      "harness/specs/rules/vtoken-foundation-boundary.md",
       "packages/vtoken/src/vtoken/host_rpc.py",
       "packages/vtoken/src/vtoken/store.py",
+      "packages/vtoken/tests/test_host_rpc.py",
+      "packages/vtoken/tests/test_store.py",
+      "packages/vtoken/README.HOST.md",
       "openclaw_runtime/src/context-engine/vtoken-rpc-client.ts",
-      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts"
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.test.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.test.ts",
+      "tests/unit/uas-03-vtoken-stateless-packing.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#14-tf-0014uas-03-工程实现与最终门禁2026-07-30",
+      "VToken 251; runtime 34; root 14 tests: passed",
+      "typecheck; Ruff/oxlint/ESLint; comms replay/compare: passed",
+      "isolated diff-aware Harness validate and dry-run: passed at C:\\uas03v-c3309527a74345e6a3860dbf6c896526"
     ],
     "execution_hints": [
-      "先锁定 Orchestrator/VToken authority contract",
-      "不得创建第二 Memory authority"
+      "生产 Working Context 只允许使用 VtokenPackRequest/v1；不得恢复 open-ingest-assemble transaction、session state 或全局互斥尾队列",
+      "Context Orchestrator 保持最终候选、去重、allowance、projection 与 lineage authority；VerseToken estimate 不得冒充 provider actual usage 或成本",
+      "三个产品锁、C1 keep-off、TF-0006 blocked、TF-0009 review_needed、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变",
+      "后续仅在回归发现生产状态副作用、请求交叉污染、重复候选未拒绝、热重载屏障或 estimate 语义漂移时重开"
     ],
     "id": "TF-0014",
     "kind": "task",
+    "next_action": "本节点已完成；后续只在上述 contract 回归时重开。",
     "non_goals": [
       "让 VerseToken 成为长期 Memory store",
       "扩大 Developer smoke 权限"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "移除只读 assembly 的无用 MemStore/WAL/lock 和全局无关串行。",
-    "remaining_minutes_max": 2400,
-    "remaining_minutes_min": 1440,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "新增 stateless pack request 或隔离 worker pool",
       "Orchestrator 传入已去重候选和 allowance",
       "修复或重定义 hot reload completion 语义"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "只读持久副作用 0",
       "无关 session 锁竞争 0",
       "estimate 冒充 actual 0"
     ],
-    "summary": "把生产 VerseToken 收口为无业务 Memory 的并发 packer/renderer。",
+    "summary": "UAS-03 工程收口完成：生产 Working Context 每 turn 只调用一次 VtokenPackRequest/v1；每请求独立内存 graph，无生产 sessionDir/session、MemStore、WAL、lock 或全局 runExclusive；Context Orchestrator 显式拥有 allowance，结果只报告 chars_div_4 estimate；stateful API 仅保留给 package consumer 和默认关闭 diagnostics。",
     "title": "UAS-03 VerseToken 无状态装箱化",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T02:31:13.418276Z"
   },
   "TF-0015": {
     "acceptance_criteria": [
@@ -985,7 +1078,7 @@
     "assumptions": [
       "应用层 prepare/commit/rollback 能覆盖目标文件操作"
     ],
-    "confidence": 0.64,
+    "confidence": 0.98,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -998,26 +1091,41 @@
     "difficulty": "high",
     "estimated_total_minutes": 2640,
     "evidence": [
-      "openclaw_runtime/src/agents/agent-tools.ts",
+      "harness/specs/tasks/uas-04-coding-mutation-consistency.md",
+      "harness/specs/rules/coding-mutation-consistency-boundary.md",
       "openclaw_runtime/src/agents/apply-patch.ts",
-      "openclaw_runtime/src/agents/tools/write-journal.ts"
+      "openclaw_runtime/src/agents/apply-patch-types.ts",
+      "openclaw_runtime/src/agents/apply-patch-batch-lock.ts",
+      "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+      "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
+      "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "openclaw_runtime/src/agents/tools/write-journal.test.ts",
+      "openclaw_runtime/src/agents/agent-tools.ts",
+      "tests/unit/uas-04-coding-mutation-consistency.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#15-tf-0015uas-04-工程实现与本地门禁2026-07-30",
+      "runtime focused: 6 files / 96 tests passed; root contract: 1 file / 3 tests passed",
+      "root typecheck; targeted type-aware oxlint; root ESLint; comms replay/compare: passed",
+      "Harness structural validate and isolated diff-aware validate/dry-run: passed at C:\\uas04v-100730b39e9e4a3b9600a98fa0804a5d"
     ],
     "execution_hints": [
-      "明确区分正常 rollback 和 recovery_required",
-      "保留 Coding 为唯一写入 authority"
+      "apply_patch 必须在原始内容读取和 hunk 预计算前获取规范化排序路径租约，并持有到 commit/rollback 与 journal 终态写入完成",
+      "write-journal.ts 保持唯一 mutation recovery evidence owner；不得恢复租约外 apply_patch 快照或创建第二 journal",
+      "rolled_back 必须恢复全部触碰路径；恢复不完整必须 fail closed 为 recovery_required 并保留 recoveryRef",
+      "post-write verify 不得回滚或重分类 committed mutation；三个产品锁、C1 keep-off、TF-0006 blocked、TF-0009 review_needed、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变"
     ],
     "id": "TF-0015",
     "kind": "task",
+    "next_action": "本节点已完成；后续只在静默 partial mutation、重叠 patch 交错、journal 批次证据丢失、重启检测失效或 verify 回滚 committed mutation 时重开。",
     "non_goals": [
       "宣称跨文件系统真实原子事务",
       "把写入 journal 迁入 VerseShell"
     ],
     "priority": 2,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "消除多文件 patch 抛错后静默保留 partial mutation 的不确定性。",
-    "remaining_minutes_max": 3360,
-    "remaining_minutes_min": 1920,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "patch 先完整解析和预计算",
       "排序获取多文件 lease/queue",
@@ -1025,15 +1133,15 @@
       "复用现有 write journal，不创建第二 journal"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "静默 partial mutation 0",
       "同文件写入交错 0",
       "无法定位恢复材料的失败 0"
     ],
-    "summary": "为 apply_patch 建立预计算、排序 lease、明确 commit 状态和 crash recovery。",
+    "summary": "UAS-04 工程收口完成：apply_patch 在读取/预计算前获取排序路径租约，全批 prepared 后才 mutation；后段失败完整恢复为 rolled_back，恢复不完整为 recovery_required 并保留既有 write-journal recoveryRef；重启可检测 prepared 批次，post-write verify 不回滚 committed mutation。",
     "title": "UAS-04 Coding 写入一致性与恢复",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T03:39:30.285944Z"
   },
   "TF-0016": {
     "acceptance_criteria": [
@@ -1062,7 +1170,7 @@
       "需要 VerseShell 上游与 ClawX adapter 协同修改",
       "原生 Windows contained 模式可能依赖额外 VM/WSL2 边界"
     ],
-    "confidence": 0.48,
+    "confidence": 0.98,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -1075,27 +1183,44 @@
     "difficulty": "very_high",
     "estimated_total_minutes": 6000,
     "evidence": [
-      "openclaw_runtime/src/agents/verseshell/process-manager.ts",
-      "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
-      "shared/verseshell",
-      "docs/dev/verseshell-foundation/CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md"
+      "harness/specs/tasks/uas-05-verseshell-process-lifecycle.md",
+      "harness/specs/rules/verseshell-process-lifecycle-boundary.md",
+      "resources/verseshell/manifest.json",
+      "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+      "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+      "openclaw_runtime/src/agents/bash-tools.process.ts",
+      "openclaw_runtime/src/agents/bash-process-registry.ts",
+      "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
+      "docs/dev/verseshell-foundation/STATUS.md#uas-05-engineering-update-2026-07-30",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#16-tf-0016uas-05-工程实现与本地门禁2026-07-30",
+      "Rust operation protocol 9/9 and lifecycle 3/3 passed; cargo release ae build passed",
+      "pnpm verseshell:test: bundle 8/8, runtime bundle 11/11, focused runtime 8 files / 47 tests passed",
+      "root manifest plus UAS-05: 2 files / 12 tests passed; exact UAS-05: 1 file / 4 tests passed",
+      "root typecheck, comms replay/compare, package manifest validation, and both workspace git diff --check passed",
+      "Harness structural validate and isolated diff-aware validate/dry-run passed at C:\\uas05v-290ec773e2e14f4d8b16416bb3f1677c; shared default diff-aware validate correctly refused unrelated dirty paths"
     ],
     "execution_hints": [
-      "先冻结 process state machine",
-      "上游 binary provenance 必须进入证据包"
+      "process.start 不得 replay；owner key 继续绑定 process/runtime/workspace/agent/session，mismatch 必须 fail closed",
+      "poll cursor 必须单调并显式报告 retained_start_cursor/lost_bytes/truncated；输出和 terminal record 保持有界",
+      "VerseShell lifecycle owner 必须处理 stdin/ConPTY/timeout/cancel/tree cleanup；不得对 VerseShell PID 使用 native fallback",
+      "对应源码必须保持 base commit + tracked patch + binary/catalog immutable identity；dirty package 未完整记录或未批准必须拒绝",
+      "后续 TF-0017 只能做独立确认的 cohort canary；三个产品锁、C1 keep-off、TF-0006 blocked、TF-0009 review_needed、Runtime Memory diagnostics-only 与 SEKB 零自动写回保持不变"
     ],
     "id": "TF-0016",
     "kind": "task",
+    "next_action": "本节点已完成；仅在 process replay、owner 越界、cursor 回退/静默丢失、stdin/ConPTY 回归、孤立进程树、manifest/patch identity 漂移或 governed native fallback 时重开。",
     "non_goals": [
       "把 host-governed 宣称为 sandbox",
       "让远程或 provider-native 执行强制经过 VerseShell"
     ],
     "priority": 2,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "使 VerseShell 具备替代现有本地 exec/process 的完整语义，而不仅是 shell string 包装。",
-    "remaining_minutes_max": 7200,
-    "remaining_minutes_min": 4800,
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
     "requirements": [
       "支持 argv、envDelta、PATH/PATHEXT、stdin、background、ConPTY、poll/read/write/kill/cancel",
       "定义幂等 process create、owner lease、heartbeat、reconcile 和 tombstone",
@@ -1103,16 +1228,16 @@
       "所有路径无隐式 native fallback"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [
       "重复进程 0",
       "孤立进程树 0",
       "丢失输出 cursor 0",
       "隐式 fallback 0"
     ],
-    "summary": "补齐 direct argv、环境、交互进程、取消、cursor、幂等创建和重启 reconciliation。",
+    "summary": "UAS-05 工程收口完成：VerseShell 以内部 process.start/poll/write/kill/list 拥有 governed 进程生命周期；Windows argv/env/PATH/PATHEXT、pipe/ConPTY、cursor/retention、artifact lineage、owner isolation、kill/timeout/crash 整树清理和 restart lost 均有真实 binary 证据；OpenClaw exec/process 使用同一 lifecycle owner，MCP 隐藏 process.*，governed 路径无 native PID fallback。",
     "title": "UAS-05 VerseShell 进程生命周期等价",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T07:24:21.056847Z"
   },
   "TF-0017": {
     "acceptance_criteria": [
@@ -1124,22 +1249,24 @@
     "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.94,
-      "user_goal": "让统一基础设施真正被 Agent 全量使用，而不是长期双轨",
+      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
       "validation_plan": [
-        "paired canary runs",
-        "hard-veto review",
-        "kill/rollback drill",
-        "support bundle inspection"
+        "审阅 generated UAS-06 evidence report",
+        "运行真实 paired cohort 并逐条记录 provider/human recovery",
+        "执行经审核 operator kill/rollback drill",
+        "真实证据审阅后再单独提出 closeout proposal"
       ],
-      "why_not_enough": "仍不构成全产品 default-on 或 GA。",
-      "why_this_task": "cohort 级固定路径可以验证全量使用，同时避免额外模型路由。"
+      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
+      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
     "assumptions": [
       "UAS-05 功能矩阵已通过",
       "有明确内部 owner 与回滚窗口"
     ],
-    "confidence": 0.56,
+    "confidence": 0.7,
     "context_tags": [],
     "created_at": "2026-07-27T13:16:29.659095Z",
     "deprecated_at": null,
@@ -1152,25 +1279,34 @@
     "difficulty": "high",
     "estimated_total_minutes": 3120,
     "evidence": [
-      "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#12-小范围回本策略"
+      "harness/specs/tasks/uas-06-single-local-exec-canary.md",
+      "harness/specs/rules/verseshell-single-local-exec-canary-boundary.md",
+      "artifacts/uas-06-single-local-exec-canary/report.json",
+      "openclaw_runtime/src/agents/verseshell/single-plane-canary.ts",
+      "openclaw_runtime/src/logging/diagnostic-stability.exec.test.ts",
+      "UAS-06 report: engineering-only, needs-real-canary, 9/9 scenarios, governed coverage 100%, native fallback 0, hard vetoes 0",
+      "UAS-06 focused config/evidence/diagnostic tests, verseshell:test, root typecheck, comms replay/compare, and isolated diff-aware Harness validate/dry-run passed"
     ],
     "execution_hints": [
-      "cohort 内不允许隐式 fallback",
-      "扩大范围必须重新审批"
+      "仅由操作员在 global/agent/session scope 选择 tools.exec.host=verseshell；模型侧 host enum 不得增加 VerseShell",
+      "任何 governed 失败保持 fail-closed；rollback 必须是显式 host 配置变更，不能是 native fallback",
+      "下一步采集真实内部 cohort paired baseline/VerseShell task，逐条记录 actual provider usage 与 human recovery minutes，并执行经审核的 operator kill/rollback drill",
+      "在真实报告审阅并独立 closeout 前，TF-0018/UAS-07 和 TF-0019/UAS-08 保持 proposed"
     ],
     "id": "TF-0017",
     "kind": "task",
+    "next_action": "在受控内部 cohort 运行 paired native-baseline/VerseShell 任务，记录每条 live observation 的 actual provider usage、人工恢复分钟、lifecycle/security 结果和经审核的 operator kill/rollback drill；通过真实证据审阅前不得关闭本节点或启动 TF-0018。",
     "non_goals": [
       "default-on",
       "无界 cohort",
       "用单次 demo 宣称 ROI"
     ],
     "priority": 2,
-    "progress": 0.0,
+    "progress": 35.0,
     "progress_source": "manual",
     "purpose": "以真实任务验证单一路径的正确性、安全性、运营性和回滚能力。",
-    "remaining_minutes_max": 3840,
-    "remaining_minutes_min": 2400,
+    "remaining_minutes_max": 2280,
+    "remaining_minutes_min": 1560,
     "requirements": [
       "按 cohort 配置而非 per-call LLM 路由",
       "单次 governed 失败保持 fail-closed",
@@ -1178,16 +1314,16 @@
       "记录 provider usage、latency、resource、recovery 和人工时间"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "in_progress",
     "success_metrics": [
       "本地执行覆盖率 100%",
       "native fallback 0",
       "关键生命周期成功率 100%",
       "安全违规观测 0"
     ],
-    "summary": "在有限 workspace/cohort 中将合格本地 exec/process 固定编译到 VerseShell。",
+    "summary": "UAS-06 工程路由已完成：operator-owned tools.exec.host=verseshell 在选定 cohort 内确定性进入 governed lifecycle，模型侧无 VerseShell per-call host，eligible-local 工程矩阵九场景覆盖 100%、native fallback 0、engineering hard veto 0。真实 cohort、paired A/B、actual provider usage、人工恢复和 reviewed rollback evidence 仍为 0，节点不可 closeout。",
     "title": "UAS-06 单一本地执行平面 canary",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T09:49:03.873196Z"
   },
   "TF-0018": {
     "acceptance_criteria": [
@@ -1199,18 +1335,20 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.86,
-      "user_goal": "让 Agent 在长期任务中积累可靠记忆而非重复工作",
+      "fit_confidence": 0.94,
+      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
       "validation_plan": [
-        "memory lifecycle state tests",
-        "correction/deletion E2E",
-        "cross-scope isolation tests",
-        "human-confirmed SEKB E2E"
+        "审阅 generated UAS-06 evidence report",
+        "运行真实 paired cohort 并逐条记录 provider/human recovery",
+        "执行经审核 operator kill/rollback drill",
+        "真实证据审阅后再单独提出 closeout proposal"
       ],
-      "why_not_enough": "真实收益和毕业仍需 UAS-08。",
-      "why_this_task": "它在已有统一证据链上增加受治理长期事实和经验复用。"
+      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
+      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
     "assumptions": [
       "UAS-01 至 UAS-06 已提供稳定 artifact、trace 和执行主路径"
     ],
@@ -1262,7 +1400,7 @@
     ],
     "summary": "在基础主路径闭合后实现可纠正、可撤销、可追溯的长期事实和工程经验生命周期。",
     "title": "UAS-07 长期 Memory 治理闭环",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T09:49:03.873196Z"
   },
   "TF-0019": {
     "acceptance_criteria": [
@@ -1274,18 +1412,20 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.9,
-      "user_goal": "判断统一 Agent 系统是否达到成熟产品投入价值",
+      "fit_confidence": 0.94,
+      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
       "validation_plan": [
-        "预注册协议审阅",
-        "paired A/B reproducibility check",
-        "soak hard-veto audit",
-        "product decision review"
+        "审阅 generated UAS-06 evidence report",
+        "运行真实 paired cohort 并逐条记录 provider/human recovery",
+        "执行经审核 operator kill/rollback drill",
+        "真实证据审阅后再单独提出 closeout proposal"
       ],
-      "why_not_enough": "实验通过后仍需单独的 TF-0006/product approval 决策。",
-      "why_this_task": "它把架构完成转化为真实收益、安全和运营毕业证据。"
+      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
+      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
     "assumptions": [
       "已有真实内部 cohort 和稳定 baseline",
       "产品 owner 可完成毕业审阅"
@@ -1339,6 +1479,83 @@
     ],
     "summary": "以预注册 paired A/B、真实 provider usage 和 14-28 天 soak 决定继续、缩小或停止。",
     "title": "UAS-08 真实 ROI、soak 与毕业裁决",
-    "updated_at": "2026-07-27T13:16:29.659095Z"
+    "updated_at": "2026-07-30T09:49:03.873196Z"
+  },
+  "TF-0020": {
+    "acceptance_criteria": [
+      "acceptance:agent full 在隔离 Executor/Verifier 下 fail-closed",
+      "报告绑定单一 commit/tree、命令、日志与产物 SHA",
+      "TF-0009 作为受控 suite 且不覆盖 canonical artifact",
+      "当前全量工程门禁恢复为零失败"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
+      "validation_plan": [
+        "Verifier 重跑全量 profile",
+        "检查报告 SHA/日志完整性",
+        "确认产品锁持续关闭"
+      ],
+      "why_not_enough": "不替代真人/live/product 证据",
+      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
+    },
+    "alignment_records": [
+      "TFA-32a1af6c38"
+    ],
+    "assumptions": [
+      "用户已授权本工程验收编排及其 task-forest 应用",
+      "现有脏工作树必须保留且正式证据在隔离 worktree 中生成"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "agent-acceptance",
+      "engineering-evidence",
+      "fail-closed"
+    ],
+    "created_at": "2026-07-31T06:14:56.840368Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "所有工程任务由独立 Verifier 重跑后获得机器可读 engineering verdict",
+      "当前失败的 runtime、E2E、maturity 与 release 门禁逐项闭合"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 1440,
+    "evidence": [],
+    "execution_hints": [
+      "一次只推进该验收节点的有序阶段",
+      "所有 source/evidence 变更使用 Harness task spec",
+      "严禁将 engineering verdict 写为 live/product readiness"
+    ],
+    "id": "TF-0020",
+    "kind": "task",
+    "non_goals": [
+      "真人验收替代",
+      "产品审批、发布、default-on、GA",
+      "SEKB 自动写回或 Browser 私网开放"
+    ],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "在无真人验收条件下，让每个工程任务都具有可复跑、可审计、fail-closed 的 Agent 验收结果。",
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "requirements": [
+      "Agent 证据与 human/live/product 证据完全隔离",
+      "产品锁保持 liveReady=false、productApproved=false、defaultOn=false",
+      "正式验收只在干净候选 SHA 和独立 worktree 中完成",
+      "不得清理或覆盖用户现有工作树"
+    ],
+    "source_sessions": [],
+    "status": "ready",
+    "success_metrics": [
+      "Verifier 重跑结果与 Executor 结果一致",
+      "超时、非零退出、旧 SHA、脏树、TLS 绕过、额外 skip 均拒绝验收",
+      "人类/live 产品计数和三项产品锁误增为零"
+    ],
+    "summary": "建立可复现的 Executor/Verifier 工程验收主控，并先闭合当前 runtime、E2E、maturity 与 release 阻塞。",
+    "title": "Agent 工程自动验收编排器",
+    "updated_at": "2026-07-31T06:14:56.840368Z"
   }
 }

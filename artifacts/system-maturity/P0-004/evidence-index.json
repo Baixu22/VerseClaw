@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T16:43:10.984Z",
+  "generatedAt": "2026-07-31T06:58:01.775Z",
   "entries": [
     {
       "task": "P0-001",
@@ -85,7 +85,7 @@
     {
       "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1"
+      "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722"
     },
     {
       "task": "P0-003",
@@ -95,7 +95,7 @@
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P0-003",
@@ -135,7 +135,7 @@
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P0-004",
@@ -190,12 +190,12 @@
     {
       "task": "P1-001",
       "path": "shared/host-api/contract.ts",
-      "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b"
+      "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d"
     },
     {
       "task": "P1-001",
       "path": "src/lib/host-api.ts",
-      "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1"
+      "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722"
     },
     {
       "task": "P1-001",
@@ -230,7 +230,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc-handlers.ts",
-      "sha256": "5c41611a37505eb26214a5ae5f1732cb1bddf75c74e031420d4c4cc84887d1a2"
+      "sha256": "c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27"
     },
     {
       "task": "P1-002",
@@ -255,7 +255,7 @@
     {
       "task": "P1-003",
       "path": "electron/services/files-api.ts",
-      "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295"
+      "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f"
     },
     {
       "task": "P1-003",
@@ -385,7 +385,7 @@
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-spawn.ts",
-      "sha256": "69cf86731e99e5d307bb6cb6459820c89e2b2c6ddf5c9d0f974c65530a18128d"
+      "sha256": "736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2"
     },
     {
       "task": "P2-003",
@@ -850,7 +850,7 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "bffbaca3a067809edc8c073da2492c28c974775ea082e3647464d1ae31040ec2"
+      "sha256": "01e36522014d961fe1fa0f0e4bdcd2cf55a9ce284e7eb086f195eb279858b29d"
     },
     {
       "task": "P7-001",
@@ -905,12 +905,12 @@
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-      "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a"
+      "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448"
     },
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-      "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae"
+      "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7"
     },
     {
       "task": "P7-002",
@@ -1065,12 +1065,12 @@
     {
       "task": "P7-003",
       "path": "shared/host-api/contract.ts",
-      "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b"
+      "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d"
     },
     {
       "task": "P7-003",
       "path": "electron/services/agent-browser-api.ts",
-      "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9"
+      "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b"
     },
     {
       "task": "P7-003",
@@ -1090,7 +1090,7 @@
     {
       "task": "P7-003",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P7-003",
@@ -1235,7 +1235,7 @@
     {
       "task": "P7-004",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P7-004",
@@ -1330,12 +1330,12 @@
     {
       "task": "P8-001",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517"
+      "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d"
     },
     {
       "task": "P8-001",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P8-001",
@@ -1375,7 +1375,7 @@
     {
       "task": "P8-002",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517"
+      "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d"
     },
     {
       "task": "P8-002",
@@ -1450,7 +1450,7 @@
     {
       "task": "P8-003",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P8-004",
@@ -1500,7 +1500,7 @@
     {
       "task": "P8-004",
       "path": "package.json",
-      "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     }
   ]
 }

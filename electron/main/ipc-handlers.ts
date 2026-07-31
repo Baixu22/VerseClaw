@@ -14,7 +14,7 @@ import { ClawHubService } from '../gateway/clawhub';
 import {
   type ProviderConfig,
 } from '../utils/secure-storage';
-import { getOpenClawStatus, getOpenClawSkillsDir, ensureDir, expandPath } from '../utils/paths';
+import { getOpenClawStatus, getOpenClawSkillsDir, getOpenClawConfigDir, ensureDir, expandPath } from '../utils/paths';
 import { getOpenClawCliCommand } from '../utils/openclaw-cli';
 import { getAllSettings, getSetting, resetSettings, setSetting, type AppSettings } from '../utils/store';
 import {
@@ -1331,7 +1331,7 @@ function getMimeType(ext: string): string {
   return EXT_MIME_MAP[ext.toLowerCase()] || 'application/octet-stream';
 }
 
-const OUTBOUND_DIR = join(homedir(), '.openclaw', 'media', 'outbound');
+const OUTBOUND_DIR = join(getOpenClawConfigDir(), 'media', 'outbound');
 
 // ── File preview (sandboxed) ──────────────────────────────────────────
 //
@@ -1400,7 +1400,7 @@ function isPathInside(child: string, parent: string): boolean {
  */
 function getFilePreviewWriteRoots(): string[] {
   const roots: string[] = [];
-  const openclawDir = join(homedir(), '.openclaw');
+  const openclawDir = getOpenClawConfigDir();
   roots.push(resolve(openclawDir));
   try {
     roots.push(resolve(app.getPath('userData')));
