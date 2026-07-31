@@ -16,22 +16,28 @@ import {
   Check,
   ChevronDown,
   CircleSlash,
+  Copy,
   Database,
   Eye,
+  FilePlus,
   FileText,
   FolderPlus,
   Gauge,
   GitBranchPlus,
+  History,
   Loader2,
   MessageSquarePlus,
   Paperclip,
+  PencilLine,
   Plus,
+  RotateCcw,
   Search,
   SendHorizontal,
   Shield,
   Sparkles,
   Square,
   Target,
+  Trash2,
   Wrench,
   Users,
   X,
@@ -199,6 +205,13 @@ const SLASH_COMMANDS = [
   { id: 'compact', group: 'session', kind: 'compact', aliases: ['compress'] },
   { id: 'fork', group: 'session', kind: 'fork' },
   { id: 'handoff', group: 'session', kind: 'handoff' },
+  { id: 'new', group: 'session', kind: 'newSession', aliases: ['new-chat'] },
+  { id: 'resume', group: 'session', kind: 'resumeSession' },
+  { id: 'rename', group: 'session', kind: 'renameSession' },
+  { id: 'archive', group: 'session', kind: 'archiveSession' },
+  { id: 'delete', group: 'session', kind: 'deleteSession' },
+  { id: 'clear', group: 'session', kind: 'clearSession' },
+  { id: 'copy', group: 'session', kind: 'copySession' },
 ] as const;
 
 type SlashCommand = (typeof SLASH_COMMANDS)[number];
@@ -372,6 +385,20 @@ function SlashCommandIcon({ command }: { command: SlashCommand }) {
       return <GitBranchPlus className={className} />;
     case 'handoff':
       return <MessageSquarePlus className={className} />;
+    case 'new':
+      return <FilePlus className={className} />;
+    case 'resume':
+      return <History className={className} />;
+    case 'rename':
+      return <PencilLine className={className} />;
+    case 'archive':
+      return <Archive className={className} />;
+    case 'delete':
+      return <Trash2 className={className} />;
+    case 'clear':
+      return <RotateCcw className={className} />;
+    case 'copy':
+      return <Copy className={className} />;
     default:
       return <Wrench className={className} />;
   }
@@ -1935,7 +1962,10 @@ export function ChatInput({
   const hasComposerDraft = Boolean(input.trim() || selectedKnowledgeRefs.length > 0);
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
   const canStop = sending && !inputDisabled && !!onStop;
-  const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting;
+  // 干预门禁（对齐 P1-4）：无 /loop Task Ledger root（available:false）时
+  // 运行时会对显式 inputMode 返回 INVALID_REQUEST——禁用并提示，避免"按钮可点但不可用"。
+  const longTaskAvailable = longTaskControlStatus?.available !== false;
+  const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting && longTaskAvailable;
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || Boolean(longTaskControlStatus)
@@ -2261,6 +2291,140 @@ export function ChatInput({
       }
       clearComposer();
       await onHandoffSession();
+      return;
+    }
+
+    if (command.kind === 'newSession') {
+      if (!onNewSession) {
+        toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
+        return;
+      }
+      clearComposer();
+      await onNewSession();
+      toast.success(t('composer.slashCommands.toasts.newSessionCreated'));
+      return;
+    }
+
+    if (command.kind === 'resumeSession') {
+      clearComposer();
+      const store = useChatStore.getState();
+      const query = trimmedArgs.toLowerCase();
+      if (!query) {
+        toast.message(t('composer.slashCommands.toasts.resumeSessionNoArgs'));
+        return;
+      }
+      const candidates = store.sessions
+        .filter((session) => {
+          const label =
+            store.sessionLabels[session.key] ??
+            session.label ??
+            session.displayName ??
+            session.derivedTitle ??
+            '';
+          return (
+            session.key.toLowerCase().includes(query) ||
+            label.toLowerCase().includes(query)
+          );
+        })
+        .sort(
+          (left, right) =>
+            (right.updatedAt ?? 0) - (left.updatedAt ?? 0),
+        );
+      if (candidates.length === 0) {
+        toast.message(
+          t('composer.slashCommands.toasts.resumeSessionNotFound', { query: trimmedArgs }),
+        );
+        return;
+      }
+      const target = candidates[0];
+      const targetLabel =
+        store.sessionLabels[target.key] ?? target.label ?? target.displayName ?? target.key;
+      await store.switchSession(target.key);
+      toast.success(
+        t('composer.slashCommands.toasts.resumeSessionResumed', { label: targetLabel }),
+      );
+      return;
+    }
+
+    if (command.kind === 'renameSession') {
+      const label = trimmedArgs.trim();
+      if (!label) {
+        toast.message(t('composer.slashCommands.toasts.renameNoArgs'));
+        return;
+      }
+      clearComposer();
+      try {
+        await useChatStore.getState().renameSession(currentSessionKey, label);
+        toast.success(t('composer.slashCommands.toasts.renameDone', { label }));
+      } catch (error) {
+        toast.error(t('composer.slashCommands.toasts.renameFailed', { error: String(error) }));
+      }
+      return;
+    }
+
+    if (command.kind === 'archiveSession') {
+      clearComposer();
+      try {
+        await useChatStore.getState().archiveSession(currentSessionKey);
+        toast.success(t('composer.slashCommands.toasts.archiveDone'));
+      } catch (error) {
+        toast.error(t('composer.slashCommands.toasts.archiveFailed', { error: String(error) }));
+      }
+      return;
+    }
+
+    if (command.kind === 'deleteSession') {
+      const confirmed = window.confirm(t('composer.slashCommands.toasts.deleteConfirm'));
+      if (!confirmed) {
+        clearComposer();
+        return;
+      }
+      clearComposer();
+      try {
+        await useChatStore.getState().deleteSession(currentSessionKey);
+        toast.success(t('composer.slashCommands.toasts.deleteDone'));
+      } catch (error) {
+        toast.error(t('composer.slashCommands.toasts.deleteFailed', { error: String(error) }));
+      }
+      return;
+    }
+
+    if (command.kind === 'clearSession') {
+      clearComposer();
+      useChatStore.getState().clearSessionView();
+      toast.success(t('composer.slashCommands.toasts.clearDone'));
+      return;
+    }
+
+    if (command.kind === 'copySession') {
+      clearComposer();
+      const messages = useChatStore.getState().messages;
+      // 对齐 Codex `/copy`（"copy last response as markdown"）：复制最后一条
+      // assistant 响应，而非整个会话 transcript。
+      const lastResponse = [...messages].reverse().find((message) => message.role === 'assistant');
+      if (!lastResponse) {
+        toast.message(t('composer.slashCommands.toasts.copyEmpty'));
+        return;
+      }
+      const text =
+        typeof lastResponse.content === 'string'
+          ? lastResponse.content
+          : Array.isArray(lastResponse.content)
+            ? lastResponse.content
+                .filter((block): block is { type: string; text?: string } =>
+                  typeof block === 'object' && block !== null && 'text' in block,
+                )
+                .map((block) => block.text ?? '')
+                .filter(Boolean)
+                .join('\n')
+            : '';
+      try {
+        await navigator.clipboard.writeText(text);
+        toast.success(t('composer.slashCommands.toasts.copyDone'));
+      } catch (error) {
+        toast.error(t('composer.slashCommands.toasts.copyFailed', { error: String(error) }));
+      }
+      return;
     }
   }, [
     allReady,
@@ -2280,6 +2444,7 @@ export function ChatInput({
     knowledgeScope,
     onForkSession,
     onHandoffSession,
+    onNewSession,
     onKnowledgeModeChange,
     onKnowledgeScopeChange,
     runKnowledgeSearch,
@@ -2927,7 +3092,31 @@ export function ChatInput({
                     </span>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.intervention.guideTooltip')}
+                    {canIntervene
+                      ? t('composer.intervention.guideTooltip')
+                      : t('composer.intervention.longTaskRequired')}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        data-testid="chat-intervention-revise-goal"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('revise-goal')}
+                        className="h-7 rounded-md px-2 text-[11px] font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                      >
+                        {t('composer.intervention.reviseGoal')}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {canIntervene
+                      ? t('composer.intervention.reviseGoalTooltip')
+                      : t('composer.intervention.longTaskRequired')}
                   </TooltipContent>
                 </Tooltip>
                 <Tooltip>
@@ -2947,7 +3136,9 @@ export function ChatInput({
                     </span>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.intervention.interruptTooltip')}
+                    {canIntervene
+                      ? t('composer.intervention.interruptTooltip')
+                      : t('composer.intervention.longTaskRequired')}
                   </TooltipContent>
                 </Tooltip>
               </div>

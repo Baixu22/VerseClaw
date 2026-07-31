@@ -1069,8 +1069,12 @@ export function Sidebar() {
                 const target = sessionToDelete;
                 if (!target) return;
                 setDeleteDialogOpen(false);
-                await archiveSession(target.key);
-                if (currentSessionKey === target.key) navigate('/');
+                try {
+                  await archiveSession(target.key);
+                  if (currentSessionKey === target.key) navigate('/');
+                } catch (error) {
+                  console.warn('[sidebar] archiveSession failed:', error);
+                }
               }}
             >
               <ArchiveIcon className="mr-1 h-3.5 w-3.5" />
@@ -1083,8 +1087,12 @@ export function Sidebar() {
                 const target = sessionToDelete;
                 if (!target) return;
                 setDeleteDialogOpen(false);
-                await deleteSession(target.key);
-                if (currentSessionKey === target.key) navigate('/');
+                try {
+                  await deleteSession(target.key);
+                  if (currentSessionKey === target.key) navigate('/');
+                } catch (error) {
+                  console.warn('[sidebar] deleteSession failed:', error);
+                }
               }}
             >
               <Trash2 className="mr-1 h-3.5 w-3.5" />

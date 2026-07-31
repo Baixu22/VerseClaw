@@ -484,6 +484,7 @@
       "loadFailed": "Failed to load checkpoints",
       "restore": "Restore",
       "restoreSucceeded": "Workspace restored to the checkpoint.",
+      "partialRestoreNotice": "Partial restore: file writes were rolled back, but runtime state and external side effects were not restored.",
       "restoreFailed": "Restore failed",
       "filesTouched": "{{count}} files touched",
       "testsRun": "{{count}} tests run",
@@ -1186,6 +1187,41 @@
           "label": "Handoff session",
           "description": "Prepare an editable continuation draft in a new session.",
           "argumentHint": ""
+        },
+        "new": {
+          "label": "New session",
+          "description": "Start a fresh chat in the current workspace.",
+          "argumentHint": ""
+        },
+        "resume": {
+          "label": "Resume session",
+          "description": "Resume a previous session. Optionally filter by a search term: /resume <keyword>",
+          "argumentHint": "<keyword>"
+        },
+        "rename": {
+          "label": "Rename session",
+          "description": "Rename the current session.",
+          "argumentHint": "<label>"
+        },
+        "archive": {
+          "label": "Archive session",
+          "description": "Archive the current session.",
+          "argumentHint": ""
+        },
+        "delete": {
+          "label": "Delete session",
+          "description": "Permanently delete the current session.",
+          "argumentHint": ""
+        },
+        "clear": {
+          "label": "Clear session",
+          "description": "Clear the current session history.",
+          "argumentHint": ""
+        },
+        "copy": {
+          "label": "Copy last response",
+          "description": "Copy the last assistant response as markdown.",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1212,7 +1248,23 @@
         "ledgerCreated": "Created ledger task: {{title}}",
         "ledgerFailed": "Could not create ledger task: {{error}}",
         "missionOpened": "Opened Agents for Mission Control",
-        "forkUnavailable": "Fork is available after the current run finishes."
+        "forkUnavailable": "Fork is available after the current run finishes.",
+        "newSessionCreated": "Started a new session.",
+        "resumeSessionResumed": "Resumed session: {{label}}",
+        "resumeSessionNotFound": "No session matched \"{{query}}\".",
+        "resumeSessionNoArgs": "Type /resume <keyword> to pick a session by name.",
+        "renameNoArgs": "Type /rename <label> to set a new session name.",
+        "renameDone": "Session renamed to \"{{label}}\".",
+        "renameFailed": "Could not rename session: {{error}}",
+        "archiveFailed": "Could not archive session: {{error}}",
+        "deleteFailed": "Could not delete session: {{error}}",
+        "deleteConfirm": "Permanently delete the current session? This cannot be undone.",
+        "archiveDone": "Session archived.",
+        "deleteDone": "Session deleted.",
+        "clearDone": "Session history cleared.",
+        "copyDone": "Copied session transcript as markdown.",
+        "copyEmpty": "No messages in the current session to copy.",
+        "copyFailed": "Could not copy session transcript: {{error}}"
       }
     },
     "clearTarget": "Clear target agent",
@@ -1559,6 +1611,9 @@
     "intervention": {
       "guide": "Guide",
       "guideTooltip": "Inject non-interrupting guidance into the active run.",
+      "longTaskRequired": "Interrupt/guide/queue/revise-goal requires an active /loop long-task context for this session.",
+      "reviseGoal": "Revise goal",
+      "reviseGoalTooltip": "Checkpoint the active run and restart from a revised user goal.",
       "queueDefault": "Running: Enter queues this message",
       "queue": "Queue",
       "queueTooltip": "Keep the active run intact and replay this follow-up later.",
