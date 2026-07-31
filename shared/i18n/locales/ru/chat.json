@@ -11,6 +11,11 @@
     "retry": "Повторить загрузку"
   },
   "welcome": {
+    "titleInProject": "Что соберём в <projectSelect>{{projectName}}</projectSelect>?",
+    "titleNoProject": "Что будем создавать?",
+    "projectSearch": "Поиск проектов",
+    "projectEmpty": "Проекты не найдены",
+    "changeProject": "Сменить проект: {{projectName}}",
     "title": "Чат Verse Claw",
     "subtitle": "Чем могу помочь?",
     "askQuestions": "Задачи",
@@ -29,6 +34,7 @@
     "currentAgent": "Общение с {{agent}}",
     "workspace": "Рабочая область",
     "saveToKnowledge": "Сохранить в знания",
+    "moreActions": "Другие действия",
     "addWorkspaceDialogTitle": "Выберите каталог рабочей области",
     "addWorkspaceDialogButton": "Сделать рабочей областью",
     "promptCache": {
@@ -1451,11 +1457,19 @@
     "workspaceActions": "Действия рабочей области",
     "workspaceActionFailed": "Действие рабочей области не выполнено: {{error}}",
     "permissionModeTitle": "Режим разрешений",
+    "permissionMenuTitle": "Как Verse Claw должен подтверждать действия?",
+    "permissionLearnMore": "Подробнее",
     "permissionMode": {
       "readOnly": "Только чтение",
       "plan": "План",
       "acceptEdits": "Принимать правки",
       "fullAccess": "Полный доступ"
+    },
+    "permissionModeDescription": {
+      "readOnly": "Всегда спрашивать перед изменением файлов или использованием интернета",
+      "plan": "Анализировать и предлагать план без внесения изменений",
+      "acceptEdits": "Запрашивать подтверждение только для обнаруженных рискованных действий",
+      "fullAccess": "Доступ к интернету и всем файлам компьютера без ограничений"
     },
     "pickWorkspaceFolder": "Выбрать папку рабочей области",
     "newWorkspaceSession": "Новая сессия рабочей области",
@@ -1651,9 +1665,14 @@
     "time": "Время"
   },
   "sidebar": {
+    "sectionConversations": "Диалоги",
+    "organizeSessions": "Упорядочить диалоги",
     "searchSessions": "Поиск диалогов",
     "clearSearch": "Очистить поиск",
     "searchNoResults": "Диалоги не найдены",
+    "empty": "Диалогов пока нет",
+    "emptyAction": "Новый диалог",
+    "workspaceError": "Не удалось загрузить рабочие пространства",
     "searchModalPlaceholder": "Поиск диалогов по названию, рабочей группе, пространству или агенту...",
     "searchEmptyHint": "Начните вводить для поиска диалогов",
     "searchCurrent": "Текущий",
@@ -1692,6 +1711,14 @@
     }
   },
   "archive": {
+    "searchPlaceholder": "Поиск в архиве",
+    "ungrouped": "Без группы",
+    "noMatches": "Совпадений не найдено",
+    "groupCount": "Диалогов: {{count}}",
+    "view": {
+      "allSessions": "Все диалоги",
+      "allWorkspaces": "Все рабочие области"
+    },
     "title": "Архив разговоров",
     "open": "Архив",
     "empty": "Нет архивированных разговоров",
@@ -1702,7 +1729,8 @@
     "deleteMessage": "Выберите способ удаления. Архив перемещает в корзину (восстановимо); Удалить окончательно удаляет «{{label}}».",
     "archiveAction": "Архив",
     "emptyAll": "Очистить архив",
-    "emptyAllConfirm": "Нажмите ещё раз, чтобы окончательно удалить все архивированные разговоры"
+    "emptyAllConfirm": "Нажмите ещё раз, чтобы окончательно удалить все архивированные разговоры",
+    "viewLabel": "Вид архива"
   },
   "questionDirectory": {
     "title": "Список вопросов",
@@ -1820,17 +1848,19 @@
     "dismissCompleted": "Скрыть завершенный статус"
   },
   "turnSummary": {
-    "titleFallback": "Работа завершена",
-    "toggle": "Развернуть или свернуть сводку работы",
-    "status": {
-      "completed": "Работа завершена",
-      "error": "Требует внимания"
-    },
-    "counts": {
-      "tasks": "{{count}} задач",
-      "reports": "{{count}} файлов",
-      "sources": "{{count}} источников",
-      "orchestrations": "{{count}} команд"
+    "working": "Выполняется",
+    "workingFor": "Выполняется {{duration}}",
+    "workedFor": "Выполнено за {{duration}}",
+    "workDetails": "Подробности работы",
+    "stopped": "Остановлено",
+    "stoppedAfter": "Остановлено через {{duration}}",
+    "needsAttention": "Требует внимания",
+    "duration": {
+      "seconds_one": "{{count}} секунда",
+      "seconds_other": "{{count}} секунд",
+      "minutes_one": "{{count}} минута",
+      "minutes_other": "{{count}} минут",
+      "minutesSeconds": "{{minutes}} мин {{seconds}} сек"
     }
   },
   "turnWork": {

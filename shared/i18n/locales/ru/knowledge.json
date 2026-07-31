@@ -18,15 +18,19 @@
   },
   "subtitle": "Управление wiki-контекстом с источниками, черновиками на проверке и изменениями знаний под ролевым контролем.",
   "tabs": {
+    "navigation": "Основная навигация базы знаний",
     "library": "Library",
     "inbox": "Inbox",
-    "drafts": "Draft Inbox",
+    "drafts": "Черновики",
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance",
     "sources": "Источники"
   },
   "actions": {
+    "more": "Другие действия",
+    "content": "Содержимое",
+    "maintenance": "Обслуживание",
     "configure": "Configure",
     "init": "Initialize",
     "importFiles": "Import Files",
@@ -73,7 +77,8 @@
     "warnings": "Warnings",
     "errors": "Errors",
     "typeDistribution": "Types",
-    "selectAll": "Выбрать все допустимые concept"
+    "selectAll": "Выбрать все допустимые concept",
+    "selectedConcepts": "Выбрано: {{count}}"
   },
   "library": {
     "title": "Library",
@@ -81,6 +86,9 @@
     "typeHint": "Фильтровать и просматривать этот тип знаний"
   },
   "workspace": {
+    "newNote": "Новая заметка",
+    "browseTypes": "По типам",
+    "sourceTools": "Инструменты источников",
     "vault": "Vault",
     "localVault": "Локальное хранилище знаний",
     "documents": "Документы",
@@ -97,6 +105,22 @@
       "edit": "Редактировать",
       "preview": "Предпросмотр",
       "split": "Разделить"
+    }
+  },
+  "utility": {
+    "close": "Закрыть панель",
+    "status": {
+      "title": "Статус Vault",
+      "description": "Путь Vault, режимы, отображение, Obsidian, число источников и предупреждения."
+    },
+    "okf": {
+      "title": "Проверка OKF",
+      "description": "Просмотрите результат и выберите concept для импорта.",
+      "empty": "Сначала проверьте OKF Bundle через меню других действий."
+    },
+    "sources": {
+      "title": "Инструменты источников",
+      "description": "Управляйте текущим Source Set, сохраненными наборами и результатами Studio."
     }
   },
   "librarian": {
@@ -495,6 +519,7 @@
   },
   "sourceSet": {
     "title": "Текущий Source Set",
+    "savedSets": "Сохраненные наборы",
     "empty": "Добавьте источники из поиска или текущего документа.",
     "count": "{{count}} источников",
     "save": "Сохранить Source Set",
