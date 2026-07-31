@@ -169,6 +169,17 @@ async function runSerial(commands) {
 }
 
 /**
+ * pnpm's verify-deps-before-run nests a `pnpm install` before every script
+ * when it cannot confirm deps are current. Under the parallel preflight stage
+ * that means several concurrent nested installs racing on the virtual store's
+ * `.pnpm/lock.yaml` — Windows reports EPERM/ENOTEMPTY and gates fail
+ * non-deterministically. The repo already opts out of this check for long-run
+ * gates (see artifacts/runtime-long-stability/report.json command lines); the
+ * aggregate check does the same so guard execution is deterministic.
+ */
+const PNPM_NO_DEPS_VERIFY = "--config.verify-deps-before-run=false";
+
+/**
  * Runs one managed check command and returns timing/status details.
  */
 export async function runCommand(command, runManagedCommandImpl = runManagedCommand) {
@@ -176,7 +187,7 @@ export async function runCommand(command, runManagedCommandImpl = runManagedComm
   let status = 1;
   try {
     status = await runManagedCommandImpl({
-      args: command.args,
+      args: [PNPM_NO_DEPS_VERIFY, ...command.args],
       bin: "pnpm",
     });
   } catch (error) {

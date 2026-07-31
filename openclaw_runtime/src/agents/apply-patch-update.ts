@@ -42,13 +42,14 @@ export async function applyUpdateHunk(
     originalLines.pop();
   }
 
-  const replacements = computeReplacements(originalLines, filePath, chunks);
+  const replacements = computeReplacements(originalContents, originalLines, filePath, chunks);
   const newLines = applyReplacements(originalLines, replacements);
   const normalizedResult = `${newLines.join("\n")}${hadTrailingNewline ? "\n" : ""}`;
   return restoreLineEndings(normalizedResult, originalEndings);
 }
 
 function computeReplacements(
+  originalContents: string,
   originalLines: string[],
   filePath: string,
   chunks: UpdateFileChunk[],

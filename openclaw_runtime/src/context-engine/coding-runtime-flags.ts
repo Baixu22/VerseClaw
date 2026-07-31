@@ -9,7 +9,7 @@
  * control plane). The former `runtime.coding.factViews.enabled` default-true
  * leaf was a dead config with zero production callers and has been removed.
  */
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 
 export const DEFAULT_CODING_FEATURE_FLAGS = {
   "runtime.coding.parseOnTouch.enabled": true,

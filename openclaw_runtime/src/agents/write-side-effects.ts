@@ -138,7 +138,7 @@ function normalizeTestExecutionResult(params: {
     };
   }
   if (status === "approval-unavailable") {
-    const reason = typeof details.reason === "string" ? details.reason : "no approval route";
+    const reason = typeof details?.reason === "string" ? details.reason : "no approval route";
     return {
       ...base,
       status: "unavailable",
@@ -156,10 +156,10 @@ function normalizeTestExecutionResult(params: {
     if (/^exec denied\b/i.test(aggregated.trim())) {
       return { ...base, status: "denied", reason: aggregated.split(/\r?\n/, 1)[0] };
     }
-    if (details.timedOut === true) {
+    if (details?.timedOut === true) {
       return { ...base, status: "timed_out", reason: "The test command exceeded its timeout." };
     }
-    if (status === "completed" && details.exitCode === 0) {
+    if (status === "completed" && details?.exitCode === 0) {
       return { ...base, status: "passed" };
     }
     return { ...base, status: "failed", reason: "The test command exited unsuccessfully." };
