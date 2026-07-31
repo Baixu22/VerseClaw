@@ -3137,7 +3137,7 @@ export async function runTaskLoop(
         repairIterationsUsed: repairIterations,
         maxRepairIterations,
       }, deps.selfCheckDeps);
-      const selfCheck = applyEvidenceGateToSelfCheck(
+      let selfCheck = applyEvidenceGateToSelfCheck(
         gateTaskLoopSelfCheckCompletion(rawSelfCheck, repairIterations, maxRepairIterations),
         record.evidenceGate,
       );

@@ -4,7 +4,6 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   __resetWriteJournals,
-  getOrCreateWriteJournal,
   snapshotBeforeWrite,
 } from "./tools/write-journal.js";
 import {

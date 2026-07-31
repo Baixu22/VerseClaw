@@ -7,6 +7,7 @@ import {
   getTaskLoopRun,
   runTaskLoop,
 } from '../../openclaw_runtime/src/agents/task-loop-controller';
+import { resetAllGuardianCircuitBreakersForTests } from '../../openclaw_runtime/src/agents/guardian-circuit-breaker';
 import {
   buildTaskLoopContextPack,
   formatTaskLoopContextPackForReviewer,
@@ -302,6 +303,7 @@ function createTaskLoopRuntimeMemoryDbPath(): string {
 
 afterEach(() => {
   clearTaskLoopRunsForTests();
+  resetAllGuardianCircuitBreakersForTests();
   closeOpenClawStateDatabaseForTest();
   for (const dir of taskLoopRuntimeMemoryTempDirs.splice(0)) {
     rmSync(dir, { recursive: true, force: true });

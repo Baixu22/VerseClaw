@@ -677,11 +677,35 @@ export function parseTestCounts(stdout, stderr = '') {
   return { passed, failed, skipped, total, source: 'parsed' };
 }
 
+function pnpmGateSpawnSpec(command, args) {
+  // Node cannot exec .cmd shims directly on Windows (EINVAL). Match the repo's
+  // pnpm-runner pattern: wrap in cmd.exe and rely on the shim's trailing
+  // `exit /b %errorlevel%` to propagate the child's real exit code. (The shim
+  // must keep that line; a shim without it fails open.)
+  if (process.platform !== 'win32' || !/^pnpm(\.cmd)?$/iu.test(commandName(command))) {
+    return { command, args, shell: false };
+  }
+  const escaped = [command, ...args].map((part) => {
+    const text = String(part);
+    if (!/^[A-Za-z0-9_./\\:-]+$/u.test(text)) {
+      return `"${text.replace(/"/gu, '""')}"`;
+    }
+    return text;
+  });
+  return {
+    command: 'cmd.exe',
+    args: ['/d', '/s', '/c', escaped.join(' ')],
+    shell: false,
+    windowsVerbatimArguments: true,
+  };
+}
+
 function spawnGate(gate, options = {}) {
   const command = commandName(gate.command) === 'pnpm' ? pnpmExecutable() : gate.command;
   const startedAt = new Date().toISOString();
   const started = Date.now();
-  const result = (options.spawn ?? spawnSync)(command, gate.args, {
+  const spawnSpec = pnpmGateSpawnSpec(command, gate.args);
+  const result = (options.spawn ?? spawnSync)(spawnSpec.command, spawnSpec.args, {
     cwd: options.cwd,
     env: options.env,
     encoding: 'utf8',

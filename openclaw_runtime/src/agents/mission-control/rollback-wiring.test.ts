@@ -2,7 +2,6 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { createMission, tickMission, type MissionControllerDeps } from "./controller.js";
 import type { MissionRunRecord } from "./types.js";
-import type { ReplayRollbackResult } from "../replay-rollback-authority.js";
 import * as longTaskStore from "../long-task-control/store.js";
 
 function makeReviewer(decision: "repair" | "complete") {
@@ -69,16 +68,7 @@ function missionConfig(rollbackEnabled: boolean): OpenClawConfig {
 }
 
 describe("mission-control rollback wiring (A3)", () => {
-  let rollbackResult: ReplayRollbackResult;
-
   beforeEach(() => {
-    rollbackResult = {
-      ok: true,
-      rolledBackTo: "checkpoint:c1",
-      mode: "legacy_checkpoint_fallback",
-      evidenceSummary: "restored",
-      durationMs: 1,
-    };
     vi.restoreAllMocks();
   });
 
