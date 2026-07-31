@@ -10,7 +10,7 @@ import {
   copyFileSync,
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -1161,16 +1161,16 @@ export function verifyAcceptance(manifest, options = {}) {
     }
   }
   const verifierGates = (verifierRun.gates ?? []).map((gate) => prefixGateEvidence(gate, 'verifier'));
+  const verifierFailures = verifierRun.result === 'pass' ? [] : [...(verifierRun.failures ?? ['verifier rerun did not pass'])];
   const report = makeReport(manifest, { role: 'verifier', actor: verifierActor, env: options.env ?? process.env, providerKeys: [] }, verifierGates, {
     executorActor: executorReport.actor ?? null,
     verifierActor,
     executorEvidence: { result: executorReport.result, verified: true },
     consistency: { identicalGateContracts: consistencyErrors.length === 0, errors: consistencyErrors },
     controlledArtifacts: controlledArtifacts(outputDir, manifest, verifierGates),
-    failures: verifierRun.result === 'pass' ? [] : (verifierRun.failures ?? ['verifier rerun did not pass']),
+    failures: [...verifierFailures, ...consistencyErrors],
   });
   if (consistencyErrors.length > 0) {
-    report.failures.push(...consistencyErrors);
     report.result = 'NO-GO';
     report.engineeringAcceptedByAgent = false;
     report.taskStatusRecommendation = 'NO-GO';
@@ -1185,6 +1185,34 @@ export function readAcceptanceStatus(outputRoot = DEFAULT_OUTPUT_ROOT) {
   const root = resolve(outputRoot);
   const runs = [];
   if (!existsSync(root)) return { schema: ACCEPTANCE_SCHEMA, outputRoot: '<redacted>', runs, latest: null, counts: {} };
+  const addRun = (reportPathValue, displayPath) => {
+    try {
+      const report = readJson(reportPathValue);
+      runs.push({
+        runId: report.runId ?? basename(dirname(reportPathValue)),
+        result: report.result ?? 'NO-GO',
+        engineeringAcceptedByAgent: report.engineeringAcceptedByAgent === true,
+        taskStatusRecommendation: report.taskStatusRecommendation ?? 'NO-GO',
+        generatedAt: report.generatedAt ?? null,
+        humanEvidenceRequired: report.humanEvidenceRequired === true,
+        path: displayPath,
+      });
+    } catch {
+      runs.push({
+        runId: basename(dirname(reportPathValue)),
+        result: 'NO-GO',
+        engineeringAcceptedByAgent: false,
+        taskStatusRecommendation: 'NO-GO',
+        path: displayPath,
+      });
+    }
+  };
+  // A run directory may either nest under `runs/<runId>/` (default layout) or be
+  // written flat into the status root when the caller passes --output-dir directly.
+  const flatReport = join(root, 'final-report.json');
+  const flatFallback = join(root, 'verifier-report.json');
+  const flatPath = existsSync(flatReport) ? flatReport : existsSync(flatFallback) ? flatFallback : null;
+  if (flatPath) addRun(flatPath, basename(flatPath));
   for (const entry of readdirSync(root, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const runDir = join(root, entry.name);
@@ -1192,20 +1220,7 @@ export function readAcceptanceStatus(outputRoot = DEFAULT_OUTPUT_ROOT) {
     const fallbackPath = join(runDir, 'verifier-report.json');
     const pathValue = existsSync(reportPath) ? reportPath : existsSync(fallbackPath) ? fallbackPath : null;
     if (!pathValue) continue;
-    try {
-      const report = readJson(pathValue);
-      runs.push({
-        runId: report.runId ?? entry.name,
-        result: report.result ?? 'NO-GO',
-        engineeringAcceptedByAgent: report.engineeringAcceptedByAgent === true,
-        taskStatusRecommendation: report.taskStatusRecommendation ?? 'NO-GO',
-        generatedAt: report.generatedAt ?? null,
-        humanEvidenceRequired: report.humanEvidenceRequired === true,
-        path: `runs/${entry.name}/${pathValue.endsWith('final-report.json') ? 'final-report.json' : 'verifier-report.json'}`,
-      });
-    } catch {
-      runs.push({ runId: entry.name, result: 'NO-GO', engineeringAcceptedByAgent: false, taskStatusRecommendation: 'NO-GO', path: `runs/${entry.name}` });
-    }
+    addRun(pathValue, `runs/${entry.name}/${pathValue.endsWith('final-report.json') ? 'final-report.json' : 'verifier-report.json'}`);
   }
   runs.sort((left, right) => String(right.generatedAt ?? '').localeCompare(String(left.generatedAt ?? '')));
   const counts = {};

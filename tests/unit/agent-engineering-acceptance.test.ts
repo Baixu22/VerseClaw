@@ -25,6 +25,7 @@ import { main as acceptanceCliMain } from '../../scripts/agent-engineering-accep
 const temporaryPaths: string[] = [];
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   for (const path of temporaryPaths.splice(0)) rmSync(path, { recursive: true, force: true });
 });
 
@@ -469,25 +470,43 @@ describe('Agent Engineering Acceptance', () => {
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
     const manifest = createManifest(root);
+    const secondGate = {
+      id: 'second-gate',
+      name: 'Second fixture gate',
+      profile: 'fast',
+      command: 'node',
+      args: ['-e', 'process.exit(0)'],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      safety: { network: 'none', productionEffects: false, humanEvidence: false },
+    };
+    const twoGateManifest = structuredClone(manifest);
+    twoGateManifest.gates = [...manifest.gates, secondGate];
+    twoGateManifest.planDigest = digestManifest(twoGateManifest);
+    twoGateManifest.manifestDigest = digestManifest(twoGateManifest);
     const baseReport = {
       schema: ACCEPTANCE_SCHEMA,
       role: 'executor',
-      runId: manifest.runId,
-      source: { manifestDigest: manifest.manifestDigest },
-      candidate: manifest.candidate,
+      runId: twoGateManifest.runId,
+      source: { manifestDigest: twoGateManifest.manifestDigest },
+      candidate: twoGateManifest.candidate,
       result: 'pass',
       engineeringAcceptedByAgent: false,
       controlledArtifacts: [],
     };
 
     const missingGate = { ...baseReport, gates: [{ id: 'another-gate', result: 'pass' }] };
-    expect(validateExecutorEvidence(manifest, missingGate, outputDir)).toContain('executor report gate set/order mismatch');
+    expect(validateExecutorEvidence(twoGateManifest, missingGate, outputDir)).toContain('executor report gate set/order mismatch');
 
     const duplicatedGate = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }, { id: 'fixture-gate', result: 'pass' }] };
-    expect(validateExecutorEvidence(manifest, duplicatedGate, outputDir)).toContain('executor report gate set/order mismatch');
+    expect(validateExecutorEvidence(twoGateManifest, duplicatedGate, outputDir)).toContain('executor report gate set/order mismatch');
 
-    const reorderedGate = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }] };
-    expect(validateExecutorEvidence(manifest, reorderedGate, outputDir)).not.toContain('executor report gate set/order mismatch');
+    const reorderedGate = { ...baseReport, gates: [{ id: 'second-gate', result: 'pass' }, { id: 'fixture-gate', result: 'pass' }] };
+    expect(validateExecutorEvidence(twoGateManifest, reorderedGate, outputDir)).toContain('executor report gate set/order mismatch');
+
+    const inOrderGates = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }, { id: 'second-gate', result: 'pass' }] };
+    expect(validateExecutorEvidence(twoGateManifest, inOrderGates, outputDir)).not.toContain('executor report gate set/order mismatch');
   });
 
   it('refuses engineering acceptance when verifier rerun contradicts executor result contracts', () => {
@@ -532,6 +551,17 @@ describe('Agent Engineering Acceptance', () => {
     const finalReport = JSON.parse(readFileSync(finalReportPath, 'utf8'));
     expect(finalReport).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false, conclusion: { allowedPromotion: false } });
     expect(finalReport.failures.join('\n')).toContain('NODE_TLS_REJECT_UNAUTHORIZED must be unset');
+    expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+
+    const statusAfterFull = acceptanceCliMain(['status', '--output-dir', outputDir]);
+    expect(statusAfterFull).toBe(0);
+    const statusCalls = log.mock.calls
+      .map((call) => call[0])
+      .filter((value) => typeof value === 'string' && value.includes('"runs"'));
+    const statusJson = statusCalls[statusCalls.length - 1];
+    expect(statusJson).toBeTruthy();
+    expect(statusJson).toContain('"result": "NO-GO"');
+    expect(statusJson).toContain('final-report.json');
     log.mockRestore();
   });
 });
