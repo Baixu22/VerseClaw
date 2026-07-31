@@ -12,6 +12,7 @@ import {
   digestManifest,
   inferCoverage,
   redactText,
+  readAcceptanceStatus,
   repositoryIdentity,
   runAcceptance,
   sha256File,
@@ -535,33 +536,53 @@ describe('Agent Engineering Acceptance', () => {
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
     temporaryPaths.push(outputDir);
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--output-dir', outputDir]);
+      expect(planExit).toBe(0);
+      expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
 
-    const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--output-dir', outputDir]);
-    expect(planExit).toBe(0);
-    expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
+      const statusExit = acceptanceCliMain(['status', '--output-dir', outputDir]);
+      expect(statusExit).toBe(0);
 
-    const statusExit = acceptanceCliMain(['status', '--output-dir', outputDir]);
-    expect(statusExit).toBe(0);
+      vi.stubEnv('NODE_TLS_REJECT_UNAUTHORIZED', '0');
+      const fullExit = acceptanceCliMain(['full', '--spec', specPath, '--output-dir', outputDir, '--since', 'HEAD^']);
+      expect(fullExit).toBe(1);
+      const finalReportPath = join(outputDir, 'final-report.json');
+      expect(existsSync(finalReportPath)).toBe(true);
+      const finalReport = JSON.parse(readFileSync(finalReportPath, 'utf8'));
+      expect(finalReport).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false, conclusion: { allowedPromotion: false } });
+      expect(finalReport.failures.join('\n')).toContain('NODE_TLS_REJECT_UNAUTHORIZED must be unset');
+      expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
 
-    vi.stubEnv('NODE_TLS_REJECT_UNAUTHORIZED', '0');
-    const fullExit = acceptanceCliMain(['full', '--spec', specPath, '--output-dir', outputDir, '--since', 'HEAD^']);
-    expect(fullExit).toBe(1);
-    const finalReportPath = join(outputDir, 'final-report.json');
-    expect(existsSync(finalReportPath)).toBe(true);
-    const finalReport = JSON.parse(readFileSync(finalReportPath, 'utf8'));
-    expect(finalReport).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false, conclusion: { allowedPromotion: false } });
-    expect(finalReport.failures.join('\n')).toContain('NODE_TLS_REJECT_UNAUTHORIZED must be unset');
-    expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+      const statusAfterFull = acceptanceCliMain(['status', '--output-dir', outputDir]);
+      expect(statusAfterFull).toBe(0);
+      const statusCalls = log.mock.calls
+        .map((call) => call[0])
+        .filter((value) => typeof value === 'string' && value.includes('"runs"'));
+      const statusJson = statusCalls[statusCalls.length - 1];
+      expect(statusJson).toBeTruthy();
+      expect(statusJson).toContain('"result": "NO-GO"');
+      expect(statusJson).toContain('final-report.json');
+    } finally {
+      log.mockRestore();
+    }
+  });
 
-    const statusAfterFull = acceptanceCliMain(['status', '--output-dir', outputDir]);
-    expect(statusAfterFull).toBe(0);
-    const statusCalls = log.mock.calls
-      .map((call) => call[0])
-      .filter((value) => typeof value === 'string' && value.includes('"runs"'));
-    const statusJson = statusCalls[statusCalls.length - 1];
-    expect(statusJson).toBeTruthy();
-    expect(statusJson).toContain('"result": "NO-GO"');
-    expect(statusJson).toContain('final-report.json');
-    log.mockRestore();
+  it('status sees nested default-layout runs and ignores internal verifier subdirectories', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-status-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    // Default layout: <statusRoot>/runs/<runId>/final-report.json
+    const runDir = join(outputDir, 'runs', manifest.runId);
+    mkdirSync(join(runDir, 'verifier'), { recursive: true });
+    writeFileSync(join(runDir, 'final-report.json'), `${JSON.stringify({ ...manifest, schema: ACCEPTANCE_SCHEMA, role: 'executor', runId: manifest.runId, result: 'NO-GO', engineeringAcceptedByAgent: false, generatedAt: '2026-07-31T00:00:00.000Z' }, null, 2)}\n`, 'utf8');
+    // Internal verifier subdirectory must not be counted as a second run.
+    writeFileSync(join(runDir, 'verifier', 'verifier-report.json'), `${JSON.stringify({ schema: ACCEPTANCE_SCHEMA, role: 'verifier', runId: manifest.runId, result: 'pass', engineeringAcceptedByAgent: true, generatedAt: '2026-07-31T00:00:01.000Z' }, null, 2)}\n`, 'utf8');
+
+    const status = readAcceptanceStatus(outputDir);
+    expect(status.runs).toHaveLength(1);
+    expect(status.runs[0]).toMatchObject({ runId: manifest.runId, result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(status.runs[0].path).toBe(`runs/${manifest.runId}/final-report.json`);
   });
 });
