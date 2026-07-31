@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -175,6 +175,19 @@ function runFull(args) {
     continueOnError: true,
   });
   if (executor.result !== 'pass') {
+    // A failed executor run must still be observable through `status`: persist a
+    // final report so the run shows up with NO-GO instead of disappearing.
+    const finalReport = {
+      ...executor,
+      conclusion: {
+        ...executor.conclusion,
+        verifierRequired: true,
+        allowedPromotion: false,
+        engineeringAcceptedByAgent: false,
+      },
+      failures: [...(executor.failures ?? []), 'executor did not pass; verifier rerun not attempted'],
+    };
+    writeFileSync(join(outputDir, 'final-report.json'), JSON.stringify(finalReport, null, 2));
     printJson({ plan: { runId: manifest.runId, manifestDigest: manifest.manifestDigest }, executor: summary(executor) });
     return 1;
   }

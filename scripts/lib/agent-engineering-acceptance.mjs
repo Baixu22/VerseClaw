@@ -229,14 +229,6 @@ export function repositoryIdentity(root = REPOSITORY_ROOT, options = {}) {
   };
 }
 
-export function assertCleanWorktree(root = REPOSITORY_ROOT) {
-  const identity = repositoryIdentity(root);
-  if (!identity.clean) {
-    throw new Error(`acceptance requires a clean worktree; found ${identity.status.split(/\r?\n/u).filter(Boolean).length} changes`);
-  }
-  return identity;
-}
-
 function gitChangedPaths(root, since) {
   const base = since || 'HEAD^';
   const result = runGit(root, ['diff', '--name-only', '-z', `${base}..HEAD`]);
