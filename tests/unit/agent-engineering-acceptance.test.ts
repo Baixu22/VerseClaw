@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ACCEPTANCE_SCHEMA,
@@ -17,8 +17,10 @@ import {
   sha256File,
   validateAcceptanceEnvironment,
   validateAcceptanceManifest,
+  validateExecutorEvidence,
   verifyAcceptance,
 } from '../../scripts/lib/agent-engineering-acceptance.mjs';
+import { main as acceptanceCliMain } from '../../scripts/agent-engineering-acceptance.mjs';
 
 const temporaryPaths: string[] = [];
 
@@ -416,5 +418,120 @@ describe('Agent Engineering Acceptance', () => {
     expect(result).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
     expect(existsSync(join(outputDir, 'adapters', 'tf0009', 'agent-surrogate-report.json'))).toBe(true);
     expect(existsSync(join(root, 'artifacts', 'first-product-preview', 'TF-0009', 'agent-surrogate-report.json'))).toBe(false);
+  });
+
+  it('rejects a dirty source worktree end-to-end before running any gate', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    writeFileSync(join(root, 'uncommitted.txt'), 'dirty\n', 'utf8');
+
+    const result = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: passingSpawn,
+    });
+    expect(result).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(result.failures).toContain('source worktree is dirty');
+    expect(result.gates).toEqual([]);
+  });
+
+  it('rejects a stale candidate SHA that does not match source HEAD', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const stale = structuredClone(manifest);
+    stale.runId = 'fixture-stale-sha';
+    stale.candidate = { ...stale.candidate, commit: '0'.repeat(40), tree: '0'.repeat(40) };
+    stale.planDigest = digestManifest(stale);
+    stale.manifestDigest = digestManifest(stale);
+
+    const result = runAcceptance(stale, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: passingSpawn,
+    });
+    expect(result).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(result.failures).toEqual(expect.arrayContaining([
+      'candidate commit does not match source HEAD',
+      'candidate tree does not match source HEAD',
+    ]));
+  });
+
+  it('rejects executor reports with a missing, duplicated, or reordered gate set', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const baseReport = {
+      schema: ACCEPTANCE_SCHEMA,
+      role: 'executor',
+      runId: manifest.runId,
+      source: { manifestDigest: manifest.manifestDigest },
+      candidate: manifest.candidate,
+      result: 'pass',
+      engineeringAcceptedByAgent: false,
+      controlledArtifacts: [],
+    };
+
+    const missingGate = { ...baseReport, gates: [{ id: 'another-gate', result: 'pass' }] };
+    expect(validateExecutorEvidence(manifest, missingGate, outputDir)).toContain('executor report gate set/order mismatch');
+
+    const duplicatedGate = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }, { id: 'fixture-gate', result: 'pass' }] };
+    expect(validateExecutorEvidence(manifest, duplicatedGate, outputDir)).toContain('executor report gate set/order mismatch');
+
+    const reorderedGate = { ...baseReport, gates: [{ id: 'fixture-gate', result: 'pass' }] };
+    expect(validateExecutorEvidence(manifest, reorderedGate, outputDir)).not.toContain('executor report gate set/order mismatch');
+  });
+
+  it('refuses engineering acceptance when verifier rerun contradicts executor result contracts', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const env = { PATH: process.env.PATH ?? '' };
+    const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'executor', env, spawn: passingSpawn });
+    expect(executor.result).toBe('pass');
+
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'verifier',
+      env,
+      executorReport: executor,
+      spawn: () => ({ status: 1, signal: null, stdout: '', stderr: 'verifier gate failed' }),
+    });
+    expect(verifier).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(verifier.failures.join('\n')).toContain('executor/verifier result contract differs');
+  });
+
+  it('CLI plan/status succeed and a failed full run persists a NO-GO final report', () => {
+    const specPath = 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md';
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
+    temporaryPaths.push(outputDir);
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--output-dir', outputDir]);
+    expect(planExit).toBe(0);
+    expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
+
+    const statusExit = acceptanceCliMain(['status', '--output-dir', outputDir]);
+    expect(statusExit).toBe(0);
+
+    vi.stubEnv('NODE_TLS_REJECT_UNAUTHORIZED', '0');
+    const fullExit = acceptanceCliMain(['full', '--spec', specPath, '--output-dir', outputDir, '--since', 'HEAD^']);
+    expect(fullExit).toBe(1);
+    const finalReportPath = join(outputDir, 'final-report.json');
+    expect(existsSync(finalReportPath)).toBe(true);
+    const finalReport = JSON.parse(readFileSync(finalReportPath, 'utf8'));
+    expect(finalReport).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false, conclusion: { allowedPromotion: false } });
+    expect(finalReport.failures.join('\n')).toContain('NODE_TLS_REJECT_UNAUTHORIZED must be unset');
+    log.mockRestore();
   });
 });

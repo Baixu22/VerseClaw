@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-28T16:42:10.000Z",
-  "ok": true,
+  "evaluatedAt": "2026-07-31T07:44:46.000Z",
+  "ok": false,
   "summary": {
     "findingCount": 35,
     "taskCount": 38,
     "testCount": 35,
-    "freshCount": 35,
-    "staleCount": 0,
-    "failureCount": 0,
+    "freshCount": 24,
+    "staleCount": 11,
+    "failureCount": 11,
     "warningCount": 0
   },
   "policy": {
@@ -152,13 +152,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b",
+          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1",
+          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -284,13 +284,13 @@
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517",
+          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -338,7 +338,7 @@
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517",
+          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
           "taskId": "P8-002",
           "kind": "task"
         },
@@ -392,9 +392,9 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-11T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-14T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -477,13 +477,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b",
+          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1",
+          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -519,11 +519,13 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-11T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-29T03:49:51.000Z",
+      "nextReviewAt": "2026-08-12T03:49:51.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-SEC-003",
@@ -637,13 +639,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -727,7 +729,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -756,11 +758,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
+      "nextReviewAt": "2026-08-28T02:29:22.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-SEC-004",
@@ -822,7 +826,7 @@
         },
         {
           "path": "electron/services/files-api.ts",
-          "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295",
+          "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f",
           "taskId": "P1-003",
           "kind": "task"
         },
@@ -858,9 +862,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T00:33:18.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -930,7 +934,7 @@
         },
         {
           "path": "electron/main/ipc-handlers.ts",
-          "sha256": "5c41611a37505eb26214a5ae5f1732cb1bddf75c74e031420d4c4cc84887d1a2",
+          "sha256": "c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27",
           "taskId": "P1-002",
           "kind": "task"
         },
@@ -960,9 +964,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1067,11 +1071,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-ISO-001",
@@ -1166,11 +1172,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T00:33:18.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-ISO-002",
@@ -1262,11 +1270,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T00:33:18.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-AUTH-001",
@@ -1376,11 +1386,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-AUTH-002",
@@ -1456,7 +1468,7 @@
         },
         {
           "path": "openclaw_runtime/src/agents/role-spawn.ts",
-          "sha256": "69cf86731e99e5d307bb6cb6459820c89e2b2c6ddf5c9d0f974c65530a18128d",
+          "sha256": "736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2",
           "taskId": "P2-003",
           "kind": "task"
         },
@@ -1492,9 +1504,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1944,11 +1956,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-07-29T02:34:58.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-DATA-003",
@@ -2027,11 +2041,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T23:30:07.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-DATA-004",
@@ -2338,13 +2354,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b",
+          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
+          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2368,7 +2384,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2446,7 +2462,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -2470,9 +2486,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2570,13 +2586,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -2660,7 +2676,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -2690,8 +2706,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
+      "nextReviewAt": "2026-08-28T02:29:22.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2775,11 +2791,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-REL-003",
@@ -2977,13 +2995,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3133,13 +3151,13 @@
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517",
+          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3223,7 +3241,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-003",
           "kind": "task"
         },
@@ -3235,7 +3253,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -3265,8 +3283,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3474,13 +3492,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3564,7 +3582,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -3594,8 +3612,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
+      "nextReviewAt": "2026-08-28T02:29:22.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3708,7 +3726,7 @@
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1",
+          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3720,7 +3738,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3828,13 +3846,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3918,7 +3936,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -3948,8 +3966,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4191,7 +4209,7 @@
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "5c559900aeefe29ea89a2e69585b7951b5e97a0dac95d84d8b2cfdbd590210a1",
+          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4203,7 +4221,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4251,7 +4269,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -4359,13 +4377,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -4593,7 +4611,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4707,13 +4725,13 @@
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517",
+          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4797,7 +4815,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -4809,7 +4827,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -4838,9 +4856,9 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T16:25:14.004Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-09-26T16:42:10.000Z",
+      "latestSourceAt": "2026-07-28T17:00:20.681Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-09-29T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4995,7 +5013,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -5253,7 +5271,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -5313,9 +5331,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T16:27:23.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5564,13 +5582,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b",
+          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
+          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5594,7 +5612,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5636,9 +5654,9 @@
         }
       ],
       "reviewCycleDays": 90,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-10-26T16:42:10.000Z",
+      "latestSourceAt": "2026-07-29T02:34:58.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-10-29T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5726,7 +5744,7 @@
         },
         {
           "path": "electron/services/files-api.ts",
-          "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295",
+          "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f",
           "taskId": "P1-003",
           "kind": "task"
         },
@@ -5750,13 +5768,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -5840,7 +5858,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -5869,9 +5887,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6008,11 +6026,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-AUTH-006",
@@ -6119,13 +6139,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6209,7 +6229,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -6239,8 +6259,8 @@
       ],
       "reviewCycleDays": 30,
       "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
+      "nextReviewAt": "2026-08-28T02:29:22.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6325,11 +6345,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T09:31:50.000Z",
+      "latestSourceAt": "2026-07-31T07:42:04.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-AUTH-009",
@@ -6523,13 +6545,13 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-          "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae",
+          "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6715,13 +6737,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "249f2dfbe64d5a5df24b5770b6bc07849061d382271cf866afbc14daf34e182b",
+          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9",
+          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6745,7 +6767,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "ad00cfc462ff161a2ad54cfb233afc3e499599245269a6325624ea1d60cd257c",
+          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6775,7 +6797,7 @@
         },
         {
           "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-          "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a",
+          "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448",
           "taskId": "P7-002",
           "kind": "global-validation",
           "findingIds": [
@@ -6804,9 +6826,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-07-29T02:34:58.000Z",
+      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
+      "nextReviewAt": "2026-08-30T07:42:04.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -7096,6 +7118,18 @@
       "failures": []
     }
   ],
-  "fail": [],
+  "fail": [
+    "F-SEC-002: stale evidence: linked source is newer than evidence",
+    "F-SEC-003: stale evidence: linked source is newer than evidence",
+    "F-SEC-010: stale evidence: linked source is newer than evidence",
+    "F-ISO-001: stale evidence: linked source is newer than evidence",
+    "F-ISO-002: stale evidence: linked source is newer than evidence",
+    "F-AUTH-001: stale evidence: linked source is newer than evidence",
+    "F-DATA-002: stale evidence: linked source is newer than evidence",
+    "F-DATA-003: stale evidence: linked source is newer than evidence",
+    "F-REL-002: stale evidence: linked source is newer than evidence",
+    "F-SEC-007: stale evidence: linked source is newer than evidence",
+    "F-AUTH-008: stale evidence: linked source is newer than evidence"
+  ],
   "warn": []
 }
