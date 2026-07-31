@@ -12,8 +12,13 @@ import {
 import {
   buildRuntimeResumeCheckpoint,
   getLatestLongTaskCheckpoint,
+  listLongTaskCheckpoints,
   recordLongTaskCheckpoint,
 } from "../long-task-control/store.js";
+import {
+  executeReplayRollback,
+  type ReplayRollbackDeps,
+} from "../replay-rollback-authority.js";
 import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
 import {
   defaultQualityAssessments,
@@ -70,6 +75,23 @@ export type MissionControllerDeps = {
   storeTrace?: typeof storeRuntimeTrace;
   proposeMemory?: typeof proposeMemoryCard;
   createKnowledgeInboxItem?: (item: MissionKnowledgeInboxItem) => void;
+  /**
+   * A3 replay-rollback wiring for repeated-repair recovery. When provided AND
+   * `runtime.mission.rollback.enabled` is true, Mission Control invokes
+   * `executeReplayRollback` (legacy checkpoint target) instead of blocking
+   * immediately when repair evidence repeats without progress. Default
+   * undefined: no rollback, legacy blocked behavior preserved.
+   */
+  rollback?: ReplayRollbackDeps;
+  /**
+   * Resolve the write-journal seq boundary at the current instant (max entry
+   * seq recorded so far for the mission session). When provided, checkpoints
+   * are stamped with `metadata.journalSeq` so rollback can filter journal
+   * entries by monotonic seq (`entry.seq > boundary`) instead of
+   * same-millisecond-ambiguous createdAt. Default undefined: checkpoint
+   * falls back to createdAt-based filtering.
+   */
+  journalSeqBoundary?: () => number | undefined;
 };
 
 export type MissionRunResult = MissionRunRecord;
@@ -980,6 +1002,7 @@ export async function tickMission(
       controlSignals: reviewer.controlSignals,
       validationState: reviewer.validationState,
     });
+    const journalSeq = deps.journalSeqBoundary?.();
     const checkpoint = buildRuntimeResumeCheckpoint({
       id: `mission:${record.missionId}:tick:${record.tick}`,
       sessionKey: record.sessionKey,
@@ -1001,6 +1024,7 @@ export async function tickMission(
         taskLedgerRootId: record.metadata?.taskLedgerRootId,
         tick: record.tick,
         reviewer,
+        ...(journalSeq !== undefined ? { journalSeq } : {}),
       },
       createdAt: now(),
     });
@@ -1024,11 +1048,76 @@ export async function tickMission(
     });
 
     if (repeatedRepair) {
-      record.status = "blocked";
-      record.phase = "blocked";
-      record.blockedReason = "Mission blocked because repair evidence repeated without progress.";
-      record.lastDecision = "blocked";
-      record.completedAt = now();
+      const rollbackEnabled = cfg?.runtime?.mission?.rollback?.enabled === true;
+      if (rollbackEnabled && deps.rollback) {
+        // A3: repeated repair without progress — attempt checkpoint rollback
+        // before blocking. Only the legacy checkpoint target is used (event-log
+        // replay is not implemented); the authority enforces decision shape and
+        // records the outcome through deps.rollback.recordOutcome.
+        // A3: roll back to the PREVIOUS tick's checkpoint. The most recent
+        // checkpoint was just written at the end of THIS tick (createdAt≈now),
+        // so its journal seq boundary covers nothing — rolling back to it
+        // would report success while undoing zero writes. The previous
+        // checkpoint's seq boundary is before this tick's writes, which is
+        // exactly the state to restore.
+        const checkpoints = listLongTaskCheckpoints(record.sessionKey, 2);
+        const checkpoint = checkpoints.length >= 2 ? checkpoints[1] : undefined;
+        const rollbackDecision = {
+          decision: "repair" as const,
+          repairStrategy: "replay_rollback" as const,
+          reason: record.blockedReason ?? "Mission blocked because repair evidence repeated without progress.",
+          requestedAtTick: record.tick,
+        };
+        const rollbackResult = checkpoint
+          ? await executeReplayRollback(
+              rollbackDecision,
+              { enabled: false, reason: "event-log replay not implemented; legacy checkpoint fallback" },
+              { kind: "checkpoint", checkpointId: checkpoint.id },
+              deps.rollback,
+            )
+          : undefined;
+        if (rollbackResult?.ok) {
+          // Rollback succeeded: record the event, clear the no-progress latch
+          // so the next repair tick may make progress, and keep the mission
+          // sleeping (not blocked) for another tick.
+          recorder.recordEvent("mission.rollback", "ok", {
+            attributes: {
+              missionId: record.missionId,
+              tick: record.tick,
+              rolledBackTo: rollbackResult.rolledBackTo,
+              mode: rollbackResult.mode,
+              evidenceSummary: rollbackResult.evidenceSummary,
+            },
+          });
+          record.noProgressHash = undefined;
+          record.lastDecision = "repair";
+          record.phase = "schedule";
+          record.status = "sleeping";
+          record.nextWakeAt = reviewer.nextTick?.afterMs ? now() + reviewer.nextTick.afterMs : now() + 60_000;
+        } else {
+          // Rollback unavailable/failed: preserve the legacy blocked outcome.
+          record.status = "blocked";
+          record.phase = "blocked";
+          record.blockedReason = `Mission blocked because repair evidence repeated without progress${
+            rollbackResult ? `; rollback failed: ${rollbackResult.reason} (${rollbackResult.detail})` : "; no checkpoint available for rollback"
+          }.`;
+          record.lastDecision = "blocked";
+          record.completedAt = now();
+          recorder.recordEvent("mission.rollback", "failed", {
+            attributes: {
+              missionId: record.missionId,
+              tick: record.tick,
+              reason: rollbackResult?.reason ?? "no_checkpoint",
+            },
+          });
+        }
+      } else {
+        record.status = "blocked";
+        record.phase = "blocked";
+        record.blockedReason = "Mission blocked because repair evidence repeated without progress.";
+        record.lastDecision = "blocked";
+        record.completedAt = now();
+      }
     } else if (reviewer.decision === "complete") {
       record.status = "complete";
       record.phase = "complete";

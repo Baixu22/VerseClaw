@@ -713,6 +713,15 @@ export const SessionsQueueDrainParamsSchema = Type.Object(
   { additionalProperties: false },
 );
 
+export const SessionsRestoreCheckpointParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    checkpointId: NonEmptyString,
+  },
+  { additionalProperties: false },
+);
+
 export const SessionsLongTaskControlStatusResultSchema = Type.Object(
   {
     ok: Type.Literal(true),
@@ -740,6 +749,18 @@ export const SessionsResumeCheckpointsResultSchema = Type.Object(
     ok: Type.Literal(true),
     key: NonEmptyString,
     checkpoints: Type.Array(LongTaskCheckpointRecordSchema),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsRestoreCheckpointResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    checkpointId: NonEmptyString,
+    rolledBackTo: Type.String(),
+    mode: Type.Union([Type.Literal("legacy_checkpoint_fallback"), Type.Literal("event_log_replay")]),
+    evidenceSummary: Type.String(),
   },
   { additionalProperties: false },
 );

@@ -118,6 +118,65 @@ describe('code review center service', () => {
     });
   });
 
+  it('keeps findings whose line is inside a diff hunk', async () => {
+    const { validateFindingsInDiff } = await import('@electron/services/code-review-api');
+    const findings = [{
+      id: 'f1',
+      severity: 'high' as const,
+      file: 'src/app.ts',
+      line: 3,
+      reason: 'inside hunk',
+      suggestedFix: 'fix',
+    }];
+    const artifacts = [{
+      schema: 'git-patch-v1',
+      file: 'src/app.ts',
+      status: 'modified',
+      contentKind: 'text',
+      hunks: [{ oldStart: 1, oldLines: 4, newStart: 1, newLines: 4, lines: [] }],
+      completeness: 'complete',
+    }];
+    const result = validateFindingsInDiff(findings, artifacts);
+    expect(result[0]).toEqual(findings[0]); // unchanged
+  });
+
+  it('downgrades findings whose line falls outside every hunk', async () => {
+    const { validateFindingsInDiff } = await import('@electron/services/code-review-api');
+    const findings = [{
+      id: 'f1',
+      severity: 'critical' as const,
+      file: 'src/app.ts',
+      line: 42,
+      reason: 'outside hunk',
+      suggestedFix: 'fix',
+    }];
+    const artifacts = [{
+      schema: 'git-patch-v1',
+      file: 'src/app.ts',
+      status: 'modified',
+      contentKind: 'text',
+      hunks: [{ oldStart: 1, oldLines: 4, newStart: 1, newLines: 4, lines: [] }],
+      completeness: 'complete',
+    }];
+    const result = validateFindingsInDiff(findings, artifacts);
+    expect(result[0].severity).toBe('info');
+    expect(result[0].reason).toContain('[not in diff]');
+  });
+
+  it('keeps findings for files without diff hunks', async () => {
+    const { validateFindingsInDiff } = await import('@electron/services/code-review-api');
+    const findings = [{
+      id: 'f1',
+      severity: 'medium' as const,
+      file: 'src/untouched.ts',
+      line: 3,
+      reason: 'no hunks',
+      suggestedFix: 'fix',
+    }];
+    const result = validateFindingsInDiff(findings, []);
+    expect(result[0]).toEqual(findings[0]); // no hunks → untouched by in-diff policy
+  });
+
   it('collects base branch diffs with read-only Git commands', async () => {
     const calls: string[][] = [];
     mockExec((args) => {

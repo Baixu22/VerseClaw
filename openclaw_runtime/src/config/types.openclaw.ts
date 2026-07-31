@@ -179,9 +179,10 @@ export type RuntimeFeatureConfig = {
     parseOnTouch?: { enabled?: boolean };
     staleWriteGuard?: { enabled?: boolean };
     writeJournal?: { enabled?: boolean };
-    /** Default-off post-write test execution through the canonical exec tool. */
+    /** Post-write test execution through the canonical exec tool. */
     autoVerify?: {
-      enabled?: boolean;
+      /** true=always, false=never, "auto"=run when a runner is detected (default "auto"). */
+      enabled?: boolean | "auto";
       /** Per-runner timeout in seconds (1-90, default 90). */
       timeoutSeconds?: number;
       /** Optional workspace-level command used instead of automatic detection. */
@@ -239,6 +240,14 @@ export type RuntimeFeatureConfig = {
   toolRegistry?: {
     /** Emit tool registry diagnostics/evidence without changing legacy tool responses. */
     shadow?: boolean;
+  };
+  /** A3 checkpoint rollback (rewind) gates. Defaults off — legacy behavior unchanged. */
+  mission?: {
+    /** Checkpoint rollback wiring for Mission Control repair decisions. */
+    rollback?: {
+      /** Allow Mission Control to invoke replay-rollback when repair evidence repeats without progress. */
+      enabled?: boolean;
+    };
   };
   /** Runtime registry diagnostic collector flags. Defaults off. */
   registryDiagnostics?: {

@@ -358,6 +358,10 @@ import {
   SessionsResumeCheckpointsParamsSchema,
   type SessionsResumeCheckpointsResult,
   SessionsResumeCheckpointsResultSchema,
+  type SessionsRestoreCheckpointParams,
+  SessionsRestoreCheckpointParamsSchema,
+  type SessionsRestoreCheckpointResult,
+  SessionsRestoreCheckpointResultSchema,
   type SessionOperationEvent,
   type SessionsCreateParams,
   SessionsCreateParamsSchema,
@@ -715,6 +719,8 @@ export const validateSessionsLongTaskControlHistoryParams =
   lazyCompile<SessionsLongTaskControlHistoryParams>(SessionsLongTaskControlHistoryParamsSchema);
 export const validateSessionsResumeCheckpointsParams =
   lazyCompile<SessionsResumeCheckpointsParams>(SessionsResumeCheckpointsParamsSchema);
+export const validateSessionsRestoreCheckpointParams =
+  lazyCompile<SessionsRestoreCheckpointParams>(SessionsRestoreCheckpointParamsSchema);
 export const validateSessionsQueueDrainParams =
   lazyCompile<SessionsQueueDrainParams>(SessionsQueueDrainParamsSchema);
 export const validateSessionsCompactionListParams = lazyCompile<SessionsCompactionListParams>(

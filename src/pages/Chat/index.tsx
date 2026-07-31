@@ -6,7 +6,7 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles, X } from 'lucide-react';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, History, Laptop, Loader2, Pencil, Sparkles, X } from 'lucide-react';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -95,6 +95,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { CheckpointsDialog } from '@/components/chat/CheckpointsDialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -424,6 +425,7 @@ function ProjectSessionHeader({
 }) {
   const { t } = useTranslation('chat');
   const [open, setOpen] = useState<'workspace' | 'session' | null>(null);
+  const [checkpointsOpen, setCheckpointsOpen] = useState(false);
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
   const [renaming, setRenaming] = useState(false);
@@ -485,7 +487,8 @@ function ProjectSessionHeader({
   };
 
   return (
-    <div ref={rootRef} className="flex min-w-0 items-center gap-1.5 text-sm" data-testid="chat-project-session-header">
+    <>
+      <div ref={rootRef} className="flex min-w-0 items-center gap-1.5 text-sm" data-testid="chat-project-session-header">
       <Laptop className="h-4 w-4 shrink-0 text-foreground/80" />
       <div className="relative min-w-0">
         <button
@@ -636,6 +639,18 @@ function ProjectSessionHeader({
                 </span>
               )}
             </button>
+            <button
+              type="button"
+              className="mb-0.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+              data-testid="chat-session-checkpoints"
+              onClick={() => {
+                setOpen(null);
+                setCheckpointsOpen(true);
+              }}
+            >
+              <History className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{t('composer.actions.checkpoints')}</span>
+            </button>
             <div className="mb-0.5 border-t border-black/5 dark:border-white/5" />
             {recentSessions.map((session) => {
               const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
@@ -685,6 +700,13 @@ function ProjectSessionHeader({
         )}
       </div>
     </div>
+    <CheckpointsDialog
+      open={checkpointsOpen}
+      onOpenChange={setCheckpointsOpen}
+      sessionKey={currentSessionKey}
+      agentId={undefined}
+    />
+    </>
   );
 }
 

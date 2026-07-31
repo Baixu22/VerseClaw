@@ -25,6 +25,7 @@ import {
   type EditDiffResult,
   generateDiffString,
   generateUnifiedPatch,
+  findSimilarLines,
   normalizeToLF,
   restoreLineEndings,
   stripBom,
@@ -167,14 +168,25 @@ function didEditLikelyApply(params: {
   );
 }
 
-function appendMismatchHint(error: Error, currentContent: string): Error {
+function appendMismatchHint(
+  error: Error,
+  currentContent: string,
+  editOldTexts: string[],
+): Error {
   const snippet =
     currentContent.length <= EDIT_MISMATCH_HINT_LIMIT
       ? currentContent
       : `${currentContent.slice(0, EDIT_MISMATCH_HINT_LIMIT)}\n... (truncated)`;
-  const enhanced = new Error(`${error.message}\nCurrent file contents:\n${snippet}`, {
-    cause: error,
-  });
+  const similar = editOldTexts
+    .map((oldText) => findSimilarLines(currentContent, oldText))
+    .filter((hint) => hint.length > 0);
+  const similarHint = similar.length > 0
+    ? `\n\nDid you mean to match some of these actual lines?\n${[...new Set(similar)].join("\n\n")}`
+    : "";
+  const enhanced = new Error(
+    `${error.message}\nCurrent file contents:\n${snippet}${similarHint}`,
+    { cause: error },
+  );
   enhanced.stack = error.stack;
   return enhanced;
 }
@@ -493,7 +505,11 @@ export function createEditToolDefinition(
             };
           }
           if (normalizedError.message.includes(EDIT_MISMATCH_MESSAGE)) {
-            throw appendMismatchHint(normalizedError, currentContent);
+            throw appendMismatchHint(
+              normalizedError,
+              currentContent,
+              edits.map((edit) => edit.oldText),
+            );
           }
           throw normalizedError;
         }

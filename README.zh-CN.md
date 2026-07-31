@@ -155,6 +155,8 @@ Chat 会把编排进度显示为响应式 Wave 时间线。稳定的 task node �
 Engineering Control Signals 会把 evidence gap、scope drift、validation missing 和 unverified claim 明确写入现有 checkpoint、Mission/Task reviewer、HostEvent 与 Task Ledger metadata 路径；Verse Claw 不会创建第二套进度文件，也不会把 Observability trace 自动当作完成事实。
 
 Chat 输入区还提供预览优先的 **接力到新对话**：Verse Claw 会从 ResumeCheckpoint、runtime 恢复上下文、Task Ledger、Git 状态、近期 trace/error 状态和 transcript fallback 证据生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
+
+会话菜单现在还提供 **检查点**：Verse Claw 列出长任务 `ResumeCheckpoint` 快照（每个 Mission tick 一个），并可将工作区恢复到所选检查点——回滚该检查点之后写入日志中的条目。这是运行时 replay-rollback authority 的手动半边（自动半边由 `runtime.mission.rollback.enabled` 门控，默认关闭）。
 **Fork 到新对话** 是分支式对应功能：当前会话空闲时，Verse Claw 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会复制 Task Ledger 真相、生成 prompt 或自动发送。
 Composer 只显示本地 preflight 推荐的连续性动作，并用很短的 healthy/risky/blocked 提示说明状态；会话下拉菜单仍保留 Fork 和接力两项，并用轻量推荐标记与 Fork 来源元数据提示选择。失败提示只提供显式替代动作，例如“准备接力”，不会自动切换语义。
 

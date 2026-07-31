@@ -66,7 +66,8 @@ export type ReplayRollbackResult =
         | 'invalid_decision' // decision is not repair + replay_rollback
         | 'no_checkpoint' // checkpoint not found
         | 'replay_failed' // replay threw an error
-        | 'checkpoint_corrupted'; // checkpoint failed validation
+        | 'checkpoint_corrupted' // checkpoint failed validation
+        | 'rollback_apply_failed'; // applyCheckpoint threw (restore could not complete)
       detail: string;
       durationMs: number;
     };
@@ -197,7 +198,21 @@ export async function executeReplayRollback(
     return result;
   }
 
-  await deps.applyCheckpoint(checkpoint);
+  try {
+    await deps.applyCheckpoint(checkpoint);
+  } catch (error) {
+    // Restore itself failed (e.g. journal snapshot missing). This must be a
+    // recorded outcome, never an unhandled rejection: callers (mission
+    // control) map ok:false to a blocked state with the failure detail.
+    const result: ReplayRollbackResult = {
+      ok: false,
+      reason: 'rollback_apply_failed',
+      detail: error instanceof Error ? error.message : String(error),
+      durationMs: Date.now() - start,
+    };
+    deps.recordOutcome(result);
+    return result;
+  }
 
   const result: ReplayRollbackResult = {
     ok: true,

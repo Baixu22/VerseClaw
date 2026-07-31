@@ -476,6 +476,24 @@
       "prevPage": "Previous rows",
       "nextPage": "Next rows"
     },
+    "checkpoints": {
+      "title": "Session checkpoints",
+      "description": "Restore the workspace to a previous long-task checkpoint. Files changed after the checkpoint will be rolled back from the write journal.",
+      "loading": "Loading checkpoints…",
+      "empty": "No checkpoints for this session yet. Long-task missions record one per tick.",
+      "loadFailed": "Failed to load checkpoints",
+      "restore": "Restore",
+      "restoreSucceeded": "Workspace restored to the checkpoint.",
+      "restoreFailed": "Restore failed",
+      "filesTouched": "{{count}} files touched",
+      "testsRun": "{{count}} tests run",
+      "showDiff": "View changes to undo",
+      "hideDiff": "Hide changes",
+      "diffLoading": "Loading changes…",
+      "diffFailed": "Failed to load changes",
+      "diffEmpty": "No file changes to undo for this checkpoint.",
+      "close": "Close"
+    },
     "office": {
       "title": "Office preview: {{fileName}}",
       "loading": "Loading Office preview...",

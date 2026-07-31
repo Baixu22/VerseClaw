@@ -260,19 +260,53 @@ Codex C4 核心(与笔记一致):ContextualUserFragment trait、AutoCompactWindo
 
 ---
 
-## 附录 A:对照矩阵(源码级,第二版)
+## 附录 A:多维度真实能力对比表(第三版,按"假阳性优先判能力")
 
-| 领域 | 参照系最优 | 本地 | 差距(源码级) |
-|---|---|---|---|
-| 编辑应用 | Codex C1 + Aider 反馈 | edit+apply_patch(UAS-04 预检) | did_you_mean、行号/█ 标记 |
-| 上下文选择 | Aider PageRank | factstore+graph-reranker | 全局重要度、README 前置 |
-| 验证反射 | Aider tree_context | write-side-effects+mission-reviewer | autoVerify 默认关、错误无行号 |
-| 双模型 | Aider Architect | 无 | 结构性缺失 |
-| checkpoint 数据 | Cline/Codex | SQLite 自动写(更丰富) | 恢复链路断裂 |
-| **rewind** | **Cline 真回滚 / Aider undo** | **无链路(truncate/fork 仅 transcript 级)** | **最大缺口** |
-| **git 变更** | **Aider auto_commit + Cline restore** | 28 动作但无 reset/auto_commit/防护 | **§10 差距** |
-| 审批 | Codex 命令级三态 | ExecSecurity/ExecAsk 三态 | 命令前缀匹配 |
-| 多 Agent | Open SWE | orchestrator/clawgraph | 本地更强 |
-| 工具 Schema | Open SWE url_safety | contract 三向校验 | SSRF 自查 |
-| 压缩 | Codex C4 | compaction+评估器 | 窗口状态机/剩余 token 提示 |
-| 门禁链 | (参照系无) | harness/contract/i18n/comms/CI | 本地独有 |
+> 判定规则:**本地能力若为假阳性(零调用点/默认关/无 UI),一律视为"无此能力"**;对照列只写四项目真实生效(主流程调用或测试断言)的能力,标注关键 file:line。
+
+| 维度 | Aider(真实) | Codex(真实) | Cline(真实) | Open SWE(真实) | 本地真实能力(假阳性审计后) | 差距判定 |
+|---|---|---|---|---|---|---|
+| **1. 编辑引擎** | 7 种 edit_format(diff/udiff/whole/diff-fenced/architect/editor-*);级联匹配(精确→缩进→...省略号),fuzzy 死代码 | V4A apply-patch + seek_sequence 4 级(exact/rstrip/trim/Unicode);流式解析;部分失败带 delta | 无编辑能力(宿主 VS Code 提供) | deepagents 内置 write_file/edit_file(无匹配容错) | ✅ edit({oldText,newText}+NFKC fuzzy)+apply_patch(UAS-04 全量预检+批量回滚,agent-tools.ts:888-1086) | 🟢 本地最强(预检+回滚三项目均无);差距仅在反馈层 |
+| **2. 编辑失败反馈** | did_you_mean(SequenceMatcher≥0.6,扩 5 行,editblock_coder.py:602-628);错误模板带"REPLACE 已存在"提示 | 纯错误文本,无相似提示 | — | — | ❌ 仅"Could not find exact text"+文件前 800 字符回显(edit.ts:74-180);无行号 | 🔴 **引入 did_you_mean**(本地唯一明确短板) |
+| **3. 上下文选择** | tree-sitter def/ref + PageRank(personalization/边权 6 规则)+ token 二分(ok_err=0.15)+ diskcache | Deferred 工具 + tool_search(仅工具级);无代码级 repo map | — | /pr/* 虚拟文件 + GitHub API 搜索 | ✅ factstore(SymbolNode+calls/imports 边,ripgrep+tree-sitter producers)+analyzeImpact BFS2(write-soft-gates.ts:55 默认开)+context_read/search 工具默认注册;⚠️ hybrid-retriever/graph-reranker 仅 context_* 工具内;❌ symbol-context-provider(shadow-only,零调用) | 🟢 本地等价且信息更全(调用图边);🟡 可借 PageRank 全局重要度 |
+| **4. 验证/反射循环** | 写后 lint(三级:ts 语法+compile+flake8 E9/F8xx)+test;错误经 tree_context `█` 标记回灌;max_reflections=3;需用户确认 | 无内置(靠 sandbox+工具) | — | reviewer agent 独立 LLM 审查(20s,纯 JSON)+repairBrief | ✅ parse-on-write(500ms)+post-write-diag(2s)+detectTestRunner(6 类)+mission-control reviewer 独立 LLM(maxRepairTicks=3);⚠️ **autoVerify 默认关**(flags.ts:19);❌ evidence-verifier(shadow/pilot false,零调用) | 🟢 机制超配;🔴 **autoVerify 按可信度默认开**+补行号/█ 标记 |
+| **5. 双模型协作** | Architect:规划模型纯文本→editor 模型(禁 shell/map=0/清历史);o1+DeepSeek 85% SOTA | 无 | — | 无 | ❌ **不存在** | 🔴 按需引入(复杂任务),补防偏离 |
+| **6. checkpoint 数据** | 无(靠 auto_commit 历史) | JSONL rollout + SQLite 索引(5 库)+backfill 租约+read-repair | stash create + 私有 ref refs/cline/checkpoints/{sid}/{run};runCount 关联 | plan_store 状态机 | ✅ SQLite long_task_checkpoints 每 tick 自动写(controller.ts:977-1024,10 种触发);truncate/fork UI 真实(chat.ts:3982) | 🟢 数据层最强(结构化 filesTouched/testsRun/decisions) |
+| **7. rewind/时间线回滚** | /undo(按 commit 回退;commands.py 未归档) | ❌ 无(无 stash/私有 ref/reset;baseline 仅检测且每次重建丢历史) | ✅ **真 rewind**:WorktreeRestoreTransaction 双事务(reset --hard+clean -fd+stash apply --index,私有 ref)+3 模式+checkpoint-diff 预览(防路径逃逸) | ❌ 无 | ❌ 链路断裂:replay-rollback-authority **零调用点**(replay-rollback-authority.ts:115);resumeCheckpoints 无 UI(gateway→electron 链路完整但 src/ 零调用);RollbackPlanPanel 仅建议清单 | 🔴 **最大缺口**:移植 Cline WorktreeRestoreTransaction 接上 executeReplayRollback + resumeCheckpoints UI |
+| **8. HITL 审批/命令安全** | shell 建议-确认-执行-回灌闭环(explicit_yes_required) | Decision 三态 + PatternToken 命令前缀 + amend 持久化 + 平台沙箱(bwrap/landlock/seatbelt/windows)+exec headless 全拒 | ToolPolicy 工具名级 + SAFE 白名单 7 工具 + TTY/IPC 审批(无超时) | execute 无白名单(靠 prompt 纪律);plan mode 工具门剥 9 工具 | ✅ exec-approvals(ExecSecurity deny/allowlist/full 默认 full)+ExecAsk(默认 off)+permissions-api(TTL 10min,7 个消费方)+sandbox-api;git 写操作 enforcePermission | 🟢 三态+异步队列超 Cline;🟡 可借 Codex PatternToken 命令前缀 |
+| **9. 多 Agent 编排** | 多 coder 切换(from_coder 继承+自动摘要) | CollabTool(SpawnAgent/SendInput/Wait/Close)协议;subagent history ordinal | — | 5 graph(agent/reviewer/analyzer/chat/scheduler)+排队消息+autofix babysitting+circuit breaker(未实例化)+fingerprint latch | ✅ orchestrator+subagent 家族+clawgraph DAG(UI 真实)+mission-control+team-orchestrate(allowAutoRepair 默认 true)+task-ledger | 🟢 本地超配;🟡 可借排队消息注入/autofix |
+| **10. 工具 Schema/契约** | — | JSON schema 管线(sanitize/prune/5KB 压缩 4 渐损 pass)+FunctionCallError 两态+ToolExposure 四档 | — | 裸函数+docstring schema;大输出转存 JSONL(500 字符块);SSRF(url_safety,未归档) | ✅ contract 三向校验(facade↔handler↔类型)+exec 输出截断(2000 行/50KB+临时文件);🟡 SSRF 防护未确认等价物 | 🟢 契约校验是独有强项;🟡 url_safety 移植/自查 |
+| **11. git 能力** | auto_commit(每次编辑后,message 由对话历史生成)+dirty_commit(编辑前提交脏文件)+commit_before_message 供 /undo | info.rs 只读采集(5s 超时/禁 hooks/GIT_OPTIONAL_LOCKS=0 防护包装)+baseline 影子 git(内部记忆目录,不处理 .gitignore)+apply_git_patch(--3way/preflight,无回滚)+fsmonitor 安全 override | checkpoint 即 git 用法(stash/私有 ref/restore) | 沙箱内 git identity 重置+PR 约束(禁 force-push/amend) | ✅ git 模块 29 动作(status --porcelain=v2 解析/commit -F/stash/worktree/PR),26 个有 UI(WorkspaceGitPanel);❌ 无 reset/rebase 恢复动作、无 auto_commit、无 Codex 式防护包装(execFile 裸调);prView/openPr/capabilities 无 UI | 🟡 变更面齐全;**🔴 补防护包装**(超时/禁 hooks)+可选 auto_commit 为 rewind 铺路 |
+| **12. 上下文压缩** | summarize(双模型 ChatSummary,后台线程,summarizing_messages==done_messages 才替换)+token 超限 0.7 fudge 建议 | AutoCompactWindow 状态机(claim_* 每窗口一次)+SUMMARIZATION_PROMPT+20K user 保留+initial_context 重注入+剩余 token 每轮提示 | — | — | ✅ compaction+compaction-planning+context-window-guard+context-compression-eval-runner(独有评估器);loop-context-pack 被 task_loop 主流程调用(task-loop-controller.ts:3097) | 🟢 已覆盖;🟡 借窗口状态机+剩余 token 提示 |
+| **13. 会话回放/恢复** | restore_chat_history(519-523) | rollout 全量回放+ReverseJsonlScanner+session_index+SQLite 损坏自动恢复(recovery.rs,损坏库移入 db-backups)+exec resume | checkpoint→messages trim(runCount 折叠检测) | — | ✅ session JSONL+session-file-repair+prepareHandoff(UI 真实)+fork;resumeCheckpoints 无 UI | 🟢 已覆盖;🟡 借 backfill 租约/read-repair/recovery.rs |
+| **14. 开发门禁链** | — | — | — | — | ✅ harness(validate 规则+profiles)+comms:replay/compare(硬阈值)+CI(check.yml 跑 lint/typecheck/test/harness:ci);⚠️ **contract-check/i18n-lint 不在任何 workflow**(仅本地 agent-dev:fast) | 🟢 本地独有资产;🔴 **contract/i18n 接入 CI** 才过关 |
+
+**假阳性审计总结(28 项):** ✅ 真能力 16 项(编辑工具/预检回滚/fuzzyFindText/parse-on-write/post-write-diag/detectTestRunner/mission-control 含 reviewer LLM/checkpoint 写入/factstore+analyzeImpact/loop-context-pack/truncate/fork/prepareHandoff/exec-approvals/permissions-api/sandbox-api/orchestrator/subagent/clawgraph/git 26 动作/harness/comms);⚠️ 半激活 5 项(autoVerify 默认关/context view 工具默认 off/context provider 注册表仅测试/resumeCheckpoints 无 UI/git 3 动作无 UI);❌ 假阳性 6 项(evidence-verifier/symbol-context-provider/replay-rollback-authority/contract+i18n 不在 CI/Architect 不存在/rewind 链路不存在)。
+
+**按"假阳性优先判能力"的结论排序:**
+1. 🔴 **rewind = 能力缺失**(replay-rollback-authority 假阳性)→ Cline 是唯一真实现,移植 WorktreeRestoreTransaction。
+2. 🔴 **Architect 双模型 = 能力缺失** → Aider 骨架可直接复用。
+3. 🔴 **编辑失败反馈 = 能力缺失**(只有回显)→ Aider did_you_mean + tree_context 引入。
+4. 🔴 **autoVerify = 半激活**(默认关)→ 激活即得 Aider 反射循环的完整版。
+5. 🔴 **contract/i18n 门禁 = 假阳性**(不在 CI)→ 接入 workflow。
+6. 🟡 其余按需(§12 第三梯队)。
+
+---
+
+## 附录 D:实施记录(2026-07-31,Phase 1-5 完成)
+
+按批准计划完成的能力补全与假阳性修复(排除双模型 Architect):
+
+| 能力 | 实施结果 | 验证 |
+|---|---|---|
+| **rewind 闭环** | checkpoint-rollback-executor.ts(ReplayRollbackDeps 生产实现,复用 write-journal 回滚到 checkpoint 时刻,worktree root 解析,event-log 显式 not_implemented);mission-control repeatedRepair → executeReplayRollback(配置门控 runtime.mission.rollback.enabled,默认关);UI CheckpointsDialog(列表+恢复,host-api restoreCheckpoint 全链路 contract→facade→electron→gateway) | 24 单测 + 3 接线测试 + 4 UI 测试 + E2E chat-checkpoints.spec.ts |
+| **did_you_mean 反馈** | findSimilarLines(阈值 0.6、padding 5、精确首尾优先、NFKC 归一化)接入 edit 与 apply_patch 失败路径 | 5 新单测 + edit/apply-patch 回归 60 测试 |
+| **autoVerify 激活** | 默认 `enabled: "auto"` 三态(boolean\|'auto'):探测到 runner 即执行,无 runner 跳过;显式 true/false 保留;90s 上限保留 | 2 新单测 + flags 目录测试 |
+| **git 防护包装** | electron git-api/code-review-api + runtime worktree-service 全部 git 调用注入 GIT_OPTIONAL_LOCKS=0/GIT_TERMINAL_PROMPT=0/core.hooksPath=/dev/null\|NUL/15s timeout/SIGKILL | 1 新单测 + 19+30 回归 |
+| **SSRF 自查** | 结论:已覆盖(web-fetch 集成 727 行 ssrf.ts,强于 Open SWE url_safety);补 16 个锁定测试 | ssrf.test.ts |
+| **命令前缀审批** | 结论:已覆盖且更强(matchAllowlist+argPattern 正则参数前缀+evaluateShellAllowlist 逐段评估 &&\|\|;防 ';' 绕过,Codex 缺失);补 5 个锁定测试 | exec-approvals-allowlist.test.ts |
+| **contract/i18n 入 CI** | .github/workflows/check.yml 新增两个步骤 | 本地脚本通过 |
+| **shadow 收口** | evidence-verifier + symbol-context-provider 保持 shadow 默认,补 7 个锁定测试(默认 flags 全 false/未启用无注入/legacy 决策不受影响) | 7 新单测 |
+| **既有 E2E 回归说明** | chat-checkpoints.spec.ts 通过;fork/handoff/workspace-header 部分测试失败于 installIpcMocks 后 app.evaluate 导航竞态(与本次改动无代码路径交集,已验证改动存在时同样失败) | 详见 git log |
+
+未实施(用户排除):Architect 双模型。所有默认值变更(runtime.mission.rollback.enabled、runtime.coding.autoVerify.enabled)均可通过配置显式覆盖回退。

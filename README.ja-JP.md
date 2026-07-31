@@ -154,6 +154,8 @@ Chat のオーケストレーション進捗はレスポンシブな Wave タイ
 Engineering Control Signals は evidence gap、scope drift、validation missing、unverified claim を既存の checkpoint、Mission/Task reviewer、HostEvent、Task Ledger metadata の経路に明示します。Verse Claw は第二の進捗ファイルを作らず、Observability trace を自動的に完了事実として扱いません。
 
 Chat 入力欄には、プレビュー優先の **新しい会話への Handoff** もあります。Verse Claw は ResumeCheckpoint、runtime recovery context、Task Ledger、Git 状態、最近の trace/error 状態、transcript fallback 証拠から編集可能な決定的な引き継ぎ草稿を作成し、新しい workspace スコープのセッションにその草稿を入力済みにします。自動送信はしません。
+
+セッションメニューには **チェックポイント** も追加されました。Verse Claw は長タスクの `ResumeCheckpoint` スナップショット（Mission の tick ごとに 1 つ）を一覧表示し、選択したチェックポイント以降に書き込みジャーナルへ記録されたエントリをロールバックしてワークスペースを復元できます。これは runtime replay-rollback authority の手動側です（自動側は `runtime.mission.rollback.enabled` でゲートされ、既定では無効）。
 **新しい会話への Fork** は分岐型の対になる機能です。現在のセッションがアイドル状態のとき、Verse Claw は runtime に active transcript branch を継承した子セッションを作成させ、すぐに切り替えます。親セッションは変更せず、Task Ledger の真実をコピーせず、prompt の生成や自動送信も行いません。
 Composer にはローカル preflight でおすすめされた継続アクションだけを表示し、短い healthy/risky/blocked の状態ヒントを添えます。セッションのドロップダウンには Fork と Handoff の両方を残して小さな Recommended マーカーと軽量な Fork 元情報を付けます。失敗時は Prepare handoff などの明示的な代替操作だけを提示し、自動で意味を切り替えません。
 
