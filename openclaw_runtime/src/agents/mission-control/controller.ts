@@ -28,6 +28,7 @@ import {
   signalsFromGaps,
   type LongConversationControlSignal,
 } from "../long-conversation-control-signals.js";
+import { getSessionGuardianCircuitBreaker } from "../guardian-circuit-breaker.js";
 import {
   runTaskLoop,
   type TaskLoopControllerDeps,
@@ -982,6 +983,19 @@ export async function tickMission(
     record.validationState = reviewer.validationState;
     record.acceptanceStatus = reviewer.acceptanceStatus;
 
+    // Guardian circuit breaker (P2-7)：连续 blocking ≥3 或 50 次内 ≥10 →
+    // 强制 blocked + audit_fail checkpoint，停止 mission tick 循环。
+    const guardianOutcome = getSessionGuardianCircuitBreaker(record.sessionKey).record(
+      record.controlSignals,
+    );
+    if (guardianOutcome === "trip") {
+      record.guardianTripped = true;
+      reviewer = { ...reviewer, decision: "blocked" as const };
+      record.lastDecision = "blocked";
+      record.lastReason =
+        "Mission interrupted by the guardian circuit breaker after repeated blocking control signals.";
+    }
+
     record.phase = "memory_propose";
     emit(record, deps, {
       reviewerDecision: reviewer.decision,
@@ -1011,7 +1025,12 @@ export async function tickMission(
       taskLedgerRootId: typeof record.metadata?.taskLedgerRootId === "string"
         ? record.metadata.taskLedgerRootId
         : undefined,
-      trigger: reviewer.decision === "blocked" || reviewer.decision === "ask_user" ? "manual_review" : "guide",
+      trigger:
+        record.guardianTripped === true
+          ? "audit_fail"
+          : reviewer.decision === "blocked" || reviewer.decision === "ask_user"
+            ? "manual_review"
+            : "guide",
       activeTask: record.objective,
       nextAction: reviewer.decision,
       reviewNeededItems: reviewer.decision === "ask_user" ? reviewer.missingEvidence : [],

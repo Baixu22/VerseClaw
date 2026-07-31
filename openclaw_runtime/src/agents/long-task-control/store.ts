@@ -29,6 +29,13 @@ import {
 } from "./task-ledger.js";
 
 export type LongTaskInputMode = "interrupt" | "guide" | "queue" | "revise-goal";
+
+export const LONG_TASK_INPUT_MODES = [
+  "interrupt",
+  "guide",
+  "queue",
+  "revise-goal",
+] as const satisfies readonly LongTaskInputMode[];
 export type ResumeCheckpointTrigger =
   | "compaction"
   | "interrupt"

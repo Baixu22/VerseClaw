@@ -8,6 +8,7 @@ import {
   normalizeLongConversationValidationState,
   renderResumeCheckpointSummary,
 } from '../../shared/types/long-task-control';
+import { interventionPolicyForInputMode as runtimePolicy } from '../../openclaw_runtime/src/agents/long-task-control/intervention-policy';
 
 describe('long-task intervention control', () => {
   it('maps guide to non-disruptive steering evidence', () => {
@@ -189,5 +190,49 @@ describe('long-task intervention control', () => {
       criteria: ['original scope'],
       gaps: ['new acceptance requested'],
     })).toMatchObject({ status: 'changed', gaps: ['new acceptance requested'] });
+  });
+});
+
+describe('intervention policy: shared/runtime consistency (P0-2)', () => {
+  const modeCases = [
+    { mode: 'interrupt' as const, options: {} },
+    { mode: 'interrupt' as const, options: { highRisk: true, clawGraphNodeActive: true } },
+    { mode: 'guide' as const, options: {} },
+    { mode: 'guide' as const, options: { highRisk: true } },
+    { mode: 'queue' as const, options: {} },
+    { mode: 'revise-goal' as const, options: {} },
+    { mode: 'revise-goal' as const, options: { clawGraphNodeActive: true } },
+  ];
+
+  it.each(modeCases)('keeps runtime policy identical to shared for mode=$mode options=$options', ({ mode, options }) => {
+    const shared = interventionPolicyForInputMode(mode, options);
+    const runtime = runtimePolicy(mode, options);
+
+    expect(runtime).toEqual(shared);
+  });
+
+  it('requires review for guide with highRisk (shared side)', () => {
+    const policy = interventionPolicyForInputMode('guide', { highRisk: true });
+
+    expect(policy).toMatchObject({
+      delivery: 'steer_active_run',
+      shouldAbortActiveRun: false,
+      recordsDeviation: false,
+      reviewRequired: true,
+      confirmationRequired: false,
+      resumeTrigger: 'guide',
+      taskLedgerEffect: 'evidence',
+    });
+  });
+
+  it('marks queue checkpointRequired without abort semantics', () => {
+    const policy = interventionPolicyForInputMode('queue');
+
+    expect(policy).toMatchObject({
+      delivery: 'follow_up_after_run',
+      shouldAbortActiveRun: false,
+      checkpointRequired: true,
+      resumeTrigger: 'queue_drain',
+    });
   });
 });
