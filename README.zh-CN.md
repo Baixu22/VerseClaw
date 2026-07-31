@@ -419,7 +419,7 @@ VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认
 }
 ```
 
-配置允许覆盖时，可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。
+`tools.exec.host=verseshell` 是由操作员在全局或单个 agent 范围选择的 cohort 配置。配置允许覆盖时，也可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端；模型不能在单次调用中选择 VerseShell host。sandbox、node、remote/provider-native 和 elevated 执行继续由原 owner 负责。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。本地工程覆盖不等于真实 cohort、provider usage、ROI、soak 或产品毕业证据。
 
 ---
 

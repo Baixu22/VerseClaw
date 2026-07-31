@@ -38,7 +38,7 @@ describe("DCS dual-injection observability (D7)", () => {
     dcsObservability.recordVtokenAssembly({
       success: true,
       chars: 120,
-      tokens: 32,
+      estimatedTokens: 32,
       sourcesIngested: 4,
     });
     dcsObservability.recordVtokenAssembly({ success: false });
@@ -47,7 +47,7 @@ describe("DCS dual-injection observability (D7)", () => {
       vtokenAssemblySuccesses: 1,
       vtokenAssemblyErrors: 1,
       vtokenAssemblyChars: 120,
-      vtokenAssemblyTokens: 32,
+      vtokenAssemblyEstimatedTokens: 32,
       vtokenSourcesIngested: 4,
     });
   });

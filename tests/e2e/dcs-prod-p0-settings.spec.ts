@@ -109,6 +109,33 @@ test.describe('DCS production P0 packaging surface', () => {
     await expect(trSwitch).toHaveAttribute('data-state', 'unchecked');
   });
 
+  test('renders the DCS control surface in Japanese and Russian', async ({ page }) => {
+    await ensureDevPanel(page);
+
+    await page.getByTestId('settings-nav-general').click();
+    await page.getByRole('button', { name: '日本語', exact: true }).click();
+    await page.getByTestId('settings-nav-developer').click();
+    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
+      'コンテキスト層の違い（混同しないでください）',
+    );
+    await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
+      'DCS Controlled Preview フラグ',
+    );
+
+    await page.getByTestId('settings-nav-general').click();
+    await page.getByRole('button', { name: 'Русский', exact: true }).click();
+    await page.getByTestId('settings-nav-developer').click();
+    await expect(page.getByTestId('settings-context-layers-explainer')).toContainText(
+      'Различия слоёв контекста: не смешивайте их',
+    );
+    await expect(page.getByTestId('settings-dcs-prod-flags')).toContainText(
+      'Флаги DCS Controlled Preview',
+    );
+
+    await page.getByTestId('settings-nav-general').click();
+    await page.getByRole('button', { name: 'English', exact: true }).click();
+  });
+
   test('toggles writable flags, persists store, and restores baseline', async ({ page }) => {
     await ensureDevPanel(page);
 

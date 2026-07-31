@@ -7,6 +7,7 @@ import test from 'node:test';
 import {
   VerseShellBundleError,
   atomicCopy,
+  collectSourceDiff,
   validatePackagedBundle,
 } from './verseshell-bundle.mjs';
 
@@ -81,6 +82,25 @@ test('packaged validator accepts the unified Task14 schema', async (t) => {
   t.after(() => rm(bundle.root, { recursive: true, force: true }));
   const result = await validatePackagedBundle({ resourcesPath: bundle.root });
   assert.equal(result.artifact.sha256, bundle.manifest.artifacts['win32-x64'].sha256);
+});
+
+test('source diff includes tracked edits and complete untracked source files', async (t) => {
+  const source = await mkdtemp(join(tmpdir(), 'verseshell-source-diff-test-'));
+  t.after(() => rm(source, { recursive: true, force: true }));
+  execFileSync('git', ['init'], { cwd: source });
+  execFileSync('git', ['config', 'user.email', 'verseshell-test@example.invalid'], { cwd: source });
+  execFileSync('git', ['config', 'user.name', 'VerseShell Bundle Test'], { cwd: source });
+  await writeFile(join(source, 'tracked.rs'), 'fn tracked() {}\n');
+  execFileSync('git', ['add', 'tracked.rs'], { cwd: source });
+  execFileSync('git', ['commit', '-m', 'baseline'], { cwd: source });
+  await writeFile(join(source, 'tracked.rs'), 'fn tracked_changed() {}\n');
+  await writeFile(join(source, 'untracked.rs'), 'fn untracked_complete() {}\n');
+
+  const diff = collectSourceDiff(source);
+  assert.match(diff, /tracked_changed/u);
+  assert.match(diff, /new file mode 100644/u);
+  assert.match(diff, /untracked_complete/u);
+  assert.match(diff, /\+\+\+ b\/untracked\.rs/u);
 });
 
 test('verify-package CLI forwards --resources to the packaged validator', async (t) => {

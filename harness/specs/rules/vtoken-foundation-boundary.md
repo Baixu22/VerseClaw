@@ -17,10 +17,10 @@ It must not flat-replace markdown/jsonl storage: those remain sources of truth o
 Correct product use:
 
 ```
-Host sources (workspace md / tool schemas / memory outputs)
-        → ingest*
-   UnifiedStore
-        → assemble(task_hint, budget)
+Context Orchestrator allowance + deduplicated host candidates
+        → VtokenPackRequest/v1
+   Stateless in-memory graph
+        → pack(task_hint, allowance)
    ## Working Context (extraSystemPrompt)
 ```
 
@@ -30,6 +30,11 @@ Production path (**default OFF — opt-in / canary**):
   hook-adjusted bootstrap files and effective runtime tools
   (`openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts`).
 - Gateway-owned stdio worker: `openclaw_runtime/src/context-engine/vtoken-rpc-client.ts`.
+- Production sends one `vt.pack` request per turn. It must not call `vt.open`,
+  pass `sessionDir/session`, create MemStore/WAL/lock files, or serialize unrelated
+  workspaces behind a shared transaction mutex.
+- `VtokenPackResult/v1.estimatedTokens` is an estimate and must carry
+  `estimateMethod=chars_div_4`; it is not provider actual usage or billing evidence.
 - Enable canary: `runtime.vtoken.assembly.enabled=true` **or**
   `VERSE_VTOKEN_ASSEMBLY_ENABLED=1`.
 - Kill-switch (instant): `VERSE_VTOKEN_ASSEMBLY_ENABLED=0`,
@@ -55,3 +60,7 @@ Diagnostics path (host-api, **default OFF — opt-in**):
 - Kill-switch: `VERSE_VTOKEN_BRIDGE_ENABLED=0`, assembly env kill, or enhancement kill switch.
 
 Settings > Developer may expose VtokenBridgePanel for status/toggle/smoke only.
+
+The stateful `vt.open` / `vt.ingest_*` / `vt.assemble` methods belong to package
+and diagnostics use. Their persistence capability must not leak back into the
+production Working Context path.

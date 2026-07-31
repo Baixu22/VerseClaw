@@ -68,29 +68,103 @@ Exit evidence: provider-backed completion, latency, usage, artifact/recovery, an
 
 Tool-definition bytes/count/cache stability, call/result bytes, task completion, tool turns, latency, provider usage, and artifact/recovery behavior are reported separately. Cold and warm records remain distinct. Provider response usage or billing exports are actual token evidence; VerseShell heuristic estimates, token-count endpoints, and four-characters-per-token approximations are estimates only. No 50-70% savings statement is permitted unless paired, comparable actual provider usage directly supports it.
 
-## Acceptance update (2026-07-27)
+## UAS-05 engineering update (2026-07-30)
 
-The foundation remains **default-off, canary-only, and not eligible for default-on or GA claims**. The pinned runtime and typed governed route are integrated for explicit internal opt-in; provider-backed live canary and packaged-product acceptance remain outstanding.
+The foundation remains **default-off, canary-only, and not eligible for default-on or GA claims**.
+UAS-05 process-lifecycle parity is implemented and locally verified, and its Task Forest closeout
+is confirmed and applied. UAS-06 engineering qualification has started, but no real cohort
+observation has been collected.
 
-### Verified locally
+### Runtime contract
 
-- Upstream source is a clean, tracked Git worktree at immutable commit `c3983694407a9ddb23505e05fad4a9eae653b283` (`feat: publish reproducible runtime operations baseline`). `src/ops/runtime_ops.rs` is tracked in that commit.
-- `cargo test --test operation_protocol_tests --test mcp_stdio_tests` passes (**14 tests**) and `cargo build --release --bin ae` succeeds. The release build retains 11 pre-existing Rust warnings, which are not promotion evidence.
-- A real Windows release-binary JSONL probe against `ae.exe --serve --agent --format json --policy strict` succeeds. With no capabilities, `runtime.handshake` reports allow-list mode with no grants and `exec.run` returns `E_CAPABILITY_DENY`; with `--cap shell.exec`, `exec.run` returns `E_NEEDS_APPROVAL` without executing. Startup/shutdown logs are emitted on stderr, not JSONL stdout.
-- The handshake reports `agent_strict`, protocol `verseshell.jsonl/v1`, catalog schema `verseshell.operation-catalog/v1`, catalog digest `sha256:857eb12ca6b83da190764263a4e4a0181d3cd047926f0d404fc3a4c93c9f4848`, and catalog count `26`. Host-bound `policy_profile { id, digest }` echo was also verified.
-- The checked-in local bundle was rebuilt from that clean commit. It records the exact clean provenance, immutable corresponding-source locator, byte size `14446592`, and SHA-256 `63716c3f0589c0291443f770a0ede97d728fb842aa39f50ac230ee7b5175e884` for `resources/bin/win32-x64/ae.exe`.
-- Electron passes a verified binary path and SHA-256, runtime version, server protocol, and catalog digest/count into the Gateway. A config-only canary in `openclaw.json` also triggers this verification before Gateway spawn.
-- `exec host=verseshell` now uses typed `exec.run` when the strict canary flags are enabled. It first passes OpenClaw command policy and approval, then retries an upstream `E_NEEDS_APPROVAL` once in a process scoped to the action-bound token. That process is closed after the action.
-- The `clawx-governed-exec-v1` policy definition and digest are repository-owned. The process receives only `shell.exec`; permissive policy, `cap all`, inherited broad approvals, handshake drift, and unverified binary identity fail closed.
-- The `verseshell_result` tool recovers bounded `result://sha256/...` artifacts through typed `result.query`. Raw/query output is capped at 64 KiB and 4000 estimated tokens, with additional line/match bounds.
-- `pnpm verseshell:test`, the focused OpenClaw suite (including the real pinned `ae.exe` flow), the standard repository typecheck, and config-schema parity tests pass. The package verifier was exercised against a staged Electron resources layout and validated the copied AGPL payload plus `bin/ae.exe` checksum.
-- Bundle validation was tightened without lowering controls: canonical indented FSF AGPL title lines are accepted, non-whitespace preambles remain rejected, and the `verify-package --resources` CLI now forwards its resource path correctly. The local manifest validator now verifies the synchronized clean provenance rather than the obsolete source-only scaffold.
-- Legacy eval remains a separate default-off compatibility path. The governed typed route never performs native-shell fallback, including on outage, timeout, denial, protocol drift, or command failure.
+- The typed catalog now contains 31 operations, including internal `process.start`, `process.poll`,
+  `process.write`, `process.kill`, and `process.list`. These lifecycle operations remain hidden from
+  MCP and are not new model-facing tools.
+- The lifecycle state is `starting -> running -> exited | killed | lost`; a failed start does not
+  publish a process id. The ownership key binds `process_id` to `runtime_id`, canonical
+  `workspace_id`, `agent_id`, and `session_id`. Mismatches fail closed.
+- Output uses a monotonically increasing byte cursor. Poll responses expose requested/next cursor,
+  retained start cursor, lost bytes, explicit truncation, state, and terminal artifact lineage.
+  Output is bounded by the approved start budget; records and persisted output are retained for 24
+  hours, then removed.
+- Durable metadata and bounded output live under the workspace `.ae/process-lifecycle` directory.
+  A new runtime never replays `process.start`; retained `starting/running` records that cannot be
+  re-owned become terminal `lost` with `runtime_restart_unrecoverable`.
+- Windows resolution covers `PATH`/`PATHEXT`, `.exe/.com/.cmd/.bat`, explicit audited `cmd.exe` for
+  batch shims, cwd, environment overrides, spaces, and Unicode paths. Pipe stdin supports write,
+  submit, and EOF; EOF is reported successful only after the lifecycle owner acknowledges it.
+  ConPTY supports interactive input. Job Objects terminate the full process tree for explicit kill,
+  timeout, shutdown, and runtime crash.
+- The existing OpenClaw `exec` branch starts the lifecycle owner and the existing `process` tool
+  writes, polls, and cancels that session. VerseShell-owned PIDs are forbidden from the native PID
+  fallback. Governed failures remain fail-closed; legacy eval/native compatibility remains a
+  separate default-off path.
 
-### Remaining P1 / production blockers
+### Bundle identity and local evidence
 
-1. Run provider-backed, operator-observed canaries with real Agent exec tasks and artifact recovery. Saved fixtures and focused tests are not live product evidence.
-2. Validate the actual Electron packaging output and installed-app launch, including config-only opt-in, bundle absence/tamper, outage/restart, approval denial, kill switch, and rollback.
-3. Record completion, latency, provider usage, output reduction, artifact expiry/recovery, and operational rollback evidence before discussing any phase graduation.
+- Base commit: `c3983694407a9ddb23505e05fad4a9eae653b283`.
+- Corresponding-source patch: `resources/verseshell/patches/uas-05-process-lifecycle.patch`,
+  SHA-256 `cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098`.
+- Windows x64 `ae.exe`: `14880256` bytes, SHA-256
+  `19ca598916077f677722b4f82d8dfc1c24c4e88ace9809abe681255370702699`.
+- Catalog: 31 operations, digest
+  `sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7`.
+- Rust lifecycle integration passes 3 tests; operation protocol passes 9 tests; release build
+  succeeds. Coverage includes direct argv/env/PATHEXT, pipe and ConPTY input, cursor loss/truncation,
+  owner mismatch, idempotent kill, timeout, parent/child cleanup, runtime-crash cleanup, and restart
+  reconciliation without respawn.
+- The focused OpenClaw suite passes 8 files / 47 tests. Root manifest and UAS-05 evidence pass 2
+  files / 12 tests. Bundle script tests pass 8/8 and package-mode manifest validation passes.
 
-**Current conclusion:** the safety adaptation is implemented and suitable for an explicit internal canary only. Keep every production-affecting VerseShell flag disabled by default; do not infer P1 completion, default-on readiness, or joint-system GA.
+### Remaining production blockers
+
+1. TF-0016 closeout proposal `TFP-tf0016-verseshell-process-lifecycle-closeout-20260730` is
+   confirmed and applied. Canonical state is `TF-0016=done, 100%` and `TF-0017=ready, 0%`;
+   UAS-06 engineering work has started. Proposal
+   `TFP-tf0017-single-local-exec-engineering-20260730` requests an in-progress update and still
+   requires explicit confirmation.
+2. UAS-06 engineering qualification does not switch the default local execution plane or remove
+   the native baseline. The selected canary remains explicit and default-off.
+3. Collect provider-backed, installed-product, latency/resource, artifact recovery, operator
+   kill-switch/rollback, real paired A/B, and soak evidence before closeout or phase graduation.
+
+**Current conclusion:** lifecycle parity is an engineering acceptance result, not product
+graduation. Keep `liveReady=false`, `productApproved=false`, `defaultOn=false`, C1 `keep-off`,
+Runtime Memory `diagnostics-only`, and SEKB auto-writeback disabled.
+
+## UAS-06 engineering update (2026-07-30)
+
+UAS-06 adds a deterministic, operator-owned canary route without widening the model tool surface.
+Strict configuration accepts `tools.exec.host=verseshell` globally and per agent, and the existing
+session override can select the same route. The model-facing `exec` host enum remains limited to
+`auto`, `sandbox`, `gateway`, and `node`.
+
+- Eligible non-sandboxed, non-node, non-elevated local execution in the selected scope is owned by
+  the governed VerseShell lifecycle. Sandbox, node, remote, provider-native, and elevated execution
+  retain their existing owners and are excluded from the canary denominator.
+- The route requires `verifiedRuntime`, `typedAci`, `facade`, and `governedExec`. A denial, outage,
+  timeout, protocol mismatch, or lifecycle failure cannot retry through the native shell. The kill
+  switch fails closed; rollback requires an explicit operator change back to the previous host.
+- Exec diagnostics now retain selected host, actual execution host, lifecycle owner, cohort route,
+  native fallback, duration/outcome, and recovery state. Command contents are not retained in the
+  stability record.
+- `artifacts/uas-06-single-local-exec-canary/report.json` is explicitly `engineering-only`. Its nine
+  engineering scenarios cover short, long, background, stdin, PTY, cancel, timeout, restart, and
+  rollback with 100% governed coverage, zero native fallback, and no engineering hard veto.
+
+The report status is `needs-real-canary`, not closeout. Real internal observations, paired native
+baseline/VerseShell tasks, actual provider usage for every observation, human recovery minutes,
+and reviewed operator kill/rollback evidence all remain at zero. `TF-0017` therefore remains
+incomplete; `TF-0018/UAS-07` and `TF-0019/UAS-08` remain locked. Product graduation is not
+authorized.
+
+## UAS-06 reviewed live evidence channel (2026-07-30)
+
+`artifacts/uas-06-single-local-exec-canary/live-observations.json` is an initially empty, strictly
+validated input for reviewed live cohort records. It is intentionally separate from the engineering
+matrix and accepts only low-sensitivity diagnostic route windows, external provider receipt digests,
+and human recovery/rollback attestations. The generated
+`real-cohort-report.json` remains a closeout-review candidate only: it cannot authorize Task Forest
+closeout, product graduation, default-on, or any product lock change. See
+[`UAS-06-REAL-CANARY-RUNBOOK.md`](./UAS-06-REAL-CANARY-RUNBOOK.md) for the controlled operator
+procedure.

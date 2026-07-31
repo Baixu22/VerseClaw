@@ -4,43 +4,38 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   computeVtokenExtraSystemPrompt,
+  createVtokenPackCandidates,
   DEFAULT_VTOKEN_ASSEMBLY_CONFIG,
   loadVtokenDcsMemoryEntries,
   renderWorkingContextBlock,
   resolveVtokenAssemblyConfig,
   shouldAssembleVtokenWorkingContext,
 } from "./chat-turn-vtoken-injection.js";
-import type { VtokenRpcAssembleResult, VtokenRpcClient } from "./vtoken-rpc-client.js";
-import {
-  resetSharedVtokenRpcClientForTests,
-  VtokenRpcClient as RealVtokenRpcClient,
-} from "./vtoken-rpc-client.js";
+import type { VtokenRpcClient, VtokenRpcPackResult } from "./vtoken-rpc-client.js";
+import { resetSharedVtokenRpcClientForTests } from "./vtoken-rpc-client.js";
 
-function fakeAssemble(prompt = "packed working context"): VtokenRpcAssembleResult {
+function fakePack(prompt = "packed working context"): VtokenRpcPackResult {
   return {
+    schema: "VtokenPackResult/v1",
     prompt,
-    tokens_used: 42,
-    tokens_budget: 600,
+    estimatedTokens: 42,
+    allowanceTokens: 600,
+    estimateMethod: "chars_div_4",
     slot_breakdown: {},
     nodes_included: ["n1"],
     nodes_evicted: [],
     dedup_count: 0,
+    candidateCount: 1,
   };
 }
 
 function createMockClient(overrides: Partial<VtokenRpcClient> = {}): VtokenRpcClient {
   return {
-    opened: true,
     running: true,
     pid: 1,
-    runExclusive: vi.fn(async (operation) => operation()),
     ensureStarted: vi.fn(async () => undefined),
     stop: vi.fn(async () => undefined),
-    open: vi.fn(async () => ({ ok: true })),
-    ingestMarkdown: vi.fn(async () => undefined),
-    ingestTools: vi.fn(async () => undefined),
-    ingestMemory: vi.fn(async () => undefined),
-    assemble: vi.fn(async () => fakeAssemble()),
+    pack: vi.fn(async () => fakePack()),
     call: vi.fn(async () => ({})),
     ...overrides,
   } as unknown as VtokenRpcClient;
@@ -121,7 +116,11 @@ describe("shouldAssembleVtokenWorkingContext", () => {
   });
 
   it("restricts main-only sessions", () => {
-    const cfg = { ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG, enabled: true, sessions: "main-only" as const };
+    const cfg = {
+      ...DEFAULT_VTOKEN_ASSEMBLY_CONFIG,
+      enabled: true,
+      sessions: "main-only" as const,
+    };
     expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:main")).toBe(true);
     expect(shouldAssembleVtokenWorkingContext(cfg, "agent:main:sub")).toBe(false);
   });
@@ -144,18 +143,14 @@ describe("loadVtokenDcsMemoryEntries", () => {
         entity_extraction_status: "empty" as const,
       },
     ]);
-    const entries = await loadVtokenDcsMemoryEntries(
-      { query },
-      "session-1",
-      {
-        runtime: {
-          contextBlock: {
-            "working-memory": { enabled: true },
-            compass: { enabled: false },
-          },
+    const entries = await loadVtokenDcsMemoryEntries({ query }, "session-1", {
+      runtime: {
+        contextBlock: {
+          "working-memory": { enabled: true },
+          compass: { enabled: false },
         },
       },
-    );
+    });
     expect(query).toHaveBeenCalledWith(
       expect.objectContaining({
         requester_session_id: "session-1",
@@ -180,47 +175,30 @@ describe("loadVtokenDcsMemoryEntries", () => {
 
 describe("renderWorkingContextBlock", () => {
   it("wraps assemble prompt under ## Working Context", () => {
-    const text = renderWorkingContextBlock(fakeAssemble("hello world"));
+    const text = renderWorkingContextBlock(fakePack("hello world"));
     expect(text).toContain("## Working Context");
     expect(text).toContain("hello world");
-    expect(text).toContain("tokens_used=42");
+    expect(text).toContain("estimated_tokens=42");
+    expect(text).toContain("estimate_method=chars_div_4");
   });
 
   it("returns empty for blank prompt", () => {
-    expect(renderWorkingContextBlock(fakeAssemble("   "))).toBe("");
+    expect(renderWorkingContextBlock(fakePack("   "))).toBe("");
   });
 });
 
-describe("VtokenRpcClient.runExclusive", () => {
-  it("keeps complete store transactions from interleaving", async () => {
-    const client = new RealVtokenRpcClient();
-    const order: string[] = [];
-    let releaseFirst!: () => void;
-    const firstGate = new Promise<void>((resolve) => {
-      releaseFirst = resolve;
+describe("createVtokenPackCandidates", () => {
+  it("emits stable duplicate-free candidates before the worker call", () => {
+    const source = { sourcePath: "AGENTS.md", text: "# Rules" };
+    const candidates = createVtokenPackCandidates({
+      markdownSources: [source, { ...source }],
+      memoryEntries: [
+        { id: "m1", content: "remember this" },
+        { id: "m1", content: "remember this" },
+      ],
     });
-
-    const first = client.runExclusive(async () => {
-      order.push("first:start");
-      await firstGate;
-      order.push("first:end");
-    });
-    const second = client.runExclusive(async () => {
-      order.push("second:start");
-      order.push("second:end");
-    });
-
-    await vi.waitFor(() => {
-      expect(order).toEqual(["first:start"]);
-    });
-    releaseFirst();
-    await Promise.all([first, second]);
-    expect(order).toEqual([
-      "first:start",
-      "first:end",
-      "second:start",
-      "second:end",
-    ]);
+    expect(candidates).toHaveLength(2);
+    expect(new Set(candidates.map((candidate) => candidate.candidateId)).size).toBe(2);
   });
 });
 
@@ -237,13 +215,15 @@ describe("computeVtokenExtraSystemPrompt", () => {
       {
         sessionKey: "agent:main:main",
         taskHint: "fix auth",
+        allowanceTokens: 600,
         markdownSources: [{ sourcePath: "AGENTS.md", text: "rules" }],
       },
       undefined,
       client,
     );
     expect(result).toBe("base");
-    expect(client.assemble).not.toHaveBeenCalled();
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).not.toHaveBeenCalled();
   });
 
   it("appends Working Context when sources are provided", async () => {
@@ -254,6 +234,7 @@ describe("computeVtokenExtraSystemPrompt", () => {
       {
         sessionKey: "agent:main:main",
         taskHint: "fix auth bug",
+        allowanceTokens: 600,
         markdownSources: [{ sourcePath: "AGENTS.md", text: "# Agents\nPrefer tests." }],
       },
       undefined,
@@ -262,10 +243,13 @@ describe("computeVtokenExtraSystemPrompt", () => {
     expect(result).toContain("base prompt");
     expect(result).toContain("## Working Context");
     expect(result).toContain("packed working context");
-    expect(client.open).toHaveBeenCalled();
-    expect(client.ingestMarkdown).toHaveBeenCalled();
-    expect(client.assemble).toHaveBeenCalled();
-    expect(client.runExclusive).toHaveBeenCalledTimes(1);
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        allowanceTokens: 600,
+        candidates: [expect.objectContaining({ kind: "markdown", sourcePath: "AGENTS.md" })],
+      }),
+    );
   });
 
   it("uses bounded hook-adjusted sources instead of reopening an independent file set", async () => {
@@ -281,6 +265,7 @@ describe("computeVtokenExtraSystemPrompt", () => {
       },
       {
         taskHint: "x",
+        allowanceTokens: 600,
         workspaceDir: "ignored-because-preloaded",
         markdownSources: [
           { sourcePath: "hooked-agents.md", text: "hook adjusted content" },
@@ -290,16 +275,23 @@ describe("computeVtokenExtraSystemPrompt", () => {
       undefined,
       client,
     );
-    expect(client.ingestMarkdown).toHaveBeenCalledTimes(1);
-    expect(client.ingestMarkdown).toHaveBeenCalledWith(
-      "hook adjusted content",
-      "hooked-agents.md",
+    // oxlint-disable-next-line typescript/unbound-method
+    expect(client.pack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        candidates: [
+          expect.objectContaining({
+            kind: "markdown",
+            text: "hook adjusted content",
+            sourcePath: "hooked-agents.md",
+          }),
+        ],
+      }),
     );
   });
 
   it("suppresses errors and returns original prompt", async () => {
     const client = createMockClient({
-      assemble: vi.fn(async () => {
+      pack: vi.fn(async () => {
         throw new Error("worker down");
       }),
     });
@@ -308,6 +300,7 @@ describe("computeVtokenExtraSystemPrompt", () => {
       {},
       {
         taskHint: "x",
+        allowanceTokens: 600,
         markdownSources: [{ sourcePath: "a.md", text: "body" }],
       },
       undefined,

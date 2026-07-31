@@ -1,5 +1,10 @@
 ﻿# Morning Brief — DCS TF-0009 overnight harvest
 
+> **Authority correction (2026-07-29):** the `continue` label below is a historical L0/L1
+> engineering-harvest recommendation, not the TF-0009 exit decision. No named owner approved a
+> charter, no L3 run ledger is present, and qualifying counts remain DCS `0/10`, SEKB `0/10`,
+> Browser `0/10`. See `docs/dev/tf0009-engineering-evidence-audit.md`.
+
 **decision:** continue  
 **why:** L0+L1 green, canary keep-off honest, ops pack runnable, defaults unchanged. Not GA.
 

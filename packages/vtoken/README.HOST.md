@@ -5,11 +5,11 @@
 VT (`packages/vtoken`) is the **Working Context Assembly** foundation for ClawX / DCS:
 
 ```
-Host data (md / tools / memory outputs)
-        → ingest*
-   UnifiedStore
-        → assemble(task_hint, budget)
-   prompt + audit fields
+Context Orchestrator allowance + deduplicated host candidates
+        → VtokenPackRequest/v1
+   Stateless in-memory graph
+        → pack(task_hint, allowance)
+   prompt + estimate metadata + audit fields
         → ## Working Context on agent turns (extraSystemPrompt)
 ```
 
@@ -24,10 +24,18 @@ Markdown files remain authoritative on disk; VT packs a budgeted, task-relevant 
 - Sources: hook-adjusted workspace bootstrap files, effective post-policy tool
   schemas, and enabled DCS BlockStore projections for working-memory /
   compass / role-memory.
+- Each turn sends one `vt.pack` request. Production does not call `vt.open`,
+  pass a session directory, or create MemStore, WAL, or lock files.
+- Stateless pack requests use independent in-memory graphs and may complete out
+  of order. JSON-RPC ids preserve response correlation without a global
+  `runExclusive` transaction.
+- `VtokenPackResult/v1` reports `estimated_tokens` with
+  `estimate_method=chars_div_4`. This is not provider actual usage or billing
+  evidence; Context Orchestrator remains the final budget and projection owner.
 - Enable canary:
-untime.vtoken.assembly.enabled=true or VERSE_VTOKEN_ASSEMBLY_ENABLED=1.
+  `runtime.vtoken.assembly.enabled=true` or `VERSE_VTOKEN_ASSEMBLY_ENABLED=1`.
 - Kill-switch: env VERSE_VTOKEN_ASSEMBLY_ENABLED=0, config
-untime.vtoken.assembly.enabled=false,
+  `runtime.vtoken.assembly.enabled=false`,
   or VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1.
 
 ## Diagnostics host-api (default OFF - opt-in)
@@ -43,6 +51,10 @@ When disabled, APIs return { success: false, disabled: true } and **do not** sta
 
 ## Methods
 
+Production uses `vt.pack` directly from the Gateway-owned runtime client. The
+stateful methods below remain available to package consumers and the opt-in
+diagnostics host-api; they are not part of production Working Context assembly.
+
 | host-api | RPC |
 |----------|-----|
 | `vtoken.ping` | `vt.ping` |
@@ -57,6 +69,11 @@ When disabled, APIs return { success: false, disabled: true } and **do not** sta
 | `vtoken.getStatus` | (bridge-local) |
 | `vtoken.setEnabled` | (bridge-local) |
 | `vtoken.ensureStarted` | starts worker if enabled |
+
+Doc-source users that require an explicit hot-reload barrier can call
+`UnifiedStore.refresh_doc_sources()`. When it returns, all source changes
+visible to that call have been atomically published; normal reads still poll
+lazily.
 
 ## Local commands
 

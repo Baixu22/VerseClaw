@@ -34,9 +34,18 @@ so the two figures are not expected to agree and neither supersedes the other.
 - Both artifacts now carry an explicit `reductionDefinition` block naming the
   formula, the corpus, and the fixture count, so a reader cannot mistake one scope
   for the other.
-- `artifacts/dcs-visible-production/p1-01-live-ab-report.json` already attributes
-  its 5.125x to `artifacts/dcs-canary/c1/decision.json`; that pointer is correct and
-  is left as-is.
+- The previously documented `artifacts/dcs-visible-production/p1-01-live-ab-report.json`
+  was never present on disk. FP-P4-05 corrects that historical pointer instead of
+  fabricating a live report.
+
+## FP-P4-05 authority update (2026-07-29)
+
+`artifacts/first-product-preview/FP-P4-05/decision.json` now selects the four
+hand-authored fixtures that execute real context tools (`4.5x`) as the sole gate
+authority. The 32-task synthetic result (`5.125x`) remains scale and routing
+reference evidence only. Execution fidelity outranks simulated-corpus size, and
+the selection was not made to cross the 5x threshold. The resulting decision is
+therefore still `meetsGate:false` and `keep-off`.
 
 ## What did NOT change
 
@@ -47,9 +56,8 @@ so the two figures are not expected to agree and neither supersedes the other.
 - The 5.125x figure remains **synthetic**, not live A/B. It must not be cited as
   evidence of product usability.
 
-## Residual
+## Residual (closed by FP-P4-05)
 
-The two corpora should be unified into one gate corpus so a single reduction number
-exists for the C1 flag decision. That is a canary-methodology change, out of scope
-for FP-P0-05 (which owns injection budget and precedence). Tracked as **FP-P4-05**
-(see FP-P0-05 `## Residuals`).
+The two corpora now have one evidence-ranked decision: real-tool fixtures are the
+gate authority and the synthetic corpus is reference-only. Historical values remain
+unchanged and reproducible. Closed by **FP-P4-05**.

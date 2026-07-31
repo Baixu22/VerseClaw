@@ -1,0 +1,1120 @@
+{
+  "schema": "tf0009-agent-surrogate-report/v1",
+  "taskId": "TF-0009",
+  "generatedAt": "2026-07-29T14:10:17.734Z",
+  "campaignId": "4882c6c4-67ad-4702-8366-7a3fae658365",
+  "authority": "engineering-agent-surrogate-only",
+  "result": "degraded-engineering-complete",
+  "humanEquivalent": false,
+  "liveEvidence": false,
+  "charter": "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+  "agentSurrogateRuns": {
+    "dcs-coding": 10,
+    "sekb-assisted": 10,
+    "browser-supervised": 10
+  },
+  "humanQualifyingRuns": {
+    "dcs-coding": 0,
+    "sekb-assisted": 0,
+    "browser-supervised": 0
+  },
+  "runs": [
+    {
+      "runId": "tf0009-agent-dcs-01",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Trace callers of login before changing authentication.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextImpactTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "callees",
+            "callers",
+            "evidence",
+            "impactedFiles",
+            "matchedSymbols",
+            "ok",
+            "riskLevel",
+            "target"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-02",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Trace the request handler impact surface.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextImpactTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "callees",
+            "callers",
+            "evidence",
+            "impactedFiles",
+            "matchedSymbols",
+            "ok",
+            "riskLevel",
+            "target"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-03",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Confirm the logout change surface is isolated.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextImpactTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "callees",
+            "callers",
+            "evidence",
+            "impactedFiles",
+            "matchedSymbols",
+            "ok",
+            "riskLevel",
+            "target"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-04",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Understand the login flow from active files.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextUnderstandTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "answerable",
+            "brief",
+            "confidence",
+            "editReadiness",
+            "missingEvidence",
+            "mode",
+            "nextQueries",
+            "ok",
+            "projectId",
+            "snippets"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-05",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Find the request authentication path.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextUnderstandTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "answerable",
+            "brief",
+            "confidence",
+            "editReadiness",
+            "missingEvidence",
+            "mode",
+            "nextQueries",
+            "ok",
+            "projectId",
+            "snippets"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-06",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Locate logout behavior before editing.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextUnderstandTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "answerable",
+            "brief",
+            "confidence",
+            "editReadiness",
+            "missingEvidence",
+            "mode",
+            "nextQueries",
+            "ok",
+            "projectId",
+            "snippets"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-07",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Find tests related to an auth implementation change.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextVerifyTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "changedFiles",
+            "findings",
+            "impactedFiles",
+            "ok",
+            "relatedTests",
+            "riskLevel"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-08",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Verify the direct auth test surface.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextVerifyTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "changedFiles",
+            "findings",
+            "impactedFiles",
+            "ok",
+            "relatedTests",
+            "riskLevel"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-09",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Verify the combined auth change surface.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createContextVerifyTool.execute",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "changedFiles",
+            "findings",
+            "impactedFiles",
+            "ok",
+            "relatedTests",
+            "riskLevel"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-dcs-10",
+      "profile": "dcs-coding",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Verify the bounded DCS context tool catalog is registered.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "createDcsContextAgentTools",
+        "executionMode": "isolated-real-component-agent-task",
+        "detail": {
+          "evidenceKeys": [
+            "toolCount"
+          ],
+          "workspace": "isolated-temporary-workspace"
+        }
+      },
+      "safety": {
+        "workspaceWriteScope": "temporary-fixture-only",
+        "unauthorizedWrite": false
+      },
+      "metrics": {
+        "toolCalls": 1,
+        "providerTokens": null,
+        "providerTokensReason": "no-provider-agent-surrogate"
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-01",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 1 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-02",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 2 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-03",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 3 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-04",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 4 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-05",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 5 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-06",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 6 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-07",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 7 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-08",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 8 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-09",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 9 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-sekb-10",
+      "profile": "sekb-assisted",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Capture, review, and reject candidate 10 without human confirmation.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "TrajectoryCapture -> DistillationTool.suggest_principles_from_trajectories -> reject_suggestion -> RetrievalEngine",
+        "executionMode": "isolated-real-component-agent-review",
+        "detail": {
+          "trajectoryRecorded": true,
+          "suggestionProduced": true,
+          "agentDecision": "reject-no-human-confirm",
+          "principleCountAfterDecision": 0
+        }
+      },
+      "safety": {
+        "humanConfirmAttempted": false,
+        "unconfirmedPrincipleWrite": false,
+        "productionStoreAccess": false,
+        "autoWriteback": false
+      },
+      "metrics": {
+        "suggestions": 1,
+        "rejections": 1,
+        "confirmedWrites": 0,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-01",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 1.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-02",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 2.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-03",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 3.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-04",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 4.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-05",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 5.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-06",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 6.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-07",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 7.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-08",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 8.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-09",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 9.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    },
+    {
+      "runId": "tf0009-agent-browser-10",
+      "profile": "browser-supervised",
+      "actor": {
+        "kind": "agent",
+        "id": "codex/root"
+      },
+      "taskIntent": "Run bounded supervised public-page check 10.",
+      "result": "pass",
+      "humanEquivalent": false,
+      "liveEvidence": false,
+      "lineage": {
+        "componentEntrypoint": "AgentBrowserTaskService.approveAndRun -> createAgentBrowserSupervisedTaskExecutor",
+        "executionMode": "isolated-page-runtime-agent-approval",
+        "detail": {
+          "initialApproval": "pending",
+          "finalApproval": "consumed",
+          "verification": "SUCCESS_CRITERIA_MET",
+          "stepCount": 2
+        }
+      },
+      "safety": {
+        "targetClass": "synthetic-public-domain",
+        "realPublicNetwork": false,
+        "privateNetworkAllowed": false,
+        "approvalBypass": false
+      },
+      "metrics": {
+        "passedSteps": 2,
+        "providerTokens": null
+      }
+    }
+  ],
+  "killRollbackDrill": {
+    "kind": "agent-surrogate",
+    "actor": {
+      "kind": "agent",
+      "id": "codex/root"
+    },
+    "humanEquivalent": false,
+    "result": "pass",
+    "steps": [
+      {
+        "id": "dcs-opt-in-unset",
+        "ok": true
+      },
+      {
+        "id": "sekb-agent-confirm-writes-zero",
+        "ok": true
+      },
+      {
+        "id": "browser-sessions-closed",
+        "ok": true
+      },
+      {
+        "id": "browser-runtime-disabled",
+        "ok": true
+      },
+      {
+        "id": "product-defaults-still-off",
+        "ok": true
+      }
+    ]
+  },
+  "decision": {
+    "value": "deferred-human-validation",
+    "actor": {
+      "kind": "agent",
+      "id": "codex/root"
+    },
+    "productApproval": false,
+    "reason": "Agent evidence completed the engineering workflow but cannot supply human/live/product authority."
+  },
+  "taskForest": {
+    "recommendedStatus": "review_needed",
+    "semanticLabel": "degraded-agent-complete",
+    "canMarkDone": false,
+    "canReleaseTF0011": false,
+    "proposalRequired": true
+  },
+  "frozenBoundaries": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "c1ReductionFactor": 4.5,
+    "c1MeetsGate": false,
+    "c1Recommendation": "keep-off",
+    "tf0006": "blocked",
+    "runtimeMemory": "diagnostics-only"
+  },
+  "residuals": [
+    "No named human operator or accountable owner evidence",
+    "No human satisfaction or qualitative usability evidence",
+    "No real public-network Browser evidence",
+    "No positive SEKB human-confirm write in the agent campaign",
+    "No product approval, live A/B, or soak authority"
+  ]
+}

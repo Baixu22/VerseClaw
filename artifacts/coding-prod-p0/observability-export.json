@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T15:43:43.670Z",
+  "generatedAt": "2026-07-31T04:17:57.850Z",
   "coding": {
     "snapshot": {
       "factToolCalls": 0,
@@ -22,6 +22,8 @@
       "syntaxCheckHits": 0,
       "syntaxCheckSilent": 0,
       "verifyConsumeHits": 0,
+      "testRunnerDetected": 0,
+      "testRunnerSkipped": 0,
       "diagHits": 0,
       "diagSilent": 0,
       "approvalPrompts": 0,
@@ -67,6 +69,8 @@
       "undoCount": "coding.write.undoCount",
       "syntaxCheckHits": "coding.write.syntaxCheckHits",
       "verifyHitRate": "coding.write.verifyHitRate",
+      "testRunnerDetected": "coding.write.testRunnerDetected",
+      "testRunnerSkipped": "coding.write.testRunnerSkipped",
       "diagHitRate": "coding.write.diagHitRate",
       "approvalPromptRate": "coding.write.approvalPromptRate",
       "waveConflictRate": "coding.concurrent.waveConflictRate",
@@ -95,7 +99,7 @@
       "vtokenAssemblySuccesses": 0,
       "vtokenAssemblyErrors": 0,
       "vtokenAssemblyChars": 0,
-      "vtokenAssemblyTokens": 0,
+      "vtokenAssemblyEstimatedTokens": 0,
       "vtokenSourcesIngested": 0,
       "contextOrchestratorCalls": 0,
       "contextOrchestratorKillSwitchHits": 0,
@@ -105,7 +109,15 @@
       "injectionBudgetTruncations": 0,
       "injectionBudgetDrops": 0,
       "injectionBudgetRequestedChars": 0,
-      "injectionBudgetAppliedChars": 0
+      "injectionBudgetAppliedChars": 0,
+      "turnInjectionTurns": 0,
+      "turnInjectionKilledTurns": 0,
+      "turnInjectionAppliedChars": 0,
+      "turnInjectionRequestedChars": 0,
+      "turnInjectionDroppedChars": 0,
+      "turnInjectionTruncatedChars": 0,
+      "turnInjectionDropAlerts": 0,
+      "lastTurnInjection": null
     }
   },
   "families": {

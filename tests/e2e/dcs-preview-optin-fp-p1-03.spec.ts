@@ -172,7 +172,10 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
         'runtime.contextBlock.tool_registry.enabled',
         'runtime.coding.staleWriteGuard.enabled',
       ]) {
-        await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toHaveText(
+        // FP-P1-10 adds an adjacent provenance badge (for example, "from env").
+        // The effective flag remains the behavioral contract; keep the locator
+        // bound to that value without rejecting the separately rendered origin.
+        await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toContainText(
           `${key}: true`,
         );
       }
@@ -191,7 +194,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
         'runtime.contextBlock.tool_registry.enabled',
         'runtime.coding.staleWriteGuard.enabled',
       ]) {
-        await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toHaveText(
+        await expect(page.getByTestId(`settings-dcs-preview-effective-${key}`)).toContainText(
           `${key}: false`,
         );
       }

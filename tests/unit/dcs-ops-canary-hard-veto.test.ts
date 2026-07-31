@@ -52,6 +52,34 @@ describe('DCS ops canary hard veto (honesty locks)', () => {
     expect(String(d.metrics?.corpusKind || '')).toMatch(/synthetic/i);
   });
 
+  it('uses the real-tool C1 corpus as the only gate authority', () => {
+    const d = readJson('artifacts/first-product-preview/FP-P4-05/decision.json');
+    expect(d.authority).toMatchObject({
+      corpusId: 'coding-c1-hand-authored-real-tools',
+      role: 'gate-authority',
+      fixtureCount: 4,
+      reductionFactor: 4.5,
+      live: false,
+      meetsMetricThreshold: false,
+    });
+    expect(d.references).toHaveLength(1);
+    expect(d.references[0]).toMatchObject({
+      role: 'reference-only',
+      fixtureCount: 32,
+      reductionFactor: 5.125,
+      eligibleForGateAuthority: false,
+      live: false,
+    });
+    expect(d.decision).toMatchObject({
+      meetsGate: false,
+      recommendation: 'keep-off',
+      defaultOn: false,
+      defaultsUnchanged: true,
+      liveReady: false,
+      productApproved: false,
+    });
+  });
+
   it('TF-0006 remains blocked with graduation gates false when present', () => {
     if (!exists('artifacts/tf0006-evidence-upgrade/status.json')) {
       expect(true).toBe(true);
@@ -95,5 +123,12 @@ describe('DCS ops canary hard veto (honesty locks)', () => {
     expect(src).toMatch(/liveReady === true/);
     expect(src).toMatch(/HARD-STOP/);
     expect(src).toMatch(/nextStep/);
+    expect(src).toMatch(/authoritative C1 gate decision/);
+    expect(src).toMatch(/C1 reference corpus gained gate authority/);
+    expect(src).toMatch(/l3Ready/);
+    expect(src).toMatch(/do not start L3/);
+    expect(src).toMatch(/evaluateTf0009L3Readiness/);
+    expect(src).toMatch(/validateTf0009AgentSurrogateReport/);
+    expect(src).toMatch(/agentSurrogateReady/);
   });
 });

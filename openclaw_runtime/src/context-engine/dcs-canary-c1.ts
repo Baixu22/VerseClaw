@@ -32,6 +32,20 @@ export type C1CanaryAbMetrics = {
   taskCount: number;
   entryCount: number;
   ab: AbReport;
+  reductionDefinition: {
+    formula: string;
+    corpusId: string;
+    corpus: string;
+    fixtureCount: number;
+    meanOffCalls: number;
+    meanOnCalls: number;
+    live: false;
+    evidenceClass: "simulated-arm-synthetic";
+    role: "reference-only";
+    eligibleForGateAuthority: false;
+    authoritativeDecision: string;
+    reconciliation: string;
+  };
   ts: string;
 };
 
@@ -100,6 +114,21 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
       factstorePassRate: Number(ab.factstorePassRate.toFixed(4)),
       routingAccuracy: Number(ab.routingAccuracy.toFixed(4)),
     },
+    reductionDefinition: {
+      formula: "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+      corpusId: "dcs-canary-c1-synthetic-seed-" + (corpus.seed ?? "unknown"),
+      corpus: "synthetic-agent generated corpus, seed " + (corpus.seed ?? "unknown"),
+      fixtureCount: ab.fixtureCount,
+      meanOffCalls: Number(ab.baselineAvgCalls.toFixed(4)),
+      meanOnCalls: Number(ab.factstoreAvgCalls.toFixed(4)),
+      live: false,
+      evidenceClass: "simulated-arm-synthetic",
+      role: "reference-only",
+      eligibleForGateAuthority: false,
+      authoritativeDecision: "artifacts/first-product-preview/FP-P4-05/decision.json",
+      reconciliation:
+        "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md",
+    },
     ts,
   };
 
@@ -116,6 +145,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
       routingAccuracy: abMetrics.ab.routingAccuracy,
       corpusKind: corpus.kind,
       live: false,
+      reductionDefinition: abMetrics.reductionDefinition,
     },
     productApproved: options?.productApproved === true,
     liveReady,

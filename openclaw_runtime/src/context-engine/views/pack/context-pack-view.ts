@@ -53,10 +53,12 @@ export async function buildContextPack(
   // memoized into the store (producer=ripgrep) and served as snippets so a cold or
   // partial store still answers at grep quality instead of returning nothing.
   let grepFallbackUsed = false;
+  let grepFallbackError: string | undefined;
   if (hits.length === 0) {
     const pattern = ripgrepPatternFor(queryContext);
     if (pattern) {
       const textFacts = await materializer.ensureTextFacts(pattern);
+      grepFallbackError = textFacts.error;
       if (textFacts.chunks.length > 0) {
         grepFallbackUsed = true;
         hits = textFacts.chunks.slice(0, 24).map((chunk) => ({
@@ -78,6 +80,9 @@ export async function buildContextPack(
     missingEvidence.push(
       "Evidence served by the ripgrep fallback (producer=ripgrep); structural facts for these files are pending materialization.",
     );
+  }
+  if (grepFallbackError) {
+    missingEvidence.push(`ripgrep fallback failed: ${grepFallbackError}`);
   }
   const relationships = buildRelationships(topology);
   const nextQueries = buildNextQueries(queryContext.codeTokens, ownerChain);

@@ -48,10 +48,41 @@ export function expandPath(path: string): string {
 }
 
 /**
- * Get OpenClaw config directory
+ * Environment variable name for overriding the OpenClaw config directory.
+ * When set, all OpenClaw-owned paths (config, agents, sessions, extensions,
+ * credentials) are rooted at this directory instead of ~/.openclaw.
+ *
+ * This is the primary decoupling seam for redirecting OpenClaw runtime data
+ * into a Verse Claw-owned location (e.g. ~/.verse-claw/runtime).
+ */
+export const OPENCLAW_CONFIG_DIR_ENV = 'OPENCLAW_CONFIG_DIR';
+
+/**
+ * Get OpenClaw config directory.
+ *
+ * Resolution order:
+ * 1. OPENCLAW_CONFIG_DIR environment variable (explicit override)
+ * 2. ~/.openclaw (default, backward compatible)
+ *
+ * All callers that need the OpenClaw config root MUST go through this function
+ * so the redirect stays consistent. Hardcoded join(homedir(), '.openclaw', ...)
+ * elsewhere is a known gap and should be migrated to use this helper.
  */
 export function getOpenClawConfigDir(): string {
+  const override = process.env[OPENCLAW_CONFIG_DIR_ENV]?.trim();
+  if (override) {
+    return expandPath(override);
+  }
   return join(homedir(), '.openclaw');
+}
+
+/**
+ * Get OpenClaw config file path (openclaw.json inside the config directory).
+ * Use this instead of join(homedir(), '.openclaw', 'openclaw.json') so the
+ * path follows OPENCLAW_CONFIG_DIR overrides.
+ */
+export function getOpenClawConfigPath(): string {
+  return join(getOpenClawConfigDir(), 'openclaw.json');
 }
 
 /**

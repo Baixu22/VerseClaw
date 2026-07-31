@@ -1,0 +1,145 @@
+{
+  "schema": "dcs-deep-test-day1-gates/v1",
+  "generatedAt": "2026-07-29T13:38:37.928226Z",
+  "sha": "5d416810f5701036eb918fe473f175d7e12d7034",
+  "workspaceDirty": true,
+  "authority": "engineering-l0-l1-l2-only",
+  "result": "pass-after-repaired-cold-build-gap",
+  "defaultsUnchanged": true,
+  "liveReady": false,
+  "productApproved": false,
+  "defaultOn": false,
+  "c1": {
+    "reductionFactor": 4.5,
+    "meetsGate": false,
+    "recommendation": "keep-off"
+  },
+  "tf0006": "blocked",
+  "qualifyingRealRuns": {
+    "dcs-coding": 0,
+    "sekb-assisted": 0,
+    "browser-supervised": 0
+  },
+  "l3Ready": false,
+  "l3Blockers": [
+    "profiles.json with named owner/operator/safety and bounded cohort is not yet approved"
+  ],
+  "steps": [
+    {
+      "name": "dcs:ops:preflight:gates",
+      "command": "pnpm run dcs:ops:preflight:gates",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 9479,
+      "notes": "Packaging smoke and C1 refresh passed; C1 remained 4.5x and keep-off."
+    },
+    {
+      "name": "dcs:prod-p0",
+      "command": "pnpm run dcs:prod-p0",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 2900,
+      "notes": "Production packaging report regenerated with defaults unchanged."
+    },
+    {
+      "name": "lint:dcs",
+      "command": "pnpm run lint:dcs",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 9842
+    },
+    {
+      "name": "test:dcs",
+      "command": "pnpm run test:dcs",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 29882,
+      "notes": "35 files and 314 tests passed."
+    },
+    {
+      "name": "p0:accept",
+      "command": "pnpm run p0:accept",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 10362,
+      "notes": "8 files and 120 tests passed."
+    },
+    {
+      "name": "dcs:corpus:validate",
+      "command": "pnpm run dcs:corpus:validate",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 3366,
+      "notes": "Validated one synthetic-agent fixture; this is not real canary evidence."
+    },
+    {
+      "name": "build:vite",
+      "command": "pnpm run build:vite",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 30560
+    },
+    {
+      "name": "electron-critical-initial",
+      "command": "pnpm exec playwright test tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts --workers=1",
+      "ok": false,
+      "exitCode": 1,
+      "ms": 147895,
+      "notes": "8/9 passed. SEKB failed with runtimeUnavailable because the cold full runtime build did not publish dist/knowledge/sekb/index.js. The surrounding PowerShell capture incorrectly reported exitCode 0; the Playwright result and this record use the authoritative failure."
+    },
+    {
+      "name": "build:runtime-before-fix",
+      "command": "pnpm build:runtime",
+      "ok": false,
+      "exitCode": 0,
+      "ms": 27300,
+      "notes": "The command and gateway smoke passed but the required SEKB host entry was absent, exposing an incomplete cold-build contract."
+    },
+    {
+      "name": "sekb-runtime-build-contract",
+      "command": "pnpm exec vitest run tests/unit/sekb-runtime-build-contract.test.ts tests/unit/tf0009-engineering-evidence-audit.test.ts tests/unit/dcs-ops-canary-hard-veto.test.ts",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 5100,
+      "notes": "3 files and 15 tests passed, including a negative incomplete-Day-1 record check."
+    },
+    {
+      "name": "build:runtime-after-fix",
+      "command": "pnpm build:runtime",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 27000,
+      "notes": "Full clean build restored dist/knowledge/sekb/index.js and runtime smoke imported the required SEKB exports."
+    },
+    {
+      "name": "sekb-electron-retry",
+      "command": "pnpm exec playwright test tests/e2e/sekb-golden-path.spec.ts --workers=1",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 11700,
+      "notes": "1/1 passed after the cold-build contract fix."
+    },
+    {
+      "name": "electron-critical-final",
+      "command": "pnpm exec playwright test tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts --workers=1",
+      "ok": true,
+      "exitCode": 0,
+      "ms": 138300,
+      "notes": "Final combined Windows Electron matrix passed 9/9."
+    }
+  ],
+  "incidents": [
+    {
+      "id": "cold-build-missing-sekb-entry",
+      "status": "repaired-and-regression-tested",
+      "impact": "L2 SEKB host path returned runtimeUnavailable after a clean runtime build.",
+      "repair": "The full runtime build now restores the existing --sekb-only entry after the upstream clean build; runtime smoke imports and validates the required exports.",
+      "files": [
+        "scripts/build-openclaw-runtime.mjs",
+        "scripts/smoke-openclaw-runtime.mjs",
+        "tests/unit/sekb-runtime-build-contract.test.ts"
+      ]
+    }
+  ],
+  "nextStep": "Obtain explicit named owner/operator/safety and bounded cohort approval before creating profiles.json or starting L3."
+}

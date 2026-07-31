@@ -415,7 +415,7 @@ VerseShell は Windows x64 の内部 canary 向けに限定した任意の実行
 }
 ```
 
-設定がオーバーライドを許可している場合、セッション指令 `/exec host=verseshell security=allowlist ask=on-miss` でも同じバックエンドを選択できます。大きな出力は `result://sha256/...` handle を返し、Agent は `verseshell_result` で範囲を制限した断片を取得できます。`legacyEval`、`mcpCompatibility`、`compatibilityNativeFallback` は無効のままにしてください。緊急停止は `runtime.verseShellFoundation.killSwitch` を `true` にするか、`VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1` を設定して Gateway を再起動します。
+`tools.exec.host=verseshell` は、オペレーターがグローバルまたは Agent ごとの cohort に対して選択する設定です。設定がオーバーライドを許可している場合、セッション指令 `/exec host=verseshell security=allowlist ask=on-miss` でも同じバックエンドを選択できますが、モデルが呼び出しごとに VerseShell host を選択することはできません。sandbox、node、remote/provider-native、elevated の実行は既存の owner を維持します。大きな出力は `result://sha256/...` handle を返し、Agent は `verseshell_result` で範囲を制限した断片を取得できます。`legacyEval`、`mcpCompatibility`、`compatibilityNativeFallback` は無効のままにしてください。緊急停止は `runtime.verseShellFoundation.killSwitch` を `true` にするか、`VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1` を設定して Gateway を再起動します。ローカルの engineering coverage は、実 cohort、provider usage、ROI、soak、製品 graduation の証拠にはなりません。
 
 ---
 

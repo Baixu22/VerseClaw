@@ -197,7 +197,7 @@ export function createProcessTool(
 
   const describeRunningSession = (session: ProcessSession): RunningSessionRuntime => {
     const record = supervisor.getRecord(session.id);
-    const lastOutputAt = record?.lastOutputAtMs ?? session.startedAt;
+    const lastOutputAt = record?.lastOutputAtMs ?? session.lastOutputAt ?? session.startedAt;
     const idleMs = Math.max(0, Date.now() - lastOutputAt);
     const stdinWritable = isWritableStdin(resolveSessionStdin(session));
     return {
@@ -217,6 +217,11 @@ export function createProcessTool(
   };
 
   const cancelManagedSession = (sessionId: string) => {
+    const session = getSession(sessionId);
+    if (session?.lifecycleOwner === "verseshell" && session.lifecycleCancel) {
+      session.lifecycleCancel("manual-cancel");
+      return true;
+    }
     const record = supervisor.getRecord(sessionId);
     if (!record || record.state === "exited") {
       return false;
@@ -226,6 +231,9 @@ export function createProcessTool(
   };
 
   const terminateSessionFallback = (session: ProcessSession) => {
+    if (session.lifecycleOwner === "verseshell") {
+      return false;
+    }
     const pid = session.pid ?? session.child?.pid;
     if (typeof pid !== "number" || !Number.isFinite(pid) || pid <= 0) {
       return false;
@@ -371,6 +379,18 @@ export function createProcessTool(
       const writeToStdin = async (stdin: WritableStdin, data: string) => {
         await new Promise<void>((resolve, reject) => {
           stdin.write(data, (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      };
+
+      const endStdin = async (stdin: WritableStdin) => {
+        await new Promise<void>((resolve, reject) => {
+          stdin.end((err) => {
             if (err) {
               reject(err);
             } else {
@@ -572,7 +592,7 @@ export function createProcessTool(
           }
           await writeToStdin(resolved.stdin, params.data ?? "");
           if (params.eof) {
-            resolved.stdin.end();
+            await endStdin(resolved.stdin);
           }
           return runningSessionResult(
             resolved.session,

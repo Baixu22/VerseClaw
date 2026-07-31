@@ -1,7 +1,7 @@
 /**
  * Verse Token bridge — long-lived Python host_rpc worker over stdio JSON-RPC.
  *
- * Product default ON (diagnostics). Production Working Context injects in gateway agent turns.
+ * Product default OFF (opt-in diagnostics). Opt-in Working Context assembly runs in gateway turns.
  */
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { existsSync } from 'node:fs';

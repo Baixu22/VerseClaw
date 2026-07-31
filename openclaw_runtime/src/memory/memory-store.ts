@@ -19,6 +19,7 @@ import {
 } from "./memory-dual-gate.js";
 import { evaluateMemoryPolicy, evaluateRetentionCandidate, getMemoryPolicySnapshot, roleAppliesToCard } from "./memory-policy.js";
 import { buildContextPack } from "./context-pack.js";
+import { isMemoryCardInContextScope, type MemoryCardScopeContext } from "./memory-card.js";
 import type {
   ContextPack,
   MemoryAuditActor,
@@ -85,6 +86,7 @@ type CardRow = {
   version: number;
   supersedes: string | null;
   superseded_by: string | null;
+  correction_ref: string | null;
   created_at: string;
   updated_at: string;
   last_accessed_at: string;
@@ -262,6 +264,7 @@ function openDatabase(): DatabaseSync {
       version INTEGER NOT NULL,
       supersedes TEXT,
       superseded_by TEXT,
+      correction_ref TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
       last_accessed_at TEXT NOT NULL,
@@ -406,6 +409,7 @@ function openDatabase(): DatabaseSync {
     `ALTER TABLE role_memory_cards ADD COLUMN source_role TEXT`,
     `ALTER TABLE role_memory_cards ADD COLUMN applicable_roles_json TEXT`,
     `ALTER TABLE role_memory_cards ADD COLUMN allowed_mutators_json TEXT`,
+    `ALTER TABLE role_memory_cards ADD COLUMN correction_ref TEXT`,
     `ALTER TABLE role_memory_proposals ADD COLUMN risk_level TEXT`,
     `ALTER TABLE role_memory_proposals ADD COLUMN impact_scope TEXT`,
     `ALTER TABLE role_memory_proposals ADD COLUMN suggested_action TEXT`,
@@ -448,6 +452,7 @@ function rowToCard(row: CardRow): MemoryCard {
     version: row.version,
     supersedes: row.supersedes,
     supersededBy: row.superseded_by,
+    correctionRef: row.correction_ref,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     lastAccessedAt: row.last_accessed_at,
@@ -480,6 +485,7 @@ function cardParams(card: MemoryCard): SQLInputValue[] {
     card.version,
     card.supersedes ?? null,
     card.supersededBy ?? null,
+    card.correctionRef ?? null,
     card.createdAt,
     card.updatedAt ?? card.createdAt,
     card.lastAccessedAt,
@@ -668,8 +674,8 @@ export function storeMemoryCard(card: MemoryCard, options?: { actor?: MemoryAudi
       id, type, scope_kind, scope_key, role_tags_json, owner_role, source_role, applicable_roles_json,
       allowed_mutators_json, phase_tags_json, content, evidence_json,
       evidence_refs_json, confidence, importance, status, sensitivity, durability, source,
-      version, supersedes, superseded_by, created_at, updated_at, last_accessed_at, access_count, expires_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      version, supersedes, superseded_by, correction_ref, created_at, updated_at, last_accessed_at, access_count, expires_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       type=excluded.type,
       scope_kind=excluded.scope_kind,
@@ -692,6 +698,7 @@ export function storeMemoryCard(card: MemoryCard, options?: { actor?: MemoryAudi
       version=excluded.version,
       supersedes=excluded.supersedes,
       superseded_by=excluded.superseded_by,
+      correction_ref=excluded.correction_ref,
       updated_at=excluded.updated_at,
       last_accessed_at=excluded.last_accessed_at,
       access_count=excluded.access_count,
@@ -771,6 +778,7 @@ function cardFromProposal(proposal: MemoryProposal, id: string, options?: { base
     source: normalized.source,
     supersedes: normalized.targetId ?? null,
     supersededBy: null,
+    correctionRef: base?.correctionRef ?? null,
     expiresAt: normalized.expiresAt ?? null,
   };
 }
@@ -950,6 +958,7 @@ export function updateMemoryCard(
     createdAt: current.createdAt,
     version: current.version + 1,
     accessCount: current.accessCount,
+    correctionRef: proposalRecord.id,
   };
   storeMemoryCard(next, { actor: options?.actor, reason: options?.reason ?? patch.reason ?? "updated" });
   proposalRecord.status = "applied";
@@ -1011,6 +1020,7 @@ export function archiveMemoryCard(id: string, status: "archived" | "tombstone" =
   const next: MemoryCard = {
     ...current,
     status,
+    correctionRef: proposalRecord.id,
     version: current.version + 1,
     updatedAt: new Date().toISOString(),
   };
@@ -1031,17 +1041,19 @@ export function supersedeMemoryCard(id: string, proposal: MemoryProposal, option
     ...current,
     status: "archived",
     supersededBy: decision.card.id,
+    correctionRef: decision.proposal?.id ?? null,
     version: current.version + 1,
     updatedAt: new Date().toISOString(),
   };
   const newNext: MemoryCard = {
     ...decision.card,
     supersedes: id,
+    correctionRef: decision.proposal?.id ?? null,
   };
   storeMemoryCard(oldNext, { actor: options?.actor, reason: options?.reason ?? "superseded" });
   storeMemoryCard(newNext, { actor: options?.actor, reason: options?.reason ?? "supersedes previous memory" });
   insertAudit("supersede", id, { oldId: id, newId: newNext.id }, options?.actor, options?.reason);
-  return { action: "supersede", accepted: true, card: newNext, targetId: id };
+  return { action: "supersede", accepted: true, card: newNext, targetId: id, proposal: decision.proposal };
 }
 
 function rowToConflict(row: ConflictRow): MemoryConflict {
@@ -1170,16 +1182,18 @@ export function getMemoryStats(): Record<string, number> {
 
 function applyProposalRecord(
   record: MemoryProposalRecord,
-  options?: { actor?: MemoryAuditActor; status?: MemoryCardStatus; reason?: string },
+  options?: { actor?: MemoryAuditActor; status?: MemoryCardStatus; reason?: string; correctionRef?: string },
 ): MemoryGatekeeperDecision {
   const targetId = record.targetId ?? record.proposal.targetId ?? undefined;
   const nextStatus = options?.status ?? "active";
+  const correctionRef = options?.correctionRef ?? record.batchId ?? record.id;
   if ((record.operation === "archive" || record.operation === "tombstone") && targetId) {
     const current = getMemoryCard(targetId);
     if (!current) return { action: "reject", accepted: false, reason: `Unknown memory card: ${targetId}`, proposal: record };
     const next: MemoryCard = {
       ...current,
       status: record.operation === "tombstone" ? "tombstone" : "archived",
+      correctionRef,
       version: current.version + 1,
       updatedAt: new Date().toISOString(),
     };
@@ -1189,12 +1203,18 @@ function applyProposalRecord(
   if (record.operation === "update" && targetId) {
     const current = getMemoryCard(targetId);
     if (!current) return { action: "reject", accepted: false, reason: `Unknown memory card: ${targetId}`, proposal: record };
-    const next = cardFromProposal(record.proposal, targetId, { base: current, status: nextStatus });
+    const next = {
+      ...cardFromProposal(record.proposal, targetId, { base: current, status: nextStatus }),
+      correctionRef,
+    };
     storeMemoryCard(next, { actor: options?.actor, reason: options?.reason ?? "review approved update" });
     return { action: "accept", accepted: true, card: next, targetId, proposal: record };
   }
   const id = `mem_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  const next = cardFromProposal(record.proposal, id, { status: nextStatus });
+  const next = {
+    ...cardFromProposal(record.proposal, id, { status: nextStatus }),
+    correctionRef,
+  };
   if (record.operation === "supersede" && targetId) {
     const current = getMemoryCard(targetId);
     if (current) {
@@ -1202,6 +1222,7 @@ function applyProposalRecord(
         ...current,
         status: "archived",
         supersededBy: next.id,
+        correctionRef,
         version: current.version + 1,
         updatedAt: new Date().toISOString(),
       }, { actor: options?.actor, reason: "review approved supersede" });
@@ -1215,7 +1236,7 @@ function applyProposalRecord(
 export function reviewMemoryProposalRecord(
   id: string,
   action: "approve" | "reject" | "applyAsCold" | "supersede" | "merge",
-  options?: { actor?: MemoryAuditActor; reason?: string },
+  options?: { actor?: MemoryAuditActor; reason?: string; correctionRef?: string },
 ): MemoryGatekeeperDecision {
   const record = listMemoryProposals({ limit: 500 }).find((proposal) => proposal.id === id);
   if (!record) return { action: "reject", accepted: false, reason: `Unknown memory proposal: ${id}` };
@@ -1235,7 +1256,12 @@ export function reviewMemoryProposalRecord(
   }
   const applyStatus: MemoryCardStatus = action === "applyAsCold" ? "cold" : "active";
   const applyRecord = action === "supersede" ? { ...record, operation: "supersede" as const } : record;
-  const applied = applyProposalRecord(applyRecord, { actor: options?.actor, status: applyStatus, reason: options?.reason });
+  const applied = applyProposalRecord(applyRecord, {
+    actor: options?.actor,
+    status: applyStatus,
+    reason: options?.reason,
+    correctionRef: options?.correctionRef,
+  });
   const nextStatus: MemoryProposalStatus = applied.accepted ? "applied" : "rejected";
   updateProposalStatus(id, nextStatus, options?.reason ?? action);
   insertAudit("review-apply", applied.card?.id ?? record.targetId ?? null, { proposalId: id, action, applied }, options?.actor, options?.reason);
@@ -1508,7 +1534,11 @@ export function reviewMemoryProposalBatch(params: {
           decision: { action: "reject", accepted: false, reason: `Unknown memory proposal: ${id}` } satisfies MemoryGatekeeperDecision,
         };
       }
-      const decision = reviewMemoryProposalRecord(id, params.action, { actor: params.actor, reason: params.reason ?? `batch ${params.action}` });
+      const decision = reviewMemoryProposalRecord(id, params.action, {
+        actor: params.actor,
+        reason: params.reason ?? `batch ${params.action}`,
+        correctionRef: batchId,
+      });
       openDatabase().prepare(`UPDATE role_memory_proposals SET batch_id = ? WHERE id = ?`).run(batchId, id);
       return { id, ok: decision.accepted || decision.action === "reject", decision };
     } catch (error) {
@@ -1610,11 +1640,56 @@ export function buildMemoryMergeDraft(params: {
 
 export function revokePoisonedMemoryCard(
   id: string,
-  options?: { actor?: MemoryAuditActor; reason?: string },
+  options?: { actor?: MemoryAuditActor; reason?: string; correctionRef?: string },
 ): MemoryCard | undefined {
   const current = getMemoryCard(id);
   if (!current) return undefined;
-  const revoked = revokePoisonedMemory(current, { reason: options?.reason });
+  let correctionRef = options?.correctionRef?.trim();
+  if (!correctionRef) {
+    const proposal: MemoryProposal = {
+      type: current.type,
+      scope: current.scope,
+      scopeKey: current.scopeKey,
+      roleTags: current.roleTags,
+      ownerRole: current.ownerRole,
+      sourceRole: current.sourceRole,
+      applicableRoles: current.applicableRoles,
+      allowedMutators: current.allowedMutators,
+      phaseTags: current.phaseTags,
+      content: current.content,
+      evidence: current.evidence,
+      evidenceRefs: current.evidenceRefs,
+      confidence: current.confidence,
+      importance: current.importance,
+      sensitivity: current.sensitivity,
+      durability: current.durability,
+      source: options?.actor?.type === "user" ? "user" : "system",
+      targetId: id,
+      operation: "tombstone",
+      reason: options?.reason ?? "poison revoke (P3-003)",
+      expiresAt: current.expiresAt,
+    };
+    const proposalRecord = storeProposalRecord(makeProposalRecord({
+      operation: "tombstone",
+      targetId: id,
+      proposal,
+      decision: {
+        action: "accept",
+        accepted: true,
+        targetId: id,
+        reason: options?.reason ?? "Safety revocation of poisoned memory.",
+      },
+      actor: options?.actor,
+    }));
+    proposalRecord.status = "applied";
+    proposalRecord.decidedAt = new Date().toISOString();
+    updateProposalStatus(proposalRecord.id, "applied", options?.reason ?? "poison revoke (P3-003)");
+    correctionRef = proposalRecord.id;
+  }
+  const revoked = {
+    ...revokePoisonedMemory(current, { reason: options?.reason }),
+    correctionRef,
+  };
   storeMemoryCard(revoked, {
     actor: options?.actor,
     reason: options?.reason ?? "poison revoke (P3-003)",
@@ -1622,7 +1697,7 @@ export function revokePoisonedMemoryCard(
   insertAudit(
     "tombstone",
     id,
-    { poisonRevoked: true, reason: options?.reason ?? "poison revoke (P3-003)" },
+    { poisonRevoked: true, correctionRef, reason: options?.reason ?? "poison revoke (P3-003)" },
     options?.actor,
     options?.reason ?? "poison revoke (P3-003)",
   );
@@ -1635,14 +1710,18 @@ export function simulateMemoryInjection(params: {
   task?: string;
   budget?: Partial<ContextPack["budget"]>;
   dualGate?: Partial<import("./memory-dual-gate.js").MemoryDualGateConfig>;
+  scope?: MemoryCardScopeContext;
 }): MemoryInjectionSimulation {
   const dualGate = resolveMemoryDualGateConfig(params.dualGate ?? {});
   const memories = filterCardsForModelInjection(
     getMemoryCards({ roleName: params.roleName, status: "all" })
       .filter((card) => card.status === "active" || card.status === "cold"),
     dualGate,
+  ).filter((card) => isMemoryCardInContextScope(card, params.scope ?? {}));
+  const memoryIds = new Set(memories.map((card) => card.id));
+  const openConflictRecords = listMemoryConflicts({ status: "open" }).filter((conflict) =>
+    conflict.cardIds.some((cardId) => memoryIds.has(cardId)),
   );
-  const openConflictRecords = listMemoryConflicts({ status: "open" });
   const pack = buildContextPack({
     memories,
     roleName: params.roleName,

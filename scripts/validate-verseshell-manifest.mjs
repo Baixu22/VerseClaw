@@ -12,8 +12,8 @@ const expectedFacade = [
   ['result_query', 'result.query'],
 ];
 const expectedOperationCatalogDigest =
-  'sha256:857eb12ca6b83da190764263a4e4a0181d3cd047926f0d404fc3a4c93c9f4848';
-const expectedOperationCatalogCount = 26;
+  'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7';
+const expectedOperationCatalogCount = 31;
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8').replace(/^﻿/u, ''));
@@ -137,33 +137,58 @@ export function validateVerseShellManifest({ root = repositoryRoot, mode = 'dev'
     if (manifest.provenance.commit !== manifest.upstream?.pinned_commit || !/^[0-9a-f]{40}$/u.test(manifest.provenance.commit || '')) {
       issues.push('provenance.commit must match the pinned full lowercase Git commit');
     }
-    if (manifest.provenance.dirty !== false) {
-      issues.push('provenance.dirty must be false for the synchronized release bundle');
+    if (typeof manifest.provenance.dirty !== 'boolean') {
+      issues.push('provenance.dirty must be boolean');
     }
     exactKeys(manifest.provenance.build_input, ['source_directory', 'status_porcelain', 'diff_sha256', 'dirty_entry_count'], 'provenance.build_input', issues);
     string(manifest.provenance.build_input?.source_directory, 'provenance.build_input.source_directory', issues);
-    if (!Array.isArray(manifest.provenance.build_input?.status_porcelain) || manifest.provenance.build_input.status_porcelain.length !== 0) {
-      issues.push('provenance.build_input.status_porcelain must be an empty array for a clean bundle');
-    }
-    if (manifest.provenance.build_input?.diff_sha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
-      issues.push('provenance.build_input.diff_sha256 must be the empty Git diff SHA-256');
-    }
-    if (manifest.provenance.build_input?.dirty_entry_count !== 0) {
-      issues.push('provenance.build_input.dirty_entry_count must be 0 for a clean bundle');
-    }
     exactKeys(manifest.provenance.corresponding_source, ['locator', 'patch_instructions'], 'provenance.corresponding_source', issues);
     const expectedLocator = `${manifest.upstream?.source_repository}@${manifest.upstream?.pinned_commit}`;
-    if (manifest.provenance.corresponding_source?.locator !== expectedLocator) {
-      issues.push('provenance.corresponding_source.locator must identify the pinned upstream commit');
-    }
-    if (manifest.provenance.corresponding_source?.patch_instructions !== null) {
-      issues.push('provenance.corresponding_source.patch_instructions must be null for a clean bundle');
-    }
     exactKeys(manifest.provenance.dirty_build_override, ['approved', 'source_snapshot', 'patch_instructions'], 'provenance.dirty_build_override', issues);
-    if (manifest.provenance.dirty_build_override?.approved !== false
-      || manifest.provenance.dirty_build_override?.source_snapshot !== null
-      || manifest.provenance.dirty_build_override?.patch_instructions !== null) {
-      issues.push('provenance.dirty_build_override must record no override for a clean bundle');
+    const statusPorcelain = manifest.provenance.build_input?.status_porcelain;
+    const diffSha256 = manifest.provenance.build_input?.diff_sha256;
+    const dirtyEntryCount = manifest.provenance.build_input?.dirty_entry_count;
+    if (manifest.provenance.dirty === true) {
+      if (!Array.isArray(statusPorcelain) || statusPorcelain.length === 0) {
+        issues.push('dirty provenance.build_input.status_porcelain must be non-empty');
+      }
+      if (!/^[0-9a-f]{64}$/u.test(diffSha256 || '') || diffSha256 === 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
+        issues.push('dirty provenance.build_input.diff_sha256 must identify the captured source patch');
+      }
+      if (!Array.isArray(statusPorcelain) || dirtyEntryCount !== statusPorcelain.length) {
+        issues.push('dirty provenance.build_input.dirty_entry_count must match status_porcelain');
+      }
+      string(manifest.provenance.corresponding_source?.locator, 'provenance.corresponding_source.locator', issues);
+      string(manifest.provenance.corresponding_source?.patch_instructions, 'provenance.corresponding_source.patch_instructions', issues);
+      if (!manifest.provenance.corresponding_source?.locator?.startsWith(`${expectedLocator}+`)) {
+        issues.push('dirty provenance.corresponding_source.locator must identify the pinned commit plus patch');
+      }
+      if (manifest.provenance.dirty_build_override?.approved !== true
+        || manifest.provenance.dirty_build_override?.source_snapshot !== manifest.provenance.corresponding_source?.locator
+        || manifest.provenance.dirty_build_override?.patch_instructions !== manifest.provenance.corresponding_source?.patch_instructions) {
+        issues.push('dirty provenance override must match the recorded corresponding source');
+      }
+    } else {
+      if (!Array.isArray(statusPorcelain) || statusPorcelain.length !== 0) {
+        issues.push('provenance.build_input.status_porcelain must be an empty array for a clean bundle');
+      }
+      if (diffSha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
+        issues.push('provenance.build_input.diff_sha256 must be the empty Git diff SHA-256');
+      }
+      if (dirtyEntryCount !== 0) {
+        issues.push('provenance.build_input.dirty_entry_count must be 0 for a clean bundle');
+      }
+      if (manifest.provenance.corresponding_source?.locator !== expectedLocator) {
+        issues.push('provenance.corresponding_source.locator must identify the pinned upstream commit');
+      }
+      if (manifest.provenance.corresponding_source?.patch_instructions !== null) {
+        issues.push('provenance.corresponding_source.patch_instructions must be null for a clean bundle');
+      }
+      if (manifest.provenance.dirty_build_override?.approved !== false
+        || manifest.provenance.dirty_build_override?.source_snapshot !== null
+        || manifest.provenance.dirty_build_override?.patch_instructions !== null) {
+        issues.push('provenance.dirty_build_override must record no override for a clean bundle');
+      }
     }
   } else {
     issues.push('manifest.provenance: required for a synchronized binary bundle');
@@ -250,17 +275,35 @@ export function validateVerseShellManifest({ root = repositoryRoot, mode = 'dev'
   const correspondingLocator = manifest.compliance?.corresponding_source_locator;
   const correspondingSourcePath = manifest.compliance?.corresponding_source_path;
   const expectedLocator = `${manifest.upstream?.source_repository}@${manifest.upstream?.pinned_commit}`;
-  if (correspondingLocator !== expectedLocator) {
-    issues.push('compliance.corresponding_source_locator must identify the pinned upstream commit');
+  if (correspondingLocator !== manifest.provenance?.corresponding_source?.locator) {
+    issues.push('compliance.corresponding_source_locator must match provenance');
   }
-  if (correspondingSourcePath !== null) {
+  if (manifest.provenance?.dirty === true) {
+    if (typeof correspondingSourcePath !== 'string' || correspondingSourcePath.length === 0) {
+      issues.push('dirty compliance.corresponding_source_path must identify the captured patch');
+    } else {
+      const sourcePath = resolve(root, correspondingSourcePath);
+      if (!existsSync(sourcePath)) {
+        issues.push('compliance.corresponding_source_path does not exist');
+      } else {
+        const patchSha256 = createHash('sha256').update(readFileSync(sourcePath)).digest('hex');
+        if (patchSha256 !== manifest.provenance?.build_input?.diff_sha256) {
+          issues.push('compliance corresponding-source patch checksum does not match build input');
+        }
+      }
+    }
+    if (manifest.compliance?.corresponding_source_status !== 'dirty_corresponding_source_recorded') {
+      issues.push('dirty compliance.corresponding_source_status must attest recorded corresponding source');
+    }
+  } else if (correspondingLocator !== expectedLocator) {
+    issues.push('compliance.corresponding_source_locator must identify the pinned upstream commit');
+  } else if (correspondingSourcePath !== null) {
     if (typeof correspondingSourcePath !== 'string' || correspondingSourcePath.length === 0) {
       issues.push('compliance.corresponding_source_path: string or null required');
     } else if (!existsSync(resolve(root, correspondingSourcePath))) {
       issues.push('compliance.corresponding_source_path does not exist');
     }
-  }
-  if (manifest.compliance?.corresponding_source_status !== 'identified_by_repository_and_commit') {
+  } else if (manifest.compliance?.corresponding_source_status !== 'identified_by_repository_and_commit') {
     issues.push('compliance.corresponding_source_status must attest a clean pinned source commit');
   }
 

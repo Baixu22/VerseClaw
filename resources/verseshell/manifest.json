@@ -5,7 +5,7 @@
     "cargo_repository": "https://github.com/nervosys/verseshell",
     "source_repository": "https://github.com/Baixu22/VerseShell.git",
     "pinned_commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "pinned_commit_status": "clean_build_input"
+    "pinned_commit_status": "dirty_build_input_recorded"
   },
   "license": "AGPL-3.0-or-later",
   "crate": {
@@ -19,8 +19,8 @@
     "mcp_protocol_version": "2024-11-05",
     "expected_server_protocol": "verseshell.jsonl/v1",
     "operation_catalog_schema": "verseshell.operation-catalog/v1",
-    "operation_catalog_digest": "sha256:857eb12ca6b83da190764263a4e4a0181d3cd047926f0d404fc3a4c93c9f4848",
-    "operation_catalog_count": 26,
+    "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
+    "operation_catalog_count": 31,
     "handshake_operation": "runtime.handshake",
     "server_name": "ae-mcp",
     "server_version": "1.0.0"
@@ -33,9 +33,9 @@
     "notice_path": "resources/verseshell/NOTICE.md",
     "source_instructions_path": "resources/verseshell/SOURCE.md",
     "build_instructions_path": "resources/verseshell/BUILD.md",
-    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283",
-    "corresponding_source_path": null,
-    "corresponding_source_status": "identified_by_repository_and_commit"
+    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
+    "corresponding_source_path": "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+    "corresponding_source_status": "dirty_corresponding_source_recorded"
   },
   "build": {
     "instructions_path": "resources/verseshell/BUILD.md",
@@ -50,16 +50,16 @@
       "package_version": "1.0.0",
       "target_directory": "[build-source]/target"
     },
-    "cargo_toml_sha256": "8f1f5f34ba6db98903d971dd23b5771347b008b51c4fb44f09c0262b9146bf1a",
+    "cargo_toml_sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
     "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
-    "synchronized_at": "2026-07-27T04:03:42.623Z"
+    "synchronized_at": "2026-07-30T06:37:27.157Z"
   },
   "artifacts": {
     "win32-x64": {
       "path": "resources/bin/win32-x64/ae.exe",
       "packaged_path": "bin/ae.exe",
-      "sha256": "63716c3f0589c0291443f770a0ede97d728fb842aa39f50ac230ee7b5175e884",
-      "bytes": 14446592,
+      "sha256": "19ca598916077f677722b4f82d8dfc1c24c4e88ace9809abe681255370702699",
+      "bytes": 14880256,
       "version": "1.0.0"
     },
     "darwin-x64": {
@@ -86,21 +86,35 @@
   "provenance": {
     "repository": "https://github.com/Baixu22/VerseShell.git",
     "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "dirty": false,
+    "dirty": true,
     "build_input": {
       "source_directory": "[build-source]",
-      "status_porcelain": [],
-      "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "dirty_entry_count": 0
+      "status_porcelain": [
+        " M Cargo.toml",
+        " M src/lib.rs",
+        " M src/mcp/tools.rs",
+        " M src/ops/mod.rs",
+        " M src/ops/runtime_ops.rs",
+        " M src/process_runner.rs",
+        " M src/server.rs",
+        " M tests/operation_protocol_tests.rs",
+        "?? src/ops/process_ops.rs",
+        "?? src/process_command.rs",
+        "?? src/process_lifecycle.rs",
+        "?? src/process_lifecycle_windows.rs",
+        "?? tests/process_lifecycle_tests.rs"
+      ],
+      "diff_sha256": "cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098",
+      "dirty_entry_count": 13
     },
     "corresponding_source": {
-      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283",
-      "patch_instructions": null
+      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "patch_instructions": "Clone the recorded repository, checkout c3983694407a9ddb23505e05fad4a9eae653b283, then apply resources/verseshell/patches/uas-05-process-lifecycle.patch from the ClawX source tree with git apply."
     },
     "dirty_build_override": {
-      "approved": false,
-      "source_snapshot": null,
-      "patch_instructions": null
+      "approved": true,
+      "source_snapshot": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "patch_instructions": "Clone the recorded repository, checkout c3983694407a9ddb23505e05fad4a9eae653b283, then apply resources/verseshell/patches/uas-05-process-lifecycle.patch from the ClawX source tree with git apply."
     }
   }
 }

@@ -62,7 +62,8 @@ describe('P0 production acceptance gate (TF-0001..0005)', () => {
     expect(src).toMatch(/computeContextExtraSystemPrompt/);
     expect(src).not.toMatch(/computeMemoryExtraSystemPrompt/);
     expect(src).not.toMatch(/computeVtokenExtraSystemPrompt\s*\(/);
-    expect(src).toMatch(/suppressCvkAddition/);
+    expect(src).toMatch(/collectContextOrchestratorCandidate/);
+    expect(src).toMatch(/sourceId:\s*"cvk-context-engine"/);
     expect(src).toMatch(/isContextEnhancementKillSwitchEngaged/);
   });
 

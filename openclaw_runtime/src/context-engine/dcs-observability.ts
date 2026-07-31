@@ -29,7 +29,7 @@ export type DcsObservabilitySnapshot = {
   vtokenAssemblySuccesses: number;
   vtokenAssemblyErrors: number;
   vtokenAssemblyChars: number;
-  vtokenAssemblyTokens: number;
+  vtokenAssemblyEstimatedTokens: number;
   vtokenSourcesIngested: number;
   contextOrchestratorCalls: number;
   contextOrchestratorKillSwitchHits: number;
@@ -79,7 +79,7 @@ const ZERO: DcsObservabilitySnapshot = {
   vtokenAssemblySuccesses: 0,
   vtokenAssemblyErrors: 0,
   vtokenAssemblyChars: 0,
-  vtokenAssemblyTokens: 0,
+  vtokenAssemblyEstimatedTokens: 0,
   vtokenSourcesIngested: 0,
   contextOrchestratorCalls: 0,
   contextOrchestratorKillSwitchHits: 0,
@@ -117,10 +117,7 @@ class DcsObservabilityRegistry {
    * When `suppressed` is true (exactly-once heading already present),
    * chars must be 0 and the suppression counter increments.
    */
-  recordDcsTransformContextInjection(params: {
-    chars: number;
-    suppressed?: boolean;
-  }): void {
+  recordDcsTransformContextInjection(params: { chars: number; suppressed?: boolean }): void {
     this.#counters.dcsTransformContextCalls += 1;
     if (params.suppressed) {
       this.#counters.injectionDuplicateSuppressions += 1;
@@ -146,7 +143,7 @@ class DcsObservabilityRegistry {
   recordVtokenAssembly(params: {
     success: boolean;
     chars?: number;
-    tokens?: number;
+    estimatedTokens?: number;
     sourcesIngested?: number;
   }): void {
     this.#counters.vtokenAssemblyCalls += 1;
@@ -156,13 +153,12 @@ class DcsObservabilityRegistry {
     }
     this.#counters.vtokenAssemblySuccesses += 1;
     this.#counters.vtokenAssemblyChars += Math.max(0, Math.floor(params.chars ?? 0));
-    this.#counters.vtokenAssemblyTokens += Math.max(0, Math.floor(params.tokens ?? 0));
-    this.#counters.vtokenSourcesIngested += Math.max(
+    this.#counters.vtokenAssemblyEstimatedTokens += Math.max(
       0,
-      Math.floor(params.sourcesIngested ?? 0),
+      Math.floor(params.estimatedTokens ?? 0),
     );
+    this.#counters.vtokenSourcesIngested += Math.max(0, Math.floor(params.sourcesIngested ?? 0));
   }
-
 
   recordContextOrchestrator(params: {
     killSwitch: boolean;
@@ -177,10 +173,7 @@ class DcsObservabilityRegistry {
     if (params.error) {
       this.#counters.contextOrchestratorErrors += 1;
     }
-    this.#counters.contextOrchestratorCharsAdded += Math.max(
-      0,
-      Math.floor(params.charsAdded ?? 0),
-    );
+    this.#counters.contextOrchestratorCharsAdded += Math.max(0, Math.floor(params.charsAdded ?? 0));
   }
 
   /** TASK-P2-03: overflow / truncation against shared injection budget. */

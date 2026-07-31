@@ -418,7 +418,7 @@ Use this conservative `openclaw.json` configuration:
 }
 ```
 
-The session directive `/exec host=verseshell security=allowlist ask=on-miss` may select the same host when configuration allows the override. Large outputs return `result://sha256/...` handles; the Agent can inspect bounded slices with `verseshell_result`. Keep `legacyEval`, `mcpCompatibility`, and `compatibilityNativeFallback` disabled. For immediate rollback, set `runtime.verseShellFoundation.killSwitch` to `true` or export `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`, then restart the Gateway.
+`tools.exec.host=verseshell` is an operator-owned global or per-agent cohort selection. The session directive `/exec host=verseshell security=allowlist ask=on-miss` may select the same host when configuration allows the override; VerseShell is not exposed as a per-call model host. Sandbox, node, remote/provider-native, and elevated execution retain their existing owners. Large outputs return `result://sha256/...` handles; the Agent can inspect bounded slices with `verseshell_result`. Keep `legacyEval`, `mcpCompatibility`, and `compatibilityNativeFallback` disabled. For immediate rollback, set `runtime.verseShellFoundation.killSwitch` to `true` or export `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`, then restart the Gateway. Local engineering coverage is not real cohort, provider-usage, ROI, soak, or product-graduation evidence.
 
 ---
 

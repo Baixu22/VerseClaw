@@ -35,7 +35,7 @@ Use `packages/vtoken` as the Working Context assembly layer under existing ClawX
 
 ## Expected behavior
 
-- Product default **ON** for assembly and host-api bridge.
+- Product default **OFF** for assembly and the host-api bridge. Both are explicit opt-in capabilities.
 - Kill-switch: `VERSE_VTOKEN_ASSEMBLY_ENABLED=0` / `runtime.vtoken.assembly.enabled=false` / `VERSE_VTOKEN_BRIDGE_ENABLED=0`.
 - Embedded agent attempts append budgeted Working Context after the runtime has
   resolved hook-adjusted bootstrap files and effective tools; failures never block the turn.
@@ -43,6 +43,10 @@ Use `packages/vtoken` as the Working Context assembly layer under existing ClawX
   through the existing BlockStore into VT memory inputs. VT must honor the
   corresponding DCS feature flags and must not query a parallel store.
 - Renderer never spawns Python; only `hostApi.vtoken.*` for diagnostics.
+
+> **FP-P4-06 correction (2026-07-29):** this active specification previously
+> claimed a product default of ON. The default is OFF, as locked by
+> `docs/dev/default-config-matrix.md`, `vtoken-foundation-boundary`, and runtime tests.
 
 ## Required tests
 

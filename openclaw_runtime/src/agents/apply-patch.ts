@@ -8,19 +8,37 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Type } from "typebox";
 import { openRootFile, type RootFileOpenResult } from "../infra/boundary-file-read.js";
-import { formatErrorMessage } from "../infra/errors.js";
 import { root as fsRoot } from "../infra/fs-safe.js";
 import { PATH_ALIAS_POLICIES, type PathAliasPolicy } from "../infra/path-alias-guards.js";
-import { applyUpdateHunk } from "./apply-patch-update.js";
+import {
+  applyPreparedBatch,
+  preflightPatch,
+  type ApplyPatchJournalEvidence,
+  type PatchBatchState,
+} from "./apply-patch-preflight.js";
 import { toRelativeSandboxPath, resolvePathFromInput } from "./path-policy.js";
 import type { AgentToolWithMeta } from "./tools/common.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
-import {
-  decodeTextFile,
-  encodeTextFile,
-  type DecodedTextFile,
-} from "./sessions/tools/text-file-codec.js";
+import { decodeTextFile } from "./sessions/tools/text-file-codec.js";
+import type {
+  ApplyPatchBatchOptions,
+  ApplyPatchJournalOptions,
+  ApplyPatchSummary,
+  Hunk,
+  PatchFileOps,
+  UpdateFileChunk,
+} from "./apply-patch-types.js";
+
+export type {
+  AddFileHunk,
+  ApplyPatchSummary,
+  DeleteFileHunk,
+  Hunk,
+  PatchFileOps,
+  UpdateFileChunk,
+  UpdateFileHunk,
+} from "./apply-patch-types.js";
 
 const BEGIN_PATCH_MARKER = "*** Begin Patch";
 const END_PATCH_MARKER = "*** End Patch";
@@ -32,46 +50,19 @@ const EOF_MARKER = "*** End of File";
 const CHANGE_CONTEXT_MARKER = "@@ ";
 const EMPTY_CHANGE_CONTEXT_MARKER = "@@";
 
-type AddFileHunk = {
-  kind: "add";
-  path: string;
-  contents: string;
-};
-
-type DeleteFileHunk = {
-  kind: "delete";
-  path: string;
-};
-
-type UpdateFileChunk = {
-  changeContext?: string;
-  oldLines: string[];
-  newLines: string[];
-  isEndOfFile: boolean;
-};
-
-type UpdateFileHunk = {
-  kind: "update";
-  path: string;
-  movePath?: string;
-  chunks: UpdateFileChunk[];
-};
-
-type Hunk = AddFileHunk | DeleteFileHunk | UpdateFileHunk;
-
-export type ApplyPatchSummary = {
-  added: string[];
-  modified: string[];
-  deleted: string[];
-};
-
-type ApplyPatchResult = {
+export type ApplyPatchResult = {
   summary: ApplyPatchSummary;
   text: string;
+  batchState: "committed";
+  modifiedFiles: string[];
+  journal?: ApplyPatchJournalEvidence;
 };
 
 type ApplyPatchToolDetails = {
   summary: ApplyPatchSummary;
+  batchState: "committed";
+  modifiedFiles: string[];
+  write_journal?: ApplyPatchJournalEvidence;
   working_memory?: {
     result_summary: string;
     significance: "high" | "medium" | "low";
@@ -83,12 +74,18 @@ type SandboxApplyPatchConfig = {
   bridge: SandboxFsBridge;
 };
 
-type ApplyPatchOptions = {
+export type ApplyPatchOptions = ApplyPatchBatchOptions & {
   cwd: string;
   sandbox?: SandboxApplyPatchConfig;
   /** Restrict patch paths to the workspace root (cwd). Default: true. Set false to opt out. */
   workspaceOnly?: boolean;
-  signal?: AbortSignal;
+};
+
+type CreateApplyPatchToolOptions = {
+  cwd?: string;
+  sandbox?: SandboxApplyPatchConfig;
+  workspaceOnly?: boolean;
+  journal?: Omit<ApplyPatchJournalOptions, "requestId">;
 };
 
 const applyPatchSchema = Type.Object({
@@ -99,7 +96,7 @@ const applyPatchSchema = Type.Object({
 
 /** Create the agent tool wrapper for applying patch-envelope input. */
 export function createApplyPatchTool(
-  options: { cwd?: string; sandbox?: SandboxApplyPatchConfig; workspaceOnly?: boolean } = {},
+  options: CreateApplyPatchToolOptions = {},
 ): AgentToolWithMeta<typeof applyPatchSchema, ApplyPatchToolDetails> {
   const cwd = options.cwd ?? process.cwd();
   const sandbox = options.sandbox;
@@ -115,7 +112,7 @@ export function createApplyPatchTool(
     risk: "destructive",
     writeRiskProfile: { kind: "dynamic_writes", requiresApproval: true },
     parameters: applyPatchSchema,
-    execute: async (_toolCallId, args, signal) => {
+    execute: async (toolCallId, args, signal) => {
       const params = args as { input?: string };
       const input = typeof params.input === "string" ? params.input : "";
       if (!input.trim()) {
@@ -132,14 +129,29 @@ export function createApplyPatchTool(
         sandbox,
         workspaceOnly,
         signal,
+        ...(options.journal
+          ? {
+              journal: {
+                ...options.journal,
+                ...(toolCallId ? { requestId: toolCallId } : {}),
+              },
+            }
+          : {}),
       });
 
       return {
         content: [{ type: "text", text: result.text }],
         details: {
           summary: result.summary,
+          batchState: result.batchState,
+          modifiedFiles: result.modifiedFiles,
+          ...(result.journal ? { write_journal: result.journal } : {}),
           working_memory: {
-            result_summary: `Patched: +${result.summary.added.length} ~${result.summary.modified.length} -${result.summary.deleted.length}`.slice(0, 100),
+            result_summary:
+              `Patched: +${result.summary.added.length} ~${result.summary.modified.length} -${result.summary.deleted.length}`.slice(
+                0,
+                100,
+              ),
             significance: "high",
           },
         },
@@ -158,130 +170,48 @@ export async function applyPatch(
     throw new Error("No files were modified.");
   }
 
-  const summary: ApplyPatchSummary = {
-    added: [],
-    modified: [],
-    deleted: [],
-  };
-  const seen = {
-    added: new Set<string>(),
-    modified: new Set<string>(),
-    deleted: new Set<string>(),
-  };
   const fileOps = resolvePatchFileOps(options);
 
-  for (const hunk of parsed.hunks) {
-    if (options.signal?.aborted) {
-      const err = new Error("Aborted");
-      err.name = "AbortError";
-      throw err;
-    }
+  // UAS-04: preflight phase — parse, resolve, pre-read, pre-compute every hunk
+  // before any filesystem mutation. A preflight failure returns an error with
+  // zero files touched.
+  const prepared = await preflightPatch(parsed.hunks, options, fileOps, {
+    resolvePath: (filePath, aliasPolicy) => resolvePatchPath(filePath, options, aliasPolicy),
+    assertParentPath: (filePath) => assertPatchParentPath(filePath, options),
+  });
 
-    if (hunk.kind === "add") {
-      const target = await resolvePatchPath(hunk.path, options);
-      await assertPatchParentPath(hunk.path, options);
-      await ensureDir(target.resolved, fileOps);
-      await fileOps.writeFile(target.resolved, hunk.contents);
-      recordSummary(summary, seen, "added", target.display);
-      continue;
-    }
+  // UAS-04: batch apply with state machine and rollback
+  const batchResult = await applyPreparedBatch(prepared, options, fileOps);
 
-    if (hunk.kind === "delete") {
-      const target = await resolvePatchPath(hunk.path, options, PATH_ALIAS_POLICIES.unlinkTarget);
-      await fileOps.remove(target.resolved);
-      recordSummary(summary, seen, "deleted", target.display);
-      continue;
-    }
-
-    const target = await resolvePatchPath(hunk.path, options);
-    const source = await fileOps.readFile(target.resolved).catch((error: unknown) => {
-      throw new Error(
-        `Failed to read file to update ${target.resolved}: ${formatErrorMessage(error)}`,
-      );
+  // If the batch was rolled back or requires recovery, throw so the caller
+  // knows the patch did not commit. The batch state and recoveryRef are
+  // attached to the error for observability.
+  if (batchResult.batchState !== "committed") {
+    const err = new Error(batchResult.text);
+    Object.assign(err, {
+      batchState: batchResult.batchState satisfies Exclude<PatchBatchState, "committed">,
+      recoveryRef: batchResult.recoveryRef,
+      modifiedFiles: batchResult.modifiedFiles,
+      summary: batchResult.summary,
+      journal: batchResult.journal,
     });
-    const applied = await applyUpdateHunk(target.resolved, hunk.chunks, {
-      readFile: async () => source.text,
-    });
-    const encoded =
-      source.encoding === "utf8"
-        ? applied
-        : source.encoding === "utf8-bom"
-          ? `\uFEFF${applied}`
-          : encodeTextFile(applied, source.encoding);
-
-    if (hunk.movePath) {
-      const moveTarget = await resolvePatchPath(hunk.movePath, options);
-      await assertPatchParentPath(hunk.movePath, options);
-      await ensureDir(moveTarget.resolved, fileOps);
-      const moveResolvesToSource =
-        path.resolve(moveTarget.resolved) === path.resolve(target.resolved);
-      await fileOps.writeFile(
-        moveResolvesToSource ? target.resolved : moveTarget.resolved,
-        encoded,
-      );
-      if (!moveResolvesToSource) {
-        await fileOps.remove(target.resolved);
-      }
-      recordSummary(
-        summary,
-        seen,
-        "modified",
-        moveResolvesToSource ? target.display : moveTarget.display,
-      );
-    } else {
-      await fileOps.writeFile(target.resolved, encoded);
-      recordSummary(summary, seen, "modified", target.display);
-    }
+    throw err;
   }
 
   return {
-    summary,
-    text: formatSummary(summary),
+    summary: batchResult.summary,
+    text: batchResult.text,
+    batchState: "committed",
+    modifiedFiles: batchResult.modifiedFiles,
+    ...(batchResult.journal ? { journal: batchResult.journal } : {}),
   };
 }
-
-function recordSummary(
-  summary: ApplyPatchSummary,
-  seen: {
-    added: Set<string>;
-    modified: Set<string>;
-    deleted: Set<string>;
-  },
-  bucket: keyof ApplyPatchSummary,
-  value: string,
-) {
-  if (seen[bucket].has(value)) {
-    return;
-  }
-  seen[bucket].add(value);
-  summary[bucket].push(value);
-}
-
-function formatSummary(summary: ApplyPatchSummary): string {
-  const lines = ["Success. Updated the following files:"];
-  for (const file of summary.added) {
-    lines.push(`A ${file}`);
-  }
-  for (const file of summary.modified) {
-    lines.push(`M ${file}`);
-  }
-  for (const file of summary.deleted) {
-    lines.push(`D ${file}`);
-  }
-  return lines.join("\n");
-}
-
-type PatchFileOps = {
-  readFile: (filePath: string) => Promise<DecodedTextFile>;
-  writeFile: (filePath: string, content: Buffer | string) => Promise<void>;
-  remove: (filePath: string) => Promise<void>;
-  mkdirp: (dir: string) => Promise<void>;
-};
 
 function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
   if (options.sandbox) {
     const { root, bridge } = options.sandbox;
     return {
+      exists: async (filePath) => (await bridge.stat({ filePath, cwd: root }))?.type === "file",
       readFile: async (filePath) => {
         const buf = await bridge.readFile({ filePath, cwd: root });
         return decodeTextFile(buf, filePath);
@@ -294,6 +224,16 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
   const workspaceOnly = options.workspaceOnly !== false;
   const rootPromise = workspaceOnly ? fsRoot(options.cwd) : undefined;
   return {
+    exists: async (filePath) => {
+      try {
+        return (await fs.stat(filePath)).isFile();
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+          return false;
+        }
+        throw error;
+      }
+    },
     readFile: async (filePath) => {
       if (!workspaceOnly) {
         return decodeTextFile(await fs.readFile(filePath), filePath);
@@ -357,7 +297,7 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
   };
 }
 
-async function ensureDir(filePath: string, ops: PatchFileOps) {
+export async function ensureDir(filePath: string, ops: PatchFileOps) {
   const parent = path.dirname(filePath);
   if (!parent || parent === ".") {
     return;
@@ -365,7 +305,7 @@ async function ensureDir(filePath: string, ops: PatchFileOps) {
   await ops.mkdirp(parent);
 }
 
-async function assertPatchParentPath(filePath: string, options: ApplyPatchOptions) {
+export async function assertPatchParentPath(filePath: string, options: ApplyPatchOptions) {
   if (options.workspaceOnly === false || options.sandbox) {
     return;
   }
@@ -413,7 +353,7 @@ async function assertNoExistingParentAliases(params: { parentPath: string; rootP
   }
 }
 
-async function resolvePatchPath(
+export async function resolvePatchPath(
   filePath: string,
   options: ApplyPatchOptions,
   aliasPolicy: PathAliasPolicy = PATH_ALIAS_POLICIES.strict,
@@ -487,7 +427,7 @@ function relativePathEscapesRoot(relativePath: string): boolean {
   );
 }
 
-function parsePatchText(input: string): { hunks: Hunk[]; patch: string } {
+export function parsePatchText(input: string): { hunks: Hunk[]; patch: string } {
   const trimmed = input.trim();
   if (!trimmed) {
     throw new Error("Invalid patch: input is empty.");
