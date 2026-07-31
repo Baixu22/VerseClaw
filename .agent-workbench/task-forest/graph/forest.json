@@ -810,7 +810,7 @@
     }
   },
   "event_id": null,
-  "generated_at": "2026-07-31T07:31:58.076545Z",
+  "generated_at": "2026-07-31T07:44:16.807866Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -2564,5 +2564,5 @@
     "TFE-0019",
     "TFE-0033"
   ],
-  "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-maturity-p0"
+  "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }
