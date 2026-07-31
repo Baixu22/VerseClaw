@@ -5,6 +5,7 @@ import { ChatInput } from '@/pages/Chat/ChatInput';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ComponentProps, ReactElement } from 'react';
 import type { WorkspaceProfile } from '@shared/types/workspace';
+import { toast as sonnerToast } from 'sonner';
 
 function render(ui: ReactElement) {
   return testingLibraryRender(ui, { wrapper: HashRouter });
@@ -20,6 +21,19 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
   chatState: {
     currentAgentId: 'main',
     currentSessionKey: 'agent:main:main',
+    sessions: [] as Array<Record<string, unknown>>,
+    sessionLabels: {} as Record<string, string>,
+    messages: [] as Array<Record<string, unknown>>,
+    streamingText: '',
+    streamingMessage: null as unknown,
+    streamingTools: [] as Array<Record<string, unknown>>,
+    pendingFinal: false,
+    switchSession: vi.fn(async () => undefined),
+    renameSession: vi.fn(async () => undefined),
+    archiveSession: vi.fn(async () => undefined),
+    deleteSession: vi.fn(async () => undefined),
+    newSession: vi.fn(),
+    clearSessionView: vi.fn(),
   },
   gatewayState: {
     status: { state: 'running', port: 18789 },
@@ -84,7 +98,27 @@ vi.mock('@/stores/agents', () => ({
 }));
 
 vi.mock('@/stores/chat', () => ({
-  useChatStore: (selector: (state: typeof chatState) => unknown) => selector(chatState),
+  useChatStore: Object.assign(
+    (selector: (state: typeof chatState) => unknown) => selector(chatState),
+    {
+      getState: () => chatState,
+      setState: (patch: Partial<typeof chatState>) => {
+        Object.assign(chatState, patch);
+      },
+    },
+  ),
+}));
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    message: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+    loading: vi.fn(),
+    dismiss: vi.fn(),
+  },
 }));
 
 vi.mock('@/stores/gateway', () => ({
@@ -297,6 +331,27 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.commands.handoff.label': 'Handoff session',
   'composer.slashCommands.commands.handoff.description': 'Prepare an editable continuation draft in a new session.',
   'composer.slashCommands.commands.handoff.argumentHint': '',
+  'composer.slashCommands.commands.new.label': 'New session',
+  'composer.slashCommands.commands.new.description': 'Start a fresh chat in the current workspace.',
+  'composer.slashCommands.commands.new.argumentHint': '',
+  'composer.slashCommands.commands.resume.label': 'Resume session',
+  'composer.slashCommands.commands.resume.description': 'Resume a previous session. Optionally filter by a search term: /resume <keyword>',
+  'composer.slashCommands.commands.resume.argumentHint': '<keyword>',
+  'composer.slashCommands.commands.rename.label': 'Rename session',
+  'composer.slashCommands.commands.rename.description': 'Rename the current session.',
+  'composer.slashCommands.commands.rename.argumentHint': '<label>',
+  'composer.slashCommands.commands.archive.label': 'Archive session',
+  'composer.slashCommands.commands.archive.description': 'Archive the current session.',
+  'composer.slashCommands.commands.archive.argumentHint': '',
+  'composer.slashCommands.commands.delete.label': 'Delete session',
+  'composer.slashCommands.commands.delete.description': 'Permanently delete the current session.',
+  'composer.slashCommands.commands.delete.argumentHint': '',
+  'composer.slashCommands.commands.clear.label': 'Clear session',
+  'composer.slashCommands.commands.clear.description': 'Clear the current session history.',
+  'composer.slashCommands.commands.clear.argumentHint': '',
+  'composer.slashCommands.commands.copy.label': 'Copy last response',
+  'composer.slashCommands.commands.copy.description': 'Copy the last assistant response as markdown.',
+  'composer.slashCommands.commands.copy.argumentHint': '',
   'composer.slashCommands.prompts.review': 'Review the current changes as a code reviewer. Focus on bugs, regressions, risks, and missing tests.\n{{argsDetail}}',
   'composer.slashCommands.prompts.fix-ci': 'Help fix the current CI failure.\n{{argsDetail}}',
   'composer.slashCommands.prompts.write-tests': 'Write focused tests for the current change.\n{{argsDetail}}',
@@ -319,6 +374,23 @@ const slashCommandTranslations: Record<string, string> = {
   'composer.slashCommands.toasts.ledgerFailed': 'Could not create ledger task: {{error}}',
   'composer.slashCommands.toasts.missionOpened': 'Opened Agents for Mission Control',
   'composer.slashCommands.toasts.forkUnavailable': 'Fork is available after the current run finishes.',
+  'composer.slashCommands.toasts.newSessionCreated': 'Started a new session.',
+  'composer.slashCommands.toasts.resumeSessionResumed': 'Resumed session: {{label}}',
+  'composer.slashCommands.toasts.resumeSessionNotFound': 'No session matched "{{query}}".',
+  'composer.slashCommands.toasts.resumeSessionNoArgs': 'Type /resume <keyword> to pick a session by name.',
+  'composer.slashCommands.toasts.renameNoArgs': 'Type /rename <label> to set a new session name.',
+  'composer.slashCommands.toasts.renameDone': 'Session renamed to "{{label}}".',
+  'composer.slashCommands.toasts.renameFailed': 'Could not rename session: {{error}}',
+  'composer.slashCommands.toasts.archiveFailed': 'Could not archive session: {{error}}',
+  'composer.slashCommands.toasts.deleteFailed': 'Could not delete session: {{error}}',
+  'composer.slashCommands.toasts.deleteConfirm': 'Permanently delete the current session? This cannot be undone.',
+  'composer.slashCommands.toasts.archiveDone': 'Session archived.',
+  'composer.slashCommands.toasts.deleteDone': 'Session deleted.',
+  'composer.slashCommands.toasts.clearDone': 'Session history cleared.',
+  'composer.slashCommands.toasts.copyDone': 'Copied session transcript as markdown.',
+  'composer.slashCommands.toasts.copyEmpty': 'No messages in the current session to copy.',
+  'composer.slashCommands.toasts.copyFailed': 'Could not copy session transcript: {{error}}',
+  'composer.intervention.longTaskRequired': 'Interrupt/guide/queue requires an active /loop long-task context for this session.',
 };
 
 function interpolate(template: string, vars?: Record<string, unknown>): string {
@@ -1608,6 +1680,215 @@ describe('ChatInput capability action preflight', () => {
 
     expect(hostApiFetchMock).not.toHaveBeenCalledWith('/api/mcp/create', expect.anything());
     expect(onSend).not.toHaveBeenCalled();
+  });
+});
+
+describe('ChatInput slash session lifecycle commands', () => {
+  beforeEach(() => {
+    chatState.currentAgentId = 'main';
+    chatState.currentSessionKey = 'agent:main:main';
+    chatState.sessions = [];
+    chatState.sessionLabels = {};
+    chatState.messages = [];
+    gatewayState.status = { state: 'running', port: 18789 };
+    setProviderReady();
+    providersState.refreshProviderSnapshot.mockReset();
+    vi.mocked(hostApiFetchMock).mockReset();
+    permissionMocks.approvals.mockReset();
+    permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
+    permissionMocks.decideApproval.mockReset();
+    permissionMocks.decideApproval.mockResolvedValue({ success: true });
+    artifactPanelMocks.openPreview.mockReset();
+    vi.mocked(chatState.switchSession).mockReset();
+    vi.mocked(chatState.renameSession).mockReset();
+    vi.mocked(chatState.archiveSession).mockReset();
+    vi.mocked(chatState.deleteSession).mockReset();
+    vi.mocked(chatState.newSession).mockReset();
+  });
+
+  it('/new starts a fresh session through the onNewSession prop', async () => {
+    const onNewSession = vi.fn(async () => undefined);
+    renderChatInput(vi.fn(), { onNewSession });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/new' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(onNewSession).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(sonnerToast.success).toHaveBeenCalledWith('Started a new session.');
+    });
+  });
+
+  it('/resume switches to the session matching the keyword', async () => {
+    chatState.sessions = [{ key: 'agent:main:old-session', label: 'Old release work' }];
+    chatState.sessionLabels = { 'agent:main:old-session': 'Release prep' };
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/resume release' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.switchSession).toHaveBeenCalledWith('agent:main:old-session');
+    });
+    await waitFor(() => {
+      expect(sonnerToast.success).toHaveBeenCalledWith('Resumed session: Release prep');
+    });
+  });
+
+  it('/resume without args shows a hint instead of switching', async () => {
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/resume' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.switchSession).not.toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(sonnerToast.message).toHaveBeenCalledWith(
+        'Type /resume <keyword> to pick a session by name.',
+      );
+    });
+  });
+
+  it('/rename renames the current session', async () => {
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/rename New label' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.renameSession).toHaveBeenCalledWith('agent:main:main', 'New label');
+    });
+  });
+
+  it('/archive archives the current session', async () => {
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/archive' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.archiveSession).toHaveBeenCalledWith('agent:main:main');
+    });
+  });
+
+  it('/delete permanently deletes the current session after confirmation', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/delete' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.deleteSession).toHaveBeenCalledWith('agent:main:main');
+    });
+  });
+
+  it('/clear resets the local message view through the store action', async () => {
+    chatState.messages = [{ role: 'user', content: 'old turn' }];
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/clear' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(chatState.clearSessionView).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(sonnerToast.success).toHaveBeenCalledWith('Session history cleared.');
+    });
+  });
+
+  it('/copy copies the last assistant response as markdown', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    chatState.messages = [
+      { role: 'user', content: 'first question' },
+      { role: 'assistant', content: 'first answer' },
+      { role: 'user', content: 'second question' },
+      { role: 'assistant', content: [{ type: 'text', text: 'second answer' }] },
+    ];
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/copy' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith('second answer');
+    });
+    await waitFor(() => {
+      expect(sonnerToast.success).toHaveBeenCalledWith('Copied session transcript as markdown.');
+    });
+  });
+
+  it('/copy shows a hint when there is no assistant response', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    chatState.messages = [{ role: 'user', content: 'question without answer' }];
+    renderChatInput(vi.fn());
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/copy' } });
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(writeText).not.toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(sonnerToast.message).toHaveBeenCalledWith(
+        'No messages in the current session to copy.',
+      );
+    });
+  });
+
+  it('disables intervention buttons when the session has no /loop long-task context', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend, {
+      sending: true,
+      draftValue: 'interrupt the run',
+      longTaskControlStatus: {
+        available: false,
+        queueCount: 0,
+        warnings: [],
+      },
+    });
+
+    expect(screen.getByTestId('chat-intervention-guide')).toBeDisabled();
+    expect(screen.getByTestId('chat-intervention-interrupt')).toBeDisabled();
+    expect(screen.getByTestId('chat-intervention-revise-goal')).toBeDisabled();
+  });
+
+  it('sends revise-goal through the intervention button', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend, {
+      sending: true,
+      draftValue: 'the goal changed: ship only the core path',
+      longTaskControlStatus: {
+        available: true,
+        queueCount: 0,
+        warnings: [],
+      },
+    });
+
+    fireEvent.click(screen.getByTestId('chat-intervention-revise-goal'));
+
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith(
+        'the goal changed: ship only the core path',
+        expect.objectContaining({ inputMode: 'revise-goal' }),
+      );
+    });
   });
 });
 

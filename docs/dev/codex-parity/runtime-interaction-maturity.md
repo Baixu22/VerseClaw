@@ -84,11 +84,13 @@ Codex 侧是生产级三层链路（TUI→RPC→core）+ guardian 熔断 + 大�
 
 ## 3. 验证缺口（最优先关注）
 
-1. **ClawX 运行时 inputMode 三分支（interrupt/guide/queue，`chat.ts:3371-3661`）无直接单测**——e2e 均 mock Host API 层；Codex 同类逻辑有全套 core 测试。这是两者成熟度差距的最大来源。
-2. **restoreCheckpoint 的 event-log replay 未实现**（`sessions/run-control.ts:550`），恢复实际走 legacy 文件回滚，语义弱于设计意图。
-3. **`interventionPolicyForInputMode` 生产侧死代码**（`long-task-control.ts:398-467`）：仅 `tests/unit/long-task-control.test.ts` 单测引用，无任何生产调用；策略实际分散在 `electron/services/chat-api.ts` 白名单 + `input-classifier.ts` + `input-mode.ts` 实现，存在漂移风险。
-4. **interrupt/guide/queue 三模式的 `/loop` Task Ledger root 门禁**（`chat.ts:3382`）：普通会话显式 inputMode（含 queue）一律 `INVALID_REQUEST` 且 UI 无前置提示；guide 无 root 时静默降级普通发送，用户无感知。
-5. **revise-goal 无 UI 入口**（仅运行时分类器）。
+> 状态更新（2026-07 实施后）：**P0 三项已闭环**（见 §6 标记）。以下保留历史描述并标注当前状态。
+
+1. **~~ClawX 运行时 inputMode 三分支（interrupt/guide/queue，`chat.ts:3371-3661`）无直接单测~~** —— ✅ **已解决**：新增 `tests/unit/chat-send-input-mode.test.ts`（7 用例：门禁、协议校验、interrupt checkpoint-then-abort 顺序+幂等键、guide steered/fallback、queue 入队广播+drain 竞态回滚），全部直接调用 `chatHandlers['chat.send']`，不 mock chat.ts 本体。e2e 均 mock Host API 层；Codex 同类逻辑有全套 core 测试。这是两者成熟度差距的最大来源。
+2. **restoreCheckpoint 的 event-log replay 未实现**（`sessions/run-control.ts:550`），恢复实际走 legacy 文件回滚，语义弱于设计意图。—— ✅ **部分解决（降级声明）**：authority 的 legacy 分支 evidenceSummary 明确"文件写入已回滚，运行态/外部副作用未恢复"；CheckpointsDialog 在 `legacy_checkpoint_fallback` 时展示"部分恢复"标注（4 语言 i18n）。**完整 replay 落地独立立项（3-5 人日）**。
+3. **`interventionPolicyForInputMode` 生产侧死代码**（`long-task-control.ts:398-467`）—— ✅ **已解决**：runtime 侧新增 `intervention-policy.ts`（与 shared 同构，7 组组合 toEqual 一致性测试锁定）；`chat.ts:3399` 调用 policy（resumeTrigger 替换 trigger 推导、recordsDeviation/reviewRequired 控制 checkpoint 字段、confirmationRequired/reviewRequired 进事件审计面）；`LONG_TASK_INPUT_MODES` 常量消除三处白名单字符串重复。
+4. **interrupt/guide/queue 三模式的 `/loop` Task Ledger root 门禁**（`chat.ts:3382`）：普通会话显式 inputMode（含 queue）一律 `INVALID_REQUEST` 且 UI 无前置提示；guide 无 root 时静默降级普通发送，用户无感知。—— ⏳ **未解决（P1）**：UI 前置提示尚未实现。
+5. **revise-goal 无 UI 入口**（仅运行时分类器）。—— ⏳ **未解决（P1）**。
 
 ---
 
@@ -111,17 +113,19 @@ Codex 侧是生产级三层链路（TUI→RPC→core）+ guardian 熔断 + 大�
 
 ### P0 — 验证与正确性
 
-1. **运行时 inputMode 三分支补单测**（对标 Codex `session/tests.rs` 的 steer/abort 测试密度）
+> 实施状态（2026-07）：**三项全部完成**，本清单保留为历史记录。
+
+1. **~~运行时 inputMode 三分支补单测~~**（对标 Codex `session/tests.rs` 的 steer/abort 测试密度）—— ✅ **已完成**：`tests/unit/chat-send-input-mode.test.ts`（7/7 通过）。
    - 目标：`openclaw_runtime/src/gateway/server-methods/chat.ts:3371-3661`（interrupt/guide/queue 分支）
    - 建议：以 `tests/unit/user-message-queue.test.ts` 为模板（它已覆盖存储层），新增 chat 层测试：① interrupt：checkpoint 先于 abort 写入、幂等键、abort 后新 run 启动；② guide：steer 成功→'steered' 事件、被拒→fallback 降级；③ queue：入队→广播→drain 合成 chat.send 合并投递→drained/failed、`active_run_started_before_queue_drain` 竞态回滚。
    - 验收：三个分支各有 ≥1 个直接单测（不 mock 掉 chat.ts 本体）；`pnpm test` 通过。
 
-2. **消除 `interventionPolicyForInputMode` 生产侧死代码或接线**
+2. **~~消除 `interventionPolicyForInputMode` 生产侧死代码或接线~~** —— ✅ **已完成**：runtime 侧 `intervention-policy.ts` 接线（`chat.ts:3399` 调用，resumeTrigger/recordsDeviation/reviewRequired 生效），shared 与 runtime 两侧 7 组组合 toEqual 一致性测试；`LONG_TASK_INPUT_MODES` 常量消除三处白名单字符串重复。
    - 目标：`shared/types/long-task-control.ts:398-467`
    - 建议：二选一——要么让 `electron/services/chat-api.ts:459-461` 白名单校验复用该 policy（`confirmationRequired`/`checkpointRequired` 等字段进运行时决策），要么删除并注明策略实际在 `input-classifier.ts` + `input-mode.ts` 实现。
    - 验收：`interventionPolicyForInputMode` 有生产引用或已删除（单测引用不计数），无生产侧死代码。
 
-3. **restoreCheckpoint 的 event-log replay 落地或降级声明**
+3. **~~restoreCheckpoint 的 event-log replay 落地或降级声明~~** —— ✅ **已完成（降级声明方案）**：authority legacy evidenceSummary 明确恢复粒度；CheckpointsDialog '部分恢复' 标注（4 语言 i18n）+ mode 断言单测；**完整 replay 落地独立立项（3-5 人日）**。
    - 目标：`openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts:501-574`
    - 建议：短中期把 `executeReplayRollback` 的 `{enabled:false}` 改为显式文档化降级（UI 标注"部分恢复"），长期按 `runtime_task_event_log_records` 表（schema 已建，`:1106-1122`）实现事件日志重放。
    - 验收：UI 恢复对话框明确标注恢复粒度；或 replay 实现后移除 legacy fallback。
@@ -140,9 +144,39 @@ Codex 侧是生产级三层链路（TUI→RPC→core）+ guardian 熔断 + 大�
 
 ### P2 — 对等能力（可选，按产品方向取舍）
 
-6. **运行中 agent 间消息 / 侧边对话**（对标 Codex `/side` + `send_message`）
-   - 建议：若 ClawX 角色编排模型需要"主 agent 运行中向角色 agent 注入指令"，先评估 `task-visualization.ts`/`RolesOrchestrationPanel` 现有编排是否已覆盖，再决定是否引入 steering-queue 式的 agent 消息通道。**不做默认推荐**——ClawX 与 Codex 的多 agent 模型本就不同。
+6. **运行中 agent 间消息 / 侧边对话**（对标 Codex `/side` + `send_message`）—— **决策（2026-07）：不引入，记为设计差异**。ClawX 采用角色编排模型（`orchestrator.run` + 任务 DAG + 黑板 + verifier + `subagent-lifecycle` 事件），与 Codex 的消息传递模型（`/side` 临时 fork + `send_message`）是不同协作范式；运行时虽已有 `sessions_send` A2A 工具（默认关闭）与 `subagent-lifecycle` 事件等 80% 构件，但引入 side chat 属产品方向变更，非纯技术补缺。差距记录：无"运行中可寻址侧边对话"UI、A2A 默认关、`targetAgentId` 为会话切换语义。
 
-7. **guardian 式自动中断兜底**（对标 Codex `GuardianRejectionCircuitBreaker`）
-   - 建议：ClawX 已有 `LongConversationControlSignal`（blocking 级）与 `audit_fail`/`manual_review` checkpoint trigger，可在此之上实现"连续 blocking 信号→自动 checkpoint+interrupt"，复用现有链路。
-   - 验收：有控制信号熔断的单测（阈值语义参照 Codex：3 连拒/50 次内 10 拒）。
+7. **~~guardian 式自动中断兜底~~**（对标 Codex `GuardianRejectionCircuitBreaker`）—— ✅ **已完成（2026-07）**：新建 `openclaw_runtime/src/agents/guardian-circuit-breaker.ts`——会话级聚合器，阈值对标 Codex（连续 blocking ≥3 = `MAX_CONSECUTIVE_GUARDIAN_DENIALS_PER_TURN`；50 次窗口内 ≥10 = `MAX_RECENT_AUTO_REVIEW_DENIALS`），clean 复位连续计数、trip 保持至 reset；接入 task-loop（self-check 后 `record.controlSignals` 处）与 mission-control（reviewer 后）两条信号源，trip 时强制 `blocked` + 写 `audit_fail` checkpoint（该 trigger 此前无产生点，现由熔断器语义化使用）+ 停止 repair/tick 循环；单测 7 用例（连续 3 拒/窗口 10 拒/clean 复位/trip 保持/会话隔离/选项校验）。已知限制：普通 chat turn 不产生 `LongConversationControlSignal`（信号只来自 task-loop/mission），run 级失败观察为后续独立项。
+
+---
+
+## 7. 对齐核对矩阵（2026-07 真实 review 输出）
+
+逐项对照 Codex CLI（`codex-rs/tui/src/slash_command.rs` 描述 + 运行时语义）核对 ClawX 实现。
+
+### 7.1 slash 会话生命周期命令
+
+| ClawX 命令 | Codex 命令 | Codex 语义 | ClawX 实现 | 对齐 |
+|---|---|---|---|---|
+| `/new` | `/new` | "start a new chat during a conversation" | `onNewSession` prop → `createWorkspaceScopedNewSession`（workspace-session.ts:70） | ✅ 一致 |
+| `/resume <keyword>` | `/resume` | "resume a saved chat"（会话选择器） | 关键词匹配 `store.sessions`（label/key，按 updatedAt 降序取最近）→ `switchSession` | ✅ 等价（参数定位比选择器更快；无参数时提示用法） |
+| `/rename <label>` | `/rename` | "rename the current thread" | `renameSession(currentSessionKey, label)`（空参数提示 renameNoArgs） | ✅ 一致 |
+| `/archive` | `/archive` | "archive this session and exit" | `archiveSession(currentSessionKey)`（IPC 失败 throw → archiveFailed toast，修复后） | ✅ 一致 |
+| `/delete` | `/delete` | "permanently delete this session"（含确认） | `window.confirm(deleteConfirm)` → `deleteSession(key)`（IPC 失败 throw → deleteFailed toast） | ✅ 一致（确认对齐） |
+| `/clear` | `/clear` | "clear the terminal and start a new chat" | `clearSessionView`（停轮询+清缓存+消息/运行态复位，保留会话与服务端历史） | ⚠️ 语义差异：Codex 清屏+新对话；ClawX 本地清空视图。桌面端无"终端清屏"，该映射可接受，文档已记录 |
+| `/copy` | `/copy` | "copy last response as markdown" | 复制最后一条 assistant 响应（本回合从"整个会话"修正为对齐 Codex） | ✅ 一致（修正后） |
+
+### 7.2 运行时三模式
+
+| 模式 | Codex 语义 | ClawX 实现 | 对齐 |
+|---|---|---|---|
+| interrupt | 中止当前 turn（纯中断，无载荷），`<turn_aborted>` marker | checkpoint → abort → 新 run 重启（带载荷=新消息即新 run 起点） | ✅ 语义等价（ClawX 更强：checkpoint 先写） |
+| guide/steer | `steer_input` 注入 pending，下一采样边界生效，不打断推理 | steering queue 注入，LLM 循环下一轮消费，不打断 run | ✅ 一致 |
+| queue | 无用户级队列（mailbox/turn pending）；TUI 层排队 | SQLite 持久化队列 + run 结束 drain + 竞态回滚 | ✅ ClawX 更强（用户级持久化） |
+
+### 7.3 全量功能测试结论（2026-07 真实运行）
+
+- **单测**：`pnpm test` 全链通过（无失败项）。
+- **核心 e2e**：本会话新增/触及 spec 全部通过（slash-session-lifecycle 2/2、checkpoints 1/1、sidebar 3/3）；9 个失败全部为 `app.evaluate` 导航竞态（Execution context destroyed），与会话前文档记录的 pre-existing 问题一致，非本会话功能缺陷。
+- **功能可用性 review**：7 命令均真实可触发/可完成/有反馈；修复了 2 个真实缺陷（/archive /delete IPC 失败仍弹成功 toast；/clear 状态复位不完整）与 3 个 nit（/resume 排序、/copy 文案、policy 注释）。
+- **安全 review**：pass（无注入面；剪贴板/错误文案 2 个低风险观察项）。

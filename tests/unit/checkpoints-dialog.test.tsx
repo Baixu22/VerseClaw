@@ -157,8 +157,41 @@ describe('CheckpointsDialog', () => {
       );
     });
     await waitFor(() => {
-      expect(screen.getByText('Restored from checkpoint "c1"')).toBeDefined();
+      // legacy_checkpoint_fallback → 追加"部分恢复"标注（i18n mock 返回 key）
+      expect(
+        screen.getByText('Restored from checkpoint "c1" checkpoints.partialRestoreNotice'),
+      ).toBeDefined();
     });
+  });
+
+  it('omits the partial-restore notice for full event-log replays', async () => {
+    resumeCheckpointsMock.mockResolvedValue({
+      success: true,
+      checkpoints: [makeCheckpoint('c1', '2026-07-31T00:00:00.000Z')],
+    });
+    restoreCheckpointMock.mockResolvedValueOnce({
+      success: true,
+      checkpointId: 'c1',
+      rolledBackTo: 'checkpoint:c1',
+      mode: 'event_log_replay',
+      evidenceSummary: 'Replayed event-log entries 1..5',
+    });
+    render(
+      <CheckpointsDialog
+        open
+        onOpenChange={() => undefined}
+        sessionKey="agent::s1"
+        agentId={null}
+      />,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId('chat-checkpoint-restore-c1')).toBeDefined();
+    });
+    fireEvent.click(screen.getByTestId('chat-checkpoint-restore-c1'));
+    await waitFor(() => {
+      expect(screen.getByText('Replayed event-log entries 1..5')).toBeDefined();
+    });
+    expect(screen.queryByText(/partialRestoreNotice/)).toBeNull();
   });
 
   it('surfaces restore failure', async () => {

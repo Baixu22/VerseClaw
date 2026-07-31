@@ -54,8 +54,29 @@ vi.mock('../../openclaw_runtime/src/gateway/session-utils.js', () => ({
   resolveSessionStoreKey: vi.fn(() => 'agent:main'),
 }));
 
-import { chatHandlers } from '../../openclaw_runtime/src/gateway/server-methods/chat';
+// embedded-agent-runner/runs.js 仅在 chat.ts 中被动态 import（guide 分支与
+// drain 回调），全 mock 以便可控地驱动 steering / drain 竞态。
+vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js', () => ({
+  resolveActiveEmbeddedRunSessionId: vi.fn(() => undefined),
+  queueEmbeddedAgentMessageWithOutcomeAsync: vi.fn(async () => ({ queued: false })),
+}));
+
+// clawgraph/runtime.js 的依赖链在 jsdom 下加载期崩溃
+// （manifest-metadata-scan 的 new URL(import.meta.url)），chat.ts 仅需
+// listClawGraphRunSnapshots 判断 clawGraphNodeActive，全 mock。
+vi.mock('../../openclaw_runtime/src/agents/clawgraph/runtime.js', () => ({
+  listClawGraphRunSnapshots: vi.fn(() => []),
+}));
+
+import { chatHandlers, drainQueuedUserMessagesForSession } from '../../openclaw_runtime/src/gateway/server-methods/chat';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import {
+  listLongTaskCheckpoints,
+  listLongTaskInterventions,
+  listLongTaskQueuedMessages,
+  recordLongTaskCheckpoint,
+} from '../../openclaw_runtime/src/agents/long-task-control/store';
+import { enqueueUserMessage } from '../../openclaw_runtime/src/agents/user-message-queue';
 
 const ORIGINAL_STATE_DIR = process.env.OPENCLAW_STATE_DIR;
 let testStateRoot: string | undefined;
@@ -164,5 +185,198 @@ describe('chat.send inputMode gate', () => {
     expect(errorPayload?.code).toBe('INVALID_REQUEST');
     expect(errorPayload?.message).toContain('invalid chat.send params');
     expect(errorPayload?.message).not.toContain('inputMode requires');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 三分支用例：interrupt / guide / queue
+// ---------------------------------------------------------------------------
+
+const LEDGER_ROOT = 'tlroot_test';
+
+/** 预置 /loop Task Ledger root（getLatestLongTaskLedgerRootId 查询真实 SQLite）。 */
+function seedLedgerRoot(sessionKey: string) {
+  return recordLongTaskCheckpoint({
+    idempotencyKey: `seed-root-${sessionKey}`,
+    sessionKey,
+    agentId: 'main',
+    workspaceId: 'workspace',
+    taskLedgerRootId: LEDGER_ROOT,
+    trigger: 'guide',
+    activeTask: 'seed loop root',
+  });
+}
+
+describe('chat.send inputMode: interrupt', () => {
+  it('checkpoints before aborting, records checkpointed event, and responds ok', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const respond = vi.fn();
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+
+    await callChatSend(context, respond, {
+      sessionKey: SESSION_KEY,
+      message: 'change course',
+      idempotencyKey: RUN_ID,
+      inputMode: 'interrupt',
+    });
+
+    // ① checkpoint 先于 abort 写入（trigger:'interrupt' + 幂等键）
+    const checkpoints = listLongTaskCheckpoints(SESSION_KEY);
+    const interruptCheckpoint = checkpoints.find((c) => c.trigger === 'interrupt');
+    expect(interruptCheckpoint).toBeDefined();
+    expect(interruptCheckpoint?.idempotencyKey).toBe(`chat:${RUN_ID}:interrupt:checkpoint`);
+    expect(interruptCheckpoint?.checkpoint.taskLedgerRootId).toBe(LEDGER_ROOT);
+
+    // ② intervention event 'checkpointed'
+    const interventions = listLongTaskInterventions(SESSION_KEY);
+    expect(
+      interventions.some((i) => i.mode === 'interrupt' && i.status === 'checkpointed'),
+    ).toBe(true);
+
+    // ③ abort 路径被触发（chat-abort mock 的 abortChatRunById 被调用）
+    const { abortChatRunById } = await import(
+      '../../openclaw_runtime/src/gateway/chat-abort'
+    );
+    expect(abortChatRunById).toHaveBeenCalled();
+
+    // ④ 分支 fall-through 后因 active run 仍在 → in_flight（非错误）
+    expect(respond.mock.calls[0]?.[0]).toBe(true);
+  });
+});
+
+describe('chat.send inputMode: guide', () => {
+  it('steers the active run and records steered evidence', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const respond = vi.fn();
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+    const { resolveActiveEmbeddedRunSessionId, queueEmbeddedAgentMessageWithOutcomeAsync } =
+      await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue('session-1');
+    vi.mocked(queueEmbeddedAgentMessageWithOutcomeAsync).mockResolvedValue({
+      queued: true,
+    });
+
+    await callChatSend(context, respond, {
+      sessionKey: SESSION_KEY,
+      message: 'please focus on tests',
+      idempotencyKey: RUN_ID,
+      inputMode: 'guide',
+    });
+
+    // 注入调用参数正确
+    expect(queueEmbeddedAgentMessageWithOutcomeAsync).toHaveBeenCalledWith(
+      'session-1',
+      'please focus on tests',
+      { steeringMode: 'all', debounceMs: 0 },
+    );
+    // steered 响应
+    expect(respond.mock.calls[0]?.[0]).toBe(true);
+    expect(respond.mock.calls[0]?.[1]).toMatchObject({
+      ok: true,
+      steered: true,
+      mode: 'guide',
+    });
+    // checkpoint + steered 事件
+    const checkpoints = listLongTaskCheckpoints(SESSION_KEY);
+    expect(checkpoints.find((c) => c.trigger === 'guide')).toBeDefined();
+    const interventions = listLongTaskInterventions(SESSION_KEY);
+    expect(
+      interventions.some((i) => i.mode === 'guide' && i.status === 'steered'),
+    ).toBe(true);
+  });
+
+  it('falls back to a normal send when steering is rejected', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const respond = vi.fn();
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+    const { resolveActiveEmbeddedRunSessionId, queueEmbeddedAgentMessageWithOutcomeAsync } =
+      await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue('session-1');
+    vi.mocked(queueEmbeddedAgentMessageWithOutcomeAsync).mockResolvedValue({
+      queued: false,
+      reason: 'run_ended',
+    });
+
+    await callChatSend(context, respond, {
+      sessionKey: SESSION_KEY,
+      message: 'steer rejected case',
+      idempotencyKey: RUN_ID,
+      inputMode: 'guide',
+    });
+
+    // fallback 事件被记录（而非 steered）
+    const interventions = listLongTaskInterventions(SESSION_KEY);
+    expect(
+      interventions.some((i) => i.mode === 'guide' && i.status === 'fallback'),
+    ).toBe(true);
+    expect(
+      interventions.some((i) => i.status === 'steered'),
+    ).toBe(false);
+    // 降级后走主 dispatch：active run 仍在 → in_flight（非错误、非 steered）
+    expect(respond.mock.calls[0]?.[0]).toBe(true);
+    expect(respond.mock.calls[0]?.[1]).not.toMatchObject({ steered: true });
+  });
+});
+
+describe('chat.send inputMode: queue', () => {
+  it('persists the queued message and broadcasts queue status', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const respond = vi.fn();
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+
+    await callChatSend(context, respond, {
+      sessionKey: SESSION_KEY,
+      message: 'queue this follow-up',
+      idempotencyKey: RUN_ID,
+      inputMode: 'queue',
+    });
+
+    // queued 响应
+    expect(respond.mock.calls[0]?.[0]).toBe(true);
+    expect(respond.mock.calls[0]?.[1]).toMatchObject({
+      ok: true,
+      queued: true,
+      mode: 'queue',
+      queuePosition: 1,
+    });
+    // SQLite 持久化入队
+    const queued = listLongTaskQueuedMessages(SESSION_KEY);
+    expect(queued).toHaveLength(1);
+    expect(queued[0]?.text).toBe('queue this follow-up');
+    expect(queued[0]?.idempotencyKey).toBe(`chat:${RUN_ID}:queue:item`);
+    // chat.queue-status 广播（enqueue，含 dropIfSlow 选项）
+    expect(context.broadcast).toHaveBeenCalledWith(
+      'chat.queue-status',
+      expect.objectContaining({ action: 'enqueue', queueCount: 1 }),
+      { dropIfSlow: true },
+    );
+  });
+
+  it('drain restores claimed rows when a new run started before drain', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    enqueueUserMessage(SESSION_KEY, {
+      text: 'follow-up after restart',
+      source: 'queue',
+      idempotencyKey: 'drain-race-1',
+    });
+    // 模拟：drain 检查时已有新 run 启动
+    const { resolveActiveEmbeddedRunSessionId } = await import(
+      '../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js'
+    );
+    vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue('session-new-run');
+
+    const context = makeContext();
+    const result = await drainQueuedUserMessagesForSession(context, SESSION_KEY);
+
+    expect(result.drained).toBe(false);
+    expect(result.reason).toBe('active_run_started_before_queue_drain');
+    // 已 claim 的条目被 restore 回 pending，不丢消息
+    expect(listLongTaskQueuedMessages(SESSION_KEY)).toHaveLength(1);
+    const restored = listLongTaskQueuedMessages(SESSION_KEY)[0];
+    expect(restored?.text).toBe('follow-up after restart');
   });
 });

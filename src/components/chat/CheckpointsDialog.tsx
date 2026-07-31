@@ -72,7 +72,11 @@ export function CheckpointsDialog({ open, onOpenChange, sessionKey, agentId }: C
         checkpointId,
       });
       if (result.success) {
-        setRestored(result.evidenceSummary || t('checkpoints.restoreSucceeded'));
+        const partialNotice =
+          result.mode === 'legacy_checkpoint_fallback'
+            ? ` ${t('checkpoints.partialRestoreNotice')}`
+            : '';
+        setRestored(`${result.evidenceSummary || t('checkpoints.restoreSucceeded')}${partialNotice}`);
         await load();
       } else {
         setError(result.error || t('checkpoints.restoreFailed'));

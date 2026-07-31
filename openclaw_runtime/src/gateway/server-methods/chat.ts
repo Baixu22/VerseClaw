@@ -56,9 +56,12 @@ import {
 } from "../../agents/user-message-queue.js";
 import {
   getLatestLongTaskLedgerRootId,
+  LONG_TASK_INPUT_MODES,
   recordLongTaskCheckpoint,
   recordLongTaskInterventionEvent,
 } from "../../agents/long-task-control/store.js";
+import { interventionPolicyForInputMode } from "../../agents/long-task-control/intervention-policy.js";
+import { listClawGraphRunSnapshots } from "../../agents/clawgraph/runtime.js";
 import {
   getReplyPayloadMetadata,
   isReplyPayloadStatusNotice,
@@ -2192,6 +2195,15 @@ function resolveAuthorizedRunsForSessionKeys(params: {
 /** Scans the active abort-controller map for a run matching a session key.
  * Used by the role-first input-mode integration to detect runs that can be
  * interrupted, steered, or queued when a new message arrives. */
+function hasActiveClawGraphNodeForSession(sessionKey: string): boolean {
+  return listClawGraphRunSnapshots().some(
+    (snapshot) =>
+      snapshot.sessionKey === sessionKey &&
+      Array.isArray(snapshot.activeNodeIds) &&
+      snapshot.activeNodeIds.length > 0,
+  );
+}
+
 function findActiveChatAbortEntryForSession(
   controllers: Map<string, ChatAbortControllerEntry>,
   sessionKey: string,
@@ -3374,11 +3386,20 @@ export const chatHandlers: GatewayRequestHandlers = {
       // Without this the classifier regex alone decides, silently dropping the
       // user's explicit "guide"/"queue"/"interrupt" choice.
       const explicitInputMode = typeof p.inputMode === "string"
-        && ["interrupt", "guide", "queue", "revise-goal"].includes(p.inputMode)
+        && (LONG_TASK_INPUT_MODES as readonly string[]).includes(p.inputMode)
         ? (p.inputMode as "interrupt" | "guide" | "queue" | "revise-goal")
         : undefined;
       const action = createInputModeAction(inboundMessage, explicitInputMode);
       const taskLedgerRootId = getLatestLongTaskLedgerRootId(sessionKey);
+      // Runtime intervention policy (P0-2): resumeTrigger / checkpointRequired /
+      // recordsDeviation / reviewRequired / confirmationRequired drive the
+      // checkpoint fields and audit annotations below. highRisk is not yet
+      // wired to control signals (defaults false); clawGraphNodeActive reflects
+      // live ClawGraph runs with running/ready/auditing nodes for this session.
+      const interventionPolicy = interventionPolicyForInputMode(action.mode, {
+        highRisk: false,
+        clawGraphNodeActive: hasActiveClawGraphNodeForSession(sessionKey),
+      });
       if (!taskLedgerRootId && explicitInputMode) {
         respond(
           false,
@@ -3404,12 +3425,18 @@ export const chatHandlers: GatewayRequestHandlers = {
           workspaceId,
           taskLedgerRootId,
           runId: activeEntryForSession.runId, 
-          trigger: action.mode === "revise-goal" ? "revise_goal" : "interrupt", 
+          trigger: interventionPolicy.resumeTrigger ??
+            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"), 
           activeTask: action.mode === "revise-goal"
             ? "Active chat run checkpointed because the user revised the goal."
             : "Active chat run interrupted by user input.", 
-          deviations: [action.mode === "revise-goal" ? "User revised the active goal." : "User interrupted the active run."], 
+          deviations: interventionPolicy.recordsDeviation
+            ? [action.mode === "revise-goal" ? "User revised the active goal." : "User interrupted the active run."]
+            : [], 
           ...(action.mode === "revise-goal" ? { decisions: ["Restart from the revised user goal."] } : {}),
+          ...(interventionPolicy.reviewRequired
+            ? { reviewNeededItems: ["Review required before continuing after the intervention."] }
+            : {}),
           nextAction: action.mode === "revise-goal"
             ? "Start a fresh run from the revised user goal."
             : "Start a fresh run from the interrupting user message.", 
@@ -3425,9 +3452,17 @@ export const chatHandlers: GatewayRequestHandlers = {
           runId: activeEntryForSession.runId, 
           checkpointId: checkpoint.id, 
           mode: action.mode, 
-          trigger: action.mode === "revise-goal" ? "revise_goal" : "interrupt", 
+          trigger: interventionPolicy.resumeTrigger ??
+            (action.mode === "revise-goal" ? "revise_goal" : "interrupt"), 
           status: "checkpointed", 
-          payload: { message: inboundMessage }, 
+          payload: {
+            message: inboundMessage,
+            policy: {
+              delivery: interventionPolicy.delivery,
+              confirmationRequired: interventionPolicy.confirmationRequired,
+              reviewRequired: interventionPolicy.reviewRequired,
+            },
+          }, 
         }); 
         // Abort the active run via the existing session-scoped abort path, then
         // fall through so the inbound message starts a fresh run.
@@ -3458,7 +3493,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           workspaceId,
           taskLedgerRootId,
           runId: activeEntryForSession.runId,
-          trigger: "queue_drain",
+          trigger: interventionPolicy.resumeTrigger ?? "queue_drain",
           activeTask: "Queued user follow-up while an active run continued.",
           nextAction: "Drain the queued follow-up after the active run completes.",
           evidenceRefs: [{ type: "session", ref: sessionKey }],
@@ -3481,7 +3516,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           runId: activeEntryForSession.runId,
           checkpointId: checkpoint.id,
           mode: "queue",
-          trigger: "queue_drain",
+          trigger: interventionPolicy.resumeTrigger ?? "queue_drain",
           status: "queued",
           payload: { queueItemId: queuedMsg.id, message: inboundMessage },
         });
@@ -3612,7 +3647,7 @@ export const chatHandlers: GatewayRequestHandlers = {
                 workspaceId,
                 taskLedgerRootId,
                 runId: activeEntryForSession.runId,
-                trigger: "guide",
+                trigger: interventionPolicy.resumeTrigger ?? "guide",
                 activeTask: "User guidance injected into the active run.",
                 nextAction: "Continue the active run with the user guidance as steering evidence.",
                 evidenceRefs: [{ type: "session", ref: sessionKey }],
@@ -3627,7 +3662,7 @@ export const chatHandlers: GatewayRequestHandlers = {
                 runId: activeEntryForSession.runId,
                 checkpointId: checkpoint.id,
                 mode: "guide",
-                trigger: "guide",
+                trigger: interventionPolicy.resumeTrigger ?? "guide",
                 status: "steered",
                 payload: { message: inboundMessage },
               });
@@ -3648,7 +3683,7 @@ export const chatHandlers: GatewayRequestHandlers = {
               taskLedgerRootId,
               runId: activeEntryForSession.runId,
               mode: "guide",
-              trigger: "guide",
+              trigger: interventionPolicy.resumeTrigger ?? "guide",
               status: "fallback",
               payload: { reason: outcome.reason ?? "steering_rejected", message: inboundMessage },
             });
