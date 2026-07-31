@@ -157,18 +157,96 @@ test.describe('Chat page layout CDP checks', () => {
 
       await expect(page.getByTestId('chat-page')).toBeVisible();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      const composerShell = page.getByTestId('chat-composer-shell');
+      await expect(composerShell).toBeVisible();
+      await expect(page.getByTestId('chat-composer-context-strip')).toHaveCount(0);
+      const composerMetrics = await composerShell.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return {
+          borderRadius: style.borderRadius,
+          minHeight: style.minHeight,
+          width: rect.width,
+        };
+      });
+      expect(composerMetrics.borderRadius).toBe('25px');
+      expect(composerMetrics.minHeight).toBe('98px');
+      expect(composerMetrics.width).toBeLessThanOrEqual(736);
+      await expect(page.getByTestId('chat-composer-actions')).not.toHaveAttribute('title');
+      await page.getByTestId('chat-composer-actions').hover();
+      const composerTooltip = page.locator('[data-radix-popper-content-wrapper] > [data-side]').filter({ hasText: '@' }).last();
+      await expect(composerTooltip).toBeVisible();
+      await expect(composerTooltip).toHaveCSS('border-radius', '12.5px');
+      await expect(composerTooltip).toContainText('@');
       await expect(page.getByTestId('chat-composer-context-menu-trigger')).toHaveCount(0);
-      await expect(page.getByTestId('chat-composer-permission-mode')).toBeVisible();
+      const permissionTrigger = page.getByTestId('chat-composer-permission-mode');
+      await expect(permissionTrigger).toBeVisible();
+      const composerControlAlignment = await composerShell.evaluate((shell) => {
+        const actions = shell.querySelector('[data-testid="chat-composer-actions"]');
+        const permission = shell.querySelector('[data-testid="chat-composer-permission-mode"]');
+        if (!actions || !permission) throw new Error('Missing composer controls');
+        const actionsRect = actions.getBoundingClientRect();
+        const permissionRect = permission.getBoundingClientRect();
+        return {
+          actionsCenterY: actionsRect.top + actionsRect.height / 2,
+          permissionCenterY: permissionRect.top + permissionRect.height / 2,
+        };
+      });
+      expect(Math.abs(composerControlAlignment.actionsCenterY - composerControlAlignment.permissionCenterY)).toBeLessThanOrEqual(1);
       await expect(page.getByTestId('chat-composer-skill')).toHaveCount(0);
       await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveCount(0);
       await expect(page.getByTestId('chat-knowledge-scope-button')).toBeVisible();
+      await page.getByTestId('chat-composer-actions').click();
+      const actionMenu = page.getByTestId('chat-composer-actions-menu');
+      await expect(actionMenu).toBeVisible();
+      const actionMenuMetrics = await actionMenu.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        const shell = element.closest('[data-testid="chat-composer-shell"]');
+        const shellRect = shell?.getBoundingClientRect();
+        return {
+          borderRadius: style.borderRadius,
+          backdropFilter: style.backdropFilter,
+          maxHeight: style.maxHeight,
+          width: rect.width,
+          shellWidth: shellRect?.width ?? 0,
+        };
+      });
+      expect(actionMenuMetrics.borderRadius).toBe('20px');
+      expect(actionMenuMetrics.backdropFilter).toContain('blur(8px)');
+      expect(actionMenuMetrics.maxHeight).toBe('320px');
+      expect(Math.abs(actionMenuMetrics.width - actionMenuMetrics.shellWidth)).toBeLessThanOrEqual(1);
+      const attachAction = page.getByTestId('chat-composer-action-attach-files');
+      await expect(attachAction).toHaveCSS('border-radius', '12.5px');
+      await expect(attachAction.locator('svg')).toHaveCSS('width', '16px');
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-add-menu');
+      await page.getByTestId('chat-composer-input').click();
+      await expect(actionMenu).not.toBeVisible();
       await expect(page.getByTestId('chat-composer-permission-menu')).not.toBeVisible();
       await expect(page.getByTestId('sidebar-session-search')).toBeVisible({ timeout: 30_000 });
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-before-search');
       await page.getByTestId('chat-composer-permission-mode').click();
       await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-composer-permission-option-acceptEdits')).toBeVisible();
+      const permissionOption = page.getByTestId('chat-composer-permission-option-acceptEdits');
+      await expect(permissionOption).toBeVisible();
+      const dropdownMetrics = await page.getByTestId('chat-composer-permission-menu').evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          borderRadius: style.borderRadius,
+          backdropFilter: style.backdropFilter,
+        };
+      });
+      expect(dropdownMetrics.borderRadius).toBe('15px');
+      expect(dropdownMetrics.backdropFilter).toContain('blur(8px)');
+      await expect(permissionOption).toHaveCSS('min-height', '47px');
+      await expect(permissionOption).toHaveCSS('border-radius', '12.5px');
+      await expect(permissionOption.locator('svg')).toHaveCount(2);
+      await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(composerShell).toHaveCSS('background-color', 'rgba(45, 45, 45, 0.9)');
+      await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
+      await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');
       await expect(page.getByTestId('chat-slash-command-menu')).toBeVisible();
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-slash-menu');
@@ -185,6 +263,7 @@ test.describe('Chat page layout CDP checks', () => {
         await expect(titlebar.getByTitle('Close')).toBeVisible();
       }
 
+      await page.locator('.section-heading').first().hover();
       await page.getByTestId('sidebar-session-search').click();
       const modal = page.getByTestId('session-search-modal');
       await expect(modal).toBeVisible();

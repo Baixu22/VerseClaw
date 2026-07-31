@@ -1,3 +1,10 @@
+/**
+ * Permission audit trail for the active workspace.
+ *
+ * One of the workspace panel's tab kinds. Terminal, git, and web preview each
+ * have their own panel component and are routed to directly by
+ * `ArtifactPanel`'s `PanelContent`, so this file only handles approvals.
+ */
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
@@ -6,20 +13,6 @@ import { Button } from '@/components/ui/button';
 import { hostApi } from '@/lib/host-api';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { PermissionApprovalEvent } from '@shared/types/workspace';
-import { WorkspaceTerminalPanel } from './WorkspaceTerminalPanel';
-import { WorkspaceWebPreviewPanel } from './WorkspaceWebPreviewPanel';
-import { WorkspaceGitPanel } from './WorkspaceGitPanel';
-import type { GitDiffMode } from '@shared/types/git';
-
-type WorkspaceOperationsPanelProps = {
-  view: 'terminal' | 'web' | 'audit' | 'git';
-  onOpenWorkspaceWebView?: () => void;
-  onAppendComposerDraft?: (text: string) => void;
-  gitSelectedPath?: string | null;
-  gitDiffMode?: GitDiffMode;
-  onGitSelectedPathChange?: (path: string | null) => void;
-  onGitDiffModeChange?: (mode: GitDiffMode) => void;
-};
 
 type T = ReturnType<typeof useTranslation>['t'];
 
@@ -71,15 +64,7 @@ function formatApprovalTime(value: number): string {
   });
 }
 
-export function WorkspaceOperationsPanel({
-  view,
-  onOpenWorkspaceWebView,
-  onAppendComposerDraft,
-  gitSelectedPath,
-  gitDiffMode,
-  onGitSelectedPathChange,
-  onGitDiffModeChange,
-}: WorkspaceOperationsPanelProps) {
+export function WorkspaceAuditPanel() {
   const { t } = useTranslation('chat');
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
   const workspaceId = activeWorkspace?.id;
@@ -107,26 +92,6 @@ export function WorkspaceOperationsPanel({
       void refreshApprovals();
     });
   }, [refreshApprovals]);
-
-  if (view === 'terminal') return <WorkspaceTerminalPanel />;
-  if (view === 'git') {
-    return (
-      <WorkspaceGitPanel
-        selectedPath={gitSelectedPath}
-        diffMode={gitDiffMode}
-        onSelectedPathChange={onGitSelectedPathChange}
-        onDiffModeChange={onGitDiffModeChange}
-      />
-    );
-  }
-  if (view === 'web') {
-    return (
-      <WorkspaceWebPreviewPanel
-        onOpenWorkspaceWebView={onOpenWorkspaceWebView}
-        onAppendComposerDraft={onAppendComposerDraft}
-      />
-    );
-  }
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3">
@@ -167,3 +132,5 @@ export function WorkspaceOperationsPanel({
     </div>
   );
 }
+
+export default WorkspaceAuditPanel;

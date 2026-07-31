@@ -482,7 +482,6 @@ export function deriveTaskSteps({
   const steps: TaskStep[] = [];
   const stepIndexById = new Map<string, number>();
   const toolLabelsById = new Map<string, string>();
-  let finalReply: { id: string; detail: string } | null = null;
 
   const upsertStep = (step: TaskStep): void => {
     const existingIndex = stepIndexById.get(step.id);
@@ -545,12 +544,6 @@ export function deriveTaskSteps({
       const graphNarrationSegments = messageIndex === replyIndex
         ? narrationSegments.slice(0, -1)
         : narrationSegments;
-      if (messageIndex === replyIndex) {
-        const finalDetail = normalizeText(narrationSegments.at(-1));
-        finalReply = finalDetail
-          ? { id: `assistant-final-${message.id || messageIndex}`, detail: finalDetail }
-          : null;
-      }
       appendDetailSegments(graphNarrationSegments, {
         idPrefix: `history-message-${message.id || messageIndex}`,
         label: 'Message',
@@ -581,17 +574,6 @@ export function deriveTaskSteps({
     for (const result of message._toolResults ?? []) {
       appendToolResultStep(result.toolCallId, result.toolName, result.result);
     }
-  }
-
-  if (finalReply && steps.some((step) => step.kind === 'tool' || step.id.startsWith('tool-result-'))) {
-    upsertStep({
-      id: finalReply.id,
-      label: 'Assistant Final',
-      status: 'completed',
-      kind: 'system',
-      detail: finalReply.detail,
-      depth: 1,
-    });
   }
 
   if (streamMessage) {

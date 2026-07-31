@@ -1,11 +1,5 @@
-/**
- * Inline panel showing files the AI wrote/edited in the current run.
- * Lives directly under the ExecutionGraphCard for each user trigger
- * (see Chat/index.tsx).
- */
+import { FileText, FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import {
@@ -30,7 +24,6 @@ export function GeneratedFilesPanel({
   className,
 }: GeneratedFilesPanelProps) {
   const { t } = useTranslation('chat');
-
   if (!files.length) return null;
 
   const revealInFileManager = (file: GeneratedFile) => {
@@ -42,82 +35,52 @@ export function GeneratedFilesPanel({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
-      <div className="px-1">
-        <p className="text-xs font-semibold text-foreground/75">
-          {t('generatedFiles.title', { count: files.length, defaultValue: 'File changes ({{count}})' })}
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {files.map((file) => {
-          const lineStats = computeLineStats(file);
-          const clickable = supportsInlineDiff(file) || supportsInlineDocumentPreview(file.ext);
-          const revealOnly = supportsRichDocumentPreview(file.ext);
-          if (revealOnly) {
-            return (
-              <button
-                key={`${file.filePath}-${file.lastSeenIndex}`}
-                type="button"
-                onClick={() => revealInFileManager(file)}
-                className={cn(
-                  'group inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-black/8 bg-black/[0.035] px-3.5 py-2 text-left transition-colors',
-                  'hover:border-black/12 hover:bg-black/[0.055] dark:hover:bg-white/[0.07]',
-                  'dark:border-white/10 dark:bg-white/[0.04]',
-                )}
-                title={file.filePath}
-              >
-                <div className="min-w-0 flex items-center gap-2 overflow-hidden whitespace-nowrap text-meta leading-none">
-                  <span className="shrink-0 font-medium text-foreground">{file.fileName}</span>
-                  <span className="truncate text-muted-foreground">{file.filePath}</span>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="shrink-0 rounded-full border border-black/8 bg-black/[0.045] px-1.5 py-0.5 text-2xs text-foreground/70 dark:border-white/10 dark:bg-white/[0.06] dark:text-foreground/75"
-                >
-                  <FolderOpen className="mr-1 h-3 w-3" />
-                  {t('generatedFiles.openFolder', 'Open folder')}
-                </Badge>
-              </button>
-            );
-          }
-          return (
-            <button
-              key={`${file.filePath}-${file.lastSeenIndex}`}
-              type="button"
-              disabled={!clickable}
-              onClick={() => {
-                if (clickable) onOpen(file);
-              }}
-              className={cn(
-                'group inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-black/8 bg-black/[0.035] px-3.5 py-2 text-left transition-colors disabled:opacity-100',
-                clickable && 'hover:border-black/12 hover:bg-black/[0.055] dark:hover:bg-white/[0.07]',
-                !clickable && 'cursor-default',
-                'dark:border-white/10 dark:bg-white/[0.04]',
-              )}
-              title={file.filePath}
-            >
-              <div className="min-w-0 flex items-center gap-2 overflow-hidden whitespace-nowrap text-meta leading-none">
-                <span className="shrink-0 font-medium text-foreground">{file.fileName}</span>
-                <span className="truncate text-muted-foreground">{file.filePath}</span>
-              </div>
-              {lineStats && (
-                <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xs leading-none tabular-nums">
-                  <span className="text-emerald-600 dark:text-emerald-400">+{lineStats.added}</span>
-                  <span className="text-rose-600 dark:text-rose-400">-{lineStats.removed}</span>
-                </div>
-              )}
-              <Badge
-                variant="secondary"
-                className="shrink-0 rounded-full border border-black/8 bg-black/[0.045] px-1.5 py-0.5 text-2xs text-foreground/70 dark:border-white/10 dark:bg-white/[0.06] dark:text-foreground/75"
-              >
-                {file.action === 'created'
+    <div className={cn('space-y-0.5', className)} data-testid="chat-generated-files">
+      <p className="pb-0.5 text-xs font-medium text-muted-foreground">
+        {t('generatedFiles.title', { count: files.length, defaultValue: 'File changes ({{count}})' })}
+      </p>
+      {files.map((file) => {
+        const lineStats = computeLineStats(file);
+        const clickable = supportsInlineDiff(file) || supportsInlineDocumentPreview(file.ext);
+        const revealOnly = supportsRichDocumentPreview(file.ext);
+        const onClick = revealOnly
+          ? () => revealInFileManager(file)
+          : clickable
+            ? () => onOpen(file)
+            : undefined;
+        return (
+          <button
+            key={`${file.filePath}-${file.lastSeenIndex}`}
+            type="button"
+            disabled={!onClick}
+            onClick={onClick}
+            className={cn(
+              'group/file flex min-h-7 w-full min-w-0 items-center gap-2 rounded-sm px-1 text-left text-sm text-muted-foreground',
+              onClick && 'hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+              !onClick && 'cursor-default',
+            )}
+            title={file.filePath}
+          >
+            {revealOnly
+              ? <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+              : <FileText className="h-3.5 w-3.5 shrink-0" />}
+            <span className="min-w-0 flex-1 truncate font-medium">{file.fileName}</span>
+            {lineStats && (
+              <span className="shrink-0 whitespace-nowrap font-mono text-xs tabular-nums">
+                <span className="text-emerald-600 dark:text-emerald-400">+{lineStats.added}</span>
+                <span className="ml-1 text-rose-600 dark:text-rose-400">-{lineStats.removed}</span>
+              </span>
+            )}
+            <span className="shrink-0 text-xs text-muted-foreground/75">
+              {revealOnly
+                ? t('generatedFiles.openFolder', 'Open folder')
+                : file.action === 'created'
                   ? t('generatedFiles.created', 'Created')
                   : t('generatedFiles.modified', 'Modified')}
-              </Badge>
-            </button>
-          );
-        })}
-      </div>
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

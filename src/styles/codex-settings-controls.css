@@ -1,0 +1,774 @@
+/*
+ * codex-settings-controls.css — the settings *content* design system, ported
+ * from the FakeCoding reference app.
+ *
+ * PROVENANCE. Ported from
+ *   FakeCoding-main/web/src/components/settings/settings.css
+ * whose header records the source of every number below: a CDP capture of the
+ * official Codex Desktop settings surface (127.0.0.1:9229, dark theme,
+ * 1285x820 @ zoom 1). Line ranges are cited per block. The measurement
+ * comments are kept verbatim — the 12.5px radii, 0.667px hairlines, 32x20
+ * switch and 220px menu are read off the real app, not chosen.
+ *
+ * This file owns the card / row / section / control vocabulary. Page chrome
+ * (nav rail, surface, panel, scroller) already lives in codex-settings.css.
+ *
+ * DEVIATIONS from the source, and why:
+ *   1. THEMING. The source token block is dark-only and hardcodes whites
+ *      (`rgba(255,255,255,.08)`, `#232323`, `#fff`). ClawX renders settings in
+ *      both themes, so tokens are split into `:root.dark` / `:root:not(.dark)`
+ *      — the same split codex-settings-archived.css already established.
+ *   2. FONT SHORTHAND. The source writes `font: 445 13px/18px var(--font-sans)`.
+ *      ClawX has no `--font-sans`, and an unresolved var in a shorthand makes
+ *      the browser drop the WHOLE declaration (silently losing size+weight).
+ *      Every such shorthand is expanded to longhands here so the family is
+ *      inherited from the app font stack instead.
+ *   3. Only the vocabulary ClawX actually renders is ported; the source also
+ *      carries page-specific recipes (plugins/MCP manage lists, theme
+ *      previews, hotkeys) that have no ClawX counterpart yet.
+ */
+
+/* ---- measured tokens (official computed values, settings.css:17-35) ---- */
+:root.dark {
+  --sp-hairline: rgba(255, 255, 255, 0.082);          /* border-token-border */
+  --sp-hairline-w: 0.667px;
+  --sp-hover-bg: rgba(255, 255, 255, 0.08);            /* token-list-hover-background */
+  --sp-fill-3: rgba(255, 255, 255, 0.03);              /* bg-token-bg-fog */
+  --sp-fill-5: rgba(255, 255, 255, 0.05);              /* token-foreground/5 */
+  --sp-fill-10: rgba(255, 255, 255, 0.1);              /* token-foreground/10 */
+  --sp-fill-15: rgba(255, 255, 255, 0.15);             /* token-foreground/15 (active press) */
+  --sp-text: #fff;
+  --sp-text-secondary: rgba(255, 255, 255, 0.65);      /* text-token-text-secondary */
+  --sp-text-placeholder: rgba(255, 255, 255, 0.498);   /* input-placeholder-foreground */
+  --sp-link: #83c3ff;                                  /* text-token-text-link */
+  --sp-card-bg: #232323;                               /* card rgb(35,35,35) */
+  --sp-switch-on: #339cff;                             /* bg-token-charts-blue */
+  --sp-switch-thumb: #fff;
+  --sp-radius-row: 12.5px;                             /* rounded-lg (chips/rows/fields) */
+  --sp-radius-card: 20px;
+  --sp-menu-bg: rgba(45, 45, 45, 0.9);                 /* dropdown shell */
+  --sp-menu-ring: rgba(255, 255, 255, 0.082);
+  --sp-menu-text: #fff;
+  --sp-menu-hover: rgba(255, 255, 255, 0.08);
+  --sp-menu-danger: #fca5a5;
+  --sp-focus-ring: rgba(255, 255, 255, 0.18);
+  --sp-banner-bg: rgba(120, 72, 20, 0.35);
+  --sp-banner-text: #f3d2a1;
+}
+
+/* Light mirror. The official app ships dark-only, so these have no capture to
+ * cite: each is the same *role* re-expressed on a light ground (white ink
+ * inverted to near-black at matching alpha, `#232323` card → white on the grey
+ * page). Alphas are nudged down because dark ink on light reads heavier than
+ * light ink on dark at equal opacity. */
+:root:not(.dark) {
+  --sp-hairline: rgba(0, 0, 0, 0.09);
+  --sp-hairline-w: 0.667px;
+  --sp-hover-bg: rgba(0, 0, 0, 0.045);
+  --sp-fill-3: rgba(0, 0, 0, 0.022);
+  --sp-fill-5: rgba(0, 0, 0, 0.04);
+  --sp-fill-10: rgba(0, 0, 0, 0.07);
+  --sp-fill-15: rgba(0, 0, 0, 0.1);
+  --sp-text: #1a1c1f;
+  --sp-text-secondary: rgba(26, 28, 31, 0.65);
+  --sp-text-placeholder: rgba(26, 28, 31, 0.5);
+  --sp-link: #0b6bcb;
+  --sp-card-bg: #fff;
+  --sp-switch-on: #0a84ff;
+  --sp-switch-thumb: #fff;
+  --sp-radius-row: 12.5px;
+  --sp-radius-card: 20px;
+  --sp-menu-bg: rgba(252, 252, 252, 0.94);
+  --sp-menu-ring: rgba(0, 0, 0, 0.09);
+  --sp-menu-text: #1a1c1f;
+  --sp-menu-hover: rgba(0, 0, 0, 0.05);
+  --sp-menu-danger: #b42318;
+  --sp-focus-ring: rgba(0, 0, 0, 0.22);
+  --sp-banner-bg: rgba(180, 118, 20, 0.14);
+  --sp-banner-text: #7a4a06;
+}
+
+/* --------------------------------------------------------------- content
+   settings.css:325-367. h1 24/400 lh28.8, 40px below; section title 14/500
+   lh21, 16px above card; card → next title = 50px. */
+.sp-section { margin: 0 0 50px; }
+.sp-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+.sp-section-head-text { min-width: 0; flex: 1 1 auto; }
+.sp-section-title {
+  margin: 0;
+  color: var(--sp-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+}
+.sp-section-desc {
+  margin: 4px 0 0;
+  color: var(--sp-text-secondary);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 16px;
+}
+.sp-section-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+/* settings.css:369-380 */
+.sp-banner {
+  margin: -12px 0 20px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--sp-banner-bg);
+  color: var(--sp-banner-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.4;
+}
+.sp-banner.info {
+  background: var(--sp-fill-5);
+  color: var(--sp-text-secondary);
+}
+
+/* card: r20, hairline border, clipped; hairline dividers inset 16px.
+   settings.css:382-401 */
+.sp-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: var(--sp-radius-card);
+  background: var(--sp-card-bg);
+}
+.sp-card > * { position: relative; }
+.sp-card > *:not(:last-child)::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+  left: 16px;
+  height: 0.5px;
+  background: var(--sp-hairline);
+}
+
+/* row: pad 12x16, gap 24, centered; title 13/500, desc 12/445 @65%, col gap 2.
+   settings.css:402-436 */
+.sp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 16px;
+}
+.sp-row-label {
+  display: flex;
+  min-width: 0;
+  /* official text column is 505px; 520 here compensates local font metrics
+     so line counts (and row heights 61/77/77) match the official page */
+  max-width: 520px;
+  flex-direction: column;
+  gap: 2px;
+}
+.sp-row-label b {
+  color: var(--sp-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.43;
+}
+.sp-row-label small {
+  color: var(--sp-text-secondary);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 16px;
+}
+.sp-row-control {
+  display: flex;
+  min-height: 28px;
+  flex: none;
+  align-items: center;
+}
+
+/* ClawX addition, no reference counterpart: a full-width card row for content
+   that cannot sit in the reference's label/control split (nested editors,
+   lists, textareas). Keeps the row's 12x16 padding so it shares the card's
+   inset divider rhythm. */
+.sp-stack-row {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.sp-stack-row > .sp-row-label { max-width: none; }
+
+/* ClawX addition: a row list nested inside a panel that is not a .sp-card
+   (the sandbox runtime panel owns its own surface). Rows keep the reference's
+   label/control geometry but get their own hairline separators, since the
+   card's `> *` divider rule does not reach them. */
+.sp-subrows {
+  display: flex;
+  flex-direction: column;
+}
+.sp-subrows > .sp-row { padding-inline: 0; }
+.sp-subrows > .sp-row:not(:last-child) {
+  border-bottom: var(--sp-hairline-w) solid var(--sp-hairline);
+}
+
+/* ClawX additions for read-only row values and link clusters (the About rows
+   have no reference counterpart). Both match the row's secondary text metrics
+   so they sit on the same baseline as a real control. */
+.sp-row-value {
+  color: var(--sp-text-secondary);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+}
+/* Monospace detail inside a row description (bundle paths, ports, pids). */
+.sp-row-mono {
+  display: block;
+  margin-top: 6px;
+  color: var(--sp-text-placeholder);
+  font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
+  font-size: 11px;
+  line-height: 15px;
+  overflow-wrap: anywhere;
+}
+.sp-row-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  font-size: 13px;
+  line-height: 18px;
+}
+/* Several ClawX rows carry more than one control (a state pill plus two
+   actions). The reference only ever had a single control per row. */
+.sp-row-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.sp-row-cluster--start { justify-content: flex-start; }
+/* Buttons inside settings rows size their glyphs like the reference's 14px
+   control icons rather than lucide's 24px default. */
+.sp-btn-secondary > svg,
+.sp-btn-primary > svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+/* Row titles that carry a leading glyph and/or a state badge. The reference's
+   titles are plain text, but several ClawX rows are feature toggles whose
+   on/off state must read at a glance. */
+.sp-row-title-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.sp-row-title-line > svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--sp-text-secondary);
+}
+.sp-row-badge {
+  display: inline-flex;
+  align-items: center;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: 9999px;
+  padding: 0 7px;
+  background: transparent;
+  color: var(--sp-text-placeholder);
+  font-size: 11px;
+  font-weight: 445;
+  line-height: 17px;
+}
+.sp-row-badge.is-on {
+  background: var(--sp-fill-5);
+  color: var(--sp-text-secondary);
+}
+/* Secondary caveat line under a row description (e.g. "what turning this off
+   does"), one step quieter than the description itself. */
+.sp-row-note {
+  display: block;
+  margin-top: 4px;
+  color: var(--sp-text-placeholder);
+}
+
+/* Semantic state pill (gateway/provider health). No reference counterpart:
+   red/green carry meaning the reference's neutral chrome cannot express, so
+   only the geometry follows the row vocabulary. */
+.sp-state-pill {
+  display: inline-flex;
+  min-height: 23px;
+  align-items: center;
+  gap: 6px;
+  border: var(--sp-hairline-w) solid transparent;
+  border-radius: 9999px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.sp-state-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 9999px;
+  background: currentColor;
+}
+.sp-state-pill.is-ok {
+  border-color: rgb(34 197 94 / 0.2);
+  background: rgb(34 197 94 / 0.1);
+  color: #16a34a;
+}
+:root.dark .sp-state-pill.is-ok { color: #22c55e; }
+.sp-state-pill.is-bad {
+  border-color: rgb(239 68 68 / 0.2);
+  background: rgb(239 68 68 / 0.1);
+  color: #dc2626;
+}
+:root.dark .sp-state-pill.is-bad { color: #ef4444; }
+.sp-state-pill.is-idle {
+  background: var(--sp-fill-5);
+  color: var(--sp-text-secondary);
+}
+
+/* Log / diagnostic output inside a stacked row. */
+.sp-log-pre {
+  max-height: 240px;
+  overflow: auto;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--sp-fill-3);
+  color: var(--sp-text-secondary);
+  font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: pre-wrap;
+}
+
+/* inline link: no underline until hover. settings.css:437-448 */
+.sp-inline-link {
+  display: inline-flex;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--sp-link);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.sp-inline-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* --------------------------------------------------------------- switch
+   settings.css:450-494. button 32x20 (transparent) > track 32x20 r9999 >
+   thumb 16 white. ON #339cff / OFF 10%; thumb travel 2px -> 14px;
+   disabled opacity .6 (默认权限 is disabled+checked in Codex). */
+.sp-switch {
+  display: inline-flex;
+  width: 32px;
+  height: 20px;
+  flex: none;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+.sp-switch:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sp-switch-track {
+  position: relative;
+  display: inline-flex;
+  width: 32px;
+  height: 20px;
+  align-items: center;
+  border-radius: 9999px;
+  background: var(--sp-fill-10);
+  transition: background-color 0.2s ease-out;
+}
+.sp-switch.on .sp-switch-track { background: var(--sp-switch-on); }
+.sp-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border: var(--sp-hairline-w) solid var(--sp-switch-thumb);
+  border-radius: 9999px;
+  background: var(--sp-switch-thumb);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  transform: translateX(2px);
+  transition: transform 0.2s ease-out;
+}
+.sp-switch.on .sp-switch-thumb { transform: translateX(14px); }
+
+/* --------------------------------------------------------------- select
+   settings.css:496-535. trigger: h28, pad 0 12, gap 4, r12.5, fog bg +
+   hairline, 14/445 lh18; chevron 14 @ placeholder color; hover/open 8%,
+   press 15%. */
+.sp-select-wrap { position: relative; }
+.sp-select-btn {
+  display: inline-flex;
+  max-width: 100%;
+  height: 28px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: var(--sp-radius-row);
+  padding: 0 12px;
+  background: var(--sp-hover-bg);
+  color: var(--sp-text);
+  font-size: 14px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.sp-select-btn:hover,
+.sp-select-btn.open,
+.sp-select-btn:active { background: var(--sp-fill-15); }
+.sp-select-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sp-select-btn .sp-select-chevron {
+  flex: none;
+  color: var(--sp-text-placeholder);
+}
+.sp-select-btn .sp-select-leading {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+/* ClawX addition: the source's trigger label is a bare span, which is safe
+   because its option strings are short. ClawX binds selects to model ids and
+   translated language names, so the label clips instead of blowing out the
+   28px row. */
+.sp-select-btn .sp-select-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sp-select-btn .sp-select-leading img,
+.sp-select-btn .sp-select-leading svg { display: block; width: 100%; height: 100%; }
+
+/* menu: official dropdown (settings-dropdown.json): fixed 220px, opens
+   below-right of trigger with ~2px gap, #2d2d2d @ 90% + blur(8px), radius 15,
+   pad 4, ring-in-shadow, inner scroll max-h 320. Rendered via portal to
+   document.body so it is never clipped by an ancestor's overflow:hidden;
+   position/top/left/z-index come from usePopover's inline style.
+   settings.css:536-603 */
+.sp-select-menu {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  width: 220px;
+  max-height: 328px;
+  flex-direction: column;
+  overflow-y: auto;
+  border-radius: 15px;
+  padding: 4px;
+  background: var(--sp-menu-bg);
+  box-shadow: 0 0 0 0.5px var(--sp-menu-ring), 0 8px 16px -4px rgb(0 0 0 / 0.12);
+  backdrop-filter: blur(8px);
+}
+.sp-select-menu button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 12.5px;
+  padding: 5px 8px;
+  background: transparent;
+  color: var(--sp-menu-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.43;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sp-select-menu button:hover { background: var(--sp-menu-hover); }
+.sp-select-menu .sp-opt-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.sp-select-menu .sp-opt-icon img,
+.sp-select-menu .sp-opt-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sp-select-menu .sp-opt-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* multi-select check slot (16px, mirrors .sp-opt-icon width) */
+.sp-select-menu.sp-multiselect .sp-opt-check {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  color: var(--sp-text);
+}
+.sp-select-menu.sp-multiselect button[aria-selected="false"] .sp-opt-check { opacity: 0; }
+
+/* --------------------------------------------------------------- buttons
+   settings.css:631-682. secondary (导入/查看): h28, pad 0 8, r12.5, bg 5%,
+   14/445; hover 10%, press 15%. */
+.sp-btn-secondary {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  gap: 4px;
+  border: var(--sp-hairline-w) solid transparent;
+  border-radius: var(--sp-radius-row);
+  padding: 0 8px;
+  background: var(--sp-fill-5);
+  color: var(--sp-text);
+  font-size: 14px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.sp-btn-secondary:hover { background: var(--sp-fill-10); }
+.sp-btn-secondary:active { background: var(--sp-fill-15); }
+.sp-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sp-btn-primary {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  border: 0;
+  border-radius: var(--sp-radius-row);
+  padding: 0 12px;
+  /* source uses var(--text)/var(--bg-app); ClawX equivalent is the inverted
+     foreground pair, which also keeps contrast in the light theme. */
+  background: var(--sp-text);
+  color: var(--sp-card-bg);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+.sp-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sp-btn-danger {
+  /* ClawX addition: destructive row actions (删除/清空) have no reference
+     counterpart, so it reuses the secondary geometry with destructive ink. */
+  color: var(--sp-menu-danger);
+}
+
+/* bare icon button (row ⋯) */
+.sp-icon-btn {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--sp-radius-row);
+  padding: 0;
+  background: transparent;
+  color: var(--sp-text-secondary);
+  place-items: center;
+  cursor: pointer;
+}
+.sp-icon-btn:hover,
+.sp-icon-btn.open {
+  background: var(--sp-hover-bg);
+  color: var(--sp-text);
+}
+
+/* -------------------------------------------------------------- row menu
+   settings.css:684-712. Rendered via portal to document.body; position comes
+   from usePopover's inline style. */
+.sp-row-menu-anchor { position: relative; display: inline-flex; }
+.sp-row-menu-trigger { display: inline-flex; }
+.sp-row-menu {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  min-width: 148px;
+  flex-direction: column;
+  border: 0.5px solid var(--sp-menu-ring);
+  border-radius: 15px;
+  padding: 4px;
+  background: var(--sp-menu-bg);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
+  backdrop-filter: blur(8px);
+}
+.sp-row-menu button {
+  height: 29px;
+  flex: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--sp-menu-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+.sp-row-menu button:hover { background: var(--sp-menu-hover); }
+.sp-row-menu button.danger { color: var(--sp-menu-danger); }
+
+/* ------------------------------------------------------------- segmented
+   settings.css:605-629. wrapper gap 2; option pad 2x8 + hairline transparent
+   border (h 23.3), r9999, 13/445 lh18; active bg 5%, inactive 49.8%.
+   Single definition for the whole settings surface — the Archived page used to
+   carry its own copy of this block, which now lives here. */
+.sp-segmented {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+}
+.sp-segmented button {
+  display: inline-flex;
+  align-items: center;
+  border: var(--sp-hairline-w) solid transparent;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  background: transparent;
+  color: var(--sp-text-placeholder);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.sp-segmented button:hover {
+  background: var(--sp-fill-10);
+  color: var(--sp-text);
+}
+.sp-segmented button.active {
+  background: var(--sp-fill-5);
+  color: var(--sp-text);
+}
+/* ClawX addition: theme options carry a leading glyph (sun/moon/monitor),
+   which the reference's text-only segments never needed. */
+.sp-segmented-icon {
+  display: inline-flex;
+  margin-right: 4px;
+}
+.sp-segmented-icon svg { width: 14px; height: 14px; }
+
+/* ---------------------------------------------------------------- fields
+   settings.css:1050-1082. input h28 / pad 0 10 / r12.5 / fog bg + hairline,
+   13/445 lh18; textarea r14 / pad 12 14 / min-h 120. */
+.sp-input {
+  height: 28px;
+  min-width: 120px;
+  max-width: 220px;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: var(--sp-radius-row);
+  padding: 0 10px;
+  background: var(--sp-fill-3);
+  color: var(--sp-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+  outline: 0;
+}
+.sp-input::placeholder { color: var(--sp-text-placeholder); }
+.sp-input:focus {
+  border-color: var(--sp-focus-ring);
+  background: var(--sp-fill-5);
+}
+.sp-input.sp-input-wide { min-width: 220px; max-width: 320px; }
+.sp-textarea {
+  width: 100%;
+  min-height: 120px;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: var(--sp-fill-3);
+  color: var(--sp-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.45;
+  outline: 0;
+  resize: vertical;
+}
+.sp-textarea::placeholder { color: var(--sp-text-placeholder); }
+.sp-textarea:focus {
+  border-color: var(--sp-focus-ring);
+  background: var(--sp-fill-5);
+}
+
+/* settings.css:1107-1130 — shortcut pills */
+.sp-kbd-group {
+  display: inline-flex;
+  max-width: 280px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.sp-kbd {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  border: var(--sp-hairline-w) solid var(--sp-hairline);
+  border-radius: 8px;
+  padding: 0 7px;
+  background: var(--sp-fill-5);
+  color: var(--sp-text);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.sp-kbd-empty {
+  color: var(--sp-text-placeholder);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-switch-track,
+  .sp-switch-thumb,
+  .sp-select-btn,
+  .sp-btn-secondary { transition: none; }
+}

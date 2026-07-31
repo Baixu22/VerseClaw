@@ -169,6 +169,17 @@ test.describe('Chat renderer pipeline — assistant-ui + tool-ui coexistence', (
 
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
+      await page.evaluate(() => {
+        // The real clipboard rejects under the Electron test runner (the window
+        // isn't focused), so the copy handler's `await` throws and the button
+        // never reaches its "Copied" state. chat-user-message-actions.spec.ts
+        // stubs the same way for the same reason.
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: { writeText: async () => undefined },
+        });
+      });
+
       // ── assistant-ui MarkdownTextPrimitive assertions ──
       // The .prose class + data-status="complete" prove MarkdownTextPrimitive is
       // the actual renderer, not a fallback.

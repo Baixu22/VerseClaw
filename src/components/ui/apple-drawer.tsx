@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, type AnimationEvent, type ReactNode } from 'react';
 import { Drawer } from 'vaul';
 import { useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ export type AppleDrawerDragMode = 'handle' | 'none';
 export interface AppleDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onOpened?: () => void;
   onClosed?: () => void;
   title: ReactNode;
   description?: ReactNode;
@@ -30,6 +31,7 @@ const sizeClasses: Record<AppleDrawerSize, string> = {
 export function AppleDrawer({
   open,
   onOpenChange,
+  onOpened,
   onClosed,
   title,
   description,
@@ -40,9 +42,10 @@ export function AppleDrawer({
   testId,
   overlayTestId,
 }: AppleDrawerProps) {
-  const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
+  const portalHostRef = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const closeTimerRef = useRef<number | null>(null);
+  const openedNotifiedRef = useRef(false);
   const closedNotifiedRef = useRef(false);
   const notifyClosed = useCallback(() => {
     if (closedNotifiedRef.current) return;
@@ -53,12 +56,26 @@ export function AppleDrawer({
     }
     onClosed?.();
   }, [onClosed]);
+  const notifyOpened = useCallback(() => {
+    if (openedNotifiedRef.current) return;
+    openedNotifiedRef.current = true;
+    onOpened?.();
+  }, [onOpened]);
   const handleAnimationEnd = useCallback((nextOpen: boolean) => {
     if (!nextOpen) notifyClosed();
   }, [notifyClosed]);
+  const handleContentAnimationEnd = useCallback((event: AnimationEvent<HTMLDivElement>) => {
+    if (
+      event.target === event.currentTarget
+      && event.animationName === 'apple-drawer-slide-from-right'
+    ) {
+      notifyOpened();
+    }
+  }, [notifyOpened]);
 
   useEffect(() => {
     if (open) {
+      openedNotifiedRef.current = false;
       closedNotifiedRef.current = false;
       if (closeTimerRef.current !== null) {
         window.clearTimeout(closeTimerRef.current);
@@ -67,7 +84,7 @@ export function AppleDrawer({
       return;
     }
 
-    closeTimerRef.current = window.setTimeout(notifyClosed, reduceMotion ? 160 : 420);
+    closeTimerRef.current = window.setTimeout(notifyClosed, reduceMotion ? 100 : 220);
     return () => {
       if (closeTimerRef.current !== null) {
         window.clearTimeout(closeTimerRef.current);
@@ -93,15 +110,16 @@ export function AppleDrawer({
       <Drawer.Portal>
         <Drawer.Overlay
           data-testid={overlayTestId ?? (testId ? `${testId}-overlay` : undefined)}
-          className="apple-drawer-overlay fixed inset-x-0 bottom-0 top-10 z-[60] bg-black/16 backdrop-blur-[3px] dark:bg-black/55"
+          className="apple-drawer-overlay fixed inset-x-0 bottom-0 top-10 z-[60] bg-black/24 dark:bg-black/60"
         />
         <Drawer.Content
           data-testid={testId}
+          onAnimationEnd={handleContentAnimationEnd}
           className={cn(
             'apple-drawer-content fixed bottom-0 right-0 top-10 z-[70] flex outline-none',
-            'overflow-hidden rounded-l-[20px] border-l border-white/70 bg-surface-modal/96',
+            'overflow-hidden rounded-l-[20px] border-l border-white/70 bg-surface-modal',
             'shadow-[0_24px_80px_rgba(15,23,42,0.22),0_2px_12px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.68)]',
-            'backdrop-blur-[24px] backdrop-saturate-[1.28] dark:border-white/10 dark:bg-surface-modal/90',
+            'dark:border-white/10 dark:bg-surface-modal',
             sizeClasses[size],
             className,
           )}
@@ -117,11 +135,11 @@ export function AppleDrawer({
             </div>
           ) : null}
           <div className="relative min-w-0 flex-1 overflow-hidden">
-            <OverlayPortalProvider container={portalHost}>
+            <OverlayPortalProvider container={portalHostRef}>
               {children}
             </OverlayPortalProvider>
             <div
-              ref={setPortalHost}
+              ref={portalHostRef}
               className="pointer-events-none absolute inset-0 z-[95] [&>*]:pointer-events-auto"
               data-testid={testId ? `${testId}-portal-host` : undefined}
             />

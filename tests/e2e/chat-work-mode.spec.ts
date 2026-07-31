@@ -12,6 +12,32 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
+// FP-P1-01 added a first-send provider gate: when no usable provider exists the
+// composer intercepts the send instead of dispatching it. Any test that actually
+// sends a message must present a configured, keyed default account, otherwise the
+// send never happens and no chat payload is ever recorded.
+const PROVIDER_TIMESTAMP = '2026-01-01T00:00:00.000Z';
+const PROVIDER_HOST_API_MOCKS: Record<string, unknown> = {
+  [stableStringify(['providers', 'accounts', null])]: [
+    {
+      id: 'anthropic-e2e',
+      vendorId: 'anthropic',
+      label: 'Anthropic',
+      authMode: 'api_key',
+      model: 'claude-opus-4',
+      enabled: true,
+      isDefault: true,
+      createdAt: PROVIDER_TIMESTAMP,
+      updatedAt: PROVIDER_TIMESTAMP,
+    },
+  ],
+  [stableStringify(['providers', 'accountKeyInfo', null])]: [
+    { accountId: 'anthropic-e2e', hasKey: true, keyMasked: 'sk-***' },
+  ],
+  [stableStringify(['providers', 'vendors', null])]: [],
+  [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'anthropic-e2e' },
+};
+
 const WORKSPACE = {
   id: 'workspace-1',
   name: 'Demo Workspace',
@@ -145,6 +171,7 @@ test.describe('Verse Claw chat without Work Mode', () => {
           },
         },
         hostApi: {
+          ...PROVIDER_HOST_API_MOCKS,
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -209,7 +236,7 @@ test.describe('Verse Claw chat without Work Mode', () => {
       await page.keyboard.press('Escape');
 
       await page.getByTestId('chat-composer-input').fill('Summarize this spreadsheet');
-      await page.getByTitle('Send').click();
+      await page.getByTestId('chat-composer-send').click();
       await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
 
       await expect.poll(async () => await app.evaluate(() => (

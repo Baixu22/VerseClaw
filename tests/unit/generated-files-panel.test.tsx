@@ -117,6 +117,19 @@ describe('GeneratedFilesPanel', () => {
     expect(onRevealInFileManager).toHaveBeenCalledWith(expect.objectContaining({ filePath: '/tmp/report.docx' }));
   });
 
+  it('shows line stats in the compact code receipt', () => {
+    const file = makeFile({
+      fileName: 'demo.ts',
+      filePath: '/workspace/demo.ts',
+      edits: [{ old: 'const value = 1\n', new: 'const value = 2\n' }],
+    });
+    render(<GeneratedFilesPanel files={[file]} onOpen={vi.fn()} />);
+
+    const receipt = screen.getByRole('button', { name: /demo\.ts/ });
+    expect(receipt).toHaveTextContent('+1');
+    expect(receipt).toHaveTextContent('-1');
+  });
+
   it('keeps supported text/code formats clickable', () => {
     const onOpen = vi.fn();
     const file = makeFile({ filePath: '/tmp/example.ts' });

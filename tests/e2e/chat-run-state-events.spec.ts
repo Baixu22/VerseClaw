@@ -11,6 +11,32 @@ function stableStringify(value: unknown): string {
   return `{${entries.join(',')}}`;
 }
 
+// FP-P1-01 added a first-send provider gate: when no usable provider exists the
+// composer intercepts the send instead of dispatching it. Tests that actually
+// send a message must therefore present a configured, keyed default account,
+// otherwise the send never happens and no run/message is ever produced.
+const PROVIDER_TIMESTAMP = '2026-01-01T00:00:00.000Z';
+const PROVIDER_HOST_API_MOCKS: Record<string, unknown> = {
+  [stableStringify(['providers', 'accounts', null])]: [
+    {
+      id: 'anthropic-e2e',
+      vendorId: 'anthropic',
+      label: 'Anthropic',
+      authMode: 'api_key',
+      model: 'claude-opus-4',
+      enabled: true,
+      isDefault: true,
+      createdAt: PROVIDER_TIMESTAMP,
+      updatedAt: PROVIDER_TIMESTAMP,
+    },
+  ],
+  [stableStringify(['providers', 'accountKeyInfo', null])]: [
+    { accountId: 'anthropic-e2e', hasKey: true, keyMasked: 'sk-***' },
+  ],
+  [stableStringify(['providers', 'vendors', null])]: [],
+  [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'anthropic-e2e' },
+};
+
 test.describe('Verse Claw chat run state events', () => {
   test('anchors the live thinking matrix to the latest assistant output and clears it after completion', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
@@ -39,6 +65,7 @@ test.describe('Verse Claw chat run state events', () => {
           },
         },
         hostApi: {
+          ...PROVIDER_HOST_API_MOCKS,
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -98,20 +125,35 @@ test.describe('Verse Claw chat run state events', () => {
             sessionKey,
             startedAt: Date.now() - 14_000,
           });
+          win.webContents.send('chat:runtime-event', {
+            type: 'tool.started',
+            runId: 'run-inline-status',
+            sessionKey,
+            toolCallId: 'status-tool',
+            name: 'read',
+            args: { path: '/tmp/status.md' },
+          });
         }
       }, MAIN_SESSION_KEY);
 
-      const status = page.getByTestId('assistant-stream-status');
-      const statusDot = page.getByTestId('assistant-stream-status-dot');
-      await expect(status).toBeVisible();
-      await expect(statusDot).toHaveAttribute('data-state', 'thinking');
-      await expect(page.getByTestId('assistant-stream-status-elapsed')).toContainText(/1[34]s|15s/);
+      const activityToggle = page.getByTestId('chat-turn-summary-toggle');
+      await expect(activityToggle).toBeVisible();
+      await expect(activityToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(activityToggle).toContainText(/Working|处理中/);
 
-      const initialBox = await statusDot.boundingBox();
-      expect(initialBox).not.toBeNull();
-
+      // The reply bubble is only promoted once no tool is still running, so
+      // settle the read tool before streaming the assistant text.
       await app.evaluate(({ BrowserWindow }, payload) => {
         for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            type: 'tool.completed',
+            runId: payload.runId,
+            sessionKey: payload.sessionKey,
+            toolCallId: 'status-tool',
+            name: 'read',
+            result: { summary: 'read status.md' },
+            isError: false,
+          });
           win.webContents.send('chat:runtime-event', {
             type: 'assistant.delta',
             runId: payload.runId,
@@ -123,17 +165,7 @@ test.describe('Verse Claw chat run state events', () => {
       }, { runId: 'run-inline-status', sessionKey: MAIN_SESSION_KEY });
 
       await expect(page.getByText('First line of streamed output.')).toBeVisible();
-      await expect(statusDot).toHaveAttribute('data-state', 'streaming');
-      const tokenStatus = page.getByTestId('assistant-stream-status-tokens');
-      const tokenRoll = tokenStatus.locator('[data-slot="number-roll"]');
-      await expect(tokenRoll).toBeVisible();
-      await expect(tokenRoll.locator('.sr-only')).toHaveText('245');
-      await expect(tokenStatus).toContainText('tokens');
-
-      const afterShortTextBox = await statusDot.boundingBox();
-      expect(afterShortTextBox).not.toBeNull();
-      expect(Math.abs(afterShortTextBox!.x - initialBox!.x)).toBeLessThanOrEqual(2);
-      expect(afterShortTextBox!.y).toBeGreaterThan(initialBox!.y);
+      await expect(activityToggle).toHaveAttribute('aria-expanded', 'false');
 
       const screenshotPath = testInfo.outputPath('assistant-stream-status-inline.png');
       await page.screenshot({ path: screenshotPath, fullPage: false });
@@ -164,10 +196,7 @@ test.describe('Verse Claw chat run state events', () => {
       }, { runId: 'run-inline-status', sessionKey: MAIN_SESSION_KEY });
 
       await expect(page.getByText('Fourth paragraph keeps the same left anchor.')).toBeVisible();
-      const afterLongTextBox = await statusDot.boundingBox();
-      expect(afterLongTextBox).not.toBeNull();
-      expect(Math.abs(afterLongTextBox!.x - initialBox!.x)).toBeLessThanOrEqual(2);
-      expect(afterLongTextBox!.y).toBeGreaterThan(afterShortTextBox!.y);
+      await expect(activityToggle).toHaveAttribute('aria-expanded', 'false');
 
       await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {
@@ -181,7 +210,11 @@ test.describe('Verse Claw chat run state events', () => {
         }
       }, MAIN_SESSION_KEY);
 
-      await expect(status).toHaveCount(0);
+      // A finished run self-quiets: the live "Working for …" label turns into a
+      // past-tense receipt instead of disappearing entirely.
+      await expect(page.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'completed');
+      await expect(activityToggle).toContainText(/Worked for|Work details|用时|工作详情/);
+      await expect(activityToggle).not.toContainText(/Working|处理中/);
     } finally {
       await closeElectronApp(app);
     }
@@ -210,6 +243,7 @@ test.describe('Verse Claw chat run state events', () => {
           },
         },
         hostApi: {
+          ...PROVIDER_HOST_API_MOCKS,
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: {
@@ -281,49 +315,63 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeEnabled({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('run long task');
       await sendButton.click();
-      await expect(sendButton).toHaveAttribute('title', /Stop|停止/);
 
-      await app.evaluate(({ BrowserWindow }) => {
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            type: 'run.started',
+            runId: 'run-e2e',
+            sessionKey,
+            startedAt: Date.now(),
+          });
+        }
+      }, MAIN_SESSION_KEY);
+      await expect(sendButton).toHaveAttribute('aria-label', /Stop|停止/);
+
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {
           win.webContents.send('chat:runtime-event', {
             type: 'tool.started',
             runId: 'run-e2e',
+            sessionKey,
             toolCallId: 'call-1',
             name: 'read',
             args: { filePath: '/tmp/demo.md' },
           });
         }
-      });
+      }, MAIN_SESSION_KEY);
 
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
 
-      await app.evaluate(({ BrowserWindow }) => {
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {
           win.webContents.send('chat:runtime-event', {
             type: 'tool.completed',
             runId: 'run-e2e',
+            sessionKey,
             toolCallId: 'call-1',
             name: 'read',
             result: { summary: 'done' },
             isError: false,
           });
         }
-      });
+      }, MAIN_SESSION_KEY);
 
-      await expect(sendButton).toHaveAttribute('title', /Stop|停止/);
+      await expect(sendButton).toHaveAttribute('aria-label', /Stop|停止/);
 
-      await app.evaluate(({ BrowserWindow }) => {
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {
           win.webContents.send('chat:runtime-event', {
             type: 'run.ended',
             runId: 'run-e2e',
+            sessionKey,
             status: 'completed',
             endedAt: Date.now(),
           });
         }
-      });
+      }, MAIN_SESSION_KEY);
 
-      await expect(sendButton).toHaveAttribute('title', /Send|发送/);
+      await expect(sendButton).toHaveAttribute('aria-label', /Send|发送/);
     } finally {
       await closeElectronApp(app);
     }
@@ -441,9 +489,7 @@ test.describe('Verse Claw chat run state events', () => {
 
       const graph = summary.getByTestId('chat-execution-graph');
       await expect(graph).toBeVisible({ timeout: 30_000 });
-      if (await graph.getAttribute('data-collapsed') === 'true') {
-        await graph.getByRole('button').click();
-      }
+      await expect(graph).toHaveAttribute('data-collapsed', 'false');
 
       await expect(graph.getByText('read', { exact: true })).toBeVisible();
       await expect(graph.getByText('edit', { exact: true })).toBeVisible();
@@ -451,8 +497,9 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(graph.getByText('Tool Result: read', { exact: true })).toBeVisible();
       await expect(graph.getByText('Tool Result: edit', { exact: true })).toBeVisible();
       await expect(graph.getByText('Tool Result: exec', { exact: true })).toBeVisible();
-      await expect(graph.getByText('Assistant Final', { exact: true })).toBeVisible();
-      await expect(graph.getByText('Fixed subtract and tests now pass.', { exact: true })).toBeVisible();
+      await expect(graph.getByText('Assistant Final', { exact: true })).toHaveCount(0);
+      await expect(graph.getByText('Fixed subtract and tests now pass.', { exact: true })).toHaveCount(0);
+      await expect(page.getByTestId('chat-message-2').getByText('Fixed subtract and tests now pass.')).toBeVisible();
     } finally {
       await closeElectronApp(app);
     }

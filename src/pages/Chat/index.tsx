@@ -6,7 +6,8 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, FileText, Folder, FolderPlus, GitBranchPlus, Laptop, Loader2, Pencil, Sparkles, X } from 'lucide-react';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, FolderPlus, GitBranchPlus, Loader2, Pencil, X } from 'lucide-react';
+import { FileText, Laptop, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -69,7 +70,7 @@ import {
   type GraphStepCacheEntry,
   type UserRunCard,
 } from './execution-projection';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
@@ -85,15 +86,12 @@ import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
-import { TurnWorkPanel } from '@/components/assistant-render/TurnWorkPanel';
-import { buildTurnWorkModel } from '@/components/assistant-render/turn-work-model';
-import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
-import { projectGeneratedFileDiff } from '@/components/tool-ui/run-surfaces';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
-import { buildTurnSummaryModel } from '@/components/assistant-render/turn-summary-model';
+import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
-import { useUiOverlay } from '@/components/layout/ui-overlay-context';
+import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -776,7 +774,7 @@ function KnowledgeErrorAdvisoryCard({
 
 export function Chat() {
   const { t } = useTranslation(['chat', 'common']);
-  const { uiVersion } = useUiOverlay();
+  const uiVersion = useUiVersion();
   const navigate = useNavigate();
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
@@ -873,8 +871,9 @@ export function Chat() {
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);
   const openChanges = useArtifactPanel((s) => s.openChanges);
   const openPreview = useArtifactPanel((s) => s.openPreview);
-  const openBrowser = useArtifactPanel((s) => s.openBrowser);
-  const artifactTab = useArtifactPanel((s) => s.tab);
+  const openArtifactTab = useArtifactPanel((s) => s.openTab);
+  const artifactTabs = useArtifactPanel((s) => s.tabs);
+  const artifactActiveTabId = useArtifactPanel((s) => s.activeTabId);
   const restoreArtifactPanelState = useArtifactPanel((s) => s.restoreSessionState);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const lastObservedSessionKeyRef = useRef(currentSessionKey);
@@ -913,14 +912,7 @@ export function Chat() {
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
-  // Persistent per-run override for the Execution Graph's expanded/collapsed
-  // state. Keyed by a stable run id (trigger message id, or a fallback of
-  // `${sessionKey}:${triggerIdx}`) so user toggles survive the `loadHistory`
-  // refresh that runs after every final event — otherwise the card would
-  // remount and reset. `undefined` values mean "user hasn't toggled, let the
-  // card pick a default from its own `active` prop."
-  const [graphExpandedOverrides, setGraphExpandedOverrides] = useState<Record<string, boolean>>({});
-  const [turnSummaryExpandedOverrides, setTurnSummaryExpandedOverrides] = useState<Record<string, boolean>>({});
+  const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
@@ -932,12 +924,12 @@ export function Chat() {
         ...previousArtifactPanel,
         open: panelOpen,
         expanded: panelExpanded,
-        activeTab: artifactTab,
+        tabs: artifactTabs.map((tab) => ({ kind: tab.kind, title: tab.title })),
+        activeTabKind: artifactTabs.find((tab) => tab.id === artifactActiveTabId)?.kind,
       },
-      graphExpanded: graphExpandedOverrides,
-      turnSummaryExpanded: turnSummaryExpandedOverrides,
+      turnSummaryExpanded: runActivityExpandedOverrides,
     };
-  }, [activeWorkspace, artifactTab, composerDraft, currentSessionKey, graphExpandedOverrides, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, turnSummaryExpandedOverrides]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -970,7 +962,7 @@ export function Chat() {
       lastObservedSessionKeyRef.current = target.sessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       setComposerDraft('');
-      setGraphExpandedOverrides({});
+      setRunActivityExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -995,7 +987,7 @@ export function Chat() {
       lastObservedSessionKeyRef.current = target.sessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       setComposerDraft('');
-      setGraphExpandedOverrides({});
+      setRunActivityExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -1037,7 +1029,7 @@ export function Chat() {
     resetSessionView(nextSessionKey);
     if (target.isFresh) {
       setComposerDraft('');
-      setGraphExpandedOverrides({});
+      setRunActivityExpandedOverrides({});
       setKnowledgeScope('none');
       void clearActiveTopicMarker(activeWorkspace.rootPath);
     }
@@ -1063,7 +1055,7 @@ export function Chat() {
     lastObservedSessionKeyRef.current = nextSessionKey;
     workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
     setComposerDraft('');
-    setGraphExpandedOverrides({});
+    setRunActivityExpandedOverrides({});
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
@@ -1122,7 +1114,7 @@ export function Chat() {
         lastObservedSessionKeyRef.current = nextSessionKey;
         workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
         setComposerDraft('');
-        setGraphExpandedOverrides({});
+        setRunActivityExpandedOverrides({});
         setContextRange(null);
         setLiveUsage(null);
         resetSessionView(nextSessionKey);
@@ -1182,10 +1174,6 @@ export function Chat() {
     void fetchAgents();
   }, [fetchAgents]);
 
-  useEffect(() => {
-    void fetchWorkspaces();
-  }, [fetchWorkspaces]);
-
   // Startup hydration is Main-owned through the chat store. Re-run when the
   // Gateway runtime changes so a page mounted before readiness can load once
   // the connection becomes available.
@@ -1225,8 +1213,10 @@ export function Chat() {
       sessionKey: currentSessionKey,
     };
     setComposerDraft(sessionState.draftInput ?? '');
-    setGraphExpandedOverrides(sessionState.graphExpanded ?? {});
-    setTurnSummaryExpandedOverrides(sessionState.turnSummaryExpanded ?? {});
+    setRunActivityExpandedOverrides({
+      ...(sessionState.graphExpanded ?? {}),
+      ...(sessionState.turnSummaryExpanded ?? {}),
+    });
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
     void clearActiveTopicMarker(activeWorkspace.rootPath);
@@ -1371,38 +1361,40 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, saveWorkspaceState]);
 
+  /* These three open a specific panel tab. `openArtifactTab` is single-instance
+   * per kind, so re-triggering focuses the tab the user already has open. */
   const handleOpenWorkspaceWebView = useCallback(() => {
-    openBrowser();
+    openArtifactTab('browser');
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
       sessionKey: currentSessionKey,
       state: {
-        artifactPanel: { open: true, activeTab: 'browser', workspaceView: 'web' },
+        artifactPanel: { open: true, activeTabKind: 'browser' },
       },
     });
-  }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState]);
+  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState]);
 
   const handleOpenGitPanel = useCallback(() => {
-    openBrowser();
+    openArtifactTab('review');
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
       sessionKey: currentSessionKey,
       state: {
-        artifactPanel: { open: true, activeTab: 'browser', workspaceView: 'git' },
+        artifactPanel: { open: true, activeTabKind: 'review' },
       },
     });
-  }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState]);
+  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState]);
 
   const handleInterruptTerminal = useCallback(async () => {
-    openBrowser();
+    openArtifactTab('terminal');
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
       sessionKey: currentSessionKey,
       state: {
-        artifactPanel: { open: true, activeTab: 'browser', workspaceView: 'terminal' },
+        artifactPanel: { open: true, activeTabKind: 'terminal' },
       },
     });
     try {
@@ -1420,7 +1412,7 @@ export function Chat() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error));
     }
-  }, [activeWorkspaceId, currentSessionKey, openBrowser, saveWorkspaceState, t]);
+  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState, t]);
 
   const handleOpenTaskLedger = useCallback(() => {
     navigate('/task-ledger');
@@ -1556,7 +1548,7 @@ export function Chat() {
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, [activeWorkspace?.id, artifactTab, captureCurrentWorkspaceSessionState, currentSessionKey, graphExpandedOverrides, panelOpen, saveWorkspaceState, turnSummaryExpandedOverrides]);
+  }, [activeWorkspace?.id, artifactActiveTabId, artifactTabs, captureCurrentWorkspaceSessionState, currentSessionKey, panelOpen, runActivityExpandedOverrides, saveWorkspaceState]);
 
   useEffect(() => () => {
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
@@ -2056,7 +2048,7 @@ export function Chat() {
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       resetSessionView(nextSessionKey);
       setComposerDraft(draft);
-      setGraphExpandedOverrides({});
+      setRunActivityExpandedOverrides({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -2387,13 +2379,7 @@ export function Chat() {
     return () => window.clearInterval(timer);
   }, [assistantStreamStatus?.active, activeRuntimeRunStartedAt]);
 
-  // Derive the set of run keys that should be auto-collapsed (run finished
-  // streaming or has a reply override) during render instead of in an effect,
-  // so we don't violate react-hooks/set-state-in-effect. Explicit user toggles
-  // still win via `graphExpandedOverrides` and are merged in at the call site.
-  // Pre-compute generated files per run (memoised so the cards and the
-  // ArtifactPanel can both read them without re-parsing tool calls every
-  // render).
+  // Cache generated files per run so the activity receipt and artifact panel share one projection.
   const filesByRun = useMemo(() => {
     const map = new Map<number, GeneratedFile[]>();
     for (const card of userRunCards) {
@@ -2456,19 +2442,6 @@ export function Chat() {
     if (sending) return undefined;
     return lastUserMessageAt ?? 0;
   }, [sending, lastUserMessageAt]);
-
-  const autoCollapsedRunKeys = useMemo(() => {
-    const keys = new Set<string>();
-    for (const card of userRunCards) {
-      // Auto-collapse once the run is complete and a final reply exists.
-      // Don't collapse while the reply is still streaming.
-      const isStillStreaming = card.streamingReplyText != null;
-      const shouldCollapse = !isStillStreaming && !card.active && card.replyIndex != null;
-      if (!shouldCollapse) continue;
-      keys.add(card.runKey);
-    }
-    return keys;
-  }, [userRunCards]);
 
   useEffect(() => {
     if (userRunCards.length === 0) return;
@@ -2596,7 +2569,11 @@ export function Chat() {
                 />
               ) : isEmpty ? (
                 <>
-                  <WelcomeScreen onSend={handleSendMessage} disabled={!isGatewayRunning} />
+                  <WelcomeScreen
+                    onSend={handleSendMessage}
+                    onPickFolder={handlePickWorkspaceFolder}
+                    disabled={!isGatewayRunning}
+                  />
                   {showRollbackPlanPanel && (
                     <RollbackPlanPanel
                       plan={rollbackPlan}
@@ -2656,53 +2633,45 @@ export function Chat() {
                         })}
                       />
                       {row.runCards.map((card) => {
-                          const runKey = card.runKey;
-                          const userOverride = graphExpandedOverrides[runKey];
-                          // Always use the controlled expanded prop instead of
-                          // relying on ExecutionGraphCard's uncontrolled state.
-                          // Uncontrolled state is lost on remount (key changes
-                          // when loadHistory replaces message ids), causing
-                          // spurious collapse.  The controlled prop survives
-                          // remounts because it's computed fresh each render.
-                          const expanded = userOverride != null
-                            ? userOverride
-                            : !autoCollapsedRunKeys.has(runKey);
-                          const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
-                          const mutationDiffs = generatedFiles
-                            .map(projectGeneratedFileDiff)
-                            .filter((surface) => surface != null);
-                          const turnWorkModel = buildTurnWorkModel({
-                            id: runKey,
-                            active: card.active,
-                            steps: card.steps,
-                            reports: generatedFiles,
-                          });
-                          const replyMessage = card.replyIndex == null ? null : messages[card.replyIndex];
-                          const finalReplyText = card.replyIndex == null
-                            ? card.streamingReplyText ?? ''
-                            : replyTextOverrides.get(card.replyIndex) ?? (replyMessage ? extractText(replyMessage) : '');
-                          const turnSummaryModel = buildTurnSummaryModel({
-                            card,
-                            finalReplyText,
-                            generatedFiles,
-                          });
-                          const summaryExpanded = turnSummaryModel
-                            ? turnSummaryExpandedOverrides[runKey] ?? !turnSummaryModel.defaultCollapsed
-                            : true;
-                          const runDetails = (
-                            <>
-                              <TurnWorkPanel
-                                model={turnWorkModel}
-                                onOpenReport={(report) => {
-                                  const target = generatedFileToTarget(report.file);
-                                  if (isHtmlPreviewExt(report.file.ext)) {
-                                    openPreview(target);
-                                    return;
-                                  }
-                                  openChanges(target);
-                                }}
-                              />
-                              <RunMutationDiffs surfaces={mutationDiffs} />
+                        const runKey = card.runKey;
+                        const defaultExpanded = card.status === 'error'
+                          || card.status === 'aborted'
+                          || (card.active && card.streamingReplyText == null)
+                          || !card.hasVisibleReply;
+                        const expanded = runActivityExpandedOverrides[runKey] ?? defaultExpanded;
+                        const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
+                        const hasActivity = card.active
+                          || card.steps.length > 0
+                          || generatedFiles.length > 0
+                          || card.orchestrations.length > 0
+                          || Boolean(card.traceId);
+                        if (!hasActivity) return null;
+
+                        return (
+                          <div key={`run-${currentSessionKey}:${card.triggerIndex}`}>
+                            <TurnSummaryCard
+                              status={card.status}
+                              startedAt={card.startedAt}
+                              endedAt={card.endedAt}
+                              now={streamStatusNow}
+                              expanded={expanded}
+                              onExpandedChange={(next) =>
+                                setRunActivityExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
+                              }
+                            >
+                              {generatedFiles.length > 0 && (
+                                <GeneratedFilesPanel
+                                  files={generatedFiles}
+                                  onOpen={(file) => {
+                                    const target = generatedFileToTarget(file);
+                                    if (isHtmlPreviewExt(file.ext)) {
+                                      openPreview(target);
+                                      return;
+                                    }
+                                    openChanges(target);
+                                  }}
+                                />
+                              )}
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
@@ -2710,35 +2679,18 @@ export function Chat() {
                                 active={card.active}
                                 suppressThinking={card.suppressThinking}
                                 traceId={card.traceId}
-                                expanded={expanded}
-                                onExpandedChange={(next) =>
-                                  setGraphExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
-                                }
                               />
                               {card.orchestrations.map((orchestration) => (
                                 <TeamOrchestrationCard
                                   key={`team-orchestration-${orchestration.id}`}
                                   orchestration={orchestration}
+                                  embedded
                                 />
                               ))}
-                            </>
-                          );
-                          return (
-                            <div key={`run-${currentSessionKey}:${card.triggerIndex}`} className="space-y-3">
-                              {turnSummaryModel ? (
-                                <TurnSummaryCard
-                                  model={turnSummaryModel}
-                                  expanded={summaryExpanded}
-                                  onExpandedChange={(next) =>
-                                    setTurnSummaryExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
-                                  }
-                                >
-                                  {runDetails}
-                                </TurnSummaryCard>
-                              ) : runDetails}
-                            </div>
-                          );
-                        })}
+                            </TurnSummaryCard>
+                          </div>
+                        );
+                      })}
                     </div>
                     );
                   })}
@@ -3274,6 +3226,7 @@ function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
 
 type WelcomeScreenProps = {
   onSend: (text: string) => void | Promise<unknown>;
+  onPickFolder?: () => void | Promise<unknown>;
   disabled?: boolean;
 };
 
@@ -3343,8 +3296,9 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
   return <AuiProvider value={aui}>{children}</AuiProvider>;
 }
 
-function WelcomeScreen({ disabled = false, onSend }: WelcomeScreenProps) {
+function WelcomeScreen({ disabled = false, onPickFolder, onSend }: WelcomeScreenProps) {
   const { t } = useTranslation('chat');
+  const hasWorkspace = useWorkspacesStore((s) => Boolean(s.activeWorkspace));
   const quickActions = useMemo<SuggestionConfig[]>(() => [
     {
       title: t('welcome.askQuestions'),
@@ -3368,8 +3322,21 @@ function WelcomeScreen({ disabled = false, onSend }: WelcomeScreenProps) {
       <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/55 bg-material-elevated/72 text-primary shadow-lg backdrop-blur-[18px] dark:border-white/10">
         <Sparkles className="h-5 w-5" />
       </div>
-      <h1 className="chat-brand-heading mb-7 text-4xl font-normal tracking-[-0.035em] text-foreground/82 md:text-5xl font-serif">
-        {t('welcome.subtitle')}
+      {/* Project-aware hero, ported from the FakeCoding empty state: the active
+        * project is named inline in the heading and is itself the switcher.
+        * Falls back to the project-less phrasing when no workspace is open. */}
+      <h1 className="codex-welcome-hero codex-welcome-title" data-testid="chat-welcome-title">
+        {hasWorkspace ? (
+          <Trans
+            t={t}
+            i18nKey="welcome.titleInProject"
+            components={{
+              projectSelect: <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />,
+            }}
+          />
+        ) : (
+          t('welcome.titleNoProject')
+        )}
       </h1>
 
       <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>

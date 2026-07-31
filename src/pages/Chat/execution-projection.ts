@@ -39,11 +39,17 @@ export type GraphStepCacheEntry = {
   triggerIndex: number;
 };
 
+export type UserRunStatus = 'running' | 'completed' | 'error' | 'aborted';
+
 export type UserRunCard = {
   runKey: string;
   triggerIndex: number;
   replyIndex: number | null;
   active: boolean;
+  status: UserRunStatus;
+  startedAt?: number;
+  endedAt?: number;
+  hasVisibleReply: boolean;
   agentLabel: string;
   sessionLabel: string;
   segmentEnd: number;
@@ -313,6 +319,39 @@ function shouldFoldNarrationMessage(
   return hasNarrationText || hasThinking;
 }
 
+function normalizeRunTimestamp(value: unknown): number | undefined {
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return undefined;
+  return numeric > 1_000_000_000_000 ? numeric : numeric * 1000;
+}
+
+function deriveRunLifecycle(input: {
+  runtimeRun: ChatRuntimeRunState | null;
+  active: boolean;
+  steps: TaskStep[];
+  triggerMessage: RawMessage;
+  replyMessage?: RawMessage;
+  hasVisibleReply: boolean;
+  hasRunError: boolean;
+}): Pick<UserRunCard, 'status' | 'startedAt' | 'endedAt' | 'hasVisibleReply'> {
+  const runtimeStatus = input.runtimeRun?.status;
+  const status: UserRunStatus = runtimeStatus === 'aborted'
+    ? 'aborted'
+    : runtimeStatus === 'error' || input.hasRunError || input.steps.some((step) => step.status === 'error')
+      ? 'error'
+      : input.active || runtimeStatus === 'running'
+        ? 'running'
+        : 'completed';
+  const startedAt = normalizeRunTimestamp(input.runtimeRun?.startedAt)
+    ?? normalizeRunTimestamp(input.triggerMessage.timestamp);
+  const endedAt = status === 'running'
+    ? undefined
+    : normalizeRunTimestamp(input.runtimeRun?.endedAt)
+      ?? normalizeRunTimestamp(input.replyMessage?.timestamp);
+
+  return { status, startedAt, endedAt, hasVisibleReply: input.hasVisibleReply };
+}
+
 export function deriveUserRunProjection({
   messages,
   subagentCompletionInfos,
@@ -480,6 +519,15 @@ export function deriveUserRunProjection({
           triggerIndex: idx,
           replyIndex,
           active: true,
+          ...deriveRunLifecycle({
+            runtimeRun: activeRuntimeRun,
+            active: true,
+            steps: [],
+            triggerMessage: message,
+            replyMessage: replyIndex == null ? undefined : messages[replyIndex],
+            hasVisibleReply: true,
+            hasRunError: isLatestRunSegment && Boolean(runError),
+          }),
           agentLabel: segmentAgentLabel,
           sessionLabel: segmentSessionLabel,
           segmentEnd: displaySegmentEnd,
@@ -502,6 +550,15 @@ export function deriveUserRunProjection({
           triggerIndex: idx,
           replyIndex,
           active: true,
+          ...deriveRunLifecycle({
+            runtimeRun: activeRuntimeRun,
+            active: true,
+            steps: [],
+            triggerMessage: message,
+            replyMessage: replyIndex == null ? undefined : messages[replyIndex],
+            hasVisibleReply: false,
+            hasRunError: isLatestRunSegment && Boolean(runError),
+          }),
           agentLabel: segmentAgentLabel,
           sessionLabel: segmentSessionLabel,
           segmentEnd: displaySegmentEnd,
@@ -520,11 +577,21 @@ export function deriveUserRunProjection({
       const cleanedSteps = sanitizeGraphSteps(cached.steps.filter(
         (s) => !(s.kind === 'message' && s.id.startsWith('stream-message')),
       ));
+      const cachedReplyIndex = cached.replyIndex;
       cards.push({
         runKey,
         triggerIndex: idx,
-        replyIndex: cached.replyIndex,
+        replyIndex: cachedReplyIndex,
         active: false,
+        ...deriveRunLifecycle({
+          runtimeRun: activeRuntimeRun,
+          active: false,
+          steps: cleanedSteps,
+          triggerMessage: message,
+          replyMessage: cachedReplyIndex == null ? undefined : messages[cachedReplyIndex],
+          hasVisibleReply: cachedReplyIndex != null,
+          hasRunError: Boolean(runError),
+        }),
         agentLabel: cached.agentLabel,
         sessionLabel: cached.sessionLabel,
         segmentEnd: displaySegmentEnd,
@@ -557,6 +624,15 @@ export function deriveUserRunProjection({
       triggerIndex: idx,
       replyIndex,
       active: isLatestOpenRun,
+      ...deriveRunLifecycle({
+        runtimeRun: activeRuntimeRun,
+        active: isLatestOpenRun,
+        steps,
+        triggerMessage: message,
+        replyMessage: replyIndex == null ? undefined : messages[replyIndex],
+        hasVisibleReply: streamingReplyText != null || replyIndex != null,
+        hasRunError: Boolean(runError),
+      }),
       agentLabel: segmentAgentLabel,
       sessionLabel: segmentSessionLabel,
       segmentEnd: displaySegmentEnd,

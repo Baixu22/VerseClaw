@@ -2,8 +2,8 @@
  * Root Application Component
  * Handles routing and global providers
  */
-import { Navigate, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Navigate, Routes, Route, useNavigate, useLocation, type Location } from 'react-router-dom';
+import { Component, lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import i18n from './i18n';
@@ -22,7 +22,6 @@ import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery
 import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
 import { applyDocumentTheme } from './lib/theme';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
-import { SettingsDrawerRoute } from './pages/Settings/SettingsDrawerRoute';
 import { resolveUiVersion } from './lib/ui-version';
 import { UiOverlayProvider } from './components/layout/ui-overlay-context';
 import { toRoutePath } from './lib/settings-overlay-routing';
@@ -50,6 +49,58 @@ function SetupRoute() {
     </Suspense>
   );
 }
+
+type ExtraRoute = ReturnType<typeof rendererExtensionRegistry.getExtraRoutes>[number];
+
+type BackgroundRoutesProps = {
+  location: Location;
+  devModeUnlocked: boolean;
+  extraRoutes: ExtraRoute[];
+};
+
+const BackgroundRoutes = memo(function BackgroundRoutes({
+  location,
+  devModeUnlocked,
+  extraRoutes,
+}: BackgroundRoutesProps) {
+  return (
+    <Routes location={location}>
+      <Route path="/setup/*" element={<SetupRoute />} />
+
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Chat />} />
+        <Route path="/models" element={<Navigate to="/settings/models" replace />} />
+        <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
+        <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
+        <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
+        <Route path="/cron" element={<Cron />} />
+        <Route path="/remote-tasks" element={<RemoteTasks />} />
+        <Route path="/task-ledger" element={<TaskLedgerPage />} />
+        <Route path="/clawgraph" element={<ClawGraphPage />} />
+        <Route path="/code-review" element={<CodeReviewPage />} />
+        <Route path="/knowledge" element={<Knowledge />} />
+        <Route path="/browser" element={<BrowserWorkbench />} />
+        <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
+        <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
+        <Route path="/observability" element={<ObservabilityDashboard />} />
+        <Route path="/ui-v2-showcase" element={<UiV2Showcase />} />
+        <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
+        <Route path="/settings/*" element={<SettingsRoute />} />
+        {extraRoutes.map((route) => (
+          <Route key={route.path} path={route.path} element={<route.component />} />
+        ))}
+      </Route>
+    </Routes>
+  );
+}, (previous, next) => (
+  previous.location === next.location
+  && previous.devModeUnlocked === next.devModeUnlocked
+  && previous.extraRoutes.length === next.extraRoutes.length
+  && previous.extraRoutes.every((route, index) => (
+    route.path === next.extraRoutes[index]?.path
+    && route.component === next.extraRoutes[index]?.component
+  ))
+));
 
 /**
  * Error Boundary to catch and display React rendering errors
@@ -137,31 +188,21 @@ function App() {
   const initStorageHealth = useStorageHealthStore((state) => state.init);
   const handleNewChat = useNewChatAction();
   const uiVersion = resolveUiVersion(window.electron?.platform, window.location.search);
-  const settingsOpen = uiVersion === 'v2' && location.pathname.startsWith('/settings');
+  const settingsOpen = location.pathname.startsWith('/settings');
   const [appOverlayHost, setAppOverlayHost] = useState<HTMLDivElement | null>(null);
   const settingsCloseDestinationRef = useRef<string | null>(null);
   const settingsFocusRestoreRef = useRef<HTMLElement | null>(null);
-  const [overlayRouteState, setOverlayRouteState] = useState(() => ({
-    observedLocationKey: location.key,
-    backgroundLocation: location.pathname.startsWith('/settings')
+  const backgroundLocationRef = useRef<Location>(
+    location.pathname.startsWith('/settings')
       ? { ...location, pathname: '/', search: '', hash: '' }
       : location,
-    drawerOpen: settingsOpen,
-  }));
-  let currentOverlayRouteState = overlayRouteState;
-  if (overlayRouteState.observedLocationKey !== location.key) {
-    currentOverlayRouteState = {
-      observedLocationKey: location.key,
-      backgroundLocation: location.pathname.startsWith('/settings')
-        ? overlayRouteState.backgroundLocation
-        : location,
-      drawerOpen: settingsOpen ? true : overlayRouteState.drawerOpen,
-    };
-    setOverlayRouteState(currentOverlayRouteState);
+  );
+
+  if (!settingsOpen) {
+    backgroundLocationRef.current = location;
   }
 
-  const backgroundLocation = settingsOpen ? currentOverlayRouteState.backgroundLocation : location;
-  const backgroundPath = toRoutePath(backgroundLocation);
+  const backgroundPath = toRoutePath(backgroundLocationRef.current);
 
   useEffect(() => {
     document.documentElement.dataset.uiVersion = uiVersion;
@@ -177,14 +218,9 @@ function App() {
   }, [navigate]);
 
   const requestCloseSettings = useCallback((destination?: string) => {
-    settingsCloseDestinationRef.current = destination ?? null;
-    setOverlayRouteState((current) => ({ ...current, drawerOpen: false }));
-  }, []);
-
-  const handleSettingsClosed = useCallback(() => {
-    const destination = settingsCloseDestinationRef.current ?? backgroundPath;
+    const target = destination ?? backgroundPath;
     settingsCloseDestinationRef.current = null;
-    navigate(destination, { replace: true });
+    navigate(target, { replace: true });
     window.requestAnimationFrame(() => {
       const storedTarget = settingsFocusRestoreRef.current;
       const fallbackTarget = document.querySelector<HTMLElement>('[data-testid="sidebar-nav-settings"]');
@@ -194,12 +230,11 @@ function App() {
   }, [backgroundPath, navigate]);
 
   const overlayContextValue = useMemo(() => ({
-    uiVersion,
     settingsOpen,
     backgroundLocation: backgroundPath,
     openSettings,
     requestCloseSettings,
-  }), [backgroundPath, openSettings, requestCloseSettings, settingsOpen, uiVersion]);
+  }), [backgroundPath, openSettings, requestCloseSettings, settingsOpen]);
 
   useEffect(() => {
     installAgentDevTestSurface({
@@ -303,44 +338,12 @@ function App() {
     <ErrorBoundary>
       <OverlayPortalProvider container={appOverlayHost}>
       <TooltipProvider delayDuration={300}>
-        <UiOverlayProvider value={overlayContextValue}>
-        <Routes location={settingsOpen ? backgroundLocation : location}>
-          {/* Setup wizard (shown on first launch) */}
-          <Route path="/setup/*" element={<SetupRoute />} />
-
-          {/* Main application routes */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Chat />} />
-            <Route path="/models" element={<Navigate to="/settings/models" replace />} />
-            <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
-            <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
-            <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
-            <Route path="/cron" element={<Cron />} />
-            <Route path="/remote-tasks" element={<RemoteTasks />} />
-            <Route path="/task-ledger" element={<TaskLedgerPage />} />
-            <Route path="/clawgraph" element={<ClawGraphPage />} />
-            <Route path="/code-review" element={<CodeReviewPage />} />
-            <Route path="/knowledge" element={<Knowledge />} />
-            <Route path="/browser" element={<BrowserWorkbench />} />
-            <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
-            <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
-            <Route path="/observability" element={<ObservabilityDashboard />} />
-            <Route path="/ui-v2-showcase" element={<UiV2Showcase />} />
-            <Route path="/settings/*" element={<SettingsRoute />} />
-            {extraRoutes.map((r) => (
-              <Route key={r.path} path={r.path} element={<r.component />} />
-            ))}
-          </Route>
-        </Routes>
-
-        {settingsOpen && (
-          <Routes>
-            <Route
-              path="/settings/*"
-              element={<SettingsDrawerRoute open={currentOverlayRouteState.drawerOpen} onClosed={handleSettingsClosed} />}
-            />
-          </Routes>
-        )}
+        <UiOverlayProvider uiVersion={uiVersion} value={overlayContextValue}>
+        <BackgroundRoutes
+          location={location}
+          devModeUnlocked={devModeUnlocked}
+          extraRoutes={extraRoutes}
+        />
         </UiOverlayProvider>
 
         <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" />

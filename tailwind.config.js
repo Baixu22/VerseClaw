@@ -276,6 +276,48 @@ module.exports = {
           output: 'hsl(var(--usage-output) / <alpha-value>)',
           cache: 'hsl(var(--usage-cache) / <alpha-value>)',
         },
+
+        // ── E. Conversation flow tokens ──────────────────────────────
+        // The chat transcript is the one surface where restraint matters
+        // most, so it gets a deliberately tiny palette instead of the
+        // full semantic set: exactly three text lightness levels
+        // (foreground / body / tertiary) and two border weights. This
+        // replaces the ad-hoc `border-black/[0.07]`-style variants that
+        // had drifted to 15 distinct values across the chat components.
+        //
+        //   text-conversation-body      → default transcript prose
+        //   text-conversation-tertiary  → timestamps, counts, meta
+        //   border-conversation         → default hairline boundary
+        //   border-conversation-strong  → boundary that must stay visible
+        //
+        // The third text level is shadcn's `foreground`, used on hover
+        // only, so a resting transcript never shows high contrast.
+        conversation: {
+          body: 'hsl(var(--conversation-text-body) / <alpha-value>)',
+          tertiary: 'hsl(var(--conversation-text-tertiary) / <alpha-value>)',
+          DEFAULT: 'hsl(var(--conversation-border-light) / <alpha-value>)',
+          strong: 'hsl(var(--conversation-border-heavy) / <alpha-value>)',
+        },
+      },
+
+      /* ──────────────────────────────────────────────────────────────
+       * boxShadow
+       * ──────────────────────────────────────────────────────────────
+       *
+       * Four levels only, and the conversation flow uses none of them
+       * above `subtle`:
+       *
+       *   hairline → 0.5px ring, for a boundary that must read as a line
+       *   subtle   → 1px lift, for a control resting on the transcript
+       *   (TW) md  → menus and popovers
+       *   (TW) lg  → modals and drawers only
+       *
+       * Anything needing more than `subtle` inside the transcript is a
+       * signal the element should be a plain indented text row instead.
+       * ────────────────────────────────────────────────────────────── */
+      boxShadow: {
+        hairline: 'var(--shadow-hairline)',
+        subtle: 'var(--shadow-subtle)',
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -1,15 +1,18 @@
-import { BookOpenCheck, Gauge, RefreshCw, FolderTree, ListTree } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { BookOpenCheck, FolderTree, Gauge, ListTree, MoreHorizontal, RefreshCw } from 'lucide-react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ResourceChip } from '@/components/chat/ResourceChip';
+import { WORKSPACE_BROWSER_ENABLED } from '@/components/file-preview/workspace-browser-config';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useChatStore } from '@/stores/chat';
+import { cn } from '@/lib/utils';
 import { useAgentsStore } from '@/stores/agents';
 import { useArtifactPanel } from '@/stores/artifact-panel';
-import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
-import { WORKSPACE_BROWSER_ENABLED } from '@/components/file-preview/workspace-browser-config';
-import { useMemo } from 'react';
-import { ResourceChip } from '@/components/chat/ResourceChip';
+import { useChatStore } from '@/stores/chat';
 import type { PromptCacheRiskAssessment, PromptCacheStatus } from '@shared/types/workspace';
+
+const MENU_ITEM_CLASS = 'flex min-h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm text-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-foreground/5';
 
 type ChatToolbarProps = {
   questionDirectoryOpen?: boolean;
@@ -35,33 +38,22 @@ function formatCacheHitRate(value: number | null): string {
   return `${Math.round(value * 100)}%`;
 }
 
-function formatUsd(value: number): string {
-  return `$${value.toFixed(value >= 0.01 ? 2 : 4)}`;
-}
-
 function statusTone(status: PromptCacheStatus): string {
-  switch (status) {
-    case 'warm':
-      return 'border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400';
-    case 'warming':
-      return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-400';
-    case 'at-risk':
-      return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
-    case 'cold':
-      return 'border-zinc-400/30 bg-black/5 text-muted-foreground dark:bg-white/10';
-    case 'ineligible':
-      return 'border-zinc-300/30 bg-transparent text-muted-foreground';
-    case 'unknown':
-    default:
-      return 'border-zinc-300/30 bg-transparent text-muted-foreground';
-  }
+  if (status === 'at-risk') return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  if (status === 'warm' || status === 'warming') return 'border-border/60 bg-foreground/[0.035] text-muted-foreground';
+  return 'border-border/50 bg-transparent text-muted-foreground';
 }
 
+/* A healthy prompt cache is the normal case, so reporting it earns the user
+ * nothing but another lit chip in the toolbar. Surface the chip only when the
+ * cache actually needs attention: the current assessment says `at-risk`, or a
+ * risk event fired earlier this session and is still worth explaining. Warm,
+ * warming, and unknown states stay silent — the details remain reachable
+ * through the same tooltip once the chip has a reason to appear. */
 function shouldShowPromptCacheChip(status?: PromptCacheRiskAssessment | null): status is PromptCacheRiskAssessment {
   if (!status) return false;
-  if (status.lastRiskEvent) return true;
-  if (status.cacheReadTokens > 0 || status.cacheWriteTokens > 0) return true;
-  return status.status !== 'unknown' && status.promptTokens > 0;
+  if (status.status === 'at-risk') return true;
+  return Boolean(status.lastRiskEvent);
 }
 
 export function ChatToolbar({
@@ -71,27 +63,28 @@ export function ChatToolbar({
   onSaveToKnowledge,
   promptCacheStatus,
 }: ChatToolbarProps = {}) {
-  const refresh = useChatStore((s) => s.refresh);
-  const loading = useChatStore((s) => s.loading);
-  const currentAgentId = useChatStore((s) => s.currentAgentId);
-  const agents = useAgentsStore((s) => s.agents);
-  const openBrowser = useArtifactPanel((s) => s.openBrowser);
-  const panelOpen = useArtifactPanel((s) => s.open);
-  const panelTab = useArtifactPanel((s) => s.tab);
-  const closePanel = useArtifactPanel((s) => s.close);
+  const refresh = useChatStore((state) => state.refresh);
+  const loading = useChatStore((state) => state.loading);
+  const currentAgentId = useChatStore((state) => state.currentAgentId);
+  const agents = useAgentsStore((state) => state.agents);
+  const openBrowser = useArtifactPanel((state) => state.openBrowser);
+  const panelOpen = useArtifactPanel((state) => state.open);
+  const closePanel = useArtifactPanel((state) => state.close);
   const { t } = useTranslation('chat');
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
   );
 
-  const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen && panelTab === 'browser';
-  const questionDirectoryAvailable = questionDirectoryCount > 1 && !!onToggleQuestionDirectory;
+  // The toggle opens/closes the whole panel now — the tab strip inside it owns
+  // which view is showing, so there is no single "browser tab is active" state.
+  const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen;
+  const questionDirectoryAvailable = questionDirectoryCount > 1 && Boolean(onToggleQuestionDirectory);
   const showPromptCacheChip = shouldShowPromptCacheChip(promptCacheStatus);
   const promptCacheReason = promptCacheStatus?.reason ?? promptCacheStatus?.lastRiskEvent?.reason;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex min-w-0 items-center gap-1">
       <ResourceChip />
       {showPromptCacheChip && (
         <Tooltip>
@@ -107,9 +100,7 @@ export function ChatToolbar({
               })}
             >
               <Gauge className="h-4 w-4" />
-              <span className="hidden sm:inline">
-                {t(`toolbar.promptCache.short.${promptCacheStatus.status}`)}
-              </span>
+              <span className="hidden lg:inline">{t(`toolbar.promptCache.short.${promptCacheStatus.status}`)}</span>
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-72">
@@ -119,66 +110,15 @@ export function ChatToolbar({
                   status: t(`toolbar.promptCache.status.${promptCacheStatus.status}`),
                 })}
               </p>
-              <p>
-                {t('toolbar.promptCache.hitRate', {
-                  value: formatCacheHitRate(promptCacheStatus.hitRate),
-                })}
-              </p>
-              {promptCacheStatus.lastTurnHitRate != null && (
-                <p>
-                  {t('toolbar.promptCache.lastTurnHitRate', {
-                    value: formatCacheHitRate(promptCacheStatus.lastTurnHitRate),
-                  })}
-                </p>
-              )}
-              {promptCacheStatus.warmTurnHitRate != null && (
-                <p>
-                  {t('toolbar.promptCache.warmTurnHitRate', {
-                    value: formatCacheHitRate(promptCacheStatus.warmTurnHitRate),
-                  })}
-                </p>
-              )}
-              <p>
-                {t('toolbar.promptCache.tokens', {
-                  read: formatCacheTokens(promptCacheStatus.cacheReadTokens),
-                  write: formatCacheTokens(promptCacheStatus.cacheWriteTokens),
-                })}
-              </p>
-              <p>
-                {t('toolbar.promptCache.confidence', {
-                  value: t(`toolbar.promptCache.confidenceValue.${promptCacheStatus.confidence}`),
-                })}
-              </p>
-              {promptCacheReason && (
-                <p>
-                  {t('toolbar.promptCache.reason', {
-                    reason: t(`toolbar.promptCache.reasonValue.${promptCacheReason}`, {
-                      defaultValue: promptCacheReason,
-                    }),
-                  })}
-                </p>
-              )}
-              {promptCacheStatus.warningCount > 0 && (
-                <p>
-                  {t('toolbar.promptCache.ledger', {
-                    warnings: promptCacheStatus.warningCount,
-                    cancelled: promptCacheStatus.cancelledBreakCount,
-                  })}
-                </p>
-              )}
-              {promptCacheStatus.costEstimateReliable && promptCacheStatus.estimatedSavedUsd != null && (
-                <p>
-                  {t('toolbar.promptCache.saved', {
-                    value: formatUsd(promptCacheStatus.estimatedSavedUsd),
-                  })}
-                </p>
-              )}
-              {promptCacheStatus.costEstimateReliable && promptCacheStatus.estimatedExtraCostUsd != null && (
-                <p>
-                  {t('toolbar.promptCache.extraCost', {
-                    value: formatUsd(promptCacheStatus.estimatedExtraCostUsd),
-                  })}
-                </p>
+              <p>{t('toolbar.promptCache.hitRate', { value: formatCacheHitRate(promptCacheStatus.hitRate) })}</p>
+              <p>{t('toolbar.promptCache.tokens', {
+                read: formatCacheTokens(promptCacheStatus.cacheReadTokens),
+                write: formatCacheTokens(promptCacheStatus.cacheWriteTokens),
+              })}</p>
+              {promptCacheStatus.status === 'at-risk' && promptCacheReason && (
+                <p>{t('toolbar.promptCache.reason', {
+                  reason: t(`toolbar.promptCache.reasonValue.${promptCacheReason}`, { defaultValue: promptCacheReason }),
+                })}</p>
               )}
             </div>
           </TooltipContent>
@@ -192,7 +132,7 @@ export function ChatToolbar({
               variant="ghost"
               size="icon"
               className={cn(
-                'h-8 w-8 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
                 browserActive && 'bg-foreground/10 text-foreground',
               )}
               onClick={() => (browserActive ? closePanel() : openBrowser())}
@@ -202,68 +142,67 @@ export function ChatToolbar({
               <FolderTree className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>
-            <p>{t('toolbar.workspace')}</p>
-          </TooltipContent>
+          <TooltipContent><p>{t('toolbar.workspace')}</p></TooltipContent>
         </Tooltip>
       )}
-      <Tooltip>
-        <TooltipTrigger asChild>
+      {questionDirectoryAvailable && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              data-testid="chat-question-directory-toggle"
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
+                questionDirectoryOpen && 'bg-foreground/10 text-foreground',
+              )}
+              onClick={onToggleQuestionDirectory}
+              aria-label={t('questionDirectory.title')}
+            >
+              <ListTree className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent><p>{t('questionDirectory.title')}</p></TooltipContent>
+        </Tooltip>
+      )}
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
           <Button
-            data-testid="chat-save-knowledge"
+            data-testid="chat-toolbar-more"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-            onClick={onSaveToKnowledge}
-            disabled={!onSaveToKnowledge}
-            aria-label={t('toolbar.saveToKnowledge')}
+            className="h-8 w-8 hover:bg-foreground/5 hover:text-foreground"
+            aria-label={t('toolbar.moreActions')}
           >
-            <BookOpenCheck className="h-4 w-4" />
+            <MoreHorizontal className="h-4 w-4" />
           </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{t('toolbar.saveToKnowledge')}</p>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            data-testid="chat-question-directory-toggle"
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'h-8 w-8 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-              questionDirectoryOpen && 'bg-foreground/10 text-foreground',
-            )}
-            onClick={onToggleQuestionDirectory}
-            disabled={!questionDirectoryAvailable}
-            aria-label={t('questionDirectory.title')}
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            align="end"
+            sideOffset={6}
+            className="z-[90] min-w-52 rounded-[var(--radius-popover)] border border-border/70 bg-popover p-1.5 text-popover-foreground shadow-sm"
           >
-            <ListTree className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{t('questionDirectory.title')}</p>
-        </TooltipContent>
-      </Tooltip>
-      {/* Refresh */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-            onClick={() => refresh()}
-            disabled={loading}
-            aria-label={t('toolbar.refresh')}
-          >
-            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{t('toolbar.refresh')}</p>
-        </TooltipContent>
-      </Tooltip>
+            <DropdownMenu.Item
+              data-testid="chat-save-knowledge"
+              className={MENU_ITEM_CLASS}
+              disabled={!onSaveToKnowledge}
+              onSelect={onSaveToKnowledge}
+            >
+              <BookOpenCheck className="h-4 w-4" />
+              {t('toolbar.saveToKnowledge')}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              className={MENU_ITEM_CLASS}
+              disabled={loading}
+              onSelect={() => refresh()}
+            >
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              {t('toolbar.refresh')}
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
     </div>
   );
 }

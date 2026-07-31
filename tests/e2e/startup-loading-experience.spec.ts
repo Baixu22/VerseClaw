@@ -68,16 +68,16 @@ test.describe('startup and route loading experience', () => {
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
       await page.getByTestId('sidebar-nav-settings').click();
-      await expect(page.getByTestId('settings-overview')).toBeVisible();
-      await page.getByTestId('settings-nav-models').click();
+      await expect(page.getByTestId('settings-implementation')).toBeVisible();
+      await page.getByTestId('settings-nav-storage').click();
 
       await expect(page.getByTestId('settings-page')).toBeVisible();
       await expect(page.getByTestId('settings-back-button')).toBeVisible();
-      await expect(page.getByTestId('models-page-title')).toBeVisible();
-      await expect(page.getByTestId('settings-section-loading')).toBeVisible();
       await expect(page.getByTestId('main-layout')).toBeVisible();
+      const transitionContent = page.locator('[data-testid="settings-section-loading"], [data-testid="settings-implementation"]');
+      await expect(transitionContent.first()).toBeVisible();
 
-      await expect(page.getByTestId('models-page')).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId('storage-info-ram')).toBeVisible({ timeout: 10_000 });
       await expect(page.getByTestId('settings-section-loading')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);

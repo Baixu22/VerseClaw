@@ -22,12 +22,9 @@ test.describe('Verse Claw developer proxy settings', () => {
 
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
-    await expect(page.getByTestId('settings-overview')).toBeVisible();
+    await expect(page.getByTestId('settings-sidebar')).toBeVisible();
     await page.getByTestId('settings-nav-developer').click();
-    await expect(page.getByTestId('settings-back-button')).toBeVisible();
-    await page.getByTestId('settings-back-button').click();
-    await expect(page.getByTestId('settings-overview')).toBeVisible();
-    await page.getByTestId('settings-nav-developer').click();
+    await expect(page.getByTestId('settings-back-button')).toHaveCount(1);
 
     const devModeToggle = page.getByTestId('settings-dev-mode-switch');
     await expect(devModeToggle).toBeVisible();

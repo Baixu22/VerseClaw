@@ -2,10 +2,10 @@
  * Settings Page
  * Application configuration
  */
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ComponentType } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  ArrowLeft,
+  Archive,
   ChevronRight,
   ReceiptText,
   Sun,
@@ -38,7 +38,17 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  SettingsSection,
+  SettingsRow,
+  SettingsSegmented,
+  SettingsSelect,
+  SettingsSwitch,
+  SettingsInlineLink,
+  SettingsButton,
+  SettingsStackRow,
+  SettingsCard,
+} from '@/components/settings/primitives';
 import { toast } from 'sonner';
 import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
@@ -52,6 +62,7 @@ import {
   type UiTelemetryEntry,
 } from '@/lib/telemetry';
 import { useTranslation } from 'react-i18next';
+import { useShallow } from 'zustand/react/shallow';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { hostApi, type OpenClawDoctorResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
@@ -60,11 +71,9 @@ import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery
 import type { SandboxNetworkPolicy, SandboxProviderId, SandboxProviderStatus } from '@shared/types/sandbox';
 import type { KnowledgeWatchedDirectoryConfig } from '@shared/host-api/contract';
 import { resolveSettingsSection, type SettingsSectionId } from './route-config';
-import type { SettingsPresentation } from './SettingsRoute';
 
 function getE2ESectionDelayMs(): number {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('e2eSkipSetup') !== '1') return 0;
   const delay = Number(params.get('e2eSettingsSectionDelayMs'));
   return Number.isFinite(delay) && delay > 0 ? Math.min(delay, 30_000) : 0;
 }
@@ -133,32 +142,9 @@ function preloadSettingsSection(section: SettingsSectionId) {
   }
 }
 
-function SettingsPageShell({ children, presentation }: { children: ReactNode; presentation: SettingsPresentation }) {
-  return (
-    <div
-      data-testid="settings-page"
-      data-presentation={presentation}
-      className={cn(
-        'flex flex-col overflow-hidden',
-        presentation === 'drawer'
-          ? 'settings-drawer-shell h-full bg-transparent'
-          : '-m-6 h-[calc(100vh-2.5rem)] bg-background',
-      )}
-    >
-      <div className={cn(
-        'flex h-full w-full flex-col',
-        presentation === 'drawer' ? 'px-5 py-5 sm:px-6' : 'mx-auto max-w-6xl px-5 py-6 sm:px-8 lg:px-10',
-      )}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-export function Settings({ presentation = 'page' }: { presentation?: SettingsPresentation }) {
+export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
   const { t, i18n } = useTranslation('settings');
   const location = useLocation();
-  const navigate = useNavigate();
   const currentSection = resolveSettingsSection(location.pathname);
   const {
     theme,
@@ -195,9 +181,47 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
     setTelemetryEnabled,
     uiDepthMode,
     setUiDepthMode,
-  } = useSettingsStore();
+  } = useSettingsStore(useShallow((state) => ({
+    theme: state.theme,
+    setTheme: state.setTheme,
+    language: state.language,
+    setLanguage: state.setLanguage,
+    launchAtStartup: state.launchAtStartup,
+    setLaunchAtStartup: state.setLaunchAtStartup,
+    gatewayAutoStart: state.gatewayAutoStart,
+    setGatewayAutoStart: state.setGatewayAutoStart,
+    roleMemoryEnabled: state.roleMemoryEnabled,
+    setRoleMemoryEnabled: state.setRoleMemoryEnabled,
+    memoryEmbeddingEnabled: state.memoryEmbeddingEnabled,
+    setMemoryEmbeddingEnabled: state.setMemoryEmbeddingEnabled,
+    cdpRemoteControlEnabled: state.cdpRemoteControlEnabled,
+    cdpRemoteDebuggingPort: state.cdpRemoteDebuggingPort,
+    setCdpRemoteControlEnabled: state.setCdpRemoteControlEnabled,
+    setCdpRemoteDebuggingPort: state.setCdpRemoteDebuggingPort,
+    proxyEnabled: state.proxyEnabled,
+    proxyServer: state.proxyServer,
+    proxyHttpServer: state.proxyHttpServer,
+    proxyHttpsServer: state.proxyHttpsServer,
+    proxyAllServer: state.proxyAllServer,
+    proxyBypassRules: state.proxyBypassRules,
+    setProxyEnabled: state.setProxyEnabled,
+    setProxyServer: state.setProxyServer,
+    setProxyHttpServer: state.setProxyHttpServer,
+    setProxyHttpsServer: state.setProxyHttpsServer,
+    setProxyAllServer: state.setProxyAllServer,
+    setProxyBypassRules: state.setProxyBypassRules,
+    devModeUnlocked: state.devModeUnlocked,
+    setDevModeUnlocked: state.setDevModeUnlocked,
+    telemetryEnabled: state.telemetryEnabled,
+    setTelemetryEnabled: state.setTelemetryEnabled,
+    uiDepthMode: state.uiDepthMode,
+    setUiDepthMode: state.setUiDepthMode,
+  })));
 
-  const { status: gatewayStatus, restart: restartGateway } = useGatewayStore();
+  const { status: gatewayStatus, restart: restartGateway } = useGatewayStore(useShallow((state) => ({
+    status: state.status,
+    restart: state.restart,
+  })));
   const [currentVersion, setCurrentVersion] = useState('0.0.0');
   const [controlUiInfo, setControlUiInfo] = useState<ControlUiInfo | null>(null);
   const [remoteControlStatus, setRemoteControlStatus] = useState<Awaited<ReturnType<typeof hostApi.remoteControl.status>> | null>(null);
@@ -801,7 +825,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
     }
   };
 
-  const remoteControlSection = (
+  const remoteControlSection = currentSection === 'system' ? (
     <div className="space-y-4 rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.04] p-5" data-testid="settings-remote-control-section">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
@@ -984,85 +1008,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
         </div>
       )}
     </div>
-  );
-
-  const legacySandboxRuntimeSection = (
-    <div className="space-y-4 rounded-2xl border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.04] p-5" data-testid="settings-sandbox-runtime-section">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-foreground/70" />
-            <Label className="text-sm font-medium text-foreground">{t('sandbox.title')}</Label>
-            <Badge variant={sandboxStatus?.runtimeLevel === 'strong' ? 'secondary' : 'outline'} className="rounded-full">
-              {sandboxStatus?.runtimeLevel === 'strong'
-                ? t('sandbox.runtimeLevels.strong')
-                : sandboxStatus?.runtimeLevel === 'light'
-                  ? t('sandbox.runtimeLevels.light')
-                  : t('sandbox.runtimeLevels.policy')}
-            </Badge>
-          </div>
-          <p className="mt-1 text-meta text-muted-foreground">
-            {t('sandbox.description')}
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => void refreshSandboxStatus()}
-          disabled={sandboxLoading}
-          className="rounded-xl h-9 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
-        >
-          <RefreshCw className={cn('h-4 w-4 mr-2', sandboxLoading && 'animate-spin')} />
-          {t('sandbox.refresh')}
-        </Button>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">Provider</p>
-          <p className="mt-1 truncate text-sm text-foreground">{sandboxStatus?.provider.label ?? t('sandbox.loading')}</p>
-        </div>
-        <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">{t('sandbox.permissionMode')}</p>
-          <p className="mt-1 font-mono text-sm text-foreground">{sandboxStatus?.permissionMode ?? '-'}</p>
-        </div>
-        <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">Workspace Access</p>
-          <p className="mt-1 font-mono text-sm text-foreground">
-            {sandboxStatus?.openClawConfig.agents.defaults.sandbox.workspaceAccess ?? '-'}
-          </p>
-        </div>
-        <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] p-3">
-          <p className="text-tiny text-muted-foreground">{t('sandbox.networkPolicy')}</p>
-          <p className="mt-1 font-mono text-sm text-foreground">{sandboxStatus?.networkPolicy ?? 'disabled'}</p>
-        </div>
-      </div>
-
-      {sandboxStatus?.warnings.length ? (
-        <div className="space-y-1 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3">
-          {sandboxStatus.warnings.map((warning: string) => (
-            <p key={warning} className="text-xs text-amber-900 dark:text-amber-200">{warning}</p>
-          ))}
-        </div>
-      ) : null}
-
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        {sandboxStatus?.providers.map((provider: SandboxProviderStatus) => (
-          <div key={provider.id} className="rounded-xl border border-black/5 dark:border-white/5 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-xs font-medium text-foreground">{provider.label}</p>
-              <Badge variant={provider.available ? 'secondary' : 'outline'} className="rounded-full text-2xs">
-                {provider.available ? t('sandbox.available') : t('sandbox.unavailable')}
-              </Badge>
-            </div>
-            <p className="mt-1 line-clamp-2 text-2xs text-muted-foreground">{provider.reason}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  void legacySandboxRuntimeSection;
+  ) : null;
 
   const sandboxProviderOptions = sandboxStatus?.providers ?? [];
   const sandboxDockerChecks = [
@@ -1074,7 +1020,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
     ? `${sandboxStatus.execPolicy.host}/${sandboxStatus.execPolicy.security}/${sandboxStatus.execPolicy.ask}`
     : '-';
 
-  const sandboxRuntimeSection = (
+  const sandboxRuntimeSection = currentSection === 'system' && devModeUnlocked ? (
     <div className="space-y-4 rounded-lg border border-black/10 bg-black/[0.03] p-5 dark:border-white/10 dark:bg-white/[0.04]" data-testid="settings-sandbox-runtime-section">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0">
@@ -1121,45 +1067,36 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">{t('sandbox.requestedProvider')}</Label>
-          <Select
-            value={sandboxStatus?.requestedProviderId ?? 'policy-light'}
-            onValueChange={(value) => void updateSandboxProfile({ providerId: value as SandboxProviderId })}
-            disabled={sandboxLoading}
-          >
-            <SelectTrigger className="h-9 rounded-lg border-black/10 bg-background dark:border-white/10" data-testid="settings-sandbox-provider-select">
-              <SelectValue placeholder={t('sandbox.requestedProvider')} />
-            </SelectTrigger>
-            <SelectContent>
-              {sandboxProviderOptions.map((provider) => (
-                <SelectItem key={provider.id} value={provider.id}>
-                  {provider.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">{t('sandbox.networkPolicy')}</Label>
-          <Select
-            value={sandboxStatus?.networkPolicy ?? 'disabled'}
-            onValueChange={(value) => void updateSandboxProfile({ networkPolicy: value as SandboxNetworkPolicy })}
-            disabled={sandboxLoading}
-          >
-            <SelectTrigger className="h-9 rounded-lg border-black/10 bg-background dark:border-white/10" data-testid="settings-sandbox-network-select">
-              <SelectValue placeholder={t('sandbox.networkPolicy')} />
-            </SelectTrigger>
-            <SelectContent>
-              {(['disabled', 'approvalRequired', 'enabled'] as SandboxNetworkPolicy[]).map((policy) => (
-                <SelectItem key={policy} value={policy}>
-                  {t(`sandbox.networkPolicies.${policy}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="sp-subrows">
+        <SettingsRow
+          title={t('sandbox.requestedProvider')}
+          control={(
+            <SettingsSelect
+              ariaLabel={t('sandbox.requestedProvider')}
+              value={sandboxStatus?.requestedProviderId ?? 'policy-light'}
+              testId="settings-sandbox-provider-select"
+              disabled={sandboxLoading}
+              onChange={(value) => void updateSandboxProfile({ providerId: value as SandboxProviderId })}
+              options={sandboxProviderOptions.map((provider) => ({ value: provider.id, label: provider.label }))}
+            />
+          )}
+        />
+        <SettingsRow
+          title={t('sandbox.networkPolicy')}
+          control={(
+            <SettingsSelect
+              ariaLabel={t('sandbox.networkPolicy')}
+              value={sandboxStatus?.networkPolicy ?? 'disabled'}
+              testId="settings-sandbox-network-select"
+              disabled={sandboxLoading}
+              onChange={(value) => void updateSandboxProfile({ networkPolicy: value as SandboxNetworkPolicy })}
+              options={(['disabled', 'approvalRequired', 'enabled'] as SandboxNetworkPolicy[]).map((policy) => ({
+                value: policy,
+                label: t(`sandbox.networkPolicies.${policy}`),
+              }))}
+            />
+          )}
+        />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -1224,7 +1161,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
         </div>
       </div>
     </div>
-  );
+  ) : null;
 
   const telemetryStats = useMemo(() => {
     let errorCount = 0;
@@ -1351,6 +1288,10 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
       title: t('navigation.storage.title'),
       description: t('navigation.storage.description'),
     },
+    archived: {
+      title: t('navigation.archived.title'),
+      description: t('navigation.archived.description'),
+    },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
   const settingsSections = [
@@ -1417,6 +1358,13 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
       ...sectionMeta.storage,
       testId: 'settings-nav-storage',
     },
+    {
+      id: 'archived',
+      to: '/settings/archived',
+      icon: <Archive className="h-5 w-5" />,
+      ...sectionMeta.archived,
+      testId: 'settings-nav-archived',
+    },
   ] as const;
   const settingsSectionGroups = [
     {
@@ -1427,7 +1375,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
     {
       id: 'experience',
       title: t('navigation.groups.experience'),
-      sections: settingsSections.filter((section) => ['general'].includes(section.id)),
+      sections: settingsSections.filter((section) => ['general', 'archived'].includes(section.id)),
     },
     {
       id: 'operations',
@@ -1436,61 +1384,10 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
     },
   ] as const;
 
-  const pageTitle = currentSection === 'overview'
-    ? t('title')
-    : sectionMeta[currentSection].title;
-  const pageSubtitle = currentSection === 'overview'
-    ? t('subtitle')
-    : sectionMeta[currentSection].description;
-  const pageTitleTestId = currentSection === 'models'
-    ? 'models-page-title'
-    : currentSection === 'billing'
-      ? 'billing-page-title'
-      : undefined;
+  void embedded;
 
   return (
-    <SettingsPageShell presentation={presentation}>
-
-        {/* Header */}
-        <div className={cn(
-          'flex shrink-0 flex-col justify-between gap-3 border-b border-border md:flex-row md:items-start',
-          presentation === 'drawer' ? 'mb-4 pb-4' : 'mb-6 pb-5',
-          presentation === 'drawer' && currentSection === 'overview' && 'hidden',
-        )}>
-          <div>
-            {presentation === 'page' && currentSection !== 'overview' && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/settings')}
-                data-testid="settings-back-button"
-                className="mb-4 h-8 border-black/10 bg-transparent px-2.5 text-xs dark:border-white/10"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t('navigation.back')}
-              </Button>
-            )}
-            <h1 className={cn(
-              'font-serif font-normal tracking-tight text-foreground',
-              presentation === 'drawer'
-                ? 'mb-1 text-xl font-semibold'
-                : currentSection === 'overview' ? 'mb-1.5 text-3xl' : 'mb-1 text-2xl',
-            )}
-              data-testid={pageTitleTestId}
-            >
-              {pageTitle}
-            </h1>
-            <p className="max-w-3xl text-sm leading-5 text-muted-foreground">
-              {pageSubtitle}
-            </p>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className={cn(
-          '-mr-2 min-h-0 flex-1 overflow-y-auto pb-10 pr-2',
-          presentation === 'drawer' ? 'space-y-6' : 'space-y-8',
-        )}>
+    <div data-testid="settings-implementation" className="codex-settings-content space-y-8">
           {currentSection === 'overview' && (
             <div data-testid="settings-overview" className="space-y-6">
               {settingsSectionGroups.map((group) => (
@@ -1506,7 +1403,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
                       >
                         <Link
                           to={section.to}
-                          data-testid={presentation === 'drawer' ? undefined : section.testId}
+                          data-testid={section.testId}
                           onPointerEnter={() => preloadSettingsSection(section.id)}
                           onFocus={() => preloadSettingsSection(section.id)}
                           className="flex min-h-20 h-full items-center gap-3 px-4 py-3"
@@ -1528,97 +1425,68 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
             </div>
           )}
 
-          {/* Appearance */}
+          {/* Appearance. Rows use the ported settings vocabulary
+              (SettingsSection > SettingsRow > control) so the geometry comes
+              from the reference recipe rather than per-call-site utilities. */}
           {currentSection === 'general' && (
-          <div>
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
-              {t('appearance.title')}
-            </h2>
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <Label className="text-sm font-medium text-foreground/80">{t('appearance.theme')}</Label>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={theme === 'light' ? 'secondary' : 'outline'}
-                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", theme === 'light' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                    onClick={() => setTheme('light')}
-                  >
-                    <Sun className="h-4 w-4 mr-2" />
-                    {t('appearance.light')}
-                  </Button>
-                  <Button
-                    variant={theme === 'dark' ? 'secondary' : 'outline'}
-                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", theme === 'dark' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                    onClick={() => setTheme('dark')}
-                  >
-                    <Moon className="h-4 w-4 mr-2" />
-                    {t('appearance.dark')}
-                  </Button>
-                  <Button
-                    variant={theme === 'system' ? 'secondary' : 'outline'}
-                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", theme === 'system' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                    onClick={() => setTheme('system')}
-                  >
-                    <Monitor className="h-4 w-4 mr-2" />
-                    {t('appearance.system')}
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <Label className="text-sm font-medium text-foreground/80">{t('appearance.language')}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {SUPPORTED_LANGUAGES.map((lang) => (
-                    <Button
-                      key={lang.code}
-                      variant={language === lang.code ? 'secondary' : 'outline'}
-                      className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", language === lang.code ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                      onClick={() => handleLanguageChange(lang.code)}
-                    >
-                      {lang.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-sm font-medium text-foreground/80">{t('appearance.uiDepthMode.title')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('appearance.uiDepthMode.description')}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2" data-testid="settings-ui-depth-mode">
-                  <Button
-                    variant={uiDepthMode === 'basic' ? 'secondary' : 'outline'}
-                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", uiDepthMode === 'basic' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                    onClick={() => setUiDepthMode('basic')}
-                    data-testid="settings-ui-depth-basic"
-                  >
-                    {t('appearance.uiDepthMode.basic')}
-                  </Button>
-                  <Button
-                    variant={uiDepthMode === 'advanced' ? 'secondary' : 'outline'}
-                    className={cn("rounded-full px-5 h-10 border-black/10 dark:border-white/10", uiDepthMode === 'advanced' ? "bg-black/5 dark:bg-white/10 text-foreground" : "bg-transparent text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5")}
-                    onClick={() => setUiDepthMode('advanced')}
-                    data-testid="settings-ui-depth-advanced"
-                  >
-                    {t('appearance.uiDepthMode.advanced')}
-                  </Button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-foreground/80">{t('appearance.launchAtStartup')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('appearance.launchAtStartupDesc')}
-                  </p>
-                </div>
-                <Switch
-                  checked={launchAtStartup}
-                  onCheckedChange={setLaunchAtStartup}
-                />
-              </div>
-            </div>
-          </div>
+            <SettingsSection title={t('appearance.title')}>
+              <SettingsRow
+                title={t('appearance.theme')}
+                control={(
+                  <SettingsSegmented
+                    ariaLabel={t('appearance.theme')}
+                    value={theme}
+                    testId="settings-theme-mode"
+                    onChange={setTheme}
+                    options={[
+                      { value: 'light', label: t('appearance.light'), icon: <Sun /> },
+                      { value: 'dark', label: t('appearance.dark'), icon: <Moon /> },
+                      { value: 'system', label: t('appearance.system'), icon: <Monitor /> },
+                    ]}
+                  />
+                )}
+              />
+              <SettingsRow
+                title={t('appearance.language')}
+                control={(
+                  <SettingsSelect
+                    ariaLabel={t('appearance.language')}
+                    value={language}
+                    testId="settings-language-select"
+                    onChange={(next) => handleLanguageChange(next)}
+                    options={SUPPORTED_LANGUAGES.map((lang) => ({ value: lang.code, label: lang.label }))}
+                  />
+                )}
+              />
+              <SettingsRow
+                title={t('appearance.uiDepthMode.title')}
+                description={t('appearance.uiDepthMode.description')}
+                control={(
+                  <SettingsSegmented
+                    ariaLabel={t('appearance.uiDepthMode.title')}
+                    value={uiDepthMode}
+                    testId="settings-ui-depth-mode"
+                    onChange={setUiDepthMode}
+                    options={[
+                      { value: 'basic', label: t('appearance.uiDepthMode.basic'), testId: 'settings-ui-depth-basic' },
+                      { value: 'advanced', label: t('appearance.uiDepthMode.advanced'), testId: 'settings-ui-depth-advanced' },
+                    ]}
+                  />
+                )}
+              />
+              <SettingsRow
+                title={t('appearance.launchAtStartup')}
+                description={t('appearance.launchAtStartupDesc')}
+                control={(
+                  <SettingsSwitch
+                    ariaLabel={t('appearance.launchAtStartup')}
+                    checked={launchAtStartup}
+                    testId="settings-launch-at-startup"
+                    onChange={setLaunchAtStartup}
+                  />
+                )}
+              />
+            </SettingsSection>
           )}
 
           {currentSection === 'models' && (
@@ -1647,167 +1515,161 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
 
           {currentSection === 'system' && (
             <>
-          <Separator className="bg-black/5 dark:bg-white/5" />
-
           {/* FP-P1-06: sanitized support bundle export */}
-          <div className="mb-8" data-testid="settings-support-bundle">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <Label className="text-sm font-medium text-foreground">{t('supportBundle.title')}</Label>
-                <p className="text-meta text-muted-foreground mt-1">
+          <SettingsSection title={t('supportBundle.title')} testId="settings-support-bundle">
+            <SettingsRow
+              title={t('supportBundle.title')}
+              description={(
+                <>
                   {t('supportBundle.desc')}
-                </p>
-                {supportBundleResult && (
-                  <p
-                    className="mt-2 break-all font-mono text-tiny text-muted-foreground"
-                    data-testid="settings-support-bundle-result"
-                  >
-                    {supportBundleResult}
-                  </p>
-                )}
-              </div>
-              <Button
-                data-testid="settings-support-bundle-export"
-                variant="outline"
-                disabled={supportBundleBusy}
-                onClick={() => void handleExportSupportBundle()}
-                className="rounded-xl h-10 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                {supportBundleBusy ? t('supportBundle.exporting') : t('supportBundle.export')}
-              </Button>
-            </div>
-          </div>
+                  {supportBundleResult ? (
+                    <span className="sp-row-mono" data-testid="settings-support-bundle-result">
+                      {supportBundleResult}
+                    </span>
+                  ) : null}
+                </>
+              )}
+              control={(
+                <SettingsButton
+                  testId="settings-support-bundle-export"
+                  disabled={supportBundleBusy}
+                  onClick={() => void handleExportSupportBundle()}
+                >
+                  {supportBundleBusy ? t('supportBundle.exporting') : t('supportBundle.export')}
+                </SettingsButton>
+              )}
+            />
+          </SettingsSection>
 
           {/* Gateway */}
-          <div>
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
-              {t('gateway.title')}
-            </h2>
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('gateway.status')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1 font-mono">
+          <SettingsSection title={t('gateway.title')}>
+              <SettingsRow
+                title={t('gateway.status')}
+                description={(
+                  <span className="sp-row-mono">
                     port: {gatewayStatus.port || '-'}
                     {gatewayStatus.pid ? ` · pid: ${gatewayStatus.pid}` : ''}
                     {gatewayStatus.gatewayReady === false ? ' · runtime: starting' : ''}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-meta font-medium border",
-                    gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false ? "bg-green-500/10 text-green-600 dark:text-green-500 border-green-500/20" :
-                      gatewayStatus.state === 'running' ? "bg-red-500/10 text-red-600 dark:text-red-500 border-red-500/20" :
-                        gatewayStatus.state === 'error' ? "bg-red-500/10 text-red-600 dark:text-red-500 border-red-500/20" :
-                          "bg-black/5 dark:bg-white/5 text-muted-foreground border-transparent"
-                  )}>
-                    <div className={cn("w-1.5 h-1.5 rounded-full",
-                      gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false ? "bg-green-500" :
-                        gatewayStatus.state === 'running' ? "bg-red-500" :
-                          gatewayStatus.state === 'error' ? "bg-red-500" : "bg-muted-foreground"
-                    )} />
-                    {gatewayStatus.state === 'running' && gatewayStatus.gatewayReady === false ? 'starting' : gatewayStatus.state}
+                  </span>
+                )}
+                control={(
+                  <div className="sp-row-cluster">
+                    {/* The state pill keeps its semantic colors: green/red carry
+                        meaning the reference's neutral chrome cannot express. */}
+                    <span
+                      className={cn(
+                        'sp-state-pill',
+                        gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false ? 'is-ok'
+                          : gatewayStatus.state === 'running' || gatewayStatus.state === 'error' ? 'is-bad'
+                            : 'is-idle',
+                      )}
+                    >
+                      <span className="sp-state-dot" />
+                      {gatewayStatus.state === 'running' && gatewayStatus.gatewayReady === false ? 'starting' : gatewayStatus.state}
+                    </span>
+                    <SettingsButton onClick={restartGateway}>
+                      <RefreshCw />
+                      {t('common:actions.restart')}
+                    </SettingsButton>
+                    <SettingsButton onClick={handleShowLogs}>
+                      <FileText />
+                      {t('gateway.logs')}
+                    </SettingsButton>
                   </div>
-                  <Button variant="outline" size="sm" onClick={restartGateway} className="rounded-full h-8 px-4 border-black/10 dark:border-white/10 bg-transparent hover:bg-black/5 dark:hover:bg-white/5">
-                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                    {t('common:actions.restart')}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleShowLogs} className="rounded-full h-8 px-4 border-black/10 dark:border-white/10 bg-transparent hover:bg-black/5 dark:hover:bg-white/5">
-                    <FileText className="h-3.5 w-3.5 mr-1.5" />
-                    {t('gateway.logs')}
-                  </Button>
-                </div>
-              </div>
+                )}
+              />
 
               {showLogs && (
-                <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="font-medium text-sm">{t('gateway.appLogs')}</p>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" className="h-7 text-xs rounded-full hover:bg-black/5 dark:hover:bg-white/10" onClick={handleOpenLogDir}>
-                        <ExternalLink className="h-3 w-3 mr-1.5" />
-                        {t('gateway.openFolder')}
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-7 text-xs rounded-full hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setShowLogs(false)}>
-                        {t('common:actions.close')}
-                      </Button>
-                    </div>
+                <SettingsStackRow
+                  title={t('gateway.appLogs')}
+                  testId="settings-gateway-logs"
+                >
+                  <div className="sp-row-cluster sp-row-cluster--start">
+                    <SettingsButton onClick={handleOpenLogDir}>
+                      <ExternalLink />
+                      {t('gateway.openFolder')}
+                    </SettingsButton>
+                    <SettingsButton onClick={() => setShowLogs(false)}>
+                      {t('common:actions.close')}
+                    </SettingsButton>
                   </div>
-                  <pre className="text-xs text-muted-foreground bg-surface-input p-4 rounded-xl max-h-60 overflow-auto whitespace-pre-wrap font-mono border border-black/5 dark:border-white/5 shadow-inner">
-                    {logContent || t('chat:noLogs')}
-                  </pre>
-                </div>
+                  <pre className="sp-log-pre">{logContent || t('chat:noLogs')}</pre>
+                </SettingsStackRow>
               )}
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-foreground">{t('gateway.autoStart')}</Label>
-                  <p className="text-meta text-muted-foreground mt-1">
-                    {t('gateway.autoStartDesc')}
-                  </p>
-                </div>
-                <Switch
-                  checked={gatewayAutoStart}
-                  onCheckedChange={setGatewayAutoStart}
-                />
-              </div>
+              <SettingsRow
+                title={t('gateway.autoStart')}
+                description={t('gateway.autoStartDesc')}
+                control={(
+                  <SettingsSwitch
+                    ariaLabel={t('gateway.autoStart')}
+                    checked={gatewayAutoStart}
+                    testId="settings-gateway-auto-start"
+                    onChange={setGatewayAutoStart}
+                  />
+                )}
+              />
 
-              <div
-                className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10"
-                data-testid="settings-role-memory-section"
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4 text-foreground/70" />
-                      <Label className="text-sm font-medium text-foreground">{t('roleMemory.title')}</Label>
-                      <Badge variant={roleMemoryEnabled ? 'secondary' : 'outline'} className="rounded-full text-2xs">
-                        {roleMemoryEnabled ? t('roleMemory.enabled') : t('roleMemory.disabled')}
-                      </Badge>
-                    </div>
-                    <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
-                      {t('roleMemory.description')}
-                    </p>
-                    <p className="mt-2 max-w-2xl text-xs text-muted-foreground">
-                      {t('roleMemory.disableEffect')}
-                    </p>
-                  </div>
-                  <Switch
+              <SettingsRow
+                testId="settings-role-memory-section"
+                title={(
+                  <span className="sp-row-title-line">
+                    <ShieldCheck />
+                    {t('roleMemory.title')}
+                    <span className={roleMemoryEnabled ? 'sp-row-badge is-on' : 'sp-row-badge'}>
+                      {roleMemoryEnabled ? t('roleMemory.enabled') : t('roleMemory.disabled')}
+                    </span>
+                  </span>
+                )}
+                description={(
+                  <>
+                    {t('roleMemory.description')}
+                    <span className="sp-row-note">{t('roleMemory.disableEffect')}</span>
+                  </>
+                )}
+                control={(
+                  <SettingsSwitch
+                    ariaLabel={t('roleMemory.title')}
                     checked={roleMemoryEnabled}
-                    onCheckedChange={setRoleMemoryEnabled}
-                    data-testid="settings-role-memory-toggle"
+                    testId="settings-role-memory-toggle"
+                    onChange={setRoleMemoryEnabled}
                   />
-                </div>
-              </div>
+                )}
+              />
 
-              <div
-                className="rounded-lg border border-black/10 bg-surface-modal p-5 shadow-none dark:border-white/10"
-                data-testid="settings-memory-embedding-section"
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <ScanSearch className="h-4 w-4 text-foreground/70" />
-                      <Label className="text-sm font-medium text-foreground">{t('memoryEmbedding.title')}</Label>
-                      <Badge variant={memoryEmbeddingEnabled ? 'secondary' : 'outline'} className="rounded-full text-2xs">
-                        {memoryEmbeddingEnabled ? t('memoryEmbedding.enabled') : t('memoryEmbedding.disabled')}
-                      </Badge>
-                    </div>
-                    <p className="mt-1 max-w-2xl text-meta text-muted-foreground">
-                      {t('memoryEmbedding.description')}
-                    </p>
-                    <p className="mt-2 max-w-2xl text-xs text-muted-foreground">
-                      {t('memoryEmbedding.disableEffect')}
-                    </p>
-                  </div>
-                  <Switch
+              <SettingsRow
+                testId="settings-memory-embedding-section"
+                title={(
+                  <span className="sp-row-title-line">
+                    <ScanSearch />
+                    {t('memoryEmbedding.title')}
+                    <span className={memoryEmbeddingEnabled ? 'sp-row-badge is-on' : 'sp-row-badge'}>
+                      {memoryEmbeddingEnabled ? t('memoryEmbedding.enabled') : t('memoryEmbedding.disabled')}
+                    </span>
+                  </span>
+                )}
+                description={(
+                  <>
+                    {t('memoryEmbedding.description')}
+                    <span className="sp-row-note">{t('memoryEmbedding.disableEffect')}</span>
+                  </>
+                )}
+                control={(
+                  <SettingsSwitch
+                    ariaLabel={t('memoryEmbedding.title')}
                     checked={memoryEmbeddingEnabled}
-                    onCheckedChange={setMemoryEmbeddingEnabled}
-                    data-testid="settings-memory-embedding-toggle"
+                    testId="settings-memory-embedding-toggle"
+                    onChange={setMemoryEmbeddingEnabled}
                   />
-                </div>
-              </div>
+                )}
+              />
+          </SettingsSection>
 
+          {/* The panels below carry their own surface (bordered sub-cards,
+              lists, lazy sections), so they stay OUTSIDE the card above —
+              nesting them would double the border and break the card's inset
+              divider rhythm. */}
+          <div className="space-y-6">
               {remoteControlSection}
               <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
                 <div className="animate-in fade-in duration-150 motion-reduce:animate-none"><ProjectRulesCenterLazy /></div>
@@ -1976,8 +1838,6 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
                 </div>
               </div>
               {devModeUnlocked && sandboxRuntimeSection}
-
-            </div>
           </div>
             </>
           )}
@@ -1994,36 +1854,36 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
             <>
               <Separator className="bg-black/5 dark:bg-white/5" />
               <div data-testid="settings-developer-section">
-                <h2 data-testid="settings-developer-title" className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
+                <h2 data-testid="settings-developer-title" className="mb-4 text-sm font-medium leading-[21px] text-foreground">
                   {t('developer.title')}
                 </h2>
                 <div className="space-y-8">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">{t('advanced.devMode')}</Label>
-                      <p className="text-meta text-muted-foreground mt-1">
-                        {t('advanced.devModeDesc')}
-                      </p>
-                    </div>
-                    <Switch
-                      checked={devModeUnlocked}
-                      onCheckedChange={setDevModeUnlocked}
-                      data-testid="settings-dev-mode-switch"
+                  <SettingsCard>
+                    <SettingsRow
+                      title={t('advanced.devMode')}
+                      description={t('advanced.devModeDesc')}
+                      control={(
+                        <SettingsSwitch
+                          ariaLabel={t('advanced.devMode')}
+                          checked={devModeUnlocked}
+                          testId="settings-dev-mode-switch"
+                          onChange={setDevModeUnlocked}
+                        />
+                      )}
                     />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground">{t('advanced.telemetry')}</Label>
-                      <p className="text-meta text-muted-foreground mt-1">
-                        {t('advanced.telemetryDesc')}
-                      </p>
-                    </div>
-                    <Switch
-                      checked={telemetryEnabled}
-                      onCheckedChange={setTelemetryEnabled}
+                    <SettingsRow
+                      title={t('advanced.telemetry')}
+                      description={t('advanced.telemetryDesc')}
+                      control={(
+                        <SettingsSwitch
+                          ariaLabel={t('advanced.telemetry')}
+                          checked={telemetryEnabled}
+                          testId="settings-telemetry-switch"
+                          onChange={setTelemetryEnabled}
+                        />
+                      )}
                     />
-                  </div>
+                  </SettingsCard>
 
                   {devModeUnlocked && (
                     <>
@@ -2394,7 +2254,7 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
             <>
               <Separator className="bg-black/5 dark:bg-white/5" />
               <div data-testid="settings-storage-section">
-                <h2 data-testid="settings-storage-title" className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
+                <h2 data-testid="settings-storage-title" className="mb-4 text-sm font-medium leading-[21px] text-foreground">
                   {t('storage.title')}
                 </h2>
                 <Suspense fallback={<SettingsSectionLoading label={t('loading.section')} />}>
@@ -2405,50 +2265,34 @@ export function Settings({ presentation = 'page' }: { presentation?: SettingsPre
           )}
 
           {currentSection === 'general' && (
-            <>
-          <Separator className="bg-black/5 dark:bg-white/5" />
-
-          {/* About */}
-          <div>
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight">
-              {t('about.title')}
-            </h2>
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <p>
-                <strong className="text-foreground font-semibold">{t('about.appName')}</strong> - {t('about.tagline')}
-              </p>
-              <p>{t('about.basedOn')}</p>
-              <p>{t('about.version', { version: currentVersion })}</p>
-              <div className="flex gap-4 pt-3">
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://claw-x.com')}
-                >
-                  {t('about.docs')}
-                </Button>
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}
-                >
-                  {t('about.github')}
-                </Button>
-                <Button
-                  variant="link"
-                  className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://icnnp7d0dymg.feishu.cn/wiki/UyfOwQ2cAiJIP6kqUW8cte5Bnlc')}
-                >
-                  {t('about.faq')}
-                </Button>
-              </div>
-            </div>
-          </div>
-            </>
+            <SettingsSection title={t('about.title')}>
+              <SettingsRow
+                title={t('about.appName')}
+                description={t('about.tagline')}
+                control={(
+                  <span className="sp-row-value">{t('about.version', { version: currentVersion })}</span>
+                )}
+              />
+              <SettingsRow
+                title={t('about.basedOn')}
+                control={(
+                  <div className="sp-row-links">
+                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://claw-x.com')}>
+                      {t('about.docs')}
+                    </SettingsInlineLink>
+                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/Verse-Claw')}>
+                      {t('about.github')}
+                    </SettingsInlineLink>
+                    <SettingsInlineLink onClick={() => window.electron.openExternal('https://icnnp7d0dymg.feishu.cn/wiki/UyfOwQ2cAiJIP6kqUW8cte5Bnlc')}>
+                      {t('about.faq')}
+                    </SettingsInlineLink>
+                  </div>
+                )}
+              />
+            </SettingsSection>
           )}
 
         </div>
-      </SettingsPageShell>
   );
 }
 

@@ -242,16 +242,16 @@ describe('Chat execution graph lifecycle', () => {
     });
   });
 
-  it('keeps the execution graph expanded while the reply is still streaming and shows only the reply suffix in the bubble', async () => {
+  it('collapses activity when the final reply starts streaming and shows only the reply suffix', async () => {
     const { Chat } = await import('@/pages/Chat/index');
 
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'false');
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
     });
 
-    expect(screen.queryByTestId('chat-turn-summary-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.getByText('Here is the summary.')).toBeInTheDocument();
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
   });
@@ -451,9 +451,9 @@ describe('Chat execution graph lifecycle', () => {
     await waitFor(() => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
-    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getAllByTestId('chat-team-orchestration-card').length).toBeGreaterThan(0);
     expect(screen.getAllByText('implementer').length).toBeGreaterThan(0);
     expect(screen.getAllByText('tester').length).toBeGreaterThan(0);
@@ -546,7 +546,7 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText('Worker failed before acceptance: max children reached')).toBeInTheDocument();
     expect(screen.getByText('Review worker limits or permissions before retrying ordinary orchestration.')).toBeInTheDocument();
     expect(screen.getByText('Explicitly start Task Loop only if a governed long-run retry is needed')).toBeInTheDocument();
@@ -712,16 +712,10 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByText('demo.ts')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
     });
 
-    expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
-    expect(screen.queryByText('+1')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
-    // Tasks stay primary when tool steps exist; line stats live on the Reports tab.
-    fireEvent.click(screen.getByText('turnWork.tabs.reports'));
-    expect(screen.getByText('+1')).toBeInTheDocument();
-    expect(screen.getByText('-1')).toBeInTheDocument();
+    expect(screen.queryByText('demo.ts')).not.toBeInTheDocument();
   });
 
   it('shows a scroll-to-latest button when the chat is scrolled away from the bottom', async () => {
@@ -865,9 +859,10 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'false');
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
     });
 
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.getByTestId('mock-streaming-message')).toHaveTextContent(finalText);
     expect(
       screen.getAllByTestId('mock-chat-message')
@@ -1095,9 +1090,10 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-typing-indicator')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-activity-indicator')).not.toBeInTheDocument();

@@ -132,7 +132,16 @@ export interface WorkspaceArtifactPanelState {
   open?: boolean;
   /** Whether the panel occupies layout space instead of overlaying the chat. */
   expanded?: boolean;
+  /** Tab strip contents, oldest first. Empty/absent means the launcher shows. */
+  tabs?: Array<{ kind?: string; title?: string }>;
+  /** Which tab kind was focused when the session was saved. */
+  activeTabKind?: string;
+  /**
+   * @deprecated Pre-tab-strip sessions. Read on restore and migrated into a
+   * single equivalent tab; never written by current code.
+   */
   activeTab?: string;
+  /** @deprecated Pre-tab-strip nested workspace sub-route. See `activeTab`. */
   workspaceView?: 'home' | 'files' | 'terminal' | 'web' | 'audit' | 'git';
   selectedPath?: string | null;
   gitSelectedPath?: string | null;

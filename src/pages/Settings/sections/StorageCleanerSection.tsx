@@ -172,7 +172,7 @@ export function StorageCleanerSection() {
     try {
       const { sendMessage } = useChatStore.getState();
       await sendMessage(prompt);
-      navigate('/chat');
+      navigate('/');
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       toast.error(t('storage.toast.scanFailed', { error: msg }));
@@ -189,7 +189,7 @@ export function StorageCleanerSection() {
   const totalScannedBytes = scan?.categories.reduce((s: number, c: SystemScanCategory) => s + c.totalBytes, 0) ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div data-testid="settings-storage-section" className="space-y-6">
       {/* System info cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div
