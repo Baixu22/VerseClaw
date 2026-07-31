@@ -32,7 +32,7 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
-import { useUiOverlay } from '@/components/layout/ui-overlay-context';
+import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import type { AgentSummary } from '@/types/agent';
 
 import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
@@ -523,7 +523,7 @@ export const ChatMessage = memo(function ChatMessage({
       <div
         className={cn(
           'flex flex-col w-full min-w-0 space-y-2',
-          isUser && isEditingUserMessage ? 'max-w-full' : 'max-w-[80%]',
+          isUser && isEditingUserMessage ? 'max-w-full' : isUser ? 'max-w-[77%]' : 'max-w-full',
           isUser ? 'items-end' : 'items-start',
         )}
       >
@@ -685,11 +685,7 @@ export const ChatMessage = memo(function ChatMessage({
           </div>
         )}
 
-        {/* Token usage badge — animated counter at the end of assistant messages */}
-        {!isUser && !showStreamStatus && (
-          <TokenUsageBadge message={message} liveUsage={liveUsage} isStreaming={isStreaming} />
-        )}
-
+        {/* Token usage is kept in the hover action row so it does not compete with the reply. */}
         {/* Hover row for user messages */}
         {showUserHoverBar && !isEditingUserMessage && (
           <UserMessageActions
@@ -702,7 +698,12 @@ export const ChatMessage = memo(function ChatMessage({
 
         {/* Hover row for assistant messages */}
         {showAssistantHoverBar && (
-          <AssistantHoverBar text={text} timestamp={message.timestamp} imageCopyTarget={imageCopyTarget} />
+          <AssistantHoverBar
+            text={text}
+            timestamp={message.timestamp}
+            imageCopyTarget={imageCopyTarget}
+            usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}
+          />
         )}
       </div>
 
@@ -811,20 +812,20 @@ function ToolStatusBar({
           <div
             key={tool.toolCallId || tool.id || tool.name}
             className={cn(
-              'flex items-center gap-2 rounded-lg border px-3 py-2 text-[13px] shadow-sm shadow-black/[0.03] transition-colors dark:shadow-black/20',
+              'flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors',
               isRunning && 'border-primary/25 bg-primary/[0.04] text-foreground',
-              !isRunning && !isError && 'border-black/[0.07] bg-surface-input/25 text-muted-foreground dark:border-white/[0.09]',
-              isError && 'border-destructive/25 bg-destructive/[0.04] text-destructive',
+              !isRunning && !isError && 'border-border/50 text-muted-foreground',
+              isError && 'border-destructive/25 text-destructive',
             )}
           >
             {isRunning && <DotMatrix state="syncing" label={tool.name} className="size-3.5 text-primary" />}
             {!isRunning && !isError && <DotMatrix state="success" label={tool.name} className="size-3.5" />}
             {isError && <DotMatrix state="error" label={tool.name} className="size-3.5" />}
             <Wrench className="h-3 w-3 shrink-0 opacity-60" />
-            <span className="font-mono text-[13px] font-medium">{tool.name}</span>
-            {duration && <span className="text-tiny opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
+            <span className="font-mono text-sm font-medium">{tool.name}</span>
+            {duration && <span className="text-xs opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
             {tool.summary && (
-              <span className="truncate text-tiny opacity-70">{tool.summary}</span>
+              <span className="truncate text-xs opacity-70">{tool.summary}</span>
             )}
           </div>
         );
@@ -944,10 +945,16 @@ function AssistantHoverBar({
   text,
   timestamp,
   imageCopyTarget,
+  usage,
 }: {
   text: string;
   timestamp?: number;
   imageCopyTarget?: ImageCopyTarget | null;
+  usage?: {
+    message: RawMessage;
+    liveUsage?: ChatMessageProps['liveUsage'];
+    isStreaming?: boolean;
+  } | null;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -974,8 +981,17 @@ function AssistantHoverBar({
       testId="chat-assistant-message-actions"
       className="flex h-6 w-full translate-y-0.5 items-center justify-between px-1 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
     >
-      <span className="text-xs text-muted-foreground">
-        {timestamp ? formatTimestamp(timestamp) : ''}
+      <span className="flex min-w-0 items-center gap-1">
+        <span className="truncate text-xs text-muted-foreground">
+          {timestamp ? formatTimestamp(timestamp) : ''}
+        </span>
+        {usage && (
+          <TokenUsageBadge
+            message={usage.message}
+            liveUsage={usage.liveUsage}
+            isStreaming={usage.isStreaming}
+          />
+        )}
       </span>
       <Button
         variant="ghost"
@@ -1097,7 +1113,7 @@ function UserMessageEditor({
 
   return (
     <form
-      className="w-[min(72vw,48rem)] max-w-full rounded-2xl border border-black/[0.07] bg-surface-input px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_2px_6px_rgba(0,0,0,0.03)] transition-colors duration-150 focus-within:border-black/20 dark:border-white/[0.09] dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:focus-within:border-white/20"
+      className="w-[min(72vw,48rem)] max-w-full rounded-2xl border border-conversation bg-surface-input px-3 py-2.5 shadow-subtle transition-colors duration-150 focus-within:border-conversation-strong"
       data-testid="chat-user-message-editor"
       onSubmit={(event) => {
         event.preventDefault();
@@ -1139,30 +1155,44 @@ function UserMessageEditor({
   );
 }
 
+/*
+ * User bubble. Reference (FakeCoding web/src/components/Conversation.tsx:1110):
+ *   `bg-token-foreground/5 max-w-[77%] rounded-2xl px-3 py-2 text-left`
+ * — a flat 5% ink wash with no border and no shadow, 12px/8px padding rather
+ * than 16px/10px. The v2 branch keeps its tinted glass treatment because that
+ * is a deliberate Windows-material divergence, but adopts the same geometry.
+ */
 function UserMessageBubble({
   text,
 }: {
   text: string;
 }) {
-  const { uiVersion } = useUiOverlay();
+  const uiVersion = useUiVersion();
   const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
   return (
     <div
       className={cn(
-        'relative rounded-2xl border px-4 py-2.5 text-foreground transition-colors duration-150',
+        'relative min-w-0 overflow-hidden rounded-2xl px-3 py-2 text-left text-foreground transition-colors duration-150',
         isUiV2
-          ? 'rounded-[16px] border border-primary/10 bg-primary/[0.07] shadow-sm backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10'
-          : 'border-black/[0.07] bg-gradient-to-b from-surface-input to-surface-input/80 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_2px_6px_rgba(0,0,0,0.03)] dark:border-white/[0.09] dark:from-surface-input dark:to-surface-input/90 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)]',
+          ? 'border border-primary/10 bg-primary/[0.07] backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10'
+          : 'bg-foreground/[0.05]',
       )}
       data-testid="chat-user-message-bubble"
     >
-      <p className="whitespace-pre-wrap break-words text-sm leading-[1.6]">{text}</p>
+      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>
     </div>
   );
 }
 
 // ── Assistant Markdown ──────────────────────────────────────────
 
+/*
+ * Code block header. Ported from the reference `markdown-code-toolbar`
+ * (FakeCoding web/src/styles.css:8264-8288): 32px min-height, a lowercase
+ * language label rather than an uppercase tracked one, and a 24px ghost button.
+ * The header and the <pre> below it together form the radius-10 bordered block
+ * described by `.markdown-code-block`.
+ */
 function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
   const { t } = useTranslation('chat');
   const [copied, setCopied] = useState(false);
@@ -1176,14 +1206,14 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
 
   return (
     <div
-      className="mt-4 flex items-center justify-between gap-3 rounded-t-lg border border-b-0 border-black/[0.07] bg-black/[0.035] px-3 py-1.5 text-[11px] text-muted-foreground shadow-[inset_0_-1px_0_rgba(0,0,0,0.03)] dark:border-white/[0.09] dark:bg-white/[0.05] dark:shadow-[inset_0_-1px_0_rgba(255,255,255,0.04)]"
+      className="mt-3.5 flex min-h-8 items-center justify-between gap-3 rounded-t-[10px] border border-b-0 border-conversation-strong bg-black/[0.02] px-2.5 text-xs lowercase text-conversation-tertiary dark:bg-white/[0.02]"
       data-testid="assistant-code-header"
     >
-      <span className="min-w-0 truncate font-mono uppercase tracking-wide">{label}</span>
+      <span className="min-w-0 truncate font-mono">{label}</span>
       <button
         type="button"
         onClick={handleCopy}
-        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+        className="inline-flex h-6 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-conversation-tertiary transition-colors hover:bg-black/[0.06] hover:text-foreground dark:hover:bg-white/[0.06]"
         aria-label={copied ? t('markdown.copiedCode') : t('markdown.copyCode')}
         title={copied ? t('markdown.copiedCode') : t('markdown.copyCode')}
         data-testid="assistant-code-copy"
@@ -1205,7 +1235,14 @@ function AssistantMarkdown({
     <>
       <TextMessagePartProvider text={text} isRunning={isStreaming}>
         <MarkdownTextPrimitive
-          className="prose prose-sm dark:prose-invert w-full max-w-none break-words text-foreground prose-p:leading-[1.65] prose-li:leading-[1.6] prose-p:my-2.5 prose-ul:my-2.5 prose-ol:my-2.5 prose-li:my-1"
+          className={cn(
+            /* `prose` is retained purely as a locator: eight e2e specs find
+             * assistant replies through `.prose`. The visual rules now come from
+             * `codex-markdown` (styles/codex-conversation.css), whose two-class
+             * descendant selectors outrank the `.prose x` rules in globals.css. */
+            'prose w-full max-w-none break-words text-foreground codex-markdown',
+            isStreaming && 'codex-markdown-streaming',
+          )}
           smooth={false}
           defer={isStreaming}
           preprocess={normalizeLatexDelimiters}
@@ -1216,20 +1253,19 @@ function AssistantMarkdown({
                 if (href && isGitHubUrl(href)) {
                   return <GitHubCard url={href} />;
                 }
-                return <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/30 hover:decoration-primary transition-colors" {...props}>{children}</a>;
+                /* Underline styling is inherited from `.codex-markdown a` —
+                 * the reference keeps transcript links monochrome. */
+                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
               },
               code({ className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
               const isInline = !match && !className;
               if (isInline) {
-                return (
-                  <code className="rounded-md border border-black/[0.07] bg-black/[0.04] px-[0.4em] py-[0.15em] font-mono text-[0.875em] break-words break-all dark:border-white/[0.09] dark:bg-white/[0.06]" {...props}>
-                    {children}
-                  </code>
-                );
+                /* Inline code chrome lives in `.codex-markdown :not(pre) > code`. */
+                return <code {...props}>{children}</code>;
               }
               return (
-                <code className={cn('text-[13px] leading-relaxed font-mono', className)} {...props}>
+                <code className={cn('font-mono', className)} {...props}>
                   {children}
                 </code>
               );
@@ -1244,7 +1280,9 @@ function AssistantMarkdown({
                     overflowWrap: 'break-word',
                   }}
                   className={cn(
-                    'rounded-b-lg rounded-t-none border border-t-0 border-black/[0.07] bg-black/[0.025] p-4 overflow-x-auto whitespace-pre-wrap break-words shadow-sm shadow-black/[0.03] dark:border-white/[0.09] dark:bg-white/[0.035] dark:shadow-black/20',
+                    /* Bottom half of `.markdown-code-block`: radius 10 to match
+                     * the header above, 10px/12px padding, no fill of its own. */
+                    'mb-3.5 overflow-x-auto whitespace-pre-wrap break-words rounded-b-[10px] rounded-t-none border border-t-0 border-conversation-strong bg-black/[0.02] px-3 py-2.5 text-conversation-body dark:bg-white/[0.02]',
                     className,
                   )}
                 >
@@ -1259,50 +1297,17 @@ function AssistantMarkdown({
               );
             },
             CodeHeader: MarkdownCodeHeader,
-            h1({ children, ...props }) {
-              return <h1 className="mb-3 mt-5 font-serif text-2xl font-normal leading-snug tracking-[-0.015em] text-foreground first:mt-0" {...props}>{children}</h1>;
-            },
-            h2({ children, ...props }) {
-              return <h2 className="mb-2.5 mt-5 font-serif text-xl font-normal leading-snug tracking-[-0.01em] text-foreground first:mt-0" {...props}>{children}</h2>;
-            },
-            h3({ children, ...props }) {
-              return <h3 className="mb-2 mt-4 text-base font-semibold leading-snug tracking-[-0.01em] text-foreground first:mt-0" {...props}>{children}</h3>;
-            },
-            blockquote({ children, ...props }) {
-              return (
-                <blockquote
-                  className="my-3 rounded-r-md border-l-2 border-primary/50 bg-black/[0.02] py-1.5 pl-4 pr-3 not-italic text-muted-foreground dark:bg-white/[0.03]"
-                  {...props}
-                >
-                  {children}
-                </blockquote>
-              );
-            },
+            /* Headings, blockquote, hr, th and td are fully described by
+             * codex-conversation.css; overriding them here would only re-open
+             * the gap the port closes. The table keeps a wrapper because the
+             * reference scrolls wide tables in a `markdown-table-scroll`
+             * container (styles.css:8231-8236) rather than clipping them. */
             table({ children, ...props }) {
               return (
-                <div className="my-4 max-w-full overflow-x-auto rounded-lg border border-black/[0.07] shadow-sm shadow-black/[0.03] dark:border-white/[0.09] dark:shadow-black/20">
-                  <table className="my-0 w-full min-w-max border-collapse text-sm" {...props}>
-                    {children}
-                  </table>
+                <div className="my-2.5 mb-[18px] max-w-full overflow-x-auto">
+                  <table {...props}>{children}</table>
                 </div>
               );
-            },
-            th({ children, ...props }) {
-              return (
-                <th className="border-b border-black/[0.07] bg-black/[0.025] px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/[0.09] dark:bg-white/[0.04]" {...props}>
-                  {children}
-                </th>
-              );
-            },
-            td({ children, ...props }) {
-              return (
-                <td className="border-t border-black/[0.05] px-3 py-2 align-top text-foreground dark:border-white/[0.07]" {...props}>
-                  {children}
-                </td>
-              );
-            },
-            hr(props) {
-              return <hr className="my-6 border-black/[0.07] dark:border-white/[0.09]" {...props} />;
             },
             input({ type, checked, ...props }) {
               if (type !== 'checkbox') return <input type={type} checked={checked} {...props} />;
@@ -1311,7 +1316,7 @@ function AssistantMarkdown({
                   type="checkbox"
                   checked={checked}
                   readOnly
-                  className="mr-2 h-3.5 w-3.5 rounded border-black/20 align-[-2px] accent-primary dark:border-white/20"
+                  className="mt-1 h-3.5 w-3.5 rounded border-black/20 accent-primary dark:border-white/20"
                   {...props}
                 />
               );

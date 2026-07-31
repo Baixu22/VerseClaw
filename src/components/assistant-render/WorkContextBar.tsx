@@ -1,4 +1,5 @@
-import { CheckCircle2, ExternalLink, FileText, GitBranch, Globe, ListChecks, Loader2, TriangleAlert } from 'lucide-react';
+import { CheckCircle2, ExternalLink, GitBranch, Globe, Loader2, TriangleAlert } from 'lucide-react';
+import { FileText, ListChecks } from '@/components/icons/codex-icons';
 import { useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';

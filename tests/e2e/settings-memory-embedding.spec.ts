@@ -22,7 +22,7 @@ test.describe('Verse Claw memory embedding settings', () => {
 
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
-    await expect(page.getByTestId('settings-overview')).toBeVisible();
+    await expect(page.getByTestId('settings-sidebar')).toBeVisible();
     await page.getByTestId('settings-nav-system').click();
     await expect(page.getByTestId('settings-back-button')).toBeVisible();
 

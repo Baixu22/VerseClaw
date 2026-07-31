@@ -165,6 +165,7 @@ vi.mock('react-i18next', () => ({
       'toolbar.saveToKnowledge': 'Save to Knowledge',
       'toolbar.workspace': 'Workspace',
       'toolbar.refresh': 'Refresh',
+      'toolbar.moreActions': 'More actions',
       'questionDirectory.title': 'Question directory',
       'knowledgeDraft.title': 'Save to Knowledge',
       'knowledgeDraft.description': 'Review and edit before creating a draft.',
@@ -225,6 +226,7 @@ describe('Chat Save to Knowledge', () => {
   it('opens an editable draft and creates a pending proposal only after confirmation', async () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
+    fireEvent.pointerDown(await screen.findByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
     fireEvent.click(await screen.findByTestId('chat-save-knowledge'));
     expect(await screen.findByTestId('knowledge-draft-dialog')).toBeInTheDocument();
     expect((screen.getByTestId('knowledge-draft-body') as HTMLTextAreaElement).value).toContain('Obsidian optional');
@@ -234,7 +236,8 @@ describe('Chat Save to Knowledge', () => {
     expect(hostApiMock.createDraft).not.toHaveBeenCalled();
     expect(hostApiMock.proposeChange).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByTestId('chat-save-knowledge'));
+    fireEvent.pointerDown(screen.getByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
+    fireEvent.click(await screen.findByTestId('chat-save-knowledge'));
     fireEvent.change(await screen.findByTestId('knowledge-draft-title'), { target: { value: 'Knowledge Hub decision' } });
     fireEvent.change(screen.getByTestId('knowledge-draft-body'), { target: { value: 'Keep Obsidian optional and use native wiki.' } });
     fireEvent.click(screen.getByTestId('knowledge-draft-apply'));

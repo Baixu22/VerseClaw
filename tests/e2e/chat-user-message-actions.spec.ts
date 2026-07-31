@@ -87,16 +87,21 @@ function chatMessageActionMocks() {
       },
     },
     hostApi: {
+      // Set the theme through settings rather than relying on the manual
+      // classList flip below: App's theme effect calls applyDocumentTheme on
+      // mount, which rewrites `light`/`dark` on <html> and would otherwise race
+      // the test's own toggle.
       [stableStringify(['/api/settings', 'GET'])]: {
         ok: true,
         data: {
           status: 200,
           ok: true,
-          json: { language: 'zh', setupComplete: true },
+          json: { language: 'zh', theme: 'dark', setupComplete: true },
         },
       },
       [stableStringify(['settings', 'getAll', null])]: {
         language: 'zh',
+        theme: 'dark',
         setupComplete: true,
       },
       [stableStringify(['/api/gateway/status', 'GET'])]: {

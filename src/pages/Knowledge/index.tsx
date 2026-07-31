@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Copy, Database, Edit3, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, MessageCircle, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, SendHorizontal, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { AlertTriangle, ArrowRight, BookOpen, Bot, Check, Columns3, Copy, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, SendHorizontal, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useTranslation } from 'react-i18next';
 import remarkGfm from 'remark-gfm';
@@ -10,7 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   hostApi,
   type KnowledgeArtifactType,
@@ -41,6 +44,7 @@ import { cn } from '@/lib/utils';
 type SearchRow = Record<string, unknown>;
 type WorkbenchTab = 'library' | 'inbox' | 'drafts' | 'review' | 'governance';
 type MarkdownEditorMode = 'edit' | 'preview' | 'split';
+type KnowledgeUtilityPanel = 'status' | 'okf' | 'sources' | null;
 type KnowledgeLibrarianCitation = {
   lookup: string;
   title: string;
@@ -94,8 +98,8 @@ type SourceSetRef = KnowledgeSourceSet['sourceRefs'][number];
 
 const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
+const MENU_ITEM_CLASS = 'flex h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm outline-none transition-colors data-[disabled]:opacity-40 data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10 motion-reduce:transition-none';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
-const WORKSPACE_CHROME_CLASS = 'overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-input/70 dark:bg-surface-input/80';
 const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
@@ -215,19 +219,6 @@ function getPageBody(page: Record<string, unknown> | null): string {
   if (direct) return direct;
   const nested = asRecord(page.page);
   return nested ? getPageBody(nested) : JSON.stringify(page, null, 2);
-}
-
-function getOkfBadges(record: Record<string, unknown>): string[] {
-  const okf = asRecord(record.okf) ?? asRecord(record.okfMetadata);
-  const source = okf ?? record;
-  const conceptId = getString(source, ['conceptId', 'okfConceptId']);
-  if (!okf && !conceptId) return [];
-  return [
-    getString(source, ['type', 'okfType']),
-    conceptId,
-    getString(source, ['resource']),
-    getString(source, ['timestamp']),
-  ].filter(Boolean);
 }
 
 function okfConceptTitle(concept: KnowledgeOkfConcept): string {
@@ -839,6 +830,7 @@ export function Knowledge() {
     return parseLibrarianCheckpoint(window.localStorage.getItem(KNOWLEDGE_LIBRARIAN_STORAGE_KEY))?.updatedAt ?? null;
   });
   const [workbenchTab, setWorkbenchTab] = useState<WorkbenchTab>('library');
+  const [utilityPanel, setUtilityPanel] = useState<KnowledgeUtilityPanel>(null);
   const [drafts, setDrafts] = useState<KnowledgeDraft[]>([]);
   const [inboxItems, setInboxItems] = useState<KnowledgeInboxItem[]>([]);
   const [proposals, setProposals] = useState<KnowledgeChangeProposal[]>([]);
@@ -870,16 +862,6 @@ export function Knowledge() {
   const statusTone = ready
     ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
     : 'border-yellow-500/20 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400';
-  const metrics = useMemo(() => [
-    { label: t('metrics.sources'), value: pageCounts.source ?? 0, icon: FileText, tone: 'text-sky-700 dark:text-sky-400' },
-    { label: t('metrics.syntheses'), value: pageCounts.synthesis ?? 0, icon: Sparkles, tone: 'text-violet-700 dark:text-violet-400' },
-    { label: t('metrics.entities'), value: (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0), icon: Database, tone: 'text-emerald-700 dark:text-emerald-400' },
-    { label: t('metrics.warnings'), value: warnings.length, icon: AlertTriangle, tone: warnings.length > 0 ? 'text-yellow-700 dark:text-yellow-400' : 'text-muted-foreground' },
-  ], [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis, t, warnings.length]);
-  const knowledgeDocTotal = useMemo(
-    () => (pageCounts.source ?? 0) + (pageCounts.synthesis ?? 0) + (pageCounts.entity ?? 0) + (pageCounts.concept ?? 0),
-    [pageCounts.concept, pageCounts.entity, pageCounts.source, pageCounts.synthesis],
-  );
   const groupedInboxItems = useMemo(() => {
     const groups: Record<InboxTriageGroup, KnowledgeInboxItem[]> = INBOX_TRIAGE_ORDER.reduce((acc, action) => {
       acc[action] = [];
@@ -1121,6 +1103,7 @@ export function Knowledge() {
       setOkfPath(path);
       setOkfValidation(validation);
       setSelectedOkfConceptIds(new Set(validation.concepts.map((concept) => concept.conceptId)));
+      setUtilityPanel('okf');
       if (!validation.success) {
         const message = validation.error || t('errors.okfValidation');
         setError(message);
@@ -1254,6 +1237,7 @@ export function Knowledge() {
       });
       if (!result.success || !result.draft) throw new Error(result.error || t('errors.action'));
       setSelectedDraftId(result.draft.id);
+      setUtilityPanel(null);
       setWorkbenchTab('drafts');
       await refreshGovernance();
       toast.success(t('studio.artifactCreated'));
@@ -1769,492 +1753,217 @@ export function Knowledge() {
 
   return (
     <div data-testid="knowledge-page" className="flex h-[calc(100vh-2.5rem)] min-h-0 flex-col overflow-hidden -m-6 bg-background">
-      <header className="flex shrink-0 items-center justify-between gap-4 px-10 pb-6 pt-8">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-foreground/70" />
-            <h1 className="truncate font-serif text-4xl font-normal tracking-tight text-foreground">{t('title')}</h1>
-            <Badge variant="outline" className={cn('border', statusTone)}>
+      <TooltipProvider delayDuration={250}>
+      <header className="shrink-0 border-b border-black/10 bg-surface-modal/70 px-5 pt-4 dark:border-white/10 md:px-6">
+        <div className="flex min-w-0 items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <BookOpen className="h-5 w-5 shrink-0 text-foreground/65" />
+            <h1 className="truncate font-serif text-3xl font-normal tracking-tight text-foreground">{t('title')}</h1>
+            <button
+              type="button"
+              className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5', statusTone)}
+              onClick={() => setUtilityPanel('status')}
+              data-testid="knowledge-status-trigger"
+            >
+              <span className={cn('h-1.5 w-1.5 rounded-full', ready ? 'bg-green-500' : 'bg-yellow-500')} />
               {ready ? t('status.ready') : t('status.missing')}
-            </Badge>
+            </button>
           </div>
-          <p className="mt-2 text-subtitle font-medium text-foreground/60">{t('subtitle')}</p>
+
+          <div className="flex shrink-0 items-center gap-1.5">
+            {!ready ? (
+              <Button type="button" size="sm" onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy}>
+                {running === 'init' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Check className="mr-2 h-3.5 w-3.5" />}
+                {t('actions.init')}
+              </Button>
+            ) : null}
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+                  onClick={() => setLibrarianOpen(true)}
+                  aria-label={t('librarian.openAssistant')}
+                  data-testid="knowledge-librarian-open"
+                >
+                  <Bot className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t('librarian.openAssistant')}</TooltipContent>
+            </Tooltip>
+
+            <DropdownMenu.Root>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu.Trigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+                      aria-label={t('actions.more')}
+                      data-testid="knowledge-more-actions"
+                    >
+                      <Ellipsis className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                </TooltipTrigger>
+                <TooltipContent>{t('actions.more')}</TooltipContent>
+              </Tooltip>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  align="end"
+                  sideOffset={6}
+                  className="z-[80] min-w-60 overflow-hidden rounded-lg border border-border bg-surface-modal p-1.5 text-foreground shadow-xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 motion-reduce:animate-none"
+                >
+                  <DropdownMenu.Label className="px-2.5 py-1.5 text-2xs font-semibold uppercase text-muted-foreground">
+                    {t('actions.content')}
+                  </DropdownMenu.Label>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void pickAndIngest('files')}>
+                    <FilePlus2 className="h-4 w-4 text-muted-foreground" />
+                    {t('actions.importFiles')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void pickAndIngest('folder')}>
+                    <FolderPlus className="h-4 w-4 text-muted-foreground" />
+                    {t('actions.importFolder')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void validateOkfBundle()} data-testid="knowledge-okf-validate">
+                    {running === 'validateOkf' ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <FileSearch className="h-4 w-4 text-muted-foreground" />}
+                    {t('actions.validateOkf')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void runAction('openVault', () => hostApi.knowledge.openVault())}>
+                    <BookOpen className="h-4 w-4 text-muted-foreground" />
+                    {t('actions.openVault')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                  <DropdownMenu.Label className="px-2.5 py-1.5 text-2xs font-semibold uppercase text-muted-foreground">
+                    {t('actions.maintenance')}
+                  </DropdownMenu.Label>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void refreshStatus()}>
+                    <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                    {t('common:actions.refresh')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void runAction('configure', () => hostApi.knowledge.configure())}>
+                    <Wrench className="h-4 w-4 text-muted-foreground" />
+                    {t('actions.configure')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} disabled={busy} onSelect={() => void runAction('init', () => hostApi.knowledge.init())}>
+                    <Check className="h-4 w-4 text-muted-foreground" />
+                    {t('actions.init')}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item className={MENU_ITEM_CLASS} onSelect={() => setWorkbenchTab('governance')} data-testid="knowledge-tab-governance">
+                    <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                    {t('governance.openAudit')}
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-3">
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runAction('configure', () => hostApi.knowledge.configure())} disabled={busy}>
-            {running === 'configure' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Wrench className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.configure')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runAction('init', () => hostApi.knowledge.init())} disabled={busy}>
-            {running === 'init' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.init')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void refreshStatus()} disabled={busy}>
-            {loading ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="mr-2 h-3.5 w-3.5" />}
-            {t('common:actions.refresh')}
-          </Button>
-        </div>
+
+        <nav className="mt-3 flex h-10 items-end gap-1 overflow-x-auto" data-testid="knowledge-workbench-tabs" aria-label={t('tabs.navigation')}>
+          {PRIMARY_WORKBENCH_TABS.map((tab) => {
+            const TabIcon = TAB_ICONS[tab];
+            const isActive = workbenchTab === tab;
+            const count = tab === 'inbox' ? inboxItems.length : tab === 'drafts' ? drafts.length : 0;
+            return (
+              <button
+                key={tab}
+                type="button"
+                className={cn(
+                  'flex h-9 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-muted-foreground hover:border-black/20 hover:text-foreground dark:hover:border-white/20',
+                )}
+                onClick={() => setWorkbenchTab(tab)}
+                data-testid={`knowledge-tab-${tab}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <TabIcon className="h-4 w-4" />
+                {t(tab === 'library' ? 'tabs.library' : `tabs.${tab}`)}
+                {count > 0 ? <span className="text-xs tabular-nums text-muted-foreground">{count}</span> : null}
+              </button>
+            );
+          })}
+        </nav>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-auto px-5 pb-10 md:px-8 xl:px-10">
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-5 pt-4 md:px-6">
         {error && (
           <div data-testid="knowledge-error" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             {error}
           </div>
         )}
 
-        <div data-testid="knowledge-command-bar" className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-black/10 bg-surface-modal/90 p-2 shadow-sm backdrop-blur dark:border-white/10">
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void pickAndIngest('files')} disabled={busy}>
-            <FilePlus2 className="mr-2 h-3.5 w-3.5" />
-            {t('actions.importFiles')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void pickAndIngest('folder')} disabled={busy}>
-            <FolderPlus className="mr-2 h-3.5 w-3.5" />
-            {t('actions.importFolder')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void validateOkfBundle()} disabled={busy} data-testid="knowledge-okf-validate">
-            {running === 'validateOkf' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <FileSearch className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.validateOkf')}
-          </Button>
-          <Button variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void importOkfBundle()} disabled={busy || !okfCanImport} data-testid="knowledge-okf-import">
-            {running === 'importOkf' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Upload className="mr-2 h-3.5 w-3.5" />}
-            {t('actions.importOkf')}{selectedOkfCount > 0 ? ` (${selectedOkfCount})` : ''}
-          </Button>
-          <Button variant="outline" className={cn('ml-auto', QUIET_BUTTON_CLASS)} onClick={() => void runAction('openVault', () => hostApi.knowledge.openVault())} disabled={busy}>
-            {t('actions.openVault')}
-          </Button>
-        </div>
-
-        <section className="mb-4 grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]" data-testid="knowledge-assistant-overview">
-          <div className={cn(PANEL_CLASS, 'overflow-hidden p-5')}>
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
-                  <h2 className="font-serif text-2xl font-normal tracking-tight text-foreground">{t('assistant.title')}</h2>
-                </div>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{t('assistant.subtitle')}</p>
-              </div>
-              <div className="flex shrink-0 flex-wrap gap-2">
-                <Button type="button" size="sm" onClick={() => setWorkbenchTab('library')} data-testid="knowledge-assistant-browse">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  {t('assistant.browse')}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className={QUIET_BUTTON_CLASS}
-                  onClick={() => setWorkbenchTab('governance')}
-                  data-testid="knowledge-audit-center-button"
-                >
-                  <ShieldCheck className="mr-2 h-3.5 w-3.5" />
-                  {t('governance.openAudit')}
-                </Button>
-              </div>
-            </div>
-            <div className="mt-5 grid gap-2 md:grid-cols-4">
-              <button
-                type="button"
-                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
-                onClick={() => setWorkbenchTab('library')}
-                data-testid="knowledge-assistant-docs"
-              >
-                <div className="text-xl font-semibold tabular-nums tracking-tight">{knowledgeDocTotal}</div>
-                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.docs')}</div>
-                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.docsHint')}</p>
-              </button>
-              <button
-                type="button"
-                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
-                onClick={() => setWorkbenchTab('inbox')}
-                data-testid="knowledge-assistant-inbox"
-              >
-                <div className="text-xl font-semibold tabular-nums tracking-tight">{inboxItems.length}</div>
-                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.pending')}</div>
-                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.pendingHint')}</p>
-              </button>
-              <button
-                type="button"
-                className="rounded-lg border border-black/10 bg-surface-input/80 p-3 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
-                onClick={() => setWorkbenchTab('drafts')}
-                data-testid="knowledge-assistant-drafts"
-              >
-                <div className="text-xl font-semibold tabular-nums tracking-tight">{drafts.length}</div>
-                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.drafts')}</div>
-                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.draftsHint')}</p>
-              </button>
-              <button
-                type="button"
-                className={cn(
-                  'rounded-lg border p-3 text-left transition-colors',
-                  warnings.length > 0
-                    ? 'border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/15'
-                    : 'border-black/10 bg-surface-input/80 hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5',
-                )}
-                onClick={() => setWorkbenchTab('governance')}
-                data-testid="knowledge-assistant-audit"
-              >
-                <div className="text-xl font-semibold tabular-nums tracking-tight">{warnings.length}</div>
-                <div className="mt-1 text-xs font-medium text-muted-foreground">{t('assistant.health')}</div>
-                <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-muted-foreground/80">{t('assistant.healthHint')}</p>
-              </button>
-            </div>
-          </div>
-
-          <div className={cn(PANEL_CLASS, 'p-5')}>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="font-serif text-xl font-normal tracking-tight">{t('assistant.mapTitle')}</h2>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('assistant.mapHint')}</p>
-              </div>
-              <Badge variant="outline" className={cn('border', statusTone)}>
-                {ready ? t('status.ready') : t('status.missing')}
-              </Badge>
-            </div>
-            <div className="mt-4 grid gap-2">
-              {KNOWLEDGE_TYPES.slice(0, 4).map((type) => {
-                const TypeIcon = TYPE_ICONS[type];
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-surface-input/80 px-3 py-2 text-left transition-colors hover:border-black/20 hover:bg-black/5 dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
-                    onClick={() => void searchWiki(t(`types.${type}`))}
-                    data-testid={`knowledge-assistant-map-${type}`}
-                  >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <TypeIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span className="truncate text-sm font-medium">{t(`types.${type}`)}</span>
-                    </span>
-                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {okfValidation && (
-          <Card className={cn('mb-4', PANEL_CLASS)} data-testid="knowledge-okf-panel">
-            <CardHeader className="p-4">
-              <CardTitle className="flex flex-wrap items-center justify-between gap-3 text-base">
-                <span>{t('okf.title')}</span>
-                <Badge variant="outline" className={cn(
-                  'border',
-                  okfValidation.success
-                    ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
-                    : 'border-destructive/30 bg-destructive/10 text-destructive',
-                )}>
-                  {okfValidation.okfVersion ? `OKF ${okfValidation.okfVersion}` : t('okf.badge')}
+        <Card className={cn(PANEL_CLASS, 'flex min-h-0 flex-1 flex-col overflow-hidden')}>
+          {workbenchTab !== 'library' ? (
+            <CardHeader className="shrink-0 border-b border-black/10 p-4 dark:border-white/10">
+              <CardTitle className="flex items-center justify-between gap-3 text-base">
+                <span className="flex min-w-0 items-center gap-2">
+                  {(() => {
+                    const ActiveIcon = TAB_ICONS[workbenchTab];
+                    return <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" />;
+                  })()}
+                  <span className="truncate">{t(workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : 'governance.title')}</span>
+                </span>
+                <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
+                  {t('governance.readOnlyBadge')}
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-4 pt-0">
-              <div className="grid gap-2 text-sm md:grid-cols-4">
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.concepts')}</span><span className="font-medium tabular-nums">{okfValidation.summary.conceptFiles}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.validConcepts')}</span><span className="font-medium tabular-nums">{okfValidation.summary.validConcepts}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.reservedFiles')}</span><span className="font-medium tabular-nums">{okfValidation.summary.reservedFiles}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.warnings')}</span><span className="font-medium tabular-nums">{okfValidation.summary.warnings}</span></div>
-              </div>
-              <div className="rounded-lg bg-surface-input px-3 py-2 text-xs">
-                <span className="text-muted-foreground">{t('okf.bundlePath')}</span>
-                <span className="ml-2 font-mono text-foreground">{okfPath}</span>
-              </div>
-              {Object.keys(okfValidation.typeDistribution).length > 0 && (
-                <div className="flex flex-wrap items-center gap-2" data-testid="knowledge-okf-type-distribution">
-                  <span className="text-xs text-muted-foreground">{t('okf.typeDistribution')}</span>
-                  {Object.entries(okfValidation.typeDistribution).map(([type, count]) => (
-                    <Badge key={type} variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
-                      {type}: {count}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              {(okfValidation.errors.length > 0 || okfValidation.warnings.length > 0) && (
-                <div className="grid gap-3 lg:grid-cols-2">
-                  {okfValidation.errors.length > 0 && (
-                    <div className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive" data-testid="knowledge-okf-errors">
-                      <div className="font-medium">{t('okf.errors')}</div>
-                      {okfValidation.errors.slice(0, 6).map((issue, index) => (
-                        <p key={`${issue.code}:${issue.conceptId ?? issue.filePath ?? index}`}>{issue.message}</p>
-                      ))}
-                    </div>
-                  )}
-                  {okfValidation.warnings.length > 0 && (
-                    <div className="space-y-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs text-yellow-700 dark:text-yellow-400" data-testid="knowledge-okf-warnings">
-                      <div className="font-medium">{t('okf.warnings')}</div>
-                      {okfValidation.warnings.slice(0, 6).map((issue, index) => (
-                        <p key={`${issue.code}:${issue.conceptId ?? issue.filePath ?? index}`}>{issue.message}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-              {okfConcepts.length > 0 && (
-                <div className="space-y-2">
-                  <label className="flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-black/10 bg-surface-input px-3 py-2 text-xs font-medium dark:border-white/10">
-                    <input
-                      type="checkbox"
-                      checked={okfAllSelected}
-                      onChange={toggleAllOkfConcepts}
-                      data-testid="knowledge-okf-select-all"
-                    />
-                    {t('okf.selectAll')}
-                  </label>
-                  <div className="grid max-h-72 gap-2 overflow-auto pr-1">
-                    {okfConcepts.map((concept) => (
-                      <label
-                        key={concept.conceptId}
-                        className="grid cursor-pointer gap-2 rounded-lg border border-black/10 bg-surface-input p-3 text-left dark:border-white/10"
-                        data-testid="knowledge-okf-concept"
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedOkfConceptIds.has(concept.conceptId)}
-                            onChange={() => toggleOkfConcept(concept.conceptId)}
-                          />
-                          <span className="min-w-0 flex-1 truncate text-sm font-medium">{okfConceptTitle(concept)}</span>
-                          <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{concept.frontmatter.type}</Badge>
-                        </div>
-                        <div className="flex flex-wrap gap-1 pl-6">
-                          <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{concept.conceptId}</Badge>
-                          {concept.frontmatter.resource && <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent text-[10px] dark:border-white/10">{concept.frontmatter.resource}</Badge>}
-                          {concept.frontmatter.timestamp && <Badge variant="outline" className="border-black/10 bg-transparent text-[10px] dark:border-white/10">{concept.frontmatter.timestamp}</Badge>}
-                        </div>
-                        {concept.bodyPreview && <p className="line-clamp-2 pl-6 text-xs leading-5 text-muted-foreground">{concept.bodyPreview}</p>}
-                        {concept.warnings.length > 0 && (
-                          <p className="pl-6 text-xs text-yellow-700 dark:text-yellow-400">
-                            {concept.warnings[0].message}
-                          </p>
-                        )}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="grid gap-4 md:grid-cols-4" data-testid="knowledge-metrics">
-          {metrics.map((metric) => {
-            const Icon = metric.icon;
-            return (
-            <Card key={metric.label} className={cn(PANEL_CLASS, 'cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-black/20 dark:hover:border-white/20')}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-2xl font-semibold tabular-nums tracking-tight">{metric.value}</div>
-                    <div className="mt-1 truncate text-xs font-medium text-muted-foreground">{metric.label}</div>
-                  </div>
-                  <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border', metric.tone.replace('text-', 'border-'), metric.tone.replace('text-', 'bg-'), '/10')}>
-                    <Icon className={cn('h-4 w-4', metric.tone)} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            );
-          })}
-        </div>
-
-        <div className="mt-4 grid gap-1 rounded-xl border border-black/10 bg-surface-modal p-1 shadow-sm dark:border-white/10 md:grid-cols-4" data-testid="knowledge-workbench-tabs">
-          {PRIMARY_WORKBENCH_TABS.map((tab) => {
-            const TabIcon = TAB_ICONS[tab];
-            const isActive = workbenchTab === tab;
-            return (
-            <button
-              key={tab}
-              type="button"
-              className={cn(
-                'flex items-center justify-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer',
-                isActive
-                  ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
-                  : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
-              )}
-              onClick={() => setWorkbenchTab(tab)}
-              data-testid={`knowledge-tab-${tab}`}
-            >
-              {TabIcon && <TabIcon className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground/60')} />}
-              {t(tab === 'library' ? 'tabs.sources' : `tabs.${tab}`)}
-            </button>
-            );
-          })}
-        </div>
-        <div className="mt-3 flex justify-end">
-          <button
-            type="button"
-            className={cn(
-              'flex items-center gap-2 rounded-lg border border-black/10 bg-surface-modal px-3 py-2 text-sm font-medium transition-all duration-200 dark:border-white/10',
-              workbenchTab === 'governance'
-                ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
-                : 'text-muted-foreground hover:border-black/20 hover:bg-black/5 hover:text-foreground dark:hover:border-white/20 dark:hover:bg-white/5',
-            )}
-            onClick={() => setWorkbenchTab(workbenchTab === 'governance' ? 'library' : 'governance')}
-            data-testid="knowledge-tab-governance"
-          >
-            <ShieldCheck className={cn('h-4 w-4', workbenchTab === 'governance' ? 'text-primary' : 'text-muted-foreground/60')} />
-            {workbenchTab === 'governance' ? t('governance.backToLibrary') : t('governance.openAudit')}
-          </button>
-        </div>
-
-        <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,1.05fr)]">
-          <Card className={PANEL_CLASS}>
-            <CardHeader className="p-4">
-              <CardTitle className="text-base">{t('status.title')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 p-4 pt-0">
-              <div className="grid gap-2 text-sm">
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.vault')}</span><span className="min-w-0 truncate font-mono">{status?.vaultPath || '-'}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.mode')}</span><span className="font-medium text-foreground">{status?.vaultMode || '-'}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.render')}</span><span className="font-medium text-foreground">{status?.renderMode || '-'}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.obsidian')}</span><span className={status?.obsidianCli?.available ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}>{status?.obsidianCli?.available ? t('status.available') : t('status.unavailable')}</span></div>
-                <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.nativeSources')}</span><span className="font-medium tabular-nums text-foreground">{sourceCounts.native ?? 0}</span></div>
-              </div>
-              {warnings.length > 0 && (
-                <div className="space-y-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs">
-                  {warnings.map((warning, index) => (
-                    <p key={`${warning.code ?? 'warning'}:${index}`} className="text-yellow-700 dark:text-yellow-400">{warning.message}</p>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className={PANEL_CLASS}>
-            <CardHeader className="p-4">
-              <CardTitle className="text-base">{t('search.title')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 p-4 pt-0">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-                  <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="pl-9" />
-                </div>
-                <Button onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" size="sm">
-                  {running === 'search' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                  <span className="ml-1.5 hidden sm:inline">{t('search.button')}</span>
-                </Button>
-              </div>
-              <div className="grid gap-2">
-                {rows.map((row, index) => {
-                  const lookup = getLookup(row);
-                  const okfBadges = getOkfBadges(row);
-                  return (
-                    <div
-                      key={`${lookup || index}`}
-                      role="button"
-                      tabIndex={0}
-                      className={cn(
-                        'w-full rounded-lg border border-black/10 p-3 text-left transition-all duration-200 hover:shadow-sm dark:border-white/10',
-                        lookup && lookup === selectedLookup
-                          ? 'border-primary/30 bg-primary/5 shadow-sm'
-                          : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
-                      )}
-                      data-testid="knowledge-search-result"
-                      onClick={() => void openResult(row)}
-                      onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') void openResult(row); }}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="truncate text-sm font-semibold">{getTitle(row)}</span>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="h-7 rounded-md px-2 text-[11px]"
-                            data-testid="knowledge-source-set-add-result"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              addSourceToCurrentSet(sourceRefFromSearchRow(row));
-                            }}
-                            disabled={!lookup}
-                          >
-                            <Plus className="mr-1 h-3 w-3" />
-                            {t('sourceSet.addResult')}
-                          </Button>
-                          {running === `get:${lookup}` && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
-                          {lookup && lookup === selectedLookup && !running && <Check className="h-3.5 w-3.5 text-primary" />}
-                        </div>
-                      </div>
-                      {okfBadges.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {okfBadges.map((badge) => (
-                            <Badge key={badge} variant="outline" className="max-w-full truncate border-black/10 bg-black/5 text-[10px] dark:border-white/10 dark:bg-white/10">
-                              {badge}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                      {getSnippet(row) && <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{getSnippet(row)}</p>}
-                      {lookup && <p className="mt-1 truncate font-mono text-[11px] text-muted-foreground/70">{lookup}</p>}
-                    </div>
-                  );
-                })}
-                {searchResult && rows.length === 0 && <p className="text-sm text-muted-foreground">{t('search.empty')}</p>}
-              </div>
-              {selectedPage && (
-                <div className="rounded-lg border border-black/10 bg-surface-input dark:border-white/10">
-                  <div className="flex items-center justify-between gap-3 border-b border-black/10 px-3 py-2 dark:border-white/10">
-                    <div className="min-w-0">
-                      <span className="block truncate text-xs font-medium text-muted-foreground">{selectedLookup || t('search.preview')}</span>
-                      {selectedProvenance && (
-                        <span className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground/70">
-                          <History className="h-3 w-3" />
-                          {t('provenance.references', { count: selectedProvenance.references.length })}
-                        </span>
-                      )}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="h-7 rounded-md px-2 text-tiny"
-                      data-testid="knowledge-use-result-draft"
-                      onClick={useSelectedResultInDraft}
-                      disabled={!selectedRow || !selectedPageBody.trim()}
-                    >
-                      {t('search.useInDraft')}
-                    </Button>
-                  </div>
-                  <pre className="max-h-64 overflow-auto p-3 text-xs">
-                    {selectedPageBody}
-                  </pre>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className={cn('mt-4', workbenchTab === 'library' ? WORKSPACE_CHROME_CLASS : PANEL_CLASS)}>
-          <CardHeader className={cn('p-4', workbenchTab === 'library' && 'border-b border-black/10 bg-surface-input/60 dark:border-white/10')}>
-            <CardTitle className="flex items-center justify-between gap-3 text-base">
-              <span className="flex min-w-0 items-center gap-2">
-                {(() => {
-                  const ActiveIcon = TAB_ICONS[workbenchTab];
-                  return ActiveIcon ? <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" /> : null;
-                })()}
-                <span className="truncate">{t(workbenchTab === 'library' ? 'sources.title' : workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : 'governance.title')}</span>
-              </span>
-              <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
-                {t('governance.readOnlyBadge')}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className={cn(workbenchTab === 'library' ? 'p-0' : 'p-4 pt-0')}>
+          ) : null}
+          <CardContent className={cn('min-h-0 flex-1', workbenchTab === 'library' ? 'p-0' : 'overflow-y-auto p-4')}>
             {workbenchTab === 'library' && (
-              <div className="grid min-h-[680px] xl:grid-cols-[280px_minmax(0,1fr)_320px]" data-testid="knowledge-library">
-                <aside className={cn('flex min-h-0 flex-col border-b border-black/10 dark:border-white/10 xl:border-b-0 xl:border-r', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
-                  <div className="flex items-center justify-between gap-2 border-b border-black/10 bg-background/30 p-3 dark:border-white/10">
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold">{t('workspace.vault')}</div>
-                      <div className="truncate text-[11px] text-muted-foreground">{status?.vaultPath || t('workspace.localVault')}</div>
-                    </div>
-                    <Button type="button" variant="outline" size="sm" className="h-8 shrink-0 rounded-md border-black/10 bg-background/60 px-2 shadow-none dark:border-white/10" onClick={createEditorNote} data-testid="knowledge-new-note">
-                      <Plus className="h-3.5 w-3.5" />
+              <div className="grid h-full min-h-0 grid-cols-[280px_minmax(0,1fr)]" data-testid="knowledge-library">
+                <aside className={cn('flex min-h-0 flex-col border-r border-black/10 dark:border-white/10', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
+                  <div className="space-y-2 border-b border-black/10 p-3 dark:border-white/10">
+                    <Button type="button" className="h-9 w-full justify-start shadow-none" onClick={createEditorNote} data-testid="knowledge-new-note">
+                      <Plus className="mr-2 h-4 w-4" />
+                      {t('workspace.newNote')}
                     </Button>
+                    <div className="flex gap-2">
+                      <div className="relative min-w-0 flex-1">
+                        <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                        <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="h-9 bg-background/70 pl-8 text-xs shadow-none" />
+                      </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button type="button" size="icon" className="h-9 w-9 shrink-0" onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" aria-label={t('search.button')}>
+                            {running === 'search' ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Search className="h-4 w-4" />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('search.button')}</TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger asChild>
+                        <Button type="button" variant="outline" className="h-8 w-full justify-between rounded-md border-black/10 bg-background/50 px-2.5 text-xs shadow-none dark:border-white/10" data-testid="knowledge-type-menu">
+                          <span className="flex items-center gap-2"><Tags className="h-3.5 w-3.5" />{t('workspace.browseTypes')}</span>
+                          <Ellipsis className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Portal>
+                        <DropdownMenu.Content align="start" sideOffset={5} className="z-[80] min-w-60 rounded-lg border border-border bg-surface-modal p-1.5 shadow-xl">
+                          {KNOWLEDGE_TYPES.map((type) => {
+                            const TypeIcon = TYPE_ICONS[type];
+                            return (
+                              <DropdownMenu.Item key={type} className={MENU_ITEM_CLASS} onSelect={() => void searchWiki(t(`types.${type}`))}>
+                                <TypeIcon className="h-4 w-4 text-muted-foreground" />
+                                <span className="min-w-0 flex-1 truncate">{t(`types.${type}`)}</span>
+                                <span className="tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
+                              </DropdownMenu.Item>
+                            );
+                          })}
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Root>
                   </div>
-                  <div className="min-h-0 flex-1 overflow-auto p-3">
-                    <div className="mb-3 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.documents')}</div>
+                  <div className="min-h-0 flex-1 overflow-auto p-2.5">
+                    <div className="mb-2 px-1 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.documents')}</div>
                     <div className="space-y-1.5" data-testid="knowledge-document-list">
                       {rows.length === 0 && (
                         <div className="rounded-md border border-dashed border-black/10 p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">
@@ -2265,73 +1974,68 @@ export function Knowledge() {
                         const lookup = getLookup(row);
                         const selected = lookup && lookup === editorSource;
                         return (
-                          <button
+                          <div
                             key={`${lookup || index}:workspace`}
-                            type="button"
                             className={cn(
-                              'flex w-full items-start gap-2 rounded-md border px-2 py-2 text-left transition-colors',
+                              'flex items-center gap-1 rounded-md border pr-1 transition-colors',
                               selected
                                 ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
                                 : 'border-transparent hover:border-black/10 hover:bg-black/5 dark:hover:border-white/10 dark:hover:bg-white/5',
                             )}
-                            onClick={() => void openResult(row)}
                             data-testid="knowledge-document-row"
                           >
-                            <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-xs font-medium">{getTitle(row)}</span>
-                              <span className="block truncate font-mono text-[10px] text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <div className="mb-2 mt-5 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.types')}</div>
-                    <div className="grid gap-1.5">
-                      {KNOWLEDGE_TYPES.map((type) => {
-                        const TypeIcon = TYPE_ICONS[type];
-                        const accent = TYPE_COLOR[type];
-                        return (
-                          <button
-                            key={type}
-                            type="button"
-                            className={cn('flex items-center justify-between gap-2 rounded-md border px-2 py-1.5 text-left text-xs transition-colors', accent)}
-                            onClick={() => void searchWiki(t(`types.${type}`))}
-                            data-testid={`knowledge-type-${type}`}
-                          >
-                            <span className="flex min-w-0 items-center gap-2">
-                              <TypeIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                              <span className="truncate">{t(`types.${type}`)}</span>
-                            </span>
-                            <span className="shrink-0 tabular-nums text-muted-foreground">{knowledgeTypeCount(pageCounts, type)}</span>
-                          </button>
+                            <button type="button" className="flex min-w-0 flex-1 items-start gap-2 px-2 py-2 text-left" onClick={() => void openResult(row)} data-testid="knowledge-search-result">
+                              <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                              <span className="min-w-0 flex-1">
+                                <span className="block truncate text-xs font-medium">{getTitle(row)}</span>
+                                <span className="block truncate font-mono text-[10px] text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
+                              </span>
+                            </button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0 rounded-md" data-testid="knowledge-source-set-add-result" onClick={() => addSourceToCurrentSet(sourceRefFromSearchRow(row))} disabled={!lookup} aria-label={t('sourceSet.addResult')}>
+                                  <Plus className="h-3.5 w-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{t('sourceSet.addResult')}</TooltipContent>
+                            </Tooltip>
+                          </div>
                         );
                       })}
                     </div>
                   </div>
                 </aside>
                 <section className="flex min-h-0 flex-col bg-background/70" data-testid="knowledge-markdown-workspace">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background/60 p-3 dark:border-white/10">
+                  <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background/60 p-3 dark:border-white/10">
                     <div className="min-w-0 flex-1">
-                      <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-9 border-transparent bg-transparent px-0 font-serif text-2xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />
+                      <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-8 border-transparent bg-transparent px-0 font-serif text-xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                        <span className="font-mono">{editorSource || t('workspace.localDraft')}</span>
+                        <span className="max-w-72 truncate font-mono">{editorSource || t('workspace.localDraft')}</span>
+                        {selectedProvenance ? <span>{t('provenance.references', { count: selectedProvenance.references.length })}</span> : null}
                         <span>{editorBody.length} {t('workspace.characters')}</span>
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-1 rounded-lg border border-black/10 bg-background/50 p-1 dark:border-white/10">
-                      {(['edit', 'preview', 'split'] as MarkdownEditorMode[]).map((mode) => {
-                        const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
-                        return (
-                          <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', editorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} data-testid={`knowledge-editor-mode-${mode}`}>
-                            <ModeIcon className="h-3.5 w-3.5" />
-                          </button>
-                        );
-                      })}
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <Button type="button" variant="ghost" className="h-8 rounded-md px-2.5 text-xs" data-testid="knowledge-use-result-draft" onClick={useSelectedResultInDraft} disabled={!selectedRow || !selectedPageBody.trim()}>
+                        <Edit3 className="mr-1.5 h-3.5 w-3.5" />{t('search.useInDraft')}
+                      </Button>
+                      <Button type="button" variant="ghost" className="h-8 rounded-md px-2.5 text-xs" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
+                        <Layers className="mr-1.5 h-3.5 w-3.5" />{t('workspace.sourceTools')}
+                      </Button>
+                      <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-background/50 p-1 dark:border-white/10">
+                        {(['edit', 'preview', 'split'] as MarkdownEditorMode[]).map((mode) => {
+                          const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
+                          return (
+                            <button key={mode} type="button" className={cn('flex h-7 w-8 items-center justify-center rounded-md transition-colors', editorMode === mode ? 'bg-black/5 text-foreground dark:bg-white/10' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5')} onClick={() => setEditorMode(mode)} title={t(`workspace.modes.${mode}`)} data-testid={`knowledge-editor-mode-${mode}`}>
+                              <ModeIcon className="h-3.5 w-3.5" />
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                  <div className="grid gap-3 border-b border-black/10 bg-surface-input/50 p-3 dark:border-white/10 md:grid-cols-[180px_minmax(0,1fr)_160px]">
-                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-background/70 px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type">
+                  <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input/50 p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
+                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-background/70 px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
                       {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                     </select>
                     <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 bg-background/70 shadow-none" data-testid="knowledge-editor-tags" />
@@ -2342,135 +2046,15 @@ export function Knowledge() {
                   </div>
                   <div className={cn('grid min-h-0 flex-1 gap-0', editorMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1')}>
                     {(editorMode === 'edit' || editorMode === 'split') && (
-                      <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="min-h-[520px] resize-none rounded-none border-0 bg-background/40 p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
+                      <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="h-full min-h-0 resize-none rounded-none border-0 bg-background/40 p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
                     )}
                     {(editorMode === 'preview' || editorMode === 'split') && (
-                      <div className="min-h-[520px] overflow-auto border-black/10 bg-background/80 p-6 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
+                      <div className="h-full min-h-0 overflow-auto border-black/10 bg-background/80 p-5 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
                       </div>
                     )}
                   </div>
                 </section>
-                <aside className={cn('flex min-h-0 flex-col gap-3 border-t border-black/10 p-3 dark:border-white/10 xl:border-l xl:border-t-0', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-librarian-panel">
-                  <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
-                      <Bot className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold">{t('librarian.title')}</div>
-                      <div className="text-[11px] text-muted-foreground">{t('librarian.roleId')}</div>
-                    </div>
-                  </div>
-                  <div className="space-y-3 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-source-set-panel">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                          <Layers className="h-3.5 w-3.5" />
-                          {t('sourceSet.title')}
-                        </div>
-                        <p className="mt-1 text-[11px] text-muted-foreground">
-                          {t('sourceSet.count', { count: currentSourceRefs.length })}
-                        </p>
-                      </div>
-                      <Button type="button" variant="ghost" className="h-7 rounded-md px-2 text-[11px]" onClick={clearCurrentSourceSet} disabled={currentSourceRefs.length === 0} data-testid="knowledge-source-set-clear">
-                        {t('sourceSet.clear')}
-                      </Button>
-                    </div>
-                    <Input
-                      value={sourceSetTitle}
-                      onChange={(event) => setSourceSetTitle(event.target.value)}
-                      placeholder={t('sourceSet.titlePlaceholder')}
-                      className="h-8 bg-background/70 text-xs shadow-none"
-                      data-testid="knowledge-source-set-title"
-                    />
-                    {currentSourceRefs.length === 0 ? (
-                      <p className="text-xs leading-5 text-muted-foreground">{t('sourceSet.empty')}</p>
-                    ) : (
-                      <div className="max-h-28 space-y-1 overflow-auto">
-                        {currentSourceRefs.map((ref) => (
-                          <div key={ref.id} className="rounded-md bg-black/5 px-2 py-1.5 text-xs dark:bg-white/10" data-testid="knowledge-source-set-ref">
-                            <span className="block truncate font-medium">{ref.label || ref.id}</span>
-                            <span className="block truncate font-mono text-[10px] text-muted-foreground">{ref.path || ref.id}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {sourceSets.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {sourceSets.slice(0, 3).map((sourceSet) => (
-                          <button
-                            key={sourceSet.id}
-                            type="button"
-                            className="max-w-full truncate rounded-md border border-black/10 px-2 py-1 text-[11px] text-muted-foreground hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
-                            onClick={() => {
-                              setCurrentSourceSetId(sourceSet.id);
-                              setSourceSetTitle(sourceSet.title);
-                              setCurrentSourceRefs(sourceSet.sourceRefs);
-                            }}
-                            data-testid="knowledge-source-set-saved"
-                          >
-                            {sourceSet.title}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void saveCurrentSourceSet()} disabled={busy || currentSourceRefs.length === 0} data-testid="knowledge-source-set-save">
-                      {running === 'sourceSetSave' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-2 h-3.5 w-3.5" />}
-                      {t('sourceSet.save')}
-                    </Button>
-                    <p className="text-[11px] leading-4 text-muted-foreground">{t('sourceSet.answerBoundary')}</p>
-                  </div>
-                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-studio-actions">
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                      <Sparkles className="h-3.5 w-3.5" />
-                      {t('studio.title')}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {STUDIO_ARTIFACTS.map((artifact) => {
-                        const label = t(artifact.labelKey);
-                        return (
-                          <Button
-                            key={artifact.type}
-                            type="button"
-                            variant="outline"
-                            className="h-8 rounded-md px-2 text-[11px] shadow-none"
-                            onClick={() => void createStudioArtifact(artifact.type, label)}
-                            disabled={busy || currentSourceRefs.length === 0}
-                            data-testid={`knowledge-studio-artifact-${artifact.type}`}
-                          >
-                            {running === `studio:${artifact.type}` ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <FileText className="mr-1 h-3 w-3" />}
-                            <span className="truncate">{label}</span>
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><FileText className="h-3.5 w-3.5" />{t('librarian.currentDocument')}</div>
-                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{editorSummary || t('librarian.noSummary')}</p>
-                  </div>
-                  <div className="grid gap-2">
-                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setLibrarianOpen(true)} data-testid="knowledge-librarian-open"><MessageCircle className="mr-2 h-3.5 w-3.5" />{t('librarian.openAssistant')}</Button>
-                    <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void askSteward(null)} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-review"><ShieldCheck className="mr-2 h-3.5 w-3.5" />{t('librarian.askSteward')}</Button>
-                  </div>
-                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><Link2 className="h-3.5 w-3.5" />{t('librarian.related')}</div>
-                    {relatedRows.length === 0 ? <p className="text-xs leading-5 text-muted-foreground">{t('librarian.noRelated')}</p> : relatedRows.map((row, index) => (
-                      <button key={`${getLookup(row) || index}:related`} type="button" className="block w-full rounded-md px-2 py-1.5 text-left text-xs hover:bg-black/5 dark:hover:bg-white/5" onClick={() => void openResult(row)} data-testid="knowledge-related-row">
-                        <span className="block truncate font-medium">{getTitle(row)}</span>
-                        <span className="block truncate font-mono text-[10px] text-muted-foreground">{getLookup(row)}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="space-y-2 rounded-lg border border-black/10 bg-background/60 p-3 dark:border-white/10">
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><Tags className="h-3.5 w-3.5" />{t('librarian.boundaries')}</div>
-                    <ul className="space-y-1 text-xs leading-5 text-muted-foreground">
-                      <li>{t('librarian.boundaryRead')}</li>
-                      <li>{t('librarian.boundaryDraft')}</li>
-                      <li>{t('librarian.boundarySources')}</li>
-                    </ul>
-                  </div>
-                </aside>
               </div>
             )}
 
@@ -3253,16 +2837,191 @@ export function Knowledge() {
         </Card>
       </main>
 
-      <button
-        type="button"
-        className="fixed bottom-6 right-6 z-40 flex h-12 items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-600 px-4 text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"
-        onClick={() => setLibrarianOpen(true)}
-        data-testid="knowledge-librarian-fab"
-        aria-label={t('librarian.openAssistant')}
-      >
-        <Bot className="h-5 w-5" />
-        <span className="hidden text-sm font-medium md:inline">{t('librarian.openAssistant')}</span>
-      </button>
+      <Sheet open={utilityPanel !== null} onOpenChange={(open) => { if (!open) setUtilityPanel(null); }}>
+        <SheetContent side="right" className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-lg" data-testid="knowledge-utility-sheet">
+          <SheetHeader className="shrink-0 border-b border-black/10 px-5 py-4 pr-14 text-left dark:border-white/10">
+            <SheetTitle className="font-serif text-xl font-normal tracking-tight">
+              {utilityPanel === 'status' ? t('utility.status.title') : utilityPanel === 'okf' ? t('utility.okf.title') : t('utility.sources.title')}
+            </SheetTitle>
+            <SheetDescription>
+              {utilityPanel === 'status' ? t('utility.status.description') : utilityPanel === 'okf' ? t('utility.okf.description') : t('utility.sources.description')}
+            </SheetDescription>
+          </SheetHeader>
+          <SheetClose asChild>
+            <Button type="button" variant="ghost" size="icon" className="absolute right-3 top-3 h-9 w-9 rounded-lg" aria-label={t('utility.close')}>
+              <X className="h-4 w-4" />
+            </Button>
+          </SheetClose>
+
+          <div className="min-h-0 flex-1 overflow-y-auto p-5">
+            {utilityPanel === 'status' ? (
+              <div className="space-y-4" data-testid="knowledge-status-panel">
+                <div className="grid gap-2 text-sm">
+                  <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.vault')}</span><span className="min-w-0 truncate font-mono text-xs">{status?.vaultPath || '-'}</span></div>
+                  <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.mode')}</span><span className="font-medium text-foreground">{status?.vaultMode || '-'}</span></div>
+                  <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.render')}</span><span className="font-medium text-foreground">{status?.renderMode || '-'}</span></div>
+                  <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.obsidian')}</span><span className={status?.obsidianCli?.available ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}>{status?.obsidianCli?.available ? t('status.available') : t('status.unavailable')}</span></div>
+                  <div className={ROW_CLASS}><span className="text-muted-foreground">{t('status.nativeSources')}</span><span className="font-medium tabular-nums text-foreground">{sourceCounts.native ?? 0}</span></div>
+                </div>
+                {warnings.length > 0 ? (
+                  <div className="space-y-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs">
+                    {warnings.map((warning, index) => (
+                      <p key={`${warning.code ?? 'warning'}:${index}`} className="text-yellow-700 dark:text-yellow-400">{warning.message}</p>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {utilityPanel === 'okf' ? (
+              okfValidation ? (
+                <div className="space-y-4" data-testid="knowledge-okf-panel">
+                  <div className="flex items-center justify-between gap-3">
+                    <Badge variant="outline" className={cn('border', okfValidation.success ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400' : 'border-destructive/30 bg-destructive/10 text-destructive')}>
+                      {okfValidation.okfVersion ? `OKF ${okfValidation.okfVersion}` : t('okf.badge')}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{t('okf.selectedConcepts', { count: selectedOkfCount })}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.concepts')}</span><span className="font-medium tabular-nums">{okfValidation.summary.conceptFiles}</span></div>
+                    <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.validConcepts')}</span><span className="font-medium tabular-nums">{okfValidation.summary.validConcepts}</span></div>
+                    <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.reservedFiles')}</span><span className="font-medium tabular-nums">{okfValidation.summary.reservedFiles}</span></div>
+                    <div className={ROW_CLASS}><span className="text-muted-foreground">{t('okf.warnings')}</span><span className="font-medium tabular-nums">{okfValidation.summary.warnings}</span></div>
+                  </div>
+                  <div className="min-w-0 rounded-lg bg-surface-input px-3 py-2 text-xs">
+                    <span className="text-muted-foreground">{t('okf.bundlePath')}</span>
+                    <span className="ml-2 break-all font-mono text-foreground">{okfPath}</span>
+                  </div>
+                  {Object.keys(okfValidation.typeDistribution).length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-2" data-testid="knowledge-okf-type-distribution">
+                      <span className="text-xs text-muted-foreground">{t('okf.typeDistribution')}</span>
+                      {Object.entries(okfValidation.typeDistribution).map(([type, count]) => (
+                        <Badge key={type} variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{type}: {count}</Badge>
+                      ))}
+                    </div>
+                  ) : null}
+                  {okfValidation.errors.length > 0 ? (
+                    <div className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive" data-testid="knowledge-okf-errors">
+                      <div className="font-medium">{t('okf.errors')}</div>
+                      {okfValidation.errors.slice(0, 6).map((issue, index) => <p key={`${issue.code}:${issue.conceptId ?? issue.filePath ?? index}`}>{issue.message}</p>)}
+                    </div>
+                  ) : null}
+                  {okfValidation.warnings.length > 0 ? (
+                    <div className="space-y-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs text-yellow-700 dark:text-yellow-400" data-testid="knowledge-okf-warnings">
+                      <div className="font-medium">{t('okf.warnings')}</div>
+                      {okfValidation.warnings.slice(0, 6).map((issue, index) => <p key={`${issue.code}:${issue.conceptId ?? issue.filePath ?? index}`}>{issue.message}</p>)}
+                    </div>
+                  ) : null}
+                  {okfConcepts.length > 0 ? (
+                    <div className="space-y-2">
+                      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-black/10 bg-surface-input px-3 py-2 text-xs font-medium dark:border-white/10">
+                        <input type="checkbox" checked={okfAllSelected} onChange={toggleAllOkfConcepts} data-testid="knowledge-okf-select-all" />
+                        {t('okf.selectAll')}
+                      </label>
+                      <div className="grid gap-2">
+                        {okfConcepts.map((concept) => (
+                          <label key={concept.conceptId} className="grid cursor-pointer gap-2 rounded-lg border border-black/10 bg-surface-input p-3 text-left dark:border-white/10" data-testid="knowledge-okf-concept">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <input type="checkbox" checked={selectedOkfConceptIds.has(concept.conceptId)} onChange={() => toggleOkfConcept(concept.conceptId)} />
+                              <span className="min-w-0 flex-1 truncate text-sm font-medium">{okfConceptTitle(concept)}</span>
+                              <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{concept.frontmatter.type}</Badge>
+                            </div>
+                            <div className="flex flex-wrap gap-1 pl-6">
+                              <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent font-mono text-[10px] dark:border-white/10">{concept.conceptId}</Badge>
+                              {concept.frontmatter.resource ? <Badge variant="outline" className="max-w-full truncate border-black/10 bg-transparent text-[10px] dark:border-white/10">{concept.frontmatter.resource}</Badge> : null}
+                            </div>
+                            {concept.bodyPreview ? <p className="line-clamp-2 pl-6 text-xs leading-5 text-muted-foreground">{concept.bodyPreview}</p> : null}
+                            {concept.warnings.length > 0 ? <p className="pl-6 text-xs text-yellow-700 dark:text-yellow-400">{concept.warnings[0].message}</p> : null}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  <Button type="button" className="w-full" onClick={() => void importOkfBundle()} disabled={busy || !okfCanImport} data-testid="knowledge-okf-import">
+                    {running === 'importOkf' ? <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Upload className="mr-2 h-4 w-4" />}
+                    {t('actions.importOkf')}{selectedOkfCount > 0 ? ` (${selectedOkfCount})` : ''}
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">{t('utility.okf.empty')}</p>
+              )
+            ) : null}
+
+            {utilityPanel === 'sources' ? (
+              <div className="space-y-5">
+                <section className="space-y-3" data-testid="knowledge-source-set-panel">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold">{t('sourceSet.title')}</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{t('sourceSet.count', { count: currentSourceRefs.length })}</p>
+                    </div>
+                    <Button type="button" variant="ghost" className="h-8 rounded-md px-2 text-xs" onClick={clearCurrentSourceSet} disabled={currentSourceRefs.length === 0} data-testid="knowledge-source-set-clear">{t('sourceSet.clear')}</Button>
+                  </div>
+                  <Input value={sourceSetTitle} onChange={(event) => setSourceSetTitle(event.target.value)} placeholder={t('sourceSet.titlePlaceholder')} className="h-9 bg-surface-input text-sm shadow-none" data-testid="knowledge-source-set-title" />
+                  {currentSourceRefs.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-black/10 p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">{t('sourceSet.empty')}</p>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {currentSourceRefs.map((ref) => (
+                        <div key={ref.id} className="rounded-md bg-black/5 px-2.5 py-2 text-xs dark:bg-white/10" data-testid="knowledge-source-set-ref">
+                          <span className="block truncate font-medium">{ref.label || ref.id}</span>
+                          <span className="block truncate font-mono text-[10px] text-muted-foreground">{ref.path || ref.id}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <Button type="button" variant="outline" className={cn(QUIET_BUTTON_CLASS, 'w-full')} onClick={() => void saveCurrentSourceSet()} disabled={busy || currentSourceRefs.length === 0} data-testid="knowledge-source-set-save">
+                    {running === 'sourceSetSave' ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Save className="mr-2 h-3.5 w-3.5" />}
+                    {t('sourceSet.save')}
+                  </Button>
+                  <p className="text-[11px] leading-4 text-muted-foreground">{t('sourceSet.answerBoundary')}</p>
+                </section>
+
+                {sourceSets.length > 0 ? (
+                  <section className="space-y-2 border-t border-black/10 pt-4 dark:border-white/10">
+                    <h3 className="text-sm font-semibold">{t('sourceSet.savedSets')}</h3>
+                    <div className="grid gap-1.5">
+                      {sourceSets.map((sourceSet) => (
+                        <button key={sourceSet.id} type="button" className="flex w-full items-center justify-between gap-3 rounded-md border border-black/10 px-3 py-2 text-left text-xs transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5" onClick={() => { setCurrentSourceSetId(sourceSet.id); setSourceSetTitle(sourceSet.title); setCurrentSourceRefs(sourceSet.sourceRefs); }} data-testid="knowledge-source-set-saved">
+                          <span className="min-w-0 flex-1 truncate font-medium">{sourceSet.title}</span>
+                          <span className="shrink-0 tabular-nums text-muted-foreground">{sourceSet.sourceRefs.length}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
+
+                <section className="space-y-3 border-t border-black/10 pt-4 dark:border-white/10" data-testid="knowledge-studio-actions">
+                  <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-muted-foreground" /><h3 className="text-sm font-semibold">{t('studio.title')}</h3></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {STUDIO_ARTIFACTS.map((artifact) => {
+                      const label = t(artifact.labelKey);
+                      return (
+                        <Button key={artifact.type} type="button" variant="outline" className="h-9 rounded-md px-2 text-xs shadow-none" onClick={() => void createStudioArtifact(artifact.type, label)} disabled={busy || currentSourceRefs.length === 0} data-testid={`knowledge-studio-artifact-${artifact.type}`}>
+                          {running === `studio:${artifact.type}` ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <FileText className="mr-1.5 h-3.5 w-3.5" />}
+                          <span className="truncate">{label}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {relatedRows.length > 0 ? (
+                  <section className="space-y-2 border-t border-black/10 pt-4 dark:border-white/10">
+                    <div className="flex items-center gap-2"><Link2 className="h-4 w-4 text-muted-foreground" /><h3 className="text-sm font-semibold">{t('librarian.related')}</h3></div>
+                    {relatedRows.map((row, index) => (
+                      <button key={`${getLookup(row) || index}:related`} type="button" className="block w-full rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { void openResult(row); setUtilityPanel(null); }} data-testid="knowledge-related-row">
+                        <span className="block truncate font-medium">{getTitle(row)}</span>
+                        <span className="block truncate font-mono text-[10px] text-muted-foreground">{getLookup(row)}</span>
+                      </button>
+                    ))}
+                  </section>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {librarianOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/35 p-3 backdrop-blur-[2px] md:items-stretch md:p-4" role="dialog" aria-modal="true" data-testid="knowledge-librarian-modal">
@@ -3516,6 +3275,7 @@ export function Knowledge() {
           </div>
         </div>
       ) : null}
+      </TooltipProvider>
     </div>
   );
 }

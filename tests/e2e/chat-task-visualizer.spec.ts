@@ -515,13 +515,9 @@ test.describe('Verse Claw chat execution graph', () => {
       if (await summary.getByTestId('chat-turn-summary-toggle').getAttribute('aria-expanded') === 'false') {
         await summary.getByTestId('chat-turn-summary-toggle').click();
       }
-      await expect(page.getByTestId('chat-execution-graph')).toBeVisible({ timeout: 30_000 });
-      // Completed runs auto-collapse into a single-line summary button. Expand
-      // it first so the underlying step details are rendered.
       const graph = page.getByTestId('chat-execution-graph');
-      if ((await graph.getAttribute('data-collapsed')) === 'true') {
-        await graph.click();
-      }
+      await expect(graph).toBeVisible({ timeout: 30_000 });
+      await expect(graph).toHaveAttribute('data-collapsed', 'false');
       await expect(
         page.locator('[data-testid="chat-execution-graph"] [data-testid="chat-execution-step"]').getByText('sessions_yield', { exact: true }),
       ).toBeVisible();
@@ -635,11 +631,11 @@ test.describe('Verse Claw chat execution graph', () => {
       if (await summary.getByTestId('chat-turn-summary-toggle').getAttribute('aria-expanded') === 'false') {
         await summary.getByTestId('chat-turn-summary-toggle').click();
       }
-      await expect(page.getByTestId('chat-execution-graph')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('chat-execution-graph')).toHaveAttribute('data-collapsed', 'true');
-      await expect(page.getByTestId('chat-execution-graph')).toContainText(/0\s+(tool calls|个工具调用)/);
-      await expect(page.getByTestId('chat-execution-graph')).toContainText(/9\s+(process messages|条过程消息)/);
-      await expect(summary.getByText(longRunSummary, { exact: true })).toBeVisible();
+      const graph = page.getByTestId('chat-execution-graph');
+      await expect(graph).toBeVisible({ timeout: 30_000 });
+      await expect(graph).toHaveAttribute('data-collapsed', 'false');
+      await expect(graph.getByTestId('chat-execution-step')).toHaveCount(9);
+      await expect(summary.getByText(longRunSummary, { exact: true })).toHaveCount(0);
       await expect(page.getByText(longRunReplyText, { exact: true })).toHaveCount(0);
     } finally {
       await closeElectronApp(app);

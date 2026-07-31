@@ -142,8 +142,9 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-project-session-header')).toContainText('Demo Workspace');
       await expect(page.getByTestId('chat-topic-selector')).toHaveCount(0);
-      await expect(page.getByTestId('sidebar-session-view-project')).toBeVisible();
-      await expect(page.getByTestId('sidebar-session-view-time')).toBeVisible();
+      await page.locator('.section-heading').first().hover();
+      await expect(page.getByTestId('sidebar-session-organize')).toBeVisible();
+      await expect(page.getByTestId('sidebar-session-search')).toBeVisible();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toContainText('Demo Workspace');
       await expect(page.getByTestId('sidebar-session-project-workspace-2')).toContainText('Other Workspace');
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).not.toContainText('/tmp/demo-workspace');
@@ -198,11 +199,23 @@ test.describe('Verse Claw chat workspace header', () => {
       await page.getByTestId('sidebar-session-project-toggle-workspace-1').click();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toHaveAttribute('data-state', 'collapsed');
       await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'false');
-      await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toHaveCount(0);
+      // The official collapse animates grid-template-rows 1fr→0fr, so rows stay
+      // mounted and are clipped to zero height rather than unmounting.
+      const collapsedList = page
+        .getByTestId('sidebar-session-project-workspace-1')
+        .locator('.project-tasks-outer');
+      await expect(collapsedList).toHaveAttribute('aria-hidden', 'true');
+      // Fully clipped: only the reference's 4px `.project-tasks` top padding
+      // survives the 0fr track, so no session row remains on screen.
+      await expect
+        .poll(() => collapsedList.evaluate((el) => Math.round(el.getBoundingClientRect().height)))
+        .toBeLessThanOrEqual(4);
       await page.getByTestId('sidebar-session-project-toggle-workspace-1').click();
       await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
 
-      await page.getByTestId('sidebar-session-view-time').click();
+      await page.locator('.section-heading').first().hover();
+      await page.getByTestId('sidebar-session-organize').click();
+      await page.getByRole('menuitemradio', { name: 'Time' }).click();
       await expect(page.getByTestId('sidebar-session-project-workspace-1')).toHaveCount(0);
       await expect(page.getByText('Other project')).toBeVisible();
     } finally {

@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Settings } from '@/pages/Settings';
+import { SettingsRoute } from '@/pages/Settings/SettingsRoute';
 
 const remoteControlStatusMock = vi.fn();
 const remoteControlInspectMock = vi.fn();
@@ -338,12 +339,18 @@ describe('Settings remote control section', () => {
     });
   });
 
+  // The page chrome moved out of `Settings` into SettingsPageChrome (rendered by
+  // SettingsRoute), so the shell contract is asserted against the route. The
+  // back button now belongs to SettingsSidebar and is covered by the e2e specs.
   it('keeps the settings shell visible while a lazy section is loading', async () => {
     window.history.replaceState({}, '', '/?e2eSkipSetup=1&e2eSettingsSectionDelayMs=900');
-    renderSettings('/settings/storage');
+    render(
+      <MemoryRouter initialEntries={['/settings/storage']}>
+        <SettingsRoute />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByTestId('settings-page')).toBeInTheDocument();
-    expect(screen.getByTestId('settings-back-button')).toBeInTheDocument();
     expect(screen.getByTestId('settings-section-loading')).toBeInTheDocument();
 
     await waitFor(() => {

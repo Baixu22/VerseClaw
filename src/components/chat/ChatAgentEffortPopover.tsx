@@ -588,43 +588,47 @@ export function ChatAgentEffortButton({
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        type="button"
-        data-testid="chat-agent-effort-button"
-        onClick={onToggle}
-        disabled={disabled}
-        title={buttonLabel}
-        aria-label={buttonLabel}
-        className={cn(
-          'inline-flex h-8 max-w-[148px] items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors',
-          'hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-0 dark:hover:bg-white/10',
-          'disabled:pointer-events-none disabled:opacity-50',
-          (open || isHigh) && 'text-foreground',
-        )}
-      >
-        <Flame
-          className={cn(
-            'h-3.5 w-3.5 shrink-0 transition-colors',
-            isHigh && 'text-fuchsia-600 dark:text-fuchsia-300',
-          )}
-        />
-        <span className="shrink-0">{t('composer.effortButton')}:</span>
-        <span
-          className={cn(
-            'min-w-0 truncate transition-colors',
-            isMax && 'text-fuchsia-700 dark:text-fuchsia-300',
-          )}
-        >
-          {currentLabel}
-        </span>
-        <ChevronDown
-          className={cn(
-            'h-3.5 w-3.5 shrink-0 transition-transform',
-            open && 'rotate-180',
-          )}
-        />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            ref={buttonRef}
+            type="button"
+            data-testid="chat-agent-effort-button"
+            onClick={onToggle}
+            disabled={disabled}
+            aria-label={buttonLabel}
+            className={cn(
+              'inline-flex h-8 max-w-[148px] items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors',
+              'hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-0 dark:hover:bg-white/10',
+              'disabled:pointer-events-none disabled:opacity-50',
+              (open || isHigh) && 'text-foreground',
+            )}
+          >
+            <Flame
+              className={cn(
+                'h-3.5 w-3.5 shrink-0 transition-colors',
+                isHigh && 'text-fuchsia-600 dark:text-fuchsia-300',
+              )}
+            />
+            <span className="shrink-0">{t('composer.effortButton')}:</span>
+            <span
+              className={cn(
+                'min-w-0 truncate transition-colors',
+                isMax && 'text-fuchsia-700 dark:text-fuchsia-300',
+              )}
+            >
+              {currentLabel}
+            </span>
+            <ChevronDown
+              className={cn(
+                'h-3.5 w-3.5 shrink-0 transition-transform',
+                open && 'rotate-180',
+              )}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top">{buttonLabel}</TooltipContent>
+      </Tooltip>
       <ChatAgentEffortPopover
         open={open}
         anchorRect={anchorRect}

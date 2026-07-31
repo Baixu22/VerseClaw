@@ -195,7 +195,12 @@ describe('execution projection', () => {
     const result = project({ messages });
 
     expect(result.cards).toHaveLength(1);
-    expect(result.cards[0]).toMatchObject({ active: false, replyIndex: 2 });
+    expect(result.cards[0]).toMatchObject({
+      active: false,
+      status: 'completed',
+      replyIndex: 2,
+      hasVisibleReply: true,
+    });
     expect(result.cards[0].steps).toEqual([
       expect.objectContaining({
         id: 'search-1',
@@ -204,14 +209,10 @@ describe('execution projection', () => {
         kind: 'tool',
         url: 'https://example.test',
       }),
-      expect.objectContaining({
-        id: 'assistant-final-final-turn',
-        label: 'Assistant Final',
-        status: 'completed',
-        kind: 'system',
-        detail: 'Summary complete.',
-      }),
     ]);
+    expect(result.cards[0].steps).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ label: 'Assistant Final' }),
+    ]));
   });
 
   it('suppresses trailing thinking when streaming text is folded into the graph', () => {

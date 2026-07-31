@@ -1,93 +1,99 @@
-import { CheckCircle2, ChevronDown, FileText, Globe, ListChecks, TriangleAlert } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { ChevronRight } from 'lucide-react';
+import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import type { TurnSummaryHighlight, TurnSummaryModel } from './turn-summary-model';
+import type { UserRunStatus } from '@/pages/Chat/execution-projection';
 
-function HighlightIcon({ kind }: { kind: TurnSummaryHighlight['kind'] }) {
-  if (kind === 'report') return <FileText className="h-3.5 w-3.5" />;
-  if (kind === 'source') return <Globe className="h-3.5 w-3.5" />;
-  return <ListChecks className="h-3.5 w-3.5" />;
-}
-
-function CountPill({ label, value }: { label: string; value: number }) {
-  if (value <= 0) return null;
-  return (
-    <span className="inline-flex h-6 items-center rounded-md border border-border/70 bg-surface-input px-2 text-2xs font-medium text-muted-foreground">
-      {label}
-    </span>
-  );
+function formatDuration(
+  startedAt: number | undefined,
+  endedAt: number | undefined,
+  now: number,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string | null {
+  if (!startedAt) return null;
+  const durationSeconds = Math.max(0, Math.round(((endedAt ?? now) - startedAt) / 1000));
+  if (durationSeconds < 1) return null;
+  if (durationSeconds < 60) {
+    return t('turnSummary.duration.seconds', { count: durationSeconds });
+  }
+  const minutes = Math.floor(durationSeconds / 60);
+  const seconds = durationSeconds % 60;
+  return seconds > 0
+    ? t('turnSummary.duration.minutesSeconds', { minutes, seconds })
+    : t('turnSummary.duration.minutes', { count: minutes });
 }
 
 export function TurnSummaryCard({
-  model,
+  status,
+  startedAt,
+  endedAt,
+  now,
   expanded,
   onExpandedChange,
   children,
 }: {
-  model: TurnSummaryModel;
+  status: UserRunStatus;
+  startedAt?: number;
+  endedAt?: number;
+  now: number;
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
   const { t } = useTranslation('chat');
-  const statusTone = model.status === 'error'
-    ? 'text-red-700 dark:text-red-400'
-    : 'text-green-700 dark:text-green-400';
-  const title = model.title || t('turnSummary.titleFallback');
+  const detailsId = useId();
+  const duration = formatDuration(startedAt, endedAt, now, t);
+  const label = status === 'running'
+    ? duration
+      ? t('turnSummary.workingFor', { duration })
+      : t('turnSummary.working')
+    : status === 'aborted'
+      ? duration
+        ? t('turnSummary.stoppedAfter', { duration })
+        : t('turnSummary.stopped')
+      : status === 'error'
+        ? t('turnSummary.needsAttention')
+        : duration
+          ? t('turnSummary.workedFor', { duration })
+          : t('turnSummary.workDetails');
 
   return (
     <section
-      className="rounded-md border border-border/70 bg-background/60 text-xs shadow-sm"
+      className="group/run-activity min-w-0 text-sm text-muted-foreground"
       data-testid="chat-turn-summary-card"
+      data-status={status}
     >
       <button
         type="button"
-        className="flex w-full min-w-0 items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+        className={cn(
+          'flex w-full min-w-0 items-center gap-2 rounded-sm py-1 text-left',
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2',
+          'hover:text-foreground',
+          status === 'error' && 'text-destructive hover:text-destructive',
+        )}
         aria-expanded={expanded}
-        aria-label={t('turnSummary.toggle')}
+        aria-controls={detailsId}
         onClick={() => onExpandedChange(!expanded)}
         data-testid="chat-turn-summary-toggle"
       >
-        <span className={cn('mt-0.5 shrink-0', statusTone)}>
-          {model.status === 'error'
-            ? <TriangleAlert className="h-4 w-4" />
-            : <CheckCircle2 className="h-4 w-4" />}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-xs font-semibold text-foreground">{title}</span>
-          <span className={cn('mt-0.5 block text-2xs font-medium', statusTone)}>
-            {t(`turnSummary.status.${model.status}`)}
-          </span>
-          <span className="mt-2 flex flex-wrap gap-1.5">
-            <CountPill label={t('turnSummary.counts.tasks', { count: model.counts.tasks })} value={model.counts.tasks} />
-            <CountPill label={t('turnSummary.counts.reports', { count: model.counts.reports })} value={model.counts.reports} />
-            <CountPill label={t('turnSummary.counts.sources', { count: model.counts.sources })} value={model.counts.sources} />
-            <CountPill label={t('turnSummary.counts.orchestrations', { count: model.counts.orchestrations })} value={model.counts.orchestrations} />
-          </span>
-        </span>
-        <ChevronDown className={cn('mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-180')} />
+        <span className="shrink-0 whitespace-nowrap">{label}</span>
+        <span className="h-px min-w-4 flex-1 bg-border/70" aria-hidden="true" />
+        <ChevronRight
+          className={cn(
+            'h-3.5 w-3.5 shrink-0 opacity-0 transition-[transform,opacity,color] duration-150',
+            'group-hover/run-activity:opacity-100 group-focus-within/run-activity:opacity-100',
+            expanded && 'rotate-90 opacity-100',
+          )}
+          aria-hidden="true"
+        />
       </button>
 
-      {model.highlights.length > 0 && !expanded && (
-        <div className="border-t border-border/70 px-3 py-2" data-testid="chat-turn-summary-highlights">
-          <div className="flex flex-wrap gap-1.5">
-            {model.highlights.map((highlight, index) => (
-              <span
-                key={`${highlight.kind}:${highlight.label}:${index}`}
-                className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-surface-input px-2 py-1 text-2xs text-muted-foreground"
-                title={highlight.detail || highlight.label}
-              >
-                <HighlightIcon kind={highlight.kind} />
-                <span className="truncate">{highlight.label}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {expanded && (
-        <div className="space-y-3 border-t border-border/70 px-3 py-3" data-testid="chat-turn-summary-details">
+        <div
+          id={detailsId}
+          className="flex min-w-0 flex-col gap-2 pb-1 pl-6 pt-1"
+          data-testid="chat-turn-summary-details"
+        >
           {children}
         </div>
       )}

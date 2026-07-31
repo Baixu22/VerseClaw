@@ -198,10 +198,16 @@ test.describe('Verse Claw chat prompt cache guard', () => {
       await page.reload();
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
-      await expect(page.getByTestId('chat-prompt-cache-status')).toBeVisible({ timeout: 30_000 });
+      // The prompt-cache chip is now only rendered when the cache actually needs
+      // attention, and this session's ambient assessment is `warm`, so gate on the
+      // composer being interactive instead of on the chip appearing.
+      await expect(page.getByTestId('chat-composer-actions')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-prompt-cache-status')).toHaveCount(0);
 
-      await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'claude-opus' }).click();
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-model').click();
+      await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
+      await page.getByTestId('chat-model-picker-option-claude-opus').click();
       const cancelToast = page.getByTestId('prompt-cache-risk-toast').last();
       await expect(cancelToast).toBeVisible();
       await cancelToast.getByRole('button', { name: 'Cancel' }).click();
@@ -211,13 +217,14 @@ test.describe('Verse Claw chat prompt cache guard', () => {
       ));
       expect(requests.some((request) => request.path === 'agents:updateModel')).toBe(false);
 
-      await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'claude-opus' }).click();
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-model').click();
+      await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
+      await page.getByTestId('chat-model-picker-option-claude-opus').click();
       const continueToast = page.getByTestId('prompt-cache-risk-toast').last();
       await expect(continueToast).toBeVisible();
       await continueToast.getByRole('button', { name: 'Continue' }).click();
 
-      await expect(page.getByTestId('chat-model-picker-button')).toContainText('claude-opus');
       requests = await app.evaluate(() => (
         (globalThis as typeof globalThis & { __promptCacheGuardRequests?: Array<{ path: string; body: unknown }> }).__promptCacheGuardRequests ?? []
       ));

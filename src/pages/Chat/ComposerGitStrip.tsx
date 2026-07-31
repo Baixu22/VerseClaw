@@ -11,8 +11,8 @@ import {
   Loader2,
   PanelRightOpen,
   RefreshCw,
-  Search,
 } from 'lucide-react';
+import { Search } from '@/components/icons/codex-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

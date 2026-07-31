@@ -686,16 +686,10 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       if (await summaryToggle.count() > 0) {
         await summaryToggle.click().catch(() => undefined);
       }
-      const workPanel = page.getByTestId('turn-work-panel').first();
-      if (await workPanel.count() > 0) {
-        const showMore = workPanel.getByRole('button', { name: /^Show \d+ more$/ });
-        if (await showMore.count() > 0) {
-          await showMore.click();
-        }
-      }
-      const panelText = (await workPanel.count()) > 0 ? await workPanel.innerText() : '<no-panel>';
+      const activity = page.getByTestId('chat-turn-summary-details').first();
+      const activityText = (await activity.count()) > 0 ? await activity.innerText() : '<no-activity>';
 
-      console.log('[fp-p1-04-workpanel]', JSON.stringify(panelText).slice(0, 2500));
+      console.log('[fp-p1-04-activity]', JSON.stringify(activityText).slice(0, 2500));
       const chatText = await page.getByTestId('chat-message-layout').innerText();
 
       console.log('[fp-p1-04-chatdom]', JSON.stringify(chatText).slice(0, 3000));
@@ -710,28 +704,17 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(editResult).toMatch(/verify_tests: passed\(node\/npm\)/);
       expect(editResult).toContain('verify_output_tail:');
       // ...and it is present in the rendered transcript, not only in the log.
-      const rendered = `${panelText}\n${chatText}`;
+      const rendered = `${activityText}\n${chatText}`;
       expect(rendered).toContain('util.js');
       expect(rendered).toContain('AUTO_VERIFY_PASS');
 
-      const mutationDiffs = page.getByTestId('chat-mutation-code-diff');
-      await expect(mutationDiffs).toHaveCount(2, { timeout: 30_000 });
-      await expect(mutationDiffs.nth(0)).toContainText('util.js');
-      await expect(mutationDiffs.nth(1)).toContainText('summary.txt');
-      await page.evaluate(() => {
-        Object.defineProperty(navigator, 'clipboard', {
-          configurable: true,
-          value: {
-            writeText: async (value: string) => {
-              (window as unknown as { __fpP2PatchCopy?: string }).__fpP2PatchCopy = value;
-            },
-          },
-        });
-      });
-      await mutationDiffs.nth(0).getByRole('button', { name: 'Copy patch' }).click();
-      await expect.poll(() => page.evaluate(
-        () => (window as unknown as { __fpP2PatchCopy?: string }).__fpP2PatchCopy ?? '',
-      )).toContain('+  return a + b;');
+      const fileReceipts = page.getByTestId('chat-generated-files').getByRole('button');
+      await expect(fileReceipts).toHaveCount(2, { timeout: 30_000 });
+      await expect(fileReceipts.nth(0)).toContainText('util.js');
+      await expect(fileReceipts.nth(1)).toContainText('summary.txt');
+      await fileReceipts.nth(0).click();
+      await expect(page.getByTestId('artifact-panel')).toBeVisible();
+      await expect(page.getByTestId('monaco-diff-viewer')).toBeVisible();
 
       // Shared injection budget accounting after a REAL turn (FP-P1-11).
       const ack = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {

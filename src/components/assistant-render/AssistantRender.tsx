@@ -54,7 +54,7 @@ export function BranchPicker({
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-md border border-black/[0.07] bg-background/70 p-1 text-xs text-muted-foreground shadow-sm shadow-black/[0.04] dark:border-white/[0.09] dark:shadow-black/20"
+      className="inline-flex items-center gap-1 rounded-md border border-conversation bg-background/70 p-1 text-xs text-muted-foreground"
       data-testid="assistant-branch-picker"
     >
       <GitBranch className="h-3.5 w-3.5" />
@@ -86,10 +86,10 @@ export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
   const [open, setOpen] = useState(false);
   if (items.length === 0) return null;
   return (
-    <div className="w-full rounded-lg border border-black/[0.07] bg-background/60 text-muted-foreground shadow-sm shadow-black/[0.04] dark:border-white/[0.09] dark:shadow-black/20" data-testid="assistant-reasoning-panel">
+    <div className="w-full text-muted-foreground" data-testid="assistant-reasoning-panel">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-[13px] text-muted-foreground transition-colors duration-150 hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
+        className="flex w-full items-center justify-between gap-3 rounded-sm py-1 text-left text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
         onClick={() => setOpen((value) => !value)}
       >
         <span className="flex min-w-0 items-center gap-2">
@@ -99,7 +99,7 @@ export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
         <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform duration-150', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="space-y-2 border-t border-black/[0.06] px-3 py-2.5 text-[13px] leading-[1.65] text-muted-foreground dark:border-white/[0.08]">
+        <div className="space-y-2 border-l border-conversation py-1 pl-3 text-sm leading-[1.65] text-muted-foreground">
           {items.map((item) => (
             <p key={item.id} className="whitespace-pre-wrap break-words">{item.summary}</p>
           ))}
@@ -118,16 +118,16 @@ export function ToolFallbackCard({ tools }: { tools: AssistantToolFallback[] }) 
         <div
           key={tool.id}
           className={cn(
-            'rounded-lg border px-3 py-2 text-[13px] shadow-sm shadow-black/[0.04] dark:shadow-black/20',
+            'rounded-md border px-3 py-2 text-sm',
             tool.status === 'error' && 'border-destructive/25 bg-destructive/[0.04] text-destructive',
             tool.status === 'running' && 'border-primary/25 bg-background/60 text-foreground',
-            tool.status === 'completed' && 'border-black/[0.07] bg-background/60 text-muted-foreground dark:border-white/[0.09]',
+            tool.status === 'completed' && 'border-conversation text-muted-foreground',
           )}
         >
           <div className="flex items-center gap-2">
             <Wrench className="h-3.5 w-3.5 shrink-0 opacity-70" />
             <span className="min-w-0 truncate font-mono font-medium">{tool.name}</span>
-            <span className="ml-auto shrink-0 rounded-md border border-black/[0.05] bg-black/[0.04] px-1.5 py-0.5 text-[10px] uppercase tracking-wide dark:border-white/[0.07] dark:bg-white/[0.07]">
+            <span className="ml-auto shrink-0 rounded-md border border-conversation px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
               {t(`assistantRender.tool.${tool.status}`)}
             </span>
           </div>
@@ -181,15 +181,15 @@ export function TokenUsageRoll({ usage }: { usage: AssistantUsageModel }) {
   const { t } = useTranslation('chat');
   const percentage = usage.maxTokens ? Math.min(100, Math.round((usage.totalTokens / usage.maxTokens) * 100)) : null;
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-lg border border-border bg-background/85 px-3 py-2 text-xs text-muted-foreground shadow-sm" data-testid="assistant-token-usage-roll">
+    <div className="flex min-w-0 flex-wrap items-center gap-2 py-1 pl-1 text-xs text-muted-foreground" data-testid="assistant-token-usage-roll">
       <CircleDollarSign className="h-3.5 w-3.5 text-foreground/70" />
       <span className="font-mono text-foreground">{formatCompact(usage.totalTokens)}</span>
       <span>{t('assistantRender.usage.tokens')}</span>
       {percentage != null && (
-        <span className="rounded-md bg-black/5 px-1.5 py-0.5 font-mono text-[11px] dark:bg-white/10">{percentage}%</span>
+        <span className="rounded-md bg-black/5 px-1.5 py-0.5 font-mono text-xs dark:bg-white/10">{percentage}%</span>
       )}
       {usage.estimatedCostUsd != null && (
-        <span className="font-mono text-[11px]">${usage.estimatedCostUsd.toFixed(4)}</span>
+        <span className="font-mono text-xs">${usage.estimatedCostUsd.toFixed(4)}</span>
       )}
     </div>
   );
@@ -198,7 +198,7 @@ export function TokenUsageRoll({ usage }: { usage: AssistantUsageModel }) {
 export function DotMatrixStatus({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
   const { t } = useTranslation('chat');
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-border bg-background/85 px-2 py-2 shadow-sm" data-testid="assistant-dot-matrix-status">
+    <div className="flex items-center gap-1 py-1 pl-1" data-testid="assistant-dot-matrix-status">
       {dimensions.map((item) => (
         <span
           key={item.id}
