@@ -237,7 +237,7 @@ When a compatible gateway rejects `/models` for non-auth reasons, Verse Claw aut
 ### 馃寵 Adaptive Theming
 Light mode, dark mode, or system-synchronized themes. Verse Claw adapts to your preferences automatically.
 
-On Windows, the default UI v2 adds a warm liquid-material split view, Segoe UI Variable typography, compact Apple-blue controls, and an animated right-side Settings drawer powered by `vaul@1.1.2`. Settings deep links keep the previous page mounted behind the drawer and restore focus after the exit animation. macOS and Linux continue to use the legacy shell for now; developers can compare the Windows legacy shell with `?uiVersion=legacy`.
+On Windows, the default UI v2 adds a warm material split view, Segoe UI Variable typography, compact Apple-blue controls, and a lightweight right-side Settings drawer powered by `vaul@1.1.2`. Settings deep links keep the previous page mounted but stationary behind an opaque drawer, avoid full-window backdrop filters, and restore focus after the short exit animation. macOS and Linux continue to use the legacy shell for now; developers can compare the Windows legacy shell with `?uiVersion=legacy`.
 
 ### 馃殌 Startup Launch Control
 In **Settings 鈫?General**, you can enable **Launch at system startup** so Verse Claw starts automatically after login.
