@@ -29,6 +29,7 @@ expectedUserBehavior:
   - Windows starts in UI v2 with a translucent split-view shell; macOS and Linux retain the legacy shell.
   - The query parameter `uiVersion=legacy` provides a development-only rollback without changing persisted settings or host contracts.
   - Settings opens from the right as a modal, draggable drawer while the previous page remains mounted behind it.
+  - Opening Settings leaves the background page visually stationary and does not invalidate the Chat render tree.
   - Settings deep links, section navigation, focus restoration, reduced motion, nested dialogs, and existing test ids continue to work.
   - Chat and shared page surfaces use the same compact typography, material hierarchy, and motion presets without changing business behavior.
 requiredProfiles:
@@ -47,6 +48,8 @@ requiredTests:
 acceptance:
   - Windows title-bar controls remain visible and clickable above UI overlays.
   - UI v2 large surfaces use shared transform/opacity motion and respect reduced-motion.
+  - The Settings drawer uses an opaque token surface without full-window or nested backdrop filters.
+  - Settings overlay state does not propagate through the stable UI-version context used by Chat.
   - Vaul is pinned and imported only through the local AppleDrawer wrapper.
   - Settings does not replace or unmount the background route and navigates away only after its close animation completes.
   - Nested Radix overlays remain interactive inside the settings drawer.

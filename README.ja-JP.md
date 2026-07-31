@@ -237,7 +237,7 @@ OpenAI-compatible ゲートウェイを **Custom プロバイダー** で使う�
 ### 🌙 アダプティブテーマ
 ライトモード、ダークモード、またはシステム同期テーマ。Verse Clawはあなたの好みに自動的に適応します。
 
-Windows では UI v2 が既定で有効です。暖色系のリキッドマテリアル、Segoe UI Variable、コンパクトな Apple Blue コントロール、`vaul@1.1.2` による右側の設定 Drawer と開閉アニメーションを採用しています。設定のディープリンクでも背後のページを保持し、終了アニメーション後に戻ってフォーカスを復元します。macOS と Linux は当面 legacy shell を使用し、開発時は `?uiVersion=legacy` で Windows の旧 UI と比較できます。
+Windows では UI v2 が既定で有効です。暖色系のマテリアル、Segoe UI Variable、コンパクトな Apple Blue コントロール、`vaul@1.1.2` による軽量な右側の設定 Drawer を採用しています。設定のディープリンクでも背後のページを静止状態で保持し、不透明な Drawer によって全画面のリアルタイムぼかしを避け、短い終了アニメーション後にフォーカスを復元します。macOS と Linux は当面 legacy shell を使用し、開発時は `?uiVersion=legacy` で Windows の旧 UI と比較できます。
 
 ### 🚀 自動起動設定
 **設定 → 一般** から **システム起動時に自動起動** を有効化すると、ログイン後に Verse Claw が自動的に起動します。

@@ -238,7 +238,7 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 ### 🌙 自适应主题
 支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
 
-Windows 默认启用 UI v2：统一使用暖白液态材质、Segoe UI Variable 字体、紧凑的 Apple Blue 控件和带进入/退出动效的右侧设置 Drawer（基于 `vaul@1.1.2`）。设置深链接会保留背后的原页面，退出动画结束后再返回并恢复焦点。macOS 与 Linux 当前继续使用 legacy shell；开发调试可通过 `?uiVersion=legacy` 对比 Windows 旧界面。
+Windows 默认启用 UI v2：统一使用暖白材质、Segoe UI Variable 字体、紧凑的 Apple Blue 控件和轻量右侧设置 Drawer（基于 `vaul@1.1.2`）。设置深链接会保留但不缩放背后的原页面，抽屉使用不透明材质并避免全窗口实时模糊，短退出动画结束后再返回并恢复焦点。macOS 与 Linux 当前继续使用 legacy shell；开发调试可通过 `?uiVersion=legacy` 对比 Windows 旧界面。
 
 ### 🚀 开机启动控制
 在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。
