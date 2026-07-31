@@ -1218,7 +1218,9 @@ export function readAcceptanceStatus(outputRoot = DEFAULT_OUTPUT_ROOT) {
     if (!entry.isDirectory() || entry.name === 'verifier') continue;
     const runDir = join(root, entry.name);
     if (entry.name === 'runs') {
-      // Default layout: <root>/runs/<runId>/{final,verifier}-report.json
+      // Default layout: <root>/runs/<runId>/{final,verifier}-report.json.
+      // Note: files directly inside a runs/ dir are intentionally not scanned;
+      // no generated layout writes them there (flat runs land at the root).
       for (const nested of readdirSync(runDir, { withFileTypes: true })) {
         if (!nested.isDirectory()) continue;
         const nestedReport = join(runDir, nested.name, 'final-report.json');
