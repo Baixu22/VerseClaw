@@ -72,4 +72,36 @@ describe("FP-P2-05 canonical exec wiring", () => {
       status: "unavailable",
     });
   });
+
+  it("runs detected tests under the default auto mode when a runner exists", async () => {
+    const workspaceRoot = makeWorkspace();
+    const details = await executeWrite({
+      workspaceRoot,
+      config: {
+        // No explicit runtime.coding.autoVerify: default is "auto".
+        tools: { profile: "full", exec: { mode: "full", security: "full", ask: "off" } },
+      },
+    });
+    expect(readFileSync(path.join(workspaceRoot, "result.txt"), "utf8")).toBe("after\n");
+    const execution = (details.verify_tests as Record<string, unknown>).execution as
+      | { status: string }
+      | undefined;
+    // Detection found the package.json test script; auto mode executes it.
+    expect(execution).toBeDefined();
+    expect(execution?.status).not.toBe("disabled");
+  });
+
+  it("respects explicit false even when a runner exists", async () => {
+    const workspaceRoot = makeWorkspace();
+    const details = await executeWrite({
+      workspaceRoot,
+      config: {
+        runtime: { coding: { autoVerify: { enabled: false } } },
+        tools: { profile: "full", exec: { mode: "full", security: "full", ask: "off" } },
+      },
+    });
+    expect((details.verify_tests as Record<string, unknown>).execution).toMatchObject({
+      status: "disabled",
+    });
+  });
 });

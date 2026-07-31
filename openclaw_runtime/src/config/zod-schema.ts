@@ -296,7 +296,7 @@ const RuntimeFeatureSchema = z
         writeJournal: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         autoVerify: z
           .object({
-            enabled: z.boolean().optional(),
+            enabled: z.union([z.boolean(), z.literal('auto')]).optional(),
             timeoutSeconds: z.number().int().min(1).max(90).optional(),
             command: z.string().trim().min(1).max(2000).optional(),
           })

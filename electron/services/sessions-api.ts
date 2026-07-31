@@ -1672,6 +1672,87 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
         ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
       };
     },
+    restoreCheckpoint: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const checkpointId = typeof payload.checkpointId === 'string' && payload.checkpointId.trim()
+        ? payload.checkpointId.trim()
+        : '';
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable', key: sessionKey, checkpointId, rolledBackTo: '', mode: 'legacy_checkpoint_fallback', evidenceSummary: '' };
+      }
+      if (!checkpointId) {
+        return { success: false, error: 'checkpointId is required', key: sessionKey, checkpointId, rolledBackTo: '', mode: 'legacy_checkpoint_fallback', evidenceSummary: '' };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.restoreCheckpoint', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        checkpointId,
+      }, 30_000);
+      if (result && (result as { ok?: unknown }).ok === true) {
+        return {
+          success: true,
+          key: typeof result.key === 'string' ? result.key : sessionKey,
+          checkpointId,
+          rolledBackTo: typeof result.rolledBackTo === 'string' ? result.rolledBackTo : checkpointId,
+          mode: result.mode === 'event_log_replay' ? 'event_log_replay' : 'legacy_checkpoint_fallback',
+          evidenceSummary: typeof result.evidenceSummary === 'string' ? result.evidenceSummary : '',
+        };
+      }
+      return {
+        success: false,
+        error: result && typeof (result as { error?: unknown }).error === 'string'
+          ? (result as { error: string }).error
+          : 'Checkpoint restore failed',
+        key: sessionKey,
+        checkpointId,
+        rolledBackTo: '',
+        mode: 'legacy_checkpoint_fallback',
+        evidenceSummary: '',
+      };
+    },
+    checkpointDiff: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const checkpointId = typeof payload.checkpointId === 'string' && payload.checkpointId.trim()
+        ? payload.checkpointId.trim()
+        : '';
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable', key: sessionKey, checkpointId, files: [], errors: [] };
+      }
+      if (!checkpointId) {
+        return { success: false, error: 'checkpointId is required', key: sessionKey, checkpointId, files: [], errors: [] };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.checkpointDiff', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+        checkpointId,
+      }, 15_000);
+      if (result && (result as { ok?: unknown }).ok === true) {
+        const rawFiles = Array.isArray(result.files) ? result.files : [];
+        return {
+          success: true,
+          key: typeof result.key === 'string' ? result.key : sessionKey,
+          checkpointId,
+          files: rawFiles.map((file) => ({
+            filePath: typeof file.filePath === 'string' ? file.filePath : '',
+            status: file.status === 'created' || file.status === 'deleted' ? file.status : 'modified',
+            unifiedDiff: typeof file.unifiedDiff === 'string' ? file.unifiedDiff : '',
+          })),
+          errors: Array.isArray(result.errors) ? result.errors.map(String) : [],
+        };
+      }
+      return {
+        success: false,
+        error: result && typeof (result as { error?: unknown }).error === 'string'
+          ? (result as { error: string }).error
+          : 'Checkpoint diff failed',
+        key: sessionKey,
+        checkpointId,
+        files: [],
+        errors: [],
+      };
+    },
     compact: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const agentId = getOptionalAgentId(payload);

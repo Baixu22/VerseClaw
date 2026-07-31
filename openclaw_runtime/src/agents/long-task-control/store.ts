@@ -887,7 +887,7 @@ export function listLongTaskInterventions(
   ).rows.map(interventionRowToRecord);
 }
 
-function getLongTaskCheckpointById(id: string): LongTaskCheckpointRecord | undefined {
+export function getLongTaskCheckpointById(id: string): LongTaskCheckpointRecord | undefined {
   const { db, query } = stateDb();
   const row = executeSqliteQuerySync(
     db,

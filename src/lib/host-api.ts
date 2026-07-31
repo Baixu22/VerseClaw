@@ -185,6 +185,8 @@ import type {
   GitFileDiffPayload,
   GitLogPayload,
   GitLogResult,
+  GitMergeBasePayload,
+  GitMergeBaseResult,
   GitOperationResult,
   GitPathPayload,
   GitPathsPayload,
@@ -374,6 +376,7 @@ import type {
   SessionCompactionPayload,
   SessionCompactionResult,
   SessionCompactionStatusResult,
+  SessionCheckpointDiffResult,
   SessionExpandSelectorPayload,
   SessionExpandSelectorResult,
   SessionEmptyArchivePayload,
@@ -398,6 +401,8 @@ import type {
   SessionRecoveryContextPayload,
   SessionRecoveryContextResult,
   SessionResumeCheckpointsResult,
+  SessionRestoreCheckpointPayload,
+  SessionRestoreCheckpointResult,
   SessionTruncatePayload,
   SessionTruncateResult,
   RemoteForgeCapabilitiesResult,
@@ -629,6 +634,7 @@ export type {
   SessionCompactionResult,
   SessionCompactionStatus,
   SessionCompactionStatusResult,
+  SessionCheckpointDiffResult,
   SessionForkResult,
   SessionHandoffResult,
   SessionHistoryResult,
@@ -637,6 +643,8 @@ export type {
   SessionLongTaskControlStatusResult,
   SessionQueueDrainResult,
   SessionResumeCheckpointsResult,
+  SessionRestoreCheckpointPayload,
+  SessionRestoreCheckpointResult,
   SessionSummariesResult,
   SettingsResetResult,
   SettingsSnapshot,
@@ -810,6 +818,7 @@ export const hostApi = {
     commit: (input: GitCommitPayload): Promise<GitCommitResult> => invokeHost('git', 'commit', input),
     branches: (): Promise<GitBranchListResult> => invokeHost('git', 'branches'),
     log: (input?: GitLogPayload): Promise<GitLogResult> => invokeHost('git', 'log', input),
+    mergeBase: (input: GitMergeBasePayload): Promise<GitMergeBaseResult> => invokeHost('git', 'mergeBase', input),
     checkoutBranch: (input: GitBranchCheckoutPayload): Promise<GitOperationResult> => invokeHost('git', 'checkoutBranch', input),
     createBranch: (input: GitBranchCreatePayload): Promise<GitOperationResult> => invokeHost('git', 'createBranch', input),
     stashList: (): Promise<GitStashListResult> => invokeHost('git', 'stashList'),
@@ -1384,6 +1393,16 @@ export const hostApi = {
       input: SessionLongTaskControlHistoryPayload,
     ): Promise<SessionResumeCheckpointsResult> => (
       invokeHost('sessions', 'resumeCheckpoints', input)
+    ),
+    restoreCheckpoint: (
+      input: SessionRestoreCheckpointPayload,
+    ): Promise<SessionRestoreCheckpointResult> => (
+      invokeHost('sessions', 'restoreCheckpoint', input)
+    ),
+    checkpointDiff: (
+      input: SessionRestoreCheckpointPayload,
+    ): Promise<SessionCheckpointDiffResult> => (
+      invokeHost('sessions', 'checkpointDiff', input)
     ),
     queueDrain: (input: SessionLongTaskControlPayload): Promise<SessionQueueDrainResult> => (
       invokeHost('sessions', 'queueDrain', input)

@@ -13,10 +13,17 @@ import {
   validateSessionsLongTaskControlStatusParams,
   validateSessionsQueueDrainParams,
   validateSessionsResumeCheckpointsParams,
+  validateSessionsRestoreCheckpointParams,
   validateSessionsSendParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
-import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { createCheckpointRollbackDeps } from "../../agents/checkpoint-rollback-executor.js";
+import {
+  executeReplayRollback,
+} from "../../agents/replay-rollback-authority.js";
+import { getLongTaskCheckpointById } from "../../agents/long-task-control/store.js";
+import { checkpointContentDiff } from "../../agents/checkpoint-diff.js";
 import { type SessionEntry } from "../../config/sessions.js";
 import {
   normalizeAgentId,
@@ -492,6 +499,134 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       undefined,
     );
   },
+  "sessions.restoreCheckpoint": async ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRestoreCheckpointParams,
+        "sessions.restoreCheckpoint",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    // Restore requires the checkpoint to exist; replay-rollback authority is
+    // invoked with the legacy checkpoint target (event-log replay is not
+    // implemented). The journal root is the agent workspace.
+    const checkpoint = getLongTaskCheckpointById(p.checkpointId);
+    if (!checkpoint || checkpoint.sessionKey !== canonicalKey) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
+      );
+      return;
+    }
+    const workspaceRoot = resolveAgentWorkspaceDir(cfg, requestedAgent.agentId);
+    const rollbackDeps = createCheckpointRollbackDeps({
+      workspaceRoot,
+      sessionId: checkpoint.sessionKey,
+    });
+    const result = await executeReplayRollback(
+      {
+        decision: "repair",
+        repairStrategy: "replay_rollback",
+        reason: `manual restore of checkpoint ${p.checkpointId}`,
+        requestedAtTick: 0,
+      },
+      { enabled: false, reason: "event-log replay not implemented; legacy checkpoint fallback" },
+      { kind: "checkpoint", checkpointId: p.checkpointId },
+      rollbackDeps,
+    );
+    if (!result.ok) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.UNAVAILABLE, `checkpoint restore failed: ${result.reason} (${result.detail})`),
+      );
+      return;
+    }
+    respond(
+      true,
+      {
+        ok: true,
+        key: canonicalKey,
+        checkpointId: p.checkpointId,
+        rolledBackTo: result.rolledBackTo,
+        mode: result.mode,
+        evidenceSummary: result.evidenceSummary,
+      },
+      undefined,
+    );
+  },
+
+  "sessions.checkpointDiff": async ({ params, respond, context }) => {
+    if (
+      !assertValidParams(
+        params,
+        validateSessionsRestoreCheckpointParams,
+        "sessions.checkpointDiff",
+        respond,
+      )
+    ) {
+      return;
+    }
+    const p = params;
+    const key = requireSessionKey(p.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const checkpoint = getLongTaskCheckpointById(p.checkpointId);
+    if (!checkpoint || checkpoint.sessionKey !== canonicalKey) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.NOT_FOUND, `checkpoint "${p.checkpointId}" not found for session ${canonicalKey}`),
+      );
+      return;
+    }
+    const workspaceRoot = resolveAgentWorkspaceDir(cfg, requestedAgent.agentId);
+    const diff = checkpointContentDiff({
+      workspaceRoot,
+      checkpoint,
+      sessionId: checkpoint.sessionKey,
+    });
+    respond(
+      true,
+      {
+        ok: true,
+        key: canonicalKey,
+        checkpointId: p.checkpointId,
+        files: diff.files,
+        errors: diff.errors,
+      },
+      undefined,
+    );
+  },
+
   "sessions.queueDrain": async ({ params, respond, context }) => {
     if (
       !assertValidParams(

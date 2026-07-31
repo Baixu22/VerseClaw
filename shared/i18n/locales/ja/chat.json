@@ -476,6 +476,24 @@
       "prevPage": "前のページ",
       "nextPage": "次のページ"
     },
+    "checkpoints": {
+      "title": "セッションのチェックポイント",
+      "description": "ワークスペースを以前の長時間タスクのチェックポイントに復元します。チェックポイント以降の変更は書き込みジャーナルからロールバックされます。",
+      "loading": "チェックポイントを読み込み中…",
+      "empty": "このセッションにはまだチェックポイントがありません。長時間タスクのミッションは tick ごとに記録されます。",
+      "loadFailed": "チェックポイントの読み込みに失敗",
+      "restore": "復元",
+      "restoreSucceeded": "ワークスペースをチェックポイントに復元しました。",
+      "restoreFailed": "復元に失敗",
+      "filesTouched": "{{count}} ファイル変更",
+      "testsRun": "{{count}} テスト実行",
+      "showDiff": "元に戻す変更を表示",
+      "hideDiff": "変更を隠す",
+      "diffLoading": "変更を読み込み中…",
+      "diffFailed": "変更の読み込みに失敗",
+      "diffEmpty": "このチェックポイントに元に戻す変更はありません。",
+      "close": "閉じる"
+    },
     "office": {
       "title": "Office プレビュー: {{fileName}}",
       "loading": "Office プレビューを読み込み中...",

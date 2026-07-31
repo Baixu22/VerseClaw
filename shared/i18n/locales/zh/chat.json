@@ -476,6 +476,24 @@
       "prevPage": "上一页",
       "nextPage": "下一页"
     },
+    "checkpoints": {
+      "title": "会话检查点",
+      "description": "将工作区恢复到之前的长任务检查点。检查点之后更改的文件将从写入日志回滚。",
+      "loading": "正在加载检查点…",
+      "empty": "此会话暂无检查点。长任务 Mission 每 tick 记录一个。",
+      "loadFailed": "加载检查点失败",
+      "restore": "恢复",
+      "restoreSucceeded": "工作区已恢复到该检查点。",
+      "restoreFailed": "恢复失败",
+      "filesTouched": "改动 {{count}} 个文件",
+      "testsRun": "运行 {{count}} 个测试",
+      "showDiff": "查看将撤销的改动",
+      "hideDiff": "隐藏改动",
+      "diffLoading": "正在加载改动…",
+      "diffFailed": "加载改动失败",
+      "diffEmpty": "该检查点没有可撤销的文件改动。",
+      "close": "关闭"
+    },
     "office": {
       "title": "Office 预览：{{fileName}}",
       "loading": "正在加载 Office 预览...",

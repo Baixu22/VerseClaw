@@ -62,6 +62,89 @@ export function normalizeForFuzzyMatch(text: string): string {
   );
 }
 
+/**
+ * Aider-style "did you mean" hint: find the line(s) in `content` most similar
+ * to `oldText` when an exact/fuzzy match failed. Returns up to `padding`
+ * context lines around the best match when similarity >= threshold.
+ *
+ * Mirrors aider's `find_similar_lines` (threshold 0.6, expand N=5 lines):
+ * - exact first/last line match → return the exact block
+ * - otherwise best SequenceMatcher-style ratio over line windows
+ */
+export function findSimilarLines(
+  content: string,
+  oldText: string,
+  options: { threshold?: number; padding?: number } = {},
+): string {
+  const threshold = options.threshold ?? 0.6;
+  const padding = options.padding ?? 5;
+  const contentLines = normalizeForFuzzyMatch(content).split("\n");
+  const patternLines = normalizeForFuzzyMatch(oldText).split("\n").filter((line) => line.length > 0);
+  if (contentLines.length === 0 || patternLines.length === 0) {
+    return "";
+  }
+
+  // Exact first/last line match wins.
+  const first = patternLines[0];
+  const last = patternLines[patternLines.length - 1];
+  for (let i = 0; i + patternLines.length <= contentLines.length; i += 1) {
+    if (contentLines[i] === first && contentLines[i + patternLines.length - 1] === last) {
+      const from = Math.max(0, i - padding);
+      const to = Math.min(contentLines.length, i + patternLines.length + padding);
+      return contentLines.slice(from, to).join("\n");
+    }
+  }
+
+  // Sliding-window best ratio.
+  let bestRatio = 0;
+  let bestStart = -1;
+  for (let start = 0; start + patternLines.length <= contentLines.length; start += 1) {
+    const window = contentLines.slice(start, start + patternLines.length);
+    const ratio = lineWindowRatio(window, patternLines);
+    if (ratio > bestRatio) {
+      bestRatio = ratio;
+      bestStart = start;
+    }
+  }
+  if (bestRatio < threshold || bestStart < 0) {
+    return "";
+  }
+  const from = Math.max(0, bestStart - padding);
+  const to = Math.min(contentLines.length, bestStart + patternLines.length + padding);
+  return contentLines.slice(from, to).join("\n");
+}
+
+/**
+ * Line-level similarity via longest common subsequence (LCS) length, matching
+ * Aider's SequenceMatcher.ratio() semantics on line sequences: 2*M/(len1+len2)
+ * where M is the LCS length. Unlike shared-line counting, this is sensitive to
+ * line ORDER, so a reordered block no longer scores 1.0 (parity fix: Aider
+ * rejects reordered windows below threshold; the old Set count accepted them).
+ */
+function lineWindowRatio(window: string[], pattern: string[]): number {
+  const denom = window.length + pattern.length;
+  if (denom === 0) return 0;
+  // Classic LCS DP, O(m*n) time with O(n) rolling rows. Rows are pattern
+  // (m), columns are window (n); equal-length sliding windows make
+  // ratio = 2*M/(2L) = M/L, identical to SequenceMatcher on unique lines.
+  const m = pattern.length;
+  const n = window.length;
+  let prev = new Array<number>(n + 1).fill(0);
+  let curr = new Array<number>(n + 1).fill(0);
+  for (let i = 1; i <= m; i += 1) {
+    for (let j = 1; j <= n; j += 1) {
+      curr[j] =
+        pattern[i - 1] === window[j - 1]
+          ? prev[j - 1] + 1
+          : Math.max(prev[j], curr[j - 1]);
+    }
+    [prev, curr] = [curr, prev];
+    curr.fill(0);
+  }
+  const lcs = prev[n];
+  return (2 * lcs) / denom;
+}
+
 export interface FuzzyMatchResult {
   /** Whether a match was found */
   found: boolean;

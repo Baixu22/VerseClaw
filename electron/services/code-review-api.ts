@@ -1,4 +1,8 @@
 import { execFile } from 'node:child_process';
+import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
+
+/** execFile options that also carry hardened stdio (string-encoding variant). */
+
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
@@ -111,14 +115,25 @@ function emptyTokenUsage(): ObservabilityTokenUsage {
 
 function git(args: string[], cwd: string): Promise<ExecResult> {
   return new Promise((resolveResult) => {
-    execFile('git', args, {
+    const options: ExecFileOptionsWithStringEncoding = {
       cwd,
       encoding: 'utf8',
       windowsHide: true,
       maxBuffer: 8 * 1024 * 1024,
-    }, (error, stdout, stderr) => {
-      const exitCode = error && typeof (error as { code?: unknown }).code === 'number'
-        ? (error as { code: number }).code
+      env: {
+        ...process.env,
+        GIT_OPTIONAL_LOCKS: '0',
+        GIT_TERMINAL_PROMPT: '0',
+        GIT_CONFIG_COUNT: '1',
+        GIT_CONFIG_KEY_0: 'core.hooksPath',
+        GIT_CONFIG_VALUE_0: process.platform === 'win32' ? 'NUL' : '/dev/null',
+      },
+      timeout: 15_000,
+      killSignal: 'SIGKILL',
+    };
+    execFile('git', args, options, (error: ExecFileException | null, stdout: string, stderr: string) => {
+      const exitCode = error && typeof error.code === 'number'
+        ? error.code
         : error ? 1 : 0;
       resolveResult({
         exitCode,
@@ -393,6 +408,42 @@ export function sortCodeReviewFindings(findings: CodeReviewFinding[]): CodeRevie
     const file = left.file.localeCompare(right.file);
     if (file !== 0) return file;
     return (left.line ?? Number.MAX_SAFE_INTEGER) - (right.line ?? Number.MAX_SAFE_INTEGER);
+  });
+}
+
+/**
+ * In-diff line validation (Open SWE findings parity): a finding whose line
+ * does not fall inside any diff hunk of its file points at code the review
+ * did not change. Open SWE rejects such findings outright; we keep the signal
+ * but downgrade it to `info` and annotate `[not in diff]` so the user can
+ * tell it is not anchored to the reviewed change.
+ */
+export function validateFindingsInDiff(
+  findings: CodeReviewFinding[],
+  patchArtifacts: GitPatchArtifactV1[],
+): CodeReviewFinding[] {
+  const lineSets = new Map<string, Set<number>>();
+  for (const artifact of patchArtifacts) {
+    if (!artifact.file) continue;
+    let set = lineSets.get(artifact.file);
+    if (!set) {
+      set = new Set<number>();
+      lineSets.set(artifact.file, set);
+    }
+    for (const hunk of artifact.hunks) {
+      for (let i = 0; i < hunk.oldLines; i += 1) set.add(hunk.oldStart + i);
+      for (let i = 0; i < hunk.newLines; i += 1) set.add(hunk.newStart + i);
+    }
+  }
+  return findings.map((finding) => {
+    if (finding.line == null || finding.line <= 0) return finding;
+    const set = lineSets.get(finding.file);
+    if (!set || set.has(finding.line)) return finding;
+    return {
+      ...finding,
+      severity: 'info',
+      reason: `${finding.reason} [not in diff]`,
+    };
   });
 }
 
@@ -724,7 +775,7 @@ export function createCodeReviewApi({ gatewayManager }: { gatewayManager: Gatewa
           startedAt,
           output,
           summary: parsed.summary,
-          findings: parsed.findings,
+          findings: validateFindingsInDiff(parsed.findings, bundle.patchArtifacts),
         });
         reviewRuns.set(runId, review);
         recordReviewTrace(review);
