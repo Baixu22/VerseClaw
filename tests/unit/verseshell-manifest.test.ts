@@ -17,6 +17,7 @@ async function fixtureRoot(): Promise<string> {
     'resources/verseshell/NOTICE.md',
     'resources/verseshell/SOURCE.md',
     'resources/verseshell/BUILD.md',
+    'resources/verseshell/patches/uas-05-process-lifecycle.patch',
     'resources/bin/win32-x64/ae.exe',
     'shared/verseshell/facade.ts',
   ]) {
@@ -32,7 +33,12 @@ afterEach(async () => {
 });
 
 describe('VerseShell manifest validation', () => {
-  it('accepts the synchronized clean bundle in development and packaging modes', () => {
+  it('accepts the synchronized dirty corresponding-source bundle in development and packaging modes', async () => {
+    const manifestText = await readFile(join(root, 'resources/verseshell/manifest.json'), 'utf8');
+    expect(manifestText).not.toMatch(/[A-Za-z]:\\Users\\/u);
+    expect(manifestText).toContain('[build-source]');
+    expect(manifestText).toContain('dirty_corresponding_source_recorded');
+    expect(manifestText).toContain('resources/verseshell/patches/uas-05-process-lifecycle.patch');
     expect(validateVerseShellManifest({ root, mode: 'dev' })).toEqual({
       ok: true,
       mode: 'dev',
@@ -47,16 +53,34 @@ describe('VerseShell manifest validation', () => {
     });
   });
 
-  it('rejects an unpinned or dirty provenance record', async () => {
+  it('rejects a tampered corresponding-source patch', async () => {
+    const fixture = await fixtureRoot();
+    const patchPath = join(fixture, 'resources/verseshell/patches/uas-05-process-lifecycle.patch');
+    await writeFile(patchPath, `${await readFile(patchPath, 'utf8')}\n# tampered\n`);
+    expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
+      expect.arrayContaining([expect.stringMatching(/patch checksum/u)]),
+    );
+  });
+
+  it('rejects a corresponding-source hash mismatch', async () => {
     const fixture = await fixtureRoot();
     const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.provenance.dirty = true;
-    manifest.provenance.build_input.status_porcelain = [' M src/ops/runtime_ops.rs'];
-    manifest.provenance.build_input.dirty_entry_count = 1;
+    manifest.provenance.build_input.diff_sha256 = '0'.repeat(64);
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
     expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/provenance\.dirty/u)]),
+      expect.arrayContaining([expect.stringMatching(/patch checksum/u)]),
+    );
+  });
+
+  it('rejects an unapproved dirty bundle', async () => {
+    const fixture = await fixtureRoot();
+    const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.provenance.dirty_build_override.approved = false;
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+    expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
+      expect.arrayContaining([expect.stringMatching(/dirty provenance override/u)]),
     );
   });
 
@@ -135,7 +159,7 @@ describe('VerseShell manifest validation', () => {
     await writeFile(
       facadePath,
       source.replace(
-        "name: 'read_file',\n    canonical_op: 'file.view'",
+        /name: 'read_file',\r?\n {4}canonical_op: 'file\.view'/u,
         "name: 'read_file',\n    canonical_op: 'repo.search'",
       ),
     );

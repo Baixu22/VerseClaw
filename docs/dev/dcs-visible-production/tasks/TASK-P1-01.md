@@ -20,8 +20,8 @@ After Settings enable, four view tools are stably usable; evidence pack for usef
 - [x] stable UI enable path (P0-01/03 + E2E 3/3)
 - [x] may remain default-off but production-usable (opt-in Settings/env)
 - [x] one-step kill (Settings off / env unset + OPS-02)
-- [x] synthetic usefulness baseline recorded (C1 canary reduction 5.125×, keep-off)
-- [x] live-ab **protocol + draft report** (synthetic; human residual)
+- [x] synthetic usefulness baseline recorded (C1 canary reduction 5.125×, keep-off; FP-P4-05 now classifies it as reference-only)
+- [x] live-ab protocol recorded; no live or synthetic draft report is present (corrected by FP-P4-05)
 - [ ] ≥10 human free-form product-chat A/B records — **residual** (calendar)
 - [ ] liveReady/productApproved — **forbidden this task**
 
@@ -37,9 +37,10 @@ After Settings enable, four view tools are stably usable; evidence pack for usef
 |-------|--------|
 | `context-agent-tools.test.ts` | **19 passed** |
 | Settings E2E enable/discover/kill | **3 passed** |
-| `dcs-canary-c1` | ok, **keep-off**, reductionFactor 5.125 |
+| `dcs-canary-c1` | ok, **keep-off**, synthetic reference reductionFactor 5.125 |
+| C1 authority | `artifacts/first-product-preview/FP-P4-05/decision.json`: real-tool fixtures 4.5x, below 5x, keep-off |
 | Live A/B protocol | `docs/dev/dcs-visible-production/P1-01-LIVE-AB-PROTOCOL.md` |
-| Draft report | `artifacts/dcs-visible-production/p1-01-live-ab-report.json` |
+| Live report | **not generated**; future human path remains defined by the protocol |
 
 ## Progress log
 | when | slice | result | note |
@@ -48,6 +49,7 @@ After Settings enable, four view tools are stably usable; evidence pack for usef
 | 2026-07-22 | unit/canary | pass | 19 tools + c1 keep-off |
 | 2026-07-22 | live-ab draft | done | protocol + synthetic draft |
 | 2026-07-22 | close | **accept-with-residuals** | no default-on |
+| 2026-07-29 | FP-P4-05 correction | done | remove nonexistent draft-report claim; 5.125x is reference-only and 4.5x is the C1 gate authority |
 
 ## Handoff
 - Human operators may fill live A/B using protocol without code changes.

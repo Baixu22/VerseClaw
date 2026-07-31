@@ -18,6 +18,11 @@ Release evidence must record every required full gate from
 cannot satisfy a release gate. Every required command must have a zero exit
 code and a captured output digest.
 
+Before Electron-dependent release gates run, the collector must rebuild the
+OpenClaw runtime and record a zero-exit, hash-addressed preflight. Release
+stdout and stderr must replace workspace and user-home absolute paths before
+the captured bytes are persisted or hashed.
+
 The release source manifest must be deterministic. It records the resolved
 commit, release version/ref, and sorted SHA256 inventory of tracked source
 files. Regenerating it from the same commit and inputs must produce identical
@@ -25,5 +30,5 @@ bytes; any untracked, modified, deleted, or staged-but-uncommitted source state
 is denied.
 
 Changes require focused tests for dirty-tree denial, tag/commit binding,
-missing or failed full-gate evidence, and byte-for-byte manifest
-reproducibility.
+missing or failed runtime preflight/full-gate evidence, local-path redaction,
+and byte-for-byte manifest reproducibility.

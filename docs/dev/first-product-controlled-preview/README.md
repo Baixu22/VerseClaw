@@ -72,7 +72,7 @@ FP-P1 首产品纵向链路
 - `FP-P2-06`、`FP-P4-03`、`FP-P4-04` 只交付 Preview 范围证据，不另建与 `TF-0013`、`TF-0014`、`TF-0018` 重复的基础设施主线；
 - `FP-P2-07`–`FP-P2-10` 是 MergeBeacon 调研派生的 GitHub Forge 开发链；`FP-P2-07` 同时收口 DCS 编辑 diff 富渲染与全文件 `write` diff 残留，它们先于 canary charter，随后由 `FP-P2-02/03` 与 DCS 一起验收、裁决和刷新 `TF-0009`；
 - `FP-P4-08` 只消费 P2/P3 证据裁决 GitLab/Gitee/PR DAG 扩围，不在本 program 内直接实现 adapter；
-- 即使 `TF-0009` 已完成，`TF-0011` 仍保持 `proposed`，直到 `FP-P3-04` 完成或用户正式暂停 P3 后再通过 Task Forest proposal 转为 `ready`。
+- `TF-0009` 当前为 `degraded-agent-complete` / `review_needed`，不等于真人完成。其 agent 工程基线以非阻塞 `derived_from` 关系交给已完成的 `TF-0011`；当前后继唯一 ready 叶节点为 `TF-0012`。该解耦和串行推进不改变任何真人/live/product 门。
 
 ## 禁止
 

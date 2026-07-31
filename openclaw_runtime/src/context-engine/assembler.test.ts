@@ -11,6 +11,11 @@ import {
 } from "./assembler.js";
 import { dcsObservability } from "./dcs-observability.js";
 import {
+  endContextCandidateCollection,
+  finalizeContextCandidates,
+  getContextCandidateCollection,
+} from "./context-candidate.js";
+import {
   beginTurnInjectionBudget,
   endTurnInjectionBudget,
   getTurnInjectionBudget,
@@ -198,9 +203,9 @@ describe("DCS v1.6.1 addendum 1: unique kebab/snake flag mapping", () => {
   });
 
   it("covers every default flag key exactly once", () => {
-    const mapped = (
-      ["compass", "role-memory", "working-memory", "cvk"] as const
-    ).map((sourceSystem) => contextBlockFlagNameForSourceSystem(sourceSystem));
+    const mapped = (["compass", "role-memory", "working-memory", "cvk"] as const).map(
+      (sourceSystem) => contextBlockFlagNameForSourceSystem(sourceSystem),
+    );
     expect([...mapped].sort()).toEqual(Object.keys(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS).sort());
     expect(new Set(mapped).size).toBe(mapped.length);
   });
@@ -220,9 +225,7 @@ describe("DCS v1.6.1 addendum 2: exactly-once working-memory injection", () => {
         mutability: "system_managed" as const,
         summary: "Recent actions",
         full_content: JSON.stringify({
-          actions: [
-            { tool: "write", result_summary: "Created handler", significance: "high" },
-          ],
+          actions: [{ tool: "write", result_summary: "Created handler", significance: "high" }],
         }),
         compression_depth: 0 as const,
         entity_extraction_status: "empty" as const,
@@ -374,7 +377,10 @@ describe("DCS Stage 3: tool_registry Assembler injection", () => {
     const store = storeWithToolRegistry();
     const assembler = new Assembler({ workingMemoryStore: store });
     const messages = [
-      { role: "user" as const, content: "## Tools (2 available)\n→ context_read('tool_registry') for full schema" },
+      {
+        role: "user" as const,
+        content: "## Tools (2 available)\n→ context_read('tool_registry') for full schema",
+      },
     ];
 
     const result = await assembler.assemble(
@@ -599,9 +605,7 @@ describe("DCS Stage 4: knowledge Assembler injection", () => {
   it("exactly-once: does not duplicate ## Knowledge heading", async () => {
     const store = storeWithCompassKnowledge();
     const assembler = new Assembler({ workingMemoryStore: store });
-    const messages = [
-      { role: "user" as const, content: "## Knowledge\nexisting content" },
-    ];
+    const messages = [{ role: "user" as const, content: "## Knowledge\nexisting content" }];
 
     const result = await assembler.assemble(
       { session_id: "agent:alpha:main" },
@@ -666,9 +670,7 @@ describe("DCS Stage 4: knowledge Assembler injection", () => {
 
   it("compass flag on + sink: produces knowledge Block from PreReplyInjection", async () => {
     const store = storeWithCompassKnowledge();
-    const sink: ContextBlockSink = vi.fn(async (writes) =>
-      writes.map(() => ({ accepted: true })),
-    );
+    const sink: ContextBlockSink = vi.fn(async (writes) => writes.map(() => ({ accepted: true })));
     const buildCompass = vi.fn(async () => ({
       sspString: "## SSP\nobjective: ship feature",
       top5FactsString: "## Top 5 Facts\n- fact A",
@@ -676,7 +678,7 @@ describe("DCS Stage 4: knowledge Assembler injection", () => {
     }));
     const assembler = new Assembler({
       buildCompass,
-      buildRoleMemory: () => ({} as never),
+      buildRoleMemory: () => ({}) as never,
       workingMemoryStore: store,
       contextBlockSink: sink,
     });
@@ -765,26 +767,23 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
     "runtime.contextBlock.tool_registry.enabled": true,
   } as const;
 
-  function createThreeChannelAssembler(blocks: ContextBlock[] = [
-    knowledgeBlock,
-    workingMemoryBlock,
-    toolRegistryBlock,
-  ]) {
+  function createThreeChannelAssembler(
+    blocks: ContextBlock[] = [knowledgeBlock, workingMemoryBlock, toolRegistryBlock],
+  ) {
     const store = {
       query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
-        blocks.filter((block) =>
-          (params.block_types?.includes(block.block_type) ?? true) &&
-          (params.source_systems?.includes(block.source_system) ?? true),
-        )),
+        blocks.filter(
+          (block) =>
+            (params.block_types?.includes(block.block_type) ?? true) &&
+            (params.source_systems?.includes(block.source_system) ?? true),
+        ),
+      ),
       upsert: vi.fn(),
     };
     return { assembler: new Assembler({ workingMemoryStore: store }), store };
   }
 
-  function appendedContents(
-    output: unknown,
-    initialCount = 1,
-  ): string[] {
+  function appendedContents(output: unknown, initialCount = 1): string[] {
     if (!Array.isArray(output)) return [];
     return output.slice(initialCount).flatMap((message) => {
       const content = (message as { content?: unknown }).content;
@@ -825,14 +824,79 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
       for (const channel of Object.keys(projected)) {
         const text = projected[channel];
         expect(text, channel).toBeDefined();
-        expect(accounting.byChannel[channel as keyof typeof accounting.byChannel]?.applied)
-          .toBe(text!.length);
+        expect(accounting.byChannel[channel as keyof typeof accounting.byChannel]?.applied).toBe(
+          text!.length,
+        );
       }
-      expect(contents.reduce((sum, content) => sum + content.length, 0))
-        .toBe(accounting.charsApplied);
-      expect(accounting.charsApplied + accounting.charsDropped + accounting.charsTruncated)
-        .toBe(accounting.charsRequested);
+      expect(contents.reduce((sum, content) => sum + content.length, 0)).toBe(
+        accounting.charsApplied,
+      );
+      expect(accounting.charsApplied + accounting.charsDropped + accounting.charsTruncated).toBe(
+        accounting.charsRequested,
+      );
     } finally {
+      endTurnInjectionBudget(turnId);
+    }
+  });
+
+  it("deferred production mode collects all channels before the first budget charge", async () => {
+    const turnId = "uas-02-deferred-assembler";
+    const { assembler } = createThreeChannelAssembler();
+    const initial = [{ role: "user" as const, content: "next" }];
+
+    try {
+      const result = await assembler.assemble(
+        { session_id: sessionId, turnId, deferProjection: true },
+        { existing_output: initial },
+        flags,
+      );
+      expect(result.output).toBe(initial);
+      const ledger = getTurnInjectionBudget(turnId);
+      expect(ledger).toBeDefined();
+      expect(ledger?.entries).toEqual([]);
+      expect(getContextCandidateCollection(turnId)?.diagnostics).toMatchObject({
+        finalized: false,
+        collected: 3,
+      });
+
+      const projection = finalizeContextCandidates({ turnId, ledger: ledger! });
+      expect(contentByChannel(appendedContents(projection.messages, 0))).toEqual({
+        knowledge: expect.stringContaining("## Knowledge"),
+        working_memory: expect.stringContaining("## Recent Actions"),
+        tool_registry: expect.stringContaining("## Tools"),
+      });
+      expect(
+        projection.lineage.filter((entry) => entry.charsApplied > 0).map((entry) => entry.channel),
+      ).toEqual(["knowledge", "working_memory", "tool_registry"]);
+    } finally {
+      endContextCandidateCollection(turnId);
+      endTurnInjectionBudget(turnId);
+    }
+  });
+
+  it("deferred killed mode performs zero BlockStore queries and records explicit kill lineage", async () => {
+    const turnId = "uas-02-killed-assembler";
+    const { assembler, store } = createThreeChannelAssembler();
+    try {
+      await assembler.assemble(
+        {
+          session_id: sessionId,
+          turnId,
+          deferProjection: true,
+          cfg: { runtime: { contextEnhancement: { killSwitch: true } } },
+        },
+        { existing_output: [{ role: "user" as const, content: "next" }] },
+        flags,
+      );
+      expect(store.query).not.toHaveBeenCalled();
+      expect(getContextCandidateCollection(turnId)?.lineage).toEqual([
+        expect.objectContaining({ channel: "knowledge", reason: "kill-switch" }),
+        expect.objectContaining({ channel: "working_memory", reason: "kill-switch" }),
+        expect.objectContaining({ channel: "tool_registry", reason: "kill-switch" }),
+      ]);
+      expect(getTurnInjectionBudget(turnId)?.entries).toEqual([]);
+    } finally {
+      endContextCandidateCollection(turnId);
       endTurnInjectionBudget(turnId);
     }
   });
@@ -876,8 +940,9 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
         { channel: "working_memory", disposition: "truncate" },
         { channel: "tool_registry", disposition: "drop" },
       ]);
-      expect(contents.reduce((sum, content) => sum + content.length, 0))
-        .toBe(accounting.charsApplied);
+      expect(contents.reduce((sum, content) => sum + content.length, 0)).toBe(
+        accounting.charsApplied,
+      );
       expect(contents[0]).toBe(baselineByChannel.knowledge);
       expect(contents).toHaveLength(2);
     } finally {
@@ -939,8 +1004,9 @@ describe("FP-P2-06 DCS turn-ledger attribution", () => {
 
     const contents = appendedContents(result.output, initial.length);
     expect(contents).toHaveLength(3);
-    expect(contents.reduce((sum, content) => sum + content.length, 0))
-      .toBeLessThanOrEqual(KNOWLEDGE_INJECTION_CHAR_BUDGET);
+    expect(contents.reduce((sum, content) => sum + content.length, 0)).toBeLessThanOrEqual(
+      KNOWLEDGE_INJECTION_CHAR_BUDGET,
+    );
     expect(getTurnInjectionBudget("undefined")).toBeUndefined();
   });
 });

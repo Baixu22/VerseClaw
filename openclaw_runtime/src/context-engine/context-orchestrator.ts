@@ -1,32 +1,44 @@
 /**
  * Context Orchestrator — single production entry for memory/context enhancement.
  *
- * TF-0002: unifies chat-turn memory inject (role/runtime memory) and Verse Token
- * Working Context assembly behind one fail-closed API. Production paths must
- * call {@link computeContextExtraSystemPrompt} only; low-level injectors remain
- * internal implementation details.
+ * TF-0002/UAS-02: unifies Memory, Verse Token, DCS context-block, and CVK prompt
+ * additions behind one fail-closed arbitration authority. Production sources
+ * emit ContextCandidate/v1; this module owns final ordering, deduplication,
+ * budgeting, projection, and lineage.
  *
- * Composition order (stable):
- *   base extraSystemPrompt
- *     → memory inject pilot (## Memory Context) when enabled
- *     → VToken assembly (## Working Context) when enabled
- *     → caller may still append unrelated system sections (e.g. Runtime Intensity)
+ * Candidate precedence (stable):
+ *   knowledge → working memory → tool registry → CVK → VToken → Memory pilot
  *
  * Flag off / kill switch: zero injection, zero side effects on the turn
  * (best-effort; errors never abort the agent turn).
  */
 import { isRecord } from "../runtime-core/index.js";
 import type { RuntimeContextProvider } from "../runtime-core/index.js";
+import type { AgentMessage } from "../agents/runtime/index.js";
 import { computeMemoryExtraSystemPrompt } from "./chat-turn-memory-injection.js";
 import {
   computeVtokenExtraSystemPrompt,
+  resolveVtokenAssemblyConfig,
   type VtokenMarkdownSource,
 } from "./chat-turn-vtoken-injection.js";
 import type { VtokenRpcClient } from "./vtoken-rpc-client.js";
 import { dcsObservability } from "./dcs-observability.js";
 import {
-  isContextEnhancementKillSwitchEngaged,
-} from "./enhancement-kill-switch.js";
+  beginContextCandidateCollection,
+  collectContextCandidate,
+  createContextCandidate,
+  endContextCandidateCollection,
+  getContextCandidateCollection,
+  projectContextCandidates,
+  recordContextCandidateSkip,
+  type ContextCandidate,
+  type ContextCandidateCollection,
+  type ContextCandidateDiagnostics,
+  type ContextCandidateLineage,
+  type ContextCandidateProjection,
+  type ContextCandidateTarget,
+} from "./context-candidate.js";
+import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
@@ -48,6 +60,7 @@ export type ContextOrchestratorSource = {
 };
 
 export type ContextOrchestratorLineage = {
+  turnId?: string;
   sessionId?: string;
   sessionKey?: string;
   runId?: string;
@@ -56,6 +69,8 @@ export type ContextOrchestratorLineage = {
   killSwitchEngaged: boolean;
   stagesRequested: ContextOrchestratorStage[];
   sources: ContextOrchestratorSource[];
+  candidates?: ContextCandidateLineage[];
+  candidateDiagnostics?: ContextCandidateDiagnostics;
   budget: {
     memoryTokenBudget?: number;
     vtokenBudgetTokens?: number;
@@ -76,6 +91,8 @@ export type ContextOrchestratorInput = {
   markdownSources?: VtokenMarkdownSource[];
   toolSchemas?: Array<Record<string, unknown>>;
   memoryEntries?: Array<Record<string, unknown>>;
+  /** Lazy VToken memory projection; invoked only after flag and kill-switch gates pass. */
+  memoryEntriesFactory?: () => Promise<Array<Record<string, unknown>>>;
   /**
    * Lazy memory provider factory. Only invoked when the memory stage is
    * requested and the inject pilot flag is enabled.
@@ -89,6 +106,12 @@ export type ContextOrchestratorInput = {
    * CVK addition charge) instead of growing the prompt off the books.
    */
   turnId?: string;
+  /**
+   * UAS-02 production mode: collect source output as ContextCandidate/v1 and
+   * leave final ordering, deduplication, budgeting, and projection to the
+   * provider-boundary Orchestrator pass.
+   */
+  deferProjection?: boolean;
 };
 
 export type ContextOrchestratorOptions = {
@@ -105,6 +128,12 @@ export type ContextOrchestratorResult = {
 const DEFAULT_STAGES: ContextOrchestratorStage[] = ["memory", "vtoken"];
 
 let lastLineage: ContextOrchestratorLineage | null = null;
+const lineageByTurn = new Map<string, ContextOrchestratorLineage>();
+
+function rememberLineage(lineage: ContextOrchestratorLineage): void {
+  lastLineage = lineage;
+  if (lineage.turnId) lineageByTurn.set(lineage.turnId, lineage);
+}
 
 export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage | null {
   return lastLineage ? structuredClone(lastLineage) : null;
@@ -112,11 +141,91 @@ export function getLastContextOrchestratorLineage(): ContextOrchestratorLineage 
 
 export function resetContextOrchestratorLineageForTests(): void {
   lastLineage = null;
+  lineageByTurn.clear();
 }
 
-function resolveStages(
-  stages: ContextOrchestratorStage[] | undefined,
-): ContextOrchestratorStage[] {
+export type ContextOrchestratorCandidateInput = Omit<
+  ContextCandidate,
+  "schema" | "candidateId" | "dedupKey" | "authority"
+> & {
+  authorityObjectId: string;
+  authorityVersion: string;
+};
+
+export function collectContextOrchestratorCandidate(
+  turnId: string,
+  input: ContextOrchestratorCandidateInput,
+): ContextCandidateLineage {
+  return collectContextCandidate(turnId, createContextCandidate(input));
+}
+
+export function recordContextOrchestratorSourceDecision(
+  turnId: string,
+  input: {
+    sourceId: string;
+    channel: TurnInjectionChannel;
+    target: ContextCandidateTarget;
+    reason: "empty" | "flag-off" | "kill-switch";
+  },
+): ContextCandidateLineage {
+  return recordContextCandidateSkip(turnId, input);
+}
+
+export function getContextOrchestratorCollection(
+  turnId: string,
+): ContextCandidateCollection | undefined {
+  return getContextCandidateCollection(turnId);
+}
+
+export function finalizeContextOrchestratorTurn(params: {
+  turnId: string;
+  messages: AgentMessage[];
+}): {
+  messages: AgentMessage[];
+  projection: ContextCandidateProjection;
+} {
+  const wasFinalized = getContextCandidateCollection(params.turnId)?.diagnostics.finalized === true;
+  const ledger = beginTurnInjectionBudget({ turnId: params.turnId });
+  const projected = projectContextCandidates({
+    turnId: params.turnId,
+    ledger,
+    messages: params.messages,
+  });
+  const collection = getContextCandidateCollection(params.turnId);
+  const turnLineage = lineageByTurn.get(params.turnId);
+  if (turnLineage && collection) {
+    turnLineage.candidates = collection.lineage;
+    turnLineage.candidateDiagnostics = collection.diagnostics;
+    turnLineage.totalCharsAdded = collection.diagnostics.charsApplied;
+    for (const source of turnLineage.sources) {
+      const entries = collection.lineage.filter((entry) => entry.sourceId === source.id);
+      if (entries.length === 0) continue;
+      source.chars = entries.reduce((total, entry) => total + entry.charsApplied, 0);
+      source.applied = source.chars > 0;
+      source.reason =
+        entries.find((entry) => entry.charsApplied > 0)?.reason ??
+        entries.at(-1)?.reason ??
+        source.reason;
+    }
+    if (!wasFinalized) {
+      dcsObservability.recordContextOrchestrator({
+        killSwitch: turnLineage.killSwitchEngaged,
+        stages: turnLineage.stagesRequested.length,
+        charsAdded: turnLineage.totalCharsAdded,
+        ...(turnLineage.error ? { error: true } : {}),
+      });
+    }
+    lastLineage = turnLineage;
+  }
+  return { messages: projected.messages, projection: projected.projection };
+}
+
+export function endContextOrchestratorTurn(turnId: string): ContextCandidateCollection | undefined {
+  lineageByTurn.delete(turnId);
+  return endContextCandidateCollection(turnId);
+}
+
+function resolveStages(stages: ContextOrchestratorStage[] | undefined): ContextOrchestratorStage[] {
   if (!stages || stages.length === 0) return [...DEFAULT_STAGES];
   const out: ContextOrchestratorStage[] = [];
   for (const stage of stages) {
@@ -129,7 +238,8 @@ function resolveStages(
 
 function resolveMemoryBudget(cfg: unknown): number | undefined {
   try {
-    const runtime = isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
+    const runtime =
+      isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
     const memory = isRecord(runtime?.memory) ? runtime.memory : undefined;
     const injectPilot = isRecord(memory?.injectPilot) ? memory.injectPilot : undefined;
     const budget = injectPilot?.totalTokenBudget;
@@ -141,7 +251,8 @@ function resolveMemoryBudget(cfg: unknown): number | undefined {
 
 function resolveVtokenBudget(cfg: unknown): number | undefined {
   try {
-    const runtime = isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
+    const runtime =
+      isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
     const vtoken = isRecord(runtime?.vtoken) ? runtime.vtoken : undefined;
     const assembly = isRecord(vtoken?.assembly) ? vtoken.assembly : undefined;
     const budget = assembly?.budgetTokens;
@@ -153,26 +264,11 @@ function resolveVtokenBudget(cfg: unknown): number | undefined {
 
 function isMemoryPilotEnabled(cfg: unknown): boolean {
   try {
-    const runtime = isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
+    const runtime =
+      isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
     const memory = isRecord(runtime?.memory) ? runtime.memory : undefined;
     const injectPilot = isRecord(memory?.injectPilot) ? memory.injectPilot : undefined;
     return injectPilot?.enabled === true;
-  } catch {
-    return false;
-  }
-}
-
-function isVtokenAssemblyEnabled(cfg: unknown): boolean {
-  try {
-    // Delegate to the same resolve path VToken uses: only explicit true / env canary.
-    const runtime = isRecord(cfg) && isRecord(cfg.runtime) ? cfg.runtime : isRecord(cfg) ? cfg : undefined;
-    const vtoken = isRecord(runtime?.vtoken) ? runtime.vtoken : undefined;
-    const assembly = isRecord(vtoken?.assembly) ? vtoken.assembly : undefined;
-    if (assembly?.enabled === true) return true;
-    const env = (process.env.VERSE_VTOKEN_ASSEMBLY_ENABLED ?? "").trim().toLowerCase();
-    if (env === "0" || env === "false" || env === "no" || env === "off") return false;
-    if (env === "1" || env === "true" || env === "yes" || env === "on") return true;
-    return false;
   } catch {
     return false;
   }
@@ -231,6 +327,7 @@ export async function computeContextExtraSystemPrompt(
   const stagesRequested = resolveStages(options.stages);
   const log = options.log;
   const lineage: ContextOrchestratorLineage = {
+    turnId: input.turnId,
     sessionId: input.sessionId,
     sessionKey: input.sessionKey,
     runId: input.runId,
@@ -246,6 +343,21 @@ export async function computeContextExtraSystemPrompt(
     totalCharsAdded: 0,
     durationMs: 0,
   };
+
+  const deferProjection = input.deferProjection === true && input.turnId !== undefined;
+  if (input.deferProjection === true && !input.turnId) {
+    lineage.error = "deferred context projection requires turnId";
+    lineage.durationMs = Date.now() - started;
+    rememberLineage(lineage);
+    return { extraSystemPrompt, lineage };
+  }
+  const candidateCollection = deferProjection
+    ? beginContextCandidateCollection(input.turnId!)
+    : undefined;
+  if (candidateCollection) {
+    lineage.candidates = candidateCollection.lineage;
+    lineage.candidateDiagnostics = candidateCollection.diagnostics;
+  }
 
   let result = extraSystemPrompt;
   const baseLen = result?.length ?? 0;
@@ -263,6 +375,14 @@ export async function computeContextExtraSystemPrompt(
     if (isContextEnhancementKillSwitchEngaged(cfg)) {
       lineage.killSwitchEngaged = true;
       for (const stage of stagesRequested) {
+        if (deferProjection) {
+          recordContextOrchestratorSourceDecision(input.turnId!, {
+            sourceId: stage === "memory" ? "memory-inject-pilot" : "vtoken-assembly",
+            channel: stage === "memory" ? "memory_pilot" : "vtoken",
+            target: "system_prompt",
+            reason: "kill-switch",
+          });
+        }
         lineage.sources.push({
           id: stage === "memory" ? "memory-inject-pilot" : "vtoken-assembly",
           stage,
@@ -272,13 +392,15 @@ export async function computeContextExtraSystemPrompt(
           reason: "enhancement-kill-switch",
         });
       }
-      dcsObservability.recordContextOrchestrator({
-        killSwitch: true,
-        stages: stagesRequested.length,
-        charsAdded: 0,
-      });
+      if (!deferProjection) {
+        dcsObservability.recordContextOrchestrator({
+          killSwitch: true,
+          stages: stagesRequested.length,
+          charsAdded: 0,
+        });
+      }
       lineage.durationMs = Date.now() - started;
-      lastLineage = lineage;
+      rememberLineage(lineage);
       return { extraSystemPrompt: result, lineage };
     }
 
@@ -286,6 +408,14 @@ export async function computeContextExtraSystemPrompt(
       const enabled = isMemoryPilotEnabled(cfg);
       const before = result?.length ?? 0;
       if (!enabled) {
+        if (deferProjection) {
+          recordContextOrchestratorSourceDecision(input.turnId!, {
+            sourceId: "memory-inject-pilot",
+            channel: "memory_pilot",
+            target: "system_prompt",
+            reason: "flag-off",
+          });
+        }
         lineage.sources.push({
           id: "memory-inject-pilot",
           stage: "memory",
@@ -295,6 +425,14 @@ export async function computeContextExtraSystemPrompt(
           reason: "flag-off",
         });
       } else if (!input.memoryProviderFactory) {
+        if (deferProjection) {
+          recordContextOrchestratorSourceDecision(input.turnId!, {
+            sourceId: "memory-inject-pilot",
+            channel: "memory_pilot",
+            target: "system_prompt",
+            reason: "empty",
+          });
+        }
         lineage.sources.push({
           id: "memory-inject-pilot",
           stage: "memory",
@@ -304,34 +442,78 @@ export async function computeContextExtraSystemPrompt(
           reason: "no-provider-factory",
         });
       } else {
-        result = await computeMemoryExtraSystemPrompt(
-          result,
+        const computed = await computeMemoryExtraSystemPrompt(
+          deferProjection ? undefined : result,
           cfg,
           input.sessionKey,
           input.memoryProviderFactory,
           log,
+          { workspace: input.workspaceDir, taskId: input.runId },
         );
-        // FP-P0-05: charge the appended segment against the turn-wide budget and
-        // keep only what the budget granted, so the ledger matches the prompt.
-        const charged = chargeAppendedSegment(turnLedger, "memory_pilot", result, before);
-        result = charged.text;
-        const chars = charged.charsApplied;
-        lineage.sources.push({
-          id: "memory-inject-pilot",
-          stage: "memory",
-          enabled: true,
-          applied: chars > 0,
-          chars,
-          tokens: lineage.budget.memoryTokenBudget,
-          reason: charged.reason ?? (chars > 0 ? "applied" : "no-items"),
-        });
+        if (deferProjection) {
+          const text = computed?.trim();
+          if (text) {
+            collectContextOrchestratorCandidate(input.turnId!, {
+              authorityObjectId: "memory-inject-pilot",
+              authorityVersion: String(lineage.budget.memoryTokenBudget ?? "default"),
+              sourceId: "memory-inject-pilot",
+              channel: "memory_pilot",
+              target: "system_prompt",
+              text,
+            });
+          } else {
+            recordContextOrchestratorSourceDecision(input.turnId!, {
+              sourceId: "memory-inject-pilot",
+              channel: "memory_pilot",
+              target: "system_prompt",
+              reason: "empty",
+            });
+          }
+          const chars = text?.length ?? 0;
+          lineage.sources.push({
+            id: "memory-inject-pilot",
+            stage: "memory",
+            enabled: true,
+            applied: false,
+            chars,
+            tokens: lineage.budget.memoryTokenBudget,
+            reason: chars > 0 ? "candidate-collected" : "no-items",
+          });
+          result = extraSystemPrompt;
+        } else {
+          result = computed;
+          // FP-P0-05: charge the appended segment against the turn-wide budget and
+          // keep only what the budget granted, so the ledger matches the prompt.
+          const charged = chargeAppendedSegment(turnLedger, "memory_pilot", result, before);
+          result = charged.text;
+          const chars = charged.charsApplied;
+          lineage.sources.push({
+            id: "memory-inject-pilot",
+            stage: "memory",
+            enabled: true,
+            applied: chars > 0,
+            chars,
+            tokens: lineage.budget.memoryTokenBudget,
+            reason: charged.reason ?? (chars > 0 ? "applied" : "no-items"),
+          });
+        }
       }
     }
 
     if (stagesRequested.includes("vtoken")) {
-      const enabled = isVtokenAssemblyEnabled(cfg);
+      const vtokenConfig = resolveVtokenAssemblyConfig(cfg);
+      const enabled = vtokenConfig.enabled;
+      lineage.budget.vtokenBudgetTokens = vtokenConfig.budgetTokens;
       const before = result?.length ?? 0;
       if (!enabled) {
+        if (deferProjection) {
+          recordContextOrchestratorSourceDecision(input.turnId!, {
+            sourceId: "vtoken-assembly",
+            channel: "vtoken",
+            target: "system_prompt",
+            reason: "flag-off",
+          });
+        }
         lineage.sources.push({
           id: "vtoken-assembly",
           stage: "vtoken",
@@ -341,60 +523,101 @@ export async function computeContextExtraSystemPrompt(
           reason: "flag-off",
         });
       } else {
-        result = await computeVtokenExtraSystemPrompt(
-          result,
+        const memoryEntries =
+          input.memoryEntries ??
+          (input.memoryEntriesFactory ? await input.memoryEntriesFactory() : undefined);
+        const computed = await computeVtokenExtraSystemPrompt(
+          deferProjection ? undefined : result,
           cfg,
           {
             sessionKey: input.sessionKey,
             taskHint: input.taskHint ?? "",
+            allowanceTokens: vtokenConfig.budgetTokens,
             workspaceDir: input.workspaceDir,
             markdownSources: input.markdownSources,
             toolSchemas: input.toolSchemas,
-            memoryEntries: input.memoryEntries,
+            memoryEntries,
           },
           log,
           input.vtokenClient,
         );
-        // FP-P0-05: same shared-budget charge for the VToken segment. VToken's own
-        // `budgetTokens` governs internal packing; this governs prompt growth.
-        const charged = chargeAppendedSegment(turnLedger, "vtoken", result, before);
-        result = charged.text;
-        const chars = charged.charsApplied;
-        lineage.sources.push({
-          id: "vtoken-assembly",
-          stage: "vtoken",
-          enabled: true,
-          applied: chars > 0,
-          chars,
-          tokens: lineage.budget.vtokenBudgetTokens,
-          reason: charged.reason ?? (chars > 0 ? "applied" : "empty-or-skipped"),
-        });
+        if (deferProjection) {
+          const text = computed?.trim();
+          if (text) {
+            collectContextOrchestratorCandidate(input.turnId!, {
+              authorityObjectId: "vtoken-assembly",
+              authorityVersion: String(lineage.budget.vtokenBudgetTokens ?? "default"),
+              sourceId: "vtoken-assembly",
+              channel: "vtoken",
+              target: "system_prompt",
+              text,
+            });
+          } else {
+            recordContextOrchestratorSourceDecision(input.turnId!, {
+              sourceId: "vtoken-assembly",
+              channel: "vtoken",
+              target: "system_prompt",
+              reason: "empty",
+            });
+          }
+          const chars = text?.length ?? 0;
+          lineage.sources.push({
+            id: "vtoken-assembly",
+            stage: "vtoken",
+            enabled: true,
+            applied: false,
+            chars,
+            tokens: lineage.budget.vtokenBudgetTokens,
+            reason: chars > 0 ? "candidate-collected" : "empty-or-skipped",
+          });
+          result = extraSystemPrompt;
+        } else {
+          result = computed;
+          // FP-P0-05: same shared-budget charge for the VToken segment. VToken's own
+          // `budgetTokens` governs internal packing; this governs prompt growth.
+          const charged = chargeAppendedSegment(turnLedger, "vtoken", result, before);
+          result = charged.text;
+          const chars = charged.charsApplied;
+          lineage.sources.push({
+            id: "vtoken-assembly",
+            stage: "vtoken",
+            enabled: true,
+            applied: chars > 0,
+            chars,
+            tokens: lineage.budget.vtokenBudgetTokens,
+            reason: charged.reason ?? (chars > 0 ? "applied" : "empty-or-skipped"),
+          });
+        }
       }
     }
 
     lineage.totalCharsAdded = Math.max(0, (result?.length ?? 0) - baseLen);
-    dcsObservability.recordContextOrchestrator({
-      killSwitch: false,
-      stages: stagesRequested.length,
-      charsAdded: lineage.totalCharsAdded,
-    });
+    if (!deferProjection) {
+      dcsObservability.recordContextOrchestrator({
+        killSwitch: false,
+        stages: stagesRequested.length,
+        charsAdded: lineage.totalCharsAdded,
+      });
+    }
   } catch (err) {
     lineage.error = String(err);
     log?.("[context-orchestrator] suppressed error; continuing without enhancement", {
       err: String(err),
     });
-    dcsObservability.recordContextOrchestrator({
-      killSwitch: false,
-      stages: stagesRequested.length,
-      charsAdded: 0,
-      error: true,
-    });
+    if (!deferProjection) {
+      dcsObservability.recordContextOrchestrator({
+        killSwitch: false,
+        stages: stagesRequested.length,
+        charsAdded: 0,
+        error: true,
+      });
+    }
     // Fail-closed: return original prompt on unexpected errors.
     result = extraSystemPrompt;
     lineage.totalCharsAdded = 0;
   }
 
   lineage.durationMs = Date.now() - started;
-  lastLineage = lineage;
+  rememberLineage(lineage);
   return { extraSystemPrompt: result, lineage };
 }

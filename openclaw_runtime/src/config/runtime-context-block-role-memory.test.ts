@@ -34,6 +34,10 @@ describe("runtime.contextBlock role-memory config", () => {
               timeoutMs?: number;
             };
           };
+          injectionBudget?: {
+            totalChars?: number;
+            dropAlertRatio?: number;
+          };
         }
       | undefined
     >();

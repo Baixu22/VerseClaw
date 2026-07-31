@@ -11,6 +11,7 @@ import {
 import { getDataDir } from '../utils/paths';
 import { createDefaultAgentBrowserCliRunner } from './agent-browser-cli-runner';
 import { AgentBrowserService } from './agent-browser-service';
+import { createAgentBrowserSupervisedTaskExecutor } from './agent-browser-supervised-task-executor';
 import { AgentBrowserTaskService } from './agent-browser-task-service';
 import { AgentBrowserVault } from './agent-browser-vault';
 import { recordPermissionDecisionEvent } from './permissions-api';
@@ -56,17 +57,10 @@ export function getDefaultAgentBrowserService(): AgentBrowserService {
 export function createAgentBrowserApi(
   service = getDefaultAgentBrowserService(),
   taskService = new AgentBrowserTaskService({
-    execute: async (task, signal) => {
-      signal.throwIfAborted();
-      await assertBrowserAllowedUnderSandbox('runTask');
-      const opened = await service.open({
-        url: task.url,
-        profile: task.profile,
-        mode: task.mode,
-      });
-      signal.throwIfAborted();
-      return { sessionId: opened.session.id, runId: task.id };
-    },
+    execute: createAgentBrowserSupervisedTaskExecutor({
+      service,
+      assertSandboxAllowed: () => assertBrowserAllowedUnderSandbox('runTask'),
+    }),
     storagePath: join(getDataDir(), 'agent-browser', 'tasks.json'),
   }),
   vault?: AgentBrowserVault,
@@ -162,9 +156,13 @@ export function createAgentBrowserApi(
       success: true,
       task: taskService.waitForApproval(payload.taskId),
     }),
-    approveTask: (payload) => ({
+    approveTask: async (payload) => ({
       success: true,
-      task: taskService.approve(payload.taskId),
+      task: await taskService.approveAndRun(payload.taskId),
+    }),
+    rejectTask: (payload) => ({
+      success: true,
+      task: taskService.reject(payload.taskId),
     }),
     show: async (payload) => ({
       success: true,

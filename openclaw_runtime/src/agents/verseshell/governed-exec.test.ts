@@ -16,7 +16,7 @@ const CONTRACT_ENV = {
   VERSESHELL_RUNTIME_VERSION: "1.0.0",
   VERSESHELL_SERVER_PROTOCOL: "verseshell.jsonl/v1",
   VERSESHELL_OPERATION_CATALOG_DIGEST: `sha256:${"a".repeat(64)}`,
-  VERSESHELL_OPERATION_CATALOG_COUNT: "26",
+  VERSESHELL_OPERATION_CATALOG_COUNT: "31",
 };
 
 function observation(overrides: Partial<Observation>): Observation {

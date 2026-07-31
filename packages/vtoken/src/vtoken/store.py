@@ -9,6 +9,7 @@ source changed, recompiles/reloads and atomically swaps the merged doc graph
 reference (the old graph is GC'd once in-flight readers release it). File
 absence is tolerated (stale graph kept, no error) per HANDOFF T5.1 spec.
 """
+
 from __future__ import annotations
 
 import json
@@ -28,7 +29,9 @@ def load_vtg(path: str) -> SIRGraph:
     with open(path, "rb") as f:
         payload = json.loads(f.read().decode("utf-8"))
     if payload.get("mode") != "doc":
-        raise VTStoreError(f"{path} is not a doc-mode .vtg (use MemStore for mem snapshots)")
+        raise VTStoreError(
+            f"{path} is not a doc-mode .vtg (use MemStore for mem snapshots)"
+        )
     return graph_from_doc_payload(payload, source_file=path)
 
 
@@ -37,11 +40,14 @@ def load_doc_graphs(paths) -> SIRGraph:
     return merge_doc_graphs([load_vtg(p) for p in paths])
 
 
-def _compile_and_load(vt_path: str, out_path: str | None = None) -> "tuple[SIRGraph, str]":
+def _compile_and_load(
+    vt_path: str, out_path: str | None = None
+) -> "tuple[SIRGraph, str]":
     """Compile one .vt → load the resulting .vtg → return (SIRGraph, out_path).
     Late import of compiler avoids circular import (compiler imports model
     which is fine; store imports compiler lazily)."""
     from .compiler import compile_file  # noqa: WPS433
+
     actual_out, _parsed = compile_file(vt_path, out_path=out_path)
     return load_vtg(actual_out), actual_out
 
@@ -53,6 +59,7 @@ class GraphHolder:
     `is_compiled=True` means source is .vt (recompile on change);
     `False` means .vtg (just reload).
     """
+
     source_path: str
     source_mtime_ns: int
     graph: SIRGraph
@@ -80,9 +87,12 @@ class GraphHolder:
 
 
 class UnifiedStore:
-    def __init__(self, doc_graph: SIRGraph | None = None,
-                 mem_store: MemStore | None = None,
-                 doc_sources: "list[str] | None" = None):
+    def __init__(
+        self,
+        doc_graph: SIRGraph | None = None,
+        mem_store: MemStore | None = None,
+        doc_sources: "list[str] | None" = None,
+    ):
         """Construct a unified store.
 
         Backward-compat modes:
@@ -118,8 +128,12 @@ class UnifiedStore:
             mtime = os.stat(source_path).st_mtime_ns
         except FileNotFoundError:
             mtime = 0  # source missing at startup; refresh() will tolerate later too
-        return GraphHolder(source_path=source_path, source_mtime_ns=mtime,
-                           graph=graph, is_compiled=is_compiled)
+        return GraphHolder(
+            source_path=source_path,
+            source_mtime_ns=mtime,
+            graph=graph,
+            is_compiled=is_compiled,
+        )
 
     def _merge_holders(self) -> SIRGraph:
         if not self._doc_holders:
@@ -148,9 +162,23 @@ class UnifiedStore:
                 self.doc = self._merge_holders()
             return any_changed
 
+    def refresh_doc_sources(self) -> bool:
+        """Synchronously publish all source changes visible at call completion.
+
+        Callers that need a refresh barrier should use this method before
+        checking the final graph version. Normal reads continue to poll lazily.
+        """
+        return self._maybe_reload()
+
     @classmethod
-    def open(cls, vtg_paths=(), session_dir: str | None = None,
-             session: str | None = None, doc_sources=None, **mem_kwargs) -> "UnifiedStore":
+    def open(
+        cls,
+        vtg_paths=(),
+        session_dir: str | None = None,
+        session: str | None = None,
+        doc_sources=None,
+        **mem_kwargs,
+    ) -> "UnifiedStore":
         """Open a unified store.
 
         Args:
@@ -179,21 +207,42 @@ class UnifiedStore:
             raise VTStoreError("UnifiedStore has no graphs loaded")
         return graphs
 
-    def resolve(self, node_id: str, depth: int = 2, type_filter=None,
-                include_untyped: bool = True, include_edges: bool = False,
-                max_nodes: int | None = None, max_facets: int | None = None) -> str:
+    def resolve(
+        self,
+        node_id: str,
+        depth: int = 2,
+        type_filter=None,
+        include_untyped: bool = True,
+        include_edges: bool = False,
+        max_nodes: int | None = None,
+        max_facets: int | None = None,
+    ) -> str:
         # T5.1: poll mtimes; reload if changed (cheap if no holders).
         # Done BEFORE taking mem._lock so reload never blocks on mem writes.
         self._maybe_reload()
         graphs = self._graphs()
         if self.mem is not None:
             with self.mem._lock:
-                return resolve_tir(graphs, node_id, depth=depth, type_filter=type_filter,
-                                   include_untyped=include_untyped, include_edges=include_edges,
-                                   max_nodes=max_nodes, max_facets=max_facets)
-        return resolve_tir(graphs, node_id, depth=depth, type_filter=type_filter,
-                           include_untyped=include_untyped, include_edges=include_edges,
-                           max_nodes=max_nodes, max_facets=max_facets)
+                return resolve_tir(
+                    graphs,
+                    node_id,
+                    depth=depth,
+                    type_filter=type_filter,
+                    include_untyped=include_untyped,
+                    include_edges=include_edges,
+                    max_nodes=max_nodes,
+                    max_facets=max_facets,
+                )
+        return resolve_tir(
+            graphs,
+            node_id,
+            depth=depth,
+            type_filter=type_filter,
+            include_untyped=include_untyped,
+            include_edges=include_edges,
+            max_nodes=max_nodes,
+            max_facets=max_facets,
+        )
 
     def toc(self) -> str:
         """D20 cold-start entry point: TIR of every DEF facet in the doc graph."""
@@ -215,6 +264,7 @@ class UnifiedStore:
         """
         self._maybe_reload()
         from .search import SearchIndex
+
         # Combine doc + mem graphs; rebuild index if either changed
         graphs = []
         if self.doc is not None:
@@ -228,8 +278,10 @@ class UnifiedStore:
         doc_v = self.doc.version if self.doc is not None else 0
         mem_v = self.mem.graph.version if self.mem is not None else 0
         cache_key = (doc_v, mem_v)
-        if (getattr(self, "_search_index", None) is None
-                or getattr(self, "_search_cache_key", None) != cache_key):
+        if (
+            getattr(self, "_search_index", None) is None
+            or getattr(self, "_search_cache_key", None) != cache_key
+        ):
             idx = SearchIndex()
             idx.build(graphs)
             self._search_index = idx  # type: ignore[attr-defined]
@@ -238,9 +290,13 @@ class UnifiedStore:
 
     # ------------------------------------------------------------------ v0.4 assemble
 
-    def assemble(self, task_hint: str, budget_tokens: int = 32000,
-                 slots: "dict | None" = None,
-                 render_mode: str = "compact") -> "object":
+    def assemble(
+        self,
+        task_hint: str,
+        budget_tokens: int = 32000,
+        slots: "dict | None" = None,
+        render_mode: str = "compact",
+    ) -> "object":
         """v0.4 Task F — ContextAssembler 包装入口。
 
         把 store 中 doc + mem 图内容组装为 token 预算可控的最终 prompt。
@@ -259,11 +315,16 @@ class UnifiedStore:
             nodes_included / nodes_evicted / dedup_count）
         """
         from .assembler import ContextAssembler, DEFAULT_SLOTS
+
         self._maybe_reload()
         asm = ContextAssembler()
-        return asm.assemble(task_hint, budget_tokens,
-                            slots if slots is not None else DEFAULT_SLOTS,
-                            self, render_mode=render_mode)
+        return asm.assemble(
+            task_hint,
+            budget_tokens,
+            slots if slots is not None else DEFAULT_SLOTS,
+            self,
+            render_mode=render_mode,
+        )
 
     def ingest(self, source: str, source_type: str = "auto") -> int:
         """v0.4 — 把任意格式源 ingest 进当前 doc 图。
@@ -276,6 +337,7 @@ class UnifiedStore:
             新增节点数
         """
         from .ingest import ingest_markdown_file, ingest_tool_schemas_from_json
+
         if source_type == "auto":
             ext = os.path.splitext(source)[1].lower()
             if ext == ".md":
@@ -315,14 +377,22 @@ class UnifiedStore:
             for n in self.mem.graph.nodes.values():
                 for t, _ in n.parts:
                     type_counts[t or "(untyped)"] += 1
-        return {"doc_nodes": doc_nodes, "doc_edges": doc_edges,
-                "mem_nodes": mem_nodes, "parts_by_type": dict(type_counts)}
+        return {
+            "doc_nodes": doc_nodes,
+            "doc_edges": doc_edges,
+            "mem_nodes": mem_nodes,
+            "parts_by_type": dict(type_counts),
+        }
 
     # ------------------------------------------------------------------ mem passthrough
 
-    def write(self, content: str, type: str | None = None, edges=None, tag: str | None = None) -> str:
+    def write(
+        self, content: str, type: str | None = None, edges=None, tag: str | None = None
+    ) -> str:
         if self.mem is None:
-            raise VTStoreError("no mem session attached (open with session_dir + session)")
+            raise VTStoreError(
+                "no mem session attached (open with session_dir + session)"
+            )
         return self.mem.write(content, type=type, edges=edges, tag=tag)
 
     def delete(self, node_id: str) -> bool:

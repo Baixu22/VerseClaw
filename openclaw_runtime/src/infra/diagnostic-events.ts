@@ -429,6 +429,12 @@ export type DiagnosticExecProcessCompletedEvent = DiagnosticBaseEvent & {
   type: "exec.process.completed";
   sessionKey?: string;
   target: "host" | "sandbox";
+  selectedHost?: "sandbox" | "gateway" | "node" | "verseshell";
+  executionHost?: "sandbox" | "gateway" | "node" | "verseshell";
+  lifecycleOwner?: "native" | "sandbox" | "node" | "verseshell" | "legacy-verseshell";
+  cohortRoute?: "verseshell-single-plane";
+  nativeFallback?: boolean;
+  recoveryState?: "none" | "start-failed" | "exited" | "killed" | "lost" | "runtime-error";
   mode: "child" | "pty";
   outcome: "completed" | "failed";
   durationMs: number;

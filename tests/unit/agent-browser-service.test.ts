@@ -59,11 +59,47 @@ class FakeDebugger extends EventEmitter {
   });
 }
 
+type FakeBeforeRequestDetails = {
+  url: string;
+  webContentsId?: number;
+  resourceType: string;
+};
+
+class FakeWebRequest {
+  private listener?: (details: FakeBeforeRequestDetails, callback: (result: { cancel?: boolean }) => void) => void;
+
+  onBeforeRequest(listener: (details: FakeBeforeRequestDetails, callback: (result: { cancel?: boolean }) => void) => void) {
+    this.listener = listener;
+  }
+
+  async request(url: string, resourceType: string, webContentsId?: number): Promise<{ cancel?: boolean }> {
+    if (!this.listener) return { cancel: false };
+    return await new Promise((resolve) => this.listener?.({ url, resourceType, webContentsId }, resolve));
+  }
+}
+
+class FakeSession {
+  readonly webRequest = new FakeWebRequest();
+  resolvedEndpoints = [{ address: '93.184.216.34', family: 'ipv4' as const }];
+  readonly resolveHost = vi.fn(async () => ({ endpoints: this.resolvedEndpoints }));
+}
+
 class FakeWebContents extends EventEmitter {
+  readonly id = 41;
+  readonly session = new FakeSession();
   url = '';
   title = '';
   scripts: string[] = [];
   readonly debugger = new FakeDebugger();
+  private windowOpenHandler?: (details: { url: string }) => { action: 'allow' | 'deny' };
+
+  setWindowOpenHandler(handler: (details: { url: string }) => { action: 'allow' | 'deny' }) {
+    this.windowOpenHandler = handler;
+  }
+
+  openPopup(url: string): { action: 'allow' | 'deny' } {
+    return this.windowOpenHandler?.({ url }) ?? { action: 'allow' };
+  }
 
   getURL() {
     return this.url;
@@ -92,6 +128,8 @@ class FakeWindow {
   shown = false;
 
   async loadURL(url: string) {
+    const decision = await this.webContents.session.webRequest.request(url, 'mainFrame', this.webContents.id);
+    if (decision.cancel) throw new Error('ERR_BLOCKED_BY_CLIENT');
     this.webContents.url = url;
     this.webContents.title = 'Loaded page';
     queueMicrotask(() => {
@@ -116,6 +154,93 @@ class FakeWindow {
 }
 
 describe('agent browser service', () => {
+  it('applies supervised request guards to navigation redirects and subresources', async () => {
+    const window = new FakeWindow();
+    const service = new AgentBrowserService({ createWindow: () => window as never });
+    const guard = vi.fn(async (url: string, options: {
+      enforceApprovedDomains: boolean;
+      lookupAddresses?: (hostname: string) => Promise<Array<{ address: string; family: number }>>;
+    }) => {
+      const hostname = new URL(url).hostname;
+      if (hostname === '127.0.0.1') {
+        throw Object.assign(new Error('private network denied'), { code: 'PRIVATE_NETWORK_DENIED' });
+      }
+      const addresses = await options.lookupAddresses?.(hostname);
+      if (addresses?.some(({ address }) => address === '10.0.0.8')) {
+        throw Object.assign(new Error('private network denied'), { code: 'PRIVATE_NETWORK_DENIED' });
+      }
+      if (options.enforceApprovedDomains && hostname !== 'example.com') {
+        throw Object.assign(new Error('domain not approved'), { code: 'DOMAIN_NOT_APPROVED' });
+      }
+    });
+
+    const opened = await service.openSupervised({ url: 'https://example.com', mode: 'headless' }, guard);
+    expect(opened.session.url).toBe('https://example.com/');
+    expect(guard).toHaveBeenCalledWith(
+      'https://example.com/',
+      expect.objectContaining({ enforceApprovedDomains: true }),
+    );
+
+    await expect(window.webContents.session.webRequest.request(
+      'https://other.example.net/redirect',
+      'mainFrame',
+      window.webContents.id,
+    )).resolves.toEqual({ cancel: true });
+    expect(() => service.assertSupervisedRequestSafe(opened.session.id)).toThrow('domain not approved');
+
+    const secondWindow = new FakeWindow();
+    const secondService = new AgentBrowserService({ createWindow: () => secondWindow as never });
+    const second = await secondService.openSupervised({ url: 'https://example.com', mode: 'headless' }, guard);
+    await expect(secondWindow.webContents.session.webRequest.request(
+      'http://127.0.0.1/metadata',
+      'xhr',
+      secondWindow.webContents.id,
+    )).resolves.toEqual({ cancel: true });
+    expect(() => secondService.assertSupervisedRequestSafe(second.session.id)).toThrow('private network denied');
+    expect(guard).toHaveBeenLastCalledWith(
+      'http://127.0.0.1/metadata',
+      expect.objectContaining({ enforceApprovedDomains: false }),
+    );
+
+    const reboundWindow = new FakeWindow();
+    const reboundService = new AgentBrowserService({ createWindow: () => reboundWindow as never });
+    const rebound = await reboundService.openSupervised({ url: 'https://example.com', mode: 'headless' }, guard);
+    reboundWindow.webContents.session.resolvedEndpoints = [{ address: '10.0.0.8', family: 'ipv4' }];
+    await expect(reboundWindow.webContents.session.webRequest.request(
+      'https://cdn.example.net/app.js',
+      'script',
+      reboundWindow.webContents.id,
+    )).resolves.toEqual({ cancel: true });
+    expect(() => reboundService.assertSupervisedRequestSafe(rebound.session.id)).toThrow('private network denied');
+    expect(reboundWindow.webContents.session.resolveHost).toHaveBeenCalledWith('cdn.example.net');
+
+    const workerWindow = new FakeWindow();
+    const workerService = new AgentBrowserService({ createWindow: () => workerWindow as never });
+    const worker = await workerService.openSupervised({ url: 'https://example.com', mode: 'headless' }, guard);
+    await expect(workerWindow.webContents.session.webRequest.request(
+      'http://127.0.0.1/service-worker-fetch',
+      'xhr',
+    )).resolves.toEqual({ cancel: true });
+    expect(() => workerService.assertSupervisedRequestSafe(worker.session.id)).toThrow('private network denied');
+
+    const popupWindow = new FakeWindow();
+    const popupService = new AgentBrowserService({ createWindow: () => popupWindow as never });
+    const popupSession = await popupService.openSupervised({ url: 'https://example.com', mode: 'headless' }, guard);
+    const sensitivePopupUrl = 'https://example.com/popup?token=must-not-persist';
+    expect(popupWindow.webContents.openPopup(sensitivePopupUrl)).toEqual({ action: 'deny' });
+    let popupError: unknown;
+    try {
+      popupService.assertSupervisedRequestSafe(popupSession.session.id);
+    } catch (error) {
+      popupError = error;
+    }
+    expect(popupError).toMatchObject({
+      code: 'POPUP_NAVIGATION_DENIED',
+      message: 'Supervised browser task popup navigation is denied',
+    });
+    expect(String(popupError)).not.toContain(sensitivePopupUrl);
+  });
+
   it('prefers the bundled agent-browser CLI runner when available', async () => {
     const createWindow = vi.fn(() => {
       throw new Error('BrowserWindow fallback should not be used');

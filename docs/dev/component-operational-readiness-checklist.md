@@ -1,6 +1,6 @@
 # 组件受控投用验收清单
 
-> P0 状态：完成。P1 状态：ready、尚未实际投放。任何硬性 NO-GO 仍立即停止 canary 或扩大灰度。
+> P0 状态：完成。P1 agent-surrogate 工程流程完成，真人投放延后；任何硬性 NO-GO 仍立即停止 canary 或扩大灰度。
 
 ## A. P0 变更集完整性
 
@@ -56,11 +56,14 @@
 
 ## F. P1 启动前仍需完成
 
+- [x] 工程证据差距审计已落盘，fixture/synthetic/E2E/Harness 不计入真实 run：`docs/dev/tf0009-engineering-evidence-audit.md`
+- [x] agent-surrogate 三 profile 各 `10/10`、agent kill/rollback 通过；证据固定非 human/live，任务只可降级为 `review_needed`
+- [x] Day-1 L0/L1/L2 门禁已归档；冷构建 SEKB 缺口修复后最终 Electron 联合矩阵 `9/9`
 - [ ] 明确 owner 与最小 cohort
-- [ ] 为 DCS/SEKB/Browser profile 写明启用和关闭步骤
-- [ ] 固化 token、时延、命中、拒绝、错误和回滚指标
+- [x] 为 DCS/SEKB/Browser profile 写明启用和关闭步骤（runbook 已具备；尚未获 owner 批准）
+- [x] 固化 token、时延、命中、拒绝、错误和回滚指标（字段已定义；尚无真实分布）
 - [ ] 固化隐私、数据保留与删除边界
-- [ ] 执行至少一轮 kill/rollback 演练
+- [x] 执行至少一轮 agent kill/rollback 演练（真人 canary drill 仍未执行）
 - [ ] 参与者确认这是 opt-in canary，不是 GA
 - [ ] 记录最小真实任务及负责人继续/缩小/停止结论
 

@@ -3,6 +3,8 @@ export * from "./evidence.js";
 export * from "./events.js";
 export * from "./event-log.js";
 export * from "./event-log-persistence.js";
+export * from "./agent-run-contracts.js";
+export * from "./agent-run-event-spine.js";
 export * from "./event-log-operator-inspection.js";
 export * from "./event-log-resume-cutover-readiness.js";
 export * from "./event-log-controlled-dual-read-resume-pilot.js";

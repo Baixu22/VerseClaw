@@ -1,9 +1,7 @@
 
 Running 2 tests using 1 worker
 
-  ok 1 tests\e2e\chat-plan-mode-write-challenge.spec.ts:56:7 › Plan mode real write challenge › blocks terminal, file write, and mutating Gateway RPC without side effects (7.1s)
-  ok 2 tests\e2e\cron-browser-automation.spec.ts:13:7 › Cron browser automation › creates a browser automation scheduled task from the cron dialog (5.7s)
+  ok 1 tests\e2e\chat-plan-mode-write-challenge.spec.ts:56:7 › Plan mode real write challenge › blocks terminal, file write, and mutating Gateway RPC without side effects (6.6s)
+  ok 2 tests\e2e\cron-browser-automation.spec.ts:13:7 › Cron browser automation › creates a browser automation scheduled task from the cron dialog (8.1s)
 
-  2 passed (13.4s)
-
-/* reseal-marker:cd87e3735 */
+  2 passed (15.4s)

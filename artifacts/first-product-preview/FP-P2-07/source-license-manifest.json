@@ -6,7 +6,7 @@
     "name": "MergeBeacon",
     "upstreamUrl": "https://github.com/tisrop/mergebeacon.git",
     "upstreamWebUrl": "https://github.com/tisrop/mergebeacon",
-    "localSnapshotPath": "C:/Users/27933/Desktop/verseshell/MergeBeacon-main",
+    "localSnapshotPath": "[local-source-snapshot]/MergeBeacon-main",
     "localSnapshotObservedAt": "2026-07-28",
     "containsGitMetadata": false,
     "snapshotInventory": {
@@ -50,7 +50,9 @@
     }
   },
   "upstreamResolution": {
-    "status": "exact_parent_commit_unresolved",
+    "status": "exact_parent_commit_resolved",
+    "resolvedParentCommit": "14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+    "resolvedParentTree": "95fddba4593a879352a59de157db92c63afa819f",
     "observedRefs": {
       "main": "ba9fca80eae1f474f3cfb84b36d485991733655e",
       "release/0.10.0": "6407a8f9168f6f2520ca1c8861bb9411aac5e6a0",
@@ -59,7 +61,30 @@
       "prDiffCommitScopeHead": "3383256585d91668980349f0ea24abe17d0f01b2",
       "pullRequest54Head": "3383256585d91668980349f0ea24abe17d0f01b2"
     },
+    "resolvedParentVerification": {
+      "commit": "14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+      "tree": "95fddba4593a879352a59de157db92c63afa819f",
+      "archiveUrl": "https://codeload.github.com/tisrop/mergebeacon/zip/14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+      "verifiedAt": "2026-07-28",
+      "fileCount": 262,
+      "byteSize": 4428869,
+      "rootHash": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+      "matchesLocalSnapshot": true,
+      "noticeFilePresent": false,
+      "method": "GitHub commit API parent lookup, recursive tree inventory, and byte-for-byte codeload archive inventory hash"
+    },
     "contentComparisons": [
+      {
+        "candidate": "14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+        "remoteFileCount": 262,
+        "remoteByteSize": 4428869,
+        "remoteRootHash": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+        "localFileCount": 262,
+        "localByteSize": 4428869,
+        "localRootHash": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+        "differentCount": 0,
+        "summary": "The resolved parent archive is byte-identical to the local snapshot under the recorded ordinal inventory algorithm."
+      },
       {
         "candidate": "main@ba9fca80eae1f474f3cfb84b36d485991733655e",
         "remoteFileCount": 266,
@@ -97,17 +122,27 @@
       "filesChanged": 6,
       "addedLines": 345,
       "deletedLines": 2,
-      "relationToSnapshot": "All six local-to-head deltas are exactly the files changed by this single commit, so the snapshot matches its parent tree by content; the parent commit SHA remains unresolved."
+      "relationToSnapshot": "All six local-to-head deltas are exactly the files changed by this single commit. The commit API identifies parent 14a17c7ecb821af4bdb645d5f492e7cf72bcd293, whose codeload archive matches the snapshot inventory byte-for-byte."
     },
     "diagnostics": [
       "Anonymous GitHub REST requests were rate-limited during the audit.",
       "Three filtered or shallow git clone attempts were reset or timed out by the network path.",
-      "git ls-remote, codeload commit archives, and the PR 54 patch remained available and supplied the recorded evidence."
+      "git ls-remote, codeload commit archives, and the PR 54 patch remained available and supplied the initial evidence.",
+      "On 2026-07-28 the GitHub commit endpoint resolved PR 54 head 3383256585d91668980349f0ea24abe17d0f01b2 to parent 14a17c7ecb821af4bdb645d5f492e7cf72bcd293; its 262-blob recursive tree contains LICENSE and no NOTICE."
     ]
   },
   "adoptionPolicy": {
     "directSourceCopyAllowed": false,
-    "reason": "The exact parent commit SHA is unresolved. No copied implementation may enter Verse Claw until the commit and NOTICE state are frozen.",
+    "reason": "The exact parent and NOTICE state are now frozen, but the shipped Verse Claw implementation was completed as a clean-room TypeScript design. FP-P3-01 records provenance and does not retroactively authorize source copying.",
+    "attributionAndModificationNotice": {
+      "upstream": "https://github.com/tisrop/mergebeacon",
+      "upstreamCommit": "14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+      "snapshotRootSha256": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+      "license": "Apache-2.0",
+      "noticeAtResolvedCommit": "absent",
+      "implementation": "clean-room TypeScript; no upstream implementation text copied",
+      "modificationStatement": "No upstream implementation file was copied or modified. Verse Claw contracts, adapters, providers, UI, and tests are independently authored; future copying requires a separate license and NOTICE review."
+    },
     "allowedNow": [
       "Study behavior and boundary cases.",
       "Write Verse Claw-owned TypeScript contracts and adapters from the accepted requirements.",
@@ -115,7 +150,7 @@
     ],
     "forbidden": [
       "Copy Tauri, Vue, or Rust implementation files into Verse Claw.",
-      "Treat README version 0.8.0 or package version 0.10.0 as proof of the snapshot commit.",
+      "Treat README version 0.8.0 or package version 0.10.0 as a substitute for the resolved commit and snapshot hash.",
       "Create a second local Git service, patch schema, or write journal.",
       "Use this source record as authorization for real remote mutations."
     ]

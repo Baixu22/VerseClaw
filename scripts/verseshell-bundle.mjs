@@ -50,6 +50,24 @@ function run(command, args, { cwd } = {}) {
   return (result.stdout || '').trim();
 }
 
+function runPreservingLeadingWhitespace(command, args, { cwd } = {}) {
+  const result = spawnSync(command, args, { cwd, encoding: 'utf8', shell: false, windowsHide: true });
+  if (result.error) fail(`Unable to run ${command}: ${result.error.message}`);
+  if (result.status !== 0) {
+    fail(`${command} ${args.join(' ')} failed: ${(result.stderr || result.stdout || `exit ${result.status}`).trim()}`);
+  }
+  return (result.stdout || '').trimEnd();
+}
+
+function runDiff(command, args, { cwd } = {}) {
+  const result = spawnSync(command, args, { cwd, encoding: 'utf8', shell: false, windowsHide: true });
+  if (result.error) fail(`Unable to run ${command}: ${result.error.message}`);
+  if (result.status !== 0 && result.status !== 1) {
+    fail(`${command} ${args.join(' ')} failed: ${(result.stderr || result.stdout || `exit ${result.status}`).trim()}`);
+  }
+  return (result.stdout || '').trim();
+}
+
 function requireSupportedTarget(platform, arch) {
   if (platform !== SUPPORTED_TARGET.platform || arch !== SUPPORTED_TARGET.arch) {
     fail(`VerseShell bundle supports win32/x64 only; received ${platform}/${arch}.`);
@@ -70,6 +88,20 @@ function expectedArtifact(platform, arch) {
     path: `resources/bin/${platform}-${arch}/ae.exe`,
     packaged_path: 'bin/ae.exe',
   };
+}
+
+function resolveProjectPath(input, label) {
+  const destination = resolve(PROJECT_ROOT, input);
+  const projectRelative = relative(PROJECT_ROOT, destination);
+  if (
+    !projectRelative
+    || projectRelative === '..'
+    || projectRelative.startsWith('../')
+    || projectRelative.startsWith('..\\')
+  ) {
+    fail(`${label} must stay inside the ClawX workspace.`);
+  }
+  return destination;
 }
 
 export function bundlePaths(root = PROJECT_ROOT, platform = 'win32', arch = 'x64') {
@@ -183,6 +215,9 @@ function validateManifest(manifest, { platform, arch, mode }) {
     if (mode === 'package' && (!cleanString(corresponding.locator) || !cleanString(corresponding.patch_instructions))) {
       fail('Dirty package build requires corresponding source and patch/source-snapshot instructions.');
     }
+    if (mode === 'package' && !cleanString(compliance.corresponding_source_path)) {
+      fail('Dirty package build requires a corresponding-source patch path.');
+    }
   }
   const artifacts = object(manifest.artifacts, 'manifest.artifacts');
   const target = `${platform}-${arch}`;
@@ -207,6 +242,18 @@ async function validateArtifact(binaryPath, artifact) {
   }
 }
 
+async function validateCorrespondingSource(root, manifest) {
+  if (manifest.provenance?.dirty !== true) return;
+  const relativePatch = cleanString(manifest.compliance?.corresponding_source_path);
+  if (!relativePatch) fail('Dirty VerseShell bundle is missing its corresponding-source patch path.');
+  const patchPath = resolve(root, relativePatch);
+  await requireFile(patchPath, 'VerseShell corresponding-source patch');
+  const actualSha256 = await sha256File(patchPath);
+  if (actualSha256 !== manifest.provenance.build_input.diff_sha256) {
+    fail(`VerseShell corresponding-source patch checksum mismatch: expected ${manifest.provenance.build_input.diff_sha256}, found ${actualSha256}.`);
+  }
+}
+
 export async function validateSourceBundle({ root = PROJECT_ROOT, platform = 'win32', arch = 'x64', mode = 'dev' } = {}) {
   requireSupportedTarget(platform, arch);
   if (!['dev', 'package'].includes(mode)) fail(`Unsupported bundle mode: ${mode}.`);
@@ -214,6 +261,7 @@ export async function validateSourceBundle({ root = PROJECT_ROOT, platform = 'wi
   const manifest = await readJson(paths.manifestPath, 'VerseShell manifest');
   const artifact = validateManifest(manifest, { platform, arch, mode });
   await validateComplianceFiles(paths.complianceDir, manifest);
+  await validateCorrespondingSource(paths.root, manifest);
   await validateArtifact(paths.binaryPath, artifact);
   return { manifest, artifact, paths };
 }
@@ -225,6 +273,7 @@ export async function validatePackagedBundle({ resourcesPath, platform = 'win32'
   const manifest = await readJson(paths.manifestPath, 'packaged VerseShell manifest');
   const artifact = validateManifest(manifest, { platform, arch, mode });
   await validateComplianceFiles(paths.complianceDir, manifest);
+  await validateCorrespondingSource(resolve(resourcesPath), manifest);
   await validateArtifact(paths.binaryPath, artifact);
   return { manifest, artifact, paths };
 }
@@ -266,16 +315,58 @@ function parseCargoMetadata(source) {
   const pkg = metadata.packages?.find((candidate) => String(candidate.manifest_path).replace(/\\/g, '/') === manifestPath)
     ?? metadata.packages?.[0];
   if (!pkg || pkg.name !== 'verseshell' || !cleanString(pkg.version)) fail('cargo metadata did not identify verseshell.');
-  return { package_name: pkg.name, package_version: pkg.version, target_directory: metadata.target_directory };
+  return {
+    package_name: pkg.name,
+    package_version: pkg.version,
+    target_directory: '[build-source]/target',
+  };
+}
+
+export function collectSourceDiff(source) {
+  const tracked = run('git', ['diff', '--binary', '--no-ext-diff', 'HEAD'], { cwd: source });
+  const untracked = run('git', ['ls-files', '--others', '--exclude-standard', '-z'], { cwd: source })
+    .split('\0')
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+  const patches = [tracked];
+  for (const path of untracked) {
+    patches.push(runDiff(
+      'git',
+      ['diff', '--binary', '--no-ext-diff', '--no-index', '--', '/dev/null', path],
+      { cwd: source },
+    ));
+  }
+  return `${patches.filter(Boolean).join('\n')}\n`;
+}
+
+export async function captureSourcePatch({ source, output }) {
+  if (!source) fail('capture-patch requires --source <VerseShell source path>.');
+  if (!output) fail('capture-patch requires --output <workspace-relative patch path>.');
+  const sourceRoot = resolve(source);
+  await requireFile(join(sourceRoot, 'Cargo.toml'), 'VerseShell Cargo.toml');
+  const destination = resolveProjectPath(output, 'capture-patch output');
+  const diff = collectSourceDiff(sourceRoot);
+  if (!diff.trim()) fail('VerseShell source has no changes to capture.');
+  await mkdir(dirname(destination), { recursive: true });
+  await writeFile(destination, diff, 'utf8');
+  return {
+    path: destination,
+    bytes: Buffer.byteLength(diff),
+    sha256: sha256(diff),
+  };
 }
 
 function sourceProvenance(source, args) {
   const commit = run('git', ['rev-parse', 'HEAD'], { cwd: source });
   const repository = run('git', ['remote', 'get-url', 'origin'], { cwd: source });
-  const status = run('git', ['status', '--porcelain=v1', '--untracked-files=all'], { cwd: source });
+  const status = runPreservingLeadingWhitespace(
+    'git',
+    ['status', '--porcelain=v1', '--untracked-files=all'],
+    { cwd: source },
+  );
   const statusPorcelain = status ? status.split(/\r?\n/).filter(Boolean) : [];
   const dirty = statusPorcelain.length > 0;
-  const diff = run('git', ['diff', '--binary', '--no-ext-diff', 'HEAD'], { cwd: source });
+  const diff = collectSourceDiff(source);
   const sourceSnapshot = cleanString(args.sourceSnapshot);
   const patchInstructions = cleanString(args.patchInstructions);
   if (args.mode === 'package' && dirty) {
@@ -291,7 +382,7 @@ function sourceProvenance(source, args) {
     commit,
     dirty,
     build_input: {
-      source_directory: source,
+      source_directory: '[build-source]',
       status_porcelain: statusPorcelain,
       diff_sha256: sha256(diff),
       dirty_entry_count: statusPorcelain.length,
@@ -381,6 +472,18 @@ async function buildAndSync(args) {
   await requireFile(join(source, 'Cargo.toml'), 'VerseShell Cargo.toml');
   const existing = await readJson(bundlePaths().manifestPath, 'Task14 VerseShell manifest');
   const provenance = sourceProvenance(source, args);
+  const sourcePatch = cleanString(args.sourcePatch);
+  if (provenance.dirty && args.mode === 'package' && !sourcePatch) {
+    fail('Dirty package build requires --source-patch <workspace-relative patch path>.');
+  }
+  if (provenance.dirty && sourcePatch) {
+    const patchPath = resolveProjectPath(sourcePatch, 'source patch');
+    await requireFile(patchPath, 'VerseShell corresponding-source patch');
+    const patchSha256 = await sha256File(patchPath);
+    if (patchSha256 !== provenance.build_input.diff_sha256) {
+      fail(`Corresponding-source patch does not match the build input diff: expected ${provenance.build_input.diff_sha256}, found ${patchSha256}.`);
+    }
+  }
   const cargoVersion = run('cargo', ['--version'], { cwd: source });
   const rustcVersion = run('rustc', ['-vV'], { cwd: source });
   const cargoTarget = (rustcVersion.match(/^host:\s*(.+)$/m) || [])[1]?.trim();
@@ -449,7 +552,10 @@ async function buildAndSync(args) {
       source_instructions_path: 'resources/verseshell/SOURCE.md',
       build_instructions_path: 'resources/verseshell/BUILD.md',
       corresponding_source_locator: provenance.corresponding_source.locator,
-      corresponding_source_status: provenance.dirty ? 'dirty_source_capture_required' : 'identified_by_repository_and_commit',
+      corresponding_source_path: provenance.dirty ? sourcePatch : null,
+      corresponding_source_status: provenance.dirty
+        ? 'dirty_corresponding_source_recorded'
+        : 'identified_by_repository_and_commit',
     },
     artifacts: {
       ...(existing.artifacts ?? {}),
@@ -463,7 +569,7 @@ async function buildAndSync(args) {
 }
 
 function parseArgs(argv) {
-  const args = { platform: 'win32', arch: 'x64', mode: 'dev', source: null, resources: null, sourceSnapshot: null, patchInstructions: null, allowDirtyProvenance: false };
+  const args = { platform: 'win32', arch: 'x64', mode: 'dev', source: null, resources: null, output: null, sourcePatch: null, sourceSnapshot: null, patchInstructions: null, allowDirtyProvenance: false };
   const [command, ...rest] = argv;
   if (!command || ['--help', '-h'].includes(command)) return { command: 'help', ...args };
   for (let index = 0; index < rest.length; index += 1) {
@@ -474,6 +580,8 @@ function parseArgs(argv) {
     index += 1;
     if (token === '--source') args.source = value;
     else if (token === '--resources') args.resources = value;
+    else if (token === '--output') args.output = value;
+    else if (token === '--source-patch') args.sourcePatch = value;
     else if (token === '--platform') args.platform = value;
     else if (token === '--arch') args.arch = value;
     else if (token === '--mode') args.mode = value;
@@ -486,7 +594,8 @@ function parseArgs(argv) {
 
 function printUsage() {
   console.log(`Usage:
-  node scripts/verseshell-bundle.mjs sync --source <path> --platform win32 --arch x64 --mode dev|package [--allow-dirty-provenance --source-snapshot <locator> --patch-instructions <instruction>]
+  node scripts/verseshell-bundle.mjs capture-patch --source <path> --output <workspace-relative patch path>
+  node scripts/verseshell-bundle.mjs sync --source <path> --platform win32 --arch x64 --mode dev|package [--allow-dirty-provenance --source-patch <workspace-relative path> --source-snapshot <locator> --patch-instructions <instruction>]
   node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode dev|package
   node scripts/verseshell-bundle.mjs verify-package --resources <unpacked resources directory> --platform win32 --arch x64`);
 }
@@ -494,6 +603,11 @@ function printUsage() {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.command === 'help') return printUsage();
+  if (args.command === 'capture-patch') {
+    const captured = await captureSourcePatch(args);
+    console.log(JSON.stringify({ action: 'captured-patch', patch: relative(PROJECT_ROOT, captured.path), bytes: captured.bytes, sha256: captured.sha256 }, null, 2));
+    return;
+  }
   if (args.command === 'sync') {
     const { manifest, artifact, paths } = await buildAndSync(args);
     console.log(JSON.stringify({ action: 'synced', binary: relative(PROJECT_ROOT, paths.binaryPath), sizeBytes: artifact.bytes, sha256: artifact.sha256, dirty: manifest.provenance.dirty, commit: manifest.provenance.commit }, null, 2));

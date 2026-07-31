@@ -23,7 +23,7 @@
 本文不是：
 
 - 将所有组件塞进 VerseShell 的单体化设计；
-- 让模型直接使用 VerseShell 26 个 operation 的工具扩面；
+- 让模型直接使用 VerseShell 31 个 operation 的工具扩面；
 - default-on、联合系统 GA 或生产批准；
 - 已批准的 Task Forest 排期；
 - 对论文中收益数字的项目背书。
@@ -90,30 +90,33 @@
 | 热重载失败用例单独复跑 | 5/5 failed | 不是一次性抖动；测试在最后写入后立即停止 reader，当前缺少可验证的刷新完成语义 |
 | Context/VToken/Coding focused Vitest | 11 files / 147 tests passed | 局部 contract 和现有治理行为通过 |
 | 根层 Orchestrator/VToken bridge/default tests | 3 files / 18 tests passed | 默认 OFF 和现有入口扫描通过 |
+| UAS-05 Rust lifecycle / operation protocol | 3/3 + 9/9 passed | 真实 Windows binary 覆盖 argv/env/PATHEXT、pipe/ConPTY、cursor、kill/timeout、整树清理和 restart reconcile |
+| UAS-05 focused runtime / root evidence / bundle | 8 files / 47 tests；2 files / 12 tests；8/8 passed | lifecycle adapter、31-op identity、patch/binary SHA、MCP 隐藏和冻结锁可重复验证 |
 
 热重载红灯不在当前生产 assembly 的直接热路径上，因为生产每回合执行 `open -> ingest -> assemble`，且 `docSources=[]`。它仍然阻止项目宣称 VToken 的 doc-source 并发热重载已经可靠；若目标改为纯 packer，可将该能力移出生产依赖。
 
 ## 4. 现状审计
 
-### 4.1 VerseShell：完整二进制，接入和生命周期不完整
+### 4.1 VerseShell：完整 base+patch 二进制，生命周期等价已实现
 
-已确认：
+UAS-03 前审计基线已确认：
 
-- ClawX 内置 `ae.exe` 与固定上游 commit `c3983694407a9ddb23505e05fad4a9eae653b283` 的 release binary SHA-256 相同；
-- catalog 为 26 个 operation，二进制不是裁剪版；
-- ClawX 当前生产候选路径只接 `runtime.handshake`、`exec.run`、`result.query`；
+- ClawX 内置 `ae.exe` 来自固定上游 commit `c3983694407a9ddb23505e05fad4a9eae653b283` 加 tracked UAS-05 patch；
+- catalog 为 31 个 operation，patch 与 binary SHA-256 均受 manifest 验证；
+- ClawX governed 候选路径内部接 `runtime.handshake`、`result.query` 和 `process.start/poll/write/kill/list`；
 - policy profile、action-bound approval、fail-closed、bounded observation 和 artifact 查询已经存在；
 - 所有生产相关 flag 仍默认关闭。
 
-关键缺口：
+UAS-05 已闭合：
 
-- `exec.run` 仍由 ClawX 把 command string 包装为 `cmd /C`、PowerShell、Git Bash 或 `sh -lc`；
-- 上游缺请求级 env/PATH、stdin、background、ConPTY、主动 cancel、`start/read/write/poll/kill` 和重启恢复；
+- process lifecycle 接收显式 argv、清洗 env、PATH/PATHEXT、stdin/background/ConPTY、cancel、poll/write/kill/list；
+- 单调 cursor、有界 retention、artifact lineage、runtime/workspace/agent/session owner 和 restart `lost` 已实现；
+- Job Object 在 kill/timeout/shutdown/crash 时清理整树，OpenClaw 禁止 VerseShell PID native fallback；
 - workspace jail 和 Job Object 不是 OS filesystem sandbox；
 - transaction/test last-state 是进程级状态，且 transaction 不覆盖 shell 命令造成的写入；
-- 当前能力不足以无回归替代现有 `exec/process`。
+- 当前能力足以支撑 default-off governed host 的 `exec/process` 生命周期等价，但尚未迁移默认本地 plane。
 
-裁决：保留并扩展 VerseShell 的**进程执行内核**。不引入其 file/repo/test/transaction operation 作为新的模型主工具。
+裁决：UAS-05 的**进程执行内核**实现可接受；下一步只能在独立 UAS-06 cohort 中验证单一路径，不引入 file/repo/test/transaction operation 作为新的模型主工具。
 
 ### 4.2 VerseToken：assembler 完整，但生产集成承担了不必要状态
 
@@ -145,10 +148,12 @@ Embedded attempt
 2. 只读 assembly 为无用 WAL/lock 付出 I/O、故障和锁竞争成本；
 3. 全局 worker 使无关 workspace/session 串行；
 4. `tokens_used` 是估算，不能作为 provider 成本事实；
-5. `harness/specs/tasks/vtoken-foundation-bridge.md` 仍写产品默认 ON，而规则、代码、README 和测试均锁定默认 OFF，存在 spec drift；
+5. 审计时 `harness/specs/tasks/vtoken-foundation-bridge.md` 仍写产品默认 ON，而规则、代码、README 和测试均锁定默认 OFF；该 spec drift 已由 `FP-P4-06` 修正并增加回归守卫；
 6. 热重载测试当前稳定失败，不能宣称该扩展能力已可靠。
 
 裁决：复用 parser/graph/selection/rendering，但将生产形态收口为**无业务 Memory 的纯 assembly service**。
+
+UAS-03 实施结果（2026-07-30）：生产已改为每 turn 一次 `VtokenPackRequest/v1`，由 Context Orchestrator 显式传入 allowance 和稳定去重候选。每个请求使用独立内存 graph，Python worker 可并发处理并由 JSON-RPC id 关联乱序响应；生产不再调用 `vt.open`、传 `sessionDir/session` 或创建 MemStore/WAL/lock，也不再使用全局 `runExclusive`。返回值仅暴露 `estimatedTokens` 与 `estimateMethod=chars_div_4`；同步 `refresh_doc_sources()` 定义了热重载完成屏障。原 stateful API 保留给 package consumer 和默认关闭的 diagnostics。
 
 ### 4.3 Coding：已经是稳定门面和治理层，不是待搬迁的单一包
 
@@ -380,7 +385,7 @@ flowchart TD
 - 独立于 Orchestrator 的 context 私有预算；
 - 同一 BlockStore 内容被 VToken、Assembler 和 memory pilot 重复投影；
 - 长期保留独立 `verseshell_result` 学习面；进程生命周期完成后应并入现有 `process` 读取体验；
-- task spec 中与实现冲突的 VToken default-ON 表述。
+- task spec 中与实现冲突的 VToken default-ON 表述（`FP-P4-06` 已修正，保留本条作为历史审计记录）。
 
 ### 9.4 明确不引入
 
@@ -480,7 +485,7 @@ validationState, approvalState, targetStore
 
 - 用户确认后提交 Task Forest proposal；
 - 新建引用 `gateway-backend-communication` 的 Harness task spec；
-- 修复 VToken task spec 的 default-ON 漂移；
+- 修复 VToken task spec 的 default-ON 漂移（已由 `FP-P4-06` 前置完成）；
 - 冻结 contract 版本和跨层 owner。
 
 退出条件：Task Forest、Harness、默认矩阵和本文没有 authority 冲突。
@@ -526,6 +531,8 @@ validationState, approvalState, targetStore
 
 退出条件：失败后文件状态可证明；同文件并发不交错；journal 和 undo 对 partial failure 可见。
 
+2026-07-30 工程更新：上述退出条件已在 UAS-04 实现层闭合。`apply_patch` 的排序路径租约覆盖预检读取、全批预计算、mutation、回滚和 journal 状态写入；后段失败完整恢复时为 `rolled_back`，恢复不完整时为 `recovery_required` 并保留既有 write-journal sidecar/recovery ref。重启可检测 `prepared` 批次，post-write verify 不回滚 committed mutation。closeout 已经用户确认并应用，正式状态为 `TF-0015=done/100%`。
+
 ### U4：VerseShell Execution Contract 和生命周期
 
 范围：
@@ -537,6 +544,13 @@ validationState, approvalState, targetStore
 
 退出条件：现有 `exec/process` 行为矩阵在 VerseShell 上功能等价；常用 Node/pnpm/git/python 命令覆盖 Windows quoting、Unicode 和 shim；无 native fallback。
 
+2026-07-30 工程更新：UAS-05 已实现内部 `process.start/poll/write/kill/list`、
+PATH/PATHEXT 与 batch shim、pipe stdin、ConPTY、单调 cursor、24 小时有界 retention、
+artifact lineage、owner mismatch fail-closed、timeout/重复 kill/Job Object 整树清理和 restart
+`lost`。OpenClaw `exec/process` 已接 lifecycle owner，MCP 隐藏全部 `process.*`，生产路径不再
+调用同步 compatibility helper。真实 Windows、focused runtime、manifest/source patch 和供应链
+测试通过。Task Forest closeout 已获用户确认并应用，正式状态为 `TF-0016=done/100%`，UAS-06 已在独立任务边界内启动。
+
 ### U5：单一本地执行平面迁移
 
 范围：
@@ -547,6 +561,10 @@ validationState, approvalState, targetStore
 - 以 workspace/cohort 配置启用，不做 per-call LLM 路由。
 
 退出条件：canary cohort 内本地执行覆盖率 100%，native fallback 0，安全/功能门禁无回归，kill switch rollback 演练通过。
+
+2026-07-30 工程更新：严格配置已接受 global/per-agent `tools.exec.host=verseshell`，session override 复用同一路由；模型侧 host enum 不增加 VerseShell。被选 scope 中合格的本地调用确定性进入 governed lifecycle，sandbox、node、remote/provider-native 与 elevated 路径不计入分母。诊断记录 selected/actual host、lifecycle owner、cohort route、fallback 和 recovery state，且不记录 command 内容。
+
+工程证据报告为 `engineering-only/needs-real-canary`：short、long、background、stdin、PTY、cancel、timeout、restart、rollback 九场景覆盖率 100%，native fallback 0，engineering hard veto 0。真实 cohort、paired task、actual provider usage、human recovery 和 soak 计数均为 0；因此退出条件尚未闭合，不能关闭 TF-0017 或启动 UAS-07。
 
 ### U6：长任务和长期 Memory 闭环
 
@@ -621,7 +639,7 @@ validationState, approvalState, targetStore
 - context 候选仍有未计费或重复注入；
 - VToken `tokens_used` 被当成 provider actual usage；
 - apply_patch 仍可能静默留下 partial mutation；
-- VerseShell 缺 stdin/background/PTY/cancel 任一现有关键能力却切默认路径；
+- TF-0016 未正式 closeout 或 UAS-06 未完成真实 cohort 证据却切默认路径；
 - governed 路径自动回退 native shell；
 - workspace jail/Job Object 被宣传为 OS sandbox；
 - 通过增加 LLM router 掩盖确定性 contract 缺口；
@@ -639,13 +657,13 @@ validationState, approvalState, targetStore
 5. **TF-0016 / UAS-05 VerseShell 生命周期等价**：补齐后才谈全量替代 PowerShell/Git Bash；
 6. **TF-0017 / UAS-06 cohort 级单一路径**：不用 LLM router，以真实 paired A/B 判断回本。
 
-路线已获确认并登记，但实现仍未开始。当前唯一 `status=ready` 的可执行节点是 `TF-0009`；完成或正式暂停它之后，才允许按依赖从 `TF-0011` 开始。
+路线已获确认并登记。TF-0009 的 agent-surrogate 工程流已完成但真人层保持 `review_needed`；独立治理 proposal 只把纯工程证据以非阻塞 `derived_from` 关系交给 TF-0011。TF-0011 至 TF-0016 已正式收口为 done；TF-0017/UAS-06 已完成工程路由和本地矩阵，Task Forest 已确认推进为 `in_progress/35%`，但真实 cohort 证据仍为 0。这不构成 TF-0009 done，也不解锁 TF-0018、live/product/default-on。
 
 ## 15. 最终理解
 
 VerseShell、VerseToken 和 Coding 都不是“残血组件”：
 
-- VerseShell 是完整二进制，但上游进程生命周期和 ClawX 适配还不足；
+- VerseShell 是完整 base+patch 二进制，UAS-05 生命周期与 ClawX adapter 已达到 default-off governed host 等价；UAS-06 已建立显式 cohort 单一路由，但真实 canary 尚未开始；
 - VerseToken 的算法/存储能力完整，但生产只需要其中的 assembly 子集，当前反而使用了不必要状态；
 - Coding 已经拥有大量关键治理能力，不能为了统一而被 VerseShell 覆盖；
 - DCS/Memory 不是缺模块，而是入口和预算还没有真正完成单一 owner 收口。

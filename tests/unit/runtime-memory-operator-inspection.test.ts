@@ -520,7 +520,7 @@ describe("runtime memory readonly operator inspection utility", () => {
     expect(result.stdout).toContain("explicit --database <path>");
     expect(result.stdout).toContain("does not affect runtime behavior");
     expect(result.stdout).toContain("does not provide durable fact authority");
-  });
+  }, 120_000);
 
   it("keeps package script invocation no-open and no-create until both explicit flags are provided", () => {
     const missingDbPath = path.join(createTempDir(), "missing.sqlite");

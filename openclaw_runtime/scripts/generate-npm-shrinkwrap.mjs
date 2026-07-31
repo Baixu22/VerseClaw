@@ -383,7 +383,36 @@ function packageJsonForShrinkwrap(packageJson, shrinkwrapOverrides) {
   const normalized = { ...packageJson };
   delete normalized.devDependencies;
   normalized.overrides = mergeOverrides(packageJson.overrides, shrinkwrapOverrides, {});
+  pinDirectDependencySpecsForNpmOverrides(normalized, normalized.overrides);
   return normalized;
+}
+
+/**
+ * npm rejects an exact override when the same package is declared directly
+ * with a range (EOVERRIDE), even when that exact version is the version
+ * selected by pnpm-lock.yaml. The temporary manifest used only to generate a
+ * shrinkwrap must therefore use the lock-selected exact spec for that direct
+ * dependency. Keep the published manifest untouched; this is an npm input
+ * normalization step, not a source dependency change.
+ */
+function pinDirectDependencySpecsForNpmOverrides(packageJson, overrides) {
+  for (const section of ["dependencies", "optionalDependencies", "peerDependencies"]) {
+    const dependencies = packageJson[section];
+    if (!dependencies || typeof dependencies !== "object" || Array.isArray(dependencies)) {
+      continue;
+    }
+    const pinned = { ...dependencies };
+    for (const [name, spec] of Object.entries(dependencies)) {
+      const override = overrides?.[name];
+      const rootSpec = isPlainObject(override) ? override["."] : override;
+      const exact = exactVersionFromOverrideSpec(rootSpec);
+      if (exact && spec !== exact) {
+        pinned[name] = exact;
+      }
+    }
+    packageJson[section] = pinned;
+  }
+  return packageJson;
 }
 
 /**

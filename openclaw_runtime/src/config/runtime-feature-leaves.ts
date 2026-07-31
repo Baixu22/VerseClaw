@@ -62,6 +62,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
         timeoutMs: 5000,
       },
     },
+    injectionBudget: { totalChars: 6000, dropAlertRatio: 0.1 },
   },
   coding: {
     factViews: { enabled: true },

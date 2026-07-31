@@ -1,7 +1,10 @@
 """RPC contract tests for vtoken.host_rpc (in-process dispatch)."""
+
 from __future__ import annotations
 
 import json
+import threading
+from io import StringIO
 
 import pytest
 
@@ -21,6 +24,96 @@ def test_ping_before_open():
     assert result["ok"] is True
     assert result["opened"] is False
     assert "version" in result
+
+
+def _pack_request(candidate_id: str, text: str) -> dict:
+    return {
+        "schema": "VtokenPackRequest/v1",
+        "task_hint": "auth",
+        "allowance_tokens": 600,
+        "estimate_method": "chars_div_4",
+        "render_mode": "compact",
+        "candidates": [
+            {
+                "candidate_id": candidate_id,
+                "kind": "markdown",
+                "source_path": "AGENTS.md",
+                "text": text,
+            }
+        ],
+    }
+
+
+def test_stateless_pack_has_honest_estimate_and_no_store_side_effect(
+    tmp_path, monkeypatch
+):
+    state_dir = tmp_path / "state"
+    state_dir.mkdir()
+    monkeypatch.setenv("OPENCLAW_STATE_DIR", str(state_dir))
+
+    packed = dispatch(
+        "vt.pack",
+        _pack_request("workspace-a", "# Auth\n\n- rotate refresh tokens\n"),
+    )
+
+    assert packed["schema"] == "VtokenPackResult/v1"
+    assert packed["estimate_method"] == "chars_div_4"
+    assert packed["estimated_tokens"] <= packed["allowance_tokens"] == 600
+    assert "tokens_used" not in packed
+    assert packed["candidate_count"] == 1
+    assert dispatch("vt.ping", {})["opened"] is False
+    assert list(state_dir.iterdir()) == []
+
+
+def test_stateless_pack_rejects_duplicate_candidate_ids():
+    params = _pack_request("duplicate", "# A\n\n- first\n")
+    params["candidates"].append(
+        {
+            "candidate_id": "duplicate",
+            "kind": "markdown",
+            "source_path": "B.md",
+            "text": "# B\n\n- second\n",
+        }
+    )
+    with pytest.raises(ValueError, match="duplicate candidate_id"):
+        dispatch("vt.pack", params)
+
+
+def test_stateless_pack_requests_do_not_share_graphs():
+    first = dispatch(
+        "vt.pack", _pack_request("workspace-a", "# Auth\n\n- alpha-only\n")
+    )
+    second = dispatch(
+        "vt.pack", _pack_request("workspace-b", "# Auth\n\n- beta-only\n")
+    )
+
+    assert "alpha-only" in first["prompt"]
+    assert "beta-only" not in first["prompt"]
+    assert "beta-only" in second["prompt"]
+    assert "alpha-only" not in second["prompt"]
+
+
+def test_line_server_runs_stateless_pack_requests_concurrently():
+    barrier = threading.Barrier(2)
+
+    def concurrent_handler(request):
+        barrier.wait(timeout=2)
+        return {"jsonrpc": "2.0", "id": request["id"], "result": {"ok": True}}
+
+    requests = "".join(
+        json.dumps(
+            {"jsonrpc": "2.0", "id": request_id, "method": "vt.pack", "params": {}}
+        )
+        + "\n"
+        for request_id in (1, 2)
+    )
+    output = StringIO()
+    host_rpc.serve(
+        StringIO(requests), output, handler=concurrent_handler, pack_workers=2
+    )
+
+    responses = [json.loads(line) for line in output.getvalue().splitlines()]
+    assert {response["id"] for response in responses} == {1, 2}
 
 
 def test_open_ingest_assemble_stats_close_flow():
@@ -45,7 +138,10 @@ def test_open_ingest_assemble_stats_close_flow():
                 {
                     "name": "lookup_user",
                     "description": "Look up a user by id",
-                    "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}},
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {"id": {"type": "string"}},
+                    },
                 }
             ],
             "server_name": "demo",
@@ -82,7 +178,9 @@ def test_assemble_requires_open():
 
 
 def test_unknown_method_jsonrpc():
-    resp = handle_request({"jsonrpc": "2.0", "id": 1, "method": "vt.nope", "params": {}})
+    resp = handle_request(
+        {"jsonrpc": "2.0", "id": 1, "method": "vt.nope", "params": {}}
+    )
     assert resp["id"] == 1
     assert resp["error"]["code"] == -32601
 
@@ -90,7 +188,12 @@ def test_unknown_method_jsonrpc():
 def test_invalid_params_jsonrpc():
     dispatch("vt.open", {})
     resp = handle_request(
-        {"jsonrpc": "2.0", "id": 2, "method": "vt.assemble", "params": {"budget_tokens": "nope"}}
+        {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "vt.assemble",
+            "params": {"budget_tokens": "nope"},
+        }
     )
     assert resp["error"]["code"] == -32602
 
@@ -99,7 +202,10 @@ def test_render_modes():
     dispatch("vt.open", {})
     dispatch(
         "vt.ingest_markdown",
-        {"text": "# Title\n\nSome knowledge about security rules.\n", "source_path": "k.md"},
+        {
+            "text": "# Title\n\nSome knowledge about security rules.\n",
+            "source_path": "k.md",
+        },
     )
     for mode in ("compact", "dense", "verbose"):
         out = dispatch(

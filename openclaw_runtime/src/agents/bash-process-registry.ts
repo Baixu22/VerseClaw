@@ -30,7 +30,7 @@ export type ProcessStatus = "running" | "completed" | "failed" | "killed";
 /** Writable stdin surface shared by child-process and PTY-backed sessions. */
 export type SessionStdin = {
   write: (data: string, cb?: (err?: Error | null) => void) => void;
-  end: () => void;
+  end: (cb?: (err?: Error | null) => void) => void;
   // When backed by a real Node stream (child.stdin), this exists; for PTY wrappers it may not.
   destroy?: () => void;
   destroyed?: boolean;
@@ -65,6 +65,10 @@ export interface ProcessSession {
   child?: ChildProcessWithoutNullStreams;
   stdin?: SessionStdin;
   pid?: number;
+  /** Non-native lifecycle owner; prevents PID fallback from bypassing its control plane. */
+  lifecycleOwner?: "verseshell";
+  lifecycleCancel?: (reason: TerminationReason) => void;
+  lastOutputAt?: number;
   startedAt: number;
   cwd?: string;
   maxOutputChars: number;
@@ -164,6 +168,7 @@ export function appendOutput(session: ProcessSession, stream: "stdout" | "stderr
     session.pendingStderrChars = pendingChars;
   }
   session.totalOutputChars += chunk.length;
+  session.lastOutputAt = Date.now();
   const aggregated = trimWithCap(session.aggregated + chunk, session.maxOutputChars);
   session.truncated =
     session.truncated || aggregated.length < session.aggregated.length + chunk.length;

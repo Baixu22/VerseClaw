@@ -30,13 +30,16 @@ describe('observability trajectory-backed trace indexing', () => {
   let tempRoot: string;
   let previousUserData: string | undefined;
   let previousIndexDir: string | undefined;
+  let previousOpenClawConfigDir: string | undefined;
 
   beforeEach(async () => {
     tempRoot = await mkdtemp(join(tmpdir(), 'clawx-observability-trajectory-index-'));
     previousUserData = process.env.VERSE_CLAW_USER_DATA_DIR;
     previousIndexDir = process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
+    previousOpenClawConfigDir = process.env.OPENCLAW_CONFIG_DIR;
     process.env.VERSE_CLAW_USER_DATA_DIR = tempRoot;
     process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = join(tempRoot, 'observability-index');
+    process.env.OPENCLAW_CONFIG_DIR = join(tempRoot, 'openclaw-source-state');
     setRuntimeTraceFetcher(async () => ({ traces: [], scorecards: [] }));
     clearObservabilityTraceBuffer();
     resetObservabilityIndexForTests();
@@ -50,6 +53,8 @@ describe('observability trajectory-backed trace indexing', () => {
     else process.env.VERSE_CLAW_USER_DATA_DIR = previousUserData;
     if (previousIndexDir == null) delete process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
     else process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR = previousIndexDir;
+    if (previousOpenClawConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;
+    else process.env.OPENCLAW_CONFIG_DIR = previousOpenClawConfigDir;
     await rm(tempRoot, { recursive: true, force: true });
   });
 

@@ -469,7 +469,7 @@ import { invokeHost } from './host-api-client';
 type PromptCacheStatusFn = HostApiContract['usage']['promptCacheStatus'];
 type PromptCacheRiskEventFn = HostApiContract['usage']['recordPromptCacheRiskEvent'];
 
-export type { ChatKnowledgeReference } from '@shared/host-api/contract';
+export type { ChatKnowledgeReference, KnowledgeSekbDistillationSuggestion } from '@shared/host-api/contract';
 
 export type {
   ChannelAccountsResult,
@@ -937,6 +937,8 @@ export const hostApi = {
       invokeHost('agentBrowser', 'requestTaskApproval', input),
     approveTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
       invokeHost('agentBrowser', 'approveTask', input),
+    rejectTask: (input: AgentBrowserTaskPayload): Promise<AgentBrowserTaskResult> =>
+      invokeHost('agentBrowser', 'rejectTask', input),
     show: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>
       invokeHost('agentBrowser', 'show', input),
     hide: (input: AgentBrowserSessionPayload): Promise<AgentBrowserActionResult> =>

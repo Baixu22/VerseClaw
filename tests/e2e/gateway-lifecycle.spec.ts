@@ -1,4 +1,10 @@
+import type { Page } from '@playwright/test';
 import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
+
+async function closeSettingsDrawer(page: Page) {
+  await page.getByTestId('settings-drawer-close').click();
+  await expect(page.getByTestId('settings-drawer')).toHaveCount(0);
+}
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -26,18 +32,18 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
     await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('models-page')).toBeVisible();
 
-    await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
-    await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
 
+    await closeSettingsDrawer(page);
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
 
     // Navigate back to chat — the gateway status indicator should be visible
+    await closeSettingsDrawer(page);
     await page.getByTestId('sidebar-new-chat').click();
     // Verify the page didn't crash; main layout should still be stable
     await expect(page.getByTestId('main-layout')).toBeVisible();
@@ -95,7 +101,6 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
     await page.waitForTimeout(500);
 
     // App should still be functional in error state
-    await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-agents').click();
     await expect(page.getByTestId('agents-page')).toBeVisible();
 
@@ -122,8 +127,10 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
     await page.waitForTimeout(500);
 
     // Final navigation check to confirm app is still healthy after full lifecycle
+    await closeSettingsDrawer(page);
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
+    await closeSettingsDrawer(page);
     await page.getByTestId('sidebar-new-chat').click();
     await expect(page.getByTestId('main-layout')).toBeVisible();
   });
@@ -192,11 +199,11 @@ test.describe('Verse Claw gateway lifecycle resilience', () => {
     await expect(page.getByTestId('agents-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);
 
-    await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-channels').click();
     await expect(page.getByTestId('channels-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);
 
+    await closeSettingsDrawer(page);
     await page.getByTestId('sidebar-nav-cron').click();
     await expect(page.getByTestId('cron-page')).toBeVisible();
     await expect(page.getByText(oldWarningCopy)).toHaveCount(0);

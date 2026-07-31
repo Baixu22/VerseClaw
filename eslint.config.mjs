@@ -20,6 +20,7 @@ export default [
       '.tmp/**',
       '**/.tmp/**',
       '**/.artifacts/**',
+      '.claude/worktrees/**',
       'artifacts/**',
       'dist/**',
       'dist-electron/**',

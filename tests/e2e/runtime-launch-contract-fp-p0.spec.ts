@@ -239,10 +239,10 @@ test.describe('FP-P0 runtime launch contract (real gateway child)', () => {
         (counters.appliedChars ?? 0) + (counters.droppedChars ?? 0) + (counters.truncatedChars ?? 0),
       ).toBeLessThanOrEqual(counters.requestedChars ?? 0);
 
-      // eslint-disable-next-line no-console -- evidence line for the task's Test/evidence block
+
       console.log('[fp-p0-05-budget]', JSON.stringify(budget));
 
-      // eslint-disable-next-line no-console -- evidence line for the task's Test/evidence block
+
       console.log('[fp-p0-ack]', JSON.stringify({
         childPid: ack.childPid,
         gatewayGeneration: ack.gatewayGeneration,
@@ -324,7 +324,7 @@ test.describe('FP-P0 runtime launch contract (real gateway child)', () => {
       expect(probe.wouldChangeTurn).toBe(false);
       expect(probe.activeSurfaces).toEqual([]);
 
-      // eslint-disable-next-line no-console -- evidence line for the task's Test/evidence block
+
       console.log('[fp-p0-02-config-kill]', JSON.stringify({
         childPid: ack.childPid,
         envKillPresent: launchEnv.VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH?.present,
@@ -379,7 +379,7 @@ test.describe('FP-P0 runtime launch contract (real gateway child)', () => {
         restartGateway: true,
       });
 
-      // eslint-disable-next-line no-console -- evidence line for the task's Test/evidence block
+
       console.log('[fp-p0-04-setflag]', JSON.stringify({
         status: result.status,
         ackTrail: result.ackTrail,

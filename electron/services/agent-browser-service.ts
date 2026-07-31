@@ -134,6 +134,19 @@ type AgentBrowserRecord = {
   tabManager?: AgentBrowserTabManager;
 };
 
+export type AgentBrowserSupervisedRequestGuard = (
+  url: string,
+  options: {
+    enforceApprovedDomains: boolean;
+    lookupAddresses?: (hostname: string) => Promise<Array<{ address: string; family: number }>>;
+  },
+) => Promise<void>;
+
+type AgentBrowserSupervisedGuardState = {
+  guard: AgentBrowserSupervisedRequestGuard;
+  error?: unknown;
+};
+
 type AgentBrowserControlState = {
   connection: BrowserDebuggerConnection;
   snapshotManager: BrowserControlSnapshotManager;
@@ -378,6 +391,9 @@ const WAIT_FOR_SELECTOR_SCRIPT = `(selector, timeoutMs) => new Promise((resolve)
 export class AgentBrowserService {
   private readonly sessions = new Map<string, AgentBrowserRecord>();
   private readonly browserControlStates = new Map<string, AgentBrowserControlState>();
+  private readonly supervisedRequestGuards = new Map<number, AgentBrowserSupervisedGuardState>();
+  private readonly supervisedRequestSessions = new WeakSet<object>();
+  private readonly supervisedRequestSessionIds = new WeakMap<object, Set<number>>();
   private readonly cliRunner: AgentBrowserRunner | undefined;
   private readonly createWindow: (options: Electron.BrowserWindowConstructorOptions) => AgentBrowserWindow;
   private readonly now: () => Date;
@@ -594,6 +610,20 @@ export class AgentBrowserService {
   }
 
   async open(payload: AgentBrowserOpenPayload = {}): Promise<{ session: AgentBrowserSession; textSample?: string }> {
+    return await this.openInternal(payload);
+  }
+
+  async openSupervised(
+    payload: AgentBrowserOpenPayload,
+    requestGuard: AgentBrowserSupervisedRequestGuard,
+  ): Promise<{ session: AgentBrowserSession; textSample?: string }> {
+    return await this.openInternal(payload, requestGuard);
+  }
+
+  private async openInternal(
+    payload: AgentBrowserOpenPayload = {},
+    requestGuard?: AgentBrowserSupervisedRequestGuard,
+  ): Promise<{ session: AgentBrowserSession; textSample?: string }> {
     const mode = normalizeMode(payload.mode);
     const profile = normalizeProfile(payload.profile);
     const authPersistence = normalizeAuthPersistence(payload.authPersistence);
@@ -618,7 +648,7 @@ export class AgentBrowserService {
     };
     const url = normalizeHttpUrl(payload.url);
 
-    if (this.cliRunner?.isAvailable()) {
+    if (!requestGuard && this.cliRunner?.isAvailable()) {
       this.sessions.set(session.id, { session, engine: 'agent-browser-cli', runtimeMode });
       const metadata = await this.cliRunner.open({ session, url, width, height });
       await this.refreshCli(session.id, metadata);
@@ -647,6 +677,7 @@ export class AgentBrowserService {
     this.sessions.set(session.id, { session, window, engine: 'browser-window', runtimeMode });
     // P1-7：初始化多标签页管理器，注册主窗口为首页
     const record = this.sessions.get(session.id)!;
+    if (requestGuard) this.installSupervisedRequestGuard(record, requestGuard);
     record.tabManager = new AgentBrowserTabManager({
       createWindow: this.createWindow,
       profile,
@@ -656,9 +687,23 @@ export class AgentBrowserService {
     });
     record.tabManager.registerMainWindow(window, url ?? '', '');
     if (url) {
-      await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+      try {
+        await this.navigate({ sessionId: session.id, url, waitUntil: 'load' });
+        if (requestGuard) this.assertSupervisedRequestSafe(session.id);
+      } catch (error) {
+        if (requestGuard) this.close(session.id);
+        throw error;
+      }
     }
     return { session: this.snapshot(session.id), textSample: await this.textSample(session.id) };
+  }
+
+  assertSupervisedRequestSafe(sessionId: string): void {
+    const record = this.getRecord(sessionId);
+    if (record.engine !== 'browser-window' || !record.window) return;
+    const state = this.supervisedRequestGuards.get(record.window.webContents.id);
+    if (!state?.error) return;
+    throw state.error;
   }
 
   async navigate(payload: { sessionId: string; url: string; waitUntil?: 'dom-ready' | 'load' }): Promise<AgentBrowserSession> {
@@ -997,6 +1042,13 @@ export class AgentBrowserService {
       void this.requireCliRunner().close(record.session);
       return;
     }
+    if (record.window) {
+      const webContentsId = record.window.webContents.id;
+      this.supervisedRequestGuards.delete(webContentsId);
+      const sessionIds = this.supervisedRequestSessionIds.get(record.window.webContents.session);
+      sessionIds?.delete(webContentsId);
+      if (sessionIds?.size === 0) this.supervisedRequestSessionIds.delete(record.window.webContents.session);
+    }
     // P1-7：关闭所有标签页窗口（主窗口 + newPage 创建的额外窗口）
     if (record.tabManager) {
       for (const page of record.tabManager.listPages()) {
@@ -1012,6 +1064,65 @@ export class AgentBrowserService {
         window.close();
       }
     }
+  }
+
+  private installSupervisedRequestGuard(
+    record: AgentBrowserRecord,
+    guard: AgentBrowserSupervisedRequestGuard,
+  ): void {
+    const window = this.requireWindow(record);
+    const webContentsId = window.webContents.id;
+    const state: AgentBrowserSupervisedGuardState = { guard };
+    this.supervisedRequestGuards.set(webContentsId, state);
+    window.webContents.setWindowOpenHandler(() => {
+      state.error = Object.assign(
+        new Error('Supervised browser task popup navigation is denied'),
+        { code: 'POPUP_NAVIGATION_DENIED' },
+      );
+      return { action: 'deny' };
+    });
+    const electronSession = window.webContents.session;
+    let sessionIds = this.supervisedRequestSessionIds.get(electronSession);
+    if (!sessionIds) {
+      sessionIds = new Set<number>();
+      this.supervisedRequestSessionIds.set(electronSession, sessionIds);
+    }
+    sessionIds.add(webContentsId);
+    if (this.supervisedRequestSessions.has(electronSession)) return;
+    this.supervisedRequestSessions.add(electronSession);
+    electronSession.webRequest.onBeforeRequest((details, callback) => {
+      const directState = typeof details.webContentsId === 'number'
+        ? this.supervisedRequestGuards.get(details.webContentsId)
+        : undefined;
+      const states = directState
+        ? [directState]
+        : typeof details.webContentsId === 'number'
+          ? []
+          : [...(this.supervisedRequestSessionIds.get(electronSession) ?? [])]
+              .map((id) => this.supervisedRequestGuards.get(id))
+              .filter((entry): entry is AgentBrowserSupervisedGuardState => Boolean(entry));
+      if (states.length === 0) {
+        callback({ cancel: false });
+        return;
+      }
+      const enforceApprovedDomains = details.resourceType === 'mainFrame' || details.resourceType === 'subFrame';
+      const lookupAddresses = async (hostname: string) => {
+        const resolved = await electronSession.resolveHost(hostname);
+        return resolved.endpoints.map((endpoint) => ({
+          address: endpoint.address,
+          family: endpoint.family === 'ipv4' ? 4 : endpoint.family === 'ipv6' ? 6 : 0,
+        }));
+      };
+      void Promise.all(states.map((state) => state.guard(details.url, {
+        enforceApprovedDomains,
+        lookupAddresses,
+      }))).then(() => {
+        callback({ cancel: false });
+      }).catch((error) => {
+        for (const state of states) state.error = error;
+        callback({ cancel: true });
+      });
+    });
   }
 
   // ===== P1-7：多标签页受控 =====

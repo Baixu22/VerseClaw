@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sha256CanonicalEvidenceFile } from './lib/canonical-evidence-hash.mjs';
+import { normalizeCapturedOutput } from './lib/captured-output-redaction.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = path.join(root, 'artifacts/system-maturity/P7-001');
@@ -19,6 +21,7 @@ const commands = [
   ['diff-check', 'git', ['diff', '--check']],
   ['focused-unit', 'pnpm', ['exec', 'vitest', 'run', 'tests/unit/system-maturity-traceability-p7-001.test.ts']],
   ['plan-validate', 'node', ['scripts/validate-system-maturity-plan.mjs']],
+  ['delivery-hash-sync', 'node', ['scripts/update-system-maturity-delivery-hashes.mjs']],
   ['evidence-validate', 'node', ['scripts/validate-system-maturity-evidence.mjs']],
   ['harness-task', 'pnpm', ['harness', 'validate', '--spec', 'harness/specs/tasks/system-maturity-traceability.md']],
   ['harness-ci', 'pnpm', ['run', 'harness:ci']],
@@ -26,11 +29,6 @@ const commands = [
   ['typecheck', 'pnpm', ['run', 'typecheck']],
   ['unit-full', 'pnpm', ['test']],
 ];
-
-function normalizeCapturedOutput(value) {
-  if (!value) return '';
-  return `${String(value).replace(/\s+$/u, '')}\n`;
-}
 
 const results = [];
 for (const [id, command, args] of commands) {
@@ -57,8 +55,15 @@ for (const [id, command, args] of commands) {
   });
   const stdoutPath = path.join(gatesDir, `${id}.stdout.txt`);
   const stderrPath = path.join(gatesDir, `${id}.stderr.txt`);
-  const stdout = normalizeCapturedOutput(result.stdout);
-  const stderr = normalizeCapturedOutput([result.stderr, result.error?.stack].filter(Boolean).join('\n'));
+  const redactionPaths = {
+    workspaceRoot: root,
+    userHome: process.env.USERPROFILE || os.homedir(),
+  };
+  const stdout = normalizeCapturedOutput(result.stdout, redactionPaths);
+  const stderr = normalizeCapturedOutput(
+    [result.stderr, result.error?.stack].filter(Boolean).join('\n'),
+    redactionPaths,
+  );
   fs.writeFileSync(stdoutPath, stdout);
   fs.writeFileSync(stderrPath, stderr);
   results.push({

@@ -1,0 +1,395 @@
+{
+  "schema": "first-product-preview/fp-p4-08-expansion-decision/v1",
+  "taskId": "FP-P4-08",
+  "generatedAt": "2026-07-29T12:46:43.2733097+08:00",
+  "authority": "engineering-validation-only",
+  "scope": {
+    "codeChanges": "none",
+    "implementationAuthorized": false,
+    "taskForestProposalRequiredBeforeImplementation": true,
+    "taskForestProposalCreated": false,
+    "remoteEffects": false
+  },
+  "sourceBaseline": {
+    "mergeBeaconCommit": "14a17c7ecb821af4bdb645d5f492e7cf72bcd293",
+    "mergeBeaconTree": "95fddba4593a879352a59de157db92c63afa819f",
+    "mergeBeaconInventorySha256": "4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4",
+    "clawxGitHubBaseline": [
+      "docs/dev/first-product-controlled-preview/tasks/FP-P2-08.md",
+      "docs/dev/first-product-controlled-preview/tasks/FP-P2-09.md",
+      "docs/dev/first-product-controlled-preview/tasks/FP-P2-10.md",
+      "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+    ]
+  },
+  "evidenceLimits": {
+    "humanGitLabRuns": 0,
+    "humanGiteeRuns": 0,
+    "humanStackedPullRequestRuns": 0,
+    "humanQueueOrTrainRuns": 0,
+    "realProviderCredentialsUsed": false,
+    "realRemoteEffectsPerformed": false,
+    "cleanVmReleaseCompleted": false,
+    "meaning": "Engineering evidence proves reusable boundaries and identifies risks; it does not prove demand or live-provider value."
+  },
+  "verdicts": [
+    {
+      "surface": "gitlab",
+      "verdict": "shrink",
+      "retainedScope": "Research-only candidate for a future read-first Merge Request adapter; no active implementation backlog.",
+      "rationale": "The frozen source shows broad API coverage and a Merge Train status surface, but ClawX has no named GitLab user, target repository, credential scope, or live workflow evidence. GitHub contract reuse lowers design risk but does not justify another provider implementation.",
+      "evidence": {
+        "demand": {
+          "status": "missing",
+          "facts": [
+            "No named GitLab demand owner or target repository is recorded.",
+            "No human GitLab workflow has been run in ClawX."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P2-02.md",
+            "docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md"
+          ]
+        },
+        "apiFit": {
+          "status": "candidate",
+          "facts": [
+            "The frozen MergeBeacon capability matrix exposes GitLab compare, review discussions, metadata, merge strategies, and Merge Train status.",
+            "ClawX already has provider-neutral completeness, patch, error, readiness, and action-binding contracts from the GitHub baseline.",
+            "No ClawX GitLab mapping or live API compatibility probe exists."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md",
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+          ]
+        },
+        "permissionModel": {
+          "status": "unverified",
+          "facts": [
+            "A future adapter would need Main-owned PAT handling and explicit read versus write scope discovery.",
+            "No token scopes, self-managed host policy, or sandbox namespace are approved."
+          ],
+          "sources": [
+            "harness/specs/rules/backend-communication-boundary.md",
+            "docs/dev/first-product-controlled-preview/tasks/FP-P2-09.md"
+          ]
+        },
+        "maintenanceCost": {
+          "level": "high",
+          "facts": [
+            "A second provider adds pagination, version, self-managed host, approval, discussion, and Merge Train compatibility matrices.",
+            "The current Windows release path is only engineering-validation-only, so provider expansion would multiply unvalidated support cost."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P3-04.md",
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "securityBoundary": {
+          "status": "defined-not-proven",
+          "facts": [
+            "Credentials stay in Main secure storage or an authenticated CLI boundary.",
+            "Private hosts and credentials must be removed from safe errors, traces, and support bundles.",
+            "Read evidence remains bounded and incomplete states fail closed."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md",
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+          ]
+        }
+      },
+      "reviewTriggers": [
+        {
+          "id": "gitlab-demand",
+          "condition": "A named demand owner identifies at least one target GitLab namespace or repository and documents representative read or review workflows.",
+          "evidenceRequired": "Demand note with owner, repository class, workflow list, expected frequency, and why GitHub-only support is insufficient."
+        },
+        {
+          "id": "gitlab-permission-spike",
+          "condition": "A disposable GitLab sandbox and least-privilege PAT scope plan are available.",
+          "evidenceRequired": "Read-only API spike covering pagination, completeness, head SHA, discussions, approvals, and safe private-host redaction with zero mutation."
+        }
+      ]
+    },
+    {
+      "surface": "gitee",
+      "verdict": "stop",
+      "retainedScope": "No backlog item. Preserve only the security and review-trigger record.",
+      "rationale": "There is no named Gitee demand, the frozen implementation transports access tokens in query parameters, protocol capabilities are narrower, and Gitee has no native queue surface in the audited matrix. Current value evidence does not justify carrying the credential and compatibility risk.",
+      "evidence": {
+        "demand": {
+          "status": "missing",
+          "facts": [
+            "No named Gitee demand owner, deployment, or target repository is recorded.",
+            "No human Gitee workflow has been run in ClawX."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P2-02.md",
+            "docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md"
+          ]
+        },
+        "apiFit": {
+          "status": "limited",
+          "facts": [
+            "The frozen matrix lacks Draft toggle, review-thread resolution, remote viewed-file state, and native queue status.",
+            "No ClawX Gitee mapping or live compatibility probe exists."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "permissionModel": {
+          "status": "blocked",
+          "facts": [
+            "The audited upstream snapshot uses access_token query parameters.",
+            "ClawX has no approved secure Gitee credential transport or permission-discovery evidence."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md",
+            "harness/specs/rules/remote-forge-expansion-boundary.md"
+          ]
+        },
+        "maintenanceCost": {
+          "level": "high",
+          "facts": [
+            "Platform-specific capability gaps require separate UI, test, and support behavior.",
+            "Private deployment and credential redaction add support obligations without demonstrated demand."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P3-04.md",
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "securityBoundary": {
+          "status": "hard-veto",
+          "facts": [
+            "Query tokens are forbidden in generic URLs, logs, request traces, errors, telemetry, and support bundles.",
+            "A future spike must prove credential-safe transport before any adapter proposal can be considered."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md",
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+          ]
+        }
+      },
+      "securityConstraints": {
+        "queryTokenInGenericUrl": false,
+        "queryTokenInLogs": false,
+        "queryTokenInTraces": false,
+        "queryTokenInErrors": false,
+        "queryTokenInSupportBundles": false
+      },
+      "reviewTriggers": [
+        {
+          "id": "gitee-demand",
+          "condition": "A named demand owner identifies at least one real Gitee deployment or repository and documents workflows unavailable through the supported GitHub path.",
+          "evidenceRequired": "Demand note with owner, deployment class, repository class, workflow list, and expected frequency."
+        },
+        {
+          "id": "gitee-credential-veto-cleared",
+          "condition": "A documented Gitee authentication route avoids query credentials or contains them inside a dedicated non-logging Main transport.",
+          "evidenceRequired": "Negative tests prove that tokens cannot reach generic URLs, logs, traces, errors, telemetry, or support bundles; a disposable read-only sandbox probe proves scoped access."
+        }
+      ]
+    },
+    {
+      "surface": "stacked-pr-dependency-dag",
+      "verdict": "shrink",
+      "retainedScope": "Read-only product candidate; retain semantic requirements but do not add graph discovery or branch mutation.",
+      "rationale": "The frozen source demonstrates a bounded graph algorithm, but ClawX has no recorded stacked-PR workflow. A future read-only view could reuse Remote Forge identity and completeness concepts only after demand is demonstrated.",
+      "evidence": {
+        "demand": {
+          "status": "missing",
+          "facts": [
+            "No human ClawX run records a stacked pull-request workflow.",
+            "No user has identified dependency visualization as blocking current GitHub work."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P2-02.md",
+            "docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md"
+          ]
+        },
+        "apiFit": {
+          "status": "candidate",
+          "facts": [
+            "The frozen source walks bounded dependency candidates and marks page, query, and candidate-limit truncation.",
+            "Repository-aware branch identity, cycles, and unmerged parents are explicit in the audited graph model.",
+            "No ClawX dependency graph contract or UI exists."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "permissionModel": {
+          "status": "read-only-candidate",
+          "facts": [
+            "Future discovery may use only existing bounded read permission.",
+            "The graph cannot grant branch, pull-request, approval, or merge mutation authority."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md",
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+          ]
+        },
+        "maintenanceCost": {
+          "level": "medium-high",
+          "facts": [
+            "Correctness requires cross-repository identity, bounded traversal, cycle handling, incomplete-state UI, and provider-specific discovery tests.",
+            "A graph that silently loses parents could mislead merge order, so it needs stronger semantics than a decorative visualization."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md"
+          ]
+        },
+        "securityBoundary": {
+          "status": "defined-not-proven",
+          "facts": [
+            "Graph discovery is observation only and uses bounded provider reads.",
+            "Cycle or incomplete state cannot be presented as a safe merge order.",
+            "No local branch creation, checkout, rebase, push, or PR mutation is authorized."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md"
+          ]
+        }
+      },
+      "requiredSemantics": {
+        "repositoryIdentity": true,
+        "cycle": true,
+        "truncated": true,
+        "blockingParent": true,
+        "incompleteFailsClosed": true,
+        "branchMutationAuthority": false
+      },
+      "reviewTriggers": [
+        {
+          "id": "dag-demand",
+          "condition": "A named user workflow contains real stacked pull requests and identifies a decision that the current PR detail cannot answer.",
+          "evidenceRequired": "Redacted workflow record with repository relationships, stack depth, decision point, and expected read-only outcome."
+        },
+        {
+          "id": "dag-contract-spike",
+          "condition": "A read-only proposal covers same-repository stacks, forks, cycles, traversal limits, and missing parents.",
+          "evidenceRequired": "Contract fixtures and tests preserve repository identity, cycle, truncated, and blocking-parent semantics and prove zero branch or PR mutation authority."
+        }
+      ]
+    },
+    {
+      "surface": "merge-queue-train",
+      "verdict": "shrink",
+      "retainedScope": "Read-only status candidate for GitHub Merge Queue or GitLab Merge Train; no queue controls.",
+      "rationale": "The audited matrix identifies provider-native queue kinds, but ClawX has no user demand, live status evidence, or permission mapping. Status can only be reconsidered as a bounded observation after a queue-enabled repository is named.",
+      "evidence": {
+        "demand": {
+          "status": "missing",
+          "facts": [
+            "No queue-enabled or train-enabled target repository is recorded.",
+            "No human run requires queue position or train status."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/tasks/FP-P2-02.md",
+            "docs/dev/first-product-controlled-preview/tasks/FP-P4-08.md"
+          ]
+        },
+        "apiFit": {
+          "status": "provider-specific-candidate",
+          "facts": [
+            "The frozen capability matrix maps GitHub to Merge Queue, GitLab to Merge Train, and Gitee to no native queue.",
+            "No ClawX status contract or completeness mapping exists for either provider surface."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "permissionModel": {
+          "status": "unverified-read-only",
+          "facts": [
+            "A future status read must use least-privilege provider permissions.",
+            "No enqueue, dequeue, reorder, retry, approval, or merge scope is allowed."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md"
+          ]
+        },
+        "maintenanceCost": {
+          "level": "high",
+          "facts": [
+            "Queue and train state machines differ by provider and can change asynchronously.",
+            "Correct status requires stale-state handling, completeness semantics, and queue-enabled integration fixtures."
+          ],
+          "sources": [
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md",
+            "docs/dev/first-product-controlled-preview/MERGEBEACON-GIT-CAPABILITY-ADOPTION.md"
+          ]
+        },
+        "securityBoundary": {
+          "status": "read-only-hard-boundary",
+          "facts": [
+            "Status observation cannot authorize or imply merge readiness.",
+            "Unknown or stale status remains unknown.",
+            "Agent merge remains off."
+          ],
+          "sources": [
+            "harness/specs/rules/remote-forge-expansion-boundary.md",
+            "docs/dev/first-product-controlled-preview/REMOTE-FORGE-CONTRACTS.md"
+          ]
+        }
+      },
+      "readOnlyBoundary": {
+        "statusOnly": true,
+        "unknownOrStaleFailsClosed": true,
+        "forbiddenMutations": [
+          "enqueue",
+          "dequeue",
+          "reorder",
+          "retry",
+          "approve",
+          "merge"
+        ]
+      },
+      "reviewTriggers": [
+        {
+          "id": "queue-demand",
+          "condition": "A named queue-enabled GitHub repository or train-enabled GitLab project has a recurring need for status visibility inside ClawX.",
+          "evidenceRequired": "Demand record names the provider, repository class, queue or train mode, decision supported by the status, and expected frequency."
+        },
+        {
+          "id": "queue-read-spike",
+          "condition": "A provider-specific read-only spike can distinguish current, stale, unknown, unavailable, and complete status without mutation permission.",
+          "evidenceRequired": "Sandbox contract evidence proves bounded reads, least privilege, unknown-state fail-closed behavior, and absence of enqueue, dequeue, reorder, retry, approval, or merge methods."
+        }
+      ]
+    }
+  ],
+  "frozenBoundaries": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "agentMerge": "off"
+  },
+  "docsReview": {
+    "readmeChanged": false,
+    "reason": "This task changes no product behavior, architecture, interface, or supported provider claim."
+  },
+  "validation": {
+    "focusedUnit": {
+      "status": "pass",
+      "files": 1,
+      "tests": 7
+    },
+    "harnessRun": {
+      "status": "pass",
+      "profiles": [
+        "rules",
+        "fast",
+        "comms"
+      ],
+      "lintErrors": 0,
+      "lintWarnings": 116,
+      "rootTestsPassed": 6443,
+      "runtimeTestsPassed": 314,
+      "commsReplay": "pass",
+      "commsCompare": "pass",
+      "report": "artifacts/harness/latest.md"
+    },
+    "gitDiffCheck": "pass"
+  }
+}

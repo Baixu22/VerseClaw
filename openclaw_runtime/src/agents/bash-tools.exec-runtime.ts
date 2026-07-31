@@ -63,7 +63,7 @@ import { maybeWrapCommandWithShellSnapshot } from "./shell-snapshot.js";
 import { getShellConfig, sanitizeBinaryOutput } from "./shell-utils.js";
 import { resolveVerseShellFoundationRollout } from "./verseshell-foundation-flags.js";
 import { verseshellExec } from "./verseshell-runtime.js";
-import { executeGovernedVerseShell } from "./verseshell/governed-exec.js";
+import { startGovernedVerseShellProcess } from "./verseshell/governed-process.js";
 
 export { execSchema } from "./bash-tools.schemas.js";
 
@@ -214,11 +214,23 @@ function emitExecProcessCompleted(params: {
   outcome: ExecProcessOutcome;
   sessionKey?: string;
   target: "host" | "sandbox";
+  selectedHost: ExecHost;
+  executionHost: ExecHost;
+  lifecycleOwner: "native" | "sandbox" | "node" | "verseshell" | "legacy-verseshell";
+  cohortRoute?: "verseshell-single-plane";
+  nativeFallback: boolean;
+  recoveryState: "none" | "start-failed" | "exited" | "killed" | "lost" | "runtime-error";
 }): void {
   const exitSignal = normalizeExecExitSignal(params.outcome.exitSignal);
   emitDiagnosticEvent({
     type: "exec.process.completed",
     target: params.target,
+    selectedHost: params.selectedHost,
+    executionHost: params.executionHost,
+    lifecycleOwner: params.lifecycleOwner,
+    ...(params.cohortRoute ? { cohortRoute: params.cohortRoute } : {}),
+    nativeFallback: params.nativeFallback,
+    recoveryState: params.recoveryState,
     mode: params.mode,
     outcome: params.outcome.status,
     durationMs: params.outcome.durationMs,
@@ -706,6 +718,8 @@ export async function runExecProcess(opts: {
   const sessionId = createSessionSlug();
   const execCommand = opts.execCommand ?? opts.command;
   const diagnosticTarget = opts.sandbox ? "sandbox" : "host";
+  const selectedHost = opts.execHost ?? (opts.sandbox ? "sandbox" : "gateway");
+  let compatibilityNativeFallbackUsed = false;
   const supervisor = getProcessSupervisor();
   const shellRuntimeEnv: Record<string, string> = {
     ...opts.env,
@@ -816,7 +830,8 @@ export async function runExecProcess(opts: {
   // ── VerseShell Branch ──────────────────────────────────────────────────
   // When the configured exec host is "verseshell", execute the command via
   // the ae --serve JSON-RPC bridge instead of spawning a native shell.
-  // Falls back to native shell if VerseShell is unavailable.
+  // Governed lifecycle mode fails closed; only the separately gated legacy
+  // compatibility route may opt into native fallback.
   if (opts.execHost === "verseshell") {
     // The legacy bridge is not a governed ACI route: it historically starts
     // `ae --serve --policy permissive --cap all`. Keep it explicitly opt-in
@@ -841,6 +856,12 @@ export async function runExecProcess(opts: {
         outcome,
         sessionKey: opts.sessionKey,
         target: "host",
+        selectedHost,
+        executionHost: "verseshell",
+        lifecycleOwner: rollout.enabled.governedExec ? "verseshell" : "legacy-verseshell",
+        ...(rollout.enabled.governedExec ? { cohortRoute: "verseshell-single-plane" as const } : {}),
+        nativeFallback: false,
+        recoveryState: "start-failed",
       });
       return {
         session,
@@ -896,6 +917,11 @@ export async function runExecProcess(opts: {
         outcome,
         sessionKey: opts.sessionKey,
         target: "host",
+        selectedHost,
+        executionHost: "verseshell",
+        lifecycleOwner: "legacy-verseshell",
+        nativeFallback: false,
+        recoveryState: "exited",
       });
       return {
         session,
@@ -918,13 +944,133 @@ export async function runExecProcess(opts: {
         );
       }
       try {
-        const result = await executeGovernedVerseShell({
+        const lifecycle = await startGovernedVerseShellProcess({
           command: execCommand,
           cwd: opts.workdir,
+          processEnv: shellRuntimeEnv,
           timeoutMs,
+          maxOutputBytes: Math.min(64 * 1024 * 1024, Math.max(1, opts.maxOutput * 4)),
+          usePty: opts.usePty,
+          agentId: opts.scopeKey?.trim() || "openclaw",
+          sessionId: opts.sessionKey?.trim() || sessionId,
           hostPolicyApproved: opts.hostPolicyApproved === true,
+          onStdout: handleStdout,
+          onStderr: handleStderr,
         });
-        return completeVerseShell(result);
+        session.stdin = lifecycle.stdin;
+        session.pid = lifecycle.pid;
+        session.lifecycleOwner = "verseshell";
+        const cancelLifecycle = (reason: TerminationReason) => {
+          void lifecycle.kill(reason).catch((error) => {
+            handleStderr(`VerseShell lifecycle cancel failed: ${String(error)}\n`);
+          });
+        };
+        session.lifecycleCancel = cancelLifecycle;
+
+        const promise = lifecycle
+          .wait()
+          .then((exit): ExecProcessOutcome => {
+            updatesDisabled = true;
+            for (const artifact of exit.artifacts) {
+              handleStderr(`[VerseShell process artifact: ${artifact}]\n`);
+            }
+            const durationMs = Date.now() - startedAt;
+            const completed = exit.state === "exited" && exit.exitCode === 0 && !exit.timedOut;
+            const exitReason: TerminationReason = exit.timedOut
+              ? "overall-timeout"
+              : exit.terminationReason === "manual-cancel" || exit.terminationReason === "agent_abort"
+                ? "manual-cancel"
+                : exit.state === "lost"
+                  ? "signal"
+                  : "exit";
+            const outcome: ExecProcessOutcome = completed
+              ? {
+                  status: "completed",
+                  exitCode: 0,
+                  exitSignal: null,
+                  durationMs,
+                  aggregated: session.aggregated.trim(),
+                  timedOut: false,
+                }
+              : {
+                  status: "failed",
+                  exitCode: exit.exitCode,
+                  exitSignal: null,
+                  durationMs,
+                  aggregated: session.aggregated.trim(),
+                  timedOut: exit.timedOut,
+                  failureKind: exit.timedOut
+                    ? "overall-timeout"
+                    : exit.state === "lost"
+                      ? "runtime-error"
+                      : exit.state === "killed"
+                        ? "signal"
+                        : "aborted",
+                  reason: exit.timedOut
+                    ? "VerseShell command timed out"
+                    : exit.state === "lost"
+                      ? `VerseShell process ownership was lost (${exit.terminationReason ?? "runtime restart"})`
+                      : exit.state === "killed"
+                        ? `VerseShell process tree was killed (${exit.terminationReason ?? "cancel"})`
+                        : `Command exited with code ${exit.exitCode ?? 1}`,
+                };
+            markExited(
+              session,
+              exit.exitCode,
+              null,
+              exit.state === "killed" ? "killed" : outcome.status,
+              exitReason,
+            );
+            maybeNotifyOnExit(session, outcome.status);
+            emitExecProcessCompleted({
+              command: opts.command,
+              mode: lifecycle.mode === "pty" ? "pty" : "child",
+              outcome,
+              sessionKey: opts.sessionKey,
+              target: "host",
+              selectedHost,
+              executionHost: "verseshell",
+              lifecycleOwner: "verseshell",
+              cohortRoute: "verseshell-single-plane",
+              nativeFallback: false,
+              recoveryState: exit.state,
+            });
+            return outcome;
+          })
+          .catch((error: unknown): ExecProcessOutcome => {
+            updatesDisabled = true;
+            markExited(session, null, null, "failed", "signal");
+            maybeNotifyOnExit(session, "failed");
+            const outcome = buildExecRuntimeErrorOutcome({
+              error,
+              aggregated: session.aggregated.trim(),
+              durationMs: Date.now() - startedAt,
+            });
+            emitExecProcessCompleted({
+              command: opts.command,
+              mode: lifecycle.mode === "pty" ? "pty" : "child",
+              outcome,
+              sessionKey: opts.sessionKey,
+              target: "host",
+              selectedHost,
+              executionHost: "verseshell",
+              lifecycleOwner: "verseshell",
+              cohortRoute: "verseshell-single-plane",
+              nativeFallback: false,
+              recoveryState: "runtime-error",
+            });
+            return outcome;
+          });
+        return {
+          session,
+          startedAt,
+          pid: lifecycle.pid,
+          promise,
+          kill: () => cancelLifecycle("manual-cancel"),
+          disableUpdates: () => {
+            updatesDisabled = true;
+          },
+        };
       } catch (error) {
         return failClosedVerseShell(error);
       }
@@ -949,6 +1095,7 @@ export async function runExecProcess(opts: {
       logWarn(
         `exec: VerseShell legacy exec failed (${String(err)}); explicit compatibility fallback is enabled for "${opts.command.slice(0, 80)}".`,
       );
+      compatibilityNativeFallbackUsed = true;
       // The compatibility fallback is explicitly default-off.
     }
   }
@@ -1108,6 +1255,11 @@ export async function runExecProcess(opts: {
           }),
           sessionKey: opts.sessionKey,
           target: diagnosticTarget,
+          selectedHost,
+          executionHost: opts.sandbox ? "sandbox" : "gateway",
+          lifecycleOwner: opts.sandbox ? "sandbox" : "native",
+          nativeFallback: compatibilityNativeFallbackUsed,
+          recoveryState: "runtime-error",
         });
         throw retryErr;
       }
@@ -1124,6 +1276,11 @@ export async function runExecProcess(opts: {
         }),
         sessionKey: opts.sessionKey,
         target: diagnosticTarget,
+        selectedHost,
+        executionHost: opts.sandbox ? "sandbox" : "gateway",
+        lifecycleOwner: opts.sandbox ? "sandbox" : "native",
+        nativeFallback: compatibilityNativeFallbackUsed,
+        recoveryState: "runtime-error",
       });
       throw err;
     }
@@ -1166,6 +1323,11 @@ export async function runExecProcess(opts: {
         outcome,
         sessionKey: opts.sessionKey,
         target: diagnosticTarget,
+        selectedHost,
+        executionHost: opts.sandbox ? "sandbox" : "gateway",
+        lifecycleOwner: opts.sandbox ? "sandbox" : "native",
+        nativeFallback: compatibilityNativeFallbackUsed,
+        recoveryState: "exited",
       });
       return outcome;
     })
@@ -1184,6 +1346,11 @@ export async function runExecProcess(opts: {
         outcome,
         sessionKey: opts.sessionKey,
         target: diagnosticTarget,
+        selectedHost,
+        executionHost: opts.sandbox ? "sandbox" : "gateway",
+        lifecycleOwner: opts.sandbox ? "sandbox" : "native",
+        nativeFallback: compatibilityNativeFallbackUsed,
+        recoveryState: "runtime-error",
       });
       return outcome;
     });

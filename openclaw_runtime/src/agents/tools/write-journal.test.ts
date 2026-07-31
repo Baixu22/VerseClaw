@@ -8,7 +8,10 @@ import {
   __resetWriteJournals,
   clearWriteJournal,
   createUndoWriteTool,
+  listPreparedWriteJournalEntries,
+  setWriteJournalBatchState,
   snapshotBeforeWrite,
+  snapshotPreparedWrite,
   undoLastWrites,
   wrapToolWithWriteJournal,
 } from "./write-journal.js";
@@ -139,23 +142,27 @@ describe("write-journal (C2-8)", () => {
 
     expect(result.details).toMatchObject({
       patch: expect.stringContaining("+const value = 2;"),
-      patchArtifacts: [{
-        schema: "GitPatchArtifact/v1",
-        file: "f.ts",
-        status: "modified",
-        contentKind: "text",
-        completeness: "complete",
-        lineage: {
-          requestId: "write-existing",
-          journalEntryId: "write-journal:sess-journal:1",
+      patchArtifacts: [
+        {
+          schema: "GitPatchArtifact/v1",
+          file: "f.ts",
+          status: "modified",
+          contentKind: "text",
+          completeness: "complete",
+          lineage: {
+            requestId: "write-existing",
+            journalEntryId: "write-journal:sess-journal:1",
+          },
         },
-      }],
+      ],
       write_journal: {
-        snapshots: [{
-          path: "f.ts",
-          journalEntryId: "write-journal:sess-journal:1",
-          hadPrior: true,
-        }],
+        snapshots: [
+          {
+            path: "f.ts",
+            journalEntryId: "write-journal:sess-journal:1",
+            hadPrior: true,
+          },
+        ],
       },
     });
   });
@@ -178,16 +185,18 @@ describe("write-journal (C2-8)", () => {
     });
 
     expect(result.details).toMatchObject({
-      patchArtifacts: [{
-        file: "new.ts",
-        status: "added",
-        contentKind: "text",
-        completeness: "complete",
-        lineage: {
-          requestId: "write-new",
-          journalEntryId: "write-journal:sess-journal:1",
+      patchArtifacts: [
+        {
+          file: "new.ts",
+          status: "added",
+          contentKind: "text",
+          completeness: "complete",
+          lineage: {
+            requestId: "write-new",
+            journalEntryId: "write-journal:sess-journal:1",
+          },
         },
-      }],
+      ],
       write_journal: { snapshots: [{ path: "new.ts", hadPrior: false }] },
     });
   });
@@ -207,17 +216,19 @@ describe("write-journal (C2-8)", () => {
     const result = await wrapped.execute("write-empty", { path: "empty.txt", content: "" });
 
     expect(result.details).toMatchObject({
-      patchArtifacts: [{
-        file: "empty.txt",
-        status: "added",
-        contentKind: "metadata",
-        hunks: [],
-        completeness: "complete",
-        lineage: {
-          requestId: "write-empty",
-          journalEntryId: "write-journal:sess-journal:1",
+      patchArtifacts: [
+        {
+          file: "empty.txt",
+          status: "added",
+          contentKind: "metadata",
+          hunks: [],
+          completeness: "complete",
+          lineage: {
+            requestId: "write-empty",
+            journalEntryId: "write-journal:sess-journal:1",
+          },
         },
-      }],
+      ],
     });
   });
 
@@ -243,10 +254,12 @@ describe("write-journal (C2-8)", () => {
     };
 
     expect(readFileSync(file, "utf8")).toBe("const value = 2;\r\n");
-    expect(details.patchArtifacts?.[0]?.hunks?.[0]?.lines).toEqual(expect.arrayContaining([
-      expect.objectContaining({ text: "const value = 1;" }),
-      expect.objectContaining({ text: "const value = 2;" }),
-    ]));
+    expect(details.patchArtifacts?.[0]?.hunks?.[0]?.lines).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ text: "const value = 1;" }),
+        expect.objectContaining({ text: "const value = 2;" }),
+      ]),
+    );
   });
 
   it("fails closed when the workspace after content cannot be verified", async () => {
@@ -285,25 +298,29 @@ describe("write-journal (C2-8)", () => {
       return {
         content: [{ type: "text", text: "ok" }],
         details: {
-          patchArtifacts: [{
-            schema: "GitPatchArtifact/v1",
-            file: "f.ts",
-            status: "modified",
-            contentKind: "text",
-            hunks: [{
-              oldStart: 1,
-              oldLines: 1,
-              newStart: 1,
-              newLines: 1,
-              lines: [
-                { kind: "deletion", text: "v0", oldLine: 1, newLine: null },
-                { kind: "addition", text: "v1", oldLine: null, newLine: 1 },
+          patchArtifacts: [
+            {
+              schema: "GitPatchArtifact/v1",
+              file: "f.ts",
+              status: "modified",
+              contentKind: "text",
+              hunks: [
+                {
+                  oldStart: 1,
+                  oldLines: 1,
+                  newStart: 1,
+                  newLines: 1,
+                  lines: [
+                    { kind: "deletion", text: "v0", oldLine: 1, newLine: null },
+                    { kind: "addition", text: "v1", oldLine: null, newLine: 1 },
+                  ],
+                },
               ],
-            }],
-            patch: "diff --git a/f.ts b/f.ts\n--- a/f.ts\n+++ b/f.ts\n@@ -1 +1 @@\n-v0\n+v1",
-            completeness: "complete",
-            lineage: { requestId: "call-1" },
-          }],
+              patch: "diff --git a/f.ts b/f.ts\n--- a/f.ts\n+++ b/f.ts\n@@ -1 +1 @@\n-v0\n+v1",
+              completeness: "complete",
+              lineage: { requestId: "call-1" },
+            },
+          ],
         },
       };
     });
@@ -334,22 +351,27 @@ describe("write-journal (C2-8)", () => {
       return {
         content: [{ type: "text", text: "ok" }],
         details: {
-          patchArtifacts: [{
-            schema: "GitPatchArtifact/v1",
-            file: "other.ts",
-            status: "added",
-            contentKind: "text",
-            hunks: [{
-              oldStart: 0,
-              oldLines: 0,
-              newStart: 1,
-              newLines: 1,
-              lines: [{ kind: "addition", text: "v1", oldLine: null, newLine: 1 }],
-            }],
-            patch: "diff --git a/other.ts b/other.ts\n--- /dev/null\n+++ b/other.ts\n@@ -0,0 +1 @@\n+v1",
-            completeness: "complete",
-            lineage: { requestId: "call-1" },
-          }],
+          patchArtifacts: [
+            {
+              schema: "GitPatchArtifact/v1",
+              file: "other.ts",
+              status: "added",
+              contentKind: "text",
+              hunks: [
+                {
+                  oldStart: 0,
+                  oldLines: 0,
+                  newStart: 1,
+                  newLines: 1,
+                  lines: [{ kind: "addition", text: "v1", oldLine: null, newLine: 1 }],
+                },
+              ],
+              patch:
+                "diff --git a/other.ts b/other.ts\n--- /dev/null\n+++ b/other.ts\n@@ -0,0 +1 @@\n+v1",
+              completeness: "complete",
+              lineage: { requestId: "call-1" },
+            },
+          ],
         },
       };
     });
@@ -389,7 +411,11 @@ describe("write-journal (C2-8)", () => {
 // FP-P1-04: undo is not best-effort; journal survives restarts; lineage.
 // ---------------------------------------------------------------------------
 import { existsSync, readdirSync } from "node:fs";
-import { getOrCreateWriteJournal, journalDirFor, listJournalSnapshotFiles } from "./write-journal.js";
+import {
+  getOrCreateWriteJournal,
+  journalDirFor,
+  listJournalSnapshotFiles,
+} from "./write-journal.js";
 
 describe("write-journal FP-P1-04 semantics", () => {
   let repoRoot: string;
@@ -417,7 +443,12 @@ describe("write-journal FP-P1-04 semantics", () => {
   it("multi-file batch undo restores everything (create + modify)", () => {
     write("a.ts", "a1\n");
     write("b.ts", "b1\n");
-    snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: "new.ts", toolName: "write" });
+    snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "new.ts",
+      toolName: "write",
+    });
     writeFileSync(path.join(repoRoot, "new.ts"), "n1\n", "utf8");
 
     const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 3 });
@@ -456,6 +487,31 @@ describe("write-journal FP-P1-04 semantics", () => {
     const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
     expect(outcome.errors).toEqual([]);
     expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a0\n");
+  });
+
+  it("rehydrates prepared apply_patch batches and persists recovery_required", () => {
+    const entry = snapshotPreparedWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "a.ts",
+      toolName: "apply_patch",
+      requestId: "patch-call",
+      batch: { id: "patch-call", state: "prepared" },
+      hadPrior: true,
+      priorContent: "a0\n",
+    });
+    expect(entry).not.toBeNull();
+
+    __resetWriteJournals();
+    const prepared = listPreparedWriteJournalEntries(repoRoot, sessionId);
+    expect(prepared).toHaveLength(1);
+    expect(prepared[0]?.batch).toEqual({ id: "patch-call", state: "prepared" });
+
+    expect(setWriteJournalBatchState(prepared, "recovery_required")).toBe(true);
+    __resetWriteJournals();
+    expect(getOrCreateWriteJournal(repoRoot, sessionId).entries[0]?.batch?.state).toBe(
+      "recovery_required",
+    );
   });
 
   it("every snapshot meta carries lineage (session/workspace)", () => {

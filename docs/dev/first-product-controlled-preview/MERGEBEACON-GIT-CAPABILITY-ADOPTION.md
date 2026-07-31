@@ -3,6 +3,7 @@
 > 状态：Research complete / core implementation planned in FP-P2
 > 调研日期：2026-07-27
 > 来源快照：`C:\Users\27933\Desktop\verseshell\MergeBeacon-main`
+> 已解析上游提交：`14a17c7ecb821af4bdb645d5f492e7cf72bcd293`（tree `95fddba4593a879352a59de157db92c63afa819f`）
 > 任务入口：`FP-P2-07` → `FP-P2-10` → `FP-P2-01/02/03`；多平台扩围为 `FP-P4-08`
 
 ## 1. 裁决
@@ -54,10 +55,10 @@ MergeBeacon 可提供的是**远端代码托管平台协作能力**，不是本�
 
 ## 4. 来源和许可证风险
 
-- 本地目录是源码快照，无 `.git`，不能据此证明与上游 tag 完全一致；
+- 本地目录是源码快照，无 `.git`；FP-P3-01 已通过 PR 54 parent、GitHub recursive tree 与 codeload archive 将其精确绑定到提交 `14a17c7ecb821af4bdb645d5f492e7cf72bcd293`；
 - README 标记 `0.8.0`，`package.json` / `Cargo.toml` 标记 `0.10.0`，存在版本漂移；
-- 许可证为 Apache-2.0，当前快照未见 `NOTICE`；
-- 如复制代码，必须保留许可证和归属、标注修改并复核目标上游 commit；默认策略是重写 contract/adapter，移植测试语料和边界用例。
+- 许可证为 Apache-2.0，本地快照与已解析提交均未见 `NOTICE`；全量 262 文件 / 4,428,869 bytes 的 ordinal inventory root SHA-256 为 `4e8255d3e9d4580e8bf5dd4d726f5d2d78b6be6c7dd97f91c62be098826152a4`；
+- 现有 Verse Claw contract/adapter/provider/UI/test 均为 clean-room TypeScript 实现，没有复制或修改上游 Tauri/Vue/Rust 实现文本。`directSourceCopyAllowed=false` 保持；未来若复制代码，仍须独立保留许可证和归属、标注修改并复核 NOTICE。
 
 ## 5. 任务闭环
 

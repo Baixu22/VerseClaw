@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-20T18:16:42.773Z",
+  "generatedAt": "2026-07-31T07:52:18.611Z",
   "entries": [
     {
       "task": "P0-001",
@@ -60,7 +60,7 @@
     {
       "task": "P0-003",
       "path": "plans/system-maturity/gates.json",
-      "sha256": "fa002bad3d7a130b39144a53efb02588e449f443ba64f6e52e85d8970b4810f9"
+      "sha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a"
     },
     {
       "task": "P0-003",
@@ -85,17 +85,17 @@
     {
       "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52"
+      "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722"
     },
     {
       "task": "P0-003",
       "path": "tests/unit/host-api-facade.test.ts",
-      "sha256": "b29c5e37c4731d561b6261b40d886e10cebe4c3e4c8622d3e737ec04f10caa39"
+      "sha256": "05cbe23d8592c59f7f9b1577397074d8a05cb4e29fdbc2c69a924aa1de933b2b"
     },
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P0-003",
@@ -105,7 +105,7 @@
     {
       "task": "P0-003",
       "path": "artifacts/system-maturity/P0-003/release-gates.commands.json",
-      "sha256": "90272b005e838d1530272b8f9b9aa58a0a054a6da0551599ae16482751001e2e"
+      "sha256": "cee9bb79b6c5d18195a8b031f986a99f19a445bc7bfbd45310422928db0b3b11"
     },
     {
       "task": "P0-003",
@@ -130,12 +130,12 @@
     {
       "task": "P0-004",
       "path": "scripts/validate-system-maturity-evidence.mjs",
-      "sha256": "bf9daea73ab67cae232cc18c3ecf9e3ddedbae395558ed5129967511c6721e11"
+      "sha256": "afd81298c58bfa3c9d08ccd2fefb906f27d82cfb841caacae0f56c89e4c00e34"
     },
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P0-004",
@@ -190,12 +190,12 @@
     {
       "task": "P1-001",
       "path": "shared/host-api/contract.ts",
-      "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c"
+      "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d"
     },
     {
       "task": "P1-001",
       "path": "src/lib/host-api.ts",
-      "sha256": "3f078b690242fab8e1aa40f149554ab41d8105579b1e9328021bfd0bb912cb52"
+      "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722"
     },
     {
       "task": "P1-001",
@@ -230,7 +230,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc-handlers.ts",
-      "sha256": "0f5854455e9b4758bf7e5aa1b1685f45570378f8cfbc10f4cb80993c56c9a0cc"
+      "sha256": "c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27"
     },
     {
       "task": "P1-002",
@@ -255,12 +255,12 @@
     {
       "task": "P1-003",
       "path": "electron/services/files-api.ts",
-      "sha256": "31b24fd010161d4b7832877efbe94b5ce16aeefe3ecc3c2930f5dd26ef5e5295"
+      "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f"
     },
     {
       "task": "P1-003",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882"
+      "sha256": "fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43"
     },
     {
       "task": "P1-003",
@@ -315,12 +315,12 @@
     {
       "task": "P2-001",
       "path": "electron/services/workspaces-api.ts",
-      "sha256": "ef8015f1838f3060b6f59fe57a90baf1274d7e6f906f7a19a4b3791f5ca68380"
+      "sha256": "46c44a861293b3f97500639a71837c805e24feef40996a3294c6013d046eba2a"
     },
     {
       "task": "P2-001",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "7c002ae99351ed2617796b01b9ec510337b3114403fcb32cbb464f0b1406f882"
+      "sha256": "fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43"
     },
     {
       "task": "P2-001",
@@ -385,7 +385,7 @@
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-spawn.ts",
-      "sha256": "69cf86731e99e5d307bb6cb6459820c89e2b2c6ddf5c9d0f974c65530a18128d"
+      "sha256": "736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2"
     },
     {
       "task": "P2-003",
@@ -845,12 +845,12 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/full-validation.json",
-      "sha256": "41c9b6afec4277eaa669ad7efa27ebb3dd0b44ec8317b3528639f4648c2b377d"
+      "sha256": "a73a5f5adc760586e4028cf11a5d3f2658b000d1ca8570d6d9f977dacd679833"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "b5ce0743cd09ddb78d1c547d1bde262dacd9ee952216c0e50262ccdb37e830ef"
+      "sha256": "01e36522014d961fe1fa0f0e4bdcd2cf55a9ce284e7eb086f195eb279858b29d"
     },
     {
       "task": "P7-001",
@@ -860,27 +860,27 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
-      "sha256": "ff81b54e267187a955e01d59c543c7227103b1e77bdc475c4b02df8f0e150b98"
+      "sha256": "73d76b4bef9b2029e767989a4e8c25d7049693a42bbcabe8efcbcfe44d485b68"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
-      "sha256": "5e52d65790b50f796164d518a046289d459e3e4b6042563a8b44c68012e84296"
+      "sha256": "0e3c7887beb4d06ff73b317ba5310190a520b1371d272edb8c52cbc2db7b2c85"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/gates/lint-check.stdout.txt",
-      "sha256": "4435c82d47c0073ab5365b048dbd6a3c51a7b593227d888c9aebafc3467af656"
+      "sha256": "5cc0183258f78641025a1649f29b8a4c4e4787117717a93f03c84d400282c702"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
-      "sha256": "2a60de71d2a661be448de9fc5d2ec42f2930135601426bf489b3e1e88453589f"
+      "sha256": "e9b6159d60e3593effe02ec3ca239e62f1237a00af167e65ad9f7fe300bc4e12"
     },
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
-      "sha256": "6d49390da8b5808351b6a764d3d38bd9875ca0f8e7c741bc6adcead39a8d5fac"
+      "sha256": "d8a4d17a7cd176787032c134473e76fd6f2cbf713055ae9108ab5368337d7487"
     },
     {
       "task": "P7-001",
@@ -890,7 +890,7 @@
     {
       "task": "P7-001",
       "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-      "sha256": "95dc24dcf76a4fe4df25b715299040a247a5d232a776d6d4925f69f2118d9ea4"
+      "sha256": "d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5"
     },
     {
       "task": "P7-001",
@@ -905,12 +905,12 @@
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/security-regression-report.json",
-      "sha256": "105b9cbf9950cf08f9bdb54331a609a3a3a5e59db94e25728c25245bdfba789a"
+      "sha256": "46047ab1b47309a8ce8e80d706cba5c502a48c67c76cd557a9cc0faf51d5a448"
     },
     {
       "task": "P7-002",
       "path": "artifacts/system-maturity/P7-002/evidence-manifest.json",
-      "sha256": "0ceb1706b6f84bc061172d12b65277290b7a2ee7e70510a860b51cdecc9b66ae"
+      "sha256": "ff11378f2150438b686dc1721d1ac3a451ca4c485198c3d028ef82d12cdddad7"
     },
     {
       "task": "P7-002",
@@ -1065,12 +1065,12 @@
     {
       "task": "P7-003",
       "path": "shared/host-api/contract.ts",
-      "sha256": "97403e4854f4c0785963bab96ab04e6754f943b96015156e078f448ef4570f4c"
+      "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d"
     },
     {
       "task": "P7-003",
       "path": "electron/services/agent-browser-api.ts",
-      "sha256": "8ebfbd2d8d299a7ae4b1f254adc621037341c0091d00c6da8caeaede0876a7c9"
+      "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b"
     },
     {
       "task": "P7-003",
@@ -1085,12 +1085,12 @@
     {
       "task": "P7-003",
       "path": "electron/utils/store.ts",
-      "sha256": "cd9087bd0d80ed2d0dd7d2622b3f3dba275593c94218be7e11e2e5496b309214"
+      "sha256": "1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af"
     },
     {
       "task": "P7-003",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P7-003",
@@ -1235,7 +1235,7 @@
     {
       "task": "P7-004",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P7-004",
@@ -1330,12 +1330,12 @@
     {
       "task": "P8-001",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517"
+      "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d"
     },
     {
       "task": "P8-001",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P8-001",
@@ -1375,7 +1375,7 @@
     {
       "task": "P8-002",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "9248ebe4d426b234f3cf5f99787913caabedcb0fa928d04fbe0dac2348223517"
+      "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d"
     },
     {
       "task": "P8-002",
@@ -1450,7 +1450,7 @@
     {
       "task": "P8-003",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     },
     {
       "task": "P8-004",
@@ -1500,7 +1500,7 @@
     {
       "task": "P8-004",
       "path": "package.json",
-      "sha256": "18853e33ffa93333590771f8a1056e862746ff2e9914c409157baa811f9e9293"
+      "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846"
     }
   ]
 }

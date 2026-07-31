@@ -7,6 +7,7 @@ import { createReleaseBaselineManifest, resolveReleaseIdentity } from './release
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const comparePath = (left, right) => (left < right ? -1 : left > right ? 1 : 0);
+const canonicalEvidenceDirectory = (root) => join(root, 'artifacts/system-maturity/P6-005');
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex');
@@ -63,27 +64,41 @@ export function validateReleaseGateEvidence({ evidencePath, gatesPath, manifestT
   }
 
   const evidenceDir = dirname(evidencePath);
-  for (let index = 0; index < required.length; index += 1) {
-    const expected = required[index];
-    const actual = evidence.gates[index];
-    if (actual.id !== expected.id || actual.command !== expected.run) {
-      throw new Error(`release gate evidence mismatch at index ${index}`);
+  const validateCapturedCommand = (actual, expected, label) => {
+    if (actual?.id !== expected.id || actual?.command !== expected.command) {
+      throw new Error(`${label} evidence mismatch`);
     }
-    if (actual.exitCode !== 0) throw new Error(`release gate ${actual.id} failed with exit ${actual.exitCode}`);
+    if (actual.exitCode !== 0) throw new Error(`${label} failed with exit ${actual.exitCode}`);
     for (const stream of ['stdout', 'stderr']) {
       const relativePath = actual[`${stream}Path`];
       const expectedDigest = actual[`${stream}Sha256`];
       const absolutePath = join(evidenceDir, relativePath || '');
       if (!relativePath || !existsSync(absolutePath)) {
-        throw new Error(`release gate ${actual.id} missing ${stream} evidence`);
+        throw new Error(`${label} missing ${stream} evidence`);
       }
       const bytes = readFileSync(absolutePath);
       if (sha256(bytes) !== expectedDigest) {
-        throw new Error(`release gate ${actual.id} ${stream} digest mismatch`);
+        throw new Error(`${label} ${stream} digest mismatch`);
       }
     }
+  };
+
+  validateCapturedCommand(
+    evidence.preflight,
+    { id: 'runtime-build-preflight', command: 'pnpm build:runtime' },
+    'release runtime preflight',
+  );
+
+  for (let index = 0; index < required.length; index += 1) {
+    const expected = required[index];
+    const actual = evidence.gates[index];
+    validateCapturedCommand(
+      actual,
+      { id: expected.id, command: expected.run },
+      `release gate ${expected.id} at index ${index}`,
+    );
   }
-  return { gateCount: required.length };
+  return { preflightCount: 1, gateCount: required.length };
 }
 
 export function validateReleaseWorkflowBaselinePolicy(text) {
@@ -102,21 +117,45 @@ export function validateReleaseWorkflowBaselinePolicy(text) {
   return { baselineJob: true, packagingDependency: true, evidenceTransfer: true };
 }
 
-export function validateReleaseBaseline(options) {
+export function resolveReleaseBaselinePaths(options = {}) {
   const root = resolve(options.root || repositoryRoot);
-  const manifestPath = resolve(options.manifestPath);
-  const evidencePath = resolve(options.evidencePath);
-  const gatesPath = resolve(options.gatesPath || join(root, 'plans/system-maturity/gates.json'));
-  const workflowPath = resolve(options.workflowPath || join(root, '.github/workflows/release.yml'));
+  const evidenceDirectory = canonicalEvidenceDirectory(root);
+  return {
+    root,
+    manifestPath: options.manifestPath
+      ? resolve(options.manifestPath)
+      : join(evidenceDirectory, 'release-source-manifest.json'),
+    evidencePath: options.evidencePath
+      ? resolve(options.evidencePath)
+      : join(evidenceDirectory, 'release-gate-evidence.json'),
+    gatesPath: options.gatesPath
+      ? resolve(options.gatesPath)
+      : join(root, 'plans/system-maturity/gates.json'),
+    workflowPath: options.workflowPath
+      ? resolve(options.workflowPath)
+      : join(root, '.github/workflows/release.yml'),
+  };
+}
+
+export function validateReleaseBaseline(options = {}) {
+  const { root, manifestPath, evidencePath, gatesPath, workflowPath } = resolveReleaseBaselinePaths(options);
   const manifestText = readFileSync(manifestPath, 'utf8');
   const manifest = JSON.parse(manifestText.replace(/^\uFEFF/u, ''));
   assertSortedUniqueManifest(manifest);
-  const identity = resolveReleaseIdentity({ root, ...options });
+  // A local no-argument validation has no CI ref. The manifest may provide that
+  // binding, but it still has to resolve to the current HEAD below; stale evidence
+  // therefore remains fail-closed.
+  const identity = resolveReleaseIdentity({ ...options, root, ref: options.ref || manifest.ref });
   for (const key of ['commit', 'ref', 'version', 'tree']) {
     if (manifest[key] !== identity[key]) throw new Error(`release source manifest ${key} mismatch`);
   }
   if (options.evidenceOnly !== true) {
-    const regenerated = createReleaseBaselineManifest({ root, ...options });
+    const regenerated = createReleaseBaselineManifest({
+      root,
+      version: identity.version,
+      ref: identity.ref,
+      commit: identity.commit,
+    });
     if (regenerated !== manifestText) {
       throw new Error('release source manifest is not byte-for-byte reproducible');
     }

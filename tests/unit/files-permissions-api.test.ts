@@ -13,6 +13,16 @@ const activeWorkspace = vi.hoisted(() => ({
   profile: null as WorkspaceProfile | null,
 }));
 
+vi.mock('@electron/services/permissions-api', async () => {
+  const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+  return permissionsApiTestDouble.module();
+});
+
+vi.mock('../../electron/services/permissions-api', async () => {
+  const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+  return permissionsApiTestDouble.module();
+});
+
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(() => join(tmpdir(), 'clawx-user-data-mock')),
@@ -59,8 +69,18 @@ vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
 }));
 
+vi.mock('../../electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+}));
+
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (value: string) => value,
+  getOpenClawConfigDir: () => join(tmpdir(), 'clawx-openclaw-config-mock'),
+}));
+
+vi.mock('../../electron/utils/paths', () => ({
+  expandPath: (value: string) => value,
+  getOpenClawConfigDir: () => join(tmpdir(), 'clawx-openclaw-config-mock'),
 }));
 
 function workspace(rootPath: string, permissionMode: WorkspaceProfile['permissionMode'] = 'acceptEdits'): WorkspaceProfile {
@@ -79,9 +99,11 @@ function workspace(rootPath: string, permissionMode: WorkspaceProfile['permissio
 }
 
 describe('files api permission approval flow', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     storeState.approvals = [];
     storeState.decisionEvents = [];
+    const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
+    permissionsApiTestDouble.reset();
     activeWorkspace.profile = null;
   });
 
@@ -92,8 +114,8 @@ describe('files api permission approval flow', () => {
     await writeFile(filePath, 'old', 'utf8');
     activeWorkspace.profile = workspace(workspaceDir);
 
-    const { createFilesApi } = await import('@electron/services/files-api');
-    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createPermissionsApi } = await import('../../electron/services/permissions-api');
+    const { createFilesApi } = await import('../../electron/services/files-api');
     const api = createFilesApi();
     const permissions = createPermissionsApi();
 
@@ -128,8 +150,8 @@ describe('files api permission approval flow', () => {
     await writeFile(filePath, 'old', 'utf8');
     activeWorkspace.profile = workspace(workspaceDir, 'plan');
 
-    const { createFilesApi } = await import('@electron/services/files-api');
-    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
+    const { listPermissionDecisionEvents } = await import('../../electron/services/permissions-api');
+    const { createFilesApi } = await import('../../electron/services/files-api');
     const api = createFilesApi();
 
     await expect(api.writeText({ path: filePath, content: 'new' })).resolves.toMatchObject({
@@ -153,8 +175,8 @@ describe('files api permission approval flow', () => {
     await writeFile(filePath, 'old', 'utf8');
     activeWorkspace.profile = workspace(workspaceDir, 'readOnly');
 
-    const { createFilesApi } = await import('@electron/services/files-api');
-    const { listPermissionDecisionEvents } = await import('@electron/services/permissions-api');
+    const { listPermissionDecisionEvents } = await import('../../electron/services/permissions-api');
+    const { createFilesApi } = await import('../../electron/services/files-api');
     const api = createFilesApi();
 
     await expect(api.writeText({ path: filePath, content: 'new' })).resolves.toMatchObject({
@@ -179,7 +201,7 @@ describe('files api read allowlist (P1-003)', () => {
     await writeFile(secretPath, 'top-secret', 'utf8');
     activeWorkspace.profile = workspace(workspaceDir);
 
-    const { createFilesApi } = await import('@electron/services/files-api');
+    const { createFilesApi } = await import('../../electron/services/files-api');
     const api = createFilesApi();
     const result = await api.readText({ path: secretPath });
     expect(result).toMatchObject({ ok: false, error: 'outsideSandbox' });
@@ -191,7 +213,7 @@ describe('files api read allowlist (P1-003)', () => {
     await writeFile(filePath, 'hello', 'utf8');
     activeWorkspace.profile = workspace(workspaceDir);
 
-    const { createFilesApi } = await import('@electron/services/files-api');
+    const { createFilesApi } = await import('../../electron/services/files-api');
     const api = createFilesApi();
     const result = await api.readText({ path: filePath });
     expect(result).toMatchObject({ ok: true, content: 'hello' });

@@ -6,6 +6,7 @@ import {
   VERSE_CLAW_OPENAI_IMAGE_DEFAULT_MODEL,
   VERSE_CLAW_OPENAI_IMAGE_PROVIDER_KEY,
 } from '../utils/openclaw-image-relay-constants';
+import { getOpenClawConfigDir } from '../utils/paths';
 import {
   applyOpenAiImageRelaySettings,
   getImageGenerationSettingsSnapshot,
@@ -70,7 +71,7 @@ async function resolveOutgoingMediaUrl(
     if (!match) return null;
     const attachmentId = decodeURIComponent(match[1]);
     if (!/^[A-Za-z0-9._-]+$/.test(attachmentId)) return null;
-    const recordPath = join(homedir(), '.openclaw', 'media', 'outgoing', 'records', `${attachmentId}.json`);
+    const recordPath = join(getOpenClawConfigDir(), 'media', 'outgoing', 'records', `${attachmentId}.json`);
     const fsP = await import('node:fs/promises');
     const raw = await fsP.readFile(recordPath, 'utf8');
     const record = JSON.parse(raw) as {
