@@ -218,7 +218,9 @@ export async function executeReplayRollback(
     ok: true,
     rolledBackTo: `checkpoint:${target.checkpointId}`,
     mode: 'legacy_checkpoint_fallback',
-    evidenceSummary: `Restored from checkpoint "${target.checkpointId}" at tick ${decision.requestedAtTick}`,
+    evidenceSummary:
+      `Restored from checkpoint "${target.checkpointId}" at tick ${decision.requestedAtTick}; ` +
+      'file writes were rolled back via the write-journal, but runtime state and external side effects are not restored (event-log replay not implemented)',
     durationMs: Date.now() - start,
   };
   deps.recordOutcome(result);

@@ -137,6 +137,8 @@ export type MissionRunRecord = {
   validationState?: LongConversationValidationState;
   acceptanceStatus?: LongConversationAcceptanceStatus;
   noProgressHash?: string;
+  /** Guardian circuit breaker (P2-7) 触发标记：checkpoint trigger 用 audit_fail。 */
+  guardianTripped?: boolean;
   metadata?: Record<string, unknown>;
   createdAt: number;
   updatedAt: number;

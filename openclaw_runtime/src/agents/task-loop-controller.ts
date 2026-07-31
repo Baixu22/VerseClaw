@@ -77,6 +77,7 @@ import {
   normalizeControlSignals,
   signalsFromGaps,
 } from "./long-conversation-control-signals.js";
+import { getSessionGuardianCircuitBreaker } from "./guardian-circuit-breaker.js";
 import {
   extractFollowupCandidates,
   scoreWorkerQuality,
@@ -325,6 +326,8 @@ export type TaskLoopRunRecord = {
   nextActions: string[];
   controlSignals?: TaskLoopSelfCheckResult["controlSignals"];
   validationState?: TaskLoopSelfCheckResult["validationState"];
+  /** Guardian circuit breaker (P2-7) 触发标记：checkpoint trigger 用 audit_fail。 */
+  guardianTripped?: boolean;
   finalSummary?: string;
   traceId?: string;
   error?: string;
@@ -2527,7 +2530,12 @@ async function recordTaskLoopCheckpoint(
       sessionKey: record.sessionKey,
       ...(record.workspaceId !== undefined ? { workspaceId: record.workspaceId } : {}),
       ...(record.taskLedgerRootId ? { taskLedgerRootId: record.taskLedgerRootId } : {}),
-      trigger: record.status === "blocked" || record.status === "error" ? "manual_review" : "guide",
+      trigger:
+        record.guardianTripped === true
+          ? "audit_fail"
+          : record.status === "blocked" || record.status === "error"
+            ? "manual_review"
+            : "guide",
       activeTask: record.task,
       openBlockers: [],
       decisions: [],
@@ -3139,6 +3147,21 @@ export async function runTaskLoop(
       record.controlSignals = selfCheck.controlSignals;
       record.validationState = selfCheck.validationState;
       record.nextActions = [];
+      // Guardian circuit breaker (P2-7)：连续 blocking ≥3 或 50 次内 ≥10 →
+      // 强制 blocked + audit_fail checkpoint，停止 repair 循环。
+      const guardianOutcome = getSessionGuardianCircuitBreaker(record.sessionKey).record(
+        record.controlSignals,
+      );
+      if (guardianOutcome === "trip") {
+        record.guardianTripped = true;
+        record.status = "blocked";
+        record.phase = "blocked";
+        record.finalSummary =
+          "Task loop interrupted by the guardian circuit breaker after repeated blocking control signals.";
+        record.nextActions = ["ask_user_or_manual_review"];
+        // 阻止后续 repair 分支继续循环：self-check 视为 blocked。
+        selfCheck = { ...selfCheck, decision: "blocked" as const };
+      }
       const selfCheckEvidenceVerifierEnabled = evidenceVerifierShadowEnabled(record);
       const selfCheckEvidenceReportEnabled = localControlPlaneReportEnabled(cfg, "evidence");
       const selfCheckEvidenceReportAt = selfCheckEvidenceVerifierEnabled || selfCheckEvidenceReportEnabled
