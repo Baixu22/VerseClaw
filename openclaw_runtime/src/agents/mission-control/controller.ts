@@ -969,7 +969,7 @@ export async function tickMission(
       maxTicks: record.maxTicks,
       ...(anomalyPattern != null ? { anomalyPattern } : {}),
     }, deps.reviewerDeps);
-    const reviewer = gateMissionReviewerCompletion(rawReviewer, record);
+    let reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 
     const noProgressHash = buildNoProgressHash(reviewer.decision, reviewer.repairBrief, record.evidenceRefs);
     const repeatedRepair = reviewer.decision === "repair" && record.noProgressHash === noProgressHash;

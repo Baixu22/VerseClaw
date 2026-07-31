@@ -563,17 +563,22 @@ function exactVersionFromOverrideSpec(spec) {
   if (!spec || typeof spec !== "string") {
     return null;
   }
-  if (EXACT_VERSION_PATTERN.test(spec)) {
-    return spec;
+  // pnpm-lock.yaml v9 snapshot dependency specs carry a peer-resolution
+  // suffix ("0.100.1(zod@4.4.3)") that npm never accepts. Strip it so the
+  // version component matches the exact-version pattern; the suffix selects a
+  // peer context, not a different package version.
+  const withoutPeerSuffix = spec.replace(/\(.*\)$/u, "");
+  if (EXACT_VERSION_PATTERN.test(withoutPeerSuffix)) {
+    return withoutPeerSuffix;
   }
-  if (!spec.startsWith("npm:")) {
+  if (!withoutPeerSuffix.startsWith("npm:")) {
     return null;
   }
-  const versionIndex = spec.lastIndexOf("@");
+  const versionIndex = withoutPeerSuffix.lastIndexOf("@");
   if (versionIndex <= "npm:".length) {
     return null;
   }
-  const version = spec.slice(versionIndex + 1);
+  const version = withoutPeerSuffix.slice(versionIndex + 1);
   return EXACT_VERSION_PATTERN.test(version) ? version : null;
 }
 

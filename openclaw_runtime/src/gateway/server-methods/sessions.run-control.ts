@@ -30,6 +30,7 @@ import {
   parseAgentSessionKey,
 } from "../../routing/session-key.js";
 import { resolveSessionKeyForRun } from "../server-session-key.js";
+import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import { listSessionCompactionCheckpoints } from "../session-compaction-checkpoints.js";
 import { reactivateCompletedSubagentSession } from "../session-subagent-reactivation.js";
 import {
@@ -536,7 +537,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, requestedAgent.agentId);
+    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
     const rollbackDeps = createCheckpointRollbackDeps({
       workspaceRoot,
       sessionId: checkpoint.sessionKey,
@@ -608,7 +609,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const workspaceRoot = resolveAgentWorkspaceDir(cfg, requestedAgent.agentId);
+    const workspaceRoot = resolveAgentWorkspaceDir(cfg, resolveSessionStoreAgentId(cfg, canonicalKey));
     const diff = checkpointContentDiff({
       workspaceRoot,
       checkpoint,
