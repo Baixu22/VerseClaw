@@ -1207,15 +1207,28 @@ export function readAcceptanceStatus(outputRoot = DEFAULT_OUTPUT_ROOT) {
       });
     }
   };
-  // A run directory may either nest under `runs/<runId>/` (default layout) or be
-  // written flat into the status root when the caller passes --output-dir directly.
+  // A run directory may either nest under `runs/<runId>/` (default layout), be
+  // written flat into the status root when the caller passes --output-dir
+  // directly, or recurse from the runs/ parent (CLI default status root).
   const flatReport = join(root, 'final-report.json');
   const flatFallback = join(root, 'verifier-report.json');
   const flatPath = existsSync(flatReport) ? flatReport : existsSync(flatFallback) ? flatFallback : null;
   if (flatPath) addRun(flatPath, basename(flatPath));
   for (const entry of readdirSync(root, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
+    if (!entry.isDirectory() || entry.name === 'verifier') continue;
     const runDir = join(root, entry.name);
+    if (entry.name === 'runs') {
+      // Default layout: <root>/runs/<runId>/{final,verifier}-report.json
+      for (const nested of readdirSync(runDir, { withFileTypes: true })) {
+        if (!nested.isDirectory()) continue;
+        const nestedReport = join(runDir, nested.name, 'final-report.json');
+        const nestedFallback = join(runDir, nested.name, 'verifier-report.json');
+        const nestedPath = existsSync(nestedReport) ? nestedReport : existsSync(nestedFallback) ? nestedFallback : null;
+        if (!nestedPath) continue;
+        addRun(nestedPath, `runs/${nested.name}/${basename(nestedPath)}`);
+      }
+      continue;
+    }
     const reportPath = join(runDir, 'final-report.json');
     const fallbackPath = join(runDir, 'verifier-report.json');
     const pathValue = existsSync(reportPath) ? reportPath : existsSync(fallbackPath) ? fallbackPath : null;
