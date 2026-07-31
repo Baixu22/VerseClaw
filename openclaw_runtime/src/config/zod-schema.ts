@@ -219,6 +219,17 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    mission: z
+      .object({
+        rollback: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     registryDiagnostics: z
       .object({
         collector: z.boolean().optional(),

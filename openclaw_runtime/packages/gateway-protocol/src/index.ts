@@ -360,8 +360,6 @@ import {
   SessionsResumeCheckpointsResultSchema,
   type SessionsRestoreCheckpointParams,
   SessionsRestoreCheckpointParamsSchema,
-  type SessionsRestoreCheckpointResult,
-  SessionsRestoreCheckpointResultSchema,
   type SessionOperationEvent,
   type SessionsCreateParams,
   SessionsCreateParamsSchema,

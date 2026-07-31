@@ -86,6 +86,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   checkpointSerializer: { shadow: true },
   resume: { replayShadow: true },
   toolRegistry: { shadow: true },
+  mission: { rollback: { enabled: true } },
   registryDiagnostics: { collector: true },
   toolProtocol: { mcpShadow: true },
   toolGovernance: { destructiveOperationGuard: { preflight: { enabled: true } } },
