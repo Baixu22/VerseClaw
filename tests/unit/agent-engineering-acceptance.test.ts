@@ -584,5 +584,16 @@ describe('Agent Engineering Acceptance', () => {
     expect(status.runs).toHaveLength(1);
     expect(status.runs[0]).toMatchObject({ runId: manifest.runId, result: 'NO-GO', engineeringAcceptedByAgent: false });
     expect(status.runs[0].path).toBe(`runs/${manifest.runId}/final-report.json`);
+
+    // Flat layout: a verifier/ subdirectory next to final-report.json must not
+    // double-count when the caller points --output-dir at the run directory.
+    const flatDir = join(outputDir, 'flat-run');
+    mkdirSync(join(flatDir, 'verifier'), { recursive: true });
+    writeFileSync(join(flatDir, 'final-report.json'), `${JSON.stringify({ schema: ACCEPTANCE_SCHEMA, role: 'executor', runId: 'flat-run', result: 'NO-GO', engineeringAcceptedByAgent: false, generatedAt: '2026-07-31T00:00:02.000Z' }, null, 2)}\n`, 'utf8');
+    writeFileSync(join(flatDir, 'verifier', 'verifier-report.json'), `${JSON.stringify({ schema: ACCEPTANCE_SCHEMA, role: 'verifier', runId: 'flat-run', result: 'pass', engineeringAcceptedByAgent: true, generatedAt: '2026-07-31T00:00:03.000Z' }, null, 2)}\n`, 'utf8');
+    const flatStatus = readAcceptanceStatus(flatDir);
+    expect(flatStatus.runs).toHaveLength(1);
+    expect(flatStatus.runs[0]).toMatchObject({ runId: 'flat-run', result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(flatStatus.runs[0].path).toBe('final-report.json');
   });
 });
