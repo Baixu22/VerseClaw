@@ -10,13 +10,14 @@
 ## Windows UI v2 shell and overlay routing
 
 - `UiVersion` resolves from `?uiVersion=legacy|v2`; Windows defaults to `v2`, while macOS/Linux default to `legacy`.
-- The Windows titlebar stays outside the animated `AppContentStage`. Opening Settings recesses only the sidebar/content stage, leaving native window controls interactive.
+- The Windows titlebar stays outside modal overlays. Opening Settings keeps the background application stage stationary, leaving native window controls interactive and avoiding a full-tree transform.
 - `/settings/*` is an overlay route. The last non-Settings location remains rendered as the background, direct deep links fall back to `/`, and category changes do not remount the drawer.
-- `AppleDrawer` is the only renderer wrapper allowed to import `vaul`. The project pins and patches `vaul@1.1.2` so its internal lifecycle duration matches the 420 ms material animation.
+- `AppleDrawer` is the only renderer wrapper allowed to import `vaul`. The project pins `vaul@1.1.2`; the wrapper caps the visible drawer transition at 180 ms and owns a 220 ms close fallback.
 - X, ESC, scrim, and drag dismissal share one close state machine. Navigation and focus restoration happen only after the exit animation completes.
 - Radix Select, Tooltip, Dialog, and Sheet portals inherit the active overlay host, preventing nested controls from escaping the drawer or being treated as outside interactions.
-- Light UI v2 materials share one warm-neutral hue family across semantic surfaces and `canvas/sidebar/panel/elevated/control`; light-only overrides explicitly exclude `.dark` to prevent mixed themes.
-- Reduced motion removes large transform/spring effects and keeps only 160 ms opacity/color feedback.
+- Light UI v2 materials share one warm-neutral hue family across semantic surfaces and `canvas/sidebar/panel/elevated/control`; Settings uses opaque token surfaces so software rendering does not stack full-window backdrop filters.
+- Stable UI-version context is separated from changing overlay state so Settings does not invalidate Chat, ChatInput, or message consumers.
+- Reduced motion removes large movement and keeps only 100 ms opacity/color feedback.
 - This renderer-only architecture does not change IPC, host-api, Gateway transport, permissions, or persisted business schemas.
 
 The durable acceptance contract lives in `harness/specs/tasks/windows-ui-v2-apple-motion.md`, with the reusable motion/material rule in `harness/specs/rules/ui-motion-material-system.md`.

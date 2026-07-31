@@ -2,7 +2,7 @@ export const MOTION_DURATION = {
   fast: 0.12,
   control: 0.18,
   surface: 0.24,
-  drawer: 0.42,
+  drawer: 0.18,
 } as const;
 
 export const MOTION_EASE = {

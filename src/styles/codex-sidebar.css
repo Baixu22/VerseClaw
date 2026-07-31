@@ -1,0 +1,767 @@
+/*
+ * codex-sidebar.css — sidebar recipe ported from the FakeCoding reference app.
+ *
+ * PROVENANCE. Every rule below is copied from
+ *   C:\Users\27933\Desktop\FakeCoding-main\web\src\styles.css        (sidebar blocks)
+ *   C:\Users\27933\Desktop\FakeCoding-main\web\src\codex-tokens.css  (token subset)
+ * which are themselves generated from the official Codex Electron bundle via CDP
+ * capture (see that repo's codex-reference/live-capture). The inline comments
+ * recording pixel measurements are kept verbatim — they are the justification
+ * for values that otherwise look arbitrary, and they are what makes this a port
+ * rather than a re-invention. Do not "clean up" the odd numbers (30px rows,
+ * 12.5px radius, 13.5px labels, .06px letter-spacing): they are measured.
+ *
+ * THREE DELIBERATE DEVIATIONS from the source, and why:
+ *
+ *   1. Theme selectors are re-scoped. FakeCoding ships
+ *      `:root[data-theme="light"], :root.electron-light`; ClawX's
+ *      applyDocumentTheme() (src/lib/theme.ts) writes plain `light`/`dark`
+ *      classes onto <html>, so the blocks below use `:root.dark` / `:root:not(.dark)`.
+ *
+ *   2. The `.sidebar` rule is not copied. In FakeCoding the sidebar is an
+ *      absolutely-positioned overlay reference frame, so its rule carries 14
+ *      `!important` declarations and a fixed `--sidebar-w`. ClawX's sidebar is a
+ *      flex child that owns its width from `sidebarWidth` React state; importing
+ *      that rule would break collapse and drag-resize. Only the surface
+ *      treatment is kept, as `.codex-sidebar-surface`.
+ *
+ *   3. Token names are namespaced `--cdx-*`. The source uses bare `--text`,
+ *      `--bg-hover` etc., which are far too generic to drop into a codebase that
+ *      already has its own `--surface-*` / shadcn variables.
+ */
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Token subset — codex-tokens.css:255-290 (dark) and :400-425 (light).
+ * Only the variables the copied rules actually reference are ported; the full
+ * bridge is 462 lines of palette we have no use for.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Official base palette (codex-tokens.css:10-50) — only the greys/blues the
+   * sidebar rules mix against. */
+  --cdx-gray-0: #fff;
+  --cdx-gray-100: #ededed;
+  --cdx-gray-300: #afafaf;
+  --cdx-gray-500: #5d5d5d;
+  --cdx-gray-1000: #0d0d0d;
+  --cdx-blue-100: #99ceff;
+  --cdx-blue-300: #339cff;
+}
+
+/* Dark is the source's default block (`:root, :root[data-theme="dark"]`). */
+:root.dark {
+  --cdx-bg-hover: color-mix(in srgb, var(--cdx-gray-0) 6%, transparent);
+  --cdx-text: var(--cdx-gray-0);
+  --cdx-text-2: color-mix(in srgb, var(--cdx-gray-0) 86%, var(--cdx-gray-500));
+  --cdx-text-3: var(--cdx-gray-300);
+  --cdx-text-4: var(--cdx-gray-500);
+  /* LIVE CDP 2026-07-25: --token-list-hover-background */
+  --cdx-bg-row-hover: rgba(255, 255, 255, 0.08);
+  /* Muted section labels are mixed against white in the source; on a light
+   * ground they must be mixed against the foreground instead. */
+  --cdx-label-mix: var(--cdx-gray-0);
+}
+
+:root:not(.dark) {
+  --cdx-bg-hover: color-mix(in srgb, var(--cdx-gray-1000) 4%, transparent);
+  --cdx-text: #1a1c1f;
+  --cdx-text-2: color-mix(in srgb, #1a1c1f 88%, var(--cdx-gray-500));
+  --cdx-text-3: var(--cdx-gray-500);
+  --cdx-text-4: var(--cdx-gray-300);
+  --cdx-bg-row-hover: rgba(0, 0, 0, 0.06);
+  --cdx-label-mix: #1a1c1f;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Sidebar shell — styles.css:114-133, minus the overlay/!important block
+ * (see deviation 2 in the header).
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-sidebar-surface {
+  border-right: 1px solid color-mix(in srgb, var(--cdx-text) 6%, transparent);
+}
+
+/* styles.css:160 — heading strip above the primary nav. */
+.codex-sidebar .sidebar-heading {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 0 14px;
+  position: relative;
+  flex: none;
+}
+.codex-sidebar .sidebar-heading > .icon-button { margin-left: auto; }
+
+/* styles.css:206-207 */
+.codex-sidebar .icon-button {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: var(--cdx-text-3);
+  transition: color 120ms ease, background 160ms ease;
+}
+.codex-sidebar .icon-button svg { width: 16px; height: 16px; }
+.codex-sidebar .icon-button:hover {
+  color: var(--cdx-text-2);
+  background: var(--cdx-bg-hover);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Primary nav — styles.css:208-214. The `kbd` shortcut is invisible until the
+ * row is hovered, which is why ClawX's always-on badge could be dropped.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-sidebar .primary-nav { padding: 0 8px 10px; flex: none; }
+.codex-sidebar .primary-nav > button,
+.codex-sidebar .primary-nav > a {
+  height: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--cdx-text-2);
+  font-size: 13.5px;
+  font-weight: 430;
+  letter-spacing: 0.06px;
+  text-align: left;
+}
+.codex-sidebar .primary-nav > button svg,
+.codex-sidebar .primary-nav > a svg {
+  width: 17px;
+  height: 17px;
+  color: var(--cdx-text-3);
+  transition: color 120ms ease;
+}
+.codex-sidebar .primary-nav > button:hover,
+.codex-sidebar .primary-nav > a:hover {
+  background: var(--cdx-bg-hover);
+  color: var(--cdx-text);
+}
+.codex-sidebar .primary-nav > button:hover svg,
+.codex-sidebar .primary-nav > a:hover svg { color: var(--cdx-text-2); }
+/* Active route keeps the hover wash so the current page stays legible. */
+.codex-sidebar .primary-nav > a[aria-current='page'] {
+  background: var(--cdx-bg-row-hover);
+  color: var(--cdx-text);
+}
+.codex-sidebar .primary-nav > a[aria-current='page'] svg { color: var(--cdx-text-2); }
+.codex-sidebar .primary-nav kbd {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--cdx-text-4);
+  opacity: 0;
+}
+.codex-sidebar .primary-nav button:hover kbd,
+.codex-sidebar .primary-nav a:hover kbd { opacity: 1; }
+
+/* styles.css:215 + 379 — scroll region clips horizontally so long session
+ * titles can never introduce a horizontal scrollbar. */
+.codex-sidebar .sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: clip;
+  padding-bottom: 20px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Sections — styles.css:216-252. Official CDP section headers are ~14px/500
+ * at 50% opacity, and the chevron is *hidden* while the section is open
+ * (opacity 0), appearing only on hover — that is why an expanded section
+ * reads as a plain label.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-sidebar .sidebar-section { padding: 11px 8px 6px; }
+.codex-sidebar .section-heading {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px 2px 8px;
+}
+.codex-sidebar .section-label-button {
+  flex: 1;
+  min-width: 0;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: color-mix(in srgb, var(--cdx-label-mix) 50%, transparent);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-align: left;
+  border-radius: 10px;
+  transition: color 120ms ease;
+  padding: 2px 4px 2px 0;
+}
+.codex-sidebar .section-label-button > span { line-height: 1.2; }
+.codex-sidebar .section-label-button:hover {
+  color: color-mix(in srgb, var(--cdx-label-mix) 72%, transparent);
+}
+.codex-sidebar .section-label-button svg,
+.codex-sidebar .section-chevron {
+  color: currentColor;
+  flex: none;
+  opacity: 0.7;
+  transition: transform 150ms ease, opacity 120ms ease;
+}
+/* Official chevron points down when open; -rotate-90 when collapsed */
+.codex-sidebar .section-chevron { transform: rotate(-90deg); }
+.codex-sidebar .section-chevron.open { transform: rotate(0deg); opacity: 0; }
+.codex-sidebar .section-label-button:hover .section-chevron { opacity: 1; }
+
+.codex-sidebar .section-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 130ms ease;
+}
+.codex-sidebar .section-heading:hover .section-heading-actions,
+.codex-sidebar .section-heading:focus-within .section-heading-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+.codex-sidebar .section-heading-actions button {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: var(--cdx-text-4);
+}
+.codex-sidebar .section-heading-actions button:hover {
+  color: var(--cdx-text-2);
+  background: color-mix(in srgb, var(--cdx-text) 7%, transparent);
+}
+/* While the organize menu is open its trigger must stay visible, otherwise the
+ * action strip fades out from under the open popover. */
+.codex-sidebar .section-heading-actions:has(button[aria-expanded="true"]) {
+  opacity: 1;
+  pointer-events: auto;
+}
+.codex-sidebar .section-collapsed { padding-bottom: 3px; }
+
+/* Quiet empty rows — official has no large muted block under every project.
+ * Left padding matches the nested task-title start so the state text lines up
+ * with the rows it replaces. */
+.codex-sidebar .empty-sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px 6px 32px;
+  color: color-mix(in srgb, var(--cdx-label-mix) 38%, transparent);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0;
+  user-select: none;
+}
+.codex-sidebar .show-more {
+  padding: 4px 12px 6px 32px;
+  color: color-mix(in srgb, var(--cdx-label-mix) 45%, transparent);
+  font-size: 12px;
+  text-align: left;
+  width: 100%;
+  border-radius: 8px;
+}
+.codex-sidebar .show-more:hover {
+  color: color-mix(in srgb, var(--cdx-label-mix) 70%, transparent);
+  background: color-mix(in srgb, var(--cdx-label-mix) 4%, transparent);
+}
+.codex-sidebar .task-collection-list { padding-top: 4px; overflow-x: clip; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * SidebarRow — shared hover surface (LIVE CDP 2026-07-25, .sidebar-item recipe)
+ *
+ * Project rows and session rows are unified: height 30px / radius 12.5px /
+ * transparent at rest; hover AND selected are both
+ * --token-list-hover-background. Keeping them in one rule is what stops the
+ * two row types from drifting apart again.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-sidebar .sidebar-row {
+  height: 30px;
+  position: relative;
+  border-radius: 12.5px;
+  transition: background 130ms ease;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.codex-sidebar .sidebar-row:hover,
+.codex-sidebar .sidebar-row.selected { background: var(--cdx-bg-row-hover); }
+.codex-sidebar .sidebar-row__actions {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 0s linear 120ms;
+  z-index: 6;
+}
+.codex-sidebar .sidebar-row:hover .sidebar-row__actions,
+.codex-sidebar .sidebar-row:focus-within .sidebar-row__actions,
+/* ClawX's existing e2e tests hover the outer `[data-testid=sidebar-folder-*]`
+ * container, not the inner row. Scope this to the folder's own header row —
+ * `:hover` stays true on ancestors, so an unscoped descendant selector would
+ * reveal action strips on every ancestor folder at once. */
+.codex-sidebar [data-testid^='sidebar-folder-']:hover > div > .sidebar-row:first-child .sidebar-row__actions,
+/* ClawX addition: a row whose move-menu popover is open must keep its controls
+ * pinned, otherwise they fade out from under the open menu. */
+.codex-sidebar .sidebar-row[data-force-actions='true'] .sidebar-row__actions {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* styles.css:299 — project/workspace row. */
+.codex-sidebar .project-row {
+  height: 30px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 19px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  padding: 0 8px;
+  border-radius: 12.5px;
+  background: transparent;
+  color: var(--cdx-text-2);
+  font-size: 14px;
+  font-weight: 450;
+  text-align: left;
+  transition: color 120ms ease, box-shadow 140ms ease;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.codex-sidebar .project-row svg {
+  width: 17px;
+  height: 17px;
+  color: var(--cdx-text-3);
+  transition: color 120ms ease;
+}
+/* styles.css:7959-7962 — the folder glyph is smaller than the 17px icon slot. */
+.codex-sidebar .project-row .project-folder-icon {
+  width: 15px;
+  height: 15px;
+}
+.codex-sidebar .project-row:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cdx-blue-100) 22%, transparent),
+              0 0 0 2px color-mix(in srgb, var(--cdx-blue-300) 13%, transparent);
+}
+.codex-sidebar .project-row:hover svg { color: var(--cdx-text-2); }
+
+/* Unified text truncation: gradient fade where hover buttons appear. Both
+   project and session rows share the same soft-fade strategy so their
+   rendering is identical. Mask only affects pixels with content, so short
+   text is unaffected. */
+.codex-sidebar .project-row > span,
+.codex-sidebar .task-select > span:not(.task-status-slot) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 40px), transparent 100%);
+}
+
+/* Trailing runtime-state slot — occupies the official task-progress-spinner
+ * position, so it never shifts the title start. */
+.codex-sidebar .task-select > .task-status-slot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: opacity 120ms ease, margin-right 120ms ease;
+}
+/* styles.css:331-333 — passive badges yield to the hover actions that overlay
+ * the row's right edge. */
+.codex-sidebar .task-row:hover .task-status-slot,
+.codex-sidebar .task-row:focus-within .task-status-slot {
+  opacity: 0;
+}
+.codex-sidebar .task-select > .task-status-slot--dismissible {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px;
+}
+/* ClawX addition: the completed marker is dismissed by clicking it, so unlike
+ * the reference's passive badges it must stay visible and hittable on hover —
+ * it slides clear of the action strip instead of fading under it. */
+.codex-sidebar .task-row:hover .task-status-slot--dismissible,
+.codex-sidebar .task-row:focus-within .task-status-slot--dismissible {
+  opacity: 1;
+  margin-right: 68px;
+}
+.codex-sidebar .task-select > .task-status-slot--dismissible:hover {
+  background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
+  color: var(--cdx-text);
+}
+
+.codex-sidebar .project-hover-actions { gap: 1px; }
+.codex-sidebar .project-hover-actions button {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: var(--cdx-text-4);
+}
+.codex-sidebar .project-hover-actions button:hover {
+  background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
+  color: var(--cdx-text-2);
+}
+
+/* styles.css:317-324 — session rows nested under a project. */
+.codex-sidebar .project-tasks { padding: 4px 0 0; overflow-x: clip; }
+.codex-sidebar .task-select {
+  min-width: 0;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 8px;
+  text-align: left;
+  color: var(--cdx-text-2);
+  font-size: 14px;
+  font-weight: 450;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.codex-sidebar .project-tasks .task-select { padding-left: 35px; }
+.codex-sidebar .task-select svg { color: var(--cdx-text-3); }
+
+/* ClawX-only workgroup tree. The reference has no nested folders, so depth is
+ * expressed the way the rest of the recipe works: relative padding on the
+ * children container rather than absolute per-depth math. The step equals the
+ * folder row's own leading glyph + gap (12px chevron + 7px gap), which lands a
+ * child session title exactly on its parent workgroup's title. */
+.codex-sidebar .folder-children { padding-left: 19px; }
+
+/* Workgroup creation is management chrome, so it stays hidden until the
+ * workspace group is hovered or something inside it takes focus. */
+.codex-sidebar .sidebar-create-workgroup {
+  opacity: 0;
+  transition: opacity 130ms ease, background-color 120ms ease, color 120ms ease;
+}
+.codex-sidebar .project-tasks:hover .sidebar-create-workgroup,
+.codex-sidebar .project-tasks:focus-within .sidebar-create-workgroup {
+  opacity: 1;
+}
+
+/* styles.css:318 — official row cadence is 30px + 1px, giving the ~31px stride
+ * the virtualized list estimate assumes. Tailwind's `space-y-0.5` in the folder
+ * tree would otherwise add a competing 2px gap at some depths only. */
+.codex-sidebar .task-row { margin-bottom: 1px; }
+.codex-sidebar .project-tasks > .space-y-0\.5 > :not([hidden]) ~ :not([hidden]),
+.codex-sidebar .project-tasks .space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* styles.css:330-355 — hover actions, unified 22x22 / radius 5px. */
+.codex-sidebar .task-hover-actions { gap: 1px; }
+.codex-sidebar .task-hover-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: var(--cdx-text-4);
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  flex: none;
+}
+.codex-sidebar .task-hover-btn:hover {
+  color: var(--cdx-text-2);
+  background: color-mix(in srgb, var(--cdx-text) 8%, transparent);
+}
+.codex-sidebar .task-hover-btn svg { width: 16px; height: 16px; display: block; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Expand/collapse — styles.css:1671-1676. grid-template-rows 0fr→1fr animates
+ * height without measuring it. ClawX had the same technique written inline as
+ * `grid-rows-[0fr]`/`grid-rows-[1fr]`; this version carries the official easing.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-sidebar .project-tasks-outer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 190ms cubic-bezier(.2, .82, .25, 1);
+}
+.codex-sidebar .project-tasks-outer.open { grid-template-rows: 1fr; }
+.codex-sidebar .project-tasks-outer > .project-tasks { min-height: 0; overflow: hidden; }
+.codex-sidebar .section-list-outer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms cubic-bezier(.2, .82, .25, 1);
+}
+.codex-sidebar .section-list-outer.open { grid-template-rows: 1fr; }
+.codex-sidebar .section-list-outer > * { min-height: 0; overflow: hidden; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Dropdown / overflow menu — copied from FakeCoding codex-dropdown.css.
+ * Source comments are preserved in shortened form: shell = bg-token-dropdown-
+ * background/90, rounded-xl, ring 0.5px, shadow-xl-spread, backdrop-blur-sm;
+ * item = rounded-lg, 5px/8px padding, 29px min-height, 13px/445.
+ *
+ * The original uses bare --text / --gray vars. This scoped port maps those to
+ * the namespaced --cdx-* tokens above so the recipe does not leak globally.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-dropdown {
+  position: fixed;
+  z-index: 220;
+  box-sizing: border-box;
+  padding: 4px;
+  color: #fff;
+  background: rgba(45, 45, 45, 0.92);
+  background: color-mix(in oklab, #2d2d2d 90%, transparent);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.082), 0 8px 16px -4px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  animation: codex-dropdown-in 140ms cubic-bezier(.19, 1, .22, 1);
+}
+:root:not(.dark) .codex-dropdown {
+  color: var(--cdx-text);
+  background: rgba(255, 255, 255, 0.92);
+  background: color-mix(in oklab, #fff 92%, transparent);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+}
+.codex-dropdown--compact { width: 172px; min-width: 172px; max-width: 240px; }
+.codex-dropdown__label {
+  padding: 6px 10px 4px;
+  color: var(--cdx-text-4);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.2;
+}
+.codex-dropdown__label--divider {
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--cdx-label-mix) 8%, transparent);
+}
+.codex-dropdown__item {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 29px;
+  margin: 0;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 12.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--cdx-text-2);
+  font-size: 13px;
+  font-weight: 450;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 80ms ease, color 80ms ease;
+}
+.codex-dropdown__item:hover,
+.codex-dropdown__item:focus-visible {
+  background: color-mix(in srgb, var(--cdx-label-mix) 7%, transparent);
+  color: var(--cdx-text);
+}
+.codex-dropdown__item.radio-item.checked,
+.codex-dropdown__item.radio-item[aria-checked="true"] {
+  background: transparent;
+  color: var(--cdx-text);
+}
+.codex-dropdown__item.radio-item:hover,
+.codex-dropdown__item.radio-item:focus-visible {
+  background: color-mix(in srgb, var(--cdx-label-mix) 7%, transparent);
+}
+.codex-dropdown__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  font: inherit;
+  line-height: 1.25;
+}
+.codex-dropdown__check,
+.menu-check-slot {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  flex: none;
+  opacity: 0.75;
+  line-height: 0;
+}
+.codex-dropdown__item:hover .codex-dropdown__check,
+.codex-dropdown__item:focus-visible .codex-dropdown__check,
+.codex-dropdown__item.checked .codex-dropdown__check { opacity: 1; }
+.codex-dropdown__check svg,
+.menu-check-slot svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.codex-dropdown__check.invisible,
+.menu-check-slot.invisible {
+  visibility: hidden;
+  opacity: 0;
+}
+.codex-dropdown__item.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 29px;
+  padding: 5px 8px;
+  border-radius: 12.5px;
+  font-size: 13px;
+  font-weight: 445;
+  color: var(--cdx-text);
+}
+@keyframes codex-dropdown-in {
+  from { opacity: 0; transform: translateY(-2px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Geometry for this row lives with the other section rules above; only the
+ * trailing retry/new-session affordance is defined here. */
+.codex-sidebar .empty-sidebar-row__action {
+  flex: none;
+  border-radius: 8px;
+  padding: 2px 6px;
+  color: var(--cdx-text-2);
+  font-size: 12px;
+}
+.codex-sidebar .empty-sidebar-row__action:hover,
+.codex-sidebar .empty-sidebar-row__action:focus-visible {
+  background: var(--cdx-bg-row-hover);
+  color: var(--cdx-text);
+}
+
+/* Official footer profile geometry: 45px footer, 29px trigger, 259px menu. */
+.codex-sidebar .sidebar-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 45px;
+  box-sizing: border-box;
+  padding: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--cdx-label-mix) 6%, transparent);
+}
+.codex-sidebar .sidebar-account-control {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+}
+.codex-sidebar .profile-menu-trigger {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 29px;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cdx-text);
+  font-size: 14px;
+  font-weight: 445;
+  text-align: left;
+  outline: none;
+  transition: background-color 120ms ease;
+}
+.codex-sidebar .profile-menu-trigger:hover,
+.codex-sidebar .profile-menu-trigger.open { background: var(--cdx-bg-row-hover); }
+.codex-sidebar .profile-menu-trigger-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+.codex-sidebar .profile-menu-trigger-icon svg { display: block; width: 16px; height: 16px; }
+.codex-sidebar .profile-menu-trigger-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.codex-sidebar .profile-menu-shortcut,
+.sidebar-account-menu .profile-menu-shortcut {
+  margin-left: auto;
+  flex: none;
+  color: color-mix(in srgb, var(--cdx-label-mix) 50%, transparent);
+  font-size: 12px;
+  font-weight: 400;
+}
+.codex-sidebar .sidebar-footer-menu-trigger {
+  display: inline-flex;
+  width: 29px;
+  height: 29px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--cdx-text-3);
+}
+.codex-sidebar .sidebar-footer-menu-trigger:hover,
+.codex-sidebar .sidebar-footer-menu-trigger[aria-expanded='true'] { background: var(--cdx-bg-row-hover); color: var(--cdx-text); }
+.codex-sidebar .sidebar-footer-menu-trigger svg { width: 16px; height: 16px; }
+.codex-dropdown.sidebar-account-menu {
+  width: 259px;
+  min-width: 240px;
+  max-width: min(280px, calc(100vw - 16px));
+  z-index: 10030;
+}
+.sidebar-account-menu .profile-menu-user { cursor: default; }
+.sidebar-account-menu .profile-menu-user:hover { background: transparent; }
+.sidebar-account-menu .codex-dropdown__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  opacity: .75;
+}
+.sidebar-account-menu .codex-dropdown__icon svg { width: 16px; height: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-sidebar .project-tasks-outer,
+  .codex-sidebar .section-list-outer,
+  .codex-sidebar .sidebar-row,
+  .codex-sidebar .section-chevron,
+  .codex-dropdown { transition: none; animation: none; }
+}

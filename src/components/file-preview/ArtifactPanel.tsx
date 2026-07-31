@@ -1,38 +1,42 @@
 /**
- * Right-side artifact panel — the WorkBuddy-style split-pane sidebar
- * shown next to the Chat conversation.  Hosts three top-level tabs:
+ * Right-side workspace panel shown next to the Chat conversation.
  *
- *   - Changes: side-by-side diff for the focused file only (no
- *     in-panel file list — open a file from the run’s file cards below
- *     the graph, or “View file changes” picks the latest change).
- *   - Preview: rendered preview of whichever file is currently
- *     focused (Markdown → rendered, code → syntax-highlighted).  Shares
- *     `focusedFile` with the changes tab so switching tabs keeps
- *     context.
- *   - Workspace (browser): read-only workspace tree + file preview,
- *     scoped to the current agent's `agent.workspace`.
+ * Structurally a tab strip, not a fixed set of tabs.  With no tabs open the
+ * panel shows a launcher of every entry it can host; picking one opens a tab
+ * chip in the toolbar and all further detail views sit alongside it.  `+`
+ * opens more, each chip closes on its own, and closing the last chip
+ * collapses the panel.  Panel controls (expand / close) are pinned right of
+ * the strip and are never squeezed by chips.
  *
- * Open/close + tab + focused-file state lives in the
+ * Tab kinds (all peers — there is no nested sub-router):
+ *   review · terminal · browser · files · changes · preview · artifact · audit
+ *
+ * Tab list, active tab, and focused-file state live in the
  * `useArtifactPanel` zustand store so any part of the page (file cards,
  * toolbar buttons, "View file changes →" links) can drive it.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Eye, FileEdit, FolderOpen, FolderTree, GitBranch, Globe, History, Layers, PanelRightClose, PanelRightOpen, Plus, TerminalSquare, X } from 'lucide-react';
+import { FolderOpen, PanelRightClose, PanelRightOpen, Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supportsRichDocumentPreview, type GeneratedFile } from '@/lib/generated-files';
 import { hostApi } from '@/lib/host-api';
 import type { AgentSummary } from '@/types/agent';
-import { useArtifactPanel } from '@/stores/artifact-panel';
+import { useArtifactPanel, type PanelTabInstance, type PanelTabKind } from '@/stores/artifact-panel';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { FilePreviewTarget } from './types';
 import { FilePreviewBody } from './FilePreviewBody';
 import { WorkspaceBrowserBody } from './WorkspaceBrowserBody';
-import { WorkspaceOperationsPanel } from './WorkspaceOperationsPanel';
-import { WORKSPACE_BROWSER_ENABLED } from './workspace-browser-config';
+import { WorkspaceAuditPanel } from './WorkspaceAuditPanel';
+import { WorkspaceTerminalPanel } from './WorkspaceTerminalPanel';
+import { WorkspaceWebPreviewPanel } from './WorkspaceWebPreviewPanel';
+import { WorkspaceGitPanel } from './WorkspaceGitPanel';
 import { ArtifactView } from './ArtifactView';
+import { LAUNCHER_TAB_KINDS, NEW_TAB_MENU_KINDS, PANEL_TAB_META } from './panel-tab-meta';
 import type { WorkArtifact } from '@shared/types/work-artifact';
 import type { WorkspaceArtifactPanelState } from '@shared/types/workspace';
 import type { GitRepositoryStatus } from '@shared/types/git';
@@ -60,21 +64,53 @@ export interface ArtifactPanelProps {
 export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating }: ArtifactPanelProps) {
   const { t } = useTranslation('chat');
   const isMac = window.electron?.platform === 'darwin';
-  const tab = useArtifactPanel((s) => s.tab);
-  const setTab = useArtifactPanel((s) => s.setTab);
+  const tabs = useArtifactPanel((s) => s.tabs);
+  const activeTabId = useArtifactPanel((s) => s.activeTabId);
+  const openTab = useArtifactPanel((s) => s.openTab);
+  const closeTab = useArtifactPanel((s) => s.closeTab);
+  const setActiveTab = useArtifactPanel((s) => s.setActiveTab);
   const focusedFile = useArtifactPanel((s) => s.focusedFile);
   const setFocusedFile = useArtifactPanel((s) => s.setFocusedFile);
   const expanded = useArtifactPanel((s) => s.expanded);
   const setExpanded = useArtifactPanel((s) => s.setExpanded);
   const close = useArtifactPanel((s) => s.close);
-  const richFocusedFile = !!focusedFile && supportsRichDocumentPreview(focusedFile.ext);
-  const requestedTab = !WORKSPACE_BROWSER_ENABLED && tab === 'browser' ? 'changes' : tab;
-  const visibleTab = richFocusedFile && requestedTab === 'changes' ? 'preview' : requestedTab;
+  const [newTabMenuOpen, setNewTabMenuOpen] = useState(false);
+  const newTabButtonRef = useRef<HTMLButtonElement | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const activeTab = tabs.find((entry) => entry.id === activeTabId) ?? null;
+  const openKinds = useMemo(() => tabs.map((entry) => entry.kind), [tabs]);
+  const { visibleTabs, hiddenCount } = useTabStripOverflow(tabs, activeTabId, scrollAreaRef);
 
-  const handleRevealFocusedFile = () => {
-    if (!focusedFile) return;
-    hostApi.shell.showItemInFolder(focusedFile.filePath).catch(() => {
-      toast.error(t('filePreview.errors.openInFinderFailed', 'Could not reveal in file manager'));
+  /* Persist the strip so reopening the session lands on the same tabs. The
+   * store owns instance ids; only kinds are durable. */
+  const persistTabs = (nextTabs: PanelTabInstance[], nextActiveKind?: PanelTabKind | null) => {
+    onSessionStateChange?.({
+      tabs: nextTabs.map((entry) => ({ kind: entry.kind, title: entry.title })),
+      activeTabKind: nextActiveKind ?? undefined,
+    });
+  };
+
+  const handleOpenTab = (kind: PanelTabKind) => {
+    openTab(kind);
+    setNewTabMenuOpen(false);
+    const { tabs: nextTabs, activeTabId: nextActiveId } = useArtifactPanel.getState();
+    persistTabs(nextTabs, nextTabs.find((entry) => entry.id === nextActiveId)?.kind ?? kind);
+  };
+
+  const handleSelectTab = (tabId: string) => {
+    setActiveTab(tabId);
+    const { tabs: nextTabs, activeTabId: nextActiveId } = useArtifactPanel.getState();
+    persistTabs(nextTabs, nextTabs.find((entry) => entry.id === nextActiveId)?.kind ?? null);
+  };
+
+  const handleCloseTab = (tabId: string) => {
+    closeTab(tabId);
+    const next = useArtifactPanel.getState();
+    onSessionStateChange?.({
+      tabs: next.tabs.map((entry) => ({ kind: entry.kind, title: entry.title })),
+      activeTabKind: next.tabs.find((entry) => entry.id === next.activeTabId)?.kind ?? undefined,
+      // Closing the last chip collapses the panel — mirror that in the session.
+      ...(next.tabs.length === 0 ? { open: false, expanded: false } : {}),
     });
   };
 
@@ -84,8 +120,8 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
   };
 
   return (
-    <div data-testid="artifact-panel" className={cn('flex h-full min-h-0 flex-col bg-background', isMac && 'no-drag')}>
-      <div className="relative z-30 flex shrink-0 items-center justify-between gap-2 border-b border-black/5 bg-background px-3 py-2 dark:border-white/10">
+    <div data-testid="artifact-panel" className={cn('rs-panel-shell flex h-full min-h-0 flex-col', isMac && 'no-drag')}>
+      <div className="rs-tab-toolbar relative z-30">
         {isMac && (
           <div
             data-testid="artifact-panel-drag-region"
@@ -93,54 +129,57 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
             aria-hidden="true"
           />
         )}
-        <div className={cn('flex min-w-0 items-center gap-1', isMac && 'no-drag relative z-10')}>
-          {richFocusedFile ? (
-            <PanelTabButton
-              testId="artifact-panel-action-open-folder"
-              icon={<FolderOpen className="h-3.5 w-3.5" />}
-              label={t('generatedFiles.openFolder', 'Open folder')}
-              active={false}
-              onClick={handleRevealFocusedFile}
-            />
-          ) : (
-            <PanelTabButton
-              testId="artifact-panel-tab-changes"
-              icon={<FileEdit className="h-3.5 w-3.5" />}
-              label={t('artifactPanel.tabs.changes', 'Changes')}
-              active={visibleTab === 'changes'}
-              onClick={() => setTab('changes')}
-            />
-          )}
-          <PanelTabButton
-            testId="artifact-panel-tab-preview"
-            icon={<Eye className="h-3.5 w-3.5" />}
-            label={t('artifactPanel.tabs.preview', 'Preview')}
-            active={visibleTab === 'preview'}
-            onClick={() => setTab('preview')}
-          />
-          {WORKSPACE_BROWSER_ENABLED && (
-            <PanelTabButton
-              testId="artifact-panel-tab-browser"
-              icon={<FolderTree className="h-3.5 w-3.5" />}
-              label={t('artifactPanel.tabs.browser', 'Workspace')}
-              active={visibleTab === 'browser'}
-              onClick={() => setTab('browser')}
-            />
-          )}
-          <PanelTabButton
-            testId="artifact-panel-tab-artifact"
-            icon={<Layers className="h-3.5 w-3.5" />}
-            label={t('artifactPanel.tabs.artifact', 'Artifacts')}
-            active={visibleTab === 'artifact'}
-            onClick={() => setTab('artifact')}
-          />
-        </div>
-        <div className={cn('flex shrink-0 items-center gap-1', isMac && 'no-drag relative z-10')}>
-          <Button
+        {tabs.length > 0 && (
+          <div
+            ref={scrollAreaRef}
+            className={cn('rs-tab-scroll-area', isMac && 'no-drag relative z-10')}
+          >
+            <div className="rs-tab-strip" role="tablist" aria-label={t('artifactPanel.tabStrip.label', 'Workspace panel tabs')}>
+              {hiddenCount > 0 && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="rs-tab-overflow-mark"
+                      data-testid="artifact-panel-tab-overflow"
+                      aria-label={t('artifactPanel.actions.overflow', '{{count}} more tabs', { count: hiddenCount })}
+                    >
+                      …
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{t('artifactPanel.actions.overflow', '{{count}} more tabs', { count: hiddenCount })}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {visibleTabs.map((entry) => (
+                <PanelTabChip
+                  key={entry.id}
+                  tab={entry}
+                  active={entry.id === activeTabId}
+                  onSelect={() => handleSelectTab(entry.id)}
+                  onClose={() => handleCloseTab(entry.id)}
+                />
+              ))}
+              <button
+                ref={newTabButtonRef}
+                type="button"
+                className="rs-new-tab-btn"
+                data-testid="artifact-panel-new-tab"
+                aria-label={t('artifactPanel.actions.newTab', 'Open a panel tab')}
+                aria-haspopup="menu"
+                aria-expanded={newTabMenuOpen}
+                onClick={() => setNewTabMenuOpen((open) => !open)}
+              >
+                <Plus className="h-4 w-4 pointer-events-none" />
+              </button>
+            </div>
+          </div>
+        )}
+        <div className={cn('rs-panel-controls', isMac && 'no-drag relative z-10')} role="toolbar" aria-label={t('artifactPanel.panelControls.label', 'Panel controls')}>
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
+            className={cn('rs-panel-control-btn', expanded && 'active')}
             onClick={() => handleExpandedChange(!expanded)}
             aria-label={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
             title={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
@@ -150,35 +189,32 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
             {expanded
               ? <PanelRightClose className="h-4 w-4 pointer-events-none" />
               : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
+            className="rs-panel-control-btn"
             onClick={close}
+            data-testid="artifact-panel-close"
             aria-label={t('filePreview.actions.close', 'Close')}
           >
             <X className="h-4 w-4 pointer-events-none" />
-          </Button>
+          </button>
         </div>
       </div>
 
-      <div className={cn('relative z-0 min-h-0 flex-1 overflow-hidden', isMac && 'no-drag')}>
-        <div className={cn('h-full min-h-0', visibleTab !== 'changes' && 'hidden')}>
-          <ChangesTab
-            files={files}
-            focusedFile={focusedFile}
-            onFocus={(f) => setFocusedFile(f)}
-            active={visibleTab === 'changes'}
-          />
-        </div>
-        <div className={cn('h-full min-h-0', visibleTab !== 'preview' && 'hidden')}>
-          <PreviewTab focusedFile={focusedFile} />
-        </div>
-        {WORKSPACE_BROWSER_ENABLED && (
-          <div className={cn('h-full min-h-0', visibleTab !== 'browser' && 'hidden')}>
-            <WorkspaceTabContent
+      <div className={cn('rs-content relative z-0', isMac && 'no-drag')}>
+        {/* Every open tab stays mounted so terminals keep their scrollback and
+         * dev-server iframes are not torn down when the user switches away. */}
+        {tabs.map((entry) => (
+          <div
+            key={entry.id}
+            role="tabpanel"
+            className={cn('h-full min-h-0', entry.id !== activeTabId && 'hidden')}
+          >
+            <PanelContent
+              kind={entry.kind}
+              active={entry.id === activeTabId}
+              files={files}
               agent={agent}
               runStartedAt={runStartedAt}
               refreshSignal={refreshSignal}
@@ -186,25 +222,116 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
               onSessionStateChange={onSessionStateChange}
               onOpenWorkspaceWebView={onOpenWorkspaceWebView}
               onAppendComposerDraft={onAppendComposerDraft}
+              focusedFile={focusedFile}
+              onFocusFile={setFocusedFile}
+              artifacts={artifacts}
+              selectedArtifactId={selectedArtifactId}
+              onArtifactSelect={onArtifactSelect}
+              onArtifactValidate={onArtifactValidate}
+              artifactGenerating={artifactGenerating}
             />
           </div>
-        )}
-        {/* Artifact tab */}
-        <div className={cn('h-full min-h-0', visibleTab !== 'artifact' && 'hidden')}>
-          <ArtifactView
-            artifacts={artifacts}
-            selectedArtifactId={selectedArtifactId ?? null}
-            onSelect={(id) => onArtifactSelect?.(id)}
-            onValidate={(id) => onArtifactValidate?.(id)}
-            generating={artifactGenerating ?? false}
-          />
-        </div>
+        ))}
+        {!activeTab && <PanelLauncher onOpenTab={handleOpenTab} />}
       </div>
+
+      {newTabMenuOpen && (
+        <NewTabMenu
+          anchorRef={newTabButtonRef}
+          openKinds={openKinds}
+          onSelect={handleOpenTab}
+          onClose={() => setNewTabMenuOpen(false)}
+        />
+      )}
     </div>
   );
 }
 
-type WorkspaceSubView = 'home' | 'files' | 'terminal' | 'web' | 'audit' | 'git';
+interface PanelContentProps extends Pick<ArtifactPanelProps,
+  'files' | 'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange'
+  | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft' | 'artifacts' | 'selectedArtifactId'
+  | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating'> {
+  kind: PanelTabKind;
+  active: boolean;
+  focusedFile: FilePreviewTarget | null;
+  onFocusFile: (file: FilePreviewTarget) => void;
+}
+
+/** Routes a tab kind to the panel that renders it. */
+function PanelContent({
+  kind,
+  active,
+  files,
+  agent,
+  runStartedAt,
+  refreshSignal,
+  sessionState,
+  onSessionStateChange,
+  onOpenWorkspaceWebView,
+  onAppendComposerDraft,
+  focusedFile,
+  onFocusFile,
+  artifacts = [],
+  selectedArtifactId,
+  onArtifactSelect,
+  onArtifactValidate,
+  artifactGenerating,
+}: PanelContentProps) {
+  switch (kind) {
+    case 'review':
+      return (
+        <WorkspaceGitPanel
+          selectedPath={sessionState?.gitSelectedPath ?? null}
+          diffMode={sessionState?.gitDiffMode ?? 'unstaged'}
+          onSelectedPathChange={(gitSelectedPath) => onSessionStateChange?.({ gitSelectedPath })}
+          onDiffModeChange={(gitDiffMode) => onSessionStateChange?.({ gitDiffMode })}
+        />
+      );
+    case 'terminal':
+      return <WorkspaceTerminalPanel />;
+    case 'browser':
+      return (
+        <WorkspaceWebPreviewPanel
+          onOpenWorkspaceWebView={onOpenWorkspaceWebView}
+          onAppendComposerDraft={onAppendComposerDraft}
+        />
+      );
+    case 'files':
+      return (
+        <WorkspaceBrowserBody
+          agent={agent}
+          runStartedAt={runStartedAt}
+          refreshSignal={refreshSignal}
+          compact
+          selectedPath={sessionState?.selectedPath ?? null}
+          onSelectedPathChange={(selectedPath) => onSessionStateChange?.({ selectedPath })}
+        />
+      );
+    case 'changes':
+      return (
+        <ChangesTab
+          files={files}
+          focusedFile={focusedFile}
+          onFocus={onFocusFile}
+          active={active}
+        />
+      );
+    case 'preview':
+      return <PreviewTab focusedFile={focusedFile} />;
+    case 'artifact':
+      return (
+        <ArtifactView
+          artifacts={artifacts}
+          selectedArtifactId={selectedArtifactId ?? null}
+          onSelect={(id) => onArtifactSelect?.(id)}
+          onValidate={(id) => onArtifactValidate?.(id)}
+          generating={artifactGenerating ?? false}
+        />
+      );
+    case 'audit':
+      return <WorkspaceAuditPanel />;
+  }
+}
 
 type GitLaunchpadState = {
   loading: boolean;
@@ -214,19 +341,238 @@ type GitLaunchpadState = {
   conflictedCount: number;
 };
 
-function WorkspaceTabContent({
-  agent,
-  runStartedAt,
-  refreshSignal,
-  sessionState,
-  onSessionStateChange,
-  onOpenWorkspaceWebView,
-  onAppendComposerDraft,
-}: Pick<ArtifactPanelProps, 'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange' | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft'>) {
+/**
+ * Measures the strip and reports how many tabs to drop from the *front* when
+ * chips can no longer shrink further.  The active tab is always kept visible.
+ * Mirrors the reference implementation's budget maths so the strip degrades
+ * the same way: labels end-fade first, then oldest chips fall off behind a `…`.
+ */
+function useTabStripOverflow(
+  tabs: PanelTabInstance[],
+  activeTabId: string | null,
+  scrollAreaRef: React.RefObject<HTMLDivElement | null>,
+) {
+  const [hiddenPrefix, setHiddenPrefix] = useState(0);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const area = scrollAreaRef.current;
+      if (!area || tabs.length === 0) {
+        setHiddenPrefix(0);
+        return;
+      }
+      const NEW_TAB_BTN = 32;
+      const OVERFLOW_MARK = 16;
+      const MIN_CHIP = 88;
+      const GAP = 2;
+      const budget = Math.max(0, area.clientWidth - NEW_TAB_BTN);
+      let drop = 0;
+      let maxFit = Math.max(1, Math.floor((budget + GAP) / (MIN_CHIP + GAP)));
+      if (tabs.length > maxFit) {
+        // Showing the `…` mark costs width of its own.
+        maxFit = Math.max(1, Math.floor((budget - OVERFLOW_MARK + GAP) / (MIN_CHIP + GAP)));
+        drop = Math.max(0, tabs.length - maxFit);
+      }
+      const activeIndex = tabs.findIndex((entry) => entry.id === activeTabId);
+      if (activeIndex >= 0 && activeIndex < drop) drop = activeIndex;
+      drop = Math.min(drop, Math.max(0, tabs.length - 1));
+      setHiddenPrefix((previous) => (previous === drop ? previous : drop));
+    };
+
+    const frame = requestAnimationFrame(() => requestAnimationFrame(measure));
+    const area = scrollAreaRef.current;
+    const observer = typeof ResizeObserver !== 'undefined' && area ? new ResizeObserver(measure) : null;
+    if (observer && area) observer.observe(area);
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [tabs, activeTabId, scrollAreaRef]);
+
+  const visibleTabs = useMemo(() => {
+    if (hiddenPrefix <= 0) return tabs;
+    const sliced = tabs.slice(hiddenPrefix);
+    if (activeTabId && !sliced.some((entry) => entry.id === activeTabId)) {
+      const active = tabs.find((entry) => entry.id === activeTabId);
+      return active ? [active, ...sliced] : sliced;
+    }
+    return sliced;
+  }, [tabs, hiddenPrefix, activeTabId]);
+
+  return { visibleTabs, hiddenCount: Math.max(0, tabs.length - visibleTabs.length) };
+}
+
+/**
+ * One tab chip.  `onPointerDown` activates ahead of `click` so the chip wins
+ * against iframe previews that would otherwise swallow the pointer sequence.
+ */
+function PanelTabChip({
+  tab,
+  active,
+  onSelect,
+  onClose,
+}: {
+  tab: PanelTabInstance;
+  active: boolean;
+  onSelect: () => void;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation('chat');
+  const pointerActivated = useRef(false);
+  const meta = PANEL_TAB_META[tab.kind];
+  const Icon = meta.icon;
+  const label = tab.title || t(meta.labelKey, meta.labelFallback);
+
+  return (
+    <div className={cn('rs-tab-chip', active && 'active')}>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={active}
+        title={label}
+        data-testid={`artifact-panel-tab-${tab.kind}`}
+        className="rs-tab-chip-btn"
+        onPointerDown={(event) => {
+          if (event.button !== 0) return;
+          pointerActivated.current = true;
+          event.preventDefault();
+          onSelect();
+        }}
+        onClick={() => {
+          if (pointerActivated.current) {
+            pointerActivated.current = false;
+            return;
+          }
+          onSelect();
+        }}
+      >
+        <span className="rs-tab-icon"><Icon className="h-4 w-4" /></span>
+        <span className="rs-tab-label">{label}</span>
+      </button>
+      <button
+        type="button"
+        className="rs-tab-close"
+        data-testid={`artifact-panel-tab-close-${tab.kind}`}
+        aria-label={t('artifactPanel.actions.closeTab', 'Close {{label}} tab', { label })}
+        onClick={(event) => {
+          event.stopPropagation();
+          onClose();
+        }}
+      >
+        <X className="h-3.5 w-3.5 pointer-events-none" />
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Frosted `+` menu, portalled to the body so it escapes the panel's
+ * `overflow: hidden` and flips above the anchor near the viewport edge.
+ * Tabs are single-instance, so already-open kinds are omitted.
+ */
+function NewTabMenu({
+  anchorRef,
+  openKinds,
+  onSelect,
+  onClose,
+}: {
+  anchorRef: React.RefObject<HTMLElement | null>;
+  openKinds: PanelTabKind[];
+  onSelect: (kind: PanelTabKind) => void;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation('chat');
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = useState({ top: -9999, left: -9999 });
+  const availableKinds = useMemo(
+    () => NEW_TAB_MENU_KINDS.filter((kind) => !openKinds.includes(kind)),
+    [openKinds],
+  );
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const menu = menuRef.current;
+      const anchor = anchorRef.current;
+      if (!menu || !anchor) return;
+      const anchorRect = anchor.getBoundingClientRect();
+      const menuRect = menu.getBoundingClientRect();
+      const width = menuRect.width || 280;
+      const height = menuRect.height || 140;
+      const left = Math.max(8, Math.min(window.innerWidth - width - 8, anchorRect.right - width));
+      let top = anchorRect.bottom + 4;
+      if (top + height > window.innerHeight - 8) top = Math.max(8, anchorRect.top - height - 4);
+      setPosition({ top, left });
+    };
+    update();
+    const frame = requestAnimationFrame(update);
+    window.addEventListener('resize', update);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', update);
+    };
+  }, [anchorRef, availableKinds.length]);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (menuRef.current?.contains(event.target as Node)) return;
+      if (anchorRef.current?.contains(event.target as Node)) return;
+      onClose();
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [anchorRef, onClose]);
+
+  if (availableKinds.length === 0) return null;
+
+  return createPortal(
+    <div
+      ref={menuRef}
+      className="rs-new-tab-menu"
+      role="menu"
+      data-testid="artifact-panel-new-tab-menu"
+      aria-label={t('artifactPanel.newTabMenu.label', 'Open a panel tab')}
+      style={{ top: position.top, left: position.left }}
+    >
+      {availableKinds.map((kind) => {
+        const meta = PANEL_TAB_META[kind];
+        const Icon = meta.icon;
+        return (
+          <button
+            key={kind}
+            type="button"
+            role="menuitem"
+            className="rs-new-tab-item"
+            data-testid={`artifact-panel-new-tab-${kind}`}
+            onClick={() => onSelect(kind)}
+          >
+            <span className="rs-new-tab-icon"><Icon className="h-4 w-4" /></span>
+            <span className="rs-new-tab-label">{t(meta.labelKey, meta.labelFallback)}</span>
+            {meta.shortcut && <span className="rs-new-tab-kbd">{meta.shortcut}</span>}
+          </button>
+        );
+      })}
+    </div>,
+    document.body,
+  );
+}
+
+/**
+ * Shown whenever no tab is open: one card per entry the panel can host.  The
+ * review card carries live git state so the user knows whether it is worth
+ * opening before they click.
+ */
+function PanelLauncher({ onOpenTab }: { onOpenTab: (kind: PanelTabKind) => void }) {
   const { t } = useTranslation('chat');
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
-  const view = normalizeWorkspaceSubView(sessionState?.workspaceView);
-  const [entryMenuOpen, setEntryMenuOpen] = useState(false);
   const [gitState, setGitState] = useState<GitLaunchpadState>({
     loading: true,
     isRepository: false,
@@ -234,11 +580,6 @@ function WorkspaceTabContent({
     dirtyCount: 0,
     conflictedCount: 0,
   });
-
-  const selectView = (nextView: WorkspaceSubView) => {
-    setEntryMenuOpen(false);
-    onSessionStateChange?.({ workspaceView: nextView });
-  };
 
   useEffect(() => {
     let cancelled = false;
@@ -265,93 +606,43 @@ function WorkspaceTabContent({
     };
   }, [activeWorkspace?.id, activeWorkspace?.rootPath]);
 
-  const viewTitle = view === 'home'
-    ? t('artifactPanel.workspaceLaunchpad.title', 'ClawX workspace')
-    : t(`artifactPanel.workspaceTabs.${view}`, view);
-  const workspacePath = activeWorkspace?.rootPath || agent?.workspace || '';
+  const workspacePath = activeWorkspace?.rootPath || '';
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-black/5 bg-surface-modal px-3 py-2 dark:border-white/10">
-        <div className="flex min-w-0 items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2">
-            {view !== 'home' && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 shrink-0"
-                onClick={() => selectView('home')}
-                aria-label={t('artifactPanel.workspaceLaunchpad.actions.back', 'Back to entries')}
-                data-testid="workspace-view-back"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </Button>
-            )}
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-foreground">{viewTitle}</p>
-              {workspacePath && (
-                <p className="truncate font-mono text-[11px] text-muted-foreground">{workspacePath}</p>
-              )}
-            </div>
-          </div>
-          <div className="relative shrink-0">
-            <Button
+    <div data-testid="artifact-panel-launcher" className="rs-launcher-body">
+      <div className="rs-launcher-heading">
+        <p className="rs-launcher-title">{t('artifactPanel.launcher.title', 'Workspace')}</p>
+        {workspacePath && <p className="rs-launcher-path">{workspacePath}</p>}
+      </div>
+      <nav className="rs-nav-cards" aria-label={t('artifactPanel.launcher.label', 'Panel navigation')}>
+        {LAUNCHER_TAB_KINDS.map((kind) => {
+          const meta = PANEL_TAB_META[kind];
+          const Icon = meta.icon;
+          const description = kind === 'review' && gitState.isRepository && gitState.branch
+            ? t('artifactPanel.launcher.entries.reviewBranch', 'Review changes on {{branch}}.', { branch: gitState.branch })
+            : t(meta.descriptionKey, meta.descriptionFallback);
+          const badge = kind === 'review' && gitState.isRepository ? makeGitBadge(t, gitState) : undefined;
+          return (
+            <button
+              key={kind}
               type="button"
-              variant={entryMenuOpen ? 'outline' : 'ghost'}
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => setEntryMenuOpen((open) => !open)}
-              aria-label={t('artifactPanel.workspaceLaunchpad.actions.open', 'Open entry launcher')}
-              aria-expanded={entryMenuOpen}
-              title={t('artifactPanel.workspaceLaunchpad.actions.open', 'Open entry launcher')}
-              data-testid="workspace-launchpad-add"
+              className="rs-nav-card"
+              data-testid={`artifact-panel-launcher-${kind}`}
+              title={description}
+              onClick={() => onOpenTab(kind)}
             >
-              <Plus className="h-3.5 w-3.5" />
-            </Button>
-            {entryMenuOpen && (
-              <WorkspaceEntryMenu
-                gitState={gitState}
-                onSelect={selectView}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="min-h-0 flex-1 overflow-hidden">
-        {view === 'home' ? (
-          <WorkspaceLaunchpad
-            onSelect={selectView}
-          />
-        ) : view === 'files' ? (
-          <WorkspaceBrowserBody
-            agent={agent}
-            runStartedAt={runStartedAt}
-            refreshSignal={refreshSignal}
-            compact
-            selectedPath={sessionState?.selectedPath ?? null}
-            onSelectedPathChange={(selectedPath) => onSessionStateChange?.({ selectedPath })}
-          />
-        ) : (
-          <WorkspaceOperationsPanel
-            view={view}
-            onOpenWorkspaceWebView={onOpenWorkspaceWebView}
-            onAppendComposerDraft={onAppendComposerDraft}
-            gitSelectedPath={sessionState?.gitSelectedPath ?? null}
-            gitDiffMode={sessionState?.gitDiffMode ?? 'unstaged'}
-            onGitSelectedPathChange={(gitSelectedPath) => onSessionStateChange?.({ gitSelectedPath })}
-            onGitDiffModeChange={(gitDiffMode) => onSessionStateChange?.({ gitDiffMode })}
-          />
-        )}
-      </div>
+              <span className="rs-nav-card-icon"><Icon className="h-4 w-4" /></span>
+              <span className="rs-nav-card-label">{t(meta.labelKey, meta.labelFallback)}</span>
+              <span className="rs-nav-card-trailing">
+                {badge && <span className="rs-nav-card-badge">{badge}</span>}
+                {meta.shortcut && <kbd className="rs-nav-card-kbd">{meta.shortcut}</kbd>}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
-}
-
-function normalizeWorkspaceSubView(value: string | null | undefined): WorkspaceSubView {
-  return value === 'home' || value === 'terminal' || value === 'web' || value === 'audit' || value === 'files' || value === 'git'
-    ? value
-    : 'home';
 }
 
 function summarizeGitStatus(status: GitRepositoryStatus | undefined): GitLaunchpadState {
@@ -376,216 +667,12 @@ function summarizeGitStatus(status: GitRepositoryStatus | undefined): GitLaunchp
 
 function makeGitBadge(t: ReturnType<typeof useTranslation>['t'], gitState: GitLaunchpadState): string {
   if (gitState.conflictedCount > 0) {
-    return t('artifactPanel.workspaceLaunchpad.badges.conflicts', '{{count}} conflicts', { count: gitState.conflictedCount });
+    return t('artifactPanel.launcher.badges.conflicts', '{{count}} conflicts', { count: gitState.conflictedCount });
   }
   if (gitState.dirtyCount > 0) {
-    return t('artifactPanel.workspaceLaunchpad.badges.changes', '{{count}} changes', { count: gitState.dirtyCount });
+    return t('artifactPanel.launcher.badges.changes', '{{count}} changes', { count: gitState.dirtyCount });
   }
-  return t('artifactPanel.workspaceLaunchpad.badges.clean', 'Clean');
-}
-
-function WorkspaceEntryMenu({
-  gitState,
-  onSelect,
-}: {
-  gitState: GitLaunchpadState;
-  onSelect: (view: WorkspaceSubView) => void;
-}) {
-  const { t } = useTranslation('chat');
-  const gitBadge = makeGitBadge(t, gitState);
-
-  return (
-    <div
-      data-testid="workspace-entry-menu"
-      className="absolute right-0 top-8 z-50 w-72 overflow-hidden rounded-md border border-black/10 bg-surface-modal shadow-lg dark:border-white/10"
-    >
-      <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
-        <p className="text-xs font-medium text-foreground">{t('artifactPanel.workspaceLaunchpad.actions.moreEntries', 'More entries')}</p>
-      </div>
-      <div className="py-1">
-        {gitState.isRepository && (
-          <WorkspaceLaunchpadEntry
-            testId="workspace-launchpad-entry-review"
-            icon={<GitBranch className="h-4 w-4" />}
-            title={t('artifactPanel.workspaceTabs.git', 'Review')}
-            description={gitState.branch
-              ? t('artifactPanel.workspaceLaunchpad.entries.reviewBranch', 'Review changes on {{branch}}.', { branch: gitState.branch })
-              : t('artifactPanel.workspaceLaunchpad.entries.review', 'Review changes, branches, stashes, and PRs.')}
-            badge={gitBadge}
-            shortcut="R"
-            compact
-            onClick={() => onSelect('git')}
-          />
-        )}
-        <WorkspaceLaunchpadEntry
-          testId="workspace-launchpad-entry-web"
-          icon={<Globe className="h-4 w-4" />}
-          title={t('artifactPanel.workspaceTabs.web', 'Web')}
-          description={t('artifactPanel.workspaceLaunchpad.entries.web', 'Open a local preview or inspect a URL.')}
-          shortcut="W"
-          compact
-          onClick={() => onSelect('web')}
-        />
-        <WorkspaceLaunchpadEntry
-          testId="workspace-launchpad-entry-audit"
-          icon={<History className="h-4 w-4" />}
-          title={t('artifactPanel.workspaceTabs.audit', 'Audit')}
-          description={t('artifactPanel.workspaceLaunchpad.entries.audit', 'Inspect permission requests and recent approvals.')}
-          shortcut="A"
-          compact
-          onClick={() => onSelect('audit')}
-        />
-      </div>
-    </div>
-  );
-}
-
-function WorkspaceLaunchpad({
-  onSelect,
-}: {
-  onSelect: (view: WorkspaceSubView) => void;
-}) {
-  const { t } = useTranslation('chat');
-
-  return (
-    <div data-testid="workspace-launchpad" className="h-full overflow-y-auto bg-background px-3 py-3">
-      <div className="mb-4">
-        <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
-          {t('artifactPanel.workspaceLaunchpad.subtitle', 'Pinned entries')}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t('artifactPanel.workspaceLaunchpad.moreHint', 'Use + for review, preview, and audit tools.')}
-        </p>
-      </div>
-
-      <WorkspaceLaunchpadSection title={t('artifactPanel.workspaceLaunchpad.sections.highFrequency', 'High-frequency')}>
-        <WorkspaceLaunchpadEntry
-          testId="workspace-launchpad-entry-files"
-          icon={<FolderTree className="h-4 w-4" />}
-          title={t('artifactPanel.workspaceTabs.files', 'Files')}
-          description={t('artifactPanel.workspaceLaunchpad.entries.files', 'Browse files and preview selected content.')}
-          shortcut="F"
-          onClick={() => onSelect('files')}
-        />
-        <WorkspaceLaunchpadEntry
-          testId="workspace-launchpad-entry-terminal"
-          icon={<TerminalSquare className="h-4 w-4" />}
-          title={t('artifactPanel.workspaceTabs.terminal', 'Terminal')}
-          description={t('artifactPanel.workspaceLaunchpad.entries.terminal', 'Start an interactive shell for this workspace.')}
-          shortcut="T"
-          onClick={() => onSelect('terminal')}
-        />
-      </WorkspaceLaunchpadSection>
-    </div>
-  );
-}
-
-function WorkspaceLaunchpadSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mb-5">
-      <h3 className="mb-1.5 px-1 text-[11px] font-semibold uppercase tracking-normal text-muted-foreground">{title}</h3>
-      <div className="divide-y divide-black/5 border-y border-black/5 dark:divide-white/10 dark:border-white/10">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function WorkspaceLaunchpadEntry({
-  testId,
-  icon,
-  title,
-  description,
-  badge,
-  shortcut,
-  compact = false,
-  onClick,
-}: {
-  testId: string;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  badge?: string;
-  shortcut: string;
-  compact?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      data-testid={testId}
-      className={cn(
-        'flex w-full items-center gap-3 text-left transition-colors hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10',
-        compact ? 'min-h-12 px-3 py-2' : 'min-h-14 px-2 py-2.5',
-      )}
-      onClick={onClick}
-    >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-input text-muted-foreground">
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium text-foreground">{title}</span>
-        <span className="block truncate text-xs text-muted-foreground">{description}</span>
-      </span>
-      <span className="flex shrink-0 items-center gap-1.5">
-        {badge && (
-          <span className="max-w-24 truncate rounded-sm bg-black/5 px-1.5 py-0.5 text-[11px] text-muted-foreground dark:bg-white/10">
-            {badge}
-          </span>
-        )}
-        <span className="min-w-5 rounded-sm border border-black/10 px-1.5 py-0.5 text-center text-[11px] text-muted-foreground dark:border-white/15">
-          {shortcut}
-        </span>
-      </span>
-    </button>
-  );
-}
-
-interface PanelTabButtonProps {
-  testId?: string;
-  icon: React.ReactNode;
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}
-
-function PanelTabButton({ testId, icon, label, active, onClick }: PanelTabButtonProps) {
-  const pointerActivated = useRef(false);
-
-  return (
-    <button
-      data-testid={testId}
-      type="button"
-      onPointerDown={(event) => {
-        if (event.button !== 0) return;
-        pointerActivated.current = true;
-        event.preventDefault();
-        onClick();
-      }}
-      onClick={() => {
-        if (pointerActivated.current) {
-          pointerActivated.current = false;
-          return;
-        }
-        onClick();
-      }}
-      className={cn(
-        'relative z-40 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-[background-color,color,transform] duration-150 active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100',
-        active
-          ? 'bg-foreground/10 text-foreground'
-          : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-      )}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
+  return t('artifactPanel.launcher.badges.clean', 'Clean');
 }
 
 function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
@@ -639,6 +726,12 @@ function ChangesTab({ files, focusedFile, onFocus, active }: ChangesTabProps) {
     onFocus(generatedFileToTarget(uniqueFiles[0]));
   }, [active, focusedFile, uniqueFiles, onFocus]);
 
+  // Office/PDF and friends have no meaningful in-app diff. Offer the file
+  // manager instead of an empty diff pane.
+  if (focusedFile && supportsRichDocumentPreview(focusedFile.ext)) {
+    return <RichDocumentChangesEmpty file={focusedFile} />;
+  }
+
   if (!focusedFile && uniqueFiles.length === 0) {
     return (
       <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
@@ -654,6 +747,35 @@ function ChangesTab({ files, focusedFile, onFocus, active }: ChangesTabProps) {
   ) : (
     <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
       {t('artifactPanel.changes.selectFileHint', 'Click a file card in the conversation, or choose “View file changes”')}
+    </div>
+  );
+}
+
+/** Rich documents (Office, PDF) diff to nothing useful — offer the OS instead. */
+function RichDocumentChangesEmpty({ file }: { file: FilePreviewTarget }) {
+  const { t } = useTranslation('chat');
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+      <p className="text-sm font-medium text-foreground">
+        {t('artifactPanel.changes.richDocumentTitle', 'No in-app diff for this file type')}
+      </p>
+      <p className="max-w-md text-xs text-muted-foreground">
+        {t('artifactPanel.changes.richDocumentHint', 'Open the containing folder to inspect it, or switch to the Preview tab.')}
+      </p>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        data-testid="artifact-panel-action-open-folder"
+        onClick={() => {
+          hostApi.shell.showItemInFolder(file.filePath).catch(() => {
+            toast.error(t('filePreview.errors.openInFinderFailed', 'Could not reveal in file manager'));
+          });
+        }}
+      >
+        <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
+        {t('generatedFiles.openFolder', 'Open folder')}
+      </Button>
     </div>
   );
 }

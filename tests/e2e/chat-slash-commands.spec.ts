@@ -149,6 +149,9 @@ test.describe('Verse Claw chat slash commands', () => {
         hostApi: baseHostApiMocks(),
       });
 
+      const page = await getStableWindow(app);
+      await page.waitForLoadState('domcontentloaded');
+
       await app.evaluate((_, params) => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
         const originalHostInvoke = (ipcMain as unknown as {
@@ -241,7 +244,6 @@ test.describe('Verse Claw chat slash commands', () => {
         workspaceId: WORKSPACE_ID,
       });
 
-      const page = await getStableWindow(app);
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
@@ -260,7 +262,7 @@ test.describe('Verse Claw chat slash commands', () => {
 
       await page.getByTestId('chat-composer-permission-mode').click();
       await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-composer-permission-menu')).toContainText('Permission mode');
+      await expect(page.getByTestId('chat-composer-permission-menu')).toContainText('How should Verse Claw approve actions?');
       await expect(page.getByTestId('chat-slash-command-menu')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-permission-menu')).not.toContainText('/review');
       await page.getByTestId('chat-composer-input').fill('');
@@ -312,9 +314,9 @@ test.describe('Verse Claw chat slash commands', () => {
       expect(slashPaletteMetrics!.menuLeft).toBeGreaterThanOrEqual(0);
       expect(slashPaletteMetrics!.menuRight).toBeLessThanOrEqual(slashPaletteMetrics!.viewportWidth);
       expect(slashPaletteMetrics!.menuHasHorizontalOverflow).toBe(false);
-      expect(slashPaletteMetrics!.iconWidth).toBeGreaterThanOrEqual(24);
-      expect(slashPaletteMetrics!.iconHeight).toBeGreaterThanOrEqual(24);
-      expect(slashPaletteMetrics!.optionHeight).toBeGreaterThanOrEqual(38);
+      expect(slashPaletteMetrics!.iconWidth).toBeCloseTo(16, 0);
+      expect(slashPaletteMetrics!.iconHeight).toBeCloseTo(16, 0);
+      expect(slashPaletteMetrics!.optionHeight).toBeCloseTo(28.5625, 0);
       expect(slashPaletteMetrics!.optionText).toContain('/goal');
       expect(slashPaletteMetrics!.optionText).not.toContain('/review');
 
@@ -389,6 +391,9 @@ test.describe('Verse Claw chat slash commands', () => {
         hostApi: baseHostApiMocks(),
       });
 
+      const page = await getStableWindow(app);
+      await page.waitForLoadState('domcontentloaded');
+
       await app.evaluate((_, params) => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
         const originalHostInvoke = (ipcMain as unknown as {
@@ -437,7 +442,6 @@ test.describe('Verse Claw chat slash commands', () => {
         workspaceId: WORKSPACE_ID,
       });
 
-      const page = await getStableWindow(app);
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });

@@ -1,3 +1,18 @@
+/* Recipes ported from the FakeCoding reference app. These must come first:
+ * CSS requires @import to precede all other rules, and PostCSS silently drops
+ * imports that appear after the @tailwind directives. Ordering costs nothing
+ * here — every ported rule is a two-class descendant selector
+ * (`.codex-sidebar .sidebar-row`), so it outranks single-class Tailwind
+ * utilities on specificity regardless of source order. */
+@import './codex-sidebar.css';
+@import './codex-settings-controls.css';
+@import './codex-settings-archived.css';
+@import './codex-settings.css';
+@import './codex-conversation.css';
+@import './codex-composer-menu.css';
+@import './codex-welcome-hero.css';
+@import './codex-workspace-panel.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -156,7 +171,7 @@
     --motion-fast: 120ms;
     --motion-control: 180ms;
     --motion-surface: 240ms;
-    --motion-drawer: 420ms;
+    --motion-drawer: 180ms;
     --ease-ui-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-ui-move: cubic-bezier(0.77, 0, 0.175, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
@@ -165,6 +180,12 @@
     --radius-popover: 14px;
     --radius-panel: 20px;
     --shadow-floating: 0 24px 80px rgba(15, 23, 42, 0.18), 0 2px 12px rgba(15, 23, 42, 0.08), inset 0 1px rgba(255, 255, 255, 0.62);
+    --conversation-text-body: 220 8% 43%;
+    --conversation-text-tertiary: 220 6% 56%;
+    --conversation-border-light: 42 14% 92%;
+    --conversation-border-heavy: 42 14% 82%;
+    --shadow-hairline: 0 0 0 0.5px rgba(15, 23, 42, 0.1);
+    --shadow-subtle: 0 1px 2px -1px rgba(15, 23, 42, 0.08);
 
     /* ── Verse Claw cream surfaces (light) ────────────────────────────
      *
@@ -266,6 +287,12 @@
     --material-control: 240 3% 20%;
     --material-scrim: 240 8% 3%;
     --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.5), 0 2px 14px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.08);
+    --conversation-text-body: 220 8% 72%;
+    --conversation-text-tertiary: 220 6% 54%;
+    --conversation-border-light: 240 3% 18%;
+    --conversation-border-heavy: 240 3% 30%;
+    --shadow-hairline: 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+    --shadow-subtle: 0 1px 2px -1px rgba(0, 0, 0, 0.28);
 
     /* In dark mode the three cream surfaces collapse onto existing
      * shadcn tokens:
@@ -361,28 +388,28 @@
   }
 
   .apple-drawer-overlay[data-state='open'] {
-    animation: apple-drawer-fade-in 180ms var(--ease-ui-out) both;
+    animation: apple-drawer-fade-in 120ms var(--ease-ui-out) both !important;
   }
 
   .apple-drawer-overlay[data-state='closed'] {
-    animation: apple-drawer-fade-out 160ms var(--ease-ui-out) both;
+    animation: apple-drawer-fade-out 100ms var(--ease-ui-out) both !important;
   }
 
   .apple-drawer-content {
     --initial-transform: 102%;
     box-shadow: var(--shadow-floating);
-    will-change: transform;
-    transition: transform var(--motion-drawer) var(--ease-drawer);
-    animation-duration: var(--motion-drawer);
-    animation-timing-function: var(--ease-drawer);
+    will-change: auto !important;
+    transition: transform var(--motion-drawer) var(--ease-drawer) !important;
+    animation-duration: var(--motion-drawer) !important;
+    animation-timing-function: var(--ease-drawer) !important;
   }
 
   .apple-drawer-content[data-state='open'] {
-    animation-name: apple-drawer-slide-from-right;
+    animation-name: apple-drawer-slide-from-right !important;
   }
 
   .apple-drawer-content[data-state='closed'] {
-    animation-name: apple-drawer-slide-to-right;
+    animation-name: apple-drawer-slide-to-right !important;
   }
 
   .apple-drawer-content [data-vaul-handle] {
@@ -424,7 +451,7 @@
   @media (prefers-reduced-motion: reduce) {
     .apple-drawer-content[data-state],
     .apple-drawer-overlay[data-state] {
-      animation-duration: 160ms !important;
+      animation-duration: 100ms !important;
       animation-timing-function: var(--ease-ui-out) !important;
     }
 
@@ -580,61 +607,69 @@
   @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
 }
 
-/* Prose styling for markdown */
-.prose {
+/* Prose styling for markdown.
+ *
+ * `:not(.codex-markdown)` opts the chat transcript out. The assistant markdown
+ * root carries both classes — `prose` because e2e specs locate replies through
+ * it, `codex-markdown` for the ported Codex metrics (styles/codex-conversation.css).
+ * Without this exclusion the two would collide: `.prose p` and `.codex-markdown p`
+ * have identical specificity, and since @import must precede all other rules the
+ * block below would always win on source order. Other `.prose` consumers
+ * (file-preview/MarkdownPreview.tsx, knowledge previews) are unaffected. */
+.prose:not(.codex-markdown) {
   line-height: 1.6;
 }
 
-.prose p {
+.prose:not(.codex-markdown) p {
   margin-bottom: 0.75em;
 }
 
-.prose p:last-child {
+.prose:not(.codex-markdown) p:last-child {
   margin-bottom: 0;
 }
 
-.prose ul,
-.prose ol {
+.prose:not(.codex-markdown) ul,
+.prose:not(.codex-markdown) ol {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   padding-left: 1.5em;
 }
 
-.prose li {
+.prose:not(.codex-markdown) li {
   margin-bottom: 0.25em;
 }
 
-.prose pre {
+.prose:not(.codex-markdown) pre {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
-.prose blockquote {
+.prose:not(.codex-markdown) blockquote {
   border-left: 3px solid hsl(var(--border));
   padding-left: 1em;
   margin: 0.5em 0;
   color: hsl(var(--muted-foreground));
 }
 
-.prose table {
+.prose:not(.codex-markdown) table {
   width: 100%;
   border-collapse: collapse;
   margin: 0.5em 0;
 }
 
-.prose th,
-.prose td {
+.prose:not(.codex-markdown) th,
+.prose:not(.codex-markdown) td {
   border: 1px solid hsl(var(--border));
   padding: 0.5em;
   text-align: left;
 }
 
-.prose th {
+.prose:not(.codex-markdown) th {
   background: transparent;
   font-weight: 700;
 }
 
-.dark .prose th {
+.dark .prose:not(.codex-markdown) th {
   background: hsl(var(--muted));
 }
 

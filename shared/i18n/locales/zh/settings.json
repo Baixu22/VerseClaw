@@ -6,7 +6,7 @@
   "title": "设置",
   "subtitle": "配置您的 Verse Claw 体验",
   "navigation": {
-    "back": "返回设置",
+    "back": "返回应用",
     "groups": {
       "configuration": "AI 配置",
       "experience": "体验与工作流",
@@ -47,10 +47,14 @@
     "storage": {
       "title": "存储与内存",
       "description": "扫描并清理应用缓存、日志和会话产物。"
+    },
+    "archived": {
+      "title": "已归档",
+      "description": "恢复或永久删除已归档的会话。"
     }
   },
   "appearance": {
-    "title": "通用",
+    "title": "外观与语言",
     "description": "自定义外观和风格",
     "theme": "主题",
     "light": "浅色",

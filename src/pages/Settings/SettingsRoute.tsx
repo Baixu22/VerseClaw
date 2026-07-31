@@ -1,27 +1,40 @@
-import { lazy, Suspense, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Bot,
-  ChevronRight,
-  Cpu,
-  Network,
-  Palette,
-  Puzzle,
-  ReceiptText,
-  Server,
-  Trash2,
-  Wrench,
-} from 'lucide-react';
+import { lazy, Suspense, type ComponentType } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { recoverFromDynamicImportLoadError } from '@/lib/dynamic-import-recovery';
 import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
+import { SettingsPageChrome } from './SettingsPageChrome';
 import { resolveSettingsSection, type SettingsSectionId } from './route-config';
 
 let settingsModulePromise: ReturnType<typeof importSettingsModule> | null = null;
+
+function getE2ESectionDelayMs(): number {
+  const params = new URLSearchParams(window.location.search);
+  const delay = Number(params.get('e2eSettingsSectionDelayMs'));
+  return Number.isFinite(delay) && delay > 0 ? Math.min(delay, 30_000) : 0;
+}
+
+function createPreloadableLazy<P extends object>(loader: () => Promise<{ default: ComponentType<P> }>) {
+  let pending: Promise<{ default: ComponentType<P> }> | null = null;
+  const load = () => {
+    if (!pending) {
+      const modulePromise = loader();
+      const delayMs = getE2ESectionDelayMs();
+      pending = (delayMs > 0
+        ? Promise.all([
+            modulePromise,
+            new Promise<void>((resolve) => window.setTimeout(resolve, delayMs)),
+          ]).then(([module]) => module)
+        : modulePromise).catch((error) => {
+          pending = null;
+          recoverFromDynamicImportLoadError(error);
+          throw error;
+        });
+    }
+    return pending;
+  };
+  return { Component: lazy(load), preload: () => { void load(); } };
+}
 
 function importSettingsModule() {
   return import('./index').then((module) => ({ default: module.Settings }));
@@ -38,41 +51,39 @@ function loadSettingsModule() {
   return settingsModulePromise;
 }
 
-function preloadSettingsModule() {
-  void loadSettingsModule().catch(() => undefined);
-}
-
 const SettingsImplementation = lazy(loadSettingsModule);
+const settingsModels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Models').then((module) => ({ default: module.Models })));
+const settingsAgents = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Agents').then((module) => ({ default: module.Agents })));
+const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Skills').then((module) => ({ default: module.Skills })));
+const settingsChannels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Channels').then((module) => ({ default: module.Channels })));
+const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((module) => ({ default: module.Billing })));
+const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((module) => ({
+  default: module.StorageCleanerSection as ComponentType<Record<string, never>>,
+})));
+const settingsArchived = createPreloadableLazy<Record<string, never>>(() => import('./sections/ArchivedSection').then((module) => ({
+  default: module.ArchivedSection as ComponentType<Record<string, never>>,
+})));
 
-export type SettingsPresentation = 'page' | 'drawer';
+const standaloneSections = {
+  models: settingsModels.Component,
+  agents: settingsAgents.Component,
+  skills: settingsSkills.Component,
+  channels: settingsChannels.Component,
+  billing: settingsBilling.Component,
+} as const;
+const SettingsStorage = settingsStorage.Component;
+const SettingsArchived = settingsArchived.Component;
 
-function SettingsPageShell({ children, presentation }: { children: ReactNode; presentation: SettingsPresentation }) {
-  return (
-    <div
-      data-testid="settings-page"
-      data-presentation={presentation}
-      className={cn(
-        'flex flex-col overflow-hidden',
-        presentation === 'drawer'
-          ? 'settings-drawer-shell h-full bg-transparent'
-          : '-m-6 h-[calc(100vh-2.5rem)] bg-background',
-      )}
-    >
-      <div className={cn(
-        'flex h-full w-full flex-col',
-        presentation === 'drawer' ? 'px-5 py-5 sm:px-6' : 'mx-auto max-w-6xl px-5 py-6 sm:px-8 lg:px-10',
-      )}>
-        {children}
-      </div>
-    </div>
-  );
-}
+export type SettingsPresentation = 'page';
 
-export function SettingsRoute({ presentation = 'page' }: { presentation?: SettingsPresentation }) {
+export function SettingsRoute() {
   const { t } = useTranslation('settings');
   const location = useLocation();
-  const navigate = useNavigate();
   const currentSection = resolveSettingsSection(location.pathname);
+
+  if (currentSection === 'overview') {
+    return <Navigate to="/settings/general" replace />;
+  }
 
   const sectionMeta = {
     general: { title: t('navigation.general.title'), description: t('navigation.general.description') },
@@ -84,98 +95,56 @@ export function SettingsRoute({ presentation = 'page' }: { presentation?: Settin
     developer: { title: t('navigation.developer.title'), description: t('navigation.developer.description') },
     billing: { title: t('navigation.billing.title'), description: t('navigation.billing.description') },
     storage: { title: t('navigation.storage.title'), description: t('navigation.storage.description') },
+    archived: { title: t('navigation.archived.title'), description: t('navigation.archived.description') },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
-  const settingsSections = [
-    { id: 'general', to: '/settings/general', icon: <Palette />, testId: 'settings-nav-general', ...sectionMeta.general },
-    { id: 'models', to: '/settings/models', icon: <Cpu />, testId: 'settings-nav-models', ...sectionMeta.models },
-    { id: 'agents', to: '/settings/agents', icon: <Bot />, testId: 'settings-nav-agents', ...sectionMeta.agents },
-    { id: 'skills', to: '/settings/skills', icon: <Puzzle />, testId: 'settings-nav-skills', ...sectionMeta.skills },
-    { id: 'channels', to: '/settings/channels', icon: <Network />, testId: 'settings-nav-channels', ...sectionMeta.channels },
-    { id: 'system', to: '/settings/system', icon: <Server />, testId: 'settings-nav-system', ...sectionMeta.system },
-    { id: 'developer', to: '/settings/developer', icon: <Wrench />, testId: 'settings-nav-developer', ...sectionMeta.developer },
-    { id: 'billing', to: '/settings/billing', icon: <ReceiptText />, testId: 'settings-nav-billing', ...sectionMeta.billing },
-    { id: 'storage', to: '/settings/storage', icon: <Trash2 />, testId: 'settings-nav-storage', ...sectionMeta.storage },
-  ] as const;
-  const groups = [
-    { id: 'configuration', title: t('navigation.groups.configuration'), sections: settingsSections.filter((item) => ['models', 'agents', 'skills', 'channels'].includes(item.id)) },
-    { id: 'experience', title: t('navigation.groups.experience'), sections: settingsSections.filter((item) => item.id === 'general') },
-    { id: 'operations', title: t('navigation.groups.operations'), sections: settingsSections.filter((item) => ['billing', 'system', 'developer', 'storage'].includes(item.id)) },
-  ];
+  const meta = sectionMeta[currentSection];
+  const pageTitleTestId = currentSection === 'models'
+    ? 'models-page-title'
+    : currentSection === 'billing'
+      ? 'billing-page-title'
+      : undefined;
+  const loadingShell = (
+    <SettingsPageChrome title={meta.title} description={meta.description} titleTestId={pageTitleTestId}>
+      <SettingsSectionLoading label={t('loading.section')} />
+    </SettingsPageChrome>
+  );
 
-  if (currentSection !== 'overview') {
-    const pageTitleTestId = currentSection === 'models'
-      ? 'models-page-title'
-      : currentSection === 'billing' ? 'billing-page-title' : undefined;
+  const StandaloneSection = currentSection in standaloneSections
+    ? standaloneSections[currentSection as keyof typeof standaloneSections]
+    : null;
+
+  if (StandaloneSection) {
     return (
-      <Suspense fallback={(
-        <SettingsPageShell presentation={presentation}>
-          <div className="mb-6 flex shrink-0 flex-col justify-between gap-3 border-b border-border pb-5 md:flex-row md:items-start">
-            <div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/settings')}
-                data-testid="settings-back-button"
-                className="mb-4 h-8 border-black/10 bg-transparent px-2.5 text-xs dark:border-white/10"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t('navigation.back')}
-              </Button>
-              <h1 data-testid={pageTitleTestId} className="mb-1 font-serif text-2xl font-normal tracking-tight text-foreground">
-                {sectionMeta[currentSection].title}
-              </h1>
-              <p className="max-w-3xl text-sm leading-5 text-muted-foreground">{sectionMeta[currentSection].description}</p>
-            </div>
+      <Suspense fallback={loadingShell}>
+        <SettingsPageChrome title={meta.title} description={meta.description} titleTestId={pageTitleTestId}>
+          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+            <StandaloneSection embedded />
           </div>
-          <div className="-mr-2 min-h-0 flex-1 overflow-y-auto pb-10 pr-2">
-            <SettingsSectionLoading label={t('loading.section')} />
+        </SettingsPageChrome>
+      </Suspense>
+    );
+  }
+
+  if (currentSection === 'storage' || currentSection === 'archived') {
+    const StandalonePage = currentSection === 'storage' ? SettingsStorage : SettingsArchived;
+    return (
+      <Suspense fallback={loadingShell}>
+        <SettingsPageChrome title={meta.title} description={meta.description}>
+          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+            <StandalonePage />
           </div>
-        </SettingsPageShell>
-      )}>
-        <SettingsImplementation presentation={presentation} />
+        </SettingsPageChrome>
       </Suspense>
     );
   }
 
   return (
-    <SettingsPageShell presentation={presentation}>
-      <div className={cn('shrink-0 border-b border-border pb-5', presentation === 'drawer' ? 'mb-4' : 'mb-6')}>
-        <h1 className="mb-1.5 font-serif text-3xl font-normal tracking-tight text-foreground">
-          {presentation === 'drawer' ? t('overviewTitle') : t('title')}
-        </h1>
-        <p className="max-w-3xl text-sm leading-5 text-muted-foreground">{t('subtitle')}</p>
-      </div>
-      <div className="-mr-2 min-h-0 flex-1 overflow-y-auto pb-10 pr-2">
-        <div data-testid="settings-overview" className="space-y-6">
-          {groups.map((group) => (
-            <section key={group.id} className="space-y-3">
-              <h2 className="text-sm font-semibold text-foreground/70">{group.title}</h2>
-              <div className="grid overflow-hidden rounded-[14px] border border-border md:grid-cols-2">
-                {group.sections.map((section) => (
-                  <Card key={section.id} className="group rounded-none border-0 border-b border-border bg-surface-modal shadow-none transition-colors last:border-b-0 hover:bg-black/[0.03] motion-reduce:transition-none md:odd:border-r dark:hover:bg-white/[0.05]">
-                    <Link
-                      to={section.to}
-                      data-testid={presentation === 'drawer' ? undefined : section.testId}
-                      onPointerEnter={preloadSettingsModule}
-                      onFocus={preloadSettingsModule}
-                      className="flex h-full min-h-20 items-center gap-3 px-4 py-3"
-                    >
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-black/5 text-foreground/80 dark:bg-white/10 [&_svg]:h-4 [&_svg]:w-4">{section.icon}</span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-medium text-foreground">{section.title}</span>
-                        <span className="mt-0.5 block text-xs leading-4 text-muted-foreground">{section.description}</span>
-                      </span>
-                      <ChevronRight className={cn('mt-1 h-4 w-4 shrink-0 text-muted-foreground', 'motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5')} />
-                    </Link>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      </div>
-    </SettingsPageShell>
+    <Suspense fallback={loadingShell}>
+      <SettingsPageChrome title={meta.title} description={meta.description}>
+        <SettingsImplementation embedded />
+      </SettingsPageChrome>
+    </Suspense>
   );
 }
 

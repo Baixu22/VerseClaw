@@ -27,6 +27,25 @@ function typed(module: string, action: string, payload: unknown = null): string 
   return stableStringify([module, action, payload]);
 }
 
+const readyProviderAccount = {
+  id: 'knowledge-e2e-provider',
+  vendorId: 'ollama',
+  label: 'Knowledge E2E',
+  authMode: 'local',
+  model: 'llama3.2',
+  enabled: true,
+  isDefault: true,
+  createdAt: '2026-07-01T00:00:00.000Z',
+  updatedAt: '2026-07-01T00:00:00.000Z',
+};
+
+const readyProviderHostApi = {
+  [typed('providers', 'accounts')]: [readyProviderAccount],
+  [typed('providers', 'accountKeyInfo')]: [],
+  [typed('providers', 'vendors')]: [],
+  [typed('providers', 'getDefaultAccount')]: { accountId: readyProviderAccount.id },
+};
+
 // ── Knowledge CRUD UX Tests ────────────────────────────────────────
 
 test.describe('Knowledge Hub UX', () => {
@@ -121,6 +140,10 @@ test.describe('Knowledge Hub UX', () => {
             { id: 'proposal-1', operation: 'create', status: 'proposed', draftId: 'draft-1', reason: 'New RAG pipeline architecture', sources: [], requiresUserConfirmation: true, createdAt: '2026-06-18T00:00:00.000Z', updatedAt: '2026-06-18T00:00:00.000Z' },
           ],
         },
+        [typed('knowledge', 'listSourceSets')]: {
+          success: true,
+          sourceSets: [],
+        },
         [typed('knowledge', 'search', { query: 'What is this note about?', maxResults: 4, corpus: 'wiki', roleTag: 'knowledge-librarian' })]: {
           success: true,
           results: [
@@ -199,26 +222,102 @@ test.describe('Knowledge Hub UX', () => {
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
   });
 
-  // ── Metric cards ─────────────────────────────────────────────────
+  test('workspace-first Library opens without dashboard clutter', async ({ page }) => {
+    await expect(page.getByTestId('knowledge-library')).toBeVisible();
+    await expect(page.getByTestId('knowledge-markdown-workspace')).toBeVisible();
+    await expect(page.getByTestId('knowledge-assistant-overview')).toHaveCount(0);
+    await expect(page.getByTestId('knowledge-metrics')).toHaveCount(0);
+    await expect(page.getByTestId('knowledge-librarian-panel')).toHaveCount(0);
+    await expect(page.getByTestId('knowledge-librarian-fab')).toHaveCount(0);
 
-  test('metric cards render with icon enclosures and value text', async ({ page }) => {
-    const metricsGrid = page.getByTestId('knowledge-metrics');
-    await expect(metricsGrid).toBeVisible();
+    await page.getByTestId('knowledge-status-trigger').click();
+    await expect(page.getByTestId('knowledge-utility-sheet')).toBeVisible();
+    await expect(page.getByTestId('knowledge-status-panel')).toBeVisible();
+    await page.getByRole('button', { name: /Close panel/ }).click();
+  });
 
-    // Four metric cards
-    // Card components render as <div role="article"> in shadcn Card
-    // (Radix doesn't add role — we just count direct children)
-    const cardDivs = metricsGrid.locator('> *');
-    await expect(cardDivs).toHaveCount(4);
+  test('Library stays first-viewport visible at supported window widths', async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addStyleTag({
+      content: '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}',
+    });
 
-    // Each has an SVG icon inside
-    for (let i = 0; i < 4; i++) {
-      await expect(cardDivs.nth(i).locator('svg')).toBeVisible();
-    }
+    const readLayout = async () => page.evaluate(() => {
+      const root = document.querySelector<HTMLElement>('[data-testid="knowledge-page"]');
+      const sidebar = document.querySelector<HTMLElement>('[data-testid="knowledge-vault-sidebar"]');
+      const editor = document.querySelector<HTMLElement>('[data-testid="knowledge-markdown-workspace"]');
+      if (!root || !sidebar || !editor) throw new Error('Knowledge workspace layout is incomplete.');
+      const sidebarBox = sidebar.getBoundingClientRect();
+      const editorBox = editor.getBoundingClientRect();
+      return {
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        rootClientHeight: root.clientHeight,
+        rootScrollHeight: root.scrollHeight,
+        sidebarRight: sidebarBox.right,
+        editorLeft: editorBox.left,
+        editorRight: editorBox.right,
+        editorTop: editorBox.top,
+        editorHeight: editorBox.height,
+      };
+    });
 
-    // Verify the value numbers are rendered (42, 15, 20, 0)
-    await expect(metricsGrid).toContainText('42');
-    await expect(metricsGrid).toContainText('15');
+    const expectStableLayout = async () => {
+      const layout = await readLayout();
+      expect(layout.documentScrollWidth).toBeLessThanOrEqual(layout.viewportWidth);
+      expect(layout.rootScrollHeight).toBeLessThanOrEqual(layout.rootClientHeight + 1);
+      expect(layout.sidebarRight).toBeLessThanOrEqual(layout.editorLeft + 1);
+      expect(layout.editorRight).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(layout.editorTop).toBeLessThan(layout.viewportHeight);
+      expect(layout.editorHeight).toBeGreaterThan(300);
+    };
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.getByTestId('knowledge-document-list')).toBeVisible();
+    await expect(page.getByTestId('knowledge-markdown-workspace')).toBeVisible();
+    await expectStableLayout();
+    await page.screenshot({
+      path: testInfo.outputPath('knowledge-library-1280x800.png'),
+      fullPage: false,
+      animations: 'disabled',
+    });
+
+    await page.getByTestId('knowledge-more-actions').click();
+    await expect(page.getByTestId('knowledge-tab-governance')).toBeVisible();
+    const menuBox = await page.getByRole('menu').boundingBox();
+    expect(menuBox).not.toBeNull();
+    expect(menuBox!.x).toBeGreaterThanOrEqual(0);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(1280);
+    expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(800);
+    await page.screenshot({
+      path: testInfo.outputPath('knowledge-more-menu-1280x800.png'),
+      fullPage: false,
+      animations: 'disabled',
+    });
+    await page.keyboard.press('Escape');
+
+    await page.getByTestId('knowledge-source-tools').click();
+    await expect(page.getByTestId('knowledge-utility-sheet')).toBeVisible();
+    await expect(page.getByTestId('knowledge-source-set-panel')).toBeVisible();
+    const sheetBox = await page.getByTestId('knowledge-utility-sheet').boundingBox();
+    expect(sheetBox).not.toBeNull();
+    expect(sheetBox!.y).toBeGreaterThanOrEqual(40);
+    expect(sheetBox!.y + sheetBox!.height).toBeLessThanOrEqual(800);
+    await page.screenshot({
+      path: testInfo.outputPath('knowledge-source-sheet-1280x800.png'),
+      fullPage: false,
+      animations: 'disabled',
+    });
+    await page.keyboard.press('Escape');
+
+    await page.setViewportSize({ width: 960, height: 800 });
+    await expectStableLayout();
+    await page.screenshot({
+      path: testInfo.outputPath('knowledge-library-960x800.png'),
+      fullPage: false,
+      animations: 'disabled',
+    });
   });
 
   // ── Workbench tabs ────────────────────────────────────────────────
@@ -232,7 +331,9 @@ test.describe('Knowledge Hub UX', () => {
     for (let i = 0; i < 4; i++) {
       await expect(tabs.nth(i).locator('svg')).toBeVisible();
     }
-    await expect(page.getByTestId('knowledge-audit-center-button')).toBeVisible();
+    await page.getByTestId('knowledge-more-actions').click();
+    await expect(page.getByTestId('knowledge-tab-governance')).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   test('clicking a tab selects it with distinct visual state', async ({ page }) => {
@@ -240,41 +341,23 @@ test.describe('Knowledge Hub UX', () => {
     await page.getByTestId('knowledge-tab-library').click();
     const libraryTab = page.getByTestId('knowledge-tab-library');
     // Active tab gets primary border and background treatment
-    await expect(libraryTab).toHaveClass(/border-primary/);
+    await expect(libraryTab).toHaveClass(/border-foreground/);
 
     // Click Inbox tab — verify Library deactivates
     await page.getByTestId('knowledge-tab-inbox').click();
     await expect(page.getByTestId('knowledge-inbox')).toBeVisible();
   });
 
-  // ── Library tab — type cards ──────────────────────────────────────
-
-  test('library tab shows 8 type cards each with an icon', async ({ page }) => {
+  test('Library type browsing is disclosed in one menu', async ({ page }) => {
     await page.getByTestId('knowledge-tab-library').click();
     const library = page.getByTestId('knowledge-library');
     await expect(library).toBeVisible();
     await expect(page.getByTestId('knowledge-markdown-workspace')).toBeVisible();
-    await expect(page.getByTestId('knowledge-librarian-panel')).toBeVisible();
-
-    const typeCards = page.locator('[data-testid^="knowledge-type-"]');
-    await expect(typeCards).toHaveCount(8);
-
-    // Each card has an icon
-    const firstCard = typeCards.first();
-    await expect(firstCard.locator('svg').first()).toBeVisible();
-  });
-
-  test('type cards have distinct color accents', async ({ page }) => {
-    await page.getByTestId('knowledge-tab-library').click();
-
-    const decisionCard = page.getByTestId('knowledge-type-decision');
-    await expect(decisionCard).toHaveClass(/border-amber/);
-
-    const synthesisCard = page.getByTestId('knowledge-type-synthesis');
-    await expect(synthesisCard).toHaveClass(/border-emerald/);
-
-    const architectureCard = page.getByTestId('knowledge-type-architecture');
-    await expect(architectureCard).toHaveClass(/border-violet/);
+    await page.getByTestId('knowledge-type-menu').click();
+    const typeOptions = page.getByRole('menuitem');
+    await expect(typeOptions).toHaveCount(8);
+    await expect(typeOptions.first().locator('svg')).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   test('markdown workspace supports editing, preview mode, and librarian modal', async ({ page }) => {
@@ -285,7 +368,7 @@ test.describe('Knowledge Hub UX', () => {
     await page.getByTestId('knowledge-editor-mode-preview').click();
     await expect(page.getByTestId('knowledge-markdown-preview')).toContainText('Keep reusable notes in Markdown.');
 
-    await page.getByTestId('knowledge-librarian-fab').click();
+    await page.getByTestId('knowledge-librarian-open').click();
     await expect(page.getByTestId('knowledge-librarian-modal')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-capability-ask')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
@@ -349,10 +432,9 @@ test.describe('Knowledge Hub UX', () => {
     await expect(firstDraft).toContainText('RAG pipeline design');
   });
 
-  // ── Audit center ────────────────────────────────────────────────
-
-  test('audit center button opens governance sections with descriptive text', async ({ page }) => {
-    await page.getByTestId('knowledge-audit-center-button').click();
+  test('Governance remains available from the More menu', async ({ page }) => {
+    await page.getByTestId('knowledge-more-actions').click();
+    await page.getByTestId('knowledge-tab-governance').click();
     const governance = page.getByTestId('knowledge-governance');
     await expect(governance).toBeVisible();
 
@@ -392,6 +474,7 @@ test.describe('Chat Knowledge Attachment UX', () => {
         },
       },
       hostApi: {
+        ...readyProviderHostApi,
         [typed('knowledge', 'routeContext', null)]: {
           success: true,
           decision: 'suggest',
@@ -469,6 +552,7 @@ test.describe('Chat Knowledge Attachment UX', () => {
         },
       },
     });
+    await page.reload();
     await completeSetup(page);
     await expect(page.getByTestId('chat-composer-input')).toBeVisible();
   });
@@ -708,7 +792,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
 
     // Click tabs via CDP click
-    for (const tab of ['inbox', 'drafts', 'review', 'governance', 'library']) {
+    for (const tab of ['inbox', 'drafts', 'review', 'library']) {
       const tabClick = await page.evaluate(async (tabName) => {
         const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
           id: `test-tabclick-${tabName}`,
@@ -721,8 +805,24 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
       expect(tabClick.ok).toBe(true);
       expect(tabClick.data.success).toBe(true);
       const activeTab = page.getByTestId(`knowledge-tab-${tab}`);
-      await expect(activeTab).toHaveClass(/border-primary/);
+      await expect(activeTab).toHaveClass(/border-foreground/);
     }
+
+    // Radix opens dropdowns from pointer events; use Playwright for disclosure,
+    // then keep the actual Governance navigation under CDP control.
+    await page.getByTestId('knowledge-more-actions').click();
+    await expect(page.getByTestId('knowledge-tab-governance')).toBeVisible();
+    const governanceClick = await page.evaluate(async () => {
+      const res = await (window as unknown as { verseClaw: { hostInvoke: (args: Record<string, unknown>) => Promise<unknown> } }).verseClaw.hostInvoke({
+        id: 'test-governance-menu-click',
+        module: 'remoteControl',
+        action: 'click',
+        payload: { selector: '[data-testid="knowledge-tab-governance"]' },
+      });
+      return res;
+    });
+    expect(governanceClick.ok).toBe(true);
+    await expect(page.getByTestId('knowledge-governance')).toBeVisible();
   });
 
   test('CDP pageInfo and screenshot retrieves live DOM state', async ({ page }) => {
@@ -749,7 +849,7 @@ test.describe('CDP Remote Control Developer API Dogfooding', () => {
     expect(pageInfo.ok).toBe(true);
     expect(pageInfo.data.success).toBe(true);
     expect(pageInfo.data.url).toMatch(/app:\/\/|file:\/\//);
-    expect(pageInfo.data.textSample).toContain('Vault');
+    expect(pageInfo.data.textSample).toContain('New note');
 
     // Take screenshot via CDP screenshot
     const screenshot = await page.evaluate(async () => {

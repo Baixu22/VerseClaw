@@ -4,17 +4,16 @@
  * No longer fixed - sits inside the flex layout below the title bar.
  */
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Clock,
-  ChevronRight,
   Settings as SettingsIcon,
+  MoreHorizontal,
   PanelLeftClose,
   PanelLeft,
   Plus,
-  Folder,
   Terminal,
   ExternalLink,
   Trash2,
@@ -31,7 +30,6 @@ import {
   Workflow,
   GitCompare,
   Inbox,
-  Search,
   AlertTriangle,
   Globe2,
 } from 'lucide-react';
@@ -40,20 +38,30 @@ import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-ma
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
-import { useUiOverlay } from './ui-overlay-context';
+import { useUiOverlay, useUiVersion } from './ui-overlay-context';
 import { useChatStore, type ChatRuntimeRunState, type ChatSession } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { useStorageHealthStore } from '@/stores/storage-health';
 import {
+  buildLatestRuntimeRunBySession,
   buildSidebarTimeSessions,
   buildSidebarWorkspaceSessionGroups,
   type SidebarSessionEntry,
 } from './session-buckets';
-import { SessionSearchModal, SESSION_SEARCH_LAYOUT_ID } from './SessionSearchModal';
-import { ArchiveModal } from './ArchiveModal';
+import { SessionSearchModal } from './SessionSearchModal';
 import { SessionFolderTree } from './SessionFolderTree';
+import { SidebarRow } from './SidebarRow';
+import {
+  OfficialArchiveIcon,
+  OfficialFolderClosedIcon,
+  OfficialFolderOpenIcon,
+  OfficialMenuCheckIcon,
+  OfficialMoreIcon,
+  OfficialSearchIcon,
+  OfficialSectionChevron,
+} from './codex-sidebar-icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -80,21 +88,10 @@ function NavItem({ to, icon, label, badge, collapsed, onClick, testId }: NavItem
       to={to}
       onClick={onClick}
       data-testid={testId}
-      className={({ isActive }) =>
-        cn(
-          'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
-          'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-          isActive
-            ? 'bg-black/5 dark:bg-white/10 text-foreground'
-            : '',
-          collapsed && 'justify-center px-0'
-        )
-      }
+      className={() => cn(collapsed && 'justify-center px-0')}
     >
       <>
-        <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
-          {icon}
-        </div>
+        {icon}
         {!collapsed && (
           <>
             <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{label}</span>
@@ -147,31 +144,6 @@ const COMPLETED_SESSION_STATUSES = new Set(['completed', 'success', 'done', 'fin
 const ERROR_SESSION_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const ABORTED_SESSION_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
 
-function getRuntimeRunActivityMs(run: ChatRuntimeRunState): number {
-  const lastEventTs = run.events.reduce((latest, event) => {
-    const ts = typeof event.ts === 'number' && Number.isFinite(event.ts) ? event.ts : 0;
-    return Math.max(latest, ts);
-  }, 0);
-  return Math.max(run.endedAt ?? 0, run.startedAt ?? 0, lastEventTs);
-}
-
-function getLatestRuntimeRunForSession(
-  runtimeRuns: Record<string, ChatRuntimeRunState>,
-  sessionKey: string,
-): ChatRuntimeRunState | null {
-  let latest: ChatRuntimeRunState | null = null;
-  let latestActivity = -1;
-  for (const run of Object.values(runtimeRuns)) {
-    if (run.sessionKey !== sessionKey) continue;
-    const activity = getRuntimeRunActivityMs(run);
-    if (activity >= latestActivity) {
-      latest = run;
-      latestActivity = activity;
-    }
-  }
-  return latest;
-}
-
 function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
   if (!run) return false;
   const latestApproval = [...run.events].reverse().find((event) => event.type === 'approval.updated');
@@ -182,7 +154,7 @@ function runHasWaitingApproval(run: ChatRuntimeRunState | null): boolean {
 
 function buildSidebarSessionStatus(input: {
   session: ChatSession;
-  runtimeRuns: Record<string, ChatRuntimeRunState>;
+  latestRun: ChatRuntimeRunState | null;
   currentSessionKey: string;
   activeRunId: string | null;
   sending: boolean;
@@ -190,7 +162,7 @@ function buildSidebarSessionStatus(input: {
   runError: string | null;
   dismissedCompletedSignature?: string;
 }): SidebarSessionStatus | null {
-  const latestRun = getLatestRuntimeRunForSession(input.runtimeRuns, input.session.key);
+  const latestRun = input.latestRun;
   const isCurrentSession = input.session.key === input.currentSessionKey;
   const currentRunActive = isCurrentSession && (input.sending || input.pendingFinal || input.activeRunId != null);
   const sessionStatus = input.session.status?.toLowerCase();
@@ -263,122 +235,123 @@ const SessionRowMemo = memo(function SessionRow({
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
-  const hasLeadingActions = Boolean(leadingActions);
+  const isSelected = isOnChat && currentSessionKey === s.key;
+
+  if (isEditing) {
+    return (
+      <div className="flex w-full items-center gap-1 px-1.5 py-1">
+        <Input
+          autoFocus
+          value={editingLabel}
+          onChange={(e) => onEditLabel(e.target.value)}
+          onKeyDown={onRenameKeyDown}
+          onBlur={() => void onRenameSubmit()}
+          className="h-7 min-w-0 flex-1 text-meta"
+          aria-label={t('common:sidebar.renameSessionPlaceholder', { ns: 'common' })}
+        />
+        <button
+          aria-label={t('common:sidebar.saveSessionRename', { ns: 'common' })}
+          onMouseDown={(e) => { e.preventDefault(); void onRenameSubmit(); }}
+          className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground"
+        >
+          <Check className="h-3.5 w-3.5" />
+        </button>
+        <button
+          aria-label={t('common:sidebar.cancelSessionRename', { ns: 'common' })}
+          onMouseDown={(e) => { e.preventDefault(); onRenameCancel(); }}
+          className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="group relative flex items-center">
-      {isEditing ? (
-        <div className="flex w-full items-center gap-1 px-1.5 py-1">
-          <Input
-            autoFocus
-            value={editingLabel}
-            onChange={(e) => onEditLabel(e.target.value)}
-            onKeyDown={onRenameKeyDown}
-            onBlur={() => void onRenameSubmit()}
-            className="h-7 min-w-0 flex-1 text-meta"
-            aria-label={t('common:sidebar.renameSessionPlaceholder', { ns: 'common' })}
-          />
-          <button
-            aria-label={t('common:sidebar.saveSessionRename', { ns: 'common' })}
-            onMouseDown={(e) => { e.preventDefault(); void onRenameSubmit(); }}
-            className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground"
-          >
-            <Check className="h-3.5 w-3.5" />
-          </button>
-          <button
-            aria-label={t('common:sidebar.cancelSessionRename', { ns: 'common' })}
-            onMouseDown={(e) => { e.preventDefault(); onRenameCancel(); }}
-            className="flex shrink-0 items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      ) : (
+    <SidebarRow
+      className="task-row"
+      selected={isSelected}
+      actionsClassName="task-hover-actions"
+      actions={(
         <>
+          {leadingActions}
           <button
-            data-testid={`sidebar-session-${s.key}`}
-            onClick={() => {
-              if (currentSessionKey === s.key) {
-                void onLoadHistory(false);
-              } else {
-                onSwitch(s.key);
-              }
-              navigate('/');
+            type="button"
+            data-testid={`sidebar-session-rename-${s.key}`}
+            aria-label={t('common:sidebar.renameSession', { ns: 'common' })}
+            onClick={(e) => {
+              e.stopPropagation();
+              onStartRename(s.key, sessionLabel);
             }}
-            onDoubleClick={() => onStartRename(s.key, sessionLabel)}
-            className={cn(
-              'w-full text-left rounded-lg px-2.5 py-1.5 text-meta transition-colors',
-              hasLeadingActions ? 'pr-20' : 'pr-16',
-              'hover:bg-black/5 dark:hover:bg-white/5',
-              isOnChat && currentSessionKey === s.key
-                ? 'bg-black/5 dark:bg-white/10 text-foreground font-medium'
-                : 'text-foreground/75',
-            )}
+            className="task-hover-btn"
           >
-            <div className="flex min-w-0 items-center gap-2">
-              {sessionStatus ? (
-                <span
-                  data-testid={`sidebar-session-status-${s.key}`}
-                  data-state={sessionStatus.kind}
-                  role="status"
-                  aria-label={sessionStatusLabel}
-                  title={sessionStatus.dismissible
-                    ? t('chat:sessionStatus.dismissCompleted')
-                    : sessionStatusLabel}
-                  onClick={(event) => {
-                    if (!sessionStatus.dismissible) return;
-                    event.stopPropagation();
-                    event.preventDefault();
-                    onDismissSessionStatus(s.key, sessionStatus.signature);
-                  }}
-                  className={cn(
-                    'flex shrink-0 items-center justify-center',
-                    sessionStatus.dismissible
-                      ? 'cursor-pointer rounded p-0.5 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10'
-                      : 'cursor-default',
-                  )}
-                >
-                  <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
-                </span>
-              ) : (
-                <span className="size-3.5 shrink-0" aria-hidden="true" />
-              )}
-              <span className="shrink-0 rounded-full bg-black/[0.04] px-2 py-0.5 text-2xs font-medium text-foreground/70 dark:bg-white/[0.08]">
-                {agentName}
-              </span>
-              <span className="truncate">{sessionLabel}</span>
-            </div>
+            <Pencil />
           </button>
-          <div className={cn(
-            'absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-0.5 transition-opacity',
-            forceActionsVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
-          )}>
-            {leadingActions}
-            <button
-              data-testid={`sidebar-session-rename-${s.key}`}
-              aria-label={t('common:sidebar.renameSession', { ns: 'common' })}
-              onClick={(e) => {
-                e.stopPropagation();
-                onStartRename(s.key, sessionLabel);
-              }}
-              className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </button>
-            <button
-              data-testid={`sidebar-session-delete-${s.key}`}
-              aria-label={t('common:sidebar.deleteSession', { ns: 'common' })}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteClick(s.key, sessionLabel);
-              }}
-              className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
+          <button
+            type="button"
+            data-testid={`sidebar-session-delete-${s.key}`}
+            aria-label={t('common:sidebar.deleteSession', { ns: 'common' })}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteClick(s.key, sessionLabel);
+            }}
+            className="task-hover-btn hover:!text-destructive"
+          >
+            <Trash2 />
+          </button>
         </>
       )}
-    </div>
+      /* While a row's move-menu is open the controls must not fade out from
+         under the open popover; `.sidebar-row[data-force-actions]` pins them. */
+      data-force-actions={forceActionsVisible ? 'true' : undefined}
+    >
+      <button
+        type="button"
+        data-testid={`sidebar-session-${s.key}`}
+        onClick={() => {
+          if (currentSessionKey === s.key) {
+            void onLoadHistory(false);
+          } else {
+            onSwitch(s.key);
+          }
+          navigate('/');
+        }}
+        onDoubleClick={() => onStartRename(s.key, sessionLabel)}
+        className="task-select"
+        /* Agent name is not inline chrome in the official row; it rides the
+           row tooltip so the title keeps the full width. */
+        title={`${sessionLabel} — ${agentName}`}
+      >
+        {/* Official row: the title is the first child so it receives the
+            flex/ellipsis/fade contract. Runtime state trails it, replacing the
+            reference's task-progress spinner slot, and is only present when a
+            session actually has state — idle rows reserve nothing. */}
+        <span>{sessionLabel}</span>
+        {sessionStatus && (
+          <span
+            data-testid={`sidebar-session-status-${s.key}`}
+            data-state={sessionStatus.kind}
+            role="status"
+            aria-label={sessionStatusLabel}
+            title={sessionStatus.dismissible
+              ? t('chat:sessionStatus.dismissCompleted')
+              : sessionStatusLabel}
+            onClick={(event) => {
+              if (!sessionStatus.dismissible) return;
+              event.stopPropagation();
+              event.preventDefault();
+              onDismissSessionStatus(s.key, sessionStatus.signature);
+            }}
+            className={cn(
+              'task-status-slot',
+              sessionStatus.dismissible && 'task-status-slot--dismissible',
+            )}
+          >
+            <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
+          </span>
+        )}
+      </button>
+    </SidebarRow>
   );
 });
 
@@ -388,9 +361,36 @@ function getAgentIdFromSessionKey(sessionKey: string): string {
   return agentId || 'main';
 }
 
+function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
+  const { t } = useTranslation();
+  const { settingsOpen, openSettings } = useUiOverlay();
+
+  return (
+    <NavLink
+      to="/settings/general"
+      data-testid="sidebar-nav-settings"
+      onClick={(event) => {
+        event.preventDefault();
+        openSettings('/settings/general');
+      }}
+      className={({ isActive }) =>
+        cn(
+          'profile-menu-trigger',
+          (isActive || settingsOpen) && 'open',
+          collapsed && 'justify-center px-0',
+        )
+      }
+    >
+      <span className="profile-menu-trigger-icon"><SettingsIcon strokeWidth={1.8} /></span>
+      {!collapsed && <span className="profile-menu-trigger-label">{t('sidebar.settings')}</span>}
+      {!collapsed && <span className="profile-menu-shortcut">Ctrl+,</span>}
+    </NavLink>
+  );
+}
+
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
-  const { uiVersion, settingsOpen, openSettings } = useUiOverlay();
+  const uiVersion = useUiVersion();
   const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
   const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
@@ -402,7 +402,7 @@ export function Sidebar() {
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
 
-  const { sessions, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError } = useChatStore(useShallow((s) => ({
+  const { sessions, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError, startupPhase } = useChatStore(useShallow((s) => ({
     sessions: s.sessions,
     currentSessionKey: s.currentSessionKey,
     sessionLabels: s.sessionLabels,
@@ -412,6 +412,7 @@ export function Sidebar() {
     sending: s.sending,
     pendingFinal: s.pendingFinal,
     runError: s.runError,
+    startupPhase: s.startupPhase,
   })));
   const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
@@ -421,13 +422,15 @@ export function Sidebar() {
   const hydrateStartup = useChatStore((s) => s.hydrateStartup);
   const handleNewChat = useNewChatAction();
   const workspaceProfiles = useWorkspacesStore((s) => s.profiles);
+  const workspacesLoading = useWorkspacesStore((s) => s.loading);
+  const workspacesError = useWorkspacesStore((s) => s.error);
+  const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
   const createWorkspaceFolder = useWorkspacesStore((s) => s.createFolder);
   const renameWorkspaceFolder = useWorkspacesStore((s) => s.renameFolder);
   const deleteWorkspaceFolder = useWorkspacesStore((s) => s.deleteFolder);
   const moveSessionToFolder = useWorkspacesStore((s) => s.moveSessionToFolder);
   const [dismissedCompletedStatuses, setDismissedCompletedStatuses] = useState<Record<string, string>>({});
   const [collapsedFolderIds, setCollapsedFolderIds] = useState<Record<string, boolean>>({});
-  const [archiveModalOpen, setArchiveModalOpen] = useState(false);
 
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
@@ -474,12 +477,38 @@ export function Sidebar() {
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
   const [editingLabel, setEditingLabel] = useState('');
   const [sessionView, setSessionView] = useState<'project' | 'time'>('project');
+  /* Official sections are collapsible; conversations default to open so the
+     restored session list is visible without an extra click. */
+  const [sessionSectionOpen, setSessionSectionOpen] = useState(true);
+  const [sessionOrganizeMenu, setSessionOrganizeMenu] = useState<{ top: number; left: number } | null>(null);
+  const [footerMenu, setFooterMenu] = useState<{ top: number; left: number } | null>(null);
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   useEffect(() => {
     void fetchAgents();
   }, [fetchAgents]);
+
+  useEffect(() => {
+    if (!sessionOrganizeMenu && !footerMenu) return;
+    const close = (event: PointerEvent) => {
+      if ((event.target as Element).closest?.('.sidebar-session-organize-menu,.sidebar-session-organize-trigger,.sidebar-footer-menu,.sidebar-footer-menu-trigger')) return;
+      setSessionOrganizeMenu(null);
+      setFooterMenu(null);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSessionOrganizeMenu(null);
+        setFooterMenu(null);
+      }
+    };
+    addEventListener('pointerdown', close);
+    addEventListener('keydown', escape);
+    return () => {
+      removeEventListener('pointerdown', close);
+      removeEventListener('keydown', escape);
+    };
+  }, [footerMenu, sessionOrganizeMenu]);
 
   useEffect(() => {
     if (deleteDialogOpen || !sessionToDelete) return;
@@ -636,13 +665,18 @@ export function Sidebar() {
     })),
   ];
 
+  const latestRuntimeRunBySession = useMemo(
+    () => buildLatestRuntimeRunBySession(runtimeRuns),
+    [runtimeRuns],
+  );
+
   const sessionStatuses = useMemo(() => {
     const entries = sessions
       .map((session) => [
         session.key,
         buildSidebarSessionStatus({
           session,
-          runtimeRuns,
+          latestRun: latestRuntimeRunBySession.get(session.key) ?? null,
           currentSessionKey,
           activeRunId,
           sending,
@@ -657,9 +691,9 @@ export function Sidebar() {
     activeRunId,
     currentSessionKey,
     dismissedCompletedStatuses,
+    latestRuntimeRunBySession,
     pendingFinal,
     runError,
-    runtimeRuns,
     sending,
     sessions,
   ]);
@@ -713,12 +747,32 @@ export function Sidebar() {
     handleDismissSessionStatus,
   ]);
 
+  const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sessions.length > 0 && !workspacesLoading)
+    ? timeSessions
+    : null;
+  const sessionPanelState = startupPhase === 'error'
+    ? 'chat-error'
+    : workspacesError
+      ? 'workspace-error'
+      : startupPhase !== 'ready' || workspacesLoading
+        ? 'loading'
+        : 'empty';
+  const sessionPanelMessage = sessionPanelState === 'chat-error'
+    ? t('chat:startup.errorTitle')
+    : sessionPanelState === 'workspace-error'
+      ? t('chat:sidebar.workspaceError')
+      : sessionPanelState === 'loading'
+        ? t(startupPhase === 'waiting-for-gateway' ? 'chat:startup.waitingForGateway' : 'chat:startup.loadingSessions')
+        : t('chat:sidebar.empty');
+
   return (
     <aside
       data-testid="sidebar"
       className={cn(
-        'relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
-        isUiV2 && 'border-r border-white/55 bg-surface-sidebar/90 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:border-white/5 dark:bg-surface-sidebar/76',
+        // `codex-sidebar` scopes the ported Codex sidebar recipe
+        // (src/styles/codex-sidebar.css) to this subtree.
+        'codex-sidebar codex-sidebar-surface relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
+        isUiV2 && 'bg-surface-sidebar/90 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:bg-surface-sidebar/76',
         isResizing ? 'transition-none' : 'transition-[width] duration-200 ease-out',
       )}
       style={{ width: sidebarCollapsed ? (isUiV2 ? 64 : SIDEBAR_COLLAPSED_WIDTH) : (isUiV2 ? Math.min(360, Math.max(240, sidebarWidth)) : sidebarWidth) }}
@@ -732,56 +786,51 @@ export function Sidebar() {
         />
       )}
 
-      {/* Top Header Toggle */}
+      {/* Top Header Toggle — `.sidebar-heading` recipe (50px strip). */}
       <div
         className={cn(
-          'flex h-10 shrink-0 items-center px-2 py-1.5',
-          sidebarCollapsed ? 'justify-center' : 'justify-between',
+          'sidebar-heading',
+          sidebarCollapsed && 'justify-center',
         )}
       >
         {!sidebarCollapsed && (
-          <div className="flex min-w-0 items-center gap-2 overflow-hidden px-2">
+          <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <BrandLogo size="sidebar" />
-            <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">
+            <span className="truncate whitespace-nowrap text-[17px] font-semibold leading-6 text-foreground/90">
               Verse
             </span>
           </div>
         )}
-        <Button
+        <button
+          type="button"
           data-testid="sidebar-collapse-toggle"
           aria-label={t(sidebarCollapsed ? 'sidebar.expandSidebar' : 'sidebar.collapseSidebar')}
-          variant="ghost"
-          size="icon"
-          className={cn(
-            'no-drag h-8 w-8 shrink-0 rounded-lg text-foreground/80',
-            'hover:bg-black/5 hover:text-foreground/80 dark:hover:bg-white/5',
-          )}
+          className="icon-button no-drag shrink-0"
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
         >
           {sidebarCollapsed ? (
-            <PanelLeft className="h-[18px] w-[18px]" />
+            <PanelLeft className="h-4 w-4" />
           ) : (
-            <PanelLeftClose className="h-[18px] w-[18px]" />
+            <PanelLeftClose className="h-4 w-4" />
           )}
-        </Button>
+        </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex flex-col gap-1 px-2">
+      {/* Navigation — `.primary-nav` recipe: 32px rows, 13.5px/430 labels,
+          hover-revealed shortcut hints. */}
+      <nav className="primary-nav">
         <button
           type="button"
           data-testid="sidebar-new-chat"
           onClick={handleNewChat}
-          className={cn(
-            'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-2 transition-colors',
-            'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-            sidebarCollapsed && 'justify-center px-0',
-          )}
+          className={cn(sidebarCollapsed && 'justify-center px-0')}
         >
-          <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
-            <Plus className="h-4 w-4" strokeWidth={2} />
-          </div>
-          {!sidebarCollapsed && <span className="flex-1 text-left overflow-hidden text-ellipsis whitespace-nowrap">{t('sidebar.newChat')}</span>}
+          <Plus strokeWidth={2} />
+          {!sidebarCollapsed && (
+            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left">
+              {t('sidebar.newChat')}
+            </span>
+          )}
         </button>
 
         {navItems.map((item) => (
@@ -793,236 +842,245 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Session list below nav, only when expanded */}
-      {!sidebarCollapsed && sessions.length > 0 && (
-        <>
-          {/* Session grouping toggle */}
-          <div className="mx-2 mt-3 flex rounded-lg bg-black/[0.03] p-0.5 dark:bg-white/[0.04]">
-            {(['project', 'time'] as const).map((view) => (
+      {/* Session list stays structurally present while the gateway and workspace data hydrate. */}
+      {!sidebarCollapsed && (
+        <div className="sidebar-scroll">
+          <section className={cn('sidebar-section', !sessionSectionOpen && 'section-collapsed')}>
+            {/* Official section heading: the label itself is the collapse
+                control (`aria-expanded` + trailing chevron), and the organize
+                and search actions live in hover-only 22x22 slots. */}
+            <div className="section-heading">
               <button
-                key={view}
                 type="button"
-                data-testid={`sidebar-session-view-${view}`}
-                onClick={() => setSessionView(view)}
-                className={cn(
-                  'flex-1 rounded-md py-1 text-2xs font-medium transition-colors',
-                  sessionView === view
-                    ? 'bg-material-elevated/92 text-foreground shadow-sm dark:bg-white/10'
-                    : 'text-muted-foreground/60 hover:text-muted-foreground',
-                )}
+                className="section-label-button"
+                data-testid="sidebar-session-section-toggle"
+                aria-expanded={sessionSectionOpen}
+                onClick={() => setSessionSectionOpen((open) => !open)}
               >
-                {t(`chat:sessionView.${view}`)}
+                <span>{t('chat:sidebar.sectionConversations')}</span>
+                <OfficialSectionChevron open={sessionSectionOpen} />
               </button>
-            ))}
-          </div>
+              <div className="section-heading-actions">
+                <button
+                  type="button"
+                  data-testid="sidebar-session-organize"
+                  aria-expanded={sessionOrganizeMenu != null}
+                  aria-haspopup="menu"
+                  aria-label={t('chat:sidebar.organizeSessions')}
+                  title={t('chat:sidebar.organizeSessions')}
+                  className="sidebar-session-organize-trigger"
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    setSessionOrganizeMenu((current) => current ? null : {
+                      top: Math.min(window.innerHeight - 8, rect.bottom + 2),
+                      left: Math.min(window.innerWidth - 180, Math.max(8, rect.right - 172)),
+                    });
+                  }}
+                >
+                  <OfficialMoreIcon />
+                </button>
+                <button
+                  type="button"
+                  data-testid="sidebar-session-search"
+                  aria-label={t('chat:sidebar.searchSessions')}
+                  title={t('chat:sidebar.searchSessions')}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={() => setSearchModalOpen(true)}
+                >
+                  <OfficialSearchIcon />
+                </button>
+              </div>
+            </div>
 
-          {/* Session search trigger — opens spotlight modal */}
-          <motion.button
-            layoutId={SESSION_SEARCH_LAYOUT_ID}
-            type="button"
-            data-testid="sidebar-session-search"
-            aria-label={t('chat:sidebar.searchSessions')}
-            onClick={() => setSearchModalOpen(true)}
-            className="mx-2 mt-2 flex w-[calc(100%-1rem)] items-center gap-2 rounded-md border border-black/10 bg-surface-input/50 px-2 py-1.5 text-2xs text-muted-foreground/80 transition-colors hover:border-primary/40 hover:bg-surface-input dark:border-white/10"
-          >
-            <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-            <span className="flex-1 truncate text-left">
-              {t('chat:sidebar.searchSessions')}
-            </span>
-            <kbd className="rounded bg-black/5 px-1 py-0.5 font-mono text-2xs text-muted-foreground/60 dark:bg-white/10">
-              /
-            </kbd>
-          </motion.button>
-
-          {/* Session list */}
-          <div className="mt-1 flex-1 overflow-y-auto overflow-x-hidden px-2 pb-2 space-y-0.5" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 36px' }}>
-            {sessionView === 'project'
-              ? workspaceSessionGroups.map((group) => {
-                const collapsed = collapsedWorkspaceIds[group.workspace.id] ?? false;
-                return (
-                  <div
-                    key={group.workspace.id}
-                    data-testid={`sidebar-session-project-${group.workspace.id}`}
-                    data-state={collapsed ? 'collapsed' : 'expanded'}
-                    className="space-y-0.5"
-                  >
-                    <button
-                      type="button"
-                      data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
-                      aria-expanded={!collapsed}
-                      onClick={() => toggleWorkspaceGroup(group.workspace.id)}
-                      className={cn(
-                        'flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-colors',
-                        'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
-                      )}
-                    >
-                      <Folder className="h-4 w-4 shrink-0" />
-                      <span className="min-w-0 flex-1 truncate text-sm font-medium tracking-normal">
-                        {group.workspace.name}
-                      </span>
-                      <ChevronRight
-                        className={cn(
-                          'h-3.5 w-3.5 shrink-0 transition-transform duration-200 motion-reduce:transition-none',
-                          !collapsed && 'rotate-90',
-                        )}
-                      />
-                    </button>
+            {/* Session list */}
+            <div className={cn('section-list-outer', sessionSectionOpen && 'open')} aria-hidden={!sessionSectionOpen}>
+            <div className="task-collection-list" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 31px' }}>
+              {sidebarSessionEntries
+                ? sidebarSessionEntries.length > 0
+                  ? sidebarSessionEntries.map((entry) => renderSessionRow(entry))
+                  : <p className="px-2 py-2 text-xs text-muted-foreground">{sessionPanelMessage}</p>
+                : workspaceSessionGroups.length > 0
+                  ? workspaceSessionGroups.map((group) => {
+                  const collapsed = collapsedWorkspaceIds[group.workspace.id] ?? false;
+                  return (
                     <div
-                      className={cn(
-                        'grid transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none',
-                        collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',
-                      )}
-                      aria-hidden={collapsed}
+                      key={group.workspace.id}
+                      data-testid={`sidebar-session-project-${group.workspace.id}`}
+                      data-state={collapsed ? 'collapsed' : 'expanded'}
                     >
-                      <div className="min-h-0 overflow-hidden">
-                        <SessionFolderTree
-                          workspace={group.workspace}
-                          sessions={group.sessions}
-                          collapsedFolders={collapsedFolderIds}
-                          sessionStatusKinds={sessionStatusKinds}
-                          onToggleFolder={toggleFolder}
-                          onCreateFolder={handleCreateFolder}
-                          onRenameFolder={handleRenameFolder}
-                          onDeleteFolder={handleDeleteFolder}
-                          onMoveSession={handleMoveSessionToFolder}
-                          renderSessionRow={renderSessionRow}
-                        />
+                      <SidebarRow className="project-row-wrap">
+                        <button
+                          type="button"
+                          data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
+                          aria-expanded={!collapsed}
+                          onClick={() => toggleWorkspaceGroup(group.workspace.id)}
+                          className="project-row"
+                        >
+                          {collapsed
+                            ? <OfficialFolderClosedIcon size={19} />
+                            : <OfficialFolderOpenIcon size={19} />}
+                          <span>{group.workspace.name}</span>
+                        </button>
+                      </SidebarRow>
+                      <div
+                        className={cn('project-tasks-outer', !collapsed && 'open')}
+                        aria-hidden={collapsed}
+                      >
+                        <div className="project-tasks">
+                          <SessionFolderTree
+                            workspace={group.workspace}
+                            sessions={group.sessions}
+                            collapsedFolders={collapsedFolderIds}
+                            sessionStatusKinds={sessionStatusKinds}
+                            onToggleFolder={toggleFolder}
+                            onCreateFolder={handleCreateFolder}
+                            onRenameFolder={handleRenameFolder}
+                            onDeleteFolder={handleDeleteFolder}
+                            onMoveSession={handleMoveSessionToFolder}
+                            renderSessionRow={renderSessionRow}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
-              : timeSessions.map((entry) => renderSessionRow(entry))}
-          </div>
-        </>
+                  );
+                })
+                  : <div className="empty-sidebar-row" role="status" aria-live="polite">
+                    {sessionPanelState === 'loading' && <DotMatrix state="loading" label={sessionPanelMessage} className="size-3.5 shrink-0" />}
+                    <span className="min-w-0 flex-1">{sessionPanelMessage}</span>
+                    {(sessionPanelState === 'chat-error' || sessionPanelState === 'workspace-error') && (
+                      <button
+                        type="button"
+                        className="empty-sidebar-row__action"
+                        onClick={() => {
+                          if (sessionPanelState === 'chat-error') void hydrateStartup();
+                          else void fetchWorkspaces();
+                        }}
+                      >
+                        {t('chat:startup.retry')}
+                      </button>
+                    )}
+                    {sessionPanelState === 'empty' && (
+                      <button type="button" className="empty-sidebar-row__action" onClick={handleNewChat}>
+                        {t('chat:sidebar.emptyAction')}
+                      </button>
+                    )}
+                  </div>}
+            </div>
+            </div>
+          </section>
+        </div>
       )}
 
-      {/* Footer */}
-      <div className="mt-auto flex flex-col gap-1 p-2">
-        <button
-          data-testid="sidebar-archive"
-          onClick={() => setArchiveModalOpen(true)}
-          aria-label={t('chat:archive.open')}
-          title={sidebarCollapsed ? t('chat:archive.open') : undefined}
-          className={cn(
-            'sidebar-nav-text flex min-h-8 w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-foreground/80',
-            'transition-[background-color,color,transform] duration-150 hover:bg-black/5 active:scale-[0.98] dark:hover:bg-white/5 motion-reduce:transition-none motion-reduce:active:scale-100',
-            sidebarCollapsed && 'justify-center px-0',
-          )}
-        >
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center text-current [&_svg]:size-4">
-            <ArchiveIcon className="h-4 w-4" strokeWidth={2} />
-          </div>
-          {!sidebarCollapsed && (
-            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-              {t('chat:archive.open')}
-            </span>
-          )}
-        </button>
+      {sessionOrganizeMenu && createPortal(
         <div
-          data-testid="sidebar-gateway-restarting"
-          data-state={gatewayRestarting ? 'visible' : 'hidden'}
-          aria-hidden={!gatewayRestarting}
-          className={cn(
-            'overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out',
-            gatewayRestarting ? 'max-h-12 translate-y-0 opacity-100' : 'max-h-0 translate-y-1 opacity-0',
-          )}
+          role="menu"
+          className="codex-dropdown codex-dropdown--compact sidebar-session-organize-menu"
+          style={{ top: sessionOrganizeMenu.top, left: sessionOrganizeMenu.left }}
         >
-          <div
-            aria-live="polite"
-            aria-label={t('common:gateway.restarting')}
-            title={t('common:gateway.restarting')}
-            className={cn(
-              'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5',
-              'border border-yellow-500/20 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400',
-              sidebarCollapsed && 'justify-center px-0',
-            )}
-          >
-            <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-            {!sidebarCollapsed && (
-              <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                {t('common:gateway.restarting')}
-              </span>
-            )}
-          </div>
+          {(['project', 'time'] as const).map((view) => {
+            const checked = sessionView === view;
+            return <button
+              key={view}
+              type="button"
+              role="menuitemradio"
+              aria-checked={checked}
+              className={cn('codex-dropdown__item radio-item', checked && 'checked')}
+              onClick={() => {
+                setSessionView(view);
+                setSessionOrganizeMenu(null);
+              }}
+            >
+              <span className={cn('codex-dropdown__check', !checked && 'invisible')}><OfficialMenuCheckIcon /></span>
+              <span className="codex-dropdown__text">{t(`chat:sessionView.${view}`)}</span>
+            </button>;
+          })}
+        </div>,
+        document.body,
+      )}
+
+      <footer className="sidebar-footer">
+        <span data-testid="sidebar-gateway-restarting" data-state={gatewayRestarting ? 'visible' : 'hidden'} className="sr-only" aria-live="polite">
+          {gatewayRestarting ? t('common:gateway.restarting') : ''}
+        </span>
+        <span data-testid="sidebar-storage-low" data-state={storageHealthLow ? 'visible' : 'hidden'} className="sr-only" aria-live="polite">
+          {storageHealthLow ? t('common:storageHealth.bannerLow') : ''}
+        </span>
+        <div className="sidebar-account-control">
+          <SidebarSettingsNavItem collapsed={sidebarCollapsed} />
         </div>
-        <div
-          data-testid="sidebar-storage-low"
-          data-state={storageHealthLow ? 'visible' : 'hidden'}
-          aria-hidden={!storageHealthLow}
-          className={cn(
-            'overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out',
-            storageHealthLow ? 'max-h-12 translate-y-0 opacity-100' : 'max-h-0 translate-y-1 opacity-0',
-          )}
-        >
+        {!sidebarCollapsed && (
           <button
             type="button"
-            onClick={() => navigate('/settings/storage')}
-            aria-live="polite"
-            aria-label={t('common:storageHealth.bannerLow')}
-            title={t('common:storageHealth.bannerLow')}
-            className={cn(
-              'sidebar-nav-text flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5',
-              'border border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400',
-              sidebarCollapsed && 'justify-center px-0',
-            )}
-          >
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            {!sidebarCollapsed && (
-              <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                {t('common:storageHealth.bannerLow')}
-              </span>
-            )}
-          </button>
-        </div>
-
-        <NavLink
-            to="/settings"
-            data-testid="sidebar-nav-settings"
+            data-testid="sidebar-footer-menu-trigger"
+            className="sidebar-footer-menu-trigger"
+            aria-label={t('common:actions.show')}
+            aria-haspopup="menu"
+            aria-expanded={footerMenu != null}
             onClick={(event) => {
-              event.preventDefault();
-              openSettings('/settings');
+              const rect = event.currentTarget.getBoundingClientRect();
+              const menuWidth = 259;
+              const menuHeight = devModeUnlocked ? 154 : 121;
+              setFooterMenu((current) => current ? null : {
+                top: Math.max(8, rect.top - menuHeight - 6),
+                left: Math.max(8, Math.min(window.innerWidth - menuWidth - 8, rect.right - menuWidth)),
+              });
             }}
-            className={({ isActive }) =>
-              cn(
-                'sidebar-nav-text flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
-                'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-                (isActive || settingsOpen) && 'bg-material-elevated/84 shadow-sm dark:bg-white/10 text-foreground',
-                sidebarCollapsed ? 'justify-center px-0' : ''
-              )
-            }
           >
-          <>
-            <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
-              <SettingsIcon className="h-4 w-4" strokeWidth={2} />
-            </div>
-            {!sidebarCollapsed && <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{t('sidebar.settings')}</span>}
-          </>
-        </NavLink>
-
-        {devModeUnlocked && (
-          <Button
-            data-testid="sidebar-open-dev-console"
-            variant="ghost"
-            className={cn(
-              'sidebar-nav-text flex h-auto w-full items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors',
-              'hover:bg-black/5 dark:hover:bg-white/5 text-foreground/80',
-              sidebarCollapsed ? 'justify-center px-0' : 'justify-start'
-            )}
-            onClick={openDevConsole}
-          >
-            <div className="flex shrink-0 items-center justify-center text-current [&_svg]:size-4">
-              <Terminal className="h-4 w-4" strokeWidth={2} />
-            </div>
-            {!sidebarCollapsed && (
-              <>
-                <span className="flex-1 text-left overflow-hidden text-ellipsis whitespace-nowrap">{t('common:sidebar.openClawPage')}</span>
-                <ExternalLink className="ml-auto h-3 w-3 shrink-0 opacity-50 text-current" />
-              </>
-            )}
-          </Button>
+            {gatewayRestarting ? <Loader2 className="animate-spin text-yellow-500" /> : storageHealthLow ? <AlertTriangle className="text-red-500" /> : <MoreHorizontal />}
+          </button>
         )}
-      </div>
+      </footer>
+
+      {footerMenu && createPortal(
+        <div role="menu" className="codex-dropdown sidebar-account-menu sidebar-footer-menu" style={{ top: footerMenu.top, left: footerMenu.left }}>
+          <div className="codex-dropdown__item profile-menu-user" role="presentation">
+            <span className="codex-dropdown__text">Verse Claw</span>
+          </div>
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-archive"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/settings/archived'); }}
+          >
+            <span className="codex-dropdown__icon"><OfficialArchiveIcon /></span>
+            <span className="codex-dropdown__text">{t('chat:archive.open')}</span>
+          </button>
+          {gatewayRestarting && (
+            <div data-state="visible" className="codex-dropdown__item profile-menu-user text-yellow-500" aria-live="polite">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="codex-dropdown__text">{t('common:gateway.restarting')}</span>
+            </div>
+          )}
+          {storageHealthLow && (
+            <button
+              type="button"
+              role="menuitem"
+              data-state="visible"
+              className="codex-dropdown__item text-red-500"
+              onClick={() => { setFooterMenu(null); navigate('/settings/storage'); }}
+            >
+              <AlertTriangle className="h-4 w-4" />
+              <span className="codex-dropdown__text">{t('common:storageHealth.bannerLow')}</span>
+            </button>
+          )}
+          {devModeUnlocked && (
+            <button
+              type="button"
+              role="menuitem"
+              data-testid="sidebar-open-dev-console"
+              className="codex-dropdown__item"
+              onClick={() => { setFooterMenu(null); void openDevConsole(); }}
+            >
+              <Terminal className="h-4 w-4" />
+              <span className="codex-dropdown__text">{t('common:sidebar.openClawPage')}</span>
+              <ExternalLink className="h-3 w-3 opacity-50" />
+            </button>
+          )}
+        </div>,
+        document.body,
+      )}
 
       {!sidebarCollapsed && (
         <div
@@ -1093,11 +1151,6 @@ export function Sidebar() {
           </div>
         </DialogContent>
       </Dialog>
-
-      <ArchiveModal
-        open={archiveModalOpen}
-        onClose={() => setArchiveModalOpen(false)}
-      />
 
       <SessionSearchModal
         key={`session-search-${searchModalOpen ? 'open' : 'closed'}`}

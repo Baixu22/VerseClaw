@@ -330,7 +330,7 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
 
       await page.getByTestId('sidebar-nav-settings').click();
       await expect(page.getByTestId('settings-page')).toBeVisible();
-      await expect(page.getByTestId('settings-overview')).toBeVisible();
+      await expect(page.getByTestId('settings-sidebar')).toBeVisible();
       await expect(page.getByTestId('settings-work-heatgraph')).not.toBeVisible();
     } finally {
       await closeElectronApp(app);

@@ -11,6 +11,11 @@
     "retry": "Retry loading"
   },
   "welcome": {
+    "titleInProject": "What should we build in <projectSelect>{{projectName}}?</projectSelect>",
+    "titleNoProject": "What should we build?",
+    "projectSearch": "Search projects",
+    "projectEmpty": "No projects found",
+    "changeProject": "Change project: {{projectName}}",
     "title": "Verse Claw Chat",
     "subtitle": "What can I do for you?",
     "askQuestions": "Handle Tasks",
@@ -29,6 +34,7 @@
     "currentAgent": "Talking to {{agent}}",
     "workspace": "Workspace",
     "saveToKnowledge": "Save to Knowledge",
+    "moreActions": "More actions",
     "addWorkspaceDialogTitle": "Choose workspace directory",
     "addWorkspaceDialogButton": "Set as Workspace",
     "promptCache": {
@@ -1463,11 +1469,19 @@
     "workspaceActions": "Workspace actions",
     "workspaceActionFailed": "Workspace action failed: {{error}}",
     "permissionModeTitle": "Permission mode",
+    "permissionMenuTitle": "How should Verse Claw approve actions?",
+    "permissionLearnMore": "Learn more",
     "permissionMode": {
       "readOnly": "Read only",
       "plan": "Plan",
       "acceptEdits": "Accept edits",
       "fullAccess": "Full access"
+    },
+    "permissionModeDescription": {
+      "readOnly": "Always ask before editing files or using the internet",
+      "plan": "Analyze and propose a plan without making changes",
+      "acceptEdits": "Only ask for approval for detected risky actions",
+      "fullAccess": "Access the internet and any file on your computer without restrictions"
     },
     "pickWorkspaceFolder": "Choose workspace folder",
     "newWorkspaceSession": "New workspace session",
@@ -1651,9 +1665,14 @@
     "time": "Time"
   },
   "sidebar": {
+    "sectionConversations": "Conversations",
+    "organizeSessions": "Organize conversations",
     "searchSessions": "Search conversations",
     "clearSearch": "Clear search",
     "searchNoResults": "No conversations found",
+    "empty": "No conversations yet",
+    "emptyAction": "New chat",
+    "workspaceError": "Couldn’t load workspaces",
     "searchModalPlaceholder": "Search conversations by name, workgroup, workspace, or agent...",
     "searchEmptyHint": "Start typing to search your conversations",
     "searchCurrent": "Current",
@@ -1692,6 +1711,14 @@
     }
   },
   "archive": {
+    "searchPlaceholder": "Search archived conversations",
+    "ungrouped": "Ungrouped",
+    "noMatches": "No matching conversations",
+    "groupCount": "{{count}} conversations",
+    "view": {
+      "allSessions": "All conversations",
+      "allWorkspaces": "All workspaces"
+    },
     "title": "Archived conversations",
     "open": "Archive",
     "empty": "No archived conversations",
@@ -1702,7 +1729,8 @@
     "deleteMessage": "Choose how to remove \"{{label}}\". Archive moves it to the recycle bin (restorable); Delete permanently removes it.",
     "archiveAction": "Archive",
     "emptyAll": "Empty archive",
-    "emptyAllConfirm": "Click again to permanently delete all archived conversations"
+    "emptyAllConfirm": "Click again to permanently delete all archived conversations",
+    "viewLabel": "Archived view"
   },
   "questionDirectory": {
     "title": "Question directory",
@@ -1820,17 +1848,19 @@
     "dismissCompleted": "Hide completed status"
   },
   "turnSummary": {
-    "titleFallback": "Work completed",
-    "toggle": "Toggle work summary",
-    "status": {
-      "completed": "Work completed",
-      "error": "Needs attention"
-    },
-    "counts": {
-      "tasks": "{{count}} tasks",
-      "reports": "{{count}} files",
-      "sources": "{{count}} sources",
-      "orchestrations": "{{count}} teams"
+    "working": "Working",
+    "workingFor": "Working for {{duration}}",
+    "workedFor": "Worked for {{duration}}",
+    "workDetails": "Work details",
+    "stopped": "Stopped",
+    "stoppedAfter": "Stopped after {{duration}}",
+    "needsAttention": "Needs attention",
+    "duration": {
+      "seconds_one": "{{count}} second",
+      "seconds_other": "{{count}} seconds",
+      "minutes_one": "{{count}} minute",
+      "minutes_other": "{{count}} minutes",
+      "minutesSeconds": "{{minutes}}m {{seconds}}s"
     }
   },
   "turnWork": {

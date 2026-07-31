@@ -6,10 +6,12 @@
  * transforms so the panel cannot drift toward the sidebar trigger.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, CornerDownLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import type { ChatSession } from '@/stores/chat';
 import { getSessionActivityMs } from '@/components/layout/session-buckets';
 import type { WorkspaceProfile } from '@shared/types/workspace';
@@ -71,8 +73,7 @@ function formatRelative(ms: number, t: (key: string, options?: Record<string, un
   return new Date(ms).toLocaleDateString();
 }
 
-export function SessionSearchModal({
-  open,
+function SessionSearchContent({
   onClose,
   sessions,
   currentSessionKey,
@@ -81,7 +82,7 @@ export function SessionSearchModal({
   workspaces,
   agentNameById,
   onSwitch,
-}: SessionSearchModalProps) {
+}: Omit<SessionSearchModalProps, 'open'>) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -91,10 +92,9 @@ export function SessionSearchModal({
   // Focus input when modal opens. Query/selection are reset by remount
   // (parent passes a fresh `key` when opening).
   useEffect(() => {
-    if (!open) return;
     const timer = setTimeout(() => inputRef.current?.focus(), 80);
     return () => clearTimeout(timer);
-  }, [open]);
+  }, []);
 
   // Build a flat searchable list (current agent only)
   const results = useMemo<SearchResult[]>(() => {
@@ -142,7 +142,6 @@ export function SessionSearchModal({
 
   // Scroll selected item into view
   useEffect(() => {
-    if (!open) return;
     const list = listRef.current;
     if (!list) return;
     const item = list.children[safeSelectedIndex] as HTMLElement | undefined;
@@ -153,7 +152,7 @@ export function SessionSearchModal({
         item.scrollIntoView({ block: 'nearest' });
       }
     }
-  }, [safeSelectedIndex, open]);
+  }, [safeSelectedIndex]);
 
   const handleSelect = useCallback(
     (index: number) => {
@@ -185,11 +184,8 @@ export function SessionSearchModal({
   );
 
   return (
-    <AnimatePresence>
-      {open && (
-        <>
-          {/* Backdrop — click to close */}
-          <motion.div
+    <>
+      <motion.div
             className="fixed inset-0 z-40 bg-black/30 dark:bg-black/60"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -332,10 +328,22 @@ export function SessionSearchModal({
               </span>
             </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+      </motion.div>
+    </>
+  );
+}
+
+export function SessionSearchModal(props: SessionSearchModalProps) {
+  const overlayContainer = useOverlayPortalContainer();
+
+  /* The sidebar host uses `backdrop-filter`, which makes it a containing block
+   * for fixed-position descendants. Rendering in place would clamp this
+   * overlay to the sidebar width, so portal it to the app overlay root. */
+  return createPortal(
+    <AnimatePresence>
+      {props.open ? <SessionSearchContent key="session-search-content" {...props} /> : null}
+    </AnimatePresence>,
+    overlayContainer ?? document.body,
   );
 }
 

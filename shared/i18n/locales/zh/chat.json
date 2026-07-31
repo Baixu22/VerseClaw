@@ -11,6 +11,11 @@
     "retry": "重新加载"
   },
   "welcome": {
+    "titleInProject": "我们应该在 <projectSelect>{{projectName}}</projectSelect> 中构建什么？",
+    "titleNoProject": "我们该构建什么？",
+    "projectSearch": "搜索项目",
+    "projectEmpty": "未找到项目",
+    "changeProject": "切换项目：{{projectName}}",
     "title": "Verse Claw 聊天",
     "subtitle": "我能为你做些什么？",
     "askQuestions": "处理任务",
@@ -29,6 +34,7 @@
     "currentAgent": "当前对话对象：{{agent}}",
     "workspace": "工作空间",
     "saveToKnowledge": "保存到知识库",
+    "moreActions": "更多操作",
     "addWorkspaceDialogTitle": "选择工作区目录",
     "addWorkspaceDialogButton": "设为工作区",
     "promptCache": {
@@ -1451,11 +1457,19 @@
     "workspaceActions": "工作区操作",
     "workspaceActionFailed": "工作区操作失败：{{error}}",
     "permissionModeTitle": "权限模式",
+    "permissionMenuTitle": "应如何批准 Verse Claw 操作？",
+    "permissionLearnMore": "了解更多",
     "permissionMode": {
       "readOnly": "只读",
       "plan": "计划",
       "acceptEdits": "接受修改",
       "fullAccess": "完全访问"
+    },
+    "permissionModeDescription": {
+      "readOnly": "编辑文件或使用互联网时始终询问",
+      "plan": "仅分析并提出计划，不执行修改",
+      "acceptEdits": "仅对检测到的风险操作请求批准",
+      "fullAccess": "可不受限制地访问互联网和您电脑上的任何文件"
     },
     "pickWorkspaceFolder": "选择工作区文件夹",
     "newWorkspaceSession": "新建工作区会话",
@@ -1651,9 +1665,14 @@
     "time": "时间"
   },
   "sidebar": {
+    "sectionConversations": "会话",
+    "organizeSessions": "整理会话",
     "searchSessions": "搜索会话",
     "clearSearch": "清除搜索",
     "searchNoResults": "未找到会话",
+    "empty": "还没有会话",
+    "emptyAction": "新建会话",
+    "workspaceError": "无法加载工作区",
     "searchModalPlaceholder": "按名称、工作组、工作区或代理搜索会话...",
     "searchEmptyHint": "开始输入以搜索你的会话",
     "searchCurrent": "当前",
@@ -1692,6 +1711,14 @@
     }
   },
   "archive": {
+    "searchPlaceholder": "搜索已归档会话",
+    "ungrouped": "未分组",
+    "noMatches": "没有匹配的会话",
+    "groupCount": "{{count}} 个会话",
+    "view": {
+      "allSessions": "所有会话",
+      "allWorkspaces": "所有工作区"
+    },
     "title": "已归档对话",
     "open": "归档",
     "empty": "暂无已归档对话",
@@ -1702,7 +1729,8 @@
     "deleteMessage": "选择移除方式。归档将其移入回收站（可恢复）；删除将永久移除 \"{{label}}\"。",
     "archiveAction": "归档",
     "emptyAll": "清空归档",
-    "emptyAllConfirm": "再次点击以永久删除所有已归档对话"
+    "emptyAllConfirm": "再次点击以永久删除所有已归档对话",
+    "viewLabel": "归档视图"
   },
   "questionDirectory": {
     "title": "问题目录",
@@ -1820,17 +1848,19 @@
     "dismissCompleted": "隐藏已完成状态"
   },
   "turnSummary": {
-    "titleFallback": "工作已完成",
-    "toggle": "展开或折叠工作总结",
-    "status": {
-      "completed": "工作已完成",
-      "error": "需要处理"
-    },
-    "counts": {
-      "tasks": "{{count}} 个任务",
-      "reports": "{{count}} 个文件",
-      "sources": "{{count}} 个来源",
-      "orchestrations": "{{count}} 个团队"
+    "working": "正在处理",
+    "workingFor": "已处理 {{duration}}",
+    "workedFor": "处理用时 {{duration}}",
+    "workDetails": "工作详情",
+    "stopped": "已停止",
+    "stoppedAfter": "{{duration}} 后停止",
+    "needsAttention": "需要处理",
+    "duration": {
+      "seconds_one": "{{count}} 秒",
+      "seconds_other": "{{count}} 秒",
+      "minutes_one": "{{count}} 分钟",
+      "minutes_other": "{{count}} 分钟",
+      "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     }
   },
   "turnWork": {

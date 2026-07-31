@@ -59,13 +59,13 @@ export function GitHubCard({ url }: { url: string }) {
       type="button"
       onClick={() => void hostApi.shell.openExternal(url)}
       className={cn(
-        'group inline-flex max-w-full items-center gap-2.5 rounded-lg border border-border bg-black/[0.025] px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:bg-white/[0.025] dark:hover:bg-white/10',
+        'group inline-flex max-w-full items-center gap-2.5 rounded-lg border border-conversation px-3 py-2 text-left text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/10',
       )}
     >
       <Github className="h-4 w-4 shrink-0 text-foreground/70" />
       <span className="min-w-0 flex-1">
         <span className="block truncate font-medium text-foreground">{label}</span>
-        <span className="block text-2xs text-muted-foreground">{typeLabel}</span>
+        <span className="block text-xs text-muted-foreground">{typeLabel}</span>
       </span>
       <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
     </button>

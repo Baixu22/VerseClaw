@@ -1,12 +1,14 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode, type RefObject } from 'react';
 
-const OverlayPortalContext = createContext<HTMLElement | null>(null);
+type OverlayPortalTarget = HTMLElement | RefObject<HTMLElement | null> | null;
+
+const OverlayPortalContext = createContext<OverlayPortalTarget>(null);
 
 export function OverlayPortalProvider({
   container,
   children,
 }: {
-  container: HTMLElement | null;
+  container: OverlayPortalTarget;
   children: ReactNode;
 }) {
   return (
@@ -17,6 +19,8 @@ export function OverlayPortalProvider({
 }
 
 export function useOverlayPortalContainer() {
-  return useContext(OverlayPortalContext);
+  const target = useContext(OverlayPortalContext);
+  if (target && 'current' in target) return target.current;
+  return target;
 }
 

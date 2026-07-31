@@ -6,7 +6,7 @@
     "section": "Loading settings section"
   },
   "navigation": {
-    "back": "Back to Settings",
+    "back": "Back to app",
     "groups": {
       "configuration": "AI Configuration",
       "experience": "Experience & Workflow",
@@ -47,10 +47,14 @@
     "storage": {
       "title": "Storage & Memory",
       "description": "Scan and clean app caches, logs, and session artefacts."
+    },
+    "archived": {
+      "title": "Archived",
+      "description": "Restore or permanently delete conversations you have archived."
     }
   },
   "appearance": {
-    "title": "General",
+    "title": "Appearance & language",
     "description": "Customize the look and feel",
     "theme": "Theme",
     "light": "Light",

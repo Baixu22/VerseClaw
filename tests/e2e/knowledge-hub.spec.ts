@@ -14,6 +14,25 @@ function typed(module: string, action: string, payload: unknown = null): string 
   return stableStringify([module, action, payload]);
 }
 
+const readyProviderAccount = {
+  id: 'knowledge-e2e-provider',
+  vendorId: 'ollama',
+  label: 'Knowledge E2E',
+  authMode: 'local',
+  model: 'llama3.2',
+  enabled: true,
+  isDefault: true,
+  createdAt: '2026-07-01T00:00:00.000Z',
+  updatedAt: '2026-07-01T00:00:00.000Z',
+};
+
+const readyProviderHostApi = {
+  [typed('providers', 'accounts')]: [readyProviderAccount],
+  [typed('providers', 'accountKeyInfo')]: [],
+  [typed('providers', 'vendors')]: [],
+  [typed('providers', 'getDefaultAccount')]: { accountId: readyProviderAccount.id },
+};
+
 async function installKnowledgeInvokeRecorder(app: ElectronApplication): Promise<void> {
   await app.evaluate(async () => {
     const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
@@ -478,13 +497,10 @@ test.describe('Knowledge Hub MVP', () => {
     await completeSetup(page);
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
-
-    await page.getByTestId('knowledge-tab-runtime').click();
-    await expect(page.getByTestId('knowledge-runtime-lessons')).toBeVisible();
-    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('E2E runtime lesson capture');
-    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('Keep Runtime Lessons review-only in Phase 1');
-    await expect(page.getByTestId('knowledge-runtime-lessons')).toContainText('E2E runtime lesson index');
-    await expect(page.getByTestId('knowledge-runtime-lessons')).not.toContainText('Approve and Apply');
+    await expect(page.getByTestId('knowledge-library')).toBeVisible();
+    await expect(page.getByTestId('knowledge-markdown-workspace')).toBeVisible();
+    await expect(page.getByTestId('knowledge-assistant-overview')).not.toBeVisible();
+    await expect(page.getByTestId('knowledge-metrics')).not.toBeVisible();
 
     await page.getByTestId('knowledge-runtime-suggest').click();
     await expect(page.getByTestId('knowledge-runtime-suggestion-list')).toContainText('Review before durable knowledge writes');
@@ -520,7 +536,8 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByRole('button', { name: /Initialize/ }).click();
     await expect(page.getByText(/Knowledge vault initialized/)).toBeVisible();
 
-    await page.getByRole('button', { name: /Import Files/ }).click();
+    await page.getByTestId('knowledge-more-actions').click();
+    await page.getByRole('menuitem', { name: /Import Files/ }).click();
     await expect(page.getByText(/Knowledge imported/)).toBeVisible();
 
     await page.getByTestId('knowledge-tab-inbox').click();
@@ -555,20 +572,25 @@ test.describe('Knowledge Hub MVP', () => {
     expect(postPromoteKnowledgeActions).toContain('promoteInboxItemToDraft');
     expect(postPromoteKnowledgeActions).not.toContain('applyReviewedChange');
 
-    await page.getByRole('button', { name: /Validate OKF Bundle/ }).click();
+    await page.getByTestId('knowledge-more-actions').click();
+    await page.getByRole('menuitem', { name: /Validate OKF Bundle/ }).click();
     await expect(page.getByTestId('knowledge-okf-panel')).toBeVisible();
     await expect(page.getByTestId('knowledge-okf-panel')).toContainText('Broken OKF link: missing.md');
     await page.getByTestId('knowledge-okf-concept').nth(1).getByRole('checkbox').click();
     await expect(page.getByTestId('knowledge-okf-import')).toBeEnabled();
     await page.getByTestId('knowledge-okf-import').click();
     await expect(page.getByText(/OKF concepts imported/)).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('knowledge-utility-sheet')).not.toBeVisible();
 
-    await page.getByTestId('knowledge-audit-center-button').click();
+    await page.getByTestId('knowledge-more-actions').click();
+    await page.getByTestId('knowledge-tab-governance').click();
     await page.getByRole('button', { name: /Compile/ }).click();
     await expect(page.getByText(/Compile complete/)).toBeVisible();
     await page.getByRole('button', { name: /Lint/ }).click();
     await expect(page.getByText(/Lint complete/)).toBeVisible();
 
+    await page.getByTestId('knowledge-tab-library').click();
     await page.getByTestId('knowledge-search-input').fill('native wiki');
     await page.getByTestId('knowledge-search-submit').click();
     await expect(page.getByTestId('knowledge-search-result').filter({ hasText: 'Decision' })).toBeVisible();
@@ -694,13 +716,16 @@ test.describe('Knowledge Hub MVP', () => {
     await completeSetup(page);
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();
+    await page.getByTestId('knowledge-source-tools').click();
     await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('Current Source Set');
+    await page.getByRole('button', { name: /Close panel/ }).click();
 
     await page.getByTestId('knowledge-search-input').fill('durable writes');
     await page.getByTestId('knowledge-search-submit').click();
     await expect(page.getByTestId('knowledge-search-result')).toContainText('Decision');
 
     await page.getByTestId('knowledge-source-set-add-result').click();
+    await page.getByTestId('knowledge-source-tools').click();
     await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('Decision');
     await expect(page.getByTestId('knowledge-source-set-panel')).toContainText('1 sources');
 
@@ -732,9 +757,12 @@ test.describe('Knowledge Hub MVP', () => {
           result: { sessions: [] },
         },
       },
-      hostApi: {},
+      hostApi: {
+        ...readyProviderHostApi,
+      },
     });
     await installKnowledgeInvokeRecorder(electronApp);
+    await page.reload();
 
     await completeSetup(page);
     await expect(page.getByTestId('chat-composer-input')).toBeVisible();
@@ -744,7 +772,7 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('chat-knowledge-scope-button')).toContainText('Wiki');
 
     await page.getByTestId('chat-composer-input').fill('Use my project notes for this answer');
-    await page.getByTitle('Send').click();
+    await page.getByTestId('chat-composer-send').click();
 
     await expect.poll(async () => await electronApp.evaluate(() => (
       (globalThis as unknown as { __clawxKnowledgeChatPayload?: { knowledgeScope?: string } }).__clawxKnowledgeChatPayload?.knowledgeScope
@@ -761,6 +789,7 @@ test.describe('Knowledge Hub MVP', () => {
         },
       },
       hostApi: {
+        ...readyProviderHostApi,
         [typed('knowledge', 'search', { query: 'context palette', maxResults: 8, corpus: 'wiki' })]: {
           success: true,
           results: [{
@@ -776,6 +805,7 @@ test.describe('Knowledge Hub MVP', () => {
       },
     });
     await installKnowledgeInvokeRecorder(electronApp);
+    await page.reload();
 
     await completeSetup(page);
     const input = page.getByTestId('chat-composer-input');
@@ -789,7 +819,7 @@ test.describe('Knowledge Hub MVP', () => {
     await page.getByTestId('chat-knowledge-search-result').click();
     await expect(page.getByTestId('chat-knowledge-selected')).toContainText('Context Palette Notes');
 
-    await page.getByTitle('Send').click();
+    await page.getByTestId('chat-composer-send').click();
 
     await expect.poll(async () => await electronApp.evaluate(() => (
       (globalThis as unknown as {

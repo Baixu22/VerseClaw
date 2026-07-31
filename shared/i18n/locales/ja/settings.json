@@ -6,7 +6,7 @@
   "title": "設定",
   "subtitle": "Verse Claw の体験をカスタマイズ",
   "navigation": {
-    "back": "設定に戻る",
+    "back": "アプリに戻る",
     "groups": {
       "configuration": "AI 設定",
       "experience": "体験とワークフロー",
@@ -47,10 +47,14 @@
     "storage": {
       "title": "ストレージとメモリ",
       "description": "アプリのキャッシュ、ログ、セッション成果物をスキャンして整理します。"
+    },
+    "archived": {
+      "title": "アーカイブ",
+      "description": "アーカイブした会話を復元、または完全に削除します。"
     }
   },
   "appearance": {
-    "title": "通用",
+    "title": "外観と言語",
     "description": "外観とスタイルをカスタマイズ",
     "theme": "テーマ",
     "light": "ライト",

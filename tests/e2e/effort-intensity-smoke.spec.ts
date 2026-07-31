@@ -261,7 +261,7 @@ test.describe('Verse Claw effort & intensity smoke', () => {
       // Send a message; legacy Work Mode prompt overrides should no longer be
       // written as a user-visible behavior preset.
       await page.getByTestId('chat-composer-input').fill('Hello world');
-      await page.getByTitle('Send').click();
+      await page.getByTestId('chat-composer-send').click();
 
       await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
       const wroteLegacyOverride = await app.evaluate(() => {

@@ -18,15 +18,19 @@
   },
   "subtitle": "出典付き wiki コンテキスト、レビュー待ちドラフト、ロール管理された知識変更を扱います。",
   "tabs": {
+    "navigation": "ナレッジのメインナビゲーション",
     "library": "Library",
     "inbox": "Inbox",
-    "drafts": "Draft Inbox",
+    "drafts": "下書き",
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance",
     "sources": "ソース"
   },
   "actions": {
+    "more": "その他の操作",
+    "content": "コンテンツ",
+    "maintenance": "メンテナンス",
     "configure": "Configure",
     "init": "Initialize",
     "importFiles": "Import Files",
@@ -73,7 +77,8 @@
     "warnings": "Warnings",
     "errors": "Errors",
     "typeDistribution": "Types",
-    "selectAll": "有効な concept をすべて選択"
+    "selectAll": "有効な concept をすべて選択",
+    "selectedConcepts": "{{count}} 件を選択"
   },
   "library": {
     "title": "Library",
@@ -81,6 +86,9 @@
     "typeHint": "この知識タイプで絞り込んで表示"
   },
   "workspace": {
+    "newNote": "新規ノート",
+    "browseTypes": "タイプ別に表示",
+    "sourceTools": "ソースツール",
     "vault": "Vault",
     "localVault": "ローカル知識保管庫",
     "documents": "文書",
@@ -97,6 +105,22 @@
       "edit": "編集",
       "preview": "プレビュー",
       "split": "分割"
+    }
+  },
+  "utility": {
+    "close": "パネルを閉じる",
+    "status": {
+      "title": "Vault ステータス",
+      "description": "Vault パス、モード、表示方式、Obsidian、ソース数、警告を確認します。"
+    },
+    "okf": {
+      "title": "OKF 検証",
+      "description": "検証結果を確認し、インポートする concept を選択します。",
+      "empty": "先にその他のメニューから OKF Bundle を検証してください。"
+    },
+    "sources": {
+      "title": "ソースツール",
+      "description": "現在の Source Set、保存済みセット、Studio 出力を管理します。"
     }
   },
   "librarian": {
@@ -550,6 +574,7 @@
   },
   "sourceSet": {
     "title": "現在の Source Set",
+    "savedSets": "保存済みセット",
     "empty": "検索結果または現在の文書からソースを追加します。",
     "count": "{{count}} 件のソース",
     "save": "Source Set を保存",

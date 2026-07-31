@@ -12,14 +12,13 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { forwardRef } from 'react';
 import {
-  File,
   FileArchive,
-  FileText,
   Film,
   FolderOpen,
   Music,
   X,
 } from 'lucide-react';
+import { File, FileText } from '@/components/icons/codex-icons';
 import { cn } from '@/lib/utils';
 
 export const DIRECTORY_MIME_TYPE = 'application/x-directory';
