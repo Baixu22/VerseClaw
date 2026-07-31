@@ -1,0 +1,62 @@
+{
+  "schema": "first-product-preview/fp-p4-01-evidence/v1",
+  "taskId": "FP-P4-01",
+  "generatedAt": "2026-07-29T03:46:23.490Z",
+  "authority": "engineering-validation-only",
+  "workflow": [
+    "suggest",
+    "review",
+    "confirm-or-reject",
+    "retrieve"
+  ],
+  "boundaries": {
+    "suggestionAndReviewWriteFree": true,
+    "confirmRequiresSessionLineage": true,
+    "confirmSourceSystem": "ui-confirm",
+    "confirmIntegrityClaim": "confirmed",
+    "rejectCallsConfirm": false,
+    "retrievalIsAdvisoryOnly": true,
+    "automaticConversationInjection": false,
+    "automaticWriteback": false,
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "validation": {
+    "focusedUnit": {
+      "status": "pass",
+      "files": 3,
+      "tests": 74
+    },
+    "focusedElectronE2e": {
+      "status": "pass",
+      "tests": 1,
+      "fixtureGrade": true
+    },
+    "contractCheck": "pass",
+    "i18nLint": "pass",
+    "viteElectronBuild": "pass",
+    "gitDiffCheck": "pass",
+    "formalHarness": {
+      "status": "pass",
+      "spec": "harness/specs/tasks/sekb-assisted-ui-component-graduation.md",
+      "since": "HEAD",
+      "startedAt": "2026-07-29T03:15:48.651Z",
+      "finishedAt": "2026-07-29T03:46:23.490Z",
+      "steps": {
+        "rules": "pass",
+        "lint": "pass",
+        "typecheck": "pass",
+        "unit": "pass",
+        "commsReplay": "pass",
+        "commsCompare": "pass",
+        "electronE2e": "pass"
+      }
+    }
+  },
+  "limitations": [
+    "No human usage record or independent safety reviewer evidence.",
+    "No live-provider distillation or product-benefit evidence.",
+    "Does not authorize SEKB automatic writeback, automatic prompt injection, default-on, product approval, or GA."
+  ]
+}

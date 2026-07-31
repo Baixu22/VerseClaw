@@ -962,6 +962,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       roleName,
       phase: readString(params.phase) as MemoryPhaseTag | undefined,
       task: readString(params.task ?? params.taskState),
+      scope: {
+        workspace: readString(params.workspace ?? params.workspaceId),
+        sessionKey: readString(params.sessionKey),
+        taskId: readString(params.taskId),
+      },
     }), undefined);
   },
 
@@ -1035,6 +1040,11 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
           roleName: readString(params.roleName)!,
           phase: readString(params.phase) as MemoryPhaseTag | undefined,
           task: readString(params.task ?? params.taskState),
+          scope: {
+            workspace: readString(params.workspace ?? params.workspaceId),
+            sessionKey: readString(params.sessionKey),
+            taskId: readString(params.taskId),
+          },
         })
         : undefined,
     }, undefined);

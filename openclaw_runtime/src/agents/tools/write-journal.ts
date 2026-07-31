@@ -30,9 +30,19 @@ import {
   GIT_PATCH_ADAPTER_LIMITS,
 } from "../../../../shared/remote-forge/unified-diff-adapter.js";
 import { createRemoteForgeErrorV1 } from "../../../../shared/remote-forge/error-envelope.js";
-import type { RemoteForgeErrorCode, RemoteForgeErrorV1 } from "../../../../shared/types/remote-forge.js";
+import type {
+  RemoteForgeErrorCode,
+  RemoteForgeErrorV1,
+} from "../../../../shared/types/remote-forge.js";
 
 export const UNDO_WRITE_TOOL_NAME = "undo_write";
+
+export type WriteJournalBatchState = "prepared" | "committed" | "rolled_back" | "recovery_required";
+
+export type WriteJournalBatch = {
+  id: string;
+  state: WriteJournalBatchState;
+};
 
 export type WriteJournalEntry = {
   seq: number;
@@ -53,6 +63,8 @@ export type WriteJournalEntry = {
     /** Coding flags in force at write time (AC: lineage carries flags). */
     flags?: Record<string, boolean | string>;
   };
+  /** UAS-04: application-level apply_patch batch state persisted in the same sidecar. */
+  batch?: WriteJournalBatch;
 };
 
 export type WriteJournal = {
@@ -64,8 +76,34 @@ export type WriteJournal = {
 
 const journals = new Map<string, WriteJournal>();
 
-function journalEntryId(sessionId: string, seq: number): string {
+export function journalEntryId(sessionId: string, seq: number): string {
   return `write-journal:${sessionId}:${seq}`;
+}
+
+function isWriteJournalBatchState(value: unknown): value is WriteJournalBatchState {
+  return (
+    value === "prepared" ||
+    value === "committed" ||
+    value === "rolled_back" ||
+    value === "recovery_required"
+  );
+}
+
+function persistWriteJournalEntry(entry: WriteJournalEntry): void {
+  writeFileSync(
+    `${entry.snapshotPath}.meta.json`,
+    JSON.stringify({
+      seq: entry.seq,
+      relPath: entry.relPath,
+      absPath: entry.absPath,
+      hadPrior: entry.hadPrior,
+      toolName: entry.toolName,
+      createdAtMs: entry.createdAtMs,
+      lineage: entry.lineage,
+      batch: entry.batch,
+    }),
+    "utf8",
+  );
 }
 
 function bindPatchArtifactLineage(params: {
@@ -223,6 +261,12 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
           typeof parsed.relPath === "string" &&
           typeof parsed.absPath === "string"
         ) {
+          const batch =
+            parsed.batch &&
+            typeof parsed.batch.id === "string" &&
+            isWriteJournalBatchState(parsed.batch.state)
+              ? { id: parsed.batch.id, state: parsed.batch.state }
+              : undefined;
           entries.push({
             seq: parsed.seq,
             relPath: parsed.relPath,
@@ -232,6 +276,7 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
             toolName: typeof parsed.toolName === "string" ? parsed.toolName : "unknown",
             createdAtMs: typeof parsed.createdAtMs === "number" ? parsed.createdAtMs : 0,
             ...(parsed.lineage ? { lineage: parsed.lineage } : {}),
+            ...(batch ? { batch } : {}),
           });
         }
       } catch {
@@ -246,10 +291,7 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
   }
 }
 
-export function getOrCreateWriteJournal(
-  workspaceRoot: string,
-  sessionId: string,
-): WriteJournal {
+export function getOrCreateWriteJournal(workspaceRoot: string, sessionId: string): WriteJournal {
   const sid = sessionId.trim() || "default";
   const key = `${path.resolve(workspaceRoot)}::${sid}`;
   let journal = journals.get(key);
@@ -278,6 +320,41 @@ export function snapshotBeforeWrite(params: {
   requestId?: string;
   /** FP-P1-04: coding flags in force at write time. */
   flags?: Record<string, boolean | string>;
+  /** UAS-04: apply_patch batch identity and lifecycle state. */
+  batch?: WriteJournalBatch;
+}): WriteJournalEntry | null {
+  const absPath = path.isAbsolute(params.filePath)
+    ? path.resolve(params.filePath)
+    : path.resolve(params.workspaceRoot, params.filePath);
+  let hadPrior = false;
+  let priorContent: Buffer | undefined;
+  try {
+    if (existsSync(absPath) && statSync(absPath).isFile()) {
+      hadPrior = true;
+      priorContent = readFileSync(absPath);
+    }
+  } catch {
+    return null;
+  }
+  return snapshotPreparedWrite({
+    ...params,
+    filePath: absPath,
+    hadPrior,
+    ...(priorContent ? { priorContent } : {}),
+  });
+}
+
+/** Persist an already captured pre-image without rereading the mutation target. */
+export function snapshotPreparedWrite(params: {
+  workspaceRoot: string;
+  sessionId?: string;
+  filePath: string;
+  toolName: string;
+  requestId?: string;
+  flags?: Record<string, boolean | string>;
+  batch?: WriteJournalBatch;
+  hadPrior: boolean;
+  priorContent?: Buffer | string;
 }): WriteJournalEntry | null {
   const sessionId = params.sessionId?.trim() || "default";
   const started = performance.now();
@@ -294,10 +371,11 @@ export function snapshotBeforeWrite(params: {
     const base = path.basename(rel || "file");
     const hashHint = String(seq).padStart(4, "0");
     const snapshotPath = path.join(journal.rootDir, `${hashHint}-${base}.pre`);
-    let hadPrior = false;
-    if (existsSync(absPath) && statSync(absPath).isFile()) {
-      copyFileSync(absPath, snapshotPath);
-      hadPrior = true;
+    if (params.hadPrior) {
+      if (params.priorContent === undefined) {
+        throw new Error(`Missing prepared journal content for ${absPath}`);
+      }
+      writeFileSync(snapshotPath, params.priorContent);
     } else {
       // Marker for create: empty snapshot file with sidecar meta.
       writeFileSync(snapshotPath, "", "utf8");
@@ -307,7 +385,7 @@ export function snapshotBeforeWrite(params: {
       relPath: rel,
       absPath,
       snapshotPath,
-      hadPrior,
+      hadPrior: params.hadPrior,
       toolName: params.toolName,
       createdAtMs: Date.now(),
       lineage: {
@@ -319,21 +397,9 @@ export function snapshotBeforeWrite(params: {
         ...(params.requestId ? { requestId: params.requestId } : {}),
         ...(params.flags ? { flags: params.flags } : {}),
       },
+      ...(params.batch ? { batch: params.batch } : {}),
     };
-    // meta sidecar
-    writeFileSync(
-      `${snapshotPath}.meta.json`,
-      JSON.stringify({
-        seq,
-        relPath: rel,
-        absPath,
-        hadPrior,
-        toolName: params.toolName,
-        createdAtMs: entry.createdAtMs,
-        lineage: entry.lineage,
-      }),
-      "utf8",
-    );
+    persistWriteJournalEntry(entry);
     journal.entries.push(entry);
     codingObservability.recordJournalLatency(performance.now() - started, true);
     return entry;
@@ -341,6 +407,64 @@ export function snapshotBeforeWrite(params: {
     codingObservability.recordJournalLatency(performance.now() - started, false);
     return null;
   }
+}
+
+/** Update every entry in one apply_patch batch while preserving the journal as authority. */
+export function setWriteJournalBatchState(
+  entries: WriteJournalEntry[],
+  state: WriteJournalBatchState,
+): boolean {
+  let persisted = true;
+  for (const entry of entries) {
+    if (!entry.batch) {
+      persisted = false;
+      continue;
+    }
+    entry.batch = { ...entry.batch, state };
+    try {
+      persistWriteJournalEntry(entry);
+    } catch {
+      // A stale prepared sidecar is safer than claiming a terminal state that was not persisted.
+      persisted = false;
+    }
+  }
+  return persisted;
+}
+
+/** Remove journal evidence only after the matching mutation was fully rolled back. */
+export function discardWriteJournalEntries(entries: WriteJournalEntry[]): void {
+  for (const entry of entries) {
+    const workspaceRoot = entry.lineage?.workspaceRoot;
+    const sessionId = entry.lineage?.sessionId;
+    if (workspaceRoot && sessionId) {
+      const journal = getOrCreateWriteJournal(workspaceRoot, sessionId);
+      journal.entries = journal.entries.filter((candidate) => candidate.seq !== entry.seq);
+    }
+    try {
+      rmSync(`${entry.snapshotPath}.meta.json`, { force: true });
+      rmSync(entry.snapshotPath, { force: true });
+    } catch {
+      // A rolled_back sidecar is harmless and remains explicit if cleanup is interrupted.
+    }
+  }
+}
+
+export function listPreparedWriteJournalEntries(
+  workspaceRoot: string,
+  sessionId: string,
+): WriteJournalEntry[] {
+  return getOrCreateWriteJournal(workspaceRoot, sessionId).entries.filter(
+    (entry) => entry.batch?.state === "prepared",
+  );
+}
+
+export function writeJournalRecoveryRef(entries: WriteJournalEntry[]): string | undefined {
+  const first = entries[0];
+  if (!first?.batch || !first.lineage) {
+    return undefined;
+  }
+  const ids = entries.map((entry) => journalEntryId(first.lineage!.sessionId, entry.seq));
+  return `${journalDirFor(first.lineage.workspaceRoot, first.lineage.sessionId)}#batch=${encodeURIComponent(first.batch.id)}&entries=${encodeURIComponent(ids.join(","))}`;
 }
 
 /**
@@ -391,9 +515,7 @@ export function undoLastWrites(params: {
       restored.push(entry.relPath);
       codingObservability.recordUndo();
     } catch (error) {
-      errors.push(
-        `${entry.relPath}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      errors.push(`${entry.relPath}: ${error instanceof Error ? error.message : String(error)}`);
       // Stop immediately: continuing would leave an inconsistent mix while
       // discarding the evidence needed to recover.
       break;
@@ -407,10 +529,7 @@ export function undoLastWrites(params: {
   };
 }
 
-export function clearWriteJournal(params: {
-  workspaceRoot: string;
-  sessionId?: string;
-}): void {
+export function clearWriteJournal(params: { workspaceRoot: string; sessionId?: string }): void {
   const sessionId = params.sessionId?.trim() || "default";
   const key = `${path.resolve(params.workspaceRoot)}::${sessionId}`;
   const journal = journals.get(key);
@@ -427,8 +546,7 @@ export function clearWriteJournal(params: {
 /** Best-effort path list from apply_patch input (for pre-write snapshots). */
 export function extractPatchTargetPaths(input: string): string[] {
   const paths: string[] = [];
-  const re =
-    /^\*\*\*\s+(?:Add|Update|Delete|Move)\s+File:\s+(.+?)\s*$/gim;
+  const re = /^\*\*\*\s+(?:Add|Update|Delete|Move)\s+File:\s+(.+?)\s*$/gim;
   let match: RegExpExecArray | null;
   while ((match = re.exec(input)) !== null) {
     const p = match[1]?.trim();
@@ -493,20 +611,21 @@ export function wrapToolWithWriteJournal(
         result.details && typeof result.details === "object" && !Array.isArray(result.details)
           ? (result.details as Record<string, unknown>)
           : {};
-      const detailsForLineage = tool.name === "write"
-        ? (() => {
-            const {
-              patch: _untrustedPatch,
-              patchArtifacts: _untrustedArtifacts,
-              patchArtifactError: _untrustedError,
-              ...otherDetails
-            } = prevDetails;
-            return {
-              ...otherDetails,
-              ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
-            };
-          })()
-        : prevDetails;
+      const detailsForLineage =
+        tool.name === "write"
+          ? (() => {
+              const {
+                patch: _untrustedPatch,
+                patchArtifacts: _untrustedArtifacts,
+                patchArtifactError: _untrustedError,
+                ...otherDetails
+              } = prevDetails;
+              return {
+                ...otherDetails,
+                ...projectFullFileWrite({ args, requestId: toolCallId, snapshots }),
+              };
+            })()
+          : prevDetails;
       const patchLineage = toolCallId
         ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
         : {};

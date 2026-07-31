@@ -1,16 +1,19 @@
 {
-  "generatedAt": "2026-07-15T02:08:49.730Z",
+  "generatedAt": "2026-07-31T02:52:42.537Z",
   "wave": "C1-2",
   "targetReduction": 5,
   "avgReduction": 4.5,
   "reductionDefinition": {
-    "note": "FP-P0-05 accounting reconciliation. Do not compare this figure to artifacts/dcs-canary/c1 (5.125x) without reading the corpus field: same formula, different corpus.",
     "formula": "mean(offArm toolCalls) / mean(onArm toolCalls) (ratio of means)",
+    "corpusId": "coding-c1-hand-authored-real-tools",
     "corpus": "hand-authored C1-2 navigation fixtures (impact/understand/verify/registration)",
     "fixtureCount": 4,
     "meanOffCalls": 4.5,
     "meanOnCalls": 1,
     "live": false,
+    "evidenceClass": "real-tool-execution-fixture",
+    "role": "gate-authority",
+    "authoritativeDecision": "artifacts/first-product-preview/FP-P4-05/decision.json",
     "reconciliation": "artifacts/first-product-preview/FP-P0-05/reduction-factor-reconciliation.md"
   },
   "meetsGate": false,

@@ -132,7 +132,7 @@ test.describe('FP-P1-09 ack tuning (real gateway children)', () => {
           generation: result.gatewayGeneration,
           childPid: (result.runtimeAck as { childPid?: number } | undefined)?.childPid,
         });
-        // eslint-disable-next-line no-console -- per-iteration evidence (survives timeouts)
+
         console.log('[fp-p1-09-sample]', JSON.stringify(samples[samples.length - 1]));
         expect(
           result.status,
@@ -140,7 +140,7 @@ test.describe('FP-P1-09 ack tuning (real gateway children)', () => {
         ).toBe('applied');
         expect(typeof result.ackWaitMs).toBe('number');
       }
-      // eslint-disable-next-line no-console -- evidence for FP-P1-09 latency data
+
       console.log('[fp-p1-09-latency]', JSON.stringify(samples));
 
       // Each cycle must have spoken to a distinct child process.
@@ -150,7 +150,7 @@ test.describe('FP-P1-09 ack tuning (real gateway children)', () => {
       // ---- requery: no save, no restart, fresh state decision from the child.
       const before = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'status');
       const requery = await hostInvoke<Record<string, unknown>>(app, 'dcsProdFlags', 'requeryAck');
-      // eslint-disable-next-line no-console -- evidence for FP-P1-09 requery path
+
       console.log('[fp-p1-09-requery]', JSON.stringify({
         status: requery.status,
         ackWaitMs: requery.ackWaitMs,

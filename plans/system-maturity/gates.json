@@ -38,6 +38,7 @@
         { "id": "maturity:baseline", "run": "node scripts/audit-baseline-check.mjs" },
         { "id": "maturity:plan", "run": "node scripts/validate-system-maturity-plan.mjs" },
         { "id": "maturity:gates", "run": "node scripts/validate-test-gates.mjs" },
+        { "id": "maturity:validate", "run": "pnpm run maturity:validate" },
         { "id": "maturity:security:full", "run": "pnpm maturity:security:full" },
         { "id": "contract:check", "run": "pnpm contract:check" },
         { "id": "test", "run": "pnpm test" },
@@ -46,7 +47,6 @@
         { "id": "harness:ci", "run": "pnpm run harness:ci" },
         { "id": "agent-dev:deep-test", "run": "pnpm agent-dev:deep-test" },
         { "id": "test:e2e:agent-dev-quality", "run": "pnpm run test:e2e:agent-dev-quality" },
-        { "id": "maturity:validate", "run": "pnpm run maturity:validate" },
         { "id": "release:validate", "run": "pnpm run release:validate" }
       ]
     }

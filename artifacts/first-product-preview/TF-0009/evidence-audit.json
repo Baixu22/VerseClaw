@@ -1,0 +1,141 @@
+{
+  "schema": "task-forest/tf0009-engineering-evidence-audit/v1",
+  "taskId": "TF-0009",
+  "generatedAt": "2026-07-29T22:30:00+08:00",
+  "authority": "engineering-readiness-only",
+  "taskForestState": {
+    "status": "review_needed",
+    "progress": 50,
+    "canMarkDone": false,
+    "canReleaseTF0011": false,
+    "recommendation": "degraded-agent-complete"
+  },
+  "qualifyingEvidenceRule": {
+    "requiresRealInternalTask": true,
+    "requiresNamedHumanOperator": true,
+    "requiresProductUiPath": true,
+    "requiresNotHumanProductChatFalse": true,
+    "fixtureCounts": false,
+    "syntheticCounts": false,
+    "unitOrE2eCounts": false,
+    "harnessGreenCounts": false
+  },
+  "agentSurrogate": {
+    "authority": "engineering-agent-surrogate-only",
+    "result": "degraded-engineering-complete",
+    "humanEquivalent": false,
+    "liveEvidence": false,
+    "observedRuns": {
+      "dcs-coding": 10,
+      "sekb-assisted": 10,
+      "browser-supervised": 10
+    },
+    "humanQualifyingRuns": {
+      "dcs-coding": 0,
+      "sekb-assisted": 0,
+      "browser-supervised": 0
+    },
+    "killRollbackDrill": "agent-pass-human-missing",
+    "recommendedTaskForestStatus": "review_needed",
+    "canMarkDone": false,
+    "canReleaseTF0011": false,
+    "report": "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json"
+  },
+  "profiles": [
+    {
+      "id": "dcs-coding",
+      "requiredQualifyingRuns": 10,
+      "observedQualifyingRuns": 0,
+      "observedAgentSurrogateRuns": 10,
+      "status": "missing-real-canary",
+      "engineeringEvidence": [
+        "FP-P2-02 documents 10 mixed DCS/Forge fixture records with notHumanProductChat=true; they do not count",
+        "FP-P1-05 proves the live supervised Electron/Gateway kill and rollback mechanism, not a TF-0009 operator run"
+      ]
+    },
+    {
+      "id": "sekb-assisted",
+      "requiredQualifyingRuns": 10,
+      "observedQualifyingRuns": 0,
+      "observedAgentSurrogateRuns": 10,
+      "status": "missing-real-canary",
+      "engineeringEvidence": [
+        "FP-P4-01 has 74 focused tests and one fixture-grade Electron path",
+        "FP-P4-01 explicitly records no human usage or independent safety-review evidence"
+      ]
+    },
+    {
+      "id": "browser-supervised",
+      "requiredQualifyingRuns": 10,
+      "observedQualifyingRuns": 0,
+      "observedAgentSurrogateRuns": 10,
+      "status": "missing-real-canary",
+      "engineeringEvidence": [
+        "FP-P4-02 has 20/20 fixture-synthetic runs and two Electron E2E paths",
+        "The soak artifact explicitly excludes human-use and real-public-network evidence"
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "profile-run-count",
+      "requirement": "Each profile has at least 10 recorded internal tasks",
+      "status": "not-met",
+      "reason": "Qualifying counts are 0/10 for dcs-coding, 0/10 for sekb-assisted, and 0/10 for browser-supervised"
+    },
+    {
+      "id": "zero-unauthorized-write-or-leak",
+      "requirement": "Unauthorized writes and security/privacy leaks are zero",
+      "status": "not-evaluable",
+      "reason": "Automated guards pass, but there are no qualifying TF-0009 runs over which to measure the canary incident rate"
+    },
+    {
+      "id": "kill-switch-success",
+      "requirement": "Kill-switch drill success rate is 100%",
+      "status": "mechanism-proven-canary-missing",
+      "reason": "FP-P1-05 measured a 6980 ms supervised Electron kill, but no canary-period operator drill is recorded"
+    },
+    {
+      "id": "owner-decision",
+      "requirement": "The accountable owner decides continue, shrink, or stop",
+      "status": "not-met",
+      "reason": "No named owner or approved charter exists; fixture and L0/L1 decisions are not the TF-0009 exit decision"
+    }
+  ],
+  "governanceGaps": [
+    "artifacts/dcs-deep-test-week1/profiles.json is absent by design after the agent-surrogate downgrade; human L3 remains deferred",
+    "day1-gates.json now records final L0/L1/L2 green after a repaired cold-build gap, but remains engineering evidence only",
+    "the available FP-P2 charter is a local ignored fixture with placeholder roles",
+    "the FP-P2 fixture run and verdict files are local ignored artifacts and are not clean-checkout evidence",
+    "no qualifying human run ledger exists for any of the three TF-0009 profiles",
+    "the separate agent-surrogate ledger is complete at 10/10/10 but cannot provide human/live/product authority"
+  ],
+  "frozenBoundaries": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "c1ReductionFactor": 4.5,
+    "c1MeetsGate": false,
+    "c1Recommendation": "keep-off",
+    "tf0006": "blocked",
+    "runtimeMemory": "diagnostics-only"
+  },
+  "sources": [
+    ".agent-workbench/task-forest/graph/nodes.json",
+    "docs/dev/component-controlled-rollout-plan.md",
+    "docs/dev/component-operational-readiness-checklist.md",
+    "docs/dev/first-product-controlled-preview/tasks/FP-P2-01.md",
+    "docs/dev/first-product-controlled-preview/tasks/FP-P2-02.md",
+    "docs/dev/first-product-controlled-preview/tasks/FP-P2-03.md",
+    "artifacts/first-product-preview/FP-P1-05/evidence.md",
+    "artifacts/first-product-preview/FP-P4-01/evidence.json",
+    "artifacts/first-product-preview/FP-P4-02/synthetic-soak.json",
+    "artifacts/first-product-preview/FP-P4-05/decision.json",
+    "artifacts/dcs-deep-test-week1/day1-gates.json",
+    "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+    "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+    "openclaw_runtime/scripts/tf0009-agent-surrogate.mts",
+    "scripts/build-openclaw-runtime.mjs",
+    "tests/unit/sekb-runtime-build-contract.test.ts"
+  ]
+}

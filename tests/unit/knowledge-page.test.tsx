@@ -40,6 +40,11 @@ const hostApiMock = vi.hoisted(() => ({
   openVault: vi.fn(),
   stewardConfigGet: vi.fn(),
   stewardConfigUpdate: vi.fn(),
+  runtimeLessonsReport: vi.fn(),
+  sekbSuggestPrinciples: vi.fn(),
+  sekbConfirmPrinciple: vi.fn(),
+  sekbRejectSuggestion: vi.fn(),
+  sekbRetrieveForTask: vi.fn(),
   dialogOpen: vi.fn(),
 }));
 
@@ -87,6 +92,11 @@ vi.mock('@/lib/host-api', () => ({
       openVault: hostApiMock.openVault,
       stewardConfigGet: hostApiMock.stewardConfigGet,
       stewardConfigUpdate: hostApiMock.stewardConfigUpdate,
+      runtimeLessonsReport: hostApiMock.runtimeLessonsReport,
+      sekbSuggestPrinciples: hostApiMock.sekbSuggestPrinciples,
+      sekbConfirmPrinciple: hostApiMock.sekbConfirmPrinciple,
+      sekbRejectSuggestion: hostApiMock.sekbRejectSuggestion,
+      sekbRetrieveForTask: hostApiMock.sekbRetrieveForTask,
     },
     dialog: {
       open: hostApiMock.dialogOpen,
@@ -527,6 +537,11 @@ describe('Knowledge page', () => {
     hostApiMock.openVault.mockReset();
     hostApiMock.stewardConfigGet.mockReset();
     hostApiMock.stewardConfigUpdate.mockReset();
+    hostApiMock.runtimeLessonsReport.mockReset();
+    hostApiMock.sekbSuggestPrinciples.mockReset();
+    hostApiMock.sekbConfirmPrinciple.mockReset();
+    hostApiMock.sekbRejectSuggestion.mockReset();
+    hostApiMock.sekbRetrieveForTask.mockReset();
     hostApiMock.dialogOpen.mockReset();
 
     hostApiMock.status.mockResolvedValue({
@@ -544,6 +559,73 @@ describe('Knowledge page', () => {
     });
     hostApiMock.init.mockResolvedValue({ success: true });
     hostApiMock.configure.mockResolvedValue({ success: true });
+    hostApiMock.runtimeLessonsReport.mockResolvedValue({
+      success: true,
+      available: true,
+      counts: { trajectories: 2, undistilledTrajectories: 2, activePrinciples: 0 },
+      undistilled: [{
+        trajectory_id: 'traj-runtime-1',
+        created_at: '2026-07-29T00:00:00.000Z',
+        task_intent: 'Preserve review boundaries',
+        task_type: 'knowledge-ui',
+        context_fingerprint: ['knowledge', 'review'],
+        outcome: 'success',
+        error_signature: null,
+      }],
+      activePrinciples: [],
+      indexPreview: '',
+      evidence: {},
+    });
+    hostApiMock.sekbSuggestPrinciples.mockResolvedValue({
+      success: true,
+      available: true,
+      mode: 'deterministic',
+      suggestions: [{
+        cluster_summary: 'Keep knowledge changes reviewable.',
+        source_trajectory_ids: ['traj-runtime-1'],
+        suggested_principle: {
+          title: 'Review before durable knowledge writes',
+          condition: 'A runtime lesson is proposed for reuse.',
+          action: 'Show the proposal and require explicit confirmation.',
+          reason: 'Suggestion generation is not durable approval.',
+          task_types: ['knowledge-ui'],
+          context_tags: ['knowledge', 'review'],
+          criticality: 'high',
+        },
+        confidence: 0.91,
+      }, {
+        cluster_summary: 'Reject low-value candidates.',
+        source_trajectory_ids: ['traj-runtime-2'],
+        suggested_principle: {
+          title: 'Reject sparse runtime lessons',
+          condition: 'A candidate lacks reusable evidence.',
+          action: 'Reject it without promotion.',
+          reason: 'Sparse evidence should not enter durable knowledge.',
+        },
+        confidence: 0.72,
+      }],
+    });
+    hostApiMock.sekbConfirmPrinciple.mockResolvedValue({
+      success: true,
+      available: true,
+      principleId: 'principle-runtime-1',
+      dcsWrite: 'written',
+      principleOnly: false,
+    });
+    hostApiMock.sekbRejectSuggestion.mockResolvedValue({ success: true, available: true });
+    hostApiMock.sekbRetrieveForTask.mockResolvedValue({
+      success: true,
+      available: true,
+      principles: [{
+        principle_id: 'principle-runtime-1',
+        title: 'Review before durable knowledge writes',
+        condition: 'A runtime lesson is proposed for reuse.',
+        action: 'Show the proposal and require explicit confirmation.',
+        reason: 'Suggestion generation is not durable approval.',
+        retrieval_count: 1,
+      }],
+      injection: '## Runtime Lessons\n- Review before durable knowledge writes',
+    });
     hostApiMock.ingestFiles.mockResolvedValue({ success: true, items: [], scanned: 1, imported: 1, failed: 0 });
     hostApiMock.validateOkfBundle.mockResolvedValue({
       success: true,
@@ -961,7 +1043,7 @@ describe('Knowledge page', () => {
 
     fireEvent.click(screen.getByText('Import Files'));
     await waitFor(() => expect(hostApiMock.ingestFiles).toHaveBeenCalledWith({ paths: ['C:/notes/decision.md'] }));
-    expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(4);
+    expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(5);
 
     fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
     fireEvent.click(screen.getByText('Audit Center'));
@@ -1260,5 +1342,55 @@ describe('Knowledge page', () => {
       path: 'C:/okf',
       conceptIds: ['guides/alpha'],
     }));
+  });
+
+  it('keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve', async () => {
+    render(<Knowledge />);
+
+    await screen.findByTestId('knowledge-page');
+    fireEvent.click(screen.getByTestId('knowledge-tab-runtime'));
+
+    await waitFor(() => expect(hostApiMock.runtimeLessonsReport).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('knowledge-runtime-lessons')).toHaveTextContent('Preserve review boundaries');
+
+    fireEvent.click(screen.getByTestId('knowledge-runtime-suggest'));
+    await waitFor(() => expect(hostApiMock.sekbSuggestPrinciples).toHaveBeenCalledWith({
+      trajectoryIds: ['traj-runtime-1'],
+    }));
+    expect(screen.getByTestId('knowledge-runtime-suggestion-list')).toHaveTextContent('Review before durable knowledge writes');
+    expect(hostApiMock.sekbConfirmPrinciple).not.toHaveBeenCalled();
+
+    expect(screen.getByTestId('knowledge-runtime-confirm')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('knowledge-runtime-session-id'), { target: { value: 'session-runtime-1' } });
+    fireEvent.click(screen.getByTestId('knowledge-runtime-confirm'));
+
+    await waitFor(() => expect(hostApiMock.sekbConfirmPrinciple).toHaveBeenCalledWith(expect.objectContaining({
+      sessionId: 'session-runtime-1',
+      sourceSystem: 'ui-confirm',
+      integrityClaim: 'confirmed',
+      suggestion: expect.objectContaining({ source_trajectory_ids: ['traj-runtime-1'] }),
+    })));
+    expect(screen.getByTestId('knowledge-runtime-confirm-result')).toHaveTextContent('principle-runtime-1');
+
+    fireEvent.click(screen.getByTestId('knowledge-runtime-suggestion-0'));
+    fireEvent.click(screen.getByTestId('knowledge-runtime-reject'));
+    await waitFor(() => expect(hostApiMock.sekbRejectSuggestion).toHaveBeenCalledWith(expect.objectContaining({
+      suggestion: expect.objectContaining({ source_trajectory_ids: ['traj-runtime-2'] }),
+    })));
+    expect(hostApiMock.sekbConfirmPrinciple).toHaveBeenCalledTimes(1);
+
+    fireEvent.change(screen.getByTestId('knowledge-runtime-retrieve-intent'), { target: { value: 'Review a runtime lesson' } });
+    fireEvent.change(screen.getByTestId('knowledge-runtime-retrieve-type'), { target: { value: 'knowledge-ui' } });
+    fireEvent.change(screen.getByTestId('knowledge-runtime-retrieve-tags'), { target: { value: 'knowledge, review' } });
+    fireEvent.click(screen.getByTestId('knowledge-runtime-retrieve'));
+
+    await waitFor(() => expect(hostApiMock.sekbRetrieveForTask).toHaveBeenCalledWith({
+      taskIntent: 'Review a runtime lesson',
+      taskType: 'knowledge-ui',
+      contextTags: ['knowledge', 'review'],
+      topK: 5,
+    }));
+    expect(screen.getByTestId('knowledge-runtime-retrieve-result')).toHaveTextContent('Review before durable knowledge writes');
+    expect(screen.getByTestId('knowledge-runtime-injection')).toHaveTextContent('Runtime Lessons');
   });
 });

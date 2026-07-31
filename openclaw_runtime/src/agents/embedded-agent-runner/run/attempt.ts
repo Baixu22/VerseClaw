@@ -233,17 +233,15 @@ import { resolveCompactionTimeoutMs } from "../compaction-safety-timeout.js";
 import { runContextEngineMaintenance } from "../context-engine-maintenance.js";
 import { applyFinalEffectiveToolPolicy } from "../effective-tool-policy.js";
 import { resolveEmbeddedDcsExtensionDeps } from "../dcs-extension-deps.js";
-import { dcsObservability } from "../../../context-engine/dcs-observability.js";
-import { KNOWLEDGE_INJECTION_CHAR_BUDGET } from "../../../context-engine/assembler.js";
 import { loadVtokenDcsMemoryEntries } from "../../../context-engine/chat-turn-vtoken-injection.js";
-import { computeContextExtraSystemPrompt } from "../../../context-engine/context-orchestrator.js";
-import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
 import {
-  beginTurnInjectionBudget,
-  chargeTurnInjection,
-  endTurnInjectionBudget,
-  reserveTurnInjectionCapacity,
-} from "../../../context-engine/turn-injection-budget.js";
+  collectContextOrchestratorCandidate,
+  computeContextExtraSystemPrompt,
+  endContextOrchestratorTurn,
+  recordContextOrchestratorSourceDecision,
+} from "../../../context-engine/context-orchestrator.js";
+import { isContextEnhancementKillSwitchEngaged } from "../../../context-engine/enhancement-kill-switch.js";
+import { endTurnInjectionBudget } from "../../../context-engine/turn-injection-budget.js";
 import {
   createMemoryContextProviders,
   defaultMainSessionRoleResolver,
@@ -253,10 +251,7 @@ import {
   resolveTrustedWorkspaceFingerprint,
 } from "../../../context-engine/workspace-fingerprint.js";
 import { invalidateWorkspaceFactServiceByFingerprint } from "../../../context-engine/factstore/workspace-fact-service.js";
-import {
-  buildEmbeddedExtensionFactories,
-  isContextBlockProjectionEnabled,
-} from "../extensions.js";
+import { buildEmbeddedExtensionFactories, isContextBlockProjectionEnabled } from "../extensions.js";
 import { mapToolsToToolRegistryEntries } from "../../../context-engine/handlers/tool-registry-handler.js";
 import {
   applyExtraParamsToAgent,
@@ -1987,30 +1982,17 @@ export async function runEmbeddedAttempt(
         ? ["## Runtime Intensity", ...runtimeIntensityPolicy.systemPromptLines].join("\n")
         : undefined;
     const toolEntries = mapToolsToToolRegistryEntries(effectiveTools);
-    const vtokenMemoryEntries = await loadVtokenDcsMemoryEntries(
-      dcsExtensionDeps?.workingMemoryStore,
-      params.sessionId,
-      params.config,
-    );
     // FP-P0-05: identify this turn so every injection source (memory pilot,
     // VToken, CVK addition, DCS assembler) charges one shared budget instead of
     // each growing the prompt on its own account.
     const injectionTurnId = `${params.sessionKey ?? params.sessionId ?? "session"}::${
       params.runId ?? `attempt-${Date.now()}`
     }`;
-    // FP-P2-06: context-engine assembly runs before the SDK context hook, so
-    // protect the established DCS 2000-char pool from lower-precedence sources
-    // without increasing the 6000-char turn total or creating synthetic charges.
-    if (isContextBlockProjectionEnabled(params.config)) {
-      reserveTurnInjectionCapacity(
-        beginTurnInjectionBudget({
-          turnId: injectionTurnId,
-          killed: isContextEnhancementKillSwitchEngaged(params.config),
-        }),
-        ["knowledge", "working_memory", "tool_registry"],
-        KNOWLEDGE_INJECTION_CHAR_BUDGET,
-      );
-    }
+    const contextBlockProjectionEnabled = isContextBlockProjectionEnabled(params.config);
+    const roleMemoryProjectionEnabled =
+      params.config?.runtime?.contextBlock?.["role-memory"]?.enabled === true;
+    const toolRegistryProjectionEnabled =
+      params.config?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
     // TF-0002: single Context Orchestrator entry for memory inject + VToken.
     const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
@@ -2028,18 +2010,32 @@ export async function runEmbeddedAttempt(
             sourcePath: file.path || file.name,
             text: file.content ?? "",
           })),
-        toolSchemas: toolEntries.map((entry) => ({
-          name: entry.resourceId,
-          description: entry.purpose,
-          ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
-        })),
-        memoryEntries: vtokenMemoryEntries,
+        toolSchemas: toolRegistryProjectionEnabled
+          ? []
+          : toolEntries.map((entry) => ({
+              name: entry.resourceId,
+              description: entry.purpose,
+              ...(entry.inputSchema !== undefined ? { inputSchema: entry.inputSchema } : {}),
+            })),
+        ...(!contextBlockProjectionEnabled
+          ? {
+              memoryEntriesFactory: () =>
+                loadVtokenDcsMemoryEntries(
+                  dcsExtensionDeps?.workingMemoryStore,
+                  params.sessionId,
+                  params.config,
+                ),
+            }
+          : {}),
         memoryProviderFactory: () =>
-          createMemoryContextProviders({
-            roleMemory: {
-              resolveRoleName: defaultMainSessionRoleResolver,
-            },
-          }),
+          roleMemoryProjectionEnabled
+            ? []
+            : createMemoryContextProviders({
+                roleMemory: {
+                  resolveRoleName: defaultMainSessionRoleResolver,
+                },
+              }),
+        deferProjection: true,
       },
       {
         log: (message, context) =>
@@ -3242,7 +3238,8 @@ export async function runEmbeddedAttempt(
           }
         }
 
-        if (activeContextEngine) {
+        const contextEnhancementKilled = isContextEnhancementKillSwitchEngaged(params.config);
+        if (activeContextEngine && !contextEnhancementKilled) {
           try {
             // Snapshot before assemble: the assemble contract does not require
             // the input array to be treated immutably, so an engine that windows
@@ -3277,51 +3274,59 @@ export async function runEmbeddedAttempt(
               unwindowedContextEngineMessagesForPrecheck =
                 preassemblyContextEngineMessagesForPrecheck;
             }
-            // D7: record CVK systemPromptAddition actual chars (addendum 6).
-            // TF-0002/P0: enhancement kill switch also cuts CVK dual-injection addition.
-            const suppressCvkAddition = isContextEnhancementKillSwitchEngaged(params.config);
-            // FP-P0-05: the CVK addition is now on the same account as every other
-            // injection source. It sits after DCS/VToken in the precedence order, so
-            // under pressure it truncates before working memory or knowledge do.
-            const cvkLedger = beginTurnInjectionBudget({
-              turnId: injectionTurnId,
-              killed: suppressCvkAddition,
-            });
-            const cvkCharged = suppressCvkAddition
-              ? undefined
-              : chargeTurnInjection(cvkLedger, "cvk_addition", assembled.systemPromptAddition)
-                  .text;
-            const cvkAdditionChars = cvkCharged?.length ?? 0;
-            dcsObservability.recordCvkSystemPromptAddition(cvkAdditionChars);
-            if (cvkCharged) {
-              setActiveSessionSystemPrompt(
-                prependSystemPromptAddition({
-                  systemPrompt: systemPromptText,
-                  systemPromptAddition: cvkCharged,
-                }),
-              );
+            // UAS-02: CVK remains the context-engine source owner, but its prompt
+            // addition is only a candidate. Context Orchestrator applies final
+            // precedence, deduplication, budget, projection, and lineage.
+            if (assembled.systemPromptAddition) {
+              collectContextOrchestratorCandidate(injectionTurnId, {
+                authorityObjectId: `context-engine:${activeContextEngine.info.id}`,
+                authorityVersion:
+                  assembled.contextProjection?.epoch ??
+                  assembled.contextProjection?.fingerprint ??
+                  activeContextEngine.info.version ??
+                  "1",
+                sourceId: "cvk-context-engine",
+                channel: "cvk_addition",
+                target: "system_prompt",
+                text: assembled.systemPromptAddition,
+              });
               log.debug(
-                `context engine: prepended system prompt addition (${cvkCharged.length} chars`
-                  + `${
-                    cvkCharged.length !== (assembled.systemPromptAddition?.length ?? 0)
-                      ? `, truncated from ${assembled.systemPromptAddition?.length ?? 0} by shared injection budget`
-                      : ""
-                  })`,
+                `context engine: collected system prompt candidate (${assembled.systemPromptAddition.length} chars)`,
               );
-            } else if (assembled.systemPromptAddition && !suppressCvkAddition) {
-              log.debug(
-                `context engine: dropped system prompt addition (${assembled.systemPromptAddition.length} chars; shared injection budget exhausted)`,
-              );
-            } else if (assembled.systemPromptAddition && suppressCvkAddition) {
-              log.debug(
-                `context engine: suppressed system prompt addition (${assembled.systemPromptAddition.length} chars; enhancement kill switch)`,
-              );
+            } else {
+              recordContextOrchestratorSourceDecision(injectionTurnId, {
+                sourceId: "cvk-context-engine",
+                channel: "cvk_addition",
+                target: "system_prompt",
+                reason: "empty",
+              });
             }
           } catch (assembleErr) {
+            recordContextOrchestratorSourceDecision(injectionTurnId, {
+              sourceId: "cvk-context-engine",
+              channel: "cvk_addition",
+              target: "system_prompt",
+              reason: "empty",
+            });
             log.warn(
               `context engine assemble failed, using pipeline messages: ${String(assembleErr)}`,
             );
           }
+        } else if (activeContextEngine && contextEnhancementKilled) {
+          recordContextOrchestratorSourceDecision(injectionTurnId, {
+            sourceId: "cvk-context-engine",
+            channel: "cvk_addition",
+            target: "system_prompt",
+            reason: "kill-switch",
+          });
+          log.debug("context engine: skipped assembly (enhancement kill switch)");
+        } else {
+          recordContextOrchestratorSourceDecision(injectionTurnId, {
+            sourceId: "cvk-context-engine",
+            channel: "cvk_addition",
+            target: "system_prompt",
+            reason: "flag-off",
+          });
         }
       } catch (err) {
         await flushPendingToolResultsAfterIdle({
@@ -5606,6 +5611,7 @@ export async function runEmbeddedAttempt(
         yieldDetected: yieldDetected || undefined,
       };
     } finally {
+      endContextOrchestratorTurn(injectionTurnId);
       // FP-P0-05: close the turn's shared injection ledger exactly once. This emits
       // the summable accounting and frees the entry so ledgers cannot leak across
       // turns. Safe when no source ever charged it (returns undefined).

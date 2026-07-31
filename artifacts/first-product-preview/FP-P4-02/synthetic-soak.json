@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "taskId": "FP-P4-02",
+  "evidenceGrade": "fixture-synthetic",
+  "generatedAt": "2026-07-29T01:54:50+08:00",
+  "command": "pnpm exec vitest run tests/unit/agent-browser-supervised-task-executor.test.ts --maxWorkers=2 --reporter=verbose",
+  "testName": "completes 20 sequential synthetic public runs with a fresh approval each time",
+  "result": {
+    "attempted": 20,
+    "passed": 20,
+    "failed": 0
+  },
+  "fixture": {
+    "target": "https://example.com",
+    "dns": "mocked-public-address",
+    "runtime": "mocked-AgentBrowserService",
+    "page": "mocked-selector-and-text-result",
+    "networkEffects": false,
+    "credentialsUsed": false,
+    "realPublicNetwork": false
+  },
+  "runs": [
+    { "sequence": 1, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 2, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 3, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 4, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 5, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 6, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 7, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 8, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 9, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 10, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 11, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 12, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 13, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 14, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 15, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 16, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 17, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 18, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 19, "approval": "fresh-single-use", "status": "passed" },
+    { "sequence": 20, "approval": "fresh-single-use", "status": "passed" }
+  ],
+  "exclusions": [
+    "not human-use evidence",
+    "not clean-VM evidence",
+    "not real-public-network evidence",
+    "not safety-reviewer approval",
+    "not liveReady, productApproved, default-on, or GA evidence"
+  ]
+}

@@ -11,7 +11,7 @@ import type { AgentToolResult } from "./runtime/index.js";
 /** Writable stdin surface shared by child-process and PTY session records. */
 export type WritableStdin = {
   write: (data: string, cb?: (err?: Error | null) => void) => void;
-  end: () => void;
+  end: (cb?: (err?: Error | null) => void) => void;
   destroyed?: boolean;
   writable?: boolean;
   writableEnded?: boolean;

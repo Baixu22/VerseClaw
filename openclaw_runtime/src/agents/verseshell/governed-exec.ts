@@ -62,10 +62,16 @@ export class GovernedVerseShellError extends Error {
 
 let sharedManager: VerseShellProcessManager | undefined;
 
-function managerFor(options: GovernedVerseShellExecOptions): VerseShellProcessManager {
-  if (options.manager) return options.manager;
+export function getGovernedVerseShellManager(
+  provided?: VerseShellProcessManager,
+): VerseShellProcessManager {
+  if (provided) return provided;
   sharedManager ??= new VerseShellProcessManager();
   return sharedManager;
+}
+
+function managerFor(options: GovernedVerseShellExecOptions): VerseShellProcessManager {
+  return getGovernedVerseShellManager(options.manager);
 }
 
 function requiredEnv(env: NodeJS.ProcessEnv, name: string): string {
@@ -79,7 +85,7 @@ function requiredEnv(env: NodeJS.ProcessEnv, name: string): string {
   return value;
 }
 
-function processConfig(options: {
+export function createGovernedVerseShellProcessConfig(options: {
   cwd: string;
   timeoutMs?: number;
   agentId?: string;
@@ -117,6 +123,15 @@ function processConfig(options: {
     agentId: options.agentId,
     requestTimeoutMs: options.timeoutMs,
   };
+}
+
+function processConfig(options: {
+  cwd: string;
+  timeoutMs?: number;
+  agentId?: string;
+  env?: NodeJS.ProcessEnv;
+}): VerseShellProcessConfig {
+  return createGovernedVerseShellProcessConfig(options);
 }
 
 function boundedInteger(value: number | undefined, fallback: number, maximum: number): number {
@@ -252,6 +267,7 @@ async function executeOnce(
 }
 
 /** Execute one host-policy-approved command through strict typed ACI without native fallback. */
+/** @deprecated Compatibility-contract helper only; production exec uses governed-process.ts. */
 export async function executeGovernedVerseShell(
   options: GovernedVerseShellExecOptions,
 ): Promise<GovernedVerseShellExecResult> {

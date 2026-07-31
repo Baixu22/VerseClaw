@@ -181,7 +181,7 @@ Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki �
 
 任意の `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` も既定ではオフで、SEKB の主ゲートが必要です。`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` はこの assistant のフラグだけを上書きします。operator は明示的に手動実行する必要があります。Host/CLI は DEEPSEEK_API_KEY があればそれを使い、なければ deterministic fallback になります。この assistant が送信するのは、有界かつ秘匿化した trajectory projection と有界な既存 principle summary だけです。可観測な 30 秒の retry は一度だけで、provider unavailable、timeout、無効な JSON/schema、または上限到達時には既存の決定的な distillation suggestion を返します。安全な集約 trace/cost evidence だけを記録し、既存の `confirm_and_save` 確認パスより前に Principle、Memory、ContextBlock、index、trajectory state を書き換えることはありません。
 
-SEKB Hermes の運用入口は CLI と Host API のみです（SEKB 運用 GUI なし）。すべて既定オフで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。耐久的な確認パスは引き続き `confirm_and_save` のみです。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
+Knowledge > Runtime Lessons は既存の typed 経路を使い、決定的な提案、正確な候補レビュー、明示的な確認または却下、確認済み原則の取得を提供します。提案とレビューは書き込みを行いません。確認には可視のセッション系譜が必要で、引き続き `confirm_and_save` を使います。取得結果は有界な助言テキストとして表示するだけで、Chat へ自動添付しません。Hermes の shadow export/protocol/report と batch 運用は引き続き CLI/Host 専用です。すべての feature flag は既定オフのままで、principle / memory / ContextBlock / index / trajectory state を自動書き込みしません。`artifacts/sekb-hermes-phase-a5/` のオフライン成果物は非権威の評価証跡です。
 
 ローカル CLI/Host ops は `openclaw_runtime/dist/knowledge/sekb/index.js` を読み込みます。`pnpm build:runtime` または `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only` で構築してください。dist がない場合 Host は `runtimeUnavailable` に降格し、CLI はビルド案内を出します。`pnpm sekb:hermes:gate` に dist は不要です。
 
@@ -194,7 +194,7 @@ CLI:
 - `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既存 DistillationTool 境界
 - `pnpm sekb:hermes:gate` - focused tests + contract + harness validate
 
-Host API（`knowledge.*`）: `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`。
+Host API（`knowledge.*`）: `runtimeLessonsReport`, `sekbShadowEvaluationExport`, `sekbShadowEvaluationProtocol`, `sekbShadowEvaluationReport`, `sekbSuggestPrinciples`, `sekbBatchDistillSuggest`, `sekbConfirmPrinciple`, `sekbRejectSuggestion`, `sekbRetrieveForTask`。
 
 Shadow V1 のスコアリングと閾値 50 は凍結。ラベリング kit の準備完了は昇格準備完了を意味しません。Phase C/D の filtering / scheduling は延期です。
 
@@ -215,6 +215,8 @@ AIタスクを自動的に実行するようスケジュール設定できます
 定期タスクでは Agent Browser 自動化も実行できます。URL、ブラウザ profile/auth state、安全ポリシー、成功/失敗条件、保守的な安全ステップ再試行、診断項目を指定すると、チェックイン、ページ監視、ドラフト公開などのジョブが内部 managed browser の永続ログイン状態を再利用し、失敗時には簡潔な証拠を表示できます。
 
 サイドバーの Agent Browser ワークベンチは、Main プロセス所有のランタイムを通じて分離された profile、タブ、session を提供します。Chat は送信前に実 transcript 使用量から token/cost 予算を判定し、永続化・描画される tool 出力を制限し、キャンセルまたはハードタイムアウト時には基盤の実行を中止します。
+
+監督対象の Browser タスクは、ブラウザーに副作用を発生させる前に承認待ちとして永続化されます。承認画面には目的、対象サイト、承認済みドメイン、モード、権限範囲、順序付き実行計画が表示され、ユーザーの明示的な承認後にのみ Main プロセスが上限付きの移動、待機、クリック手順を実行し、型付きの成功または失敗判定を返します。このフローは無人ブラウジングやプライベートネットワークアクセスを許可せず、認証情報は Main プロセス所有の Vault 参照に留まります。
 
 Verse Claw には、Web、RSS、V2EX、雪球、Bilibili、YouTube、GitHub、Twitter、小紅書に対応する読み取り専用の Reach Readers プラグインも既定で含まれます。各プラットフォームの API/CLI を優先し、既存の Agent Browser profile は安全なページ fallback または可視ログイン引き継ぎにのみ使用され、Cookie や token がモデルへ公開されることはありません。
 
@@ -413,7 +415,7 @@ VerseShell は Windows x64 の内部 canary 向けに限定した任意の実行
 }
 ```
 
-設定がオーバーライドを許可している場合、セッション指令 `/exec host=verseshell security=allowlist ask=on-miss` でも同じバックエンドを選択できます。大きな出力は `result://sha256/...` handle を返し、Agent は `verseshell_result` で範囲を制限した断片を取得できます。`legacyEval`、`mcpCompatibility`、`compatibilityNativeFallback` は無効のままにしてください。緊急停止は `runtime.verseShellFoundation.killSwitch` を `true` にするか、`VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1` を設定して Gateway を再起動します。
+`tools.exec.host=verseshell` は、オペレーターがグローバルまたは Agent ごとの cohort に対して選択する設定です。設定がオーバーライドを許可している場合、セッション指令 `/exec host=verseshell security=allowlist ask=on-miss` でも同じバックエンドを選択できますが、モデルが呼び出しごとに VerseShell host を選択することはできません。sandbox、node、remote/provider-native、elevated の実行は既存の owner を維持します。大きな出力は `result://sha256/...` handle を返し、Agent は `verseshell_result` で範囲を制限した断片を取得できます。`legacyEval`、`mcpCompatibility`、`compatibilityNativeFallback` は無効のままにしてください。緊急停止は `runtime.verseShellFoundation.killSwitch` を `true` にするか、`VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1` を設定して Gateway を再起動します。ローカルの engineering coverage は、実 cohort、provider usage、ROI、soak、製品 graduation の証拠にはなりません。
 
 ---
 

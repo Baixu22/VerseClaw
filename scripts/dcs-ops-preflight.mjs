@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DCS ops canary preflight (TF-0009).
  * Runs hard-veto checks + optional gate suite. Never flips defaults.
  *
@@ -11,6 +11,15 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+import {
+  evaluateTf0009L3Readiness,
+  hasSafeTf0009HardBounds,
+} from "./lib/tf0009-canary-readiness.mjs";
+import {
+  validateTf0009AgentSurrogateCharter,
+  validateTf0009AgentSurrogateReport,
+} from "./lib/tf0009-agent-surrogate.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const runGates = process.argv.includes("--gates");
@@ -103,6 +112,36 @@ if (canary.missing) {
   }
 }
 
+// --- Unified C1 corpus authority ---
+const c1Authority = readJson("artifacts/first-product-preview/FP-P4-05/decision.json");
+if (c1Authority.missing) {
+  fail("missing authoritative C1 gate decision", "Run: pnpm run dcs:c1:gate:refresh");
+} else if (c1Authority.error) {
+  fail(
+    "authoritative C1 decision parse error: " + c1Authority.error,
+    "Re-run pnpm run dcs:c1:gate:refresh",
+  );
+} else {
+  const c = c1Authority.data;
+  if (c.authority?.role !== "gate-authority") {
+    fail("C1 authority role drifted", "HARD-STOP: restore the real-tool corpus authority");
+  } else ok("C1 gate authority=" + c.authority.corpusId);
+  if (c.authority?.reductionFactor !== 4.5 || c.decision?.meetsGate !== false) {
+    fail("C1 authoritative 4.5x below-threshold result drifted", "HARD-STOP: run C1 gate validation");
+  } else ok("C1 authoritative reduction=4.5x; meetsGate=false");
+  if (c.references?.some((reference) => reference.eligibleForGateAuthority !== false)) {
+    fail("C1 reference corpus gained gate authority", "HARD-STOP: synthetic evidence is reference-only");
+  }
+  if (
+    c.decision?.recommendation !== "keep-off" ||
+    c.decision?.defaultOn !== false ||
+    c.decision?.liveReady !== false ||
+    c.decision?.productApproved !== false
+  ) {
+    fail("C1 product locks drifted", "HARD-STOP: restore keep-off and false product locks");
+  } else ok("C1 unified decision keeps product locks closed");
+}
+
 // --- TF-0006 still blocked ---
 const tf6 = readJson("artifacts/tf0006-evidence-upgrade/status.json");
 if (!tf6.missing && !tf6.error) {
@@ -115,40 +154,77 @@ if (!tf6.missing && !tf6.error) {
   }
 }
 
-// --- Profiles hard bounds ---
+// --- L3 governance readiness ---
 const profiles = readJson("artifacts/dcs-deep-test-week1/profiles.json");
-if (profiles.missing) {
-  warn("profiles.json missing", "Fill artifacts/dcs-deep-test-week1/profiles.json before L3");
-} else if (!profiles.error) {
-  const hb = profiles.data.hardBounds || {};
-  if (hb.liveReady === true || hb.productApproved === true || hb.defaultsUnchanged === false) {
-    fail("profiles.hardBounds illegal", "Restore hardBounds to fail-closed values");
+if (profiles.error) {
+  fail(`profiles.json parse error: ${profiles.error}`, "Fix profiles.json before any L3 task");
+} else if (!profiles.missing) {
+  if (!hasSafeTf0009HardBounds(profiles.data)) {
+    fail("profiles.hardBounds incomplete or illegal", "Restore all fail-closed TF-0009 hard bounds");
   } else ok("profiles.hardBounds fail-closed");
-  const ids = (profiles.data.profiles || []).map((p) => p.id);
-  for (const need of ["dcs-coding", "sekb-assisted", "browser-supervised"]) {
-    if (!ids.includes(need)) fail(`profile missing: ${need}`, "Complete profiles.json three-profile table");
-    else {
-      const p = profiles.data.profiles.find((x) => x.id === need);
-      const hasOwner = p.owner || profiles.data.roles?.owner;
-      const hasKill = p.kill || p.kill;
-      const hasBudget = p.budget || p.budgetTasks != null;
-      const hasPrivacy = p.privacy != null;
-      const hasMetrics = Array.isArray(p.metrics) ? p.metrics.length > 0 : false;
-      if (!hasOwner || !hasKill || !hasBudget || !hasPrivacy || !hasMetrics) {
-        warn(`profile ${need} incomplete fields`, "Ensure owner/budget/privacy/metrics/kill/rollback/stop present");
-      }
-    }
-  }
 }
 
-// --- Ops pack presence ---
-for (const rel of [
-  "docs/dev/dcs-ops-canary-runbook.md",
-  "artifacts/dcs-deep-test-week1/day1-gates.json",
-  "artifacts/dcs-deep-test-week1/decision.md",
+const runbookRel = "docs/dev/dcs-ops-canary-runbook.md";
+const day1GatesRel = "artifacts/dcs-deep-test-week1/day1-gates.json";
+const decisionRel = "artifacts/dcs-deep-test-week1/decision.md";
+const runbookPresent = fs.existsSync(path.join(root, runbookRel));
+const day1Gates = readJson(day1GatesRel);
+const day1GatesPresent = !day1Gates.missing;
+if (day1Gates.error) {
+  fail(`day1-gates.json parse error: ${day1Gates.error}`, "Regenerate the Day-1 gate record before L3");
+}
+const decisionPresent = fs.existsSync(path.join(root, decisionRel));
+for (const [rel, present] of [
+  [runbookRel, runbookPresent],
+  [day1GatesRel, day1GatesPresent],
+  [decisionRel, decisionPresent],
 ]) {
-  if (fs.existsSync(path.join(root, rel))) ok(`present: ${rel}`);
-  else warn(`missing: ${rel}`, "Complete overnight ops pack artifacts");
+  if (present) ok(`present: ${rel}`);
+  else warn(`missing: ${rel}`, rel === decisionRel ? "Required at canary close-out" : "Required before L3");
+}
+
+const l3Readiness = evaluateTf0009L3Readiness({
+  profiles: profiles.data,
+  profilesMissing: profiles.missing,
+  runbookPresent,
+  day1GatesPresent,
+  day1Gates: day1Gates.data,
+});
+for (const blocker of l3Readiness.blockers) {
+  warn(`L3 blocked [${blocker.id}]: ${blocker.message}`, blocker.nextStep);
+}
+
+// --- Agent-surrogate engineering track (never human/live evidence) ---
+const agentCharter = readJson("artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json");
+const agentReport = readJson("artifacts/first-product-preview/TF-0009/agent-surrogate-report.json");
+let agentSurrogateReady = false;
+let agentSurrogateValidation = { ok: false, errors: ["agent surrogate evidence missing"] };
+if (agentCharter.error) {
+  fail(`agent-surrogate charter parse error: ${agentCharter.error}`, "Fix the tracked TF-0009 agent charter");
+} else if (agentReport.error) {
+  fail(`agent-surrogate report parse error: ${agentReport.error}`, "Re-run: pnpm run tf0009:agent-surrogate");
+} else if (agentCharter.missing || agentReport.missing) {
+  warn(
+    "agent-surrogate campaign evidence is missing",
+    "Run: pnpm run tf0009:agent-surrogate (engineering evidence only)",
+  );
+} else {
+  const charterValidation = validateTf0009AgentSurrogateCharter(agentCharter.data);
+  const reportValidation = validateTf0009AgentSurrogateReport(agentReport.data);
+  agentSurrogateValidation = {
+    ok: charterValidation.ok && reportValidation.ok,
+    errors: [...charterValidation.errors, ...reportValidation.errors],
+  };
+  if (!agentSurrogateValidation.ok) {
+    fail(
+      `agent-surrogate evidence invalid: ${agentSurrogateValidation.errors.join("; ")}`,
+      "Re-run the campaign and keep every human/live/product claim false",
+    );
+  } else {
+    agentSurrogateReady = true;
+    ok("agent-surrogate engineering campaign complete: 10/10/10; human runs remain 0/10");
+    ok("agent-surrogate status=degraded-engineering-complete; report cannot self-authorize done or TF-0011 release");
+  }
 }
 
 // --- Optional gate suite ---
@@ -156,7 +232,7 @@ const gateResults = [];
 if (runGates && !hardStop) {
   const gates = [
     ["dcs:prod-p0:smoke", ["run", "dcs:prod-p0:smoke"]],
-    ["dcs:canary:c1", ["run", "dcs:canary:c1"]],
+    ["dcs:c1:gate:refresh", ["run", "dcs:c1:gate:refresh"]],
   ];
   for (const [name, args] of gates) {
     const pnpm = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
@@ -174,11 +250,20 @@ const summary = {
   generatedAt: new Date().toISOString(),
   ok: !hardStop && findings.every((f) => f.level !== "fail"),
   hardStop,
+  l3Ready: !hardStop && l3Readiness.ready,
+  l3Blockers: l3Readiness.blockers,
+  agentSurrogateReady: !hardStop && agentSurrogateReady,
+  agentSurrogateValidation,
+  humanEquivalent: false,
   runGates,
   gateResults,
   findings,
   nextStep: hardStop
     ? findings.find((f) => f.level === "fail")?.nextStep || "Fix hard-stop findings before any opt-in"
+    : agentSurrogateReady && !l3Readiness.ready
+      ? "Agent-surrogate engineering flow is complete. Keep TF-0009 review_needed; any engineering-chain release requires a separate confirmed governance proposal."
+    : !l3Readiness.ready
+      ? "L2 automation may continue, but do not start L3. Resolve every l3Blocker first."
     : runGates
       ? "Preflight+gates green. Proceed to L2 E2E or first L3 opt-in per docs/dev/dcs-ops-canary-runbook.md"
       : "Hard-veto checks green. For full gate run: pnpm run dcs:ops:preflight:gates",

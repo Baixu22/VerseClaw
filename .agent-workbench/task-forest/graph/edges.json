@@ -227,18 +227,6 @@
     "type": "child_of",
     "updated_at": "2026-07-27T13:16:29.659665Z"
   },
-  "TFE-0020": {
-    "blocking": true,
-    "confidence": 0.98,
-    "created_at": "2026-07-27T13:16:29.659665Z",
-    "created_from_session": null,
-    "from": "TF-0011",
-    "id": "TFE-0020",
-    "reason": "先完成现有受控 canary，冻结改造前真实基线，并保持唯一 ready 节点。",
-    "to": "TF-0009",
-    "type": "depends_on",
-    "updated_at": "2026-07-27T13:16:29.659665Z"
-  },
   "TFE-0021": {
     "blocking": true,
     "confidence": 0.99,
@@ -370,5 +358,41 @@
     "to": "TF-0007",
     "type": "related_to",
     "updated_at": "2026-07-27T13:16:29.660683Z"
+  },
+  "TFE-0032": {
+    "blocking": false,
+    "confidence": 0.99,
+    "created_at": "2026-07-29T14:55:37.638857Z",
+    "created_from_session": "session-2026-07-29-p4-03-04-start",
+    "from": "TF-0011",
+    "id": "TFE-0032",
+    "reason": "TF-0011 消费 TF-0009 的 agent-surrogate 工程基线；TF-0009 的真人/live residual 保持 review_needed，但不再阻塞纯工程证据冻结。",
+    "to": "TF-0009",
+    "type": "derived_from",
+    "updated_at": "2026-07-29T14:55:37.638857Z"
+  },
+  "TFE-0033": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-07-31T06:14:56.840368Z",
+    "created_from_session": null,
+    "from": "TF-0020",
+    "id": "TFE-0033",
+    "reason": "统一 Agent 主路径需要统一、可复现的工程验收控制面",
+    "to": "TF-0010",
+    "type": "child_of",
+    "updated_at": "2026-07-31T06:14:56.840368Z"
+  },
+  "TFE-0034": {
+    "blocking": false,
+    "confidence": 0.94,
+    "created_at": "2026-07-31T06:14:56.840368Z",
+    "created_from_session": null,
+    "from": "TF-0020",
+    "id": "TFE-0034",
+    "reason": "当前 Controlled Preview 的 runtime、E2E、maturity 与 release 阻塞由该验收编排闭合",
+    "to": "TF-0007",
+    "type": "contributes_to",
+    "updated_at": "2026-07-31T06:14:56.840368Z"
   }
 }

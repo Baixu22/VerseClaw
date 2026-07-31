@@ -182,7 +182,7 @@ Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上�
 
 可选的 `runtime.contextBlock.sekb.batchDistillationAssistant.enabled` 同样默认关闭，并依赖 SEKB 主开关；`OPENCLAW_SEKB_BATCH_DISTILLATION_ASSISTANT_ENABLED` 只覆盖该建议器开关。操作员必须显式手动调用；Host/CLI 在存在 DEEPSEEK_API_KEY 时可用其作为 provider，否则回退 deterministic。它仅发送有界、脱敏的轨迹投影和有界的既有原则摘要，最多进行一次可观测的 30 秒重试；provider 不可用、超时、JSON 或 schema 无效、或触发限额时，都会返回现有确定性蒸馏建议。它只记录安全的聚合 trace/cost 证据；在既有 `confirm_and_save` 确认路径之前，绝不写入 Principle、Memory、ContextBlock、索引或 trajectory 状态。
 
-SEKB Hermes 运营入口仅为 CLI 与 Host API（无 SEKB 运营 GUI）。全部能力默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`confirm_and_save` 仍是唯一持久确认路径。`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
+Knowledge > 运行经验通过既有 typed 路径提供确定性建议、精确候选审查、显式确认或拒绝，以及已确认原则检索。生成建议和审查不产生写入；确认要求可见会话谱系并继续使用 `confirm_and_save`，检索仅显示有界辅助文本，绝不会自动附加到 Chat。Hermes shadow 导出/协议/报告与 batch 运维仍仅限 CLI/Host。全部功能开关继续默认关闭，不会自动写入 principle、memory、ContextBlock、索引或 trajectory 状态；`artifacts/sekb-hermes-phase-a5/` 下的离线产物仅作非权威评估证据。
 
 本地 CLI/Host 运维入口依赖 `openclaw_runtime/dist/knowledge/sekb/index.js`。请先执行 `pnpm build:runtime`，或定向构建 `pnpm exec node scripts/build-openclaw-runtime.mjs --sekb-only`。缺少 dist 时 Host 会诚实降级为 `runtimeUnavailable`，CLI 会提示构建；`pnpm sekb:hermes:gate` 不需要 dist。
 
@@ -195,7 +195,7 @@ CLI：
 - `pnpm sekb:hermes:confirm` / `pnpm sekb:hermes:reject` - 既有 DistillationTool 边界
 - `pnpm sekb:hermes:gate` - 聚焦测试 + contract + harness validate
 
-Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`。
+Host API（`knowledge.*`）：`runtimeLessonsReport`、`sekbShadowEvaluationExport`、`sekbShadowEvaluationProtocol`、`sekbShadowEvaluationReport`、`sekbSuggestPrinciples`、`sekbBatchDistillSuggest`、`sekbConfirmPrinciple`、`sekbRejectSuggestion`、`sekbRetrieveForTask`。
 
 Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。Phase C/D 过滤与调度仍延期。
 
@@ -216,6 +216,8 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 定时任务也可以运行 Agent Browser 自动化：配置 URL、浏览器 profile/auth state、安全策略、成功/失败判定、保守安全步骤重试和诊断项后，就能让网页签到、页面监控、草稿发布等任务通过内部 managed browser 复用持久化登录态，并在失败时展示简洁证据。
 
 侧边栏的 Agent Browser 工作台通过 Main 进程运行时提供相互隔离的 profile、标签页和会话。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
+
+监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
 
 Verse Claw 还内置默认启用的只读 Reach Readers 插件，覆盖 Web、RSS、V2EX、雪球、哔哩哔哩、YouTube、GitHub、Twitter 和小红书。平台 API/CLI 始终优先；现有 Agent Browser profile 只作为安全页面兜底或可见登录接力，并且不会向模型暴露 Cookie 或 token。
 
@@ -417,7 +419,7 @@ VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认
 }
 ```
 
-配置允许覆盖时，可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。
+`tools.exec.host=verseshell` 是由操作员在全局或单个 agent 范围选择的 cohort 配置。配置允许覆盖时，也可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端；模型不能在单次调用中选择 VerseShell host。sandbox、node、remote/provider-native 和 elevated 执行继续由原 owner 负责。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。本地工程覆盖不等于真实 cohort、provider usage、ROI、soak 或产品毕业证据。
 
 ---
 

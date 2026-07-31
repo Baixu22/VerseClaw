@@ -16,6 +16,7 @@
  *   - runtime.vtoken.assembly.enabled=false
  *   - VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH=1 / runtime.contextEnhancement.killSwitch
  */
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { isRecord } from "../runtime-core/index.js";
@@ -26,8 +27,8 @@ import {
   getSharedVtokenRpcClient,
   isVtokenAssemblyEnvEnabled,
   isVtokenAssemblyEnvForcedOn,
-  resolveDefaultVtokenSessionDir,
-  type VtokenRpcAssembleResult,
+  type VtokenPackCandidate,
+  type VtokenRpcPackResult,
   type VtokenRpcClient,
 } from "./vtoken-rpc-client.js";
 
@@ -64,6 +65,8 @@ export type VtokenMarkdownSource = {
 export type VtokenTurnAssembleInput = {
   sessionKey?: string;
   taskHint: string;
+  /** Explicit packing allowance resolved by Context Orchestrator. */
+  allowanceTokens: number;
   workspaceDir?: string;
   /** Pre-loaded markdown sources; when omitted, workspace bootstrap files are read. */
   markdownSources?: VtokenMarkdownSource[];
@@ -71,9 +74,9 @@ export type VtokenTurnAssembleInput = {
   memoryEntries?: Array<Record<string, unknown>>;
 };
 
-export type VtokenTurnAssembleResult = {
+export type VtokenTurnPackResult = {
   text: string;
-  assemble: VtokenRpcAssembleResult;
+  pack: VtokenRpcPackResult;
   durationMs: number;
   sourcesIngested: number;
 };
@@ -96,9 +99,9 @@ export async function loadVtokenDcsMemoryEntries(
 ): Promise<Array<Record<string, unknown>>> {
   if (!store || !sessionId?.trim()) return [];
   const contextBlock = resolveContextBlockConfig(cfg);
-  const enabledSources = (Object.entries(DCS_SOURCE_CONFIG_KEYS) as Array<
-    [keyof typeof DCS_SOURCE_CONFIG_KEYS, string]
-  >)
+  const enabledSources = (
+    Object.entries(DCS_SOURCE_CONFIG_KEYS) as Array<[keyof typeof DCS_SOURCE_CONFIG_KEYS, string]>
+  )
     .filter(([, configKey]) => {
       const sourceConfig = contextBlock?.[configKey];
       return isRecord(sourceConfig) && sourceConfig.enabled === true;
@@ -252,10 +255,8 @@ export async function loadWorkspaceMarkdownSources(
   return sources;
 }
 
-export function renderWorkingContextBlock(
-  assemble: VtokenRpcAssembleResult,
-): string {
-  const prompt = (assemble.prompt ?? "").trim();
+export function renderWorkingContextBlock(pack: VtokenRpcPackResult): string {
+  const prompt = (pack.prompt ?? "").trim();
   if (!prompt) return "";
   const lines = [
     "",
@@ -267,22 +268,67 @@ export function renderWorkingContextBlock(
     "",
     prompt,
     "",
-    `<!-- vtoken tokens_used=${assemble.tokens_used} budget=${assemble.tokens_budget} ` +
-      `included=${assemble.nodes_included?.length ?? 0} evicted=${assemble.nodes_evicted?.length ?? 0} -->`,
+    `<!-- vtoken estimated_tokens=${pack.estimatedTokens} estimate_method=${pack.estimateMethod} ` +
+      `allowance=${pack.allowanceTokens} included=${pack.nodes_included?.length ?? 0} ` +
+      `evicted=${pack.nodes_evicted?.length ?? 0} -->`,
   ];
   return lines.join("\n").trim();
+}
+
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>).toSorted(([a], [b]) =>
+      a.localeCompare(b),
+    );
+    return `{${entries.map(([key, item]) => `${JSON.stringify(key)}:${stableJson(item)}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
+function packCandidateId(kind: VtokenPackCandidate["kind"], value: unknown): string {
+  const digest = createHash("sha256").update(stableJson(value), "utf8").digest("hex");
+  return `vtoken-pack:${kind}:${digest}`;
+}
+
+/** Normalize and deduplicate the exact candidate set handed to the pure packer. */
+export function createVtokenPackCandidates(input: {
+  markdownSources: VtokenMarkdownSource[];
+  toolSchemas?: Array<Record<string, unknown>>;
+  memoryEntries?: Array<Record<string, unknown>>;
+}): VtokenPackCandidate[] {
+  const candidates: VtokenPackCandidate[] = [
+    ...input.markdownSources.map((source) => ({
+      candidateId: packCandidateId("markdown", source),
+      kind: "markdown" as const,
+      sourcePath: source.sourcePath,
+      text: source.text,
+    })),
+    ...(input.toolSchemas ?? []).map((toolSchema) => ({
+      candidateId: packCandidateId("tool_schema", { serverName: "host", toolSchema }),
+      kind: "tool_schema" as const,
+      serverName: "host",
+      toolSchema,
+    })),
+    ...(input.memoryEntries ?? []).map((entry) => ({
+      candidateId: packCandidateId("memory", entry),
+      kind: "memory" as const,
+      entry,
+    })),
+  ];
+  return [...new Map(candidates.map((candidate) => [candidate.candidateId, candidate])).values()];
 }
 
 /**
  * Ingest host sources into VT and assemble a Working Context block.
  * Returns null when disabled, out of session scope, no sources, or empty assemble.
  */
-export async function assembleVtokenWorkingContext(
+export async function packVtokenWorkingContext(
   input: VtokenTurnAssembleInput,
   config: VtokenAssemblyConfig,
   client: VtokenRpcClient = getSharedVtokenRpcClient(),
   log?: (message: string, context?: Record<string, unknown>) => void,
-): Promise<VtokenTurnAssembleResult | null> {
+): Promise<VtokenTurnPackResult | null> {
   if (!shouldAssembleVtokenWorkingContext(config, input.sessionKey)) {
     return null;
   }
@@ -316,59 +362,40 @@ export async function assembleVtokenWorkingContext(
     return null;
   }
 
-  return client.runExclusive(async () => {
-    const started = Date.now();
-    const sessionDir = resolveDefaultVtokenSessionDir();
-    const session =
-      input.sessionKey?.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 80) ||
-      "default";
-
-    await client.open({
-      docSources: [],
-      sessionDir,
-      session,
-    });
-
-    let sourcesIngested = 0;
-    for (const src of markdownSources ?? []) {
-      await client.ingestMarkdown(src.text, src.sourcePath);
-      sourcesIngested += 1;
-    }
-    if (input.toolSchemas?.length) {
-      await client.ingestTools(input.toolSchemas, "host");
-      sourcesIngested += 1;
-    }
-    if (input.memoryEntries?.length) {
-      await client.ingestMemory(input.memoryEntries);
-      sourcesIngested += 1;
-    }
-
-    const assemble = await client.assemble({
-      taskHint,
-      budgetTokens: config.budgetTokens,
-      renderMode: config.renderMode,
-    });
-    const durationMs = Date.now() - started;
-    const text = renderWorkingContextBlock(assemble);
-    if (!text) {
-      log?.("[vtoken-assembly] empty assemble prompt", {
-        tokens_used: assemble.tokens_used,
-        durationMs,
-      });
-      return null;
-    }
-
-    log?.("[vtoken-assembly] assembled", {
-      tokens_used: assemble.tokens_used,
-      tokens_budget: assemble.tokens_budget,
-      nodes_included: assemble.nodes_included?.length ?? 0,
-      nodes_evicted: assemble.nodes_evicted?.length ?? 0,
-      sourcesIngested,
+  const candidates = createVtokenPackCandidates({
+    markdownSources,
+    toolSchemas: input.toolSchemas,
+    memoryEntries: input.memoryEntries,
+  });
+  const started = Date.now();
+  const pack = await client.pack({
+    taskHint,
+    allowanceTokens: input.allowanceTokens,
+    renderMode: config.renderMode,
+    candidates,
+  });
+  const durationMs = Date.now() - started;
+  const text = renderWorkingContextBlock(pack);
+  if (!text) {
+    log?.("[vtoken-pack] empty pack prompt", {
+      estimated_tokens: pack.estimatedTokens,
+      estimate_method: pack.estimateMethod,
       durationMs,
     });
+    return null;
+  }
 
-    return { text, assemble, durationMs, sourcesIngested };
+  log?.("[vtoken-pack] packed", {
+    estimated_tokens: pack.estimatedTokens,
+    estimate_method: pack.estimateMethod,
+    allowance_tokens: pack.allowanceTokens,
+    nodes_included: pack.nodes_included?.length ?? 0,
+    nodes_evicted: pack.nodes_evicted?.length ?? 0,
+    sourcesIngested: candidates.length,
+    durationMs,
   });
+
+  return { text, pack, durationMs, sourcesIngested: candidates.length };
 }
 
 /**
@@ -387,20 +414,20 @@ export async function computeVtokenExtraSystemPrompt(
     const config = resolveVtokenAssemblyConfig(cfg);
     if (!config.enabled) return result;
 
-    const assembled = await assembleVtokenWorkingContext(
+    const packed = await packVtokenWorkingContext(
       input,
       config,
       client ?? getSharedVtokenRpcClient({ requestTimeoutMs: config.timeoutMs }),
       log,
     );
-    if (assembled?.text) {
+    if (packed?.text) {
       dcsObservability.recordVtokenAssembly({
         success: true,
-        chars: assembled.text.length,
-        tokens: assembled.assemble.tokens_used,
-        sourcesIngested: assembled.sourcesIngested,
+        chars: packed.text.length,
+        estimatedTokens: packed.pack.estimatedTokens,
+        sourcesIngested: packed.sourcesIngested,
       });
-      result = result ? `${result}\n\n${assembled.text}` : assembled.text;
+      result = result ? `${result}\n\n${packed.text}` : packed.text;
     }
   } catch (err) {
     dcsObservability.recordVtokenAssembly({ success: false });
@@ -415,22 +442,13 @@ function runtimeConfigFrom(value: unknown): Record<string, unknown> | undefined 
   if (!isRecord(value)) return undefined;
   if (isRecord(value.runtime)) return value.runtime;
   // Already a runtime section
-  if (
-    isRecord(value.vtoken) ||
-    isRecord(value.memory) ||
-    isRecord(value.contextBlock)
-  ) {
+  if (isRecord(value.vtoken) || isRecord(value.memory) || isRecord(value.contextBlock)) {
     return value;
   }
   return value;
 }
 
-function resolvePositiveInt(
-  value: unknown,
-  fallback: number,
-  min: number,
-  max: number,
-): number {
+function resolvePositiveInt(value: unknown, fallback: number, min: number, max: number): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   const n = Math.floor(value);
   if (n < min || n > max) return fallback;

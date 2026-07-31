@@ -29,12 +29,18 @@ Measure whether Fact view tools (context_understand / impact / reuse / verify) r
 - unauthorized write = 0
 - routing accuracy (optional)
 
-## Synthetic baseline (already on disk)
+## Synthetic scale reference (already on disk)
 
 `artifacts/dcs-canary/c1/decision.json`:
 
 - fixtureCount 32, reductionFactor **5.125**, pass rates 1.0
 - recommendation **keep-off**, liveReady **false**, productApproved **false**
+
+This is simulated-arm evidence and is not the C1 gate authority. The unified
+FP-P4-05 decision is `artifacts/first-product-preview/FP-P4-05/decision.json`:
+the four hand-authored fixtures that execute real context tools are authoritative
+at **4.5x**, below the unchanged 5x threshold. Historical 5.125x remains a
+reference-only scale result.
 
 ## Live report path (when humans execute)
 

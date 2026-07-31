@@ -242,7 +242,7 @@ describe('FP-P1-09 exponential backoff', () => {
     // ⇒ ~20 RPCs over the same 60s window.
     expect(legacyCalls).toBeGreaterThanOrEqual(100);
     expect(backoffCalls).toBeLessThanOrEqual(25);
-    // eslint-disable-next-line no-console -- evidence for FP-P1-09 AC (前后对比)
+
     console.log('[fp-p1-09-rpc-count]', JSON.stringify({ legacyCalls, backoffCalls }));
   });
 

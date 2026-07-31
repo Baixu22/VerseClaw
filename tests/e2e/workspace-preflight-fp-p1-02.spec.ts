@@ -182,7 +182,7 @@ test.describe('FP-P1-02 workspace preflight + boundary (real Electron)', () => {
       const active = await hostInvoke<{ activeWorkspace?: { rootPath?: string; permissionMode?: string } }>(
         app, 'workspaces', 'getActive',
       );
-      // eslint-disable-next-line no-console -- evidence for FP-P1-02
+
       console.log('[fp-p1-02-active]', JSON.stringify(active.activeWorkspace));
       expect(active.activeWorkspace?.rootPath?.toLowerCase()).toBe(wsDir.toLowerCase());
       expect(active.activeWorkspace?.permissionMode).toBe('acceptEdits');
@@ -202,7 +202,7 @@ test.describe('FP-P1-02 workspace preflight + boundary (real Electron)', () => {
       const outside = await hostInvoke<{ ok?: boolean; error?: string; approval?: { reason?: string } }>(
         app, 'files', 'writeText', { path: outsidePath, content: 'escape attempt\n' },
       );
-      // eslint-disable-next-line no-console -- evidence for FP-P1-02
+
       console.log('[fp-p1-02-outside]', JSON.stringify(outside));
       expect(outside.ok).toBe(false);
       expect(outside.error).toBe('approvalRequired');
@@ -214,7 +214,7 @@ test.describe('FP-P1-02 workspace preflight + boundary (real Electron)', () => {
         path: traversalPath,
         content: 'traversal attempt\n',
       });
-      // eslint-disable-next-line no-console -- evidence for FP-P1-02
+
       console.log('[fp-p1-02-traversal]', JSON.stringify(traversal));
       expect(traversal.ok).toBe(false);
 

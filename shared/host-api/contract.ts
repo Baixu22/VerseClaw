@@ -1475,6 +1475,44 @@ export type AgentBrowserTaskRecovery = {
   reason: 'app-restart-while-running';
   recoveredAt: string;
 };
+export type AgentBrowserTaskStepAction = 'navigate' | 'wait-for-selector' | 'click';
+export type AgentBrowserTaskStepStatus = 'pending' | 'running' | 'passed' | 'failed' | 'cancelled';
+export type AgentBrowserTaskStepInput = {
+  action: AgentBrowserTaskStepAction;
+  url?: string;
+  selector?: string;
+  timeoutMs?: number;
+};
+export type AgentBrowserTaskStep = AgentBrowserTaskStepInput & {
+  id: string;
+  status: AgentBrowserTaskStepStatus;
+  startedAt?: string;
+  endedAt?: string;
+  errorCode?: string;
+  error?: string;
+};
+export type AgentBrowserTaskSuccessCriteria = {
+  kind: 'url-includes' | 'text-includes' | 'selector-visible';
+  value: string;
+  timeoutMs?: number;
+};
+export type AgentBrowserTaskVerification = AgentBrowserTaskSuccessCriteria & {
+  status: 'passed' | 'failed';
+  reasonCode: string;
+  message: string;
+  checkedAt: string;
+};
+export type AgentBrowserTaskApproval = {
+  status: 'pending' | 'approved' | 'consumed' | 'rejected';
+  requestedAt: string;
+  decidedAt?: string;
+  consumedAt?: string;
+};
+export type AgentBrowserTaskCounters = {
+  totalSteps: number;
+  passedSteps: number;
+  failedSteps: number;
+};
 export type AgentBrowserTask = {
   id: string;
   name: string;
@@ -1483,7 +1521,13 @@ export type AgentBrowserTask = {
   successCondition?: string;
   profile: string;
   mode: AgentBrowserSessionMode;
-  allowedDomains?: string[];
+  allowedDomains: string[];
+  permissionScope: Array<'navigate' | 'read-page' | 'interact-page'>;
+  steps: AgentBrowserTaskStep[];
+  successCriteria?: AgentBrowserTaskSuccessCriteria;
+  verification?: AgentBrowserTaskVerification;
+  approval: AgentBrowserTaskApproval;
+  counters: AgentBrowserTaskCounters;
   status: AgentBrowserTaskStatus;
   statusExplain?: string;
   retryCount: number;
@@ -1491,13 +1535,18 @@ export type AgentBrowserTask = {
   updatedAt: string;
   sessionId?: string;
   runId?: string;
+  errorCode?: string;
   error?: string;
   recovery?: AgentBrowserTaskRecovery;
 };
 export type AgentBrowserTaskCreatePayload = Pick<
   AgentBrowserTask,
-  'name' | 'url' | 'objective' | 'successCondition' | 'profile' | 'mode' | 'allowedDomains'
->;
+  'name' | 'url' | 'objective' | 'successCondition' | 'profile' | 'mode'
+> & {
+  allowedDomains?: string[];
+  steps?: AgentBrowserTaskStepInput[];
+  successCriteria?: AgentBrowserTaskSuccessCriteria;
+};
 export type AgentBrowserTaskPayload = { taskId: string };
 export type AgentBrowserTasksResult = HostSuccess & { tasks: AgentBrowserTask[] };
 export type AgentBrowserTaskResult = HostSuccess & { task: AgentBrowserTask };
@@ -4778,6 +4827,7 @@ export type HostApiContract = {
     cancelTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     requestTaskApproval: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     approveTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
+    rejectTask: (payload: AgentBrowserTaskPayload) => AgentBrowserTaskResult;
     show: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
     hide: (payload: AgentBrowserSessionPayload) => AgentBrowserActionResult;
     vault: () => AgentBrowserVaultResult;

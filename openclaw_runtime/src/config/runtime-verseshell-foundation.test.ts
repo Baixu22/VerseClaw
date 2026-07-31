@@ -30,4 +30,15 @@ describe("runtime.verseShellFoundation config", () => {
       runtime: { verseShellFoundation: flags },
     }).runtime?.verseShellFoundation).toEqual(flags);
   });
+
+  it("accepts operator-owned global and agent VerseShell cohort selection", () => {
+    const parsed = OpenClawSchema.parse({
+      tools: { exec: { host: "verseshell" } },
+      agents: {
+        list: [{ id: "canary-agent", tools: { exec: { host: "verseshell" } } }],
+      },
+    });
+    expect(parsed.tools?.exec?.host).toBe("verseshell");
+    expect(parsed.agents?.list?.[0]?.tools?.exec?.host).toBe("verseshell");
+  });
 });

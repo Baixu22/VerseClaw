@@ -29,9 +29,8 @@
  */
 
 import { AsyncLocalStorage } from 'async_hooks';
-import { join } from 'path';
-import { homedir } from 'os';
 import { withFileLock, type FileLockOptions } from './atomic-write';
+import { getOpenClawConfigPath } from './paths';
 
 /** Tracks whether the current async context already holds the config lock. */
 const lockContext = new AsyncLocalStorage<boolean>();
@@ -69,7 +68,7 @@ class ConfigMutex {
 const configMutex = new ConfigMutex();
 
 export function getDefaultOpenClawConfigPath(): string {
-    return join(homedir(), '.openclaw', 'openclaw.json');
+    return getOpenClawConfigPath();
 }
 
 export type WithConfigLockOptions = FileLockOptions & {

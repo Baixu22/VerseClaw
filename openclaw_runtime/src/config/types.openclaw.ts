@@ -159,6 +159,11 @@ export type RuntimeFeatureConfig = {
         timeoutMs?: number;
       };
     };
+    /** Operator-tunable turn injection budget. Defaults remain runtime-owned. */
+    injectionBudget?: {
+      totalChars?: number;
+      dropAlertRatio?: number;
+    };
   };
   /**
    * Coding FactStore / write-kit / residual isolation flags (CODING-OPTIMIZATION-EDD).

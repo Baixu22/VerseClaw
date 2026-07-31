@@ -1,0 +1,59 @@
+{
+  "base_graph_hash": "3608e45643bf3498950c50217b05c274a9bad8fc653ea30662d1144305882177",
+  "base_summary": {
+    "edge_count": 31,
+    "node_count": 19,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/component-controlled-rollout-plan.md#p1小范围受控内测运行包",
+          "docs/dev/component-operational-readiness-checklist.md",
+          "docs/dev/tf0009-engineering-evidence-audit.md",
+          "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+          "harness/specs/rules/tf0009-real-canary-authority.md",
+          "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+          "artifacts/first-product-preview/FP-P1-05/evidence.md",
+          "artifacts/first-product-preview/FP-P4-01/evidence.json",
+          "artifacts/first-product-preview/FP-P4-02/synthetic-soak.json",
+          "docs/dev/handoffs/LATEST.md"
+        ],
+        "execution_hints": [
+          "先由具名 human owner 批准三 profile 的 owner/cohort/budget/privacy/metrics/kill/rollback 治理包和 day-one gates，再允许 L3",
+          "DCS、SEKB、Browser 各完成至少 10 次真实内部产品路径任务；fixture、synthetic、unit、Electron E2E、true-child 或 Harness 均不得计数",
+          "在真实运行总体上复核未授权写入和安全/隐私泄漏为 0，并完成 canary 期 operator kill/rollback drill",
+          "四条 AC 全部满足且具名 owner 给出 continue/shrink/stop 后，另提 proposal 完成 TF-0009；TF-0011 仍须按严格依赖链单独确认后才可推进",
+          "保持 liveReady=false、productApproved=false、defaultOn=false；C1 保持 4.5x、meetsGate=false、recommendation=keep-off；Runtime Memory 保持 diagnostics-only"
+        ],
+        "summary": "工程证据审计已完成，但真实 canary 尚未开始：DCS、SEKB、Browser 合格任务均为 0/10；真实运行安全总体不可评估；FP-P1-05 仅证明 kill 机制，缺 canary 期 operator drill；缺具名 owner 的退出裁决。保持 ready、0%，不得释放 TF-0011。"
+      },
+      "id": "TF-0009"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-07-29T13:08:23.878804Z",
+        "evidence": "docs/dev/tf0009-engineering-evidence-audit.md；artifacts/first-product-preview/TF-0009/evidence-audit.json；node scripts/dcs-ops-preflight.mjs",
+        "expected_requirement": "TF-0009 必须有每 profile 至少 10 次真实内部任务、真实运行总体上的零未授权写入和零安全/隐私泄漏、canary 期 100% kill drill，以及具名负责人退出裁决。",
+        "id": "TFD-tf0009-evidence-authority-20260729",
+        "observed_action_or_result": "现有证据来自 fixture、synthetic、unit、Electron E2E、Harness 与 canary 前 kill 机制验证；三 profile 合格任务均为 0/10，治理包和 day-one gates 缺失，历史 continue 也没有 TF-0009 具名 authority。",
+        "recommendation": "保持 TF-0009 ready、0%，不释放 TF-0011；先补治理授权并执行真实 canary，不得用工程 green 替代 AC。",
+        "related_task_ids": [
+          "TF-0009"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-07-29T13:11:52.795675Z",
+  "notes": "用户同时选择 FP-P4-04 diagnostics-only guard closure 2A；该决策已写入 handoff，但不属于本 proposal 的节点变更，也不授权本会话启动 FP-P4-04。",
+  "proposal_id": "TFP-tf0009-engineering-evidence-audit-20260729",
+  "rationale": "用户选择严格依赖链 1A，并明确保持 TF-0009 的真实 canary 验收权威。现有 fixture、synthetic、单元、Electron E2E、Harness 与历史 kill 证据只能证明工程机制，不能满足真实运行数量、安全总体、canary 期 drill 或具名 owner 裁决。因此只补充 TF-0009 的证据、摘要、执行提示和偏差记录，保持 ready、0%，不释放 TF-0011。",
+  "session_id": "session-2026-07-29-tf0009-engineering-evidence-audit",
+  "status": "proposed"
+}

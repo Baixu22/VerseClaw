@@ -76,6 +76,15 @@ resources/bin
 
 build/
 artifacts/*
+!artifacts/dcs-deep-test-week1/
+artifacts/dcs-deep-test-week1/*
+!artifacts/dcs-deep-test-week1/day1-gates.json
+!artifacts/first-product-preview/
+artifacts/first-product-preview/*
+!artifacts/first-product-preview/FP-P4-05/
+!artifacts/first-product-preview/FP-P4-05/**
+!artifacts/first-product-preview/TF-0009/
+!artifacts/first-product-preview/TF-0009/**
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
 !artifacts/coding-c0/
@@ -186,3 +195,7 @@ packages/vtoken/**/*.vtg
 packages/vtoken/**/*.vtwal
 packages/vtoken/sessions/
 packages/vtoken/.venv/
+
+# Local tool caches / client metadata (not project content)
+.ae/
+.reasonix/

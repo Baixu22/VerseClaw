@@ -1,10 +1,8 @@
 
 Running 3 tests using 1 worker
 
-  ok 1 tests\e2e\gateway-lifecycle.spec.ts:18:7 › Verse Claw gateway lifecycle resilience › app remains fully navigable while gateway is disconnected (6.4s)
-  ok 2 tests\e2e\gateway-lifecycle.spec.ts:46:7 › Verse Claw gateway lifecycle resilience › gateway status indicator updates when status transitions occur (8.3s)
-  ok 3 tests\e2e\gateway-lifecycle.spec.ts:131:7 › Verse Claw gateway lifecycle resilience › shows gateway restart progress in the sidebar instead of page-level warnings (6.5s)
+  ok 1 tests\e2e\gateway-lifecycle.spec.ts:24:7 › Verse Claw gateway lifecycle resilience › app remains fully navigable while gateway is disconnected (14.9s)
+  ok 2 tests\e2e\gateway-lifecycle.spec.ts:52:7 › Verse Claw gateway lifecycle resilience › gateway status indicator updates when status transitions occur (19.5s)
+  ok 3 tests\e2e\gateway-lifecycle.spec.ts:138:7 › Verse Claw gateway lifecycle resilience › shows gateway restart progress in the sidebar instead of page-level warnings (13.8s)
 
-  3 passed (21.8s)
-
-/* reseal-marker:cd87e3735 */
+  3 passed (49.0s)

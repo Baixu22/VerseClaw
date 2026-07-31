@@ -3159,6 +3159,21 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
           "openclaw.exec.mode": evt.mode,
           "openclaw.outcome": evt.outcome,
         };
+        if (evt.selectedHost) {
+          attrs["openclaw.exec.selected_host"] = evt.selectedHost;
+        }
+        if (evt.executionHost) {
+          attrs["openclaw.exec.execution_host"] = evt.executionHost;
+        }
+        if (evt.lifecycleOwner) {
+          attrs["openclaw.exec.lifecycle_owner"] = evt.lifecycleOwner;
+        }
+        if (evt.cohortRoute) {
+          attrs["openclaw.exec.cohort_route"] = evt.cohortRoute;
+        }
+        if (evt.recoveryState) {
+          attrs["openclaw.exec.recovery_state"] = evt.recoveryState;
+        }
         if (evt.failureKind) {
           attrs["openclaw.failureKind"] = evt.failureKind;
         }
@@ -3179,6 +3194,9 @@ export function createDiagnosticsOtelService(): OpenClawPluginService {
         }
         if (evt.timedOut !== undefined) {
           spanAttrs["openclaw.exec.timed_out"] = evt.timedOut;
+        }
+        if (evt.nativeFallback !== undefined) {
+          spanAttrs["openclaw.exec.native_fallback"] = evt.nativeFallback;
         }
 
         const span = spanWithDuration("openclaw.exec", spanAttrs, evt.durationMs, {

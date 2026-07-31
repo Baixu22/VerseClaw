@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 const hostApiFetchMock = vi.fn();
 
@@ -239,6 +239,7 @@ describe('Chat execution graph lifecycle', () => {
       sessionLabels: {},
       sessionLastActivity: {},
       thinkingLevel: null,
+      hydrateStartup: vi.fn(async () => undefined),
     });
   });
 
@@ -675,9 +676,58 @@ describe('Chat execution graph lifecycle', () => {
               id: 'edit-1',
               name: 'Edit',
               input: {
-                file_path: '/workspace/demo.ts',
+                file_path: 'src/demo.ts',
                 old_string: 'const value = 1\n',
                 new_string: 'const value = 2\n',
+              },
+            },
+          ],
+          _toolResults: [
+            {
+              toolCallId: 'edit-1',
+              toolName: 'Edit',
+              result: {
+                patchArtifacts: [
+                  {
+                    schema: 'GitPatchArtifact/v1',
+                    file: 'src/demo.ts',
+                    status: 'modified',
+                    contentKind: 'text',
+                    hunks: [
+                      {
+                        oldStart: 1,
+                        oldLines: 1,
+                        newStart: 1,
+                        newLines: 1,
+                        lines: [
+                          { kind: 'deletion', text: 'const value = 1', oldLine: 1, newLine: null },
+                          { kind: 'addition', text: 'const value = 2', oldLine: null, newLine: 1 },
+                        ],
+                      },
+                    ],
+                    patch: [
+                      '--- src/demo.ts',
+                      '+++ src/demo.ts',
+                      '@@ -1,1 +1,1 @@',
+                      '-const value = 1',
+                      '+const value = 2',
+                    ].join('\n'),
+                    completeness: 'complete',
+                    lineage: {
+                      requestId: 'edit-1',
+                      journalEntryId: 'write-journal:session:1',
+                    },
+                  },
+                ],
+                write_journal: {
+                  snapshots: [
+                    {
+                      path: 'src/demo.ts',
+                      journalEntryId: 'write-journal:session:1',
+                      hadPrior: true,
+                    },
+                  ],
+                },
               },
             },
           ],

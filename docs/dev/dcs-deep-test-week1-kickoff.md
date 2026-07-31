@@ -1,6 +1,6 @@
 ﻿# DCS 生态 · 下周深度测试启动包（TF-0009）
 
-> **状态**：就绪待开跑（P0 closed / P1 canary not executed）  
+> **状态**：agent-surrogate 工程流程已执行；真人 P1 canary 延后
 > **窗口**：下一工作周（建议 5 个工作日）  
 > **唯一点位**：TF-0009（P1 组件小范围受控内测运行包）  
 > **全局任务**：TF-0007（in_progress，非 GA）  
@@ -12,6 +12,16 @@
 ## 0. 一句话目标
 
 在 **不改默认值、不扩权限、不宣称 GA** 的前提下，用 **真实任务 + 可回滚** 的方式，跑通三类 opt-in profile 的深度测试，并留下可审计证据包。
+
+### 2026-07-29 降级裁决
+
+因当前没有真人测试预算，用户授权先由 agent 完成三 profile 的工程流程。执行入口为
+`pnpm run tf0009:agent-surrogate`，结果为每 profile `10/10` agent 记录和一次 agent
+kill/rollback drill。所有记录固定 `humanEquivalent=false`、`liveEvidence=false`。
+
+该轨道的完成标签是 `degraded-agent-complete`，Task Forest 只能提议
+`review_needed`，不能标 `done`。下文真人角色、真实任务、真人 drill 和 owner 裁决清单
+保留为后续开发 residual，不因 agent 流程完成而勾选。
 
 **成功标准（周结束时）**
 
@@ -199,6 +209,7 @@ pnpm run p0:accept
 pnpm run dcs:canary:c1
 
 # 5) 关键 E2E（需 Windows Electron；先 build）
+pnpm build:runtime
 pnpm run build:vite
 pnpm exec playwright test tests/e2e/dcs-production-wiring-w5.spec.ts tests/e2e/dcs-prod-p0-settings.spec.ts tests/e2e/sekb-golden-path.spec.ts tests/e2e/browser-security-recovery.spec.ts
 

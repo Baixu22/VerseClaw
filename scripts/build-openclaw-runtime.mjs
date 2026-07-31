@@ -6,7 +6,8 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { rmSync, mkdirSync, existsSync, readFileSync, readdirSync, statSync } from 'fs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const SCRIPT_PATH = fileURLToPath(import.meta.url);
+const __dirname = dirname(SCRIPT_PATH);
 const ROOT = join(__dirname, '..');
 const RUNTIME_ROOT = join(ROOT, 'openclaw_runtime');
 const DIST = join(RUNTIME_ROOT, 'dist');
@@ -39,6 +40,9 @@ if (!isTargetedOnlyBuild) {
   // dist-runtime extension wrappers import public artifacts from
   // dist/extensions, so a core-only clean build leaves a non-bootable tree.
   runNodeScript(join(RUNTIME_ROOT, 'scripts', 'build-all.mjs'), ['cliStartup'], RUNTIME_ROOT);
+  // SEKB is a Verse Claw host/ops boundary rather than an upstream OpenClaw
+  // entrypoint. Restore it after the full build's clean dist replacement.
+  runNodeScript(SCRIPT_PATH, ['--sekb-only'], ROOT);
   runNodeScript(join(ROOT, 'scripts', 'smoke-openclaw-runtime.mjs'), [], ROOT);
   process.exit(0);
 }

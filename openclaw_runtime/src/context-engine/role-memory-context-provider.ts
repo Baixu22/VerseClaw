@@ -24,7 +24,7 @@ import {
   listMemoryConflicts,
   recordMemoryInjection,
 } from "../memory/memory-store.js";
-import { isInjectableMemoryCard } from "../memory/memory-card.js";
+import { isInjectableMemoryCard, isMemoryCardInContextScope } from "../memory/memory-card.js";
 import { buildContextPack } from "../memory/context-pack.js";
 import type {
   ContextPack,
@@ -169,13 +169,19 @@ export function createRoleMemoryContextProvider(
         });
       }
 
+      const scopeContext = {
+        workspace: resolveWorkspace(query, extras),
+        sessionKey: resolveSessionKey(query, extras),
+        taskId: resolveTaskId(query, extras),
+      };
+
       // Load cards (mirror role-spawn.ts:162-177 resolveRoleMemoryCards).
       let cards: MemoryCard[];
       try {
         ensureMemoryCardsLoaded();
-        cards = getMemoryCards({ roleName, status: "all" }).filter(
-          (card) => card.status === "active" || card.status === "cold",
-        );
+        cards = getMemoryCards({ roleName, status: "all" })
+          .filter((card) => card.status === "active" || card.status === "cold")
+          .filter((card) => isMemoryCardInContextScope(card, scopeContext));
       } catch {
         // Store unavailable — skip injection gracefully (mirror role-spawn.ts:170-173).
         return fallbackResult({
@@ -210,7 +216,10 @@ export function createRoleMemoryContextProvider(
       // Build context pack (mirror role-spawn.ts:128-141).
       let pack: ContextPack;
       try {
-        const openConflictRecords = listMemoryConflicts({ status: "open" });
+        const injectableIds = new Set(injectable.map((card) => card.id));
+        const openConflictRecords = listMemoryConflicts({ status: "open" }).filter((conflict) =>
+          conflict.cardIds.some((cardId) => injectableIds.has(cardId)),
+        );
         const openConflicts = openConflictRecords.map(
           (conflict) => `${conflict.type}: ${conflict.reason}`,
         );
@@ -262,7 +271,7 @@ export function createRoleMemoryContextProvider(
       }
 
       // Record injection (best-effort, mirror role-spawn.ts:142-153).
-      const sessionKey = resolveSessionKey(query, extras);
+      const sessionKey = scopeContext.sessionKey;
       try {
         recordMemoryInjection({
           roleName,
@@ -368,6 +377,8 @@ function resolveSessionKey(
   query: RuntimeContextProviderQuery,
   extras?: RuntimeContextProviderExtras,
 ): string | undefined {
+  const direct = (query as RuntimeContextProviderQuery & { sessionKey?: unknown }).sessionKey;
+  if (typeof direct === "string" && direct) return direct;
   if (extras?.metadata && typeof extras.metadata === "object") {
     const value = (extras.metadata as { sessionKey?: unknown }).sessionKey;
     if (typeof value === "string" && value) return value;
@@ -375,6 +386,37 @@ function resolveSessionKey(
   if (query.metadata && typeof query.metadata === "object") {
     const value = (query.metadata as { sessionKey?: unknown }).sessionKey;
     if (typeof value === "string" && value) return value;
+  }
+  return undefined;
+}
+
+function resolveWorkspace(
+  query: RuntimeContextProviderQuery,
+  extras?: RuntimeContextProviderExtras,
+): string | undefined {
+  if (typeof query.workspace === "string" && query.workspace) return query.workspace;
+  return resolveMetadataString(query, extras, ["workspaceId", "workspace"]);
+}
+
+function resolveTaskId(
+  query: RuntimeContextProviderQuery,
+  extras?: RuntimeContextProviderExtras,
+): string | undefined {
+  if (typeof query.taskId === "string" && query.taskId) return query.taskId;
+  return resolveMetadataString(query, extras, ["taskId"]);
+}
+
+function resolveMetadataString(
+  query: RuntimeContextProviderQuery,
+  extras: RuntimeContextProviderExtras | undefined,
+  keys: string[],
+): string | undefined {
+  for (const metadata of [extras?.metadata, query.metadata]) {
+    if (!metadata || typeof metadata !== "object") continue;
+    for (const key of keys) {
+      const value = (metadata as Record<string, unknown>)[key];
+      if (typeof value === "string" && value) return value;
+    }
   }
   return undefined;
 }

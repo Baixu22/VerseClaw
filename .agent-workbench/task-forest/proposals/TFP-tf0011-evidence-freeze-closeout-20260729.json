@@ -1,0 +1,79 @@
+{
+  "applied_at": "2026-07-29T15:49:51.019640Z",
+  "base_graph_hash": "45490180c4336b9a6ba00f9e4a7c397542a5ba4c0eb6a5376879029ba7456b14",
+  "base_summary": {
+    "edge_count": 31,
+    "node_count": 19,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.95,
+        "evidence": [
+          "artifacts/unified-agent-system/TF-0011/audit-manifest.json",
+          "artifacts/harness/latest.md",
+          "harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+          "harness/specs/rules/uas-00-evidence-freeze-boundary.md",
+          "scripts/uas-00-evidence-freeze.mjs",
+          "tests/unit/uas-00-evidence-freeze.test.ts",
+          "docs/dev/handoffs/LATEST.md",
+          "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#3-研究方法和证据等级"
+        ],
+        "execution_hints": [
+          "TF-0011 只冻结证据，不授予 live/product/default-on 权限",
+          "TF-0009 保持 review_needed/50%，真人三 profile 仍为 0/10",
+          "下一会话只推进 TF-0012/UAS-01，并先建立引用 gateway-backend-communication 的 Harness task spec",
+          "禁止越级实施 TF-0013/14、FP-P4-03/04"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "UAS-00 工程收口完成：机器可读 manifest 冻结 HEAD、dirty diff、untracked files、环境与二进制；Harness/Task Forest/默认矩阵/owner matrix 治理一致，agent 与真人/live 证据严格隔离。"
+      },
+      "id": "TF-0011"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0011",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "下一会话先建立 UAS-01 Harness task spec、运行 harness context，并只实现统一 Contract 与持久事件主干。"
+      },
+      "id": "TF-0012"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0012",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1.0,
+        "created_at": "2026-07-29T15:36:19.606320Z",
+        "evidence": "artifacts/unified-agent-system/TF-0011/audit-manifest.json#taskForest；.agent-workbench/task-forest/config.json",
+        "expected_requirement": "Task Forest export workspace metadata 与当前 canonical audit root 一致。",
+        "id": "TFD-tf0011-historical-workspace-metadata-20260729",
+        "observed_action_or_result": "当前 canonical 数据位于 ClawX，但 config/forest/export 仍保留历史 ClawX-maturity-p0 workspace_path。UAS-00 manifest 已同时记录两者并给出 workspaceMetadataMatchesCanonical=false。",
+        "recommendation": "保持本轮不迁移 Task Forest；未来仅在用户单独授权后通过 Task Forest CLI 校正 workspace metadata，再重新 validate/export。",
+        "related_task_ids": [
+          "TF-0011"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-07-29T15:36:19.603650Z",
+  "notes": "本 proposal 不补 TF-0009 真人/live 证据，不改变 liveReady/productApproved/defaultOn=false、C1 4.5x keep-off、TF-0006 blocked 或 Runtime Memory diagnostics-only，也不开始 TF-0012/13/14、FP-P4-03/04。未经用户明确确认不得 apply。",
+  "proposal_id": "TFP-tf0011-evidence-freeze-closeout-20260729",
+  "rationale": "TF-0011/UAS-00 已完成 dirty engineering baseline 冻结器、stale check、唯一 authority matrix、治理话术纠偏和聚焦/全量工程门禁；当前产品锁、TF-0006、TF-0009 真人 residual 均未改变。按严格串行链，应在用户确认后收口 TF-0011 并仅释放 TF-0012。",
+  "session_id": "session-2026-07-29-tf0011-evidence-freeze",
+  "status": "applied"
+}

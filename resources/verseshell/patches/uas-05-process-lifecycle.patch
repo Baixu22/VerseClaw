@@ -1,0 +1,3193 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index bb48c79..e177b2c 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -96,7 +96,10 @@ windows-sys = { version = "0.59", features = [
+     "Win32_Foundation",
+     "Win32_Globalization",
+     "Win32_Security",
++    "Win32_Storage_FileSystem",
++    "Win32_System_Console",
+     "Win32_System_JobObjects",
++    "Win32_System_Pipes",
+     "Win32_System_Threading",
+ ] }
+ 
+@@ -123,4 +126,3 @@ harness = false
+ name = "observation_performance"
+ harness = false
+ 
+-
+diff --git a/src/lib.rs b/src/lib.rs
+index 299db6c..db98194 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -21,6 +21,12 @@ pub mod env;
+ pub mod ir;
+ pub mod parser;
+ pub mod plan;
++#[cfg(feature = "native")]
++pub mod process_command;
++#[cfg(feature = "native")]
++pub mod process_lifecycle;
++#[cfg(all(feature = "native", windows))]
++mod process_lifecycle_windows;
+ pub mod shell_features;
+ pub mod typecheck;
+ pub mod types;
+diff --git a/src/mcp/tools.rs b/src/mcp/tools.rs
+index 3b17f0a..3c41e62 100644
+--- a/src/mcp/tools.rs
++++ b/src/mcp/tools.rs
+@@ -126,11 +126,12 @@ pub fn default_tools() -> Vec<Tool> {
+         describe_capabilities_tool(),
+     ];
+     // ── Typed operations from OperationRegistry (1.0) ──
+-    // exec_run / result_query keep specialized handlers; all other ops auto-bind.
++    // exec_run / result_query keep specialized handlers. Stateful process lifecycle
++    // stays on the host-owned JSONL transport and is not a new model-facing MCP tool.
+     tools.push(exec_run_tool());
+     tools.push(result_query_tool());
+     for spec in crate::operation::OperationRegistry::new().list() {
+-        if matches!(spec.name, "exec.run" | "result.query") {
++        if matches!(spec.name, "exec.run" | "result.query") || spec.name.starts_with("process.") {
+             continue;
+         }
+         tools.push(registry_op_tool(spec));
+@@ -973,6 +974,18 @@ mod tests {
+         assert!(names.contains(&"repo_search"));
+         assert!(names.contains(&"test_discover"));
+         assert!(names.contains(&"ops_list"));
++        for hidden in [
++            "process_start",
++            "process_poll",
++            "process_write",
++            "process_kill",
++            "process_list",
++        ] {
++            assert!(
++                !names.contains(&hidden),
++                "lifecycle tool {hidden} leaked into MCP"
++            );
++        }
+         assert!(
+             tools.len() >= 20,
+             "expected legacy + full 1.0 op surface, got {}",
+diff --git a/src/ops/mod.rs b/src/ops/mod.rs
+index 4c9b690..3c1feac 100644
+--- a/src/ops/mod.rs
++++ b/src/ops/mod.rs
+@@ -5,6 +5,7 @@
+ mod common;
+ mod file;
+ mod meta;
++mod process_ops;
+ mod repo;
+ mod runtime_ops;
+ mod test_ops;
+@@ -20,6 +21,7 @@ pub fn all_specs() -> Vec<OperationSpec> {
+     specs.extend(tx_ops::specs());
+     specs.extend(meta::specs());
+     specs.extend(runtime_ops::specs());
++    specs.extend(process_ops::specs());
+     specs.extend(repo::specs());
+     specs.extend(test_ops::specs());
+     specs
+diff --git a/src/ops/runtime_ops.rs b/src/ops/runtime_ops.rs
+index 1880152..e83b1c1 100644
+--- a/src/ops/runtime_ops.rs
++++ b/src/ops/runtime_ops.rs
+@@ -14,7 +14,14 @@ use crate::{capability, safety};
+ use serde_json::{json, Value};
+ use sha2::{Digest, Sha256};
+ 
+-const HANDSHAKE_FEATURES: &[&str] = &["typed_operations", "result_artifacts", "legacy_cmd"];
++const HANDSHAKE_FEATURES: &[&str] = &[
++    "typed_operations",
++    "result_artifacts",
++    "process_lifecycle",
++    "monotonic_process_cursor",
++    "windows_conpty",
++    "legacy_cmd",
++];
+ 
+ /// The host binds a named, immutable policy profile to a subprocess through
+ /// these inherited environment values. The model-facing JSONL transport has no
+diff --git a/src/process_runner.rs b/src/process_runner.rs
+index c7e4664..3e7fd16 100644
+--- a/src/process_runner.rs
++++ b/src/process_runner.rs
+@@ -4,7 +4,8 @@ use anyhow::{anyhow, Context, Result};
+ use lazy_static::lazy_static;
+ use regex::Regex;
+ use serde::{Deserialize, Serialize};
+-use std::io::Read;
++use std::collections::BTreeMap;
++use std::io::{Read, Write};
+ use std::path::Path;
+ use std::process::{Command, Stdio};
+ use std::thread;
+@@ -72,6 +73,16 @@ struct CaptureBytes {
+ }
+ 
+ pub fn run(argv: &[String], cwd: &Path, limits: &ExecLimits) -> Result<ProcessOutput> {
++    run_with_env_and_input(argv, cwd, limits, None, None)
++}
++
++pub fn run_with_env_and_input(
++    argv: &[String],
++    cwd: &Path,
++    limits: &ExecLimits,
++    env: Option<&BTreeMap<String, String>>,
++    stdin: Option<&[u8]>,
++) -> Result<ProcessOutput> {
+     if argv.is_empty() || argv[0].is_empty() {
+         return Err(anyhow!("E_EXEC_BAD_ARG: argv must contain a program"));
+     }
+@@ -86,13 +97,19 @@ pub fn run(argv: &[String], cwd: &Path, limits: &ExecLimits) -> Result<ProcessOu
+         ));
+     }
+ 
+-    let mut command = Command::new(&argv[0]);
++    let resolved = crate::process_command::resolve_process_command(argv, cwd, env)?;
++    let mut command = Command::new(&resolved.executable);
+     command
+-        .args(&argv[1..])
++        .args(&resolved.args)
+         .current_dir(cwd)
+-        .stdin(Stdio::null())
++        .stdin(if stdin.is_some() {
++            Stdio::piped()
++        } else {
++            Stdio::null()
++        })
+         .stdout(Stdio::piped())
+         .stderr(Stdio::piped());
++    crate::process_command::configure_command_environment(&mut command, env);
+ 
+     #[cfg(unix)]
+     {
+@@ -103,13 +120,27 @@ pub fn run(argv: &[String], cwd: &Path, limits: &ExecLimits) -> Result<ProcessOu
+     {
+         use std::os::windows::process::CommandExt;
+         use windows_sys::Win32::System::Threading::CREATE_NO_WINDOW;
++        if let Some(raw_arg) = resolved.windows_raw_arg.as_ref() {
++            command.raw_arg(raw_arg);
++        }
+         command.creation_flags(CREATE_NO_WINDOW);
+     }
+ 
+     let start = Instant::now();
+-    let mut child = command
+-        .spawn()
+-        .with_context(|| format!("failed to spawn '{}'", argv[0]))?;
++    let mut child = command.spawn().with_context(|| {
++        format!(
++            "failed to spawn resolved executable '{}' for '{}'",
++            resolved.audited_executable.display(),
++            argv[0]
++        )
++    })?;
++    if let Some(input) = stdin {
++        let mut child_stdin = child
++            .stdin
++            .take()
++            .ok_or_else(|| anyhow!("missing stdin pipe"))?;
++        child_stdin.write_all(input)?;
++    }
+     #[cfg(unix)]
+     let pid = child.id();
+ 
+@@ -211,7 +242,7 @@ fn decode_capture(capture: CaptureBytes) -> CapturedStream {
+         };
+     }
+ 
+-    let (text, encoding) = decode_text(&capture.bytes);
++    let (text, encoding) = decode_output_bytes(&capture.bytes);
+     CapturedStream {
+         bytes: capture.bytes,
+         raw_bytes: capture.raw_bytes,
+@@ -222,7 +253,7 @@ fn decode_capture(capture: CaptureBytes) -> CapturedStream {
+     }
+ }
+ 
+-fn decode_text(bytes: &[u8]) -> (String, String) {
++pub(crate) fn decode_output_bytes(bytes: &[u8]) -> (String, String) {
+     let bytes = bytes.strip_prefix(&[0xEF, 0xBB, 0xBF]).unwrap_or(bytes);
+     if let Ok(text) = std::str::from_utf8(bytes) {
+         return (text.to_string(), "utf-8".into());
+@@ -289,15 +320,23 @@ pub fn normalize_preview(text: &str) -> String {
+ }
+ 
+ #[cfg(windows)]
+-struct WindowsJob {
++pub(crate) struct WindowsJob {
+     handle: windows_sys::Win32::Foundation::HANDLE,
+ }
+ 
+ #[cfg(windows)]
+ impl WindowsJob {
+-    fn attach(child: &std::process::Child, limits: &ExecLimits) -> Result<Self> {
+-        use std::mem::{size_of, zeroed};
++    pub(crate) fn attach(child: &std::process::Child, limits: &ExecLimits) -> Result<Self> {
+         use std::os::windows::io::AsRawHandle;
++
++        Self::attach_handle(child.as_raw_handle(), limits)
++    }
++
++    pub(crate) fn attach_handle(
++        process_handle: std::os::windows::io::RawHandle,
++        limits: &ExecLimits,
++    ) -> Result<Self> {
++        use std::mem::{size_of, zeroed};
+         use windows_sys::Win32::Foundation::CloseHandle;
+         use windows_sys::Win32::System::JobObjects::*;
+ 
+@@ -327,7 +366,7 @@ impl WindowsJob {
+             unsafe { CloseHandle(handle) };
+             return Err(anyhow!("E_EXEC_JOB: SetInformationJobObject failed"));
+         }
+-        let assigned = unsafe { AssignProcessToJobObject(handle, child.as_raw_handle()) };
++        let assigned = unsafe { AssignProcessToJobObject(handle, process_handle) };
+         if assigned == 0 {
+             unsafe { CloseHandle(handle) };
+             return Err(anyhow!("E_EXEC_JOB: AssignProcessToJobObject failed"));
+@@ -335,14 +374,26 @@ impl WindowsJob {
+         Ok(Self { handle })
+     }
+ 
+-    fn terminate(&self) {
++    pub(crate) fn terminate(&self) {
++        let _ = self.terminate_checked();
++    }
++
++    pub(crate) fn terminate_checked(&self) -> Result<()> {
+         use windows_sys::Win32::System::JobObjects::TerminateJobObject;
+-        unsafe {
+-            TerminateJobObject(self.handle, 1);
++        if unsafe { TerminateJobObject(self.handle, 1) } == 0 {
++            Err(anyhow!("E_EXEC_JOB: TerminateJobObject failed"))
++        } else {
++            Ok(())
+         }
+     }
+ }
+ 
++#[cfg(windows)]
++unsafe impl Send for WindowsJob {}
++
++#[cfg(windows)]
++unsafe impl Sync for WindowsJob {}
++
+ #[cfg(windows)]
+ impl Drop for WindowsJob {
+     fn drop(&mut self) {
+diff --git a/src/server.rs b/src/server.rs
+index ec64e9d..2507695 100644
+--- a/src/server.rs
++++ b/src/server.rs
+@@ -328,6 +328,7 @@ async fn serve_stdio(runtime: SharedRuntime, use_scheduler: bool) -> Result<()>
+     if let Some(s) = scheduler::global_scheduler() {
+         s.shutdown();
+     }
++    crate::process_lifecycle::shutdown();
+     eprintln!("[ae-serve] server stopped");
+     Ok(())
+ }
+diff --git a/tests/operation_protocol_tests.rs b/tests/operation_protocol_tests.rs
+index 6046e01..1663658 100644
+--- a/tests/operation_protocol_tests.rs
++++ b/tests/operation_protocol_tests.rs
+@@ -92,6 +92,10 @@ fn runtime_handshake_is_registered_and_reports_enforced_allow_list() {
+     assert!(response["data"]["operation_catalog"]["digest"]
+         .as_str()
+         .is_some_and(|digest| digest.starts_with("sha256:")));
++    assert_eq!(response["data"]["operation_catalog"]["count"], 31);
++    assert!(response["data"]["features"]
++        .as_array()
++        .is_some_and(|features| features.contains(&json!("process_lifecycle"))));
+     let _ = std::fs::remove_dir_all(workspace);
+ }
+ #[test]
+diff --git a/src/ops/process_ops.rs b/src/ops/process_ops.rs
+new file mode 100644
+index 0000000..8e7a940
+--- /dev/null
++++ b/src/ops/process_ops.rs
+@@ -0,0 +1,173 @@
++//! Typed lifecycle operations for VerseShell-owned local processes.
++
++use crate::operation::OperationSpec;
++use serde_json::{json, Value};
++
++pub fn specs() -> Vec<OperationSpec> {
++    vec![
++        OperationSpec {
++            name: "process.start",
++            mcp_name: "process_start",
++            description: "Start an approved argv process owned by this runtime and return its scoped lifecycle identity.",
++            effect: "process.spawn",
++            capability: "shell.exec",
++            input_schema: start_schema,
++            handler: crate::process_lifecycle::execute_start,
++        },
++        OperationSpec {
++            name: "process.poll",
++            mcp_name: "process_poll",
++            description: "Read bounded process output from a monotonic byte cursor and observe lifecycle state.",
++            effect: "process.read",
++            capability: "shell.exec",
++            input_schema: poll_schema,
++            handler: crate::process_lifecycle::execute_poll,
++        },
++        OperationSpec {
++            name: "process.write",
++            mcp_name: "process_write",
++            description: "Write bounded input or EOF to an owned pipe or PTY process.",
++            effect: "process.write",
++            capability: "shell.exec",
++            input_schema: write_schema,
++            handler: crate::process_lifecycle::execute_write,
++        },
++        OperationSpec {
++            name: "process.kill",
++            mcp_name: "process_kill",
++            description: "Idempotently terminate an owned process tree and observe the converged state.",
++            effect: "process.kill",
++            capability: "shell.exec",
++            input_schema: kill_schema,
++            handler: crate::process_lifecycle::execute_kill,
++        },
++        OperationSpec {
++            name: "process.list",
++            mcp_name: "process_list",
++            description: "List lifecycle records scoped to one runtime, agent, session, and workspace.",
++            effect: "process.read",
++            capability: "shell.exec",
++            input_schema: list_schema,
++            handler: crate::process_lifecycle::execute_list,
++        },
++    ]
++}
++
++fn owner_properties() -> Value {
++    json!({
++        "process_id": {"type": "string"},
++        "runtime_id": {"type": "string"},
++        "agent_id": {"type": "string"},
++        "session_id": {"type": "string"}
++    })
++}
++
++fn start_schema() -> Value {
++    json!({
++        "type": "object",
++        "additionalProperties": false,
++        "required": ["argv", "agent_id", "session_id"],
++        "properties": {
++            "argv": {"type": "array", "items": {"type": "string"}, "minItems": 1},
++            "cwd": {"type": "string", "default": "."},
++            "agent_id": {"type": "string"},
++            "session_id": {"type": "string"},
++            "env": {"type": "object", "additionalProperties": {"type": "string"}},
++            "stdin_mode": {"type": "string", "enum": ["null", "pipe"], "default": "null"},
++            "stdin": {"type": "string"},
++            "stdin_encoding": {"type": "string", "enum": ["utf8", "base64"], "default": "utf8"},
++            "stdin_eof": {"type": "boolean", "default": false},
++            "pty": {"type": "boolean", "default": false},
++            "cols": {"type": "integer", "minimum": 1, "default": 120},
++            "rows": {"type": "integer", "minimum": 1, "default": 30},
++            "timeout_ms": {"type": "integer", "minimum": 0},
++            "max_output_bytes": {"type": "integer", "minimum": 1, "default": 67108864},
++            "max_memory_mb": {"type": "integer", "minimum": 1},
++            "max_processes": {"type": "integer", "minimum": 1},
++            "wait_ms": {"type": "integer", "minimum": 0, "default": 0}
++        }
++    })
++}
++
++fn poll_schema() -> Value {
++    let mut properties = owner_properties();
++    let object = properties
++        .as_object_mut()
++        .expect("owner properties are an object");
++    object.insert(
++        "cursor".into(),
++        json!({"type": "integer", "minimum": 0, "default": 0}),
++    );
++    object.insert(
++        "max_bytes".into(),
++        json!({"type": "integer", "minimum": 1, "default": 65536}),
++    );
++    object.insert(
++        "wait_ms".into(),
++        json!({"type": "integer", "minimum": 0, "default": 0}),
++    );
++    json!({
++        "type": "object",
++        "additionalProperties": false,
++        "required": ["process_id", "runtime_id", "agent_id", "session_id"],
++        "properties": properties
++    })
++}
++
++fn write_schema() -> Value {
++    let mut properties = owner_properties();
++    let object = properties
++        .as_object_mut()
++        .expect("owner properties are an object");
++    object.insert("data".into(), json!({"type": "string", "default": ""}));
++    object.insert(
++        "encoding".into(),
++        json!({"type": "string", "enum": ["utf8", "base64"], "default": "utf8"}),
++    );
++    object.insert(
++        "submit".into(),
++        json!({"type": "boolean", "default": false}),
++    );
++    object.insert("eof".into(), json!({"type": "boolean", "default": false}));
++    json!({
++        "type": "object",
++        "additionalProperties": false,
++        "required": ["process_id", "runtime_id", "agent_id", "session_id"],
++        "properties": properties
++    })
++}
++
++fn kill_schema() -> Value {
++    let mut properties = owner_properties();
++    let object = properties
++        .as_object_mut()
++        .expect("owner properties are an object");
++    object.insert(
++        "reason".into(),
++        json!({"type": "string", "default": "manual_cancel"}),
++    );
++    object.insert(
++        "wait_ms".into(),
++        json!({"type": "integer", "minimum": 0, "default": 2000}),
++    );
++    json!({
++        "type": "object",
++        "additionalProperties": false,
++        "required": ["process_id", "runtime_id", "agent_id", "session_id"],
++        "properties": properties
++    })
++}
++
++fn list_schema() -> Value {
++    json!({
++        "type": "object",
++        "additionalProperties": false,
++        "required": ["runtime_id", "agent_id", "session_id"],
++        "properties": {
++            "runtime_id": {"type": "string"},
++            "agent_id": {"type": "string"},
++            "session_id": {"type": "string"},
++            "include_terminal": {"type": "boolean", "default": false}
++        }
++    })
++}
+diff --git a/src/process_command.rs b/src/process_command.rs
+new file mode 100644
+index 0000000..5d6bf68
+--- /dev/null
++++ b/src/process_command.rs
+@@ -0,0 +1,248 @@
++//! Approved argv and environment resolution shared by synchronous and lifecycle execution.
++
++use anyhow::{anyhow, Context, Result};
++use std::collections::BTreeMap;
++use std::ffi::{OsStr, OsString};
++use std::path::{Path, PathBuf};
++use std::process::Command;
++
++#[derive(Debug, Clone)]
++pub struct ResolvedProcessCommand {
++    pub executable: PathBuf,
++    pub args: Vec<String>,
++    #[cfg(windows)]
++    pub windows_raw_arg: Option<String>,
++    pub audited_executable: PathBuf,
++    pub interpreter: Option<PathBuf>,
++}
++
++pub fn resolve_process_command(
++    argv: &[String],
++    cwd: &Path,
++    env: Option<&BTreeMap<String, String>>,
++) -> Result<ResolvedProcessCommand> {
++    let program = argv
++        .first()
++        .filter(|value| !value.is_empty())
++        .ok_or_else(|| anyhow!("E_EXEC_BAD_ARG: argv must contain a program"))?;
++    if program.contains('\0') || argv.iter().any(|arg| arg.contains(['\r', '\n', '\0'])) {
++        return Err(anyhow!(
++            "E_EXEC_BAD_ARG: argv contains a forbidden control character"
++        ));
++    }
++
++    let resolved = resolve_executable(program, cwd, env)?;
++    #[cfg(windows)]
++    if is_batch_script(&resolved) {
++        let interpreter = resolve_cmd(env)?;
++        let command_line = batch_command_line(&windows_process_path(&resolved), &argv[1..])?;
++        return Ok(ResolvedProcessCommand {
++            executable: interpreter.clone(),
++            args: vec!["/D".into(), "/S".into(), "/C".into()],
++            windows_raw_arg: Some(command_line),
++            audited_executable: resolved,
++            interpreter: Some(interpreter),
++        });
++    }
++
++    Ok(ResolvedProcessCommand {
++        executable: resolved.clone(),
++        args: argv[1..].to_vec(),
++        #[cfg(windows)]
++        windows_raw_arg: None,
++        audited_executable: resolved,
++        interpreter: None,
++    })
++}
++
++#[cfg(windows)]
++pub(crate) fn windows_process_path(path: &Path) -> PathBuf {
++    let value = path.to_string_lossy();
++    if let Some(rest) = value.strip_prefix(r"\\?\UNC\") {
++        PathBuf::from(format!(r"\\{rest}"))
++    } else if let Some(rest) = value.strip_prefix(r"\\?\") {
++        PathBuf::from(rest)
++    } else {
++        path.to_path_buf()
++    }
++}
++
++pub fn configure_command_environment(
++    command: &mut Command,
++    env: Option<&BTreeMap<String, String>>,
++) {
++    if let Some(env) = env {
++        command.env_clear();
++        command.envs(env);
++    }
++}
++
++fn resolve_executable(
++    program: &str,
++    cwd: &Path,
++    env: Option<&BTreeMap<String, String>>,
++) -> Result<PathBuf> {
++    let input = Path::new(program);
++    if input.is_absolute() || has_path_separator(program) {
++        let candidate = if input.is_absolute() {
++            input.to_path_buf()
++        } else {
++            cwd.join(input)
++        };
++        return resolve_candidate(candidate, env)
++            .with_context(|| format!("E_EXEC_NOT_FOUND: executable '{program}' was not found"));
++    }
++
++    let path_value = env_value(env, "PATH")
++        .map(OsString::from)
++        .or_else(|| std::env::var_os("PATH"))
++        .unwrap_or_default();
++    for directory in std::env::split_paths(&path_value) {
++        if let Ok(candidate) = resolve_candidate(directory.join(program), env) {
++            return Ok(candidate);
++        }
++    }
++    Err(anyhow!(
++        "E_EXEC_NOT_FOUND: executable '{}' was not found on PATH",
++        program
++    ))
++}
++
++fn resolve_candidate(
++    candidate: PathBuf,
++    env: Option<&BTreeMap<String, String>>,
++) -> Result<PathBuf> {
++    if candidate.is_file() {
++        return canonical_identity(candidate);
++    }
++    #[cfg(windows)]
++    if candidate.extension().is_none() {
++        for extension in windows_extensions(env) {
++            let mut value = candidate.as_os_str().to_os_string();
++            value.push(extension);
++            let with_extension = PathBuf::from(value);
++            if with_extension.is_file() {
++                return canonical_identity(with_extension);
++            }
++        }
++    }
++    Err(anyhow!("candidate is not an executable file"))
++}
++
++fn canonical_identity(path: PathBuf) -> Result<PathBuf> {
++    path.canonicalize()
++        .with_context(|| format!("failed to canonicalize executable '{}'", path.display()))
++}
++
++fn has_path_separator(value: &str) -> bool {
++    value.contains('/') || value.contains('\\')
++}
++
++fn env_value<'a>(env: Option<&'a BTreeMap<String, String>>, key: &str) -> Option<&'a str> {
++    env?.iter()
++        .find(|(name, _)| name.eq_ignore_ascii_case(key))
++        .map(|(_, value)| value.as_str())
++}
++
++#[cfg(windows)]
++fn windows_extensions(env: Option<&BTreeMap<String, String>>) -> Vec<String> {
++    let value = env_value(env, "PATHEXT")
++        .map(str::to_owned)
++        .or_else(|| std::env::var("PATHEXT").ok())
++        .unwrap_or_else(|| ".COM;.EXE;.BAT;.CMD".into());
++    value
++        .split(';')
++        .filter_map(|extension| {
++            let extension = extension.trim();
++            if extension.is_empty() {
++                None
++            } else if extension.starts_with('.') {
++                Some(extension.to_ascii_lowercase())
++            } else {
++                Some(format!(".{extension}").to_ascii_lowercase())
++            }
++        })
++        .collect()
++}
++
++#[cfg(windows)]
++fn is_batch_script(path: &Path) -> bool {
++    path.extension()
++        .and_then(OsStr::to_str)
++        .is_some_and(|extension| matches!(extension.to_ascii_lowercase().as_str(), "cmd" | "bat"))
++}
++
++#[cfg(windows)]
++fn resolve_cmd(env: Option<&BTreeMap<String, String>>) -> Result<PathBuf> {
++    if let Some(comspec) = env_value(env, "ComSpec") {
++        let candidate = PathBuf::from(comspec);
++        if candidate.is_file() {
++            return canonical_identity(candidate);
++        }
++    }
++    let system_root = env_value(env, "SystemRoot")
++        .map(str::to_owned)
++        .or_else(|| std::env::var("SystemRoot").ok())
++        .ok_or_else(|| {
++            anyhow!("E_EXEC_NOT_FOUND: SystemRoot is unavailable for batch execution")
++        })?;
++    resolve_candidate(
++        PathBuf::from(system_root).join("System32").join("cmd.exe"),
++        env,
++    )
++}
++
++#[cfg(windows)]
++fn batch_command_line(script: &Path, args: &[String]) -> Result<String> {
++    if args.iter().any(|arg| arg.contains(['%', '!'])) {
++        return Err(anyhow!(
++            "E_EXEC_BAD_ARG: percent and delayed-expansion tokens are not accepted for batch argv"
++        ));
++    }
++    let mut tokens = Vec::with_capacity(args.len() + 1);
++    tokens.push(quote_cmd_token(&script.to_string_lossy()));
++    tokens.extend(args.iter().map(|arg| quote_cmd_token(arg)));
++    Ok(format!("\"{}\"", tokens.join(" ")))
++}
++
++#[cfg(windows)]
++fn quote_cmd_token(value: &str) -> String {
++    let escaped = value.replace('"', "\"\"");
++    format!("\"{escaped}\"")
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn rejects_control_characters_before_resolution() {
++        let result = resolve_process_command(&["tool\nname".into()], Path::new("."), None);
++        assert!(result
++            .unwrap_err()
++            .to_string()
++            .contains("forbidden control"));
++    }
++
++    #[cfg(windows)]
++    #[test]
++    fn resolves_pathext_case_insensitively() {
++        let root =
++            std::env::temp_dir().join(format!("verseshell-resolve-{}", uuid::Uuid::new_v4()));
++        std::fs::create_dir_all(&root).unwrap();
++        let executable = root.join("sample.CMD");
++        std::fs::write(&executable, "@echo ok\r\n").unwrap();
++        let env = BTreeMap::from([
++            ("Path".into(), root.to_string_lossy().to_string()),
++            ("PathExt".into(), ".EXE;.CMD".into()),
++            ("SystemRoot".into(), std::env::var("SystemRoot").unwrap()),
++        ]);
++        let resolved = resolve_process_command(&["sample".into()], &root, Some(&env)).unwrap();
++        assert_eq!(
++            resolved.audited_executable,
++            executable.canonicalize().unwrap()
++        );
++        assert!(resolved.interpreter.is_some());
++        let _ = std::fs::remove_dir_all(root);
++    }
++}
+diff --git a/src/process_lifecycle_windows.rs b/src/process_lifecycle_windows.rs
+new file mode 100644
+index 0000000..57ca514
+--- /dev/null
++++ b/src/process_lifecycle_windows.rs
+@@ -0,0 +1,366 @@
++//! Windows ConPTY process creation without a shell or third-party PTY wrapper.
++
++use crate::process_command::ResolvedProcessCommand;
++use crate::process_lifecycle::ExitStatusValue;
++use crate::process_runner::{ExecLimits, WindowsJob};
++use anyhow::{anyhow, Result};
++use std::collections::BTreeMap;
++use std::ffi::c_void;
++use std::fs::File;
++use std::mem::{size_of, zeroed};
++use std::os::windows::ffi::OsStrExt;
++use std::os::windows::io::{FromRawHandle, RawHandle};
++use std::path::Path;
++use std::ptr::{null, null_mut};
++use std::sync::Arc;
++use windows_sys::Win32::Foundation::{
++    CloseHandle, GetLastError, SetHandleInformation, HANDLE, HANDLE_FLAG_INHERIT, WAIT_OBJECT_0,
++    WAIT_TIMEOUT,
++};
++use windows_sys::Win32::Security::SECURITY_ATTRIBUTES;
++use windows_sys::Win32::System::Console::{ClosePseudoConsole, CreatePseudoConsole, COORD, HPCON};
++use windows_sys::Win32::System::Pipes::CreatePipe;
++use windows_sys::Win32::System::Threading::{
++    CreateProcessW, DeleteProcThreadAttributeList, GetExitCodeProcess,
++    InitializeProcThreadAttributeList, ResumeThread, TerminateProcess, UpdateProcThreadAttribute,
++    WaitForSingleObject, CREATE_SUSPENDED, CREATE_UNICODE_ENVIRONMENT,
++    EXTENDED_STARTUPINFO_PRESENT, PROCESS_INFORMATION, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
++    STARTF_USESTDHANDLES, STARTUPINFOEXW,
++};
++
++pub(crate) struct SpawnedConPty {
++    pub process: WindowsPtyProcess,
++    pub stdin: File,
++    pub stdout: File,
++    pub job: Arc<WindowsJob>,
++    pub pid: u32,
++}
++
++pub(crate) struct WindowsPtyProcess {
++    process: HANDLE,
++    pseudo_console: Option<HPCON>,
++}
++
++unsafe impl Send for WindowsPtyProcess {}
++
++impl WindowsPtyProcess {
++    pub(crate) fn try_wait(&mut self) -> std::io::Result<Option<ExitStatusValue>> {
++        let result = unsafe { WaitForSingleObject(self.process, 0) };
++        if result == WAIT_TIMEOUT {
++            return Ok(None);
++        }
++        if result != WAIT_OBJECT_0 {
++            return Err(std::io::Error::last_os_error());
++        }
++        let mut code = 0u32;
++        if unsafe { GetExitCodeProcess(self.process, &mut code) } == 0 {
++            return Err(std::io::Error::last_os_error());
++        }
++        self.close_pseudo_console();
++        Ok(Some(ExitStatusValue { code: code as i32 }))
++    }
++
++    fn close_pseudo_console(&mut self) {
++        if let Some(handle) = self.pseudo_console.take() {
++            unsafe { ClosePseudoConsole(handle) };
++        }
++    }
++}
++
++impl Drop for WindowsPtyProcess {
++    fn drop(&mut self) {
++        self.close_pseudo_console();
++        if !self.process.is_null() {
++            unsafe { CloseHandle(self.process) };
++        }
++    }
++}
++
++struct AttributeList {
++    storage: Vec<u8>,
++}
++
++impl AttributeList {
++    fn new(pseudo_console: HPCON) -> Result<Self> {
++        let mut bytes = 0usize;
++        unsafe {
++            InitializeProcThreadAttributeList(null_mut(), 1, 0, &mut bytes);
++        }
++        if bytes == 0 {
++            return Err(last_error("InitializeProcThreadAttributeList(size)"));
++        }
++        let mut storage = vec![0u8; bytes];
++        let list = storage.as_mut_ptr().cast();
++        if unsafe { InitializeProcThreadAttributeList(list, 1, 0, &mut bytes) } == 0 {
++            return Err(last_error("InitializeProcThreadAttributeList"));
++        }
++        let updated = unsafe {
++            UpdateProcThreadAttribute(
++                list,
++                0,
++                PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE as usize,
++                pseudo_console as *const c_void,
++                size_of::<HPCON>(),
++                null_mut(),
++                null(),
++            )
++        };
++        if updated == 0 {
++            unsafe { DeleteProcThreadAttributeList(list) };
++            return Err(last_error("UpdateProcThreadAttribute(PSEUDOCONSOLE)"));
++        }
++        Ok(Self { storage })
++    }
++
++    fn as_mut_ptr(
++        &mut self,
++    ) -> windows_sys::Win32::System::Threading::LPPROC_THREAD_ATTRIBUTE_LIST {
++        self.storage.as_mut_ptr().cast()
++    }
++}
++
++impl Drop for AttributeList {
++    fn drop(&mut self) {
++        if !self.storage.is_empty() {
++            unsafe { DeleteProcThreadAttributeList(self.as_mut_ptr()) };
++        }
++    }
++}
++
++pub(crate) fn spawn_conpty(
++    resolved: &ResolvedProcessCommand,
++    cwd: &Path,
++    env: Option<&BTreeMap<String, String>>,
++    cols: u16,
++    rows: u16,
++    limits: &ExecLimits,
++) -> Result<SpawnedConPty> {
++    let mut input_read: HANDLE = null_mut();
++    let mut input_write: HANDLE = null_mut();
++    let mut output_read: HANDLE = null_mut();
++    let mut output_write: HANDLE = null_mut();
++    let mut security: SECURITY_ATTRIBUTES = unsafe { zeroed() };
++    security.nLength = size_of::<SECURITY_ATTRIBUTES>() as u32;
++    security.bInheritHandle = 1;
++
++    if unsafe { CreatePipe(&mut input_read, &mut input_write, &security, 0) } == 0 {
++        return Err(last_error("CreatePipe(ConPTY input)"));
++    }
++    if unsafe { CreatePipe(&mut output_read, &mut output_write, &security, 0) } == 0 {
++        close_handle(input_read);
++        close_handle(input_write);
++        return Err(last_error("CreatePipe(ConPTY output)"));
++    }
++    if unsafe { SetHandleInformation(input_write, HANDLE_FLAG_INHERIT, 0) } == 0
++        || unsafe { SetHandleInformation(output_read, HANDLE_FLAG_INHERIT, 0) } == 0
++    {
++        close_handle(input_read);
++        close_handle(input_write);
++        close_handle(output_read);
++        close_handle(output_write);
++        return Err(last_error("SetHandleInformation(ConPTY)"));
++    }
++
++    let mut pseudo_console: HPCON = 0;
++    let hr = unsafe {
++        CreatePseudoConsole(
++            COORD {
++                X: cols as i16,
++                Y: rows as i16,
++            },
++            input_read,
++            output_write,
++            0,
++            &mut pseudo_console,
++        )
++    };
++    if hr < 0 {
++        close_handle(input_read);
++        close_handle(input_write);
++        close_handle(output_read);
++        close_handle(output_write);
++        return Err(anyhow!(
++            "E_PROCESS_PTY: CreatePseudoConsole failed with HRESULT 0x{hr:08x}"
++        ));
++    }
++
++    let mut attributes = match AttributeList::new(pseudo_console) {
++        Ok(attributes) => attributes,
++        Err(error) => {
++            unsafe { ClosePseudoConsole(pseudo_console) };
++            close_handle(input_read);
++            close_handle(input_write);
++            close_handle(output_read);
++            close_handle(output_write);
++            return Err(error.context("E_PROCESS_PTY"));
++        }
++    };
++    let mut startup: STARTUPINFOEXW = unsafe { zeroed() };
++    startup.StartupInfo.cb = size_of::<STARTUPINFOEXW>() as u32;
++    startup.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
++    startup.StartupInfo.hStdInput = null_mut();
++    startup.StartupInfo.hStdOutput = null_mut();
++    startup.StartupInfo.hStdError = null_mut();
++    startup.lpAttributeList = attributes.as_mut_ptr();
++
++    let application = wide_null(resolved.executable.as_os_str());
++    let mut command_line = command_line(resolved);
++    let process_cwd = crate::process_command::windows_process_path(cwd);
++    let current_directory = wide_null(process_cwd.as_os_str());
++    let environment = env.map(environment_block);
++    let environment_ptr = environment
++        .as_ref()
++        .map(|block| block.as_ptr().cast::<c_void>())
++        .unwrap_or(null());
++    let mut process_info: PROCESS_INFORMATION = unsafe { zeroed() };
++    let created = unsafe {
++        CreateProcessW(
++            application.as_ptr(),
++            command_line.as_mut_ptr(),
++            null(),
++            null(),
++            0,
++            EXTENDED_STARTUPINFO_PRESENT | CREATE_UNICODE_ENVIRONMENT | CREATE_SUSPENDED,
++            environment_ptr,
++            current_directory.as_ptr(),
++            &startup.StartupInfo,
++            &mut process_info,
++        )
++    };
++    drop(attributes);
++    close_handle(input_read);
++    close_handle(output_write);
++    if created == 0 {
++        unsafe { ClosePseudoConsole(pseudo_console) };
++        close_handle(input_write);
++        close_handle(output_read);
++        return Err(last_error("E_PROCESS_PTY: CreateProcessW"));
++    }
++
++    let job = match WindowsJob::attach_handle(process_info.hProcess as RawHandle, limits) {
++        Ok(job) => Arc::new(job),
++        Err(error) => {
++            unsafe { TerminateProcess(process_info.hProcess, 1) };
++            close_handle(process_info.hThread);
++            close_handle(process_info.hProcess);
++            unsafe { ClosePseudoConsole(pseudo_console) };
++            close_handle(input_write);
++            close_handle(output_read);
++            return Err(error.context("E_PROCESS_JOB"));
++        }
++    };
++    if unsafe { ResumeThread(process_info.hThread) } == u32::MAX {
++        let error = last_error("E_PROCESS_PTY: ResumeThread");
++        job.terminate();
++        close_handle(process_info.hThread);
++        close_handle(process_info.hProcess);
++        unsafe { ClosePseudoConsole(pseudo_console) };
++        close_handle(input_write);
++        close_handle(output_read);
++        return Err(error);
++    }
++    close_handle(process_info.hThread);
++
++    let stdin = unsafe { File::from_raw_handle(input_write as RawHandle) };
++    let stdout = unsafe { File::from_raw_handle(output_read as RawHandle) };
++    Ok(SpawnedConPty {
++        process: WindowsPtyProcess {
++            process: process_info.hProcess,
++            pseudo_console: Some(pseudo_console),
++        },
++        stdin,
++        stdout,
++        job,
++        pid: process_info.dwProcessId,
++    })
++}
++
++fn command_line(resolved: &ResolvedProcessCommand) -> Vec<u16> {
++    let executable = resolved.executable.to_string_lossy();
++    let mut text = quote_windows_arg(&executable);
++    for arg in &resolved.args {
++        text.push(' ');
++        text.push_str(&quote_windows_arg(arg));
++    }
++    if let Some(raw_arg) = resolved.windows_raw_arg.as_ref() {
++        text.push(' ');
++        text.push_str(raw_arg);
++    }
++    text.encode_utf16().chain(Some(0)).collect()
++}
++
++fn quote_windows_arg(value: &str) -> String {
++    if !value.is_empty()
++        && !value
++            .chars()
++            .any(|character| character.is_whitespace() || character == '"')
++    {
++        return value.to_string();
++    }
++    let mut output = String::from("\"");
++    let mut backslashes = 0usize;
++    for character in value.chars() {
++        if character == '\\' {
++            backslashes += 1;
++            continue;
++        }
++        if character == '"' {
++            output.extend(std::iter::repeat('\\').take(backslashes * 2 + 1));
++            output.push('"');
++        } else {
++            output.extend(std::iter::repeat('\\').take(backslashes));
++            output.push(character);
++        }
++        backslashes = 0;
++    }
++    output.extend(std::iter::repeat('\\').take(backslashes * 2));
++    output.push('"');
++    output
++}
++
++fn environment_block(env: &BTreeMap<String, String>) -> Vec<u16> {
++    let mut entries: Vec<_> = env.iter().collect();
++    entries.sort_by(|(left, _), (right, _)| {
++        left.to_ascii_lowercase()
++            .cmp(&right.to_ascii_lowercase())
++            .then_with(|| left.cmp(right))
++    });
++    let mut block = Vec::new();
++    for (key, value) in entries {
++        block.extend(format!("{key}={value}").encode_utf16());
++        block.push(0);
++    }
++    block.push(0);
++    block
++}
++
++fn wide_null(value: &std::ffi::OsStr) -> Vec<u16> {
++    value.encode_wide().chain(Some(0)).collect()
++}
++
++fn close_handle(handle: HANDLE) {
++    if !handle.is_null() {
++        unsafe { CloseHandle(handle) };
++    }
++}
++
++fn last_error(context: &str) -> anyhow::Error {
++    let code = unsafe { GetLastError() };
++    anyhow!("E_PROCESS_WIN32: {context} failed with Win32 error {code}")
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn quotes_windows_arguments_without_losing_trailing_backslashes() {
++        assert_eq!(quote_windows_arg("plain"), "plain");
++        assert_eq!(quote_windows_arg("two words"), "\"two words\"");
++        assert_eq!(
++            quote_windows_arg("C:\\path with space\\"),
++            "\"C:\\path with space\\\\\""
++        );
++        assert_eq!(quote_windows_arg("a\"b"), "\"a\\\"b\"");
++    }
++}
+diff --git a/src/process_lifecycle.rs b/src/process_lifecycle.rs
+new file mode 100644
+index 0000000..d3a48c7
+--- /dev/null
++++ b/src/process_lifecycle.rs
+@@ -0,0 +1,1532 @@
++//! Stateful, bounded process lifecycle owned by the long-running ACI runtime.
++
++use crate::artifact::{display_path, ArtifactStore};
++use crate::operation::{safety_error_to_observation, Observation, OperationRequest};
++use crate::process_command::{resolve_process_command, ResolvedProcessCommand};
++#[cfg(windows)]
++use crate::process_runner::WindowsJob;
++use crate::process_runner::{ExecLimits, DEFAULT_MAX_OUTPUT_BYTES};
++use crate::safety::{self, Effect, GuardCtx};
++use anyhow::{anyhow, Context, Result};
++use base64::Engine;
++use lazy_static::lazy_static;
++use serde::{Deserialize, Serialize};
++use serde_json::{json, Value};
++use sha2::{Digest, Sha256};
++use std::collections::{BTreeMap, HashMap, VecDeque};
++use std::fs::{self, OpenOptions};
++use std::io::{Read, Write};
++use std::path::{Path, PathBuf};
++use std::process::{Child, Command, ExitStatus, Stdio};
++use std::sync::{Arc, Condvar, Mutex};
++use std::thread;
++use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
++
++const DEFAULT_RETENTION_MS: u64 = 24 * 60 * 60 * 1_000;
++const DEFAULT_POLL_BYTES: usize = 64 * 1024;
++const MAX_POLL_BYTES: usize = 256 * 1024;
++const MAX_ENV_ENTRIES: usize = 512;
++const MAX_ENV_BYTES: usize = 256 * 1024;
++const MAX_STDIN_BYTES: usize = 1024 * 1024;
++const MAX_WAIT_MS: u64 = 30_000;
++
++lazy_static! {
++    static ref MANAGER: Mutex<Option<Arc<LifecycleManager>>> = Mutex::new(None);
++}
++
++#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
++#[serde(rename_all = "snake_case")]
++pub enum LifecycleState {
++    Starting,
++    Running,
++    Exited,
++    Killed,
++    Lost,
++}
++
++impl LifecycleState {
++    fn terminal(self) -> bool {
++        matches!(self, Self::Exited | Self::Killed | Self::Lost)
++    }
++}
++
++#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
++struct ProcessOwner {
++    runtime_id: String,
++    workspace_id: String,
++    agent_id: String,
++    session_id: String,
++}
++
++#[derive(Debug, Clone, Serialize, Deserialize)]
++struct ArtifactLineage {
++    stream: String,
++    handle: String,
++    retained_bytes: u64,
++    raw_bytes: u64,
++}
++
++#[derive(Debug, Clone, Serialize, Deserialize)]
++struct DurableRecord {
++    process_id: String,
++    owner: ProcessOwner,
++    state: LifecycleState,
++    pid: u32,
++    argv: Vec<String>,
++    cwd: String,
++    executable: String,
++    interpreter: Option<String>,
++    mode: String,
++    stdin_mode: String,
++    started_at_ms: u64,
++    updated_at_ms: u64,
++    exited_at_ms: Option<u64>,
++    exit_code: Option<i32>,
++    termination_reason: Option<String>,
++    timed_out: bool,
++    max_output_bytes: usize,
++    retention_expires_at_ms: u64,
++    artifacts: Vec<ArtifactLineage>,
++}
++
++#[derive(Debug, Deserialize)]
++struct PersistedOutputChunk {
++    start_cursor: u64,
++    end_cursor: u64,
++    stream: String,
++    data_base64: String,
++}
++
++#[derive(Debug, Clone)]
++struct OutputChunk {
++    start_cursor: u64,
++    end_cursor: u64,
++    stream: &'static str,
++    bytes: Vec<u8>,
++}
++
++struct OutputLog {
++    chunks: VecDeque<OutputChunk>,
++    retained_start_cursor: u64,
++    next_cursor: u64,
++    retained_bytes: usize,
++    max_bytes: usize,
++    persist_path: PathBuf,
++    raw_stdout_bytes: u64,
++    raw_stderr_bytes: u64,
++    raw_pty_bytes: u64,
++}
++
++impl OutputLog {
++    fn new(persist_path: PathBuf, max_bytes: usize) -> Self {
++        Self {
++            chunks: VecDeque::new(),
++            retained_start_cursor: 0,
++            next_cursor: 0,
++            retained_bytes: 0,
++            max_bytes,
++            persist_path,
++            raw_stdout_bytes: 0,
++            raw_stderr_bytes: 0,
++            raw_pty_bytes: 0,
++        }
++    }
++
++    fn load(persist_path: PathBuf, max_bytes: usize) -> Self {
++        let mut log = Self::new(persist_path.clone(), max_bytes);
++        let Ok(text) = fs::read_to_string(&persist_path) else {
++            return log;
++        };
++        for line in text.lines() {
++            let Ok(frame) = serde_json::from_str::<PersistedOutputChunk>(line) else {
++                continue;
++            };
++            let Ok(bytes) = base64::engine::general_purpose::STANDARD.decode(frame.data_base64)
++            else {
++                continue;
++            };
++            let stream = match frame.stream.as_str() {
++                "stdout" => "stdout",
++                "stderr" => "stderr",
++                "pty" => "pty",
++                _ => continue,
++            };
++            log.add_raw_bytes(stream, bytes.len() as u64);
++            log.next_cursor = log.next_cursor.max(frame.end_cursor);
++            log.retained_bytes = log.retained_bytes.saturating_add(bytes.len());
++            log.chunks.push_back(OutputChunk {
++                start_cursor: frame.start_cursor,
++                end_cursor: frame.end_cursor,
++                stream,
++                bytes,
++            });
++        }
++        if log.enforce_budget() {
++            log.rewrite_persisted();
++        }
++        log
++    }
++
++    fn append(&mut self, stream: &'static str, bytes: &[u8]) {
++        if bytes.is_empty() {
++            return;
++        }
++        let start_cursor = self.next_cursor;
++        self.next_cursor = self.next_cursor.saturating_add(bytes.len() as u64);
++        let end_cursor = self.next_cursor;
++        self.add_raw_bytes(stream, bytes.len() as u64);
++        let frame = json!({
++            "start_cursor": start_cursor,
++            "end_cursor": end_cursor,
++            "stream": stream,
++            "data_base64": base64::engine::general_purpose::STANDARD.encode(bytes),
++        });
++        if let Some(parent) = self.persist_path.parent() {
++            let _ = fs::create_dir_all(parent);
++        }
++        if let Ok(mut file) = OpenOptions::new()
++            .create(true)
++            .append(true)
++            .open(&self.persist_path)
++        {
++            let _ = writeln!(file, "{frame}");
++            let _ = file.flush();
++        }
++        self.retained_bytes = self.retained_bytes.saturating_add(bytes.len());
++        self.chunks.push_back(OutputChunk {
++            start_cursor,
++            end_cursor,
++            stream,
++            bytes: bytes.to_vec(),
++        });
++        if self.enforce_budget() {
++            self.rewrite_persisted();
++        }
++    }
++
++    fn enforce_budget(&mut self) -> bool {
++        let mut changed = false;
++        while self.retained_bytes > self.max_bytes {
++            let Some(mut front) = self.chunks.pop_front() else {
++                break;
++            };
++            let excess = self.retained_bytes - self.max_bytes;
++            if front.bytes.len() <= excess {
++                changed = true;
++                self.retained_bytes -= front.bytes.len();
++                self.retained_start_cursor = front.end_cursor;
++                continue;
++            }
++            front.bytes.drain(..excess);
++            changed = true;
++            front.start_cursor = front.start_cursor.saturating_add(excess as u64);
++            self.retained_bytes -= excess;
++            self.retained_start_cursor = front.start_cursor;
++            self.chunks.push_front(front);
++            break;
++        }
++        if self.chunks.is_empty() {
++            self.retained_start_cursor = self.next_cursor;
++        }
++        changed
++    }
++
++    fn rewrite_persisted(&self) {
++        let temp = self
++            .persist_path
++            .with_extension(format!("{}.tmp", std::process::id()));
++        let Ok(mut file) = fs::File::create(&temp) else {
++            return;
++        };
++        for chunk in &self.chunks {
++            let frame = json!({
++                "start_cursor": chunk.start_cursor,
++                "end_cursor": chunk.end_cursor,
++                "stream": chunk.stream,
++                "data_base64": base64::engine::general_purpose::STANDARD.encode(&chunk.bytes),
++            });
++            if writeln!(file, "{frame}").is_err() {
++                let _ = fs::remove_file(&temp);
++                return;
++            }
++        }
++        if file.flush().is_ok() {
++            let _ = fs::rename(&temp, &self.persist_path).or_else(|_| {
++                let _ = fs::remove_file(&self.persist_path);
++                fs::rename(&temp, &self.persist_path)
++            });
++        }
++    }
++
++    fn add_raw_bytes(&mut self, stream: &str, bytes: u64) {
++        match stream {
++            "stdout" => self.raw_stdout_bytes = self.raw_stdout_bytes.saturating_add(bytes),
++            "stderr" => self.raw_stderr_bytes = self.raw_stderr_bytes.saturating_add(bytes),
++            "pty" => self.raw_pty_bytes = self.raw_pty_bytes.saturating_add(bytes),
++            _ => {}
++        }
++    }
++
++    fn read(&self, requested_cursor: u64, max_bytes: usize) -> Result<Value> {
++        if requested_cursor > self.next_cursor {
++            return Err(anyhow!(
++                "E_PROCESS_CURSOR: cursor {requested_cursor} exceeds next cursor {}",
++                self.next_cursor
++            ));
++        }
++        let cursor = requested_cursor.max(self.retained_start_cursor);
++        let mut returned = 0usize;
++        let mut chunks = Vec::new();
++        let mut response_cursor = cursor;
++        for chunk in &self.chunks {
++            if chunk.end_cursor <= cursor || returned >= max_bytes {
++                continue;
++            }
++            let offset = cursor.saturating_sub(chunk.start_cursor) as usize;
++            let available = chunk.bytes.len().saturating_sub(offset);
++            let take = available.min(max_bytes - returned);
++            if take == 0 {
++                continue;
++            }
++            let start = chunk.start_cursor.saturating_add(offset as u64);
++            let end = start.saturating_add(take as u64);
++            let (text, encoding) =
++                crate::process_runner::decode_output_bytes(&chunk.bytes[offset..offset + take]);
++            chunks.push(json!({
++                "stream": chunk.stream,
++                "start_cursor": start,
++                "end_cursor": end,
++                "encoding": encoding,
++                "text": text,
++            }));
++            returned += take;
++            response_cursor = end;
++        }
++        Ok(json!({
++            "chunks": chunks,
++            "requested_cursor": requested_cursor,
++            "cursor": response_cursor,
++            "next_cursor": self.next_cursor,
++            "retained_start_cursor": self.retained_start_cursor,
++            "lost_bytes": self.retained_start_cursor.saturating_sub(requested_cursor),
++            "truncated": requested_cursor < self.retained_start_cursor || response_cursor < self.next_cursor,
++            "returned_bytes": returned,
++        }))
++    }
++
++    fn stream_bytes(&self, stream: &str) -> Vec<u8> {
++        let mut bytes = Vec::new();
++        for chunk in &self.chunks {
++            if chunk.stream == stream || (stream == "stdout" && chunk.stream == "pty") {
++                bytes.extend_from_slice(&chunk.bytes);
++            }
++        }
++        bytes
++    }
++
++    fn raw_bytes(&self, stream: &str) -> u64 {
++        match stream {
++            "stdout" => self.raw_stdout_bytes.saturating_add(self.raw_pty_bytes),
++            "stderr" => self.raw_stderr_bytes,
++            "pty" => self.raw_pty_bytes,
++            _ => 0,
++        }
++    }
++}
++
++struct SharedRecord {
++    core: Mutex<DurableRecord>,
++    output: Mutex<OutputLog>,
++    stdin: Mutex<Option<Box<dyn Write + Send>>>,
++    control: Arc<dyn ProcessControl>,
++    changed: Condvar,
++}
++
++trait ProcessControl: Send + Sync {
++    fn terminate(&self) -> Result<()>;
++}
++
++#[cfg(windows)]
++impl ProcessControl for WindowsJob {
++    fn terminate(&self) -> Result<()> {
++        self.terminate_checked()
++    }
++}
++
++#[cfg(unix)]
++struct UnixProcessGroup {
++    pid: i32,
++}
++
++#[cfg(unix)]
++impl ProcessControl for UnixProcessGroup {
++    fn terminate(&self) -> Result<()> {
++        let rc = unsafe { libc::kill(-self.pid, libc::SIGKILL) };
++        if rc == 0 {
++            Ok(())
++        } else {
++            let error = std::io::Error::last_os_error();
++            if error.raw_os_error() == Some(libc::ESRCH) {
++                Ok(())
++            } else {
++                Err(error.into())
++            }
++        }
++    }
++}
++
++enum ChildWaiter {
++    Standard(Child),
++    #[cfg(windows)]
++    Pty(crate::process_lifecycle_windows::WindowsPtyProcess),
++}
++
++impl ChildWaiter {
++    fn try_wait(&mut self) -> Result<Option<ExitStatusValue>> {
++        match self {
++            Self::Standard(child) => child
++                .try_wait()
++                .map(|status| status.map(ExitStatusValue::from)),
++            #[cfg(windows)]
++            Self::Pty(process) => process.try_wait(),
++        }
++        .map_err(Into::into)
++    }
++}
++
++#[derive(Debug, Clone, Copy)]
++pub(crate) struct ExitStatusValue {
++    pub code: i32,
++}
++
++impl From<ExitStatus> for ExitStatusValue {
++    fn from(status: ExitStatus) -> Self {
++        Self {
++            code: status.code().unwrap_or(-1),
++        }
++    }
++}
++
++struct SpawnedProcess {
++    pid: u32,
++    stdin: Option<Box<dyn Write + Send>>,
++    stdout: Box<dyn Read + Send>,
++    stderr: Option<Box<dyn Read + Send>>,
++    control: Arc<dyn ProcessControl>,
++    waiter: ChildWaiter,
++    mode: &'static str,
++}
++
++struct LifecycleManager {
++    runtime_id: String,
++    workspace: PathBuf,
++    workspace_id: String,
++    root: PathBuf,
++    records: Mutex<HashMap<String, Arc<SharedRecord>>>,
++}
++
++impl LifecycleManager {
++    fn new(workspace: PathBuf) -> Result<Arc<Self>> {
++        let workspace = workspace.canonicalize().unwrap_or(workspace);
++        let root = workspace.join(".ae").join("process-lifecycle");
++        fs::create_dir_all(&root)?;
++        let normalized = if cfg!(windows) {
++            display_path(&workspace).to_ascii_lowercase()
++        } else {
++            display_path(&workspace)
++        };
++        let workspace_id = format!(
++            "ws_sha256_{}",
++            hex::encode(Sha256::digest(normalized.as_bytes()))
++        );
++        let manager = Arc::new(Self {
++            runtime_id: format!("rt_{}", uuid::Uuid::new_v4().simple()),
++            workspace,
++            workspace_id,
++            root,
++            records: Mutex::new(HashMap::new()),
++        });
++        manager.reconcile()?;
++        Ok(manager)
++    }
++
++    fn reconcile(&self) -> Result<()> {
++        let now = now_ms();
++        for entry in fs::read_dir(&self.root)? {
++            let entry = entry?;
++            let path = entry.path();
++            if path.extension().and_then(|value| value.to_str()) != Some("json") {
++                continue;
++            }
++            let Ok(bytes) = fs::read(&path) else {
++                continue;
++            };
++            let Ok(mut durable) = serde_json::from_slice::<DurableRecord>(&bytes) else {
++                continue;
++            };
++            if durable.retention_expires_at_ms <= now {
++                let _ = fs::remove_file(&path);
++                let _ = fs::remove_file(self.output_path(&durable.process_id));
++                continue;
++            }
++            if matches!(
++                durable.state,
++                LifecycleState::Starting | LifecycleState::Running
++            ) {
++                durable.state = LifecycleState::Lost;
++                durable.termination_reason = Some("runtime_restart_unrecoverable".into());
++                durable.exited_at_ms = Some(now);
++                durable.updated_at_ms = now;
++                self.persist(&durable)?;
++            }
++            let output = OutputLog::load(
++                self.output_path(&durable.process_id),
++                durable.max_output_bytes,
++            );
++            let record = Arc::new(SharedRecord {
++                core: Mutex::new(durable.clone()),
++                output: Mutex::new(output),
++                stdin: Mutex::new(None),
++                control: Arc::new(TerminalControl),
++                changed: Condvar::new(),
++            });
++            self.records
++                .lock()
++                .unwrap()
++                .insert(durable.process_id.clone(), record);
++        }
++        Ok(())
++    }
++
++    fn record_path(&self, process_id: &str) -> PathBuf {
++        self.root.join(format!("{process_id}.json"))
++    }
++
++    fn output_path(&self, process_id: &str) -> PathBuf {
++        self.root.join(format!("{process_id}.output.jsonl"))
++    }
++
++    fn persist(&self, record: &DurableRecord) -> Result<()> {
++        let path = self.record_path(&record.process_id);
++        let temp = self
++            .root
++            .join(format!(".{}.{}.tmp", record.process_id, std::process::id()));
++        fs::write(&temp, serde_json::to_vec_pretty(record)?)?;
++        fs::rename(&temp, &path).or_else(|_| {
++            let _ = fs::remove_file(&path);
++            fs::rename(&temp, &path)
++        })?;
++        Ok(())
++    }
++
++    fn lookup(&self, process_id: &str) -> Result<Arc<SharedRecord>> {
++        self.records
++            .lock()
++            .unwrap()
++            .get(process_id)
++            .cloned()
++            .ok_or_else(|| anyhow!("E_PROCESS_NOT_FOUND: process '{process_id}' does not exist"))
++    }
++}
++
++struct TerminalControl;
++
++impl ProcessControl for TerminalControl {
++    fn terminate(&self) -> Result<()> {
++        Ok(())
++    }
++}
++
++#[derive(Debug, Deserialize)]
++struct StartArgs {
++    argv: Vec<String>,
++    #[serde(default = "default_cwd")]
++    cwd: String,
++    agent_id: String,
++    session_id: String,
++    #[serde(default)]
++    env: Option<BTreeMap<String, String>>,
++    #[serde(default = "default_stdin_mode")]
++    stdin_mode: String,
++    #[serde(default)]
++    stdin: Option<String>,
++    #[serde(default = "default_encoding")]
++    stdin_encoding: String,
++    #[serde(default)]
++    stdin_eof: bool,
++    #[serde(default)]
++    pty: bool,
++    #[serde(default = "default_cols")]
++    cols: u16,
++    #[serde(default = "default_rows")]
++    rows: u16,
++    #[serde(default)]
++    timeout_ms: Option<u64>,
++    #[serde(default = "crate::process_runner::default_max_output_bytes")]
++    max_output_bytes: usize,
++    #[serde(default)]
++    max_memory_mb: Option<usize>,
++    #[serde(default)]
++    max_processes: Option<u32>,
++    #[serde(default)]
++    wait_ms: u64,
++}
++
++#[derive(Debug, Deserialize)]
++struct OwnedProcessArgs {
++    process_id: String,
++    runtime_id: String,
++    agent_id: String,
++    session_id: String,
++}
++
++#[derive(Debug, Deserialize)]
++struct PollArgs {
++    #[serde(flatten)]
++    owner: OwnedProcessArgs,
++    #[serde(default)]
++    cursor: u64,
++    #[serde(default = "default_poll_bytes")]
++    max_bytes: usize,
++    #[serde(default)]
++    wait_ms: u64,
++}
++
++#[derive(Debug, Deserialize)]
++struct WriteArgs {
++    #[serde(flatten)]
++    owner: OwnedProcessArgs,
++    #[serde(default)]
++    data: String,
++    #[serde(default = "default_encoding")]
++    encoding: String,
++    #[serde(default)]
++    submit: bool,
++    #[serde(default)]
++    eof: bool,
++}
++
++#[derive(Debug, Deserialize)]
++struct KillArgs {
++    #[serde(flatten)]
++    owner: OwnedProcessArgs,
++    #[serde(default = "default_kill_reason")]
++    reason: String,
++    #[serde(default = "default_kill_wait_ms")]
++    wait_ms: u64,
++}
++
++#[derive(Debug, Deserialize)]
++struct ListArgs {
++    runtime_id: String,
++    agent_id: String,
++    session_id: String,
++    #[serde(default)]
++    include_terminal: bool,
++}
++
++fn default_cwd() -> String {
++    ".".into()
++}
++
++fn default_stdin_mode() -> String {
++    "null".into()
++}
++
++fn default_encoding() -> String {
++    "utf8".into()
++}
++
++fn default_cols() -> u16 {
++    120
++}
++
++fn default_rows() -> u16 {
++    30
++}
++
++fn default_poll_bytes() -> usize {
++    DEFAULT_POLL_BYTES
++}
++
++fn default_kill_reason() -> String {
++    "manual_cancel".into()
++}
++
++fn default_kill_wait_ms() -> u64 {
++    2_000
++}
++
++fn now_ms() -> u64 {
++    SystemTime::now()
++        .duration_since(UNIX_EPOCH)
++        .unwrap_or_default()
++        .as_millis() as u64
++}
++
++fn manager() -> Result<Arc<LifecycleManager>> {
++    let workspace = safety::workspace_root();
++    let workspace = workspace.canonicalize().unwrap_or(workspace);
++    let mut guard = MANAGER.lock().unwrap();
++    if let Some(manager) = guard.as_ref() {
++        if manager.workspace != workspace {
++            return Err(anyhow!(
++                "E_PROCESS_WORKSPACE: lifecycle runtime is already bound to '{}'",
++                display_path(&manager.workspace)
++            ));
++        }
++        return Ok(Arc::clone(manager));
++    }
++    let manager = LifecycleManager::new(workspace)?;
++    *guard = Some(Arc::clone(&manager));
++    Ok(manager)
++}
++
++fn parse_args<T: for<'de> Deserialize<'de>>(req: &OperationRequest) -> Result<T, Observation> {
++    serde_json::from_value(req.args.clone()).map_err(|error| {
++        Observation::failure(
++            &req.id,
++            &req.op,
++            "process",
++            "E_PROCESS_BAD_ARG",
++            error.to_string(),
++            true,
++        )
++    })
++}
++
++fn require_shell(req: &OperationRequest) -> Result<(), Observation> {
++    if let crate::capability::CapabilityResult::Deny(reason) =
++        crate::capability::check_capability("sh")
++    {
++        return Err(Observation::failure(
++            &req.id,
++            &req.op,
++            "process",
++            "E_CAPABILITY_DENY",
++            reason,
++            true,
++        ));
++    }
++    Ok(())
++}
++
++fn failure(req: &OperationRequest, error: anyhow::Error) -> Observation {
++    let message = error.to_string();
++    let code = message
++        .split_once(':')
++        .map(|(code, _)| code)
++        .filter(|code| code.starts_with("E_"))
++        .unwrap_or("E_PROCESS_INTERNAL")
++        .to_string();
++    Observation::failure(&req.id, &req.op, "process", &code, message, true)
++}
++
++fn success(req: &OperationRequest, data: Value, start: Instant) -> Observation {
++    Observation::success(
++        &req.id,
++        &req.op,
++        "process",
++        data,
++        vec!["process".into()],
++        vec!["shell.exec".into()],
++        start.elapsed().as_millis() as u64,
++        Vec::new(),
++        Vec::new(),
++    )
++}
++
++pub(crate) fn execute_start(req: &OperationRequest) -> Observation {
++    let start = Instant::now();
++    if let Err(observation) = require_shell(req) {
++        return observation;
++    }
++    let args: StartArgs = match parse_args(req) {
++        Ok(args) => args,
++        Err(observation) => return observation,
++    };
++    if args.agent_id != req.agent {
++        return failure(
++            req,
++            anyhow!("E_PROCESS_OWNER: agent_id must match request.agent"),
++        );
++    }
++    if let Err(error) = validate_start_args(&args) {
++        return failure(req, error);
++    }
++    let manager = match manager() {
++        Ok(manager) => manager,
++        Err(error) => return failure(req, error),
++    };
++    let cwd = match resolve_cwd(&manager.workspace, &args.cwd) {
++        Ok(cwd) => cwd,
++        Err(error) => return failure(req, error),
++    };
++    let resolved = match resolve_process_command(&args.argv, &cwd, args.env.as_ref()) {
++        Ok(resolved) => resolved,
++        Err(error) => return failure(req, error),
++    };
++    if let Err(error) = safety::guard(GuardCtx {
++        builtin: "process.start",
++        effect: Effect::Exec,
++        what: "start process",
++        targets: vec![display_path(&resolved.audited_executable)],
++        blast_radius: json!({
++            "argv": args.argv,
++            "cwd": display_path(&cwd),
++            "agent_id": args.agent_id,
++            "session_id": args.session_id,
++            "pty": args.pty,
++            "executable": display_path(&resolved.audited_executable),
++            "interpreter": resolved.interpreter.as_ref().map(|path| display_path(path)),
++        }),
++        reversible: false,
++        fs_paths: false,
++    }) {
++        return safety_error_to_observation(req, "process", error);
++    }
++    let input = match decode_input(args.stdin.as_deref().unwrap_or(""), &args.stdin_encoding) {
++        Ok(input) => input,
++        Err(error) => return failure(req, error),
++    };
++    let process_id = format!("proc_{}", uuid::Uuid::new_v4().simple());
++    let limits = ExecLimits {
++        timeout_ms: args.timeout_ms.unwrap_or(req.timeout_ms),
++        max_output_bytes: args.max_output_bytes,
++        max_memory_mb: args.max_memory_mb,
++        max_processes: args.max_processes,
++    };
++    let spawned = match spawn_process(
++        &resolved,
++        &cwd,
++        args.env.as_ref(),
++        &args.stdin_mode,
++        args.pty,
++        args.cols,
++        args.rows,
++        &limits,
++    ) {
++        Ok(spawned) => spawned,
++        Err(error) => return failure(req, error),
++    };
++    let now = now_ms();
++    let owner = ProcessOwner {
++        runtime_id: manager.runtime_id.clone(),
++        workspace_id: manager.workspace_id.clone(),
++        agent_id: args.agent_id.clone(),
++        session_id: args.session_id.clone(),
++    };
++    let durable = DurableRecord {
++        process_id: process_id.clone(),
++        owner,
++        state: LifecycleState::Running,
++        pid: spawned.pid,
++        argv: args.argv.clone(),
++        cwd: display_path(&cwd),
++        executable: display_path(&resolved.audited_executable),
++        interpreter: resolved.interpreter.as_ref().map(|path| display_path(path)),
++        mode: spawned.mode.into(),
++        stdin_mode: args.stdin_mode.clone(),
++        started_at_ms: now,
++        updated_at_ms: now,
++        exited_at_ms: None,
++        exit_code: None,
++        termination_reason: None,
++        timed_out: false,
++        max_output_bytes: args.max_output_bytes,
++        retention_expires_at_ms: now.saturating_add(DEFAULT_RETENTION_MS),
++        artifacts: Vec::new(),
++    };
++    let record = Arc::new(SharedRecord {
++        core: Mutex::new(durable.clone()),
++        output: Mutex::new(OutputLog::new(
++            manager.output_path(&process_id),
++            args.max_output_bytes,
++        )),
++        stdin: Mutex::new(spawned.stdin),
++        control: spawned.control,
++        changed: Condvar::new(),
++    });
++    if let Err(error) = manager.persist(&durable) {
++        let _ = record.control.terminate();
++        return failure(
++            req,
++            error.context("E_PROCESS_PERSIST: failed to persist starting record"),
++        );
++    }
++    manager
++        .records
++        .lock()
++        .unwrap()
++        .insert(process_id.clone(), Arc::clone(&record));
++
++    let stdout_reader = spawn_reader(
++        Arc::clone(&record),
++        spawned.stdout,
++        if args.pty { "pty" } else { "stdout" },
++    );
++    let stderr_reader = spawned
++        .stderr
++        .map(|reader| spawn_reader(Arc::clone(&record), reader, "stderr"));
++    spawn_monitor(
++        Arc::clone(&manager),
++        Arc::clone(&record),
++        spawned.waiter,
++        stdout_reader,
++        stderr_reader,
++        limits.timeout_ms,
++    );
++
++    if !input.is_empty() || args.stdin_eof {
++        if let Err(error) = write_input(&record, &input, args.stdin_eof) {
++            {
++                let mut core = record.core.lock().unwrap();
++                core.termination_reason = Some("initial_stdin_failed".into());
++                core.updated_at_ms = now_ms();
++                let _ = manager.persist(&core);
++            }
++            let _ = record.control.terminate();
++            return failure(req, error);
++        }
++    }
++    wait_for_change(&record, 0, args.wait_ms.min(MAX_WAIT_MS));
++    match snapshot(&record, 0, DEFAULT_POLL_BYTES) {
++        Ok(data) => success(req, data, start),
++        Err(error) => failure(req, error),
++    }
++}
++
++pub(crate) fn execute_poll(req: &OperationRequest) -> Observation {
++    let start = Instant::now();
++    if let Err(observation) = require_shell(req) {
++        return observation;
++    }
++    let args: PollArgs = match parse_args(req) {
++        Ok(args) => args,
++        Err(observation) => return observation,
++    };
++    let manager = match manager() {
++        Ok(manager) => manager,
++        Err(error) => return failure(req, error),
++    };
++    let record = match manager.lookup(&args.owner.process_id) {
++        Ok(record) => record,
++        Err(error) => return failure(req, error),
++    };
++    if let Err(error) = verify_owner(req, &record, &args.owner) {
++        return failure(req, error);
++    }
++    let max_bytes = args.max_bytes.clamp(1, MAX_POLL_BYTES);
++    wait_for_change(&record, args.cursor, args.wait_ms.min(MAX_WAIT_MS));
++    match snapshot(&record, args.cursor, max_bytes) {
++        Ok(data) => success(req, data, start),
++        Err(error) => failure(req, error),
++    }
++}
++
++pub(crate) fn execute_write(req: &OperationRequest) -> Observation {
++    let start = Instant::now();
++    if let Err(observation) = require_shell(req) {
++        return observation;
++    }
++    let args: WriteArgs = match parse_args(req) {
++        Ok(args) => args,
++        Err(observation) => return observation,
++    };
++    let manager = match manager() {
++        Ok(manager) => manager,
++        Err(error) => return failure(req, error),
++    };
++    let record = match manager.lookup(&args.owner.process_id) {
++        Ok(record) => record,
++        Err(error) => return failure(req, error),
++    };
++    if let Err(error) = verify_owner(req, &record, &args.owner) {
++        return failure(req, error);
++    }
++    let mut bytes = match decode_input(&args.data, &args.encoding) {
++        Ok(bytes) => bytes,
++        Err(error) => return failure(req, error),
++    };
++    if args.submit {
++        bytes.push(b'\r');
++    }
++    if let Err(error) = write_input(&record, &bytes, args.eof) {
++        return failure(req, error);
++    }
++    success(
++        req,
++        json!({
++            "process_id": args.owner.process_id,
++            "written_bytes": bytes.len(),
++            "eof": args.eof,
++        }),
++        start,
++    )
++}
++
++pub(crate) fn execute_kill(req: &OperationRequest) -> Observation {
++    let start = Instant::now();
++    if let Err(observation) = require_shell(req) {
++        return observation;
++    }
++    let args: KillArgs = match parse_args(req) {
++        Ok(args) => args,
++        Err(observation) => return observation,
++    };
++    let manager = match manager() {
++        Ok(manager) => manager,
++        Err(error) => return failure(req, error),
++    };
++    let record = match manager.lookup(&args.owner.process_id) {
++        Ok(record) => record,
++        Err(error) => return failure(req, error),
++    };
++    if let Err(error) = verify_owner(req, &record, &args.owner) {
++        return failure(req, error);
++    }
++    let should_terminate = {
++        let mut core = record.core.lock().unwrap();
++        if core.state.terminal() {
++            false
++        } else {
++            if core.termination_reason.is_none() {
++                core.termination_reason = Some(sanitize_reason(&args.reason));
++                core.updated_at_ms = now_ms();
++                let _ = manager.persist(&core);
++            }
++            true
++        }
++    };
++    if should_terminate {
++        if let Err(error) = record.control.terminate() {
++            return failure(
++                req,
++                error.context("E_PROCESS_KILL: failed to terminate process tree"),
++            );
++        }
++    }
++    wait_until_terminal(&record, args.wait_ms.min(MAX_WAIT_MS));
++    let cursor = record.output.lock().unwrap().next_cursor;
++    match snapshot(&record, cursor, 1) {
++        Ok(data) => success(req, data, start),
++        Err(error) => failure(req, error),
++    }
++}
++
++pub(crate) fn execute_list(req: &OperationRequest) -> Observation {
++    let start = Instant::now();
++    if let Err(observation) = require_shell(req) {
++        return observation;
++    }
++    let args: ListArgs = match parse_args(req) {
++        Ok(args) => args,
++        Err(observation) => return observation,
++    };
++    if args.agent_id != req.agent {
++        return failure(
++            req,
++            anyhow!("E_PROCESS_OWNER: agent_id must match request.agent"),
++        );
++    }
++    let manager = match manager() {
++        Ok(manager) => manager,
++        Err(error) => return failure(req, error),
++    };
++    let records: Vec<_> = manager.records.lock().unwrap().values().cloned().collect();
++    let mut processes = Vec::new();
++    for record in records {
++        let core = record.core.lock().unwrap();
++        if core.owner.runtime_id != args.runtime_id
++            || core.owner.agent_id != args.agent_id
++            || core.owner.session_id != args.session_id
++            || (!args.include_terminal && core.state.terminal())
++        {
++            continue;
++        }
++        processes.push(summary_json(&core));
++    }
++    success(
++        req,
++        json!({
++            "runtime_id": args.runtime_id,
++            "workspace_id": manager.workspace_id,
++            "processes": processes,
++            "count": processes.len(),
++        }),
++        start,
++    )
++}
++
++fn validate_start_args(args: &StartArgs) -> Result<()> {
++    if args.argv.is_empty() || args.argv[0].is_empty() {
++        return Err(anyhow!("E_PROCESS_BAD_ARG: argv must contain a program"));
++    }
++    if args.agent_id.trim().is_empty() || args.session_id.trim().is_empty() {
++        return Err(anyhow!(
++            "E_PROCESS_BAD_ARG: agent_id and session_id are required"
++        ));
++    }
++    if !matches!(args.stdin_mode.as_str(), "null" | "pipe") {
++        return Err(anyhow!(
++            "E_PROCESS_BAD_ARG: stdin_mode must be null or pipe"
++        ));
++    }
++    if args.stdin_mode == "null" && (args.stdin.is_some() || args.stdin_eof) {
++        return Err(anyhow!("E_PROCESS_BAD_ARG: stdin requires stdin_mode=pipe"));
++    }
++    if args.max_output_bytes == 0 || args.max_output_bytes > DEFAULT_MAX_OUTPUT_BYTES {
++        return Err(anyhow!(
++            "E_PROCESS_BAD_ARG: max_output_bytes must be between 1 and {DEFAULT_MAX_OUTPUT_BYTES}"
++        ));
++    }
++    if args.cols == 0 || args.rows == 0 {
++        return Err(anyhow!(
++            "E_PROCESS_BAD_ARG: PTY rows and cols must be positive"
++        ));
++    }
++    if let Some(env) = args.env.as_ref() {
++        if env.len() > MAX_ENV_ENTRIES {
++            return Err(anyhow!("E_PROCESS_ENV: environment has too many entries"));
++        }
++        let mut bytes = 0usize;
++        for (key, value) in env {
++            if key.is_empty() || key.contains(['=', '\0', '\r', '\n']) || value.contains('\0') {
++                return Err(anyhow!(
++                    "E_PROCESS_ENV: environment contains an invalid entry"
++                ));
++            }
++            bytes = bytes.saturating_add(key.len()).saturating_add(value.len());
++        }
++        if bytes > MAX_ENV_BYTES {
++            return Err(anyhow!(
++                "E_PROCESS_ENV: environment exceeds the byte budget"
++            ));
++        }
++    }
++    Ok(())
++}
++
++fn resolve_cwd(workspace: &Path, input: &str) -> Result<PathBuf> {
++    let candidate = PathBuf::from(input);
++    let candidate = if candidate.is_absolute() {
++        candidate
++    } else {
++        workspace.join(candidate)
++    };
++    let canonical = candidate.canonicalize().with_context(|| {
++        format!(
++            "E_PROCESS_CWD: cannot resolve cwd '{}'",
++            candidate.display()
++        )
++    })?;
++    if !canonical.starts_with(workspace) {
++        return Err(anyhow!("E_PROCESS_CWD: cwd is outside the workspace"));
++    }
++    if !canonical.is_dir() {
++        return Err(anyhow!("E_PROCESS_CWD: cwd is not a directory"));
++    }
++    Ok(canonical)
++}
++
++fn decode_input(value: &str, encoding: &str) -> Result<Vec<u8>> {
++    let bytes = match encoding {
++        "utf8" => value.as_bytes().to_vec(),
++        "base64" => base64::engine::general_purpose::STANDARD
++            .decode(value)
++            .map_err(|error| anyhow!("E_PROCESS_INPUT: invalid base64 input: {error}"))?,
++        _ => return Err(anyhow!("E_PROCESS_INPUT: encoding must be utf8 or base64")),
++    };
++    if bytes.len() > MAX_STDIN_BYTES {
++        return Err(anyhow!(
++            "E_PROCESS_INPUT: input exceeds {MAX_STDIN_BYTES} bytes"
++        ));
++    }
++    Ok(bytes)
++}
++
++fn sanitize_reason(reason: &str) -> String {
++    let reason = reason.trim();
++    if reason.is_empty() {
++        "manual_cancel".into()
++    } else {
++        reason.chars().take(128).collect()
++    }
++}
++
++fn verify_owner(
++    req: &OperationRequest,
++    record: &SharedRecord,
++    args: &OwnedProcessArgs,
++) -> Result<()> {
++    if args.agent_id != req.agent {
++        return Err(anyhow!(
++            "E_PROCESS_OWNER: agent_id must match request.agent"
++        ));
++    }
++    let core = record.core.lock().unwrap();
++    if core.owner.runtime_id != args.runtime_id
++        || core.owner.agent_id != args.agent_id
++        || core.owner.session_id != args.session_id
++    {
++        return Err(anyhow!("E_PROCESS_OWNER: process ownership does not match"));
++    }
++    Ok(())
++}
++
++fn spawn_process(
++    resolved: &ResolvedProcessCommand,
++    cwd: &Path,
++    env: Option<&BTreeMap<String, String>>,
++    stdin_mode: &str,
++    pty: bool,
++    cols: u16,
++    rows: u16,
++    limits: &ExecLimits,
++) -> Result<SpawnedProcess> {
++    if pty {
++        #[cfg(windows)]
++        {
++            let spawned = crate::process_lifecycle_windows::spawn_conpty(
++                resolved, cwd, env, cols, rows, limits,
++            )?;
++            return Ok(SpawnedProcess {
++                pid: spawned.pid,
++                stdin: Some(Box::new(spawned.stdin)),
++                stdout: Box::new(spawned.stdout),
++                stderr: None,
++                control: spawned.job,
++                waiter: ChildWaiter::Pty(spawned.process),
++                mode: "pty",
++            });
++        }
++        #[cfg(not(windows))]
++        {
++            return Err(anyhow!(
++                "E_PROCESS_PTY_UNSUPPORTED: this build does not provide a PTY backend"
++            ));
++        }
++    }
++
++    let mut command = Command::new(&resolved.executable);
++    command
++        .args(&resolved.args)
++        .current_dir(cwd)
++        .stdin(if stdin_mode == "pipe" {
++            Stdio::piped()
++        } else {
++            Stdio::null()
++        })
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped());
++    crate::process_command::configure_command_environment(&mut command, env);
++    #[cfg(unix)]
++    {
++        use std::os::unix::process::CommandExt;
++        command.process_group(0);
++    }
++    #[cfg(windows)]
++    {
++        use std::os::windows::process::CommandExt;
++        use windows_sys::Win32::System::Threading::CREATE_NO_WINDOW;
++        if let Some(raw_arg) = resolved.windows_raw_arg.as_ref() {
++            command.raw_arg(raw_arg);
++        }
++        command.creation_flags(CREATE_NO_WINDOW);
++    }
++    let mut child = command.spawn().with_context(|| {
++        format!(
++            "E_PROCESS_SPAWN: failed to spawn '{}'",
++            resolved.audited_executable.display()
++        )
++    })?;
++    let pid = child.id();
++    let stdin = child
++        .stdin
++        .take()
++        .map(|input| Box::new(input) as Box<dyn Write + Send>);
++    let stdout = child
++        .stdout
++        .take()
++        .ok_or_else(|| anyhow!("E_PROCESS_SPAWN: stdout pipe is unavailable"))?;
++    let stderr = child
++        .stderr
++        .take()
++        .ok_or_else(|| anyhow!("E_PROCESS_SPAWN: stderr pipe is unavailable"))?;
++    #[cfg(windows)]
++    let control: Arc<dyn ProcessControl> = match WindowsJob::attach(&child, limits) {
++        Ok(job) => Arc::new(job),
++        Err(error) => {
++            let _ = child.kill();
++            let _ = child.wait();
++            return Err(error);
++        }
++    };
++    #[cfg(unix)]
++    let control: Arc<dyn ProcessControl> = Arc::new(UnixProcessGroup { pid: pid as i32 });
++    #[cfg(not(any(windows, unix)))]
++    compile_error!("process lifecycle requires a Windows or Unix target");
++    Ok(SpawnedProcess {
++        pid,
++        stdin,
++        stdout: Box::new(stdout),
++        stderr: Some(Box::new(stderr)),
++        control,
++        waiter: ChildWaiter::Standard(child),
++        mode: "pipe",
++    })
++}
++
++fn spawn_reader(
++    record: Arc<SharedRecord>,
++    mut reader: Box<dyn Read + Send>,
++    stream: &'static str,
++) -> thread::JoinHandle<()> {
++    thread::spawn(move || {
++        let mut buffer = [0u8; 8192];
++        loop {
++            match reader.read(&mut buffer) {
++                Ok(0) => break,
++                Ok(read) => {
++                    record
++                        .output
++                        .lock()
++                        .unwrap()
++                        .append(stream, &buffer[..read]);
++                    record.changed.notify_all();
++                }
++                Err(_) => break,
++            }
++        }
++        record.changed.notify_all();
++    })
++}
++
++fn spawn_monitor(
++    manager: Arc<LifecycleManager>,
++    record: Arc<SharedRecord>,
++    mut waiter: ChildWaiter,
++    stdout_reader: thread::JoinHandle<()>,
++    stderr_reader: Option<thread::JoinHandle<()>>,
++    timeout_ms: u64,
++) {
++    thread::spawn(move || {
++        let started = Instant::now();
++        let status = loop {
++            match waiter.try_wait() {
++                Ok(Some(status)) => break status,
++                Ok(None) => {}
++                Err(error) => {
++                    let mut core = record.core.lock().unwrap();
++                    core.termination_reason = Some(format!("wait_failed:{error}"));
++                    drop(core);
++                    let _ = record.control.terminate();
++                    break ExitStatusValue { code: -1 };
++                }
++            }
++            if timeout_ms > 0 && started.elapsed() >= Duration::from_millis(timeout_ms) {
++                let should_kill = {
++                    let mut core = record.core.lock().unwrap();
++                    if core.state.terminal() || core.timed_out {
++                        false
++                    } else {
++                        core.timed_out = true;
++                        core.termination_reason = Some("timeout".into());
++                        true
++                    }
++                };
++                if should_kill {
++                    let _ = record.control.terminate();
++                }
++            }
++            thread::sleep(Duration::from_millis(10));
++        };
++        let _ = stdout_reader.join();
++        if let Some(reader) = stderr_reader {
++            let _ = reader.join();
++        }
++        record.stdin.lock().unwrap().take();
++        let artifacts = store_terminal_artifacts(&manager, &record);
++        {
++            let mut core = record.core.lock().unwrap();
++            let killed = core.termination_reason.is_some();
++            core.state = if killed {
++                LifecycleState::Killed
++            } else {
++                LifecycleState::Exited
++            };
++            core.exit_code = Some(status.code);
++            core.exited_at_ms = Some(now_ms());
++            core.updated_at_ms = now_ms();
++            core.artifacts = artifacts;
++            core.retention_expires_at_ms = now_ms().saturating_add(DEFAULT_RETENTION_MS);
++            let _ = manager.persist(&core);
++        }
++        record.changed.notify_all();
++    });
++}
++
++fn store_terminal_artifacts(
++    manager: &LifecycleManager,
++    record: &SharedRecord,
++) -> Vec<ArtifactLineage> {
++    let core = record.core.lock().unwrap().clone();
++    let output = record.output.lock().unwrap();
++    let Ok(store) = ArtifactStore::new(&manager.workspace) else {
++        return Vec::new();
++    };
++    let mut artifacts = Vec::new();
++    for stream in ["stdout", "stderr"] {
++        let bytes = output.stream_bytes(stream);
++        if bytes.is_empty() {
++            continue;
++        }
++        let Ok(stored) = store.store(
++            &bytes,
++            "binary",
++            stream,
++            "process.lifecycle",
++            &core.owner.agent_id,
++        ) else {
++            continue;
++        };
++        artifacts.push(ArtifactLineage {
++            stream: stream.into(),
++            handle: stored.metadata.handle,
++            retained_bytes: bytes.len() as u64,
++            raw_bytes: output.raw_bytes(stream),
++        });
++    }
++    artifacts
++}
++
++fn write_input(record: &SharedRecord, bytes: &[u8], eof: bool) -> Result<()> {
++    if record.core.lock().unwrap().state.terminal() {
++        return Err(anyhow!("E_PROCESS_EXITED: process is no longer running"));
++    }
++    let mut stdin = record.stdin.lock().unwrap();
++    let writer = stdin
++        .as_mut()
++        .ok_or_else(|| anyhow!("E_PROCESS_STDIN_CLOSED: process stdin is closed"))?;
++    if !bytes.is_empty() {
++        writer
++            .write_all(bytes)
++            .context("E_PROCESS_WRITE: failed to write stdin")?;
++        writer
++            .flush()
++            .context("E_PROCESS_WRITE: failed to flush stdin")?;
++    }
++    if eof {
++        stdin.take();
++    }
++    Ok(())
++}
++
++fn wait_for_change(record: &SharedRecord, cursor: u64, wait_ms: u64) {
++    if wait_ms == 0 {
++        return;
++    }
++    let deadline = Instant::now() + Duration::from_millis(wait_ms);
++    let mut core = record.core.lock().unwrap();
++    loop {
++        let has_output = record.output.lock().unwrap().next_cursor > cursor;
++        if has_output || core.state.terminal() {
++            return;
++        }
++        let now = Instant::now();
++        if now >= deadline {
++            return;
++        }
++        let duration = deadline.saturating_duration_since(now);
++        let result = record.changed.wait_timeout(core, duration).unwrap();
++        core = result.0;
++        if result.1.timed_out() {
++            return;
++        }
++    }
++}
++
++fn wait_until_terminal(record: &SharedRecord, wait_ms: u64) {
++    if wait_ms == 0 {
++        return;
++    }
++    let deadline = Instant::now() + Duration::from_millis(wait_ms);
++    let mut core = record.core.lock().unwrap();
++    while !core.state.terminal() {
++        let now = Instant::now();
++        if now >= deadline {
++            return;
++        }
++        let result = record
++            .changed
++            .wait_timeout(core, deadline.saturating_duration_since(now))
++            .unwrap();
++        core = result.0;
++        if result.1.timed_out() {
++            return;
++        }
++    }
++}
++
++fn snapshot(record: &SharedRecord, cursor: u64, max_bytes: usize) -> Result<Value> {
++    let output = record.output.lock().unwrap().read(cursor, max_bytes)?;
++    let core = record.core.lock().unwrap();
++    let mut value = summary_json(&core);
++    let object = value.as_object_mut().expect("process summary is an object");
++    object.insert("output".into(), output);
++    object.insert("artifacts".into(), serde_json::to_value(&core.artifacts)?);
++    Ok(value)
++}
++
++fn summary_json(core: &DurableRecord) -> Value {
++    json!({
++        "process_id": core.process_id,
++        "runtime_id": core.owner.runtime_id,
++        "workspace_id": core.owner.workspace_id,
++        "agent_id": core.owner.agent_id,
++        "session_id": core.owner.session_id,
++        "state": core.state,
++        "pid": core.pid,
++        "argv": core.argv,
++        "cwd": core.cwd,
++        "executable": core.executable,
++        "interpreter": core.interpreter,
++        "mode": core.mode,
++        "stdin_mode": core.stdin_mode,
++        "started_at_ms": core.started_at_ms,
++        "updated_at_ms": core.updated_at_ms,
++        "exited_at_ms": core.exited_at_ms,
++        "exit_code": core.exit_code,
++        "termination_reason": core.termination_reason,
++        "timed_out": core.timed_out,
++        "retention_expires_at_ms": core.retention_expires_at_ms,
++    })
++}
++
++/// Terminate all live process trees before the JSONL runtime exits.
++pub fn shutdown() {
++    let manager = MANAGER.lock().unwrap().as_ref().cloned();
++    let Some(manager) = manager else {
++        return;
++    };
++    let records: Vec<_> = manager.records.lock().unwrap().values().cloned().collect();
++    for record in &records {
++        let live = {
++            let mut core = record.core.lock().unwrap();
++            if core.state.terminal() {
++                false
++            } else {
++                core.termination_reason = Some("runtime_shutdown".into());
++                core.updated_at_ms = now_ms();
++                let _ = manager.persist(&core);
++                true
++            }
++        };
++        if live {
++            let _ = record.control.terminate();
++        }
++    }
++    for record in records {
++        wait_until_terminal(&record, 2_000);
++    }
++}
+diff --git a/tests/process_lifecycle_tests.rs b/tests/process_lifecycle_tests.rs
+new file mode 100644
+index 0000000..d11e987
+--- /dev/null
++++ b/tests/process_lifecycle_tests.rs
+@@ -0,0 +1,533 @@
++#![cfg(windows)]
++
++use serde_json::{json, Map, Value};
++use std::io::{BufRead, BufReader, Write};
++use std::path::Path;
++use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
++use std::thread;
++use std::time::{Duration, Instant};
++
++const AGENT: &str = "uas05-agent";
++const SESSION: &str = "uas05-session";
++
++struct TestServer {
++    child: Child,
++    stdin: ChildStdin,
++    stdout: BufReader<ChildStdout>,
++    next_id: u64,
++}
++
++impl TestServer {
++    fn start(workspace: &Path) -> Self {
++        let mut child = Command::new(env!("CARGO_BIN_EXE_ae"))
++            .arg("--serve")
++            .args(["--cap", "shell.exec"])
++            .env("AETHER_WORKSPACE", workspace)
++            .env_remove("AETHER_MODE")
++            .env_remove("AETHER_CAPS")
++            .stdin(Stdio::piped())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped())
++            .spawn()
++            .expect("spawn ae --serve");
++        let stdin = child.stdin.take().expect("server stdin");
++        let stdout = BufReader::new(child.stdout.take().expect("server stdout"));
++        Self {
++            child,
++            stdin,
++            stdout,
++            next_id: 1,
++        }
++    }
++
++    fn request(&mut self, op: &str, args: Value) -> Value {
++        let id = format!("lifecycle-{}", self.next_id);
++        self.next_id += 1;
++        let request = json!({
++            "id": id,
++            "agent": AGENT,
++            "op": op,
++            "args": args,
++            "timeout_ms": 10_000,
++            "budget": {"max_tokens": 4_000}
++        });
++        writeln!(self.stdin, "{request}").expect("write request");
++        self.stdin.flush().expect("flush request");
++        let mut line = String::new();
++        self.stdout.read_line(&mut line).expect("read response");
++        assert!(!line.trim().is_empty(), "server closed before response");
++        serde_json::from_str(&line)
++            .unwrap_or_else(|error| panic!("invalid server response: {error}; line={line:?}"))
++    }
++
++    fn shutdown(mut self) {
++        writeln!(self.stdin, "SHUTDOWN").expect("write shutdown");
++        self.stdin.flush().expect("flush shutdown");
++        drop(self.stdin);
++        let output = self.child.wait_with_output().expect("wait for server");
++        assert!(
++            output.status.success(),
++            "server failed: {}",
++            String::from_utf8_lossy(&output.stderr)
++        );
++    }
++
++    fn crash(mut self) {
++        self.child.kill().expect("kill server");
++        let _ = self.child.wait();
++    }
++}
++
++fn workspace() -> std::path::PathBuf {
++    let path = std::env::temp_dir().join(format!(
++        "verseshell-process-lifecycle-{}",
++        uuid::Uuid::new_v4()
++    ));
++    std::fs::create_dir_all(&path).unwrap();
++    path
++}
++
++fn full_environment(extra: &[(&str, String)]) -> Value {
++    let mut values: Map<String, Value> = std::env::vars()
++        .map(|(key, value)| (key, Value::String(value)))
++        .collect();
++    for (key, value) in extra {
++        values.insert((*key).into(), Value::String(value.clone()));
++    }
++    Value::Object(values)
++}
++
++fn owner(data: &Value) -> Value {
++    json!({
++        "process_id": data["process_id"],
++        "runtime_id": data["runtime_id"],
++        "agent_id": AGENT,
++        "session_id": SESSION
++    })
++}
++
++fn poll(server: &mut TestServer, data: &Value, cursor: u64, wait_ms: u64) -> Value {
++    let mut args = owner(data);
++    let object = args.as_object_mut().unwrap();
++    object.insert("cursor".into(), json!(cursor));
++    object.insert("max_bytes".into(), json!(65_536));
++    object.insert("wait_ms".into(), json!(wait_ms));
++    server.request("process.poll", args)
++}
++
++fn output_text(data: &Value) -> String {
++    data["output"]["chunks"]
++        .as_array()
++        .into_iter()
++        .flatten()
++        .filter_map(|chunk| chunk["text"].as_str())
++        .collect()
++}
++
++fn child_pid(output: &str) -> u32 {
++    output
++        .split("CHILD_PID:")
++        .nth(1)
++        .and_then(|suffix| suffix.split_whitespace().next())
++        .and_then(|pid| pid.parse::<u32>().ok())
++        .unwrap_or_else(|| panic!("missing child pid in output={output:?}"))
++}
++
++fn await_output_contains(
++    server: &mut TestServer,
++    start: &Value,
++    required: &str,
++    timeout: Duration,
++) -> String {
++    let mut collected = output_text(start);
++    let mut cursor = start["output"]["cursor"].as_u64().unwrap_or(0);
++    let deadline = Instant::now() + timeout;
++    while !collected.contains(required) {
++        let next = poll(server, start, cursor, 1_000);
++        assert_eq!(next["ok"], true, "poll response={next}");
++        let next_cursor = next["data"]["output"]["cursor"].as_u64().unwrap_or(cursor);
++        assert!(next_cursor >= cursor, "cursor rewound: response={next}");
++        cursor = next_cursor;
++        collected.push_str(&output_text(&next["data"]));
++        assert!(
++            Instant::now() < deadline,
++            "timed out waiting for {required:?}: output={collected:?}"
++        );
++    }
++    collected
++}
++
++fn await_process_gone(pid: u32) {
++    let deadline = Instant::now() + Duration::from_secs(5);
++    while process_exists(pid) && Instant::now() < deadline {
++        thread::sleep(Duration::from_millis(50));
++    }
++    assert!(
++        !process_exists(pid),
++        "process {pid} survived lifecycle cleanup"
++    );
++}
++
++fn await_terminal(server: &mut TestServer, start: &Value) -> Value {
++    let mut cursor = start["output"]["cursor"].as_u64().unwrap_or(0);
++    let deadline = Instant::now() + Duration::from_secs(10);
++    loop {
++        let response = poll(server, start, cursor, 1_000);
++        assert_eq!(response["ok"], true, "poll response={response}");
++        cursor = response["data"]["output"]["cursor"]
++            .as_u64()
++            .unwrap_or(cursor);
++        let state = response["data"]["state"].as_str().unwrap_or("");
++        if matches!(state, "exited" | "killed" | "lost") {
++            return response["data"].clone();
++        }
++        assert!(
++            Instant::now() < deadline,
++            "process did not terminate: {response}"
++        );
++    }
++}
++
++#[test]
++fn direct_argv_environment_pathext_and_pipe_stdin_roundtrip() {
++    let workspace = workspace();
++    let shim = workspace.join("uas-echo.cmd");
++    std::fs::write(&shim, "@echo off\r\necho SHIM:%~1:%UAS_VALUE%\r\n").unwrap();
++    let path = format!(
++        "{};{}",
++        workspace.display(),
++        std::env::var("PATH").unwrap_or_default()
++    );
++    let env = full_environment(&[
++        ("PATH", path),
++        ("PATHEXT", ".COM;.EXE;.BAT;.CMD".into()),
++        ("UAS_VALUE", "env-ok".into()),
++    ]);
++    let mut server = TestServer::start(&workspace);
++
++    let shim_start = server.request(
++        "process.start",
++        json!({
++            "argv": ["uas-echo", "two words"],
++            "cwd": ".",
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "env": env,
++            "wait_ms": 5_000,
++            "timeout_ms": 5_000
++        }),
++    );
++    assert_eq!(shim_start["ok"], true, "shim response={shim_start}");
++    let shim_data = await_terminal(&mut server, &shim_start["data"]);
++    let shim_output = output_text(&shim_start["data"]) + &output_text(&shim_data);
++    assert!(
++        shim_output.contains("SHIM:two words:env-ok"),
++        "output={shim_output:?}"
++    );
++    assert!(shim_data["interpreter"].as_str().is_some());
++
++    let stdin_start = server.request(
++        "process.start",
++        json!({
++            "argv": [
++                "powershell.exe",
++                "-NoLogo",
++                "-NoProfile",
++                "-Command",
++                "$value=[Console]::In.ReadToEnd();[Console]::Out.Write('STDIN:'+$value)"
++            ],
++            "cwd": ".",
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "env": full_environment(&[]),
++            "stdin_mode": "pipe",
++            "wait_ms": 100,
++            "timeout_ms": 5_000
++        }),
++    );
++    assert_eq!(stdin_start["ok"], true, "stdin response={stdin_start}");
++    let mut stdin_write_args = owner(&stdin_start["data"]);
++    stdin_write_args["data"] = json!("hello world");
++    stdin_write_args["encoding"] = json!("utf8");
++    stdin_write_args["submit"] = json!(true);
++    let stdin_write = server.request("process.write", stdin_write_args);
++    assert_eq!(stdin_write["ok"], true, "stdin write={stdin_write}");
++    assert_eq!(stdin_write["data"]["written_bytes"], 12);
++    let mut stdin_eof_args = owner(&stdin_start["data"]);
++    stdin_eof_args["eof"] = json!(true);
++    let stdin_eof = server.request("process.write", stdin_eof_args);
++    assert_eq!(stdin_eof["ok"], true, "stdin EOF={stdin_eof}");
++    let stdin_output = await_output_contains(
++        &mut server,
++        &stdin_start["data"],
++        "STDIN:hello world",
++        Duration::from_secs(5),
++    );
++    let stdin_data = await_terminal(&mut server, &stdin_start["data"]);
++    assert!(
++        stdin_output.contains("STDIN:hello world"),
++        "output={stdin_output:?}"
++    );
++    assert_eq!(stdin_data["exit_code"], 0);
++
++    server.shutdown();
++    let _ = std::fs::remove_dir_all(workspace);
++}
++
++#[test]
++fn cursor_owner_kill_timeout_and_retention_are_explicit() {
++    let workspace = workspace();
++    let mut server = TestServer::start(&workspace);
++    let start = server.request(
++        "process.start",
++        json!({
++            "argv": [
++                "powershell.exe", "-NoLogo", "-NoProfile", "-Command",
++                "$child=Start-Process powershell.exe -ArgumentList '-NoLogo','-NoProfile','-Command','Start-Sleep -Seconds 30' -PassThru;[Console]::Out.WriteLine('CHILD_PID:'+$child.Id);[Console]::Out.WriteLine('one');Start-Sleep -Milliseconds 350;[Console]::Out.WriteLine('two');Start-Sleep -Seconds 30"
++            ],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "stdin_mode": "pipe",
++            "wait_ms": 150,
++            "timeout_ms": 30_000
++        }),
++    );
++    assert_eq!(start["ok"], true, "start response={start}");
++    let combined =
++        await_output_contains(&mut server, &start["data"], "two", Duration::from_secs(5));
++    assert!(
++        combined.contains("one") && combined.contains("two"),
++        "output={combined:?}"
++    );
++    let parent_pid = start["data"]["pid"].as_u64().unwrap() as u32;
++    let killed_child_pid = child_pid(&combined);
++    assert!(
++        process_exists(parent_pid),
++        "parent exited before kill proof"
++    );
++    assert!(
++        process_exists(killed_child_pid),
++        "child exited before kill proof"
++    );
++
++    let mut wrong_owner = owner(&start["data"]);
++    wrong_owner["session_id"] = json!("wrong-session");
++    let denied = server.request("process.poll", wrong_owner);
++    assert_eq!(
++        denied["error"]["code"], "E_PROCESS_OWNER",
++        "response={denied}"
++    );
++
++    let mut kill_args = owner(&start["data"]);
++    kill_args["reason"] = json!("agent_abort");
++    kill_args["wait_ms"] = json!(5_000);
++    let killed = server.request("process.kill", kill_args);
++    assert_eq!(killed["ok"], true, "kill response={killed}");
++    assert_eq!(killed["data"]["state"], "killed");
++    assert_eq!(killed["data"]["termination_reason"], "agent_abort");
++    await_process_gone(parent_pid);
++    await_process_gone(killed_child_pid);
++
++    let mut repeated_kill_args = owner(&start["data"]);
++    repeated_kill_args["reason"] = json!("second_kill_must_not_replace_reason");
++    repeated_kill_args["wait_ms"] = json!(0);
++    let repeated_kill = server.request("process.kill", repeated_kill_args);
++    assert_eq!(
++        repeated_kill["ok"], true,
++        "repeated kill response={repeated_kill}"
++    );
++    assert_eq!(repeated_kill["data"]["state"], "killed");
++    assert_eq!(repeated_kill["data"]["termination_reason"], "agent_abort");
++
++    let timeout = server.request(
++        "process.start",
++        json!({
++            "argv": [
++                "powershell.exe", "-NoLogo", "-NoProfile", "-Command",
++                "$child=Start-Process powershell.exe -ArgumentList '-NoLogo','-NoProfile','-Command','Start-Sleep -Seconds 30' -PassThru;[Console]::Out.WriteLine('CHILD_PID:'+$child.Id);Start-Sleep -Seconds 30"
++            ],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "timeout_ms": 1_500,
++            "wait_ms": 2_500
++        }),
++    );
++    assert_eq!(timeout["ok"], true, "timeout response={timeout}");
++    let timeout_output = await_output_contains(
++        &mut server,
++        &timeout["data"],
++        "CHILD_PID:",
++        Duration::from_secs(5),
++    );
++    let timeout_data = await_terminal(&mut server, &timeout["data"]);
++    assert_eq!(timeout_data["state"], "killed");
++    assert_eq!(timeout_data["timed_out"], true);
++    assert_eq!(timeout_data["termination_reason"], "timeout");
++    let timeout_child_pid = child_pid(&timeout_output);
++    await_process_gone(timeout["data"]["pid"].as_u64().unwrap() as u32);
++    await_process_gone(timeout_child_pid);
++
++    let truncated = server.request(
++        "process.start",
++        json!({
++            "argv": [
++                "powershell.exe", "-NoLogo", "-NoProfile", "-Command",
++                "[Console]::Out.Write('abcdefghijklmnopqrstuvwxyz0123456789')"
++            ],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "max_output_bytes": 12,
++            "wait_ms": 2_000,
++            "timeout_ms": 5_000
++        }),
++    );
++    assert_eq!(truncated["ok"], true, "truncated response={truncated}");
++    let truncated_terminal = await_terminal(&mut server, &truncated["data"]);
++    let truncated_poll = poll(&mut server, &truncated_terminal, 0, 0);
++    assert_eq!(
++        truncated_poll["ok"], true,
++        "truncated poll={truncated_poll}"
++    );
++    let truncated_data = &truncated_poll["data"];
++    assert_eq!(truncated_data["output"]["truncated"], true);
++    assert!(truncated_data["output"]["lost_bytes"].as_u64().unwrap() > 0);
++    assert!(truncated_data["artifacts"]
++        .as_array()
++        .is_some_and(|items| !items.is_empty()));
++
++    server.shutdown();
++    let _ = std::fs::remove_dir_all(workspace);
++}
++
++#[test]
++fn conpty_and_restart_reconciliation_do_not_orphan_or_respawn() {
++    let workspace = workspace();
++    let mut server = TestServer::start(&workspace);
++    let pty = server.request(
++        "process.start",
++        json!({
++            "argv": ["cmd.exe", "/D", "/S", "/C", "echo PTY_OK"],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "stdin_mode": "pipe",
++            "pty": true,
++            "cols": 100,
++            "rows": 24,
++            "wait_ms": 5_000,
++            "timeout_ms": 5_000
++        }),
++    );
++    assert_eq!(pty["ok"], true, "PTY response={pty}");
++    let pty_data = await_terminal(&mut server, &pty["data"]);
++    let pty_all = poll(&mut server, &pty_data, 0, 0);
++    assert_eq!(pty_all["ok"], true, "PTY poll={pty_all}");
++    let pty_output = output_text(&pty_all["data"]);
++    assert!(pty_output.contains("PTY_OK"), "PTY output={pty_output:?}");
++    assert_eq!(pty_data["mode"], "pty");
++
++    let interactive_pty = server.request(
++        "process.start",
++        json!({
++            "argv": ["cmd.exe", "/D", "/Q"],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "stdin_mode": "pipe",
++            "pty": true,
++            "cols": 100,
++            "rows": 24,
++            "wait_ms": 100,
++            "timeout_ms": 5_000
++        }),
++    );
++    assert_eq!(
++        interactive_pty["ok"], true,
++        "interactive PTY response={interactive_pty}"
++    );
++    let mut pty_input_args = owner(&interactive_pty["data"]);
++    pty_input_args["data"] = json!("echo PTY_INPUT");
++    pty_input_args["submit"] = json!(true);
++    let pty_input = server.request("process.write", pty_input_args);
++    assert_eq!(pty_input["ok"], true, "PTY input={pty_input}");
++    let mut pty_exit_args = owner(&interactive_pty["data"]);
++    pty_exit_args["data"] = json!("exit");
++    pty_exit_args["submit"] = json!(true);
++    let pty_exit = server.request("process.write", pty_exit_args);
++    assert_eq!(pty_exit["ok"], true, "PTY exit={pty_exit}");
++    let interactive_terminal = await_terminal(&mut server, &interactive_pty["data"]);
++    let interactive_all = poll(&mut server, &interactive_terminal, 0, 0);
++    assert_eq!(
++        interactive_all["ok"], true,
++        "interactive PTY poll={interactive_all}"
++    );
++    assert!(
++        output_text(&interactive_all["data"]).contains("PTY_INPUT"),
++        "interactive PTY output={interactive_all}"
++    );
++
++    let running = server.request(
++        "process.start",
++        json!({
++            "argv": [
++                "powershell.exe", "-NoLogo", "-NoProfile", "-Command",
++                "$child=Start-Process powershell.exe -ArgumentList '-NoLogo','-NoProfile','-Command','Start-Sleep -Seconds 30' -PassThru;[Console]::Out.WriteLine('CHILD_PID:'+$child.Id);Start-Sleep -Seconds 30"
++            ],
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "wait_ms": 500,
++            "timeout_ms": 30_000
++        }),
++    );
++    assert_eq!(running["ok"], true, "running response={running}");
++    assert_eq!(running["data"]["state"], "running");
++    let process_id = running["data"]["process_id"].as_str().unwrap().to_string();
++    let runtime_id = running["data"]["runtime_id"].as_str().unwrap().to_string();
++    let pid = running["data"]["pid"].as_u64().unwrap() as u32;
++    let crash_output = await_output_contains(
++        &mut server,
++        &running["data"],
++        "CHILD_PID:",
++        Duration::from_secs(5),
++    );
++    let crash_child_pid = child_pid(&crash_output);
++    server.crash();
++
++    await_process_gone(pid);
++    await_process_gone(crash_child_pid);
++
++    let mut restarted = TestServer::start(&workspace);
++    let reconciled = restarted.request(
++        "process.list",
++        json!({
++            "runtime_id": runtime_id,
++            "agent_id": AGENT,
++            "session_id": SESSION,
++            "include_terminal": true
++        }),
++    );
++    assert_eq!(reconciled["ok"], true, "list response={reconciled}");
++    let records = reconciled["data"]["processes"].as_array().unwrap();
++    let record = records
++        .iter()
++        .find(|record| record["process_id"] == process_id)
++        .expect("reconciled lifecycle record");
++    assert_eq!(record["state"], "lost");
++    assert_eq!(
++        record["termination_reason"],
++        "runtime_restart_unrecoverable"
++    );
++
++    restarted.shutdown();
++    let _ = std::fs::remove_dir_all(workspace);
++}
++
++fn process_exists(pid: u32) -> bool {
++    Command::new("powershell.exe")
++        .args([
++            "-NoLogo",
++            "-NoProfile",
++            "-Command",
++            &format!("if (Get-Process -Id {pid} -ErrorAction SilentlyContinue) {{ exit 0 }} else {{ exit 1 }}"),
++        ])
++        .status()
++        .is_ok_and(|status| status.success())
++}

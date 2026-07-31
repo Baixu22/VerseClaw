@@ -23,6 +23,11 @@ import { dcsObservability } from "./dcs-observability.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
 import { resolveKillSwitchConfig } from "./kill-switch-config-source.js";
 import {
+  collectContextCandidate,
+  createContextCandidate,
+  recordContextCandidateSkip,
+} from "./context-candidate.js";
+import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
   type TurnInjectionChannel,
@@ -57,6 +62,8 @@ export interface AssembleRequest {
    * per-assemble one, so all injection sources appear on the same account.
    */
   turnId?: string;
+  /** UAS-02: collect candidates and leave final projection to Context Orchestrator. */
+  deferProjection?: boolean;
 }
 
 export type LegacyHandlerId = "compass" | "role_memory";
@@ -138,6 +145,49 @@ function chargeAssemblerInjection(
     : applyInjectionBudget(budget, text, channel);
 }
 
+function contextBlockAuthorityVersion(block: ContextBlock): string {
+  const validAt =
+    block.valid_at instanceof Date ? block.valid_at.toISOString() : String(block.valid_at);
+  return `${validAt}:compression-${block.compression_depth}`;
+}
+
+function contextBlockSourceId(block: ContextBlock): string {
+  return `context-block:${block.source_system}:${block.block_type}`;
+}
+
+function collectContextBlockCandidate(params: {
+  turnId: string;
+  block: ContextBlock;
+  channel: TurnInjectionChannel;
+  text: string;
+}): void {
+  collectContextCandidate(
+    params.turnId,
+    createContextCandidate({
+      authorityObjectId: params.block.block_id,
+      authorityVersion: contextBlockAuthorityVersion(params.block),
+      sourceId: contextBlockSourceId(params.block),
+      channel: params.channel,
+      target: "message",
+      text: params.text,
+    }),
+  );
+}
+
+function recordContextBlockDecision(params: {
+  turnId: string;
+  sourceId: string;
+  channel: TurnInjectionChannel;
+  reason: "empty" | "flag-off" | "kill-switch";
+}): void {
+  recordContextCandidateSkip(params.turnId, {
+    sourceId: params.sourceId,
+    channel: params.channel,
+    target: "message",
+    reason: params.reason,
+  });
+}
+
 /**
  * FP-P0-02: resolve the config the kill switch evaluates for one assemble().
  *
@@ -198,6 +248,42 @@ export class Assembler {
       output: inputs.existing_output,
       selected_handlers: [],
     };
+    const deferProjection = request.deferProjection === true;
+    if (deferProjection && !request.turnId) {
+      return result;
+    }
+    if (deferProjection) {
+      const knowledgeEnabled =
+        (eligibleHandlers.has("compass") &&
+          resolvedFlags["runtime.contextBlock.compass.enabled"]) ||
+        (eligibleHandlers.has("role_memory") &&
+          resolvedFlags["runtime.contextBlock.role_memory.enabled"]);
+      const skipReason = killed ? "kill-switch" : "flag-off";
+      if (!knowledgeEnabled) {
+        recordContextBlockDecision({
+          turnId: request.turnId!,
+          sourceId: "context-block:knowledge",
+          channel: "knowledge",
+          reason: skipReason,
+        });
+      }
+      if (!resolvedFlags["runtime.contextBlock.working_memory.enabled"]) {
+        recordContextBlockDecision({
+          turnId: request.turnId!,
+          sourceId: "context-block:working-memory:working_memory",
+          channel: "working_memory",
+          reason: skipReason,
+        });
+      }
+      if (!resolvedFlags["runtime.contextBlock.tool_registry.enabled"]) {
+        recordContextBlockDecision({
+          turnId: request.turnId!,
+          sourceId: "context-block:cvk:tool_registry",
+          channel: "tool_registry",
+          reason: skipReason,
+        });
+      }
+    }
     // TASK-P2-03: one shared budget for all DCS transformContext injections.
     // FP-P0-05: when the caller supplies a `turnId`, the DCS channels charge the
     // turn-wide ledger that VToken / memory-pilot / CVK also charge, so the
@@ -309,6 +395,14 @@ export class Assembler {
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: "context-block:working-memory:working_memory",
+          channel: "working_memory",
+          reason: "empty",
+        });
+      }
       return output;
     }
     // FP-P0-02: the kill switch must cut the BlockStore *query* too, not only the
@@ -317,7 +411,7 @@ export class Assembler {
     if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
-    if (hasRecentActionsHeading(output)) {
+    if (!request.deferProjection && hasRecentActionsHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once — a prior injection point already
       // projected the window into this call's context; never accumulate a second.
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
@@ -330,9 +424,31 @@ export class Assembler {
       source_systems: ["working-memory"],
       limit: 1,
     });
-    const injection = formatWorkingMemoryInjection(blocks[0]);
+    const block = blocks[0];
+    const injection = formatWorkingMemoryInjection(block);
     if (!injection) {
-      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: block
+            ? contextBlockSourceId(block)
+            : "context-block:working-memory:working_memory",
+          channel: "working_memory",
+          reason: "empty",
+        });
+      }
+      if (!request.deferProjection) {
+        dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      }
+      return output;
+    }
+    if (request.deferProjection && request.turnId && block) {
+      collectContextBlockCandidate({
+        turnId: request.turnId,
+        block,
+        channel: "working_memory",
+        text: injection,
+      });
       return output;
     }
     const applied = chargeAssemblerInjection(
@@ -358,13 +474,21 @@ export class Assembler {
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: "context-block:cvk:tool_registry",
+          channel: "tool_registry",
+          reason: "empty",
+        });
+      }
       return output;
     }
     // FP-P0-02: same fail-closed fence on the tool-registry query segment.
     if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
-    if (hasToolsHeading(output)) {
+    if (!request.deferProjection && hasToolsHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once — a prior injection point already
       // projected the tool registry into this call's context; never accumulate.
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
@@ -377,9 +501,29 @@ export class Assembler {
       source_systems: ["cvk"],
       limit: 1,
     });
-    const injection = formatToolRegistryInjection(blocks[0]);
+    const block = blocks[0];
+    const injection = formatToolRegistryInjection(block);
     if (!injection) {
-      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: block ? contextBlockSourceId(block) : "context-block:cvk:tool_registry",
+          channel: "tool_registry",
+          reason: "empty",
+        });
+      }
+      if (!request.deferProjection) {
+        dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      }
+      return output;
+    }
+    if (request.deferProjection && request.turnId && block) {
+      collectContextBlockCandidate({
+        turnId: request.turnId,
+        block,
+        channel: "tool_registry",
+        text: injection,
+      });
       return output;
     }
     const applied = chargeAssemblerInjection(
@@ -414,13 +558,21 @@ export class Assembler {
   ): Promise<TExistingOutput> {
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: "context-block:knowledge",
+          channel: "knowledge",
+          reason: "empty",
+        });
+      }
       return output;
     }
     // FP-P0-02: same fail-closed fence on the knowledge query segment.
     if (isContextEnhancementKillSwitchEngaged(killCfg)) {
       return output;
     }
-    if (hasKnowledgeHeading(output)) {
+    if (!request.deferProjection && hasKnowledgeHeading(output)) {
       // DCS v1.6.1 addendum 2: exactly-once.
       dcsObservability.recordDcsTransformContextInjection({ chars: 0, suppressed: true });
       return output;
@@ -444,9 +596,29 @@ export class Assembler {
       source_systems: sourceSystems,
       limit: 1,
     });
-    const injection = formatKnowledgeInjection(blocks[0]);
+    const block = blocks[0];
+    const injection = formatKnowledgeInjection(block);
     if (!injection) {
-      dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      if (request.deferProjection && request.turnId) {
+        recordContextBlockDecision({
+          turnId: request.turnId,
+          sourceId: block ? contextBlockSourceId(block) : "context-block:knowledge",
+          channel: "knowledge",
+          reason: "empty",
+        });
+      }
+      if (!request.deferProjection) {
+        dcsObservability.recordDcsTransformContextInjection({ chars: 0 });
+      }
+      return output;
+    }
+    if (request.deferProjection && request.turnId && block) {
+      collectContextBlockCandidate({
+        turnId: request.turnId,
+        block,
+        channel: "knowledge",
+        text: injection,
+      });
       return output;
     }
     const applied = chargeAssemblerInjection(budget, turnLedger, "knowledge", injection);
