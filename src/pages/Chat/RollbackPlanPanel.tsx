@@ -66,7 +66,7 @@ export function RollbackPlanPanel({
           <h2 className={cn('font-medium text-foreground', compact ? 'text-xs' : 'text-sm')}>
             {t('composer.rollbackPlan.title')}
           </h2>
-          <p className={cn('mt-0.5 text-muted-foreground', compact ? 'text-2xs leading-4' : 'text-xs')}>
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {t(plan.summaryKey, plan.summaryValues)}
           </p>
         </div>
@@ -93,7 +93,7 @@ export function RollbackPlanPanel({
             key={signal.kind}
             data-testid={`chat-rollback-signal-${signal.kind}`}
             className={cn(
-              'rounded-md border px-2 py-1 text-2xs leading-4',
+              'rounded-md border px-2 py-1 text-xs',
               signal.active
                 ? riskClass(signal.risk)
                 : 'border-border/60 bg-black/[0.02] text-muted-foreground dark:bg-white/[0.03]',
@@ -122,14 +122,14 @@ export function RollbackPlanPanel({
                     {t(`composer.rollbackPlan.risk.${action.risk}`)}
                   </span>
                 </div>
-                <p className="mt-1 text-2xs leading-4 text-muted-foreground">{t(action.detailKey, action.detailValues)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t(action.detailKey, action.detailValues)}</p>
               </div>
               {action.command && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-7 shrink-0 px-2 text-2xs"
+                  className="h-7 shrink-0 px-2 text-xs"
                   data-testid={`chat-rollback-run-${action.command}`}
                   onClick={() => void runCommand(action.command)}
                 >
@@ -141,7 +141,7 @@ export function RollbackPlanPanel({
         ))}
       </div>
 
-      <div className="mt-2 flex items-start gap-1.5 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-2xs leading-4 text-amber-700 dark:text-amber-400">
+      <div className="mt-2 flex items-start gap-1.5 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-400">
         <ShieldAlert className="mt-0.5 h-3 w-3 shrink-0" />
         <span>{t('composer.rollbackPlan.destructiveWarning')}</span>
       </div>

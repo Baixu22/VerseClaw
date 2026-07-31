@@ -9,6 +9,23 @@ function stableStringify(v) {
   return "{" + e.join(",") + "}";
 }
 
+// FP-P1-01 added a first-send provider gate: with no usable provider the composer
+// intercepts the send instead of dispatching it, so the recorder never sees a
+// payload. Present a configured, keyed default account. These keys use the typed
+// [module, action, payload] shape the mock fixture resolves first, not the
+// 2-element `k()` helper below.
+const PROVIDER_TIMESTAMP = "2026-01-01T00:00:00.000Z";
+const PROVIDERS = {
+  [stableStringify(["providers", "accounts", null])]: [
+    { id:"anthropic-e2e", vendorId:"anthropic", label:"Anthropic", authMode:"api_key", model:"claude-opus-4", enabled:true, isDefault:true, createdAt:PROVIDER_TIMESTAMP, updatedAt:PROVIDER_TIMESTAMP },
+  ],
+  [stableStringify(["providers", "accountKeyInfo", null])]: [
+    { accountId:"anthropic-e2e", hasKey:true, keyMasked:"sk-***" },
+  ],
+  [stableStringify(["providers", "vendors", null])]: [],
+  [stableStringify(["providers", "getDefaultAccount", null])]: { accountId:"anthropic-e2e" },
+};
+
 const WS = { id:"ws-1", name:"Demo", rootPath:"/tmp/d", agentId:"main", activeSessionKey:SESSION_KEY, permissionMode:"acceptEdits", createdAt:1, updatedAt:1, lastOpenedAt:1, state:{}, sessionStates:{} };
 WS.sessionStates[SESSION_KEY] = {};
 const WSS = { profiles:[WS], activeWorkspaceId:WS.id, activeWorkspace:WS };
@@ -68,6 +85,7 @@ function mkMocks() {
       [k("chat.history", {sessionKey:SESSION_KEY, limit:200, maxChars:500000})]: { success:true, result:{messages:[]} },
     },
     hostApi: {
+      ...PROVIDERS,
       [k("/api/gateway/status","GET")]: ok(js({state:"running",port:18789,pid:12345})),
       [k("/api/settings","GET")]: ok(js({language:"en",setupComplete:true})),
       [k("/api/agents","GET")]: ok(js({success:true,agents:[{id:"main",name:"main"}]})),
@@ -94,7 +112,7 @@ test.describe("Work mode intensity E2E", () => {
         await expect(page.getByTestId("chat-composer-input")).toBeVisible();
         await page.getByTestId("chat-composer-input").click();
         await page.getByTestId("chat-composer-input").fill("Test msg");
-        await page.getByTitle("Send").click();
+        await page.getByTestId("chat-composer-send").click();
         const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
         expect(payload).toBeDefined();
         if (mode === "plan") expect(payload.promptMode).toBe("none");
@@ -112,7 +130,7 @@ test.describe("Work mode intensity E2E", () => {
       const page = await getStableWindow(app);
       await expect(page.getByTestId("chat-composer-input")).toBeVisible({ timeout:30000 });
       await page.getByTestId("chat-composer-input").fill("Hello");
-      await page.getByTitle("Send").click();
+      await page.getByTestId("chat-composer-send").click();
       const payload = await app.evaluate(() => globalThis.__cm && globalThis.__cm.last);
       expect(payload).toBeDefined();
       expect(payload.promptMode).toBe("full");

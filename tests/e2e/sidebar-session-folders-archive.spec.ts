@@ -333,7 +333,9 @@ test.describe('Sidebar session workgroups and archive', () => {
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_A}`)).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible({ timeout: 15000 });
 
-    // Create a new workgroup.
+    // Create a new workgroup. The affordance is hover-revealed management
+    // chrome, so the workspace group must be hovered first.
+    await page.locator('.project-tasks').first().hover();
     await page.getByTestId('sidebar-folder-create-workspace-folders').click();
     await page.getByPlaceholder('Workgroup name').fill('Research');
     await page.getByPlaceholder('Workgroup name').press('Enter');
@@ -359,12 +361,16 @@ test.describe('Sidebar session workgroups and archive', () => {
     // workgroup should surface its aggregate running state and session count.
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeVisible();
     const folderContainer = page.locator('[data-testid^="sidebar-folder-folder-"]').filter({ hasText: 'Research' });
-    await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-status-"]')).toContainText('Running');
+    // Aggregate state is a bare dot in the row; its wording rides the label so
+    // it can never crowd out the workgroup name.
+    await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-status-"]'))
+      .toHaveAttribute('aria-label', 'Running');
     await expect(folderContainer.locator('[data-testid^="sidebar-workgroup-count-"]')).toHaveText('1');
     await expect(page.getByTestId('sidebar-workgroup-ungrouped-workspace-folders')).toContainText('Ungrouped');
     await page.screenshot({ path: testInfo.outputPath('workgroup-sidebar.png'), fullPage: true });
 
     // Workgroup names participate in the spotlight search.
+    await page.locator('.section-heading').first().hover();
     await page.getByTestId('sidebar-session-search').click();
     await page.getByPlaceholder('Search conversations by name, workgroup, workspace, or agent...').fill('Research');
     await expect(page.getByTestId('session-search-modal')).toBeVisible();
@@ -408,19 +414,20 @@ test.describe('Sidebar session workgroups and archive', () => {
     await expect(page.getByTestId('session-delete-dialog')).toBeHidden({ timeout: 5000 });
     await expect(page.getByTestId(`sidebar-session-${SESSION_KEY_B}`)).toBeHidden({ timeout: 5000 });
 
-    // Open the Archive modal from the sidebar footer.
+    // Archive is available in the compact FakeCoding footer menu.
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
     await page.getByTestId('sidebar-archive').click();
-    await expect(page.getByTestId('archive-modal')).toBeVisible();
+    await expect(page.getByTestId('settings-archived-section')).toBeVisible();
 
     // The pre-existing archived entry should be visible.
-    await expect(page.getByTestId(`archive-modal-item-${ARCHIVED_SESSION_KEY}`)).toBeVisible();
+    await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeVisible();
 
     // Restore it.
-    await page.getByTestId(`archive-modal-restore-${ARCHIVED_SESSION_KEY}`).click();
-    await expect(page.getByTestId(`archive-modal-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
+    await page.getByTestId(`settings-archived-restore-${ARCHIVED_SESSION_KEY}`).click();
+    await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
   });
 
-  test('permanent delete from archive modal removes the entry', async ({ electronApp, page }) => {
+  test('permanent delete from the archived settings page removes the entry', async ({ electronApp, page }) => {
     await setupStatefulHostHandler(electronApp, {
       workspace: makeBaseWorkspace(),
       archivedEntries: [archivedEntry],
@@ -430,16 +437,17 @@ test.describe('Sidebar session workgroups and archive', () => {
     await page.getByTestId('setup-skip-button').click().catch(() => {});
     await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 15000 });
 
-    // Open the Archive modal.
+    // Open Settings -> Archived via the compact footer menu.
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
     await expect(page.getByTestId('sidebar-archive')).toBeVisible({ timeout: 10000 });
     await page.getByTestId('sidebar-archive').click();
-    await expect(page.getByTestId('archive-modal')).toBeVisible();
+    await expect(page.getByTestId('settings-archived-section')).toBeVisible();
 
     // Verify the archived entry is present.
-    await expect(page.getByTestId(`archive-modal-item-${ARCHIVED_SESSION_KEY}`)).toBeVisible();
+    await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeVisible();
 
     // Click permanent delete.
-    await page.getByTestId(`archive-modal-delete-${ARCHIVED_SESSION_KEY}`).click();
-    await expect(page.getByTestId(`archive-modal-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
+    await page.getByTestId(`settings-archived-delete-${ARCHIVED_SESSION_KEY}`).click();
+    await expect(page.getByTestId(`settings-archived-item-${ARCHIVED_SESSION_KEY}`)).toBeHidden({ timeout: 5000 });
   });
 });

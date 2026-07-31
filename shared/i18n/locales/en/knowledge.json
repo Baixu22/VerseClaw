@@ -18,15 +18,19 @@
     "mapHint": "Open a topic to search the vault and preview matching pages."
   },
   "tabs": {
+    "navigation": "Knowledge primary navigation",
     "library": "Library",
     "sources": "Sources",
     "inbox": "Inbox",
-    "drafts": "Draft Inbox",
+    "drafts": "Drafts",
     "runtime": "Runtime Lessons",
     "review": "Review",
     "governance": "Governance"
   },
   "actions": {
+    "more": "More actions",
+    "content": "Content",
+    "maintenance": "Maintenance",
     "configure": "Configure",
     "init": "Initialize",
     "importFiles": "Import Files",
@@ -73,7 +77,8 @@
     "warnings": "Warnings",
     "errors": "Errors",
     "typeDistribution": "Types",
-    "selectAll": "Select all valid concepts"
+    "selectAll": "Select all valid concepts",
+    "selectedConcepts": "{{count}} selected"
   },
   "library": {
     "title": "Library",
@@ -87,6 +92,7 @@
   },
   "sourceSet": {
     "title": "Current Source Set",
+    "savedSets": "Saved sets",
     "empty": "Add sources from search results or the current document.",
     "count": "{{count}} sources",
     "save": "Save Source Set",
@@ -107,6 +113,9 @@
     "question": "Create a {{artifact}} from the current Source Set."
   },
   "workspace": {
+    "newNote": "New note",
+    "browseTypes": "Browse by type",
+    "sourceTools": "Source tools",
     "vault": "Vault",
     "localVault": "Local knowledge vault",
     "documents": "Documents",
@@ -123,6 +132,22 @@
       "edit": "Edit",
       "preview": "Preview",
       "split": "Split"
+    }
+  },
+  "utility": {
+    "close": "Close panel",
+    "status": {
+      "title": "Vault status",
+      "description": "Review the Vault path, modes, Obsidian support, source count, and warnings."
+    },
+    "okf": {
+      "title": "OKF validation",
+      "description": "Review validation results and choose concepts to import.",
+      "empty": "Validate an OKF Bundle from the More menu first."
+    },
+    "sources": {
+      "title": "Source tools",
+      "description": "Manage the current Source Set, saved sets, and Studio outputs."
     }
   },
   "librarian": {

@@ -129,6 +129,9 @@ const labels: Record<string, string> = {
   'assistant.mapHint': 'Open a topic to search the vault.',
   'actions.configure': 'Configure',
   'actions.init': 'Initialize',
+  'actions.more': 'More actions',
+  'actions.content': 'Content',
+  'actions.maintenance': 'Maintenance',
   'actions.importFiles': 'Import Files',
   'actions.importFolder': 'Import Folder',
   'actions.validateOkf': 'Validate OKF Bundle',
@@ -165,6 +168,8 @@ const labels: Record<string, string> = {
   'okf.errors': 'Errors',
   'okf.typeDistribution': 'Types',
   'okf.selectAll': 'Select all valid concepts',
+  'okf.selectedConcepts': '{{count}} selected',
+  'tabs.navigation': 'Knowledge primary navigation',
   'tabs.library': 'Library',
   'tabs.sources': 'Sources',
   'tabs.inbox': 'Inbox',
@@ -174,6 +179,7 @@ const labels: Record<string, string> = {
   'library.title': 'Library',
   'sources.title': 'Sources',
   'sourceSet.title': 'Current Source Set',
+  'sourceSet.savedSets': 'Saved sets',
   'sourceSet.empty': 'Add sources from search results or the current document.',
   'sourceSet.count': '{{count}} sources',
   'sourceSet.save': 'Save Source Set',
@@ -193,6 +199,9 @@ const labels: Record<string, string> = {
   'library.typeHint': 'Filter and browse this knowledge type',
   'library.countLabel': '{{count}} pages',
   'workspace.vault': 'Vault',
+  'workspace.newNote': 'New note',
+  'workspace.browseTypes': 'Browse by type',
+  'workspace.sourceTools': 'Source tools',
   'workspace.localVault': 'Local knowledge vault',
   'workspace.documents': 'Documents',
   'workspace.emptyDocuments': 'Search the vault or create a new Markdown note to begin.',
@@ -207,6 +216,14 @@ const labels: Record<string, string> = {
   'workspace.modes.edit': 'Edit',
   'workspace.modes.preview': 'Preview',
   'workspace.modes.split': 'Split',
+  'utility.close': 'Close panel',
+  'utility.status.title': 'Vault status',
+  'utility.status.description': 'Review Vault status.',
+  'utility.okf.title': 'OKF validation',
+  'utility.okf.description': 'Review OKF validation.',
+  'utility.okf.empty': 'Validate an OKF Bundle first.',
+  'utility.sources.title': 'Source tools',
+  'utility.sources.description': 'Manage source tools.',
   'librarian.title': 'Knowledge Librarian',
   'librarian.roleId': 'knowledge-librarian',
   'librarian.currentDocument': 'Current document',
@@ -1012,30 +1029,38 @@ describe('Knowledge page', () => {
 
     await screen.findByTestId('knowledge-page');
     await waitFor(() => expect(hostApiMock.status).toHaveBeenCalled());
+    expect(screen.getByTestId('knowledge-markdown-workspace')).toBeInTheDocument();
+    expect(screen.queryByTestId('knowledge-assistant-overview')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('knowledge-metrics')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('knowledge-status-trigger'));
+    await screen.findByTestId('knowledge-utility-sheet');
+    fireEvent.click(screen.getByRole('button', { name: 'Close panel' }));
 
     fireEvent.click(screen.getByText('Initialize'));
     await waitFor(() => expect(hostApiMock.init).toHaveBeenCalled());
-    await waitFor(() => expect(screen.getByText('Import Files')).not.toBeDisabled());
+    fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
+    await waitFor(() => expect(screen.getByText('Import Files')).toBeInTheDocument());
 
     fireEvent.click(screen.getByText('Import Files'));
     await waitFor(() => expect(hostApiMock.ingestFiles).toHaveBeenCalledWith({ paths: ['C:/notes/decision.md'] }));
-    expect(screen.getByTestId('knowledge-assistant-overview')).toHaveTextContent('Knowledge Assistant');
     expect(screen.getByTestId('knowledge-workbench-tabs').querySelectorAll('button')).toHaveLength(5);
 
-    fireEvent.click(screen.getByTestId('knowledge-audit-center-button'));
+    fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
+    fireEvent.click(screen.getByText('Audit Center'));
     await waitFor(() => expect(screen.getByText('Run Compile')).not.toBeDisabled());
     fireEvent.click(screen.getByText('Run Compile'));
     await waitFor(() => expect(hostApiMock.compile).toHaveBeenCalled());
     await waitFor(() => expect(screen.getByText('Run Lint')).not.toBeDisabled());
     fireEvent.click(screen.getByText('Run Lint'));
     await waitFor(() => expect(hostApiMock.lint).toHaveBeenCalled());
+    fireEvent.click(screen.getByTestId('knowledge-tab-library'));
     fireEvent.change(screen.getByTestId('knowledge-search-input'), { target: { value: 'native wiki' } });
     await waitFor(() => expect(screen.getByTestId('knowledge-search-submit')).not.toBeDisabled());
     fireEvent.click(screen.getByTestId('knowledge-search-submit'));
     await waitFor(() => expect(screen.getByTestId('knowledge-search-result')).toHaveTextContent('Decision'));
 
     fireEvent.click(screen.getByTestId('knowledge-search-result'));
-    await screen.findByText(/Use native wiki/);
+    await screen.findByTestId('knowledge-markdown-preview');
     expect(screen.getByTestId('knowledge-markdown-workspace')).toBeInTheDocument();
     expect(screen.getByTestId('knowledge-editor-title')).toHaveValue('Decision');
     expect(screen.getByTestId('knowledge-markdown-editor')).toHaveValue('# Decision\nUse native wiki.');
@@ -1084,6 +1109,8 @@ describe('Knowledge page', () => {
 
     await screen.findByTestId('knowledge-page');
     expect(hostApiMock.listSourceSets).toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('knowledge-source-tools'));
+    await screen.findByTestId('knowledge-utility-sheet');
     expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Current Source Set');
     expect(screen.getByTestId('knowledge-source-set-panel')).toHaveTextContent('Add sources from search results');
 
@@ -1183,7 +1210,8 @@ describe('Knowledge page', () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
-    fireEvent.click(screen.getByTestId('knowledge-audit-center-button'));
+    fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
+    fireEvent.click(screen.getByText('Audit Center'));
     await screen.findByTestId('knowledge-governance');
 
     expect(screen.getByTestId('knowledge-quality-metrics')).toHaveTextContent('Quality Metrics');
@@ -1204,7 +1232,7 @@ describe('Knowledge page', () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
-    fireEvent.click(screen.getByTestId('knowledge-librarian-fab'));
+    fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
     await screen.findByTestId('knowledge-librarian-modal');
     expect(screen.getByTestId('knowledge-librarian-composer')).toBeInTheDocument();
     expect(screen.getByTestId('knowledge-librarian-suggestions')).toHaveTextContent('Summarize current note');
@@ -1269,7 +1297,7 @@ describe('Knowledge page', () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
-    fireEvent.click(screen.getByTestId('knowledge-librarian-fab'));
+    fireEvent.click(screen.getByTestId('knowledge-librarian-open'));
     await screen.findByTestId('knowledge-librarian-modal');
 
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Why use native wiki?' } });
@@ -1291,11 +1319,12 @@ describe('Knowledge page', () => {
     render(<Knowledge />);
 
     await screen.findByTestId('knowledge-page');
+    fireEvent.pointerDown(screen.getByTestId('knowledge-more-actions'));
     fireEvent.click(screen.getByText('Validate OKF Bundle'));
 
     await waitFor(() => expect(hostApiMock.validateOkfBundle).toHaveBeenCalledWith({ path: 'C:/okf' }));
     await screen.findByTestId('knowledge-okf-panel');
-    expect(screen.getByText('OKF Compatibility')).toBeInTheDocument();
+    expect(screen.getByText('OKF validation')).toBeInTheDocument();
     expect(screen.getByText('architecture: 1')).toBeInTheDocument();
     expect(screen.getAllByText('Broken OKF link: missing.md').length).toBeGreaterThan(0);
 

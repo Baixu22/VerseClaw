@@ -41,7 +41,7 @@ export function WorkHeatGraph() {
 
   return (
     <section
-      className="rounded-lg border border-border bg-black/[0.025] p-4 dark:bg-white/[0.035]"
+      className="rounded-lg border border-conversation p-4"
       data-testid="settings-work-heatgraph"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">

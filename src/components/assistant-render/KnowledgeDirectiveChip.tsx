@@ -31,7 +31,7 @@ export function KnowledgeDirectiveChip({
         config.color === 'emerald' && 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
         config.color === 'amber' && 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400',
         config.color === 'blue' && 'border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-400',
-        isXs && 'px-1.5 py-0.5 text-2xs',
+        isXs && 'px-1.5 py-0.5 text-xs',
       )}
       title={t('composer.knowledgeAttach.messageRefTitle', { title: reference.title })}
     >

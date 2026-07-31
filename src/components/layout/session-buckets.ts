@@ -1,4 +1,4 @@
-import type { ChatSession } from '@/stores/chat';
+import type { ChatRuntimeRunState, ChatSession } from '@/stores/chat';
 import type { SessionFolder, WorkspaceProfile } from '@shared/types/workspace';
 
 function getAgentIdFromSessionKey(sessionKey: string): string {
@@ -13,6 +13,32 @@ function getSessionCreatedAtMsFromKey(sessionKey: string): number | undefined {
 
   const createdAtMs = Number(match[1]);
   return Number.isFinite(createdAtMs) && createdAtMs > 0 ? createdAtMs : undefined;
+}
+
+export function getRuntimeRunActivityMs(run: ChatRuntimeRunState): number {
+  const lastEventTs = run.events.reduce((latest, event) => {
+    const ts = typeof event.ts === 'number' && Number.isFinite(event.ts) ? event.ts : 0;
+    return Math.max(latest, ts);
+  }, 0);
+  return Math.max(run.endedAt ?? 0, run.startedAt ?? 0, lastEventTs);
+}
+
+export function buildLatestRuntimeRunBySession(
+  runtimeRuns: Record<string, ChatRuntimeRunState>,
+): Map<string, ChatRuntimeRunState> {
+  const latestBySession = new Map<string, ChatRuntimeRunState>();
+  const latestActivityBySession = new Map<string, number>();
+
+  for (const run of Object.values(runtimeRuns)) {
+    if (!run.sessionKey) continue;
+    const activity = getRuntimeRunActivityMs(run);
+    if (activity >= (latestActivityBySession.get(run.sessionKey) ?? -1)) {
+      latestBySession.set(run.sessionKey, run);
+      latestActivityBySession.set(run.sessionKey, activity);
+    }
+  }
+
+  return latestBySession;
 }
 
 export function getSessionActivityMs(

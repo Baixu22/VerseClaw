@@ -2,10 +2,10 @@
  * Main Layout Component
  * Platform-aware application shell.
  */
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
+import { SettingsSidebar } from '@/pages/Settings/SettingsSidebar';
 import { TitleBar } from './TitleBar';
 import { MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
 import { cn } from '@/lib/utils';
@@ -15,8 +15,8 @@ import {
   GenericRouteLoadingShell,
   SettingsRouteLoadingShell,
 } from '@/components/loading/RouteLoadingShell';
-import { useUiOverlay } from './ui-overlay-context';
-import { MOTION_SPRING } from '@/components/ui/motion';
+import { useUiVersion } from './ui-overlay-context';
+import { useWorkspacesStore } from '@/stores/workspaces';
 
 function RouteLoadingFallback({ pathname }: { pathname: string }) {
   if (pathname === '/') return <ChatRouteLoadingShell />;
@@ -29,9 +29,14 @@ export function MainLayout() {
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
   const isWin = platform === 'win32';
-  const reduceMotion = useReducedMotion();
-  const { uiVersion, settingsOpen } = useUiOverlay();
+  const uiVersion = useUiVersion();
   const isUiV2 = uiVersion === 'v2' && isWin;
+  const isSettingsRoute = location.pathname.startsWith('/settings');
+  const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
+
+  useEffect(() => {
+    void fetchWorkspaces();
+  }, [fetchWorkspaces]);
 
   return (
     <div
@@ -47,29 +52,22 @@ export function MainLayout() {
       <BootShellHandoff />
       <TitleBar />
 
-      <motion.div
+      <div
         data-testid="app-content-stage"
-        data-depth={settingsOpen ? 'recessed' : 'base'}
+        data-depth="base"
         className={cn(
           'flex min-h-0 flex-1 overflow-hidden bg-surface-sidebar',
-          isUiV2 && 'app-content-stage-v2 rounded-tl-[20px]',
+          isUiV2 && !isSettingsRoute && 'app-content-stage-v2 rounded-tl-[20px]',
         )}
-        initial={false}
-        animate={{
-          transform: isUiV2 && settingsOpen && !reduceMotion
-            ? 'scale(0.985) translateX(-8px)'
-            : 'scale(1) translateX(0px)',
-          opacity: isUiV2 && settingsOpen ? 0.96 : 1,
-        }}
-        transition={reduceMotion ? { duration: 0.16 } : MOTION_SPRING.surface}
-        style={{ transformOrigin: 'left center', willChange: settingsOpen ? 'transform, opacity' : undefined }}
       >
-        <Sidebar />
+        {isSettingsRoute ? <SettingsSidebar /> : <Sidebar />}
         <main
           data-testid="main-content"
           className={cn(
-            'relative min-h-0 flex-1 overflow-auto border-l border-border/60 bg-background p-6',
-            isUiV2 ? 'rounded-tl-[20px] shadow-[-1px_0_0_rgba(255,255,255,0.45)]' : 'rounded-tl-2xl',
+            'relative min-h-0 flex-1 border-l border-border/60 bg-background',
+            isSettingsRoute
+              ? 'overflow-hidden border-l-0 p-0 rounded-none shadow-none'
+              : cn('overflow-auto p-6', isUiV2 ? 'rounded-tl-[20px] shadow-[-1px_0_0_rgba(255,255,255,0.45)]' : 'rounded-tl-2xl'),
             !isWin && 'border-t border-border/60',
           )}
         >
@@ -85,7 +83,7 @@ export function MainLayout() {
             <Outlet />
           </Suspense>
         </main>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
+import { SidebarRow } from './SidebarRow';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 import {
   buildSidebarWorkspaceFolderGroups,
@@ -50,14 +51,6 @@ function getWorkgroupStatus(
   if (kinds.length === sessionKeys.length && kinds.every((kind) => kind === 'completed')) return 'done';
   if (kinds.includes('aborted')) return 'stopped';
   return 'idle';
-}
-
-function workgroupStatusTone(status: WorkgroupStatusKind): string {
-  if (status === 'attention') return 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-400';
-  if (status === 'waiting') return 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400';
-  if (status === 'running') return 'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-400';
-  if (status === 'done') return 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
-  return 'border-black/5 bg-black/[0.04] text-muted-foreground dark:border-white/10 dark:bg-white/[0.06]';
 }
 
 function workgroupStatusDot(status: WorkgroupStatusKind): string {
@@ -117,7 +110,7 @@ function FolderRow({
   return (
     <div className="space-y-0.5" data-testid={`sidebar-folder-${node.folder.id}`}>
       {isEditing ? (
-        <div className="flex items-center gap-1 px-1.5 py-1" style={{ paddingLeft: 8 + node.depth * 12 }}>
+        <div className="flex items-center gap-1 px-1.5 py-1" style={{ paddingLeft: 8 }}>
           <Input
             autoFocus
             value={draftName}
@@ -145,81 +138,82 @@ function FolderRow({
           </button>
         </div>
       ) : (
-        <div
-          className="group relative flex items-center"
-          style={{ paddingLeft: node.depth * 12 }}
-        >
-          <button
-            type="button"
-            data-testid={`sidebar-folder-toggle-${node.folder.id}`}
-            aria-expanded={!collapsed}
-            onClick={() => onToggleFolder(node.folder.id)}
-            className={cn(
-              'flex w-full items-center gap-1.5 rounded-lg px-2 py-1 pr-14 text-left transition-colors',
-              'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+        <div>
+          <SidebarRow
+            className="folder-row-wrap"
+            actionsClassName="task-hover-actions"
+            actions={(
+              <>
+                <button
+                  type="button"
+                  aria-label={t('chat:workgroups.rename')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDraftName(node.folder.name);
+                    setIsEditing(true);
+                  }}
+                  className="task-hover-btn"
+                >
+                  <Pencil />
+                </button>
+                <button
+                  type="button"
+                  data-testid={`sidebar-folder-delete-${node.folder.id}`}
+                  aria-label={t('chat:workgroups.delete')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void onDelete();
+                  }}
+                  className="task-hover-btn hover:!text-destructive"
+                >
+                  <Trash2 />
+                </button>
+              </>
             )}
           >
-            {hasChildren
-              ? (collapsed
-                ? <ChevronRight className="h-3 w-3 shrink-0" />
-                : <ChevronDown className="h-3 w-3 shrink-0" />)
-              : <span className="w-3 shrink-0" />}
-            <ListChecks className="h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 flex-1 truncate text-meta font-medium">
-              {node.folder.name}
-            </span>
-            <span
-              data-testid={`sidebar-workgroup-status-${node.folder.id}`}
-              title={workgroupStatusLabel}
-              className={cn(
-                'flex h-5 shrink-0 items-center gap-1 rounded-full border px-1.5 text-2xs font-medium',
-                workgroupStatusTone(workgroupStatus),
-              )}
+            <button
+              type="button"
+              data-testid={`sidebar-folder-toggle-${node.folder.id}`}
+              aria-expanded={!collapsed}
+              onClick={() => onToggleFolder(node.folder.id)}
+              className="task-select"
             >
-              <span className={cn('size-1.5 shrink-0 rounded-full', workgroupStatusDot(workgroupStatus))} />
-              <span className="max-w-14 truncate">{workgroupStatusLabel}</span>
-            </span>
-            {allSessionKeys.length > 0 && (
+              {/* One leading glyph only: the chevron carries both the folder
+                  affordance and its expand state, so the row stays as quiet as
+                  the session rows it groups. */}
+              {hasChildren
+                ? (collapsed
+                  ? <ChevronRight className="size-3 shrink-0" />
+                  : <ChevronDown className="size-3 shrink-0" />)
+                : <span className="size-3 shrink-0" />}
+              <span>{node.folder.name}</span>
+              {/* Status is a bare dot; its wording rides the tooltip so it can
+                  never crowd the workgroup name out of the row. */}
               <span
-                data-testid={`sidebar-workgroup-count-${node.folder.id}`}
-                aria-label={t('chat:workgroups.sessionCount', { count: allSessionKeys.length })}
-                className="shrink-0 text-2xs text-muted-foreground/60"
+                data-testid={`sidebar-workgroup-status-${node.folder.id}`}
+                title={workgroupStatusLabel}
+                aria-label={workgroupStatusLabel}
+                className="flex shrink-0 items-center"
               >
-                {allSessionKeys.length}
+                <span className={cn('size-1.5 shrink-0 rounded-full', workgroupStatusDot(workgroupStatus))} />
               </span>
-            )}
-          </button>
-          <div className={cn(
-            'absolute right-1 flex items-center gap-0.5 transition-opacity',
-            'opacity-0 group-hover:opacity-100',
-          )}>
-            <button
-              aria-label={t('chat:workgroups.rename')}
-              onClick={(e) => {
-                e.stopPropagation();
-                setDraftName(node.folder.name);
-                setIsEditing(true);
-              }}
-              className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
-            >
-              <Pencil className="h-3 w-3" />
+              {allSessionKeys.length > 0 && (
+                <span
+                  data-testid={`sidebar-workgroup-count-${node.folder.id}`}
+                  aria-label={t('chat:workgroups.sessionCount', { count: allSessionKeys.length })}
+                  className="shrink-0 text-xs text-[color:var(--cdx-text-4)]"
+                >
+                  {allSessionKeys.length}
+                </span>
+              )}
             </button>
-            <button
-              data-testid={`sidebar-folder-delete-${node.folder.id}`}
-              aria-label={t('chat:workgroups.delete')}
-              onClick={(e) => {
-                e.stopPropagation();
-                void onDelete();
-              }}
-              className="flex items-center justify-center rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-            >
-              <Trash2 className="h-3 w-3" />
-            </button>
-          </div>
+          </SidebarRow>
         </div>
       )}
       {!collapsed && hasChildren && (
-        <div className="space-y-0.5">
+        /* Children indent relative to this folder, so a nested session always
+           sits to the right of the workgroup title that owns it. */
+        <div className="folder-children">
           {node.sessions.map((entry) => renderSessionRow(entry))}
           {node.children.map((child) => (
             <FolderRow
@@ -385,7 +379,9 @@ function SessionFolderTreeInner({
       {groups.rootSessions.length > 0 && groups.folders.length > 0 && (
         <div
           data-testid={`sidebar-workgroup-ungrouped-${workspace.id}`}
-          className="flex items-center justify-between px-2.5 pt-1 text-2xs font-medium uppercase tracking-normal text-muted-foreground/60"
+          /* Quiet divider label, matching the restrained `.empty-sidebar-row`
+             treatment rather than an uppercase section header. */
+          className="empty-sidebar-row justify-between"
         >
           <span>{t('chat:workgroups.ungrouped')}</span>
           <span>{groups.rootSessions.length}</span>
@@ -426,7 +422,11 @@ function SessionFolderTreeInner({
         <button
           data-testid={`sidebar-folder-create-${workspace.id}`}
           onClick={() => setCreatingFolder(true)}
+          /* Management affordance, not list content: it stays in the DOM for
+             keyboard reach but only paints once the workspace group is hovered,
+             so the resting list is as quiet as the reference. */
           className={cn(
+            'sidebar-create-workgroup',
             'flex w-full items-center gap-1.5 rounded-lg px-2 py-1 text-left transition-colors',
             'text-2xs text-muted-foreground/70 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
           )}

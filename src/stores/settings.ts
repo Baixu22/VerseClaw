@@ -98,7 +98,7 @@ const defaultSettings = {
   proxyAllServer: '',
   proxyBypassRules: '<local>;localhost;127.0.0.1;::1',
   sidebarCollapsed: false,
-  sidebarWidth: 280,
+  sidebarWidth: 275,
   devModeUnlocked: false,
   uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,

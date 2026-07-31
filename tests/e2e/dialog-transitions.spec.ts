@@ -128,13 +128,15 @@ test.describe('dialog transitions', () => {
     await expect(providerDialog).toHaveAttribute('data-state', 'closed');
     await expect(providerDialog).toHaveCount(0);
 
-    await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-agents').click();
     await page.getByTestId('agents-add-button').click();
     const agentDialog = page.getByTestId('add-agent-dialog');
     await expectSubtleDialogAnimation(agentDialog);
-    await page.keyboard.press('Escape');
+    await agentDialog.getByRole('button', { name: 'Cancel' }).click();
     await expect(agentDialog).toHaveCount(0);
+    await expect(page.getByTestId('settings-page')).toBeVisible();
+    await page.getByTestId('settings-back-button').click();
+    await expect(page.getByTestId('settings-page')).toHaveCount(0);
 
     await page.getByTestId('sidebar-nav-cron').click();
     await page.getByTestId('cron-new-task-button').click();
@@ -192,15 +194,18 @@ test.describe('dialog transitions', () => {
         }
       }
 
-      const sessionRow = page.getByTestId('session-bucket-today').getByText('Preserved session');
+      await page.locator('.section-heading').first().hover();
+      await page.getByTestId('sidebar-session-organize').click();
+      await page.getByRole('menuitemradio', { name: 'Time' }).click();
+      const sessionRow = page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`);
       await expect(sessionRow).toBeVisible();
       await sessionRow.hover();
       await page.getByTestId(`sidebar-session-delete-${MAIN_SESSION_KEY}`).click();
 
-      const confirmDialog = page.getByRole('dialog');
+      const confirmDialog = page.getByTestId('session-delete-dialog');
       await expect(confirmDialog).toContainText('Preserved session');
 
-      await page.getByTestId('confirm-dialog-cancel-button').click();
+      await page.getByTestId('session-delete-dialog-cancel').click();
       await expect(confirmDialog).toHaveAttribute('data-state', 'closed');
       await expect(confirmDialog).toContainText('Preserved session');
       await expect(confirmDialog).toHaveCount(0);
@@ -211,7 +216,7 @@ test.describe('dialog transitions', () => {
 
       await expect(confirmDialog).toContainText('Preserved session');
 
-      await page.getByTestId('confirm-dialog-confirm-button').click();
+      await page.getByTestId('session-delete-dialog-permanent').click();
       await expect(confirmDialog).toHaveAttribute('data-state', 'closed');
       await expect(confirmDialog).toContainText('Preserved session');
       await expect(confirmDialog).toHaveCount(0);

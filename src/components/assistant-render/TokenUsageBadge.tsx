@@ -1,23 +1,12 @@
 import { memo, useMemo } from 'react';
+import { Coins } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, Database, Coins } from 'lucide-react';
 import type { RawMessage } from '@/stores/chat';
 import { extractMessageUsage } from '@/components/assistant-render/model';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-/**
- * Token usage badge rendered at the end of assistant messages.
- *
- * Shows input / output / cache token counts with an animated NumberRoll,
- * mirroring Claude Desktop's end-of-message token counter.
- *
- * - For finalized messages: extracts usage from the message metadata.
- * - For the streaming message: receives `liveUsage` from the parent.
- *
- * Renders nothing when no usage data is available, so it degrades gracefully
- * for messages that predate usage tracking.
- */
 export const TokenUsageBadge = memo(function TokenUsageBadge({
   message,
   liveUsage,
@@ -36,8 +25,7 @@ export const TokenUsageBadge = memo(function TokenUsageBadge({
   isStreaming?: boolean;
   className?: string;
 }) {
-  const { t } = useTranslation('chat');
-
+  const { t, i18n } = useTranslation('chat');
   const usage = useMemo(() => {
     if (isStreaming && liveUsage) {
       return {
@@ -52,44 +40,51 @@ export const TokenUsageBadge = memo(function TokenUsageBadge({
   }, [message, isStreaming, liveUsage]);
 
   if (!usage || usage.totalTokens === 0) return null;
-
   const showCost = typeof usage.estimatedCostUsd === 'number' && usage.estimatedCostUsd > 0;
 
   return (
-    <div
-      className={cn(
-        'mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground/70',
-        'select-none',
-        className,
-      )}
-      data-testid="token-usage-badge"
-    >
-      <span className="inline-flex items-center gap-1" title={t('toolUi.tokenUsage.input', 'Input tokens')}>
-        <ArrowDown className="h-3 w-3" aria-hidden />
-        <NumberRoll value={usage.inputTokens} />
-      </span>
-      <span className="inline-flex items-center gap-1" title={t('toolUi.tokenUsage.output', 'Output tokens')}>
-        <ArrowUp className="h-3 w-3" aria-hidden />
-        <NumberRoll value={usage.outputTokens} />
-      </span>
-      {usage.cacheTokens > 0 && (
-        <span className="inline-flex items-center gap-1" title={t('toolUi.tokenUsage.cache', 'Cache tokens')}>
-          <Database className="h-3 w-3" aria-hidden />
-          <NumberRoll value={usage.cacheTokens} />
-        </span>
-      )}
-      <span
-        className="inline-flex items-center gap-1 font-medium text-muted-foreground"
-        title={t('toolUi.tokenUsage.total', 'Total tokens')}
-      >
-        <Coins className="h-3 w-3" aria-hidden />
-        <NumberRoll value={usage.totalTokens} />
-      </span>
-      {showCost && (
-        <span className="text-muted-foreground/60" title={t('toolUi.tokenUsage.cost', 'Estimated cost')}>
-          ${usage.estimatedCostUsd!.toFixed(4)}
-        </span>
-      )}
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            'inline-flex h-6 items-center gap-1 rounded-full px-1.5 text-xs text-muted-foreground/75',
+            'hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+            className,
+          )}
+          data-testid="token-usage-badge"
+          aria-label={t('toolUi.tokenUsage.total', 'Total tokens')}
+        >
+          <Coins className="h-3 w-3" aria-hidden="true" />
+          <NumberRoll
+            value={usage.totalTokens}
+            locales={i18n.language}
+            format={{ notation: 'compact', maximumFractionDigits: 1 }}
+          />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="min-w-48">
+        <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-xs tabular-nums">
+          <dt>{t('toolUi.tokenUsage.input', 'Input tokens')}</dt>
+          <dd>{usage.inputTokens.toLocaleString(i18n.language)}</dd>
+          <dt>{t('toolUi.tokenUsage.output', 'Output tokens')}</dt>
+          <dd>{usage.outputTokens.toLocaleString(i18n.language)}</dd>
+          {usage.cacheTokens > 0 && (
+            <>
+              <dt>{t('toolUi.tokenUsage.cache', 'Cache tokens')}</dt>
+              <dd>{usage.cacheTokens.toLocaleString(i18n.language)}</dd>
+            </>
+          )}
+          <dt className="font-medium text-foreground">{t('toolUi.tokenUsage.total', 'Total tokens')}</dt>
+          <dd className="font-medium text-foreground">{usage.totalTokens.toLocaleString(i18n.language)}</dd>
+          {showCost && (
+            <>
+              <dt>{t('toolUi.tokenUsage.cost', 'Estimated cost')}</dt>
+              <dd>${usage.estimatedCostUsd!.toFixed(4)}</dd>
+            </>
+          )}
+        </dl>
+      </TooltipContent>
+    </Tooltip>
   );
 });

@@ -111,10 +111,25 @@ test.describe('Verse Claw assistant reply Markdown styling', () => {
         const root = document.documentElement;
         root.classList.remove('dark');
         root.classList.add('light');
+        // The real clipboard rejects under the Electron test runner (the window
+        // isn't focused), so the copy handler's `await` throws and the button
+        // never reaches its "Copied" state. chat-user-message-actions.spec.ts
+        // stubs the same way for the same reason.
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: { writeText: async () => undefined },
+        });
       });
 
-      const userBubble = page.locator('div.rounded-2xl.bg-brand').filter({ hasText: 'Please render a Markdown reply plainly.' }).first();
+      // Located by testid, not by fill utility. The previous selector
+      // (`div.rounded-2xl.bg-brand`) went stale when the bubble stopped using a
+      // `bg-brand` token — it matched nothing, so this assertion had been dead
+      // before the transcript adopted the Codex recipe. The point of the check
+      // is that user prompts stay bubbled while assistant text renders plain,
+      // so assert the rounding that carries that contrast.
+      const userBubble = page.getByTestId('chat-user-message-bubble').filter({ hasText: 'Please render a Markdown reply plainly.' }).first();
       await expect(userBubble).toBeVisible({ timeout: 30_000 });
+      await expect(userBubble).toHaveClass(/rounded-2xl/);
 
       const assistantProse = page.locator('.prose').filter({ hasText: 'Plain Markdown reply' }).first();
       await expect(assistantProse).toBeVisible({ timeout: 30_000 });
@@ -127,7 +142,7 @@ test.describe('Verse Claw assistant reply Markdown styling', () => {
       await expect(assistantProse.getByTestId('assistant-code-header')).toContainText('ts');
       await expect(assistantProse.locator('pre')).toContainText('const rich = true;');
       await assistantProse.getByTestId('assistant-code-copy').click();
-      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('title', 'Copied');
+      await expect(assistantProse.getByTestId('assistant-code-copy')).toHaveAttribute('title', 'Copied', { timeout: 5000 });
 
       const assistantStyles = await assistantProse.evaluate((el) => {
         const style = window.getComputedStyle(el);

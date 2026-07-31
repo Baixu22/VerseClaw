@@ -1,0 +1,204 @@
+/*
+ * codex-welcome-hero.css — chat empty-state hero recipe ported from the
+ * FakeCoding reference app.
+ *
+ * PROVENANCE. Unlike the sibling ports, these numbers are *measured*, not read
+ * out of the source file. The reference was served from
+ *   C:\Users\27933\Desktop\FakeCoding-main\web   (npm run dev, :5199)
+ * and probed with getComputedStyle at 1285x820 in the dark theme. That matters
+ * because the source rules for this element lie: styles.css declares the
+ * trigger `display: inline-block !important`, but the h1 above it is
+ * `display: flex`, so the child is blockified and the *computed* value is
+ * `block`. Several other declarations in that file are likewise overridden by
+ * later blocks or by media queries. Where source and screen disagree, the
+ * screen wins — it is what the user is comparing against.
+ *
+ * Measured (reference, dark, 1285x820):
+ *   h1       28px / 400 / line-height 37.8px / letter-spacing -0.3px
+ *            margin-bottom 28px, flex + wrap + centred
+ *   trigger  inherits the type ramp; underline dotted 1px
+ *            rgba(255,255,255,0.498), underline-offset 4px,
+ *            margin-inline 5.6px (= 0.2em at 28px)
+ *   hover    underline colour -> rgba(255,255,255,0.72); the *text* colour
+ *            does not change (easy to get wrong — it reads like a link hover)
+ *   picker   260px wide, opens upward, left edge flush with the trigger,
+ *            1px gap between panel bottom and trigger top
+ *
+ * SCOPE. The picker surface itself is NOT restated here. `.codex-composer-menu`
+ * (styles/codex-composer-menu.css) was ported from the same reference and
+ * already carries the identical shell — radius 15px, 4px padding, blur(8px),
+ * 29px rows at 5px 8px with 12.5px radius, 13px/445 type, 0.07 hover ink — in
+ * both themes. This file adds only what that shell has no opinion about: the
+ * hero type ramp, the dotted-underline trigger, and the upward/left-aligned
+ * placement. Reusing the shell is deliberate; duplicating it would mean two
+ * copies of the same measurements drifting apart.
+ *
+ * THEME. The reference is dark-only. Colour is mapped onto ClawX tokens with a
+ * light default plus a `:root.dark` override, the same approach taken by
+ * codex-sidebar.css and codex-composer-menu.css. Geometry is ported as
+ * measured; colour is mapped, because ClawX ships a cream light theme the
+ * reference has no analogue for.
+ */
+
+.codex-welcome-hero {
+  /* Reference tertiary ink, rgba(255,255,255,0.498) on dark. */
+  --cwh-underline: color-mix(in srgb, hsl(var(--foreground)) 50%, transparent);
+  --cwh-underline-hover: color-mix(in srgb, hsl(var(--foreground)) 72%, transparent);
+}
+
+:root.dark .codex-welcome-hero {
+  --cwh-underline: rgba(255, 255, 255, 0.498);
+  --cwh-underline-hover: rgba(255, 255, 255, 0.72);
+}
+
+/* The h1. `display:flex` + wrap is what lets the project name sit inline with
+ * the surrounding copy and still wrap as one unit on a narrow window. */
+.codex-welcome-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 0 28px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.3px;
+  text-align: center;
+  white-space: normal;
+  color: hsl(var(--foreground));
+}
+
+/* The clickable project name. Underline is a text-decoration rather than a
+ * border so it tracks the glyphs when the title wraps mid-name. */
+.codex-welcome-project {
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 0.2em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  vertical-align: baseline;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--cwh-underline);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 120ms ease;
+}
+
+/* Underline only. The reference leaves the text colour alone on hover. */
+.codex-welcome-project:hover,
+.codex-welcome-project:focus-visible {
+  color: inherit;
+  background: transparent;
+  text-decoration-color: var(--cwh-underline-hover);
+}
+
+.codex-welcome-project:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.codex-welcome-project[disabled] {
+  cursor: default;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-welcome-project { transition: none; }
+}
+
+/* Anchor for the absolutely-positioned picker. */
+.codex-welcome-project-wrap {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Placement modifier on the shared menu shell: upward, left-flush, 260px. */
+.codex-composer-menu--welcome-project {
+  bottom: calc(100% + 1px);
+  left: 0;
+  width: 260px;
+  max-width: min(280px, calc(100vw - 16px));
+  max-height: min(250px, calc(100vh - 100px));
+  display: flex;
+  flex-direction: column;
+  /* Rows scroll; the search row and footer stay put. */
+  overflow: hidden;
+  text-align: left;
+  letter-spacing: normal;
+}
+
+/* Search row — 29px, hairline underneath, matching the list rows above it. */
+.codex-welcome-project-search {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 29px;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(var(--ccm-ink), 0.06);
+  color: var(--ccm-text-tertiary);
+}
+
+.codex-welcome-project-search svg { flex: none; width: 16px; height: 16px; }
+
+.codex-welcome-project-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ccm-text-strong);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.25;
+}
+
+.codex-welcome-project-search input::placeholder { color: var(--ccm-text-tertiary); }
+
+.codex-welcome-project-list {
+  flex: 1;
+  min-height: 0;
+  padding: 2px 0;
+  overflow-y: auto;
+}
+
+.codex-welcome-project-empty {
+  padding: 6px 8px;
+  color: var(--ccm-text-tertiary);
+  font-size: 13px;
+  font-weight: 445;
+}
+
+.codex-welcome-project-footer {
+  flex: none;
+  padding: 2px 0 0;
+  border-top: 1px solid rgba(var(--ccm-ink), 0.06);
+}
+
+/* Row label. `.codex-composer-menu__text` is `flex: 0 0 auto` — correct for the
+ * short inline labels it was ported for, but a long workspace name would then
+ * push the trailing check out of the row. This one takes the free space and
+ * ellipsises instead, keeping rows at the shell's 29px. Full path goes in the
+ * row tooltip rather than a second line, matching the reference's one-line rows.
+ */
+.codex-welcome-project-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

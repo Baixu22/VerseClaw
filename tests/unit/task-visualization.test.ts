@@ -227,12 +227,9 @@ describe('deriveTaskSteps', () => {
         kind: 'system',
         detail: 'math tests passed',
       }),
-      expect.objectContaining({
-        id: 'assistant-final-final-assistant',
-        label: 'Assistant Final',
-        kind: 'system',
-        detail: 'Fixed subtract and tests now pass.',
-      }),
+    ]));
+    expect(steps).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ label: 'Assistant Final' }),
     ]));
   });
 

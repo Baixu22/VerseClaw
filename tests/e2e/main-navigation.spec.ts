@@ -24,19 +24,17 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
       await expect(page.getByTestId('main-content')).toBeVisible();
       await expect(page.getByTestId('sidebar-resize-handle')).toBeVisible();
-      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '16px');
+      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '20px');
 
       await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-models').click();
+      await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
       await expect(page.getByTestId('models-page-title')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-agents').click();
+      await page.getByTestId('settings-nav-agents').click();
       await expect(page.getByTestId('agents-page')).toBeVisible();
 
-      await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-channels').click();
+      await page.getByTestId('settings-nav-channels').click();
       await expect(page.getByTestId('channels-page')).toBeVisible();
     } finally {
       await closeElectronApp(app);
@@ -51,7 +49,7 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
 
       await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-models').click();
+      await page.getByTestId('settings-nav-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
 
       await app.evaluate(({ BrowserWindow, Menu }) => {

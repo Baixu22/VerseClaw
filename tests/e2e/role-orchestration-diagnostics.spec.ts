@@ -141,8 +141,11 @@ test.describe('Role orchestration diagnostics', () => {
       });
 
       const page = await getStableWindow(app);
-      await expect(page.getByTestId('chat-turn-summary-card')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-turn-summary-toggle').click();
+      const summaryToggle = page.getByTestId('chat-turn-summary-toggle');
+      await expect(summaryToggle).toBeVisible({ timeout: 30_000 });
+      if (await summaryToggle.getAttribute('aria-expanded') === 'false') {
+        await summaryToggle.click();
+      }
       await expect(page.getByTestId('chat-team-orchestration-card')).toBeVisible();
       const diagnosticsPanel = page.getByTestId('chat-team-orchestration-diagnostics');
       await expect(diagnosticsPanel.getByText('Worker failed before acceptance: max children reached')).toBeVisible();

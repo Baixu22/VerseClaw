@@ -1,166 +1,124 @@
+import { Activity, ChevronRight, GitBranch, Link as LinkIcon, Wrench, XCircle } from 'lucide-react';
+import { MessageSquare } from '@/components/icons/codex-icons';
 import { useState } from 'react';
-import { Activity, CheckCircle2, ChevronDown, ChevronRight, CircleDashed, GitBranch, Link as LinkIcon, MessageSquare, Wrench, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { TaskStep } from './task-visualization';
 
 interface ExecutionGraphCardProps {
   agentLabel: string;
   steps: TaskStep[];
   active: boolean;
-  /** Hide the trailing "Thinking ..." indicator even when active. */
   suppressThinking?: boolean;
-  /**
-   * When provided, the card becomes fully controlled: the parent owns the
-   * expand state (e.g. to persist across remounts) and toggling goes through
-   * `onExpandedChange`. When omitted, the card manages its own local state.
-   */
-  expanded?: boolean;
-  onExpandedChange?: (expanded: boolean) => void;
   traceId?: string;
 }
 
 const TOOL_ROW_EXTRA_INDENT_PX = 8;
 
-function GraphStatusIcon({ status }: { status: TaskStep['status'] }) {
-  if (status === 'completed') return <CheckCircle2 className="h-4 w-4" />;
-  if (status === 'error') return <XCircle className="h-4 w-4" />;
-  return <CircleDashed className="h-4 w-4" />;
-}
-
-function StepDetailCard({ step }: { step: TaskStep }) {
+function StepDetailRow({ step }: { step: TaskStep }) {
   const { t } = useTranslation('chat');
   const [expanded, setExpanded] = useState(false);
-  const hasDetail = !!step.detail;
-  // Narration steps (intermediate pure-text assistant messages folded from
-  // the chat stream) are rendered without a label/status pill: the message
-  // text IS the primary content.
+  const hasDetail = Boolean(step.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
   const isThinking = step.kind === 'thinking';
+  const isSystem = step.kind === 'system';
   const displayToolLabel = isTool && step.label === 'image_generate'
     ? t('executionGraph.imageGenerateLabel')
     : step.label;
-  // System steps (subagent branch roots etc.) share the tool row layout:
-  // bold label + truncated single-line detail preview + click-to-expand,
-  // i.e. no rounded card / no separate detail line below the title.
-  const isSystem = step.kind === 'system';
-  const isFlatRow = isTool || isSystem;
-  const showRunningDots = (isTool || isThinking) && step.status === 'running';
-  const hideStatusText = (isTool || isSystem) && step.status === 'completed';
+  const displayLabel = isThinking
+    ? t('executionGraph.thinkingLabel')
+    : displayToolLabel;
   const detailPreview = step.detail?.replace(/\s+/g, ' ').trim();
-  const canExpand = hasDetail;
-    const displayLabel = isThinking ? t('executionGraph.thinkingLabel') : (isTool ? displayToolLabel : step.label);
+  const summary = isNarration && detailPreview ? detailPreview : displayLabel;
+  const showRunning = step.status === 'running' && (isTool || isThinking || isSystem);
+  const showError = step.status === 'error';
+
+  let formattedDetail = step.detail;
+  if (formattedDetail && (isTool || isSystem)) {
+    try {
+      formattedDetail = JSON.stringify(JSON.parse(formattedDetail), null, 2);
+    } catch {
+      // Keep non-JSON tool and system details unchanged.
+    }
+  }
 
   return (
-    <div
-      className={cn(
-        'min-w-0 flex-1 text-muted-foreground',
-        isFlatRow || isNarration || isThinking
-          ? 'px-0 py-0'
-          : 'rounded-md border border-border/70 bg-background/60 px-3 py-2 shadow-sm',
-      )}
-    >
-      <button
-        type="button"
-        className={cn(
-          'flex w-full gap-2 text-left',
-          isFlatRow ? 'items-center' : 'items-start',
-          canExpand ? 'cursor-pointer' : 'cursor-default',
-        )}
-        onClick={() => {
-          if (!canExpand) return;
-          setExpanded((value) => !value);
-        }}
-      >
-        <div className="min-w-0 flex-1">
-          {(!isNarration && !isThinking || expanded) && (
-            <div className="flex min-w-0 items-center gap-2">
-              <p className="shrink-0 text-sm font-medium text-muted-foreground">{displayLabel}</p>
-              {isTool && step.label === 'web_fetch' && step.url && (
-                <a
-                  href={step.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="shrink-0 text-muted-foreground hover:text-foreground"
-                  title={step.url}
-                >
-                  <LinkIcon className="h-3.5 w-3.5" />
-                </a>
-              )}
-              {isFlatRow && detailPreview && !expanded && (
-                <p className="min-w-0 truncate text-xs leading-4 text-muted-foreground/80">
-                  {detailPreview}
-                </p>
-              )}
-              {!hideStatusText && !showRunningDots && (
-                <span className="shrink-0 whitespace-nowrap rounded-full bg-black/5 px-2 py-0.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground dark:bg-white/10">
-                  {t(`taskPanel.stepStatus.${step.status}`)}
-                </span>
-              )}
-              {showRunningDots && (
-                <DotMatrix state={isTool ? 'syncing' : 'thinking'} label={displayLabel} className="size-3.5 text-primary" />
-              )}
-              {step.depth > 1 && (
-                <span className="shrink-0 whitespace-nowrap rounded-full bg-black/5 px-2 py-0.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground dark:bg-white/10">
-                  {t('executionGraph.branchLabel')}
-                </span>
-              )}
-            </div>
+    <div className="group/execution-step min-w-0 flex-1">
+      <div className="relative flex min-w-0 items-start gap-1.5">
+        <button
+          type="button"
+          className={cn(
+            'flex min-w-0 flex-1 items-start gap-1.5 rounded-sm text-left text-sm leading-6',
+            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1',
+            hasDetail ? 'cursor-pointer hover:text-foreground' : 'cursor-default',
           )}
-          {step.detail && !expanded && !isFlatRow && (
-            <p
-              className={cn(
-                'text-muted-foreground',
-                isThinking
-                  ? 'mt-0.5 text-meta leading-5 line-clamp-2'
-                  : 'text-meta leading-6 text-muted-foreground line-clamp-2',
-              )}
-            >
-              {step.detail}
-            </p>
-          )}
-        </div>
-        {canExpand && (
-          <span className="mt-0.5 shrink-0 text-muted-foreground">
-            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          onClick={() => hasDetail && setExpanded((value) => !value)}
+          aria-expanded={hasDetail ? expanded : undefined}
+        >
+          <span className={cn(
+            'min-w-0 truncate text-muted-foreground',
+            showError && 'text-destructive',
+            !isNarration && 'font-medium',
+          )}>
+            {summary}
           </span>
-        )}
-      </button>
-      {step.detail && expanded && canExpand && isFlatRow && (() => {
-            // Tool inputs are typically JSON; system payloads (e.g. subagent
-            // session keys) are usually plain strings. Pretty-print if the
-            // detail parses as JSON, otherwise fall back to the raw text so
-            // session keys render unchanged.
-            let formatted = step.detail;
-            try {
-              formatted = JSON.stringify(JSON.parse(step.detail), null, 2);
-            } catch { /* not valid JSON */ }
-            return (
-              <div className="mt-3 rounded-md border border-border/70 bg-background/60 px-3 py-2">
-                <pre
-                  className="whitespace-pre-wrap break-words text-xs leading-5 text-muted-foreground"
-                >
-                  {formatted}
-                </pre>
-              </div>
-            );
-          })()}
-          {step.detail && expanded && canExpand && (isNarration || isThinking) && (
-            <div className="mt-3 rounded-md border border-border/70 bg-background/60 px-3 py-2">
-              <pre
-                className="whitespace-pre-wrap break-words text-xs leading-5 text-muted-foreground"
-              >
-                {step.detail}
-              </pre>
-            </div>
+          {!expanded && !isNarration && detailPreview && (
+            <span className="min-w-0 flex-1 truncate text-xs font-normal text-muted-foreground/75">
+              {detailPreview}
+            </span>
           )}
+          {showRunning && (
+            <DotMatrix state={isThinking ? 'thinking' : 'syncing'} label={displayLabel} className="mt-1 size-3.5 shrink-0 text-primary" />
+          )}
+          {showError && (
+            <span className="shrink-0 whitespace-nowrap text-xs font-normal text-destructive">
+              {t('taskPanel.stepStatus.error')}
+            </span>
+          )}
+          {hasDetail && (
+            <ChevronRight
+              className={cn(
+                'mt-1 h-3.5 w-3.5 shrink-0 opacity-0 transition-[transform,opacity] duration-150',
+                'group-hover/execution-step:opacity-100 group-focus-within/execution-step:opacity-100',
+                expanded && 'rotate-90 opacity-100',
+              )}
+              aria-hidden="true"
+            />
+          )}
+        </button>
+        {isTool && step.label === 'web_fetch' && step.url && (
+          <a
+            href={step.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 shrink-0 rounded-sm text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring group-hover/execution-step:opacity-100"
+            title={step.url}
+            data-agent-activity-file-link
+          >
+            <LinkIcon className="h-3.5 w-3.5" />
+          </a>
+        )}
+      </div>
+      {formattedDetail && expanded && (
+        <div className="mt-1 border-l border-border/70 pl-3">
+          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-muted-foreground/80">
+            {formattedDetail}
+          </pre>
+        </div>
+      )}
     </div>
   );
+}
+
+function StepIcon({ step }: { step: TaskStep }) {
+  if (step.status === 'error') return <XCircle className="h-3.5 w-3.5 text-destructive" />;
+  if (step.kind === 'tool') return <Wrench className="h-3.5 w-3.5" />;
+  if (step.kind === 'message' || step.kind === 'thinking') return <MessageSquare className="h-3.5 w-3.5" />;
+  return <GitBranch className="h-3.5 w-3.5" />;
 }
 
 export function ExecutionGraphCard({
@@ -168,91 +126,25 @@ export function ExecutionGraphCard({
   steps,
   active,
   suppressThinking = false,
-  expanded: controlledExpanded,
-  onExpandedChange,
   traceId,
 }: ExecutionGraphCardProps) {
   const { t } = useTranslation('chat');
-
-  // Active runs should stay expanded by default so the user can follow the
-  // execution live. Once the run completes, the default state returns to
-  // collapsed. Explicit user toggles remain controlled by the parent override.
-  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(active);
-  const [prevActive, setPrevActive] = useState(active);
-  if (prevActive !== active) {
-    setPrevActive(active);
-    if (controlledExpanded == null && uncontrolledExpanded !== active) {
-      setUncontrolledExpanded(active);
-    }
-  }
-
-  const isControlled = controlledExpanded != null;
-  const expanded = isControlled ? controlledExpanded : uncontrolledExpanded;
-  const setExpanded = (next: boolean) => {
-    if (!isControlled) setUncontrolledExpanded(next);
-    onExpandedChange?.(next);
-  };
-
-  const toolCount = steps.filter((step) => step.kind === 'tool').length;
-  const processCount = steps.length - toolCount;
   const shouldShowTrailingThinking = active && !suppressThinking;
   const traceHref = traceId ? `#/observability?traceId=${encodeURIComponent(traceId)}` : null;
-
-  if (!expanded) {
-    return (
-      <div
-        data-testid="chat-execution-graph"
-        data-collapsed="true"
-        className="flex w-full items-center gap-1"
-      >
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => setExpanded(true)}
-          className="group h-auto min-w-0 flex-1 justify-start gap-2 px-2 py-1.5 text-left text-xs font-normal text-muted-foreground hover:text-muted-foreground"
-        >
-          <ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
-          <span className="truncate">
-            {t('executionGraph.collapsedSummary', { toolCount, processCount })}
-          </span>
-        </Button>
-        {traceHref && (
-          <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground">
-            <a
-              href={traceHref}
-              aria-label={t('executionGraph.viewTrace')}
-              title={t('executionGraph.viewTrace')}
-              data-testid="chat-view-trace-link"
-            >
-              <Activity className="h-3.5 w-3.5" />
-            </a>
-          </Button>
-        )}
-      </div>
-    );
-  }
 
   return (
     <div
       data-testid="chat-execution-graph"
       data-collapsed="false"
-      className="w-full px-0 py-0 text-muted-foreground"
+      className="w-full min-w-0 text-muted-foreground"
     >
-      <div className="flex w-full items-center gap-1">
-        <Button
-          type="button"
-          variant="ghost"
-          data-testid="chat-execution-graph-collapse"
-          onClick={() => setExpanded(false)}
-          className="group h-auto min-w-0 flex-1 justify-start gap-2 px-2 py-1.5 text-left text-xs font-normal text-muted-foreground hover:text-muted-foreground"
-          aria-label={t('executionGraph.collapseAction')}
-          title={t('executionGraph.collapseAction')}
-        >
-          <ChevronRight className="h-3.5 w-3.5 shrink-0 rotate-90" />
-          <span className="truncate">{t('executionGraph.title')}</span>
-        </Button>
+      <div className="group/execution-header flex min-w-0 items-center gap-1.5 py-0.5">
+        <GitBranch className="h-3.5 w-3.5 shrink-0" />
+        <span className="min-w-0 flex-1 truncate text-sm font-medium">
+          {t('executionGraph.agentRun', { agent: agentLabel })}
+        </span>
         {traceHref && (
-          <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground">
+          <Button asChild variant="ghost" size="icon" className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover/execution-header:opacity-100 focus-within:opacity-100">
             <a
               href={traceHref}
               aria-label={t('executionGraph.viewTrace')}
@@ -265,20 +157,7 @@ export function ExecutionGraphCard({
         )}
       </div>
 
-      <div className="mt-0 px-0 py-0">
-        <div className="mt-0.5 flex items-center gap-0.5" style={{ marginLeft: `${TOOL_ROW_EXTRA_INDENT_PX}px` }}>
-          <div className="flex w-6 shrink-0 justify-center">
-            <div className="flex h-6 w-6 items-center justify-center text-muted-foreground">
-              <GitBranch className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className="truncate text-sm font-medium text-muted-foreground">
-              {t('executionGraph.agentRun', { agent: agentLabel })}
-            </span>
-          </div>
-        </div>
-
+      <div className="mt-0.5">
         {steps.map((step) => {
           const alignedIndentOffset = (
             step.kind === 'tool'
@@ -287,57 +166,33 @@ export function ExecutionGraphCard({
           ) ? TOOL_ROW_EXTRA_INDENT_PX : 0;
           const rowMarginLeft = (Math.max(step.depth - 1, 0) * 24) + alignedIndentOffset;
           return (
-          <div key={step.id} className="mt-0.5">
-            <div
-              className="pl-3"
-              style={{ marginLeft: `${rowMarginLeft}px` }}
-            >
-              <div className="ml-3 h-1 w-px bg-border" />
-            </div>
-            <div
-              className="flex items-start gap-0.5"
-              data-testid="chat-execution-step"
-              style={{ marginLeft: `${rowMarginLeft}px` }}
-            >
-              <div className="flex w-6 shrink-0 justify-center">
-                <div className="relative flex items-center justify-center">
+            <div key={step.id} className="relative mt-0.5">
+              <div
+                className="flex min-w-0 items-start gap-1.5"
+                data-testid="chat-execution-step"
+                style={{ marginLeft: `${rowMarginLeft}px` }}
+              >
+                <div className="relative flex h-6 w-5 shrink-0 items-center justify-center text-muted-foreground">
                   {step.depth > 1 && (
-                    <div className="absolute -left-3 top-1/2 h-px w-3 -translate-y-1/2 bg-border" />
+                    <div className="absolute -left-3 top-1/2 h-px w-3 -translate-y-1/2 bg-border/70" />
                   )}
-                  <div
-                    className={cn(
-                      'flex h-6 w-6 items-center justify-center text-muted-foreground',
-                    )}
-                  >
-                    {step.kind === 'thinking'
-                      ? <MessageSquare className="h-3.5 w-3.5" />
-                      : step.kind === 'tool'
-                        ? <Wrench className="h-3.5 w-3.5" />
-                        : step.kind === 'message'
-                          ? <MessageSquare className="h-3.5 w-3.5" />
-                          : <GraphStatusIcon status={step.status} />}
-                  </div>
+                  <StepIcon step={step} />
                 </div>
+                <StepDetailRow step={step} />
               </div>
-              <StepDetailCard step={step} />
             </div>
-          </div>
-        )})}
+          );
+        })}
         {shouldShowTrailingThinking && (
-          <div className="mt-0.5">
-            <div className="pl-3" style={{ marginLeft: `${TOOL_ROW_EXTRA_INDENT_PX}px` }}>
-              <div className="ml-3 h-1 w-px bg-border" />
-            </div>
-            <div
-              className="flex items-center gap-0.5"
-              data-testid="chat-execution-step-thinking-trailing"
-              style={{ marginLeft: `${TOOL_ROW_EXTRA_INDENT_PX}px` }}
-            >
-              <div className="w-6 shrink-0" />
-              <div className="min-w-0 flex-1 text-sm text-muted-foreground">
-                <Shimmer className="font-medium">{t('executionGraph.thinkingLabel')}</Shimmer>
-              </div>
-            </div>
+          <div
+            className="mt-0.5 flex min-w-0 items-center gap-1.5"
+            data-testid="chat-execution-step-thinking-trailing"
+            style={{ marginLeft: `${TOOL_ROW_EXTRA_INDENT_PX}px` }}
+          >
+            <div className="h-6 w-5 shrink-0" />
+            <Shimmer className="min-w-0 truncate text-sm font-medium">
+              {t('executionGraph.thinkingLabel')}
+            </Shimmer>
           </div>
         )}
       </div>

@@ -27,6 +27,7 @@ import type {
 
 interface TeamOrchestrationCardProps {
   orchestration: TeamOrchestrationView;
+  embedded?: boolean;
 }
 
 function statusTone(status: string): string {
@@ -66,21 +67,23 @@ function compactId(value: string | undefined): string | null {
 function RoleChip({ role }: { role: string }) {
   const tone = toneClasses(roleTone(role));
   return (
-    <span className={cn('inline-flex min-w-0 max-w-[11rem] items-center rounded-md border px-2 py-0.5 text-2xs font-medium', tone.tint)}>
+    <span className={cn('inline-flex min-w-0 max-w-[11rem] items-center rounded-md border px-2 py-0.5 text-xs font-medium', tone.tint)}>
       <span className="truncate">{role}</span>
     </span>
   );
 }
 
-function NodeCard({ node, agent }: { node: TeamOrchestrationNodeView; agent: AgentSummary | null }) {
+function NodeCard({ node, agent, embedded = false }: { node: TeamOrchestrationNodeView; agent: AgentSummary | null; embedded?: boolean }) {
   const { t } = useTranslation('chat');
   const [detailsOpen, setDetailsOpen] = useState(false);
   const status = node.status ?? 'planned';
   const running = status === 'running';
   return (
     <div className={cn(
-      'min-w-0 rounded-xl border border-border/70 bg-surface-modal p-3 shadow-sm transition-colors',
-      running && 'border-blue-500/30 bg-blue-500/[0.04] motion-safe:animate-pulse',
+      embedded
+        ? 'min-w-0 border-l border-conversation py-1 pl-3'
+        : 'min-w-0 rounded-xl border border-conversation bg-surface-modal p-3 transition-colors',
+      running && (embedded ? 'border-primary/50' : 'border-blue-500/30 bg-blue-500/[0.04] motion-safe:animate-pulse'),
     )} data-testid={`chat-team-node-${node.taskNodeId}`}>
       <div className="flex min-w-0 items-start gap-2.5">
         {agent ? (
@@ -89,21 +92,21 @@ function NodeCard({ node, agent }: { node: TeamOrchestrationNodeView; agent: Age
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 items-center gap-1.5">
             <span className="truncate text-xs font-semibold text-foreground" title={agent?.name ?? node.agentId ?? node.roleName}>{agent?.name ?? node.agentId ?? node.roleName}</span>
-            <span className="truncate text-2xs text-muted-foreground" title={node.roleName}>{node.roleName}</span>
+            <span className="truncate text-xs text-muted-foreground" title={node.roleName}>{node.roleName}</span>
           </div>
           <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5">
           {node.phase && (
-            <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-2xs text-muted-foreground dark:bg-white/10">
+            <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-xs text-muted-foreground dark:bg-white/10">
               {t(`teamOrchestration.phase.${node.phase}`, { defaultValue: node.phase })}
             </span>
           )}
           {node.isVerifier && (
-            <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 text-2xs text-amber-700 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 text-xs text-amber-700 dark:text-amber-400">
               <ShieldCheck className="h-3 w-3" />
               {t('teamOrchestration.verifier')}
             </span>
           )}
-            <span className={cn('inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-2xs', statusTone(status))}>
+            <span className={cn('inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs', statusTone(status))}>
               {statusIcon(status)}
               {t(`teamOrchestration.status.${status}`, { defaultValue: status })}
             </span>
@@ -111,7 +114,7 @@ function NodeCard({ node, agent }: { node: TeamOrchestrationNodeView; agent: Age
         </div>
       </div>
       {node.task && <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground" title={node.task}>{node.task}</p>}
-      <div className="mt-2 flex items-center justify-between gap-2 text-2xs text-muted-foreground">
+      <div className="mt-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
         <div className="flex min-w-0 items-center gap-2">
           {node.modelRef && <span className="max-w-32 truncate" title={node.modelRef}>{node.modelRef}</span>}
           <span className="shrink-0">{t('teamOrchestration.dependencies', { count: node.dependsOn.length })}</span>
@@ -124,7 +127,7 @@ function NodeCard({ node, agent }: { node: TeamOrchestrationNodeView; agent: Age
         )}
       </div>
       {detailsOpen && (
-        <div className="mt-2 space-y-1 border-t border-border/60 pt-2 font-mono text-2xs text-muted-foreground">
+        <div className="mt-2 space-y-1 border-t border-conversation pt-2 font-mono text-xs text-muted-foreground">
           {node.modelRef && <p className="truncate">{node.modelRef}</p>}
           {node.childSessionKey && <p className="break-all">{node.childSessionKey}</p>}
           {node.roleInstanceId && <p className="break-all">{node.roleInstanceId}</p>}
@@ -174,7 +177,7 @@ function DiagnosticsPanel({ diagnostics }: { diagnostics: TeamOrchestrationDiagn
         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
         <p className="font-medium">{t('teamOrchestration.diagnostics.title')}</p>
         {diagnostics.status && (
-          <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-2xs dark:bg-white/10">
+          <span className="rounded-md bg-black/5 px-1.5 py-0.5 text-xs dark:bg-white/10">
             {t(`teamOrchestration.diagnostics.status.${diagnostics.status}`, { defaultValue: diagnostics.status })}
           </span>
         )}
@@ -188,7 +191,7 @@ function DiagnosticsPanel({ diagnostics }: { diagnostics: TeamOrchestrationDiagn
               <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                 {recommendation.roleName && <RoleChip role={recommendation.roleName} />}
                 {recommendation.code && (
-                  <span className="font-mono text-2xs opacity-75">{recommendation.code}</span>
+                  <span className="font-mono text-xs opacity-75">{recommendation.code}</span>
                 )}
               </div>
               {recommendation.message && <p className="mt-1 leading-5">{recommendation.message}</p>}
@@ -214,7 +217,7 @@ function DiagnosticsPanel({ diagnostics }: { diagnostics: TeamOrchestrationDiagn
   );
 }
 
-export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardProps) {
+export function TeamOrchestrationCard({ orchestration, embedded = false }: TeamOrchestrationCardProps) {
   const { t } = useTranslation('chat');
   const agents = useAgentsStore((state) => state.agents);
   const currentAgentId = useChatStore((state) => state.currentAgentId);
@@ -257,7 +260,10 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
   return (
     <div
       data-testid="chat-team-orchestration-card"
-      className="w-full rounded-lg border border-border/70 bg-surface-modal px-3 py-3 text-muted-foreground shadow-sm"
+      className={cn(
+        'w-full min-w-0 text-muted-foreground',
+        embedded ? 'py-1' : 'rounded-lg border border-conversation bg-surface-modal px-3 py-3',
+      )}
     >
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2">
@@ -271,7 +277,7 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <p className="text-sm font-medium text-foreground">{t('teamOrchestration.title')}</p>
-              <span className={cn('inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-2xs font-medium', statusTone(status))}>
+              <span className={cn('inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium', statusTone(status))}>
                 {statusIcon(status)}
                 {t(`teamOrchestration.status.${status}`, { defaultValue: status })}
               </span>
@@ -284,46 +290,51 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => {            setExpanded((value) => !value);
-          }}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-          aria-label={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
-          title={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
-        >
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
+        {!embedded && (
+          <button
+            type="button"
+            onClick={() => {
+              setExpanded((value) => !value);
+            }}
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+            aria-label={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
+            title={expanded ? t('teamOrchestration.collapse') : t('teamOrchestration.expand')}
+          >
+            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+        )}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
-        <div className="rounded-md bg-surface-input px-2.5 py-2">
-          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.workers')}</p>
-          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.workerCount}</p>
+      {!embedded && (
+        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="rounded-md bg-surface-input px-2.5 py-2">
+            <p className="text-xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.workers')}</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.workerCount}</p>
+          </div>
+          <div className="rounded-md bg-surface-input px-2.5 py-2">
+            <p className="text-xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.waves')}</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.waves.length || 1}</p>
+          </div>
+          <div className="rounded-md bg-surface-input px-2.5 py-2">
+            <p className="text-xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.verifier')}</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.verifierCount}</p>
+          </div>
+          <div className="rounded-md bg-surface-input px-2.5 py-2">
+            <p className="text-xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.failures')}</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.failureCount}</p>
+          </div>
         </div>
-        <div className="rounded-md bg-surface-input px-2.5 py-2">
-          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.waves')}</p>
-          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.waves.length || 1}</p>
-        </div>
-        <div className="rounded-md bg-surface-input px-2.5 py-2">
-          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.verifier')}</p>
-          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.verifierCount}</p>
-        </div>
-        <div className="rounded-md bg-surface-input px-2.5 py-2">
-          <p className="text-2xs uppercase text-muted-foreground">{t('teamOrchestration.metrics.failures')}</p>
-          <p className="mt-0.5 text-sm font-medium text-foreground">{orchestration.failureCount}</p>
-        </div>
-      </div>
+      )}
 
       {orchestration.task && (
         <p className="mt-3 line-clamp-2 text-xs leading-5 text-muted-foreground">{orchestration.task}</p>
       )}
 
-      {!expanded && orchestration.waves.length > 0 && (
+      {!embedded && !expanded && orchestration.waves.length > 0 && (
         <div className="mt-3 space-y-2" data-testid="chat-team-orchestration-waves">
           {orchestration.waves.map((wave) => (
             <div key={wave.wave} className="flex min-w-0 items-center gap-2">
-              <span className="shrink-0 rounded-md bg-black/5 px-2 py-1 text-2xs font-medium text-muted-foreground dark:bg-white/10">
+              <span className="shrink-0 rounded-md bg-black/5 px-2 py-1 text-xs font-medium text-muted-foreground dark:bg-white/10">
                 {t('teamOrchestration.wave', { wave: wave.wave })}
               </span>
               <div className="flex min-w-0 flex-wrap gap-1.5">
@@ -336,7 +347,7 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
         </div>
       )}
 
-      {expanded && orchestration.routeReasons.length > 0 && (
+      {(embedded || expanded) && orchestration.routeReasons.length > 0 && (
         <div className="mt-3 rounded-md border border-blue-500/20 bg-blue-500/10 px-2.5 py-2 text-xs text-blue-700 dark:text-blue-400">
           <p className="font-medium">{t('teamOrchestration.routeReasons')}</p>
           <ul className="mt-1 space-y-1">
@@ -347,19 +358,19 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
         </div>
       )}
 
-      {expanded && orchestration.diagnostics && (
+      {(embedded || expanded) && orchestration.diagnostics && (
         <DiagnosticsPanel diagnostics={orchestration.diagnostics} />
       )}
 
       {orchestration.alerts.length > 0 && (
         <div className="mt-3 space-y-2">
-          {orchestration.alerts.slice(0, expanded ? orchestration.alerts.length : 2).map((alert, index) => (
+          {orchestration.alerts.slice(0, embedded || expanded ? orchestration.alerts.length : 2).map((alert, index) => (
             <AlertRow key={`${alert.kind}-${alert.label ?? index}-${index}`} alert={alert} />
           ))}
         </div>
       )}
 
-      {expanded && orchestration.nodes.length > 0 && (
+      {(embedded || expanded) && orchestration.nodes.length > 0 && (
         <div className="mt-4 space-y-4" data-testid="chat-team-orchestration-timeline">
           {waveSections.map((section, index) => (
             <section key={section.wave} className="relative pl-7">
@@ -369,15 +380,20 @@ export function TeamOrchestrationCard({ orchestration }: TeamOrchestrationCardPr
                   <ArrowDown className="absolute -bottom-3 left-[5px] h-3 w-3 text-muted-foreground" aria-hidden="true" />
                 </>
               )}
-              <span className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface-modal text-2xs font-semibold text-muted-foreground">
+              <span className={cn(
+                'absolute left-0 top-0 flex h-6 w-6 items-center justify-center text-xs font-semibold text-muted-foreground',
+                !embedded && 'rounded-full border border-border bg-surface-modal',
+              )}>
                 {section.wave}
               </span>
               <div className="mb-2 flex items-center gap-2">
                 <p className="text-xs font-semibold text-foreground">{t('teamOrchestration.wave', { wave: section.wave })}</p>
-                <span className="text-2xs text-muted-foreground">{t('teamOrchestration.nodeCount', { count: section.nodes.length })}</span>
+                <span className="text-xs text-muted-foreground">{t('teamOrchestration.nodeCount', { count: section.nodes.length })}</span>
               </div>
               <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))]">
-                {section.nodes.map((node) => <NodeCard key={node.taskNodeId} node={node} agent={resolveNodeAgent(node)} />)}
+                {section.nodes.map((node) => (
+                  <NodeCard key={node.taskNodeId} node={node} agent={resolveNodeAgent(node)} embedded={embedded} />
+                ))}
               </div>
             </section>
           ))}

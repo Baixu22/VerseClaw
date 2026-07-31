@@ -11,6 +11,11 @@
     "retry": "再読み込み"
   },
   "welcome": {
+    "titleInProject": "<projectSelect>{{projectName}}</projectSelect> で何を作りましょうか？",
+    "titleNoProject": "何を作りましょうか？",
+    "projectSearch": "プロジェクトを検索",
+    "projectEmpty": "プロジェクトが見つかりません",
+    "changeProject": "プロジェクトを変更: {{projectName}}",
     "title": "Verse Claw チャット",
     "subtitle": "お手伝いできることはありますか？",
     "askQuestions": "タスク対応",
@@ -29,6 +34,7 @@
     "currentAgent": "現在の会話相手: {{agent}}",
     "workspace": "ワークスペース",
     "saveToKnowledge": "ナレッジに保存",
+    "moreActions": "その他の操作",
     "addWorkspaceDialogTitle": "ワークスペースディレクトリを選択",
     "addWorkspaceDialogButton": "ワークスペースに設定",
     "promptCache": {
@@ -1451,11 +1457,19 @@
     "workspaceActions": "ワークスペース操作",
     "workspaceActionFailed": "ワークスペース操作に失敗しました: {{error}}",
     "permissionModeTitle": "権限モード",
+    "permissionMenuTitle": "Verse Claw の操作をどのように承認しますか？",
+    "permissionLearnMore": "詳細",
     "permissionMode": {
       "readOnly": "読み取り専用",
       "plan": "計画",
       "acceptEdits": "編集を許可",
       "fullAccess": "フルアクセス"
+    },
+    "permissionModeDescription": {
+      "readOnly": "ファイル編集やインターネット利用の前に常に確認します",
+      "plan": "変更せずに分析し、計画のみを提案します",
+      "acceptEdits": "リスクが検出された操作のみ承認を求めます",
+      "fullAccess": "インターネットとコンピューター上のすべてのファイルに制限なくアクセスします"
     },
     "pickWorkspaceFolder": "ワークスペースフォルダーを選択",
     "newWorkspaceSession": "新しいワークスペースセッション",
@@ -1651,9 +1665,14 @@
     "time": "時間"
   },
   "sidebar": {
+    "sectionConversations": "会話",
+    "organizeSessions": "会話を整理",
     "searchSessions": "会話を検索",
     "clearSearch": "検索をクリア",
     "searchNoResults": "会話が見つかりません",
+    "empty": "会話はまだありません",
+    "emptyAction": "新しい会話",
+    "workspaceError": "ワークスペースを読み込めませんでした",
     "searchModalPlaceholder": "名前、ワークグループ、ワークスペース、エージェントで会話を検索...",
     "searchEmptyHint": "入力して会話を検索してください",
     "searchCurrent": "現在",
@@ -1692,6 +1711,14 @@
     }
   },
   "archive": {
+    "searchPlaceholder": "アーカイブ済みの会話を検索",
+    "ungrouped": "未分類",
+    "noMatches": "一致する会話がありません",
+    "groupCount": "{{count}} 件の会話",
+    "view": {
+      "allSessions": "すべての会話",
+      "allWorkspaces": "すべてのワークスペース"
+    },
     "title": "アーカイブされた会話",
     "open": "アーカイブ",
     "empty": "アーカイブされた会話はありません",
@@ -1702,7 +1729,8 @@
     "deleteMessage": "削除方法を選択してください。アーカイブはゴミ箱に移動（復元可能）、削除は完全に削除します「{{label}}」",
     "archiveAction": "アーカイブ",
     "emptyAll": "アーカイブを空にする",
-    "emptyAllConfirm": "もう一度クリックしてアーカイブされたすべての会話を完全に削除"
+    "emptyAllConfirm": "もう一度クリックしてアーカイブされたすべての会話を完全に削除",
+    "viewLabel": "アーカイブ表示"
   },
   "questionDirectory": {
     "title": "質問目次",
@@ -1820,17 +1848,19 @@
     "dismissCompleted": "完了状態を非表示"
   },
   "turnSummary": {
-    "titleFallback": "作業が完了しました",
-    "toggle": "作業サマリーを展開または折りたたむ",
-    "status": {
-      "completed": "作業完了",
-      "error": "対応が必要"
-    },
-    "counts": {
-      "tasks": "{{count}} 件のタスク",
-      "reports": "{{count}} 件のファイル",
-      "sources": "{{count}} 件のソース",
-      "orchestrations": "{{count}} 件のチーム"
+    "working": "作業中",
+    "workingFor": "{{duration}} 作業中",
+    "workedFor": "作業時間 {{duration}}",
+    "workDetails": "作業の詳細",
+    "stopped": "停止しました",
+    "stoppedAfter": "{{duration}} 後に停止",
+    "needsAttention": "対応が必要",
+    "duration": {
+      "seconds_one": "{{count}} 秒",
+      "seconds_other": "{{count}} 秒",
+      "minutes_one": "{{count}} 分",
+      "minutes_other": "{{count}} 分",
+      "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     }
   },
   "turnWork": {

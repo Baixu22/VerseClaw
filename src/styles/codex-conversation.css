@@ -1,0 +1,294 @@
+/*
+ * codex-conversation.css — conversation-area recipe ported from the FakeCoding
+ * reference app.
+ *
+ * PROVENANCE. Two sources, both real Codex artefacts, used for different halves:
+ *
+ *   1. C:\Users\27933\Desktop\FakeCoding-main\codex-conversation-render\css-all\
+ *        mermaid-diagram-shell-Bvc_FFGx.css
+ *      The `_markdownContent_l45ev_131` / `_heading_l45ev_235` / `_listItem_l45ev_357`
+ *      family, byte-exact out of the Codex Desktop ASAR (26.715.9079.0). This is
+ *      where every odd number below comes from: .6875rem paragraph gap,
+ *      1.3125rem list indent, 20px/10px heading margins, the 4px blockquote bar,
+ *      .92em inline code. Do not round them.
+ *
+ *   2. C:\Users\27933\Desktop\FakeCoding-main\web\src\styles.css
+ *      (`.codex-thread-results .markdown-body` block). FakeCoding's own port of
+ *      the same rules into a normal React app. Consulted wherever the ASAR value
+ *      is expressed against runtime-injected VSCode variables we do not have —
+ *      chiefly the type ramp. The ASAR drives font-size off
+ *      `--codex-chat-font-size` (16px in the standalone demo, 14px in the app
+ *      chrome); FakeCoding resolves it to 14px/22px weight 445, and that is the
+ *      thing on screen the user is comparing against, so it is what we match.
+ *
+ * SCOPE. `.codex-markdown` is applied alongside `.prose` on the assistant
+ * markdown root (see AssistantMarkdown in pages/Chat/ChatMessage.tsx). `.prose`
+ * is kept because eight e2e specs locate assistant replies through it. The
+ * rules here are two-class descendant selectors (`.codex-markdown p`), so they
+ * outrank both the hand-written `.prose x` rules in globals.css and any
+ * single-class Tailwind utility, regardless of import order.
+ *
+ * THEME. The reference is a dark-only Electron surface reading
+ * `--color-token-*` variables injected at runtime. Those do not exist here, so
+ * each is mapped onto the nearest existing ClawX token and the mapping is noted
+ * inline. Colour is therefore *not* byte-ported — metrics are. That is
+ * deliberate: ClawX ships a cream light theme the reference has no analogue for.
+ */
+
+.codex-markdown {
+  /* markdown-body: 14px/22px weight 445 (styles.css:8110-8123). 445 is a
+   * variable-font weight; on static faces it rounds to 400, which is the
+   * pre-existing rendering, so this is safe to state unconditionally. */
+  --codex-markdown-font-size: 14px;
+  --codex-markdown-line-height: 22px;
+
+  font-size: var(--codex-markdown-font-size);
+  font-weight: 445;
+  line-height: var(--codex-markdown-line-height);
+  /* _markdownContent_l45ev_131 — long unbroken tokens (paths, hashes) must wrap
+   * rather than force a horizontal scrollbar on the whole thread. */
+  overflow-wrap: anywhere;
+}
+
+.codex-markdown > :first-child {
+  margin-top: 0;
+}
+
+.codex-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+/* _paragraph_l45ev_175 { margin: 0 0 .6875rem } — 11px, notably tighter than
+ * the 10px symmetric `my-2.5` it replaces, and asymmetric: no top margin. */
+.codex-markdown p {
+  margin: 0 0 0.6875rem;
+  font: inherit;
+  line-height: inherit;
+}
+
+/* _heading_l45ev_235 — one shared margin/weight/leading, size ramp below.
+ * The reference has no serif display face in the transcript; headings are the
+ * same family as body at 600. */
+.codex-markdown h1,
+.codex-markdown h2,
+.codex-markdown h3,
+.codex-markdown h4,
+.codex-markdown h5,
+.codex-markdown h6 {
+  margin: 20px 0 10px;
+  color: hsl(var(--foreground));
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.25;
+}
+
+.codex-markdown > :first-child:is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+}
+
+.codex-markdown h1 { font-size: 24px; }
+.codex-markdown h2 { font-size: 20px; }
+
+/* _heading3/_heading4 share a size and gain an explicit 22px leading. */
+.codex-markdown h3,
+.codex-markdown h4 {
+  font-size: 17px;
+  line-height: 22px;
+}
+
+.codex-markdown h5,
+.codex-markdown h6 {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+/* _list_l45ev_287 — 1.3125rem (21px) indent, markers outside the text column. */
+.codex-markdown ul,
+.codex-markdown ol {
+  margin: 0 0 0.6875rem;
+  padding-inline-start: 1.3125rem;
+  list-style-position: outside;
+}
+
+.codex-markdown ul { list-style-type: disc; }
+.codex-markdown ul ul { list-style-type: circle; }
+.codex-markdown ul ul ul { list-style-type: square; }
+.codex-markdown ol { list-style-type: decimal; }
+
+/* _listItem_l45ev_357 — the .125rem inset keeps the marker from crowding the
+ * first glyph at 14px; item spacing is a top margin on siblings only, so a
+ * single-item list has no trailing gap. */
+.codex-markdown li {
+  padding-inline-start: 0.125rem;
+  line-height: var(--codex-markdown-line-height);
+}
+
+.codex-markdown li + li { margin-top: 0.5rem; }
+.codex-markdown li > p { margin: 0; }
+.codex-markdown li > p + p { margin-top: 0.6875rem; }
+
+.codex-markdown li > ul,
+.codex-markdown li > ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* GFM task lists: remark emits `.contains-task-list` / `.task-list-item`. */
+.codex-markdown .contains-task-list {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.codex-markdown .task-list-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 7px;
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+/* _blockquote_l45ev_465 — no background and no border shorthand; the rule is a
+ * 4px rounded bar drawn as ::after, inset 8px top and bottom so it stops short
+ * of the text block's full height. Body text keeps the primary colour. */
+.codex-markdown blockquote {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 8px 0 8px 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-style: normal;
+  line-height: 24px;
+}
+
+.codex-markdown blockquote::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 2px;
+  background: hsl(var(--conversation-border-heavy));
+}
+
+.codex-markdown blockquote > :first-child { margin-top: 0; }
+.codex-markdown blockquote > :last-child { margin-bottom: 0; }
+.codex-markdown blockquote > p { margin: 0; font-weight: 400; }
+
+/* _horizontalRule_l45ev_547 — 28px of air either side, far more than `my-6`. */
+.codex-markdown hr {
+  clear: both;
+  height: 0;
+  margin: 28px 0;
+  border: 0;
+  border-top: 1px solid hsl(var(--conversation-border-heavy));
+}
+
+.codex-markdown hr + * { margin-top: 0; }
+
+/* Links are underlined dotted in the reference rather than coloured — the
+ * transcript stays monochrome and the accent is reserved for controls. */
+.codex-markdown a {
+  color: inherit;
+  text-decoration: underline dotted 0.5px;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  text-underline-offset: 3px;
+}
+
+.codex-markdown a:hover { text-decoration-color: currentColor; }
+
+.codex-markdown strong { font-weight: 600; }
+
+/* _inlineMarkdown_l45ev_793 — no border, a flat 10.7% ink wash, and
+ * box-decoration-break so a wrapped span keeps its radius on both fragments. */
+.codex-markdown :not(pre) > code {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  display: inline;
+  padding: 1px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: color-mix(in srgb, hsl(var(--foreground)) 10.7%, transparent);
+  color: inherit;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 0.92em;
+  line-height: inherit;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* _codeBlock_l45ev_749 { margin-block: 14px }. The block itself (header + pre)
+ * is composed in ChatMessage.tsx; only the outer rhythm lives here. */
+.codex-markdown pre {
+  margin: 0;
+  font-size: 13px;
+  line-height: 19.5px;
+}
+
+/* _table_l45ev_571 — separate borders, hairline row rules only, no outer frame
+ * and no cell background. Trailing 24px gutter on every cell but the last. */
+.codex-markdown table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: auto;
+  margin: 0;
+  color: inherit;
+  font-size: 14px;
+  text-align: left;
+}
+
+.codex-markdown th,
+.codex-markdown td {
+  max-width: 480px;
+  padding: 10px 24px 10px 0;
+  border: 0;
+  border-bottom: 1px solid hsl(var(--conversation-border-light));
+  vertical-align: top;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.codex-markdown th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom-color: hsl(var(--conversation-border-heavy));
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 16px;
+  text-transform: none;
+}
+
+.codex-markdown th:last-child,
+.codex-markdown td:last-child { padding-right: 0; }
+
+/* Streaming fade-in (_fade-in_l45ev_1). The reference staggers per-block with a
+ * --fade-delay; we have no per-block delay plumbing, so this is the un-staggered
+ * form — same curve, same duration. */
+@keyframes codex-markdown-fade-in {
+  to { opacity: 1; }
+}
+
+.codex-markdown-streaming li,
+.codex-markdown-streaming tr,
+.codex-markdown-streaming hr,
+.codex-markdown-streaming blockquote {
+  opacity: 0;
+  animation: codex-markdown-fade-in 0.15s cubic-bezier(0.37, 0.55, 0.86, 0.88) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-markdown-streaming li,
+  .codex-markdown-streaming tr,
+  .codex-markdown-streaming hr,
+  .codex-markdown-streaming blockquote {
+    opacity: 1;
+    animation: none;
+  }
+}

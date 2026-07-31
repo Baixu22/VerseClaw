@@ -424,7 +424,14 @@ describe('ChatMessage word wrapping', () => {
     expect(paragraph?.classList.contains('break-words')).toBe(true);
   });
 
-  it('keeps break-all on inline code so long identifiers can still break mid-token', () => {
+  // Inline code no longer carries break utilities as classes. The Codex recipe
+  // (_inlineMarkdown_l45ev_793, ported to `.codex-markdown :not(pre) > code` in
+  // styles/codex-conversation.css) sets `overflow-wrap: anywhere` +
+  // `word-break: break-word`, which still breaks long identifiers mid-token but
+  // is stylesheet-driven, so jsdom can't observe it as a class. What this test
+  // guards now is that the element is left to the port — no competing border or
+  // background utility is reintroduced on it.
+  it('leaves inline code styling to the ported Codex recipe', () => {
     const message: RawMessage = {
       role: 'assistant',
       content: 'Use `someVeryLongIdentifierNameThatShouldStillBreakAnywhere` here.',
@@ -432,7 +439,10 @@ describe('ChatMessage word wrapping', () => {
     const { container } = render(<ChatMessage message={message} />);
     const inlineCode = container.querySelector('.prose code');
     expect(inlineCode).not.toBeNull();
-    expect(inlineCode?.classList.contains('break-all')).toBe(true);
+    expect(inlineCode?.closest('.codex-markdown')).not.toBeNull();
+    const classes = Array.from(inlineCode?.classList ?? []);
+    expect(classes.some((name) => name.startsWith('border'))).toBe(false);
+    expect(classes.some((name) => name.startsWith('bg-'))).toBe(false);
   });
 
   // Regression: fenced code blocks used to set only `overflow-x-auto`, which

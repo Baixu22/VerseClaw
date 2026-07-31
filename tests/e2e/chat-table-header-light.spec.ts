@@ -128,7 +128,13 @@ test.describe('Verse Claw chat table header styling', () => {
       });
 
       expect(headerStyles.backgroundColor).toBe('rgba(0, 0, 0, 0)');
-      expect(Number(headerStyles.fontWeight)).toBeGreaterThanOrEqual(700);
+      // 600, not 700. The guard here is that a header stays visibly heavier than
+      // body text and never picks up the dark-mode `bg-muted` fill in light
+      // theme — both still hold. The exact weight moved to 600 when the
+      // transcript adopted the Codex table recipe (_tableHeaderCell_l45ev_673,
+      // ported in styles/codex-conversation.css), which is what the reference
+      // app renders.
+      expect(Number(headerStyles.fontWeight)).toBeGreaterThanOrEqual(600);
 
       const tableEl = page.locator('.prose table').first();
       await tableEl.scrollIntoViewIfNeeded();

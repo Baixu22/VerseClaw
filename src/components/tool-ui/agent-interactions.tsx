@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useCallback, useMemo, useState } from 'react';
-import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, ListChecks, SlidersHorizontal, Table as TableIcon, CloudSun, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
+import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, Table as TableIcon, CloudSun, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
+import { ListChecks, SlidersHorizontal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

@@ -3,13 +3,13 @@ import {
   Box,
   Clapperboard,
   FileSpreadsheet,
-  FileText,
   Presentation,
   GraduationCap,
   Rocket,
   TrendingUp,
   type LucideIcon,
 } from 'lucide-react';
+import { FileText } from '@/components/icons/codex-icons';
 
 export type ComposerActionGroup = 'context' | 'skills' | 'office' | 'session';
 

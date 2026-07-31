@@ -1,0 +1,177 @@
+/*
+ * codex-settings-archived.css — the Archived-sessions page recipe, ported from
+ * the FakeCoding reference app.
+ *
+ * PROVENANCE. Copied from
+ *   FakeCoding-main/web/src/components/settings/settings.css:17-35   (--sp-* tokens)
+ *   FakeCoding-main/web/src/components/settings/settings.css:905-1000 (.sp-archived-*)
+ * which encode a CDP capture of the official Codex settings "已归档任务" page.
+ * The measurement comments are kept verbatim — the 52px/28px/40px margins and
+ * 46px/60px row heights are read off the real app, not chosen.
+ *
+ * DEVIATIONS from the source:
+ *   1. The source's `--sp-*` block is dark-only. ClawX renders settings in both
+ *      themes, so the tokens are split into `:root.dark` / `:root:not(.dark)`
+ *      and namespaced `--sp-arch-*` to avoid colliding with anything else.
+ *   2. Only the tokens the archived rules actually reference are ported (the
+ *      full settings token set is 262 declarations).
+ */
+
+:root.dark {
+  --sp-arch-hairline: rgba(255, 255, 255, 0.082);       /* border-token-border */
+  --sp-arch-hairline-w: 0.667px;
+  --sp-arch-hover-bg: rgba(255, 255, 255, 0.08);        /* token-list-hover-background */
+  --sp-arch-fill-3: rgba(255, 255, 255, 0.03);          /* bg-token-bg-fog */
+  --sp-arch-fill-5: rgba(255, 255, 255, 0.05);
+  --sp-arch-fill-10: rgba(255, 255, 255, 0.1);
+  --sp-arch-text: #fff;
+  --sp-arch-text-secondary: rgba(255, 255, 255, 0.65);  /* text-token-text-secondary */
+  --sp-arch-text-placeholder: rgba(255, 255, 255, 0.498);
+  --sp-arch-card-bg: #232323;                            /* card rgb(35,35,35) */
+  --sp-arch-radius-card: 20px;
+}
+
+:root:not(.dark) {
+  --sp-arch-hairline: rgba(0, 0, 0, 0.09);
+  --sp-arch-hairline-w: 0.667px;
+  --sp-arch-hover-bg: rgba(0, 0, 0, 0.045);
+  --sp-arch-fill-3: rgba(0, 0, 0, 0.022);
+  --sp-arch-fill-5: rgba(0, 0, 0, 0.05);
+  --sp-arch-fill-10: rgba(0, 0, 0, 0.1);
+  --sp-arch-text: #1a1c1f;
+  --sp-arch-text-secondary: rgba(26, 28, 31, 0.65);
+  --sp-arch-text-placeholder: rgba(26, 28, 31, 0.5);
+  --sp-arch-card-bg: #fff;
+  --sp-arch-radius-card: 20px;
+}
+
+/* CDP (settings-content-all.json 已归档任务):
+     y=148   h=28.8  title + "全部删除" control (same row)
+     y=228.8 h=28    search input (own row, 52px below title)
+     y=284.8 h=46    group header (name + "N 个任务")
+     y=331.5 h=60.6  task row (title + date + 取消归档) */
+.sp-archived-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 52px; /* title row → search: 228.8 − 176.8 = 52px */
+}
+
+/* CDP: search input + "所有任务/所有项目" toggle on the SAME row.
+   y=228.8 h=28 → first group y=284.8 = 28px gap. */
+.sp-archived-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 28px;
+}
+.sp-archived-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 220px;
+  min-width: min(220px, 100%);
+  max-width: 360px;
+  height: 28px;
+  padding: 0 12px 0 10px;
+  border-radius: 999px;
+  border: var(--sp-arch-hairline-w) solid var(--sp-arch-hairline);
+  background: var(--sp-arch-fill-3);
+  color: var(--sp-arch-text-placeholder);
+}
+.sp-archived-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--sp-arch-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+}
+.sp-archived-search input::placeholder { color: var(--sp-arch-text-placeholder); }
+
+/* `.sp-segmented` used to be duplicated here. It is shared settings-surface
+   vocabulary, so it now has a single definition in
+   codex-settings-controls.css (same geometry, shared `--sp-*` tokens). */
+
+/* Group cards. CDP archived page: cards are 40px apart (506.2 → 553.8). */
+.sp-archived-groups { display: flex; flex-direction: column; gap: 40px; }
+.sp-archived-card {
+  border-radius: var(--sp-arch-radius-card);
+  background: var(--sp-arch-card-bg);
+  border: var(--sp-arch-hairline-w) solid var(--sp-arch-hairline);
+  overflow: hidden;
+}
+.sp-archived-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 10px 16px;
+}
+.sp-archived-group-name {
+  color: var(--sp-arch-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.sp-archived-group-count {
+  color: var(--sp-arch-text-secondary);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 1;
+}
+.sp-archived-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 10px 16px;
+  transition: background 120ms ease;
+}
+.sp-archived-row:hover { background: var(--sp-arch-hover-bg); }
+.sp-archived-meta {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sp-archived-title {
+  color: var(--sp-arch-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.43;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sp-archived-date {
+  color: var(--sp-arch-text-secondary);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 1.4;
+}
+.sp-archived-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  margin-left: auto;
+}
+.sp-archived-empty {
+  color: var(--sp-arch-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-archived-row { transition: none; }
+}

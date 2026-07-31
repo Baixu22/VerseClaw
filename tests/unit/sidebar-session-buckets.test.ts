@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildLatestRuntimeRunBySession,
   buildSidebarTimeSessions,
   buildSidebarWorkspaceSessionGroups,
   getSessionActivityMs,
   isSessionVisibleInWorkspace,
 } from '@/components/layout/session-buckets';
+import type { ChatRuntimeRunState } from '@/stores/chat';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 function workspace(overrides: Partial<WorkspaceProfile>): WorkspaceProfile {
@@ -33,6 +35,45 @@ function workspace(overrides: Partial<WorkspaceProfile>): WorkspaceProfile {
     ...overrides,
   };
 }
+
+describe('sidebar latest runtime run index', () => {
+  function run(overrides: Partial<ChatRuntimeRunState> & Pick<ChatRuntimeRunState, 'runId'>): ChatRuntimeRunState {
+    return {
+      status: 'completed',
+      assistantText: '',
+      thinkingText: '',
+      events: [],
+      ...overrides,
+    };
+  }
+
+  it('selects the latest activity for each session in one index', () => {
+    const latestBySession = buildLatestRuntimeRunBySession({
+      oldA: run({ runId: 'old-a', sessionKey: 'agent:main:a', endedAt: 100 }),
+      newA: run({ runId: 'new-a', sessionKey: 'agent:main:a', startedAt: 150 }),
+      eventA: run({
+        runId: 'event-a',
+        sessionKey: 'agent:main:a',
+        events: [{ type: 'run.started', runId: 'event-a', ts: 200 }],
+      }),
+      onlyB: run({ runId: 'only-b', sessionKey: 'agent:main:b', endedAt: 125 }),
+      orphan: run({ runId: 'orphan', endedAt: 999 }),
+    });
+
+    expect(latestBySession.get('agent:main:a')?.runId).toBe('event-a');
+    expect(latestBySession.get('agent:main:b')?.runId).toBe('only-b');
+    expect([...latestBySession.keys()]).toEqual(['agent:main:a', 'agent:main:b']);
+  });
+
+  it('preserves the previous tie behavior by selecting the later iterated run', () => {
+    const latestBySession = buildLatestRuntimeRunBySession({
+      first: run({ runId: 'first', sessionKey: 'agent:main:a', endedAt: 100 }),
+      second: run({ runId: 'second', sessionKey: 'agent:main:a', startedAt: 100 }),
+    });
+
+    expect(latestBySession.get('agent:main:a')?.runId).toBe('second');
+  });
+});
 
 describe('sidebar session activity resolution', () => {
   it('uses the timestamp embedded in a locally-created session key as activity fallback', () => {
