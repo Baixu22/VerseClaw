@@ -109,6 +109,22 @@ function baseHostApiMocks() {
       mode: 'legacy_checkpoint_fallback',
       evidenceSummary: `Restored from checkpoint "${CHECKPOINT_ID}"`,
     },
+    [stableStringify(['sessions', 'checkpointDiff', {
+      sessionKey: SESSION_KEY,
+      checkpointId: CHECKPOINT_ID,
+    }])]: {
+      success: true,
+      key: SESSION_KEY,
+      checkpointId: CHECKPOINT_ID,
+      files: [
+        {
+          filePath: 'src/a.ts',
+          status: 'modified',
+          unifiedDiff: '--- src/a.ts\n+++ src/a.ts\n@@ -1,1 +1,1 @@\n-const x = 1;\n+const x = 2;\n',
+        },
+      ],
+      errors: [],
+    },
   };
 }
 
@@ -159,6 +175,12 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
     // Restore the checkpoint.
     await page.getByTestId(`chat-checkpoint-restore-${CHECKPOINT_ID}`).click();
     await expect(page.getByText(`Restored from checkpoint "${CHECKPOINT_ID}"`)).toBeVisible({ timeout: 30_000 });
+
+    // View what the checkpoint would undo (content diff panel).
+    await page.getByTestId(`chat-checkpoint-diff-${CHECKPOINT_ID}`).click();
+    await expect(page.getByTestId(`chat-checkpoint-diff-panel-${CHECKPOINT_ID}`)).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/src\/a\.ts/).first()).toBeVisible();
+    await expect(page.getByText('-const x = 1;')).toBeVisible();
 
     await page.keyboard.press('Escape');
   } finally {

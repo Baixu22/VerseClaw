@@ -525,6 +525,28 @@ describe("write-journal FP-P1-04 semantics", () => {
     expect(parsed.lineage?.workspaceRoot).toBe(path.resolve(repoRoot));
   });
 
+  it("journalDirFor normalizes Windows-illegal characters in session ids", () => {
+    // Canonical keys like "agent:main:main" contain ':' which must not reach
+    // the filesystem path (gateway checkpoint diff/restore use them as the
+    // journal session id).
+    const dir = journalDirFor(repoRoot, "agent:main:main");
+    expect(dir).not.toContain(":");
+    expect(dir.endsWith(`${path.sep}agent_main_main`)).toBe(true);
+    // Round-trip: snapshot and rehydrate through the normalized dir.
+    snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId: "agent:main:main",
+      filePath: "a.ts",
+      toolName: "write",
+    });
+    writeFileSync(path.join(repoRoot, "a.ts"), "v1\n", "utf8");
+    expect(
+      getOrCreateWriteJournal(repoRoot, "agent:main:main").entries.some(
+        (entry) => entry.relPath === "a.ts",
+      ),
+    ).toBe(true);
+  });
+
   it("successful undo cleans consumed snapshots; journal stays consistent with disk", () => {
     write("a.ts", "a1\n");
     expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(1);
