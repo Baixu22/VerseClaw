@@ -373,6 +373,19 @@ function buildGates(profiles, options = {}) {
     command: 'pnpm',
     args: ['install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
   });
+  // openclaw_runtime is an independent pnpm workspace (own pnpm-workspace.yaml
+  // and pnpm-lock.yaml). The root install above does not cover it, so the
+  // detached worktree would lack its dependencies (e.g. oxlint for lint:dcs,
+  // vitest for runtime-unit, tsgo for runtime-static-check). Install it with
+  // the same offline/frozen/ignore-scripts posture to keep the acceptance
+  // environment self-contained and fail-closed.
+  add({
+    id: 'dependency-install-offline-openclaw-runtime',
+    profile: 'environment',
+    name: 'Offline frozen dependency install (openclaw_runtime workspace)',
+    command: 'pnpm',
+    args: ['--dir', 'openclaw_runtime', 'install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
+  });
   add({
     id: 'harness-validate',
     profile: 'harness',
