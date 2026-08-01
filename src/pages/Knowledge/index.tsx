@@ -27,6 +27,9 @@ import {
   type KnowledgeSekbConfirmPrincipleResult,
   type KnowledgeSekbDistillationSuggestion,
   type KnowledgeSekbRetrieveForTaskResult,
+  type KnowledgeSekbCaptureTrajectoryResult,
+  type KnowledgeSekbBatchDistillSuggestResult,
+  type KnowledgeSekbShadowEvaluationExportResult,
   type KnowledgeSourceSet,
   type KnowledgeStatusResult,
   type KnowledgeStewardConfigGetResult,
@@ -882,6 +885,14 @@ export function Knowledge() {
   const [runtimeConfirmResult, setRuntimeConfirmResult] = useState<KnowledgeSekbConfirmPrincipleResult | null>(null);
   const [runtimeRetrieveIntent, setRuntimeRetrieveIntent] = useState('');
   const [runtimeRetrieveType, setRuntimeRetrieveType] = useState('');
+  const [runtimeCaptureIntent, setRuntimeCaptureIntent] = useState('');
+  const [runtimeCaptureType, setRuntimeCaptureType] = useState('');
+  const [runtimeCaptureOutcome, setRuntimeCaptureOutcome] = useState<'success' | 'failure' | 'partial'>('success');
+  const [runtimeCaptureError, setRuntimeCaptureError] = useState('');
+  const [runtimeCaptureResult, setRuntimeCaptureResult] = useState<KnowledgeSekbCaptureTrajectoryResult | null>(null);
+  const [runtimeDistillResult, setRuntimeDistillResult] = useState<KnowledgeSekbBatchDistillSuggestResult | null>(null);
+  const [runtimeShadowKey, setRuntimeShadowKey] = useState('');
+  const [runtimeShadowResult, setRuntimeShadowResult] = useState<KnowledgeSekbShadowEvaluationExportResult | null>(null);
   const [runtimeRetrieveTags, setRuntimeRetrieveTags] = useState('');
   const [runtimeRetrieveResult, setRuntimeRetrieveResult] = useState<KnowledgeSekbRetrieveForTaskResult | null>(null);
 
@@ -1167,6 +1178,76 @@ export function Knowledge() {
       setRunning(null);
     }
   }, [runtimeRetrieveIntent, runtimeRetrieveTags, runtimeRetrieveType, t]);
+
+  const captureRuntimeTrajectory = useCallback(async () => {
+    if (!runtimeCaptureIntent.trim() || !runtimeCaptureType.trim()) return;
+    setRunning('runtimeCapture');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbCaptureTrajectory({
+        taskIntent: runtimeCaptureIntent.trim(),
+        taskType: runtimeCaptureType.trim(),
+        outcome: runtimeCaptureOutcome,
+        ...(runtimeCaptureOutcome === 'failure' && runtimeCaptureError.trim()
+          ? { rawError: runtimeCaptureError.trim() }
+          : {}),
+      });
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.capture'));
+      }
+      setRuntimeCaptureResult(result);
+      toast.success(t('runtime.toasts.captured'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [runtimeCaptureIntent, runtimeCaptureOutcome, runtimeCaptureType, runtimeCaptureError, t]);
+
+  const runBatchDistill = useCallback(async () => {
+    setRunning('runtimeDistill');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbBatchDistillSuggest({});
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.distill'));
+      }
+      setRuntimeDistillResult(result);
+      if (result.suggestions.length > 0) {
+        toast.success(t('runtime.toasts.distilled', { count: result.suggestions.length }));
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [t]);
+
+  const runShadowEvaluationExport = useCallback(async () => {
+    if (!runtimeShadowKey.trim()) return;
+    setRunning('runtimeShadow');
+    setError(null);
+    try {
+      const result = await hostApi.knowledge.sekbShadowEvaluationExport({
+        pseudonymizationKey: runtimeShadowKey.trim(),
+      });
+      if (!result.success || !result.available) {
+        throw new Error(result.error || t('runtime.errors.shadow'));
+      }
+      setRuntimeShadowResult(result);
+      toast.success(t('runtime.toasts.shadow'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [runtimeShadowKey, t]);
 
   const runGovernanceChecks = useCallback(async () => {
     setGovernanceRunning(true);
@@ -3333,6 +3414,88 @@ export function Knowledge() {
                             <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-words text-xs leading-5 text-foreground" data-testid="knowledge-runtime-injection">{runtimeRetrieveResult.injection || t('runtime.emptyAdvisory')}</pre>
                           </div>
                         </div>
+                      ) : null}
+                    </section>
+
+                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-capture-title">
+                      <div>
+                        <h4 id="runtime-capture-title" className="text-sm font-semibold">{t('runtime.captureTitle')}</h4>
+                        <p className="mt-1 text-xs text-muted-foreground">{t('runtime.captureDescription')}</p>
+                      </div>
+                      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-capture-intent">{t('runtime.taskIntent')}</Label>
+                          <Input id="runtime-capture-intent" value={runtimeCaptureIntent} onChange={(event) => setRuntimeCaptureIntent(event.target.value)} placeholder={t('runtime.taskIntentPlaceholder')} data-testid="knowledge-runtime-capture-intent" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-capture-type">{t('runtime.taskType')}</Label>
+                          <Input id="runtime-capture-type" value={runtimeCaptureType} onChange={(event) => setRuntimeCaptureType(event.target.value)} placeholder={t('runtime.taskTypePlaceholder')} data-testid="knowledge-runtime-capture-type" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-capture-outcome">{t('runtime.outcome')}</Label>
+                          <select
+                            id="runtime-capture-outcome"
+                            className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm dark:border-white/10"
+                            value={runtimeCaptureOutcome}
+                            onChange={(event) => setRuntimeCaptureOutcome(event.target.value as 'success' | 'failure' | 'partial')}
+                            data-testid="knowledge-runtime-capture-outcome"
+                          >
+                            <option value="success">{t('runtime.outcomeSuccess')}</option>
+                            <option value="partial">{t('runtime.outcomePartial')}</option>
+                            <option value="failure">{t('runtime.outcomeFailure')}</option>
+                          </select>
+                        </div>
+                      </div>
+                      {runtimeCaptureOutcome === 'failure' ? (
+                        <div className="space-y-1.5">
+                          <Label htmlFor="runtime-capture-error">{t('runtime.rawError')}</Label>
+                          <Input id="runtime-capture-error" value={runtimeCaptureError} onChange={(event) => setRuntimeCaptureError(event.target.value)} placeholder={t('runtime.rawErrorPlaceholder')} data-testid="knowledge-runtime-capture-error" />
+                        </div>
+                      ) : null}
+                      <Button type="button" onClick={() => void captureRuntimeTrajectory()} disabled={busy || !runtimeCaptureIntent.trim() || !runtimeCaptureType.trim()} data-testid="knowledge-runtime-capture">
+                        {running === 'runtimeCapture' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Upload className="mr-1.5 h-3.5 w-3.5" />}
+                        {t(running === 'runtimeCapture' ? 'runtime.capturing' : 'runtime.capture')}
+                      </Button>
+                      {runtimeCaptureResult ? (
+                        <p className="text-xs text-muted-foreground" data-testid="knowledge-runtime-capture-result">
+                          {runtimeCaptureResult.success ? t('runtime.captureSuccess') : t('runtime.captureFailed')}
+                        </p>
+                      ) : null}
+                    </section>
+
+                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-distill-title">
+                      <div>
+                        <h4 id="runtime-distill-title" className="text-sm font-semibold">{t('runtime.distillTitle')}</h4>
+                        <p className="mt-1 text-xs text-muted-foreground">{t('runtime.distillDescription')}</p>
+                      </div>
+                      <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runBatchDistill()} disabled={busy} data-testid="knowledge-runtime-distill">
+                        {running === 'runtimeDistill' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1.5 h-3.5 w-3.5" />}
+                        {t(running === 'runtimeDistill' ? 'runtime.distilling' : 'runtime.distill')}
+                      </Button>
+                      {runtimeDistillResult ? (
+                        <p className="text-xs text-muted-foreground" data-testid="knowledge-runtime-distill-result">
+                          {t('runtime.distillResult', { count: runtimeDistillResult.suggestions.length })}
+                        </p>
+                      ) : null}
+                    </section>
+
+                    <section className="space-y-3 border-t border-black/10 pt-5 dark:border-white/10" aria-labelledby="runtime-shadow-title">
+                      <div>
+                        <h4 id="runtime-shadow-title" className="text-sm font-semibold">{t('runtime.shadowTitle')}</h4>
+                        <p className="mt-1 text-xs text-muted-foreground">{t('runtime.shadowDescription')}</p>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="runtime-shadow-key">{t('runtime.shadowKey')}</Label>
+                        <Input id="runtime-shadow-key" value={runtimeShadowKey} onChange={(event) => setRuntimeShadowKey(event.target.value)} placeholder={t('runtime.shadowKeyPlaceholder')} data-testid="knowledge-runtime-shadow-key" />
+                      </div>
+                      <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void runShadowEvaluationExport()} disabled={busy || !runtimeShadowKey.trim()} data-testid="knowledge-runtime-shadow-report">
+                        {running === 'runtimeShadow' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <FileSearch className="mr-1.5 h-3.5 w-3.5" />}
+                        {t(running === 'runtimeShadow' ? 'runtime.shadowRunning' : 'runtime.shadowReport')}
+                      </Button>
+                      {runtimeShadowResult ? (
+                        <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-black/10 bg-surface-input p-3 text-xs leading-5 text-muted-foreground dark:border-white/10" data-testid="knowledge-runtime-shadow-result">
+                          {JSON.stringify(runtimeShadowResult, null, 2)}
+                        </pre>
                       ) : null}
                     </section>
                   </>

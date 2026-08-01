@@ -442,18 +442,38 @@
     "advisoryTitle": "助言用注入プレビュー",
     "emptyAdvisory": "助言テキストは返されませんでした。",
     "errors": {
-      "report": "Runtime Lessons を読み込めませんでした。",
-      "suggest": "原則を提案できませんでした。",
-      "confirm": "この原則を確認できませんでした。",
-      "reject": "この提案を却下できませんでした。",
-      "retrieve": "確認済み原則を取得できませんでした。"
+      "capture": "軌跡をキャプチャできませんでした。",
+      "distill": "バッチ蒸留を実行できませんでした。",
+      "shadow": "シャドウ評価レポートを生成できませんでした。"
     },
     "toasts": {
-      "suggested": "{{count}} 件のレビュー提案を準備しました",
-      "confirmed": "原則を確認しました",
-      "rejected": "提案を却下しました",
-      "retrieved": "確認済み原則を {{count}} 件取得しました"
-    }
+      "captured": "軌跡をキャプチャしました",
+      "distilled": "{{count}}件の提案を蒸留しました",
+      "shadow": "シャドウ評価レポートが準備できました"
+    },
+    "captureTitle": "軌跡をキャプチャ",
+    "captureDescription": "タスク軌跡を手動でSEKBに記録し、後の蒸留に備えます。",
+    "outcome": "結果",
+    "outcomeSuccess": "成功",
+    "outcomePartial": "部分成功",
+    "outcomeFailure": "失敗",
+    "rawError": "生エラー",
+    "rawErrorPlaceholder": "失敗結果のエラーメッセージ",
+    "capture": "軌跡をキャプチャ",
+    "capturing": "キャプチャ中…",
+    "captureSuccess": "軌跡をキャプチャしました。",
+    "captureFailed": "キャプチャに失敗しました。",
+    "distillTitle": "バッチ蒸留",
+    "distillDescription": "未蒸留の軌跡に対してバッチ蒸留の提案を実行します。",
+    "distill": "バッチ蒸留を実行",
+    "distilling": "蒸留中…",
+    "distillResult": "{{count}}件のバッチ提案を生成",
+    "shadowTitle": "シャドウ評価",
+    "shadowDescription": "オフラインのシャドウ評価レポート（仮名化された証拠）。",
+    "shadowKey": "仮名化キー",
+    "shadowKeyPlaceholder": "オフライン評価証拠のキー",
+    "shadowReport": "レポートを生成",
+    "shadowRunning": "生成中…"
   },
   "governance": {
     "title": "Governance",
