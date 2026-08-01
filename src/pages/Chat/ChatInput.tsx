@@ -29,6 +29,7 @@ import {
   Search,
   SendHorizontal,
   Shield,
+  ShieldCheck,
   Sparkles,
   Square,
   Target,
@@ -37,6 +38,7 @@ import {
   X,
   type LucideIcon,
 } from 'lucide-react';
+import { Hand as CodexHand, Lightbulb as CodexLightbulb, ShieldAlert as CodexShieldAlert } from '@/components/icons/codex-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
