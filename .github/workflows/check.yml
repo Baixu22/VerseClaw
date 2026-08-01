@@ -42,6 +42,12 @@ jobs:
       - name: Run typecheck
         run: pnpm run typecheck
 
+      - name: Run host-api contract check
+        run: pnpm run contract:check
+
+      - name: Run i18n lint
+        run: pnpm run i18n:lint
+
       - name: Run tests
         run: pnpm run test
 

@@ -24,6 +24,7 @@ import {
 } from "./agent-tools.before-tool-call.js";
 import type { AuthProfileStore } from "./auth-profiles/types.js";
 import { resolveOpenClawPluginToolsForOptions } from "./openclaw-plugin-tools.js";
+import { createCheckpointRollbackDeps } from "./checkpoint-rollback-executor.js";
 import {
   isToolExplicitlyAllowedByFactoryPolicy,
   mergeFactoryPolicyList,
@@ -68,6 +69,7 @@ import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createMusicGenerateTool } from "./tools/music-generate-tool.js";
 import { createMissionLoopTool } from "./tools/mission-loop-tool.js";
+import { getOrCreateWriteJournal } from "./tools/write-journal.js";
 import { createNodesTool } from "./tools/nodes-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";
 import { createSessionStatusTool } from "./tools/session-status-tool.js";
@@ -573,6 +575,26 @@ export function createOpenClawTools(
             agentSessionKey: options?.agentSessionKey,
             config: resolvedConfig,
             requesterAgentIdOverride: options?.requesterAgentIdOverride,
+            deps: {
+              rollback:
+                resolvedConfig?.runtime?.mission?.rollback?.enabled === true
+                  ? createCheckpointRollbackDeps({
+                      workspaceRoot: spawnWorkspaceDir ?? workspaceDir,
+                      sessionId: options?.sessionId,
+                    })
+                  : undefined,
+              // Stamp each tick-end checkpoint with the mission journal's
+              // current seq boundary so rollback filters by monotonic seq
+              // (no same-millisecond ambiguity).
+              journalSeqBoundary: () => {
+                const journal = getOrCreateWriteJournal(
+                  spawnWorkspaceDir ?? workspaceDir,
+                  options?.sessionId?.trim() || "default",
+                );
+                const tail = journal.entries[journal.entries.length - 1];
+                return tail ? tail.seq : 0;
+              },
+            },
           }),
           createTeamOrchestrateTool({
             agentSessionKey: options?.agentSessionKey,

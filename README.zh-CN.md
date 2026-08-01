@@ -135,7 +135,7 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 设置 → 工作模式 中提供 Plan、Build、Review 和 Docs/Data 管理。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 可用性、由主进程拥有的轻量 Office/Search Work Provider 状态，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。Work Provider 可以由内置库、可选包、外部服务、Custom HTTP、外部二进制、runtime skill、MCP server 或 OpenClaw plugin 通过同一来源模型承接。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
 OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会检测二进制文件、流式显示安装日志、同步与 Codeg 兼容的 `/officecli-*` 技能，并用 `officecli watch` 实时预览 `.docx`、`.xlsx` 和 `.pptx` 文件。
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
-在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。
+在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。会话生命周期命令（`/new`、`/resume <关键词>`、`/rename <名称>`、`/archive`、`/delete`、`/clear`、`/copy`）与侧边栏使用相同的 store/host 路径：`/new` 开启新对话，`/resume` 按关键词切换会话，`/rename` 重命名当前会话，`/archive` 与 `/delete` 归档或永久删除当前会话，`/clear` 重置本地消息视图，`/copy` 将会话记录复制为 markdown。
 当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
 Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
@@ -156,6 +156,8 @@ Chat 会把编排进度显示为响应式 Wave 时间线。稳定的 task node �
 Engineering Control Signals 会把 evidence gap、scope drift、validation missing 和 unverified claim 明确写入现有 checkpoint、Mission/Task reviewer、HostEvent 与 Task Ledger metadata 路径；Verse Claw 不会创建第二套进度文件，也不会把 Observability trace 自动当作完成事实。
 
 Chat 输入区还提供预览优先的 **接力到新对话**：Verse Claw 会从 ResumeCheckpoint、runtime 恢复上下文、Task Ledger、Git 状态、近期 trace/error 状态和 transcript fallback 证据生成可编辑的确定性接力草稿，然后创建新的 workspace 作用域会话并把草稿预填到输入框，不会自动发送。
+
+会话菜单现在还提供 **检查点**：Verse Claw 列出长任务 `ResumeCheckpoint` 快照（每个 Mission tick 一个），并可将工作区恢复到所选检查点——回滚该检查点之后写入日志中的条目。这是运行时 replay-rollback authority 的手动半边（自动半边由 `runtime.mission.rollback.enabled` 门控，默认关闭）。
 **Fork 到新对话** 是分支式对应功能：当前会话空闲时，Verse Claw 会请求 runtime 创建一个已继承 active transcript branch 的子会话，立即切换过去，父会话保持不变，并且不会复制 Task Ledger 真相、生成 prompt 或自动发送。
 Composer 只显示本地 preflight 推荐的连续性动作，并用很短的 healthy/risky/blocked 提示说明状态；会话下拉菜单仍保留 Fork 和接力两项，并用轻量推荐标记与 Fork 来源元数据提示选择。失败提示只提供显式替代动作，例如“准备接力”，不会自动切换语义。
 

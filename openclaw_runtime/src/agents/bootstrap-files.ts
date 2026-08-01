@@ -71,7 +71,7 @@ export function resolveContextInjectionMode(
   if (agentMode === "always" || agentMode === "continuation-skip" || agentMode === "never") {
     return agentMode;
   }
-  return config?.agents?.defaults?.contextInjection ?? "always";
+  return config?.agents?.defaults?.contextInjection ?? "continuation-skip";
 }
 
 /** Checks whether the session transcript still has a valid full-bootstrap marker. */
@@ -362,12 +362,14 @@ export function buildBootstrapContextForFiles(
     config?: OpenClawConfig;
     agentId?: string | null;
     warn?: (message: string) => void;
+    memoryKeywords?: string[];
   },
 ): EmbeddedContextFile[] {
   const contextFiles = buildBootstrapContextFiles(bootstrapFiles, {
     maxChars: resolveBootstrapMaxChars(params.config, params.agentId),
     totalMaxChars: resolveBootstrapTotalMaxChars(params.config, params.agentId),
     warn: params.warn,
+    memoryKeywords: params.memoryKeywords,
   });
   return contextFiles;
 }

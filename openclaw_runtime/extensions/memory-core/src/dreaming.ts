@@ -28,6 +28,7 @@ import {
 } from "openclaw/plugin-sdk/string-coerce-runtime";
 import { peekSystemEventEntries } from "openclaw/plugin-sdk/system-event-runtime";
 import type { NarrativePhaseData } from "./dreaming-narrative.js";
+import type { PromotionCandidate } from "./short-term-promotion.js";
 import {
   formatErrorMessage,
   includesSystemEventToken,
@@ -600,6 +601,16 @@ export async function runShortTermDreamingPromotionIfTriggered(params: {
         maxAgeDays: params.config.maxAgeDays,
         nowMs: sweepNowMs,
       });
+      // P2-2: filter low-value candidates before promotion to keep MEMORY.md
+      // information-dense. Drop near-duplicate snippets (same claim hash) and
+      // very short fragments that add noise rather than durable knowledge.
+      const deduped = filterLowValuePromotionCandidates(candidates);
+      const filteredCount = candidates.length - deduped.length;
+      if (filteredCount > 0) {
+        params.logger.info(
+          `memory-core: dreaming governance filtered ${filteredCount} low-value candidate(s) [workspace=${workspaceDir}].`,
+        );
+      }
       totalCandidates += candidates.length;
       reportLines.push(`- Ranked ${candidates.length} candidate(s) for durable promotion.`);
       if (params.config.verboseLogging) {
@@ -618,7 +629,7 @@ export async function runShortTermDreamingPromotionIfTriggered(params: {
       }
       const applied = await applyShortTermPromotions({
         workspaceDir,
-        candidates,
+        candidates: deduped,
         limit: params.config.limit,
         minScore: params.config.minScore,
         minRecallCount: params.config.minRecallCount,
@@ -692,6 +703,31 @@ export async function runShortTermDreamingPromotionIfTriggered(params: {
   );
 
   return { handled: true, reason: "memory-core: short-term dreaming processed" };
+}
+
+/**
+ * P2-2: filters low-value promotion candidates before they are written into
+ * MEMORY.md. Drops very short fragments (< 24 chars) and near-duplicate
+ * snippets sharing the same claim hash, keeping the memory file dense.
+ */
+export function filterLowValuePromotionCandidates(
+  candidates: readonly PromotionCandidate[],
+): PromotionCandidate[] {
+  const governanceFiltered = candidates.filter(
+    (candidate) =>
+      candidate.snippet.trim().length >= 24 &&
+      (candidate.claimHash === undefined || candidate.claimHash.length > 0),
+  );
+  const deduped: PromotionCandidate[] = [];
+  const seenHashes = new Set<string>();
+  for (const candidate of governanceFiltered) {
+    if (candidate.claimHash) {
+      if (seenHashes.has(candidate.claimHash)) continue;
+      seenHashes.add(candidate.claimHash);
+    }
+    deduped.push(candidate);
+  }
+  return deduped;
 }
 
 export function registerShortTermPromotionDreaming(api: OpenClawPluginApi): void {

@@ -7,6 +7,7 @@ import fs from "node:fs/promises";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
   captureLineEndings,
+  findSimilarLines,
   normalizeToLF,
   restoreLineEndings,
 } from "./sessions/tools/edit-diff.js";
@@ -41,13 +42,14 @@ export async function applyUpdateHunk(
     originalLines.pop();
   }
 
-  const replacements = computeReplacements(originalLines, filePath, chunks);
+  const replacements = computeReplacements(originalContents, originalLines, filePath, chunks);
   const newLines = applyReplacements(originalLines, replacements);
   const normalizedResult = `${newLines.join("\n")}${hadTrailingNewline ? "\n" : ""}`;
   return restoreLineEndings(normalizedResult, originalEndings);
 }
 
 function computeReplacements(
+  originalContents: string,
   originalLines: string[],
   filePath: string,
   chunks: UpdateFileChunk[],
@@ -59,7 +61,10 @@ function computeReplacements(
     if (chunk.changeContext) {
       const ctxIndex = seekSequence(originalLines, [chunk.changeContext], lineIndex, false);
       if (ctxIndex === null) {
-        throw new Error(`Failed to find context '${chunk.changeContext}' in ${filePath}`);
+        const hint = findSimilarLines(originalContents, chunk.changeContext);
+        throw new Error(
+          `Failed to find context '${chunk.changeContext}' in ${filePath}${hint ? `\n\nDid you mean to match some of these actual lines?\n${hint}` : ""}`,
+        );
       }
       lineIndex = ctxIndex + 1;
     }
@@ -91,8 +96,9 @@ function computeReplacements(
     }
 
     if (found === null) {
+      const hint = findSimilarLines(originalContents, chunk.oldLines.join("\n"));
       throw new Error(
-        `Failed to find expected lines in ${filePath}:\n${chunk.oldLines.join("\n")}`,
+        `Failed to find expected lines in ${filePath}:\n${chunk.oldLines.join("\n")}${hint ? `\n\nDid you mean to match some of these actual lines?\n${hint}` : ""}`,
       );
     }
 

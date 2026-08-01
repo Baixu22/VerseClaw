@@ -134,7 +134,7 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 設定 → 作業モード では Plan、Build、Review、Docs/Data の作業モードを管理できます。モードは workspace session ごとに保存され、レポート、表計算、スライド、PDF、調査、Webサイト、デザイン、日常業務向けの成果物中心の Work Kits を設定できます。Kit 状態はローカル skill の準備状況、Main 所有の軽量 Office/Search Work Provider 状態、内蔵 Office skill の明示的なインストール操作を表示します。Work Provider は内蔵ライブラリ、任意パッケージ、外部サービス、Custom HTTP、外部バイナリ、runtime skill、MCP server、OpenClaw plugin を同じ source model で扱えます。Search はユーザーが provider を明示設定するまで `missingConfig` のままで、重い変換、crawler、OCR、dataframe runtime は任意のインターフェースとして扱います。次のメッセージには軽量な未信頼の意図 metadata だけが添付されます。workspace permission を自動変更したり、OpenClaw runtime のツールポリシーを上書きしたりはしません。
 OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できます。Verse Claw はバイナリを検出し、インストールログをストリーミングし、Codeg 互換の `/officecli-*` スキルを同期し、`officecli watch` で `.docx`、`.xlsx`、`.pptx` をライブプレビューします。
 コンポーザーから挿入した Skill は `/skill-name` 形式のチップとして表示され、チップをクリックすると右側のプレビュー側欄でその Skill の `SKILL.md` を開けます。
-コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。
+コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。セッションライフサイクルコマンド（`/new`、`/resume <キーワード>`、`/rename <名前>`、`/archive`、`/delete`、`/clear`、`/copy`）はサイドバーと同じ store/host 経路を使用します：`/new` で新しいチャットを開始、`/resume` でキーワードに一致するセッションに切替、`/rename` で現在のセッション名を変更、`/archive` と `/delete` でアーカイブまたは完全削除、`/clear` でローカルメッセージ表示をリセット、`/copy` でセッション記録を markdown としてコピーします。
 `@agent` で別のエージェントを選ぶと、Verse Claw はデフォルトエージェントを経由せず、そのエージェント自身の会話コンテキストへ直接切り替えます。各エージェントのワークスペースは既定で分離されていますが、より強い実行時分離は OpenClaw の sandbox 設定に依存します。
 Verse Claw は既定で軽量な `policy-light` サンドボックス層を使い、Main プロセスの権限ゲート、ワークスペースルート検査、Gateway RPC 承認、OpenClaw exec approval を組み合わせて制御します。Docker と SSH は明示的に選択する `strong` provider として残り、起動要件ではありません。
 Settings、Doctor、diagnostics は同じ effective sandbox policy を表示し、要求/有効 provider、runtime level、exec/network policy、Docker の利用可否、縮退理由を確認できます。
@@ -155,6 +155,8 @@ Chat のオーケストレーション進捗はレスポンシブな Wave タイ
 Engineering Control Signals は evidence gap、scope drift、validation missing、unverified claim を既存の checkpoint、Mission/Task reviewer、HostEvent、Task Ledger metadata の経路に明示します。Verse Claw は第二の進捗ファイルを作らず、Observability trace を自動的に完了事実として扱いません。
 
 Chat 入力欄には、プレビュー優先の **新しい会話への Handoff** もあります。Verse Claw は ResumeCheckpoint、runtime recovery context、Task Ledger、Git 状態、最近の trace/error 状態、transcript fallback 証拠から編集可能な決定的な引き継ぎ草稿を作成し、新しい workspace スコープのセッションにその草稿を入力済みにします。自動送信はしません。
+
+セッションメニューには **チェックポイント** も追加されました。Verse Claw は長タスクの `ResumeCheckpoint` スナップショット（Mission の tick ごとに 1 つ）を一覧表示し、選択したチェックポイント以降に書き込みジャーナルへ記録されたエントリをロールバックしてワークスペースを復元できます。これは runtime replay-rollback authority の手動側です（自動側は `runtime.mission.rollback.enabled` でゲートされ、既定では無効）。
 **新しい会話への Fork** は分岐型の対になる機能です。現在のセッションがアイドル状態のとき、Verse Claw は runtime に active transcript branch を継承した子セッションを作成させ、すぐに切り替えます。親セッションは変更せず、Task Ledger の真実をコピーせず、prompt の生成や自動送信も行いません。
 Composer にはローカル preflight でおすすめされた継続アクションだけを表示し、短い healthy/risky/blocked の状態ヒントを添えます。セッションのドロップダウンには Fork と Handoff の両方を残して小さな Recommended マーカーと軽量な Fork 元情報を付けます。失敗時は Prepare handoff などの明示的な代替操作だけを提示し、自動で意味を切り替えません。
 

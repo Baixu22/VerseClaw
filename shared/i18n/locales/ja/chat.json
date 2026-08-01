@@ -489,6 +489,25 @@
       "prevPage": "前のページ",
       "nextPage": "次のページ"
     },
+    "checkpoints": {
+      "title": "セッションのチェックポイント",
+      "description": "ワークスペースを以前の長時間タスクのチェックポイントに復元します。チェックポイント以降の変更は書き込みジャーナルからロールバックされます。",
+      "loading": "チェックポイントを読み込み中…",
+      "empty": "このセッションにはまだチェックポイントがありません。長時間タスクのミッションは tick ごとに記録されます。",
+      "loadFailed": "チェックポイントの読み込みに失敗",
+      "restore": "復元",
+      "restoreSucceeded": "ワークスペースをチェックポイントに復元しました。",
+      "partialRestoreNotice": "部分復元：ファイル書き込みはロールバックされましたが、実行時状態と外部副作用は復元されていません。",
+      "restoreFailed": "復元に失敗",
+      "filesTouched": "{{count}} ファイル変更",
+      "testsRun": "{{count}} テスト実行",
+      "showDiff": "元に戻す変更を表示",
+      "hideDiff": "変更を隠す",
+      "diffLoading": "変更を読み込み中…",
+      "diffFailed": "変更の読み込みに失敗",
+      "diffEmpty": "このチェックポイントに元に戻す変更はありません。",
+      "close": "閉じる"
+    },
     "office": {
       "title": "Office プレビュー: {{fileName}}",
       "loading": "Office プレビューを読み込み中...",
@@ -1187,6 +1206,41 @@
           "label": "セッションを Handoff",
           "description": "新しいセッションに編集可能な継続下書きを準備します。",
           "argumentHint": ""
+        },
+        "new": {
+          "label": "新しいセッション",
+          "description": "現在のワークスペースで新しいチャットを開始します。",
+          "argumentHint": ""
+        },
+        "resume": {
+          "label": "セッションを再開",
+          "description": "以前のセッションを再開します。キーワードで絞り込み可能：/resume <キーワード>",
+          "argumentHint": "<キーワード>"
+        },
+        "rename": {
+          "label": "セッション名を変更",
+          "description": "現在のセッション名を変更します。",
+          "argumentHint": "<名前>"
+        },
+        "archive": {
+          "label": "セッションをアーカイブ",
+          "description": "現在のセッションをアーカイブします。",
+          "argumentHint": ""
+        },
+        "delete": {
+          "label": "セッションを削除",
+          "description": "現在のセッションを完全に削除します。",
+          "argumentHint": ""
+        },
+        "clear": {
+          "label": "セッションをクリア",
+          "description": "現在のセッション履歴をクリアします。",
+          "argumentHint": ""
+        },
+        "copy": {
+          "label": "最後の応答をコピー",
+          "description": "最後のアシスタント応答を markdown としてコピーします。",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1213,7 +1267,23 @@
         "ledgerCreated": "Ledger タスクを作成しました: {{title}}",
         "ledgerFailed": "Ledger タスクを作成できませんでした: {{error}}",
         "missionOpened": "Agents の Mission Control を開きました",
-        "forkUnavailable": "Fork は現在の実行が終わってから利用できます。"
+        "forkUnavailable": "Fork は現在の実行が終わってから利用できます。",
+        "newSessionCreated": "新しいセッションを開始しました。",
+        "resumeSessionResumed": "セッションを再開しました：{{label}}",
+        "resumeSessionNotFound": "\"{{query}}\" に一致するセッションがありません。",
+        "resumeSessionNoArgs": "/resume <キーワード> で名前を指定してセッションを選択します。",
+        "renameNoArgs": "/rename <名前> で新しいセッション名を設定します。",
+        "renameDone": "セッション名を \"{{label}}\" に変更しました。",
+        "renameFailed": "セッション名を変更できませんでした：{{error}}",
+        "archiveFailed": "セッションをアーカイブできませんでした：{{error}}",
+        "deleteFailed": "セッションを削除できませんでした：{{error}}",
+        "deleteConfirm": "現在のセッションを完全に削除しますか？この操作は元に戻せません。",
+        "archiveDone": "セッションをアーカイブしました。",
+        "deleteDone": "セッションを削除しました。",
+        "clearDone": "セッション履歴をクリアしました。",
+        "copyDone": "セッションの記録を markdown としてコピーしました。",
+        "copyEmpty": "コピーするメッセージが現在のセッションにありません。",
+        "copyFailed": "セッションの記録をコピーできませんでした：{{error}}"
       }
     },
     "modelPickerTitle": "モデルを切り替え",
@@ -1568,6 +1638,9 @@
     "intervention": {
       "guide": "誘導",
       "guideTooltip": "実行中のランに非中断のガイダンスを注入します。",
+      "longTaskRequired": "中断/ガイド/キュー/目標修正には、このセッションでアクティブな /loop 長タスクコンテキストが必要です。",
+      "reviseGoal": "目標を修正",
+      "reviseGoalTooltip": "実行中ランをチェックポイントし、修正後のユーザー目標から再開します。",
       "queueDefault": "実行中: Enter でキュー",
       "queue": "キュー",
       "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",

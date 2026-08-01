@@ -40,8 +40,8 @@ export type WriteSideEffectsOptions = {
   verifyConsumeEnabled?: boolean;
   /** FP-P1-04: attach project test-runner detection after write (default true). */
   testRunnerDetectEnabled?: boolean;
-  /** FP-P2-05: execute the detected runner. Explicit opt-in; default false. */
-  autoVerifyEnabled?: boolean;
+  /** FP-P2-05: execute the detected runner. true=always, false=never, "auto"=only when a runner is detected. */
+  autoVerifyEnabled?: boolean | "auto";
   /** Bounded timeout passed to the canonical exec tool. */
   autoVerifyTimeoutSeconds?: number;
   /** Explicit workspace-level runner for unsupported or multi-package projects. */
@@ -138,7 +138,7 @@ function normalizeTestExecutionResult(params: {
     };
   }
   if (status === "approval-unavailable") {
-    const reason = typeof details.reason === "string" ? details.reason : "no approval route";
+    const reason = typeof details?.reason === "string" ? details.reason : "no approval route";
     return {
       ...base,
       status: "unavailable",
@@ -156,10 +156,10 @@ function normalizeTestExecutionResult(params: {
     if (/^exec denied\b/i.test(aggregated.trim())) {
       return { ...base, status: "denied", reason: aggregated.split(/\r?\n/, 1)[0] };
     }
-    if (details.timedOut === true) {
+    if (details?.timedOut === true) {
       return { ...base, status: "timed_out", reason: "The test command exceeded its timeout." };
     }
-    if (status === "completed" && details.exitCode === 0) {
+    if (status === "completed" && details?.exitCode === 0) {
       return { ...base, status: "passed" };
     }
     return { ...base, status: "failed", reason: "The test command exited unsuccessfully." };
@@ -179,7 +179,13 @@ async function executeDetectedTests(params: {
 }): Promise<TestRunnerExecution> {
   const { detection, options } = params;
   const workdir = path.resolve(options.workspaceRoot, detection.workdir);
-  if (options.autoVerifyEnabled !== true) {
+  // "auto": post-write verification is enabled only when a runner was actually
+  // detected (which is the only path that reaches this function). Explicit
+  // false always disables; explicit true always runs.
+  const enabled =
+    options.autoVerifyEnabled === true ||
+    options.autoVerifyEnabled === "auto";
+  if (!enabled) {
     return {
       status: "disabled",
       command: detection.command,

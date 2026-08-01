@@ -61,6 +61,7 @@ import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools
 import type { AnyAgentTool } from "./agent-tools.types.js";
 import { createApplyPatchTool } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
+import { createMemorySelfEditTools } from "../runtime-core/memory-self-edit-adapter.js";
 import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js";
 import { createDcsContextAgentTools } from "./tools/context-agent-tools.js";
 import type { WorkspaceFactService } from "../context-engine/factstore/workspace-fact-service.js";
@@ -970,6 +971,9 @@ export function createOpenClawCodingTools(options?: {
   if (memoryQueryTool) {
     base.push(memoryQueryTool);
   }
+  // COMPASS: memory self-edit tools (recall/update/forget/strengthen).
+  // Same persist gate as memory_query; factory returns [] when disabled.
+  base.push(...createMemorySelfEditTools({ config: options?.config }));
   // DCS Stage 5: register context_read / context_search / context_write when
   // attempt/compact supplied BlockStore (+ sink for write) and session id.
   const dcsContextTools = createDcsContextAgentTools({

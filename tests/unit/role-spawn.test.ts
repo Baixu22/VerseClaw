@@ -14,7 +14,7 @@ import {
   spawnRoleSubagent,
   type SpawnFn,
 } from '../../openclaw_runtime/src/agents/role-spawn';
-import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
+import { runOrchestrationObserved as runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import { roleEffortToThinking } from '../../openclaw_runtime/src/agents/role-effort';
 import { getBuiltInRoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import { buildRolePermissionDenyList } from '../../openclaw_runtime/src/agents/role-permissions-policy';

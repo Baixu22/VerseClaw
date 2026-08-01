@@ -130,6 +130,12 @@ export async function main(argv = process.argv.slice(2)) {
 
   const changelogPath = argv[0] ?? "CHANGELOG.md";
   const absolutePath = path.resolve(process.cwd(), changelogPath);
+  // The changelog is release-owned and legitimately absent between releases
+  // (see AGENTS.md "Docs / Changelog": release generation owns it; contributors
+  // never edit it). A missing changelog is not an attribution violation.
+  if (!fs.existsSync(absolutePath)) {
+    return;
+  }
   const content = fs.readFileSync(absolutePath, "utf8");
   const violations = findForbiddenChangelogThanks(content);
   if (violations.length === 0) {

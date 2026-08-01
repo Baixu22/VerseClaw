@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
 import { matchesExecAllowlistPattern } from "./exec-allowlist-pattern.js";
+import { normalizeExecutableToken } from "./exec-wrapper-tokens.js";
 import type { ExecAllowlistEntry } from "./exec-approvals.types.js";
 import { resolveExecWrapperTrustPlan } from "./exec-wrapper-trust-plan.js";
 import {
@@ -322,7 +323,14 @@ function matchArgPattern(argPattern: string, argv: string[], platform?: string |
         : argsSlice.join(sep) + sep // trailing sentinel to match pattern format
       : argsSlice.join(sep);
   try {
-    const regex = new RegExp(argPattern);
+    // Codex prefix semantics: a bare argPattern is a PREFIX of the argument
+    // string, never a substring — anchor non-`^` patterns to the start so an
+    // entry like "server" cannot be matched mid-argument ("my-server.js") or
+    // after other args ("node foo server.js"). Explicitly anchored patterns
+    // (^...) are honored exactly as authored. Auto-generated \x00 patterns are
+    // already anchored and unaffected.
+    const source = argPattern.startsWith("^") ? argPattern : `^(?:${argPattern})`;
+    const regex = new RegExp(source);
     if (regex.test(argsString)) {
       return true;
     }
@@ -373,9 +381,13 @@ function matchesExecutableBasenamePattern(
   const candidates = new Set<string>();
   if (resolution.executableName) {
     candidates.add(resolution.executableName);
+    // Windows parity with normalizeExecutableToken: a bare allowlist entry
+    // ("node") also matches the resolved "node.exe"/"node.cmd" executable.
+    candidates.add(normalizeExecutableToken(resolution.executableName));
   }
   if (resolution.resolvedPath) {
     candidates.add(path.basename(resolution.resolvedPath));
+    candidates.add(normalizeExecutableToken(path.basename(resolution.resolvedPath)));
   }
   return [...candidates].some((candidate) => matchesExecAllowlistPattern(pattern, candidate));
 }

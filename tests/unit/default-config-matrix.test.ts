@@ -200,8 +200,10 @@ describe('TF-0003 default configuration matrix', () => {
         },
         'Context enhancement kill switch': () =>
           isContextEnhancementKillSwitchEngaged({}) === false ? 'false' : 'true',
-        'Coding auto verify': () =>
-          resolveCodingAutoVerifyConfig({}).enabled === false ? 'false' : 'true',
+        'Coding auto verify': () => {
+          const enabled = resolveCodingAutoVerifyConfig({}).enabled;
+          return enabled === false ? 'false' : enabled === 'auto' ? 'auto' : 'true';
+        },
       };
       for (const row of MD_MATRIX_ROWS) {
         const probe = implProbes[row.mdLabel];
@@ -399,8 +401,8 @@ describe('TF-0003 default configuration matrix', () => {
     expect(isContextEnhancementKillSwitchEngaged({})).toBe(true);
   });
 
-  it('locks coding auto verify default OFF and bounds explicit opt-in [coding-auto-verify-default]', () => {
-    expect(resolveCodingAutoVerifyConfig({})).toEqual({ enabled: false, timeoutSeconds: 90 });
+  it('locks coding auto verify default to auto-detect and bounds explicit opt-in [coding-auto-verify-default]', () => {
+    expect(resolveCodingAutoVerifyConfig({})).toEqual({ enabled: 'auto', timeoutSeconds: 90 });
     expect(
       resolveCodingAutoVerifyConfig({
         runtime: {

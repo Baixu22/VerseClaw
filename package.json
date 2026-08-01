@@ -218,7 +218,6 @@
     "@assistant-ui/react": "^0.14.22",
     "@assistant-ui/react-markdown": "^0.14.4",
     "@ast-grep/napi": "0.44.0",
-    "@chenglou/pretext": "^0.0.8",
     "@dicebear/core": "^10.3.0",
     "@dicebear/styles": "^10.2.0",
     "@jridgewell/trace-mapping": "^0.3.25",

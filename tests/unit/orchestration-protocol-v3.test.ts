@@ -35,7 +35,7 @@ vi.mock('rastermill', () => ({
 }));
 
 import { createOrchestratorPlan } from '../../openclaw_runtime/src/agents/orchestrator';
-import { runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run';
+import { runOrchestrationObserved as runOrchestration } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import {
   extractFollowupCandidates,
   extractMemoryCandidates,

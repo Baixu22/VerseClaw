@@ -489,6 +489,25 @@
       "prevPage": "上一页",
       "nextPage": "下一页"
     },
+    "checkpoints": {
+      "title": "会话检查点",
+      "description": "将工作区恢复到之前的长任务检查点。检查点之后更改的文件将从写入日志回滚。",
+      "loading": "正在加载检查点…",
+      "empty": "此会话暂无检查点。长任务 Mission 每 tick 记录一个。",
+      "loadFailed": "加载检查点失败",
+      "restore": "恢复",
+      "restoreSucceeded": "工作区已恢复到该检查点。",
+      "partialRestoreNotice": "部分恢复：文件写入已回滚，但运行时状态与外部副作用未恢复。",
+      "restoreFailed": "恢复失败",
+      "filesTouched": "改动 {{count}} 个文件",
+      "testsRun": "运行 {{count}} 个测试",
+      "showDiff": "查看将撤销的改动",
+      "hideDiff": "隐藏改动",
+      "diffLoading": "正在加载改动…",
+      "diffFailed": "加载改动失败",
+      "diffEmpty": "该检查点没有可撤销的文件改动。",
+      "close": "关闭"
+    },
     "office": {
       "title": "Office 预览：{{fileName}}",
       "loading": "正在加载 Office 预览...",
@@ -1187,6 +1206,41 @@
           "label": "Handoff 会话",
           "description": "在新会话中准备可编辑的接力草稿。",
           "argumentHint": ""
+        },
+        "new": {
+          "label": "新会话",
+          "description": "在当前工作区开始新的对话。",
+          "argumentHint": ""
+        },
+        "resume": {
+          "label": "恢复会话",
+          "description": "恢复之前的会话。可用关键词过滤：/resume <关键词>",
+          "argumentHint": "<关键词>"
+        },
+        "rename": {
+          "label": "重命名会话",
+          "description": "重命名当前会话。",
+          "argumentHint": "<名称>"
+        },
+        "archive": {
+          "label": "归档会话",
+          "description": "归档当前会话。",
+          "argumentHint": ""
+        },
+        "delete": {
+          "label": "删除会话",
+          "description": "永久删除当前会话。",
+          "argumentHint": ""
+        },
+        "clear": {
+          "label": "清空会话",
+          "description": "清空当前会话历史。",
+          "argumentHint": ""
+        },
+        "copy": {
+          "label": "复制最后响应",
+          "description": "将最后一条助手响应复制为 markdown。",
+          "argumentHint": ""
         }
       },
       "prompts": {
@@ -1213,7 +1267,23 @@
         "ledgerCreated": "已创建任务：{{title}}",
         "ledgerFailed": "无法创建任务：{{error}}",
         "missionOpened": "已打开 Agents 的 Mission Control",
-        "forkUnavailable": "当前运行结束后才能 Fork。"
+        "forkUnavailable": "当前运行结束后才能 Fork。",
+        "newSessionCreated": "已开始新会话。",
+        "resumeSessionResumed": "已恢复会话：{{label}}",
+        "resumeSessionNotFound": "没有匹配 \"{{query}}\" 的会话。",
+        "resumeSessionNoArgs": "输入 /resume <关键词> 按名称选择会话。",
+        "renameNoArgs": "输入 /rename <名称> 设置新的会话名称。",
+        "renameDone": "会话已重命名为 \"{{label}}\"。",
+        "renameFailed": "无法重命名会话：{{error}}",
+        "archiveFailed": "无法归档会话：{{error}}",
+        "deleteFailed": "无法删除会话：{{error}}",
+        "deleteConfirm": "永久删除当前会话？此操作无法撤销。",
+        "archiveDone": "会话已归档。",
+        "deleteDone": "会话已删除。",
+        "clearDone": "会话历史已清空。",
+        "copyDone": "会话记录已复制为 markdown。",
+        "copyEmpty": "当前会话没有可复制的消息。",
+        "copyFailed": "无法复制会话记录：{{error}}"
       }
     },
     "modelPickerTitle": "切换当前 Agent 模型",
@@ -1568,6 +1638,9 @@
     "intervention": {
       "guide": "引导",
       "guideTooltip": "向当前运行注入非打断式指导。",
+      "longTaskRequired": "打断/引导/排队/修改目标需要当前会话存在有效的 /loop 长任务上下文。",
+      "reviseGoal": "修改目标",
+      "reviseGoalTooltip": "记录检查点并从修改后的用户目标重新开始。",
       "queueDefault": "运行中：Enter 默认排队",
       "queue": "排队",
       "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",

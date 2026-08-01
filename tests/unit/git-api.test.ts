@@ -659,4 +659,120 @@ describe('git api', () => {
       ],
     });
   });
+
+  it('preflights missing base branch with actionable error before creating a PR', async () => {
+    const ghCalls: string[][] = [];
+    mockExec((command, args) => {
+      if (command === 'git' && args[0] === 'rev-parse' && args[1] === '--show-toplevel') {
+        return { stdout: `${process.cwd()}\n` };
+      }
+      if (command === 'git' && args[0] === 'rev-parse' && args[1] === '--verify') {
+        // refs/heads/missing-base does not exist; anything else resolves.
+        return args[3]?.includes('missing-base') ? { code: 128 } : { stdout: `${process.cwd()}\n` };
+      }
+      if (command === 'gh') ghCalls.push(args);
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().prCreate({
+      title: 'T',
+      body: 'B',
+      base: 'missing-base',
+      head: 'feature/x',
+    });
+    expect(result.success).toBe(false);
+    expect(result.reason).toContain('likely_cause');
+    expect(result.reason).toContain('missing-base');
+    expect(ghCalls.length).toBe(0); // gh never invoked: preflight failed first
+  });
+
+  it('reuses an existing open PR for the head branch instead of creating a duplicate', async () => {
+    const ghCalls: string[][] = [];
+    mockExec((command, args) => {
+      if (command === 'git' && args[0] === 'rev-parse' && args[1] === '--show-toplevel') {
+        return { stdout: `${process.cwd()}\n` };
+      }
+      if (command === 'git' && args[0] === 'rev-parse' && args[1] === '--verify') {
+        return { stdout: `${process.cwd()}\n` };
+      }
+      if (command === 'gh') {
+        ghCalls.push(args);
+        if (args[0] === 'pr' && args[1] === 'list') {
+          return {
+            stdout: JSON.stringify([
+              { number: 7, title: 'Existing', state: 'OPEN', headRefName: 'feature/x', baseRefName: 'main', url: 'https://example/pr/7', isDraft: false },
+            ]),
+          };
+        }
+      }
+      return { stdout: '' };
+    });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+    const payload = { title: 'T', body: 'B', base: 'main', head: 'feature/x' };
+    const first = await gitApi.prCreate(payload);
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    const second = await gitApi.prCreate({ ...payload, approvalId: first.approval?.id });
+
+    expect(second.success).toBe(true);
+    if (second.success) {
+      expect(second.reused).toBe(true);
+      expect(second.pullRequest?.number).toBe(7);
+    }
+    // gh pr create never called — the open PR was reused.
+    expect(ghCalls.some((args) => args[0] === 'pr' && args[1] === 'create')).toBe(false);
+    expect(ghCalls.some((args) => args[0] === 'pr' && args[1] === 'list')).toBe(true);
+  });
+
+  it('hardens git exec: hooks disabled, no locks, no prompts, fsmonitor off, bounded timeout', async () => {
+    const seenOptions: unknown[] = [];
+    execFileMock.mockImplementation((command: string, args: string[], options: unknown, callback: (...args: unknown[]) => void) => {
+      seenOptions.push(options);
+      callback(null, '', '');
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    await createGitApi().status().catch(() => undefined);
+
+    expect(seenOptions.length).toBeGreaterThan(0);
+    for (const raw of seenOptions) {
+      const options = raw as { env?: NodeJS.ProcessEnv; timeout?: number; killSignal?: string };
+      expect(options.env?.GIT_OPTIONAL_LOCKS).toBe('0');
+      expect(options.env?.GIT_TERMINAL_PROMPT).toBe('0');
+      expect(options.env?.GIT_CONFIG_COUNT).toBe('2');
+      expect(options.env?.GIT_CONFIG_KEY_0).toBe('core.hooksPath');
+      expect(options.env?.GIT_CONFIG_VALUE_0).toBeTruthy();
+      expect(options.env?.GIT_CONFIG_KEY_1).toBe('core.fsmonitor');
+      expect(options.env?.GIT_CONFIG_VALUE_1).toBe('false');
+      expect(options.timeout).toBeGreaterThan(0);
+      expect(options.killSignal).toBeTruthy();
+    }
+  });
+
+  it('resolves merge-base between HEAD and a base branch', async () => {
+    mockExec((command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') {
+        return { stdout: process.cwd() };
+      }
+      if (args[0] === 'merge-base') {
+        return { stdout: 'abc123def456\n' };
+      }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().mergeBase({ base: 'main' });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.mergeBase).toBe('abc123def456');
+
+    const lastCall = execFileMock.mock.calls[execFileMock.mock.calls.length - 1];
+    expect(lastCall[0]).toBe('git');
+    expect(lastCall[1]).toEqual(['merge-base', 'HEAD', 'main']);
+  });
+
+  it('rejects unsafe or missing refs for merge-base', async () => {
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    await expect(api.mergeBase({ base: '' })).rejects.toThrow('base is required');
+    await expect(api.mergeBase({ base: 'a..b' })).rejects.toThrow(/Invalid git ref/);
+  });
 });

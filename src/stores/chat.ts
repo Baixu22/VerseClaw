@@ -3020,6 +3020,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
     void get().refreshTaskLedger();
   },
 
+  clearSessionView: () => {
+    const currentKey = get().currentSessionKey;
+    clearHistoryPoll();
+    clearCachedSessionHistory(currentKey);
+    clearCachedSessionRunState(currentKey);
+    set({
+      messages: [],
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      activeRunId: null,
+      runError: null,
+      error: null,
+      sending: false,
+      lastUserMessageAt: null,
+      pendingToolImages: [],
+    });
+  },
+
   // ── Delete session ──
   //
   // NOTE: The OpenClaw Gateway does NOT expose a sessions.delete (or equivalent)
@@ -3041,10 +3061,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const result = await hostApi.sessions.delete(key);
       if (!result.success) {
-        console.warn(`[deleteSession] IPC reported failure for ${key}:`, result.error);
+        throw new Error(result.error || 'Failed to delete session');
       }
     } catch (err) {
       console.warn(`[deleteSession] IPC call failed for ${key}:`, err);
+      throw err;
     }
 
     const { currentSessionKey, sessions } = get();
@@ -3161,10 +3182,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         originalFolderId: options?.folderId ?? null,
       });
       if (!result.success) {
-        console.warn(`[archiveSession] IPC reported failure for ${key}:`, result.error);
+        throw new Error(result.error || 'Failed to archive session');
       }
     } catch (err) {
       console.warn(`[archiveSession] IPC call failed for ${key}:`, err);
+      throw err;
     }
 
     const { currentSessionKey, sessions } = get();
