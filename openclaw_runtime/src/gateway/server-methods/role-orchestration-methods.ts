@@ -3,7 +3,7 @@
 // Exposes the role registry, team templates, and orchestrator planning/execution
 // to operator clients (ClawX UI). Read methods are pure over the runtime config;
 // orchestrator.run anchors on a caller-provided sessionKey and spawns real
-// role-driven subagents via runOrchestration (orchestrator-run.ts).
+// role-driven subagents via runOrchestrationObserved (orchestrator-run-observed.ts).
 //
 // Params are parsed defensively here rather than via generated protocol
 // validators, so no change to the gateway-protocol package is required.
