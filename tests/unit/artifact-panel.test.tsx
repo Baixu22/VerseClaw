@@ -1,186 +1,121 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ArtifactPanel } from '@/components/file-preview/ArtifactPanel';
-import { ARTIFACT_PANEL_DEFAULT_WIDTH, useArtifactPanel } from '@/stores/artifact-panel';
-import type { GeneratedFile } from '@/lib/generated-files';
+import {
+  ARTIFACT_PANEL_DEFAULT_WIDTH,
+  openWorkspacePanel,
+  useArtifactPanel,
+} from '@/stores/artifact-panel';
 
 vi.mock('react-i18next', () => ({
-  initReactI18next: { type: '3rdParty', init: vi.fn() },
   useTranslation: () => ({
-    t: (_key: string, defaultValue?: string) => defaultValue ?? '',
+    t: (_key: string, fallback?: string | Record<string, unknown>) => (
+      typeof fallback === 'string' ? fallback : ''
+    ),
   }),
 }));
 
-vi.mock('@/components/file-preview/FilePreviewBody', () => ({
-  FilePreviewBody: ({ file, mode }: { file: { fileName: string; filePath: string }; mode: string }) => (
-    <div data-testid="file-preview-body">
-      <span>{mode}</span>
-      <span>{file.fileName}</span>
-      <span>{file.filePath}</span>
-    </div>
-  ),
+vi.mock('@/lib/host-api', () => ({
+  hostApi: {
+    git: { status: vi.fn(async () => ({ ok: true, status: { isRepository: false } })) },
+    shell: { showItemInFolder: vi.fn() },
+  },
 }));
 
 vi.mock('@/components/file-preview/WorkspaceBrowserBody', () => ({
-  WorkspaceBrowserBody: () => <div data-testid="workspace-browser" />,
+  WorkspaceBrowserBody: () => <div data-testid="workspace-files-content" />,
+}));
+vi.mock('@/components/file-preview/WorkspaceReviewPanel', () => ({
+  WorkspaceReviewPanel: () => <div data-testid="workspace-review-content" />,
+}));
+vi.mock('@/components/file-preview/WorkspaceTerminalPanel', () => ({
+  WorkspaceTerminalPanel: () => <div data-testid="workspace-terminal-content" />,
+}));
+vi.mock('@/components/file-preview/WorkspaceBrowserPanel', () => ({
+  WorkspaceBrowserPanel: () => <div data-testid="workspace-browser-content" />,
+}));
+vi.mock('@/components/file-preview/WorkspaceAuditPanel', () => ({
+  WorkspaceAuditPanel: () => <div data-testid="workspace-audit-content" />,
+}));
+vi.mock('@/components/file-preview/ArtifactView', () => ({
+  ArtifactView: () => <div data-testid="workspace-artifacts-content" />,
 }));
 
-function makeGeneratedFile(overrides: Partial<GeneratedFile> = {}): GeneratedFile {
-  return {
-    filePath: '/tmp/test_example.py',
-    fileName: 'test_example.py',
-    ext: '.py',
-    mimeType: 'text/x-python',
-    contentType: 'code',
-    action: 'modified',
-    fullContent: 'print("hello")\n',
-    lastSeenIndex: 1,
-    ...overrides,
-  };
-}
-
-afterEach(() => {
+function resetPanel() {
   useArtifactPanel.setState({
     open: false,
-    tab: 'changes',
+    expanded: false,
+    tabs: [],
+    activeTabId: null,
     focusedFile: null,
+    selectedPath: null,
+    reviewView: 'changes',
+    browserView: 'preview',
+    browserSessionId: null,
+    browserUrl: null,
+    terminalPlacement: 'side',
     widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
   });
+}
+
+beforeEach(() => {
+  resetPanel();
+  window.electron.platform = 'win32';
+  Object.defineProperty(window, 'innerWidth', { configurable: true, writable: true, value: 1280 });
 });
 
+afterEach(() => resetPanel());
+
 describe('ArtifactPanel', () => {
-  it('keeps chat-opened SKILL.md focused when switching to changes', () => {
-    useArtifactPanel.setState({
-      open: true,
-      tab: 'changes',
-      focusedFile: {
-        filePath: '~/.openclaw/skills/open-baidu/SKILL.md',
-        fileName: 'SKILL.md',
-        ext: '.md',
-        mimeType: 'text/markdown',
-        contentType: 'document',
-      },
-      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
-    });
+  it('opens canonical workspace entries from the restrained launcher', () => {
+    render(<ArtifactPanel files={[]} agent={null} />);
 
-    render(
-      <ArtifactPanel
-        files={[makeGeneratedFile()]}
-        agent={null}
-      />,
-    );
+    expect(screen.getByTestId('artifact-panel-launcher-review')).toBeVisible();
+    expect(screen.getByTestId('artifact-panel-launcher-terminal')).toBeVisible();
+    expect(screen.getByTestId('artifact-panel-launcher-browser')).toBeVisible();
+    expect(screen.getByTestId('artifact-panel-launcher-files')).toBeVisible();
 
-    const previewBodies = screen.getAllByTestId('file-preview-body');
-    expect(previewBodies[0]).toHaveTextContent('SKILL.md');
-    expect(previewBodies[0]).toHaveTextContent('~/.openclaw/skills/open-baidu/SKILL.md');
-    expect(screen.queryByText('test_example.py')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('artifact-panel-launcher-files'));
+    expect(screen.getByTestId('artifact-panel-tab-files')).toBeVisible();
+    expect(screen.getByTestId('workspace-files-content')).toBeVisible();
   });
 
-  it('keeps the selected preview file after visiting the workspace tab', () => {
-    useArtifactPanel.setState({
-      open: true,
-      tab: 'preview',
-      focusedFile: {
-        filePath: '~/.openclaw/skills/open-xueqiu/SKILL.md',
-        fileName: 'SKILL.md',
-        ext: '.md',
-        mimeType: 'text/markdown',
-        contentType: 'document',
-      },
-      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
+  it('keeps canonical tabs mounted and switches the active content', () => {
+    act(() => {
+      openWorkspacePanel({ panel: 'review', view: 'changes' });
+      openWorkspacePanel({ panel: 'browser', view: 'preview' });
+      openWorkspacePanel({ panel: 'terminal', placement: 'side' });
     });
 
-    let sessionState: { workspaceView?: string } = {};
-    const rerenderPanelRef: { current?: () => void } = {};
-    const onSessionStateChange = (patch: { workspaceView?: string }) => {
-      sessionState = { ...sessionState, ...patch };
-      rerenderPanelRef.current?.();
-    };
+    render(<ArtifactPanel files={[]} agent={null} />);
 
-    const renderPanel = () => (
-      <ArtifactPanel
-        files={[makeGeneratedFile()]}
-        agent={null}
-        sessionState={sessionState as never}
-        onSessionStateChange={onSessionStateChange as never}
-      />
-    );
+    expect(screen.getByTestId('artifact-panel-tab-review')).toBeVisible();
+    expect(screen.getByTestId('artifact-panel-tab-browser')).toBeVisible();
+    expect(screen.getByTestId('artifact-panel-tab-terminal')).toBeVisible();
+    expect(screen.getByTestId('workspace-terminal-content')).toBeVisible();
 
-    const { rerender } = render(renderPanel());
-    rerenderPanelRef.current = () => rerender(renderPanel());
-
-    expect(screen.getAllByTestId('file-preview-body')[1]).toHaveTextContent('SKILL.md');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Workspace' }));
-    expect(screen.getByTestId('workspace-launchpad')).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('workspace-launchpad-entry-files'));
-    expect(screen.getByTestId('workspace-browser')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Preview' }));
-    expect(screen.getAllByTestId('file-preview-body')[1]).toHaveTextContent('SKILL.md');
-    expect(screen.queryByText('No file selected')).not.toBeInTheDocument();
+    fireEvent.pointerDown(screen.getByTestId('artifact-panel-tab-review'), { button: 0 });
+    expect(screen.getByTestId('workspace-review-content')).toBeVisible();
+    expect(screen.getByTestId('workspace-terminal-content').parentElement).toHaveClass('hidden');
   });
 
-  it('keeps panel tab buttons above iframe previews so changes stays clickable', () => {
-    useArtifactPanel.setState({
-      open: true,
-      tab: 'preview',
-      focusedFile: {
-        filePath: '/tmp/demo.html',
-        fileName: 'demo.html',
-        ext: '.html',
-        mimeType: 'text/html',
-        contentType: 'document',
-      },
-      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
-    });
-
-    render(
-      <ArtifactPanel
-        files={[makeGeneratedFile({
-          filePath: '/tmp/demo.html',
-          fileName: 'demo.html',
-          ext: '.html',
-          mimeType: 'text/html',
-          contentType: 'document',
-        })]}
-        agent={null}
-      />,
-    );
-
-    const changesButton = screen.getByTestId('artifact-panel-tab-changes');
-    expect(changesButton.className).toContain('z-40');
-    expect(changesButton.parentElement?.parentElement?.className).toContain('z-30');
-
-    fireEvent.pointerDown(changesButton, { button: 0 });
-    expect(screen.getAllByTestId('file-preview-body')[0]).toHaveTextContent('diff');
-  });
-
-  it('marks macOS chrome so preview tabs and content stay clickable', () => {
+  it('uses draggable macOS chrome while keeping tab controls interactive', () => {
     window.electron.platform = 'darwin';
+    act(() => openWorkspacePanel({ panel: 'files' }));
 
-    useArtifactPanel.setState({
-      open: true,
-      tab: 'preview',
-      focusedFile: {
-        filePath: '/tmp/demo.md',
-        fileName: 'demo.md',
-        ext: '.md',
-        mimeType: 'text/markdown',
-        contentType: 'document',
-      },
-      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
-    });
-
-    render(
-      <ArtifactPanel
-        files={[makeGeneratedFile()]}
-        agent={null}
-      />,
-    );
+    render(<ArtifactPanel files={[]} agent={null} />);
 
     expect(screen.getByTestId('artifact-panel')).toHaveClass('no-drag');
     expect(screen.getByTestId('artifact-panel-drag-region')).toHaveClass('drag-region');
-    expect(screen.getByTestId('artifact-panel-tab-preview').parentElement).toHaveClass('no-drag');
+    expect(screen.getByTestId('artifact-panel-tab-files').closest('.rs-tab-scroll-area')).toHaveClass('no-drag');
+  });
+
+  it('collapses the panel when the final tab is closed without ending its capability', () => {
+    act(() => openWorkspacePanel({ panel: 'terminal' }));
+    render(<ArtifactPanel files={[]} agent={null} />);
+
+    fireEvent.click(screen.getByTestId('artifact-panel-tab-close-terminal'));
+    expect(useArtifactPanel.getState().open).toBe(false);
+    expect(useArtifactPanel.getState().tabs).toEqual([]);
   });
 });

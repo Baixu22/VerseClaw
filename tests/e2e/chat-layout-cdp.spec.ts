@@ -341,7 +341,7 @@ test.describe('Chat page layout CDP checks', () => {
       expect(Math.abs(metrics.messageLayout.centerX - (metrics.chat.left + metrics.chat.width / 2))).toBeLessThanOrEqual(2);
       expect(Math.abs(metrics.scroll.centerX - metrics.messageLayout.centerX)).toBeLessThanOrEqual(2);
       if (platform === 'win32') {
-        expect(metrics.titlebar?.height).toBe(40);
+        expect(metrics.titlebar?.height).toBe(34);
         expect(metrics.titlebar?.top).toBe(0);
       }
     } finally {

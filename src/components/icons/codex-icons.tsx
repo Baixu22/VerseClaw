@@ -8,8 +8,10 @@
  *
  * WHY THIS FILE EXISTS. 125 of those 189 SVGs are byte-identical to the
  * lucide-react version this repo ships (0.563). Re-exporting those would be
- * pure noise, so only the icons whose *geometry actually differs* live here —
- * Lucide redrew them after the vintage Codex pinned. Concretely:
+ * pure noise for generic controls, so geometry-different icons plus the small
+ * product-navigation set used by Verse Claw live here. Navigation icons stay
+ * pinned even when they currently match Lucide, preventing future drift.
+ * Concretely, the geometry differences include:
  *
  *   file / file-text     corner fold is a hard 45° cut at x=15; Lucide 0.563
  *                        rounds it with a 2.4-radius arc and moves the flap.
@@ -75,6 +77,38 @@ function createCodexIcon(iconName: string, nodes: IconNode) {
   Component.displayName = iconName;
   return Component;
 }
+
+// codex-icons/pen-line.svg
+export const PenLine = createCodexIcon('pen-line', [
+  ['path', { d: 'M12 20h9' }],
+  ['path', { d: 'M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z' }],
+]);
+
+// codex-icons/inbox.svg
+export const Inbox = createCodexIcon('inbox', [
+  ['polyline', { points: '22 12 16 12 14 15 10 15 8 12 2 12' }],
+  ['path', { d: 'M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z' }],
+]);
+
+// codex-icons/calendar-days.svg
+export const CalendarDays = createCodexIcon('calendar-days', [
+  ['path', { d: 'M8 2v4' }],
+  ['path', { d: 'M16 2v4' }],
+  ['rect', { width: '18', height: '18', x: '3', y: '4', rx: '2' }],
+  ['path', { d: 'M3 10h18' }],
+  ['path', { d: 'M8 14h.01' }],
+  ['path', { d: 'M12 14h.01' }],
+  ['path', { d: 'M16 14h.01' }],
+  ['path', { d: 'M8 18h.01' }],
+  ['path', { d: 'M12 18h.01' }],
+  ['path', { d: 'M16 18h.01' }],
+]);
+
+// codex-icons/settings.svg
+export const Settings = createCodexIcon('settings', [
+  ['path', { d: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z' }],
+  ['circle', { cx: '12', cy: '12', r: '3' }],
+]);
 
 // codex-icons/file.svg
 export const File = createCodexIcon('file', [
@@ -154,4 +188,106 @@ export const Users = createCodexIcon('users', [
   ['circle', { cx: '9', cy: '7', r: '4' }],
   ['path', { d: 'M22 21v-2a4 4 0 0 0-3-3.87' }],
   ['path', { d: 'M16 3.13a4 4 0 0 1 0 7.75' }],
+]);
+
+// Product controls ported verbatim from FakeCoding-main/codex-icons.
+export const Terminal = createCodexIcon('terminal', [
+  ['polyline', { points: '4 17 10 11 4 5' }],
+  ['line', { x1: '12', x2: '20', y1: '19', y2: '19' }],
+]);
+
+export const Globe = createCodexIcon('globe', [
+  ['circle', { cx: '12', cy: '12', r: '10' }],
+  ['path', { d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }],
+  ['path', { d: 'M2 12h20' }],
+]);
+
+export const Folder = createCodexIcon('folder', [
+  ['path', { d: 'M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z' }],
+]);
+
+export const GitBranch = createCodexIcon('git-branch', [
+  ['line', { x1: '6', x2: '6', y1: '3', y2: '15' }],
+  ['circle', { cx: '18', cy: '6', r: '3' }],
+  ['circle', { cx: '6', cy: '18', r: '3' }],
+  ['path', { d: 'M18 9a9 9 0 0 1-9 9' }],
+]);
+
+export const PanelBottom = createCodexIcon('panel-bottom', [
+  ['rect', { width: '18', height: '18', x: '3', y: '3', rx: '2' }],
+  ['path', { d: 'M3 15h18' }],
+]);
+
+export const PanelRight = createCodexIcon('panel-right', [
+  ['rect', { width: '18', height: '18', x: '3', y: '3', rx: '2' }],
+  ['path', { d: 'M15 3v18' }],
+]);
+
+export const PanelRightOpen = createCodexIcon('panel-right-open', [
+  ['rect', { width: '18', height: '18', x: '3', y: '3', rx: '2' }],
+  ['path', { d: 'M15 3v18' }],
+  ['path', { d: 'm10 15-3-3 3-3' }],
+]);
+
+export const Expand = createCodexIcon('expand', [
+  ['path', { d: 'm21 21-6-6m6 6v-4.8m0 4.8h-4.8' }],
+  ['path', { d: 'M3 16.2V21m0 0h4.8M3 21l6-6' }],
+  ['path', { d: 'M21 7.8V3m0 0h-4.8M21 3l-6 6' }],
+  ['path', { d: 'M3 7.8V3m0 0h4.8M3 3l6 6' }],
+]);
+
+export const ArrowLeft = createCodexIcon('arrow-left', [
+  ['path', { d: 'm12 19-7-7 7-7' }],
+  ['path', { d: 'M19 12H5' }],
+]);
+
+export const ArrowRight = createCodexIcon('arrow-right', [
+  ['path', { d: 'M5 12h14' }],
+  ['path', { d: 'm12 5 7 7-7 7' }],
+]);
+
+export const Camera = createCodexIcon('camera', [
+  ['path', { d: 'M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z' }],
+  ['circle', { cx: '12', cy: '13', r: '3' }],
+]);
+
+export const ExternalLink = createCodexIcon('external-link', [
+  ['path', { d: 'M15 3h6v6' }],
+  ['path', { d: 'M10 14 21 3' }],
+  ['path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }],
+]);
+
+export const RefreshCw = createCodexIcon('refresh-cw', [
+  ['path', { d: 'M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' }],
+  ['path', { d: 'M21 3v5h-5' }],
+  ['path', { d: 'M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' }],
+  ['path', { d: 'M8 16H3v5' }],
+]);
+
+export const Plus = createCodexIcon('plus', [
+  ['path', { d: 'M5 12h14' }],
+  ['path', { d: 'M12 5v14' }],
+]);
+
+export const Ellipsis = createCodexIcon('ellipsis', [
+  ['circle', { cx: '12', cy: '12', r: '1' }],
+  ['circle', { cx: '19', cy: '12', r: '1' }],
+  ['circle', { cx: '5', cy: '12', r: '1' }],
+]);
+
+// codex-icons/x.svg
+export const X = createCodexIcon('x', [
+  ['path', { d: 'M18 6 6 18' }],
+  ['path', { d: 'm6 6 12 12' }],
+]);
+
+export const Eye = createCodexIcon('eye', [
+  ['path', { d: 'M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0' }],
+  ['circle', { cx: '12', cy: '12', r: '3' }],
+]);
+
+export const Monitor = createCodexIcon('monitor', [
+  ['rect', { width: '20', height: '14', x: '2', y: '3', rx: '2' }],
+  ['line', { x1: '8', x2: '16', y1: '21', y2: '21' }],
+  ['line', { x1: '12', x2: '12', y1: '17', y2: '21' }],
 ]);

@@ -2,11 +2,20 @@ import { expect, installIpcMocks, test } from './fixtures/electron';
 
 test.describe('Image generation settings page', () => {
   async function unlockDeveloperMode(page: import('@playwright/test').Page) {
-    await page.getByTestId('sidebar-nav-settings').click();
+    if (!await page.getByTestId('settings-page').isVisible().catch(() => false)) {
+      await page.getByTestId('sidebar-nav-settings').click();
+    }
     await expect(page.getByTestId('settings-page')).toBeVisible();
     await page.getByTestId('settings-nav-developer').click();
-    await page.getByTestId('settings-dev-mode-switch').click();
-    await expect(page.getByTestId('sidebar-nav-image-generation')).toBeVisible();
+    const devModeSwitch = page.getByTestId('settings-dev-mode-switch');
+    if ((await devModeSwitch.getAttribute('data-state')) !== 'checked') await devModeSwitch.click();
+    await expect(page.getByTestId('sidebar-nav-image-generation')).toHaveCount(0);
+  }
+
+  async function openImageGeneration(page: import('@playwright/test').Page) {
+    await page.getByTestId('settings-back-button').click();
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
+    await page.getByTestId('sidebar-more-image-generation').click();
   }
 
   test('shows image generation only as a developer-mode page after skipping setup', async ({ page }) => {
@@ -23,7 +32,7 @@ test.describe('Image generation settings page', () => {
     await expect(page.getByTestId('sidebar-nav-image-generation')).toHaveCount(0);
 
     await unlockDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-image-generation').click();
+    await openImageGeneration(page);
 
     await expect(page.getByTestId('image-generation-page')).toBeVisible();
     await expect(page.getByTestId('image-generation-settings')).toBeVisible();
@@ -44,7 +53,7 @@ test.describe('Image generation settings page', () => {
 
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await unlockDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-image-generation').click();
+    await openImageGeneration(page);
 
     await expect(page.getByTestId('image-generation-settings')).toBeVisible();
     await expect(page.getByTestId('image-generation-relay-base-url')).toBeVisible();
@@ -100,7 +109,7 @@ test.describe('Image generation settings page', () => {
 
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await unlockDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-image-generation').click();
+    await openImageGeneration(page);
 
     await expect(page.getByTestId('image-generation-relay-api-key')).toHaveValue('');
     await expect(page.getByTestId('image-generation-api-key-status')).not.toBeEmpty();
@@ -168,7 +177,7 @@ test.describe('Image generation settings page', () => {
 
     await expect(page.getByTestId('main-layout')).toBeVisible();
     await unlockDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-image-generation').click();
+    await openImageGeneration(page);
 
     await expect(page.getByTestId('image-generation-relay-base-url')).toHaveValue('https://api.example.com/v1');
     await expect(page.getByTestId('image-generation-clear')).toBeEnabled();

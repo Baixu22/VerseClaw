@@ -30,6 +30,7 @@
   "loadMoreHistory": "Load earlier messages",
   "loadingMoreHistory": "Loading more…",
   "toolbar": {
+    "slashCommands": "Slash commands",
     "refresh": "Refresh chat",
     "currentAgent": "Talking to {{agent}}",
     "workspace": "Workspace",
@@ -354,8 +355,12 @@
     "tabs": {
       "changes": "Changes",
       "preview": "Preview",
-      "browser": "Workspace",
-      "artifact": "Artifacts"
+      "browser": "Browser",
+      "artifact": "Artifacts",
+      "review": "Review",
+      "terminal": "Terminal",
+      "files": "Files",
+      "audit": "Audit"
     },
     "workspaceTabs": {
       "files": "Files",
@@ -395,7 +400,9 @@
     "actions": {
       "back": "Back to list",
       "expand": "Expand panel",
-      "collapse": "Collapse panel"
+      "collapse": "Collapse panel",
+      "moveTerminalSide": "Move terminal to side",
+      "moveTerminalBottom": "Move terminal to bottom"
     },
     "changes": {
       "heading": "File changes ({{count}})",
@@ -511,11 +518,23 @@
       "openRootInFinder": "Reveal workspace in file manager",
       "toggleHidden": "Toggle hidden files",
       "showHidden": "Show hidden files",
-      "hideHidden": "Hide hidden files"
+      "hideHidden": "Hide hidden files",
+      "backToTree": "Back to files",
+      "resizeTree": "Resize file tree",
+      "openTaskLedger": "Task Ledger",
+      "openClawGraph": "ClawGraph",
+      "more": "More file actions"
+    },
+    "review": {
+      "views": { "label": "Review view", "changes": "Changes", "ai-review": "AI Review", "pull-requests": "Pull Requests" }
+    },
+    "browser": {
+      "views": { "label": "Browser view", "preview": "Preview", "live": "Live" }
     },
     "terminal": {
       "title": "Workspace terminal",
       "noWorkspace": "No workspace selected",
+      "resize": "Resize terminal panel",
       "permission": {
         "readOnly": "Read only",
         "acceptEdits": "Accept edits",
@@ -534,7 +553,8 @@
         "interrupt": "Ctrl+C",
         "close": "Close",
         "clear": "Clear",
-        "approve": "Approve"
+        "approve": "Approve",
+        "end": "End terminal"
       },
       "blocked": {
         "title": "Interactive terminal is disabled in this permission mode",
@@ -546,10 +566,15 @@
       "toast": {
         "approvalRequired": "Interactive terminal requires approval",
         "blocked": "Terminal launch was blocked",
-        "approvalFailed": "Approval failed"
+        "approvalFailed": "Approval failed",
+        "interruptFailed": "Could not interrupt terminal",
+        "closeFailed": "Could not end terminal"
       }
     },
     "web": {
+      "configuration": {
+        "title": "Preview configuration"
+      },
       "title": "Web preview",
       "mode": {
         "static": "Static",

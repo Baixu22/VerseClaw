@@ -1,0 +1,125 @@
+{
+  "title": "收件箱",
+  "description": "处理需要决定的请求，并查看处理后的真实记录。",
+  "updated": "更新于 {{time}}",
+  "filters": {
+    "view": "收件箱视图",
+    "actionable": "待处理",
+    "history": "历史",
+    "source": {
+      "all": "全部来源",
+      "permission": "权限申请",
+      "remote-task": "远程任务",
+      "browser-task": "浏览器任务"
+    }
+  },
+  "source": {
+    "permission": "权限申请",
+    "remote-task": "远程任务",
+    "browser-task": "浏览器任务"
+  },
+  "permissionSource": {
+    "terminal": "终端",
+    "gateway": "Gateway",
+    "mcp": "MCP",
+    "file": "文件",
+    "remoteControl": "远程控制",
+    "git": "Git",
+    "cleaner": "存储清理"
+  },
+  "remoteSource": {
+    "local": "本地测试",
+    "relay": "中继",
+    "channel": "频道",
+    "api": "API"
+  },
+  "risk": {
+    "read": "只读",
+    "write": "写入数据",
+    "network": "网络访问",
+    "destructive": "破坏性操作",
+    "external-write": "外部更改",
+    "dangerous": "高风险"
+  },
+  "status": {
+    "permission": {
+      "pending": "等待决定",
+      "approved": "已批准",
+      "denied": "已拒绝",
+      "expired": "已过期"
+    },
+    "remoteTask": {
+      "pending": "可运行",
+      "pendingApproval": "等待批准",
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "rejected": "已拒绝"
+    },
+    "browserTask": {
+      "waitingApproval": "等待批准"
+    }
+  },
+  "partialError": {
+    "title": "部分来源暂时无法加载，已成功读取的结果仍会显示。"
+  },
+  "empty": {
+    "actionable": {
+      "title": "没有需要决定的事项",
+      "description": "新的权限、远程任务和受监督浏览器请求会显示在这里。"
+    },
+    "history": {
+      "title": "当前筛选没有历史记录",
+      "description": "已处理的权限申请和远程任务记录会保留在这里。"
+    }
+  },
+  "list": {
+    "label": "收件箱事项"
+  },
+  "detail": {
+    "label": "事项详情",
+    "select": "选择一项，查看证据和可用操作。"
+  },
+  "evidence": {
+    "title": "证据",
+    "empty": "没有记录更多证据。",
+    "command": "命令",
+    "location": "位置",
+    "paths": "路径",
+    "parameters": "参数",
+    "reason": "原因",
+    "message": "消息",
+    "settings": "设置",
+    "result": "结果",
+    "error": "错误",
+    "target": "目标",
+    "domains": "允许的域名",
+    "mode": "浏览器模式",
+    "profile": "Profile",
+    "scope": "允许的操作",
+    "success": "成功条件",
+    "steps": "步骤数"
+  },
+  "preview": {
+    "title": "更改预览",
+    "before": "更改前",
+    "after": "更改后"
+  },
+  "permissionRetryNote": "批准后，原操作可以重新尝试；收件箱不会代替原入口重复执行该操作。",
+  "actions": {
+    "refresh": "刷新收件箱",
+    "back": "返回列表",
+    "approve": "批准",
+    "deny": "拒绝",
+    "reject": "拒绝",
+    "execute": "运行",
+    "approve-and-run": "批准并运行"
+  },
+  "toast": {
+    "approve": "已批准请求",
+    "deny": "已拒绝请求",
+    "reject": "已拒绝请求",
+    "execute": "任务已结束",
+    "approve-and-run": "已批准浏览器任务"
+  }
+}

@@ -30,7 +30,7 @@ export function MainLayout() {
   const isMac = platform === 'darwin';
   const isWin = platform === 'win32';
   const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2' && isWin;
+  const isUiV2 = uiVersion === 'v2';
   const isSettingsRoute = location.pathname.startsWith('/settings');
   const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
 
@@ -45,7 +45,7 @@ export function MainLayout() {
       data-ui-version={uiVersion}
       className={cn(
         'flex h-screen overflow-hidden',
-        isWin ? 'bg-surface-sidebar' : 'bg-background',
+        isUiV2 ? 'bg-surface-sidebar' : isWin ? 'bg-surface-sidebar' : 'bg-background',
         isMac ? 'flex-row' : 'flex-col',
       )}
     >
@@ -57,17 +57,17 @@ export function MainLayout() {
         data-depth="base"
         className={cn(
           'flex min-h-0 flex-1 overflow-hidden bg-surface-sidebar',
-          isUiV2 && !isSettingsRoute && 'app-content-stage-v2 rounded-tl-[20px]',
+          isUiV2 && !isSettingsRoute && 'app-content-stage-v2',
         )}
       >
         {isSettingsRoute ? <SettingsSidebar /> : <Sidebar />}
         <main
           data-testid="main-content"
           className={cn(
-            'relative min-h-0 flex-1 border-l border-border/60 bg-background',
+            'relative min-h-0 flex-1 border-l border-border bg-background',
             isSettingsRoute
               ? 'overflow-hidden border-l-0 p-0 rounded-none shadow-none'
-              : cn('overflow-auto p-6', isUiV2 ? 'rounded-tl-[20px] shadow-[-1px_0_0_rgba(255,255,255,0.45)]' : 'rounded-tl-2xl'),
+              : cn('overflow-auto', isUiV2 ? 'p-5' : 'rounded-tl-2xl p-6'),
             !isWin && 'border-t border-border/60',
           )}
         >

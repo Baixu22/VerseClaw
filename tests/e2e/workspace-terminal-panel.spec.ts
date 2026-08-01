@@ -109,20 +109,14 @@ test.describe('Workspace terminal panel', () => {
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-files')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-terminal')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toHaveCount(0);
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-audit')).toHaveCount(0);
-      await sidePanel.getByTestId('workspace-launchpad-add').click();
-      await expect(sidePanel.getByTestId('workspace-entry-menu')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-audit')).toBeVisible();
-      await sidePanel.getByTestId('workspace-launchpad-entry-terminal').click();
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await expect(page.getByTestId('artifact-panel-new-tab-review')).toBeVisible();
+      await expect(page.getByTestId('artifact-panel-new-tab-browser')).toBeVisible();
+      await expect(page.getByTestId('artifact-panel-new-tab-audit')).toBeVisible();
+      await page.getByTestId('artifact-panel-new-tab-terminal').click();
 
-      await expect(sidePanel.getByText('Workspace terminal')).toBeVisible();
+      await expect(sidePanel.getByTestId('workspace-terminal-panel')).toBeVisible();
       await expect(sidePanel.getByText('/workspace/demo').first()).toBeVisible();
       await expect(sidePanel.getByText('Interactive terminal is disabled in this permission mode')).toBeVisible();
       await expect(sidePanel.getByRole('button', { name: 'Start' })).toBeDisabled();
@@ -132,7 +126,7 @@ test.describe('Workspace terminal panel', () => {
     }
   });
 
-  test('starts a live workspace terminal from the launchpad', async ({ launchElectronApp }) => {
+  test('starts a live workspace terminal from the launcher', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -222,9 +216,9 @@ test.describe('Workspace terminal panel', () => {
       await workspaceToggle.click();
 
       const sidePanel = page.getByTestId('artifact-panel');
-      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-web')).toHaveCount(0);
-      await sidePanel.getByTestId('workspace-launchpad-entry-terminal').click();
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-terminal').click();
       await expect(sidePanel.getByRole('button', { name: 'Start' })).toBeEnabled();
       await sidePanel.getByRole('button', { name: 'Start' }).click();
 
@@ -233,6 +227,24 @@ test.describe('Workspace terminal panel', () => {
         return calls.some((call) => call.module === 'terminal' && call.action === 'open');
       })).toBe(true);
       await expect(sidePanel.getByText('Running').first()).toBeVisible();
+
+      const terminalOpenCalls = () => app.evaluate(() => (
+        (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? []
+      ).filter((call) => call.module === 'terminal' && call.action === 'open').length);
+      await expect(terminalOpenCalls).resolves.toBe(1);
+      await expect(sidePanel).toHaveAttribute('data-terminal-placement', 'side');
+      await sidePanel.getByTestId('artifact-panel-terminal-placement').click();
+      await expect(sidePanel).toHaveAttribute('data-terminal-placement', 'bottom');
+      await sidePanel.getByTestId('artifact-panel-terminal-placement').click();
+      await expect(sidePanel).toHaveAttribute('data-terminal-placement', 'side');
+      await expect(terminalOpenCalls).resolves.toBe(1);
+
+      await sidePanel.getByTestId('artifact-panel-tab-close-terminal').click();
+      await expect(sidePanel.getByTestId('workspace-terminal-panel')).toHaveCount(0);
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> }).__verseClawE2eHostCalls ?? []
+      ).filter((call) => call.module === 'terminal' && call.action === 'close').length)).toBe(0);
     } finally {
       await closeElectronApp(app);
     }

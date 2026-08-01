@@ -30,6 +30,7 @@
   "loadMoreHistory": "加载更早的消息",
   "loadingMoreHistory": "加载更多中…",
   "toolbar": {
+    "slashCommands": "Slash 鍛戒护",
     "refresh": "刷新聊天",
     "currentAgent": "当前对话对象：{{agent}}",
     "workspace": "工作空间",
@@ -354,8 +355,12 @@
     "tabs": {
       "changes": "变更",
       "preview": "预览",
-      "browser": "工作空间",
-      "artifact": "产物"
+      "browser": "浏览器",
+      "artifact": "产物",
+      "review": "审查",
+      "terminal": "终端",
+      "files": "文件",
+      "audit": "审计"
     },
     "workspaceTabs": {
       "files": "文件",
@@ -395,7 +400,9 @@
     "actions": {
       "back": "返回列表",
       "expand": "展开面板",
-      "collapse": "收起面板"
+      "collapse": "收起面板",
+      "moveTerminalSide": "将终端移到右侧",
+      "moveTerminalBottom": "将终端移到底部"
     },
     "changes": {
       "heading": "文件变更（{{count}} 个）",
@@ -511,11 +518,23 @@
       "openRootInFinder": "在文件管理器中显示根目录",
       "toggleHidden": "显示/隐藏隐藏文件",
       "showHidden": "显示隐藏文件",
-      "hideHidden": "隐藏隐藏文件"
+      "hideHidden": "隐藏隐藏文件",
+      "backToTree": "返回文件列表",
+      "resizeTree": "调整文件树宽度",
+      "openTaskLedger": "任务账本",
+      "openClawGraph": "ClawGraph",
+      "more": "更多文件操作"
+    },
+    "review": {
+      "views": { "label": "审查视图", "changes": "变更", "ai-review": "AI 审查", "pull-requests": "拉取请求" }
+    },
+    "browser": {
+      "views": { "label": "浏览器视图", "preview": "预览", "live": "实时" }
     },
     "terminal": {
       "title": "工作区终端",
       "noWorkspace": "未选择工作区",
+      "resize": "调整终端面板高度",
       "permission": {
         "readOnly": "只读",
         "acceptEdits": "接受修改",
@@ -534,7 +553,8 @@
         "interrupt": "Ctrl+C",
         "close": "关闭",
         "clear": "清屏",
-        "approve": "批准"
+        "approve": "批准",
+        "end": "结束终端"
       },
       "blocked": {
         "title": "当前权限模式不允许交互式终端",
@@ -546,10 +566,15 @@
       "toast": {
         "approvalRequired": "启动交互式终端需要批准",
         "blocked": "终端启动被阻止",
-        "approvalFailed": "审批失败"
+        "approvalFailed": "审批失败",
+        "interruptFailed": "无法中断终端",
+        "closeFailed": "无法结束终端"
       }
     },
     "web": {
+      "configuration": {
+        "title": "预览配置"
+      },
       "title": "Web 预览",
       "mode": {
         "static": "静态",

@@ -1,0 +1,54 @@
+{
+  "applied_at": "2026-07-31T14:22:31.828024Z",
+  "base_graph_hash": "bcba8fd1efb929fb0061a42448d6c3b4013565512866526fe4cb2e3e96829ff9",
+  "base_summary": {
+    "edge_count": 44,
+    "node_count": 27,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-ui-polish"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "以 FakeCoding 式克制界面精简页面，同时让定时任务和 Browser 运行按真实功能展示。",
+          "validation_plan": [
+            "运行 Harness context/validate、i18n、聚焦单测、typecheck 和 build",
+            "Electron E2E 覆盖 Cron 全功能、Browser task 操作与 Profile/Vault 入口",
+            "检查 1280x800 与 960x800 Light/Dark"
+          ],
+          "why_not_enough": "本节点不处理会话 Browser/Review、Knowledge 或最终 Legacy 移除。",
+          "why_this_task": "已安排是 Cron 与受监督 Browser Tasks 的共同时间上下文，统一入口能减少导航并保持完整运行能力。"
+        },
+        "desired_outcomes": [
+          "已安排提供 Cron 与 Browser Runs 的统一可扫描列表和真实详情",
+          "窄窗口在列表与详情之间切换，不形成拥挤三栏",
+          "Browser Profile 与 Vault 从已安排可发现并在设置中使用"
+        ],
+        "execution_hints": [
+          "先建立 Harness task 和 ScheduledItem renderer 投影，再改页面",
+          "复用现有 cron 与 agentBrowser host-api，不改后端模型、安全策略或通信边界",
+          "不进入 TF-0025 的会话 Browser/Review 工作区",
+          "不得覆盖用户现有未提交 Cron 修改"
+        ],
+        "purpose": "将定时工作与受监督浏览器运行统一归入已安排，同时完整保留两类后端能力和安全决策。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 720
+      },
+      "id": "TF-0024"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0024",
+      "progress": 0,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-07-31T14:22:31.527628Z",
+  "proposal_id": "TFP-tf0024-start-20260731",
+  "rationale": "用户确认继续唯一 ready 节点 TF-0024；本轮在现有 Cron 修改上接入 Browser Runs 统一投影、真实操作和 Browser 设置入口。",
+  "session_id": "session-2026-07-31-fakecoding-scheduled-browser-runs",
+  "status": "applied"
+}

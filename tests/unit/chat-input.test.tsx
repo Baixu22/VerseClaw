@@ -37,7 +37,7 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
     fetchServers: vi.fn(),
   },
   artifactPanelMocks: {
-    openPreview: vi.fn(),
+    openWorkspacePanel: vi.fn(),
   },
   permissionMocks: {
     approvals: vi.fn(),
@@ -712,7 +712,7 @@ describe('ChatInput draft persistence', () => {
     permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
     permissionMocks.decideApproval.mockReset();
     permissionMocks.decideApproval.mockResolvedValue({ success: true });
-    artifactPanelMocks.openPreview.mockReset();
+    artifactPanelMocks.openWorkspacePanel.mockReset();
     window.location.hash = '#/';
     taskLedgerMocks.createNode.mockReset();
     taskLedgerMocks.createNode.mockResolvedValue({
@@ -1623,7 +1623,7 @@ describe('ChatInput read-only context status', () => {
     permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
     permissionMocks.decideApproval.mockReset();
     permissionMocks.decideApproval.mockResolvedValue({ success: true });
-    artifactPanelMocks.openPreview.mockReset();
+    artifactPanelMocks.openWorkspacePanel.mockReset();
   });
 
   it('renders message, token, and hidden-context counts when provided', () => {
@@ -1969,7 +1969,7 @@ describe('ChatInput agent targeting', () => {
     permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
     permissionMocks.decideApproval.mockReset();
     permissionMocks.decideApproval.mockResolvedValue({ success: true });
-    artifactPanelMocks.openPreview.mockReset();
+    artifactPanelMocks.openWorkspacePanel.mockReset();
   });
 
   it('hides the @agent picker when only one agent is configured', () => {
@@ -2110,7 +2110,7 @@ describe('ChatInput agent targeting', () => {
 
     expect(screen.getByTestId('chat-composer-input')).toBeDisabled();
     expect(screen.queryByTestId('chat-composer-skill')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('chat-model-picker-button')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-model-picker-button')).toBeDisabled();
     expect(screen.getByTestId('chat-composer-actions')).toBeDisabled();
   });
 
@@ -2715,12 +2715,10 @@ describe('ChatInput agent targeting', () => {
 
     fireEvent.click(screen.getByTestId('chat-composer-skill-token'));
 
-    expect(artifactPanelMocks.openPreview).toHaveBeenCalledWith(
-      expect.objectContaining({
-        filePath: '/tmp/workspace/skill/create-skill/SKILL.md',
-        fileName: 'SKILL.md',
-      }),
-    );
+    expect(artifactPanelMocks.openWorkspacePanel).toHaveBeenCalledWith({
+      panel: 'files',
+      filePath: '/tmp/workspace/skill/create-skill/SKILL.md',
+    });
   });
 
   it('stages dropped folders via disk path instead of buffer upload', async () => {

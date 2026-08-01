@@ -156,7 +156,7 @@ export function TaskLedgerSummaryPanel({
         )}
 
         <Button asChild variant="outline" size="sm" className="mt-3 h-8 w-full gap-1.5 text-xs">
-          <Link to="/task-ledger">
+          <Link to={groups.currentGoal ? `/task-ledger?nodeId=${encodeURIComponent(groups.currentGoal.id)}` : '/task-ledger'}>
             <GitBranch className="h-3.5 w-3.5" />
             {t('summary.open')}
           </Link>

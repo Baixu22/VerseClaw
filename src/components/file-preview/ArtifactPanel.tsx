@@ -18,7 +18,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
-import { FolderOpen, PanelRightClose, PanelRightOpen, Plus, X } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
+import { PanelBottom, PanelRight, PanelRightOpen, Plus, X } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -28,14 +29,14 @@ import { hostApi } from '@/lib/host-api';
 import type { AgentSummary } from '@/types/agent';
 import { useArtifactPanel, type PanelTabInstance, type PanelTabKind } from '@/stores/artifact-panel';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import type { FilePreviewTarget } from './types';
-import { FilePreviewBody } from './FilePreviewBody';
 import { WorkspaceBrowserBody } from './WorkspaceBrowserBody';
 import { WorkspaceAuditPanel } from './WorkspaceAuditPanel';
 import { WorkspaceTerminalPanel } from './WorkspaceTerminalPanel';
-import { WorkspaceWebPreviewPanel } from './WorkspaceWebPreviewPanel';
-import { WorkspaceGitPanel } from './WorkspaceGitPanel';
+import { WorkspaceBrowserPanel } from './WorkspaceBrowserPanel';
+import { WorkspaceReviewPanel } from './WorkspaceReviewPanel';
 import { ArtifactView } from './ArtifactView';
+import type { FilePreviewTarget } from './types';
+import { FilePreviewBody } from './FilePreviewBody';
 import { LAUNCHER_TAB_KINDS, NEW_TAB_MENU_KINDS, PANEL_TAB_META } from './panel-tab-meta';
 import type { WorkArtifact } from '@shared/types/work-artifact';
 import type { WorkspaceArtifactPanelState } from '@shared/types/workspace';
@@ -61,16 +62,18 @@ export interface ArtifactPanelProps {
   onAppendComposerDraft?: (text: string) => void;
 }
 
-export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating }: ArtifactPanelProps) {
+export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState, onSessionStateChange, onOpenWorkspaceWebView, onAppendComposerDraft, artifacts = [], selectedArtifactId, onArtifactSelect, onArtifactValidate, artifactGenerating }: ArtifactPanelProps) {
   const { t } = useTranslation('chat');
   const isMac = window.electron?.platform === 'darwin';
   const tabs = useArtifactPanel((s) => s.tabs);
   const activeTabId = useArtifactPanel((s) => s.activeTabId);
-  const openTab = useArtifactPanel((s) => s.openTab);
+  const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
   const closeTab = useArtifactPanel((s) => s.closeTab);
   const setActiveTab = useArtifactPanel((s) => s.setActiveTab);
-  const focusedFile = useArtifactPanel((s) => s.focusedFile);
-  const setFocusedFile = useArtifactPanel((s) => s.setFocusedFile);
+  const selectedPath = useArtifactPanel((s) => s.selectedPath);
+  const setSelectedPath = useArtifactPanel((s) => s.setSelectedPath);
+  const terminalPlacement = useArtifactPanel((s) => s.terminalPlacement);
+  const setTerminalPlacement = useArtifactPanel((s) => s.setTerminalPlacement);
   const expanded = useArtifactPanel((s) => s.expanded);
   const setExpanded = useArtifactPanel((s) => s.setExpanded);
   const close = useArtifactPanel((s) => s.close);
@@ -91,7 +94,26 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
   };
 
   const handleOpenTab = (kind: PanelTabKind) => {
-    openTab(kind);
+    switch (kind) {
+      case 'terminal':
+        openWorkspacePanel({ panel: 'terminal', placement: window.innerWidth <= 960 ? 'bottom' : terminalPlacement });
+        break;
+      case 'review':
+        openWorkspacePanel({ panel: 'review' });
+        break;
+      case 'browser':
+        openWorkspacePanel({ panel: 'browser' });
+        break;
+      case 'files':
+        openWorkspacePanel({ panel: 'files' });
+        break;
+      case 'artifact':
+        openWorkspacePanel({ panel: 'artifact' });
+        break;
+      case 'audit':
+        openWorkspacePanel({ panel: 'audit' });
+        break;
+    }
     setNewTabMenuOpen(false);
     const { tabs: nextTabs, activeTabId: nextActiveId } = useArtifactPanel.getState();
     persistTabs(nextTabs, nextTabs.find((entry) => entry.id === nextActiveId)?.kind ?? kind);
@@ -119,8 +141,23 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
     onSessionStateChange?.({ expanded: nextExpanded });
   };
 
+  const handleTerminalPlacementChange = () => {
+    if (window.innerWidth <= 960) {
+      setTerminalPlacement('bottom');
+      onSessionStateChange?.({ terminalPlacement: 'bottom' });
+      return;
+    }
+    const next = terminalPlacement === 'bottom' ? 'side' : 'bottom';
+    setTerminalPlacement(next);
+    onSessionStateChange?.({ terminalPlacement: next });
+  };
+
   return (
-    <div data-testid="artifact-panel" className={cn('rs-panel-shell flex h-full min-h-0 flex-col', isMac && 'no-drag')}>
+    <div
+      data-testid="artifact-panel"
+      data-terminal-placement={terminalPlacement}
+      className={cn('rs-panel-shell flex h-full min-h-0 flex-col', isMac && 'no-drag')}
+    >
       <div className="rs-tab-toolbar relative z-30">
         {isMac && (
           <div
@@ -177,6 +214,18 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
           </div>
         )}
         <div className={cn('rs-panel-controls', isMac && 'no-drag relative z-10')} role="toolbar" aria-label={t('artifactPanel.panelControls.label', 'Panel controls')}>
+          {activeTab?.kind === 'terminal' && (
+            <button
+              type="button"
+              className="rs-panel-control-btn"
+              onClick={handleTerminalPlacementChange}
+              aria-label={t(terminalPlacement === 'bottom' ? 'artifactPanel.actions.moveTerminalSide' : 'artifactPanel.actions.moveTerminalBottom')}
+              title={t(terminalPlacement === 'bottom' ? 'artifactPanel.actions.moveTerminalSide' : 'artifactPanel.actions.moveTerminalBottom')}
+              data-testid="artifact-panel-terminal-placement"
+            >
+              {terminalPlacement === 'bottom' ? <PanelRight className="h-4 w-4" /> : <PanelBottom className="h-4 w-4" />}
+            </button>
+          )}
           <button
             type="button"
             className={cn('rs-panel-control-btn', expanded && 'active')}
@@ -187,7 +236,7 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
             data-testid="artifact-panel-expand"
           >
             {expanded
-              ? <PanelRightClose className="h-4 w-4 pointer-events-none" />
+              ? <PanelRight className="h-4 w-4 pointer-events-none" />
               : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
           </button>
           <button
@@ -213,8 +262,6 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
           >
             <PanelContent
               kind={entry.kind}
-              active={entry.id === activeTabId}
-              files={files}
               agent={agent}
               runStartedAt={runStartedAt}
               refreshSignal={refreshSignal}
@@ -222,8 +269,8 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
               onSessionStateChange={onSessionStateChange}
               onOpenWorkspaceWebView={onOpenWorkspaceWebView}
               onAppendComposerDraft={onAppendComposerDraft}
-              focusedFile={focusedFile}
-              onFocusFile={setFocusedFile}
+              selectedPath={selectedPath}
+              onSelectedPathChange={setSelectedPath}
               artifacts={artifacts}
               selectedArtifactId={selectedArtifactId}
               onArtifactSelect={onArtifactSelect}
@@ -248,20 +295,17 @@ export function ArtifactPanel({ files, agent, runStartedAt, refreshSignal, sessi
 }
 
 interface PanelContentProps extends Pick<ArtifactPanelProps,
-  'files' | 'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange'
+  'agent' | 'runStartedAt' | 'refreshSignal' | 'sessionState' | 'onSessionStateChange'
   | 'onOpenWorkspaceWebView' | 'onAppendComposerDraft' | 'artifacts' | 'selectedArtifactId'
   | 'onArtifactSelect' | 'onArtifactValidate' | 'artifactGenerating'> {
   kind: PanelTabKind;
-  active: boolean;
-  focusedFile: FilePreviewTarget | null;
-  onFocusFile: (file: FilePreviewTarget) => void;
+  selectedPath: string | null;
+  onSelectedPathChange: (path: string | null) => void;
 }
 
 /** Routes a tab kind to the panel that renders it. */
 function PanelContent({
   kind,
-  active,
-  files,
   agent,
   runStartedAt,
   refreshSignal,
@@ -269,8 +313,8 @@ function PanelContent({
   onSessionStateChange,
   onOpenWorkspaceWebView,
   onAppendComposerDraft,
-  focusedFile,
-  onFocusFile,
+  selectedPath,
+  onSelectedPathChange,
   artifacts = [],
   selectedArtifactId,
   onArtifactSelect,
@@ -280,20 +324,16 @@ function PanelContent({
   switch (kind) {
     case 'review':
       return (
-        <WorkspaceGitPanel
-          selectedPath={sessionState?.gitSelectedPath ?? null}
-          diffMode={sessionState?.gitDiffMode ?? 'unstaged'}
-          onSelectedPathChange={(gitSelectedPath) => onSessionStateChange?.({ gitSelectedPath })}
-          onDiffModeChange={(gitDiffMode) => onSessionStateChange?.({ gitDiffMode })}
-        />
+        <WorkspaceReviewPanel sessionState={sessionState} onSessionStateChange={onSessionStateChange} />
       );
     case 'terminal':
       return <WorkspaceTerminalPanel />;
     case 'browser':
       return (
-        <WorkspaceWebPreviewPanel
+        <WorkspaceBrowserPanel
           onOpenWorkspaceWebView={onOpenWorkspaceWebView}
           onAppendComposerDraft={onAppendComposerDraft}
+          onSessionStateChange={onSessionStateChange}
         />
       );
     case 'files':
@@ -303,21 +343,13 @@ function PanelContent({
           runStartedAt={runStartedAt}
           refreshSignal={refreshSignal}
           compact
-          selectedPath={sessionState?.selectedPath ?? null}
-          onSelectedPathChange={(selectedPath) => onSessionStateChange?.({ selectedPath })}
+          selectedPath={selectedPath ?? sessionState?.selectedPath ?? null}
+          onSelectedPathChange={(path) => {
+            onSelectedPathChange(path);
+            onSessionStateChange?.({ selectedPath: path });
+          }}
         />
       );
-    case 'changes':
-      return (
-        <ChangesTab
-          files={files}
-          focusedFile={focusedFile}
-          onFocus={onFocusFile}
-          active={active}
-        />
-      );
-    case 'preview':
-      return <PreviewTab focusedFile={focusedFile} />;
     case 'artifact':
       return (
         <ArtifactView
@@ -702,7 +734,7 @@ interface ChangesTabProps {
  * the run’s file cards or “View file changes →” (auto-first); switching workspace
  * tabs does not bring back a sidebar list.
  */
-function ChangesTab({ files, focusedFile, onFocus, active }: ChangesTabProps) {
+function LegacyChangesTab({ files, focusedFile, onFocus, active }: ChangesTabProps) {
   const { t } = useTranslation('chat');
 
   // De-dup files by path, keep the latest entry (highest lastSeenIndex).
@@ -784,7 +816,7 @@ interface PreviewTabProps {
   focusedFile: FilePreviewTarget | null;
 }
 
-function PreviewTab({ focusedFile }: PreviewTabProps) {
+function LegacyPreviewTab({ focusedFile }: PreviewTabProps) {
   const { t } = useTranslation('chat');
   if (!focusedFile) {
     return (
@@ -803,5 +835,8 @@ function PreviewTab({ focusedFile }: PreviewTabProps) {
   }
   return <FilePreviewBody key={focusedFile.filePath} file={focusedFile} compact mode="preview" />;
 }
+
+void LegacyChangesTab;
+void LegacyPreviewTab;
 
 export default ArtifactPanel;

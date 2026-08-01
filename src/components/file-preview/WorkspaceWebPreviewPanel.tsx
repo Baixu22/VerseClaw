@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Camera, Loader2, MousePointer2, RefreshCw, Send, SlidersHorizontal, Square, X } from 'lucide-react';
+import { Loader2, MousePointer2, Send, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,11 @@ import {
   WebPreviewEmpty,
   WebPreviewRoot,
   WebPreviewSelectionBar,
-  WebPreviewToolbar,
 } from '@/components/ai-elements/web-preview';
 import { hostApi, type WorkspaceWebPreviewResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
+import { Camera, RefreshCw, X } from '@/components/icons/codex-icons';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import type { AgentBrowserSession } from '@shared/host-api/contract';
@@ -424,92 +424,10 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
   return (
     <WebPreviewRoot>
       {/* Slim toolbar — single row with mode tabs + address + actions */}
-      <WebPreviewToolbar>
-          <Select value={mode} onValueChange={(value) => setMode(value as WorkspacePreviewMode)}>
-            <SelectTrigger
-              size="sm"
-              className="h-7 w-8 shrink-0 justify-center gap-0 bg-surface-input px-0 text-muted-foreground [&>span]:sr-only [&>svg:last-child]:hidden"
-              aria-label={t('workspace.web.prompt.mode', 'Mode')}
-              title={modeLabel(t, mode)}
-              data-testid="ai-web-preview-mode-select"
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent align="start" className="min-w-[150px]">
-              {(['static', 'devServer', 'externalUrl'] as const).map((previewMode) => (
-                <SelectItem key={previewMode} value={previewMode}>{modeLabel(t, previewMode)}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="min-w-0 flex-1">
-            {mode !== 'externalUrl' ? (
-              <Input
-                aria-label={t('workspace.web.fields.targetPath', 'Target path')}
-                value={targetPath}
-                onChange={(event) => setTargetPath(event.target.value)}
-                placeholder={t('workspace.web.fields.targetPathPlaceholder', 'Relative path, e.g. index.html')}
-                className="h-7 bg-surface-input font-mono text-xs"
-              />
-            ) : (
-              <Input
-                aria-label={t('workspace.web.fields.url', 'URL')}
-                value={externalUrl ?? ''}
-                onChange={(event) => setExternalUrl(event.target.value)}
-                placeholder="http://localhost:3000"
-                className="h-7 bg-surface-input font-mono text-xs"
-              />
-            )}
-          </div>
-
-          {mode === 'devServer' && (
-            <Select value={selectedConfigName} onValueChange={setSelectedConfigName} disabled={launchConfigs.length === 0}>
-              <SelectTrigger size="sm" className="h-7 min-w-[120px] bg-surface-input text-xs"><SelectValue placeholder={t('workspace.web.fields.detectScriptsFirst', 'Detect scripts first')} /></SelectTrigger>
-              <SelectContent>
-                {launchConfigs.map((config) => <SelectItem key={config.name} value={config.name}>{config.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          )}
-
-          <div className="flex shrink-0 items-center gap-1">
-            {mode === 'devServer' && (
-              <Button variant="ghost" size="icon" className="h-7 w-7" disabled={busy} onClick={() => void detectConfig()} title={t('workspace.web.actions.detect', 'Detect')}>
-                <RefreshCw className={cn('h-3.5 w-3.5', busy && 'animate-spin')} />
-              </Button>
-            )}
-            <Button size="sm" className="h-7 text-xs" disabled={busy} onClick={() => void startPreview()}>
-              {busy ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-1.5 h-3 w-3" />}
-              {t('workspace.web.actions.start', 'Start')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              disabled={busy || !status?.running}
-              onClick={() => void stopPreview()}
-              aria-label={t('workspace.web.actions.stop', 'Stop')}
-              title={t('workspace.web.actions.stop', 'Stop')}
-            >
-              <Square className="h-3 w-3" />
-            </Button>
-            {annotationEnabled ? <Button
-              variant={selectionEnabled ? 'default' : 'outline'}
-              size="icon"
-              className="h-7 w-7"
-              disabled={!previewUrl}
-              onClick={() => setSelectionEnabled((current) => !current)}
-              title={t('workspace.web.actions.pickComponent', 'Pick component')}
-            >
-              <MousePointer2 className="h-3.5 w-3.5" />
-            </Button> : null}
-          </div>
-      </WebPreviewToolbar>
-
       {annotationEnabled && selectedElement && (
         <WebPreviewSelectionBar>
           <div className="flex items-center gap-2">
-            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-2xs font-medium text-primary">{t('workspace.web.selection.selected', 'Selected')}</span>
+            <span className="rounded bg-black/5 px-1.5 py-0.5 text-2xs font-medium text-foreground dark:bg-white/10">{t('workspace.web.selection.selected', 'Selected')}</span>
             <span className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">&lt;{selectedElement.tagName}&gt;</span>
             <span className="min-w-0 flex-1 truncate font-mono text-xs text-foreground">{selectedElement.cssSelector}</span>
             <div className="flex shrink-0 items-center gap-1">
@@ -570,6 +488,128 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
           url: agentBrowserSession?.url ?? null,
         }}
         onOpenAgentBrowser={() => void openOrLocateAgentBrowser()}
+        toolbarActions={(
+          <>
+            {!status?.running ? (
+              <Button
+                size="sm"
+                className="h-7 px-2 text-xs"
+                disabled={busy}
+                onClick={() => void startPreview()}
+                data-testid="ai-web-preview-start"
+              >
+                {busy ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : null}
+                {t('workspace.web.actions.start', 'Start')}
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={busy}
+                onClick={() => void stopPreview()}
+                aria-label={t('workspace.web.actions.stop', 'Stop')}
+                title={t('workspace.web.actions.stop', 'Stop')}
+                data-testid="ai-web-preview-stop"
+              >
+                <Square className="h-3 w-3" />
+              </Button>
+            )}
+            {annotationEnabled ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn('h-7 w-7', selectionEnabled && 'bg-black/5 dark:bg-white/10')}
+                disabled={!previewUrl}
+                onClick={() => setSelectionEnabled((current) => !current)}
+                title={t('workspace.web.actions.pickComponent', 'Pick component')}
+                aria-label={t('workspace.web.actions.pickComponent', 'Pick component')}
+                data-testid="ai-web-preview-pick-component"
+              >
+                <MousePointer2 className="h-3.5 w-3.5" />
+              </Button>
+            ) : null}
+          </>
+        )}
+        menuConfiguration={(
+          <div
+            className="space-y-2 px-2 py-1.5"
+            data-testid="ai-web-preview-configuration"
+            onPointerDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <div className="text-[11px] font-medium text-muted-foreground">
+              {t('workspace.web.configuration.title', 'Preview configuration')}
+            </div>
+            <div className="grid grid-cols-3 gap-1" role="group" aria-label={t('workspace.web.prompt.mode', 'Mode')}>
+              {(['static', 'devServer', 'externalUrl'] as const).map((previewMode) => (
+                <button
+                  key={previewMode}
+                  type="button"
+                  className={cn(
+                    'h-7 min-w-0 truncate rounded px-1 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 motion-reduce:transition-none',
+                    mode === previewMode && 'bg-black/5 text-foreground dark:bg-white/10',
+                  )}
+                  aria-pressed={mode === previewMode}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setMode(previewMode);
+                  }}
+                  data-testid={`ai-web-preview-mode-${previewMode}`}
+                >
+                  {modeLabel(t, previewMode)}
+                </button>
+              ))}
+            </div>
+            {mode !== 'externalUrl' ? (
+              <Input
+                aria-label={t('workspace.web.fields.targetPath', 'Target path')}
+                value={targetPath}
+                onChange={(event) => setTargetPath(event.target.value)}
+                placeholder={t('workspace.web.fields.targetPathPlaceholder', 'Relative path, e.g. index.html')}
+                className="h-8 bg-surface-input font-mono text-xs"
+                data-testid="ai-web-preview-target-path"
+              />
+            ) : (
+              <Input
+                aria-label={t('workspace.web.fields.url', 'URL')}
+                value={externalUrl ?? ''}
+                onChange={(event) => setExternalUrl(event.target.value)}
+                placeholder="http://localhost:3000"
+                className="h-8 bg-surface-input font-mono text-xs"
+                data-testid="ai-web-preview-external-url"
+              />
+            )}
+            {mode === 'devServer' ? (
+              <div className="flex items-center gap-1">
+                <Select value={selectedConfigName} onValueChange={setSelectedConfigName} disabled={launchConfigs.length === 0}>
+                  <SelectTrigger size="sm" className="h-8 min-w-0 flex-1 bg-surface-input text-xs" data-testid="ai-web-preview-launch-config">
+                    <SelectValue placeholder={t('workspace.web.fields.detectScriptsFirst', 'Detect scripts first')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {launchConfigs.map((config) => <SelectItem key={config.name} value={config.name}>{config.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  disabled={busy}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    void detectConfig();
+                  }}
+                  data-testid="ai-web-preview-detect"
+                >
+                  <RefreshCw className={cn('mr-1 h-3.5 w-3.5', busy && 'animate-spin')} />
+                  {t('workspace.web.actions.detect', 'Detect')}
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        )}
       >
           {/* Address bar — single slim row */}
           {previewUrl ? (

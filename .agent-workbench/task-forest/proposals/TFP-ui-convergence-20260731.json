@@ -1,0 +1,378 @@
+{
+  "applied_at": "2026-07-31T11:00:30.792691Z",
+  "base_graph_hash": "fec4cc599dda63c35d2d1596f9062ed37a347511d52659fdf5662eaa8f44d2c6",
+  "base_summary": {
+    "edge_count": 33,
+    "node_count": 20,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-ui-polish"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "ui-convergence",
+      "node": {
+        "acceptance_criteria": [
+          "顶级业务入口恰为收件箱、已安排、知识三个，新任务作为命令入口独立存在",
+          "每个可见状态最多一个主操作，普通页面不存在蓝色实心主按钮",
+          "Browser 与 Review 不再保留语义重复的一级入口",
+          "Knowledge 首屏仅呈现 Library 与 Review Queue",
+          "1280x800 与 960x800 的 Light/Dark 验证无横向溢出、文字断裂、重叠或重复主操作",
+          "相关 i18n、lint、typecheck、build、E2E 与 Harness 验证通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "完整迁移 FakeCoding 的克制设计哲学和信息架构，同时保证 Verse Claw 的真实功能完整可达。",
+          "validation_plan": [
+            "逐节点运行 Harness context/validate 和聚焦 E2E",
+            "最终运行 i18n lint、ESLint、typecheck、build:vite、harness:ci",
+            "在 1280x800 与 960x800 验证 Light/Dark 截图和交互"
+          ],
+          "why_not_enough": "必须按串行节点逐步实现和验收，不能用单次样式替换宣称完成全部迁移。",
+          "why_this_task": "任务同时覆盖视觉系统、入口精简、真实能力归位和跨平台验收，是用户已确认方案的直接工程映射。"
+        },
+        "assumptions": [
+          "现有 host-api 已足够支持 Inbox、Scheduled、Review 和 Browser 的入口重组",
+          "Task Ledger 与 ClawGraph 的完整页面继续作为深层兼容工作区保留"
+        ],
+        "confidence": 0.82,
+        "context_tags": [
+          "ui-polish",
+          "fakecoding",
+          "information-architecture",
+          "cross-platform"
+        ],
+        "desired_outcomes": [
+          "一级侧栏固定为新任务、收件箱、已安排、知识，并保留项目、会话和底部设置",
+          "Browser、Review、Task Ledger、ClawGraph、Cron、Remote Tasks 和 Knowledge 均有唯一且真实的产品归属",
+          "全局控件、SVG、灰阶 token、密度和动效与 FakeCoding 设计语言一致",
+          "普通界面使用直白文案，Developer/Advanced 保留准确术语"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 7200,
+        "execution_hints": [
+          "一次只推进一个串行子节点",
+          "每个节点先更新 Harness 与 E2E，再扩大视觉迁移面"
+        ],
+        "kind": "global_task",
+        "non_goals": [
+          "重写 Gateway、Host API 或后端数据模型",
+          "合并 Task Ledger 与 ClawGraph 的状态真源",
+          "将所有全屏工具强塞进狭窄会话侧栏",
+          "把 Agent Browser 攟造成通用人类浏览器"
+        ],
+        "priority": 1,
+        "purpose": "降低导航和页面认知负担，在不削弱真实能力的前提下形成一致、安静、可发现的跨平台桌面体验。",
+        "remaining_minutes_max": 9600,
+        "remaining_minutes_min": 4800,
+        "requirements": [
+          "不删除、伪造或重写现有后端能力与安全策略",
+          "Remote Tasks 必须进入 Inbox，不得归类为 Automations 或 Scheduled",
+          "保留现有未提交 Cron 修改并在其上继续整合",
+          "所有新增可见文案覆盖 en、zh、ja、ru，所有可见流程配套 Electron E2E",
+          "960x800 下详情使用覆盖层或单视图，避免强制三栏"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "管理页 H1 不超过 28px",
+          "一级业务入口数量为 3",
+          "Knowledge 顶级业务视图数量为 2",
+          "迁移路径功能 E2E 覆盖率为 100%"
+        ],
+        "summary": "以克制的灰阶工作界面重构 Verse Claw，同时按真实使用上下文重新归位现有能力。",
+        "title": "FakeCoding 设计体系与产品信息架构迁移"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "design-shell",
+      "node": {
+        "acceptance_criteria": [
+          "新增 fakecoding-ui-convergence Harness task",
+          "UI v2 默认覆盖 Windows、macOS、Linux",
+          "按钮、输入、菜单、标签、Tooltip 和应用壳遵守新尺寸与颜色契约",
+          "UI showcase 和应用壳聚焦 E2E 通过"
+        ],
+        "confidence": 0.88,
+        "difficulty": "high",
+        "estimated_total_minutes": 900,
+        "kind": "task",
+        "priority": 1,
+        "purpose": "先提供后续所有页面迁移共同依赖的可验证视觉和布局基线。",
+        "requirements": [
+          "保留 ?uiVersion=legacy 回滚",
+          "移除默认蓝色 primary、页面 serif 规则和常规 active:scale",
+          "迁移实际使用的 FakeCoding SVG 并保留 stroke/fill 规则"
+        ],
+        "status": "ready",
+        "summary": "建立 Harness 契约、跨平台 UI v2、灰阶 token、紧凑控件、SVG 包装层和克制的应用壳。",
+        "title": "FakeCoding 设计系统与应用壳基线"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "navigation-inbox",
+      "node": {
+        "acceptance_criteria": [
+          "Sidebar 仅保留四个固定顶层命令/业务入口",
+          "Inbox 三类来源均可显示风险、证据、时间和真实动作",
+          "动作完成后聚合状态立即刷新"
+        ],
+        "confidence": 0.8,
+        "difficulty": "high",
+        "estimated_total_minutes": 960,
+        "kind": "task",
+        "priority": 1,
+        "requirements": [
+          "Remote Tasks 归入 Inbox",
+          "旧路由保留兼容跳转",
+          "侧栏显示真实待处理数量"
+        ],
+        "status": "proposed",
+        "summary": "收敛 Sidebar，新增 /inbox，并聚合权限申请、Remote Tasks 与待批准 Browser Tasks。",
+        "title": "四入口导航与真实 Inbox 聚合"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "scheduled-browser",
+      "node": {
+        "acceptance_criteria": [
+          "已安排页面真实展示 Cron 与 Browser Runs",
+          "960px 详情使用覆盖式布局",
+          "Browser 设置入口具备 Profile 与 Vault 现有能力"
+        ],
+        "confidence": 0.76,
+        "difficulty": "very_high",
+        "estimated_total_minutes": 1200,
+        "kind": "task",
+        "priority": 1,
+        "requirements": [
+          "保留 Cron 创建、编辑、启停、删除、立即运行、投递渠道和历史",
+          "保留 Browser task 审批、重试、取消、步骤和结果",
+          "不得覆盖用户未提交 Cron 修改"
+        ],
+        "status": "proposed",
+        "summary": "在现有 Cron 成果上建立 ScheduledItem 投影，接入 Browser Runs，并将 Browser Profile/Vault 迁入设置。",
+        "title": "已安排与 Browser 任务归位"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "workspace-review",
+      "node": {
+        "acceptance_criteria": [
+          "旧 /browser 与 /code-review 进入正确新上下文",
+          "AI Review、Remote Forge 审批流和 Ledger 节点创建功能可达",
+          "workspace 菜单可打开 Task Ledger 与 ClawGraph"
+        ],
+        "confidence": 0.7,
+        "difficulty": "very_high",
+        "estimated_total_minutes": 1500,
+        "kind": "task",
+        "priority": 1,
+        "requirements": [
+          "Review 包含 Changes、AI Review、Pull Requests",
+          "Browser 保留预览、聚焦、接管、停止、截图和选择内容",
+          "Task Ledger 与 ClawGraph 完整全屏页继续可用"
+        ],
+        "status": "proposed",
+        "summary": "扩展会话 Browser 与 Review 标签，统一 openWorkspacePanel(intent)，并提供 Task Ledger/ClawGraph 上下文入口。",
+        "title": "会话 Browser/Review 与工作区深层入口"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "knowledge-convergence",
+      "node": {
+        "acceptance_criteria": [
+          "首屏仅有 Library 与 Review Queue",
+          "Inbox、Drafts、Proposal 使用统一 KnowledgeReviewItem 投影",
+          "Maintenance/Source tools 保留全部高级能力",
+          "引用、保存草稿、提交复核完整可用"
+        ],
+        "confidence": 0.68,
+        "difficulty": "very_high",
+        "estimated_total_minutes": 1500,
+        "kind": "task",
+        "priority": 1,
+        "requirements": [
+          "编辑必须显式进入",
+          "窄窗口 Preview 与 Edit 不同时堆叠",
+          "Librarian 迁入 Chat 的询问知识库模式"
+        ],
+        "status": "proposed",
+        "summary": "拆分 Knowledge 单体页，以 Library 和 Review Queue 为首屏，并将高级治理和来源工具按需披露。",
+        "title": "Knowledge Library 与 Review Queue 收敛"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "secondary-cleanup",
+      "node": {
+        "acceptance_criteria": [
+          "低频页面全部使用同一控件体系",
+          "全局视觉约束测试通过",
+          "i18n、lint、typecheck、build、分阶段 E2E、harness:ci 全绿",
+          "确认无回滚需要后移除 legacy"
+        ],
+        "confidence": 0.66,
+        "difficulty": "very_high",
+        "estimated_total_minutes": 1200,
+        "kind": "task",
+        "priority": 2,
+        "requirements": [
+          "清理蓝色 CTA、serif hero、嵌套卡片和普通界面 ToB 话术",
+          "完成前保留 legacy 回滚",
+          "同步三份 README 与设计说明"
+        ],
+        "status": "proposed",
+        "summary": "统一 Settings、Setup、Agents、Models、Channels、Skills、Observability 等页面，并完成文档和全局门禁。",
+        "title": "次级页面视觉收尾与 Legacy 移除"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "设计系统和应用壳是全局迁移的公共基线"
+      },
+      "from": "design-shell",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "导航和 Inbox 是信息架构迁移的首个业务纵切"
+      },
+      "from": "navigation-inbox",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "Scheduled 与 Browser 归位属于全局迁移"
+      },
+      "from": "scheduled-browser",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "会话工作区收敛属于全局迁移"
+      },
+      "from": "workspace-review",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "Knowledge 收敛属于全局迁移"
+      },
+      "from": "knowledge-convergence",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "次级页面和最终门禁是全局迁移收尾"
+      },
+      "from": "secondary-cleanup",
+      "to": "ui-convergence",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.96,
+        "reason": "导航与 Inbox 必须复用稳定的设计系统和应用壳"
+      },
+      "from": "navigation-inbox",
+      "to": "design-shell",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "已安排页面依赖新导航结构和共享聚合模式"
+      },
+      "from": "scheduled-browser",
+      "to": "navigation-inbox",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "先完成全局任务归位，再扩大会话工作区"
+      },
+      "from": "workspace-review",
+      "to": "scheduled-browser",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.92,
+        "reason": "Chat Librarian 依赖会话工作区入口模型"
+      },
+      "from": "knowledge-convergence",
+      "to": "workspace-review",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.96,
+        "reason": "次级页面收尾在核心信息架构稳定后执行"
+      },
+      "from": "secondary-cleanup",
+      "to": "knowledge-convergence",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "采用全局迁移目标和六个严格串行节点，Remote Tasks 明确归入 Inbox。",
+        "confidence": 0.97,
+        "created_at": "2026-07-31T11:00:22.842558Z",
+        "id": "TFA-fba6617d96",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "完整迁移 FakeCoding 的设计哲学和信息架构，同时保留 Verse Claw 的真实能力。",
+          "validation_plan": [
+            "逐节点 Harness 和 Electron E2E",
+            "最终跨平台视觉与全量门禁"
+          ],
+          "why_not_enough": "仍需逐节点工程实现和真实 E2E 证据。",
+          "why_this_task": "覆盖视觉基础、业务入口归位、会话工作区和 Knowledge 收敛。"
+        },
+        "reason": "串行方案能保持真实功能和现有未提交工作，且每个阶段可独立验证和回滚。",
+        "rejected_options": [
+          "仅换皮不调整信息架构",
+          "同时并行改造所有大型页面"
+        ],
+        "related_task_ids": [],
+        "selected_option": "用户确认的分阶段完整迁移方案",
+        "user_goal": "完整迁移 FakeCoding 的设计哲学和信息架构，同时保留 Verse Claw 的真实能力。"
+      }
+    }
+  ],
+  "created_at": "2026-07-31T11:00:22.839747Z",
+  "proposal_id": "TFP-ui-convergence-20260731",
+  "rationale": "用户已确认 FakeCoding 设计体系与产品信息架构迁移方案；旧提案错误地把 Remote Tasks 归入 Automations，本提案改为 Inbox，并以严格串行节点保护现有 Cron 和其他在途工作。",
+  "session_id": "session-2026-07-31-fakecoding-ui",
+  "status": "applied"
+}

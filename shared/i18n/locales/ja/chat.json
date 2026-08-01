@@ -30,6 +30,7 @@
   "loadMoreHistory": "以前のメッセージを読み込む",
   "loadingMoreHistory": "読み込み中…",
   "toolbar": {
+    "slashCommands": "Slash 銈兗銉夈伀銈?",
     "refresh": "チャットを更新",
     "currentAgent": "現在の会話相手: {{agent}}",
     "workspace": "ワークスペース",
@@ -354,8 +355,12 @@
     "tabs": {
       "changes": "変更",
       "preview": "プレビュー",
-      "browser": "ワークスペース",
-      "artifact": "アーティファクト"
+      "browser": "ブラウザー",
+      "artifact": "アーティファクト",
+      "review": "レビュー",
+      "terminal": "ターミナル",
+      "files": "ファイル",
+      "audit": "監査"
     },
     "workspaceTabs": {
       "files": "ファイル",
@@ -395,7 +400,9 @@
     "actions": {
       "back": "一覧に戻る",
       "expand": "パネルを展開",
-      "collapse": "パネルを折りたたむ"
+      "collapse": "パネルを折りたたむ",
+      "moveTerminalSide": "ターミナルを右側へ移動",
+      "moveTerminalBottom": "ターミナルを下部へ移動"
     },
     "changes": {
       "heading": "ファイルの変更（{{count}} 件）",
@@ -511,11 +518,23 @@
       "openRootInFinder": "ルートをファイルマネージャーで表示",
       "toggleHidden": "隠しファイル表示切替",
       "showHidden": "隠しファイルを表示",
-      "hideHidden": "隠しファイルを隠す"
+      "hideHidden": "隠しファイルを隠す",
+      "backToTree": "ファイル一覧へ戻る",
+      "resizeTree": "ファイルツリーの幅を変更",
+      "openTaskLedger": "タスク台帳",
+      "openClawGraph": "ClawGraph",
+      "more": "その他のファイル操作"
+    },
+    "review": {
+      "views": { "label": "レビュー表示", "changes": "変更", "ai-review": "AI レビュー", "pull-requests": "プルリクエスト" }
+    },
+    "browser": {
+      "views": { "label": "ブラウザー表示", "preview": "プレビュー", "live": "ライブ" }
     },
     "terminal": {
       "title": "ワークスペース端末",
       "noWorkspace": "ワークスペース未選択",
+      "resize": "ターミナルパネルの高さを変更",
       "permission": {
         "readOnly": "読み取り専用",
         "acceptEdits": "編集を許可",
@@ -534,7 +553,8 @@
         "interrupt": "Ctrl+C",
         "close": "閉じる",
         "clear": "クリア",
-        "approve": "承認"
+        "approve": "承認",
+        "end": "ターミナルを終了"
       },
       "blocked": {
         "title": "この権限モードでは対話型端末を使えません",
@@ -546,10 +566,15 @@
       "toast": {
         "approvalRequired": "対話型端末には承認が必要です",
         "blocked": "端末の起動がブロックされました",
-        "approvalFailed": "承認に失敗しました"
+        "approvalFailed": "承認に失敗しました",
+        "interruptFailed": "ターミナルを中断できませんでした",
+        "closeFailed": "ターミナルを終了できませんでした"
       }
     },
     "web": {
+      "configuration": {
+        "title": "プレビュー設定"
+      },
       "title": "Web プレビュー",
       "mode": {
         "static": "静的",

@@ -6,8 +6,8 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, FolderPlus, GitBranchPlus, Loader2, Pencil, X } from 'lucide-react';
-import { FileText, Laptop, Sparkles } from '@/components/icons/codex-icons';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, FolderPlus, GitBranchPlus, Loader2, Pencil, Workflow, X } from 'lucide-react';
+import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -71,7 +71,7 @@ import {
   type UserRunCard,
 } from './execution-projection';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
@@ -105,6 +105,7 @@ import type {
   PromptCacheRiskAssessment,
   WorkspaceContextRange,
   WorkspaceArtifactPanelState,
+  WorkspacePanelIntent,
   WorkspaceKnowledgeScope,
   WorkspacePermissionMode,
   WorkspaceProfile,
@@ -211,15 +212,6 @@ function buildKnowledgeDraftBody(messages: RawMessage[]): string {
   return visibleTurns
     .map((turn) => `### ${turn.role === 'user' ? 'User' : 'Assistant'}\n\n${turn.text}`)
     .join('\n\n');
-}
-
-function buildKnowledgeDraftTitle(sessionLabel: string, messages: RawMessage[]): string {
-  const firstUserText = messages
-    .find((msg) => isRealUserMessage(msg))
-    ? extractText(messages.find((msg) => isRealUserMessage(msg))!).replace(/\s+/g, ' ').trim()
-    : '';
-  const base = firstUserText || sessionLabel || 'Chat synthesis';
-  return base.length > 72 ? `${base.slice(0, 72)}...` : base;
 }
 
 function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
@@ -375,6 +367,8 @@ function ProjectSessionHeader({
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
+  onOpenTaskLedger,
+  onOpenClawGraph,
   sessions,
   currentSessionKey,
   sessionLabels,
@@ -400,6 +394,8 @@ function ProjectSessionHeader({
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
+  onOpenTaskLedger: () => void;
+  onOpenClawGraph: () => void;
   sessions: ChatSession[];
   currentSessionKey: string;
   sessionLabels: Record<string, string>;
@@ -519,6 +515,14 @@ function ProjectSessionHeader({
               <div className="px-2 py-2 text-2xs text-muted-foreground">{t('workspace.noRecent')}</div>
             )}
             <div className="mt-1 border-t border-black/5 pt-1 dark:border-white/5">
+              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
+                <ListChecks className="h-3.5 w-3.5" />
+                {t('workspace.actions.openTaskLedger')}
+              </button>
+              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
+                <Workflow className="h-3.5 w-3.5" />
+                {t('workspace.actions.openClawGraph')}
+              </button>
               <button
                 type="button"
                 className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
@@ -776,6 +780,7 @@ export function Chat() {
   const { t } = useTranslation(['chat', 'common']);
   const uiVersion = useUiVersion();
   const navigate = useNavigate();
+  const location = useLocation();
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
@@ -869,13 +874,14 @@ export function Chat() {
   const panelOpen = useArtifactPanel((s) => s.open);
   const panelExpanded = useArtifactPanel((s) => s.expanded);
   const panelWidthPct = useArtifactPanel((s) => s.widthPct);
-  const openChanges = useArtifactPanel((s) => s.openChanges);
-  const openPreview = useArtifactPanel((s) => s.openPreview);
-  const openArtifactTab = useArtifactPanel((s) => s.openTab);
+  const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
   const artifactTabs = useArtifactPanel((s) => s.tabs);
   const artifactActiveTabId = useArtifactPanel((s) => s.activeTabId);
+  const terminalPlacement = useArtifactPanel((s) => s.terminalPlacement);
+  const setTerminalPlacement = useArtifactPanel((s) => s.setTerminalPlacement);
   const restoreArtifactPanelState = useArtifactPanel((s) => s.restoreSessionState);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
+  const [terminalBottomHeight, setTerminalBottomHeight] = useState(280);
   const lastObservedSessionKeyRef = useRef(currentSessionKey);
   const lastRestoredWorkspaceIdRef = useRef<string | null>(null);
   const workspaceSessionRestoreTargetRef = useRef<{ workspaceId: string; sessionKey: string } | null>(null);
@@ -911,6 +917,7 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
+  const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
@@ -1078,8 +1085,8 @@ export function Chat() {
       return;
     }
     const target = buildPreviewTarget(file.filePath, file.fileName, file.fileSize);
-    openPreview(target);
-  }, [openPreview, t]);
+    openWorkspacePanel({ panel: 'files', filePath: target.filePath });
+  }, [openWorkspacePanel, t]);
 
   const handlePickWorkspaceFolder = useCallback(async () => {
     const result = await hostApi.dialog.open({
@@ -1292,18 +1299,6 @@ export function Chat() {
     void handleSendMessage(responseText);
   }, [handleSendMessage]);
 
-  const handleOpenKnowledgeDraft = useCallback(() => {
-    const body = buildKnowledgeDraftBody(messages);
-    if (!body.trim()) {
-      toast.error(t('knowledgeDraft.empty'));
-      return;
-    }
-    const sessionLabel = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
-    setKnowledgeDraftTitle(buildKnowledgeDraftTitle(sessionLabel, messages));
-    setKnowledgeDraftBody(body);
-    setKnowledgeDraftOpen(true);
-  }, [currentSessionKey, messages, sessionLabels, sessions, t]);
-
   const handleOpenRecoveryMemoryDraft = useCallback(() => {
     const sessionLabel = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
     const body = buildKnowledgeDraftBody(messages);
@@ -1361,10 +1356,75 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, saveWorkspaceState]);
 
-  /* These three open a specific panel tab. `openArtifactTab` is single-instance
-   * per kind, so re-triggering focuses the tab the user already has open. */
+  useEffect(() => {
+    const routeState = location.state as { workspacePanelIntent?: WorkspacePanelIntent } | null;
+    let intent = routeState?.workspacePanelIntent ?? null;
+    const search = new URLSearchParams(location.search);
+    const panel = search.get('workspacePanel');
+    const view = search.get('view');
+
+    if (!intent && panel === 'browser') {
+      intent = {
+        panel: 'browser',
+        view: view === 'preview' ? 'preview' : 'live',
+        url: search.get('url') ?? undefined,
+        sessionId: search.get('sessionId') ?? undefined,
+      };
+    } else if (!intent && panel === 'review') {
+      intent = {
+        panel: 'review',
+        view: view === 'changes' || view === 'pull-requests' ? view : 'ai-review',
+        filePath: search.get('filePath') ?? undefined,
+      };
+    } else if (!intent && panel === 'files') {
+      intent = { panel: 'files', filePath: search.get('filePath') ?? undefined };
+    } else if (!intent && panel === 'terminal') {
+      intent = { panel: 'terminal', placement: search.get('placement') === 'side' ? 'side' : 'bottom' };
+    } else if (!intent && panel === 'artifact') {
+      intent = { panel: 'artifact', artifactId: search.get('artifactId') ?? undefined };
+    } else if (!intent && panel === 'audit') {
+      intent = { panel: 'audit' };
+    }
+
+    if (!intent) return;
+    openWorkspacePanel(intent);
+    const state = useArtifactPanel.getState();
+    handleArtifactSessionStateChange({
+      open: true,
+      activeTabKind: intent.panel,
+      reviewView: state.reviewView,
+      browserView: state.browserView,
+      browserSessionId: state.browserSessionId,
+      terminalPlacement: state.terminalPlacement,
+      selectedPath: state.selectedPath,
+    });
+
+    ['workspacePanel', 'view', 'filePath', 'placement', 'sessionId', 'url', 'artifactId'].forEach((key) => search.delete(key));
+    const nextSearch = search.toString();
+    navigate(
+      { pathname: '/', search: nextSearch ? `?${nextSearch}` : '', hash: location.hash },
+      { replace: true, state: null },
+    );
+  }, [handleArtifactSessionStateChange, location.hash, location.search, location.state, navigate, openWorkspacePanel]);
+
+  useEffect(() => {
+    const enforceNarrowTerminalPlacement = () => {
+      if (window.innerWidth > 960 || useArtifactPanel.getState().terminalPlacement === 'bottom') return;
+      const activeKind = useArtifactPanel.getState().tabs.find(
+        (tab) => tab.id === useArtifactPanel.getState().activeTabId,
+      )?.kind;
+      if (activeKind !== 'terminal') return;
+      setTerminalPlacement('bottom');
+      handleArtifactSessionStateChange({ terminalPlacement: 'bottom' });
+    };
+    enforceNarrowTerminalPlacement();
+    window.addEventListener('resize', enforceNarrowTerminalPlacement);
+    return () => window.removeEventListener('resize', enforceNarrowTerminalPlacement);
+  }, [handleArtifactSessionStateChange, setTerminalPlacement]);
+
+  /* Workspace capability entry points share the canonical intent contract. */
   const handleOpenWorkspaceWebView = useCallback(() => {
-    openArtifactTab('browser');
+    openWorkspacePanel({ panel: 'browser', view: 'preview' });
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
@@ -1373,10 +1433,10 @@ export function Chat() {
         artifactPanel: { open: true, activeTabKind: 'browser' },
       },
     });
-  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState]);
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
   const handleOpenGitPanel = useCallback(() => {
-    openArtifactTab('review');
+    openWorkspacePanel({ panel: 'review', view: 'changes' });
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
@@ -1385,10 +1445,10 @@ export function Chat() {
         artifactPanel: { open: true, activeTabKind: 'review' },
       },
     });
-  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState]);
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
   const handleInterruptTerminal = useCallback(async () => {
-    openArtifactTab('terminal');
+    openWorkspacePanel({ panel: 'terminal' });
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
       id: activeWorkspaceId,
@@ -1412,11 +1472,17 @@ export function Chat() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error));
     }
-  }, [activeWorkspaceId, currentSessionKey, openArtifactTab, saveWorkspaceState, t]);
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState, t]);
 
   const handleOpenTaskLedger = useCallback(() => {
-    navigate('/task-ledger');
-  }, [navigate]);
+    const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
+    navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
+  }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
+
+  const handleOpenClawGraph = useCallback(() => {
+    const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
+    navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
+  }, [longTaskControlStatus?.latestCheckpoint?.clawGraphRunId, navigate]);
 
   const handleAppendComposerDraft = useCallback((text: string) => {
     const nextDraft = composerDraft.trim()
@@ -1424,6 +1490,10 @@ export function Chat() {
       : text;
     handleComposerDraftChange(nextDraft);
   }, [composerDraft, handleComposerDraftChange]);
+
+  const handleOpenSlashCommands = useCallback(() => {
+    setComposerSlashRequest((value) => value + 1);
+  }, []);
 
   const handleQuoteSelection = useCallback((text: string) => {
     const clipped = text.replace(/\s+/g, ' ').trim().slice(0, 1200);
@@ -2206,6 +2276,26 @@ export function Chat() {
     ARTIFACT_PANEL_MAX_WIDTH,
     Math.max(ARTIFACT_PANEL_MIN_WIDTH, panelWidthPct),
   );
+  const activeArtifactTabKind = artifactTabs.find((tab) => tab.id === artifactActiveTabId)?.kind ?? null;
+  const terminalBottomOpen = panelOpen
+    && activeArtifactTabKind === 'terminal'
+    && terminalPlacement === 'bottom';
+
+  const beginTerminalBottomResize = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = terminalBottomHeight;
+    const onMove = (moveEvent: PointerEvent) => {
+      const maxHeight = Math.max(220, (splitContainerRef.current?.clientHeight ?? window.innerHeight) * 0.7);
+      setTerminalBottomHeight(Math.round(Math.min(maxHeight, Math.max(180, startHeight + startY - moveEvent.clientY))));
+    };
+    const onEnd = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onEnd);
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onEnd);
+  }, [terminalBottomHeight]);
 
   const runSegmentMessageIndices = useMemo(
     () => deriveRunSegmentMessageIndices(messages, nextUserMessageIndexes, subagentCompletionInfos),
@@ -2455,8 +2545,7 @@ export function Chat() {
 
   const platform = window.electron?.platform;
   const isMac = platform === 'darwin';
-  const isWindows = platform === 'win32';
-  const isUiV2 = isWindows && uiVersion === 'v2';
+  const isUiV2 = uiVersion === 'v2';
 
   return (
     <TooltipProvider>
@@ -2464,22 +2553,27 @@ export function Chat() {
       ref={splitContainerRef}
       data-testid="chat-page"
       className={cn(
-        'relative flex min-h-0 -m-6 overflow-hidden transition-colors duration-200 motion-reduce:transition-none',
+        'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
+        isUiV2 ? '-m-5' : '-m-6',
         'bg-background',
         // Stack above MainLayout's mac-main-drag-region (z-10) so the right-hand
         // artifact/preview pane stays clickable; window drag is handled by the
         // sidebar + chat-toolbar drag strips instead.
-        isMac && 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]',
-        isUiV2 && 'rounded-tl-[20px] bg-material-canvas',
+        isMac && !isUiV2 && 'z-20 rounded-tl-2xl shadow-[inset_1px_1px_0_hsl(var(--border)/0.55)]',
+        isUiV2 && 'bg-material-canvas',
       )}
-      style={{ height: isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
+      style={{ height: isUiV2 ? 'calc(100% + 2.5rem)' : isMac ? 'calc(100vh - 1px)' : 'calc(100vh - 2.5rem)' }}
     >
       {/* Left column: chat */}
-      <div data-testid="chat-conversation-column" className="flex min-w-0 flex-1 flex-col">
+      <div
+        data-testid="chat-conversation-column"
+        className="flex min-w-0 flex-1 flex-col"
+        style={terminalBottomOpen ? { paddingBottom: terminalBottomHeight } : undefined}
+      >
       {/* Toolbar */}
       <div className={cn(
         'relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
-        isUiV2 && 'mx-3 mt-2 min-h-11 rounded-[14px] border border-white/65 bg-material-panel/90 shadow-sm backdrop-blur-[18px] backdrop-saturate-[1.22] dark:border-white/8 dark:bg-material-panel/72',
+        isUiV2 && 'min-h-11 border-b border-border bg-material-panel',
       )}>
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
         <div className="no-drag relative z-10 min-w-0">
@@ -2490,7 +2584,9 @@ export function Chat() {
                 projectPath={activeWorkspace?.rootPath}
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
-                pickWorkspaceFolder={handlePickWorkspaceFolder}
+                 pickWorkspaceFolder={handlePickWorkspaceFolder}
+                 onOpenTaskLedger={handleOpenTaskLedger}
+                 onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
                 currentSessionKey={currentSessionKey}
                 sessionLabels={sessionLabels}
@@ -2528,7 +2624,7 @@ export function Chat() {
           <ChatToolbar
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
-            onSaveToKnowledge={handleOpenKnowledgeDraft}
+            onOpenSlashCommands={handleOpenSlashCommands}
             promptCacheStatus={promptCacheStatus}
             onToggleQuestionDirectory={() =>
               setQuestionDirectoryOpenSessionKey((openSessionKey) =>
@@ -2665,10 +2761,10 @@ export function Chat() {
                                   onOpen={(file) => {
                                     const target = generatedFileToTarget(file);
                                     if (isHtmlPreviewExt(file.ext)) {
-                                      openPreview(target);
+                                      openWorkspacePanel({ panel: 'files', filePath: target.filePath });
                                       return;
                                     }
-                                    openChanges(target);
+                                    openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
                                   }}
                                 />
                               )}
@@ -2836,6 +2932,7 @@ export function Chat() {
         liveUsage={liveUsage}
         messageCount={messages.length}
         draftValue={composerDraft}
+        slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}
@@ -2955,7 +3052,7 @@ export function Chat() {
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
-          {panelExpanded && (
+          {panelExpanded && !terminalBottomOpen && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
@@ -2963,14 +3060,30 @@ export function Chat() {
           <aside
             data-testid="artifact-panel-aside"
             data-expanded={panelExpanded ? 'true' : 'false'}
+            data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
-              'absolute inset-y-0 right-0 z-30 flex shrink-0 flex-col border-l border-black/5 bg-surface-modal shadow-2xl dark:border-white/10',
-              panelExpanded && 'xl:relative xl:z-20 xl:shadow-none',
-              'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-200 motion-reduce:transition-none',
+              'absolute z-30 flex shrink-0 flex-col bg-surface-modal shadow-2xl',
+              terminalBottomOpen
+                ? 'inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10'
+                : 'inset-y-0 right-0 border-l border-black/5 dark:border-white/10',
+              panelExpanded && !terminalBottomOpen && 'xl:relative xl:z-20 xl:shadow-none',
+              !terminalBottomOpen && 'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-150 motion-reduce:transition-none',
               isMac && 'no-drag',
             )}
-            style={{ width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}
+            style={terminalBottomOpen
+              ? { width: '100%', height: terminalBottomHeight }
+              : { width: `min(100%, clamp(22rem, ${boundedPanelWidthPct}%, 44rem))` }}
           >
+            {terminalBottomOpen && (
+              <div
+                role="separator"
+                aria-orientation="horizontal"
+                aria-label={t('workspace.terminal.resize')}
+                data-testid="workspace-terminal-bottom-resize"
+                className="absolute inset-x-0 -top-1 z-40 h-2 cursor-row-resize"
+                onPointerDown={beginTerminalBottomResize}
+              />
+            )}
             <Suspense
               fallback={
                 <div className="flex h-full items-center justify-center">
@@ -3357,7 +3470,7 @@ function SuggestionItem({ disabled = false }: { disabled?: boolean }) {
       disabled={disabled}
       className={cn(
         'flex min-h-[82px] flex-col items-start gap-1 rounded-[14px] border border-white/55 bg-material-panel/72 px-4 py-3 text-left text-sm shadow-sm backdrop-blur-[16px]',
-        'transition-[background-color,border-color,box-shadow,transform] duration-150 hover:bg-material-elevated/80 active:scale-[0.985] dark:border-white/10',
+        'transition-[background-color,border-color,box-shadow] duration-150 hover:bg-material-elevated/80 dark:border-white/10',
         'disabled:cursor-not-allowed disabled:opacity-60',
       )}
     >

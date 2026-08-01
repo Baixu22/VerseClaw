@@ -8,7 +8,7 @@ type UiOverlayContextValue = {
   requestCloseSettings: (destination?: string) => void;
 };
 
-const UiVersionContext = createContext<UiVersion>('legacy');
+const UiVersionContext = createContext<UiVersion>('v2');
 
 const UiOverlayContext = createContext<UiOverlayContextValue>({
   settingsOpen: false,

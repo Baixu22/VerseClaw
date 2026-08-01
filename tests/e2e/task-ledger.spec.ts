@@ -247,7 +247,8 @@ test.describe('Task ledger', () => {
 
       const page = await getStableWindow(electronApp);
 
-      await page.getByTestId('sidebar-nav-task-ledger').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-task-ledger').click();
       await expect(page.getByTestId('task-ledger-page')).toBeVisible();
       await expect(page.getByTestId('task-ledger-tree')).toContainText('Ship long task ledger');
       await expect(page.getByTestId('task-ledger-status-plan-projection')).toBeDisabled();
