@@ -104,6 +104,9 @@ const AGENTS_POLICY_DIGEST_RATIO = 0.35;
 const AGENTS_POLICY_HEAD_RATIO = 0.45;
 const AGENTS_POLICY_TAIL_RATIO = 0.15;
 const AGENTS_POLICY_DIGEST_MAX_LINE_CHARS = 240;
+const MEMORY_BOOTSTRAP_FILENAME = "MEMORY.md";
+const MEMORY_TOP_K_SNIPPETS = 5;
+const MEMORY_SNIPPET_MAX_CHARS = 400;
 
 type TrimBootstrapResult = {
   content: string;
@@ -410,9 +413,69 @@ export async function ensureSessionHeader(params: {
   });
 }
 
+/**
+ * Lightweight keyword retrieval over MEMORY.md for P1-4 injection precision.
+ *
+ * Splits the file into line blocks (blank-line separated), scores each block
+ * against the session's recent user-visible keywords (task objective + last
+ * user message), and returns the top-K blocks. This replaces full-file
+ * injection with a small high-signal excerpt while staying dependency-free
+ * (the semantic index lives in the memory-core plugin, which the runtime
+ * bootstrap path cannot reach).
+ */
+function retrieveMemorySnippetsForBootstrap(
+  content: string,
+  keywords: readonly string[],
+  topK: number = MEMORY_TOP_K_SNIPPETS,
+  maxCharsPerSnippet: number = MEMORY_SNIPPET_MAX_CHARS,
+): string {
+  const blocks = content
+    .split(/\r?\n{2,}/)
+    .map((block) => block.trim())
+    // CJK text is denser per character; 24 chars is a Latin-oriented floor.
+    // Use 10 so short Chinese memory lines still qualify for retrieval.
+    .filter((block) => block.length >= 10);
+  if (blocks.length === 0) return "";
+
+  const tokens = keywords
+    .flatMap((keyword) => keyword.toLowerCase().split(/[^a-z0-9一-鿿]+/))
+    .filter((token) => token.length >= 2);
+  if (tokens.length === 0) return "";
+
+  const scored = blocks
+    .map((block) => {
+      const lower = block.toLowerCase();
+      let score = 0;
+      for (const token of tokens) {
+        if (lower.includes(token)) {
+          score += 1;
+          if (lower.startsWith(token) || lower.includes(`\n${token}`)) score += 0.5;
+        }
+      }
+      return { block, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK);
+
+  if (scored.length === 0) return "";
+  return scored
+    .map((entry) =>
+      entry.block.length > maxCharsPerSnippet
+        ? `${entry.block.slice(0, maxCharsPerSnippet)}…`
+        : entry.block,
+    )
+    .join("\n\n");
+}
+
 export function buildBootstrapContextFiles(
   files: WorkspaceBootstrapFile[],
-  opts?: { warn?: (message: string) => void; maxChars?: number; totalMaxChars?: number },
+  opts?: {
+    warn?: (message: string) => void;
+    maxChars?: number;
+    totalMaxChars?: number;
+    memoryKeywords?: string[];
+  },
 ): EmbeddedContextFile[] {
   const maxChars = opts?.maxChars ?? DEFAULT_BOOTSTRAP_MAX_CHARS;
   const totalMaxChars = Math.max(
@@ -450,6 +513,25 @@ export function buildBootstrapContextFiles(
         `remaining bootstrap budget is ${remainingTotalChars} chars (<${MIN_BOOTSTRAP_FILE_BUDGET_CHARS}); skipping additional bootstrap files`,
       );
       break;
+    }
+    // P1-4: MEMORY.md is injected as a keyword-retrieved Top-K excerpt instead
+    // of the full file, keeping the working context information-dense. Falls
+    // back to the normal bounded trim when retrieval yields no hits.
+    if (file.name === MEMORY_BOOTSTRAP_FILENAME && typeof file.content === "string") {
+      const memoryKeywords = opts?.memoryKeywords ?? [];
+      const retrieved = retrieveMemorySnippetsForBootstrap(file.content, memoryKeywords);
+      if (retrieved.length > 0) {
+        const contentWithinBudget = clampToBudget(retrieved, remainingTotalChars);
+        if (contentWithinBudget) {
+          remainingTotalChars = Math.max(0, remainingTotalChars - contentWithinBudget.length);
+          result.push({
+            path: pathValue,
+            content: contentWithinBudget,
+          });
+          continue;
+        }
+      }
+      // No retrieval hits — fall through to the bounded full-file trim.
     }
     const fileMaxChars = Math.max(1, Math.min(maxChars, remainingTotalChars));
     const trimmed = trimBootstrapContent(file.content ?? "", file.name, fileMaxChars);

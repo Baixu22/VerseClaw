@@ -161,6 +161,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "memory.evidenceCheck", scope: "operator.read" },
   { name: "memory.simulateInjection", scope: "operator.read" },
   { name: "memory.health", scope: "operator.read" },
+  { name: "memory.governance", scope: "operator.read" },
+  { name: "memory.operatorInspection", scope: "operator.admin" },
   { name: "memory.utilityReport", scope: "operator.read" },
   { name: "memory.evalReport", scope: "operator.read" },
   { name: "memory.detail", scope: "operator.read" },

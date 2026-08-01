@@ -5,6 +5,7 @@ import { isVitestRuntimeEnv } from "../infra/env.js";
 import { startHeartbeatRunner, type HeartbeatRunner } from "../infra/heartbeat-runner.js";
 import type { PluginMetadataRegistryView } from "../plugins/plugin-metadata-snapshot.types.js";
 import { isGatewayModelPricingEnabled } from "./model-pricing-config.js";
+import { startRuntimeMemoryConsolidationService } from "./runtime-memory-consolidation-service.js";
 import type { startGatewayMaintenanceTimers } from "./server-maintenance.js";
 import {
   createNoopHeartbeatRunner,
@@ -220,7 +221,7 @@ export function activateGatewayScheduledServices(params: {
   logCron: { error: (message: string) => void };
   log: GatewayRuntimeServiceLogger;
   pluginLookUpTable?: PluginMetadataRegistryView;
-}): { heartbeatRunner: HeartbeatRunner; stopModelPricingRefresh: () => void } {
+}): { heartbeatRunner: HeartbeatRunner; stopModelPricingRefresh: () => void; stopMemoryConsolidation?: () => void } {
   if (params.minimalTestGateway) {
     // Minimal gateways keep handles callable but inert so tests can share shutdown paths with
     // production starts without launching background loops.
@@ -249,5 +250,16 @@ export function activateGatewayScheduledServices(params: {
         log: params.log,
       })
     : () => {};
-  return { heartbeatRunner, stopModelPricingRefresh };
+  // Runtime-memory consolidation: pure computation pass over the fact store
+  // on a 24h interval. Runs in production only (skipped under vitest to keep
+  // scheduled-service tests inert), replayed through the persistence port.
+  let stopMemoryConsolidation: (() => void) | undefined;
+  if (!isVitestRuntimeEnv()) {
+    const service = startRuntimeMemoryConsolidationService({
+      cfg: params.cfgAtStart,
+      logger: params.log.child("memory-consolidation"),
+    });
+    stopMemoryConsolidation = service.stop;
+  }
+  return { heartbeatRunner, stopModelPricingRefresh, stopMemoryConsolidation };
 }
