@@ -902,7 +902,7 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     if (provisionedDigest !== artifact.sha256 || provisionedBytes.length !== artifact.bytes) {
       return fail('provisioned binary verification failed in worktree');
     }
-    const stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
+    let stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
     const copied = [];
     const copyIndex = argv.indexOf('--copy');
     const copyRelativePaths = copyIndex >= 0
