@@ -129,10 +129,6 @@ const loadDoctorHandlers = lazyHandlerModule(
   () => import("./server-methods/doctor.js"),
   (module) => module.doctorHandlers,
 );
-const loadEnvironmentsHandlers = lazyHandlerModule(
-  () => import("./server-methods/environments.js"),
-  (module) => module.environmentsHandlers,
-);
 const loadExecApprovalsHandlers = lazyHandlerModule(
   () => import("./server-methods/exec-approvals.js"),
   (module) => module.execApprovalsHandlers,
@@ -172,10 +168,6 @@ const loadNodeHandlers = lazyHandlerModule(
 const loadPluginHostHookHandlers = lazyHandlerModule(
   () => import("./server-methods/plugin-host-hooks.js"),
   (module) => module.pluginHostHookHandlers,
-);
-const loadPushHandlers = lazyHandlerModule(
-  () => import("./server-methods/push.js"),
-  (module) => module.pushHandlers,
 );
 const loadRestartHandlers = lazyHandlerModule(
   () => import("./server-methods/restart.js"),
@@ -356,10 +348,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "doctor.memory.remHarness",
     ],
     loadHandlers: loadDoctorHandlers,
-  }),
-  ...createLazyCoreHandlers({
-    methods: ["environments.list", "environments.status"],
-    loadHandlers: loadEnvironmentsHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [
@@ -543,16 +531,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["node.pending.drain", "node.pending.enqueue"],
     loadHandlers: loadNodePendingHandlers,
-  }),
-  ...createLazyCoreHandlers({
-    methods: [
-      "push.test",
-      "push.web.vapidPublicKey",
-      "push.web.subscribe",
-      "push.web.unsubscribe",
-      "push.web.test",
-    ],
-    loadHandlers: loadPushHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: ["gateway.restart.request", "gateway.restart.preflight"],
