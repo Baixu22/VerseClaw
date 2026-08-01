@@ -406,6 +406,7 @@ function buildGates(profiles, options = {}) {
       '--manifest', 'resources/verseshell/manifest.json',
       '--binary', 'resources/bin/win32-x64/ae.exe',
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
     ],
   }, { kind: 'provision-verseshell' });
   add({
