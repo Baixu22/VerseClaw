@@ -1275,6 +1275,35 @@ export function wrapToolWithBeforeToolCallHook(
             durationMs,
           });
         }
+        // C7-1: routing memo shadow dual-write. When the opt-in flag is set
+        // and a workspace is available, record which tool was chosen for the
+        // query so the routing memo JSONL can feed future tool-routing
+        // analysis. Pure shadow — never affects prompt injection.
+        if (ctx?.workspaceDir && ctx.config) {
+          try {
+            void (async () => {
+              const { isCodingRoutingMemoShadowEnabled } = await import(
+                "../context-engine/coding-runtime-flags.js"
+              );
+              if (!isCodingRoutingMemoShadowEnabled(ctx.config)) return;
+              const { appendRoutingMemo } = await import(
+                "../knowledge/routing-memo-shadow.js"
+              );
+              const queryText = summarizeToolParams(executeParams);
+              appendRoutingMemo(ctx.workspaceDir!, {
+                atMs: Date.now(),
+                sessionId: ctx.sessionId ?? "unknown",
+                query: queryText.kind === "string"
+                  ? `(${queryText.length} chars)`
+                  : queryText.kind,
+                chosenTool: normalizedToolName,
+                success: true,
+              });
+            })();
+          } catch {
+            // Routing memo shadow is best-effort; never perturb tool execution.
+          }
+        }
         return result;
       } catch (err) {
         const cause = unwrapErrorCause(err);
