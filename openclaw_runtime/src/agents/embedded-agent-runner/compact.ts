@@ -883,6 +883,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
       runId: params.runId,
       dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
       dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
+      dcsContextRole: params.config?.runtime?.contextBlock?.["context-write"]?.role,
+      dcsFactBudgetChars: params.config?.runtime?.contextBlock?.["context-understand"]?.budgetChars,
       factService: dcsExtensionDeps?.factService,
       groupId: params.groupId,
       groupChannel: params.groupChannel,

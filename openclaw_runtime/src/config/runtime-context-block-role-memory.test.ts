@@ -38,6 +38,12 @@ describe("runtime.contextBlock role-memory config", () => {
             totalChars?: number;
             dropAlertRatio?: number;
           };
+          "context-write"?: {
+            role?: string;
+          };
+          "context-understand"?: {
+            budgetChars?: number;
+          };
         }
       | undefined
     >();

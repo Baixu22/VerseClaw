@@ -63,6 +63,8 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
       },
     },
     injectionBudget: { totalChars: 6000, dropAlertRatio: 0.1 },
+    "context-write": { role: "implementer" },
+    "context-understand": { budgetChars: 12000 },
   },
   coding: {
     factViews: { enabled: true },

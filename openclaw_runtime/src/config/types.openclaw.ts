@@ -164,6 +164,14 @@ export type RuntimeFeatureConfig = {
       totalChars?: number;
       dropAlertRatio?: number;
     };
+    /** DCS Stage 5 context_write agency role override. Default "implementer". */
+    "context-write"?: {
+      role?: string;
+    };
+    /** DCS context_understand pack budget override (chars). Default 12000. */
+    "context-understand"?: {
+      budgetChars?: number;
+    };
   };
   /**
    * Coding FactStore / write-kit / residual isolation flags (CODING-OPTIMIZATION-EDD).

@@ -154,6 +154,18 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        "context-write": z
+          .object({
+            role: z.string().min(1).max(100).optional(),
+          })
+          .strict()
+          .optional(),
+        "context-understand": z
+          .object({
+            budgetChars: z.number().int().min(1).max(1_000_000).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
