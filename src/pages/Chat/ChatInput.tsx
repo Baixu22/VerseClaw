@@ -922,6 +922,7 @@ export function ChatInput({
   const [knowledgeRoutingBusy, setKnowledgeRoutingBusy] = useState(false);
   const dismissedRouteKeysRef = useRef<Map<string, number>>(new Map());
   const [quickSkills, setQuickSkills] = useState<QuickAccessSkill[]>([]);
+  const [dynamicSkillCommands, setDynamicSkillCommands] = useState<QuickAccessSkill[]>([]);
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [skillsError, setSkillsError] = useState<string | null>(null);
   const [slashMenuDismissed, setSlashMenuDismissed] = useState(false);
@@ -1249,7 +1250,7 @@ export function ChatInput({
       command,
     }));
 
-    const skillItems = quickSkills
+    const skillItems = [...quickSkills, ...dynamicSkillCommands]
       .filter((skill) => slashSkillMatchesQuery(skill, query))
       .sort((left, right) => {
         const scoreDelta = slashSkillSortScore(left, query) - slashSkillSortScore(right, query);
@@ -1269,7 +1270,7 @@ export function ChatInput({
       if (groupDelta !== 0) return groupDelta;
       return 0;
     });
-  }, [quickSkills, slashInput.active, slashInput.allowsCommands, slashInput.commandText]);
+  }, [dynamicSkillCommands, quickSkills, slashInput.active, slashInput.allowsCommands, slashInput.commandText]);
   const slashMenuOpen = slashInput.active && !slashMenuDismissed;
   const selectedSlashItem = slashItems[Math.min(slashSelectedIndex, Math.max(0, slashItems.length - 1))] ?? null;
   const taskLoopUpgradeSuggestion = useMemo(
@@ -1621,6 +1622,7 @@ export function ChatInput({
 
   useEffect(() => {
     setQuickSkills([]);
+    setDynamicSkillCommands([]);
     setSkillsError(null);
   }, [currentAgentId]);
 
@@ -1711,6 +1713,7 @@ export function ChatInput({
   const loadQuickSkills = useCallback(async (): Promise<QuickAccessSkill[]> => {
     if (!currentAgent) {
       setQuickSkills([]);
+      setDynamicSkillCommands([]);
       setSkillsError(null);
       return [];
     }
@@ -1726,9 +1729,38 @@ export function ChatInput({
       }
       const list = result.skills || [];
       setQuickSkills(list);
-      return list;
+      // commands.list exposes skill-contributed chat commands (/skill-name)
+      // that the local quick-access scan may not surface. Merge them as
+      // additional skill entries so they appear in the slash palette.
+      try {
+        const commandsResult = await hostApi.gateway.rpc<{ commands?: Array<{
+          name: string;
+          description?: string;
+          source?: string;
+        }> }>('commands.list', {
+          agentId: currentAgent.id,
+          scope: 'text',
+        });
+        const skillCommands = (commandsResult?.commands ?? [])
+          .filter((entry) => entry?.source === 'skill' && typeof entry.name === 'string')
+          .map((entry) => ({
+            name: entry.name,
+            description: entry.description ?? '',
+            source: 'openclaw' as const,
+            sourceLabel: 'skill command',
+            manifestPath: '',
+            baseDir: '',
+          }));
+        setDynamicSkillCommands(skillCommands);
+        return [...list, ...skillCommands];
+      } catch {
+        // commands.list is best-effort; fall back to local skills only.
+        setDynamicSkillCommands([]);
+        return list;
+      }
     } catch (error) {
       setQuickSkills([]);
+      setDynamicSkillCommands([]);
       setSkillsError(String(error));
       return [];
     } finally {
