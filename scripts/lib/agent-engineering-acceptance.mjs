@@ -392,15 +392,20 @@ function buildGates(profiles, options = {}) {
   // lifecycle tests. A clean detached worktree has no copy, so provision it
   // from the source repository with fail-closed integrity verification against
   // the committed manifest. The binary stays gitignored, so the worktree
-  // remains clean under repositoryIdentity.
+  // remains clean under repositoryIdentity. The UAS-06 canary stub
+  // artifacts/uas-06-single-local-exec-canary/live-observations.json is also
+  // gitignored (artifacts/*) yet read by
+  // tests/unit/uas-06-single-local-exec-canary.test.ts; it is a fixed empty
+  // observations stub (non-executing channel), so a straight copy suffices.
   add({
-    id: 'provision-verseshell-binary',
+    id: 'provision-verseshell-resources',
     profile: 'environment',
-    name: 'Provision VerseShell ae.exe binary with manifest verification',
+    name: 'Provision VerseShell gitignored resources (ae.exe + canary stub)',
     command: 'internal',
     args: [
       '--manifest', 'resources/verseshell/manifest.json',
       '--binary', 'resources/bin/win32-x64/ae.exe',
+      '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
     ],
   }, { kind: 'provision-verseshell' });
   add({
@@ -898,6 +903,20 @@ function runVerseShellBinaryProvision(gate, options = {}) {
       return fail('provisioned binary verification failed in worktree');
     }
     const stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
+    const copied = [];
+    const copyIndex = argv.indexOf('--copy');
+    const copyRelativePaths = copyIndex >= 0
+      ? argv.slice(copyIndex + 1).filter((value) => !value.startsWith('--'))
+      : [];
+    for (const copyRelative of copyRelativePaths) {
+      const sourcePath = resolve(sourceRoot, copyRelative);
+      if (!existsSync(sourcePath)) return fail(`provision source missing: ${copyRelative}`);
+      const destPath = resolve(worktree, copyRelative);
+      mkdirSync(dirname(destPath), { recursive: true });
+      copyFileSync(sourcePath, destPath);
+      copied.push(copyRelative);
+    }
+    if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
     return {
       ...base,
       status: 'pass',
