@@ -129,10 +129,6 @@ const loadDoctorHandlers = lazyHandlerModule(
   () => import("./server-methods/doctor.js"),
   (module) => module.doctorHandlers,
 );
-const loadEnvironmentsHandlers = lazyHandlerModule(
-  () => import("./server-methods/environments.js"),
-  (module) => module.environmentsHandlers,
-);
 const loadExecApprovalsHandlers = lazyHandlerModule(
   () => import("./server-methods/exec-approvals.js"),
   (module) => module.execApprovalsHandlers,
@@ -173,10 +169,6 @@ const loadPluginHostHookHandlers = lazyHandlerModule(
   () => import("./server-methods/plugin-host-hooks.js"),
   (module) => module.pluginHostHookHandlers,
 );
-const loadPushHandlers = lazyHandlerModule(
-  () => import("./server-methods/push.js"),
-  (module) => module.pushHandlers,
-);
 const loadRestartHandlers = lazyHandlerModule(
   () => import("./server-methods/restart.js"),
   (module) => module.restartHandlers,
@@ -196,10 +188,6 @@ const loadSkillsHandlers = lazyHandlerModule(
 const loadSystemHandlers = lazyHandlerModule(
   () => import("./server-methods/system.js"),
   (module) => module.systemHandlers,
-);
-const loadTalkHandlers = lazyHandlerModule(
-  () => import("./server-methods/talk.js"),
-  (module) => module.talkHandlers,
 );
 const loadTasksHandlers = lazyHandlerModule(
   () => import("./server-methods/tasks.js"),
@@ -221,10 +209,6 @@ const loadSecurityVerificationShadowHandlers = lazyHandlerModule(
   () => import("./server-methods/security-verification-shadow.js"),
   (module) => module.securityVerificationShadowHandlers,
 );
-const loadTtsHandlers = lazyHandlerModule(
-  () => import("./server-methods/tts.js"),
-  (module) => module.ttsHandlers,
-);
 const loadUpdateHandlers = lazyHandlerModule(
   () => import("./server-methods/update.js"),
   (module) => module.updateHandlers,
@@ -232,14 +216,6 @@ const loadUpdateHandlers = lazyHandlerModule(
 const loadUsageHandlers = lazyHandlerModule(
   () => import("./server-methods/usage.js"),
   (module) => module.usageHandlers,
-);
-const loadVoicewakeRoutingHandlers = lazyHandlerModule(
-  () => import("./server-methods/voicewake-routing.js"),
-  (module) => module.voicewakeRoutingHandlers,
-);
-const loadVoicewakeHandlers = lazyHandlerModule(
-  () => import("./server-methods/voicewake.js"),
-  (module) => module.voicewakeHandlers,
 );
 const loadWebHandlers = lazyHandlerModule(
   () => import("./server-methods/web.js"),
@@ -297,14 +273,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["localControlPlane.status", "localControlPlane.reports", "localControlPlane.correlations"],
     loadHandlers: loadLocalControlPlaneHandlers,
-  }),
-  ...createLazyCoreHandlers({
-    methods: ["voicewake.get", "voicewake.set"],
-    loadHandlers: loadVoicewakeHandlers,
-  }),
-  ...createLazyCoreHandlers({
-    methods: ["voicewake.routing.get", "voicewake.routing.set"],
-    loadHandlers: loadVoicewakeRoutingHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: ["health", "status"],
@@ -382,10 +350,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadDoctorHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["environments.list", "environments.status"],
-    loadHandlers: loadEnvironmentsHandlers,
-  }),
-  ...createLazyCoreHandlers({
     methods: [
       "exec.approvals.get",
       "exec.approvals.set",
@@ -431,28 +395,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadWizardHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: [
-      "talk.session.create",
-      "talk.session.join",
-      "talk.session.appendAudio",
-      "talk.session.startTurn",
-      "talk.session.endTurn",
-      "talk.session.cancelTurn",
-      "talk.session.cancelOutput",
-      "talk.session.submitToolResult",
-      "talk.session.steer",
-      "talk.session.close",
-      "talk.client.create",
-      "talk.client.toolCall",
-      "talk.client.steer",
-      "talk.catalog",
-      "talk.config",
-      "talk.speak",
-      "talk.mode",
-    ],
-    loadHandlers: loadTalkHandlers,
-  }),
-  ...createLazyCoreHandlers({
     methods: ["tasks.list", "tasks.get", "tasks.cancel"],
     loadHandlers: loadTasksHandlers,
   }),
@@ -489,19 +431,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: ["agentBrowser.invoke", "agentBrowser.invoke.result"],
     loadHandlers: loadAgentBrowserHandlers,
-  }),
-  ...createLazyCoreHandlers({
-    methods: [
-      "tts.status",
-      "tts.enable",
-      "tts.disable",
-      "tts.convert",
-      "tts.setProvider",
-      "tts.personas",
-      "tts.setPersona",
-      "tts.providers",
-    ],
-    loadHandlers: loadTtsHandlers,
   }),
   ...createLazyCoreHandlers({
     methods: [
@@ -604,16 +533,6 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadNodePendingHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: [
-      "push.test",
-      "push.web.vapidPublicKey",
-      "push.web.subscribe",
-      "push.web.unsubscribe",
-      "push.web.test",
-    ],
-    loadHandlers: loadPushHandlers,
-  }),
-  ...createLazyCoreHandlers({
     methods: ["gateway.restart.request", "gateway.restart.preflight"],
     loadHandlers: loadRestartHandlers,
   }),
@@ -671,6 +590,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "memory.evidenceCheck",
       "memory.simulateInjection",
       "memory.health",
+      "memory.governance",
+      "memory.operatorInspection",
       "memory.utilityReport",
       "memory.evalReport",
       "memory.detail",

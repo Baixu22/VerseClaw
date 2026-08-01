@@ -1,7 +1,0 @@
-Use the input brand board as reference. Recreate only the small app icon design from the Small App Icon panel as a clean standalone 1024x1024 app icon.
-
-Icon content: rounded square warm yellow-orange app icon background, centered simplified Clawling head logo. The logo is a cute yellow face with tiny black oval eyes and tiny simple mouth, wearing a red-orange soft three-petal rounded claw hood. Include the cream-white small claw belly/mark at the bottom only if it remains clear and balanced. Keep the exact soft vinyl mascot style and color identity from the reference board.
-
-Requirements: single icon only, centered, no grid, no board layout, no labels, no numbers, no text, no watermark. Crisp readable silhouette at 16/32/64 px, generous padding, polished app icon, smooth rounded shapes, soft matte 3D clay feel.
-
-Avoid: extra characters, full body, specification sheet, text, letters, numbers, mushroom cap, mecha, metal, crab, lobster, sharp armor, busy background.

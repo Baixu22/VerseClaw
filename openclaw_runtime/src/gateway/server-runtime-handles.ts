@@ -28,6 +28,7 @@ export type GatewayServerMutableState = {
   skillsChangeUnsub: () => void;
   channelHealthMonitor: ChannelHealthMonitor | null;
   stopModelPricingRefresh: () => void;
+  stopMemoryConsolidation?: () => void;
   mcpServer: { port: number; close: () => Promise<void> } | undefined;
   configReloader: GatewayConfigReloaderHandle;
   agentUnsub: (() => void) | null;

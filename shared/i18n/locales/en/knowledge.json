@@ -493,18 +493,38 @@
     "advisoryTitle": "Advisory injection preview",
     "emptyAdvisory": "No advisory text was returned.",
     "errors": {
-      "report": "Could not load runtime lessons.",
-      "suggest": "Could not suggest principles.",
-      "confirm": "Could not confirm this principle.",
-      "reject": "Could not reject this suggestion.",
-      "retrieve": "Could not retrieve confirmed principles."
+      "capture": "Could not capture trajectory.",
+      "distill": "Could not run batch distillation.",
+      "shadow": "Could not generate shadow evaluation report."
     },
     "toasts": {
-      "suggested": "{{count}} review suggestion(s) ready",
-      "confirmed": "Principle confirmed",
-      "rejected": "Suggestion rejected",
-      "retrieved": "{{count}} confirmed principle(s) retrieved"
-    }
+      "captured": "Trajectory captured",
+      "distilled": "{{count}} suggestion(s) distilled",
+      "shadow": "Shadow evaluation report ready"
+    },
+    "captureTitle": "Capture trajectory",
+    "captureDescription": "Manually record a task trajectory into SEKB for later distillation.",
+    "outcome": "Outcome",
+    "outcomeSuccess": "Success",
+    "outcomePartial": "Partial",
+    "outcomeFailure": "Failure",
+    "rawError": "Raw error",
+    "rawErrorPlaceholder": "Error message for failure outcomes",
+    "capture": "Capture trajectory",
+    "capturing": "Capturing…",
+    "captureSuccess": "Trajectory captured.",
+    "captureFailed": "Capture failed.",
+    "distillTitle": "Batch distillation",
+    "distillDescription": "Run batch distillation suggestions over undistilled trajectories.",
+    "distill": "Run batch distillation",
+    "distilling": "Distilling…",
+    "distillResult": "{{count}} batch suggestion(s) produced",
+    "shadowTitle": "Shadow evaluation",
+    "shadowDescription": "Offline shadow evaluation report (pseudonymized evidence).",
+    "shadowKey": "Pseudonymization key",
+    "shadowKeyPlaceholder": "Key for offline evaluation evidence",
+    "shadowReport": "Generate report",
+    "shadowRunning": "Generating…"
   },
   "governance": {
     "title": "Governance",

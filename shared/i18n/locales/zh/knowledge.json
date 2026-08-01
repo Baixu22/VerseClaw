@@ -466,18 +466,38 @@
     "advisoryTitle": "辅助注入预览",
     "emptyAdvisory": "未返回辅助文本。",
     "errors": {
-      "report": "无法加载运行经验。",
-      "suggest": "无法生成原则建议。",
-      "confirm": "无法确认该原则。",
-      "reject": "无法拒绝该建议。",
-      "retrieve": "无法检索已确认原则。"
+      "capture": "无法捕获轨迹。",
+      "distill": "无法运行批量蒸馏。",
+      "shadow": "无法生成影子评测报告。"
     },
     "toasts": {
-      "suggested": "已有 {{count}} 条建议可供审查",
-      "confirmed": "原则已确认",
-      "rejected": "建议已拒绝",
-      "retrieved": "已检索 {{count}} 条确认原则"
-    }
+      "captured": "轨迹已捕获",
+      "distilled": "已蒸馏 {{count}} 条建议",
+      "shadow": "影子评测报告已就绪"
+    },
+    "captureTitle": "捕获轨迹",
+    "captureDescription": "手动将任务轨迹记录到 SEKB，供后续蒸馏。",
+    "outcome": "结果",
+    "outcomeSuccess": "成功",
+    "outcomePartial": "部分成功",
+    "outcomeFailure": "失败",
+    "rawError": "原始错误",
+    "rawErrorPlaceholder": "失败结果的错误信息",
+    "capture": "捕获轨迹",
+    "capturing": "捕获中…",
+    "captureSuccess": "轨迹已捕获。",
+    "captureFailed": "捕获失败。",
+    "distillTitle": "批量蒸馏",
+    "distillDescription": "对未蒸馏轨迹运行批量蒸馏建议。",
+    "distill": "运行批量蒸馏",
+    "distilling": "蒸馏中…",
+    "distillResult": "生成 {{count}} 条批量建议",
+    "shadowTitle": "影子评测",
+    "shadowDescription": "离线影子评测报告（伪匿名证据）。",
+    "shadowKey": "伪匿名密钥",
+    "shadowKeyPlaceholder": "离线评测证据的密钥",
+    "shadowReport": "生成报告",
+    "shadowRunning": "生成中…"
   },
   "governance": {
     "title": "治理",

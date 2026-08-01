@@ -154,6 +154,18 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        "context-write": z
+          .object({
+            role: z.string().min(1).max(100).optional(),
+          })
+          .strict()
+          .optional(),
+        "context-understand": z
+          .object({
+            budgetChars: z.number().int().min(1).max(1_000_000).optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
@@ -216,6 +228,17 @@ const RuntimeFeatureSchema = z
     toolRegistry: z
       .object({
         shadow: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    mission: z
+      .object({
+        rollback: z
+          .object({
+            enabled: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
@@ -296,7 +319,7 @@ const RuntimeFeatureSchema = z
         writeJournal: z.object({ enabled: z.boolean().optional() }).strict().optional(),
         autoVerify: z
           .object({
-            enabled: z.boolean().optional(),
+            enabled: z.union([z.boolean(), z.literal('auto')]).optional(),
             timeoutSeconds: z.number().int().min(1).max(90).optional(),
             command: z.string().trim().min(1).max(2000).optional(),
           })

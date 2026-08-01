@@ -7,6 +7,7 @@ import { isRecord } from './payload-utils';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
+import { LONG_TASK_INPUT_MODES } from '../../shared/types/long-task-control';
 import { getSessionTokenUsageSummary } from '../utils/token-usage';
 import { computeWorkspaceFingerprint } from '@shared/workspace-fingerprint';
 import { getWorkspaceRootPathById } from './workspaces-api';
@@ -456,7 +457,10 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
             }
           }
         }
-        if (typeof body.inputMode === 'string' && ['interrupt', 'guide', 'queue', 'revise-goal'].includes(body.inputMode)) {
+        if (
+          typeof body.inputMode === 'string' &&
+          (LONG_TASK_INPUT_MODES as readonly string[]).includes(body.inputMode)
+        ) {
           rpcParams.inputMode = body.inputMode;
         }
         // Area 2 §3.2: forward turn-scoped model override to runtime chat.send.

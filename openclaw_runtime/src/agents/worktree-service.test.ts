@@ -242,4 +242,47 @@ describe("worktree-service C4-H hardening", () => {
     expect(listWorktreeDirs(root).includes("g-a")).toBe(false);
     expect(listWorktreeDirs(root).includes("g-b")).toBe(false);
   });
+
+  it("hardened git env disables repository hooks (C4-H parity with Codex info.rs)", () => {
+    // Same env set injected by worktree-service git()/isGitRepo (and
+    // electron git-api execBinary): GIT_OPTIONAL_LOCKS=0,
+    // GIT_TERMINAL_PROMPT=0, core.hooksPath=NUL|/dev/null. A repository
+    // post-commit hook must NOT run under this env, while the control run
+    // (plain env) proves the hook itself fires.
+    initGitRepo(root);
+    mkdirSync(path.join(root, ".git", "hooks"), { recursive: true });
+    const marker = path.join(root, "hook-marker");
+    const hookPath = path.join(root, ".git", "hooks", "post-commit");
+    writeFileSync(
+      hookPath,
+      `#!/bin/sh\necho HOOK_TRIGGERED >> "${marker.replace(/\\/g, "/")}"\n`,
+    );
+    try {
+      execFileSync("chmod", ["+x", hookPath], { stdio: "ignore" });
+    } catch {
+      // Windows: executable bit is not meaningful; git for windows still
+      // executes hooks via sh when core.hooksPath is active.
+    }
+
+    // Control: plain env → hook fires.
+    writeFileSync(path.join(root, "f.txt"), "v1\n", "utf8");
+    execFileSync("git", ["add", "f.txt"], { cwd: root, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "control"], { cwd: root, stdio: "ignore" });
+    expect(existsSync(marker)).toBe(true);
+    rmSync(marker, { force: true });
+
+    // Hardened env (same as production wrapper) → hook must not fire.
+    const hardenedEnv = {
+      ...process.env,
+      GIT_OPTIONAL_LOCKS: "0",
+      GIT_TERMINAL_PROMPT: "0",
+      GIT_CONFIG_COUNT: "1",
+      GIT_CONFIG_KEY_0: "core.hooksPath",
+      GIT_CONFIG_VALUE_0: process.platform === "win32" ? "NUL" : "/dev/null",
+    };
+    writeFileSync(path.join(root, "f.txt"), "v2\n", "utf8");
+    execFileSync("git", ["add", "f.txt"], { cwd: root, stdio: "ignore", env: hardenedEnv });
+    execFileSync("git", ["commit", "-m", "hardened"], { cwd: root, stdio: "ignore", env: hardenedEnv });
+    expect(existsSync(marker)).toBe(false);
+  });
 });

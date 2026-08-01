@@ -3,7 +3,7 @@
 // Exposes the role registry, team templates, and orchestrator planning/execution
 // to operator clients (ClawX UI). Read methods are pure over the runtime config;
 // orchestrator.run anchors on a caller-provided sessionKey and spawns real
-// role-driven subagents via runOrchestration (orchestrator-run.ts).
+// role-driven subagents via runOrchestrationObserved (orchestrator-run-observed.ts).
 //
 // Params are parsed defensively here rather than via generated protocol
 // validators, so no change to the gateway-protocol package is required.
@@ -973,6 +973,79 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
   "memory.health": async ({ respond }) => {
     if (respondRoleMemoryDisabled(respond, { payload: { health: disabledMemoryHealthReport() } })) return;
     respond(true, { health: getMemoryHealthReport() }, undefined);
+  },
+
+  "memory.governance": async ({ params, respond, context }) => {
+    // Runtime-memory governance report (roadmap §D3): 4 signals over the
+    // runtime-memory fact store, separate from role-memory (memory.health).
+    try {
+      const { createRuntimeMemoryRuntimeIntegration } = await import(
+        "../../runtime-core/memory-runtime-integration.js"
+      );
+      const { buildHealthReport } = await import(
+        "../../runtime-core/memory-governance.js"
+      );
+      const integration = createRuntimeMemoryRuntimeIntegration({
+        config: context.getRuntimeConfig(),
+      });
+      const { store } = integration.loadStore();
+      const facts = store.queryFacts();
+      const usage = store.getUsageStats();
+      const usageByFact = new Map(usage.map((u) => [u.factId, u]));
+      const governanceFacts = facts
+        .filter((fact) => "factId" in fact && typeof fact.factId === "string")
+        .map((fact) => {
+          const typed = fact as {
+            factId: string;
+            invalid_at?: number;
+            subject?: string;
+            predicate?: string;
+          };
+          const stat = usageByFact.get(typed.factId);
+          return {
+            factId: typed.factId,
+            invalidAt: typeof typed.invalid_at === "number" ? typed.invalid_at : undefined,
+            lastAccessedAt: stat?.lastAccessedAt,
+            accessCount: stat?.count ?? 0,
+            subject: typed.subject ?? "unknown",
+            predicate: typed.predicate ?? "",
+          };
+        });
+      const limit = readPositiveInteger(params.limit) ?? 0;
+      const userId = readString(params.userId) ?? "operator";
+      const report = buildHealthReport(userId, {
+        facts: limit > 0 ? governanceFacts.slice(0, limit) : governanceFacts,
+      });
+      respond(true, { report }, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.UNAVAILABLE, `memory.governance failed: ${error instanceof Error ? error.message : String(error)}`),
+      );
+    }
+  },
+
+  "memory.operatorInspection": async ({ params, respond, context }) => {
+    // Read-only sanitized runtime-memory episode inspection for operators.
+    // Admin scope: episodes may contain sensitive text, redacted before return.
+    try {
+      const { inspectRuntimeMemoryForOperator } = await import(
+        "../../runtime-core/memory-operator-inspection.js"
+      );
+      const limit = readPositiveInteger(params.limit) ?? 50;
+      const inspection = inspectRuntimeMemoryForOperator({
+        config: context.getRuntimeConfig(),
+        limit: Math.max(1, Math.min(200, limit)),
+      });
+      respond(true, { inspection }, undefined);
+    } catch (error) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.UNAVAILABLE, `memory.operatorInspection failed: ${error instanceof Error ? error.message : String(error)}`),
+      );
+    }
   },
 
   "memory.utilityReport": async ({ params, respond }) => {

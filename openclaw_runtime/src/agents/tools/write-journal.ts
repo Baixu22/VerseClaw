@@ -238,7 +238,11 @@ function projectFullFileWrite(params: {
 }
 
 export function journalDirFor(workspaceRoot: string, sessionId: string): string {
-  return path.join(workspaceRoot, ".openclaw", "journal", sessionId);
+  // Filesystem-safe session key: canonical keys like "agent:main:main"
+  // contain ':' which is illegal in Windows paths. Normalize once here so
+  // every read/write/rehydrate path resolves the same directory.
+  const safe = sessionId.replace(/[\\/:*?"<>|]/g, "_");
+  return path.join(workspaceRoot, ".openclaw", "journal", safe);
 }
 
 /**

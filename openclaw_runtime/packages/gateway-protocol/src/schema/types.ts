@@ -108,6 +108,8 @@ export type SessionsLongTaskControlHistoryResult =
   SchemaType<"SessionsLongTaskControlHistoryResult">;
 export type SessionsResumeCheckpointsParams = SchemaType<"SessionsResumeCheckpointsParams">;
 export type SessionsResumeCheckpointsResult = SchemaType<"SessionsResumeCheckpointsResult">;
+export type SessionsRestoreCheckpointParams = SchemaType<"SessionsRestoreCheckpointParams">;
+export type SessionsRestoreCheckpointResult = SchemaType<"SessionsRestoreCheckpointResult">;
 export type SessionsQueueDrainParams = SchemaType<"SessionsQueueDrainParams">;
 export type SessionsQueueDrainResult = SchemaType<"SessionsQueueDrainResult">;
 export type SessionsCreateParams = SchemaType<"SessionsCreateParams">;

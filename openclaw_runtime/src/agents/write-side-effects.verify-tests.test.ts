@@ -115,6 +115,27 @@ describe("FP-P1-04 write-side verify段 (test-runner detection)", () => {
     expect(result.details?.verify_tests).toBeUndefined();
   });
 
+  it("auto mode with NO detected runner never calls the exec bridge", async () => {
+    // "auto" semantics: only execute when a runner is detected within budget.
+    // A project without any manifest must skip detection and must NOT invoke
+    // executeTestCommand — the bridge call is the only side effect to assert.
+    const executeTestCommand = vi.fn(async () => ({
+      content: [{ type: "text", text: "SHOULD_NOT_RUN" }],
+      details: { status: "completed", exitCode: 0, durationMs: 0 },
+    }));
+    const root = workspace({ "a.js": "x\n" });
+    const details = await runEdit(root, {
+      autoVerifyEnabled: "auto",
+      executeTestCommand,
+    });
+    expect(executeTestCommand).not.toHaveBeenCalled();
+    const verify = details.verify_tests as Record<string, unknown> | undefined;
+    expect(verify).toBeDefined();
+    expect(verify?.execution).toBeUndefined();
+    // The skip must be explainable to the model, not silent.
+    expect(String(verify?.rendered)).toContain("skip");
+  });
+
   it("executes through the injected canonical exec bridge and records pass output", async () => {
     const executeTestCommand = vi.fn(async () => ({
       content: [{ type: "text", text: "AUTO_VERIFY_PASS" }],

@@ -2733,6 +2733,27 @@ export type SessionResumeCheckpointsResult = HostSuccess & {
   key?: string;
   checkpoints: LongTaskCheckpointRecord[];
 };
+export type SessionRestoreCheckpointPayload = SessionLongTaskControlHistoryPayload & {
+  checkpointId: string;
+};
+export type SessionCheckpointDiffFile = {
+  filePath: string;
+  status: 'modified' | 'created' | 'deleted';
+  unifiedDiff: string;
+};
+export type SessionCheckpointDiffResult = HostSuccess & {
+  key?: string;
+  checkpointId: string;
+  files: SessionCheckpointDiffFile[];
+  errors: string[];
+};
+export type SessionRestoreCheckpointResult = HostSuccess & {
+  key?: string;
+  checkpointId: string;
+  rolledBackTo: string;
+  mode: 'legacy_checkpoint_fallback' | 'event_log_replay';
+  evidenceSummary: string;
+};
 export type SessionQueueDrainResult = HostSuccess & {
   key?: string;
   drained: boolean;
@@ -4178,6 +4199,9 @@ export type GitDiffListResult = HostSuccess & {
 };
 export type GitFileDiffResult = HostSuccess & GitDiffResult;
 export type GitBranchListResult = HostSuccess & { branches: GitBranch[] };
+
+export type GitMergeBasePayload = { base: string; head?: string };
+export type GitMergeBaseResult = HostSuccess & { mergeBase?: string };
 export type GitLogPayload = { ref?: string; limit?: number };
 export type GitLogResult = HostSuccess & {
   commits: GitCommitInfo[];
@@ -4191,7 +4215,7 @@ export type GithubAuthStatusResult = HostSuccess & GithubAuthStatus;
 export type GithubRepoResult = HostSuccess & { repository: GithubRepository | null };
 export type GithubPrListResult = HostSuccess & { pullRequests: GithubPrSummary[] };
 export type GithubPrViewResult = HostSuccess & { pullRequest: GithubPrSummary | null; body?: string };
-export type GithubPrCreateResult = GitOperationResult & { pullRequest?: GithubPrSummary };
+export type GithubPrCreateResult = GitOperationResult & { pullRequest?: GithubPrSummary; reused?: boolean };
 
 export type TaskLedgerWorkspacePayload = { workspaceId?: string | null };
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
@@ -4741,6 +4765,7 @@ export type HostApiContract = {
     commit: (payload: GitCommitPayload) => GitCommitResult;
     branches: () => GitBranchListResult;
     log: (payload?: GitLogPayload) => GitLogResult;
+    mergeBase: (payload: GitMergeBasePayload) => GitMergeBaseResult;
     checkoutBranch: (payload: GitBranchCheckoutPayload) => GitOperationResult;
     createBranch: (payload: GitBranchCreatePayload) => GitOperationResult;
     stashList: () => GitStashListResult;
@@ -5029,6 +5054,8 @@ export type HostApiContract = {
     longTaskControlStatus: (payload: SessionLongTaskControlPayload) => SessionLongTaskControlStatusResult;
     longTaskControlHistory: (payload: SessionLongTaskControlHistoryPayload) => SessionLongTaskControlHistoryResult;
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;
+    restoreCheckpoint: (payload: SessionRestoreCheckpointPayload) => SessionRestoreCheckpointResult;
+    checkpointDiff: (payload: SessionRestoreCheckpointPayload) => SessionCheckpointDiffResult;
     queueDrain: (payload: SessionLongTaskControlPayload) => SessionQueueDrainResult;
     compact: (payload: SessionManualCompactPayload) => SessionCompactionResult;
     prepareHandoff: (payload: SessionHandoffPayload) => SessionHandoffResult;

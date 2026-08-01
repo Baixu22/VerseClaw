@@ -1341,6 +1341,8 @@ export async function runEmbeddedAttempt(
             runId: params.runId,
             dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
             dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
+            dcsContextRole: params.config?.runtime?.contextBlock?.["context-write"]?.role,
+            dcsFactBudgetChars: params.config?.runtime?.contextBlock?.["context-understand"]?.budgetChars,
             factService: dcsExtensionDeps?.factService,
             toolSearchCatalogRef,
             agentDir,
@@ -1496,6 +1498,7 @@ export async function runEmbeddedAttempt(
             config: params.config,
             agentId: sessionAgentId,
             warn: bootstrapWarn,
+            memoryKeywords: typeof params.prompt === "string" ? [params.prompt] : [],
           }),
         };
       },

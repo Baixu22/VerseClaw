@@ -13,6 +13,8 @@ export const ErrorCodes = {
   INVALID_REQUEST: "INVALID_REQUEST",
   /** Approval resolution referenced a missing or expired approval request. */
   APPROVAL_NOT_FOUND: "APPROVAL_NOT_FOUND",
+  /** Requested resource (session, checkpoint, artifact) does not exist. */
+  NOT_FOUND: "NOT_FOUND",
   /** Gateway service or required backend is temporarily unavailable. */
   UNAVAILABLE: "UNAVAILABLE",
 } as const;

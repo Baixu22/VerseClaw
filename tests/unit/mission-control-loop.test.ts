@@ -402,4 +402,56 @@ describe('Mission Control controller', () => {
     const cancelled = cancelMission(created.missionId, deps);
     expect(cancelled.status).toBe('cancelled');
   });
+
+  it('extracts explicit remember statements into role memory proposals (P1-3)', async () => {
+    const { deps } = createDeps({
+      reviewer: async () => review('complete', {
+        memoryCandidates: [],
+        reason: 'Remember to verify Mission evidence before reuse.',
+      }),
+    });
+
+    await runMission(
+      {
+        objective: 'Capture durable guidance',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    // The reviewer reason contains an explicit "Remember" statement, so the
+    // extractor path must produce exactly one role-memory proposal beyond any
+    // reviewer role_memory candidates (none here). The extractor strips the
+    // leading "remember" keyword from the stored content.
+    expect(deps.proposeMemory).toHaveBeenCalledTimes(1);
+    expect(deps.proposeMemory).toHaveBeenCalledWith(expect.objectContaining({
+      content: 'to verify Mission evidence before reuse.',
+      source: 'trace',
+    }), expect.anything());
+  });
+
+  it('does not extract when reviewer text lacks remember patterns (P1-3)', async () => {
+    const { deps } = createDeps({
+      reviewer: async () => review('complete', {
+        memoryCandidates: [],
+        reason: 'The evidence satisfies the acceptance criteria.',
+      }),
+    });
+
+    await runMission(
+      {
+        objective: 'No explicit memory guidance',
+        sessionKey: 'agent:main:session',
+        acceptance: ['tests pass'],
+      },
+      {},
+      deps,
+    );
+
+    // No "remember"-style statement: the extractor gate must stay closed and
+    // the plain reviewer reason must not become a role-memory proposal.
+    expect(deps.proposeMemory).not.toHaveBeenCalled();
+  });
 });

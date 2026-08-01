@@ -29,6 +29,13 @@ import {
 } from "./task-ledger.js";
 
 export type LongTaskInputMode = "interrupt" | "guide" | "queue" | "revise-goal";
+
+export const LONG_TASK_INPUT_MODES = [
+  "interrupt",
+  "guide",
+  "queue",
+  "revise-goal",
+] as const satisfies readonly LongTaskInputMode[];
 export type ResumeCheckpointTrigger =
   | "compaction"
   | "interrupt"
@@ -887,7 +894,7 @@ export function listLongTaskInterventions(
   ).rows.map(interventionRowToRecord);
 }
 
-function getLongTaskCheckpointById(id: string): LongTaskCheckpointRecord | undefined {
+export function getLongTaskCheckpointById(id: string): LongTaskCheckpointRecord | undefined {
   const { db, query } = stateDb();
   const row = executeSqliteQuerySync(
     db,

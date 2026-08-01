@@ -7,6 +7,7 @@ import {
   parseCronBrowserAutomationPrompt,
 } from '@shared/cron-browser-automation';
 import type { BrowserAutomationRunResult } from '@shared/host-api/contract';
+import type { DeliveryChannelGroup } from '@shared/host-api/contract';
 import type {
   CronBrowserAutomationConfig,
   CronJob,
@@ -211,7 +212,32 @@ function buildCronRunMessage(entry: CronRunLogEntry, index: number): CronSession
   };
 }
 
-async function readCronRunLog(jobId: string): Promise<CronRunLogEntry[]> {
+async function readCronRunLog(
+  gatewayManager: GatewayManager,
+  jobId: string,
+): Promise<CronRunLogEntry[]> {
+  // Runtime persists run logs to SQLite (cron_run_logs); the legacy JSONL
+  // path below has no producers. Prefer the cron.runs RPC so run history
+  // actually shows up; fall back to the old file read (now effectively empty)
+  // when the gateway is unreachable.
+  try {
+    const result = await gatewayManager.rpc(
+      'cron.runs',
+      { jobId, limit: 500, sortDir: 'asc' },
+      8000,
+    );
+    const page = result as { entries?: CronRunLogEntry[] } | undefined;
+    const entries = Array.isArray(page?.entries) ? page.entries : [];
+    if (entries.length > 0) {
+      return entries.filter(
+        (entry) => entry && entry.jobId === jobId && (!entry.action || entry.action === 'finished'),
+      );
+    }
+    // No entries from the RPC (mock, old gateway, or genuinely empty run log):
+    // fall through to the legacy JSONL read so callers keep working.
+  } catch {
+    // fall through to legacy JSONL read (returns [] when absent)
+  }
   const logPath = join(getOpenClawConfigDir(), 'cron', 'runs', `${jobId}.jsonl`);
   const raw = await readFile(logPath, 'utf8').catch(() => '');
   if (!raw.trim()) return [];
@@ -673,7 +699,7 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
       const [jobsResult, runs, sessionEntry] = await Promise.all([
         gatewayManager.rpc('cron.list', { includeDisabled: true }, 8000)
           .catch(() => ({ jobs: [] as GatewayCronJob[] })),
-        readCronRunLog(parsedSession.jobId),
+        readCronRunLog(gatewayManager, parsedSession.jobId),
         readSessionStoreEntry(parsedSession.agentId, sessionKey),
       ]);
       const jobs = (jobsResult as { jobs?: GatewayCronJob[] }).jobs ?? [];
@@ -692,6 +718,32 @@ export function createCronApi({ gatewayManager }: { gatewayManager: GatewayManag
         browserAutomationRuns: collectBrowserAutomationRuns(runs, limit),
       };
     },
-    deliveryTargets: async () => ({ success: true, targets: [] }),
+    deliveryTargets: async () => {
+      try {
+        const { readOpenClawConfig } = await import('../utils/channel-config');
+        const config = await readOpenClawConfig();
+        const channels = config.channels ?? {};
+        const targets: DeliveryChannelGroup[] = [];
+        for (const [channelType, section] of Object.entries(channels)) {
+          if (!section || typeof section !== 'object') continue;
+          const accounts = isRecord(section.accounts) ? section.accounts as Record<string, unknown> : {};
+          const accountIds = Object.keys(accounts);
+          if (accountIds.length === 0) continue;
+          targets.push({
+            channelType: toUiChannelType(channelType),
+            defaultAccountId: accountIds[0],
+            accounts: accountIds.map((accountId) => ({
+              accountId,
+              name: accountId,
+              isDefault: accountId === accountIds[0],
+            })),
+          });
+        }
+        return { success: true, targets };
+      } catch {
+        // Config read failures degrade to empty target list, never throw.
+        return { success: true, targets: [] };
+      }
+    },
   };
 }

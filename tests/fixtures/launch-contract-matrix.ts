@@ -224,8 +224,8 @@ export const MD_MATRIX_ROWS: readonly MdMatrixRow[] = [
   },
   {
     mdLabel: 'Coding auto verify',
-    mdDefaultCell: '**false** (opt-in)',
-    declaredDefault: 'false',
+    mdDefaultCell: '**auto** (detect runner, else skip)',
+    declaredDefault: 'auto',
     assertedBy: 'coding-auto-verify-default',
   },
 ] as const;

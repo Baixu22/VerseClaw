@@ -9,14 +9,14 @@
  * control plane). The former `runtime.coding.factViews.enabled` default-true
  * leaf was a dead config with zero production callers and has been removed.
  */
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 
 export const DEFAULT_CODING_FEATURE_FLAGS = {
   "runtime.coding.parseOnTouch.enabled": true,
   "runtime.coding.staleWriteGuard.enabled": false,
   "runtime.coding.writeJournal.enabled": true,
-  /** FP-P2-05: post-write execution remains explicit opt-in. */
-  "runtime.coding.autoVerify.enabled": false,
+  /** FP-P2-05: post-write execution. "auto" runs only when a runner is detected within budget. */
+  "runtime.coding.autoVerify.enabled": "auto" as const,
   /** C4-H: inprocess until git backend ACCEPT evidence. */
   "runtime.coding.worktree.backend": "inprocess" as const,
   /** C5-H: memory until multi-process WAL ACCEPT evidence. */
@@ -42,7 +42,15 @@ export const DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
 export const MAX_CODING_AUTO_VERIFY_TIMEOUT_SECONDS = 90;
 
 export type CodingAutoVerifyConfig = {
-  enabled: boolean;
+  /**
+   * - true: always run detected tests after writes.
+   * - false: never run.
+   * - "auto": run only when a test runner is detected AND the estimated
+   *   timeout fits the configured budget (default 90s). This is the new
+   *   default: post-write verification becomes active where it is cheap and
+   *   reliable, while stays off where no runner exists.
+   */
+  enabled: boolean | "auto";
   timeoutSeconds: number;
   command?: string;
 };
@@ -127,10 +135,13 @@ export function resolveCodingAutoVerifyConfig(cfg?: OpenClawConfig): CodingAutoV
       ? leaf.timeoutSeconds
       : DEFAULT_CODING_AUTO_VERIFY_TIMEOUT_SECONDS;
   const command = typeof leaf?.command === "string" ? leaf.command.trim() : "";
+  const enabledValue = leaf?.enabled === undefined
+    ? DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"]
+    : leaf.enabled;
   return {
     enabled:
-      typeof leaf?.enabled === "boolean"
-        ? leaf.enabled
+      enabledValue === "auto" || enabledValue === true || enabledValue === false
+        ? enabledValue
         : DEFAULT_CODING_FEATURE_FLAGS["runtime.coding.autoVerify.enabled"],
     timeoutSeconds,
     ...(command ? { command } : {}),

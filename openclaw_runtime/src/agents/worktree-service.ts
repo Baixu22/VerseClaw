@@ -114,11 +114,30 @@ export function hardenFsRoot(absPath: string): string {
   return resolved;
 }
 
+const GIT_EXEC_TIMEOUT_MS = 15_000;
+
+/** Shared hardened env for all git invocations (C4-H): hooks disabled, no locks, no prompts, fsmonitor off. */
+function hardenedGitEnv(): NodeJS.ProcessEnv {
+  return {
+    ...process.env,
+    GIT_OPTIONAL_LOCKS: "0",
+    GIT_TERMINAL_PROMPT: "0",
+    GIT_CONFIG_COUNT: "2",
+    GIT_CONFIG_KEY_0: "core.hooksPath",
+    GIT_CONFIG_VALUE_0: process.platform === "win32" ? "NUL" : "/dev/null",
+    GIT_CONFIG_KEY_1: "core.fsmonitor",
+    GIT_CONFIG_VALUE_1: "false",
+  };
+}
+
 function isGitRepo(root: string): boolean {
   try {
     const out = execFileSync("git", ["-C", root, "rev-parse", "--is-inside-work-tree"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
+      windowsHide: true,
+      timeout: GIT_EXEC_TIMEOUT_MS,
+      env: hardenedGitEnv(),
     }).trim();
     return out === "true";
   } catch {
@@ -126,12 +145,15 @@ function isGitRepo(root: string): boolean {
   }
 }
 
+/** Hardened git exec for worktree lifecycle (C4-H): hooks disabled, no locks, no stdin, bounded timeout. */
 function git(args: string[], cwd: string): string {
   return execFileSync("git", args, {
     cwd,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
+    timeout: GIT_EXEC_TIMEOUT_MS,
+    env: hardenedGitEnv(),
   });
 }
 

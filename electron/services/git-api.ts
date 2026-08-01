@@ -1,5 +1,6 @@
 import { openExternalSafe } from '../utils/safe-open-external';
 import { execFile } from 'node:child_process';
+import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
@@ -32,6 +33,7 @@ import type {
   GitFetchPayload,
   GitFileDiffPayload,
   GitLogPayload,
+  GitMergeBasePayload,
   GitPathPayload,
   GitPathsPayload,
   GitPullPayload,
@@ -122,16 +124,48 @@ function createRequestHash(action: string, workspace: WorkspaceProfile, args: un
   return `${workspace.id}:${workspace.activeSessionKey}:git:${action}:${JSON.stringify(args)}`;
 }
 
+/** Hardened git/gh exec wrapper (borrowed from Codex git-utils info.rs):
+ * - GIT_OPTIONAL_LOCKS=0: status/diff scans never take the index lock
+ * - core.hooksPath=/dev/null|NUL: repository config cannot run arbitrary hooks
+ * - stdin: null (no interactive prompts)
+ * - bounded timeout + kill: slow/frozen git must not hang the UI
+ */
+
+
+const GIT_EXEC_TIMEOUT_MS = 15_000;
+const GIT_HOOKS_NULL = process.platform === 'win32' ? 'NUL' : '/dev/null';
+
 function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise<ExecResult> {
   return new Promise((resolveResult) => {
-    execFile(command, args, {
+    const options: ExecFileOptionsWithStringEncoding = {
       cwd,
       encoding: 'utf8',
       windowsHide: true,
       maxBuffer: 8 * 1024 * 1024,
-    }, (error, stdout, stderr) => {
-      const maybeCode = error && typeof (error as { code?: unknown }).code === 'number'
-        ? (error as { code: number }).code
+      env: {
+        ...process.env,
+        GIT_OPTIONAL_LOCKS: '0',
+        GIT_TERMINAL_PROMPT: '0',
+        ...(command === 'git'
+          ? {
+              GIT_CONFIG_COUNT: '2',
+              GIT_CONFIG_KEY_0: 'core.hooksPath',
+              GIT_CONFIG_VALUE_0: GIT_HOOKS_NULL,
+              GIT_CONFIG_KEY_1: 'core.fsmonitor',
+              GIT_CONFIG_VALUE_1: 'false',
+            }
+          : {}),
+      },
+      timeout: GIT_EXEC_TIMEOUT_MS,
+      killSignal: 'SIGKILL',
+    };
+    const child = execFile(
+      command,
+      args,
+      options,
+      (error: ExecFileException | null, stdout: string, stderr: string) => {
+      const maybeCode = error && typeof error.code === 'number'
+        ? error.code
         : error ? 1 : 0;
       resolveResult({
         exitCode: maybeCode,
@@ -139,6 +173,13 @@ function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise
         stderr: trimOutput(typeof stderr === 'string' ? stderr : String(stderr ?? '')),
       });
     });
+    // stdin: null — execFile has no stdio option, so destroy the inherited
+    // pipe immediately: git can never read interactive input (matches the
+    // Codex Stdio::null() wrapper; GIT_TERMINAL_PROMPT=0 is belt-and-suspenders).
+    child.stdin?.destroy();
+    // belt-and-suspenders: execFile's timeout kills the child, but on Windows
+    // grandchildren (git's own helpers) may outlive it; nothing else to do.
+    void child;
   });
 }
 
@@ -993,8 +1034,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const limit = typeof body.limit === 'number' && Number.isFinite(body.limit)
         ? Math.max(1, Math.min(Math.floor(body.limit), 100))
         : 20;
-      const result = await git([
-        'log',
+      const result = await git([        'log',
         ref,
         `--max-count=${limit}`,
         '--format=%H%x09%h%x09%ct%x09%an%x09%s',
@@ -1014,6 +1054,25 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         }
       }
       return { success: true, commits: parseCommitLog(result.stdout), ref, ahead, behind };
+    },
+    mergeBase: async (payload) => {
+      const body = (isRecord(payload) ? payload : {}) as GitMergeBasePayload;
+      const base = normalizeString(body.base);
+      const rawHead = normalizeString(body.head);
+      const head = rawHead && rawHead !== 'HEAD' ? rawHead : 'HEAD';
+      if (!base) throw new Error('base is required');
+      if (!isSafeGitRef(base) || !isSafeGitRef(head)) {
+        throw new Error(`Invalid git ref for merge-base: ${base} ${head}`);
+      }
+      const ctx = await requireRepoContext();
+      const result = await git(['merge-base', head, base], ctx.workspaceRoot);
+      if (result.exitCode !== 0 || !result.stdout.trim()) {
+        return {
+          success: false,
+          error: result.stderr.trim() || `No common ancestor between ${head} and ${base}`,
+        };
+      }
+      return { success: true, mergeBase: result.stdout.trim() };
     },
     checkoutBranch: async (payload: GitBranchCheckoutPayload) => {
       const ctx = await requireRepoContext();
@@ -1235,6 +1294,31 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const args = ['pr', 'create', '--title', title, '--body', body];
       const base = normalizeString(payload.base);
       const head = normalizeString(payload.head);
+      // PR preflight (Open SWE parity): base/head branches must exist before
+      // creating, with actionable error text instead of a raw gh failure.
+      for (const [label, ref] of [['base', base], ['head', head]] as const) {
+        if (!ref) continue;
+        if (!isSafeGitRef(ref)) {
+          return {
+            success: false,
+            stdout: '',
+            stderr: `${label} branch '${ref}' is not a valid git ref`,
+            exitCode: 2,
+            reason: `invalid ${label} branch '${ref}' (likely_cause: unsafe ref; suggested_action: use a plain branch name)`,
+          };
+        }
+        const local = await git(['rev-parse', '--verify', '--quiet', `refs/heads/${ref}`], ctx.workspaceRoot);
+        const remote = await git(['rev-parse', '--verify', '--quiet', `refs/remotes/origin/${ref}`], ctx.workspaceRoot);
+        if (local.exitCode !== 0 && remote.exitCode !== 0) {
+          return {
+            success: false,
+            stdout: '',
+            stderr: `${label} branch '${ref}' not found locally or on origin`,
+            exitCode: 2,
+            reason: `${label} branch '${ref}' not found (likely_cause: branch does not exist; suggested_action: create/push it or pick an existing ${label})`,
+          };
+        }
+      }
       if (base) args.push('--base', base);
       if (head) args.push('--head', head);
       if (normalizeBoolean(payload.draft)) args.push('--draft');
@@ -1246,6 +1330,25 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         command: `gh ${args.join(' ')}`,
       });
       if (blocked) return blocked;
+      // Reuse an existing open PR for the head branch (Open SWE 422 parity)
+      // instead of failing with a duplicate-PR error.
+      const headForLookup = head || (await readCurrentGitStatus().catch(() => null))?.branch;
+      if (headForLookup) {
+        const existingList = await gh(['pr', 'list', '--head', headForLookup, '--state', 'open', '--json', 'number,title,state,author,headRefName,baseRefName,url,isDraft,updatedAt'], ctx.workspaceRoot);
+        if (existingList.exitCode === 0) {
+          const existing = parseJson<Array<Record<string, unknown>>>(existingList.stdout, [])[0];
+          if (existing) {
+            return {
+              success: true,
+              stdout: existingList.stdout,
+              stderr: '',
+              exitCode: 0,
+              pullRequest: prFromGh(existing),
+              reused: true,
+            };
+          }
+        }
+      }
       const result = await gh([...args, '--json', 'number,title,state,author,headRefName,baseRefName,url,isDraft,updatedAt'], ctx.workspaceRoot);
       const raw = parseJson<Record<string, unknown>>(result.stdout, {});
       return {

@@ -14,6 +14,7 @@ import {
   applyEditsToNormalizedContent,
   computeEditsDiff,
   detectLineEnding,
+  findSimilarLines,
   generateDiffString,
   generateUnifiedPatch,
   normalizeForFuzzyMatch,
@@ -227,5 +228,50 @@ describe("computeEditsDiff", () => {
     const result = await computeEditsDiff(file, [{ oldText: "two", newText: "TWO" }], dir);
     expect(result).toEqual({ diff: " 1 one\n-2 two\n+2 TWO", firstChangedLine: 2 });
     expect(await readFile(file, "utf-8")).toBe("one\ntwo\n");
+  });
+});
+
+describe("findSimilarLines (did-you-mean)", () => {
+  const content = [
+    "function alpha() {",
+    "  const x = 1;",
+    "  return x;",
+    "}",
+    "",
+    "function beta() {",
+    "  const y = 2;",
+    "  return y;",
+    "}",
+    "",
+  ].join("\n");
+
+  it("returns the exact block when first/last lines match exactly", () => {
+    const hint = findSimilarLines(content, "  const x = 1;\n  return x;");
+    expect(hint).toContain("const x = 1");
+    expect(hint).toContain("return x");
+  });
+
+  it("returns a nearby block for a near-miss pattern (normalized)", () => {
+    // Pattern with a typo on one of three lines; shared 2/3 >= 0.6.
+    const hint = findSimilarLines(content, "function alpha() {\n  const x = 1;\n  retrun x;");
+    expect(hint.length).toBeGreaterThan(0);
+    expect(hint).toContain("function alpha()");
+  });
+
+  it("returns empty when similarity is below threshold", () => {
+    const hint = findSimilarLines(content, "totally unrelated\ncontent here\nnothing shared");
+    expect(hint).toBe("");
+  });
+
+  it("expands context lines around the match (padding)", () => {
+    const hint = findSimilarLines(content, "  const y = 2;", { padding: 1 });
+    expect(hint).toContain("function beta()");
+    expect(hint).toContain("  return y;");
+  });
+
+  it("normalizes smart quotes and dashes before comparing", () => {
+    const quoted = "const msg = \u201Chello\u201D;";
+    const hint = findSimilarLines(`line0\n${quoted}\nline2`, 'const msg = "hello";');
+    expect(hint.length).toBeGreaterThan(0);
   });
 });

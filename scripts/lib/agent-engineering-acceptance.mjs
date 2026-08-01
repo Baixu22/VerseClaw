@@ -5,7 +5,10 @@ import {
   mkdtempSync,
   readFileSync,
   readdirSync,
+  readlinkSync,
   rmSync,
+  statSync,
+  symlinkSync,
   writeFileSync,
   copyFileSync,
 } from 'node:fs';
@@ -373,6 +376,43 @@ function buildGates(profiles, options = {}) {
     command: 'pnpm',
     args: ['install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
   });
+  // openclaw_runtime is an independent pnpm workspace (own pnpm-workspace.yaml
+  // and pnpm-lock.yaml). The root install above does not cover it, so the
+  // detached worktree would lack its dependencies (e.g. oxlint for lint:dcs,
+  // vitest for runtime-unit, tsgo for runtime-static-check). Install it with
+  // the same offline/frozen/ignore-scripts posture to keep the acceptance
+  // environment self-contained and fail-closed.
+  add({
+    id: 'dependency-install-offline-openclaw-runtime',
+    profile: 'environment',
+    name: 'Offline frozen dependency install (openclaw_runtime workspace)',
+    command: 'pnpm',
+    args: ['--dir', 'openclaw_runtime', 'install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
+  });
+  // resources/bin/win32-x64/ae.exe is a source-built VerseShell binary that is
+  // gitignored by design (reproducible via scripts/verseshell-bundle.mjs sync)
+  // and required by tests/unit/verseshell-manifest.test.ts and the UAS-05/06
+  // lifecycle tests. A clean detached worktree has no copy, so provision it
+  // from the source repository with fail-closed integrity verification against
+  // the committed manifest. The binary stays gitignored, so the worktree
+  // remains clean under repositoryIdentity. The UAS-06 canary stub
+  // artifacts/uas-06-single-local-exec-canary/live-observations.json is also
+  // gitignored (artifacts/*) yet read by
+  // tests/unit/uas-06-single-local-exec-canary.test.ts; it is a fixed empty
+  // observations stub (non-executing channel), so a straight copy suffices.
+  add({
+    id: 'provision-verseshell-resources',
+    profile: 'environment',
+    name: 'Provision VerseShell gitignored resources (ae.exe + canary stub)',
+    command: 'internal',
+    args: [
+      '--manifest', 'resources/verseshell/manifest.json',
+      '--binary', 'resources/bin/win32-x64/ae.exe',
+      '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
+      '--electron',
+    ],
+  }, { kind: 'provision-verseshell' });
   add({
     id: 'harness-validate',
     profile: 'harness',
@@ -677,11 +717,35 @@ export function parseTestCounts(stdout, stderr = '') {
   return { passed, failed, skipped, total, source: 'parsed' };
 }
 
+function pnpmGateSpawnSpec(command, args) {
+  // Node cannot exec .cmd shims directly on Windows (EINVAL). Match the repo's
+  // pnpm-runner pattern: wrap in cmd.exe and rely on the shim's trailing
+  // `exit /b %errorlevel%` to propagate the child's real exit code. (The shim
+  // must keep that line; a shim without it fails open.)
+  if (process.platform !== 'win32' || !/^pnpm(\.cmd)?$/iu.test(commandName(command))) {
+    return { command, args, shell: false };
+  }
+  const escaped = [command, ...args].map((part) => {
+    const text = String(part);
+    if (!/^[A-Za-z0-9_./\\:-]+$/u.test(text)) {
+      return `"${text.replace(/"/gu, '""')}"`;
+    }
+    return text;
+  });
+  return {
+    command: 'cmd.exe',
+    args: ['/d', '/s', '/c', escaped.join(' ')],
+    shell: false,
+    windowsVerbatimArguments: true,
+  };
+}
+
 function spawnGate(gate, options = {}) {
   const command = commandName(gate.command) === 'pnpm' ? pnpmExecutable() : gate.command;
   const startedAt = new Date().toISOString();
   const started = Date.now();
-  const result = (options.spawn ?? spawnSync)(command, gate.args, {
+  const spawnSpec = pnpmGateSpawnSpec(command, gate.args);
+  const result = (options.spawn ?? spawnSync)(spawnSpec.command, spawnSpec.args, {
     cwd: options.cwd,
     env: options.env,
     encoding: 'utf8',
@@ -773,6 +837,162 @@ function runTf0009Adapter(gate, options = {}) {
   };
   result.testCounts = { passed: 30, failed: 0, skipped: 0, total: 30, source: 'adapter-report' };
   return result;
+}
+
+/**
+ * Provision a gitignored, source-built binary into the detached acceptance
+ * worktree with fail-closed integrity verification against the committed
+ * manifest. The binary (e.g. resources/bin/win32-x64/ae.exe for the VerseShell
+ * process-lifecycle tests) is reproducible from source via
+ * scripts/verseshell-bundle.mjs sync but is not part of git state, so a clean
+ * detached worktree has no copy. This gate copies it from the source
+ * repository and verifies its SHA-256 and byte length against the manifest's
+ * recorded artifact entry. Missing source binary, missing manifest entry, or a
+ * hash/size mismatch all fail the gate.
+ */
+function runVerseShellBinaryProvision(gate, options = {}) {
+  const startedAt = new Date().toISOString();
+  const started = Date.now();
+  const base = { id: gate.id, profile: gate.profile, name: gate.name, command: gate.command, args: [...gate.args] };
+  const fail = (error) => ({
+    ...base,
+    status: 'fail',
+    required: true,
+    allowSkip: false,
+    exitCode: 1,
+    signal: null,
+    timedOut: false,
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    durationMs: Date.now() - started,
+    stdout: '',
+    stderr: `${String(error)}\n`,
+    stdoutSha256: sha256(''),
+    stderrSha256: sha256(`${String(error)}\n`),
+    stdoutBytes: 0,
+    stderrBytes: Buffer.byteLength(String(error)),
+    error: String(error),
+    testExpectation: gate.testExpectation ?? null,
+    testCounts: null,
+  });
+  try {
+    const argv = [...(gate.args ?? [])];
+    const manifestRelative = argv[argv.indexOf('--manifest') + 1];
+    const binaryRelative = argv[argv.indexOf('--binary') + 1];
+    if (!manifestRelative || !binaryRelative) return fail('provision gate requires --manifest and --binary');
+    const sourceRoot = options.sourceRoot;
+    const worktree = options.cwd;
+    if (!sourceRoot || !worktree) return fail('provision gate requires sourceRoot and cwd');
+    const sourceBinary = resolve(sourceRoot, binaryRelative);
+    if (!existsSync(sourceBinary)) {
+      return fail(`source binary missing: ${binaryRelative} (build it with scripts/verseshell-bundle.mjs sync)`);
+    }
+    const manifestPath = resolve(worktree, manifestRelative);
+    if (!existsSync(manifestPath)) return fail(`committed manifest missing in worktree: ${manifestRelative}`);
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    const artifact = manifest.artifacts?.['win32-x64'];
+    if (!artifact || typeof artifact.sha256 !== 'string' || !Number.isSafeInteger(artifact.bytes)) {
+      return fail('committed manifest lacks win32-x64 artifact sha256/bytes');
+    }
+    const sourceBytes = readFileSync(sourceBinary);
+    const sourceDigest = createHash('sha256').update(sourceBytes).digest('hex');
+    if (sourceDigest !== artifact.sha256 || sourceBytes.length !== artifact.bytes) {
+      return fail(`source binary does not match committed manifest (sha256 ${sourceDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${sourceBytes.length} expected ${artifact.bytes})`);
+    }
+    const dest = resolve(worktree, binaryRelative);
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(sourceBinary, dest);
+    const provisionedBytes = readFileSync(dest);
+    const provisionedDigest = createHash('sha256').update(provisionedBytes).digest('hex');
+    if (provisionedDigest !== artifact.sha256 || provisionedBytes.length !== artifact.bytes) {
+      return fail('provisioned binary verification failed in worktree');
+    }
+    let stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
+    const copied = [];
+    const copyIndex = argv.indexOf('--copy');
+    const copyRelativePaths = copyIndex >= 0
+      ? argv.slice(copyIndex + 1).filter((value) => !value.startsWith('--'))
+      : [];
+    for (const copyRelative of copyRelativePaths) {
+      const sourcePath = resolve(sourceRoot, copyRelative);
+      if (!existsSync(sourcePath)) return fail(`provision source missing: ${copyRelative}`);
+      const destPath = resolve(worktree, copyRelative);
+      mkdirSync(dirname(destPath), { recursive: true });
+      copyFileSync(sourcePath, destPath);
+      copied.push(copyRelative);
+    }
+    if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
+    if (argv.includes('--electron')) {
+      const sourceElectron = resolve(sourceRoot, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
+      const worktreeElectron = resolve(worktree, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
+      const sourceDist = join(sourceElectron, 'dist');
+      const sourcePathTxt = join(sourceElectron, 'path.txt');
+      if (!existsSync(sourceDist) || !existsSync(sourcePathTxt)) {
+        return fail('electron dist/path.txt missing in source repository (run electron postinstall or install without --ignore-scripts)');
+      }
+      const worktreeDist = join(worktreeElectron, 'dist');
+      rmSync(worktreeDist, { recursive: true, force: true });
+      mkdirSync(worktreeDist, { recursive: true });
+      copyRecursiveSync(sourceDist, worktreeDist);
+      copyFileSync(sourcePathTxt, join(worktreeElectron, 'path.txt'));
+      const entry = readFileSync(join(worktreeElectron, 'path.txt'), 'utf8').trim();
+      const provisionedElectron = join(worktreeDist, entry);
+      if (!existsSync(provisionedElectron)) {
+        return fail(`electron binary not provisioned: expected ${entry} in dist`);
+      }
+      stdout += `provisioned electron dist (${readdirSync(worktreeDist).length} entries, path.txt=${entry})\n`;
+    }
+    return {
+      ...base,
+      status: 'pass',
+      required: true,
+      allowSkip: false,
+      exitCode: 0,
+      signal: null,
+      timedOut: false,
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      durationMs: Date.now() - started,
+      stdout,
+      stderr: '',
+      stdoutSha256: sha256(stdout),
+      stderrSha256: sha256(''),
+      stdoutBytes: Buffer.byteLength(stdout),
+      stderrBytes: 0,
+      error: null,
+      testExpectation: gate.testExpectation ?? null,
+      testCounts: null,
+    };
+  } catch (error) {
+    return fail(error instanceof Error ? error.message : String(error));
+  }
+}
+
+/**
+ * Recursively copy a directory tree. Used to provision the project-local
+ * Electron binary (dist/) that pnpm --ignore-scripts does not produce in a
+ * detached worktree.
+ */
+function copyRecursiveSync(sourceDir, destDir) {
+  mkdirSync(destDir, { recursive: true });
+  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
+    const sourcePath = join(sourceDir, entry.name);
+    const destPath = join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      copyRecursiveSync(sourcePath, destPath);
+    } else if (entry.isFile()) {
+      copyFileSync(sourcePath, destPath);
+    } else if (entry.isSymbolicLink()) {
+      const link = readlinkSync(sourcePath);
+      mkdirSync(dirname(destPath), { recursive: true });
+      try {
+        symlinkSync(link, destPath);
+      } catch {
+        const target = resolve(dirname(sourcePath), link);
+        if (existsSync(target) && statSync(target).isFile()) copyFileSync(target, destPath);
+      }
+    }
+  }
 }
 
 function sanitizeGateResult(gateResult, outputDir) {
@@ -995,7 +1215,9 @@ export function runAcceptance(manifest, options = {}) {
       };
       const result = gate.kind === 'adapter' && gate.adapter === TF0009_ADAPTER_ID
         ? runTf0009Adapter(gate, gateOptions)
-        : spawnGate(gate, gateOptions);
+        : gate.kind === 'provision-verseshell'
+          ? runVerseShellBinaryProvision(gate, gateOptions)
+          : spawnGate(gate, gateOptions);
       const sanitized = sanitizeGateResult(result, outputDir);
       gateResults.push(sanitized);
       if (sanitized.status !== 'pass' && options.continueOnError !== true) break;
