@@ -1,0 +1,87 @@
+{
+  "applied_at": "2026-07-31T16:58:41.171593Z",
+  "base_graph_hash": "04c1f32ac58803c50ffa451f52e9f056ad501dac20ea18173fbb821c5787534d",
+  "base_summary": {
+    "edge_count": 44,
+    "node_count": 27,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-ui-polish"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "Browser、Terminal、Files、Review 的真实功能与 FakeCoding 样式均可在会话工作区访问",
+          "/browser 与 /code-review 正确进入对应工作区上下文，/task-ledger 与 /clawgraph 深链可聚焦",
+          "SVG 测试验证 viewBox、fill/stroke、关键 path 与 stroke 属性",
+          "1280x800 和 960x800 的 Light/Dark 无溢出、遮挡、重复标题或重复主操作",
+          "i18n、focused tests、typecheck、build、相关 Electron E2E、Harness validate 与 harness:ci 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "完整实现会话工作区 FakeCoding 对齐，尤其保证 Browser、Terminal、Files、Review 的真实功能和对应 SVG 样式完整。",
+          "validation_plan": [
+            "运行 TF-0025 Harness context/validate 和聚焦单元测试",
+            "运行 i18n、ESLint、typecheck、build:vite 与相关 Electron E2E",
+            "检查 1280x800、960x800 Light/Dark 及 SVG 几何契约"
+          ],
+          "why_not_enough": "本节点不会处理 Knowledge 或最终 legacy 移除，这些继续由 TF-0026 和 TF-0027 承担。",
+          "why_this_task": "TF-0025 是已完成应用壳、Inbox 和 Scheduled 之后唯一 ready 的串行节点，直接覆盖用户当前要求。"
+        },
+        "assumptions": [
+          "现有 hostApi 已具备计划所需的 Browser、Terminal、Code Review、Remote Forge、Task Ledger 与 ClawGraph 能力",
+          "旧工作区持久化状态允许在 renderer 读取时规范化而无需后端迁移"
+        ],
+        "confidence": 0.86,
+        "desired_outcomes": [
+          "工作区仅保留 Review、Terminal、Browser、Files、Artifacts、Audit 六类可见标签",
+          "Browser Preview/Live、Terminal bottom/side、Files、Review 三子视图全部复用现有真实能力",
+          "所有工作区标签和命令 SVG 保持 FakeCoding 原始几何及 fill/stroke 规则",
+          "960x800 下不出现拥挤三栏、横向溢出或功能不可达"
+        ],
+        "execution_hints": [
+          "先建立 Harness task，再完成 renderer 类型与旧状态迁移",
+          "优先抽取共享 Terminal controller 和可嵌入 Review 子面板",
+          "复制 FakeCoding 原始 SVG 路径，不用 Lucide 近似替代",
+          "保留用户现有未提交修改、legacy 回滚和指定临时文件"
+        ],
+        "non_goals": [
+          "Knowledge 信息架构收敛",
+          "移除 ?uiVersion=legacy",
+          "将 Browser Tasks、Profiles 或 Vault 放回会话 Browser",
+          "重写 Host API、Gateway、安全审批或后端状态模型"
+        ],
+        "purpose": "将会话内 Browser、Terminal、Files 与 Review 收敛为克制、连续且功能真实的 FakeCoding 式工作区，减少重复一级页面并保留深层能力。",
+        "remaining_minutes_max": 2100,
+        "remaining_minutes_min": 1200,
+        "requirements": [
+          "Review 内含 Changes、AI Review、Pull Requests，并保留审批和 fail-closed 行为",
+          "Browser 内含 Preview、Live、接管、停止、截图、snapshot 与 UID 交互",
+          "Terminal 底部与右侧呈现共享同一个 sessionId、scrollback 和权限状态",
+          "Files 宽屏双栏、960px 单视图，支持通过 intent 定位文件",
+          "统一 openWorkspacePanel(intent)，保留 Task Ledger 与 ClawGraph 全屏深层页面",
+          "不修改后端、Host API、Gateway、Browser 安全或持久化契约"
+        ],
+        "success_metrics": [
+          "工作区可见标签数量固定为 6",
+          "同一 Terminal intent 产生的后端 shell 数量为 1",
+          "Browser 与 Review 语义重复一级页面数量为 0",
+          "新增用户文案 en、zh、ja、ru 覆盖率为 100%"
+        ]
+      },
+      "id": "TF-0025"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0025",
+      "progress": 0,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-07-31T16:58:40.971721Z",
+  "proposal_id": "TFP-tf0025-start-20260801",
+  "rationale": "用户已明确确认 TF-0025 会话工作区 FakeCoding 完整对齐方案，本轮仅推进该串行节点，覆盖 Browser、Terminal、Files、Review、统一工作区 intent、兼容路由、精确 SVG 与响应式验收。",
+  "session_id": "session-2026-08-01-fakecoding-workspace-convergence",
+  "status": "applied"
+}

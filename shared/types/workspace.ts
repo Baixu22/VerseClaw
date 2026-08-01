@@ -22,6 +22,18 @@ export function normalizeWorkspacePermissionMode(value: unknown): WorkspacePermi
 
 export type WorkspacePreviewMode = 'static' | 'devServer' | 'externalUrl';
 
+export type WorkspaceReviewView = 'changes' | 'ai-review' | 'pull-requests';
+export type WorkspaceBrowserView = 'preview' | 'live';
+export type WorkspaceTerminalPlacement = 'bottom' | 'side';
+
+export type WorkspacePanelIntent =
+  | { panel: 'review'; view?: WorkspaceReviewView; filePath?: string }
+  | { panel: 'browser'; view?: WorkspaceBrowserView; url?: string; sessionId?: string }
+  | { panel: 'files'; filePath?: string }
+  | { panel: 'terminal'; placement?: WorkspaceTerminalPlacement }
+  | { panel: 'artifact'; artifactId?: string }
+  | { panel: 'audit' };
+
 export type PermissionApprovalStatus = 'pending' | 'approved' | 'denied' | 'expired';
 export type PermissionApprovalDecision = 'approved' | 'denied';
 export type PermissionApprovalSource = 'terminal' | 'gateway' | 'mcp' | 'file' | 'remoteControl' | 'git' | 'cleaner';
@@ -136,6 +148,10 @@ export interface WorkspaceArtifactPanelState {
   tabs?: Array<{ kind?: string; title?: string }>;
   /** Which tab kind was focused when the session was saved. */
   activeTabKind?: string;
+  reviewView?: WorkspaceReviewView;
+  browserView?: WorkspaceBrowserView;
+  browserSessionId?: string | null;
+  terminalPlacement?: WorkspaceTerminalPlacement;
   /**
    * @deprecated Pre-tab-strip sessions. Read on restore and migrated into a
    * single equivalent tab; never written by current code.

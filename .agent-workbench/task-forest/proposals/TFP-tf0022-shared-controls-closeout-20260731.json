@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-07-31T12:22:41.808229Z",
+  "base_graph_hash": "9947711e609a27e575322dbbbcf4957331d895ba7023c942fa7e484ec9a79bc3",
+  "base_summary": {
+    "edge_count": 44,
+    "node_count": 27,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-ui-polish"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/fakecoding-ui-convergence.md；pnpm harness validate：通过",
+          "tests/unit/ui-version.test.ts、tests/unit/fakecoding-design-system.test.ts：8/8 通过",
+          "tests/e2e/windows-ui-v2.spec.ts：4/4 通过；Showcase 最终聚焦复跑 1/1",
+          "tests/e2e/settings-drawer.spec.ts、tests/e2e/startup-loading-experience.spec.ts：8/8 通过",
+          "pnpm run i18n:lint、pnpm run typecheck、pnpm run build:vite：通过",
+          "精确 ESLint：0 error；仅 5 个既有 Hook/Fast Refresh warning",
+          "playwright-report/data：1280x800、960x800 的 Light/Dark 四张 Showcase 截图已人工检查，无横向溢出、文字断裂、控件重叠或重复主操作"
+        ],
+        "execution_hints": [
+          "下一节点只推进 TF-0023：四入口导航与真实 Inbox 聚合",
+          "继续保留 ?uiVersion=legacy，直到 TF-0027 全局收尾",
+          "不得覆盖用户现有未提交 Cron 修改"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "FakeCoding 跨平台灰阶设计系统与应用壳基线已完整收口：共享控件、SVG、连续工作面、应用级浮层 portal、克制动效和双宽度双主题视觉证据均已验证。"
+      },
+      "id": "TF-0022"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0022",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-07-31T12:22:41.251115Z",
+  "proposal_id": "TFP-tf0022-shared-controls-closeout-20260731",
+  "rationale": "TF-0022 的遗漏共享控件已补齐：Badge、Switch、Card、Textarea、Sheet、Tooltip、Dialog/Drawer/Sidebar 动效均满足 FakeCoding 紧凑灰阶契约，Showcase、静态契约、构建、Electron 回归及双宽度双主题视觉证据已通过。",
+  "session_id": "session-2026-07-31-fakecoding-ui-design-shell-followup",
+  "status": "applied"
+}

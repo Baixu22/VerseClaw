@@ -8,12 +8,10 @@ import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Clock,
   Settings as SettingsIcon,
   MoreHorizontal,
   PanelLeftClose,
   PanelLeft,
-  Plus,
   Terminal,
   ExternalLink,
   Trash2,
@@ -21,17 +19,13 @@ import {
   Pencil,
   Check,
   X,
+  Loader2,
+  AlertTriangle,
+  Activity,
+  GitCompare,
   ImagePlus,
   Moon,
-  Loader2,
-  Activity,
-  BookOpen,
-  CheckSquare,
   Workflow,
-  GitCompare,
-  Inbox,
-  AlertTriangle,
-  Globe2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
@@ -44,6 +38,7 @@ import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { useStorageHealthStore } from '@/stores/storage-health';
+import { isInboxItemActionable, useInboxStore } from '@/stores/inbox';
 import {
   buildLatestRuntimeRunBySession,
   buildSidebarTimeSessions,
@@ -71,6 +66,7 @@ import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/side
 import { useTranslation } from 'react-i18next';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
+import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLine } from '@/components/icons/codex-icons';
 
 interface NavItemProps {
   to: string;
@@ -96,7 +92,7 @@ function NavItem({ to, icon, label, badge, collapsed, onClick, testId }: NavItem
           <>
             <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{label}</span>
             {badge && (
-              <Badge variant="secondary" className="ml-auto shrink-0">
+              <Badge data-testid={testId ? `${testId}-badge` : undefined} variant="secondary" className="ml-auto shrink-0">
                 {badge}
               </Badge>
             )}
@@ -391,7 +387,7 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
 export function Sidebar() {
   const isMac = window.electron?.platform === 'darwin';
   const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
+  const isUiV2 = uiVersion === 'v2';
   const { sidebarCollapsed, setSidebarCollapsed, sidebarWidth, setSidebarWidth, devModeUnlocked } = useSettingsStore(useShallow((state) => ({
     sidebarCollapsed: state.sidebarCollapsed,
     setSidebarCollapsed: state.setSidebarCollapsed,
@@ -429,6 +425,8 @@ export function Sidebar() {
   const renameWorkspaceFolder = useWorkspacesStore((s) => s.renameFolder);
   const deleteWorkspaceFolder = useWorkspacesStore((s) => s.deleteFolder);
   const moveSessionToFolder = useWorkspacesStore((s) => s.moveSessionToFolder);
+  const inboxItems = useInboxStore((state) => state.items);
+  const refreshInbox = useInboxStore((state) => state.refresh);
   const [dismissedCompletedStatuses, setDismissedCompletedStatuses] = useState<Record<string, string>>({});
   const [collapsedFolderIds, setCollapsedFolderIds] = useState<Record<string, boolean>>({});
 
@@ -453,7 +451,18 @@ export function Sidebar() {
   }, [isMac, sidebarCollapsed]);
 
   const navigate = useNavigate();
-  const isOnChat = useLocation().pathname === '/';
+  const location = useLocation();
+  const isOnChat = location.pathname === '/';
+  const inboxPendingCount = useMemo(
+    () => inboxItems.filter(isInboxItemActionable).length,
+    [inboxItems],
+  );
+
+  useEffect(() => {
+    void refreshInbox();
+    const intervalId = window.setInterval(() => void refreshInbox(), 30_000);
+    return () => window.clearInterval(intervalId);
+  }, [location.pathname, refreshInbox]);
 
   const openControlUi = async (view?: 'dreams', label = 'OpenClaw Page') => {
     try {
@@ -471,7 +480,7 @@ export function Sidebar() {
     await openControlUi(undefined, 'OpenClaw Page');
   };
 
-  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'knowledge', 'codeReview']);
+  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview']);
   const [sessionToDelete, setSessionToDelete] = useState<{ key: string; label: string } | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
@@ -639,31 +648,18 @@ export function Sidebar() {
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
 
   const coreNavItems = [
-    { to: '/cron', icon: <Clock className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.cronTasks'), testId: 'sidebar-nav-cron' },
-    { to: '/remote-tasks', icon: <Inbox className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.remoteTasks'), testId: 'sidebar-nav-remote-tasks' },
-    { to: '/task-ledger', icon: <CheckSquare className="h-4 w-4" strokeWidth={2} />, label: t('taskLedger:nav'), testId: 'sidebar-nav-task-ledger' },
-    { to: '/clawgraph', icon: <Workflow className="h-4 w-4" strokeWidth={2} />, label: t('clawGraph:nav'), testId: 'sidebar-nav-clawgraph' },
-    { to: '/code-review', icon: <GitCompare className="h-4 w-4" strokeWidth={2} />, label: t('codeReview:nav'), testId: 'sidebar-nav-code-review' },
-    { to: '/knowledge', icon: <BookOpen className="h-4 w-4" strokeWidth={2} />, label: t('knowledge:nav'), testId: 'sidebar-nav-knowledge' },
-    { to: '/browser', icon: <Globe2 className="h-4 w-4" strokeWidth={2} />, label: t('common:sidebar.browser'), testId: 'sidebar-nav-browser' },
-    ...(devModeUnlocked
-      ? [
-        { to: '/observability', icon: <Activity className="h-4 w-4" strokeWidth={2} />, label: 'Observability', testId: 'sidebar-nav-observability' },
-        { to: '/image-generation', icon: <ImagePlus className="h-4 w-4" strokeWidth={2} />, label: t('common:sidebar.imageGeneration'), testId: 'sidebar-nav-image-generation' },
-        { to: '/dreams', icon: <Moon className="h-4 w-4" strokeWidth={2} />, label: t('common:sidebar.openClawDreams'), testId: 'sidebar-nav-dreams' },
-      ]
-      : []),
+    {
+      to: '/inbox',
+      icon: <CodexInbox className="h-4 w-4" strokeWidth={2} />,
+      label: t('sidebar.inbox'),
+      badge: inboxPendingCount > 0 ? (inboxPendingCount > 99 ? '99+' : String(inboxPendingCount)) : undefined,
+      testId: 'sidebar-nav-inbox',
+    },
+    { to: '/cron', icon: <CalendarDays className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.scheduled'), testId: 'sidebar-nav-cron' },
+    { to: '/knowledge', icon: <FileText className="h-4 w-4" strokeWidth={2} />, label: t('sidebar.knowledge'), testId: 'sidebar-nav-knowledge' },
   ];
 
-  const navItems = [
-    ...coreNavItems.filter((item) => !hiddenRoutes.has(item.to)),
-    ...extraNavItems.map((item) => ({
-      to: item.to,
-      icon: <item.icon className="h-4 w-4" strokeWidth={2} />,
-      label: item.labelI18nKey ? t(item.labelI18nKey) : item.label,
-      testId: item.testId,
-    })),
-  ];
+  const navItems = coreNavItems.filter((item) => !hiddenRoutes.has(item.to));
 
   const latestRuntimeRunBySession = useMemo(
     () => buildLatestRuntimeRunBySession(runtimeRuns),
@@ -772,8 +768,8 @@ export function Sidebar() {
         // `codex-sidebar` scopes the ported Codex sidebar recipe
         // (src/styles/codex-sidebar.css) to this subtree.
         'codex-sidebar codex-sidebar-surface relative flex min-h-0 shrink-0 flex-col overflow-hidden bg-surface-sidebar',
-        isUiV2 && 'bg-surface-sidebar/90 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:bg-surface-sidebar/76',
-        isResizing ? 'transition-none' : 'transition-[width] duration-200 ease-out',
+        isUiV2 && 'bg-surface-sidebar',
+        isResizing ? 'transition-none' : 'transition-[width] duration-180 ease-out',
       )}
       style={{ width: sidebarCollapsed ? (isUiV2 ? 64 : SIDEBAR_COLLAPSED_WIDTH) : (isUiV2 ? Math.min(360, Math.max(240, sidebarWidth)) : sidebarWidth) }}
     >
@@ -825,10 +821,10 @@ export function Sidebar() {
           onClick={handleNewChat}
           className={cn(sidebarCollapsed && 'justify-center px-0')}
         >
-          <Plus strokeWidth={2} />
+          <PenLine className="h-4 w-4" strokeWidth={2} />
           {!sidebarCollapsed && (
             <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left">
-              {t('sidebar.newChat')}
+              {t('sidebar.newTask')}
             </span>
           )}
         </button>
@@ -1020,7 +1016,10 @@ export function Sidebar() {
             onClick={(event) => {
               const rect = event.currentTarget.getBoundingClientRect();
               const menuWidth = 259;
-              const menuHeight = devModeUnlocked ? 154 : 121;
+              const menuHeight = Math.min(
+                window.innerHeight - 16,
+                88 + (4 + extraNavItems.length + (devModeUnlocked ? 4 : 0)) * 33,
+              );
               setFooterMenu((current) => current ? null : {
                 top: Math.max(8, rect.top - menuHeight - 6),
                 left: Math.max(8, Math.min(window.innerWidth - menuWidth - 8, rect.right - menuWidth)),
@@ -1047,6 +1046,59 @@ export function Sidebar() {
             <span className="codex-dropdown__icon"><OfficialArchiveIcon /></span>
             <span className="codex-dropdown__text">{t('chat:archive.open')}</span>
           </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-more-browser"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/browser'); }}
+          >
+            <span className="codex-dropdown__icon"><Laptop /></span>
+            <span className="codex-dropdown__text">{t('common:sidebar.browser')}</span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-more-code-review"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/code-review'); }}
+          >
+            <span className="codex-dropdown__icon"><GitCompare /></span>
+            <span className="codex-dropdown__text">{t('codeReview:nav')}</span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-more-task-ledger"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/task-ledger'); }}
+          >
+            <span className="codex-dropdown__icon"><ListChecks /></span>
+            <span className="codex-dropdown__text">{t('taskLedger:nav')}</span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-more-clawgraph"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/clawgraph'); }}
+          >
+            <span className="codex-dropdown__icon"><Workflow /></span>
+            <span className="codex-dropdown__text">{t('clawGraph:nav')}</span>
+          </button>
+          {extraNavItems.map((item) => (
+            <button
+              key={item.to}
+              type="button"
+              role="menuitem"
+              data-testid={item.testId}
+              className="codex-dropdown__item"
+              onClick={() => { setFooterMenu(null); navigate(item.to); }}
+            >
+              <span className="codex-dropdown__icon"><item.icon /></span>
+              <span className="codex-dropdown__text">{item.labelI18nKey ? t(item.labelI18nKey) : item.label}</span>
+            </button>
+          ))}
           {gatewayRestarting && (
             <div data-state="visible" className="codex-dropdown__item profile-menu-user text-yellow-500" aria-live="polite">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -1066,17 +1118,49 @@ export function Sidebar() {
             </button>
           )}
           {devModeUnlocked && (
-            <button
-              type="button"
-              role="menuitem"
-              data-testid="sidebar-open-dev-console"
-              className="codex-dropdown__item"
-              onClick={() => { setFooterMenu(null); void openDevConsole(); }}
-            >
-              <Terminal className="h-4 w-4" />
-              <span className="codex-dropdown__text">{t('common:sidebar.openClawPage')}</span>
-              <ExternalLink className="h-3 w-3 opacity-50" />
-            </button>
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                data-testid="sidebar-more-observability"
+                className="codex-dropdown__item"
+                onClick={() => { setFooterMenu(null); navigate('/observability'); }}
+              >
+                <Activity className="h-4 w-4" />
+                <span className="codex-dropdown__text">{t('common:sidebar.observability')}</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                data-testid="sidebar-more-image-generation"
+                className="codex-dropdown__item"
+                onClick={() => { setFooterMenu(null); navigate('/image-generation'); }}
+              >
+                <ImagePlus className="h-4 w-4" />
+                <span className="codex-dropdown__text">{t('common:sidebar.imageGeneration')}</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                data-testid="sidebar-more-dreams"
+                className="codex-dropdown__item"
+                onClick={() => { setFooterMenu(null); navigate('/dreams'); }}
+              >
+                <Moon className="h-4 w-4" />
+                <span className="codex-dropdown__text">{t('common:sidebar.openClawDreams')}</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                data-testid="sidebar-open-dev-console"
+                className="codex-dropdown__item"
+                onClick={() => { setFooterMenu(null); void openDevConsole(); }}
+              >
+                <Terminal className="h-4 w-4" />
+                <span className="codex-dropdown__text">{t('common:sidebar.openClawPage')}</span>
+                <ExternalLink className="h-3 w-3 opacity-50" />
+              </button>
+            </>
           )}
         </div>,
         document.body,

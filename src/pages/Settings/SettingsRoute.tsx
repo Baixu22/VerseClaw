@@ -57,6 +57,9 @@ const settingsAgents = createPreloadableLazy<{ embedded?: boolean }>(() => impor
 const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Skills').then((module) => ({ default: module.Skills })));
 const settingsChannels = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Channels').then((module) => ({ default: module.Channels })));
 const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((module) => ({ default: module.Billing })));
+const settingsBrowser = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/components/settings/BrowserSettingsPanel').then((module) => ({
+  default: module.BrowserSettingsPanel as ComponentType<{ embedded?: boolean }>,
+})));
 const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((module) => ({
   default: module.StorageCleanerSection as ComponentType<Record<string, never>>,
 })));
@@ -70,6 +73,7 @@ const standaloneSections = {
   skills: settingsSkills.Component,
   channels: settingsChannels.Component,
   billing: settingsBilling.Component,
+  browser: settingsBrowser.Component,
 } as const;
 const SettingsStorage = settingsStorage.Component;
 const SettingsArchived = settingsArchived.Component;
@@ -91,6 +95,7 @@ export function SettingsRoute() {
     agents: { title: t('navigation.agents.title'), description: t('navigation.agents.description') },
     channels: { title: t('navigation.channels.title'), description: t('navigation.channels.description') },
     skills: { title: t('navigation.skills.title'), description: t('navigation.skills.description') },
+    browser: { title: t('navigation.browser.title'), description: t('navigation.browser.description') },
     system: { title: t('navigation.system.title'), description: t('navigation.system.description') },
     developer: { title: t('navigation.developer.title'), description: t('navigation.developer.description') },
     billing: { title: t('navigation.billing.title'), description: t('navigation.billing.description') },

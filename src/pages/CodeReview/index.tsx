@@ -46,7 +46,7 @@ function defaultBaseBranch(branches: GitBranchInfo[]): string {
     ?? '';
 }
 
-export default function CodeReviewPage() {
+export function CodeReviewPanel({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation('codeReview');
   const [viewMode, setViewMode] = useState<'local' | 'remote'>('local');
   const [targetKind, setTargetKind] = useState<TargetKind>('uncommitted');
@@ -140,8 +140,8 @@ export default function CodeReviewPage() {
   const hasFindings = Boolean(review?.findings.length);
 
   return (
-    <div data-testid="code-review-page" className="flex h-full min-h-0 flex-col bg-background">
-      <header className="border-b border-border/60 px-6 py-5">
+    <div data-testid={embedded ? 'workspace-ai-review' : 'code-review-page'} className="flex h-full min-h-0 flex-col bg-background">
+      {!embedded && <header className="border-b border-border/60 px-6 py-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="font-serif text-3xl font-normal tracking-tight text-foreground">
@@ -187,9 +187,9 @@ export default function CodeReviewPage() {
             </div>
           </div>
         </div>
-      </header>
+      </header>}
 
-      {viewMode === 'remote' ? <RemoteForgePanel /> : (
+      {!embedded && viewMode === 'remote' ? <RemoteForgePanel /> : (
       <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[360px_minmax(0,1fr)]">
         <section className="border-b border-border/60 p-4 lg:border-b-0 lg:border-r">
           <div className="space-y-5">
@@ -203,7 +203,7 @@ export default function CodeReviewPage() {
                     data-testid={`code-review-target-${kind}`}
                     onClick={() => setTargetKind(kind)}
                     className={cn(
-                      'flex min-h-10 items-center gap-2 rounded-md border px-3 py-2 text-left text-sm transition-colors',
+                      'flex h-8 items-center gap-2 rounded-md border px-2.5 text-left text-sm transition-colors',
                       targetKind === kind
                         ? 'border-foreground/20 bg-black/5 text-foreground dark:bg-white/10'
                         : 'border-border bg-surface-modal text-foreground/80 hover:bg-black/5 dark:hover:bg-white/5',
@@ -227,7 +227,7 @@ export default function CodeReviewPage() {
                   list="code-review-branches"
                   value={baseBranch}
                   onChange={(event) => setBaseBranch(event.target.value)}
-                  className="mt-2 h-10 w-full rounded-md border border-border bg-surface-input px-3 text-sm outline-none focus:border-foreground/30"
+                  className="mt-2 h-8 w-full rounded-md border border-border bg-surface-input px-2.5 text-sm outline-none focus:border-foreground/30"
                   placeholder={t('target.baseBranchPlaceholder')}
                 />
                 <datalist id="code-review-branches">
@@ -248,7 +248,7 @@ export default function CodeReviewPage() {
                   data-testid="code-review-commit-input"
                   value={commit}
                   onChange={(event) => setCommit(event.target.value)}
-                  className="mt-2 h-10 w-full rounded-md border border-border bg-surface-input px-3 text-sm outline-none focus:border-foreground/30"
+                  className="mt-2 h-8 w-full rounded-md border border-border bg-surface-input px-2.5 text-sm outline-none focus:border-foreground/30"
                   placeholder={t('target.commitPlaceholder')}
                 />
               </div>
@@ -274,7 +274,7 @@ export default function CodeReviewPage() {
               data-testid="code-review-run"
               onClick={() => void handleRunReview()}
               disabled={running}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-md bg-foreground px-3 text-sm font-medium text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
             >
               {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
               <span>{running ? t('actions.running') : t('actions.run')}</span>
@@ -402,4 +402,8 @@ export default function CodeReviewPage() {
       )}
     </div>
   );
+}
+
+export default function CodeReviewPage() {
+  return <CodeReviewPanel />;
 }

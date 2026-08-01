@@ -32,6 +32,10 @@
       "title": "Skills",
       "description": "Installed skills, MCP services, local folders, and enablement controls."
     },
+    "browser": {
+      "title": "Browser",
+      "description": "Profiles and protected credentials for supervised browser work."
+    },
     "system": {
       "title": "System & Runtime",
       "description": "Gateway status, auto-start, remote control, and sandbox runtime."
@@ -373,6 +377,13 @@
   "developer": {
     "title": "Developer",
     "description": "Advanced options for developers",
+    "remoteTasks": {
+      "title": "Remote Task test envelope",
+      "description": "Create a local message, Doctor, or settings task to verify the Inbox decision flow.",
+      "openInbox": "Open Inbox",
+      "created": "Created: {{title}}",
+      "localOnly": "Creates a local test record; it does not accept external input."
+    },
     "console": "OpenClaw Console",
     "consoleDesc": "Access the native OpenClaw management interface",
     "openConsole": "Open Developer Console",

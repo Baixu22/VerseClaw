@@ -32,6 +32,10 @@
       "title": "Skills",
       "description": "インストール済みスキル、MCP サービス、ローカルフォルダー、オン/オフ設定。"
     },
+    "browser": {
+      "title": "ブラウザー",
+      "description": "監督付きブラウザー作業のプロファイルと保護された認証情報。"
+    },
     "system": {
       "title": "システムとランタイム",
       "description": "ゲートウェイ状態、自動起動、リモート制御、サンドボックス。"
@@ -373,6 +377,13 @@
   "developer": {
     "title": "開発者",
     "description": "開発者向け詳細オプション",
+    "remoteTasks": {
+      "title": "リモートタスクのテストエンベロープ",
+      "description": "ローカルのメッセージ、Doctor、設定タスクを作成し、受信トレイの判断フローを確認します。",
+      "openInbox": "受信トレイを開く",
+      "created": "作成済み: {{title}}",
+      "localOnly": "ローカルのテスト記録のみを作成し、外部入力は受け付けません。"
+    },
     "console": "OpenClaw コンソール",
     "consoleDesc": "ネイティブ OpenClaw 管理インターフェースにアクセス",
     "openConsole": "開発者コンソールを開く",

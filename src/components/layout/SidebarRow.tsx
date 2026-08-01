@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
  * LIVE CDP (2026-07-25, ChatGPT.exe/Codex sidebar):
  *   - rest: transparent; hover AND selected: `--token-list-hover-background`
  *     = rgba(255,255,255,0.08) — identical for project rows and thread rows
- *   - height 30px (`--height-token-row`), border-radius 12.5px (`--radius-lg`)
+ *   - height 30px with the product navigation's restrained 8px radius
  *   - trailing actions fade in on row hover / focus-within
  *
  * Workspace rows and session rows must share this surface so their hover

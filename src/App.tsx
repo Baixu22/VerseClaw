@@ -23,13 +23,14 @@ import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agen
 import { applyDocumentTheme } from './lib/theme';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
 import { resolveUiVersion } from './lib/ui-version';
+import type { WorkspacePanelIntent } from '@shared/types/workspace';
 import { UiOverlayProvider } from './components/layout/ui-overlay-context';
 import { toRoutePath } from './lib/settings-overlay-routing';
 import { OverlayPortalProvider } from './components/ui/overlay-portal';
 
 const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })));
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
-const RemoteTasks = lazy(() => import('./pages/RemoteTasks').then((m) => ({ default: m.RemoteTasks })));
+const Inbox = lazy(() => import('./pages/Inbox').then((m) => ({ default: m.Inbox })));
 const Dreams = lazy(() => import('./pages/Dreams').then((m) => ({ default: m.Dreams })));
 const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m) => ({ default: m.ImageGenerationPage })));
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
@@ -40,6 +41,37 @@ const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default:
 const BrowserWorkbench = lazy(() => import('./pages/Browser').then((m) => ({ default: m.BrowserWorkbench })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 const UiV2Showcase = lazy(() => import('./pages/UiV2Showcase').then((m) => ({ default: m.UiV2Showcase })));
+
+function WorkspaceCompatibilityRoute({
+  intent,
+  legacy,
+}: {
+  intent: WorkspacePanelIntent;
+  legacy: ReactNode;
+}) {
+  const location = useLocation();
+  if (resolveUiVersion(window.electron?.platform, location.search) === 'legacy') return legacy;
+
+  const search = new URLSearchParams(location.search);
+  search.set('workspacePanel', intent.panel);
+  if ('view' in intent && intent.view) search.set('view', intent.view);
+  if (intent.panel === 'browser') {
+    if (intent.url) search.set('url', intent.url);
+    if (intent.sessionId) search.set('sessionId', intent.sessionId);
+  }
+  if ((intent.panel === 'review' || intent.panel === 'files') && intent.filePath) {
+    search.set('filePath', intent.filePath);
+  }
+  if (intent.panel === 'terminal' && intent.placement) search.set('placement', intent.placement);
+  if (intent.panel === 'artifact' && intent.artifactId) search.set('artifactId', intent.artifactId);
+  return (
+    <Navigate
+      to={{ pathname: '/', search: `?${search.toString()}` }}
+      state={{ workspacePanelIntent: intent }}
+      replace
+    />
+  );
+}
 
 function SetupRoute() {
   return (
@@ -73,13 +105,30 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
         <Route path="/agents" element={<Navigate to="/settings/agents" replace />} />
         <Route path="/channels" element={<Navigate to="/settings/channels" replace />} />
         <Route path="/skills" element={<Navigate to="/settings/skills" replace />} />
+        <Route path="/inbox" element={<Inbox />} />
         <Route path="/cron" element={<Cron />} />
-        <Route path="/remote-tasks" element={<RemoteTasks />} />
+        <Route path="/remote-tasks" element={<Navigate to="/inbox?source=remote-task" replace />} />
         <Route path="/task-ledger" element={<TaskLedgerPage />} />
         <Route path="/clawgraph" element={<ClawGraphPage />} />
-        <Route path="/code-review" element={<CodeReviewPage />} />
+        <Route
+          path="/code-review"
+          element={(
+            <WorkspaceCompatibilityRoute
+              intent={{ panel: 'review', view: 'ai-review' }}
+              legacy={<CodeReviewPage />}
+            />
+          )}
+        />
         <Route path="/knowledge" element={<Knowledge />} />
-        <Route path="/browser" element={<BrowserWorkbench />} />
+        <Route
+          path="/browser"
+          element={(
+            <WorkspaceCompatibilityRoute
+              intent={{ panel: 'browser', view: 'live' }}
+              legacy={<BrowserWorkbench />}
+            />
+          )}
+        />
         <Route path="/image-generation" element={devModeUnlocked ? <ImageGenerationPage /> : <Navigate to="/" replace />} />
         <Route path="/dreams" element={devModeUnlocked ? <Dreams /> : <Navigate to="/" replace />} />
         <Route path="/observability" element={<ObservabilityDashboard />} />
@@ -190,19 +239,11 @@ function App() {
   const uiVersion = resolveUiVersion(window.electron?.platform, window.location.search);
   const settingsOpen = location.pathname.startsWith('/settings');
   const [appOverlayHost, setAppOverlayHost] = useState<HTMLDivElement | null>(null);
-  const settingsCloseDestinationRef = useRef<string | null>(null);
   const settingsFocusRestoreRef = useRef<HTMLElement | null>(null);
-  const backgroundLocationRef = useRef<Location>(
-    location.pathname.startsWith('/settings')
-      ? { ...location, pathname: '/', search: '', hash: '' }
-      : location,
-  );
-
-  if (!settingsOpen) {
-    backgroundLocationRef.current = location;
-  }
-
-  const backgroundPath = toRoutePath(backgroundLocationRef.current);
+  const settingsLocationState = location.state as { settingsBackgroundPath?: string } | null;
+  const backgroundPath = settingsOpen
+    ? settingsLocationState?.settingsBackgroundPath ?? '/'
+    : toRoutePath(location);
 
   useEffect(() => {
     document.documentElement.dataset.uiVersion = uiVersion;
@@ -213,13 +254,11 @@ function App() {
     if (document.activeElement instanceof HTMLElement) {
       settingsFocusRestoreRef.current = document.activeElement;
     }
-    settingsCloseDestinationRef.current = null;
-    navigate(destination);
-  }, [navigate]);
+    navigate(destination, { state: { settingsBackgroundPath: backgroundPath } });
+  }, [backgroundPath, navigate]);
 
   const requestCloseSettings = useCallback((destination?: string) => {
     const target = destination ?? backgroundPath;
-    settingsCloseDestinationRef.current = null;
     navigate(target, { replace: true });
     window.requestAnimationFrame(() => {
       const storedTarget = settingsFocusRestoreRef.current;

@@ -32,6 +32,10 @@
       "title": "Skills",
       "description": "已安装技能、MCP 服务、本地目录与启用控制。"
     },
+    "browser": {
+      "title": "浏览器",
+      "description": "管理受监督浏览器工作使用的 Profile 与受保护凭据。"
+    },
     "system": {
       "title": "系统与运行时",
       "description": "网关状态、自动启动、远程控制与沙盒运行时。"
@@ -373,6 +377,13 @@
   "developer": {
     "title": "开发者",
     "description": "开发者高级选项",
+    "remoteTasks": {
+      "title": "远程任务测试信封",
+      "description": "创建本地消息、Doctor 或设置任务，用于验证收件箱决策流程。",
+      "openInbox": "打开收件箱",
+      "created": "已创建：{{title}}",
+      "localOnly": "这里只创建本地测试记录，不接收外部输入。"
+    },
     "console": "OpenClaw 控制台",
     "consoleDesc": "访问原生 OpenClaw 管理界面",
     "openConsole": "打开开发者控制台",

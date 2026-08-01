@@ -544,11 +544,13 @@ const EFFORT_CSS = `
 export interface ChatAgentEffortButtonProps {
   agentId: string | null;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export function ChatAgentEffortButton({
   agentId,
   disabled = false,
+  compact = false,
 }: ChatAgentEffortButtonProps) {
   const { t } = useTranslation('chat');
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -598,7 +600,9 @@ export function ChatAgentEffortButton({
             disabled={disabled}
             aria-label={buttonLabel}
             className={cn(
-              'inline-flex h-8 max-w-[148px] items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors',
+              'inline-flex h-8 items-center gap-1 rounded-lg px-1.5 text-meta font-medium text-muted-foreground transition-colors',
+              !compact && 'max-w-[148px]',
+              compact && 'w-8 justify-center px-0',
               'hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-0 dark:hover:bg-white/10',
               'disabled:pointer-events-none disabled:opacity-50',
               (open || isHigh) && 'text-foreground',
@@ -610,24 +614,26 @@ export function ChatAgentEffortButton({
                 isHigh && 'text-fuchsia-600 dark:text-fuchsia-300',
               )}
             />
-            <span className="shrink-0">{t('composer.effortButton')}:</span>
-            <span
-              className={cn(
-                'min-w-0 truncate transition-colors',
-                isMax && 'text-fuchsia-700 dark:text-fuchsia-300',
-              )}
-            >
-              {currentLabel}
-            </span>
-            <ChevronDown
-              className={cn(
-                'h-3.5 w-3.5 shrink-0 transition-transform',
-                open && 'rotate-180',
-              )}
-            />
+            {!compact && <>
+              <span className="shrink-0">{t('composer.effortButton')}:</span>
+              <span
+                className={cn(
+                  'min-w-0 truncate transition-colors',
+                  isMax && 'text-fuchsia-700 dark:text-fuchsia-300',
+                )}
+              >
+                {currentLabel}
+              </span>
+              <ChevronDown
+                className={cn(
+                  'h-3.5 w-3.5 shrink-0 transition-transform',
+                  open && 'rotate-180',
+                )}
+              />
+            </>}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="top">{buttonLabel}</TooltipContent>
+        <TooltipContent side="top" collisionPadding={8}>{buttonLabel}</TooltipContent>
       </Tooltip>
       <ChatAgentEffortPopover
         open={open}

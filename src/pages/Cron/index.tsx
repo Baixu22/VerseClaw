@@ -2,32 +2,22 @@
  * Cron Page
  * Manage scheduled tasks
  */
-import { useEffect, useState, useCallback, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, useCallback, type ReactNode } from 'react';
 import {
   Plus,
   Clock,
-  Play,
   Trash2,
   RefreshCw,
   X,
-  Calendar,
   AlertCircle,
   CheckCircle2,
   XCircle,
-  MessageSquare,
   Loader2,
   Timer,
   History,
-  Pause,
-  Bot,
   ShieldCheck,
-  RadioTower,
-  Database,
-  Send,
-  Globe2,
   ClipboardCheck,
   KeyRound,
-  ListChecks,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,6 +35,11 @@ import {
   type DeliveryChannelGroup,
 } from '@/lib/host-api';
 import { useCronStore } from '@/stores/cron';
+import {
+  projectScheduledItems,
+  useScheduledStore,
+  type BrowserScheduledAction,
+} from '@/stores/scheduled';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
@@ -52,8 +47,9 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { formatRelativeTime, cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { CronJob, CronJobCreateInput, ScheduleType } from '@/types/cron';
-import { CHANNEL_ICONS, CHANNEL_NAMES, type ChannelType } from '@/types/channel';
+import { CHANNEL_NAMES, type ChannelType } from '@/types/channel';
 import { useTranslation } from 'react-i18next';
+import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import type { TFunction } from 'i18next';
 import { isGatewayStopped } from '@/lib/gateway-status';
 import { DEFAULT_CRON_BROWSER_AUTOMATION } from '@shared/cron-browser-automation';
@@ -69,6 +65,16 @@ import type {
   BrowserAutomationRunResult,
 } from '@shared/host-api/contract';
 import type { RawMessage } from '@shared/chat/types';
+import { ListChecks as CodexListChecks, Search as CodexSearch } from '@/components/icons/codex-icons';
+import {
+  CronAgentTaskIcon,
+  CronBrowserTaskIcon,
+  CronCloseIcon,
+  CronEditIcon,
+  CronPauseCircleIcon,
+  CronPlayCircleIcon,
+} from './cron-icons';
+import { BrowserTaskDetailsPanel, BrowserTaskRow } from './BrowserTaskDetailsPanel';
 
 // Common cron schedule presets
 const schedulePresets: { key: string; value: string; type: ScheduleType }[] = [
@@ -1508,7 +1514,7 @@ function CronRunDetailsDialog({
     <Dialog open={!!job} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-2xl rounded-3xl border-0 bg-surface-modal p-6 shadow-2xl">
         <DialogTitle className="flex items-center gap-2 text-xl font-serif font-normal">
-          <ListChecks className="h-5 w-5" />
+          <CodexListChecks className="h-5 w-5" />
           {t('details.title')}
         </DialogTitle>
         <DialogDescription className="text-sm text-foreground/70">
@@ -1639,50 +1645,132 @@ function CronRunDetailsDialog({
 
 interface CronJobCardProps {
   job: CronJob;
+  selected: boolean;
+  onSelect: () => void;
+  onToggle: (enabled: boolean) => void;
+  onDetails: () => void;
+}
+
+function CronJobCard({ job, selected, onSelect, onToggle, onDetails }: CronJobCardProps) {
+  const { t } = useTranslation('cron');
+  const isBrowserAutomation = job.taskKind === 'browserAutomation' || !!job.browserAutomation;
+  const summary = isBrowserAutomation && job.browserAutomation
+    ? `${job.browserAutomation.url} - ${job.browserAutomation.objective}`
+    : job.message;
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      data-testid={`cron-job-card-${job.id}`}
+      className={cn(
+        'group grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-start gap-3 rounded-lg px-3 py-3 text-left transition-colors',
+        selected
+          ? 'bg-black/5 dark:bg-white/10'
+          : 'hover:bg-black/5 dark:hover:bg-white/5',
+      )}
+      onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
+    >
+      <span
+        className={cn(
+          'mt-1 flex h-5 w-5 items-center justify-center',
+          job.enabled
+            ? isBrowserAutomation
+              ? 'text-green-700 dark:text-green-400'
+              : 'text-foreground'
+            : 'text-muted-foreground',
+        )}
+      >
+        {isBrowserAutomation ? <CronBrowserTaskIcon /> : <CronAgentTaskIcon />}
+      </span>
+
+      <span className="min-w-0">
+        <span className="flex min-w-0 items-baseline gap-2">
+          <span
+            data-testid={`cron-job-card-title-${job.id}`}
+            className="min-w-0 truncate text-sm font-medium leading-5 text-foreground"
+          >
+            {job.name}
+          </span>
+          <span className="shrink-0 truncate text-meta leading-5 text-muted-foreground">
+            {parseCronSchedule(job.schedule, t)}
+          </span>
+        </span>
+        <span className="mt-0.5 block truncate text-meta leading-5 text-muted-foreground">
+          {summary}
+        </span>
+        {job.nextRun && job.enabled ? (
+          <span className="mt-0.5 block truncate text-xs leading-4 text-muted-foreground/80">
+            {t('card.next')}: {new Date(job.nextRun).toLocaleString()}
+          </span>
+        ) : null}
+      </span>
+
+      <span
+        data-testid={`cron-job-card-switch-${job.id}`}
+        className="flex min-h-8 shrink-0 items-center gap-1 pl-2"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {isBrowserAutomation ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-md text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100 group-focus-within:opacity-100"
+            onClick={onDetails}
+            aria-label={t('card.runDetails')}
+            title={t('card.runDetails')}
+          >
+            <CodexListChecks className="h-4 w-4" />
+          </Button>
+        ) : null}
+        <Switch checked={job.enabled} onCheckedChange={onToggle} aria-label={job.enabled ? t('stats.active') : t('stats.paused')} />
+      </span>
+    </div>
+  );
+}
+
+interface CronJobDetailsPanelProps {
+  job: CronJob;
   deliveryAccountName?: string;
+  gatewayLabel: string;
+  onClose: () => void;
   onToggle: (enabled: boolean) => void;
   onEdit: () => void;
   onDelete: () => void;
   onTrigger: () => Promise<void>;
-  onDetails: () => void;
+  onRunDetails: () => void;
 }
 
-function CronJobCard({ job, deliveryAccountName, onToggle, onEdit, onDelete, onTrigger, onDetails }: CronJobCardProps) {
+function CronJobDetailsPanel({
+  job,
+  deliveryAccountName,
+  gatewayLabel,
+  onClose,
+  onToggle,
+  onEdit,
+  onDelete,
+  onTrigger,
+  onRunDetails,
+}: CronJobDetailsPanelProps) {
   const { t } = useTranslation('cron');
+  const agents = useAgentsStore((state) => state.agents);
   const [triggering, setTriggering] = useState(false);
-  const agents = useAgentsStore((s) => s.agents);
-  const agentName = agents.find((a) => a.id === job.agentId)?.name ?? job.agentId;
-  const isBrowserAutomation = job.taskKind === 'browserAutomation';
-
-  const handleTrigger = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setTriggering(true);
-    try {
-      await onTrigger();
-      toast.success(t('toast.triggered'));
-    } catch (error) {
-      console.error('Failed to trigger cron job:', error);
-      toast.error(t('toast.failedTrigger', { error: error instanceof Error ? error.message : String(error) }));
-    } finally {
-      setTriggering(false);
-    }
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDelete();
-  };
-
-  const handleDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDetails();
-  };
-
-  const deliveryChannel = typeof job.delivery?.channel === 'string' ? job.delivery.channel : '';
-  const deliveryLabel = deliveryChannel ? getChannelDisplayName(deliveryChannel) : '';
-  const deliveryIcon = deliveryChannel && isKnownChannelType(deliveryChannel)
-    ? CHANNEL_ICONS[deliveryChannel]
-    : null;
+  const agentName = agents.find((agent) => agent.id === job.agentId)?.name ?? job.agentId;
+  const isBrowserAutomation = job.taskKind === 'browserAutomation' || !!job.browserAutomation;
+  const browserAutomation = job.browserAutomation;
+  const unsetLabel = t('workbench.notSet');
+  const deliveryChannel = typeof job.delivery?.channel === 'string'
+    ? job.delivery.channel
+    : (job.target?.channelType || '');
+  const deliveryLabel = deliveryChannel ? getChannelDisplayName(deliveryChannel) : unsetLabel;
+  const deliveryTarget = job.delivery?.to || job.target?.recipient || job.target?.channelId || unsetLabel;
+  const deliveryAccount = deliveryAccountName || job.delivery?.accountId || unsetLabel;
   const sourceLabel = job.source === 'config-fallback' ? t('assurance.sourceFallback') : t('assurance.sourceGateway');
   const runtimeTarget = job.runtime?.sessionTarget === 'isolated'
     ? t('assurance.isolatedRun')
@@ -1690,175 +1778,279 @@ function CronJobCard({ job, deliveryAccountName, onToggle, onEdit, onDelete, onT
   const wakeLabel = job.runtime?.wakeMode === 'next-heartbeat'
     ? t('assurance.nextHeartbeat')
     : (job.runtime?.wakeMode || t('assurance.unknown'));
-  const resultLabel = job.delivery?.mode === 'announce' && deliveryChannel
-    ? t('assurance.externalDelivery')
-    : t('assurance.inAppResult');
-  const deliveryTargetLabel = deliveryAccountName || job.delivery?.to || '';
+  const deliveryModeLabel = job.delivery?.mode === 'announce' || job.target
+    ? t('dialog.deliveryModeAnnounce')
+    : t('dialog.deliveryModeNone');
+  const prompt = isBrowserAutomation && browserAutomation
+    ? browserAutomation.objective
+    : job.message;
+
+  const browserTemplateLabel = browserAutomation?.template
+    ? t(`dialog.browserTemplates.${browserAutomation.template}` as const)
+    : unsetLabel;
+  const browserModeLabel = browserAutomation?.mode
+    ? t(`dialog.browserModes.${browserAutomation.mode}` as const)
+    : unsetLabel;
+  const browserAuthPersistenceKey = browserAutomation?.authPersistence === 'session-name'
+    ? 'sessionName'
+    : browserAutomation?.authPersistence;
+  const browserAuthPersistenceLabel = browserAuthPersistenceKey
+    ? t(`dialog.browserAuthPersistenceModes.${browserAuthPersistenceKey}` as const)
+    : unsetLabel;
+  const browserSensitivePolicyKey = browserAutomation?.sensitiveActionPolicy === 'draft-only'
+    ? 'draftOnly'
+    : browserAutomation?.sensitiveActionPolicy === 'auto-submit'
+      ? 'autoSubmit'
+      : undefined;
+  const browserSensitivePolicyLabel = browserSensitivePolicyKey
+    ? t(`dialog.browserSensitivePolicies.${browserSensitivePolicyKey}` as const)
+    : unsetLabel;
+  const browserDiagnosticsLabel = browserAutomation?.diagnostics
+    ? Object.entries(browserAutomation.diagnostics)
+      .filter(([, enabled]) => enabled)
+      .map(([kind]) => t(`dialog.browserDiagnosticOptions.${kind}` as const))
+      .join(', ') || t('workbench.none')
+    : t('workbench.none');
+
+  const runNow = async () => {
+    setTriggering(true);
+    try {
+      await onTrigger();
+      toast.success(t('toast.triggered'));
+    } catch (triggerError) {
+      toast.error(t('toast.failedTrigger', {
+        error: triggerError instanceof Error ? triggerError.message : String(triggerError),
+      }));
+    } finally {
+      setTriggering(false);
+    }
+  };
+
+  type DetailRow = { label: string; value: ReactNode; testId?: string };
+  type DetailGroup = { title: string; rows: DetailRow[] };
+
+  const detailGroups: DetailGroup[] = [
+    {
+      title: t('workbench.runtime'),
+      rows: [
+        { label: t('assurance.scheduler'), value: gatewayLabel, testId: 'scheduler' },
+        { label: t('dialog.agent'), value: agentName, testId: 'agent' },
+        {
+          label: t('dialog.taskType'),
+          value: isBrowserAutomation ? t('dialog.taskTypeBrowser') : t('dialog.taskTypeAgent'),
+          testId: 'task-type',
+        },
+        { label: t('workbench.runsOn'), value: runtimeTarget, testId: 'run-target' },
+        { label: t('assurance.wake'), value: wakeLabel, testId: 'wake' },
+        { label: t('workbench.payload'), value: job.runtime?.payloadKind || unsetLabel, testId: 'payload' },
+        { label: t('assurance.source'), value: sourceLabel, testId: 'source' },
+      ],
+    },
+    {
+      title: t('workbench.schedule'),
+      rows: [
+        { label: t('dialog.schedule'), value: parseCronSchedule(job.schedule, t), testId: 'schedule' },
+        {
+          label: t('workbench.nextRun'),
+          value: job.nextRun && job.enabled ? new Date(job.nextRun).toLocaleString() : t('workbench.notScheduled'),
+          testId: 'next-run',
+        },
+        { label: t('workbench.createdAt'), value: new Date(job.createdAt).toLocaleString(), testId: 'created-at' },
+        { label: t('workbench.updatedAt'), value: new Date(job.updatedAt).toLocaleString(), testId: 'updated-at' },
+      ],
+    },
+    {
+      title: t('dialog.deliveryTitle'),
+      rows: [
+        { label: t('workbench.deliveryMode'), value: deliveryModeLabel, testId: 'delivery-mode' },
+        ...(job.delivery?.mode === 'announce' || job.target
+          ? [
+              { label: t('dialog.deliveryChannel'), value: deliveryLabel, testId: 'delivery-channel' },
+              { label: t('dialog.deliveryAccount'), value: deliveryAccount, testId: 'delivery-account' },
+              { label: t('dialog.deliveryTarget'), value: deliveryTarget, testId: 'delivery-target' },
+            ]
+          : []),
+      ],
+    },
+    ...(browserAutomation
+      ? [{
+          title: t('workbench.browserConfiguration'),
+          rows: [
+            { label: t('dialog.browserUrl'), value: browserAutomation.url, testId: 'browser-url' },
+            { label: t('dialog.browserTemplate'), value: browserTemplateLabel, testId: 'browser-template' },
+            { label: t('dialog.browserMode'), value: browserModeLabel, testId: 'browser-mode' },
+            { label: t('dialog.browserProfile'), value: browserAutomation.profile || unsetLabel, testId: 'browser-profile' },
+            { label: t('dialog.browserAuthStateName'), value: browserAutomation.authStateName || unsetLabel, testId: 'browser-auth-state' },
+            { label: t('dialog.browserAuthPersistence'), value: browserAuthPersistenceLabel, testId: 'browser-auth-persistence' },
+            { label: t('dialog.browserSensitiveActionPolicy'), value: browserSensitivePolicyLabel, testId: 'browser-sensitive-policy' },
+            {
+              label: t('dialog.browserAllowedDomains'),
+              value: browserAutomation.allowedDomains?.join(', ') || unsetLabel,
+              testId: 'browser-domains',
+            },
+            {
+              label: t('dialog.browserRetryOnTransientFailure'),
+              value: browserAutomation.retryOnTransientFailure ? t('workbench.yes') : t('workbench.no'),
+              testId: 'browser-retry',
+            },
+            { label: t('dialog.browserDiagnostics'), value: browserDiagnosticsLabel, testId: 'browser-diagnostics' },
+            { label: t('dialog.browserSuccessCondition'), value: browserAutomation.successCondition || unsetLabel, testId: 'browser-success' },
+            { label: t('dialog.browserFailureCondition'), value: browserAutomation.failureCondition || unsetLabel, testId: 'browser-failure' },
+            { label: t('workbench.allowedTools'), value: job.toolsAllow?.join(', ') || unsetLabel, testId: 'allowed-tools' },
+          ],
+        }]
+      : []),
+  ];
 
   return (
-    <div
-      data-testid={`cron-job-card-${job.id}`}
-      className="group grid min-h-[224px] grid-rows-[auto_1fr_auto] gap-3 rounded-lg border border-border/70 bg-background/45 p-4 transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer overflow-hidden"
-      onClick={onEdit}
+    <aside
+      data-testid="cron-detail-panel"
+      className="absolute inset-y-0 right-0 z-20 flex w-full max-w-none flex-col border-l border-border bg-background shadow-2xl lg:static lg:z-auto lg:w-[min(42vw,36rem)] lg:min-w-[22rem] lg:max-w-xl lg:shadow-none"
     >
-      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-start gap-3">
-        <div className="h-9 w-9 shrink-0 flex items-center justify-center text-foreground bg-black/5 dark:bg-white/5 border border-border/60 rounded-md">
-            {isBrowserAutomation ? (
-              <Globe2 className={cn("h-5 w-5", job.enabled ? "text-foreground" : "text-muted-foreground")} />
-            ) : (
-              <Clock className={cn("h-5 w-5", job.enabled ? "text-foreground" : "text-muted-foreground")} />
-            )}
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 min-w-0">
-            <h3 data-testid={`cron-job-card-title-${job.id}`} className="min-w-0 truncate text-sm font-semibold text-foreground leading-5">{job.name}</h3>
-            <span
-              className={cn(
-                "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none",
-                job.enabled
-                  ? "bg-green-500/10 text-green-700 dark:text-green-400"
-                  : "bg-muted text-muted-foreground"
-              )}
-              title={job.enabled ? t('stats.active') : t('stats.paused')}
-            >
-              {job.enabled ? t('stats.active') : t('stats.paused')}
-            </span>
-            {isBrowserAutomation && (
-              <span className="shrink-0 rounded-md bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none text-blue-700 dark:text-blue-400">
-                {t('card.browserAutomation')}
-              </span>
-            )}
-          </div>
-          <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-            <Timer className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{parseCronSchedule(job.schedule, t)}</span>
-          </p>
-        </div>
-
-        <div data-testid={`cron-job-card-switch-${job.id}`} className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
-          <Switch
-            checked={job.enabled}
-            onCheckedChange={onToggle}
-          />
-        </div>
-      </div>
-
-      <div className="min-w-0 space-y-3 pl-12">
-        <div className="flex min-w-0 items-start gap-2">
-          <MessageSquare className="h-3.5 w-3.5 mt-0.5 text-muted-foreground shrink-0" />
-          <p className="min-w-0 flex-1 break-words text-xs text-muted-foreground line-clamp-2 leading-5">
-            {isBrowserAutomation && job.browserAutomation
-              ? `${job.browserAutomation.url} - ${job.browserAutomation.objective}`
-              : job.message}
-          </p>
-        </div>
-
-        <div data-testid={`cron-job-card-meta-${job.id}`} className="grid min-w-0 grid-cols-1 gap-2 text-xs text-muted-foreground/80 sm:grid-cols-2">
-          {job.delivery?.mode === 'announce' && deliveryChannel && (
-            <span className="flex min-w-0 items-center gap-1.5">
-              {deliveryIcon}
-              <span className="shrink-0">{deliveryLabel}</span>
-              {deliveryTargetLabel ? <span className="min-w-0 truncate">{deliveryTargetLabel}</span> : null}
-            </span>
+      <div className="flex h-14 shrink-0 items-center justify-between gap-3 px-5">
+        <span
+          className={cn(
+            'rounded-full px-2 py-0.5 text-meta font-medium',
+            job.enabled
+              ? 'bg-green-500/10 text-green-700 dark:text-green-400'
+              : 'bg-black/5 text-muted-foreground dark:bg-white/10',
           )}
-
-          {job.lastRun && (
-            <span className="flex min-w-0 items-center gap-1.5">
-              <History className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{t('card.last')}: {formatRelativeTime(job.lastRun.time)}</span>
-              {job.lastRun.success ? (
-                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-green-500" />
-              ) : (
-                <XCircle className="h-3.5 w-3.5 shrink-0 text-red-500" />
-              )}
-            </span>
-          )}
-
-          {job.nextRun && job.enabled && (
-            <span className="flex min-w-0 items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{t('card.next')}: {new Date(job.nextRun).toLocaleString()}</span>
-            </span>
-          )}
-
-          <span className="flex min-w-0 items-center gap-1.5">
-            <Bot className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{agentName}</span>
-          </span>
-
-          <span className="flex min-w-0 items-center gap-1.5">
-            <Database className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{sourceLabel}</span>
-          </span>
-
-          <span className="flex min-w-0 items-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{runtimeTarget}</span>
-          </span>
-        </div>
-
-        {job.lastRun && !job.lastRun.success && job.lastRun.error && (
-          <div className="flex items-start gap-2 p-2.5 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive">
-            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-            <span className="line-clamp-2">{job.lastRun.error}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-3">
-        <div className="flex min-w-0 items-center gap-2 text-[11px] font-medium text-muted-foreground">
-          <RadioTower className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate">{wakeLabel}</span>
-          <span className="h-1 w-1 shrink-0 rounded-full bg-muted-foreground/50" />
-          <span className="truncate">{resultLabel}</span>
-        </div>
-        <div className="flex shrink-0 justify-end gap-1.5" onClick={(event) => event.stopPropagation()}>
-          {isBrowserAutomation && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDetails}
-              className="h-8 w-8 text-foreground/70 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 rounded-md transition-colors"
-              aria-label={t('card.runDetails')}
-              title={t('card.runDetails')}
-            >
-              <ListChecks className="h-3.5 w-3.5" />
-            </Button>
-          )}
+        >
+          {job.enabled ? t('stats.active') : t('stats.paused')}
+        </span>
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleTrigger}
+            className="h-8 w-8 rounded-md"
+            onClick={() => void runNow()}
             disabled={triggering}
-            className="h-8 w-8 text-foreground/70 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 rounded-md transition-colors"
             aria-label={t('card.runNow')}
             title={t('card.runNow')}
           >
-            {triggering ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Play className="h-3.5 w-3.5" />
-            )}
+            {triggering ? <Loader2 className="h-4 w-4 animate-spin" /> : <CronPlayCircleIcon />}
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleDelete}
-            className="h-8 w-8 text-destructive/70 hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors"
-            aria-label={t('common:actions.delete', 'Delete')}
-            title={t('common:actions.delete', 'Delete')}
+            className="h-8 w-8 rounded-md"
+            onClick={() => onToggle(!job.enabled)}
+            aria-label={job.enabled ? t('workbench.pause') : t('workbench.enable')}
+            title={job.enabled ? t('workbench.pause') : t('workbench.enable')}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            {job.enabled ? <CronPauseCircleIcon /> : <CronPlayCircleIcon />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-md"
+            onClick={onClose}
+            data-testid="scheduled-detail-back"
+            aria-label={t('workbench.closeDetails')}
+            title={t('workbench.closeDetails')}
+          >
+            <CronCloseIcon />
           </Button>
         </div>
       </div>
-    </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">
+        <h2 className="mb-5 break-words text-xl font-medium leading-7 text-foreground">{job.name}</h2>
+
+        <div className="mb-6 whitespace-pre-wrap break-words rounded-lg border border-border bg-surface-input p-4 text-sm leading-6 text-foreground">
+          {prompt}
+        </div>
+
+        <div className="space-y-6">
+          {detailGroups.map((group) => (
+            <section key={group.title}>
+              <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">{group.title}</h3>
+              <div className="overflow-hidden rounded-lg border border-border bg-surface-modal">
+                {group.rows.map(({ label, value, testId }, index) => (
+                  <div
+                    key={label}
+                    data-testid={testId ? `cron-detail-${testId}` : undefined}
+                    className={cn(
+                      'grid min-h-11 grid-cols-[minmax(7rem,0.7fr)_minmax(0,1.3fr)] items-center gap-4 px-4 py-2 text-sm',
+                      index > 0 && 'border-t border-border/70',
+                    )}
+                  >
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="min-w-0 break-words text-right text-foreground">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          {job.lastRun ? (
+            <section>
+              <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">{t('workbench.latestRun')}</h3>
+              <button
+                type="button"
+                className="flex w-full items-start gap-3 rounded-lg border border-border bg-surface-modal p-4 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                onClick={onRunDetails}
+              >
+                {job.lastRun.success ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-700 dark:text-green-400" />
+                ) : (
+                  <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-700 dark:text-red-400" />
+                )}
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium text-foreground">
+                    {job.lastRun.success ? t('details.success') : t('details.failed')}
+                  </span>
+                  <span className="mt-0.5 block text-meta text-muted-foreground">
+                    {formatRelativeTime(job.lastRun.time)}
+                  </span>
+                  {job.lastRun.error ? (
+                    <span className="mt-1 block break-words text-meta text-red-700 dark:text-red-400">{job.lastRun.error}</span>
+                  ) : null}
+                </span>
+              </button>
+            </section>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border px-5 py-3">
+        <Button variant="ghost" onClick={onRunDetails} className="h-9 rounded-md px-3 text-meta">
+          <History className="mr-2 h-4 w-4" />
+          {t('card.runDetails')}
+        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" onClick={onEdit} className="h-9 rounded-md px-3 text-meta">
+            <CronEditIcon className="mr-2 h-5 w-5" />
+            {t('workbench.editConfiguration')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            className="h-9 w-9 rounded-md text-destructive hover:bg-destructive/10 hover:text-destructive"
+            aria-label={t('common:actions.delete', 'Delete')}
+            title={t('common:actions.delete', 'Delete')}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </aside>
   );
 }
 
 export function Cron() {
   const { t } = useTranslation('cron');
+  const { openSettings } = useUiOverlay();
   const { jobs, loading, error, fetchJobs, createJob, updateJob, toggleJob, deleteJob, triggerJob } = useCronStore();
+  const {
+    browserTasks,
+    loadingBrowserTasks,
+    browserError,
+    busyKey: browserBusyKey,
+    refreshBrowserTasks,
+    actOnBrowserTask,
+  } = useScheduledStore();
   const gatewayStatus = useGatewayStore((state) => state.status);
   const [showDialog, setShowDialog] = useState(false);
   const [editingJob, setEditingJob] = useState<CronJob | undefined>();
@@ -1889,6 +2081,12 @@ export function Cron() {
   useEffect(() => {
     void fetchJobs();
   }, [fetchJobs]);
+
+  useEffect(() => {
+    void refreshBrowserTasks();
+    const intervalId = window.setInterval(() => void refreshBrowserTasks(), 15_000);
+    return () => window.clearInterval(intervalId);
+  }, [refreshBrowserTasks]);
 
   useEffect(() => {
     void fetchConfiguredChannels();
@@ -1924,16 +2122,41 @@ export function Cron() {
     };
   }, [detailsJob]);
 
-  // Statistics
-  const safeJobs = Array.isArray(jobs) ? jobs : [];
-  const activeJobs = safeJobs.filter((j) => j.enabled);
-  const pausedJobs = safeJobs.filter((j) => !j.enabled);
-  const failedJobs = safeJobs.filter((j) => j.lastRun && !j.lastRun.success);
-  const fallbackJobs = safeJobs.filter((j) => j.source === 'config-fallback');
-  const externalDeliveryJobs = safeJobs.filter((j) => j.delivery?.mode === 'announce');
+  const safeJobs = useMemo(() => Array.isArray(jobs) ? jobs : [], [jobs]);
+  const safeBrowserTasks = useMemo(() => Array.isArray(browserTasks) ? browserTasks : [], [browserTasks]);
+  const scheduledItems = useMemo(
+    () => projectScheduledItems({ cronJobs: safeJobs, browserTasks: safeBrowserTasks }),
+    [safeBrowserTasks, safeJobs],
+  );
+  const activeJobs = safeJobs.filter((job) => job.enabled);
+  const pausedJobs = safeJobs.filter((job) => !job.enabled);
+  const fallbackJobs = safeJobs.filter((job) => job.source === 'config-fallback');
   const gatewayAssuranceLabel = isGatewayRunning
     ? t('assurance.gatewayConnected')
     : (fallbackJobs.length > 0 ? t('assurance.readOnlyFallback') : t('assurance.gatewayOffline'));
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'on' | 'off'>('all');
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'cron-job' | 'browser-task'>('all');
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  const selectedItem = scheduledItems.find((item) => item.key === selectedKey);
+  const selectedJob = selectedItem?.source === 'cron-job' ? selectedItem.job : undefined;
+  const selectedBrowserItem = selectedItem?.source === 'browser-task' ? selectedItem : undefined;
+  const visibleItems = scheduledItems.filter((item) => {
+    if (sourceFilter !== 'all' && item.source !== sourceFilter) return false;
+    if (filter === 'on' && (item.source !== 'cron-job' || !item.enabled)) return false;
+    if (filter === 'off' && (item.source !== 'cron-job' || item.enabled)) return false;
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return true;
+    if (item.searchText.includes(normalizedQuery)) return true;
+    return item.source === 'cron-job'
+      ? parseCronSchedule(item.job.schedule, t).toLowerCase().includes(normalizedQuery)
+      : item.status.toLowerCase().includes(normalizedQuery);
+  });
+
+  useEffect(() => {
+    if (selectedKey && !selectedItem) setSelectedKey(null);
+  }, [selectedItem, selectedKey]);
 
   const handleSave = useCallback(async (input: CronJobCreateInput) => {
     if (editingJob) {
@@ -1952,217 +2175,230 @@ export function Cron() {
     }
   }, [toggleJob, t]);
 
+  const handleBrowserAction = useCallback(async (id: string, action: BrowserScheduledAction) => {
+    try {
+      await actOnBrowserTask(id, action);
+    } catch (actionError) {
+      toast.error(actionError instanceof Error ? actionError.message : String(actionError));
+    }
+  }, [actOnBrowserTask]);
 
 
-  if (loading) {
+
+  if ((loading || loadingBrowserTasks) && scheduledItems.length === 0) {
     return (
-      <div data-testid="cron-page" className="flex flex-col -m-6 dark:bg-background min-h-[calc(100vh-2.5rem)] items-center justify-center">
+      <div data-testid="cron-page" className="-m-6 flex min-h-[calc(100vh-2.5rem)] items-center justify-center bg-background">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div data-testid="cron-page" className="flex flex-col -m-6 dark:bg-background h-[calc(100vh-2.5rem)] overflow-hidden">
-      <div className="w-full max-w-6xl mx-auto flex flex-col h-full p-6 pt-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 shrink-0 gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-2 font-normal tracking-tight">
-              {t('title')}
-            </h1>
-            <p className="text-subtitle text-foreground/70 font-medium">
-              {t('subtitle')}
-            </p>
-          </div>
-          <div className="flex items-center gap-3 md:mt-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                void fetchJobs();
-                void fetchConfiguredChannels();
-              }}
-              disabled={!isGatewayRunning}
-              className="h-9 text-meta font-medium rounded-full px-4 border-black/10 dark:border-white/10 bg-transparent hover:bg-black/5 dark:hover:bg-white/5 shadow-none text-foreground/80 hover:text-foreground transition-colors"
-            >
-              <RefreshCw className="h-3.5 w-3.5 mr-2" />
-              {t('refresh')}
-            </Button>
-            <Button
-              data-testid="cron-new-task-button"
-              onClick={() => {
-                setEditingJob(undefined);
-                setShowDialog(true);
-              }}
-              disabled={!isGatewayRunning}
-              className="h-9 text-meta font-medium rounded-full px-4 shadow-none"
-            >
-              <Plus className="h-3.5 w-3.5 mr-2" />
-              {t('newTask')}
-            </Button>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-8 min-h-0 -mr-2">
-          {/* Gateway Warning */}
-          {showGatewayUnavailableWarning && (
-            <div className="mb-4 p-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-              <span className="text-yellow-700 dark:text-yellow-400 text-sm font-medium">
-                {t('gatewayWarning')}
-              </span>
+    <div data-testid="cron-page" className="relative -m-6 flex h-[calc(100vh-2.5rem)] overflow-hidden bg-background">
+      <main className={cn('min-w-0 flex-1 flex-col overflow-hidden', selectedItem ? 'hidden lg:flex' : 'flex')}>
+        <div className={cn('mx-auto flex h-full w-full flex-col px-6 pb-8 pt-8', selectedItem ? 'max-w-4xl' : 'max-w-5xl')}>
+          <div className="flex shrink-0 items-start justify-between gap-5">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-semibold tracking-normal text-foreground">{t('title')}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
             </div>
-          )}
-
-          {/* Error Display */}
-          {error && (
-            <div className="mb-4 p-3 rounded-lg border border-destructive/50 bg-destructive/10 flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              <span className="text-destructive text-sm font-medium">
-                {error}
-              </span>
-            </div>
-          )}
-
-          <div data-testid="cron-assurance-panel" className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-4">
-            <div className="min-w-0 rounded-lg border border-border/70 bg-background/45 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{t('assurance.scheduler')}</span>
-              </div>
-              <p className="mt-2 truncate text-sm font-medium text-foreground">{gatewayAssuranceLabel}</p>
-            </div>
-            <div className="min-w-0 rounded-lg border border-border/70 bg-background/45 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                <RadioTower className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{t('assurance.wake')}</span>
-              </div>
-              <p className="mt-2 truncate text-sm font-medium text-foreground">{t('assurance.nextHeartbeat')}</p>
-            </div>
-            <div className="min-w-0 rounded-lg border border-border/70 bg-background/45 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                <Database className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{t('assurance.source')}</span>
-              </div>
-              <p className="mt-2 truncate text-sm font-medium text-foreground">
-                {fallbackJobs.length > 0
-                  ? t('assurance.fallbackCount', { count: fallbackJobs.length })
-                  : t('assurance.gatewaySnapshot')}
-              </p>
-            </div>
-            <div className="min-w-0 rounded-lg border border-border/70 bg-background/45 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                <Send className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{t('assurance.delivery')}</span>
-              </div>
-              <p className="mt-2 truncate text-sm font-medium text-foreground">
-                {t('assurance.deliverySummary', {
-                  external: externalDeliveryJobs.length,
-                  local: safeJobs.length - externalDeliveryJobs.length,
-                })}
-              </p>
-            </div>
-          </div>
-
-          {/* Statistics */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-transparent flex flex-col justify-between min-h-[104px] relative overflow-hidden group hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Clock className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2 min-w-0">
-                <p className="text-stat font-serif text-foreground">{safeJobs.length}</p>
-                <p className="truncate text-sm font-medium text-muted-foreground">{t('stats.total')}</p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-transparent flex flex-col justify-between min-h-[104px] relative overflow-hidden group hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="h-11 w-11 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <Play className="h-5 w-5 text-green-600 dark:text-green-500 ml-0.5" />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2 min-w-0">
-                <p className="text-stat font-serif text-foreground">{activeJobs.length}</p>
-                <p className="truncate text-sm font-medium text-muted-foreground">{t('stats.active')}</p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-transparent flex flex-col justify-between min-h-[104px] relative overflow-hidden group hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="h-11 w-11 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                  <Pause className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2 min-w-0">
-                <p className="text-stat font-serif text-foreground">{pausedJobs.length}</p>
-                <p className="truncate text-sm font-medium text-muted-foreground">{t('stats.paused')}</p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-transparent flex flex-col justify-between min-h-[104px] relative overflow-hidden group hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="h-11 w-11 rounded-full bg-destructive/10 flex items-center justify-center">
-                  <XCircle className="h-5 w-5 text-destructive" />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2 min-w-0">
-                <p className="text-stat font-serif text-foreground">{failedJobs.length}</p>
-                <p className="truncate text-sm font-medium text-muted-foreground">{t('stats.failed')}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Jobs List */}
-          {safeJobs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-black/5 dark:bg-white/5 rounded-lg border border-transparent border-dashed">
-              <Clock className="h-10 w-10 mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2 text-foreground">{t('empty.title')}</h3>
-              <p className="text-sm text-center mb-6 max-w-md">
-                {t('empty.description')}
-              </p>
+            <div className="flex shrink-0 items-center gap-2">
               <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-md"
+                onClick={() => openSettings('/settings/browser')}
+                aria-label={t('scheduled.browserSettings')}
+                title={t('scheduled.browserSettings')}
+                data-testid="scheduled-browser-settings"
+              >
+                <KeyRound className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-md"
+                onClick={() => {
+                  void fetchJobs();
+                  void refreshBrowserTasks();
+                  void fetchConfiguredChannels();
+                }}
+                disabled={loading || loadingBrowserTasks}
+                aria-label={t('refresh')}
+                title={t('refresh')}
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button
+                data-testid="cron-new-task-button"
+                variant={selectedItem ? 'ghost' : 'default'}
                 onClick={() => {
                   setEditingJob(undefined);
                   setShowDialog(true);
                 }}
                 disabled={!isGatewayRunning}
-                className="rounded-full px-6 h-10"
+                className="h-9 rounded-md px-3 text-meta"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('empty.create')}
+                <Plus className="mr-2 h-4 w-4" />
+                {t('newTask')}
               </Button>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {safeJobs.map((job) => {
-                const channelGroup = configuredChannels.find((group) => group.channelType === job.delivery?.channel);
-                const account = channelGroup?.accounts.find((item) => item.accountId === job.delivery?.accountId);
-                const deliveryAccountName = account ? getDeliveryAccountDisplayName(account, t) : undefined;
-                return (
-                <CronJobCard
-                  key={job.id}
-                  job={job}
-                  deliveryAccountName={deliveryAccountName}
-                  onToggle={(enabled) => handleToggle(job.id, enabled)}
-                  onEdit={() => {
-                    setEditingJob(job);
-                    setShowDialog(true);
-                  }}
-                  onDelete={() => setJobToDelete({ id: job.id })}
-                  onTrigger={() => triggerJob(job.id)}
-                  onDetails={() => setDetailsJob(job)}
-                />
-                );
-              })}
-            </div>
-          )}
+          </div>
 
+          <div className="mt-6 flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-surface-input px-3">
+            <CodexSearch className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <input
+              data-testid="cron-search-input"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t('workbench.searchPlaceholder')}
+              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+
+          <div className="mt-4 flex shrink-0 items-center gap-1" role="tablist" aria-label={t('scheduled.sourcesLabel')} data-testid="scheduled-source-filter">
+            {([
+              ['all', t('scheduled.allSources'), scheduledItems.length],
+              ['cron-job', t('scheduled.cronSource'), safeJobs.length],
+              ['browser-task', t('scheduled.browserSource'), safeBrowserTasks.length],
+            ] as const).map(([value, label, count]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                data-testid={`scheduled-source-${value}`}
+                aria-selected={sourceFilter === value}
+                onClick={() => {
+                  setSourceFilter(value);
+                  if (value === 'browser-task') setFilter('all');
+                }}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-sm transition-colors duration-150',
+                  sourceFilter === value
+                    ? 'bg-black/5 font-medium text-foreground dark:bg-white/10'
+                    : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                )}
+              >
+                {label}<span className="ml-1 text-xs text-muted-foreground">{count}</span>
+              </button>
+            ))}
+          </div>
+
+          {sourceFilter !== 'browser-task' ? <div className="mt-2 flex shrink-0 items-center gap-1" role="tablist" aria-label={t('workbench.filtersLabel')}>
+            {([
+              ['all', t('workbench.anyStatus'), sourceFilter === 'cron-job' ? safeJobs.length : scheduledItems.length],
+              ['on', t('workbench.enabled'), activeJobs.length],
+              ['off', t('workbench.paused'), pausedJobs.length],
+            ] as const).map(([value, label, count]) => (
+              <button
+                key={value}
+                type="button"
+                data-testid={`cron-filter-${value}`}
+                role="tab"
+                aria-selected={filter === value}
+                onClick={() => setFilter(value)}
+                className={cn(
+                  'rounded-md px-3 py-1.5 text-sm transition-colors duration-150',
+                  filter === value
+                    ? 'bg-black/5 font-medium text-foreground dark:bg-white/10'
+                    : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                )}
+              >
+                {label}<span className="ml-1 text-xs text-muted-foreground">{count}</span>
+              </button>
+            ))}
+          </div> : null}
+
+          <div className="min-h-0 flex-1 overflow-y-auto pb-6 pt-4">
+            {showGatewayUnavailableWarning ? (
+              <div className="mb-4 flex items-start gap-3 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-sm text-yellow-700 dark:text-yellow-400">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{t('gatewayWarning')}</span>
+              </div>
+            ) : null}
+            {error ? (
+              <div className="mb-4 flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            ) : null}
+            {browserError ? (
+              <div className="mb-4 flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive" data-testid="scheduled-browser-error">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{t('scheduled.browserLoadFailed', { error: browserError })}</span>
+              </div>
+            ) : null}
+            <div data-testid="cron-assurance-panel" className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>{gatewayAssuranceLabel}</span>
+              <span aria-hidden="true">·</span>
+              <span>{t('scheduled.itemCount', { count: scheduledItems.length })}</span>
+            </div>
+
+            {scheduledItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-6 py-16 text-center">
+                <Clock className="mb-4 h-9 w-9 text-muted-foreground/50" />
+                <h2 className="text-lg font-medium text-foreground">{t('scheduled.emptyTitle')}</h2>
+                <p className="mt-2 max-w-md text-sm text-muted-foreground">{t('scheduled.emptyDescription')}</p>
+              </div>
+            ) : visibleItems.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+                {t('workbench.noMatches')}
+              </div>
+            ) : (
+              <div data-testid="cron-job-list" className="divide-y divide-border/70" aria-label={t('scheduled.listLabel')}>
+                {visibleItems.map((item) => item.source === 'cron-job' ? (
+                  <CronJobCard
+                    key={item.key}
+                    job={item.job}
+                    selected={item.key === selectedKey}
+                    onSelect={() => setSelectedKey(item.key)}
+                    onToggle={(enabled) => void handleToggle(item.job.id, enabled)}
+                    onDetails={() => setDetailsJob(item.job)}
+                  />
+                ) : (
+                  <BrowserTaskRow
+                    key={item.key}
+                    item={item}
+                    selected={item.key === selectedKey}
+                    onSelect={() => setSelectedKey(item.key)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
+
+      {selectedJob ? (
+        <CronJobDetailsPanel
+          job={selectedJob}
+          gatewayLabel={gatewayAssuranceLabel}
+          deliveryAccountName={(() => {
+            const group = configuredChannels.find((item) => item.channelType === selectedJob.delivery?.channel);
+            const account = group?.accounts.find((item) => item.accountId === selectedJob.delivery?.accountId);
+            return account ? getDeliveryAccountDisplayName(account, t) : undefined;
+          })()}
+          onClose={() => setSelectedKey(null)}
+          onToggle={(enabled) => void handleToggle(selectedJob.id, enabled)}
+          onEdit={() => {
+            setEditingJob(selectedJob);
+            setShowDialog(true);
+          }}
+          onDelete={() => setJobToDelete({ id: selectedJob.id })}
+          onTrigger={() => triggerJob(selectedJob.id)}
+          onRunDetails={() => setDetailsJob(selectedJob)}
+        />
+      ) : null}
+
+      {selectedBrowserItem ? (
+        <BrowserTaskDetailsPanel
+          item={selectedBrowserItem}
+          busy={browserBusyKey === selectedBrowserItem.key}
+          onClose={() => setSelectedKey(null)}
+          onAction={(action) => void handleBrowserAction(selectedBrowserItem.id, action)}
+        />
+      ) : null}
 
       {/* Create/Edit Dialog */}
       <TaskDialog

@@ -22,6 +22,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { FilePreviewTarget } from '@/components/file-preview/types';
+import type {
+  WorkspaceBrowserView,
+  WorkspacePanelIntent,
+  WorkspaceReviewView,
+  WorkspaceTerminalPlacement,
+} from '@shared/types/workspace';
 
 /**
  * Every kind of tab the panel can host.  The first four came from the old
@@ -33,8 +39,6 @@ export type PanelTabKind =
   | 'terminal'
   | 'browser'
   | 'files'
-  | 'changes'
-  | 'preview'
   | 'artifact'
   | 'audit';
 
@@ -50,8 +54,6 @@ const PANEL_TAB_KINDS: readonly PanelTabKind[] = [
   'terminal',
   'browser',
   'files',
-  'changes',
-  'preview',
   'artifact',
   'audit',
 ];
@@ -81,6 +83,10 @@ export interface RestorableArtifactPanelState {
   /** @deprecated Pre-tab-strip sessions. Migrated into a single tab. */
   workspaceView?: string;
   selectedPath?: string | null;
+  reviewView?: WorkspaceReviewView;
+  browserView?: WorkspaceBrowserView;
+  browserSessionId?: string | null;
+  terminalPlacement?: WorkspaceTerminalPlacement;
 }
 
 interface ArtifactPanelState {
@@ -97,26 +103,27 @@ interface ArtifactPanelState {
    * may auto-select the first file in that case.
    */
   focusedFile: FilePreviewTarget | null;
+  selectedPath: string | null;
+  reviewView: WorkspaceReviewView;
+  browserView: WorkspaceBrowserView;
+  browserSessionId: string | null;
+  browserUrl: string | null;
+  terminalPlacement: WorkspaceTerminalPlacement;
   /** Persisted panel width as a % of the chat container (clamped on read). */
   widthPct: number;
-  /**
-   * Open (or re-activate) a tab of this kind and make it active.  Opens the
-   * panel as a side effect so callers don't have to sequence two actions.
-   */
-  openTab: (kind: PanelTabKind, title?: string) => void;
   /** Close one tab. Closing the last one collapses the panel. */
   closeTab: (tabId: string) => void;
   setActiveTab: (tabId: string) => void;
   /** Rename a tab chip (browser tabs track the loaded hostname). */
   setTabTitle: (kind: PanelTabKind, title: string) => void;
   setFocusedFile: (file: FilePreviewTarget | null) => void;
+  setSelectedPath: (path: string | null) => void;
+  setReviewView: (view: WorkspaceReviewView) => void;
+  setBrowserView: (view: WorkspaceBrowserView) => void;
+  setBrowserSessionId: (sessionId: string | null) => void;
+  setTerminalPlacement: (placement: WorkspaceTerminalPlacement) => void;
+  openWorkspacePanel: (intent: WorkspacePanelIntent) => void;
   setExpanded: (expanded: boolean) => void;
-  /** Open the changes tab. Optionally focus a single file. */
-  openChanges: (file?: FilePreviewTarget | null) => void;
-  /** Open the preview tab on a specific file. */
-  openPreview: (file?: FilePreviewTarget | null) => void;
-  /** Open the panel on its launcher, without committing to a tab. */
-  openBrowser: () => void;
   toggle: () => void;
   close: () => void;
   /** Update the panel width (clamped). */
@@ -134,8 +141,8 @@ function clampWidth(pct: number): number {
 /**
  * Sessions saved before the tab strip existed stored a single `activeTab`
  * plus, for the old nested workspace tab, a `workspaceView` sub-route.
- * Flatten that pair into the equivalent tab kind.  `workspaceView: 'home'`
- * was the launcher, so it maps to "no tab".
+ * Flatten that pair into the equivalent canonical tab kind. Unknown and old
+ * launcher values fall back to Files so restored sessions never open blank.
  */
 function migrateLegacyTab(state: RestorableArtifactPanelState): PanelTabKind | null {
   if (state.activeTab === 'browser') {
@@ -145,11 +152,25 @@ function migrateLegacyTab(state: RestorableArtifactPanelState): PanelTabKind | n
       case 'web': return 'browser';
       case 'audit': return 'audit';
       case 'git': return 'review';
-      default: return null; // 'home' or unset — the old launchpad
+      default: return 'files';
     }
   }
+  if (state.activeTab === 'changes') return 'review';
+  if (state.activeTab === 'preview') return 'files';
   if (isPanelTabKind(state.activeTab)) return state.activeTab;
+  if (state.workspaceView === 'web') return 'browser';
+  if (state.workspaceView === 'git') return 'review';
+  if (state.workspaceView === 'terminal') return 'terminal';
+  if (state.workspaceView === 'audit') return 'audit';
+  if (state.workspaceView === 'files') return 'files';
+  if (state.activeTab != null || state.workspaceView != null) return 'files';
   return null;
+}
+
+function normalizeTabKind(value: unknown): PanelTabKind | null {
+  if (value === 'changes') return 'review';
+  if (value === 'preview') return 'files';
+  return isPanelTabKind(value) ? value : null;
 }
 
 function restoreTabs(state: RestorableArtifactPanelState): PanelTabInstance[] {
@@ -157,11 +178,13 @@ function restoreTabs(state: RestorableArtifactPanelState): PanelTabInstance[] {
     const seen = new Set<PanelTabKind>();
     const restored: PanelTabInstance[] = [];
     for (const entry of state.tabs) {
-      if (!isPanelTabKind(entry?.kind) || seen.has(entry.kind)) continue;
-      seen.add(entry.kind);
-      restored.push({ id: nextTabId(entry.kind), kind: entry.kind, title: entry.title });
+      const kind = normalizeTabKind(entry?.kind);
+      if (!kind || seen.has(kind)) continue;
+      seen.add(kind);
+      restored.push({ id: nextTabId(kind), kind, title: entry.title });
     }
     if (restored.length > 0) return restored;
+    return [{ id: nextTabId('files'), kind: 'files' }];
   }
   const legacy = migrateLegacyTab(state);
   return legacy ? [{ id: nextTabId(legacy), kind: legacy }] : [];
@@ -169,27 +192,35 @@ function restoreTabs(state: RestorableArtifactPanelState): PanelTabInstance[] {
 
 export const useArtifactPanel = create<ArtifactPanelState>()(
   persist(
-    (set, get) => ({
-      open: false,
-      expanded: false,
-      tabs: [],
-      activeTabId: null,
-      focusedFile: null,
-      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
-      openTab: (kind, title) => set((s) => {
-        const existing = s.tabs.find((tab) => tab.kind === kind);
+    (set) => {
+      const openCanonicalTab = (kind: PanelTabKind, title?: string) => set((state) => {
+        const existing = state.tabs.find((tab) => tab.kind === kind);
         if (existing) {
           return {
             open: true,
             activeTabId: existing.id,
             tabs: title && title !== existing.title
-              ? s.tabs.map((tab) => (tab.id === existing.id ? { ...tab, title } : tab))
-              : s.tabs,
+              ? state.tabs.map((tab) => (tab.id === existing.id ? { ...tab, title } : tab))
+              : state.tabs,
           };
         }
         const tab: PanelTabInstance = { id: nextTabId(kind), kind, title };
-        return { open: true, tabs: [...s.tabs, tab], activeTabId: tab.id };
-      }),
+        return { open: true, tabs: [...state.tabs, tab], activeTabId: tab.id };
+      });
+
+      return ({
+      open: false,
+      expanded: false,
+      tabs: [],
+      activeTabId: null,
+      focusedFile: null,
+      selectedPath: null,
+      reviewView: 'changes',
+      browserView: 'preview',
+      browserSessionId: null,
+      browserUrl: null,
+      terminalPlacement: 'side',
+      widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
       closeTab: (tabId) => set((s) => {
         const tabs = s.tabs.filter((tab) => tab.id !== tabId);
         // Closing the last tab collapses the panel entirely — a chrome-less
@@ -208,26 +239,52 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
         tabs: s.tabs.map((tab) => (tab.kind === kind && tab.title !== title ? { ...tab, title } : tab)),
       })),
       setFocusedFile: (focusedFile) => set({ focusedFile }),
+      setSelectedPath: (selectedPath) => set({ selectedPath }),
+      setReviewView: (reviewView) => set({ reviewView }),
+      setBrowserView: (browserView) => set({ browserView }),
+      setBrowserSessionId: (browserSessionId) => set({ browserSessionId }),
+      setTerminalPlacement: (terminalPlacement) => set({
+        terminalPlacement: window.innerWidth <= 960 ? 'bottom' : terminalPlacement,
+      }),
+      openWorkspacePanel: (intent) => {
+        if (intent.panel === 'terminal') {
+          const placement = window.innerWidth <= 960 ? 'bottom' : (intent.placement ?? 'side');
+          set({ terminalPlacement: placement });
+          openCanonicalTab('terminal');
+          return;
+        }
+        if (intent.panel === 'review') {
+          set({
+            reviewView: intent.view ?? 'changes',
+            selectedPath: intent.filePath ?? null,
+          });
+          openCanonicalTab('review');
+          return;
+        }
+        if (intent.panel === 'browser') {
+          set({
+            browserView: intent.view ?? 'preview',
+            browserSessionId: intent.sessionId ?? null,
+            browserUrl: intent.url ?? null,
+          });
+          openCanonicalTab('browser');
+          return;
+        }
+        if (intent.panel === 'files') {
+          set({ selectedPath: intent.filePath ?? null });
+          openCanonicalTab('files');
+          return;
+        }
+        openCanonicalTab(intent.panel);
+      },
       setExpanded: (expanded) => set({ expanded }),
-      openChanges: (file = null) => {
-        set({ focusedFile: file ?? null });
-        get().openTab('changes');
-      },
-      openPreview: (file = null) => {
-        set({ focusedFile: file ?? null });
-        get().openTab('preview');
-      },
-      // Historically "open the workspace launchpad". With the flat tab strip
-      // that is exactly the launcher: open the panel, commit to no tab.
-      openBrowser: () => set({ open: true }),
       toggle: () => set((s) => ({ open: !s.open })),
-      close: () => set({ open: false, expanded: false, tabs: [], activeTabId: null, focusedFile: null }),
+      close: () => set({ open: false, expanded: false, tabs: [], activeTabId: null, focusedFile: null, selectedPath: null }),
       setWidthPct: (pct) => set({ widthPct: clampWidth(pct) }),
       restoreSessionState: (state) => set(() => {
         const tabs = restoreTabs(state);
-        const requestedKind = isPanelTabKind(state.activeTabKind)
-          ? state.activeTabKind
-          : migrateLegacyTab(state);
+        const normalizedActiveKind = normalizeTabKind(state.activeTabKind);
+        const requestedKind = normalizedActiveKind ?? migrateLegacyTab(state);
         const active = tabs.find((tab) => tab.kind === requestedKind) ?? tabs[tabs.length - 1] ?? null;
         return {
           open: state.open ?? false,
@@ -237,9 +294,15 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
           tabs,
           activeTabId: active?.id ?? null,
           focusedFile: null,
+          selectedPath: state.selectedPath ?? null,
+          reviewView: state.reviewView ?? 'changes',
+          browserView: state.browserView ?? 'preview',
+          browserSessionId: state.browserSessionId ?? null,
+          terminalPlacement: window.innerWidth <= 960 ? 'bottom' : (state.terminalPlacement ?? 'side'),
         };
       }),
-    }),
+      });
+    },
     {
       name: 'verse-claw.artifact-panel',
       // Only persist the user-controlled width — open/tabs/focus reset on reload.
@@ -247,3 +310,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
     },
   ),
 );
+
+export function openWorkspacePanel(intent: WorkspacePanelIntent): void {
+  useArtifactPanel.getState().openWorkspacePanel(intent);
+}

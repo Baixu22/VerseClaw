@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Bot,
   Cpu,
+  Globe2,
   Network,
   Palette,
   Puzzle,
@@ -49,6 +50,7 @@ function SettingsDrawerNavigation({ children, currentSection, onClose }: Setting
     { id: 'agents', to: '/settings/agents', icon: Bot, group: 'configuration' },
     { id: 'skills', to: '/settings/skills', icon: Puzzle, group: 'configuration' },
     { id: 'channels', to: '/settings/channels', icon: Network, group: 'configuration' },
+    { id: 'browser', to: '/settings/browser', icon: Globe2, group: 'configuration' },
     { id: 'billing', to: '/settings/billing', icon: ReceiptText, group: 'operations' },
     { id: 'system', to: '/settings/system', icon: Server, group: 'operations' },
     { id: 'developer', to: '/settings/developer', icon: Wrench, group: 'operations' },

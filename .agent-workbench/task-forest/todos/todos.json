@@ -215,6 +215,93 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "完整迁移 FakeCoding 的克制设计哲学和信息架构，同时保证 Verse Claw 的真实功能完整可达。",
+      "validation_plan": [
+        "逐节点运行 Harness context/validate 和聚焦 E2E",
+        "最终运行 i18n lint、ESLint、typecheck、build:vite、harness:ci",
+        "在 1280x800 与 960x800 验证 Light/Dark 截图和交互"
+      ],
+      "why_not_enough": "必须按串行节点逐步实现和验收，不能用单次样式替换宣称完成全部迁移。",
+      "why_this_task": "任务同时覆盖视觉系统、入口精简、真实能力归位和跨平台验收，是用户已确认方案的直接工程映射。"
+    },
+    "blocked_by": [],
+    "confidence": 0.82,
+    "context_tags": [
+      "ui-polish",
+      "fakecoding",
+      "information-architecture",
+      "cross-platform"
+    ],
+    "desired_outcomes": [
+      "一级侧栏固定为新任务、收件箱、已安排、知识，并保留项目、会话和底部设置",
+      "Browser、Review、Task Ledger、ClawGraph、Cron、Remote Tasks 和 Knowledge 均有唯一且真实的产品归属",
+      "全局控件、SVG、灰阶 token、密度和动效与 FakeCoding 设计语言一致",
+      "普通界面使用直白文案，Developer/Advanced 保留准确术语"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0021",
+    "kind": "global_task",
+    "next_action": "一次只推进一个串行子节点",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "降低导航和页面认知负担，在不削弱真实能力的前提下形成一致、安静、可发现的跨平台桌面体验。",
+    "ready": true,
+    "remaining_minutes_max": 9600,
+    "remaining_minutes_min": 4800,
+    "status": "in_progress",
+    "success_metrics": [
+      "管理页 H1 不超过 28px",
+      "一级业务入口数量为 3",
+      "Knowledge 顶级业务视图数量为 2",
+      "迁移路径功能 E2E 覆盖率为 100%"
+    ],
+    "title": "FakeCoding 设计体系与产品信息架构迁移"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "完整实现会话工作区 FakeCoding 对齐，尤其保证 Browser、Terminal、Files、Review 的真实功能和对应 SVG 样式完整。",
+      "validation_plan": [
+        "运行 TF-0025 Harness context/validate 和聚焦单元测试",
+        "运行 i18n、ESLint、typecheck、build:vite 与相关 Electron E2E",
+        "检查 1280x800、960x800 Light/Dark 及 SVG 几何契约"
+      ],
+      "why_not_enough": "本节点不会处理 Knowledge 或最终 legacy 移除，这些继续由 TF-0026 和 TF-0027 承担。",
+      "why_this_task": "TF-0025 是已完成应用壳、Inbox 和 Scheduled 之后唯一 ready 的串行节点，直接覆盖用户当前要求。"
+    },
+    "blocked_by": [],
+    "confidence": 0.86,
+    "context_tags": [],
+    "desired_outcomes": [
+      "工作区仅保留 Review、Terminal、Browser、Files、Artifacts、Audit 六类可见标签",
+      "Browser Preview/Live、Terminal bottom/side、Files、Review 三子视图全部复用现有真实能力",
+      "所有工作区标签和命令 SVG 保持 FakeCoding 原始几何及 fill/stroke 规则",
+      "960x800 下不出现拥挤三栏、横向溢出或功能不可达"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0025",
+    "kind": "task",
+    "next_action": "先建立 Harness task，再完成 renderer 类型与旧状态迁移",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "将会话内 Browser、Terminal、Files 与 Review 收敛为克制、连续且功能真实的 FakeCoding 式工作区，减少重复一级页面并保留深层能力。",
+    "ready": true,
+    "remaining_minutes_max": 2100,
+    "remaining_minutes_min": 1200,
+    "status": "in_progress",
+    "success_metrics": [
+      "工作区可见标签数量固定为 6",
+      "同一 Terminal intent 产生的后端 shell 数量为 1",
+      "Browser 与 Review 语义重复一级页面数量为 0",
+      "新增用户文案 en、zh、ja、ru 覆盖率为 100%"
+    ],
+    "title": "会话 Browser/Review 与工作区深层入口"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
@@ -328,5 +415,63 @@
       "产品决定有明确 owner 和日期"
     ],
     "title": "UAS-08 真实 ROI、soak 与毕业裁决"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0026"
+    ],
+    "confidence": 0.66,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0027",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0026",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": 1200,
+    "remaining_minutes_min": 1200,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "次级页面视觉收尾与 Legacy 移除"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0025"
+    ],
+    "confidence": 0.68,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0026",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0025",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": 1500,
+    "remaining_minutes_min": 1500,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "Knowledge Library 与 Review Queue 收敛"
   }
 ]

@@ -161,7 +161,8 @@ test.describe('Agent Browser workbench', () => {
     });
 
     await completeSetup(page);
-    await page.getByTestId('sidebar-nav-browser').click();
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
+    await page.getByTestId('sidebar-more-browser').click();
     const diskSpaceNotice = page.getByText('Disk space is running low', { exact: true });
     if (await diskSpaceNotice.isVisible().catch(() => false)) {
       await diskSpaceNotice.locator('xpath=ancestor::*[@data-sonner-toast][1]').getByRole('button').click();

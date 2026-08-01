@@ -1557,5 +1557,481 @@
     "summary": "建立可复现的 Executor/Verifier 工程验收主控，并先闭合当前 runtime、E2E、maturity 与 release 阻塞。",
     "title": "Agent 工程自动验收编排器",
     "updated_at": "2026-07-31T06:14:56.840368Z"
+  },
+  "TF-0021": {
+    "acceptance_criteria": [
+      "顶级业务入口恰为收件箱、已安排、知识三个，新任务作为命令入口独立存在",
+      "每个可见状态最多一个主操作，普通页面不存在蓝色实心主按钮",
+      "Browser 与 Review 不再保留语义重复的一级入口",
+      "Knowledge 首屏仅呈现 Library 与 Review Queue",
+      "1280x800 与 960x800 的 Light/Dark 验证无横向溢出、文字断裂、重叠或重复主操作",
+      "相关 i18n、lint、typecheck、build、E2E 与 Harness 验证通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "完整迁移 FakeCoding 的克制设计哲学和信息架构，同时保证 Verse Claw 的真实功能完整可达。",
+      "validation_plan": [
+        "逐节点运行 Harness context/validate 和聚焦 E2E",
+        "最终运行 i18n lint、ESLint、typecheck、build:vite、harness:ci",
+        "在 1280x800 与 960x800 验证 Light/Dark 截图和交互"
+      ],
+      "why_not_enough": "必须按串行节点逐步实现和验收，不能用单次样式替换宣称完成全部迁移。",
+      "why_this_task": "任务同时覆盖视觉系统、入口精简、真实能力归位和跨平台验收，是用户已确认方案的直接工程映射。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "现有 host-api 已足够支持 Inbox、Scheduled、Review 和 Browser 的入口重组",
+      "Task Ledger 与 ClawGraph 的完整页面继续作为深层兼容工作区保留"
+    ],
+    "confidence": 0.82,
+    "context_tags": [
+      "ui-polish",
+      "fakecoding",
+      "information-architecture",
+      "cross-platform"
+    ],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "一级侧栏固定为新任务、收件箱、已安排、知识，并保留项目、会话和底部设置",
+      "Browser、Review、Task Ledger、ClawGraph、Cron、Remote Tasks 和 Knowledge 均有唯一且真实的产品归属",
+      "全局控件、SVG、灰阶 token、密度和动效与 FakeCoding 设计语言一致",
+      "普通界面使用直白文案，Developer/Advanced 保留准确术语"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 7200,
+    "evidence": [],
+    "execution_hints": [
+      "一次只推进一个串行子节点",
+      "每个节点先更新 Harness 与 E2E，再扩大视觉迁移面"
+    ],
+    "id": "TF-0021",
+    "kind": "global_task",
+    "non_goals": [
+      "重写 Gateway、Host API 或后端数据模型",
+      "合并 Task Ledger 与 ClawGraph 的状态真源",
+      "将所有全屏工具强塞进狭窄会话侧栏",
+      "把 Agent Browser 攟造成通用人类浏览器"
+    ],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "降低导航和页面认知负担，在不削弱真实能力的前提下形成一致、安静、可发现的跨平台桌面体验。",
+    "remaining_minutes_max": 9600,
+    "remaining_minutes_min": 4800,
+    "requirements": [
+      "不删除、伪造或重写现有后端能力与安全策略",
+      "Remote Tasks 必须进入 Inbox，不得归类为 Automations 或 Scheduled",
+      "保留现有未提交 Cron 修改并在其上继续整合",
+      "所有新增可见文案覆盖 en、zh、ja、ru，所有可见流程配套 Electron E2E",
+      "960x800 下详情使用覆盖层或单视图，避免强制三栏"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "管理页 H1 不超过 28px",
+      "一级业务入口数量为 3",
+      "Knowledge 顶级业务视图数量为 2",
+      "迁移路径功能 E2E 覆盖率为 100%"
+    ],
+    "summary": "以克制的灰阶工作界面重构 Verse Claw，同时按真实使用上下文重新归位现有能力。",
+    "title": "FakeCoding 设计体系与产品信息架构迁移",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
+  },
+  "TF-0022": {
+    "acceptance_criteria": [
+      "新增 fakecoding-ui-convergence Harness task",
+      "UI v2 默认覆盖 Windows、macOS、Linux",
+      "按钮、输入、菜单、标签、Tooltip 和应用壳遵守新尺寸与颜色契约",
+      "UI showcase 和应用壳聚焦 E2E 通过"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.88,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 900,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-ui-convergence.md；pnpm harness validate：通过",
+      "tests/unit/ui-version.test.ts、tests/unit/fakecoding-design-system.test.ts：8/8 通过",
+      "tests/e2e/windows-ui-v2.spec.ts：4/4 通过；Showcase 最终聚焦复跑 1/1",
+      "tests/e2e/settings-drawer.spec.ts、tests/e2e/startup-loading-experience.spec.ts：8/8 通过",
+      "pnpm run i18n:lint、pnpm run typecheck、pnpm run build:vite：通过",
+      "精确 ESLint：0 error；仅 5 个既有 Hook/Fast Refresh warning",
+      "playwright-report/data：1280x800、960x800 的 Light/Dark 四张 Showcase 截图已人工检查，无横向溢出、文字断裂、控件重叠或重复主操作"
+    ],
+    "execution_hints": [
+      "下一节点只推进 TF-0023：四入口导航与真实 Inbox 聚合",
+      "继续保留 ?uiVersion=legacy，直到 TF-0027 全局收尾",
+      "不得覆盖用户现有未提交 Cron 修改"
+    ],
+    "id": "TF-0022",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "先提供后续所有页面迁移共同依赖的可验证视觉和布局基线。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "保留 ?uiVersion=legacy 回滚",
+      "移除默认蓝色 primary、页面 serif 规则和常规 active:scale",
+      "迁移实际使用的 FakeCoding SVG 并保留 stroke/fill 规则"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "FakeCoding 跨平台灰阶设计系统与应用壳基线已完整收口：共享控件、SVG、连续工作面、应用级浮层 portal、克制动效和双宽度双主题视觉证据均已验证。",
+    "title": "FakeCoding 设计系统与应用壳基线",
+    "updated_at": "2026-07-31T12:22:41.803066Z"
+  },
+  "TF-0023": {
+    "acceptance_criteria": [
+      "Sidebar 仅保留四个固定顶层命令/业务入口",
+      "Inbox 三类来源均可显示风险、证据、时间和真实动作",
+      "动作完成后聚合状态立即刷新"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 960,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-inbox-navigation.md",
+      "src/pages/Inbox/index.tsx",
+      "src/stores/inbox.ts",
+      "src/components/layout/Sidebar.tsx",
+      "tests/unit/inbox-store.test.ts (10 focused tests pass)",
+      "tests/unit/fakecoding-design-system.test.ts (design contract pass)",
+      "tests/e2e/fakecoding-inbox-navigation.spec.ts (2/2 pass)",
+      "tests/e2e/agent-browser-workbench.spec.ts (deep menu pass)",
+      "tests/e2e/clawgraph.spec.ts (deep menu pass)",
+      "tests/e2e/code-review-center.spec.ts (deep menu pass)",
+      "tests/e2e/remote-forge-controlled-preview.spec.ts (3/3 deep menu pass)",
+      "tests/e2e/openclaw-dreams.spec.ts (3/3 deep menu pass)",
+      "tests/e2e/remote-tasks.spec.ts (Developer creator pass)",
+      "tests/e2e/developer-mode.spec.ts (1/1 pass)",
+      "tests/e2e/image-generation-settings.spec.ts (4/4 pass)",
+      "tests/e2e/system-maturity-p45.spec.ts Browser isolation (1/1 pass)",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-1280-light.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-960-light.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-1280-dark.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-960-dark.png",
+      "pnpm run i18n:lint",
+      "pnpm run typecheck",
+      "pnpm run build:vite"
+    ],
+    "execution_hints": [
+      "复用现有 permissions、remoteTasks 与 agentBrowser host-api，不改变后端模型和安全策略",
+      "只推进 TF-0023，不实现 TF-0024 Scheduled/Browser Runs 归位",
+      "不得覆盖用户现有未提交 Cron 修改"
+    ],
+    "id": "TF-0023",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "把分散的待决策事项收敛到一个真实收件箱，同时降低一级导航的认知负担。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "Remote Tasks 归入 Inbox",
+      "旧路由保留兼容跳转",
+      "侧栏显示真实待处理数量"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "四入口 Sidebar、/inbox 和三类真实来源聚合已完成；权限、Remote Task、待批准 Browser Task 的风险/证据/历史/决策均可达，动作后刷新待处理计数，旧路由与深层功能入口保持兼容。",
+    "title": "四入口导航与真实 Inbox 聚合",
+    "updated_at": "2026-07-31T13:53:11.977560Z"
+  },
+  "TF-0024": {
+    "acceptance_criteria": [
+      "已安排页面真实展示 Cron 与 Browser Runs",
+      "960px 详情使用覆盖式布局",
+      "Browser 设置入口具备 Profile 与 Vault 现有能力"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "以 FakeCoding 式克制界面精简页面，同时让定时任务和 Browser 运行按真实功能展示。",
+      "validation_plan": [
+        "运行 Harness context/validate、i18n、聚焦单测、typecheck 和 build",
+        "Electron E2E 覆盖 Cron 全功能、Browser task 操作与 Profile/Vault 入口",
+        "检查 1280x800 与 960x800 Light/Dark"
+      ],
+      "why_not_enough": "本节点不处理会话 Browser/Review、Knowledge 或最终 Legacy 移除。",
+      "why_this_task": "已安排是 Cron 与受监督 Browser Tasks 的共同时间上下文，统一入口能减少导航并保持完整运行能力。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.76,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "已安排提供 Cron 与 Browser Runs 的统一可扫描列表和真实详情",
+      "窄窗口在列表与详情之间切换，不形成拥挤三栏",
+      "Browser Profile 与 Vault 从已安排可发现并在设置中使用"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1200,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-scheduled-browser-runs.md",
+      "src/stores/scheduled.ts",
+      "src/pages/Cron/index.tsx",
+      "src/pages/Cron/BrowserTaskDetailsPanel.tsx",
+      "src/components/settings/BrowserSettingsPanel.tsx",
+      "src/pages/Settings/SettingsSidebar.tsx (FakeCoding browser SVG entry)",
+      "src/pages/Settings/SettingsDrawerRoute.tsx",
+      "README.md / README.zh-CN.md / README.ja-JP.md",
+      "tests/unit/scheduled-store.test.ts",
+      "tests/e2e/fakecoding-scheduled-browser-runs.spec.ts (1/1 pass)",
+      "tests/e2e/cron-browser-automation.spec.ts (1/1 isolated retry pass after Electron teardown timeout)",
+      "tests/e2e/cron-card-long-title.spec.ts (1/1 pass)",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-1280-light.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-960-light.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-1280-dark.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-960-dark.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/browser-settings-1280-dark.png",
+      "pnpm harness validate --spec harness/specs/tasks/fakecoding-scheduled-browser-runs.md",
+      "pnpm run i18n:lint",
+      "focused ESLint (0 errors, 0 warnings)",
+      "focused Vitest (13/13 pass)",
+      "pnpm run typecheck",
+      "pnpm run build:vite"
+    ],
+    "execution_hints": [
+      "先建立 Harness task 和 ScheduledItem renderer 投影，再改页面",
+      "复用现有 cron 与 agentBrowser host-api，不改后端模型、安全策略或通信边界",
+      "不进入 TF-0025 的会话 Browser/Review 工作区",
+      "不得覆盖用户现有未提交 Cron 修改"
+    ],
+    "id": "TF-0024",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "将定时工作与受监督浏览器运行统一归入已安排，同时完整保留两类后端能力和安全决策。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "保留 Cron 创建、编辑、启停、删除、立即运行、投递渠道和历史",
+      "保留 Browser task 审批、重试、取消、步骤和结果",
+      "不得覆盖用户未提交 Cron 修改"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "已安排页面已用 ScheduledItem 统一投影 Cron 与监督式 Browser Runs，完整保留两类真实动作、运行证据和安全边界；960px 详情替换列表，Profile/Vault 归入可发现的 Settings > Browser。",
+    "title": "已安排与 Browser 任务归位",
+    "updated_at": "2026-07-31T15:22:04.533274Z"
+  },
+  "TF-0025": {
+    "acceptance_criteria": [
+      "Browser、Terminal、Files、Review 的真实功能与 FakeCoding 样式均可在会话工作区访问",
+      "/browser 与 /code-review 正确进入对应工作区上下文，/task-ledger 与 /clawgraph 深链可聚焦",
+      "SVG 测试验证 viewBox、fill/stroke、关键 path 与 stroke 属性",
+      "1280x800 和 960x800 的 Light/Dark 无溢出、遮挡、重复标题或重复主操作",
+      "i18n、focused tests、typecheck、build、相关 Electron E2E、Harness validate 与 harness:ci 通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "完整实现会话工作区 FakeCoding 对齐，尤其保证 Browser、Terminal、Files、Review 的真实功能和对应 SVG 样式完整。",
+      "validation_plan": [
+        "运行 TF-0025 Harness context/validate 和聚焦单元测试",
+        "运行 i18n、ESLint、typecheck、build:vite 与相关 Electron E2E",
+        "检查 1280x800、960x800 Light/Dark 及 SVG 几何契约"
+      ],
+      "why_not_enough": "本节点不会处理 Knowledge 或最终 legacy 移除，这些继续由 TF-0026 和 TF-0027 承担。",
+      "why_this_task": "TF-0025 是已完成应用壳、Inbox 和 Scheduled 之后唯一 ready 的串行节点，直接覆盖用户当前要求。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "现有 hostApi 已具备计划所需的 Browser、Terminal、Code Review、Remote Forge、Task Ledger 与 ClawGraph 能力",
+      "旧工作区持久化状态允许在 renderer 读取时规范化而无需后端迁移"
+    ],
+    "confidence": 0.86,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "工作区仅保留 Review、Terminal、Browser、Files、Artifacts、Audit 六类可见标签",
+      "Browser Preview/Live、Terminal bottom/side、Files、Review 三子视图全部复用现有真实能力",
+      "所有工作区标签和命令 SVG 保持 FakeCoding 原始几何及 fill/stroke 规则",
+      "960x800 下不出现拥挤三栏、横向溢出或功能不可达"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1500,
+    "evidence": [],
+    "execution_hints": [
+      "先建立 Harness task，再完成 renderer 类型与旧状态迁移",
+      "优先抽取共享 Terminal controller 和可嵌入 Review 子面板",
+      "复制 FakeCoding 原始 SVG 路径，不用 Lucide 近似替代",
+      "保留用户现有未提交修改、legacy 回滚和指定临时文件"
+    ],
+    "id": "TF-0025",
+    "kind": "task",
+    "non_goals": [
+      "Knowledge 信息架构收敛",
+      "移除 ?uiVersion=legacy",
+      "将 Browser Tasks、Profiles 或 Vault 放回会话 Browser",
+      "重写 Host API、Gateway、安全审批或后端状态模型"
+    ],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "将会话内 Browser、Terminal、Files 与 Review 收敛为克制、连续且功能真实的 FakeCoding 式工作区，减少重复一级页面并保留深层能力。",
+    "remaining_minutes_max": 2100,
+    "remaining_minutes_min": 1200,
+    "requirements": [
+      "Review 内含 Changes、AI Review、Pull Requests，并保留审批和 fail-closed 行为",
+      "Browser 内含 Preview、Live、接管、停止、截图、snapshot 与 UID 交互",
+      "Terminal 底部与右侧呈现共享同一个 sessionId、scrollback 和权限状态",
+      "Files 宽屏双栏、960px 单视图，支持通过 intent 定位文件",
+      "统一 openWorkspacePanel(intent)，保留 Task Ledger 与 ClawGraph 全屏深层页面",
+      "不修改后端、Host API、Gateway、Browser 安全或持久化契约"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "工作区可见标签数量固定为 6",
+      "同一 Terminal intent 产生的后端 shell 数量为 1",
+      "Browser 与 Review 语义重复一级页面数量为 0",
+      "新增用户文案 en、zh、ja、ru 覆盖率为 100%"
+    ],
+    "summary": "扩展会话 Browser 与 Review 标签，统一 openWorkspacePanel(intent)，并提供 Task Ledger/ClawGraph 上下文入口。",
+    "title": "会话 Browser/Review 与工作区深层入口",
+    "updated_at": "2026-07-31T16:58:41.165423Z"
+  },
+  "TF-0026": {
+    "acceptance_criteria": [
+      "首屏仅有 Library 与 Review Queue",
+      "Inbox、Drafts、Proposal 使用统一 KnowledgeReviewItem 投影",
+      "Maintenance/Source tools 保留全部高级能力",
+      "引用、保存草稿、提交复核完整可用"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.68,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1500,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0026",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "编辑必须显式进入",
+      "窄窗口 Preview 与 Edit 不同时堆叠",
+      "Librarian 迁入 Chat 的询问知识库模式"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "拆分 Knowledge 单体页，以 Library 和 Review Queue 为首屏，并将高级治理和来源工具按需披露。",
+    "title": "Knowledge Library 与 Review Queue 收敛",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
+  },
+  "TF-0027": {
+    "acceptance_criteria": [
+      "低频页面全部使用同一控件体系",
+      "全局视觉约束测试通过",
+      "i18n、lint、typecheck、build、分阶段 E2E、harness:ci 全绿",
+      "确认无回滚需要后移除 legacy"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.66,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1200,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0027",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "清理蓝色 CTA、serif hero、嵌套卡片和普通界面 ToB 话术",
+      "完成前保留 legacy 回滚",
+      "同步三份 README 与设计说明"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "统一 Settings、Setup、Agents、Models、Channels、Skills、Observability 等页面，并完成文档和全局门禁。",
+    "title": "次级页面视觉收尾与 Legacy 移除",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
   }
 }
