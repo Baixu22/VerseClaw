@@ -291,3 +291,30 @@ export const Monitor = createCodexIcon('monitor', [
   ['line', { x1: '8', x2: '16', y1: '21', y2: '21' }],
   ['line', { x1: '12', x2: '12', y1: '17', y2: '21' }],
 ]);
+
+// Permission-mode icons ported from FakeCoding-main/web/src/components/Icon.tsx
+// (handmadeIconPaths). These are the four glyphs used by Codex's approval menu
+// on the composer; ClawX maps them onto its own WorkspacePermissionMode set:
+//   readOnly    -> hand         (Codex `suggest` — "always ask")
+//   plan        -> lightbulb    (no Codex equivalent; placeholder after suggest)
+//   acceptEdits -> shield-check (Codex `auto` — ShieldCheck from lucide-react)
+//   fullAccess  -> shield-alert (Codex `full`  — warning variant)
+// ShieldCheck is re-exported from lucide-react at the call site, so only the
+// three handmade paths live here.
+
+// codex-icons/hand.svg — "request approval" raised hand
+export const Hand = createCodexIcon('hand', [
+  ['path', { d: 'M7.7 11.4V6.8a1.25 1.25 0 0 1 2.5 0v3.1-4.3a1.25 1.25 0 0 1 2.5 0v4.1-3.3a1.25 1.25 0 0 1 2.5 0v4.1-2.3a1.25 1.25 0 0 1 2.5 0v5.3c0 4.1-2.5 6.7-6.3 6.7-2.4 0-4.1-1.1-5.4-3l-1.8-2.7a1.35 1.35 0 0 1 2.1-1.7l1.4 1.4' }],
+]);
+
+// codex-icons/lightbulb.svg — plan-mode placeholder
+export const Lightbulb = createCodexIcon('lightbulb', [
+  ['path', { d: 'M8.6 17h6.8M9.4 20h5.2' }],
+  ['path', { d: 'M8.1 14.5c-1.2-1-2-2.5-2-4.2a5.9 5.9 0 0 1 11.8 0c0 1.7-.8 3.2-2 4.2-.8.7-1.2 1.3-1.3 2.5H9.4c-.1-1.2-.5-1.8-1.3-2.5Z' }],
+]);
+
+// codex-icons/shield-alert.svg — full-access warning
+export const ShieldAlert = createCodexIcon('shield-alert', [
+  ['path', { d: 'M12 3.2 19 6v5.1c0 4.5-2.6 7.8-7 9.7-4.4-1.9-7-5.2-7-9.7V6l7-2.8Z' }],
+  ['path', { d: 'M12 8v5M12 16.2h.01' }],
+]);
