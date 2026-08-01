@@ -5,7 +5,10 @@ import {
   mkdtempSync,
   readFileSync,
   readdirSync,
+  readlinkSync,
   rmSync,
+  statSync,
+  symlinkSync,
   writeFileSync,
   copyFileSync,
 } from 'node:fs';
@@ -407,6 +410,7 @@ function buildGates(profiles, options = {}) {
       '--binary', 'resources/bin/win32-x64/ae.exe',
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
       '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
+      '--electron',
     ],
   }, { kind: 'provision-verseshell' });
   add({
@@ -918,6 +922,26 @@ function runVerseShellBinaryProvision(gate, options = {}) {
       copied.push(copyRelative);
     }
     if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
+    if (argv.includes('--electron')) {
+      const sourceElectron = resolve(sourceRoot, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
+      const worktreeElectron = resolve(worktree, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
+      const sourceDist = join(sourceElectron, 'dist');
+      const sourcePathTxt = join(sourceElectron, 'path.txt');
+      if (!existsSync(sourceDist) || !existsSync(sourcePathTxt)) {
+        return fail('electron dist/path.txt missing in source repository (run electron postinstall or install without --ignore-scripts)');
+      }
+      const worktreeDist = join(worktreeElectron, 'dist');
+      rmSync(worktreeDist, { recursive: true, force: true });
+      mkdirSync(worktreeDist, { recursive: true });
+      copyRecursiveSync(sourceDist, worktreeDist);
+      copyFileSync(sourcePathTxt, join(worktreeElectron, 'path.txt'));
+      const entry = readFileSync(join(worktreeElectron, 'path.txt'), 'utf8').trim();
+      const provisionedElectron = join(worktreeDist, entry);
+      if (!existsSync(provisionedElectron)) {
+        return fail(`electron binary not provisioned: expected ${entry} in dist`);
+      }
+      stdout += `provisioned electron dist (${readdirSync(worktreeDist).length} entries, path.txt=${entry})\n`;
+    }
     return {
       ...base,
       status: 'pass',
@@ -941,6 +965,33 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     };
   } catch (error) {
     return fail(error instanceof Error ? error.message : String(error));
+  }
+}
+
+/**
+ * Recursively copy a directory tree. Used to provision the project-local
+ * Electron binary (dist/) that pnpm --ignore-scripts does not produce in a
+ * detached worktree.
+ */
+function copyRecursiveSync(sourceDir, destDir) {
+  mkdirSync(destDir, { recursive: true });
+  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
+    const sourcePath = join(sourceDir, entry.name);
+    const destPath = join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      copyRecursiveSync(sourcePath, destPath);
+    } else if (entry.isFile()) {
+      copyFileSync(sourcePath, destPath);
+    } else if (entry.isSymbolicLink()) {
+      const link = readlinkSync(sourcePath);
+      mkdirSync(dirname(destPath), { recursive: true });
+      try {
+        symlinkSync(link, destPath);
+      } catch {
+        const target = resolve(dirname(sourcePath), link);
+        if (existsSync(target) && statSync(target).isFile()) copyFileSync(target, destPath);
+      }
+    }
   }
 }
 
