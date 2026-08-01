@@ -4,6 +4,7 @@ import { Chat } from '@/pages/Chat';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
+  useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -51,9 +52,14 @@ const chatState = {
 
 const artifactPanelState = vi.hoisted(() => ({
   open: true,
+  expanded: false,
   widthPct: 34,
-  openChanges: vi.fn(),
-  openPreview: vi.fn(),
+  openWorkspacePanel: vi.fn(),
+  tabs: [{ id: 'files-1', kind: 'files' }],
+  activeTabId: 'files-1',
+  terminalPlacement: 'side',
+  setTerminalPlacement: vi.fn(),
+  restoreSessionState: vi.fn(),
   close: vi.fn(),
 }));
 
@@ -71,7 +77,10 @@ vi.mock('@/stores/agents', () => ({
 vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MIN_WIDTH: 28,
   ARTIFACT_PANEL_MAX_WIDTH: 50,
-  useArtifactPanel: (selector: (state: typeof artifactPanelState) => unknown) => selector(artifactPanelState),
+  useArtifactPanel: Object.assign(
+    (selector: (state: typeof artifactPanelState) => unknown) => selector(artifactPanelState),
+    { getState: () => artifactPanelState },
+  ),
 }));
 
 vi.mock('@/components/file-preview/ArtifactPanel', () => ({
@@ -120,13 +129,13 @@ describe('Chat artifact panel layout', () => {
     expect(actions).toHaveClass('no-drag');
   });
 
-  it('stacks the chat page above the macOS main drag strip', async () => {
+  it('keeps the chat page as the positioned workspace surface on macOS', async () => {
     window.electron.platform = 'darwin';
 
     render(<Chat />);
 
     const chatPage = await screen.findByTestId('chat-page');
-    expect(chatPage).toHaveClass('z-20');
+    expect(chatPage).toHaveClass('relative', 'overflow-hidden');
   });
 
   it('layers the right artifact panel above the macOS drag strip', async () => {

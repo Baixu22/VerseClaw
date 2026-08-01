@@ -117,7 +117,7 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 
 私たちはアップストリームのOpenClawプロジェクトとの厳密な整合性を維持することにコミットしており、公式リリースが提供する最新の機能、安定性の改善、エコシステムの互換性に常にアクセスできることを保証します。
 
-開発者モードを有効にすると、サイドバーにはネイティブの Dreams ページも表示され、Verse Claw 内で OpenClaw の記憶レビュー、夢日記、基本メンテナンス操作を扱えます。詳細な診断が必要な場合は、そのページから完全版の OpenClaw Dreams UI も開けます。
+開発者モードを有効にすると、サイドバー下部の `...` メニューからネイティブの Dreams ページを開き、Verse Claw 内で OpenClaw の記憶レビュー、夢日記、基本メンテナンス操作を扱えます。詳細な診断が必要な場合は、そのページから完全版の OpenClaw Dreams UI も開けます。
 
 ---
 
@@ -130,6 +130,7 @@ Verse Clawは公式の**OpenClaw**コアを直接ベースに構築されてい�
 モダンなチャット体験を通じてAIエージェントとコミュニケーションできます。複数の会話コンテキスト、メッセージ履歴、Markdownによるリッチコンテンツレンダリング（GitHub 風テーブルや KaTeX による LaTeX 数式 `$インライン$`、`$$ブロック$$`、`\(インライン\)`、`\[ブロック\]` を含む）、計画・選択肢リスト・質問フロー・設定向けの構造化 Tool UI カードに加え、マルチエージェント構成ではメイン入力欄の `@agent` から対象エージェントへ直接ルーティングできます。
 推論強度はランタイムポリシーとしても使われます。minimal/low は prompt、Skill、tool result の注入密度を下げて低コストで簡潔なターンにし、high/xhigh は明示的な `/loop`、ClawGraph、role/subagent、multi-model workflow を提案できますが、権限やツール authority は変更しません。
 左サイドバーには Workgroups ビューがあり、workspace 単位のタスクグループで会話を整理し、実行中・待機中・要対応などの集約状態を表示し、未分類の会話も残したまま、新しい workspace スコープの会話に現在のワークグループを継承させます。
+固定ナビゲーションは **新しいタスク**、**受信トレイ**、**スケジュール済み**、**ナレッジ** に限定されています。受信トレイは一般の権限申請、Remote Tasks、承認待ち Browser Tasks をまとめ、実際のリスク、証拠、履歴、判断操作を表示します。Browser、Review、Task Ledger、ClawGraph は最下部の `...` メニューから引き続き利用できます。
 設定 → 作業モード では Plan、Build、Review、Docs/Data の作業モードを管理できます。モードは workspace session ごとに保存され、レポート、表計算、スライド、PDF、調査、Webサイト、デザイン、日常業務向けの成果物中心の Work Kits を設定できます。Kit 状態はローカル skill の準備状況、Main 所有の軽量 Office/Search Work Provider 状態、内蔵 Office skill の明示的なインストール操作を表示します。Work Provider は内蔵ライブラリ、任意パッケージ、外部サービス、Custom HTTP、外部バイナリ、runtime skill、MCP server、OpenClaw plugin を同じ source model で扱えます。Search はユーザーが provider を明示設定するまで `missingConfig` のままで、重い変換、crawler、OCR、dataframe runtime は任意のインターフェースとして扱います。次のメッセージには軽量な未信頼の意図 metadata だけが添付されます。workspace permission を自動変更したり、OpenClaw runtime のツールポリシーを上書きしたりはしません。
 OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できます。Verse Claw はバイナリを検出し、インストールログをストリーミングし、Codeg 互換の `/officecli-*` スキルを同期し、`officecli watch` で `.docx`、`.xlsx`、`.pptx` をライブプレビューします。
 コンポーザーから挿入した Skill は `/skill-name` 形式のチップとして表示され、チップをクリックすると右側のプレビュー側欄でその Skill の `SKILL.md` を開けます。
@@ -168,11 +169,14 @@ Runtime には、Gateway から見える `tools.invoke` 呼び出しと runtime 
 ### タスク台帳
 Task Ledger ページは、長期作業のために workspace 単位かつ Agent 中立の構造化記録を保持します。目標、サブタスク、依存関係、ブロック、レビュー対象、決定、逸脱、セッションリンクを append-only JSONL イベントとしてローカル OpenClaw 設定ディレクトリに保存し、Chat の横に要約を表示し、Tree、DAG、History、Review を含む単一のオフライン HTML として出力できます。
 
-### リモートタスク
-Remote Tasks ページは、メッセージ、OpenClaw Doctor、設定パッチの構造化タスクを扱うローカル優先の受信箱です。設定パッチは変更プレビューを表示し、ユーザーが明示的に承認した後にだけ Main プロセスが許可リスト内の設定更新を適用します。
+### 受信トレイとリモートタスク
+受信トレイは、一般の権限申請、構造化 Remote Task envelope、監督対象 Browser Tasks を一つのローカル判断キューにまとめます。リモート設定パッチは変更プレビューを表示し、ユーザーが明示的に承認した後にだけ Main プロセスが許可リスト内の設定更新を適用します。処理済みの権限申請と Remote Task は「履歴」に残り、ローカル Remote Task テスト envelope の作成機能は **設定 → 開発者** に移動しました。旧 `/remote-tasks` ルートは Remote Tasks フィルター付きの受信トレイを開きます。
 
 ### Code Review Center
 Review Center は、未コミット変更、ベースブランチとの差分、または指定 commit に対して読み取り専用の AI review を実行します。severity 付きの findings、file/line アンカー、サニタイズ済み review trace を生成し、finding または review 全体を Task Ledger review node に変換できます。stage、commit、ファイル編集は行いません。Git patch は共有の構造化 patch contract で検証され、malformed または producer-truncated の diff はモデルレビュー開始前に停止します。Chat では、write journal で裏付けられた成功済みの `edit` とファイル全体の `write` に rich diff と同一 text patch のコピー操作を表示します。mutation lineage が欠落、古い、または不完全な場合、Renderer の状態から diff を推測して再構築しません。Remote PR タブは Main-owned host API を通じて GitHub PR の detail、commits、files、構造化 diff、checks、reviews、branch protection、および指定ファイル内容を上限付きで読み取ります。完全性、capability、readiness は明示され、不足、truncated、unauthorized、unknown の証拠が ready と解釈されることはありません。review、line comment、thread reply、許可リスト内の metadata 更新は既定で draft に留まり、完全一致する一回限りの action-bound approval を消費した場合だけ公開されます。head/version drift は fail closed となり、partial または ambiguous な結果は無条件再試行ではなく reconciliation を表示します。制御された merge も同じ Main-owned policy を使い、実行直前に head と readiness を再取得し、正確な strategy と policy 証拠に結び付いた短時間・一回限りの approval を消費して expected head SHA を送信します。本番 repository は allowlist 外、Agent merge は既定で無効であり、merge 後の refresh または audit の失敗は merge 再試行ではなく reconciliation として表示されます。
+
+### セッションワークスペース
+Chat のワークスペースは、連続したコンパクトな作業面として `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` の 6 タブを表示します。Changes は Review に、ファイルプレビューは Files に含まれます。Browser には Preview と監督付き Live があり、Terminal は同じシェルセッションを保ったまま下部パネルとサイドタブを切り替えられます。狭い画面では Files がツリーとプレビューの単一ビューを切り替えます。既存の Main 所有 Browser、Terminal、Git、Review、スクリーンショット、snapshot、承認 API を引き続き利用し、`/browser` と `/code-review` は対応するワークスペースを開く互換ルートとして残しています。Task Ledger と ClawGraph はワークスペースのコンテキスト入口から全画面ツールとして開けます。
 
 ### Knowledge Hub
 Knowledge ページは OpenClaw `memory-wiki` を通じて、出典付き wiki コンテキストを管理します。既定では Verse Claw 管理の隔離 native vault を使い、unsafe local-vault モードへ切り替えずに、制限されたテキストファイルやフォルダーを取り込めます。また、ローカル OKF v0.1 Markdown bundle を検証して `wiki.ingest` 上の薄い互換アダプターとしてインポートできます。状態確認、検索、結果確認、compile、lint、Knowledge Inbox、draft/proposal レビュー、provenance、ガバナンスの流れを備えています。Inbox は Chat、Task Ledger、ファイル、OKF、ClawGraph、agent 由来の候補知識を正式な wiki の外に保持し、ユーザーがドラフトへ昇格または破棄するまで書き込みません。provenance は出典参照と読み取り/参照イベントだけを記録し、wiki ページを変更しません。Chat の知識範囲（`None`、`Memory`、`Wiki`、`All`）は読み取り範囲だけを表します。Agent は search/get で文脈を読めますが、scope が有効でも書き込み、更新、アーカイブ、削除、マージ、apply はできません。Chat では `/wiki` で検索し、明示的な wiki 参照を visible chip として添付してから送信できます。`/memory`、`/all`、`/none`、`/scope` は読み取り範囲だけを変更し、書き込み権限にはなりません。知識呼び出しモードの既定は Suggest で、関連知識は任意の chip として表示されます。Auto-read は明示的に有効化した場合のみ、少数の新しく高信頼な読み取り専用参照を添付します。セッション由来の知識や agent/Knowledge Steward の提案は編集可能な draft/proposal に入り、ユーザーの明示的な確認後にだけ wiki へ適用されます。Obsidian は任意の拡張であり、必須依存ではありません。ガバナンスダッシュボードはオンデマンドの健全性チェックにより矛盾、陳腐化、未解決参照を可視化します。監視ディレクトリはプロジェクト文書を pending Inbox にだけ入れ、正式な wiki への direct-ingest や synthesis 作成は自動実行しません。
@@ -214,7 +218,9 @@ AIタスクを自動的に実行するようスケジュール設定できます
 定期タスク画面では外部配信を「送信アカウント」と「受信先ターゲット」の 2 段階セレクターで設定できるようになりました。対応チャネルでは、受信先候補をチャネルのディレクトリ機能や既知セッション履歴から自動検出するため、`jobs.json` を手で編集する必要はありません。
 定期タスクでは Agent Browser 自動化も実行できます。URL、ブラウザ profile/auth state、安全ポリシー、成功/失敗条件、保守的な安全ステップ再試行、診断項目を指定すると、チェックイン、ページ監視、ドラフト公開などのジョブが内部 managed browser の永続ログイン状態を再利用し、失敗時には簡潔な証拠を表示できます。
 
-サイドバーの Agent Browser ワークベンチは、Main プロセス所有のランタイムを通じて分離された profile、タブ、session を提供します。Chat は送信前に実 transcript 使用量から token/cost 予算を判定し、永続化・描画される tool 出力を制限し、キャンセルまたはハードタイムアウト時には基盤の実行を中止します。
+**スケジュール済み** ページでは、Cron ジョブと監督対象 Browser run を、バックエンドモデルを統合せずに一つのコンパクトなリストへ投影します。Cron では作成、編集、有効化/一時停止、削除、即時実行、配信設定、実行履歴を引き続き利用でき、Browser run では承認、拒否、再試行、キャンセル、順序付き手順、時刻、型付きの結果またはエラー証拠を確認できます。幅 960px では、混雑した 3 列表示にせず、詳細がリストを置き換えます。Browser profile と既存の資格情報 Vault は **設定 > Browser** で管理し、送信したパスワードは Main プロセスだけが保持して Renderer へ再表示しません。
+
+Agent Browser ワークベンチと旧 `/browser` ルートは、サイドバー下部の `...` メニューから開く互換エントリとして引き続き残り、Main プロセス所有のランタイムを通じて分離されたタブとライブ session を提供します。これらのライブ session を Chat ワークスペースへ移す作業は後続の移行段階です。Chat は送信前に実 transcript 使用量から token/cost 予算を判定し、永続化・描画される tool 出力を制限し、キャンセルまたはハードタイムアウト時には基盤の実行を中止します。
 
 監督対象の Browser タスクは、ブラウザーに副作用を発生させる前に承認待ちとして永続化されます。承認画面には目的、対象サイト、承認済みドメイン、モード、権限範囲、順序付き実行計画が表示され、ユーザーの明示的な承認後にのみ Main プロセスが上限付きの移動、待機、クリック手順を実行し、型付きの成功または失敗判定を返します。このフローは無人ブラウジングやプライベートネットワークアクセスを許可せず、認証情報は Main プロセス所有の Vault 参照に留まります。
 
@@ -239,7 +245,7 @@ OpenAI-compatible ゲートウェイを **Custom プロバイダー** で使う�
 ### 🌙 アダプティブテーマ
 ライトモード、ダークモード、またはシステム同期テーマ。Verse Clawはあなたの好みに自動的に適応します。
 
-Windows では UI v2 が既定で有効です。暖色系のマテリアル、Segoe UI Variable、コンパクトな Apple Blue コントロール、`vaul@1.1.2` による軽量な右側の設定 Drawer を採用しています。設定のディープリンクでも背後のページを静止状態で保持し、不透明な Drawer によって全画面のリアルタイムぼかしを避け、短い終了アニメーション後にフォーカスを復元します。macOS と Linux は当面 legacy shell を使用し、開発時は `?uiVersion=legacy` で Windows の旧 UI と比較できます。
+Windows、macOS、Linux では UI v2 が既定で有効になりました。FakeCoding に合わせたニュートラルなグレースケールの作業面、28-36 px のコンパクトなコントロール、白黒反転の主要操作、サンセリフの管理画面見出し、120-180 ms の控えめなモーションを採用し、各プラットフォーム固有のウィンドウ操作は維持します。設定のディープリンクは背後のページを保持し、閉じた後にフォーカスを復元します。段階的な移行中は `?uiVersion=legacy` で旧 UI と比較できます。
 
 ### 🚀 自動起動設定
 **設定 → 一般** から **システム起動時に自動起動** を有効化すると、ログイン後に Verse Claw が自動的に起動します。

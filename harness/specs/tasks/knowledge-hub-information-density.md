@@ -13,9 +13,10 @@ touchedAreas:
   - tests/e2e/knowledge-ux-cdp.spec.ts
 expectedUserBehavior:
   - Opening Knowledge shows document search, results, and the Markdown workspace in the first viewport without repeated overview dashboards.
-  - Library, Inbox, Drafts, and Review remain primary navigation; Governance and maintenance actions remain reachable from the page menu.
-  - Vault status, OKF validation, Source Sets, Studio actions, and related pages appear only when the user opens their utility panel.
-  - Knowledge Librarian remains available from the compact page header and keeps its existing governed write boundaries.
+  - Library and Review Queue are the only primary navigation views; Inbox, Drafts, and Proposal become status filters inside Review Queue.
+  - Runtime Lessons, Governance, OKF validation, Source Sets, Studio actions, and related pages appear only under More > Maintenance or Source tools.
+  - Knowledge Librarian is available as the Chat "ask the knowledge base" mode and keeps citations, draft save, review submission, and existing governed write boundaries.
+  - Edit is an explicit mode; Preview and Edit never stack side-by-side at the 960px minimum window width.
 requiredProfiles:
   - fast
 requiredRules:
@@ -32,9 +33,9 @@ requiredTests:
 acceptance:
   - At 1280x800, the Library document list and Markdown editor are visible without scrolling the page shell.
   - At the 960px minimum window width, the Library split view does not overlap or force horizontal page scrolling.
-  - Import, OKF, Vault, refresh, configure, initialize, Governance, Source Set, Studio, and Librarian workflows remain reachable within two interactions.
+  - Import, OKF, Vault, refresh, configure, initialize, Governance, Source Set, Studio, and Librarian workflows remain reachable through progressive disclosure.
   - Existing Knowledge Host API calls, write confirmation policy, persistence, and backend contracts are unchanged.
-  - Inbox, Drafts, Review, and Governance retain their existing internal business content and actions.
+  - Inbox, Drafts, Proposal, Review, and Governance retain their existing internal business content and actions through the unified Review Queue or on-demand tools.
 docs:
   required: false
   note: README capability descriptions remain accurate because this task changes layout and disclosure only.

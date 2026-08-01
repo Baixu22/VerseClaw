@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -95,6 +96,7 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, t }: NodeCardPro
 
 export default function TaskLedgerPage() {
   const { t } = useTranslation('taskLedger');
+  const [searchParams] = useSearchParams();
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
@@ -107,6 +109,7 @@ export default function TaskLedgerPage() {
   const [linkNodeId, setLinkNodeId] = useState<string>('none');
 
   const workspaceId = activeWorkspace?.id ?? null;
+  const focusedNodeId = searchParams.get('nodeId');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -121,6 +124,10 @@ export default function TaskLedgerPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (focusedNodeId) setQuery(focusedNodeId);
+  }, [focusedNodeId]);
 
   const filteredNodes = useMemo(() => {
     const nodes = snapshot?.nodes ?? [];

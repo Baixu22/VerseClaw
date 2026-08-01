@@ -56,13 +56,13 @@ function WindowsTitleBar() {
   return (
     <div
       data-testid="windows-titlebar"
-      className="drag-region relative z-[120] flex h-10 shrink-0 items-center justify-end border-b border-white/55 bg-surface-sidebar/92 backdrop-blur-[24px] backdrop-saturate-[1.3] dark:border-white/5 dark:bg-surface-sidebar/82"
+      className="drag-region relative z-[120] flex h-[34px] shrink-0 items-center justify-end border-b border-border bg-surface-sidebar"
     >
       {/* Right: Window Controls */}
       <div className="no-drag flex h-full">
         <button
           onClick={handleMinimize}
-          className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 transition-colors"
+          className="flex h-full w-11 items-center justify-center text-muted-foreground transition-colors duration-150 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
           aria-label={t('window.minimize')}
           title={t('window.minimize')}
         >
@@ -70,7 +70,7 @@ function WindowsTitleBar() {
         </button>
         <button
           onClick={handleMaximize}
-          className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 transition-colors"
+          className="flex h-full w-11 items-center justify-center text-muted-foreground transition-colors duration-150 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
           aria-label={maximized ? t('window.restore') : t('window.maximize')}
           title={maximized ? t('window.restore') : t('window.maximize')}
         >
@@ -78,7 +78,7 @@ function WindowsTitleBar() {
         </button>
         <button
           onClick={handleClose}
-          className="flex h-full w-11 items-center justify-center text-muted-foreground hover:bg-red-500 hover:text-white transition-colors"
+          className="flex h-full w-11 items-center justify-center text-muted-foreground transition-colors duration-150 hover:bg-red-500 hover:text-white"
           aria-label={t('window.close')}
           title={t('window.close')}
         >

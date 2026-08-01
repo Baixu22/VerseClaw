@@ -6,16 +6,13 @@
  * `+` new-tab menu. Both draw labels from the same i18n keys so a chip and
  * its launcher card never drift apart.
  */
+import { History, Layers } from 'lucide-react';
 import {
-  Eye,
-  FileEdit,
-  FolderTree,
-  GitBranch,
-  Globe,
-  History,
-  Layers,
-  TerminalSquare,
-} from 'lucide-react';
+  OfficialBrowserIcon,
+  OfficialFilesIcon,
+  OfficialReviewIcon,
+  OfficialTerminalIcon,
+} from '@/components/icons/official-workspace-icons';
 import type { PanelTabKind } from '@/stores/artifact-panel';
 
 export interface PanelTabMeta {
@@ -37,7 +34,7 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     descriptionKey: 'artifactPanel.launcher.entries.review',
     descriptionFallback: 'Review changes, branches, stashes, and PRs.',
     shortcut: 'R',
-    icon: GitBranch,
+    icon: OfficialReviewIcon,
   },
   terminal: {
     labelKey: 'artifactPanel.tabs.terminal',
@@ -45,7 +42,7 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     descriptionKey: 'artifactPanel.launcher.entries.terminal',
     descriptionFallback: 'Start an interactive shell for this workspace.',
     shortcut: 'T',
-    icon: TerminalSquare,
+    icon: OfficialTerminalIcon,
   },
   browser: {
     labelKey: 'artifactPanel.tabs.browser',
@@ -53,7 +50,7 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     descriptionKey: 'artifactPanel.launcher.entries.browser',
     descriptionFallback: 'Open a local preview or inspect a URL.',
     shortcut: 'B',
-    icon: Globe,
+    icon: OfficialBrowserIcon,
   },
   files: {
     labelKey: 'artifactPanel.tabs.files',
@@ -61,21 +58,7 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     descriptionKey: 'artifactPanel.launcher.entries.files',
     descriptionFallback: 'Browse files and preview selected content.',
     shortcut: 'F',
-    icon: FolderTree,
-  },
-  changes: {
-    labelKey: 'artifactPanel.tabs.changes',
-    labelFallback: 'Changes',
-    descriptionKey: 'artifactPanel.launcher.entries.changes',
-    descriptionFallback: 'Diff the file focused from the conversation.',
-    icon: FileEdit,
-  },
-  preview: {
-    labelKey: 'artifactPanel.tabs.preview',
-    labelFallback: 'Preview',
-    descriptionKey: 'artifactPanel.launcher.entries.preview',
-    descriptionFallback: 'Render the focused file.',
-    icon: Eye,
+    icon: OfficialFilesIcon,
   },
   artifact: {
     labelKey: 'artifactPanel.tabs.artifact',
@@ -100,8 +83,6 @@ export const LAUNCHER_TAB_KINDS: readonly PanelTabKind[] = [
   'terminal',
   'browser',
   'files',
-  'changes',
-  'preview',
   'artifact',
   'audit',
 ];

@@ -162,7 +162,8 @@ test.describe('ClawGraph', () => {
 
     await completeSetup(page);
 
-    await page.getByTestId('sidebar-nav-clawgraph').click();
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
+    await page.getByTestId('sidebar-more-clawgraph').click();
     await expect(page.getByTestId('clawgraph-page')).toBeVisible();
     await expect(page.getByTestId('clawgraph-workflow-select')).toContainText('.clawx/clawgraph/long.yaml');
     await expect(page.getByText('Ready')).toBeVisible();

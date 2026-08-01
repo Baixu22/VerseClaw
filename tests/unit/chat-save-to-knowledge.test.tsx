@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Chat } from '@/pages/Chat';
 
@@ -98,6 +98,8 @@ vi.mock('@/stores/artifact-panel', () => ({
     open: false,
     widthPct: 45,
     tab: 'changes',
+    tabs: [],
+    activeTabId: null,
     openChanges: vi.fn(),
     openPreview: vi.fn(),
     openBrowser: vi.fn(),
@@ -162,7 +164,7 @@ vi.mock('react-i18next', () => ({
   },
   useTranslation: () => ({
     t: (key: string) => ({
-      'toolbar.saveToKnowledge': 'Save to Knowledge',
+      'toolbar.slashCommands': 'Slash commands',
       'toolbar.workspace': 'Workspace',
       'toolbar.refresh': 'Refresh',
       'toolbar.moreActions': 'More actions',
@@ -196,7 +198,9 @@ vi.mock('@/hooks/use-min-loading', () => ({
 }));
 
 vi.mock('@/pages/Chat/ChatInput', () => ({
-  ChatInput: () => <div data-testid="chat-input" />,
+  ChatInput: ({ slashRequest }: { slashRequest?: number }) => (
+    <div data-testid="chat-input" data-slash-request={slashRequest ?? 0} />
+  ),
 }));
 
 vi.mock('@/pages/Chat/ChatMessage', () => ({
@@ -205,7 +209,7 @@ vi.mock('@/pages/Chat/ChatMessage', () => ({
   ),
 }));
 
-describe('Chat Save to Knowledge', () => {
+describe('Chat toolbar slash entry', () => {
   beforeEach(() => {
     hostApiMock.applyDraft.mockReset();
     hostApiMock.applyDraft.mockResolvedValue({ success: true });
@@ -223,47 +227,13 @@ describe('Chat Save to Knowledge', () => {
     window.electron.platform = 'win32';
   });
 
-  it('opens an editable draft and creates a pending proposal only after confirmation', async () => {
+  it('replaces the old save shortcut and requests the composer slash palette', async () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     fireEvent.pointerDown(await screen.findByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
-    fireEvent.click(await screen.findByTestId('chat-save-knowledge'));
-    expect(await screen.findByTestId('knowledge-draft-dialog')).toBeInTheDocument();
-    expect((screen.getByTestId('knowledge-draft-body') as HTMLTextAreaElement).value).toContain('Obsidian optional');
-
-    fireEvent.click(screen.getByText('Cancel'));
-    expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
-    expect(hostApiMock.createDraft).not.toHaveBeenCalled();
-    expect(hostApiMock.proposeChange).not.toHaveBeenCalled();
-
+    fireEvent.click(await screen.findByTestId('chat-toolbar-slash'));
+    expect(screen.getByTestId('chat-input')).toHaveAttribute('data-slash-request', '1');
     fireEvent.pointerDown(screen.getByTestId('chat-toolbar-more'), { button: 0, ctrlKey: false });
-    fireEvent.click(await screen.findByTestId('chat-save-knowledge'));
-    fireEvent.change(await screen.findByTestId('knowledge-draft-title'), { target: { value: 'Knowledge Hub decision' } });
-    fireEvent.change(screen.getByTestId('knowledge-draft-body'), { target: { value: 'Keep Obsidian optional and use native wiki.' } });
-    fireEvent.click(screen.getByTestId('knowledge-draft-apply'));
-
-    await waitFor(() => expect(hostApiMock.createDraft).toHaveBeenCalledWith({
-      title: 'Knowledge Hub decision',
-      body: 'Keep Obsidian optional and use native wiki.',
-      type: 'synthesis',
-      sourceIds: ['agent:main:knowledge-session'],
-      sourceRefs: [{
-        id: 'agent:main:knowledge-session',
-        kind: 'chat',
-        label: 'Knowledge Hub decision',
-      }],
-      createdBy: 'user',
-    }));
-    expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
-    await waitFor(() => expect(hostApiMock.proposeChange).toHaveBeenCalledWith({
-      operation: 'create',
-      draftId: 'draft-1',
-      reason: 'User requested this chat synthesis be saved as a pending Knowledge draft.',
-      sources: [{
-        id: 'agent:main:knowledge-session',
-        kind: 'chat',
-        label: 'Knowledge Hub decision',
-      }],
-    }));
+    expect(screen.queryByTestId('chat-save-knowledge')).not.toBeInTheDocument();
   });
 });

@@ -1,0 +1,125 @@
+{
+  "title": "Inbox",
+  "description": "Review requests that need a decision and inspect what happened afterward.",
+  "updated": "Updated {{time}}",
+  "filters": {
+    "view": "Inbox view",
+    "actionable": "Needs action",
+    "history": "History",
+    "source": {
+      "all": "All sources",
+      "permission": "Permissions",
+      "remote-task": "Remote Tasks",
+      "browser-task": "Browser Tasks"
+    }
+  },
+  "source": {
+    "permission": "Permission",
+    "remote-task": "Remote Task",
+    "browser-task": "Browser Task"
+  },
+  "permissionSource": {
+    "terminal": "Terminal",
+    "gateway": "Gateway",
+    "mcp": "MCP",
+    "file": "Files",
+    "remoteControl": "Remote control",
+    "git": "Git",
+    "cleaner": "Storage cleaner"
+  },
+  "remoteSource": {
+    "local": "Local test",
+    "relay": "Relay",
+    "channel": "Channel",
+    "api": "API"
+  },
+  "risk": {
+    "read": "Read only",
+    "write": "Writes data",
+    "network": "Network access",
+    "destructive": "Destructive",
+    "external-write": "External change",
+    "dangerous": "High risk"
+  },
+  "status": {
+    "permission": {
+      "pending": "Waiting for decision",
+      "approved": "Approved",
+      "denied": "Denied",
+      "expired": "Expired"
+    },
+    "remoteTask": {
+      "pending": "Ready to run",
+      "pendingApproval": "Waiting for approval",
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed",
+      "rejected": "Rejected"
+    },
+    "browserTask": {
+      "waitingApproval": "Waiting for approval"
+    }
+  },
+  "partialError": {
+    "title": "Some sources could not be loaded. Available results are still shown."
+  },
+  "empty": {
+    "actionable": {
+      "title": "Nothing needs a decision",
+      "description": "New permission, remote, and supervised browser requests will appear here."
+    },
+    "history": {
+      "title": "No history for this filter",
+      "description": "Resolved permission and Remote Task records remain available here."
+    }
+  },
+  "list": {
+    "label": "Inbox items"
+  },
+  "detail": {
+    "label": "Inbox item details",
+    "select": "Select an item to inspect its evidence and available actions."
+  },
+  "evidence": {
+    "title": "Evidence",
+    "empty": "No additional evidence was recorded.",
+    "command": "Command",
+    "location": "Location",
+    "paths": "Paths",
+    "parameters": "Parameters",
+    "reason": "Reason",
+    "message": "Message",
+    "settings": "Settings",
+    "result": "Result",
+    "error": "Error",
+    "target": "Target",
+    "domains": "Allowed domains",
+    "mode": "Browser mode",
+    "profile": "Profile",
+    "scope": "Allowed actions",
+    "success": "Success check",
+    "steps": "Steps"
+  },
+  "preview": {
+    "title": "Change preview",
+    "before": "Before",
+    "after": "After"
+  },
+  "permissionRetryNote": "Approving this request allows the original operation to be retried. It does not replay that operation from the Inbox.",
+  "actions": {
+    "refresh": "Refresh Inbox",
+    "back": "Back to list",
+    "approve": "Approve",
+    "deny": "Deny",
+    "reject": "Reject",
+    "execute": "Run",
+    "approve-and-run": "Approve and run"
+  },
+  "toast": {
+    "approve": "Request approved",
+    "deny": "Request denied",
+    "reject": "Request rejected",
+    "execute": "Task finished",
+    "approve-and-run": "Browser task approved"
+  }
+}

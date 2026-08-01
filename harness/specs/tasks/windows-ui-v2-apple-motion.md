@@ -1,9 +1,9 @@
 ---
 id: windows-ui-v2-apple-motion
-title: ClawX Windows UI v2 Apple motion and materials
+title: Cross-platform FakeCoding UI v2 foundation
 scenario: windows-ui-v2
 taskType: implementation
-intent: Replace the Windows renderer shell with a ClawX-branded Apple-inspired material and motion system, render settings as a route-driven Vaul drawer, and migrate shared page surfaces without changing runtime behavior.
+intent: Replace the renderer shell with a cross-platform FakeCoding-aligned grayscale material, compact controls, exact product SVGs, and restrained motion without changing runtime behavior.
 touchedAreas:
   - harness/specs/tasks/windows-ui-v2-apple-motion.md
   - harness/specs/scenarios/windows-ui-v2.md
@@ -26,12 +26,12 @@ touchedAreas:
   - README.ja-JP.md
   - docs/clawx-design-overview.md
 expectedUserBehavior:
-  - Windows starts in UI v2 with a translucent split-view shell; macOS and Linux retain the legacy shell.
+  - Windows, macOS, and Linux start in UI v2 with the same compact grayscale work-surface system; only native window controls differ.
   - The query parameter `uiVersion=legacy` provides a development-only rollback without changing persisted settings or host contracts.
-  - Settings opens from the right as a modal, draggable drawer while the previous page remains mounted behind it.
+  - Settings retains its route and focus behavior while using the shared compact control and surface system.
   - Opening Settings leaves the background page visually stationary and does not invalidate the Chat render tree.
   - Settings deep links, section navigation, focus restoration, reduced motion, nested dialogs, and existing test ids continue to work.
-  - Chat and shared page surfaces use the same compact typography, material hierarchy, and motion presets without changing business behavior.
+  - Chat and shared page surfaces use the same compact sans typography, grayscale hierarchy, exact migrated SVGs, and motion presets without changing business behavior.
 requiredProfiles:
   - fast
 requiredRules:
@@ -46,7 +46,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/ui-version.test.ts tests/unit/settings-drawer-routing.test.tsx
   - pnpm run test:e2e:run tests/e2e/windows-ui-v2.spec.ts tests/e2e/settings-drawer.spec.ts tests/e2e/startup-loading-experience.spec.ts tests/e2e/main-navigation.spec.ts
 acceptance:
-  - Windows title-bar controls remain visible and clickable above UI overlays.
+  - Platform-native title-bar controls remain visible and clickable above UI overlays.
+  - Management page headings stay at or below 28px and no shared primary button renders as a blue solid CTA.
+  - Shared buttons, inputs, menus, tabs, and tooltips use 28-36px compact dimensions without press-scale effects.
   - UI v2 large surfaces use shared transform/opacity motion and respect reduced-motion.
   - The Settings drawer uses an opaque token surface without full-window or nested backdrop filters.
   - Settings overlay state does not propagate through the stable UI-version context used by Chat.

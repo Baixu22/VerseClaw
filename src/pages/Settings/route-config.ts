@@ -5,6 +5,7 @@ export type SettingsSectionId =
   | 'agents'
   | 'channels'
   | 'skills'
+  | 'browser'
   | 'system'
   | 'developer'
   | 'billing'
@@ -17,6 +18,7 @@ export const SETTINGS_SECTION_SEGMENTS: Record<Exclude<SettingsSectionId, 'overv
   agents: 'agents',
   channels: 'channels',
   skills: 'skills',
+  browser: 'browser',
   system: 'system',
   developer: 'developer',
   billing: 'billing',

@@ -37,6 +37,12 @@ async function enableDeveloperMode(page: Page): Promise<void> {
   await expect(devModeToggle).toHaveAttribute('data-state', 'checked');
 }
 
+async function openDreams(page: Page): Promise<void> {
+  await page.getByTestId('settings-back-button').click();
+  await page.getByTestId('sidebar-footer-menu-trigger').click();
+  await page.getByTestId('sidebar-more-dreams').click();
+}
+
 test.describe('OpenClaw Dreams', () => {
   const dreamsRpcMocks = {
     [stableStringify(['sessions.list', {}])]: {
@@ -130,8 +136,8 @@ test.describe('OpenClaw Dreams', () => {
 
     await completeSetup(page);
     await enableDeveloperMode(page);
-    await expect(page.getByTestId('sidebar-nav-dreams')).toBeVisible();
-    await page.getByTestId('sidebar-nav-dreams').click();
+    await expect(page.getByTestId('sidebar-nav-dreams')).toHaveCount(0);
+    await openDreams(page);
 
     await expect(page.getByTestId('dreams-page')).toBeVisible();
     await expect(page.getByTestId('dreams-disable')).toBeVisible();
@@ -208,7 +214,7 @@ test.describe('OpenClaw Dreams', () => {
 
     await completeSetup(page);
     await enableDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-dreams').click();
+    await openDreams(page);
 
     await expect(page.getByTestId('dreams-page')).toBeVisible();
     await expect(page.getByTestId('dreams-enable')).toBeVisible();
@@ -235,7 +241,7 @@ test.describe('OpenClaw Dreams', () => {
 
     await completeSetup(page);
     await enableDeveloperMode(page);
-    await page.getByTestId('sidebar-nav-dreams').click();
+    await openDreams(page);
 
     await expect(page.getByTestId('dreams-page')).toBeVisible();
     await expect(page.getByTestId('dreams-refresh')).toBeDisabled();

@@ -114,7 +114,7 @@
 .codex-sidebar .primary-nav { padding: 0 8px 10px; flex: none; }
 .codex-sidebar .primary-nav > button,
 .codex-sidebar .primary-nav > a {
-  height: 32px;
+  height: 31px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -123,8 +123,8 @@
   border-radius: 8px;
   color: var(--cdx-text-2);
   font-size: 13.5px;
-  font-weight: 430;
-  letter-spacing: 0.06px;
+  font-weight: 400;
+  letter-spacing: 0;
   text-align: left;
 }
 .codex-sidebar .primary-nav > button svg,
@@ -276,7 +276,7 @@
 /* ──────────────────────────────────────────────────────────────────────────
  * SidebarRow — shared hover surface (LIVE CDP 2026-07-25, .sidebar-item recipe)
  *
- * Project rows and session rows are unified: height 30px / radius 12.5px /
+ * Project rows and session rows are unified: height 30px / radius 8px /
  * transparent at rest; hover AND selected are both
  * --token-list-hover-background. Keeping them in one rule is what stops the
  * two row types from drifting apart again.
@@ -284,7 +284,7 @@
 .codex-sidebar .sidebar-row {
   height: 30px;
   position: relative;
-  border-radius: 12.5px;
+  border-radius: 8px;
   transition: background 130ms ease;
   display: flex;
   align-items: center;

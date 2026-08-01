@@ -254,7 +254,8 @@ test.describe('Remote Forge controlled preview', () => {
         if (!String(error).includes('ERR_FILE_NOT_FOUND')) throw error;
       }
 
-      await page.getByTestId('sidebar-nav-code-review').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-code-review').click();
       await page.getByTestId('code-review-view-remote').click();
       await expect(page.getByTestId('remote-forge-panel')).toBeVisible();
       await page.getByTestId('remote-forge-owner').fill('acme');
@@ -359,7 +360,8 @@ test.describe('Remote Forge controlled preview', () => {
         if (!String(error).includes('ERR_FILE_NOT_FOUND')) throw error;
       }
 
-      await page.getByTestId('sidebar-nav-code-review').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-code-review').click();
       await page.getByTestId('code-review-view-remote').click();
       await page.getByTestId('remote-forge-owner').fill('acme');
       await page.getByTestId('remote-forge-repository').fill('demo');
@@ -472,7 +474,8 @@ test.describe('Remote Forge controlled preview', () => {
         if (!String(error).includes('ERR_FILE_NOT_FOUND')) throw error;
       }
 
-      await page.getByTestId('sidebar-nav-code-review').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-code-review').click();
       await page.getByTestId('code-review-view-remote').click();
       await page.getByTestId('remote-forge-owner').fill('acme');
       await page.getByTestId('remote-forge-repository').fill('demo');

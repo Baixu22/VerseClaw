@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Globe2,
   Palette,
   RefreshCw,
   ExternalLink,
@@ -107,6 +108,7 @@ const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => impor
 const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
 const settingsProjectRules = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ProjectRulesCenter').then((m) => ({ default: m.ProjectRulesCenter as ComponentType<Record<string, never>> })));
 const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/AgentDevWorkbenchPanel').then((m) => ({ default: m.AgentDevWorkbenchPanel as ComponentType<Record<string, never>> })));
+const settingsRemoteTaskDeveloper = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/RemoteTaskDeveloperPanel').then((m) => ({ default: m.RemoteTaskDeveloperPanel as ComponentType<Record<string, never>> })));
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
 const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
@@ -119,6 +121,7 @@ const SettingsSkillsLazy = settingsSkills.Component;
 const SettingsBillingLazy = settingsBilling.Component;
 const ProjectRulesCenterLazy = settingsProjectRules.Component;
 const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
+const RemoteTaskDeveloperPanelLazy = settingsRemoteTaskDeveloper.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
 const ContextLayersExplainerLazy = settingsContextLayers.Component;
@@ -136,7 +139,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'skills': settingsSkills.preload(); break;
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
-    case 'developer': settingsAgentDev.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); break;
+    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); break;
     case 'storage': settingsStorage.preload(); break;
     default: break;
   }
@@ -1272,6 +1275,10 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       title: t('navigation.skills.title'),
       description: t('navigation.skills.description'),
     },
+    browser: {
+      title: t('navigation.browser.title'),
+      description: t('navigation.browser.description'),
+    },
     system: {
       title: t('navigation.system.title'),
       description: t('navigation.system.description'),
@@ -1331,6 +1338,13 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       testId: 'settings-nav-channels',
     },
     {
+      id: 'browser',
+      to: '/settings/browser',
+      icon: <Globe2 className="h-5 w-5" />,
+      ...sectionMeta.browser,
+      testId: 'settings-nav-browser',
+    },
+    {
       id: 'system',
       to: '/settings/system',
       icon: <Server className="h-5 w-5" />,
@@ -1370,7 +1384,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     {
       id: 'configuration',
       title: t('navigation.groups.configuration'),
-      sections: settingsSections.filter((section) => ['models', 'agents', 'skills', 'channels'].includes(section.id)),
+      sections: settingsSections.filter((section) => ['models', 'agents', 'skills', 'channels', 'browser'].includes(section.id)),
     },
     {
       id: 'experience',
@@ -2037,6 +2051,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                       <ContextLayersExplainerLazy />
                       <DcsProdFlagsPanelLazy />
                       <VtokenBridgePanelLazy />
+                      <RemoteTaskDeveloperPanelLazy />
                       <AgentDevWorkbenchPanelLazy />
                     </div>
                   </Suspense>

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const hostApiFetchMock = vi.fn();
 
@@ -29,14 +29,25 @@ vi.mock('@/stores/artifact-panel', () => {
   const state = {
     open: false,
     widthPct: 45,
+    expanded: false,
+    tabs: [],
+    activeTabId: null,
+    terminalPlacement: 'bottom',
     openChanges: vi.fn(),
     openPreview: vi.fn(),
+    openWorkspacePanel: vi.fn(),
+    setTerminalPlacement: vi.fn(),
+    restoreSessionState: vi.fn(),
     close: vi.fn(),
   };
+  const useArtifactPanel = Object.assign(
+    (selector: (value: typeof state) => unknown) => selector(state),
+    { getState: () => state },
+  );
   return {
     ARTIFACT_PANEL_MIN_WIDTH: 28,
     ARTIFACT_PANEL_MAX_WIDTH: 50,
-    useArtifactPanel: (selector: (value: typeof state) => unknown) => selector(state),
+    useArtifactPanel,
   };
 });
 
@@ -129,6 +140,7 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
+  useLocation: () => ({ pathname: '/', search: '', hash: '', state: null, key: 'test' }),
 }));
 
 vi.mock('@/hooks/use-stick-to-bottom-instant', () => ({

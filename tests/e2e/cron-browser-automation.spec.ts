@@ -115,8 +115,20 @@ test.describe('Cron browser automation', () => {
     await expect(dialog.getByTestId('cron-browser-validation-result')).toContainText('Validation passed');
     await dialog.getByRole('button', { name: 'Create Task' }).click();
 
-    await expect(page.getByTestId('cron-job-card-browser-cron-1')).toBeVisible();
-    await page.getByTestId('cron-job-card-browser-cron-1').getByLabel('Run Details').click();
+    const browserTask = page.getByTestId('cron-job-card-browser-cron-1');
+    await expect(browserTask).toBeVisible();
+    await expect(browserTask.locator('[data-cron-icon="browser-task"]')).toBeVisible();
+    await browserTask.click();
+
+    const detailPanel = page.getByTestId('cron-detail-panel');
+    await expect(detailPanel).toBeVisible();
+    await expect(page.getByTestId('cron-detail-browser-url')).toContainText('https://example.com/check-in');
+    await expect(page.getByTestId('cron-detail-browser-profile')).toContainText('work');
+    await expect(page.getByTestId('cron-detail-browser-sensitive-policy')).toContainText('Draft / verify only');
+    await expect(page.getByTestId('cron-detail-allowed-tools')).toContainText('agent_browser');
+    await detailPanel.getByLabel('Close details').click();
+
+    await browserTask.getByLabel('Run Details').click();
     await expect(page.getByTestId('cron-browser-run-result')).toContainText('Structured result');
     await expect(page.getByTestId('cron-browser-run-result')).toContainText('authenticated');
     await expect(page.getByTestId('cron-browser-run-result')).toContainText('Diagnostic evidence');

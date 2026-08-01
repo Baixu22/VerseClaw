@@ -1,0 +1,125 @@
+{
+  "title": "受信トレイ",
+  "description": "判断が必要なリクエストを処理し、その後の記録を確認します。",
+  "updated": "{{time}} 更新",
+  "filters": {
+    "view": "受信トレイ表示",
+    "actionable": "要対応",
+    "history": "履歴",
+    "source": {
+      "all": "すべてのソース",
+      "permission": "権限リクエスト",
+      "remote-task": "リモートタスク",
+      "browser-task": "ブラウザタスク"
+    }
+  },
+  "source": {
+    "permission": "権限リクエスト",
+    "remote-task": "リモートタスク",
+    "browser-task": "ブラウザタスク"
+  },
+  "permissionSource": {
+    "terminal": "ターミナル",
+    "gateway": "Gateway",
+    "mcp": "MCP",
+    "file": "ファイル",
+    "remoteControl": "リモート操作",
+    "git": "Git",
+    "cleaner": "ストレージ整理"
+  },
+  "remoteSource": {
+    "local": "ローカルテスト",
+    "relay": "リレー",
+    "channel": "チャンネル",
+    "api": "API"
+  },
+  "risk": {
+    "read": "読み取り専用",
+    "write": "データ書き込み",
+    "network": "ネットワークアクセス",
+    "destructive": "破壊的操作",
+    "external-write": "外部変更",
+    "dangerous": "高リスク"
+  },
+  "status": {
+    "permission": {
+      "pending": "判断待ち",
+      "approved": "承認済み",
+      "denied": "拒否済み",
+      "expired": "期限切れ"
+    },
+    "remoteTask": {
+      "pending": "実行可能",
+      "pendingApproval": "承認待ち",
+      "running": "実行中",
+      "completed": "完了",
+      "failed": "失敗",
+      "rejected": "拒否済み"
+    },
+    "browserTask": {
+      "waitingApproval": "承認待ち"
+    }
+  },
+  "partialError": {
+    "title": "一部のソースを読み込めませんでした。取得済みの結果は表示しています。"
+  },
+  "empty": {
+    "actionable": {
+      "title": "判断が必要な項目はありません",
+      "description": "新しい権限、リモート、監督付きブラウザのリクエストがここに表示されます。"
+    },
+    "history": {
+      "title": "この条件の履歴はありません",
+      "description": "処理済みの権限とリモートタスクの記録はここに残ります。"
+    }
+  },
+  "list": {
+    "label": "受信トレイ項目"
+  },
+  "detail": {
+    "label": "項目の詳細",
+    "select": "項目を選択して、証拠と利用可能な操作を確認します。"
+  },
+  "evidence": {
+    "title": "証拠",
+    "empty": "追加の証拠は記録されていません。",
+    "command": "コマンド",
+    "location": "場所",
+    "paths": "パス",
+    "parameters": "パラメータ",
+    "reason": "理由",
+    "message": "メッセージ",
+    "settings": "設定",
+    "result": "結果",
+    "error": "エラー",
+    "target": "対象",
+    "domains": "許可ドメイン",
+    "mode": "ブラウザモード",
+    "profile": "プロファイル",
+    "scope": "許可操作",
+    "success": "成功条件",
+    "steps": "ステップ数"
+  },
+  "preview": {
+    "title": "変更プレビュー",
+    "before": "変更前",
+    "after": "変更後"
+  },
+  "permissionRetryNote": "承認すると元の操作を再試行できます。受信トレイから元の操作を再実行することはありません。",
+  "actions": {
+    "refresh": "受信トレイを更新",
+    "back": "一覧に戻る",
+    "approve": "承認",
+    "deny": "拒否",
+    "reject": "拒否",
+    "execute": "実行",
+    "approve-and-run": "承認して実行"
+  },
+  "toast": {
+    "approve": "リクエストを承認しました",
+    "deny": "リクエストを拒否しました",
+    "reject": "リクエストを拒否しました",
+    "execute": "タスクが終了しました",
+    "approve-and-run": "ブラウザタスクを承認しました"
+  }
+}

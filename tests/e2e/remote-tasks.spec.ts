@@ -26,7 +26,7 @@ const createdTask = {
 };
 
 test.describe('Remote tasks', () => {
-  test('opens the inbox and creates a local message task', async ({ electronApp, page }) => {
+  test('creates a local test envelope from Settings > Developer', async ({ electronApp, page }) => {
     await installIpcMocks(electronApp, {
       gatewayStatus: { running: true, ready: true },
       hostApi: {
@@ -57,10 +57,19 @@ test.describe('Remote tasks', () => {
 
     await completeSetup(page);
 
-    await page.getByTestId('sidebar-nav-remote-tasks').click();
-    await expect(page.getByTestId('remote-tasks-page')).toBeVisible();
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-developer').click();
+    const devModeSwitch = page.getByTestId('settings-dev-mode-switch');
+    if ((await devModeSwitch.getAttribute('data-state')) !== 'checked') await devModeSwitch.click();
+    await expect(page.getByTestId('settings-remote-task-developer')).toBeVisible();
     await page.getByTestId('remote-task-create').click();
-    await expect(page.getByTestId('remote-task-list')).toContainText('Check remote task inbox');
-    await expect(page.getByTestId('remote-task-detail')).toContainText('This is a local test task.');
+    await expect(page.getByTestId('settings-remote-task-created')).toContainText('Check remote task inbox');
+
+    const calls = await electronApp.evaluate(() => (
+      (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string }> }).__verseClawE2eHostCalls ?? []
+    ));
+    expect(calls).toEqual(expect.arrayContaining([
+      expect.objectContaining({ module: 'remoteTasks', action: 'create' }),
+    ]));
   });
 });

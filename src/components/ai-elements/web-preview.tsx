@@ -1,18 +1,10 @@
 import type { ReactNode } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import {
-  ArrowLeft,
-  ArrowRight,
-  ExternalLink,
-  Globe,
-  Loader2,
-  MonitorUp,
-  MoreVertical,
-  RefreshCw,
-} from 'lucide-react';
+import { Globe, Loader2, MonitorUp, MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ArrowLeft, ArrowRight, ExternalLink, RefreshCw } from '@/components/icons/codex-icons';
 
 export function WebPreviewRoot({ children, className }: { children: ReactNode; className?: string }) {
   return (
@@ -24,8 +16,8 @@ export function WebPreviewRoot({ children, className }: { children: ReactNode; c
 
 export function WebPreviewToolbar({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-b border-border bg-surface-modal px-3 py-2" data-testid="ai-web-preview-toolbar">
-      <div className="flex items-center gap-2">{children}</div>
+    <div className="flex h-[39px] shrink-0 items-center border-b border-border/60 bg-material-panel px-2" data-testid="ai-web-preview-toolbar">
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">{children}</div>
     </div>
   );
 }
@@ -62,7 +54,7 @@ export function WebPreviewModeTabs<TMode extends string>({
 
 export function WebPreviewSelectionBar({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-b border-blue-500/20 bg-blue-500/10 px-3 py-1.5" data-testid="ai-web-preview-selection">
+    <div className="shrink-0 border-b border-border/60 bg-black/[0.035] px-3 py-1.5 dark:bg-white/[0.055]" data-testid="ai-web-preview-selection">
       {children}
     </div>
   );
@@ -71,7 +63,7 @@ export function WebPreviewSelectionBar({ children }: { children: ReactNode }) {
 export function WebPreviewConsole({ value }: { value: string }) {
   return (
     <pre
-      className="mx-3 mt-2 h-16 shrink-0 resize-none overflow-auto rounded-md border border-border bg-surface-input p-2 font-mono text-2xs text-muted-foreground"
+      className="h-16 shrink-0 resize-none overflow-auto border-b border-border/60 bg-surface-input px-3 py-2 font-mono text-2xs text-muted-foreground"
       data-testid="ai-web-preview-console"
     >
       {value}
@@ -88,6 +80,8 @@ export function WebPreviewBrowser({
   onOpenExternal,
   agentBrowser,
   onOpenAgentBrowser,
+  toolbarActions,
+  menuConfiguration,
   children,
 }: {
   previewUrl?: string | null;
@@ -104,6 +98,8 @@ export function WebPreviewBrowser({
     url?: string | null;
   };
   onOpenAgentBrowser?: () => void;
+  toolbarActions?: ReactNode;
+  menuConfiguration?: ReactNode;
   children: ReactNode;
 }) {
   const { t } = useTranslation('chat');
@@ -122,9 +118,9 @@ export function WebPreviewBrowser({
   const navigationButtonClass = 'h-7 w-7 rounded-md text-zinc-600 hover:bg-black/5 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-white/10 dark:hover:text-zinc-100';
 
   return (
-    <div className="min-h-0 flex-1 bg-surface-input p-1.5 sm:p-2" data-testid="ai-web-preview-browser">
-      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-border bg-white dark:bg-[#121212]">
-        <div className="relative flex h-11 shrink-0 items-center gap-0.5 border-b border-border bg-zinc-100 px-1.5 text-zinc-700 dark:bg-[#191919] dark:text-zinc-300">
+    <div className="min-h-0 flex-1 bg-material-panel" data-testid="ai-web-preview-browser">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
+        <div className="relative flex h-[39px] shrink-0 items-center gap-0.5 border-b border-border/60 bg-surface-input px-1.5 text-foreground">
           <Button
             variant="ghost"
             size="icon"
@@ -159,7 +155,7 @@ export function WebPreviewBrowser({
             <RefreshCw className="h-4 w-4" />
           </Button>
           <div
-            className="absolute left-1/2 flex h-8 w-[min(52%,36rem)] min-w-0 -translate-x-1/2 items-center justify-center gap-2 rounded-md border border-border bg-white/80 px-3 transition-colors duration-150 hover:bg-white motion-reduce:transition-none dark:border-white/10 dark:bg-white/[0.055] dark:hover:bg-white/[0.075] max-sm:static max-sm:ml-1 max-sm:w-auto max-sm:flex-1 max-sm:translate-x-0"
+            className="absolute left-1/2 flex h-7 w-[min(52%,36rem)] min-w-0 -translate-x-1/2 items-center justify-center gap-2 rounded border border-transparent bg-transparent px-3 transition-colors duration-150 hover:border-border hover:bg-background focus-within:border-ring motion-reduce:transition-none max-sm:static max-sm:ml-1 max-sm:w-auto max-sm:flex-1 max-sm:translate-x-0"
             data-testid="ai-web-preview-address"
             title={previewUrl ?? undefined}
           >
@@ -178,6 +174,7 @@ export function WebPreviewBrowser({
             ) : null}
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
+            {toolbarActions}
             {onOpenAgentBrowser ? (
               <Button
                 variant={agentBrowser?.active ? 'outline' : 'ghost'}
@@ -211,6 +208,12 @@ export function WebPreviewBrowser({
                   sideOffset={6}
                   className="z-[80] min-w-56 overflow-hidden rounded-lg border border-border bg-surface-modal p-1.5 text-foreground shadow-xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 motion-reduce:animate-none"
                 >
+                  {menuConfiguration ? (
+                    <>
+                      {menuConfiguration}
+                      <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                    </>
+                  ) : null}
                   <DropdownMenu.Label className="px-2 py-1.5 text-[11px] font-medium text-zinc-500">
                     {t('workspace.web.browser.pageActions', 'Page actions')}
                   </DropdownMenu.Label>

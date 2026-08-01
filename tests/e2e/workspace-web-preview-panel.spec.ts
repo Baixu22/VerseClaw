@@ -172,23 +172,26 @@ test.describe('Workspace Web preview panel', () => {
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible();
-      await sidePanel.getByTestId('workspace-launchpad-add').click();
-      await sidePanel.getByTestId('workspace-launchpad-entry-web').click();
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-browser').click();
       const webPreview = sidePanel.getByTestId('ai-web-preview');
       await expect(webPreview).toBeVisible();
-      await expect(webPreview.getByTestId('ai-web-preview-toolbar')).toBeVisible();
+      await expect(webPreview.getByTestId('ai-web-preview-toolbar')).toHaveCount(0);
       await expect(webPreview.getByTestId('ai-web-preview-mode-tabs')).toHaveCount(0);
-      await expect(webPreview.getByTestId('ai-web-preview-mode-select')).toBeVisible();
-      await webPreview.getByTestId('ai-web-preview-mode-select').click();
-      await expect(page.getByRole('option', { name: 'External URL' })).toBeVisible();
+      await webPreview.getByTestId('ai-web-preview-browser-menu').click();
+      await expect(page.getByTestId('ai-web-preview-configuration')).toBeVisible();
+      await expect(page.getByTestId('ai-web-preview-mode-externalUrl')).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(webPreview.getByTestId('ai-web-preview-browser')).toBeVisible();
       await expect(webPreview.locator('iframe[title="Workspace preview"]')).toBeVisible();
-      await webPreview.getByTestId('ai-web-preview-mode-select').click();
-      await page.getByRole('option', { name: 'External URL' }).click();
+      await webPreview.getByTestId('ai-web-preview-browser-menu').click();
+      await page.getByTestId('ai-web-preview-mode-externalUrl').click();
+      await page.keyboard.press('Escape');
       await expect(sidePanel.getByRole('button', { name: 'Pick component' })).toHaveCount(0);
-      await webPreview.getByTestId('ai-web-preview-mode-select').click();
-      await page.getByRole('option', { name: 'Dev server' }).click();
+      await webPreview.getByTestId('ai-web-preview-browser-menu').click();
+      await page.getByTestId('ai-web-preview-mode-devServer').click();
+      await page.keyboard.press('Escape');
       await expect(sidePanel.getByRole('button', { name: 'Pick component' })).toBeVisible();
 
       await webPreview.getByTestId('ai-web-preview-browser-menu').click();

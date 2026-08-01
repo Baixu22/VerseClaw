@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle2, GitBranch, History, Play, RefreshCw, ShieldCheck, Square, Workflow, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -104,6 +105,7 @@ function ReviewItem({
 
 export default function ClawGraphPage() {
   const { t } = useTranslation('clawGraph');
+  const [searchParams] = useSearchParams();
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
   const [workflows, setWorkflows] = useState<ClawGraphWorkflowFile[]>([]);
@@ -115,6 +117,7 @@ export default function ClawGraphPage() {
   const [starting, setStarting] = useState(false);
 
   const workspaceId = activeWorkspace?.id ?? null;
+  const deepLinkedRunId = searchParams.get('runId');
   const sessionKey = currentSessionKey ?? activeWorkspace?.activeSessionKey ?? '';
   const agentId = activeWorkspace?.selectedAgentId ?? activeWorkspace?.agentId ?? undefined;
 
@@ -168,6 +171,21 @@ export default function ClawGraphPage() {
   useEffect(() => {
     void loadWorkflows();
   }, [loadWorkflows]);
+
+  useEffect(() => {
+    if (!deepLinkedRunId) return;
+    let cancelled = false;
+    void hostApi.clawGraph.status({ runId: deepLinkedRunId }).then(async (result) => {
+      if (cancelled || !result.snapshot) return;
+      setCurrentRun(result.snapshot);
+      await refreshEvents(result.snapshot.runId);
+    }).catch((error) => {
+      if (!cancelled) toast.error(error instanceof Error ? error.message : String(error));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [deepLinkedRunId, refreshEvents]);
 
   useEffect(() => {
     if (!currentRun || !['queued', 'running', 'review'].includes(currentRun.status)) return;

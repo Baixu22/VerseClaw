@@ -51,8 +51,8 @@ const cronJobs = [
   },
 ];
 
-test.describe('Cron job card layout', () => {
-  test('keeps the toggle switch fully inside the card when the title is very long', async ({ electronApp, page }) => {
+test.describe('Scheduled task workbench', () => {
+  test('keeps long task rows contained and supports detail, status, and search views', async ({ electronApp, page }) => {
     await installIpcMocks(electronApp, {
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       gatewayRpc: {},
@@ -90,25 +90,23 @@ test.describe('Cron job card layout', () => {
     const card = page.getByTestId('cron-job-card-job-long-title');
     const switchWrapper = page.getByTestId('cron-job-card-switch-job-long-title');
     const title = page.getByTestId('cron-job-card-title-job-long-title');
-    const meta = page.getByTestId('cron-job-card-meta-job-long-title');
 
     await expect(page.getByTestId('cron-assurance-panel')).toBeVisible();
+    await expect(page.getByTestId('cron-search-input')).toBeVisible();
     await expect(card).toBeVisible();
+    await expect(card.locator('[data-cron-icon="agent-task"]')).toBeVisible();
     await expect(switchWrapper).toBeVisible();
     await expect(title).toBeVisible();
-    await expect(meta).toBeVisible();
 
     const cardBox = await card.boundingBox();
     const switchBox = await switchWrapper.boundingBox();
     const titleBox = await title.boundingBox();
-    const metaBox = await meta.boundingBox();
 
-    expect(cardBox, 'card bounding box should be available').not.toBeNull();
+    expect(cardBox, 'task row bounding box should be available').not.toBeNull();
     expect(switchBox, 'switch bounding box should be available').not.toBeNull();
     expect(titleBox, 'title bounding box should be available').not.toBeNull();
-    expect(metaBox, 'metadata bounding box should be available').not.toBeNull();
 
-    if (!cardBox || !switchBox || !titleBox || !metaBox) return;
+    if (!cardBox || !switchBox || !titleBox) return;
 
     // The switch must stay fully inside the card horizontally and not be
     // partially clipped by the card boundary (this is the regression we are
@@ -123,10 +121,25 @@ test.describe('Cron job card layout', () => {
     const titleRight = titleBox.x + titleBox.width;
     expect(titleRight).toBeLessThanOrEqual(switchBox.x + 0.5);
 
-    const metaRight = metaBox.x + metaBox.width;
-    const metaBottom = metaBox.y + metaBox.height;
-    expect(metaBox.x).toBeGreaterThanOrEqual(cardBox.x);
-    expect(metaRight).toBeLessThanOrEqual(cardRight + 0.5);
-    expect(metaBottom).toBeLessThanOrEqual(cardBox.y + cardBox.height + 0.5);
+    await card.click();
+    const detailPanel = page.getByTestId('cron-detail-panel');
+    await expect(detailPanel).toBeVisible();
+    await expect(detailPanel.getByText(cronJobs[0].name, { exact: true })).toBeVisible();
+    await expect(detailPanel.locator('[data-cron-icon="pause"]')).toBeVisible();
+    await expect(detailPanel.locator('[data-cron-icon="close"]')).toBeVisible();
+    await expect(detailPanel.locator('[data-cron-icon="edit"]')).toBeVisible();
+    await expect(page.getByTestId('cron-detail-delivery-channel')).toContainText('Feishu / Lark');
+    await expect(page.getByTestId('cron-detail-delivery-target')).toContainText(
+      'chat:oc_extremely_long_delivery_target_that_should_never_push_metadata_outside_the_card',
+    );
+
+    await page.getByTestId('cron-filter-off').click();
+    await expect(page.getByTestId('cron-job-card-job-long-title')).toBeHidden();
+    await expect(page.getByTestId('cron-job-card-job-short-title')).toBeVisible();
+
+    await page.getByTestId('cron-filter-all').click();
+    await page.getByTestId('cron-search-input').fill('喝水');
+    await expect(page.getByTestId('cron-job-card-job-long-title')).toBeHidden();
+    await expect(page.getByTestId('cron-job-card-job-short-title')).toBeVisible();
   });
 });

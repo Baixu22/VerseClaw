@@ -1045,7 +1045,7 @@ function UserMessageActions({
         type="button"
         variant="ghost"
         size="icon"
-        className="h-6 w-6 text-muted-foreground/75 transition-transform active:scale-95"
+        className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
         onClick={() => void copyContent()}
         aria-label={copied ? t('messageActions.copied') : t('messageActions.copy')}
         title={copied ? t('messageActions.copied') : t('messageActions.copy')}
@@ -1058,7 +1058,7 @@ function UserMessageActions({
           type="button"
           variant="ghost"
           size="icon"
-          className="h-6 w-6 text-muted-foreground/75 transition-transform active:scale-95"
+          className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
           onClick={onEdit}
           aria-label={t('messageActions.edit')}
           title={t('messageActions.edit')}
@@ -1135,7 +1135,7 @@ function UserMessageEditor({
           onClick={onCancel}
           aria-label={cancelLabel}
           title={cancelLabel}
-          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color,transform] duration-150 hover:bg-black/5 hover:text-foreground active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color] duration-150 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
           data-testid="chat-user-message-edit-cancel"
         >
           <X className="h-3.5 w-3.5" />
@@ -1145,7 +1145,7 @@ function UserMessageEditor({
           disabled={!canSubmit}
           aria-label={sendLabel}
           title={sendLabel}
-          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color,transform] duration-150 hover:bg-black/5 hover:text-foreground active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color] duration-150 hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
           data-testid="chat-user-message-edit-send"
         >
           <Send className="h-3.5 w-3.5" />
@@ -1168,7 +1168,7 @@ function UserMessageBubble({
   text: string;
 }) {
   const uiVersion = useUiVersion();
-  const isUiV2 = uiVersion === 'v2' && window.electron?.platform === 'win32';
+  const isUiV2 = uiVersion === 'v2';
   return (
     <div
       className={cn(
