@@ -99,15 +99,6 @@ export function createTray(mainWindow: BrowserWindow): Tray {
   return tray;
 }
 
-/**
- * Update tray tooltip with Gateway status
- */
-export function updateTrayStatus(status: string): void {
-  if (tray) {
-    tray.setToolTip(`Verse Claw - ${status}`);
-  }
-}
-
 export function syncTrayIconWithSystemTheme(): void {
   if (tray) {
     tray.setImage(getTrayIcon());
