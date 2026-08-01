@@ -9,6 +9,14 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { expandPath, getDataDir, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
+// DCS Stage 5: real BlockStore-backed experience write-back. Electron imports
+// the runtime source directly (same pattern as agency-role-package-store), so
+// confirmed SEKB principles land in the same openclaw-state SQLite that
+// runtime context_search / context_read consume, instead of a detached journal.
+import { openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { BlockStore } from '../../openclaw_runtime/src/context-engine/block-store';
+import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
+import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
   HostSuccess,
   ChatKnowledgeReference,
@@ -327,11 +335,8 @@ async function loadSekbRuntimeModule(): Promise<SekbRuntimeModule | null> {
 }
 
 
-function createHostExperienceJournalSink(stateDir: string) {
-  return async (writes: ReadonlyArray<{
-    block: Record<string, unknown>;
-    admission?: Record<string, unknown>;
-  }>) => {
+function createHostExperienceJournalSink(stateDir: string): ContextBlockSink {
+  return async (writes) => {
     const dir = join(stateDir, 'dcs-experience-journal');
     await mkdir(dir, { recursive: true });
     const results: Array<{ accepted: boolean; reason?: string }> = [];
@@ -356,8 +361,10 @@ function createHostExperienceJournalSink(stateDir: string) {
         JSON.stringify(
           {
             writtenAt: new Date().toISOString(),
-            taskId: 'P3-002',
-            findingIds: ['F-DATA-002', 'F-DATA-004'],
+            // Honest fallback journal: the real DCS write-back goes through the
+            // BlockStore sink (createHostBlockStoreSink); this journal is only
+            // used when that sink is unavailable and must not claim a task or
+            // finding it did not record.
             block: write.block,
             admission,
           },
@@ -382,6 +389,31 @@ function createHostSekbStore(sekb: SekbRuntimeModule) {
       },
     },
   });
+}
+
+/**
+ * Build a real DCS ContextBlockSink backed by the shared openclaw-state
+ * SQLite. This is the same BlockStore that runtime context_search /
+ * context_read consume, so confirmed SEKB experience Blocks become visible to
+ * the DCS context tools instead of only a detached journal file.
+ * Returns null when the shared state DB cannot be opened (best-effort).
+ */
+function createHostBlockStoreSink():
+  | ReturnType<typeof createContextBlockSink>
+  | null {
+  try {
+    const database = openOpenClawStateDatabase({
+      env: {
+        ...process.env,
+        OPENCLAW_STATE_DIR: resolveHostOpenClawStateDir(),
+      },
+    });
+    const blockStore = new BlockStore(database.db);
+    return createContextBlockSink(blockStore);
+  } catch (error) {
+    console.warn('[knowledge-api] BlockStore sink unavailable, falling back to journal:', error);
+    return null;
+  }
 }
 
 function readHostSekbFlagConfig(): unknown {
@@ -4052,7 +4084,11 @@ export function createKnowledgeApi({
         const store = createHostSekbStore(sekb);
         const distiller = new sekb.DistillationTool({ store });
         const stateDir = resolveHostOpenClawStateDir();
-        const sink = createHostExperienceJournalSink(stateDir);
+        // Prefer a real DCS BlockStore sink so confirmed experience Blocks are
+        // visible to runtime context_search / context_read. Fall back to the
+        // journal sink when the shared state DB cannot be opened.
+        const blockStoreSink = createHostBlockStoreSink();
+        const sink = blockStoreSink ?? createHostExperienceJournalSink(stateDir);
         const lineage =
           typeof distiller.confirm_and_save_with_lineage === 'function'
             ? await distiller.confirm_and_save_with_lineage(body.suggestion, body.edits ?? null, {
