@@ -36,6 +36,7 @@ import {
   type TaskLoopRunResult,
 } from "../task-loop-controller.js";
 import { proposeMemoryCard } from "../../memory/memory-store.js";
+import { extractMemoryProposalDrafts } from "../../memory/memory-extractor.js";
 import type { MemoryEvidenceRef, MemoryProposal } from "../../memory/types.js";
 import { resolveAnomalyPatternForReviewer } from "../anomaly-classifier.js";
 import { buildMissionContextPack } from "./context.js";
@@ -723,6 +724,68 @@ function proposeMemoryCandidates(record: MissionRunRecord, candidates: readonly 
   return proposed;
 }
 
+function proposeExtractedMemoryCandidates(record: MissionRunRecord, deps: MissionControllerDeps): number {
+  const propose = deps.proposeMemory ?? proposeMemoryCard;
+  // Extract explicit "remember" style statements from the tick's reviewable
+  // text (latest reason + task-loop final summary + checkpoint summary).
+  // Only run on the first tick or a complete decision to avoid cross-tick
+  // duplicate proposals; the gatekeeper dedup is a backstop.
+  if (record.tick !== 1 && record.status !== "complete" && record.lastDecision !== "complete") {
+    return 0;
+  }
+  const text = record.lastReason ?? "";
+  if (!text.trim()) return 0;
+  // extractMemoryProposalDrafts emits a draft whenever a source is supplied,
+  // so gate on the explicit-remember patterns here: only actual "remember"
+  // statements become role-memory candidates. Reviewer summaries are not
+  // memory by themselves — this keeps the extraction precise and avoids
+  // duplicate proposals alongside reviewer role_memory candidates.
+  const REMEMBER_PATTERNS = [
+    /\bremember\b/i,
+    /\bkeep in mind\b/i,
+    /\bnext time\b/i,
+    /记住/,
+    /以后/,
+    /下次/,
+    /这个角色应该/,
+  ];
+  if (!REMEMBER_PATTERNS.some((pattern) => pattern.test(text))) {
+    return 0;
+  }
+  const drafts = extractMemoryProposalDrafts({
+    text,
+    roleName: "mission-control",
+    scopeKey: record.missionId,
+    source: "trace_summary",
+    evidenceRefs: memoryEvidenceRefs(record),
+  });
+  let proposed = 0;
+  for (const draft of drafts) {
+    const proposal: MemoryProposal = {
+      type: draft.type,
+      scope: draft.scope,
+      scopeKey: draft.scopeKey ?? record.missionId,
+      roleTags: draft.roleTags,
+      content: draft.content,
+      evidenceRefs: draft.evidenceRefs,
+      evidence: draft.evidenceRefs?.map((ref) => ref.ref),
+      confidence: draft.confidence,
+      importance: draft.importance,
+      source: draft.source,
+      durability: "session",
+      operation: "create",
+      reason: `Mission ${record.missionId} extracted memory candidate (tick ${record.tick})`,
+    };
+    try {
+      propose(proposal, { actor: { type: "system", id: "mission-control" } });
+      proposed += 1;
+    } catch {
+      // Memory proposals are best-effort; Mission state remains authoritative.
+    }
+  }
+  return proposed;
+}
+
 function proposeKnowledgeInboxCandidates(record: MissionRunRecord, reviewer: MissionReviewerResult, deps: MissionControllerDeps, failedOverride = false): number {
   if (!deps.createKnowledgeInboxItem) return 0;
   let proposed = 0;
@@ -1005,9 +1068,12 @@ export async function tickMission(
     const proposedMemory = config.memory?.proposeAfterTick === false
       ? 0
       : proposeMemoryCandidates(record, reviewer.memoryCandidates, deps);
+    const proposedExtracted = config.memory?.proposeAfterTick === false
+      ? 0
+      : proposeExtractedMemoryCandidates(record, deps);
     const proposedKnowledge = proposeKnowledgeInboxCandidates(record, reviewer, deps, repeatedRepair);
-    recorder.recordEvent("mission.memory_propose", String(proposedMemory), {
-      attributes: { missionId: record.missionId, proposedMemory, proposedKnowledge },
+    recorder.recordEvent("mission.memory_propose", String(proposedMemory + proposedExtracted), {
+      attributes: { missionId: record.missionId, proposedMemory, proposedExtracted, proposedKnowledge },
     });
 
     record.phase = "checkpoint";

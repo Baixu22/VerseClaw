@@ -1496,6 +1496,7 @@ export async function runEmbeddedAttempt(
             config: params.config,
             agentId: sessionAgentId,
             warn: bootstrapWarn,
+            memoryKeywords: typeof params.prompt === "string" ? [params.prompt] : [],
           }),
         };
       },

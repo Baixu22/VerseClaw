@@ -671,6 +671,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "memory.evidenceCheck",
       "memory.simulateInjection",
       "memory.health",
+      "memory.governance",
+      "memory.operatorInspection",
       "memory.utilityReport",
       "memory.evalReport",
       "memory.detail",
