@@ -15,6 +15,7 @@
  */
 import { useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import { SettingsChevronDownIcon, SettingsCheckIcon, SettingsMoreIcon } from './SettingsGlyphs';
 import { useDismissOnOutside, usePopover } from './usePopover';
 
@@ -89,13 +90,14 @@ export function SettingsSelect({
   testId?: string;
   placeholder?: string;
 }) {
+  const overlayContainer = useOverlayPortalContainer();
   const popover = usePopover<HTMLButtonElement>({ align: 'right', gap: 2, fixedWidth: 220 });
-  const { open, setOpen } = popover;
+  const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
 
   useDismissOnOutside({
     open,
     onDismiss: () => setOpen(false),
-    refs: [popover.triggerRef, popover.layerRef],
+    refs: [triggerRef, layerRef],
   });
 
   const selected = options.find((o) => o.value === value);
@@ -104,7 +106,7 @@ export function SettingsSelect({
   return (
     <div className="sp-select-wrap">
       <button
-        ref={popover.triggerRef}
+        ref={triggerRef}
         type="button"
         data-testid={testId}
         className={open ? 'sp-select-btn open' : 'sp-select-btn'}
@@ -121,11 +123,11 @@ export function SettingsSelect({
       {open
         && createPortal(
           <div
-            ref={popover.layerRef}
-            className={popover.placement === 'top' ? 'sp-select-menu flip-top' : 'sp-select-menu'}
+            ref={layerRef}
+            className={placement === 'top' ? 'sp-select-menu flip-top' : 'sp-select-menu'}
             role="listbox"
             aria-label={ariaLabel}
-            style={popover.style}
+            style={style}
           >
             {options.map((opt) => (
               <button
@@ -143,7 +145,7 @@ export function SettingsSelect({
               </button>
             ))}
           </div>,
-          document.body,
+          overlayContainer ?? document.body,
         )}
     </div>
   );
@@ -263,17 +265,17 @@ export function SettingsRowMenu({
   testId?: string;
 }) {
   const popover = usePopover<HTMLSpanElement>({ align: 'right', gap: 4, minWidth: 148 });
-  const { open, setOpen } = popover;
+  const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
 
   useDismissOnOutside({
     open,
     onDismiss: () => setOpen(false),
-    refs: [popover.triggerRef, popover.layerRef],
+    refs: [triggerRef, layerRef],
   });
 
   return (
     <div className="sp-row-menu-anchor">
-      <span ref={popover.triggerRef} className="sp-row-menu-trigger">
+      <span ref={triggerRef} className="sp-row-menu-trigger">
         <SettingsIconButton
           label={triggerLabel}
           open={open}
@@ -284,10 +286,10 @@ export function SettingsRowMenu({
       {open
         && createPortal(
           <div
-            ref={popover.layerRef}
-            className={popover.placement === 'top' ? 'sp-row-menu flip-top' : 'sp-row-menu'}
+            ref={layerRef}
+            className={placement === 'top' ? 'sp-row-menu flip-top' : 'sp-row-menu'}
             role="menu"
-            style={popover.style}
+            style={style}
           >
             {items.map((item) => (
               <button
@@ -406,12 +408,12 @@ export function SettingsMultiSelect({
   testId?: string;
 }) {
   const popover = usePopover<HTMLButtonElement>({ align: 'right', gap: 2, fixedWidth: 220 });
-  const { open, setOpen } = popover;
+  const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
 
   useDismissOnOutside({
     open,
     onDismiss: () => setOpen(false),
-    refs: [popover.triggerRef, popover.layerRef],
+    refs: [triggerRef, layerRef],
   });
 
   const toggle = (v: string) => {
@@ -428,7 +430,7 @@ export function SettingsMultiSelect({
   return (
     <div className="sp-select-wrap">
       <button
-        ref={popover.triggerRef}
+        ref={triggerRef}
         type="button"
         data-testid={testId}
         className={open ? 'sp-select-btn open' : 'sp-select-btn'}
@@ -443,14 +445,14 @@ export function SettingsMultiSelect({
       {open
         && createPortal(
           <div
-            ref={popover.layerRef}
-            className={popover.placement === 'top'
+            ref={layerRef}
+            className={placement === 'top'
               ? 'sp-select-menu sp-multiselect flip-top'
               : 'sp-select-menu sp-multiselect'}
             role="listbox"
             aria-label={ariaLabel}
             aria-multiselectable="true"
-            style={popover.style}
+            style={style}
           >
             {options.map((opt) => {
               const checked = value.includes(opt.value);

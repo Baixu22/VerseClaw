@@ -84,7 +84,7 @@ export function AppleDrawer({
       return;
     }
 
-    closeTimerRef.current = window.setTimeout(notifyClosed, reduceMotion ? 100 : 220);
+    closeTimerRef.current = window.setTimeout(notifyClosed, reduceMotion ? 100 : 180);
     return () => {
       if (closeTimerRef.current !== null) {
         window.clearTimeout(closeTimerRef.current);

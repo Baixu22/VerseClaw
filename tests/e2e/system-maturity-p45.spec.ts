@@ -201,7 +201,8 @@ test.describe('System maturity Phase 4/5 runtime gates', () => {
         },
       });
       const page = await getStableWindow(app);
-      await page.getByTestId('sidebar-nav-browser').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-browser').click();
       await expect(page.getByText('Work tab')).toBeVisible();
       await expect(page.getByText('Personal tab')).toBeVisible();
       await expect(page.getByText('https://work.example')).toBeVisible();

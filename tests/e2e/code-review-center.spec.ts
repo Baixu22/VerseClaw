@@ -191,7 +191,8 @@ test.describe('Code Review Center', () => {
       await app.evaluate(() => {
         (globalThis as unknown as { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls = [];
       });
-      await page.getByTestId('sidebar-nav-code-review').click();
+      await page.getByTestId('sidebar-footer-menu-trigger').click();
+      await page.getByTestId('sidebar-more-code-review').click();
       await expect(page.getByTestId('code-review-page')).toBeVisible();
       await expect(page.getByTestId('code-review-readonly')).toContainText('Read-only review');
 

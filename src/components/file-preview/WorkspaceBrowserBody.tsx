@@ -5,13 +5,14 @@
  * Used by `ArtifactPanel`'s browser tab (split-pane on the chat page).
  */
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { FolderOpen, RefreshCw } from 'lucide-react';
+import { Folder } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { cn } from '@/lib/utils';
+import { ArrowLeft, Ellipsis, RefreshCw } from '@/components/icons/codex-icons';
 import { readTextFile, statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -97,25 +98,59 @@ export function WorkspaceBrowserBody({
   const [fileState, setFileState] = useState<FileState>({ status: 'idle' });
   const [refreshTick, setRefreshTick] = useState(0);
   const [showHidden, setShowHidden] = useState(false);
+  const [treePaneWidth, setTreePaneWidth] = useState(treeWidth ?? (compact ? 208 : 268));
+  const [narrow, setNarrow] = useState(() => window.innerWidth <= 960);
   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
 
   const workspace = activeWorkspace?.rootPath || agent?.workspace || '';
   const workspaceLabel = activeWorkspace?.name || agent?.name || '';
+
+  const normalizeSelectedPath = useCallback((path: string | null | undefined) => {
+    if (!path) return null;
+    const normalizedPath = path.replace(/\\/g, '/');
+    const normalizedRoot = workspace.replace(/\\/g, '/').replace(/\/$/, '');
+    if (normalizedRoot && normalizedPath.startsWith(`${normalizedRoot}/`)) {
+      return normalizedPath.slice(normalizedRoot.length + 1);
+    }
+    return normalizedPath;
+  }, [workspace]);
 
   const reload = useCallback(() => setRefreshTick((v) => v + 1), []);
 
   // Reset selection when the workspace changes.
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- intentional reset on agent switch */
-    setSelectedRel(selectedPath ?? null);
+    setSelectedRel(normalizeSelectedPath(selectedPath));
     setFileState({ status: 'idle' });
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [activeWorkspace?.id, agent?.id, selectedPath]);
+  }, [activeWorkspace?.id, agent?.id, normalizeSelectedPath, selectedPath]);
+
+  useEffect(() => {
+    const update = () => setNarrow(window.innerWidth <= 960);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   const selectRelPath = useCallback((relPath: string | null) => {
     setSelectedRel(relPath);
     onSelectedPathChange?.(relPath);
   }, [onSelectedPathChange]);
+
+  const beginTreeResize = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (narrow) return;
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = treePaneWidth;
+    const onMove = (moveEvent: PointerEvent) => {
+      setTreePaneWidth(Math.min(420, Math.max(160, startWidth + moveEvent.clientX - startX)));
+    };
+    const onEnd = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onEnd);
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onEnd);
+  }, [narrow, treePaneWidth]);
 
   useEffect(() => {
     if (!workspace) return;
@@ -288,10 +323,6 @@ export function WorkspaceBrowserBody({
     }
     return (
       <div className="space-y-1 overflow-y-auto">
-        <div className="px-3 py-2 text-2xs uppercase tracking-wide text-muted-foreground">
-          {t('workspace.title', 'Workspace')}
-          {workspaceLabel ? <span className="ml-1 text-foreground/60">/ {workspaceLabel}</span> : null}
-        </div>
         <FileTree
           nodes={state.root.children ?? []}
           expanded={expanded}
@@ -318,6 +349,13 @@ export function WorkspaceBrowserBody({
   };
 
   const renderBody = () => {
+    if (selectedRel && state.status === 'ready' && !selectedNode) {
+      return (
+        <div className="flex h-full items-center justify-center px-6 text-center text-sm text-destructive">
+          {t('filePreview.errors.notFound', 'File not found')}
+        </div>
+      );
+    }
     if (!selectedNode || selectedNode.isDir) {
       return (
         <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -383,7 +421,7 @@ export function WorkspaceBrowserBody({
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={handleOpenSelectedInFinder}>
-              <FolderOpen className="mr-2 h-4 w-4" />
+              <Folder className="mr-2 h-4 w-4" />
               {t('filePreview.actions.openInFinder', 'Show in file manager')}
             </Button>
           </div>
@@ -409,7 +447,7 @@ export function WorkspaceBrowserBody({
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={handleOpenSelectedInFinder}>
-              <FolderOpen className="mr-2 h-4 w-4" />
+              <Folder className="mr-2 h-4 w-4" />
               {t('filePreview.actions.openInFinder', 'Show in file manager')}
             </Button>
           </div>
@@ -458,7 +496,7 @@ export function WorkspaceBrowserBody({
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={handleOpenSelectedInFinder}>
-              <FolderOpen className="mr-2 h-4 w-4" />
+              <Folder className="mr-2 h-4 w-4" />
               {t('filePreview.actions.openInFinder', 'Show in file manager')}
             </Button>
           </div>
@@ -501,33 +539,20 @@ export function WorkspaceBrowserBody({
     <div className="flex h-full min-h-0 flex-col">
       <header
         className={cn(
-          'flex items-center justify-between gap-3 border-b border-black/5 dark:border-white/10',
-          compact ? 'px-3 py-1.5' : 'px-4 py-2',
+          'flex h-8 shrink-0 items-center justify-between gap-3 border-b border-black/5 px-2 dark:border-white/10',
         )}
       >
-        <div className="flex min-w-0 items-center gap-3">
-          <h2 className="truncate text-sm font-semibold">
-            {t('workspace.title', 'Workspace')}
-            {workspaceLabel ? <span className="ml-2 font-normal text-foreground/70">/ {workspaceLabel}</span> : null}
-          </h2>
-          {workspace && !compact ? (
-            <code className="hidden truncate rounded bg-black/5 px-2 py-0.5 text-2xs text-muted-foreground dark:bg-white/10 sm:inline">
-              {workspace}
-            </code>
-          ) : null}
+        <div className="flex min-w-0 items-center gap-1.5">
+          {narrow && selectedRel && (
+            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => selectRelPath(null)} aria-label={t('workspace.actions.backToTree', 'Back to files')} title={t('workspace.actions.backToTree', 'Back to files')}>
+              <ArrowLeft className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          <span className="truncate font-mono text-[11px] text-muted-foreground">
+            {selectedRel || workspaceLabel || workspace}
+          </span>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            onClick={() => setShowHidden((v) => !v)}
-            title={t('workspace.actions.toggleHidden', 'Show/hide hidden files')}
-          >
-            {showHidden
-              ? t('workspace.actions.hideHidden', 'Hide hidden files')
-              : t('workspace.actions.showHidden', 'Show hidden files')}
-          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -538,27 +563,46 @@ export function WorkspaceBrowserBody({
           >
             <RefreshCw className={cn('h-3.5 w-3.5', state.status === 'loading' && 'animate-spin')} />
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            onClick={handleOpenWorkspaceInFinder}
-            title={t('workspace.actions.openRootInFinder', 'Show root folder in file manager')}
-          >
-            <FolderOpen className="h-3.5 w-3.5 pointer-events-none" />
-          </Button>
+          <details className="relative">
+            <summary
+              className="flex h-7 w-7 cursor-default list-none items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+              aria-label={t('workspace.actions.more', 'More file actions')}
+              title={t('workspace.actions.more', 'More file actions')}
+              data-testid="workspace-files-menu"
+            >
+              <Ellipsis className="h-3.5 w-3.5" />
+            </summary>
+            <div className="absolute right-0 top-8 z-30 min-w-48 rounded-md border border-border bg-surface-modal p-1 shadow-lg">
+              <button type="button" className="rs-browser-options-item" onClick={() => setShowHidden((value) => !value)}>
+                {showHidden
+                  ? t('workspace.actions.hideHidden', 'Hide hidden files')
+                  : t('workspace.actions.showHidden', 'Show hidden files')}
+              </button>
+              <button type="button" className="rs-browser-options-item" onClick={handleOpenWorkspaceInFinder}>
+                {t('workspace.actions.openRootInFinder', 'Show root folder in file manager')}
+              </button>
+            </div>
+          </details>
           {toolbarTrailing}
         </div>
       </header>
       <div
         className="grid min-h-0 flex-1"
-        style={{ gridTemplateColumns: `${treeWidth ?? (compact ? 220 : 280)}px 1fr` }}
+        style={{ gridTemplateColumns: narrow ? 'minmax(0, 1fr)' : `${treePaneWidth}px 1px minmax(0, 1fr)` }}
       >
-        <aside className="min-h-0 overflow-hidden border-r border-black/5 dark:border-white/10">
+        <aside className={cn('min-h-0 overflow-hidden', narrow && selectedRel && 'hidden')}>
           <div className="h-full overflow-y-auto py-2 text-sm">{renderTree()}</div>
         </aside>
-        <section className="min-h-0 overflow-hidden">
+        {!narrow && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label={t('workspace.actions.resizeTree', 'Resize file tree')}
+            className="relative z-10 cursor-col-resize bg-border/60 before:absolute before:inset-y-0 before:-left-1 before:w-3"
+            onPointerDown={beginTreeResize}
+          />
+        )}
+        <section className={cn('flex min-h-0 flex-col overflow-hidden', narrow && !selectedRel && 'hidden')}>
           {selectedNode && !selectedNode.isDir && (
             <div className="flex items-center justify-between gap-3 border-b border-black/5 px-4 py-1.5 text-xs text-muted-foreground dark:border-white/10">
               <div className="flex min-w-0 items-center gap-2">
@@ -578,7 +622,7 @@ export function WorkspaceBrowserBody({
               <span className="shrink-0">{formatFileSize(selectedNode.size ?? 0)}</span>
             </div>
           )}
-          <div className="h-[calc(100%-2rem)] min-h-0">{renderBody()}</div>
+          <div className="min-h-0 flex-1">{renderBody()}</div>
         </section>
       </div>
     </div>

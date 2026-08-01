@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { BookOpenCheck, FolderTree, Gauge, ListTree, MoreHorizontal, RefreshCw } from 'lucide-react';
+import { Gauge, ListTree, MoreHorizontal, RefreshCw, Slash } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceChip } from '@/components/chat/ResourceChip';
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { useAgentsStore } from '@/stores/agents';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { useChatStore } from '@/stores/chat';
+import { PanelRightOpen } from '@/components/icons/codex-icons';
 import type { PromptCacheRiskAssessment, PromptCacheStatus } from '@shared/types/workspace';
 
 const MENU_ITEM_CLASS = 'flex min-h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm text-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-foreground/5';
@@ -18,7 +19,7 @@ type ChatToolbarProps = {
   questionDirectoryOpen?: boolean;
   questionDirectoryCount?: number;
   onToggleQuestionDirectory?: () => void;
-  onSaveToKnowledge?: () => void;
+  onOpenSlashCommands?: () => void;
   promptCacheStatus?: PromptCacheRiskAssessment | null;
 };
 
@@ -60,14 +61,14 @@ export function ChatToolbar({
   questionDirectoryOpen = false,
   questionDirectoryCount = 0,
   onToggleQuestionDirectory,
-  onSaveToKnowledge,
+  onOpenSlashCommands,
   promptCacheStatus,
 }: ChatToolbarProps = {}) {
   const refresh = useChatStore((state) => state.refresh);
   const loading = useChatStore((state) => state.loading);
   const currentAgentId = useChatStore((state) => state.currentAgentId);
   const agents = useAgentsStore((state) => state.agents);
-  const openBrowser = useArtifactPanel((state) => state.openBrowser);
+  const openWorkspacePanel = useArtifactPanel((state) => state.openWorkspacePanel);
   const panelOpen = useArtifactPanel((state) => state.open);
   const closePanel = useArtifactPanel((state) => state.close);
   const { t } = useTranslation('chat');
@@ -103,7 +104,7 @@ export function ChatToolbar({
               <span className="hidden lg:inline">{t(`toolbar.promptCache.short.${promptCacheStatus.status}`)}</span>
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-72">
+          <TooltipContent side="bottom" collisionPadding={8} className="max-w-72">
             <div className="space-y-1 text-xs">
               <p className="font-medium text-foreground">
                 {t('toolbar.promptCache.title', {
@@ -135,14 +136,14 @@ export function ChatToolbar({
                 'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
                 browserActive && 'bg-foreground/10 text-foreground',
               )}
-              onClick={() => (browserActive ? closePanel() : openBrowser())}
+              onClick={() => (browserActive ? closePanel() : openWorkspacePanel({ panel: 'files' }))}
               disabled={!currentAgent?.workspace}
               aria-label={t('toolbar.workspace')}
             >
-              <FolderTree className="h-4 w-4" />
+              <PanelRightOpen className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent><p>{t('toolbar.workspace')}</p></TooltipContent>
+          <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.workspace')}</p></TooltipContent>
         </Tooltip>
       )}
       {questionDirectoryAvailable && (
@@ -162,7 +163,7 @@ export function ChatToolbar({
               <ListTree className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent><p>{t('questionDirectory.title')}</p></TooltipContent>
+          <TooltipContent side="bottom" collisionPadding={8}><p>{t('questionDirectory.title')}</p></TooltipContent>
         </Tooltip>
       )}
       <DropdownMenu.Root>
@@ -184,13 +185,13 @@ export function ChatToolbar({
             className="z-[90] min-w-52 rounded-[var(--radius-popover)] border border-border/70 bg-popover p-1.5 text-popover-foreground shadow-sm"
           >
             <DropdownMenu.Item
-              data-testid="chat-save-knowledge"
+              data-testid="chat-toolbar-slash"
               className={MENU_ITEM_CLASS}
-              disabled={!onSaveToKnowledge}
-              onSelect={onSaveToKnowledge}
+              disabled={!onOpenSlashCommands}
+              onSelect={onOpenSlashCommands}
             >
-              <BookOpenCheck className="h-4 w-4" />
-              {t('toolbar.saveToKnowledge')}
+              <Slash className="h-4 w-4" />
+              {t('toolbar.slashCommands')}
             </DropdownMenu.Item>
             <DropdownMenu.Item
               className={MENU_ITEM_CLASS}

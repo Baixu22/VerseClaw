@@ -421,10 +421,9 @@ test.describe('Workspace Git panel', () => {
 
       const sidePanel = page.getByTestId('artifact-panel');
       await expect(sidePanel).toBeVisible({ timeout: 30_000 });
-      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
-      await expect(sidePanel.getByTestId('workspace-launchpad-entry-review')).toHaveCount(0);
-      await sidePanel.getByTestId('workspace-launchpad-add').click();
-      await sidePanel.getByTestId('workspace-launchpad-entry-review').click();
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-review').click();
 
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
@@ -708,9 +707,9 @@ test.describe('Workspace Git panel', () => {
       await workspaceToggle.click();
 
       const sidePanel = page.getByTestId('artifact-panel');
-      await expect(sidePanel.getByTestId('workspace-launchpad')).toBeVisible();
-      await sidePanel.getByTestId('workspace-launchpad-add').click();
-      await sidePanel.getByTestId('workspace-launchpad-entry-review').click();
+      await expect(sidePanel.getByTestId('artifact-panel-tab-files')).toBeVisible();
+      await sidePanel.getByTestId('artifact-panel-new-tab').click();
+      await page.getByTestId('artifact-panel-new-tab-review').click();
       const gitPanel = sidePanel.getByTestId('workspace-git-panel');
       await expect(gitPanel).toBeVisible();
       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');

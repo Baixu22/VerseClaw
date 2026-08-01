@@ -32,10 +32,8 @@
  *      Radix-driven components read these directly.
  *
  *   2. Verse Claw surface tokens (--surface-modal / --surface-input /
- *      --surface-sidebar). Three light-mode "cream paper" layers added
- *      by Verse Claw. In dark mode each one is redirected to an existing
- *      shadcn token (--card / --muted / --background) so we don't have
- *      to maintain a second dark-cream palette.
+ *      --surface-sidebar). These are neutral grayscale work surfaces in
+ *      both themes and intentionally avoid warm paper or decorative glass.
  *
  * Usage:
  *   - Application code should always go through Tailwind utilities, e.g.
@@ -64,14 +62,14 @@
  *     bg-muted   (when used as a panel) →  bg-surface-input
  *     bg-[hsl(var(--xxx))] / arbitrary  →  bg-<named-token>
  *
- *     bg-surface-modal = raised cream  panels, popovers, inputs, cards
- *     bg-surface-input = recessed cream  code/log <pre>, segmented track
+ *     bg-surface-modal = raised neutral panels and popovers
+ *     bg-surface-input = recessed neutral inputs, code panes, segmented track
  *
- *     Windows UI v2 material order:
+ *     Cross-platform UI v2 material order:
  *       bg-material-canvas -> bg-material-sidebar -> bg-material-panel
  *       -> bg-material-elevated; controls use bg-material-control.
- *     Light v2 values must stay in one warm-neutral hue family and must be
- *     scoped with :not(.dark), so system dark mode cannot inherit light glass.
+ *     Light v2 values use the FakeCoding neutral gray family and are scoped
+ *     with :not(.dark), so system dark mode cannot inherit light surfaces.
  *
  *     Never write `dark:bg-card` / `dark:bg-muted` companion classes —
  *     the surface tokens already redirect in dark mode.
@@ -115,11 +113,8 @@
  *
  *   TYPOGRAPHY
  *   ─────────────────────────────────────────────────────────────────────
- *     page H1 / H2     :  font-serif font-normal tracking-tight
- *                         · hero pages   text-5xl md:text-6xl  (Settings,
- *                                                               Cron, Models)
- *                         · wizard steps text-3xl / section H2 text-xl
- *                                                              (Setup)
+ *     page H1 / H2     :  font-sans font-normal tracking-normal
+ *                         management H1 <= 28px; no generic hero treatment
  *     monospace        :  font-mono     (NOT `font-monospace` — dead class)
  *     pixel text       :  text-[13px] → text-meta
  *                         text-[10px] → text-2xs
@@ -128,84 +123,65 @@
  *
  *   PRIMARY CTA
  *   ─────────────────────────────────────────────────────────────────────
- *     Use the default <Button> styling (variant="default", which renders
- *     `bg-primary`). Do not hand-apply `bg-brand` to action buttons —
- *     `bg-brand` / `bg-brand-hover` are reserved for branded surfaces
- *     where a divergent Apple-blue is explicitly desired (rare).
- *     Reference: pages/Models "+ Add Provider" trigger.
+ *     Use the default <Button> styling, which inverts foreground/background.
+ *     Blue is reserved for links, keyboard focus, and active running state.
+ *     A visible state exposes at most one default button.
  * ────────────────────────────────────────────────────────────────────────── */
 
 @layer base {
   :root {
     /* ── shadcn semantic tokens (light) ─────────────────────────── */
-    /* Lightened Verse Claw cream page background; gentler than pure white
-     *           for long sessions in front of the editor. */
-    --background: 45 30% 96.6%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%;
+    --foreground: 210 9% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 9% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 9% 11%;
+    --primary: 210 9% 11%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 17% 98%;
+    --secondary-foreground: 210 9% 11%;
+    --muted: 210 17% 98%;
+    --muted-foreground: 210 6% 40%;
+    --accent: 210 14% 96%;
+    --accent-foreground: 210 9% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 210 10% 90%;
+    --input: 210 10% 88%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
-    /* Windows UI v2 material and motion primitives. */
-    --material-canvas: 45 30% 96.6%;
-    --material-sidebar: 42 20% 94%;
-    --material-panel: 45 38% 98%;
+    /* Cross-platform FakeCoding material and motion primitives. */
+    --material-canvas: 0 0% 100%;
+    --material-sidebar: 210 17% 98%;
+    --material-panel: 0 0% 100%;
     --material-elevated: 0 0% 100%;
-    --material-control: 42 18% 93%;
-    --material-scrim: 222 28% 9%;
+    --material-control: 210 14% 96%;
+    --material-scrim: 210 11% 7%;
     --motion-fast: 120ms;
     --motion-control: 180ms;
-    --motion-surface: 240ms;
+    --motion-surface: 180ms;
     --motion-drawer: 180ms;
     --ease-ui-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-ui-move: cubic-bezier(0.77, 0, 0.175, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
     --radius-control: 8px;
-    --radius-card: 12px;
-    --radius-popover: 14px;
-    --radius-panel: 20px;
-    --shadow-floating: 0 24px 80px rgba(15, 23, 42, 0.18), 0 2px 12px rgba(15, 23, 42, 0.08), inset 0 1px rgba(255, 255, 255, 0.62);
+    --radius-card: 8px;
+    --radius-popover: 8px;
+    --radius-panel: 8px;
+    --shadow-floating: 0 16px 32px -8px rgba(0, 0, 0, 0.19), 0 2px 8px rgba(0, 0, 0, 0.08);
     --conversation-text-body: 220 8% 43%;
     --conversation-text-tertiary: 220 6% 56%;
-    --conversation-border-light: 42 14% 92%;
-    --conversation-border-heavy: 42 14% 82%;
+    --conversation-border-light: 210 10% 92%;
+    --conversation-border-heavy: 210 8% 82%;
     --shadow-hairline: 0 0 0 0.5px rgba(15, 23, 42, 0.1);
     --shadow-subtle: 0 1px 2px -1px rgba(15, 23, 42, 0.08);
 
-    /* ── Verse Claw cream surfaces (light) ────────────────────────────
-     *
-     * Three stacked cream layers — think "a cream paper laid on top
-     * of a slightly paler cream paper". The contrast between layers
-     * is deliberately low so we can suggest hierarchy without using
-     * heavy shadows. Pixel values are extracted from the hex literals
-     * that used to be sprinkled across components.
-     *
-     *   --surface-modal   = lifted cream   large rounded modal panels (top);
-     *                                      slightly lighter than --background
-     *                                      so dialogs feel raised
-     *   --surface-input   = recessed cream inputs / selects / code panes;
-     *                                      slightly darker than --background
-     *                                      so fields feel inset
-     *   --surface-sidebar = sidebar cream  left navigation rail (often /60)
-     * ─────────────────────────────────────────────────────────── */
-    --surface-modal: 45 30% 97.6%;
-    --surface-input: 45 22% 94%;
-    --surface-sidebar: 45 16% 94%;
+    /* Neutral light work surfaces. */
+    --surface-modal: 0 0% 100%;
+    --surface-input: 210 14% 96%;
+    --surface-sidebar: 210 17% 98%;
 
     /* ── Verse Claw usage accents (light) ─────────────────────────────
      *
@@ -228,46 +204,44 @@
     --usage-cache: 48 96% 53%;
   }
 
-  /* Windows UI v2 uses one warm-neutral family for every light material.
-   * Keeping semantic and material tokens on the same hue avoids the visible
-   * blue-gray / yellow / pure-white seams that appear when glass layers blend. */
+  /* UI v2 keeps semantic and material tokens in one neutral gray family. */
   :root[data-ui-version='v2']:not(.dark) {
-    --background: 42 32% 97.2%;
-    --foreground: 220 16% 10%;
-    --card: 42 42% 98.4%;
-    --card-foreground: 220 16% 10%;
-    --popover: 42 44% 98.7%;
-    --popover-foreground: 220 16% 10%;
-    --secondary: 42 22% 95.2%;
-    --secondary-foreground: 220 14% 16%;
-    --muted: 42 20% 95%;
-    --muted-foreground: 220 8% 43%;
-    --accent: 42 24% 94.8%;
-    --accent-foreground: 220 14% 16%;
-    --border: 42 16% 87.5%;
-    --input: 42 16% 86%;
+    --background: 0 0% 100%;
+    --foreground: 210 9% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 9% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 9% 11%;
+    --secondary: 210 17% 98%;
+    --secondary-foreground: 210 9% 11%;
+    --muted: 210 17% 98%;
+    --muted-foreground: 210 6% 40%;
+    --accent: 210 14% 96%;
+    --accent-foreground: 210 9% 11%;
+    --border: 210 10% 90%;
+    --input: 210 10% 88%;
 
-    --material-canvas: 42 32% 97.2%;
-    --material-sidebar: 42 28% 96.1%;
-    --material-panel: 42 40% 98.1%;
-    --material-elevated: 42 48% 99%;
-    --material-control: 42 22% 95.1%;
+    --material-canvas: 0 0% 100%;
+    --material-sidebar: 210 17% 98%;
+    --material-panel: 0 0% 100%;
+    --material-elevated: 0 0% 100%;
+    --material-control: 210 14% 96%;
 
-    --surface-modal: 42 40% 98.1%;
-    --surface-input: 42 22% 95.1%;
-    --surface-sidebar: 42 28% 96.1%;
+    --surface-modal: 0 0% 100%;
+    --surface-input: 210 14% 96%;
+    --surface-sidebar: 210 17% 98%;
   }
 
   /* Neutral deep-gray dark palette */
   .dark {
-    --background: 240 4% 11%;
+    --background: 0 0% 9.4%;
     --foreground: 210 20% 96%;
     --card: 240 3% 14%;
     --card-foreground: 210 20% 96%;
     --popover: 240 3% 14%;
     --popover-foreground: 210 20% 96%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 9.4%;
     --secondary: 240 3% 18%;
     --secondary-foreground: 210 20% 96%;
     --muted: 240 3% 18%;
@@ -280,11 +254,11 @@
     --input: 240 3% 18%;
     --ring: 217.2 91.2% 59.8%;
 
-    --material-canvas: 240 4% 10.5%;
-    --material-sidebar: 240 4% 13%;
-    --material-panel: 240 4% 16%;
-    --material-elevated: 240 4% 18%;
-    --material-control: 240 3% 20%;
+    --material-canvas: 0 0% 9.4%;
+    --material-sidebar: 0 0% 9.4%;
+    --material-panel: 0 0% 13%;
+    --material-elevated: 0 0% 15.7%;
+    --material-control: 0 0% 15.7%;
     --material-scrim: 240 8% 3%;
     --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.5), 0 2px 14px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.08);
     --conversation-text-body: 220 8% 72%;
@@ -302,9 +276,9 @@
      * This way every `bg-surface-*` utility resolves correctly in
      * both themes, and components no longer need `dark:bg-card`-style
      * companion classes for theme switching. */
-    --surface-modal: 240 3% 14%;
-    --surface-input: 240 3% 18%;
-    --surface-sidebar: 240 4% 11%;
+    --surface-modal: 0 0% 13%;
+    --surface-input: 0 0% 15.7%;
+    --surface-sidebar: 0 0% 9.4%;
 
     /* Usage accents — lifted *-400-ish shades so bars stay vivid
      * against the deep-gray dark surfaces (see light block above
@@ -326,7 +300,7 @@
   }
 
   :root[data-ui-version='v2'] body {
-    font-family: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    font-family: "SF Pro Text", "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", Inter, system-ui, sans-serif;
   }
 }
 
@@ -349,42 +323,39 @@
   }
 
   .verse-claw-dialog-overlay[data-state='open'] {
-    animation: verse-claw-dialog-overlay-in 100ms ease-out both;
+    animation: verse-claw-dialog-overlay-in 140ms var(--ease-ui-out) both;
   }
 
   .verse-claw-dialog-overlay[data-state='closed'] {
-    animation: verse-claw-dialog-overlay-out 100ms var(--ease-ui-out) both;
+    animation: verse-claw-dialog-overlay-out 120ms var(--ease-ui-out) both;
   }
 
   .verse-claw-dialog-content[data-state='open'] {
-    animation: verse-claw-dialog-content-in 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: verse-claw-dialog-content-in 150ms var(--ease-ui-out) both;
   }
 
   .verse-claw-dialog-content[data-state='closed'] {
-    animation: verse-claw-dialog-content-out 100ms var(--ease-ui-out) both;
+    animation: verse-claw-dialog-content-out 130ms var(--ease-ui-out) both;
   }
 
   .app-content-stage-v2 {
     isolation: isolate;
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.45);
   }
 
   [data-ui-version='v2'] [data-testid='main-content'] {
-    background:
-      radial-gradient(circle at 80% -10%, hsl(var(--primary) / 0.055), transparent 34%),
-      hsl(var(--material-canvas));
+    background: hsl(var(--material-canvas));
   }
 
   [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading),
   [data-ui-version='v2'] [data-testid='main-content'] h2.font-serif:not(.chat-brand-heading) {
     font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
   [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading) {
-    font-size: 1.5rem;
-    line-height: 1.875rem;
+    font-size: 1.75rem;
+    line-height: 2.1rem;
   }
 
   .apple-drawer-overlay[data-state='open'] {
@@ -437,15 +408,15 @@
   .settings-drawer-shell h2.text-3xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
   .settings-drawer-shell h1.text-2xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -526,24 +497,24 @@
 @keyframes verse-claw-dialog-content-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.985);
+    transform: translate(-50%, calc(-50% + 4px));
   }
 
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%);
   }
 }
 
 @keyframes verse-claw-dialog-content-out {
   from {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%);
   }
 
   to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.99);
+    transform: translate(-50%, calc(-50% + 4px));
   }
 }
 
@@ -599,7 +570,7 @@
 
 /* Smooth transitions */
 .transition-theme {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-150;
 }
 
 /* Focus ring */

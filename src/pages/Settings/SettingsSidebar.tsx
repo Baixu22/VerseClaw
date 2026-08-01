@@ -13,6 +13,7 @@ const sections = [
   { id: 'agents', to: '/settings/agents', icon: 'account', group: 'configuration' },
   { id: 'skills', to: '/settings/skills', icon: 'plugins', group: 'configuration' },
   { id: 'channels', to: '/settings/channels', icon: 'connections', group: 'configuration' },
+  { id: 'browser', to: '/settings/browser', icon: 'browser', group: 'configuration' },
   { id: 'billing', to: '/settings/billing', icon: 'appearance', group: 'operations' },
   { id: 'system', to: '/settings/system', icon: 'computer', group: 'operations' },
   { id: 'developer', to: '/settings/developer', icon: 'hooks', group: 'operations' },

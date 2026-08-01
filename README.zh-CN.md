@@ -118,7 +118,7 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 
 我们致力于与上游 OpenClaw 项目保持严格同步，确保你始终可以使用官方发布的最新功能、稳定性改进和生态兼容性。
 
-打开开发者模式后，侧边栏还会提供原生 Dreams 页面，可在 Verse Claw 内查看 OpenClaw 记忆回顾、梦境日记，并执行基础维护操作；需要更深诊断时仍可从该页面打开完整 OpenClaw Dreams UI。
+打开开发者模式后，可从侧边栏底部的 `...` 菜单进入原生 Dreams 页面，在 Verse Claw 内查看 OpenClaw 记忆回顾、梦境日记并执行基础维护操作；需要更深诊断时仍可从该页面打开完整 OpenClaw Dreams UI。
 
 ---
 
@@ -131,6 +131,7 @@ Verse Claw 直接基于官方 **OpenClaw** 核心构建。无需单独安装，�
 通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染（包括 GitHub 风格表格以及由 KaTeX 渲染的 LaTeX 数学公式：`$行内$`、`$$块级$$`、`\(行内\)` 和 `\[块级\]`）、用于计划、选项列表、问题流和偏好设置的结构化 Tool UI 卡片，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
 推理强度也会作为运行时策略生效：minimal/low 会降低 prompt、skill 和工具结果注入密度，让普通回合更省 token、更简洁；high/xhigh 可建议显式 `/loop`、ClawGraph、角色/子 Agent 或多模型协作，但不会改变权限或工具授权边界。
 左侧栏提供 Workgroups 视图，可按 workspace 级任务组组织会话，显示运行、等待、需处理等聚合状态，保留未归组会话，并让新的 workspace 作用域会话继承当前工作组。
+固定导航只保留 **新任务**、**收件箱**、**已安排** 和 **知识**。收件箱会聚合通用权限申请、Remote Tasks 与等待批准的 Browser Tasks，并真实展示风险、证据、历史和可用决策。Browser、Review、Task Ledger 与 ClawGraph 继续从底部 `...` 菜单进入，不再与高频入口并列。
 设置 → 工作模式 中提供 Plan、Build、Review 和 Docs/Data 管理。模式会按 workspace session 保存，并通过面向产物的 Work Kits 管理报告、表格、演示、PDF、调研、网站、设计和日常事务能力。Kit 状态会显示本地 skill 可用性、由主进程拥有的轻量 Office/Search Work Provider 状态，并为内置 Office skill 提供显式安装入口；下一条消息只会携带轻量的不可信意图 metadata。Work Provider 可以由内置库、可选包、外部服务、Custom HTTP、外部二进制、runtime skill、MCP server 或 OpenClaw plugin 通过同一来源模型承接。Search 在用户显式配置 provider 前保持 `missingConfig`，重型格式转换、爬虫、OCR 和 dataframe runtime 只作为可选接口。工作模式不会自动改变 workspace permission，也不会覆盖 OpenClaw runtime 的工具策略。
 OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会检测二进制文件、流式显示安装日志、同步与 Codeg 兼容的 `/officecli-*` 技能，并用 `officecli watch` 实时预览 `.docx`、`.xlsx` 和 `.pptx` 文件。
 从输入框插入的技能会以 `/技能名` 卡片形式显示；点击卡片可在右侧预览栏打开并阅读该技能的 `SKILL.md`。
@@ -169,11 +170,14 @@ Runtime 还包含默认关闭的安全与验证影子层，覆盖 Gateway 可见
 ### 任务账本
 Task Ledger 页面为长期任务维护 workspace 级、Agent 中立的结构化记录：长期目标、子任务、依赖、阻塞、待复核节点、决策、偏差和会话链接。它在本地 OpenClaw 配置目录中保存 append-only JSONL 事件，在 Chat 旁展示紧凑摘要，并可导出单文件离线 HTML，包含树视图、DAG、历史和复核视图。
 
-### 远程任务
-Remote Tasks 页面提供本地优先的结构化任务收件箱，可接收消息、OpenClaw Doctor 和设置补丁任务。设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新。
+### 收件箱与远程任务
+收件箱为通用权限申请、结构化 Remote Task 信封和监督式 Browser Tasks 提供统一的本地决策队列。远程设置补丁会展示变更预览，并且只有用户明确批准后，主进程才会应用白名单内的配置更新；已处理的权限与 Remote Task 记录仍可在“历史”中查看。本地 Remote Task 测试信封创建器现位于 **设置 → 开发者**，旧 `/remote-tasks` 路由会打开收件箱并选中 Remote Tasks 筛选。
 
 ### Code Review Center
 Review Center 可以对未提交改动、相对基准分支的 diff 或指定 commit 运行只读 AI 审查。它会按 severity 结构化 findings，保留 file/line 锚点，写入脱敏 review trace，并可把单条 finding 或整次 review 转成 Task Ledger review node，不会暂存、提交或编辑文件。Git patch 会先经过共享结构化 patch contract 验证；malformed 或 producer-truncated diff 会在模型审查启动前停止。在 Chat 中，成功且有 write journal 支撑的 `edit` 与全文件 `write` 会显示富 diff，并可复制同一文本 patch；mutation lineage 缺失、过期或不完整时，不会用 Renderer 状态推断重建。Remote PR 标签页通过 Main-owned host API 有界读取 GitHub PR detail、commits、files、结构化 diff、checks、reviews、branch protection 和指定文件内容。完整性、能力与 readiness 会显式展示；缺失、截断、未授权或未知证据不会被解释为 ready。整体评审、行评论、线程回复和白名单 metadata 修改默认只生成草稿，只有精确匹配的一次性 action-bound approval 被消费后才会发布；head/version 漂移会 fail closed，partial 或 ambiguous 结果会显示 reconciliation，避免盲目重试。受控合并复用同一 Main-owned policy：动作前即时重读 head/readiness，消费绑定精确策略与 policy 证据的短时单次审批，并携带 expected head SHA。生产仓库不在 allowlist 中，Agent merge 默认关闭；合并后的 refresh 或 audit 失败会显示 reconciliation，而不会提示重试合并。
+
+### 会话工作区
+Chat 会话工作区保持紧凑的连续工作面，固定显示 `Review`、`Terminal`、`Browser`、`Files`、`Artifacts`、`Audit` 六个标签；Changes 收入 Review，文件预览收入 Files。Browser 内部提供 Preview 和受监督的 Live，Terminal 可在底部面板与右侧标签间切换且不会创建第二个 shell 会话。窄窗口下 Files 在文件树与预览之间使用单视图切换。工作区继续使用 Main-owned Browser、终端、Git、Review、截图、snapshot 和审批 API；`/browser` 与 `/code-review` 仍作为兼容路由打开对应工作区上下文。Task Ledger 和 ClawGraph 继续通过工作区上下文入口打开全屏页面。
 
 ### Knowledge Hub
 Knowledge 页面通过 OpenClaw `memory-wiki` 管理有来源支撑的 wiki 上下文。默认使用 Verse Claw 托管的隔离 native vault，可在不切换到 unsafe local-vault 模式的情况下导入受限的文本文件或文件夹，也可以验证并导入本地 OKF v0.1 Markdown bundle，作为覆盖在 `wiki.ingest` 之上的轻量兼容适配层。它提供状态、搜索、查看、compile、lint、Knowledge Inbox、draft/proposal 审查、provenance 和治理流程。Inbox 会把 Chat、任务账本、文件、OKF、ClawGraph 或 agent 提出的候选知识暂存在正式 wiki 之外，直到用户选择提升为草稿或忽略；provenance 只记录来源引用和读取/引用事件，不修改 wiki 页面。Chat 的知识范围（`None`、`Memory`、`Wiki` 或 `All`）只代表读取范围：agent 可以 search/get 上下文，但不能因为启用 scope 就写入、修改、归档、删除、合并或 apply 知识。在 Chat 中，`/wiki` 会搜索并以可见 chip 挂载明确的 wiki 引用后再发送，`/memory`、`/all`、`/none` 和 `/scope` 只调整读取范围，不会变成写权限。知识调用模式默认是 Suggest：相关知识只显示为可选 chip；Auto-read 需要用户显式开启，并且只会附加少量新鲜、高置信、只读引用。会话知识以及 agent/知识管理员建议都会先进入可编辑 draft/proposal，只有用户明确确认后才写入 wiki。Obsidian 是可选增强，不是必需依赖。治理仪表盘按需运行健康检查，呈现矛盾条目、陈旧页面和无主引用；监控目录只会把项目文档放入 pending Inbox，不会自动 direct-ingest 到正式 wiki，也不会自动生成 synthesis。
@@ -215,7 +219,9 @@ Verse Claw 现在还内置了腾讯官方个人微信渠道插件，可直接在
 现在定时任务页面已经可以直接配置外部投递，统一拆成“发送账号”和“接收目标”两个下拉选择。对于已支持的通道，接收目标会从通道目录能力或已知会话历史中自动发现，不需要再手动修改 `jobs.json`。
 定时任务也可以运行 Agent Browser 自动化：配置 URL、浏览器 profile/auth state、安全策略、成功/失败判定、保守安全步骤重试和诊断项后，就能让网页签到、页面监控、草稿发布等任务通过内部 managed browser 复用持久化登录态，并在失败时展示简洁证据。
 
-侧边栏的 Agent Browser 工作台通过 Main 进程运行时提供相互隔离的 profile、标签页和会话。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
+**已安排** 页面现在会把 Cron 任务和监督式 Browser 运行投影到同一份紧凑列表中，但不会合并两类后端模型。Cron 继续保留创建、编辑、启停、删除、立即运行、投递配置和运行历史；Browser 运行可执行批准、拒绝、重试和取消，并展示有序步骤、时间及类型化结果或错误证据。窗口宽度为 960px 时，详情会替换列表，不会强行挤出第三栏。Browser Profile 与现有凭据 Vault 统一在 **设置 > Browser** 管理；提交的密码始终由 Main 进程持有，不会回显到渲染进程。
+
+Agent Browser 工作台与旧 `/browser` 路由继续作为兼容入口保留在侧边栏底部的 `...` 菜单中，并通过 Main 进程运行时提供相互隔离的标签页和实时会话。把这些实时会话迁入聊天工作区属于后续迁移阶段。聊天会在发送前依据真实 transcript 用量执行 token/费用预算门，限制持久化与渲染的工具输出，并在取消或硬超时时中止底层运行。
 
 监督式 Browser 任务会先持久化为“等待授权”，在产生任何浏览器副作用前展示目标、站点、获批域名、模式、权限范围和有序计划。用户显式批准后，Main 进程才会执行有界的导航、等待与点击步骤，并返回类型化的成功或失败判定。该流程不开放无监督浏览或私网访问，凭据仍只以 Main 进程持有的 Vault 引用存在。
 
@@ -240,7 +246,7 @@ Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、wor
 ### 🌙 自适应主题
 支持浅色模式、深色模式或跟随系统主题。Verse Claw 自动适应你的偏好设置。
 
-Windows 默认启用 UI v2：统一使用暖白材质、Segoe UI Variable 字体、紧凑的 Apple Blue 控件和轻量右侧设置 Drawer（基于 `vaul@1.1.2`）。设置深链接会保留但不缩放背后的原页面，抽屉使用不透明材质并避免全窗口实时模糊，短退出动画结束后再返回并恢复焦点。macOS 与 Linux 当前继续使用 legacy shell；开发调试可通过 `?uiVersion=legacy` 对比 Windows 旧界面。
+Windows、macOS 与 Linux 现在都默认启用 UI v2。界面采用与 FakeCoding 对齐的中性灰阶工作面、28-36 px 紧凑控件、黑白反转主操作、无衬线管理页标题和 120-180 ms 克制动效，同时保留各平台原生窗口控件。设置深链接继续保留背后的原页面并在关闭后恢复焦点；分阶段迁移期间可通过 `?uiVersion=legacy` 对比旧界面。
 
 ### 🚀 开机启动控制
 在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 Verse Claw 在系统登录后自动启动。

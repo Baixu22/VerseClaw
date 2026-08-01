@@ -30,6 +30,7 @@
   "loadMoreHistory": "Загрузить предыдущие сообщения",
   "loadingMoreHistory": "Загрузка…",
   "toolbar": {
+    "slashCommands": "Slash-泻芯屑邪薪写褘",
     "refresh": "Обновить чат",
     "currentAgent": "Общение с {{agent}}",
     "workspace": "Рабочая область",
@@ -354,8 +355,12 @@
     "tabs": {
       "changes": "Изменения",
       "preview": "Просмотр",
-      "browser": "Рабочая область",
-      "artifact": "Артефакты"
+      "browser": "Браузер",
+      "artifact": "Артефакты",
+      "review": "Проверка",
+      "terminal": "Терминал",
+      "files": "Файлы",
+      "audit": "Аудит"
     },
     "workspaceTabs": {
       "files": "Файлы",
@@ -395,7 +400,9 @@
     "actions": {
       "back": "Назад к списку",
       "expand": "Развернуть панель",
-      "collapse": "Свернуть панель"
+      "collapse": "Свернуть панель",
+      "moveTerminalSide": "Переместить терминал вправо",
+      "moveTerminalBottom": "Переместить терминал вниз"
     },
     "changes": {
       "heading": "Изменения файлов ({{count}})",
@@ -511,11 +518,23 @@
       "openRootInFinder": "Показать корень в файловом менеджере",
       "toggleHidden": "Скрытые файлы",
       "showHidden": "Показать скрытые файлы",
-      "hideHidden": "Скрыть скрытые файлы"
+      "hideHidden": "Скрыть скрытые файлы",
+      "backToTree": "Назад к файлам",
+      "resizeTree": "Изменить ширину дерева файлов",
+      "openTaskLedger": "Журнал задач",
+      "openClawGraph": "ClawGraph",
+      "more": "Другие действия с файлами"
+    },
+    "review": {
+      "views": { "label": "Режим проверки", "changes": "Изменения", "ai-review": "AI-проверка", "pull-requests": "Pull Requests" }
+    },
+    "browser": {
+      "views": { "label": "Режим браузера", "preview": "Предпросмотр", "live": "Live" }
     },
     "terminal": {
       "title": "Терминал рабочей области",
       "noWorkspace": "Рабочая область не выбрана",
+      "resize": "Изменить высоту панели терминала",
       "permission": {
         "readOnly": "Только чтение",
         "acceptEdits": "Разрешить правки",
@@ -534,7 +553,8 @@
         "interrupt": "Ctrl+C",
         "close": "Закрыть",
         "clear": "Очистить",
-        "approve": "Разрешить"
+        "approve": "Разрешить",
+        "end": "Завершить терминал"
       },
       "blocked": {
         "title": "Интерактивный терминал отключён в этом режиме прав",
@@ -546,10 +566,15 @@
       "toast": {
         "approvalRequired": "Для интерактивного терминала нужно разрешение",
         "blocked": "Запуск терминала заблокирован",
-        "approvalFailed": "Не удалось подтвердить"
+        "approvalFailed": "Не удалось подтвердить",
+        "interruptFailed": "Не удалось прервать терминал",
+        "closeFailed": "Не удалось завершить терминал"
       }
     },
     "web": {
+      "configuration": {
+        "title": "Настройка предпросмотра"
+      },
       "title": "Web-предпросмотр",
       "mode": {
         "static": "Статика",

@@ -77,7 +77,8 @@ export function usePopover<T extends HTMLElement>({
 
   useLayoutEffect(() => {
     if (!open) return;
-    measure();
+    const frame = window.requestAnimationFrame(measure);
+    return () => window.cancelAnimationFrame(frame);
   }, [open, measure]);
 
   useEffect(() => {

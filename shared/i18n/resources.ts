@@ -19,6 +19,7 @@ import enClawGraph from './locales/en/clawGraph.json';
 import enKnowledge from './locales/en/knowledge.json';
 import enCodeReview from './locales/en/codeReview.json';
 import enBrowser from './locales/en/browser.json';
+import enInbox from './locales/en/inbox.json';
 
 // ZH
 import zhCommon from './locales/zh/common.json';
@@ -39,6 +40,7 @@ import zhClawGraph from './locales/zh/clawGraph.json';
 import zhKnowledge from './locales/zh/knowledge.json';
 import zhCodeReview from './locales/zh/codeReview.json';
 import zhBrowser from './locales/zh/browser.json';
+import zhInbox from './locales/zh/inbox.json';
 
 // JA
 import jaCommon from './locales/ja/common.json';
@@ -59,6 +61,7 @@ import jaClawGraph from './locales/ja/clawGraph.json';
 import jaKnowledge from './locales/ja/knowledge.json';
 import jaCodeReview from './locales/ja/codeReview.json';
 import jaBrowser from './locales/ja/browser.json';
+import jaInbox from './locales/ja/inbox.json';
 
 // RU
 import ruCommon from './locales/ru/common.json';
@@ -79,6 +82,7 @@ import ruClawGraph from './locales/ru/clawGraph.json';
 import ruKnowledge from './locales/ru/knowledge.json';
 import ruCodeReview from './locales/ru/codeReview.json';
 import ruBrowser from './locales/ru/browser.json';
+import ruInbox from './locales/ru/inbox.json';
 
 export const I18N_NAMESPACES = [
   'common',
@@ -99,6 +103,7 @@ export const I18N_NAMESPACES = [
   'knowledge',
   'codeReview',
   'browser',
+  'inbox',
 ] as const;
 
 export const I18N_RESOURCES = {
@@ -121,6 +126,7 @@ export const I18N_RESOURCES = {
     knowledge: enKnowledge,
     codeReview: enCodeReview,
     browser: enBrowser,
+    inbox: enInbox,
   },
   zh: {
     common: zhCommon,
@@ -141,6 +147,7 @@ export const I18N_RESOURCES = {
     knowledge: zhKnowledge,
     codeReview: zhCodeReview,
     browser: zhBrowser,
+    inbox: zhInbox,
   },
   ja: {
     common: jaCommon,
@@ -161,6 +168,7 @@ export const I18N_RESOURCES = {
     knowledge: jaKnowledge,
     codeReview: jaCodeReview,
     browser: jaBrowser,
+    inbox: jaInbox,
   },
   ru: {
     common: ruCommon,
@@ -181,6 +189,7 @@ export const I18N_RESOURCES = {
     knowledge: ruKnowledge,
     codeReview: ruCodeReview,
     browser: ruBrowser,
+    inbox: ruInbox,
   },
 } as const;
 
