@@ -374,3 +374,83 @@
   font-size: 12px;
   font-weight: 445;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Approval trigger pill — `.approval-button` in the reference.
+ * 28px pill, transparent background, 13px/445 tertiary text + 16px icon.
+ * Hover/expanded lifts to 7% ink wash + 85% strong text. The `warning`
+ * modifier (full-access) tints the icon and label orange (#ff8549) and
+ * shifts to a warmer orange on hover.
+ * ────────────────────────────────────────────────────────────────────────── */
+.codex-approval-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: color-mix(in srgb, hsl(var(--foreground)) 50%, transparent);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 80ms ease, color 80ms ease;
+}
+
+.codex-approval-trigger:hover,
+.codex-approval-trigger[aria-expanded='true'] {
+  background: rgba(var(--ccm-ink), 0.07);
+  color: color-mix(in srgb, hsl(var(--foreground)) 85%, transparent);
+}
+
+.codex-approval-trigger:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.codex-approval-trigger:disabled:hover {
+  background: transparent;
+  color: color-mix(in srgb, hsl(var(--foreground)) 50%, transparent);
+}
+
+.codex-approval-trigger__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.codex-approval-trigger__icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.codex-approval-trigger__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Full-access warning: orange icon + label, warmer orange on hover. */
+.codex-approval-trigger--warning,
+.codex-approval-trigger--warning .codex-approval-trigger__icon {
+  color: var(--ccm-warning);
+}
+
+.codex-approval-trigger--warning:hover,
+.codex-approval-trigger--warning[aria-expanded='true'] {
+  color: rgb(255, 160, 110);
+  background: color-mix(in srgb, var(--ccm-warning) 8%, transparent);
+}
+
+.codex-approval-trigger--warning:hover .codex-approval-trigger__icon,
+.codex-approval-trigger--warning[aria-expanded='true'] .codex-approval-trigger__icon {
+  color: rgb(255, 160, 110);
+}
