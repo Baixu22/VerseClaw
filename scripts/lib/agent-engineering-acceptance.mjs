@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import {
   existsSync,
   mkdirSync,
@@ -34,6 +34,18 @@ const ROOT_UNIT_EXPECTED_SKIPS = 52;
 const RUNTIME_UNIT_EXPECTED_SKIPS = 3;
 const SAFE_NETWORK_POLICIES = new Set(['none', 'isolated']);
 const REQUIRED_LOCK_FILES = ['package.json', 'pnpm-lock.yaml', '.npmrc'];
+const CANDIDATE_BOUND_GATE_ARTIFACTS = Object.freeze({
+  'comms-replay': [{
+    kind: 'comms-replay-metrics',
+    source: 'artifacts/comms/current-metrics.json',
+    schema: 'comms-replay-metrics/v1',
+  }],
+  'comms-compare': [{
+    kind: 'comms-compare-report',
+    source: 'artifacts/comms/compare-report.json',
+    schema: 'comms-compare-report/v1',
+  }],
+});
 const PROVIDER_ENV_RE = /(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PRIVATE[_-]?KEY|CREDENTIAL)/iu;
 const PROVIDER_ENV_ALLOWLIST = new Set([
   'NODE_TLS_REJECT_UNAUTHORIZED',
@@ -178,9 +190,37 @@ export function sha256File(filePath) {
   return sha256(readFileSync(filePath));
 }
 
+/**
+ * Reports are addressed by their semantic JSON payload, not by a caller-supplied
+ * hexadecimal-looking value. Undefined reportDigest is omitted by JSON.stringify,
+ * keeping this compatible with the persisted report representation.
+ */
+export function digestReport(report) {
+  if (!report || typeof report !== 'object') return sha256(stableJson(report));
+  const payload = { ...report, reportDigest: undefined };
+  return sha256(stableJson(payload));
+}
+
+export function equalDigest(expected, actual) {
+  if (typeof expected !== 'string' || typeof actual !== 'string') return false;
+  if (!/^[a-f0-9]{64}$/u.test(expected) || !/^[a-f0-9]{64}$/u.test(actual)) return false;
+  const expectedBytes = Buffer.from(expected, 'hex');
+  const actualBytes = Buffer.from(actual, 'hex');
+  return expectedBytes.length === actualBytes.length && timingSafeEqual(expectedBytes, actualBytes);
+}
+
 function canonicalManifestPayload(manifest) {
   const { manifestDigest: _manifestDigest, ...payload } = manifest;
   return payload;
+}
+
+function canonicalPlanPayload(manifest) {
+  const { manifestDigest: _manifestDigest, planDigest: _planDigest, ...payload } = manifest;
+  return payload;
+}
+
+export function digestPlan(manifest) {
+  return sha256(stableJson(canonicalPlanPayload(manifest)));
 }
 
 export function digestManifest(manifest) {
@@ -259,6 +299,11 @@ function gitChangedPaths(root, since) {
     .sort(comparePath);
 }
 
+function gitBlobIdentity(root, relativePath, ref = 'HEAD') {
+  const result = runGit(root, ['rev-parse', '--verify', `${ref}:${relativePath}`], { allowFailure: true });
+  return result.status === 0 && /^[a-f0-9]{40}$/u.test(result.stdout) ? result.stdout : null;
+}
+
 export function resolveChangedPaths(root = REPOSITORY_ROOT, options = {}) {
   if (Array.isArray(options.changedPaths)) {
     return [...new Set(options.changedPaths.map(normalizePath).filter(Boolean))].sort(comparePath);
@@ -294,7 +339,7 @@ export function inferCoverage(changedPaths = []) {
   return coverage;
 }
 
-function readRelativeFile(root, relativePath) {
+function readRelativeFile(root, relativePath, ref = 'HEAD') {
   const normalized = normalizePath(relativePath);
   if (!normalized) return { path: relativePath, exists: false, sha256: null };
   const fullPath = resolve(root, normalized);
@@ -303,7 +348,14 @@ function readRelativeFile(root, relativePath) {
     return { path: normalized, exists: false, sha256: null };
   }
   if (!existsSync(fullPath)) return { path: normalized, exists: false, sha256: null };
-  return { path: normalized, exists: true, sha256: sha256File(fullPath) };
+  return {
+    path: normalized,
+    exists: true,
+    // sha256 is retained for diagnostics; formal manifests use the Git blob
+    // identity below so CRLF/LF checkout policy cannot change source identity.
+    sha256: sha256File(fullPath),
+    gitBlob: gitBlobIdentity(root, normalized, ref),
+  };
 }
 
 function collectRulePaths(spec) {
@@ -427,12 +479,19 @@ function buildGates(profiles, options = {}) {
       '--electron',
     ],
   }, { kind: 'provision-verseshell' });
+  // The Harness gate must run a real changed-path diff. Passing --spec alone
+  // leaves checkDiff false in harness/src/cli.mjs, so ownership enforcement
+  // never engages and the gate cannot fail on unowned paths -- the same
+  // vacuous pass that --no-diff used to produce. A formal plan always has a
+  // baseRef (or explicit changedPaths); when a baseRef exists it is required.
   add({
     id: 'harness-validate',
     profile: 'harness',
     name: 'Harness task-spec validation',
     command: 'pnpm',
-    args: ['harness', 'validate', '--spec', options.specPath, '--no-diff'],
+    args: options.baseRef
+      ? ['harness', 'validate', '--spec', options.specPath, '--since', options.baseRef]
+      : ['harness', 'validate', '--spec', options.specPath],
   });
   for (const step of selectSteps(['fast'])) add(step);
   for (const step of FULL_BASELINE_STEPS) add(step);
@@ -486,11 +545,11 @@ export function createAcceptancePlan(options = {}) {
   const profiles = inferProfiles(spec, coverage, mode);
   const rulePaths = collectRulePaths(spec);
   const sourceFiles = [specPath, ...rulePaths, ...REQUIRED_LOCK_FILES];
-  const source = sourceFiles.map((path) => readRelativeFile(root, path));
+  const source = sourceFiles.map((path) => readRelativeFile(root, path, identity.commit));
   const missingSource = source.filter((entry) => !entry.exists).map((entry) => entry.path);
   const taskId = String(spec.data?.id ?? '');
   const humanEvidenceRequired = hasHumanEvidenceRequirement(spec);
-  const gates = buildGates(profiles, { specPath, taskId });
+  const gates = buildGates(profiles, { specPath, taskId, baseRef });
   const manifest = {
     schema: ACCEPTANCE_SCHEMA,
     manifestVersion: 1,
@@ -518,6 +577,8 @@ export function createAcceptancePlan(options = {}) {
       files: source,
       missing: missingSource,
       lockFiles: source.filter((entry) => REQUIRED_LOCK_FILES.includes(entry.path)),
+      identityPolicy: 'git-blob-v1',
+      eolPolicy: 'git-blob',
     },
     gates,
     safety: {
@@ -540,7 +601,7 @@ export function createAcceptancePlan(options = {}) {
       ? ['human/product/live evidence remains required; agent evidence cannot promote task status']
       : [],
   };
-  manifest.planDigest = digestManifest(manifest);
+  manifest.planDigest = digestPlan(manifest);
   manifest.manifestDigest = digestManifest(manifest);
   return manifest;
 }
@@ -555,6 +616,19 @@ export function validateAcceptanceManifest(manifest, options = {}) {
   if (!/^[a-f0-9]{40}$/u.test(asString(manifest.candidate?.tree))) errors.push('candidate.tree must be a full tree SHA');
   if (!['full', 'fast'].includes(manifest.executionMode)) errors.push('executionMode must be full or fast');
   if (options.requireFull && manifest.executionMode !== 'full') errors.push('formal acceptance requires executionMode=full');
+  if (typeof manifest.planDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(manifest.planDigest)) {
+    errors.push('manifest plan digest is missing or malformed');
+  } else if (!equalDigest(manifest.planDigest, digestPlan(manifest))) {
+    errors.push('manifest plan digest mismatch');
+  }
+  if (typeof manifest.manifestDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(manifest.manifestDigest)) {
+    errors.push('manifest digest is missing or malformed');
+  } else if (!equalDigest(manifest.manifestDigest, digestManifest(manifest))) {
+    errors.push('manifest digest mismatch');
+  }
+  if (manifest.source?.identityPolicy !== 'git-blob-v1' || manifest.source?.eolPolicy !== 'git-blob') {
+    errors.push('formal source identity must use git-blob-v1 with git-blob EOL policy');
+  }
   if (!Array.isArray(manifest.gates) || manifest.gates.length === 0) errors.push('manifest must contain gates');
   const gateIds = new Set();
   for (const gate of manifest.gates ?? []) {
@@ -577,6 +651,9 @@ export function validateAcceptanceManifest(manifest, options = {}) {
       if (FORBIDDEN_ARGUMENTS.some((pattern) => pattern.test(String(arg)))) {
         errors.push(`${gate.id}: forbidden argument ${String(arg)}`);
       }
+      if (String(arg) === '--no-diff') {
+        errors.push(`${gate.id}: --no-diff is forbidden for formal acceptance`);
+      }
     }
     const name = commandName(gate.command);
     const firstArg = String(gate.args?.[0] ?? '').toLowerCase();
@@ -589,7 +666,6 @@ export function validateAcceptanceManifest(manifest, options = {}) {
   if (manifest.safety?.productionEffects !== false || manifest.safety?.realProvider !== false) {
     errors.push('manifest permits production effects or real providers');
   }
-  if (manifest.manifestDigest && manifest.manifestDigest !== digestManifest(manifest)) errors.push('manifest digest mismatch');
   if (options.root) {
     try {
       const identity = repositoryIdentity(options.root);
@@ -600,10 +676,20 @@ export function validateAcceptanceManifest(manifest, options = {}) {
         errors.push('candidate ref does not match source ref');
       }
       for (const expected of manifest.source?.files ?? []) {
-        const actual = readRelativeFile(options.root, expected.path);
-        if (actual.exists !== expected.exists || actual.sha256 !== expected.sha256) {
-          errors.push(`source input digest mismatch: ${expected.path}`);
+        const actual = readRelativeFile(options.root, expected.path, manifest.candidate?.commit);
+        if (!expected?.path || !expected.gitBlob || !actual.gitBlob) {
+          errors.push(`source input Git blob identity unavailable: ${expected?.path ?? '<unknown>'}`);
+          continue;
         }
+        if (actual.exists !== expected.exists || actual.gitBlob !== expected.gitBlob) {
+          errors.push(`source input Git blob identity mismatch: ${expected.path}`);
+        }
+        const worktreeDiff = runGit(
+          options.root,
+          ['diff', '--quiet', manifest.candidate?.commit ?? 'HEAD', '--', expected.path],
+          { allowFailure: true },
+        );
+        if (worktreeDiff.status !== 0) errors.push(`source input differs from candidate Git blob: ${expected.path}`);
       }
     } catch (error) {
       errors.push(`cannot inspect source repository: ${error.message}`);
@@ -787,6 +873,8 @@ function spawnGate(gate, options = {}) {
     name: gate.name,
     command: gate.command,
     args: [...gate.args],
+    timeoutMs: gate.timeoutMs,
+    safety: { ...(gate.safety ?? {}) },
     status,
     required: gate.required === true,
     allowSkip: gate.allowSkip === true,
@@ -877,7 +965,15 @@ function runTf0009Adapter(gate, options = {}) {
 function runVerseShellBinaryProvision(gate, options = {}) {
   const startedAt = new Date().toISOString();
   const started = Date.now();
-  const base = { id: gate.id, profile: gate.profile, name: gate.name, command: gate.command, args: [...gate.args] };
+  const base = {
+    id: gate.id,
+    profile: gate.profile,
+    name: gate.name,
+    command: gate.command,
+    args: [...gate.args],
+    timeoutMs: gate.timeoutMs,
+    safety: { ...(gate.safety ?? {}) },
+  };
   const fail = (error) => ({
     ...base,
     status: 'fail',
@@ -1032,11 +1128,27 @@ function sanitizeGateResult(gateResult, outputDir) {
 function resultContract(result) {
   return {
     id: result.id,
+    profile: result.profile,
+    name: result.name,
+    command: result.command,
+    args: result.args ?? [],
     status: result.status,
     exitCode: result.exitCode,
     timedOut: result.timedOut,
     required: result.required,
     allowSkip: result.allowSkip,
+    timeoutMs: result.timeoutMs,
+    safety: result.safety ?? null,
+    testExpectation: result.testExpectation ?? null,
+    testCounts: result.testCounts ?? null,
+    logs: result.logs
+      ? {
+        stdout: result.logs.stdout,
+        stderr: result.logs.stderr,
+        stdoutSha256: result.logs.stdoutSha256,
+        stderrSha256: result.logs.stderrSha256,
+      }
+      : null,
   };
 }
 
@@ -1044,6 +1156,10 @@ function prefixGateEvidence(gate, prefix) {
   const withPrefix = (pathValue) => (pathValue ? `${prefix.replace(/[\\/]+$/u, '')}/${pathValue}` : pathValue);
   return {
     ...gate,
+    artifacts: gate.artifacts?.map((artifact) => ({
+      ...artifact,
+      path: withPrefix(artifact.path),
+    })),
     logs: gate.logs
       ? {
         ...gate.logs,
@@ -1068,7 +1184,13 @@ function verifyLogs(outputDir, result) {
     try {
       const { full } = safeRelativeOutputPath(outputDir, pathValue);
       const actual = sha256File(full);
-      if (actual !== result.logs[`${stream}Sha256`]) errors.push(`${result.id}: ${stream} log digest mismatch`);
+      const declared = result.logs[`${stream}Sha256`];
+      if (typeof declared !== 'string' || !/^[a-f0-9]{64}$/u.test(declared) || !equalDigest(actual, declared)) {
+        errors.push(`${result.id}: ${stream} log digest mismatch`);
+      }
+      if (typeof result[`${stream}Sha256`] === 'string' && !equalDigest(result[`${stream}Sha256`], declared)) {
+        errors.push(`${result.id}: ${stream} report/log digest mismatch`);
+      }
     } catch (error) {
       errors.push(`${result.id}: ${stream} log unavailable (${error.message})`);
     }
@@ -1116,6 +1238,15 @@ function controlledArtifacts(outputDir, manifest, gateResults) {
     });
   }
   for (const gate of gateResults) {
+    for (const artifact of gate.artifacts ?? []) {
+      artifacts.push({
+        kind: artifact.kind,
+        gateId: gate.id,
+        path: artifact.path,
+        sha256: artifact.sha256,
+        schema: artifact.schema,
+      });
+    }
     if (!gate.adapterEvidence?.report || !gate.adapterEvidence.reportSha256) continue;
     artifacts.push({
       kind: 'adapter-evidence',
@@ -1128,14 +1259,24 @@ function controlledArtifacts(outputDir, manifest, gateResults) {
 }
 
 function makeReport(manifest, options, gateResults, extras = {}) {
-  const failures = gateResults
-    .filter((result) => result.status !== 'pass' || result.required !== true || result.allowSkip === true)
-    .map((result) => `${result.id}: ${result.status}`);
+  const failures = gateResults.flatMap((result) => {
+    if (result.status === 'pass' && result.required === true && result.allowSkip !== true) return [];
+    return [
+      `${result.id}: ${result.status}`,
+      ...(result.error ? [`${result.id}: ${result.error}`] : []),
+    ];
+  });
   for (const result of gateResults) {
     if (!result.testExpectation?.requireCounts) continue;
     if (!result.testCounts) {
       failures.push(`${result.id}: test counts were not parsed`);
       continue;
+    }
+    if (
+      result.testCounts.total !== result.testCounts.passed + result.testCounts.failed + result.testCounts.skipped
+      || result.testCounts.total === 0
+    ) {
+      failures.push(`${result.id}: parsed test counts are inconsistent or empty`);
     }
     if (result.testCounts.failed !== 0) failures.push(`${result.id}: parsed failed tests=${result.testCounts.failed}`);
     if (result.testCounts.skipped !== result.testExpectation.expectedSkips) {
@@ -1201,6 +1342,60 @@ function makeReport(manifest, options, gateResults, extras = {}) {
   };
 }
 
+function collectCandidateBoundGateArtifacts(gate, workspace, outputDir, manifest) {
+  const definitions = CANDIDATE_BOUND_GATE_ARTIFACTS[gate.id] ?? [];
+  const artifacts = [];
+  for (const definition of definitions) {
+    const sourcePath = resolve(workspace, definition.source);
+    if (!pathInside(sourcePath, workspace) || !existsSync(sourcePath)) {
+      throw new Error(`${gate.id}: required candidate-bound artifact is missing: ${definition.source}`);
+    }
+    const bytes = readFileSync(sourcePath);
+    if (bytes.length === 0) throw new Error(`${gate.id}: required candidate-bound artifact is empty: ${definition.source}`);
+    let payload;
+    try {
+      payload = JSON.parse(bytes.toString('utf8'));
+    } catch (error) {
+      throw new Error(`${gate.id}: required artifact is not JSON: ${definition.source} (${error.message})`);
+    }
+    if (payload?.schema !== definition.schema) {
+      throw new Error(`${gate.id}: required artifact schema mismatch: ${definition.source}`);
+    }
+    if (
+      payload?.candidate?.commit !== manifest.candidate.commit
+      || payload?.candidate?.tree !== manifest.candidate.tree
+    ) {
+      throw new Error(`${gate.id}: required artifact is not bound to the manifest candidate: ${definition.source}`);
+    }
+    const target = safeRelativeOutputPath(outputDir, `evidence/${gate.id}/${basename(definition.source)}`);
+    ensureDirectory(dirname(target.full));
+    copyFileSync(sourcePath, target.full);
+    artifacts.push({
+      kind: definition.kind,
+      path: target.normalized,
+      sha256: sha256File(target.full),
+      schema: definition.schema,
+    });
+  }
+  return artifacts;
+}
+
+function failGateForArtifactError(result, error) {
+  const message = error instanceof Error ? error.message : String(error);
+  const stderr = `${result.stderr ?? ''}${result.stderr ? '\n' : ''}${message}\n`;
+  result.status = 'fail';
+  result.exitCode = 1;
+  result.error = message;
+  result.stderr = stderr;
+  result.stderrSha256 = sha256(stderr);
+  result.stderrBytes = Buffer.byteLength(stderr);
+}
+
+export function sealReport(report) {
+  report.reportDigest = digestReport(report);
+  return report;
+}
+
 export function runAcceptance(manifest, options = {}) {
   const role = options.role ?? 'executor';
   const actor = options.actor ?? (role === 'verifier' ? 'verifier-agent' : 'executor-agent');
@@ -1216,6 +1411,7 @@ export function runAcceptance(manifest, options = {}) {
     report.result = 'NO-GO';
     report.engineeringAcceptedByAgent = false;
     report.failures = [...envValidation.errors, ...manifestValidation.errors];
+    sealReport(report);
     writeJson(join(outputDir, `${role}-report.json`), report);
     return report;
   }
@@ -1242,6 +1438,13 @@ export function runAcceptance(manifest, options = {}) {
         : gate.kind === 'provision-verseshell'
           ? runVerseShellBinaryProvision(gate, gateOptions)
           : spawnGate(gate, gateOptions);
+      if (result.status === 'pass') {
+        try {
+          result.artifacts = collectCandidateBoundGateArtifacts(gate, workspace, outputDir, manifest);
+        } catch (error) {
+          failGateForArtifactError(result, error);
+        }
+      }
       const sanitized = sanitizeGateResult(result, outputDir);
       gateResults.push(sanitized);
       if (sanitized.status !== 'pass' && options.continueOnError !== true) break;
@@ -1287,7 +1490,7 @@ export function runAcceptance(manifest, options = {}) {
       },
     );
     report.worktree = { mode: 'detached-temporary', isolated: true, cleaned: true };
-    report.reportDigest = sha256(stableJson({ ...report, reportDigest: undefined }));
+    sealReport(report);
     writeJson(join(outputDir, `${role}-report.json`), report);
     return report;
   } catch (error) {
@@ -1309,7 +1512,7 @@ export function runAcceptance(manifest, options = {}) {
       },
     );
     report.worktree = { mode: 'detached-temporary', isolated: true, cleaned: true };
-    report.reportDigest = sha256(stableJson({ ...report, reportDigest: undefined }));
+    sealReport(report);
     writeJson(join(outputDir, `${role}-report.json`), report);
     return report;
   } finally {
@@ -1321,48 +1524,180 @@ function readJson(pathValue) {
   return JSON.parse(readFileSync(pathValue, 'utf8'));
 }
 
-export function validateExecutorEvidence(manifest, executorReport, outputDir) {
+function verifyControlledArtifacts(outputDir, manifest, report, label) {
   const errors = [];
-  if (executorReport?.schema !== ACCEPTANCE_REPORT_SCHEMA) errors.push('executor report schema mismatch');
-  if (executorReport?.role !== 'executor') errors.push('executor report role mismatch');
-  if (executorReport?.runId !== manifest.runId) errors.push('executor report runId mismatch');
-  if (executorReport?.source?.manifestDigest !== manifest.manifestDigest) errors.push('executor report manifest digest mismatch');
-  if (executorReport?.candidate?.commit !== manifest.candidate.commit || executorReport?.candidate?.tree !== manifest.candidate.tree) {
-    errors.push('executor report candidate identity mismatch');
+  if (!Array.isArray(report?.controlledArtifacts)) {
+    errors.push(`${label} controlledArtifacts must be an array`);
+    return errors;
   }
-  const actor = executorReport?.actor;
-  if (typeof actor !== 'string' || actor.trim() === '') {
-    errors.push('executor report actor is missing, blank, or not a string');
-  }
-  if (executorReport?.executorActor !== undefined) {
-    if (typeof executorReport.executorActor !== 'string' || executorReport.executorActor.trim() === '') {
-      errors.push('executor report executorActor is missing, blank, or not a string');
-    } else if (executorReport.executorActor !== actor) {
-      errors.push('executor report actor and executorActor fields differ');
+  const requiredCandidateArtifacts = (manifest?.gates ?? []).flatMap((gate) =>
+    (CANDIDATE_BOUND_GATE_ARTIFACTS[gate?.id] ?? []).map((definition) => ({
+      gateId: gate.id,
+      kind: definition.kind,
+      schema: definition.schema,
+    })),
+  );
+  for (const required of requiredCandidateArtifacts) {
+    const matches = report.controlledArtifacts.filter((artifact) =>
+      artifact?.gateId === required.gateId && artifact?.kind === required.kind,
+    );
+    if (matches.length === 0) {
+      errors.push(`${label} is missing required candidate-bound artifact: ${required.gateId}/${required.kind}`);
+    } else if (matches.length > 1) {
+      errors.push(`${label} has duplicate candidate-bound artifacts: ${required.gateId}/${required.kind}`);
+    } else if (matches[0].schema !== required.schema) {
+      errors.push(`${label} controlled artifact schema record mismatch: ${matches[0].path}`);
     }
   }
-  const reportDigest = executorReport?.reportDigest;
-  if (typeof reportDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(reportDigest)) {
-    errors.push('executor report semantic reportDigest is missing or malformed');
-  } else {
-    const recomputed = sha256(stableJson({ ...executorReport, reportDigest: undefined }));
-    if (recomputed !== reportDigest) errors.push('executor report semantic reportDigest mismatch');
-  }
-  const expectedIds = manifest.gates.map((gate) => gate.id);
-  const actualIds = (executorReport?.gates ?? []).map((gate) => gate.id);
-  if (expectedIds.join('\0') !== actualIds.join('\0')) errors.push('executor report gate set/order mismatch');
-  for (const result of executorReport?.gates ?? []) errors.push(...verifyLogs(outputDir, result));
-  for (const artifact of executorReport?.controlledArtifacts ?? []) {
-    if (!artifact?.path || !artifact?.sha256) {
-      errors.push('executor report has an incomplete controlled artifact record');
+  for (const artifact of report.controlledArtifacts) {
+    if (!artifact?.path || typeof artifact.sha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(artifact.sha256)) {
+      errors.push(`${label} has an incomplete controlled artifact record`);
       continue;
     }
     try {
       const { full } = safeRelativeOutputPath(outputDir, artifact.path);
-      if (sha256File(full) !== artifact.sha256) errors.push(`controlled artifact digest mismatch: ${artifact.path}`);
+      if (!existsSync(full) || !equalDigest(sha256File(full), artifact.sha256)) {
+        errors.push(`${label} controlled artifact digest mismatch: ${artifact.path}`);
+        continue;
+      }
+      if (statSync(full).size === 0) {
+        errors.push(`${label} controlled artifact is empty: ${artifact.path}`);
+        continue;
+      }
+      if (artifact.kind === 'manifest-snapshot') {
+        if (artifact.sourceDigest !== report?.source?.manifestDigest) {
+          errors.push(`${label} manifest snapshot source digest mismatch`);
+        }
+        try {
+          const snapshot = JSON.parse(readFileSync(full, 'utf8'));
+          if (stableJson(snapshot) !== stableJson(manifest)) errors.push(`${label} manifest snapshot content mismatch`);
+        } catch (error) {
+          errors.push(`${label} manifest snapshot is not JSON: ${artifact.path} (${error.message})`);
+        }
+      }
+      const expectedSchema = Object.values(CANDIDATE_BOUND_GATE_ARTIFACTS)
+        .flat()
+        .find((definition) => definition.kind === artifact.kind)?.schema;
+      if (expectedSchema) {
+        if (artifact.schema !== expectedSchema) errors.push(`${label} controlled artifact schema record mismatch: ${artifact.path}`);
+        let payload;
+        try {
+          payload = JSON.parse(readFileSync(full, 'utf8'));
+        } catch (error) {
+          errors.push(`${label} controlled artifact is not JSON: ${artifact.path} (${error.message})`);
+          continue;
+        }
+        if (
+          payload?.schema !== expectedSchema
+          || payload?.candidate?.commit !== report?.candidate?.commit
+          || payload?.candidate?.tree !== report?.candidate?.tree
+        ) {
+          errors.push(`${label} controlled artifact schema or candidate mismatch: ${artifact.path}`);
+        }
+      }
     } catch (error) {
-      errors.push(`controlled artifact unavailable: ${artifact.path} (${error.message})`);
+      errors.push(`${label} controlled artifact unavailable: ${artifact.path} (${error.message})`);
     }
+  }
+  return errors;
+}
+
+export function validateReportEvidence(manifest, report, outputDir, options = {}) {
+  const label = options.label ?? 'report';
+  const expectedRole = options.expectedRole;
+  const errors = [];
+  if (report?.schema !== ACCEPTANCE_REPORT_SCHEMA) errors.push(`${label} schema mismatch`);
+  if (expectedRole && report?.role !== expectedRole) errors.push(`${label} role mismatch`);
+  if (report?.runId !== manifest.runId) errors.push(`${label} runId mismatch`);
+  if (report?.source?.planDigest !== manifest.planDigest) errors.push(`${label} plan digest mismatch`);
+  if (report?.source?.manifestDigest !== manifest.manifestDigest) errors.push(`${label} manifest digest mismatch`);
+  if (report?.candidate?.commit !== manifest.candidate.commit || report?.candidate?.tree !== manifest.candidate.tree) {
+    errors.push(`${label} candidate identity mismatch`);
+  }
+  if (stableJson(report?.source?.changedPaths ?? null) !== stableJson(manifest.changedPaths ?? null)) {
+    errors.push(`${label} changed-path evidence mismatch`);
+  }
+  if (stableJson(report?.source?.sourceFiles ?? null) !== stableJson(manifest.source?.files ?? null)) {
+    errors.push(`${label} source-input evidence mismatch`);
+  }
+  const reportDigest = report?.reportDigest;
+  if (typeof reportDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(reportDigest)) {
+    errors.push(`${label} semantic reportDigest is missing or malformed`);
+  } else if (!equalDigest(digestReport(report), reportDigest)) {
+    errors.push(`${label} semantic reportDigest mismatch`);
+  }
+
+  const expectedGates = Array.isArray(manifest.gates) ? manifest.gates : [];
+  const actualGates = Array.isArray(report?.gates) ? report.gates : [];
+  const expectedIds = expectedGates.map((gate) => gate.id);
+  const actualIds = actualGates.map((gate) => gate.id);
+  if (expectedIds.join('\0') !== actualIds.join('\0')) errors.push(`${label} gate set/order mismatch`);
+  for (let index = 0; index < expectedGates.length; index += 1) {
+    const expected = expectedGates[index];
+    const actual = actualGates[index];
+    if (!actual || actual.id !== expected.id) continue;
+    if (actual.command !== expected.command || stableJson(actual.args ?? []) !== stableJson(expected.args ?? [])) {
+      errors.push(`${label} gate command mismatch: ${expected.id}`);
+    }
+    if (actual.profile !== expected.profile || actual.name !== expected.name || actual.timeoutMs !== expected.timeoutMs) {
+      errors.push(`${label} gate execution contract mismatch: ${expected.id}`);
+    }
+    if (stableJson(actual.safety ?? null) !== stableJson(expected.safety ?? null)) {
+      errors.push(`${label} gate safety contract mismatch: ${expected.id}`);
+    }
+    if (actual.required !== true || actual.allowSkip !== false) {
+      errors.push(`${label} gate requirement contract mismatch: ${expected.id}`);
+    }
+    if (actual.status !== 'pass' || actual.exitCode !== 0 || actual.timedOut !== false) {
+      errors.push(`${label} gate result is not a passing completed run: ${expected.id}`);
+    }
+    if (stableJson(actual.testExpectation ?? null) !== stableJson(expected.testExpectation ?? null)) {
+      errors.push(`${label} gate test contract mismatch: ${expected.id}`);
+    }
+    if (expected.testExpectation?.requireCounts) {
+      const counts = actual.testCounts;
+      if (!counts || !['passed', 'failed', 'skipped', 'total'].every((key) => Number.isInteger(counts[key]) && counts[key] >= 0)) {
+        errors.push(`${label} gate test counts are missing or invalid: ${expected.id}`);
+      } else {
+        if (counts.total !== counts.passed + counts.failed + counts.skipped || counts.total === 0) {
+          errors.push(`${label} gate test counts are inconsistent or empty: ${expected.id}`);
+        }
+        if (counts.failed !== 0) errors.push(`${label} gate parsed failures are non-zero: ${expected.id}`);
+        if (counts.skipped !== expected.testExpectation.expectedSkips) {
+          errors.push(`${label} gate skip budget mismatch: ${expected.id}`);
+        }
+      }
+    }
+    errors.push(...verifyLogs(outputDir, actual));
+  }
+  const expectedGateContractDigest = sha256(stableJson(actualGates.map(resultContract)));
+  if (!equalDigest(expectedGateContractDigest, report?.gateContractDigest)) {
+    errors.push(`${label} gate contract digest mismatch`);
+  }
+  const actualCounts = summarizeTestCounts(actualGates);
+  for (const key of ['passed', 'failed', 'skipped', 'total', 'unavailableGates']) {
+    if (report?.testCounts?.[key] !== actualCounts[key]) errors.push(`${label} aggregate test count mismatch: ${key}`);
+  }
+  errors.push(...verifyControlledArtifacts(outputDir, manifest, report, label));
+  if (report?.mutationCheck?.sourceCleanAfter !== true || report?.mutationCheck?.detachedWorktreeCleanAfter !== true) {
+    errors.push(`${label} lacks a clean-after-run proof`);
+  }
+  return errors;
+}
+
+export function validateExecutorEvidence(manifest, executorReport, outputDir) {
+  const errors = validateReportEvidence(manifest, executorReport, outputDir, {
+    expectedRole: 'executor',
+    label: 'executor report',
+  });
+  const actor = executorReport?.actor;
+  if (typeof actor !== 'string' || actor.trim() === '') {
+    errors.push('executor report actor is missing, blank, or not a string');
+  }
+  if (typeof executorReport?.executorActor !== 'string' || executorReport.executorActor.trim() === '') {
+    errors.push('executor report executorActor is missing, blank, or not a string');
+  } else if (executorReport.executorActor !== actor) {
+    errors.push('executor report actor and executorActor fields differ');
   }
   if (executorReport?.result !== 'pass') errors.push('executor report is not a passing run');
   if (executorReport?.engineeringAcceptedByAgent === true) errors.push('executor cannot self-accept engineering evidence');
@@ -1384,6 +1719,7 @@ export function verifyAcceptance(manifest, options = {}) {
     });
     report.result = 'NO-GO';
     report.engineeringAcceptedByAgent = false;
+    sealReport(report);
     writeJson(join(outputDir, 'verifier-report.json'), report);
     return report;
   }
@@ -1402,6 +1738,7 @@ export function verifyAcceptance(manifest, options = {}) {
     report.result = 'NO-GO';
     report.engineeringAcceptedByAgent = false;
     report.failures = preflightErrors;
+    sealReport(report);
     writeJson(join(outputDir, 'verifier-report.json'), report);
     return report;
   }
@@ -1432,6 +1769,7 @@ export function verifyAcceptance(manifest, options = {}) {
     executorEvidence: { result: executorReport.result, verified: true },
     consistency: { identicalGateContracts: consistencyErrors.length === 0, errors: consistencyErrors },
     controlledArtifacts: controlledArtifacts(outputDir, manifest, verifierGates),
+    mutationCheck: verifierRun.mutationCheck,
     failures: [...verifierFailures, ...consistencyErrors],
   });
   if (consistencyErrors.length > 0) {
@@ -1439,7 +1777,7 @@ export function verifyAcceptance(manifest, options = {}) {
     report.engineeringAcceptedByAgent = false;
     report.taskStatusRecommendation = 'NO-GO';
   }
-  report.reportDigest = sha256(stableJson({ ...report, reportDigest: undefined }));
+  sealReport(report);
   writeJson(join(outputDir, 'verifier-report.json'), report);
   writeJson(join(outputDir, 'final-report.json'), report);
   return report;

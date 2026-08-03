@@ -10,21 +10,23 @@ import {
   TF0009_ADAPTER_ID,
   createAcceptancePlan,
   digestManifest,
+  digestPlan,
+  digestReport,
   inferCoverage,
   redactText,
   readAcceptanceStatus,
   repositoryIdentity,
   resolveChangedPaths,
   runAcceptance,
-  sha256,
   sha256File,
-  stableJson,
   validateAcceptanceEnvironment,
   validateAcceptanceManifest,
   validateExecutorEvidence,
+  validateReportEvidence,
   verifyAcceptance,
 } from '../../scripts/lib/agent-engineering-acceptance.mjs';
 import { main as acceptanceCliMain } from '../../scripts/agent-engineering-acceptance.mjs';
+import { validateRuntimeAuthorityConvergence } from '../../scripts/validate-runtime-authority-convergence.mjs';
 
 const temporaryPaths: string[] = [];
 
@@ -37,6 +39,10 @@ function git(root: string, args: string[]) {
   execFileSync('git', args, { cwd: root, stdio: 'pipe' });
 }
 
+function gitText(root: string, args: string[]) {
+  return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+}
+
 function createFixtureRepository() {
   const root = mkdtempSync(join(tmpdir(), 'agent-acceptance-fixture-'));
   temporaryPaths.push(root);
@@ -45,6 +51,7 @@ function createFixtureRepository() {
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n', 'utf8');
   writeFileSync(join(root, '.npmrc'), 'strict-peer-dependencies=false\n', 'utf8');
   writeFileSync(join(root, '.gitignore'), 'artifacts/\n', 'utf8');
+  writeFileSync(join(root, '.gitattributes'), '*.md text\n', 'utf8');
   writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), '# fixture\n', 'utf8');
   git(root, ['init', '--quiet']);
   git(root, ['config', 'user.email', 'fixture@example.invalid']);
@@ -60,6 +67,7 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
     path,
     exists: true,
     sha256: sha256File(join(root, path)),
+    gitBlob: gitText(root, ['rev-parse', '--verify', `HEAD:${path}`]),
   }));
   const manifest: { [key: string]: unknown; gates: Array<Record<string, unknown>> } = {
     schema: ACCEPTANCE_SCHEMA,
@@ -79,7 +87,13 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
     changedPaths: ['src/example.ts'],
     coverage: { runtime: false, ui: true, comms: false, release: false },
     requiredProfiles: ['fast'],
-    source: { files: sourceFiles, missing: [], lockFiles: sourceFiles.slice(0, 3) },
+    source: {
+      files: sourceFiles,
+      missing: [],
+      lockFiles: sourceFiles.slice(0, 3),
+      identityPolicy: 'git-blob-v1',
+      eolPolicy: 'git-blob',
+    },
     gates: [options.gate ?? {
       id: 'fixture-gate',
       name: 'Fixture gate',
@@ -104,9 +118,31 @@ function createManifest(root: string, options: { gate?: Record<string, unknown>;
     eligibility: { cleanWorktreeRequired: true, fullModeRequired: true, sourceComplete: true, cleanAtPlan: true },
     residuals: [],
   };
-  manifest.planDigest = digestManifest(manifest);
+  manifest.planDigest = digestPlan(manifest);
   manifest.manifestDigest = digestManifest(manifest);
   return manifest;
+}
+
+function resealManifest(manifest: Record<string, unknown>) {
+  manifest.planDigest = digestPlan(manifest);
+  manifest.manifestDigest = digestManifest(manifest);
+  return manifest;
+}
+
+function createConvergenceFixture() {
+  const root = createFixtureRepository();
+  const base = repositoryIdentity(root).commit;
+  const baselineRelative = 'artifacts/runtime-authority-convergence/rc-01/baseline.json';
+  const baselinePath = join(root, ...baselineRelative.split('/'));
+  mkdirSync(join(root, 'artifacts', 'runtime-authority-convergence', 'rc-01'), { recursive: true });
+  writeFileSync(baselinePath, `${JSON.stringify({
+    schema: 'runtime-authority-convergence-baseline/v1',
+    acceptedBaseSha: base,
+    productLocks: { liveReady: false, productApproved: false, defaultOn: false },
+  }, null, 2)}\n`, 'utf8');
+  git(root, ['add', '--force', baselineRelative]);
+  git(root, ['commit', '--quiet', '-m', 'add convergence baseline']);
+  return { root, base, baselineRelative };
 }
 
 function passingSpawn(_command: string, _args: string[], options: { cwd?: string } = {}) {
@@ -205,6 +241,7 @@ describe('Agent Engineering Acceptance', () => {
     const unsafe = structuredClone(manifest);
     unsafe.gates[0].allowSkip = true;
     unsafe.gates[0].args = ['--fix'];
+    unsafe.planDigest = digestPlan(unsafe);
     unsafe.manifestDigest = digestManifest(unsafe);
     expect(validateAcceptanceManifest(unsafe).errors).toEqual(expect.arrayContaining([
       'fixture-gate: allowSkip must be false',
@@ -213,7 +250,31 @@ describe('Agent Engineering Acceptance', () => {
 
     writeFileSync(join(root, 'package.json'), '{"name":"changed"}\n', 'utf8');
     expect(validateAcceptanceManifest(manifest, { root, requireClean: false }).errors).toContain(
-      'source input digest mismatch: package.json',
+      'source input differs from candidate Git blob: package.json',
+    );
+  });
+
+  it('uses Git blob source identity across LF and CRLF clean checkouts', () => {
+    const root = createFixtureRepository();
+    const manifest = createManifest(root);
+    const lfCheckout = mkdtempSync(join(tmpdir(), 'agent-acceptance-lf-'));
+    const crlfCheckout = mkdtempSync(join(tmpdir(), 'agent-acceptance-crlf-'));
+    temporaryPaths.push(lfCheckout, crlfCheckout);
+    git(root, ['clone', '--quiet', root, lfCheckout]);
+    git(root, ['clone', '--quiet', root, crlfCheckout]);
+    git(lfCheckout, ['config', 'core.autocrlf', 'false']);
+    git(lfCheckout, ['config', 'core.eol', 'lf']);
+    git(lfCheckout, ['reset', '--hard', '--quiet']);
+    git(crlfCheckout, ['config', 'core.autocrlf', 'false']);
+    git(crlfCheckout, ['config', 'core.eol', 'crlf']);
+    git(crlfCheckout, ['reset', '--hard', '--quiet']);
+
+    expect(gitText(lfCheckout, ['config', '--get', 'core.eol'])).toBe('lf');
+    expect(gitText(crlfCheckout, ['config', '--get', 'core.eol'])).toBe('crlf');
+    expect(validateAcceptanceManifest(manifest, { root: lfCheckout, requireClean: true })).toEqual({ ok: true, errors: [] });
+    expect(validateAcceptanceManifest(manifest, { root: crlfCheckout, requireClean: true })).toEqual({ ok: true, errors: [] });
+    expect(manifest.source.files.find((entry) => entry.path.endsWith('fixture.md'))?.gitBlob).toBe(
+      gitText(crlfCheckout, ['rev-parse', '--verify', 'HEAD:harness/specs/tasks/fixture.md']),
     );
   });
 
@@ -304,7 +365,7 @@ describe('Agent Engineering Acceptance', () => {
 
     const timeoutManifest = structuredClone(manifest);
     timeoutManifest.runId = 'fixture-timeout';
-    timeoutManifest.planDigest = digestManifest(timeoutManifest);
+    timeoutManifest.planDigest = digestPlan(timeoutManifest);
     timeoutManifest.manifestDigest = digestManifest(timeoutManifest);
     const timeout = runAcceptance(timeoutManifest, {
       sourceRoot: root,
@@ -354,7 +415,7 @@ describe('Agent Engineering Acceptance', () => {
 
     const hiddenManifest = structuredClone(manifest);
     hiddenManifest.runId = 'fixture-hidden-test-counts';
-    hiddenManifest.planDigest = digestManifest(hiddenManifest);
+    hiddenManifest.planDigest = digestPlan(hiddenManifest);
     hiddenManifest.manifestDigest = digestManifest(hiddenManifest);
     const hidden = runAcceptance(hiddenManifest, {
       sourceRoot: root,
@@ -365,6 +426,19 @@ describe('Agent Engineering Acceptance', () => {
     });
     expect(hidden).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
     expect(hidden.failures).toContain('fixture-test-gate: test counts were not parsed');
+
+    const noOpManifest = structuredClone(manifest);
+    noOpManifest.runId = 'fixture-no-op-test-counts';
+    resealManifest(noOpManifest);
+    const noOp = runAcceptance(noOpManifest, {
+      sourceRoot: root,
+      outputDir: join(outputDir, 'no-op'),
+      actor: 'executor',
+      env,
+      spawn: () => ({ status: 0, signal: null, stdout: 'Tests 0 passed (0)\n', stderr: '' }),
+    });
+    expect(noOp).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(noOp.failures).toContain('fixture-test-gate: parsed test counts are inconsistent or empty');
   });
 
   it('fails closed when a gate mutates its detached source worktree', () => {
@@ -425,6 +499,96 @@ describe('Agent Engineering Acceptance', () => {
     expect(existsSync(join(root, 'artifacts', 'first-product-preview', 'TF-0009', 'agent-surrogate-report.json'))).toBe(false);
   });
 
+  it('requires non-empty candidate-bound comms artifacts in acceptance evidence', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-comms-'));
+    temporaryPaths.push(outputDir);
+    const gate = {
+      id: 'comms-replay',
+      name: 'Communication replay',
+      profile: 'comms',
+      command: 'node',
+      args: ['scripts/comms/replay.mjs'],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      safety: { network: 'none', productionEffects: false, humanEvidence: false },
+    };
+    const manifest = createManifest(root, { gate });
+    const empty = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir: join(outputDir, 'empty'),
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: (_command: string, _args: string[], options: { cwd?: string } = {}) => {
+        const artifact = join(options.cwd!, 'artifacts', 'comms', 'current-metrics.json');
+        mkdirSync(join(options.cwd!, 'artifacts', 'comms'), { recursive: true });
+        writeFileSync(artifact, '', 'utf8');
+        return { status: 0, signal: null, stdout: 'replay command executed\n', stderr: '' };
+      },
+    });
+    expect(empty).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(empty.failures.join('\n')).toContain('required candidate-bound artifact is empty');
+
+    const passing = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: (_command: string, _args: string[], options: { cwd?: string } = {}) => {
+        const artifact = join(options.cwd!, 'artifacts', 'comms', 'current-metrics.json');
+        mkdirSync(join(options.cwd!, 'artifacts', 'comms'), { recursive: true });
+        writeFileSync(artifact, `${JSON.stringify({
+          schema: 'comms-replay-metrics/v1',
+          candidate: { commit: manifest.candidate.commit, tree: manifest.candidate.tree },
+          scenario: 'fixture',
+          scenarios: { fixture: {} },
+          aggregate: {},
+        })}\n`, 'utf8');
+        return { status: 0, signal: null, stdout: 'replay command executed\n', stderr: '' };
+      },
+    });
+    expect(passing).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
+    expect(passing.controlledArtifacts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'comms-replay-metrics', path: 'evidence/comms-replay/current-metrics.json' }),
+    ]));
+    const missingArtifactRecord = structuredClone(passing);
+    missingArtifactRecord.controlledArtifacts = missingArtifactRecord.controlledArtifacts.filter(
+      (artifact) => artifact.kind !== 'comms-replay-metrics',
+    );
+    missingArtifactRecord.reportDigest = digestReport(missingArtifactRecord);
+    expect(validateExecutorEvidence(manifest, missingArtifactRecord, outputDir)).toContain(
+      'executor report is missing required candidate-bound artifact: comms-replay/comms-replay-metrics',
+    );
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'verifier',
+      env: { PATH: process.env.PATH ?? '' },
+      executorReport: passing,
+      spawn: (_command: string, _args: string[], options: { cwd?: string } = {}) => {
+        const artifact = join(options.cwd!, 'artifacts', 'comms', 'current-metrics.json');
+        mkdirSync(join(options.cwd!, 'artifacts', 'comms'), { recursive: true });
+        writeFileSync(artifact, `${JSON.stringify({
+          schema: 'comms-replay-metrics/v1',
+          candidate: { commit: manifest.candidate.commit, tree: manifest.candidate.tree },
+          scenario: 'fixture',
+          scenarios: { fixture: {} },
+          aggregate: {},
+        })}\n`, 'utf8');
+        return { status: 0, signal: null, stdout: 'replay command executed\n', stderr: '' };
+      },
+    });
+    expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+    expect(validateReportEvidence(manifest, verifier, outputDir, {
+      expectedRole: 'verifier',
+      label: 'verifier report',
+    })).toEqual([]);
+    const copiedArtifact = join(outputDir, 'evidence', 'comms-replay', 'current-metrics.json');
+    writeFileSync(copiedArtifact, '{"tampered":true}\n', 'utf8');
+    expect(validateExecutorEvidence(manifest, passing, outputDir).join('\n')).toContain('controlled artifact digest mismatch');
+  });
+
   it('rejects a dirty source worktree end-to-end before running any gate', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
@@ -452,7 +616,7 @@ describe('Agent Engineering Acceptance', () => {
     const stale = structuredClone(manifest);
     stale.runId = 'fixture-stale-sha';
     stale.candidate = { ...stale.candidate, commit: '0'.repeat(40), tree: '0'.repeat(40) };
-    stale.planDigest = digestManifest(stale);
+    stale.planDigest = digestPlan(stale);
     stale.manifestDigest = digestManifest(stale);
 
     const result = runAcceptance(stale, {
@@ -487,7 +651,7 @@ describe('Agent Engineering Acceptance', () => {
     };
     const twoGateManifest = structuredClone(manifest);
     twoGateManifest.gates = [...manifest.gates, secondGate];
-    twoGateManifest.planDigest = digestManifest(twoGateManifest);
+    twoGateManifest.planDigest = digestPlan(twoGateManifest);
     twoGateManifest.manifestDigest = digestManifest(twoGateManifest);
     const baseReport = {
       schema: ACCEPTANCE_SCHEMA,
@@ -553,6 +717,32 @@ describe('Agent Engineering Acceptance', () => {
     expect(plan.baseRef).toBeNull();
   });
 
+  // RC-00R regression: dropping --no-diff was not sufficient. harness/src/cli.mjs
+  // only enables changed-path diff review when --since is present, so a gate
+  // invoked with --spec alone could never fail on unowned paths.
+  it('builds the Harness gate with a real --since diff and never with --no-diff', () => {
+    const root = createFixtureRepository();
+    const spec = {
+      path: 'harness/specs/tasks/fixture.md',
+      data: { id: 'fixture-task', title: 'Fixture task', humanEvidence: 'not-required', requiredRules: [] },
+      body: '# fixture\n',
+    };
+    const plan = createAcceptancePlan({
+      root,
+      spec,
+      since: 'HEAD',
+      runId: 'fixture-harness-diff',
+      createdAt: '2026-07-31T00:00:00.000Z',
+    });
+    const harnessGate = plan.gates.find((gate) => gate.id === 'harness-validate');
+    expect(harnessGate).toBeDefined();
+    expect(harnessGate.args).toContain('--since');
+    expect(harnessGate.args[harnessGate.args.indexOf('--since') + 1]).toBe('HEAD');
+    for (const gate of plan.gates) {
+      expect(gate.args ?? []).not.toContain('--no-diff');
+    }
+  });
+
   it('rejects executor reports with missing, blank, non-string, or mismatched actors and bad report digests', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
@@ -571,7 +761,7 @@ describe('Agent Engineering Acceptance', () => {
     };
     const withDigest = (report) => {
       const copy = { ...report, reportDigest: undefined };
-      copy.reportDigest = sha256(stableJson(copy));
+      copy.reportDigest = digestReport(copy);
       return copy;
     };
 
@@ -816,5 +1006,169 @@ describe('Agent Engineering Acceptance', () => {
     expect(verifier2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
     const finalReport2 = JSON.parse(readFileSync(join(secondOutput, 'final-report.json'), 'utf8'));
     expect(finalReport2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+  });
+
+  it('validates engineering and human convergence evidence and rejects semantic tampering', () => {
+    const { root, base, baselineRelative } = createConvergenceFixture();
+    const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-convergence');
+    const manifest = createManifest(root, {
+      humanEvidence: 'required',
+      gate: {
+        id: 'fixture-validator-gate',
+        name: 'Fixture validator gate',
+        profile: 'fast',
+        command: 'node',
+        args: ['-e', 'console.log("Tests 1 passed (1)")'],
+        required: true,
+        allowSkip: false,
+        timeoutMs: 30_000,
+        safety: { network: 'none', productionEffects: false, humanEvidence: false },
+        testExpectation: { requireCounts: true, expectedSkips: 0 },
+      },
+    });
+    manifest.baseRef = base;
+    manifest.changedPaths = [baselineRelative];
+    resealManifest(manifest);
+    mkdirSync(outputDir, { recursive: true });
+    const manifestPath = join(outputDir, 'manifest.json');
+    writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+
+    const executor = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'validator-executor',
+      env: { PATH: process.env.PATH ?? '' },
+    });
+    expect(executor.result).toBe('pass');
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'validator-verifier',
+      env: { PATH: process.env.PATH ?? '' },
+      executorReport: executor,
+    });
+    expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+    const reportPath = join(outputDir, 'final-report.json');
+    const engineering = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'engineering',
+      manifestPath,
+      engineeringReportPath: reportPath,
+      baselinePath: baselineRelative,
+    });
+    expect(engineering).toEqual(expect.objectContaining({ ok: true, errors: [] }));
+
+    const humanVerdictPath = join(outputDir, 'human-verdict.yaml');
+    writeFileSync(humanVerdictPath, [
+      'schema: runtime-authority-convergence-human-verdict/v1',
+      `candidate_sha: ${manifest.candidate.commit}`,
+      `manifest_sha256: ${sha256File(manifestPath)}`,
+      `engineering_report_sha256: ${sha256File(reportPath)}`,
+      'verdict: accepted',
+      'accepted_scenarios: [H-01, H-02, H-03, H-04, H-05, H-06]',
+      'failed_scenarios: []',
+      'notes: fixture proof',
+      'decided_at: 2026-08-03T00:00:00.000Z',
+      '',
+    ].join('\n'), 'utf8');
+    const human = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'human',
+      manifestPath,
+      engineeringReportPath: reportPath,
+      humanVerdictPath,
+      baselinePath: baselineRelative,
+    });
+    expect(human).toEqual(expect.objectContaining({ ok: true, errors: [] }));
+
+    const changedPathTamper = structuredClone(manifest);
+    changedPathTamper.changedPaths = [];
+    resealManifest(changedPathTamper);
+    const changedPathTamperPath = join(outputDir, 'tampered-paths-manifest.json');
+    writeFileSync(changedPathTamperPath, `${JSON.stringify(changedPathTamper, null, 2)}\n`, 'utf8');
+    const changedPathResult = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'engineering',
+      manifestPath: changedPathTamperPath,
+      engineeringReportPath: reportPath,
+      baselinePath: baselineRelative,
+    });
+    expect(changedPathResult.errors.some((error) => error.startsWith('manifest changedPaths mismatch'))).toBe(true);
+
+    const badPhase = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'final',
+      manifestPath,
+      engineeringReportPath: reportPath,
+      baselinePath: baselineRelative,
+    });
+    expect(badPhase.errors).toContain('phase must be one of: engineering, human');
+
+    const tamperedReport = structuredClone(verifier);
+    tamperedReport.gates[0].command = 'echo';
+    tamperedReport.reportDigest = digestReport(tamperedReport);
+    const tamperedReportPath = join(outputDir, 'tampered-report.json');
+    writeFileSync(tamperedReportPath, `${JSON.stringify(tamperedReport, null, 2)}\n`, 'utf8');
+    const commandTamper = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'engineering',
+      manifestPath,
+      engineeringReportPath: tamperedReportPath,
+      baselinePath: baselineRelative,
+    });
+    expect(commandTamper.ok).toBe(false);
+    expect(commandTamper.errors).toContain('final report gate command mismatch: fixture-validator-gate');
+
+    const sameActor = structuredClone(verifier);
+    sameActor.executorActor = sameActor.verifierActor;
+    sameActor.reportDigest = digestReport(sameActor);
+    const sameActorPath = join(outputDir, 'same-actor-report.json');
+    writeFileSync(sameActorPath, `${JSON.stringify(sameActor, null, 2)}\n`, 'utf8');
+    const actorTamper = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'engineering',
+      manifestPath,
+      engineeringReportPath: sameActorPath,
+      baselinePath: baselineRelative,
+    });
+    expect(actorTamper.errors).toContain('Executor/Verifier identity separation failed');
+
+    const sourceTamper = structuredClone(manifest);
+    sourceTamper.source.files[0].gitBlob = '0'.repeat(40);
+    resealManifest(sourceTamper);
+    const sourceTamperPath = join(outputDir, 'tampered-source-manifest.json');
+    writeFileSync(sourceTamperPath, `${JSON.stringify(sourceTamper, null, 2)}\n`, 'utf8');
+    const sourceResult = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'engineering',
+      manifestPath: sourceTamperPath,
+      engineeringReportPath: reportPath,
+      baselinePath: baselineRelative,
+    });
+    expect(sourceResult.errors).toContain('source Git blob mismatch: package.json');
+
+    const badVerdictPath = join(outputDir, 'bad-human-verdict.yaml');
+    writeFileSync(badVerdictPath, readFileSync(humanVerdictPath, 'utf8').replace('H-06', 'H-99'), 'utf8');
+    const verdictTamper = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'human',
+      manifestPath,
+      engineeringReportPath: reportPath,
+      humanVerdictPath: badVerdictPath,
+      baselinePath: baselineRelative,
+    });
+    expect(verdictTamper.errors).toContain('human verdict accepted_scenarios must be exactly H-01 through H-06');
+
+    const hashTamperPath = join(outputDir, 'bad-hash-verdict.yaml');
+    writeFileSync(hashTamperPath, readFileSync(humanVerdictPath, 'utf8').replace(/manifest_sha256: .+/u, `manifest_sha256: ${'0'.repeat(64)}`), 'utf8');
+    const hashTamper = validateRuntimeAuthorityConvergence({
+      root,
+      phase: 'human',
+      manifestPath,
+      engineeringReportPath: reportPath,
+      humanVerdictPath: hashTamperPath,
+      baselinePath: baselineRelative,
+    });
+    expect(hashTamper.errors).toContain('human verdict manifest_sha256 mismatch');
   });
 });

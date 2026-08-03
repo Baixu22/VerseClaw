@@ -1,124 +1,388 @@
 #!/usr/bin/env node
-// RC-09 final engineering evidence validator. Enforces the repository acceptance
-// contract for the Runtime Authority Convergence final run: manifest schema,
-// baseRef equals the RC-01 acceptedBaseSha, changedPaths equality, a green
-// independent Verifier final report, Executor/Verifier identity separation,
-// human residual fields, semantic reportDigest, and product locks unchanged.
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { execFileSync } from 'node:child_process';
+// Runtime Authority Convergence final-evidence validator. It intentionally
+// fails closed: engineering evidence and the user-authored human verdict are
+// independently bound to one clean Git candidate and one acceptance manifest.
+import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const repoRoot = process.cwd();
-const SHA256_HEX = /^[a-f0-9]{64}$/;
+import { parse as parseYaml } from 'yaml';
+
+import {
+  ACCEPTANCE_SCHEMA,
+  digestManifest,
+  digestPlan,
+  digestReport,
+  equalDigest,
+  sha256File,
+  stableJson,
+  validateAcceptanceManifest,
+  validateReportEvidence,
+} from './lib/agent-engineering-acceptance.mjs';
+
+const SCRIPT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const SHA1_HEX = /^[a-f0-9]{40}$/u;
+const SHA256_HEX = /^[a-f0-9]{64}$/u;
+const PHASES = new Set(['engineering', 'human']);
+const HUMAN_SCENARIOS = ['H-01', 'H-02', 'H-03', 'H-04', 'H-05', 'H-06'];
+const HUMAN_VERDICT_KEYS = [
+  'schema',
+  'candidate_sha',
+  'manifest_sha256',
+  'engineering_report_sha256',
+  'verdict',
+  'accepted_scenarios',
+  'failed_scenarios',
+  'notes',
+  'decided_at',
+];
+
+function isNonBlankString(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
+function pathInside(child, parent) {
+  const childPath = resolve(child);
+  const parentPath = resolve(parent);
+  const relation = relative(parentPath, childPath);
+  return relation === '' || (!relation.startsWith(`..${sep}`) && relation !== '..' && !isAbsolute(relation));
+}
+
+function resolveInputPath(root, value, label) {
+  if (!isNonBlankString(value)) throw new Error(`${label} is required`);
+  const pathValue = resolve(root, value);
+  if (!pathInside(pathValue, root)) throw new Error(`${label} must remain inside the candidate worktree`);
+  return pathValue;
+}
 
 function parseArgs(argv) {
-  const args = {};
-  for (let i = 0; i < argv.length; i += 1) {
-    const token = argv[i];
-    if (token === '--phase') {
-      args.phase = argv[++i];
-    } else if (token === '--manifest') {
-      args.manifest = argv[++i];
-    } else if (token === '--engineering-report') {
-      args.engineeringReport = argv[++i];
-    }
+  const values = {};
+  const known = new Set(['phase', 'manifest', 'engineering-report', 'human-verdict', 'baseline', 'root']);
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) throw new Error(`unexpected argument: ${token}`);
+    const key = token.slice(2);
+    if (!known.has(key)) throw new Error(`unknown argument: --${key}`);
+    if (Object.prototype.hasOwnProperty.call(values, key)) throw new Error(`duplicate argument: --${key}`);
+    const value = argv[index + 1];
+    if (!value || value.startsWith('--')) throw new Error(`--${key} requires a value`);
+    values[key] = value;
+    index += 1;
   }
-  return args;
+  return {
+    phase: values.phase,
+    manifest: values.manifest,
+    engineeringReport: values['engineering-report'],
+    humanVerdict: values['human-verdict'],
+    baseline: values.baseline,
+    root: values.root,
+  };
 }
 
-function readJson(pathValue) {
-  return JSON.parse(readFileSync(resolve(pathValue), 'utf8'));
-}
-
-function git(args) {
-  return execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' }).trim();
-}
-
-function main(argv) {
-  const args = parseArgs(argv);
-  if (!args.manifest || !args.engineeringReport) {
-    console.error('usage: node scripts/validate-runtime-authority-convergence.mjs --phase engineering --manifest <path> --engineering-report <path>');
-    process.exit(1);
-  }
-  const errors = [];
-  const manifest = readJson(args.manifest);
-  const report = readJson(args.engineeringReport);
-  const baseline = readJson('artifacts/runtime-authority-convergence/rc-01/baseline.json');
-  const acceptedBaseSha = String(baseline.acceptedBaseSha ?? '');
-
-  // Manifest contract.
-  if (manifest.schema !== 'agent-engineering-acceptance/v1') errors.push('manifest schema mismatch');
-  if (manifest.manifestVersion !== 1) errors.push('manifestVersion must be 1');
-  if (manifest.executionMode !== 'full') errors.push('executionMode must be full');
-  if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
-  if (manifest.baseRef !== acceptedBaseSha) errors.push(`manifest baseRef mismatch: ${manifest.baseRef} != ${acceptedBaseSha}`);
-  if (manifest.task?.humanEvidence !== 'required' || manifest.safety?.humanEvidence !== 'required') {
-    errors.push('manifest lost human-evidence residual');
-  }
-
-  // changedPaths equality: git diff --name-only <acceptedBaseSha>..<candidateSha>.
+function readJson(pathValue, label) {
   try {
-    const expected = git(['diff', '--name-only', `${acceptedBaseSha}..${manifest.candidate?.commit}`])
-      .split(/\r?\n/)
-      .filter(Boolean)
-      .map((p) => p.replace(/\\/g, '/'))
-      .sort();
-    const actual = (manifest.changedPaths ?? []).map(String).map((p) => p.replace(/\\/g, '/')).sort();
-    if (JSON.stringify(expected) !== JSON.stringify(actual)) {
-      errors.push(`manifest changedPaths mismatch (expected ${expected.length} paths, got ${actual.length})`);
+    return JSON.parse(readFileSync(pathValue, 'utf8'));
+  } catch (error) {
+    throw new Error(`cannot read ${label}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+function git(root, args, options = {}) {
+  const result = spawnSync(process.platform === 'win32' ? 'git.exe' : 'git', args, {
+    cwd: root,
+    encoding: 'utf8',
+    shell: false,
+    timeout: options.timeoutMs ?? 30_000,
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  const stdout = String(result.stdout ?? '');
+  const stderr = String(result.stderr ?? '');
+  if (result.status !== 0 && !options.allowFailure) {
+    throw new Error(`git ${args.join(' ')} failed${stderr.trim() ? `: ${stderr.trim()}` : ''}`);
+  }
+  return { status: result.status ?? 1, stdout, stderr };
+}
+
+function normalizedPath(value) {
+  if (!isNonBlankString(value)) return null;
+  const pathValue = value.replaceAll('\\', '/').replace(/^\.\//u, '');
+  if (pathValue.startsWith('/') || /^[A-Za-z]:\//u.test(pathValue)) return null;
+  const normalized = pathValue.split('/').filter(Boolean).join('/');
+  if (!normalized || normalized === '..' || normalized.startsWith('../') || normalized.includes('/../')) return null;
+  return normalized;
+}
+
+function validateManifestDigests(manifest, errors) {
+  if (!isNonBlankString(manifest?.planDigest) || !SHA256_HEX.test(manifest.planDigest)) {
+    errors.push('manifest planDigest is missing or malformed');
+  } else if (!equalDigest(digestPlan(manifest), manifest.planDigest)) {
+    errors.push('manifest planDigest mismatch');
+  }
+  if (!isNonBlankString(manifest?.manifestDigest) || !SHA256_HEX.test(manifest.manifestDigest)) {
+    errors.push('manifest manifestDigest is missing or malformed');
+  } else if (!equalDigest(digestManifest(manifest), manifest.manifestDigest)) {
+    errors.push('manifest manifestDigest mismatch');
+  }
+}
+
+function validateBaseline(root, baseline, manifest, errors) {
+  const acceptedBaseSha = baseline?.acceptedBaseSha;
+  if (baseline?.schema !== 'runtime-authority-convergence-baseline/v1') {
+    errors.push('baseline schema mismatch');
+  }
+  if (!isNonBlankString(acceptedBaseSha) || !SHA1_HEX.test(acceptedBaseSha)) {
+    errors.push('baseline acceptedBaseSha is missing or malformed');
+    return null;
+  }
+  const base = acceptedBaseSha.toLowerCase();
+  try {
+    git(root, ['cat-file', '-e', `${base}^{commit}`]);
+    if (manifest?.baseRef !== base) errors.push(`manifest baseRef mismatch: ${manifest?.baseRef ?? '<missing>'} != ${base}`);
+    if (!isNonBlankString(manifest?.candidate?.commit) || !SHA1_HEX.test(manifest.candidate.commit)) {
+      errors.push('manifest candidate commit is missing or malformed');
+      return base;
+    }
+    const candidate = manifest.candidate.commit.toLowerCase();
+    const ancestor = git(root, ['merge-base', '--is-ancestor', base, candidate], { allowFailure: true });
+    if (ancestor.status !== 0) errors.push('acceptedBaseSha is not an ancestor of candidate commit');
+  } catch (error) {
+    errors.push(`cannot verify baseline ancestry: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  const locks = baseline?.productLocks ?? {};
+  if (locks.liveReady !== false || locks.productApproved !== false || locks.defaultOn !== false) {
+    errors.push('baseline product locks changed');
+  }
+  return base;
+}
+
+function validateCandidateTree(root, manifest, errors) {
+  const candidate = manifest?.candidate ?? {};
+  if (!isNonBlankString(candidate.commit) || !SHA1_HEX.test(candidate.commit)) {
+    errors.push('manifest candidate commit is missing or malformed');
+    return;
+  }
+  if (!isNonBlankString(candidate.tree) || !SHA1_HEX.test(candidate.tree)) {
+    errors.push('manifest candidate tree is missing or malformed');
+    return;
+  }
+  try {
+    const candidateTree = git(root, ['rev-parse', '--verify', `${candidate.commit}^{tree}`]).stdout.trim().toLowerCase();
+    if (candidateTree !== candidate.tree.toLowerCase()) errors.push('manifest candidate tree does not match candidate commit');
+    const head = git(root, ['rev-parse', '--verify', 'HEAD']).stdout.trim().toLowerCase();
+    const headTree = git(root, ['rev-parse', '--verify', 'HEAD^{tree}']).stdout.trim().toLowerCase();
+    if (head !== candidate.commit.toLowerCase() || headTree !== candidate.tree.toLowerCase()) {
+      errors.push('validator worktree is not checked out at the manifest candidate');
     }
   } catch (error) {
-    errors.push(`cannot recompute final changed paths: ${error.message}`);
+    errors.push(`cannot verify candidate identity: ${error instanceof Error ? error.message : String(error)}`);
   }
+}
 
-  // Final report contract.
-  if (report.schema !== 'agent-engineering-acceptance/v1') errors.push('final report schema mismatch');
-  if (report.documentType !== 'agent-engineering-acceptance-report' || report.reportVersion !== 1) {
+function validateChangedPaths(root, manifest, base, errors) {
+  if (!base || !isNonBlankString(manifest?.candidate?.commit)) return;
+  const declared = Array.isArray(manifest.changedPaths) ? manifest.changedPaths.map(normalizedPath) : null;
+  if (!declared || declared.some((pathValue) => !pathValue)) {
+    errors.push('manifest changedPaths must be a normalized array');
+    return;
+  }
+  if (new Set(declared).size !== declared.length || stableJson(declared) !== stableJson([...declared].sort())) {
+    errors.push('manifest changedPaths must be unique and sorted');
+  }
+  try {
+    const expected = git(root, ['diff', '--name-only', '-z', `${base}..${manifest.candidate.commit}`]).stdout
+      .split('\0')
+      .filter(Boolean)
+      .map(normalizedPath)
+      .filter(Boolean)
+      .sort();
+    if (stableJson(expected) !== stableJson(declared)) {
+      errors.push(`manifest changedPaths mismatch (expected ${expected.length} paths, got ${declared.length})`);
+    }
+  } catch (error) {
+    errors.push(`cannot recompute candidate changed paths: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+function validateSourceIdentity(root, manifest, errors) {
+  const source = manifest?.source;
+  const candidate = manifest?.candidate?.commit;
+  if (source?.identityPolicy !== 'git-blob-v1' || source?.eolPolicy !== 'git-blob') {
+    errors.push('manifest source identity policy is not git-blob-v1');
+  }
+  if (!Array.isArray(source?.files) || source.files.length === 0) {
+    errors.push('manifest source files are missing');
+    return;
+  }
+  if (!Array.isArray(source?.missing) || source.missing.length !== 0) errors.push('manifest declares missing source inputs');
+  for (const file of source.files) {
+    const pathValue = normalizedPath(file?.path);
+    if (!pathValue || file?.exists !== true || !isNonBlankString(file?.gitBlob) || !SHA1_HEX.test(file.gitBlob)) {
+      errors.push(`manifest source input is malformed: ${file?.path ?? '<unknown>'}`);
+      continue;
+    }
+    try {
+      const candidateBlob = git(root, ['rev-parse', '--verify', `${candidate}:${pathValue}`]).stdout.trim().toLowerCase();
+      if (candidateBlob !== file.gitBlob.toLowerCase()) errors.push(`source Git blob mismatch: ${pathValue}`);
+      const diff = git(root, ['diff', '--quiet', candidate, '--', pathValue], { allowFailure: true });
+      if (diff.status !== 0) errors.push(`source worktree differs from candidate Git blob: ${pathValue}`);
+    } catch (error) {
+      errors.push(`cannot verify source Git blob ${pathValue}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+}
+
+function validateReportContract(manifest, report, reportPath, errors) {
+  const evidenceRoot = dirname(reportPath);
+  errors.push(...validateReportEvidence(manifest, report, evidenceRoot, {
+    expectedRole: 'verifier',
+    label: 'final report',
+  }));
+  if (report?.documentType !== 'agent-engineering-acceptance-report' || report?.reportVersion !== 1) {
     errors.push('final report contract mismatch');
   }
-  if (report.role !== 'verifier') errors.push('final report is not independent Verifier evidence');
-  if (report.result !== 'pass' || report.engineeringAcceptedByAgent !== true || (report.failures ?? []).length !== 0) {
+  if (report?.role !== 'verifier') errors.push('final report is not independent Verifier evidence');
+  if (report?.result !== 'pass' || report?.engineeringAcceptedByAgent !== true || !Array.isArray(report?.failures) || report.failures.length !== 0) {
     errors.push('engineering acceptance is not green');
   }
-  if (report.conclusion?.engineeringAcceptedByAgent !== true) errors.push('final report conclusion is not green');
-  if (report.humanEvidenceRequired !== true || report.taskStatusRecommendation !== 'review_needed' || report.conclusion?.residualHumanEvidence !== true) {
+  if (report?.conclusion?.engineeringAcceptedByAgent !== true) errors.push('final report conclusion is not green');
+  if (report?.humanEvidenceRequired !== true || report?.taskStatusRecommendation !== 'review_needed' || report?.conclusion?.residualHumanEvidence !== true) {
     errors.push('final report lost human-evidence residual');
   }
-  if (report.runId !== manifest.runId) errors.push('final report runId mismatch');
-  if (report.source?.manifestDigest !== manifest.manifestDigest) errors.push('final report manifest digest mismatch');
-  if (report.candidate?.commit !== manifest.candidate?.commit) errors.push('final report candidate mismatch');
-  if (typeof report.executorActor !== 'string' || report.executorActor.trim() === '' || report.executorActor === report.verifierActor) {
+  if (!isNonBlankString(report?.actor) || !isNonBlankString(report?.executorActor) || !isNonBlankString(report?.verifierActor)) {
+    errors.push('final report actors are missing or blank');
+  } else if (report.actor !== report.verifierActor || report.executorActor === report.verifierActor) {
     errors.push('Executor/Verifier identity separation failed');
   }
-
-  // Semantic reportDigest recomputation.
-  const reportDigest = report.reportDigest;
-  if (typeof reportDigest !== 'string' || !SHA256_HEX.test(reportDigest)) {
+  if (!isNonBlankString(report?.reportDigest) || !SHA256_HEX.test(report.reportDigest)) {
     errors.push('final report semantic reportDigest missing or malformed');
+  } else if (!equalDigest(digestReport(report), report.reportDigest)) {
+    errors.push('final report semantic reportDigest mismatch');
   }
-
-  // Product locks unchanged.
-  const safety = report.safety ?? {};
+  const safety = report?.safety ?? {};
   if (
-    safety.productLocksChanged !== false ||
-    safety.liveReady !== false ||
-    safety.productApproved !== false ||
-    safety.defaultOn !== false ||
-    safety.promotionAuthorized !== false ||
-    report.conclusion?.allowedPromotion !== false
+    safety.productLocksChanged !== false
+    || safety.liveReady !== false
+    || safety.productApproved !== false
+    || safety.defaultOn !== false
+    || safety.promotionAuthorized !== false
+    || report?.conclusion?.allowedPromotion !== false
   ) {
     errors.push('product lock or promotion drift');
   }
-  if (baseline.productLocks?.liveReady !== false || baseline.productLocks?.productApproved !== false || baseline.productLocks?.defaultOn !== false) {
-    errors.push('baseline product locks changed');
-  }
-
-  if (errors.length > 0) {
-    console.error('runtime-authority-convergence engineering evidence validator FAILED:');
-    for (const error of errors) console.error(`  - ${error}`);
-    process.exit(1);
-  }
-  console.log(`runtime-authority-convergence engineering evidence validator PASSED (manifest ${manifest.runId}, report ${report.runId})`);
 }
 
-main(process.argv.slice(2));
+function validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors) {
+  let verdict;
+  try {
+    verdict = parseYaml(readFileSync(verdictPath, 'utf8'));
+  } catch (error) {
+    errors.push(`cannot read human verdict: ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
+  if (!verdict || typeof verdict !== 'object' || Array.isArray(verdict)) {
+    errors.push('human verdict must be a YAML object');
+    return;
+  }
+  const actualKeys = Object.keys(verdict).sort();
+  if (stableJson(actualKeys) !== stableJson([...HUMAN_VERDICT_KEYS].sort())) errors.push('human verdict schema keys mismatch');
+  if (verdict.schema !== 'runtime-authority-convergence-human-verdict/v1') errors.push('human verdict schema mismatch');
+  if (verdict.candidate_sha !== manifest?.candidate?.commit) errors.push('human verdict candidate_sha mismatch');
+  if (!isNonBlankString(verdict.manifest_sha256) || !SHA256_HEX.test(verdict.manifest_sha256) || !equalDigest(sha256File(manifestPath), verdict.manifest_sha256)) {
+    errors.push('human verdict manifest_sha256 mismatch');
+  }
+  if (!isNonBlankString(verdict.engineering_report_sha256) || !SHA256_HEX.test(verdict.engineering_report_sha256) || !equalDigest(sha256File(reportPath), verdict.engineering_report_sha256)) {
+    errors.push('human verdict engineering_report_sha256 mismatch');
+  }
+  if (verdict.verdict !== 'accepted') errors.push('human verdict is not accepted');
+  if (!Array.isArray(verdict.accepted_scenarios) || stableJson(verdict.accepted_scenarios) !== stableJson(HUMAN_SCENARIOS)) {
+    errors.push('human verdict accepted_scenarios must be exactly H-01 through H-06');
+  }
+  if (!Array.isArray(verdict.failed_scenarios) || verdict.failed_scenarios.length !== 0) errors.push('human verdict failed_scenarios must be empty');
+  if (typeof verdict.notes !== 'string' || !isNonBlankString(verdict.decided_at)) errors.push('human verdict notes/decided_at are incomplete');
+}
+
+export function validateRuntimeAuthorityConvergence(options = {}) {
+  const root = resolve(options.root ?? SCRIPT_ROOT);
+  const errors = [];
+  const phase = options.phase;
+  if (!PHASES.has(phase)) {
+    return { ok: false, errors: [`phase must be one of: ${[...PHASES].join(', ')}`] };
+  }
+  if (phase === 'engineering' && options.humanVerdictPath) errors.push('engineering phase must not receive a human verdict');
+  if (phase === 'human' && !options.humanVerdictPath) errors.push('human phase requires --human-verdict');
+
+  let manifest;
+  let report;
+  let baseline;
+  let manifestPath;
+  let reportPath;
+  let verdictPath;
+  try {
+    manifestPath = resolveInputPath(root, options.manifestPath, 'manifest');
+    reportPath = resolveInputPath(root, options.engineeringReportPath, 'engineering report');
+    const baselinePath = resolveInputPath(root, options.baselinePath ?? 'artifacts/runtime-authority-convergence/rc-01/baseline.json', 'baseline');
+    if (!existsSync(manifestPath) || !existsSync(reportPath) || !existsSync(baselinePath)) throw new Error('manifest, engineering report, or baseline file is missing');
+    if (phase === 'human') {
+      verdictPath = resolveInputPath(root, options.humanVerdictPath, 'human verdict');
+      if (!existsSync(verdictPath)) throw new Error('human verdict file is missing');
+    }
+    manifest = readJson(manifestPath, 'manifest');
+    report = readJson(reportPath, 'engineering report');
+    baseline = readJson(baselinePath, 'baseline');
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : String(error));
+    return { ok: false, errors };
+  }
+
+  if (manifest.schema !== ACCEPTANCE_SCHEMA || manifest.manifestVersion !== 1) errors.push('manifest schema mismatch');
+  if (manifest.executionMode !== 'full') errors.push('manifest executionMode must be full');
+  if (manifest.candidate?.cleanAtPlan !== true) errors.push('candidate was dirty at plan');
+  validateManifestDigests(manifest, errors);
+  errors.push(...validateAcceptanceManifest(manifest, { root, requireClean: true, requireFull: true }).errors);
+  const base = validateBaseline(root, baseline, manifest, errors);
+  validateCandidateTree(root, manifest, errors);
+  validateChangedPaths(root, manifest, base, errors);
+  validateSourceIdentity(root, manifest, errors);
+  validateReportContract(manifest, report, reportPath, errors);
+  if (phase === 'human' && verdictPath) validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors);
+
+  return { ok: errors.length === 0, errors, phase, manifest, report, baseline };
+}
+
+function usage() {
+  return [
+    'usage:',
+    '  node scripts/validate-runtime-authority-convergence.mjs --phase engineering --manifest <path> --engineering-report <path>',
+    '  node scripts/validate-runtime-authority-convergence.mjs --phase human --manifest <path> --engineering-report <path> --human-verdict <path>',
+  ].join('\n');
+}
+
+export function main(argv = process.argv.slice(2)) {
+  try {
+    const args = parseArgs(argv);
+    const result = validateRuntimeAuthorityConvergence({
+      root: args.root,
+      phase: args.phase,
+      manifestPath: args.manifest,
+      engineeringReportPath: args.engineeringReport,
+      humanVerdictPath: args.humanVerdict,
+      baselinePath: args.baseline,
+    });
+    if (!result.ok) {
+      console.error('runtime-authority-convergence evidence validator FAILED:');
+      for (const error of result.errors) console.error(`  - ${error}`);
+      return 1;
+    }
+    console.log(`runtime-authority-convergence ${result.phase} evidence validator PASSED (manifest ${result.manifest.runId}, report ${result.report.runId})`);
+    return 0;
+  } catch (error) {
+    console.error(`runtime-authority-convergence evidence validator FAILED: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(usage());
+    return 1;
+  }
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+  process.exitCode = main();
+}
