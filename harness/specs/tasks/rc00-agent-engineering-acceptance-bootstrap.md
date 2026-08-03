@@ -18,6 +18,7 @@ ownedPaths:
   - tests/unit/harness-specs.test.ts
   - tests/unit/harness-git.test.ts
   - harness/specs/tasks/rc00-agent-engineering-acceptance-bootstrap.md
+  - docs/dev/Sustained-Development-Playbook.md
   - harness/specs/tasks/runtime-authority-convergence-final-acceptance.md
   - harness/specs/tasks/rc04-durable-approval-effect-reconciliation.md
   - harness/specs/tasks/rc06b-clawgraph-lifecycle-migration.md
