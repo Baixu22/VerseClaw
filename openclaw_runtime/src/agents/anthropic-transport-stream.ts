@@ -17,6 +17,7 @@ import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./copilot-dyn
 import { parseJsonObjectPreservingUnsafeIntegers } from "./json-unsafe-integers.js";
 import { resolveProviderEndpoint } from "./provider-attribution.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import { emitShadowCensus } from "./shadow-census.js";
 import type { StreamFn } from "./runtime/index.js";
 import { transformTransportMessages } from "./transport-message-transform.js";
 import {
@@ -996,6 +997,26 @@ export function createAnthropicMessagesTransportStreamFn(): StreamFn {
         const nextParams = await transportOptions.onPayload?.(params, model);
         if (nextParams !== undefined) {
           params = nextParams as Record<string, unknown>;
+        }
+        // RC-02 shadow census: emits ShadowContextReceipt/v0 + ShadowWireReceipt/v0
+        // at the guarded request-body boundary after provider-specific finalizers.
+        // Strictly observational: never mutates params, never changes send behavior,
+        // and a write failure surfaces in the result (fails the RC-02 run) without
+        // throwing into the send path. Gated by options.metadata.rc02ShadowCensus.
+        if (transportOptions.metadata?.rc02ShadowCensus === true) {
+          emitShadowCensus(
+            params as Record<string, unknown>,
+            {
+              providerId: model.provider,
+              modelId: model.id,
+              sessionKey: (context as { sessionId?: string })?.sessionId,
+              traceId: (context as { traceId?: string })?.traceId,
+              attemptIndex: (transportOptions.metadata as { rc02AttemptIndex?: number })?.rc02AttemptIndex,
+              modelCallIndex: (transportOptions.metadata as { rc02ModelCallIndex?: number })?.rc02ModelCallIndex,
+              wireAttemptIndex: (transportOptions.metadata as { rc02WireAttemptIndex?: number })?.rc02WireAttemptIndex,
+            },
+            { enabled: true, sourceRuntime: true },
+          );
         }
         const anthropicStream = client.messages.stream(
           { ...params, stream: true },

@@ -424,6 +424,12 @@ export type RuntimeFeatureConfig = {
      */
     anomalyClassifierPilot?: "off" | "shadow";
   };
+  /** RC-05 minimal Operator governance slice flags. Defaults off. */
+  rc05?: {
+    /** Enable the Operator slice on the cron announce path (durable approval +
+     *  bounded message effect + EffectReceipt + restart recovery). */
+    operatorSliceEnabled?: boolean;
+  };
 };
 
 /** Top-level OpenClaw config as read from user/project config files. */

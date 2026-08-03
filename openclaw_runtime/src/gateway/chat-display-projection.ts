@@ -631,7 +631,8 @@ function projectMutationPatchDetails(entry: Record<string, unknown>): Record<str
   const snapshot = journal.snapshots
     .map((value) => readRecord(value))
     .find((value) =>
-      value?.journalEntryId === artifact.lineage?.journalEntryId
+      value !== undefined
+      && value.journalEntryId === artifact.lineage?.journalEntryId
       && value.path === artifact.file);
   if (!snapshot) return undefined;
 

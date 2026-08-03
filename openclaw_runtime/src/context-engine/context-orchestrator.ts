@@ -39,6 +39,7 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
+import { runRc03SealHook } from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
@@ -180,6 +181,13 @@ export function getContextOrchestratorCollection(
 export function finalizeContextOrchestratorTurn(params: {
   turnId: string;
   messages: AgentMessage[];
+  sessionKey?: string;
+  runId?: string;
+  providerId?: string;
+  rc03Seal?: {
+    enabled?: boolean;
+    database?: { env?: NodeJS.ProcessEnv; path?: string };
+  };
 }): {
   messages: AgentMessage[];
   projection: ContextCandidateProjection;
@@ -191,6 +199,21 @@ export function finalizeContextOrchestratorTurn(params: {
     ledger,
     messages: params.messages,
   });
+  // RC-03 production wiring: at the pre-seal semantic producer convergence
+  // point, run the seal hook when the RC-03 flag is on. It enforces that all
+  // DCS semantic producers are registered (zero-bypass), seals the immutable
+  // ContextBundle, and persists a ContextReceipt/v1. When off, this is a no-op
+  // and the legacy path is byte-identical.
+  if (params.rc03Seal?.enabled === true) {
+    runRc03SealHook(projected.projection, projected.messages, {
+      enabled: true,
+      killed: lineageByTurn.get(params.turnId)?.killSwitchEngaged,
+      sessionKey: params.sessionKey,
+      runId: params.runId,
+      providerId: params.providerId,
+      database: params.rc03Seal?.database,
+    });
+  }
   const collection = getContextCandidateCollection(params.turnId);
   const turnLineage = lineageByTurn.get(params.turnId);
   if (turnLineage && collection) {

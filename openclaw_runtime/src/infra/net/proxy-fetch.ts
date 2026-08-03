@@ -19,7 +19,7 @@ function isFormDataLike(value: unknown): value is FormData {
   return (
     typeof value === "object" &&
     value !== null &&
-    typeof (value as FormData).entries === "function" &&
+    typeof (value as { forEach?: unknown }).forEach === "function" &&
     (value as { [Symbol.toStringTag]?: unknown })[Symbol.toStringTag] === "FormData"
   );
 }
@@ -61,9 +61,9 @@ function normalizeInitForUndici(
     return initWithNormalizedHeaders;
   }
   const form = new UndiciFormData();
-  for (const [key, value] of body.entries()) {
+  body.forEach((value, key) => {
     appendFormDataEntry(form, key, value);
-  }
+  });
   // Undici must generate the multipart boundary for its own FormData instance;
   // forwarding caller-supplied multipart headers can send a stale boundary.
   const headers = new Headers(normalizedHeaders);

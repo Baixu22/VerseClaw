@@ -195,19 +195,21 @@ function buildHealthProbeHeaders(
   requestHeaders: HeadersInit | undefined,
 ): Headers | undefined {
   const headers = new Headers();
+  let hasHeaders = false;
   const appendHeaders = (input: HeadersInit | undefined) => {
     if (!input) {
       return;
     }
-    for (const [key, value] of new Headers(input)) {
+    new Headers(input).forEach((value, key) => {
       if (value.trim().length > 0 && value.trim().toLowerCase() !== "null") {
         headers.set(key, value);
+        hasHeaders = true;
       }
-    }
+    });
   };
   appendHeaders((model as { headers?: HeadersInit }).headers);
   appendHeaders(requestHeaders);
-  return [...headers].length > 0 ? headers : undefined;
+  return hasHeaders ? headers : undefined;
 }
 
 async function probeHealth(

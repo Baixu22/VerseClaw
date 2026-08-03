@@ -19,6 +19,7 @@ import {
   type GatewayReloadPlan,
 } from "./config-reload-plan.js";
 import { createExecApprovalIosPushDelivery } from "./exec-approval-ios-push.js";
+import { ApprovalLedger } from "../agents/approval-ledger.js";
 import { ExecApprovalManager } from "./exec-approval-manager.js";
 import type { GatewayRequestHandler, GatewayRequestHandlers } from "./server-methods/types.js";
 import {
@@ -72,8 +73,16 @@ export function createGatewayAuxHandlers(params: {
   startChannel: (name: ChannelKind) => Promise<void>;
   stopChannel: (name: ChannelKind) => Promise<void>;
   logChannels: { info: (msg: string) => void };
+  /** RC-04 feature flag (default-off): mirror approval pending/resolved into the
+   *  durable approval_ledger so the truth survives a Gateway restart. */
+  enableDurableApprovalLedger?: boolean;
+  /** OpenClaw state database options for the durable ledger. */
+  durableLedgerDatabase?: { env?: NodeJS.ProcessEnv; path?: string };
 }) {
-  const execApprovalManager = new ExecApprovalManager();
+  const durableLedger = params.enableDurableApprovalLedger === true
+    ? new ApprovalLedger(params.durableLedgerDatabase)
+    : undefined;
+  const execApprovalManager = new ExecApprovalManager(durableLedger ? { durableLedger } : undefined);
   const execApprovalForwarder = createExecApprovalForwarder();
   const execApprovalIosPushDelivery = createExecApprovalIosPushDelivery({ log: params.log });
   let execApprovalHandlersPromise: Promise<GatewayRequestHandlers> | null = null;

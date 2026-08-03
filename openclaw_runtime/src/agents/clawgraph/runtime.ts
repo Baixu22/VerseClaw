@@ -2,6 +2,8 @@ import crypto from "node:crypto";
 import { isAbsolute, relative, resolve } from "node:path";
 import { spawnRoleSubagent, type SpawnFn } from "../role-spawn.js";
 import { listSubagentRunsForRequester, type SubagentRunRecord } from "../subagent-registry.js";
+import { isTruthyEnvValue } from "../../infra/env.js";
+import { projectClawgraphRunEvent } from "./clawgraph-taskflow-projection.js";
 // [SPINE] Diagnostic-only runtime family hooks for ClawGraph shadow telemetry.
 import {
   eventBus,
@@ -69,6 +71,12 @@ export type ClawGraphRunRequest = {
 const runs = new Map<string, RuntimeRun>();
 const SPINE_ACTOR = "clawgraph-runtime";
 const SPINE_MODE = "diagnostic_only";
+
+/** RC-06B projection gate (default-off). Reads env or config so operators can
+ *  enable the ClawGraph -> TaskFlow read-only projection. */
+function clawgraphProjectionEnabled(): boolean {
+  return isTruthyEnvValue(process.env.RC06B_CLAWGRAPH_PROJECTION);
+}
 
 function now(): number {
   return Date.now();
@@ -400,6 +408,16 @@ function emit(run: RuntimeRun, lifecycle: LifecycleFn | undefined, entry: ClawGr
     lifecycle?.(entry, projectRunSnapshot(run));
   } catch {
     // Lifecycle broadcasts are best-effort; the append-only event remains authoritative.
+  }
+  // RC-06B read-only projection into TaskFlow (flow_runs) behind a default-off
+  // flag. Observational only: the legacy process Map remains authoritative; a
+  // projection failure never changes ClawGraph behavior.
+  if (clawgraphProjectionEnabled()) {
+    try {
+      projectClawgraphRunEvent(entry, { enabled: true });
+    } catch {
+      // Best-effort projection; the legacy run state stays authoritative.
+    }
   }
 }
 

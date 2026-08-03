@@ -185,9 +185,9 @@ export function withSameOriginMcpHttpHeaders(params: {
       return params.fetchFn(url, init);
     }
     const headers = new Headers(params.headers);
-    for (const [key, value] of new Headers(init?.headers)) {
+    new Headers(init?.headers).forEach((value, key) => {
       headers.set(key, value);
-    }
+    });
     return params.fetchFn(url, { ...(init as RequestInit), headers });
   };
 }

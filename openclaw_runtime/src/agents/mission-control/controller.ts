@@ -20,6 +20,8 @@ import {
   type ReplayRollbackDeps,
 } from "../replay-rollback-authority.js";
 import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
+import { isTruthyEnvValue } from "../../infra/env.js";
+import { projectMissionRun } from "./mission-taskflow-projection.js";
 import {
   defaultQualityAssessments,
   deriveValidationState,
@@ -139,6 +141,12 @@ export type MissionKnowledgeInboxItem = {
     captureKey: string;
   };
 };
+
+/** RC-06C projection gate (default-off). Reads env so operators can enable the
+ *  Mission -> TaskFlow read-only projection. */
+function missionProjectionEnabled(): boolean {
+  return isTruthyEnvValue(process.env.RC06C_MISSION_PROJECTION);
+}
 
 function defaultId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
@@ -351,6 +359,29 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
     ts: now,
     ...patch,
   });
+  // RC-06C read-only projection into TaskFlow (flow_runs) behind a default-off
+  // flag. Observational only: mission_runs/events remain authoritative; a
+  // projection failure never changes Mission behavior.
+  if (missionProjectionEnabled()) {
+    try {
+      projectMissionRun(
+        {
+          missionId: record.missionId,
+          sessionKey: record.sessionKey,
+          status: record.status,
+          phase: record.phase,
+          tick: record.tick,
+          waitMode:
+            record.status === "ask_user" || record.status === "sleeping"
+              ? (record.status === "ask_user" ? "ask_user" : "sleep")
+              : "none",
+        },
+        { enabled: true },
+      );
+    } catch {
+      // Best-effort projection; the legacy Mission state stays authoritative.
+    }
+  }
 }
 
 function checkpointSummary(sessionKey: string): string {

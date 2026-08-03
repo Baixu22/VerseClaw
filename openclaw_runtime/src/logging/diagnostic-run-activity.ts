@@ -665,8 +665,7 @@ function registerDiagnosticRunActivityListener(): void {
         return;
       case "run.completed":
         recordRunCompleted(event);
-
-      // falls through
+        break;
 
       default:
     }

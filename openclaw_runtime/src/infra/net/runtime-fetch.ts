@@ -16,7 +16,7 @@ function isFormDataLike(value: unknown): value is FormData {
   return (
     typeof value === "object" &&
     value !== null &&
-    typeof (value as FormData).entries === "function" &&
+    typeof (value as { forEach?: unknown }).forEach === "function" &&
     (value as { [Symbol.toStringTag]?: unknown })[Symbol.toStringTag] === "FormData"
   );
 }
@@ -37,7 +37,7 @@ function normalizeRuntimeFormData(
   // Node's global FormData and undici's runtime FormData can be different
   // constructors. Rebuild entries so runtime fetch can stream multipart bodies.
   const next = new RuntimeFormData();
-  for (const [key, value] of body.entries()) {
+  body.forEach((value, key) => {
     const namedValue = value as FormDataEntryValueWithOptionalName;
     // File.name is the standard filename property; skip empty/whitespace-only values
     const fileName =
@@ -47,7 +47,7 @@ function normalizeRuntimeFormData(
     } else {
       next.append(key, value);
     }
-  }
+  });
   // undici.FormData is structurally compatible with BodyInit but lives in a separate
   // type namespace; the cast avoids a cross-implementation assignability error.
   return next as unknown as BodyInit;

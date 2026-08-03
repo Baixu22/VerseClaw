@@ -1,0 +1,15 @@
+name: rc05-operator-fixture
+description: RC-05 operator channel conformance fixture (no real external account)
+capabilities:
+  - channel.send
+  - channel.receive
+requiredPermissions:
+  - operator-slice
+diagnostics:
+  - rate-limit
+  - connection-drop
+  - credential-missing
+  - message-too-long
+rateLimit:
+  perMinute: 60
+  perMessage: 1

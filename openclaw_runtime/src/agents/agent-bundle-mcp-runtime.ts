@@ -210,6 +210,18 @@ function connectWithTimeout(
   });
 }
 
+/**
+ * RC-08A health verdict after a real SDK initialize handshake. Connection state is
+ * derived from the SDK `client.connect()` handshake; configuration presence or an
+ * HTTP GET is never treated as connected. This is the single source of the
+ * MCP-health truth in the bundle runtime.
+ */
+export function connectedAfterMcpHandshake(handshakeOk: boolean): { connected: boolean; handshake: string } {
+  return handshakeOk
+    ? { connected: true, handshake: "sdk-initialize" }
+    : { connected: false, handshake: "not-attempted" };
+}
+
 function redactErrorUrls(error: unknown): string {
   return redactSensitiveUrlLikeString(String(error));
 }

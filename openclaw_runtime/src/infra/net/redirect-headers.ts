@@ -30,11 +30,11 @@ export function retainSafeHeadersForCrossOriginRedirect(
   }
   const incoming = new Headers(normalizeHeadersInitForFetch(headers));
   const safeHeaders: Record<string, string> = {};
-  for (const [key, value] of incoming.entries()) {
+  incoming.forEach((value, key) => {
     // Normalize lookup only; preserve the outgoing casing produced by Headers.
     if (CROSS_ORIGIN_REDIRECT_SAFE_HEADERS.has(normalizeLowercaseStringOrEmpty(key))) {
       safeHeaders[key] = value;
     }
-  }
+  });
   return safeHeaders;
 }

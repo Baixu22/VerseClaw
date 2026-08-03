@@ -438,7 +438,10 @@ function createReplayHeaders(headers: NetworkHeader[]): Headers {
 
 async function createReplaySendResult(response: Response, redirected: boolean): Promise<ReplaySendResult> {
   const contentType = response.headers.get('content-type') ?? '';
-  const headers = Array.from(response.headers.entries()).map(([name, value]) => ({ name, value: redactHeaderValue(name, value) }));
+  const headers: NetworkHeader[] = [];
+  response.headers.forEach((value, name) => {
+    headers.push({ name, value: redactHeaderValue(name, value) });
+  });
   const text = shouldReadResponseText(contentType) ? await response.text() : '';
   const truncated = truncateText(redactNetworkText(text), MAX_RESPONSE_BODY_CHARS);
   return {

@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createMemorySelfEditTools } from '../../openclaw_runtime/src/runtime-core/memory-self-edit-adapter';
 
 const persistConfig = {

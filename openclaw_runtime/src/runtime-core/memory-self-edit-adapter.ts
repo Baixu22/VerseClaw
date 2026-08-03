@@ -120,7 +120,7 @@ export function createMemorySelfEditTools(options: {
     description: def.description,
     parameters: def.parameters,
     displaySummary: def.description.split(".")[0] ?? def.label,
-    async execute(toolCallId, params) {
+    async execute(_toolCallId, params) {
       try {
         const context = resolveContext();
         const result = await executeMemorySelfEditTool(def.name, params, context);

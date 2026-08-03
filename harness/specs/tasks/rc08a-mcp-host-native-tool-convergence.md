@@ -1,0 +1,85 @@
+---
+id: rc08a-mcp-host-native-tool-convergence
+title: RC-08A MCP And Host-Native Tool Convergence
+taskType: engineering-acceptance
+intent: Keep the MCP SDK runtime as the external protocol authority; make Work Provider a catalog/projection; label Git, storage, terminal, and browser as host-native unless backed by a real MCP server. Correct health so it requires a real MCP handshake; configuration presence or HTTP GET is not connected; unsupported WebSocket choices are removed or rejected; Streamable HTTP naming is accurate.
+ownedPaths:
+  - openclaw_runtime/src/agents/tool-convergence.ts
+  - openclaw_runtime/src/agents/tool-convergence.test.ts
+  - openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts
+  - openclaw_runtime/src/agents/mcp-transport.ts
+  - openclaw_runtime/src/agents/mcp-transport-config.ts
+  - openclaw_runtime/src/config/types.mcp.ts
+  - shared/types/work-provider.ts
+  - electron/services/work-providers-api.ts
+  - tests/unit/work-provider.test.ts
+  - tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts
+  - harness/specs/tasks/rc08a-mcp-host-native-tool-convergence.md
+  - artifacts/runtime-authority-convergence/rc-08a/**
+touchedAreas:
+  - openclaw_runtime/src/mcp/**
+  - openclaw_runtime/src/agents/**
+  - openclaw_runtime/src/config/**
+  - shared/types/**
+  - electron/services/**
+  - tests/unit/**
+  - harness/specs/**
+  - artifacts/runtime-authority-convergence/rc-08a/**
+expectedUserBehavior:
+  - No runtime send behavior, ordering, tools, retries, approvals, delivery, or payload bytes change.
+  - The MCP SDK runtime remains the external protocol authority; the runtime does not define its own MCP schema.
+  - Work Provider is a catalog/projection; Git, storage, terminal, and browser are labelled host-native unless backed by a real MCP server.
+  - Health requires a real MCP handshake; configuration presence or HTTP GET is not connected.
+  - Unsupported WebSocket choices are removed or rejected; Streamable HTTP naming is accurate.
+  - MCP conformance/Inspector-compatible tests pass; catalog and runtime support match; no fake-connected state.
+  - Approvals, SecretRef, network policy, and hot reload remain intact.
+requiredProfiles:
+  - fast
+requiredRules:
+  - agent-engineering-acceptance-boundary
+  - runtime-authority-convergence-boundary
+humanEvidence: not-required
+forbiddenPatterns:
+  - a new runtime, workflow engine, store, protocol, exporter, collector, daemon, service, port, or LLM router
+  - defining a parallel MCP schema outside the @modelcontextprotocol/sdk
+  - labelling a host-native tool as MCP without a real MCP server path
+  - reporting connected from configuration presence or HTTP GET alone
+  - a fake-connected state
+  - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
+featureFlags:
+  - The MCP/tool catalog correction is behind a feature flag default-off; the kill switch restores the legacy behavior.
+rollback:
+  - Disable the flag to restore the legacy catalog behavior.
+  - No migration rollback is required because no data migration occurs.
+requiredTests:
+  - pnpm exec vitest run tests/unit/rc08a-mcp-host-native-tool-convergence.test.ts
+  - pnpm --dir openclaw_runtime exec vitest run src/agents/tool-convergence.test.ts
+  - pnpm exec vitest run tests/unit/work-provider.test.ts tests/unit/work-providers-api.test.ts
+  - pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts
+  - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
+  - pnpm harness validate --spec harness/specs/tasks/rc08a-mcp-host-native-tool-convergence.md
+acceptance:
+  - The MCP SDK runtime (@modelcontextprotocol/sdk) is the external protocol authority; the runtime defines no parallel MCP schema.
+  - Work Provider is a catalog/projection; Git, storage, terminal, and browser are labelled host-native unless backed by a real MCP server.
+  - Health requires a real MCP handshake (SDK initialize); configuration presence or HTTP GET is not connected; no fake-connected state.
+  - Unsupported WebSocket choices are removed or rejected; Streamable HTTP naming is accurate.
+  - MCP conformance/Inspector-compatible tests pass; catalog and runtime support match.
+  - Approvals, SecretRef, network policy, and hot reload remain intact.
+  - Product locks remain false; an RC-08A independent Verifier accepts using the RC-00 infrastructure.
+docs:
+  required: true
+  files:
+    - docs/dev/unified-agent-system/runtime-convergence/STATUS.md
+    - docs/dev/unified-agent-system/runtime-convergence/WORK-PACKAGES.md
+    - docs/dev/unified-agent-system/runtime-convergence/TARGET-ARCHITECTURE.md
+    - docs/dev/unified-agent-system/runtime-convergence/AGENT-START.md
+---
+
+# RC-08A MCP And Host-Native Tool Convergence
+
+RC-08A keeps the MCP SDK runtime as the external protocol authority, makes Work Provider a
+catalog/projection, and labels Git, storage, terminal, and browser tools as host-native unless
+backed by a real MCP server. Health requires a real MCP handshake; configuration presence or HTTP
+GET is never treated as connected. Unsupported WebSocket choices are removed or rejected and
+Streamable HTTP naming is accurate. MCP conformance/Inspector-compatible tests pass, catalog and
+runtime support match, and no fake-connected state exists.

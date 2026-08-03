@@ -127,7 +127,6 @@ function getRequestedTransport(rawServer: unknown): string {
   }
   return normalizeLowercaseStringOrEmpty((rawServer as { transport?: string }).transport);
 }
-
 function getRequestedTransportAlias(rawServer: unknown): HttpMcpTransportType | "" {
   if (
     !rawServer ||

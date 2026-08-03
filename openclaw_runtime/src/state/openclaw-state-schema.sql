@@ -1199,6 +1199,26 @@ CREATE TABLE IF NOT EXISTS sekb_distillation_rejections (
   reason TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS sekb_batch_distillation_events (
+  batch_id TEXT NOT NULL PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  status TEXT NOT NULL,
+  fallback_reason TEXT,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  suggestion_count INTEGER NOT NULL DEFAULT 0,
+  duplicate_suggestion_count INTEGER NOT NULL DEFAULT 0,
+  attributed_suggestion_count INTEGER NOT NULL DEFAULT 0,
+  attribution_total REAL NOT NULL DEFAULT 0,
+  input_tokens INTEGER,
+  output_tokens INTEGER,
+  total_cost_usd REAL,
+  trace_id TEXT NOT NULL,
+  confirmation_count INTEGER NOT NULL DEFAULT 0,
+  rejection_count INTEGER NOT NULL DEFAULT 0,
+  edit_distance_sum REAL NOT NULL DEFAULT 0,
+  edit_distance_count INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS mission_runs (
   mission_id TEXT NOT NULL PRIMARY KEY,
   session_key TEXT NOT NULL,
@@ -1476,3 +1496,110 @@ CREATE TABLE IF NOT EXISTS backup_runs (
 
 CREATE INDEX IF NOT EXISTS idx_backup_runs_created
   ON backup_runs(created_at DESC, id);
+
+-- RC-02 receipt persistence owner (user-confirmed 2026-08-02): typed, append-only
+-- runtime_receipts table in the existing openclaw-state SQLite, exposed through a
+-- narrow ReceiptStore interface. Seven hard constraints:
+--  1. digest/refs/call-index/version/policy-digest only; never raw prompt/tool output/credentials.
+--  2. append-only; same idempotency_key with identical content is idempotent success,
+--     different content must conflict-fail.
+--  3. no max(sequence)+1; explicit attempt/model-call/wire-attempt identity via
+--     attempt_index/model_call_index/wire_attempt_index columns.
+--  4. no silent pruning; deletion requires an explicit lifecycle policy.
+--  5. shadow write failure must not change send behavior but must fail RC-02 acceptance.
+--  6. receipt explains and correlates facts only; never authorizes replay; domain journals
+--     remain the effect/idempotency truth.
+--  7. npm fallback reports degraded and never counts toward receipt coverage.
+CREATE TABLE IF NOT EXISTS runtime_receipts (
+  receipt_id TEXT NOT NULL PRIMARY KEY,
+  idempotency_key TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('shadow_context','shadow_wire','context','wire','effect')),
+  runtime_mode TEXT NOT NULL CHECK (runtime_mode IN ('source','npm')),
+  version TEXT NOT NULL,
+  session_key TEXT,
+  run_id TEXT,
+  trace_id TEXT,
+  attempt_index INTEGER NOT NULL,
+  model_call_index INTEGER NOT NULL,
+  wire_attempt_index INTEGER NOT NULL,
+  provider_id TEXT,
+  adapter_id TEXT,
+  transform_ids_json TEXT,
+  selected_json TEXT,
+  omitted_json TEXT,
+  budget_json TEXT,
+  policy_digest TEXT,
+  logical_digest TEXT,
+  wire_digest TEXT,
+  correlation_digest TEXT NOT NULL,
+  content_digest TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_runtime_receipts_idempotency
+  ON runtime_receipts(idempotency_key);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_receipts_kind_created
+  ON runtime_receipts(kind, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_receipts_run_attempt
+  ON runtime_receipts(run_id, attempt_index, model_call_index, wire_attempt_index);
+
+CREATE INDEX IF NOT EXISTS idx_runtime_receipts_session
+  ON runtime_receipts(session_key, created_at DESC);
+
+-- RC-04 durable approval owner: replaces the Gateway process Map pending/resolved
+-- truth with a durable ledger in the existing openclaw-state SQLite. State
+-- sequence: intent_reserved -> approval_pending -> approved|denied ->
+-- execution_started -> applied|not_applied|unknown -> reconciled. Repeated
+-- identical resolve is idempotent; denial produces no effect; an unknown outcome
+-- stops in needs_reconciliation and is never auto-replayed.
+CREATE TABLE IF NOT EXISTS approval_ledger (
+  approval_id TEXT NOT NULL PRIMARY KEY,
+  idempotency_key TEXT NOT NULL,
+  state TEXT NOT NULL CHECK (state IN (
+    'intent_reserved','approval_pending','approved','denied',
+    'execution_started','applied','not_applied','unknown','reconciled',
+    'needs_reconciliation'
+  )),
+  request_json TEXT NOT NULL,
+  requested_by_conn_id TEXT,
+  requested_by_device_id TEXT,
+  requested_by_client_id TEXT,
+  expires_at_ms INTEGER NOT NULL,
+  resolved_at_ms INTEGER,
+  decision TEXT,
+  resolved_by TEXT,
+  effect_receipt_id TEXT,
+  domain_journal_ref TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_approval_ledger_idempotency
+  ON approval_ledger(idempotency_key);
+
+CREATE INDEX IF NOT EXISTS idx_approval_ledger_state_created
+  ON approval_ledger(state, created_at DESC);
+
+-- RC-04 EffectReceipt: explains and correlates domain-journal outcomes; it never
+-- authorizes replay. Domain journals remain the effect/idempotency truth.
+CREATE TABLE IF NOT EXISTS effect_receipts (
+  effect_receipt_id TEXT NOT NULL PRIMARY KEY,
+  idempotency_key TEXT NOT NULL,
+  approval_id TEXT,
+  proposal_json TEXT NOT NULL,
+  approval_decision TEXT,
+  domain_executor TEXT NOT NULL,
+  outcome TEXT NOT NULL CHECK (outcome IN ('applied','not_applied','unknown','reconciled')),
+  artifact_ref TEXT,
+  journal_ref TEXT,
+  recoverability TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_effect_receipts_idempotency
+  ON effect_receipts(idempotency_key);
+
+CREATE INDEX IF NOT EXISTS idx_effect_receipts_approval
+  ON effect_receipts(approval_id, created_at DESC);

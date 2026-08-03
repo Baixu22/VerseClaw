@@ -417,6 +417,12 @@ const RuntimeFeatureSchema = z
       })
       .strict()
       .optional(),
+    rc05: z
+      .object({
+        operatorSliceEnabled: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict()
   .optional();

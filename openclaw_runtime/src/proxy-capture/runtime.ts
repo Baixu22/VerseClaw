@@ -128,13 +128,17 @@ function redactedCaptureHeaders(
   if (!headers) {
     return undefined;
   }
-  const entries =
-    headers instanceof Headers ? Array.from(headers.entries()) : Object.entries(headers);
   const redacted: Record<string, string> = {};
-  for (const [name, value] of entries) {
-    // Header names are matched exactly and by sensitive fragments because
-    // providers use many token/key naming variants.
-    redacted[name] = isSensitiveCaptureHeaderName(name) ? REDACTED_CAPTURE_HEADER_VALUE : value;
+  if (headers instanceof Headers) {
+    headers.forEach((value, name) => {
+      // Header names are matched exactly and by sensitive fragments because
+      // providers use many token/key naming variants.
+      redacted[name] = isSensitiveCaptureHeaderName(name) ? REDACTED_CAPTURE_HEADER_VALUE : value;
+    });
+  } else {
+    for (const [name, value] of Object.entries(headers)) {
+      redacted[name] = isSensitiveCaptureHeaderName(name) ? REDACTED_CAPTURE_HEADER_VALUE : value;
+    }
   }
   return redacted;
 }
@@ -383,7 +387,7 @@ export function captureHttpExchange(
           ? (params.response.headers.get("content-type") ?? undefined)
           : undefined,
       headersJson:
-        params.response.headers && typeof params.response.headers.entries === "function"
+        params.response.headers && typeof params.response.headers.forEach === "function"
           ? runtime.safeJsonString(redactedCaptureHeaders(params.response.headers))
           : undefined,
       metaJson: runtime.safeJsonString({ ...params.meta, bodyCapture: "unavailable" }),

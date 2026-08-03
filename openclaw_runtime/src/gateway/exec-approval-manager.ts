@@ -63,6 +63,12 @@ export type ExecApprovalIdLookupResult =
 
 export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
   private pending = new Map<string, PendingEntry<TPayload>>();
+  /** RC-04 optional durable ledger; when present, create/resolve mirror into it. */
+  private readonly durableLedger?: import("../agents/approval-ledger.js").ApprovalLedger;
+
+  constructor(options: { durableLedger?: import("../agents/approval-ledger.js").ApprovalLedger } = {}) {
+    this.durableLedger = options.durableLedger;
+  }
 
   create(request: TPayload, timeoutMs: number, id?: string | null): ExecApprovalRecord<TPayload> {
     const now = Date.now();
@@ -78,6 +84,22 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
       createdAtMs: now,
       expiresAtMs,
     };
+    // RC-04 durable mirror: reserve the intent -> approval_pending in the ledger
+    // so the pending truth survives a Gateway restart. Best-effort: a ledger
+    // failure never blocks the in-memory approval path.
+    if (this.durableLedger) {
+      try {
+        this.durableLedger.reserve({
+          idempotencyKey: resolvedId,
+          approvalId: resolvedId,
+          request: record.request as Record<string, unknown>,
+          expiresAtMs,
+          createdAt: now,
+        });
+      } catch {
+        // The durable mirror is observational; the process-local path stays live.
+      }
+    }
     return record;
   }
 
@@ -139,6 +161,19 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
     // Prevent double-resolve (e.g., if called after timeout already resolved)
     if (pending.record.resolvedAtMs !== undefined) {
       return false;
+    }
+    // RC-04 durable mirror: resolve approval_pending -> approved|denied in the
+    // ledger so the resolved truth survives a Gateway restart. Best-effort.
+    if (this.durableLedger) {
+      try {
+        this.durableLedger.resolve({
+          approvalId: recordId,
+          decision: decision === "deny" ? "denied" : "approved",
+          resolvedBy: resolvedBy ?? undefined,
+        });
+      } catch {
+        // Observational mirror; the process-local path stays live.
+      }
     }
     clearTimeout(pending.timer);
     pending.record.resolvedAtMs = Date.now();

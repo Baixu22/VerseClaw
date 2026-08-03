@@ -103,7 +103,7 @@ export function createMemoryQueryTool(options: {
       "entity names.",
     parameters: memoryQuerySchema,
     displaySummary: "Search long-term memory for facts",
-    async execute(toolCallId, params, _signal, _onUpdate) {
+    async execute(_toolCallId, params, _signal, _onUpdate) {
       const args = params as { query?: string; topK?: number; subject?: string };
       const queryText = args.query?.trim();
       if (!queryText) {
