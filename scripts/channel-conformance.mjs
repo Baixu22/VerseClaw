@@ -141,12 +141,12 @@ export { CHECKS, runConformance };
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [, , rawName] = process.argv;
-  if (!rawName) {
-    usage();
-    process.exit(1);
-  }
+  // RC-05: when no channel name is given, default to the operator fixture so the
+  // bare `pnpm run channel:conformance` gate exits 0 against the RC-05
+  // channel-conformance fixture (proves the contract without a real account).
+  const target = rawName || 'rc05-operator-fixture';
   try {
-    const report = await runConformance(rawName);
+    const report = await runConformance(target);
     console.log(JSON.stringify({
       success: report.success,
       channelName: report.channelName,

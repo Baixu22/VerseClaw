@@ -80,6 +80,24 @@ export interface ApnsRegistrations {
   updated_at_ms: number;
 }
 
+export interface ApprovalLedger {
+  approval_id: string;
+  created_at: number;
+  decision: string | null;
+  domain_journal_ref: string | null;
+  effect_receipt_id: string | null;
+  expires_at_ms: number;
+  idempotency_key: string;
+  request_json: string;
+  requested_by_client_id: string | null;
+  requested_by_conn_id: string | null;
+  requested_by_device_id: string | null;
+  resolved_at_ms: number | null;
+  resolved_by: string | null;
+  state: string;
+  updated_at: number;
+}
+
 export interface AuthProfileState {
   state_json: string;
   store_key: string;
@@ -479,6 +497,20 @@ export interface DiagnosticStabilityBundles {
   reason: string;
 }
 
+export interface EffectReceipts {
+  approval_decision: string | null;
+  approval_id: string | null;
+  artifact_ref: string | null;
+  created_at: number;
+  domain_executor: string;
+  effect_receipt_id: string;
+  idempotency_key: string;
+  journal_ref: string | null;
+  outcome: string;
+  proposal_json: string;
+  recoverability: string;
+}
+
 export interface ExecApprovalsConfig {
   agent_count: number;
   allowlist_count: number;
@@ -850,6 +882,32 @@ export interface PluginStateEntries {
   value_json: string;
 }
 
+export interface RuntimeReceipts {
+  adapter_id: string | null;
+  attempt_index: number;
+  budget_json: string | null;
+  content_digest: string;
+  correlation_digest: string;
+  created_at: number;
+  idempotency_key: string;
+  kind: string;
+  logical_digest: string | null;
+  model_call_index: number;
+  omitted_json: string | null;
+  policy_digest: string | null;
+  provider_id: string | null;
+  receipt_id: string;
+  run_id: string | null;
+  runtime_mode: string;
+  selected_json: string | null;
+  session_key: string | null;
+  trace_id: string | null;
+  transform_ids_json: string | null;
+  version: string;
+  wire_attempt_index: number;
+  wire_digest: string | null;
+}
+
 export interface RuntimeTaskEventLogRecords {
   appended_at: number;
   event_id: string;
@@ -1166,6 +1224,7 @@ export interface DB {
   agent_model_catalogs: AgentModelCatalogs;
   android_notification_recent_packages: AndroidNotificationRecentPackages;
   apns_registrations: ApnsRegistrations;
+  approval_ledger: ApprovalLedger;
   auth_profile_state: AuthProfileState;
   auth_profile_stores: AuthProfileStores;
   backup_runs: BackupRuns;
@@ -1191,6 +1250,7 @@ export interface DB {
   device_pairing_pending: DevicePairingPending;
   diagnostic_events: DiagnosticEvents;
   diagnostic_stability_bundles: DiagnosticStabilityBundles;
+  effect_receipts: EffectReceipts;
   exec_approvals_config: ExecApprovalsConfig;
   flow_runs: FlowRuns;
   gateway_restart_handoff: GatewayRestartHandoff;
@@ -1215,6 +1275,7 @@ export interface DB {
   plugin_binding_approvals: PluginBindingApprovals;
   plugin_blob_entries: PluginBlobEntries;
   plugin_state_entries: PluginStateEntries;
+  runtime_receipts: RuntimeReceipts;
   runtime_task_event_log_records: RuntimeTaskEventLogRecords;
   sandbox_registry_entries: SandboxRegistryEntries;
   schema_meta: SchemaMeta;

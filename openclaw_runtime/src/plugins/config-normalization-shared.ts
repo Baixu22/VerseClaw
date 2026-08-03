@@ -6,6 +6,7 @@ import {
 import { normalizeArrayBackedTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
 import { normalizeChatChannelId } from "../channels/ids.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { assertSingleMemorySlotOwner } from "../agents/slot-convergence.js";
 import { defaultSlotIdForKey } from "./slots.js";
 
 /** Canonical plugin config shape consumed by runtime policy and loaders. */
@@ -18,6 +19,8 @@ export type NormalizedPluginsConfig = {
     memory?: string | null;
     contextEngine?: string | null;
   };
+  /** RC-07 slot-convergence errors when an explicit memory slot is not the single owner. */
+  slotConvergenceErrors?: string[];
   entries: Record<
     string,
     {
@@ -230,6 +233,12 @@ export function normalizePluginsConfigWithResolver(
   normalizePluginId: NormalizePluginId = identityNormalizePluginId,
 ): NormalizedPluginsConfig {
   const memorySlot = normalizeSlotValue(config?.slots?.memory);
+  // RC-07 slot convergence: when an explicit memory slot is configured, the
+  // memory slot must be the single owner (default memory-core). A non-owner
+  // selection is rejected so parallel memory writers stay zero.
+  const convergence = memorySlot !== undefined
+    ? assertSingleMemorySlotOwner({ memorySlotId: memorySlot ?? undefined })
+    : { ok: true as const, errors: [] as string[] };
   return {
     enabled: config?.enabled !== false,
     allow: normalizeList(config?.allow, normalizePluginId),
@@ -240,6 +249,7 @@ export function normalizePluginsConfigWithResolver(
       contextEngine: normalizeSlotValue(config?.slots?.contextEngine),
     },
     entries: normalizePluginEntries(config?.entries, normalizePluginId),
+    slotConvergenceErrors: convergence.errors,
   };
 }
 

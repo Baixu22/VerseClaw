@@ -1,7 +1,6 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
 // Source: src/indexing/analyzers/java-treesitter-analyzer.ts (verbatim; import paths localized).
 import Parser from "tree-sitter";
-// @ts-expect-error - tree-sitter-java doesn't have TypeScript definitions
 import Java from "tree-sitter-java";
 import type { AnalyzeFileInput, FileAnalysis, LanguageAnalyzer } from "./types.js";
 import { analyzeWithTreeSitter, type TreeSitterLanguageConfig } from "./tree-sitter-base.js";

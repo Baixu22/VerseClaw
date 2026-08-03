@@ -14,8 +14,11 @@ import {
   redactText,
   readAcceptanceStatus,
   repositoryIdentity,
+  resolveChangedPaths,
   runAcceptance,
+  sha256,
   sha256File,
+  stableJson,
   validateAcceptanceEnvironment,
   validateAcceptanceManifest,
   validateExecutorEvidence,
@@ -510,6 +513,114 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateExecutorEvidence(twoGateManifest, inOrderGates, outputDir)).not.toContain('executor report gate set/order mismatch');
   });
 
+  it('resolveChangedPaths fails closed for missing, blank, or invalid base refs without any fallback', () => {
+    const root = createFixtureRepository();
+    // A real changed path must be detectable through an explicit ref only.
+    expect(() => resolveChangedPaths(root, {})).toThrow(/--since/);
+    expect(() => resolveChangedPaths(root, { since: undefined })).toThrow(/--since/);
+    expect(() => resolveChangedPaths(root, { since: '' })).toThrow(/--since/);
+    expect(() => resolveChangedPaths(root, { since: '   ' })).toThrow(/--since/);
+    expect(() => resolveChangedPaths(root, { since: 'no-such-ref' })).toThrow(/invalid or missing base ref/);
+    // An explicit changedPaths list never touches the base ref machinery.
+    expect(resolveChangedPaths(root, { changedPaths: ['src/a.ts', 'src/b.ts'] })).toEqual(['src/a.ts', 'src/b.ts']);
+  });
+
+  it('createAcceptancePlan fails closed without an explicit since or changed paths', () => {
+    const root = createFixtureRepository();
+    const spec = {
+      path: 'harness/specs/tasks/fixture.md',
+      data: { id: 'fixture-task', title: 'Fixture task', humanEvidence: 'not-required', requiredRules: [] },
+      body: '# fixture\n',
+    };
+    expect(() => createAcceptancePlan({
+      root,
+      spec,
+      changedPaths: undefined,
+      since: undefined,
+      runId: 'fixture-no-since',
+      createdAt: '2026-07-31T00:00:00.000Z',
+    })).toThrow(/--since/);
+    // Explicit changedPaths never requires a base ref.
+    const plan = createAcceptancePlan({
+      root,
+      spec,
+      changedPaths: ['src/a.ts'],
+      since: undefined,
+      runId: 'fixture-changed-paths',
+      createdAt: '2026-07-31T00:00:00.000Z',
+    });
+    expect(plan.changedPaths).toEqual(['src/a.ts']);
+    expect(plan.baseRef).toBeNull();
+  });
+
+  it('rejects executor reports with missing, blank, non-string, or mismatched actors and bad report digests', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const baseReport = {
+      schema: ACCEPTANCE_SCHEMA,
+      role: 'executor',
+      runId: manifest.runId,
+      source: { manifestDigest: manifest.manifestDigest },
+      candidate: manifest.candidate,
+      result: 'pass',
+      engineeringAcceptedByAgent: false,
+      controlledArtifacts: [],
+      gates: [{ id: 'fixture-gate', result: 'pass' }],
+    };
+    const withDigest = (report) => {
+      const copy = { ...report, reportDigest: undefined };
+      copy.reportDigest = sha256(stableJson(copy));
+      return copy;
+    };
+
+    const missingActor = withDigest(baseReport);
+    delete missingActor.actor;
+    expect(validateExecutorEvidence(manifest, missingActor, outputDir)).toContain('executor report actor is missing, blank, or not a string');
+
+    const blankActor = withDigest({ ...baseReport, actor: '   ' });
+    expect(validateExecutorEvidence(manifest, blankActor, outputDir)).toContain('executor report actor is missing, blank, or not a string');
+
+    const nonStringActor = withDigest({ ...baseReport, actor: { id: 7 } });
+    expect(validateExecutorEvidence(manifest, nonStringActor, outputDir)).toContain('executor report actor is missing, blank, or not a string');
+
+    const mismatchedField = withDigest({ ...baseReport, actor: 'executor-a', executorActor: 'executor-b' });
+    expect(validateExecutorEvidence(manifest, mismatchedField, outputDir)).toContain('executor report actor and executorActor fields differ');
+
+    const tamperedDigest = { ...withDigest({ ...baseReport, actor: 'executor-a' }), reportDigest: 'f'.repeat(64) };
+    expect(validateExecutorEvidence(manifest, tamperedDigest, outputDir)).toContain('executor report semantic reportDigest mismatch');
+
+    const missingDigest = { ...baseReport, actor: 'executor-a' };
+    expect(validateExecutorEvidence(manifest, missingDigest, outputDir)).toContain('executor report semantic reportDigest is missing or malformed');
+
+    const valid = withDigest({ ...baseReport, actor: 'executor-a', executorActor: 'executor-a' });
+    expect(validateExecutorEvidence(manifest, valid, outputDir)).not.toContain('executor report actor is missing, blank, or not a string');
+    expect(validateExecutorEvidence(manifest, valid, outputDir)).not.toContain('executor report actor and executorActor fields differ');
+    expect(validateExecutorEvidence(manifest, valid, outputDir)).not.toContain('executor report semantic reportDigest mismatch');
+    expect(validateExecutorEvidence(manifest, valid, outputDir)).not.toContain('executor report semantic reportDigest is missing or malformed');
+  });
+
+  it('rejects an executor report with an identical verifier identity even when other evidence is valid', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'shared-identity', env: { PATH: process.env.PATH ?? '' }, spawn: passingSpawn });
+    expect(executor.result).toBe('pass');
+
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'shared-identity',
+      env: { PATH: process.env.PATH ?? '' },
+      executorReport: executor,
+      spawn: passingSpawn,
+    });
+    expect(verifier).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    expect(verifier.failures.join('\n')).toContain('executor and verifier identities must differ');
+  });
+
   it('refuses engineering acceptance when verifier rerun contradicts executor result contracts', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
@@ -531,15 +642,46 @@ describe('Agent Engineering Acceptance', () => {
     expect(verifier.failures.join('\n')).toContain('executor/verifier result contract differs');
   });
 
-  it('CLI plan/status succeed and a failed full run persists a NO-GO final report', () => {
+  it('fails closed for a missing --since ref and never falls back to the HEAD file list', () => {
+    const specPath = 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md';
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
+    temporaryPaths.push(outputDir);
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      // Missing --since (and no --changed): the plan must fail closed, not fall
+      // back to an implicit HEAD^/HEAD file list.
+      const missingSinceExit = acceptanceCliMain(['plan', '--spec', specPath, '--output-dir', outputDir]);
+      expect(missingSinceExit).toBe(1);
+      expect(error.mock.calls.some((call) => String(call[0] ?? '').includes('--since'))).toBe(true);
+
+      // Invalid --since ref: must fail closed, never reuse the last HEAD diff.
+      const invalidExit = acceptanceCliMain(['plan', '--spec', specPath, '--since', 'this-ref-does-not-exist', '--output-dir', outputDir]);
+      expect(invalidExit).toBe(1);
+      expect(existsSync(join(outputDir, 'manifest.json'))).toBe(false);
+
+      // Invalid --since on the full path also fails closed before any gate runs.
+      vi.stubEnv('NODE_TLS_REJECT_UNAUTHORIZED', '0');
+      const invalidFullExit = acceptanceCliMain(['full', '--spec', specPath, '--output-dir', outputDir, '--since', 'this-ref-does-not-exist']);
+      expect(invalidFullExit).toBe(1);
+      expect(existsSync(join(outputDir, 'final-report.json'))).toBe(false);
+    } finally {
+      log.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it('CLI plan with an explicit since succeeds and a TLS-poisoned full run persists a NO-GO final report', () => {
     const specPath = 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md';
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-cli-'));
     temporaryPaths.push(outputDir);
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
-      const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--output-dir', outputDir]);
+      const planExit = acceptanceCliMain(['plan', '--spec', specPath, '--since', 'HEAD^', '--output-dir', outputDir]);
       expect(planExit).toBe(0);
       expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
+      const manifest = JSON.parse(readFileSync(join(outputDir, 'manifest.json'), 'utf8'));
+      expect(manifest.baseRef).toBe('HEAD^');
 
       const statusExit = acceptanceCliMain(['status', '--output-dir', outputDir]);
       expect(statusExit).toBe(0);
@@ -595,5 +737,84 @@ describe('Agent Engineering Acceptance', () => {
     expect(flatStatus.runs).toHaveLength(1);
     expect(flatStatus.runs[0]).toMatchObject({ runId: 'flat-run', result: 'NO-GO', engineeringAcceptedByAgent: false });
     expect(flatStatus.runs[0].path).toBe('final-report.json');
+  });
+
+  it('proves RC-00 end-to-end on a real isolated fixture with real gate execution', () => {
+    // This is the RC-00 exit proof: a clean fixture repo, a real (unmocked)
+    // detached-worktree gate run, a separately identified Executor and Verifier,
+    // explicit output-dir, redacted logs, and green verifier/final reports.
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-real-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root, {
+      gate: {
+        id: 'fixture-real-gate',
+        name: 'Fixture real gate',
+        profile: 'fast',
+        command: 'node',
+        args: ['-e', 'console.log("Tests 1 passed (1)")'],
+        required: true,
+        allowSkip: false,
+        timeoutMs: 30_000,
+        safety: { network: 'none', productionEffects: false, humanEvidence: false },
+        testExpectation: { requireCounts: true, expectedSkips: 0 },
+      },
+    });
+    const env = { PATH: process.env.PATH ?? '' };
+
+    // Executor (real gate run in a detached worktree).
+    const executor = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'rc00-executor', env });
+    expect(executor).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
+    expect(executor.role).toBe('executor');
+    expect(executor.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+    expect(existsSync(join(outputDir, 'executor-report.json'))).toBe(true);
+    expect(existsSync(join(outputDir, 'logs', 'fixture-real-gate.stdout.log'))).toBe(true);
+    expect(executor.testCounts).toMatchObject({ passed: 1, failed: 0, skipped: 0, total: 1 });
+    // Logs are redacted: the fixture output dir must not leak into the log.
+    const logText = readFileSync(join(outputDir, 'logs', 'fixture-real-gate.stdout.log'), 'utf8');
+    expect(logText).not.toContain(tmpdir());
+
+    // Independent Verifier reruns the same manifest in a second worktree.
+    const verifier = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'rc00-verifier',
+      env,
+      executorReport: executor,
+    });
+    expect(verifier).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true, role: 'verifier' });
+    expect(verifier.executorActor).toBe('rc00-executor');
+    expect(verifier.verifierActor).toBe('rc00-verifier');
+    expect(verifier.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+    expect(verifier.consistency).toMatchObject({ identicalGateContracts: true });
+    expect(existsSync(join(outputDir, 'verifier-report.json'))).toBe(true);
+    expect(existsSync(join(outputDir, 'final-report.json'))).toBe(true);
+
+    const finalReport = JSON.parse(readFileSync(join(outputDir, 'final-report.json'), 'utf8'));
+    expect(finalReport).toMatchObject({
+      result: 'pass',
+      engineeringAcceptedByAgent: true,
+      role: 'verifier',
+      executorActor: 'rc00-executor',
+      verifierActor: 'rc00-verifier',
+      conclusion: { verifierRequired: true, allowedPromotion: false },
+    });
+    expect(finalReport.safety).toMatchObject({ liveReady: false, productApproved: false, defaultOn: false, promotionAuthorized: false });
+
+    // A second Agent reproduction: a fresh output dir, same manifest, same
+    // identities, must independently produce a green final report.
+    const secondOutput = mkdtempSync(join(tmpdir(), 'agent-acceptance-real2-'));
+    temporaryPaths.push(secondOutput);
+    const executor2 = runAcceptance(manifest, { sourceRoot: root, outputDir: secondOutput, actor: 'rc00-executor', env });
+    const verifier2 = verifyAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir: secondOutput,
+      actor: 'rc00-verifier',
+      env,
+      executorReport: executor2,
+    });
+    expect(verifier2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
+    const finalReport2 = JSON.parse(readFileSync(join(secondOutput, 'final-report.json'), 'utf8'));
+    expect(finalReport2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
   });
 });

@@ -232,8 +232,25 @@ export function repositoryIdentity(root = REPOSITORY_ROOT, options = {}) {
   };
 }
 
+function assertBaseRef(root, since) {
+  if (typeof since !== 'string' || since.trim() === '') {
+    throw new Error('acceptance plan requires --since <ref> (or explicit --changed paths); the implicit HEAD^ default is removed');
+  }
+  const base = since.trim();
+  // The base must resolve to a real commit that is an ancestor of HEAD.
+  const rev = runGit(root, ['rev-parse', '--verify', `${base}^{commit}`], { allowFailure: true });
+  if (rev.status !== 0 || !/^[a-f0-9]{40}$/u.test(rev.stdout)) {
+    throw new Error(`invalid or missing base ref: ${since}`);
+  }
+  const mergeBase = runGit(root, ['merge-base', '--is-ancestor', base, 'HEAD'], { allowFailure: true });
+  if (mergeBase.status !== 0) {
+    throw new Error(`base ref is not an ancestor of HEAD: ${since}`);
+  }
+  return base;
+}
+
 function gitChangedPaths(root, since) {
-  const base = since || 'HEAD^';
+  const base = assertBaseRef(root, since);
   const result = runGit(root, ['diff', '--name-only', '-z', `${base}..HEAD`]);
   return result.stdout
     .split('\0')
@@ -246,12 +263,9 @@ export function resolveChangedPaths(root = REPOSITORY_ROOT, options = {}) {
   if (Array.isArray(options.changedPaths)) {
     return [...new Set(options.changedPaths.map(normalizePath).filter(Boolean))].sort(comparePath);
   }
-  try {
-    return gitChangedPaths(root, options.since);
-  } catch {
-    const fallback = runGit(root, ['show', '--format=', '--name-only', 'HEAD']);
-    return [...new Set(fallback.stdout.split(/\r?\n/u).map(normalizePath).filter(Boolean))].sort(comparePath);
-  }
+  // No implicit HEAD^ default and no catch-all fallback: an invalid or missing
+  // --since ref must fail closed instead of silently using the HEAD file list.
+  return gitChangedPaths(root, options.since);
 }
 
 function globToRegExp(glob) {
@@ -457,6 +471,16 @@ export function createAcceptancePlan(options = {}) {
   const mode = options.mode ?? 'full';
   if (!['full', 'fast'].includes(mode)) throw new Error(`unsupported acceptance mode: ${mode}`);
   const identity = repositoryIdentity(root);
+  const hasExplicitChangedPaths = Array.isArray(options.changedPaths);
+  // Invalid or missing base refs must fail closed. A plan needs either an
+  // explicit --since ref or explicit --changed paths; neither may be omitted
+  // or fall back to the HEAD file list.
+  let baseRef = null;
+  if (!hasExplicitChangedPaths) {
+    baseRef = assertBaseRef(root, options.since);
+  } else if (typeof options.since === 'string' && options.since.trim() !== '') {
+    baseRef = assertBaseRef(root, options.since);
+  }
   const changedPaths = resolveChangedPaths(root, options);
   const coverage = inferCoverage(changedPaths);
   const profiles = inferProfiles(spec, coverage, mode);
@@ -486,7 +510,7 @@ export function createAcceptancePlan(options = {}) {
       ref: identity.ref,
       cleanAtPlan: identity.clean,
     },
-    baseRef: options.since ?? 'HEAD^',
+    baseRef,
     changedPaths,
     coverage,
     requiredProfiles: profiles,
@@ -1305,6 +1329,24 @@ export function validateExecutorEvidence(manifest, executorReport, outputDir) {
   if (executorReport?.source?.manifestDigest !== manifest.manifestDigest) errors.push('executor report manifest digest mismatch');
   if (executorReport?.candidate?.commit !== manifest.candidate.commit || executorReport?.candidate?.tree !== manifest.candidate.tree) {
     errors.push('executor report candidate identity mismatch');
+  }
+  const actor = executorReport?.actor;
+  if (typeof actor !== 'string' || actor.trim() === '') {
+    errors.push('executor report actor is missing, blank, or not a string');
+  }
+  if (executorReport?.executorActor !== undefined) {
+    if (typeof executorReport.executorActor !== 'string' || executorReport.executorActor.trim() === '') {
+      errors.push('executor report executorActor is missing, blank, or not a string');
+    } else if (executorReport.executorActor !== actor) {
+      errors.push('executor report actor and executorActor fields differ');
+    }
+  }
+  const reportDigest = executorReport?.reportDigest;
+  if (typeof reportDigest !== 'string' || !/^[a-f0-9]{64}$/u.test(reportDigest)) {
+    errors.push('executor report semantic reportDigest is missing or malformed');
+  } else {
+    const recomputed = sha256(stableJson({ ...executorReport, reportDigest: undefined }));
+    if (recomputed !== reportDigest) errors.push('executor report semantic reportDigest mismatch');
   }
   const expectedIds = manifest.gates.map((gate) => gate.id);
   const actualIds = (executorReport?.gates ?? []).map((gate) => gate.id);

@@ -6,6 +6,8 @@ import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../config/agent-limits.
 import { storeRuntimeTrace } from "../observability/trace-buffer.js";
 import { createRoleFirstTrace, completeObservedRun } from "../observability/role-first-observer.js";
 import type { ObservabilityTraceRecorder } from "../observability/trace-recorder.js";
+import { isTruthyEnvValue } from "../infra/env.js";
+import { projectTaskLoopRun } from "./task-loop-taskflow-projection.js";
 import {
   localControlPlaneReportEnabled,
   recordLocalControlPlaneReport,
@@ -414,6 +416,12 @@ export type RunObservedFn = (
 const taskLoopRuns = new Map<string, TaskLoopRunRecord>();
 const taskLoopRuntimeStatusByRun = new WeakMap<TaskLoopRunRecord, RuntimeTaskStatus>();
 const taskLoopPhaseLog = createSubsystemLogger("agents/task-loop");
+
+/** RC-06D projection gate (default-off). Reads env so operators can enable the
+ *  Task Loop -> TaskFlow read-only projection. */
+function taskLoopProjectionEnabled(): boolean {
+  return isTruthyEnvValue(process.env.RC06D_TASK_LOOP_PROJECTION);
+}
 const runtimeEventShadowFlags = new WeakMap<
   TaskLoopRunRecord,
   {
@@ -2677,6 +2685,27 @@ function emit(
   recordTaskLoopMissionLifecycleReport(record, event);
   // DCS Stage 2: primary task_phase_change producer (exactly once per true runtime status change).
   emitTaskLoopTaskPhaseChange(record, event);
+  // RC-06D read-only projection into TaskFlow (flow_runs) behind a default-off
+  // flag. Observational only: the legacy Task Loop Map remains authoritative;
+  // long_task_checkpoints retain checkpoint material only; a projection failure
+  // never changes Task Loop behavior and never executes effects.
+  if (taskLoopProjectionEnabled()) {
+    try {
+      projectTaskLoopRun(
+        {
+          runId: record.loopRunId,
+          sessionKey: record.sessionKey,
+          status: record.status,
+          phase: record.phase,
+          waiting: record.status === "blocked",
+          checkpointRef: `checkpoint:${record.loopRunId}`,
+        },
+        { enabled: true },
+      );
+    } catch {
+      // Best-effort projection; the legacy Task Loop state stays authoritative.
+    }
+  }
 }
 
 /**

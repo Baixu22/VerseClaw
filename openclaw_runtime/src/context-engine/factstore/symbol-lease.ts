@@ -277,19 +277,20 @@ export function __resetSymbolLeases(): void {
 /** Compact WAL for tests / maintenance (best-effort). */
 export function compactSymbolLeaseWal(workspaceRoot: string): void {
   const s = storeFor(workspaceRoot, "wal");
-  if (!s.walPath) return;
+  const walPath = s.walPath;
+  if (!walPath) return;
   withLock(s, () => {
     hydrateFromWal(s);
     const lines: string[] = [];
     for (const lease of s.leases.values()) {
       lines.push(JSON.stringify({ op: "acquire", lease, at: lease.acquiredAtMs }));
     }
-    const tmp = `${s.walPath}.tmp`;
+    const tmp = `${walPath}.tmp`;
     writeFileSync(tmp, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
     try {
-      renameSync(tmp, s.walPath);
+      renameSync(tmp, walPath);
     } catch {
-      writeFileSync(s.walPath, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
+      writeFileSync(walPath, lines.length ? `${lines.join("\n")}\n` : "", "utf8");
       try {
         unlinkSync(tmp);
       } catch {

@@ -4,6 +4,7 @@ import type { CliDeps } from "../gateway/cli-runtime/deps.types.js";
 import { createOutboundSendDeps } from "../gateway/cli-runtime/outbound-send-deps.js";
 import type { OpenClawConfig } from "../config/types.js";
 import { formatErrorMessage } from "../infra/errors.js";
+import { isTruthyEnvValue } from "../infra/env.js";
 import { resolveAgentOutboundIdentity } from "../infra/outbound/identity.js";
 import { buildOutboundSessionContext } from "../infra/outbound/session-context.js";
 import { getChildLogger } from "../logging.js";
@@ -131,6 +132,32 @@ export async function sendCronAnnouncePayloadStrict(params: {
   const delivery = await resolveCronAnnounceDelivery(params);
   if (!delivery.ok) {
     throw delivery.error;
+  }
+  // RC-05 production wiring: when the operator-slice flag is enabled, the cron
+  // announce runs the Operator governance slice (durable approval + bounded
+  // message effect + EffectReceipt + restart recovery) before the durable
+  // channel delivery. Flag-off keeps the legacy announce path byte-identical.
+  const sliceEnabled =
+    params.cfg.runtime?.rc05?.operatorSliceEnabled === true ||
+    isTruthyEnvValue(process.env.RC05_OPERATOR_SLICE);
+  if (sliceEnabled) {
+    const { runOperatorSlice } = await import("../agents/operator-slice.js");
+    const sliceResult = runOperatorSlice({
+      identity: {
+        sessionKey: params.target.sessionKey ?? `cron:${params.agentId}`,
+        runId: params.jobId,
+        cronJobId: params.jobId,
+        inboxItemId: `inbox:${params.jobId}`,
+      },
+      effect: { kind: "message", text: params.message },
+      requestJson: { jobId: params.jobId, agentId: params.agentId, message: params.message },
+      approvalDecision: "approved",
+      resolvedBy: "cron-policy",
+      options: { enabled: true },
+    });
+    if (sliceResult.ok !== true) {
+      throw new Error(`RC-05 operator slice rejected announce: ${sliceResult.reason}`);
+    }
   }
   await deliverCronAnnouncePayload({
     deps: params.deps,

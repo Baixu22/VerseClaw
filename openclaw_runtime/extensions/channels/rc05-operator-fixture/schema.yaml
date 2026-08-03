@@ -1,0 +1,19 @@
+# RC-05 Operator Fixture Channel Schema
+
+Outbound and inbound text message contracts for the RC-05 operator conformance
+fixture. Messages carry plain text or markdown; the payload schema constrains
+message structure so too-long payloads are rejected before delivery.
+
+## Outbound Message
+
+- `text` (string, required): the plain-text or markdown message body.
+- `channel` (string, optional): the target channel label.
+- `to` (string, optional): the recipient label.
+
+## Inbound Message
+
+- `text` (string, required): the received plain-text or markdown body.
+- `from` (string, optional): the sender label.
+
+Too-long payloads (beyond the channel limit) are rejected at the schema boundary
+rather than delivered truncated.

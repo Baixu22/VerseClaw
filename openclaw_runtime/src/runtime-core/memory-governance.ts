@@ -218,10 +218,11 @@ export function decideGovernanceAction(
     };
   }
   // 优先级排序: reconcile > rebuild > prune
-  const priority: Record<Exclude<GovernanceActionType, "none">, number> = {
+  const priority: Record<GovernanceActionType, number> = {
     reconcile: 3,
     rebuild: 2,
     prune: 1,
+    none: 0,
   };
   decisions.sort((a, b) => priority[b.action] - priority[a.action]);
   return decisions[0];

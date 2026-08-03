@@ -351,7 +351,13 @@ export function resolveProviderHttpRequestConfig(params: {
     capability: params.capability ?? "other",
     transport: params.transport ?? "http",
     callerHeaders: params.headers
-      ? Object.fromEntries(new Headers(params.headers).entries())
+      ? Object.fromEntries(
+          (() => {
+            const out: Array<[string, string]> = [];
+            new Headers(params.headers).forEach((value, key) => out.push([key, value]));
+            return out;
+          })(),
+        )
       : undefined,
     providerHeaders: params.defaultHeaders,
     precedence: "caller-wins",

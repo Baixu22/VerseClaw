@@ -7,7 +7,7 @@ import type { RuntimeEnv } from "../runtime.js";
 
 /** Loads runtime/source config and resolves command SecretRefs when the agent path needs them. */
 export async function resolveAgentRuntimeConfig(
-  runtime: RuntimeEnv,
+  _runtime: RuntimeEnv,
   params?: { runtimeTargetsChannelSecrets?: boolean },
 ): Promise<{
   loadedRaw: OpenClawConfig;
