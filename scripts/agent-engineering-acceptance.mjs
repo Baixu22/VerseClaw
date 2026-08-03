@@ -7,11 +7,10 @@ import { fileURLToPath } from 'node:url';
 import {
   createAcceptancePlan,
   defaults,
+  sealReport,
   loadManifest,
   readAcceptanceStatus,
   runAcceptance,
-  sha256,
-  stableJson,
   verifyAcceptance,
   writePlan,
 } from './lib/agent-engineering-acceptance.mjs';
@@ -190,7 +189,7 @@ function runFull(args) {
       failures: [...(executor.failures ?? []), 'executor did not pass; verifier rerun not attempted'],
       reportDigest: undefined,
     };
-    finalReport.reportDigest = sha256(stableJson({ ...finalReport, reportDigest: undefined }));
+    sealReport(finalReport);
     writeFileSync(join(outputDir, 'final-report.json'), `${JSON.stringify(finalReport, null, 2)}\n`);
     printJson({ plan: { runId: manifest.runId, manifestDigest: manifest.manifestDigest }, executor: summary(executor) });
     return 1;

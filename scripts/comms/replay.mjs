@@ -1,11 +1,44 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
+export const COMMS_REPLAY_SCHEMA = 'comms-replay-metrics/v1';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DATASET_DIR = path.join(ROOT, 'scripts/comms/datasets');
-const OUTPUT_DIR = path.join(ROOT, 'artifacts/comms');
-const OUTPUT_FILE = path.join(OUTPUT_DIR, 'current-metrics.json');
+
+function gitExecutable() {
+  return process.platform === 'win32' ? 'git.exe' : 'git';
+}
+
+export function candidateIdentity(root = ROOT) {
+  return {
+    commit: execFileSync(gitExecutable(), ['rev-parse', '--verify', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim().toLowerCase(),
+    tree: execFileSync(gitExecutable(), ['rev-parse', '--verify', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim().toLowerCase(),
+  };
+}
+
+export function validateReplayArtifact(value, options = {}) {
+  const errors = [];
+  if (!value || typeof value !== 'object') return ['replay artifact must be an object'];
+  if (value.schema !== COMMS_REPLAY_SCHEMA) errors.push('replay artifact schema mismatch');
+  if (!/^[a-f0-9]{40}$/u.test(String(value.candidate?.commit ?? '')) || !/^[a-f0-9]{40}$/u.test(String(value.candidate?.tree ?? ''))) {
+    errors.push('replay artifact candidate identity is malformed');
+  }
+  if (options.candidate && (
+    value.candidate?.commit !== options.candidate.commit || value.candidate?.tree !== options.candidate.tree
+  )) {
+    errors.push('replay artifact candidate identity mismatch');
+  }
+  if (typeof value.scenario !== 'string' || !value.scenario) errors.push('replay artifact scenario is missing');
+  if (!value.scenarios || typeof value.scenarios !== 'object' || Array.isArray(value.scenarios) || Object.keys(value.scenarios).length === 0) {
+    errors.push('replay artifact scenarios are missing');
+  }
+  if (!value.aggregate || typeof value.aggregate !== 'object' || Array.isArray(value.aggregate)) errors.push('replay artifact aggregate is missing');
+  return errors;
+}
 
 export function percentile(values, p) {
   if (values.length === 0) return 0;
@@ -136,9 +169,14 @@ export async function loadScenario(fileName) {
   return lines.map((line) => JSON.parse(line));
 }
 
-export async function main() {
-  const argScenario = process.argv.find((arg) => arg.startsWith('--scenario='))?.split('=')[1] ?? 'all';
-  const files = (await readdir(DATASET_DIR)).filter((name) => name.endsWith('.jsonl')).sort();
+export async function main(options = {}) {
+  const argv = options.argv ?? process.argv.slice(2);
+  const root = path.resolve(options.root ?? ROOT);
+  const datasetDir = path.resolve(options.datasetDir ?? path.join(root, 'scripts/comms/datasets'));
+  const outputDir = path.resolve(options.outputDir ?? process.env.COMMS_OUTPUT_DIR ?? path.join(root, 'artifacts/comms'));
+  const outputFile = path.join(outputDir, 'current-metrics.json');
+  const argScenario = argv.find((arg) => arg.startsWith('--scenario='))?.split('=')[1] ?? 'all';
+  const files = (await readdir(datasetDir)).filter((name) => name.endsWith('.jsonl')).sort();
   const selectedFiles = argScenario === 'all'
     ? files
     : files.filter((name) => name === `${argScenario}.jsonl`);
@@ -150,24 +188,33 @@ export async function main() {
   const scenarios = {};
   for (const fileName of selectedFiles) {
     const scenarioName = fileName.replace(/\.jsonl$/, '');
-    const events = await loadScenario(fileName);
+    const raw = await readFile(path.join(datasetDir, fileName), 'utf8');
+    const events = raw.split('\n').map((line) => line.trim()).filter(Boolean).map((line) => JSON.parse(line));
     scenarios[scenarioName] = calculateScenarioMetrics(events);
   }
 
   const aggregate = aggregateMetrics(Object.values(scenarios));
   const output = {
+    schema: COMMS_REPLAY_SCHEMA,
     generated_at: new Date().toISOString(),
+    candidate: candidateIdentity(root),
     scenario: argScenario,
     scenarios,
     aggregate,
   };
 
-  await mkdir(OUTPUT_DIR, { recursive: true });
-  await writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2));
-  console.log(`Wrote comms replay metrics to ${OUTPUT_FILE}`);
+  const validationErrors = validateReplayArtifact(output, { candidate: candidateIdentity(root) });
+  if (validationErrors.length > 0) throw new Error(validationErrors.join('; '));
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(outputFile, JSON.stringify(output, null, 2));
+  const persisted = JSON.parse(await readFile(outputFile, 'utf8'));
+  const persistedErrors = validateReplayArtifact(persisted, { candidate: output.candidate });
+  if (persistedErrors.length > 0) throw new Error(`persisted replay artifact invalid: ${persistedErrors.join('; ')}`);
+  console.log(`Wrote comms replay metrics to ${outputFile}`);
+  return output;
 }
 
-const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname);
+const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
 if (isEntrypoint) {
   main().catch((error) => {
     console.error('[comms:replay] failed:', error);

@@ -12,6 +12,7 @@ import {
   scanBackendCommunicationBoundary,
   scanBackendCommunicationBoundaryText,
   touchesCommunicationPath,
+  validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
 } from '../../harness/src/rules.mjs';
@@ -219,5 +220,51 @@ Body`);
   it('allows pages and components to display gatewayReady state', async () => {
     const failures = await scanBackendCommunicationBoundary(['src/components/layout/Sidebar.tsx']);
     expect(failures).toEqual([]);
+  });
+
+  // RC-00R regression. Scenario-less task specs (the RC-00..RC-09 convergence
+  // packages) previously reached only the id/title branch in cli.mjs, so their
+  // declared ownedPaths were inert and any changed path validated clean. These
+  // cases pin the ownership check to the task spec itself.
+  describe('changed-path ownership', () => {
+    const spec = {
+      path: 'harness/specs/tasks/example.md',
+      data: {
+        id: 'example',
+        title: 'Example',
+        touchedAreas: ['scripts/**'],
+        ownedPaths: ['tests/unit/example.test.ts'],
+      },
+    };
+
+    it('accepts changed paths covered by touchedAreas or the task spec ownedPaths', () => {
+      expect(validateChangedPathOwnership(spec, null, [
+        'scripts/lib/thing.mjs',
+        'tests/unit/example.test.ts',
+      ])).toEqual([]);
+    });
+
+    it('rejects a changed path owned by no declared area', () => {
+      const failures = validateChangedPathOwnership(spec, null, [
+        'scripts/lib/thing.mjs',
+        'openclaw_runtime/src/agents/receipt-store.ts',
+      ]);
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toContain('openclaw_runtime/src/agents/receipt-store.ts');
+      expect(failures[0]).not.toContain('scripts/lib/thing.mjs');
+    });
+
+    it('still honours scenario ownedPaths for scenario-bound specs', () => {
+      expect(validateChangedPathOwnership(spec, {
+        data: { ownedPaths: ['openclaw_runtime/src/agents/receipt-store.ts'] },
+      }, ['openclaw_runtime/src/agents/receipt-store.ts'])).toEqual([]);
+    });
+
+    it('fails closed when a spec declares no ownership at all but files changed', () => {
+      const bare = { path: 'harness/specs/tasks/bare.md', data: { id: 'bare', title: 'Bare' } };
+      expect(validateChangedPathOwnership(bare, null, ['scripts/x.mjs'])).toHaveLength(1);
+      // No changed files is the only case that legitimately produces no failure.
+      expect(validateChangedPathOwnership(bare, null, [])).toEqual([]);
+    });
   });
 });
