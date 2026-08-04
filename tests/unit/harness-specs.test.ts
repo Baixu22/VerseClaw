@@ -1,3 +1,8 @@
+import { execFileSync, spawnSync } from 'node:child_process';
+import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -265,6 +270,46 @@ Body`);
       expect(validateChangedPathOwnership(bare, null, ['scripts/x.mjs'])).toHaveLength(1);
       // No changed files is the only case that legitimately produces no failure.
       expect(validateChangedPathOwnership(bare, null, [])).toEqual([]);
+    });
+
+    it('runs the CLI ownership branch for a scenario-less spec', () => {
+      const fixtureRoot = mkdtempSync(join(tmpdir(), 'harness-cli-f4-'));
+      try {
+        cpSync(join(process.cwd(), 'harness', 'src'), join(fixtureRoot, 'harness', 'src'), {
+          recursive: true,
+        });
+        mkdirSync(join(fixtureRoot, 'harness', 'specs', 'tasks'), { recursive: true });
+        writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'scenario-less.md'), `---
+id: scenario-less-fixture
+title: Scenario-less fixture
+touchedAreas:
+  - owned.txt
+---
+
+# Scenario-less fixture
+`, 'utf8');
+        writeFileSync(join(fixtureRoot, 'owned.txt'), 'base\n', 'utf8');
+
+        execFileSync('git', ['init', '--quiet'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.email', 'harness-fixture@example.invalid'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.name', 'Harness Fixture'], { cwd: fixtureRoot });
+        execFileSync('git', ['add', '.'], { cwd: fixtureRoot });
+        execFileSync('git', ['commit', '--quiet', '-m', 'fixture base'], { cwd: fixtureRoot });
+
+        writeFileSync(join(fixtureRoot, 'unowned-change.txt'), 'unowned\n', 'utf8');
+        const result = spawnSync(
+          process.execPath,
+          [join(fixtureRoot, 'harness', 'src', 'cli.mjs'), 'validate', '--spec', 'harness/specs/tasks/scenario-less.md', '--since', 'HEAD'],
+          { cwd: fixtureRoot, encoding: 'utf8' },
+        );
+        const output = `${result.stdout}\n${result.stderr}`;
+
+        expect(result.status).toBe(1);
+        expect(output).toContain('changed files are not covered by touchedAreas or ownedPaths');
+        expect(output).toContain('unowned-change.txt');
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 3 });
+      }
     });
   });
 });
