@@ -1,1 +1,1 @@
-export * from './context-item';
+export * from './context-item.js';

@@ -35,10 +35,8 @@
 import type {
   RuntimeMemoryQueryableFact,
 } from "./memory-context.js";
-import {
-  passesTemporalPolicy,
-  type TemporalPolicy,
-} from "./memory-temporal-policy.js";
+import { passesTemporalPolicy } from "./memory-temporal-policy.js";
+import type { TemporalPolicy } from "./memory-trace.js";
 // Week 7-8 WP2: EntityResolver (canonicalize e1/e2 + 候选 fact entities)
 import type { AliasTable } from "./memory-entity-resolver.js";
 // Week 7-8 WP3: Weighted traversal 排序 (best-first, 偏向 causal 边)

@@ -7,7 +7,7 @@ import {
   remoteForgeHttpStatusMatches,
   type RemoteForgeErrorCode,
   type RemoteForgeErrorV1,
-} from '../types/remote-forge';
+} from '../types/remote-forge.js';
 
 const FALLBACK_REQUEST_ID = 'remote-forge-unattributed';
 
