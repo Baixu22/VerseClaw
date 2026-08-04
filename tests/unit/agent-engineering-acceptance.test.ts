@@ -608,6 +608,57 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.gates).toEqual([]);
   });
 
+  it('refuses to borrow ignored VerseShell resources from the source checkout', () => {
+    const root = createFixtureRepository();
+    const binaryRelative = 'resources/bin/win32-x64/ae.exe';
+    const resourceManifestRelative = 'resources/verseshell/manifest.json';
+    const binaryPath = join(root, ...binaryRelative.split('/'));
+    const resourceManifestPath = join(root, ...resourceManifestRelative.split('/'));
+    const binary = Buffer.from('ignored source-only VerseShell fixture');
+    mkdirSync(join(root, 'resources', 'bin', 'win32-x64'), { recursive: true });
+    mkdirSync(join(root, 'resources', 'verseshell'), { recursive: true });
+    writeFileSync(join(root, '.gitignore'), 'artifacts/\nresources/bin/\n', 'utf8');
+    writeFileSync(binaryPath, binary);
+    writeFileSync(resourceManifestPath, `${JSON.stringify({
+      artifacts: { 'win32-x64': { sha256: sha256File(binaryPath), bytes: binary.length } },
+    }, null, 2)}\n`, 'utf8');
+    git(root, ['add', '.gitignore', resourceManifestRelative]);
+    git(root, ['commit', '--quiet', '-m', 'add fixture resource manifest']);
+
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root, {
+      gate: {
+        id: 'candidate-resource-gate',
+        name: 'Candidate-bound VerseShell resource',
+        profile: 'environment',
+        command: 'internal',
+        args: ['--manifest', resourceManifestRelative, '--binary', binaryRelative],
+        kind: 'provision-verseshell',
+        required: true,
+        allowSkip: false,
+        timeoutMs: 30_000,
+        safety: { network: 'none', productionEffects: false, humanEvidence: false },
+      },
+    });
+
+    const result = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+    });
+
+    expect(result).toMatchObject({ result: 'NO-GO', engineeringAcceptedByAgent: false });
+    const gate = result.gates.find((entry) => entry.id === 'candidate-resource-gate');
+    expect(gate).toMatchObject({ status: 'fail' });
+    expect(gate?.logs?.stderr).toBeTruthy();
+    const gateError = readFileSync(join(outputDir, String(gate?.logs?.stderr)), 'utf8');
+    expect(gateError).toContain(`candidate worktree resource missing: ${binaryRelative}`);
+    expect(gateError).toContain('cannot borrow ignored files from sourceRoot');
+    expect(existsSync(binaryPath)).toBe(true);
+  });
+
   it('rejects a stale candidate SHA that does not match source HEAD', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
