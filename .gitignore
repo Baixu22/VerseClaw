@@ -76,6 +76,11 @@ resources/bin
 
 build/
 artifacts/*
+!artifacts/runtime-authority-convergence/
+artifacts/runtime-authority-convergence/*
+!artifacts/runtime-authority-convergence/rc-01/
+artifacts/runtime-authority-convergence/rc-01/*
+!artifacts/runtime-authority-convergence/rc-01/baseline.json
 !artifacts/dcs-deep-test-week1/
 artifacts/dcs-deep-test-week1/*
 !artifacts/dcs-deep-test-week1/day1-gates.json
