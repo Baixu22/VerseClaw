@@ -1,9 +1,12 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
 const BASELINE_PATH = join(process.cwd(), 'artifacts', 'runtime-authority-convergence', 'rc-01', 'baseline.json');
+const BASELINE_REPO_PATH = 'artifacts/runtime-authority-convergence/rc-01/baseline.json';
+const GENERATOR_PATH = join(process.cwd(), 'scripts', 'rc01-authority-inventory.mjs');
 
 const REQUIRED_MODULES = [
   'taskFlow',
@@ -30,6 +33,51 @@ describe('RC-01 authority inventory baseline', () => {
     const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
     expect(baseline.schema).toBe('runtime-authority-convergence-baseline/v1');
     expect(baseline.acceptedBaseSha).toMatch(/^[a-f0-9]{40}$/);
+  });
+
+  it('is tracked and every declared owner path exists in the candidate', () => {
+    const tracked = execFileSync('git', ['ls-files', '--error-unmatch', BASELINE_REPO_PATH], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    }).trim();
+    expect(tracked).toBe(BASELINE_REPO_PATH);
+
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+    const missing = [];
+    for (const authority of Object.values(baseline.authorities)) {
+      for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
+        for (const writer of authority[list] ?? []) {
+          if (typeof writer?.path !== 'string') continue;
+          const wildcardIndex = writer.path.search(/[?*[\]]/);
+          const ownerRoot = (wildcardIndex >= 0 ? writer.path.slice(0, wildcardIndex) : writer.path).replace(/[\\/]+$/, '');
+          if (!ownerRoot || !existsSync(join(process.cwd(), ownerRoot))) missing.push(writer.path);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('regenerates byte-identically from the explicit accepted base', () => {
+    const original = readFileSync(BASELINE_PATH);
+    const baseline = JSON.parse(original.toString('utf8'));
+    let result;
+    let regenerated;
+    try {
+      result = spawnSync(process.execPath, [GENERATOR_PATH, '--accepted-base', baseline.acceptedBaseSha], {
+        cwd: process.cwd(),
+        encoding: 'utf8',
+      });
+      regenerated = readFileSync(BASELINE_PATH);
+    } finally {
+      writeFileSync(BASELINE_PATH, original);
+    }
+    expect(result.status).toBe(0);
+    expect(regenerated).toEqual(original);
+    const unstagedDiff = spawnSync('git', ['diff', '--exit-code', '--', BASELINE_REPO_PATH], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    });
+    expect(unstagedDiff.status).toBe(0);
   });
 
   it('records source and npm runtime versions with correct capability split', () => {

@@ -3,8 +3,8 @@
 // artifacts/runtime-authority-convergence/rc-01/baseline.json with schema
 // runtime-authority-convergence-baseline/v1. This is a read-only baseline: it
 // classifies every known writer, records source/npm runtime versions and the
-// accepted base SHA, and records the receipt-owner decision with its evidence.
-// No runtime code changes occur.
+// explicitly supplied accepted base SHA, and records the receipt-owner decision
+// with its evidence. No runtime code changes occur.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -37,8 +37,28 @@ function readNpmOpenclawVersion(path) {
   }
 }
 
-const acceptedBaseSha = git(repoRoot, ['rev-parse', 'HEAD']).toLowerCase();
+function parseArgs(argv) {
+  let acceptedBase;
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index];
+    if (argument === '--accepted-base') {
+      const value = argv[index + 1];
+      if (!value || value.startsWith('--')) throw new Error('--accepted-base requires a commit ref');
+      if (acceptedBase) throw new Error('--accepted-base may only be supplied once');
+      acceptedBase = value;
+      index += 1;
+      continue;
+    }
+    throw new Error(`unknown argument: ${argument}`);
+  }
+  if (!acceptedBase) throw new Error('missing required --accepted-base <commit ref>');
+  return acceptedBase;
+}
+
+const acceptedBaseRef = parseArgs(process.argv.slice(2));
+const acceptedBaseSha = git(repoRoot, ['rev-parse', `${acceptedBaseRef}^{commit}`]).toLowerCase();
 if (!/^[a-f0-9]{40}$/.test(acceptedBaseSha)) throw new Error(`invalid acceptedBaseSha: ${acceptedBaseSha}`);
+git(repoRoot, ['merge-base', '--is-ancestor', acceptedBaseSha, 'HEAD']);
 
 const sourceRuntime = readPkgVersion(join(repoRoot, 'openclaw_runtime', 'package.json'));
 const npmOpenclawSpec = readNpmOpenclawVersion(join(repoRoot, 'package.json'));
@@ -47,7 +67,6 @@ const npmRuntime = { name: 'openclaw', spec: npmOpenclawSpec, path: 'package.jso
 const inventory = {
   schema: SCHEMA,
   baselineVersion: 1,
-  generatedAt: new Date().toISOString(),
   acceptedBaseSha,
   sourceRuntimeVersion: { name: sourceRuntime.name, version: sourceRuntime.version, path: 'openclaw_runtime/package.json', runtimeMode: 'source' },
   npmRuntimeVersion: npmRuntime,

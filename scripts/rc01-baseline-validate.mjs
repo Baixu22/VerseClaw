@@ -3,14 +3,19 @@
 // criteria — schema, acceptedBaseSha, source/npm versions, no unclassified
 // writer, every required module present, runtime-family frozen, receipt-owner
 // decision evidence, and product locks unchanged.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 const repoRoot = resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').split('/scripts/')[0]);
 const baselinePath = join(repoRoot, 'artifacts', 'runtime-authority-convergence', 'rc-01', 'baseline.json');
 
 const errors = [];
 const warnings = [];
+
+function git(args) {
+  return spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false });
+}
 
 let baseline;
 try {
@@ -24,6 +29,12 @@ try {
 // 1. Schema and identity.
 if (baseline.schema !== 'runtime-authority-convergence-baseline/v1') errors.push('schema mismatch');
 if (!/^[a-f0-9]{40}$/.test(String(baseline.acceptedBaseSha ?? ''))) errors.push('acceptedBaseSha must be a valid 40-hex SHA');
+const trackedBaseline = git(['ls-files', '--error-unmatch', 'artifacts/runtime-authority-convergence/rc-01/baseline.json']);
+if (trackedBaseline.status !== 0 || trackedBaseline.stdout.trim() !== 'artifacts/runtime-authority-convergence/rc-01/baseline.json') {
+  errors.push('baseline.json must be tracked by git');
+}
+const acceptedBaseAncestor = git(['merge-base', '--is-ancestor', String(baseline.acceptedBaseSha ?? ''), 'HEAD']);
+if (acceptedBaseAncestor.status !== 0) errors.push('acceptedBaseSha must be an ancestor of the candidate HEAD');
 if (baseline.sourceRuntimeVersion?.runtimeMode !== 'source') errors.push('source runtime must declare runtimeMode=source');
 if (baseline.npmRuntimeVersion?.satisfiesReceiptReadiness !== false) errors.push('npm fallback must not satisfy receipt readiness');
 if (!baseline.capabilitySplit?.sourceIsSoleImplementationPath) errors.push('source must be the sole implementation path');
@@ -60,6 +71,11 @@ function checkWriter(writer) {
     return;
   }
   classified += 1;
+  if (typeof writer.path === 'string' && writer.path.length > 0) {
+    const wildcardIndex = writer.path.search(/[?*[\]]/);
+    const ownerRoot = (wildcardIndex >= 0 ? writer.path.slice(0, wildcardIndex) : writer.path).replace(/[\\/]+$/, '');
+    if (!ownerRoot || !existsSync(join(repoRoot, ownerRoot))) errors.push(`owner path missing in candidate: ${writer.path}`);
+  }
   for (const [name, pattern] of Object.entries(requiredModules)) {
     if (pattern.test(writer.path ?? '')) foundModules.add(name);
   }
