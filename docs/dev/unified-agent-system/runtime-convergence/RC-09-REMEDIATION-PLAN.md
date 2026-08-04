@@ -1,10 +1,10 @@
 # RC-09 NO-GO 修复与重新送审计划
 
-> 状态：approved-for-planning / implementation-not-started  
-> 日期：2026-08-03  
-> 失败候选：`fac6327a2d4c03b7517daa2fd819b891086d912c`  
-> 原基线：`6493d5cce6fbfa558aa26eb4cfb5a4cd71504664`  
-> 审计证据：`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/independent-audit-2026-08-03.md`  
+> 状态：approved-for-planning / implementation-not-started
+> 日期：2026-08-03
+> 失败候选：`fac6327a2d4c03b7517daa2fd819b891086d912c`
+> 原基线：`6493d5cce6fbfa558aa26eb4cfb5a4cd71504664`
+> 审计证据：`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/independent-audit-2026-08-03.md`
 > 当前结论：`NO-GO`；RC-10 保持 blocked，不授权真人 provider/channel 验收、default-on、promotion 或 done。
 
 ## 1. 目标与 PASS 定义
