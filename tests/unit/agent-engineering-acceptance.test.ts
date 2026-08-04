@@ -1091,6 +1091,30 @@ describe('Agent Engineering Acceptance', () => {
     expect(finalReport2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
   });
 
+  it('runs the RC-00 bootstrap script with a canonical plan digest', () => {
+    // Keep the checked-in bootstrap proof covered as an executable entrypoint.
+    // Calling digestManifest for planDigest makes its own manifest fail closed
+    // before the Executor can run, despite the library-level proof remaining green.
+    const outputDir = mkdtempSync(join(tmpdir(), 'rc00-bootstrap-proof-'));
+    temporaryPaths.push(outputDir);
+
+    const output = execFileSync(
+      process.execPath,
+      ['scripts/rc00-acceptance-bootstrap.mjs', outputDir],
+      { cwd: process.cwd(), encoding: 'utf8' },
+    );
+
+    expect(output).toContain('RC-00 bootstrap proof PASSED');
+    const finalReport = JSON.parse(readFileSync(join(outputDir, 'final-report.json'), 'utf8'));
+    expect(finalReport).toMatchObject({
+      role: 'verifier',
+      result: 'pass',
+      engineeringAcceptedByAgent: true,
+      executorActor: 'rc00-executor',
+      verifierActor: 'rc00-verifier',
+    });
+  });
+
   it('validates engineering and human convergence evidence and rejects semantic tampering', () => {
     const { root, base, baselineRelative } = createConvergenceFixture();
     const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-convergence');
