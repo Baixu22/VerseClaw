@@ -5,10 +5,8 @@ import {
   mkdtempSync,
   readFileSync,
   readdirSync,
-  readlinkSync,
   rmSync,
   statSync,
-  symlinkSync,
   writeFileSync,
   copyFileSync,
 } from 'node:fs';
@@ -455,27 +453,20 @@ function buildGates(profiles, options = {}) {
     command: 'pnpm',
     args: ['--dir', 'openclaw_runtime', 'install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
   });
-  // resources/bin/win32-x64/ae.exe is a source-built VerseShell binary that is
-  // gitignored by design (reproducible via scripts/verseshell-bundle.mjs sync)
-  // and required by tests/unit/verseshell-manifest.test.ts and the UAS-05/06
-  // lifecycle tests. A clean detached worktree has no copy, so provision it
-  // from the source repository with fail-closed integrity verification against
-  // the committed manifest. The binary stays gitignored, so the worktree
-  // remains clean under repositoryIdentity. The UAS-06 canary stub
-  // artifacts/uas-06-single-local-exec-canary/live-observations.json is also
-  // gitignored (artifacts/*) yet read by
-  // tests/unit/uas-06-single-local-exec-canary.test.ts; it is a fixed empty
-  // observations stub (non-executing channel), so a straight copy suffices.
+  // Formal acceptance must not borrow ignored inputs from the implementation
+  // checkout. These resources must exist in the detached candidate because
+  // they are tracked or generated from committed offline inputs by an earlier
+  // gate. Otherwise the candidate is not self-contained and is NO-GO.
   add({
     id: 'provision-verseshell-resources',
     profile: 'environment',
-    name: 'Provision VerseShell gitignored resources (ae.exe + canary stub)',
+    name: 'Verify candidate-bound VerseShell resources',
     command: 'internal',
     args: [
       '--manifest', 'resources/verseshell/manifest.json',
       '--binary', 'resources/bin/win32-x64/ae.exe',
-      '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
-      '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
+      '--resource', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      '--resource', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
       '--electron',
     ],
   }, { kind: 'provision-verseshell' });
@@ -952,15 +943,9 @@ function runTf0009Adapter(gate, options = {}) {
 }
 
 /**
- * Provision a gitignored, source-built binary into the detached acceptance
- * worktree with fail-closed integrity verification against the committed
- * manifest. The binary (e.g. resources/bin/win32-x64/ae.exe for the VerseShell
- * process-lifecycle tests) is reproducible from source via
- * scripts/verseshell-bundle.mjs sync but is not part of git state, so a clean
- * detached worktree has no copy. This gate copies it from the source
- * repository and verifies its SHA-256 and byte length against the manifest's
- * recorded artifact entry. Missing source binary, missing manifest entry, or a
- * hash/size mismatch all fail the gate.
+ * Verify candidate-bound VerseShell resources. This gate never copies ignored
+ * files or Electron from the source checkout: a detached candidate must create
+ * every required input from committed, offline inputs.
  */
 function runVerseShellBinaryProvision(gate, options = {}) {
   const startedAt = new Date().toISOString();
@@ -1000,67 +985,62 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     const manifestRelative = argv[argv.indexOf('--manifest') + 1];
     const binaryRelative = argv[argv.indexOf('--binary') + 1];
     if (!manifestRelative || !binaryRelative) return fail('provision gate requires --manifest and --binary');
-    const sourceRoot = options.sourceRoot;
     const worktree = options.cwd;
-    if (!sourceRoot || !worktree) return fail('provision gate requires sourceRoot and cwd');
-    const sourceBinary = resolve(sourceRoot, binaryRelative);
-    if (!existsSync(sourceBinary)) {
-      return fail(`source binary missing: ${binaryRelative} (build it with scripts/verseshell-bundle.mjs sync)`);
+    if (!worktree) return fail('provision gate requires cwd');
+    const candidatePath = (relativePath, label) => {
+      const fullPath = resolve(worktree, relativePath);
+      if (!pathInside(fullPath, worktree)) throw new Error(`${label} escapes candidate worktree: ${relativePath}`);
+      return fullPath;
+    };
+    const candidateBinary = candidatePath(binaryRelative, 'binary path');
+    if (!existsSync(candidateBinary)) {
+      return fail(`candidate worktree resource missing: ${binaryRelative}; formal acceptance cannot borrow ignored files from sourceRoot`);
     }
-    const manifestPath = resolve(worktree, manifestRelative);
+    const manifestPath = candidatePath(manifestRelative, 'manifest path');
     if (!existsSync(manifestPath)) return fail(`committed manifest missing in worktree: ${manifestRelative}`);
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
     const artifact = manifest.artifacts?.['win32-x64'];
     if (!artifact || typeof artifact.sha256 !== 'string' || !Number.isSafeInteger(artifact.bytes)) {
       return fail('committed manifest lacks win32-x64 artifact sha256/bytes');
     }
-    const sourceBytes = readFileSync(sourceBinary);
-    const sourceDigest = createHash('sha256').update(sourceBytes).digest('hex');
-    if (sourceDigest !== artifact.sha256 || sourceBytes.length !== artifact.bytes) {
-      return fail(`source binary does not match committed manifest (sha256 ${sourceDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${sourceBytes.length} expected ${artifact.bytes})`);
+    const candidateBytes = readFileSync(candidateBinary);
+    const candidateDigest = createHash('sha256').update(candidateBytes).digest('hex');
+    if (candidateDigest !== artifact.sha256 || candidateBytes.length !== artifact.bytes) {
+      return fail(`candidate binary does not match committed manifest (sha256 ${candidateDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${candidateBytes.length} expected ${artifact.bytes})`);
     }
-    const dest = resolve(worktree, binaryRelative);
-    mkdirSync(dirname(dest), { recursive: true });
-    copyFileSync(sourceBinary, dest);
+    const dest = candidateBinary;
     const provisionedBytes = readFileSync(dest);
     const provisionedDigest = createHash('sha256').update(provisionedBytes).digest('hex');
     if (provisionedDigest !== artifact.sha256 || provisionedBytes.length !== artifact.bytes) {
       return fail('provisioned binary verification failed in worktree');
     }
-    let stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
-    const copied = [];
-    const copyIndex = argv.indexOf('--copy');
-    const copyRelativePaths = copyIndex >= 0
-      ? argv.slice(copyIndex + 1).filter((value) => !value.startsWith('--'))
-      : [];
-    for (const copyRelative of copyRelativePaths) {
-      const sourcePath = resolve(sourceRoot, copyRelative);
-      if (!existsSync(sourcePath)) return fail(`provision source missing: ${copyRelative}`);
-      const destPath = resolve(worktree, copyRelative);
-      mkdirSync(dirname(destPath), { recursive: true });
-      copyFileSync(sourcePath, destPath);
-      copied.push(copyRelative);
+    let stdout = `verified candidate-bound ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) against committed manifest\n`;
+    const resourceRelativePaths = argv
+      .flatMap((value, index) => value === '--resource' ? [argv[index + 1]] : [])
+      .filter((value) => typeof value === 'string' && value.length > 0 && !value.startsWith('--'));
+    for (const resourceRelative of resourceRelativePaths) {
+      const resourcePath = candidatePath(resourceRelative, 'resource path');
+      if (!existsSync(resourcePath)) {
+        return fail(`candidate worktree resource missing: ${resourceRelative}; formal acceptance cannot borrow ignored files from sourceRoot`);
+      }
+      if (!statSync(resourcePath).isFile()) return fail(`candidate worktree resource is not a file: ${resourceRelative}`);
     }
-    if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
+    if (resourceRelativePaths.length > 0) stdout += `verified candidate-bound resources: ${resourceRelativePaths.join(', ')}\n`;
     if (argv.includes('--electron')) {
-      const sourceElectron = resolve(sourceRoot, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
       const worktreeElectron = resolve(worktree, 'node_modules/.pnpm/electron@40.8.4/node_modules/electron');
-      const sourceDist = join(sourceElectron, 'dist');
-      const sourcePathTxt = join(sourceElectron, 'path.txt');
-      if (!existsSync(sourceDist) || !existsSync(sourcePathTxt)) {
-        return fail('electron dist/path.txt missing in source repository (run electron postinstall or install without --ignore-scripts)');
+      const candidateElectron = worktreeElectron;
+      const candidateDist = join(candidateElectron, 'dist');
+      const candidatePathTxt = join(candidateElectron, 'path.txt');
+      if (!existsSync(candidateDist) || !existsSync(candidatePathTxt)) {
+        return fail('candidate worktree electron dist/path.txt missing; generate it from candidate-bound offline inputs');
       }
       const worktreeDist = join(worktreeElectron, 'dist');
-      rmSync(worktreeDist, { recursive: true, force: true });
-      mkdirSync(worktreeDist, { recursive: true });
-      copyRecursiveSync(sourceDist, worktreeDist);
-      copyFileSync(sourcePathTxt, join(worktreeElectron, 'path.txt'));
-      const entry = readFileSync(join(worktreeElectron, 'path.txt'), 'utf8').trim();
-      const provisionedElectron = join(worktreeDist, entry);
-      if (!existsSync(provisionedElectron)) {
-        return fail(`electron binary not provisioned: expected ${entry} in dist`);
+      const entry = readFileSync(candidatePathTxt, 'utf8').trim();
+      const candidateBinary = resolve(worktreeDist, entry);
+      if (!entry || !pathInside(candidateBinary, worktreeDist) || !existsSync(candidateBinary)) {
+        return fail(`candidate worktree electron binary missing: expected ${entry || '<empty>'} in dist`);
       }
-      stdout += `provisioned electron dist (${readdirSync(worktreeDist).length} entries, path.txt=${entry})\n`;
+      stdout += `verified candidate-bound electron dist (${readdirSync(worktreeDist).length} entries, path.txt=${entry})\n`;
     }
     return {
       ...base,
@@ -1085,33 +1065,6 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     };
   } catch (error) {
     return fail(error instanceof Error ? error.message : String(error));
-  }
-}
-
-/**
- * Recursively copy a directory tree. Used to provision the project-local
- * Electron binary (dist/) that pnpm --ignore-scripts does not produce in a
- * detached worktree.
- */
-function copyRecursiveSync(sourceDir, destDir) {
-  mkdirSync(destDir, { recursive: true });
-  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
-    const sourcePath = join(sourceDir, entry.name);
-    const destPath = join(destDir, entry.name);
-    if (entry.isDirectory()) {
-      copyRecursiveSync(sourcePath, destPath);
-    } else if (entry.isFile()) {
-      copyFileSync(sourcePath, destPath);
-    } else if (entry.isSymbolicLink()) {
-      const link = readlinkSync(sourcePath);
-      mkdirSync(dirname(destPath), { recursive: true });
-      try {
-        symlinkSync(link, destPath);
-      } catch {
-        const target = resolve(dirname(sourcePath), link);
-        if (existsSync(target) && statSync(target).isFile()) copyFileSync(target, destPath);
-      }
-    }
   }
 }
 
