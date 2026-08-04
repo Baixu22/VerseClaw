@@ -5,7 +5,7 @@
 // classifies every known writer, records source/npm runtime versions and the
 // accepted base SHA, and records the receipt-owner decision with its evidence.
 // No runtime code changes occur.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
@@ -40,6 +40,11 @@ function readNpmOpenclawVersion(path) {
 const acceptedBaseSha = git(repoRoot, ['rev-parse', 'HEAD']).toLowerCase();
 if (!/^[a-f0-9]{40}$/.test(acceptedBaseSha)) throw new Error(`invalid acceptedBaseSha: ${acceptedBaseSha}`);
 
+// Derived from the accepted base commit, never from wall-clock time: the
+// baseline is tracked candidate material, so regenerating it at the same commit
+// must produce a byte-identical file.
+const generatedAt = new Date(Number(git(repoRoot, ['show', '-s', '--format=%ct', acceptedBaseSha])) * 1000).toISOString();
+
 const sourceRuntime = readPkgVersion(join(repoRoot, 'openclaw_runtime', 'package.json'));
 const npmOpenclawSpec = readNpmOpenclawVersion(join(repoRoot, 'package.json'));
 const npmRuntime = { name: 'openclaw', spec: npmOpenclawSpec, path: 'package.json (devDependencies)', runtimeMode: 'npm', satisfiesReceiptReadiness: false };
@@ -47,7 +52,7 @@ const npmRuntime = { name: 'openclaw', spec: npmOpenclawSpec, path: 'package.jso
 const inventory = {
   schema: SCHEMA,
   baselineVersion: 1,
-  generatedAt: new Date().toISOString(),
+  generatedAt,
   acceptedBaseSha,
   sourceRuntimeVersion: { name: sourceRuntime.name, version: sourceRuntime.version, path: 'openclaw_runtime/package.json', runtimeMode: 'source' },
   npmRuntimeVersion: npmRuntime,
@@ -328,6 +333,29 @@ const inventory = {
 const outDir = join(repoRoot, 'artifacts', 'runtime-authority-convergence', 'rc-01');
 mkdirSync(outDir, { recursive: true });
 const outPath = join(outDir, 'baseline.json');
+
+// Fail closed when a classified owner path no longer exists in the candidate.
+// A baseline that names paths the tree does not contain is not an inventory of
+// the candidate, and the RC-09 remediation plan requires the opposite.
+const trackedFiles = git(repoRoot, ['ls-files']).split('\n').filter(Boolean);
+const trackedSet = new Set(trackedFiles);
+const missingOwnerPaths = [];
+for (const [authorityKey, authority] of Object.entries(inventory.authorities)) {
+  for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
+    for (const entry of authority[list] ?? []) {
+      if (!entry || typeof entry !== 'object' || !entry.path) continue;
+      const ownerPath = entry.path;
+      const prefix = ownerPath.endsWith('/**') ? ownerPath.slice(0, -2) : ownerPath.endsWith('/') ? ownerPath : null;
+      const exists = prefix === null ? trackedSet.has(ownerPath) : trackedFiles.some((file) => file.startsWith(prefix));
+      if (!exists) missingOwnerPaths.push(`${authorityKey}.${list}: ${ownerPath}`);
+    }
+  }
+}
+if (missingOwnerPaths.length > 0) {
+  throw new Error(`owner paths absent from the candidate tree:\n  ${missingOwnerPaths.join('\n  ')}`);
+}
+
 writeFileSync(outPath, `${JSON.stringify(inventory, null, 2)}\n`, 'utf8');
 console.log(`RC-01 baseline written: ${outPath}`);
 console.log(`schema=${SCHEMA} acceptedBaseSha=${acceptedBaseSha} sourceRuntime=${sourceRuntime.name}@${sourceRuntime.version} npmRuntime=${npmRuntime.name}@${npmRuntime.spec}`);
+console.log(`ownerPathsVerified=${trackedFiles.length > 0 ? 'yes' : 'no'} generatedAt=${generatedAt}`);

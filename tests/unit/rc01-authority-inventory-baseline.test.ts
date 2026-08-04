@@ -1,9 +1,17 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-const BASELINE_PATH = join(process.cwd(), 'artifacts', 'runtime-authority-convergence', 'rc-01', 'baseline.json');
+const REPO_ROOT = process.cwd();
+const BASELINE_RELATIVE = 'artifacts/runtime-authority-convergence/rc-01/baseline.json';
+const BASELINE_PATH = join(REPO_ROOT, 'artifacts', 'runtime-authority-convergence', 'rc-01', 'baseline.json');
+const GENERATOR_RELATIVE = 'scripts/rc01-authority-inventory.mjs';
+
+function git(args: string[]): string {
+  return execFileSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 1024 * 1024 * 64 }).trim();
+}
 
 const REQUIRED_MODULES = [
   'taskFlow',
@@ -135,5 +143,98 @@ describe('RC-01 authority inventory baseline', () => {
     const checkpointCandidate = receipt.candidates.find((candidate) => candidate.path.includes('long-task-control'));
     expect(checkpointCandidate.role).toBe('rejected');
     expect(checkpointCandidate.rejectionReason).toMatch(/mutable/i);
+  });
+});
+
+// RC-01R: the audit found the baseline was never part of the candidate. These
+// cases pin the four properties that made it non-self-contained.
+describe('RC-01R self-contained baseline', () => {
+  it('is tracked by Git so a clean clone of the candidate can read it', () => {
+    expect(git(['ls-files', '--', BASELINE_RELATIVE])).toBe(BASELINE_RELATIVE);
+  });
+
+  it('keeps sibling convergence run outputs ignored', () => {
+    const ignored = execFileSync('git', ['check-ignore', '--quiet', 'artifacts/runtime-authority-convergence/rc-07/manifest.json'], {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      stdio: 'pipe',
+    });
+    expect(ignored).toBe('');
+  });
+
+  it('reads identically from the Git index blob and the working tree', () => {
+    const indexed = git(['show', `:${BASELINE_RELATIVE}`]);
+    const onDisk = readFileSync(BASELINE_PATH, 'utf8');
+    expect(JSON.parse(indexed)).toEqual(JSON.parse(onDisk));
+  });
+
+  it('regenerates byte-identically at the same commit', () => {
+    const before = readFileSync(BASELINE_PATH);
+    execFileSync('node', [GENERATOR_RELATIVE], { cwd: REPO_ROOT, encoding: 'utf8' });
+    const after = readFileSync(BASELINE_PATH);
+    expect(after.equals(before)).toBe(true);
+  });
+
+  it('derives generatedAt from the accepted base commit, not wall-clock time', () => {
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+    const commitEpochSeconds = Number(git(['show', '-s', '--format=%ct', baseline.acceptedBaseSha]));
+    expect(baseline.generatedAt).toBe(new Date(commitEpochSeconds * 1000).toISOString());
+  });
+
+  it('records an acceptedBaseSha that is an ancestor of the candidate', () => {
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+    const head = git(['rev-parse', 'HEAD']);
+    expect(() => git(['merge-base', '--is-ancestor', baseline.acceptedBaseSha, head])).not.toThrow();
+  });
+
+  it('names only owner paths that exist in the candidate tree', () => {
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+    const trackedFiles = git(['ls-files']).split('\n').filter(Boolean);
+    const trackedSet = new Set(trackedFiles);
+    const missing: string[] = [];
+    for (const [authorityKey, authority] of Object.entries<Record<string, unknown>>(baseline.authorities)) {
+      for (const list of ['writers', 'nonOwners', 'legacyWriters', 'candidates']) {
+        for (const entry of (authority[list] as { path?: string }[] | undefined) ?? []) {
+          if (!entry || typeof entry !== 'object' || !entry.path) continue;
+          const ownerPath = entry.path;
+          const prefix = ownerPath.endsWith('/**') ? ownerPath.slice(0, -2) : ownerPath.endsWith('/') ? ownerPath : null;
+          const exists = prefix === null ? trackedSet.has(ownerPath) : trackedFiles.some((file) => file.startsWith(prefix));
+          if (!exists) missing.push(`${authorityKey}.${list}: ${ownerPath}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('fails closed when a classified owner path is absent from the candidate', () => {
+    const source = readFileSync(join(REPO_ROOT, GENERATOR_RELATIVE), 'utf8');
+    const marker = "{ path: 'openclaw_runtime/src/plugins/slots.ts', role: 'slot-owner', classification: 'reuse' }";
+    expect(source).toContain(marker);
+    const mutated = source.replace(
+      marker,
+      "{ path: 'openclaw_runtime/src/plugins/does-not-exist-rc01r.ts', role: 'slot-owner', classification: 'reuse' }",
+    );
+    // The probe must live inside scripts/ because the generator derives repoRoot
+    // from its own module URL; running it from a temp dir would fail for an
+    // unrelated reason and prove nothing about the owner-path check.
+    const probePath = join(REPO_ROOT, 'scripts', `.rc01r-owner-path-probe-${process.pid}.mjs`);
+    const baselineBefore = readFileSync(BASELINE_PATH);
+    writeFileSync(probePath, mutated, 'utf8');
+    try {
+      const run = spawnSync(process.execPath, [probePath], { cwd: REPO_ROOT, encoding: 'utf8' });
+      expect(run.status).not.toBe(0);
+      expect(String(run.stderr)).toMatch(/owner paths absent from the candidate tree/);
+      expect(String(run.stderr)).toContain('openclaw_runtime/src/plugins/does-not-exist-rc01r.ts');
+      // Fail-closed means the throw happens before the write, so the tracked
+      // baseline must be untouched.
+      expect(readFileSync(BASELINE_PATH).equals(baselineBefore)).toBe(true);
+    } finally {
+      rmSync(probePath, { force: true });
+      writeFileSync(BASELINE_PATH, baselineBefore);
+    }
+  });
+
+  it('leaves the tracked baseline unchanged after the fail-closed probe', () => {
+    expect(git(['diff', '--name-only', '--', BASELINE_RELATIVE])).toBe('');
   });
 });
