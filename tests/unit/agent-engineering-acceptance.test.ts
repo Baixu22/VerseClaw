@@ -743,6 +743,89 @@ describe('Agent Engineering Acceptance', () => {
     }
   });
 
+  // The validator compares report changed-path evidence against the manifest,
+  // but no test forced that path to fail. An implementation without a reversed
+  // assertion is exactly the "code exists, nothing proves it" shape RC-00R
+  // exists to remove. Each mutation below recomputes reportDigest, so the
+  // report is internally consistent and only the manifest cross-check can
+  // reject it.
+  it('rejects executor reports whose changed-path or source-input evidence drifts from the manifest', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
+    temporaryPaths.push(outputDir);
+    const manifest = createManifest(root);
+    const withDigest = (report) => {
+      const copy = { ...report, reportDigest: undefined };
+      copy.reportDigest = digestReport(copy);
+      return copy;
+    };
+    const baseReport = {
+      schema: ACCEPTANCE_SCHEMA,
+      role: 'executor',
+      runId: manifest.runId,
+      actor: 'executor-a',
+      source: {
+        manifestDigest: manifest.manifestDigest,
+        planDigest: manifest.planDigest,
+        changedPaths: manifest.changedPaths,
+        sourceFiles: manifest.source.files,
+      },
+      candidate: manifest.candidate,
+      result: 'pass',
+      engineeringAcceptedByAgent: false,
+      controlledArtifacts: [],
+      gates: [{ id: 'fixture-gate', result: 'pass' }],
+    };
+
+    // Control: faithful evidence must not trip either drift check.
+    const faithful = validateExecutorEvidence(manifest, withDigest(baseReport), outputDir);
+    expect(faithful).not.toContain('executor report changed-path evidence mismatch');
+    expect(faithful).not.toContain('executor report source-input evidence mismatch');
+
+    // Hiding a reviewed path is the payload that matters: it is how a run
+    // claims to have reviewed less than the candidate actually changed.
+    const droppedPath = withDigest({
+      ...baseReport,
+      source: { ...baseReport.source, changedPaths: [] },
+    });
+    expect(validateExecutorEvidence(manifest, droppedPath, outputDir)).toContain(
+      'executor report changed-path evidence mismatch',
+    );
+
+    const extraPath = withDigest({
+      ...baseReport,
+      source: { ...baseReport.source, changedPaths: [...manifest.changedPaths, 'src/never-touched.ts'] },
+    });
+    expect(validateExecutorEvidence(manifest, extraPath, outputDir)).toContain(
+      'executor report changed-path evidence mismatch',
+    );
+
+    // Same set, different order: the comparison must be order-sensitive
+    // because the manifest list is normalized and sorted.
+    const manifestWithTwoPaths = { ...manifest, changedPaths: ['src/a.ts', 'src/b.ts'] };
+    const reorderedPaths = withDigest({
+      ...baseReport,
+      source: { ...baseReport.source, changedPaths: ['src/b.ts', 'src/a.ts'] },
+    });
+    expect(validateExecutorEvidence(manifestWithTwoPaths, reorderedPaths, outputDir)).toContain(
+      'executor report changed-path evidence mismatch',
+    );
+
+    // Source-input drift: a mutated blob identity must not pass either.
+    const driftedSource = withDigest({
+      ...baseReport,
+      source: {
+        ...baseReport.source,
+        sourceFiles: manifest.source.files.map((file, index) =>
+          index === 0 ? { ...file, gitBlob: 'f'.repeat(40) } : file,
+        ),
+      },
+    });
+    expect(validateExecutorEvidence(manifest, driftedSource, outputDir)).toContain(
+      'executor report source-input evidence mismatch',
+    );
+  });
+
   it('rejects executor reports with missing, blank, non-string, or mismatched actors and bad report digests', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
