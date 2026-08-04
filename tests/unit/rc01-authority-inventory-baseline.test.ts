@@ -187,6 +187,17 @@ describe('RC-01R self-contained baseline', () => {
     expect(() => git(['merge-base', '--is-ancestor', baseline.acceptedBaseSha, head])).not.toThrow();
   });
 
+  // Deriving acceptedBaseSha from HEAD made the tracked baseline
+  // self-invalidating: committing it moved HEAD, so the next run rewrote the
+  // file it had just committed and the RC-01 tests went red on the commit that
+  // added them. The base must be the commit the work is measured from.
+  it('pins acceptedBaseSha to the accepted base, not to the moving candidate', () => {
+    const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
+    const head = git(['rev-parse', 'HEAD']);
+    expect(baseline.acceptedBaseSha).not.toBe(head);
+    expect(baseline.acceptedBaseSha).toBe(git(['merge-base', 'HEAD', 'origin/main']));
+  });
+
   it('names only owner paths that exist in the candidate tree', () => {
     const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
     const trackedFiles = git(['ls-files']).split('\n').filter(Boolean);
