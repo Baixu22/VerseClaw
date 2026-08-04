@@ -789,6 +789,13 @@ describe('Agent Engineering Acceptance', () => {
     expect(harnessGate).toBeDefined();
     expect(harnessGate.args).toContain('--since');
     expect(harnessGate.args[harnessGate.args.indexOf('--since') + 1]).toBe('HEAD');
+    const resourceGate = plan.gates.find((gate) => gate.id === 'provision-verseshell-resources');
+    expect(resourceGate?.args).toEqual(expect.arrayContaining([
+      '--resource',
+      'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+      'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
+    ]));
+    expect(resourceGate?.args).not.toContain('--copy');
     for (const gate of plan.gates) {
       expect(gate.args ?? []).not.toContain('--no-diff');
     }
