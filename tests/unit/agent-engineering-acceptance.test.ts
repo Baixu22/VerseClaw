@@ -1091,6 +1091,27 @@ describe('Agent Engineering Acceptance', () => {
     expect(finalReport2).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: true });
   });
 
+  it('keeps the standalone RC-00 bootstrap manifest digests canonical', () => {
+    const outputDir = mkdtempSync(join(tmpdir(), 'rc00-bootstrap-test-'));
+    temporaryPaths.push(outputDir);
+
+    execFileSync(
+      process.execPath,
+      ['scripts/rc00-acceptance-bootstrap.mjs', outputDir],
+      { cwd: process.cwd(), encoding: 'utf8' },
+    );
+
+    const finalReport = JSON.parse(readFileSync(join(outputDir, 'final-report.json'), 'utf8'));
+    expect(finalReport).toMatchObject({
+      result: 'pass',
+      engineeringAcceptedByAgent: true,
+      role: 'verifier',
+      executorActor: 'rc00-executor',
+      verifierActor: 'rc00-verifier',
+    });
+    expect(finalReport.reportDigest).toMatch(/^[a-f0-9]{64}$/);
+  });
+
   it('validates engineering and human convergence evidence and rejects semantic tampering', () => {
     const { root, base, baselineRelative } = createConvergenceFixture();
     const outputDir = join(root, 'artifacts', 'agent-engineering-acceptance', 'fixture-convergence');
