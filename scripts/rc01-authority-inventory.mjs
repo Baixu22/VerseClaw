@@ -37,7 +37,13 @@ function readNpmOpenclawVersion(path) {
   }
 }
 
-const acceptedBaseSha = git(repoRoot, ['rev-parse', 'HEAD']).toLowerCase();
+// The accepted base is the commit the convergence work is measured *from*, not
+// the current candidate. Deriving it from HEAD made the tracked baseline
+// self-invalidating: committing it moved HEAD, so the next run rewrote the file
+// it had just committed. The merge-base against the accepted upstream is stable
+// across every commit on this branch.
+const ACCEPTED_BASE_REF = 'origin/main';
+const acceptedBaseSha = git(repoRoot, ['merge-base', 'HEAD', ACCEPTED_BASE_REF]).toLowerCase();
 if (!/^[a-f0-9]{40}$/.test(acceptedBaseSha)) throw new Error(`invalid acceptedBaseSha: ${acceptedBaseSha}`);
 
 // Derived from the accepted base commit, never from wall-clock time: the

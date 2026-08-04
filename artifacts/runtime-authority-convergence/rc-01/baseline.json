@@ -1,8 +1,8 @@
 {
   "schema": "runtime-authority-convergence-baseline/v1",
   "baselineVersion": 1,
-  "generatedAt": "2026-08-04T04:35:29.000Z",
-  "acceptedBaseSha": "73bdddbb1dcf250783afb5da1174a43cf8d90535",
+  "generatedAt": "2026-08-01T09:21:23.000Z",
+  "acceptedBaseSha": "6493d5cce6fbfa558aa26eb4cfb5a4cd71504664",
   "sourceRuntimeVersion": {
     "name": "openclaw",
     "version": "2026.6.2",
