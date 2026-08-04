@@ -1,5 +1,5 @@
 // Control UI module implements tool display behavior.
-import SHARED_TOOL_DISPLAY_JSON from "../../../apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json" with { type: "json" };
+import { TOOL_DISPLAY_CONFIG } from "../../../src/agents/tool-display-config.js";
 import {
   defaultTitle,
   formatToolDetailText,
@@ -68,7 +68,7 @@ function convertSpec(spec?: SharedToolDisplaySpec): ToolDisplaySpec {
   };
 }
 
-const SHARED_TOOL_DISPLAY_CONFIG = SHARED_TOOL_DISPLAY_JSON as SharedToolDisplayConfig;
+const SHARED_TOOL_DISPLAY_CONFIG = TOOL_DISPLAY_CONFIG as SharedToolDisplayConfig;
 const FALLBACK = convertSpec(SHARED_TOOL_DISPLAY_CONFIG.fallback ?? { emoji: "🧩" });
 const TOOL_MAP: Record<string, ToolDisplaySpec> = Object.fromEntries(
   Object.entries(SHARED_TOOL_DISPLAY_CONFIG.tools ?? {}).map(([key, spec]) => [

@@ -1,5 +1,5 @@
-import type { WorkspaceKnowledgeScope, WorkspacePermissionMode } from './workspace';
-import type { WorkProviderCapability } from './work-provider';
+import type { WorkspaceKnowledgeScope, WorkspacePermissionMode } from './workspace.js';
+import type { WorkProviderCapability } from './work-provider.js';
 
 /**
  * @deprecated Internal compatibility for legacy Work Mode data and tests only.

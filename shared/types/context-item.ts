@@ -5,7 +5,7 @@ import {
   type CvkChecksum,
   type ResourceId,
   type Selector,
-} from './context-runtime-kit';
+} from './context-runtime-kit.js';
 
 type Brand<T, Name extends string> = T & { readonly __brand: Name };
 

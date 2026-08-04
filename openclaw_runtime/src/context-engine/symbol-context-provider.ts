@@ -318,23 +318,22 @@ function groundingDiagnosticsMetadata(
 function groundingDiagnosticsQueryMetadata(
   query: GroundingQuery,
 ): RuntimeCoreJsonObject {
-  return {
-    readonly: true,
-    ...(query.kind !== undefined ? { kind: query.kind as never } : {}),
-    ...(query.trust !== undefined ? { trust: query.trust as never } : {}),
-    ...(query.taskId !== undefined ? { taskId: query.taskId } : {}),
-    ...(query.traceId !== undefined ? { traceId: query.traceId } : {}),
-    ...(query.spanId !== undefined ? { spanId: query.spanId } : {}),
-    ...(query.eventId !== undefined ? { eventId: query.eventId } : {}),
-    ...(query.checkpointId !== undefined ? { checkpointId: query.checkpointId } : {}),
-    ...(query.toolCallId !== undefined ? { toolCallId: query.toolCallId } : {}),
-    ...(query.file !== undefined ? { file: query.file } : {}),
-    ...(query.symbol !== undefined ? { symbol: query.symbol } : {}),
-    ...(query.limit !== undefined ? { limit: query.limit } : {}),
-    ...(query.tokenBudget !== undefined ? { tokenBudget: query.tokenBudget } : {}),
-    includeRaw: false,
-    includeUntrusted: false,
-  };
+  const metadata: RuntimeCoreJsonObject = { readonly: true };
+  if (query.kind !== undefined) metadata.kind = query.kind as never;
+  if (query.trust !== undefined) metadata.trust = query.trust as never;
+  if (query.taskId !== undefined) metadata.taskId = query.taskId;
+  if (query.traceId !== undefined) metadata.traceId = query.traceId;
+  if (query.spanId !== undefined) metadata.spanId = query.spanId;
+  if (query.eventId !== undefined) metadata.eventId = query.eventId;
+  if (query.checkpointId !== undefined) metadata.checkpointId = query.checkpointId;
+  if (query.toolCallId !== undefined) metadata.toolCallId = query.toolCallId;
+  if (query.file !== undefined) metadata.file = query.file;
+  if (query.symbol !== undefined) metadata.symbol = query.symbol;
+  if (query.limit !== undefined) metadata.limit = query.limit;
+  if (query.tokenBudget !== undefined) metadata.tokenBudget = query.tokenBudget;
+  metadata.includeRaw = false;
+  metadata.includeUntrusted = false;
+  return metadata;
 }
 
 type SymbolProviderInput = {
@@ -431,18 +430,19 @@ function symbolText(symbol: RuntimeSymbolNode): string {
 function symbolDiagnostic(
   item: RuntimeSymbolContractDiagnostic,
 ): RuntimeRegistryDiagnostic {
+  const metadata: RuntimeCoreJsonObject = {
+    symbolDiagnosticCode: item.code,
+    symbolDiagnosticSeverity: item.severity,
+  };
+  if (item.file) metadata.file = item.file;
+  if (item.range) metadata.range = item.range as never;
+  metadata.readonlySymbolContext = true;
+  metadata.shadowOnly = true;
   return diagnostic({
     status: item.severity === "error" ? "error" : "fallback",
     reason: item.severity === "error" ? "provider_error" : "legacy_authoritative",
     message: item.message,
-    metadata: {
-      symbolDiagnosticCode: item.code,
-      symbolDiagnosticSeverity: item.severity,
-      ...(item.file ? { file: item.file } : {}),
-      ...(item.range ? { range: item.range as never } : {}),
-      readonlySymbolContext: true,
-      shadowOnly: true,
-    },
+    metadata,
   });
 }
 
