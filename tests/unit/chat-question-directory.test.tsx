@@ -3,9 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Chat } from '@/pages/Chat';
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(),
+    useLocation: () => ({ pathname: '/', search: '', hash: '', state: null, key: 'default' }),
+  };
+});
 
 vi.mock('react-i18next', () => ({
   initReactI18next: {
@@ -74,18 +79,28 @@ vi.mock('@/stores/agents', () => ({
   }),
 }));
 
+const artifactPanelMocks = vi.hoisted(() => {
+  const state = {
+    open: false,
+    expanded: false,
+    widthPct: 34,
+    openWorkspacePanel: vi.fn(),
+    tabs: [],
+    activeTabId: null,
+    terminalPlacement: 'side',
+    setTerminalPlacement: vi.fn(),
+    restoreSessionState: vi.fn(),
+    reviewView: 'changes',
+    selectedPath: null,
+  };
+  const hook = (selector: (value: typeof state) => unknown) => selector(state);
+  return { hook: Object.assign(hook, { getState: () => state }) };
+});
+
 vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MIN_WIDTH: 28,
   ARTIFACT_PANEL_MAX_WIDTH: 50,
-  useArtifactPanel: (selector: (state: { open: boolean; widthPct: number; openChanges: () => void; openPreview: () => void; close: () => void; openBrowser: () => void; tab: string }) => unknown) => selector({
-    open: false,
-    widthPct: 34,
-    openChanges: vi.fn(),
-    openPreview: vi.fn(),
-    close: vi.fn(),
-    openBrowser: vi.fn(),
-    tab: 'changes',
-  }),
+  useArtifactPanel: artifactPanelMocks.hook,
 }));
 
 vi.mock('@/hooks/use-stick-to-bottom-instant', () => ({
