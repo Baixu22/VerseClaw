@@ -18,6 +18,9 @@ touchedAreas:
   - openclaw_runtime/src/state/**
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/gateway/**
+  - openclaw_runtime/src/infra/**
+  - openclaw_runtime/src/context-engine/**
+  - openclaw_runtime/src/tasks/**
   - tests/unit/**
   - harness/specs/**
   - artifacts/runtime-authority-convergence/rc-04/**

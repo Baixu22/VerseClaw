@@ -475,6 +475,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.longTaskControlStatus",
       "sessions.longTaskControlHistory",
       "sessions.resumeCheckpoints",
+      "sessions.checkpointDiff",
+      "sessions.restoreCheckpoint",
       "sessions.queueDrain",
       "sessions.compaction.list",
       "sessions.compaction.get",

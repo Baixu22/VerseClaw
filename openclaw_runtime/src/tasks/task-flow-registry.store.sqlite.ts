@@ -88,6 +88,9 @@ function rowToFlowRecord(row: FlowRegistryRow): TaskFlowRecord {
     ...(row.blocked_summary ? { blockedSummary: row.blocked_summary } : {}),
     ...(stateJson !== undefined ? { stateJson } : {}),
     ...(waitJson !== undefined ? { waitJson } : {}),
+    // The delivery projection is persisted on the same row as the lifecycle
+    // transition; project it back so registry reads never split the two.
+    ...(row.delivery_state !== null ? { deliveryState: row.delivery_state } : {}),
     ...(cancelRequestedAt != null ? { cancelRequestedAt } : {}),
     createdAt: normalizeNumber(row.created_at) ?? 0,
     updatedAt: normalizeNumber(row.updated_at) ?? 0,
@@ -112,6 +115,9 @@ function bindFlowRecord(record: TaskFlowRecord): Insertable<FlowRunsTable> {
     blocked_summary: record.blockedSummary ?? null,
     state_json: serializeJson(record.stateJson),
     wait_json: serializeJson(record.waitJson),
+    // Round-trip the delivery projection: registry writes persist it on the
+    // same row as the lifecycle transition, exactly like the CAS store.
+    delivery_state: record.deliveryState ?? null,
     cancel_requested_at: record.cancelRequestedAt ?? null,
     created_at: record.createdAt,
     updated_at: record.updatedAt,
@@ -160,6 +166,7 @@ function selectFlowRows(db: DatabaseSync): FlowRegistryRow[] {
       "blocked_summary",
       "state_json",
       "wait_json",
+      "delivery_state",
       "cancel_requested_at",
       "created_at",
       "updated_at",
@@ -191,6 +198,7 @@ function upsertFlowRow(db: DatabaseSync, row: Insertable<FlowRunsTable>): void {
           blocked_summary: (eb) => eb.ref("excluded.blocked_summary"),
           state_json: (eb) => eb.ref("excluded.state_json"),
           wait_json: (eb) => eb.ref("excluded.wait_json"),
+          delivery_state: (eb) => eb.ref("excluded.delivery_state"),
           cancel_requested_at: (eb) => eb.ref("excluded.cancel_requested_at"),
           created_at: (eb) => eb.ref("excluded.created_at"),
           updated_at: (eb) => eb.ref("excluded.updated_at"),
