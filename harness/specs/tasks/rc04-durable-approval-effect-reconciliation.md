@@ -21,6 +21,7 @@ touchedAreas:
   - openclaw_runtime/ui/**
   - openclaw_runtime/extensions/**
   - openclaw_runtime/tsconfig.json
+  - openclaw_runtime/apps/shared/**
   - shared/verseshell/**
   - .gitattributes
   - scripts/**
