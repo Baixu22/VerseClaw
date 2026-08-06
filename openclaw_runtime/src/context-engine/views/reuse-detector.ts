@@ -223,7 +223,7 @@ function candidateKind(draft: CandidateDraft): ReuseCandidateKind {
   const file = draft.filePath;
   if (/(^|\/)(__tests__|tests?)(\/|$)|\.(test|spec)\.[jt]sx?$/.test(file)) return "test_fixture";
   if (/\.tsx?$/.test(file) && /^use[A-Z]/.test(symbol)) return "react_hook";
-  if (/\.tsx$/.test(file) && /^[A-Z]/.test(symbol)) return "component";
+  if (file.endsWith('.tsx') && /^[A-Z]/.test(symbol)) return "component";
   if (/api|client|sdk|fetch/i.test(file) || /api|client|fetch/i.test(symbol)) return "api_wrapper";
   if (draft.symbol?.kind === "type" || /schema|type|interface/i.test(file)) return "type_or_schema";
   if (/config|constant|env/i.test(file) || /^[A-Z0-9_]+$/.test(symbol)) return "config_constant";

@@ -215,8 +215,8 @@ function xmlDepthDelta(line: string): number {
   const tags = withoutComments.match(/<\/?[^!?][^>]*>/g) ?? [];
   let delta = 0;
   for (const tag of tags) {
-    if (/^<\//.test(tag)) delta -= 1;
-    else if (!/\/>$/.test(tag)) delta += 1;
+    if (tag.startsWith('</')) delta -= 1;
+    else if (!tag.endsWith('/>')) delta += 1;
   }
   return delta;
 }

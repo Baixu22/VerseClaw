@@ -530,5 +530,5 @@ export declare class ToolHandler {
     private textResult;
     private errorResult;
 }
-export {};
+
 //# sourceMappingURL=tools.d.ts.map

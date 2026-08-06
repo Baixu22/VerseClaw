@@ -8,7 +8,6 @@ import {
   type ConfirmIntegrityLevel,
   type ConfirmProvenance,
 } from "./confirm-provenance.js";
-import { productizeExperienceShadow } from "./experience-shadow-product.js";
 
 /**
  * DCS Stage 5: Bridge between SEKB distillation `confirm_and_save` and the
@@ -91,6 +90,7 @@ export async function handleConfirmAndSave(
     // Shadow-only confirm path: journal experience without production BlockStore write.
     if (params.experienceShadow?.enabled && params.experienceShadow.workspaceRoot) {
       try {
+        const { productizeExperienceShadow } = await import("./experience-shadow-product.js");
         productizeExperienceShadow({
           workspaceRoot: params.experienceShadow.workspaceRoot,
           enabled: true,
@@ -163,6 +163,7 @@ export async function handleConfirmAndSave(
   // C7-2 shadow journal (default-off; never flips production cutover).
   if (params.experienceShadow?.enabled && params.experienceShadow.workspaceRoot) {
     try {
+        const { productizeExperienceShadow } = await import("./experience-shadow-product.js");
       productizeExperienceShadow({
         workspaceRoot: params.experienceShadow.workspaceRoot,
         enabled: true,

@@ -36,7 +36,7 @@ export function extractChangedFiles(diff: string): string[] {
     if (gitMatch) {
       // Header only counts when the file survives (deletions resolve to /dev/null above).
       const next = lines[index + 1] ?? "";
-      if (!/^deleted file mode/.test(next)) files.add(normalizeFactPath(gitMatch[2]!.trim()));
+      if (!next.startsWith('deleted file mode')) files.add(normalizeFactPath(gitMatch[2]!.trim()));
     }
   }
   return [...files].sort();

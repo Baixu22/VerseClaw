@@ -22,8 +22,7 @@ export {
   initializeGlobalHookRunner,
   resetGlobalHookRunner,
 } from "../plugins/hook-runner-global.js";
-export { addTestHook } from "../plugins/hooks.test-helpers.js";
-export { createPluginRecord } from "../plugins/status.test-helpers.js";
+export { createPluginRecord } from "../plugins/loader-records.js";
 export {
   resolveBundledExplicitWebFetchProvidersFromPublicArtifacts,
   resolveBundledExplicitWebSearchProvidersFromPublicArtifacts,
@@ -68,7 +67,6 @@ export type { PluginHookRegistration } from "../plugins/hook-types.js";
 export type { RuntimeEnv } from "../runtime.js";
 export type { MockFn } from "../test-utils/vitest-mock-fn.js";
 export { createOutboundTestPlugin, createTestRegistry } from "../test-utils/channel-plugins.js";
-export { readQueuedEntries as readQueuedDeliveryEntriesForTest } from "../infra/outbound/delivery-queue.test-helpers.js";
 export {
   registerProviderPlugin,
   registerProviderPlugins,

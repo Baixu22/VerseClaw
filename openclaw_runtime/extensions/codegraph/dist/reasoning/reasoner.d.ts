@@ -39,5 +39,5 @@ export declare function stripAgentDirectives(context: string): string;
  * return its synthesized answer, or null to signal "fall back to local source".
  */
 export declare function synthesizeOffload({ query, context }: SynthArgs): Promise<string | null>;
-export {};
+
 //# sourceMappingURL=reasoner.d.ts.map

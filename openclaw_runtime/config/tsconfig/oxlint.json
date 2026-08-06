@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "../../src/**/*.ts",
+    "../../extensions/**/*.ts",
+    "../../packages/**/*.ts",
+    "../../scripts/**/*.ts",
+    "../../ui/**/*.ts"
+  ],
+  "exclude": [
+    "../../**/*.test.ts",
+    "../../**/*.test.tsx",
+    "../../**/*test-helpers.ts",
+    "../../**/*test-harness.ts",
+    "../../**/*test-support.ts",
+    "../../**/dist/**",
+    "../../**/node_modules/**"
+  ]
+}

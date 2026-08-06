@@ -184,5 +184,5 @@ export declare class SocketTransport extends LineBasedJsonRpcTransport {
     protected idPrefix(): string;
     private handleSocketClose;
 }
-export {};
+
 //# sourceMappingURL=transport.d.ts.map

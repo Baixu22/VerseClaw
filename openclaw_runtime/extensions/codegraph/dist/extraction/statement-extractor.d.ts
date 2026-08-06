@@ -35,5 +35,5 @@ export declare class StatementExtractor {
     private walkNode;
 }
 export declare const statementExtractor: StatementExtractor;
-export {};
+
 //# sourceMappingURL=statement-extractor.d.ts.map

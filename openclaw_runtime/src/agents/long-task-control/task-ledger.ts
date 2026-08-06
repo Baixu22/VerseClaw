@@ -241,7 +241,7 @@ export function ensureLongTaskLedgerRoot(input: LongTaskLedgerRootInput): string
             agentId: input.agentId,
             runId: input.runId,
             source: input.source,
-            ...(input.metadata ?? {}),
+            ...input.metadata,
           },
           createdAt,
         }),

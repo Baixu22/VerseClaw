@@ -445,7 +445,7 @@ function fallbackResult(params: {
       providerId: ROLE_MEMORY_CONTEXT_PROVIDER_ID,
       enabled: false,
       legacyBehaviorUnaffected: true,
-      ...(params.metadata ?? {}),
+      ...params.metadata,
     },
   };
 }

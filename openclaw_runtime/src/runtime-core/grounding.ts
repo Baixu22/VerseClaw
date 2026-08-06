@@ -657,7 +657,7 @@ export function groundingRefForProjectedFile(
     transform: options.transform ?? "string-file-projection",
     lossy: true,
     metadata: {
-      ...(options.metadata ?? {}),
+      ...options.metadata,
       projectedFromString: true,
       rawRetained: false,
     },
@@ -690,7 +690,7 @@ export function groundingRefForProjectedTest(
     transform: options.transform ?? "string-test-projection",
     lossy: true,
     metadata: {
-      ...(options.metadata ?? {}),
+      ...options.metadata,
       projectedFromString: true,
       rawRetained: false,
     },
@@ -741,7 +741,7 @@ export function groundingRefsFromRuntimeTaskEvent(
       transform: options.transform ?? "runtime-event-summary",
       lossy: true,
       metadata: {
-        ...(options.metadata ?? {}),
+        ...options.metadata,
         ...runtimeTaskEventMetadata(event),
         rawRetained: false,
       },
@@ -931,7 +931,7 @@ export function groundingRefsFromCheckpointDiagnostics(
       transform: options.transform ?? "checkpoint-diagnostic-summary",
       lossy: true,
       metadata: {
-        ...(options.metadata ?? {}),
+        ...options.metadata,
         diagnosticCode: diagnostic.code,
         recoverable: diagnostic.recoverable,
         hasExpectedSchemaMarker: Boolean(diagnostic.expectedSchemaMarker),
@@ -981,7 +981,7 @@ export function groundingRefsFromEvidenceVerifierReport(
       transform: options.transform ?? "verifier-report-summary",
       lossy: true,
       metadata: {
-        ...(options.metadata ?? {}),
+        ...options.metadata,
         verifierDecision: report.decision,
         findingCount: report.findings.length,
         evidenceRefCount: report.evidenceRefs.length,
@@ -1044,7 +1044,7 @@ export function groundingRefsFromEvidenceVerifierFinding(
       transform: options.transform ?? "verifier-finding-summary",
       lossy: true,
       metadata: {
-        ...(options.metadata ?? {}),
+        ...options.metadata,
         verifierFindingCode: finding.code,
         severity: finding.severity,
         category: finding.category,
@@ -1214,7 +1214,7 @@ export function groundingRefsFromRuntimeTraceSourceRefs(
           sourceField: options.sourceField ?? "sourceRefs",
           transform: options.transform ?? "trace-source-anchor",
           metadata: {
-            ...(options.metadata ?? {}),
+            ...options.metadata,
             ...runtimeTraceSourceRefMetadata(sourceRef),
             sourceRefsAreEvidenceLinksOnly: true,
             sourceRefsAreRelevanceAnchorsOnly: true,
@@ -1885,7 +1885,7 @@ function traceGroundingOptions(
     ? undefined
     : Math.max(0, span.endedAt - span.startedAt);
   const metadata = sanitizeGroundingMetadata({
-    ...(options.metadata ?? {}),
+    ...options.metadata,
     traceId: span.traceId,
     spanId: span.spanId,
     ...(span.parentSpanId ? { parentSpanId: span.parentSpanId } : {}),
@@ -1938,7 +1938,7 @@ function groundingRefFromRuntimeTraceSpanEvent(
       ? "external-trace-context-untrusted"
       : "trace-span-event-summary",
     metadata: {
-      ...(options.metadata ?? {}),
+      ...options.metadata,
       spanEventName: event.name,
       eventAttributeKeys: Object.keys(event.attributes ?? {}),
       evidenceRefCount: event.evidenceRefs?.length ?? 0,
@@ -2581,8 +2581,8 @@ function evidenceRefGroundingParams(
     timestamp: overrides.timestamp ?? options.timestamp,
     index: overrides.index ?? 0,
     metadata: {
-      ...(options.metadata ?? {}),
-      ...(overrides.metadata ?? {}),
+      ...options.metadata,
+      ...overrides.metadata,
       sourceRefsAreEvidenceLinksOnly: true,
       noVerifierAuthority: true,
       noRuntimeAuthority: true,
@@ -2842,7 +2842,7 @@ export function groundingRefFromEvidenceRef(
       ? { evidenceRefType: ref.type, rejected: true }
       : {
           evidenceRefType: ref.type,
-          ...(resolved.metadata ?? {}),
+          ...resolved.metadata,
         },
   });
 }

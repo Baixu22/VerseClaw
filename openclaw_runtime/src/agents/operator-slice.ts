@@ -119,7 +119,7 @@ export function createOperatorSliceIntent(input: {
   identity: OperatorSliceIdentity;
   requestJson: Record<string, unknown>;
   options: OperatorSliceOptions;
-}): { ok: true; approvalId: string; state: string } | { ok: false; reason: 'duplicate' | 'error'; approvalId?: string } {
+}): { ok: true; approvalId: string; state: string } | { ok: false; reason: 'duplicate' | 'error'; approvalId?: string; message?: string } {
   if (input.options.enabled !== true) {
     return { ok: false, reason: 'error', message: 'operator slice flag is off' };
   }

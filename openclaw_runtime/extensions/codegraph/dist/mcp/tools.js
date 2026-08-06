@@ -2344,7 +2344,7 @@ class ToolHandler {
                 // below the FTS cut, so findAllSymbols would never see it and the
                 // type-token bias below couldn't pick the harness.rs one. (Same fix as
                 // codegraph_node's findSymbolMatches.) Qualified tokens keep findAllSymbols.
-                const isQual = /[.\/]|::/.test(t);
+                const isQual = /[./]|::/.test(t);
                 const raw = isQual ? this.findAllSymbols(cg, t).nodes : cg.getNodesByName(t);
                 const cands = raw
                     .filter((n) => CALLABLE.has(n.kind) && !isTestPath(n.filePath))
@@ -2427,16 +2427,16 @@ class ToolHandler {
         const isLowValue = (p) => {
             const lp = p.toLowerCase();
             return (/\/(tests?|__tests?__|spec)\//.test(lp) ||
-                /_test\.go$/.test(lp) ||
+                lp.endsWith('_test.go') ||
                 /(?:^|\/)test_[^/]+\.py$/.test(lp) ||
-                /_test\.py$/.test(lp) ||
-                /_spec\.rb$/.test(lp) ||
-                /_test\.rb$/.test(lp) ||
+                lp.endsWith('_test.py') ||
+                lp.endsWith('_spec.rb') ||
+                lp.endsWith('_test.rb') ||
                 /\.(test|spec)\.[jt]sx?$/.test(lp) ||
                 /(test|spec|tests)\.(java|kt|scala)$/.test(lp) ||
                 /(tests?|spec)\.cs$/.test(lp) ||
                 /tests?\.swift$/.test(lp) ||
-                /_test\.dart$/.test(lp) ||
+                lp.endsWith('_test.dart') ||
                 /\bicons?\b/.test(lp) ||
                 /\bi18n\b/.test(lp));
         };
@@ -3845,7 +3845,7 @@ class ToolHandler {
         // Qualified-name lookups: split on any supported separator. `\w` keeps
         // identifier chars (incl. `_`) intact; everything else is treated as
         // a separator we tolerate.
-        if (!/[.\/]|::/.test(symbol))
+        if (!/[./]|::/.test(symbol))
             return false;
         const parts = symbol.split(/::|[./]/).filter((p) => p.length > 0);
         if (parts.length < 2)
@@ -3880,7 +3880,7 @@ class ToolHandler {
      * bare name with no exact match falls back to the single top fuzzy result.
      */
     findSymbolMatches(cg, symbol) {
-        const isQualified = /[.\/]|::/.test(symbol);
+        const isQualified = /[./]|::/.test(symbol);
         // For a bare name, enumerate EVERY exact-name definition via the direct index
         // (not FTS, which caps + ranks): tokio's `poll` has 50+ defs and the one the
         // caller wants (`Harness::poll` at harness.rs:153) ranks below any search cut,
@@ -3930,7 +3930,7 @@ class ToolHandler {
         // Mirror the fallback in `findSymbol` for qualified queries — FTS
         // strips colons, so a module-qualified lookup needs a second pass
         // by the bare last part.
-        if (results.length === 0 && /[.\/]|::/.test(symbol)) {
+        if (results.length === 0 && /[./]|::/.test(symbol)) {
             const tail = lastQualifierPart(symbol);
             if (tail && tail !== symbol)
                 results = cg.searchNodes(tail, { limit: 50 });

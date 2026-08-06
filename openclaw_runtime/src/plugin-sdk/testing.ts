@@ -12,11 +12,6 @@ export {
   shouldAckReaction,
 } from "../channels/ack-reactions.js";
 export {
-  expectChannelInboundContextContract,
-  expectChannelTurnDispatchResultContract,
-  primeChannelOutboundSendMock,
-} from "../channels/plugins/contracts/test-helpers.js";
-export {
   installChannelOutboundPayloadContractSuite,
   type OutboundPayloadHarnessParams,
 } from "../channels/plugins/contracts/outbound-payload-testkit.js";
@@ -58,12 +53,11 @@ export {
   initializeGlobalHookRunner,
   resetGlobalHookRunner,
 } from "../plugins/hook-runner-global.js";
-export { addTestHook } from "../plugins/hooks.test-helpers.js";
+export { createPluginRecord } from "../plugins/loader-records.js";
 export {
   assertUniqueValues,
   BUNDLED_RUNTIME_SIDECAR_PATHS,
 } from "../plugins/runtime-sidecar-paths.js";
-export { createPluginRecord } from "../plugins/status.test-helpers.js";
 export {
   resolveBundledExplicitWebFetchProvidersFromPublicArtifacts,
   resolveBundledExplicitWebSearchProvidersFromPublicArtifacts,
@@ -92,19 +86,6 @@ export type { PluginHookRegistration } from "../plugins/hook-types.js";
 export type { RuntimeEnv } from "../runtime.js";
 export type { MockFn } from "../test-utils/vitest-mock-fn.js";
 export {
-  createAuthCaptureJsonFetch,
-  createRequestCaptureJsonFetch,
-  installPinnedHostnameTestHooks,
-} from "../media-understanding/audio.test-helpers.ts";
-export {
-  createSingleUserPromptMessage,
-  extractNonEmptyAssistantText,
-  isLiveProfileKeyModeEnabled,
-  isLiveTestEnabled,
-} from "../agents/live-test-helpers.js";
-export { createSandboxTestContext } from "../agents/sandbox/test-fixtures.js";
-export { writeSkill } from "../skills/test-support/e2e-test-helpers.js";
-export {
   castAgentMessage,
   makeAgentAssistantMessage,
   makeAgentUserMessage,
@@ -121,7 +102,7 @@ export {
 export { maybeLoadShellEnvForGenerationProviders } from "../test-utils/generation-live-test-helpers.js";
 export { testing, testing as __testing } from "../acp/control-plane/manager.js";
 export { testing as acpManagerTesting } from "../acp/control-plane/manager.js";
-export { runAcpRuntimeAdapterContract } from "../runtime/adapter-contract.testkit.ts";
+export { runAcpRuntimeAdapterContract } from "../acp/runtime/adapter-contract.testkit.ts";
 export { handleAcpCommand } from "../auto-reply/reply/commands-acp.js";
 export { buildCommandTestParams } from "../auto-reply/reply/commands-spawn.test-harness.js";
 export { peekSystemEvents, resetSystemEventsForTest } from "../infra/system-events.js";

@@ -300,7 +300,7 @@ function controlledDiagnostics(
         file: item.file,
         evidenceRefs: item.evidenceRefs,
         metadata: {
-          ...(item.metadata ?? {}),
+          ...item.metadata,
           flags,
           ...AUTHORITY_METADATA,
         },

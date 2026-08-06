@@ -191,7 +191,7 @@ function stripAgentDirectives(context) {
         const ln = lines[i] ?? '';
         // Headers are bold labels, not ATX headings (tools.ts, issue #778): the
         // explore header is `**Exploration: …**`, file sections start with ``**` ``.
-        if (/^\*\*Exploration:/.test(ln) || /^Found \d+ symbols? across \d+ files?/.test(ln)) {
+        if (ln.startsWith('**Exploration:') || /^Found \d+ symbols? across \d+ files?/.test(ln)) {
             i++;
             continue;
         }

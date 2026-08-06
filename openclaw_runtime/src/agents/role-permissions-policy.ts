@@ -113,9 +113,7 @@ export function buildRolePermissionDenyPatches(
     ]),
   ];
 
-  return {
-    ...(mergedDeny.length > 0 ? { inheritedToolDenylist: mergedDeny } : {}),
-  };
+  return (mergedDeny.length > 0 ? { inheritedToolDenylist: mergedDeny } : {});
 }
 
 import { resolve, normalize, isAbsolute, relative } from "node:path";

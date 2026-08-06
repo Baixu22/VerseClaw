@@ -310,3 +310,5 @@ function normalizeNonNegativeInteger(
     ? value
     : fallback;
 }
+
+export type { RuntimeMemoryHydrationShadowFactProjection } from "./memory-read-hydration-shadow.js";

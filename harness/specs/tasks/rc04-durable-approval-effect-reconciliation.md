@@ -15,11 +15,24 @@ ownedPaths:
   - harness/specs/tasks/rc04-durable-approval-effect-reconciliation.md
   - artifacts/runtime-authority-convergence/rc-04/**
 touchedAreas:
+  - openclaw_runtime/src/**
+  - openclaw_runtime/test/**
+  - openclaw_runtime/config/**
+  - openclaw_runtime/ui/**
+  - openclaw_runtime/extensions/**
+  - openclaw_runtime/tsconfig.json
+  - shared/verseshell/**
+  - .gitattributes
+  - scripts/**
+  - openclaw_runtime/scripts/**
+  - openclaw_runtime/apps/macos/**
   - openclaw_runtime/src/state/**
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/gateway/**
   - openclaw_runtime/src/infra/**
   - openclaw_runtime/src/context-engine/**
+  - openclaw_runtime/src/config/**
+  - openclaw_runtime/src/cron/**
   - openclaw_runtime/src/tasks/**
   - tests/unit/**
   - harness/specs/**

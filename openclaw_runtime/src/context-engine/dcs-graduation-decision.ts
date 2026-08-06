@@ -109,7 +109,7 @@ export function applyProductApprovalHardRules(params: {
     return {
       // Packaging never sets meetsGate true for default-on auto-flip.
       meetsGate: false,
-      recommendation: rec === "default-on" ? "consider-default-on" : rec,
+      recommendation: rec,
       defaultsUnchanged: true,
     };
   }

@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import type { ProviderRuntimeModel } from "../plugin-entry.js";
 import { registerProviderPlugin, requireRegisteredProvider } from "../plugin-test-runtime.js";
 import type { ProviderPlugin } from "../provider-model-shared.js";
-import { createProviderUsageFetch, makeResponse } from "../test-env.js";
+import { createProviderUsageFetch, makeResponse } from "../../test-utils/provider-usage-fetch.js";
 
 const CONTRACT_SETUP_TIMEOUT_MS = 300_000;
 
@@ -207,7 +207,7 @@ export function describeAnthropicProviderRuntimeContract(
 
     it("owns usage snapshot fetching", async () => {
       const provider = requireProviderContractProvider("anthropic");
-      const mockFetch = createProviderUsageFetch(async (url) => {
+      const mockFetch = createProviderUsageFetch(async (url: string) => {
         if (url.includes("api.anthropic.com/api/oauth/usage")) {
           return makeResponse(200, {
             five_hour: { utilization: 20, resets_at: "2026-01-07T01:00:00Z" },
@@ -382,7 +382,7 @@ export function describeGoogleProviderRuntimeContract(load: ProviderRuntimeContr
 
     it("owns usage snapshot fetching", async () => {
       const provider = requireProviderContractProvider("google-gemini-cli");
-      const mockFetch = createProviderUsageFetch(async (url) => {
+      const mockFetch = createProviderUsageFetch(async (url: string) => {
         if (url.includes("cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota")) {
           return makeResponse(200, {
             buckets: [
@@ -667,7 +667,7 @@ export function describeOpenAIProviderRuntimeContract(load: ProviderRuntimeContr
 
     it("owns usage snapshot fetching", async () => {
       const provider = requireProviderContractProvider("openai");
-      const mockFetch = createProviderUsageFetch(async (url) => {
+      const mockFetch = createProviderUsageFetch(async (url: string) => {
         if (url.includes("chatgpt.com/backend-api/wham/usage")) {
           return makeResponse(200, {
             rate_limit: {
@@ -812,7 +812,7 @@ export function describeZAIProviderRuntimeContract(load: ProviderRuntimeContract
 
     it("owns usage snapshot fetching", async () => {
       const provider = requireProviderContractProvider("zai");
-      const mockFetch = createProviderUsageFetch(async (url) => {
+      const mockFetch = createProviderUsageFetch(async (url: string) => {
         if (url.includes("api.z.ai/api/monitor/usage/quota/limit")) {
           return makeResponse(200, {
             success: true,

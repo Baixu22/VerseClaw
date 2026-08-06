@@ -514,7 +514,7 @@ export function recordLongTaskCheckpoint(input: {
         ? []
         : [{ type: "task_ledger", ref: taskLedgerRootId, label: "Task Ledger root" }]),
     ];
-    checkpoint.metadata = { ...(checkpoint.metadata ?? {}), taskLedgerRootId };
+    checkpoint.metadata = { ...checkpoint.metadata, taskLedgerRootId };
   }
   const values: LongTaskCheckpointInsert = {
     id,
@@ -601,7 +601,7 @@ export function recordLongTaskInterventionEvent(input: {
     trigger: input.trigger,
     status: input.status,
     payload_json: JSON.stringify({
-      ...(input.payload ?? {}),
+      ...input.payload,
       ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
     }),
     created_at: now,
@@ -667,7 +667,7 @@ export function enqueueLongTaskUserMessage(input: {
     last_error: null,
     drained_at: null,
     payload_json: JSON.stringify({
-      ...(input.payload ?? {}),
+      ...input.payload,
       ...(taskLedgerRootId ? { taskLedgerRootId } : {}),
     }),
     created_at: now,

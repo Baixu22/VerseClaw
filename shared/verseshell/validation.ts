@@ -1,4 +1,4 @@
-import { VerseShellContractError } from './errors';
+import { VerseShellContractError } from './errors.js';
 import {
   DEFAULT_MAX_HANDSHAKE_BYTES,
   DEFAULT_MAX_OBSERVATION_BYTES,
@@ -25,7 +25,7 @@ import {
   type RuntimeHandshakeData,
   type SuggestedAction,
   type SuggestedFix,
-} from './types';
+} from './types.js';
 
 export interface DecodeOperationRequestOptions {
   max_bytes?: number;

@@ -237,7 +237,7 @@ function listChildBlock(lines, parent, child) {
         const indent = indentMatch?.[1]?.length ?? 0;
         if (indent >= 4)
             continue;
-        if (indent === 2 && /^  - /.test(line))
+        if (indent === 2 && line.startsWith('  - '))
             continue;
         end = i;
         break;

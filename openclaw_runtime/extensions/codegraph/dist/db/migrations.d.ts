@@ -40,5 +40,5 @@ export declare function getMigrationHistory(db: SqliteDatabase): Array<{
     appliedAt: number;
     description: string | null;
 }>;
-export {};
+
 //# sourceMappingURL=migrations.d.ts.map

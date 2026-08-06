@@ -346,5 +346,5 @@ export declare class FileWatcher {
  * test runtime, where the registry is intentionally not populated).
  */
 export declare function __emitWatchEventForTests(projectRoot: string, relPath: string): boolean;
-export {};
+
 //# sourceMappingURL=watcher.d.ts.map

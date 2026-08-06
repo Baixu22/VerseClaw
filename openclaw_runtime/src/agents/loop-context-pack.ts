@@ -166,7 +166,7 @@ function normalizeBudget(input?: LoopContextPackInput["budget"]): LoopContextPac
     itemTokens: Math.max(1, Math.floor(input?.itemTokens ?? DEFAULT_LOOP_CONTEXT_PACK_BUDGET.itemTokens)),
     sectionTokens: {
       ...DEFAULT_LOOP_CONTEXT_PACK_BUDGET.sectionTokens,
-      ...(input?.sectionTokens ?? {}),
+      ...input?.sectionTokens,
     },
   };
 }

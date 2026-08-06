@@ -20,16 +20,16 @@ const generated_detection_1 = require("../extraction/generated-detection");
 function isLowValueFile(filePath) {
     const lp = filePath.toLowerCase();
     return (/(?:^|\/)(tests?|__tests?__|spec)\//.test(lp) ||
-        /_test\.go$/.test(lp) ||
+        lp.endsWith('_test.go') ||
         /(?:^|\/)test_[^/]+\.py$/.test(lp) ||
-        /_test\.py$/.test(lp) ||
-        /_spec\.rb$/.test(lp) ||
-        /_test\.rb$/.test(lp) ||
+        lp.endsWith('_test.py') ||
+        lp.endsWith('_spec.rb') ||
+        lp.endsWith('_test.rb') ||
         /\.(test|spec)\.[jt]sx?$/.test(lp) ||
         /(test|spec|tests)\.(java|kt|scala)$/.test(lp) ||
         /(tests?|spec)\.cs$/.test(lp) ||
         /tests?\.swift$/.test(lp) ||
-        /_test\.dart$/.test(lp) ||
+        lp.endsWith('_test.dart') ||
         (0, generated_detection_1.isGeneratedFile)(filePath));
 }
 const SQLITE_PARAM_CHUNK_SIZE = 500;

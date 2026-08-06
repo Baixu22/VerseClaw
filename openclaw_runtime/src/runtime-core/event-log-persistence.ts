@@ -437,7 +437,7 @@ function mergeMetadata(
   if (!base && !override) {
     return undefined;
   }
-  return { ...(base ?? {}), ...(override ?? {}) };
+  return { ...base, ...override };
 }
 
 function stringField(value: unknown, key: string): string | undefined {

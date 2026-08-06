@@ -1593,8 +1593,8 @@ function mergeEpisodeEvidence(
     ...(existing.metadata || incoming.metadata
       ? {
           metadata: {
-            ...(existing.metadata ?? {}),
-            ...(incoming.metadata ?? {}),
+            ...existing.metadata,
+            ...incoming.metadata,
           },
         }
       : {}),

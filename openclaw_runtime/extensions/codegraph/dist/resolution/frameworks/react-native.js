@@ -114,7 +114,7 @@ function parseJvmRNExports(source) {
         return results;
     // @ReactMethod annotations — followed (after optional modifiers / args /
     // newlines) by either `void <name>(` (Java) or `fun <name>(` (Kotlin).
-    const methodRegex = /@ReactMethod\b[^{]*?(?:\bfun\s+|\bvoid\s+|\bpublic\s+\w[\w<>\[\]]*\s+)([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+    const methodRegex = /@ReactMethod\b[^{]*?(?:\bfun\s+|\bvoid\s+|\bpublic\s+\w[\w<>[\]]*\s+)([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
     let m;
     while ((m = methodRegex.exec(source)) !== null) {
         const jsName = m[1];

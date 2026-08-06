@@ -1,6 +1,5 @@
 // Outbound delivery test helpers re-export channel delivery fixtures for plugin tests.
 export {
-  addTestHook,
   createEmptyPluginRegistry,
   createOutboundTestPlugin,
   createTestRegistry,

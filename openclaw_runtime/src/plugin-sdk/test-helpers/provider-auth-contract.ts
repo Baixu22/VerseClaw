@@ -48,7 +48,8 @@ function buildPrompter(): WizardPrompter {
       }
       return option.value;
     },
-    multiselect: async <T>(params: WizardMultiSelectParams<T>) => params.initialValues ?? [],
+    multiselect: async <T>(params: WizardMultiSelectParams<T>) => [...(params.initialValues ?? [])],
+    plain: async () => {},
     text: async () => "",
     confirm: async () => false,
     progress: () => progress,

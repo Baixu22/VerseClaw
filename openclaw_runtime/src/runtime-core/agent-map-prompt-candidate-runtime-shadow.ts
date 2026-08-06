@@ -231,7 +231,7 @@ function runtimeShadowDiagnostics(
       file: item.file,
       evidenceRefs: item.evidenceRefs,
       metadata: {
-        ...(item.metadata ?? {}),
+        ...item.metadata,
         flags,
         ...AUTHORITY_FLAGS,
       },

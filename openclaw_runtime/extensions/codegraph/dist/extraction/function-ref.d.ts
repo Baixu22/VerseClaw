@@ -114,5 +114,5 @@ export declare const FN_REF_SPECS: Record<string, FnRefSpec | undefined>;
  * (name, position) pairs of every function-value-shaped expression found.
  */
 export declare function captureFnRefCandidates(container: SyntaxNode, rule: CaptureRule, spec: FnRefSpec, source: string): FnRefCandidate[];
-export {};
+
 //# sourceMappingURL=function-ref.d.ts.map

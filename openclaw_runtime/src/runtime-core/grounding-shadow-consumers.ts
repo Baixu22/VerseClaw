@@ -264,7 +264,7 @@ export function createGroundingShadowConsumerSummary(
     noMemoryPromotionAuthority: true,
     noPatchMutationAuthority: true,
     groundingResultMetadata: result.metadata,
-    ...(options.metadata ?? {}),
+    ...options.metadata,
   });
   const summary: GroundingShadowConsumerSummary = {
     readonly: true,
@@ -685,7 +685,7 @@ function shadowConsumerQuery(
 ): GroundingQuery {
   return sanitizeGroundingQuery({
     readonly: true,
-    ...(options.query ?? {}),
+    ...options.query,
     limit: options.limit ?? options.query?.limit ?? DEFAULT_LIMIT,
     tokenBudget: options.tokenBudget ??
       options.query?.tokenBudget ??

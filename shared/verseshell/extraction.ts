@@ -1,5 +1,5 @@
-import { VerseShellContractError } from './errors';
-import type { JsonObject, JsonValue, Observation } from './types';
+import { VerseShellContractError } from './errors.js';
+import type { JsonObject, JsonValue, Observation } from './types.js';
 
 export const VERSESHELL_ARTIFACT_HANDLE_PATTERN = /^result:\/\/sha256\/[0-9a-f]{64}$/u;
 export const VERSESHELL_APPROVAL_TOKEN_PATTERN = /^apv_[0-9a-f]{16}$/u;

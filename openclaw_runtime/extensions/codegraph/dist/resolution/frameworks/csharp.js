@@ -153,7 +153,7 @@ exports.aspnetResolver = {
             // Next method declaration (skip stacked attributes; C# puts the return type
             // before the name). Bounded so we don't grab a far one.
             const tail = safe.slice(match.index + match[0].length, match.index + match[0].length + 600);
-            const methodMatch = tail.match(/(?:public|private|protected|internal)\s+[\w<>,\s\[\]?.]+?\s+(\w+)\s*\(/);
+            const methodMatch = tail.match(/(?:public|private|protected|internal)\s+[\w<>,\s[\]?.]+?\s+(\w+)\s*\(/);
             if (methodMatch) {
                 references.push({
                     fromNodeId: routeNode.id,

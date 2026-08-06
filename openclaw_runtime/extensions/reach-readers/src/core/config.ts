@@ -35,7 +35,7 @@ export class Config {
     values?: Readonly<Record<string, unknown>>;
     env?: Readonly<Record<string, string | undefined>>;
   } = {}) {
-    this.data = Object.freeze({ ...(options.values ?? {}) });
+    this.data = Object.freeze({ ...options.values });
     this.env = options.env ?? process.env;
   }
 

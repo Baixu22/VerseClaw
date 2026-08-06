@@ -155,7 +155,7 @@ function updateFromValues(values: MissionRunInsert): MissionRunUpdate {
 
 export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
   const metadata = {
-    ...(record.metadata ?? {}),
+    ...record.metadata,
     longConversationControl: {
       controlSignals: record.controlSignals ?? [],
       ...(record.validationState ? { validationState: record.validationState } : {}),

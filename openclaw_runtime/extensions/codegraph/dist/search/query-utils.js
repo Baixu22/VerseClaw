@@ -356,7 +356,7 @@ function nameMatchBonus(nodeName, query) {
     // Split query into word-level terms (handles "CacheBuilder build" → ["cache","builder","build"])
     const rawTerms = query
         .replace(/([a-z])([A-Z])/g, '$1 $2')
-        .split(/[\s_.\-]+/)
+        .split(/[\s_.-]+/)
         .map(t => t.toLowerCase())
         .filter(t => t.length >= 2);
     // Also keep original space-separated tokens for exact-term matching

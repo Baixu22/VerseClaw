@@ -261,7 +261,7 @@ function scanDynamicDispatch(body, language, fileStartLine) {
                 label: spec.label,
                 snippet: snippetAround(original, m.index),
                 line,
-                ...(derived ?? {}),
+                ...derived,
             };
             seen.set(dedupeKey, match);
             out.push(match);

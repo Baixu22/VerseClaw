@@ -196,6 +196,8 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   { name: "sessions.recoveryContext", scope: "operator.read" },  { name: "sessions.longTaskControlStatus", scope: "operator.read" },
   { name: "sessions.longTaskControlHistory", scope: "operator.read" },
   { name: "sessions.resumeCheckpoints", scope: "operator.read" },
+  { name: "sessions.checkpointDiff", scope: "operator.read" },
+  { name: "sessions.restoreCheckpoint", scope: "operator.write" },
   { name: "sessions.queueDrain", scope: "operator.write" },
   { name: "sessions.compaction.list", scope: "operator.read" },
   { name: "sessions.compaction.get", scope: "operator.read" },

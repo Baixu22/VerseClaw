@@ -2344,7 +2344,7 @@ function optimizationCategoryCounts(
 ): Record<CodeTaskEvidenceGateSampleCategory, number> {
   const counts = {
     ...emptySampleCategoryCounts(),
-    ...(input.evaluation?.summary.categoryCounts ?? {}),
+    ...input.evaluation?.summary.categoryCounts,
   };
   for (const [category, count] of Object.entries(
     input.fixtureMatrix?.categoryCounts ?? {},

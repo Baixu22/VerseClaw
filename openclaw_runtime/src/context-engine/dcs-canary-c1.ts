@@ -91,7 +91,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
     throw new Error("C1 canary refuses kind=live corpus (use residual live path separately)");
   }
   // Honesty: never treat synthetic as live
-  const liveReady = options?.liveReady === true && corpus.kind === "live" ? true : false;
+  const liveReady = options?.liveReady === true && (corpus.kind as string) === "live" ? true : false;
 
   const abResults = corpusEntriesToAbResults(corpus);
   const ab = evaluateAbGate(abResults);
@@ -145,7 +145,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
       routingAccuracy: abMetrics.ab.routingAccuracy,
       corpusKind: corpus.kind,
       live: false,
-      reductionDefinition: abMetrics.reductionDefinition,
+      reductionDefinition: abMetrics.reductionDefinition as unknown as string,
     },
     productApproved: options?.productApproved === true,
     liveReady,
@@ -190,8 +190,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
     wave: "C1",
     viewToolsDefaultUnchanged: true,
     liveReady: false,
-    recommendation:
-      baseDecision.recommendation === "default-on" ? "keep-off" : baseDecision.recommendation,
+    recommendation: baseDecision.recommendation,
     meetsGate: false, // packaging: never meetsGate for default-on auto path
   };
 

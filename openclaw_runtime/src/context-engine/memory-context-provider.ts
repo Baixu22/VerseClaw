@@ -298,7 +298,7 @@ function groundingDiagnosticsSummary(
     limit: options.limit,
     tokenBudget: options.tokenBudget,
     metadata: {
-      ...(options.metadata ?? {}),
+      ...options.metadata,
       runtimeMemoryGroundingDiagnostics: true,
       diagnosticsOnly: true,
       metadataOnly: true,
@@ -326,7 +326,7 @@ function withGroundingDiagnostics(
     ...result,
     diagnostics: [...result.diagnostics, groundingDiagnosticsDiagnostic(summary)],
     metadata: {
-      ...(result.metadata ?? {}),
+      ...result.metadata,
       groundingDiagnostics: groundingDiagnosticsMetadata(summary),
     },
   };

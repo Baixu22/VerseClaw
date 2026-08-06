@@ -10,11 +10,12 @@
 // consumer directly with raw projections (hazard text intact) so the sentinel
 // regex is actually exercised.
 
+import type { RuntimeMemoryHydrationShadowFactProjection } from '../../runtime-core/memory-read-hydration-consumer.js';
 import type { RuntimeMemoryTemporalFact } from "../../runtime-core/memory-context.js";
 import type {
   RuntimeMemoryHydrationConsumerResult,
   RuntimeMemoryHydrationConsumerQuery,
-  RuntimeMemoryHydrationShadowFactProjection,
+  
 } from "../../runtime-core/memory-read-hydration-consumer.js";
 import type { MultiTurnQueryPlan } from "./multi-turn-driver.js";
 

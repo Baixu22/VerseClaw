@@ -13,6 +13,13 @@ export function createProviderUsageFetch(_options?: unknown): ProviderUsageFetch
   };
 }
 
-export function makeResponse(body: string, init?: ResponseInit): Response {
-  return new Response(body, init);
+export function makeResponse(status: number, body?: string | object): Response {
+  const init: ResponseInit = { status };
+  if (typeof body === "string") {
+    return new Response(body, init);
+  }
+  return new Response(JSON.stringify(body ?? {}), {
+    ...init,
+    headers: { "content-type": "application/json" },
+  });
 }

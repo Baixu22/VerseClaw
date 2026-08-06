@@ -991,7 +991,7 @@ function matchMethodCall(ref, context) {
 function splitCamelCase(str) {
     return str.replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-        .split(/[\s._:\/\\]+/)
+        .split(/[\s._:/\\]+/)
         .filter(w => w.length > 1);
 }
 /**

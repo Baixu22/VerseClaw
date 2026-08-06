@@ -160,7 +160,7 @@ function positiveInt(value: unknown, fallback: number, min = 1, max = Number.MAX
 function resolveAgentMissionConfig(cfg: OpenClawConfig | undefined, agentId?: string): MissionConfig {
   const defaults = cfg?.agents?.defaults?.missionLoop ?? {};
   const agent = cfg?.agents?.list?.find((entry: AgentConfig) => entry.id === agentId);
-  return { ...defaults, ...(agent?.missionLoop ?? {}) };
+  return { ...defaults, ...agent?.missionLoop };
 }
 
 function terminal(status: MissionStatus): boolean {
@@ -208,7 +208,7 @@ function clone(record: MissionRunRecord): MissionRunRecord {
         acceptanceStatus: tick.reviewer.acceptanceStatus ? { ...tick.reviewer.acceptanceStatus } : undefined,
       } : undefined,
     })),
-    metadata: { ...(record.metadata ?? {}) },
+    metadata: { ...record.metadata },
   };
 }
 

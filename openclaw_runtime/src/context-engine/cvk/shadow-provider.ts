@@ -2,9 +2,9 @@ import type { AgentMessage } from '../../agents/runtime/index.js';
 import {
   type RuntimeContextProvider,
   type RuntimeContextProviderResult,
-  type RuntimeCoreJsonObject,
   type RuntimeRegistryDiagnostic,
 } from '../../runtime-core/registries.js';
+import type { RuntimeCoreJsonObject } from '../../runtime-core/types.js';
 import {
   compileCvkFixtureSources,
   type CvkCompilerFixtureInput,

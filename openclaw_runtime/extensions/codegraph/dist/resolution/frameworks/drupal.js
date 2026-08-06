@@ -288,7 +288,7 @@ exports.drupalResolver = {
                     return true;
                 if (typeof json.type === 'string' && json.type.startsWith('drupal-'))
                     return true;
-                const deps = { ...json.require, ...(json['require-dev'] ?? {}) };
+                const deps = { ...json.require, ...json['require-dev'] };
                 if (Object.keys(deps).some((k) => k.startsWith('drupal/')))
                     return true;
             }

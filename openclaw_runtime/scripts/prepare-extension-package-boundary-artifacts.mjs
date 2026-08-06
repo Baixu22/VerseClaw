@@ -647,6 +647,15 @@ async function main(argv = process.argv.slice(2)) {
       process.stdout.write("[plugin-sdk package boundary dts] fresh; skipping\n");
     }
     if (mode === "all") {
+      const usesLocalBoundaryPaths = fs.existsSync(resolve("extensions/tsconfig.package-boundary.paths.json"));
+      if (!usesLocalBoundaryPaths) {
+      const qaChannelTsconfigPath = resolve("extensions/qa-channel/tsconfig.json");
+      const qaChannelExtendsPath = fs.existsSync(qaChannelTsconfigPath)
+        ? resolve("extensions/qa-channel", JSON.parse(fs.readFileSync(qaChannelTsconfigPath, "utf8")).extends ?? "")
+        : "";
+      const qaChannelUsesLocalPluginSdkPaths = fs.existsSync(qaChannelExtendsPath) &&
+        /package-boundary\.paths/.test(fs.readFileSync(qaChannelExtendsPath, "utf8"));
+      if (fs.existsSync(qaChannelTsconfigPath) && fs.existsSync(qaChannelExtendsPath) && !qaChannelUsesLocalPluginSdkPaths) {
       if (!qaChannelDtsFresh) {
         removeIncrementalStateForMissingOutput({
           outputPaths: QA_CHANNEL_DTS_REQUIRED_OUTPUTS,
@@ -677,6 +686,10 @@ async function main(argv = process.argv.slice(2)) {
         });
       } else {
         process.stdout.write("[qa-channel boundary dts] fresh; skipping\n");
+      }
+      } else {
+        process.stdout.write("[qa-channel boundary dts] qa-channel tsconfig missing; skipping\n");
+        process.stdout.write("[qa-channel boundary dts] local plugin-sdk paths or missing extends target; skipping\n");
       }
       if (!discordDtsFresh) {
         removeIncrementalStateForMissingOutput({
@@ -779,6 +792,9 @@ async function main(argv = process.argv.slice(2)) {
         if (step.stampPath) {
           writeStampFile(step.stampPath);
         }
+      }
+      } else {
+        process.stdout.write("[extension boundary dts] local plugin-sdk paths active; skipping extension boundary dts\n");
       }
     }
 

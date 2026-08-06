@@ -331,7 +331,7 @@ async function syncInstance(inst: CGInstance, reason: string): Promise<Record<st
   inst.syncPromise = Promise.resolve()
     .then(async () => {
       const result = await inst.cg.sync();
-      return { ...(result ?? {}), durationMs: Number((result as any)?.durationMs ?? Date.now() - started) };
+      return { ...result, durationMs: Number((result as any)?.durationMs ?? Date.now() - started) };
     })
     .finally(() => {
       inst.syncPromise = undefined;
@@ -571,7 +571,7 @@ function enrichResult<T extends Record<string, any>>(
     ...result,
     content,
     details: {
-      ...(result.details ?? {}),
+      ...result.details,
       ...extraDetails,
       freshness,
       retrieval,

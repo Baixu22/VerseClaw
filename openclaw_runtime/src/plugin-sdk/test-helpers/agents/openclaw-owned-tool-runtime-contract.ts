@@ -10,6 +10,7 @@ import {
   initializeGlobalHookRunner,
   resetGlobalHookRunner,
 } from "../../../plugins/hook-runner-global.js";
+import type { GlobalHookRunnerRegistry } from "../../../plugins/hook-registry.types.js";
 import { createMockPluginRegistry } from "../../../plugins/hooks.test-helpers.js";
 import { createEmptyPluginRegistry } from "../../../plugins/registry-empty.js";
 import {
@@ -55,10 +56,7 @@ export function installOpenClawOwnedToolHooks(params?: {
   });
   const afterToolCall = vi.fn(async () => {});
   initializeGlobalHookRunner(
-    createMockPluginRegistry([
-      { hookName: "before_tool_call", handler: beforeToolCall },
-      { hookName: "after_tool_call", handler: afterToolCall },
-    ]),
+    createMockPluginRegistry() as unknown as GlobalHookRunnerRegistry,
   );
   return { beforeToolCall, afterToolCall };
 }

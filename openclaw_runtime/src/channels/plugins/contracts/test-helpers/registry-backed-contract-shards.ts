@@ -151,7 +151,9 @@ export function installPluginContractRegistryShard(params: ContractShardParams) 
         if (!plugin) {
           throw new Error(`Missing bundled channel plugin for ${entry.id}`);
         }
-        expectChannelPluginContract(plugin);
+        expectChannelPluginContract(
+          plugin as Parameters<typeof expectChannelPluginContract>[0],
+        );
       });
     });
   }

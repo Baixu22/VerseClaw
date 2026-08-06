@@ -69,6 +69,9 @@ export function registerVirtualTestPlugin(params: {
     record: createPluginRecord({
       id: params.id,
       name: params.name,
+      origin: "workspace",
+      enabled: true,
+      configSchema: false,
       source: params.source ?? `/virtual/${params.id}/index.ts`,
       ...(params.kind ? { kind: params.kind } : {}),
       ...(params.contracts ? { contracts: params.contracts } : {}),

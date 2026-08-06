@@ -1315,7 +1315,11 @@ function updateOrCheckPackage(packageDir, check, changedPaths = []) {
       `${label}: npm-shrinkwrap.json is missing. Run \`pnpm deps:shrinkwrap:generate\`.`,
     );
   }
-  if (current !== generated) {
+  // Compare on normalized line endings: core.autocrlf=true checkouts smudge
+  // LF blobs to CRLF on Windows, so a byte comparison would report every
+  // shrinkwrap as stale on win32 even when the content is identical.
+  const currentNormalized = current.replace(/\r\n/g, "\n");
+  if (currentNormalized !== generated) {
     throw new Error(
       `${label}: npm-shrinkwrap.json is stale. Run \`pnpm deps:shrinkwrap:generate\`.`,
     );

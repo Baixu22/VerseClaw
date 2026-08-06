@@ -370,7 +370,7 @@ export function beginShadowModelCall(
 }
 
 export function attachShadowReceiptOptions<T extends object>(options: T | undefined, shadow: ShadowReceiptOptions): T & { [RC02_SHADOW_OPTIONS]: ShadowReceiptOptions } {
-  return { ...(options ?? {}), [RC02_SHADOW_OPTIONS]: shadow } as T & { [RC02_SHADOW_OPTIONS]: ShadowReceiptOptions };
+  return { ...options, [RC02_SHADOW_OPTIONS]: shadow } as T & { [RC02_SHADOW_OPTIONS]: ShadowReceiptOptions };
 }
 
 /** Emit the logical receipt before provider projection. No raw context is stored. */

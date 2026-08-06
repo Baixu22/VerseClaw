@@ -131,7 +131,7 @@ export function createMemoryRuntimeConfig(
 ): MemoryRuntimeConfig {
   const featureFlags: MemoryFeatureFlags = {
     ...DEFAULT_MEMORY_RUNTIME_CONFIG.featureFlags,
-    ...(override.featureFlags ?? {}),
+    ...override.featureFlags,
   };
   return {
     featureFlags,

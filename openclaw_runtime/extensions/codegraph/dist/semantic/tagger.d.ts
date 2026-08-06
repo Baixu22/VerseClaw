@@ -22,5 +22,5 @@ export declare class SemanticTagger {
     private getModuleImports;
     private buildRules;
 }
-export {};
+
 //# sourceMappingURL=tagger.d.ts.map

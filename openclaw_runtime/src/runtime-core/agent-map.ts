@@ -1928,7 +1928,7 @@ function buildAgentMapSourceDiagnostic(params: {
       readonly: true,
       language,
       byteLength: agentMapFileByteLength(params.source.content),
-      ...(params.metadata ?? {}),
+      ...params.metadata,
     },
   };
 }
@@ -1952,7 +1952,7 @@ function buildAgentMapTraceDiagnostic(params: {
     }],
     metadata: {
       readonly: true,
-      ...(params.metadata ?? {}),
+      ...params.metadata,
     },
   };
 }

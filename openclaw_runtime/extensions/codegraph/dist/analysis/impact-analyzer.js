@@ -172,10 +172,10 @@ class ImpactAnalyzer {
         const lp = filePath.toLowerCase();
         return (/(?:^|\/)(tests?|__tests?__|spec)\//.test(lp) ||
             /\.(test|spec)\.[jt]sx?$/.test(lp) ||
-            /_test\.go$/.test(lp) ||
-            /_test\.py$/.test(lp) ||
-            /_spec\.rb$/.test(lp) ||
-            /_test\.dart$/.test(lp) ||
+            lp.endsWith('_test.go') ||
+            lp.endsWith('_test.py') ||
+            lp.endsWith('_spec.rb') ||
+            lp.endsWith('_test.dart') ||
             /(test|spec|tests)\.(java|kt|scala)$/.test(lp) ||
             /(tests?|spec)\.cs$/.test(lp) ||
             /tests?\.swift$/.test(lp));

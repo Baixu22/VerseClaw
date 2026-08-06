@@ -12,11 +12,12 @@
 // hazard-sentinel-eval) because the shadow reader sanitizes/modifies fact
 // text before the consumer can see it.
 
+import type { RuntimeMemoryHydrationShadowFactProjection } from '../../runtime-core/memory-read-hydration-consumer.js';
 import type {
   RuntimeMemoryHydrationConsumerQuery,
   RuntimeMemoryHydrationConsumerResult,
   RuntimeMemoryHydrationConsumerRejectionReason,
-  RuntimeMemoryHydrationShadowFactProjection,
+  
 } from "../../runtime-core/memory-read-hydration-consumer.js";
 
 export type CrossAxisFactSpec = {
