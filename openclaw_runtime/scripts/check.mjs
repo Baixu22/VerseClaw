@@ -122,6 +122,13 @@ export async function main(argv = process.argv.slice(2)) {
       parallel: false,
       commands: [
         {
+          // ui/src/ui/tool-display.ts imports the generated tool-display.json;
+          // regenerate it so typecheck works even if the snapshot went
+          // missing in the acceptance worktree (idempotent, byte-stable).
+          name: "ensure tool-display snapshot",
+          args: ["tool-display:write"],
+        },
+        {
           // Acceptance static gate: the core project types only. The
           // extensions project (tsgo:extensions) carries ~350 pre-existing
           // type errors in the baseline tree that are unrelated to any
