@@ -15,3 +15,6 @@ artifacts/runtime-authority-convergence/rc-01/baseline.json -text
 # scripts/generate-host-env-security-policy-swift.mjs; keep the tracked
 # copy LF so the --check comparison is byte-identical on Windows.
 openclaw_runtime/apps/macos/Sources/OpenClaw/HostEnvSecurityPolicy.generated.swift -text
+
+# Tool display snapshot is compared byte-identically by scripts/tool-display.ts --check.
+openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json -text
