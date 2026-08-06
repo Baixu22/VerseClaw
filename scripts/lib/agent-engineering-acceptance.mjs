@@ -804,7 +804,14 @@ export function createDetachedWorktree(root, options = {}) {
       try {
         runGit(root, ['worktree', 'remove', '--force', checkout], { allowFailure: true, timeoutMs: 120_000 });
       } finally {
-        rmSync(holder, { recursive: true, force: true });
+        try {
+          rmSync(holder, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
+        } catch (error) {
+          // Windows can hold transient locks (antivirus/indexer) on the
+          // detached worktree right after gate processes exit; cleanup is
+          // best-effort and must not fail the acceptance run.
+          console.warn(`[acceptance] cleanup warning: ${error.message}`);
+        }
       }
     },
   };
