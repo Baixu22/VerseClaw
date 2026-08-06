@@ -19,7 +19,7 @@ touchedAreas:
 expectedUserBehavior:
   - No runtime send behavior, ordering, tools, retries, approvals, delivery, or payload bytes change.
   - ClawGraph compiler and UI remain unchanged.
-  - The run lifecycle is projected read-only into TaskFlow (flow_runs) while the legacy process Map remains authoritative during the observation window.
+  - The run lifecycle first has a read-only projection while the legacy process Map remains authoritative, then moves through a controlled single-writer cutover and legacy freeze after proof.
   - Restart, cancel, child-task, and projection tests pass.
   - The legacy writer is cut over only after idempotency and rollback proof; indefinite dual-write is not a migration strategy.
 requiredProfiles:
@@ -34,10 +34,9 @@ forbiddenPatterns:
   - indefinite dual-write as a migration strategy
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The ClawGraph -> TaskFlow read-only projection is behind a feature flag default-off; the kill switch restores the pure legacy path.
+  - The read-only projection may be default-off only during observation. The controlled cutover configuration selects exactly one lifecycle writer; rollback is an explicit mutually exclusive writer transition.
 rollback:
-  - Disable the projection flag to restore the pure legacy ClawGraph path.
-  - No migration rollback is required because the projection writes only flow_runs rows that the legacy owner also writes.
+  - Before cutover, disable the projection. After cutover, rollback explicitly restores the legacy writer and freezes the TaskFlow writer; dual-write is forbidden.
 requiredTests:
   - pnpm --dir openclaw_runtime exec vitest run src/agents/clawgraph/clawgraph-taskflow-projection.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/tasks/task-flow-cas.test.ts
@@ -45,9 +44,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rc06b-clawgraph-lifecycle-migration.md
 acceptance:
-  - ClawGraph run lifecycle is projected read-only into TaskFlow (flow_runs) behind a default-off flag with zero behavior change to the compiler, UI, or legacy process Map.
+  - Projection, controlled cutover, legacy freeze, and emergency rollback each have explicit evidence; acceptance occurs only after the controlled cutover.
   - Restart, cancel, child-task, and projection tests pass.
-  - The legacy ClawGraph writer remains authoritative until a separate cutover with idempotency and rollback proof is executed.
+  - TaskFlow/TaskRegistry is the sole lifecycle writer after cutover. The legacy ClawGraph writer is removed, frozen, or used only in an explicit mutually exclusive rollback.
   - Product locks remain false; an RC-06B independent Verifier accepts using the RC-00 infrastructure.
 docs:
   required: true

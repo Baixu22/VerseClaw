@@ -1,14 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
-  shutdownMock,
   captureMock,
   getSettingMock,
   setSettingMock,
   loggerDebugMock,
   loggerErrorMock,
 } = vi.hoisted(() => ({
-  shutdownMock: vi.fn(),
   captureMock: vi.fn(),
   getSettingMock: vi.fn(),
   setSettingMock: vi.fn(),
@@ -20,7 +18,6 @@ vi.mock('posthog-node', () => ({
   PostHog: vi.fn(function PostHogMock() {
     return {
       capture: captureMock,
-      shutdown: shutdownMock,
     };
   }),
 }));
@@ -49,7 +46,7 @@ vi.mock('node-machine-id', () => ({
   machineIdSync: () => 'machine-id-1',
 }));
 
-describe('main telemetry shutdown', () => {
+describe('main telemetry capture', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -69,24 +66,25 @@ describe('main telemetry shutdown', () => {
     captureMock.mockReturnValue(undefined);
   });
 
-  it('ignores PostHog network timeout errors during shutdown', async () => {
-    shutdownMock.mockRejectedValueOnce(
-      Object.assign(new Error('Network error while fetching PostHog'), {
-        name: 'PostHogFetchNetworkError',
-        cause: Object.assign(new Error('The operation was aborted due to timeout'), {
-          name: 'TimeoutError',
-        }),
-      }),
-    );
-
-    const { initTelemetry, shutdownTelemetry } = await import('@electron/utils/telemetry');
+  it('initializes the client and enriches captured events with app metadata', async () => {
+    const { captureTelemetryEvent, initTelemetry } = await import('@electron/utils/telemetry');
     await initTelemetry();
-    await shutdownTelemetry();
+    captureTelemetryEvent('agent_run_completed', { durationMs: 42 });
 
     expect(loggerErrorMock).not.toHaveBeenCalled();
-    expect(loggerDebugMock).toHaveBeenCalledWith(
-      'Ignored telemetry shutdown network error:',
-      expect.objectContaining({ name: 'PostHogFetchNetworkError' }),
-    );
+    expect(captureMock).toHaveBeenNthCalledWith(1, {
+      distinctId: 'existing-machine-id',
+      event: 'app_opened',
+      properties: expect.objectContaining({ $app_version: '0.2.1' }),
+    });
+    expect(captureMock).toHaveBeenNthCalledWith(2, {
+      distinctId: 'existing-machine-id',
+      event: 'agent_run_completed',
+      properties: expect.objectContaining({
+        $app_version: '0.2.1',
+        durationMs: 42,
+      }),
+    });
+    expect(loggerDebugMock).toHaveBeenCalledWith('Reported app_opened event');
   });
 });

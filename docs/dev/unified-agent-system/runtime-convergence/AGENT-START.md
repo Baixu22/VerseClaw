@@ -1,3 +1,8 @@
+> **2026-08-03 独立审计覆盖声明**：候选 `fac6327a2` 的结论是 `NO-GO`。
+> 下文所有审计前的“已完成/已通过”只能视为历史声明，不能授权继续 RC-10 或后续实现。
+> 当前先读 `RC-09-REMEDIATION-PLAN.md`，通过受支持的 Task Forest proposal 串行重开并复验
+> RC-00..RC-09；没有新的独立 Verifier evidence，不得恢复 accepted 状态。
+
 你将接管 ClawX Runtime Authority Convergence。若本文件与当前工作区证据冲突，以当前证据为准，记录冲突并停止相关实现；不要自行重开已冻结决策。
 
 ## 【工作目录】

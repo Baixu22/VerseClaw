@@ -19,8 +19,8 @@ touchedAreas:
   - artifacts/runtime-authority-convergence/rc-06c/**
 expectedUserBehavior:
   - No runtime send behavior, ordering, tools, retries, approvals, delivery, or payload bytes change.
-  - Mission definitions become TaskFlow templates/controllers behind a default-off flag.
-  - mission_runs/events remain compatibility reads until migration proof permits retirement.
+  - Mission definitions first project into TaskFlow templates/controllers, then undergo a controlled single-writer cutover and legacy freeze.
+  - mission_runs/events become compatibility reads after cutover and never remain an indefinite lifecycle truth writer.
   - Mission restart, wait, resume, and cancel semantics are preserved.
   - Migration and rollback pass.
 requiredProfiles:
@@ -35,10 +35,9 @@ forbiddenPatterns:
   - indefinite dual-write as a migration strategy
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The Mission -> TaskFlow read-only projection is behind a feature flag default-off; the kill switch restores the pure legacy path.
+  - The read-only projection may be default-off only during observation. The controlled cutover configuration selects exactly one lifecycle writer; rollback is an explicit mutually exclusive writer transition.
 rollback:
-  - Disable the projection flag to restore the pure legacy Mission path.
-  - No migration rollback is required because the projection writes only flow_runs rows.
+  - Before cutover, disable the projection. After cutover, rollback explicitly restores the legacy writer and freezes the TaskFlow writer; dual-write is forbidden.
 requiredTests:
   - pnpm --dir openclaw_runtime exec vitest run src/agents/mission-control/mission-taskflow-projection.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/agents/clawgraph/clawgraph-taskflow-projection.test.ts src/tasks/task-flow-cas.test.ts
@@ -46,9 +45,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rc06c-mission-lifecycle-migration.md
 acceptance:
-  - Mission definitions are projected as TaskFlow templates/controllers behind a default-off flag with zero behavior change to mission_runs/events compatibility reads.
+  - Projection, controlled cutover, legacy freeze, and emergency rollback each have explicit evidence; acceptance occurs only after the controlled cutover.
   - Mission restart, wait, resume, and cancel semantics are preserved in the projection.
-  - The legacy mission_runs/events writer remains authoritative until migration proof permits retirement.
+  - TaskFlow/TaskRegistry is the sole Mission lifecycle writer after cutover. mission_runs/events are compatibility reads or an explicit mutually exclusive rollback path.
   - Product locks remain false; an RC-06C independent Verifier accepts using the RC-00 infrastructure.
 docs:
   required: true

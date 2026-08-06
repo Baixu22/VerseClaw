@@ -1698,7 +1698,6 @@ describe('ChatInput slash session lifecycle commands', () => {
     permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
     permissionMocks.decideApproval.mockReset();
     permissionMocks.decideApproval.mockResolvedValue({ success: true });
-    artifactPanelMocks.openPreview.mockReset();
     vi.mocked(chatState.switchSession).mockReset();
     vi.mocked(chatState.renameSession).mockReset();
     vi.mocked(chatState.archiveSession).mockReset();

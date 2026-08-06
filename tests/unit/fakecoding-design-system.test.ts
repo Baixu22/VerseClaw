@@ -81,7 +81,9 @@ describe('FakeCoding design-system contract', () => {
     expect(globals).toContain('@apply transition-colors duration-150');
     expect(drawer).toContain('reduceMotion ? 100 : 180');
     expect(sidebar).toContain("transition-[width] duration-180 ease-out");
-    expect(tooltip).toContain('shadow-md duration-150');
+    expect(tooltip).toContain('shadow-none');
+    expect(tooltip).toContain('animate-in fade-in-0 zoom-in-95');
+    expect(tooltip).toContain('motion-reduce:animate-none');
   });
 
   it('keeps the fixed sidebar to three business links plus the New task command', () => {

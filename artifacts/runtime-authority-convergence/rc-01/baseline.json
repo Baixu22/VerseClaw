@@ -1,0 +1,523 @@
+{
+  "schema": "runtime-authority-convergence-baseline/v1",
+  "baselineVersion": 1,
+  "generatedAt": "2026-08-01T09:21:23.000Z",
+  "acceptedBaseSha": "6493d5cce6fbfa558aa26eb4cfb5a4cd71504664",
+  "sourceRuntimeVersion": {
+    "name": "openclaw",
+    "version": "2026.6.2",
+    "path": "openclaw_runtime/package.json",
+    "runtimeMode": "source"
+  },
+  "npmRuntimeVersion": {
+    "name": "openclaw",
+    "spec": "2026.5.20",
+    "path": "package.json (devDependencies)",
+    "runtimeMode": "npm",
+    "satisfiesReceiptReadiness": false
+  },
+  "capabilitySplit": {
+    "sourceIsSoleImplementationPath": true,
+    "npmFallbackReportsDegraded": true,
+    "npmFallbackSatisfiesReceiptReadiness": false,
+    "note": "Source openclaw_runtime is the sole implementation path for convergence capabilities; the npm fallback must expose runtimeMode=npm plus explicit capability degradation and cannot emit complete-receipt or readiness claims."
+  },
+  "authorities": {
+    "run": {
+      "name": "Run identity and lifecycle",
+      "targetOwner": "OpenClaw Gateway/runtime session authority",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/agents/sessions/**",
+          "role": "authority",
+          "classification": "reuse"
+        },
+        {
+          "path": "openclaw_runtime/src/gateway/call.runtime.ts",
+          "role": "authority",
+          "classification": "reuse"
+        }
+      ]
+    },
+    "session": {
+      "name": "Session transcript and identity",
+      "targetOwner": "Existing OpenClaw session authority",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/sessions/**",
+          "role": "authority",
+          "classification": "reuse"
+        },
+        {
+          "path": "electron/gateway/**",
+          "role": "projection",
+          "classification": "reuse"
+        }
+      ],
+      "nonOwners": [
+        "Task Ledger",
+        "Observability index"
+      ]
+    },
+    "checkpoint": {
+      "name": "Checkpoint material",
+      "targetOwner": "Existing long_task_checkpoints until a separate cutover is proven",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+          "role": "authority",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "tables": [
+            "long_task_checkpoints",
+            "long_task_intervention_events",
+            "long_task_user_queue"
+          ],
+          "restartSurvives": true
+        }
+      ],
+      "nonOwners": [
+        "Runtime event replay",
+        "UI state"
+      ]
+    },
+    "workflow": {
+      "name": "Flow lifecycle, waiting, resume, cancel, revision",
+      "targetOwner": "TaskFlow and TaskRegistry only after RC-06A capability proof and per-domain cutover",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts",
+          "role": "candidate-authority",
+          "classification": "converge",
+          "persistence": "sqlite",
+          "tables": [
+            "flow_runs"
+          ],
+          "revisionCas": "in-process expected-revision CAS; not DB-atomic",
+          "restartSurvives": true
+        },
+        {
+          "path": "openclaw_runtime/src/tasks/task-registry.store.sqlite.ts",
+          "role": "candidate-authority",
+          "classification": "converge",
+          "persistence": "sqlite",
+          "tables": [
+            "task_runs",
+            "task_delivery_state"
+          ],
+          "restartSurvives": true
+        }
+      ],
+      "legacyWriters": [
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/store.ts",
+          "classification": "converge",
+          "persistence": "sqlite",
+          "tables": [
+            "mission_runs",
+            "mission_events"
+          ]
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "classification": "converge",
+          "persistence": "process-map"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/clawgraph/runtime.ts",
+          "classification": "converge",
+          "persistence": "process-map"
+        }
+      ],
+      "rc06AGate": "TaskFlow/TaskRegistry become the only workflow lifecycle writers only after RC-06A proves SQLite-level expected-revision CAS, explicit transition graph, restart persistence, concurrent-writer rejection, and delivery-state consistency."
+    },
+    "context": {
+      "name": "Provider-bound logical context",
+      "targetOwner": "DCS in the single contextEngine slot",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/context-engine/assembler.ts",
+          "role": "candidate-authority",
+          "classification": "converge",
+          "persistence": "none",
+          "featureFlagsDefaultOff": true
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/block-store.ts",
+          "role": "projection",
+          "classification": "converge",
+          "persistence": "sqlite",
+          "tables": [
+            "context_blocks"
+          ],
+          "featureFlagsDefaultOff": true
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+          "role": "candidate",
+          "classification": "converge"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/legacy.ts",
+          "role": "legacy-slot",
+          "classification": "adapt"
+        }
+      ],
+      "slotNote": "The contextEngine slot default id is \"legacy\" owned by core; DCS occupies the single slot only after RC-03 cutover.",
+      "nonOwners": [
+        "Memory providers",
+        "Adapters",
+        "Payload hooks"
+      ]
+    },
+    "memory": {
+      "name": "Persistent memory",
+      "targetOwner": "One active memory slot plugin",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/memory/memory-store.ts",
+          "role": "authority",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "db": "role-memory.sqlite",
+          "defaultEnabled": true,
+          "automaticMutation": false
+        },
+        {
+          "path": "openclaw_runtime/src/plugins/slots.ts",
+          "role": "slot-owner",
+          "classification": "reuse"
+        }
+      ],
+      "nonOwners": [
+        {
+          "path": "packages/vtoken/",
+          "role": "stateless packer/benchmark arm",
+          "classification": "freeze"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/agent-map-context-provider.ts",
+          "role": "candidate producer",
+          "classification": "converge"
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/**",
+          "role": "human-confirmed governance",
+          "classification": "adapt"
+        }
+      ],
+      "flagOff": "flag-off performs zero query/write (RC-07)."
+    },
+    "tool": {
+      "name": "External tool protocol",
+      "targetOwner": "MCP SDK runtime; Work Provider as catalog/projection; host-native tools labelled honestly",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/mcp/plugin-tools-serve.ts",
+          "role": "protocol-surface",
+          "classification": "reuse"
+        },
+        {
+          "path": "openclaw_runtime/src/mcp/openclaw-tools-serve.ts",
+          "role": "protocol-surface",
+          "classification": "reuse"
+        },
+        {
+          "path": "openclaw_runtime/src/mcp/tools-stdio-server.ts",
+          "role": "protocol-surface",
+          "classification": "reuse"
+        }
+      ],
+      "note": "MCP SDK (@modelcontextprotocol/sdk) is the external protocol authority; no parallel MCP schema is defined."
+    },
+    "approval": {
+      "name": "Approval pending/resolved truth",
+      "targetOwner": "Durable approval owner selected in RC-04",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/gateway/exec-approval-manager.ts",
+          "role": "transient-authority",
+          "classification": "adapt",
+          "persistence": "process-map",
+          "restartSurvives": false,
+          "defect": "pending/resolved state held in Gateway process Map; restart clears them"
+        },
+        {
+          "path": "openclaw_runtime/src/channels/plugins/approvals.ts",
+          "role": "projection",
+          "classification": "reuse"
+        }
+      ],
+      "note": "RC-04 must replace in-memory approval truth with one durable owner in the existing OpenClaw state boundary."
+    },
+    "effect": {
+      "name": "External effect and idempotency truth",
+      "targetOwner": "Existing domain executor plus RC-04 EffectReceipt correlation record",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/agents/exec-approval-result.ts",
+          "role": "effect-result",
+          "classification": "adapt"
+        },
+        {
+          "path": "openclaw_runtime/src/channels/message/state.ts",
+          "role": "delivery-state",
+          "classification": "reuse"
+        }
+      ],
+      "note": "No unified EffectReceipt exists today; domain journals remain execution/idempotency truth. EffectReceipt must explain but never authorize replay."
+    },
+    "receipt": {
+      "name": "Receipt persistence owner",
+      "decision": "accepted",
+      "selectedOwner": "OpenClaw shared state SQLite / runtime_receipts via ReceiptStore",
+      "logicalOwner": "narrow ReceiptStore interface",
+      "physicalOwner": "existing openclaw-state SQLite",
+      "tableName": "runtime_receipts",
+      "tableIsNewTypedAppendOnly": true,
+      "reusedCapabilities": [
+        "openclaw-state SQLite (openclaw_runtime/src/state/openclaw-state-db.ts): schema/ensureSchema, permissions, WAL maintenance, PRAGMA synchronous=NORMAL, PRAGMA busy_timeout, restart persistence",
+        "runOpenClawStateWriteTransaction: synchronous immediate transaction"
+      ],
+      "rejectedOwners": {
+        "long_task_checkpoints": "mutable checkpoint/resume truth source; same idempotency key updates checkpoint_json and cannot cover ordinary model calls",
+        "RuntimeTaskEventLog": "default-off, auto-pruned, lacks receipt/effect kind; remains diagnostic only",
+        "flow_runs": "workflow-scoped; in-process expected-revision CAS is not multi-process safe",
+        "mission_events": "mission-scoped append-only lifecycle journal",
+        "channels/message/receipt.ts": "pure normalization function; writes no table"
+      },
+      "hardConstraints": [
+        "1. receipt stores only digest, refs, call index, version, and policy digest; never raw prompt, tool output, credentials, cookies, or environment values",
+        "2. append-only; same idempotency_key with identical content is idempotent success, different content must conflict-fail",
+        "3. no max(sequence)+1; use explicit attempt/model-call/wire-attempt identity",
+        "4. no silent pruning; deletion requires an explicit lifecycle policy",
+        "5. shadow write failure must not change send behavior but must fail RC-02 acceptance",
+        "6. receipt explains and correlates facts only; it never authorizes replay; domain journals remain the effect/idempotency truth source",
+        "7. npm fallback continues to report degraded and does not count toward complete receipt coverage"
+      ],
+      "noNewAuthority": "no new database, sidecar, service, or second runtime authority is introduced",
+      "proofRequired": "schema, atomic-sequence, retention, lookup, idempotency, failure-propagation, privacy, restart",
+      "candidates": [
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+          "role": "rejected",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "tables": [
+            "long_task_checkpoints"
+          ],
+          "assessment": {
+            "schema": "typed: id/idempotency_key/session_key/agent_id/workspace_id/task_ledger_root_id/run_id/trace_id/clawgraph_run_id/trigger/status/checkpoint_json/created_at/updated_at",
+            "atomicSequence": "transactionally durable; onConflict(id) or onConflict(idempotency_key) doUpdateSet",
+            "retention": "no auto-prune for checkpoints (durable recovery truth); bounded only by manual cleanup",
+            "lookup": "indexes on session_key+created_at, status+created_at, task_ledger_root_id+created_at",
+            "idempotency": "idempotency_key UNIQUE + onConflict doUpdateSet (mutable)",
+            "failurePropagation": "best-effort task-ledger projection does not affect SQLite durability",
+            "privacy": "checkpoint_json holds bounded resume material; raw prompts/credentials not stored by default",
+            "restart": "rows survive; getLatestLongTaskCheckpoint/listLongTaskCheckpoints are the resume source"
+          },
+          "rejectionReason": "Rejected as receipt owner: checkpoint_json is mutable under the same idempotency key, and the table is the checkpoint/resume recovery truth, not a model-call receipt journal."
+        },
+        {
+          "path": "openclaw_runtime/src/runtime-core/event-log-persistence.ts",
+          "role": "rejected",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "tables": [
+            "runtime_task_event_log_records"
+          ],
+          "assessment": {
+            "schema": "typed records with task_sequence",
+            "atomicSequence": "append-only; per-task idempotency_key",
+            "retention": "prunes: 14-day max age, 2000 records/task, batch 500, max 25 tasks/run",
+            "lookup": "by task/trace scope",
+            "idempotency": "event_id uniqueness + per-task idempotency_key",
+            "failurePropagation": "replay/reducer/resume not implemented as authority (diagnostic pilots only)",
+            "privacy": "bounded diagnostic records",
+            "restart": "persists only when runtime.eventLog.persist=true (default off)"
+          },
+          "defaultOff": true,
+          "prunable": true,
+          "hasReceiptEffectKind": false,
+          "rejectionReason": "Rejected as receipt owner: default-off, auto-pruned, lacks receipt/effect event kinds; remains diagnostic only."
+        },
+        {
+          "path": "openclaw_runtime/src/tasks/task-flow-registry.store.sqlite.ts",
+          "role": "rejected",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "tables": [
+            "flow_runs"
+          ],
+          "assessment": {
+            "schema": "typed flow_runs with revision INTEGER",
+            "atomicSequence": "in-process expected-revision CAS, not DB-atomic WHERE revision=?",
+            "retention": "no receipt-specific retention",
+            "lookup": "indexes on status/owner_key",
+            "idempotency": "upsert by flow id; revision conflict rejected",
+            "failurePropagation": "in-process CAS is not multi-process safe",
+            "privacy": "stateJson/waitJson bounded",
+            "restart": "lazy restore from SQLite"
+          },
+          "rejectionReason": "Rejected as receipt owner: workflow-scoped; in-process CAS is not a multi-process-safe receipt journal."
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/store.ts",
+          "role": "rejected",
+          "classification": "reuse",
+          "persistence": "sqlite",
+          "tables": [
+            "mission_events"
+          ],
+          "assessment": {
+            "schema": "typed: mission_events(id/type/phase/status/tick/decision/payload_json)",
+            "atomicSequence": "insert onConflict(id) doNothing — append-only lifecycle",
+            "retention": "no auto-prune",
+            "lookup": "by mission_id/event id",
+            "idempotency": "onConflict(id) doNothing",
+            "failurePropagation": "append-only; no reducer authority",
+            "privacy": "payload_json bounded",
+            "restart": "rows survive"
+          },
+          "rejectionReason": "Rejected as receipt owner: mission-scoped append-only lifecycle journal, not a model-call receipt owner."
+        },
+        {
+          "path": "openclaw_runtime/src/channels/message/receipt.ts",
+          "role": "rejected",
+          "classification": "reuse",
+          "persistence": "none",
+          "rejectionReason": "createMessageReceiptFromOutboundResults is a pure normalization function; writes no table."
+        }
+      ],
+      "note": "User-confirmed decision: a typed, append-only runtime_receipts table in the existing openclaw-state SQLite is the receipt owner, exposed through a narrow ReceiptStore interface. It reuses the shared state DB capabilities (schema, permissions, WAL, busy timeout, restart persistence, immediate transaction) without creating a new database, sidecar, service, or second runtime authority."
+    },
+    "telemetry": {
+      "name": "Telemetry export",
+      "targetOwner": "OpenTelemetry/OTLP",
+      "writers": [
+        {
+          "path": "openclaw_runtime/extensions/diagnostics-otel/",
+          "role": "exporter",
+          "classification": "reuse",
+          "defaultEnabled": false
+        },
+        {
+          "path": "openclaw_runtime/src/observability/trace-recorder.ts",
+          "role": "in-memory-projector",
+          "classification": "adapt",
+          "persistence": "process-map",
+          "rebuildable": true
+        },
+        {
+          "path": "openclaw_runtime/src/observability/trace-buffer.ts",
+          "role": "in-memory-buffer",
+          "classification": "adapt",
+          "persistence": "process-map",
+          "maxTraces": 100
+        }
+      ],
+      "note": "OTel exports traces; receipts and domain journals remain factual evidence, not a second telemetry platform."
+    },
+    "trajectory": {
+      "name": "Bounded flight-recorder trajectory",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/trajectory/runtime.ts",
+          "role": "bounded-recorder",
+          "classification": "adapt",
+          "persistence": "jsonl",
+          "defaultEnabled": true,
+          "bounds": "CAPTURE_MAX_BYTES=10MB, FILE_MAX_BYTES=50MB, EVENT_MAX_BYTES=256KB"
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+          "role": "bounded-recorder",
+          "classification": "adapt",
+          "persistence": "sqlite",
+          "tables": [
+            "sekb_trajectories"
+          ],
+          "defaultEnabled": false
+        }
+      ]
+    },
+    "observabilityJsonl": {
+      "name": "Observability JSONL",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/observability/**",
+          "role": "rebuildable-cache",
+          "classification": "adapt",
+          "persistence": "process-map"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/dcs-observability.ts",
+          "role": "rebuildable-cache",
+          "classification": "adapt",
+          "persistence": "process-map"
+        }
+      ],
+      "note": "Rebuildable cache only; not runtime truth."
+    },
+    "ui": {
+      "name": "User view projections",
+      "writers": [
+        {
+          "path": "electron/services/task-ledger-service.ts",
+          "role": "projection",
+          "classification": "reuse",
+          "note": "read/append/project service over JSONL; recomputes snapshot.json"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/long-task-control/task-ledger.ts",
+          "role": "best-effort-projection",
+          "classification": "adapt",
+          "note": "SQLite recovery state remains durable; ledger is a derived graph"
+        }
+      ],
+      "nonOwners": [
+        "runtime authority"
+      ]
+    },
+    "runtimeSpine": {
+      "name": "runtime-spine diagnostic residue",
+      "writers": [
+        {
+          "path": "openclaw_runtime/src/runtime-spine/**",
+          "role": "diagnostic-only",
+          "classification": "freeze"
+        }
+      ],
+      "frozen": true,
+      "note": "Existing diagnostic_only code is frozen; it may be removed or adapted but never promoted as a second runtime."
+    },
+    "runtimeFamily": {
+      "name": "runtime-family-unification-v1",
+      "frozen": true,
+      "note": "Frozen as diagnostic legacy; must not become runtime authority."
+    }
+  },
+  "receiptOwnerDecision": {
+    "status": "accepted",
+    "blocker": null,
+    "selectedOwner": "OpenClaw shared state SQLite / runtime_receipts via ReceiptStore",
+    "logicalOwner": "narrow ReceiptStore interface",
+    "physicalOwner": "existing openclaw-state SQLite",
+    "tableName": "runtime_receipts",
+    "comparisonCovered": [
+      "RuntimeTaskEventLog",
+      "TaskFlow flow_runs",
+      "mission_events",
+      "long_task_checkpoints",
+      "trajectory",
+      "domain journals",
+      "same-state-DB typed receipt table"
+    ],
+    "reason": "User-confirmed decision (2026-08-02). RC-01 completed the required comparison of existing domain journals, trajectory, TaskFlow/TaskRegistry evidence, RuntimeTaskEventLog, and a same-state-DB typed receipt table against receipt schema, atomic sequencing, retention, lookup, idempotency, failure propagation, privacy, and restart requirements. None of the existing owners qualifies: RuntimeTaskEventLog is default-off/prunable/without receipt kinds and stays diagnostic; TaskFlow flow_runs is workflow-scoped with in-process CAS; mission_events is mission-scoped; long_task_checkpoints is mutable checkpoint/resume truth that updates checkpoint_json under the same idempotency key and cannot cover ordinary model calls. The decision is to add a typed, append-only runtime_receipts table in the existing openclaw-state SQLite, exposed through a narrow ReceiptStore interface, reusing the shared state DB capabilities (schema, permissions, WAL, busy timeout, restart persistence, immediate transaction). No new database, sidecar, service, or second runtime authority is introduced. The seven hard constraints (digest-only payload, append-only with content-sensitive idempotency, explicit attempt/model-call/wire-attempt identity, no silent pruning, shadow-write failure fails RC-02 but never changes send behavior, receipt explains facts without authorizing replay, npm fallback stays degraded) are binding."
+  },
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  }
+}

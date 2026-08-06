@@ -1,7 +1,7 @@
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createObservabilityApi, setRuntimeTraceFetcher } from '../../electron/services/observability-api';
 import { clearObservabilityTraceBuffer } from '../../electron/services/observability-service';
 import { clearObservabilityIndex, resetObservabilityIndexForTests } from '../../electron/services/observability-index';
@@ -33,6 +33,8 @@ describe('observability trajectory-backed trace indexing', () => {
   let previousOpenClawConfigDir: string | undefined;
 
   beforeEach(async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-05T00:00:00.000Z'));
     tempRoot = await mkdtemp(join(tmpdir(), 'clawx-observability-trajectory-index-'));
     previousUserData = process.env.VERSE_CLAW_USER_DATA_DIR;
     previousIndexDir = process.env.VERSE_CLAW_OBSERVABILITY_INDEX_DIR;
@@ -56,6 +58,7 @@ describe('observability trajectory-backed trace indexing', () => {
     if (previousOpenClawConfigDir == null) delete process.env.OPENCLAW_CONFIG_DIR;
     else process.env.OPENCLAW_CONFIG_DIR = previousOpenClawConfigDir;
     await rm(tempRoot, { recursive: true, force: true });
+    vi.useRealTimers();
   });
 
   it('makes transcript-adjacent runtime trajectory queryable by workspace, sessionKey, and runId', async () => {
