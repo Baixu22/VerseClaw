@@ -132,9 +132,12 @@ const COVERAGE_PATTERNS = Object.freeze({
     'scripts/smoke-openclaw-runtime.mjs',
   ],
   ui: [
+    // shared/ subpackages are consumed by both renderer and the runtime
+    // (e.g. shared/verseshell is runtime-only); e2e cannot run in the
+    // headless acceptance environment, so only renderer/electron paths
+    // trigger the e2e profile.
     'src/**',
     'electron/**',
-    'shared/**',
     'tests/e2e/**',
     'playwright.config.ts',
   ],

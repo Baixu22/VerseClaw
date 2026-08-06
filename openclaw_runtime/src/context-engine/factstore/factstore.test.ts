@@ -1,4 +1,4 @@
-import { mkdtempSync, existsSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, existsSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -332,6 +332,7 @@ describe("openFactStore lifecycle", () => {
 describe("neutral membrane artifact (gate C-5)", () => {
   const runtimeRoot = fileURLToPath(new URL("../../..", import.meta.url));
   const artifactDir = path.join(runtimeRoot, ".artifacts");
+  mkdirSync(artifactDir, { recursive: true });
   const dbPath = path.join(artifactDir, "factstore-neutral-membrane.sqlite");
   const expectedPath = path.join(artifactDir, "factstore-neutral-membrane.expected.json");
 
