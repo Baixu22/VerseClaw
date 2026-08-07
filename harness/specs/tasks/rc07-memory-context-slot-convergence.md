@@ -21,6 +21,7 @@ ownedPaths:
   - artifacts/runtime-authority-convergence/rc-07/**
 touchedAreas:
   - openclaw_runtime/src/plugins/**
+  - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/memory/**
   - openclaw_runtime/src/context-engine/**
   - packages/vtoken/**

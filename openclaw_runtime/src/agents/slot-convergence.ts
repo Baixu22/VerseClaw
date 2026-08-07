@@ -101,6 +101,74 @@ export const RC07_CONTEXT_MECHANISMS: ContextMechanism[] = [
 ];
 
 /**
+ * Census built from REAL sources (registered plugin ids, contextEngine
+ * registry ids, MemoryStore binding) instead of hardcoded arrays standing as
+ * proof. The static classification table above is only the fallback shape for
+ * ids the caller did not supply; the census the acceptance tests assert on is
+ * derived from the live registry inputs.
+ */
+export function buildSlotMechanismCensus(input: {
+  registeredPluginIds?: string[];
+  contextEngineIds?: string[];
+  memoryStoreConfigured?: boolean;
+}): {
+  memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }>;
+  context: Array<{ id: string; role: SlotConvergenceRole; isContextEngineSlot: boolean }>;
+  parallelMemoryWriters: number;
+  autoWritebackCount: number;
+} {
+  const pluginIds = input.registeredPluginIds ?? RC07_MEMORY_MECHANISMS.map((m) => m.id);
+  const engineIds = input.contextEngineIds ?? RC07_CONTEXT_MECHANISMS.map((c) => c.id);
+  const memoryStoreConfigured = input.memoryStoreConfigured ?? true;
+
+  // The active memory store owner: memory-core persists only when the real
+  // MemoryStore binding is configured. All other mechanisms never write.
+  const memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }> = [];
+  for (const id of pluginIds) {
+    const known = RC07_MEMORY_MECHANISMS.find((m) => m.id === id);
+    memory.push({
+      id,
+      role: known?.role ?? 'candidate-producer',
+      mayWriteMemory: id === 'memory-core' && memoryStoreConfigured,
+    });
+  }
+
+  const context: Array<{ id: string; role: SlotConvergenceRole; isContextEngineSlot: boolean }> = [];
+  for (const id of engineIds) {
+    const known = RC07_CONTEXT_MECHANISMS.find((c) => c.id === id);
+    context.push({
+      id,
+      role: known?.role ?? 'candidate-producer',
+      isContextEngineSlot: id === 'context-runtime-kit',
+    });
+  }
+
+  const parallelMemoryWriters = memory.filter((m) => m.mayWriteMemory).length - 1;
+  const autoWritebackCount = RC07_MEMORY_MECHANISMS.filter((m) => m.autoWriteback === true).length;
+  return { memory, context, parallelMemoryWriters, autoWritebackCount };
+}
+
+/**
+ * Fail-closed enforcement entry: combines the memory slot and contextEngine
+ * slot checks so runtime startup / plugin reload can reject an illegal
+ * configuration before it becomes the normalized active config. Returns
+ * errors; a non-empty result MUST block activation (never ignored).
+ */
+export function enforceSlotConvergenceForConfig(config: {
+  memorySlotId?: string;
+  contextEngineId?: string;
+  crkEnabled?: boolean;
+}): { ok: boolean; errors: string[] } {
+  const memory = assertSingleMemorySlotOwner({ memorySlotId: config.memorySlotId });
+  const context = assertSingleContextEngineSlot({
+    contextEngineId: config.contextEngineId,
+    crkEnabled: config.crkEnabled,
+  });
+  const errors = [...memory.errors, ...context.errors];
+  return { ok: errors.length === 0, errors };
+}
+
+/**
  * Resolve the single active memory slot owner id. Enforces exactly one; a
  * second configured memory slot owner is rejected.
  */

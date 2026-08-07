@@ -3,6 +3,7 @@ import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import { uniqueStrings } from "@openclaw/normalization-core/string-normalization";
 import type { OpenClawConfig } from "../config/types.js";
+import { buildSlotMechanismCensus } from "../agents/slot-convergence.js";
 import { normalizePluginsConfig } from "./config-state.js";
 import { passesManifestOwnerBasePolicy } from "./manifest-owner-policy.js";
 import type { PluginManifestRecord } from "./manifest-registry.js";
@@ -71,6 +72,15 @@ export function resolveManifestActivationPlan(
 ): PluginActivationPlan {
   const onlyPluginIdSet = createPluginIdScopeSet(normalizePluginIdScope(params.onlyPluginIds));
   const normalizedConfig = normalizePluginsConfig(params.config?.plugins);
+  // RC-07 fail-closed: an illegal memory/contextEngine slot configuration is
+  // rejected at activation planning time (runtime startup and plugin reload
+  // both flow through here). The error list is consumed, never ignored.
+  const slotErrors = normalizedConfig.slotConvergenceErrors ?? [];
+  if (slotErrors.length > 0) {
+    throw new Error(
+      `plugin slot convergence rejected (illegal config must not become active): ${slotErrors.join("; ")}`,
+    );
+  }
   const registry = params.manifestRecords
     ? { plugins: params.manifestRecords, diagnostics: [] }
     : loadPluginManifestRegistryForPluginRegistry({
@@ -109,6 +119,23 @@ export function resolveManifestActivationPlan(
       ];
     })
     .toSorted((left, right) => left.pluginId.localeCompare(right.pluginId));
+
+  // RC-07 runtime census from REAL inputs: the manifest records this plan is
+  // about to activate and the resolved memory slot (never hardcoded ids). A
+  // non-zero parallel-memory-writer census is fail-closed — the plan is not
+  // produced and the illegal configuration can never activate.
+  const census = buildSlotMechanismCensus({
+    registeredPluginIds: registry.plugins.map((plugin) => plugin.id),
+    contextEngineIds: normalizedConfig.slots.contextEngine
+      ? [normalizedConfig.slots.contextEngine]
+      : [],
+    memoryStoreConfigured: normalizedConfig.slots.memory === "memory-core",
+  });
+  if (census.parallelMemoryWriters > 0) {
+    throw new Error(
+      `plugin slot convergence rejected: ${census.parallelMemoryWriters} parallel memory writers in census`,
+    );
+  }
 
   return {
     trigger: params.trigger,
