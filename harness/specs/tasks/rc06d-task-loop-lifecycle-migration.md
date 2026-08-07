@@ -5,6 +5,7 @@ taskType: engineering-acceptance
 intent: Migrate Task Loop lifecycle (waiting, cancel, terminal state) to TaskFlow last. long_task_checkpoints retain checkpoint material only; replay never executes effects. After this package, TaskFlow/TaskRegistry are the only workflow lifecycle writers.
 ownedPaths:
   - openclaw_runtime/src/agents/task-loop-controller.ts
+  - openclaw_runtime/src/agents/orchestration-quality-scorecard.ts
   - openclaw_runtime/src/agents/task-loop-taskflow-projection.ts
   - openclaw_runtime/src/agents/task-loop-taskflow-projection.test.ts
   - openclaw_runtime/src/agents/long-task-control/store.ts
