@@ -160,7 +160,7 @@ function positiveInt(value: unknown, fallback: number, min = 1, max = Number.MAX
 function resolveAgentMissionConfig(cfg: OpenClawConfig | undefined, agentId?: string): MissionConfig {
   const defaults = cfg?.agents?.defaults?.missionLoop ?? {};
   const agent = cfg?.agents?.list?.find((entry: AgentConfig) => entry.id === agentId);
-  return { ...defaults, ...agent?.missionLoop };
+  return { ...defaults, ...(agent?.missionLoop ?? {}) };
 }
 
 function terminal(status: MissionStatus): boolean {
@@ -208,7 +208,7 @@ function clone(record: MissionRunRecord): MissionRunRecord {
         acceptanceStatus: tick.reviewer.acceptanceStatus ? { ...tick.reviewer.acceptanceStatus } : undefined,
       } : undefined,
     })),
-    metadata: { ...record.metadata },
+    metadata: { ...(record.metadata ?? {}) },
   };
 }
 
@@ -372,8 +372,12 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
           phase: record.phase,
           tick: record.tick,
           waitMode:
-            record.status === "ask_user" || record.status === "sleeping"
-              ? (record.status === "ask_user" ? "ask_user" : "sleep")
+            record.status === "ask_user" || record.status === "sleeping" || record.status === "paused"
+              ? record.status === "ask_user"
+                ? "ask_user"
+                : record.status === "paused"
+                  ? "pause"
+                  : "sleep"
               : "none",
         },
         { enabled: true },
