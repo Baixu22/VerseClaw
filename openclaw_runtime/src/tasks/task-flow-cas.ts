@@ -22,6 +22,9 @@ import type { DB as OpenClawStateKyselyDatabase } from '../state/openclaw-state-
 
 export const TASK_FLOW_CAS_SCHEMA_VERSION = '1';
 
+/** Create sentinel: a new flow MUST be created with expectedRevision = -1. */
+export const CAS_CREATE_SENTINEL = -1;
+
 export const FLOW_STATUSES = [
   'queued',
   'running',
@@ -33,6 +36,13 @@ export const FLOW_STATUSES = [
   'lost',
 ] as const;
 export type FlowStatus = (typeof FLOW_STATUSES)[number];
+
+const TERMINAL_STATUSES: ReadonlySet<FlowStatus> = new Set(['succeeded', 'failed', 'cancelled', 'lost']);
+
+/** Terminal statuses are absorbing and can never be an initial status. */
+export function isTerminalFlowStatus(status: FlowStatus): boolean {
+  return TERMINAL_STATUSES.has(status);
+}
 
 /**
  * Explicit legal transition graph. Only these transitions are allowed; any
@@ -80,20 +90,29 @@ export type CasFlowOptions = OpenClawStateDatabaseOptions;
 
 export type CasUpsertInput = {
   flowId: string;
+  /** expectedRevision = CAS_CREATE_SENTINEL (-1) creates a new flow; otherwise
+   *  the writer must hold the current revision. */
   expectedRevision: number;
   status: FlowStatus;
   ownerKey?: string;
   currentStep?: string;
-  stateJson?: string;
-  waitJson?: string;
-  deliveryState?: string;
+  /** Explicit null clears the field (e.g. wait payload on cancel/terminal). */
+  stateJson?: string | null;
+  waitJson?: string | null;
+  /** Delivery projection, persisted on flow_runs.delivery_state in the same
+   *  row/transaction as the lifecycle transition (never declared but dropped).
+   *  Explicit null clears the field. */
+  deliveryState?: string | null;
 };
 
 /**
- * Expected-revision CAS upsert against flow_runs. Reads the current row in the
- * same immediate transaction, checks the expected revision and the legal
- * transition, and only then writes. A concurrent writer with a stale revision is
- * rejected atomically.
+ * Expected-revision CAS write against flow_runs. Creation requires the explicit
+ * create sentinel (expectedRevision = -1) and a non-terminal initial status;
+ * updates are guarded by `WHERE flow_id = ? AND revision = ?` at the SQL level
+ * so a stale or concurrent writer is rejected atomically (affected rows = 0).
+ * The legal transition graph is validated inside the same immediate
+ * transaction as the write. delivery_state persists on the same row, so
+ * delivery/lifecycle can never split.
  */
 export class TaskFlowCasStore {
   #database: CasFlowOptions = {};
@@ -110,63 +129,105 @@ export class TaskFlowCasStore {
         db,
         query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
       );
-      const currentStatus = existing ? (existing.status as FlowStatus) : 'queued';
-      const currentRevision = existing ? normalizeNumber(existing.revision) ?? 0 : 0;
 
-      if (existing && currentRevision !== input.expectedRevision) {
-        result = { ok: false, reason: 'revision-conflict', message: `expected ${input.expectedRevision}, got ${currentRevision}` };
+      if (!existing) {
+        // ---- CREATE path: explicit sentinel + non-terminal initial status.
+        if (input.expectedRevision !== CAS_CREATE_SENTINEL) {
+          result = {
+            ok: false,
+            reason: 'revision-conflict',
+            message: `new flow requires expectedRevision=${CAS_CREATE_SENTINEL}, got ${input.expectedRevision}`,
+          };
+          return;
+        }
+        if (isTerminalFlowStatus(input.status)) {
+          result = {
+            ok: false,
+            reason: 'illegal-transition',
+            message: `terminal status ${input.status} cannot be an initial status`,
+          };
+          return;
+        }
+        const now = Date.now();
+        const row: Insertable<CasFlowRow> = {
+          flow_id: input.flowId,
+          shape: null,
+          sync_mode: 'managed',
+          owner_key: input.ownerKey ?? 'cas-proof',
+          requester_origin_json: null,
+          controller_id: null,
+          revision: 0,
+          status: input.status,
+          notify_policy: 'done_only',
+          goal: `cas-${input.flowId}`,
+          current_step: input.currentStep ?? null,
+          blocked_task_id: null,
+          blocked_summary: null,
+          state_json: input.stateJson ?? null,
+          wait_json: input.waitJson ?? null,
+          delivery_state: input.deliveryState ?? null,
+          cancel_requested_at: null,
+          created_at: now,
+          updated_at: now,
+          ended_at: null,
+        };
+        executeSqliteQuerySync(db, query.insertInto('flow_runs').values(row));
+        const inserted = executeSqliteQueryTakeFirstSync(
+          db,
+          query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
+        );
+        result = inserted ? { ok: true, row: inserted, revision: 0 } : { ok: false, reason: 'not-found' };
         return;
       }
-      if (existing && !isLegalTransition(currentStatus, input.status)) {
+
+      // ---- UPDATE path: revision CAS + legal transition, atomic in SQL.
+      const currentRevision = normalizeNumber(existing.revision) ?? 0;
+      if (currentRevision !== input.expectedRevision) {
+        result = {
+          ok: false,
+          reason: 'revision-conflict',
+          message: `expected ${input.expectedRevision}, got ${currentRevision}`,
+        };
+        return;
+      }
+      const currentStatus = existing.status as FlowStatus;
+      if (!isLegalTransition(currentStatus, input.status)) {
         result = { ok: false, reason: 'illegal-transition', message: `${currentStatus}->${input.status}` };
         return;
       }
-      const nextRevision = existing ? currentRevision + 1 : 0;
+      const nextRevision = currentRevision + 1;
       const now = Date.now();
-      const row: Insertable<CasFlowRow> = {
-        flow_id: input.flowId,
-        shape: existing?.shape ?? null,
-        sync_mode: existing?.sync_mode ?? 'managed',
-        owner_key: input.ownerKey ?? existing?.owner_key ?? 'cas-proof',
-        requester_origin_json: existing?.requester_origin_json ?? null,
-        controller_id: existing?.controller_id ?? null,
-        revision: nextRevision,
-        status: input.status,
-        notify_policy: existing?.notify_policy ?? 'none',
-        goal: existing?.goal ?? `cas-${input.flowId}`,
-        current_step: input.currentStep ?? existing?.current_step ?? null,
-        blocked_task_id: existing?.blocked_task_id ?? null,
-        blocked_summary: existing?.blocked_summary ?? null,
-        state_json: input.stateJson ?? existing?.state_json ?? null,
-        wait_json: input.waitJson ?? existing?.wait_json ?? null,
-        cancel_requested_at: existing?.cancel_requested_at ?? null,
-        created_at: existing?.created_at ?? now,
-        updated_at: now,
-        ended_at: input.status === 'succeeded' || input.status === 'failed' || input.status === 'cancelled' ? now : existing?.ended_at ?? null,
-      };
-      executeSqliteQuerySync(
+      const endedAt =
+        input.status === 'succeeded' || input.status === 'failed' || input.status === 'cancelled' || input.status === 'lost'
+          ? now
+          : existing.ended_at ?? null;
+      const updatedResult = executeSqliteQuerySync(
         db,
         query
-          .insertInto('flow_runs')
-          .values(row)
-          .onConflict((conflict) =>
-            conflict.column('flow_id').doUpdateSet({
-              shape: (eb) => eb.ref('excluded.shape'),
-              sync_mode: (eb) => eb.ref('excluded.sync_mode'),
-              owner_key: (eb) => eb.ref('excluded.owner_key'),
-              controller_id: (eb) => eb.ref('excluded.controller_id'),
-              revision: (eb) => eb.ref('excluded.revision'),
-              status: (eb) => eb.ref('excluded.status'),
-              notify_policy: (eb) => eb.ref('excluded.notify_policy'),
-              goal: (eb) => eb.ref('excluded.goal'),
-              current_step: (eb) => eb.ref('excluded.current_step'),
-              state_json: (eb) => eb.ref('excluded.state_json'),
-              wait_json: (eb) => eb.ref('excluded.wait_json'),
-              updated_at: (eb) => eb.ref('excluded.updated_at'),
-              ended_at: (eb) => eb.ref('excluded.ended_at'),
-            }),
-          ),
+          .updateTable('flow_runs')
+          .set({
+            status: input.status,
+            revision: nextRevision,
+            owner_key: input.ownerKey ?? existing.owner_key,
+            current_step: input.currentStep ?? existing.current_step,
+            state_json: input.stateJson !== undefined ? input.stateJson : existing.state_json,
+            wait_json: input.waitJson !== undefined ? input.waitJson : existing.wait_json,
+            delivery_state: input.deliveryState !== undefined ? input.deliveryState : existing.delivery_state,
+            updated_at: now,
+            ended_at: endedAt,
+          })
+          .where('flow_id', '=', input.flowId)
+          .where('revision', '=', input.expectedRevision),
       );
+      const affected = Number(updatedResult.numAffectedRows ?? 0n);
+      if (affected === 0) {
+        result = {
+          ok: false,
+          reason: 'revision-conflict',
+          message: `no row updated (revision guard) for ${input.flowId}`,
+        };
+        return;
+      }
       const updated = executeSqliteQueryTakeFirstSync(
         db,
         query.selectFrom('flow_runs').selectAll().where('flow_id', '=', input.flowId),
