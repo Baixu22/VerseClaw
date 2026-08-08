@@ -164,6 +164,48 @@ if (typeof window !== 'undefined') {
   });
 }
 
+// Mock IntersectionObserver: jsdom does not implement it, but framer-motion's
+// useInView (used by dia-text-reveal in the loading shells) constructs one at
+// mount. A no-op observer keeps those components renderable in unit tests.
+if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
+  class IntersectionObserverMock {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds: ReadonlyArray<number> = [];
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+    takeRecords = vi.fn(() => []);
+  }
+  Object.defineProperty(window, 'IntersectionObserver', {
+    writable: true,
+    value: IntersectionObserverMock,
+  });
+  Object.defineProperty(globalThis, 'IntersectionObserver', {
+    writable: true,
+    value: IntersectionObserverMock,
+  });
+}
+
+// Mock ResizeObserver: jsdom does not implement it either. The composer's
+// plus-menu-morph measures the add menu on mount, so renderer tests that mount
+// ChatInput need a no-op observer.
+if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
+  class ResizeObserverMock {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+  }
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: true,
+    value: ResizeObserverMock,
+  });
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    writable: true,
+    value: ResizeObserverMock,
+  });
+}
+
 // Reset mocks after each test
 afterEach(() => {
   vi.clearAllMocks();

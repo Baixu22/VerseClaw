@@ -2655,6 +2655,7 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     fireEvent.click(screen.getByTestId('chat-composer-actions'));
+    fireEvent.click(await screen.findByTestId('chat-composer-action-more'));
 
     expect(await screen.findByTestId('chat-composer-actions-menu')).toBeInTheDocument();
     expect(screen.getByTestId('chat-composer-action-group-office')).toHaveTextContent('Office');
@@ -2697,6 +2698,7 @@ describe('ChatInput agent targeting', () => {
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
     fireEvent.click(screen.getByTestId('chat-composer-actions'));
+    fireEvent.click(await screen.findByTestId('chat-composer-action-more'));
     fireEvent.click(await screen.findByTestId('chat-composer-action-office-word'));
 
     expect(textbox).toHaveValue('/officecli-docx  Create a Word document with the following requirements:\n\n[describe your document content, structure, and formatting here]');

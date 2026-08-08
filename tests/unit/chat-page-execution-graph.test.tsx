@@ -54,6 +54,12 @@ vi.mock('@/stores/artifact-panel', () => {
 vi.mock('@/lib/host-api', () => ({
   hostApiFetch: (...args: unknown[]) => hostApiFetchMock(...args),
   hostApi: {
+    git: {
+      status: vi.fn(async () => ({ success: true, status: null })),
+    },
+    sessionActivity: {
+      snapshot: vi.fn(async () => ({ success: true, snapshot: null })),
+    },
     topics: {
       list: vi.fn(async () => ({ topics: [], activeTopicId: null })),
     },
