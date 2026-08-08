@@ -1,14 +1,14 @@
 import type {
   CompressionArtifact,
   CompressionCvkEvidenceRef,
-} from '../../../packages/agent-core/src/harness/compaction/compression-artifact';
-import type { Chunk } from '../../../../shared/types/context-runtime-kit';
-import type { CvkFixtureArtifact } from './compiler';
+} from '../../../packages/agent-core/src/harness/compaction/compression-artifact.js';
+import type { Chunk } from '../../../../shared/types/context-runtime-kit.js';
+import type { CvkFixtureArtifact } from './compiler.js';
 import {
   resolveCvkSelector,
   type CvkSelectorResolutionFailureStatus,
-} from './resolver';
-import { generateCvkViews, type CvkRegistryViewEntry } from './views';
+} from './resolver.js';
+import { generateCvkViews, type CvkRegistryViewEntry } from './views.js';
 
 export type CvkRecoveryReferenceDiagnostic = {
   status: CvkSelectorResolutionFailureStatus | 'stale_reference';

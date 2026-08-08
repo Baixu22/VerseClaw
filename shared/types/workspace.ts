@@ -1,4 +1,4 @@
-import type { WorkModeId } from './work-mode';
+import type { WorkModeId } from './work-mode.js';
 
 export type WorkspacePermissionMode = 'readOnly' | 'acceptEdits' | 'plan' | 'fullAccess';
 

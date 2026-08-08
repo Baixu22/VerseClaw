@@ -5,3 +5,8 @@
 # to the blob on every platform; core.autocrlf=true would otherwise smudge it
 # to CRLF on fresh worktrees and break the recorded SHA-256.
 resources/verseshell/patches/uas-05-process-lifecycle.patch -text
+
+# RC-01 acceptance uses this generated inventory as a candidate-bound input.
+# Keep the JSON byte-stable across Windows and POSIX checkouts so rerunning its
+# deterministic generator cannot create an EOL-only worktree mutation.
+artifacts/runtime-authority-convergence/rc-01/baseline.json -text

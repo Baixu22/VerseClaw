@@ -1,4 +1,4 @@
-import type { WorkModeKit } from './work-mode';
+import type { WorkModeKit } from './work-mode.js';
 
 export type WorkProviderKind =
   | 'officeDocument'

@@ -7,7 +7,7 @@ import {
   normalizeResourceId,
   normalizeSelector,
   stableStringifyContextRuntimeKit,
-} from '../../../../shared/types/context-runtime-kit';
+} from '../../../../shared/types/context-runtime-kit.js';
 
 export type CvkCodebaseFileInput = {
   path: string;

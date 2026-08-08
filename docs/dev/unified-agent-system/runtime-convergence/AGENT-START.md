@@ -65,7 +65,7 @@
 - `C:\Users\27933\Desktop\result\final\dcs-first-architecture-synthesis-final-2026-08-02.md`
 - `pnpm harness context --spec <active-spec>`
 - `pnpm harness validate --spec <active-spec>`
-- `node scripts/rc01-authority-inventory.mjs`（重新生成 baseline）
+- `node scripts/rc01-authority-inventory.mjs --accepted-base <RC-01 accepted base SHA>`（从固定基线重新生成 baseline）
 - `node scripts/rc01-baseline-validate.mjs`（校验 baseline）
 - `pnpm acceptance:agent:*`
 - `.agent-workbench/task-forest/exports/task-forest.html`

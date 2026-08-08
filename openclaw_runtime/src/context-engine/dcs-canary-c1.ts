@@ -91,7 +91,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
     throw new Error("C1 canary refuses kind=live corpus (use residual live path separately)");
   }
   // Honesty: never treat synthetic as live
-  const liveReady = options?.liveReady === true && corpus.kind === "live" ? true : false;
+  const liveReady = false;
 
   const abResults = corpusEntriesToAbResults(corpus);
   const ab = evaluateAbGate(abResults);
@@ -173,7 +173,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
   assertProductApprovalHardRules(baseDecision);
   assertPackagingDefaultsUnchanged(baseDecision);
 
-  if (baseDecision.recommendation === "default-on") {
+  if ((baseDecision.recommendation as string) === "default-on") {
     throw new Error("C1 canary hard rule: recommendation must not be default-on");
   }
   if (baseDecision.liveReady !== false) {
@@ -190,8 +190,7 @@ export function runC1Canary(options?: RunC1CanaryOptions): C1CanaryRunResult {
     wave: "C1",
     viewToolsDefaultUnchanged: true,
     liveReady: false,
-    recommendation:
-      baseDecision.recommendation === "default-on" ? "keep-off" : baseDecision.recommendation,
+    recommendation: baseDecision.recommendation,
     meetsGate: false, // packaging: never meetsGate for default-on auto path
   };
 

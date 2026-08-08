@@ -13,7 +13,9 @@ export type GraduationRecommendation =
   | "consider-default-on"
   | "default-on";
 
-export type GraduationMetrics = Record<string, number | boolean | string | null | undefined>;
+export type GraduationMetricScalar = number | boolean | string | null | undefined;
+export type GraduationMetricEvidence = Record<string, GraduationMetricScalar>;
+export type GraduationMetrics = Record<string, GraduationMetricScalar | GraduationMetricEvidence>;
 
 export type GraduationDecision = {
   flagId: string;
@@ -109,7 +111,7 @@ export function applyProductApprovalHardRules(params: {
     return {
       // Packaging never sets meetsGate true for default-on auto-flip.
       meetsGate: false,
-      recommendation: rec === "default-on" ? "consider-default-on" : rec,
+      recommendation: rec,
       defaultsUnchanged: true,
     };
   }

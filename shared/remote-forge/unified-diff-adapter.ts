@@ -9,7 +9,7 @@ import {
   type GitPatchFileStatus,
   type GitPatchHunkV1,
   type GitPatchLineageV1,
-} from '../types/remote-forge';
+} from '../types/remote-forge.js';
 
 export const GIT_PATCH_ADAPTER_LIMITS = Object.freeze({
   maxInputBytes: 1024 * 1024,

@@ -1,6 +1,8 @@
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import type { RuntimeMemoryHydrationShadowFactProjection } from "./memory-read-hydration-shadow.js";
 
+export type { RuntimeMemoryHydrationShadowFactProjection };
+
 const logger = createSubsystemLogger("runtime-memory");
 
 export type RuntimeMemoryHydrationConsumerQuery = {

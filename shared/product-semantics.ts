@@ -1,14 +1,14 @@
 import {
   createTaskLedgerReference as createCanonicalTaskLedgerReference,
   type TaskLedgerReference,
-} from './types/task-ledger-reference';
-import type { WorkspacePermissionMode } from './types/workspace';
+} from './types/task-ledger-reference.js';
+import type { WorkspacePermissionMode } from './types/workspace.js';
 
-export type { TaskLedgerReference } from './types/task-ledger-reference';
+export type { TaskLedgerReference } from './types/task-ledger-reference.js';
 export {
   PRODUCT_SEMANTIC_UNSAFE_CLAIMS,
   type ProductSemanticUnsafeClaim,
-} from './product-semantic-unsafe-claims';
+} from './product-semantic-unsafe-claims.js';
 
 export type ProductSemanticConceptId =
   | 'chat'

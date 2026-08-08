@@ -2,7 +2,7 @@ import type {
   VerseShellLifecycleErrorCode,
   VerseShellLifecycleStage,
   VerseShellTransportErrorCode,
-} from './types';
+} from './types.js';
 
 export type VerseShellContractErrorCode =
   | 'invalid_json'

@@ -417,17 +417,9 @@ function renderTimeSeriesCompact(
   }
   let cumTokens = 0,
     cumCost = 0;
-  const _sumOutput = 0;
-  const _sumInput = 0;
-  const _sumCacheRead = 0;
-  const _sumCacheWrite = 0;
   points = points.map((p) => {
     cumTokens += p.totalTokens;
     cumCost += p.cost;
-    sumOutput += p.output;
-    sumInput += p.input;
-    sumCacheRead += p.cacheRead;
-    sumCacheWrite += p.cacheWrite;
     return { ...p, cumulativeTokens: cumTokens, cumulativeCost: cumCost };
   });
 

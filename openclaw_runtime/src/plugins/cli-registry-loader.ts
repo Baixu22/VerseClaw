@@ -230,11 +230,11 @@ export async function loadPluginCliDescriptors(
       { primaryCommand: params.primaryCommand },
       params.loaderOptions,
     );
-    return collectUniqueCommandDescriptors(
+    return [...collectUniqueCommandDescriptors(
       registry.cliRegistrars
         .filter((entry) => (entry.parentPath ?? []).length === 0)
-        .map((entry) => entry.descriptors),
-    );
+        .flatMap((entry) => entry.descriptors),
+    )];
   } catch {
     return [];
   }

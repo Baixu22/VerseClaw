@@ -14,7 +14,15 @@ const outputDir = process.argv[2];
 if (!outputDir) throw new Error('usage: node scripts/rc00-acceptance-bootstrap.mjs <output-dir>');
 
 const lib = await import(pathToFileURL(join(repoRoot, 'scripts/lib/agent-engineering-acceptance.mjs')).href);
-const { repositoryIdentity, createAcceptancePlan, runAcceptance, verifyAcceptance, ACCEPTANCE_SCHEMA } = lib;
+const {
+  repositoryIdentity,
+  createAcceptancePlan,
+  digestPlan,
+  digestManifest,
+  runAcceptance,
+  verifyAcceptance,
+  ACCEPTANCE_SCHEMA,
+} = lib;
 
 // 1. Clean isolated fixture repository (real git repo, committed state).
 const fixtureRoot = mkdtempSync(join(tmpdir(), 'rc00-bootstrap-fixture-'));
@@ -57,8 +65,7 @@ manifest.gates = [{
   safety: { network: 'none', productionEffects: false, humanEvidence: false },
   testExpectation: { requireCounts: true, expectedSkips: 0 },
 }];
-const { digestManifest } = lib;
-manifest.planDigest = digestManifest(manifest);
+manifest.planDigest = digestPlan(manifest);
 manifest.manifestDigest = digestManifest(manifest);
 
 const env = { PATH: process.env.PATH ?? '' };
