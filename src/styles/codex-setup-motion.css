@@ -156,21 +156,55 @@
  * 4. Arc stage
  * ──────────────────────────────────────────────────────────────────────── */
 
-/* The step card is swept along a ring by framer-motion (rotateY + z, see
- * stepCardVariants in index.tsx). Two properties belong in CSS because they
- * describe the stage rather than the animation:
+/* The step card rides a ring built from three nodes, because the matrix
+ * product it needs — translateZ(-r) · rotateY(θ) · translateZ(+r) — cannot be
+ * written on one: framer-motion emits every transform in one fixed order
+ * (translate, scale, rotate), so a lone node can only ever produce T·R. See
+ * THE ARC in index.tsx for the full derivation.
  *
- *  - backface-visibility, so the card cannot flash its reverse mid-sweep
- *  - will-change, to hand the compositor the layer up front. This matters
- *    more than usual here: hardware acceleration is disabled app-wide
- *    (electron/main/index.ts), so promotion is what keeps the rotation to a
- *    cached raster being re-transformed rather than a per-frame repaint of
- *    the card's text, borders and shadow.
+ *   .setup-arc-stage   the camera. `perspective` is set inline from
+ *                      ARC_PERSPECTIVE and the opacity fade animates here.
+ *   .setup-arc-orbit   translateZ(-r) rotateY(θ), from framer. The only
+ *                      animated node in the arc.
+ *   .setup-card-3d     translateZ(+r), static, from the custom property below.
+ *
+ * The stage deliberately does NOT declare transform-style: preserve-3d. It
+ * carries the opacity fade, and an element with opacity < 1 is a grouping
+ * element — grouping forces preserve-3d to compute to flat. Declaring it here
+ * would be inert at best and misleading at worst. `perspective` is not a
+ * grouping-sensitive property, so the camera survives the fade; that split is
+ * the whole reason the fade sits on the stage instead of the orbit.
  */
+
+.setup-arc-orbit {
+  /* Extends the stage's 3D context to the card, so the card's translateZ(+r)
+   * resolves against the orbit's rotation instead of being flattened into it.
+   * Without this the product collapses to T(-r)·R(θ) and the arc silently
+   * degrades back to a dolly zoom. */
+  transform-style: preserve-3d;
+
+  /* Promotion is requested on the orbit alone — it is the only node whose
+   * transform changes. This matters more than usual: hardware acceleration is
+   * disabled app-wide (electron/main/index.ts), so every user rasterises on
+   * the CPU, and promotion is what keeps the sweep re-transforming one cached
+   * raster instead of repainting the card's text, borders and shadow per
+   * frame. framer-motion also toggles will-change while a transform animates,
+   * but the orbit's layer is worth holding for the whole step lifetime: the
+   * card is re-swept on every Next click. */
+  will-change: transform;
+}
+
+/* The card sits one radius in front of the orbit's centre, which is what turns
+ * the orbit's rotation into travel along the ring rather than a spin in place.
+ * The radius comes from ARC_RADIUS as a custom property so the JS constant
+ * stays the single source of truth for both nodes.
+ *
+ * No will-change here: this transform is static. Promoting it too would cost a
+ * second full-card layer for nothing. */
 .setup-card-3d {
+  transform: translateZ(var(--setup-arc-radius, 900px));
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  will-change: transform, opacity;
 }
 
 /* ────────────────────────────────────────────────────────────────────────
