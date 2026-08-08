@@ -10,16 +10,12 @@ ownedPaths:
   - tests/unit/rc01-authority-inventory-baseline.test.ts
   - harness/specs/tasks/rc01r-self-contained-baseline.md
 touchedAreas:
-  - .gitattributes
   - .gitignore
   - artifacts/runtime-authority-convergence/rc-01/baseline.json
-  - .agent-workbench/task-forest/**
-  - docs/dev/Sustained-Development-Playbook.md
-  - docs/dev/unified-agent-system/runtime-convergence/**
-  - harness/specs/**
-  - harness/src/**
-  - scripts/**
-  - tests/unit/**
+  - scripts/rc01-authority-inventory.mjs
+  - tests/unit/rc01-authority-inventory-baseline.test.ts
+  - harness/specs/tasks/rc01r-self-contained-baseline.md
+  - src/pages/Chat/ChatInput.tsx
 expectedUserBehavior:
   - No runtime, renderer, Main, Gateway, provider, channel, approval, effect, memory, context, tool, telemetry, default, or readiness behavior changes.
   - A clean checkout of the candidate contains the RC-01 baseline; the acceptance validator no longer depends on an untracked working-tree file.
