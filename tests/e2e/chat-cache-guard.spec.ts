@@ -205,7 +205,8 @@ test.describe('Verse Claw chat prompt cache guard', () => {
       await expect(page.getByTestId('chat-prompt-cache-status')).toHaveCount(0);
 
       await page.getByTestId('chat-composer-actions').click();
-      await page.getByTestId('chat-composer-action-model').click();
+    await page.getByTestId('chat-composer-action-more').click();
+      await page.getByTestId('chat-composer-actions-menu').getByTestId('chat-composer-action-model').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
       await page.getByTestId('chat-model-picker-option-claude-opus').click();
       const cancelToast = page.getByTestId('prompt-cache-risk-toast').last();
@@ -218,7 +219,8 @@ test.describe('Verse Claw chat prompt cache guard', () => {
       expect(requests.some((request) => request.path === 'agents:updateModel')).toBe(false);
 
       await page.getByTestId('chat-composer-actions').click();
-      await page.getByTestId('chat-composer-action-model').click();
+    await page.getByTestId('chat-composer-action-more').click();
+      await page.getByTestId('chat-composer-actions-menu').getByTestId('chat-composer-action-model').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
       await page.getByTestId('chat-model-picker-option-claude-opus').click();
       const continueToast = page.getByTestId('prompt-cache-risk-toast').last();

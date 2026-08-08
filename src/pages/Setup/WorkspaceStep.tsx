@@ -157,10 +157,10 @@ export function WorkspaceStepContent({ confirmed, onConfirmed }: WorkspaceStepCo
                   onConfirmed(null);
                 }}
                 className={cn(
-                  'flex w-full flex-col rounded-lg border p-3 text-left text-sm',
+                  'setup-frame flex w-full flex-col rounded-lg border p-3 text-left text-sm',
                   disabled && 'opacity-50',
                   mode === candidate && !disabled
-                    ? 'border-primary bg-primary/5'
+                    ? 'setup-frame--on border-primary bg-primary/5'
                     : 'border-border hover:bg-surface-input/50',
                 )}
               >

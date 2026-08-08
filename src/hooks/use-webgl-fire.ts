@@ -1,6 +1,6 @@
 // WebGL fire shader hook for the effort slider.
 // Ported from the claude-range-slider reference (Vue → React).
-// Renders a purple flame effect on a <canvas> overlay when the slider is active
+// Renders an amber flame effect on a <canvas> overlay when the slider is active
 // (effort >= high). The canvas is masked to the slider's fill width via CSS.
 import { useEffect, useRef } from 'react';
 
@@ -79,17 +79,17 @@ const FRAG_SIM = `#version 300 es
     float leadF    = sin(leadD * 100.0 + t * 20.0 * ts + h2 * 6.28) * 0.5 + 0.5;
     float leadSpark = leadZone * step(0.6, h2) * leadF * act * es * 0.5;
     float total = energy + edge + leadSpark;
-    vec3 ember = vec3(0.28, 0.10, 0.58);
-    vec3 wpur  = vec3(0.62, 0.32, 1.0);
-    vec3 wht   = vec3(1.0, 0.94, 0.98);
+    vec3 ember = vec3(0.58, 0.16, 0.02);
+    vec3 amber = vec3(1.0, 0.47, 0.04);
+    vec3 wht   = vec3(1.0, 0.91, 0.70);
     float temp = 1.0 - dn;
-    vec3 col   = mix(ember, wpur, temp);
+    vec3 col   = mix(ember, amber, temp);
     col        = mix(col, wht, pow(temp, 4.5));
     col       *= total;
     float pulse = sin(t * 2.8) * 0.15 + 1.0;
     float core  = exp(-pow((uv.x - u_slider) * 16.0, 2.0));
     col += wht * core * 2.2 * pulse * act * es;
-    col += wpur * exp(-pow((uv.x - u_slider) * 3.5, 2.0)) * 0.12 * act * es;
+    col += amber * exp(-pow((uv.x - u_slider) * 3.5, 2.0)) * 0.12 * act * es;
     col *= cell;
     col *= fade_mask;
     fc = vec4(min(decay + col, vec3(1.5)), 1.0);
@@ -132,7 +132,7 @@ const MAX_IDLE = 180;
 type FBO = { fbo: WebGLFramebuffer; tex: WebGLTexture };
 
 /**
- * Renders a purple fire effect on the given canvas when `active` is true.
+ * Renders an amber fire effect on the given canvas when `active` is true.
  * The `slider01` value (0..1) controls the flame's fill width.
  * The canvas should be positioned absolutely over the slider track with
  * `mix-blend-mode: screen` and a CSS mask matching the fill width.

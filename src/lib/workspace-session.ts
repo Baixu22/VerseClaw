@@ -74,7 +74,7 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
   const workspace = await ensureActiveWorkspaceForSession();
 
   if (!workspace?.id) {
-    chatState.newSession();
+    chatState.newSession({ deferSessionEntry: true });
     return useChatStore.getState().currentSessionKey;
   }
 
@@ -87,7 +87,7 @@ export async function createWorkspaceScopedNewSession(): Promise<string> {
   });
   await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
   await useWorkspacesStore.getState().fetchWorkspaces();
-  chatState.resetSessionView(sessionKey);
+  chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
   return sessionKey;
 }
 
@@ -98,7 +98,7 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
   const workspace = await ensureActiveWorkspaceForSession();
 
   if (!workspace?.id) {
-    chatState.newSession();
+    chatState.newSession({ deferSessionEntry: true });
     return useChatStore.getState().currentSessionKey;
   }
 

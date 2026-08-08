@@ -11,11 +11,13 @@
     "retry": "Retry loading"
   },
   "welcome": {
-    "titleInProject": "What should we build in <projectSelect>{{projectName}}?</projectSelect>",
-    "titleNoProject": "What should we build?",
     "projectSearch": "Search projects",
     "projectEmpty": "No projects found",
     "changeProject": "Change project: {{projectName}}",
+    "branchPickerTitle": "Switch branch",
+    "branchSearch": "Search branches",
+    "branchEmpty": "No branches found",
+    "branchSwitchFailed": "Couldn't switch branch: {{error}}",
     "title": "Verse Claw Chat",
     "subtitle": "What can I do for you?",
     "askQuestions": "Handle Tasks",
@@ -957,6 +959,7 @@
       "attachFiles": "Attach files",
       "knowledge": "Search knowledge",
       "model": "Model",
+      "more": "More",
       "compact": "Compact session",
       "fork": "Fork session",
       "handoff": "Handoff session"
@@ -1514,6 +1517,7 @@
     "retryFailedAttachments": "Retry failed attachments",
     "folderDropUnsupported": "Couldn't attach this folder. Drag it again, or paste the folder path into your message.",
     "folderAttachment": "Folder",
+    "removeAttachment": "Remove {{fileName}}",
     "skillPreviewTooltip": "Preview SKILL.md",
     "skillPreviewNotFound": "Could not find this skill. Open the skill picker to refresh the list.",
     "capability": {
@@ -1613,6 +1617,7 @@
         "memory": "Memory"
       },
       "destructiveWarning": "Risky Git, file, or terminal actions are suggestions only and require explicit confirmation.",
+      "dismiss": "Dismiss recovery assist",
       "actions": {
         "checkpoint-handoff": {
           "title": "Prepare checkpoint handoff",
@@ -1693,6 +1698,13 @@
     "sectionConversations": "Conversations",
     "organizeSessions": "Organize conversations",
     "searchSessions": "Search conversations",
+    "addProject": "Add project",
+    "sortBy": "Sort by",
+    "newSessionInProject": "New task in {{name}}",
+    "projectOptions": "Project options for {{name}}",
+    "createFolder": "New folder",
+    "untitledFolder": "Untitled folder",
+    "switchToProject": "Switch to {{name}}",
     "clearSearch": "Clear search",
     "searchNoResults": "No conversations found",
     "empty": "No conversations yet",

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { filterSettingsSections } from '@/lib/settings-search';
 import { resolveSettingsSection } from './route-config';
@@ -72,10 +71,7 @@ export function SettingsSidebar() {
                     to={section.to}
                     data-testid={`settings-nav-${section.id}`}
                     aria-current={active ? 'page' : undefined}
-                    className={cn(
-                      'flex h-[29px] items-center gap-2 overflow-hidden rounded-[12.5px] px-2 text-sm font-normal leading-[21px] text-foreground transition-colors hover:bg-foreground/8',
-                      active && 'bg-foreground/8',
-                    )}
+                    className="codex-settings-nav-item"
                   >
                     <span className="flex w-4 shrink-0 items-center justify-center"><SettingsNavIcon name={section.icon} /></span>
                     <span className="truncate">{section.title}</span>

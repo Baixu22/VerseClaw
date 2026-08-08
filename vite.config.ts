@@ -179,7 +179,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: rendererManualChunks,
-        onlyExplicitManualChunks: true,
       },
     },
   },

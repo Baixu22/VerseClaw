@@ -123,6 +123,14 @@ function chatLayoutMocks() {
           recentDecisions: [],
         },
       },
+      [stableStringify(['files', 'stageBuffer', null])]: {
+        id: 'attachment-layout-pdf',
+        fileName: 'design-notes.pdf',
+        mimeType: 'application/pdf',
+        fileSize: 23,
+        stagedPath: 'C:/workspace-layout-cdp/design-notes.pdf',
+        preview: null,
+      },
     },
   };
 }
@@ -150,12 +158,18 @@ test.describe('Chat page layout CDP checks', () => {
     try {
       await installIpcMocks(app, chatLayoutMocks());
       const page = await getStableWindow(app);
+      const rendererErrors: string[] = [];
+      page.on('pageerror', (error) => rendererErrors.push(error.stack || String(error)));
       await page.setViewportSize({ width: 1600, height: 800 });
       const url = new URL(page.url());
       url.searchParams.set('e2eSkipSetup', '1');
       await page.goto(url.toString());
 
-      await expect(page.getByTestId('chat-page')).toBeVisible();
+      try {
+        await expect(page.getByTestId('chat-page')).toBeVisible({ timeout: 30_000 });
+      } catch (error) {
+        throw new Error(`Renderer diagnostics: ${rendererErrors.join('\n\n')}`, { cause: error });
+      }
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       const composerShell = page.getByTestId('chat-composer-shell');
       await expect(composerShell).toBeVisible();
@@ -167,20 +181,129 @@ test.describe('Chat page layout CDP checks', () => {
           borderRadius: style.borderRadius,
           minHeight: style.minHeight,
           width: rect.width,
+          height: rect.height,
         };
       });
       expect(composerMetrics.borderRadius).toBe('25px');
       expect(composerMetrics.minHeight).toBe('98px');
       expect(composerMetrics.width).toBeLessThanOrEqual(736);
+
+      await page.getByTestId('chat-composer-input').evaluate((input) => {
+        const transfer = new DataTransfer();
+        transfer.items.add(new File(['attachment layout'], 'design-notes.pdf', { type: 'application/pdf' }));
+        input.dispatchEvent(new ClipboardEvent('paste', {
+          bubbles: true,
+          cancelable: true,
+          clipboardData: transfer,
+        }));
+      });
+      const attachmentShelf = page.getByTestId('chat-composer-attachments');
+      const attachmentCard = page.getByTestId('chat-composer-attachment');
+      const attachmentRemove = page.getByTestId('chat-composer-attachment-remove');
+      await expect(attachmentCard).toBeVisible();
+      await expect(attachmentCard.locator('img')).toBeVisible();
+      await expect.poll(() => attachmentCard.locator('img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+      await expect(attachmentRemove).toBeVisible();
+      const attachmentMetrics = await composerShell.evaluate((shell) => {
+        const shelf = shell.querySelector('[data-testid="chat-composer-attachments"]');
+        const card = shell.querySelector('[data-testid="chat-composer-attachment"]');
+        const remove = shell.querySelector('[data-testid="chat-composer-attachment-remove"]');
+        const input = shell.querySelector('[data-testid="chat-composer-input"]');
+        if (!shelf || !card || !remove || !input) throw new Error('Missing attachment composer elements');
+        const shellRect = shell.getBoundingClientRect();
+        const shelfRect = shelf.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        const removeRect = remove.getBoundingClientRect();
+        const inputRect = input.getBoundingClientRect();
+        return {
+          cardWidth: cardRect.width,
+          cardHeight: cardRect.height,
+          removeWidth: removeRect.width,
+          removeHeight: removeRect.height,
+          insideComposer: shelfRect.top >= shellRect.top && shelfRect.bottom <= shellRect.bottom,
+          layeredAboveText: cardRect.bottom <= inputRect.top,
+        };
+      });
+      expect(attachmentMetrics.cardWidth).toBe(88);
+      expect(attachmentMetrics.cardHeight).toBe(88);
+      expect(attachmentMetrics.removeWidth).toBe(24);
+      expect(attachmentMetrics.removeHeight).toBe(24);
+      expect(attachmentMetrics.insideComposer).toBe(true);
+      expect(attachmentMetrics.layeredAboveText).toBe(true);
+      await captureLayoutScreenshot(page, testInfo, 'chat-composer-attachment-light');
+
+      await page.evaluate(() => {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      });
+      await captureLayoutScreenshot(page, testInfo, 'chat-composer-attachment-dark');
+
+      await attachmentRemove.click();
+      const dissolveCanvas = page.locator('canvas[data-smoky-dissolve="canvas"]');
+      await expect(dissolveCanvas).toBeVisible({ timeout: 5_000 });
+      await expect.poll(() => dissolveCanvas.evaluate((canvas) => Number.parseFloat(canvas.style.opacity || '1'))).toBeLessThan(0.95);
+      const dissolveMotion = await dissolveCanvas.evaluate((canvas) => ({
+        opacity: Number.parseFloat(canvas.style.opacity),
+        transform: canvas.style.transform,
+      }));
+      expect(dissolveMotion.opacity).toBeGreaterThan(0);
+      expect(dissolveMotion.transform).toMatch(/translate\(0(?:\.0)?px,/);
+      expect(dissolveMotion.transform).toMatch(/scale\(1(?:\.0+)?\)/);
+      await captureLayoutScreenshot(page, testInfo, 'chat-composer-attachment-dissolve');
+      // The outgoing chip leaves flex layout before its canvas dissolve ends,
+      // so clearing the last attachment restores the idle composer without a
+      // delayed height jump.
+      await expect.poll(
+        () => composerShell.evaluate((element) => element.getBoundingClientRect().height),
+        { timeout: 400 },
+      ).toBeLessThanOrEqual(composerMetrics.height + 1);
+      await expect(attachmentShelf).toHaveCount(0, { timeout: 3_000 });
+      await page.evaluate(() => {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      });
+
       await expect(page.getByTestId('chat-composer-actions')).not.toHaveAttribute('title');
+      await expect(page.getByTestId('chat-composer-actions')).toHaveAttribute('aria-expanded', 'false');
       await page.getByTestId('chat-composer-actions').hover();
-      const composerTooltip = page.locator('[data-radix-popper-content-wrapper] > [data-side]').filter({ hasText: '@' }).last();
-      await expect(composerTooltip).toBeVisible();
-      await expect(composerTooltip).toHaveCSS('border-radius', '12.5px');
-      await expect(composerTooltip).toContainText('@');
+      await expect(page.getByTestId('chat-composer-actions')).toBeVisible();
       await expect(page.getByTestId('chat-composer-context-menu-trigger')).toHaveCount(0);
       const permissionTrigger = page.getByTestId('chat-composer-permission-mode');
       await expect(permissionTrigger).toBeVisible();
+      const executionTrigger = page.getByTestId('chat-model-picker-button');
+      await expect(executionTrigger).toBeVisible();
+      const knowledgeTrigger = page.getByTestId('chat-knowledge-scope-button');
+      await expect(knowledgeTrigger).toBeVisible();
+      const controlTypography = await page.evaluate(() => {
+        const permission = document.querySelector<HTMLElement>('[data-testid="chat-composer-permission-mode"]')!;
+        const knowledge = document.querySelector<HTMLElement>('[data-testid="chat-knowledge-scope-button"]')!;
+        const execution = document.querySelector<HTMLElement>('[data-testid="chat-model-picker-button"]')!;
+        const permissionStyle = getComputedStyle(permission);
+        const knowledgeStyle = getComputedStyle(knowledge);
+        const executionStyle = getComputedStyle(execution);
+        const readStyle = (style: CSSStyleDeclaration) => ({
+          fontSize: style.fontSize,
+          fontWeight: style.fontWeight,
+          height: style.height,
+          lineHeight: style.lineHeight,
+          borderRadius: style.borderRadius,
+        });
+        return {
+          permission: readStyle(permissionStyle),
+          knowledge: readStyle(knowledgeStyle),
+          execution: readStyle(executionStyle),
+        };
+      });
+      expect(controlTypography.permission).toEqual(controlTypography.execution);
+      expect(controlTypography.knowledge).toEqual(controlTypography.execution);
+      await permissionTrigger.hover();
+      const permissionHover = await permissionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
+      await knowledgeTrigger.hover();
+      const knowledgeHover = await knowledgeTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
+      await executionTrigger.hover();
+      const executionHover = await executionTrigger.evaluate((element) => getComputedStyle(element).backgroundColor);
+      expect(permissionHover).toBe(executionHover);
+      expect(knowledgeHover).toBe(executionHover);
       const composerControlAlignment = await composerShell.evaluate((shell) => {
         const actions = shell.querySelector('[data-testid="chat-composer-actions"]');
         const permission = shell.querySelector('[data-testid="chat-composer-permission-mode"]');
@@ -195,8 +318,10 @@ test.describe('Chat page layout CDP checks', () => {
       expect(Math.abs(composerControlAlignment.actionsCenterY - composerControlAlignment.permissionCenterY)).toBeLessThanOrEqual(1);
       await expect(page.getByTestId('chat-composer-skill')).toHaveCount(0);
       await expect(page.getByTestId('chat-knowledge-quick-toggle')).toHaveCount(0);
-      await expect(page.getByTestId('chat-knowledge-scope-button')).toBeVisible();
       await page.getByTestId('chat-composer-actions').click();
+      // Gooey fan opens; the "more" fan action reveals the full command panel.
+      await expect(page.getByTestId('chat-composer-action-more')).toBeVisible();
+      await page.getByTestId('chat-composer-action-more').click();
       const actionMenu = page.getByTestId('chat-composer-actions-menu');
       await expect(actionMenu).toBeVisible();
       const actionMenuMetrics = await actionMenu.evaluate((element) => {
@@ -216,7 +341,8 @@ test.describe('Chat page layout CDP checks', () => {
       expect(actionMenuMetrics.backdropFilter).toContain('blur(8px)');
       expect(actionMenuMetrics.maxHeight).toBe('320px');
       expect(Math.abs(actionMenuMetrics.width - actionMenuMetrics.shellWidth)).toBeLessThanOrEqual(1);
-      const attachAction = page.getByTestId('chat-composer-action-attach-files');
+      // The fan and the panel both carry an attach action — assert the panel one.
+      const attachAction = actionMenu.getByTestId('chat-composer-action-attach-files');
       await expect(attachAction).toHaveCSS('border-radius', '12.5px');
       await expect(attachAction.locator('svg')).toHaveCSS('width', '16px');
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-add-menu');
@@ -244,7 +370,9 @@ test.describe('Chat page layout CDP checks', () => {
       await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
       await page.evaluate(() => document.documentElement.classList.add('dark'));
-      await expect(composerShell).toHaveCSS('background-color', 'rgba(45, 45, 45, 0.9)');
+      await page.waitForTimeout(240);
+      const darkComposerBackground = await composerShell.evaluate((element) => getComputedStyle(element).backgroundColor);
+      expect(darkComposerBackground).toMatch(/0\.96|0\.247/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');

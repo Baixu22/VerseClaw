@@ -65,7 +65,7 @@ describe('WelcomeProjectPicker', () => {
     expect(screen.getByTestId('welcome-project-menu')).toBeTruthy();
 
     const rows = screen.getAllByTestId('welcome-project-item');
-    expect(rows.map((row) => row.textContent?.trim())).toEqual(['ClawX', 'verseshell']);
+    expect(rows.map((row) => row.querySelector('.text-xs')?.textContent?.trim())).toEqual(['ClawX', 'verseshell']);
 
     fireEvent.click(rows[1]);
     expect(switchWorkspace).toHaveBeenCalledWith('ws-verse');
@@ -82,18 +82,14 @@ describe('WelcomeProjectPicker', () => {
     expect(screen.queryByTestId('welcome-project-menu')).toBeNull();
   });
 
-  it('filters by name and reports when nothing matches', () => {
+  it('shows the workspace path in each shared dropdown row', () => {
     render(<WelcomeProjectPicker />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
-    const search = screen.getByPlaceholderText('welcome.projectSearch');
-
-    fireEvent.change(search, { target: { value: 'verse' } });
-    expect(screen.getAllByTestId('welcome-project-item')).toHaveLength(1);
-
-    fireEvent.change(search, { target: { value: 'nothing-matches' } });
-    expect(screen.queryAllByTestId('welcome-project-item')).toHaveLength(0);
-    expect(screen.getByTestId('welcome-project-empty')).toHaveTextContent('welcome.projectEmpty');
+    const rows = screen.getAllByTestId('welcome-project-item');
+    expect(rows[0]).toHaveAttribute('title', 'D:\\work\\ws-clawx');
+    expect(rows[0]).toHaveTextContent('D:\\work\\ws-clawx');
+    expect(screen.queryByPlaceholderText('welcome.projectSearch')).toBeNull();
   });
 
   it('closes on Escape', () => {

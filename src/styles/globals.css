@@ -3,15 +3,23 @@
  * imports that appear after the @tailwind directives. Ordering costs nothing
  * here — every ported rule is a two-class descendant selector
  * (`.codex-sidebar .sidebar-row`), so it outranks single-class Tailwind
- * utilities on specificity regardless of source order. */
+ * utilities on specificity regardless of source order.
+ *
+ * codex-tokens.css leads: it declares the --color-* / --radius-* / --shadow-*
+ * layer that every stylesheet below resolves against, and the alias block at
+ * the foot of this file redirects the legacy per-component prefixes into it. */
+@import './codex-tokens.css';
 @import './codex-sidebar.css';
 @import './codex-settings-controls.css';
 @import './codex-settings-archived.css';
 @import './codex-settings.css';
 @import './codex-conversation.css';
 @import './codex-composer-menu.css';
+@import './codex-composer-shell.css';
+@import './plus-menu-morph.css';
 @import './codex-welcome-hero.css';
 @import './codex-workspace-panel.css';
+@import './codex-setup-motion.css';
 
 @tailwind base;
 @tailwind components;
@@ -166,17 +174,19 @@
     --ease-ui-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-ui-move: cubic-bezier(0.77, 0, 0.175, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-    --radius-control: 8px;
-    --radius-card: 8px;
-    --radius-popover: 8px;
-    --radius-panel: 8px;
+    /* The four --radius-{control,card,popover,panel} aliases that used to sit
+     * here are gone: all four were a flat 8px, none had a consumer, and an
+     * unscaled 8px contradicts the 1.25x ladder in codex-tokens.css. Reach for
+     * --radius-md (10px) for controls and --radius-2xl (20px) for panels. */
     --shadow-floating: 0 16px 32px -8px rgba(0, 0, 0, 0.19), 0 2px 8px rgba(0, 0, 0, 0.08);
     --conversation-text-body: 220 8% 43%;
     --conversation-text-tertiary: 220 6% 56%;
     --conversation-border-light: 210 10% 92%;
     --conversation-border-heavy: 210 8% 82%;
-    --shadow-hairline: 0 0 0 0.5px rgba(15, 23, 42, 0.1);
-    --shadow-subtle: 0 1px 2px -1px rgba(15, 23, 42, 0.08);
+    /* Hairline and its 1px lift. Expressed as color-mix over the theme ink so
+     * they track the border role rather than carrying a second slate literal. */
+    --shadow-hairline: 0 0 0 0.5px var(--color-border);
+    --shadow-subtle: var(--shadow-sm);
 
     /* Neutral light work surfaces. */
     --surface-modal: 0 0% 100%;
@@ -265,8 +275,8 @@
     --conversation-text-tertiary: 220 6% 54%;
     --conversation-border-light: 240 3% 18%;
     --conversation-border-heavy: 240 3% 30%;
-    --shadow-hairline: 0 0 0 0.5px rgba(255, 255, 255, 0.1);
-    --shadow-subtle: 0 1px 2px -1px rgba(0, 0, 0, 0.28);
+    /* Hairline follows --color-border, which already inverts for dark, so it
+     * needs no restatement; --shadow-subtle likewise tracks --shadow-sm. */
 
     /* In dark mode the three cream surfaces collapse onto existing
      * shadcn tokens:

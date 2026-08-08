@@ -139,6 +139,10 @@ let _lastLoadSessionsAt = 0;
 let _startupHydrationInFlight: Promise<void> | null = null;
 let _startupHydrationRuntimeKey: string | null = null;
 let _hydratedGatewayRuntimeKey: string | null = null;
+// New workspace sessions stay local until their first user message. The
+// gateway list may be empty during mock/startup, so `loadSessions` must not
+// recreate a sidebar row merely because the renderer is viewing that key.
+const _deferredSessionEntries = new Set<string>();
 /** Simple LRU map with O(1) get/set and bounded size. Evicts least-recently used entries. */
 class LruMap<K, V> {
   private _map = new Map<K, V>();
@@ -1923,7 +1927,13 @@ function buildSessionSwitchPatch(
     | 'startupError'
   >,
   nextSessionKey: string,
+  options?: { deferSessionEntry?: boolean },
 ): Partial<ChatState> {
+  if (options?.deferSessionEntry) {
+    _deferredSessionEntries.add(nextSessionKey);
+  } else {
+    _deferredSessionEntries.delete(nextSessionKey);
+  }
   captureSessionRunState(state.currentSessionKey, state);
   if (state.messages.length > 0) {
     cacheSessionHistory(
@@ -1941,6 +1951,10 @@ function buildSessionSwitchPatch(
     && !state.sessionLastActivity[state.currentSessionKey]
     && !state.sessionLabels[state.currentSessionKey];
 
+  if (leavingEmpty) {
+    _deferredSessionEntries.delete(state.currentSessionKey);
+  }
+
   const nextSessions = leavingEmpty
     ? state.sessions.filter((session) => session.key !== state.currentSessionKey)
     : state.sessions;
@@ -1950,7 +1964,9 @@ function buildSessionSwitchPatch(
   return {
     currentSessionKey: nextSessionKey,
     currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
-    sessions: ensureSessionEntry(nextSessions, nextSessionKey),
+    sessions: options?.deferSessionEntry
+      ? nextSessions
+      : ensureSessionEntry(nextSessions, nextSessionKey),
     sessionLabels: leavingEmpty
       ? clearSessionEntryFromMap(state.sessionLabels, state.currentSessionKey)
       : state.sessionLabels,
@@ -2865,7 +2881,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           if (!dedupedSessions.find((s) => s.key === nextSessionKey) && dedupedSessions.length > 0) {
             // Preserve only locally-created pending sessions. On initial boot the
             // default ghost key (`agent:main:main`) should yield to real history.
-            const hasLocalPendingSession = localSessions.some((session) => session.key === nextSessionKey);
+            const hasLocalPendingSession = localSessions.some((session) => session.key === nextSessionKey)
+              || _deferredSessionEntries.has(nextSessionKey);
             if (!hasLocalPendingSession) {
               const fallbackKey = pickStartupSessionFallback(nextSessionKey, dedupedSessions);
               if (fallbackKey) {
@@ -2874,7 +2891,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           }
 
-          const sessionsWithCurrent = !dedupedSessions.find((s) => s.key === nextSessionKey) && nextSessionKey
+          if (dedupedSessions.some((session) => session.key === nextSessionKey)) {
+            _deferredSessionEntries.delete(nextSessionKey);
+          }
+          const sessionsWithCurrent = !dedupedSessions.find((s) => s.key === nextSessionKey)
+            && nextSessionKey
+            && !_deferredSessionEntries.has(nextSessionKey)
             ? [
               ...dedupedSessions,
               { key: nextSessionKey, displayName: nextSessionKey },
@@ -3009,13 +3031,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
     void ensureSessionLinkedToLedger(key);
   },
 
-  resetSessionView: (key?: string) => {
+  resetSessionView: (key?: string, options?: { deferSessionEntry?: boolean }) => {
     const nextSessionKey = key || get().currentSessionKey;
     clearHistoryPoll();
     clearBaselines();
     clearCachedSessionHistory(nextSessionKey);
     clearCachedSessionRunState(nextSessionKey);
-    set((s) => buildSessionSwitchPatch(s, nextSessionKey));
+    set((s) => buildSessionSwitchPatch(s, nextSessionKey, options));
     get().loadHistory();
     void get().refreshTaskLedger();
   },
@@ -3084,7 +3106,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   // ── New session ──
 
-  newSession: () => {
+  newSession: (options?: { deferSessionEntry?: boolean }) => {
     // Generate a new unique session key and switch to it.
     // NOTE: We intentionally do NOT call sessions.reset on the old session.
     // sessions.reset archives (renames) the session JSONL file, making old
@@ -3102,14 +3124,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
     clearHistoryPoll();
     clearBaselines();
     set((s) => ({
-      ...buildSessionSwitchPatch(s, newKey),
+      ...buildSessionSwitchPatch(s, newKey, options),
       loading: false,
       historyRefreshing: false,
       startupPhase: 'ready',
       startupError: null,
     }));
     void get().refreshTaskLedger();
-    void ensureSessionLinkedToLedger(newKey);
+    if (!options?.deferSessionEntry) {
+      void ensureSessionLinkedToLedger(newKey);
+    }
   },
 
   // ── Rename session ──
@@ -4074,8 +4098,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
         : {}),
     };
     rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
+    _deferredSessionEntries.delete(currentSessionKey);
     set((s) => ({
       messages: applyHistoryMemoryCap([...s.messages, userMsg]),
+      sessions: ensureSessionEntry(s.sessions, currentSessionKey),
       sending: true,
       error: null,
       runError: null,

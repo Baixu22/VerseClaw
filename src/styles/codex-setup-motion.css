@@ -1,0 +1,259 @@
+/*
+ * codex-setup-motion.css — first-run Setup wizard motion language.
+ *
+ * Ported from the rogierdeboeve WebGL portfolio reference, but only the
+ * *language*, never the engine: no three.js, no gsap, no lenis. Three
+ * mechanisms live here:
+ *
+ *   1. Backdrop — a dim always-on 64px grid that brightens where the cursor
+ *      has been. The grid and grain are static CSS; only a half-resolution
+ *      canvas overlay animates (see SetupGridBackdrop.tsx for why half).
+ *   2. Two-layer button text — the label sits in an overflow-hidden slot with
+ *      a duplicate underneath; hover rolls one out and the other in.
+ *   3. Dashed→solid frame — an option card reads dashed while unchosen and
+ *      solid once hovered or picked.
+ *
+ * Easing: --ease-enter (codex-tokens.css) is byte-identical to the
+ * reference's --expo-out, cubic-bezier(0.19, 1, 0.22, 1). Nothing new is
+ * declared here — that curve *is* the reference's signature.
+ *
+ * Every hover mechanism is wrapped in `(hover: hover) and (pointer: fine)`,
+ * as the reference does. That keeps touch input and any non-hover automation
+ * path on the plain, un-animated rendering.
+ */
+
+/* ────────────────────────────────────────────────────────────────────────
+ * 1. Backdrop
+ * ──────────────────────────────────────────────────────────────────────── */
+
+.setup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-base);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Base grid: always on, deliberately near-invisible. The canvas overlay only
+ * ever *brightens* these lines, so the effect reads as illumination rather
+ * than as a grid materialising out of nowhere. Values and the radial mask are
+ * the .codex-welcome-bg__grid recipe (codex-welcome-hero.css) — same 64px
+ * pitch, same light/dark split, so the two surfaces feel like one system. */
+.setup-backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, .035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, #000 0%, rgba(0, 0, 0, .85) 58%, rgba(0, 0, 0, .25) 82%, transparent 92%);
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, #000 0%, rgba(0, 0, 0, .85) 58%, rgba(0, 0, 0, .25) 82%, transparent 92%);
+}
+
+:root.dark .setup-backdrop__grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px);
+}
+
+/* The cursor-lit layer. Backing store is half CSS resolution (set in JS) and
+ * stretched back up here — under Electron's software rasteriser that quarters
+ * the per-frame fill, and the softening it costs is the effect we wanted. */
+.setup-backdrop__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Same radial vignette as the base grid: the highlight must not survive to
+   * the window edges where the grid beneath it has already faded out. */
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, #000 0%, rgba(0, 0, 0, .85) 58%, rgba(0, 0, 0, .25) 82%, transparent 92%);
+  mask-image: radial-gradient(ellipse 80% 65% at 50% 45%, #000 0%, rgba(0, 0, 0, .85) 58%, rgba(0, 0, 0, .25) 82%, transparent 92%);
+}
+
+/* Grain, lifted verbatim from .codex-welcome-bg__noise — an inline SVG
+ * feTurbulence, so it ships no asset. It sits above the highlight to break up
+ * the bilinear upscale of the half-res canvas. */
+.setup-backdrop__noise {
+  position: absolute;
+  inset: 0;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * 2. Two-layer button text
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* overflow:hidden lives on the text slot, never on the button: the button
+ * carries shadcn's focus-visible ring with a 1px offset, and clipping it
+ * would swallow the focus indicator. */
+.setup-btn__text {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.setup-btn__text-inner {
+  display: block;
+  position: relative;
+}
+
+.setup-btn__text-layer {
+  display: block;
+}
+
+/* The duplicate waits exactly one line below. translateY(±100%) resolves
+ * against each layer's own height, and both layers share a line-height, so
+ * the roll lands on the baseline with no magic numbers. */
+.setup-btn__text-layer--hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * 3. Dashed → solid frame
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* Applied to elements that already carry a Tailwind `border` + `rounded-*`.
+ * The host's own border is switched to dashed; an overlaid solid ring fades
+ * in on top of it. `border-color: inherit` resolves against the originating
+ * element, so the ring automatically tracks whatever the host is currently
+ * using — border-border when idle, border-primary when chosen — and the
+ * existing conditional Tailwind classes keep working untouched. */
+.setup-frame {
+  position: relative;
+  border-style: dashed;
+}
+
+.setup-frame::after {
+  content: '';
+  position: absolute;
+  /* -1px: an absolutely positioned child resolves against the padding box,
+   * and the host's border sits just outside it. This lands the ring exactly
+   * on the border it replaces. */
+  inset: -1px;
+  border: 1px solid;
+  border-color: inherit;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity .3s linear;
+  pointer-events: none;
+}
+
+/* Chosen state: solid regardless of pointer, so touch users still get the
+ * selected/unselected distinction the dashed border is carrying. */
+.setup-frame--on::after {
+  opacity: 1;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * 4. Arc stage
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* The step card is swept along a ring by framer-motion (rotateY + z, see
+ * stepCardVariants in index.tsx). Two properties belong in CSS because they
+ * describe the stage rather than the animation:
+ *
+ *  - backface-visibility, so the card cannot flash its reverse mid-sweep
+ *  - will-change, to hand the compositor the layer up front. This matters
+ *    more than usual here: hardware acceleration is disabled app-wide
+ *    (electron/main/index.ts), so promotion is what keeps the rotation to a
+ *    cached raster being re-transformed rather than a per-frame repaint of
+ *    the card's text, borders and shadow.
+ */
+.setup-card-3d {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * 5. Completion mark
+ * ──────────────────────────────────────────────────────────────────────── */
+
+.setup-complete-mark__track {
+  stroke: rgba(0, 0, 0, .07);
+}
+
+:root.dark .setup-complete-mark__track {
+  stroke: rgba(255, 255, 255, .06);
+}
+
+/* Same ink as the lit grid, so the ring belongs to the backdrop's surface
+ * rather than reading as a separate graphic dropped on top. */
+.setup-complete-mark__sweep {
+  stroke: rgba(0, 0, 0, .28);
+}
+
+:root.dark .setup-complete-mark__sweep {
+  stroke: rgba(255, 255, 255, .26);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Hover behaviour
+ * ──────────────────────────────────────────────────────────────────────── */
+
+@media (hover: hover) and (pointer: fine) {
+  /* The transition is declared *only* inside :hover — the reference's own
+   * trick (global.css .c-link:hover / .preloader-cta:hover). Moving in takes
+   * the full 1.6s expo tail; moving out snaps back instantly, because a
+   * 1.6s recovery on a wizard button reads as unresponsive. */
+  .setup-btn:hover .setup-btn__text-layer {
+    transition:
+      transform 1.6s var(--ease-enter),
+      opacity 1.6s var(--ease-enter);
+  }
+
+  .setup-btn:hover .setup-btn__text-layer--static {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  .setup-btn:hover .setup-btn__text-layer--hover {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .setup-frame:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Reduced motion
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* The canvas is never mounted under reduced motion (SetupGridBackdrop bails
+ * before creating a context), so there is nothing to disable here — the base
+ * grid and grain are static by construction.
+ *
+ * The text roll is suppressed rather than merely shortened: its whole point
+ * is the travel, and a 0s roll is just a flicker. The frame crossfade is an
+ * opacity change with no motion, so it survives. */
+@media (prefers-reduced-motion: reduce) {
+  .setup-btn:hover .setup-btn__text-layer {
+    transition: none;
+  }
+
+  .setup-btn:hover .setup-btn__text-layer--static {
+    transform: none;
+    opacity: 1;
+  }
+
+  .setup-btn:hover .setup-btn__text-layer--hover {
+    opacity: 0;
+  }
+
+  /* The completion ring's dash sweep is driven by framer-motion, which does
+   * not read this query; the closed track underneath is what makes skipping
+   * the sweep safe — the ring still reads as complete, just undrawn. */
+  .setup-complete-mark__sweep {
+    stroke-dashoffset: 0 !important;
+  }
+}

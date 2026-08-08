@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Check,
   ChevronLeft,
@@ -34,7 +34,110 @@ import {
   type PendingProviderSetup,
 } from './ProviderModelSteps';
 import { WorkspaceStepContent, type WorkspaceSetupOutcome } from './WorkspaceStep';
+import { SetupGridBackdrop } from './SetupGridBackdrop';
+import { SetupActionButton } from './SetupActionButton';
+import { SetupCompleteMark } from './SetupCompleteMark';
 import { isSetupVerificationComplete } from '@/lib/setup-provider';
+
+/**
+ * Step transition choreography, ported from the rogierdeboeve reference.
+ *
+ * The curve is the reference's --expo-out verbatim — fast departure, long
+ * decelerating tail — and is the same value as the --ease-enter token.
+ *
+ * The durations are not verbatim, for two separate reasons.
+ *
+ * ENTRANCE (0.6s, not the reference's 1.8s). 1.8s is right for a portfolio you
+ * are browsing and wrong for a wizard you are trying to get through — after
+ * clicking Next it is just dead time. 0.6s keeps the whole shape of the curve:
+ * expo.out spends its first third covering most of the distance, so the step
+ * is legible almost immediately and only the last few pixels are still
+ * settling.
+ *
+ * EXIT (0.12s, unstaggered). This one is a correctness constraint, not taste.
+ * AnimatePresence mode="wait" holds the incoming step until the outgoing one
+ * has fully left, so exit duration is latency on every single Next click, paid
+ * before the next step even mounts. A staggered exit compounds that per child.
+ * Exit therefore uses an accelerating ease and gets out of the way fast, which
+ * is also what codex-tokens.css prescribes for anything leaving.
+ *
+ * THE ARC
+ * The reference lays its projects out on a ring and puts the camera just
+ * inside it: each item sits at (-sin(θi)·r, 0, cos(θi)·r) and faces the centre,
+ * with the camera at z = r - 0.3 (webgl.ts:6584). Rotating the ring sweeps the
+ * next item into view along a curve rather than sliding it flat.
+ *
+ * That is reproducible in CSS 3D with no WebGL at all: a perspective parent
+ * plus `rotateY(θ) translateZ(r)` on the card is the same construction. The
+ * wrapper carries translateZ(-r) so the front card lands back at z = 0.
+ *
+ * The reference's own radius formula is r = width/2 / tan(π/count). With seven
+ * steps that gives θ ≈ 51°, which is right for browsing artwork and wrong for
+ * reading a form — at that angle the far edge of the card is unreadable. The
+ * same formula with a wider virtual ring gives ARC_DEGREES/ARC_RADIUS below:
+ * enough curvature to read as rotation, not enough to fight the text.
+ *
+ * STALE CLICKS ARE GUARDED IN THE HANDLER, NOT THE DOM
+ * Under AnimatePresence mode="wait" the outgoing step stays mounted while it
+ * leaves, so a fast second Next click can land on the step that is already
+ * going away and fire its handler a second time — silently advancing twice, or
+ * past the end. The fix belongs in handleNext/handleBack, which ignore a click
+ * whose originating step is no longer the current one.
+ *
+ * Doing this with `pointerEvents` inside the variants instead looks tempting
+ * and is a trap: `animate` would carry no pointerEvents of its own, so every
+ * re-render re-resolves it toward the `initial` value, `transitionEnd` sets it
+ * back, and the card re-runs its rotation forever. The card never settles, and
+ * Playwright — which requires two consecutive stable bounding boxes — can then
+ * never click anything inside it.
+ */
+const EXPO_OUT = [0.19, 1, 0.22, 1] as const;
+const EASE_IN = [0.4, 0, 1, 1] as const;
+
+/** Swing angle and ring radius, in the reference's own construction. */
+const ARC_DEGREES = 22;
+const ARC_RADIUS = 900;
+const ARC_PERSPECTIVE = 1400;
+
+const stepContainerVariants = {
+  initial: {},
+  animate: { transition: { staggerChildren: 0.04, delayChildren: 0.04 } },
+  // No staggerChildren on exit: every child's exit is latency before the next
+  // step can mount, and staggering multiplies it.
+  exit: {},
+};
+
+/** Heading row: free to travel, nothing inside it is interactive. */
+const stepHeadingVariants = {
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EXPO_OUT } },
+  exit: { opacity: 0, y: -6, transition: { duration: 0.12, ease: EASE_IN } },
+};
+
+/** The card, swept along the ring. Reduced motion keeps the fade, drops the arc. */
+const buildStepCardVariants = (reduceMotion: boolean) => ({
+  initial: {
+    opacity: 0,
+    ...(reduceMotion ? {} : { rotateY: ARC_DEGREES, z: -ARC_RADIUS }),
+  },
+  animate: {
+    opacity: 1,
+    ...(reduceMotion ? {} : { rotateY: 0, z: 0 }),
+    transition: { duration: reduceMotion ? 0.2 : 0.7, ease: EXPO_OUT },
+  },
+  exit: {
+    opacity: 0,
+    ...(reduceMotion ? {} : { rotateY: -ARC_DEGREES, z: -ARC_RADIUS }),
+    transition: { duration: 0.12, ease: EASE_IN },
+  },
+});
+
+/** Nav row: opacity only — the buttons must never move under the pointer. */
+const stepItemVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.6, ease: EXPO_OUT } },
+  exit: { opacity: 0, transition: { duration: 0.12, ease: EASE_IN } },
+};
 
 interface SetupStep {
   id: string;
@@ -116,6 +219,8 @@ export function Setup() {
   const { t } = useTranslation(['setup', 'channels']);
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<number>(STEP.WELCOME);
+  const reduceMotion = useReducedMotion() ?? false;
+  const stepCardVariants = useMemo(() => buildStepCardVariants(reduceMotion), [reduceMotion]);
 
   // Setup state
   // Installation state for the Installing step
@@ -166,10 +271,20 @@ export function Setup() {
     }
   }, [safeStepIndex, runtimeChecksPassed, pendingProvider, modelVerified, workspaceConfirmed]);
 
+  // Under AnimatePresence mode="wait" the outgoing step stays mounted while it
+  // leaves, so a fast double-click can reach a handler on a step that is
+  // already going away. The step-index updates below are functional, so a
+  // repeat advance is harmless; committing setup twice is not — markSetupComplete
+  // + navigate firing twice races the route change. This latch makes the
+  // terminal actions run at most once.
+  const committedRef = useRef(false);
+
   const handleNext = async () => {
     if (isLastStep) {
       // FP-P1-01: Complete is only reachable as 'verified' (provider+model both
       // live-checked) or via the explicit Skip path which records 'skipped'.
+      if (committedRef.current) return;
+      committedRef.current = true;
       markSetupComplete();
       toast.success(t('complete.title'));
       navigate('/');
@@ -185,6 +300,8 @@ export function Setup() {
   const handleSkip = () => {
     // FP-P1-01: skipping is allowed but never silently equivalent to verified.
     // The Complete page and the chat first-send gate both key off this state.
+    if (committedRef.current) return;
+    committedRef.current = true;
     if (!isSetupVerificationComplete(setupProviderVerification)) {
       setSetupProviderVerification({ status: 'skipped' });
     }
@@ -205,7 +322,11 @@ export function Setup() {
   return (
     <div data-testid="setup-page" className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <TitleBar />
-      <div className="flex-1 overflow-auto">
+      {/* Cursor-lit grid. Fixed and at --z-base, so the content below needs to
+       * be positioned to paint above it — non-positioned blocks render beneath
+       * positioned siblings regardless of DOM order. */}
+      <SetupGridBackdrop />
+      <div className="relative z-raised flex-1 overflow-auto">
         {/* Progress Indicator */}
         <div className="flex justify-center pt-8">
           <div className="flex items-center gap-2">
@@ -228,12 +349,16 @@ export function Setup() {
                   )}
                 </div>
                 {i < steps.length - 1 && (
-                  <div
-                    className={cn(
-                      'h-0.5 w-8 transition-colors',
-                      i < safeStepIndex ? 'bg-primary' : 'bg-muted-foreground/30'
-                    )}
-                  />
+                  <div className="h-0.5 w-8 bg-muted-foreground/30">
+                    {/* Fills left-to-right instead of swapping colour, so the
+                      * progress rail gains a direction. */}
+                    <motion.div
+                      className="h-full w-full origin-left bg-primary"
+                      initial={false}
+                      animate={{ scaleX: i < safeStepIndex ? 1 : 0 }}
+                      transition={{ duration: 0.5, ease: EXPO_OUT }}
+                    />
+                  </div>
                 )}
               </div>
             ))}
@@ -244,18 +369,26 @@ export function Setup() {
         <AnimatePresence mode="wait">
           <motion.div
             key={step.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            variants={stepContainerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             className="mx-auto max-w-2xl p-8"
           >
-            <div className="text-center mb-8">
+            <motion.div variants={stepHeadingVariants} className="text-center mb-8">
               <h1 className="text-3xl font-serif font-normal tracking-tight mb-2">{t(`steps.${step.id}.title`)}</h1>
               <p className="text-muted-foreground">{t(`steps.${step.id}.description`)}</p>
-            </div>
+            </motion.div>
 
             {/* Step-specific content */}
-            <div className="rounded-xl bg-card text-card-foreground border shadow-sm p-8 mb-8">
+            <motion.div
+              variants={stepCardVariants}
+              style={{
+                transformPerspective: ARC_PERSPECTIVE,
+                transformStyle: 'preserve-3d',
+              }}
+              className="setup-card-3d rounded-xl bg-card text-card-foreground border shadow-sm p-8 mb-8"
+            >
               {safeStepIndex === STEP.WELCOME && <WelcomeContent />}
               {safeStepIndex === STEP.RUNTIME && <RuntimeContent onStatusChange={setRuntimeChecksPassed} />}
               {safeStepIndex === STEP.INSTALLING && (
@@ -289,37 +422,43 @@ export function Setup() {
                   workspace={workspaceConfirmed}
                 />
               )}
-            </div>
+            </motion.div>
 
             {/* Navigation - hidden during installation step */}
             {safeStepIndex !== STEP.INSTALLING && (
-              <div className="flex justify-between">
+              <motion.div variants={stepItemVariants} className="flex justify-between">
                 <div>
                   {!isFirstStep && (
-                    <Button variant="ghost" onClick={handleBack}>
-                      <ChevronLeft className="h-4 w-4 mr-2" />
-                      {t('nav.back')}
-                    </Button>
+                    <SetupActionButton
+                      variant="ghost"
+                      frame
+                      onClick={handleBack}
+                      label={t('nav.back')}
+                      iconBefore={<ChevronLeft className="h-4 w-4 mr-2" />}
+                    />
                   )}
                 </div>
                 <div className="flex gap-2">
                   {!isLastStep && safeStepIndex !== STEP.RUNTIME && (
-                    <Button data-testid="setup-skip-button" variant="ghost" onClick={handleSkip}>
-                      {t('nav.skipSetup')}
-                    </Button>
+                    <SetupActionButton
+                      data-testid="setup-skip-button"
+                      variant="ghost"
+                      frame
+                      onClick={handleSkip}
+                      label={t('nav.skipSetup')}
+                    />
                   )}
-                  <Button data-testid="setup-next-button" onClick={handleNext} disabled={!canProceed}>
-                    {isLastStep ? (
-                      t('nav.getStarted')
-                    ) : (
-                      <>
-                        {t('nav.next')}
-                        <ChevronRight className="h-4 w-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
+                  {/* No frame: this variant is filled, and a ring drawn on the
+                    * fill reads as an artefact rather than an affordance. */}
+                  <SetupActionButton
+                    data-testid="setup-next-button"
+                    onClick={handleNext}
+                    disabled={!canProceed}
+                    label={isLastStep ? t('nav.getStarted') : t('nav.next')}
+                    iconAfter={isLastStep ? undefined : <ChevronRight className="h-4 w-4 ml-2" />}
+                  />
                 </div>
-              </div>
+              </motion.div>
             )}
           </motion.div>
         </AnimatePresence>
@@ -921,7 +1060,7 @@ function CompleteContent({ installedSkills, workspace }: CompleteContentProps) {
 
   return (
     <div className="text-center space-y-6">
-      <div className="text-6xl mb-4">🎉</div>
+      <SetupCompleteMark />
       <h2 className="text-xl font-serif font-normal tracking-tight">{t('complete.title')}</h2>
       <p className="text-muted-foreground">
         {t('complete.subtitle')}

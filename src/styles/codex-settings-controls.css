@@ -15,9 +15,9 @@
  *
  * DEVIATIONS from the source, and why:
  *   1. THEMING. The source token block is dark-only and hardcodes whites
- *      (`rgba(255,255,255,.08)`, `#232323`, `#fff`). ClawX renders settings in
- *      both themes, so tokens are split into `:root.dark` / `:root:not(.dark)`
- *      — the same split codex-settings-archived.css already established.
+ *      (`rgba(255,255,255,.08)`, `#232323`, `#fff`). Those literals — and the
+ *      hand-mirrored light block that used to sit beside them — are replaced by
+ *      aliases into codex-tokens.css, which carries both themes in one place.
  *   2. FONT SHORTHAND. The source writes `font: 445 13px/18px var(--font-sans)`.
  *      ClawX has no `--font-sans`, and an unresolved var in a shorthand makes
  *      the browser drop the WHOLE declaration (silently losing size+weight).
@@ -28,64 +28,56 @@
  *      previews, hotkeys) that have no ClawX counterpart yet.
  */
 
-/* ---- measured tokens (official computed values, settings.css:17-35) ---- */
-:root.dark {
-  --sp-hairline: rgba(255, 255, 255, 0.082);          /* border-token-border */
+/* ---- tokens (Layer 3 aliases into codex-tokens.css) ----------------------
+ *
+ * These were literals in two mirrored blocks: 24 dark values in `:root.dark`
+ * and 24 hand-tuned light counterparts. Both are gone. Each name now aliases
+ * the semantic role it was always standing in for, so the theme switch happens
+ * once in codex-tokens.css instead of being re-derived here.
+ *
+ * The originals had drifted from the roles they described — `--sp-menu-bg` was
+ * `rgba(45,45,45,.9)` where an elevated surface is `#212121` at 96%, and every
+ * overlay used rgba() where the system uses color-mix(in oklab). Aliasing fixes
+ * both without touching a single rule below.
+ *
+ * The measurement comments from the CDP capture are kept: they record what the
+ * real app computed, which is still the check on whether a role is mapped
+ * correctly. Two values stay literal because they are geometry, not colour, and
+ * one (--sp-link) because no `--color-text-link` role exists yet.
+ * ------------------------------------------------------------------------ */
+:root {
+  --sp-hairline: var(--color-border);                  /* border-token-border */
   --sp-hairline-w: 0.667px;
-  --sp-hover-bg: rgba(255, 255, 255, 0.08);            /* token-list-hover-background */
-  --sp-fill-3: rgba(255, 255, 255, 0.03);              /* bg-token-bg-fog */
-  --sp-fill-5: rgba(255, 255, 255, 0.05);              /* token-foreground/5 */
-  --sp-fill-10: rgba(255, 255, 255, 0.1);              /* token-foreground/10 */
-  --sp-fill-15: rgba(255, 255, 255, 0.15);             /* token-foreground/15 (active press) */
-  --sp-text: #fff;
-  --sp-text-secondary: rgba(255, 255, 255, 0.65);      /* text-token-text-secondary */
-  --sp-text-placeholder: rgba(255, 255, 255, 0.498);   /* input-placeholder-foreground */
-  --sp-link: #83c3ff;                                  /* text-token-text-link */
-  --sp-card-bg: #232323;                               /* card rgb(35,35,35) */
-  --sp-switch-on: #339cff;                             /* bg-token-charts-blue */
-  --sp-switch-thumb: #fff;
-  --sp-radius-row: 12.5px;                             /* rounded-lg (chips/rows/fields) */
-  --sp-radius-card: 20px;
-  --sp-menu-bg: rgba(45, 45, 45, 0.9);                 /* dropdown shell */
-  --sp-menu-ring: rgba(255, 255, 255, 0.082);
-  --sp-menu-text: #fff;
-  --sp-menu-hover: rgba(255, 255, 255, 0.08);
-  --sp-menu-danger: #fca5a5;
-  --sp-focus-ring: rgba(255, 255, 255, 0.18);
-  --sp-banner-bg: rgba(120, 72, 20, 0.35);
-  --sp-banner-text: #f3d2a1;
+  --sp-hover-bg: var(--color-background-button-secondary-hover); /* token-list-hover-background */
+  --sp-fill-3: var(--color-background-elevated-secondary);       /* bg-token-bg-fog */
+  --sp-fill-5: var(--color-background-button-secondary);         /* token-foreground/5 */
+  --sp-fill-10: var(--color-background-button-tertiary-hover);   /* token-foreground/10 */
+  --sp-fill-15: var(--color-background-button-secondary-active); /* token-foreground/15 (active press) */
+  --sp-text: var(--color-text-foreground);
+  --sp-text-secondary: var(--color-text-foreground-secondary);   /* text-token-text-secondary */
+  --sp-text-placeholder: var(--color-text-foreground-tertiary);  /* input-placeholder-foreground */
+  --sp-card-bg: var(--color-background-elevated-primary-opaque); /* card rgb(35,35,35) */
+  --sp-switch-on: var(--color-icon-accent);            /* bg-token-charts-blue */
+  --sp-switch-thumb: var(--gray-0);
+  --sp-radius-row: var(--radius-lg);                   /* rounded-lg (chips/rows/fields) */
+  --sp-radius-card: var(--radius-2xl);
+  --sp-menu-bg: var(--color-background-elevated-primary);        /* dropdown shell */
+  --sp-menu-ring: var(--color-border);
+  --sp-menu-text: var(--color-text-foreground);
+  --sp-menu-hover: var(--color-background-button-secondary-hover);
+  --sp-menu-danger: var(--color-text-error);
+  --sp-focus-ring: var(--color-border-heavy);
+  --sp-banner-bg: var(--color-background-status-warning);
+  --sp-banner-text: var(--color-text-warning);
+
+  /* Link blue. The one role with no semantic token: --color-text-accent is the
+   * brand accent for interactive marks, which is a different job from prose
+   * hyperlink colour, and the capture shows Codex using a lighter blue here. */
+  --sp-link: var(--blue-400);
 }
 
-/* Light mirror. The official app ships dark-only, so these have no capture to
- * cite: each is the same *role* re-expressed on a light ground (white ink
- * inverted to near-black at matching alpha, `#232323` card → white on the grey
- * page). Alphas are nudged down because dark ink on light reads heavier than
- * light ink on dark at equal opacity. */
-:root:not(.dark) {
-  --sp-hairline: rgba(0, 0, 0, 0.09);
-  --sp-hairline-w: 0.667px;
-  --sp-hover-bg: rgba(0, 0, 0, 0.045);
-  --sp-fill-3: rgba(0, 0, 0, 0.022);
-  --sp-fill-5: rgba(0, 0, 0, 0.04);
-  --sp-fill-10: rgba(0, 0, 0, 0.07);
-  --sp-fill-15: rgba(0, 0, 0, 0.1);
-  --sp-text: #1a1c1f;
-  --sp-text-secondary: rgba(26, 28, 31, 0.65);
-  --sp-text-placeholder: rgba(26, 28, 31, 0.5);
-  --sp-link: #0b6bcb;
-  --sp-card-bg: #fff;
-  --sp-switch-on: #0a84ff;
-  --sp-switch-thumb: #fff;
-  --sp-radius-row: 12.5px;
-  --sp-radius-card: 20px;
-  --sp-menu-bg: rgba(252, 252, 252, 0.94);
-  --sp-menu-ring: rgba(0, 0, 0, 0.09);
-  --sp-menu-text: #1a1c1f;
-  --sp-menu-hover: rgba(0, 0, 0, 0.05);
-  --sp-menu-danger: #b42318;
-  --sp-focus-ring: rgba(0, 0, 0, 0.22);
-  --sp-banner-bg: rgba(180, 118, 20, 0.14);
-  --sp-banner-text: #7a4a06;
+:root.dark {
+  --sp-link: #83c3ff;                                  /* text-token-text-link */
 }
 
 /* --------------------------------------------------------------- content
@@ -125,7 +117,7 @@
 .sp-banner {
   margin: -12px 0 20px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--sp-banner-bg);
   color: var(--sp-banner-text);
   font-size: 13px;
@@ -289,7 +281,7 @@
   display: inline-flex;
   align-items: center;
   border: var(--sp-hairline-w) solid var(--sp-hairline);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   padding: 0 7px;
   background: transparent;
   color: var(--sp-text-placeholder);
@@ -318,7 +310,7 @@
   align-items: center;
   gap: 6px;
   border: var(--sp-hairline-w) solid transparent;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   padding: 0 10px;
   font-size: 12px;
   font-weight: 500;
@@ -329,7 +321,7 @@
   width: 6px;
   height: 6px;
   flex: none;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: currentColor;
 }
 .sp-state-pill.is-ok {
@@ -354,7 +346,7 @@
   max-height: 240px;
   overflow: auto;
   border: var(--sp-hairline-w) solid var(--sp-hairline);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 12px;
   background: var(--sp-fill-3);
   color: var(--sp-text-secondary);
@@ -403,7 +395,7 @@
   width: 32px;
   height: 20px;
   align-items: center;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--sp-fill-10);
   transition: background-color 0.2s ease-out;
 }
@@ -415,7 +407,7 @@
   width: 16px;
   height: 16px;
   border: var(--sp-hairline-w) solid var(--sp-switch-thumb);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--sp-switch-thumb);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
   transform: translateX(2px);
@@ -491,7 +483,7 @@
   max-height: 328px;
   flex-direction: column;
   overflow-y: auto;
-  border-radius: 15px;
+  border-radius: var(--radius-xl);
   padding: 4px;
   background: var(--sp-menu-bg);
   box-shadow: 0 0 0 0.5px var(--sp-menu-ring), 0 8px 16px -4px rgb(0 0 0 / 0.12);
@@ -503,7 +495,7 @@
   align-items: center;
   gap: 6px;
   border: 0;
-  border-radius: 12.5px;
+  border-radius: var(--radius-lg);
   padding: 5px 8px;
   background: transparent;
   color: var(--sp-menu-text);
@@ -629,7 +621,7 @@
   min-width: 148px;
   flex-direction: column;
   border: 0.5px solid var(--sp-menu-ring);
-  border-radius: 15px;
+  border-radius: var(--radius-xl);
   padding: 4px;
   background: var(--sp-menu-bg);
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
@@ -639,7 +631,7 @@
   height: 29px;
   flex: none;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 0 8px;
   background: transparent;
   color: var(--sp-menu-text);
@@ -651,6 +643,76 @@
 }
 .sp-row-menu button:hover { background: var(--sp-menu-hover); }
 .sp-row-menu button.danger { color: var(--sp-menu-danger); }
+
+/* ------------------------------------------------------------- header menu
+   Shared shell for the chat header project/session dropdowns. Reuses the global
+   `--sp-menu-*` tokens so the header dropdowns render in the same shell as
+   settings selects (`.sp-select-menu`) and row menus (`.sp-row-menu`):
+   radius 15, pad 4, blur(8), 0.5px ring + soft shadow, items r12.5 / 5x8 /
+   13-445. This is the single source for header dropdown chrome — both the
+   workspace picker and the session picker consume it so they stay in sync. */
+.codex-header-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: min(288px, calc(100vw - 32px));
+  max-height: 360px;
+  overflow-y: auto;
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  /* Keep header and empty-state workspace menus readable over the animated
+   * welcome stage. Both surfaces intentionally share this opaque token. */
+  background: var(--color-background-elevated-primary-opaque);
+  box-shadow: 0 0 0 0.5px var(--sp-menu-ring), 0 8px 16px -4px rgb(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.codex-header-menu__label {
+  padding: 6px 8px 4px;
+  color: var(--sp-text-secondary);
+  font-size: 12px;
+  font-weight: 445;
+  line-height: 1.2;
+}
+.codex-header-menu__sep {
+  height: 1px;
+  margin: 4px 0;
+  border: 0;
+  background: var(--sp-hairline);
+}
+.codex-header-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 5px 8px;
+  background: transparent;
+  color: var(--sp-menu-text);
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background 80ms ease;
+}
+.codex-header-menu__item:hover:not(:disabled) {
+  background: var(--sp-menu-hover);
+}
+.codex-header-menu__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.codex-header-menu__item--muted {
+  color: var(--sp-text-secondary);
+}
+.codex-header-menu__item--muted:hover:not(:disabled) {
+  color: var(--sp-menu-text);
+}
 
 /* ------------------------------------------------------------- segmented
    settings.css:605-629. wrapper gap 2; option pad 2x8 + hairline transparent
@@ -667,7 +729,7 @@
   display: inline-flex;
   align-items: center;
   border: var(--sp-hairline-w) solid transparent;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   padding: 2px 8px;
   background: transparent;
   color: var(--sp-text-placeholder);
@@ -721,7 +783,7 @@
   width: 100%;
   min-height: 120px;
   border: var(--sp-hairline-w) solid var(--sp-hairline);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   padding: 12px 14px;
   background: var(--sp-fill-3);
   color: var(--sp-text);
@@ -750,7 +812,7 @@
   min-height: 22px;
   align-items: center;
   border: var(--sp-hairline-w) solid var(--sp-hairline);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 0 7px;
   background: var(--sp-fill-5);
   color: var(--sp-text);

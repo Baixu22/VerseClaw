@@ -21,9 +21,6 @@ export function SettingsPageChrome({
         </div>
         <div className="codex-settings-page__panel">
           <div className="codex-settings-page__topfade" aria-hidden="true" />
-          <div className="codex-settings-page__toolbar">
-            <span className="codex-settings-page__toolbar-label">{title}</span>
-          </div>
           <div className="codex-settings-page__scroll">
             <div className="codex-settings-page__content">
               <header className="codex-settings-page__intro">

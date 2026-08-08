@@ -17,6 +17,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
@@ -27,7 +28,7 @@ import { TokenUsageBadge } from '@/components/assistant-render/TokenUsageBadge';
 import { extractAssistantBranches, extractAssistantReasoning, extractAssistantToolFallbacks } from '@/components/assistant-render/model';
 import { KnowledgeDirectiveChip } from '@/components/assistant-render/KnowledgeDirectiveChip';
 import { GitHubCard, isGitHubUrl } from '@/components/assistant-render/GitHubCard';
-import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
@@ -756,7 +757,7 @@ function AssistantStreamStatusBar({
           {t('assistantRender.activity.thinking')}
         </Shimmer>
       ) : (
-        <DotMatrix
+        <OrbStatus
           state={dotState}
           label={t('assistantRender.activity.thinking')}
           className="size-4 shrink-0 text-primary"
@@ -818,9 +819,9 @@ function ToolStatusBar({
               isError && 'border-destructive/25 text-destructive',
             )}
           >
-            {isRunning && <DotMatrix state="syncing" label={tool.name} className="size-3.5 text-primary" />}
-            {!isRunning && !isError && <DotMatrix state="success" label={tool.name} className="size-3.5" />}
-            {isError && <DotMatrix state="error" label={tool.name} className="size-3.5" />}
+            {isRunning && <OrbStatus state="syncing" label={tool.name} className="size-3.5 text-primary" />}
+            {!isRunning && !isError && <OrbStatus state="success" label={tool.name} className="size-3.5" />}
+            {isError && <OrbStatus state="error" label={tool.name} className="size-3.5" />}
             <Wrench className="h-3 w-3 shrink-0 opacity-60" />
             <span className="font-mono text-sm font-medium">{tool.name}</span>
             {duration && <span className="text-xs opacity-60">{tool.summary ? `(${duration})` : duration}</span>}
@@ -1041,6 +1042,9 @@ function UserMessageActions({
           {formatTimestamp(timestamp)}
         </span>
       )}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">
       <Button
         type="button"
         variant="ghost"
@@ -1048,12 +1052,18 @@ function UserMessageActions({
         className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
         onClick={() => void copyContent()}
         aria-label={copied ? t('messageActions.copied') : t('messageActions.copy')}
-        title={copied ? t('messageActions.copied') : t('messageActions.copy')}
         data-testid="chat-user-message-copy"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
       </Button>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top">{copied ? t('messageActions.copied') : t('messageActions.copy')}</TooltipContent>
+      </Tooltip>
       {canEdit && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex">
         <Button
           type="button"
           variant="ghost"
@@ -1061,11 +1071,14 @@ function UserMessageActions({
           className="h-6 w-6 text-muted-foreground/75 transition-colors duration-150"
           onClick={onEdit}
           aria-label={t('messageActions.edit')}
-          title={t('messageActions.edit')}
           data-testid="chat-user-message-edit"
         >
           <Pencil className="h-3.5 w-3.5" />
         </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top">{t('messageActions.edit')}</TooltipContent>
+        </Tooltip>
       )}
     </AssistantUiGhostActionBar>
   );
@@ -1130,26 +1143,34 @@ function UserMessageEditor({
         className="block min-h-[72px] w-full resize-none border-0 bg-transparent p-0 text-sm leading-6 text-foreground shadow-none outline-none placeholder:text-muted-foreground/60 focus:ring-0"
       />
       <div className="mt-2 flex h-6 items-center justify-end gap-1" data-testid="chat-user-message-editor-actions">
+        <Tooltip>
+          <TooltipTrigger asChild>
         <button
           type="button"
           onClick={onCancel}
           aria-label={cancelLabel}
-          title={cancelLabel}
           className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color] duration-150 hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
           data-testid="chat-user-message-edit-cancel"
         >
           <X className="h-3.5 w-3.5" />
         </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{cancelLabel}</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
         <button
           type="submit"
           disabled={!canSubmit}
           aria-label={sendLabel}
-          title={sendLabel}
           className="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/75 transition-[background-color,color] duration-150 hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
           data-testid="chat-user-message-edit-send"
         >
           <Send className="h-3.5 w-3.5" />
         </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{sendLabel}</TooltipContent>
+        </Tooltip>
       </div>
     </form>
   );
@@ -1210,16 +1231,20 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
       data-testid="assistant-code-header"
     >
       <span className="min-w-0 truncate font-mono">{label}</span>
+      <Tooltip>
+        <TooltipTrigger asChild>
       <button
         type="button"
         onClick={handleCopy}
         className="inline-flex h-6 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-conversation-tertiary transition-colors hover:bg-black/[0.06] hover:text-foreground dark:hover:bg-white/[0.06]"
         aria-label={copied ? t('markdown.copiedCode') : t('markdown.copyCode')}
-        title={copied ? t('markdown.copiedCode') : t('markdown.copyCode')}
         data-testid="assistant-code-copy"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
       </button>
+        </TooltipTrigger>
+        <TooltipContent side="top">{copied ? t('markdown.copiedCode') : t('markdown.copyCode')}</TooltipContent>
+      </Tooltip>
     </div>
   );
 }
@@ -1352,13 +1377,14 @@ function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: At
         : t('assistantRender.attachment.file', { defaultValue: 'File' });
 
   return (
+    <Tooltip>
+      <TooltipTrigger asChild>
     <AttachmentRoot
       className={cn(
         'flex min-h-14 w-[min(260px,100%)] items-center gap-3 rounded-lg border border-border bg-background/70 px-3 py-2.5 shadow-sm',
         file.filePath && 'cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10',
       )}
       onClick={handleOpen}
-      title={file.filePath ? t('assistantRender.attachment.open', { defaultValue: 'Open file' }) : undefined}
       data-testid="assistant-attachment-card"
     >
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-black/5 text-muted-foreground dark:bg-white/10">
@@ -1366,6 +1392,11 @@ function FileCard({ file, onOpen }: { file: AttachedFileMeta; onOpen?: (file: At
       </div>
       <AttachmentName name={file.fileName} sublabel={sublabel} />
     </AttachmentRoot>
+      </TooltipTrigger>
+      {file.filePath && (
+        <TooltipContent side="top">{t('assistantRender.attachment.open', { defaultValue: 'Open file' })}</TooltipContent>
+      )}
+    </Tooltip>
   );
 }
 
@@ -1377,21 +1408,25 @@ function ImagePreviewPlaceholder({ file }: { file: AttachedFileMeta }) {
     : t('imageGeneration.previewLoading');
 
   return (
+    <Tooltip>
+      <TooltipTrigger asChild>
     <div
       className={cn(
         'flex h-36 w-36 flex-col items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/5 px-3 text-center text-muted-foreground dark:border-white/10 dark:bg-white/5',
         unavailable && 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400',
       )}
       data-testid={unavailable ? 'image-preview-unavailable' : 'image-preview-loading'}
-      title={file.fileName}
     >
       {unavailable ? (
         <AlertCircle className="h-5 w-5 shrink-0" />
       ) : (
-        <DotMatrix state="loading" label={label} className="size-5 text-primary" />
+        <OrbStatus state="loading" label={label} className="size-5 text-primary" />
       )}
       <span className="text-xs leading-4">{label}</span>
     </div>
+      </TooltipTrigger>
+      <TooltipContent side="top">{file.fileName}</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -1510,25 +1545,33 @@ function ImageLightbox({
         {/* Action buttons below image */}
         <div className="flex items-center gap-2">
           {filePath && (
+            <Tooltip>
+              <TooltipTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
               onClick={handleShowInFolder}
-              title={t('filePreview.actions.openInFinder')}
             >
               <FolderOpen className="h-4 w-4" />
             </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">{t('filePreview.actions.openInFinder')}</TooltipContent>
+            </Tooltip>
           )}
+          <Tooltip>
+            <TooltipTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 bg-white/10 hover:bg-white/20 text-white"
             onClick={onClose}
-            title={t('filePreview.actions.close')}
           >
             <X className="h-4 w-4" />
           </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('filePreview.actions.close')}</TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>,

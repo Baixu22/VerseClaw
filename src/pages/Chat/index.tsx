@@ -6,7 +6,7 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, FolderPlus, GitBranchPlus, Loader2, Pencil, Workflow, X } from 'lucide-react';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
 import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
@@ -70,7 +70,7 @@ import {
   type GraphStepCacheEntry,
   type UserRunCard,
 } from './execution-projection';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
@@ -85,11 +85,13 @@ import {
 import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
-import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
+import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -328,7 +330,7 @@ function getContinuityErrorMessage(error: unknown, fallback: string): string {
 const HEADER_COMPLETED_STATUSES = new Set(['completed', 'success', 'done', 'finished']);
 const HEADER_ERROR_STATUSES = new Set(['failed', 'error', 'killed', 'timeout']);
 const HEADER_ABORTED_STATUSES = new Set(['aborted', 'cancelled', 'canceled']);
-const HEADER_SESSION_DOT_LABEL_KEYS: Partial<Record<DotMatrixState, string>> = {
+const HEADER_SESSION_DOT_LABEL_KEYS: Partial<Record<OrbStatusState, string>> = {
   streaming: 'sessionStatus.running',
   waiting: 'sessionStatus.waiting',
   success: 'sessionStatus.completed',
@@ -344,7 +346,7 @@ function getHeaderSessionDotState(input: {
   sending?: boolean;
   pendingFinal?: boolean;
   runError?: string | null;
-}): DotMatrixState | null {
+}): OrbStatusState | null {
   const isCurrent = input.sessionKey === input.currentSessionKey;
   if (isCurrent && input.runError) return 'error';
   const runs = input.runtimeRuns ?? {};
@@ -362,6 +364,7 @@ function getHeaderSessionDotState(input: {
 }
 
 function ProjectSessionHeader({
+  workspaceId,
   projectName,
   projectPath,
   workspaceProfiles,
@@ -389,6 +392,7 @@ function ProjectSessionHeader({
   pendingFinal,
   runError,
 }: {
+  workspaceId?: string;
   projectName: string;
   projectPath?: string;
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
@@ -421,8 +425,31 @@ function ProjectSessionHeader({
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
   const [renaming, setRenaming] = useState(false);
+  const [branch, setBranch] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
+
+  /* The empty state names the checkout under the composer (project · branch).
+   * Once a conversation starts that row is gone, and the header was carrying
+   * project / session only — so the branch you are about to have an agent
+   * write to stopped being visible at exactly the point it starts mattering.
+   * Same call the hero makes; the two are never mounted at once. */
+  useEffect(() => {
+    let cancelled = false;
+    void hostApi.git.status().then((result) => {
+      if (cancelled) return;
+      const status = result.status;
+      if (!status?.isRepository) {
+        setBranch(null);
+        return;
+      }
+      setBranch(status.detached ? 'detached' : status.branch || null);
+    }).catch(() => {
+      if (!cancelled) setBranch(null);
+    });
+    return () => { cancelled = true; };
+  }, [projectPath]);
+
   const currentSessionDotState = getHeaderSessionDotState({
     sessionKey: currentSessionKey,
     currentSessionKey,
@@ -435,10 +462,6 @@ function ProjectSessionHeader({
   const currentSessionDotLabel = currentSessionDotState
     ? t(HEADER_SESSION_DOT_LABEL_KEYS[currentSessionDotState] ?? 'sessionStatus.running')
     : '';
-  const sortedWorkspaces = useMemo(
-    () => [...workspaceProfiles].sort((left, right) => (right.lastOpenedAt ?? 0) - (left.lastOpenedAt ?? 0)),
-    [workspaceProfiles],
-  );
   const recentSessions = useMemo(() => {
     return resolveWorkspaceHeaderSessions({ currentSessionKey, sessions, workspaceSessionKeys });
   }, [currentSessionKey, sessions, workspaceSessionKeys]);
@@ -479,67 +502,74 @@ function ProjectSessionHeader({
   };
 
   return (
-    <div ref={rootRef} className="flex min-w-0 items-center gap-1.5 text-sm" data-testid="chat-project-session-header">
-      <Laptop className="h-4 w-4 shrink-0 text-foreground/80" />
-      <div className="relative min-w-0">
+    <div ref={rootRef} className="flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
+      <Laptop className="order-1 h-4 w-4 shrink-0 text-muted-foreground" />
+      <div className="relative order-4 hidden min-w-0 md:block" data-testid="chat-header-environment-project">
+        {/* Project is the ancestor, not the subject — the session is what this
+          * pane is showing, so it takes the weight and the project steps back
+          * to breadcrumb strength. */}
+        <Tooltip>
+          <TooltipTrigger asChild>
         <button
           type="button"
-          className="inline-flex max-w-[220px] items-center gap-1 rounded-md px-1.5 py-1 font-semibold text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-          title={projectPath}
+          className="inline-flex max-w-[200px] items-center gap-1 rounded-md px-1.5 py-1 text-xs font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
           onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
         >
+          <Folder className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{projectName}</span>
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
+        </Tooltip>
         {open === 'workspace' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-72 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
-            <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">{t('workspace.recent')}</div>
-            {sortedWorkspaces.map((workspace) => (
-              <button
-                key={workspace.id}
-                type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-                onClick={() => {
-                  setOpen(null);
-                  void switchWorkspace(workspace.id);
-                }}
-              >
-                <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-medium text-foreground">{workspace.name}</span>
-                  <span className="block truncate font-mono text-2xs text-muted-foreground">{workspace.rootPath}</span>
-                </span>
-              </button>
-            ))}
-            {sortedWorkspaces.length === 0 && (
-              <div className="px-2 py-2 text-2xs text-muted-foreground">{t('workspace.noRecent')}</div>
+          <WorkspacePickerMenu
+            profiles={workspaceProfiles}
+            activeWorkspaceId={workspaceId}
+            onSelect={(id) => {
+              setOpen(null);
+              return switchWorkspace(id);
+            }}
+            onPickFolder={() => {
+              setOpen(null);
+              return pickWorkspaceFolder();
+            }}
+            menuTestId="chat-header-workspace-menu"
+            className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
+            extraActions={(
+              <>
+                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
+                  <ListChecks className="h-4 w-4" />
+                  {t('workspace.actions.openTaskLedger')}
+                </button>
+                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
+                  <Workflow className="h-4 w-4" />
+                  {t('workspace.actions.openClawGraph')}
+                </button>
+              </>
             )}
-            <div className="mt-1 border-t border-black/5 pt-1 dark:border-white/5">
-              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
-                <ListChecks className="h-3.5 w-3.5" />
-                {t('workspace.actions.openTaskLedger')}
-              </button>
-              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
-                <Workflow className="h-3.5 w-3.5" />
-                {t('workspace.actions.openClawGraph')}
-              </button>
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                onClick={() => {
-                  setOpen(null);
-                  void pickWorkspaceFolder();
-                }}
-              >
-                <FolderPlus className="h-3.5 w-3.5" />
-                {t('workspace.chooseNew')}
-              </button>
-            </div>
-          </div>
+          />
         )}
       </div>
-      <span className="text-foreground/35">/</span>
-      <div className="relative min-w-0">
+      {/* Branch reads as a label, not a control — checking out from here would
+        * be a destructive action one stray click away from the session menu.
+        * The composer's git strip stays the place that switches branches. */}
+      {branch && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+        <span
+          className="order-5 hidden min-w-0 shrink items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted-foreground lg:inline-flex"
+          data-testid="chat-header-branch"
+        >
+          <GitBranch className="h-3.5 w-3.5 shrink-0" />
+          <span className="max-w-[160px] truncate font-mono">{branch}</span>
+        </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{branch}</TooltipContent>
+        </Tooltip>
+      )}
+      <span className="order-3 hidden text-foreground/25 md:inline" aria-hidden="true">/</span>
+      <div className="relative order-2 min-w-0">
         {editingSession ? (
           <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
             <input
@@ -560,18 +590,20 @@ function ProjectSessionHeader({
             )}
           </div>
         ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
           <button
             type="button"
-            className="inline-flex max-w-[360px] items-center gap-1 rounded-md px-1.5 py-1 font-semibold text-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+            className="inline-flex max-w-[460px] items-center gap-1 rounded-md px-1.5 py-1 font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
               startRenameSession();
             }}
-            title={t('session.renameHint')}
+            data-testid="chat-header-session-name"
           >
             {currentSessionDotState && (
-              <DotMatrix
+              <OrbStatus
                 state={currentSessionDotState}
                 label={currentSessionDotLabel}
                 className="size-3.5 shrink-0"
@@ -581,20 +613,23 @@ function ProjectSessionHeader({
             <span className="truncate">{sessionName}</span>
             <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" collisionPadding={8}>{t('session.renameHint')}</TooltipContent>
+          </Tooltip>
         )}
         {open === 'session' && (
-            <div className="absolute left-0 top-full z-30 mt-1 w-80 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
+            <div className="codex-header-menu motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none">
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               onClick={startRenameSession}
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <Pencil className="h-4 w-4" />
               {t('session.renameCurrent')}
             </button>
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               data-testid="chat-session-fork"
               disabled={forkDisabled || forkBusy}
               onClick={() => {
@@ -603,7 +638,7 @@ function ProjectSessionHeader({
               }}
             >
               <span className="flex min-w-0 items-center gap-2">
-                {forkBusy ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <GitBranchPlus className="h-3.5 w-3.5 shrink-0" />}
+                {forkBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <GitBranchPlus className="h-4 w-4 shrink-0" />}
                 <span className="truncate">{t('composer.fork.action')}</span>
               </span>
               {recommendedContinuityAction === 'fork' && (
@@ -617,7 +652,7 @@ function ProjectSessionHeader({
             </button>
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               data-testid="chat-session-handoff"
               disabled={handoffDisabled || handoffBusy}
               onClick={() => {
@@ -626,7 +661,7 @@ function ProjectSessionHeader({
               }}
             >
               <span className="flex min-w-0 items-center gap-2">
-                {handoffBusy ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <FileText className="h-3.5 w-3.5 shrink-0" />}
+                {handoffBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <FileText className="h-4 w-4 shrink-0" />}
                 <span className="truncate">{t('composer.handoff.action')}</span>
               </span>
               {recommendedContinuityAction === 'handoff' && (
@@ -638,7 +673,7 @@ function ProjectSessionHeader({
                 </span>
               )}
             </button>
-            <div className="mb-0.5 border-t border-black/5 dark:border-white/5" />
+            <hr className="codex-header-menu__sep" />
             {recentSessions.map((session) => {
               const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
                 ? session.parentSessionKey
@@ -658,16 +693,16 @@ function ProjectSessionHeader({
                 <button
                   key={session.key}
                   type="button"
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                  className="codex-header-menu__item"
                   onClick={() => {
                     setOpen(null);
                     switchSession(session.key);
                   }}
                 >
                   {dotState ? (
-                    <DotMatrix state={dotState} className="size-3.5 shrink-0" />
+                    <OrbStatus state={dotState} className="size-4 shrink-0" />
                   ) : (
-                    <span className="size-3.5 shrink-0" />
+                    <span className="size-4 shrink-0" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-medium text-foreground">
@@ -843,9 +878,11 @@ export function Chat() {
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
   const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
+  const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
 
   useEffect(() => {
     setTaskLedgerSummaryVisible(true);
+    setRollbackPlanDismissed(false);
   }, [activeWorkspaceId, currentSessionKey]);
 
   // Refresh Task Ledger snapshot when workspace changes
@@ -917,7 +954,6 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
-  const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
@@ -1284,6 +1320,11 @@ export function Chat() {
     });
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, composerDraft, currentSessionKey, saveWorkspaceState]);
 
+  // Send animation state for the verse-style empty-state transition. Declared
+  // here rather than beside `isEmpty` because handleSendMessage below needs it,
+  // and that callback is defined long before `isEmpty` exists.
+  const [sendingAnimation, setSendingAnimation] = useState(false);
+
   const handleSendMessage = useCallback((
     text: string,
     opts?: SendOptions,
@@ -1292,8 +1333,17 @@ export function Chat() {
       ...opts,
       knowledgeMode: opts?.knowledgeMode ?? knowledgeMode,
     };
+
+    // First message out of the empty state: slide the composer down and fade
+    // the hero scaffolding out. Same predicate `isEmpty` uses, minus the
+    // startup-phase terms, which cannot be false on a user-driven send.
+    if (messages.length === 0 && !sending) {
+      setSendingAnimation(true);
+      window.setTimeout(() => setSendingAnimation(false), 800);
+    }
+
     return sendMessage(text, resolved);
-  }, [knowledgeMode, sendMessage]);
+  }, [knowledgeMode, messages.length, sending, sendMessage]);
 
   const handleSubmitInteractionResponse = useCallback((responseText: string) => {
     void handleSendMessage(responseText);
@@ -1490,10 +1540,6 @@ export function Chat() {
       : text;
     handleComposerDraftChange(nextDraft);
   }, [composerDraft, handleComposerDraftChange]);
-
-  const handleOpenSlashCommands = useCallback(() => {
-    setComposerSlashRequest((value) => value + 1);
-  }, []);
 
   const handleQuoteSelection = useCallback((text: string) => {
     const clipped = text.replace(/\s+/g, ' ').trim().slice(0, 1200);
@@ -2368,7 +2414,8 @@ export function Chat() {
     && taskLedgerSummaryVisible;
   const showRollbackPlanPanel = canShowChatSideRail
     && hasRollbackPlanSidebarTrigger(rollbackPlan)
-    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
+    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
+    && !rollbackPlanDismissed;
   const showChatAssistiveRail = canShowChatSideRail
     && chatAssistiveRailVisible
     && !isEmpty
@@ -2580,6 +2627,7 @@ export function Chat() {
           {!isEmpty && (
             <div className="flex items-center gap-1.5">
               <ProjectSessionHeader
+                workspaceId={activeWorkspaceId}
                 projectName={activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || 'clawx'}
                 projectPath={activeWorkspace?.rootPath}
                 workspaceProfiles={workspaceProfiles}
@@ -2617,14 +2665,13 @@ export function Chat() {
               className="flex items-center gap-1.5 text-xs text-muted-foreground"
               role="status"
             >
-              <DotMatrix state="syncing" label={t('startup.syncing')} className="size-3.5" />
+              <OrbStatus state="syncing" label={t('startup.syncing')} className="size-3.5" />
               <span>{t('startup.syncing')}</span>
             </div>
           )}
           <ChatToolbar
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
-            onOpenSlashCommands={handleOpenSlashCommands}
             promptCacheStatus={promptCacheStatus}
             onToggleQuestionDirectory={() =>
               setQuestionDirectoryOpenSessionKey((openSessionKey) =>
@@ -2637,6 +2684,34 @@ export function Chat() {
 
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
+        {/* verse-style background: grid, glows, noise — empty state only */}
+        <div
+          className={cn(
+            'codex-welcome-bg',
+            isEmpty && !sendingAnimation && 'codex-welcome-bg--visible',
+            sendingAnimation && 'codex-welcome-bg--sending',
+          )}
+          aria-hidden="true"
+          data-testid="chat-welcome-bg"
+        >
+          <div className="codex-welcome-bg__grid" />
+          <div className="codex-welcome-bg__glow codex-welcome-bg__glow--a" />
+          <div className="codex-welcome-bg__glow codex-welcome-bg__glow--b" />
+          <div className="codex-welcome-bg__noise" />
+        </div>
+        {isEmpty && (
+          <div
+            className={cn(
+              'codex-welcome-watermark',
+              !sendingAnimation && 'codex-welcome-watermark--visible',
+              sendingAnimation && 'codex-welcome-watermark--sending',
+            )}
+            aria-hidden="true"
+            data-testid="chat-welcome-watermark"
+          >
+            verse
+          </div>
+        )}
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         <div
           className={cn(
@@ -2650,7 +2725,9 @@ export function Chat() {
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
-                isEmpty ? "w-full max-w-[820px]" : "max-w-[820px]",
+                // Empty state fills the pane so the scroll area does not collapse
+                // around the recovery panel and let the watermark reflow.
+                isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
               {messageAreaLoading ? (
@@ -2665,11 +2742,11 @@ export function Chat() {
                 />
               ) : isEmpty ? (
                 <>
-                  <WelcomeScreen
-                    onSend={handleSendMessage}
-                    onPickFolder={handlePickWorkspaceFolder}
-                    disabled={!isGatewayRunning}
-                  />
+                  {/* The empty state's own scaffolding — context row and chips —
+                    * is rendered below the composer, not here: the reference
+                    * stacks them under the input. The scroll area keeps only
+                    * the recovery panel, so the watermark behind it is
+                    * unobstructed. */}
                   {showRollbackPlanPanel && (
                     <RollbackPlanPanel
                       plan={rollbackPlan}
@@ -2681,6 +2758,7 @@ export function Chat() {
                       onOpenTaskLedger={handleOpenTaskLedger}
                       onInterruptTerminal={handleInterruptTerminal}
                       onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
+                      onDismiss={() => setRollbackPlanDismissed(true)}
                     />
                   )}
                 </>
@@ -2844,17 +2922,21 @@ export function Chat() {
             </div>
           </div>
           {showScrollToLatest && (
+            <Tooltip>
+              <TooltipTrigger asChild>
             <button
               type="button"
               onClick={() => void scrollToBottom({ animation: 'smooth', ignoreEscapes: true })}
               className="absolute bottom-4 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-border bg-background/95 px-3 py-1.5 text-xs font-medium text-foreground shadow-lg shadow-black/10 backdrop-blur transition-colors hover:bg-black/5 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:shadow-black/30"
               aria-label={t('scrollToLatest')}
-              title={t('scrollToLatest')}
               data-testid="chat-scroll-to-latest"
             >
               <ArrowDownToLine className="h-3.5 w-3.5" />
               <span>{t('scrollToLatest')}</span>
             </button>
+              </TooltipTrigger>
+              <TooltipContent side="left" collisionPadding={8}>{t('scrollToLatest')}</TooltipContent>
+            </Tooltip>
           )}
 
           {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
@@ -2886,6 +2968,7 @@ export function Chat() {
                   onOpenTaskLedger={handleOpenTaskLedger}
                   onInterruptTerminal={handleInterruptTerminal}
                   onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
+                  onDismiss={() => setRollbackPlanDismissed(true)}
                 />
               )}
             </aside>
@@ -2931,8 +3014,8 @@ export function Chat() {
         contextRange={contextRange}
         liveUsage={liveUsage}
         messageCount={messages.length}
+        hero={isEmpty}
         draftValue={composerDraft}
-        slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}
@@ -2959,7 +3042,29 @@ export function Chat() {
         onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
+        className={cn(sendingAnimation && 'codex-composer-host--sending')}
       />
+      {/* Reference stacking under the stage is composer → context → chips, then
+        * a spacer that grows like the message area above it; the two spacers
+        * together centre the group without the composer leaving its slot. */}
+      {isEmpty && (
+        <>
+          <div className={cn(sendingAnimation && 'codex-welcome-context--sending')}>
+            <WelcomeScreen
+              onPickFolder={handlePickWorkspaceFolder}
+              disabled={!isGatewayRunning}
+            />
+          </div>
+          <div className={cn(sendingAnimation && 'codex-welcome-chips--sending')}>
+            <WelcomeChips
+              onSend={handleSendMessage}
+              disabled={!isGatewayRunning}
+              retracted={composerDraft.trim().length > 0}
+            />
+          </div>
+          <div className="codex-welcome-tail-spacer" aria-hidden="true" />
+        </>
+      )}
       <CompactionArtifactViewer
         open={compactionArtifactOpen}
         onOpenChange={setCompactionArtifactOpen}
@@ -2995,18 +3100,23 @@ export function Chat() {
           )}
           <div className="mt-4 flex flex-wrap gap-2">
             {(handoffResult?.sources ?? []).map((source) => (
+              <Tooltip key={source.id}>
+                <TooltipTrigger asChild>
               <span
-                key={source.id}
                 className={cn(
                   'inline-flex items-center rounded-md border px-2 py-1 text-xs',
                   source.available
                     ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
                     : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400',
                 )}
-                title={source.summary || source.warning}
               >
                 {source.label}
               </span>
+                </TooltipTrigger>
+                {(source.summary || source.warning) && (
+                  <TooltipContent side="top" className="max-w-xs text-xs">{source.summary || source.warning}</TooltipContent>
+                )}
+              </Tooltip>
             ))}
           </div>
           {(handoffResult?.warnings?.length ?? 0) > 0 && (
@@ -3052,7 +3162,7 @@ export function Chat() {
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
-          {panelExpanded && !terminalBottomOpen && (
+          {!terminalBottomOpen && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
@@ -3062,13 +3172,12 @@ export function Chat() {
             data-expanded={panelExpanded ? 'true' : 'false'}
             data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
-              'absolute z-30 flex shrink-0 flex-col bg-surface-modal shadow-2xl',
+              'flex shrink-0 flex-col bg-surface-modal',
               terminalBottomOpen
-                ? 'inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10'
-                : 'inset-y-0 right-0 border-l border-black/5 dark:border-white/10',
-              panelExpanded && !terminalBottomOpen && 'xl:relative xl:z-20 xl:shadow-none',
+                ? 'absolute z-30 inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10 shadow-2xl'
+                : 'relative border-l border-black/5 dark:border-white/10',
               !terminalBottomOpen && 'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-150 motion-reduce:transition-none',
-              isMac && 'no-drag',
+              'no-drag',
             )}
             style={terminalBottomOpen
               ? { width: '100%', height: terminalBottomHeight }
@@ -3209,7 +3318,7 @@ function ChatLoadingSkeleton({
           className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
           role="status"
         >
-          <DotMatrix state="connecting" label={t(statusKey)} className="size-4 text-primary" />
+          <OrbStatus state="connecting" label={t(statusKey)} className="size-4 text-primary" />
           <span>{t(statusKey)}</span>
         </div>
       )}
@@ -3308,8 +3417,9 @@ function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
         </div>
         <nav ref={scrollRef} className="max-h-[calc(100vh-13rem)] space-y-1 overflow-y-auto pr-1">
           {visibleItems.map((item) => (
+            <Tooltip key={item.index}>
+              <TooltipTrigger asChild>
             <button
-              key={item.index}
               type="button"
               data-testid={`chat-question-directory-item-${item.index}`}
               onClick={() => handleJumpToMessage(item.index)}
@@ -3317,12 +3427,14 @@ function QuestionDirectory({ items }: { items: QuestionDirectoryItem[] }) {
                 'group flex w-full items-start gap-2 rounded-xl px-2 py-2 text-left transition-colors',
                 'text-foreground/70 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
               )}
-              title={item.title}
             >
               <span className="line-clamp-2 min-w-0 text-xs leading-5">
                 {item.title}
               </span>
             </button>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-xs text-xs">{item.title}</TooltipContent>
+            </Tooltip>
           ))}
           {hiddenCount > 0 && (
             <div className="px-2 py-2 text-xs leading-5 text-muted-foreground">
@@ -3409,9 +3521,87 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
   return <AuiProvider value={aui}>{children}</AuiProvider>;
 }
 
-function WelcomeScreen({ disabled = false, onPickFolder, onSend }: WelcomeScreenProps) {
+/**
+ * Empty-state scaffolding: the project/branch context row under the composer.
+ *
+ * There is deliberately no heading here. The reference's empty state has one
+ * piece of display type — the giant `verse` watermark behind the composer —
+ * and adding a second ("what should we build in X?") gave the screen two
+ * competing focal points and pushed the composer off centre. The watermark is
+ * the heading; this row is the caption under it.
+ *
+ * That leaves the context row as the only place the workspace can be switched
+ * from, so the project token is the picker rather than a static label.
+ */
+function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
+  const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
+  const hasWorkspace = Boolean(activeWorkspace);
+  const [gitStatus, setGitStatus] = useState<
+    { workspaceId: string; branch: string; detached: boolean } | null
+  >(null);
+
+  const refreshGitStatus = useCallback(async () => {
+    const workspaceId = activeWorkspace?.id;
+    if (!workspaceId) return;
+    try {
+      const result = await hostApi.git.status();
+      const status = result.status;
+      setGitStatus(status?.isRepository && status.branch
+        ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
+        : null);
+    } catch {
+      setGitStatus(null);
+    }
+  }, [activeWorkspace?.id]);
+
+  useEffect(() => {
+    void refreshGitStatus();
+  }, [refreshGitStatus]);
+
+  /* A result from the workspace we just left is dropped here rather than
+   * cleared in the effect body: clearing it there is a synchronous setState
+   * inside an effect, which costs a second render pass on every workspace
+   * switch. Tagging the result with the workspace it was read from is enough
+   * to know it is stale. */
+  const branch = gitStatus?.workspaceId === activeWorkspace?.id ? gitStatus : null;
+
+  return (
+    <div className="codex-welcome-stage">
+      {hasWorkspace && (
+        <div className="codex-welcome-context" data-testid="chat-welcome-context">
+          <div className="codex-welcome-context__group" data-testid="chat-welcome-environment-group">
+            <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />
+            {branch && (
+              <WelcomeBranchPicker
+                branch={branch.branch}
+                detached={branch.detached}
+                disabled={disabled}
+                onChanged={refreshGitStatus}
+              />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Quick-action chips. Rendered *below* the composer to match the reference
+ * ordering — above, a row of suggestions reads as a menu the input belongs to;
+ * below, it reads as shortcuts you may ignore.
+ *
+ * They retract while the composer holds text: once you have said what you want,
+ * three canned openers are noise sitting between you and the send button. The
+ * retraction is staggered left-to-right and reverses on the way back, and the
+ * row keeps its height throughout so the composer never moves.
+ */
+function WelcomeChips({
+  disabled = false,
+  onSend,
+  retracted = false,
+}: Pick<WelcomeScreenProps, 'disabled' | 'onSend'> & { retracted?: boolean }) {
   const { t } = useTranslation('chat');
-  const hasWorkspace = useWorkspacesStore((s) => Boolean(s.activeWorkspace));
   const quickActions = useMemo<SuggestionConfig[]>(() => [
     {
       title: t('welcome.askQuestions'),
@@ -3430,54 +3620,42 @@ function WelcomeScreen({ disabled = false, onPickFolder, onSend }: WelcomeScreen
     },
   ], [t]);
 
-  return (
-    <div className="flex h-[60vh] flex-col items-center justify-center text-center">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/55 bg-material-elevated/72 text-primary shadow-lg backdrop-blur-[18px] dark:border-white/10">
-        <Sparkles className="h-5 w-5" />
-      </div>
-      {/* Project-aware hero, ported from the FakeCoding empty state: the active
-        * project is named inline in the heading and is itself the switcher.
-        * Falls back to the project-less phrasing when no workspace is open. */}
-      <h1 className="codex-welcome-hero codex-welcome-title" data-testid="chat-welcome-title">
-        {hasWorkspace ? (
-          <Trans
-            t={t}
-            i18nKey="welcome.titleInProject"
-            components={{
-              projectSelect: <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />,
-            }}
-          />
-        ) : (
-          t('welcome.titleNoProject')
-        )}
-      </h1>
+  const actionIcons = [ListChecks, RefreshCw, Users] as const;
 
-      <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
-        <div className="grid w-full max-w-[680px] grid-cols-1 gap-2.5 sm:grid-cols-2" data-testid="chat-welcome-suggestions">
-          <ThreadPrimitive.Suggestions>
-            {() => <SuggestionItem disabled={disabled} />}
-          </ThreadPrimitive.Suggestions>
-        </div>
-      </WelcomeSuggestionRuntime>
-    </div>
+  return (
+    <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
+      <div
+        className={cn('codex-welcome-chips', retracted && 'codex-welcome-chips--retracted')}
+        data-testid="chat-welcome-suggestions"
+        data-retracted={retracted ? 'true' : undefined}
+        // Retracted chips are gone as far as the pointer and the tab order are
+        // concerned; `inert` is what keeps a mid-fade chip from being clicked.
+        inert={retracted || undefined}
+      >
+        <ThreadPrimitive.Suggestions>
+          {({ suggestion }) => {
+            const index = quickActions.findIndex((action) => (
+              typeof action === 'string' ? action === suggestion.title : action.title === suggestion.title
+            ));
+            return <SuggestionItem disabled={disabled} Icon={actionIcons[index] ?? ListChecks} />;
+          }}
+        </ThreadPrimitive.Suggestions>
+      </div>
+    </WelcomeSuggestionRuntime>
   );
 }
 
-function SuggestionItem({ disabled = false }: { disabled?: boolean }) {
+function SuggestionItem({ disabled = false, Icon = ListChecks }: { disabled?: boolean; Icon?: typeof ListChecks }) {
   return (
-    <SuggestionPrimitive.Trigger
-      send
-      disabled={disabled}
-      className={cn(
-        'flex min-h-[82px] flex-col items-start gap-1 rounded-[14px] border border-white/55 bg-material-panel/72 px-4 py-3 text-left text-sm shadow-sm backdrop-blur-[16px]',
-        'transition-[background-color,border-color,box-shadow] duration-150 hover:bg-material-elevated/80 dark:border-white/10',
-        'disabled:cursor-not-allowed disabled:opacity-60',
-      )}
-    >
-      <span className="font-medium text-foreground">
+    <SuggestionPrimitive.Trigger send disabled={disabled} className="codex-welcome-chip">
+      <Icon className="codex-welcome-chip__icon" aria-hidden="true" />
+      <span className="codex-welcome-chip__label">
         <SuggestionPrimitive.Title />
       </span>
-      <span className="text-muted-foreground">
+      {/* The reference chip is a single short phrase, so the description is not
+        * drawn — but it is still the only thing that says what the action does,
+        * so it stays in the accessibility tree rather than being deleted. */}
+      <span className="codex-welcome-chip__desc">
         <SuggestionPrimitive.Description />
       </span>
     </SuggestionPrimitive.Trigger>
@@ -3498,7 +3676,7 @@ function ImageGeneratingIndicator() {
       </div>
       <div className="bg-black/5 dark:bg-white/5 text-foreground rounded-2xl px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <DotMatrix state="loading" label={t('imageGeneration.generating')} className="size-4 text-primary" />
+          <OrbStatus state="loading" label={t('imageGeneration.generating')} className="size-4 text-primary" />
           <span>{t('imageGeneration.generating')}</span>
         </div>
       </div>

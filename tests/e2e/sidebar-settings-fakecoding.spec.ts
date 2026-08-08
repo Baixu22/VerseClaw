@@ -191,13 +191,26 @@ test.describe('FakeCoding sidebar and full-page settings alignment', () => {
       await page.waitForTimeout(180);
       const menuGeometry = await footerMenu.evaluate((element) => {
         const rect = element.getBoundingClientRect();
-        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: parseFloat(getComputedStyle(element).width) };
+        const trigger = document.querySelector<HTMLElement>('[data-testid="sidebar-footer-menu-trigger"]')!.getBoundingClientRect();
+        const firstRow = element.querySelector<HTMLElement>('.codex-dropdown__item')!;
+        return {
+          left: rect.left,
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          width: parseFloat(getComputedStyle(element).width),
+          triggerGap: trigger.top - rect.bottom,
+          firstRowHeight: firstRow.getBoundingClientRect().height,
+        };
       });
       expect(menuGeometry.width).toBe(259);
       expect(menuGeometry.left).toBeGreaterThanOrEqual(8);
       expect(menuGeometry.top).toBeGreaterThanOrEqual(8);
       expect(menuGeometry.right).toBeLessThanOrEqual(952);
       expect(menuGeometry.bottom).toBeLessThanOrEqual(592);
+      expect(Math.abs(menuGeometry.triggerGap - 6)).toBeLessThanOrEqual(1);
+      expect(menuGeometry.firstRowHeight).toBeGreaterThanOrEqual(30);
+      await expect(page.getByTestId('sidebar-open-dev-console')).toHaveCount(0);
       await page.keyboard.press('Escape');
       await expect(footerMenu).toBeHidden();
     } finally {

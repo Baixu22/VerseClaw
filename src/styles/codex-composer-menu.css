@@ -26,50 +26,245 @@
  * numbers are kept identical to the shared shell on purpose.
  *
  * THEME. The reference is dark-only and hardcodes #2d2d2d / rgba(255,255,255,α).
- * Each of those is expressed here as a light default plus a `:root.dark`
- * override, matching how codex-sidebar.css handles the same problem. Geometry
- * is byte-ported; colour is mapped, because ClawX ships a cream light theme the
- * reference has no analogue for.
+ * Those literals are gone: every colour here now aliases a semantic role from
+ * codex-tokens.css, which carries both themes, so this file has no theme block
+ * of its own. Geometry stays byte-ported from the capture; colour resolves
+ * through the token layer.
  */
 
 /* ──────────────────────────────────────────────────────────────────────────
- * Shared surface. One block, three consumers. Mirrors the computed shell:
- * radius 15px, 4px padding, 8px blur, 0.5px hairline ring + soft drop shadow.
+ * Shared surface. One block, three consumers.
+ *
+ * The surface used to restate its own literals (#2d2d2d at 90%, rgba hairlines,
+ * a hand-rolled shadow pair) and had drifted from the elevated-surface role it
+ * represents: the system value is #212121 at 96%, mixed in OKLab. It now aliases
+ * the role, so this menu, the settings menu and the sidebar dropdown finally
+ * resolve to one surface.
+ *
+ * Radius moves 15px → 20px (--radius-2xl). The composer shell is 25px; a 15px
+ * menu opening from it looked recessed *into* the composer rather than floating
+ * above it. 20px is one step down, which is the relationship the three-step
+ * rhythm asks for.
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-composer-menu {
-  --ccm-ink: 0, 0, 0;
-  --ccm-surface: rgba(255, 255, 255, 0.92);
-  --ccm-ring: rgba(0, 0, 0, 0.08);
-  --ccm-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.18);
-  /* Reference tertiary text is rgba(255,255,255,0.498) on dark. */
-  --ccm-text-tertiary: color-mix(in srgb, hsl(var(--foreground)) 55%, transparent);
-  --ccm-text-strong: hsl(var(--foreground));
-  /* Full-access orange, CDP #ff8549. Identical in both themes in the source. */
-  --ccm-warning: rgb(255, 133, 73);
+  --ccm-surface: var(--color-background-elevated-primary);
+  --ccm-ring: var(--color-border);
+  --ccm-shadow: var(--shadow-xl-spread);
+  --ccm-text-tertiary: var(--color-text-foreground-tertiary);
+  --ccm-text-strong: var(--color-text-foreground);
+  /* Full-access orange. Same in both themes in the source, and it stays that
+   * way here: this is a permission warning, not a themed surface. */
+  --ccm-warning: var(--color-icon-warning);
+  /* Row washes. Kept as an explicit hover role rather than an ink triplet so
+   * the mix happens in OKLab like every other overlay in the system. */
+  --ccm-row-hover: var(--color-background-row-hover);
 
   position: absolute;
   bottom: calc(100% + 8px);
   left: 0;
-  z-index: 30;
+  z-index: var(--z-dropdown);
   box-sizing: border-box;
   padding: 4px;
   border: none;
-  border-radius: 15px;
+  border-radius: var(--radius-xl);
   background: var(--ccm-surface);
   box-shadow: var(--ccm-shadow);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  backdrop-filter: blur(var(--blur-sm));
   overflow: hidden;
-  animation: codex-composer-menu-in 140ms cubic-bezier(0.19, 1, 0.22, 1);
+  animation: codex-composer-menu-in 140ms var(--ease-enter);
 }
 
-:root.dark .codex-composer-menu {
-  --ccm-ink: 255, 255, 255;
-  --ccm-surface: color-mix(in oklab, #2d2d2d 90%, transparent);
-  --ccm-ring: rgba(255, 255, 255, 0.082);
-  --ccm-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.082), 0 8px 16px -4px rgba(0, 0, 0, 0.35);
-  --ccm-text-tertiary: rgba(255, 255, 255, 0.498);
-  --ccm-text-strong: #fff;
+.codex-composer-control {
+  display: inline-flex;
+  height: 32px;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-foreground-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-composer-control:hover:not(:disabled),
+.codex-composer-control.is-active {
+  background: var(--color-background-row-hover);
+  color: var(--color-text-foreground);
+}
+
+.codex-composer-control:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+.codex-composer-control:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.codex-model-picker-trigger {
+  max-width: min(180px, 24vw);
+}
+
+.codex-execution-settings__effort-shortcut {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 22px;
+  margin-left: -3px;
+  color: inherit;
+}
+
+.codex-execution-settings__effort-shortcut.is-max {
+  color: var(--color-icon-warning);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-icon-warning) 45%, transparent));
+}
+
+/* The composer is intentionally capped to keep the empty state calm. In the
+ * narrow app viewport the full model label would make the trailing send
+ * control overflow, so the picker collapses to its familiar gauge icon while
+ * retaining its accessible label/title and the full menu. */
+@media (max-width: 900px) {
+  .codex-composer-control-group {
+    flex-shrink: 1;
+  }
+
+  .codex-model-picker-trigger {
+    width: 32px;
+    max-width: 32px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .codex-model-picker-label,
+  .codex-model-picker-chevron {
+    display: none;
+  }
+}
+
+.codex-composer-menu--model {
+  right: 0;
+  left: auto;
+  width: 300px;
+}
+
+.codex-execution-settings {
+  padding: 8px;
+}
+
+.codex-execution-settings__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) 16px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--ccm-text-strong);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-align: left;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-execution-settings__row:hover,
+.codex-execution-settings__row:focus-visible,
+.codex-execution-settings__row[aria-expanded='true'] {
+  background: var(--ccm-row-hover);
+  outline: none;
+}
+
+.codex-execution-settings__value {
+  max-width: 144px;
+  overflow: hidden;
+  color: var(--ccm-text-tertiary);
+  font-weight: 445;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codex-execution-settings__value.is-max {
+  color: var(--color-icon-warning);
+}
+
+.codex-execution-settings__chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--ccm-text-tertiary);
+  transition: transform 160ms var(--ease-enter), color 100ms ease;
+}
+
+.codex-execution-settings__section {
+  margin: 2px 0 6px;
+  padding: 3px;
+  border-radius: var(--radius-lg);
+  background: var(--color-background-secondary);
+  animation: codex-execution-section-in 160ms var(--ease-enter);
+}
+
+.codex-execution-settings__section--effort {
+  padding: 0;
+  background: transparent;
+}
+
+.codex-execution-settings__section .codex-composer-menu__item {
+  min-height: 32px;
+}
+
+@keyframes codex-execution-section-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.codex-composer-menu__divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--ccm-ring);
+}
+
+.codex-composer-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  margin: 0 4px 4px;
+  padding: 2px;
+  border-radius: var(--radius-md);
+  background: var(--color-background-secondary);
+}
+
+.codex-composer-segmented button {
+  min-width: 0;
+  height: 26px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 2px);
+  background: transparent;
+  color: var(--ccm-text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codex-composer-segmented button:hover,
+.codex-composer-segmented button.is-active {
+  background: var(--color-background-elevated-primary);
+  color: var(--ccm-text-strong);
+  box-shadow: var(--shadow-sm);
 }
 
 @keyframes codex-composer-menu-in {
@@ -102,7 +297,7 @@
 .codex-composer-menu__label--divider {
   margin-top: 2px;
   padding-top: 8px;
-  border-top: 1px solid rgba(var(--ccm-ink), 0.08);
+  border-top: 1px solid var(--ccm-ring);
 }
 
 /* Inline "learn more" affordance in the approval head. */
@@ -138,7 +333,7 @@
   margin: 0;
   padding: 5px 8px;
   border: 0;
-  border-radius: 12.5px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: var(--ccm-text-strong);
   font-size: 13px;
@@ -152,9 +347,10 @@
 
 .codex-composer-menu__item:hover,
 .codex-composer-menu__item:focus-visible,
+.codex-composer-menu__item.is-active,
 .codex-composer-menu__item[data-selected='true'],
 .codex-composer-menu__item[aria-selected='true'] {
-  background: rgba(var(--ccm-ink), 0.07);
+  background: var(--ccm-row-hover);
   color: var(--ccm-text-strong);
 }
 
@@ -231,7 +427,7 @@
   height: 1px;
   margin: 4px 8px;
   border: 0;
-  background: rgba(var(--ccm-ink), 0.08);
+  background: var(--ccm-ring);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -239,9 +435,15 @@
  * 355px shell; two-line rows on a 20px / 1fr / 16px grid at 47px min-height.
  * ────────────────────────────────────────────────────────────────────────── */
 .codex-composer-menu--approval {
-  width: 355px;
-  min-width: 320px;
-  max-width: min(380px, calc(100vw - 24px));
+  width: 300px;
+  min-width: 280px;
+  max-width: min(340px, calc(100vw - 24px));
+}
+
+.codex-composer-menu--knowledge {
+  max-height: min(410px, calc(100vh - 120px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .codex-composer-menu__option {
@@ -287,7 +489,7 @@
 
 .codex-composer-menu__option--warning:hover,
 .codex-composer-menu__option--warning:focus-visible {
-  background: color-mix(in srgb, var(--ccm-warning) 8%, transparent);
+  background: var(--ccm-row-hover);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -300,7 +502,7 @@
   min-width: 0;
   max-width: calc(100vw - 1rem);
   border: 0.666667px solid var(--ccm-ring);
-  border-radius: 20px;
+  border-radius: var(--radius-2xl);
 }
 
 .codex-composer-menu--list-wide {
@@ -356,7 +558,7 @@
 
 .codex-composer-menu--add .codex-composer-menu__item:hover,
 .codex-composer-menu--add .codex-composer-menu__item:focus-visible {
-  background: rgba(var(--ccm-ink), 0.06);
+  background: var(--ccm-row-hover);
   opacity: 1;
 }
 
@@ -382,42 +584,13 @@
  * modifier (full-access) tints the icon and label orange (#ff8549) and
  * shifts to a warmer orange on hover.
  * ────────────────────────────────────────────────────────────────────────── */
-.codex-approval-trigger {
+.codex-permission-trigger {
   display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-  min-height: 28px;
-  padding: 0 6px;
-  border: 0;
-  border-radius: 9999px;
-  background: transparent;
-  color: color-mix(in srgb, hsl(var(--foreground)) 50%, transparent);
-  font-size: 13px;
-  font-weight: 445;
-  line-height: 18px;
+  max-width: 148px;
   white-space: nowrap;
-  cursor: pointer;
-  transition: background-color 80ms ease, color 80ms ease;
 }
 
-.codex-approval-trigger:hover,
-.codex-approval-trigger[aria-expanded='true'] {
-  background: rgba(var(--ccm-ink), 0.07);
-  color: color-mix(in srgb, hsl(var(--foreground)) 85%, transparent);
-}
-
-.codex-approval-trigger:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.codex-approval-trigger:disabled:hover {
-  background: transparent;
-  color: color-mix(in srgb, hsl(var(--foreground)) 50%, transparent);
-}
-
-.codex-approval-trigger__icon {
+.codex-permission-trigger__icon {
   display: grid;
   place-items: center;
   flex: none;
@@ -426,31 +599,41 @@
   color: currentColor;
 }
 
-.codex-approval-trigger__icon svg {
+.codex-permission-trigger__icon svg {
   width: 16px;
   height: 16px;
   display: block;
 }
 
-.codex-approval-trigger__label {
+.codex-permission-trigger__label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 /* Full-access warning: orange icon + label, warmer orange on hover. */
-.codex-approval-trigger--warning,
-.codex-approval-trigger--warning .codex-approval-trigger__icon {
-  color: var(--ccm-warning);
+.codex-permission-trigger--warning,
+.codex-permission-trigger--warning .codex-permission-trigger__icon {
+  color: var(--color-icon-warning);
 }
 
-.codex-approval-trigger--warning:hover,
-.codex-approval-trigger--warning[aria-expanded='true'] {
+.codex-permission-trigger--warning:hover,
+.codex-permission-trigger--warning.is-active {
   color: rgb(255, 160, 110);
-  background: color-mix(in srgb, var(--ccm-warning) 8%, transparent);
+  background: var(--color-background-row-hover);
 }
 
-.codex-approval-trigger--warning:hover .codex-approval-trigger__icon,
-.codex-approval-trigger--warning[aria-expanded='true'] .codex-approval-trigger__icon {
+.codex-permission-trigger--warning:hover .codex-permission-trigger__icon,
+.codex-permission-trigger--warning.is-active .codex-permission-trigger__icon {
   color: rgb(255, 160, 110);
+}
+
+@media (max-width: 639px) {
+  .codex-model-picker-trigger {
+    max-width: 128px;
+  }
+
+  .codex-permission-trigger {
+    max-width: 112px;
+  }
 }

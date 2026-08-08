@@ -1,0 +1,157 @@
+/* Compact composer add button that expands from its lower-right anchor. */
+.pm-morph-slot {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+
+.pm-morph {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--pm-border, var(--color-border));
+  border-radius: var(--pm-r-closed);
+  overflow: hidden;
+  z-index: var(--z-dropdown);
+  transform-origin: left bottom;
+  will-change: width, height, border-radius;
+  background: var(--pm-surface, var(--color-background-elevated-primary));
+  color: var(--pm-ink, var(--color-text-foreground));
+  box-shadow: var(--pm-shadow, var(--shadow-sm));
+  transition:
+    width var(--pm-close-dur) var(--pm-close-ease),
+    height var(--pm-close-dur) var(--pm-close-ease),
+    border-radius var(--pm-close-dur) var(--pm-close-ease),
+    box-shadow var(--pm-close-dur) var(--pm-close-ease);
+}
+
+.pm-morph[data-open='true'] {
+  width: var(--pm-open-width);
+  height: var(--pm-open-height);
+  border-radius: var(--pm-r-open);
+  box-shadow: var(--shadow-xl-spread);
+  transition:
+    width var(--pm-open-dur) var(--pm-ease),
+    height var(--pm-open-dur) var(--pm-ease),
+    border-radius var(--pm-open-dur) var(--pm-ease),
+    box-shadow var(--pm-open-dur) var(--pm-ease);
+}
+
+.pm-morph-plus {
+  position: absolute;
+  inset: auto auto 0 0;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pm-ink, var(--color-text-foreground));
+  cursor: pointer;
+  transition:
+    opacity var(--pm-fade-dur) var(--pm-close-ease),
+    transform var(--pm-open-dur) var(--pm-close-ease),
+    filter var(--pm-fade-dur) var(--pm-close-ease);
+}
+
+.pm-morph-plus:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: -2px;
+}
+
+.pm-morph-plus svg {
+  width: 17px;
+  height: 17px;
+  transition: transform var(--pm-open-dur) var(--pm-close-ease);
+}
+
+.pm-morph[data-open='true'] .pm-morph-plus {
+  opacity: 0;
+  transform: translate(calc(-1 * var(--pm-slide)), calc(-1 * var(--pm-slide)));
+  filter: blur(var(--pm-blur));
+  pointer-events: none;
+}
+
+.pm-morph[data-open='true'] .pm-morph-plus svg {
+  transform: scale(var(--pm-scale)) rotate(var(--pm-rotate));
+}
+
+.pm-morph-menu {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  display: flex;
+  width: max-content;
+  min-width: 156px;
+  height: max-content;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: flex-start;
+  padding: 6px;
+  opacity: 0;
+  transform: translate(var(--pm-slide), var(--pm-slide)) scale(var(--pm-scale));
+  transform-origin: left bottom;
+  filter: blur(var(--pm-blur));
+  pointer-events: none;
+  transition:
+    opacity var(--pm-fade-dur) var(--pm-close-ease),
+    transform var(--pm-open-dur) var(--pm-close-ease),
+    filter var(--pm-fade-dur) var(--pm-close-ease);
+}
+
+.pm-morph[data-open='true'] .pm-morph-menu {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.pm-morph-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 29px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--pm-ink, var(--color-text-foreground));
+  font-size: 13px;
+  font-weight: 445;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 80ms ease, color 80ms ease;
+}
+
+.pm-morph-menu button:hover,
+.pm-morph-menu button:focus-visible {
+  outline: none;
+  background: var(--pm-row-hover, var(--color-background-row-hover));
+}
+
+.pm-morph-item-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.pm-morph-item-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-morph,
+  .pm-morph-plus,
+  .pm-morph-menu {
+    transition: none !important;
+  }
+}

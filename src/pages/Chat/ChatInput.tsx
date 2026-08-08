@@ -6,7 +6,7 @@
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
@@ -15,10 +15,12 @@ import {
   Briefcase,
   Check,
   ChevronDown,
+  ChevronRight,
   CircleSlash,
   Database,
   Eye,
   FileText,
+  Flame,
   FolderPlus,
   Gauge,
   GitBranchPlus,
@@ -55,17 +57,17 @@ import { useSettingsStore } from '@/stores/settings';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
-import { AttachmentName, AttachmentRemove, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
+import { AttachmentRemove, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE } from '@/components/assistant-ui/attachment';
 import { useProviderStore } from '@/stores/providers';
 import { buildConfiguredModelOptions, formatModelRefLabel } from '@/lib/model-options';
-import type { AgentSummary } from '@/types/agent';
+import type { AgentReasoningEffort, AgentSummary } from '@/types/agent';
 import type { QuickAccessSkill } from '@/types/skill';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
-import { ChatAgentEffortButton } from '@/components/chat/ChatAgentEffortPopover';
+import { ChatAgentEffortPanel, getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
   buildCapabilityActionMessage,
@@ -91,6 +93,13 @@ import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompa
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
+import { useResolvedTheme } from '@/lib/theme';
+import { BorderBeam } from 'border-beam';
+import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
+import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
+import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
+import LobeConfigProvider from '@lobehub/ui/es/ConfigProvider/index';
+import type { MotionComponentType } from '@lobehub/ui/es/MotionProvider/index';
 import { OFFICE_ACTIONS, findOfficeSkill, type OfficeAction } from './composer-actions';
 import { detectTaskLoopUpgradeSuggestion } from './task-loop-upgrade';
 import { isProviderRuntimeReady } from '@/lib/setup-provider';
@@ -117,6 +126,12 @@ interface ChatInputProps {
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   messageCount?: number;
+  /**
+   * Empty-state presentation. The composer is the same component in both
+   * states — remounting it on first send would drop the draft, the caret and
+   * any in-flight attachment — so the hero look is a prop, not a second copy.
+   */
+  hero?: boolean;
   draftValue?: string;
   slashRequest?: number;
   onDraftChange?: (value: string) => void;
@@ -145,6 +160,8 @@ interface ChatInputProps {
   onDrainQueuedFollowup?: () => Promise<void>;
   taskLoopUpgradeBusy?: boolean;
   onConfirmTaskLoopUpgrade?: (suggestion: TaskLoopUpgradeSuggestion) => Promise<void> | void;
+  /** Extra classes on the composer host — used for the empty-state send transition. */
+  className?: string;
 }
 
 type PendingCapabilitySend = {
@@ -163,24 +180,17 @@ type PendingCapabilitySend = {
 
 type KnowledgeSearchRow = Record<string, unknown>;
 
-function ComposerTooltip({ children, shortcut }: { children: ReactNode; shortcut?: string }) {
-  return <span className="inline-flex items-center gap-2">{children}{shortcut ? <kbd className="rounded-[10px] bg-white/10 px-1.5 py-0.5 font-sans text-xs text-white">{shortcut}</kbd> : null}</span>;
-}
-
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
-// Mode accent is expressed as a small leading dot + tinted icon (macOS-style),
-// not as a full-color chip. PERMISSION_MODE_STYLES tints the icon/dot only.
-const PERMISSION_MODE_STYLES: Record<WorkspacePermissionMode, string> = {
-  readOnly: 'text-sky-600 dark:text-sky-400',
-  plan: 'text-amber-600 dark:text-amber-400',
-  acceptEdits: 'text-emerald-600 dark:text-emerald-400',
-  fullAccess: 'text-rose-600 dark:text-rose-400',
-};
-const PERMISSION_MODE_DOTS: Record<WorkspacePermissionMode, string> = {
-  readOnly: 'bg-sky-500 dark:bg-sky-400',
-  plan: 'bg-amber-500 dark:bg-amber-400',
-  acceptEdits: 'bg-emerald-500 dark:bg-emerald-400',
-  fullAccess: 'bg-rose-500 dark:bg-rose-400',
+const LOBE_FILE_ICON_MOTION = {} as MotionComponentType;
+// Codex-alignment: each mode maps to a specific glyph (no colour tinting except
+// fullAccess, which carries the orange warning). Mirrors the FakeCoding
+// approvalOptions icon set — hand/lightbulb/ShieldCheck/shield-alert.
+type PermissionModeIcon = ComponentType<{ className?: string }>;
+const PERMISSION_MODE_ICONS: Record<WorkspacePermissionMode, PermissionModeIcon> = {
+  readOnly: CodexHand as unknown as PermissionModeIcon,
+  plan: CodexLightbulb as unknown as PermissionModeIcon,
+  acceptEdits: ShieldCheck as unknown as PermissionModeIcon,
+  fullAccess: CodexShieldAlert as unknown as PermissionModeIcon,
 };
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
 const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
@@ -519,7 +529,6 @@ function SlashCommandPalette({
                     role="option"
                     aria-selected={selected}
                     data-testid={`chat-composer-skill-option-${item.skill.name}`}
-                    title={item.skill.description}
                     className="codex-composer-menu__item codex-composer-menu__item--compact"
                     data-selected={selected ? 'true' : undefined}
                     onMouseEnter={() => onHover(index)}
@@ -730,12 +739,12 @@ function renderHighlightedComposerText(
       chunks.push(value.slice(cursor, tokenRange.start));
     }
     chunks.push(
+      <Tooltip key={`skill-token-${tokenRange.start}`}>
+        <TooltipTrigger asChild>
       <button
-        key={`skill-token-${tokenRange.start}`}
         type="button"
         data-testid="chat-composer-skill-token"
         data-skill-name={skillName}
-        title={options.previewTooltip}
         className={cn(
           'inline h-auto border-0 p-0 font-inherit leading-inherit',
           'pointer-events-auto cursor-pointer underline-offset-2 hover:underline',
@@ -754,7 +763,10 @@ function renderHighlightedComposerText(
         }}
       >
         {tokenLabel}
-      </button>,
+      </button>
+        </TooltipTrigger>
+        <TooltipContent side="top">{options.previewTooltip}</TooltipContent>
+      </Tooltip>,
       tokenTrailingSpace,
     );
     cursor = tokenRange.end;
@@ -803,6 +815,7 @@ export function ChatInput({
   contextRange,
   liveUsage,
   messageCount,
+  hero = false,
   draftValue,
   slashRequest = 0,
   onDraftChange,
@@ -832,9 +845,11 @@ export function ChatInput({
   onDrainQueuedFollowup,
   taskLoopUpgradeBusy = false,
   onConfirmTaskLoopUpgrade,
+  className,
 }: ChatInputProps) {
   const uiVersion = useUiVersion();
   const isUiV2 = uiVersion === 'v2';
+  const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const uiDepthMode = useSettingsStore((state) => state.uiDepthMode);
   const showAdvancedDetails = uiDepthMode === 'advanced';
@@ -843,12 +858,13 @@ export function ChatInput({
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
   /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
   const [pendingTurnModelRef, setPendingTurnModelRef] = useState<string | null>(null);
-  /** Area 2 §3.1: active scope in the model picker menu. */
-  const [modelScope, setModelScope] = useState<'turn' | 'session' | 'persistent'>('persistent');
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
+  const [morphOpen, setMorphOpen] = useState(false);
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
+  const [executionSettingsSection, setExecutionSettingsSection] = useState<'model' | 'effort' | null>(null);
+  const [executionEffortPreview, setExecutionEffortPreview] = useState<AgentReasoningEffort>('auto');
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
   const [knowledgeSearchResult, setKnowledgeSearchResult] = useState<KnowledgeSearchResult | null>(null);
@@ -880,6 +896,11 @@ export function ChatInput({
     useChatStore.setState({ activeTaskNodeId: nodeId });
   }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const composerHostRef = useRef<HTMLDivElement>(null);
+  const heroComposerRectRef = useRef<{ top: number } | null>(null);
+  const composerTransitionRef = useRef<Animation | null>(null);
+  const composerTransitionFrameRef = useRef<number | null>(null);
+  const composerTransitionTimerRef = useRef<number | null>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const workspaceMenuRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -906,6 +927,9 @@ export function ChatInput({
     () => currentAgent?.name ?? currentAgentId,
     [currentAgent, currentAgentId],
   );
+  useEffect(() => {
+    setExecutionEffortPreview(currentAgent?.reasoningEffort ?? 'auto');
+  }, [currentAgent?.id, currentAgent?.reasoningEffort]);
   const modelOptions = useMemo(
     () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId),
     [providerAccounts, providerDefaultAccountId, providerStatuses],
@@ -924,6 +948,10 @@ export function ChatInput({
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
   const effectiveModelRef = optimisticModelRef || currentAgent?.modelRef || defaultModelRef || modelOptions[0]?.modelRef || null;
+  const effectiveModelLabel = effectiveModelRef
+    ? formatModelRefLabel(effectiveModelRef)
+    : t('composer.modelSourceDefault');
+  const currentEffortLabel = t(getAgentEffortLabelKey(executionEffortPreview));
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
     [agents, currentAgentId],
@@ -942,7 +970,15 @@ export function ChatInput({
     return counts;
   }, [suggestedKnowledgeGroups]);
   const showAgentPicker = mentionableAgents.length > 0;
-  const showModelPicker = modelOptions.length > 1;
+  // Keep model choice discoverable even when only one configured model exists.
+  // The current agent model is also a valid fallback while provider accounts
+  // are still hydrating, so the control never vanishes during startup.
+  const pickerModelOptions = modelOptions.length > 0
+    ? modelOptions
+    : effectiveModelRef
+      ? [{ modelRef: effectiveModelRef, label: formatModelRefLabel(effectiveModelRef) }]
+      : [];
+  const showModelPicker = pickerModelOptions.length > 0;
   const showWorkspaceMenu = Boolean(
     workspace
     || onPickWorkspaceFolder
@@ -959,6 +995,79 @@ export function ChatInput({
   const inputDisabled = disabled || !isGatewayUsable;
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
+
+  // The first optimistic message changes the page from a centered hero layout
+  // to the docked conversation layout. Animate that real layout delta so the
+  // composer lands directly at its final position without an added overshoot.
+  useLayoutEffect(() => {
+    const host = composerHostRef.current;
+    if (!host) return;
+
+    const nextRect = host.getBoundingClientRect();
+    if (hero) {
+      composerTransitionRef.current?.cancel();
+      heroComposerRectRef.current = { top: nextRect.top };
+      return;
+    }
+
+    const previousRect = heroComposerRectRef.current;
+    if (!previousRect) return;
+    heroComposerRectRef.current = null;
+
+    const deltaY = previousRect.top - nextRect.top;
+    const reducedMotion = typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (Math.abs(deltaY) < 1 || reducedMotion) return;
+
+    composerTransitionRef.current?.cancel();
+    if (typeof host.animate === 'function') {
+      composerTransitionRef.current = host.animate(
+        [
+          { transform: `translate3d(0, ${deltaY}px, 0)` },
+          { transform: 'translate3d(0, 0, 0)' },
+        ],
+        {
+          duration: 520,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        },
+      );
+      return;
+    }
+
+    // Browser-only mock mode does not expose Element.animate. Use the same
+    // FLIP delta with a CSS transition so the visual behavior stays identical.
+    host.style.transition = 'none';
+    host.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+    if (composerTransitionFrameRef.current != null) {
+      window.cancelAnimationFrame(composerTransitionFrameRef.current);
+    }
+    if (composerTransitionTimerRef.current != null) {
+      window.clearTimeout(composerTransitionTimerRef.current);
+    }
+    composerTransitionFrameRef.current = window.requestAnimationFrame(() => {
+      composerTransitionFrameRef.current = null;
+      host.style.transition = 'transform 520ms cubic-bezier(0.22, 1, 0.36, 1)';
+      host.style.transform = 'translate3d(0, 0, 0)';
+      composerTransitionTimerRef.current = window.setTimeout(() => {
+        composerTransitionTimerRef.current = null;
+        host.style.transition = '';
+        host.style.transform = '';
+      }, 540);
+    });
+  });
+
+  useEffect(() => () => {
+    composerTransitionRef.current?.cancel();
+    if (composerTransitionFrameRef.current != null) window.cancelAnimationFrame(composerTransitionFrameRef.current);
+    if (composerTransitionTimerRef.current != null) window.clearTimeout(composerTransitionTimerRef.current);
+  }, []);
+
+  const captureHeroComposerPosition = useCallback(() => {
+    if (!hero || !composerHostRef.current) return;
+    heroComposerRectRef.current = {
+      top: composerHostRef.current.getBoundingClientRect().top,
+    };
+  }, [hero]);
 
   const updateInput = useCallback((value: string) => {
     setInput(value);
@@ -1088,6 +1197,7 @@ export function ChatInput({
 
   const closeComposerPopovers = useCallback(() => {
     setActionMenuOpen(false);
+    setMorphOpen(false);
     setPickerOpen(false);
     setModelPickerOpen(false);
     setKnowledgePickerOpen(false);
@@ -1557,6 +1667,10 @@ export function ChatInput({
   }, [actionMenuOpen, closeComposerPopovers, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
+    if (!modelPickerOpen) setExecutionSettingsSection(null);
+  }, [modelPickerOpen]);
+
+  useEffect(() => {
     if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
@@ -1733,36 +1847,6 @@ export function ChatInput({
       }
     }
 
-    // Area 2 §3.1: turn tier — composer-local state, no persistence.
-    if (modelScope === 'turn') {
-      setPendingTurnModelRef(modelRef === pendingTurnModelRef ? null : modelRef);
-      setModelPickerOpen(false);
-      textareaRef.current?.focus();
-      return;
-    }
-
-    // Area 2 §3.3: session tier — patch runtime SessionEntry.modelOverride.
-    if (modelScope === 'session') {
-      setSwitchingModelRef(modelRef);
-      setModelPickerOpen(false);
-      try {
-        const result = await hostApi.sessions.patchRuntimeModel({
-          sessionKey: currentSessionKey,
-          modelRef,
-        });
-        if (!result.success) {
-          toast.error(t('composer.modelSwitchFailed', { error: result.error ?? 'Unknown error' }));
-        }
-      } catch (error) {
-        toast.error(t('composer.modelSwitchFailed', { error: String(error) }));
-      } finally {
-        setSwitchingModelRef(null);
-        textareaRef.current?.focus();
-      }
-      return;
-    }
-
-    // Persistent tier — existing behavior (updateAgentModel).
     if (modelRef === effectiveModelRef) {
       setModelPickerOpen(false);
       textareaRef.current?.focus();
@@ -1783,7 +1867,7 @@ export function ChatInput({
       setSwitchingModelRef(null);
       textareaRef.current?.focus();
     }
-  }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, defaultModelRef, effectiveModelRef, modelScope, pendingTurnModelRef, switchingModelRef, t, updateAgentModel]);
+  }, [confirmPromptCacheRisk, currentAgent, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
 
   const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
     setWorkspaceMenuOpen(false);
@@ -1951,6 +2035,7 @@ export function ChatInput({
         stagedPath: a.stagedPath, status: a.status, hasPreview: !!a.preview,
       })));
     }
+    captureHeroComposerPosition();
     updateInput('');
     setAttachments([]);
     setSelectedKnowledgeRefs([]);
@@ -1992,7 +2077,7 @@ export function ChatInput({
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
     return true;
-  }, [activeTaskNodeId, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
+  }, [activeTaskNodeId, captureHeroComposerPosition, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
 
   const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
     if (!sending) return;
@@ -2390,6 +2475,7 @@ export function ChatInput({
         stagedPath: a.stagedPath, status: a.status, hasPreview: !!a.preview,
       })));
     }
+    captureHeroComposerPosition();
     updateInput('');
     setAttachments([]);
     setSelectedKnowledgeRefs([]);
@@ -2413,7 +2499,7 @@ export function ChatInput({
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -2665,36 +2751,66 @@ export function ChatInput({
 
   return (
     <div
+      ref={composerHostRef}
       className={cn(
-        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl'
+        'codex-composer-host',
+        hero && 'codex-composer-host--hero',
+        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl',
+        className,
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <div className="w-full">
-        {/* Attachment Previews */}
-        {attachments.length > 0 && (
-          <div className="flex gap-2 mb-3 flex-wrap">
-            {attachments.map((att) => (
-              <AttachmentPreview
-                key={att.id}
-                attachment={att}
-                onRemove={() => removeAttachment(att.id)}
-              />
-            ))}
-          </div>
-        )}
-
         {/* Input Container */}
-        <div data-testid="chat-composer-shell" className={cn(
-          'relative rounded-[25px] border px-3 pb-1.5 pt-2.5 min-h-[98px]',
-          'transition-[border-color,box-shadow,background-color,transform] duration-180',
-          isUiV2
-            ? 'border-white/70 bg-material-elevated/94 shadow-[0_16px_46px_rgba(31,27,20,0.10),0_1px_4px_rgba(31,27,20,0.06),inset_0_1px_0_rgba(255,255,255,0.74)] backdrop-blur-[22px] backdrop-saturate-[1.24] dark:border-white/10 dark:bg-[#2d2d2d]/90'
-            : 'bg-surface-modal shadow-sm',
-          dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10',
-        )}>
+        {/* Geometry stays here (asserted by chat-layout-cdp.spec.ts); surface,
+          * border and elevation come from .codex-composer-shell so the card and
+          * the menus that open out of it read from the same tokens.
+          *
+          * BorderBeam: animated sunset beam that runs along the INNER edge of
+          * the composer while a run is active (`sending`). It sits as an
+          * absolutely-positioned overlay inside the shell (not wrapping it), so
+          * the library's overflow:hidden clips the glow to the rounded inner
+          * wall — an inner ring, not an outer halo — and the slash/action
+          * menus, being siblings, are never clipped by it. */}
+        <div
+          data-testid="chat-composer-shell"
+          data-drag-over={dragOver ? 'true' : undefined}
+          className={cn(
+            'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
+            'transition-[border-color,box-shadow,background-color,transform] duration-180',
+            isUiV2 ? 'codex-composer-shell' : 'border border-black/10 bg-surface-modal shadow-sm dark:border-white/10',
+            !isUiV2 && dragOver && 'border-primary ring-1 ring-primary',
+          )}
+        >
+          <BorderBeam
+            size="sm"
+            colorVariant="sunset"
+            strength={0.3}
+            theme={resolvedTheme}
+            borderRadius={25}
+            active={sending}
+            className="codex-composer-beam"
+            data-testid="chat-composer-beam"
+            style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+          >
+            <span aria-hidden />
+          </BorderBeam>
+          {attachments.length > 0 && (
+            <div
+              className="codex-composer-attachments relative flex flex-wrap gap-2 pb-3"
+              data-testid="chat-composer-attachments"
+            >
+              {attachments.map((att) => (
+                <AttachmentPreview
+                  key={att.id}
+                  attachment={att}
+                  onRemove={() => removeAttachment(att.id)}
+                />
+              ))}
+            </div>
+          )}
           {slashMenuOpen && (
             <SlashCommandPalette
               items={slashItems}
@@ -2712,27 +2828,35 @@ export function ChatInput({
           {(selectedTarget || pendingTurnModelRef) && (
             <div className="flex flex-wrap gap-2 pb-1.5">
               {pendingTurnModelRef && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
                 <button
                   type="button"
                   onClick={() => setPendingTurnModelRef(null)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
-                  title={t('composer.clearTurnModel')}
                   data-testid="chat-turn-model-chip"
                 >
                   <span>{t('composer.turnModelChip', { model: formatModelRefLabel(pendingTurnModelRef) })}</span>
                   <X className="h-3 w-3 text-muted-foreground" />
                 </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">{t('composer.clearTurnModel')}</TooltipContent>
+                </Tooltip>
               )}
               {selectedTarget && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
                 <button
                   type="button"
                   onClick={() => setTargetAgentId(null)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 text-meta font-medium text-foreground transition-colors hover:bg-primary/10"
-                  title={t('composer.clearTarget')}
                 >
                   <span>{t('composer.targetChip', { agent: selectedTarget.name })}</span>
                   <X className="h-3 w-3 text-muted-foreground" />
                 </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">{t('composer.clearTarget')}</TooltipContent>
+                </Tooltip>
               )}
             </div>
           )}
@@ -2741,18 +2865,23 @@ export function ChatInput({
           {selectedKnowledgeRefs.length > 0 && (
             <div className="flex flex-wrap gap-2 pb-2" data-testid="chat-knowledge-selected">
               {selectedKnowledgeRefs.map((reference) => (
+                <Tooltip key={reference.id}>
+                  <TooltipTrigger asChild>
                 <button
-                  key={reference.id}
                   type="button"
                   onClick={() => removeKnowledgeReference(reference.id)}
                   className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-meta font-medium text-emerald-700 transition-colors hover:bg-emerald-500/15 dark:text-emerald-400"
-                  title={t('composer.knowledgeAttach.remove', { title: reference.title })}
                   data-testid="chat-knowledge-selected-item"
                 >
                   <BookOpen className="h-3 w-3 shrink-0" />
                   <span className="max-w-[220px] truncate">{reference.title}</span>
                   <X className="h-3 w-3 shrink-0" />
                 </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t('composer.knowledgeAttach.remove', { title: reference.title })}
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </div>
           )}
@@ -2973,36 +3102,67 @@ export function ChatInput({
           {/* Action Row — icons on their own line */}
           <div className="mt-1.5 flex items-center gap-1">
             <div ref={actionMenuRef} className="contents">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  'h-8 w-8 shrink-0 rounded-full border border-black/[0.08] bg-gradient-to-b from-white/[0.06] to-black/[0.03] text-muted-foreground shadow-sm transition-[background-color,color,transform] duration-150 hover:from-white/[0.09] hover:to-black/[0.05] hover:text-foreground active:scale-95 dark:border-white/[0.08] dark:from-white/[0.08] dark:to-white/[0.02] dark:hover:from-white/[0.12] dark:hover:to-white/[0.05]',
-                  actionMenuOpen && 'text-foreground from-white/[0.09] to-black/[0.05] dark:from-white/[0.12] dark:to-white/[0.05]',
-                )}
-                onClick={() => {
-                  const nextOpen = !actionMenuOpen;
-                  setWorkspaceMenuOpen(false);
-                  setPickerOpen(false);
-                  setModelPickerOpen(false);
-                  setKnowledgePickerOpen(false);
-                  setActionMenuOpen(nextOpen);
-                  if (nextOpen) void loadQuickSkills();
-                }}
+              {/* Plus menu morph — the composer's primary add affordance.
+                  The compact circle morphs its own container into the measured
+                  action panel (manba #20 "Plus menu morph"): plus fades out,
+                  actions fade in. Clicking outside / Esc morphs it back.
+                  It occupies its own layout slot, so neighbouring controls do
+                  not shift while the panel opens. */}
+              <PlusMenuMorph
                 disabled={inputDisabled || sending}
-                data-testid="chat-composer-actions"
-                aria-label={t('composer.actions.add')}
-                aria-expanded={actionMenuOpen}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" collisionPadding={8} data-testid="chat-composer-actions-tooltip">
-                  <ComposerTooltip shortcut="@">{t('composer.actions.add')}</ComposerTooltip>
-                </TooltipContent>
-              </Tooltip>
+                open={morphOpen}
+                triggerTestId="chat-composer-actions"
+                containerTestId="chat-composer-morph"
+                onOpenChange={(next) => {
+                  setMorphOpen(next);
+                  if (next) {
+                    setWorkspaceMenuOpen(false);
+                    setPickerOpen(false);
+                    setModelPickerOpen(false);
+                    setKnowledgePickerOpen(false);
+                    setActionMenuOpen(false);
+                    void loadQuickSkills();
+                  }
+                }}
+                items={[
+                  {
+                    key: 'attach',
+                    label: t('composer.actions.attachFiles'),
+                    icon: <Paperclip className="h-3.5 w-3.5" />,
+                    testId: 'chat-composer-action-attach-files',
+                    onSelect: () => void pickFiles(),
+                  },
+                  {
+                    key: 'knowledge',
+                    label: t('composer.actions.knowledge'),
+                    icon: <BookOpen className="h-3.5 w-3.5" />,
+                    testId: 'chat-composer-action-knowledge',
+                    onSelect: () => {
+                      setKnowledgePickerOpen(true);
+                      requestAnimationFrame(() => textareaRef.current?.focus());
+                    },
+                  },
+                  ...(showModelPicker
+                    ? [{
+                        key: 'model',
+                        label: t('composer.actions.model'),
+                        icon: <Gauge className="h-3.5 w-3.5" />,
+                        testId: 'chat-composer-action-model',
+                        onSelect: () => {
+                          setExecutionSettingsSection('model');
+                          setModelPickerOpen(true);
+                        },
+                      }]
+                    : []),
+                  {
+                    key: 'more',
+                    label: t('composer.actions.more'),
+                    icon: <Plus className="h-3.5 w-3.5" />,
+                    testId: 'chat-composer-action-more',
+                    onSelect: () => setActionMenuOpen(true),
+                  },
+                ]}
+              />
               {actionMenuOpen && (
                 <div
                   className="absolute bottom-full -left-px -right-px z-30 mb-2 max-h-[320px] overflow-y-auto rounded-[20px] border border-border bg-surface-modal p-1.5 shadow-xl backdrop-blur-[8px] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none [scrollbar-gutter:stable]"
@@ -3036,6 +3196,7 @@ export function ChatInput({
                         testId="chat-composer-action-model"
                         onClick={() => {
                           setActionMenuOpen(false);
+                          setExecutionSettingsSection('model');
                           setModelPickerOpen(true);
                         }}
                       />
@@ -3123,40 +3284,58 @@ export function ChatInput({
               <div ref={workspaceMenuRef} className="relative shrink-0">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      data-testid="chat-composer-permission-mode"
-                      className={cn(
-                        'inline-flex h-8 w-8 items-center justify-center rounded-lg border px-0 text-2xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
-                        workspace && onPermissionModeChange
-                          ? 'border-black/[0.08] bg-black/[0.03] text-foreground/80 shadow-sm hover:bg-black/[0.06] hover:text-foreground dark:border-white/[0.08] dark:bg-white/[0.06] dark:hover:bg-white/[0.09]'
-                          : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-                        workspaceMenuOpen && 'ring-1 ring-primary/20',
-                      )}
-                      onClick={() => {
-                        setSlashMenuDismissed(true);
-                        setPickerOpen(false);
-                        setModelPickerOpen(false);
-                        setKnowledgePickerOpen(false);
-                        setWorkspaceMenuOpen((open) => !open);
-                      }}
-                      disabled={inputDisabled || sending}
-                      title={workspaceMenuTitle}
-                      aria-label={workspaceMenuTitle}
-                      aria-expanded={workspaceMenuOpen}
-                    >
-                      {workspace && onPermissionModeChange ? (
-                        <>
-                          <span
-                            aria-hidden="true"
-                            className={cn('h-1.5 w-1.5 shrink-0 rounded-full', PERMISSION_MODE_DOTS[activePermissionMode])}
-                          />
-                          <Shield className={cn('h-3.5 w-3.5 shrink-0', PERMISSION_MODE_STYLES[activePermissionMode])} />
-                        </>
-                      ) : (
+                    {workspace && onPermissionModeChange ? (
+                      <button
+                        type="button"
+                        data-testid="chat-composer-permission-mode"
+                        className={cn(
+                          'codex-composer-control codex-permission-trigger',
+                          workspaceMenuOpen && 'is-active',
+                          activePermissionMode === 'fullAccess' && 'codex-permission-trigger--warning',
+                        )}
+                        onClick={() => {
+                          setSlashMenuDismissed(true);
+                          setPickerOpen(false);
+                          setModelPickerOpen(false);
+                          setKnowledgePickerOpen(false);
+                          setWorkspaceMenuOpen((open) => !open);
+                        }}
+                        disabled={inputDisabled || sending}
+                        aria-label={workspaceMenuTitle}
+                        aria-expanded={workspaceMenuOpen}
+                      >
+                        <span className="codex-permission-trigger__icon">
+                          {(() => {
+                            const Icon = PERMISSION_MODE_ICONS[activePermissionMode];
+                            return <Icon className="h-4 w-4" />;
+                          })()}
+                        </span>
+                        <span className="codex-permission-trigger__label">
+                          {t(`composer.permissionMode.${activePermissionMode}`)}
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        data-testid="chat-composer-permission-mode"
+                        className={cn(
+                          'codex-composer-control w-8 justify-center px-0',
+                          workspaceMenuOpen && 'is-active',
+                        )}
+                        onClick={() => {
+                          setSlashMenuDismissed(true);
+                          setPickerOpen(false);
+                          setModelPickerOpen(false);
+                          setKnowledgePickerOpen(false);
+                          setWorkspaceMenuOpen((open) => !open);
+                        }}
+                        disabled={inputDisabled || sending}
+                        aria-label={workspaceMenuTitle}
+                        aria-expanded={workspaceMenuOpen}
+                      >
                         <Briefcase className="h-3.5 w-3.5 shrink-0" />
-                      )}
-                    </button>
+                      </button>
+                    )}
                   </TooltipTrigger>
                   <TooltipContent side="top" collisionPadding={8} className="max-w-xs text-xs">
                     {workspaceMenuTitle}
@@ -3166,61 +3345,65 @@ export function ChatInput({
                 {workspaceMenuOpen && (
                   <div
                     data-testid="chat-composer-permission-menu"
-                    className="absolute bottom-full left-0 z-30 mb-2 w-[min(336px,calc(100vw-2rem))] overflow-hidden rounded-[15px] border border-black/[0.08] bg-surface-modal/95 p-1.5 shadow-lg shadow-black/[0.08] backdrop-blur-[8px] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none dark:border-white/[0.08] dark:shadow-black/40"
+                    className="codex-composer-menu codex-composer-menu--approval"
                   >
                     {workspace && (
-                      <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
-                        <div className="truncate text-xs font-medium text-foreground">
+                      <div className="codex-composer-menu__label codex-composer-menu__label--divider">
+                        <span className="truncate text-foreground">
                           {workspace.name || t('composer.workspaceActions')}
-                        </div>
+                        </span>
                         {workspace.rootPath && (
-                          <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                          <span className="truncate font-mono text-[11px] text-muted-foreground">
                             {workspace.rootPath}
-                          </div>
+                          </span>
                         )}
                       </div>
                     )}
 
                     {workspace && onPermissionModeChange && (
-                      <div className="py-1.5">
-                        <div className="border-b border-black/5 px-2.5 pb-2 text-xs font-medium text-foreground dark:border-white/10">
-                          {t('composer.permissionMenuTitle')}
-                        </div>
-                        <div className="flex items-center gap-1.5 px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">
-                          <Shield className="h-3 w-3" />
-                          <span>{t('composer.permissionModeTitle')}</span>
+                      <>
+                        <div className="codex-composer-menu__label">
+                          <span>{t('composer.permissionMenuTitle')}</span>
+                          <button
+                            type="button"
+                            className="codex-composer-menu__label-action"
+                            onClick={() => handleWorkspaceAction(() => setWorkspaceMenuOpen(false))}
+                          >
+                            {t('composer.permissionLearnMore')}
+                          </button>
                         </div>
                         {WORKSPACE_PERMISSION_MODES.map((mode) => {
                           const selected = activePermissionMode === mode;
+                          const isFull = mode === 'fullAccess';
+                          const Icon = PERMISSION_MODE_ICONS[mode];
                           return (
                             <button
                               key={mode}
                               type="button"
                               className={cn(
-                                'flex min-h-[47px] w-full items-center gap-2.5 rounded-[12.5px] px-2.5 py-2 text-left transition-colors duration-150',
-                                selected
-                                  ? 'bg-black/[0.05] dark:bg-white/[0.08]'
-                                  : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                                'codex-composer-menu__item codex-composer-menu__option',
+                                isFull && 'codex-composer-menu__option--warning',
                               )}
                               data-testid={`chat-composer-permission-option-${mode}`}
                               onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
                             >
-                              <Shield className={cn('h-4 w-4 shrink-0', PERMISSION_MODE_STYLES[mode], !selected && 'opacity-70')} />
-                              <span
-                                className="min-w-0 flex-1"
-                              >
-                                <span className={cn('block truncate text-[13px] font-medium leading-5', selected ? 'text-foreground' : 'text-foreground/75')}>
-                                  {t(`composer.permissionMode.${mode}`)}
-                                </span>
-                                <span className="block truncate text-[11px] leading-4 text-muted-foreground">
-                                  {t(`composer.permissionModeDescription.${mode}`)}
-                                </span>
+                              <span className="codex-composer-menu__icon">
+                                <Icon className="h-4 w-4" />
                               </span>
-                              {selected && <Check className="h-3.5 w-3.5 shrink-0 text-foreground/70" />}
+                              <span className="codex-composer-menu__option-text">
+                                <b>{t(`composer.permissionMode.${mode}`)}</b>
+                                <small>{t(`composer.permissionModeDescription.${mode}`)}</small>
+                              </span>
+                              <span
+                                className="codex-composer-menu__check"
+                                data-hidden={selected ? undefined : 'true'}
+                              >
+                                <Check className="h-4 w-4" />
+                              </span>
                             </button>
                           );
                         })}
-                      </div>
+                      </>
                     )}
 
                     {(onPickWorkspaceFolder || onNewSession) && (
@@ -3292,6 +3475,9 @@ export function ChatInput({
 
             {showAgentPicker && (
               <div ref={pickerRef} className="relative shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -3308,10 +3494,13 @@ export function ChatInput({
                   }}
                   disabled={inputDisabled || sending}
                   aria-label={t('composer.pickAgent')}
-                  title={t('composer.pickAgent')}
                 >
                   <AtSign className="h-3.5 w-3.5" />
                 </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.pickAgent')}</TooltipContent>
+                </Tooltip>
                 {pickerOpen && (
                   <div className="absolute left-0 bottom-full z-20 mb-2 w-72 overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10">
                     <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
@@ -3337,20 +3526,19 @@ export function ChatInput({
             )}
 
             <div ref={knowledgePickerRef} className="relative shrink-0">
-              <Button
+              <Tooltip>
+                <TooltipTrigger asChild>
+              <button
                 type="button"
-                variant="ghost"
-                size="sm"
                 className={cn(
-                  'h-8 max-w-[152px] gap-1.5 rounded-lg px-2 text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                  'codex-composer-control max-w-[152px]',
                   (knowledgePickerOpen || knowledgeScope !== 'none' || selectedKnowledgeRefs.length > 0)
-                    && 'bg-black/5 text-foreground dark:bg-white/10',
+                    && 'is-active',
                 )}
                 data-testid="chat-knowledge-scope-button"
                 aria-label={t('composer.knowledgeScopeTitle')}
                 aria-expanded={knowledgePickerOpen}
                 disabled={inputDisabled || sending}
-                title={t('composer.knowledgeScopeTitle')}
                 onClick={() => {
                   const nextOpen = !knowledgePickerOpen;
                   setActionMenuOpen(false);
@@ -3363,14 +3551,17 @@ export function ChatInput({
                 <BookOpen className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
                 <ChevronDown className={cn('h-3 w-3 shrink-0 transition-transform', knowledgePickerOpen && 'rotate-180')} />
-              </Button>
+              </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" collisionPadding={8}>{t('composer.knowledgeScopeTitle')}</TooltipContent>
+              </Tooltip>
               {knowledgePickerOpen && (
                 <div
-                  className="absolute left-0 bottom-full z-20 mb-2 w-[360px] overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  className="codex-composer-menu codex-composer-menu--approval codex-composer-menu--knowledge"
                   data-testid="chat-knowledge-scope-menu"
                 >
-                  <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
-                    {t('composer.knowledgeScopeTitle')}
+                  <div className="codex-composer-menu__label">
+                    <span>{t('composer.knowledgeScopeTitle')}</span>
                   </div>
                   {KNOWLEDGE_SCOPES.map((scope) => {
                     const isActive = scope === knowledgeScope;
@@ -3379,10 +3570,8 @@ export function ChatInput({
                       key={scope}
                       type="button"
                       className={cn(
-                        'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200',
-                        isActive
-                          ? 'bg-primary/5 text-foreground font-medium'
-                          : 'hover:bg-black/5 dark:hover:bg-white/5',
+                        'codex-composer-menu__item codex-composer-menu__option',
+                        !isActive && 'opacity-80',
                       )}
                       data-testid={`chat-knowledge-scope-${scope}`}
                       onClick={() => {
@@ -3391,42 +3580,42 @@ export function ChatInput({
                         textareaRef.current?.focus();
                       }}
                     >
-                      <span className="min-w-0">
-                        <span className="block font-medium">{t(`composer.knowledgeScope.${scope}`)}</span>
-                        <span className="mt-0.5 block text-tiny leading-4 text-muted-foreground">{t(`composer.knowledgeScopeDescription.${scope}`)}</span>
+                      <span className="codex-composer-menu__icon">
+                        {isActive && <Check className="h-4 w-4" />}
                       </span>
-                      {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+                      <span className="codex-composer-menu__option-text">
+                        <b>{t(`composer.knowledgeScope.${scope}`)}</b>
+                        <small>{t(`composer.knowledgeScopeDescription.${scope}`)}</small>
+                      </span>
                     </button>
                     );
                   })}
-                  <div className="mx-3 my-2 rounded-xl border border-black/10 bg-surface-input p-1 dark:border-white/10">
-                    <div className="px-2 pb-1 text-tiny font-medium text-muted-foreground/80">
-                      {t('composer.knowledgeModeTitle')}
-                    </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      {KNOWLEDGE_MODES.map((mode) => {
-                        const isActive = mode === knowledgeMode;
-                        return (
-                          <button
-                            key={mode}
-                            type="button"
-                            className={cn(
-                              'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
-                              isActive
-                                ? 'bg-black/5 text-foreground dark:bg-white/10'
-                                : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
-                            )}
-                            data-testid={`chat-knowledge-mode-${mode}`}
-                            onClick={() => {
-                              void onKnowledgeModeChange?.(mode);
-                              textareaRef.current?.focus();
-                            }}
-                          >
-                            {t(`composer.knowledgeMode.${mode}`)}
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="codex-composer-menu__label codex-composer-menu__label--divider">
+                    <span>{t('composer.knowledgeModeTitle')}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 px-2 pb-2">
+                    {KNOWLEDGE_MODES.map((mode) => {
+                      const isActive = mode === knowledgeMode;
+                      return (
+                        <button
+                          key={mode}
+                          type="button"
+                          className={cn(
+                            'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
+                            isActive
+                              ? 'bg-black/5 text-foreground dark:bg-white/10'
+                              : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                          )}
+                          data-testid={`chat-knowledge-mode-${mode}`}
+                          onClick={() => {
+                            void onKnowledgeModeChange?.(mode);
+                            textareaRef.current?.focus();
+                          }}
+                        >
+                          {t(`composer.knowledgeMode.${mode}`)}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="my-1.5 h-px bg-border/70" />
                   <div className="px-3 py-2">
@@ -3507,54 +3696,122 @@ export function ChatInput({
               )}
             </div>
 
-            {currentAgentId && (
-              <div className="shrink-0">
-                <ChatAgentEffortButton
-                  agentId={currentAgent?.id ?? currentAgentId}
-                  disabled={inputDisabled || sending}
-                  compact
-                />
-              </div>
-            )}
-
-            {/* Send Button — pushed to the right */}
-            {showModelPicker && (
+            <div className="codex-composer-control-group ml-auto flex min-w-0 shrink-0 items-center gap-1">
+            {(showModelPicker || currentAgentId) && (
               <div ref={modelPickerRef} className="relative shrink-0">
-                <button type="button" data-testid="chat-model-picker-button" className="inline-flex h-8 max-w-[220px] items-center gap-1.5 rounded-lg px-2 text-xs font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" aria-label={t('composer.modelPickerTitle')} aria-expanded={modelPickerOpen} disabled={inputDisabled || sending} onClick={() => setModelPickerOpen((open) => !open)}>
-                  <Gauge className="h-3.5 w-3.5 shrink-0" />
-                  <span className="max-w-[138px] truncate">{formatModelRefLabel(effectiveModelRef ?? '')}</span>
-                  <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', modelPickerOpen && 'rotate-180')} />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                <button
+                  type="button"
+                  data-testid="chat-model-picker-button"
+                  className={cn('codex-composer-control codex-model-picker-trigger', modelPickerOpen && 'is-active')}
+                  aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
+                  aria-expanded={modelPickerOpen}
+                  disabled={inputDisabled || sending}
+                  onClick={() => setModelPickerOpen((open) => !open)}
+                >
+                  <span
+                    data-testid="chat-agent-effort-button"
+                    className={cn(
+                      'codex-execution-settings__effort-shortcut',
+                      executionEffortPreview === 'max' && 'is-max',
+                    )}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setModelPickerOpen(true);
+                      setExecutionSettingsSection('effort');
+                    }}
+                  >
+                    <Flame className="h-3.5 w-3.5 shrink-0" />
+                  </span>
+                  <span className="codex-model-picker-label max-w-[138px] truncate">{effectiveModelLabel}</span>
+                  <ChevronDown className={cn('codex-model-picker-chevron h-3.5 w-3.5 transition-transform', modelPickerOpen && 'rotate-180')} />
                 </button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}</TooltipContent>
+                </Tooltip>
                 {modelPickerOpen && (
-                  <div className="absolute right-0 bottom-full z-30 mb-2 w-[300px] rounded-[16px] border border-black/[0.08] bg-surface-modal p-2 shadow-lg dark:border-white/[0.08]" data-testid="chat-model-picker-menu">
-                    <div className="px-2 py-1.5 text-tiny font-medium text-muted-foreground/80">{t('composer.modelPickerTitle')}</div>
-                    <div className="flex gap-1 px-1 pb-1.5" data-testid="chat-model-scope-selector">
-                      {(['turn', 'session', 'persistent'] as const).map((scope) => <button key={scope} type="button" onClick={() => setModelScope(scope)} className={cn('flex-1 rounded-md px-2 py-1 text-tiny font-medium', modelScope === scope ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:bg-foreground/5')} data-testid={`chat-model-scope-${scope}`}>{t(`composer.modelScope.${scope}`)}</button>)}
-                    </div>
-                    <div className="my-1 h-px bg-border/70" />
-                    <div className="max-h-64 overflow-y-auto">
-                      {modelOptions.map((option) => {
-                        const isActive = modelScope === 'turn' ? option.modelRef === pendingTurnModelRef : option.modelRef === effectiveModelRef;
-                        return <button key={option.modelRef} type="button" onClick={() => void handleSelectModel(option.modelRef)} className={cn('flex min-h-9 w-full items-center justify-between gap-3 rounded-[10px] px-2.5 py-1.5 text-left text-sm', isActive ? 'bg-foreground/10 text-foreground' : 'hover:bg-foreground/5')} data-testid={`chat-model-picker-option-${option.label}`}><span className="truncate">{option.label}</span>{isActive && <Check className="h-3.5 w-3.5" />}</button>;
-                      })}
-                    </div>
+                  <div
+                    className="codex-composer-menu codex-composer-menu--model codex-execution-settings"
+                    data-testid="chat-model-picker-menu"
+                  >
+                    <button
+                      type="button"
+                      className="codex-execution-settings__row"
+                      aria-expanded={executionSettingsSection === 'model'}
+                      onClick={() => setExecutionSettingsSection((section) => section === 'model' ? null : 'model')}
+                    >
+                      <span>{t('composer.actions.model')}</span>
+                      <span className="codex-execution-settings__value">{effectiveModelLabel}</span>
+                      <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'model' && 'rotate-90')} />
+                    </button>
+                    {executionSettingsSection === 'model' && (
+                      <div className="codex-execution-settings__section" data-testid="chat-model-options">
+                        {pickerModelOptions.map((option) => {
+                          const isActive = option.modelRef === effectiveModelRef;
+                          return (
+                            <button
+                              key={option.modelRef}
+                              type="button"
+                              onClick={() => void handleSelectModel(option.modelRef)}
+                              className={cn('codex-composer-menu__item', isActive && 'is-active')}
+                              data-testid={`chat-model-picker-option-${option.label}`}
+                            >
+                              <Gauge className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                              <span className="codex-composer-menu__check" data-hidden={isActive ? undefined : 'true'}>
+                                <Check className="h-3.5 w-3.5" />
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="codex-execution-settings__row"
+                      aria-expanded={executionSettingsSection === 'effort'}
+                      onClick={() => setExecutionSettingsSection((section) => section === 'effort' ? null : 'effort')}
+                    >
+                      <span>{t('composer.effortTitle')}</span>
+                      <span className={cn(
+                        'codex-execution-settings__value',
+                        executionEffortPreview === 'max' && 'is-max',
+                      )}>
+                        {currentEffortLabel}
+                      </span>
+                      <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'effort' && 'rotate-90')} />
+                    </button>
+                    {executionSettingsSection === 'effort' && currentAgentId && (
+                      <div className="codex-execution-settings__section codex-execution-settings__section--effort">
+                        <ChatAgentEffortPanel
+                          agentId={currentAgent?.id ?? currentAgentId}
+                          disabled={inputDisabled || sending}
+                          onEffortChange={setExecutionEffortPreview}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex">
             <Button
               onClick={handlePrimaryComposerAction}
               disabled={sending ? !(canIntervene || canStop) : !canSend}
               size="icon"
               data-testid="chat-composer-send"
-              className={`ml-auto shrink-0 h-8 w-8 rounded-lg transition-colors ${
+              className={`shrink-0 h-8 w-8 rounded-lg transition-colors ${
                 (sending || canSend)
                   ? 'bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20'
                   : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'
               }`}
               variant="ghost"
               aria-label={sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
-              title={sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
             >
               {sending && !canIntervene ? (
                 <Square className="h-3.5 w-3.5" fill="currentColor" />
@@ -3562,6 +3819,13 @@ export function ChatInput({
                 <SendHorizontal className="h-4 w-4" strokeWidth={2} />
               )}
             </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" collisionPadding={8}>
+                {sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
+              </TooltipContent>
+            </Tooltip>
+            </div>
           </div>
         </div>
         <div
@@ -3597,7 +3861,6 @@ export function ChatInput({
             <div
               className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
               data-testid="chat-composer-context-status"
-              title={t('composer.contextStatusTitle')}
             >
               {composerContextParts.map((part, index) => (
                 <span key={`${index}:${part}`} className="inline-flex items-center gap-1.5">
@@ -3686,6 +3949,8 @@ export function ChatInput({
                 </>
               )}
               {showAdvancedDetails && compactionQuality && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
                 <Badge
                   variant="outline"
                   className={cn(
@@ -3695,18 +3960,22 @@ export function ChatInput({
                     compactionQuality.level === 'low' && 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400',
                   )}
                   data-testid="chat-compaction-quality"
-                  title={t('composer.compaction.qualityTitle', {
-                    evidence: Math.round(compactionQuality.evidenceCoverage * 100),
-                    fields: Math.round(compactionQuality.fieldCoverage * 100),
-                    tokens: compactionQuality.projectionTokens,
-                    unverified: compactionStatus?.lastCompaction?.unverifiedCount ?? 0,
-                  })}
                 >
                   {t('composer.compaction.quality', {
                     level: t(`composer.compaction.qualityLevel.${compactionQuality.level}`),
                     score: Math.round(compactionQuality.score * 100),
                   })}
                 </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {t('composer.compaction.qualityTitle', {
+                      evidence: Math.round(compactionQuality.evidenceCoverage * 100),
+                      fields: Math.round(compactionQuality.fieldCoverage * 100),
+                      tokens: compactionQuality.projectionTokens,
+                      unverified: compactionStatus?.lastCompaction?.unverifiedCount ?? 0,
+                    })}
+                  </TooltipContent>
+                </Tooltip>
               )}
               {showAdvancedDetails && compactionQuality && onViewCompactionArtifact && (
                 <Tooltip>
@@ -4118,46 +4387,88 @@ function AttachmentPreview({
   onRemove: () => void;
 }) {
   const { t } = useTranslation('chat');
-  const isImage = attachment.mimeType.startsWith('image/') && attachment.preview;
+  const isImage = !!attachment.mimeType.startsWith('image/') && !!attachment.preview;
+  const [dissolving, setDissolving] = useState(false);
 
-  const sublabel =
-    attachment.mimeType === DIRECTORY_MIME_TYPE
-      ? t('composer.folderAttachment')
-      : attachment.fileSize > 0
-        ? formatFileSize(attachment.fileSize)
-        : '...';
+  const handleRemove = () => {
+    if (dissolving) return;
+    setDissolving(true);
+  };
 
   return (
-    <AttachmentRoot className="rounded-lg overflow-hidden border border-border">
-      {isImage ? (
-        <AttachmentThumb
-          src={attachment.preview!}
-          alt={attachment.fileName}
-          className="w-16 h-16"
+    <SmokyDissolve
+      dissolving={dissolving}
+      onDissolved={onRemove}
+      isImage={isImage}
+      // Match the reference card's compact smoky-dissolve profile. The
+      // wrapper leaves layout immediately; only the fixed canvas runs here.
+      durationMs={550}
+      gravity={150}
+      warp={30}
+      maxBlur={12}
+      sway={0}
+      spin={3}
+      churn={30}
+      spread={0}
+      className="shrink-0"
+    >
+      <Tooltip>
+        <TooltipTrigger asChild>
+      <AttachmentRoot
+        className="h-[88px] w-[88px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm dark:border-white/20 dark:bg-white/[0.92]"
+        data-testid="chat-composer-attachment"
+      >
+        {isImage ? (
+          <AttachmentThumb
+            src={attachment.preview!}
+            alt={attachment.fileName}
+            className="h-full w-full"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-white dark:bg-white/[0.92]">
+            <span className="sr-only">{attachment.fileName}</span>
+            <LobeConfigProvider
+              config={{
+                proxy: 'custom',
+                customCdnFn: () => new URL('./lobe-icons', window.location.href).toString(),
+              }}
+              motion={LOBE_FILE_ICON_MOTION}
+            >
+              <MaterialFileTypeIcon
+                filename={attachment.fileName}
+                type={attachment.mimeType === DIRECTORY_MIME_TYPE ? 'folder' : 'file'}
+                size={40}
+                className="pointer-events-none shrink-0"
+              />
+            </LobeConfigProvider>
+          </div>
+        )}
+
+        {/* Staging overlay */}
+        {attachment.status === 'staging' && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/35">
+            <Loader2 className="h-4 w-4 text-white animate-spin" />
+          </div>
+        )}
+
+        {/* Error overlay */}
+        {attachment.status === 'error' && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-destructive/20">
+            <span className="text-2xs text-destructive font-medium px-1">Error</span>
+          </div>
+        )}
+
+        <AttachmentRemove
+          onRemove={handleRemove}
+          aria-label={t('composer.removeAttachment', { fileName: attachment.fileName })}
+          data-testid="chat-composer-attachment-remove"
+          className="right-1.5 top-1.5 z-20 grid h-6 w-6 place-items-center bg-white/95 p-0 text-[#17181c] opacity-100 shadow-[0_1px_3px_rgba(0,0,0,0.25)] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17181c]"
         />
-      ) : (
-        <div className="flex items-center gap-2 px-3 py-2 bg-surface-input/50 max-w-[200px]">
-          <FileIcon mimeType={attachment.mimeType} className="h-5 w-5 shrink-0 text-muted-foreground" />
-          <AttachmentName name={attachment.fileName} sublabel={sublabel} />
-        </div>
-      )}
-
-      {/* Staging overlay */}
-      {attachment.status === 'staging' && (
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <Loader2 className="h-4 w-4 text-white animate-spin" />
-        </div>
-      )}
-
-      {/* Error overlay */}
-      {attachment.status === 'error' && (
-        <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center">
-          <span className="text-2xs text-destructive font-medium px-1">Error</span>
-        </div>
-      )}
-
-      <AttachmentRemove onRemove={onRemove} />
-    </AttachmentRoot>
+      </AttachmentRoot>
+        </TooltipTrigger>
+        <TooltipContent side="top">{attachment.fileName}</TooltipContent>
+      </Tooltip>
+    </SmokyDissolve>
   );
 }
 

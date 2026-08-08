@@ -125,6 +125,7 @@ test.describe('Chat composer feature plugins', () => {
     await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
     await page.getByTestId('chat-composer-actions').click();
+    await page.getByTestId('chat-composer-action-more').click();
     await expect(page.getByTestId('chat-composer-action-skill-brainstorming')).toBeVisible();
     await expect(page.getByTestId('chat-composer-action-group-office')).toBeVisible();
     await page.getByTestId('chat-composer-action-office-word').click();
@@ -147,6 +148,7 @@ test.describe('Chat composer feature plugins', () => {
     await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
     await page.getByTestId('chat-composer-actions').click();
+    await page.getByTestId('chat-composer-action-more').click();
     await expect(page.getByTestId('chat-composer-action-skill-brainstorming')).toBeVisible();
     await expect(page.getByTestId('chat-composer-action-group-office')).toBeVisible();
     await page.getByTestId('chat-composer-action-office-word').click();

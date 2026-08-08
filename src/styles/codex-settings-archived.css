@@ -10,39 +10,28 @@
  * 46px/60px row heights are read off the real app, not chosen.
  *
  * DEVIATIONS from the source:
- *   1. The source's `--sp-*` block is dark-only. ClawX renders settings in both
- *      themes, so the tokens are split into `:root.dark` / `:root:not(.dark)`
- *      and namespaced `--sp-arch-*` to avoid colliding with anything else.
+ *   1. The source's `--sp-*` block is dark-only, and this file originally
+ *      mirrored it by hand into `:root.dark` / `:root:not(.dark)`. Both blocks
+ *      are now a single alias set pointing at codex-tokens.css, so the theme
+ *      switch resolves once in the token layer instead of being restated here.
+ *      The `--sp-arch-*` namespace is kept — the rules below reference it, and
+ *      renaming them would be a structural change for no visual gain.
  *   2. Only the tokens the archived rules actually reference are ported (the
  *      full settings token set is 262 declarations).
  */
 
-:root.dark {
-  --sp-arch-hairline: rgba(255, 255, 255, 0.082);       /* border-token-border */
+:root {
+  --sp-arch-hairline: var(--color-border);              /* border-token-border */
   --sp-arch-hairline-w: 0.667px;
-  --sp-arch-hover-bg: rgba(255, 255, 255, 0.08);        /* token-list-hover-background */
-  --sp-arch-fill-3: rgba(255, 255, 255, 0.03);          /* bg-token-bg-fog */
-  --sp-arch-fill-5: rgba(255, 255, 255, 0.05);
-  --sp-arch-fill-10: rgba(255, 255, 255, 0.1);
-  --sp-arch-text: #fff;
-  --sp-arch-text-secondary: rgba(255, 255, 255, 0.65);  /* text-token-text-secondary */
-  --sp-arch-text-placeholder: rgba(255, 255, 255, 0.498);
-  --sp-arch-card-bg: #232323;                            /* card rgb(35,35,35) */
-  --sp-arch-radius-card: 20px;
-}
-
-:root:not(.dark) {
-  --sp-arch-hairline: rgba(0, 0, 0, 0.09);
-  --sp-arch-hairline-w: 0.667px;
-  --sp-arch-hover-bg: rgba(0, 0, 0, 0.045);
-  --sp-arch-fill-3: rgba(0, 0, 0, 0.022);
-  --sp-arch-fill-5: rgba(0, 0, 0, 0.05);
-  --sp-arch-fill-10: rgba(0, 0, 0, 0.1);
-  --sp-arch-text: #1a1c1f;
-  --sp-arch-text-secondary: rgba(26, 28, 31, 0.65);
-  --sp-arch-text-placeholder: rgba(26, 28, 31, 0.5);
-  --sp-arch-card-bg: #fff;
-  --sp-arch-radius-card: 20px;
+  --sp-arch-hover-bg: var(--color-background-button-secondary-hover); /* token-list-hover-background */
+  --sp-arch-fill-3: var(--color-background-elevated-secondary);       /* bg-token-bg-fog */
+  --sp-arch-fill-5: var(--color-background-button-secondary);
+  --sp-arch-fill-10: var(--color-background-button-tertiary-hover);
+  --sp-arch-text: var(--color-text-foreground);
+  --sp-arch-text-secondary: var(--color-text-foreground-secondary);   /* text-token-text-secondary */
+  --sp-arch-text-placeholder: var(--color-text-foreground-tertiary);
+  --sp-arch-card-bg: var(--color-background-elevated-primary-opaque); /* card rgb(35,35,35) */
+  --sp-arch-radius-card: var(--radius-2xl);
 }
 
 /* CDP (settings-content-all.json 已归档任务):
@@ -76,7 +65,7 @@
   max-width: 360px;
   height: 28px;
   padding: 0 12px 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: var(--sp-arch-hairline-w) solid var(--sp-arch-hairline);
   background: var(--sp-arch-fill-3);
   color: var(--sp-arch-text-placeholder);

@@ -1,4 +1,4 @@
-import { RotateCcw, ShieldAlert } from 'lucide-react';
+import { RotateCcw, ShieldAlert, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ type RollbackPlanPanelProps = {
   onOpenTaskLedger?: () => void | Promise<void>;
   onInterruptTerminal?: () => void | Promise<void>;
   onCreateMemoryDraft?: () => void | Promise<void>;
+  onDismiss?: () => void;
 };
 
 function riskClass(risk: 'safe' | 'review' | 'dangerous'): string {
@@ -34,6 +35,7 @@ export function RollbackPlanPanel({
   onOpenTaskLedger,
   onInterruptTerminal,
   onCreateMemoryDraft,
+  onDismiss,
 }: RollbackPlanPanelProps) {
   const { t } = useTranslation('chat');
   if (!plan.available) return null;
@@ -70,6 +72,17 @@ export function RollbackPlanPanel({
             {t(plan.summaryKey, plan.summaryValues)}
           </p>
         </div>
+        {onDismiss && (
+          <button
+            type="button"
+            data-testid="chat-rollback-dismiss"
+            aria-label={t('composer.rollbackPlan.dismiss', 'Dismiss recovery assist')}
+            className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+            onClick={onDismiss}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       <div
