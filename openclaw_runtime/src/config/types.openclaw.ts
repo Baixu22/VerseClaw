@@ -429,6 +429,9 @@ export type RuntimeFeatureConfig = {
     /** Enable the Operator slice on the cron announce path (durable approval +
      *  bounded message effect + EffectReceipt + restart recovery). */
     operatorSliceEnabled?: boolean;
+    /** Explicit opt-in that lets the cron-policy actor auto-approve announce
+     *  intents (default deny; without this the slice rejects announces). */
+    cronAutoApprove?: boolean;
   };
 };
 

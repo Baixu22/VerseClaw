@@ -13,10 +13,25 @@ ownedPaths:
   - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/**
 touchedAreas:
   - harness/specs/**
+  - harness/src/**
   - scripts/**
+  - scripts/lib/**
+  - scripts/comms/**
   - docs/dev/unified-agent-system/runtime-convergence/**
-  - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/**
+  - docs/dev/Sustained-Development-Playbook.md
+  - artifacts/agent-engineering-acceptance/**
+  - artifacts/runtime-authority-convergence/**
   - .agent-workbench/task-forest/**
+  - openclaw_runtime/**
+  - tests/unit/**
+  - tests/e2e/**
+  - shared/**
+  - electron/**
+  - src/**
+  - .gitattributes
+  - .gitignore
+  - pnpm-lock.yaml
+  - tsconfig.node.json
 expectedUserBehavior:
   - External default behavior and product locks do not drift; internal runtime authority changes are limited to the separately accepted RC-00 through RC-08B packages.
   - The acceptance manifest records baseRef equal to the RC-01 acceptedBaseSha; its changedPaths equal git diff --name-only <acceptedBaseSha>..<candidateSha>.

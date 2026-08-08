@@ -16,7 +16,8 @@
   "source": {
     "permission": "Permission",
     "remote-task": "Remote Task",
-    "browser-task": "Browser Task"
+    "browser-task": "Browser Task",
+    "operator": "Operator"
   },
   "permissionSource": {
     "terminal": "Terminal",
@@ -58,6 +59,11 @@
     },
     "browserTask": {
       "waitingApproval": "Waiting for approval"
+    },
+    "operator": {
+      "approval_pending": "Waiting for decision",
+      "approved": "Approved",
+      "denied": "Denied"
     }
   },
   "partialError": {

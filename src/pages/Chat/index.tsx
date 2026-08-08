@@ -21,6 +21,7 @@ import {
 } from '@assistant-ui/react';
 import type { CompressionArtifact, KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHandoffResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
+import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
@@ -45,16 +46,16 @@ import { CompactionArtifactViewer } from './CompactionArtifactViewer';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
-import { RollbackPlanPanel } from './RollbackPlanPanel';
 import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
   type SessionContinuityErrorKind,
   type SessionContinuityRecommendation,
 } from './session-continuity';
-import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
+import { SessionActivityPanel } from './SessionActivityPanel';
+import { useSessionActivityStore } from '@/stores/session-activity';
+import { useSettingsStore } from '@/stores/settings';
 import { extractText, extractThinking, extractToolUse, normalizeMessageRole } from './message-utils';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
@@ -85,6 +86,7 @@ import {
 import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, type GeneratedFile } from '@/lib/generated-files';
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
@@ -94,7 +96,6 @@ import { Button } from '@/components/ui/button';
 import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { CheckpointsDialog } from '@/components/chat/CheckpointsDialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { FilePreviewTarget } from '@/components/file-preview/types';
@@ -195,24 +196,6 @@ function buildQuestionDirectoryTitle(message: RawMessage, fallback: string): str
 
 function hasUserFacingImageAttachments(msg: RawMessage): boolean {
   return (msg._attachedFiles ?? []).some((file) => file.mimeType.startsWith('image/'));
-}
-
-function buildKnowledgeDraftBody(messages: RawMessage[]): string {
-  const visibleTurns = messages
-    .filter((msg) => !isInternalMessage(msg))
-    .map((msg) => {
-      const role = normalizeMessageRole(msg.role);
-      if (role !== 'user' && role !== 'assistant') return null;
-      const text = extractText(msg).replace(/\n{3,}/g, '\n\n').trim();
-      if (!text) return null;
-      return { role, text };
-    })
-    .filter((entry): entry is { role: string; text: string } => entry != null)
-    .slice(-24);
-
-  return visibleTurns
-    .map((turn) => `### ${turn.role === 'user' ? 'User' : 'Assistant'}\n\n${turn.text}`)
-    .join('\n\n');
 }
 
 function generatedFileToTarget(file: GeneratedFile): FilePreviewTarget {
@@ -857,18 +840,21 @@ export function Chat() {
 
   const [knowledgeScope, setKnowledgeScope] = useState<WorkspaceKnowledgeScope>('none');
   const [knowledgeMode, setKnowledgeMode] = useState<KnowledgeInvocationMode>('suggest');
-  const [knowledgeDraftOpen, setKnowledgeDraftOpen] = useState(false);
-  const [knowledgeDraftTitle, setKnowledgeDraftTitle] = useState('');
-  const [knowledgeDraftBody, setKnowledgeDraftBody] = useState('');
-  const [knowledgeDraftApplying, setKnowledgeDraftApplying] = useState(false);
   const [knowledgeErrorAdvisory, setKnowledgeErrorAdvisory] = useState<KnowledgeErrorGuardAdvisory | null>(null);
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
-  const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
+  const sessionActivitySnapshot = useSessionActivityStore((state) => state.snapshots[currentSessionKey]);
+  const loadSessionActivity = useSessionActivityStore((state) => state.load);
+  const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
+  const sessionActivityAutoExpand = useSettingsStore((state) => state.sessionActivityAutoExpand);
+  const sessionActivityShowGit = useSettingsStore((state) => state.sessionActivityShowGit);
+  const sessionActivityShowCommands = useSettingsStore((state) => state.sessionActivityShowCommands);
+  const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
 
   useEffect(() => {
-    setTaskLedgerSummaryVisible(true);
-  }, [activeWorkspaceId, currentSessionKey]);
+    if (!currentSessionKey) return;
+    void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
+  }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -917,6 +903,9 @@ export function Chat() {
   const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
   const [questionDirectoryOpenSessionKey, setQuestionDirectoryOpenSessionKey] = useState<string | null>(null);
+  const [sessionActivityOpenOverrides, setSessionActivityOpenOverrides] = useState<Record<string, boolean>>({});
+  const [sessionActivitySheetOpen, setSessionActivitySheetOpen] = useState(false);
+  const [sessionActivityRetentionClock, setSessionActivityRetentionClock] = useState(() => Date.now());
   const [contextRange, setContextRange] = useState<WorkspaceContextRange | null>(null);
   const [liveUsage, setLiveUsage] = useState<LiveTokenUsage | null>(null);
   const [promptCacheStatus, setPromptCacheStatus] = useState<PromptCacheRiskAssessment | null>(null);
@@ -942,6 +931,14 @@ export function Chat() {
   const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    setSessionActivitySheetOpen(false);
+  }, [currentSessionKey, panelOpen]);
+  useEffect(() => {
+    if (sessionActivityRetentionMinutes === 0) return;
+    const timer = window.setInterval(() => setSessionActivityRetentionClock(Date.now()), 15_000);
+    return () => window.clearInterval(timer);
+  }, [sessionActivityRetentionMinutes]);
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
@@ -1321,52 +1318,6 @@ export function Chat() {
     void handleSendMessage(responseText);
   }, [handleSendMessage]);
 
-  const handleOpenRecoveryMemoryDraft = useCallback(() => {
-    const sessionLabel = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
-    const body = buildKnowledgeDraftBody(messages);
-    setKnowledgeDraftTitle(t('composer.rollbackPlan.memoryDraft.title', { session: sessionLabel }));
-    setKnowledgeDraftBody([
-      t('composer.rollbackPlan.memoryDraft.reviewNotice'),
-      '',
-      body.trim() || t('composer.rollbackPlan.memoryDraft.emptyBody', { sessionKey: currentSessionKey }),
-    ].join('\n'));
-    setKnowledgeDraftOpen(true);
-  }, [currentSessionKey, messages, sessionLabels, sessions, t]);
-
-  const handleApplyKnowledgeDraft = useCallback(async () => {
-    const title = knowledgeDraftTitle.trim();
-    const body = knowledgeDraftBody.trim();
-    if (!title || !body) {
-      toast.error(t('knowledgeDraft.invalid'));
-      return;
-    }
-    setKnowledgeDraftApplying(true);
-    try {
-      const draftResult = await hostApi.knowledge.createDraft({
-        title,
-        body,
-        type: 'synthesis',
-        sourceIds: [currentSessionKey],
-        sourceRefs: [{ id: currentSessionKey, kind: 'chat', label: title }],
-        createdBy: 'user',
-      });
-      if (!draftResult.success || !draftResult.draft) throw new Error(draftResult.error || t('knowledgeDraft.applyFailed'));
-      const proposalResult = await hostApi.knowledge.proposeChange({
-        operation: 'create',
-        draftId: draftResult.draft.id,
-        reason: t('knowledgeDraft.proposalReason'),
-        sources: [{ id: currentSessionKey, kind: 'chat', label: title }],
-      });
-      if (!proposalResult.success) throw new Error(proposalResult.error || t('knowledgeDraft.applyFailed'));
-      toast.success(t('knowledgeDraft.applied'));
-      setKnowledgeDraftOpen(false);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : String(err));
-    } finally {
-      setKnowledgeDraftApplying(false);
-    }
-  }, [currentSessionKey, knowledgeDraftBody, knowledgeDraftTitle, t]);
-
   const handleArtifactSessionStateChange = useCallback((patch: WorkspaceArtifactPanelState) => {
     if (!activeWorkspaceId) return;
     void saveWorkspaceState({
@@ -1456,45 +1407,6 @@ export function Chat() {
       },
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleOpenGitPanel = useCallback(() => {
-    openWorkspacePanel({ panel: 'review', view: 'changes' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'review' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleInterruptTerminal = useCallback(async () => {
-    openWorkspacePanel({ panel: 'terminal' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'terminal' },
-      },
-    });
-    try {
-      const status = await hostApi.terminal.status({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-      if (status.sessionId && status.status === 'running') {
-        const result = await hostApi.terminal.interrupt({ sessionId: status.sessionId });
-        if (!result.success) {
-          toast.error(result.error || t('composer.rollbackPlan.terminal.interruptFailed'));
-          return;
-        }
-        toast.success(t('composer.rollbackPlan.terminal.interrupted'));
-        return;
-      }
-      toast.message(t('composer.rollbackPlan.terminal.opened'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
-    }
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState, t]);
 
   const handleOpenTaskLedger = useCallback(() => {
     const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
@@ -1952,25 +1864,6 @@ export function Chat() {
   const continuityRecommendation = continuityPreflight.recommendation;
   const handoffDisabled = continuityPreflight.handoff.disabled;
   const forkDisabled = continuityPreflight.fork.disabled;
-  const rollbackPlan = useMemo(() => buildRollbackPlan({
-    activeRun: continuityRunActive,
-    gatewayAvailable,
-    queueDrainBusy,
-    compactionBusy,
-    handoffDisabled,
-    contextRange,
-    compactionStatus,
-    longTaskControlStatus,
-  }), [
-    compactionBusy,
-    compactionStatus,
-    contextRange,
-    continuityRunActive,
-    gatewayAvailable,
-    handoffDisabled,
-    longTaskControlStatus,
-    queueDrainBusy,
-  ]);
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -2384,18 +2277,46 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
-  const showTaskLedgerSummaryPanel = canShowChatSideRail
-    && !isEmpty
-    && !!activeWorkspaceId
-    && taskLedgerSummaryVisible;
-  const showRollbackPlanPanel = canShowChatSideRail
-    && hasRollbackPlanSidebarTrigger(rollbackPlan)
-    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
+  const mockModeActive = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('mock') === '1';
+  const visibleSessionActivitySnapshot = useMemo(
+    () => sessionActivitySnapshot
+      ? retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock)
+      : undefined,
+    [sessionActivityRetentionClock, sessionActivityRetentionMinutes, sessionActivitySnapshot],
+  );
+  const sessionActivityLevel = visibleSessionActivitySnapshot
+    ? classifySessionActivity(visibleSessionActivitySnapshot, {
+      showGit: sessionActivityShowGit,
+      showCommands: sessionActivityShowCommands,
+    })
+    : 'none';
+  const hasSessionActivityEntry = canShowChatSideRail
+    && sessionActivityPanelEnabled
+    && Boolean(visibleSessionActivitySnapshot)
+    && (!isEmpty || mockModeActive)
+    && sessionActivityLevel !== 'none';
+  const shouldAutoExpandSessionActivity = sessionActivityAutoExpand === 'active'
+    ? sessionActivityLevel === 'active' || sessionActivityLevel === 'attention'
+    : sessionActivityAutoExpand === 'attention' && sessionActivityLevel === 'attention';
+  const sessionActivityRailOpen = sessionActivityOpenOverrides[currentSessionKey]
+    ?? shouldAutoExpandSessionActivity;
+  const handleToggleSessionActivity = useCallback(() => {
+    setQuestionDirectoryOpenSessionKey(null);
+    setSessionActivityOpenOverrides((current) => ({
+      ...current,
+      [currentSessionKey]: !(current[currentSessionKey] ?? shouldAutoExpandSessionActivity),
+    }));
+  }, [currentSessionKey, shouldAutoExpandSessionActivity]);
+  const handleOpenSessionActivitySheet = useCallback(() => {
+    setQuestionDirectoryOpenSessionKey(null);
+    setSessionActivitySheetOpen(true);
+  }, []);
   const showChatAssistiveRail = canShowChatSideRail
     && chatAssistiveRailVisible
-    && !isEmpty
     && !questionDirectoryVisible
-    && (showTaskLedgerSummaryPanel || showRollbackPlanPanel);
+    && hasSessionActivityEntry
+    && sessionActivityRailOpen;
   const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
 
   useEffect(() => {
@@ -2648,6 +2569,11 @@ export function Chat() {
             questionDirectoryCount={questionDirectoryItems.length}
             onOpenSlashCommands={handleOpenSlashCommands}
             promptCacheStatus={promptCacheStatus}
+            sessionActivityAvailable={hasSessionActivityEntry && chatAssistiveRailVisible}
+            sessionActivityOpen={showChatAssistiveRail || sessionActivitySheetOpen}
+            sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
+            onToggleSessionActivity={handleToggleSessionActivity}
+            onOpenSessionActivity={handleOpenSessionActivitySheet}
             onToggleQuestionDirectory={() =>
               setQuestionDirectoryOpenSessionKey((openSessionKey) =>
                 openSessionKey === currentSessionKey ? null : currentSessionKey,
@@ -2692,19 +2618,6 @@ export function Chat() {
                     onPickFolder={handlePickWorkspaceFolder}
                     disabled={!isGatewayRunning}
                   />
-                  {showRollbackPlanPanel && (
-                    <RollbackPlanPanel
-                      plan={rollbackPlan}
-                      className="mx-auto w-full max-w-3xl"
-                      onPrepareHandoff={handlePrepareHandoff}
-                      onDrainQueue={handleDrainQueuedFollowup}
-                      onCompact={handleManualCompact}
-                      onOpenGit={handleOpenGitPanel}
-                      onOpenTaskLedger={handleOpenTaskLedger}
-                      onInterruptTerminal={handleInterruptTerminal}
-                      onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                    />
-                  )}
                 </>
               ) : (
                 <>
@@ -2882,34 +2795,18 @@ export function Chat() {
           {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
             <QuestionDirectory items={questionDirectoryItems} />
           )}
-          {showChatAssistiveRail && (
+          {showChatAssistiveRail && visibleSessionActivitySnapshot && (
             <aside
-            data-testid="chat-assistive-rail"
-            className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
-          >
-              {showTaskLedgerSummaryPanel && (
-                <TaskLedgerSummaryPanel
-                  workspaceId={activeWorkspace?.id}
-                  compact
-                  hideWhenEmpty
-                  className="w-full lg:w-full xl:w-full"
-                  onVisibilityChange={setTaskLedgerSummaryVisible}
-                />
-              )}
-              {showRollbackPlanPanel && (
-                <RollbackPlanPanel
-                  plan={rollbackPlan}
-                  compact
-                  className="w-full lg:w-full xl:w-full"
-                  onPrepareHandoff={handlePrepareHandoff}
-                  onDrainQueue={handleDrainQueuedFollowup}
-                  onCompact={handleManualCompact}
-                  onOpenGit={handleOpenGitPanel}
-                  onOpenTaskLedger={handleOpenTaskLedger}
-                  onInterruptTerminal={handleInterruptTerminal}
-                  onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                />
-              )}
+              data-testid="chat-assistive-rail"
+              className="hidden w-full shrink-0 flex-col gap-3 xl:flex xl:w-72"
+            >
+              <SessionActivityPanel
+                snapshot={visibleSessionActivitySnapshot}
+                compact
+                showGit={sessionActivityShowGit}
+                showCommands={sessionActivityShowCommands}
+                onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
+              />
             </aside>
           )}
 
@@ -2982,6 +2879,31 @@ export function Chat() {
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
       />
+      <Sheet
+        open={sessionActivitySheetOpen && hasSessionActivityEntry && chatAssistiveRailVisible}
+        onOpenChange={setSessionActivitySheetOpen}
+      >
+        <SheetContent
+          side="right"
+          className="w-[min(22rem,calc(100vw-1rem))] overflow-y-auto p-0 sm:max-w-sm xl:hidden [&_header]:pr-12"
+          data-testid="chat-session-activity-sheet"
+        >
+          <SheetTitle className="sr-only">{t('sessionActivity.title')}</SheetTitle>
+          <SheetDescription className="sr-only">{t('sessionActivity.description')}</SheetDescription>
+          {visibleSessionActivitySnapshot && (
+            <SessionActivityPanel
+              snapshot={visibleSessionActivitySnapshot}
+              className="min-h-full border-0 shadow-none"
+              showGit={sessionActivityShowGit}
+              showCommands={sessionActivityShowCommands}
+              onOpenRecovery={() => {
+                setSessionActivitySheetOpen(false);
+                navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`);
+              }}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
       <CompactionArtifactViewer
         open={compactionArtifactOpen}
         onOpenChange={setCompactionArtifactOpen}
@@ -3140,62 +3062,6 @@ export function Chat() {
           </aside>
         </>
       )}
-
-      <Dialog open={knowledgeDraftOpen} onOpenChange={setKnowledgeDraftOpen}>
-        <DialogContent
-          data-testid="knowledge-draft-dialog"
-          className="w-[min(720px,calc(100vw-2rem))] max-w-none border border-black/10 bg-surface-modal p-0 shadow-2xl dark:border-white/10"
-        >
-          <div className="space-y-5 p-6">
-            <div>
-              <DialogTitle className="font-serif text-2xl font-normal tracking-tight text-foreground">
-                {t('knowledgeDraft.title')}
-              </DialogTitle>
-              <DialogDescription className="mt-2 text-sm text-muted-foreground">
-                {t('knowledgeDraft.description')}
-              </DialogDescription>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="knowledge-draft-title">{t('knowledgeDraft.titleLabel')}</Label>
-              <Input
-                id="knowledge-draft-title"
-                data-testid="knowledge-draft-title"
-                value={knowledgeDraftTitle}
-                onChange={(event) => setKnowledgeDraftTitle(event.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="knowledge-draft-body">{t('knowledgeDraft.bodyLabel')}</Label>
-              <Textarea
-                id="knowledge-draft-body"
-                data-testid="knowledge-draft-body"
-                value={knowledgeDraftBody}
-                onChange={(event) => setKnowledgeDraftBody(event.target.value)}
-                className="min-h-[320px] resize-y bg-surface-input font-mono text-xs leading-relaxed"
-              />
-            </div>
-            <div className="flex items-center justify-end gap-3">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setKnowledgeDraftOpen(false)}
-                disabled={knowledgeDraftApplying}
-              >
-                {t('common:actions.cancel')}
-              </Button>
-              <Button
-                type="button"
-                data-testid="knowledge-draft-apply"
-                onClick={() => void handleApplyKnowledgeDraft()}
-                disabled={knowledgeDraftApplying || !knowledgeDraftTitle.trim() || !knowledgeDraftBody.trim()}
-              >
-                {knowledgeDraftApplying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('knowledgeDraft.apply')}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
     </div>
     </TooltipProvider>

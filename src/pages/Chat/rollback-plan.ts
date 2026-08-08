@@ -1,6 +1,7 @@
 import type { SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import type { WorkspaceContextRange } from '@shared/types/workspace';
+import type { GitRepositoryStatus } from '@shared/types/git';
 
 export type RollbackPlanActionKind =
   | 'checkpoint-handoff'
@@ -88,24 +89,32 @@ export type BuildRollbackPlanInput = {
   contextRange: WorkspaceContextRange | null;
   compactionStatus: SessionCompactionStatus | null;
   longTaskControlStatus: LongTaskControlStatus | null;
+  gitStatus?: GitRepositoryStatus | null;
+  activeTerminalCount?: number;
+  taskLedgerReviewCount?: number;
+  taskLedgerBlockedCount?: number;
+  recoveryFactsCount?: number;
+  checkpointAvailable?: boolean;
+  queueCount?: number;
+  canCompact?: boolean;
+  contextPressure?: 'low' | 'medium' | 'high' | null;
+  truncatedCount?: number;
 };
 
-export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
+export function deriveRecoveryRecommendations(input: BuildRollbackPlanInput): RollbackPlan {
   const actions: RollbackPlanAction[] = [];
   const checkpoint = input.longTaskControlStatus?.latestCheckpoint;
-  const queueCount = input.longTaskControlStatus?.queueCount ?? 0;
-  const pressure = input.compactionStatus?.pressure;
-  const truncated = input.compactionStatus?.truncatedMessageCount ?? input.contextRange?.truncatedMessageCount ?? 0;
-  const gitRecoveryPressure = Boolean(
-    input.activeRun
-    || checkpoint
-    || queueCount > 0
-    || input.compactionStatus?.canCompact
-    || pressure === 'high'
-    || truncated > 0,
-  );
+  const checkpointAvailable = Boolean(checkpoint || input.checkpointAvailable);
+  const queueCount = input.queueCount ?? input.longTaskControlStatus?.queueCount ?? 0;
+  const pressure = input.contextPressure ?? input.compactionStatus?.pressure;
+  const truncated = input.truncatedCount ?? input.compactionStatus?.truncatedMessageCount ?? input.contextRange?.truncatedMessageCount ?? 0;
+  const canCompact = input.canCompact ?? input.compactionStatus?.canCompact ?? false;
+  const gitRecoveryPressure = Boolean(input.gitStatus && (!input.gitStatus.clean || input.gitStatus.hasConflicts));
+  const hasActiveTerminal = (input.activeTerminalCount ?? 0) > 0;
+  const hasTaskLedgerPressure = (input.taskLedgerReviewCount ?? 0) > 0 || (input.taskLedgerBlockedCount ?? 0) > 0;
+  const hasRecoveryFacts = (input.recoveryFactsCount ?? 0) > 0;
 
-  if (checkpoint && !input.handoffDisabled) {
+  if (checkpointAvailable && !input.handoffDisabled) {
     const evidence = checkpointEvidenceCounts(checkpoint);
     const hasCheckpointEvidence = evidence.fileCount > 0 && evidence.toolCount > 0;
     actions.push({
@@ -114,7 +123,7 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
       detailKey: hasCheckpointEvidence
         ? 'composer.rollbackPlan.actions.checkpoint-handoff.detailEvidenceBacked'
         : 'composer.rollbackPlan.actions.checkpoint-handoff.detailNoEvidence',
-      detailValues: { trigger: checkpoint.trigger, ...evidence },
+      detailValues: { trigger: checkpoint?.trigger ?? 'runtime', ...evidence },
       risk: 'safe',
       command: 'handoff',
     });
@@ -131,7 +140,7 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     });
   }
 
-  if (!input.activeRun && input.compactionStatus?.canCompact) {
+  if (!input.activeRun && canCompact) {
     actions.push({
       kind: 'manual-compact',
       titleKey: 'composer.rollbackPlan.actions.manual-compact.title',
@@ -143,37 +152,45 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     });
   }
 
-  actions.push({
-    kind: 'terminal-control',
-    titleKey: 'composer.rollbackPlan.actions.terminal-control.title',
-    detailKey: 'composer.rollbackPlan.actions.terminal-control.detail',
-    risk: 'review',
-    command: 'interruptTerminal',
-  });
+  if (hasActiveTerminal) {
+    actions.push({
+      kind: 'terminal-control',
+      titleKey: 'composer.rollbackPlan.actions.terminal-control.title',
+      detailKey: 'composer.rollbackPlan.actions.terminal-control.detail',
+      risk: 'review',
+      command: 'interruptTerminal',
+    });
+  }
 
-  actions.push({
-    kind: 'review-git',
-    titleKey: 'composer.rollbackPlan.actions.review-git.title',
-    detailKey: 'composer.rollbackPlan.actions.review-git.detail',
-    risk: gitRecoveryPressure ? 'dangerous' : 'review',
-    command: 'openGit',
-  });
+  if (gitRecoveryPressure) {
+    actions.push({
+      kind: 'review-git',
+      titleKey: 'composer.rollbackPlan.actions.review-git.title',
+      detailKey: 'composer.rollbackPlan.actions.review-git.detail',
+      risk: input.gitStatus?.hasConflicts ? 'dangerous' : 'review',
+      command: 'openGit',
+    });
+  }
 
-  actions.push({
-    kind: 'task-ledger-review',
-    titleKey: 'composer.rollbackPlan.actions.task-ledger-review.title',
-    detailKey: 'composer.rollbackPlan.actions.task-ledger-review.detail',
-    risk: 'review',
-    command: 'openTaskLedger',
-  });
+  if (hasTaskLedgerPressure) {
+    actions.push({
+      kind: 'task-ledger-review',
+      titleKey: 'composer.rollbackPlan.actions.task-ledger-review.title',
+      detailKey: 'composer.rollbackPlan.actions.task-ledger-review.detail',
+      risk: 'review',
+      command: 'openTaskLedger',
+    });
+  }
 
-  actions.push({
-    kind: 'memory-review',
-    titleKey: 'composer.rollbackPlan.actions.memory-review.title',
-    detailKey: 'composer.rollbackPlan.actions.memory-review.detail',
-    risk: 'review',
-    command: 'createMemoryDraft',
-  });
+  if (hasRecoveryFacts) {
+    actions.push({
+      kind: 'memory-review',
+      titleKey: 'composer.rollbackPlan.actions.memory-review.title',
+      detailKey: 'composer.rollbackPlan.actions.memory-review.detail',
+      risk: 'review',
+      command: 'createMemoryDraft',
+    });
+  }
 
   if (input.activeRun) {
     actions.unshift({
@@ -189,7 +206,7 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     {
       kind: 'checkpoint',
       titleKey: 'composer.rollbackPlan.signals.checkpoint',
-      active: Boolean(checkpoint),
+      active: checkpointAvailable,
       risk: 'safe',
     },
     {
@@ -201,13 +218,13 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     {
       kind: 'context',
       titleKey: 'composer.rollbackPlan.signals.context',
-      active: Boolean(input.compactionStatus?.canCompact || pressure === 'high' || truncated > 0),
+      active: Boolean(canCompact || pressure === 'high' || truncated > 0),
       risk: 'review',
     },
     {
       kind: 'terminal',
       titleKey: 'composer.rollbackPlan.signals.terminal',
-      active: input.activeRun,
+      active: input.activeRun || hasActiveTerminal,
       risk: input.activeRun ? 'dangerous' : 'review',
     },
     {
@@ -219,13 +236,13 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     {
       kind: 'task-ledger',
       titleKey: 'composer.rollbackPlan.signals.taskLedger',
-      active: true,
+      active: hasTaskLedgerPressure,
       risk: 'review',
     },
     {
       kind: 'memory',
       titleKey: 'composer.rollbackPlan.signals.memory',
-      active: true,
+      active: hasRecoveryFacts,
       risk: 'review',
     },
   ];
@@ -238,8 +255,8 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
     { safe: 0, review: 0, dangerous: 0 },
   );
 
-  const available = input.gatewayAvailable || actions.length > 0;
-  const summaryKey = checkpoint
+  const available = actions.length > 0;
+  const summaryKey = checkpointAvailable
     ? 'composer.rollbackPlan.summary.checkpoint'
     : queueCount > 0
       ? 'composer.rollbackPlan.summary.queue'
@@ -247,8 +264,8 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
         ? 'composer.rollbackPlan.summary.truncated'
         : 'composer.rollbackPlan.summary.default';
   let summaryValues: Record<string, string | number> | undefined;
-  if (checkpoint) {
-    summaryValues = { trigger: checkpoint.trigger };
+  if (checkpointAvailable) {
+    summaryValues = { trigger: checkpoint?.trigger ?? 'runtime' };
   } else if (queueCount > 0) {
     summaryValues = { count: queueCount };
   } else if (truncated > 0) {
@@ -257,3 +274,6 @@ export function buildRollbackPlan(input: BuildRollbackPlanInput): RollbackPlan {
 
   return { available, summaryKey, summaryValues, riskCounts, signals, actions };
 }
+
+/** @deprecated Recovery recommendations belong to Settings; use deriveRecoveryRecommendations. */
+export const buildRollbackPlan = deriveRecoveryRecommendations;

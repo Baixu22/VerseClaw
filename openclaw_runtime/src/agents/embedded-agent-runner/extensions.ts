@@ -163,10 +163,13 @@ function readWorkingMemoryEnvelope(details: unknown):
 function buildContextBlockFactory(params: {
   sessionId?: string;
   sessionKey?: string;
+  runId?: string;
   injectionTurnId?: string;
   projectionFlags: ContextBlockFeatureFlags;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
+  /** Real source-runtime config: the RC-03 seal switch resolves from it. */
+  cfg?: OpenClawConfig | undefined;
 }): ExtensionFactory {
   const sessionId = params.sessionKey?.trim() || params.sessionId?.trim();
   let currentBlockStore: Pick<BlockStoreApi, "query" | "upsert"> | undefined =
@@ -211,7 +214,13 @@ function buildContextBlockFactory(params: {
         params.projectionFlags,
       );
     }
-    const finalized = finalizeContextOrchestratorTurn({ turnId, messages });
+    const finalized = finalizeContextOrchestratorTurn({
+      turnId,
+      messages,
+      sessionKey: params.sessionKey,
+      runId: params.runId,
+      cfg: params.cfg,
+    });
     if (!projectionObservabilityRecorded) {
       projectionObservabilityRecorded = true;
       const dcsChars = finalized.projection.lineage
@@ -573,6 +582,7 @@ export function buildEmbeddedExtensionFactories(params: {
   model: ProviderRuntimeModel | undefined;
   sessionId?: string;
   sessionKey?: string;
+  runId?: string;
   injectionTurnId?: string;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;

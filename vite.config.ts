@@ -32,10 +32,18 @@ export const localOpenClawRuntimeAliases = {
   '@openclaw/acp-core': resolve(__dirname, 'openclaw_runtime/packages/acp-core/src'),
   '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
 };
+// Dependencies of openclaw_runtime source that the main process bundle inlines
+// via localOpenClawRuntimeAliases. These must be bundled (not externalized):
+// the app root node_modules does not hoist them, so a runtime require() from
+// dist-electron/main would fail at startup with "Cannot find module".
+// @openclaw/fs-safe is imported via subpaths (config/advanced), hence prefix match.
 const bundledMainRuntimeDependencies = new Set([
   '@pierre/diffs',
   'json5',
   'shiki',
+  'kysely',
+  'tslog',
+  '@openclaw/fs-safe',
 ]);
 const alias = {
   '@': resolve(__dirname, 'src'),
@@ -111,6 +119,9 @@ export function isMainProcessExternal(id: string): boolean {
   if (id.startsWith('@/') || id.startsWith('@electron/') || id.startsWith('@shared/')) return false;
   if (isLocalOpenClawRuntimeImport(id)) return false;
   if (bundledMainRuntimeDependencies.has(id)) return false;
+  for (const pkg of bundledMainRuntimeDependencies) {
+    if (id.startsWith(pkg + '/')) return false;
+  }
   for (const pkg of extensionPackages) {
     if (id === pkg || id.startsWith(pkg + '/')) return false;
   }

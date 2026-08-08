@@ -10,6 +10,7 @@ import {
   Play,
   RefreshCw,
   ShieldCheck,
+  TerminalSquare,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -40,12 +41,14 @@ function parseSource(value: string | null): SourceFilter {
 function sourceIcon(source: InboxSource) {
   if (source === 'permission') return <ShieldCheck className="h-4 w-4" />;
   if (source === 'remote-task') return <MessageSquare className="h-4 w-4" />;
+  if (source === 'operator') return <TerminalSquare className="h-4 w-4" />;
   return <Globe2 className="h-4 w-4" />;
 }
 
 function statusKey(item: InboxItem): string {
   if (item.source === 'permission') return `status.permission.${item.status}`;
   if (item.source === 'remote-task') return `status.remoteTask.${item.status}`;
+  if (item.source === 'operator') return `status.operator.${item.status}`;
   return 'status.browserTask.waitingApproval';
 }
 
@@ -100,6 +103,7 @@ export function Inbox() {
     decidePermission,
     actOnRemoteTask,
     actOnBrowserTask,
+    decideOperator,
     previewRemoteTask,
   } = useInboxStore(useShallow((state) => ({
     items: state.items,
@@ -112,6 +116,7 @@ export function Inbox() {
     decidePermission: state.decidePermission,
     actOnRemoteTask: state.actOnRemoteTask,
     actOnBrowserTask: state.actOnBrowserTask,
+    decideOperator: state.decideOperator,
     previewRemoteTask: state.previewRemoteTask,
   })));
 
@@ -161,6 +166,8 @@ export function Inbox() {
         await decidePermission(item.id, action === 'approve' ? 'approved' : 'denied');
       } else if (item.source === 'remote-task') {
         await actOnRemoteTask(item.id, action as 'approve' | 'reject' | 'execute');
+      } else if (item.source === 'operator') {
+        await decideOperator(item.id, action as 'approve' | 'deny');
       } else {
         await actOnBrowserTask(item.id, action as 'approve-and-run' | 'reject');
       }
@@ -362,7 +369,9 @@ function InboxDetail({
     ? t(`permissionSource.${item.approval.source}`)
     : item.source === 'remote-task'
       ? t(`remoteSource.${item.task.source}`)
-      : item.task.profile;
+      : item.source === 'operator'
+        ? t('source.operator')
+        : item.task.profile;
 
   return (
     <div className="flex min-h-full flex-col">

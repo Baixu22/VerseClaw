@@ -39,7 +39,7 @@ import {
   type ContextCandidateTarget,
 } from "./context-candidate.js";
 import { isContextEnhancementKillSwitchEngaged } from "./enhancement-kill-switch.js";
-import { runRc03SealHook } from "./rc03-seal-hook.js";
+import { runRc03SealHook, resolveRc03SealState } from "./rc03-seal-hook.js";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
@@ -184,6 +184,9 @@ export function finalizeContextOrchestratorTurn(params: {
   sessionKey?: string;
   runId?: string;
   providerId?: string;
+  /** Real source-runtime config used to resolve the RC-03 seal switch when
+   *  rc03Seal.enabled is not explicitly given (default-off + kill switch). */
+  cfg?: unknown;
   rc03Seal?: {
     enabled?: boolean;
     database?: { env?: NodeJS.ProcessEnv; path?: string };
@@ -200,11 +203,14 @@ export function finalizeContextOrchestratorTurn(params: {
     messages: params.messages,
   });
   // RC-03 production wiring: at the pre-seal semantic producer convergence
-  // point, run the seal hook when the RC-03 flag is on. It enforces that all
+  // point, run the seal hook when the RC-03 flag is on (explicit override or
+  // resolved from the real source-runtime config). It enforces that all
   // DCS semantic producers are registered (zero-bypass), seals the immutable
   // ContextBundle, and persists a ContextReceipt/v1. When off, this is a no-op
   // and the legacy path is byte-identical.
-  if (params.rc03Seal?.enabled === true) {
+  const rc03Enabled =
+    params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled;
+  if (rc03Enabled) {
     runRc03SealHook(projected.projection, projected.messages, {
       enabled: true,
       killed: lineageByTurn.get(params.turnId)?.killSwitchEngaged,

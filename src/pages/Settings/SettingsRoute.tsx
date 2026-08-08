@@ -66,6 +66,9 @@ const settingsStorage = createPreloadableLazy<Record<string, never>>(() => impor
 const settingsArchived = createPreloadableLazy<Record<string, never>>(() => import('./sections/ArchivedSection').then((module) => ({
   default: module.ArchivedSection as ComponentType<Record<string, never>>,
 })));
+const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((module) => ({
+  default: module.RecoverySettingsSection as ComponentType<Record<string, never>>,
+})));
 
 const standaloneSections = {
   models: settingsModels.Component,
@@ -77,6 +80,7 @@ const standaloneSections = {
 } as const;
 const SettingsStorage = settingsStorage.Component;
 const SettingsArchived = settingsArchived.Component;
+const SettingsRecovery = settingsRecovery.Component;
 
 export type SettingsPresentation = 'page';
 
@@ -101,6 +105,7 @@ export function SettingsRoute() {
     billing: { title: t('navigation.billing.title'), description: t('navigation.billing.description') },
     storage: { title: t('navigation.storage.title'), description: t('navigation.storage.description') },
     archived: { title: t('navigation.archived.title'), description: t('navigation.archived.description') },
+    recovery: { title: t('navigation.recovery.title'), description: t('navigation.recovery.description') },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
   const meta = sectionMeta[currentSection];
@@ -138,6 +143,18 @@ export function SettingsRoute() {
         <SettingsPageChrome title={meta.title} description={meta.description}>
           <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
             <StandalonePage />
+          </div>
+        </SettingsPageChrome>
+      </Suspense>
+    );
+  }
+
+  if (currentSection === 'recovery') {
+    return (
+      <Suspense fallback={loadingShell}>
+        <SettingsPageChrome title={meta.title} description={meta.description}>
+          <div className="codex-settings-content animate-in fade-in duration-150 motion-reduce:animate-none">
+            <SettingsRecovery />
           </div>
         </SettingsPageChrome>
       </Suspense>

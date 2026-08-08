@@ -5,6 +5,7 @@ import { sessionsCompactionHandlers } from "./sessions.compaction.js";
 import { sessionsLifecycleHandlers } from "./sessions.lifecycle.js";
 import { sessionsReadHandlers } from "./sessions.read.js";
 import { sessionsRunControlHandlers } from "./sessions.run-control.js";
+import { sessionActivityHandlers } from "./session-activity.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 export const sessionsHandlers: GatewayRequestHandlers = {
@@ -12,4 +13,5 @@ export const sessionsHandlers: GatewayRequestHandlers = {
   ...sessionsCompactionHandlers,
   ...sessionsLifecycleHandlers,
   ...sessionsRunControlHandlers,
+  ...sessionActivityHandlers,
 };

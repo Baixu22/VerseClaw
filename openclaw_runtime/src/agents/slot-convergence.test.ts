@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   assertSingleContextEngineSlot,
+  buildSlotMechanismCensus,
   classifySlotMechanisms,
+  enforceSlotConvergenceForConfig,
   RC07_CONTEXT_MECHANISMS,
   RC07_MEMORY_MECHANISMS,
   resolveActiveMemorySlotOwner,
@@ -80,5 +82,58 @@ describe('RC-07 memory/context slot convergence', () => {
     for (const m of [RC07_MEMORY_MECHANISMS.find((x) => x.id === 'vtoken-packer'), RC07_MEMORY_MECHANISMS.find((x) => x.id === 'agent-map')]) {
       expect(m?.flagOffZeroQueryWrite).toBe(true);
     }
+  });
+
+  it('census is derived from REAL sources (registered plugins + engine registry + MemoryStore binding)', () => {
+    // Simulate the real registry inputs: the plugin registry reports exactly
+    // the mechanisms that exist, and the contextEngine registry reports the
+    // registered engines. The census follows the live input, not the table.
+    const census = buildSlotMechanismCensus({
+      registeredPluginIds: ['memory-core', 'vtoken-packer', 'agent-map', 'sekb-governance', 'working-context'],
+      contextEngineIds: ['context-runtime-kit', 'dcs-assembler', 'working-context-query', 'legacy-context-engine'],
+      memoryStoreConfigured: true,
+    });
+    expect(census.parallelMemoryWriters).toBe(0);
+    expect(census.memory.filter((m) => m.mayWriteMemory)).toHaveLength(1);
+    expect(census.memory.find((m) => m.id === 'memory-core')?.role).toBe('store-owner');
+    expect(census.context.filter((c) => c.isContextEngineSlot)).toHaveLength(1);
+    expect(census.context.find((c) => c.isContextEngineSlot)?.id).toBe('context-runtime-kit');
+
+    // A second memory writer reported by the registry is NOT granted write
+    // capability by the census: the slot owner stays the single writer.
+    const withImpostor = buildSlotMechanismCensus({
+      registeredPluginIds: ['memory-core', 'rogue-memory-writer'],
+      contextEngineIds: [],
+      memoryStoreConfigured: true,
+    });
+    expect(withImpostor.memory.filter((m) => m.mayWriteMemory)).toHaveLength(1);
+    expect(withImpostor.parallelMemoryWriters).toBe(0);
+
+    // MemoryStore not configured: zero writers (no owner can persist).
+    const unbound = buildSlotMechanismCensus({
+      registeredPluginIds: ['memory-core'],
+      contextEngineIds: [],
+      memoryStoreConfigured: false,
+    });
+    expect(unbound.memory.filter((m) => m.mayWriteMemory)).toHaveLength(0);
+  });
+
+  it('enforceSlotConvergenceForConfig fails closed on non-owner slots', () => {
+    const ok = enforceSlotConvergenceForConfig({
+      memorySlotId: 'memory-core',
+      contextEngineId: 'context-runtime-kit',
+      crkEnabled: true,
+    });
+    expect(ok.ok).toBe(true);
+    expect(ok.errors).toEqual([]);
+
+    // Non-owner memory slot + second context engine -> rejected.
+    const bad = enforceSlotConvergenceForConfig({
+      memorySlotId: 'vtoken-packer',
+      contextEngineId: 'legacy-context-engine',
+      crkEnabled: false,
+    });
+    expect(bad.ok).toBe(false);
+    expect(bad.errors.length).toBeGreaterThanOrEqual(2);
   });
 });

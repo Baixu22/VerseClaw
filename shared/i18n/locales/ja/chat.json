@@ -25,6 +25,23 @@
     "brainstorming": "マルチエージェント並列実行",
     "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
+  "sessionActivity": {
+    "title": "セッション状態",
+    "description": "この会話のランタイム、タスク、Git、サブエージェント、ターミナルのリアルタイム状態。",
+    "openRecovery": "セッション復旧を開く",
+    "duration": "経過時間",
+    "notAvailable": "利用不可",
+    "sections": { "session": "セッション", "git": "ワークスペース Git", "tasks": "実行中のタスク", "subagents": "サブエージェント", "terminals": "ターミナル", "continuity": "継続性" },
+    "status": { "idle": "待機中", "running": "実行中", "waiting_approval": "承認待ち", "completed": "完了", "failed": "失敗", "aborted": "中止" },
+    "git": { "detached": "デタッチ HEAD", "changes": "{{count}} 件の変更", "conflicts": "競合" },
+    "taskKinds": { "mission": "ミッション", "taskLoop": "タスクループ", "clawGraph": "ClawGraph", "taskLedger": "タスク台帳" },
+    "taskStatus": { "queued": "待機中", "running": "実行中", "review": "レビュー", "blocked": "ブロック中", "completed": "完了", "failed": "失敗", "aborted": "中止" },
+    "subagents": { "unknown": "エージェント" },
+    "subagentStatus": { "started": "実行中", "completed": "完了", "error": "エラー", "aborted": "中止", "verified": "検証済み" },
+    "terminals": { "interactive": "対話型ターミナル", "agentCommand": "エージェントコマンド", "webPreview": "Web プレビューサーバー" },
+    "terminalStatus": { "idle": "待機中", "starting": "起動中", "running": "実行中", "exited": "終了", "blocked": "ブロック中", "completed": "完了", "error": "エラー" },
+    "continuity": { "queue": "{{count}} 件のフォローアップが待機中", "context": "コンテキスト負荷: {{pressure}}", "checkpoint": "復旧チェックポイントあり", "pressure": { "low": "低", "medium": "中", "high": "高" } }
+  },
   "noLogs": "（ログはまだありません）",
   "scrollToLatest": "最下部に戻る",
   "loadMoreHistory": "以前のメッセージを読み込む",

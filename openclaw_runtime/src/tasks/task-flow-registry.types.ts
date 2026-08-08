@@ -73,6 +73,8 @@ export type TaskFlowRecord = {
   blockedSummary?: string;
   stateJson?: JsonValue;
   waitJson?: JsonValue;
+  /** Delivery projection persisted on the same row as the lifecycle transition. */
+  deliveryState?: string;
   cancelRequestedAt?: number;
   createdAt: number;
   updatedAt: number;

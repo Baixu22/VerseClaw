@@ -368,6 +368,9 @@ export function handleRuntimeEventState(
             set({ streamingText: '', streamingMessage: null, pendingFinal: true });
             get().loadHistory();
           }
+          // P0-2: the active run is over; auto-send any messages the user queued
+          // while it was running instead of silently dropping them.
+          get().drainPendingMessages();
           break;
         }
         case 'error': {
@@ -419,6 +422,8 @@ export function handleRuntimeEventState(
               errorMsg,
               normalizeRawRuntimeEvent(event, runId),
             );
+            // P0-2: the active run ended in an error; send any queued messages.
+            get().drainPendingMessages();
           };
 
           if (recoverable) {
@@ -447,6 +452,8 @@ export function handleRuntimeEventState(
             lastUserMessageAt: null,
             pendingToolImages: [],
           });
+          // P0-2: the run was aborted; send any queued messages.
+          get().drainPendingMessages();
           break;
         }
         default: {

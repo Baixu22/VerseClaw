@@ -208,6 +208,7 @@ import type {
   GithubPrViewResult,
   GithubRepoResult,
   HostApiContract,
+  SessionActivitySnapshotPayload,
   ImageGenerationSettingsPayload,
   KnowledgeApplyDraftPayload,
   KnowledgeApplyDraftResult,
@@ -429,6 +430,7 @@ import type {
   WorkspaceFolderRenamePayload,
   WorkspaceSaveStatePayload,
   WorkspaceTerminalOpenPayload,
+  WorkspaceTerminalListPayload,
   WorkspaceTerminalResizePayload,
   WorkspaceTerminalRunPayload,
   WorkspaceTerminalSessionPayload,
@@ -806,6 +808,10 @@ export const hostApi = {
     interrupt: (input: WorkspaceTerminalSessionPayload) => invokeHost('terminal', 'interrupt', input),
     close: (input: WorkspaceTerminalSessionPayload) => invokeHost('terminal', 'close', input),
     status: (input?: WorkspaceTerminalStatusPayload) => invokeHost('terminal', 'status', input),
+    list: (input?: WorkspaceTerminalListPayload) => invokeHost('terminal', 'list', input),
+  },
+  sessionActivity: {
+    snapshot: (input: SessionActivitySnapshotPayload) => invokeHost('sessionActivity', 'snapshot', input),
   },
   git: {
     capabilities: (): Promise<GitCapabilitiesResult> => invokeHost('git', 'capabilities'),

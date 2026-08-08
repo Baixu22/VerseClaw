@@ -3,6 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { TSchema } from "typebox";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { AnyAgentTool } from "./tools/common.js";
+import type { McpHealthVerdict, TransportType } from "./tool-convergence.js";
 
 /** Materialized MCP tools plus diagnostics and cleanup handle for one run. */
 export type BundleMcpToolRuntime = {
@@ -17,6 +18,14 @@ export type McpServerCatalog = {
   safeServerName?: string;
   launchSummary: string;
   toolCount: number;
+  /** The transport that actually backed the SDK handshake for this server. */
+  transportType?: TransportType;
+  /**
+   * RC-08A health verdict for this server. Connected requires the real SDK
+   * initialize handshake; configuration presence or an HTTP GET alone is never
+   * connected. Omitted only when the server never produced a catalog entry.
+   */
+  health?: McpHealthVerdict;
   resources?: {
     listChanged?: boolean;
   };

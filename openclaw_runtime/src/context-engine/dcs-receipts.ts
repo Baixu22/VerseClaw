@@ -5,6 +5,7 @@
 // attempt/model-call/wire-attempt identity; observational write failure never
 // changes send behavior but must fail the RC-03 acceptance run.
 import type {
+  ReceiptBudget,
   ReceiptContent,
   ReceiptIdentity,
   PutReceiptInput,
@@ -14,6 +15,27 @@ import type { CompilePlan } from './compile-plan.js';
 
 export const CONTEXT_RECEIPT_SCHEMA = 'ContextReceipt/v1' as const;
 export const WIRE_RECEIPT_SCHEMA = 'WireReceipt/v1' as const;
+
+/** RC-02 typed canonical input: parse a JSON budget summary into the typed
+ *  ReceiptBudget; anything that does not match the token-budget shape is
+ *  omitted instead of being persisted raw. */
+function parseBudgetSummary(value: string | undefined): ReceiptBudget | undefined {
+  if (value === undefined) return undefined;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value) as unknown;
+  } catch {
+    return undefined;
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return undefined;
+  const candidate = parsed as Record<string, unknown>;
+  if (candidate.unit !== 'tokens') return undefined;
+  const inputLimit = candidate.inputLimit;
+  const outputLimit = candidate.outputLimit;
+  if (typeof inputLimit !== 'number' || !Number.isSafeInteger(inputLimit) || inputLimit < 0) return undefined;
+  if (typeof outputLimit !== 'number' || !Number.isSafeInteger(outputLimit) || outputLimit < 0) return undefined;
+  return { unit: 'tokens', inputLimit, outputLimit };
+}
 
 export function buildContextReceiptInput(input: {
   plan: CompilePlan;
@@ -30,7 +52,7 @@ export function buildContextReceiptInput(input: {
     correlationDigest,
     selected: selectedRefs ?? bundle.selectedRefs,
     omitted: omittedRefs ?? bundle.omittedRefs,
-    budget: budget ?? bundle.budgetSummary,
+    budget: parseBudgetSummary(budget) ?? parseBudgetSummary(bundle.budgetSummary),
     policyDigest: plan.policyDigest,
   };
   return {

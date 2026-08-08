@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { areBundledPluginsDisabled, resolveBundledPluginsDir } from "../plugins/bundled-dir.js";
 import {
-  getCachedPluginSourceModuleLoader,
+  getCachedPluginModuleLoader,
   type PluginModuleLoaderCache,
 } from "../plugins/plugin-module-loader-cache.js";
 import { resolveLoaderPackageRoot } from "../plugins/sdk-alias.js";
@@ -118,12 +118,17 @@ let facadeActivationCheckRuntimeModule: FacadeActivationCheckRuntimeModule | und
 const facadeActivationCheckRuntimeLoaders: PluginModuleLoaderCache = new Map();
 
 function getFacadeActivationCheckRuntimeSourceLoader(modulePath: string) {
-  return getCachedPluginSourceModuleLoader({
+  // The runtime is loaded as TS source in dev/test and as a built .js chunk in
+  // dist. Its source form imports workspace packages (@openclaw/model-catalog-core,
+  // @openclaw/normalization-core, ...), so the source loader must resolve the
+  // default alias map (same as facade-loader) instead of an empty map, or jiti
+  // cannot resolve those imports in a source checkout.
+  return getCachedPluginModuleLoader({
     cache: facadeActivationCheckRuntimeLoaders,
     modulePath,
     importerUrl: import.meta.url,
     loaderFilename: import.meta.url,
-    aliasMap: {},
+    preferBuiltDist: true,
   });
 }
 
