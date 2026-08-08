@@ -1,5 +1,7 @@
 # VerseShell、VerseToken、Coding 与 DCS/Memory 能力融合审计和路线图
 
+> **2026-08-02 收敛候选通知**：本文是历史能力审计，不再是未来实施路线真源。候选路线为 `docs/dev/unified-agent-system/runtime-convergence/README.md`；Task Forest proposal 应用前不授权新实现，且禁止从本文恢复新的 Runtime、Memory、Graph、Protocol 或 Telemetry authority。
+
 > 状态：`research-complete / architecture-recommendation`
 >
 > 审计日期：2026-07-27
