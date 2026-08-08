@@ -975,6 +975,7 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
+  const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   useEffect(() => {
@@ -1569,6 +1570,10 @@ export function Chat() {
       : text;
     handleComposerDraftChange(nextDraft);
   }, [composerDraft, handleComposerDraftChange]);
+
+  const handleOpenSlashCommands = useCallback(() => {
+    setComposerSlashRequest((value) => value + 1);
+  }, []);
 
   const handleQuoteSelection = useCallback((text: string) => {
     const clipped = text.replace(/\s+/g, ' ').trim().slice(0, 1200);
@@ -2751,6 +2756,7 @@ export function Chat() {
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
             onOpenSessionActivity={handleOpenSessionActivitySheet}
+            onOpenSlashCommands={handleOpenSlashCommands}
           />
         </div>
       </div>
@@ -3098,6 +3104,7 @@ export function Chat() {
         messageCount={messages.length}
         hero={isEmpty}
         draftValue={composerDraft}
+        slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}

@@ -122,7 +122,7 @@ describe('workspace session helpers', () => {
       state: { activeTopicId: null },
     });
     expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1);
-    expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8');
+    expect(chatState.resetSessionView).toHaveBeenCalledWith('agent:reviewer:session-1711111111111-4fzyo8', { deferSessionEntry: true });
     expect(chatState.newSession).not.toHaveBeenCalled();
   });
 

@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const switchWorkspace = vi.fn();
@@ -48,9 +50,15 @@ beforeEach(() => {
   };
 });
 
+// The picker renders a Tooltip for the workspace path (mirrors the real Chat
+// tree, where the component sits inside a TooltipProvider), so tests wrap it.
+function renderPicker(ui: ReactNode) {
+  return render(<TooltipProvider>{ui}</TooltipProvider>);
+}
+
 describe('WelcomeProjectPicker', () => {
   it('names the active workspace on the trigger and keeps the menu closed until asked', () => {
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
 
     const trigger = screen.getByTestId('welcome-project-trigger');
     expect(trigger).toHaveTextContent('ClawX');
@@ -59,7 +67,7 @@ describe('WelcomeProjectPicker', () => {
   });
 
   it('switches workspace on selection and closes', () => {
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     expect(screen.getByTestId('welcome-project-menu')).toBeTruthy();
@@ -73,7 +81,7 @@ describe('WelcomeProjectPicker', () => {
   });
 
   it('does not re-switch when the active workspace is picked again', () => {
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     fireEvent.click(screen.getAllByTestId('welcome-project-item')[0]);
@@ -83,17 +91,16 @@ describe('WelcomeProjectPicker', () => {
   });
 
   it('shows the workspace path in each shared dropdown row', () => {
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     const rows = screen.getAllByTestId('welcome-project-item');
-    expect(rows[0]).toHaveAttribute('title', 'D:\\work\\ws-clawx');
     expect(rows[0]).toHaveTextContent('D:\\work\\ws-clawx');
     expect(screen.queryByPlaceholderText('welcome.projectSearch')).toBeNull();
   });
 
   it('closes on Escape', () => {
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     expect(screen.getByTestId('welcome-project-menu')).toBeTruthy();
@@ -104,13 +111,13 @@ describe('WelcomeProjectPicker', () => {
 
   it('offers the folder picker only when a handler is supplied', () => {
     const onPickFolder = vi.fn();
-    const { rerender } = render(<WelcomeProjectPicker onPickFolder={onPickFolder} />);
+    const { rerender } = renderPicker(<WelcomeProjectPicker onPickFolder={onPickFolder} />);
 
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     fireEvent.click(screen.getByTestId('welcome-project-pick-folder'));
     expect(onPickFolder).toHaveBeenCalledTimes(1);
 
-    rerender(<WelcomeProjectPicker />);
+    rerender(<TooltipProvider><WelcomeProjectPicker /></TooltipProvider>);
     fireEvent.click(screen.getByTestId('welcome-project-trigger'));
     expect(screen.queryByTestId('welcome-project-pick-folder')).toBeNull();
   });
@@ -119,7 +126,7 @@ describe('WelcomeProjectPicker', () => {
     const active = makeProfile({ id: 'ws-raw', rootPath: 'D:\\work\\raw-folder' });
     state = { ...state, profiles: [active], activeWorkspace: active, activeWorkspaceId: 'ws-raw' };
 
-    render(<WelcomeProjectPicker />);
+    renderPicker(<WelcomeProjectPicker />);
     expect(screen.getByTestId('welcome-project-trigger')).toHaveTextContent('raw-folder');
   });
 });

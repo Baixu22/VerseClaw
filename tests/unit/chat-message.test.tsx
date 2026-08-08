@@ -1,7 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import type { RawMessage } from '@/stores/chat';
+
+// ChatMessage renders Tooltip for the copy / interrupt affordances (added with
+// the Codex-style polish pass), so tests must render inside a TooltipProvider
+// the way the real Chat tree does.
+function renderMessage(ui: ReactNode) {
+  return render(<TooltipProvider>{ui}</TooltipProvider>);
+}
 
 vi.mock('@/lib/file-preview-client', () => ({
   readBinaryFile: vi.fn(),
@@ -21,7 +30,7 @@ vi.mock('@/lib/file-preview-client', () => ({
 
 describe('ChatMessage attachment dedupe', () => {
   it('renders the assistant avatar in a fully clipped stable slot', () => {
-    render(
+    renderMessage(
       <ChatMessage
         message={{ id: 'assistant-avatar', role: 'assistant', content: 'Avatar check' }}
       />,
@@ -50,7 +59,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         suppressProcessAttachments
@@ -80,7 +89,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         suppressProcessAttachments
@@ -106,7 +115,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(<ChatMessage message={message} />);
+    renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('image-preview-loading')).toBeInTheDocument();
     expect(screen.queryByTestId('image-preview-unavailable')).not.toBeInTheDocument();
@@ -129,7 +138,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(<ChatMessage message={message} />);
+    renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('image-preview-unavailable')).toBeInTheDocument();
     expect(screen.queryByTestId('image-preview-loading')).not.toBeInTheDocument();
@@ -151,7 +160,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         suppressProcessAttachments
@@ -167,7 +176,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: '已生成 /workspace/demo.html',
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(await screen.findByText('demo.html')).toBeInTheDocument();
   });
@@ -188,7 +197,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(screen.getByText('Coder has finished the analysis, here are the conclusions.')).toBeInTheDocument();
     expect(screen.queryByText('CHECKLIST.md')).not.toBeInTheDocument();
@@ -210,7 +219,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(screen.getByText('SKILL.md')).toBeInTheDocument();
   });
@@ -239,7 +248,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         suppressProcessAttachments
@@ -256,7 +265,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: '已生成测试 PDF 文件： 测试PDF文件.pdf 位置： `/Users/zhonghaolu/.openclaw/workspace/测试PDF文件.pdf`',
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(await screen.findByText('测试PDF文件.pdf')).toBeInTheDocument();
   });
@@ -267,7 +276,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: '名称： open-eastmoney\n位置： ~/.openclaw/skills/open-eastmoney\n校验结果：通过',
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(await screen.findByText('open-eastmoney')).toBeInTheDocument();
     expect(screen.getByText('文件夹')).toBeInTheDocument();
@@ -279,7 +288,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: String.raw`位置： C:\Users\张三\.openclaw\skills\打开东方财富`,
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     expect(await screen.findByText('打开东方财富')).toBeInTheDocument();
     expect(screen.getByText('文件夹')).toBeInTheDocument();
@@ -292,7 +301,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: '位置： ~/.openclaw/skills/open-baidu\nMarkdown 文件： ~/.openclaw/skills/open-baidu/SKILL.md',
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments onOpenFile={onOpenFile} />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments onOpenFile={onOpenFile} />);
 
     expect(await screen.findByText('open-baidu')).toBeInTheDocument();
     expect(await screen.findByText('SKILL.md')).toBeInTheDocument();
@@ -312,7 +321,7 @@ describe('ChatMessage attachment dedupe', () => {
       content: '不存在的文件： ~/.openclaw/skills/missing-skill/SKILL.md',
     };
 
-    render(<ChatMessage message={message} suppressProcessAttachments />);
+    renderMessage(<ChatMessage message={message} suppressProcessAttachments />);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(screen.queryByText('SKILL.md')).not.toBeInTheDocument();
@@ -334,7 +343,7 @@ describe('ChatMessage attachment dedupe', () => {
       ],
     };
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         suppressProcessAttachments
@@ -351,7 +360,7 @@ describe('ChatMessage LaTeX rendering', () => {
       role: 'assistant',
       content: 'Mass-energy equivalence: $E=mc^2$ is famous.',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     expect(container.querySelector('.katex')).not.toBeNull();
   });
 
@@ -360,7 +369,7 @@ describe('ChatMessage LaTeX rendering', () => {
       role: 'assistant',
       content: 'Definite integral:\n\n$$\n\\int_0^1 x\\,dx = \\frac{1}{2}\n$$\n',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     expect(container.querySelector('.katex-display')).not.toBeNull();
   });
 
@@ -369,7 +378,7 @@ describe('ChatMessage LaTeX rendering', () => {
       role: 'assistant',
       content: 'Quadratic formula: \\(x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}\\).',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     expect(container.querySelector('.katex')).not.toBeNull();
     expect(container.querySelector('.katex-display')).toBeNull();
   });
@@ -379,7 +388,7 @@ describe('ChatMessage LaTeX rendering', () => {
       role: 'assistant',
       content: 'Sum formula:\n\n\\[\\sum_{i=1}^n i = \\frac{n(n+1)}{2}\\]',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     expect(container.querySelector('.katex-display')).not.toBeNull();
   });
 
@@ -388,7 +397,7 @@ describe('ChatMessage LaTeX rendering', () => {
       role: 'assistant',
       content: 'Code sample:\n\n```\nprintf("\\(hello\\)")\n```\n',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     expect(container.textContent).toContain('\\(hello\\)');
     expect(container.querySelector('.katex')).toBeNull();
   });
@@ -405,7 +414,7 @@ describe('ChatMessage word wrapping', () => {
       role: 'assistant',
       content: 'The neural network response should wrap at word boundaries.',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const prose = container.querySelector('.prose');
     expect(prose).not.toBeNull();
     expect(prose?.classList.contains('break-all')).toBe(false);
@@ -417,7 +426,7 @@ describe('ChatMessage word wrapping', () => {
       role: 'user',
       content: 'A user-typed sentence that should also wrap by words, not characters.',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const paragraph = container.querySelector('p.whitespace-pre-wrap');
     expect(paragraph).not.toBeNull();
     expect(paragraph?.classList.contains('break-all')).toBe(false);
@@ -436,7 +445,7 @@ describe('ChatMessage word wrapping', () => {
       role: 'assistant',
       content: 'Use `someVeryLongIdentifierNameThatShouldStillBreakAnywhere` here.',
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const inlineCode = container.querySelector('.prose code');
     expect(inlineCode).not.toBeNull();
     expect(inlineCode?.closest('.codex-markdown')).not.toBeNull();
@@ -454,7 +463,7 @@ describe('ChatMessage word wrapping', () => {
       role: 'assistant',
       content: ['Gateway log:', '', '```', longLine, '```'].join('\n'),
     };
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const codeBlock = container.querySelector('.prose pre');
     expect(codeBlock).not.toBeNull();
     expect(codeBlock?.classList.contains('whitespace-pre-wrap')).toBe(true);
@@ -469,7 +478,7 @@ describe('ChatMessage reply styling', () => {
       content: 'Direct Markdown reply with **bold** text.',
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const prose = container.querySelector('.prose');
     expect(prose).not.toBeNull();
     expect(prose?.classList.contains('rounded-2xl')).toBe(false);
@@ -484,7 +493,7 @@ describe('ChatMessage reply styling', () => {
       content: 'Keep the prompt bubble.',
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
     const bubble = container.querySelector('[data-testid="chat-user-message-bubble"]');
     expect(bubble).not.toBeNull();
     expect(bubble?.classList.contains('rounded-2xl')).toBe(true);
@@ -529,7 +538,7 @@ describe('ChatMessage image copy', () => {
       ],
     };
 
-    render(<ChatMessage message={message} />);
+    renderMessage(<ChatMessage message={message} />);
 
     fireEvent.click(screen.getByRole('button'));
     await vi.waitFor(() => {
@@ -562,7 +571,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('chat-tool-ui-plan')).toBeInTheDocument();
     expect(screen.getByText('Implementation plan')).toBeInTheDocument();
@@ -592,7 +601,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ],
     } as RawMessage;
 
-    render(
+    renderMessage(
       <ChatMessage
         message={message}
         onSubmitInteractionResponse={onSubmit}
@@ -633,7 +642,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('chat-tool-ui-plan')).toHaveTextContent('Relaxed rollout');
     expect(screen.getByTestId('chat-tool-ui-option-list')).toHaveTextContent('Fallback choice');
@@ -657,7 +666,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('chat-tool-ui-plan')).toHaveTextContent('Plan');
     expect(screen.getByText('Adapt the Tool UI parser')).toBeInTheDocument();
@@ -677,7 +686,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    render(<ChatMessage message={message} />);
+    renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('chat-tool-ui-question-flow')).toHaveTextContent('Which format should Verse Claw use when the model pauses?');
     expect(screen.getByText('Structured cards')).toBeInTheDocument();
@@ -696,7 +705,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    render(<ChatMessage message={message} />);
+    renderMessage(<ChatMessage message={message} />);
 
     expect(screen.getByTestId('chat-tool-ui-preferences-panel')).toHaveTextContent('Preferences');
     expect(screen.getByText('Rich cards')).toBeInTheDocument();
@@ -716,7 +725,7 @@ describe('ChatMessage Tool UI rendering', () => {
       ].join('\n'),
     };
 
-    const { container } = render(<ChatMessage message={message} />);
+    const { container } = renderMessage(<ChatMessage message={message} />);
 
     expect(screen.queryByTestId('chat-tool-ui-plan')).not.toBeInTheDocument();
     expect(container).toHaveTextContent('"todos"');

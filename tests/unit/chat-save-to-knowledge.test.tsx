@@ -147,6 +147,9 @@ vi.mock('@/lib/host-api', () => ({
     git: {
       status: vi.fn(async () => ({ success: true, status: null })),
     },
+    sessionActivity: {
+      snapshot: vi.fn(async () => ({ success: true, snapshot: null })),
+    },
   },
 }));
 
