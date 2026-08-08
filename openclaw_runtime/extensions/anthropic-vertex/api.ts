@@ -64,10 +64,11 @@ export function createAnthropicVertexStreamFn(
   baseURL?: string,
   deps?: AnthropicVertexStreamDeps,
 ): StreamFn {
-  const streamFnPromise = loadStreamRuntimeModule().then((runtime) =>
-    runtime.createAnthropicVertexStreamFn(projectId, region, baseURL, deps),
-  );
+  let streamFnPromise: Promise<StreamFn> | null = null;
   return async (model, context, options) => {
+    streamFnPromise ??= loadStreamRuntimeModule().then((runtime) =>
+      runtime.createAnthropicVertexStreamFn(projectId, region, baseURL, deps),
+    );
     const streamFn = await streamFnPromise;
     return streamFn(model, context, options);
   };
@@ -79,10 +80,11 @@ export function createAnthropicVertexStreamFnForModel(
   env: NodeJS.ProcessEnv = process.env,
   deps?: AnthropicVertexStreamDeps,
 ): StreamFn {
-  const streamFnPromise = loadStreamRuntimeModule().then((runtime) =>
-    runtime.createAnthropicVertexStreamFnForModel(model, env, deps),
-  );
+  let streamFnPromise: Promise<StreamFn> | null = null;
   return async (...args) => {
+    streamFnPromise ??= loadStreamRuntimeModule().then((runtime) =>
+      runtime.createAnthropicVertexStreamFnForModel(model, env, deps),
+    );
     const streamFn = await streamFnPromise;
     return streamFn(...args);
   };
