@@ -6,11 +6,11 @@ import {
   normalizeChecksum,
   normalizeResourceId,
   normalizeSelector,
-} from '../../../../shared/types/context-runtime-kit';
+} from '../../../../shared/types/context-runtime-kit.js';
 import type {
   CvkCompiledResource,
   CvkFixtureArtifact,
-} from './compiler';
+} from './compiler.js';
 
 export type CvkSelectorRef = {
   resourceId: string;

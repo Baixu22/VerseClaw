@@ -4,7 +4,7 @@ import type {
   ContextItemKind,
   LifecycleEvent,
   LifecycleState,
-} from '../../../../shared/types/context-family';
+} from '../../../../shared/types/context-family.js';
 
 export type ContextItemQuery = {
   sessionId?: string;

@@ -58,12 +58,10 @@ const DEFAULT_MAX_WORKERS = 64;
  */
 export class ResourceAwareWaveScheduler {
   private readonly waves = new Map<number, WavePlan>();
-  private readonly originalGraph: OrchestrationTaskGraph;
   private currentGraph: OrchestrationTaskGraph;
   private currentMaxWorkers: number;
 
   constructor(graph: OrchestrationTaskGraph, options: { maxWorkers?: number } = {}) {
-    this.originalGraph = graph;
     this.currentGraph = graph;
     // P2 fix: use a sane default cap instead of MAX_SAFE_INTEGER.
     this.currentMaxWorkers = options.maxWorkers ?? DEFAULT_MAX_WORKERS;

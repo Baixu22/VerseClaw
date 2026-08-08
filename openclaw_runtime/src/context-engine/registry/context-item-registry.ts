@@ -21,15 +21,15 @@ import {
   type LifecycleEventId,
   type LifecycleState,
   type SourceRef,
-} from '../../../../shared/types/context-family';
+} from '../../../../shared/types/context-family.js';
 import {
   InMemoryContextItemStore,
   type ContextItemQuery,
   type ContextItemStore,
-} from './context-item-store';
+} from './context-item-store.js';
 
-export type { ContextItemQuery, ContextItemStore } from './context-item-store';
-export { InMemoryContextItemStore } from './context-item-store';
+export type { ContextItemQuery, ContextItemStore } from './context-item-store.js';
+export { InMemoryContextItemStore } from './context-item-store.js';
 
 type RegistryDiagnostic = {
   code: string;

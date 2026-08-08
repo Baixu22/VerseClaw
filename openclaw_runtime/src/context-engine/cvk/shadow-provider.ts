@@ -2,19 +2,19 @@ import type { AgentMessage } from '../../agents/runtime/index.js';
 import {
   type RuntimeContextProvider,
   type RuntimeContextProviderResult,
-  type RuntimeCoreJsonObject,
   type RuntimeRegistryDiagnostic,
 } from '../../runtime-core/registries.js';
+import type { RuntimeCoreJsonObject } from '../../runtime-core/types.js';
 import {
   compileCvkFixtureSources,
   type CvkCompilerFixtureInput,
   type CvkFixtureArtifact,
-} from './compiler';
+} from './compiler.js';
 import {
   generateCvkViews,
   type CvkGeneratedCompactView,
   type CvkRegistryViewEntry,
-} from './views';
+} from './views.js';
 
 export const CONTEXT_RUNTIME_KIT_SHADOW_PROVIDER_ID = 'context-runtime-kit-shadow';
 

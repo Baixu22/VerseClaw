@@ -2,8 +2,8 @@ import {
   type Selector,
   normalizeResourceId,
   normalizeSelector,
-} from '../../../../shared/types/context-runtime-kit';
-import type { CvkFixtureArtifact } from './compiler';
+} from '../../../../shared/types/context-runtime-kit.js';
+import type { CvkFixtureArtifact } from './compiler.js';
 
 export type CvkToolSelectorFamily =
   | 'required'
