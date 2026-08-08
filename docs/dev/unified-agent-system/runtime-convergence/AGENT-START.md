@@ -1,3 +1,8 @@
+> **2026-08-03 独立审计覆盖声明**：候选 `fac6327a2` 的结论是 `NO-GO`。
+> 下文所有审计前的“已完成/已通过”只能视为历史声明，不能授权继续 RC-10 或后续实现。
+> 当前先读 `RC-09-REMEDIATION-PLAN.md`，通过受支持的 Task Forest proposal 串行重开并复验
+> RC-00..RC-09；没有新的独立 Verifier evidence，不得恢复 accepted 状态。
+
 你将接管 ClawX Runtime Authority Convergence。若本文件与当前工作区证据冲突，以当前证据为准，记录冲突并停止相关实现；不要自行重开已冻结决策。
 
 ## 【工作目录】
@@ -24,7 +29,7 @@
 - [verified] `runtime-spine` 是 `diagnostic_only`，不得晋升为权威。
 - [verified] RuntimeTaskEventLog 已有 SQLite persistence adapter/schema，但 persist 默认关闭、记录会裁剪、事件 union 无 receipt/effect kind；保持诊断用途，不得晋升为 receipt owner。
 - [verified] Receipt owner 决策已由用户确认（2026-08-02）：typed、append-only `runtime_receipts` 表落在既有 openclaw-state SQLite，经窄接口 `ReceiptStore` 访问；复用 shared state DB 的 schema/权限/WAL/busy timeout/重启持久化/immediate transaction；不新增 DB/sidecar/service/second runtime authority。`long_task_checkpoints` 被否决（可变 checkpoint/resume 真源、同幂等键更新 checkpoint_json、不能覆盖普通 model call）。七条硬约束：digest-only 载荷、同 idempotency_key 内容相同幂等成功/不同冲突失败、不用 max(sequence)+1 而用显式 attempt/model-call/wire-attempt identity、不静默裁剪、shadow 写失败不改发送行为但使 RC-02 验收失败、receipt 只解释不授权 replay、npm fallback 继续 degraded 不计入 coverage。
-- [verified] 当前 approval pending/resolved 由 Gateway 进程内 `Map` 持有，重启会丢失；RC-04 必须先闭合 durable approval/effect reconciliation，RC-05 才能做重启垂直切片。
+- [verified] 当前 approval pending/resolved 由 Gateway 进程内 `Map` 持有，重启会丢失；RC-04 必须先闭合 durable approval/effect reconciliation，RC-05 才能做重启垂直切片。RC-04R 本地实现（未独立验收）：`ApprovalLedger` 已为唯一 exec-approval owner 且生产默认启用，`recoverPendingFromLedger()` 恢复重启前 pending truth；raw request/proposal 只存 SHA-256 digest。RC-05R：Cron ingress 只创建 intent，批准来自显式治理 policy/Inbox 决策（actor+policyDigest）；channel-conformance 为可执行 fixture。RC-06A/06B/06C/06D：TaskFlow CAS 证明层 + 三域 read-only projection（cancelled 显式支持）。RC-07R：slotConvergenceErrors 由 activation planner fail-closed 消费，census 由真实源生成。RC-08AR（2026-08-08 独立验收 PASS）：`tool-convergence.ts` 生产 `classifyMcpCatalogServer` 接线到 `agent-bundle-mcp-runtime.ts` 目录条目（`transportType`+`health`），connected 仅由 SDK initialize 握手置位；真实 stdio MCP fixture 经 `createSessionMcpRuntime` 完成握手；websocket-only transport 由生产 resolver 拒绝。RC-08BR（2026-08-08 独立验收 PASS）：OTel/OTLP JSON exporter 接线到 observability cache（canonical ExportTraceServiceRequest；completed traces 导出、exporter-off parity、失败不改变 store）；correlation IDs 派生 OTLP trace/span id；redaction 攻击与 cache 可重建测试通过。RC-09A（2026-08-08 修复完成，候选 22a7bad35，未独立验收）：changed-path ownership matrix generator + validator fail-closed 校验 + final spec touchedAreas 覆盖累计 diff；RC-09 最终 21-gate 验收因 electron-e2e（kysely 未 hoist / 66 pre-existing UI 失败）与 release-baseline-validate（P6-005 证据再生成 chicken-and-egg）BLOCKED。
 - [verified] 新收敛能力只走 source `openclaw_runtime@2026.6.2`；npm `2026.5.20` fallback 必须显式降级且不得虚报完整 receipt。
 - [verified] DCS 最终方案是 attempt CompilePlan、per-model-call ContextBundle、ContextReceipt/WireReceipt；Phase 1 必须零行为变化。
 - [verified] WireReceipt 必须在 provider-specific finalizer 之后的 guarded request-body 边界生成；`onPayload` 不是所有 provider 的最终 seal。

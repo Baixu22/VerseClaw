@@ -924,6 +924,7 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  const pendingMessages = useChatStore((s) => s.pendingMessages);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -2511,7 +2512,32 @@ export function ChatInput({
       return;
     }
 
-    if (!canSend) return;
+    if (!canSend) {
+      // P0-2: while a run is active, plain Enter used to silently drop the
+      // draft (canSend includes !sending). Instead queue it and surface that it
+      // will be sent when the run finishes.
+      if (sending && !inputDisabled && !capabilityExecuting && !allReady) {
+        if (input.trim() || attachments.some((a) => a.status === 'ready') || selectedKnowledgeRefs.length > 0) {
+          const readyAttachments = attachments.filter((a) => a.status === 'ready');
+          useChatStore.getState().queuePendingMessage(
+            input.trim() || (selectedKnowledgeRefs.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : ''),
+            {
+              attachments: readyAttachments.length > 0 ? readyAttachments : undefined,
+              targetAgentId,
+              knowledgeScope: knowledgeScope === 'none' && selectedKnowledgeRefs.length > 0 ? 'wiki' : knowledgeScope,
+              knowledgeMode,
+              knowledgeReferences: selectedKnowledgeRefs.length > 0 ? selectedKnowledgeRefs : undefined,
+            },
+          );
+          updateInput('');
+          setAttachments([]);
+          setSelectedKnowledgeRefs([]);
+          setSuggestedKnowledgeRefs([]);
+          toast.success(t('composer.queueQueued'));
+        }
+      }
+      return;
+    }
     // FP-P1-01: block the send when no provider can actually serve it and
     // guide the user to configuration (Setup skip must not fail silently).
     if (!providerRuntimeReady) {
@@ -3826,6 +3852,15 @@ export function ChatInput({
                   <span>{part}</span>
                 </span>
               ))}
+              {pendingMessages.length > 0 && (
+                <Badge
+                  variant="outline"
+                  className="h-6 rounded-md border-sky-500/30 bg-sky-500/10 px-2 text-[11px] font-medium text-sky-700 dark:text-sky-400"
+                  data-testid="chat-pending-messages-count"
+                >
+                  {t('composer.queueCount', { count: pendingMessages.length })}
+                </Badge>
+              )}
               {longTaskControlStatus && (
                 <>
                   {queuedFollowupCount > 0 && (

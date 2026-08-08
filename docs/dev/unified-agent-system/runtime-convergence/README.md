@@ -1,25 +1,30 @@
 # Runtime Authority Convergence Control Pack
 
 > Program: `runtime-authority-convergence`
-> Activation: `proposed / non-authorizing`
+> Activation: `active / remediation after independent NO-GO`
 > Status source: `.agent-workbench/task-forest/`
 > Parent goal: `TF-0010`
 > Current metadata: `STATUS.md`
-> Updated: 2026-08-02
+> Updated: 2026-08-03
+
+> Independent audit override: candidate `fac6327a2` was rejected on 2026-08-03. Do not
+> rely on earlier package-completion claims. The active recovery authority is
+> `RC-09-REMEDIATION-PLAN.md`; RC-10 remains blocked.
 
 ## Purpose
 
-This is the proposed control pack for converging ClawX from parallel runtime implementations to an OpenClaw-based Operator Desktop. It becomes implementation-authorizing only after `STATUS.md` names an applied Task Forest proposal. Until then, old expansion plans remain non-authorizing historical evidence and no RC implementation may start.
+This control pack governs convergence from parallel runtime implementations to an OpenClaw-based Operator Desktop. The original Task Forest proposal was applied, but the `fac6327a2` candidate failed independent audit and the program is now in fail-closed remediation. A new, user-confirmed Task Forest proposal must establish the serial revalidation sequence before implementation resumes; old expansion and pre-audit completion claims remain non-authorizing historical evidence.
 
 ## Read Order
 
 1. `STATUS.md`
-2. `CHARTER.md`
-3. `TARGET-ARCHITECTURE.md`
-4. `WORK-PACKAGES.md`
-5. `ACCEPTANCE.md`
-6. `HUMAN-ACCEPTANCE.md` only after engineering acceptance
-7. `AGENT-START.md` when opening a fresh development session
+2. `RC-09-REMEDIATION-PLAN.md` while the independent NO-GO is unresolved
+3. `CHARTER.md`
+4. `TARGET-ARCHITECTURE.md`
+5. `WORK-PACKAGES.md`
+6. `ACCEPTANCE.md`
+7. `HUMAN-ACCEPTANCE.md` only after engineering acceptance
+8. `AGENT-START.md` when opening a fresh development session
 
 ## Authority Order
 

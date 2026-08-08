@@ -35,6 +35,7 @@ type TerminalSessionSnapshot = {
   sessionId: string | null;
   workspaceId: string | null;
   sessionKey: string | null;
+  kind?: TerminalSessionKind;
   cwd: string | null;
   pid: number | null;
   cols?: number;
@@ -223,6 +224,13 @@ export class TerminalSessionManager {
     return this.idleSnapshot(input.workspaceId ?? null, input.sessionKey ?? null);
   }
 
+  list(input: { workspaceId?: string; sessionKey?: string } = {}): TerminalSessionSnapshot[] {
+    return Array.from(this.sessions.values())
+      .filter((session) => !input.workspaceId || session.workspaceId === input.workspaceId)
+      .filter((session) => !input.sessionKey || session.sessionKey === input.sessionKey)
+      .map((session) => this.toSnapshot(session, false));
+  }
+
   stopForWorkspace(workspaceId: string, reason: TerminalCloseReason): void {
     this.unregisterWorkspace(workspaceId, reason);
   }
@@ -303,11 +311,14 @@ export class TerminalSessionManager {
     return {
       workspaceId: session.workspaceId,
       sessionKey: session.sessionKey,
+      kind: session.kind,
       sessionId: session.id,
       cwd: session.cwd,
       pid: session.pid,
       cols: session.cols,
       rows: session.rows,
+      seq: session.seq,
+      ts: Date.now(),
       status: session.status,
     };
   }
@@ -325,6 +336,7 @@ export class TerminalSessionManager {
       sessionId: session.id,
       workspaceId: session.workspaceId,
       sessionKey: session.sessionKey,
+      kind: session.kind,
       cwd: session.cwd,
       pid: session.pid,
       cols: session.cols,
@@ -340,6 +352,7 @@ export class TerminalSessionManager {
       sessionId: null,
       workspaceId,
       sessionKey,
+      kind: undefined,
       cwd: null,
       pid: null,
       status: 'idle',

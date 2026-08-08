@@ -1,0 +1,93 @@
+{
+  "applied_at": "2026-08-04T08:10:29.860038Z",
+  "base_graph_hash": "e64f197cd356f0b2b173d49ece90bcb9cbe2ebded7961bc05af6b407d7cd5058",
+  "base_summary": {
+    "edge_count": 85,
+    "node_count": 42,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0020",
+      "progress": 0,
+      "status": "blocked"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "F5 已由用户裁决为 RC-01R-first：等待 RC-01R 自包含基线全绿，再补 F4 并恢复 RC-00R 的双 detached worktree 独立验收。"
+      },
+      "id": "TF-0020"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0029",
+      "progress": 0,
+      "status": "in_progress"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "在新的 clean worktree 复现 lint/typecheck 基线，建立 RC-01R scoped Harness spec，完成最小修复、全局门禁与独立验证证据。",
+        "purpose": "使 Runtime Authority Convergence 的后续验收基于真实全局绿线，而非从脏 UI 工作树借用 lint 修复或将 nested runtime typecheck 债排除。",
+        "summary": "在干净候选中消除 ChatInput lint 与 openclaw_runtime typecheck 债，重建可复现全局绿线；随后为 RC-00R 独立验收提供不依赖脏工作树的前置基线。",
+        "title": "RC-01R 自包含基线与全局绿线"
+      },
+      "id": "TF-0029"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 1,
+        "created_at": "2026-08-04T08:10:19.965194Z",
+        "evidence": "用户 F5 裁决（当前 Codex 会话，2026-08-04）：RC-01R-first。",
+        "expected_requirement": "RC-00R -> RC-01R 严格串行，且同一时刻只有一个 Runtime Convergence 工作包 active。",
+        "id": "TFD-RC00R-F5-20260804",
+        "observed_action_or_result": "用户明确授权先执行 RC-01R，先清理 ChatInput.tsx lint 债与 openclaw_runtime/** typecheck 债，之后再补 F4 并重跑 RC-00R。",
+        "recommendation": "TF-0029 作为唯一 in_progress 节点完成自包含绿线；TF-0020 保持 blocked，直到 RC-01R 成功后恢复 F4 与两个不同 actor 的 detached worktree 验收。",
+        "related_task_ids": [
+          "TF-0020",
+          "TF-0029"
+        ],
+        "severity": "high",
+        "status": "accepted"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "用户在 F5 中比较先重跑 RC-00R 与先建立 RC-01R 自包含绿线两种顺序。",
+        "confidence": 1,
+        "created_at": "2026-08-04T08:10:19.965194Z",
+        "id": "TFA-64b346a25c",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 1.0,
+          "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
+          "validation_plan": [
+            "干净 worktree 复现并清除 lint/typecheck 债",
+            "RC-01R scoped Harness 与全局门禁",
+            "恢复 RC-00R 后运行双 detached worktree 验收"
+          ],
+          "why_not_enough": "RC-01R 不替代 RC-00R 的 F4 防护、独立 Executor/Verifier 或最终人类验收。",
+          "why_this_task": "RC-01R 直接消除 clean candidate 的 Chat/UI lint 与 nested runtime typecheck 阻塞。"
+        },
+        "reason": "没有干净全局绿线时，RC-00R 的后续证据无法满足计划的可复现、非脏树依赖和全局 gate 真实性要求。",
+        "rejected_options": [
+          "RC-00R-first"
+        ],
+        "related_task_ids": [
+          "TF-0029"
+        ],
+        "selected_option": "RC-01R-first",
+        "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。"
+      }
+    }
+  ],
+  "created_at": "2026-08-04T08:10:19.960415Z",
+  "proposal_id": "TFP-rc01r-first-f5-20260804",
+  "rationale": "用户已完成 F5 裁决：为使 RC-00R 后续验收建立真实可绿的自包含基线，先执行 RC-01R 清理 ChatInput lint 债与 openclaw_runtime typecheck 债；随后补 F4 并恢复 RC-00R 的双 detached worktree 验收。",
+  "session_id": "session-20260804-rc01r-first",
+  "status": "applied"
+}

@@ -44,6 +44,10 @@
       "title": "Developer",
       "description": "Developer mode, proxy, CLI, diagnostics, and local telemetry."
     },
+    "recovery": {
+      "title": "Session & Recovery",
+      "description": "Live session activity, recovery controls, and retention preferences."
+    },
     "billing": {
       "title": "Billing",
       "description": "Token usage history, cost estimates, and usage activity charts."
@@ -56,6 +60,22 @@
       "title": "Archived",
       "description": "Restore or permanently delete conversations you have archived."
     }
+  },
+  "recovery": {
+    "activityTitle": "Session & Recovery",
+    "currentTitle": "Current session recovery",
+    "enabled": { "title": "Show session activity panel", "description": "Show structured runtime status beside Chat when real activity exists." },
+    "autoExpand": { "title": "Automatic expansion", "description": "Choose when the activity panel opens on desktop.", "active": "When active", "attention": "When attention is needed", "never": "Never" },
+    "showGit": { "title": "Show workspace Git", "description": "Include workspace-scoped branch and change status." },
+    "showCommands": { "title": "Show Agent commands", "description": "Include structured command summaries alongside interactive terminals." },
+    "notifications": { "title": "Recovery and blocked notifications", "description": "Notify when a real recovery or blocked signal needs review." },
+    "retention": { "title": "Recent activity retention", "description": "Keep completed activity visible for a bounded period.", "none": "Do not retain", "five": "5 minutes", "fifteen": "15 minutes" },
+    "session": { "title": "Session", "description": "Choose a workspace session to inspect." },
+    "runAction": "Run",
+    "openConversation": "Open conversation",
+    "healthy": "No recovery pressure detected for this session.",
+    "actionComplete": "Recovery action completed",
+    "actionFailed": "Recovery action failed"
   },
   "appearance": {
     "title": "Appearance & language",

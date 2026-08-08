@@ -5,7 +5,7 @@
 // separate cutover with idempotency and rollback proof. Indefinite dual-write is
 // not a migration strategy.
 import type { ClawGraphRunEvent } from './types.js';
-import { TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
+import { CAS_CREATE_SENTINEL, TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
 
 export const CLAWGRAPH_PROJECTION_FLAG = 'rc06b.clawgraphProjection';
 export const CLAWGRAPH_PROJECTION_SCHEMA_VERSION = '1';
@@ -20,7 +20,7 @@ export type ClawgraphProjectionResult = {
   flowId?: string;
   revision?: number;
   status?: FlowStatus;
-  skippedReason?: 'flag-off' | 'unknown-event';
+  skippedReason?: 'flag-off' | 'unknown-event' | 'revision-conflict' | 'illegal-transition';
 };
 
 const EVENT_TO_FLOW_STATUS: Record<string, FlowStatus> = {
@@ -30,6 +30,9 @@ const EVENT_TO_FLOW_STATUS: Record<string, FlowStatus> = {
   node_handoff: 'running',
   node_audit: 'running',
   node_done: 'running',
+  // A failed node does not end the run: ClawGraph may continue/retry or emit a
+  // later run_failed/run_aborted event; those events carry the terminal status.
+  node_failed: 'running',
   review_requested: 'blocked',
   review_resolved: 'running',
   run_completed: 'succeeded',
@@ -56,8 +59,9 @@ export function projectClawgraphRunEvent(
   const flowId = `clawgraph:${event.runId}`;
   const store = new TaskFlowCasStore(options.database ?? {});
   // Read the current row to compute the expected revision (CAS write).
+  // RC-06A create sentinel: a missing row requires expectedRevision = -1.
   const existing = store.getById(flowId);
-  const expectedRevision = existing ? normalizeRevision(existing.revision) : 0;
+  const expectedRevision = existing ? normalizeRevision(existing.revision) : CAS_CREATE_SENTINEL;
   const result = store.casUpsert({
     flowId,
     expectedRevision,
@@ -67,8 +71,20 @@ export function projectClawgraphRunEvent(
     stateJson: JSON.stringify({ eventId: event.id, message: event.message }),
   });
   if (!result.ok) {
-    // A conflicting projection is skipped rather than failing the legacy path.
-    return { projected: false, skippedReason: result.reason === 'illegal-transition' ? 'unknown-event' : 'flag-off' };
+    // Report the REAL skip reason instead of masking conflicts: a CAS conflict
+    // means drift between the projection and flow_runs and must be observable
+    // (revision-conflict) rather than disguised as flag-off/unknown-event.
+    return {
+      projected: false,
+      skippedReason:
+        result.reason === 'illegal-transition'
+          ? 'illegal-transition'
+          : result.reason === 'revision-conflict'
+            ? 'revision-conflict'
+            : result.reason === 'not-found'
+              ? 'revision-conflict'
+              : 'flag-off',
+    };
   }
   return { projected: true, flowId, revision: result.revision, status: targetStatus };
 }

@@ -18,6 +18,7 @@ import {
 import {
   scanBackendCommunicationBoundary,
   touchesCommunicationPath,
+  validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
 } from './rules.mjs';
@@ -102,6 +103,14 @@ async function validate(specPath, options = {}) {
     failures.push(...validatePluginLifecycleTaskSpec(spec, scenario, changedFiles));
   } else if (!spec.data.id || !spec.data.title) {
     failures.push(`${spec.path}: spec must include id and title`);
+  }
+
+  // Changed-path ownership is enforced for every spec family. The two
+  // scenario-bound validators above already run it internally, so only the
+  // remaining (scenario-less) specs need it here. Without this, an RC package
+  // spec could be validated against a diff containing paths it does not own.
+  if (!isGatewayBackendCommunicationTask(spec) && !isPluginLifecycleTask(spec)) {
+    failures.push(...validateChangedPathOwnership(spec, scenario, changedFiles));
   }
 
   if (changedFiles.length > 0 && touchesCommunicationPath(changedFiles) && isGatewayBackendCommunicationTask(spec)) {

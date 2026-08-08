@@ -25,6 +25,23 @@
     "brainstorming": "多智能体并行",
     "brainstormingDesc": "让多个智能体协同拆分任务"
   },
+  "sessionActivity": {
+    "title": "会话状态",
+    "description": "当前会话的实时运行、任务、Git、子 Agent 和终端状态。",
+    "openRecovery": "打开会话恢复",
+    "duration": "持续时间",
+    "notAvailable": "暂无",
+    "sections": { "session": "会话", "git": "工作区 Git", "tasks": "实时任务", "subagents": "子 Agent", "terminals": "终端", "continuity": "连续性" },
+    "status": { "idle": "空闲", "running": "运行中", "waiting_approval": "等待批准", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
+    "git": { "detached": "游离 HEAD", "changes": "{{count}} 项变更", "conflicts": "冲突" },
+    "taskKinds": { "mission": "任务目标", "taskLoop": "任务循环", "clawGraph": "ClawGraph", "taskLedger": "任务账本" },
+    "taskStatus": { "queued": "排队中", "running": "运行中", "review": "待复核", "blocked": "已阻塞", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
+    "subagents": { "unknown": "Agent" },
+    "subagentStatus": { "started": "运行中", "completed": "已完成", "error": "错误", "aborted": "已中止", "verified": "已验证" },
+    "terminals": { "interactive": "交互终端", "agentCommand": "Agent 命令", "webPreview": "Web 预览服务" },
+    "terminalStatus": { "idle": "空闲", "starting": "启动中", "running": "运行中", "exited": "已退出", "blocked": "已阻塞", "completed": "已完成", "error": "错误" },
+    "continuity": { "queue": "{{count}} 个排队中的后续任务", "context": "上下文压力：{{pressure}}", "checkpoint": "可用恢复检查点", "pressure": { "low": "低", "medium": "中", "high": "高" } }
+  },
   "noLogs": "（暂无日志）",
   "scrollToLatest": "回到底部",
   "loadMoreHistory": "加载更早的消息",

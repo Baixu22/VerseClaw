@@ -17,7 +17,12 @@ import { buildCopilotDynamicHeaders, hasCopilotVisionInput } from "./copilot-dyn
 import { parseJsonObjectPreservingUnsafeIntegers } from "./json-unsafe-integers.js";
 import { resolveProviderEndpoint } from "./provider-attribution.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
-import { emitShadowCensus } from "./shadow-census.js";
+import {
+  beginShadowModelCall,
+  getShadowReceiptOptions,
+  RC02_SHADOW_OPTIONS,
+  type ShadowReceiptOptions,
+} from "./shadow-census.js";
 import type { StreamFn } from "./runtime/index.js";
 import { transformTransportMessages } from "./transport-message-transform.js";
 import {
@@ -60,6 +65,7 @@ type AnthropicTransportModel = Model<"anthropic-messages"> & {
 };
 
 type AnthropicOptions = SimpleStreamOptions & {
+  client?: AnthropicMessagesClient;
   effort?: string;
   interleavedThinking?: boolean;
   metadata?: { user_id?: string };
@@ -734,16 +740,17 @@ function createAnthropicTransportClient(params: {
   context: Context;
   apiKey: string;
   options: AnthropicTransportOptions | undefined;
+  shadow?: ShadowReceiptOptions;
 }) {
-  const { model, context, apiKey, options } = params;
+  const { model, context, apiKey, options, shadow } = params;
   const needsInterleavedBeta =
     (options?.interleavedThinking ?? true) && !supportsAdaptiveThinking(model.id);
   // Kimi's Anthropic thinking SSE is already well-formed for this parser, but
   // the OpenAI SDK compatibility sanitizer can stall before the text block.
   const fetch =
     isKimiAnthropicProvider(model.provider) && options?.thinkingEnabled === true
-      ? buildGuardedModelFetch(model, undefined, { sanitizeSse: false })
-      : buildGuardedModelFetch(model);
+      ? buildGuardedModelFetch(model, undefined, { sanitizeSse: false }, shadow)
+      : buildGuardedModelFetch(model, undefined, undefined, shadow);
   if (model.provider === "github-copilot") {
     const betaFeatures = needsInterleavedBeta ? ["interleaved-thinking-2025-05-14"] : [];
     return {
@@ -930,6 +937,7 @@ function resolveAnthropicTransportOptions(
     maxTokens: baseMaxTokens,
     signal: options?.signal,
     apiKey,
+    client: options?.client,
     cacheRetention: options?.cacheRetention,
     sessionId: options?.sessionId,
     headers: options?.headers,
@@ -940,6 +948,9 @@ function resolveAnthropicTransportOptions(
     toolChoice: options?.toolChoice,
     thinkingBudgets: options?.thinkingBudgets,
     reasoning: options?.reasoning,
+    ...(getShadowReceiptOptions(options)
+      ? { [RC02_SHADOW_OPTIONS]: getShadowReceiptOptions(options) }
+      : {}),
   };
   if (!options?.reasoning) {
     resolved.thinkingEnabled = false;
@@ -983,40 +994,33 @@ export function createAnthropicMessagesTransportStreamFn(): StreamFn {
       };
       try {
         const apiKey = options?.apiKey ?? getEnvApiKey(model.provider) ?? "";
-        if (!apiKey) {
+        if (!apiKey && !options?.client) {
           throw new Error(`No API key for provider: ${model.provider}`);
         }
-        const transportOptions = resolveAnthropicTransportOptions(model, options, apiKey);
-        const { client, isOAuthToken } = createAnthropicTransportClient({
-          model,
+        const shadowCall = beginShadowModelCall(
           context,
-          apiKey,
-          options: transportOptions,
-        });
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: options?.sessionId,
+          },
+          options,
+        );
+        const transportOptions = resolveAnthropicTransportOptions(model, options, apiKey);
+        const { client, isOAuthToken } = transportOptions.client
+          ? { client: transportOptions.client, isOAuthToken: false }
+          : createAnthropicTransportClient({
+              model,
+              context,
+              apiKey,
+              options: transportOptions,
+              shadow: shadowCall.active ? shadowCall.options : undefined,
+            });
         let params = buildAnthropicParams(model, context, isOAuthToken, transportOptions);
         const nextParams = await transportOptions.onPayload?.(params, model);
         if (nextParams !== undefined) {
           params = nextParams as Record<string, unknown>;
-        }
-        // RC-02 shadow census: emits ShadowContextReceipt/v0 + ShadowWireReceipt/v0
-        // at the guarded request-body boundary after provider-specific finalizers.
-        // Strictly observational: never mutates params, never changes send behavior,
-        // and a write failure surfaces in the result (fails the RC-02 run) without
-        // throwing into the send path. Gated by options.metadata.rc02ShadowCensus.
-        if (transportOptions.metadata?.rc02ShadowCensus === true) {
-          emitShadowCensus(
-            params as Record<string, unknown>,
-            {
-              providerId: model.provider,
-              modelId: model.id,
-              sessionKey: (context as { sessionId?: string })?.sessionId,
-              traceId: (context as { traceId?: string })?.traceId,
-              attemptIndex: (transportOptions.metadata as { rc02AttemptIndex?: number })?.rc02AttemptIndex,
-              modelCallIndex: (transportOptions.metadata as { rc02ModelCallIndex?: number })?.rc02ModelCallIndex,
-              wireAttemptIndex: (transportOptions.metadata as { rc02WireAttemptIndex?: number })?.rc02WireAttemptIndex,
-            },
-            { enabled: true, sourceRuntime: true },
-          );
         }
         const anthropicStream = client.messages.stream(
           { ...params, stream: true },

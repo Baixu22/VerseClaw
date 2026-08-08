@@ -5,6 +5,11 @@ import { getApiProvider } from "../../llm/api-registry.js";
 import { streamSimple } from "../../llm/stream.js";
 import { createAnthropicVertexStreamFnForModel } from "../anthropic-vertex-stream.js";
 import { createBoundaryAwareStreamFnForModel } from "../provider-transport-stream.js";
+import {
+  attachShadowReceiptOptions,
+  beginShadowModelCall,
+} from "../shadow-census.js";
+import { getRc03SealPlan } from "../../context-engine/rc03-seal-hook.js";
 import type { StreamFn } from "../runtime/index.js";
 import { stripSystemPromptCacheBoundary } from "../system-prompt-cache-boundary.js";
 import type { EmbeddedRunAttemptParams } from "./run/types.js";
@@ -119,6 +124,8 @@ export function resolveEmbeddedAgentStreamFn(params: {
   currentStreamFn: StreamFn | undefined;
   providerStreamFn?: StreamFn;
   sessionId: string;
+  runId?: string;
+  attemptIndex?: number;
   promptCacheKey?: string;
   signal?: AbortSignal;
   model: EmbeddedRunAttemptParams["model"];
@@ -133,6 +140,9 @@ export function resolveEmbeddedAgentStreamFn(params: {
       authProfileId: params.authProfileId,
       authStorage: params.authStorage,
       providerId: params.model.provider,
+      sessionId: params.sessionId,
+      runId: params.runId,
+      attemptIndex: params.attemptIndex,
       promptCacheKey: params.promptCacheKey,
       transformContext: (context) =>
         context.systemPrompt
@@ -146,7 +156,17 @@ export function resolveEmbeddedAgentStreamFn(params: {
 
   const currentStreamFn = params.currentStreamFn ?? streamSimple;
   if (params.model.provider === "anthropic-vertex") {
-    return createAnthropicVertexStreamFnForModel(params.model);
+    return wrapEmbeddedAgentStreamFn(createAnthropicVertexStreamFnForModel(params.model), {
+      runSignal: params.signal,
+      resolvedApiKey: params.resolvedApiKey,
+      authProfileId: params.authProfileId,
+      authStorage: params.authStorage,
+      providerId: params.model.provider,
+      sessionId: params.sessionId,
+      runId: params.runId,
+      attemptIndex: params.attemptIndex,
+      promptCacheKey: params.promptCacheKey,
+    });
   }
 
   const openClawNativeCodexResponsesStreamFn = resolveOpenClawNativeCodexResponsesStreamFn({
@@ -161,6 +181,8 @@ export function resolveEmbeddedAgentStreamFn(params: {
       authStorage: params.authStorage,
       providerId: params.model.provider,
       sessionId: params.sessionId,
+      runId: params.runId,
+      attemptIndex: params.attemptIndex,
       promptCacheKey: params.promptCacheKey,
       transformContext: (context) =>
         context.systemPrompt
@@ -193,22 +215,24 @@ export function resolveEmbeddedAgentStreamFn(params: {
         authProfileId: params.authProfileId,
         authStorage: params.authStorage,
         providerId: params.model.provider,
+        sessionId: params.sessionId,
+        runId: params.runId,
+        attemptIndex: params.attemptIndex,
         promptCacheKey: params.promptCacheKey,
       });
     }
   }
 
-  const promptCacheKey = params.promptCacheKey?.trim();
-  if (!promptCacheKey) {
-    return currentStreamFn;
-  }
   return wrapEmbeddedAgentStreamFn(currentStreamFn, {
     runSignal: params.signal,
     resolvedApiKey: undefined,
     authProfileId: undefined,
     authStorage: undefined,
     providerId: params.model.provider,
-    promptCacheKey,
+    sessionId: params.sessionId,
+    runId: params.runId,
+    attemptIndex: params.attemptIndex,
+    promptCacheKey: params.promptCacheKey,
   });
 }
 
@@ -230,10 +254,13 @@ function wrapEmbeddedAgentStreamFn(
     authStorage: { getApiKey(provider: string): Promise<string | undefined> } | undefined;
     providerId: string;
     sessionId?: string;
+    runId?: string;
+    attemptIndex?: number;
     promptCacheKey?: string;
     transformContext?: (context: Parameters<StreamFn>[1]) => Parameters<StreamFn>[1];
   },
 ): StreamFn {
+  let nextModelCallIndex = 0;
   const transformContext =
     params.transformContext ?? ((context: Parameters<StreamFn>[1]) => context);
   const mergeRunSignal = (options: Parameters<StreamFn>[2]) => {
@@ -252,8 +279,45 @@ function wrapEmbeddedAgentStreamFn(
     }
     return signal ? { ...merged, signal } : merged;
   };
+  const withShadowContext = (
+    model: Parameters<StreamFn>[0],
+    context: Parameters<StreamFn>[1],
+    options: Parameters<StreamFn>[2],
+  ): Parameters<StreamFn>[2] => {
+    const optionRecord = options as Record<string, unknown> | undefined;
+    const modelCallIndex =
+      typeof optionRecord?.modelCallIndex === "number"
+        ? optionRecord.modelCallIndex
+        : nextModelCallIndex;
+    nextModelCallIndex = Math.max(nextModelCallIndex, modelCallIndex + 1);
+    const runId =
+      typeof optionRecord?.runId === "string" ? optionRecord.runId : params.runId;
+    const callContext = {
+      providerId: model.provider,
+      adapterId: model.api,
+      modelId: model.id,
+      sessionKey: typeof optionRecord?.sessionId === "string" ? optionRecord.sessionId : params.sessionId,
+      runId,
+      traceId: typeof optionRecord?.traceId === "string" ? optionRecord.traceId : undefined,
+      attemptIndex: typeof optionRecord?.attemptIndex === "number" ? optionRecord.attemptIndex : params.attemptIndex,
+      modelCallIndex,
+      wireAttemptIndex: typeof optionRecord?.wireAttemptIndex === "number" ? optionRecord.wireAttemptIndex : undefined,
+    };
+    const shadowCall = beginShadowModelCall(context, callContext, options);
+    if (!shadowCall.active) {
+      return options;
+    }
+    // RC-03: carry the sealed CompilePlan of this run to the guarded wire
+    // boundary so WireReceipt/v1 can be persisted with the final body digest.
+    const plan = getRc03SealPlan(runId);
+    const shadowOptions = plan ? { ...shadowCall.options, rc03Plan: plan } : shadowCall.options;
+    return attachShadowReceiptOptions(options, shadowOptions);
+  };
   if (!params.authStorage && !params.resolvedApiKey) {
-    return (m, context, options) => inner(m, transformContext(context), mergeRunSignal(options));
+    return (m, context, options) => {
+      const merged = mergeRunSignal(options);
+      return inner(m, transformContext(context), withShadowContext(m, context, merged));
+    };
   }
   const { authStorage, providerId, resolvedApiKey } = params;
   return async (m, context, options) => {
@@ -262,8 +326,9 @@ function wrapEmbeddedAgentStreamFn(
       resolvedApiKey,
       authStorage,
     });
+    const merged = withShadowContext(m, context, mergeRunSignal(options));
     return inner(m, transformContext(context), {
-      ...mergeRunSignal(options),
+      ...merged,
       apiKey: apiKey ?? options?.apiKey,
     });
   };

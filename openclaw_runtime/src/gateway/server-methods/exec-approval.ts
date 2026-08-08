@@ -326,7 +326,14 @@ export function createExecApprovalHandlers(
         turnSourceAccountId: normalizeOptionalString(p.turnSourceAccountId) ?? null,
         turnSourceThreadId: p.turnSourceThreadId ?? null,
       };
-      const record = manager.create(request, timeoutMs, explicitId);
+      // Pass the requester identity into create() so the durable ledger
+      // reservation persists it atomically (survives restarts); bind() then
+      // keeps the in-process cache (incl. deviceTokenAuth) in sync.
+      const record = manager.create(request, timeoutMs, explicitId, {
+        connId: client?.connId ?? null,
+        deviceId: client?.connect?.device?.id ?? null,
+        clientId: client?.connect?.client?.id ?? null,
+      });
       bindApprovalRequesterMetadata({ record, client });
       // Use register() to synchronously add to pending map before sending any response.
       // This ensures the approval ID is valid immediately after the "accepted" response.

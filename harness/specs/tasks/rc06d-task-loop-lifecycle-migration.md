@@ -22,7 +22,7 @@ touchedAreas:
   - artifacts/runtime-authority-convergence/rc-06d/**
 expectedUserBehavior:
   - No runtime send behavior, ordering, tools, retries, approvals, delivery, or payload bytes change.
-  - Task Loop lifecycle (waiting, cancel, terminal state) migrates to TaskFlow last.
+  - Task Loop lifecycle first projects read-only into TaskFlow, then migrates through a controlled single-writer cutover and legacy freeze after cancellation/restart proof.
   - long_task_checkpoints retain checkpoint material only; replay never executes effects.
   - After this package, TaskFlow/TaskRegistry are the only workflow lifecycle writers.
 requiredProfiles:
@@ -37,10 +37,9 @@ forbiddenPatterns:
   - indefinite dual-write as a migration strategy
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The Task Loop -> TaskFlow read-only projection is behind a feature flag default-off; the kill switch restores the pure legacy path.
+  - The read-only projection may be default-off only during observation. The controlled cutover configuration selects exactly one lifecycle writer; rollback is an explicit mutually exclusive writer transition.
 rollback:
-  - Disable the projection flag to restore the pure legacy Task Loop path.
-  - No migration rollback is required because the projection writes only flow_runs rows.
+  - Before cutover, disable the projection. After cutover, rollback explicitly restores the legacy writer and freezes the TaskFlow writer; dual-write is forbidden.
 requiredTests:
   - pnpm --dir openclaw_runtime exec vitest run src/agents/task-loop-taskflow-projection.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/agents/mission-control/mission-taskflow-projection.test.ts src/agents/clawgraph/clawgraph-taskflow-projection.test.ts src/tasks/task-flow-cas.test.ts
@@ -48,9 +47,9 @@ requiredTests:
   - pnpm exec vitest run tests/unit/runtime-authority-convergence-control-pack.test.ts
   - pnpm harness validate --spec harness/specs/tasks/rc06d-task-loop-lifecycle-migration.md
 acceptance:
-  - Task Loop lifecycle (waiting, cancel, terminal state) is projected read-only into TaskFlow (flow_runs) behind a default-off flag; wait/resume/cancel/terminal/restart tests pass.
+  - Projection, controlled cutover, legacy freeze, and emergency rollback each have explicit evidence; acceptance occurs only after the controlled cutover, with real wait/resume/cancel/terminal/restart tests.
   - long_task_checkpoints retain checkpoint material only; replay never executes effects.
-  - After this package, TaskFlow/TaskRegistry are the only workflow lifecycle writers; the legacy Task Loop controller no longer writes lifecycle truth.
+  - After cutover, TaskFlow/TaskRegistry are the only workflow lifecycle writers; the legacy Task Loop controller is removed, frozen, or used only in an explicit mutually exclusive rollback.
   - Product locks remain false; an RC-06D independent Verifier accepts using the RC-00 infrastructure.
 docs:
   required: true

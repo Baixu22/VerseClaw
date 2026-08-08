@@ -5,7 +5,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { describe, expect, it } from 'vitest';
 
-import { getChangedFiles } from '../../harness/src/git.mjs';
+import { getChangedFiles, assertDiffBase } from '../../harness/src/git.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -33,6 +33,34 @@ describe('harness git changed files', () => {
       const changed = await getChangedFiles('HEAD', repo);
 
       expect(changed).toContain('tracked.txt');
+    } finally {
+      await rm(repo, { recursive: true, force: true });
+    }
+  });
+
+  // RC-00R regression: an unresolvable base ref previously made gitLines swallow
+  // the git error and return an empty changed-file list, which turned every
+  // downstream changed-path ownership check into a vacuous pass.
+  it('fails closed for an invalid or empty diff base instead of returning no changed files', async () => {
+    const repo = await mkdtemp(path.join(tmpdir(), 'clawx-harness-git-base-'));
+
+    try {
+      await writeFile(path.join(repo, 'tracked.txt'), 'before\n');
+      await git(repo, ['init']);
+      await git(repo, ['config', 'user.email', 'test@example.com']);
+      await git(repo, ['config', 'user.name', 'Test']);
+      await git(repo, ['add', 'tracked.txt']);
+      await git(repo, ['commit', '-m', 'init']);
+
+      await expect(getChangedFiles('this-ref-does-not-exist', repo)).rejects.toThrow(
+        /invalid or missing diff base ref/,
+      );
+      await expect(assertDiffBase('   ', repo)).rejects.toThrow(/non-empty ref/);
+      await expect(assertDiffBase(undefined as unknown as string, repo)).rejects.toThrow(/non-empty ref/);
+
+      // A valid base still resolves and still reports real changes.
+      await writeFile(path.join(repo, 'tracked.txt'), 'after\n');
+      await expect(getChangedFiles('HEAD', repo)).resolves.toContain('tracked.txt');
     } finally {
       await rm(repo, { recursive: true, force: true });
     }

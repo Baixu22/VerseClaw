@@ -147,6 +147,12 @@ export interface AppSettings {
   enabledSkills: string[];
   disabledSkills: string[];
   workProviders: WorkProviderConfig;
+  sessionActivityPanelEnabled: boolean;
+  sessionActivityAutoExpand: 'active' | 'attention' | 'never';
+  sessionActivityShowGit: boolean;
+  sessionActivityShowCommands: boolean;
+  sessionRecoveryNotificationsEnabled: boolean;
+  sessionActivityRetentionMinutes: 0 | 5 | 15;
   promptCacheRiskLedger: PromptCacheRiskEvent[];
   // Privacy / sensitive capture (P7-003)
   sensitiveCapturePolicy: SensitiveCapturePolicy;
@@ -212,6 +218,12 @@ function createDefaultSettings(): AppSettings {
     enabledSkills: [],
     disabledSkills: [],
     workProviders: {},
+    sessionActivityPanelEnabled: true,
+    sessionActivityAutoExpand: 'active',
+    sessionActivityShowGit: true,
+    sessionActivityShowCommands: true,
+    sessionRecoveryNotificationsEnabled: true,
+    sessionActivityRetentionMinutes: 5,
     promptCacheRiskLedger: [],
     sensitiveCapturePolicy: DEFAULT_SENSITIVE_CAPTURE_POLICY,
   };

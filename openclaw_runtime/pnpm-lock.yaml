@@ -189,6 +189,12 @@ importers:
       '@a2ui/lit':
         specifier: 0.10.0
         version: 0.10.0(signal-polyfill@0.2.2)
+      '@anthropic-ai/vertex-sdk':
+        specifier: 0.16.1
+        version: 0.16.1(zod@4.4.3)
+      '@aws-sdk/client-bedrock-runtime':
+        specifier: 3.1056.0
+        version: 3.1056.0
       '@copilotkit/aimock':
         specifier: 1.27.3
         version: 1.27.3(vitest@4.1.7)
@@ -216,6 +222,9 @@ importers:
       '@shikijs/engine-oniguruma':
         specifier: 4.1.0
         version: 4.1.0
+      '@smithy/node-http-handler':
+        specifier: 4.7.7
+        version: 4.7.7
       '@types/cross-spawn':
         specifier: 6.0.6
         version: 6.0.6

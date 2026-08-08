@@ -41,9 +41,9 @@ forbiddenPatterns:
   - changing payload bytes, ordering, tools, retries, approvals, or delivery during instrumentation
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The durable approval ledger is written behind a feature flag default-off; the kill switch restores the legacy Gateway process Map path.
+  - Observe-only diagnostics may be default-off before cutover. After acceptance, Gateway configuration selects the durable ledger as the mandatory single approval owner; no flag may silently restore the process Map as a second authority.
 rollback:
-  - Disable the durable approval flag to restore the legacy process Map path.
+  - Before cutover, disable the observer. After cutover, rollback is an explicit, audited, mutually exclusive writer transition back to the legacy owner; it never enables a durable mirror or dual write.
   - No migration rollback is required because the approval_ledger table is append-only and idempotent.
 requiredTests:
   - pnpm --dir openclaw_runtime exec vitest run src/agents/rc04-durable-approval.test.ts src/agents/rc04-exec-approval-wiring.test.ts
@@ -57,6 +57,7 @@ acceptance:
   - Failure injection at every transition (intent_reserved -> approval_pending -> approved|denied -> execution_started -> applied|not_applied|unknown -> reconciled) is reconciled from the domain journal.
   - Unknown outcome stops in needs_reconciliation and is never auto-replayed.
   - EffectReceipt explains but cannot replay the effect; domain journals remain the effect/idempotency truth.
+  - Observe, cutover, legacy-freeze, and emergency rollback are separately evidenced. The package is accepted only after production callers reach the durable owner and the process Map is a non-authoritative cache or removed.
   - No generic workflow engine or global exactly-once claim is introduced.
   - Product locks remain false; an RC-04 independent Verifier accepts using the RC-00 infrastructure.
 docs:

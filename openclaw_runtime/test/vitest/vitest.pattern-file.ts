@@ -114,6 +114,19 @@ function patternsCouldOverlap(value: string, pattern: string): boolean {
     return true;
   }
 
+  // A literal file path either matches the glob or it does not; the prefix
+  // heuristic below exists for two-glob overlap, so a concrete path that did
+  // not match must not be widened back into overlap (e.g. a file directly
+  // under src/agents/ is not part of the src/agents/*/**/*.test.ts shard).
+  const hasGlobInValue = /[?*[\]{}]/u.test(value);
+  const hasGlobInPattern = /[?*[\]{}]/u.test(pattern);
+  if (!hasGlobInValue && hasGlobInPattern) {
+    return false;
+  }
+  if (hasGlobInValue && !hasGlobInPattern) {
+    return false;
+  }
+
   const valuePrefix = literalPrefixForGlobPattern(value);
   const patternPrefix = literalPrefixForGlobPattern(pattern);
   return (

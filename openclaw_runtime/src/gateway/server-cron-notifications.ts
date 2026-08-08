@@ -200,6 +200,8 @@ export async function sendGatewayCronFailureAlert(params: {
     cfg: runtimeConfig,
     agentId,
     jobId: params.job.id,
+    // Per-run unique key for the failure alert intent.
+    runKey: `${params.job.id}:notify:${Date.now()}`,
     target: {
       channel: params.channel,
       to: params.to,

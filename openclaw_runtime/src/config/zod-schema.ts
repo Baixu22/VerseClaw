@@ -420,6 +420,7 @@ const RuntimeFeatureSchema = z
     rc05: z
       .object({
         operatorSliceEnabled: z.boolean().optional(),
+        cronAutoApprove: z.boolean().optional(),
       })
       .strict()
       .optional(),

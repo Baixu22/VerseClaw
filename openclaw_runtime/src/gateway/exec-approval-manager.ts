@@ -1,5 +1,10 @@
 // Gateway exec approval manager.
-// Tracks pending operator decisions and short-lived resolved approval records.
+// RC-04: when a durable ApprovalLedger is injected it is the sole approval
+// truth: create/resolve commit through the ledger first and the in-process
+// Map is a disposable cache (pending waiters, expiry timers, prefix lookup).
+// A Gateway restart recovers pending truth from the ledger via
+// recoverPendingFromLedger(). Without a ledger (legacy mode) the Map remains
+// the transient owner until cutover is complete.
 import { randomUUID } from "node:crypto";
 import { resolveExpiresAtMsFromDurationMs } from "@openclaw/normalization-core/number-coercion";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
@@ -8,6 +13,7 @@ import type {
   ExecApprovalRequestPayload as InfraExecApprovalRequestPayload,
 } from "../infra/exec-approvals.js";
 import { resolveTimerTimeoutMs } from "../shared/number-coercion.js";
+import type { ApprovalLedger } from "../agents/approval-ledger.js";
 
 // Grace period to keep resolved entries for late awaitDecision calls
 const RESOLVED_ENTRY_GRACE_MS = 15_000;
@@ -61,16 +67,35 @@ export type ExecApprovalIdLookupResult =
   | { kind: "ambiguous"; ids: string[] }
   | { kind: "none" };
 
+export type ExecApprovalManagerOptions = {
+  /** RC-04 durable approval owner. When present it is the sole approval truth. */
+  durableLedger?: ApprovalLedger;
+};
+
 export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
   private pending = new Map<string, PendingEntry<TPayload>>();
-  /** RC-04 optional durable ledger; when present, create/resolve mirror into it. */
-  private readonly durableLedger?: import("../agents/approval-ledger.js").ApprovalLedger;
+  /** RC-04 durable approval owner; when present it is authoritative. */
+  private readonly durableLedger?: ApprovalLedger;
 
-  constructor(options: { durableLedger?: import("../agents/approval-ledger.js").ApprovalLedger } = {}) {
+  constructor(options: ExecApprovalManagerOptions = {}) {
     this.durableLedger = options.durableLedger;
   }
 
-  create(request: TPayload, timeoutMs: number, id?: string | null): ExecApprovalRecord<TPayload> {
+  /** The durable ledger when configured (authority mode). */
+  get ledger(): ApprovalLedger | undefined {
+    return this.durableLedger;
+  }
+
+  create(
+    request: TPayload,
+    timeoutMs: number,
+    id?: string | null,
+    requester?: {
+      connId?: string | null;
+      deviceId?: string | null;
+      clientId?: string | null;
+    },
+  ): ExecApprovalRecord<TPayload> {
     const now = Date.now();
     const resolvedTimeoutMs = resolveApprovalTimeoutMs(timeoutMs);
     const expiresAtMs = resolveExpiresAtMsFromDurationMs(resolvedTimeoutMs, { nowMs: now });
@@ -83,21 +108,28 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
       request,
       createdAtMs: now,
       expiresAtMs,
+      requestedByConnId: requester?.connId ?? null,
+      requestedByDeviceId: requester?.deviceId ?? null,
+      requestedByClientId: requester?.clientId ?? null,
     };
-    // RC-04 durable mirror: reserve the intent -> approval_pending in the ledger
-    // so the pending truth survives a Gateway restart. Best-effort: a ledger
-    // failure never blocks the in-memory approval path.
+    // RC-04 durable authority: the intent -> approval_pending transition must
+    // commit through the ledger; a ledger failure is a hard failure, never a
+    // silent fallback to the process Map as a second authority. Requester
+    // identity is persisted atomically with the reservation so the bind
+    // survives Gateway restarts (the in-process record is only a cache).
     if (this.durableLedger) {
-      try {
-        this.durableLedger.reserve({
-          idempotencyKey: resolvedId,
-          approvalId: resolvedId,
-          request: record.request as Record<string, unknown>,
-          expiresAtMs,
-          createdAt: now,
-        });
-      } catch {
-        // The durable mirror is observational; the process-local path stays live.
+      const reserved = this.durableLedger.reserve({
+        idempotencyKey: resolvedId,
+        approvalId: resolvedId,
+        request: record.request as Record<string, unknown>,
+        expiresAtMs,
+        createdAt: now,
+        requestedByConnId: requester?.connId ?? undefined,
+        requestedByDeviceId: requester?.deviceId ?? undefined,
+        requestedByClientId: requester?.clientId ?? undefined,
+      });
+      if (!reserved.ok) {
+        throw new Error(`approval ledger reserve failed for '${resolvedId}': ${reserved.reason}`);
       }
     }
     return record;
@@ -162,17 +194,24 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
     if (pending.record.resolvedAtMs !== undefined) {
       return false;
     }
-    // RC-04 durable mirror: resolve approval_pending -> approved|denied in the
-    // ledger so the resolved truth survives a Gateway restart. Best-effort.
+    // RC-04 durable authority: the approval_pending -> approved|denied
+    // transition must commit through the ledger first. The ledger result is
+    // final; the process Map only mirrors it. An identical decision already
+    // committed in the ledger (e.g. by another process) is treated as
+    // idempotent success.
     if (this.durableLedger) {
-      try {
-        this.durableLedger.resolve({
-          approvalId: recordId,
-          decision: decision === "deny" ? "denied" : "approved",
-          resolvedBy: resolvedBy ?? undefined,
-        });
-      } catch {
-        // Observational mirror; the process-local path stays live.
+      const ledgerDecision = decision === "deny" ? "denied" : "approved";
+      const resolved = this.durableLedger.resolve({
+        approvalId: recordId,
+        decision: ledgerDecision,
+        resolvedBy: resolvedBy ?? undefined,
+      });
+      if (!resolved.ok) {
+        if (resolved.row?.state === ledgerDecision) {
+          // Already resolved identically in the durable owner: idempotent.
+        } else {
+          return false;
+        }
       }
     }
     clearTimeout(pending.timer);
@@ -189,6 +228,46 @@ export class ExecApprovalManager<TPayload = ExecApprovalRequestPayload> {
       }
     });
     return true;
+  }
+
+  /**
+   * RC-04 restart recovery: re-register pending approvals from the durable
+   * ledger so pending truth survives a Gateway restart. Only rows that have
+   * not expired are restored; the raw request payload was never persisted, so
+   * restored records carry a digest-only marker (the decision/audit truth is
+   * still complete). Returns the number of restored records.
+   */
+  recoverPendingFromLedger(): number {
+    if (!this.durableLedger) {
+      return 0;
+    }
+    const now = Date.now();
+    const rows = this.durableLedger.listByState("approval_pending");
+    let restored = 0;
+    for (const row of rows) {
+      if (this.pending.has(row.approval_id)) {
+        continue;
+      }
+      if (row.expires_at_ms <= now) {
+        continue;
+      }
+      const record: ExecApprovalRecord<TPayload> = {
+        id: row.approval_id,
+        request: {
+          digestOnly: true,
+          requestDigest: row.request_digest,
+          command: "",
+        } as unknown as TPayload,
+        createdAtMs: row.created_at,
+        expiresAtMs: row.expires_at_ms,
+        requestedByConnId: row.requested_by_conn_id ?? null,
+        requestedByDeviceId: row.requested_by_device_id ?? null,
+        requestedByClientId: row.requested_by_client_id ?? null,
+      };
+      this.register(record, row.expires_at_ms - now);
+      restored += 1;
+    }
+    return restored;
   }
 
   expire(recordId: string, resolvedBy?: string | null): boolean {

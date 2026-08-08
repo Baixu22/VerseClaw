@@ -209,6 +209,8 @@ function prepareCompactionSessionAgent(params: {
   session: { agent: { streamFn?: unknown } };
   providerStreamFn: unknown;
   sessionId: string;
+  runId?: string;
+  attemptIndex?: number;
   signal: AbortSignal;
   effectiveModel: ProviderRuntimeModel;
   resolvedApiKey?: string;
@@ -226,6 +228,8 @@ function prepareCompactionSessionAgent(params: {
     currentStreamFn: resolveEmbeddedAgentBaseStreamFn({ session: params.session as never }),
     providerStreamFn: params.providerStreamFn as never,
     sessionId: params.sessionId,
+    runId: params.runId,
+    attemptIndex: params.attemptIndex,
     signal: params.signal,
     model: params.effectiveModel,
     resolvedApiKey: params.resolvedApiKey,
@@ -1332,6 +1336,8 @@ async function compactEmbeddedAgentSessionDirectOnce(
             session,
             providerStreamFn,
             sessionId: params.sessionId,
+            runId: params.runId,
+            attemptIndex: params.attempt,
             signal: runAbortController.signal,
             effectiveModel,
             resolvedApiKey: hasRuntimeAuthExchange ? undefined : apiKeyInfo?.apiKey,

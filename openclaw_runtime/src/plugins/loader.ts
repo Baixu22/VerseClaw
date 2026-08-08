@@ -1327,6 +1327,17 @@ function resolvePluginLoadCacheContext(options: PluginLoadOptions = {}) {
       }) as OpenClawConfig)
     : rawActivationSourceConfig;
   const normalized = normalizePluginsConfig(cfg.plugins);
+  // RC-07 fail-closed: an illegal memory/contextEngine slot configuration must
+  // never become the active plugin set. The loader is a mandatory production
+  // entry (Gateway startup and plugin reload both flow through
+  // loadOpenClawPlugins), so it consumes slotConvergenceErrors exactly like
+  // the activation planner — never normalizes-and-ignores.
+  const loaderSlotErrors = normalized.slotConvergenceErrors ?? [];
+  if (loaderSlotErrors.length > 0) {
+    throw new Error(
+      `plugin slot convergence rejected (illegal config must not become active): ${loaderSlotErrors.join("; ")}`,
+    );
+  }
   const activationSource = createPluginActivationSource({
     config: activationSourceConfig,
   });

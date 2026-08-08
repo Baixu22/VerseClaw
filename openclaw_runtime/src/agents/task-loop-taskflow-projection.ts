@@ -4,7 +4,7 @@
 // TaskFlow/TaskRegistry are the only workflow lifecycle writers. This is a read-only
 // projection behind a default-off flag; the legacy Task Loop controller remains
 // authoritative until a writer cutover with proof.
-import { TaskFlowCasStore, type FlowStatus } from '../tasks/task-flow-cas.js';
+import { CAS_CREATE_SENTINEL, TaskFlowCasStore, type FlowStatus } from '../tasks/task-flow-cas.js';
 
 export const TASK_LOOP_PROJECTION_FLAG = 'rc06d.taskLoopProjection';
 export const TASK_LOOP_PROJECTION_SCHEMA_VERSION = '1';
@@ -37,6 +37,9 @@ const TASK_LOOP_STATUS_TO_FLOW: Record<string, FlowStatus> = {
   complete: 'succeeded',
   blocked: 'blocked',
   error: 'failed',
+  // RC-06D: cancelled is an explicit Task Loop terminal (real cancel path); it
+  // must never be represented as blocked/waiting in the TaskFlow state model.
+  cancelled: 'cancelled',
 };
 
 /**
@@ -58,12 +61,17 @@ export function projectTaskLoopRun(
   const flowId = `taskloop:${input.runId}`;
   const store = new TaskFlowCasStore(options.database ?? {});
   const existing = store.getById(flowId);
-  const expectedRevision = existing ? Number(existing.revision) || 0 : 0;
+  // RC-06A create sentinel: a missing row requires expectedRevision = -1.
+  const expectedRevision = existing ? Number(existing.revision) || 0 : CAS_CREATE_SENTINEL;
   // Waiting (blocked for user/manual review) maps to a waiting flow state so
-  // resume/cancel semantics are preserved in the projection.
+  // resume/cancel semantics are preserved in the projection. Non-waiting
+  // transitions (including cancel/terminal) explicitly clear the wait payload.
   const effectiveStatus: FlowStatus =
     input.waiting === true && flowStatus === 'blocked' ? 'waiting' : flowStatus;
-  const waitJson = input.waiting === true ? JSON.stringify({ waitMode: 'manual_review', phase: input.phase }) : undefined;
+  const waitJson =
+    input.waiting === true
+      ? JSON.stringify({ waitMode: 'manual_review', phase: input.phase })
+      : null;
   const result = store.casUpsert({
     flowId,
     expectedRevision,

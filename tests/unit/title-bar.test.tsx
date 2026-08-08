@@ -53,7 +53,7 @@ describe('TitleBar platform behavior', () => {
     expect(screen.getByTitle('window.maximize')).toBeInTheDocument();
     expect(screen.getByTitle('window.close')).toBeInTheDocument();
     const bar = screen.getByTestId('windows-titlebar');
-    expect(bar).toHaveClass('bg-surface-sidebar/92');
+    expect(bar).toHaveClass('bg-surface-sidebar');
     expect(bar).toHaveClass('border-b');
 
     await waitFor(() => {

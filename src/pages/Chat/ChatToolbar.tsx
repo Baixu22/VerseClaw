@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Gauge, ListTree, MoreHorizontal, RefreshCw, Slash } from 'lucide-react';
+import { Activity, Gauge, ListTree, MoreHorizontal, RefreshCw, Slash } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceChip } from '@/components/chat/ResourceChip';
@@ -21,6 +21,11 @@ type ChatToolbarProps = {
   onToggleQuestionDirectory?: () => void;
   onOpenSlashCommands?: () => void;
   promptCacheStatus?: PromptCacheRiskAssessment | null;
+  sessionActivityAvailable?: boolean;
+  sessionActivityOpen?: boolean;
+  sessionActivityNeedsAttention?: boolean;
+  onToggleSessionActivity?: () => void;
+  onOpenSessionActivity?: () => void;
 };
 
 function formatCacheTokens(value: number): string {
@@ -63,6 +68,11 @@ export function ChatToolbar({
   onToggleQuestionDirectory,
   onOpenSlashCommands,
   promptCacheStatus,
+  sessionActivityAvailable = false,
+  sessionActivityOpen = false,
+  sessionActivityNeedsAttention = false,
+  onToggleSessionActivity,
+  onOpenSessionActivity,
 }: ChatToolbarProps = {}) {
   const refresh = useChatStore((state) => state.refresh);
   const loading = useChatStore((state) => state.loading);
@@ -145,6 +155,48 @@ export function ChatToolbar({
           </TooltipTrigger>
           <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.workspace')}</p></TooltipContent>
         </Tooltip>
+      )}
+      {sessionActivityAvailable && onToggleSessionActivity && onOpenSessionActivity && (
+        <>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                data-testid="chat-session-activity-toggle"
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  'hidden h-8 w-8 hover:bg-foreground/5 hover:text-foreground xl:inline-flex',
+                  sessionActivityOpen && 'bg-foreground/10 text-foreground',
+                )}
+                onClick={onToggleSessionActivity}
+                aria-label={t('sessionActivity.title')}
+                aria-pressed={sessionActivityOpen}
+              >
+                <Activity className={cn('h-4 w-4', sessionActivityNeedsAttention && 'text-red-700 dark:text-red-400')} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" collisionPadding={8}><p>{t('sessionActivity.title')}</p></TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                data-testid="chat-session-activity-sheet-toggle"
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  'h-8 w-8 hover:bg-foreground/5 hover:text-foreground xl:hidden',
+                  sessionActivityOpen && 'bg-foreground/10 text-foreground',
+                )}
+                onClick={onOpenSessionActivity}
+                aria-label={t('sessionActivity.title')}
+                aria-pressed={sessionActivityOpen}
+              >
+                <Activity className={cn('h-4 w-4', sessionActivityNeedsAttention && 'text-red-700 dark:text-red-400')} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" collisionPadding={8}><p>{t('sessionActivity.title')}</p></TooltipContent>
+          </Tooltip>
+        </>
       )}
       {questionDirectoryAvailable && (
         <Tooltip>

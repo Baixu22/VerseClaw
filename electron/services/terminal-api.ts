@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import type {
   WorkspaceTerminalOpenPayload,
+  WorkspaceTerminalListPayload,
   WorkspaceTerminalRunResult,
   WorkspaceTerminalStatusPayload,
 } from '@shared/host-api/contract';
@@ -181,6 +182,7 @@ function buildSessionResult(snapshot: ReturnType<TerminalSessionManager['status'
     sessionId: snapshot.sessionId,
     workspaceId: snapshot.workspaceId,
     sessionKey: snapshot.sessionKey,
+    kind: snapshot.kind,
     cwd: snapshot.cwd,
     pid: snapshot.pid,
     cols: snapshot.cols,
@@ -503,6 +505,21 @@ export function createTerminalApi({
         sessionId: normalizeString(body.sessionId),
       });
       return buildSessionResult(snapshot);
+    },
+    list: async (payload) => {
+      const body = isRecord(payload) ? payload as WorkspaceTerminalListPayload : {};
+      const workspace = await getActiveWorkspaceProfile();
+      const sessions = terminalManager.list({
+        workspaceId: body.workspaceId ?? workspace?.id,
+        sessionKey: body.sessionKey,
+      });
+      return {
+        success: true,
+        sessions: sessions.map((snapshot) => {
+          const { success: _success, ...session } = buildSessionResult(snapshot);
+          return session;
+        }),
+      };
     },
   };
 }

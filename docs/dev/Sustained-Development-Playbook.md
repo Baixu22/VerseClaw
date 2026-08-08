@@ -1,5 +1,7 @@
 # 可持续开发手册（COMPASS + Harness）
 
+> **候选 Runtime 收敛主线（2026-08-02）**：涉及 Run/Workflow/Context/Memory/Tool/Effect/Telemetry 的后续开发，先读 `docs/dev/unified-agent-system/runtime-convergence/README.md`。Task Forest proposal 应用前，本控制包和旧 runtime-family 路线都不授权新实现；应用后挂在 `TF-0010` 下，一次只推进一个 ready 节点。`TF-0021` UI 迁移是独立主线，不得并行混入 Runtime 收敛。
+
 > 状态：Active
 > 生效日期：2026-07-19
 > 适用范围：ClawX / Verse Claw 成熟度推进、DCS/MEM/Context/SEKB/Browser 相关开发
@@ -45,7 +47,9 @@
 
 ---
 
-## 3. 唯一主线（只做 4 条 P0 + 1 条延后）
+## 3. 历史 P0 主线（2026-07-19 快照）
+
+本节只解释既有 `TF-0001..TF-0006` 的来源，不再授权 Runtime 收敛实施。Runtime 工作以 `runtime-convergence/STATUS.md` 和已应用的 Task Forest proposal 为准；提案未应用时不得启动任何 RC。
 
 | ID | 节点 | 优先级 | 目标 |
 |---|---|---:|---|
@@ -76,7 +80,7 @@ Sprint 3+: TF-0006
 1. docs/dev/Sustained-Development-Playbook.md
 2. task-forest todo / HTML
 3. docs/dev/handoffs/LATEST.md
-4. only one ready node (TF-0002 or TF-0003)
+4. read the active program STATUS; advance only its one ready node
 ```
 
 ### 4.2 高歧义时：task-clarifier
@@ -135,7 +139,7 @@ Windows: prefer --fields-file UTF-8 JSON for Chinese fields.
 
 ---
 
-## 7. P0 anchors
+## 7. 历史 P0 anchors（参考证据）
 
 ### TF-0002 Context Orchestrator
 - openclaw_runtime/src/context-engine/context-orchestrator.ts
@@ -186,9 +190,10 @@ Windows: prefer --fields-file UTF-8 JSON for Chinese fields.
 ```text
 Follow docs/dev/Sustained-Development-Playbook.md strictly.
 1. Read docs/dev/handoffs/LATEST.md if present
-2. Run task-forest todo; advance only the highest-priority ready node
-3. No parallel mega-surfaces; no full-system GA discussion
-4. Before end: update task-forest after confirmation; write handoff LATEST.md;
+2. For Runtime work, read runtime-convergence/STATUS.md and README.md
+3. Run task-forest todo; advance only the active program's one ready node
+4. No parallel mega-surfaces; no full-system GA discussion
+5. Before end: update task-forest after confirmation; write handoff LATEST.md;
    summarize done / evidence / next first step
 ```
 
@@ -199,6 +204,7 @@ Follow docs/dev/Sustained-Development-Playbook.md strictly.
 | Date | Change |
 |---|---|
 | 2026-07-19 | Initial: audit NO-GO + COMPASS install + task-forest seed TF-0001..0006 |
+| 2026-08-02 | Mark the July P0 sequence historical; route candidate Runtime work through the non-authorizing convergence control pack until its proposal is applied. |
 
 ---
 

@@ -8,7 +8,7 @@ import type {
   PermissionRiskLevel,
 } from '@shared/types/workspace';
 
-export type InboxSource = 'permission' | 'remote-task' | 'browser-task';
+export type InboxSource = 'permission' | 'remote-task' | 'browser-task' | 'operator';
 export type InboxRisk = 'read' | PermissionRiskLevel;
 export type InboxEvidenceKind =
   | 'command'
@@ -63,7 +63,29 @@ export type BrowserTaskInboxItem = InboxItemBase & {
   task: AgentBrowserTask;
 };
 
-export type InboxItem = PermissionInboxItem | RemoteTaskInboxItem | BrowserTaskInboxItem;
+/** RC-05: a real Operator slice intent projected from the durable approval ledger. */
+export type OperatorInboxItem = InboxItemBase & {
+  source: 'operator';
+  actions: Array<'approve' | 'deny'>;
+  /** Real approval ledger row fields (digest-only request). */
+  approvalId: string;
+  requestDigest: string;
+  resolvedBy?: string | null;
+  /** Structured lineage: context/effect/recovery refs from real receipts. */
+  lineage?: {
+    contextReceipts: string[];
+    effectReceipt?: string;
+    approval?: string;
+    recovery: string;
+    refs: string[];
+  };
+};
+
+export type InboxItem =
+  | PermissionInboxItem
+  | RemoteTaskInboxItem
+  | BrowserTaskInboxItem
+  | OperatorInboxItem;
 
 type InboxSourceErrors = Partial<Record<InboxSource, string>>;
 
@@ -79,6 +101,12 @@ type InboxState = {
   actOnRemoteTask: (id: string, action: 'approve' | 'reject' | 'execute') => Promise<void>;
   actOnBrowserTask: (id: string, action: 'approve-and-run' | 'reject') => Promise<void>;
   previewRemoteTask: (id: string) => Promise<RemoteTaskPreview>;
+  /** RC-05: decide a pending Operator slice intent (real governance decision). */
+  decideOperator: (id: string, decision: 'approve' | 'deny') => Promise<void>;
+  /** RC-05: fetch real Operator lineage (ContextReceipt/EffectReceipt) for an intent identity. */
+  loadOperatorLineage: (runId: string, sessionKey: string) => Promise<unknown>;
+  /** Last lineage payload returned by loadOperatorLineage. */
+  operatorLineage?: unknown;
 };
 
 function compactEvidence(entries: Array<InboxEvidence | null | undefined>): InboxEvidence[] {
@@ -196,10 +224,52 @@ export function isInboxItemActionable(item: InboxItem): boolean {
   return item.actions.length > 0;
 }
 
+/** RC-05: project a real Operator slice intent row into an Inbox item. */
+export function projectOperatorIntent(intent: {
+  approvalId: string;
+  state: string;
+  requestDigest: string;
+  createdAtMs: number;
+  expiresAtMs: number;
+  resolvedBy?: string | null;
+  decision?: string | null;
+}): OperatorInboxItem {
+  const pending = intent.state === 'approval_pending';
+  return {
+    key: `operator:${intent.approvalId}`,
+    id: intent.approvalId,
+    source: 'operator',
+    title: `operator:${intent.approvalId.slice(0, 12)}`,
+    // Pure domain data, never display prose: the UI renders i18n labels.
+    summary: intent.requestDigest,
+    risk: 'write',
+    status: intent.decision ?? intent.state,
+    timestamp: intent.createdAtMs,
+    evidence: [
+      { kind: 'reason', value: intent.state },
+      { kind: 'result', value: intent.requestDigest },
+      intent.resolvedBy ? { kind: 'profile', value: intent.resolvedBy } : null,
+    ].filter((entry): entry is InboxEvidence => entry !== null),
+    actions: pending ? ['approve', 'deny'] : [],
+    approvalId: intent.approvalId,
+    requestDigest: intent.requestDigest,
+    resolvedBy: intent.resolvedBy ?? null,
+  };
+}
+
 export function projectInboxItems(input: {
   approvals?: PermissionApprovalEvent[];
   remoteTasks?: RemoteTaskRecord[];
   browserTasks?: AgentBrowserTask[];
+  operatorIntents?: Array<{
+    approvalId: string;
+    state: string;
+    requestDigest: string;
+    createdAtMs: number;
+    expiresAtMs: number;
+    resolvedBy?: string | null;
+    decision?: string | null;
+  }>;
 }): InboxItem[] {
   return [
     ...(input.approvals ?? []).map(projectPermissionApproval),
@@ -207,6 +277,7 @@ export function projectInboxItems(input: {
     ...(input.browserTasks ?? [])
       .filter((task) => task.status === 'waiting-approval' && task.approval.status === 'pending')
       .map(projectBrowserTask),
+    ...(input.operatorIntents ?? []).map(projectOperatorIntent),
   ].sort((left, right) => right.timestamp - left.timestamp);
 }
 
@@ -232,11 +303,23 @@ export const useInboxStore = create<InboxState>((set, get) => ({
     if (refreshInFlight) return refreshInFlight;
     refreshInFlight = (async () => {
       if (!get().loaded) set({ loading: true });
-      const [permissionsResult, remoteTasksResult, browserTasksResult] = await Promise.allSettled([
-        hostApi.permissions.approvals({ includeExpired: true, limit: 200 }),
-        hostApi.remoteTasks.list(),
-        hostApi.agentBrowser.tasks(),
-      ]);
+      const [permissionsResult, remoteTasksResult, browserTasksResult, operatorIntentsResult] =
+        await Promise.allSettled([
+          hostApi.permissions.approvals({ includeExpired: true, limit: 200 }),
+          hostApi.remoteTasks.list(),
+          hostApi.agentBrowser.tasks(),
+          // RC-05: real Operator slice intents from the durable approval ledger
+          // through the Gateway Inbox methods (never a fabricated list).
+          hostApi.gateway.rpc<{ intents: Array<{
+            approvalId: string;
+            state: string;
+            requestDigest: string;
+            createdAtMs: number;
+            expiresAtMs: number;
+            resolvedBy?: string | null;
+            decision?: string | null;
+          }> }>('inbox.operator.list', {}),
+        ]);
 
       const sourceErrors: InboxSourceErrors = {};
       const approvals = permissionsResult.status === 'fulfilled'
@@ -248,9 +331,12 @@ export const useInboxStore = create<InboxState>((set, get) => ({
       const browserTasks = browserTasksResult.status === 'fulfilled'
         ? browserTasksResult.value.tasks
         : (sourceErrors['browser-task'] = errorMessage(browserTasksResult.reason), undefined);
+      const operatorIntents = operatorIntentsResult.status === 'fulfilled'
+        ? operatorIntentsResult.value.intents
+        : (sourceErrors.operator = errorMessage(operatorIntentsResult.reason), undefined);
 
       set({
-        items: projectInboxItems({ approvals, remoteTasks, browserTasks }),
+        items: projectInboxItems({ approvals, remoteTasks, browserTasks, operatorIntents }),
         sourceErrors,
         loading: false,
         loaded: true,
@@ -302,6 +388,35 @@ export const useInboxStore = create<InboxState>((set, get) => ({
       await get().refresh();
       set({ busyKey: null });
     }
+  },
+
+  decideOperator: async (id, decision) => {
+    set({ busyKey: `operator:${id}` });
+    try {
+      // UI action names (approve/deny) map to the wire protocol values
+      // (approved/denied) the Gateway inbox.operator.decide accepts.
+      const wireDecision = decision === 'approve' ? 'approved' : decision === 'deny' ? 'denied' : decision;
+      const result = await hostApi.gateway.rpc<{ success: boolean; error?: string }>(
+        'inbox.operator.decide',
+        { approvalId: id, decision: wireDecision },
+      );
+      assertHostSuccess(result);
+    } finally {
+      await get().refresh();
+      set({ busyKey: null });
+    }
+  },
+
+  /** RC-05: fetch the real Operator lineage (ContextReceipt/EffectReceipt) for
+   *  an intent identity through the Gateway Inbox lineage API. */
+  loadOperatorLineage: async (runId, sessionKey) => {
+    const result = await hostApi.gateway.rpc<{ success: boolean; lineage?: unknown; error?: string }>(
+      'inbox.operator.lineage',
+      { runId, sessionKey },
+    );
+    if (!result.success) throw new Error(result.error || 'Operator lineage failed');
+    set({ operatorLineage: result.lineage });
+    return result.lineage;
   },
 
   previewRemoteTask: async (id) => {

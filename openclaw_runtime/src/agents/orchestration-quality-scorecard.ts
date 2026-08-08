@@ -171,7 +171,7 @@ export function buildTaskLoopVerifiedQualityAuthority(input: {
   record: {
     loopRunId: string;
     sessionKey: string;
-    status: "running" | "complete" | "blocked" | "error";
+    status: "running" | "complete" | "blocked" | "error" | "cancelled";
     traceId?: string;
     evidenceGate?: { status: "pass" | "repair" | "blocked" };
     roleQualitySummary: {

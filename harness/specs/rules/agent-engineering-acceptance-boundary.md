@@ -56,5 +56,5 @@ Browser private-network policy.
 
 - `pnpm acceptance:agent:plan --spec harness/specs/tasks/agent-engineering-acceptance-orchestrator.md`
 - `pnpm exec vitest run tests/unit/agent-engineering-acceptance.test.ts`
-- `pnpm harness validate --spec harness/specs/tasks/agent-engineering-acceptance-orchestrator.md --no-diff`
+- `pnpm harness validate --spec harness/specs/tasks/agent-engineering-acceptance-orchestrator.md`
 - `git diff --check`

@@ -1,10 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+
+import { afterEach, describe, expect, it } from 'vitest';
 
 import {
   aggregateMetrics,
+  candidateIdentity,
   calculateScenarioMetrics,
+  validateReplayArtifact,
 } from '../../scripts/comms/replay.mjs';
-import { evaluateReport } from '../../scripts/comms/compare.mjs';
+import { evaluateReport, validateCompareArtifact } from '../../scripts/comms/compare.mjs';
+
+const temporaryPaths: string[] = [];
+const repositoryRoot = resolve(import.meta.dirname, '..', '..');
+
+afterEach(() => {
+  for (const path of temporaryPaths.splice(0)) rmSync(path, { recursive: true, force: true });
+});
 
 function buildPassingScenarioMetrics() {
   return {
@@ -58,5 +72,37 @@ describe('comms scripts', () => {
     const result = evaluateReport(current, baseline);
 
     expect(result.failures.some((f) => f.includes('missing scenario'))).toBe(true);
+  });
+
+  it('runs literal Node entrypoints and regenerates candidate-bound artifacts', () => {
+    const outputDir = mkdtempSync(join(tmpdir(), 'comms-script-output-'));
+    temporaryPaths.push(outputDir);
+    const env = { ...process.env, COMMS_OUTPUT_DIR: outputDir };
+    const replayPath = join(repositoryRoot, 'scripts', 'comms', 'replay.mjs');
+    const comparePath = join(repositoryRoot, 'scripts', 'comms', 'compare.mjs');
+    const metricsPath = join(outputDir, 'current-metrics.json');
+    const reportPath = join(outputDir, 'compare-report.json');
+
+    execFileSync(process.execPath, [replayPath], { cwd: repositoryRoot, env, stdio: 'pipe' });
+    expect(existsSync(metricsPath)).toBe(true);
+    expect(statSync(metricsPath).size).toBeGreaterThan(0);
+    const firstMetrics = JSON.parse(readFileSync(metricsPath, 'utf8'));
+    expect(validateReplayArtifact(firstMetrics, { candidate: candidateIdentity(repositoryRoot) })).toEqual([]);
+
+    unlinkSync(metricsPath);
+    execFileSync(process.execPath, [replayPath], { cwd: repositoryRoot, env, stdio: 'pipe' });
+    const regeneratedMetrics = JSON.parse(readFileSync(metricsPath, 'utf8'));
+    expect(validateReplayArtifact(regeneratedMetrics, { candidate: candidateIdentity(repositoryRoot) })).toEqual([]);
+
+    execFileSync(process.execPath, [comparePath], { cwd: repositoryRoot, env, stdio: 'pipe' });
+    expect(existsSync(reportPath)).toBe(true);
+    expect(statSync(reportPath).size).toBeGreaterThan(0);
+    const firstReport = JSON.parse(readFileSync(reportPath, 'utf8'));
+    expect(validateCompareArtifact(firstReport, { candidate: candidateIdentity(repositoryRoot) })).toEqual([]);
+
+    unlinkSync(reportPath);
+    execFileSync(process.execPath, [comparePath], { cwd: repositoryRoot, env, stdio: 'pipe' });
+    const regeneratedReport = JSON.parse(readFileSync(reportPath, 'utf8'));
+    expect(validateCompareArtifact(regeneratedReport, { candidate: candidateIdentity(repositoryRoot) })).toEqual([]);
   });
 });

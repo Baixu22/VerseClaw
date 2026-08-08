@@ -3,7 +3,7 @@
 // remain compatibility reads until migration proof permits retirement. Mission
 // restart, wait, resume, and cancel semantics are preserved in the projection.
 // Indefinite dual-write is not a migration strategy.
-import { TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
+import { CAS_CREATE_SENTINEL, TaskFlowCasStore, type FlowStatus } from '../../tasks/task-flow-cas.js';
 
 export const MISSION_PROJECTION_FLAG = 'rc06c.missionProjection';
 export const MISSION_PROJECTION_SCHEMA_VERSION = '1';
@@ -19,8 +19,8 @@ export type MissionProjectionInput = {
   status: string;
   phase?: string;
   tick?: number;
-  /** Wait semantics: mission is asking the user or sleeping. */
-  waitMode?: 'ask_user' | 'sleep' | 'none';
+  /** Wait semantics: mission is asking the user, sleeping, or paused. */
+  waitMode?: 'ask_user' | 'sleep' | 'pause' | 'none';
 };
 
 export type MissionProjectionResult = {
@@ -62,11 +62,12 @@ export function projectMissionRun(
   const flowId = `mission:${input.missionId}`;
   const store = new TaskFlowCasStore(options.database ?? {});
   const existing = store.getById(flowId);
-  const expectedRevision = existing ? Number(existing.revision) || 0 : 0;
+  // RC-06A create sentinel: a missing row requires expectedRevision = -1.
+  const expectedRevision = existing ? Number(existing.revision) || 0 : CAS_CREATE_SENTINEL;
   const waitJson =
     input.waitMode && input.waitMode !== 'none'
       ? JSON.stringify({ waitMode: input.waitMode, phase: input.phase, tick: input.tick })
-      : undefined;
+      : null;
   const result = store.casUpsert({
     flowId,
     expectedRevision,

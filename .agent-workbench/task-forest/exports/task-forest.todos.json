@@ -43,47 +43,6 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
-      "validation_plan": [
-        "审阅 generated UAS-06 evidence report",
-        "运行真实 paired cohort 并逐条记录 provider/human recovery",
-        "执行经审核 operator kill/rollback drill",
-        "真实证据审阅后再单独提出 closeout proposal"
-      ],
-      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
-      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
-    },
-    "blocked_by": [],
-    "confidence": 0.7,
-    "context_tags": [],
-    "desired_outcomes": [
-      "cohort 内合格本地执行覆盖率 100%",
-      "verseshell_result 合并回既有 process 体验",
-      "形成对照基线和可解释失败分类"
-    ],
-    "difficulty": "high",
-    "id": "TF-0017",
-    "kind": "task",
-    "next_action": "仅由操作员在 global/agent/session scope 选择 tools.exec.host=verseshell；模型侧 host enum 不得增加 VerseShell",
-    "priority": 2,
-    "progress": 35.0,
-    "purpose": "以真实任务验证单一路径的正确性、安全性、运营性和回滚能力。",
-    "ready": true,
-    "remaining_minutes_max": 2280,
-    "remaining_minutes_min": 1560,
-    "status": "in_progress",
-    "success_metrics": [
-      "本地执行覆盖率 100%",
-      "native fallback 0",
-      "关键生命周期成功率 100%",
-      "安全违规观测 0"
-    ],
-    "title": "UAS-06 单一本地执行平面 canary"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
       "fit_confidence": 0.96,
       "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
       "validation_plan": [
@@ -124,18 +83,18 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
+      "fit_confidence": 0.95,
+      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
       "validation_plan": [
-        "Verifier 重跑全量 profile",
-        "检查报告 SHA/日志完整性",
-        "确认产品锁持续关闭"
+        "逐包 Harness 与独立 Agent Engineering Acceptance",
+        "最终全量工程 gate 和 manifest",
+        "用户执行 H-01 至 H-06"
       ],
-      "why_not_enough": "不替代真人/live/product 证据",
-      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
+      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
+      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
     },
     "blocked_by": [],
-    "confidence": 0.58,
+    "confidence": 0.9,
     "context_tags": [
       "unified-agent",
       "verseshell",
@@ -145,72 +104,29 @@
       "memory"
     ],
     "desired_outcomes": [
-      "合格本地 exec/process 在 canary cohort 中 100% 经过 VerseShell",
-      "所有 prompt 增量由唯一 Context Orchestrator 选择、去重和计费",
-      "文件 mutation、进程执行和 Memory 写入均有明确失败与恢复语义",
-      "统一 trace 能关联 plan、policy、execution、observation、context 和 memory candidate"
+      "每次模型调用、审批、外部 effect 和恢复结果均可关联且可解释",
+      "每个运行域最终只有一个权威 writer",
+      "工程证据通过独立 Agent 复验，真人操作只在最终阶段执行"
     ],
     "difficulty": "very_high",
     "id": "TF-0010",
     "kind": "global_task",
-    "next_action": "只解锁依赖链中的首个未完成节点",
+    "next_action": "唯一入口为 docs/dev/unified-agent-system/runtime-convergence/README.md",
     "priority": 1,
     "progress": 0.0,
-    "purpose": "将 VerseShell、VerseToken、Coding、Context/DCS 和 Memory 从可用组件收口为可审计、可恢复、可验证的统一 Agent 系统。",
+    "purpose": "停止通过新增通用模块证明产品价值，把现有工程基础收敛为唯一权威主路径和可验收的 Operator 产品闭环。",
     "ready": true,
-    "remaining_minutes_max": 24000,
-    "remaining_minutes_min": 14400,
-    "status": "proposed",
+    "remaining_minutes_max": 19200,
+    "remaining_minutes_min": 19200,
+    "status": "in_progress",
     "success_metrics": [
-      "重复进程创建 0",
-      "静默 partial mutation 0",
-      "未计费或重复 context 注入 0",
-      "未授权 Memory/SEKB 持久化 0",
-      "kill switch 与 rollback 演练成功率 100%"
+      "未登记 semantic mutation 0",
+      "重复副作用 0",
+      "平行 workflow/memory/telemetry writer 0",
+      "自动化 human/live 计数误增 0",
+      "必需工程门禁通过率 100%"
     ],
-    "title": "统一 Agent 基础设施主路径收口（非GA）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
-      "validation_plan": [
-        "Verifier 重跑全量 profile",
-        "检查报告 SHA/日志完整性",
-        "确认产品锁持续关闭"
-      ],
-      "why_not_enough": "不替代真人/live/product 证据",
-      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [
-      "agent-acceptance",
-      "engineering-evidence",
-      "fail-closed"
-    ],
-    "desired_outcomes": [
-      "所有工程任务由独立 Verifier 重跑后获得机器可读 engineering verdict",
-      "当前失败的 runtime、E2E、maturity 与 release 门禁逐项闭合"
-    ],
-    "difficulty": "high",
-    "id": "TF-0020",
-    "kind": "task",
-    "next_action": "一次只推进该验收节点的有序阶段",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "在无真人验收条件下，让每个工程任务都具有可复跑、可审计、fail-closed 的 Agent 验收结果。",
-    "ready": true,
-    "remaining_minutes_max": 1920,
-    "remaining_minutes_min": 960,
-    "status": "ready",
-    "success_metrics": [
-      "Verifier 重跑结果与 Executor 结果一致",
-      "超时、非零退出、旧 SHA、脏树、TLS 绕过、额外 skip 均拒绝验收",
-      "人类/live 产品计数和三项产品锁误增为零"
-    ],
-    "title": "Agent 工程自动验收编排器"
+    "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）"
   },
   {
     "alignment": {
@@ -302,6 +218,45 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+      "validation_plan": [
+        "逐包 Harness 与独立 Agent Engineering Acceptance",
+        "RC-09 全量门禁与最终 manifest",
+        "用户执行 H-01 至 H-06"
+      ],
+      "why_not_enough": "没有用户最终 accepted verdict 时只能停在 human_acceptance_pending。",
+      "why_this_task": "以权威收敛替代通用轮子扩张，并把差异化落在可见、可审计的 Operator 闭环。"
+    },
+    "blocked_by": [],
+    "confidence": 0.88,
+    "context_tags": [
+      "runtime-convergence",
+      "operator-desktop",
+      "authority"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0028",
+    "kind": "milestone",
+    "next_action": "RC-00 至 RC-09 工程验收通过",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "把 TF-0010 的收敛裁决变成可恢复、可验证、不会扩张跑偏的工程序列。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [
+      "必需 RC 包验收率 100%",
+      "并行 active RC 包 0",
+      "未授权新 authority 0"
+    ],
+    "title": "Runtime Authority Convergence 与 Operator 验收"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
@@ -329,92 +284,6 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "M2/M3 证据升级（延后）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
-      "validation_plan": [
-        "审阅 generated UAS-06 evidence report",
-        "运行真实 paired cohort 并逐条记录 provider/human recovery",
-        "执行经审核 operator kill/rollback drill",
-        "真实证据审阅后再单独提出 closeout proposal"
-      ],
-      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
-      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
-    },
-    "blocked_by": [
-      "TF-0017"
-    ],
-    "confidence": 0.5,
-    "context_tags": [],
-    "desired_outcomes": [
-      "MemoryCandidate 经验证和批准后进入唯一目标 store",
-      "事实支持 TTL、纠正、冲突、supersede 和 revoke",
-      "SEKB 始终人工确认"
-    ],
-    "difficulty": "very_high",
-    "id": "TF-0018",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0017",
-    "priority": 3,
-    "progress": 0.0,
-    "purpose": "让 Runtime Memory 与 SEKB 提供长期价值，同时避免错误、越权和重复 authority。",
-    "ready": false,
-    "remaining_minutes_max": 4800,
-    "remaining_minutes_min": 2400,
-    "status": "proposed",
-    "success_metrics": [
-      "未授权持久化 0",
-      "无法追溯 Memory 0",
-      "错误纠正未生效 0",
-      "SEKB 未确认写入 0"
-    ],
-    "title": "UAS-07 长期 Memory 治理闭环"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "完成统一 Agent 单一本地执行路径，同时保持真实证据、串行依赖和产品锁诚实。",
-      "validation_plan": [
-        "审阅 generated UAS-06 evidence report",
-        "运行真实 paired cohort 并逐条记录 provider/human recovery",
-        "执行经审核 operator kill/rollback drill",
-        "真实证据审阅后再单独提出 closeout proposal"
-      ],
-      "why_not_enough": "工程证据不能证明真实 provider 成本、人工恢复、内部 cohort 安全运营或长期收益。",
-      "why_this_task": "TF-0017 是已确认执行主线路径中承接 VerseShell lifecycle parity 的唯一 cohort 验证节点。"
-    },
-    "blocked_by": [
-      "TF-0018"
-    ],
-    "confidence": 0.46,
-    "context_tags": [],
-    "desired_outcomes": [
-      "完成预注册实验协议",
-      "获得实际 provider、执行、恢复、运营和维护成本",
-      "形成产品负责人签署的毕业决定"
-    ],
-    "difficulty": "high",
-    "id": "TF-0019",
-    "kind": "milestone",
-    "next_action": "先完成依赖：TF-0018",
-    "priority": 3,
-    "progress": 0.0,
-    "purpose": "用真实产品证据判断统一 Agent 系统是否回本，并为 TF-0006 提供候选证据而非自动解阻。",
-    "ready": false,
-    "remaining_minutes_max": 1920,
-    "remaining_minutes_min": 960,
-    "status": "proposed",
-    "success_metrics": [
-      "实际 provider usage 覆盖率 100%",
-      "实验任务与结果可追溯率 100%",
-      "硬性安全 veto 0",
-      "产品决定有明确 owner 和日期"
-    ],
-    "title": "UAS-08 真实 ROI、soak 与毕业裁决"
   },
   {
     "alignment": {
@@ -455,6 +324,179 @@
       "why_this_task": ""
     },
     "blocked_by": [
+      "TF-0031",
+      "TF-0037"
+    ],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0038",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0031, TF-0037",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-07 Memory 与 Context 插件槽收敛"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0038"
+    ],
+    "confidence": 0.84,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0039",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0038",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-08A MCP 与 Host-native Tool 收敛"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0039",
+      "TF-0032",
+      "TF-0033"
+    ],
+    "confidence": 0.85,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0040",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0039, TF-0032, TF-0033",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-08B OTel 与 Observability 收敛"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "实现统一而不重复的 Context 主路径",
+      "validation_plan": [
+        "entry scan",
+        "candidate ordering/dedup tests",
+        "combined provider integration tests",
+        "lineage assertions"
+      ],
+      "why_not_enough": "仍需 UAS-03 移除 VToken 自有业务状态和无关串行。",
+      "why_this_task": "它直接解决当前双入口、私账和重复投影问题。"
+    },
+    "blocked_by": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "desired_outcomes": [
+      "所有 context source 先产出 ContextCandidate",
+      "先排序去重再收费",
+      "最终 lineage 完整记录保留、截断和丢弃原因"
+    ],
+    "difficulty": "high",
+    "id": "TF-0013",
+    "kind": "task",
+    "next_action": "澄清阻塞原因并决定解除或废止",
+    "priority": 1,
+    "progress": 60.0,
+    "purpose": "消除动态 Assembler 私有预算、调用顺序冒充优先级和跨 provider 重复投影。",
+    "ready": false,
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 960,
+    "status": "blocked",
+    "success_metrics": [
+      "私有 context budget 0",
+      "重复 authority object 注入 0",
+      "声明和实际优先级偏差 0"
+    ],
+    "title": "UAS-02 Context Orchestrator residual 收口"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+      "validation_plan": [
+        "逐包 Harness 与独立 Agent Engineering Acceptance",
+        "最终全量工程 gate 和 manifest",
+        "用户执行 H-01 至 H-06"
+      ],
+      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
+      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "agent-acceptance",
+      "engineering-evidence",
+      "fail-closed"
+    ],
+    "desired_outcomes": [
+      "每个后续 RC 包可复用同一验收编排器",
+      "候选 SHA、base ref、命令、日志和产物 digest 可复现"
+    ],
+    "difficulty": "high",
+    "id": "TF-0020",
+    "kind": "task",
+    "next_action": "澄清阻塞原因并决定解除或废止",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "在无真人验收条件下，让每个工程任务都具有可复跑、可审计、fail-closed 的 Agent 验收结果。",
+    "ready": false,
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "status": "blocked",
+    "success_metrics": [
+      "bootstrap fixture Executor/Verifier 通过率 100%",
+      "无效 base 静默 fallback 0",
+      "actor/digest 篡改误接受 0",
+      "人类/live 产品计数误增 0"
+    ],
+    "title": "RC-00 Agent 工程验收 Bootstrap"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
       "TF-0025"
     ],
     "confidence": 0.68,
@@ -473,5 +515,332 @@
     "status": "proposed",
     "success_metrics": [],
     "title": "Knowledge Library 与 Review Queue 收敛"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 1.0,
+      "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
+      "validation_plan": [
+        "干净 worktree 复现并清除 lint/typecheck 债",
+        "RC-01R scoped Harness 与全局门禁",
+        "恢复 RC-00R 后运行双 detached worktree 验收"
+      ],
+      "why_not_enough": "RC-01R 不替代 RC-00R 的 F4 防护、独立 Executor/Verifier 或最终人类验收。",
+      "why_this_task": "RC-01R 直接消除 clean candidate 的 Chat/UI lint 与 nested runtime typecheck 阻塞。"
+    },
+    "blocked_by": [
+      "TF-0020"
+    ],
+    "confidence": 0.93,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0029",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0020",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "使 Runtime Authority Convergence 的后续验收基于真实全局绿线，而非从脏 UI 工作树借用 lint 修复或将 nested runtime typecheck 债排除。",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [],
+    "title": "RC-01R 自包含基线与全局绿线"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0029"
+    ],
+    "confidence": 0.88,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0030",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0029",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-02 Full-payload Shadow Census"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0030"
+    ],
+    "confidence": 0.86,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0031",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0030",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-03 DCS Seal 与双收据"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0031"
+    ],
+    "confidence": 0.88,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0032",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0031",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-04 Durable Approval 与 Effect Reconciliation"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0031",
+      "TF-0032"
+    ],
+    "confidence": 0.84,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0033",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0031, TF-0032",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-05 最小 Operator 治理切片"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0033"
+    ],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0034",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0033",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-06A TaskFlow 能力与并发语义证明"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0034"
+    ],
+    "confidence": 0.78,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0035",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0034",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-06B ClawGraph Lifecycle 迁移"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0035"
+    ],
+    "confidence": 0.76,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0036",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0035",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-06C Mission Lifecycle 迁移"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0036"
+    ],
+    "confidence": 0.75,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "very_high",
+    "id": "TF-0037",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0036",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-06D Task Loop Lifecycle 迁移"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0037",
+      "TF-0038",
+      "TF-0039",
+      "TF-0040"
+    ],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0041",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0037, TF-0038, TF-0039, TF-0040",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-09 独立工程总验收与证据封存"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0041"
+    ],
+    "confidence": 0.86,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0042",
+    "kind": "milestone",
+    "next_action": "先完成依赖：TF-0041",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "blocked",
+    "success_metrics": [],
+    "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
   }
 ]

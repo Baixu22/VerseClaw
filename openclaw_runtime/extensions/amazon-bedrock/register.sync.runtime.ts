@@ -502,6 +502,8 @@ export function registerAmazonBedrockPlugin(api: OpenClawPluginApi): void {
     },
     resolveConfigApiKey: ({ env }) => resolveBedrockConfigApiKey(env),
     ...anthropicByModelReplayHooks,
+    createStreamFn: ({ model }) =>
+      model.api === "bedrock-converse-stream" ? (streamSimpleBedrock as StreamFn) : undefined,
     wrapStreamFn: ({ modelId, config, model, streamFn, thinkingLevel, extraParams }) => {
       const currentPluginConfig = resolveCurrentPluginConfig(config);
       const currentGuardrail = currentPluginConfig?.guardrail;
