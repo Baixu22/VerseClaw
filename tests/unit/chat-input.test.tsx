@@ -52,6 +52,7 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
   },
   artifactPanelMocks: {
     openWorkspacePanel: vi.fn(),
+    openPreview: vi.fn(),
   },
   permissionMocks: {
     approvals: vi.fn(),

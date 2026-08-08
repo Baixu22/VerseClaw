@@ -5,6 +5,7 @@ import { Chat } from '@/pages/Chat';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
+  useLocation: () => ({ hash: '', pathname: '/', search: '', state: null }),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -79,7 +80,13 @@ vi.mock('@/stores/artifact-panel', () => ({
   ARTIFACT_PANEL_MAX_WIDTH: 50,
   useArtifactPanel: (selector: (state: { open: boolean; widthPct: number; openChanges: () => void; openPreview: () => void; close: () => void; openBrowser: () => void; tab: string }) => unknown) => selector({
     open: false,
+    expanded: false,
     widthPct: 34,
+    tabs: [],
+    activeTabId: null,
+    terminalPlacement: 'side',
+    setTerminalPlacement: vi.fn(),
+    restoreSessionState: vi.fn(),
     openChanges: vi.fn(),
     openPreview: vi.fn(),
     close: vi.fn(),
