@@ -2,7 +2,7 @@
  * Setup Wizard Page
  * First-time setup experience for new users
  */
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
@@ -64,18 +64,52 @@ import { isSetupVerificationComplete } from '@/lib/setup-provider';
  * THE ARC
  * The reference lays its projects out on a ring and puts the camera just
  * inside it: each item sits at (-sin(θi)·r, 0, cos(θi)·r) and faces the centre,
- * with the camera at z = r - 0.3 (webgl.ts:6584). Rotating the ring sweeps the
- * next item into view along a curve rather than sliding it flat.
+ * with the camera at z = r - 0.3 (webgl.ts:6560-6585). Rotating the ring sweeps
+ * the next item into view along a curve rather than sliding it flat.
  *
- * That is reproducible in CSS 3D with no WebGL at all: a perspective parent
- * plus `rotateY(θ) translateZ(r)` on the card is the same construction. The
- * wrapper carries translateZ(-r) so the front card lands back at z = 0.
+ * In CSS 3D that construction is the matrix product
+ *
+ *     translateZ(-r) · rotateY(θ) · translateZ(+r)
+ *
+ * which maps the card to (r·sinθ, 0, r·cosθ - r) while turning it by θ: it
+ * arrives along the ring, side-first, and lands at exactly z = 0 when θ = 0.
+ *
+ * THAT PRODUCT CANNOT LIVE ON ONE NODE.
+ * framer-motion builds every transform string in one fixed order —
+ * translate, then scale, then rotate (transform-box order in its own
+ * `buildTransform`). So a single motion node asked for `rotateY` and `z`
+ * emits `translateZ(z) rotateY(θ)`, i.e. T·R with no trailing T. The card
+ * then travels straight down the view axis: at r = 900 / perspective = 1400
+ * it enters at scale 1400/(1400+900) ≈ 0.61 dead centre and inflates to 1.0,
+ * with ~0px of lateral travel. That is a dolly zoom, not the reference's
+ * sweep, and it re-rasterises every glyph in the card on every frame.
+ *
+ * So the ring is spelled across three nodes, which is the minimum the fixed
+ * order allows:
+ *
+ *   .setup-arc-stage   perspective (the camera). Carries the opacity fade.
+ *   .setup-arc-orbit   translateZ(-r) rotateY(θ) — the only animated node.
+ *   .setup-card-3d     translateZ(+r) — static, from CSS.
+ *
+ * OPACITY AND preserve-3d MUST NOT SHARE A NODE.
+ * An element with opacity < 1 is a grouping element, and grouping forces its
+ * `transform-style: preserve-3d` to compute to `flat`. Fading the orbit node
+ * would therefore flatten the card's translateZ(+r) into the orbit's plane
+ * and silently collapse the ring back to a slide. The fade lives on the
+ * stage, which supplies `perspective` (unaffected by grouping) and never
+ * declares preserve-3d.
  *
  * The reference's own radius formula is r = width/2 / tan(π/count). With seven
  * steps that gives θ ≈ 51°, which is right for browsing artwork and wrong for
  * reading a form — at that angle the far edge of the card is unreadable. The
  * same formula with a wider virtual ring gives ARC_DEGREES/ARC_RADIUS below:
  * enough curvature to read as rotation, not enough to fight the text.
+ *
+ * With the product correct, θ = 22° at r = 900 resolves to 337px of lateral
+ * travel (half the 672px card) against only 66px of depth — a 0.96→1.00 scale
+ * swing instead of 0.61→1.00. The card reads as swinging in along the ring,
+ * and near-unity scale is also why the text stays sharp: the compositor is
+ * re-transforming a cached raster rather than re-shaping every glyph.
  *
  * STALE CLICKS ARE GUARDED IN THE HANDLER, NOT THE DOM
  * Under AnimatePresence mode="wait" the outgoing step stays mounted while it
@@ -114,23 +148,46 @@ const stepHeadingVariants = {
   exit: { opacity: 0, y: -6, transition: { duration: 0.12, ease: EASE_IN } },
 };
 
-/** The card, swept along the ring. Reduced motion keeps the fade, drops the arc. */
-const buildStepCardVariants = (reduceMotion: boolean) => ({
-  initial: {
-    opacity: 0,
-    ...(reduceMotion ? {} : { rotateY: ARC_DEGREES, z: -ARC_RADIUS }),
-  },
-  animate: {
-    opacity: 1,
-    ...(reduceMotion ? {} : { rotateY: 0, z: 0 }),
-    transition: { duration: reduceMotion ? 0.2 : 0.7, ease: EXPO_OUT },
-  },
-  exit: {
-    opacity: 0,
-    ...(reduceMotion ? {} : { rotateY: -ARC_DEGREES, z: -ARC_RADIUS }),
-    transition: { duration: 0.12, ease: EASE_IN },
-  },
-});
+/**
+ * Stage: the camera node. Opacity only — see the OPACITY AND preserve-3d note
+ * above for why the fade cannot sit on the orbit node that carries the ring.
+ */
+const stepStageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.6, ease: EXPO_OUT } },
+  exit: { opacity: 0, transition: { duration: 0.12, ease: EASE_IN } },
+};
+
+/**
+ * Orbit: the swept node, and the only thing that animates in the arc.
+ *
+ * `z` is held at -ARC_RADIUS in all three variants rather than being set once
+ * in `style`. Both would render identically at rest, but a transform value
+ * present in some variants and absent from others gets re-resolved toward the
+ * variant that omits it on every re-render — the same failure mode the
+ * pointerEvents note above describes. Stating it three times makes the ring
+ * radius a constant of the node, not something the animation can drift.
+ *
+ * Under reduced motion the node emits no transform at all: the arc is the
+ * ambient movement the setting exists to remove, and the stage's fade already
+ * carries the step change on its own.
+ */
+const buildStepOrbitVariants = (reduceMotion: boolean) =>
+  reduceMotion
+    ? { initial: {}, animate: {}, exit: {} }
+    : {
+        initial: { rotateY: ARC_DEGREES, z: -ARC_RADIUS },
+        animate: {
+          rotateY: 0,
+          z: -ARC_RADIUS,
+          transition: { duration: 0.7, ease: EXPO_OUT },
+        },
+        exit: {
+          rotateY: -ARC_DEGREES,
+          z: -ARC_RADIUS,
+          transition: { duration: 0.12, ease: EASE_IN },
+        },
+      };
 
 /** Nav row: opacity only — the buttons must never move under the pointer. */
 const stepItemVariants = {
@@ -220,7 +277,7 @@ export function Setup() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<number>(STEP.WELCOME);
   const reduceMotion = useReducedMotion() ?? false;
-  const stepCardVariants = useMemo(() => buildStepCardVariants(reduceMotion), [reduceMotion]);
+  const stepOrbitVariants = useMemo(() => buildStepOrbitVariants(reduceMotion), [reduceMotion]);
 
   // Setup state
   // Installation state for the Installing step
@@ -326,7 +383,15 @@ export function Setup() {
        * be positioned to paint above it — non-positioned blocks render beneath
        * positioned siblings regardless of DOM order. */}
       <SetupGridBackdrop />
-      <div className="relative z-raised flex-1 overflow-auto">
+      {/* overflow-x-clip, not the default both-axis auto: the card now swings
+        * ~337px sideways along the ring, which is real horizontal overflow. Left
+        * on auto it raises a horizontal scrollbar mid-sweep, and the scrollbar
+        * appearing steals height and reflows the step under the pointer. `clip`
+        * rather than `hidden` because hidden would also make x a programmatic
+        * scroll surface; we want the sweep masked, not scrollable. Clipping on
+        * an ancestor is safe for the 3D chain — only preserve-3d on the node
+        * itself is affected by grouping. */}
+      <div className="relative z-raised flex-1 overflow-y-auto overflow-x-clip">
         {/* Progress Indicator */}
         <div className="flex justify-center pt-8">
           <div className="flex items-center gap-2">
@@ -380,48 +445,74 @@ export function Setup() {
               <p className="text-muted-foreground">{t(`steps.${step.id}.description`)}</p>
             </motion.div>
 
-            {/* Step-specific content */}
+            {/* Step-specific content, on the ring. Three nodes, because the
+              * product translateZ(-r)·rotateY(θ)·translateZ(+r) cannot be
+              * expressed on one — see THE ARC at the top of this file.
+              *
+              * `perspective` here is the CSS property, not framer's
+              * `transformPerspective`. They are different things: the property
+              * is the camera for this element's *children*, while
+              * transformPerspective injects perspective() into the element's
+              * *own* transform and leaves descendants untouched. Only the
+              * former can project a parent/child 3D chain. */}
             <motion.div
-              variants={stepCardVariants}
-              style={{
-                transformPerspective: ARC_PERSPECTIVE,
-                transformStyle: 'preserve-3d',
-              }}
-              className="setup-card-3d rounded-xl bg-card text-card-foreground border shadow-sm p-8 mb-8"
+              variants={stepStageVariants}
+              style={reduceMotion ? undefined : { perspective: `${ARC_PERSPECTIVE}px` }}
+              className={cn('mb-8', !reduceMotion && 'setup-arc-stage')}
             >
-              {safeStepIndex === STEP.WELCOME && <WelcomeContent />}
-              {safeStepIndex === STEP.RUNTIME && <RuntimeContent onStatusChange={setRuntimeChecksPassed} />}
-              {safeStepIndex === STEP.INSTALLING && (
-                <InstallingContent
-                  skills={getDefaultSkills(t)}
-                  onComplete={handleInstallationComplete}
-                  onSkip={() => setCurrentStep((i) => i + 1)}
-                />
-              )}
-              {safeStepIndex === STEP.PROVIDER && (
-                <ProviderStepContent
-                  pending={pendingProvider}
-                  onValidated={(pending) => {
-                    setPendingProvider(pending);
-                    if (!pending) setModelVerified(null);
-                  }}
-                />
-              )}
-              {safeStepIndex === STEP.MODEL && (
-                <ModelStepContent pending={pendingProvider} onVerified={setModelVerified} />
-              )}
-              {safeStepIndex === STEP.WORKSPACE && (
-                <WorkspaceStepContent
-                  confirmed={workspaceConfirmed}
-                  onConfirmed={setWorkspaceConfirmed}
-                />
-              )}
-              {safeStepIndex === STEP.COMPLETE && (
-                <CompleteContent
-                  installedSkills={installedSkills}
-                  workspace={workspaceConfirmed}
-                />
-              )}
+              <motion.div
+                variants={stepOrbitVariants}
+                className={cn(!reduceMotion && 'setup-arc-orbit')}
+              >
+                <div
+                  data-testid="setup-step-card"
+                  style={
+                    reduceMotion
+                      ? undefined
+                      : ({ '--setup-arc-radius': `${ARC_RADIUS}px` } as CSSProperties)
+                  }
+                  className={cn(
+                    'rounded-xl bg-card text-card-foreground border shadow-sm p-8',
+                    !reduceMotion && 'setup-card-3d',
+                  )}
+                >
+                  {safeStepIndex === STEP.WELCOME && <WelcomeContent />}
+                  {safeStepIndex === STEP.RUNTIME && (
+                    <RuntimeContent onStatusChange={setRuntimeChecksPassed} />
+                  )}
+                  {safeStepIndex === STEP.INSTALLING && (
+                    <InstallingContent
+                      skills={getDefaultSkills(t)}
+                      onComplete={handleInstallationComplete}
+                      onSkip={() => setCurrentStep((i) => i + 1)}
+                    />
+                  )}
+                  {safeStepIndex === STEP.PROVIDER && (
+                    <ProviderStepContent
+                      pending={pendingProvider}
+                      onValidated={(pending) => {
+                        setPendingProvider(pending);
+                        if (!pending) setModelVerified(null);
+                      }}
+                    />
+                  )}
+                  {safeStepIndex === STEP.MODEL && (
+                    <ModelStepContent pending={pendingProvider} onVerified={setModelVerified} />
+                  )}
+                  {safeStepIndex === STEP.WORKSPACE && (
+                    <WorkspaceStepContent
+                      confirmed={workspaceConfirmed}
+                      onConfirmed={setWorkspaceConfirmed}
+                    />
+                  )}
+                  {safeStepIndex === STEP.COMPLETE && (
+                    <CompleteContent
+                      installedSkills={installedSkills}
+                      workspace={workspaceConfirmed}
+                    />
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
 
             {/* Navigation - hidden during installation step */}
