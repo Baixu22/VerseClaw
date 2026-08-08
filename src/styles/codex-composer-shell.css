@@ -1,0 +1,83 @@
+/*
+ * codex-composer-shell.css — the resting look of the composer card.
+ *
+ * WHY A STYLESHEET AND NOT UTILITIES. The shell previously carried a ~40-class
+ * Tailwind string with two hand-written shadow stacks (one per theme) inlined
+ * twice. Every literal in it was a one-off: the blur, the saturation, the
+ * shadow geometry and the dark-mode surface (#2d2d2d) existed nowhere else in
+ * the token layer, so the composer drifted away from the menus that open out of
+ * it. Moving colour/elevation here lets both read from codex-tokens.css.
+ *
+ * WHAT STAYS IN THE MARKUP. Geometry — radius 25px, min-height 98px, padding —
+ * remains as utilities on the element. Those three are asserted directly by
+ * tests/e2e/chat-layout-cdp.spec.ts, and keeping them where the assertion can
+ * see them keeps the contract legible. This file only claims surface, border,
+ * elevation and the focus/drag states.
+ *
+ * THE TOP RIM. The reference card is lit from above: its border is a gradient
+ * that is brightest at the top edge and fades out by the midpoint. A gradient
+ * border needs the padding-box/border-box two-layer trick, which fights the
+ * translucent surface underneath. The inset hairline below buys the same
+ * read — an edge that catches light at the top — for one declaration, and is
+ * how the rest of the system already draws lit edges.
+ *
+ * DRAG STATE is a data attribute rather than a conditional class because these
+ * rules are unlayered and would otherwise win against Tailwind's `border-*`
+ * utilities regardless of what the component passed.
+ */
+
+.codex-composer-shell {
+  --ccs-surface: var(--color-background-elevated-primary);
+  --ccs-border: var(--color-border);
+  --ccs-rim: color-mix(in oklab, var(--color-text-foreground) 6%, transparent);
+  --ccs-focus: color-mix(in oklab, var(--color-border-focus) 12%, transparent);
+
+  border: 1px solid var(--ccs-border);
+  background: var(--ccs-surface);
+  box-shadow:
+    inset 0 1px 0 var(--ccs-rim),
+    var(--shadow-2xl);
+  backdrop-filter: blur(var(--blur-xl)) saturate(1.24);
+  -webkit-backdrop-filter: blur(var(--blur-xl)) saturate(1.24);
+}
+
+/* On near-black the rim has to be light to read as a lit edge; the ink-based
+ * mix above resolves to something darker than the surface and disappears. */
+.dark .codex-composer-shell {
+  --ccs-rim: color-mix(in oklab, var(--gray-0) 8%, transparent);
+}
+
+/* Textarea focus should not tint the whole composer. Keep the shell visually
+ * stable while preserving the separate drag-over treatment below. */
+.codex-composer-shell:focus-within {
+  border-color: var(--ccs-border);
+  box-shadow:
+    inset 0 1px 0 var(--ccs-rim),
+    var(--shadow-2xl);
+}
+
+.codex-composer-shell[data-drag-over='true'] {
+  border-color: var(--color-border-focus);
+  box-shadow:
+    0 0 0 4px var(--ccs-focus),
+    inset 0 1px 0 var(--ccs-rim),
+    var(--shadow-2xl);
+}
+
+/*
+ * .codex-composer-beam — border-beam overlay inside the composer shell.
+ *
+ * The library's beam container bakes in `overflow: hidden` and clip-paths its
+ * glow layers to the rounded rect. That is exactly what we want here: the
+ * beam is an absolutely-positioned sibling overlay inside the shell, so its
+ * overflow clips the glow to the inner wall — an inner running ring — while
+ * the composer's menus (siblings of the beam) are never clipped by it.
+ * Pointer-events are disabled so the beam never intercepts clicks on the
+ * textarea or action row beneath it.
+ */
+.codex-composer-beam[data-beam] {
+  pointer-events: none;
+}
+.codex-composer-attachments:not(:has(> .smoky-dissolve-root:not([data-smoky-state='dissolving']))) {
+  padding-bottom: 0;
+}

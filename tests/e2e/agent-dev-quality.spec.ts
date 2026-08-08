@@ -44,6 +44,10 @@ test.describe('agent dev quality gates', () => {
     await expect(suggestions.locator('button')).toHaveCount(3);
     await expect(suggestions.locator('button').first()).toContainText('Handle Tasks');
     await expect(suggestions.locator('button').first()).toContainText('Work on task-oriented requests');
+    const chipIcons = suggestions.locator('svg.codex-welcome-chip__icon');
+    await expect(chipIcons).toHaveCount(3);
+    const uniqueIcons = await chipIcons.evaluateAll((icons) => new Set(icons.map((icon) => icon.outerHTML)).size);
+    expect(uniqueIcons).toBe(3);
 
     const screenshotPath = testInfo.outputPath('chat-welcome-suggestions.png');
     await suggestions.screenshot({ path: screenshotPath, animations: 'disabled' });

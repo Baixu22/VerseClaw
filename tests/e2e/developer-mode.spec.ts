@@ -45,7 +45,7 @@ test.describe('Verse Claw developer-mode gated UI', () => {
     await expect(page.getByTestId('settings-developer-gateway-token')).toBeVisible();
     await page.getByTestId('settings-back-button').click();
     await page.getByTestId('sidebar-footer-menu-trigger').click();
-    await expect(page.getByTestId('sidebar-open-dev-console')).toBeVisible();
+    await expect(page.getByTestId('sidebar-open-dev-console')).toHaveCount(0);
     await expect(page.getByTestId('sidebar-nav-dreams')).toHaveCount(0);
     await page.getByTestId('sidebar-more-dreams').click();
     await expect(page.getByTestId('dreams-page')).toBeVisible();

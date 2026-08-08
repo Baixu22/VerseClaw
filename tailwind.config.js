@@ -298,31 +298,150 @@ module.exports = {
           DEFAULT: 'hsl(var(--conversation-border-light) / <alpha-value>)',
           strong: 'hsl(var(--conversation-border-heavy) / <alpha-value>)',
         },
+
+        // ── F. Codex semantic roles ──────────────────────────────────
+        // Direct handles on the --color-* layer in styles/codex-tokens.css,
+        // for the cases that used to reach for a literal or a dark: pair.
+        //
+        // These carry no `<alpha-value>` slot on purpose: the values are
+        // already color-mix(in oklab, …) composites, and Tailwind's alpha
+        // modifier only works on a bare hsl/rgb channel triplet. An overlay
+        // that needs to be lighter should use the role one step down
+        // (tertiary under secondary) rather than an opacity suffix — the
+        // steps are calibrated, arbitrary alphas are not.
+        //
+        //   bg-elevated            floating panel: dropdown, popover, tooltip
+        //   bg-elevated-opaque     same, where backdrop-filter cannot apply
+        //   bg-elevated-secondary  recessed flat card inside a panel
+        //   bg-row-hover           list-row and menu-item hover wash
+        //   bg-overlay-backdrop    modal scrim
+        //   text-fg / -secondary / -tertiary   the three text levels
+        //   border-hairline / -heavy / -light  boundary weights
+        elevated: 'var(--color-background-elevated-primary)',
+        'elevated-opaque': 'var(--color-background-elevated-primary-opaque)',
+        'elevated-secondary': 'var(--color-background-elevated-secondary)',
+        'row-hover': 'var(--color-background-row-hover)',
+        'overlay-backdrop': 'var(--color-overlay-backdrop)',
+        fg: {
+          DEFAULT: 'var(--color-text-foreground)',
+          secondary: 'var(--color-text-foreground-secondary)',
+          tertiary: 'var(--color-text-foreground-tertiary)',
+        },
+        hairline: 'var(--color-border)',
+        'hairline-heavy': 'var(--color-border-heavy)',
+        'hairline-light': 'var(--color-border-light)',
       },
 
       /* ──────────────────────────────────────────────────────────────
        * boxShadow
        * ──────────────────────────────────────────────────────────────
        *
-       * Four levels only, and the conversation flow uses none of them
-       * above `subtle`:
+       * A closed set. `hairline` is a 0.5px ring for a boundary that must
+       * read as a drawn line; the six ambient steps run sm → 2xl. The
+       * values live in styles/codex-tokens.css and deepen in dark mode,
+       * because a 12% black shadow is invisible on a #181818 canvas.
        *
-       *   hairline → 0.5px ring, for a boundary that must read as a line
-       *   subtle   → 1px lift, for a control resting on the transcript
-       *   (TW) md  → menus and popovers
-       *   (TW) lg  → modals and drawers only
+       *   hairline → 0.5px ring
+       *   subtle   → legacy alias of sm, kept for existing callers
+       *   sm/md    → resting controls, surface cards
+       *   lg       → hover lift
+       *   xl       → dropdowns (usually via xl-spread)
+       *   2xl      → modals and drawers
        *
-       * Anything needing more than `subtle` inside the transcript is a
-       * signal the element should be a plain indented text row instead.
+       * `xl-spread` composes the hairline with xl and is what every
+       * floating menu uses: the ring keeps a translucent panel from
+       * dissolving into a canvas of similar lightness, the xl gives it
+       * depth. Anything needing more than `subtle` inside the transcript
+       * is a signal the element should be a plain indented row instead.
        * ────────────────────────────────────────────────────────────── */
       boxShadow: {
         hairline: 'var(--shadow-hairline)',
         subtle: 'var(--shadow-subtle)',
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow-md)',
+        md: 'var(--shadow-md)',
+        'md-stronger': 'var(--shadow-md-stronger)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        '2xl': 'var(--shadow-2xl)',
+        'xl-spread': 'var(--shadow-xl-spread)',
       },
+
+      /* ──────────────────────────────────────────────────────────────
+       * borderRadius
+       * ──────────────────────────────────────────────────────────────
+       *
+       * Every rung resolves to a token whose value is a base radius times
+       * --corner-radius-scale (1.25). That multiplier is what makes the UI
+       * read softer than stock Tailwind without tipping into iOS roundness,
+       * and it is why the halves (2.5 / 7.5 / 12.5) are correct, not typos.
+       *
+       * Remapping the scale here rather than rewriting call sites is
+       * deliberate: `rounded-md`, `rounded-lg` and `rounded-xl` account for
+       * ~980 usages, and they were already applied with the right *intent*
+       * (md on controls, lg on rows, xl on panels). They were just resolving
+       * to unscaled values. Retuning the scale moves all of them onto the
+       * rhythm at once, with no churn in components.
+       *
+       *   2xs 2.5   xs 5     sm 7.5   md 10    lg 12.5
+       *   xl  15    2xl 20   3xl 25   4xl 30   full 9999
+       *
+       * The three that carry the rhythm: 3xl composer, 2xl dropdown/dialog,
+       * lg list row. A floating layer sits one step below the surface it
+       * springs from — never two, or it looks sunken into it.
+       * ────────────────────────────────────────────────────────────── */
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        '2xs': 'var(--radius-2xs)',
+        xs: 'var(--radius-xs)',
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        '3xl': 'var(--radius-3xl)',
+        '4xl': 'var(--radius-4xl)',
+        full: 'var(--radius-full)',
+      },
+
+      /* ──────────────────────────────────────────────────────────────
+       * zIndex
+       * ──────────────────────────────────────────────────────────────
+       *
+       * Five rungs, nothing between them. The audit found 13 distinct
+       * values including a `z-[95]` whose only meaning was "clear 90, duck
+       * under 100" — a value that encodes a past collision rather than an
+       * intent, which guarantees the next one.
+       *
+       * A backdrop shares `modal` with the dialog it dims; the dialog wins
+       * by DOM order, not by a bigger number. `toast` outranks everything
+       * because a tooltip can be summoned from inside any other layer.
+       * ────────────────────────────────────────────────────────────── */
+      zIndex: {
+        base: 'var(--z-base)',
+        raised: 'var(--z-raised)',
+        dropdown: 'var(--z-dropdown)',
+        modal: 'var(--z-modal)',
+        toast: 'var(--z-toast)',
+      },
+
+      /* Blur scale — 8px (`sm`) is the glass standard, paired with a ~96%
+       * color-mix. Neither half reads as frosted glass alone. */
+      backdropBlur: {
+        xs: 'var(--blur-xs)',
+        sm: 'var(--blur-sm)',
+        md: 'var(--blur-md)',
+        lg: 'var(--blur-lg)',
+        xl: 'var(--blur-xl)',
+        '2xl': 'var(--blur-2xl)',
+        '3xl': 'var(--blur-3xl)',
+      },
+
+      /* Entering and leaving are not symmetric: arrivals decelerate hard so
+       * they feel placed, exits accelerate away because attention has
+       * already moved on. */
+      transitionTimingFunction: {
+        enter: 'var(--ease-enter)',
+        'enter-snappy': 'var(--ease-enter-snappy)',
       },
       keyframes: {
         'accordion-down': {

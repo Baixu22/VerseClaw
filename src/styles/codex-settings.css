@@ -10,7 +10,7 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
-    border-radius: 12.5px;
+    border-radius: var(--radius-lg);
     padding: 5px 8px;
     color: hsl(var(--foreground) / 0.65);
     font-size: 14px;
@@ -60,9 +60,8 @@
     flex: 1;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 12.5px 0 0;
+    border-radius: var(--radius-lg) 0 0;
     background: hsl(var(--background));
-    box-shadow: 0 0 0 0.667px hsl(var(--foreground) / 0.12), 0 3px 7.5px rgb(0 0 0 / 0.04), 0 0 20px rgb(0 0 0 / 0.05);
   }
 
   .codex-settings-page__header {
@@ -86,9 +85,14 @@
     flex: 1;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 12.5px 0 0;
+    border-radius: var(--radius-lg) 0 0;
     background: hsl(var(--background));
     box-shadow: 0 0 0 0.667px hsl(var(--foreground) / 0.12), 0 3px 7.5px rgb(0 0 0 / 0.04), 0 0 20px rgb(0 0 0 / 0.05);
+    /* Promote to a composited layer so the large box-shadow is rasterized once
+     * and never re-painted while the inner scroll container scrolls. Without
+     * this the shadow edge lives on the same layer as the scrolling content. */
+    contain: paint;
+    will-change: transform;
   }
 
   .codex-settings-page__toolbar {
@@ -111,14 +115,18 @@
     inset: 0 0 auto;
     z-index: 2;
     height: 16px;
-    border-radius: 12.5px 0 0;
+    border-radius: var(--radius-lg) 0 0;
     background: linear-gradient(hsl(var(--background)) 0%, hsl(var(--background) / 0) 100%);
+    /* Keep the fade on its own layer so the scrolling content underneath
+     * doesn't trigger repaints of the gradient on every frame. */
+    will-change: transform;
   }
 
   .codex-settings-page__scroll {
     min-height: 0;
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px;
     scrollbar-gutter: stable;
   }
@@ -128,13 +136,15 @@
   .codex-settings-page__scroll::-webkit-scrollbar-corner { background: transparent; }
   .codex-settings-page__scroll::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: hsl(var(--foreground) / 0.18);
     background-clip: padding-box;
   }
 
   .codex-settings-page__content {
-    width: min(768px, 100%);
+    width: 100%;
+    max-width: 768px;
+    margin-left: auto;
     margin-right: auto;
   }
 
@@ -163,6 +173,54 @@
   }
 
   .codex-settings-content > :first-child { margin-top: 0; }
+
+  /* ──────────────────────────────────────────────────────────────────────────
+   * Sidebar nav items — mirrors `.codex-sidebar .primary-nav` from
+   * codex-sidebar.css so hover/active feel identical to the main sidebar.
+   * Hover lifts to --cdx-bg-hover; the active route uses the stronger
+   * --cdx-bg-row-hover and full-strength text, matching FakeCoding's
+   * `.settings-layout > nav button.active` recipe.
+   * ────────────────────────────────────────────────────────────────────────── */
+  .codex-settings-sidebar .codex-settings-nav-item {
+    height: 31px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 10px;
+    border-radius: var(--radius-md);
+    color: var(--cdx-text-2);
+    font-size: 13.5px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-align: left;
+    transition: background 160ms ease, color 120ms ease;
+  }
+
+  .codex-settings-sidebar .codex-settings-nav-item svg {
+    width: 17px;
+    height: 17px;
+    color: var(--cdx-text-3);
+    transition: color 120ms ease;
+  }
+
+  .codex-settings-sidebar .codex-settings-nav-item:hover {
+    background: var(--cdx-bg-hover);
+    color: var(--cdx-text);
+  }
+
+  .codex-settings-sidebar .codex-settings-nav-item:hover svg {
+    color: var(--cdx-text-2);
+  }
+
+  .codex-settings-sidebar .codex-settings-nav-item[aria-current='page'] {
+    background: var(--cdx-bg-row-hover);
+    color: var(--cdx-text);
+  }
+
+  .codex-settings-sidebar .codex-settings-nav-item[aria-current='page'] svg {
+    color: var(--cdx-text-2);
+  }
 
   @media (max-width: 760px) {
     .codex-settings-page__scroll { padding: 16px; }
