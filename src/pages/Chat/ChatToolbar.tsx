@@ -1,5 +1,4 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Gauge, ListTree, MoreHorizontal, RefreshCw, Slash } from 'lucide-react';
+import { Gauge, ListTree, RefreshCw } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceChip } from '@/components/chat/ResourceChip';
@@ -13,13 +12,10 @@ import { useChatStore } from '@/stores/chat';
 import { PanelRightOpen } from '@/components/icons/codex-icons';
 import type { PromptCacheRiskAssessment, PromptCacheStatus } from '@shared/types/workspace';
 
-const MENU_ITEM_CLASS = 'flex min-h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm text-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-foreground/5';
-
 type ChatToolbarProps = {
   questionDirectoryOpen?: boolean;
   questionDirectoryCount?: number;
   onToggleQuestionDirectory?: () => void;
-  onOpenSlashCommands?: () => void;
   promptCacheStatus?: PromptCacheRiskAssessment | null;
 };
 
@@ -61,7 +57,6 @@ export function ChatToolbar({
   questionDirectoryOpen = false,
   questionDirectoryCount = 0,
   onToggleQuestionDirectory,
-  onOpenSlashCommands,
   promptCacheStatus,
 }: ChatToolbarProps = {}) {
   const refresh = useChatStore((state) => state.refresh);
@@ -166,44 +161,22 @@ export function ChatToolbar({
           <TooltipContent side="bottom" collisionPadding={8}><p>{t('questionDirectory.title')}</p></TooltipContent>
         </Tooltip>
       )}
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
+      <Tooltip>
+        <TooltipTrigger asChild>
           <Button
-            data-testid="chat-toolbar-more"
+            data-testid="chat-toolbar-refresh"
             variant="ghost"
             size="icon"
             className="h-8 w-8 hover:bg-foreground/5 hover:text-foreground"
-            aria-label={t('toolbar.moreActions')}
+            onClick={() => refresh()}
+            disabled={loading}
+            aria-label={t('toolbar.refresh')}
           >
-            <MoreHorizontal className="h-4 w-4" />
+            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
           </Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            align="end"
-            sideOffset={6}
-            className="z-[90] min-w-52 rounded-[var(--radius-popover)] border border-border/70 bg-popover p-1.5 text-popover-foreground shadow-sm"
-          >
-            <DropdownMenu.Item
-              data-testid="chat-toolbar-slash"
-              className={MENU_ITEM_CLASS}
-              disabled={!onOpenSlashCommands}
-              onSelect={onOpenSlashCommands}
-            >
-              <Slash className="h-4 w-4" />
-              {t('toolbar.slashCommands')}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              className={MENU_ITEM_CLASS}
-              disabled={loading}
-              onSelect={() => refresh()}
-            >
-              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-              {t('toolbar.refresh')}
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.refresh')}</p></TooltipContent>
+      </Tooltip>
     </div>
   );
 }

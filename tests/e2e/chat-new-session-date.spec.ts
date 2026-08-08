@@ -92,7 +92,7 @@ test.describe('Verse Claw chat session date grouping', () => {
     }
   });
 
-  test('new chat appears in the Today session bucket', async ({ launchElectronApp }) => {
+  test('new chat appears in Today only after the first message and lands without overshoot', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const oldTimestampMs = Date.now() - 35 * 24 * 60 * 60 * 1000;
     const seededHistory = [
@@ -140,6 +140,29 @@ test.describe('Verse Claw chat session date grouping', () => {
               json: { success: true, agents: [{ id: 'main', name: 'Main' }] },
             },
           },
+          [stableStringify(['providers', 'accounts', null])]: [{
+            id: 'e2e-provider',
+            vendorId: 'anthropic',
+            label: 'E2E Provider',
+            authMode: 'api_key',
+            model: 'claude-sonnet-4',
+            enabled: true,
+            isDefault: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }],
+          [stableStringify(['providers', 'accountKeyInfo', null])]: [{
+            accountId: 'e2e-provider',
+            hasKey: true,
+          }],
+          [stableStringify(['providers', 'getDefaultAccount', null])]: {
+            accountId: 'e2e-provider',
+          },
+          [stableStringify(['providers', 'vendors', null])]: [],
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: 'new-session-run', sessionKey: MAIN_SESSION_KEY },
+          },
         },
       });
 
@@ -156,8 +179,28 @@ test.describe('Verse Claw chat session date grouping', () => {
 
       await page.getByTestId('sidebar-new-chat').click();
 
-      await expect(page.getByTestId('session-bucket-today').getByText(/agent:main:session-/)).toBeVisible();
-      await expect(page.getByTestId('session-bucket-older')).toBeVisible();
+      await expect(page.getByText(/agent:main:session-/)).toHaveCount(0);
+      const sessionRows = page.locator('[data-testid^="sidebar-session-agent"]');
+      const emptySessionRowCount = await sessionRows.count();
+
+      const composerHost = page.locator('.codex-composer-host');
+      const startTop = await composerHost.evaluate((element) => element.getBoundingClientRect().top);
+      await page.getByTestId('chat-composer-input').fill('First message creates the session');
+      await page.getByTestId('chat-composer-send').click();
+
+      const transitionTops: number[] = [];
+      for (const delay of [40, 80, 120, 160]) {
+        await page.waitForTimeout(delay);
+        transitionTops.push(await composerHost.evaluate((element) => element.getBoundingClientRect().top));
+      }
+      await page.waitForTimeout(600);
+      const finalTop = await composerHost.evaluate((element) => element.getBoundingClientRect().top);
+
+      const lowerBound = Math.min(startTop, finalTop) - 1;
+      const upperBound = Math.max(startTop, finalTop) + 1;
+      expect(transitionTops.every((top) => top >= lowerBound && top <= upperBound)).toBe(true);
+      await expect(page.getByTestId('chat-user-message-bubble').getByText('First message creates the session')).toBeVisible();
+      await expect.poll(() => sessionRows.count()).toBeGreaterThan(emptySessionRowCount);
     } finally {
       await closeElectronApp(app);
     }

@@ -63,7 +63,11 @@ describe('FakeCoding design-system contract', () => {
     expect(textarea).toContain('rounded-lg border border-input bg-surface-input');
     expect(textarea).toContain('text-[13px] leading-5');
     expect(textarea).toContain('duration-150');
-    expect(sheet).toContain('bg-black/24 duration-150');
+    // The scrim is one token carrying both themes (24% ink light, 60% dark)
+    // rather than a `bg-black/24 dark:bg-black/60` pair. Same rendered value;
+    // the pair is what the token layer exists to remove.
+    expect(sheet).toContain('bg-overlay-backdrop duration-150');
+    expect(sheet).not.toContain('dark:bg-black');
     expect(sheet).toContain('bg-surface-modal p-5 shadow-xl');
     expect(sheet).toContain('duration-180');
     expect(sheet).not.toContain('backdrop-blur');
@@ -82,6 +86,45 @@ describe('FakeCoding design-system contract', () => {
     expect(drawer).toContain('reduceMotion ? 100 : 180');
     expect(sidebar).toContain("transition-[width] duration-180 ease-out");
     expect(tooltip).toContain('shadow-md duration-150');
+  });
+
+  it('scales every corner radius through the single 1.25x ladder', () => {
+    const tokens = source('src/styles/codex-tokens.css');
+    const tailwind = source('tailwind.config.js');
+
+    // The multiplier is the whole rhythm. Base x 1.25 is what produces the
+    // half-pixel rungs (2.5 / 7.5 / 12.5) that look like typos and are not.
+    expect(tokens).toContain('--corner-radius-scale: 1.25');
+    expect(tokens).toContain('--radius-lg: calc(var(--radius-lg-base) * var(--corner-radius-scale))');
+
+    // Tailwind must resolve to the tokens, not to its own unscaled defaults —
+    // this is what carries ~980 existing rounded-* usages onto the ladder.
+    expect(tailwind).toContain("lg: 'var(--radius-lg)'");
+    expect(tailwind).toContain("'2xl': 'var(--radius-2xl)'");
+    expect(tailwind).toContain("'3xl': 'var(--radius-3xl)'");
+    expect(tailwind).not.toContain("md: 'calc(var(--radius) - 2px)'");
+  });
+
+  it('resolves every floating surface to one elevated role', () => {
+    const composer = source('src/styles/codex-composer-menu.css');
+    const sidebar = source('src/styles/codex-sidebar.css');
+
+    // Two dropdowns had independently drifted to #2d2d2d at 90% where the
+    // role is #212121 at 96%, and to a 15px radius that reads as sunken
+    // beneath the 25px composer it opens from.
+    //
+    // Comments are stripped before asserting: both files discuss the old
+    // literal in prose to explain what moved, and that prose should not trip
+    // a check aimed at live declarations.
+    const declarationsOf = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const sheetSource of [composer, sidebar]) {
+      expect(sheetSource).toContain('var(--color-background-elevated-primary)');
+      expect(sheetSource).toContain('border-radius: var(--radius-2xl)');
+      expect(declarationsOf(sheetSource)).not.toContain('#2d2d2d');
+    }
+    // Stacking runs on the five-rung ladder, never a bare number.
+    expect(composer).toContain('z-index: var(--z-dropdown)');
+    expect(sidebar).toContain('z-index: var(--z-dropdown)');
   });
 
   it('keeps the fixed sidebar to three business links plus the New task command', () => {

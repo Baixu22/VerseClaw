@@ -208,8 +208,8 @@ export interface ChatState {
   hydrateStartup: () => Promise<void>;
   loadSessions: () => Promise<void>;
   switchSession: (key: string) => void;
-  resetSessionView: (key?: string) => void;
-  newSession: () => void;
+  resetSessionView: (key?: string, options?: { deferSessionEntry?: boolean }) => void;
+  newSession: (options?: { deferSessionEntry?: boolean }) => void;
   deleteSession: (key: string) => Promise<void>;
   renameSession: (key: string, label: string) => Promise<void>;
   archiveSession: (key: string, options?: { workspaceId?: string | null; folderId?: string | null }) => Promise<void>;

@@ -110,13 +110,13 @@ export function AppleDrawer({
       <Drawer.Portal>
         <Drawer.Overlay
           data-testid={overlayTestId ?? (testId ? `${testId}-overlay` : undefined)}
-          className="apple-drawer-overlay fixed inset-x-0 bottom-0 top-10 z-[60] bg-black/24 dark:bg-black/60"
+          className="apple-drawer-overlay fixed inset-x-0 bottom-0 top-10 z-modal bg-overlay-backdrop"
         />
         <Drawer.Content
           data-testid={testId}
           onAnimationEnd={handleContentAnimationEnd}
           className={cn(
-            'apple-drawer-content fixed bottom-0 right-0 top-10 z-[70] flex outline-none',
+            'apple-drawer-content fixed bottom-0 right-0 top-10 z-modal flex outline-none',
             'overflow-hidden rounded-l-[20px] border-l border-white/70 bg-surface-modal',
             'shadow-[0_24px_80px_rgba(15,23,42,0.22),0_2px_12px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.68)]',
             'dark:border-white/10 dark:bg-surface-modal',
@@ -140,7 +140,7 @@ export function AppleDrawer({
             </OverlayPortalProvider>
             <div
               ref={portalHostRef}
-              className="pointer-events-none absolute inset-0 z-[95] [&>*]:pointer-events-auto"
+              className="pointer-events-none absolute inset-0 z-raised [&>*]:pointer-events-auto"
               data-testid={testId ? `${testId}-portal-host` : undefined}
             />
           </div>

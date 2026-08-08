@@ -135,6 +135,7 @@ export function buildSidebarWorkspaceSessionGroups(params: {
   currentSessionKey: string;
   sessionLastActivity: Record<string, number>;
   workspaces: WorkspaceProfile[];
+  includeSyntheticCurrent?: boolean;
 }): SidebarWorkspaceSessionGroup[] {
   const currentAgentId = getAgentIdFromSessionKey(params.currentSessionKey);
   const sessionsByKey = new Map(params.sessions.map((session) => [session.key, session]));
@@ -154,9 +155,11 @@ export function buildSidebarWorkspaceSessionGroups(params: {
         sessionKeys.add(params.currentSessionKey);
       }
       const sessions = Array.from(sessionKeys)
-        .map((sessionKey) => sessionsByKey.get(sessionKey) ?? (sessionKey === params.currentSessionKey
+        .map((sessionKey) => sessionsByKey.get(sessionKey) ?? (
+          params.includeSyntheticCurrent !== false && sessionKey === params.currentSessionKey
           ? { key: sessionKey, displayName: sessionKey }
-          : null))
+          : null
+        ))
         .filter((session): session is ChatSession => Boolean(session))
         .filter((session) => getAgentIdFromSessionKey(session.key) === currentAgentId)
         .map((session) => ({

@@ -1,0 +1,400 @@
+/*
+ * codex-tokens.css — the single design-token layer for the Codex visual system.
+ *
+ * WHY THIS FILE EXISTS. Before it, the same semantic ("an elevated floating
+ * surface") was spelled five different ways across five files: --sp-menu-bg,
+ * --ccm-surface, --cdx-dropdown-bg, --material-elevated, --surface-modal. Each
+ * carried its own literal, so changing the look of one menu changed nothing
+ * about the other four, and they had already drifted apart (#2d2d2d vs
+ * #212121, 90% vs 96% opacity). This file is the one place those literals are
+ * allowed to live; every other stylesheet aliases into it.
+ *
+ * THREE LAYERS, IN ORDER. Do not skip a layer.
+ *
+ *   Layer 1  --gray-900, --blue-300         raw palette. hex appears ONLY here.
+ *   Layer 2  --color-background-surface     semantic role. theme switches here.
+ *   Layer 3  --ccm-surface, --sp-menu-bg    per-component alias -> Layer 2.
+ *
+ * Components read Layer 2. Reading Layer 1 directly bypasses the theme switch
+ * and leaves the element stuck at one theme's value, which is what produced the
+ * "half-dark" surfaces the audit found.
+ *
+ * THEME POLARITY. Codex upstream is dark-first: its :root is dark and light is
+ * the override. ClawX is the reverse — :root is light and `.dark` overrides —
+ * and that convention is load-bearing here (Tailwind's darkMode: ['class'],
+ * every existing `:root:not(.dark)` block, the theme store). So the *values*
+ * below are ported faithfully while the *polarity* stays ClawX's. Light values
+ * live in :root, dark values in .dark.
+ *
+ * TRANSPARENCY IS color-mix(in oklab), NOT rgba(). On a dark surface an 8%
+ * white rgba overlay reads as gray haze; the same mix in OKLab reads as light,
+ * because OKLab is perceptually uniform. This is the difference between "flat
+ * gray block" and "native glass panel", and it is why rgba() is banned for
+ * overlays.
+ *
+ * SOURCE. openai-codex-electron 26.715.52143 tokens.css (1137 properties), via
+ * the design spec at Desktop/result/design/{02-tokens,03-colors,05-spacing-
+ * shapes-elevation,09-theme-and-dark-mode}.md.
+ */
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Layer 1 — palette. Theme-independent. The only hex in the system.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --gray-0: #ffffff;
+  --gray-50: #f9f9f9;
+  --gray-75: #f3f3f3;
+  --gray-100: #ededed;
+  --gray-300: #afafaf;
+  --gray-500: #5d5d5d;
+  --gray-550: #4f4f4f;
+  --gray-600: #414141;
+  --gray-700: #303030;
+  --gray-750: #282828;
+  --gray-800: #212121;
+  --gray-900: #181818;
+  --gray-1000: #0d0d0d;
+
+  --green-50: #d9f4e4;
+  --green-300: #40c977;
+  --green-400: #04b84c;
+  --green-500: #00a240;
+  --green-700: #00692a;
+
+  --red-50: #ffd9d9;
+  --red-300: #ff6764;
+  --red-400: #fa423e;
+  --red-500: #e02e2a;
+  --red-600: #ba2623;
+  --red-900: #4d100e;
+
+  --orange-50: #ffe7d9;
+  --orange-300: #ff8549;
+  --orange-400: #fb6a22;
+  --orange-500: #e25507;
+  --orange-700: #923b0f;
+  --orange-900: #4a2206;
+
+  --yellow-300: #ffd240;
+  --yellow-400: #ffc300;
+
+  /* The single brand accent. Rare by design: it marks "a decision is yours
+   * here" (send, active tab, link, focus ring) and is never wallpaper. */
+  --blue-50: #e5f3ff;
+  --blue-100: #99ceff;
+  --blue-300: #339cff;
+  --blue-400: #0285ff;
+  --blue-900: #00284d;
+
+  --purple-300: #ad7bf9;
+  --purple-400: #924ff7;
+  --pink-400: #ff66ad;
+
+  /* Light-theme ink. Deliberately not #000 — pure black on white reads as
+   * "hard" at 14px; this near-black carries a trace of blue-green so long
+   * passages stay comfortable. */
+  --codex-ink: #1a1c1f;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Shape — radius. One global multiplier, three-step rhythm.
+ * ──────────────────────────────────────────────────────────────────────────
+ *
+ * Codex scales every base radius by 1.25. That single number is what makes the
+ * UI read softer than stock Tailwind without tipping into iOS roundness, and it
+ * is why the odd halves (2.5 / 7.5 / 12.5) are correct rather than typos.
+ *
+ * The rhythm that matters, largest surface to smallest:
+ *
+ *   3xl  25px   composer shell        biggest surface, roundest
+ *   2xl  20px   dropdown / dialog     floats above the composer
+ *   lg   12.5px list row / menu item  tightest
+ *
+ * Ordering is the whole point: a 15px dropdown over a 25px composer looks like
+ * it has sunk *into* the composer. The floating layer must sit one step below
+ * the surface it springs from, never two.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --corner-radius-scale: 1.25;
+
+  --radius-2xs-base: 0.125rem; /* 2px  */
+  --radius-xs-base: 0.25rem;   /* 4px  */
+  --radius-sm-base: 0.375rem;  /* 6px  */
+  --radius-md-base: 0.5rem;    /* 8px  */
+  --radius-lg-base: 0.625rem;  /* 10px */
+  --radius-xl-base: 0.75rem;   /* 12px */
+  --radius-2xl-base: 1rem;     /* 16px */
+  --radius-3xl-base: 1.25rem;  /* 20px */
+  --radius-4xl-base: 1.5rem;   /* 24px */
+
+  --radius-2xs: calc(var(--radius-2xs-base) * var(--corner-radius-scale)); /* 2.5  */
+  --radius-xs: calc(var(--radius-xs-base) * var(--corner-radius-scale));   /* 5    */
+  --radius-sm: calc(var(--radius-sm-base) * var(--corner-radius-scale));   /* 7.5  */
+  --radius-md: calc(var(--radius-md-base) * var(--corner-radius-scale));   /* 10   */
+  --radius-lg: calc(var(--radius-lg-base) * var(--corner-radius-scale));   /* 12.5 */
+  --radius-xl: calc(var(--radius-xl-base) * var(--corner-radius-scale));   /* 15   */
+  --radius-2xl: calc(var(--radius-2xl-base) * var(--corner-radius-scale)); /* 20   */
+  --radius-3xl: calc(var(--radius-3xl-base) * var(--corner-radius-scale)); /* 25   */
+  --radius-4xl: calc(var(--radius-4xl-base) * var(--corner-radius-scale)); /* 30   */
+  --radius-full: 9999px;
+
+  /* A single-line composer sits at 22px: above the 20px dropdown that opens
+   * from it, below the 25px it grows into once the text wraps. */
+  --radius-token-composer-single-line: 22px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Elevation — shadow. Closed set of six plus a hairline.
+ * ──────────────────────────────────────────────────────────────────────────
+ *
+ * A hairline is a 0.5px *box-shadow*, not a border: at 1px it reads as a drawn
+ * line rather than an edge, and it would also add to layout width.
+ *
+ * Dropdowns always compose hairline + xl (--shadow-xl-spread). Without the
+ * hairline a translucent panel dissolves into a canvas of similar lightness;
+ * without the xl it has no depth. Both, or it looks broken.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --shadow-sm: 0px 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-md: 0px 2px 4px -1px rgb(0 0 0 / 0.08);
+  --shadow-md-stronger: 0px 2px 4px -1px rgb(0 0 0 / 0.13);
+  --shadow-lg: 0px 4px 8px -2px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0px 8px 16px -4px rgb(0 0 0 / 0.12);
+  --shadow-2xl: 0px 16px 32px -8px rgb(0 0 0 / 0.19);
+  --shadow-xl-spread: 0 0 0 0.5px var(--color-border), var(--shadow-xl);
+}
+
+/* Dark surfaces swallow a 12% black shadow, so the ambient steps deepen while
+ * the geometry (offset/blur/spread) stays identical — only opacity moves. */
+.dark {
+  --shadow-sm: 0px 1px 2px -1px rgb(0 0 0 / 0.28);
+  --shadow-md: 0px 2px 4px -1px rgb(0 0 0 / 0.32);
+  --shadow-md-stronger: 0px 2px 4px -1px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0px 4px 8px -2px rgb(0 0 0 / 0.36);
+  --shadow-xl: 0px 8px 16px -4px rgb(0 0 0 / 0.44);
+  --shadow-2xl: 0px 16px 32px -8px rgb(0 0 0 / 0.55);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Blur. 8px is the glass standard, paired with a ~96% color-mix.
+ * ──────────────────────────────────────────────────────────────────────────
+ * Neither half works alone: mix without blur is a translucent gray rectangle,
+ * blur without mix is clear glass with no layer of its own. Below ~4px the
+ * effect stops reading as frosting and starts reading as a rendering bug.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --blur-xs: 4px;
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --blur-2xl: 40px;
+  --blur-3xl: 64px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Motion. 0.15s default; entrances decelerate hard.
+ * ──────────────────────────────────────────────────────────────────────────
+ * Entering and leaving are not symmetric. Something arriving should overshoot
+ * its deceleration so it feels placed (--ease-enter); something leaving should
+ * accelerate away (--ease-in) because the user has already moved on.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --default-transition-duration: 0.15s;
+  --transition-duration-basic: 0.15s;
+  --transition-duration-relaxed: 0.3s;
+
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-enter-snappy: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Stacking order. Five rungs, and nothing between them.
+ * ──────────────────────────────────────────────────────────────────────────
+ * The audit found 13 distinct z-index values, including a `z-[95]` whose only
+ * meaning was "clear 90, duck under 100". Values like that encode a past
+ * collision, not an intent, and they make the next collision inevitable.
+ *
+ * A backdrop shares --z-modal with the dialog it dims; the dialog wins by
+ * coming later in the DOM, not by a higher number. Tooltips outrank everything
+ * because they can be summoned from inside any other layer, including a modal.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --z-base: 0;
+  --z-raised: 10;
+  --z-dropdown: 30;
+  --z-modal: 50;
+  --z-toast: 100;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Layer 2 — semantic roles, light theme.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surface. On white, an elevated panel needs to stay *more* opaque than it
+   * does on near-black (70% here vs 96% in dark) — light backdrops show
+   * through far more readily, and a paler panel loses its edge entirely. */
+  --color-background-surface: var(--gray-0);
+  --color-background-surface-under: var(--gray-50);
+  --color-background-editor-opaque: var(--gray-75);
+  --color-background-elevated-primary: color-mix(in oklab, var(--gray-0) 70%, transparent);
+  --color-background-elevated-primary-opaque: var(--gray-0);
+  --color-background-elevated-secondary: color-mix(in oklab, var(--codex-ink) 2%, transparent);
+  --color-background-elevated-secondary-opaque: var(--gray-75);
+
+  /* Buttons. Primary is ink, never a colour. A blue or green "confirm" would
+   * borrow the accent's one job (marking a choice) and the status palette's
+   * one job (reporting an outcome) to say something neither means. */
+  --color-background-button-primary: var(--codex-ink);
+  --color-background-button-primary-hover: color-mix(in oklab, var(--codex-ink) 8%, transparent);
+  --color-background-button-primary-active: color-mix(in oklab, var(--codex-ink) 16%, transparent);
+  --color-background-button-secondary: color-mix(in oklab, var(--codex-ink) 5%, transparent);
+  --color-background-button-secondary-hover: color-mix(in oklab, var(--codex-ink) 8%, transparent);
+  --color-background-button-secondary-active: color-mix(in oklab, var(--codex-ink) 12%, transparent);
+  --color-background-button-tertiary: transparent;
+  --color-background-button-tertiary-hover: color-mix(in oklab, var(--codex-ink) 10%, transparent);
+  --color-background-button-tertiary-active: color-mix(in oklab, var(--codex-ink) 20%, transparent);
+
+  /* Status. */
+  --color-background-accent: var(--blue-50);
+  --color-background-status-success: color-mix(in oklab, var(--green-500) 7%, transparent);
+  --color-background-status-warning: var(--orange-50);
+  --color-background-status-error: var(--red-50);
+  --color-background-danger-active: color-mix(in oklab, var(--red-500) 90%, transparent);
+
+  /* Text. Three lightness levels and no more: full, 70%, 50%. Emphasis comes
+   * from size and colour, never from weight — 500 is the ceiling. */
+  --color-text-foreground: var(--codex-ink);
+  --color-text-foreground-secondary: color-mix(in oklab, var(--codex-ink) 70%, transparent);
+  --color-text-foreground-tertiary: color-mix(in oklab, var(--codex-ink) 50%, transparent);
+  --color-text-button-primary: var(--gray-0);
+  --color-text-button-secondary: var(--codex-ink);
+  --color-text-button-tertiary: var(--gray-500);
+  --color-text-accent: var(--blue-300);
+  --color-text-on-accent: var(--gray-1000);
+  --color-text-success: var(--green-500);
+  --color-text-warning: var(--orange-500);
+  --color-text-error: var(--red-500);
+
+  /* Icon. */
+  --color-icon-primary: var(--codex-ink);
+  --color-icon-secondary: color-mix(in oklab, var(--codex-ink) 70%, transparent);
+  --color-icon-tertiary: color-mix(in oklab, var(--codex-ink) 50%, transparent);
+  --color-icon-accent: var(--blue-300);
+  --color-icon-success: var(--green-500);
+  --color-icon-warning: var(--orange-500);
+  --color-icon-error: var(--red-500);
+
+  /* Border. */
+  --color-border: color-mix(in oklab, var(--codex-ink) 8%, transparent);
+  --color-border-heavy: color-mix(in oklab, var(--codex-ink) 12%, transparent);
+  --color-border-light: color-mix(in oklab, var(--codex-ink) 5%, transparent);
+  --color-border-warning: color-mix(in oklab, var(--orange-500) 15%, transparent);
+  --color-border-error: color-mix(in oklab, var(--red-500) 15%, transparent);
+  --color-border-focus: var(--blue-300);
+
+  /* Row hover. Measured at 5.2% off the reference build, not rounded to 5 —
+   * at list density the difference between the two is visible. */
+  --color-background-row-hover: color-mix(in oklab, var(--codex-ink) 5.2%, transparent);
+
+  /* Scrim behind modals. */
+  --color-overlay-backdrop: color-mix(in oklab, var(--gray-1000) 24%, transparent);
+
+  /* Diff decoration. Theme-independent on purpose: green means "added" as a
+   * fact about the code, not a UI mood. Fading it in light mode would imply
+   * the addition mattered less. */
+  --color-decoration-added: var(--green-500);
+  --color-decoration-modified: var(--orange-700);
+  --color-decoration-deleted: var(--red-600);
+  --color-decoration-unchanged: var(--gray-300);
+  --color-editor-added: color-mix(in oklab, var(--green-500) 15%, transparent);
+  --color-editor-deleted: color-mix(in oklab, var(--red-600) 15%, transparent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Layer 2 — semantic roles, dark theme.
+ * ──────────────────────────────────────────────────────────────────────────
+ * The canvas is #181818, not black. Pure black leaves no room to sit *under*
+ * the canvas, which is what --surface-under needs to do, and it makes every
+ * elevation step above it feel like a jump rather than a lift.
+ * ────────────────────────────────────────────────────────────────────────── */
+.dark {
+  --color-background-surface: var(--gray-900);
+  --color-background-surface-under: #000000;
+  --color-background-editor-opaque: var(--gray-800);
+  --color-background-elevated-primary: color-mix(in oklab, var(--gray-800) 96%, transparent);
+  --color-background-elevated-primary-opaque: var(--gray-750);
+  --color-background-elevated-secondary: color-mix(in oklab, var(--gray-0) 3%, transparent);
+  --color-background-elevated-secondary-opaque: var(--gray-800);
+
+  --color-background-button-primary: var(--gray-1000);
+  --color-background-button-primary-hover: color-mix(in oklab, var(--gray-0) 6%, transparent);
+  --color-background-button-primary-active: color-mix(in oklab, var(--gray-0) 10%, transparent);
+  --color-background-button-secondary: color-mix(in oklab, var(--gray-0) 5%, transparent);
+  --color-background-button-secondary-hover: color-mix(in oklab, var(--gray-0) 8%, transparent);
+  --color-background-button-secondary-active: color-mix(in oklab, var(--gray-0) 12%, transparent);
+  --color-background-button-tertiary: color-mix(in oklab, var(--gray-0) 3%, transparent);
+  --color-background-button-tertiary-hover: color-mix(in oklab, var(--gray-0) 7%, transparent);
+  --color-background-button-tertiary-active: color-mix(in oklab, var(--gray-0) 10%, transparent);
+
+  --color-background-accent: var(--blue-900);
+  --color-background-status-success: color-mix(in oklab, var(--green-400) 16%, transparent);
+  --color-background-status-warning: var(--orange-900);
+  --color-background-status-error: var(--red-900);
+  --color-background-danger-active: color-mix(in oklab, var(--red-400) 36%, transparent);
+
+  --color-text-foreground: var(--gray-0);
+  --color-text-foreground-secondary: color-mix(in oklab, var(--gray-0) 70%, transparent);
+  --color-text-foreground-tertiary: color-mix(in oklab, var(--gray-0) 50%, transparent);
+  --color-text-button-primary: var(--gray-0);
+  --color-text-button-secondary: var(--gray-300);
+  --color-text-button-tertiary: var(--gray-300);
+  /* Link blue lightens in dark (blue-100 over blue-300): the brand hue at full
+   * saturation does not carry enough contrast against #181818 to read as text. */
+  --color-text-accent: var(--blue-100);
+  --color-text-on-accent: var(--gray-1000);
+  --color-text-success: var(--green-300);
+  --color-text-warning: var(--orange-300);
+  --color-text-error: var(--red-300);
+
+  --color-icon-primary: color-mix(in oklab, var(--gray-0) 90%, transparent);
+  --color-icon-secondary: color-mix(in oklab, var(--gray-0) 70%, transparent);
+  --color-icon-tertiary: color-mix(in oklab, var(--gray-0) 50%, transparent);
+  --color-icon-accent: var(--blue-300);
+  --color-icon-success: var(--green-500);
+  --color-icon-warning: var(--orange-500);
+  --color-icon-error: var(--red-500);
+
+  --color-border: color-mix(in oklab, var(--gray-0) 8%, transparent);
+  --color-border-heavy: color-mix(in oklab, var(--gray-0) 12%, transparent);
+  --color-border-light: color-mix(in oklab, var(--gray-0) 5%, transparent);
+  --color-border-focus: var(--blue-300);
+
+  --color-background-row-hover: color-mix(in oklab, var(--gray-0) 5.2%, transparent);
+  --color-overlay-backdrop: color-mix(in oklab, var(--gray-1000) 60%, transparent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Composer geometry. Hardcoded constants — do not improvise per-component.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --spacing-token-button-composer: 28px;
+  --spacing-token-button-composer-sm: 20px;
+  --spacing-token-button-composer-gap: 4px;
+
+  --height-toolbar: 46px;
+  --height-toolbar-sm: 36px;
+  --height-toolbar-pane: 40px;
+
+  /* Rows are 32px with 6px vertical padding. 6 is not on the 4px grid, and
+   * that is deliberate: at this row height the optical centre of a 12-14px
+   * glyph sits above the geometric centre, so an even 4/8 split reads as
+   * bottom-heavy. This is the one sanctioned half-step. */
+  --list-row-min-height: 32px;
+  --list-row-padding-y: 6px;
+  --list-row-padding-x: 8px;
+}

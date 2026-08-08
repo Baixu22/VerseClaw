@@ -74,6 +74,7 @@ describe('ChatAgentEffortButton', () => {
     expect(slider).toBeInTheDocument();
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '6');
+    expect(slider).toHaveAttribute('step', '0.05');
   });
 
   it('commits the slider value through updateAgentReasoningEffort', async () => {
@@ -81,7 +82,8 @@ describe('ChatAgentEffortButton', () => {
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const slider = await screen.findByTestId('chat-agent-effort-slider');
     fireEvent.change(slider, { target: { value: '5' } });
-    // Commit is debounced so slider drag stays smooth.
+    fireEvent.pointerUp(slider);
+    // Persist only after the drag ends so agent refreshes cannot interrupt it.
     await waitFor(() => {
       expect(updateAgentReasoningEffort).toHaveBeenCalled();
     });
@@ -96,6 +98,7 @@ describe('ChatAgentEffortButton', () => {
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const slider = await screen.findByTestId('chat-agent-effort-slider');
     fireEvent.change(slider, { target: { value: '6' } });
+    fireEvent.pointerUp(slider);
     await waitFor(() => {
       expect(updateAgentReasoningEffort).toHaveBeenCalled();
     });
@@ -103,22 +106,38 @@ describe('ChatAgentEffortButton', () => {
     expect(value).toBe('max');
   });
 
-  it('uses the reference-style black squircle card', async () => {
+  it('uses the shared dropdown squircle card', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const card = popover.querySelector('.effort-card') as HTMLElement;
     expect(card).toBeTruthy();
-    expect(card.className).toContain('bg-black');
+    expect(card.className).toContain('effort-card--dropdown');
     expect(card.style.clipPath).toContain('effort-squircle');
   });
 
-  it('renders squircle clip-path definitions for card and track', async () => {
+  it('keeps the card squircle but uses a real rounded track', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const clipPaths = popover.querySelectorAll('clipPath');
-    expect(clipPaths).toHaveLength(2);
+    const track = screen.getByTestId('chat-agent-effort-track');
+    expect(clipPaths).toHaveLength(1);
+    expect(track.className).toContain('rounded-full');
+    expect(track.style.clipPath).toBe('');
+  });
+
+  it('moves continuously and snaps to the nearest effort on release', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const slider = await screen.findByTestId('chat-agent-effort-slider') as HTMLInputElement;
+
+    fireEvent.change(slider, { target: { value: '2.4' } });
+    expect(slider.value).toBe('2.4');
+
+    fireEvent.pointerUp(slider);
+    await waitFor(() => expect(slider.value).toBe('2'));
+    await waitFor(() => expect(updateAgentReasoningEffort).toHaveBeenCalledWith('main', 'low'));
   });
 
   it('only ignites the fire trail at max effort', async () => {

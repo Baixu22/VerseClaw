@@ -24,6 +24,7 @@ import {
   type ProviderType,
 } from '@/lib/providers';
 import { buildProviderAccountId } from '@/lib/provider-accounts';
+import { providerIcons } from '@/assets/providers';
 import {
   classifyProviderValidationError,
   type ProviderValidationFailureClass,
@@ -60,6 +61,43 @@ type ValidationState =
 interface ProviderStepContentProps {
   pending: PendingProviderSetup | null;
   onValidated: (pending: PendingProviderSetup | null) => void;
+}
+
+/**
+ * Vendor brand mark.
+ *
+ * src/assets/providers/ already ships real brand SVGs, but nothing consumed
+ * them — PROVIDER_TYPE_INFO carries emoji (🤖 / 💚 / 🔷) and that is what the
+ * picker rendered. This resolves the SVG per vendor and keeps the emoji as a
+ * fallback for any vendor without one.
+ *
+ * The lookup lives here rather than in src/lib/providers.ts on purpose: that
+ * module's `icon` field is also read by Settings (ProvidersSettings.tsx:1550),
+ * so retyping it would push this change well past the setup wizard.
+ */
+function ProviderMark({
+  vendorId,
+  name,
+  fallback,
+}: {
+  vendorId: string;
+  name: string;
+  fallback?: unknown;
+}) {
+  const src = providerIcons[vendorId];
+  if (!src) {
+    return <span className="text-base">{typeof fallback === 'string' ? fallback : '∙'}</span>;
+  }
+  return (
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      data-testid={`setup-provider-mark-${vendorId}`}
+      title={name}
+      className="h-4 w-4 shrink-0 object-contain"
+    />
+  );
 }
 
 export function ProviderStepContent({ pending, onValidated }: ProviderStepContentProps) {
@@ -281,13 +319,13 @@ export function ProviderStepContent({ pending, onValidated }: ProviderStepConten
               resetValidation();
             }}
             className={cn(
-              'flex items-center gap-2 rounded-lg border p-3 text-left text-sm transition-colors',
+              'setup-frame flex items-center gap-2 rounded-lg border p-3 text-left text-sm transition-colors',
               selectedType === info.id
-                ? 'border-primary bg-primary/5'
+                ? 'setup-frame--on border-primary bg-primary/5'
                 : 'border-border hover:bg-surface-input/50',
             )}
           >
-            <span className="text-base">{typeof info.icon === 'string' ? info.icon : '∙'}</span>
+            <ProviderMark vendorId={info.id} name={info.name} fallback={info.icon} />
             <span className="truncate">{info.name}</span>
           </button>
         ))}
@@ -522,9 +560,9 @@ export function ModelStepContent({ pending, onVerified }: ModelStepContentProps)
                 onVerified(null);
               }}
               className={cn(
-                'flex w-full items-center justify-between rounded-lg border p-2 text-left text-sm',
+                'setup-frame flex w-full items-center justify-between rounded-lg border p-2 text-left text-sm',
                 selectedModel === model
-                  ? 'border-primary bg-primary/5'
+                  ? 'setup-frame--on border-primary bg-primary/5'
                   : 'border-border hover:bg-surface-input/50',
               )}
             >

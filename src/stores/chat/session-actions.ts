@@ -369,7 +369,7 @@ export function createSessionActions(
 
     // ── New session ──
 
-    newSession: () => {
+    newSession: (options?: { deferSessionEntry?: boolean }) => {
       // Generate a new unique session key and switch to it.
       // NOTE: We intentionally do NOT call sessions.reset on the old session.
       // sessions.reset archives (renames) the session JSONL file, making old
@@ -386,10 +386,12 @@ export function createSessionActions(
       set((s) => ({
         currentSessionKey: newKey,
         currentAgentId: getAgentIdFromSessionKey(newKey),
-        sessions: [
-          ...(leavingEmpty ? s.sessions.filter((sess) => sess.key !== currentSessionKey) : s.sessions),
-          newSessionEntry,
-        ],
+        sessions: options?.deferSessionEntry
+          ? (leavingEmpty ? s.sessions.filter((sess) => sess.key !== currentSessionKey) : s.sessions)
+          : [
+            ...(leavingEmpty ? s.sessions.filter((sess) => sess.key !== currentSessionKey) : s.sessions),
+            newSessionEntry,
+          ],
         sessionLabels: leavingEmpty
           ? Object.fromEntries(Object.entries(s.sessionLabels).filter(([k]) => k !== currentSessionKey))
           : s.sessionLabels,

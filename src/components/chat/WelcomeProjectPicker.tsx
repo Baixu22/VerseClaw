@@ -1,19 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Folder, FolderPlus, Search } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronDown, Folder } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { basenameFromPath } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
+import { WorkspacePickerMenu } from './WorkspacePickerMenu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 /**
- * The clickable project name inside the chat empty-state title, plus the
- * workspace picker it opens.
+ * The active project token in the chat empty state, plus the workspace picker
+ * it opens.
  *
- * Ported from the FakeCoding reference empty state, where the active project is
- * named inline in the hero heading and doubles as the project switcher. The
- * shell (`.codex-composer-menu`) and the dotted-underline trigger
- * (`.codex-welcome-project`) carry the measured geometry; see
- * styles/codex-welcome-hero.css for where those numbers come from.
+ * Ported from the FakeCoding reference empty state, where the active project
+ * doubles as the project switcher. The reference names it inline in a hero
+ * heading; this build has no heading (the watermark is the display type), so
+ * the trigger is the pill in the context row under the composer, shaped to
+ * match the branch token beside it. The shared header menu shell
+ * carries the measured geometry — see styles/codex-welcome-hero.css.
  *
  * The reference's menu also offers "new project" and "work without a project".
  * Neither maps onto a ClawX workspace, so the footer instead reuses the
@@ -33,9 +36,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder }: Welcome
   const switchWorkspace = useWorkspacesStore((state) => state.switchWorkspace);
 
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const rootRef = useRef<HTMLSpanElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   // Same expression the composer header uses, so both surfaces always agree on
   // what this workspace is called.
@@ -43,23 +44,8 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder }: Welcome
     || basenameFromPath(activeWorkspace?.rootPath)
     || 'clawx';
 
-  const sortedProfiles = useMemo(
-    () => [...profiles].sort((a, b) => (b.lastOpenedAt ?? 0) - (a.lastOpenedAt ?? 0)),
-    [profiles],
-  );
-
-  const filteredProfiles = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return sortedProfiles;
-    return sortedProfiles.filter((profile) => {
-      const name = profile.name || basenameFromPath(profile.rootPath);
-      return name.toLowerCase().includes(query) || profile.rootPath.toLowerCase().includes(query);
-    });
-  }, [search, sortedProfiles]);
-
   const close = useCallback(() => {
     setOpen(false);
-    setSearch('');
   }, []);
 
   useEffect(() => {
@@ -80,10 +66,6 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder }: Welcome
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [close, open]);
 
-  useEffect(() => {
-    if (open) searchRef.current?.focus();
-  }, [open]);
-
   const handleSelect = (id: string) => {
     close();
     if (id === activeWorkspaceId) return;
@@ -92,90 +74,45 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder }: Welcome
 
   return (
     <span className="codex-welcome-project-wrap" ref={rootRef}>
+      <Tooltip>
+        <TooltipTrigger asChild>
       <button
         type="button"
-        className="codex-welcome-project"
+        className="codex-welcome-context__subcontrol codex-welcome-context__subcontrol--project codex-welcome-project-token"
         aria-expanded={open}
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
         aria-label={t('welcome.changeProject', { projectName: displayName })}
         disabled={disabled}
-        title={activeWorkspace?.rootPath}
         data-testid="welcome-project-trigger"
         onClick={() => (open ? close() : setOpen(true))}
       >
-        {displayName}
+        <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <span className="codex-welcome-context__name">{displayName}</span>
+        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', open && 'rotate-180')} aria-hidden="true" />
       </button>
+        </TooltipTrigger>
+        {activeWorkspace?.rootPath && (
+          <TooltipContent side="top" collisionPadding={8} className="max-w-xs break-all text-xs">
+            {activeWorkspace.rootPath}
+          </TooltipContent>
+        )}
+      </Tooltip>
 
       {open && (
-        <div
-          className="codex-composer-menu codex-composer-menu--welcome-project"
-          role="listbox"
-          aria-label={t('welcome.changeProject', { projectName: displayName })}
-          data-testid="welcome-project-menu"
-        >
-          <div className="codex-welcome-project-search">
-            <Search aria-hidden="true" />
-            <input
-              ref={searchRef}
-              type="text"
-              value={search}
-              placeholder={t('welcome.projectSearch')}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          </div>
-
-          <div className="codex-welcome-project-list">
-            {filteredProfiles.map((profile) => {
-              const name = profile.name || basenameFromPath(profile.rootPath);
-              const selected = profile.id === activeWorkspaceId;
-              return (
-                <button
-                  key={profile.id}
-                  type="button"
-                  role="option"
-                  aria-selected={selected}
-                  className="codex-composer-menu__item"
-                  title={profile.rootPath}
-                  data-testid="welcome-project-item"
-                  onClick={() => handleSelect(profile.id)}
-                >
-                  <span className="codex-composer-menu__icon">
-                    <Folder aria-hidden="true" />
-                  </span>
-                  <span className="codex-welcome-project-name">{name}</span>
-                  <span className="codex-composer-menu__check" data-hidden={selected ? undefined : 'true'}>
-                    <Check aria-hidden="true" />
-                  </span>
-                </button>
-              );
-            })}
-
-            {filteredProfiles.length === 0 && (
-              <div className="codex-welcome-project-empty" data-testid="welcome-project-empty">
-                {search.trim() ? t('welcome.projectEmpty') : t('workspace.noRecent')}
-              </div>
-            )}
-          </div>
-
-          {onPickFolder && (
-            <div className="codex-welcome-project-footer">
-              <button
-                type="button"
-                className={cn('codex-composer-menu__item')}
-                data-testid="welcome-project-pick-folder"
-                onClick={() => {
-                  close();
-                  void onPickFolder();
-                }}
-              >
-                <span className="codex-composer-menu__icon">
-                  <FolderPlus aria-hidden="true" />
-                </span>
-                <span className="codex-welcome-project-name">{t('workspace.chooseNew')}</span>
-              </button>
-            </div>
-          )}
-        </div>
+        <WorkspacePickerMenu
+          profiles={profiles}
+          activeWorkspaceId={activeWorkspaceId}
+          onSelect={handleSelect}
+          onPickFolder={onPickFolder ? () => {
+            close();
+            return onPickFolder();
+          } : undefined}
+          className="codex-header-menu--welcome-project"
+          menuTestId="welcome-project-menu"
+          rowTestId="welcome-project-item"
+          pickFolderTestId="welcome-project-pick-folder"
+          emptyTestId="welcome-project-empty"
+        />
       )}
     </span>
   );

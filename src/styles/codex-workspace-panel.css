@@ -71,7 +71,7 @@
   min-width: 72px;
   max-width: 156px;
   padding: 4px 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: transparent;
   overflow: hidden;
   transition: background-color 100ms ease;
@@ -146,7 +146,7 @@
   height: 20px;
   padding: 2px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: hsl(var(--muted-foreground));
   opacity: 0;
@@ -171,7 +171,7 @@
   min-width: 20px;
   padding: 0 6px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: hsl(var(--muted-foreground));
   font-size: 13px;
@@ -198,7 +198,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
@@ -234,7 +234,7 @@
   height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
@@ -316,7 +316,7 @@
   min-height: 40px;
   padding: 8px 10px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: hsl(var(--foreground) / 0.03);
   color: hsl(var(--foreground));
   text-align: left;
@@ -360,7 +360,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: hsl(var(--foreground) / 0.06);
   color: hsl(var(--muted-foreground));
   font-size: 11px;
@@ -373,7 +373,7 @@
   min-height: 16px;
   padding: 2px 6px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: hsl(var(--foreground) / 0.065);
   color: hsl(var(--muted-foreground));
   font-family: inherit;
@@ -394,7 +394,7 @@
   width: 280px;
   padding: 4px;
   border: 0;
-  border-radius: 15px;
+  border-radius: var(--radius-xl);
   background: hsl(var(--material-elevated));
   box-shadow: var(--shadow-hairline, 0 0 0 0.5px hsl(var(--border))), 0 12px 40px hsl(var(--material-scrim, 240 8% 3%) / 0.28);
   overflow-y: auto;
@@ -410,7 +410,7 @@
   min-height: 29px;
   padding: 5px 8px;
   border: 0;
-  border-radius: 12.5px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: hsl(var(--foreground));
   font-size: 13px;
@@ -448,7 +448,7 @@
 .rs-new-tab-kbd {
   flex: none;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: hsl(var(--foreground) / 0.065);
   color: hsl(var(--muted-foreground));
   font-size: 12px;
@@ -494,7 +494,7 @@
   height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 12.5px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
@@ -533,7 +533,7 @@
   min-width: 0;
   height: 28px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: transparent;
   overflow: hidden;
   cursor: text;
@@ -557,7 +557,7 @@
   height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 10px 0 0 10px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
   background: transparent;
   color: hsl(var(--muted-foreground));
   opacity: 0;
@@ -624,7 +624,7 @@
   width: 240px;
   padding: 4px;
   border: 0;
-  border-radius: 15px;
+  border-radius: var(--radius-xl);
   background: hsl(var(--material-elevated));
   box-shadow: var(--shadow-hairline, 0 0 0 0.5px hsl(var(--border))), 0 12px 40px hsl(var(--material-scrim, 240 8% 3%) / 0.28);
   color: hsl(var(--foreground));
@@ -654,7 +654,7 @@
   min-height: 29px;
   padding: 5px 8px;
   border: 0;
-  border-radius: 12.5px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: hsl(var(--foreground));
   font-size: 13px;

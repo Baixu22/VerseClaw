@@ -2,7 +2,7 @@ import { Activity, ChevronRight, GitBranch, Link as LinkIcon, Wrench, XCircle } 
 import { MessageSquare } from '@/components/icons/codex-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -72,7 +72,7 @@ function StepDetailRow({ step }: { step: TaskStep }) {
             </span>
           )}
           {showRunning && (
-            <DotMatrix state={isThinking ? 'thinking' : 'syncing'} label={displayLabel} className="mt-1 size-3.5 shrink-0 text-primary" />
+            <OrbStatus state={isThinking ? 'thinking' : 'syncing'} label={displayLabel} className="mt-1 size-3.5 shrink-0 text-primary" />
           )}
           {showError && (
             <span className="shrink-0 whitespace-nowrap text-xs font-normal text-destructive">
