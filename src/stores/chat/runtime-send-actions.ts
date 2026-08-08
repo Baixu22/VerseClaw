@@ -142,6 +142,7 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
       rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
       set((s) => ({
         messages: [...s.messages, userMsg],
+        sessions: ensureSessionEntry(s.sessions, currentSessionKey),
         sending: true,
         error: null,
         streamingText: '',

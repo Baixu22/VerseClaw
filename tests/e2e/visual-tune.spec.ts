@@ -97,9 +97,9 @@ test.describe('visual tuning screenshots', () => {
                 id: 'main',
                 name: 'Main',
                 isDefault: true,
-                modelDisplay: 'test/model',
-                modelRef: 'test/model',
-                overrideModelRef: 'test/model',
+                modelDisplay: 'model-alpha',
+                modelRef: 'custom-alpha123/model-alpha',
+                overrideModelRef: 'custom-alpha123/model-alpha',
                 inheritedModel: false,
                 workspace: '~/.openclaw/workspace',
                 agentDir: '~/.openclaw/agents/main/agent',
@@ -108,7 +108,7 @@ test.describe('visual tuning screenshots', () => {
                 reasoningEffort: 'medium',
               }],
               defaultAgentId: 'main',
-              defaultModelRef: 'test/model',
+              defaultModelRef: 'custom-alpha123/model-alpha',
               configuredChannelTypes: [],
               channelOwners: {},
               channelAccountOwners: {},
@@ -117,6 +117,25 @@ test.describe('visual tuning screenshots', () => {
           if (request.module === 'agents' && request.action === 'updateReasoningEffort') {
             return makeResponse({ success: true });
           }
+          if (request.module === 'providers' && request.action === 'accounts') {
+            const now = new Date().toISOString();
+            return makeResponse([
+              { id: 'alpha1234', vendorId: 'custom', label: 'Alpha', authMode: 'api_key', baseUrl: 'http://127.0.0.1:1111/v1', model: 'model-alpha', enabled: true, isDefault: true, createdAt: now, updatedAt: now },
+              { id: 'beta5678', vendorId: 'custom', label: 'Beta', authMode: 'api_key', baseUrl: 'http://127.0.0.1:2222/v1', model: 'provider/model-beta', enabled: true, isDefault: false, createdAt: now, updatedAt: now },
+            ]);
+          }
+          if (request.module === 'providers' && request.action === 'list') {
+            const now = new Date().toISOString();
+            return makeResponse([
+              { id: 'alpha1234', type: 'custom', name: 'Alpha', enabled: true, hasKey: true, keyMasked: 'sk-***', createdAt: now, updatedAt: now },
+              { id: 'beta5678', type: 'custom', name: 'Beta', enabled: true, hasKey: true, keyMasked: 'sk-***', createdAt: now, updatedAt: now },
+            ]);
+          }
+          if (request.module === 'providers' && request.action === 'accountKeyInfo') {
+            return makeResponse([{ accountId: 'alpha1234', hasKey: true }, { accountId: 'beta5678', hasKey: true }]);
+          }
+          if (request.module === 'providers' && request.action === 'vendors') return makeResponse([]);
+          if (request.module === 'providers' && request.action === 'getDefaultAccount') return makeResponse({ accountId: 'alpha1234' });
           if (request.module === 'workspaces' && request.action === 'list') {
             return makeResponse({
               profiles: [{
@@ -172,6 +191,22 @@ test.describe('visual tuning screenshots', () => {
       // 1. Full chat page
       await page.screenshot({ path: `${OUT}/01-chat-page.png` });
 
+      const projectTrigger = page.getByTestId('welcome-project-trigger');
+      if (await projectTrigger.count()) {
+        await projectTrigger.click();
+        await expect(page.getByTestId('welcome-project-menu')).toBeVisible();
+        await page.screenshot({ path: `${OUT}/01a-project-menu.png` });
+        await page.keyboard.press('Escape');
+      }
+
+      const branchTrigger = page.getByTestId('welcome-branch-trigger');
+      if (await branchTrigger.count()) {
+        await branchTrigger.click();
+        await expect(page.getByTestId('welcome-branch-menu')).toBeVisible();
+        await page.screenshot({ path: `${OUT}/01b-branch-menu.png` });
+        await page.keyboard.press('Escape');
+      }
+
       // 2. Plus button + composer close-up
       const composer = page.getByTestId('chat-composer-input');
       const composerBox = await composer.boundingBox();
@@ -194,6 +229,22 @@ test.describe('visual tuning screenshots', () => {
         await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();
         await page.waitForTimeout(250);
         await page.screenshot({ path: `${OUT}/03-permission-menu.png` });
+        await page.keyboard.press('Escape');
+      }
+
+      const knowledgeButton = page.getByTestId('chat-knowledge-scope-button');
+      if (await knowledgeButton.count()) {
+        await knowledgeButton.click();
+        await expect(page.getByTestId('chat-knowledge-scope-menu')).toBeVisible();
+        await page.screenshot({ path: `${OUT}/03a-knowledge-menu.png` });
+        await page.keyboard.press('Escape');
+      }
+
+      const modelButton = page.getByTestId('chat-model-picker-button');
+      if (await modelButton.count()) {
+        await modelButton.click();
+        await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
+        await page.screenshot({ path: `${OUT}/03b-model-menu.png` });
         await page.keyboard.press('Escape');
       }
 
@@ -224,7 +275,7 @@ test.describe('visual tuning screenshots', () => {
       await popover.screenshot({ path: `${OUT}/05-effort-medium.png` });
 
       const slider = page.getByTestId('chat-agent-effort-slider');
-      await slider.click();
+      await slider.focus();
       await page.keyboard.press('End');
       // Let the flame develop (shader eases in over ~2.5s).
       await page.waitForTimeout(2_600);

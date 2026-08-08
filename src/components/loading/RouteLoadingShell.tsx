@@ -1,5 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { ShimmerBlock } from '@/components/ai-elements/shimmer';
+import { DiaTextReveal } from '@/components/magicui/dia-text-reveal';
 import { cn } from '@/lib/utils';
 
 const BOOT_SHELL_TRANSITION_MS = 160;
@@ -25,6 +26,7 @@ export function BootShellHandoff() {
 
     const handoffTimer = window.setTimeout(() => {
       bootShell.dataset.state = 'leaving';
+      window.dispatchEvent(new CustomEvent('verse:boot-leaving'));
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       removalTimer = window.setTimeout(
         () => bootShell.remove(),
@@ -45,6 +47,19 @@ function SkeletonLine({ className }: { className: string }) {
   return <ShimmerBlock className={cn('rounded-full', className)} />;
 }
 
+/** Small brand mark that sweeps once on route-level loading shells. */
+function VerseRouteBrand() {
+  return (
+    <DiaTextReveal
+      text="verse"
+      duration={1.2}
+      startOnView={false}
+      once
+      className="text-sm font-medium tracking-tight text-muted-foreground"
+    />
+  );
+}
+
 export function ChatRouteLoadingShell() {
   return (
     <div
@@ -52,6 +67,9 @@ export function ChatRouteLoadingShell() {
       className="flex h-full min-h-[420px] flex-col"
       aria-busy="true"
     >
+      <div className="mb-4 flex shrink-0 items-center">
+        <VerseRouteBrand />
+      </div>
       <div className="flex h-12 shrink-0 items-center justify-between border-b border-border/50 pb-4">
         <div className="space-y-2">
           <SkeletonLine className="h-4 w-36" />
@@ -98,6 +116,9 @@ export function SettingsRouteLoadingShell() {
       className="mx-auto w-full max-w-6xl"
       aria-busy="true"
     >
+      <div className="mb-4 flex items-center">
+        <VerseRouteBrand />
+      </div>
       <div className="mb-10 flex items-start justify-between">
         <div className="space-y-3">
           <SkeletonLine className="h-10 w-52" />
@@ -129,6 +150,9 @@ export function GenericRouteLoadingShell() {
       className="mx-auto w-full max-w-5xl"
       aria-busy="true"
     >
+      <div className="mb-4 flex items-center">
+        <VerseRouteBrand />
+      </div>
       <div className="mb-8 space-y-3">
         <SkeletonLine className="h-9 w-48" />
         <SkeletonLine className="h-3 w-80 max-w-[75vw]" />
@@ -154,6 +178,9 @@ export function SetupRouteLoadingShell() {
       aria-busy="true"
     >
       <BootShellHandoff />
+      <div className="mb-6 flex items-center justify-center">
+        <VerseRouteBrand />
+      </div>
       <div className="w-full max-w-2xl rounded-3xl border border-border/60 bg-surface-modal p-8 shadow-sm">
         <ShimmerBlock className="mb-8 h-14 w-[70px] rounded-2xl" />
         <SkeletonLine className="h-9 w-64 max-w-full" />

@@ -11,11 +11,13 @@
     "retry": "再読み込み"
   },
   "welcome": {
-    "titleInProject": "<projectSelect>{{projectName}}</projectSelect> で何を作りましょうか？",
-    "titleNoProject": "何を作りましょうか？",
     "projectSearch": "プロジェクトを検索",
     "projectEmpty": "プロジェクトが見つかりません",
     "changeProject": "プロジェクトを変更: {{projectName}}",
+    "branchPickerTitle": "ブランチを切り替え",
+    "branchSearch": "ブランチを検索",
+    "branchEmpty": "ブランチが見つかりません",
+    "branchSwitchFailed": "ブランチを切り替えられませんでした: {{error}}",
     "title": "Verse Claw チャット",
     "subtitle": "お手伝いできることはありますか？",
     "askQuestions": "タスク対応",
@@ -993,6 +995,7 @@
       "attachFiles": "ファイルを添付",
       "knowledge": "ナレッジを検索",
       "model": "モデル",
+      "more": "その他",
       "compact": "セッションを圧縮",
       "fork": "セッションを分岐",
       "handoff": "セッションを引き継ぎ"
@@ -1589,6 +1592,7 @@
     "retryFailedAttachments": "失敗した添付を再試行",
     "folderDropUnsupported": "このフォルダを添付できませんでした。もう一度ドラッグするか、メッセージにフォルダパスを貼り付けてください。",
     "folderAttachment": "フォルダ",
+    "removeAttachment": "{{fileName}} を削除",
     "skillPreviewTooltip": "SKILL.md をプレビュー",
     "skillPreviewNotFound": "この Skill が見つかりません。Skill ピッカーを開いて一覧を更新してください。",
     "capability": {
@@ -1691,6 +1695,7 @@
         "memory": "メモリ"
       },
       "destructiveWarning": "リスクのある Git、ファイル、ターミナル操作は提案のみで、実行には明示的な確認が必要です。",
+      "dismiss": "リカバリーアシストを閉じる",
       "actions": {
         "checkpoint-handoff": {
           "title": "チェックポイント Handoff を準備",
@@ -1783,6 +1788,13 @@
     "sectionConversations": "会話",
     "organizeSessions": "会話を整理",
     "searchSessions": "会話を検索",
+    "addProject": "プロジェクトを追加",
+    "sortBy": "並び替え",
+    "newSessionInProject": "{{name}} で新しいタスク",
+    "projectOptions": "{{name}} のプロジェクト操作",
+    "createFolder": "新規フォルダ",
+    "untitledFolder": "無題フォルダ",
+    "switchToProject": "{{name}} に切り替え",
     "clearSearch": "検索をクリア",
     "searchNoResults": "会話が見つかりません",
     "empty": "会話はまだありません",

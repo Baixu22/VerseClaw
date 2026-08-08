@@ -170,7 +170,7 @@
   top: 8px;
   bottom: 8px;
   width: 4px;
-  border-radius: 2px;
+  border-radius: var(--radius-2xs);
   background: hsl(var(--conversation-border-heavy));
 }
 
@@ -210,7 +210,7 @@
   display: inline;
   padding: 1px 6px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: color-mix(in srgb, hsl(var(--foreground)) 10.7%, transparent);
   color: inherit;
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);

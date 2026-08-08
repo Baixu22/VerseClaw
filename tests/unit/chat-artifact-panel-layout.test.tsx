@@ -138,7 +138,7 @@ describe('Chat artifact panel layout', () => {
     expect(chatPage).toHaveClass('relative', 'overflow-hidden');
   });
 
-  it('layers the right artifact panel above the macOS drag strip', async () => {
+  it('renders the right artifact panel as a flex sibling that squeezes the chat', async () => {
     window.electron.platform = 'darwin';
 
     render(<Chat />);
@@ -146,10 +146,10 @@ describe('Chat artifact panel layout', () => {
     const panel = await screen.findByTestId('artifact-panel');
     const aside = panel.closest('aside');
 
-    expect(aside).toHaveClass('absolute');
-    expect(aside).toHaveClass('z-30');
-    expect(aside).toHaveClass('inset-y-0', 'right-0', 'bg-surface-modal');
+    expect(aside).toHaveClass('relative');
+    expect(aside).toHaveClass('bg-surface-modal');
     expect(aside).toHaveClass('no-drag');
+    expect(aside).not.toHaveClass('absolute');
   });
 
   it('hides the chat assistive rail while the artifact panel is open', async () => {

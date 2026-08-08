@@ -22,8 +22,8 @@ const WORKSPACE_SNAPSHOT = {
   activeWorkspace: WORKSPACE,
 };
 
-test.describe('Verse Claw chat agent effort popover', () => {
-  test('opens the effort popover, slides to max, and commits max', async ({ launchElectronApp }) => {
+test.describe('Verse Claw combined model and reasoning settings', () => {
+  test('opens the reasoning section in the shared menu, slides to max, and commits max', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -150,12 +150,16 @@ test.describe('Verse Claw chat agent effort popover', () => {
       });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
-      // The effort button should be visible directly in the composer controls.
+      // The flame shortcut opens the reasoning section of the same menu that
+      // contains model selection.
       const effortButton = page.getByTestId('chat-agent-effort-button');
       await expect(effortButton).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
 
-      // Open the popover
+      // Open the shared menu directly to its reasoning section.
       await effortButton.click();
+      await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
+      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
       // The slider should have 7 stops (0..6)
@@ -165,6 +169,7 @@ test.describe('Verse Claw chat agent effort popover', () => {
 
       // Slide to max (index 6)
       await slider.fill('6');
+      await slider.dispatchEvent('pointerup');
 
       // Max is a first-class persisted effort value in the shared agent contract.
       await expect.poll(async () => {
@@ -176,15 +181,37 @@ test.describe('Verse Claw chat agent effort popover', () => {
         });
       }).toBe('max');
 
-      // Close popover with Escape
+      const effortScreenshotPath = testInfo.outputPath('combined-effort-max.png');
+      await page.screenshot({ path: effortScreenshotPath, animations: 'disabled' });
+      await testInfo.attach('combined-effort-max', {
+        path: effortScreenshotPath,
+        contentType: 'image/png',
+      });
+
+      // Escape closes the whole shared menu.
       await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-agent-effort-popover')).toHaveCount(0);
+
+      await page.getByTestId('chat-model-picker-button').click();
+      const settingsMenu = page.getByTestId('chat-model-picker-menu');
+      await expect(settingsMenu).toBeVisible();
+      const settingRows = settingsMenu.locator('.codex-execution-settings__row');
+      await expect(settingRows).toHaveCount(2);
+      await expect(page.getByTestId('chat-model-options')).toHaveCount(0);
+      await settingRows.first().click();
+      await expect(page.getByTestId('chat-model-options')).toBeVisible();
+      const screenshotPath = testInfo.outputPath('combined-model-effort-menu.png');
+      await page.screenshot({ path: screenshotPath, animations: 'disabled' });
+      await testInfo.attach('combined-model-effort-menu', {
+        path: screenshotPath,
+        contentType: 'image/png',
+      });
     } finally {
       await closeElectronApp(app);
     }
   });
 
-  test('renders a theme-aware rounded effort popover', async ({ launchElectronApp }) => {
+  test('keeps the reasoning slider inside the shared dropdown surface', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -280,23 +307,60 @@ test.describe('Verse Claw chat agent effort popover', () => {
       });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
-      // Open the effort popover
+      // Open the inline reasoning section.
       await page.getByTestId('chat-agent-effort-button').click();
       const popover = page.getByTestId('chat-agent-effort-popover');
       await expect(popover).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
 
-      const cardBg = await popover.locator('.effort-card').evaluate((el) => {
+      const surface = page.getByTestId('chat-model-picker-menu');
+      const surfaceBg = await surface.evaluate((el) => {
         return window.getComputedStyle(el).backgroundColor;
       });
-      expect(cardBg).not.toBe('rgb(0, 0, 0)');
+      expect(surfaceBg).not.toBe('rgb(0, 0, 0)');
 
       const clipPathCount = await popover.locator('clipPath').count();
-      expect(clipPathCount).toBe(2);
+      expect(clipPathCount).toBe(1);
 
-      const radius = await popover.locator('.effort-card').evaluate((el) => {
-        return window.getComputedStyle(el).borderRadius;
+      const slider = page.getByTestId('chat-agent-effort-slider');
+      await expect(slider).toHaveAttribute('step', '0.05');
+      const trackMetrics = await page.evaluate(() => {
+        const root = document.documentElement;
+        const track = document.querySelector<HTMLElement>('[data-testid="chat-agent-effort-track"]')!;
+        const surface = track.querySelector<HTMLElement>('.effort-track-surface')!;
+        const hadLight = root.classList.contains('light');
+        const hadDark = root.classList.contains('dark');
+        const readTheme = (theme: 'light' | 'dark') => {
+          root.classList.remove('light', 'dark');
+          root.classList.add(theme);
+          const style = getComputedStyle(track);
+          return {
+            background: getComputedStyle(surface).backgroundColor,
+            borderRadius: style.borderRadius,
+            clipPath: style.clipPath,
+            height: style.height,
+            thumbSize: style.getPropertyValue('--effort-thumb-size').trim(),
+          };
+        };
+        const light = readTheme('light');
+        const dark = readTheme('dark');
+        root.classList.remove('light', 'dark');
+        if (hadLight) root.classList.add('light');
+        if (hadDark) root.classList.add('dark');
+        return { light, dark };
       });
-      expect(radius).not.toBe('0px');
+      expect(trackMetrics.light.background).not.toBe(trackMetrics.dark.background);
+      expect(trackMetrics.light.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
+      expect(trackMetrics.dark.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
+      expect(trackMetrics.light).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '22px', thumbSize: '18px' });
+      expect(trackMetrics.dark).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '22px', thumbSize: '18px' });
+
+      const card = popover.locator('.effort-card');
+      await expect(card).toHaveClass(/effort-card--inline/);
+      const boxShadow = await card.evaluate((el) => {
+        return window.getComputedStyle(el).boxShadow;
+      });
+      expect(boxShadow).toBe('none');
     } finally {
       await closeElectronApp(app);
     }

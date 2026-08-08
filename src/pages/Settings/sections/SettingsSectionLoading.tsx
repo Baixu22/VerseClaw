@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DotMatrix } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { ShimmerBlock } from '@/components/ai-elements/shimmer';
 
 export function SettingsSectionLoading({ label }: { label: string }) {
@@ -27,7 +27,7 @@ export function SettingsSectionLoading({ label }: { label: string }) {
           ? 'flex h-6 items-center gap-2 text-xs text-muted-foreground opacity-100 transition-opacity duration-150 motion-reduce:transition-none'
           : 'flex h-6 items-center gap-2 text-xs text-muted-foreground opacity-0'}
       >
-        <DotMatrix state="loading" label={label} className="size-3.5" />
+        <OrbStatus state="loading" label={label} className="size-3.5" />
         <span>{label}</span>
       </div>
       <div

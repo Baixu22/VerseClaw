@@ -56,7 +56,7 @@ function WindowsTitleBar() {
   return (
     <div
       data-testid="windows-titlebar"
-      className="drag-region relative z-[120] flex h-[34px] shrink-0 items-center justify-end border-b border-border bg-surface-sidebar"
+      className="drag-region relative z-raised flex h-[34px] shrink-0 items-center justify-end border-b border-border bg-surface-sidebar"
     >
       {/* Right: Window Controls */}
       <div className="no-drag flex h-full">

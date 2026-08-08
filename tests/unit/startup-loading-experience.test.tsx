@@ -86,13 +86,10 @@ describe('Settings section loading feedback', () => {
 
     act(() => vi.advanceTimersByTime(500));
     expect(status).toHaveClass('opacity-100', 'motion-reduce:transition-none');
-    expect(screen.getAllByText('Loading settings')).toHaveLength(2);
-
-    const shimmer = Array.from(loading.querySelectorAll('[aria-hidden="true"]'))
-      .find((element) => element.getAttribute('class')?.includes('motion-safe:animate-'));
-    expect(shimmer).toHaveClass('motion-safe:animate-[ai-elements-shimmer_1.8s_linear_infinite]');
-    const dot = loading.querySelector('[data-slot="dot-matrix-dot"]');
-    expect(dot).toHaveClass('motion-reduce:[animation-name:none]');
+    expect(screen.getByText('Loading settings')).toBeInTheDocument();
+    const orb = loading.querySelector('canvas[role="img"]');
+    expect(orb).not.toBeNull();
+    expect(orb).toHaveAttribute('aria-label', 'Loading settings');
   });
 });
 

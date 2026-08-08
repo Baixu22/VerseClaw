@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import type {
   AssistantBranch,
   AssistantReasoning,
@@ -195,7 +195,7 @@ export function TokenUsageRoll({ usage }: { usage: AssistantUsageModel }) {
   );
 }
 
-export function DotMatrixStatus({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
+export function StatusChips({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
   const { t } = useTranslation('chat');
   return (
     <div className="flex items-center gap-1 py-1 pl-1" data-testid="assistant-dot-matrix-status">
@@ -217,7 +217,7 @@ export function DotMatrixStatus({ dimensions }: { dimensions: AssistantStatusDim
   );
 }
 
-function resolveAssistantStatusMatrixState(dimensions: AssistantStatusDimension[]): DotMatrixState {
+function resolveAssistantStatusMatrixState(dimensions: AssistantStatusDimension[]): OrbStatusState {
   const byId = new Map(dimensions.map((dimension) => [dimension.id, dimension]));
   if (dimensions.some((dimension) => dimension.state === 'error')) return 'error';
   if (byId.get('tools')?.state === 'active') return 'syncing';
@@ -239,7 +239,7 @@ export function AssistantStatusIndicator({ dimensions }: { dimensions: Assistant
       aria-label={t('assistantRender.statusIndicator.label')}
       title={t('assistantRender.statusIndicator.label')}
     >
-      <DotMatrix
+      <OrbStatus
         state={state}
         label={t('assistantRender.statusIndicator.label')}
         className="size-4 text-foreground/75"
@@ -252,7 +252,7 @@ export function AssistantStatusIndicator({ dimensions }: { dimensions: Assistant
           'group-focus-within/status:translate-y-0 group-focus-within/status:opacity-100',
         )}
       >
-        <DotMatrixStatus dimensions={dimensions} />
+        <StatusChips dimensions={dimensions} />
       </div>
     </div>
   );

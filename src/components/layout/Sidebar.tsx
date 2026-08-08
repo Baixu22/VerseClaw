@@ -12,8 +12,6 @@ import {
   MoreHorizontal,
   PanelLeftClose,
   PanelLeft,
-  Terminal,
-  ExternalLink,
   Trash2,
   Archive as ArchiveIcon,
   Pencil,
@@ -26,9 +24,15 @@ import {
   ImagePlus,
   Moon,
   Workflow,
+  Plus,
+  FolderPlus,
+  MoreVertical,
+  Clock3,
+  Folder,
+  GitBranch,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { useSettingsStore } from '@/stores/settings';
@@ -60,6 +64,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { hostApi } from '@/lib/host-api';
 import { SIDEBAR_COLLAPSED_WIDTH, MAC_SIDEBAR_CHROME_HEIGHT } from '@shared/sidebar-layout';
@@ -67,6 +72,8 @@ import { useTranslation } from 'react-i18next';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useNewChatAction } from './use-new-chat-action';
 import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLine } from '@/components/icons/codex-icons';
+import { toast } from 'sonner';
+import { createFreshWorkspaceSessionKey } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -106,6 +113,9 @@ function NavItem({ to, icon, label, badge, collapsed, onClick, testId }: NavItem
 interface SessionRowProps {
   session: ChatSession;
   agentName: string;
+  workspaceName?: string;
+  branch?: string;
+  activityMs: number;
   isEditing: boolean;
   sessionLabel: string;
   sessionStatus?: SidebarSessionStatus | null;
@@ -130,7 +140,7 @@ type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 
 
 type SidebarSessionStatus = {
   kind: SidebarSessionStatusKind;
-  matrixState: DotMatrixState;
+  matrixState: OrbStatusState;
   labelKey: string;
   signature: string;
   dismissible: boolean;
@@ -190,7 +200,7 @@ function buildSidebarSessionStatus(input: {
     return null;
   }
 
-  const matrixStateByKind: Record<SidebarSessionStatusKind, DotMatrixState> = {
+  const matrixStateByKind: Record<SidebarSessionStatusKind, OrbStatusState> = {
     running: 'streaming',
     waiting: 'waiting',
     completed: 'success',
@@ -210,6 +220,9 @@ function buildSidebarSessionStatus(input: {
 const SessionRowMemo = memo(function SessionRow({
   session: s,
   agentName,
+  workspaceName,
+  branch,
+  activityMs,
   isEditing,
   sessionLabel,
   sessionStatus,
@@ -232,6 +245,48 @@ const SessionRowMemo = memo(function SessionRow({
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
   const isSelected = isOnChat && currentSessionKey === s.key;
+
+  /* Long-title marquee: on row hover, measure how far the title overflows past
+     the action strip and pan it left so the full name scrolls into view. The
+     three hover buttons are absolute-positioned over the right edge; reserving
+     their width keeps the title from sliding under them. The outer `.marquee-
+     text` span stays fixed (overflow clip + fade mask); only the inner span
+     translates, so the text scrolls inside the clipped frame. */
+  const taskSelectRef = useRef<HTMLButtonElement>(null);
+
+  const handleRowHoverStart = useCallback(() => {
+    const btn = taskSelectRef.current;
+    if (!btn) return;
+    const wrapper = btn.querySelector<HTMLElement>('.marquee-text');
+    const inner = wrapper?.querySelector<HTMLElement>('.marquee-text__inner');
+    if (!wrapper || !inner) return;
+    const row = btn.closest('.sidebar-row');
+    const actionsEl = row?.querySelector<HTMLElement>('.sidebar-row__actions');
+    /* actions is absolute; offsetWidth is layout-stable even at opacity 0.
+       +8px breathes between the title end and the first button. */
+    const actionsWidth = actionsEl ? actionsEl.offsetWidth + 8 : 72;
+    const available = wrapper.clientWidth - actionsWidth;
+    const overflow = inner.scrollWidth - available;
+    if (overflow > 4) {
+      inner.style.setProperty('--marquee-distance', `-${overflow}px`);
+      /* Expose the measured action-strip width to CSS so the fade mask can
+         terminate exactly at the buttons' left edge — the panning text stays
+         legible up to that point and never slides under the buttons. */
+      wrapper.style.setProperty('--marquee-actions-width', `${actionsWidth}px`);
+      wrapper.classList.add('is-marqueeing');
+    }
+  }, []);
+
+  const handleRowHoverEnd = useCallback(() => {
+    const btn = taskSelectRef.current;
+    if (!btn) return;
+    const wrapper = btn.querySelector<HTMLElement>('.marquee-text');
+    const inner = wrapper?.querySelector<HTMLElement>('.marquee-text__inner');
+    if (!wrapper || !inner) return;
+    wrapper.classList.remove('is-marqueeing');
+    inner.style.removeProperty('--marquee-distance');
+    wrapper.style.removeProperty('--marquee-actions-width');
+  }, []);
 
   if (isEditing) {
     return (
@@ -263,11 +318,19 @@ const SessionRowMemo = memo(function SessionRow({
     );
   }
 
+  const tooltipWorkspace = workspaceName || agentName;
+  const tooltipTime = activityMs > 0
+    ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(activityMs)
+    : '';
+
   return (
+    <Tooltip>
     <SidebarRow
       className="task-row"
       selected={isSelected}
       actionsClassName="task-hover-actions"
+      onMouseEnter={handleRowHoverStart}
+      onMouseLeave={handleRowHoverEnd}
       actions={(
         <>
           {leadingActions}
@@ -301,7 +364,9 @@ const SessionRowMemo = memo(function SessionRow({
          under the open popover; `.sidebar-row[data-force-actions]` pins them. */
       data-force-actions={forceActionsVisible ? 'true' : undefined}
     >
-      <button
+      <TooltipTrigger asChild>
+        <button
+        ref={taskSelectRef}
         type="button"
         data-testid={`sidebar-session-${s.key}`}
         onClick={() => {
@@ -314,24 +379,18 @@ const SessionRowMemo = memo(function SessionRow({
         }}
         onDoubleClick={() => onStartRename(s.key, sessionLabel)}
         className="task-select"
-        /* Agent name is not inline chrome in the official row; it rides the
-           row tooltip so the title keeps the full width. */
-        title={`${sessionLabel} — ${agentName}`}
       >
         {/* Official row: the title is the first child so it receives the
             flex/ellipsis/fade contract. Runtime state trails it, replacing the
             reference's task-progress spinner slot, and is only present when a
             session actually has state — idle rows reserve nothing. */}
-        <span>{sessionLabel}</span>
+        <span className="marquee-text"><span className="marquee-text__inner">{sessionLabel}</span></span>
         {sessionStatus && (
           <span
             data-testid={`sidebar-session-status-${s.key}`}
             data-state={sessionStatus.kind}
             role="status"
             aria-label={sessionStatusLabel}
-            title={sessionStatus.dismissible
-              ? t('chat:sessionStatus.dismissCompleted')
-              : sessionStatusLabel}
             onClick={(event) => {
               if (!sessionStatus.dismissible) return;
               event.stopPropagation();
@@ -343,11 +402,45 @@ const SessionRowMemo = memo(function SessionRow({
               sessionStatus.dismissible && 'task-status-slot--dismissible',
             )}
           >
-            <DotMatrix state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
+            <OrbStatus state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
           </span>
         )}
-      </button>
+        </button>
+      </TooltipTrigger>
     </SidebarRow>
+      <TooltipContent
+        side="right"
+        align="start"
+        collisionPadding={10}
+        className="w-64 overflow-hidden rounded-xl border-border/80 bg-elevated p-0 text-foreground shadow-xl"
+        data-testid={`sidebar-session-tooltip-${s.key}`}
+      >
+        <div className="grid gap-2 px-3 py-2.5">
+          <div className="min-w-0 truncate text-sm font-medium leading-5">{sessionLabel}</div>
+          {tooltipTime && (
+            <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
+              <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tooltipTime}</span>
+            </div>
+          )}
+          {tooltipWorkspace && (
+            <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
+              <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tooltipWorkspace}</span>
+            </div>
+          )}
+          {branch?.trim() && (
+            <div
+              className="flex min-w-0 items-center gap-2 border-t border-border/60 pt-2 text-xs text-muted-foreground"
+              data-testid={`sidebar-session-tooltip-branch-${s.key}`}
+            >
+              <GitBranch className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate font-mono">{branch.trim()}</span>
+            </div>
+          )}
+        </div>
+      </TooltipContent>
+    </Tooltip>
   );
 });
 
@@ -398,8 +491,9 @@ export function Sidebar() {
   const [isResizing, setIsResizing] = useState(false);
   const stopResizeRef = useRef<(() => void) | null>(null);
 
-  const { sessions, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError, startupPhase } = useChatStore(useShallow((s) => ({
+  const { sessions, messages, currentSessionKey, sessionLabels, sessionLastActivity, runtimeRuns, activeRunId, sending, pendingFinal, runError, startupPhase } = useChatStore(useShallow((s) => ({
     sessions: s.sessions,
+    messages: s.messages,
     currentSessionKey: s.currentSessionKey,
     sessionLabels: s.sessionLabels,
     sessionLastActivity: s.sessionLastActivity,
@@ -421,6 +515,8 @@ export function Sidebar() {
   const workspacesLoading = useWorkspacesStore((s) => s.loading);
   const workspacesError = useWorkspacesStore((s) => s.error);
   const fetchWorkspaces = useWorkspacesStore((s) => s.fetchWorkspaces);
+  const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
+  const switchWorkspace = useWorkspacesStore((s) => s.switchWorkspace);
   const createWorkspaceFolder = useWorkspacesStore((s) => s.createFolder);
   const renameWorkspaceFolder = useWorkspacesStore((s) => s.renameFolder);
   const deleteWorkspaceFolder = useWorkspacesStore((s) => s.deleteFolder);
@@ -458,27 +554,22 @@ export function Sidebar() {
     [inboxItems],
   );
 
+  const sidebarSessions = useMemo(() => sessions.filter((session) => {
+    // A newly created workspace session is intentionally invisible until its
+    // first message. The store may still receive a synthetic "current" row
+    // from a gateway refresh, so keep that implementation detail out of the
+    // sidebar while preserving real history-backed session rows.
+    const isFreshCurrent = session.key === currentSessionKey
+      && /:session-\d/.test(session.key)
+      && messages.length === 0;
+    return !isFreshCurrent;
+  }), [currentSessionKey, messages.length, sessions]);
+
   useEffect(() => {
     void refreshInbox();
     const intervalId = window.setInterval(() => void refreshInbox(), 30_000);
     return () => window.clearInterval(intervalId);
   }, [location.pathname, refreshInbox]);
-
-  const openControlUi = async (view?: 'dreams', label = 'OpenClaw Page') => {
-    try {
-      // P4-001: Main opens Control UI with token in-process; Renderer never receives plaintext token/URL.
-      const result = await hostApi.gateway.controlUi(view ? { view, open: true } : { open: true });
-      if (!result.success || result.opened === false) {
-        console.error(`Failed to open ${label}:`, result.error);
-      }
-    } catch (err) {
-      console.error(`Error opening ${label}:`, err);
-    }
-  };
-
-  const openDevConsole = async () => {
-    await openControlUi(undefined, 'OpenClaw Page');
-  };
 
   const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview']);
   const [sessionToDelete, setSessionToDelete] = useState<{ key: string; label: string } | null>(null);
@@ -490,25 +581,28 @@ export function Sidebar() {
      restored session list is visible without an extra click. */
   const [sessionSectionOpen, setSessionSectionOpen] = useState(true);
   const [sessionOrganizeMenu, setSessionOrganizeMenu] = useState<{ top: number; left: number } | null>(null);
-  const [footerMenu, setFooterMenu] = useState<{ top: number; left: number } | null>(null);
+  const [footerMenu, setFooterMenu] = useState<{ bottom: number; left: number; maxHeight: number } | null>(null);
   const [collapsedWorkspaceIds, setCollapsedWorkspaceIds] = useState<Record<string, boolean>>({});
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [projectMenu, setProjectMenu] = useState<{ workspaceId: string; top: number; left: number } | null>(null);
 
   useEffect(() => {
     void fetchAgents();
   }, [fetchAgents]);
 
   useEffect(() => {
-    if (!sessionOrganizeMenu && !footerMenu) return;
+    if (!sessionOrganizeMenu && !footerMenu && !projectMenu) return;
     const close = (event: PointerEvent) => {
-      if ((event.target as Element).closest?.('.sidebar-session-organize-menu,.sidebar-session-organize-trigger,.sidebar-footer-menu,.sidebar-footer-menu-trigger')) return;
+      if ((event.target as Element).closest?.('.sidebar-session-organize-menu,.sidebar-session-organize-trigger,.sidebar-footer-menu,.sidebar-footer-menu-trigger,.sidebar-project-menu,.sidebar-project-menu-trigger')) return;
       setSessionOrganizeMenu(null);
       setFooterMenu(null);
+      setProjectMenu(null);
     };
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSessionOrganizeMenu(null);
         setFooterMenu(null);
+        setProjectMenu(null);
       }
     };
     addEventListener('pointerdown', close);
@@ -517,7 +611,7 @@ export function Sidebar() {
       removeEventListener('pointerdown', close);
       removeEventListener('keydown', escape);
     };
-  }, [footerMenu, sessionOrganizeMenu]);
+  }, [footerMenu, projectMenu, sessionOrganizeMenu]);
 
   useEffect(() => {
     if (deleteDialogOpen || !sessionToDelete) return;
@@ -553,6 +647,40 @@ export function Sidebar() {
       [workspaceId]: !current[workspaceId],
     }));
   }, []);
+
+  const handlePickWorkspaceFolder = useCallback(async () => {
+    try {
+      const result = await hostApi.dialog.open({
+        title: t('chat:toolbar.addWorkspaceDialogTitle'),
+        buttonLabel: t('chat:toolbar.addWorkspaceDialogButton'),
+        properties: ['openDirectory', 'createDirectory'],
+      });
+      if (result.canceled || !result.filePaths[0]) return;
+      const rootPath = result.filePaths[0];
+      const normalize = (p: string) => p.replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
+      const existing = workspaceProfiles.find((profile) => normalize(profile.rootPath) === normalize(rootPath));
+      if (existing) {
+        await switchWorkspace(existing.id);
+        toast.success(t('chat:workspace.switched'));
+      } else {
+        const agentId = getAgentIdFromSessionKey(currentSessionKey);
+        const nextSessionKey = createFreshWorkspaceSessionKey(agentId);
+        await createWorkspace({ rootPath, agentId, activeSessionKey: nextSessionKey });
+        toast.success(t('chat:workspace.addedAndSwitched'));
+      }
+    } catch (error) {
+      toast.error(t('chat:workspace.switchFailed', { error: error instanceof Error ? error.message : String(error) }));
+    }
+  }, [createWorkspace, currentSessionKey, switchWorkspace, t, workspaceProfiles]);
+
+  const handleNewSessionInWorkspace = useCallback(async (workspaceId: string) => {
+    try {
+      await switchWorkspace(workspaceId);
+      handleNewChat();
+    } catch (error) {
+      toast.error(String(error instanceof Error ? error.message : error));
+    }
+  }, [handleNewChat, switchWorkspace]);
 
   const toggleFolder = useCallback((folderId: string) => {
     setCollapsedFolderIds((current) => ({
@@ -631,18 +759,19 @@ export function Sidebar() {
   );
 
   const timeSessions = useMemo(() => buildSidebarTimeSessions({
-    sessions,
+    sessions: sidebarSessions,
     currentSessionKey,
     sessionLastActivity,
     workspaces: workspaceProfiles,
-  }), [currentSessionKey, sessions, sessionLastActivity, workspaceProfiles]);
+  }), [currentSessionKey, sessionLastActivity, sidebarSessions, workspaceProfiles]);
 
   const workspaceSessionGroups = useMemo(() => buildSidebarWorkspaceSessionGroups({
-    sessions,
+    sessions: sidebarSessions,
     currentSessionKey,
     sessionLastActivity,
     workspaces: workspaceProfiles,
-  }), [currentSessionKey, sessions, sessionLastActivity, workspaceProfiles]);
+    includeSyntheticCurrent: messages.length > 0 || !/:session-\d/.test(currentSessionKey),
+  }), [currentSessionKey, messages.length, sessionLastActivity, sidebarSessions, workspaceProfiles]);
 
   const hiddenRoutes = rendererExtensionRegistry.getHiddenRoutes();
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
@@ -667,7 +796,7 @@ export function Sidebar() {
   );
 
   const sessionStatuses = useMemo(() => {
-    const entries = sessions
+    const entries = sidebarSessions
       .map((session) => [
         session.key,
         buildSidebarSessionStatus({
@@ -691,7 +820,7 @@ export function Sidebar() {
     pendingFinal,
     runError,
     sending,
-    sessions,
+    sidebarSessions,
   ]);
 
   const handleDismissSessionStatus = useCallback((key: string, signature: string) => {
@@ -710,10 +839,22 @@ export function Sidebar() {
     forceActionsVisible?: boolean;
   }) => {
     const { session: s } = entry;
+    const workspace = workspaceProfiles.find((profile) => (
+      profile.activeSessionKey === s.key
+      || Boolean(profile.sessionStates?.[s.key])
+      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === s.key)
+    ));
+    const sessionBranch = (s as ChatSession & { branch?: string; gitBranch?: string }).branch
+      ?? (s as ChatSession & { branch?: string; gitBranch?: string }).gitBranch;
+    const workspaceBranch = (workspace as (typeof workspace & { branch?: string; gitBranch?: string }))?.branch
+      ?? (workspace as (typeof workspace & { branch?: string; gitBranch?: string }))?.gitBranch;
     return <SessionRowMemo
       key={s.key}
       session={s}
       agentName={agentNameById[getAgentIdFromSessionKey(s.key)] || getAgentIdFromSessionKey(s.key)}
+      workspaceName={workspace?.name}
+      branch={sessionBranch ?? workspaceBranch}
+      activityMs={entry.activityMs}
       isEditing={editingSessionKey === s.key}
       sessionLabel={sessionLabels[s.key] ?? s.label ?? s.displayName ?? s.key}
       sessionStatus={sessionStatuses[s.key] ?? null}
@@ -740,10 +881,10 @@ export function Sidebar() {
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
     currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
-    handleDismissSessionStatus,
+    handleDismissSessionStatus, workspaceProfiles,
   ]);
 
-  const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sessions.length > 0 && !workspacesLoading)
+  const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sidebarSessions.length > 0 && !workspacesLoading)
     ? timeSessions
     : null;
   const sessionPanelState = startupPhase === 'error'
@@ -878,6 +1019,16 @@ export function Sidebar() {
                 </button>
                 <button
                   type="button"
+                  data-testid="sidebar-add-project"
+                  aria-label={t('chat:sidebar.addProject')}
+                  title={t('chat:sidebar.addProject')}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={() => void handlePickWorkspaceFolder()}
+                >
+                  <FolderPlus className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
                   data-testid="sidebar-session-search"
                   aria-label={t('chat:sidebar.searchSessions')}
                   title={t('chat:sidebar.searchSessions')}
@@ -905,7 +1056,44 @@ export function Sidebar() {
                       data-testid={`sidebar-session-project-${group.workspace.id}`}
                       data-state={collapsed ? 'collapsed' : 'expanded'}
                     >
-                      <SidebarRow className="project-row-wrap">
+                      <SidebarRow
+                        className="project-row-wrap"
+                        actionsClassName="project-hover-actions"
+                        actions={(
+                          <>
+                            <button
+                              type="button"
+                              data-testid={`sidebar-project-new-session-${group.workspace.id}`}
+                              aria-label={t('chat:sidebar.newSessionInProject', { name: group.workspace.name })}
+                              title={t('chat:sidebar.newSessionInProject', { name: group.workspace.name })}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                void handleNewSessionInWorkspace(group.workspace.id);
+                              }}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              data-testid={`sidebar-project-menu-${group.workspace.id}`}
+                              aria-label={t('chat:sidebar.projectOptions', { name: group.workspace.name })}
+                              title={t('chat:sidebar.projectOptions', { name: group.workspace.name })}
+                              className="sidebar-project-menu-trigger"
+                              onPointerDown={(event) => event.stopPropagation()}
+                              onClick={(event) => {
+                                const rect = event.currentTarget.getBoundingClientRect();
+                                setProjectMenu((current) => (current?.workspaceId === group.workspace.id ? null : {
+                                  workspaceId: group.workspace.id,
+                                  top: Math.min(window.innerHeight - 200, rect.bottom + 2),
+                                  left: Math.min(window.innerWidth - 200, Math.max(8, rect.right - 196)),
+                                }));
+                              }}
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                      >
                         <button
                           type="button"
                           data-testid={`sidebar-session-project-toggle-${group.workspace.id}`}
@@ -942,7 +1130,7 @@ export function Sidebar() {
                   );
                 })
                   : <div className="empty-sidebar-row" role="status" aria-live="polite">
-                    {sessionPanelState === 'loading' && <DotMatrix state="loading" label={sessionPanelMessage} className="size-3.5 shrink-0" />}
+                    {sessionPanelState === 'loading' && <OrbStatus state="loading" label={sessionPanelMessage} className="size-3.5 shrink-0" />}
                     <span className="min-w-0 flex-1">{sessionPanelMessage}</span>
                     {(sessionPanelState === 'chat-error' || sessionPanelState === 'workspace-error') && (
                       <button
@@ -974,6 +1162,7 @@ export function Sidebar() {
           className="codex-dropdown codex-dropdown--compact sidebar-session-organize-menu"
           style={{ top: sessionOrganizeMenu.top, left: sessionOrganizeMenu.left }}
         >
+          <div className="codex-dropdown__label">{t('chat:sidebar.sortBy')}</div>
           {(['project', 'time'] as const).map((view) => {
             const checked = sessionView === view;
             return <button
@@ -991,6 +1180,61 @@ export function Sidebar() {
               <span className="codex-dropdown__text">{t(`chat:sessionView.${view}`)}</span>
             </button>;
           })}
+        </div>,
+        document.body,
+      )}
+
+      {projectMenu && createPortal(
+        <div
+          role="menu"
+          className="codex-dropdown codex-dropdown--compact sidebar-project-menu"
+          style={{ top: projectMenu.top, left: projectMenu.left }}
+        >
+          {(() => {
+            const ws = workspaceProfiles.find((p) => p.id === projectMenu.workspaceId);
+            if (!ws) return null;
+            return (
+              <>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="codex-dropdown__item"
+                  onClick={() => {
+                    setProjectMenu(null);
+                    void handleNewSessionInWorkspace(ws.id);
+                  }}
+                >
+                  <span className="codex-dropdown__icon"><Plus className="h-4 w-4" /></span>
+                  <span className="codex-dropdown__text">{t('chat:sidebar.newSessionInProject', { name: ws.name })}</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="codex-dropdown__item"
+                  onClick={() => {
+                    setProjectMenu(null);
+                    void handleCreateFolder(ws.id, t('chat:sidebar.untitledFolder'), null);
+                  }}
+                >
+                  <span className="codex-dropdown__icon"><OfficialFolderClosedIcon size={16} /></span>
+                  <span className="codex-dropdown__text">{t('chat:sidebar.createFolder')}</span>
+                </button>
+                <div className="codex-dropdown__sep" />
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="codex-dropdown__item"
+                  onClick={() => {
+                    setProjectMenu(null);
+                    void switchWorkspace(ws.id).then(() => navigate('/'));
+                  }}
+                >
+                  <span className="codex-dropdown__icon"><OfficialFolderOpenIcon size={16} /></span>
+                  <span className="codex-dropdown__text">{t('chat:sidebar.switchToProject', { name: ws.name })}</span>
+                </button>
+              </>
+            );
+          })()}
         </div>,
         document.body,
       )}
@@ -1016,13 +1260,11 @@ export function Sidebar() {
             onClick={(event) => {
               const rect = event.currentTarget.getBoundingClientRect();
               const menuWidth = 259;
-              const menuHeight = Math.min(
-                window.innerHeight - 16,
-                88 + (4 + extraNavItems.length + (devModeUnlocked ? 4 : 0)) * 33,
-              );
+              const maxHeight = Math.max(180, rect.top - 14);
               setFooterMenu((current) => current ? null : {
-                top: Math.max(8, rect.top - menuHeight - 6),
+                bottom: Math.max(12, window.innerHeight - rect.top + 6),
                 left: Math.max(8, Math.min(window.innerWidth - menuWidth - 8, rect.right - menuWidth)),
+                maxHeight,
               });
             }}
           >
@@ -1032,7 +1274,7 @@ export function Sidebar() {
       </footer>
 
       {footerMenu && createPortal(
-        <div role="menu" className="codex-dropdown sidebar-account-menu sidebar-footer-menu" style={{ top: footerMenu.top, left: footerMenu.left }}>
+        <div role="menu" className="codex-dropdown sidebar-account-menu sidebar-footer-menu" style={{ bottom: footerMenu.bottom, left: footerMenu.left, maxHeight: footerMenu.maxHeight }}>
           <div className="codex-dropdown__item profile-menu-user" role="presentation">
             <span className="codex-dropdown__text">Verse Claw</span>
           </div>
@@ -1149,17 +1391,6 @@ export function Sidebar() {
                 <Moon className="h-4 w-4" />
                 <span className="codex-dropdown__text">{t('common:sidebar.openClawDreams')}</span>
               </button>
-              <button
-                type="button"
-                role="menuitem"
-                data-testid="sidebar-open-dev-console"
-                className="codex-dropdown__item"
-                onClick={() => { setFooterMenu(null); void openDevConsole(); }}
-              >
-                <Terminal className="h-4 w-4" />
-                <span className="codex-dropdown__text">{t('common:sidebar.openClawPage')}</span>
-                <ExternalLink className="h-3 w-3 opacity-50" />
-              </button>
             </>
           )}
         </div>,
@@ -1248,7 +1479,7 @@ export function Sidebar() {
         key={`session-search-${searchModalOpen ? 'open' : 'closed'}`}
         open={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
-        sessions={sessions}
+        sessions={sidebarSessions}
         currentSessionKey={currentSessionKey}
         sessionLabels={sessionLabels}
         sessionLastActivity={sessionLastActivity}
