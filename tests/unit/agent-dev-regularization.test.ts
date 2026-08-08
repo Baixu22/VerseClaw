@@ -4,7 +4,7 @@ import { mkdir, readFile, rm, utimes, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { CHECKS, runConformance } from '../../scripts/channel-conformance.mjs';
+import { CHECKS, REQUIRED_SCENARIOS, runConformance } from '../../scripts/channel-conformance.mjs';
 import { renderHtml } from '../../scripts/agent-dev-workbench.mjs';
 import { assertLooksRedacted } from '../../scripts/agent-dev-promote-scenario.mjs';
 import {
@@ -51,20 +51,27 @@ describe('agent dev regularization contracts', () => {
   }
 
   it('defines the required channel conformance matrix', () => {
+    // RC-05: the matrix is the set of executable scenarios the fixture must
+    // prove, not a source-regex checklist.
+    expect(REQUIRED_SCENARIOS).toEqual([
+      'connection drop',
+      'rate limiting',
+      'duplicate delivery',
+      'restart recovery',
+      'denial produces zero effect',
+      'unknown outcome',
+    ]);
     expect(CHECKS.map((check) => check.id)).toEqual([
-      'send-text',
-      'receive-text',
-      'markdown-format-downgrade',
-      'rate-limit',
       'connection-drop',
-      'message-too-long',
-      'credential-missing',
-      'binding-behavior',
-      'logs-diagnostics',
+      'rate-limiting',
+      'duplicate-delivery',
+      'restart-recovery',
+      'denial-produces-zero-effect',
+      'unknown-outcome',
     ]);
   });
 
-  it('writes channel conformance reports for a scaffold-shaped channel', async () => {
+  it('writes fail-closed channel conformance reports for a scaffold-shaped channel', async () => {
     const originalRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;
     const originalArtifactRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT;
     const root = join(tmpdir(), `clawx-channel-conformance-${Date.now()}`);
@@ -79,8 +86,12 @@ describe('agent dev regularization contracts', () => {
     process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT = join(root, 'artifacts');
     try {
       const report = await runConformance('smoke-channel');
-      expect(report.success).toBe(true);
-      expect(report.checks).toHaveLength(CHECKS.length);
+      // RC-05: a scaffold without an executable conformance suite is NOT proof.
+      // The runner fails closed (no executed scenarios) instead of passing on
+      // source-regex matches.
+      expect(report.success).toBe(false);
+      expect(report.scenarios).toHaveLength(REQUIRED_SCENARIOS.length);
+      expect(report.scenarios.every((check) => check.status === 'fail')).toBe(true);
     } finally {
       if (originalRoot === undefined) {
         delete process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;

@@ -180,17 +180,14 @@ describe('rollback plan', () => {
       risk: 'dangerous',
       command: 'interruptTerminal',
     });
-    expect(plan.actions.find((action) => action.kind === 'review-git')).toMatchObject({
-      risk: 'dangerous',
-      command: 'openGit',
-    });
+    expect(plan.actions.find((action) => action.kind === 'review-git')).toBeUndefined();
     expect(hasRollbackPlanSidebarTrigger(plan)).toBe(true);
-    expect(plan.riskCounts).toEqual({ safe: 2, review: 3, dangerous: 2 });
+    expect(plan.riskCounts).toEqual({ safe: 2, review: 0, dangerous: 1 });
     expect(plan.signals).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'checkpoint', active: true, risk: 'safe' }),
       expect.objectContaining({ kind: 'queue', active: true, risk: 'safe' }),
       expect.objectContaining({ kind: 'terminal', active: true, risk: 'dangerous' }),
-      expect.objectContaining({ kind: 'memory', active: true, risk: 'review' }),
+      expect.objectContaining({ kind: 'memory', active: false, risk: 'review' }),
     ]));
   });
 
@@ -225,25 +222,15 @@ describe('rollback plan', () => {
 
     expect(plan.summaryKey).toBe('composer.rollbackPlan.summary.truncated');
     expect(plan.summaryValues).toEqual({ count: 3 });
-    expect(plan.actions).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        kind: 'manual-compact',
-        risk: 'review',
-        command: 'compact',
-      }),
-      expect.objectContaining({
-        kind: 'task-ledger-review',
-        command: 'openTaskLedger',
-      }),
-      expect.objectContaining({
-        kind: 'memory-review',
-        command: 'createMemoryDraft',
-      }),
-    ]));
+    expect(plan.actions).toEqual([expect.objectContaining({
+      kind: 'manual-compact',
+      risk: 'review',
+      command: 'compact',
+    })]);
     expect(plan.signals).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'checkpoint', active: false }),
       expect.objectContaining({ kind: 'context', active: true, risk: 'review' }),
-      expect.objectContaining({ kind: 'git', active: true, risk: 'dangerous' }),
+      expect.objectContaining({ kind: 'git', active: false }),
     ]));
     expect(hasRollbackPlanSidebarTrigger(plan)).toBe(true);
   });
@@ -281,12 +268,8 @@ describe('rollback plan', () => {
       },
     });
 
-    expect(plan.actions).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'terminal-control' }),
-      expect.objectContaining({ kind: 'review-git' }),
-      expect.objectContaining({ kind: 'task-ledger-review' }),
-      expect.objectContaining({ kind: 'memory-review' }),
-    ]));
+    expect(plan.actions).toEqual([]);
+    expect(plan.available).toBe(false);
     expect(hasRollbackPlanSidebarTrigger(plan)).toBe(false);
   });
 });

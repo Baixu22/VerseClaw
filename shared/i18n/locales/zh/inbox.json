@@ -16,7 +16,8 @@
   "source": {
     "permission": "权限申请",
     "remote-task": "远程任务",
-    "browser-task": "浏览器任务"
+    "browser-task": "浏览器任务",
+    "operator": "Operator（运营）"
   },
   "permissionSource": {
     "terminal": "终端",
@@ -58,6 +59,11 @@
     },
     "browserTask": {
       "waitingApproval": "等待批准"
+    },
+    "operator": {
+      "approval_pending": "等待决策",
+      "approved": "已批准",
+      "denied": "已拒绝"
     }
   },
   "partialError": {

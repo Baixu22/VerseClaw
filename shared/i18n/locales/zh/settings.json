@@ -44,6 +44,10 @@
       "title": "开发者",
       "description": "开发者模式、代理、CLI、诊断与本地遥测。"
     },
+    "recovery": {
+      "title": "会话与恢复",
+      "description": "实时会话状态、恢复操作和活动保留设置。"
+    },
     "billing": {
       "title": "计费",
       "description": "Token 用量历史、费用估算及使用活跃度图表。"
@@ -56,6 +60,22 @@
       "title": "已归档",
       "description": "恢复或永久删除已归档的会话。"
     }
+  },
+  "recovery": {
+    "activityTitle": "会话与恢复",
+    "currentTitle": "当前会话恢复",
+    "enabled": { "title": "显示会话状态面板", "description": "存在真实活动时，在聊天旁显示结构化运行状态。" },
+    "autoExpand": { "title": "自动展开", "description": "选择桌面端打开状态面板的时机。", "active": "活跃时", "attention": "需要关注时", "never": "从不" },
+    "showGit": { "title": "显示工作区 Git", "description": "包含工作区范围的分支和变更状态。" },
+    "showCommands": { "title": "显示 Agent 命令", "description": "在交互终端旁显示结构化命令摘要。" },
+    "notifications": { "title": "恢复与阻塞通知", "description": "真实恢复或阻塞信号需要复核时发出通知。" },
+    "retention": { "title": "最近活动保留时间", "description": "在有限时间内保留已完成活动。", "none": "不保留", "five": "5 分钟", "fifteen": "15 分钟" },
+    "session": { "title": "会话", "description": "选择要查看的工作区会话。" },
+    "runAction": "执行",
+    "openConversation": "打开会话",
+    "healthy": "此会话未检测到恢复压力。",
+    "actionComplete": "恢复操作已完成",
+    "actionFailed": "恢复操作失败"
   },
   "appearance": {
     "title": "外观与语言",

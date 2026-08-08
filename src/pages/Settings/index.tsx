@@ -31,6 +31,7 @@ import {
   Puzzle,
   Server,
   Wrench,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -113,6 +114,7 @@ const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => 
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
 const settingsContextLayers = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextLayersExplainer').then((m) => ({ default: m.ContextLayersExplainer as ComponentType<Record<string, never>> })));
 const settingsStorage = createPreloadableLazy<Record<string, never>>(() => import('./sections/StorageCleanerSection').then((m) => ({ default: m.StorageCleanerSection as ComponentType<Record<string, never>> })));
+const settingsRecovery = createPreloadableLazy<Record<string, never>>(() => import('./sections/RecoverySettingsSection').then((m) => ({ default: m.RecoverySettingsSection as ComponentType<Record<string, never>> })));
 
 const SettingsModelsLazy = settingsModels.Component;
 const SettingsAgentsLazy = settingsAgents.Component;
@@ -141,6 +143,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'system': settingsProjectRules.preload(); break;
     case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); break;
     case 'storage': settingsStorage.preload(); break;
+    case 'recovery': settingsRecovery.preload(); break;
     default: break;
   }
 }
@@ -1299,6 +1302,10 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       title: t('navigation.archived.title'),
       description: t('navigation.archived.description'),
     },
+    recovery: {
+      title: t('navigation.recovery.title'),
+      description: t('navigation.recovery.description'),
+    },
   } satisfies Record<Exclude<SettingsSectionId, 'overview'>, { title: string; description: string }>;
 
   const settingsSections = [
@@ -1379,6 +1386,13 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
       ...sectionMeta.archived,
       testId: 'settings-nav-archived',
     },
+    {
+      id: 'recovery',
+      to: '/settings/recovery',
+      icon: <RotateCcw className="h-5 w-5" />,
+      ...sectionMeta.recovery,
+      testId: 'settings-nav-recovery',
+    },
   ] as const;
   const settingsSectionGroups = [
     {
@@ -1394,7 +1408,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     {
       id: 'operations',
       title: t('navigation.groups.operations'),
-      sections: settingsSections.filter((section) => ['billing', 'system', 'developer', 'storage'].includes(section.id)),
+      sections: settingsSections.filter((section) => ['billing', 'system', 'developer', 'storage', 'recovery'].includes(section.id)),
     },
   ] as const;
 

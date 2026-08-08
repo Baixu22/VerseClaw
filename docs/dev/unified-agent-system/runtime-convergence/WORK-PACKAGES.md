@@ -63,6 +63,10 @@
 
 **Deliver:** replace in-memory approval truth with one durable owner in the existing OpenClaw state boundary. Persist the state sequence `intent_reserved -> approval_pending -> approved|denied -> execution_started -> applied|not_applied|unknown -> reconciled`; define stable approval/effect IDs, idempotency keys, domain-journal joins, and `needs_reconciliation`. Do not create a generic workflow engine or claim global exactly-once.
 
+**Local-implementation status (RC-04R/RC-05R, not yet independently verified):** RC-04R delivered the durable approval owner (see above). RC-05R wired the automated primary path: Cron ingress creates only the approval intent; approval comes from an explicit governance policy or the desktop Inbox (`inbox.operator.list/decide/lineage` Gateway methods) and records actor + policy digest; the bounded effect runs `execution_started` before the real executor and `applied/not_applied/unknown` only from the executor outcome; `channel-conformance` is now an executable-fixture runner (connection drop / rate limit / duplicate delivery / restart / denial / unknown outcome); the Inbox store projects real approval/EffectReceipt lineage with real ContextReceipt refs.
+
+**RC-06A status (not yet independently verified):** TaskFlow CAS proof layer complete: create sentinel (`expectedRevision=-1`) rejects arbitrary revisions and terminal initial statuses (audit counter-example `999 + succeeded + delivered` fails); updates use SQL-level `WHERE flow_id=? AND revision=?` CAS with affected-rows checks; revision is monotonic; the legal transition graph is validated inside the same immediate transaction; `flow_runs.delivery_state` persists on the same row as the lifecycle transition (legacy DBs get the column via `ensureColumn`); two independent connections racing for one flow allow exactly one winner; reopen/restart restores revision, wait, terminal, and delivery state. TaskFlow remains a candidate — the proof layer is not wired into any active path.
+
 **Exit:** pending/resolved truth survives restart; repeated identical resolve is idempotent; denial produces no effect; failure injection at every transition is reconciled from the domain journal; unknown outcome stops in `needs_reconciliation`; EffectReceipt explains but cannot replay the effect.
 
 ## RC-05: Minimal Operator Governance Slice
@@ -100,17 +104,23 @@ Run four serial subpackages with separate Harness specs:
 
 **Exit:** MCP conformance/Inspector-compatible tests pass; catalog and runtime support match; no fake-connected state; approvals, SecretRef, network policy, and hot reload remain intact.
 
+**Status (2026-08-08):** local implementation green. `tool-convergence.ts` exposes the production `classifyMcpCatalogServer` surface; `agent-bundle-mcp-runtime.ts` catalog entries carry `transportType` + `health` where `connected` is set only by the real SDK `initialize` handshake (HTTP GET/unsupported transport never connected). Root and runtime acceptance tests run the production implementation; a real spawned stdio MCP server completes the handshake through `createSessionMcpRuntime`; `resolveMcpTransportConfig` rejects WebSocket-only configs. Independent candidate acceptance pending (`--since=1e1c3557e`); not accepted, product locks false.
+
 ## RC-08B: OTel And Observability
 
 **Deliver:** OTel/OTLP owns trace export; ingress, run, model/tool, effect, and delivery share correlation IDs; receipts and domain journals remain facts; trajectory is bounded flight-recorder evidence; Observability JSONL is rebuildable cache only.
 
 **Exit:** exporter-off parity passes; default raw prompt/tool leakage is zero; one golden trace exports to a neutral OTLP fixture; no second trace schema/store is introduced.
 
+**Status (2026-08-08):** local implementation green. `exporter-parity.ts` maps runtime observability traces to the canonical OTLP `ExportTraceServiceRequest` JSON and exposes `createObservabilityOtlpJsonExporter` (HTTP/JSON to a neutral fixture collector); `trace-buffer.ts` (the in-memory observability cache) installs the exporter — completed traces export, running traces never export, exporter failures never change the store, exporter-off is byte-identical (no second store). Correlation ids from `correlation-ids.ts` derive the OTLP trace/span ids; redaction attacks (raw content in benign attribute keys) are blocked. Independent candidate acceptance pending after RC-08A (`--since=<rc08a-candidate>`); not accepted, product locks false.
+
 ## RC-09: Final Engineering Acceptance
 
 **Deliver:** clean candidate SHA, full gate results, independent Executor/Verifier reports, migration/rollback results, security/privacy scans, performance diagnostics, `artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json`, and the tested `scripts/validate-runtime-authority-convergence.mjs` validator for engineering and final human-verdict contracts.
 
 **Exit:** every required gate is green with the declared skip budget; no stale evidence; `STATUS.md` becomes `human_acceptance_pending`. It must not become `done`.
+
+**Status (2026-08-08):** RC-09A remediation complete at candidate `22a7bad35` (ownership matrix generator for the 261-path cumulative diff, validator `changed-path-ownership` fail-closed check, final-spec `touchedAreas` covering the full cumulative diff, counter-tests 39/39, harness validate final PASS). The RC-09 final 21-gate independent acceptance is BLOCKED by pre-existing gates: `electron-e2e` cannot launch Electron in a clean detached worktree (kysely not hoisted) and has 66 pre-existing UI-workstream test failures; `release-baseline-validate` requires regenerating P6-005 evidence via the full release suite (chicken-and-egg with protected-workstream `pnpm test` failures). `maturity:validate` stale evidence was fixed (seal green, traceability fresh=35) but the regenerated system-maturity files have no RC-spec ownership and were kept out of the candidate. Not accepted; RC-10 blocked; product locks false.
 
 ## RC-10: Final Human Acceptance
 

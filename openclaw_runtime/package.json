@@ -1931,6 +1931,8 @@
   },
   "devDependencies": {
     "@a2ui/lit": "0.10.0",
+    "@anthropic-ai/vertex-sdk": "0.16.1",
+    "@aws-sdk/client-bedrock-runtime": "3.1056.0",
     "@copilotkit/aimock": "1.27.3",
     "@grammyjs/types": "3.27.3",
     "@lit-labs/signals": "0.3.0",
@@ -1940,6 +1942,7 @@
     "@shikijs/core": "4.1.0",
     "@shikijs/engine-javascript": "4.1.0",
     "@shikijs/engine-oniguruma": "4.1.0",
+    "@smithy/node-http-handler": "4.7.7",
     "@types/cross-spawn": "6.0.6",
     "@types/express": "5.0.6",
     "@types/hosted-git-info": "3.0.5",

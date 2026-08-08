@@ -43,6 +43,8 @@ export type EmbeddedRunContextWindowInfo = {
 };
 
 export type EmbeddedRunAttemptParams = EmbeddedRunAttemptBase & {
+  /** Zero-based outer run-attempt identity used by receipt correlation. */
+  attemptIndex?: number;
   initialReplayState?: EmbeddedRunReplayState;
   /** Pluggable context engine for ingest/assemble/compact lifecycle. */
   contextEngine?: ContextEngine;

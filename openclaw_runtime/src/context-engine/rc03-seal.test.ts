@@ -42,7 +42,7 @@ function makePlan(overrides = {}) {
     sessionKey: 'sess-rc03',
     runId: 'run-rc03',
     providerId: 'anthropic',
-    policyDigest: 'policy-rc03',
+    policyDigest: '31135fc7f09768c027e26028eff8028f22cb91ab8a0cc3bbce32d003296f6908',
     callIndex: { attemptIndex: 0, planRevision: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
     ...overrides,
   });
@@ -174,11 +174,11 @@ describe('RC-03 receipts through ReceiptStore', () => {
       systemPrompt: 'system',
       messages: [{ role: 'user', content: 'hi' }],
       appliedProducerIds: ['compass-ssp'],
-      selectedRefs: ['ref:applied'],
-      omittedRefs: ['ref:dropped'],
+      selectedRefs: ['ref:context:applied'],
+      omittedRefs: ['ref:context:dropped'],
     }));
-    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', sessionKey: 'sess-rc03', runId: 'run-rc03' };
-    const correlationDigest = 'corr-rc03';
+    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', adapterId: 'anthropic-messages', sessionKey: 'sess-rc03', runId: 'run-rc03' };
+    const correlationDigest = 'a55b6948bdb31a5bf58e0d286fc1cff987c310e7f5ef2e7a6580d4f5b1ea7676';
 
     const store = newStore();
     const ctxInput = buildContextReceiptInput({ plan, bundle, identity, correlationDigest });
@@ -189,7 +189,7 @@ describe('RC-03 receipts through ReceiptStore', () => {
 
     const wireInput = buildWireReceiptInput({
       plan,
-      wireDigest: 'wire-digest-1',
+      wireDigest: '9cb06a8c1329ecefbc08037434974e36277e14db2444175858bc062d5c850496',
       logicalDigest: bundle.bundleDigest,
       identity,
       correlationDigest,
@@ -205,21 +205,21 @@ describe('RC-03 receipts through ReceiptStore', () => {
     expect(wireRows).toHaveLength(1);
     expect(contextRows[0].correlation_digest).toBe(correlationDigest);
     expect(wireRows[0].correlation_digest).toBe(correlationDigest);
-    expect(wireRows[0].wire_digest).toBe('wire-digest-1');
+    expect(wireRows[0].wire_digest).toBe('9cb06a8c1329ecefbc08037434974e36277e14db2444175858bc062d5c850496');
     // Post-seal transform ids recorded on the wire receipt.
     expect(wireRows[0].transform_ids_json).toContain('transport-wire-serialization');
-    // The receipt stores refs, never raw content.
-    expect(contextRows[0].selected_json).toContain('ref:applied');
+    // The receipt stores canonical refs, never raw content.
+    expect(contextRows[0].selected_json).toContain('ref:context:applied');
     expect(JSON.stringify(contextRows[0])).not.toContain('hi');
   });
 
   it('remains idempotent for identical correlated receipts (content-sensitive)', () => {
     const plan = makePlan();
     const bundle = sealContextBundle(createContextBundle({ plan, systemPrompt: 's', messages: [] }));
-    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic' };
+    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', adapterId: 'anthropic-messages' };
     const store = newStore();
-    const first = store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: 'corr' }));
-    const second = store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: 'corr' }));
+    const first = store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: '84bae4db933bb6e48e3de43849eab73c13689d2a657963e0da364e0a62361e25' }));
+    const second = store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: '84bae4db933bb6e48e3de43849eab73c13689d2a657963e0da364e0a62361e25' }));
     expect(first.ok).toBe(true);
     expect(second.ok).toBe(true);
     expect(second.duplicate).toBe(true);
@@ -228,19 +228,19 @@ describe('RC-03 receipts through ReceiptStore', () => {
   });
 
   it('supports tool-loop and compact correlation through distinct plans', () => {
-    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic' };
+    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', adapterId: 'anthropic-messages' };
     const store = newStore();
     // Model call 0 and 1 in the same attempt (tool loop).
     const plan0 = makePlan();
     const plan1 = nextModelCall(plan0);
     const bundle0 = sealContextBundle(createContextBundle({ plan: plan0, systemPrompt: 's0', messages: [] }));
     const bundle1 = sealContextBundle(createContextBundle({ plan: plan1, systemPrompt: 's1', messages: [] }));
-    expect(store.put(buildContextReceiptInput({ plan: plan0, bundle: bundle0, identity, correlationDigest: 'corr-0' })).ok).toBe(true);
-    expect(store.put(buildContextReceiptInput({ plan: plan1, bundle: bundle1, identity, correlationDigest: 'corr-1' })).ok).toBe(true);
+    expect(store.put(buildContextReceiptInput({ plan: plan0, bundle: bundle0, identity, correlationDigest: '35258d769af52ac6cfdfcb50acc4422b83b25a50cd48a491576653015f3a0ba6' })).ok).toBe(true);
+    expect(store.put(buildContextReceiptInput({ plan: plan1, bundle: bundle1, identity, correlationDigest: '12423b976fe4078b3c8b6b4c279cd86ed6bb9835c9ea9c294049acefbc5171a5' })).ok).toBe(true);
     // Compact is a new attempt.
     const compactPlan = nextAttempt(plan1, { providerId: 'anthropic' });
     const compactBundle = sealContextBundle(createContextBundle({ plan: compactPlan, systemPrompt: 's2', messages: [] }));
-    expect(store.put(buildContextReceiptInput({ plan: compactPlan, bundle: compactBundle, identity, correlationDigest: 'corr-2' })).ok).toBe(true);
+    expect(store.put(buildContextReceiptInput({ plan: compactPlan, bundle: compactBundle, identity, correlationDigest: '7f4e1a13f6e91c1a28310506df9a6ccba47c3ab386183ec0db6c740fece5f4f4' })).ok).toBe(true);
 
     const rows = store.list({ kind: 'context' });
     expect(rows).toHaveLength(3);

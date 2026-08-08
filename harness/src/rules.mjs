@@ -38,6 +38,27 @@ export function touchesCommunicationPath(files) {
   return files.some((file) => pathMatchesAny(file, COMMUNICATION_PATHS));
 }
 
+// Changed-path ownership applies to every task spec, not just the two
+// scenario-bound families. Scenario-less specs (the RC-00..RC-09 convergence
+// packages) previously reached only the id/title check in cli.mjs, so their
+// declared ownedPaths were inert metadata and any changed path passed. The RC-09
+// remediation plan requires each changed path map to exactly one owning package.
+export function validateChangedPathOwnership(taskSpec, scenarioSpec, changedFiles = []) {
+  if (changedFiles.length === 0) return [];
+  const touchedAreas = toArray(taskSpec?.data?.touchedAreas);
+  const ownedPaths = [
+    ...toArray(taskSpec?.data?.ownedPaths),
+    ...toArray(scenarioSpec?.data?.ownedPaths),
+  ];
+  const allowedPaths = [...touchedAreas, ...ownedPaths];
+  if (allowedPaths.length === 0) {
+    return [`${taskSpec.path}: changed files present but the spec declares no touchedAreas or ownedPaths`];
+  }
+  const uncovered = changedFiles.filter((file) => !pathMatchesAny(file, allowedPaths));
+  if (uncovered.length === 0) return [];
+  return [`${taskSpec.path}: changed files are not covered by touchedAreas or ownedPaths: ${uncovered.join(', ')}`];
+}
+
 export function scanBackendCommunicationBoundaryText(file, text) {
   const failures = [];
   const isPageOrComponent = file.startsWith('src/pages/') || file.startsWith('src/components/');
@@ -139,14 +160,7 @@ function validateTaskSpec(taskSpec, scenarioSpec, changedFiles, options) {
     }
   }
 
-  if (changedFiles.length > 0) {
-    const ownedPaths = toArray(scenarioSpec?.data?.ownedPaths);
-    const allowedPaths = [...touchedAreas, ...ownedPaths];
-    const uncovered = changedFiles.filter((file) => !pathMatchesAny(file, allowedPaths));
-    if (uncovered.length > 0) {
-      failures.push(`${taskSpec.path}: changed files are not covered by touchedAreas or scenario ownedPaths: ${uncovered.join(', ')}`);
-    }
-  }
+  failures.push(...validateChangedPathOwnership(taskSpec, scenarioSpec, changedFiles));
 
   return failures;
 }

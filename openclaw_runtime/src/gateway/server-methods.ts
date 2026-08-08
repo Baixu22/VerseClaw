@@ -460,6 +460,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...createLazyCoreHandlers({
     methods: [
       "sessions.list",
+      "session.activitySnapshot",
       "sessions.cleanup",
       "sessions.subscribe",
       "sessions.unsubscribe",
@@ -475,6 +476,8 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "sessions.longTaskControlStatus",
       "sessions.longTaskControlHistory",
       "sessions.resumeCheckpoints",
+      "sessions.checkpointDiff",
+      "sessions.restoreCheckpoint",
       "sessions.queueDrain",
       "sessions.compaction.list",
       "sessions.compaction.get",

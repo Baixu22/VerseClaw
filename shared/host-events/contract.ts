@@ -76,10 +76,13 @@ export type TerminalSessionEvent = {
   workspaceId: string;
   sessionKey: string;
   sessionId: string;
+  kind?: 'interactive' | 'webPreviewDevServer';
   cwd?: string | null;
   pid?: number | null;
   cols?: number;
   rows?: number;
+  seq?: number;
+  ts?: number;
   status?: 'idle' | 'starting' | 'running' | 'exited' | 'blocked';
 };
 

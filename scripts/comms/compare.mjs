@@ -1,12 +1,13 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
-const CURRENT_FILE = path.join(ROOT, 'artifacts/comms/current-metrics.json');
-const BASELINE_FILE = path.join(ROOT, 'scripts/comms/baseline/metrics.baseline.json');
-const OUTPUT_DIR = path.join(ROOT, 'artifacts/comms');
-const REPORT_FILE = path.join(OUTPUT_DIR, 'compare-report.md');
+import { candidateIdentity, validateReplayArtifact } from './replay.mjs';
+
+export const COMMS_COMPARE_SCHEMA = 'comms-compare-report/v1';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 const HARD_THRESHOLDS = {
   duplicate_event_rate: 0.005,
@@ -85,16 +86,44 @@ export function evaluateReport(current, baseline) {
   return { failures, rows };
 }
 
-export async function main() {
-  const current = JSON.parse(await readFile(CURRENT_FILE, 'utf8'));
-  const baseline = JSON.parse(await readFile(BASELINE_FILE, 'utf8'));
+export function validateCompareArtifact(value, options = {}) {
+  const errors = [];
+  if (!value || typeof value !== 'object') return ['compare artifact must be an object'];
+  if (value.schema !== COMMS_COMPARE_SCHEMA) errors.push('compare artifact schema mismatch');
+  if (!/^[a-f0-9]{40}$/u.test(String(value.candidate?.commit ?? '')) || !/^[a-f0-9]{40}$/u.test(String(value.candidate?.tree ?? ''))) {
+    errors.push('compare artifact candidate identity is malformed');
+  }
+  if (options.candidate && (
+    value.candidate?.commit !== options.candidate.commit || value.candidate?.tree !== options.candidate.tree
+  )) {
+    errors.push('compare artifact candidate identity mismatch');
+  }
+  if (!['PASS', 'FAIL'].includes(value.result)) errors.push('compare artifact result is invalid');
+  if (!Array.isArray(value.failures) || !Array.isArray(value.rows)) errors.push('compare artifact failures/rows are missing');
+  return errors;
+}
+
+export async function main(options = {}) {
+  const root = path.resolve(options.root ?? ROOT);
+  const outputDir = path.resolve(options.outputDir ?? process.env.COMMS_OUTPUT_DIR ?? path.join(root, 'artifacts/comms'));
+  const currentFile = path.join(outputDir, 'current-metrics.json');
+  const baselineFile = path.resolve(options.baselineFile ?? path.join(root, 'scripts/comms/baseline/metrics.baseline.json'));
+  const reportFile = path.join(outputDir, 'compare-report.md');
+  const reportJsonFile = path.join(outputDir, 'compare-report.json');
+  const current = JSON.parse(await readFile(currentFile, 'utf8'));
+  const baseline = JSON.parse(await readFile(baselineFile, 'utf8'));
+  const candidate = candidateIdentity(root);
+  const currentErrors = validateReplayArtifact(current, { candidate });
+  if (currentErrors.length > 0) throw new Error(`current replay artifact invalid: ${currentErrors.join('; ')}`);
   const { failures, rows } = evaluateReport(current, baseline);
+  const result = failures.length === 0 ? 'PASS' : 'FAIL';
 
   const report = [
     '# Comms Regression Report',
     '',
     `- Generated at: ${new Date().toISOString()}`,
-    `- Result: ${failures.length === 0 ? 'PASS' : 'FAIL'}`,
+    `- Candidate: ${candidate.commit} (${candidate.tree})`,
+    `- Result: ${result}`,
     '',
     '| Metric | Current | Threshold | Status |',
     '|---|---:|---:|---|',
@@ -102,18 +131,34 @@ export async function main() {
     '',
   ].join('\n');
 
-  await mkdir(OUTPUT_DIR, { recursive: true });
-  await writeFile(REPORT_FILE, report);
+  const machineReport = {
+    schema: COMMS_COMPARE_SCHEMA,
+    generated_at: new Date().toISOString(),
+    candidate,
+    replay_candidate: current.candidate,
+    result,
+    failures,
+    rows,
+  };
+  const validationErrors = validateCompareArtifact(machineReport, { candidate });
+  if (validationErrors.length > 0) throw new Error(validationErrors.join('; '));
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(reportFile, report);
+  await writeFile(reportJsonFile, JSON.stringify(machineReport, null, 2));
+  const persisted = JSON.parse(await readFile(reportJsonFile, 'utf8'));
+  const persistedErrors = validateCompareArtifact(persisted, { candidate });
+  if (persistedErrors.length > 0) throw new Error(`persisted compare artifact invalid: ${persistedErrors.join('; ')}`);
   console.log(report);
-  console.log(`\nWrote comparison report to ${REPORT_FILE}`);
+  console.log(`\nWrote comparison report to ${reportFile}`);
 
   if (failures.length > 0) {
     console.error('\nThreshold failures:\n- ' + failures.join('\n- '));
     process.exitCode = 1;
   }
+  return machineReport;
 }
 
-const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname);
+const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
 if (isEntrypoint) {
   main().catch((error) => {
     console.error('[comms:compare] failed:', error);

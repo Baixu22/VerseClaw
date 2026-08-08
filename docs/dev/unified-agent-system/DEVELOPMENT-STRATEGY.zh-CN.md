@@ -1,5 +1,7 @@
 # VerseShell、VerseToken 与 Coding 组件统一 Agent 系统开发策略
 
+> **2026-08-02 收敛候选通知**：本文保留历史事实与已完成 UAS 工程证据，但不再授权未来实施顺序。候选入口为 `docs/dev/unified-agent-system/runtime-convergence/README.md`；Task Forest proposal 应用前，新旧路线均不授权 Runtime 实现，应用后以新控制包为准。
+
 > 状态：`roadmap-approved / task-forest-registered / implementation-not-started`
 >
 > 创建日期：2026-07-27

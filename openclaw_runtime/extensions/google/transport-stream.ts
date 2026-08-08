@@ -12,6 +12,7 @@ import { parseStrictNonNegativeInteger } from "openclaw/plugin-sdk/number-runtim
 import { createProviderHttpError } from "openclaw/plugin-sdk/provider-http";
 import {
   buildGuardedModelFetch,
+  beginShadowModelCall,
   coerceTransportToolCallArguments,
   createEmptyTransportUsage,
   createWritableTransportEventStream,
@@ -1225,7 +1226,22 @@ function createGoogleTransportStreamFn(kind: CanonicalGoogleTransportApi): Strea
       };
       try {
         const apiKey = options?.apiKey ?? getEnvApiKey(model.provider) ?? undefined;
-        const guardedFetch = buildGuardedModelFetch(model);
+        const shadowCall = beginShadowModelCall(
+          context,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: options?.sessionId,
+          },
+          options,
+        );
+        const guardedFetch = buildGuardedModelFetch(
+          model,
+          undefined,
+          undefined,
+          shadowCall.active ? shadowCall.options : undefined,
+        );
         let params = buildGoogleGenerativeAiParams(model, context, options);
         const nextParams = await options?.onPayload?.(params, model);
         if (nextParams !== undefined) {

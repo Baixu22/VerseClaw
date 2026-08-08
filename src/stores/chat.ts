@@ -52,6 +52,7 @@ import {
   type ChatSession,
   type ChatState,
   type ContentBlock,
+  type PendingMessage,
   type RawMessage,
   type SendOptions,
   type ToolStatus,
@@ -2683,6 +2684,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   pendingFinal: false,
   lastUserMessageAt: null,
   pendingToolImages: [],
+  pendingMessages: [],
   runtimeRuns: {},
 
   sessions: [],
@@ -4046,6 +4048,49 @@ export const useChatStore = create<ChatState>((set, get) => ({
     await get().sendMessage(trimmed);
   },
 
+  queuePendingMessage: (text, opts) => {
+    const trimmed = text.trim();
+    if (!trimmed && (!opts?.attachments || opts.attachments.length === 0)) return;
+    const targetSessionKey =
+      resolveMainSessionKeyForAgent(opts?.targetAgentId ?? null) ?? get().currentSessionKey;
+    const pending: PendingMessage = {
+      id: crypto.randomUUID(),
+      text: trimmed,
+      targetAgentId: opts?.targetAgentId ?? null,
+      targetSessionKey,
+      opts: {
+        attachments: opts?.attachments,
+        targetAgentId: opts?.targetAgentId,
+        knowledgeScope: opts?.knowledgeScope,
+        knowledgeMode: opts?.knowledgeMode,
+        knowledgeReferences: opts?.knowledgeReferences,
+        activeTaskNodeId: opts?.activeTaskNodeId,
+        modelRefOverride: opts?.modelRefOverride,
+        // Queued sends are ordinary chat messages, never long-task interventions.
+      },
+    };
+    set((s) => ({ pendingMessages: [...s.pendingMessages, pending] }));
+  },
+
+  drainPendingMessages: () => {
+    const queued = get().pendingMessages;
+    if (queued.length === 0) return;
+    if (get().sending) return; // a queued send just started another run; wait
+    set({ pendingMessages: [] });
+    // Dispatch sequentially so each send observes a settled run state. Keep
+    // failures isolated: a rejected send must not block the rest of the queue.
+    void (async () => {
+      for (const item of queued) {
+        try {
+          await useChatStore.getState().sendMessage(item.text, item.opts);
+        } catch {
+          // Surface the failure through the store error state (sendMessage sets
+          // runError on failure); continue with the remaining queued messages.
+        }
+      }
+    })();
+  },
+
   sendMessage: async (
     text: string,
     opts?: SendOptions,
@@ -4064,7 +4109,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const targetSessionKey = resolveMainSessionKeyForAgent(targetAgentId) ?? get().currentSessionKey;
 
     // Guard against double-submit before React re-renders with sending=true.
+    // P0-2: instead of silently dropping the second message while a run is
+    // active, queue it so it auto-sends when the run drains. Long-task
+    // interventions (inputMode) are NOT queued — they have their own
+    // guide/interrupt/queue path in the gateway.
     if (get().sending && targetSessionKey === get().currentSessionKey && !inputMode) {
+      get().queuePendingMessage(text, opts);
       return;
     }
 

@@ -6,6 +6,7 @@
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { Api, Model } from "../llm/types.js";
 import { resolveProviderStreamFn } from "../plugins/provider-runtime.js";
+import { createAnthropicVertexStreamFnForModel } from "./anthropic-vertex-stream.js";
 import { createAnthropicMessagesTransportStreamFn } from "./anthropic-transport-stream.js";
 import {
   createAzureOpenAIResponsesTransportStreamFn,
@@ -15,15 +16,6 @@ import {
 import { getModelProviderLocalService } from "./provider-local-service.js";
 import { getModelProviderRequestTransport } from "./provider-request-config.js";
 import type { StreamFn } from "./runtime/index.js";
-
-const SUPPORTED_TRANSPORT_APIS = new Set<Api>([
-  "openai-responses",
-  "openai-chatgpt-responses",
-  "openai-completions",
-  "azure-openai-responses",
-  "anthropic-messages",
-  "google-generative-ai",
-]);
 
 const SIMPLE_TRANSPORT_API_ALIAS: Record<string, Api> = {
   "openai-responses": "openclaw-openai-responses-transport",
@@ -41,9 +33,22 @@ type ProviderTransportStreamContext = {
   env?: NodeJS.ProcessEnv;
 };
 
-function createProviderOwnedGoogleTransportStreamFn(
+type SourceRuntimeTransportDescriptor = {
+  id: string;
+  api: Api;
+  provider?: string;
+  create: (model: Model, ctx?: ProviderTransportStreamContext) => StreamFn | undefined;
+};
+
+export type SourceRuntimeTransportMetadata = Pick<
+  SourceRuntimeTransportDescriptor,
+  "id" | "api" | "provider"
+>;
+
+function createProviderOwnedTransportStreamFn(
   model: Model,
   ctx?: ProviderTransportStreamContext,
+  fallbackProvider?: string,
 ): StreamFn | undefined {
   return (
     resolveProviderStreamFn({
@@ -60,8 +65,9 @@ function createProviderOwnedGoogleTransportStreamFn(
         model,
       },
     }) ??
-    resolveProviderStreamFn({
-      provider: "google",
+    (fallbackProvider
+      ? resolveProviderStreamFn({
+      provider: fallbackProvider,
       config: ctx?.cfg,
       workspaceDir: ctx?.workspaceDir,
       env: ctx?.env,
@@ -73,30 +79,68 @@ function createProviderOwnedGoogleTransportStreamFn(
         modelId: model.id,
         model,
       },
-    }) ??
+    })
+      : undefined) ??
     undefined
   );
+}
+
+const SOURCE_RUNTIME_TRANSPORTS: readonly SourceRuntimeTransportDescriptor[] = [
+  { id: "openai-responses", api: "openai-responses", create: () => createOpenAIResponsesTransportStreamFn() },
+  { id: "openai-chatgpt-responses", api: "openai-chatgpt-responses", create: () => createOpenAIResponsesTransportStreamFn() },
+  { id: "openai-completions", api: "openai-completions", create: () => createOpenAICompletionsTransportStreamFn() },
+  { id: "azure-openai-responses", api: "azure-openai-responses", create: () => createAzureOpenAIResponsesTransportStreamFn() },
+  {
+    id: "anthropic-vertex",
+    api: "anthropic-messages",
+    provider: "anthropic-vertex",
+    create: (model, ctx) => createAnthropicVertexStreamFnForModel(model, ctx?.env),
+  },
+  { id: "anthropic-messages", api: "anthropic-messages", create: () => createAnthropicMessagesTransportStreamFn() },
+  {
+    id: "google-generative-ai",
+    api: "google-generative-ai",
+    create: (model, ctx) => createProviderOwnedTransportStreamFn(model, ctx, "google"),
+  },
+  {
+    id: "google-vertex",
+    api: "google-vertex",
+    create: (model, ctx) => createProviderOwnedTransportStreamFn(model, ctx, "google"),
+  },
+  {
+    id: "amazon-bedrock",
+    api: "bedrock-converse-stream",
+    provider: "amazon-bedrock",
+    create: (model, ctx) => createProviderOwnedTransportStreamFn(model, ctx, "amazon-bedrock"),
+  },
+];
+
+/** Lists the production source-runtime transport denominator used by RC-02 coverage. */
+export function listSourceRuntimeTransportApis(): readonly Api[] {
+  return [...new Set(SOURCE_RUNTIME_TRANSPORTS.map((descriptor) => descriptor.api))];
+}
+
+/** Lists provider-specific production adapters without exposing their factories. */
+export function listSourceRuntimeTransportDescriptors(): readonly SourceRuntimeTransportMetadata[] {
+  return SOURCE_RUNTIME_TRANSPORTS.map(({ id, api, provider }) => ({
+    id,
+    api,
+    ...(provider ? { provider } : {}),
+  }));
 }
 
 function createSupportedTransportStreamFn(
   model: Model,
   ctx?: ProviderTransportStreamContext,
 ): StreamFn | undefined {
-  switch (model.api) {
-    case "openai-responses":
-    case "openai-chatgpt-responses":
-      return createOpenAIResponsesTransportStreamFn();
-    case "openai-completions":
-      return createOpenAICompletionsTransportStreamFn();
-    case "azure-openai-responses":
-      return createAzureOpenAIResponsesTransportStreamFn();
-    case "anthropic-messages":
-      return createAnthropicMessagesTransportStreamFn();
-    case "google-generative-ai":
-      return createProviderOwnedGoogleTransportStreamFn(model, ctx);
-    default:
-      return undefined;
-  }
+  const descriptor =
+    SOURCE_RUNTIME_TRANSPORTS.find(
+      (candidate) => candidate.api === model.api && candidate.provider === model.provider,
+    ) ??
+    SOURCE_RUNTIME_TRANSPORTS.find(
+      (candidate) => candidate.api === model.api && candidate.provider === undefined,
+    );
+  return descriptor?.create(model, ctx);
 }
 
 function hasOpenClawTransportRequirement(model: Model): boolean {
@@ -106,7 +150,7 @@ function hasOpenClawTransportRequirement(model: Model): boolean {
 
 /** Returns whether OpenClaw has a managed transport implementation for this API. */
 export function isTransportAwareApiSupported(api: Api): boolean {
-  return SUPPORTED_TRANSPORT_APIS.has(api);
+  return SOURCE_RUNTIME_TRANSPORTS.some((descriptor) => descriptor.api === api);
 }
 
 /** Maps public model APIs to the internal transport API id used by simple runtime dispatch. */

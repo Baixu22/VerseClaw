@@ -177,3 +177,29 @@ describe("sessions.checkpointDiff gateway integration", () => {
     expect(readFileSync(path.join(workspaceRoot, "f.ts"), "utf8")).toBe("v1\n");
   });
 });
+
+// Registry dispatch guard: the two checkpoint methods must be exposed through the
+// core gateway method whitelist + descriptor table, not just callable directly on
+// the handler object. If either chokepoint drifts, createCoreGatewayMethodDescriptors
+// throws at startup (handler without descriptor) or the method is unreachable
+// (missing whitelist entry -> "unknown method").
+describe("sessions checkpoint gateway registry exposure", () => {
+  it("exposes restoreCheckpoint and checkpointDiff through core gateway descriptors", async () => {
+    const { coreGatewayHandlers } = await import("../server-methods.js");
+    const { createCoreGatewayMethodDescriptors } = await import("../methods/core-descriptors.js");
+    const descriptors = createCoreGatewayMethodDescriptors(coreGatewayHandlers);
+    const names = new Set(descriptors.map((d) => d.name));
+
+    expect(names.has("sessions.restoreCheckpoint")).toBe(true);
+    expect(names.has("sessions.checkpointDiff")).toBe(true);
+  });
+
+  it("does not throw on unclassified handler drift", async () => {
+    const { coreGatewayHandlers } = await import("../server-methods.js");
+    const { createCoreGatewayMethodDescriptors } = await import("../methods/core-descriptors.js");
+    // createCoreGatewayMethodDescriptors throws if any handler in the lazy map has
+    // no matching spec; running it proves every advertised core handler (including
+    // the two checkpoint methods) has a descriptor today.
+    expect(() => createCoreGatewayMethodDescriptors(coreGatewayHandlers)).not.toThrow();
+  });
+});

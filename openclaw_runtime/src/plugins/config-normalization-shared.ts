@@ -6,7 +6,7 @@ import {
 import { normalizeArrayBackedTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
 import { normalizeChatChannelId } from "../channels/ids.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { assertSingleMemorySlotOwner } from "../agents/slot-convergence.js";
+import { assertSingleContextEngineSlot, assertSingleMemorySlotOwner } from "../agents/slot-convergence.js";
 import { defaultSlotIdForKey } from "./slots.js";
 
 /** Canonical plugin config shape consumed by runtime policy and loaders. */
@@ -233,12 +233,23 @@ export function normalizePluginsConfigWithResolver(
   normalizePluginId: NormalizePluginId = identityNormalizePluginId,
 ): NormalizedPluginsConfig {
   const memorySlot = normalizeSlotValue(config?.slots?.memory);
+  const contextEngineSlot = normalizeSlotValue(config?.slots?.contextEngine);
   // RC-07 slot convergence: when an explicit memory slot is configured, the
   // memory slot must be the single owner (default memory-core). A non-owner
-  // selection is rejected so parallel memory writers stay zero.
-  const convergence = memorySlot !== undefined
-    ? assertSingleMemorySlotOwner({ memorySlotId: memorySlot ?? undefined })
-    : { ok: true as const, errors: [] as string[] };
+  // selection is rejected so parallel memory writers stay zero. The
+  // contextEngine slot is checked the same way (single DCS slot occupant).
+  // Consumers (activation planner / runtime startup) MUST fail closed on a
+  // non-empty slotConvergenceErrors list; an illegal configuration never
+  // becomes the normalized active config.
+  const convergenceMemory =
+    memorySlot !== undefined
+      ? assertSingleMemorySlotOwner({ memorySlotId: memorySlot ?? undefined })
+      : { ok: true as const, errors: [] as string[] };
+  const convergenceContext =
+    contextEngineSlot !== undefined
+      ? assertSingleContextEngineSlot({ contextEngineId: contextEngineSlot ?? undefined })
+      : { ok: true as const, errors: [] as string[] };
+  const convergenceErrors = [...convergenceMemory.errors, ...convergenceContext.errors];
   return {
     enabled: config?.enabled !== false,
     allow: normalizeList(config?.allow, normalizePluginId),
@@ -246,10 +257,10 @@ export function normalizePluginsConfigWithResolver(
     loadPaths: normalizeList(config?.load?.paths, identityNormalizePluginId),
     slots: {
       memory: memorySlot === undefined ? defaultSlotIdForKey("memory") : memorySlot,
-      contextEngine: normalizeSlotValue(config?.slots?.contextEngine),
+      contextEngine: contextEngineSlot,
     },
     entries: normalizePluginEntries(config?.entries, normalizePluginId),
-    slotConvergenceErrors: convergence.errors,
+    slotConvergenceErrors: convergenceErrors,
   };
 }
 

@@ -121,7 +121,7 @@ export type TaskLoopPhase =
   | "complete"
   | "error";
 
-export type TaskLoopStatus = "running" | "complete" | "blocked" | "error";
+export type TaskLoopStatus = "running" | "complete" | "blocked" | "error" | "cancelled";
 
 export type TaskLoopConfig = {
   enabled?: boolean;
@@ -1995,6 +1995,7 @@ function runtimeTaskStatusForTaskLoop(phase: TaskLoopPhase, status: TaskLoopStat
   if (status === "complete") return "completed";
   if (status === "blocked") return "blocked";
   if (status === "error") return "failed";
+  if (status === "cancelled") return "cancelled";
   switch (phase) {
     case "intake":
       return "created";
@@ -2697,7 +2698,7 @@ function emit(
           sessionKey: record.sessionKey,
           status: record.status,
           phase: record.phase,
-          waiting: record.status === "blocked",
+          waiting: record.status === "blocked" && hasGenuineHumanWait(record),
           checkpointRef: `checkpoint:${record.loopRunId}`,
         },
         { enabled: true },
@@ -2905,6 +2906,44 @@ function gateTaskLoopSelfCheckCompletion(
 
 export function getTaskLoopRun(loopRunId: string): TaskLoopRunRecord | null {
   return taskLoopRuns.get(loopRunId) ?? null;
+}
+
+export function listTaskLoopRunsForSession(sessionKey: string): TaskLoopRunRecord[] {
+  return [...taskLoopRuns.values()]
+    .filter((record) => record.sessionKey === sessionKey)
+    .sort((left, right) => left.updatedAt - right.updatedAt);
+}
+
+/**
+ * RC-06D: production cancel API. Cancels a live task-loop run through the real
+ * controller path: status -> cancelled (terminal), snapshot + emit so the
+ * TaskFlow projection records the terminal cancelled state exactly like every
+ * other lifecycle transition. Idempotent on terminal runs.
+ */
+export function cancelTaskLoopRun(loopRunId: string, deps: TaskLoopControllerDeps = {}): TaskLoopRunRecord {
+  const record = getTaskLoopRun(loopRunId);
+  if (!record) {
+    throw new Error(`unknown task loop run "${loopRunId}"`);
+  }
+  if (record.status === "complete" || record.status === "error" || record.status === "cancelled") {
+    return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+  }
+  record.status = "cancelled";
+  record.phase = "complete";
+  record.nextActions = ["cancelled_by_operator"];
+  snapshot(record);
+  emit(record, deps, {});
+  return { ...record, iterations: [...record.iterations], evidenceRefs: [...record.evidenceRefs] };
+}
+
+/** True when a blocked run is genuinely waiting on a human (ask_user / permission_wait)
+ *  rather than an automatic guard (circuit breaker, iteration limit, repeated repair). */
+function hasGenuineHumanWait(record: TaskLoopRunRecord): boolean {
+  if (record.status !== "blocked") return false;
+  if (record.guardianTripped === true) return false;
+  return (record.controlSignals ?? []).some(
+    (signal) => signal.suggestedAction === "ask_user" || signal.kind === "permission_wait",
+  );
 }
 
 export function clearTaskLoopRunsForTests(): void {

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 
 import { parseFrontmatter } from '../../harness/src/specs.mjs';
-import { sha256, stableJson } from '../../scripts/lib/agent-engineering-acceptance.mjs';
+import { digestReport } from '../../scripts/lib/agent-engineering-acceptance.mjs';
 
 const packRoot = 'docs/dev/unified-agent-system/runtime-convergence';
 
@@ -108,7 +108,7 @@ function loadAcceptedEngineeringEvidence(manifestPath: string, reportPath: strin
   expect(report.verifierActor?.trim()).toBeTruthy();
   expect(report.actor).toBe(report.verifierActor);
   expect(report.executorActor).not.toBe(report.verifierActor);
-  expect(report.reportDigest).toBe(sha256(stableJson({ ...report, reportDigest: undefined })));
+  expect(report.reportDigest).toBe(digestReport(report));
 
   return { manifestBytes, reportBytes, manifest, report };
 }
@@ -353,7 +353,7 @@ describe('runtime authority convergence control pack', () => {
     expect(human).toContain('recompute both file SHA-256 values');
     expect(human).toContain('engineering_report_sha256');
     expect(human).toContain('green result, `engineeringAcceptedByAgent=true`');
-    expect(human).toContain('node scripts/validate-runtime-authority-convergence.mjs --phase final');
+    expect(human).toContain('node scripts/validate-runtime-authority-convergence.mjs --phase human');
     expect(human).toContain('The validator may verify the user\'s record; it may not create or edit');
   });
 

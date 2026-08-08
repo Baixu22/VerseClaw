@@ -12,11 +12,28 @@
 | Persistent memory | One active `memory` slot plugin | VToken, DCS, SEKB proposal queue, Working Context |
 | External effects | Existing domain executor plus RC-04 EffectReceipt correlation record | Context lineage, UI projection, OTel span |
 | External tool protocol | MCP | Work Provider catalog, host-native tools |
+
+The MCP SDK runtime is the external protocol authority; the runtime defines no
+parallel MCP schema. Work Provider is a catalog/projection; Git, storage,
+terminal, and browser are host-native unless backed by a real MCP server path.
+MCP `connected` is set only by a real SDK `initialize` handshake; configuration
+presence, an HTTP GET, or an unsupported (WebSocket-only) transport is never
+`connected` (no fake-connected state). Catalog entries carry the transport type
+and the health verdict derived from the handshake (RC-08A).
 | Telemetry export | OpenTelemetry/OTLP | Receipt store, Observability JSONL |
+
+OTel/OTLP owns trace export; the runtime defines no second trace schema or
+store. Ingress, run, model/tool, effect, and delivery share correlation IDs
+(`correlation-ids.ts`); the runtime observability cache encodes the canonical
+OTLP `ExportTraceServiceRequest` and exports completed traces through the
+installed exporter (exporter-off is byte-identical, failures never change the
+store). Receipts and domain journals remain factual evidence; trajectory is
+bounded flight-recorder evidence; the Observability JSONL cache is rebuildable
+(RC-08B).
 | User views | Electron projections | Runtime authority |
 | Convergence capability reporting | Source `openclaw_runtime` capability probe | npm fallback assumptions, renderer inference |
 | Receipt persistence | Typed, append-only `runtime_receipts` table in the existing openclaw-state SQLite, exposed through a narrow `ReceiptStore` interface (user-confirmed 2026-08-02; no new DB/sidecar/service) | `long_task_checkpoints` (mutable checkpoint truth), RuntimeTaskEventLog (default-off/prunable), Unreviewed JSONL, OTel |
-| Pending approvals | Durable approval owner selected and implemented in RC-04 | Gateway process `Map`, renderer state |
+| Pending approvals | Durable approval owner selected and implemented in RC-04 (RC-04R local: `ApprovalLedger` over openclaw-state `approval_ledger`, production default-on) | Gateway process `Map` (disposable cache after RC-04R), renderer state |
 
 ## Runtime Flow
 

@@ -27,6 +27,13 @@ import {
 import { NodeHttpHandler } from "@smithy/node-http-handler";
 import type { DocumentType } from "@smithy/types";
 import {
+  attachShadowReceiptOptions,
+  beginShadowModelCall,
+  emitShadowWireReceipt,
+  getShadowReceiptOptions,
+  recordShadowCensusFailure,
+} from "openclaw/plugin-sdk/provider-transport-runtime";
+import {
   adjustMaxTokensForThinking,
   AssistantMessageEventStream,
   buildBaseOptions,
@@ -83,6 +90,16 @@ export const streamBedrock: StreamFunction<"bedrock-converse-stream", BedrockOpt
     };
 
     const blocks = output.content as Block[];
+    const shadowCall = beginShadowModelCall(
+      context,
+      {
+        providerId: model.provider,
+        adapterId: model.api,
+        modelId: model.id,
+        sessionKey: options.sessionId,
+      },
+      options,
+    );
 
     const config: BedrockRuntimeClientConfig = {
       profile: options.profile,
@@ -154,6 +171,43 @@ export const streamBedrock: StreamFunction<"bedrock-converse-stream", BedrockOpt
 
     try {
       const client = new BedrockRuntimeClient(config);
+      if (shadowCall.active) {
+        let nextWireAttemptIndex = shadowCall.options.wireAttemptIndex ?? 0;
+        client.middlewareStack.add(
+          (next) => async (args) => {
+            const body = (args.request as { body?: unknown } | undefined)?.body;
+            const wireAttemptIndex = nextWireAttemptIndex;
+            nextWireAttemptIndex += 1;
+            if (typeof body === "string" || body instanceof Uint8Array) {
+              const wireOptions = { ...shadowCall.options, wireAttemptIndex };
+              emitShadowWireReceipt(
+                body,
+                {
+                  providerId: model.provider,
+                  adapterId: model.api,
+                  modelId: model.id,
+                  sessionKey: wireOptions.sessionKey,
+                  runId: wireOptions.runId,
+                  traceId: wireOptions.traceId,
+                  transformIds: wireOptions.transformIds,
+                  attemptIndex: wireOptions.attemptIndex,
+                  modelCallIndex: wireOptions.modelCallIndex,
+                  wireAttemptIndex,
+                },
+                wireOptions,
+              );
+            } else {
+              recordShadowCensusFailure("wire-capture", "final-wire-body-unavailable");
+            }
+            return next(args);
+          },
+          {
+            step: "finalizeRequest",
+            priority: "low",
+            name: "openclawRc02ShadowWireReceipt",
+          },
+        );
+      }
       const cacheRetention = resolveCacheRetention(options.cacheRetention);
       let commandInput = {
         modelId: model.id,
@@ -279,20 +333,24 @@ export const streamSimpleBedrock: StreamFunction<"bedrock-converse-stream", Simp
   options?: SimpleStreamOptions,
 ) => {
   const base = buildBaseOptions(model, options, undefined);
+  const withShadow = (next: BedrockOptions): BedrockOptions => {
+    const shadow = getShadowReceiptOptions(options);
+    return shadow ? attachShadowReceiptOptions(next, shadow) : next;
+  };
   if (!options?.reasoning) {
-    return streamBedrock(model, context, {
+    return streamBedrock(model, context, withShadow({
       ...base,
       reasoning: undefined,
-    } satisfies BedrockOptions);
+    } satisfies BedrockOptions));
   }
 
   if (isAnthropicClaudeModel(model)) {
     if (supportsAdaptiveThinking(model.id, model.name)) {
-      return streamBedrock(model, context, {
+      return streamBedrock(model, context, withShadow({
         ...base,
         reasoning: options.reasoning,
         thinkingBudgets: options.thinkingBudgets,
-      } satisfies BedrockOptions);
+      } satisfies BedrockOptions));
     }
 
     // Undefined means the caller did not request an output cap; let the helper use the model cap.
@@ -304,7 +362,7 @@ export const streamSimpleBedrock: StreamFunction<"bedrock-converse-stream", Simp
       options.thinkingBudgets,
     );
 
-    return streamBedrock(model, context, {
+    return streamBedrock(model, context, withShadow({
       ...base,
       maxTokens: adjusted.maxTokens,
       reasoning: options.reasoning,
@@ -312,14 +370,14 @@ export const streamSimpleBedrock: StreamFunction<"bedrock-converse-stream", Simp
         ...options.thinkingBudgets,
         [clampReasoning(options.reasoning)!]: adjusted.thinkingBudget,
       },
-    } satisfies BedrockOptions);
+    } satisfies BedrockOptions));
   }
 
-  return streamBedrock(model, context, {
+  return streamBedrock(model, context, withShadow({
     ...base,
     reasoning: options.reasoning,
     thinkingBudgets: options.thinkingBudgets,
-  } satisfies BedrockOptions);
+  } satisfies BedrockOptions));
 };
 
 function handleContentBlockStart(

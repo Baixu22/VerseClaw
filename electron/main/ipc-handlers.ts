@@ -81,6 +81,7 @@ import { createUsageApi } from '../services/usage-api';
 import { createPermissionsApi } from '../services/permissions-api';
 import { createOrchestrationPresetsApi } from '../services/orchestration-presets-api';
 import { createTerminalApi } from '../services/terminal-api';
+import { createSessionActivityApi } from '../services/session-activity-api';
 import { createGitApi } from '../services/git-api';
 import { createTerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
@@ -197,6 +198,7 @@ function registerTypedHostHandlers(
     workspaces: createWorkspacesApi({ gatewayManager, terminalManager, webPreviewManager }),
     projectRules: createProjectRulesApi(),
     terminal: createTerminalApi({ gatewayManager, terminalManager }),
+    sessionActivity: createSessionActivityApi({ gatewayManager, terminalManager }),
     git: createGitApi(),
     permissions: createPermissionsApi(),
     orchestrationPresets: createOrchestrationPresetsApi(),

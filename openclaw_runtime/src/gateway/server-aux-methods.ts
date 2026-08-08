@@ -13,4 +13,7 @@ export const GATEWAY_AUX_METHODS = [
   "plugin.approval.resolve",
   "secrets.reload",
   "secrets.resolve",
+  "inbox.operator.list",
+  "inbox.operator.decide",
+  "inbox.operator.lineage",
 ] as const;

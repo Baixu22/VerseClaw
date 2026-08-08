@@ -42,14 +42,14 @@ function renderDeferredMainRoute(pathname: string) {
 
 describe('route loading shells', () => {
   it.each([
-    ['/', 'route-loading-chat'],
-    ['/settings/models', 'route-loading-settings'],
-    ['/knowledge', 'route-loading-generic'],
-  ])('keeps MainLayout mounted for the %s fallback', async (pathname, fallbackTestId) => {
+    ['/', 'route-loading-chat', 'sidebar'],
+    ['/settings/models', 'route-loading-settings', 'settings-sidebar'],
+    ['/knowledge', 'route-loading-generic', 'sidebar'],
+  ])('keeps MainLayout mounted for the %s fallback', async (pathname, fallbackTestId, sidebarTestId) => {
     const deferred = renderDeferredMainRoute(pathname);
 
     expect(screen.getByTestId('main-layout')).toBeVisible();
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId(sidebarTestId)).toBeInTheDocument();
     expect(screen.getByTestId('titlebar')).toBeInTheDocument();
     expect(screen.getByTestId(fallbackTestId)).toHaveAttribute('aria-busy', 'true');
 

@@ -73,16 +73,21 @@ export function createGatewayAuxHandlers(params: {
   startChannel: (name: ChannelKind) => Promise<void>;
   stopChannel: (name: ChannelKind) => Promise<void>;
   logChannels: { info: (msg: string) => void };
-  /** RC-04 feature flag (default-off): mirror approval pending/resolved into the
-   *  durable approval_ledger so the truth survives a Gateway restart. */
+  /** RC-04 durable approval owner (default-on): approval pending/resolved truth
+   *  lives in the durable approval_ledger and the process Map is a disposable
+   *  cache. Set to false only for an explicit, audited rollback to the legacy
+   *  process-Map owner; a flag must never silently create dual authority. */
   enableDurableApprovalLedger?: boolean;
   /** OpenClaw state database options for the durable ledger. */
   durableLedgerDatabase?: { env?: NodeJS.ProcessEnv; path?: string };
 }) {
-  const durableLedger = params.enableDurableApprovalLedger === true
+  const durableLedger = params.enableDurableApprovalLedger !== false
     ? new ApprovalLedger(params.durableLedgerDatabase)
     : undefined;
   const execApprovalManager = new ExecApprovalManager(durableLedger ? { durableLedger } : undefined);
+  // RC-04 restart recovery: re-register pending approvals from the durable
+  // owner so pending truth survives a Gateway restart.
+  execApprovalManager.recoverPendingFromLedger();
   const execApprovalForwarder = createExecApprovalForwarder();
   const execApprovalIosPushDelivery = createExecApprovalIosPushDelivery({ log: params.log });
   let execApprovalHandlersPromise: Promise<GatewayRequestHandlers> | null = null;
@@ -103,6 +108,13 @@ export function createGatewayAuxHandlers(params: {
         createPluginApprovalHandlers(pluginApprovalManager, {
           forwarder: execApprovalForwarder,
         }),
+    ));
+  // RC-05 desktop Inbox: real governance surface for Operator slice intents
+  // (list pending, decide with actor + policy digest, project lineage).
+  let inboxHandlersPromise: Promise<GatewayRequestHandlers> | null = null;
+  const loadInboxHandlers = () =>
+    (inboxHandlersPromise ??= import("./server-methods/inbox.js").then(({ createInboxHandlers }) =>
+      createInboxHandlers(params.durableLedgerDatabase),
     ));
   // Serialize the entire `secrets.reload` path (activation + channel restart)
   // so concurrent callers cannot overlap the stop/start loop and so the
@@ -300,6 +312,9 @@ export function createGatewayAuxHandlers(params: {
       ),
       "secrets.reload": createLazyHandler("secrets.reload", loadSecretsHandlers),
       "secrets.resolve": createLazyHandler("secrets.resolve", loadSecretsHandlers),
+      "inbox.operator.list": createLazyHandler("inbox.operator.list", loadInboxHandlers),
+      "inbox.operator.decide": createLazyHandler("inbox.operator.decide", loadInboxHandlers),
+      "inbox.operator.lineage": createLazyHandler("inbox.operator.lineage", loadInboxHandlers),
     },
   };
 }

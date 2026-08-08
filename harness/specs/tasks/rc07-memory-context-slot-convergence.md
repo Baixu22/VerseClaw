@@ -2,7 +2,7 @@
 id: rc07-memory-context-slot-convergence
 title: RC-07 Memory And Context Slot Convergence
 taskType: engineering-acceptance
-intent: Enforce one active configured memory slot owner and one DCS contextEngine slot; define each existing mechanism as store owner, candidate producer, review proposal, benchmark arm, or projection. VToken/AgentMap are stateless packer/benchmark arms; Working Context is a query projection; SEKB is human-confirmed governance; Runtime Memory cannot bypass the selected memory slot or DCS. Parallel memory writes are zero; flag-off performs zero query/write; delete/correction propagation tests pass; no default or auto-writeback change.
+intent: Enforce one active configured memory slot owner and one DCS contextEngine slot as a startup/config invariant; define each existing mechanism as store owner, candidate producer, review proposal, benchmark arm, or projection. VToken/AgentMap are stateless packer/benchmark arms; Working Context is a query projection; SEKB is human-confirmed governance; Runtime Memory cannot bypass the selected memory slot or DCS. Parallel memory writes are zero; diagnostics-off performs zero query/write; delete/correction propagation tests pass; no default or auto-writeback change.
 ownedPaths:
   - openclaw_runtime/src/plugins/slots.ts
   - openclaw_runtime/src/plugins/config-normalization-shared.ts
@@ -33,7 +33,7 @@ expectedUserBehavior:
   - Exactly one configured memory slot owner may persist memory; other systems produce candidates or review proposals only.
   - DCS occupies the single contextEngine slot.
   - VToken/AgentMap are stateless packer/benchmark arms; Working Context is a query projection; SEKB is human-confirmed governance; Runtime Memory cannot bypass the selected memory slot or DCS.
-  - Parallel memory writes are zero; flag-off performs zero query/write; delete/correction propagation tests pass; no default or auto-writeback change.
+  - Parallel memory writes are zero; diagnostics-off performs zero query/write without weakening single-owner startup/config enforcement; delete/correction propagation tests pass; no default or auto-writeback change.
 requiredProfiles:
   - fast
 requiredRules:
@@ -47,10 +47,10 @@ forbiddenPatterns:
   - parallel memory writers beyond the single configured slot owner
   - changing product locks, liveReady, productApproved, defaultOn, or human/live evidence counts
 featureFlags:
-  - The slot-convergence enforcement is behind a feature flag default-off; the kill switch restores the legacy multi-writer behavior.
+  - Diagnostics may be default-off. Single-owner memory/context validation is always enforced for an accepted configuration; no flag or kill switch may restore legacy multi-writer authority.
 rollback:
-  - Disable the convergence flag to restore the legacy behavior.
-  - No migration rollback is required because no data migration occurs.
+  - Rollback selects a prior validated single-owner configuration and clears derived projections/candidates as needed; it cannot restore multi-writer authority.
+  - No data migration rollback is required because no new persistent store is introduced.
 requiredTests:
   - pnpm exec vitest run tests/unit/rc07-memory-context-slot-convergence.test.ts
   - pnpm --dir openclaw_runtime exec vitest run src/agents/slot-convergence.test.ts src/memory/memory-store.test.ts src/context-engine/block-store.test.ts
@@ -61,7 +61,7 @@ requiredTests:
 acceptance:
   - Exactly one active configured memory slot owner persists memory; every other mechanism is classified store owner / candidate producer / review proposal / benchmark arm / projection.
   - DCS occupies the single contextEngine slot; VToken/AgentMap are stateless packer/benchmark arms; Working Context is a query projection; SEKB is human-confirmed governance; Runtime Memory cannot bypass the selected memory slot or DCS.
-  - Parallel memory writes are zero; flag-off performs zero query/write; delete/correction propagation tests pass; no default or auto-writeback change.
+  - Parallel memory writes are zero; diagnostics-off performs zero query/write while startup/reload reject a second owner; delete/correction propagation tests pass; no default or auto-writeback change.
   - Product locks remain false; an RC-07 independent Verifier accepts using the RC-00 infrastructure.
 docs:
   required: true

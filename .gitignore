@@ -87,6 +87,14 @@ artifacts/first-product-preview/*
 !artifacts/first-product-preview/TF-0009/**
 !artifacts/capability-claims/
 !artifacts/capability-claims/status-table.json
+# RC-01 authority baseline is candidate material, not a run artifact: the
+# acceptance validator resolves it from the candidate tree, so it must be
+# tracked. Scoped to rc-01 only; other convergence run outputs stay ignored.
+!artifacts/runtime-authority-convergence/
+artifacts/runtime-authority-convergence/*
+!artifacts/runtime-authority-convergence/rc-01/
+artifacts/runtime-authority-convergence/rc-01/*
+!artifacts/runtime-authority-convergence/rc-01/baseline.json
 !artifacts/coding-c0/
 !artifacts/coding-c0/**
 !artifacts/coding-c1/

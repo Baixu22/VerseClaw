@@ -72,6 +72,13 @@ const runs = new Map<string, RuntimeRun>();
 const SPINE_ACTOR = "clawgraph-runtime";
 const SPINE_MODE = "diagnostic_only";
 
+/**
+ * RC-06B drift counter: increments every time the read-only projection throws
+ * inside emit(). Best-effort projection must never break the legacy ClawGraph
+ * path, but failures must stay observable for diagnostics (never silent).
+ */
+export let clawgraphProjectionFailureCount = 0;
+
 /** RC-06B projection gate (default-off). Reads env or config so operators can
  *  enable the ClawGraph -> TaskFlow read-only projection. */
 function clawgraphProjectionEnabled(): boolean {
@@ -417,6 +424,8 @@ function emit(run: RuntimeRun, lifecycle: LifecycleFn | undefined, entry: ClawGr
       projectClawgraphRunEvent(entry, { enabled: true });
     } catch {
       // Best-effort projection; the legacy run state stays authoritative.
+      // The failure is still observable as drift for diagnostics (never silent).
+      clawgraphProjectionFailureCount += 1;
     }
   }
 }

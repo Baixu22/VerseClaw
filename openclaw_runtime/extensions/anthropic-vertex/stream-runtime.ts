@@ -13,6 +13,13 @@ import {
   applyAnthropicPayloadPolicyToParams,
   resolveAnthropicPayloadPolicy,
 } from "openclaw/plugin-sdk/provider-stream-shared";
+import {
+  attachShadowReceiptOptions,
+  beginShadowModelCall,
+  emitShadowWireReceipt,
+  recordShadowCensusFailure,
+  type ShadowReceiptOptions,
+} from "openclaw/plugin-sdk/provider-transport-runtime";
 import { resolveAnthropicVertexClientRegion, resolveAnthropicVertexProjectId } from "./region.js";
 
 type AnthropicVertexTransportOptions = ProviderStreamOptions & {
@@ -28,6 +35,7 @@ type AnthropicVertexClientOptions = {
   baseURL?: string;
   projectId?: string;
   region: string;
+  fetch?: typeof fetch;
 };
 
 /** Injectable dependencies for Anthropic Vertex stream tests. */
@@ -147,11 +155,47 @@ export function createAnthropicVertexStreamFn(
   baseURL?: string,
   deps: AnthropicVertexStreamDeps = defaultAnthropicVertexStreamDeps,
 ): StreamFn {
-  const client = new deps.AnthropicVertex({
+  const clientOptions: AnthropicVertexClientOptions = {
     region,
     ...(baseURL ? { baseURL } : {}),
     ...(projectId ? { projectId } : {}),
-  });
+  };
+  const client = new deps.AnthropicVertex(clientOptions);
+
+  const createShadowFetch = (
+    model: Parameters<StreamFn>[0],
+    shadow: ShadowReceiptOptions,
+  ): typeof fetch => {
+    let nextWireAttemptIndex = shadow.wireAttemptIndex ?? 0;
+    return async (input, init) => {
+      const request = input instanceof Request ? new Request(input, init) : new Request(input, init);
+      const body = request.body ? new Uint8Array(await request.clone().arrayBuffer()) : undefined;
+      const wireAttemptIndex = nextWireAttemptIndex;
+      nextWireAttemptIndex += 1;
+      if (body) {
+        const wireOptions = { ...shadow, wireAttemptIndex };
+        emitShadowWireReceipt(
+          body,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: wireOptions.sessionKey,
+            runId: wireOptions.runId,
+            traceId: wireOptions.traceId,
+            transformIds: wireOptions.transformIds,
+            attemptIndex: wireOptions.attemptIndex,
+            modelCallIndex: wireOptions.modelCallIndex,
+            wireAttemptIndex,
+          },
+          wireOptions,
+        );
+      } else {
+        recordShadowCensusFailure("wire-capture", "final-wire-body-unavailable");
+      }
+      return globalThis.fetch(input, init);
+    };
+  };
 
   return (model, context, options) => {
     const transportModel = model as Model<"anthropic-messages"> & {
@@ -164,8 +208,24 @@ export function createAnthropicVertexStreamFn(
       requestedMaxTokens: options?.maxTokens,
     });
     const temperature = isClaudeOpus47OrNewerModel(model.id) ? undefined : options?.temperature;
+    const shadowCall = beginShadowModelCall(
+      context,
+      {
+        providerId: model.provider,
+        adapterId: model.api,
+        modelId: model.id,
+        sessionKey: options?.sessionId,
+      },
+      options,
+    );
+    const transportClient = shadowCall.active
+      ? new deps.AnthropicVertex({
+          ...clientOptions,
+          fetch: createShadowFetch(model, shadowCall.options),
+        })
+      : client;
     const opts: AnthropicVertexTransportOptions = {
-      client,
+      client: transportClient,
       ...(temperature !== undefined ? { temperature } : {}),
       ...(maxTokens !== undefined ? { maxTokens } : {}),
       signal: options?.signal,
@@ -200,7 +260,11 @@ export function createAnthropicVertexStreamFn(
       opts.thinkingEnabled = false;
     }
 
-    return deps.streamAnthropic(transportModel, context, opts);
+    return deps.streamAnthropic(
+      transportModel,
+      context,
+      shadowCall.active ? attachShadowReceiptOptions(opts, shadowCall.options) : opts,
+    );
   };
 }
 

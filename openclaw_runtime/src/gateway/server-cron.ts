@@ -92,6 +92,23 @@ function sanitizeCronHeartbeatOverride(
 }
 
 /** Map internal CronJob to the public plugin SDK shape. */
+/**
+ * RC-05/security: replayable per-run Operator idempotency key derived from the
+ * persisted tick marker (job.state.runningAtMs). A retry of the same tick
+ * reuses the same key (dedupe); the next tick gets a fresh one. Fails closed
+ * instead of falling back to Date.now(), which would break dedupe and allow
+ * double delivery on same-tick retries.
+ */
+function resolveReplayableCronRunKey(job: CronJob): string {
+  const runAtMs = job.state?.runningAtMs;
+  if (typeof runAtMs !== "number") {
+    throw new Error(
+      `cron announce rejected: job '${job.id}' has no persisted runningAtMs marker (replayable runKey required)`,
+    );
+  }
+  return `${job.id}:${runAtMs}`;
+}
+
 function toPluginCronJob(job: CronJob): PluginHookGatewayCronJob {
   return {
     id: job.id,
@@ -444,6 +461,11 @@ export function buildGatewayCronService(params: {
           cfg: runtimeConfig,
           agentId,
           jobId: job.id,
+          // Per-run unique AND replayable key: the run's start timestamp is
+          // persisted in job state for the whole tick, so a retry of the same
+          // tick reuses the same Operator intent (dedupe) while the next tick
+          // gets a fresh one.
+          runKey: resolveReplayableCronRunKey(job),
           target: {
             channel: plan.channel,
             to: plan.to,

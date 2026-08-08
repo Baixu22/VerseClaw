@@ -4,6 +4,8 @@ title: RC-02 Full-Payload Shadow Census
 taskType: engineering-acceptance
 intent: Establish ShadowContextReceipt/v0 before provider projection and ShadowWireReceipt/v0 at the guarded request-body boundary after every provider-specific finalizer for every source-runtime model call in the automated entry matrix; write bounded evidence through the RC-01-approved ReceiptStore (typed append-only runtime_receipts in openclaw-state SQLite); record no raw payload by default; achieve owner-classification coverage 100% and zero-byte parity; the npm fallback reports explicit capability degradation and never counts as receipt coverage.
 ownedPaths:
+  - openclaw_runtime/package.json
+  - openclaw_runtime/pnpm-lock.yaml
   - openclaw_runtime/src/state/openclaw-state-schema.sql
   - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
   - openclaw_runtime/src/state/openclaw-state-db.generated.ts
@@ -13,6 +15,27 @@ ownedPaths:
   - openclaw_runtime/src/agents/shadow-census.test.ts
   - openclaw_runtime/src/agents/rc02-shadow-census.acceptance.test.ts
   - openclaw_runtime/src/agents/anthropic-transport-stream.ts
+  - openclaw_runtime/src/agents/openai-transport-stream.ts
+  - openclaw_runtime/src/agents/provider-transport-fetch.ts
+  - openclaw_runtime/src/agents/provider-transport-stream.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/compact.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/types.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
+  - openclaw_runtime/src/plugin-sdk/provider-transport-runtime.ts
+  - openclaw_runtime/extensions/amazon-bedrock/register.sync.runtime.ts
+  - openclaw_runtime/extensions/amazon-bedrock/stream.runtime.ts
+  - openclaw_runtime/extensions/anthropic-vertex/api.ts
+  - openclaw_runtime/extensions/anthropic-vertex/stream-runtime.ts
+  - openclaw_runtime/extensions/anthropic-vertex/stream-runtime.test-fixture.ts
+  - openclaw_runtime/extensions/google/transport-stream.ts
+  - openclaw_runtime/src/infra/node-sqlite.ts
+  - openclaw_runtime/src/plugin-sdk/facade-runtime.ts
+  - openclaw_runtime/src/context-engine/dcs-receipts.ts
+  - openclaw_runtime/src/context-engine/rc03-seal-hook.ts
+  - openclaw_runtime/src/context-engine/rc03-seal.test.ts
+  - openclaw_runtime/test/vitest/vitest.pattern-file.ts
   - harness/specs/tasks/rc02-full-payload-shadow-census.md
   - artifacts/runtime-authority-convergence/rc-02/**
 touchedAreas:
