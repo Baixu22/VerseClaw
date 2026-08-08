@@ -14,6 +14,7 @@ import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
 import { useStorageHealthStore } from './stores/storage-health';
+import { useSessionActivityStore } from './stores/session-activity';
 import { rendererExtensionRegistry } from './extensions/registry';
 import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generated';
 import { useNewChatAction } from './components/layout/use-new-chat-action';
@@ -235,6 +236,7 @@ function App() {
   const initGateway = useGatewayStore((state) => state.init);
   const initProviders = useProviderStore((state) => state.init);
   const initStorageHealth = useStorageHealthStore((state) => state.init);
+  const initSessionActivity = useSessionActivityStore((state) => state.init);
   const handleNewChat = useNewChatAction();
   const uiVersion = resolveUiVersion(window.electron?.platform, window.location.search);
   const settingsOpen = location.pathname.startsWith('/settings');
@@ -300,6 +302,10 @@ function App() {
   useEffect(() => {
     initGateway();
   }, [initGateway]);
+
+  useEffect(() => {
+    initSessionActivity();
+  }, [initSessionActivity]);
 
   // Initialize provider snapshot on mount
   useEffect(() => {

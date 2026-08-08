@@ -16,7 +16,8 @@
   "source": {
     "permission": "権限リクエスト",
     "remote-task": "リモートタスク",
-    "browser-task": "ブラウザタスク"
+    "browser-task": "ブラウザタスク",
+    "operator": "Operator（運用）"
   },
   "permissionSource": {
     "terminal": "ターミナル",
@@ -58,6 +59,11 @@
     },
     "browserTask": {
       "waitingApproval": "承認待ち"
+    },
+    "operator": {
+      "approval_pending": "判断待ち",
+      "approved": "承認済み",
+      "denied": "拒否済み"
     }
   },
   "partialError": {

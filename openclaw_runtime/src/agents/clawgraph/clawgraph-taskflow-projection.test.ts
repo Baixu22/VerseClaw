@@ -100,11 +100,66 @@ describe('RC-06B ClawGraph -> TaskFlow read-only projection', () => {
     expect(row?.current_step).toBe('node:node-child-1');
   });
 
-  it('skips unknown events without failing the legacy path', () => {
-    const result = projectClawgraphRunEvent(event({ type: 'run_started' }), options());
-    expect(result.projected).toBe(true);
-    const unknown = projectClawgraphRunEvent(event({ type: 'node_failed' }), options());
-    // node_failed maps to running per the table; an unrecognized type is skipped.
-    expect(unknown.skippedReason ?? 'projected').toBeDefined();
+  it('skips unknown events without failing the legacy path; node_failed is a real running event', () => {
+    expect(projectClawgraphRunEvent(event({ type: 'run_started' }), options()).projected).toBe(true);
+    // node_failed IS produced in production ClawGraph runs; it must project to
+    // running (a failed node does not end the run) — not be skipped.
+    const nodeFailed = projectClawgraphRunEvent(event({ type: 'node_failed', nodeId: 'node-9' }), options());
+    expect(nodeFailed.projected).toBe(true);
+    expect(nodeFailed.status).toBe('running');
+    // A genuinely unrecognized type is skipped with an honest reason.
+    const unknown = projectClawgraphRunEvent(event({ type: 'no_such_event_type' }), options());
+    expect(unknown.projected).toBe(false);
+    expect(unknown.skippedReason).toBe('unknown-event');
+  });
+
+  it('cancel proof: run_aborted projects to terminal cancelled and survives restart', () => {
+    expect(projectClawgraphRunEvent(event({ type: 'run_started' }), options()).projected).toBe(true);
+    const aborted = projectClawgraphRunEvent(event({ type: 'run_aborted' }), options());
+    expect(aborted.projected).toBe(true);
+    expect(aborted.status).toBe('cancelled');
+
+    // Terminal is absorbing: a stale/late event cannot resurrect the flow,
+    // and the conflict is reported honestly (never masked as flag-off).
+    const late = projectClawgraphRunEvent(event({ type: 'run_started' }), options());
+    expect(late.projected).toBe(false);
+    expect(late.skippedReason).toBe('illegal-transition');
+
+    // Recovery after restart reads the same terminal truth from flow_runs.
+    const recovery = recoverClawgraphProjection('run-clawgraph-1', options());
+    expect(recovery.recovered).toBe(true);
+    expect(recovery.status).toBe('cancelled');
+    const store = new TaskFlowCasStore(options().database);
+    expect(store.getById('clawgraph:run-clawgraph-1')?.ended_at).not.toBeNull();
+  });
+
+  it('restart proof: recovery rebuilds state from flow_runs, not from a live controller', () => {
+    // Project a full lifecycle with one store instance, then "restart": a
+    // brand-new store + recovery call (no controller in memory) restores the
+    // exact revision/status — the projection is a durable read-only mirror of
+    // the legacy Map, independent of any live ClawGraph controller instance.
+    expect(projectClawgraphRunEvent(event({ type: 'run_started' }), options()).projected).toBe(true);
+    expect(projectClawgraphRunEvent(event({ type: 'review_requested' }), options()).projected).toBe(true);
+    expect(projectClawgraphRunEvent(event({ type: 'review_resolved' }), options()).projected).toBe(true);
+    expect(projectClawgraphRunEvent(event({ type: 'node_ready', nodeId: 'node-2' }), options()).projected).toBe(true);
+
+    const restartedStore = new TaskFlowCasStore(options().database);
+    const row = restartedStore.getById('clawgraph:run-clawgraph-1');
+    expect(row?.status).toBe('running');
+    expect(row?.revision).toBe(3);
+    expect(row?.current_step).toBe('node:node-2');
+  });
+
+  it('child-task projection stays consistent across parent events', () => {
+    expect(projectClawgraphRunEvent(event({ type: 'run_started' }), options()).projected).toBe(true);
+    expect(projectClawgraphRunEvent(event({ type: 'node_started', nodeId: 'node-a' }), options()).projected).toBe(true);
+    expect(projectClawgraphRunEvent(event({ type: 'node_handoff', nodeId: 'node-b' }), options()).projected).toBe(true);
+    const store = new TaskFlowCasStore(options().database);
+    const row = store.getById('clawgraph:run-clawgraph-1');
+    expect(row?.current_step).toBe('node:node-b');
+    expect(row?.status).toBe('running');
+    // A completed child still keeps the parent run non-terminal.
+    expect(projectClawgraphRunEvent(event({ type: 'node_done', nodeId: 'node-b' }), options()).projected).toBe(true);
+    expect(store.getById('clawgraph:run-clawgraph-1')?.status).toBe('running');
   });
 });

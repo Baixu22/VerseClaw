@@ -45,6 +45,12 @@ import {
   mergeModelProviderRequestOverrides,
   resolveProviderRequestPolicyConfig,
 } from "./provider-request-config.js";
+import {
+  emitRc03WireReceipt,
+  emitShadowWireReceipt,
+  recordShadowCensusFailure,
+  type ShadowReceiptOptions,
+} from "./shadow-census.js";
 
 const DEFAULT_MAX_SDK_RETRY_WAIT_SECONDS = 60;
 const OPENAI_SDK_STREAM_CONTENT_SNIFF_BYTES = 2 * 1024;
@@ -382,13 +388,10 @@ function decodeProviderTraceBody(body: BodyInit | null | undefined): string | un
   return undefined;
 }
 
-async function readProviderRequestJsonPayloadForTrace(
+async function readProviderRequestJsonBody(
   request: Request | undefined,
   init: RequestInit | undefined,
-): Promise<unknown | undefined> {
-  if (!isProviderPayloadTraceEnabled()) {
-    return undefined;
-  }
+): Promise<{ text: string; payload: unknown } | undefined> {
   const headers = request?.headers ?? new Headers(init?.headers);
   const contentType = headers.get("content-type") ?? "";
   if (contentType && !isJsonContentType(contentType)) {
@@ -407,7 +410,7 @@ async function readProviderRequestJsonPayloadForTrace(
     return undefined;
   }
   try {
-    return JSON.parse(text) as unknown;
+    return { text, payload: JSON.parse(text) as unknown };
   } catch {
     return undefined;
   }
@@ -779,10 +782,12 @@ export function buildGuardedModelFetch(
   model: Model,
   timeoutMs?: number,
   options?: { sanitizeSse?: boolean },
+  shadow?: ShadowReceiptOptions,
 ): typeof fetch {
   const requestConfig = resolveModelRequestPolicy(model);
   const dispatcherPolicy = buildProviderRequestDispatcherPolicy(requestConfig);
   const requestTimeoutMs = resolveModelRequestTimeoutMs(model, timeoutMs);
+  let nextWireAttemptIndex = shadow?.wireAttemptIndex ?? 0;
   const summarizeError = (error: unknown): string => {
     if (!error || typeof error !== "object") {
       return `type=${typeof error}`;
@@ -835,13 +840,54 @@ export function buildGuardedModelFetch(
         ...(request.body ? ({ duplex: "half" } as const) : {}),
       } satisfies RequestInit & { duplex?: "half" });
     const baseInit = requestInit ?? init;
-    const providerPayloadForTrace = await readProviderRequestJsonPayloadForTrace(request, baseInit);
-    if (providerPayloadForTrace !== undefined) {
+    const shouldReadProviderBody = Boolean(shadow) || isProviderPayloadTraceEnabled();
+    const providerBody = shouldReadProviderBody
+      ? await readProviderRequestJsonBody(request, baseInit)
+      : undefined;
+    if (isProviderPayloadTraceEnabled() && providerBody !== undefined) {
       recordProviderPayloadTrace(
         undefined,
-        providerPayloadForTrace,
+        providerBody.payload,
         resolveProviderHttpPayloadTraceSource(model, url),
       );
+    }
+    if (shadow) {
+      const wireAttemptIndex = nextWireAttemptIndex;
+      nextWireAttemptIndex += 1;
+      const wireShadow = { ...shadow, wireAttemptIndex };
+      if (providerBody) {
+        // Receipt writes are observational. A persistence failure is recorded by the
+        // census diagnostics, while the guarded provider request continues unchanged.
+        emitShadowWireReceipt(
+          providerBody.text,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: wireShadow.sessionKey,
+            runId: wireShadow.runId,
+            traceId: wireShadow.traceId,
+            transformIds: wireShadow.transformIds,
+            attemptIndex: wireShadow.attemptIndex,
+            modelCallIndex: wireShadow.modelCallIndex,
+            wireAttemptIndex,
+          },
+          wireShadow,
+        );
+        if (wireShadow.rc03Plan) {
+          // RC-03: WireReceipt/v1 at the guarded request boundary, bound to the
+          // sealed CompilePlan and the final serialized body digest. Observational:
+          // failures land in the census diagnostics, never in the send path.
+          emitRc03WireReceipt(providerBody.text, wireShadow, {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            wireAttemptIndex,
+          });
+        }
+      } else {
+        recordShadowCensusFailure("wire-capture", "final-wire-body-unavailable");
+      }
     }
     const synthesizeJsonAsSse = await requestBodyHasStreamTrue(request, baseInit);
     const baseSignal = baseInit?.signal ?? undefined;

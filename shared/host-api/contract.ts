@@ -43,6 +43,7 @@ import type {
   MemoryProposalPreview,
   MemoryProposalRecord,
 } from '../types/memory';
+import type { SessionActivitySnapshot } from '../types/session-activity';
 import type {
   GitBranch,
   GitCapabilities,
@@ -354,6 +355,12 @@ export type SettingsSnapshot = Partial<{
   cdpRemoteControlEnabled: boolean;
   cdpRemoteDebuggingPort: number;
   workProviders: WorkProviderConfig;
+  sessionActivityPanelEnabled: boolean;
+  sessionActivityAutoExpand: 'active' | 'attention' | 'never';
+  sessionActivityShowGit: boolean;
+  sessionActivityShowCommands: boolean;
+  sessionRecoveryNotificationsEnabled: boolean;
+  sessionActivityRetentionMinutes: 0 | 5 | 15;
 }>;
 export type SettingsKey = keyof SettingsSnapshot & string;
 export type SettingsValue = SettingsSnapshot[SettingsKey];
@@ -474,6 +481,10 @@ export type WorkspaceTerminalStatusPayload = {
   sessionKey?: string;
   sessionId?: string;
 };
+export type WorkspaceTerminalListPayload = {
+  workspaceId?: string;
+  sessionKey?: string;
+};
 export type WorkspaceTerminalSessionResult = HostSuccess & {
   blocked?: boolean;
   approvalRequired?: boolean;
@@ -482,6 +493,7 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   sessionId?: string | null;
   workspaceId?: string | null;
   sessionKey?: string | null;
+  kind?: 'interactive' | 'webPreviewDevServer';
   cwd?: string | null;
   pid?: number | null;
   cols?: number;
@@ -489,6 +501,17 @@ export type WorkspaceTerminalSessionResult = HostSuccess & {
   status?: 'idle' | 'starting' | 'running' | 'exited' | 'blocked';
   exitCode?: number | null;
   scrollback?: string;
+};
+export type WorkspaceTerminalListResult = HostSuccess & {
+  sessions: Array<Omit<WorkspaceTerminalSessionResult, 'success'>>;
+};
+export type SessionActivitySnapshotPayload = {
+  workspaceId?: string | null;
+  sessionKey: string;
+};
+export type SessionActivitySnapshotResult = HostSuccess & {
+  snapshot: SessionActivitySnapshot;
+  runtimeAvailable: boolean;
 };
 export type WorkspaceWebPreviewStartPayload = {
   mode?: WorkspacePreviewMode;
@@ -4753,6 +4776,10 @@ export type HostApiContract = {
     interrupt: (payload: WorkspaceTerminalSessionPayload) => HostSuccess;
     close: (payload: WorkspaceTerminalSessionPayload) => HostSuccess;
     status: (payload?: WorkspaceTerminalStatusPayload) => WorkspaceTerminalSessionResult;
+    list: (payload?: WorkspaceTerminalListPayload) => WorkspaceTerminalListResult;
+  };
+  sessionActivity: {
+    snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
   };
   git: {
     capabilities: () => GitCapabilitiesResult;

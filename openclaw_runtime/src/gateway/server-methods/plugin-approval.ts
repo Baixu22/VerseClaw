@@ -97,7 +97,14 @@ export function createPluginApprovalHandlers(
 
       // Always server-generate the ID — never accept plugin-provided IDs.
       // Kind-prefix so /approve routing can distinguish plugin vs exec IDs deterministically.
-      const record = manager.create(request, timeoutMs, `plugin:${randomUUID()}`);
+      // Pass the requester identity into create() so the durable ledger
+      // reservation persists it atomically (survives restarts); bind() then
+      // keeps the in-process cache (incl. deviceTokenAuth) in sync.
+      const record = manager.create(request, timeoutMs, `plugin:${randomUUID()}`, {
+        connId: client?.connId ?? null,
+        deviceId: client?.connect?.device?.id ?? null,
+        clientId: client?.connect?.client?.id ?? null,
+      });
       bindApprovalRequesterMetadata({ record, client });
 
       const decisionPromise = registerPendingApprovalRecord({

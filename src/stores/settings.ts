@@ -15,6 +15,8 @@ import {
 
 type Theme = 'light' | 'dark' | 'system';
 export type UiDepthMode = 'basic' | 'advanced';
+export type SessionActivityAutoExpand = 'active' | 'attention' | 'never';
+export type SessionActivityRetentionMinutes = 0 | 5 | 15;
 
 interface SettingsState {
   // General
@@ -44,6 +46,12 @@ interface SettingsState {
   devModeUnlocked: boolean;
   uiDepthMode: UiDepthMode;
   workProviders: WorkProviderConfig;
+  sessionActivityPanelEnabled: boolean;
+  sessionActivityAutoExpand: SessionActivityAutoExpand;
+  sessionActivityShowGit: boolean;
+  sessionActivityShowCommands: boolean;
+  sessionRecoveryNotificationsEnabled: boolean;
+  sessionActivityRetentionMinutes: SessionActivityRetentionMinutes;
 
   // Setup
   setupComplete: boolean;
@@ -74,6 +82,12 @@ interface SettingsState {
   setDevModeUnlocked: (value: boolean) => void;
   setUiDepthMode: (value: UiDepthMode) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
+  setSessionActivityPanelEnabled: (value: boolean) => void;
+  setSessionActivityAutoExpand: (value: SessionActivityAutoExpand) => void;
+  setSessionActivityShowGit: (value: boolean) => void;
+  setSessionActivityShowCommands: (value: boolean) => void;
+  setSessionRecoveryNotificationsEnabled: (value: boolean) => void;
+  setSessionActivityRetentionMinutes: (value: SessionActivityRetentionMinutes) => void;
   markSetupComplete: () => void;
   setSetupProviderVerification: (verification: SetupProviderVerification) => void;
   resetSettings: () => void;
@@ -102,6 +116,12 @@ const defaultSettings = {
   devModeUnlocked: false,
   uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,
+  sessionActivityPanelEnabled: true,
+  sessionActivityAutoExpand: 'active' as SessionActivityAutoExpand,
+  sessionActivityShowGit: true,
+  sessionActivityShowCommands: true,
+  sessionRecoveryNotificationsEnabled: true,
+  sessionActivityRetentionMinutes: 5 as SessionActivityRetentionMinutes,
   setupComplete: false,
   setupProviderVerification: DEFAULT_SETUP_PROVIDER_VERIFICATION,
 };
@@ -205,6 +225,30 @@ export const useSettingsStore = create<SettingsState>()(
           void hostApi.settings.set('workProviders', workProviders).catch(() => { });
           return { workProviders };
         });
+      },
+      setSessionActivityPanelEnabled: (value) => {
+        set({ sessionActivityPanelEnabled: value });
+        void hostApi.settings.set('sessionActivityPanelEnabled', value).catch(() => { });
+      },
+      setSessionActivityAutoExpand: (value) => {
+        set({ sessionActivityAutoExpand: value });
+        void hostApi.settings.set('sessionActivityAutoExpand', value).catch(() => { });
+      },
+      setSessionActivityShowGit: (value) => {
+        set({ sessionActivityShowGit: value });
+        void hostApi.settings.set('sessionActivityShowGit', value).catch(() => { });
+      },
+      setSessionActivityShowCommands: (value) => {
+        set({ sessionActivityShowCommands: value });
+        void hostApi.settings.set('sessionActivityShowCommands', value).catch(() => { });
+      },
+      setSessionRecoveryNotificationsEnabled: (value) => {
+        set({ sessionRecoveryNotificationsEnabled: value });
+        void hostApi.settings.set('sessionRecoveryNotificationsEnabled', value).catch(() => { });
+      },
+      setSessionActivityRetentionMinutes: (value) => {
+        set({ sessionActivityRetentionMinutes: value });
+        void hostApi.settings.set('sessionActivityRetentionMinutes', value).catch(() => { });
       },
       markSetupComplete: () => set({ setupComplete: true }),
       setSetupProviderVerification: (verification) => {

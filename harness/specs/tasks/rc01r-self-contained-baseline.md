@@ -15,6 +15,7 @@ touchedAreas:
   - scripts/rc01-authority-inventory.mjs
   - tests/unit/rc01-authority-inventory-baseline.test.ts
   - harness/specs/tasks/rc01r-self-contained-baseline.md
+  - src/pages/Chat/ChatInput.tsx
 expectedUserBehavior:
   - No runtime, renderer, Main, Gateway, provider, channel, approval, effect, memory, context, tool, telemetry, default, or readiness behavior changes.
   - A clean checkout of the candidate contains the RC-01 baseline; the acceptance validator no longer depends on an untracked working-tree file.

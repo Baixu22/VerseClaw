@@ -372,8 +372,12 @@ function emit(record: MissionRunRecord, deps: MissionControllerDeps, patch: Part
           phase: record.phase,
           tick: record.tick,
           waitMode:
-            record.status === "ask_user" || record.status === "sleeping"
-              ? (record.status === "ask_user" ? "ask_user" : "sleep")
+            record.status === "ask_user" || record.status === "sleeping" || record.status === "paused"
+              ? record.status === "ask_user"
+                ? "ask_user"
+                : record.status === "paused"
+                  ? "pause"
+                  : "sleep"
               : "none",
         },
         { enabled: true },

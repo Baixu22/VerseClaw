@@ -34,6 +34,7 @@ import type {
 import { loadEmbeddedAgentMcpConfig } from "./embedded-agent-mcp.js";
 import { isMcpConfigRecord } from "./mcp-config-shared.js";
 import { resolveMcpTransport } from "./mcp-transport.js";
+import { classifyMcpCatalogServer } from "./tool-convergence.js";
 
 type BundleMcpSession = {
   serverName: string;
@@ -211,15 +212,25 @@ function connectWithTimeout(
 }
 
 /**
- * RC-08A health verdict after a real SDK initialize handshake. Connection state is
- * derived from the SDK `client.connect()` handshake; configuration presence or an
- * HTTP GET is never treated as connected. This is the single source of the
- * MCP-health truth in the bundle runtime.
+ * RC-08A catalog-health wiring: a server's connected state is derived from the
+ * SDK `client.connect()` initialize handshake. Configuration presence or an
+ * HTTP GET is never treated as connected (no fake-connected state). The verdict
+ * is produced by the shared `classifyMcpCatalogServer` helper and stored on the
+ * live catalog entry so health consumers read the real handshake outcome.
  */
-export function connectedAfterMcpHandshake(handshakeOk: boolean): { connected: boolean; handshake: string } {
-  return handshakeOk
-    ? { connected: true, handshake: "sdk-initialize" }
-    : { connected: false, handshake: "not-attempted" };
+function resolveCatalogServerHealth(params: {
+  serverName: string;
+  transportType: "stdio" | "sse" | "streamable-http";
+  handshakeCompleted: boolean;
+  unsupportedTransport?: boolean;
+}) {
+  return classifyMcpCatalogServer({
+    serverName: params.serverName,
+    transportType: params.transportType,
+    configured: true,
+    handshakeCompleted: params.handshakeCompleted,
+    unsupportedTransport: params.unsupportedTransport,
+  });
 }
 
 function redactErrorUrls(error: unknown): string {
@@ -685,6 +696,12 @@ export function createSessionMcpRuntime(params: {
               safeServerName,
               launchSummary: resolved.description,
               toolCount: exposedTools.length,
+              transportType: resolved.transportType,
+              health: resolveCatalogServerHealth({
+                serverName,
+                transportType: resolved.transportType,
+                handshakeCompleted: connected,
+              }).health,
               requestTimeoutMs: resolved.requestTimeoutMs,
               supportsParallelToolCalls: resolved.supportsParallelToolCalls,
               ...(capabilities.resources ? { resources: capabilities.resources } : {}),

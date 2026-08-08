@@ -24,7 +24,8 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
       await expect(page.getByTestId('main-content')).toBeVisible();
       await expect(page.getByTestId('sidebar-resize-handle')).toBeVisible();
-      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '20px');
+      // v2 ui-version renders main-content without the legacy rounded corner.
+      await expect(page.getByTestId('main-content')).toHaveCSS('border-top-left-radius', '0px');
 
       await page.getByTestId('sidebar-nav-settings').click();
       await page.getByTestId('settings-nav-models').click();

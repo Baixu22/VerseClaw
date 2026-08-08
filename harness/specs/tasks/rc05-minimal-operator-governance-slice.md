@@ -23,7 +23,9 @@ touchedAreas:
   - openclaw_runtime/src/cron/**
   - openclaw_runtime/src/gateway/**
   - src/stores/**
+  - src/pages/Inbox/**
   - scripts/**
+  - tests/unit/**
   - harness/specs/**
   - artifacts/runtime-authority-convergence/rc-05/**
 expectedUserBehavior:

@@ -10,6 +10,7 @@ import type { Context, Message, Model, SimpleStreamOptions } from "../llm/types.
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
 import { recordProviderPayloadTrace } from "./provider-payload-trace.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import { beginShadowModelCall } from "./shadow-census.js";
 import {
   canonicalizeProviderToolSchema,
   canonicalizeProviderTools,
@@ -408,7 +409,22 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         if (!apiKey) {
           throw new Error(`No API key for provider: ${model.provider}`);
         }
-        const fetch = buildGuardedModelFetch(model);
+        const shadowCall = beginShadowModelCall(
+          context,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: options?.sessionId,
+          },
+          options,
+        );
+        const fetch = buildGuardedModelFetch(
+          model,
+          undefined,
+          undefined,
+          shadowCall.active ? shadowCall.options : undefined,
+        );
 
         const client = new OpenAI({
           baseURL: model.baseUrl,
@@ -793,7 +809,22 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         if (!apiKey) {
           throw new Error(`No API key for provider: ${model.provider}`);
         }
-        const fetch = buildGuardedModelFetch(model);
+        const shadowCall = beginShadowModelCall(
+          context,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: options?.sessionId,
+          },
+          options,
+        );
+        const fetch = buildGuardedModelFetch(
+          model,
+          undefined,
+          undefined,
+          shadowCall.active ? shadowCall.options : undefined,
+        );
 
         const client = new OpenAI({
           baseURL: model.baseUrl,
@@ -1168,7 +1199,22 @@ export function createAzureOpenAIResponsesTransportStreamFn(): StreamFn {
           throw new Error(`No API key for provider: ${model.provider}`);
         }
         const apiVersion = resolveAzureOpenAIApiVersion();
-        const fetch = buildGuardedModelFetch(model);
+        const shadowCall = beginShadowModelCall(
+          context,
+          {
+            providerId: model.provider,
+            adapterId: model.api,
+            modelId: model.id,
+            sessionKey: options?.sessionId,
+          },
+          options,
+        );
+        const fetch = buildGuardedModelFetch(
+          model,
+          undefined,
+          undefined,
+          shadowCall.active ? shadowCall.options : undefined,
+        );
 
         // Resolve deployment name: use model.id or the deployment from model params
         const deployment =

@@ -152,6 +152,20 @@ export type SendOptions = {
   modelRefOverride?: string | null;
 };
 
+/**
+ * A send intent queued while a run was active (P0-2). Captures everything
+ * `sendMessage` needs to re-dispatch once the run drains, without dropping the
+ * user's message silently. `inputMode` is intentionally excluded — queued sends
+ * are ordinary chat messages, not long-task interventions.
+ */
+export type PendingMessage = {
+  id: string;
+  text: string;
+  targetAgentId: string | null;
+  targetSessionKey: string | null;
+  opts: Omit<SendOptions, 'inputMode'>;
+};
+
 export type ChatStartupPhase =
   | 'waiting-for-gateway'
   | 'loading-sessions'
@@ -182,6 +196,12 @@ export interface ChatState {
   /** Images collected from tool results, attached to the next assistant message */
   pendingToolImages: AttachedFileMeta[];
   runtimeRuns: Record<string, ChatRuntimeRunState>;
+  /**
+   * Messages the user sent while a run was active (P0-2). Instead of being
+   * silently dropped at the store layer, they queue here and are auto-sent when
+   * the active run finishes. Each entry is a full send intent (text + options).
+   */
+  pendingMessages: PendingMessage[];
 
   // Sessions
   sessions: ChatSession[];
@@ -222,6 +242,17 @@ export interface ChatState {
   loadMoreHistory: () => Promise<void>;
   sendMessage: (text: string, opts?: SendOptions) => Promise<void>;
   resendUserMessage: (input: ChatResendUserMessageInput) => Promise<void>;
+  /**
+   * Queue a message while a run is active (P0-2). Replaces the old silent-drop
+   * guard in `sendMessage`: the user's send intent is preserved and auto-sent
+   * when the run drains.
+   */
+  queuePendingMessage: (text: string, opts?: SendOptions) => void;
+  /**
+   * Send all queued messages now that the active run finished. Called from the
+   * run-finalization paths that clear `sending`.
+   */
+  drainPendingMessages: () => void;
   abortRun: () => Promise<void>;
   handleChatEvent: (event: Record<string, unknown>) => void;
   handleRuntimeEvent: (event: ChatRuntimeEvent) => void;

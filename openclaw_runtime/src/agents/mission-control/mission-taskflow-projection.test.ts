@@ -15,7 +15,11 @@ const tempRoots: string[] = [];
 let stateDir = '';
 
 function options(enabled = true) {
-  return { enabled, database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') } } as const;
+  // Match the env-default path used by the production controller projection
+  // (controller.ts calls projectMissionRun with { enabled: true } and no
+  // database override -> resolveOpenClawStateSqlitePath = OPENCLAW_STATE_DIR
+  // + '/state/openclaw.sqlite'), so the real-pause test hits one file.
+  return { enabled, database: { env: process.env, path: path.join(stateDir, 'state', 'openclaw.sqlite') } } as const;
 }
 
 function input(overrides = {}) {
@@ -76,11 +80,69 @@ describe('RC-06C Mission -> TaskFlow read-only projection', () => {
     expect(resumed.status).toBe('running');
   });
 
+  it('real pauseMission -> resumeMission projects wait semantics through the production path', async () => {
+    // Enable the production projection gate and drive the REAL controller
+    // functions (not synthetic projection inputs): pauseMission emits paused
+    // (waiting + waitMode=pause), resumeMission emits sleeping (waiting +
+    // waitMode=sleep) through controller.ts emit().
+    process.env.RC06C_MISSION_PROJECTION = '1';
+    const { createMission, pauseMission, resumeMission } = await import('./controller.js');
+    const { projectMissionRun } = await import('./mission-taskflow-projection.js');
+    const missions = new Map<string, { missionId: string; status: string; phase: string; tick: number }>();
+    const deps = {
+      getMission: (id: string) => missions.get(id),
+      saveMission: (record: { missionId: string }) => {
+        missions.set(record.missionId, record);
+        return record;
+      },
+    };
+    const mission = createMission(
+      { objective: 'task', sessionKey: 'agent::s1' },
+      { runtime: { mission: { enabled: true } } } as never,
+      deps as never,
+    );
+    missions.set(mission.missionId, mission);
+    // Bring the projected flow to running first (the mission ran a tick);
+    // queued -> waiting is not a legal transition, exactly like production.
+    expect(projectMissionRun(input({ missionId: mission.missionId, status: 'running', phase: 'execute', tick: 1 }), options()).projected).toBe(true);
+
+    const paused = pauseMission(mission.missionId, deps as never);
+    expect(paused.status).toBe('paused');
+    const pausedRecovery = recoverMissionProjection(mission.missionId, options());
+    expect(pausedRecovery.status).toBe('waiting');
+    expect(pausedRecovery.waitMode).toBe('pause');
+
+    const resumed = resumeMission(mission.missionId, deps as never);
+    expect(resumed.status).toBe('sleeping');
+    const resumedRecovery = recoverMissionProjection(mission.missionId, options());
+    expect(resumedRecovery.status).toBe('waiting');
+    expect(resumedRecovery.waitMode).toBe('sleep');
+
+    delete process.env.RC06C_MISSION_PROJECTION;
+  });
+
   it('preserves cancel semantics (running -> cancelled)', () => {
     expect(projectMissionRun(input({ status: 'running' }), options()).projected).toBe(true);
     const cancelled = projectMissionRun(input({ status: 'cancelled' }), options());
     expect(cancelled.projected).toBe(true);
     expect(cancelled.status).toBe('cancelled');
+  });
+
+  it('cancel survives restart and terminal is absorbing', () => {
+    expect(projectMissionRun(input({ status: 'running' }), options()).projected).toBe(true);
+    expect(projectMissionRun(input({ status: 'cancelled' }), options()).projected).toBe(true);
+
+    // Terminal is absorbing: a late running event cannot resurrect the mission.
+    const late = projectMissionRun(input({ status: 'running', tick: 9 }), options());
+    expect(late.projected).toBe(false);
+    expect(late.skippedReason).toBe('conflict');
+
+    // Restart recovery sees the terminal truth from flow_runs.
+    const recovery = recoverMissionProjection('mission-1', options());
+    expect(recovery.recovered).toBe(true);
+    expect(recovery.status).toBe('cancelled');
+    const store = new TaskFlowCasStore(options().database);
+    expect(store.getById('mission:mission-1')?.ended_at).not.toBeNull();
   });
 
   it('is a no-op when the flag is off (pure legacy path)', () => {

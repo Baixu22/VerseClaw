@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   browserTasks: vi.fn(),
   browserApprove: vi.fn(),
   browserReject: vi.fn(),
+  gatewayRpc: vi.fn(),
 }));
 
 vi.mock('@/lib/host-api', () => ({
@@ -33,6 +34,9 @@ vi.mock('@/lib/host-api', () => ({
       tasks: mocks.browserTasks,
       approveTask: mocks.browserApprove,
       rejectTask: mocks.browserReject,
+    },
+    gateway: {
+      rpc: mocks.gatewayRpc,
     },
   },
 }));
@@ -100,6 +104,7 @@ describe('Inbox store', () => {
     mocks.remoteList.mockResolvedValue({ success: true, tasks: [], generatedAt: '2026-07-31T10:00:00.000Z' });
     mocks.browserTasks.mockResolvedValue({ success: true, tasks: [] });
     mocks.remotePreview.mockResolvedValue({ success: true, requiresApproval: false, changes: [] });
+    mocks.gatewayRpc.mockResolvedValue({ intents: [] });
   });
 
   it('projects the three backend models into constrained actionable item variants', () => {
@@ -117,12 +122,14 @@ describe('Inbox store', () => {
     mocks.approvals.mockRejectedValue(new Error('permission store unavailable'));
     mocks.remoteList.mockResolvedValue({ success: true, tasks: [remoteTask], generatedAt: '2026-07-31T10:03:00.000Z' });
     mocks.browserTasks.mockResolvedValue({ success: true, tasks: [browserTask] });
+    mocks.gatewayRpc.mockRejectedValue(new Error('operator intents unavailable'));
 
     await useInboxStore.getState().refresh();
 
     const state = useInboxStore.getState();
     expect(state.items).toHaveLength(2);
     expect(state.sourceErrors.permission).toBe('permission store unavailable');
+    expect(state.sourceErrors.operator).toBe('operator intents unavailable');
     expect(state.loaded).toBe(true);
   });
 

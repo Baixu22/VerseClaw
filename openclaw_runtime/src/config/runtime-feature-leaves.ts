@@ -134,7 +134,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   },
   orchestration: { routingMemoPilot: "shadow", handoffArtifacts: "on" },
   resilience: { anomalyClassifierPilot: "shadow" },
-  rc05: { operatorSliceEnabled: true },
+  rc05: { operatorSliceEnabled: true, cronAutoApprove: false },
 };
 
 /** Dot-joined leaf paths of a plain-object sample tree (arrays are leaves). */

@@ -17,6 +17,9 @@ ownedPaths:
   - openclaw_runtime/src/context-engine/compass-handler.ts
   - openclaw_runtime/src/agents/anthropic-transport-stream.ts
   - openclaw_runtime/src/agents/shadow-census.ts
+  - openclaw_runtime/src/agents/provider-transport-fetch.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
   - harness/specs/tasks/rc03-dcs-seal-dual-receipts.md
   - artifacts/runtime-authority-convergence/rc-03/**
 touchedAreas:

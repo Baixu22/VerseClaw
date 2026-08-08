@@ -16,7 +16,8 @@
   "source": {
     "permission": "Разрешение",
     "remote-task": "Удалённая задача",
-    "browser-task": "Задача браузера"
+    "browser-task": "Задача браузера",
+    "operator": "Оператор"
   },
   "permissionSource": {
     "terminal": "Терминал",
@@ -58,6 +59,11 @@
     },
     "browserTask": {
       "waitingApproval": "Ожидает одобрения"
+    },
+    "operator": {
+      "approval_pending": "Ожидает решения",
+      "approved": "Одобрено",
+      "denied": "Отклонено"
     }
   },
   "partialError": {

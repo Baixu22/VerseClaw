@@ -1407,6 +1407,9 @@ CREATE TABLE IF NOT EXISTS flow_runs (
   blocked_summary TEXT,
   state_json TEXT,
   wait_json TEXT,
+  -- RC-06A: delivery projection persisted on the same row as the lifecycle
+  -- transition so delivery/lifecycle can never split; owned by flow_runs.
+  delivery_state TEXT,
   cancel_requested_at INTEGER,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
@@ -1511,29 +1514,62 @@ CREATE INDEX IF NOT EXISTS idx_backup_runs_created
 --     remain the effect/idempotency truth.
 --  7. npm fallback reports degraded and never counts toward receipt coverage.
 CREATE TABLE IF NOT EXISTS runtime_receipts (
-  receipt_id TEXT NOT NULL PRIMARY KEY,
-  idempotency_key TEXT NOT NULL,
+  receipt_id TEXT NOT NULL PRIMARY KEY CHECK (
+    length(receipt_id) BETWEEN 6 AND 64 AND receipt_id GLOB 'rcpt_*'
+  ),
+  idempotency_key TEXT NOT NULL CHECK (length(idempotency_key) BETWEEN 1 AND 512),
   kind TEXT NOT NULL CHECK (kind IN ('shadow_context','shadow_wire','context','wire','effect')),
   runtime_mode TEXT NOT NULL CHECK (runtime_mode IN ('source','npm')),
-  version TEXT NOT NULL,
-  session_key TEXT,
-  run_id TEXT,
-  trace_id TEXT,
-  attempt_index INTEGER NOT NULL,
-  model_call_index INTEGER NOT NULL,
-  wire_attempt_index INTEGER NOT NULL,
-  provider_id TEXT,
-  adapter_id TEXT,
-  transform_ids_json TEXT,
-  selected_json TEXT,
-  omitted_json TEXT,
-  budget_json TEXT,
-  policy_digest TEXT,
-  logical_digest TEXT,
-  wire_digest TEXT,
-  correlation_digest TEXT NOT NULL,
-  content_digest TEXT NOT NULL,
-  created_at INTEGER NOT NULL
+  version TEXT NOT NULL CHECK (
+    (kind IN ('shadow_context','shadow_wire') AND version = '0') OR
+    (kind IN ('context','wire','effect') AND version = '1')
+  ),
+  session_key TEXT CHECK (session_key IS NULL OR length(session_key) BETWEEN 1 AND 256),
+  run_id TEXT CHECK (run_id IS NULL OR length(run_id) BETWEEN 1 AND 256),
+  trace_id TEXT CHECK (trace_id IS NULL OR length(trace_id) BETWEEN 1 AND 256),
+  attempt_index INTEGER NOT NULL CHECK (attempt_index BETWEEN 0 AND 2147483647),
+  model_call_index INTEGER NOT NULL CHECK (model_call_index BETWEEN 0 AND 2147483647),
+  wire_attempt_index INTEGER NOT NULL CHECK (wire_attempt_index BETWEEN 0 AND 2147483647),
+  provider_id TEXT CHECK (provider_id IS NULL OR length(provider_id) BETWEEN 1 AND 256),
+  adapter_id TEXT CHECK (adapter_id IS NULL OR length(adapter_id) BETWEEN 1 AND 256),
+  transform_ids_json TEXT CHECK (
+    transform_ids_json IS NULL OR
+    (length(transform_ids_json) <= 8192 AND json_valid(transform_ids_json) AND json_type(transform_ids_json) = 'array')
+  ),
+  selected_json TEXT CHECK (
+    selected_json IS NULL OR
+    (length(selected_json) <= 16384 AND json_valid(selected_json) AND json_type(selected_json) = 'array')
+  ),
+  omitted_json TEXT CHECK (
+    omitted_json IS NULL OR
+    (length(omitted_json) <= 16384 AND json_valid(omitted_json) AND json_type(omitted_json) = 'array')
+  ),
+  budget_json TEXT CHECK (
+    budget_json IS NULL OR
+    (length(budget_json) <= 256 AND json_valid(budget_json) AND json_type(budget_json) = 'object')
+  ),
+  policy_digest TEXT CHECK (
+    policy_digest IS NULL OR
+    (length(policy_digest) = 64 AND policy_digest NOT GLOB '*[^0-9a-f]*')
+  ),
+  logical_digest TEXT CHECK (
+    logical_digest IS NULL OR
+    (length(logical_digest) = 64 AND logical_digest NOT GLOB '*[^0-9a-f]*')
+  ),
+  wire_digest TEXT CHECK (
+    wire_digest IS NULL OR
+    (length(wire_digest) = 64 AND wire_digest NOT GLOB '*[^0-9a-f]*')
+  ),
+  correlation_digest TEXT NOT NULL CHECK (
+    length(correlation_digest) = 64 AND correlation_digest NOT GLOB '*[^0-9a-f]*'
+  ),
+  content_digest TEXT NOT NULL CHECK (
+    length(content_digest) = 64 AND content_digest NOT GLOB '*[^0-9a-f]*'
+  ),
+  created_at INTEGER NOT NULL CHECK (created_at >= 0),
+  CHECK (kind NOT IN ('shadow_context','context') OR logical_digest IS NOT NULL),
+  CHECK (kind NOT IN ('shadow_wire','wire') OR wire_digest IS NOT NULL),
+  CHECK (kind = 'effect' OR (provider_id IS NOT NULL AND adapter_id IS NOT NULL))
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_runtime_receipts_idempotency
@@ -1562,7 +1598,13 @@ CREATE TABLE IF NOT EXISTS approval_ledger (
     'execution_started','applied','not_applied','unknown','reconciled',
     'needs_reconciliation'
   )),
-  request_json TEXT NOT NULL,
+  -- RC-04: only the canonical SHA-256 digest of the request is stored. Raw
+  -- request payloads (which may carry command text or secrets) never persist;
+  -- legacy request_json columns are migrated to request_digest on reopen.
+  request_digest TEXT NOT NULL,
+  -- Optimistic-concurrency revision: every transition bumps revision and the
+  -- UPDATE is guarded by WHERE revision = ? so stale writers are rejected.
+  revision INTEGER NOT NULL DEFAULT 1,
   requested_by_conn_id TEXT,
   requested_by_device_id TEXT,
   requested_by_client_id TEXT,
@@ -1572,6 +1614,10 @@ CREATE TABLE IF NOT EXISTS approval_ledger (
   resolved_by TEXT,
   effect_receipt_id TEXT,
   domain_journal_ref TEXT,
+  -- RC-04: outcome records the applied|not_applied|unknown intermediate state
+  -- observed between execution_started and reconciled (persisted so the full
+  -- state sequence is auditable even after the row reaches reconciled).
+  outcome TEXT CHECK (outcome IN ('applied','not_applied','unknown')),
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
@@ -1588,13 +1634,19 @@ CREATE TABLE IF NOT EXISTS effect_receipts (
   effect_receipt_id TEXT NOT NULL PRIMARY KEY,
   idempotency_key TEXT NOT NULL,
   approval_id TEXT,
-  proposal_json TEXT NOT NULL,
+  -- RC-04: only the canonical SHA-256 digest of the proposal is stored; raw
+  -- proposal payloads never persist. Legacy proposal_json columns are migrated
+  -- to proposal_digest on reopen.
+  proposal_digest TEXT NOT NULL,
   approval_decision TEXT,
   domain_executor TEXT NOT NULL,
   outcome TEXT NOT NULL CHECK (outcome IN ('applied','not_applied','unknown','reconciled')),
   artifact_ref TEXT,
   journal_ref TEXT,
   recoverability TEXT NOT NULL,
+  -- Idempotency comparison includes the schema version so a format change
+  -- conflicts instead of silently matching an old receipt.
+  schema_version TEXT NOT NULL DEFAULT '2',
   created_at INTEGER NOT NULL
 );
 

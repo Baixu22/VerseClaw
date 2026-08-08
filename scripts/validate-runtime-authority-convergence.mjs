@@ -204,6 +204,63 @@ function validateChangedPaths(root, manifest, base, errors) {
   }
 }
 
+/**
+ * RC-09A ownership-matrix validation. The final evidence bundle must contain
+ * changed-path-ownership.json generated from the exact candidate diff; every
+ * manifest changed path maps to EXACTLY ONE RC owner (RC-00..RC-08B). Missing
+ * matrix, path/owner mismatch, duplicate owners, or paths owned by an RC that is
+ * not in the required package set all fail closed.
+ */
+function validateOwnershipMatrix(root, manifest, base, errors) {
+  if (!base || !Array.isArray(manifest?.changedPaths)) return;
+  const matrixPath = resolve(
+    root,
+    'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
+  );
+  if (!existsSync(matrixPath)) {
+    errors.push('changed-path-ownership.json is missing from the final evidence bundle');
+    return;
+  }
+  let matrix;
+  try {
+    matrix = JSON.parse(readFileSync(matrixPath, 'utf8'));
+  } catch (error) {
+    errors.push(`cannot read changed-path-ownership.json: ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
+  if (matrix?.schema !== 'runtime-authority-convergence-rc09-ownership/v1') {
+    errors.push('changed-path-ownership.json schema mismatch');
+    return;
+  }
+  if (!Array.isArray(matrix.entries)) {
+    errors.push('changed-path-ownership.json entries are missing');
+    return;
+  }
+  const owners = new Map();
+  for (const entry of matrix.entries) {
+    const pathValue = normalizedPath(entry?.path);
+    const rc = isNonBlankString(entry?.rc) ? String(entry.rc) : null;
+    if (!pathValue || !rc) {
+      errors.push(`changed-path-ownership.json has a malformed entry: ${JSON.stringify(entry)}`);
+      continue;
+    }
+    if (owners.has(pathValue)) {
+      errors.push(`changed path owned by multiple RC packages: ${pathValue}`);
+      continue;
+    }
+    owners.set(pathValue, rc);
+  }
+  for (const pathValue of manifest.changedPaths) {
+    if (!owners.has(pathValue)) {
+      errors.push(`changed path has no RC owner in changed-path-ownership.json: ${pathValue}`);
+    }
+  }
+  const manifestOwnerCount = manifest.changedPaths.length;
+  if (owners.size !== manifestOwnerCount) {
+    errors.push(`changed-path-ownership.json owner count mismatch (matrix ${owners.size}, manifest ${manifestOwnerCount})`);
+  }
+}
+
 function validateSourceIdentity(root, manifest, errors) {
   const source = manifest?.source;
   const candidate = manifest?.candidate?.commit;
@@ -343,6 +400,7 @@ export function validateRuntimeAuthorityConvergence(options = {}) {
   const base = validateBaseline(root, baseline, manifest, errors);
   validateCandidateTree(root, manifest, errors);
   validateChangedPaths(root, manifest, base, errors);
+  validateOwnershipMatrix(root, manifest, base, errors);
   validateSourceIdentity(root, manifest, errors);
   validateReportContract(manifest, report, reportPath, errors);
   if (phase === 'human' && verdictPath) validateHumanVerdict(manifest, manifestPath, reportPath, verdictPath, errors);

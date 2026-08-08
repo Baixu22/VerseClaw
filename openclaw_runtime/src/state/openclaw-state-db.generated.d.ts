@@ -88,12 +88,14 @@ export interface ApprovalLedger {
   effect_receipt_id: string | null;
   expires_at_ms: number;
   idempotency_key: string;
-  request_json: string;
+  outcome: string | null;
+  request_digest: string;
   requested_by_client_id: string | null;
   requested_by_conn_id: string | null;
   requested_by_device_id: string | null;
   resolved_at_ms: number | null;
   resolved_by: string | null;
+  revision: Generated<number>;
   state: string;
   updated_at: number;
 }
@@ -507,8 +509,9 @@ export interface EffectReceipts {
   idempotency_key: string;
   journal_ref: string | null;
   outcome: string;
-  proposal_json: string;
+  proposal_digest: string;
   recoverability: string;
+  schema_version: Generated<string>;
 }
 
 export interface ExecApprovalsConfig {
@@ -532,6 +535,7 @@ export interface FlowRuns {
   controller_id: string | null;
   created_at: number;
   current_step: string | null;
+  delivery_state: string | null;
   ended_at: number | null;
   flow_id: string;
   goal: string;
