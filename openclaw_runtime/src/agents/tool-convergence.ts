@@ -11,11 +11,13 @@ export type TransportType = 'stdio' | 'sse' | 'streamable-http';
 
 export type ToolOrigin = 'mcp-server' | 'host-native' | 'catalog-projection';
 
+export type HostNativeSurface = 'git' | 'storage' | 'terminal' | 'browser';
+
 export type ToolClassification = {
   toolId: string;
   origin: ToolOrigin;
   /** When origin is host-native: the backing host surface (git/storage/terminal/browser). */
-  hostSurface?: 'git' | 'storage' | 'terminal' | 'browser';
+  hostSurface?: HostNativeSurface;
   /** When origin is mcp-server: the real MCP server transport that backs it. */
   mcpTransport?: TransportType;
   /** A host-native tool must never be labelled MCP without a real MCP server path. */
@@ -63,6 +65,39 @@ export function classifyTool(input: {
 /** A host-native tool labelled as MCP without a real MCP server is a defect. */
 export function isHostNativeMisLabelledAsMcp(classification: ToolClassification): boolean {
   return classification.origin === 'host-native' && classification.labelledAsMcp === true;
+}
+
+export type McpCatalogServerClassification = {
+  serverName: string;
+  origin: 'mcp-server';
+  transportType?: TransportType;
+  health: McpHealthVerdict;
+};
+
+/**
+ * Classify one live MCP catalog server. A server that reached the SDK catalog
+ * handshake is a real MCP server; its health is connected only when the
+ * handshake completed (never from configuration presence or an HTTP GET alone).
+ */
+export function classifyMcpCatalogServer(input: {
+  serverName: string;
+  transportType?: TransportType;
+  configured: boolean;
+  handshakeCompleted: boolean;
+  httpGetOk?: boolean;
+  unsupportedTransport?: boolean;
+}): McpCatalogServerClassification {
+  return {
+    serverName: input.serverName,
+    origin: 'mcp-server',
+    transportType: input.transportType,
+    health: evaluateMcpHealth({
+      configured: input.configured,
+      handshakeCompleted: input.handshakeCompleted,
+      httpGetOk: input.httpGetOk,
+      unsupportedTransport: input.unsupportedTransport,
+    }),
+  };
 }
 
 export type McpHealthVerdict =
