@@ -339,13 +339,13 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
         hostApi.sessionActivity.snapshot({ workspaceId, sessionKey }),
       ]);
       let snapshot = get().snapshots[sessionKey] ?? initial;
-      if (activityResult.status === 'fulfilled' && activityResult.value.success) {
+      if (activityResult.status === 'fulfilled' && activityResult.value.success && activityResult.value.snapshot) {
         const hydrated = activityResult.value.snapshot;
         const mergeItems = <T extends { id: string; updatedAt: number }>(base: T[], incoming: T[]) => incoming.reduce(upsert, base);
         snapshot = {
           ...snapshot,
           ...hydrated,
-          session: hydrated.session.updatedAt >= snapshot.session.updatedAt
+          session: hydrated.session && hydrated.session.updatedAt >= snapshot.session.updatedAt
             ? { ...snapshot.session, ...hydrated.session, sessionKey }
             : snapshot.session,
           tasks: mergeItems(snapshot.tasks, hydrated.tasks),

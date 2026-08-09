@@ -87,6 +87,7 @@ type ChatLikeState = {
   lastUserMessageAt: number | null;
   streamingText: string;
   loadHistory: ReturnType<typeof vi.fn>;
+  drainPendingMessages: ReturnType<typeof vi.fn>;
 };
 
 function makeHarness(initial?: Partial<ChatLikeState>) {
@@ -103,6 +104,7 @@ function makeHarness(initial?: Partial<ChatLikeState>) {
     lastUserMessageAt: null,
     streamingText: '',
     loadHistory: vi.fn(),
+    drainPendingMessages: vi.fn(),
     ...initial,
   };
 

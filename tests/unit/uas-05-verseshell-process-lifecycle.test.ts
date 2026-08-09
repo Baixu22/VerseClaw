@@ -71,9 +71,10 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
     const surrogate = read("artifacts/first-product-preview/TF-0009/agent-surrogate-report.json");
 
     expect(nodes["TF-0016"]).toMatchObject({ status: "done", progress: 100 });
-    expect(nodes["TF-0017"]).toMatchObject({ status: "in_progress", progress: 35 });
-    expect(nodes["TF-0018"]).toMatchObject({ status: "proposed", progress: 0 });
-    expect(nodes["TF-0019"]).toMatchObject({ status: "proposed", progress: 0 });
+    expect(nodes["TF-0017"]).toMatchObject({ status: "deprecated" });
+    expect(nodes["TF-0028"]).toMatchObject({ status: "in_progress" });
+    expect(nodes["TF-0041"]).toMatchObject({ status: "proposed" });
+    expect(nodes["TF-0042"]).toMatchObject({ status: "blocked" });
     expect(evidence.frozenBoundaries).toMatchObject({
       liveReady: false,
       productApproved: false,

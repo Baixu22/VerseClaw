@@ -28,6 +28,7 @@ const { agentsState, chatState, gatewayState, providersState, mcpState, artifact
     streamingMessage: null as unknown,
     streamingTools: [] as Array<Record<string, unknown>>,
     pendingFinal: false,
+    pendingMessages: [] as Array<Record<string, unknown>>,
     switchSession: vi.fn(async () => undefined),
     renameSession: vi.fn(async () => undefined),
     archiveSession: vi.fn(async () => undefined),
@@ -2610,18 +2611,19 @@ describe('ChatInput agent targeting', () => {
     });
 
     fireEvent.click(screen.getByTestId('chat-composer-actions'));
+    fireEvent.click(await screen.findByTestId('chat-composer-action-more'));
 
-    expect(await screen.findByTestId('chat-composer-actions-menu')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-composer-actions-menu')).toHaveAttribute('data-layout', 'compact-command-list');
-    expect(screen.getByTestId('chat-composer-action-group-context')).toHaveTextContent('Add context');
-    expect(screen.getByTestId('chat-composer-action-attach-files')).toHaveTextContent('Attach files');
-    expect(screen.getByTestId('chat-composer-action-knowledge')).toHaveTextContent('Search knowledge');
-    expect(screen.getByTestId('chat-composer-action-group-skills')).toHaveTextContent('Skills');
-    expect(await screen.findByTestId('chat-composer-action-skill-create-skill')).toHaveTextContent('/create-skill');
-    expect(screen.getByTestId('chat-composer-action-group-office')).toHaveTextContent('Office');
-    expect(screen.getByTestId('chat-composer-action-office-word')).toHaveTextContent('Word');
-    expect(screen.getByTestId('chat-composer-action-group-session')).toHaveTextContent('Session');
-    expect(screen.getByTestId('chat-composer-action-compact')).toHaveTextContent('Compact session');
+    const menu = await screen.findByTestId('chat-composer-actions-menu');
+    expect(menu).toHaveAttribute('data-layout', 'compact-command-list');
+    expect(within(menu).getByTestId('chat-composer-action-group-context')).toHaveTextContent('Add context');
+    expect(within(menu).getByTestId('chat-composer-action-attach-files')).toHaveTextContent('Attach files');
+    expect(within(menu).getByTestId('chat-composer-action-knowledge')).toHaveTextContent('Search knowledge');
+    expect(within(menu).getByTestId('chat-composer-action-group-skills')).toHaveTextContent('Skills');
+    expect(await within(menu).findByTestId('chat-composer-action-skill-create-skill')).toHaveTextContent('/create-skill');
+    expect(within(menu).getByTestId('chat-composer-action-group-office')).toHaveTextContent('Office');
+    expect(within(menu).getByTestId('chat-composer-action-office-word')).toHaveTextContent('Word');
+    expect(within(menu).getByTestId('chat-composer-action-group-session')).toHaveTextContent('Session');
+    expect(within(menu).getByTestId('chat-composer-action-compact')).toHaveTextContent('Compact session');
   });
 
   it('keeps Office actions visible and routes to setup when no enabled Office skill is available', async () => {
