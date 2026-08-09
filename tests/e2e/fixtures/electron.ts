@@ -368,8 +368,15 @@ export async function installIpcMocks(
   app: ElectronApplication,
   config: IpcMockConfig,
 ): Promise<void> {
-  await app.evaluate(
-    async ({ app: _app }, mockConfig) => {
+  // The window can still be navigating right after launch; app.evaluate then
+  // races the navigation and dies with "Execution context was destroyed".
+  // Stabilize the window first, then retry briefly as a fallback.
+  await getStableWindow(app);
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      await app.evaluate(
+        async ({ app: _app }, mockConfig) => {
       const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
       const stableStringify = (value: unknown): string => {
         if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -587,4 +594,11 @@ export async function installIpcMocks(
     },
     config,
   );
+      return;
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 750));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }

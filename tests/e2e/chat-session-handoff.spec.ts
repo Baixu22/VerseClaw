@@ -59,6 +59,23 @@ const activeWorkspace = {
 
 function baseHostApiMocks() {
   return {
+    [stableStringify(['providers', 'accounts', null])]: [{
+      id: 'test-provider',
+      name: 'Test Provider',
+      type: 'custom',
+      vendorId: 'custom',
+      enabled: true,
+      authMode: 'api_key',
+      createdAt: 1,
+      updatedAt: 1,
+    }],
+    [stableStringify(['providers', 'accountKeyInfo', null])]: [{
+      accountId: 'test-provider',
+      hasKey: true,
+      keyMasked: 'sk-***',
+    }],
+    [stableStringify(['providers', 'vendors', null])]: [],
+    [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'test-provider' },
     [stableStringify(['gateway', 'status', null])]: {
       state: 'running',
       port: 18789,
