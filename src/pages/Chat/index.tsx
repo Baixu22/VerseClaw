@@ -2830,6 +2830,13 @@ export function Chat() {
                                       openWorkspacePanel({ panel: 'files', filePath: target.filePath });
                                       return;
                                     }
+                                    // Prefer the captured edit diff (receipt
+                                    // carries old/new snippets + baseline) over
+                                    // the git panel: runtime-generated files
+                                    // live in the agent workspace, not the
+                                    // app workspace, so git state may not
+                                    // cover them.
+                                    useArtifactPanel.getState().setFocusedFile(target);
                                     openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
                                   }}
                                 />
