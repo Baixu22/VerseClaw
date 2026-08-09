@@ -2064,7 +2064,8 @@ export function ChatInput({
     || chatComposerStatusComponents.length > 0
     || Boolean(longTaskControlStatus)
     || compactAttention
-    || hasFailedAttachments;
+    || hasFailedAttachments
+    || Boolean(composerContinuityAction);
 
   const completeSend = useCallback(async (
     textToSend: string,
