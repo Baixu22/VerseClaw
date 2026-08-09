@@ -8,8 +8,8 @@ current_work_package: RC-09
 current_task_forest_node: TF-0028
 engineering_verdict: pass
 engineering_report: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
-human_verdict: not-run
-human_verdict_record: null
+human_verdict: blocked
+human_verdict_record: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml
 done_allowed: false
 required_work_packages:
   - RC-00
@@ -35,5 +35,5 @@ product_locks:
 evidence_manifest: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
 blockers: []
 last_verified_at: 2026-08-09T12:10:00+08:00
-next_action: RC-10 前置任务已完成一轮（2026-08-09 rc10-round-1）：H-01 真实 agent turn（scripted LLM + 真实 gateway，journal/receipts/diff 全过，FP-P1-11 budget channel 偏差已记录）、H-02 rc05-operator-inbox 2/2、H-03 channel-conformance fixture 9/9（真实 channel 未配置——前置缺口，按 HUMAN-ACCEPTANCE.md 该缺口使 verdict 只能 blocked 直至用户提供真实 channel）、H-04 restart-recovery-fp-p1-05 1/1 + rc04 61/61、H-05 rc04 effect idempotency/restart 61/61、H-06 fork/handoff 5/5 + inbox deny 零 effect。运行手册 harness/specs/tasks/rc10-human-acceptance-runbook.md 已建并 validate。预裁决证据：artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/rc10-round-1/（run-record.md + manifest/final-report 副本）。human-verdict.yaml 仅由用户撰写：candidate 3209f0981、manifest e411eef8…、final-report 108a9906…；accepted 需 H-01..H-06 全部 accepted 且 H-03 真实 channel 已配置。
+next_action: 用户判定 RC-10 blocked（2026-08-09，human-verdict.yaml 已记录）：H-03 真实 channel 未配置，fixture 证据不可豁免。rc10-round-1 已执行 H-01 核心/H-02/H-04/H-05/H-06（真实 Electron + 真实 gateway + scripted LLM，证据 rc10-round-1/），H-01 FP-P1-11 DCS budget-channel 偏差已记录待 runtime owner 复核。程序保持 human_acceptance_pending；解除 blocked 的路径：用户配置真实 channel → 复核 rc10-round-1 证据 → 将 human-verdict.yaml 改为 accepted（H-01..H-06 全 accepted、failed 空）→ 在候选 worktree 运行 --phase human validator 通过后才允许 done。product locks 保持 false；accepted_work_packages 保持空。
 ---
