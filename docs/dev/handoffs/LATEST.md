@@ -658,3 +658,11 @@ ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 校验�
 
 解除 blocked 的唯一路径：配置真实 channel → 复核 rc10-round-1 证据（含 H-01 FP-P1-11 偏差）→ 将 verdict 改为 accepted（H-01..H-06 全 accepted、failed 空）→ 候选 worktree 运行 
 ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 通过 → 才允许 done。
+
+---
+
+# RC-10 用户判定 accepted — 程序 done（2026-08-09）
+
+用户最终判定：**accepted**（human-verdict.yaml：candidate 3209f0981、manifest file sha 2ea05762…、final-report sha 108a9906…、accepted_scenarios=[H-01..H-06]、failed_scenarios=[]；H-03 以 channel-conformance fixture 9/9 证据按用户明确 override 通过）。候选 worktree --phase human validator **PASS（exit 0）**。STATUS.md → program_status: done，accepted_work_packages = RC-00..RC-10。
+
+后续跟进（不阻塞，已记录）：H-01 FP-P1-11 DCS budget-channel 偏差（working_memory 未计费、cvk_addition 计费）与 FP-P1-01 Setup 验证方差，建议 runtime owner 复核。product locks 保持 false——done 不自动改变 default-on/release/GA/TF-0006。Task Forest closeout proposal 待受支持 CLI 恢复后创建。
