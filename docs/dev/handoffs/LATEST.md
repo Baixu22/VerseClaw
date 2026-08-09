@@ -618,3 +618,34 @@ ode scripts/validate-runtime-authority-convergence.mjs --phase engineering ... |
 ## 下一步唯一动作
 
 RC-10（用户执行）：真实 Desktop/Cron/Channel/Restart/Fork/Handoff 场景验收并记录 accepted/rejected/blocked；之后才允许 done 与 product locks 变更。
+
+---
+
+# RC-10 前置任务完成 + 真实验收 Round 1（2026-08-09）
+
+> 状态：RC-10 的 agent 侧前置任务全部完成；一轮真实验收（rc10-round-1）已执行并产出预裁决证据。human-verdict.yaml 保持未写（仅用户可写）。H-03 需真实 channel——未配置前 verdict 只能 blocked。
+
+## 本轮完成内容
+
+1. **运行手册 spec**：harness/specs/tasks/rc10-human-acceptance-runbook.md（validate PASS，requiredProfiles fast+comms）。
+2. **真实轮执行**（真实 Electron + 真实 gateway + scripted LLM / mock provider，零凭据）：
+   - H-01：coding-loop-fp-p1-04 真实 agent turn——util.js read→edit→write→verify→undo、journal 双 mutation snapshot + lineage、file receipts、captured diff viewer（monaco-diff-viewer）全过；FP-P1-11 DCS budget channel 偏差（working_memory 未计费、cvk_addition 计费）确定性存在，运行时单元覆盖（dcs-producer-envelope / turn-injection-budget / extensions.working-memory）全过——记录为 H-01 偏差待 runtime owner 复核。
+   - H-02：rc05-operator-inbox 2/2（decide 批准→badge 清除；deny→零 effect）。
+   - H-03：channel-conformance fixture 9/9（六故障场景）；真实 channel 未配置 = 前置缺口（blocked 条件）。
+   - H-04：restart-recovery-fp-p1-05 1/1（真实 gateway 重启 19900→14756、journal generation、forced-off flags、fail-closed）+ rc04 运行时 61/61（pending approval 重启恢复、effect 前无动作）。
+   - H-05：rc04 effect idempotency（8 维度）/restart 恢复 61/61。
+   - H-06：chat-session-fork 3/3 + chat-session-handoff 2/2（含 run-active 时入口禁用）+ inbox deny 零 effect。
+3. **修复落 main（已 push d9de5803c）**：
+   - 生成文件 receipt 点击 → review changes 视图渲染 captured edit diff（focusedFile），无 captured 内容时回退 git 面板（修复 coding-loop / chat-file-changes 类 diff-viewer 断言）。
+   - installIpcMocks 先稳定窗口 + 重试（消除 evaluate 竞态）。
+   - chat-input/chat-session-fork/handoff spec：provider snapshot mock（send 通过 readiness gate）、workMode legacy 断言移除。
+   - coding-loop workspace git-init（真实 diff 基线）。
+4. **预裁决证据**：artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/rc10-round-1/{run-record.md,manifest.copy.json,final-report.copy.json}（gitignored 证据 bundle；final-report sha256 108a9906…已填入 verdict 模板）。
+
+## 用户剩余动作（RC-10）
+
+1. 配置至少一个真实 channel（H-03）或确认维持 blocked。
+2. 复核 rc10-round-1/run-record.md 的 H-01 FP-P1-11 偏差与 FP-P1-01 Setup 验证偏差。
+3. 撰写 human-verdict.yaml（模板在 run-record.md；accepted 需 H-01..H-06 全 accepted、failed 空、candidate/manifest/report digest 匹配）。
+4. 运行 
+ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 校验后才有权 done。
