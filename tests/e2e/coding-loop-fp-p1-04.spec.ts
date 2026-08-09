@@ -16,6 +16,7 @@
  *  T4 partial-undo hard lock: edit again, snapshot sabotaged on disk → undo
  *     reports failure + journalDir retained (never silent partial restore)
  */
+import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, rm, writeFile, readdir, unlink } from 'node:fs/promises';
 import { createServer as createHttpServer, type Server } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
@@ -544,6 +545,15 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-fp-p1-04-'));
     await writeFile(join(workspaceDir, 'util.js'), BUGGY, 'utf8');
     await writeFile(join(workspaceDir, 'summary.txt'), SUMMARY_BEFORE, 'utf8');
+    // A real workspace is a Git repository: the review Changes panel shows the
+    // agent's edit as a true before/after diff (MonacoDiffViewer) only when
+    // git state exists. Commit the buggy baseline so the fixed file diff is
+    // visible after the run.
+    execFileSync('git', ['init', '--quiet'], { cwd: workspaceDir });
+    execFileSync('git', ['config', 'user.email', 'fp-p1-04@example.invalid'], { cwd: workspaceDir });
+    execFileSync('git', ['config', 'user.name', 'FP-P1-04'], { cwd: workspaceDir });
+    execFileSync('git', ['add', '.'], { cwd: workspaceDir });
+    execFileSync('git', ['commit', '--quiet', '-m', 'baseline'], { cwd: workspaceDir });
     await writeFile(
       join(workspaceDir, 'auto-verify.cjs'),
       [

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import type { WorkspaceArtifactPanelState, WorkspaceReviewView } from '@shared/types/workspace';
 import { WorkspaceGitPanel } from './WorkspaceGitPanel';
+import { FilePreviewBody } from './FilePreviewBody';
 
 const REVIEW_VIEWS: readonly WorkspaceReviewView[] = ['changes', 'ai-review', 'pull-requests'];
 
@@ -20,6 +21,7 @@ export function WorkspaceReviewPanel({
   const setReviewView = useArtifactPanel((state) => state.setReviewView);
   const intentSelectedPath = useArtifactPanel((state) => state.selectedPath);
   const setIntentSelectedPath = useArtifactPanel((state) => state.setSelectedPath);
+  const focusedFile = useArtifactPanel((state) => state.focusedFile);
 
   const selectView = (next: WorkspaceReviewView) => {
     setReviewView(next);
@@ -50,15 +52,19 @@ export function WorkspaceReviewPanel({
       </div>
       <div className={cn('min-h-0 flex-1', view === 'changes' ? 'overflow-hidden' : 'overflow-auto')}>
         {view === 'changes' && (
-          <WorkspaceGitPanel
-            selectedPath={sessionState?.gitSelectedPath ?? intentSelectedPath}
-            diffMode={sessionState?.gitDiffMode ?? 'unstaged'}
-            onSelectedPathChange={(gitSelectedPath) => {
-              setIntentSelectedPath(gitSelectedPath);
-              onSessionStateChange?.({ gitSelectedPath });
-            }}
-            onDiffModeChange={(gitDiffMode) => onSessionStateChange?.({ gitDiffMode })}
-          />
+          focusedFile ? (
+            <FilePreviewBody key={focusedFile.filePath} file={focusedFile} compact mode="diff" />
+          ) : (
+            <WorkspaceGitPanel
+              selectedPath={sessionState?.gitSelectedPath ?? intentSelectedPath}
+              diffMode={sessionState?.gitDiffMode ?? 'unstaged'}
+              onSelectedPathChange={(gitSelectedPath) => {
+                setIntentSelectedPath(gitSelectedPath);
+                onSessionStateChange?.({ gitSelectedPath });
+              }}
+              onDiffModeChange={(gitDiffMode) => onSessionStateChange?.({ gitDiffMode })}
+            />
+          )
         )}
         {view === 'ai-review' && <CodeReviewPanel embedded />}
         {view === 'pull-requests' && <RemoteForgePanel />}
