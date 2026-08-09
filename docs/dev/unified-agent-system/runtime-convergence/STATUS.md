@@ -10,7 +10,7 @@ engineering_verdict: pass
 engineering_report: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
 human_verdict: accepted
 human_verdict_record: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/human-verdict.yaml
-done_allowed: false
+done_allowed: true
 required_work_packages:
   - RC-00
   - RC-01
