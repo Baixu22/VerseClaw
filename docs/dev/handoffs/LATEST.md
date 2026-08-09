@@ -649,3 +649,12 @@ RC-10（用户执行）：真实 Desktop/Cron/Channel/Restart/Fork/Handoff 场�
 3. 撰写 human-verdict.yaml（模板在 run-record.md；accepted 需 H-01..H-06 全 accepted、failed 空、candidate/manifest/report digest 匹配）。
 4. 运行 
 ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 校验后才有权 done。
+
+---
+
+# RC-10 用户判定 blocked（2026-08-09）
+
+用户决策：**H-03 真实 channel 暂不可用 → RC-10 verdict = blocked**（human-verdict.yaml 已记录：candidate 3209f0981、manifest file sha 2ea05762…、final-report sha 108a9906…、accepted_scenarios 空、failed_scenarios=[H-03]、decided_at 2026-08-09T08:30+08:00）。候选 worktree 中 human-phase validator 全证据项通过、仅因 blocked 判定拒绝——done 门禁正确保持关闭。程序保持 human_acceptance_pending；product locks false；accepted_work_packages 空。
+
+解除 blocked 的唯一路径：配置真实 channel → 复核 rc10-round-1 证据（含 H-01 FP-P1-11 偏差）→ 将 verdict 改为 accepted（H-01..H-06 全 accepted、failed 空）→ 候选 worktree 运行 
+ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 通过 → 才允许 done。
