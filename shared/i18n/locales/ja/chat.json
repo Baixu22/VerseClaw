@@ -31,6 +31,7 @@
     "title": "セッション状態",
     "description": "この会話のランタイム、タスク、Git、サブエージェント、ターミナルのリアルタイム状態。",
     "openRecovery": "セッション復旧を開く",
+    "createMemoryDraft": "メモリ草案として保存",
     "duration": "経過時間",
     "notAvailable": "利用不可",
     "sections": { "session": "セッション", "git": "ワークスペース Git", "tasks": "実行中のタスク", "subagents": "サブエージェント", "terminals": "ターミナル", "continuity": "継続性" },

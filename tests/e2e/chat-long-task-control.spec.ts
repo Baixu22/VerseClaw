@@ -293,20 +293,9 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await expect(page.getByTestId('chat-long-task-checkpoint')).toBeVisible();
       await expect(page.getByTestId('chat-long-task-intervention')).toBeVisible();
       await expect(page.getByTestId('chat-long-task-warnings')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-plan')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-risk-summary')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-risk-safe')).toContainText('safe');
-      await expect(page.getByTestId('chat-rollback-risk-review')).toContainText('review');
-      await expect(page.getByTestId('chat-rollback-risk-dangerous')).toContainText('dangerous');
-      await expect(page.getByTestId('chat-rollback-signal-checkpoint')).toContainText('Checkpoint');
-      await expect(page.getByTestId('chat-rollback-signal-queue')).toContainText('Queue');
-      await expect(page.getByTestId('chat-rollback-signal-terminal')).toContainText('Terminal');
-      await expect(page.getByTestId('chat-rollback-signal-memory')).toContainText('Memory');
-      await expect(page.getByTestId('chat-rollback-action-checkpoint-handoff')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-action-drain-queue')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-action-terminal-control')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-action-memory-review')).toBeVisible();
-      await expect(page.getByTestId('chat-rollback-action-review-git')).toBeVisible();
+      // Long-task control stays in Chat; recovery recommendations do not. The
+      // recovery rail moved to Settings > Session & Recovery.
+      await expect(page.getByTestId('chat-rollback-plan')).toHaveCount(0);
 
       await page.getByTestId('chat-long-task-drain').click();
 
@@ -321,21 +310,10 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
         agentId: 'main',
       });
 
-      await page.getByTestId('chat-rollback-run-interruptTerminal').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __longTaskTerminalInterruptCalls?: unknown[] }).__longTaskTerminalInterruptCalls?.length ?? 0
-      ))).toBe(1);
-
-      await page.getByTestId('chat-rollback-run-createMemoryDraft').click();
-      await expect(page.getByTestId('knowledge-draft-dialog')).toBeVisible();
-      await expect(page.getByTestId('knowledge-draft-body')).toHaveValue(/Review-only recovery memory proposal/);
-      await page.getByTestId('knowledge-draft-apply').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __longTaskKnowledgeDraftCalls?: Array<Record<string, unknown>> }).__longTaskKnowledgeDraftCalls?.length ?? 0
-      ))).toBe(1);
-
-      await page.getByTestId('chat-rollback-run-openGit').click();
-      await expect(page.getByTestId('artifact-panel')).toBeVisible();
+      // Terminal interrupt, Git review, and the recovery memory draft are no
+      // longer reachable from the Chat message flow. Terminal and Git recovery
+      // are Settings actions; the memory draft is triggered from the session
+      // activity panel, which owns its own coverage.
 
       await page.getByTestId('chat-composer-input').fill('start a long validation run');
       await page.getByTestId('chat-composer-send').click();

@@ -226,35 +226,34 @@ test.describe('Chat recovery assist', () => {
       const page = await getStableWindow(app);
       await page.waitForLoadState('domcontentloaded');
 
-      const panel = page.getByTestId('chat-rollback-plan');
-      await expect(panel).toBeVisible({ timeout: 30_000 });
-      await expect(panel).toContainText('Recovery assist');
-      await expect(panel).toContainText('1 file fingerprint(s)');
-      await expect(panel).toContainText('1 tool result(s)');
-      await expect(panel).toContainText('Risky Git, file, or terminal actions are suggestions only');
-      await expect(panel).not.toContainText(/lossless|automatic full|full rollback|all side effects|completely equivalent/i);
-      await expect(panel.getByTestId('chat-rollback-action-checkpoint-handoff')).toBeVisible();
-      await expect(panel.getByTestId('chat-rollback-action-drain-queue')).toBeVisible();
-      await expect(panel.getByTestId('chat-rollback-action-manual-compact')).toBeVisible();
+      // Recovery no longer lives in the Chat message flow or its side rail.
+      await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('chat-rollback-plan')).toHaveCount(0);
 
-      await panel.getByTestId('chat-rollback-run-handoff').click();
-      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
-      await expect(page.getByText('Review audit_fail checkpoint evidence before continuing.')).toBeVisible();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __recoveryAssistHandoffCalls?: unknown[] }).__recoveryAssistHandoffCalls?.length ?? 0
-      ))).toBe(1);
-      await page.getByTestId('chat-handoff-dialog').getByRole('button', { name: 'Cancel' }).click();
-      await expect(page.getByTestId('chat-handoff-dialog')).toBeHidden();
+      // It moved to Settings > Session & Recovery, deep-linked with the session
+      // key the activity panel hands over.
+      await page.evaluate((sessionKey) => {
+        window.location.hash = `#/settings/recovery?sessionKey=${encodeURIComponent(sessionKey)}`;
+      }, SESSION_KEY);
 
-      await panel.getByTestId('chat-rollback-run-queueDrain').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __recoveryAssistQueueDrainCalls?: unknown[] }).__recoveryAssistQueueDrainCalls?.length ?? 0
-      ))).toBe(1);
+      const section = page.getByTestId('recovery-settings-section');
+      await expect(section).toBeVisible({ timeout: 30_000 });
 
-      await panel.getByTestId('chat-rollback-run-compact').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __recoveryAssistCompactCalls?: unknown[] }).__recoveryAssistCompactCalls?.length ?? 0
-      ))).toBe(1);
+      // Long-term configuration is present.
+      await expect(section.getByTestId('settings-session-activity-enabled')).toBeVisible();
+      await expect(section.getByTestId('settings-session-activity-auto-expand')).toBeVisible();
+      await expect(section.getByTestId('settings-session-activity-show-git')).toBeVisible();
+      await expect(section.getByTestId('settings-session-activity-show-commands')).toBeVisible();
+      await expect(section.getByTestId('settings-session-recovery-notifications')).toBeVisible();
+      await expect(section.getByTestId('settings-session-activity-retention')).toBeVisible();
+
+      // Per-session recovery is scoped to the handed-over session.
+      await expect(section.getByTestId('settings-recovery-session')).toHaveValue(SESSION_KEY);
+
+      // Copy resolves through i18n (a broken key path would surface the raw
+      // dotted key) and must not overclaim what recovery can undo.
+      await expect(section).not.toContainText(/recovery\.[a-zA-Z]+\./);
+      await expect(section).not.toContainText(/lossless|automatic full|full rollback|all side effects|completely equivalent/i);
     } finally {
       await closeElectronApp(app);
     }
