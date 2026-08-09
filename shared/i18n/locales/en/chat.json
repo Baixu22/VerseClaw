@@ -31,6 +31,7 @@
     "title": "Session status",
     "description": "Live runtime, task, Git, agent, and terminal activity for this conversation.",
     "openRecovery": "Open session recovery",
+    "createMemoryDraft": "Save session to Knowledge",
     "duration": "Duration",
     "notAvailable": "Not available",
     "sections": { "session": "Session", "git": "Workspace Git", "tasks": "Live tasks", "subagents": "Sub-agents", "terminals": "Terminals", "continuity": "Continuity" },

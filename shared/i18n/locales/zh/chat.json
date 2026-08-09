@@ -31,6 +31,7 @@
     "title": "会话状态",
     "description": "当前会话的实时运行、任务、Git、子 Agent 和终端状态。",
     "openRecovery": "打开会话恢复",
+    "createMemoryDraft": "存为记忆草稿",
     "duration": "持续时间",
     "notAvailable": "暂无",
     "sections": { "session": "会话", "git": "工作区 Git", "tasks": "实时任务", "subagents": "子 Agent", "terminals": "终端", "continuity": "连续性" },
