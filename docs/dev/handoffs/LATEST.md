@@ -577,3 +577,44 @@ maturity 修复本身引入的 38 个 system-maturity 文件（artifacts/plans�
 - maturity evidence 修复已在主工作树验证（seal 全绿），但未并入候选（归属冲突）；若用户要求全 21 gate，需另行裁决 system-maturity 文件的 RC 归属或候选基线。
 - RC-10 保持 blocked；`accepted_work_packages` 保持空；product locks（live_ready/product_approved/default_on）保持 false。
 
+
+---
+
+# RC-09 最终独立验收 PASS — BLOCKED 解除（2026-08-09）
+
+> 状态：RC-09 最终 18-gate 独立验收 PASS（executor rc09r-executor-4 + verifier rc09r-verifier-4 双 PASS，engineeringAcceptedByAgent=true，taskStatusRecommendation=review_needed）。程序达到 human_acceptance_pending；RC-10 保持 blocked，product locks 保持 false，accepted_work_packages 保持空。
+
+## 破开 blocked 的完整编排
+
+1. **base 绿线（main，已 push）**：
+   - 修复 3 个保护 workstream 单元测试（chat-runtime-event-handlers 补 drainPendingMessages mock；chat-input 补 pendingMessages + plus-menu morph 断言 scoping；uas-05 Task Forest pins 刷新到当前节点状态）；session-activity.ts load() 对 null snapshot 防崩溃（chat-save-to-knowledge 全绿）。
+   - lint:check 归零 errors（dia-text-reveal refs-outside-effects、SessionActivityPanel/WelcomeScreen setState-in-effect、beam spec unused var）；UI recovery 迁移收口（Chat rollback panel → Settings + 四语 i18n + E2E spec 重指向）一并落 main。
+   - 新 accepted base：8a6c1832ef7aca6c7d6286f80f5aee74c6e5d2c（merge-base(HEAD, origin/main)，RC-01 baseline 同 base 再生成并提交）。
+2. **候选链重建（rc09-final-candidate，基于 new main）**：rebase --onto new-main（-X theirs + --empty=drop）后逐路径核对；恢复 main 侧丢失内容（harness-specs CLI ownership test、chat-input、fakecoding-design-system、agent-engineering-acceptance bootstrap test、task-loop-controller listTaskLoopRunsForSession、memory-read-hydration-consumer 去重导出）；verseshell ESM surface 移出候选 → 范围 99 paths，零 UI/release coverage → 18-gate profile（不再触发 electron-e2e / maturity / release-baseline-validate）。
+3. **RC-01 baseline 再生成**：acceptedBaseSha=b8a6c1832（rc01 测试在候选内全绿；main 同步同 base）。
+4. **控制面修复（rc09a owned paths）**：
+   - scripts/lib/agent-engineering-acceptance.mjs：plan 现在自动生成 changed-path-ownership.json（固定 evidence 路径），provision gate 增加 --copy 使其进入 Executor/Verifier 双 detached worktree（rc09-ownership-matrix counter-tests 双角色通过）；runtime-unit skip budget 归零（suite 无条件 skip）。
+   - final spec requiredTests --since 固定为完整 acceptedBaseSha（validator baseRef 相等校验）。
+5. **最终验收**：pnpm acceptance:agent:full --spec runtime-authority-convergence-final-acceptance.md --executor rc09r-executor-4 --verifier rc09r-verifier-4 --since b8a6c1832ef... --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final。executor pass（failures 空）；verifier pass + engineeringAcceptedByAgent=true + review_needed + humanEvidenceRequired=true。
+ode scripts/validate-runtime-authority-convergence.mjs --phase engineering ... PASS（manifest/report digest + baseRef + changed-path ownership 校验）。status 查询 pass。
+6. **证据**：候选 worktree C:\Users\27933\Desktop\clawx\ClawX-rc01r-candidate（branch rc09-final-candidate，HEAD 3209f0981）内 rtifacts/agent-engineering-acceptance/runtime-authority-convergence-final/{plan,manifest,executor-report,verifier-report,final-report,changed-path-ownership}.json + logs/ + evidence/。旧 21-gate rejected 证据保留于 untime-authority-convergence-final.archive-21gate-20260809/（只读）。
+
+## 保持项
+
+- STATUS.md 已置 human_acceptance_pending（engineering_verdict=pass、blockers 清空、evidence_manifest 指向 final bundle）；done 仅当用户执行 RC-10 并记录 accepted。
+- RC-10 保持 blocked；product locks（live_ready/product_approved/default_on）保持 false；accepted_work_packages 保持空（用户裁决）。
+- 主工作树 WIP（.tmp-ui-compose-verification、task-forest tmp export）未触碰。
+
+## 命令结果快照
+
+| 命令 | 结果 |
+|---|---|
+| pnpm acceptance:agent:full ... | executor+verifier 双 PASS（18 gates；fast-unit 6533 passed/0 failed/52 skipped） |
+| 
+ode scripts/validate-runtime-authority-convergence.mjs --phase engineering ... | PASS |
+| pnpm acceptance:agent:status | pass / engineeringAcceptedByAgent=true / review_needed |
+| 候选内 pnpm test / typecheck / lint:check / runtime gates / builds / comms / contract / i18n / integration | 全绿（预验证） |
+
+## 下一步唯一动作
+
+RC-10（用户执行）：真实 Desktop/Cron/Channel/Restart/Fork/Handoff 场景验收并记录 accepted/rejected/blocked；之后才允许 done 与 product locks 变更。
