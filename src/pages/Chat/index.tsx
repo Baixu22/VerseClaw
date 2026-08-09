@@ -50,16 +50,13 @@ import { ChatToolbar } from './ChatToolbar';
 import { SessionActivityPanel } from './SessionActivityPanel';
 import { useSessionActivityStore } from '@/stores/session-activity';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
-import { RollbackPlanPanel } from './RollbackPlanPanel';
 import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
   type SessionContinuityErrorKind,
   type SessionContinuityRecommendation,
 } from './session-continuity';
-import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { extractText, extractThinking, extractToolUse, normalizeMessageRole } from './message-utils';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
@@ -895,13 +892,6 @@ export function Chat() {
     void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
   }, [activeWorkspaceId, currentSessionKey, loadSessionActivity]);
 
-  const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
-  const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
-
-  useEffect(() => {
-    setTaskLedgerSummaryVisible(true);
-    setRollbackPlanDismissed(false);
-  }, [activeWorkspaceId, currentSessionKey]);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -1515,45 +1505,6 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenGitPanel = useCallback(() => {
-    openWorkspacePanel({ panel: 'review', view: 'changes' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'review' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleInterruptTerminal = useCallback(async () => {
-    openWorkspacePanel({ panel: 'terminal' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'terminal' },
-      },
-    });
-    try {
-      const status = await hostApi.terminal.status({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey });
-      if (status.sessionId && status.status === 'running') {
-        const result = await hostApi.terminal.interrupt({ sessionId: status.sessionId });
-        if (!result.success) {
-          toast.error(result.error || t('composer.rollbackPlan.terminal.interruptFailed'));
-          return;
-        }
-        toast.success(t('composer.rollbackPlan.terminal.interrupted'));
-        return;
-      }
-      toast.message(t('composer.rollbackPlan.terminal.opened'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
-    }
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState, t]);
-
   const handleOpenTaskLedger = useCallback(() => {
     const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
     navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
@@ -2010,25 +1961,6 @@ export function Chat() {
   const continuityRecommendation = continuityPreflight.recommendation;
   const handoffDisabled = continuityPreflight.handoff.disabled;
   const forkDisabled = continuityPreflight.fork.disabled;
-  const rollbackPlan = useMemo(() => buildRollbackPlan({
-    activeRun: continuityRunActive,
-    gatewayAvailable,
-    queueDrainBusy,
-    compactionBusy,
-    handoffDisabled,
-    contextRange,
-    compactionStatus,
-    longTaskControlStatus,
-  }), [
-    compactionBusy,
-    compactionStatus,
-    contextRange,
-    continuityRunActive,
-    gatewayAvailable,
-    handoffDisabled,
-    longTaskControlStatus,
-    queueDrainBusy,
-  ]);
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -2442,14 +2374,6 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
-  const showTaskLedgerSummaryPanel = canShowChatSideRail
-    && !isEmpty
-    && !!activeWorkspaceId
-    && taskLedgerSummaryVisible;
-  const showRollbackPlanPanel = canShowChatSideRail
-    && hasRollbackPlanSidebarTrigger(rollbackPlan)
-    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
-    && !rollbackPlanDismissed;
   const mockModeActive = typeof window !== 'undefined'
     && new URLSearchParams(window.location.search).get('mock') === '1';
   const visibleSessionActivitySnapshot = useMemo(
@@ -2493,7 +2417,7 @@ export function Chat() {
     && chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
-    && (showTaskLedgerSummaryPanel || showRollbackPlanPanel || showSessionActivityRail);
+    && showSessionActivityRail;
   const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
 
   useEffect(() => {
@@ -2820,27 +2744,12 @@ export function Chat() {
                   onRetry={() => void hydrateStartup()}
                 />
               ) : isEmpty ? (
-                <>
-                  {/* The empty state's own scaffolding — context row and chips —
-                    * is rendered below the composer, not here: the reference
-                    * stacks them under the input. The scroll area keeps only
-                    * the recovery panel, so the watermark behind it is
-                    * unobstructed. */}
-                  {showRollbackPlanPanel && (
-                    <RollbackPlanPanel
-                      plan={rollbackPlan}
-                      className="mx-auto w-full max-w-3xl"
-                      onPrepareHandoff={handlePrepareHandoff}
-                      onDrainQueue={handleDrainQueuedFollowup}
-                      onCompact={handleManualCompact}
-                      onOpenGit={handleOpenGitPanel}
-                      onOpenTaskLedger={handleOpenTaskLedger}
-                      onInterruptTerminal={handleInterruptTerminal}
-                      onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                      onDismiss={() => setRollbackPlanDismissed(true)}
-                    />
-                  )}
-                </>
+                /* The empty state's own scaffolding — context row and chips —
+                 * is rendered below the composer, not here: the reference
+                 * stacks them under the input. Recovery now lives in
+                 * Settings > Session & Recovery, so the scroll area stays
+                 * empty and the watermark is unobstructed. */
+                null
               ) : (
                 <>
                   {hasMoreHistory && (
@@ -3026,30 +2935,6 @@ export function Chat() {
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
-              {showTaskLedgerSummaryPanel && (
-                <TaskLedgerSummaryPanel
-                  workspaceId={activeWorkspace?.id}
-                  compact
-                  hideWhenEmpty
-                  className="w-full lg:w-full xl:w-full"
-                  onVisibilityChange={setTaskLedgerSummaryVisible}
-                />
-              )}
-              {showRollbackPlanPanel && (
-                <RollbackPlanPanel
-                  plan={rollbackPlan}
-                  compact
-                  className="w-full lg:w-full xl:w-full"
-                  onPrepareHandoff={handlePrepareHandoff}
-                  onDrainQueue={handleDrainQueuedFollowup}
-                  onCompact={handleManualCompact}
-                  onOpenGit={handleOpenGitPanel}
-                  onOpenTaskLedger={handleOpenTaskLedger}
-                  onInterruptTerminal={handleInterruptTerminal}
-                  onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
-                  onDismiss={() => setRollbackPlanDismissed(true)}
-                />
-              )}
               {visibleSessionActivitySnapshot && (
                 <SessionActivityPanel
                   snapshot={visibleSessionActivitySnapshot}
@@ -3057,6 +2942,7 @@ export function Chat() {
                   showGit={sessionActivityShowGit}
                   showCommands={sessionActivityShowCommands}
                   onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
+                  onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
                 />
               )}
             </aside>
@@ -3394,6 +3280,10 @@ export function Chat() {
                 setSessionActivitySheetOpen(false);
                 navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`);
               }}
+              onCreateMemoryDraft={() => {
+                setSessionActivitySheetOpen(false);
+                handleOpenRecoveryMemoryDraft();
+              }}
             />
           )}
         </SheetContent>
@@ -3670,8 +3560,27 @@ function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenPro
   }, [activeWorkspace?.id]);
 
   useEffect(() => {
-    void refreshGitStatus();
-  }, [refreshGitStatus]);
+    let cancelled = false;
+    const loadGitStatus = async () => {
+      const workspaceId = activeWorkspace?.id;
+      if (!workspaceId) return;
+      try {
+        const result = await hostApi.git.status();
+        const status = result.status;
+        if (!cancelled) {
+          setGitStatus(status?.isRepository && status.branch
+            ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
+            : null);
+        }
+      } catch {
+        if (!cancelled) setGitStatus(null);
+      }
+    };
+    void loadGitStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeWorkspace?.id]);
 
   /* A result from the workspace we just left is dropped here rather than
    * cleared in the effect body: clearing it there is a synchronous setState

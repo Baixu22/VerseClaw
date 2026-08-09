@@ -200,7 +200,6 @@ test('sunset beam wraps composer, lights on sending, menus unclipped', async ({ 
     report.sending = await page.evaluate(() => {
       const beam = document.querySelector('[data-testid="chat-composer-beam"]');
       if (!beam) return null;
-      const cs = getComputedStyle(beam);
       return {
         active: beam.hasAttribute('data-active'),
         fading: beam.hasAttribute('data-fading'),
