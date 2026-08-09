@@ -1,7 +1,8 @@
-import { Activity, Bot, CheckCircle2, CircleAlert, Clock3, GitBranch, GitCommitHorizontal, ListChecks, Loader2, Monitor, RotateCcw, TerminalSquare } from 'lucide-react';
+import { Activity, Bot, CheckCircle2, CircleAlert, Clock3, FilePlus2, GitBranch, GitCommitHorizontal, ListChecks, Loader2, Monitor, RotateCcw, TerminalSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { SessionActivitySnapshot, SessionActivityTask, SessionActivityTerminal } from '@shared/types/session-activity';
 
 type SessionActivityPanelProps = {
@@ -9,6 +10,7 @@ type SessionActivityPanelProps = {
   compact?: boolean;
   className?: string;
   onOpenRecovery?: () => void;
+  onCreateMemoryDraft?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
 };
@@ -52,17 +54,18 @@ export function SessionActivityPanel({
   compact = false,
   className,
   onOpenRecovery,
+  onCreateMemoryDraft,
   showGit = true,
   showCommands = true,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
   const [now, setNow] = useState(() => Date.now());
+  const runActive = snapshot.session.status === 'running' || snapshot.session.status === 'waiting_approval';
   useEffect(() => {
-    if (snapshot.session.status !== 'running' && snapshot.session.status !== 'waiting_approval') return;
-    setNow(Date.now());
+    if (!runActive) return;
     const timer = window.setInterval(() => setNow(Date.now()), 1_000);
     return () => window.clearInterval(timer);
-  }, [snapshot.session.startedAt, snapshot.session.status]);
+  }, [runActive, snapshot.session.startedAt]);
   const hasGit = showGit && Boolean(snapshot.git && snapshot.git.isRepository && !snapshot.git.clean);
   const hasTasks = snapshot.tasks.length > 0;
   const hasSubagents = snapshot.subagents.length > 0;
@@ -93,17 +96,37 @@ export function SessionActivityPanel({
           <div className="truncate text-xs font-medium text-foreground">{t('sessionActivity.title')}</div>
           <div className={cn('truncate text-[11px]', statusClass(snapshot.session.status))}>{statusLabel}{snapshot.session.phase ? ` · ${snapshot.session.phase}` : ''}</div>
         </div>
+        {onCreateMemoryDraft ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                aria-label={t('sessionActivity.createMemoryDraft')}
+                onClick={onCreateMemoryDraft}
+                data-testid="session-activity-create-memory-draft"
+              >
+                <FilePlus2 className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.createMemoryDraft')}</TooltipContent>
+          </Tooltip>
+        ) : null}
         {onOpenRecovery && hasContinuity ? (
-          <button
-            type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-            aria-label={t('sessionActivity.openRecovery')}
-            title={t('sessionActivity.openRecovery')}
-            onClick={onOpenRecovery}
-            data-testid="session-activity-open-recovery"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                aria-label={t('sessionActivity.openRecovery')}
+                onClick={onOpenRecovery}
+                data-testid="session-activity-open-recovery"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.openRecovery')}</TooltipContent>
+          </Tooltip>
         ) : null}
       </header>
 
