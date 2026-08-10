@@ -70,11 +70,17 @@ export type ReceiptCallIndex = {
   wireAttemptIndex: number;
 };
 
-export type ReceiptBudget = {
-  unit: "tokens";
-  inputLimit: number;
-  outputLimit: number;
-};
+export type ReceiptBudget =
+  | {
+      unit: "tokens";
+      inputLimit: number;
+      outputLimit: number;
+    }
+  | {
+      unit: "chars";
+      charsRequested: number;
+      charsApplied: number;
+    };
 
 export type ReceiptContent = {
   /** Semantic logical digest (ContextReceipt) or final wire digest (WireReceipt). */
@@ -145,7 +151,13 @@ const RECEIPT_CONTENT_KEYS = new Set([
   "budget",
   "policyDigest",
 ]);
-const RECEIPT_BUDGET_KEYS = new Set(["unit", "inputLimit", "outputLimit"]);
+const RECEIPT_BUDGET_KEYS = new Set([
+  "unit",
+  "inputLimit",
+  "outputLimit",
+  "charsRequested",
+  "charsApplied",
+]);
 const SHA256_DIGEST_RE = /^[a-f0-9]{64}$/;
 const RECEIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/-]*$/;
 const RECEIPT_REFERENCE_RE =
@@ -259,17 +271,36 @@ function assertBudget(value: unknown, label: string): asserts value is ReceiptBu
   if (value === undefined) return;
   assertPlainRecord(value, label);
   assertOnlyKeys(value, RECEIPT_BUDGET_KEYS, label);
-  if (value.unit !== "tokens") throw new TypeError(`${label} unit must be tokens`);
-  for (const key of ["inputLimit", "outputLimit"] as const) {
-    const amount = value[key];
-    if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
-      throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
+  if (value.unit === "tokens") {
+    for (const key of ["inputLimit", "outputLimit"] as const) {
+      const amount = value[key];
+      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+        throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
+      }
     }
+    return;
   }
+  if (value.unit === "chars") {
+    for (const key of ["charsRequested", "charsApplied"] as const) {
+      const amount = value[key];
+      if (!Number.isSafeInteger(amount) || Number(amount) < 0 || Number(amount) > MAX_BUDGET_TOKENS) {
+        throw new TypeError(`${label} ${key} must be a bounded non-negative integer`);
+      }
+    }
+    return;
+  }
+  throw new TypeError(`${label} unit must be tokens or chars`);
 }
 
 function serializeBudget(value: ReceiptBudget | undefined): string | null {
   if (!value) return null;
+  if (value.unit === "chars") {
+    return JSON.stringify({
+      unit: value.unit,
+      charsRequested: value.charsRequested,
+      charsApplied: value.charsApplied,
+    });
+  }
   return JSON.stringify({
     unit: value.unit,
     inputLimit: value.inputLimit,
@@ -397,11 +428,17 @@ export function receiptContentDigest(
         selected: content.selected?.length ? content.selected : null,
         omitted: content.omitted?.length ? content.omitted : null,
         budget: content.budget
-          ? {
-              unit: content.budget.unit,
-              inputLimit: content.budget.inputLimit,
-              outputLimit: content.budget.outputLimit,
-            }
+          ? content.budget.unit === "chars"
+            ? {
+                unit: content.budget.unit,
+                charsRequested: content.budget.charsRequested,
+                charsApplied: content.budget.charsApplied,
+              }
+            : {
+                unit: content.budget.unit,
+                inputLimit: content.budget.inputLimit,
+                outputLimit: content.budget.outputLimit,
+              }
           : null,
         policyDigest: content.policyDigest ?? null,
       },

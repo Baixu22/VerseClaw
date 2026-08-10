@@ -16,6 +16,7 @@ import {
   resetShadowCensusDiagnosticsForTest,
   wireBodyDigest,
 } from "./shadow-census.js";
+import type { ShadowCensusEmitResult } from "./shadow-census.js";
 
 const tempRoots: string[] = [];
 let stateDir = "";
@@ -162,7 +163,7 @@ describe("emitShadowCensus (RC-02 shadow receipts)", () => {
       env: process.env,
       path: path.join(blocker, "openclaw-state.db"),
     };
-    let result;
+    let result: ShadowCensusEmitResult | undefined;
     let threw = false;
     try {
       result = emitShadowCensus(makeBody(), makeContext(), {
@@ -176,7 +177,7 @@ describe("emitShadowCensus (RC-02 shadow receipts)", () => {
     expect(threw).toBe(false);
     // A shadow-write failure surfaces as failed=true; the RC-02 run must fail on
     // this without ever changing send behavior.
-    expect(result.failed).toBe(true);
+    expect(result?.failed).toBe(true);
     expect(getShadowCensusDiagnostics()).toMatchObject({
       failedWrites: 2,
       acceptanceReady: false,

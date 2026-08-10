@@ -5,7 +5,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 
-import { ReceiptStore, receiptContentDigest, type PutReceiptInput } from "./receipt-store.js";
+import { ReceiptStore, receiptContentDigest, type PutReceiptInput, type ReceiptContent } from "./receipt-store.js";
 import {
   closeOpenClawStateDatabase,
   openOpenClawStateDatabase,
@@ -33,7 +33,9 @@ function makeCallIndex(overrides: Partial<PutReceiptInput["callIndex"]> = {}) {
 
 let receiptCounter = 0;
 
-function makeReceipt(overrides: Partial<PutReceiptInput> = {}): PutReceiptInput {
+function makeReceipt(
+  overrides: Partial<Omit<PutReceiptInput, "content">> & { content?: Partial<ReceiptContent> } = {},
+): PutReceiptInput {
   receiptCounter += 1;
   const base = {
     idempotencyKey: `rc02-${receiptCounter}`,
@@ -114,9 +116,13 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     expect(first.inserted).toBe(true);
     const second = store.put(input);
     expect(second.ok).toBe(true);
-    expect(second.duplicate).toBe(true);
-    expect(second.inserted).toBe(false);
-    expect(second.reason).toBe("identical-content");
+    if (second.ok) {
+      expect(second.duplicate).toBe(true);
+      expect(second.inserted).toBe(false);
+      if (second.duplicate) {
+        expect(second.reason).toBe("identical-content");
+      }
+    }
     // Only one row exists.
     expect(store.list({ kind: "shadow_wire" })).toHaveLength(1);
   });
@@ -132,11 +138,13 @@ describe("ReceiptStore (runtime_receipts via openclaw-state SQLite)", () => {
     });
     const result = store.put(conflicting);
     expect(result.ok).toBe(false);
-    expect(result.duplicate).toBe(true);
-    expect(result.reason).toBe("content-conflict");
-    expect(result.existing).toBe(
-      receiptContentDigest(input.identity, input.callIndex, input.content),
-    );
+    if (!result.ok) {
+      expect(result.duplicate).toBe(true);
+      expect(result.reason).toBe("content-conflict");
+      expect(result.existing).toBe(
+        receiptContentDigest(input.identity, input.callIndex, input.content),
+      );
+    }
     // The conflicting content was NOT written.
     expect(store.list({ kind: "shadow_wire" })).toHaveLength(1);
   });

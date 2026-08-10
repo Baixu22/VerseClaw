@@ -36,6 +36,7 @@ import {
   listSourceRuntimeTransportApis,
 } from "./provider-transport-stream.js";
 import { attachModelProviderRequestTransport } from "./provider-request-config.js";
+import type { Model } from "../llm/types.js";
 import { ReceiptStore } from "./receipt-store.js";
 import { runEmbeddedAgent } from "./embedded-agent-runner/run.js";
 import {
@@ -328,7 +329,7 @@ describe("RC-02 full-payload shadow census acceptance", () => {
         { ...modelBase, api, provider, id, baseUrl: "http://127.0.0.1:40123/v1" } as never,
         { allowPrivateNetwork: true },
       );
-    const context = { messages: [{ role: "user", content: "hello", timestamp: Date.now() }] };
+    const context = { messages: [{ role: "user" as const, content: "hello", timestamp: 1 }] };
     const entries = [
       {
         id: "desktop-chat",
@@ -377,7 +378,7 @@ describe("RC-02 full-payload shadow census acceptance", () => {
           { apiKey: "fixture-key", sessionId: `sess-${entry.id}`, runId: `run-${entry.id}` },
           { enabled: true, sourceRuntime: true, database: database() },
         );
-        const stream = entry.stream(entry.model, context, options);
+        const stream = await entry.stream(entry.model, context, options);
         for await (const _event of stream) {
           // Consume the real provider stream to completion.
         }
@@ -509,16 +510,16 @@ describe("RC-02 full-payload shadow census acceptance", () => {
                 : `${provider}-rc02`,
             baseUrl:
               api === "bedrock-converse-stream" ? bedrockBaseUrl : "http://127.0.0.1:40123/v1",
-          } as never,
+          } as Model,
           { allowPrivateNetwork: true },
         );
         const registryStreamFn = createOpenClawTransportStreamFnForModel(model);
         const streamFn =
           descriptor.id === "anthropic-vertex"
-            ? createAnthropicVertexStreamFn("rc02-fixture-project", "us-central1", model.baseUrl, {
+            ? (createAnthropicVertexStreamFn("rc02-fixture-project", "us-central1", model.baseUrl, {
                 AnthropicVertex: FixtureAnthropicVertex,
-                streamAnthropic: createAnthropicMessagesTransportStreamFn(),
-              })
+                streamAnthropic: createAnthropicMessagesTransportStreamFn() as unknown as never,
+              }) as unknown as ReturnType<typeof createOpenClawTransportStreamFnForModel>)
             : registryStreamFn;
         expect(
           registryStreamFn,
@@ -542,7 +543,7 @@ describe("RC-02 full-payload shadow census acceptance", () => {
         );
         const stream = await streamFn!(
           model,
-          { messages: [{ role: "user", content: "hello", timestamp: 1 }] },
+          { messages: [{ role: "user" as const, content: "hello", timestamp: 1 }] },
           options,
         );
         for await (const _event of stream) {
