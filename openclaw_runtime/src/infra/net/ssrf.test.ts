@@ -7,6 +7,7 @@
  * DNS pinning, and redirect re-evaluation.
  */
 import { describe, expect, it } from "vitest";
+import type { LookupAddress } from "node:dns";
 import {
   createPinnedLookup,
   isBlockedHostname,
@@ -121,7 +122,10 @@ describe("createPinnedLookup (DNS pinning)", () => {
   });
 
   it("falls back to the original lookup for other hostnames", async () => {
-    const fallback = (host: string, cb: (err: Error | null, address?: string, family?: number) => void) => {
+    const fallback: (
+      hostname: string,
+      callback: (err: NodeJS.ErrnoException | null, address: string | LookupAddress[], family?: number) => void,
+    ) => void = (host, cb) => {
       cb(null, "1.2.3.4", 4);
     };
     const lookup = createPinnedLookup({

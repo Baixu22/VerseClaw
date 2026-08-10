@@ -302,7 +302,7 @@ async function runScanToCreate(
   await prompter.note(t("wizard.feishu.scanQr"), t("wizard.feishu.scanTitle"));
   await printQrCode(begin.qrUrl);
 
-  const progress = prompter.progress(t("wizard.feishu.fetchingConfig"));
+  const progress = prompter.progress({ message: t("wizard.feishu.fetchingConfig") });
 
   const outcome = await pollAppRegistration({
     deviceCode: begin.deviceCode,
@@ -420,7 +420,7 @@ async function runNewAppFlow(params: {
   })) as "allowlist" | "open" | "disabled";
 
   // ----- Apply credentials & security policy -----
-  const configProgress = prompter.progress(t("wizard.feishu.configuring"));
+  const configProgress = prompter.progress({ message: t("wizard.feishu.configuring") });
   await new Promise((resolve) => {
     setTimeout(resolve, 50);
   });

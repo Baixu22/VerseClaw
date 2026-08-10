@@ -5,7 +5,7 @@ import { vi } from "vitest";
 import type { RuntimeEnv } from "../../src/runtime.js";
 import { makeTempWorkspace } from "../../src/test-helpers/workspace.js";
 import { captureEnv } from "../../src/test-utils/env.js";
-import type { WizardPrompter } from "../../src/wizard/prompts.js";
+import type { WizardPrompter } from "../../src/gateway/wizard-runtime/prompts.js";
 
 // Shared auth wizard test helpers for runtime/env setup.
 
@@ -30,6 +30,7 @@ export function createWizardPrompter(
 ): WizardPrompter {
   return {
     intro: vi.fn(noopAsync),
+    plain: vi.fn(noopAsync),
     outro: vi.fn(noopAsync),
     note: vi.fn(noopAsync),
     select: vi.fn(async () => (options?.defaultSelect ?? "") as never),

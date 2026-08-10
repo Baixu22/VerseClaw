@@ -61,6 +61,8 @@ export type PluginInstallRecord = Omit<InstallRecordBase, "source"> & {
 export type PluginsConfig = {
   /** Enable or disable plugin loading. */
   enabled?: boolean;
+  /** Plugin-level configuration keyed by plugin id (read by plugins at runtime). */
+  config?: Record<string, unknown>;
   /** Optional plugin allowlist (plugin ids). */
   allow?: string[];
   /** Optional plugin denylist (plugin ids). */

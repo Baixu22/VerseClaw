@@ -175,7 +175,7 @@ function createOAuthHandler(region: MiniMaxRegion) {
   const regionLabel = resolveMinimaxRegionLabel(region);
 
   return async (ctx: ProviderAuthContext): Promise<ProviderAuthResult> => {
-    const progress = ctx.prompter.progress(`Starting MiniMax OAuth (${regionLabel})…`);
+    const progress = ctx.prompter.progress({ message: `Starting MiniMax OAuth (${regionLabel})…` });
     try {
       const { loginMiniMaxPortalOAuth } = await import("./oauth.runtime.js");
       const result = await loginMiniMaxPortalOAuth({

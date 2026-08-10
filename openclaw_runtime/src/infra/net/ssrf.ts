@@ -430,7 +430,7 @@ function normalizeLookupResults(results: LookupResult): readonly LookupAddress[]
 export function createPinnedLookup(params: {
   hostname: string;
   addresses: string[];
-  fallback?: typeof dnsLookupCb;
+  fallback?: (hostname: string, callback: LookupCallback) => void;
 }): typeof dnsLookupCb {
   const normalizedHost = normalizeHostname(params.hostname);
   if (params.addresses.length === 0) {

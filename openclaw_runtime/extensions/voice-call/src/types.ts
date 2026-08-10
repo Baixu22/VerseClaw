@@ -88,7 +88,6 @@ const BaseEventSchema = z.object({
   to: z.string().optional(),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const NormalizedEventSchema = z.discriminatedUnion("type", [
   BaseEventSchema.extend({
     type: z.literal("call.initiated"),

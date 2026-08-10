@@ -118,10 +118,7 @@ describe("node camera media payloads", () => {
     await writeCameraPayloadToFile({
       filePath,
       payload: {
-        format: "jpg",
         base64: Buffer.from("camera-bytes").toString("base64"),
-        width: 1,
-        height: 1,
       },
     });
 
@@ -155,10 +152,7 @@ describe("node camera media payloads", () => {
       writeCameraPayloadToFile({
         filePath: path.join(dir, "http.jpg"),
         payload: {
-          format: "jpg",
           url: "http://node.example/camera.jpg",
-          width: 1,
-          height: 1,
         },
         expectedHost: "node.example",
       }),
@@ -168,10 +162,7 @@ describe("node camera media payloads", () => {
       writeCameraPayloadToFile({
         filePath: path.join(dir, "mismatch.jpg"),
         payload: {
-          format: "jpg",
           url: "https://other.example/camera.jpg",
-          width: 1,
-          height: 1,
         },
         expectedHost: "node.example",
       }),

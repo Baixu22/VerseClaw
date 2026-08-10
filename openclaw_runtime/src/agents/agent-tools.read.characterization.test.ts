@@ -64,12 +64,15 @@ describe("createHostWorkspaceWriteTool", () => {
     );
     expect(textOf(result)).toBe("Successfully wrote 5 bytes to new.txt");
     // P0 envelope: write now emits a details.working_memory envelope.
-    expect(result.details).toMatchObject({
+    const details = result.details as {
+      working_memory?: { significance?: string; result_summary?: string };
+    };
+    expect(details).toMatchObject({
       working_memory: {
         significance: "high",
       },
     });
-    expect(result.details?.working_memory?.result_summary).toContain("new.txt");
+    expect(details?.working_memory?.result_summary).toContain("new.txt");
     expect(await readFile(join(dir, "new.txt"), "utf-8")).toBe("hello");
   });
 

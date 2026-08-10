@@ -1,6 +1,6 @@
 // Wizard prompter test helper provides mocked wizard prompt responses.
 import { vi } from "vitest";
-import type { WizardPrompter } from "../../src/wizard/prompts.js";
+import type { WizardPrompter } from "../../src/gateway/wizard-runtime/prompts.js";
 
 // Vitest mock prompter for wizard tests.
 
@@ -9,6 +9,7 @@ export function createWizardPrompter(overrides?: Partial<WizardPrompter>): Wizar
   const select = vi.fn(async () => "quickstart") as unknown as WizardPrompter["select"];
   return {
     intro: vi.fn(async () => {}),
+    plain: vi.fn(async () => {}),
     outro: vi.fn(async () => {}),
     note: vi.fn(async () => {}),
     select,

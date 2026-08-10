@@ -324,7 +324,7 @@ function doPost(url: string, body: string, allowInsecureSsl = false): Promise<bo
         rejectUnauthorized: !allowInsecureSsl,
       },
       (res) => {
-        const _data = "";
+        let data = "";
         res.on("data", (chunk: Buffer) => {
           data += chunk.toString();
         });

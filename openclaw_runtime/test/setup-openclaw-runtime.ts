@@ -159,7 +159,7 @@ function createTestRegistryForSetup(
     commands: [],
     conversationBindingResolvedHandlers: [],
     diagnostics: [],
-  };
+  } as unknown as PluginRegistry;
 }
 
 function resolveSlackStubReplyToMode(params: {
@@ -234,7 +234,7 @@ const createStubPlugin = (params: {
     cfg: OpenClawConfig;
     accountId?: string | null;
     chatType?: string | null;
-  }) => "off" | "first" | "all";
+  }) => "off" | "first" | "all" | "batched";
 }): ChannelPlugin => ({
   id: params.id,
   meta: {

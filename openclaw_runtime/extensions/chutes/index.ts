@@ -57,7 +57,7 @@ async function runChutesOAuth(ctx: ProviderAuthContext): Promise<ProviderAuthRes
     "Chutes OAuth",
   );
 
-  const progress = ctx.prompter.progress("Starting Chutes OAuth…");
+  const progress = ctx.prompter.progress({ message: "Starting Chutes OAuth…" });
   try {
     const { onAuth, onPrompt } = ctx.oauth.createVpsAwareHandlers({
       isRemote,

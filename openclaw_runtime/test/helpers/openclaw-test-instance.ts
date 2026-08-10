@@ -1,5 +1,5 @@
 // OpenClaw test instance helper spawns isolated OpenClaw processes.
-import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import net from "node:net";
@@ -48,7 +48,7 @@ export type OpenClawTestInstance = {
   state: OpenClawTestState;
   stdout: string[];
   stderr: string[];
-  child?: ChildProcessWithoutNullStreams;
+  child?: ChildProcess;
   env: NodeJS.ProcessEnv;
   entrypoint: () => Promise<string[]>;
   cli: (
@@ -207,7 +207,7 @@ const getFreePort = async () => {
 };
 
 async function waitForPortOpen(
-  proc: ChildProcessWithoutNullStreams,
+  proc: ChildProcess,
   chunksOut: string[],
   chunksErr: string[],
   port: number,
@@ -248,7 +248,7 @@ async function waitForPortOpen(
 }
 
 async function waitForGatewayExit(
-  child: ChildProcessWithoutNullStreams,
+  child: ChildProcess,
   timeoutMs: number,
 ): Promise<boolean> {
   return await Promise.race([
@@ -263,7 +263,7 @@ async function waitForGatewayExit(
   ]);
 }
 
-function hasChildExited(child: Pick<ChildProcessWithoutNullStreams, "exitCode" | "signalCode">) {
+function hasChildExited(child: Pick<ChildProcess, "exitCode" | "signalCode">) {
   return child.exitCode !== null || child.signalCode !== null;
 }
 
@@ -351,7 +351,7 @@ export async function createOpenClawTestInstance(
     stateEnv: state.env,
     extraEnv: options.env ?? {},
   });
-  let child: ChildProcessWithoutNullStreams | undefined;
+  let child: ChildProcess | undefined;
   let cleaned = false;
 
   const instance: OpenClawTestInstance = {

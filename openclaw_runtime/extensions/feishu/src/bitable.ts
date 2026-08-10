@@ -605,7 +605,6 @@ export function registerFeishuBitableTools(api: OpenClawPluginApi) {
   };
 
   const registerBitableTool = <
-    // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Tool params bind each schema-specific executor to its registered tool.
     TParams extends AccountAwareParams,
   >(params: {
     name: string;

@@ -64,7 +64,7 @@ export function buildGoogleGeminiCliProvider(): ProviderPlugin {
             return { profiles: [] };
           }
 
-          const spin = ctx.prompter.progress("Starting Gemini CLI OAuth…");
+          const spin = ctx.prompter.progress({ message: "Starting Gemini CLI OAuth…" });
           try {
             const { loginGeminiCliOAuth } = await loadOauthRuntimeModule();
             const result = await loginGeminiCliOAuth({

@@ -452,7 +452,7 @@ async function runOpenAICodexOAuth(ctx: OpenAICodexOAuthContext) {
 }
 
 async function runOpenAICodexDeviceCode(ctx: ProviderAuthContext) {
-  const spin = ctx.prompter.progress("Starting device code flow…");
+  const spin = ctx.prompter.progress({ message: "Starting device code flow…" });
   try {
     const creds = await loginOpenAICodexDeviceCode({
       onProgress: (message) => spin.update(message),

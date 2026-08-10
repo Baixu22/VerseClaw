@@ -294,7 +294,7 @@ export async function loginOpenAICodexOAuth(params: {
     "OpenAI Codex OAuth",
   );
 
-  const spin = prompter.progress("Starting OAuth flow...");
+  const spin = prompter.progress({ message: "Starting OAuth flow..." });
   let progressActive = true;
   const updateProgress = (message: string) => {
     if (progressActive) {
