@@ -6,10 +6,82 @@
                                                                          "../src/extensionAPI.ts"
                                                                      ],
                                           "openclaw/plugin-sdk":  [
-                                                                      "../src/plugin-sdk/index.ts"
+                                                                      "../packages/plugin-sdk/dist/src/plugin-sdk/index.d.ts"
                                                                   ],
-                                          "openclaw/plugin-sdk/*":  [
-                                                                        "../src/plugin-sdk/*.ts"
+                                          "openclaw/plugin-sdk/account-helpers": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/account-helpers.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/account-resolution-runtime": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/account-resolution-runtime.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-actions": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-actions.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-config-schema": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-config-schema.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-contract": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-contract.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-core": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-core.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-ingress-runtime": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-ingress-runtime.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-outbound": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-outbound.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/channel-plugin-common": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-plugin-common.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/config-contracts": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/config-contracts.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/inbound-envelope": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/inbound-envelope.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/media-runtime": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/media-runtime.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/runtime": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/runtime.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/runtime-store": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/runtime-store.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/status-helpers": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/status-helpers.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/string-coerce-runtime": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/string-coerce-runtime.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/tool-send": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/tool-send.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/agent-sessions": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/agent-sessions.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/llm": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/llm.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/provider-http": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/provider-http.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/provider-model-shared": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/provider-model-shared.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/provider-onboard": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/provider-onboard.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/reply-payload": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/reply-payload.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/speech-core": [
+                                        "../packages/plugin-sdk/dist/src/plugin-sdk/speech-core.d.ts"
+                                        ],
+                                        "openclaw/plugin-sdk/*":  [
+                                                                        "../packages/plugin-sdk/dist/src/plugin-sdk/*.d.ts"
                                                                     ],
                                           "openclaw/plugin-sdk/reply-payload-testing":  [
                                                                                             "../packages/plugin-sdk/dist/src/plugin-sdk/reply-payload-testing.d.ts"
@@ -63,43 +135,43 @@
                                                                                                "../packages/plugin-sdk/dist/src/plugin-sdk/channel-contract-testing.d.ts"
                                                                                            ],
                                           "openclaw/plugin-sdk/account-id":  [
-                                                                                 "../src/plugin-sdk/account-id.ts"
+                                                                                 "../packages/plugin-sdk/dist/src/plugin-sdk/account-id.d.ts"
                                                                              ],
                                           "openclaw/plugin-sdk/channel-entry-contract":  [
-                                                                                             "../src/plugin-sdk/channel-entry-contract.ts"
+                                                                                             "../packages/plugin-sdk/dist/src/plugin-sdk/channel-entry-contract.d.ts"
                                                                                          ],
                                           "openclaw/plugin-sdk/browser-maintenance":  [
                                                                                           "../packages/plugin-sdk/dist/extensions/browser/browser-maintenance.d.ts"
                                                                                       ],
                                           "openclaw/plugin-sdk/channel-secret-basic-runtime":  [
-                                                                                                   "../src/plugin-sdk/channel-secret-basic-runtime.ts"
+                                                                                                   "../packages/plugin-sdk/dist/src/plugin-sdk/channel-secret-basic-runtime.d.ts"
                                                                                                ],
                                           "openclaw/plugin-sdk/channel-secret-runtime":  [
-                                                                                             "../src/plugin-sdk/channel-secret-runtime.ts"
+                                                                                             "../packages/plugin-sdk/dist/src/plugin-sdk/channel-secret-runtime.d.ts"
                                                                                          ],
                                           "openclaw/plugin-sdk/channel-secret-tts-runtime":  [
-                                                                                                 "../src/plugin-sdk/channel-secret-tts-runtime.ts"
+                                                                                                 "../packages/plugin-sdk/dist/src/plugin-sdk/channel-secret-tts-runtime.d.ts"
                                                                                              ],
                                           "openclaw/plugin-sdk/channel-streaming":  [
-                                                                                        "../src/plugin-sdk/channel-streaming.ts"
+                                                                                        "../packages/plugin-sdk/dist/src/plugin-sdk/channel-streaming.d.ts"
                                                                                     ],
                                           "openclaw/plugin-sdk/error-runtime":  [
-                                                                                    "../src/plugin-sdk/error-runtime.ts"
+                                                                                    "../packages/plugin-sdk/dist/src/plugin-sdk/error-runtime.d.ts"
                                                                                 ],
                                           "openclaw/plugin-sdk/provider-catalog-live-runtime":  [
-                                                                                                    "../src/plugin-sdk/provider-catalog-live-runtime.ts"
+                                                                                                    "../packages/plugin-sdk/dist/src/plugin-sdk/provider-catalog-live-runtime.d.ts"
                                                                                                 ],
                                           "openclaw/plugin-sdk/provider-catalog-shared":  [
-                                                                                              "../src/plugin-sdk/provider-catalog-shared.ts"
+                                                                                              "../packages/plugin-sdk/dist/src/plugin-sdk/provider-catalog-shared.d.ts"
                                                                                           ],
                                           "openclaw/plugin-sdk/provider-entry":  [
-                                                                                     "../src/plugin-sdk/provider-entry.ts"
+                                                                                     "../packages/plugin-sdk/dist/src/plugin-sdk/provider-entry.d.ts"
                                                                                  ],
                                           "openclaw/plugin-sdk/secret-ref-runtime":  [
-                                                                                         "../src/plugin-sdk/secret-ref-runtime.ts"
+                                                                                         "../packages/plugin-sdk/dist/src/plugin-sdk/secret-ref-runtime.d.ts"
                                                                                      ],
                                           "openclaw/plugin-sdk/ssrf-runtime":  [
-                                                                                   "../src/plugin-sdk/ssrf-runtime.ts"
+                                                                                   "../packages/plugin-sdk/dist/src/plugin-sdk/ssrf-runtime.d.ts"
                                                                                ],
                                           "@openclaw/qa-channel/api.js":  [
                                                                               "../dist/plugin-sdk/extensions/qa-channel/api.d.ts"
@@ -371,7 +443,7 @@
                                                                                  "../src/plugin-sdk/qa-runtime.ts"
                                                                              ],
                                           "@openclaw/plugin-sdk/*":  [
-                                                                         "../src/plugin-sdk/*.ts"
+                                                                         "../packages/plugin-sdk/dist/src/plugin-sdk/*.d.ts"
                                                                      ]
                                       }
                         }

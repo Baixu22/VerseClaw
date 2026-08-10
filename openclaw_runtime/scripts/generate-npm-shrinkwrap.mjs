@@ -1295,9 +1295,15 @@ function resolvePackageDirs(args) {
 }
 
 function updateOrCheckPackage(packageDir, check, changedPaths = []) {
+  // The check and generate paths must share one override baseline: generating
+  // with the *current* shrinkwrap's own packages as overrides changes the root
+  // dependency spec (pinDirectDependencySpecsForNpmOverrides) and re-resolves
+  // registry-drifted transitive versions, so a freshly generated shrinkwrap
+  // would never satisfy --check. Both paths therefore generate from the same
+  // pnpm-lock-derived overrides only; keeping shrinkwrap-local overrides in
+  // sync is handled by committing the generated output.
   const generated = generateShrinkwrap(packageDir, {
-    useCurrentShrinkwrapOverrides:
-      check && !packageDependencyInputsChanged(packageDir, changedPaths),
+    useCurrentShrinkwrapOverrides: false,
   });
   const shrinkwrapPath = shrinkwrapPathForPackage(packageDir);
   const label = packageLabel(packageDir);

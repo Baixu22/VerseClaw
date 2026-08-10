@@ -194,8 +194,14 @@ describe('RC-01R self-contained baseline', () => {
   it('pins acceptedBaseSha to the accepted base, not to the moving candidate', () => {
     const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
     const head = git(['rev-parse', 'HEAD']);
-    expect(baseline.acceptedBaseSha).not.toBe(head);
-    expect(baseline.acceptedBaseSha).toBe(git(['merge-base', 'HEAD', 'origin/main']));
+    const mergeBase = git(['merge-base', 'HEAD', 'origin/main']);
+    expect(baseline.acceptedBaseSha).toBe(mergeBase);
+    // On the main line there is no candidate delta: the accepted base IS the
+    // current commit, so the anti-self-invalidation pin only bites when the
+    // candidate has commits beyond origin/main (candidate worktree runs).
+    if (mergeBase !== head) {
+      expect(baseline.acceptedBaseSha).not.toBe(head);
+    }
   });
 
   it('names only owner paths that exist in the candidate tree', () => {
