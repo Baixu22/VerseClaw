@@ -257,7 +257,7 @@ const SLACK_QA_APPROVAL_CHECKPOINT_TIMEOUT_MS_ENV =
   "OPENCLAW_QA_SLACK_APPROVAL_CHECKPOINT_TIMEOUT_MS";
 const QA_REDACT_PUBLIC_METADATA_ENV = "OPENCLAW_QA_REDACT_PUBLIC_METADATA";
 const SLACK_QA_WEB_API_TIMEOUT_MS = 45_000;
-const SLACK_QA_ENV_KEYS = [
+const _SLACK_QA_ENV_KEYS = [
   "OPENCLAW_QA_SLACK_CHANNEL_ID",
   "OPENCLAW_QA_SLACK_DRIVER_BOT_TOKEN",
   "OPENCLAW_QA_SLACK_SUT_BOT_TOKEN",
@@ -515,7 +515,7 @@ const SLACK_QA_STANDARD_SCENARIO_IDS = collectLiveTransportStandardScenarioCover
   scenarios: SLACK_QA_SCENARIOS,
 });
 
-function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof SLACK_QA_ENV_KEYS)[number]) {
+function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof _SLACK_QA_ENV_KEYS)[number]) {
   const value = env[key]?.trim();
   if (!value) {
     throw new Error(`Missing ${key}.`);

@@ -321,25 +321,6 @@ describe("F-01 model-call boundary: tool-produced working_memory enters the next
     };
   }
 
-  function wmBlock(): ContextBlock {
-    return {
-      block_id: "working-memory:agent:alpha:main",
-      block_type: "working_memory" as const,
-      source_system: "working-memory" as const,
-      session_id: "agent:alpha:main",
-      presence: { always_on: false, background: true },
-      entities: [],
-      valid_at: new Date("2026-07-10T00:00:00.000Z"),
-      mutability: "system_managed" as const,
-      summary: "Recent actions",
-      full_content: JSON.stringify({
-        actions: [{ tool: "write", result_summary: "Wrote the F-01 fix", significance: "high" }],
-      }),
-      compression_depth: 0 as const,
-      entity_extraction_status: "empty" as const,
-    };
-  }
-
   it("re-seals per model call: second context callback injects tool-produced working_memory once, without re-injecting knowledge, and receipts carry modelCallIndex 0 then 1", async () => {
     const turnId = "f01-model-call-turn";
     const agent = createAgentRecorder();
@@ -352,7 +333,7 @@ describe("F-01 model-call boundary: tool-produced working_memory enters the next
       },
     };
     const savedWmBlocks: Array<{ block: ContextBlock }> = [];
-    let knowledgeWritten = true;
+    const knowledgeWritten = true;
     const store: Pick<BlockStoreApi, "query" | "upsert"> = {
       query: async (q: { block_types?: string[]; source_systems?: string[] }) => {
         if (q.block_types?.includes("knowledge")) {
@@ -484,7 +465,7 @@ describe("F-01 model-call boundary: tool-produced working_memory enters the next
         if (q.block_types?.includes("knowledge")) return [knowledgeBlock()];
         return [];
       },
-      upsert: async (write) => ({ accepted: true }),
+      upsert: async (_write) => ({ accepted: true }),
     };
 
     for (const factory of buildEmbeddedExtensionFactories({

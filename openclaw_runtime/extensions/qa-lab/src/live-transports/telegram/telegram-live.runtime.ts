@@ -541,7 +541,7 @@ const TELEGRAM_QA_STANDARD_SCENARIO_IDS = collectLiveTransportStandardScenarioCo
   scenarios: TELEGRAM_QA_SCENARIOS,
 });
 
-const TELEGRAM_QA_ENV_KEYS = [
+const _TELEGRAM_QA_ENV_KEYS = [
   "OPENCLAW_QA_TELEGRAM_GROUP_ID",
   "OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN",
   "OPENCLAW_QA_TELEGRAM_SUT_BOT_TOKEN",
@@ -559,7 +559,7 @@ const telegramQaCredentialPayloadSchema = z.object({
   sutToken: z.string().trim().min(1),
 });
 
-function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof TELEGRAM_QA_ENV_KEYS)[number]) {
+function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof _TELEGRAM_QA_ENV_KEYS)[number]) {
   const value = env[key]?.trim();
   if (!value) {
     throw new Error(`Missing ${key}.`);
