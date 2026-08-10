@@ -119,9 +119,7 @@ export function resolveEmbeddedSekbRuntime(params: {
 
 export type SekbInstallableAgent = {
   // Loosely typed so ExtensionAPI overloads and recorder stubs both assign.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on: (type: string, handler: (...args: any[]) => any) => any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   subscribe?: (listener: (...args: any[]) => any) => () => void;
 };
 

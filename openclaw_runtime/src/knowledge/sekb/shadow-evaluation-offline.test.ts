@@ -279,7 +279,7 @@ function trajectory(input: {
         errorSignaturePresent: Boolean(input.errorSignature),
         priorMatchingErrorSignatureCount: 0,
       });
-  if (shadow && input.score !== undefined) {
+  if (shadow && input.score !== undefined && input.score !== null) {
     shadow.captureQuality.score = input.score;
     shadow.captureQuality.recommendation = input.score >= 50 ? "retain" : "review_low_signal";
   }

@@ -7,6 +7,7 @@ import {
   productizeExperienceShadow,
   readExperienceShadowEvents,
 } from "./experience-shadow-product.js";
+import { buildExperienceBlock } from "./experience-block-bridge.js";
 import type { DistillationSuggestion, Principle } from "./types.js";
 
 function makePrinciple(overrides: Partial<Principle> = {}): Principle {
@@ -64,6 +65,7 @@ describe("experience-shadow-product (C7-H)", () => {
       workspaceRoot: root,
       enabled: false,
       dualWrite: false,
+      buildBlock: (build) => buildExperienceBlock(build),
       build: {
         principle: makePrinciple({ principle_id: "p1" }),
         suggestion: makeSuggestion(),
@@ -80,6 +82,7 @@ describe("experience-shadow-product (C7-H)", () => {
       workspaceRoot: root,
       enabled: true,
       dualWrite: true,
+      buildBlock: (build) => buildExperienceBlock(build),
       build: {
         principle: makePrinciple({ principle_id: "p2" }),
         suggestion: makeSuggestion(),
@@ -98,6 +101,7 @@ describe("experience-shadow-product (C7-H)", () => {
       workspaceRoot: root,
       enabled: true,
       dualWrite: false,
+      buildBlock: (build) => buildExperienceBlock(build),
       build: {
         principle: makePrinciple({ principle_id: "p3" }),
         suggestion: makeSuggestion(),

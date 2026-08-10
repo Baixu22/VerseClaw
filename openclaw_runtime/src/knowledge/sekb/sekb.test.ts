@@ -12,7 +12,7 @@ import { DistillationTool } from "./distillation-tool.js";
 import { installSekbHarnessHooks } from "./harness-integration.js";
 import { KnowledgeStore } from "./knowledge-store.js";
 import { buildSekbOperatorReport } from "./operator-report.js";
-import { RetrievalEngine } from "./retrieval-engine.js";
+import { RetrievalEngine, type ContextInjector } from "./retrieval-engine.js";
 import { TrajectoryCapture } from "./trajectory-capture.js";
 import type { Principle } from "./types.js";
 
@@ -373,7 +373,7 @@ describe("SEKB-MVP", () => {
         for_error() {
           throw new Error("boom");
         },
-      },
+      } as unknown as ContextInjector,
       onError: (error) => errors.push(error),
     });
     const isolated = await throwingHarness.runner.runBeforeAgentStart(
@@ -618,7 +618,6 @@ function createPluginHookHarness() {
   };
   const runner = createHookRunner(registry, {
     logger: {
-      info() {},
       warn() {},
       error() {},
     },

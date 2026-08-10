@@ -6,6 +6,7 @@
  * injects prompt content or tool authority unless explicitly enabled. These
  * tests pin the gate and the no-op behavior when not enabled.
  */
+import type { RuntimeContextProviderQuery } from "../runtime-core/index.js";
 import { describe, expect, it } from "vitest";
 import {
   createSymbolContextProvider,
@@ -30,12 +31,16 @@ describe("symbol context provider (shadow-only gate)", () => {
   it("returns a fallback result when not explicitly enabled", async () => {
     const provider = createSymbolContextProvider();
     const result = await provider.getContext(
-      { type: "text", text: "find SymbolName" },
+      { text: "find SymbolName" } as RuntimeContextProviderQuery,
       {},
     );
     // Shadow gate: no symbol output, no prompt injection.
-    expect(result.status).toBe("fallback");
-    expect(result.contextItems).toEqual([]);
-    expect(result.diagnostics.length).toBeGreaterThan(0);
+    if (Array.isArray(result)) {
+      expect(result).toEqual([]);
+    } else {
+      expect(result.status).toBe("fallback");
+      expect(result.contextItems).toEqual([]);
+      expect(result.diagnostics.length).toBeGreaterThan(0);
+    }
   });
 });

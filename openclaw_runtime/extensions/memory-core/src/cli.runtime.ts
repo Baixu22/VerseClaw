@@ -493,7 +493,7 @@ async function withMemoryManagerForAgent(params: {
     managerParams.purpose = params.purpose;
   }
   await withManager<MemoryManager>({
-    getManager: () => getMemorySearchManager(managerParams),
+    getManager: () => getMemorySearchManager(managerParams).then((result) => result.manager),
     onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
     onCloseError: (err) =>
       defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
@@ -752,7 +752,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
                       update({
                         completed: syncUpdate.completed,
                         total: syncUpdate.total,
-                        label: syncUpdate.label,
+                        label: syncUpdate.label ?? "",
                       });
                       if (syncUpdate.label) {
                         progress.setLabel(syncUpdate.label);

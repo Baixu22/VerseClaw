@@ -188,11 +188,11 @@ describe("SekbBatchDistillationAssistant", () => {
     const store = createStore();
     const ids = seedTrajectories(store, 2);
     const distiller = new DistillationTool({ store });
-    const provider: SekbBatchDistillationProvider = {
+    const provider = {
       suggest: vi.fn((_input, options) => new Promise((_resolve, reject) => {
         options.signal.addEventListener("abort", () => reject(new Error("aborted")));
-      })),
-    };
+      })) as unknown as SekbBatchDistillationProvider["suggest"],
+    } as SekbBatchDistillationProvider;
     const assistant = createAssistant(store, { provider });
     const pending = assistant.suggest({ trajectoryIds: ids });
 

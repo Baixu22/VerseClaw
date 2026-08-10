@@ -87,7 +87,9 @@ describe("runtime memory context provider", () => {
     });
 
     const result = await provider.getContext({});
-    const groundingDiagnostics = result.metadata?.groundingDiagnostics;
+    const groundingDiagnostics = Array.isArray(result)
+      ? undefined
+      : result.metadata?.groundingDiagnostics;
 
     expect(groundingDiagnostics).toMatchObject({
       query: {
