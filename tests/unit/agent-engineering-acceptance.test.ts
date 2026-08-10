@@ -201,7 +201,8 @@ describe('Agent Engineering Acceptance', () => {
       createdAt: '2026-07-31T00:00:00.000Z',
     });
 
-    expect(manifest.coverage).toMatchObject({ runtime: true, ui: true, comms: true, maturity: false, release: true });
+    expect(manifest.coverage).toMatchObject({ runtime: true, ui: true, comms: true, release: true });
+    expect(manifest.coverage).not.toHaveProperty('maturity');
     expect(manifest.requiredProfiles).toEqual(expect.arrayContaining(['fast', 'runtime', 'e2e', 'comms', 'release', 'full']));
     expect(manifest.requiredProfiles).not.toContain('maturity');
     expect(manifest.gates.map((gate) => gate.id)).toEqual(expect.arrayContaining([
