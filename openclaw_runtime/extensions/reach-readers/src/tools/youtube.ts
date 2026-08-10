@@ -28,7 +28,7 @@ import type { Availability } from '../types.js';
 import { readBrowserFallbackPage } from '../core/browser-bridge.js';
 
 const DOMAINS = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'] as const;
-const _DEFAULT_BACKENDS = ['yt-dlp'] as const;
+export const _DEFAULT_BACKENDS = ['yt-dlp'] as const;
 
 type MediaTranscribe = (params: {
   filePath: string;

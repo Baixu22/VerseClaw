@@ -122,7 +122,6 @@ function getPluginBoundarySourceLoader(modulePath: string, loaders: PluginModule
   });
 }
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Dynamic plugin boundary loaders use caller-supplied module types.
 export function loadPluginBoundaryModule<TModule>(
   modulePath: string,
   loaders: PluginModuleLoaderCache,

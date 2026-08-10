@@ -228,7 +228,6 @@ export async function runTrustedToolPolicies(
     const policyCtx: PluginHookToolContext = {
       ...ctxWithoutToolIdentity,
       ...currentContextToolIdentity,
-      // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Plugin callers type JSON reads by namespace.
       getSessionExtension: <T extends PluginJsonValue = PluginJsonValue>(namespace: string) => {
         const normalizedNamespace = namespace.trim();
         const cacheKey = pluginId;

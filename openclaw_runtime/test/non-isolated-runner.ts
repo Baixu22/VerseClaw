@@ -202,7 +202,7 @@ function resetOpenClawGlobalRunState(): void {
 }
 
 export default class OpenClawNonIsolatedRunner extends TestRunner {
-  override onCollectStart(file: { filepath: string }) {
+  override onCollectStart(file: Parameters<TestRunner["onCollectStart"]>[0]) {
     super.onCollectStart(file);
     restoreRealTimers();
     restoreNativeTimerGlobals();
@@ -247,7 +247,10 @@ export default class OpenClawNonIsolatedRunner extends TestRunner {
     vi.clearAllMocks();
     resetOpenClawGlobalRunState();
     vi.resetModules();
-    this.moduleRunner?.mocker?.reset?.();
-    resetEvaluatedModules(this.workerState.evaluatedModules as EvaluatedModules, true);
+    (this as unknown as { moduleRunner?: { mocker?: { reset?: () => void } } }).moduleRunner?.mocker?.reset?.();
+    resetEvaluatedModules(
+      (this as unknown as { workerState: { evaluatedModules?: EvaluatedModules } }).workerState.evaluatedModules as EvaluatedModules,
+      true,
+    );
   }
 }

@@ -326,7 +326,6 @@ async function requestTargetCodexAppServerJson(params: {
   let lastResponse: unknown;
   let attempt = 0;
   do {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- retained binding
     attempt += 1;
     const remainingMs = Math.max(1, discoveryDeadline - Date.now());
     lastResponse = await requestCodexAppServerJson({

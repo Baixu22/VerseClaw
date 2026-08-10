@@ -114,7 +114,6 @@ function loadPublicSurfaceModule(modulePath: string): unknown {
   return getModuleLoader(modulePath)(modulePath);
 }
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Dynamic public artifact loaders use caller-supplied module surface types.
 export function loadBundledPluginPublicArtifactModuleSync<T extends object>(params: {
   dirName: string;
   artifactBasename: string;

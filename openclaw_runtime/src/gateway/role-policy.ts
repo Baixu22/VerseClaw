@@ -2,7 +2,6 @@
 // Separates node-role RPCs from operator RPCs before method scope checks.
 import { isNodeRoleMethod } from "./method-scopes.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const GATEWAY_ROLES = ["operator", "node"] as const;
 
 /** Gateway connection roles used before method-level operator scope checks. */

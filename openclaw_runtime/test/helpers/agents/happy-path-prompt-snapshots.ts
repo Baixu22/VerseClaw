@@ -233,27 +233,23 @@ const baseConfig: OpenClawConfig = {
   agents: {
     defaults: {
       heartbeat: {
-        enabled: true,
         every: "30m",
       },
     },
   },
   tools: {
-    profiles: {
-      coding: {
-        allow: [
-          "message",
-          "heartbeat_respond",
-          "sessions_spawn",
-          "sessions_list",
-          "sessions_yield",
-          "cron",
-          "memory_search",
-          "memory_get",
-          "session_status",
-        ],
-      },
-    },
+    profile: "coding",
+    allow: [
+      "message",
+      "heartbeat_respond",
+      "sessions_spawn",
+      "sessions_list",
+      "sessions_yield",
+      "cron",
+      "memory_search",
+      "memory_get",
+      "session_status",
+    ],
   },
 };
 
@@ -644,10 +640,12 @@ function renderModelBoundPromptLayers(params: {
       ? params.codexSnapshot.threadStartParams.config.instructions
       : "";
   const openClawDeveloperInstructions = params.codexSnapshot.developerInstructions;
+  const codexCollaborationMode = params.codexSnapshot.turnStartParams.collaborationMode as
+    | { settings?: { developer_instructions?: unknown } }
+    | undefined;
   const codexCollaborationModeInstructions =
-    typeof params.codexSnapshot.turnStartParams.collaborationMode?.settings
-      ?.developer_instructions === "string"
-      ? params.codexSnapshot.turnStartParams.collaborationMode.settings.developer_instructions
+    typeof codexCollaborationMode?.settings?.developer_instructions === "string"
+      ? codexCollaborationMode.settings.developer_instructions
       : "";
   const turnInputText = readCodexTurnInputText(params.codexSnapshot.turnStartParams);
   const textOnlyTotal = [

@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Edit } from "./edit-diff.js";
 import { createEditToolDefinition, type EditToolInput } from "./edit.js";
+import type { ExtensionContext } from "../extensions/types.js";
 
 let dir: string;
 
@@ -26,7 +27,7 @@ afterEach(async () => {
 
 async function executeEdit(args: { path: string; edits: Edit[] }) {
   const definition = createEditToolDefinition(dir);
-  return definition.execute("test-call", args as EditToolInput, undefined, undefined, undefined);
+  return definition.execute("test-call", args as EditToolInput, undefined, undefined, {} as ExtensionContext);
 }
 
 async function executeEditError(args: { path: string; edits: Edit[] }): Promise<Error> {

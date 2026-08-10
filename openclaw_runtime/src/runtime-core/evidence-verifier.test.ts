@@ -76,7 +76,14 @@ describe("evidence verifier shadow/pilot gating", () => {
         source: "task_loop",
       },
       toolResults: [
-        { callId: "tool:1", status: "success", evidence: [{ type: "tool", ref: "tool:1" }] },
+        {
+          callId: "tool:1",
+          status: "success",
+          evidence: [{ type: "tool", ref: "tool:1" }],
+          contextItems: [],
+          startedAt: 0,
+          finishedAt: 0,
+        },
       ],
       eventReplay: {
         status: "consistent",

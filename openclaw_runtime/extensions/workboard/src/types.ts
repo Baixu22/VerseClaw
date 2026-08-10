@@ -1,4 +1,4 @@
-import type { TaskLedgerReference } from "../../../../shared/types/task-ledger-reference";
+import type { TaskLedgerReference } from "../../../../shared/types/task-ledger-reference.js";
 
 // Workboard type declarations define plugin contracts.
 export const WORKBOARD_STATUSES = [

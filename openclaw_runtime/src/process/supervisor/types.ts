@@ -7,7 +7,8 @@ export type TerminationReason =
   | "no-output-timeout"
   | "spawn-error"
   | "signal"
-  | "exit";
+  | "exit"
+  | "agent_abort";
 
 export type RunRecord = {
   runId: string;

@@ -16,6 +16,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ImageContent, TextContent } from "../../../llm/types.js";
+import type { ExtensionContext } from "../extensions/types.js";
 import { createReadToolDefinition } from "./read.js";
 
 let dir: string;
@@ -30,7 +31,7 @@ afterEach(async () => {
 
 async function executeRead(args: { path: string; offset?: number; limit?: number }) {
   const definition = createReadToolDefinition(dir);
-  return definition.execute("test-call", args, undefined, undefined, undefined);
+  return definition.execute("test-call", args, undefined, undefined, {} as ExtensionContext);
 }
 
 function textOf(result: { content: (TextContent | ImageContent)[] }): string {
@@ -246,7 +247,7 @@ describe("read tool: images", () => {
       { path: "tiny.png" },
       undefined,
       undefined,
-      undefined,
+      {} as ExtensionContext,
     );
     expect(result.content).toEqual([
       { type: "text", text: "Read image file [image/png]" },

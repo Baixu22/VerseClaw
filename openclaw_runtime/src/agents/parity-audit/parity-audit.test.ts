@@ -186,7 +186,6 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
       checkpoint: record,
       sessionId: journalSessionId,
     });
-    // eslint-disable-next-line no-console
     console.log("J2 debug", JSON.stringify({
       entryCreatedAtMs: entry!.createdAtMs,
       checkpointAt: record.checkpoint.createdAt,
@@ -219,6 +218,7 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
         applyCheckpoint: async () => {
           throw new Error("journal snapshot corrupted");
         },
+        replayEventLog: async () => ({ ok: false, reason: "n/a" }),
         recordOutcome: (r) => outcomes.push(r.ok ? r.mode : `err:${r.reason}`),
       },
     );
@@ -270,7 +270,8 @@ describe("能力2 checkpoint 回滚: journal 时间戳过滤边界", () => {
           if (outcome.errors.length > 0) throw new Error(outcome.errors.join("; "));
           return { restored: outcome.restored } as never;
         },
-        recordOutcome: () => undefined,
+        replayEventLog: async () => ({ ok: false, reason: "n/a" }),
+    recordOutcome: () => undefined,
       },
     );
     // 修复后: 回滚真实撤销本 tick 写入, 文件恢复 v0

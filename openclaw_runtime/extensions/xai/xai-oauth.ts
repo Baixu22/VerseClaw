@@ -510,7 +510,7 @@ async function noteXaiOAuthUrl(ctx: ProviderAuthContext, authorizeUrl: string): 
 }
 
 export async function loginXaiOAuth(ctx: ProviderAuthContext): Promise<ProviderAuthResult> {
-  const progress = ctx.prompter.progress("Starting xAI OAuth...");
+  const progress = ctx.prompter.progress({ message: "Starting xAI OAuth..." });
   try {
     const discovery = await fetchXaiOAuthDiscovery();
     const pkce = generateHexPkceVerifierChallenge();
@@ -598,7 +598,7 @@ async function noteXaiDeviceCode(
 }
 
 export async function loginXaiDeviceCode(ctx: ProviderAuthContext): Promise<ProviderAuthResult> {
-  const progress = ctx.prompter.progress("Starting xAI device code flow...");
+  const progress = ctx.prompter.progress({ message: "Starting xAI device code flow..." });
   try {
     const discovery = await fetchXaiDeviceCodeDiscovery();
     progress.update("Requesting xAI device code...");

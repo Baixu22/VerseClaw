@@ -110,7 +110,6 @@ function resolveWorkspacePackageDir(packageName: string): string {
   throw new Error(`Unknown workspace package: ${packageName}`);
 }
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Test loaders use caller-supplied module surface types.
 type BundledPluginPublicSurfaceLoader = <T extends object>(params: {
   pluginId: string;
   artifactBasename: string;
@@ -121,7 +120,6 @@ type AsyncBundledPluginPublicSurfaceLoader = <T extends object>(params: {
   artifactBasename: string;
 }) => Promise<T>;
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Test loaders use caller-supplied module surface types.
 type BundledPluginPublicArtifactLoader = <T extends object>(pluginId: string) => T;
 
 export const loadBundledPluginPublicSurfaceSync: BundledPluginPublicSurfaceLoader = (params) => {

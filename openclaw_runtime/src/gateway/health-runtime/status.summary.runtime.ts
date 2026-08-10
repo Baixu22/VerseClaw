@@ -25,7 +25,7 @@ function resolveConfiguredStatusModelRef(params: {
 
 function resolveSessionRuntimeLabel(params: {
   cfg: OpenClawConfig;
-  entry?: SessionEntry;
+  entry?: Pick<SessionEntry, "modelProvider">;
   provider?: string;
   model?: string;
   agentId?: string;

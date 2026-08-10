@@ -4,6 +4,13 @@ packages:
   - packages/*
   - ui
 
+# pnpm 11 reads hoisting settings only from pnpm-workspace.yaml (not .npmrc).
+# Hoisting is required so the runtime typecheck (tsgo all, NodeNext resolution)
+# can resolve extension and test helper imports (e.g. @aws-sdk/*, baileys) from
+# the workspace root node_modules in fresh detached acceptance worktrees,
+# matching the layout the main worktree has accumulated.
+shamefullyHoist: true
+
 allowBuilds:
   '@google/genai': false
   '@matrix-org/matrix-sdk-crypto-nodejs': false

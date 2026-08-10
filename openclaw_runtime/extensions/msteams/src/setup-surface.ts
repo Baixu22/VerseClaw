@@ -279,7 +279,7 @@ export const msteamsSetupWizard: ChannelSetupWizard = {
         };
         try {
           const { loginMSTeamsDelegated } = await import("./oauth.js");
-          const progress = params.prompter.progress(t("wizard.msteams.delegatedOAuthProgress"));
+          const progress = params.prompter.progress({ message: t("wizard.msteams.delegatedOAuthProgress") });
           const tokens = await loginMSTeamsDelegated(
             {
               isRemote: true,

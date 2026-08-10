@@ -327,7 +327,7 @@ async function pullOllamaModel(
   modelName: string,
   prompter: WizardPrompter,
 ): Promise<boolean> {
-  const spinner = prompter.progress(`Downloading ${modelName}...`);
+  const spinner = prompter.progress({ message: `Downloading ${modelName}...` });
   const result = await pullOllamaModelCore({
     baseUrl,
     modelName,

@@ -10,6 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createWriteToolDefinition } from "./write.js";
+import type { ExtensionContext } from "../extensions/types.js";
 
 let dir: string;
 
@@ -23,7 +24,7 @@ afterEach(async () => {
 
 async function executeWrite(args: { path: string; content: string }) {
   const definition = createWriteToolDefinition(dir);
-  return definition.execute("test-call", args, undefined, undefined, undefined);
+  return definition.execute("test-call", args, undefined, undefined, {} as ExtensionContext);
 }
 
 describe("write tool: create and overwrite", () => {
