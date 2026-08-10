@@ -3,6 +3,7 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { createMission, tickMission, type MissionControllerDeps } from "./controller.js";
 import type { MissionRunRecord } from "./types.js";
 import * as longTaskStore from "../long-task-control/store.js";
+import type { LongTaskCheckpointRecord } from "../long-task-control/store.js";
 
 function makeReviewer(decision: "repair" | "complete") {
   return vi.fn(async () => ({
@@ -47,9 +48,9 @@ function inMemoryDeps(overrides: {
       [...missions.values()].find((m) => m.sessionKey === sessionKey),
     recordEvent: () => undefined,
     storeTrace: () => undefined,
-    proposeMemory: () => 0,
+    proposeMemory: () => ({ action: "accept" as const, accepted: true }),
     createKnowledgeInboxItem: () => undefined,
-    runTaskLoop: makeTaskLoop(),
+    runTaskLoop: makeTaskLoop() as unknown as MissionControllerDeps["runTaskLoop"],
     taskLoopDeps: {},
     reviewer: overrides.reviewer ?? makeReviewer("repair"),
     reviewerDeps: {},
@@ -96,14 +97,14 @@ describe("mission-control rollback wiring (A3)", () => {
   it("rolls back to checkpoint and stays sleeping when enabled and checkpoint exists", async () => {
     const rollbackDeps: MissionControllerDeps["rollback"] = {
       loadCheckpoint: vi.fn(async () => ({ id: "c1" })),
-      validateCheckpoint: vi.fn(async () => ({ ok: true })),
+      validateCheckpoint: vi.fn(async (): Promise<{ ok: true }> => ({ ok: true })),
       applyCheckpoint: vi.fn(async () => undefined),
       replayEventLog: vi.fn(async () => ({ ok: false, reason: "n/a" })),
       recordOutcome: vi.fn(),
     };
     // Make listLongTaskCheckpoints return [current-tick, previous-tick] so the
     // repeated-repair branch rolls back to the PREVIOUS tick checkpoint.
-    const previousCheckpoint = {
+    const previousCheckpoint: LongTaskCheckpointRecord = {
       id: "c0",
       sessionKey: "agent::s1",
       trigger: "guide",
@@ -125,7 +126,7 @@ describe("mission-control rollback wiring (A3)", () => {
       createdAt: Date.now() - 60_000,
       updatedAt: Date.now() - 60_000,
     };
-    const currentCheckpoint = {
+    const currentCheckpoint: LongTaskCheckpointRecord = {
       ...previousCheckpoint,
       id: "c1",
       checkpoint: { ...previousCheckpoint.checkpoint, id: "c1", createdAt: new Date().toISOString() },
@@ -157,12 +158,12 @@ describe("mission-control rollback wiring (A3)", () => {
   it("blocks with rollback failure detail when rollback fails", async () => {
     const rollbackDeps: MissionControllerDeps["rollback"] = {
       loadCheckpoint: vi.fn(async () => ({ id: "c1" })),
-      validateCheckpoint: vi.fn(async () => ({ ok: false, reason: "corrupt" })),
+      validateCheckpoint: vi.fn(async (): Promise<{ ok: false; reason: string }> => ({ ok: false, reason: "corrupt" })),
       applyCheckpoint: vi.fn(async () => undefined),
       replayEventLog: vi.fn(async () => ({ ok: false, reason: "n/a" })),
       recordOutcome: vi.fn(),
     };
-    const previousCheckpoint = {
+    const previousCheckpoint: LongTaskCheckpointRecord = {
       id: "c0",
       sessionKey: "agent::s1",
       trigger: "guide",
@@ -184,7 +185,7 @@ describe("mission-control rollback wiring (A3)", () => {
       createdAt: Date.now() - 60_000,
       updatedAt: Date.now() - 60_000,
     };
-    const currentCheckpoint = {
+    const currentCheckpoint: LongTaskCheckpointRecord = {
       ...previousCheckpoint,
       id: "c1",
       checkpoint: { ...previousCheckpoint.checkpoint, id: "c1", createdAt: new Date().toISOString() },
@@ -214,14 +215,14 @@ describe("mission-control rollback wiring (A3)", () => {
   it("blocks with no-checkpoint detail when only the current-tick checkpoint exists", async () => {
     const rollbackDeps: MissionControllerDeps["rollback"] = {
       loadCheckpoint: vi.fn(async () => ({ id: "c1" })),
-      validateCheckpoint: vi.fn(async () => ({ ok: true })),
+      validateCheckpoint: vi.fn(async (): Promise<{ ok: true }> => ({ ok: true })),
       applyCheckpoint: vi.fn(async () => undefined),
       replayEventLog: vi.fn(async () => ({ ok: false, reason: "n/a" })),
       recordOutcome: vi.fn(),
     };
     // Only the current tick's checkpoint exists — there is no earlier state to
     // roll back to, so the branch must block with "no checkpoint available".
-    const currentCheckpoint = {
+    const currentCheckpoint: LongTaskCheckpointRecord = {
       id: "c1",
       sessionKey: "agent::s1",
       trigger: "guide",

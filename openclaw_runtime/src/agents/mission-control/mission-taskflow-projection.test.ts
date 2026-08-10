@@ -91,7 +91,7 @@ describe('RC-06C Mission -> TaskFlow read-only projection', () => {
     const missions = new Map<string, { missionId: string; status: string; phase: string; tick: number }>();
     const deps = {
       getMission: (id: string) => missions.get(id),
-      saveMission: (record: { missionId: string }) => {
+      saveMission: (record: { missionId: string; status: string; phase: string; tick: number }) => {
         missions.set(record.missionId, record);
         return record;
       },
