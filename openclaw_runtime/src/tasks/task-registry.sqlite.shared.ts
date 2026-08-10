@@ -13,7 +13,6 @@ export function normalizeSqliteNumber(value: number | bigint | null): number | u
   return typeof value === "number" ? value : undefined;
 }
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Persisted JSON columns are typed by the receiving field.
 export function parseSqliteJsonValue<T>(raw: string | null): T | undefined {
   if (!raw?.trim()) {
     return undefined;

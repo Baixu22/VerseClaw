@@ -83,12 +83,16 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
       deliveryState: 'delivered',
     });
     expect(bogus.ok).toBe(false);
-    expect(bogus.reason).toBe('revision-conflict');
+    if (!bogus.ok) {
+      expect(bogus.reason).toBe('revision-conflict');
+    }
 
     // A plain arbitrary revision (0) also cannot create a flow.
     const arbitrary = store.casUpsert({ flowId: 'flow-arbitrary', expectedRevision: 0, status: 'queued' });
     expect(arbitrary.ok).toBe(false);
-    expect(arbitrary.reason).toBe('revision-conflict');
+    if (!arbitrary.ok) {
+      expect(arbitrary.reason).toBe('revision-conflict');
+    }
 
     // A terminal initial status with the correct sentinel is also rejected.
     const terminalInitial = store.casUpsert({
@@ -97,7 +101,9 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
       status: 'succeeded',
     });
     expect(terminalInitial.ok).toBe(false);
-    expect(terminalInitial.reason).toBe('illegal-transition');
+    if (!terminalInitial.ok) {
+      expect(terminalInitial.reason).toBe('illegal-transition');
+    }
 
     // No partial rows were produced.
     expect(store.getById('flow-bogus')).toBeUndefined();
@@ -149,7 +155,9 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // succeeded -> running is illegal (absorbing terminal).
     const resurrection = store.casUpsert({ flowId: 'flow-terminal', expectedRevision: 1, status: 'running' });
     expect(resurrection.ok).toBe(false);
-    expect(resurrection.reason).toBe('illegal-transition');
+    if (!resurrection.ok) {
+      expect(resurrection.reason).toBe('illegal-transition');
+    }
     expect(store.getById('flow-terminal')?.status).toBe('succeeded');
   });
 
@@ -197,7 +205,6 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // bypassing the process-wide connection cache. Each runs the exact same
     // CAS UPDATE (WHERE flow_id = ? AND revision = ?); SQLite serializes them
     // and exactly one sees 1 changed row.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const dbPath = options().path;
     const connA = new DatabaseSync(dbPath);
@@ -275,7 +282,9 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // A rejected transition must not alter lifecycle OR delivery state.
     const rejected = store.casUpsert({ flowId: 'flow-delivery', expectedRevision: 0, status: 'succeeded' });
     expect(rejected.ok).toBe(false);
-    expect(rejected.reason).toBe('illegal-transition');
+    if (!rejected.ok) {
+      expect(rejected.reason).toBe('illegal-transition');
+    }
     const afterReject = store.getById('flow-delivery');
     expect(afterReject?.status).toBe('queued');
     expect(afterReject?.delivery_state).toBe('pending');
