@@ -146,4 +146,66 @@ describe('RC-08B OTel and observability convergence (root acceptance)', () => {
     const body = received[0].body as { resourceSpans?: Array<{ scopeSpans?: Array<{ spans?: unknown[] }> }> };
     expect(body.resourceSpans?.[0]?.scopeSpans?.[0]?.spans).toHaveLength(3);
   });
+
+  it('F-09: one golden trace exports over a real local OTLP HTTP collector round trip (no mock fetch)', async () => {
+    // F-09: the OTel path must work against a real OTLP HTTP endpoint, not
+    // only a stubbed fetchFn. A local node:http server plays the collector;
+    // the production exporter performs a real network POST with the canonical
+    // ExportTraceServiceRequest envelope.
+    const { createServer } = await import('node:http');
+    const received: Array<{ body: unknown; contentType?: string }> = [];
+    const server = createServer((req, res) => {
+      let raw = '';
+      req.setEncoding('utf8');
+      req.on('data', (chunk) => {
+        raw += chunk;
+      });
+      req.on('end', () => {
+        received.push({
+          body: JSON.parse(raw) as unknown,
+          contentType: req.headers['content-type'],
+        });
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end('{}');
+      });
+    });
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    try {
+      const address = server.address();
+      if (!address || typeof address === 'string') throw new Error('unreachable');
+      const port = address.port;
+      const exporter = createObservabilityOtlpJsonExporter({
+        endpoint: `http://127.0.0.1:${port}/v1/traces`,
+        enabled: true,
+        serviceName: 'openclaw',
+      });
+      const result = await exporter(makeTrace() as never);
+      expect(result.exported).toBe(true);
+      expect(result.spanCount).toBe(3);
+      expect(received).toHaveLength(1);
+      expect(received[0].contentType).toBe('application/json');
+      const body = received[0].body as {
+        resourceSpans?: Array<{
+          resource?: { attributes?: Array<{ key: string; value?: { stringValue?: string } }> };
+          scopeSpans?: Array<{ spans?: Array<{ traceId?: string; name?: string }> }>;
+        }>;
+      };
+      expect(body.resourceSpans?.[0]?.scopeSpans?.[0]?.spans).toHaveLength(3);
+      // The real collector sees the golden trace id on every span.
+      const traceIds = new Set(
+        (body.resourceSpans?.[0]?.scopeSpans?.[0]?.spans ?? []).map((span) => span.traceId),
+      );
+      expect(traceIds.size).toBe(1);
+      const serviceName = body.resourceSpans?.[0]?.resource?.attributes?.find(
+        (attr) => attr.key === 'service.name',
+      )?.value?.stringValue;
+      expect(serviceName).toBe('openclaw');
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+      });
+    }
+  });
 });
