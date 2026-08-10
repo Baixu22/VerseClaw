@@ -114,7 +114,6 @@ function formatModeSource(params: { sourcePath: string; configPath: string }): s
 type ExecPolicyField = "security" | "ask" | "askFallback";
 
 function resolveRequestedField<
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Field-specific callers narrow the shared requested policy value.
   TValue extends ExecSecurity | ExecAsk,
 >(params: {
   field: ExecPolicyRequestedField;

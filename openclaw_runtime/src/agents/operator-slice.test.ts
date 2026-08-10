@@ -181,7 +181,9 @@ describe('RC-05 operator governance slice', () => {
       options: options(),
     });
     expect(second.ok).toBe(false);
-    expect(second.reason).toBe('duplicate');
+    if (!second.ok) {
+      expect(second.reason).toBe('duplicate');
+    }
 
     const target = path.join(effectRoot, 'out', 'dup.txt');
     const content = fs.readFileSync(target, 'utf8');
@@ -262,7 +264,9 @@ describe('RC-05 operator governance slice', () => {
       },
     });
     expect(executed.ok).toBe(false);
-    expect(executed.reason).toBe('governance-mismatch');
+    if (!executed.ok) {
+      expect(executed.reason).toBe('governance-mismatch');
+    }
     expect(executorCalls).toBe(0);
     // The approval stays approved (no execution_started, no outcome).
     const ledger = new ApprovalLedger(databaseOptions());
@@ -279,7 +283,9 @@ describe('RC-05 operator governance slice', () => {
       options: options(),
     });
     expect(denied.ok).toBe(false);
-    expect(denied.reason).toBe('denied');
+    if (!denied.ok) {
+      expect(denied.reason).toBe('denied');
+    }
     expect(fs.existsSync(path.join(effectRoot, 'out', 'denied.txt'))).toBe(false);
 
     const effects = new EffectReceiptStore(databaseOptions());
@@ -297,7 +303,9 @@ describe('RC-05 operator governance slice', () => {
     // No real executor -> no fake send -> not applied. The approval is resolved
     // but execution never started (no executor, no execution phase).
     expect(result.ok).toBe(false);
-    expect(result.reason).toBe('not-approved');
+    if (!result.ok) {
+      expect(result.reason).toBe('not-approved');
+    }
     const ledger = new ApprovalLedger(databaseOptions());
     const row = ledger.getByIdempotencyKey(`op:run-message-no-executor:sess-op-1`);
     expect(row?.state).toBe('approved');

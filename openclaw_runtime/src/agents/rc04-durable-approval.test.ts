@@ -108,7 +108,9 @@ describe('RC-04 durable approval ledger', () => {
 
     const conflict = ledger.resolve({ approvalId, decision: 'denied', resolvedBy: 'op-2' });
     expect(conflict.ok).toBe(false);
-    expect(conflict.reason).toBe('state-conflict');
+    if (!conflict.ok) {
+      expect(conflict.reason).toBe('state-conflict');
+    }
   });
 
   it('denial produces no effect and leads to no execution_started', () => {
@@ -124,7 +126,9 @@ describe('RC-04 durable approval ledger', () => {
     // Execution cannot start from a denied approval.
     const started = ledger.markExecutionStarted(approvalId);
     expect(started.ok).toBe(false);
-    expect(started.reason).toBe('state-conflict');
+    if (!started.ok) {
+      expect(started.reason).toBe('state-conflict');
+    }
     // No effect receipt is recorded for a denied approval.
     const effects = newEffects();
     expect(effects.listByApproval(approvalId)).toHaveLength(0);
@@ -139,14 +143,18 @@ describe('RC-04 durable approval ledger', () => {
     // approval_pending directly record applied -> state-conflict.
     const applied = ledger.recordEffectOutcome({ approvalId, outcome: 'applied' });
     expect(applied.ok).toBe(false);
-    expect(applied.reason).toBe('state-conflict');
+    if (!applied.ok) {
+      expect(applied.reason).toBe('state-conflict');
+    }
     expect(ledger.getById(approvalId)?.state).toBe('approval_pending');
 
     // approved but not yet execution_started -> still state-conflict.
     expect(ledger.resolve({ approvalId, decision: 'approved' }).ok).toBe(true);
     const appliedEarly = ledger.recordEffectOutcome({ approvalId, outcome: 'applied' });
     expect(appliedEarly.ok).toBe(false);
-    expect(appliedEarly.reason).toBe('state-conflict');
+    if (!appliedEarly.ok) {
+      expect(appliedEarly.reason).toBe('state-conflict');
+    }
     expect(ledger.getById(approvalId)?.state).toBe('approved');
   });
 
@@ -167,7 +175,9 @@ describe('RC-04 durable approval ledger', () => {
     // A different outcome cannot be recorded while needs_reconciliation.
     const forced = ledger.recordEffectOutcome({ approvalId, outcome: 'applied' });
     expect(forced.ok).toBe(false);
-    expect(forced.reason).toBe('state-conflict');
+    if (!forced.ok) {
+      expect(forced.reason).toBe('state-conflict');
+    }
 
     // Manual/domain-journal reconciliation is the only way forward.
     const reconciled = ledger.reconcile(approvalId, 'journal:run-1:outcome');
@@ -230,7 +240,9 @@ describe('RC-04 durable approval ledger', () => {
       expiresAtMs: Date.now() + 60_000,
     });
     expect(conflicting.ok).toBe(false);
-    expect(conflicting.reason).toBe('idempotency-conflict');
+    if (!conflicting.ok) {
+      expect(conflicting.reason).toBe('idempotency-conflict');
+    }
     if (first.ok) {
       expect(conflicting.row?.approval_id).toBe(first.row.approval_id);
       // The ledger still holds the original approval untouched.
@@ -257,7 +269,9 @@ describe('RC-04 durable approval ledger', () => {
     expect(ledger.markExecutionStarted(approvalId).ok).toBe(true);
     const illegalReconcile = ledger.reconcile(approvalId);
     expect(illegalReconcile.ok).toBe(false);
-    expect(illegalReconcile.reason).toBe('state-conflict');
+    if (!illegalReconcile.ok) {
+      expect(illegalReconcile.reason).toBe('state-conflict');
+    }
 
     // Recorded outcome moves to reconciled. Replaying the SAME outcome on the
     // reconciled row is idempotent (existing.outcome matches); a DIFFERENT
@@ -268,7 +282,9 @@ describe('RC-04 durable approval ledger', () => {
     expect(replay.row?.outcome).toBe('applied');
     const differentOutcome = ledger.recordEffectOutcome({ approvalId, outcome: 'unknown' });
     expect(differentOutcome.ok).toBe(false);
-    expect(differentOutcome.reason).toBe('state-conflict');
+    if (!differentOutcome.ok) {
+      expect(differentOutcome.reason).toBe('state-conflict');
+    }
     expect(ledger.reconcile(approvalId).ok).toBe(true);
     expect(ledger.getById(approvalId)?.revision).toBeGreaterThan(approved.row.revision);
   });
@@ -277,7 +293,6 @@ describe('RC-04 durable approval ledger', () => {
     // Build a legacy-shape approval_ledger by hand (raw request_json column).
     const dbPath = path.join(stateDir, 'openclaw-state.db');
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const raw = new DatabaseSync(dbPath);
     raw.exec(`
@@ -386,7 +401,6 @@ describe('RC-04 durable approval ledger', () => {
 
     // Scan every table/column of the database: the raw secret must not appear.
     const dbPath = path.join(stateDir, 'openclaw-state.db');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const reopened = new DatabaseSync(dbPath, { readOnly: true });
     const tables = reopened
@@ -457,12 +471,18 @@ describe('RC-04 EffectReceipt', () => {
     expect(effects.record(input).ok).toBe(true);
     const dup = effects.record(input);
     expect(dup.ok).toBe(true);
-    expect(dup.duplicate).toBe(true);
-    expect(dup.reason).toBe('identical-content');
+    if (dup.ok) {
+      expect(dup.duplicate).toBe(true);
+      if (dup.duplicate) {
+        expect(dup.reason).toBe('identical-content');
+      }
+    }
 
     const conflict = effects.record({ ...input, outcome: 'unknown' as const });
     expect(conflict.ok).toBe(false);
-    expect(conflict.reason).toBe('content-conflict');
+    if (!conflict.ok) {
+      expect(conflict.reason).toBe('content-conflict');
+    }
   });
 
   it('conflicts when any idempotency dimension differs (proposal/approval/decision/recoverability/refs)', () => {
@@ -479,7 +499,7 @@ describe('RC-04 EffectReceipt', () => {
       recoverability: 'none',
     };
     expect(effects.record(base).ok).toBe(true);
-    const variants: Array<Partial<typeof base>> = [
+    const variants: Array<Partial<Record<string, unknown>>> = [
       { proposal: { command: 'y' } },
       { approvalId: 'aprv-2' },
       { approvalDecision: 'denied' },
@@ -492,14 +512,15 @@ describe('RC-04 EffectReceipt', () => {
     for (const variant of variants) {
       const result = effects.record({ ...base, ...variant });
       expect(result.ok).toBe(false);
+    if (!result.ok) {
       expect(result.reason).toBe('content-conflict');
+    }
     }
   });
 
   it('migrates a legacy proposal_json receipt to digest-only on reopen', () => {
     const dbPath = path.join(stateDir, 'openclaw-state.db');
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const raw = new DatabaseSync(dbPath);
     raw.exec(`
@@ -547,8 +568,12 @@ describe('RC-04 EffectReceipt', () => {
       recoverability: 'none',
     });
     expect(replay.ok).toBe(true);
-    expect(replay.duplicate).toBe(true);
-    expect(replay.reason).toBe('identical-content');
+    if (replay.ok) {
+      expect(replay.duplicate).toBe(true);
+      if (replay.duplicate) {
+        expect(replay.reason).toBe('identical-content');
+      }
+    }
 
     // The table rebuild must recreate the query indexes on the live table
     // (PRIMARY KEY autoindexes are ignored).
