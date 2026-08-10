@@ -335,7 +335,13 @@ export function inferCoverage(changedPaths = []) {
     release: normalized.some((path) => COVERAGE_PATTERNS.release.some((pattern) => pathMatches(path, pattern))),
   };
   if (coverage.runtime) coverage.comms = true;
-  if (coverage.release) coverage.maturity = true;
+  // Note: release coverage intentionally does NOT imply maturity coverage.
+  // Maturity validation requires every linked source to be committed no later
+  // than its evidence files (git commit-time freshness); pulling the full
+  // system-maturity evidence set into every release-adjacent candidate would
+  // bloat the changed-path ownership matrix with non-RC governance evidence.
+  // The RC-09 candidate chain and the pre-F-03 formal plans did not carry the
+  // maturity gate.
   return coverage;
 }
 
