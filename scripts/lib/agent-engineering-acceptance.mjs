@@ -137,7 +137,11 @@ const COVERAGE_PATTERNS = Object.freeze({
     'openclaw_runtime/**',
   ],
   release: [
-    'package.json',
+    // package.json is intentionally NOT a release trigger: release-baseline
+    // evidence (P6-005) is branch-bound and its collector requires a clean
+    // tracked tree, so every package.json-touching candidate would otherwise
+    // carry a release gate it cannot satisfy. Release coverage fires only on
+    // release-specific paths.
     'pnpm-lock.yaml',
     'electron-builder.yml',
     '.github/workflows/release.yml',
