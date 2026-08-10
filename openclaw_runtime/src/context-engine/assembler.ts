@@ -64,6 +64,15 @@ export interface AssembleRequest {
   turnId?: string;
   /** UAS-02: collect candidates and leave final projection to Context Orchestrator. */
   deferProjection?: boolean;
+  /**
+   * F-01: channels already projected into this attempt's transcript by an
+   * earlier model call. A deferred projection for the *next* model call must
+   * not collect them again (exactly-once per attempt), while channels that
+   * produced new Blocks since the last call (working_memory after a
+   * tool_result) are still queried. Skipped channels are neither queried nor
+   * recorded — they did not participate in this model call.
+   */
+  skipChannels?: TurnInjectionChannel[];
 }
 
 export type LegacyHandlerId = "compass" | "role_memory";
@@ -393,6 +402,9 @@ export class Assembler {
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
+    if (request.skipChannels?.includes("working_memory")) {
+      return output;
+    }
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
       if (request.deferProjection && request.turnId) {
@@ -472,6 +484,9 @@ export class Assembler {
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
+    if (request.skipChannels?.includes("tool_registry")) {
+      return output;
+    }
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
       if (request.deferProjection && request.turnId) {
@@ -556,6 +571,9 @@ export class Assembler {
     turnLedger: TurnInjectionLedger | undefined,
     killCfg: unknown,
   ): Promise<TExistingOutput> {
+    if (request.skipChannels?.includes("knowledge")) {
+      return output;
+    }
     const store = this.#dependencies.workingMemoryStore;
     if (!store || !Array.isArray(output)) {
       if (request.deferProjection && request.turnId) {

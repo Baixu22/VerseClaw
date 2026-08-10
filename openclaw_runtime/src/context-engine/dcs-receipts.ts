@@ -17,8 +17,11 @@ export const CONTEXT_RECEIPT_SCHEMA = 'ContextReceipt/v1' as const;
 export const WIRE_RECEIPT_SCHEMA = 'WireReceipt/v1' as const;
 
 /** RC-02 typed canonical input: parse a JSON budget summary into the typed
- *  ReceiptBudget; anything that does not match the token-budget shape is
- *  omitted instead of being persisted raw. */
+ *  ReceiptBudget. Two shapes are accepted: the token-budget shape
+ *  ({unit:'tokens', inputLimit, outputLimit}) and the DCS character-budget
+ *  shape ({unit:'chars', charsRequested, charsApplied}) that the RC-03 seal
+ *  hook writes from the real projection lineage. Anything else is omitted
+ *  instead of being persisted raw. */
 function parseBudgetSummary(value: string | undefined): ReceiptBudget | undefined {
   if (value === undefined) return undefined;
   let parsed: unknown;
@@ -29,12 +32,21 @@ function parseBudgetSummary(value: string | undefined): ReceiptBudget | undefine
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return undefined;
   const candidate = parsed as Record<string, unknown>;
-  if (candidate.unit !== 'tokens') return undefined;
-  const inputLimit = candidate.inputLimit;
-  const outputLimit = candidate.outputLimit;
-  if (typeof inputLimit !== 'number' || !Number.isSafeInteger(inputLimit) || inputLimit < 0) return undefined;
-  if (typeof outputLimit !== 'number' || !Number.isSafeInteger(outputLimit) || outputLimit < 0) return undefined;
-  return { unit: 'tokens', inputLimit, outputLimit };
+  if (candidate.unit === 'tokens') {
+    const inputLimit = candidate.inputLimit;
+    const outputLimit = candidate.outputLimit;
+    if (typeof inputLimit !== 'number' || !Number.isSafeInteger(inputLimit) || inputLimit < 0) return undefined;
+    if (typeof outputLimit !== 'number' || !Number.isSafeInteger(outputLimit) || outputLimit < 0) return undefined;
+    return { unit: 'tokens', inputLimit, outputLimit };
+  }
+  if (candidate.unit === 'chars') {
+    const charsRequested = candidate.charsRequested;
+    const charsApplied = candidate.charsApplied;
+    if (typeof charsRequested !== 'number' || !Number.isSafeInteger(charsRequested) || charsRequested < 0) return undefined;
+    if (typeof charsApplied !== 'number' || !Number.isSafeInteger(charsApplied) || charsApplied < 0) return undefined;
+    return { unit: 'chars', charsRequested, charsApplied };
+  }
+  return undefined;
 }
 
 export function buildContextReceiptInput(input: {

@@ -13,6 +13,8 @@ import {
   finalizeContextOrchestratorTurn,
   getContextOrchestratorCollection,
 } from "../../context-engine/context-orchestrator.js";
+import { reopenContextCandidateCollection } from "../../context-engine/context-candidate.js";
+import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
 import { BlockStore } from "../../context-engine/block-store.js";
@@ -165,6 +167,7 @@ function buildContextBlockFactory(params: {
   sessionKey?: string;
   runId?: string;
   injectionTurnId?: string;
+  attemptIndex?: number;
   projectionFlags: ContextBlockFeatureFlags;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
@@ -199,17 +202,51 @@ function buildContextBlockFactory(params: {
   let baselineLoaded = false;
   let acceptedBaseline: ContextBlock | undefined;
   let projectionObservabilityRecorded = false;
-  async function finalizeCandidates(messages: AgentMessage[]) {
+  // F-01: model-call identity inside the attempt. The first finalize (from
+  // before_agent_start and the first context callback) seals modelCallIndex 0;
+  // every later context callback — one per model call of the tool loop — opens
+  // the next model-call collection and seals index N so provider payload,
+  // ledger, lineage, and ContextReceipt stay aligned per model call.
+  let modelCallIndex = 0;
+  let sawFirstContextCall = false;
+  // Channels whose content already entered this attempt's transcript through an
+  // earlier projection. Later model calls must not collect them again.
+  const injectedChannels = new Set<TurnInjectionChannel>();
+  async function finalizeCandidates(
+    messages: AgentMessage[],
+    options: {
+      skipChannels?: TurnInjectionChannel[];
+      advanceModelCall?: boolean;
+      /** F-01: seal only real model-call projections (default true). */
+      seal?: boolean;
+    } = {},
+  ) {
     const turnId = params.injectionTurnId;
     if (!turnId) return undefined;
     await enqueue(async () => undefined);
-    const existingCollection = getContextOrchestratorCollection(turnId);
+    let existingCollection = getContextOrchestratorCollection(turnId);
+    if (options.advanceModelCall === true && existingCollection?.diagnostics.finalized) {
+      // F-01: this is the next model call of the same attempt. The previous
+      // model call's bundle stays frozen; open a fresh collection so Blocks
+      // produced by tool results since the last call (working_memory) can
+      // enter this call's projection.
+      reopenContextCandidateCollection(turnId);
+      modelCallIndex += 1;
+      existingCollection = undefined;
+    }
     if (!existingCollection?.diagnostics.finalized) {
       const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
       const store = hasProjectionSource ? getBlockStore() : undefined;
       const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
       await assembler.assemble(
-        { session_id: sessionId ?? "", turnId, deferProjection: true },
+        {
+          session_id: sessionId ?? "",
+          turnId,
+          deferProjection: true,
+          ...(options.skipChannels && options.skipChannels.length > 0
+            ? { skipChannels: options.skipChannels }
+            : {}),
+        },
         { existing_output: messages },
         params.projectionFlags,
       );
@@ -220,7 +257,18 @@ function buildContextBlockFactory(params: {
       sessionKey: params.sessionKey,
       runId: params.runId,
       cfg: params.cfg,
+      attemptIndex: params.attemptIndex,
+      modelCallIndex,
+      seal: options.seal !== false,
     });
+    // The projection that just sealed is the one that will enter the
+    // transcript (or was already consumed for the system prompt); remember
+    // which channels actually applied so the next model call skips them.
+    for (const entry of finalized.projection.lineage) {
+      if (entry.charsApplied > 0) {
+        injectedChannels.add(entry.channel);
+      }
+    }
     if (!projectionObservabilityRecorded) {
       projectionObservabilityRecorded = true;
       const dcsChars = finalized.projection.lineage
@@ -304,7 +352,9 @@ function buildContextBlockFactory(params: {
     if (params.injectionTurnId) {
       agent.on("before_agent_start", async (event: unknown) => {
         if (!sessionId) return undefined;
-        const finalized = await finalizeCandidates([]);
+        // F-01: this pass only derives the system-prompt addition. Its empty
+        // message list is never sent, so no ContextBundle is sealed for it.
+        const finalized = await finalizeCandidates([], { seal: false });
         const addition = finalized?.projection.systemPromptAddition;
         if (!addition) return undefined;
         const base = recordFromUnknown(event).systemPrompt;
@@ -323,7 +373,17 @@ function buildContextBlockFactory(params: {
         return undefined;
       }
       if (params.injectionTurnId) {
-        const finalized = await finalizeCandidates(messages as AgentMessage[]);
+        // F-01: the first context callback of the attempt reuses the projection
+        // sealed at before_agent_start (modelCallIndex 0). Every later callback
+        // is a new model call: skip channels already injected into the
+        // transcript and collect only what the tool loop produced since the
+        // last call (working_memory), sealing modelCallIndex N.
+        const isFirstContextCall = !sawFirstContextCall;
+        sawFirstContextCall = true;
+        const finalized = await finalizeCandidates(messages as AgentMessage[], {
+          advanceModelCall: !isFirstContextCall,
+          ...(!isFirstContextCall ? { skipChannels: [...injectedChannels] } : {}),
+        });
         return { messages: finalized?.messages ?? messages };
       }
       // Legacy callers without a turn id retain the direct Assembler path.
@@ -584,6 +644,7 @@ export function buildEmbeddedExtensionFactories(params: {
   sessionKey?: string;
   runId?: string;
   injectionTurnId?: string;
+  attemptIndex?: number;
   contextBlockSink?: ContextBlockSink;
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   trajectoryCapture?: TrajectoryCapture;

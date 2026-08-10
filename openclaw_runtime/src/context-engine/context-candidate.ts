@@ -184,6 +184,37 @@ export function getContextCandidateCollection(
   return collections.get(turnId);
 }
 
+/**
+ * F-01: model-call boundary inside one attempt. The first finalize of a turn
+ * freezes one immutable projection (one ContextBundle per model call). When the
+ * tool loop reaches the *next* model call of the same attempt, the caller opens
+ * a fresh collection for the same turnId so newly produced Blocks (e.g.
+ * working_memory written by a tool_result) can be collected into the next
+ * projection. The previous projection stays frozen — it is never mutated.
+ */
+export function reopenContextCandidateCollection(turnId: string): ContextCandidateCollection {
+  const existing = collections.get(turnId);
+  if (!existing?.diagnostics.finalized) {
+    return beginContextCandidateCollection(turnId);
+  }
+  const collection: ContextCandidateCollection = {
+    turnId,
+    candidates: [],
+    lineage: [],
+    candidateLineageIndexes: [],
+    diagnostics: {
+      finalized: false,
+      collected: 0,
+      unique: 0,
+      duplicates: 0,
+      charsRequested: 0,
+      charsApplied: 0,
+    },
+  };
+  collections.set(turnId, collection);
+  return collection;
+}
+
 export function collectContextCandidate(
   turnId: string,
   candidate: ContextCandidate,

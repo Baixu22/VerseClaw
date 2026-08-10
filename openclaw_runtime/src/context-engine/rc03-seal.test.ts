@@ -222,8 +222,12 @@ describe('RC-03 receipts through ReceiptStore', () => {
     const second = store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: '84bae4db933bb6e48e3de43849eab73c13689d2a657963e0da364e0a62361e25' }));
     expect(first.ok).toBe(true);
     expect(second.ok).toBe(true);
-    expect(second.duplicate).toBe(true);
-    expect(second.reason).toBe('identical-content');
+    if (second.ok) {
+      expect(second.duplicate).toBe(true);
+      if (second.duplicate) {
+        expect(second.reason).toBe('identical-content');
+      }
+    }
     expect(store.list({ kind: 'context' })).toHaveLength(1);
   });
 

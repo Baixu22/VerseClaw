@@ -13,13 +13,16 @@ ownedPaths:
   - openclaw_runtime/src/context-engine/rc03-seal.test.ts
   - openclaw_runtime/src/context-engine/rc03-seal-wiring.test.ts
   - openclaw_runtime/src/context-engine/assembler.ts
+  - openclaw_runtime/src/context-engine/context-candidate.ts
   - openclaw_runtime/src/context-engine/context-orchestrator.ts
   - openclaw_runtime/src/context-engine/compass-handler.ts
   - openclaw_runtime/src/agents/anthropic-transport-stream.ts
   - openclaw_runtime/src/agents/shadow-census.ts
   - openclaw_runtime/src/agents/provider-transport-fetch.ts
+  - openclaw_runtime/src/agents/receipt-store.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/stream-resolution.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
   - harness/specs/tasks/rc03-dcs-seal-dual-receipts.md
   - artifacts/runtime-authority-convergence/rc-03/**
 touchedAreas:

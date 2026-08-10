@@ -13,6 +13,7 @@ export const RC03_PRE_SEAL_PRODUCERS = {
   cvkSystemPromptAddition: 'cvk-system-prompt-addition',
   roleMemoryInjection: 'role-memory-injection',
   vtokenPacker: 'vtoken-packer',
+  memoryPilotInjection: 'memory-pilot-injection',
 } as const;
 
 const preSealRegistrations: SealProducerRegistration[] = [
@@ -70,6 +71,13 @@ const preSealRegistrations: SealProducerRegistration[] = [
     mutates: 'messages',
     kind: 'semantic',
     purpose: 'VToken assembly output injected as context candidates.',
+    version: '1',
+  },
+  {
+    id: RC03_PRE_SEAL_PRODUCERS.memoryPilotInjection,
+    mutates: 'system_prompt',
+    kind: 'semantic',
+    purpose: 'Runtime Memory inject-pilot output collected by the Context Orchestrator (memory_pilot channel); must run before the bundle seal.',
     version: '1',
   },
 ];

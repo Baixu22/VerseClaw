@@ -187,6 +187,20 @@ export function finalizeContextOrchestratorTurn(params: {
   /** Real source-runtime config used to resolve the RC-03 seal switch when
    *  rc03Seal.enabled is not explicitly given (default-off + kill switch). */
   cfg?: unknown;
+  /**
+   * F-01: per-model-call identity. The same attempt can seal several immutable
+   * ContextBundles (one per model call); the runner increments modelCallIndex
+   * at each model-call boundary so receipts and WireReceipts correlate exactly.
+   */
+  attemptIndex?: number;
+  modelCallIndex?: number;
+  /**
+   * F-01: seal only when a real model-call projection exists. The
+   * before_agent_start pass finalizes for the system prompt but its empty
+   * message list is never sent; sealing it would mint a bundle/receipt that
+   * never reached the provider. Defaults to true.
+   */
+  seal?: boolean;
   rc03Seal?: {
     enabled?: boolean;
     database?: { env?: NodeJS.ProcessEnv; path?: string };
@@ -209,7 +223,8 @@ export function finalizeContextOrchestratorTurn(params: {
   // ContextBundle, and persists a ContextReceipt/v1. When off, this is a no-op
   // and the legacy path is byte-identical.
   const rc03Enabled =
-    params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled;
+    params.seal !== false &&
+    (params.rc03Seal?.enabled === true || resolveRc03SealState(params.cfg).enabled);
   if (rc03Enabled) {
     runRc03SealHook(projected.projection, projected.messages, {
       enabled: true,
@@ -217,6 +232,8 @@ export function finalizeContextOrchestratorTurn(params: {
       sessionKey: params.sessionKey,
       runId: params.runId,
       providerId: params.providerId,
+      attemptIndex: params.attemptIndex,
+      modelCallIndex: params.modelCallIndex,
       database: params.rc03Seal?.database,
     });
   }
