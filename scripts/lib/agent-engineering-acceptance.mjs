@@ -487,6 +487,7 @@ function buildGates(profiles, options = {}) {
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
       '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
       '--copy', 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
+      '--copy', 'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
       '--electron',
     ],
   }, { kind: 'provision-verseshell' });
