@@ -443,7 +443,6 @@ function loadBundledEntryModuleSync(
 }
 
 /** Loads one export from a bundled channel sidecar module through the guarded entry boundary. */
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Dynamic entry export loaders use caller-supplied export types.
 export function loadBundledEntryExportSync<T>(
   importMetaUrl: string,
   reference: BundledEntryModuleRef,
