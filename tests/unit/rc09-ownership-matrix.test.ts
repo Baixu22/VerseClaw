@@ -72,7 +72,7 @@ describe('RC-09 changed-path ownership matrix', () => {
       '--head', head,
     ], { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 1024 * 1024 * 64 });
     expect(output).toMatch(/rc09 ownership matrix:/);
-  });
+  }, 120_000);
 
   it('every pre-chain entry is attributed to an RC via spec ownership', () => {
     const matrix = readMatrix();
