@@ -575,7 +575,10 @@ export function createAcceptancePlan(options = {}) {
       args: [],
       required: true,
       allowSkip: false,
-      timeoutMs: DEFAULT_TIMEOUT_MS,
+      // Spec-declared acceptance commands may themselves run the full formal
+      // executor/verifier (nested acceptance runs exceed the 30-minute default
+      // gate budget), so give them the same 3-hour ceiling as the install gates.
+      timeoutMs: 180 * 60 * 1000,
       kind: 'required-test',
       safety: { network: 'none', productionEffects: false, humanEvidence: false },
     });
