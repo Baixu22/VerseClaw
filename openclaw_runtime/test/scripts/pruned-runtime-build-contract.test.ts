@@ -79,6 +79,18 @@ afterEach(() => {
   for (const generatedPath of generatedPaths) {
     fs.rmSync(generatedPath, { force: true });
   }
+  // tool-display.json is a tracked, source-level artifact consumed by the
+  // runtime static check and smoke gates after this suite; regenerate it so
+  // the pruned-build simulation does not leave the worktree mutated.
+  if (!generatedPaths.some((p) => p.endsWith("tool-display.json"))) return;
+  const result = spawnSync(
+    process.execPath,
+    ["--import", "tsx", path.join(runtimeRoot, "scripts", "tool-display.ts"), "--write"],
+    { cwd: runtimeRoot, encoding: "utf8" },
+  );
+  if (result.status !== 0) {
+    throw new Error(`afterEach failed to restore tool-display.json: ${result.stderr}`);
+  }
 });
 
 describe("pruned runtime build contract", () => {
