@@ -253,6 +253,9 @@ function buildCoreDistEntries(): Record<string, string> {
   return {
     index: "src/index.ts",
     entry: "src/entry.ts",
+    // The runtime smoke gate imports dist/knowledge/sekb/index.js (SEKB runtime
+    // export contract); keep the entry stable so a clean build satisfies it.
+    "knowledge/sekb/index": "src/knowledge/sekb/index.ts",
     // Keep long-lived lazy runtime boundaries on stable filenames so rebuilt
     // dist/ trees do not strand already-running gateways on stale hashed chunks.
     "agents/auth-profiles.runtime": "src/agents/auth-profiles.runtime.ts",
