@@ -1495,8 +1495,13 @@ export function runAcceptance(manifest, options = {}) {
     checkout = createDetachedWorktree(root, { commit: manifest.candidate.commit });
     const workspace = checkout.path;
     for (const gate of manifest.gates) {
+      // Required-test gates are spec-declared command lines designed to run in
+      // the source repository (their --manifest/--output-dir paths are
+      // repo-relative), so execute them from the source root, not the detached
+      // worktree which lacks gitignored acceptance artifacts.
+      const gateCwd = gate.kind === 'required-test' ? root : workspace;
       const gateOptions = {
-        cwd: workspace,
+        cwd: gateCwd,
         env: executionEnv,
         outputDir,
         sourceRoot: root,
