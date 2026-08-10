@@ -549,7 +549,25 @@ export function createAcceptancePlan(options = {}) {
   const missingSource = source.filter((entry) => !entry.exists).map((entry) => entry.path);
   const taskId = String(spec.data?.id ?? '');
   const humanEvidenceRequired = hasHumanEvidenceRequirement(spec);
+  // F-03: the spec's own requiredTests must be executed by the formal runner,
+  // not merely described. Each declared command line becomes a required gate.
+  const requiredTests = toArray(spec.data?.requiredTests).map(String).filter((value) => value.trim().length > 0);
   const gates = buildGates(profiles, { specPath, taskId, baseRef });
+  for (const [index, commandLine] of requiredTests.entries()) {
+    gates.push({
+      id: `required-test-${index + 1}`,
+      name: `Required test ${index + 1} (spec requiredTests)`,
+      profile: 'required-tests',
+      commandLine,
+      command: null,
+      args: [],
+      required: true,
+      allowSkip: false,
+      timeoutMs: DEFAULT_TIMEOUT_MS,
+      kind: 'required-test',
+      safety: { network: 'none', productionEffects: false, humanEvidence: false },
+    });
+  }
   const manifest = {
     schema: ACCEPTANCE_SCHEMA,
     manifestVersion: 1,
@@ -561,6 +579,7 @@ export function createAcceptancePlan(options = {}) {
       specPath,
       humanEvidence: humanEvidenceRequired ? 'required' : 'not-required',
       requiredRules: toArray(spec.data?.requiredRules).map(String).sort(comparePath),
+      requiredTests,
     },
     executionMode: mode,
     candidate: {
@@ -630,11 +649,31 @@ export function validateAcceptanceManifest(manifest, options = {}) {
     errors.push('formal source identity must use git-blob-v1 with git-blob EOL policy');
   }
   if (!Array.isArray(manifest.gates) || manifest.gates.length === 0) errors.push('manifest must contain gates');
+  // F-03 fail-closed: every spec-declared requiredTests command line must be
+  // materialized as a required-test gate; a spec that declares required tests
+  // the plan does not execute is invalid.
+  const declaredRequiredTests = Array.isArray(manifest.task?.requiredTests)
+    ? manifest.task.requiredTests.filter((value) => String(value).trim().length > 0)
+    : [];
+  const requiredTestGates = (manifest.gates ?? []).filter((gate) => gate.kind === 'required-test');
+  if (declaredRequiredTests.length !== requiredTestGates.length) {
+    errors.push(
+      `manifest requiredTests (${declaredRequiredTests.length}) must map 1:1 to required-test gates (${requiredTestGates.length})`,
+    );
+  }
+  for (const [index, gate] of requiredTestGates.entries()) {
+    if (gate.commandLine !== declaredRequiredTests[index]) {
+      errors.push(`required-test gate ${gate?.id ?? index}: commandLine must match the declared spec requiredTests entry`);
+    }
+  }
   const gateIds = new Set();
   for (const gate of manifest.gates ?? []) {
     if (!gate?.id || gateIds.has(gate.id)) errors.push(`gate id is missing or duplicated: ${gate?.id ?? '<empty>'}`);
     gateIds.add(gate?.id);
-    if (!gate.command || !Array.isArray(gate.args)) errors.push(`${gate?.id ?? '<gate>'}: command and args are required`);
+    if (!gate.command && typeof gate.commandLine !== 'string') {
+      errors.push(`${gate?.id ?? '<gate>'}: command and args (or a commandLine for required-test gates) are required`);
+    }
+    if (gate.command && !Array.isArray(gate.args)) errors.push(`${gate?.id ?? '<gate>'}: command and args are required`);
     if (gate.required !== true) errors.push(`${gate?.id ?? '<gate>'}: required must be true`);
     if (gate.allowSkip !== false) errors.push(`${gate?.id ?? '<gate>'}: allowSkip must be false`);
     if (!SAFE_NETWORK_POLICIES.has(gate.safety?.network)) errors.push(`${gate?.id ?? '<gate>'}: unsafe network policy`);
@@ -661,6 +700,7 @@ export function validateAcceptanceManifest(manifest, options = {}) {
       errors.push(`${gate.id}: git mutation command is forbidden`);
     }
     if (gate.kind === 'adapter' && gate.adapter !== TF0009_ADAPTER_ID) errors.push(`${gate.id}: unknown adapter`);
+    if (gate.kind === 'required-test' && !gate.commandLine) errors.push(`${gate.id}: required-test gate must carry a commandLine`);
   }
   if (manifest.safety?.scope !== 'engineering-only') errors.push('manifest safety scope must be engineering-only');
   if (manifest.safety?.productionEffects !== false || manifest.safety?.realProvider !== false) {
@@ -850,11 +890,30 @@ function pnpmGateSpawnSpec(command, args) {
   };
 }
 
+function shellCommandLineSpec(commandLine) {
+  if (process.platform === 'win32') {
+    return {
+      command: 'cmd.exe',
+      args: ['/d', '/s', '/c', commandLine],
+      shell: false,
+      windowsVerbatimArguments: true,
+    };
+  }
+  return { command: 'sh', args: ['-c', commandLine], shell: false };
+}
+
 function spawnGate(gate, options = {}) {
-  const command = commandName(gate.command) === 'pnpm' ? pnpmExecutable() : gate.command;
+  let spawnSpec;
+  if (typeof gate.commandLine === 'string' && gate.commandLine.trim().length > 0) {
+    // required-test gates carry a full command line declared by the task spec;
+    // run it through the platform shell with the same failure posture.
+    spawnSpec = shellCommandLineSpec(gate.commandLine);
+  } else {
+    const command = commandName(gate.command) === 'pnpm' ? pnpmExecutable() : gate.command;
+    spawnSpec = pnpmGateSpawnSpec(command, gate.args);
+  }
   const startedAt = new Date().toISOString();
   const started = Date.now();
-  const spawnSpec = pnpmGateSpawnSpec(command, gate.args);
   const result = (options.spawn ?? spawnSync)(spawnSpec.command, spawnSpec.args, {
     cwd: options.cwd,
     env: options.env,
@@ -871,7 +930,7 @@ function spawnGate(gate, options = {}) {
     id: gate.id,
     profile: gate.profile,
     name: gate.name,
-    command: gate.command,
+    command: gate.commandLine ?? gate.command,
     args: [...gate.args],
     timeoutMs: gate.timeoutMs,
     safety: { ...(gate.safety ?? {}) },

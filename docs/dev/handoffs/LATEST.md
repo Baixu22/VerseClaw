@@ -1,6 +1,12 @@
 # Runtime Authority Convergence NO-GO 修复接管（2026-08-03）
 
-## RC-00R 本会话更新
+## 后端健康修复状态（2026-08-10 追加）
+
+- 系统健康审计（`artifacts/system-health-audit/`，2026-08-09，72/100 CONCERN）的 P1/P2 findings 已逐项修复并验证：F-01（DCS model-call 级 finalization，working_memory 进入同 attempt 下一次模型调用）、F-02（RC-03 receipt 真实 producer + char budget）、F-03（acceptance runner 强制 requiredTests）、F-04（根门禁 6534 passed / 0 failed）、F-05（runtime static check exit 0）、F-07（test:integration 4 files 28/28）、F-08（final harness validate PASS）、F-09（真实本地 OTLP collector round trip）。
+- 剩余 **F-06 OPEN**（另开任务）：RC-09 validator 在 main 仍失败（需重新形成 clean candidate 并重新签发）；RC-10 H-03 真实 channel 待用户提供（fixture 不得 waive）。
+- 本轮未运行 Playwright / 全量 Electron E2E；未修改 default-on、liveReady、productApproved、GA、release 或 TF-0006 解锁状态。
+
+## RC-00R 本会话更新（历史）
 
 - 唯一 active package 是 `RC-00R` / `TF-0020`；RC-01+ 未启动，RC-10 仍 blocked，所有 product locks 仍为 false。
 - 已完成验收控制面加固：Git-blob source identity、canonical manifest/report digest、constant-time digest 比较、actor separation、gate/log/count/skip/artifact 校验、engineering/human phase schema 和 clean-after-run proof。
