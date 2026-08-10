@@ -8,6 +8,7 @@ import type {
   ObservabilityTraceEvent,
   ObservabilityTraceStatus,
 } from "./types.js";
+import { randomUUID } from "node:crypto";
 import { EMPTY_OBSERVABILITY_TOKEN_USAGE, addObservabilityTokenUsage } from "./metrics.js";
 import {
   TRACE_SPAN_TRUNCATION_THRESHOLD,
@@ -84,7 +85,7 @@ const cloneTrace = (trace: ObservabilityTrace): ObservabilityTrace => ({
 });
 
 function defaultIdFactory(prefix: string): string {
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+  return `${prefix}_${randomUUID()}`;
 }
 
 export class ObservabilityTraceRecorder {

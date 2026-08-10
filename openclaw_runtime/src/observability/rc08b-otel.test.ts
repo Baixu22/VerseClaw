@@ -151,9 +151,14 @@ describe('RC-08B OTel and observability convergence', () => {
   });
 
   it('encodes the golden trace as the canonical OTLP ExportTraceServiceRequest', () => {
-    const request = toOtlpExportTraceServiceRequest(makeTrace());
+    const request = toOtlpExportTraceServiceRequest(makeTrace()) as {
+      resourceSpans: Array<{
+        resource?: { attributes?: Array<{ key: string; value?: { stringValue?: string } }> };
+        scopeSpans: Array<{ spans: Array<{ traceId?: string; name?: string }> }>;
+      }>;
+    };
     expect(request.resourceSpans).toHaveLength(1);
-    const resource = request.resourceSpans[0].resource;
+    const resource = request.resourceSpans[0].resource!;
     expect(resource.attributes).toContainEqual({ key: 'service.name', value: { stringValue: 'openclaw' } });
     expect(resource.attributes).toContainEqual({ key: 'openclaw.run.id', value: { stringValue: 'run-1' } });
     const spans = request.resourceSpans[0].scopeSpans[0].spans;
@@ -189,7 +194,9 @@ describe('RC-08B OTel and observability convergence', () => {
     expect(result.receivedTraceId).toMatch(/^[a-f0-9]{32}$/);
     expect(fetchFn).toHaveBeenCalledTimes(1);
     expect(received[0].contentType).toBe('application/json');
-    const body = received[0].body;
+    const body = received[0].body as {
+      resourceSpans?: Array<{ scopeSpans?: Array<{ spans?: unknown[] }> }>;
+    };
     expect(body.resourceSpans?.[0]?.scopeSpans?.[0]?.spans).toHaveLength(3);
   });
 
