@@ -863,7 +863,6 @@ export function createOpenAICompletionsTransportStreamFn(): StreamFn {
         finalizeOpenAIProviderParams(params);
         recordFinalOpenAIProviderPayload(options, params, "openai-completions-transport");
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const chatStream = await client.chat.completions.create(params as any);
 
         const blocks = output.content;
