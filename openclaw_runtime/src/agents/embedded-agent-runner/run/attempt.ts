@@ -2342,6 +2342,7 @@ export async function runEmbeddedAttempt(
         sessionKey: params.sessionKey,
         runId: params.runId,
         injectionTurnId,
+        attemptIndex: params.attemptIndex,
         workingMemoryStore: dcsExtensionDeps?.workingMemoryStore,
         contextBlockSink: dcsExtensionDeps?.contextBlockSink,
         objective: dcsExtensionDeps?.objective,

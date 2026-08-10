@@ -307,9 +307,10 @@ function wrapEmbeddedAgentStreamFn(
     if (!shadowCall.active) {
       return options;
     }
-    // RC-03: carry the sealed CompilePlan of this run to the guarded wire
-    // boundary so WireReceipt/v1 can be persisted with the final body digest.
-    const plan = getRc03SealPlan(runId);
+    // RC-03: carry the sealed CompilePlan of this run and model call to the
+    // guarded wire boundary so WireReceipt/v1 can be persisted with the final
+    // body digest of the same model call.
+    const plan = getRc03SealPlan(runId, modelCallIndex);
     const shadowOptions = plan ? { ...shadowCall.options, rc03Plan: plan } : shadowCall.options;
     return attachShadowReceiptOptions(options, shadowOptions);
   };

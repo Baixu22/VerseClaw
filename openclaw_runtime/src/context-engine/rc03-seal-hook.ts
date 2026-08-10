@@ -30,19 +30,34 @@ export const RC03_SEAL_ENV = 'OPENCLAW_RC03_SEAL';
 export const RC03_SEAL_POLICY_DIGEST =
   '49ae4fddce0451f75ab207a392c8b51394d39abc9998027a705b29a677ffced1';
 
-/** Sealed plans per run, so the guarded wire boundary can emit WireReceipt/v1
- *  correlated to the sealed ContextBundle of the same run. In-process only;
- *  cleared with the turn. */
-const sealedPlansByRun = new Map<string, CompilePlan>();
+/** Sealed plans per run and model call, so the guarded wire boundary can emit
+ *  WireReceipt/v1 correlated to the sealed ContextBundle of the same run and
+ *  model call. In-process only; cleared with the turn. */
+const sealedPlansByRun = new Map<string, Map<number, CompilePlan>>();
 
 export function recordRc03SealPlan(runId: string | undefined, plan: CompilePlan): void {
   if (!runId) return;
-  sealedPlansByRun.set(runId, plan);
+  let byModelCall = sealedPlansByRun.get(runId);
+  if (!byModelCall) {
+    byModelCall = new Map();
+    sealedPlansByRun.set(runId, byModelCall);
+  }
+  byModelCall.set(plan.callIndex.modelCallIndex, plan);
 }
 
-export function getRc03SealPlan(runId: string | undefined): CompilePlan | undefined {
+export function getRc03SealPlan(
+  runId: string | undefined,
+  modelCallIndex?: number,
+): CompilePlan | undefined {
   if (!runId) return undefined;
-  return sealedPlansByRun.get(runId);
+  const byModelCall = sealedPlansByRun.get(runId);
+  if (!byModelCall) return undefined;
+  if (modelCallIndex !== undefined) {
+    return byModelCall.get(modelCallIndex);
+  }
+  // Legacy callers without an index resolve the latest sealed plan of the run.
+  const indexes = [...byModelCall.keys()].sort((left, right) => right - left);
+  return indexes.length > 0 ? byModelCall.get(indexes[0]) : undefined;
 }
 
 export function clearRc03SealPlan(runId: string | undefined): void {
@@ -61,6 +76,12 @@ export type Rc03SealHookOptions = {
   runId?: string;
   providerId?: string;
   database?: { env?: NodeJS.ProcessEnv; path?: string };
+  /**
+   * F-01: per-model-call identity. The same attempt seals one immutable bundle
+   * per model call; WireReceipts of later calls correlate to their own bundle.
+   */
+  attemptIndex?: number;
+  modelCallIndex?: number;
   /** Real producer execution results: ids of producers that actually applied
    *  content this turn. When absent, the hook derives applied ids from the
    *  projection lineage instead of marking every registered producer. */
@@ -111,8 +132,33 @@ export function resolveRc03SealState(
   return { enabled: enabled && !killed, killed };
 }
 
-/** Map a projection lineage source id to its registered pre-seal producer. */
+/** Map a projection lineage source id to its registered pre-seal producer.
+ *
+ *  F-02: the Assembler emits canonical `context-block:<source_system>:<block_type>`
+ *  ids (e.g. `context-block:working-memory:working_memory`); the Context
+ *  Orchestrator emits `memory-inject-pilot` / `vtoken-assembly`. All of them
+ *  must resolve to registered producers so appliedProducerIdsFromLineage is a
+ *  true statement about the real production run, not a shorthand-only mapping. */
 function producerIdForLineageSource(sourceId: string): string | undefined {
+  if (sourceId.startsWith('context-block:')) {
+    const [, sourceSystem, blockType] = sourceId.split(':');
+    switch (blockType) {
+      case 'knowledge':
+        return 'dcs-knowledge';
+      case 'working_memory':
+        return 'dcs-working-memory';
+      case 'tool_registry':
+        return 'dcs-tool-registry';
+    }
+    switch (sourceSystem) {
+      case 'compass':
+        return 'compass-ssp';
+      case 'role-memory':
+        return 'role-memory-injection';
+      default:
+        return undefined;
+    }
+  }
   switch (sourceId) {
     case 'dcs-knowledge':
     case 'knowledge':
@@ -129,7 +175,10 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
     case 'role_memory':
       return 'role-memory-injection';
     case 'vtoken':
+    case 'vtoken-assembly':
       return 'vtoken-packer';
+    case 'memory-inject-pilot':
+      return 'memory-pilot-injection';
     default:
       return undefined;
   }
@@ -192,7 +241,12 @@ export function runRc03SealHook(
     runId: options.runId,
     providerId: options.providerId,
     policyDigest: RC03_SEAL_POLICY_DIGEST,
-    callIndex: { attemptIndex: 0, planRevision: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
+    callIndex: {
+      attemptIndex: options.attemptIndex ?? 0,
+      planRevision: 0,
+      modelCallIndex: options.modelCallIndex ?? 0,
+      wireAttemptIndex: 0,
+    },
     preSealProducers,
     postSealTransformIds,
   });
@@ -215,6 +269,7 @@ export function runRc03SealHook(
       selectedRefs,
       omittedRefs,
       budgetSummary: JSON.stringify({
+        unit: 'chars',
         charsRequested: projection.lineage.reduce((t, e) => t + e.charsRequested, 0),
         charsApplied: projection.lineage.reduce((t, e) => t + e.charsApplied, 0),
       }),

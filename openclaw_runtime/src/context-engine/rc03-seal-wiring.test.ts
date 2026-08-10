@@ -241,6 +241,67 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     expect(skipped?.applied).toBe(false);
   });
 
+  it('RC-03R/F-02: appliedProducerIdsFromLineage resolves real assembler source ids, not only shorthands', () => {
+    const projection = {
+      lineage: [
+        // Real Assembler canonical ids: context-block:<source_system>:<block_type>.
+        { sourceId: 'context-block:compass:knowledge', channel: 'knowledge', target: 'message', candidateId: 'cand-1', charsRequested: 10, charsApplied: 8 },
+        { sourceId: 'context-block:working-memory:working_memory', channel: 'working_memory', target: 'message', candidateId: 'cand-2', charsRequested: 5, charsApplied: 4 },
+        { sourceId: 'context-block:cvk:tool_registry', channel: 'tool_registry', target: 'message', candidateId: 'cand-3', charsRequested: 5, charsApplied: 5 },
+        { sourceId: 'context-block:role-memory:knowledge', channel: 'knowledge', target: 'message', candidateId: 'cand-4', charsRequested: 3, charsApplied: 0 },
+        // Context Orchestrator ids.
+        { sourceId: 'vtoken-assembly', channel: 'vtoken', target: 'system_prompt', candidateId: 'cand-5', charsRequested: 7, charsApplied: 7 },
+        { sourceId: 'memory-inject-pilot', channel: 'memory_pilot', target: 'system_prompt', candidateId: 'cand-6', charsRequested: 7, charsApplied: 7 },
+      ],
+      systemPromptAddition: undefined,
+    } as never;
+    const applied = appliedProducerIdsFromLineage(projection);
+    expect(applied).toEqual(
+      expect.arrayContaining([
+        'dcs-knowledge',
+        'dcs-working-memory',
+        'dcs-tool-registry',
+        'vtoken-packer',
+        'memory-pilot-injection',
+      ]),
+    );
+    expect(applied).not.toContain('role-memory-injection');
+  });
+
+  it('RC-03R/F-02: the persisted ContextReceipt budget is the real char summary, not silently omitted', () => {
+    const projection = {
+      lineage: [
+        { sourceId: 'context-block:compass:knowledge', channel: 'knowledge', target: 'message', candidateId: 'cand-1', charsRequested: 20, charsApplied: 18 },
+        { sourceId: 'context-block:working-memory:working_memory', channel: 'working_memory', target: 'message', candidateId: 'cand-2', charsRequested: 12, charsApplied: 10 },
+      ],
+      systemPromptAddition: undefined,
+    } as never;
+    const result = runRc03SealHook(
+      projection,
+      [{ role: 'user', content: 'hi' }],
+      {
+        enabled: true,
+        runId: 'run-chars-budget',
+        sessionKey: 'sess-chars-budget',
+        database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') },
+      },
+    );
+    expect(result.engaged).toBe(true);
+    const store = newStore();
+    const rows = store.list({ kind: 'context', runId: 'run-chars-budget' });
+    expect(rows).toHaveLength(1);
+    const budget = JSON.parse(rows[0].budget_json ?? '{}') as {
+      unit: string;
+      charsRequested: number;
+      charsApplied: number;
+    };
+    expect(budget).toEqual({ unit: 'chars', charsRequested: 32, charsApplied: 28 });
+    // The same typed budget round-trips through the store's canonical JSON.
+    expect(store.list({ kind: 'context', runId: 'run-chars-budget' })[0].budget_json).toBe(
+      '{"unit":"chars","charsRequested":32,"charsApplied":28}',
+    );
+  });
+
   it('RC-03R: receipt write failure lands in the census diagnostics and fails acceptance', () => {
     process.env.OPENCLAW_RC03_SEAL = '1';
     const blocker = path.join(stateDir, 'blocker.txt');
