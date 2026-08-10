@@ -95,6 +95,7 @@ export async function handleConfirmAndSave(
           workspaceRoot: params.experienceShadow.workspaceRoot,
           enabled: true,
           dualWrite: params.experienceShadow.dualWrite ?? false,
+          buildBlock: (build) => buildExperienceBlock(build),
           build: {
             principle: params.principle,
             suggestion: params.suggestion,
@@ -167,6 +168,7 @@ export async function handleConfirmAndSave(
         workspaceRoot: params.experienceShadow.workspaceRoot,
         enabled: true,
         dualWrite: params.experienceShadow.dualWrite ?? true,
+        buildBlock: (build) => buildExperienceBlock(build),
         build: {
           principle: params.principle,
           suggestion: params.suggestion,

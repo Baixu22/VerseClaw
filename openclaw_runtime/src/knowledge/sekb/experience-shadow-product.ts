@@ -8,7 +8,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { ContextBlock } from "../../context-engine/block.js";
-import { buildExperienceBlock, type BuildExperienceBlockParams } from "./experience-block-bridge.js";
+import type { BuildExperienceBlockParams } from "./experience-block-bridge.js";
 
 export type ExperienceShadowEvent = {
   atMs: number;
@@ -65,11 +65,12 @@ export function productizeExperienceShadow(params: {
   enabled: boolean;
   dualWrite: boolean;
   build: BuildExperienceBlockParams;
+  buildBlock: (build: BuildExperienceBlockParams) => ContextBlock;
 }): { block?: ContextBlock; journaled: boolean } {
   if (!params.enabled) {
     return { journaled: false };
   }
-  const block = buildExperienceBlock(params.build);
+  const block = params.buildBlock(params.build);
   appendExperienceShadowEvent(params.workspaceRoot, {
     atMs: Date.now(),
     sessionId: params.build.sessionId,

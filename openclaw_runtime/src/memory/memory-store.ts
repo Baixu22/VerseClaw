@@ -626,7 +626,7 @@ function makeProposalRecord(params: {
   const now = new Date().toISOString();
   const normalized = normalizeMemoryProposal(params.proposal);
   return {
-    id: `prop_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: `prop_${randomUUID()}`,
     operation: params.operation,
     targetId: params.targetId ?? params.proposal.targetId ?? null,
     proposal: redactSecrets(params.proposal),
@@ -849,7 +849,7 @@ export function previewMemoryProposal(
     : getMemoryCards({ status: "active" });
   const decision = reviewMemoryProposal(normalized, existing, {
     now: new Date(),
-    idFactory: () => `preview_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    idFactory: () => `preview_${randomUUID()}`,
     actor: options?.actor,
     operation,
     target,
@@ -881,7 +881,7 @@ export function proposeMemoryCard(
   const existing = getMemoryCards({ status: "active" });
   const reviewedDecision = reviewMemoryProposal(proposal, existing, {
     now: new Date(),
-    idFactory: options?.idFactory ?? (() => `mem_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
+    idFactory: options?.idFactory ?? (() => `mem_${randomUUID()}`),
     actor: options?.actor,
     operation: proposal.operation ?? "create",
   });
@@ -1210,7 +1210,7 @@ function applyProposalRecord(
     storeMemoryCard(next, { actor: options?.actor, reason: options?.reason ?? "review approved update" });
     return { action: "accept", accepted: true, card: next, targetId, proposal: record };
   }
-  const id = `mem_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const id = `mem_${randomUUID()}`;
   const next = {
     ...cardFromProposal(record.proposal, id, { status: nextStatus }),
     correctionRef,
@@ -1417,7 +1417,7 @@ export function checkMemoryEvidence(params: {
   const checkedRefs = refs.map((ref) => checkEvidenceRef(ref, content));
   const status = aggregateEvidenceStatus(checkedRefs.map((ref) => ref.status));
   return {
-    id: `ev_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: `ev_${randomUUID()}`,
     targetKind: params.id ? kind : "refs",
     targetId: params.id ?? null,
     status,
@@ -1475,7 +1475,7 @@ export function proposeMemoryRetention(params: {
     const action = params.action ?? candidate.recommendedAction;
     return action !== "keep";
   });
-  const runId = `ret_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const runId = `ret_${randomUUID()}`;
   const proposals: MemoryProposalRecord[] = [];
   for (const candidate of candidates) {
     const action = params.action ?? candidate.recommendedAction;
@@ -1522,7 +1522,7 @@ export function reviewMemoryProposalBatch(params: {
   actor?: MemoryAuditActor;
   reason?: string;
 }): MemoryReviewBatchResult {
-  const batchId = `batch_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const batchId = `batch_${randomUUID()}`;
   const createdAt = new Date().toISOString();
   const existingIds = new Set(listMemoryProposals({ limit: 500 }).map((proposal) => proposal.id));
   const results = params.ids.map((id) => {
@@ -1881,7 +1881,7 @@ export function recordMemoryInjection(params: {
   pack: ContextPack;
 }): MemoryInjectionRecord {
   const record: MemoryInjectionRecord = {
-    id: `inj_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: `inj_${randomUUID()}`,
     roleName: params.roleName,
     task: params.task,
     sessionKey: params.sessionKey,
@@ -1980,7 +1980,7 @@ export function recordMemoryFeedback(params: {
   const injection = params.injectionId ? explainMemoryInjection({ id: params.injectionId, limit: 500 })[0] : undefined;
   const card = params.cardId ? getMemoryCard(params.cardId) : undefined;
   const record: MemoryFeedbackRecord = {
-    id: `fb_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: `fb_${randomUUID()}`,
     injectionId: params.injectionId ?? null,
     cardId: params.cardId ?? null,
     roleName: params.roleName ?? injection?.roleName ?? card?.roleTags?.[0] ?? null,

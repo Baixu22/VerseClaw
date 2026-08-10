@@ -5,6 +5,7 @@ import {
   hydrateLifecycleBlock,
   type LifecycleBlock,
 } from "./block-lifecycle.js";
+import type { ContextBlock } from "./block.js";
 import { selectBlocksUnderTokenPressure } from "./token-pressure.js";
 import {
   buildToolOutputArchivePayload,
@@ -66,7 +67,7 @@ describe("context ladder (C6)", () => {
       ...archived,
       lifecycle_state: undefined,
       archived_at: undefined,
-    });
+    } as ContextBlock);
     expect(hydrated.lifecycle_state).toBe("archived");
   });
 
