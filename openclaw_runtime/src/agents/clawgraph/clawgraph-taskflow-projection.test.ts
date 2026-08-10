@@ -10,6 +10,7 @@ import {
   projectClawgraphRunEvent,
   recoverClawgraphProjection,
 } from './clawgraph-taskflow-projection.js';
+import type { ClawGraphRunEvent } from './types.js';
 
 const tempRoots: string[] = [];
 let stateDir = '';
@@ -18,7 +19,7 @@ function options(enabled = true) {
   return { enabled, database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') } } as const;
 }
 
-function event(overrides: Partial<Record<string, unknown>> = {}) {
+function event(overrides: Partial<ClawGraphRunEvent> = {}): ClawGraphRunEvent {
   return {
     id: 'evt-1',
     runId: 'run-clawgraph-1',
@@ -108,7 +109,12 @@ describe('RC-06B ClawGraph -> TaskFlow read-only projection', () => {
     expect(nodeFailed.projected).toBe(true);
     expect(nodeFailed.status).toBe('running');
     // A genuinely unrecognized type is skipped with an honest reason.
-    const unknown = projectClawgraphRunEvent(event({ type: 'no_such_event_type' }), options());
+    // The type union cannot express the unknown value, so it is asserted at the
+    // type boundary only; the runtime value stays the unrecognized string.
+    const unknown = projectClawgraphRunEvent(
+      event({ type: 'no_such_event_type' } as unknown as Partial<ClawGraphRunEvent>),
+      options(),
+    );
     expect(unknown.projected).toBe(false);
     expect(unknown.skippedReason).toBe('unknown-event');
   });
