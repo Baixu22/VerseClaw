@@ -69,7 +69,7 @@ const SESSION_KEY_COMPAT_METHODS = [
   "assemble",
   "compact",
 ] as const;
-const LEGACY_COMPAT_PARAMS = ["sessionKey", "prompt"] as const;
+const _LEGACY_COMPAT_PARAMS = ["sessionKey", "prompt"] as const;
 const LEGACY_COMPAT_METHOD_KEYS = {
   bootstrap: ["sessionKey"],
   maintain: ["sessionKey"],
@@ -85,7 +85,7 @@ type SessionKeyCompatParams = {
   sessionKey?: string;
   prompt?: string;
 };
-type LegacyCompatKey = (typeof LEGACY_COMPAT_PARAMS)[number];
+type LegacyCompatKey = (typeof _LEGACY_COMPAT_PARAMS)[number];
 type LegacyCompatParamMap = Partial<Record<LegacyCompatKey, unknown>>;
 
 function isSessionKeyCompatMethodName(value: PropertyKey): value is SessionKeyCompatMethodName {

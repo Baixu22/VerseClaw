@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -293,7 +294,6 @@ describe('RC-04 durable approval ledger', () => {
     // Build a legacy-shape approval_ledger by hand (raw request_json column).
     const dbPath = path.join(stateDir, 'openclaw-state.db');
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const raw = new DatabaseSync(dbPath);
     raw.exec(`
       CREATE TABLE IF NOT EXISTS approval_ledger (
@@ -401,7 +401,6 @@ describe('RC-04 durable approval ledger', () => {
 
     // Scan every table/column of the database: the raw secret must not appear.
     const dbPath = path.join(stateDir, 'openclaw-state.db');
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const reopened = new DatabaseSync(dbPath, { readOnly: true });
     const tables = reopened
       .prepare("SELECT name FROM sqlite_master WHERE type='table'")
@@ -521,7 +520,6 @@ describe('RC-04 EffectReceipt', () => {
   it('migrates a legacy proposal_json receipt to digest-only on reopen', () => {
     const dbPath = path.join(stateDir, 'openclaw-state.db');
     fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const raw = new DatabaseSync(dbPath);
     raw.exec(`
       CREATE TABLE IF NOT EXISTS effect_receipts (

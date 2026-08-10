@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import type { Observation } from "../../../../shared/verseshell/types.js";
 import {
   executeGovernedVerseShell,
-  GovernedVerseShellError,
   queryGovernedVerseShellResult,
 } from "./governed-exec.js";
 import type { VerseShellProcessManager, VerseShellProcessConfig } from "./process-manager.js";

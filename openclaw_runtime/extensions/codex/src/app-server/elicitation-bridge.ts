@@ -72,7 +72,10 @@ const ANSI_CONTROL_SEQUENCE_RE = new RegExp(
 );
 const CONTROL_CHARACTER_RE = new RegExp(String.raw`[\u0000-\u001f\u007f-\u009f]+`, "g");
 const INVISIBLE_FORMATTING_CONTROL_RE = new RegExp(
-  String.raw`[\u00ad\u034f\u061c\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\ufe00-\ufe0f\u{e0100}-\u{e01ef}]`,
+  // Combining marks (\\u034f, \\ufe00-\\ufe0f, \\u{e0100}-\\u{e01ef}) are kept
+  // out of the character class to avoid misleading combined characters under
+  // no-misleading-character-class.
+  String.raw`(?:[\u00ad\u061c\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]|\u034f|\ufe00-\ufe0f|[\u{e0100}-\u{e01ef}])`,
   "gu",
 );
 const DANGLING_TERMINAL_SEQUENCE_SUFFIX_RE = new RegExp(

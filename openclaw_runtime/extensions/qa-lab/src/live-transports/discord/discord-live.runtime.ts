@@ -280,7 +280,7 @@ const DISCORD_QA_CAPTURE_CONTENT_ENV = "OPENCLAW_QA_DISCORD_CAPTURE_CONTENT";
 const DISCORD_QA_CAPTURE_UI_METADATA_ENV = "OPENCLAW_QA_DISCORD_CAPTURE_UI_METADATA";
 const DISCORD_QA_KEEP_THREADS_ENV = "OPENCLAW_QA_DISCORD_KEEP_THREADS";
 const QA_REDACT_PUBLIC_METADATA_ENV = "OPENCLAW_QA_REDACT_PUBLIC_METADATA";
-const DISCORD_QA_ENV_KEYS = [
+const _DISCORD_QA_ENV_KEYS = [
   "OPENCLAW_QA_DISCORD_GUILD_ID",
   "OPENCLAW_QA_DISCORD_CHANNEL_ID",
   "OPENCLAW_QA_DISCORD_DRIVER_BOT_TOKEN",
@@ -400,7 +400,7 @@ function assertDiscordSnowflake(value: string, label: string) {
   }
 }
 
-function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof DISCORD_QA_ENV_KEYS)[number]) {
+function resolveEnvValue(env: NodeJS.ProcessEnv, key: (typeof _DISCORD_QA_ENV_KEYS)[number]) {
   const value = env[key]?.trim();
   if (!value) {
     throw new Error(`Missing ${key}.`);

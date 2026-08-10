@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -205,7 +206,6 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // bypassing the process-wide connection cache. Each runs the exact same
     // CAS UPDATE (WHERE flow_id = ? AND revision = ?); SQLite serializes them
     // and exactly one sees 1 changed row.
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite');
     const dbPath = options().path;
     const connA = new DatabaseSync(dbPath);
     const connB = new DatabaseSync(dbPath);

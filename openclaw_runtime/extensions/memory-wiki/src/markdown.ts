@@ -9,11 +9,11 @@ import {
 } from "openclaw/plugin-sdk/string-coerce-runtime";
 import YAML from "yaml";
 
-const WIKI_PAGE_KINDS = ["entity", "concept", "source", "synthesis", "report"] as const;
+const _WIKI_PAGE_KINDS = ["entity", "concept", "source", "synthesis", "report"] as const;
 export const WIKI_RELATED_START_MARKER = "<!-- openclaw:wiki:related:start -->";
 export const WIKI_RELATED_END_MARKER = "<!-- openclaw:wiki:related:end -->";
 
-export type WikiPageKind = (typeof WIKI_PAGE_KINDS)[number];
+export type WikiPageKind = (typeof _WIKI_PAGE_KINDS)[number];
 
 type ParsedWikiMarkdown = {
   frontmatter: Record<string, unknown>;
