@@ -189,7 +189,7 @@ function tf0009Report() {
 }
 
 describe('Agent Engineering Acceptance', () => {
-  it('derives full runtime, UI, comms, maturity, and release coverage from changed paths', () => {
+  it('derives full runtime, UI, comms, and release coverage from changed paths (release does not imply maturity)', () => {
     const manifest = createAcceptancePlan({
       specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
       changedPaths: [
@@ -201,16 +201,17 @@ describe('Agent Engineering Acceptance', () => {
       createdAt: '2026-07-31T00:00:00.000Z',
     });
 
-    expect(manifest.coverage).toMatchObject({ runtime: true, ui: true, comms: true, maturity: true, release: true });
-    expect(manifest.requiredProfiles).toEqual(expect.arrayContaining(['fast', 'runtime', 'e2e', 'comms', 'maturity', 'release', 'full']));
+    expect(manifest.coverage).toMatchObject({ runtime: true, ui: true, comms: true, maturity: false, release: true });
+    expect(manifest.requiredProfiles).toEqual(expect.arrayContaining(['fast', 'runtime', 'e2e', 'comms', 'release', 'full']));
+    expect(manifest.requiredProfiles).not.toContain('maturity');
     expect(manifest.gates.map((gate) => gate.id)).toEqual(expect.arrayContaining([
       'runtime-unit',
       'runtime-static-check',
       'electron-e2e',
       'comms-replay',
-      'maturity-validate',
       'release-baseline-validate',
     ]));
+    expect(manifest.gates.map((gate) => gate.id)).not.toContain('maturity-validate');
     const commands = manifest.gates.map((gate) => gate.args.join(' '));
     expect(commands).toEqual(expect.arrayContaining([
       expect.stringContaining('lint:check'),
