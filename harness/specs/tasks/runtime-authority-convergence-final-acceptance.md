@@ -34,6 +34,7 @@ touchedAreas:
   - pnpm-lock.yaml
   - package.json
   - tsconfig.node.json
+  - eslint.config.mjs
 expectedUserBehavior:
   - External default behavior and product locks do not drift; internal runtime authority changes are limited to the separately accepted RC-00 through RC-08B packages.
   - The acceptance manifest records baseRef equal to the RC-01 acceptedBaseSha; its changedPaths equal git diff --name-only <acceptedBaseSha>..<candidateSha>.
