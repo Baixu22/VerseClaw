@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "tsBuildInfoFile": "../../.artifacts/tsgo-cache/extensions-test.tsbuildinfo"
+  },
+  "include": ["../../extensions/**/*.test.ts", "../../extensions/**/*.test.tsx", "../../test/**/*.ts"],
+  "exclude": ["../../node_modules", "../../dist", "../../test/vitest/**", "../../test/fixtures/**"]
+}

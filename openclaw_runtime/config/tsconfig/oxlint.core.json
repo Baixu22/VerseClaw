@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["../../src/**/*.ts", "../../ui/**/*.ts", "../../packages/**/*.ts"],
+  "exclude": [
+    "../../**/*.test.ts",
+    "../../**/*.test.tsx",
+    "../../**/*test-helpers.ts",
+    "../../**/*test-harness.ts",
+    "../../**/*test-support.ts",
+    "../../**/dist/**",
+    "../../**/node_modules/**"
+  ]
+}

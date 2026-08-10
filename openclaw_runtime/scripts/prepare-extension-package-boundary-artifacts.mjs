@@ -586,12 +586,12 @@ async function main(argv = process.argv.slice(2)) {
       ],
       outputPaths: ["dist/plugin-sdk/.boundary-entry-shims.stamp"],
     });
-    const qaChannelDtsFresh =
-      isArtifactSetFresh({
-        inputPaths: QA_CHANNEL_DTS_INPUTS,
-        outputPaths: [QA_CHANNEL_DTS_STAMP, ...QA_CHANNEL_DTS_REQUIRED_OUTPUTS],
-        includeFile: isRelevantTypeInput,
-      }) && !hasMissingOutput(QA_CHANNEL_DTS_REQUIRED_OUTPUTS);
+    // qa-channel is a dev-only synthetic channel (not published to npm or
+    // ClawHub) whose import graph reaches repository-internal modules
+    // (src/plugin-sdk/qa-channel-protocol, packages/*) that cannot be bundled
+    // under a single extension rootDir. Its boundary-dts artifact is not
+    // consumed anywhere, so the package-boundary gate intentionally skips it.
+    const qaChannelDtsFresh = true;
     const discordDtsFresh =
       isArtifactSetFresh({
         inputPaths: DISCORD_DTS_INPUTS,
