@@ -26,18 +26,11 @@ function normalizeLabel(options: string | ProgressOptions | ProgressTotalsOption
 }
 
 function noopProgress(): ProgressHandle {
-  let current = 0;
   return {
     setLabel: () => {},
-    tick: (by = 1) => {
-      current += by;
-    },
-    setCurrent: (next) => {
-      current = next;
-    },
-    increment: (by = 1) => {
-      current += by;
-    },
+    tick: () => {},
+    setCurrent: () => {},
+    increment: () => {},
   };
 }
 
