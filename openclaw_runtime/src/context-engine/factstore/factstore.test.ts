@@ -1,4 +1,4 @@
-import { mkdtempSync, existsSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, existsSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -340,6 +340,9 @@ describe("neutral membrane artifact (gate C-5)", () => {
       rmSync(`${dbPath}${suffix}`, { force: true });
     }
     rmSync(expectedPath, { force: true });
+    // The artifact directory is gitignored and absent from clean detached
+    // acceptance worktrees; create it here instead of assuming a prior run.
+    mkdirSync(artifactDir, { recursive: true });
 
     const repoRoot = mkdtempSync(path.join(tmpdir(), "factstore-membrane-"));
     const membraneProjectId = projectIdForRoot(repoRoot);
