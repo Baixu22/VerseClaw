@@ -19,6 +19,7 @@ touchedAreas:
   - scripts/comms/**
   - docs/dev/unified-agent-system/runtime-convergence/**
   - docs/dev/Sustained-Development-Playbook.md
+  - docs/dev/handoffs/**
   - artifacts/agent-engineering-acceptance/**
   - artifacts/runtime-authority-convergence/**
   - .agent-workbench/task-forest/**
@@ -31,6 +32,7 @@ touchedAreas:
   - .gitattributes
   - .gitignore
   - pnpm-lock.yaml
+  - package.json
   - tsconfig.node.json
 expectedUserBehavior:
   - External default behavior and product locks do not drift; internal runtime authority changes are limited to the separately accepted RC-00 through RC-08B packages.
