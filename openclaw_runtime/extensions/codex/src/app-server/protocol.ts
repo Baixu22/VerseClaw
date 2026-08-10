@@ -501,7 +501,6 @@ export type CodexListMcpServerStatusResponse = {
 export type CodexRequestObject = Record<string, unknown>;
 
 // Type-safe declaration namespace consumed across app-server files as v2.*.
-// eslint-disable-next-line @typescript-eslint/no-namespace -- declaration-only namespace keeps these type aliases grouped without a value export
 export declare namespace v2 {
   export type AppInfo = CodexAppInfo;
   export type AppSummary = CodexAppSummary;
