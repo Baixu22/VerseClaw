@@ -1557,6 +1557,7 @@ export function runAcceptance(manifest, options = {}) {
           detachedWorktreeCleanAfter: worktreeState.clean,
           sourceStatusEntries: sourceState.clean ? 0 : sourceState.status.split(/\r?\n/u).filter(Boolean).length,
           detachedStatusEntries: worktreeState.clean ? 0 : worktreeState.status.split(/\r?\n/u).filter(Boolean).length,
+          detachedStatus: worktreeState.clean ? [] : worktreeState.status.split(/\r?\n/u).filter(Boolean).slice(0, 20),
         },
       },
     );
