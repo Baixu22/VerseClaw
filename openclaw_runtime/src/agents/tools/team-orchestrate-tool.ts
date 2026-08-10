@@ -33,13 +33,13 @@ import { resolveTeamTemplate } from "../team-template.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readPositiveIntegerParam, readStringParam, ToolInputError } from "./common.js";
 
-const TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
-const TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
+const _TEAM_ORCHESTRATE_NEXT_ACTIONS = ["yield_for_results", "synthesize_now"] as const;
+const _TEAM_ORCHESTRATE_STATUSES = ["accepted", "partial", "error"] as const;
 const TEAM_ORCHESTRATE_QUALITY_STATE_REASON =
   "Ordinary team_orchestrate quality is scored from shadow evidence; Task Loop owns active repair quality semantics.";
 
-type TeamOrchestrateStatus = (typeof TEAM_ORCHESTRATE_STATUSES)[number];
-type TeamOrchestrateNextAction = (typeof TEAM_ORCHESTRATE_NEXT_ACTIONS)[number];
+type TeamOrchestrateStatus = (typeof _TEAM_ORCHESTRATE_STATUSES)[number];
+type TeamOrchestrateNextAction = (typeof _TEAM_ORCHESTRATE_NEXT_ACTIONS)[number];
 
 type TeamOrchestrateDeps = {
   spawn: SpawnFn;

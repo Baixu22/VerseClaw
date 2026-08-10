@@ -88,7 +88,7 @@ const BaseEventSchema = z.object({
   to: z.string().optional(),
 });
 
-const NormalizedEventSchema = z.discriminatedUnion("type", [
+const _NormalizedEventSchema = z.discriminatedUnion("type", [
   BaseEventSchema.extend({
     type: z.literal("call.initiated"),
   }),
@@ -129,7 +129,7 @@ const NormalizedEventSchema = z.discriminatedUnion("type", [
     retryable: z.boolean().optional(),
   }),
 ]);
-export type NormalizedEvent = z.infer<typeof NormalizedEventSchema>;
+export type NormalizedEvent = z.infer<typeof _NormalizedEventSchema>;
 
 // -----------------------------------------------------------------------------
 // Call Direction

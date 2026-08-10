@@ -2,10 +2,10 @@
 // Separates node-role RPCs from operator RPCs before method scope checks.
 import { isNodeRoleMethod } from "./method-scopes.js";
 
-const GATEWAY_ROLES = ["operator", "node"] as const;
+const _GATEWAY_ROLES = ["operator", "node"] as const;
 
 /** Gateway connection roles used before method-level operator scope checks. */
-export type GatewayRole = (typeof GATEWAY_ROLES)[number];
+export type GatewayRole = (typeof _GATEWAY_ROLES)[number];
 
 /** Parses the untrusted role claim from connect params into the closed role set. */
 export function parseGatewayRole(roleRaw: unknown): GatewayRole | null {

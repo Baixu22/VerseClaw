@@ -324,9 +324,7 @@ async function requestTargetCodexAppServerJson(params: {
   const discoveryTimeoutMs = targetCodexMarketplaceDiscoveryTimeoutMs();
   const discoveryDeadline = Math.min(deadline, Date.now() + discoveryTimeoutMs);
   let lastResponse: unknown;
-  let attempt = 0;
   do {
-    attempt += 1;
     const remainingMs = Math.max(1, discoveryDeadline - Date.now());
     lastResponse = await requestCodexAppServerJson({
       ...params,

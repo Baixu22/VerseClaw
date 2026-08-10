@@ -11,14 +11,14 @@ import {
 // Pending node work is an in-memory per-node queue for gateway prompts such as
 // status/location requests. Nodes drain it opportunistically and acknowledge
 // item ids after handling them.
-const NODE_PENDING_WORK_TYPES = ["status.request", "location.request"] as const;
+const _NODE_PENDING_WORK_TYPES = ["status.request", "location.request"] as const;
 /** Work item types that connected nodes understand today. */
-export type NodePendingWorkType = (typeof NODE_PENDING_WORK_TYPES)[number];
+export type NodePendingWorkType = (typeof _NODE_PENDING_WORK_TYPES)[number];
  
 
-const NODE_PENDING_WORK_PRIORITIES = ["default", "normal", "high"] as const;
+const _NODE_PENDING_WORK_PRIORITIES = ["default", "normal", "high"] as const;
 /** Priority labels used for pending work drain ordering. */
-export type NodePendingWorkPriority = (typeof NODE_PENDING_WORK_PRIORITIES)[number];
+export type NodePendingWorkPriority = (typeof _NODE_PENDING_WORK_PRIORITIES)[number];
 
 type NodePendingWorkItem = {
   id: string;
