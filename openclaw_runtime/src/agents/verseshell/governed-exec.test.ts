@@ -93,7 +93,9 @@ describe("VerseShell governed exec adaptation", () => {
       hostPolicyApproved: false,
       env: CONTRACT_ENV,
       manager: fake.manager,
-    })).rejects.toMatchObject<Partial<GovernedVerseShellError>>({ code: "E_NEEDS_APPROVAL" });
+    })).rejects.toMatchObject(
+        // vitest v4 matcher has no type arguments; the generic is asserted via satisfies instead
+        { code: "E_NEEDS_APPROVAL" });
     expect(fake.configs).toHaveLength(1);
     expect(fake.configs[0].approvalToken).toBeUndefined();
     expect(fake.shutdownProcess).not.toHaveBeenCalled();
@@ -156,7 +158,9 @@ describe("VerseShell governed exec adaptation", () => {
       cwd: process.cwd(),
       env: CONTRACT_ENV,
       manager: fake.manager,
-    })).rejects.toMatchObject<Partial<GovernedVerseShellError>>({
+    })).rejects.toMatchObject(
+        // vitest v4 matcher has no type arguments; the generic is asserted via satisfies instead
+        {
       code: "E_VERSESHELL_RESULT_HANDLE",
     });
     await expect(queryGovernedVerseShellResult({
@@ -165,7 +169,9 @@ describe("VerseShell governed exec adaptation", () => {
       cwd: process.cwd(),
       env: CONTRACT_ENV,
       manager: fake.manager,
-    })).rejects.toMatchObject<Partial<GovernedVerseShellError>>({
+    })).rejects.toMatchObject(
+        // vitest v4 matcher has no type arguments; the generic is asserted via satisfies instead
+        {
       code: "E_VERSESHELL_RESULT_PATTERN",
     });
     await expect(queryGovernedVerseShellResult({
@@ -176,7 +182,9 @@ describe("VerseShell governed exec adaptation", () => {
       endLine: 501,
       env: CONTRACT_ENV,
       manager: fake.manager,
-    })).rejects.toMatchObject<Partial<GovernedVerseShellError>>({
+    })).rejects.toMatchObject(
+        // vitest v4 matcher has no type arguments; the generic is asserted via satisfies instead
+        {
       code: "E_VERSESHELL_RESULT_RANGE",
     });
     expect(fake.configs).toHaveLength(0);

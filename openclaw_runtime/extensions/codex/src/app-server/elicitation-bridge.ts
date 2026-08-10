@@ -72,7 +72,6 @@ const ANSI_CONTROL_SEQUENCE_RE = new RegExp(
 );
 const CONTROL_CHARACTER_RE = new RegExp(String.raw`[\u0000-\u001f\u007f-\u009f]+`, "g");
 const INVISIBLE_FORMATTING_CONTROL_RE = new RegExp(
-  // eslint-disable-next-line no-misleading-character-class -- intentional unicode class
   String.raw`[\u00ad\u034f\u061c\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\ufe00-\ufe0f\u{e0100}-\u{e01ef}]`,
   "gu",
 );
