@@ -1501,11 +1501,17 @@ export function runAcceptance(manifest, options = {}) {
       // Required-test gates are spec-declared command lines designed to run in
       // the source repository (their --manifest/--output-dir paths are
       // repo-relative), so execute them from the source root, not the detached
-      // worktree which lacks gitignored acceptance artifacts.
+      // worktree which lacks gitignored acceptance artifacts. Cap their Node
+      // heap so a nested acceptance run cannot compete with the outer run's
+      // detached-worktree processes for memory.
       const gateCwd = gate.kind === 'required-test' ? root : workspace;
+      const gateEnv =
+        gate.kind === 'required-test'
+          ? { ...executionEnv, NODE_OPTIONS: '--max-old-space-size=4096' }
+          : executionEnv;
       const gateOptions = {
         cwd: gateCwd,
-        env: executionEnv,
+        env: gateEnv,
         outputDir,
         sourceRoot: root,
         worktreeRoot: workspace,
