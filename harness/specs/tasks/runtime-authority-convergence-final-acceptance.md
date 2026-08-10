@@ -77,10 +77,10 @@ rollback:
   - Archive the RC-09 evidence directory before any rerun; the acceptance protocol refuses an existing final directory.
   - No runtime, schema, data, configuration, or migration rollback is required.
 requiredTests:
-  - pnpm acceptance:agent:plan --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md --since 6493d5cce6fbfa558aa26eb4cfb5a4cd71504664 --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final
-  - pnpm acceptance:agent:run --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor executor-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final
-  - pnpm acceptance:agent:verify --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor verifier-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final
-  - pnpm acceptance:agent:status --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final
+  - pnpm acceptance:agent:plan --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md --since 6493d5cce6fbfa558aa26eb4cfb5a4cd71504664 --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
+  - pnpm acceptance:agent:run --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor executor-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
+  - pnpm acceptance:agent:verify --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor verifier-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
+  - pnpm acceptance:agent:status --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
   - node scripts/validate-runtime-authority-convergence.mjs --phase engineering --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --engineering-report artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
   - pnpm harness validate --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md
 acceptance:
