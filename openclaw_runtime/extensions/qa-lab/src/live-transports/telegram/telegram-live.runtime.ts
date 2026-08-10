@@ -541,7 +541,6 @@ const TELEGRAM_QA_STANDARD_SCENARIO_IDS = collectLiveTransportStandardScenarioCo
   scenarios: TELEGRAM_QA_SCENARIOS,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- value retained for type derivation
 const TELEGRAM_QA_ENV_KEYS = [
   "OPENCLAW_QA_TELEGRAM_GROUP_ID",
   "OPENCLAW_QA_TELEGRAM_DRIVER_BOT_TOKEN",

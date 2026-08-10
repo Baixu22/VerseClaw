@@ -198,7 +198,6 @@ export function getProviderMonitorTestMocks(): typeof providerMonitorTestMocks {
   return providerMonitorTestMocks;
 }
 
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Test helper lets assertions ascribe handler params shape.
 export function getFirstDiscordMessageHandlerParams<T extends object>() {
   expect(createDiscordMessageHandlerMock).toHaveBeenCalledTimes(1);
   const firstCall = createDiscordMessageHandlerMock.mock.calls.at(0) as [T] | undefined;

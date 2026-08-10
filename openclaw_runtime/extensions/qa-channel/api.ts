@@ -43,4 +43,4 @@ export {
   readQaBusMessage,
   searchQaBusMessages,
   sendQaBusMessage,
-} from "./test-api.js";
+} from "./src/bus-client.js";

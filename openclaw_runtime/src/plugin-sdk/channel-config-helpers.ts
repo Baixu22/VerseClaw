@@ -171,7 +171,6 @@ export function adaptScopedAccountAccessor<Result, Config extends OpenClawConfig
 /** Build the shared allowlist/default target adapter surface for account-scoped channel configs. */
 export function createScopedAccountConfigAccessors<
   ResolvedAccount,
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- Config preserves caller-specific config subtype for account resolvers.
   Config extends OpenClawConfig = OpenClawConfig,
 >(params: {
   /** Resolves the account used by read-only config accessors from `{ cfg, accountId }`. */

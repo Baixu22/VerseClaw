@@ -136,7 +136,9 @@ describe('rc05-operator-fixture conformance', () => {
     const governance = resolveOperatorGovernancePolicy({ policyRule: 'deny-all', decision: 'denied', actor: 'operator-1' });
     const resolved = resolveOperatorSliceApproval({ approvalId: intent.approvalId, governance, options: sliceOptions() });
     expect(resolved.ok).toBe(false);
-    expect(resolved.reason).toBe('denied');
+    if (!resolved.ok) {
+      expect(resolved.reason).toBe('denied');
+    }
 
     // Execution cannot start from a denied approval; the adapter never ran.
     const adapter = createOperatorFixtureAdapter();
@@ -152,7 +154,9 @@ describe('rc05-operator-fixture conformance', () => {
       },
     });
     expect(executed.ok).toBe(false);
-    expect(executed.reason).toBe('not-approved');
+    if (!executed.ok) {
+      expect(executed.reason).toBe('not-approved');
+    }
     expect(adapter.deliveredCount()).toBe(0);
   });
 
@@ -181,7 +185,9 @@ describe('rc05-operator-fixture conformance', () => {
       },
     });
     expect(executed.ok).toBe(false);
-    expect(executed.reason).toBe('unknown');
+    if (!executed.ok) {
+      expect(executed.reason).toBe('unknown');
+    }
 
     // The ledger row is needs_reconciliation; the adapter never delivered.
     const { recoverOperatorSlice } = await import('../../../../src/agents/operator-slice.js');
