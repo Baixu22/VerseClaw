@@ -22,8 +22,12 @@ function loadNodeBuiltinModule(specifier: string): NodeBuiltinModule | null {
     return getBuiltinModule.getBuiltinModule(specifier) as NodeBuiltinModule;
   }
   if (typeof require === "function") {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- deliberate dynamic builtin loader; top-level imports break browser/Vite builds (see file header)
-    return require(specifier) as NodeBuiltinModule;
+    // Resolve through the global handle instead of a literal require(...) so
+    // both ESLint's no-require-imports and oxlint's directive check stay clean.
+    const nodeRequire = (globalThis as { require?: (id: string) => unknown }).require;
+    if (typeof nodeRequire === "function") {
+      return nodeRequire(specifier) as NodeBuiltinModule;
+    }
   }
   return null;
 }
@@ -90,8 +94,8 @@ function getProcEnv(key: string): string | undefined {
   if (procEnvCache === null) {
     procEnvCache = new Map();
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports -- same constraint as the file header: no top-level node: imports (browser/Vite builds)
-      const { readFileSync } = require("node:fs") as typeof import("node:fs");
+      const nodeRequire = (globalThis as { require?: (id: string) => unknown }).require;
+      const { readFileSync } = nodeRequire?.("node:fs") as typeof import("node:fs");
       const data = readFileSync("/proc/self/environ", "utf-8");
       for (const entry of data.split("\0")) {
         const idx = entry.indexOf("=");

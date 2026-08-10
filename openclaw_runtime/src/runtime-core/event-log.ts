@@ -793,8 +793,8 @@ function schemaMarkerDiagnostic(
     message: "RuntimeTaskEvent log envelope schema marker/version mismatch.",
     expectedSchemaMarker: RUNTIME_TASK_EVENT_LOG_SCHEMA_MARKER,
     actualSchemaMarker: [
-      String(value.schemaMarker ?? "missing"),
-      String(value.schemaVersion ?? "missing"),
+      typeof value.schemaMarker === "string" ? value.schemaMarker : "missing",
+      typeof value.schemaVersion === "string" ? value.schemaVersion : "missing",
     ].join("@"),
   });
 }

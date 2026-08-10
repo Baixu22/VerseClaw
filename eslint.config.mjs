@@ -66,6 +66,15 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // Declaration-only namespace (type aliases only) and module-augmentation
+      // empty interfaces are intentional type-safe shapes; keep the rules but
+      // allow these documented forms so no inline disables are needed (oxlint
+      // reports ESLint disables as unused directives).
+      '@typescript-eslint/no-namespace': ['error', { allowDeclarations: true }],
+      '@typescript-eslint/no-empty-object-type': [
+        'error',
+        { allowInterfaces: 'with-single-extends' },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

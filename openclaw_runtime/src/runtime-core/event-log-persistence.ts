@@ -410,7 +410,7 @@ function recordFromRow(
 function parsedRecordOrDiagnostic(
   row: RuntimeTaskEventLogRow,
   diagnostics: RuntimeTaskEventLogDiagnostic[],
-): unknown | undefined {
+): unknown {
   const parsed = recordFromRow(row);
   if ("diagnostic" in parsed) {
     diagnostics.push(parsed.diagnostic);
