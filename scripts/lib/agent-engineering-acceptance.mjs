@@ -476,6 +476,7 @@ function buildGates(profiles, options = {}) {
       '--binary', 'resources/bin/win32-x64/ae.exe',
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
       '--copy', 'artifacts/unified-agent-system/TF-0011/audit-manifest.json',
+      '--copy', 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
       '--electron',
     ],
   }, { kind: 'provision-verseshell' });
