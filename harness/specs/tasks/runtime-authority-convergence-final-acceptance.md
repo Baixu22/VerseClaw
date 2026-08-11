@@ -77,11 +77,14 @@ rollback:
   - Archive the RC-09 evidence directory before any rerun; the acceptance protocol refuses an existing final directory.
   - No runtime, schema, data, configuration, or migration rollback is required.
 requiredTests:
+  # The nested acceptance run/verify/validator gates were removed: the run gate
+  # executed the primary manifest, which re-materializes its own required-test
+  # gates and recurses forever, and the validator gate reads final-report.json,
+  # which only exists after the independent verifier step. Those flows are
+  # exercised once, at the top level, by the executor plan and by the
+  # engineering validator step that follows the verifier (acceptance criteria).
   - pnpm acceptance:agent:plan --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md --since 6493d5cce6fbfa558aa26eb4cfb5a4cd71504664 --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
-  - pnpm acceptance:agent:run --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor executor-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
-  - pnpm acceptance:agent:verify --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --actor verifier-agent --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
   - pnpm acceptance:agent:status --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/required-test-runs
-  - node scripts/validate-runtime-authority-convergence.mjs --phase engineering --manifest artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json --engineering-report artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
   - pnpm harness validate --spec harness/specs/tasks/runtime-authority-convergence-final-acceptance.md
 acceptance:
   - The manifest schema is agent-engineering-acceptance/v1, manifestVersion 1, executionMode full, baseRef equal to the acceptedBaseSha, and changedPaths equal to git diff --name-only <acceptedBaseSha>..<candidateSha>.
