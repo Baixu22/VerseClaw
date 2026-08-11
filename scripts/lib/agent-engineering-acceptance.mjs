@@ -1722,7 +1722,13 @@ export function validateReportEvidence(manifest, report, outputDir, options = {}
     const expected = expectedGates[index];
     const actual = actualGates[index];
     if (!actual || actual.id !== expected.id) continue;
-    if (actual.command !== expected.command || stableJson(actual.args ?? []) !== stableJson(expected.args ?? [])) {
+    // Required-test gates carry a commandLine; spawnGate records the resolved
+    // command as commandLine ?? command, so compare against the same effective
+    // command rather than the manifest's raw (null) command field.
+    const effectiveCommand = typeof expected.commandLine === 'string' && expected.commandLine.trim().length > 0
+      ? expected.commandLine
+      : expected.command;
+    if (actual.command !== effectiveCommand || stableJson(actual.args ?? []) !== stableJson(expected.args ?? [])) {
       errors.push(`${label} gate command mismatch: ${expected.id}`);
     }
     if (actual.profile !== expected.profile || actual.name !== expected.name || actual.timeoutMs !== expected.timeoutMs) {

@@ -591,6 +591,50 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateExecutorEvidence(manifest, passing, outputDir).join('\n')).toContain('controlled artifact digest mismatch');
   });
 
+  // Required-test gates declare a commandLine; spawnGate records the resolved
+  // command as commandLine ?? command. Evidence validation must compare against
+  // that effective command, not the manifest's raw null command field, or a
+  // legitimately recorded commandLine gate is rejected as a contract mismatch.
+  it('accepts commandLine required-test gates and still rejects a tampered command', () => {
+    const root = createFixtureRepository();
+    const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-commandline-'));
+    temporaryPaths.push(outputDir);
+    const gate = {
+      id: 'required-test-1',
+      name: 'Required test 1 (spec requiredTests)',
+      profile: 'required-tests',
+      commandLine: 'node scripts/fixture-required-test.mjs --flag value',
+      command: null,
+      args: [],
+      required: true,
+      allowSkip: false,
+      timeoutMs: 1_000,
+      safety: { network: 'none', productionEffects: false, humanEvidence: false },
+    };
+    const manifest = createManifest(root, { gate });
+    const passing = runAcceptance(manifest, {
+      sourceRoot: root,
+      outputDir,
+      actor: 'executor',
+      env: { PATH: process.env.PATH ?? '' },
+      spawn: passingSpawn,
+    });
+    expect(passing).toMatchObject({ result: 'pass', engineeringAcceptedByAgent: false });
+    expect(passing.gates[0].command).toBe('node scripts/fixture-required-test.mjs --flag value');
+    expect(passing.gates[0].args).toEqual([]);
+    expect(validateReportEvidence(manifest, passing, outputDir, {
+      expectedRole: 'executor',
+      label: 'executor report',
+    })).toEqual([]);
+    const tampered = structuredClone(passing);
+    tampered.gates[0].command = 'node scripts/other.mjs';
+    tampered.reportDigest = digestReport(tampered);
+    expect(validateReportEvidence(manifest, tampered, outputDir, {
+      expectedRole: 'executor',
+      label: 'executor report',
+    })).toContain('executor report gate command mismatch: required-test-1');
+  });
+
   it('rejects a dirty source worktree end-to-end before running any gate', () => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
