@@ -51,7 +51,7 @@ import {
 } from "../sessions/level-overrides.js";
 import { applyModelOverrideToSessionEntry } from "../sessions/model-overrides.js";
 import { normalizeSendPolicy } from "../sessions/send-policy.js";
-import { parseSessionLabel } from "../sessions/session-label.js";
+import { SESSION_LABEL_MAX_LENGTH, parseSessionLabel } from "../sessions/session-label.js";
 
 function invalid(message: string): { ok: false; error: ErrorShape } {
   return { ok: false, error: errorShape(ErrorCodes.INVALID_REQUEST, message) };
@@ -128,6 +128,47 @@ function normalizeSubagentControlScope(raw: string): "children" | "none" | undef
     return normalized;
   }
   return undefined;
+}
+
+/**
+ * Returns the requested label when it is free across the store, otherwise the
+ * smallest stable numeric-suffixed variant (`Reviewer-2`, `Reviewer-3`, ...)
+ * that is not used by any other session.
+ *
+ * Parallel subagent workers share role labels (e.g. orchestrator.run spawns
+ * planner/reviewer/skeptic), so a collision must auto-disambiguate instead of
+ * hard-failing the worker spawn (issue #30). The suffix is deterministic so a
+ * session re-patching its own label keeps the same value.
+ */
+function resolveAvailableSessionLabel(
+  store: Record<string, SessionEntry>,
+  storeKey: string,
+  requested: string,
+): string {
+  let candidate = requested;
+  let suffix = 2;
+  for (;;) {
+    let used = false;
+    for (const [key, entry] of Object.entries(store)) {
+      if (key === storeKey) {
+        continue;
+      }
+      if (entry?.label === candidate) {
+        used = true;
+        break;
+      }
+    }
+    if (!used) {
+      return candidate;
+    }
+    // Bound the suffix so near-max-length labels cannot overflow the label cap.
+    const suffixed = `${requested}-${suffix}`;
+    if (suffixed.length > SESSION_LABEL_MAX_LENGTH || suffix > 10_000) {
+      return candidate;
+    }
+    candidate = suffixed;
+    suffix += 1;
+  }
 }
 
 /** Apply a validated gateway session patch to an in-memory session store entry. */
@@ -356,15 +397,22 @@ export async function applySessionsPatchToStore(params: {
       if (!parsed.ok) {
         return invalid(parsed.error);
       }
-      for (const [key, entry] of Object.entries(store)) {
-        if (key === storeKey) {
-          continue;
+      const requested = parsed.label;
+      if (isSubagentSessionKey(storeKey) || isAcpSessionKey(storeKey)) {
+        // Parallel subagent workers legitimately share role labels; keep the
+        // spawn working by auto-disambiguating instead of rejecting (issue #30).
+        next.label = resolveAvailableSessionLabel(store, storeKey, requested);
+      } else {
+        for (const [key, entry] of Object.entries(store)) {
+          if (key === storeKey) {
+            continue;
+          }
+          if (entry?.label === requested) {
+            return invalid(`label already in use: ${requested}`);
+          }
         }
-        if (entry?.label === parsed.label) {
-          return invalid(`label already in use: ${parsed.label}`);
-        }
+        next.label = requested;
       }
-      next.label = parsed.label;
     }
   }
 
