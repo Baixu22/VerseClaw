@@ -1,9 +1,169 @@
+## 清理（2026-08-12）
+
+- 删除本轮产生的临时物：`scripts/issue-13-real-gateway-ab.mjs`、`scripts/issue-13-aimock-gateway-ab.mjs`（含 openclaw_runtime 下副本）、`.git/index.lock`（stale 空锁）、aimock 失败残留 `/tmp/openclaw/openclaw-qa-suite-*`、`artifacts/chain-audit/evidence/gateway.log`（A/B 尝试日志）、根目录 `.tmp-tf-list*.json`。
+- 保留正式产物：本轮修复源码改动、8 个新增测试/spec/基准文件、`artifacts/issue-13/real-gateway/report.json`（gitignored 证据）、Task Forest proposals/snapshots（CLI 正常产物）。
+- 保留不动（其他任务/系统产物，非本轮范围）：`hello-world/`（agent 任务评测）、`jobs/`（job 运行器记录）、`.zcode/`（CLI 会话数据）、sandbox fs-bridge 系列改动（#22 沙盒链 WIP）、各 harness spec 未跟踪文件。
+- `git diff --check` 对本轮源文件无空白错误；工作树保持不提交、不推送。
+
+---
+
+# 收尾完成 — GitHub #28 关闭 + Task Forest TF-0053/TF-0055 标记 done（2026-08-12）
+
+> 状态：GitHub #28（P2，最后剩余 open issue）已以 `completed` 关闭，附验证证据；Task Forest 完成提案 `TFP-github-issue-13-28-closeout-20260812` 已由用户确认并应用，`TF-0053`（#13）与 `TF-0055`（#28）均为 `done`、进度 100%，export/validate PASS。工作树保持不提交、不推送。
+
+## GitHub #28 关闭
+
+- 与 #31 同根因、同 spec（`fix-gateway-session-workspace-resolution.md`）：相对路径按 session 可信 workspace 解析（spawnedWorkspaceDir > trusted request > 持久化 session > agent 默认），不再落到 `~/.openclaw/workspace` 触发全盘搜索。
+- 验证：spawned-context + subagent-spawn 定向 5/5；gateway 套件 18/18（103）；#31 同矩阵（agents-core 32/32、embedded-agent-runner、auto-reply、comms replay/compare）均 PASS；tsgo 双 gate、harness validate --no-diff PASS。
+
+## Task Forest 收尾（CLI 已可用）
+
+- 发现 `~/.codex/skills/task-forest/scripts/task_forest.py` CLI 可用（AGENTS.md 旧 note 已过时）；经 `proposal-save`（预校验 + 写 base_graph_hash）→ 用户确认 → `proposal-apply --yes` 应用 → `export` + `validate` PASS。
+- 完成提案 `TFP-github-issue-13-28-closeout-20260812`：TF-0053 与 TF-0055 置 `done`/100%，附证据与诚实 residual（#13 真实 A/B 受环境限制）。
+
+## 至此全部 GitHub issue 已关闭
+
+#13/#28/#29/#31/#34（本轮）+ #32/#33 等此前批次——`gh issue list --state open` 无剩余。剩余在途工作：worktree 大量无关 WIP、RC-10 H-03 真实 QQ 验收（需用户本人，凭据环境变量注入）。
+
+---
+
+# GitHub Issue #13 修复完成 — 插件工具描述符缓存（2026-08-12，接手 GPT 未竟工作）
+
+> 状态：生产修复与验证已完成；GitHub #13 已于 2026-08-12 以 `completed` 关闭（附诚实 residual）。工作树保持不提交、不推送。Task Forest TF-0053 待受支持 CLI 恢复后应用完成提案（AGENTS.md 只允许只读检查，未直接编辑）。
+
+## 接手背景
+
+GPT 已完成核心实现（descriptor cache + lazy execute）与 fixture 基准，但卡在真实 Gateway stream-ready A/B 未采集 + 当时 `session-entry-slot-keys.ts` 类型错误阻塞。本次接手：修复类型阻塞（该文件已在 #31 会话修过）、复核实现正确性、复现基准、尝试真实 A/B、诚实收尾。
+
+## 实现（spec: `fix-plugin-tools-descriptor-cache-performance.md`，GPT 完成、本次复核）
+
+- 进程内插件工具描述符缓存：key 含 pluginId/source/contract 工具名、运行时上下文（config 内容哈希经 WeakMap memo、workspace/agent/model/delivery 字段）与 active+channel registry 代次；按插件元数据生命周期边界清除（gateway reload/close），上限 256。
+- key 构建不做请求时文件系统 stat；warm 解析返回描述符壳工具，不重跑插件 factory；`execute`/`prepareArguments`/`finalizeBeforeToolCallParams` 懒解析当前运行时工具并按 registry 代次 memo，保留 allow/deny 列表、认证、delivery 上下文、registry 替换与执行契约。
+
+## 本次验证
+
+- 定向测试（`tool-descriptor-cache.test.ts`）4/4；plugins 套件 3/3（8）；agents-core 32/32（249）全绿；`tsgo:core` + `tsgo:core:test` 通过。
+- 基准刷新（`perf:issue-13 --runs 5`，写入 `reports/plugin-tools-descriptor-cache-benchmark-2026-08-12.json`）：cold 22.63ms avg vs warm 0.56ms avg，-97.53%，warm factory 调用 0 次，RSS ~377MB。
+- `harness validate --no-diff` PASS。
+
+## 真实 Gateway A/B — 诚实 residual
+
+- 真实 gateway（用户 `~/.openclaw` 配置）：agent 轮被 provider auth 前置拦截（无 deepseek key），到不了工具构造；日志可见 `agent runtime plugins pre-warmed in 5ms`（真实插件面 9 个：acpx/browser/canvas/device-pair/file-transfer/memory-core/phone-control/reach-readers/talk-voice）。尝试记录在 `artifacts/issue-13/real-gateway/report.json`。
+- QA aimock 全链路 harness 无法启动：Windows `fs.symlink`（qa-agent-workspace.ts:44）需要提升权限，非管理员环境 EPERM。
+- 结论：本环境不满足 spec "配置了 Gateway 的环境" 条件，stream-ready/RSS A/B 留作有 key/无 symlink 限制环境的复测项；机制本身已由 fixture 基准 + 单测覆盖。关闭评论明确标注此 residual，不冒充真实链路证据。
+
+---
+
+# GitHub Issue #29 修复完成 — subagent 完成通知在纯工具 announce turn 上不再误报 visible_reply_missing（2026-08-12）
+
+> 状态：生产修复与验证已完成；GitHub #29 已于 2026-08-12 以 `completed` 关闭。工作树保持不提交、不推送。
+
+## 实现（spec: `fix-subagent-announce-visible-reply-handoff.md`）
+
+- `subagent-announce-delivery.ts`：对 subagent 完成（source=`subagent_announce`）在 requester announce turn 无可见输出时，若 `task_completion` internal event（source=subagent）已注入 requester 会话，则视为已交付（`delivered:true, path:"direct"`）——内部 handoff 即为嵌套/orchestrator requester 的投递契约，纯工具 turn 不代表结果丢失（issue #29）。
+- 覆盖两处分支：内部 handoff（`!shouldDeliverAgentFinal`）与 agent-final subagent 分支（`shouldDeliverAgentFinal && isSubagentCompletion`）。
+- 未注入 subagent 完成 event、非 subagent 来源（cron/image_generate 等）仍报 `visible_reply_missing`；message-tool-only 外部投递语义不变。
+- 新增 `subagent-announce-delivery.visible-reply.test.ts`（4 用例）：注入 subagent event 的纯工具 turn 判定 delivered；无 internal event / 非 subagent event 来源 / 非 subagent announce 来源保持严格。
+
+## 验证
+
+- 定向测试 4/4 通过；agents-core 32/32（249 tests）通过；`tsgo:core` + `tsgo:core:test` 通过。
+- comms replay/compare PASS（0 丢失/重复/乱序，吞吐/延迟无变化）；`harness validate --no-diff` PASS。
+- `git diff --check` 对改动文件无问题。
+
+---
+
+# GitHub Issue #31 与 #34 修复完成 — 子 agent workspace 继承 + Windows→WSL Docker 卷路径转换（2026-08-12）
+
+> 状态：生产修复与验证已完成；GitHub #31 与 #34 已于 2026-08-12 以 `completed` 关闭（验证评论避免披露本地路径与内部门禁细节）。两个 issue 均有 harness spec 与定向测试；工作树保持不提交、不推送，未回滚其他任务 WIP。
+
+## #31 子 agent workspace 继承（spec: `fix-gateway-session-workspace-resolution.md`）
+
+- Backend agent/chat RPC 接受可信 `workspaceDir`（仅 Backend 客户端；其他客户端返回 INVALID_REQUEST）。
+- spawn 持久化 `spawnedWorkspaceDir`；每轮 workspace 解析优先级：spawned > trusted request > 持久化 session > agent 默认（`resolveSessionWorkspaceDir`）。
+- `tools.effective`、`tools.invoke`、MCP loopback、`agent-command`、auto-reply 路径全部从会话持久化状态取 workspace；Electron Main 将 workspaceId 解析为绝对根路径后再转发。
+- 与本会话修复配套：`session-entry-slot-keys.ts` 补登记 `workspaceDir`/`spawnedWriteSet` 保留槽位（此前导致 `tsgo:core` 报 `MissingSessionEntryReservedSlotKeys`）。
+- 顺带修复预存测试问题：`tools-invoke-mcp-fallback.test.ts` mock 补 `CORE_TOOL_GROUPS` 导出（gateway 套件从 33/35 → 35/35）；两个未跟踪 WIP 测试的类型错误（`model-auth.auth-json-migration.test.ts` afterEach 收窄、`tool-descriptor-cache.test.ts` readonly 数组）已修，`tsgo:core:test` 转绿。
+
+## #34 Windows→WSL Docker 卷路径转换（spec: `fix-sandbox-windows-wsl-docker-paths.md`）
+
+- 新模块 `openclaw_runtime/src/agents/sandbox/wsl-path.ts`：检测 Windows 客户端 + 非 named-pipe `DOCKER_HOST`（WSL2/远程 Linux daemon），将 `C:\...` 转 `/mnt/c/...`、剥 `\\wsl$\<distro>\` 前缀；本地 named-pipe daemon 与 macOS/Linux 保持原样。
+- `workspace-mounts.ts` 挂载格式化加可选 `BindSourcePathTranslator`；`docker.ts`/`browser.ts` 在 workspace、agent workspace、只读 skill、自定义 binds 四处接线（经 `createDockerBindSourceTranslator`）。
+- 安全校验与 config hash 仍基于原始主机路径（翻译只作用于 `-v` 参数输出），容器复用判定不变。
+- 新单测 `wsl-path.test.ts`（12）+ `workspace-mounts.test.ts`（3）15/15 通过；README en/zh/ja 同步。
+
+## 验证
+
+- #31：spawned-context/subagent-spawn 定向测试通过；gateway 35/35、agents-core 31/31（244）、embedded-agent-runner 8/8（55）、auto-reply 各套件通过。
+- #34：agents-support 19/19（205）、unit 变更文件 26/26（264）、sandbox Dockerfile 契约测试通过。
+- 两 issue 均过 `tsgo:core` + `tsgo:core:test`；`git diff --check` 无新问题（LATEST.md 预存 trailing whitespace 属旧文件）。
+- #31 通过 comms replay/compare（0 丢失/重复/乱序，吞吐/延迟无变化）与 `harness validate --no-diff`；#34 spec `validate --no-diff` PASS。
+- 完整 harness diff 归属校验未用于当前大量无关 WIP 的脏工作树（与 #33 收尾一致）。
+
+---
+
+# GitHub Issue #33 修复完成 - Gateway 重启恢复运行中的主会话（2026-08-12）
+
+> 状态：生产修复与验证已完成；GitHub #33 已于 2026-08-12 以 `completed` 关闭。详细本地验证评论未发布，避免向外部披露本地路径与内部门禁细节。Task Forest 完成 proposal `TFP-github-issue-33-done-20260812` 已应用，`TF-0054` 为 `done`、进度 100%。
+
+## 实现
+
+- 重启恢复将 `assistant` 尾部的 `stopReason=aborted/toolUse` 视为未完成 turn；`stop/length/error`、缺失 stopReason 和 approval-pending 继续禁止自动重放。
+- 恢复 `agent` 调用同时传原始 `sessionKey` 和 `sessionId`，避免 freshness 边界把恢复请求旋转到新会话。
+- Gateway 调用失败时保留 `abortedLastRun=true`，供退避重试；成功接受恢复请求后才清除标记。
+- README 英文、中文、日文与 Harness task spec 已同步；真实 E2E 预置 source runtime 实际状态目录中的 running/aborted 会话。
+
+## 验证
+
+- 定向 Vitest：2 files、15/15 tests PASS。
+- `pnpm run build:runtime` PASS，runtime smoke Gateway ready；此前一次并发构建因多个 tsdown 同写 `dist` 缺少 `entry.js`，串行重跑后通过。
+- 完整 `restart-recovery-fp-p1-05.spec.ts`：2/2 PASS；新增用例证明真实 Gateway 启动后在同一 `sessionId` 恢复一次，原七场景长链路无回归。
+- 目标 oxfmt、type-aware oxlint、E2E ESLint 与 `git diff --check` PASS。
+- comms replay/compare PASS：消息丢失、重复、乱序、RPC timeout 均为 0；吞吐/延迟相对基线无变化。
+- Harness context 与 `validate --no-diff` PASS。完整 diff 归属校验未用于当前大量无关 WIP 的脏工作树。
+- 完整 typecheck：web PASS；node 仅被既有 `openclaw_runtime/src/plugins/session-entry-slot-keys.ts:140` 的 `spawnedWriteSet` 约束错误阻断，本次文件的 type-aware lint PASS。
+
+## 收尾
+
+- 不提交、不推送，不回滚工作树中的其他任务改动。
+- GitHub #33 状态已核验为 `CLOSED/COMPLETED`；Task Forest validate/export 已通过。
+
+---
+
+# RC-09 重新签发完成 — 工程证据已按当前 main 重建（2026-08-11）
+
+> 状态：F-06 工程部分已关闭。RC-09 已以候选分支 `rc09-r2-final-candidate`（candidate `657b51e1ca0b2b7e35d2e2c23554be4631e27184`）重新签发：executor 21/21 gates PASS、独立 verifier PASS、engineering validator PASS、程序进入 `human_acceptance_pending`。RC-10 H-03 真实 QQ channel round trip 与 human-verdict.yaml 待用户本人执行/书写（凭据环境变量注入，禁止落盘）。
+
+## 2026-08-11 重新签发结果
+
+- **候选**：`rc09-r2-final-candidate` 分支，HEAD `657b51e1c`（main `4cd5396db` + 2 个 fix）。baseRef=`fd857e5d`（RC-01 acceptedBaseSha），changedPaths=170，全部有唯一 RC owner。
+- **修复 1（requiredTests 嵌套递归）**：spec requiredTests 原本嵌套完整 acceptance run/verify/validator 循环。嵌套 run 执行主 manifest 会再次物化 required-test gates → 无限递归（required-test-2 → 嵌套 required-test-2 → …，每层 ~60 分钟）；validator gate 还需 `final-report.json`（只在 verifier 之后才存在），结构上无法在 fresh executor 内通过。修复：spec 只保留 plan/status/harness-validate 三个非递归 smoke gate；run/verify/validator 在顶层以完整协议执行（见 §3 证据）。备选 env-var 抑制方案（OPENCLAW_ACCEPTANCE_SUPPRESS_REQUIRED_TESTS）不可行——嵌套 run 执行的是主 manifest，抑制只对新建 manifest 生效，不能终止递归。
+- **修复 2（commandLine gate 契约校验）**：`spawnGate` 对 required-test gate 记录 `command = commandLine ?? command`，但 `validateReportEvidence` 与 manifest 原始 `command: null` 比较 → 全部 required-test gate 在 verifier rerun 判为 contract mismatch（NO-GO）。修复：比较改为对 expected gate 取 effective command（`commandLine ?? command`），与 executor 解析一致。新增回归测试 `accepts commandLine required-test gates and still rejects a tampered command`（29/29 PASS）。
+- **证据**：`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/`（manifest/executor-report/verifier-report/final-report/changed-path-ownership.json + logs + evidence）。runId `e429a44f`；executor `pass`（21 gates，含 3 required-test），verifier `pass` + `engineeringAcceptedByAgent=true` + `review_needed`；`validate-runtime-authority-convergence.mjs --phase engineering` **PASS**；`acceptance:agent:status` pass。fast-unit-tests 7124 passed / 0 failed / 52 skipped。
+- **回归**：13 个累积 rc 包 spec（rc00..rc08b）+ rc01r×2 harness validate 全 PASS；`channel:conformance` 9/9 PASS；typecheck/test/runtime-check/integration/comms×2/contract/i18n/build 均由 executor gates 以最终 SHA 覆盖并通过。
+- **文档**：STATUS.md → `program_status: human_acceptance_pending`、`engineering_verdict: accepted`；findings.md F-06 工程部分 CLOSED；本 LATEST 追加本段。product locks 保持 false；`done_allowed` 保持 false。
+
+## 剩余动作（需用户本人，非 agent 可代劳）
+
+1. **RC-10 H-03 真实 QQ channel**：用户从 QQ 私聊 bot（id=1903280802）发消息触发 round trip；凭据仅经环境变量 `QQBOT_APP_ID=1903280802` / `QQBOT_CLIENT_SECRET=<用户提供值>` 注入，**禁止写入任何文件**。环境：主工作树启动 gateway（`pnpm --dir openclaw_runtime dev gateway`，qqbot 插件在 workspace；用户全局 openclaw 2026.5.20 无 qqbot 插件，必须用 workspace build）；LLM 用 qa-lab aimock（无 provider key）。提取 gateway 日志 run ID + receipt store receipt IDs → 写 `.../final/rc10-round-1/run-record.md`（执行环境必须 = 候选 SHA `657b51e1c`）。真实 channel 不可用则如实写 blocked，不得用 fixture 冒充。
+2. **human-verdict.yaml**：仅用户本人书写（validator 禁止 agent 代写）；verdict=accepted 需 exact 六场景 [H-01..H-06] + failed 空；文件路径与 sha 校验由 `validate-runtime-authority-convergence.mjs --phase human` 负责。
+3. 最终 validator 在候选 worktree 跑（worktree HEAD==candidate 才过）。候选分支保持冻结于 `657b51e1c` 直到用户完成 H-03 与 verdict；**main 尚未前进到候选 SHA**——任何向候选分支的提交都会使既有工程证据（绑定该 SHA）失效。
+
+## 环境备忘
+
+- 候选 worktree `C:\Users\27933\Desktop\clawx\ClawX-rc09-r2-candidate`（node_modules 已按 hoisted 布局装好，勿重装成 isolated）。
+- 归档：`artifacts/agent-engineering-acceptance/runtime-authority-convergence-final-r2-exec-9b08e3f5-archived-20260811/`（executor 全绿但 verifier 因 commandLine 契约 NO-GO 的中间轮次）；`-r1-archived-20260810/` 为旧 3209f0981 链证据（F-06 判无效，只读勿用）。
+- 已删除两个 stale 临时 worktree（clawx-agent-acceptance-5ex94t / NbdyHp，各 ~4.5GB）；残留 detached worktree 重跑前 `git worktree prune`。
+- rc10 spec 曾是无 --since 时唯一强制 diff 的 rc 包（唯一带 `scenario: gateway-backend-communication` 字段，CLI 对 scenario 绑定 spec 默认 diff 到 origin/main），对其窄 touchedAreas 报 170 候选路径不覆盖。已修复（2026-08-11，main 侧，候选分支未动）：移除 rc10 的 scenario 字段对齐其余 15 个 rc 包（scenario-less + taskType），并补 `docs/dev/handoffs/**` 覆盖该轮必然更新的 LATEST.md；无 `--since` validate 16/16 全 PASS，`--since <工程验收候选 SHA>`（正确基线）空 diff PASS，harness 单测 20/20 无回归。
+
+---
+
 # Runtime Authority Convergence NO-GO 修复接管（2026-08-03）
 
 ## 后端健康修复状态（2026-08-10 追加）
 
 - 系统健康审计（`artifacts/system-health-audit/`，2026-08-09，72/100 CONCERN）的 P1/P2 findings 已逐项修复并验证：F-01（DCS model-call 级 finalization，working_memory 进入同 attempt 下一次模型调用）、F-02（RC-03 receipt 真实 producer + char budget）、F-03（acceptance runner 强制 requiredTests）、F-04（根门禁 6534 passed / 0 failed）、F-05（runtime static check exit 0）、F-07（test:integration 4 files 28/28）、F-08（final harness validate PASS）、F-09（真实本地 OTLP collector round trip）。
-- 剩余 **F-06 OPEN**（另开任务）：RC-09 validator 在 main 仍失败（需重新形成 clean candidate 并重新签发）；RC-10 H-03 真实 channel 待用户提供（fixture 不得 waive）。
+- 剩余 **F-06**：工程部分已于 2026-08-11 关闭（见上方新段），RC-10 H-03 真实 channel 待用户提供（fixture 不得 waive）。
 - 本轮未运行 Playwright / 全量 Electron E2E；未修改 default-on、liveReady、productApproved、GA、release 或 TF-0006 解锁状态。
 
 ## RC-00R 本会话更新（历史）

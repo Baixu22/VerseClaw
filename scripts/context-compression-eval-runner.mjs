@@ -86,6 +86,35 @@ function safeReadJson(file) {
   }
 }
 
+/**
+ * B-2 paired analysis: load a JSONL of `{"sampleId","compressedSummary"}` rows
+ * into a Map keyed by sample id. Rows without a usable summary are skipped; a
+ * missing/unreadable file returns undefined so callers fall back to the
+ * template-built summaries.
+ */
+function loadPairedSummaries(file) {
+  try {
+    const out = new Map();
+    const lines = readFileSync(file, 'utf8').split(/\r?\n/);
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      let row;
+      try {
+        row = JSON.parse(trimmed);
+      } catch {
+        continue;
+      }
+      if (row && typeof row.sampleId === 'string' && typeof row.compressedSummary === 'string') {
+        out.set(row.sampleId, row.compressedSummary);
+      }
+    }
+    return out;
+  } catch {
+    return undefined;
+  }
+}
+
 function createEmptyCacheStats(enabled, cacheDir) {
   return {
     enabled,
@@ -2344,6 +2373,99 @@ function buildSamples({ suite, sampleSource, sampleCount, target, snippets, tran
   };
 }
 
+/**
+ * B-2 paired analysis: classify compression damage introduced by an external
+ * summary (overlaid via --paired-summary) relative to the template baseline and
+ * the full history. Damage classes align with the runtime shadow rules M5 will
+ * encode:
+ *   dangling_tool_reference — the summary names a tool/action whose trace the
+ *     history still carries (a recoverable loss, but a re-anchor cost).
+ *   entity_loss             — an expected fact that matched in the full history
+ *     no longer matches the external summary.
+ *   decision_loss           — a high-significance decision fact (severity
+ *     critical/high) no longer matches.
+ *   goal_token_decay        — a goal/objective-shaped fact no longer matches.
+ * Each class is only reported when the template summary still preserved it
+ * (i.e. the overlay regressed relative to the template baseline).
+ */
+function classifyPairedDamage({ sample, externalScore, templateScore, historyScore, expected }) {
+  const damages = [];
+  // evaluateFactSet exposes *missing* expected ids; the found set is the complement.
+  const missing = (score) => new Set(score.missingExpectedIds ?? []);
+  const externalMissing = missing(externalScore);
+  const templateMissing = missing(templateScore);
+  const historyMissing = missing(historyScore);
+  for (const fact of expected) {
+    const inHistory = !historyMissing.has(fact.id);
+    const inTemplate = !templateMissing.has(fact.id);
+    const inExternal = !externalMissing.has(fact.id);
+    if (!inHistory) continue; // not the compression's fault
+    if (inExternal) continue; // preserved
+    if (!inTemplate) continue; // the template already lost it — not a paired regression
+    // The template kept it; the external summary dropped it. Classify.
+    const category = String(fact.category ?? '').toLowerCase();
+    const severity = String(fact.severity ?? '').toLowerCase();
+    if (category.includes('goal') || category.includes('objective') || category.includes('decision')) {
+      damages.push({ id: fact.id, type: 'decision_loss', severity, category: fact.category });
+    } else if (severity === 'critical' || severity === 'high') {
+      damages.push({ id: fact.id, type: 'entity_loss', severity, category: fact.category });
+    } else if (category.includes('tool') || category.includes('action') || category.includes('reference')) {
+      damages.push({ id: fact.id, type: 'dangling_tool_reference', severity, category: fact.category });
+    } else {
+      damages.push({ id: fact.id, type: 'entity_loss', severity, category: fact.category });
+    }
+  }
+  // Detect goal-token decay at the whole-summary level: the external summary
+  // contains none of the goal-anchoring keywords the template kept.
+  if (sample.pairedOriginalSummary) {
+    const goalMarkers = ['GOAL', 'OBJECTIVE', 'DECISION', 'CONSTRAINT', 'Goal and Progress', 'Key Decisions', 'Next Actions'];
+    const before = goalMarkers.filter((marker) => sample.pairedOriginalSummary.includes(marker)).length;
+    const after = goalMarkers.filter((marker) => sample.compressedSummary.includes(marker)).length;
+    if (before > 0 && after === 0) {
+      damages.push({ id: `${sample.id}:goal-anchors`, type: 'goal_token_decay', severity: 'high', category: 'goal' });
+    }
+  }
+  return {
+    sampleId: sample.id,
+    source: sample.source,
+    expectedCount: expected.length,
+    templateRecall: round(templateScore.recall),
+    externalRecall: round(externalScore.recall),
+    historyRecall: round(historyScore.recall),
+    damages,
+  };
+}
+
+function summarizePairedDamage(entries) {
+  if (!entries || entries.length === 0) {
+    return {
+      requested: false,
+      executed: false,
+      reason: 'No --paired-summary overlay was provided, or no samples were overlaid.',
+      samples: 0,
+      damageCounts: {},
+    };
+  }
+  const damageCounts = {};
+  for (const entry of entries) {
+    for (const damage of entry.damages) {
+      damageCounts[damage.type] = (damageCounts[damage.type] ?? 0) + 1;
+    }
+  }
+  const regressed = entries.filter((entry) => entry.externalRecall < entry.templateRecall - 0.001);
+  return {
+    requested: true,
+    executed: true,
+    samples: entries.length,
+    overlaidRegressionCount: regressed.length,
+    meanTemplateRecall: round(mean(entries.map((entry) => entry.templateRecall))),
+    meanExternalRecall: round(mean(entries.map((entry) => entry.externalRecall))),
+    meanHistoryRecall: round(mean(entries.map((entry) => entry.historyRecall))),
+    damageCounts,
+    bySample: entries,
+  };
+}
+
 function assessLayer1(aggregate) {
   return {
     pass: aggregate.recallCriticalMean >= 0.95
@@ -3525,6 +3647,15 @@ async function main() {
   const humanEvalRatingsPath = argValue('--human-eval-ratings');
   const agentManualEvalRatingsPath = argValue('--agent-manual-eval-ratings');
   const humanEvalSampleCount = parseNumberArg('--human-eval-samples', Math.min(20, sampleCount));
+  /**
+   * B-2 paired analysis: point this at a JSONL of `{"sampleId","compressedSummary"}`
+   * rows to replay the runner's full evaluation against *external* summaries
+   * (e.g. the real production compaction engine's output) instead of the
+   * template-built ones. The per-sample diff (full-template vs paired) is
+   * reported under `pairedAnalysis` in summary.json — the "compression damage
+   * vs full context" read that ACON-style paired trajectory analysis needs.
+   */
+  const pairedSummaryPath = argValue('--paired-summary');
   const inputManifest = sampleManifestPath ? safeReadJson(resolve(sampleManifestPath)) : undefined;
   const semantic = hasArg('--semantic');
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
@@ -3562,6 +3693,23 @@ async function main() {
   });
   markPhase('buildSamples', phaseStarted);
   const samples = build.samples;
+  // B-2 paired analysis: overlay external summaries keyed by sample id. The
+  // template-built summary is preserved as `pairedOriginalSummary` so the
+  // evaluation can diff "production compression" against "template baseline".
+  const pairedOverlay = pairedSummaryPath ? loadPairedSummaries(resolve(pairedSummaryPath)) : undefined;
+  if (pairedOverlay) {
+    let overlaid = 0;
+    for (const sample of samples) {
+      const external = pairedOverlay.get(sample.id);
+      if (typeof external === 'string' && external.length > 0) {
+        sample.pairedOriginalSummary = sample.compressedSummary;
+        sample.compressedSummary = external;
+        sample.paired = true;
+        overlaid += 1;
+      }
+    }
+    console.log(`[paired-summary] overlaid ${overlaid}/${samples.length} samples from ${pairedSummaryPath}`);
+  }
   const outputManifest = createSampleManifest({ samples, seed, requestedSampleCount: sampleCount });
   const manifestSummary = {
     ...(sampleManifestPath ? { input: resolve(sampleManifestPath) } : {}),
@@ -3583,6 +3731,10 @@ async function main() {
   const layer2Faithfulness = [];
   const layer3Continuation = [];
   const sampleLines = [];
+  // B-2 paired analysis: per-sample damage classification comparing the
+  // overlaid (external) summary against the template baseline, and against the
+  // full history. Collected here so summary.json can report a damage catalog.
+  const pairedDamage = [];
 
   phaseStarted = Date.now();
   for (const sample of samples) {
@@ -3608,6 +3760,31 @@ async function main() {
     layer1Local.push(localScore);
     layer2Faithfulness.push(faithfulness);
     layer3Continuation.push(continuation);
+    // B-2: when an external summary overlaid the template one, classify the
+    // damage the overlay introduced (vs the template) and the residual damage
+    // vs the full history — the "compressed lost it" read.
+    if (sample.paired && typeof sample.pairedOriginalSummary === 'string') {
+      const overlayVsTemplate = evaluateFactSet({
+        haystack: sample.compressedSummary,
+        expected: expectedAfterResend,
+        forbidden: sample.stale,
+        semantic,
+      });
+      const templateScore = evaluateFactSet({
+        haystack: sample.pairedOriginalSummary,
+        expected: expectedAfterResend,
+        forbidden: sample.stale,
+        semantic,
+      });
+      const damage = classifyPairedDamage({
+        sample,
+        externalScore: overlayVsTemplate,
+        templateScore,
+        historyScore,
+        expected: expectedAfterResend,
+      });
+      pairedDamage.push(damage);
+    }
     sampleLines.push(JSON.stringify({
       id: sample.id,
       source: sample.source,
@@ -3625,9 +3802,18 @@ async function main() {
       layer1Local: localScore,
       layer2Faithfulness: faithfulness,
       layer3Continuation: continuation,
+      ...(sample.paired
+        ? {
+            paired: true,
+            pairedOriginalSummary: sample.pairedOriginalSummary,
+            pairedDamage: pairedDamage.at(-1)?.damages ?? [],
+          }
+        : {}),
     }));
   }
   markPhase('deterministicLayers', phaseStarted);
+
+  const pairedAnalysis = summarizePairedDamage(pairedDamage);
 
   const layer0 = aggregateFactSets(layer0History);
   const layer1 = aggregateFactSets(layer1Local);
@@ -3816,6 +4002,7 @@ async function main() {
     latencyCost,
     failureChainSchemaRisk,
     hunkRehydrationAb,
+    pairedAnalysis,
     humanEvaluation: {
       ...humanEvaluation,
       packPath: humanEvalPackPath,
@@ -3846,6 +4033,7 @@ async function main() {
     `- LLM judge: ${summary.llmJudge.executed ? `${summary.llmJudge.provider}/${summary.llmJudge.model} on ${summary.llmJudge.sampleCount} samples` : 'not executed'}`,
     `- LLM judge calibration: ${summary.llmJudgeCalibration.executed ? `executed scoreMean=${summary.llmJudgeCalibration.aggregate?.judgeScoreMean}` : 'not executed'}`,
     `- LLM schema-free: ${summary.llmSchemaFree.executed ? `executed omissionRate=${summary.llmSchemaFree.aggregate?.omissionRate}` : 'not executed'}`,
+    `- Paired summary: ${pairedAnalysis.executed ? `executed on ${pairedAnalysis.samples} samples regression=${pairedAnalysis.overlaidRegressionCount} damage=${JSON.stringify(pairedAnalysis.damageCounts)}` : 'not executed'}`,
     `- LLM live rerun: ${summary.llmJudgeLiveRerun.executed ? `executed maxDelta=${summary.llmJudgeLiveRerun.consistency?.maxAbsScoreDelta}` : 'not executed'}`,
     `- LLM continuation: ${summary.llmContinuation.executed ? `${summary.llmContinuation.provider}/${summary.llmContinuation.model} on ${summary.llmContinuation.sampleCount} samples` : 'not executed'}`,
     `- Human eval pack: ${humanEvalPackPath}`,

@@ -137,12 +137,14 @@ OfficeCLI も 設定 -> スキル -> 機能プラグイン から管理できま
 コンポーザーで `/` を入力すると、Context Palette が開き、Wiki 検索、読み取り専用ナレッジ範囲の変更、レビュー、CI 修復、テスト作成、diff 説明、Task Ledger、Mission Control、圧縮、セッション fork のクイックアクションを使えます。いずれも既存の Chat / Session フローを使います。セッションライフサイクルコマンド（`/new`、`/resume <キーワード>`、`/rename <名前>`、`/archive`、`/delete`、`/clear`、`/copy`）はサイドバーと同じ store/host 経路を使用します：`/new` で新しいチャットを開始、`/resume` でキーワードに一致するセッションに切替、`/rename` で現在のセッション名を変更、`/archive` と `/delete` でアーカイブまたは完全削除、`/clear` でローカルメッセージ表示をリセット、`/copy` でセッション記録を markdown としてコピーします。
 `@agent` で別のエージェントを選ぶと、Verse Claw はデフォルトエージェントを経由せず、そのエージェント自身の会話コンテキストへ直接切り替えます。各エージェントのワークスペースは既定で分離されていますが、より強い実行時分離は OpenClaw の sandbox 設定に依存します。
 Verse Claw は既定で軽量な `policy-light` サンドボックス層を使い、Main プロセスの権限ゲート、ワークスペースルート検査、Gateway RPC 承認、OpenClaw exec approval を組み合わせて制御します。Docker と SSH は明示的に選択する `strong` provider として残り、起動要件ではありません。
+Docker サンドボックスが Windows ホスト上で動作し、デーモンが WSL2（または `DOCKER_HOST` 経由の他の Linux デーモン）にある場合、バインドソースは自動的に WSL2 マウント名前空間へ変換されます（`C:\...\workspace` → `/mnt/c/.../workspace`、`\wsl$\<distro>\...` → POSIX）。`invalid volume specification` でボリュームマウントが失敗しなくなり、ローカルの Windows named-pipe デーモンと macOS/Linux ホストには影響しません。
 Settings、Doctor、diagnostics は同じ effective sandbox policy を表示し、要求/有効 provider、runtime level、exec/network policy、Docker の利用可否、縮退理由を確認できます。
 Settings → System & Runtime には Project Rules Center もあり、現在の workspace の `AGENTS.md` を確認し、`.clawx/rules/*.md` を一覧表示し、決定的な検証 warning を示し、欠落時には新しいルール真実源を作らずに保守的な `AGENTS.md` テンプレートを作成できます。
 各 Agent は `provider/model` の実行時設定を個別に上書きできます。上書きしていない Agent は引き続きグローバルの既定モデルを継承します。
 各永続 Agent は Agents、Chat、オーケストレーション、Observability で同じ有効な identity projection を使用します。`main` は既定で Verse ブランドのアバターを使用し、その他の Agent は決定的なローカル DiceBear アバターを使用します。エディターは許可済み preset と生成 SVG を `.clawx/avatar/` に保存し、DiceBear の公開 API は呼び出しません。一時的な Role は独立した人物ではなく、所有 Agent のアバターに重ねるバッジとして表示されます。
 コンポーザーのコンテキスト状態には、確認付きの「現在のセッションを圧縮」操作が追加され、トークン圧力、非表示メッセージ数、前回の圧縮時刻、圧縮品質を確認できます。長期タスク状態は巨大な transcript に依存せず、Task Ledger / Context Pack に保持します。圧縮は高密度 recovery artifact も保存し、Handoff は transcript 証拠へ戻る前にそれを優先して使います。Runtime はまず手動または明示 opt-in の圧縮で段階的な tiered compression plan を使い、自動圧縮は品質ゲートで安定が確認されるまで telemetry を記録するだけです。
 コンポーザーは長い会話の checkpoint 回復状態も表示します。キュー済みフォローアップ、最新の介入/checkpoint、回復警告、そしてセッションがアイドルのときに永続化されたキューを今送信する操作を確認でき、これらのキューは Gateway 再起動後も復元できます。
+Gateway の再起動で実行中の main Agent turn が中断された場合、再起動回復は未完了の assistant/tool transcript の末尾を再開し、完了済み・エラー・承認待ちの turn は重複実行から保護します。
 Chat のロールバック計画はレビュー優先の復旧パネルとして、安全/確認/危険の件数、チェックポイント、キュー、コンテキスト、ターミナル、Git、Task Ledger、メモリ信号を表示します。破壊的操作は承認付きツールへ誘導し、メモリ事実は Knowledge draft または proposal にします。
 
 Agents オーケストレーションパネルには、制御された自律作業向けの有界な **タスクループ** 操作もあります。既存の Gateway RPC 経路で `task_loop.run` を開始し、ロール別サブ Agent の編成、自己チェック、範囲を絞った修復ラウンドを実行し、画面にはリアルタイムのフェーズ、反復回数、reviewer 判定、最終状態、trace 証拠を表示します。renderer から Gateway への直接接続は追加しません。

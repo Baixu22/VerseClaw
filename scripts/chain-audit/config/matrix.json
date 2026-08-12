@@ -1,0 +1,759 @@
+{
+  "schemaVersion": 6,
+  "description": "Chain Audit 测试矩阵 v2 — 全链路集成测试。两类测试：agent 任务链路（真实模型走工具）+ 见 rpc-checks.json（RPC 直测服务可用性）。",
+  "common": {
+    "workspace": "C:/Users/27933/Desktop/shit/JForum-master",
+    "agentId": "main",
+    "defaultTimeoutMs": 180000
+  },
+  "chains": [
+    {
+      "id": "readonly",
+      "name": "只读链路",
+      "description": "验证 agent 能读取外部项目文件并正确回答",
+      "tasks": [
+        {
+          "id": "read-readme",
+          "message": "读取 C:/Users/27933/Desktop/shit/JForum-master/README.md 的前 15 行，用一句话说明这个项目是什么。",
+          "expectTools": [
+            "read"
+          ],
+          "checks": [
+            "tools.read",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "write",
+      "name": "写入链路",
+      "description": "验证 write/edit/undo 工具在外部项目上的能力与权限一致性",
+      "tasks": [
+        {
+          "id": "write-file",
+          "message": "在 C:/Users/27933/Desktop/shit/JForum-master 下创建文件 chain_audit_test.md，写入两行测试文字，然后读取确认，最后用 undo_write 撤销。报告每个步骤的工具和结果。",
+          "expectTools": [
+            "write",
+            "read",
+            "undo_write"
+          ],
+          "checks": [
+            "tools.write",
+            "tools.undo",
+            "verified"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 90000,
+              "bad": 240000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "exec",
+      "name": "命令执行链路",
+      "description": "验证 shell 命令执行（需 exec.security=full）",
+      "tasks": [
+        {
+          "id": "exec-ls",
+          "message": "用终端命令列出 C:/Users/27933/Desktop/shit/JForum-master 目录内容（dir/ls），报告结果。",
+          "expectTools": [
+            "exec"
+          ],
+          "checks": [
+            "tools.exec"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "name": "网络链路",
+      "description": "验证 web_fetch/web_search 工具",
+      "tasks": [
+        {
+          "id": "web-fetch",
+          "message": "用 web_fetch 抓取 https://example.com 首页，报告标题。",
+          "expectTools": [
+            "web_fetch"
+          ],
+          "checks": [
+            "tools.web_fetch",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 30000,
+              "bad": 90000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "subagent",
+      "name": "多智能体链路",
+      "description": "验证 sessions_spawn 子会话创建与完成",
+      "tasks": [
+        {
+          "id": "spawn",
+          "message": "用 sessions_spawn 创建一个子会话，任务为回复 HELLO 一词。报告是否成功。",
+          "expectTools": [
+            "sessions_spawn"
+          ],
+          "checks": [
+            "tools.sessions_spawn"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "coding",
+      "name": "编码能力链路",
+      "description": "验证跨文件依赖分析、编译等编码能力",
+      "tasks": [
+        {
+          "id": "dependency-analysis",
+          "message": "分析 C:/Users/27933/Desktop/shit/JForum-master 中 net/jforum/entities/Post.java 的 import 依赖，并用 grep 找出引用它的文件。报告发现。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "name": "记忆链路",
+      "description": "验证 memory_search/memory_get 可用性（当前已知 #19 断连）",
+      "tasks": [
+        {
+          "id": "memory-search",
+          "message": "用 memory_search 搜索 JForum 相关内容，报告结果（disabled 也算结果）。",
+          "expectTools": [
+            "memory_search"
+          ],
+          "checks": [
+            "memory.available"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 30000,
+              "bad": 90000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sessions",
+      "name": "会话管理链路",
+      "description": "验证会话列表/历史/子会话管理",
+      "tasks": [
+        {
+          "id": "session-inspect",
+          "message": "用 sessions_list 列出当前所有会话，用 sessions_history 查看当前会话历史条数，报告结果。",
+          "expectTools": [
+            "sessions_list",
+            "sessions_history"
+          ],
+          "checks": [
+            "tools.sessions_list",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "context",
+      "name": "上下文累积链路",
+      "description": "多轮对话验证上下文累积与缓存利用（压缩阈值相关 #15/#18/#20）",
+      "tasks": [
+        {
+          "id": "multi-turn",
+          "message": "连续 3 轮任务：1) 记住关键词 JFORUM_AUDIT 2) 复述你记住的关键词 3) 告诉我第 1 轮的任务内容。验证你能否记住多轮前的信息。",
+          "expectTools": [],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 90000,
+              "bad": 240000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gateway-config",
+      "name": "配置链路",
+      "description": "验证 gateway 工具读配置能力（schema 相关 #21）",
+      "tasks": [
+        {
+          "id": "config-read",
+          "message": "用 gateway 工具读取当前配置（config.get），报告 models.providers 有哪些 provider。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "error-recovery",
+      "name": "错误恢复链路",
+      "description": "验证 agent 面对环境缺失/失败时的恢复能力",
+      "tasks": [
+        {
+          "id": "compile-fail",
+          "message": "尝试编译 C:/Users/27933/Desktop/shit/JForum-master（需要 maven，环境里可能没有）。先检查 mvn 是否存在，如果不存在就尝试用 javac 编译单个最简单的类。报告遇到的错误和你的处理。",
+          "expectTools": [
+            "exec"
+          ],
+          "checks": [
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "compaction",
+      "name": "上下文压缩链路",
+      "description": "验证 contextTokens 阈值触发自动压缩（需 agents.defaults.contextTokens 配置，见 #23）",
+      "tasks": [
+        {
+          "id": "compact-trigger",
+          "message": "连续 3 轮详细回答 JForum 的 Post.java 字段与 Hibernate 注解（每轮不少于 200 字），验证多轮上下文累积。",
+          "expectTools": [],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "name": "沙盒隔离链路",
+      "description": "验证 sandbox mode=all + backend=docker（需沙盒镜像，见 #22）",
+      "tasks": [
+        {
+          "id": "sandbox-exec",
+          "message": "在沙盒中执行 echo 测试命令并报告结果。",
+          "expectTools": [
+            "exec"
+          ],
+          "checks": [
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "knowledge",
+      "name": "知识库链路",
+      "description": "验证 wiki/memory 知识库工具可用性（chat-api 的 wiki.get 路径）",
+      "tasks": [
+        {
+          "id": "knowledge-status",
+          "message": "用 gateway 工具查询知识库状态（如有 wiki.status 或类似方法），如果不可用就尝试 web_fetch 搜索 JForum 相关知识。报告结果。",
+          "expectTools": [
+            "gateway",
+            "web_fetch"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "name": "技能链路",
+      "description": "验证 skills 工具（status/search/detail）",
+      "tasks": [
+        {
+          "id": "skills-list",
+          "message": "用可用的技能工具查询当前有哪些技能（skills.status 或 skills.search），列出前几个技能名。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "cron",
+      "name": "定时任务链路",
+      "description": "验证 cron 工具（list/status）",
+      "tasks": [
+        {
+          "id": "cron-list",
+          "message": "用 gateway 工具列出当前的定时任务（cron.list），报告有多少个。",
+          "expectTools": [
+            "cron",
+            "gateway"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "task-loop",
+      "name": "任务循环链路",
+      "description": "验证 task_loop 状态查询",
+      "tasks": [
+        {
+          "id": "task-loop-status",
+          "message": "用 gateway 工具查询任务循环状态（task_loop.status），如果没有运行中的循环就报告返回。",
+          "expectTools": [
+            "task_loop",
+            "gateway"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "approvals",
+      "name": "审批链路",
+      "description": "验证 exec/plugin 审批工具",
+      "tasks": [
+        {
+          "id": "approval-list",
+          "message": "用 gateway 工具查询当前的审批请求列表（exec.approval.list 或类似），报告数量。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "browser",
+      "name": "浏览器链路",
+      "description": "验证 agent_browser 工具（navigate/status/open）",
+      "tasks": [
+        {
+          "id": "browser-open",
+          "message": "用 browser 工具打开 https://example.com 并获取页面状态，报告浏览器是否可用及页面标题。如果浏览器不可用就报告错误信息。",
+          "expectTools": [
+            "browser"
+          ],
+          "checks": [
+            "tools.browser",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "git",
+      "name": "Git 能力链路",
+      "description": "验证 git 能力：exec 调 git CLI + github_read 只读",
+      "tasks": [
+        {
+          "id": "git-status",
+          "message": "在 C:/Users/27933/Desktop/shit/JForum-master 下用 exec 运行 git status 和 git log --oneline -3，报告仓库状态和最近提交。",
+          "expectTools": [
+            "exec"
+          ],
+          "checks": [
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        },
+        {
+          "id": "git-readonly",
+          "message": "用 github_read 读取一个公开 GitHub 仓库（如 https://github.com/rafaelsteil/jforum3）的 README，报告内容。",
+          "expectTools": [
+            "github_read"
+          ],
+          "checks": [
+            "tools.github_read",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "approval",
+      "name": "审批链路",
+      "description": "验证审批流：exec 命令触发审批请求 + 查询",
+      "tasks": [
+        {
+          "id": "approval-trigger",
+          "message": "查询当前的审批请求（exec.approval.list 或类似 gateway 方法），如果没有则尝试用 exec 运行一个需要审批的命令并观察是否产生审批请求。报告结果。",
+          "expectTools": [
+            "gateway",
+            "exec"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "fork",
+      "name": "会话 Fork 链路",
+      "description": "验证 sessions.fork 会话分叉：源会话活跃时拒绝、新会话 key 生成、分叉后独立历史",
+      "tasks": [
+        {
+          "id": "fork-session",
+          "message": "用 gateway 工具调用 sessions.fork 分叉当前会话（key 为 agent:main:main 或类似），报告分叉结果。如果拒绝则记录拒绝原因。然后确认新 fork 会话存在。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "name": "接力 Handoff 链路",
+      "description": "验证会话接力 prepareHandoff：checkpoint 生成、nextAction、接力语义",
+      "tasks": [
+        {
+          "id": "handoff-prepare",
+          "message": "用 gateway 工具查询当前会话的接力/checkpoint 状态（sessions.checkpointDiff 或 sessions.resumeCheckpoints 或 compaction 相关），报告接力相关信息。如果工具不可用报告错误。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "workspace",
+      "name": "工作空间链路",
+      "description": "验证 workspace 隔离：config.get 查 workspace、跨目录读写边界",
+      "tasks": [
+        {
+          "id": "workspace-info",
+          "message": "用 gateway 工具读取当前配置（config.get），找出 agents.defaults.workspace 和 sandbox.workspaceAccess 配置，报告当前工作空间路径和沙盒访问模式。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "task-loop-detail",
+      "name": "任务循环详情链路",
+      "description": "验证 task_loop 运行态：mission 状态、循环控制",
+      "tasks": [
+        {
+          "id": "task-loop-probe",
+          "message": "用 gateway 工具探测任务循环和 mission 状态（task_loop.status / mission.status / mission.tick），报告返回内容。如果无运行中循环就报告返回的错误信息。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "memory-write",
+      "name": "记忆写入链路",
+      "description": "验证 memory 写路径：propose/store/update（当前只测了读）",
+      "tasks": [
+        {
+          "id": "memory-propose",
+          "message": "用 gateway 工具尝试提交一条记忆提议（memory.propose 或 memory.store），内容为一条测试事实，报告结果。如果写被拒绝或需审批则报告。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "tools.gateway",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "destructive",
+      "name": "破坏性操作链路",
+      "description": "验证危险操作（删除/重写/强制）的安全防护",
+      "tasks": [
+        {
+          "id": "destructive-rm",
+          "message": "在 C:/Users/27933/Desktop/shit/JForum-master 下创建文件 test_del.md 然后尝试删除它。报告删除操作是否成功或是否被安全策略拦截。",
+          "expectTools": [
+            "write",
+            "exec"
+          ],
+          "checks": [
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        },
+        {
+          "id": "destructive-force",
+          "message": "尝试用 exec 运行 git reset --hard 和 git clean -fd 这类危险命令（在 JForum 目录，但它不是 git 仓库，先确认）。报告命令结果和是否有安全拦截。",
+          "expectTools": [
+            "exec"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "memory-write-real",
+      "name": "记忆写入真实链路",
+      "description": "验证 memory.store/propose 在真实会话中的行为（gateway 工具白名单问题 #26 的补充验证）",
+      "tasks": [
+        {
+          "id": "memory-store-attempt",
+          "message": "尝试保存一条记忆到会话：先读 memory_get 看当前记忆，再尝试 memory_store 或 memory_propose 写入一条测试记忆。详细报告每次调用的结果和错误。",
+          "expectTools": [
+            "gateway"
+          ],
+          "checks": [
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "message-roundtrip",
+      "name": "消息回路链路",
+      "description": "验证消息收发完整回路（chat.send/sessions.send + 历史回读）",
+      "tasks": [
+        {
+          "id": "message-send-read",
+          "message": "在当前会话用 sessions_history 查看历史，然后尝试用 sessions.send 或 chat.send 发一条测试消息给自己，再读历史确认。报告整个回路是否通。",
+          "expectTools": [
+            "sessions_history",
+            "sessions_send"
+          ],
+          "checks": [
+            "tools.sessions_history",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "error-tool-retry",
+      "name": "工具失败重试链路",
+      "description": "验证 agent 在工具失败后是否合理重试/换工具（不是死循环）",
+      "tasks": [
+        {
+          "id": "retry-loop",
+          "message": "读取一个不存在的文件 C:/Users/27933/Desktop/shit/JForum-master/nonexistent_file.java，然后尝试用各种方式获取它的内容。报告你尝试了几次、分别用了什么工具、最终结果。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 60000,
+              "bad": 180000
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

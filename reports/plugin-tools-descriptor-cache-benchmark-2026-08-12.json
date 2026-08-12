@@ -1,0 +1,126 @@
+{
+  "issue": 13,
+  "method": {
+    "cache": "process-local descriptor cache keyed by plugin registry generation",
+    "fixture": "temporary manifest plugin with a counted registered tool factory",
+    "process": "single Node process; each sample resets plugin runtime state"
+  },
+  "options": {
+    "output": "../reports/plugin-tools-descriptor-cache-benchmark-2026-08-12.json",
+    "runs": 5,
+    "warmup": 1
+  },
+  "residual": "This is a process-local plugin tool-list benchmark. It is not a live Gateway stream-ready or RSS A/B measurement.",
+  "samples": [
+    {
+      "cold": {
+        "durationMs": 24.51,
+        "factoryCalls": 1,
+        "toolCount": 1
+      },
+      "index": 0,
+      "rssMb": 377.32,
+      "warm": {
+        "durationMs": 0.87,
+        "factoryCalls": 0,
+        "toolCount": 1
+      }
+    },
+    {
+      "cold": {
+        "durationMs": 22.44,
+        "factoryCalls": 1,
+        "toolCount": 1
+      },
+      "index": 1,
+      "rssMb": 376.66,
+      "warm": {
+        "durationMs": 0.51,
+        "factoryCalls": 0,
+        "toolCount": 1
+      }
+    },
+    {
+      "cold": {
+        "durationMs": 21.11,
+        "factoryCalls": 1,
+        "toolCount": 1
+      },
+      "index": 2,
+      "rssMb": 377.29,
+      "warm": {
+        "durationMs": 0.6,
+        "factoryCalls": 0,
+        "toolCount": 1
+      }
+    },
+    {
+      "cold": {
+        "durationMs": 21.81,
+        "factoryCalls": 1,
+        "toolCount": 1
+      },
+      "index": 3,
+      "rssMb": 377.7,
+      "warm": {
+        "durationMs": 0.45,
+        "factoryCalls": 0,
+        "toolCount": 1
+      }
+    },
+    {
+      "cold": {
+        "durationMs": 23.26,
+        "factoryCalls": 1,
+        "toolCount": 1
+      },
+      "index": 4,
+      "rssMb": 377.91,
+      "warm": {
+        "durationMs": 0.37,
+        "factoryCalls": 0,
+        "toolCount": 1
+      }
+    }
+  ],
+  "scenario": "issue-13-plugin-tools-descriptor-cache",
+  "summary": {
+    "coldDurationMs": {
+      "avg": 22.63,
+      "max": 24.51,
+      "min": 21.11,
+      "p50": 22.44,
+      "p95": 23.26
+    },
+    "coldFactoryCalls": {
+      "avg": 1,
+      "max": 1,
+      "min": 1,
+      "p50": 1,
+      "p95": 1
+    },
+    "rssMb": {
+      "avg": 377.38,
+      "max": 377.91,
+      "min": 376.66,
+      "p50": 377.32,
+      "p95": 377.7
+    },
+    "warmDurationMs": {
+      "avg": 0.56,
+      "max": 0.87,
+      "min": 0.37,
+      "p50": 0.51,
+      "p95": 0.6
+    },
+    "warmFactoryCalls": {
+      "avg": 0,
+      "max": 0,
+      "min": 0,
+      "p50": 0,
+      "p95": 0
+    },
+    "warmReductionPercent": 97.53
+  },
+  "tempRoot": "C:\\Users\\27933\\AppData\\Local\\Temp\\openclaw-issue-13-ZrNfvY"
+}

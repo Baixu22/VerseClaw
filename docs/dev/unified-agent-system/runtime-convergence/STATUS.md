@@ -3,11 +3,11 @@ schema: runtime-authority-convergence-status/v1
 program_id: runtime-authority-convergence
 task_forest_parent: TF-0010
 task_forest_proposal: TFP-runtime-authority-convergence-20260802
-program_status: in_progress
-current_work_package: RC-09
+program_status: human_acceptance_pending
+current_work_package: RC-10
 current_task_forest_node: TF-0028
-engineering_verdict: not-run
-engineering_report: null
+engineering_verdict: accepted
+engineering_report: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json
 human_verdict: not-run
 human_verdict_record: null
 done_allowed: false
@@ -49,6 +49,6 @@ product_locks:
   default_on: false
 evidence_manifest: artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/manifest.json
 blockers: []
-last_verified_at: 2026-08-10T12:00:00+08:00
-next_action: RC-09 重新签发进行中（2026-08-10）。旧验收证据（2026-08-09，candidate 3209f0981）经系统健康审计 F-06 判定无效：工程证据未绑定当前 main、H-03 未以真实 channel 完成且 fixture override 与 HUMAN-ACCEPTANCE.md 硬规则冲突；旧 human-verdict 已不作为授权证据。新候选链 rc09-r2-final-candidate 正在重新执行 engineering acceptance（executor/verifier/validator）；工程 PASS 后将进入 human_acceptance_pending 并等待用户以真实 QQ channel 完成 H-03 round trip 后记录新 verdict。product locks 保持 false——任何状态都不改变 default-on/release/GA/TF-0006。
+last_verified_at: 2026-08-11T12:30:00+08:00
+next_action: RC-09 工程证据已按当前 main 重新签发完成（2026-08-11，候选分支 rc09-r2-final-candidate，candidate 657b51e1ca0b2b7e35d2e2c23554be4631e27184）：executor 21/21 gates PASS、独立 verifier PASS、validate-runtime-authority-convergence engineering 阶段 PASS（manifest e429a44f）。程序进入 human_acceptance_pending。RC-10 H-03 需用户本人以真实 QQ channel（bot id=1903280802，凭据经环境变量 QQBOT_APP_ID/QQBOT_CLIENT_SECRET 注入，禁止落盘）私聊 bot 完成 round trip，用户随后亲自书写 human-verdict.yaml（accepted 需 exact 六场景 H-01..H-06 且 failed 空）；真实 channel 不可用则如实记 blocked，不得以 fixture 冒充。product locks 保持 false——任何状态都不改变 default-on/release/GA/TF-0006。候选分支在用户完成 H-03 与 verdict 前保持冻结于 657b51e1c（证据绑定该 SHA）；main 尚未前进到候选 SHA。
 ---

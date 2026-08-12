@@ -138,12 +138,14 @@ OfficeCLI 也可在 设置 -> 技能 -> 功能插件 中管理：Verse Claw 会�
 在输入框输入 `/` 会打开 Context Palette，可发现 Wiki 搜索、只读知识范围切换、审查、修复 CI、补测试、解释 diff、Task Ledger、Mission Control、压缩和会话 fork；这些动作都会复用现有 Chat 和 Session 流程。会话生命周期命令（`/new`、`/resume <关键词>`、`/rename <名称>`、`/archive`、`/delete`、`/clear`、`/copy`）与侧边栏使用相同的 store/host 路径：`/new` 开启新对话，`/resume` 按关键词切换会话，`/rename` 重命名当前会话，`/archive` 与 `/delete` 归档或永久删除当前会话，`/clear` 重置本地消息视图，`/copy` 将会话记录复制为 markdown。
 当你使用 `@agent` 选择其他智能体时，Verse Claw 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
 Verse Claw 默认使用轻量 `policy-light` 沙盒层，由主进程权限门禁、工作区根目录检查、Gateway RPC 审批和 OpenClaw exec approval 共同生效；Docker 与 SSH 保留为需要显式选择的 `strong` provider，不再是启动必需项。
+当 Docker 沙盒运行在 Windows 主机、而 daemon 位于 WSL2（或通过 `DOCKER_HOST` 连接的其它 Linux daemon）时，bind source 会自动转换到 WSL2 挂载命名空间（`C:\...\workspace` → `/mnt/c/.../workspace`，`\wsl$\<distro>\...` → POSIX），卷挂载不再因 `invalid volume specification` 失败；本地 Windows named-pipe daemon 以及 macOS/Linux 主机不受影响。
 Settings、Doctor 和 diagnostics 现在展示同一份 effective sandbox policy，包括请求/生效 provider、runtime level、exec 与 network policy、Docker 可用性和降级原因。
 Settings → System & Runtime 还提供 Project Rules Center，可检查当前 workspace 的 `AGENTS.md`，列出 `.clawx/rules/*.md`，展示确定性校验 warning，并在缺失时创建保守的 `AGENTS.md` 模板，而不会引入新的规则真相源。
 每个 Agent 还可以单独覆盖自己的 `provider/model` 运行时设置；未覆盖的 Agent 会继续继承全局默认模型。
 每个持久 Agent 现在都会在 Agents、Chat、编排与 Observability 中使用同一份有效身份投影。`main` 默认使用 Verse 品牌头像；其他 Agent 使用确定性的本地 DiceBear 头像，头像编辑器只保存白名单 preset，并把生成的 SVG 写入 `.clawx/avatar/`，不会调用 DiceBear 公共 API。临时编排 Role 仍是叠加在所属 Agent 头像上的徽章，不会变成独立身份。
 输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。运行时会先在手动/显式 opt-in 压缩中使用分层渐进式压缩计划；自动压缩路径先记录遥测，等质量门禁证明稳定后再接管。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
+当 Gateway 重启中断正在运行的主 Agent turn 时，重启恢复会继续执行未完成的 assistant/tool transcript 尾部，同时保护已完成、出错和等待审批的 turn，避免重复执行。
 Chat 回滚方案现在提供复核优先的恢复面板，显示安全/复核/高风险计数，以及检查点、队列、上下文、终端、Git、Task Ledger、记忆信号；破坏性操作会进入带审批的工具链，记忆事实会变成 Knowledge 草稿或提案。
 
 Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受控自治任务。它通过现有 Gateway RPC 路径启动 `task_loop.run`，编排角色子 Agent，执行自检与限定返工轮次，并在界面中显示实时阶段、轮次、reviewer 结论、终态和 trace 证据，不新增 renderer 直连 Gateway 通道。

@@ -1,7 +1,6 @@
 ---
 id: rc10-human-acceptance-runbook
 title: RC-10 Final Human Acceptance Runbook
-scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Execute one real round of the RC-10 human acceptance scenarios (H-01..H-06) against the engineering-accepted candidate using the real Electron app, real gateway, a local scripted OpenAI-compatible LLM endpoint (no real provider credentials), and executable channel fixtures; record per-scenario run IDs, receipt IDs, results, recovery observations, and notes as pre-verdict evidence so the user can ratify the verdict.
 ownedPaths:
@@ -11,6 +10,7 @@ ownedPaths:
 touchedAreas:
   - harness/specs/**
   - docs/dev/unified-agent-system/runtime-convergence/**
+  - docs/dev/handoffs/**
   - artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/**
   - tests/e2e/**
   - openclaw_runtime/extensions/channels/rc05-operator-fixture/**

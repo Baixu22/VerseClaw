@@ -15,6 +15,9 @@ touchedAreas:
   - electron/services/task-ledger-*.ts
   - electron/services/knowledge-api.ts
   - electron/services/workspace-permissions.ts
+  - docs/codex-capability-parity-basic-chat.md
+  - harness/specs/tasks/codex-capability-parity-basic-chat.md
+  - openclaw_runtime/extensions/openshell/src/fs-bridge.ts
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/plugins/memory-*.ts
   - tests/unit/**
@@ -32,6 +35,7 @@ requiredRules:
   - docs-sync
 expectedUserBehavior:
   - Ordinary chat has full access to file, code, terminal, MCP, Skill, Office, Web, and read-only Knowledge capabilities when the underlying permissions, providers, skills, and approvals allow them.
+  - Coding agents can list workspace directories without shell access, including in read-only sandboxes, and directory paths passed to `read` receive an actionable `ls` instruction.
   - Ordinary chat is lightweight by default: it does not create a Task Ledger root node and does not enter checkpoint, intervention, or loop state machines.
   - Ordinary chat works even when Task Ledger, Knowledge, or Memory writes fail.
   - Every ordinary chat turn has a stable structured projection with user input, assistant final/error state, tool activity, file evidence, approval state, knowledge references, memory citations, and optional turn/run graph projection.
@@ -44,6 +48,7 @@ requiredTests:
   - pnpm exec vitest run tests/unit/chat-runtime-event-handlers.test.ts
   - pnpm exec vitest run tests/unit/chat-knowledge-scope.test.ts
   - pnpm exec vitest run tests/unit/task-ledger-service.test.ts
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/agent-tools.directory-listing.test.ts src/agents/sessions/tools/read.test.ts
   - pnpm exec playwright test tests/e2e/task-ledger.spec.ts
   - pnpm exec playwright test tests/e2e/knowledge-hub.spec.ts
   - pnpm run typecheck
@@ -57,6 +62,7 @@ acceptance:
   - Auto-read knowledge mode proves a real knowledge or memory read occurs before the final assistant message when references are attached.
   - Memory/Knowledge provenance is visible as selected-reference chat payload evidence and auto-read citation metadata; any Knowledge write candidate enters Inbox/draft/proposal review and never applies directly.
   - Runtime tool/file/approval evidence is keyed by the originating run/turn and does not attach to an unrelated currently active turn.
+  - The `coding` tool profile exposes a workspace-guarded `ls`; read-only sandbox sessions retain it, and `read` never leaks raw `EISDIR` for directory inputs.
   - Reloading the app reconstructs the same ordinary-turn projection from persisted transcript/runtime evidence.
 docs:
   required: true
