@@ -43,6 +43,42 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "继续确定并修复可验证的 GitHub issue",
+      "validation_plan": [
+        "运行静态契约 Vitest",
+        "运行目标 ESLint 与 setup shell 语法检查",
+        "在 Docker 环境运行 scripts/sandbox-setup.sh"
+      ],
+      "why_not_enough": "当前机器没有 Docker CLI，尚缺真实镜像构建证据。",
+      "why_this_task": "#22 根因明确、影响真实 sandbox 构建，且可用上游同路径契约做低风险恢复。"
+    },
+    "blocked_by": [],
+    "confidence": 0.94,
+    "context_tags": [
+      "runtime",
+      "sandbox",
+      "docker",
+      "github-issue"
+    ],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0047",
+    "kind": "task",
+    "next_action": "复核产物并决定是否标记完成",
+    "priority": 2,
+    "progress": 90.0,
+    "purpose": "恢复 openclaw-sandbox:bookworm-slim 从源码构建能力，解除 Docker sandbox 启用前置缺失。",
+    "ready": true,
+    "remaining_minutes_max": 30,
+    "remaining_minutes_min": 10,
+    "status": "review_needed",
+    "success_metrics": [],
+    "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.96,
       "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
       "validation_plan": [

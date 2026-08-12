@@ -1,0 +1,46 @@
+{
+  "applied_at": "2026-08-12T06:33:49.770521Z",
+  "base_graph_hash": "264445ef5fcce78a39c7aa49e61890abfdff73e0b3f9e5ff5ef6c7830ac4bce8",
+  "base_summary": {
+    "edge_count": 98,
+    "node_count": 55,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "confidence": 0.98,
+        "evidence": [
+          "main-session restart recovery 定向 Vitest：2 files、15/15 tests PASS",
+          "完整 restart-recovery Electron E2E：2/2 PASS，包含真实 Gateway 启动后恢复预置 in-flight assistant/aborted turn 并保持原 sessionId",
+          "pnpm run build:runtime PASS，runtime smoke Gateway ready",
+          "目标 oxfmt、type-aware oxlint 与 E2E ESLint PASS",
+          "comms replay/compare PASS：消息丢失、重复、乱序和 RPC 超时均为 0",
+          "Harness task spec context 与 validate --no-diff PASS",
+          "README 英文、中文、日文已同步恢复语义",
+          "完整 typecheck 的 web 项目 PASS；node 项目仅被既有 openclaw_runtime/src/plugins/session-entry-slot-keys.ts:140 spawnedWriteSet 错误阻断"
+        ],
+        "execution_hints": [
+          "GitHub #33 发布验证证据并关闭后可应用本完成提案；不要把既有全局 typecheck 错误归入本任务。"
+        ],
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "Gateway 重启恢复现在识别 aborted/toolUse assistant 尾部并在同一 sessionId 上继续运行；完成、错误、缺失 stopReason 和 approval-pending 尾部不会自动重放，恢复调用失败时保留后续重试标记。"
+      },
+      "id": "TF-0054"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0054",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-08-12T06:15:53.122497Z",
+  "proposal_id": "TFP-github-issue-33-done-20260812",
+  "rationale": "GitHub #33 的 Gateway 重启主会话恢复问题已修复并通过真实 Electron/Gateway 启动恢复链路验证；完成、错误和审批等待边界保持 fail-closed。",
+  "session_id": "issue-fix-20260812-issue33",
+  "status": "applied"
+}

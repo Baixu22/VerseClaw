@@ -1,0 +1,39 @@
+{
+  "applied_at": "2026-08-12T01:14:26.397768Z",
+  "base_graph_hash": "1423619de840f7f84ddb2a77304241e53504cccbba2e0bbdf4e995b1c3f13c69",
+  "base_summary": {
+    "edge_count": 91,
+    "node_count": 48,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "gateway-tool.schema-lookup.test.ts 5/5 PASS",
+          "目标 oxfmt 与 type-aware oxlint PASS",
+          "comms replay/compare PASS，全部指标与基线一致",
+          "真实 schema 证明根 . 包含 agents，agents.defaults.compaction 可解析，context.compaction 不存在",
+          "Harness validate 仅因当前工作树数百个无关路径不在 touchedAreas 中拒绝",
+          "tsgo:core 被既有 session-entry-slot-keys.ts:140 阻断；tsgo:core:test 被既有 model-auth.auth-json-migration.test.ts:18 阻断"
+        ],
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "summary": "config.schema.lookup 省略 path 时会查询根节点；无效路径返回根恢复入口和 agents.defaults 指引，有效路径仍走原 Gateway RPC。"
+      },
+      "id": "TF-0048"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0048",
+      "progress": 100,
+      "status": "done"
+    }
+  ],
+  "created_at": "2026-08-12T01:14:26.258526Z",
+  "proposal_id": "TFP-github-issue-21-done-20260812",
+  "rationale": "#21 的 canonical schema 路径和 agent 恢复行为均已验证；按用户要求关闭对应 issue，并如实保留脏工作树 Harness 与既有类型基线阻断。",
+  "session_id": "issue-fix-20260812-issue21",
+  "status": "applied"
+}

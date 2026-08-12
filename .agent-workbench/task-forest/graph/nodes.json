@@ -2773,5 +2773,803 @@
     "summary": "仅由用户在工程总验收后执行真实 Desktop/Cron/Channel/Restart/Fork/Handoff 场景并给出 accepted/rejected/blocked。",
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收",
     "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  "TF-0043": {
+    "acceptance_criteria": [
+      "目录输入不返回原始 EISDIR",
+      "普通与沙箱路径均指向 ls"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "持续修复并关闭可验证完成的 GitHub issues",
+      "validation_plan": [
+        "聚焦单元测试",
+        "运行时类型检查",
+        "任务相关门禁"
+      ],
+      "why_not_enough": "单个 issue 完成不代表剩余 backlog 已完成",
+      "why_this_task": "该问题直接收敛 OpenClaw 运行时工具面的真实故障"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.166996Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "聚焦回归 3 文件 34 测试通过",
+      "#10 已按 completed 关闭"
+    ],
+    "execution_hints": [],
+    "id": "TF-0043",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "恢复编码 agent 的目录发现路径",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "read 对目录输入返回可操作的 ls 指引，不再泄漏原始 EISDIR。",
+    "title": "修复 GitHub #10：read 目录输入 EISDIR",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  "TF-0044": {
+    "acceptance_criteria": [
+      "coding profile 暴露 ls",
+      "只读沙箱保留 ls",
+      "越界目录被拒绝"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "持续修复并关闭可验证完成的 GitHub issues",
+      "validation_plan": [
+        "聚焦单元测试",
+        "运行时类型检查",
+        "任务相关门禁"
+      ],
+      "why_not_enough": "单个 issue 完成不代表剩余 backlog 已完成",
+      "why_this_task": "该问题直接收敛 OpenClaw 运行时工具面的真实故障"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "聚焦回归 3 文件 34 测试通过",
+      "#12 已按 completed 关闭"
+    ],
+    "execution_hints": [],
+    "id": "TF-0044",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让 agent 无需 shell 即可正确列目录",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "生产 coding 工具面新增受工作区保护的 ls，并注册到 Files 与 coding profile。",
+    "title": "修复 GitHub #12：目录工具选择能力",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  "TF-0045": {
+    "acceptance_criteria": [
+      "默认单机不发布 file-transfer 工具",
+      "显式读写策略按能力发布",
+      "denyCommands 优先"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "持续修复并关闭可验证完成的 GitHub issues",
+      "validation_plan": [
+        "聚焦单元测试",
+        "运行时类型检查",
+        "任务相关门禁"
+      ],
+      "why_not_enough": "单个 issue 完成不代表剩余 backlog 已完成",
+      "why_this_task": "该问题直接收敛 OpenClaw 运行时工具面的真实故障"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.93,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "插件回归 6/6 通过",
+      "extensions tsgo、lint、format、comms replay/compare 通过",
+      "#17 已按 completed 关闭"
+    ],
+    "execution_hints": [],
+    "id": "TF-0045",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "避免单机 agent 选择必然失败的 paired-node 文件工具",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "file-transfer 工具仅在网关命令与节点读写策略均有效时发布。",
+    "title": "修复 GitHub #17：单机隐藏 paired-node 死工具",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  "TF-0046": {
+    "acceptance_criteria": [
+      "覆盖 workspaceOnly 开关与越界路径",
+      "写日志和 undo 不绕过有效文件策略",
+      "聚焦运行时测试和类型检查通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "继续修复剩余 GitHub issues，并优先处理 P1 工具安全一致性",
+      "validation_plan": [
+        "核对配置契约和全部写工具调用链",
+        "增加跨工具边界回归",
+        "运行 runtime tsgo 与相关 harness/comms 门禁"
+      ],
+      "why_not_enough": "完成后仍有其他 provider、memory、compaction 和 browser issues",
+      "why_this_task": "#16 是剩余 P1 中可由现有工具策略边界直接修复并验证的问题"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.82,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "同一 workspace 策略下所有写工具一致允许或拒绝",
+      "越界错误可操作且不靠模型试错"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 300,
+    "evidence": [
+      "GitHub #16 于 2026-08-11 按 completed 关闭",
+      "装配层 3/3、write-journal 19/19、runtime 类型检查、目标 lint、comms replay/compare 已通过"
+    ],
+    "execution_hints": [],
+    "id": "TF-0046",
+    "kind": "task",
+    "non_goals": [
+      "不默认扩大到任意宿主路径",
+      "不削弱现有审批与沙箱安全边界"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让编码工具在相同工作区策略下行为一致且可预测",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "apply_patch、write、edit 与 undo_write 已统一遵守有效 workspace 策略；GitHub #16 已按 completed 关闭。",
+    "title": "修复 GitHub #16：统一编码写工具工作区边界",
+    "updated_at": "2026-08-12T00:55:16.915975Z"
+  },
+  "TF-0047": {
+    "acceptance_criteria": [
+      "scripts/docker/sandbox/Dockerfile 存在且两个 setup 入口都能解析到它",
+      "基础镜像固定 digest，并包含 python3、ripgrep 与非 root sandbox 用户",
+      "在 Docker daemon 可用环境运行 scripts/sandbox-setup.sh 构建成功"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "继续确定并修复可验证的 GitHub issue",
+      "validation_plan": [
+        "运行静态契约 Vitest",
+        "运行目标 ESLint 与 setup shell 语法检查",
+        "在 Docker 环境运行 scripts/sandbox-setup.sh"
+      ],
+      "why_not_enough": "当前机器没有 Docker CLI，尚缺真实镜像构建证据。",
+      "why_this_task": "#22 根因明确、影响真实 sandbox 构建，且可用上游同路径契约做低风险恢复。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.94,
+    "context_tags": [
+      "runtime",
+      "sandbox",
+      "docker",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T00:55:16.915975Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 60,
+    "evidence": [
+      "pnpm exec vitest run tests/unit/sandbox-dockerfile-contract.test.ts --reporter=verbose：1/1 PASS",
+      "pnpm exec eslint tests/unit/sandbox-dockerfile-contract.test.ts：PASS",
+      "Git Bash bash -n openclaw_runtime/scripts/sandbox-setup.sh 与 openclaw_runtime/scripts/docker/setup.sh：PASS",
+      "git diff --check（Issue 相关脚本）：PASS",
+      "Docker CLI unavailable：未执行真实镜像构建"
+    ],
+    "execution_hints": [
+      "在具备 Docker daemon 的环境运行 openclaw_runtime/scripts/sandbox-setup.sh，确认 openclaw-sandbox:bookworm-slim 可实际构建；通过后再转 done。"
+    ],
+    "id": "TF-0047",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 90.0,
+    "progress_source": "manual",
+    "purpose": "恢复 openclaw-sandbox:bookworm-slim 从源码构建能力，解除 Docker sandbox 启用前置缺失。",
+    "remaining_minutes_max": 30,
+    "remaining_minutes_min": 10,
+    "requirements": [],
+    "source_sessions": [
+      "issue-fix-20260812-issue22"
+    ],
+    "status": "review_needed",
+    "success_metrics": [],
+    "summary": "GitHub #22 已补回固定 digest 的 Debian sandbox 基础 Dockerfile，并由 setup 入口契约测试和 shell 语法检查验证；当前环境没有 Docker CLI，真实镜像构建待具备 Docker daemon 的环境复核。",
+    "title": "修复 GitHub #22：恢复 Docker sandbox 基础镜像入口",
+    "updated_at": "2026-08-12T04:13:05.670448Z"
+  },
+  "TF-0048": {
+    "acceptance_criteria": [
+      "省略或仅空白的 path 时查询根路径 .",
+      "有效 dot path 原样转发并保持现有结果",
+      "无效 path 返回 recoveryPath=. 与 agents.defaults 提示",
+      "聚焦 runtime、Harness 和 comms 门禁通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续修复其他存在的问题并关闭对应 issue",
+      "validation_plan": [
+        "运行 gateway tool 聚焦单元测试",
+        "运行 scoped Harness validate",
+        "运行 runtime 类型检查与 comms replay/compare"
+      ],
+      "why_not_enough": "完成 #21 不代表其他 open issues 已完成。",
+      "why_this_task": "#21 可稳定复现，且修复能直接恢复 agent 的配置自描述能力。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.91,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "config-schema",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T01:01:14.610892Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "gateway-tool.schema-lookup.test.ts 5/5 PASS",
+      "目标 oxfmt 与 type-aware oxlint PASS",
+      "comms replay/compare PASS，全部指标与基线一致",
+      "真实 schema 证明根 . 包含 agents，agents.defaults.compaction 可解析，context.compaction 不存在",
+      "Harness validate 仅因当前工作树数百个无关路径不在 touchedAreas 中拒绝",
+      "tsgo:core 被既有 session-entry-slot-keys.ts:140 阻断；tsgo:core:test 被既有 model-auth.auth-json-migration.test.ts:18 阻断"
+    ],
+    "execution_hints": [],
+    "id": "TF-0048",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让 agent 能从 schema 根节点发现有效配置路径并从错误查询中自行恢复。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "config.schema.lookup 省略 path 时会查询根节点；无效路径返回根恢复入口和 agents.defaults 指引，有效路径仍走原 Gateway RPC。",
+    "title": "修复 GitHub #21：让配置 schema lookup 可发现",
+    "updated_at": "2026-08-12T01:14:26.397768Z"
+  },
+  "TF-0049": {
+    "acceptance_criteria": [
+      "tools.exec.security 与 tools.exec.ask 被归类为 hot",
+      "tools-only 变化不重启 Gateway 或无关子系统",
+      "相邻 no-op/restart 分类不回归",
+      "聚焦 runtime、Harness 与 comms 门禁通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续修复其他存在的问题并关闭对应 issue",
+      "validation_plan": [
+        "运行 reload planner 聚焦测试",
+        "运行 scoped Harness 与 runtime 类型门禁",
+        "运行 comms replay/compare"
+      ],
+      "why_not_enough": "完成 #14 不代表其余 runtime issues 已完成。",
+      "why_this_task": "#14 可由纯 reload planner 根因稳定复现，并直接影响 exec 配置的真实生效。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "hot-reload",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T01:19:49.640698Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 90,
+    "evidence": [
+      "config-reload-plan.tools.test.ts 3/3 PASS",
+      "目标 oxfmt --check 与 type-aware oxlint PASS",
+      "comms replay/compare PASS，全部指标与基线一致",
+      "README 三语已复核：未记录字段级 reload 分类，无需更新",
+      "Harness validate 仅因当前工作树大量无关路径不在 touchedAreas 中拒绝",
+      "tsgo:core 被既有 session-entry-slot-keys.ts:140 阻断；tsgo:core:test 被既有 model-auth.auth-json-migration.test.ts:18 阻断"
+    ],
+    "execution_hints": [],
+    "id": "TF-0049",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让用户修改 tools.exec 权限后无需重启 Gateway 即可在后续 agent turn 生效。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "tools 配置现在通过进程内 hot reload 刷新活动 runtime config；后续新建 exec tool 会使用更新后的 security/ask 策略，且不会重启 Gateway 或无关子系统。",
+    "title": "修复 GitHub #14：tools.exec 配置热重载",
+    "updated_at": "2026-08-12T01:26:16.796596Z"
+  },
+  "TF-0050": {
+    "acceptance_criteria": [
+      "sessions.fork、sessions.resumeCheckpoints、sessions.checkpointDiff 可从 gateway 工具调用",
+      "memory.propose、memory.store、memory.update 可从 gateway 工具调用",
+      "转发参数使用 Gateway 真实 key/proposal 契约",
+      "白名单外方法、sessions.restoreCheckpoint 和受保护 config/restart action 不可经通用转发绕过",
+      "格式、类型 lint、agents-tools 分片与 comms 基线通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续修复存在的问题并关闭对应 issue",
+      "validation_plan": [
+        "验证 agent tool schema 与真实协议参数",
+        "验证 core operator scope 和负向白名单边界",
+        "运行完整 agents-tools 分片与通信回放比较"
+      ],
+      "why_not_enough": "本任务不开放所有 Gateway 方法，也不替代专用 task_loop、mission 或 workspace 工具设计。",
+      "why_this_task": "#26 是已有 Gateway 能力与 agent 工具面之间的明确可达性缺口，且可用小型 fail-closed 白名单独立修复。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "agent-tools",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T02:06:42.873615Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "agents-tools Vitest 8/8 files、68/68 tests PASS；gateway-tool 定向 9/9 PASS",
+      "目标 oxfmt --check 与 type-aware oxlint PASS",
+      "sessions.fork 参数经 Gateway protocol validator 验证；memory.propose 参数受 MemoryProposal 类型约束",
+      "comms replay/compare PASS，全部指标与基线一致",
+      "README 三语已复核：未记录 agent 内建 gateway 工具 action，无需更新",
+      "Harness validate 仅因当前工作树大量无关路径不在 touchedAreas 中拒绝",
+      "tsgo:core 被既有 session-entry-slot-keys.ts:140 阻断；tsgo:core:test 被既有 model-auth.auth-json-migration.test.ts:18 阻断",
+      "未运行真实 Gateway RPC 往返；转发后端使用 mock，协议字段、schema 与 handler 契约通过静态和单测验证"
+    ],
+    "execution_hints": [],
+    "id": "TF-0050",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让 agent 使用已有 Gateway 能力，同时避免开放通用 operator RPC 或绕过既有配置与恢复安全边界。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "gateway 工具现在通过显式白名单转发 session fork、checkpoint 查询和受 gatekeeper 管理的 memory 写 RPC；任意、管理级及 destructive restore 方法仍不可达。",
+    "title": "修复 GitHub #26：受控开放 agent Gateway RPC",
+    "updated_at": "2026-08-12T02:06:42.873615Z"
+  },
+  "TF-0051": {
+    "acceptance_criteria": [
+      "空会话在 bootstrap/system prompt 超过预留后预算时不选择 compact_only",
+      "存在真实会话历史时保留原有 compact_only 路由",
+      "使用共享 real-conversation classifier，覆盖 windowed 与 unwindowed transcript",
+      "定向测试、格式、type-aware lint、comms replay/compare 通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续修复其他存在的问题，同时关闭对应 issue",
+      "validation_plan": [
+        "验证空历史不会选择压缩路由",
+        "验证非空历史仍选择原压缩路由",
+        "运行格式、lint、类型检查与通信回归"
+      ],
+      "why_not_enough": "本任务不处理自定义模型 context window 元数据问题 #15/#18。",
+      "why_this_task": "#23 是可独立复现和验证的 P2 会话存活性问题，修复后可直接关闭。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "compaction",
+      "context-window",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T02:32:00.961952Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 90,
+    "evidence": [
+      "preemptive-compaction 定向 Vitest 1 file、2/2 tests PASS",
+      "目标 oxfmt --check 与 type-aware oxlint PASS",
+      "comms replay/compare PASS，全部指标与基线一致",
+      "tsgo:core 仅被既有 src/plugins/session-entry-slot-keys.ts:140 错误阻断",
+      "Harness validate 仅因当前工作树大量无关路径不在 touchedAreas 中而 fail-closed"
+    ],
+    "execution_hints": [],
+    "id": "TF-0051",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "避免较小 contextTokens 配置让首条用户消息在空会话压缩重试中丢失。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "预提示预算检查现在只在存在可压缩的真实会话历史时选择压缩路由；bootstrap-only 首轮提示直接提交一次，不再对空 transcript 重复压缩。",
+    "title": "修复 GitHub #23：空会话自动压缩循环",
+    "updated_at": "2026-08-12T02:32:00.961952Z"
+  },
+  "TF-0052": {
+    "acceptance_criteria": [
+      "sessions_compact 进入真实工具 inventory、默认策略、catalog、提示词和共享展示快照",
+      "同一 attempt 重复调用只保留首次请求",
+      "attempt 返回并释放锁后执行 forced threshold compaction",
+      "成功、失败、no-op 与后处理异常均有界处理",
+      "定向测试、type-aware lint、tool-display check、comms replay/compare 通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续修复其他存在的问题，同时关闭对应 Issue",
+      "validation_plan": [
+        "运行工具与 deferred compaction 定向测试",
+        "运行 type-aware lint、tool-display snapshot check 与核心类型检查",
+        "运行 comms replay/compare 并复核权限边界"
+      ],
+      "why_not_enough": "本任务不代表其他 compaction、provider 或剩余 GitHub issues 已解决。",
+      "why_this_task": "#20 是 agent 工具面缺少当前会话压缩入口的独立可达性问题，修复后可直接验证并关闭。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.96,
+    "context_tags": [
+      "runtime",
+      "compaction",
+      "agent-tools",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T03:45:07.878545Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "agent 可请求压缩当前绑定会话",
+      "压缩不会中断当前工具调用或与 transcript lock 死锁",
+      "失败与重复请求保持有界且不会重试模型 turn"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "sessions-compact-tool.test.ts 4/4 PASS（含支持上下文发布、非支持上下文不发布）",
+      "manual-compaction.test.ts 3/3 PASS",
+      "目标 type-aware oxlint PASS",
+      "tool-display:check PASS",
+      "comms replay/compare PASS，全部指标与基线一致",
+      "README 三语复核：没有新增 renderer 或用户操作流程，无需更新",
+      "tsgo:core 仅被既有 src/plugins/session-entry-slot-keys.ts:140 spawnedWriteSet 错误阻断",
+      "Harness validate 仅因当前工作树大量无关路径不在 touchedAreas 中而 fail-closed",
+      "GitHub #20 已于 2026-08-12 按 completed 关闭：https://github.com/Baixu22/VerseClaw/issues/20#issuecomment-5262061420"
+    ],
+    "execution_hints": [],
+    "id": "TF-0052",
+    "kind": "task",
+    "non_goals": [
+      "不开放任意 Gateway RPC",
+      "不替代用户侧 /compact 命令",
+      "不处理自定义模型 context window 元数据问题"
+    ],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让 agent 能主动控制自身长会话上下文，同时不获得跨会话或管理级 Gateway 权限。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "工具参数不得接受 sessionKey、sessionId 或其他目标选择器",
+      "不得通过 sessions.compact Gateway RPC 或 operator.admin 实现",
+      "成功压缩必须同步 session id、session file、压缩次数和 token 元数据"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "跨会话目标参数数量为 0",
+      "每个 attempt 最多执行 1 次手动压缩",
+      "通信回归指标失败数量为 0"
+    ],
+    "summary": "新增 sessions_compact 工具；调用仅登记当前 attempt 的压缩请求，待 transcript lock 释放后由已解析的 ContextEngine 强制压缩当前会话，并同步旋转后的 session 元数据。",
+    "title": "修复 GitHub #20：agent 当前会话手动压缩",
+    "updated_at": "2026-08-12T03:52:33.829564Z"
+  },
+  "TF-0053": {
+    "acceptance_criteria": [
+      "新增可复现的 plugin-tools 性能基线与回归测试。",
+      "优化后工具清单和策略行为回归通过。",
+      "记录优化前后耗时与 RSS；若无法在当前环境完成真实链路，明确保留 residual。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "当前 openclaw_runtime/src/agents/openclaw-plugin-tools.ts 是 plugin-tools 热路径的主要实现。"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "github-issue",
+      "runtime",
+      "performance",
+      "plugin-tools"
+    ],
+    "created_at": "2026-08-12T04:02:14.894652Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "plugin-tools 阶段不再占用固定 16 秒级启动开销，并保持工具清单、allow/deny 与 auth 行为一致。"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "GitHub #13 已以 completed 关闭（关闭评论附机制证据与诚实 residual）",
+      "插件工具描述符缓存：warm 解析不重跑 factory，execute/prepareArguments 懒解析运行时工具并按 registry 代次 memo",
+      "定向测试 tool-descriptor-cache.test.ts 4/4 PASS；plugins 套件 3/3（8 tests）PASS；agents-core 32/32（249 tests）PASS",
+      "基准 perf:issue-13 --runs 5：cold 22.63ms vs warm 0.56ms，-97.53%，warm factory 调用 0 次（reports/plugin-tools-descriptor-cache-benchmark-2026-08-12.json）",
+      "tsgo:core 与 tsgo:core:test PASS；harness validate --no-diff PASS",
+      "真实 Gateway stream-ready/RSS A/B 在本环境不可采集（无 provider key auth 前置拦截；Windows fs.symlink 权限挡 QA aimock），已诚实记录于 artifacts/issue-13/real-gateway/report.json"
+    ],
+    "execution_hints": [
+      "真实 Gateway A/B 留作有 provider key / 无 symlink 权限限制环境的复测项；机制已由 fixture 基准与单测覆盖。"
+    ],
+    "id": "TF-0053",
+    "kind": "task",
+    "non_goals": [
+      "不扩展新的插件能力或改变默认工具授权。"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "消除每次 agent session 固定的 plugin-tools 冷启动延迟，改善 stream-ready 首轮响应。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "保留现有 plugin tool allowlist/denylist、auth、delivery-context 和安全边界。"
+    ],
+    "source_sessions": [
+      "issue-fix-20260812-issue13"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "stream-ready 中 plugin-tools 阶段相对基线显著下降，且功能回归为零。"
+    ],
+    "summary": "GitHub #13 插件工具描述符缓存已实现并验证：warm 解析避免重跑插件 factory（基准 -97.53%，warm factory 0 次），注册表代次与生命周期边界失效正确，policy/认证/执行契约保留；真实链路 A/B 受环境限制如实记录 residual。",
+    "title": "修复 GitHub #13：插件工具加载性能",
+    "updated_at": "2026-08-12T10:47:49.078426Z"
+  },
+  "TF-0054": {
+    "acceptance_criteria": [
+      "补充 recovery 判定回归测试",
+      "目标 runtime 测试、lint、typecheck 和 comms 门禁有证据",
+      "README 三语审查完成"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "继续修复最新的开放 issue 并关闭对应 issue",
+      "validation_plan": [
+        "运行目标恢复测试和 type-aware lint",
+        "运行 comms replay/compare",
+        "用 gh 发布证据并关闭 #33"
+      ],
+      "why_not_enough": "完成 #33 不代表其他开放 issue 已处理。",
+      "why_this_task": "#33 直接报告 Gateway 重启导致运行中的 agent 任务永久丢失，修复恢复判定即可覆盖用户复现链路。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "github-issue",
+      "gateway",
+      "runtime-recovery",
+      "sessions"
+    ],
+    "created_at": "2026-08-12T04:08:47.462033Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "main-session restart recovery 定向 Vitest：2 files、15/15 tests PASS",
+      "完整 restart-recovery Electron E2E：2/2 PASS，包含真实 Gateway 启动后恢复预置 in-flight assistant/aborted turn 并保持原 sessionId",
+      "pnpm run build:runtime PASS，runtime smoke Gateway ready",
+      "目标 oxfmt、type-aware oxlint 与 E2E ESLint PASS",
+      "comms replay/compare PASS：消息丢失、重复、乱序和 RPC 超时均为 0",
+      "Harness task spec context 与 validate --no-diff PASS",
+      "README 英文、中文、日文已同步恢复语义",
+      "完整 typecheck 的 web 项目 PASS；node 项目仅被既有 openclaw_runtime/src/plugins/session-entry-slot-keys.ts:140 spawnedWriteSet 错误阻断"
+    ],
+    "execution_hints": [
+      "GitHub #33 发布验证证据并关闭后可应用本完成提案；不要把既有全局 typecheck 错误归入本任务。"
+    ],
+    "id": "TF-0054",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "恢复 Gateway 重启时运行中任务的可续跑能力并保留真实失败语义。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "未完成 assistant/tool transcript tail 可自动恢复",
+      "完成、错误和 approval-pending transcript 不被重复执行",
+      "恢复失败时保留 abortedLastRun 供后续重试"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Gateway 重启恢复现在识别 aborted/toolUse assistant 尾部并在同一 sessionId 上继续运行；完成、错误、缺失 stopReason 和 approval-pending 尾部不会自动重放，恢复调用失败时保留后续重试标记。",
+    "title": "修复 GitHub #33：Gateway 重启恢复运行中的主会话",
+    "updated_at": "2026-08-12T06:33:49.764000Z"
+  },
+  "TF-0055": {
+    "acceptance_criteria": [
+      "带 spawnedWorkspaceDir 的 session 中 ls path=src/... 解析到该目录",
+      "缺少或无效 session workspace 时回退 resolveAgentWorkspaceDir",
+      "目标 runtime Vitest、lint 和 typecheck 通过，验证 residual 有明确记录"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "继续使用 gh CLI 认领并修复一个尚未认领的 GitHub issue",
+      "validation_plan": [
+        "运行目标 Gateway/agent-tools Vitest",
+        "运行 scoped lint 和 typecheck",
+        "使用 gh issue view 复核 issue 状态并记录证据"
+      ],
+      "why_not_enough": "完成 #28 不代表其他开放 issue 已处理。",
+      "why_this_task": "#28 的复现链路直接指向 Gateway 工具创建时忽略 session workspace，修复点明确且可用相对路径回归测试验证。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.92,
+    "context_tags": [
+      "github-issue",
+      "gateway",
+      "agent-tools",
+      "workspace"
+    ],
+    "created_at": "2026-08-12T04:33:41.813808Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "session 绑定项目目录时，Gateway 创建的 coding tools 使用该目录作为 cwd",
+      "没有 session-specific workspace 时保持 agent 默认 workspace 行为"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "GitHub #28 已以 completed 关闭（与 #31 同根因、同 spec fix-gateway-session-workspace-resolution.md）",
+      "每轮 workspace 解析优先级：spawnedWorkspaceDir > trusted request workspaceDir > 持久化 session workspaceDir > agent 默认（resolveSessionWorkspaceDir）",
+      "agent-command、tools.effective、tools.invoke、MCP loopback、auto-reply 路径全部从会话持久化状态取 workspace；Backend RPC 接受可信 workspaceDir（其他客户端 INVALID_REQUEST）",
+      "spawned-context + subagent-spawn 定向测试 PASS；gateway 套件 18/18（103 tests）PASS；#31 同矩阵 agents-core 32/32、embedded-agent-runner、auto-reply、comms replay/compare PASS",
+      "tsgo:core 与 tsgo:core:test PASS；harness validate --no-diff PASS"
+    ],
+    "execution_hints": [
+      "无需再动：相对路径现在按 session workspace 解析，agent 不会再落到默认 workspace 并触发全盘搜索。"
+    ],
+    "id": "TF-0055",
+    "kind": "task",
+    "non_goals": [
+      "不改变 process poll 超时策略",
+      "不自动为 GitHub issue 分配远程 assignee"
+    ],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "修复并发任务中 agent 使用相对路径时命中 ~/.openclaw/workspace、继而触发全盘搜索的问题。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "从已持久化的 SessionEntry 读取 spawnedWorkspaceDir",
+      "不改变工具授权、路径安全边界或非 session 工具调用行为",
+      "补充相对路径解析回归测试"
+    ],
+    "source_sessions": [
+      "issue-fix-20260812-issue28"
+    ],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "GitHub #28 相对路径解析错误已修复：ls/read/write/exec 等相对路径按 session 可信 workspace 解析，不再落到 ~/.openclaw/workspace 触发全盘搜索；与 #31 同根因同 spec，测试矩阵全绿。",
+    "title": "修复 GitHub #28：agent 相对路径解析到错误 workspace",
+    "updated_at": "2026-08-12T10:47:49.078426Z"
   }
 }
