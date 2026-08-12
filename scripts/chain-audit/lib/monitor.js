@@ -47,7 +47,7 @@ export function analyzeTranscript(transcriptPath, startLine = 0) {
         if (c.type === "toolCall") {
           stats.toolCalls.push({
             name: c.name,
-            args: String(c.arguments ?? "").slice(0, 120),
+            args: JSON.stringify(c.arguments ?? {}).slice(0, 120),
           });
         }
       }
