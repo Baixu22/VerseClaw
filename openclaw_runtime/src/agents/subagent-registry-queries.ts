@@ -352,7 +352,11 @@ export function countActiveRunsForSessionFromRuns(
     if (pendingDescendantCache.has(sessionKey)) {
       return pendingDescendantCache.get(sessionKey) ?? 0;
     }
-    const pending = countPendingDescendantRunsInternal(runs, sessionKey);
+    // Quota counts only descendants that are STILL RUNNING. A failed child
+    // whose announce/cleanup bookkeeping has not finished yet (e.g. the
+    // completion announce is stuck on "no visible reply") must not keep
+    // holding a spawn slot forever — see issue #32.
+    const pending = countPendingDescendantRunsInternal(runs, sessionKey, undefined, true);
     pendingDescendantCache.set(sessionKey, pending);
     return pending;
   };
@@ -450,6 +454,7 @@ function countPendingDescendantRunsInternal(
   runs: Map<string, SubagentRunRecord>,
   rootSessionKey: string,
   excludeRunId?: string,
+  liveOnly = false,
 ): number {
   const excludedRunId = excludeRunId?.trim();
   let count = 0;
@@ -457,7 +462,11 @@ function countPendingDescendantRunsInternal(
     !forEachDescendantRun(runs, rootSessionKey, (runId, entry) => {
       const runEnded = hasSubagentRunEnded(entry);
       const cleanupCompleted = typeof entry.cleanupCompletedAt === "number";
-      const runPending = runEnded ? !cleanupCompleted : isLiveUnendedSubagentRun(entry);
+      const runPending = liveOnly
+        ? !runEnded && isLiveUnendedSubagentRun(entry)
+        : runEnded
+          ? !cleanupCompleted
+          : isLiveUnendedSubagentRun(entry);
       if (runPending && runId !== excludedRunId) {
         count += 1;
       }
