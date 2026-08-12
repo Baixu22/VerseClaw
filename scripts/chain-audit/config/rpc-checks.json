@@ -392,7 +392,8 @@
           "params": {
             "loopRunId": "nonexistent-probe"
           },
-          "note": "验证错误处理而非真实循环"
+          "note": "验证错误处理而非真实循环",
+          "expectError": "unknown task loop"
         }
       ]
     },

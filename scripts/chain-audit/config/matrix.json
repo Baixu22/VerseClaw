@@ -754,6 +754,133 @@
           }
         }
       ]
+    },
+    {
+      "id": "jforum-fix",
+      "name": "JForum 真实修复链路",
+      "description": "真实项目 JForum-master 的 bug 修复验收：定位+修复+自检，监控处理思路（短路/循环/工具适配）",
+      "tasks": [
+        {
+          "id": "fix-download-path",
+          "message": "在 src/main/java/net/jforum/controllers/TopicController.java 中，downloadAttachment 方法下载附件时返回的文件路径疑似错误，导致下载的不是实际存储的文件。请定位该方法实现，找到 bug 修复它，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        },
+        {
+          "id": "fix-hql-typo",
+          "message": "在 src/main/java/net/jforum/repository/ForumRepository.java 中，findAll() 方法的 HQL 查询语句有一个多余的字符（语法错误），会导致查询时抛异常。请定位该查询语句，修复它，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        },
+        {
+          "id": "fix-watch-npe",
+          "message": "在 src/main/java/net/jforum/actions/extensions/TopicWatchExtension.java 中，afterList 方法在用户未订阅某个主题时可能抛出空指针异常。请阅读该方法及 TopicWatchService 的返回逻辑，找到空指针来源并修复，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        },
+        {
+          "id": "fix-password-plaintext",
+          "message": "在 src/main/java/net/jforum/controllers/UserController.java 中，recoverPasswordValidate 方法重置密码时疑似以明文存储，而系统的其他位置（如 UserService.add、登录校验）使用 MD5 哈希处理密码，这会导致密码重置后用户无法登录。请对比相关代码确认不一致，修复它，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        },
+        {
+          "id": "fix-precedence",
+          "message": "在 src/main/java/net/jforum/controllers/UserController.java 中，insertSave 方法校验用户名的非法字符（< 和 >）时存在运算符优先级问题：当前面已存在其他错误时，校验仍可能错误地触发并覆盖错误提示。请阅读该校验表达式，修复优先级，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        },
+        {
+          "id": "fix-empty-catch",
+          "message": "在 src/main/java/net/jforum/util/JForumConfig.java 中，加载数据库配置的 finally 块里 session.close() 的 catch 是空实现，静默吞掉关闭异常，与相邻 catch 的日志处理方式不一致。请修复空 catch 吞异常的问题，保持与相邻代码一致的错误处理风格，再用 grep 确认修复生效，报告根因和你的修改。",
+          "expectTools": [
+            "read",
+            "exec"
+          ],
+          "checks": [
+            "tools.read",
+            "tools.exec",
+            "hasAnswer"
+          ],
+          "metrics": {
+            "elapsedMs": {
+              "good": 120000,
+              "bad": 300000
+            }
+          },
+          "timeoutMs": 240000
+        }
+      ]
     }
   ]
 }

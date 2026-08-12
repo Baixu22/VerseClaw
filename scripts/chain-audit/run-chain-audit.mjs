@@ -26,7 +26,7 @@ import { startGateway, waitForReady, tailGatewayLog } from "./lib/gateway.js";
 import { RpcClient } from "./lib/rpc-client.js";
 import { grade, GRADES } from "./lib/grade.js";
 import { writeReport } from "./lib/report.js";
-import { analyzeTranscript, latestTranscript } from "./lib/monitor.js";
+import { analyzeTranscript, latestTranscript, analyzeGatewayLog } from "./lib/monitor.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const AUDIT_ROOT = resolve(__dirname);
 // 证据输出到 artifacts/chain-audit/evidence（gitignore 的产物区，不污染工具代码）
@@ -94,9 +94,10 @@ async function main() {
     // RPC 服务面分级（所有组分组内全部 OK 才计通过）
     const rpcAggregate = aggregateRpc(rpcResults);
 
-    // 4. 写报告
+    // 4. 写报告（含 gateway 日志结构化事件：压缩/重载/错误，替代纯 raw tail）
     const ts = new Date().toISOString().replace(/[:.]/g, "-");
     const outDir = join(EVIDENCE_ROOT, ts);
+    const gatewayEvents = gateway?.logPath ? analyzeGatewayLog(gateway.logPath) : undefined;
     const { jsonPath, mdPath } = writeReport(outDir, {
       timestamp: new Date().toISOString(),
       matrix: matrix.schemaVersion,
@@ -105,6 +106,7 @@ async function main() {
       tasks: results,
       rpcGroups: rpcResults,
       gatewayLog: gateway?.logPath ? tailGatewayLog(gateway.logPath, 10) : undefined,
+      gatewayEvents,
     });
 
     // 5. 趋势追踪（history.json — 跨运行对比看退化）
@@ -129,7 +131,14 @@ async function main() {
 async function runTask(chain, task, { port, token }) {
   const client = new RpcClient({ port, token });
   const startedAt = Date.now();
-  const sessionKey = `agent:main:audit-${chain.id}-${task.id}`;
+  // sessionKey 每次运行唯一（时间戳），避免复用旧 session → transcript 追加历史、跨运行串扰
+  const stamp = Date.now();
+  const sessionKey = `agent:main:audit-${chain.id}-${task.id}-${stamp}`;
+  // 任务开始前快照 sessions 目录（gateway 可能在接受请求时即创建文件，快照须早于 call）
+  const sessionDir = join(homedir(), ".openclaw", "agents", "main", "sessions");
+  const sessionSnapshot = new Set(
+    readdirSync(sessionDir).filter((f) => f.endsWith(".jsonl") && !f.includes("trajectory")),
+  );
   try {
     await client.connect();
     const res = await client.call("agent", {
@@ -138,7 +147,7 @@ async function runTask(chain, task, { port, token }) {
       workspaceDir: matrix.common.workspace,
       message: task.message,
       timeout: task.timeoutMs ?? matrix.common.defaultTimeoutMs,
-      idempotencyKey: `audit-${chain.id}-${task.id}-${Date.now()}`,
+      idempotencyKey: `audit-${chain.id}-${task.id}-${stamp}`,
     }, task.timeoutMs ?? matrix.common.defaultTimeoutMs);
 
     const elapsedMs = Date.now() - startedAt;
@@ -147,7 +156,13 @@ async function runTask(chain, task, { port, token }) {
     }
 
     // 异步执行：等待该 session 的 transcript 出现并稳定（连续 5s 不增长 = 完成）
-    const transcriptPath = await waitForSessionComplete(sessionKey, task.timeoutMs ?? matrix.common.defaultTimeoutMs);
+    const transcriptPath = await waitForSessionComplete(
+      sessionKey,
+      task.timeoutMs ?? matrix.common.defaultTimeoutMs,
+      task.message,
+      sessionSnapshot,
+      sessionDir,
+    );
 
     // 分析 transcript（独立 session，全量）
     const stats = analyzeTranscript(transcriptPath);
@@ -219,44 +234,71 @@ function buildToolChecks(stats, expectTools) {
   return checks;
 }
 
-/** 等待指定 sessionKey 的 transcript 出现并稳定（连续 5s 不增长 = 任务完成）。
- *  独立 session 的 transcript 文件是 <sessionId>.jsonl，需从 sessions.json 或扫描定位。
- *  这里采用：扫描所有 transcript，找到包含该任务首个 user 消息的文件。
+/** 读取 transcript 的首条 user 消息文本（用于识别文件归属，杜绝跨会话串扰）。 */
+function firstUserMessageText(transcriptPath) {
+  try {
+    const lines = readFileSync(transcriptPath, "utf8").split("\n").filter(Boolean);
+    for (const line of lines) {
+      const r = JSON.parse(line);
+      if (r.type !== "message" || r.message?.role !== "user") continue;
+      const c = r.message.content;
+      if (typeof c === "string" && c.trim()) return c.trim();
+      if (Array.isArray(c)) {
+        const text = c.map((x) => (typeof x === "string" ? x : x?.text ?? x?.content ?? "")).join("").trim();
+        if (text) return text;
+      }
+    }
+  } catch { /* ignore */ }
+  return "";
+}
+
+/** 等待本任务（sessionKey 唯一）的 transcript 出现并稳定（连续 5s 不增长 = 完成）。
+ *  只考虑任务开始后**新增**的文件（独立 sessionKey 必然新建 transcript），
+ *  再用任务 user 消息原文匹配归属，彻底隔离各链路（不再取全局最新文件）。
  */
-async function waitForSessionComplete(sessionKey, timeoutMs) {
+async function waitForSessionComplete(sessionKey, timeoutMs, message, snapshot, sessionDir) {
   const deadline = Date.now() + timeoutMs;
-  const sessionId = sessionKey.split(":").pop();
-  const dir = join(homedir(), ".openclaw", "agents", "main", "sessions");
+  const dir = sessionDir ?? join(homedir(), ".openclaw", "agents", "main", "sessions");
+  const isTranscript = (f) => f.endsWith(".jsonl") && !f.includes("trajectory");
+  const knownFiles = snapshot ?? new Set(readdirSync(dir).filter(isTranscript));
+  const needle = String(message ?? "").trim();
   let lastSize = -1;
   let stableSince = 0;
+  let current = null;
 
   while (Date.now() < deadline) {
-    // 找到最新的 transcript（agent 会话在 sessions/ 目录下，sessionKey 后缀是 sessionId）
-    const files = readdirSync(dir).filter((f) => f.endsWith(".jsonl") && !f.includes("trajectory"));
-    if (files.length > 0) {
-      const newest = files
+    const files = readdirSync(dir).filter(isTranscript);
+    const candidates = files.filter((f) => !knownFiles.has(f));
+    if (candidates.length > 0) {
+      const newest = candidates
         .map((f) => join(dir, f))
-        .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
-      const size = readFileSync(newest, "utf8").length;
+        .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs);
+      // 优先按任务消息匹配归属（前几个新增文件），避免 subagent/并发会话干扰
+      const match = needle
+        ? newest.slice(0, 3).find((p) => firstUserMessageText(p).includes(needle.slice(0, 40)))
+        : undefined;
+      const target = match ?? newest[0];
+      const size = readFileSync(target, "utf8").length;
       if (size > 0) {
-        if (size === lastSize) {
+        if (size === lastSize && current === target) {
           if (stableSince === 0) stableSince = Date.now();
-          if (Date.now() - stableSince > 5000) return newest;
+          if (Date.now() - stableSince > 5000) return target;
         } else {
           lastSize = size;
+          current = target;
           stableSince = Date.now();
         }
       }
     }
     await new Promise((r) => setTimeout(r, 2000));
   }
-  // 超时返回最新 transcript（可能不完整）
-  const dir2 = join(homedir(), ".openclaw", "agents", "main", "sessions");
-  const files = readdirSync(dir2).filter((f) => f.endsWith(".jsonl") && !f.includes("trajectory"));
-  if (files.length === 0) return null;
-  return files
-    .map((f) => join(dir2, f))
-    .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
+  // 超时：返回新增文件中匹配任务消息的 transcript（可能不完整）
+  const files = readdirSync(dir).filter(isTranscript);
+  const candidates = files.filter((f) => !knownFiles.has(f));
+  if (candidates.length === 0) return null;
+  const newest = candidates.map((f) => join(dir, f)).sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs);
+  const match = needle ? newest.slice(0, 3).find((p) => firstUserMessageText(p).includes(needle.slice(0, 40))) : undefined;
+  return match ?? newest[0];
 }
 
 /** RPC 直接检查：逐方法调用，按组汇总分级。 */
@@ -271,12 +313,19 @@ async function runRpcChecks({ port, token }) {
       for (const c of [...(group.checks ?? []), ...(group.adminOnly ?? [])]) {
         const res = await client.call(c.method, c.params, 10_000);
         const isAdminGated = group.adminOnly?.some((a) => a.method === c.method);
-        const ok = res.ok || (isAdminGated && /missing scope/.test(res.error?.message ?? ""));
+        // expectError：该调用预期失败（验证错误处理路径）。error 匹配期望子串即视为通过，
+        // 使“验证错误处理”的探测组不再因正常报错而恒判失败。
+        const expectErr = typeof c.expectError === "string" && c.expectError.length > 0;
+        const errorText = res.error?.message ?? "";
+        const ok = res.ok
+          || (isAdminGated && /missing scope/.test(errorText))
+          || (expectErr && new RegExp(c.expectError.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(errorText));
         checkResults.push({
           method: c.method,
           ok,
           passed: ok,
           adminGated: isAdminGated && !res.ok,
+          expectErrorMatched: expectErr && !res.ok && ok,
           elapsedMs: res.elapsedMs,
           error: res.ok ? undefined : (res.error?.message ?? "").slice(0, 100),
         });
