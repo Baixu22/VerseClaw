@@ -28,7 +28,12 @@ type Ack = {
   flagAttribution?: Record<string, { origin?: string }>;
 };
 
-type SessionRow = { key?: string; sessionId?: string };
+type SessionRow = {
+  key?: string;
+  sessionId?: string;
+  status?: string;
+  abortedLastRun?: boolean;
+};
 
 function sanitizeCallId(id: string): string {
   return id.replace(/[^a-zA-Z0-9]/g, '');
@@ -177,6 +182,98 @@ async function waitForMainLayout(app: ElectronApplication): Promise<void> {
 }
 
 test.describe('FP-P1-05 restart / recovery / live kill / rollback', () => {
+  test('resumes a persisted in-flight assistant turn after Gateway startup', async ({
+    homeDir,
+    userDataDir,
+    launchElectronApp,
+  }) => {
+    test.setTimeout(300_000);
+    const recoveryMarker = 'IN-FLIGHT-RESTART-RECOVERY complete';
+    const llm = await startScriptedLlm((userText) => ({
+      text: userText.includes('Your previous turn was interrupted by a gateway restart')
+        ? recoveryMarker
+        : 'Unexpected recovery prompt.',
+    }));
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-restart-inflight-'));
+    const openclawDir = join(homeDir, '.openclaw');
+    const sourceStateDir = join(userDataDir, 'openclaw-source-state');
+    const sessionsDir = join(sourceStateDir, 'agents', 'main', 'sessions');
+    const sessionId = 'restart-inflight-session';
+    const sessionFile = `${sessionId}.jsonl`;
+    const now = Date.now();
+
+    await writeConfig(
+      openclawDir,
+      sourceStateDir,
+      buildMockProviderConfig(llm.port, workspaceDir),
+    );
+    await mkdir(sessionsDir, { recursive: true });
+    await writeFile(join(sessionsDir, 'sessions.json'), `${JSON.stringify({
+      'agent:main:main': {
+        sessionId,
+        sessionFile,
+        status: 'running',
+        abortedLastRun: true,
+        startedAt: now - 1_000,
+        updatedAt: now,
+        modelProvider: 'openai',
+        model: 'mock-coder',
+      },
+    }, null, 2)}\n`, 'utf8');
+    await writeFile(join(sessionsDir, sessionFile), [
+      JSON.stringify({
+        type: 'session', version: 3, id: sessionId,
+        timestamp: new Date(now - 2_000).toISOString(), cwd: workspaceDir,
+      }),
+      JSON.stringify({
+        type: 'message', id: 'restart-user', parentId: null,
+        timestamp: new Date(now - 1_500).toISOString(),
+        message: {
+          role: 'user', content: [{ type: 'text', text: 'Finish the interrupted task.' }],
+          timestamp: now - 1_500,
+        },
+      }),
+      JSON.stringify({
+        type: 'message', id: 'restart-assistant', parentId: 'restart-user',
+        timestamp: new Date(now - 1_000).toISOString(),
+        message: {
+          role: 'assistant', content: [{ type: 'text', text: 'Work in progress.' }],
+          api: 'openai-completions', provider: 'openai', model: 'mock-coder',
+          stopReason: 'aborted', timestamp: now - 1_000,
+        },
+      }),
+      '',
+    ].join('\n'), 'utf8');
+
+    const app: ElectronApplication | null = await launchElectronApp({ skipSetup: true });
+    try {
+      await waitForMainLayout(app);
+      await startGateway(app);
+
+      const deadline = Date.now() + 120_000;
+      let recoveredSession: SessionRow | undefined;
+      let transcript = '';
+      while (Date.now() < deadline) {
+        recoveredSession = (await listMainSessions(app))
+          .find((session) => session.key === 'agent:main:main');
+        transcript = await readFile(join(sessionsDir, sessionFile), 'utf8');
+        if (recoveredSession?.abortedLastRun === false && transcript.includes(recoveryMarker)) {
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1_000));
+      }
+
+      expect(recoveredSession?.sessionId).toBe(sessionId);
+      expect(recoveredSession?.abortedLastRun).toBe(false);
+      expect(transcript).toContain(recoveryMarker);
+      expect(llm.log.filter((entry) => entry.issued === `text:${recoveryMarker}`).length).toBe(1);
+    } finally {
+      if (app) await closeElectronApp(app).catch(() => undefined);
+      await new Promise<void>((resolve) => llm.server.close(() => resolve()));
+      await rm(workspaceDir, { recursive: true, force: true }).catch(() => undefined);
+    }
+  });
+
   test('all seven live recovery scenarios remain explainable and fail closed', async ({
     homeDir,
     userDataDir,

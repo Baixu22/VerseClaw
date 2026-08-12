@@ -296,5 +296,6 @@
     "tokens": "Tokens",
     "cost": "Cost",
     "score": "Score"
-  }
+  },
+  "scorecardContextHealth": "Context Health {{id}}..."
 }

@@ -937,7 +937,11 @@ export function ObservabilityDashboard() {
                   {snapshot.scorecards.map((scorecard) => (
                     <div key={scorecard.traceId} className="rounded-md border border-black/10 dark:border-white/10 p-3">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="truncate text-xs font-medium">{t('scorecardTrace', { id: scorecard.traceId.slice(0, 12) })}</span>
+                        <span className="truncate text-xs font-medium">
+                          {scorecard.traceId.startsWith('ctx-health-')
+                            ? t('scorecardContextHealth', { id: scorecard.traceId.slice('ctx-health-'.length, 'ctx-health-'.length + 12) })
+                            : t('scorecardTrace', { id: scorecard.traceId.slice(0, 12) })}
+                        </span>
                         <Badge variant="secondary" className="rounded-full text-2xs">{scorecard.grade} ({scorecard.score})</Badge>
                       </div>
                       <div className="mt-2 space-y-1">

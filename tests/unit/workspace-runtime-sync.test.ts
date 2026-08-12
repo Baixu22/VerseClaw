@@ -97,6 +97,33 @@ describe('workspace runtime permission sync', () => {
     expect(state.writes).toHaveLength(0);
   });
 
+  it('repairs a legacy deny/always exec policy for an accept-edits workspace', async () => {
+    const { syncActiveWorkspacePermissionToRuntime } = await import('@electron/services/workspace-runtime-sync');
+    state.activeWorkspace.permissionMode = 'acceptEdits';
+    state.config = {
+      tools: {
+        exec: {
+          host: 'gateway',
+          security: 'deny',
+          ask: 'always',
+        },
+      },
+    };
+
+    await syncActiveWorkspacePermissionToRuntime();
+
+    expect(state.writes).toHaveLength(1);
+    expect(state.writes[0]).toMatchObject({
+      tools: {
+        exec: {
+          host: 'gateway',
+          security: 'allowlist',
+          ask: 'on-miss',
+        },
+      },
+    });
+  });
+
   it('uses the active strong sandbox profile when present', async () => {
     const { syncActiveWorkspacePermissionToRuntime } = await import('@electron/services/workspace-runtime-sync');
     state.activeWorkspace.permissionMode = 'acceptEdits';
