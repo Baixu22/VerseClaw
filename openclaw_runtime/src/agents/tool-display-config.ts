@@ -391,6 +391,10 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Session Status",
       detailKeys: ["sessionKey", "model"],
     },
+    sessions_compact: {
+      title: "Compact Session",
+      detailKeys: [],
+    },
     sessions_list: {
       emoji: "🗂️",
       title: "Sessions",

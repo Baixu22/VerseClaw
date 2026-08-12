@@ -47,7 +47,7 @@ import {
 } from "../../agents/run-timeout-attribution.js";
 import {
   normalizeSpawnedRunMetadata,
-  resolveIngressWorkspaceOverrideForSpawnedRun,
+  resolveSessionWorkspaceDir,
 } from "../../agents/spawned-context.js";
 import { resolveAgentTimeoutMs } from "../../agents/timeout.js";
 import { agentCommandFromIngress } from "../agent-command.js";
@@ -1110,6 +1110,17 @@ export const agentHandlers: GatewayRequestHandlers = {
       );
       return;
     }
+    if (request.workspaceDir && !canUseInternalRuntimeHandoff) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
+      );
+      return;
+    }
+    const trustedWorkspaceDir = canUseInternalRuntimeHandoff
+      ? normalizeOptionalString(request.workspaceDir)
+      : undefined;
     const providerOverride = allowModelOverride ? request.provider : undefined;
     const modelOverride = allowModelOverride ? request.model : undefined;
     const cfg = context.getRuntimeConfig();
@@ -1937,6 +1948,7 @@ export const agentHandlers: GatewayRequestHandlers = {
               ? { lastThreadId: effectiveDeliveryFields.lastThreadId }
               : {}),
             ...(labelValue ? { label: labelValue } : {}),
+            ...(trustedWorkspaceDir ? { workspaceDir: trustedWorkspaceDir } : {}),
             ...(freshSpawnedBy ? { spawnedBy: freshSpawnedBy } : {}),
             ...(channelValue ? { channel: channelValue } : {}),
             groupId: nextGroup.groupId,
@@ -2594,11 +2606,13 @@ export const agentHandlers: GatewayRequestHandlers = {
                   }),
                 });
               },
-              // Internal-only: allow workspace override for spawned subagent runs.
-              workspaceDir: resolveIngressWorkspaceOverrideForSpawnedRun({
-                spawnedBy: spawnedByValue,
-                workspaceDir: sessionEntry?.spawnedWorkspaceDir,
+              workspaceDir: resolveSessionWorkspaceDir({
+                spawnedWorkspaceDir: sessionEntry?.spawnedWorkspaceDir,
+                requestWorkspaceDir: trustedWorkspaceDir,
+                persistedWorkspaceDir: sessionEntry?.workspaceDir,
               }),
+              // B-3 v3: inherit the write-set coordinate persisted at spawn time.
+              writeSet: sessionEntry?.spawnedWriteSet,
               cwd: resolveSessionRuntimeCwd({
                 spawnedBy: spawnedByValue,
                 sessionEntry,

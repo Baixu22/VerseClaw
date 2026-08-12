@@ -564,6 +564,10 @@
         "model"
       ]
     },
+    "sessions_compact": {
+      "title": "Compact Session",
+      "detailKeys": []
+    },
     "sessions_list": {
       "emoji": "🗂️",
       "title": "Sessions",

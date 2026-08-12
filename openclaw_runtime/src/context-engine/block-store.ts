@@ -606,7 +606,13 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
       "recent_actions",
       "parent_session_id",
     ] as const;
-    const optionalKeys = new Set(["writeSet", "worktreeId", "worktreeRoot", "isolation"]);
+    const optionalKeys = new Set([
+      "writeSet",
+      "worktreeId",
+      "worktreeRoot",
+      "isolation",
+      "entity_snapshot",
+    ]);
     const allowedKeys = new Set<string>([...requiredKeys, ...optionalKeys]);
     const keys = Object.keys(parsed);
     if (
@@ -657,6 +663,32 @@ export function parseHandoffPack(value: string | null): HandoffPack | undefined 
     }
     if (parsed.isolation !== undefined && parsed.isolation !== "shared" && parsed.isolation !== "worktree") {
       return undefined;
+    }
+    // B-3: entity snapshot is optional; when present it must be well-formed and
+    // bounded (each list ≤ ENTITY_SNAPSHOT_CAP, decisions are condition/action pairs).
+    if (parsed.entity_snapshot !== undefined) {
+      const snapshot = parsed.entity_snapshot;
+      const isValidStringList = (list: unknown): list is string[] =>
+        Array.isArray(list) &&
+        list.length <= 20 &&
+        list.every((item) => typeof item === "string" && item.trim().length > 0 && item.length <= 512);
+      if (
+        !isValidStringList(snapshot.files) ||
+        !isValidStringList(snapshot.symbols) ||
+        !Array.isArray(snapshot.decisions) ||
+        snapshot.decisions.length > 20 ||
+        !snapshot.decisions.every(
+          (decision) =>
+            decision &&
+            typeof decision === "object" &&
+            typeof decision.condition === "string" &&
+            decision.condition.length <= 200 &&
+            typeof decision.action === "string" &&
+            decision.action.length <= 500,
+        )
+      ) {
+        return undefined;
+      }
     }
     return parsed as HandoffPack;
   } catch {

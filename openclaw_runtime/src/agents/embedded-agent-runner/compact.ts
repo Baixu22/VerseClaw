@@ -1253,6 +1253,12 @@ async function compactEmbeddedAgentSessionDirectOnce(
         parentSessionId: dcsExtensionDeps?.parentSessionId,
         trajectoryCapture: dcsExtensionDeps?.trajectoryCapture,
         sekbRuntime: dcsExtensionDeps?.sekbRuntime,
+        // B-3 v2: workspace root enriches the child handoff entity snapshot.
+        workspaceDir: params.workspaceDir,
+        // B-3 v3: write-set coordinate for the child handoff (compact-path parity).
+        ...(dcsExtensionDeps?.writeSet?.length
+          ? { writeSet: [...dcsExtensionDeps.writeSet] }
+          : {}),
         toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({

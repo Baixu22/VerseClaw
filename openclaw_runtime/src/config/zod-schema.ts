@@ -151,6 +151,12 @@ const RuntimeFeatureSchema = z
           .object({
             totalChars: z.number().int().min(1).max(1_000_000).optional(),
             dropAlertRatio: z.number().min(0).max(1).optional(),
+            // B-1: per-channel decay half-life in turns. Values are validated as
+            // positive integers so an invalid entry fails schema validation
+            // instead of silently acting as "no decay".
+            channelDecay: z
+              .record(z.string().min(1).max(64), z.number().int().min(1).max(10_000))
+              .optional(),
           })
           .strict()
           .optional(),

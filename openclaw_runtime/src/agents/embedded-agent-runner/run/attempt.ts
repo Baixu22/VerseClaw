@@ -179,6 +179,10 @@ import {
   normalizeAgentRuntimeTools,
 } from "../../runtime-plan/tools.js";
 import type { AgentMessage } from "../../runtime/index.js";
+import {
+  type ManualCompactionRequest,
+  registerManualCompactionRequest,
+} from "../../manual-compaction-request.js";
 import { resolveSandboxContext } from "../../sandbox.js";
 import { resolveSandboxRuntimeStatus } from "../../sandbox/runtime-status.js";
 import { repairSessionFileIfNeeded } from "../../session-file-repair.js";
@@ -1255,6 +1259,9 @@ export async function runEmbeddedAttempt(
       spawnedBy: params.spawnedBy,
       cfg: params.config,
       workspaceRoot: effectiveWorkspace,
+      // B-3 v3: carry the spawned-worker write-set coordinate into the DCS deps
+      // so the child handoff entity snapshot knows the files to re-anchor on.
+      ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
     });
     const dcsExtensionDeps = dcsDepsResolution.deps;
     // D3 closeout (consumer side): in-memory session↔workspace fingerprint;
@@ -1296,6 +1303,7 @@ export async function runEmbeddedAttempt(
       toolConstructionPlan.constructTools ||
       toolSearchControlsEnabledForRun ||
       codeModeControlsEnabledForRun;
+    let manualCompactionRequest: ManualCompactionRequest | undefined;
     let toolSearchCatalogExecutor: ToolSearchCatalogToolExecutor | undefined;
     toolSearchCatalogRef =
       toolSearchControlsEnabledForRun || codeModeControlsEnabledForRun
@@ -1342,7 +1350,8 @@ export async function runEmbeddedAttempt(
             dcsBlockStore: dcsExtensionDeps?.workingMemoryStore,
             dcsContextBlockSink: dcsExtensionDeps?.contextBlockSink,
             dcsContextRole: params.config?.runtime?.contextBlock?.["context-write"]?.role,
-            dcsFactBudgetChars: params.config?.runtime?.contextBlock?.["context-understand"]?.budgetChars,
+            dcsFactBudgetChars:
+              params.config?.runtime?.contextBlock?.["context-understand"]?.budgetChars,
             factService: dcsExtensionDeps?.factService,
             toolSearchCatalogRef,
             agentDir,
@@ -1402,6 +1411,11 @@ export async function runEmbeddedAttempt(
               queueYieldInterruptForSession?.();
               runAbortController.abort("sessions_yield");
               abortSessionForYield?.();
+            },
+            onManualCompactionRequest: (request) => {
+              const registered = registerManualCompactionRequest(manualCompactionRequest, request);
+              manualCompactionRequest = registered.pending;
+              return registered.status;
             },
           });
           corePluginToolStages.mark("attempt:create-openclaw-coding-tools");
@@ -2349,6 +2363,10 @@ export async function runEmbeddedAttempt(
         parentSessionId: dcsExtensionDeps?.parentSessionId,
         trajectoryCapture: dcsExtensionDeps?.trajectoryCapture,
         sekbRuntime: dcsExtensionDeps?.sekbRuntime,
+        // B-3 v2: workspace root enriches the child handoff entity snapshot.
+        workspaceDir: effectiveWorkspace,
+        // B-3 v3: write-set coordinate for the child handoff.
+        ...(dcsExtensionDeps?.writeSet?.length ? { writeSet: [...dcsExtensionDeps.writeSet] } : {}),
         toolEntries,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
@@ -4583,19 +4601,21 @@ export async function runEmbeddedAttempt(
                   : {}),
               });
           if (preemptiveCompaction) {
-            recordContextFamilyLifecycleEvents(buildPreemptiveRouteLifecycleEvents({
-              result: preemptiveCompaction,
-              sessionId: params.sessionId,
-              provider: params.provider,
-              modelId: params.modelId,
-              messageCount: activeSession.messages.length,
-              contextTokenBudget,
-              reserveTokens,
-              ...(contextEnginePromptAuthority === "preassembly_may_overflow" &&
-              unwindowedContextEngineMessagesForPrecheck
-                ? { unwindowedMessageCount: unwindowedContextEngineMessagesForPrecheck.length }
-                : {}),
-            }));
+            recordContextFamilyLifecycleEvents(
+              buildPreemptiveRouteLifecycleEvents({
+                result: preemptiveCompaction,
+                sessionId: params.sessionId,
+                provider: params.provider,
+                modelId: params.modelId,
+                messageCount: activeSession.messages.length,
+                contextTokenBudget,
+                reserveTokens,
+                ...(contextEnginePromptAuthority === "preassembly_may_overflow" &&
+                unwindowedContextEngineMessagesForPrecheck
+                  ? { unwindowedMessageCount: unwindowedContextEngineMessagesForPrecheck.length }
+                  : {}),
+              }),
+            );
             contextBudgetStatus = buildPrePromptContextBudgetStatus({
               result: preemptiveCompaction,
               provider: params.provider,
@@ -5616,6 +5636,7 @@ export async function runEmbeddedAttempt(
         // truthiness predicates keep working without a `.length` check.
         clientToolCalls: completedClientToolCalls.length > 0 ? completedClientToolCalls : undefined,
         yieldDetected: yieldDetected || undefined,
+        manualCompactionRequest,
       };
     } finally {
       endContextOrchestratorTurn(injectionTurnId);
@@ -5782,18 +5803,20 @@ function mapContextEngineProjectContextFiles(
 }
 
 function mapContextEngineSkillMetadata(
-  entries: readonly {
-    skill: {
-      name: string;
-      description: string;
-      promptVersion?: string;
-      source?: string;
-      filePath?: string;
-    };
-    metadata?: {
-      skillKey?: string;
-    };
-  }[] | undefined,
+  entries:
+    | readonly {
+        skill: {
+          name: string;
+          description: string;
+          promptVersion?: string;
+          source?: string;
+          filePath?: string;
+        };
+        metadata?: {
+          skillKey?: string;
+        };
+      }[]
+    | undefined,
 ): ContextEngineSkillMetadata[] {
   return (entries ?? [])
     .filter((entry) => entry.skill.name.trim())

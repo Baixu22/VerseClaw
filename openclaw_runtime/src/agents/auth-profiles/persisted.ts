@@ -20,7 +20,7 @@ import {
   normalizeAuthEmailToken,
   normalizeAuthIdentityToken,
 } from "./oauth-shared.js";
-import { resolveLegacyAuthStorePath } from "./paths.js";
+import { resolveAuthStorePath, resolveLegacyAuthStorePath } from "./paths.js";
 import { readPersistedAuthProfileStoreRaw } from "./sqlite.js";
 import {
   coerceAuthProfileState,
@@ -802,6 +802,11 @@ export function loadPersistedAuthProfileStore(
     ),
   };
   return merged;
+}
+
+/** Loads the retired JSON auth-profile store for an explicit Doctor migration. */
+export function loadAuthProfileJsonStoreForMigration(agentDir?: string): AuthProfileStore | null {
+  return coercePersistedAuthProfileStore(loadJsonFile(resolveAuthStorePath(agentDir)));
 }
 
 /** Loads the legacy auth.json auth profile store if present. */

@@ -21,6 +21,7 @@ import { BlockStore } from "../../context-engine/block-store.js";
 import { handleWorkingMemoryAction } from "../../context-engine/handlers/working-memory-handler.js";
 import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
 import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
+import { createWorkspaceFactStoreBridge } from "../../context-engine/views/factstore-bridge.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
 import { installEmbeddedSekbHarnessHooks } from "./sekb-runtime.js";
@@ -529,6 +530,10 @@ function buildTaskStateFactory(params: {
   sekbRuntime?: EmbeddedSekbRuntime;
   objective?: string;
   parentSessionId?: string;
+  /** B-3 v2: workspace root used to enrich the child handoff entity snapshot. */
+  workspaceDir?: string;
+  /** B-3 v3: write-set coordinate forwarded into the child handoff. */
+  writeSet?: string[];
 }): ExtensionFactory | undefined {
   const sessionKey = params.sessionKey?.trim() || params.sessionId?.trim();
   const hasSink = Boolean(params.contextBlockSink);
@@ -567,6 +572,19 @@ function buildTaskStateFactory(params: {
       objective: params.objective,
       currentPhase: "running",
       workingMemoryStore: params.workingMemoryStore,
+      // B-3 v2: enrich the child's entity snapshot from the FactStore symbols
+      // and the SEKB distilled decisions when a workspace is known. Both are
+      // best-effort — a bridge/store absence degrades to the derived snapshot.
+      ...(params.workspaceDir
+        ? {
+            workspaceDir: params.workspaceDir,
+            bridgeFactory: createWorkspaceFactStoreBridge(),
+          }
+        : {}),
+      ...(params.sekbRuntime?.store ? { sekbStore: params.sekbRuntime.store } : {}),
+      // B-3 v3: forward the spawned-worker write-set coordinate so the child
+      // entity snapshot knows the files this worker is expected to touch.
+      ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
     })
       .then((handoffPack) =>
         writeChildHandoffPack({
@@ -651,6 +669,8 @@ export function buildEmbeddedExtensionFactories(params: {
   sekbRuntime?: EmbeddedSekbRuntime;
   objective?: string;
   parentSessionId?: string;
+  /** B-3 v3: write-set coordinate forwarded into the child handoff. */
+  writeSet?: string[];
   toolEntries?: ToolRegistryEntry[];
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];

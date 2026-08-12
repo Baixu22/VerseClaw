@@ -37,6 +37,7 @@ import {
   resolveAgentWorkspaceDir,
   resolveSessionAgentId,
 } from "../../agents/agent-scope.js";
+import { resolveSessionWorkspaceDir } from "../../agents/spawned-context.js";
 import { rewriteTranscriptEntriesInSessionFile } from "../../agents/embedded-agent-runner/transcript-rewrite.js";
 import { runAgentHarnessBeforeMessageWriteHook } from "../../agents/harness/hook-helpers.js";
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
@@ -1232,6 +1233,10 @@ function canInjectSystemProvenance(client: GatewayRequestHandlerOptions["client"
   return scopes.includes(ADMIN_SCOPE);
 }
 
+function canUseBackendWorkspaceDir(client: GatewayRequestHandlerOptions["client"]): boolean {
+  return client?.connect?.client?.mode === GATEWAY_CLIENT_MODES.BACKEND;
+}
+
 async function persistChatSendImages(params: {
   images: ChatImageContent[];
   imageOrder: PromptImageOrderEntry[];
@@ -1348,6 +1353,7 @@ async function prestageMediaPathOffloads(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   agentId: string;
+  workspaceDir?: string;
 }): Promise<{ paths: string[]; types: string[]; workspaceDir?: string }> {
   const mediaPathRefs = params.offloadedRefs.filter(
     (ref) => params.includeImageRefs || !ref.mimeType.startsWith("image/"),
@@ -1357,7 +1363,8 @@ async function prestageMediaPathOffloads(params: {
   }
 
   try {
-    const workspaceDir = resolveAgentWorkspaceDir(params.cfg, params.agentId);
+    const workspaceDir =
+      params.workspaceDir ?? resolveAgentWorkspaceDir(params.cfg, params.agentId);
     const sandbox = await ensureSandboxWorkspaceForSession({
       config: params.cfg,
       sessionKey: params.sessionKey,
@@ -3164,6 +3171,7 @@ export const chatHandlers: GatewayRequestHandlers = {
       }>;
       timeoutMs?: number;
       workspaceId?: string;
+      workspaceDir?: string;
       /**
        * Trusted workspace authority fingerprint (D3 closeout consumer side).
        * Produced by Main (`electron/services/chat-api.ts`) from the workspace's
@@ -3181,6 +3189,14 @@ export const chatHandlers: GatewayRequestHandlers = {
       suppressCommandInterpretation?: boolean;
       idempotencyKey: string;
     };
+    if (p.workspaceDir && !canUseBackendWorkspaceDir(client)) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
+      );
+      return;
+    }
     const suppressCommandInterpretation = p.suppressCommandInterpretation === true;
     const explicitOriginResult = normalizeExplicitChatSendOrigin({
       originatingChannel: p.originatingChannel,
@@ -3247,6 +3263,9 @@ export const chatHandlers: GatewayRequestHandlers = {
     const agentIdOverride = normalizeOptionalText(p.agentId);
     const clientRunId = p.idempotencyKey;
     const workspaceId = normalizeOptionalText(p.workspaceId);
+    const requestedWorkspaceDir = canUseBackendWorkspaceDir(client)
+      ? normalizeOptionalText(p.workspaceDir)
+      : undefined;
     // D3 closeout (consumer side): read the trusted workspace authority
     // fingerprint forwarded by Main. Embedded attempt prefers this over the
     // locally computed `effectiveWorkspace` fingerprint so the
@@ -3274,6 +3293,11 @@ export const chatHandlers: GatewayRequestHandlers = {
     );
     const sessionLoadMs = roundedChatSendTimingMs(performance.now() - sessionLoadStartedAtMs);
     const { cfg, entry, canonicalKey: sessionKey } = sessionLoadResult;
+    const workspaceDir = resolveSessionWorkspaceDir({
+      spawnedWorkspaceDir: entry?.spawnedWorkspaceDir,
+      requestWorkspaceDir: requestedWorkspaceDir,
+      persistedWorkspaceDir: entry?.workspaceDir,
+    });
     context.logGateway.info(
       `chat.send session loaded runId=${clientRunId} sessionKey=${sessionKey} loadSessionMs=${sessionLoadMs}`,
     );
@@ -3864,6 +3888,7 @@ export const chatHandlers: GatewayRequestHandlers = {
               cfg,
               sessionKey,
               agentId,
+              workspaceDir,
             }));
           },
           {
@@ -4061,6 +4086,7 @@ export const chatHandlers: GatewayRequestHandlers = {
             }
           : {}),
         GatewayClientScopes: client?.connect?.scopes ?? [],
+        ...(workspaceDir ? { WorkspaceDir: workspaceDir } : {}),
         // D3 closeout (consumer side): forward the trusted workspace authority
         // fingerprint so embedded attempt can prefer it over the locally
         // computed `effectiveWorkspace` fingerprint. Absent → agent-config

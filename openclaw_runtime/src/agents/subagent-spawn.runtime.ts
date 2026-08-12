@@ -11,6 +11,7 @@ export { getRuntimeConfig } from "../config/config.js";
 export { loadSessionStore, mergeSessionEntry, updateSessionStore } from "../config/sessions.js";
 export {
   forkSessionFromParent,
+  formatParentForkFallbackNote,
   resolveParentForkDecision,
   type ParentForkDecision,
 } from "../auto-reply/reply/session-fork.js";

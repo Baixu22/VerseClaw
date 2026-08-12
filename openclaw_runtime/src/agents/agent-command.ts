@@ -122,7 +122,10 @@ import {
 } from "./model-visibility-policy.js";
 import { listOpenAIAuthProfileProvidersForAgentRuntime } from "./openai-routing.js";
 import { resolveProviderIdForAuth } from "./provider-auth-aliases.js";
-import { normalizeSpawnedRunMetadata } from "./spawned-context.js";
+import {
+  normalizeSpawnedRunMetadata,
+  resolveSessionWorkspaceDir,
+} from "./spawned-context.js";
 import { resolveAgentTimeoutMs } from "./timeout.js";
 import { ensureAgentWorkspace } from "./workspace.js";
 
@@ -700,9 +703,13 @@ async function prepareAgentCommandExecution(opts: AgentCommandOpts, runtime: Run
     agentId: sessionAgentId,
     sessionKey,
   });
-  // Internal callers (for example subagent spawns) may pin workspace inheritance.
+  // Internal callers may pin a spawned/session workspace, which wins over the agent default.
   const workspaceDirRaw =
-    normalizedSpawned.workspaceDir ?? resolveAgentWorkspaceDir(cfg, sessionAgentId);
+    resolveSessionWorkspaceDir({
+      spawnedWorkspaceDir: sessionEntryRaw?.spawnedWorkspaceDir,
+      requestWorkspaceDir: normalizedSpawned.workspaceDir,
+      persistedWorkspaceDir: sessionEntryRaw?.workspaceDir,
+    }) ?? resolveAgentWorkspaceDir(cfg, sessionAgentId);
   const workspaceDir = resolveUserPath(workspaceDirRaw);
   const cwd =
     normalizeOptionalString(opts.cwd) ?? normalizeOptionalString(sessionEntryRaw?.spawnedCwd);
@@ -1780,6 +1787,8 @@ async function agentCommandInternal(
               opts,
               runContext,
               spawnedBy,
+              // B-3 v3: write-set coordinate for spawned-worker runs.
+              ...(opts.writeSet?.length ? { writeSet: [...opts.writeSet] } : {}),
               messageChannel,
               skillsSnapshot,
               resolvedVerboseLevel,

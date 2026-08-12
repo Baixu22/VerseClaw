@@ -923,6 +923,22 @@ function hasFailedSubagentNoOutputCompletion(events: readonly AgentInternalEvent
   );
 }
 
+/**
+ * True when the requester session already received the subagent completion as
+ * an injected internal event. The completion internal event is persisted into
+ * the requester transcript context before the direct announce turn runs, so a
+ * requester turn that finishes without visible output (e.g. an orchestrator
+ * lead that only called tools) has still received the child result — treating
+ * that as a failed delivery would lose an otherwise-complete internal handoff.
+ */
+function hasSubagentCompletionInternalEvent(events: readonly AgentInternalEvent[] | undefined) {
+  return (
+    events?.some(
+      (event) => event.type === "task_completion" && event.source === "subagent",
+    ) === true
+  );
+}
+
 async function deliverTextCompletionDirect(params: {
   cfg: OpenClawConfig;
   requesterSessionKey: string;
@@ -1571,6 +1587,16 @@ async function sendSubagentAnnounceDirectly(params: {
         return textDelivery;
       }
       if (hasFailedSubagentNoOutputCompletion(params.internalEvents)) {
+        // The child result (or its failure notice) was already injected into
+        // the requester session as an internal event, so the requester agent
+        // can act on it in a later turn. A tool-only announce turn is not a
+        // lost result (issue #29).
+        if (hasSubagentCompletionInternalEvent(params.internalEvents)) {
+          return {
+            delivered: true,
+            path: "direct",
+          };
+        }
         return {
           delivered: false,
           path: "direct",
@@ -1620,6 +1646,15 @@ async function sendSubagentAnnounceDirectly(params: {
       !hasGatewayAgentCompletionSideEffectEvidence(directAnnounceResponse) &&
       !hasIntentionalSilentGatewayAgentPayload(directAnnounceResponse)
     ) {
+      // Internal handoff (e.g. a nested subagent requester): the completion
+      // internal event is already injected into the requester session, so a
+      // tool-only announce turn still delivered the child result (issue #29).
+      if (isSubagentCompletion && hasSubagentCompletionInternalEvent(params.internalEvents)) {
+        return {
+          delivered: true,
+          path: "direct",
+        };
+      }
       return {
         delivered: false,
         path: "direct",

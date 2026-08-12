@@ -86,3 +86,16 @@ export function resolveIngressWorkspaceOverrideForSpawnedRun(
   const normalized = normalizeSpawnedRunMetadata(metadata);
   return normalized.spawnedBy ? normalized.workspaceDir : undefined;
 }
+
+/** Resolve a session workspace using the trusted priority order. */
+export function resolveSessionWorkspaceDir(params: {
+  spawnedWorkspaceDir?: string | null;
+  requestWorkspaceDir?: string | null;
+  persistedWorkspaceDir?: string | null;
+}): string | undefined {
+  return (
+    normalizeOptionalString(params.spawnedWorkspaceDir) ??
+    normalizeOptionalString(params.requestWorkspaceDir) ??
+    normalizeOptionalString(params.persistedWorkspaceDir)
+  );
+}

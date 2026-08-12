@@ -163,6 +163,13 @@ export type RuntimeFeatureConfig = {
     injectionBudget?: {
       totalChars?: number;
       dropAlertRatio?: number;
+      /**
+       * B-1: per-channel decay half-life (turns). A channel with a finite
+       * half-life gets its charge ceiling halved each half-life as the session
+       * advances; channels absent here never decay. Example:
+       * `{ "memory_pilot": 30 }`.
+       */
+      channelDecay?: Record<string, number>;
     };
     /** DCS Stage 5 context_write agency role override. Default "implementer". */
     "context-write"?: {

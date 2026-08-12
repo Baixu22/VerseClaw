@@ -51,7 +51,10 @@ import {
   resolveMemoryProviderState,
   type MemoryProviderLifecycleState,
 } from "./manager-provider-state.js";
-import type { MemoryIndexIdentityState } from "./manager-reindex-state.js";
+import {
+  shouldAttemptMissingMemoryIndexRecovery,
+  type MemoryIndexIdentityState,
+} from "./manager-reindex-state.js";
 import { resolveMemorySearchPreflight } from "./manager-search-preflight.js";
 import { searchKeyword, searchVector } from "./manager-search.js";
 import {
@@ -600,12 +603,21 @@ export class MemoryIndexManager extends MemoryManagerEmbeddingOps implements Mem
       this.assertRequiredProviderAvailable("search");
     }
     let hasIndexedContent = this.hasIndexedContent();
-    if (!hasIndexedContent) {
+    const initialIndexIdentity = this.refreshIndexIdentityDirty({
+      providerKeyKnown: this.providerInitialized,
+    });
+    if (
+      !hasIndexedContent ||
+      shouldAttemptMissingMemoryIndexRecovery({
+        identity: initialIndexIdentity,
+        hasIndexedChunks: hasIndexedContent,
+      })
+    ) {
       try {
-        // A fresh process can receive its first search before background watch/session
-        // syncs have built the index. Force one synchronous bootstrap so the first
-        // lookup after restart does not fail closed with empty results.
-        await this.sync({ reason: "search", force: true });
+        // A fresh process may search before background sync, and a legacy index may
+        // retain chunks after its identity metadata was lost. The existing safe
+        // sync path rebuilds only once the current provider can prove the identity.
+        await this.sync({ reason: "search", force: !hasIndexedContent });
       } catch (err) {
         log.warn(`memory sync failed (search-bootstrap): ${String(err)}`);
       }

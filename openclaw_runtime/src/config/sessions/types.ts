@@ -246,8 +246,12 @@ export type SessionEntry = {
   spawnedBy?: string;
   /** Workspace inherited by spawned sessions and reused on later turns for the same child session. */
   spawnedWorkspaceDir?: string;
+  /** Trusted Backend-selected workspace for a normal session. */
+  workspaceDir?: string;
   /** Task working directory inherited by spawned sessions and reused on later turns. */
   spawnedCwd?: string;
+  /** B-3 v3: write-set coordinate inherited by a spawned worker (files it is expected to touch). */
+  spawnedWriteSet?: string[];
   /** Explicit parent session linkage for dashboard-created child sessions. */
   parentSessionKey?: string;
   /** True after a thread/topic session has been forked from its parent transcript once. */

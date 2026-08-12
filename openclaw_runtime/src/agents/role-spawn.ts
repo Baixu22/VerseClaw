@@ -45,6 +45,8 @@ export type RoleSpawnParams = {
   runTimeoutSeconds?: number;
   roleSystemPrompt?: string;
   orchestration?: TeamOrchestrationMetadata;
+  /** B-3 v3: write-set coordinate for the spawned worker (from the worker plan). */
+  writeSet?: string[];
 };
 
 /** Minimal context for role-spawned workers (structurally compatible with SpawnSubagentContext). */
@@ -101,6 +103,8 @@ export type RoleSpawnRequest = {
   /** Extra context appended after the role SOUL (e.g. orchestration framing). */
   extraSystemPrompt?: string;
   orchestration?: TeamOrchestrationMetadata;
+  /** B-3 v3: write-set coordinate for the spawned worker. */
+  writeSet?: string[];
 };
 
 export type RoleSpawnResult = {
@@ -216,6 +220,7 @@ export function buildRoleSpawnParams(
       ? { runTimeoutSeconds: request.runTimeoutSeconds }
       : {}),
     ...(request.orchestration ? { orchestration: request.orchestration } : {}),
+    ...(request.writeSet ? { writeSet: [...request.writeSet] } : {}),
     roleSystemPrompt: buildRoleSystemPrompt(role, request.extraSystemPrompt, memoryCards, {
       task: request.task,
       sessionKey: ctx?.agentSessionKey,

@@ -37,6 +37,7 @@ vi.mock("../../agents/channel-tools.js", () => ({
 
 vi.mock("../../agents/tool-catalog.js", () => ({
   isKnownCoreToolId: mocks.isKnownCoreToolId,
+  CORE_TOOL_GROUPS: {},
 }));
 
 vi.mock("../../plugins/config-state.js", () => ({

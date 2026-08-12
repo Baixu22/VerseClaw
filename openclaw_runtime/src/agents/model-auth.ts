@@ -33,6 +33,7 @@ import {
   type AuthProfileStore,
   externalCliDiscoveryForProviderAuth,
   ensureAuthProfileStore,
+  hasPendingAuthProfileJsonMigration,
   isConfiguredAwsSdkAuthProfileForProvider,
   isStoredCredentialCompatibleWithAuthProvider,
   listProfilesForProvider,
@@ -1285,14 +1286,20 @@ export async function resolveApiKeyForProvider(params: {
 
   const authStorePath = resolveAuthStorePathForDisplay(agentDir);
   const resolvedAgentDir = path.dirname(authStorePath);
+  const migrationHint = hasPendingAuthProfileJsonMigration(agentDir)
+    ? `Run ${formatCliCommand("openclaw doctor --fix")} to migrate the existing auth-profiles.json into the SQLite auth store.`
+    : undefined;
   throw new ProviderAuthError(
     "missing-provider-auth",
     provider,
     [
       `No API key found for provider "${provider}".`,
       `Auth store: ${authStorePath} (agentDir: ${resolvedAgentDir}).`,
+      migrationHint,
       `Configure auth for this agent (${formatCliCommand("openclaw agents add <id>")}) or copy only portable static auth profiles from the main agentDir.`,
-    ].join(" "),
+    ]
+      .filter((line): line is string => Boolean(line))
+      .join(" "),
   );
 }
 

@@ -222,6 +222,8 @@ export const AgentParamsSchema = Type.Object(
     execApprovalFollowupExpectedSessionId: Type.Optional(NonEmptyString),
     internalEvents: Type.Optional(Type.Array(AgentInternalEventSchema)),
     inputProvenance: Type.Optional(InputProvenanceSchema),
+    /** Trusted Backend-selected workspace root for a normal gateway session. */
+    workspaceDir: Type.Optional(NonEmptyString),
     suppressPromptPersistence: Type.Optional(Type.Boolean()),
     sessionEffects: Type.Optional(Type.Union([Type.Literal("visible"), Type.Literal("internal")])),
     sourceReplyDeliveryMode: Type.Optional(

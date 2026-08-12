@@ -34,6 +34,8 @@ const DEFAULT_LIMIT = 500;
  * Override these to delegate directory listing to remote systems (for example SSH).
  */
 export interface LsOperations {
+  /** Resolve a user-supplied path for this directory-listing backend. */
+  resolvePath?: (dirPath: string, cwd: string) => string | Promise<string>;
   /** Check if path exists */
   exists: (absolutePath: string) => Promise<boolean> | boolean;
   /** Get file or directory stats. Throws if not found. */
@@ -117,6 +119,7 @@ export function createLsToolDefinition(
     label: "ls",
     description: `List directory contents. Returns entries sorted alphabetically, with '/' suffix for directories. Includes dotfiles. Output is truncated to ${DEFAULT_LIMIT} entries or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first).`,
     promptSnippet: "List directory contents",
+    promptGuidelines: ["Use ls to inspect directories; use read only for file contents."],
     parameters: lsSchema,
     async execute(
       toolCallId,
@@ -139,7 +142,9 @@ export function createLsToolDefinition(
 
         void (async () => {
           try {
-            const dirPath = resolveToCwd(path || ".", cwd);
+            const requestedPath = path || ".";
+            const dirPath = await (ops.resolvePath?.(requestedPath, cwd) ??
+              resolveToCwd(requestedPath, cwd));
             const effectiveLimit = normalizePositiveLimit(limit, DEFAULT_LIMIT);
 
             // Check if path exists.

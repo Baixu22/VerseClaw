@@ -12,6 +12,7 @@ import type {
 import { runDockerSandboxShellCommand } from "./docker-backend.js";
 import {
   buildPinnedMkdirpPlan,
+  buildPinnedReaddirPlan,
   buildPinnedRemovePlan,
   buildPinnedRenamePlan,
   buildPinnedWritePlan,
@@ -78,6 +79,26 @@ class SandboxFsBridgeImpl implements SandboxFsBridge {
   }): Promise<Buffer> {
     const target = this.resolveResolvedPath(params);
     return this.readPinnedFile(target);
+  }
+
+  async readdir(params: {
+    filePath: string;
+    cwd?: string;
+    signal?: AbortSignal;
+  }): Promise<string[]> {
+    const target = this.resolveResolvedPath(params);
+    const check = {
+      target,
+      options: { action: "list directories", allowedType: "directory" } as const,
+    };
+    const result = await this.runPlannedCommand(
+      buildPinnedReaddirPlan({
+        check,
+        pinned: this.pathGuard.resolvePinnedDirectoryEntry(target, "list directories"),
+      }),
+      params.signal,
+    );
+    return decodeDirectoryEntries(result.stdout);
   }
 
   async writeFile(params: {
@@ -299,6 +320,13 @@ class SandboxFsBridgeImpl implements SandboxFsBridge {
 
 function allowsWrites(access: SandboxWorkspaceAccess): boolean {
   return access === "rw";
+}
+
+function decodeDirectoryEntries(output: Buffer): string[] {
+  return output
+    .toString("utf8")
+    .split("\0")
+    .filter((entry) => entry.length > 0);
 }
 
 function coerceStatType(typeRaw?: string): "file" | "directory" | "other" {

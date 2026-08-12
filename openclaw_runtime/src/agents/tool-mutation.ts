@@ -18,6 +18,7 @@ const MUTATING_TOOL_NAMES = new Set([
   "process",
   "message",
   "team_orchestrate",
+  "sessions_compact",
   "sessions_spawn",
   "sessions_send",
   "cron",
@@ -358,6 +359,7 @@ export function isMutatingToolCall(toolName: string, args: unknown): boolean {
     case "write":
     case "edit":
     case "apply_patch":
+    case "sessions_compact":
     case "sessions_send":
     case "create_goal":
     case "update_goal":

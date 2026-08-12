@@ -150,6 +150,14 @@ export const SANDBOX_PINNED_MUTATION_PYTHON = [
   "    finally:",
   "        os.close(file_fd)",
   "",
+  "def read_directory(root_fd, relative_path):",
+  "    directory_fd = walk_dir(root_fd, relative_path, False)",
+  "    try:",
+  "        for child in os.listdir(directory_fd):",
+  "            os.write(1, os.fsencode(child) + b'\\0')",
+  "    finally:",
+  "        os.close(directory_fd)",
+  "",
   "def remove_tree(parent_fd, basename):",
   "    entry_stat = os.lstat(basename, dir_fd=parent_fd)",
   "    if not stat.S_ISDIR(entry_stat.st_mode) or stat.S_ISLNK(entry_stat.st_mode):",
@@ -360,6 +368,12 @@ export const SANDBOX_PINNED_MUTATION_PYTHON = [
   "        if parent_fd is not None:",
   "            os.close(parent_fd)",
   "        os.close(root_fd)",
+  "elif operation == 'readdir':",
+  "    root_fd = open_dir(sys.argv[2])",
+  "    try:",
+  "        read_directory(root_fd, sys.argv[3])",
+  "    finally:",
+  "        os.close(root_fd)",
   "elif operation == 'mkdirp':",
   "    root_fd = open_dir(sys.argv[2])",
   "    target_fd = None",
@@ -465,6 +479,16 @@ export function buildPinnedMkdirpPlan(params: {
   return buildPinnedMutationPlan({
     checks: [params.check],
     args: ["mkdirp", params.pinned.mountRootPath, params.pinned.relativePath],
+  });
+}
+
+export function buildPinnedReaddirPlan(params: {
+  check: PathSafetyCheck;
+  pinned: PinnedSandboxDirectoryEntry;
+}): SandboxFsCommandPlan {
+  return buildPinnedMutationPlan({
+    checks: [params.check],
+    args: ["readdir", params.pinned.mountRootPath, params.pinned.relativePath],
   });
 }
 

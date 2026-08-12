@@ -18,12 +18,20 @@
  */
 import { dcsObservability } from "./dcs-observability.js";
 import {
+  contextHealthScoreToScorecard,
+  recordContextHealth,
+  scoreContextHealth,
+  scoreInjectionPressure,
+} from "./context-health-monitor.js";
+import { storeRuntimeScorecard } from "../observability/trace-buffer.js";
+import {
   applyInjectionBudget,
   createInjectionBudget,
   remainingBudget,
   type ApplyBudgetResult,
   type InjectionBudgetState,
 } from "./injection-budget.js";
+import { resolveInjectionBudgetConfig, resetInjectionBudgetConfigCache } from "./injection-budget-config-source.js";
 
 /**
  * Decision 1 — precedence. Lower index charges the budget first, so when the turn
@@ -47,6 +55,38 @@ export const TURN_INJECTION_PRECEDENCE = [
 ] as const;
 
 export type TurnInjectionChannel = (typeof TURN_INJECTION_PRECEDENCE)[number];
+
+/**
+ * B-1 channel policy — the heterogeneity table for the shared injection budget.
+ *
+ * Every channel carries a numeric `priority` (metadata: must stay ordered the
+ * same way as `TURN_INJECTION_PRECEDENCE` — a regression test locks that) and a
+ * `decayHalfLifeTurns` used by {@link decayFactorFor} to shrink the channel's
+ * charge ceiling as a session's turns advance.
+ *
+ * Decay semantics (B-1, budget side): correctness-bearing context
+ * (`knowledge` / `working_memory` / `tool_registry`) is pinned with
+ * `Infinity` — losing it causes repeated work. Enrichment channels (`vtoken`,
+ * `memory_pilot`) re-inject similar content every turn, so their older copies
+ * are worth progressively less; a finite half-life lets them give budget back
+ * to fresher, higher-value context as the session lengthens.
+ *
+ * `Infinity` is the default for every channel, so the budget behaves exactly as
+ * before until an operator opts a channel into decay via
+ * `runtime.contextBlock.injectionBudget.channelDecay`.
+ */
+export const TURN_INJECTION_CHANNEL_POLICY: Record<
+  TurnInjectionChannel,
+  { priority: number; decayHalfLifeTurns: number }
+> = {
+  knowledge: { priority: 100, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  working_memory: { priority: 90, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  tool_registry: { priority: 80, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  cvk_addition: { priority: 70, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  vtoken: { priority: 60, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  memory_pilot: { priority: 50, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+  other: { priority: 10, decayHalfLifeTurns: Number.POSITIVE_INFINITY },
+};
 
 /**
  * Decision 2 — unit and layering. The budget is counted in **characters**, single
@@ -78,9 +118,12 @@ export const TURN_INJECTION_DROP_ALERT_RATIO = 0.1;
 /**
  * FP-P2-04: config overrides for the two budget numbers. The defaults
  * (`TURN_INJECTION_CHAR_BUDGET` / `TURN_INJECTION_DROP_ALERT_RATIO`) remain
- * the starting-line values from FP-P0-05; `setTurnInjectionBudgetConfig`
- * lets the runtime apply `runtime.contextBlock.injectionBudget.*` overrides
- * without changing code. Values must come from real canary distributions
+ * the starting-line values from FP-P0-05; the getters resolve
+ * `runtime.contextBlock.injectionBudget.*` from the on-disk config through
+ * {@link resolveInjectionBudgetConfig} (mtime-keyed, so a config write applies
+ * on the next turn without a restart). The setter is retained for in-process
+ * callers and tests; explicit set values win over file overrides, keeping the
+ * precedence deterministic. Values must come from real canary distributions
  * (see FP-P2-04 Hard locks); widening the total to eliminate degradation
  * is prohibited.
  */
@@ -95,12 +138,18 @@ export function setTurnInjectionBudgetConfig(params: {
   configuredDropAlertRatio = params.dropAlertRatio;
 }
 
-export function getEffectiveTurnInjectionCharBudget(): number {
-  return configuredTotalChars ?? TURN_INJECTION_CHAR_BUDGET;
+export function getEffectiveTurnInjectionCharBudget(env: NodeJS.ProcessEnv = process.env): number {
+  if (configuredTotalChars !== undefined) return configuredTotalChars;
+  return (
+    resolveInjectionBudgetConfig(env)?.totalChars ?? TURN_INJECTION_CHAR_BUDGET
+  );
 }
 
-export function getEffectiveDropAlertRatio(): number {
-  return configuredDropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO;
+export function getEffectiveDropAlertRatio(env: NodeJS.ProcessEnv = process.env): number {
+  if (configuredDropAlertRatio !== undefined) return configuredDropAlertRatio;
+  return (
+    resolveInjectionBudgetConfig(env)?.dropAlertRatio ?? TURN_INJECTION_DROP_ALERT_RATIO
+  );
 }
 
 /**
@@ -121,10 +170,16 @@ export type TurnInjectionEntry = {
   charsApplied: number;
   /** Precedence index at charge time; makes the degradation order replayable. */
   order: number;
+  /** B-1: policy priority of the channel at charge time (metadata/audit). */
+  priority: number;
+  /** B-1: decay multiplier applied at charge time (1 = no decay). */
+  decayFactor: number;
 };
 
 export type TurnInjectionLedger = {
   turnId: string;
+  /** B-1: zero-based turn counter used by channel decay; 0 ⇒ no decay yet. */
+  turnIndex: number;
   budget: InjectionBudgetState;
   entries: TurnInjectionEntry[];
   /** Capacity held for enabled higher-precedence channels that charge later. */
@@ -163,22 +218,65 @@ export function precedenceIndexOf(channel: TurnInjectionChannel): number {
 }
 
 /**
+ * Effective decay half-life (in turns) for a channel: an explicit
+ * `runtime.contextBlock.injectionBudget.channelDecay.<channel>` value wins,
+ * otherwise the `TURN_INJECTION_CHANNEL_POLICY` default. `Infinity` means the
+ * channel never decays.
+ */
+export function getEffectiveChannelDecay(
+  channel: TurnInjectionChannel,
+  env: NodeJS.ProcessEnv = process.env,
+): number {
+  const override = resolveInjectionBudgetConfig(env)?.channelDecay?.[channel];
+  if (typeof override === "number" && Number.isFinite(override) && override > 0) {
+    return override;
+  }
+  return TURN_INJECTION_CHANNEL_POLICY[channel].decayHalfLifeTurns;
+}
+
+/**
+ * B-1: per-turn decay multiplier for a channel. `1` means "full ceiling"
+ * (no decay, or the turn has not advanced); with a finite half-life it follows
+ * the classic exponential form `0.5^(turns / halfLife)` so each half-life
+ * halves the channel's charge ceiling. The multiplier is applied to the
+ * channel's own charge limit only — reservations held for higher-precedence
+ * channels are subtracted first and are never decayed away.
+ */
+export function decayFactorFor(
+  channel: TurnInjectionChannel,
+  turnIndex: number,
+  env: NodeJS.ProcessEnv = process.env,
+): number {
+  const halfLife = getEffectiveChannelDecay(channel, env);
+  if (!Number.isFinite(halfLife) || halfLife <= 0 || turnIndex <= 0) {
+    return 1;
+  }
+  return Math.pow(0.5, turnIndex / halfLife);
+}
+
+/**
  * Get (or create) the ledger for a turn. All sources in one turn must pass the
  * same `turnId` — that is what makes the accounting summable.
  *
  * `killed: true` creates a zero-total ledger so every subsequent charge records a
  * `skip` with 0 chars, keeping FP-P0-02's "kill ⇒ accounting is zero" property.
+ *
+ * `turnIndex` is the B-1 decay clock: a zero-based turn counter for the session
+ * this ledger belongs to (0 ⇒ no channel decay yet). Callers that track turns
+ * pass the current index; callers that do not get 0 and decay is a no-op.
  */
 export function beginTurnInjectionBudget(params: {
   turnId: string;
   total?: number;
   killed?: boolean;
+  turnIndex?: number;
 }): TurnInjectionLedger {
   const existing = ledgers.get(params.turnId);
   if (existing) return existing;
   const killed = params.killed === true;
   const ledger: TurnInjectionLedger = {
     turnId: params.turnId,
+    turnIndex: Math.max(0, Math.floor(params.turnIndex ?? 0)),
     budget: createInjectionBudget(killed ? 0 : (params.total ?? getEffectiveTurnInjectionCharBudget())),
     entries: [],
     reservations: [],
@@ -252,6 +350,8 @@ export function chargeTurnInjection(
 ): ApplyBudgetResult {
   const charsRequested = text?.length ?? 0;
   const order = precedenceIndexOf(channel);
+  const priority = TURN_INJECTION_CHANNEL_POLICY[channel].priority;
+  const decayFactor = decayFactorFor(channel, ledger.turnIndex);
 
   if (ledger.killed || charsRequested === 0) {
     ledger.entries.push({
@@ -260,6 +360,8 @@ export function chargeTurnInjection(
       charsRequested: ledger.killed ? 0 : charsRequested,
       charsApplied: 0,
       order,
+      priority,
+      decayFactor: ledger.killed ? 1 : decayFactor,
     });
     return {
       text: undefined,
@@ -272,10 +374,10 @@ export function chargeTurnInjection(
   }
 
   const reservedForHigherPrecedence = capacityReservedForHigherPrecedence(ledger, channel);
-  const chargeLimit = Math.max(
-    0,
-    remainingBudget(ledger.budget) - reservedForHigherPrecedence,
-  );
+  const rawLimit = Math.max(0, remainingBudget(ledger.budget) - reservedForHigherPrecedence);
+  // B-1: decay shrinks this channel's ceiling, never the reservations held for
+  // higher-precedence channels (those were subtracted before the multiplier).
+  const chargeLimit = Math.max(0, Math.floor(rawLimit * decayFactor));
   const result = applyInjectionBudget(ledger.budget, text, channel, chargeLimit);
   for (const reservation of ledger.reservations) {
     if (reservation.channels.includes(channel)) {
@@ -293,6 +395,8 @@ export function chargeTurnInjection(
     charsRequested,
     charsApplied: result.charsApplied,
     order,
+    priority,
+    decayFactor,
   });
   return result;
 }
@@ -308,6 +412,8 @@ export function skipTurnInjection(
     charsRequested: 0,
     charsApplied: 0,
     order: precedenceIndexOf(channel),
+    priority: TURN_INJECTION_CHANNEL_POLICY[channel].priority,
+    decayFactor: 1,
   });
 }
 
@@ -369,15 +475,26 @@ export function endTurnInjectionBudget(turnId: string): TurnInjectionAccounting 
     // FP-P1-11: byChannel/degradationOrder ride along so the runtime ack can
     // show which sources charged this turn, not just the totals.
     dcsObservability.recordTurnInjectionAccounting({ ...accounting, turnId });
+    // B-4: score the turn's injection pressure into the context-health registry
+    // and project it onto the Observability scorecard pipeline (synthetic
+    // `ctx-health-<turnId>` trace id, bounded by its own cap).
+    const healthScore = scoreContextHealth({
+      turnId,
+      injectionPressure: scoreInjectionPressure(accounting),
+    });
+    recordContextHealth(healthScore);
+    storeRuntimeScorecard(contextHealthScoreToScorecard(healthScore));
   } catch {
     // Observability must never break a turn.
   }
   return accounting;
 }
 
-/** Test helper: drop every in-flight ledger and reset config overrides. */
+/** Test helper: drop every in-flight ledger, reset config overrides, and clear
+ * the file-backed config cache so tests never observe a stale override. */
 export function resetTurnInjectionBudgetsForTests(): void {
   ledgers.clear();
   configuredTotalChars = undefined;
   configuredDropAlertRatio = undefined;
+  resetInjectionBudgetConfigCache();
 }

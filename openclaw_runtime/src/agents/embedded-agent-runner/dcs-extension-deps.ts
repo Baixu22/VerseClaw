@@ -41,6 +41,8 @@ export type EmbeddedDcsExtensionDeps = {
    * Undefined when workspaceRoot is missing or FactService failed to open.
    */
   factService?: WorkspaceFactService;
+  /** B-3 v3: write-set coordinate for a spawned-worker child (re-anchor hint). */
+  writeSet?: string[];
 };
 
 /** Heading used in extraSystemPrompt when BlockStore/state DB is unavailable (TASK-P0-04). */
@@ -111,6 +113,8 @@ export function resolveEmbeddedDcsExtensionDeps(params: {
   env?: NodeJS.ProcessEnv;
   /** Coding workspace root for FactService (C0-3). */
   workspaceRoot?: string;
+  /** B-3 v3: write-set coordinate for a spawned-worker child. */
+  writeSet?: string[];
 }): DcsDepsResolution {
   try {
     const workingMemoryStore = new BlockStore(openOpenClawStateDatabase().db);
@@ -144,6 +148,7 @@ export function resolveEmbeddedDcsExtensionDeps(params: {
           }
         : {}),
       ...(factService ? { factService } : {}),
+      ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
     };
     if (factServiceUnavailableReason) {
       return {

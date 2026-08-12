@@ -80,6 +80,8 @@ export const ChatSendParamsSchema = Type.Object(
     sessionKey: ChatSendSessionKeyString,
     agentId: Type.Optional(NonEmptyString),
     workspaceId: Type.Optional(Type.String()),
+    /** Trusted Backend-selected workspace root for this chat session. */
+    workspaceDir: Type.Optional(NonEmptyString),
     /**
      * D3 closeout: trusted workspace authority fingerprint
      * (sha256(normalized absolute rootPath).slice(0, 16)) produced by Main

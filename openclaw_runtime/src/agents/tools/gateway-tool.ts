@@ -1,7 +1,8 @@
 /**
  * gateway built-in tool.
  *
- * Exposes selected Gateway control/config/update actions with fail-closed config mutation boundaries.
+ * Exposes selected Gateway control/config/update actions with fail-closed config mutation
+ * boundaries, plus a fail-closed allowlist of forwardable read/write gateway RPC methods.
  */
 import { isDeepStrictEqual } from "node:util";
 import { isRecord as isPlainObject } from "@openclaw/normalization-core/record-coerce";
@@ -17,6 +18,8 @@ import { normalizeConfigPatchReplacePaths } from "../../config/patch-replace-pat
 import { extractDeliveryInfo } from "../../config/sessions.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { GatewayClientRequestError } from "../../gateway/client.js";
+import { resolveCoreOperatorGatewayMethodScope } from "../../gateway/methods/core-descriptors.js";
+import { READ_SCOPE, WRITE_SCOPE } from "../../gateway/operator-scopes.js";
 import {
   buildRestartSuccessContinuation,
   formatDoctorNonInteractiveHint,
@@ -42,6 +45,7 @@ const log = createSubsystemLogger("gateway-tool");
 
 const DEFAULT_UPDATE_TIMEOUT_MS = 20 * 60_000;
 const CONFIG_SCHEMA_PATH_NOT_FOUND_MESSAGE = "config schema path not found";
+const CONFIG_SCHEMA_ROOT_PATH = ".";
 // Per SECURITY.md the model/agent itself is not a trusted principal.
 // `assertGatewayConfigMutationAllowed` is the explicit model -> operator
 // trust-boundary control on `config.apply`/`config.patch`, so the runtime tool
@@ -347,6 +351,58 @@ function assertGatewayConfigMutationAllowed(params: {
   }
 }
 
+// Fail-closed RPC forwarding boundary (issue #26): session fork, checkpoint
+// handoff, and memory-write RPCs exist on the gateway but had no agent tool
+// surface at all. Only the methods below may be forwarded generically. Every
+// entry must resolve to a read/write core operator scope — admin-scoped, node,
+// dynamic, and plugin methods stay unreachable from this tool, and the guarded
+// actions (restart / config.apply / config.patch / update.run) must never be
+// listed here or their mutation boundaries above would be bypassed.
+// `assertForwardableGatewayRpcMethod` enforces the scope invariant at runtime.
+const GATEWAY_RPC_FORWARD_ACTIONS = [
+  // Session fork + checkpoint/handoff surface.
+  "sessions.fork",
+  "sessions.resumeCheckpoints",
+  "sessions.checkpointDiff",
+  // Memory writes (proposal-first flow plus direct store/update).
+  "memory.propose",
+  "memory.store",
+  "memory.update",
+] as const;
+
+const GATEWAY_RPC_FORWARD_ACTION_SET: ReadonlySet<string> = new Set(GATEWAY_RPC_FORWARD_ACTIONS);
+
+function assertForwardableGatewayRpcMethod(method: string): void {
+  if (!GATEWAY_RPC_FORWARD_ACTION_SET.has(method)) {
+    throw new Error(`gateway action ${method} is not a forwardable RPC method.`);
+  }
+  const scope = resolveCoreOperatorGatewayMethodScope(method);
+  if (scope !== READ_SCOPE && scope !== WRITE_SCOPE) {
+    // Defense in depth: an allowlist edit cannot silently escalate past the
+    // read/write operator boundary this tool is allowed to exercise.
+    throw new Error(
+      `gateway action ${method} resolves to scope ${scope ?? "unknown"}; only read/write core gateway methods are forwardable.`,
+    );
+  }
+}
+
+function parseGatewayRpcParamsRaw(
+  raw: string | undefined,
+  action: string,
+): Record<string, unknown> {
+  if (raw === undefined) {
+    return {};
+  }
+  const parsedRes = parseConfigJson5(raw);
+  if (!parsedRes.ok) {
+    throw new Error(parsedRes.error);
+  }
+  if (!isPlainObject(parsedRes.parsed)) {
+    throw new Error(`${action} raw must be a JSON object of RPC params.`);
+  }
+  return parsedRes.parsed;
+}
+
 const GATEWAY_ACTIONS = [
   "restart",
   "config.get",
@@ -354,6 +410,7 @@ const GATEWAY_ACTIONS = [
   "config.apply",
   "config.patch",
   "update.run",
+  ...GATEWAY_RPC_FORWARD_ACTIONS,
 ] as const;
 
 // NOTE: Using a flattened object schema instead of Type.Union([Type.Object(...), ...])
@@ -369,7 +426,7 @@ const GatewayToolSchema = Type.Object({
   ...gatewayCallOptionSchemaProperties(),
   // config.schema.lookup
   path: Type.Optional(Type.String()),
-  // config.apply, config.patch
+  // config.apply, config.patch; for RPC forward actions: JSON object of RPC params
   raw: Type.Optional(Type.String()),
   baseHash: Type.Optional(Type.String()),
   replacePaths: Type.Optional(Type.Array(Type.String(), { maxItems: 256 })),
@@ -391,7 +448,7 @@ export function createGatewayTool(opts?: {
     label: "Gateway",
     name: "gateway",
     description:
-      "Gateway restart/config/update. Before config edits, use config.schema.lookup with targeted dot path. Prefer config.patch for partial merge; config.apply only full replace. For config.patch that intentionally removes array entries, pass replacePaths with the exact affected array path. Writes hot-reload or restart as needed. Always pass human `note` for post-restart delivery. If post-restart work must continue internally, pass one-shot `continuationMessage`; visible follow-up from that turn must use the message tool. Do not write restart sentinel files directly.",
+      "Gateway restart/config/update. Before config edits, use config.schema.lookup; omit path to list root fields, then follow returned child paths for targeted lookup. Prefer config.patch for partial merge; config.apply only full replace. For config.patch that intentionally removes array entries, pass replacePaths with the exact affected array path. Writes hot-reload or restart as needed. Always pass human `note` for post-restart delivery. If post-restart work must continue internally, pass one-shot `continuationMessage`; visible follow-up from that turn must use the message tool. Do not write restart sentinel files directly. Also forwards an allowlisted set of gateway RPCs — set action to the method name and pass RPC params as a JSON object string in `raw`: sessions.fork, sessions.resumeCheckpoints, sessions.checkpointDiff, memory.propose, memory.store, memory.update. RPC params use Gateway names: sessions methods take `key` (checkpointDiff also takes `checkpointId`); memory.propose/store take `{proposal:{type,scope,content}}`, and memory.update takes `{id,patch}`. Destructive checkpoint restore and other gateway methods are intentionally not callable from this tool.",
     parameters: GatewayToolSchema,
     execute: async (_toolCallId, args) => {
       const params = args as Record<string, unknown>;
@@ -502,10 +559,7 @@ export function createGatewayTool(opts?: {
         return jsonResult({ ok: true, result });
       }
       if (action === "config.schema.lookup") {
-        const path = readStringParam(params, "path", {
-          required: true,
-          label: "path",
-        });
+        const path = readStringParam(params, "path") ?? CONFIG_SCHEMA_ROOT_PATH;
         try {
           const result = await callGatewayTool("config.schema.lookup", gatewayOpts, { path });
           return jsonResult({ ok: true, result });
@@ -515,7 +569,9 @@ export function createGatewayTool(opts?: {
               ok: false,
               code: "schema_path_not_found",
               path,
-              message: CONFIG_SCHEMA_PATH_NOT_FOUND_MESSAGE,
+              recoveryPath: CONFIG_SCHEMA_ROOT_PATH,
+              message:
+                'config schema path not found; retry with path "." and follow the returned children. Agent defaults are under "agents.defaults".',
             });
           }
           throw error;
@@ -572,6 +628,15 @@ export function createGatewayTool(opts?: {
           restartDelayMs,
           timeoutMs: updateTimeoutMs,
         });
+        return jsonResult({ ok: true, result });
+      }
+      if (GATEWAY_RPC_FORWARD_ACTION_SET.has(action)) {
+        assertForwardableGatewayRpcMethod(action);
+        // Neutral forwarding: params come solely from `raw`; the gateway
+        // validates method params server-side and `callGatewayTool` resolves
+        // least-privilege operator scopes per method.
+        const rpcParams = parseGatewayRpcParamsRaw(readStringParam(params, "raw"), action);
+        const result = await callGatewayTool(action, gatewayOpts, rpcParams);
         return jsonResult({ ok: true, result });
       }
 

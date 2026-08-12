@@ -66,6 +66,7 @@ import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
 import { countActiveRunsForSession, registerSubagentRun } from "./subagent-registry.js";
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
+import { normalizeWriteSetPaths } from "./orchestration-protocol.js";
 import { resolveSubagentRunTimerDelayMs } from "./subagent-run-timeout.js";
 import { resolveSubagentSpawnAcceptedNote } from "./subagent-spawn-accepted-note.js";
 import { resolveSubagentSpawnOwnership } from "./subagent-spawn-ownership.js";
@@ -91,6 +92,7 @@ import {
   dispatchGatewayMethodInProcess,
   emitSessionLifecycleEvent,
   forkSessionFromParent,
+  formatParentForkFallbackNote,
   getGlobalHookRunner,
   getSessionBindingService,
   getRuntimeConfig,
@@ -195,6 +197,8 @@ export type SpawnSubagentParams = {
    */
   roleSystemPrompt?: string;
   orchestration?: TeamOrchestrationMetadata;
+  /** B-3 v3: write-set coordinate for the spawned worker (persisted on the child session). */
+  writeSet?: string[];
 };
 
 export type SpawnSubagentContext = {
@@ -338,6 +342,12 @@ function buildDirectChildSessionPatch(patch: Record<string, unknown>): Partial<S
   }
   if (typeof patch.spawnedCwd === "string" && patch.spawnedCwd.trim()) {
     entry.spawnedCwd = patch.spawnedCwd.trim();
+  }
+  if (Array.isArray(patch.spawnedWriteSet)) {
+    const normalized = normalizeWriteSetPaths(patch.spawnedWriteSet);
+    if (normalized && normalized.length > 0) {
+      entry.spawnedWriteSet = normalized;
+    }
   }
   const inheritedToolDeny = normalizeInheritedToolDenylist(patch.inheritedToolDeny);
   if (inheritedToolDeny.length > 0) {
@@ -532,7 +542,10 @@ async function prepareSubagentSessionContext(params: {
         storePath: parentTarget.storePath,
       });
       if (forkDecision.status === "skip") {
-        forkFallbackNote = forkDecision.message;
+        // This path genuinely falls back to an isolated child session, so the
+        // note may (and should) say so — unlike the sessions.fork RPC, which
+        // rejects instead (issue #27).
+        forkFallbackNote = formatParentForkFallbackNote(forkDecision);
         return null;
       }
 
@@ -1518,6 +1531,7 @@ export async function spawnSubagentDirect(
     spawnedBy: spawnedByKey,
     ...(spawnedMetadata.workspaceDir ? { spawnedWorkspaceDir: spawnedMetadata.workspaceDir } : {}),
     ...(spawnedCwd ? { spawnedCwd } : {}),
+    ...(params.writeSet ? { spawnedWriteSet: params.writeSet } : {}),
   });
   if (spawnLineagePatchError) {
     await cleanupFailedSpawnBeforeAgentStart({
@@ -1786,5 +1800,6 @@ export const testing = {
         }
       : defaultSubagentSpawnDeps;
   },
+  buildDirectChildSessionPatch,
 };
 export { testing as __testing };

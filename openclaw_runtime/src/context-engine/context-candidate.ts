@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { AgentMessage } from "../agents/runtime/index.js";
+import { computeNovelty } from "./context-health-monitor.js";
 import {
   chargeTurnInjection,
   precedenceIndexOf,
@@ -47,6 +48,11 @@ export type ContextCandidateLineage = {
   charsRequested: number;
   charsApplied: number;
   reason: ContextCandidateLineageReason;
+  /**
+   * B-4: information-novelty of this candidate against the projection window
+   * (0..1, 1 = fully new). Only set for unique candidates at finalize time.
+   */
+  novelty?: number;
 };
 
 export type ContextCandidateDiagnostics = {
@@ -56,6 +62,8 @@ export type ContextCandidateDiagnostics = {
   duplicates: number;
   charsRequested: number;
   charsApplied: number;
+  /** B-4: mean novelty of the unique candidates (0..1); absent when empty. */
+  avgNovelty?: number;
 };
 
 export type ContextCandidateCollection = {
@@ -271,6 +279,13 @@ function reasonForDisposition(
 export function finalizeContextCandidates(params: {
   turnId: string;
   ledger: TurnInjectionLedger;
+  /**
+   * B-4: previously injected context text (e.g. recent turns) used as the
+   * novelty comparison window. Candidates are scored against this window plus
+   * the texts injected earlier in this same projection. Default: empty (only
+   * same-turn overlap counts).
+   */
+  historyWindow?: readonly string[];
 }): ContextCandidateProjection {
   const collection = beginContextCandidateCollection(params.turnId);
   if (collection.projection) return collection.projection;
@@ -278,6 +293,9 @@ export function finalizeContextCandidates(params: {
   const seen = new Set<string>();
   const systemPromptParts: string[] = [];
   const messages: AgentMessage[] = [];
+  const injectedTexts: string[] = [...(params.historyWindow ?? [])];
+  let noveltySum = 0;
+  let noveltyCount = 0;
 
   for (const index of sortedCandidateIndexes(collection)) {
     const candidate = collection.candidates[index]!;
@@ -291,6 +309,11 @@ export function finalizeContextCandidates(params: {
     seen.add(candidate.dedupKey);
     collection.diagnostics.unique += 1;
 
+    // B-4: novelty against prior injected text (history + this turn).
+    lineage.novelty = computeNovelty(candidate.text, injectedTexts);
+    noveltySum += lineage.novelty;
+    noveltyCount += 1;
+
     const charged = chargeTurnInjection(params.ledger, candidate.channel, candidate.text);
     const entry = params.ledger.entries.at(-1);
     lineage.disposition = entry?.disposition ?? "skip";
@@ -301,11 +324,16 @@ export function finalizeContextCandidates(params: {
     collection.diagnostics.charsApplied += lineage.charsApplied;
 
     if (!charged.text) continue;
+    injectedTexts.push(charged.text);
     if (candidate.target === "system_prompt") {
       systemPromptParts.push(charged.text);
     } else {
       messages.push({ role: "user", content: charged.text, timestamp: Date.now() });
     }
+  }
+
+  if (noveltyCount > 0) {
+    collection.diagnostics.avgNovelty = noveltySum / noveltyCount;
   }
 
   const orderedLineage = collection.lineage.toSorted((left, right) => {

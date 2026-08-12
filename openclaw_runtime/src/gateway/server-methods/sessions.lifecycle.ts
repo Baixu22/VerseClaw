@@ -463,7 +463,25 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       storePath: source.storePath,
     });
     if (forkDecision.status === "skip") {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, forkDecision.message));
+      // Fail-closed rejection: no child session is created on this path, so
+      // the error must not imply an isolated-context fallback (issue #27). The
+      // structured details let agents detect the condition without parsing
+      // the message text.
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `${forkDecision.message} No fork was created; compact the source session first or fork a smaller session.`,
+          {
+            details: {
+              reason: forkDecision.reason,
+              parentTokens: forkDecision.parentTokens,
+              maxTokens: forkDecision.maxTokens,
+            },
+          },
+        ),
+      );
       return;
     }
     const forked = await forkSessionFromParent({
