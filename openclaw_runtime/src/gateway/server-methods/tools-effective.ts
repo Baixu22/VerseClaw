@@ -13,6 +13,7 @@ import type {
   EffectiveToolInventoryResult,
 } from "../../agents/tools-effective-inventory.types.js";
 import { buildRuntimeCompatibleMcpToolInventory } from "../../agents/tools-effective-mcp-inventory.js";
+import { resolveSessionWorkspaceDir } from "../../agents/spawned-context.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { toErrorObject } from "../../infra/errors.js";
 import { recordLocalControlPlaneReport } from "../../local-control-plane/index.js";
@@ -540,7 +541,10 @@ function resolveTrustedToolsEffectiveContext(params: {
   const delivery = deliveryContextFromSession(loaded.entry);
   const resolvedModel = resolveSessionModelRef(loaded.cfg, loaded.entry, sessionAgentId);
   const workspaceDir =
-    normalizeOptionalString(loaded.entry.spawnedWorkspaceDir) ??
+    resolveSessionWorkspaceDir({
+      spawnedWorkspaceDir: loaded.entry.spawnedWorkspaceDir,
+      persistedWorkspaceDir: loaded.entry.workspaceDir,
+    }) ??
     resolveAgentWorkspaceDir(loaded.cfg, sessionAgentId);
   const runtimeConfigCacheKey = resolveRuntimeConfigCacheKey(loaded.cfg);
   const pluginRegistryVersion = getActivePluginRegistryVersion();

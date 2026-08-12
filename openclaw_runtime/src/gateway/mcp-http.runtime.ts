@@ -3,12 +3,14 @@
 import type { SourceReplyDeliveryMode } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { resolveSessionWorkspaceDir } from "../agents/spawned-context.js";
 import {
   buildMcpToolSchema,
   type McpLoopbackTool,
   type McpToolSchemaEntry,
 } from "./mcp-http.schema.js";
 import { resolveGatewayScopedTools } from "./tool-resolution.js";
+import { loadSessionEntry } from "./session-utils.js";
 
 // MCP loopback runtime scopes gateway tools to the current session/channel
 // context and caches the expensive schema projection for short bursts of tool
@@ -60,8 +62,14 @@ export class McpLoopbackToolCache {
   #entries = new Map<string, CachedScopedTools>();
 
   resolve(params: McpLoopbackScopeParams): CachedScopedTools {
+    const sessionEntry = loadSessionEntry(params.sessionKey, { clone: false }).entry;
+    const sessionWorkspaceDir = resolveSessionWorkspaceDir({
+      spawnedWorkspaceDir: sessionEntry?.spawnedWorkspaceDir,
+      persistedWorkspaceDir: sessionEntry?.workspaceDir,
+    });
     const cacheKey = [
       params.sessionKey,
+      sessionWorkspaceDir ?? "",
       params.messageProvider ?? "",
       params.currentChannelId ?? "",
       params.currentThreadTs ?? "",

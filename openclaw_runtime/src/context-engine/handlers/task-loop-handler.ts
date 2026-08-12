@@ -13,8 +13,10 @@ import type { RuntimeTaskStatus } from "../../runtime-core/types.js";
 import type {
   ContextBlock,
   ContextBlockSink,
+  EntitySnapshot,
   HandoffPack,
 } from "../block.js";
+import { ENTITY_SNAPSHOT_CAP } from "../block.js";
 import type { BlockStoreApi } from "../block.js";
 import { parseHandoffPack } from "../block-store.js";
 import type { WorkingMemoryAction } from "./working-memory-handler.js";
@@ -34,6 +36,94 @@ export interface HandleTaskPhaseChangeParams {
   workingMemoryStore?: Pick<BlockStoreApi, "query">;
   contextBlockSink?: ContextBlockSink;
   now?: Date;
+}
+
+/**
+ * B-3: gather a structured entity snapshot for a HandoffPack, derived from the
+ * write-set and recent high-significance actions, optionally merged with
+ * external sources (FactStore symbols / SEKB decisions — see
+ * `buildChildHandoffFromParent`).
+ *
+ *   - `files`   — the write-set paths (bounded).
+ *   - `symbols` — identifier-like tokens extracted from action summaries
+ *                 (camelCase/PascalCase words and dotted paths), merged with
+ *                 any externally-supplied symbol names.
+ *   - `decisions` — condition → action pairs distilled from high-significance
+ *                 actions, merged with externally-supplied decisions
+ *                 (deduplicated by condition+action).
+ *
+ * The snapshot is a *retrieval pointer* for the restore side, not context text.
+ */
+export function gatherEntitySnapshot(params: {
+  writeSet?: readonly string[];
+  recentActions?: readonly WorkingMemoryAction[];
+  /** B-3 v2: externally extracted symbols (e.g. FactStore), merged with derived. */
+  symbols?: readonly string[];
+  /** B-3 v2: externally sourced decisions (e.g. SEKB principles), merged with derived. */
+  decisions?: ReadonlyArray<EntitySnapshot["decisions"][number]>;
+}): EntitySnapshot | undefined {
+  const files = (params.writeSet ?? [])
+    .filter((file) => typeof file === "string" && file.trim().length > 0)
+    .slice(0, ENTITY_SNAPSHOT_CAP);
+  const derivedSymbols = new Set<string>();
+  for (const action of params.recentActions ?? []) {
+    for (const token of identifierTokens(action.result_summary)) {
+      derivedSymbols.add(token);
+      if (derivedSymbols.size >= ENTITY_SNAPSHOT_CAP) break;
+    }
+    if (derivedSymbols.size >= ENTITY_SNAPSHOT_CAP) break;
+  }
+  const symbols = new Set<string>(derivedSymbols);
+  for (const symbol of params.symbols ?? []) {
+    if (typeof symbol !== "string" || symbol.trim().length === 0) continue;
+    symbols.add(symbol.trim().slice(0, 512));
+    if (symbols.size >= ENTITY_SNAPSHOT_CAP) break;
+  }
+  const derivedDecisions = (params.recentActions ?? [])
+    .filter((action) => action.significance === "high")
+    .map((action) => ({
+      condition: `${action.tool} succeeded`,
+      action: action.result_summary,
+    }));
+  const decisionKeys = new Set<string>();
+  const decisions: EntitySnapshot["decisions"] = [];
+  for (const decision of [...derivedDecisions, ...(params.decisions ?? [])]) {
+    if (!decision || typeof decision.condition !== "string" || typeof decision.action !== "string") {
+      continue;
+    }
+    const key = `${decision.condition.slice(0, 100)}::${decision.action.slice(0, 100)}`;
+    if (decisionKeys.has(key)) continue;
+    decisionKeys.add(key);
+    decisions.push({ condition: decision.condition, action: decision.action });
+    if (decisions.length >= ENTITY_SNAPSHOT_CAP) break;
+  }
+  if (files.length === 0 && symbols.size === 0 && decisions.length === 0) {
+    return undefined;
+  }
+  return {
+    files: [...files],
+    symbols: [...symbols],
+    decisions,
+  };
+}
+
+/**
+ * Extract identifier-like tokens from a summary: dotted paths (e.g.
+ * `src/auth/middleware.ts`) and camelCase/PascalCase words. Deterministic,
+ * no external deps.
+ */
+function identifierTokens(summary: string): string[] {
+  const out = new Set<string>();
+  // Dotted / slashed paths, then camelCase words.
+  const pathPattern = /[\w./-]+\.(?:ts|tsx|js|jsx|mjs|cjs|json|py|go|rs|java|css|md|vue|svelte)\b/g;
+  for (const match of summary.matchAll(pathPattern)) {
+    out.add(match[0].slice(0, 200));
+  }
+  const wordPattern = /\b[A-Z][a-zA-Z0-9]{2,}\b|\b[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]+\b/g;
+  for (const match of summary.matchAll(wordPattern)) {
+    out.add(match[0].slice(0, 100));
+  }
+  return [...out];
 }
 
 /**
@@ -61,11 +151,13 @@ export async function handleTaskPhaseChange(
     params.workingMemoryStore,
   );
 
+  const entitySnapshot = gatherEntitySnapshot({ recentActions });
   const handoffPack: HandoffPack = {
     objective: params.objective.slice(0, 2000),
     current_phase: params.event.toStatus,
     recent_actions: recentActions.slice(0, 5),
     parent_session_id: params.parentSessionId ?? sessionId,
+    ...(entitySnapshot ? { entity_snapshot: entitySnapshot } : {}),
   };
 
   const block: ContextBlock = {
@@ -132,25 +224,107 @@ export const CHILD_CONTEXT_READ_INSTRUCTION =
   "Before starting your task, use the context_read tool to read your task_state Block for your objective, current phase, recent actions, and parent session context.";
 
 /**
+ * B-3 v2: externally extract symbols for a workspace's files via the FactStore
+ * bridge. Returns the bounded symbol names (camelCase identifiers), or an empty
+ * list when no workspace/bridge is available or the store has nothing for the
+ * files. Callers must wrap this in try/catch — FactStore materialization is
+ * best-effort and must never break a handoff write.
+ */
+export function gatherWorkspaceSymbols(params: {
+  workspaceDir?: string;
+  files: readonly string[];
+  bridgeFactory?: (workspaceRoot: string) => { symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }> };
+}): string[] {
+  if (!params.workspaceDir || params.files.length === 0 || !params.bridgeFactory) {
+    return [];
+  }
+  try {
+    const overviews = params.bridgeFactory(params.workspaceDir).symbolOverviews({
+      activeFiles: [...params.files],
+    });
+    const out: string[] = [];
+    for (const overview of overviews ?? []) {
+      for (const symbol of overview.symbols ?? []) {
+        if (typeof symbol?.name !== "string" || symbol.name.trim().length === 0) continue;
+        out.push(symbol.name.trim().slice(0, 200));
+        if (out.length >= ENTITY_SNAPSHOT_CAP) return out;
+      }
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * B-3 v2: externally gather distilled decisions from the SEKB knowledge store —
+ * active principles ordered by adoption (most-adopted first), bounded. Returns
+ * an empty list when no store is available. Callers must wrap in try/catch.
+ */
+export function gatherSekbDecisions(params: {
+  store?: { query_principles(filters: { status: "active" }): Array<{ condition: string; action: string; adoption_count: number }> };
+}): EntitySnapshot["decisions"] {
+  if (!params.store) {
+    return [];
+  }
+  try {
+    const principles = params.store.query_principles({ status: "active" }) ?? [];
+    return principles
+      .sort((a, b) => (b.adoption_count ?? 0) - (a.adoption_count ?? 0))
+      .slice(0, ENTITY_SNAPSHOT_CAP)
+      .filter((principle) => typeof principle?.condition === "string" && typeof principle?.action === "string")
+      .map((principle) => ({
+        condition: principle.condition.slice(0, 200),
+        action: principle.action.slice(0, 500),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Build a HandoffPack for a child session from the parent's current state.
  * Gathers recent actions from the parent's persisted working-memory, then
  * builds a HandoffPack with the parent as the parent_session_id.
+ *
+ * B-3 v2: when `workspaceDir` and a `bridgeFactory` are supplied, symbols for
+ * the write-set files are pulled from the FactStore and merged into the entity
+ * snapshot; when a `sekbStore` is supplied, the most-adopted active principles
+ * are merged as decisions. Both are best-effort and failure-safe.
  */
 export async function buildChildHandoffFromParent(params: {
   parentSessionKey: string;
   objective: string;
   currentPhase: RuntimeTaskStatus;
   workingMemoryStore?: Pick<BlockStoreApi, "query">;
+  /** C4-3: optional write-set coordinate forwarded into the child pack. */
+  writeSet?: string[];
+  /** B-3 v2: workspace root used to resolve FactStore symbols (optional). */
+  workspaceDir?: string;
+  /** B-3 v2: FactStore bridge factory for symbol extraction (optional). */
+  bridgeFactory?: (workspaceRoot: string) => { symbolOverviews(query: { activeFiles?: string[] }): Array<{ symbols: Array<{ name: string }> }> };
+  /** B-3 v2: SEKB knowledge store for distilled decisions (optional). */
+  sekbStore?: { query_principles(filters: { status: "active" }): Array<{ condition: string; action: string; adoption_count: number }> };
 }): Promise<HandoffPack> {
   const recentActions = await gatherRecentActions(
     params.parentSessionKey,
     params.workingMemoryStore,
   );
+  const files = (params.writeSet ?? []).slice(0, ENTITY_SNAPSHOT_CAP);
+  const symbols = gatherWorkspaceSymbols({
+    workspaceDir: params.workspaceDir,
+    files,
+    bridgeFactory: params.bridgeFactory,
+  });
+  const decisions = gatherSekbDecisions({ store: params.sekbStore });
   return buildChildHandoffPack({
     objective: params.objective,
     currentPhase: params.currentPhase,
     recentActions,
     parentSessionId: params.parentSessionKey,
+    writeSet: params.writeSet,
+    symbols,
+    decisions,
   });
 }
 
@@ -171,7 +345,17 @@ export function buildChildHandoffPack(params: {
   worktreeRoot?: string;
   /** C4-4: isolation mode (default shared when omitted). */
   isolation?: "shared" | "worktree";
+  /** B-3 v2: externally extracted symbols merged into the entity snapshot. */
+  symbols?: readonly string[];
+  /** B-3 v2: externally sourced decisions merged into the entity snapshot. */
+  decisions?: ReadonlyArray<EntitySnapshot["decisions"][number]>;
 }): HandoffPack {
+  const entitySnapshot = gatherEntitySnapshot({
+    writeSet: params.writeSet,
+    recentActions: params.recentActions,
+    symbols: params.symbols,
+    decisions: params.decisions,
+  });
   return {
     objective: params.objective.slice(0, 2000),
     current_phase: params.currentPhase,
@@ -183,6 +367,7 @@ export function buildChildHandoffPack(params: {
     ...(params.worktreeId ? { worktreeId: params.worktreeId } : {}),
     ...(params.worktreeRoot ? { worktreeRoot: params.worktreeRoot } : {}),
     ...(params.isolation ? { isolation: params.isolation } : {}),
+    ...(entitySnapshot ? { entity_snapshot: entitySnapshot } : {}),
   };
 }
 

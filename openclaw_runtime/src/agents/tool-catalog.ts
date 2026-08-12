@@ -69,6 +69,13 @@ const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
     profiles: ["coding"],
   },
   {
+    id: "ls",
+    label: "ls",
+    description: "List directory contents",
+    sectionId: "fs",
+    profiles: ["coding"],
+  },
+  {
     id: "write",
     label: "write",
     description: "Create or overwrite files",
@@ -205,6 +212,14 @@ const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
     description: "Review a diff for related tests and blast radius",
     sectionId: "memory",
     profiles: ["coding"],
+    includeInOpenClawGroup: true,
+  },
+  {
+    id: "sessions_compact",
+    label: "sessions_compact",
+    description: "Compact the current session after this turn",
+    sectionId: "sessions",
+    profiles: ["coding", "messaging"],
     includeInOpenClawGroup: true,
   },
   {
@@ -476,7 +491,7 @@ function buildCoreToolGroupMap() {
 }
 
 /** Built-in core tool groups keyed by group id. */
-export const CORE_TOOL_GROUPS = buildCoreToolGroupMap();
+export const CORE_TOOL_GROUPS: Record<string, string[]> = buildCoreToolGroupMap();
 
 /** Profile options shown in model/tool configuration UIs. */
 export const PROFILE_OPTIONS = [

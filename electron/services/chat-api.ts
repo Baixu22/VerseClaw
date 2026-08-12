@@ -451,6 +451,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
           rpcParams.workspaceId = workspaceId;
           const rootPath = await getWorkspaceRootPathById(workspaceId);
           if (rootPath) {
+            rpcParams.workspaceDir = rootPath;
             const workspaceFingerprint = computeWorkspaceFingerprint(rootPath);
             if (workspaceFingerprint) {
               rpcParams.workspaceFingerprint = workspaceFingerprint;

@@ -13,6 +13,9 @@ import type { ContextBlockSink, HandoffPack } from "../block.js";
 import { createContextBlockSink } from "../../agents/harness/hook-context.js";
 import {
   buildChildHandoffPack,
+  gatherEntitySnapshot,
+  gatherSekbDecisions,
+  gatherWorkspaceSymbols,
   handleTaskPhaseChange,
   isTerminalPhase,
   restoreChildState,
@@ -239,6 +242,177 @@ describe("restoreChildState", () => {
       store,
     });
     expect(restored).toBeUndefined();
+  });
+});
+
+describe("B-3 entity snapshot", () => {
+  it("gathers files and symbols from a write-set and action summaries", () => {
+    const snapshot = gatherEntitySnapshot({
+      writeSet: ["src/auth/middleware.ts", "src/auth/rotator.ts"],
+      recentActions: [
+        { tool: "edit", result_summary: "Edited src/auth/middleware.ts: added JWT rotation", significance: "high" },
+        { tool: "grep", result_summary: "Found verifyToken callers in legacyAuth", significance: "medium" },
+      ],
+    });
+    expect(snapshot?.files).toContain("src/auth/middleware.ts");
+    expect(snapshot?.symbols.some((s) => s.includes("middleware.ts"))).toBe(true);
+    expect(snapshot?.symbols.some((s) => s.includes("verifyToken"))).toBe(true);
+    expect(snapshot?.decisions[0]?.condition).toBe("edit succeeded");
+    expect(snapshot?.decisions[0]?.action).toContain("JWT rotation");
+  });
+
+  it("returns undefined when there is nothing to snapshot", () => {
+    expect(gatherEntitySnapshot({})).toBeUndefined();
+    expect(
+      gatherEntitySnapshot({ writeSet: [], recentActions: [{ tool: "grep", result_summary: "no matches", significance: "medium" }] }),
+    ).toBeUndefined();
+  });
+
+  it("caps each snapshot list at the entity cap", () => {
+    const writeSet = Array.from({ length: 50 }, (_, i) => `file-${i}.ts`);
+    const recentActions = Array.from({ length: 50 }, (_, i) => ({
+      tool: "edit",
+      result_summary: `Edited file-${i}.ts: added rotation policy for LegacyAuth${i}`,
+      significance: "high" as const,
+    }));
+    const snapshot = gatherEntitySnapshot({ writeSet, recentActions });
+    expect(snapshot?.files.length).toBeLessThanOrEqual(20);
+    expect(snapshot?.symbols.length).toBeLessThanOrEqual(20);
+    expect(snapshot?.decisions.length).toBeLessThanOrEqual(20);
+  });
+
+  it("buildChildHandoffPack attaches the snapshot when derivable", () => {
+    const pack = buildChildHandoffPack({
+      objective: "Refactor auth",
+      currentPhase: "running",
+      recentActions: [
+        { tool: "edit", result_summary: "Edited src/auth/middleware.ts: added JWT rotation", significance: "high" },
+      ],
+      parentSessionId: "agent:parent:main",
+      writeSet: ["src/auth/middleware.ts"],
+    });
+    expect(pack.entity_snapshot?.files).toContain("src/auth/middleware.ts");
+    expect(pack.entity_snapshot?.symbols.length).toBeGreaterThan(0);
+  });
+
+  it("handleTaskPhaseChange persists the snapshot and restoreChildState round-trips it", async () => {
+    const sessionId = "agent:b3:main";
+    const wmBlock = handleWorkingMemoryAction({
+      sessionId,
+      action: {
+        tool: "edit",
+        result_summary: "Edited src/auth/middleware.ts: added JWT rotation",
+        significance: "high",
+      },
+    });
+    await store.upsert(wmBlock, { significance: "high", write_origin: "handler" });
+    const write = await handleTaskPhaseChange({
+      event: { sessionId, taskId: "task-b3", fromStatus: "running", toStatus: "completed" },
+      objective: "Add JWT rotation to auth middleware",
+      parentSessionId: sessionId,
+      contextBlockSink: sink,
+      workingMemoryStore: store,
+    });
+    expect(write?.accepted).toBe(true);
+    const restored = await restoreChildState({ childSessionKey: sessionId, store });
+    expect(restored?.entity_snapshot?.symbols.some((s) => s.includes("middleware.ts"))).toBe(true);
+    expect(restored?.entity_snapshot?.decisions.length).toBeGreaterThan(0);
+  });
+
+  it("BlockStore rejects a HandoffPack with an invalid entity_snapshot", async () => {
+    const malformed: HandoffPack = {
+      objective: "Bad snapshot",
+      current_phase: "running",
+      recent_actions: [],
+      parent_session_id: "agent:parent:main",
+      entity_snapshot: { files: ["ok.ts"], symbols: [], decisions: [{ condition: "x".repeat(201), action: "y" }] },
+    };
+    const childKey = "agent:child:subagent:bad-snapshot";
+    await writeChildHandoffPack({
+      childSessionKey: childKey,
+      handoffPack: malformed,
+      contextBlockSink: sink,
+    });
+    const restored = await restoreChildState({ childSessionKey: childKey, store });
+    expect(restored).toBeUndefined();
+  });
+
+  it("merges externally supplied symbols and decisions into the snapshot", () => {
+    const snapshot = gatherEntitySnapshot({
+      writeSet: ["src/auth/middleware.ts"],
+      recentActions: [
+        { tool: "edit", result_summary: "Edited src/auth/middleware.ts", significance: "high" },
+      ],
+      symbols: ["rotateJwt", "verifyToken"],
+      decisions: [{ condition: "token near expiry", action: "rotate before use" }],
+    });
+    expect(snapshot?.symbols).toContain("rotateJwt");
+    expect(snapshot?.symbols).toContain("verifyToken");
+    expect(snapshot?.decisions.some((d) => d.condition === "token near expiry")).toBe(true);
+    // Derived decision (edit succeeded) is still merged alongside.
+    expect(snapshot?.decisions.some((d) => d.condition === "edit succeeded")).toBe(true);
+  });
+
+  it("deduplicates decisions merged from multiple sources", () => {
+    const decisions = [{ condition: "edit succeeded", action: "Edited src/auth/middleware.ts" }];
+    const snapshot = gatherEntitySnapshot({
+      recentActions: [
+        { tool: "edit", result_summary: "Edited src/auth/middleware.ts", significance: "high" },
+      ],
+      decisions,
+    });
+    const matches = snapshot?.decisions.filter(
+      (d) => d.condition === "edit succeeded" && d.action === "Edited src/auth/middleware.ts",
+    );
+    expect(matches?.length).toBe(1);
+  });
+
+  it("gatherWorkspaceSymbols extracts symbol names from a bridge", () => {
+    const bridgeFactory = () => ({
+      symbolOverviews: () => [
+        { symbols: [{ name: "rotateJwt" }, { name: "verifyToken" }] },
+        { symbols: [{ name: "unusedLegacy" }] },
+      ],
+    });
+    const symbols = gatherWorkspaceSymbols({
+      workspaceDir: "C:/repo",
+      files: ["src/auth/middleware.ts"],
+      bridgeFactory: bridgeFactory as never,
+    });
+    expect(symbols).toContain("rotateJwt");
+    expect(symbols).toContain("verifyToken");
+    expect(symbols).toContain("unusedLegacy");
+  });
+
+  it("gatherWorkspaceSymbols degrades gracefully without a workspace", () => {
+    expect(gatherWorkspaceSymbols({ files: ["a.ts"] })).toEqual([]);
+    expect(gatherWorkspaceSymbols({ workspaceDir: "C:/repo", files: [] })).toEqual([]);
+    const throwing = () => {
+      throw new Error("store unavailable");
+    };
+    expect(
+      gatherWorkspaceSymbols({
+        workspaceDir: "C:/repo",
+        files: ["a.ts"],
+        bridgeFactory: throwing as never,
+      }),
+    ).toEqual([]);
+  });
+
+  it("gatherSekbDecisions returns adopted principles ordered by adoption", () => {
+    const store = {
+      query_principles: () => [
+        { condition: "low adoption", action: "a", adoption_count: 1 },
+        { condition: "high adoption", action: "b", adoption_count: 9 },
+      ],
+    };
+    const decisions = gatherSekbDecisions({ store: store as never });
+    expect(decisions[0]?.condition).toBe("high adoption");
+    expect(decisions[1]?.condition).toBe("low adoption");
+  });
+
+  it("gatherSekbDecisions degrades gracefully without a store", () => {
+    expect(gatherSekbDecisions({})).toEqual([]);
   });
 });
 

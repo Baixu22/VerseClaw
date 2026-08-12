@@ -19,12 +19,23 @@ export type ReadOnlyWorkspaceSkillMount = {
   containerPath: string;
 };
 
+/**
+ * Optional bind-source translator applied just before `-v` arguments are
+ * emitted (e.g. Windows → WSL2 paths when the Docker daemon is Linux). Security
+ * validation and config hashing still see the original host paths.
+ */
+export type BindSourcePathTranslator = (hostPath: string) => string;
+
 function formatManagedWorkspaceBind(params: {
   hostPath: string;
   containerPath: string;
   readOnly: boolean;
+  translateHostPath?: BindSourcePathTranslator;
 }): string {
-  return `${params.hostPath}:${params.containerPath}:${params.readOnly ? "ro,z" : "z"}`;
+  const hostPath = params.translateHostPath
+    ? params.translateHostPath(params.hostPath)
+    : params.hostPath;
+  return `${hostPath}:${params.containerPath}:${params.readOnly ? "ro,z" : "z"}`;
 }
 
 function containerJoin(root: string, ...parts: string[]): string {
@@ -122,6 +133,7 @@ export function formatReadOnlyWorkspaceSkillMountHashState(
 export function appendReadOnlyWorkspaceSkillMountArgs(params: {
   args: string[];
   readOnlyWorkspaceSkillMounts: readonly ReadOnlyWorkspaceSkillMount[];
+  translateHostPath?: BindSourcePathTranslator;
 }): void {
   for (const mount of params.readOnlyWorkspaceSkillMounts) {
     params.args.push(
@@ -130,6 +142,7 @@ export function appendReadOnlyWorkspaceSkillMountArgs(params: {
         hostPath: mount.hostPath,
         containerPath: mount.containerPath,
         readOnly: true,
+        translateHostPath: params.translateHostPath,
       }),
     );
   }
@@ -145,6 +158,7 @@ export function appendWorkspaceMountArgs(params: {
   workspaceAccess: SandboxWorkspaceAccess;
   readOnlyWorkspaceSkillMounts?: readonly ReadOnlyWorkspaceSkillMount[];
   includeReadOnlyWorkspaceSkillMounts?: boolean;
+  translateHostPath?: BindSourcePathTranslator;
 }) {
   const { args, workspaceDir, agentWorkspaceDir, workdir, workspaceAccess } = params;
 
@@ -154,6 +168,7 @@ export function appendWorkspaceMountArgs(params: {
       hostPath: workspaceDir,
       containerPath: workdir,
       readOnly: workspaceAccess !== "rw",
+      translateHostPath: params.translateHostPath,
     }),
   );
 
@@ -164,6 +179,7 @@ export function appendWorkspaceMountArgs(params: {
         hostPath: agentWorkspaceDir,
         containerPath: SANDBOX_AGENT_WORKSPACE_MOUNT,
         readOnly: workspaceAccess === "ro",
+        translateHostPath: params.translateHostPath,
       }),
     );
   }
@@ -180,6 +196,7 @@ export function appendWorkspaceMountArgs(params: {
           workdir,
           workspaceAccess,
         }),
+      translateHostPath: params.translateHostPath,
     });
   }
 }

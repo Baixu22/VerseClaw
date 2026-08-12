@@ -71,6 +71,8 @@ export type RunEmbeddedAgentParams = {
   memberRoleIds?: string[];
   /** Parent session key for subagent policy inheritance. */
   spawnedBy?: string | null;
+  /** B-3 v3: write-set coordinate for spawned-worker runs (files the worker is expected to touch). */
+  writeSet?: string[];
   /** Whether workspaceDir points at the canonical agent workspace for bootstrap purposes. */
   isCanonicalWorkspace?: boolean;
   senderId?: string | null;

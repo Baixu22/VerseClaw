@@ -60,3 +60,10 @@ export function hasLocalAuthProfileStoreSource(agentDir?: string): boolean {
     readPersistedAuthProfileStoreRaw(agentDir) || readPersistedAuthProfileStateRaw(agentDir),
   );
 }
+
+/** Returns true when Doctor can migrate an existing JSON store into an empty SQLite store. */
+export function hasPendingAuthProfileJsonMigration(agentDir?: string): boolean {
+  return (
+    fs.existsSync(resolveAuthStorePath(agentDir)) && !readPersistedAuthProfileStoreRaw(agentDir)
+  );
+}

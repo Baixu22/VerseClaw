@@ -319,6 +319,7 @@ export async function initSessionState(params: {
   let persistedLabel: string | undefined;
   let persistedSpawnedBy: SessionEntry["spawnedBy"];
   let persistedSpawnedWorkspaceDir: SessionEntry["spawnedWorkspaceDir"];
+  let persistedWorkspaceDir: SessionEntry["workspaceDir"];
   let persistedSpawnedCwd: SessionEntry["spawnedCwd"];
   let persistedParentSessionKey: SessionEntry["parentSessionKey"];
   let persistedForkedFromParent: SessionEntry["forkedFromParent"];
@@ -519,6 +520,7 @@ export async function initSessionState(params: {
     persistedAuthProfileOverrideSource = entry.authProfileOverrideSource;
     persistedAuthProfileOverrideCompactionCount = entry.authProfileOverrideCompactionCount;
     persistedLabel = entry.label;
+    persistedWorkspaceDir = entry.workspaceDir;
   } else {
     sessionId = crypto.randomUUID();
     isNewSession = true;
@@ -551,6 +553,7 @@ export async function initSessionState(params: {
       persistedLabel = entry.label;
       persistedSpawnedBy = entry.spawnedBy;
       persistedSpawnedWorkspaceDir = entry.spawnedWorkspaceDir;
+      persistedWorkspaceDir = entry.workspaceDir;
       persistedSpawnedCwd = entry.spawnedCwd;
       persistedParentSessionKey = entry.parentSessionKey;
       persistedForkedFromParent = entry.forkedFromParent;
@@ -675,6 +678,7 @@ export async function initSessionState(params: {
     label: persistedLabel ?? baseEntry?.label,
     spawnedBy: persistedSpawnedBy ?? baseEntry?.spawnedBy,
     spawnedWorkspaceDir: persistedSpawnedWorkspaceDir ?? baseEntry?.spawnedWorkspaceDir,
+    workspaceDir: normalizeOptionalString(ctx.WorkspaceDir) ?? persistedWorkspaceDir ?? baseEntry?.workspaceDir,
     spawnedCwd: persistedSpawnedCwd ?? baseEntry?.spawnedCwd,
     parentSessionKey: persistedParentSessionKey ?? baseEntry?.parentSessionKey,
     forkedFromParent: persistedForkedFromParent ?? baseEntry?.forkedFromParent,

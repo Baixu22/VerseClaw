@@ -87,6 +87,13 @@ export function resolveConfiguredScopeHash(params: {
   );
 }
 
+export function shouldAttemptMissingMemoryIndexRecovery(params: {
+  identity: MemoryIndexIdentityState;
+  hasIndexedChunks: boolean;
+}): boolean {
+  return params.identity.status === "missing" && params.hasIndexedChunks;
+}
+
 export function isMemoryIndexIdentityDirty(params: {
   meta: MemoryIndexMeta | null;
   provider: { id: string; model: string } | null;

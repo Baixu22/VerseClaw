@@ -108,6 +108,39 @@ class RemoteShellSandboxFsBridge implements SandboxFsBridge {
     return result.stdout;
   }
 
+  async readdir(params: {
+    filePath: string;
+    cwd?: string;
+    signal?: AbortSignal;
+  }): Promise<string[]> {
+    const target = this.resolveTarget(params);
+    const canonical = await this.resolveCanonicalPath({
+      containerPath: target.containerPath,
+      action: "list directories",
+      signal: params.signal,
+    });
+    const mount = this.resolveMountByContainerPath(this.getMounts(), canonical);
+    if (!mount) {
+      throw new Error(
+        `Sandbox path escapes allowed mounts; cannot list directories: ${target.containerPath}`,
+      );
+    }
+    const relativePath = path.posix.relative(mount.containerRoot, canonical);
+    if (relativePathEscapesContainerRoot(relativePath)) {
+      throw new Error(
+        `Sandbox path escapes allowed mounts; cannot list directories: ${target.containerPath}`,
+      );
+    }
+    const result = await this.runMutation({
+      args: ["readdir", mount.containerRoot, relativePath === "." ? "" : relativePath],
+      signal: params.signal,
+    });
+    return result.stdout
+      .toString("utf8")
+      .split("\0")
+      .filter((entry) => entry.length > 0);
+  }
+
   async writeFile(params: {
     filePath: string;
     cwd?: string;

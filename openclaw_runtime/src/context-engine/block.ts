@@ -80,7 +80,32 @@ export interface HandoffPack {
   worktreeRoot?: string;
   /** C4-4: isolation mode (default shared when omitted). */
   isolation?: "shared" | "worktree";
+  /**
+   * B-3: structured entity snapshot carried across the session boundary.
+   * Used as a *retrieval pointer* on restore (e.g. to seed context_understand
+   * pre-fetch), not injected verbatim into the child prompt.
+   */
+  entity_snapshot?: EntitySnapshot;
 }
+
+/**
+ * B-3: entity snapshot attached to a HandoffPack. Each list is capped at 20
+ * entries so the snapshot stays bounded; the restore side only needs enough
+ * identifiers to re-anchor the child, not the full corpus.
+ */
+export interface EntitySnapshot {
+  /** Files the parent touched (paths, derived from the write-set when present). */
+  files: string[];
+  /** Symbol names the parent worked with (name-only identifiers). */
+  symbols: string[];
+  /** Distilled decisions: condition → action pairs from high-significance work. */
+  decisions: Array<{
+    condition: string;
+    action: string;
+  }>;
+}
+
+export const ENTITY_SNAPSHOT_CAP = 20;
 
 export interface BlockAdmissionContext {
   significance?: "high" | "medium" | "low";

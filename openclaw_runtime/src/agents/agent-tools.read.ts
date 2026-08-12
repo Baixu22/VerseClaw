@@ -35,7 +35,7 @@ import { toRelativeWorkspacePath } from "./path-policy.js";
 import type { AgentToolResult } from "./runtime/index.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
-import { createEditTool, createReadTool, createWriteTool } from "./sessions/index.js";
+import { createEditTool, createLsTool, createReadTool, createWriteTool } from "./sessions/index.js";
 import { sanitizeToolResultImages } from "./tool-images.js";
 
 export {
@@ -843,6 +843,13 @@ export function createSandboxedReadTool(params: SandboxToolParams) {
   });
 }
 
+/** Create a sandbox-backed directory listing tool. */
+export function createSandboxedLsTool(params: SandboxToolParams) {
+  return createLsTool(params.root, {
+    operations: createSandboxLsOperations(params),
+  }) as unknown as AnyAgentTool;
+}
+
 /** Create a sandbox-backed write tool with required-parameter validation. */
 export function createSandboxedWriteTool(params: SandboxToolParams) {
   const base = createWriteTool(params.root, {
@@ -920,11 +927,35 @@ function createSandboxReadOperations(params: SandboxToolParams) {
     readFile: (absolutePath: string) =>
       params.bridge.readFile({ filePath: absolutePath, cwd: params.root }),
     access: (absolutePath: string) => assertSandboxFileExists(params, absolutePath),
+    stat: async (absolutePath: string) => {
+      const stat = await params.bridge.stat({ filePath: absolutePath, cwd: params.root });
+      if (!stat) {
+        throw createFsAccessError("ENOENT", absolutePath);
+      }
+      return { isDirectory: () => stat.type === "directory" };
+    },
     detectImageMimeType: async (absolutePath: string) => {
       const buffer = await params.bridge.readFile({ filePath: absolutePath, cwd: params.root });
       const mime = await detectMime({ buffer, filePath: absolutePath });
       return mime && mime.startsWith("image/") ? mime : undefined;
     },
+  } as const;
+}
+
+function createSandboxLsOperations(params: SandboxToolParams) {
+  return {
+    resolvePath: (dirPath: string) => resolveContainerPathCandidate(dirPath) ?? dirPath,
+    exists: async (absolutePath: string) =>
+      (await params.bridge.stat({ filePath: absolutePath, cwd: params.root })) !== null,
+    stat: async (absolutePath: string) => {
+      const stat = await params.bridge.stat({ filePath: absolutePath, cwd: params.root });
+      if (!stat) {
+        throw createFsAccessError("ENOENT", absolutePath);
+      }
+      return { isDirectory: () => stat.type === "directory" };
+    },
+    readdir: (absolutePath: string) =>
+      params.bridge.readdir({ filePath: absolutePath, cwd: params.root }),
   } as const;
 }
 

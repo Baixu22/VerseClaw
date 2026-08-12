@@ -18,6 +18,7 @@ import { Type } from "typebox";
 import { codingObservability } from "../../context-engine/coding-observability.js";
 import { getToolParamsRecord } from "../agent-tools.params.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
+import { toRelativeWorkspacePath } from "../path-policy.js";
 import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
 import { jsonResult } from "./common.js";
 import { toFactRelPath } from "../fact-rel-path.js";
@@ -483,6 +484,7 @@ export function undoLastWrites(params: {
   workspaceRoot: string;
   sessionId?: string;
   steps?: number;
+  workspaceOnly?: boolean;
 }): { restored: string[]; errors: string[]; journalDir: string; remainingEntries: number } {
   const sessionId = params.sessionId?.trim() || "default";
   const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
@@ -495,6 +497,9 @@ export function undoLastWrites(params: {
       break;
     }
     try {
+      if (params.workspaceOnly) {
+        toRelativeWorkspacePath(params.workspaceRoot, entry.absPath);
+      }
       if (entry.hadPrior && existsSync(entry.snapshotPath)) {
         mkdirSync(path.dirname(entry.absPath), { recursive: true });
         copyFileSync(entry.snapshotPath, entry.absPath);
@@ -657,6 +662,7 @@ export function createUndoWriteTool(options: {
   workspaceRoot: string;
   sessionId?: string;
   enabled?: boolean;
+  workspaceOnly?: boolean;
 }): AnyAgentTool | null {
   if (options.enabled === false || !options.workspaceRoot) {
     return null;
@@ -680,6 +686,7 @@ export function createUndoWriteTool(options: {
         workspaceRoot: options.workspaceRoot,
         sessionId: options.sessionId,
         steps,
+        workspaceOnly: options.workspaceOnly,
       });
       // FP-P1-04: partial restore is a FAILURE; the journal dir is reported so
       // a human can recover from the preserved snapshots.

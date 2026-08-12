@@ -22,6 +22,13 @@ export type ParentForkDecision =
       reason: "parent-too-large";
       maxTokens: number;
       parentTokens: number;
+      /**
+       * Fact-only description of the skip. It deliberately does not mention any
+       * fallback behavior: callers that reject the request (e.g. the
+       * sessions.fork gateway RPC) surface it as-is, while callers that
+       * continue with an isolated child session append their own fallback note
+       * via `formatParentForkFallbackNote` (issue #27).
+       */
       message: string;
     };
 
@@ -33,8 +40,20 @@ function formatParentForkTooLargeMessage(params: {
   parentTokens: number;
   maxTokens: number;
 }): string {
+  return `Parent context is too large to fork (${params.parentTokens}/${params.maxTokens} tokens).`;
+}
+
+/**
+ * Fallback note for call sites that continue with an isolated child session
+ * after a skip decision. Callers that fail closed instead must not use this
+ * phrasing — claiming an isolated fallback that never happened is exactly the
+ * silent-degradation confusion from issue #27.
+ */
+export function formatParentForkFallbackNote(
+  decision: Extract<ParentForkDecision, { status: "skip" }>,
+): string {
   return (
-    `Parent context is too large to fork (${params.parentTokens}/${params.maxTokens} tokens); ` +
+    `Parent context is too large to fork (${decision.parentTokens}/${decision.maxTokens} tokens); ` +
     "starting with isolated context instead."
   );
 }

@@ -123,6 +123,45 @@ describe("write-journal (C2-8)", () => {
     expect(readFileSync(file, "utf8")).toBe("v0\n");
   });
 
+  it("keeps an outside-workspace entry intact when restricted undo refuses it", async () => {
+    const outsideFile = `${repoRoot}-outside.ts`;
+    try {
+      writeFileSync(outsideFile, "outside-v0\n", "utf8");
+      snapshotBeforeWrite({
+        workspaceRoot: repoRoot,
+        sessionId,
+        filePath: outsideFile,
+        toolName: "write",
+      });
+      writeFileSync(outsideFile, "outside-v1\n", "utf8");
+      __resetWriteJournals();
+
+      const undo = createUndoWriteTool({
+        workspaceRoot: repoRoot,
+        sessionId,
+        enabled: true,
+        workspaceOnly: true,
+      });
+      const result = await undo!.execute("restricted-undo", { steps: 1 });
+      expect(result.content[0]).toMatchObject({
+        type: "text",
+        text: expect.stringContaining("Path escapes workspace root"),
+      });
+      expect(readFileSync(outsideFile, "utf8")).toBe("outside-v1\n");
+
+      const authorized = undoLastWrites({
+        workspaceRoot: repoRoot,
+        sessionId,
+        steps: 1,
+        workspaceOnly: false,
+      });
+      expect(authorized.errors).toEqual([]);
+      expect(readFileSync(outsideFile, "utf8")).toBe("outside-v0\n");
+    } finally {
+      rmSync(outsideFile, { force: true });
+    }
+  });
+
   it("projects an existing full-file write from the journal snapshot and verified after content", async () => {
     const file = path.join(repoRoot, "f.ts");
     const base = makeWriteTool(async (_id, args) => {
@@ -530,7 +569,7 @@ describe("write-journal FP-P1-04 semantics", () => {
     // the filesystem path (gateway checkpoint diff/restore use them as the
     // journal session id).
     const dir = journalDirFor(repoRoot, "agent:main:main");
-    expect(dir).not.toContain(":");
+    expect(path.basename(dir)).not.toContain(":");
     expect(dir.endsWith(`${path.sep}agent_main_main`)).toBe(true);
     // Round-trip: snapshot and rehydrate through the normalized dir.
     snapshotBeforeWrite({

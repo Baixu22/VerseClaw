@@ -2695,19 +2695,17 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── MCP cleanup ────────────────────────────────────────────────
-    // P4-C makes `mcp-servers.json` the only ClawX MCP server store.
-    // Remove legacy MCP residue from openclaw.json so startup no longer
-    // depends on, imports from, or writes back to `mcp.servers`.
+    // openclaw.json `mcp.servers` is the runtime-consumed MCP server store,
+    // mirrored from the ClawX electron-store `mcp-servers.json`. Never strip
+    // it: the OpenClaw gateway reads servers from here (see
+    // syncAllMcpServersToOpenClawConfig in mcp-api). The unrecognized
+    // `mcp.clawx` key is still removed because it is a ClawX-internal marker
+    // with no runtime meaning.
     const mcpConfigObj = (
       config.mcp && typeof config.mcp === 'object' && !Array.isArray(config.mcp)
         ? config.mcp as Record<string, unknown>
         : null
     );
-    if (mcpConfigObj && 'servers' in mcpConfigObj) {
-      delete mcpConfigObj.servers;
-      modified = true;
-      console.log('[sanitize] Removing legacy key "mcp.servers" from openclaw.json');
-    }
     if (mcpConfigObj && 'clawx' in mcpConfigObj) {
       delete mcpConfigObj.clawx;
       modified = true;

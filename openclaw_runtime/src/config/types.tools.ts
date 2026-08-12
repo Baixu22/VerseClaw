@@ -365,7 +365,9 @@ export type ExecToolConfig = {
     enabled?: boolean;
     /**
      * Restrict apply_patch paths to the workspace directory.
-     * Default: true (safer; does not affect read/write/edit).
+     * Default: inherit tools.fs.workspaceOnly (false when neither setting is present).
+     * Setting true narrows apply_patch only; setting false cannot weaken an enabled
+     * tools.fs.workspaceOnly umbrella restriction.
      */
     workspaceOnly?: boolean;
     /**

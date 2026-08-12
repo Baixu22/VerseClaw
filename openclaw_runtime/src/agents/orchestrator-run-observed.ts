@@ -526,6 +526,10 @@ export async function runOrchestrationWithRecorder(
           agentId: request.agentId,
           modelOverride: modelRef ?? undefined,
           runTimeoutSeconds: request.runTimeoutSeconds,
+          // B-3 v3: carry the worker-plan write-set coordinate into the child
+          // session so the embedded handoff entity snapshot knows the files this
+          // worker is expected to touch (no-op when the node has none).
+          ...(node?.writeSet ? { writeSet: [...node.writeSet] } : {}),
           extraSystemPrompt: handoffPrompt.status === "ready"
             ? `${framing}\n\n${handoffPrompt.prompt}`
             : framing,

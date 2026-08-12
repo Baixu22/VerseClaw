@@ -1,5 +1,6 @@
 // Gateway-scoped tool resolution for HTTP and loopback tool surfaces.
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
+import { resolveSessionWorkspaceDir } from "../agents/spawned-context.js";
 import {
   resolveEffectiveToolPolicy,
   resolveGroupToolPolicy,
@@ -27,6 +28,7 @@ import type { AnyAgentTool } from "../agents/tools/common.js";
 import type { SourceReplyDeliveryMode } from "../auto-reply/get-reply-options.types.js";
 import type { InboundEventKind } from "../channels/inbound-event/kind.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { loadSessionEntry } from "./session-utils.js";
 import { logWarn } from "../logger.js";
 import { getPluginToolMeta } from "../plugins/tools.js";
 import {
@@ -121,10 +123,13 @@ export function resolveGatewayScopedTools(params: {
       ? [...GATEWAY_HTTP_OWNER_ONLY_CORE_TOOLS]
       : [];
   // HTTP callers start with a stricter denylist than loopback callers because they cross auth only.
-  const workspaceDir = resolveAgentWorkspaceDir(
-    params.cfg,
-    agentId ?? resolveDefaultAgentId(params.cfg),
-  );
+  const sessionEntry = loadSessionEntry(params.sessionKey).entry;
+  const workspaceDir =
+    resolveSessionWorkspaceDir({
+      spawnedWorkspaceDir: sessionEntry?.spawnedWorkspaceDir,
+      persistedWorkspaceDir: sessionEntry?.workspaceDir,
+    }) ??
+    resolveAgentWorkspaceDir(params.cfg, agentId ?? resolveDefaultAgentId(params.cfg));
   const explicitDenylist = collectExplicitDenylist([
     profilePolicy,
     providerProfilePolicy,

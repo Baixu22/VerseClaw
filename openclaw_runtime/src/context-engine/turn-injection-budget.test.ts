@@ -3,11 +3,16 @@
  * degradation order, and zeroed books when the kill switch is engaged.
  */
 import { afterEach, describe, expect, it } from "vitest";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {
   beginTurnInjectionBudget,
   chargeTurnInjection,
+  decayFactorFor,
   endTurnInjectionBudget,
   getTurnInjectionBudget,
+  getEffectiveChannelDecay,
   getEffectiveDropAlertRatio,
   getEffectiveTurnInjectionCharBudget,
   precedenceIndexOf,
@@ -16,6 +21,7 @@ import {
   setTurnInjectionBudgetConfig,
   skipTurnInjection,
   summarizeTurnInjection,
+  TURN_INJECTION_CHANNEL_POLICY,
   TURN_INJECTION_CHAR_BUDGET,
   TURN_INJECTION_DROP_ALERT_RATIO,
   TURN_INJECTION_PRECEDENCE,
@@ -208,5 +214,179 @@ describe("FP-P2-04 config overrides", () => {
     resetTurnInjectionBudgetsForTests();
     expect(getEffectiveTurnInjectionCharBudget()).toBe(TURN_INJECTION_CHAR_BUDGET);
     expect(getEffectiveDropAlertRatio()).toBe(TURN_INJECTION_DROP_ALERT_RATIO);
+  });
+
+  it("reads runtime.contextBlock.injectionBudget.* from the on-disk config", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "turn-budget-cfg-"));
+    const configPath = path.join(dir, "openclaw.json");
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({
+        runtime: {
+          contextBlock: {
+            injectionBudget: { totalChars: 8000, dropAlertRatio: 0.05 },
+          },
+        },
+      }),
+      "utf-8",
+    );
+    const prevPath = process.env.OPENCLAW_CONFIG_PATH;
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    try {
+      expect(getEffectiveTurnInjectionCharBudget()).toBe(8000);
+      expect(getEffectiveDropAlertRatio()).toBe(0.05);
+      // A turn started without an explicit `total` uses the file override.
+      const ledger = beginTurnInjectionBudget({ turnId: "turn-file-total" });
+      expect(ledger.budget.total).toBe(8000);
+    } finally {
+      if (prevPath === undefined) delete process.env.OPENCLAW_CONFIG_PATH;
+      else process.env.OPENCLAW_CONFIG_PATH = prevPath;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("an explicit setTurnInjectionBudgetConfig wins over the file override", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "turn-budget-cfg-"));
+    const configPath = path.join(dir, "openclaw.json");
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({
+        runtime: { contextBlock: { injectionBudget: { totalChars: 8000 } } },
+      }),
+      "utf-8",
+    );
+    const prevPath = process.env.OPENCLAW_CONFIG_PATH;
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    try {
+      setTurnInjectionBudgetConfig({ totalChars: 9999 });
+      expect(getEffectiveTurnInjectionCharBudget()).toBe(9999);
+    } finally {
+      if (prevPath === undefined) delete process.env.OPENCLAW_CONFIG_PATH;
+      else process.env.OPENCLAW_CONFIG_PATH = prevPath;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("a missing or corrupt config falls back to the FP-P0-05 defaults", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "turn-budget-cfg-"));
+    const configPath = path.join(dir, "openclaw.json");
+    fs.writeFileSync(configPath, "{ not json", "utf-8");
+    const prevPath = process.env.OPENCLAW_CONFIG_PATH;
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    try {
+      expect(getEffectiveTurnInjectionCharBudget()).toBe(TURN_INJECTION_CHAR_BUDGET);
+      expect(getEffectiveDropAlertRatio()).toBe(TURN_INJECTION_DROP_ALERT_RATIO);
+    } finally {
+      if (prevPath === undefined) delete process.env.OPENCLAW_CONFIG_PATH;
+      else process.env.OPENCLAW_CONFIG_PATH = prevPath;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("B-1 channel policy", () => {
+  it("declares a policy for every precedence channel", () => {
+    for (const channel of TURN_INJECTION_PRECEDENCE) {
+      expect(TURN_INJECTION_CHANNEL_POLICY[channel]).toBeDefined();
+      expect(TURN_INJECTION_CHANNEL_POLICY[channel].priority).toBeGreaterThan(0);
+      expect(TURN_INJECTION_CHANNEL_POLICY[channel].decayHalfLifeTurns).toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps policy priority ordered the same way as precedence", () => {
+    for (let i = 1; i < TURN_INJECTION_PRECEDENCE.length; i += 1) {
+      const earlier = TURN_INJECTION_PRECEDENCE[i - 1]!;
+      const later = TURN_INJECTION_PRECEDENCE[i]!;
+      expect(TURN_INJECTION_CHANNEL_POLICY[earlier].priority).toBeGreaterThan(
+        TURN_INJECTION_CHANNEL_POLICY[later].priority,
+      );
+    }
+  });
+
+  it("decays only when a finite half-life is configured", () => {
+    expect(decayFactorFor("knowledge", 10)).toBe(1);
+    expect(decayFactorFor("memory_pilot", 0)).toBe(1);
+    expect(decayFactorFor("memory_pilot", 1)).toBe(1); // default: Infinity
+  });
+
+  it("decayFactorFor follows the exponential half-life curve", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "turn-budget-cfg-"));
+    const configPath = path.join(dir, "openclaw.json");
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({
+        runtime: {
+          contextBlock: {
+            injectionBudget: { channelDecay: { memory_pilot: 1, vtoken: 2 } },
+          },
+        },
+      }),
+      "utf-8",
+    );
+    const prevPath = process.env.OPENCLAW_CONFIG_PATH;
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    try {
+      // Half-life 1 turn: each turn halves the ceiling.
+      expect(decayFactorFor("memory_pilot", 1)).toBeCloseTo(0.5);
+      expect(decayFactorFor("memory_pilot", 2)).toBeCloseTo(0.25);
+      // Half-life 2 turns: turn 2 decays to 2^(-2/2) = 0.5.
+      expect(decayFactorFor("vtoken", 2)).toBeCloseTo(0.5);
+      // A channel not present in channelDecay keeps its default (no decay).
+      expect(decayFactorFor("knowledge", 10)).toBe(1);
+    } finally {
+      if (prevPath === undefined) delete process.env.OPENCLAW_CONFIG_PATH;
+      else process.env.OPENCLAW_CONFIG_PATH = prevPath;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("a decaying channel gives budget back to fresher context as turns advance", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "turn-budget-cfg-"));
+    const configPath = path.join(dir, "openclaw.json");
+    fs.writeFileSync(
+      configPath,
+      JSON.stringify({
+        runtime: {
+          contextBlock: {
+            injectionBudget: { channelDecay: { memory_pilot: 1 } },
+          },
+        },
+      }),
+      "utf-8",
+    );
+    const prevPath = process.env.OPENCLAW_CONFIG_PATH;
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    try {
+      // Same text, same budget, same turnIndex 0: full ceiling (no decay yet).
+      const first = beginTurnInjectionBudget({ turnId: "turn-decay-a", total: 100, turnIndex: 0 });
+      const firstResult = chargeTurnInjection(first, "memory_pilot", "m".repeat(100));
+      expect(firstResult.charsApplied).toBe(100);
+
+      // With turnIndex 1 and half-life 1, the ceiling is halved → truncate to ~50.
+      const second = beginTurnInjectionBudget({ turnId: "turn-decay-b", total: 100, turnIndex: 1 });
+      const secondResult = chargeTurnInjection(second, "memory_pilot", "m".repeat(100));
+      expect(secondResult.charsApplied).toBeLessThanOrEqual(51);
+      expect(secondResult.truncated).toBe(true);
+
+      // knowledge is pinned (Infinity): never decays regardless of turn index.
+      const third = beginTurnInjectionBudget({ turnId: "turn-decay-c", total: 100, turnIndex: 5 });
+      const thirdResult = chargeTurnInjection(third, "knowledge", "k".repeat(100));
+      expect(thirdResult.charsApplied).toBe(100);
+    } finally {
+      if (prevPath === undefined) delete process.env.OPENCLAW_CONFIG_PATH;
+      else process.env.OPENCLAW_CONFIG_PATH = prevPath;
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("records priority and decayFactor on charged entries for audit", () => {
+    const ledger = beginTurnInjectionBudget({ turnId: "turn-audit", total: 1000, turnIndex: 3 });
+    chargeTurnInjection(ledger, "knowledge", "k".repeat(10));
+    chargeTurnInjection(ledger, "memory_pilot", "m".repeat(10));
+    const knowledgeEntry = ledger.entries.find((e) => e.channel === "knowledge");
+    const memoryEntry = ledger.entries.find((e) => e.channel === "memory_pilot");
+    expect(knowledgeEntry?.priority).toBe(TURN_INJECTION_CHANNEL_POLICY.knowledge.priority);
+    expect(knowledgeEntry?.decayFactor).toBe(1);
+    expect(memoryEntry?.priority).toBe(TURN_INJECTION_CHANNEL_POLICY.memory_pilot.priority);
   });
 });

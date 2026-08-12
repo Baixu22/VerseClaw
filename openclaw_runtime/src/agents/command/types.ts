@@ -128,6 +128,8 @@ export type AgentCommandOpts = {
   streamParams?: AgentStreamParams;
   /** Explicit workspace directory override (for subagents to inherit parent workspace). */
   workspaceDir?: SpawnedRunMetadata["workspaceDir"];
+  /** B-3 v3: write-set coordinate inherited by a spawned worker (files it is expected to touch). */
+  writeSet?: string[];
   /** Explicit task working directory for this run. Bootstrap still uses workspaceDir. */
   cwd?: string;
   /** Force bundled MCP teardown when a one-shot local run completes. */

@@ -141,6 +141,7 @@ import { runEmbeddedAttemptWithBackend } from "./run/backend.js";
 import { resolveCodexAppServerRecoveryRetry } from "./run/codex-app-server-recovery.js";
 import { createFailoverDecisionLogger } from "./run/failover-observation.js";
 import { mergeRetryFailoverReason, resolveRunFailoverDecision } from "./run/failover-policy.js";
+import { executeManualCompactionRequest } from "./run/manual-compaction.js";
 import { hasEmbeddedRunConfiguredModelFallbacks } from "./run/fallbacks.js";
 import {
   buildErrorAgentMeta,
@@ -1604,6 +1605,7 @@ export async function runEmbeddedAgent(
             groupSpace: params.groupSpace,
             memberRoleIds: params.memberRoleIds,
             spawnedBy: params.spawnedBy,
+            ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
             isCanonicalWorkspace,
             senderId: params.senderId,
             senderName: params.senderName,
@@ -1742,6 +1744,132 @@ export async function runEmbeddedAgent(
             throw postCompactionAbortError;
           }
           const attempt = normalizeEmbeddedRunAttemptResult(rawAttempt);
+
+          if (
+            attempt.manualCompactionRequest &&
+            !attempt.aborted &&
+            !attempt.promptError &&
+            !attempt.timedOut &&
+            !attempt.idleTimedOut &&
+            !attempt.timedOutDuringCompaction
+          ) {
+            const manualCompactionRuntimeContext = {
+              ...buildEmbeddedCompactionRuntimeContext({
+                sessionKey: params.sessionKey,
+                messageChannel: params.messageChannel,
+                messageProvider: params.messageProvider,
+                agentAccountId: params.agentAccountId,
+                currentChannelId: params.currentChannelId,
+                currentThreadTs: params.currentThreadTs,
+                currentMessageId: params.currentMessageId,
+                authProfileId: lastProfileId,
+                workspaceDir: resolvedWorkspace,
+                cwd: params.cwd,
+                agentDir,
+                config: params.config,
+                skillsSnapshot: params.skillsSnapshot,
+                senderIsOwner: params.senderIsOwner,
+                senderId: params.senderId,
+                provider,
+                modelId,
+                harnessRuntime: agentHarness.id,
+                modelFallbacksOverride: params.modelFallbacksOverride,
+                thinkLevel,
+                reasoningLevel: params.reasoningLevel,
+                bashElevated: params.bashElevated,
+                extraSystemPrompt: params.extraSystemPrompt,
+                sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
+                ownerNumbers: params.ownerNumbers,
+              }),
+              ...resolveContextEngineCapabilities({
+                config: params.config,
+                sessionKey: params.sessionKey,
+                agentId: sessionAgentId,
+                contextEnginePluginId: resolveContextEnginePluginId(),
+                purpose: "context-engine.agent-manual-compaction",
+              }),
+              onCompactionHookMessages,
+              runId: params.runId,
+              trigger: "manual",
+            };
+            try {
+              await params.onAgentEvent?.({
+                stream: "compaction",
+                data: { phase: "start", trigger: "manual" },
+                ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+              });
+            } catch (eventError) {
+              log.warn(`manual compaction start event failed: ${String(eventError)}`);
+            }
+            const manualCompaction = await executeManualCompactionRequest({
+              request: attempt.manualCompactionRequest,
+              sessionId: activeSessionId,
+              sessionKey: params.sessionKey,
+              sessionFile: activeSessionFile,
+              tokenBudget: ctxInfo.tokens,
+              runtimeContext: manualCompactionRuntimeContext,
+              before: () => runOwnsCompactionBeforeHook("agent manual compaction"),
+              compact: (compactParams) =>
+                compactContextEngineWithSafetyTimeout(
+                  contextEngine,
+                  compactParams,
+                  resolveCompactionTimeoutMs(params.config),
+                  params.abortSignal,
+                ),
+              onCompacted: async (compactResult) => {
+                adoptCompactionTranscript(compactResult);
+                await runContextEngineMaintenance({
+                  contextEngine,
+                  sessionId: activeSessionId,
+                  sessionKey: params.sessionKey,
+                  sessionFile: activeSessionFile,
+                  reason: "compaction",
+                  runtimeContext: manualCompactionRuntimeContext,
+                  config: params.config,
+                  agentId: sessionAgentId,
+                });
+                if (contextEngine.info.ownsCompaction === true) {
+                  await runPostCompactionSideEffects({
+                    config: params.config,
+                    sessionKey: params.sessionKey,
+                    agentId: sessionAgentId,
+                    sessionFile: activeSessionFile,
+                  });
+                }
+              },
+              onPostProcessingError: (error) => {
+                log.warn(`agent manual compaction post-processing failed: ${String(error)}`);
+              },
+              after: (compactResult) =>
+                runOwnsCompactionAfterHook("agent manual compaction", compactResult),
+            });
+            if (manualCompaction.ok && manualCompaction.compacted) {
+              attempt.sessionIdUsed = manualCompaction.sessionId;
+              attempt.sessionFileUsed = manualCompaction.sessionFile;
+              attempt.compactionCount = Math.max(0, attempt.compactionCount ?? 0) + 1;
+              if (
+                typeof manualCompaction.result?.tokensAfter === "number" &&
+                Number.isFinite(manualCompaction.result.tokensAfter) &&
+                manualCompaction.result.tokensAfter >= 0
+              ) {
+                attempt.compactionTokensAfter = Math.floor(manualCompaction.result.tokensAfter);
+              }
+            }
+            try {
+              await params.onAgentEvent?.({
+                stream: "compaction",
+                data: {
+                  phase: "end",
+                  trigger: "manual",
+                  completed: manualCompaction.ok && manualCompaction.compacted,
+                  ...(manualCompaction.reason ? { reason: manualCompaction.reason } : {}),
+                },
+                ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+              });
+            } catch (eventError) {
+              log.warn(`manual compaction end event failed: ${String(eventError)}`);
+            }
+          }
 
           const {
             aborted,

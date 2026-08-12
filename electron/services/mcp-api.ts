@@ -852,6 +852,13 @@ function normalizeRuntimeMcpTransport(server: McpServerConfig): 'sse' | 'streama
   return undefined;
 }
 
+/** ClawX-local bridge servers (clawx-git / clawx-storage) are implemented in Main, not in the
+ *  OpenClaw runtime, so they must never be mirrored into openclaw.json. Note that user servers
+ *  also carry a hydrated `clawx://mcp/<id>` localAddress, so exclusion is by builtin id only. */
+function isClawxBridgeServer(server: McpServerConfig | StoredMcpServer): boolean {
+  return server.id === VERSE_CLAW_GIT_MCP_SERVER_ID || server.id === VERSE_CLAW_STORAGE_MCP_SERVER_ID;
+}
+
 function withMembership(values: string[] | undefined, value: string, enabled: boolean): string[] | undefined {
   const set = new Set((values ?? []).map((entry) => entry.trim()).filter(Boolean));
   if (enabled) {
@@ -970,6 +977,39 @@ export async function syncAgentMcpExposureToOpenClawConfig(
       currentServers[server.id] = next;
     }
     mcp.servers = currentServers;
+    config.mcp = mcp;
+    await writeOpenClawConfig(config);
+  });
+}
+
+/**
+ * Mirrors the full user-configured MCP server snapshot into `mcp.servers` in
+ * openclaw.json so the OpenClaw gateway runtime can actually consume it. The
+ * runtime's config watcher treats `mcp` prefix changes as a hot "dispose-mcp-
+ * runtimes" reload, so no RPC is needed — there is no `mcp.reload` gateway
+ * method. Built-in ClawX bridge servers (`clawx://` localAddress) are
+ * Main-process-local and intentionally not mirrored.
+ */
+export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
+  const servers = (await readServers()).filter((server) => !isClawxBridgeServer(server));
+  await withConfigLock(async () => {
+    const config = await readOpenClawConfig();
+    const mcp = isRecord(config.mcp) ? { ...(config.mcp as Record<string, unknown>) } : {};
+    const currentServers = isRecord(mcp.servers)
+      ? { ...(mcp.servers as Record<string, unknown>) }
+      : {};
+    const vault = await readEnvVault();
+    const nextServers: Record<string, unknown> = {};
+    for (const server of servers) {
+      const runtimeServer = await toRuntimeServer(server, vault);
+      nextServers[server.id] = projectServerToRuntimeConfig(
+        runtimeServer,
+        isRecord(currentServers[server.id])
+          ? (currentServers[server.id] as Record<string, unknown>)
+          : undefined,
+      );
+    }
+    mcp.servers = nextServers;
     config.mcp = mcp;
     await writeOpenClawConfig(config);
   });
@@ -1371,13 +1411,12 @@ export function createMcpApi(): CompleteHostServiceRegistry['mcp'] {
 }
 
 export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostServiceRegistry['mcp'] {
-  // Dispatch a best-effort runtime reload signal to the gateway. The
-  // electron-store `mcp-servers.json` is the authoritative MCP server
-  // store; this RPC only sends the resolved server snapshot for any
-  // runtime that can apply it without touching openclaw.json.
   /**
-   * Fail-closed reload: when Gateway is running, mcp.reload must ACK.
-   * Returns {ok:true} when Gateway is not running (persist-only / restart path).
+   * Fail-closed runtime apply: mirrors the full MCP server snapshot into
+   * `mcp.servers` in openclaw.json, then lets the OpenClaw gateway config
+   * watcher hot-reload its MCP runtimes. There is no `mcp.reload` gateway
+   * method; writing openclaw.json is the only runtime-consumed channel.
+   * Returns {ok:true} when the Gateway is not running (persist-only / restart path).
    */
   const reloadRuntimeStrict = async (options?: {
     workspaceId?: string | null;
@@ -1401,6 +1440,19 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       forRuntime: true,
     });
     const gatewayState = ctx.gatewayManager?.getStatus().state;
+    try {
+      await syncAllMcpServersToOpenClawConfig();
+    } catch (error) {
+      return {
+        ok: false,
+        hotReloaded: false,
+        restartRequired: true,
+        error: `MCP config mirror to openclaw.json failed: ${error instanceof Error ? error.message : String(error)}`,
+        serverCount: servers.length,
+        workspaceId,
+        agentId,
+      };
+    }
     if (gatewayState !== 'running') {
       return {
         ok: true,
@@ -1411,42 +1463,15 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         agentId,
       };
     }
-    try {
-      const runtime = await ctx.gatewayManager!.rpc(
-        'mcp.reload',
-        { workspaceId, agentId, servers },
-        5000,
-      );
-      if (runtime == null) {
-        return {
-          ok: false,
-          hotReloaded: false,
-          restartRequired: true,
-          error: 'MCP reload returned no acknowledgement; configuration was not applied hot',
-          serverCount: servers.length,
-          workspaceId,
-          agentId,
-        };
-      }
-      return {
-        ok: true,
-        hotReloaded: true,
-        restartRequired: false,
-        serverCount: servers.length,
-        workspaceId,
-        agentId,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        hotReloaded: false,
-        restartRequired: true,
-        error: error instanceof Error ? error.message : String(error),
-        serverCount: servers.length,
-        workspaceId,
-        agentId,
-      };
-    }
+    ctx.gatewayManager?.debouncedReload?.();
+    return {
+      ok: true,
+      hotReloaded: true,
+      restartRequired: false,
+      serverCount: servers.length,
+      workspaceId,
+      agentId,
+    };
   };
 
   return {

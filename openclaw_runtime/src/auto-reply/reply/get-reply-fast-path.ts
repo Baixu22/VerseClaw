@@ -251,6 +251,7 @@ export function initFastReplySessionState(params: {
     sessionId,
     sessionFile,
     updatedAt: now,
+    workspaceDir: normalizeOptionalString(ctx.WorkspaceDir) ?? existingEntry?.workspaceDir,
     sessionStartedAt: resetTriggered ? now : (existingEntry?.sessionStartedAt ?? now),
     lastInteractionAt: now,
     thinkingLevel: resetTriggered ? existingEntry?.thinkingLevel : existingEntry?.thinkingLevel,

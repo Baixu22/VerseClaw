@@ -4,6 +4,7 @@ import path from "node:path";
 import type { RunEmbeddedAgentParams } from "../agents/embedded-agent-runner/run/params.js";
 import {
   forkSessionFromParent,
+  formatParentForkFallbackNote,
   resolveParentForkDecision,
 } from "../auto-reply/reply/session-fork.js";
 import { parseSessionThreadInfoFast } from "../config/sessions/thread-info.js";
@@ -191,7 +192,9 @@ async function resolveRealtimeVoiceAgentConsultSessionEntry(params: {
               };
             }
           } else {
-            forkDecisionWarning = decision.message;
+            // Consult continues with a fresh session, so the isolated-context
+            // fallback note is accurate here (issue #27).
+            forkDecisionWarning = formatParentForkFallbackNote(decision);
           }
         }
       }

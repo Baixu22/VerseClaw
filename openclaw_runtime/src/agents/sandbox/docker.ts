@@ -182,13 +182,23 @@ import { readRegistryEntry, updateRegistry } from "./registry.js";
 import { resolveSandboxAgentId, resolveSandboxScopeKey, slugifySessionKey } from "./shared.js";
 import type { SandboxConfig, SandboxDockerConfig, SandboxWorkspaceAccess } from "./types.js";
 import { validateSandboxSecurity } from "./validate-sandbox-security.js";
+import { splitSandboxBindSpec } from "./bind-spec.js";
+import {
+  DEFAULT_DOCKER_PATH_TRANSLATION_RUNTIME,
+  isLinuxDockerDaemonFromWindows,
+  resolveDockerBindSourcePath,
+  type DockerPathTranslationRuntime,
+} from "./wsl-path.js";
+import type {
+  BindSourcePathTranslator,
+  ReadOnlyWorkspaceSkillMount,
+} from "./workspace-mounts.js";
 import {
   appendReadOnlyWorkspaceSkillMountArgs,
   appendWorkspaceMountArgs,
   formatReadOnlyWorkspaceSkillMountHashState,
   resolveReadOnlyWorkspaceSkillMounts,
   SANDBOX_MOUNT_FORMAT_VERSION,
-  type ReadOnlyWorkspaceSkillMount,
 } from "./workspace-mounts.js";
 
 const log = createSubsystemLogger("docker");
@@ -433,6 +443,7 @@ export function buildSandboxCreateArgs(params: {
   allowSourcesOutsideAllowedRoots?: boolean;
   allowReservedContainerTargets?: boolean;
   allowContainerNamespaceJoin?: boolean;
+  translateHostPath?: BindSourcePathTranslator;
   /**
    * @deprecated Docker container creation now treats cfg.env as explicit sandbox
    * configuration and ignores host-env name filters. This field is kept so SDK
@@ -542,20 +553,58 @@ export function buildSandboxCreateArgs(params: {
     }
   }
   if (params.includeBinds !== false && params.cfg.binds?.length) {
+    const translateHostPath = params.translateHostPath ?? createDockerBindSourceTranslator();
     for (const bind of params.cfg.binds) {
-      args.push("-v", bind);
+      args.push("-v", translateSandboxBindSpec(bind, translateHostPath));
     }
   }
   return args;
 }
 
-function appendCustomBinds(args: string[], cfg: SandboxDockerConfig): void {
+function appendCustomBinds(
+  args: string[],
+  cfg: SandboxDockerConfig,
+  translateHostPath?: BindSourcePathTranslator,
+): void {
   if (!cfg.binds?.length) {
     return;
   }
   for (const bind of cfg.binds) {
-    args.push("-v", bind);
+    args.push("-v", translateSandboxBindSpec(bind, translateHostPath));
   }
+}
+
+/**
+ * Resolve the Docker bind-source translator for the current client. Returns a
+ * translator only when the client runs on Windows and talks to a Linux daemon
+ * (WSL2/remote via DOCKER_HOST); otherwise returns undefined so bind sources
+ * are emitted unchanged.
+ */
+export function createDockerBindSourceTranslator(
+  runtime: DockerPathTranslationRuntime = DEFAULT_DOCKER_PATH_TRANSLATION_RUNTIME,
+): BindSourcePathTranslator | undefined {
+  if (!isLinuxDockerDaemonFromWindows(runtime)) {
+    return undefined;
+  }
+  return (hostPath) => resolveDockerBindSourcePath(hostPath, runtime);
+}
+
+/** Translate only the host side of a `host:container[:options]` bind spec. */
+function translateSandboxBindSpec(
+  bind: string,
+  translateHostPath: BindSourcePathTranslator | undefined,
+): string {
+  if (!translateHostPath) {
+    return bind;
+  }
+  const parsed = splitSandboxBindSpec(bind);
+  if (!parsed) {
+    return bind;
+  }
+  const host = translateHostPath(parsed.host);
+  return parsed.options
+    ? `${host}:${parsed.container}:${parsed.options}`
+    : `${host}:${parsed.container}`;
 }
 
 async function createSandboxContainer(params: {
@@ -572,6 +621,7 @@ async function createSandboxContainer(params: {
   const { name, cfg, workspaceDir, scopeKey } = params;
   await ensureDockerImage(cfg.image);
 
+  const translateHostPath = createDockerBindSourceTranslator();
   const args = buildSandboxCreateArgs({
     name,
     cfg,
@@ -579,6 +629,7 @@ async function createSandboxContainer(params: {
     configHash: params.configHash,
     includeBinds: false,
     bindSourceRoots: [workspaceDir, params.agentWorkspaceDir],
+    translateHostPath,
   });
   args.push("--workdir", cfg.workdir);
   appendWorkspaceMountArgs({
@@ -590,11 +641,13 @@ async function createSandboxContainer(params: {
     workspaceAccess: params.workspaceAccess,
     readOnlyWorkspaceSkillMounts: params.readOnlyWorkspaceSkillMounts,
     includeReadOnlyWorkspaceSkillMounts: false,
+    translateHostPath,
   });
-  appendCustomBinds(args, cfg);
+  appendCustomBinds(args, cfg, translateHostPath);
   appendReadOnlyWorkspaceSkillMountArgs({
     args,
     readOnlyWorkspaceSkillMounts: params.readOnlyWorkspaceSkillMounts,
+    translateHostPath,
   });
   args.push(cfg.image, "sleep", "infinity");
 

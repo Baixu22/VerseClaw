@@ -62,6 +62,7 @@ import {
   resolveReadOnlyWorkspaceSkillMounts,
   SANDBOX_MOUNT_FORMAT_VERSION,
 } from "./workspace-mounts.js";
+import { createDockerBindSourceTranslator } from "./docker.js";
 
 const HOT_BROWSER_WINDOW_MS = 5 * 60 * 1000;
 const CDP_SOURCE_RANGE_ENV_KEY = "OPENCLAW_BROWSER_CDP_SOURCE_RANGE";
@@ -340,6 +341,7 @@ export async function ensureSandboxBrowser(params: {
       allowContainerNamespaceJoin: browserDockerCfg.dangerouslyAllowContainerNamespaceJoin === true,
     });
     await ensureSandboxBrowserImage(browserImage);
+    const translateHostPath = createDockerBindSourceTranslator();
     const args = buildSandboxCreateArgs({
       name: containerName,
       cfg: browserDockerCfg,
@@ -351,6 +353,7 @@ export async function ensureSandboxBrowser(params: {
       configHash: expectedHash,
       includeBinds: false,
       bindSourceRoots: [params.workspaceDir, params.agentWorkspaceDir],
+      translateHostPath,
     });
     appendWorkspaceMountArgs({
       args,
@@ -361,6 +364,7 @@ export async function ensureSandboxBrowser(params: {
       workspaceAccess: params.cfg.workspaceAccess,
       readOnlyWorkspaceSkillMounts,
       includeReadOnlyWorkspaceSkillMounts: false,
+      translateHostPath,
     });
     if (browserDockerCfg.binds?.length) {
       for (const bind of browserDockerCfg.binds) {
@@ -370,6 +374,7 @@ export async function ensureSandboxBrowser(params: {
     appendReadOnlyWorkspaceSkillMountArgs({
       args,
       readOnlyWorkspaceSkillMounts,
+      translateHostPath,
     });
     args.push("-p", `127.0.0.1::${params.cfg.browser.cdpPort}`);
     if (noVncEnabled) {

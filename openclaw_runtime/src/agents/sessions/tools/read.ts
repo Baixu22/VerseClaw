@@ -4,7 +4,7 @@
  * Reads text and image files through local or injected operations with highlighting, resizing, and bounded output.
  */
 import { constants } from "node:fs";
-import { access as fsAccess, readFile as fsReadFile } from "node:fs/promises";
+import { access as fsAccess, readFile as fsReadFile, stat as fsStat } from "node:fs/promises";
 import { basename, dirname, isAbsolute, relative, resolve as resolvePath, sep } from "node:path";
 import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
@@ -61,6 +61,10 @@ export interface ReadOperations {
   readFile: (absolutePath: string) => Promise<Buffer>;
   /** Check if file is readable (throw if not) */
   access: (absolutePath: string) => Promise<void>;
+  /** Get file metadata when the backend can distinguish files from directories. */
+  stat?: (
+    absolutePath: string,
+  ) => Promise<{ isDirectory: () => boolean }> | { isDirectory: () => boolean };
   /** Detect image MIME type, return null or undefined for non-images */
   detectImageMimeType?: (absolutePath: string) => Promise<string | null | undefined>;
 }
@@ -69,6 +73,7 @@ const defaultReadOperations: ReadOperations = {
   resolvePath: resolveLocalReadPath,
   readFile: (path) => fsReadFile(path),
   access: (path) => fsAccess(path, constants.R_OK),
+  stat: (path) => fsStat(path),
   detectImageMimeType: detectSupportedImageMimeTypeFromFile,
 };
 
@@ -291,9 +296,12 @@ export function createReadToolDefinition(
   return {
     name: "read",
     label: "read",
-    description: `Read the contents of a file. Supports text files and images (jpg, png, gif, webp). Images are sent as attachments. For text files, output is truncated to ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). Use offset/limit for large files. When you need the full file, continue with offset until complete.`,
+    description: `Read the contents of a file. This tool accepts files only; use ls to list a directory. Supports text files and images (jpg, png, gif, webp). Images are sent as attachments. For text files, output is truncated to ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). Use offset/limit for large files. When you need the full file, continue with offset until complete.`,
     promptSnippet: "Read file contents",
-    promptGuidelines: ["Use read to examine files instead of cat or sed."],
+    promptGuidelines: [
+      "Use read to examine files instead of cat or sed.",
+      "Use ls to inspect directories; read accepts file paths only.",
+    ],
     parameters: readSchema,
     async execute(
       toolCallId,
@@ -324,6 +332,10 @@ export function createReadToolDefinition(
             const absolutePath = await resolveReadToolPath(ops, path, cwd);
             // Check if file exists and is readable.
             await ops.access(absolutePath);
+            const fileStat = await ops.stat?.(absolutePath);
+            if (fileStat?.isDirectory()) {
+              throw directoryReadError(path);
+            }
             if (aborted) {
               return;
             }
@@ -439,7 +451,7 @@ export function createReadToolDefinition(
           } catch (error: unknown) {
             signal?.removeEventListener("abort", onAbort);
             if (!aborted) {
-              reject(toLintErrorObject(error, "Non-Error rejection"));
+              reject(normalizeReadError(error, path));
             }
           }
         })();
@@ -473,6 +485,20 @@ export function createReadToolDefinition(
       return text;
     },
   };
+}
+
+function directoryReadError(filePath: string): Error {
+  return new Error(
+    `Cannot read directory with read: ${filePath}. Use the ls tool to list directory contents.`,
+  );
+}
+
+function normalizeReadError(error: unknown, filePath: string): Error {
+  const typed = error as NodeJS.ErrnoException;
+  if (typed?.code === "EISDIR" || (error instanceof Error && /\bEISDIR\b/.test(error.message))) {
+    return directoryReadError(filePath);
+  }
+  return toLintErrorObject(error, "Non-Error rejection");
 }
 
 export function createReadTool(

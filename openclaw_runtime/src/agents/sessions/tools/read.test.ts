@@ -11,7 +11,7 @@
  * (see NUL/BOM/REPLACEMENT below) rather than pasted raw bytes, so this source
  * stays reviewable text instead of a git-binary blob.
  */
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -229,6 +229,21 @@ describe("read tool: offset/limit", () => {
 });
 
 describe("read tool: errors", () => {
+  it("directs directory reads to the ls tool", async () => {
+    await mkdir(join(dir, "folder"));
+    await expect(executeRead({ path: "folder" })).rejects.toThrowError(
+      "Cannot read directory with read: folder. Use the ls tool to list directory contents.",
+    );
+  });
+
+  it("advertises the file-only boundary in model-facing guidance", () => {
+    const definition = createReadToolDefinition(dir);
+    expect(definition.description).toContain("use ls to list a directory");
+    expect(definition.promptGuidelines).toContain(
+      "Use ls to inspect directories; read accepts file paths only.",
+    );
+  });
+
   it("rejects with the raw Node ENOENT error for a missing path", async () => {
     await expect(executeRead({ path: "does-not-exist.txt" })).rejects.toThrowError(/ENOENT/);
   });

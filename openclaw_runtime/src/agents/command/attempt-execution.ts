@@ -448,6 +448,8 @@ export function runAgentAttempt(params: {
   opts: AgentCommandOpts;
   runContext: ReturnType<typeof resolveAgentRunContext>;
   spawnedBy: string | undefined;
+  /** B-3 v3: write-set coordinate for spawned-worker runs. */
+  writeSet?: string[];
   messageChannel: ReturnType<typeof resolveMessageChannel>;
   skillsSnapshot: ReturnType<typeof buildWorkspaceSkillSnapshot> | undefined;
   resolvedVerboseLevel: VerboseLevel | undefined;
@@ -699,6 +701,8 @@ export function runAgentAttempt(params: {
     groupChannel: params.runContext.groupChannel,
     groupSpace: params.runContext.groupSpace,
     spawnedBy: params.spawnedBy,
+    // B-3 v3: forward the write-set coordinate into the embedded run.
+    ...(params.writeSet?.length ? { writeSet: [...params.writeSet] } : {}),
     currentChannelId: params.runContext.currentChannelId,
     currentThreadTs: params.runContext.currentThreadTs,
     currentInboundAudio: params.runContext.currentInboundAudio,

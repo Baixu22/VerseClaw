@@ -62,7 +62,7 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
         timeoutMs: 5000,
       },
     },
-    injectionBudget: { totalChars: 6000, dropAlertRatio: 0.1 },
+    injectionBudget: { totalChars: 6000, dropAlertRatio: 0.1, channelDecay: {} },
     "context-write": { role: "implementer" },
     "context-understand": { budgetChars: 12000 },
   },

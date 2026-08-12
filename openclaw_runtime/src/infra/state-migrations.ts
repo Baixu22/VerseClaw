@@ -5,7 +5,17 @@ import path from "node:path";
 import type { DatabaseSync, SQLInputValue } from "node:sqlite";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
 import { writeAcpSessionMetaForMigration } from "../runtime/session-meta.ts";
-import { resolveDefaultAgentId } from "../agents/agent-scope.js";
+import { listAgentIds, resolveAgentDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
+import {
+  loadAuthProfileJsonStoreForMigration,
+  loadPersistedAuthProfileStore,
+} from "../agents/auth-profiles/persisted.js";
+import { resolveAuthStorePath } from "../agents/auth-profiles/paths.js";
+import {
+  resolveAuthProfileDatabasePath,
+  runAuthProfileWriteTransaction,
+} from "../agents/auth-profiles/sqlite.js";
+import { saveAuthProfileStore } from "../agents/auth-profiles/store.js";
 import {
   listBundledChannelLegacySessionSurfaces,
   listBundledChannelLegacyStateMigrationDetectors,
@@ -109,6 +119,9 @@ export type LegacyStateDetection = {
     targetDir: string;
     hasLegacy: boolean;
   };
+  authProfiles: {
+    plans: AuthProfileStateMigrationPlan[];
+  };
   channelPlans: {
     hasLegacy: boolean;
     plans: ChannelLegacyStateMigrationPlan[];
@@ -140,6 +153,12 @@ export type LegacyStateDetection = {
     hasLegacy: boolean;
   };
   preview: string[];
+};
+
+export type AuthProfileStateMigrationPlan = {
+  agentDir: string;
+  sourcePath: string;
+  targetPath: string;
 };
 
 type MigrationLogger = {
@@ -2664,6 +2683,71 @@ function createPluginDoctorStateMigrationContext(
   };
 }
 
+function collectAuthProfileMigrationAgentDirs(params: {
+  cfg: OpenClawConfig;
+  env: NodeJS.ProcessEnv;
+  stateDir: string;
+}): string[] {
+  const dirs = new Map<string, string>();
+  const add = (agentDir: string) => {
+    const resolved = path.resolve(agentDir);
+    const key = process.platform === "win32" ? resolved.toLowerCase() : resolved;
+    dirs.set(key, resolved);
+  };
+
+  for (const agentId of listAgentIds(params.cfg)) {
+    add(resolveAgentDir(params.cfg, agentId, params.env));
+  }
+  for (const entry of safeReadDir(path.join(params.stateDir, "agents"))) {
+    if (entry.isDirectory()) {
+      add(path.join(params.stateDir, "agents", entry.name, "agent"));
+    }
+  }
+  const legacyAgentDir = path.join(params.stateDir, "agent");
+  if (existsDir(legacyAgentDir)) {
+    add(legacyAgentDir);
+  }
+  return [...dirs.values()];
+}
+
+function detectLegacyAuthProfileMigrationsInStateDir(params: {
+  cfg: OpenClawConfig;
+  env: NodeJS.ProcessEnv;
+  stateDir: string;
+}): AuthProfileStateMigrationPlan[] {
+  return collectAuthProfileMigrationAgentDirs(params).flatMap((agentDir) => {
+    const sourcePath = resolveAuthStorePath(agentDir);
+    if (!fileExists(sourcePath) || loadPersistedAuthProfileStore(agentDir)) {
+      return [];
+    }
+    const sourceStore = loadAuthProfileJsonStoreForMigration(agentDir);
+    if (!sourceStore || Object.keys(sourceStore.profiles).length === 0) {
+      return [];
+    }
+    return [
+      {
+        agentDir,
+        sourcePath,
+        targetPath: resolveAuthProfileDatabasePath(agentDir),
+      },
+    ];
+  });
+}
+
+/** Detects retired JSON auth stores that an explicit Doctor fix can migrate. */
+export function detectLegacyAuthProfileMigrations(params: {
+  cfg: OpenClawConfig;
+  env?: NodeJS.ProcessEnv;
+  homedir?: () => string;
+}): AuthProfileStateMigrationPlan[] {
+  const env = params.env ?? process.env;
+  return detectLegacyAuthProfileMigrationsInStateDir({
+    cfg: params.cfg,
+    env,
+    stateDir: resolveStateDir(env, params.homedir ?? os.homedir),
+  });
+}
+
 export async function detectLegacyStateMigrations(params: {
   cfg: OpenClawConfig;
   env?: NodeJS.ProcessEnv;
@@ -2757,6 +2841,11 @@ export async function detectLegacyStateMigrations(params: {
     listLegacyDeliveryQueueDeliveredMarkers(deliveryQueuePaths.outboundPath).length > 0 ||
     listLegacyDeliveryQueueFiles(deliveryQueuePaths.sessionPath).length > 0 ||
     listLegacyDeliveryQueueDeliveredMarkers(deliveryQueuePaths.sessionPath).length > 0;
+  const authProfilePlans = detectLegacyAuthProfileMigrationsInStateDir({
+    cfg: params.cfg,
+    env,
+    stateDir,
+  });
   const channelPlans = await collectChannelLegacyStateMigrationPlans({
     cfg: params.cfg,
     env,
@@ -2788,6 +2877,9 @@ export async function detectLegacyStateMigrations(params: {
   }
   if (hasLegacyAgentDir) {
     preview.push(`- Agent dir: ${legacyAgentDir} → ${targetAgentDir}`);
+  }
+  for (const plan of authProfilePlans) {
+    preview.push(`- Auth profiles: ${plan.sourcePath} -> ${plan.targetPath}`);
   }
   if (hasPluginStateSidecar) {
     preview.push(`- Plugin state sidecar: ${pluginStateSidecarPath} → shared SQLite state`);
@@ -2840,6 +2932,9 @@ export async function detectLegacyStateMigrations(params: {
       legacyDir: legacyAgentDir,
       targetDir: targetAgentDir,
       hasLegacy: hasLegacyAgentDir,
+    },
+    authProfiles: {
+      plans: authProfilePlans,
     },
     channelPlans: {
       hasLegacy: channelPlans.length > 0,
@@ -3263,6 +3358,37 @@ function migrateLegacyStateSchema(detected: LegacyStateDetection): {
   });
 }
 
+export async function runLegacyAuthProfileMigrations(params: {
+  plans: AuthProfileStateMigrationPlan[];
+}): Promise<{
+  changes: string[];
+  warnings: string[];
+}> {
+  const changes: string[] = [];
+  const warnings: string[] = [];
+  for (const plan of params.plans) {
+    try {
+      const migrated = runAuthProfileWriteTransaction(plan.agentDir, (database) => {
+        if (loadPersistedAuthProfileStore(plan.agentDir, { database })) {
+          return false;
+        }
+        const sourceStore = loadAuthProfileJsonStoreForMigration(plan.agentDir);
+        if (!sourceStore || Object.keys(sourceStore.profiles).length === 0) {
+          return false;
+        }
+        saveAuthProfileStore(sourceStore, plan.agentDir, undefined, database);
+        return true;
+      });
+      if (migrated) {
+        changes.push(`Migrated auth profiles: ${plan.sourcePath} -> ${plan.targetPath}`);
+      }
+    } catch (err) {
+      warnings.push(`Failed migrating auth profiles from ${plan.sourcePath}: ${String(err)}`);
+    }
+  }
+  return { changes, warnings };
+}
+
 export async function runLegacyStateMigrations(params: {
   detected: LegacyStateDetection;
   config?: OpenClawConfig;
@@ -3275,6 +3401,7 @@ export async function runLegacyStateMigrations(params: {
   if (detected.stateSchema.hasLegacy && stateSchema.warnings.length > 0) {
     return stateSchema;
   }
+  const authProfiles = await runLegacyAuthProfileMigrations({ plans: detected.authProfiles.plans });
   const pluginStateSidecar = await migrateLegacyPluginStateSidecar({
     stateDir: detected.stateDir,
   });
@@ -3316,6 +3443,7 @@ export async function runLegacyStateMigrations(params: {
   return {
     changes: [
       ...stateSchema.changes,
+      ...authProfiles.changes,
       ...pluginStateSidecar.changes,
       ...pluginInstallIndex.changes,
       ...taskStateSidecars.changes,
@@ -3330,6 +3458,7 @@ export async function runLegacyStateMigrations(params: {
     ],
     warnings: [
       ...stateSchema.warnings,
+      ...authProfiles.warnings,
       ...pluginStateSidecar.warnings,
       ...pluginInstallIndex.warnings,
       ...taskStateSidecars.warnings,

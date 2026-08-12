@@ -982,7 +982,11 @@ export function ensureAuthProfileStoreForLocalUpdate(agentDir?: string): AuthPro
   });
 }
 
-export { hasAnyAuthProfileStoreSource, hasLocalAuthProfileStoreSource } from "./source-check.js";
+export {
+  hasAnyAuthProfileStoreSource,
+  hasLocalAuthProfileStoreSource,
+  hasPendingAuthProfileJsonMigration,
+} from "./source-check.js";
 
 /** Return the current runtime auth-profile snapshot for an agent dir. */
 export function getRuntimeAuthProfileStoreSnapshot(

@@ -16,6 +16,7 @@ import {
   MIN_PROMPT_BUDGET_TOKENS,
 } from "../../agent-compaction-constants.js";
 import { SAFETY_MARGIN } from "../../compaction.js";
+import { isRealConversationMessage } from "../../compaction-real-conversation.js";
 import type { AgentMessage } from "../../runtime/index.js";
 import { estimateToolResultReductionPotential } from "../tool-result-truncation.js";
 import type { PreemptiveCompactionRoute } from "./preemptive-compaction.types.js";
@@ -216,11 +217,15 @@ function getToolResultTextLength(message: AgentMessage): number {
 
 function getMessageStableId(message: AgentMessage, index: number): string {
   const record = message as unknown as Record<string, unknown>;
-  const value = record.id ?? record.toolCallId ?? record.tool_call_id ?? record.callId ?? record.toolUseId;
+  const value =
+    record.id ?? record.toolCallId ?? record.tool_call_id ?? record.callId ?? record.toolUseId;
   return typeof value === "string" && value.trim() ? value.trim() : `message-${index}`;
 }
 
-function replaceToolResultTextWithPlaceholder(message: AgentMessage, placeholder: string): AgentMessage {
+function replaceToolResultTextWithPlaceholder(
+  message: AgentMessage,
+  placeholder: string,
+): AgentMessage {
   const content = (message as unknown as { content?: unknown }).content;
   if (typeof content === "string") {
     return {
@@ -301,8 +306,13 @@ export async function buildObservationMaskingProjection(params: {
       index,
       textLength: getToolResultTextLength(message),
     }))
-    .filter((candidate) => isToolResultMessage(candidate.message) && candidate.textLength >= minChars);
-  const maskable = candidates.slice(0, Math.max(0, candidates.length - preserveNewestObservationCount));
+    .filter(
+      (candidate) => isToolResultMessage(candidate.message) && candidate.textLength >= minChars,
+    );
+  const maskable = candidates.slice(
+    0,
+    Math.max(0, candidates.length - preserveNewestObservationCount),
+  );
   if (maskable.length === 0) {
     return {
       messages: params.messages,
@@ -342,12 +352,16 @@ export async function buildObservationMaskingProjection(params: {
       archiveHandle,
       originalChars: candidate.textLength,
     });
-    replacements.set(candidate.index, replaceToolResultTextWithPlaceholder(candidate.message, placeholder));
+    replacements.set(
+      candidate.index,
+      replaceToolResultTextWithPlaceholder(candidate.message, placeholder),
+    );
     archiveHandles.push(archiveHandle);
     estimatedTokenReduction += Math.max(
       0,
-      estimateToolResultContentTokenPressure((candidate.message as unknown as { content?: unknown }).content) -
-        estimateToolResultContentTokenPressure([{ type: "text", text: placeholder }]),
+      estimateToolResultContentTokenPressure(
+        (candidate.message as unknown as { content?: unknown }).content,
+      ) - estimateToolResultContentTokenPressure([{ type: "text", text: placeholder }]),
     );
   }
 
@@ -399,9 +413,8 @@ export function buildContextFamilyPolicyPromotionMetrics(params: {
       baselinePromptTokens,
       projectedPromptTokens,
       reductionTokens,
-      reductionRatio: baselinePromptTokens > 0
-        ? Number((reductionTokens / baselinePromptTokens).toFixed(4))
-        : 0,
+      reductionRatio:
+        baselinePromptTokens > 0 ? Number((reductionTokens / baselinePromptTokens).toFixed(4)) : 0,
     },
     evidenceRetention: {
       archivedHandleCount: params.projection.archiveHandles.length,
@@ -537,6 +550,10 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
   observationMasking?: ObservationMaskingRouteInput;
 }): PreemptiveCompactionDecision {
   let messagesForPressure = params.messages;
+  const conversationMessages = params.unwindowedMessages ?? params.messages;
+  const hasRealConversation = conversationMessages.some((message, index, messages) =>
+    isRealConversationMessage(message, messages, index),
+  );
   const llmBoundaryTokenPressure = normalizeLlmBoundaryTokenPressure(
     params.llmBoundaryTokenPressure,
   );
@@ -588,7 +605,10 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
 
   let route: PreemptiveCompactionRoute = "fits";
   let observationMaskingDecision: PreemptiveCompactionDecision["observationMasking"];
-  if (overflowTokens > 0) {
+  // A bootstrap-only prompt cannot be compacted: the compaction boundary has
+  // no real conversation to summarize. Let the provider enforce its own hard
+  // limit once, instead of retrying the same empty transcript indefinitely.
+  if (overflowTokens > 0 && hasRealConversation) {
     const masking = params.observationMasking;
     if (
       masking?.enabled &&
@@ -605,7 +625,7 @@ export function shouldPreemptivelyCompactBeforePrompt(params: {
           estimatedPromptTokens - Math.max(0, Math.ceil(masking.projectedPromptTokens)),
         ),
       };
-    // Choose truncate-only only when available reduction comfortably exceeds the overflow.
+      // Choose truncate-only only when available reduction comfortably exceeds the overflow.
     } else if (toolResultReducibleChars <= 0) {
       route = "compact_only";
     } else if (toolResultReducibleChars >= truncateOnlyThresholdChars) {

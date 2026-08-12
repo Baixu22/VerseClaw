@@ -1,19 +1,25 @@
 /** Caches plugin tool descriptors by plugin source, contract names, and runtime context. */
-import fs from "node:fs";
 import type { AnyAgentTool } from "../agents/tools/common.js";
 import { resolveRuntimeConfigCacheKey } from "../config/runtime-snapshot.js";
 import type { JsonObject, ToolDescriptor } from "../tools/types.js";
 import type { PluginLoadOptions } from "./loader.js";
+import { registerPluginMetadataProcessMemoLifecycleClear } from "./plugin-metadata-lifecycle.js";
 import type { OpenClawPluginToolContext } from "./types.js";
 
-const PLUGIN_TOOL_DESCRIPTOR_CACHE_VERSION = 1;
+const PLUGIN_TOOL_DESCRIPTOR_CACHE_VERSION = 3;
 const PLUGIN_TOOL_DESCRIPTOR_CACHE_LIMIT = 256;
 
 /** Cached display descriptor for one plugin-created tool. */
 export type CachedPluginToolDescriptor = {
   descriptor: ToolDescriptor;
   displaySummary?: string;
+  executionMode?: AnyAgentTool["executionMode"];
+  hasFinalizeBeforeToolCallParams?: boolean;
+  hasPrepareArguments?: boolean;
+  hasPrepareBeforeToolCallParams?: boolean;
   optional: boolean;
+  risk?: AnyAgentTool["risk"];
+  writeRiskProfile?: AnyAgentTool["writeRiskProfile"];
 };
 
 const descriptorCache = new Map<string, CachedPluginToolDescriptor[]>();
@@ -33,14 +39,10 @@ export function resetPluginToolDescriptorCache(): void {
   nextDescriptorCacheObjectId = 1;
 }
 
-function sourceFingerprint(source: string): string {
-  try {
-    const stat = fs.statSync(source);
-    return `${stat.size}:${Math.round(stat.mtimeMs)}`;
-  } catch {
-    return "missing";
-  }
-}
+// Plugin metadata and runtime registrations are gateway-lifecycle facts. The
+// gateway reload/close path clears this bounded process cache explicitly, so
+// request-time descriptor construction does not poll the plugin filesystem.
+registerPluginMetadataProcessMemoLifecycleClear(resetPluginToolDescriptorCache);
 
 function getDescriptorCacheObjectId(value: object | null | undefined): number | null {
   if (!value) {
@@ -122,6 +124,7 @@ export function buildPluginToolDescriptorCacheKey(params: {
   rootDir?: string;
   contractToolNames: readonly string[];
   ctx: OpenClawPluginToolContext;
+  runtimeRegistryVersion?: number | string;
   currentRuntimeConfig?: PluginLoadOptions["config"] | null;
   configCacheKeyMemo?: PluginToolDescriptorConfigCacheKeyMemo;
 }): string {
@@ -130,7 +133,7 @@ export function buildPluginToolDescriptorCacheKey(params: {
     pluginId: params.pluginId,
     source: params.source,
     rootDir: params.rootDir ?? null,
-    sourceFingerprint: sourceFingerprint(params.source),
+    runtimeRegistryVersion: params.runtimeRegistryVersion ?? null,
     contractToolNames: [...params.contractToolNames].toSorted(),
     context: buildDescriptorContextCacheKey({
       ctx: params.ctx,
@@ -149,16 +152,23 @@ export function capturePluginToolDescriptor(params: {
   tool: AnyAgentTool;
   optional: boolean;
 }): CachedPluginToolDescriptor {
-  const label = (params.tool as { label?: unknown }).label;
+  const { tool } = params;
+  const label = (tool as { label?: unknown }).label;
   const title = typeof label === "string" && label.trim() ? label.trim() : undefined;
   return {
-    ...(params.tool.displaySummary ? { displaySummary: params.tool.displaySummary } : {}),
+    ...(tool.displaySummary ? { displaySummary: tool.displaySummary } : {}),
+    ...(tool.executionMode ? { executionMode: tool.executionMode } : {}),
+    ...(tool.finalizeBeforeToolCallParams ? { hasFinalizeBeforeToolCallParams: true } : {}),
     optional: params.optional,
+    ...(tool.prepareArguments ? { hasPrepareArguments: true } : {}),
+    ...(tool.prepareBeforeToolCallParams ? { hasPrepareBeforeToolCallParams: true } : {}),
+    ...(tool.risk ? { risk: tool.risk } : {}),
+    ...(tool.writeRiskProfile ? { writeRiskProfile: tool.writeRiskProfile } : {}),
     descriptor: {
-      name: params.tool.name,
+      name: tool.name,
       ...(title ? { title } : {}),
-      description: params.tool.description,
-      inputSchema: asJsonObject(params.tool.parameters),
+      description: tool.description,
+      inputSchema: asJsonObject(tool.parameters),
       owner: { kind: "plugin", pluginId: params.pluginId },
       executor: { kind: "plugin", pluginId: params.pluginId, toolName: params.tool.name },
     },

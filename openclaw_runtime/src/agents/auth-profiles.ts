@@ -60,6 +60,7 @@ export {
   ensureAuthProfileStoreWithoutExternalProfiles,
   getRuntimeAuthProfileStoreSnapshot,
   hasAnyAuthProfileStoreSource,
+  hasPendingAuthProfileJsonMigration,
   hasLocalAuthProfileStoreSource,
   loadAuthProfileStoreForSecretsRuntime,
   loadAuthProfileStoreWithoutExternalProfiles,

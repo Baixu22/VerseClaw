@@ -22,6 +22,7 @@ export type SandboxFsStat = {
 export type SandboxFsBridge = {
   resolvePath(params: { filePath: string; cwd?: string }): SandboxResolvedPath;
   readFile(params: { filePath: string; cwd?: string; signal?: AbortSignal }): Promise<Buffer>;
+  readdir(params: { filePath: string; cwd?: string; signal?: AbortSignal }): Promise<string[]>;
   writeFile(params: {
     filePath: string;
     cwd?: string;

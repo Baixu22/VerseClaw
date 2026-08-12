@@ -24,6 +24,14 @@ describe("ChatSendParamsSchema (D3 closeout)", () => {
     expect(Value.Check(ChatSendParamsSchema, params)).toBe(true);
   });
 
+  it("accepts the trusted backend workspace directory", () => {
+    const params = {
+      ...minimalValid,
+      workspaceDir: "C:/projects/verse-claw",
+    };
+    expect(Value.Check(ChatSendParamsSchema, params)).toBe(true);
+  });
+
   it("accepts workspaceFingerprint without workspaceId", () => {
     const params = {
       ...minimalValid,

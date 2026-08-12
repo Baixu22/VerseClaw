@@ -191,6 +191,8 @@ export type MsgContext = {
   MediaUrls?: string[];
   MediaTypes?: string[];
   MediaWorkspaceDir?: string;
+  /** Trusted Backend-selected workspace root for the current session. */
+  WorkspaceDir?: string;
   /** Attachment indexes whose audio was already transcribed before media understanding runs. */
   MediaTranscribedIndexes?: number[];
   /**

@@ -38,13 +38,14 @@ import {
 } from "./openclaw-tools.registration.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import type { SpawnedToolContext } from "./spawned-context.js";
+import type {
+  ManualCompactionRequest,
+  ManualCompactionRequestStatus,
+} from "./manual-compaction-request.js";
 import type { ToolFsPolicy } from "./tool-fs-policy.js";
 import { resolveToolLoopDetectionConfig } from "./tool-loop-detection-config.js";
 import { createAgentsListTool } from "./tools/agents-list-tool.js";
-import {
-  createAgentBrowserTool,
-  type AgentBrowserInvoker,
-} from "./tools/agent-browser-tool.js";
+import { createAgentBrowserTool, type AgentBrowserInvoker } from "./tools/agent-browser-tool.js";
 import {
   createAutomationPlaybookSelectorTool,
   type AutomationPlaybookCandidate,
@@ -73,6 +74,7 @@ import { getOrCreateWriteJournal } from "./tools/write-journal.js";
 import { createNodesTool } from "./tools/nodes-tool.js";
 import { createPdfTool } from "./tools/pdf-tool.js";
 import { createSessionStatusTool } from "./tools/session-status-tool.js";
+import { createSessionsCompactTool } from "./tools/sessions-compact-tool.js";
 import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
 import { createSessionsListTool } from "./tools/sessions-list-tool.js";
 import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
@@ -206,6 +208,8 @@ export function createOpenClawTools(
     spawnWorkspaceDir?: string;
     /** Callback invoked when sessions_yield tool is called. */
     onYield?: (message: string) => Promise<void> | void;
+    /** Records a current-session compaction request for post-attempt execution. */
+    onManualCompactionRequest?: (request: ManualCompactionRequest) => ManualCompactionRequestStatus;
     /** Optional Electron-owned internal browser bridge for desktop agent automation. */
     agentBrowserInvoker?: AgentBrowserInvoker;
     /**
@@ -630,6 +634,14 @@ export function createOpenClawTools(
             workspaceDir: spawnWorkspaceDir,
             inheritedToolAllowlist: options?.inheritedToolAllowlist,
             inheritedToolDenylist: options?.inheritedToolDenylist,
+          }),
+        ]
+      : []),
+    ...(options?.sessionId && options.onManualCompactionRequest
+      ? [
+          createSessionsCompactTool({
+            sessionId: options.sessionId,
+            onRequest: options.onManualCompactionRequest,
           }),
         ]
       : []),

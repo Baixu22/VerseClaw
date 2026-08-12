@@ -27,21 +27,26 @@ function readBooleanFlag(args: string[], name: string, envName: string): boolean
 }
 
 const args = process.argv.slice(2);
-const port = readPort(args);
-const token = readOption(args, "--token") ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";
-const bind = readOption(args, "--bind") ?? process.env.OPENCLAW_GATEWAY_BIND ?? "loopback";
-const deferStartupSidecars = readBooleanFlag(
-  args,
-  "--defer-startup-sidecars",
-  "OPENCLAW_DEFER_STARTUP_SIDECARS",
-);
+if (args[0] === "doctor") {
+  const { runSourceDoctor } = await import("./infra/source-doctor.js");
+  process.exitCode = await runSourceDoctor(args.slice(1));
+} else {
+  const port = readPort(args);
+  const token = readOption(args, "--token") ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";
+  const bind = readOption(args, "--bind") ?? process.env.OPENCLAW_GATEWAY_BIND ?? "loopback";
+  const deferStartupSidecars = readBooleanFlag(
+    args,
+    "--defer-startup-sidecars",
+    "OPENCLAW_DEFER_STARTUP_SIDECARS",
+  );
 
-if (token) {
-  process.env.OPENCLAW_GATEWAY_TOKEN = token;
+  if (token) {
+    process.env.OPENCLAW_GATEWAY_TOKEN = token;
+  }
+
+  await startGatewayServer(port, {
+    bind: bind as NonNullable<Parameters<typeof startGatewayServer>[1]>["bind"],
+    auth: token ? { token } : undefined,
+    deferStartupSidecars,
+  });
 }
-
-await startGatewayServer(port, {
-  bind: bind as NonNullable<Parameters<typeof startGatewayServer>[1]>["bind"],
-  auth: token ? { token } : undefined,
-  deferStartupSidecars,
-});

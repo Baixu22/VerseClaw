@@ -49,6 +49,7 @@ import {
   createHostWorkspaceWriteTool,
   createOpenClawReadTool,
   createSandboxedEditTool,
+  createSandboxedLsTool,
   createSandboxedReadTool,
   createSandboxedWriteTool,
   getToolParamsRecord,
@@ -96,10 +97,14 @@ import type { ModelAuthMode } from "./model-auth.js";
 import { resolveOpenClawPluginToolsForOptions } from "./openclaw-plugin-tools.js";
 import { createOpenClawTools } from "./openclaw-tools.js";
 import type { SandboxContext } from "./sandbox.js";
+import type {
+  ManualCompactionRequest,
+  ManualCompactionRequestStatus,
+} from "./manual-compaction-request.js";
 import { SANDBOX_AGENT_WORKSPACE_MOUNT } from "./sandbox/constants.js";
 import { resolveReadOnlyWorkspaceSkillMounts } from "./sandbox/workspace-mounts.js";
 import { resolveSenderToolPolicy } from "./sender-tool-policy.js";
-import { createReadTool } from "./sessions/index.js";
+import { createLsTool, createReadTool } from "./sessions/index.js";
 import {
   isSubagentEnvelopeSession,
   resolveSubagentCapabilityStore,
@@ -554,6 +559,8 @@ export function createOpenClawCodingTools(options?: {
   authProfileStore?: AuthProfileStore;
   /** Callback invoked when sessions_yield tool is called. */
   onYield?: (message: string) => Promise<void> | void;
+  /** Records a current-session compaction request for post-attempt execution. */
+  onManualCompactionRequest?: (request: ManualCompactionRequest) => ManualCompactionRequestStatus;
   /** Optional instrumentation callback for tool preparation stage timing. */
   recordToolPrepStage?: (name: string) => void;
   /** Lower routine policy-removal audits for diagnostic-only tool probes. */
@@ -869,9 +876,9 @@ export function createOpenClawCodingTools(options?: {
   const workspaceOnly = fsPolicy.workspaceOnly;
   const skillReadRoots = sandboxRoot ? undefined : resolveSkillReadRoots(options?.skillsSnapshot);
   const applyPatchConfig = execConfig.applyPatch;
-  // Secure by default: apply_patch is workspace-contained unless explicitly disabled.
-  // (tools.fs.workspaceOnly is a separate umbrella flag for read/write/edit/apply_patch.)
-  const applyPatchWorkspaceOnly = workspaceOnly || applyPatchConfig?.workspaceOnly !== false;
+  // The fs policy is the umbrella boundary. An apply_patch-only restriction may
+  // narrow it, but cannot weaken an enabled umbrella restriction.
+  const applyPatchWorkspaceOnly = workspaceOnly || applyPatchConfig?.workspaceOnly === true;
   const applyPatchEnabled =
     applyPatchConfig?.enabled !== false &&
     isApplyPatchAllowedForModel({
@@ -886,72 +893,99 @@ export function createOpenClawCodingTools(options?: {
   const imageSanitization = resolveImageSanitizationLimits(options?.config);
   options?.recordToolPrepStage?.("workspace-policy");
 
-  const baseToolAssemblers: Array<{ name: "read" | "edit" | "write"; build: () => AnyAgentTool }> =
-    [
-      {
-        name: "read",
-        build: () => {
-          if (sandboxRoot) {
-            const sandboxed = createSandboxedReadTool({
-              root: sandboxRoot,
-              bridge: sandboxFsBridge!,
-              modelContextWindowTokens: options?.modelContextWindowTokens,
-              imageSanitization,
-            });
-            return workspaceOnly
-              ? wrapToolWorkspaceRootGuardWithOptions(sandboxed, sandboxRoot, {
-                  additionalContainerMounts: readOnlySandboxReadMounts(sandbox),
-                  containerWorkdir: sandbox.containerWorkdir,
-                })
-              : sandboxed;
-          }
-          const wrapped = createOpenClawReadTool(createReadTool(codingRoot), {
+  const baseToolAssemblers: Array<{
+    name: "read" | "ls" | "edit" | "write";
+    build: () => AnyAgentTool;
+  }> = [
+    {
+      name: "read",
+      build: () => {
+        if (sandboxRoot) {
+          const sandboxed = createSandboxedReadTool({
+            root: sandboxRoot,
+            bridge: sandboxFsBridge!,
             modelContextWindowTokens: options?.modelContextWindowTokens,
             imageSanitization,
           });
           return workspaceOnly
-            ? wrapToolWorkspaceRootGuardWithOptions(wrapped, codingRoot, {
-                additionalRoots: skillReadRoots,
-              })
-            : wrapped;
-        },
-      },
-      {
-        name: "edit",
-        build: () => {
-          const wrapped = sandboxRoot
-            ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
-            : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
-          if (!workspaceOnly) {
-            return wrapped;
-          }
-          return sandboxRoot
-            ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+            ? wrapToolWorkspaceRootGuardWithOptions(sandboxed, sandboxRoot, {
+                additionalContainerMounts: readOnlySandboxReadMounts(sandbox),
                 containerWorkdir: sandbox.containerWorkdir,
               })
-            : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
-        },
+            : sandboxed;
+        }
+        const wrapped = createOpenClawReadTool(createReadTool(codingRoot), {
+          modelContextWindowTokens: options?.modelContextWindowTokens,
+          imageSanitization,
+        });
+        return workspaceOnly
+          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, codingRoot, {
+              additionalRoots: skillReadRoots,
+            })
+          : wrapped;
       },
-      {
-        name: "write",
-        build: () => {
-          const wrapped = sandboxRoot
-            ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
-            : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
-          if (!workspaceOnly) {
-            return wrapped;
-          }
-          return sandboxRoot
-            ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+    },
+    {
+      name: "ls",
+      build: () => {
+        if (sandboxRoot) {
+          const sandboxed = createSandboxedLsTool({
+            root: sandboxRoot,
+            bridge: sandboxFsBridge!,
+          });
+          return workspaceOnly
+            ? wrapToolWorkspaceRootGuardWithOptions(sandboxed, sandboxRoot, {
+                additionalContainerMounts: readOnlySandboxReadMounts(sandbox),
                 containerWorkdir: sandbox.containerWorkdir,
               })
-            : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
-        },
+            : sandboxed;
+        }
+        const tool = createLsTool(codingRoot) as unknown as AnyAgentTool;
+        return workspaceOnly
+          ? wrapToolWorkspaceRootGuardWithOptions(tool, codingRoot, {
+              additionalRoots: skillReadRoots,
+            })
+          : tool;
       },
-    ];
+    },
+    {
+      name: "edit",
+      build: () => {
+        const wrapped = sandboxRoot
+          ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
+          : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
+        if (!workspaceOnly) {
+          return wrapped;
+        }
+        return sandboxRoot
+          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+              containerWorkdir: sandbox.containerWorkdir,
+            })
+          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
+      },
+    },
+    {
+      name: "write",
+      build: () => {
+        const wrapped = sandboxRoot
+          ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
+          : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
+        if (!workspaceOnly) {
+          return wrapped;
+        }
+        return sandboxRoot
+          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
+              containerWorkdir: sandbox.containerWorkdir,
+            })
+          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
+      },
+    },
+  ];
   const base = includeBaseCodingTools
     ? baseToolAssemblers
-        .filter(({ name }) => name === "read" || !sandboxRoot || allowWorkspaceWrites)
+        .filter(
+          ({ name }) => name === "read" || name === "ls" || !sandboxRoot || allowWorkspaceWrites,
+        )
         .map(({ name, build }) => {
           const tool = build();
           if (name === "read") {
@@ -994,6 +1028,7 @@ export function createOpenClawCodingTools(options?: {
     workspaceRoot: codingRoot,
     sessionId: codingSessionId,
     enabled: writeJournalEnabled && includeBaseCodingTools,
+    workspaceOnly,
   });
   if (undoWriteTool) {
     base.push(undoWriteTool);
@@ -1243,6 +1278,7 @@ export function createOpenClawCodingTools(options?: {
           inheritedToolAllowlist,
           inheritedToolDenylist,
           onYield: options?.onYield,
+          onManualCompactionRequest: options?.onManualCompactionRequest,
           allowGatewaySubagentBinding: options?.allowGatewaySubagentBinding,
           recordToolPrepStage: options?.recordToolPrepStage,
         })

@@ -79,6 +79,25 @@ class OpenShellFsBridge implements SandboxFsBridge {
     }
   }
 
+  async readdir(params: {
+    filePath: string;
+    cwd?: string;
+    signal?: AbortSignal;
+  }): Promise<string[]> {
+    const target = this.resolveTarget(params);
+    const hostPath = this.requireHostPath(target);
+    await assertLocalPathSafety({
+      target,
+      root: target.mountHostRoot,
+      allowMissingLeaf: false,
+      allowFinalSymlinkForUnlink: false,
+    });
+    if (params.signal?.aborted) {
+      throw new Error("Operation aborted");
+    }
+    return fsPromises.readdir(hostPath);
+  }
+
   async writeFile(params: {
     filePath: string;
     cwd?: string;
