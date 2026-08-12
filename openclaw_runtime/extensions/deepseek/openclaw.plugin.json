@@ -30,7 +30,7 @@
             "name": "DeepSeek V4 Flash",
             "reasoning": true,
             "input": ["text"],
-            "contextWindow": 1000000,
+            "contextWindow": 131072,
             "maxTokens": 384000,
             "cost": {
               "input": 0.14,
@@ -49,7 +49,7 @@
             "name": "DeepSeek V4 Pro",
             "reasoning": true,
             "input": ["text"],
-            "contextWindow": 1000000,
+            "contextWindow": 131072,
             "maxTokens": 384000,
             "cost": {
               "input": 1.74,
