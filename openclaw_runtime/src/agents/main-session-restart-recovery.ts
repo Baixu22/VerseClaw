@@ -31,6 +31,7 @@ import {
 } from "../utils/delivery-context.shared.js";
 import { isDeliverableMessageChannel } from "../utils/message-channel.js";
 import { resolveAgentSessionDirs } from "./session-dirs.js";
+import { resolveMainSessionResumeBlockReason } from "./main-session-restart-recovery-boundary.js";
 import type { SessionLockInspection } from "./session-write-lock.js";
 
 const log = createSubsystemLogger("main-session-restart-recovery");
@@ -197,49 +198,6 @@ export async function markRestartAbortedMainSessions(params: {
   return result;
 }
 
-function getMessageRole(message: unknown): string | undefined {
-  if (!message || typeof message !== "object") {
-    return undefined;
-  }
-  const role = (message as { role?: unknown }).role;
-  return typeof role === "string" ? role : undefined;
-}
-
-function isMeaningfulTailMessage(message: unknown): boolean {
-  const role = getMessageRole(message);
-  if (!role || role === "system") {
-    return false;
-  }
-  return true;
-}
-
-function isResumableTailMessage(message: unknown): boolean {
-  const role = getMessageRole(message);
-  return role === "user" || role === "tool" || role === "toolResult";
-}
-
-function isApprovalPendingToolResult(message: unknown): boolean {
-  if (!message || typeof message !== "object" || getMessageRole(message) !== "toolResult") {
-    return false;
-  }
-  const details = (message as { details?: unknown }).details;
-  if (!details || typeof details !== "object") {
-    return false;
-  }
-  return (details as { status?: unknown }).status === "approval-pending";
-}
-
-function resolveMainSessionResumeBlockReason(messages: unknown[]): string | null {
-  const lastMeaningful = messages.toReversed().find(isMeaningfulTailMessage);
-  if (!lastMeaningful || !isResumableTailMessage(lastMeaningful)) {
-    return "transcript tail is not resumable";
-  }
-  if (isApprovalPendingToolResult(lastMeaningful)) {
-    return "transcript tail is a stale approval-pending tool result";
-  }
-  return null;
-}
-
 function buildResumeMessage(pendingFinalDeliveryText?: string | null): string {
   const base =
     "[System] Your previous turn was interrupted by a gateway restart while " +
@@ -396,6 +354,7 @@ async function resumeMainSession(params: {
     const agentParams: Record<string, unknown> = {
       message: buildResumeMessage(sanitizedPendingText),
       sessionKey: params.sessionKey,
+      sessionId: params.entry.sessionId,
       idempotencyKey: crypto.randomUUID(),
       deliver: Boolean(deliveryContext),
       lane: CommandLane.Main,
