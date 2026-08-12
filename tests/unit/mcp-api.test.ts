@@ -83,6 +83,15 @@ vi.mock('@electron/services/git-api', () => ({
   createGitApi: () => createGitApiMock(),
 }));
 
+vi.mock('@electron/utils/channel-config', () => ({
+  readOpenClawConfig: vi.fn(async () => ({})),
+  writeOpenClawConfig: vi.fn(async () => undefined),
+}));
+
+vi.mock('@electron/utils/config-mutex', () => ({
+  withConfigLock: async <T>(fn: () => Promise<T>) => fn(),
+}));
+
 describe('mcp api registry', () => {
   beforeEach(() => {
     storeState.servers = [];
@@ -244,14 +253,12 @@ describe('mcp api registry', () => {
     ]);
   });
 
-  it('resolves MCP config and exposes runtime fallbacks without restarting Gateway', async () => {
+  it('mirrors MCP servers into openclaw.json and reloads Gateway without an RPC', async () => {
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'mcp.reload') {
-          return { ok: true };
-        }
+      rpc: vi.fn(async () => {
         throw new Error('runtime method unavailable');
       }),
       debouncedReload: vi.fn(),
@@ -266,16 +273,25 @@ describe('mcp api registry', () => {
       scope: 'global',
     });
 
-    expect(gatewayManager.debouncedReload).not.toHaveBeenCalled();
-    expect(gatewayManager.rpc).toHaveBeenCalledWith(
-      'mcp.reload',
-      expect.objectContaining({
-        servers: expect.any(Array),
-      }),
-      5000,
-    );
-    const reloadPayload = gatewayManager.rpc.mock.calls.find((call) => call[0] === 'mcp.reload')?.[1] as Record<string, unknown>;
-    expect(reloadPayload.openclawServers).toBeUndefined();
+    // No dead mcp.reload RPC is issued; the runtime consumes openclaw.json instead.
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    expect(writeOpenClawConfig).toHaveBeenCalled();
+    expect(gatewayManager.debouncedReload).toHaveBeenCalled();
+    const mirrored = (writeOpenClawConfig as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0] as {
+      mcp?: { servers?: Record<string, unknown> };
+    };
+    expect(mirrored.mcp?.servers).toBeTruthy();
+    // User-configured servers must be mirrored with runtime-canonical fields...
+    const httpLocal = mirrored.mcp?.servers?.['http-local'];
+    expect(httpLocal).toMatchObject({
+      enabled: true,
+      url: 'http://127.0.0.1:4000/mcp',
+      transport: 'streamable-http',
+      networkPolicy: 'localOnly',
+    });
+    // ...but ClawX bridge servers (clawx:// localAddress) must NOT leak into runtime config.
+    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-git');
+    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-storage');
 
     const listed = await api.listServers();
     expect(listed.servers.find((server) => server.id === 'http-local')).toMatchObject({

@@ -69,7 +69,7 @@ vi.mock('@electron/utils/config-mutex', () => ({
 }));
 
 describe('P4-003 MCP runtime projection / schema / reload / secret broker', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     storeState.servers = [];
     storeState.envSecrets = {};
     resetMcpEnvBrokerCryptoForTests();
@@ -81,6 +81,9 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
         return raw.startsWith('enc:') ? raw.slice(4) : raw;
       },
     });
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
+    (writeOpenClawConfig as ReturnType<typeof vi.fn>).mockReset();
+    (writeOpenClawConfig as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
   });
 
   it('A1 projects permissionMode/sandbox/network/sslVerify/env into runtime config', () => {
@@ -140,56 +143,62 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
     }).allowed).toBe(true);
   });
 
-  it('A2 reload fails closed without ack when Gateway is running', async () => {
+  it('A2 reload fails closed when the openclaw.json mirror fails', async () => {
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
       rpc: vi.fn(async () => {
-        throw new Error('reload exploded');
+        throw new Error('runtime method unavailable');
       }),
+      debouncedReload: vi.fn(),
     };
     const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never });
 
+    (writeOpenClawConfig as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('mirror exploded'));
     const result = await api.reloadRuntime({});
     expect(result.success).toBe(false);
     expect(result.hotReloaded).toBe(false);
     expect(result.restartRequired).toBe(true);
-    expect(String(result.error || result.message)).toMatch(/reload exploded|acknowledgement|failed/i);
+    expect(String(result.error || result.message)).toMatch(/mirror exploded|failed/i);
+    // A failed mirror never requests a gateway reload.
+    expect(gatewayManager.debouncedReload).not.toHaveBeenCalled();
   });
 
-  it('A2 create rolls back when running Gateway rejects reload', async () => {
+  it('A2 create rolls back when the openclaw.json mirror rejects', async () => {
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
       rpc: vi.fn(async () => {
-        throw new Error('no ack');
+        throw new Error('runtime method unavailable');
       }),
+      debouncedReload: vi.fn(),
     };
     const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never });
 
+    (writeOpenClawConfig as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('no mirror'));
     await expect(api.createServer({
       name: 'Should Roll Back',
       transport: 'stdio',
       command: 'echo',
       enabled: true,
       scope: 'global',
-    })).rejects.toThrow(/no ack|rolled back|reload/i);
+    })).rejects.toThrow(/no mirror|rolled back|reload/i);
 
     const listed = await api.listServers();
     expect(listed.servers.some((server) => server.name === 'Should Roll Back')).toBe(false);
   });
 
-  it('A2 reload succeeds with hotReloaded when Gateway ACKs', async () => {
+  it('A2 reload mirrors security fields into openclaw.json and hot-reloads via config watcher', async () => {
     const { createMcpApiWithContext } = await import('@electron/services/mcp-api');
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
     const gatewayManager = {
       getStatus: vi.fn(() => ({ state: 'running' })),
-      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
-        expect(method).toBe('mcp.reload');
-        const servers = params.servers as Array<Record<string, unknown>>;
-        expect(Array.isArray(servers)).toBe(true);
-        // Runtime payload must include security fields for custom servers after create.
-        return { ok: true, reloaded: true };
+      rpc: vi.fn(async () => {
+        throw new Error('runtime method unavailable');
       }),
+      debouncedReload: vi.fn(),
     };
     const api = createMcpApiWithContext({ gatewayManager: gatewayManager as never });
 
@@ -209,11 +218,15 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
     const reload = await api.reloadRuntime({});
     expect(reload.success).toBe(true);
     expect(reload.hotReloaded).toBe(true);
+    // Runtime consumption is via the openclaw.json config watcher, not an RPC.
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    expect(gatewayManager.debouncedReload).toHaveBeenCalled();
 
-    const reloadCall = gatewayManager.rpc.mock.calls.find((call) => call[0] === 'mcp.reload');
-    expect(reloadCall).toBeTruthy();
-    const payloadServers = (reloadCall?.[1] as { servers: Array<Record<string, unknown>> }).servers;
-    const custom = payloadServers.find((server) => server.name === 'Secure Server');
+    const mirrored = (writeOpenClawConfig as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0] as {
+      mcp?: { servers?: Record<string, unknown> };
+    };
+    const custom = mirrored.mcp?.servers?.['secure-server'];
+    expect(custom).toBeTruthy();
     expect(custom).toMatchObject({
       permissionMode: 'readOnly',
       sandboxProfileId: 'sbx-1',
@@ -221,6 +234,9 @@ describe('P4-003 MCP runtime projection / schema / reload / secret broker', () =
       sslVerify: true,
       env: { TOKEN: 'super-secret-token-value' },
     });
+    // ClawX bridge servers stay Main-local and never leak into runtime config.
+    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-git');
+    expect(Object.keys(mirrored.mcp?.servers ?? {})).not.toContain('clawx-storage');
   });
 
   it('A3 never returns env plaintext to Renderer list/test surfaces', async () => {

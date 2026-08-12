@@ -296,5 +296,6 @@
     "turnLabel": "ターン {{sequence}}",
     "collapse": "非表示",
     "expand": "クイック移動を表示"
-  }
+  },
+  "scorecardContextHealth": "コンテキスト健全性 {{id}}..."
 }

@@ -296,5 +296,6 @@
     "turnLabel": "Ход {{sequence}}",
     "collapse": "Скрыть",
     "expand": "Показать быстрый переход"
-  }
+  },
+  "scorecardContextHealth": "Здоровье контекста {{id}}..."
 }
