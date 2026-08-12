@@ -1,0 +1,415 @@
+{
+  "schemaVersion": 2,
+  "description": "RPC 直接检查面 — 不经模型，直接调用 Gateway RPC 验证服务可用性。分组按子系统。方法/参数均已实测验证（2026-08-11）。",
+  "sessionKey": "agent:main:main",
+  "groups": [
+    {
+      "id": "core",
+      "name": "核心服务",
+      "critical": true,
+      "checks": [
+        {
+          "method": "health",
+          "params": {},
+          "critical": true
+        },
+        {
+          "method": "status",
+          "params": {}
+        },
+        {
+          "method": "models.list",
+          "params": {}
+        },
+        {
+          "method": "commands.list",
+          "params": {}
+        },
+        {
+          "method": "logs.tail",
+          "params": {}
+        },
+        {
+          "method": "diagnostics.stability",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "sessions",
+      "name": "会话服务",
+      "checks": [
+        {
+          "method": "sessions.list",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "name": "工具注册",
+      "checks": [
+        {
+          "method": "tools.effective",
+          "params": {
+            "sessionKey": "agent:main:main"
+          }
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "name": "技能服务",
+      "checks": [
+        {
+          "method": "skills.status",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "roles",
+      "name": "角色编排",
+      "checks": [
+        {
+          "method": "roles.list",
+          "params": {}
+        },
+        {
+          "method": "teams.list",
+          "params": {}
+        },
+        {
+          "method": "orchestrator.plan",
+          "params": {
+            "task": "audit probe"
+          }
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "name": "记忆服务",
+      "checks": [
+        {
+          "method": "memory.health",
+          "params": {}
+        },
+        {
+          "method": "memory.stats",
+          "params": {}
+        },
+        {
+          "method": "memory.policy",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "observability",
+      "name": "可观测性",
+      "checks": [
+        {
+          "method": "observability.traces",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "安全服务",
+      "checks": [
+        {
+          "method": "security.health",
+          "params": {}
+        },
+        {
+          "method": "security.policy.get",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "config",
+      "name": "配置服务",
+      "checks": [
+        {
+          "method": "config.get",
+          "params": {}
+        }
+      ],
+      "adminOnly": [
+        {
+          "method": "config.schema",
+          "params": {},
+          "note": "需 operator.admin scope"
+        }
+      ]
+    },
+    {
+      "id": "usage",
+      "name": "用量统计",
+      "checks": [
+        {
+          "method": "usage.status",
+          "params": {}
+        },
+        {
+          "method": "usage.cost",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "verification",
+      "name": "验证服务",
+      "checks": [
+        {
+          "method": "verification.health",
+          "params": {}
+        },
+        {
+          "method": "verification.status",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "doctor",
+      "name": "诊断服务",
+      "checks": [
+        {
+          "method": "doctor.memory.status",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "control-plane",
+      "name": "控制面",
+      "checks": [
+        {
+          "method": "localControlPlane.status",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "runtime",
+      "name": "运行时标志",
+      "checks": [
+        {
+          "method": "runtime.flags.ack",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "clawgraph",
+      "name": "CodeGraph 集成",
+      "checks": [
+        {
+          "method": "clawgraph.listWorkflows",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "agents",
+      "name": "Agent 管理",
+      "checks": [
+        {
+          "method": "agents.list",
+          "params": {}
+        },
+        {
+          "method": "agent.identity.get",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "artifacts",
+      "name": "工件服务",
+      "checks": [
+        {
+          "method": "artifacts.list",
+          "params": {
+            "sessionKey": "agent:main:main"
+          }
+        }
+      ]
+    },
+    {
+      "id": "capabilities",
+      "name": "能力发布",
+      "checks": [
+        {
+          "method": "capabilities.publications",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "channels",
+      "name": "渠道服务",
+      "checks": [
+        {
+          "method": "channels.status",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "cron",
+      "name": "定时任务",
+      "checks": [
+        {
+          "method": "cron.list",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "device",
+      "name": "设备服务",
+      "checks": [
+        {
+          "method": "device.pair.list",
+          "params": {}
+        }
+      ],
+      "adminOnly": [
+        {
+          "method": "device.pair.list",
+          "params": {},
+          "note": "需 operator.pairing"
+        }
+      ]
+    },
+    {
+      "id": "gateway-mgmt",
+      "name": "网关管理",
+      "checks": [
+        {
+          "method": "gateway.identity.get",
+          "params": {}
+        },
+        {
+          "method": "system-presence",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "node",
+      "name": "节点服务",
+      "checks": [
+        {
+          "method": "node.list",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "plugins",
+      "name": "插件服务",
+      "checks": [
+        {
+          "method": "plugins.uiDescriptors",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "tasks",
+      "name": "任务服务",
+      "checks": [
+        {
+          "method": "tasks.list",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "媒体/生成",
+      "checks": [],
+      "adminOnly": [
+        {
+          "method": "browser.request",
+          "params": {},
+          "note": "需 operator.admin"
+        }
+      ]
+    },
+    {
+      "id": "secrets",
+      "name": "密钥服务",
+      "checks": [
+        {
+          "method": "secrets.resolve",
+          "params": {}
+        }
+      ],
+      "adminOnly": [
+        {
+          "method": "secrets.resolve",
+          "params": {},
+          "note": "需 operator.admin"
+        }
+      ]
+    },
+    {
+      "id": "fork",
+      "name": "会话分叉",
+      "checks": [
+        {
+          "method": "sessions.fork",
+          "params": {
+            "key": "agent:main:main"
+          },
+          "note": "fork 当前真实会话"
+        }
+      ]
+    },
+    {
+      "id": "workspace",
+      "name": "工作空间",
+      "checks": [
+        {
+          "method": "config.get",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "taskloop",
+      "name": "任务循环详情",
+      "checks": [
+        {
+          "method": "task_loop.status",
+          "params": {
+            "loopRunId": "nonexistent-probe"
+          },
+          "note": "验证错误处理而非真实循环"
+        }
+      ]
+    },
+    {
+      "id": "memory-write",
+      "name": "记忆写入",
+      "checks": [
+        {
+          "method": "memory.propose",
+          "params": {
+            "proposal": {
+              "content": "audit probe fact"
+            }
+          },
+          "note": "proposal 需 content 字段"
+        }
+      ]
+    }
+  ]
+}

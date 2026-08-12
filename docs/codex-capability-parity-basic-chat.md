@@ -47,6 +47,7 @@ For capability parity, every ordinary chat turn should have:
 | Capability | Current ClawX implementation | Status |
 | --- | --- | --- |
 | Basic send path | `src/stores/chat/runtime-send-actions.ts` sends through typed `hostApi.chat.sendWithMedia`, then Main proxies to Gateway. | Meets baseline. |
+| Workspace discovery | `openclaw_runtime/src/agents/agent-tools.ts` exposes the bounded `ls` tool in ordinary and sandboxed coding sessions; `read` is file-only and directs directory paths to `ls`. | Meets baseline for directory listing without shell access. |
 | Transcript/history | `src/stores/chat.ts` loads Gateway history and transcript fallback, with optimistic-message reconciliation. | Meets baseline for visible chat, weaker for structured turn replay. |
 | Task projection | `src/stores/chat.ts` and `src/stores/chat/runtime-event-handlers.ts` record final/error turns into Task Ledger via `turn-ledger-recorder`. | ClawX advantage; best-effort derived side channel, not chat source of truth. |
 | Active task context | `electron/services/chat-api.ts` injects bounded selected Task Ledger node metadata into the runtime message. | Meets basic parity; only selected node plus parent are included by design. |
@@ -168,6 +169,7 @@ Acceptance evidence:
 - User-attached Knowledge/Memory references are projected into Task Ledger evidence refs (`other` for wiki, `memory` for memory) so durable turn nodes link back to the context used.
 - Reload/history hydration now rebuilds completed ordinary-turn Task Ledger projections from persisted transcript messages with stable turn IDs, so durable work evidence does not depend solely on live Gateway final events.
 - Main-process Knowledge, Work Mode, Task Ledger, and citation metadata fragments now have hard character caps before being prepended to the model-visible message.
+- The production coding tool surface includes a workspace-guarded `ls` tool in the Files catalog and `coding` profile; read-only sandboxes retain it, while `read` reports an actionable `ls` instruction for directory paths instead of leaking a raw `EISDIR` error.
 - The E2E assertion checks the generated Ledger events create a completed child node under the selected task, include structured tool/file/approval evidence, and link it back to `agent:main:main`.
 
 ### Unit
