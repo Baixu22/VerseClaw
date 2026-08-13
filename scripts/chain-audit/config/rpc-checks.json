@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "description": "RPC 直接检查面 — 不经模型，直接调用 Gateway RPC 验证服务可用性。分组按子系统。方法/参数均已实测验证（2026-08-11）。",
+  "schemaVersion": 3,
+  "description": "RPC direct probe surface ? normal/admin-denied/admin-allowed semantics; mutating probes are opt-in via --allow-mutations.",
   "sessionKey": "agent:main:main",
   "groups": [
     {
@@ -53,7 +53,8 @@
           "method": "tools.effective",
           "params": {
             "sessionKey": "agent:main:main"
-          }
+          },
+          "timeoutMs": 30000
         }
       ]
     },
@@ -143,6 +144,16 @@
           "method": "config.schema",
           "params": {},
           "note": "需 operator.admin scope"
+        }
+      ],
+      "adminOk": [
+        {
+          "method": "config.schema",
+          "params": {},
+          "scopes": [
+            "operator.admin"
+          ],
+          "note": "operator.admin ????"
         }
       ]
     },
@@ -273,17 +284,22 @@
     {
       "id": "device",
       "name": "设备服务",
-      "checks": [
-        {
-          "method": "device.pair.list",
-          "params": {}
-        }
-      ],
+      "checks": [],
       "adminOnly": [
         {
           "method": "device.pair.list",
           "params": {},
-          "note": "需 operator.pairing"
+          "note": "? operator.pairing?deny ??"
+        }
+      ],
+      "adminOk": [
+        {
+          "method": "device.pair.list",
+          "params": {},
+          "scopes": [
+            "operator.pairing"
+          ],
+          "note": "operator.pairing ????"
         }
       ]
     },
@@ -346,17 +362,28 @@
     {
       "id": "secrets",
       "name": "密钥服务",
-      "checks": [
-        {
-          "method": "secrets.resolve",
-          "params": {}
-        }
-      ],
+      "checks": [],
       "adminOnly": [
         {
           "method": "secrets.resolve",
           "params": {},
-          "note": "需 operator.admin"
+          "note": "? operator.admin?deny ??"
+        }
+      ],
+      "adminOk": [
+        {
+          "method": "secrets.resolve",
+          "params": {
+            "commandName": "chain-audit-probe",
+            "targetIds": []
+          },
+          "scopes": [
+            "operator.admin"
+          ],
+          "note": "operator.admin ????",
+          "expect": {
+            "ok": true
+          }
         }
       ]
     },
@@ -369,7 +396,8 @@
           "params": {
             "key": "agent:main:main"
           },
-          "note": "fork 当前真实会话"
+          "note": "fork 当前真实会话",
+          "mutating": true
         }
       ]
     },
@@ -408,7 +436,8 @@
               "content": "audit probe fact"
             }
           },
-          "note": "proposal 需 content 字段"
+          "note": "proposal 需 content 字段",
+          "mutating": true
         }
       ]
     }

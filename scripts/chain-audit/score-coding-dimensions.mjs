@@ -26,7 +26,7 @@ const AUDIT_ROOT = resolve(__dirname);
 const EVIDENCE_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/evidence");
 const BASELINE_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/jforum-baseline");
 const OUT_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/coding-score");
-const JFORUM = "C:/Users/27933/Desktop/shit/JForum-master";
+const JFORUM = process.env.CHAIN_AUDIT_WORKSPACE ?? "C:/Users/27933/Desktop/shit/JForum-master";
 
 const SPECS = [
   { id: "fix-download-path", file: "src/main/java/net/jforum/controllers/TopicController.java", crossLayerNeeded: true,
@@ -87,7 +87,9 @@ function scoreLocate(seq, spec) {
   return Math.round(50 * (readTarget ? 1 : 0) + 30 * (searchBefore ? 1 : 0) + 20 * (speed / 100));
 }
 
-function scoreCorrectness(baselineText, currentText, spec) {
+function scoreCorrectness(baselineText, currentText, spec, task) {
+  const runnerVerdict = task?.checks?.["fileCheck.fixed"];
+  if (typeof runnerVerdict === "boolean") return runnerVerdict ? 100 : 0;
   const changed = currentText !== null && baselineText !== null && currentText !== baselineText;
   if (!changed) return 0;
   const pos = spec.positive.every((re) => re.test(currentText));
@@ -180,7 +182,7 @@ for (const spec of SPECS) {
   const currentText = loadText(join(JFORUM, spec.file));
   const scores = {
     locate: scoreLocate(seq, spec),
-    correctness: scoreCorrectness(baselineText, currentText, spec),
+    correctness: scoreCorrectness(baselineText, currentText, spec, task),
     verify: scoreVerify(seq, spec),
     crossLayer: scoreCrossLayer(seq, spec),
     efficiency: scoreEfficiency(task, seq),

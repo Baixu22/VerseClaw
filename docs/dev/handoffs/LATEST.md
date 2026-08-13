@@ -1,3 +1,13 @@
+# Handoff — Chain-Audit 验收 + Reasonix 对齐（2026-08-12 晚，**进行中，交接下一 agent**）
+
+> ⚠️ 完整交接见 **`docs/dev/handoffs/CHAIN-AUDIT-REASONIX-ALIGNMENT.md`**（含 6 个未提交 runtime 改动、off-only 根因、环境/凭据、建议顺序）。
+> **关键阻塞**：`openclaw_runtime/dist/` 已被终止的构建**清空**，接手后必须先 `cd openclaw_runtime && CI=true node scripts/tsdown-build.mjs` 重建，否则 gateway 无法启动。
+> 未提交改动 6 文件：session-utils.ts（B7 已验证）、provider-stream-shared.ts（B2/B4）、session-fork.ts（B5）、deepseek plugin.json（B3）、provider-thinking.ts（B6 未验证）、agent.ts（B1 已回退=基线）。
+> 核心未解：DeepSeek reasoning 在运行时解析为 off-only（传 medium 报 "Use one of: off"），源码级 profile 正常（off..max），疑 manifest catalog 的 reasoning 值或 profile 解析路径问题——见交接 §3。
+> 已提交：`ca9db4de5`（chain-audit 框架修复 + 3 脚本）。已产出：RPC 31/31 全绿、jforum-fix 6/6、压缩实测 99.2% 回收、B7 contextTokens 1M→131072。
+
+---
+
 ## 清理（2026-08-12）
 
 - 删除本轮产生的临时物：`scripts/issue-13-real-gateway-ab.mjs`、`scripts/issue-13-aimock-gateway-ab.mjs`（含 openclaw_runtime 下副本）、`.git/index.lock`（stale 空锁）、aimock 失败残留 `/tmp/openclaw/openclaw-qa-suite-*`、`artifacts/chain-audit/evidence/gateway.log`（A/B 尝试日志）、根目录 `.tmp-tf-list*.json`。

@@ -65,8 +65,11 @@ export function grade({ checks = {}, criticalChecks = [], metrics = {} }) {
 
 /** 汇总多个子任务 → 总分级。 */
 export function aggregate(results) {
+  if (!results.length) {
+    return { grade: "not executed", score: null, taskCount: 0, passed: 0, failed: 0, breakdown: [] };
+  }
   const scores = results.map((r) => r.score ?? 0);
-  const total = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+  const total = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   const grade = Object.values(GRADES).find((g) => total >= g.min) ?? GRADES.F;
   return {
     grade: grade.label,
@@ -74,6 +77,11 @@ export function aggregate(results) {
     taskCount: results.length,
     passed: results.filter((r) => (r.score ?? 0) >= 75).length,
     failed: results.filter((r) => (r.score ?? 0) < 75).length,
-    breakdown: results.map((r) => ({ id: r.id, grade: r.grade, score: r.score })),
+    breakdown: results.map((r) => ({
+      id: r.id,
+      grade: r.grade,
+      score: r.score,
+      criticalFailed: (r.criticalFailed ?? []).length,
+    })),
   };
 }

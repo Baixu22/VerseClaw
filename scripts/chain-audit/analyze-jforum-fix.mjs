@@ -18,7 +18,7 @@ const AUDIT_ROOT = resolve(__dirname);
 const EVIDENCE_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/evidence");
 const BASELINE_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/jforum-baseline");
 const ACCEPT_ROOT = resolve(AUDIT_ROOT, "../../artifacts/chain-audit/jforum-acceptance");
-const JFORUM = "C:/Users/27933/Desktop/shit/JForum-master";
+const JFORUM = process.env.CHAIN_AUDIT_WORKSPACE ?? "C:/Users/27933/Desktop/shit/JForum-master";
 
 // ── 6 个修复 bug 的验证规格 ──────────────────────────────
 const SPECS = [
@@ -209,7 +209,10 @@ for (const spec of SPECS) {
   const changed = currentText !== null && baselineText !== null && currentText !== baselineText;
   const positivePass = currentText ? spec.positive.every((re) => re.test(currentText)) : false;
   const negativePass = currentText ? spec.negative.every((re) => !re.test(currentText)) : false;
-  const fixed = changed && positivePass && negativePass;
+  // v2 runner records the live verdict in checks; use it when present so the
+  // verdict is attributable to this run's file state rather than stale state.
+  const runnerFixed = task.checks?.["fileCheck.fixed"];
+  const fixed = runnerFixed === undefined ? (changed && positivePass && negativePass) : (runnerFixed === true);
   const touched = currentText && baselineText
     ? (changed ? (positivePass || negativePass ? "已修复" : "有改动但形态不符") : "未改动")
     : "文件缺失/无法读取";

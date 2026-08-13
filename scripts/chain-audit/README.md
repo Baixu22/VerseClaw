@@ -1,123 +1,87 @@
-# Chain Audit — 全链路集成测试审计系统
+# Chain Audit v2 - full-chain integration test / acceptance monitor
 
-> 沉淀自 2026-08-11 真实链路验证三轮（JForum 载体，发现 13 个 issue #9-#21）。
-> 目标：可无限复用、配置驱动、量化分级的全链路测试系统，用于持续监控各组件协作。
+Reusable, config-driven, quantified integration tests that exercise the real
+OpenClaw gateway + a real model over every major agent chain, plus a direct
+RPC service surface. Designed to catch cross-component defects that unit tests
+cannot (three rounds found 13 real issues #9-#21).
 
-## 为什么存在
-
-真实链路验证证明：**单元测试全绿 ≠ 链路通**。三轮测试发现 13 个真实问题（auth env 缺失、apply_patch 沙盒不一致、memory 禁用、contextWindow 1M 等），全部是单测覆盖不到的跨组件协作问题。本系统把这些验证沉淀为可重复执行的审计。
-
-## 架构
-
-```
-scripts/chain-audit/
-├── run-chain-audit.mjs      # 主入口（一键全矩阵）
-├── config/matrix.json       # 测试矩阵（链路分类 + 任务模板 + 预期，可增删）
-├── lib/
-│   ├── gateway.js           # gateway 生命周期（启动/健康/停止/日志）
-│   ├── rpc-client.js        # WS RPC 客户端（协议 v4 + token + scopes）
-│   ├── monitor.js           # 证据采集（transcript/token/工具序列/压缩事件）
-│   ├── grade.js             # 量化分级（A/B/C/D/F + 0-100 分）
-│   └── report.js            # 报告生成（JSON + Markdown）
-└── evidence/<ts>/           # 每次运行证据（报告 + gateway 日志）
-```
-
-## 用法
+## Quick start
 
 ```bash
-# 前置：openclaw_runtime 已构建（dist/entry.js 存在），gateway 端口空闲
-
-# 全矩阵
+# full matrix (real model required)
 DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs
 
-# 只跑指定链路
-DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs --chain coding
+# deterministic RPC surface only (no model, no API cost)
+node scripts/chain-audit/run-chain-audit.mjs --rpc-only
 
-# 复用已运行的 gateway（省去重启）
-node scripts/chain-audit/run-chain-audit.mjs --skip-start
+# fail-closed CI gate: agent>=75, rpc>=75, no critical failures, all RPC groups pass
+DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs --ci
 
-# 跑完不关 gateway（连续多轮调试）
-DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs --keep-gateway
+# one or more chains
+DEEPSEEK_API_KEY="sk-..." node scripts/chain-audit/run-chain-audit.mjs --chain readonly --chain coding
+
+# unit tests for the checker itself
+node --test scripts/chain-audit/tests/*.test.mjs
+
+# cross-run reliability (per-task spread / pass-rate / stability)
+node scripts/chain-audit/reliability.mjs --runs 4
 ```
 
-## 量化分级标准
+## Evidence rules (v2)
 
-每个任务产出 0-100 分 + A/B/C/D/F 分级：
+Every declared check is evaluated from real evidence and is fail-closed:
 
-| 分级 | 分数 | 含义 |
-|------|------|------|
-| A 健康 | ≥90 | 链路完全打通，指标达标 |
-| B 可用 | ≥75 | 链路打通，轻微缺陷 |
-| C 部分 | ≥60 | 部分可用，有阻断项 |
-| D 受损 | ≥40 | 严重受损 |
-| F 断裂 | <40 | 完全断裂 |
+| Check | Evidence |
+|---|---|
+| `tools.<name>` | tool was called AND a linked tool result has `isError=false` (a denied/errored call is a failure). `toolModes.<name>: "call"` relaxes to call-only for error-path probes. |
+| `hasAnswer` | at least one model round AND non-empty final answer text (`NO_REPLY` sentinel excluded). |
+| `memory.available` | `memory_search`/`memory_get` result is a real success without disabled/missing-index markers. |
+| `answerContains.<i>` | final answer contains `answerContains[i]`. |
+| `fileCheck.<label>` | workspace file is absent/exists, or matches positive regexes and no negative regexes. |
+| `toolResult.<tool>` | a tool result text matches every pattern in `toolResultChecks`. |
+| `evidence.matched` | the transcript provably belongs to this task (first user message match). |
+| `evidence.complete` | the transcript ended with an assistant message. |
 
-计分 = 检查项通过率 × 70% + 数值指标达标率 × 30%
+Unknown check names abort before any run (`lib/validate.js`). No check is ever
+silently dropped.
 
-### 检查项（布尔）
+## RPC probe modes
 
-- `accepted` — agent 任务被接受
-- `tools.<name>` — 期望工具被调用
-- `hasAnswer` — 有模型回复
-- 链路特定项（如 `memory.available`）
+- `checks` (normal): call with operator.read/write scopes; a scope denial is a failure.
+- `adminOnly` (deny): must be denied without the required scope; an unexpected success = "security gate missing".
+- `adminOk` (allow): call with the configured scopes and must succeed.
+- `expectError`: must fail with the configured error; an unexpected success = failure.
+- `mutating`: probes are skipped unless `--allow-mutations` is passed.
 
-### 数值指标（线性映射 good/bad）
+Groups are graded per-group; any critical group failure forces an F. Reports
+record `payloadKeys` per probe and per-task before/after file hashes.
 
-- `elapsedMs` — 任务耗时
-- `cacheHitRate` — 上下文缓存命中率（good≥80%, bad<50%）
-- `modelRounds` / `totalCost` — 成本观测
+## Evidence binding and exit codes
 
-## 已实现能力
+Every report under `artifacts/chain-audit/evidence/<ts>/` binds HEAD, branch,
+tree-dirty state, matrix/rpc config digests, runtime entry mtime/build stamp,
+node/platform. `history.json` keeps the last 50 runs with those bindings.
 
-- ✅ 真实 gateway 生命周期管理（启动/健康/停止/日志）
-- ✅ 协议 v4 WS RPC 客户端（token + scopes + 枚举 client）
-- ✅ **双测试面**：Agent 任务链路（11 条，真实模型走工具）+ RPC 直测（15 组 31 方法，不经模型秒级完成）
-- ✅ 任务级隔离（每任务独立 sessionKey → 独立 transcript，无历史串扰）
-- ✅ 量化分级 A/B/C/D/F + 0-100 分（检查项 70% + 指标 30%）
-- ✅ 关键检查语义（链路可用性类失败直接判 F，不被指标稀释）
-- ✅ 证据留存（report.json + report.md + gateway 日志）
-- ✅ 趋势追踪（history.json，最近 5 次分数对比看退化）
-- ✅ 配置驱动矩阵（新增链路/任务只需改 matrix.json 或 rpc-checks.json）
+| Exit | Meaning |
+|---|---|
+| 0 | passed |
+| 1 | runner/gateway/config error |
+| 2 | agent score below `--fail-on-score` |
+| 3 | rpc score below `--fail-on-rpc-score` (or a group failed under `--ci`) |
+| 4 | critical check failed under `--ci` |
+| 5/6 | no executable checks / no chain-filter hits |
 
-## 覆盖面
+## Workspace isolation
 
-**Agent 任务链路（26 条）**：只读 / 写入 / 命令执行 / 网络 / 多智能体 / 编码能力 / 记忆 / 会话管理 / 上下文累积 / 配置 / 错误恢复 / 上下文压缩 / 沙盒隔离 / 知识库 / 技能 / 定时任务 / 任务循环 / 审批 / 浏览器 / Git / 审批流 / 会话Fork / 接力Handoff / 工作空间 / 任务循环详情 / 记忆写入
+`CHAIN_AUDIT_WORKSPACE` overrides `matrix.common.workspace`. Task messages use
+`{{workspace}}` for project paths. Destructive chains run in a per-run
+`scratch-git` fixture, never against the real project. The `jforum-fix` chain
+refuses to run against a workspace already diverged from its baseline unless
+`--restore-baseline` is passed (current files are backed up first).
 
-**RPC 服务面（31 组）**：core / sessions / tools / skills / roles / memory / observability / security / config / usage / verification / doctor / control-plane / runtime / clawgraph / agents / artifacts / capabilities / channels / cron / device / gateway-mgmt / node / plugins / tasks / media / secrets / fork / workspace / taskloop / memory-write
+## Extending the matrix
 
-## 测试矩阵扩展
-
-`config/matrix.json` 中按 `chains[].tasks[]` 结构添加：
-
-```json
-{
-  "id": "my-chain",
-  "name": "我的链路",
-  "tasks": [
-    {
-      "id": "my-task",
-      "message": "给 agent 的任务指令",
-      "expectTools": ["read", "exec"],
-      "checks": ["hasAnswer"],
-      "metrics": { "elapsedMs": { "good": 60000, "bad": 180000 } }
-    }
-  ]
-}
-```
-
-## 与现有验证设施的关系
-
-| 设施 | 定位 | 本系统补充 |
-|------|------|-----------|
-| 单元测试（vitest） | 单组件正确性 | 跨组件链路 |
-| comms:replay/compare | 传输层指标 | 全链路行为 |
-| E2E（Playwright） | GUI 交互 | headless runtime 链路 |
-| 本系统 | 真实 gateway + 真实模型 | 可重复、量化、分级 |
-
-## 已知待办（后续迭代）
-
-- [ ] 沙盒链路（sandbox mode=on 时验证 SSH 后端）
-- [ ] 自动触发压缩实验（配 contextWindow 后验证 #15/#18/#20 修复）
-- [ ] 错误分类（把 errors[] 映射到已知 issue 模式，自动关联）
-- [ ] 多 provider 矩阵（切换不同模型跑同一链路）
-- [ ] 跨运行 diff 报告（对比两次运行的检查项差异，精确定位退化点）
+Add chains/tasks to `config/matrix.json` (schema v7) and probes to
+`config/rpc-checks.json` (schema v3). Declared checks must map to
+answerContains/fileChecks/toolResultChecks specs; validation rejects
+unresolvable checks.

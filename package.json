@@ -79,7 +79,7 @@
     "contract:check": "node scripts/contract-check.mjs",
     "chain-audit": "node scripts/chain-audit/run-chain-audit.mjs",
     "chain-audit:chain": "node scripts/chain-audit/run-chain-audit.mjs --chain",
-    "chain-audit:rpc": "node scripts/chain-audit/run-chain-audit.mjs --skip-start --chain readonly",
+    "chain-audit:rpc": "node scripts/chain-audit/run-chain-audit.mjs --rpc-only",
     "i18n:lint": "node scripts/i18n-lint.mjs",
     "channel:conformance": "node scripts/channel-conformance.mjs",
     "agent-dev:validate": "pnpm contract:check && pnpm i18n:lint && pnpm harness:ci && pnpm test:e2e:agent-dev-quality",
@@ -216,7 +216,13 @@
     "uas:06:evidence": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts",
     "uas:06:evidence:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-canary-evidence.mts --check",
     "uas:06:real-canary": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts",
-    "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check"
+    "uas:06:real-canary:check": "pnpm --dir openclaw_runtime exec node --import tsx ../scripts/uas-06-real-canary.mts --check",
+    "chain-audit:ci": "node scripts/chain-audit/run-chain-audit.mjs --ci",
+    "chain-audit:test": "node --test scripts/chain-audit/tests/",
+    "chain-audit:analyze-fix": "node scripts/chain-audit/analyze-jforum-fix.mjs",
+    "chain-audit:score": "node scripts/chain-audit/score-coding-dimensions.mjs",
+    "chain-audit:verify-compaction": "node scripts/chain-audit/verify-compaction.mjs",
+    "chain-audit:reliability": "node scripts/chain-audit/reliability.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.22",

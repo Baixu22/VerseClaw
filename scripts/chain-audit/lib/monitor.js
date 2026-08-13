@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /**
- * chain-audit 证据采集库
- * 从会话 transcript JSONL + gateway 日志中提取量化指标：
- * token 用量/缓存命中率/工具调用序列/压缩事件/错误。
+ * chain-audit evidence collection library.
+ *
+ * Parses session transcript JSONL + gateway logs into structured, evidence-grade
+ * metrics. Tool calls are linked to their results through `toolCallId`, so a
+ * tool that was merely invoked but errored is no longer reported as success.
+ * Final answer text excludes the `NO_REPLY` sentinel used by the agent loop.
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -10,12 +13,28 @@ import { homedir } from "node:os";
 
 const AGENT_SESSIONS_DIR = () => join(homedir(), ".openclaw", "agents", "main", "sessions");
 
-/** 读取最新（或指定）会话 transcript，解析为结构化指标。
- *  @param {string} transcriptPath
- *  @param {number} [startLine] 只分析该行之后的新增消息（任务级隔离，避免历史串扰）
+export const NO_REPLY_SENTINEL = "NO_REPLY";
+
+/** Extract readable text from a transcript content payload. */
+export function extractText(content) {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content
+      .map((c) => (typeof c === "string" ? c : c?.text ?? c?.content ?? ""))
+      .join("");
+  }
+  if (content && typeof content === "object") return content.text ?? content.content ?? "";
+  return "";
+}
+
+/**
+ * Analyze a session transcript.
+ * @param {string|null} transcriptPath
+ * @param {number} [startLine] only analyze lines after this offset (task isolation)
+ * @returns {object|null} structured stats, or null when the transcript is missing
  */
 export function analyzeTranscript(transcriptPath, startLine = 0) {
-  if (!existsSync(transcriptPath)) return null;
+  if (!transcriptPath || !existsSync(transcriptPath)) return null;
   const lines = readFileSync(transcriptPath, "utf8").split("\n").filter(Boolean);
   const target = lines.slice(startLine);
 
@@ -27,13 +46,34 @@ export function analyzeTranscript(transcriptPath, startLine = 0) {
     totalOutput: 0,
     totalCost: 0,
     maxCacheRead: 0,
-    toolCalls: [],          // {name, argsPreview, resultPreview}
+    toolCalls: [], // { name, args, id, ok, isError, resultPreview }
     userMessages: 0,
     toolResultCount: 0,
-    errors: [],             // 工具错误
+    errors: [], // only real isError tool results
     lastRole: null,
+    answerText: "",
+    complete: false,
+    matched: false,
   };
 
+  // Pass 1: collect tool results by toolCallId for success/failure attribution.
+  const toolResults = new Map();
+  for (const line of target) {
+    let r;
+    try { r = JSON.parse(line); } catch { continue; }
+    if (r.type !== "message") continue;
+    const m = r.message;
+    if (m?.role === "toolResult" && m.toolCallId) {
+      toolResults.set(m.toolCallId, {
+        isError: m.isError === true,
+        toolName: m.toolName,
+        text: extractText(m.content),
+      });
+    }
+  }
+
+  // Pass 2: build stats and attach results to tool calls.
+  const answerParts = [];
   for (const line of target) {
     let r;
     try { r = JSON.parse(line); } catch { continue; }
@@ -47,8 +87,14 @@ export function analyzeTranscript(transcriptPath, startLine = 0) {
         if (c.type === "toolCall") {
           stats.toolCalls.push({
             name: c.name,
-            args: JSON.stringify(c.arguments ?? {}).slice(0, 120),
+            args: safeStringify(c.arguments ?? {}).slice(0, 120),
+            id: c.id ?? null,
+            ok: null,
+            isError: null,
+            resultPreview: undefined,
           });
+        } else if (c.type === "text" && typeof c.text === "string" && c.text.trim() && c.text.trim() !== NO_REPLY_SENTINEL) {
+          answerParts.push(c.text.trim());
         }
       }
       if (m.usage) {
@@ -61,22 +107,37 @@ export function analyzeTranscript(transcriptPath, startLine = 0) {
       }
     } else if (m.role === "toolResult") {
       stats.toolResultCount++;
-      const txt = JSON.stringify(m.content || m.details || "");
-      if (m.isError || /"error"/.test(txt)) {
-        stats.errors.push({ tool: m.toolName, text: txt.slice(0, 200) });
+      if (m.isError === true) {
+        stats.errors.push({ tool: m.toolName, text: extractText(m.content).slice(0, 200) });
       }
     } else if (m.role === "user") {
       stats.userMessages++;
     }
   }
 
-  stats.cacheHitRate = stats.totalInput + stats.totalCacheRead > 0
-    ? +(stats.totalCacheRead / (stats.totalInput + stats.totalCacheRead) * 100).toFixed(1)
-    : 0;
+  for (const tc of stats.toolCalls) {
+    const tr = tc.id ? toolResults.get(tc.id) : undefined;
+    tc.ok = tr ? !tr.isError : null; // null = no result seen yet (fail-closed)
+    tc.isError = tr?.isError ?? null;
+    tc.resultPreview = tr?.text ? tr.text.slice(0, 200) : undefined;
+  }
+
+  stats.answerText = answerParts.join("\n").trim();
+  stats.hasFinalAnswer = stats.answerText.length > 0;
+  stats.complete = stats.lastRole === "assistant";
+  stats.errorCount = stats.errors.length;
+  stats.cacheHitRate =
+    stats.totalInput + stats.totalCacheRead > 0
+      ? +((stats.totalCacheRead / (stats.totalInput + stats.totalCacheRead)) * 100).toFixed(1)
+      : 0;
   return stats;
 }
 
-/** 定位最新会话 transcript 文件（排除 trajectory）。 */
+function safeStringify(value) {
+  try { return JSON.stringify(value); } catch { return ""; }
+}
+
+/** Latest session transcript file (excludes trajectory). */
 export function latestTranscript() {
   const dir = AGENT_SESSIONS_DIR();
   if (!existsSync(dir)) return null;
@@ -87,9 +148,9 @@ export function latestTranscript() {
   return files[0] ?? null;
 }
 
-/** 从 gateway 日志提取关键事件（压缩/重载/错误/瓶颈）。 */
+/** Extract key gateway-log events (compaction/reload/errors/bottlenecks). */
 export function analyzeGatewayLog(logPath) {
-  if (!existsSync(logPath)) return null;
+  if (!logPath || !existsSync(logPath)) return null;
   const content = readFileSync(logPath, "utf8").replace(/\x1b\[[0-9;]*m/g, "");
   const lines = content.split("\n");
   return {

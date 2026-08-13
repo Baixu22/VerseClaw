@@ -10,6 +10,10 @@ import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 const DEFAULT_PARENT_FORK_MAX_TOKENS = 100_000;
 const sessionForkRuntimeLoader = createLazyImportLoader(() => import("./session-fork.runtime.js"));
 
+function resolvePositiveTokenCount(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined;
+}
+
 /** Decision for whether a child session should fork parent context or start isolated. */
 export type ParentForkDecision =
   | {
@@ -63,7 +67,14 @@ export async function resolveParentForkDecision(params: {
   parentEntry: SessionEntry;
   storePath: string;
 }): Promise<ParentForkDecision> {
-  const maxTokens = DEFAULT_PARENT_FORK_MAX_TOKENS;
+  // Cap is context-derived when the session reports a context window (B7 keeps
+  // the snapshot live-validated): fork is unsafe only when the parent is near a
+  // full window, so the cap scales with the model instead of a fixed 100K.
+  const sessionContext = resolvePositiveTokenCount(params.parentEntry.contextTokens);
+  const maxTokens =
+    typeof sessionContext === "number" && sessionContext > 0
+      ? Math.min(DEFAULT_PARENT_FORK_MAX_TOKENS, Math.floor(sessionContext * 0.8))
+      : DEFAULT_PARENT_FORK_MAX_TOKENS;
   const parentTokens = await resolveParentForkTokenCount({
     parentEntry: params.parentEntry,
     storePath: params.storePath,

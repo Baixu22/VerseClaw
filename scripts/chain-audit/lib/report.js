@@ -34,7 +34,7 @@ function renderMarkdown(report) {
     lines.push("| 服务组 | 分级 | 通过率 |");
     lines.push("|--------|------|--------|");
     for (const g of report.rpcGroups) {
-      lines.push(`| ${g.name} | ${g.grade} | ${g.passed}/${g.total} |`);
+      lines.push(`| ${g.name} | ${g.grade} | ${g.passed}/${g.total}${g.skipped ? ` (skip ${g.skipped})` : ""} |`);
     }
     lines.push("");
     for (const g of report.rpcGroups) {

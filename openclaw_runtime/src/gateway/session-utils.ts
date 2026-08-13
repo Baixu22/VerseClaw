@@ -2087,26 +2087,24 @@ export function buildGatewaySessionRow(params: {
         entry,
         rowContext: params.rowContext,
       }) ?? resolveNonNegativeNumber(transcriptUsage?.estimatedCostUsd));
+  // Live model catalog is authoritative for the context window; the persisted
+  // session snapshot may be stale (e.g. created before a catalog correction,
+  // like deepseek-v4-flash 1M -> 128K in #18). Read-side validation keeps the
+  // reported contextTokens (and CLIs that consume it) correct without waiting
+  // for the next non-preserving run to rewrite the snapshot.
+  const liveContextTokens = resolvePositiveNumber(
+    resolveContextTokensForModel({
+      cfg,
+      provider: rowModelProvider,
+      model: rowModel,
+      allowAsyncLoad: false,
+    }),
+  );
   const contextTokens = lightweight
-    ? (resolvePositiveNumber(entry?.contextTokens) ??
-      resolvePositiveNumber(
-        resolveContextTokensForModel({
-          cfg,
-          provider: rowModelProvider,
-          model: rowModel,
-          allowAsyncLoad: false,
-        }),
-      ))
-    : (resolvePositiveNumber(entry?.contextTokens) ??
+    ? (liveContextTokens ?? resolvePositiveNumber(entry?.contextTokens))
+    : (liveContextTokens ??
       resolvePositiveNumber(transcriptUsage?.contextTokens) ??
-      resolvePositiveNumber(
-        resolveContextTokensForModel({
-          cfg,
-          provider: rowModelProvider,
-          model: rowModel,
-          allowAsyncLoad: false,
-        }),
-      ));
+      resolvePositiveNumber(entry?.contextTokens));
 
   let derivedTitle: string | undefined;
   let lastMessagePreview: string | undefined;
