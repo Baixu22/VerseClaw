@@ -56,6 +56,10 @@ export default defineSingleProviderPluginEntry({
     wrapStreamFn: (ctx) => createDeepSeekV4ThinkingWrapper(ctx.streamFn, ctx.thinkingLevel),
     resolveThinkingProfile: ({ modelId }) => resolveDeepSeekV4ThinkingProfile(modelId),
     isModernModelRef: ({ modelId }) => Boolean(resolveDeepSeekV4ThinkingProfile(modelId)),
+    // DeepSeek models use automatic prefix caching (supportsPromptCacheKey: true),
+    // so cache-TTL session markers and cold-resume pruning apply to them. The
+    // 24h retention default is resolved from the vendor cache policy.
+    isCacheTtlEligible: () => true,
     resolveUsageAuth: async (ctx) => {
       const apiKey = ctx.resolveApiKeyFromConfigAndStore({
         envDirect: [ctx.env.DEEPSEEK_API_KEY],

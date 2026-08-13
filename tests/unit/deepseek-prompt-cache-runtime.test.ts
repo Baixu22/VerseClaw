@@ -17,11 +17,12 @@ describe('DeepSeek prompt cache runtime helpers', () => {
       input: 200,
       output: 7,
       cacheRead: 19_900,
+      cacheMiss: 200,
       total: 20_107,
     });
   });
 
-  it('does not double-count nested cached prompt tokens', () => {
+  it('derives cacheMiss from uncached prompt when the provider reports only hits', () => {
     expect(normalizeUsage({
       prompt_tokens: 10_000,
       completion_tokens: 5,
@@ -31,6 +32,7 @@ describe('DeepSeek prompt cache runtime helpers', () => {
       input: 2_000,
       output: 5,
       cacheRead: 8_000,
+      cacheMiss: 2_000,
       total: 10_005,
     });
   });

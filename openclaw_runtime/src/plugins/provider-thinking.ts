@@ -1,6 +1,7 @@
 // Resolves provider thinking-level policy from plugin metadata.
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { resolveBundledProviderPolicySurface } from "./provider-public-artifacts.js";
+import { resolveProviderRuntimePlugin } from "./provider-hook-runtime.js";
 import type {
   ProviderDefaultThinkingPolicyContext,
   ProviderThinkingProfile,
@@ -86,9 +87,23 @@ export function resolveProviderThinkingProfile(
   if (activeProfile) {
     return activeProfile;
   }
-  return resolveBundledProviderPolicySurface(params.provider)?.resolveThinkingProfile?.(
+  const bundledSurface = resolveBundledProviderPolicySurface(params.provider)?.resolveThinkingProfile?.(
     params.context,
   );
+  if (bundledSurface) {
+    return bundledSurface;
+  }
+  // Provider plugins that are not in the gateway-side active thinking registry
+  // (e.g. DeepSeek, which loads on demand) still expose a thinking profile via
+  // the runtime plugin surface. Fall back to on-demand resolution so reasoning
+  // models are not silently degraded to "off".
+  let runtimePlugin: ReturnType<typeof resolveProviderRuntimePlugin>;
+  try {
+    runtimePlugin = resolveProviderRuntimePlugin({ provider: params.provider });
+  } catch {
+    runtimePlugin = undefined;
+  }
+  return runtimePlugin?.resolveThinkingProfile?.(params.context);
 }
 
 /** Resolves the provider default thinking level from the active plugin registry. */

@@ -38,6 +38,7 @@ import type { AgentRuntimeTransport } from "../runtime-plan/types.js";
 import type { StreamFn } from "../runtime/index.js";
 import type { SettingsManager } from "../sessions/index.js";
 import { log } from "./logger.js";
+import { createDeepSeekPrefixContinuationWrapper } from "./deepseek-prefix-continuation.js";
 import { resolveCacheRetention } from "./prompt-cache-retention.js";
 
 const defaultProviderRuntimeDeps = {
@@ -830,6 +831,14 @@ function applyPostPluginStreamWrappers(
       thinkingLevel: ctx.thinkingLevel,
       shouldPatchModel: (model) =>
         isDeepSeekV4OpenAICompatibleModel(model) && deepSeekV4NativeThinkingAllowedByCompat(model),
+    });
+    // Bounded prefix-continuation: when a native DeepSeek V4 completion ends
+    // with finish_reason=length, issue one /beta/chat/completions follow-up and
+    // fold usage/cache. Host-gated inside the wrapper so non-DeepSeek gateways
+    // are never bypassed.
+    ctx.agent.streamFn = createDeepSeekPrefixContinuationWrapper({
+      baseStreamFn: ctx.agent.streamFn,
+      shouldPatchModel: isDeepSeekV4OpenAICompatibleModel,
     });
     ctx.agent.streamFn = createDeepSeekV4NonNativeCompatSanitizerWrapper(ctx.agent.streamFn);
 

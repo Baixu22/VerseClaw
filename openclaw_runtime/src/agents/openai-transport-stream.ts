@@ -165,6 +165,7 @@ type ChatCompletionUserMessage = {
 type ChatCompletionAssistantMessage = {
   role: "assistant";
   content: string | null;
+  reasoning_content?: string;
   tool_calls?: Array<{
     id: string;
     type: "function";
@@ -203,13 +204,19 @@ function toChatCompletionsMessages(context: Context): ChatCompletionMessage[] {
 
       const textParts: string[] = [];
       const toolCalls: ChatCompletionAssistantMessage["tool_calls"] = [];
+      const reasoningParts: string[] = [];
 
       for (const block of msg.content) {
         if (block.type === "text") {
           textParts.push(block.text);
         } else if (block.type === "thinking") {
-          // thinking blocks are not native to chat completions;
-          // skip them in the request body
+          // DeepSeek (and DeepSeek-style) reasoning content round-trips via the
+          // `reasoning_content` wire field, not as a native thinking block. Carry
+          // it forward so multi-turn reasoning and prefix-continuation keep the
+          // accumulated chain-of-thought instead of dropping it.
+          if (block.thinkingSignature === "reasoning_content" && block.thinking) {
+            reasoningParts.push(block.thinking);
+          }
         } else if (block.type === "toolCall") {
           toolCalls.push({
             id: block.id,
@@ -223,6 +230,9 @@ function toChatCompletionsMessages(context: Context): ChatCompletionMessage[] {
       }
 
       assistantMsg.content = textParts.length > 0 ? textParts.join("") : null;
+      if (reasoningParts.length > 0) {
+        assistantMsg.reasoning_content = reasoningParts.join("");
+      }
       if (toolCalls.length > 0) {
         assistantMsg.tool_calls = toolCalls;
       }

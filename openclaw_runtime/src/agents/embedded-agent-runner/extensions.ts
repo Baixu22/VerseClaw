@@ -48,6 +48,7 @@ import type { AgentMessage, AgentToolResult } from "../runtime/index.js";
 import type { ExtensionFactory, SessionManager } from "../sessions/index.js";
 import { resolveTranscriptPolicy } from "../transcript-policy.js";
 import { isCacheTtlEligibleProvider, readLastCacheTtlTimestamp } from "./cache-ttl.js";
+import { effectiveCacheTtlMs } from "./vendor-cache-policy.js";
 
 type AgentToolResultEvent = {
   threadId?: string;
@@ -439,6 +440,12 @@ function buildContextPruningFactory(params: {
   const settings = computeEffectiveSettings(raw);
   if (!settings) {
     return undefined;
+  }
+  // When no explicit TTL is configured, use the vendor cache-policy default
+  // (DeepSeek 24h, Anthropic/DashScope 5m) instead of the fixed 5m fallback so
+  // cold-resume pruning does not burn still-warm provider prefix caches.
+  if (typeof raw.ttl !== "string") {
+    settings.ttlMs = effectiveCacheTtlMs({ baseUrl: params.model?.baseUrl });
   }
   const transcriptPolicy = resolveTranscriptPolicy({
     modelApi: params.model?.api,

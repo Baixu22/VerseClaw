@@ -18,6 +18,7 @@ import {
 import {
   scanBackendCommunicationBoundary,
   touchesCommunicationPath,
+  validateCacheImpactDeclaration,
   validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
@@ -118,6 +119,10 @@ async function validate(specPath, options = {}) {
     if (!requiredProfiles.includes('comms')) {
       failures.push(`${spec.path}: communication path changes must require comms`);
     }
+  }
+
+  if (changedFiles.length > 0) {
+    failures.push(...await validateCacheImpactDeclaration(changedFiles));
   }
 
   return { spec, scenario, changedFiles, failures };

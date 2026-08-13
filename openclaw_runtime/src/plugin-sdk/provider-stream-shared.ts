@@ -2,6 +2,10 @@
 import { randomUUID } from "node:crypto";
 import { normalizeLowercaseStringOrEmpty } from "../../packages/normalization-core/src/string-coerce.js";
 import {
+  DefaultHighReasoningOutputTokens,
+  DefaultReasoningOutputTokens,
+} from "../../packages/agent-core/src/harness/compaction/output-budget.js";
+import {
   extractStandalonePlainTextToolCallText,
   normalizePlainTextToolCallStreamEvents,
   promoteStandalonePlainTextToolCallMessage,
@@ -380,7 +384,22 @@ function isDisabledDeepSeekV4ThinkingLevel(thinkingLevel: DeepSeekV4ThinkingLeve
 function resolveDeepSeekV4ReasoningEffort(
   thinkingLevel: DeepSeekV4ThinkingLevel,
 ): DeepSeekV4ReasoningEffort {
-  return thinkingLevel === "xhigh" || thinkingLevel === "max" ? "max" : "high";
+  // Granular mapping aligned with DeepSeek's effort vocabulary (deepseek-v4-flash:
+  // disabled|low|high|max; medium is not a wire value, so it rides at high like the
+  // platform's own normalization). Prior behavior collapsed minimal/low/medium/high
+  // all to "high", wasting the low tier for cheap exploration turns.
+  switch (thinkingLevel) {
+    case "minimal":
+    case "low":
+      return "low";
+    case "xhigh":
+    case "max":
+      return "max";
+    case "medium":
+    case "high":
+    default:
+      return "high";
+  }
 }
 
 function stripDeepSeekV4ReasoningContent(payload: Record<string, unknown>): void {
@@ -449,7 +468,21 @@ export function createDeepSeekV4OpenAICompatibleThinkingWrapper(params: {
       }
 
       payload.thinking = { type: "enabled" };
-      payload.reasoning_effort = resolveReasoningEffort(params.thinkingLevel);
+      const effort = resolveReasoningEffort(params.thinkingLevel);
+      payload.reasoning_effort = effort;
+      // Reasoning-aware output cap, aligned with DeepSeek-Reasonix
+      // `AutoOutputBudget`: 64K for high/max effort, 32K for low/medium. Never
+      // override an explicitly configured max_tokens.
+      if (
+        payload.max_tokens === undefined &&
+        payload.max_completion_tokens === undefined &&
+        payload.maxTokens === undefined
+      ) {
+        payload.max_tokens =
+          effort === "high" || effort === "max"
+            ? DefaultHighReasoningOutputTokens
+            : DefaultReasoningOutputTokens;
+      }
       ensureDeepSeekV4AssistantReasoningContent(payload, {
         shouldBackfillAssistantMessage: params.shouldBackfillAssistantReasoningContent,
       });

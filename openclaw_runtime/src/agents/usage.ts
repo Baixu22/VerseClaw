@@ -11,6 +11,7 @@ export type UsageLike = {
   output?: number;
   cacheRead?: number;
   cacheWrite?: number;
+  cacheMiss?: number;
   total?: number;
   // Common alternates across providers/SDKs.
   inputTokens?: number;
@@ -56,6 +57,14 @@ export type NormalizedUsage = {
   output?: number;
   cacheRead?: number;
   cacheWrite?: number;
+  /**
+   * Prompt tokens not served from cache (including cache writes). Mirrors
+   * DeepSeek-Reasonix `Usage.CacheMissTokens`: for DeepSeek it is the top-level
+   * `prompt_cache_miss_tokens`; for OpenAI-style payloads it is `prompt - hit`.
+   * It is kept as a first-class field so cache-miss diagnostics do not have to
+   * re-derive it from `input`, whose meaning is provider-dependent.
+   */
+  cacheMiss?: number;
   reasoningTokens?: number;
   total?: number;
 };
@@ -176,6 +185,14 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
       ? rawInput - cacheRead
       : rawInput;
   const input = normalizeTokenCount(normalizedInput);
+  // Cache-miss accounting mirrors DeepSeek-Reasonix `Usage.CacheMissTokens`
+  // (`normaliseUsage` in openai.go): DeepSeek reports miss explicitly at the
+  // top level; OpenAI-style payloads report only the hit, so miss = prompt - hit
+  // (the uncached input). ClawX's `input` already carries the uncached prompt
+  // tokens, so it is the miss value when no explicit miss field exists.
+  const cacheMiss = normalizeTokenCount(
+    raw.prompt_cache_miss_tokens ?? raw.cacheMiss ?? normalizedInput,
+  );
   const output = normalizeTokenCount(
     raw.output ??
       raw.outputTokens ??
@@ -201,6 +218,7 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
     output === undefined &&
     cacheRead === undefined &&
     cacheWrite === undefined &&
+    cacheMiss === undefined &&
     reasoningTokens === undefined &&
     total === undefined
   ) {
@@ -212,6 +230,7 @@ export function normalizeUsage(raw?: UsageLike | null): NormalizedUsage | undefi
     output,
     cacheRead,
     cacheWrite,
+    ...(cacheMiss !== undefined ? { cacheMiss } : {}),
     ...(reasoningTokens !== undefined ? { reasoningTokens } : {}),
     total,
   };

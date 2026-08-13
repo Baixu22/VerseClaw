@@ -46,6 +46,7 @@ import {
   buildDeterministicCompressionArtifact,
   type CompressionArtifact,
 } from "./compression-artifact.js";
+import { estimateStringChars } from "./cjk-tokens.js";
 
 /** File-operation details stored on generated compaction entries. */
 export interface CompactionDetails {
@@ -268,11 +269,11 @@ export function estimateTokens(message: AgentMessage): number {
         harnessMessage as { content: string | Array<{ type: string; text?: string }> }
       ).content;
       if (typeof content === "string") {
-        chars = content.length;
+        chars = estimateStringChars(content);
       } else if (Array.isArray(content)) {
         for (const block of content) {
           if (block.type === "text" && block.text) {
-            chars += block.text.length;
+            chars += estimateStringChars(block.text);
           }
         }
       }
@@ -282,11 +283,11 @@ export function estimateTokens(message: AgentMessage): number {
       const assistant = harnessMessage;
       for (const block of assistant.content) {
         if (block.type === "text") {
-          chars += block.text.length;
+          chars += estimateStringChars(block.text);
         } else if (block.type === "thinking") {
-          chars += block.thinking.length;
+          chars += estimateStringChars(block.thinking);
         } else if (block.type === "toolCall") {
-          chars += block.name.length + safeJsonStringify(block.arguments).length;
+          chars += estimateStringChars(block.name + safeJsonStringify(block.arguments));
         }
       }
       return Math.ceil(chars / 4);
@@ -294,11 +295,11 @@ export function estimateTokens(message: AgentMessage): number {
     case "custom":
     case "toolResult": {
       if (typeof harnessMessage.content === "string") {
-        chars = harnessMessage.content.length;
+        chars = estimateStringChars(harnessMessage.content);
       } else {
         for (const block of harnessMessage.content) {
           if (block.type === "text" && block.text) {
-            chars += block.text.length;
+            chars += estimateStringChars(block.text);
           }
           if (block.type === "image") {
             chars += 4800;
@@ -308,12 +309,12 @@ export function estimateTokens(message: AgentMessage): number {
       return Math.ceil(chars / 4);
     }
     case "bashExecution": {
-      chars = harnessMessage.command.length + harnessMessage.output.length;
+      chars = estimateStringChars(harnessMessage.command) + estimateStringChars(harnessMessage.output);
       return Math.ceil(chars / 4);
     }
     case "branchSummary":
     case "compactionSummary": {
-      chars = harnessMessage.summary.length;
+      chars = estimateStringChars(harnessMessage.summary);
       return Math.ceil(chars / 4);
     }
   }
