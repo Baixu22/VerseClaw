@@ -97,6 +97,23 @@ describe('R0-3 terminal session reclamation', () => {
     expect(probe.sessions.size).toBe(1);
   });
 
+  it('close on an already-reclaimed session is an idempotent no-op', async () => {
+    tempDir = mkdtempSync(join(tmpdir(), 'clawx-r0-3-terminal-'));
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager();
+    const ws = workspace(tempDir);
+
+    const snapshot = manager.open({ workspace: ws, sessionKey: 'agent:main:one' });
+    const spawnValue = ptyMocks.spawn.mock.results[0]?.value as {
+      onExit: { mock: { calls: Array<[{ exitCode: number }]> } };
+    } | undefined;
+    spawnValue?.onExit?.mock?.calls?.[0]?.[0]?.({ exitCode: 0 });
+
+    const closed = manager.close(snapshot.sessionId as string, 'user-close');
+    expect(closed.status).toBe('idle');
+    expect(closed.sessionId).toBeNull();
+  });
+
   it('shutdownAll kills every live session and empties all bookkeeping', async () => {
     tempDir = mkdtempSync(join(tmpdir(), 'clawx-r0-3-terminal-'));
     const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
