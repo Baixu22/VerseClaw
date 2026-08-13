@@ -221,6 +221,19 @@ export class RuntimeMemoryStore {
     for (const factId of factIds) this.recordFactAccess(factId);
   }
 
+  /**
+   * Restore persisted usage stats when rebuilding the store from SQLite.
+   * Sets absolute values (does not increment) so a reload is idempotent.
+   */
+  restoreFactUsage(factId: string, count: number, lastAccessedAt: number): void {
+    if (!this.factsById.has(factId)) return;
+    if (!Number.isFinite(count) || count <= 0) return;
+    this.usageCounts.set(factId, Math.floor(count));
+    if (Number.isFinite(lastAccessedAt) && lastAccessedAt > 0) {
+      this.lastAccessedAt.set(factId, lastAccessedAt);
+    }
+  }
+
   getUsageStats(): RuntimeMemoryUsageStat[] {
     return this.factOrder.map((factId) => ({
       factId,

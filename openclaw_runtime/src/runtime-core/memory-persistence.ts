@@ -98,6 +98,42 @@ export type RuntimeMemoryPersistenceWriteResult<T> =
       value: RuntimeMemoryReadonly<T>;
     };
 
+export type RuntimeMemoryPersistenceRelationResult =
+  | {
+      status: "skipped";
+      reason: "flag_disabled";
+      persisted: false;
+    }
+  | {
+      status: "rejected";
+      reason: "invalid_relation_type";
+      message: string;
+      persisted: false;
+    }
+  | {
+      status: "persisted";
+      persisted: true;
+    };
+
+export type RuntimeMemoryPersistenceAccessResult =
+  | {
+      status: "skipped";
+      reason: "flag_disabled";
+      persisted: false;
+    }
+  | {
+      status: "rejected";
+      reason: "unknown_fact";
+      message: string;
+      persisted: false;
+    }
+  | {
+      status: "persisted";
+      persisted: true;
+      accessCount: number;
+      lastAccessedAt: number;
+    };
+
 export type RuntimeMemoryPersistenceMigrationResult =
   | {
       status: "skipped";
@@ -274,12 +310,19 @@ type RuntimeMemoryInvalidationRow = {
   updated_at: number;
 };
 
+type RuntimeMemoryFactUsageRow = {
+  fact_id: string;
+  access_count: number;
+  last_accessed_at: number;
+};
+
 type RuntimeMemoryPersistenceDatabase = {
   runtime_memory_meta: RuntimeMemoryMetaRow;
   runtime_memory_episodes: RuntimeMemoryEpisodeRow;
   runtime_memory_episode_idempotency_keys: RuntimeMemoryEpisodeIdempotencyKeyRow;
   runtime_memory_facts: RuntimeMemoryFactRow;
   runtime_memory_invalidations: RuntimeMemoryInvalidationRow;
+  runtime_memory_fact_usage: RuntimeMemoryFactUsageRow;
 };
 
 type RuntimeMemoryInspectionEpisodeRow = Pick<
@@ -424,6 +467,13 @@ CREATE INDEX IF NOT EXISTS idx_runtime_memory_relations_source
 
 CREATE INDEX IF NOT EXISTS idx_runtime_memory_relations_target
   ON runtime_memory_fact_relations(target_fact_id, relation_type);
+
+CREATE TABLE IF NOT EXISTS runtime_memory_fact_usage (
+  fact_id TEXT NOT NULL PRIMARY KEY,
+  access_count INTEGER NOT NULL,
+  last_accessed_at INTEGER NOT NULL,
+  FOREIGN KEY (fact_id) REFERENCES runtime_memory_facts(fact_id) ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS runtime_memory_embeddings (
   fact_id TEXT NOT NULL PRIMARY KEY,
@@ -655,11 +705,54 @@ export class RuntimeMemoryPersistenceStore {
 
   persistRelation(
     relation: Omit<RuntimeMemoryFactRelation, "relationId" | "createdAt">,
-  ): void {
-    if (!this.persistEnabled()) return;
-    if (!isRuntimeMemoryRelationType(relation.relationType)) return;
+  ): RuntimeMemoryPersistenceRelationResult {
+    if (!this.persistEnabled()) {
+      return { status: "skipped", reason: "flag_disabled", persisted: false };
+    }
+    if (!isRuntimeMemoryRelationType(relation.relationType)) {
+      return {
+        status: "rejected",
+        reason: "invalid_relation_type",
+        message: `Unknown relation type: ${String(relation.relationType)}.`,
+        persisted: false,
+      };
+    }
     this.withWriteTransaction(({ db }) => {
       persistRelationRow(db, relation, this.#now());
+    });
+    return { status: "persisted", persisted: true };
+  }
+
+  recordFactAccess(factId: string): RuntimeMemoryPersistenceAccessResult {
+    if (!this.persistEnabled()) {
+      return { status: "skipped", reason: "flag_disabled", persisted: false };
+    }
+    return this.withWriteTransaction(({ db }) => {
+      if (!findExistingFact(db, factId)) {
+        return {
+          status: "rejected" as const,
+          reason: "unknown_fact" as const,
+          message: `Fact not found in persistence: ${factId}.`,
+          persisted: false as const,
+        };
+      }
+      const now = this.#now();
+      const row = db
+        .prepare(
+          `INSERT INTO runtime_memory_fact_usage (fact_id, access_count, last_accessed_at)
+           VALUES (?, 1, ?)
+           ON CONFLICT(fact_id) DO UPDATE SET
+             access_count = access_count + 1,
+             last_accessed_at = excluded.last_accessed_at
+           RETURNING access_count, last_accessed_at`,
+        )
+        .get(factId, now) as { access_count: number; last_accessed_at: number };
+      return {
+        status: "persisted" as const,
+        persisted: true as const,
+        accessCount: Number(row.access_count),
+        lastAccessedAt: Number(row.last_accessed_at),
+      };
     });
   }
 
@@ -722,6 +815,13 @@ export class RuntimeMemoryPersistenceStore {
           confidence: relation.confidence,
           metadata: relation.metadata,
         });
+      }
+      for (const usage of readFactUsage(db)) {
+        store.restoreFactUsage(
+          usage.fact_id,
+          usage.access_count,
+          usage.last_accessed_at,
+        );
       }
       return {
         status: "loaded",
@@ -1129,6 +1229,16 @@ function persistRelationRow(
     metadataJson,
     now,
   );
+}
+
+function readFactUsage(db: DatabaseSync): RuntimeMemoryFactUsageRow[] {
+  return db
+    .prepare(
+      `SELECT fact_id, access_count, last_accessed_at
+       FROM runtime_memory_fact_usage
+       ORDER BY fact_id ASC`,
+    )
+    .all() as unknown as RuntimeMemoryFactUsageRow[];
 }
 
 function embeddingsTableExists(db: DatabaseSync): boolean {

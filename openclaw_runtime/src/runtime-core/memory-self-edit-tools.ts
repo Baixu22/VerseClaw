@@ -27,6 +27,7 @@ import {
   type RuntimeMemoryTemporalFact,
 } from "./memory-context.js";
 import type { RuntimeMemoryStore } from "./memory-store.js";
+import type { RuntimeMemoryRuntimeIntegrationPort } from "./memory-runtime-integration.js";
 import type { RuntimeCoreJsonObject } from "./types.js";
 
 export type MemorySelfEditToolName =
@@ -47,6 +48,13 @@ export type MemorySelfEditToolContext = {
   store: RuntimeMemoryStore;
   now?: number;
   taskId?: string;
+  /**
+   * Durable persistence port. When present, write operations (update / forget)
+   * replay through `appendFact` / `invalidateFact` / `persistRelation` so the
+   * changes land in SQLite instead of only the in-memory store snapshot. Read
+   * operations (recall / find_related) continue to use `store`.
+   */
+  persistence?: RuntimeMemoryRuntimeIntegrationPort;
 };
 
 export type MemorySelfEditToolHandler = (
@@ -93,6 +101,79 @@ function clampNumber(
 
 function resolveNow(context: MemorySelfEditToolContext): number {
   return context.now ?? Date.now();
+}
+
+type PersistWriteOutcome = { ok: true } | { ok: false; message: string };
+
+function persistFact(
+  context: MemorySelfEditToolContext,
+  fact: RuntimeMemoryTemporalFact,
+): PersistWriteOutcome {
+  if (context.persistence !== undefined) {
+    const result = context.persistence.appendFact(fact);
+    if (result.status === "persisted") {
+      return { ok: true };
+    }
+    if (result.status === "rejected") {
+      return { ok: false, message: result.message };
+    }
+    return { ok: false, message: `persistence skipped (${result.reason})` };
+  }
+  const result = context.store.appendFact(fact);
+  if (!result.accepted) {
+    return { ok: false, message: result.message };
+  }
+  return { ok: true };
+}
+
+function persistInvalidation(
+  context: MemorySelfEditToolContext,
+  invalidation: RuntimeMemoryInvalidationProposal,
+): PersistWriteOutcome {
+  if (context.persistence !== undefined) {
+    const result = context.persistence.invalidateFact(invalidation);
+    if (result.status === "persisted") {
+      return { ok: true };
+    }
+    if (result.status === "rejected") {
+      return { ok: false, message: result.message };
+    }
+    return { ok: false, message: `persistence skipped (${result.reason})` };
+  }
+  const result = context.store.invalidateFact(invalidation);
+  if (!result.accepted) {
+    return { ok: false, message: result.message };
+  }
+  return { ok: true };
+}
+
+function persistSupersedesRelation(
+  context: MemorySelfEditToolContext,
+  newFactId: string,
+  oldFactId: string,
+): PersistWriteOutcome {
+  if (context.persistence !== undefined) {
+    const result = context.persistence.persistRelation({
+      sourceFactId: newFactId,
+      targetFactId: oldFactId,
+      relationType: "supersedes",
+      confidence: 1.0,
+    });
+    if (result.status === "persisted") {
+      return { ok: true };
+    }
+    if (result.status === "rejected") {
+      return { ok: false, message: result.message };
+    }
+    return { ok: false, message: `persistence skipped (${result.reason})` };
+  }
+  context.store.appendRelation({
+    sourceFactId: newFactId,
+    targetFactId: oldFactId,
+    relationType: "supersedes",
+    confidence: 1.0,
+  });
+  return { ok: true };
 }
 
 function selfEditEvidenceRef(now: number): EvidenceRef {
@@ -272,12 +353,12 @@ export const memoryUpdateTool: MemorySelfEditTool = {
       },
     };
 
-    const appendResult = context.store.appendFact(newFact);
-    if (!appendResult.accepted) {
+    const appendResult = persistFact(context, newFact);
+    if (!appendResult.ok) {
       return {
         ok: false,
         tool: "memory_update",
-        message: `Failed to append new fact: ${appendResult.message}.`,
+        message: `Failed to persist new fact: ${appendResult.message}.`,
       };
     }
 
@@ -296,8 +377,30 @@ export const memoryUpdateTool: MemorySelfEditTool = {
     };
 
     const sanitizedInvalidation = sanitizeRuntimeMemoryInvalidationProposal(invalidation);
-    if (sanitizedInvalidation.accepted) {
-      context.store.invalidateFact(sanitizedInvalidation.value);
+    if (!sanitizedInvalidation.accepted) {
+      return {
+        ok: false,
+        tool: "memory_update",
+        message: `Failed to create invalidation: ${sanitizedInvalidation.message}.`,
+      };
+    }
+
+    const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
+    if (!invalidationResult.ok) {
+      return {
+        ok: false,
+        tool: "memory_update",
+        message: `Failed to persist invalidation: ${invalidationResult.message}.`,
+      };
+    }
+
+    const relationResult = persistSupersedesRelation(context, newFactId, factId);
+    if (!relationResult.ok) {
+      return {
+        ok: false,
+        tool: "memory_update",
+        message: `Failed to persist supersedes relation: ${relationResult.message}.`,
+      };
     }
 
     return {
@@ -395,7 +498,14 @@ export const memoryForgetTool: MemorySelfEditTool = {
       };
     }
 
-    context.store.invalidateFact(sanitizedInvalidation.value);
+    const invalidationResult = persistInvalidation(context, sanitizedInvalidation.value);
+    if (!invalidationResult.ok) {
+      return {
+        ok: false,
+        tool: "memory_forget",
+        message: `Failed to persist invalidation: ${invalidationResult.message}.`,
+      };
+    }
 
     return {
       ok: true,
@@ -437,6 +547,27 @@ export const memoryStrengthenTool: MemorySelfEditTool = {
         ok: false,
         tool: "memory_strengthen",
         message: `Fact not found: ${factId}.`,
+      };
+    }
+
+    if (context.persistence !== undefined) {
+      const accessResult = context.persistence.recordFactAccess(factId);
+      if (accessResult.status !== "persisted") {
+        const message = accessResult.status === "rejected"
+          ? accessResult.message
+          : `persistence skipped (${accessResult.reason})`;
+        return {
+          ok: false,
+          tool: "memory_strengthen",
+          message: `Failed to persist usage access: ${message}`,
+        };
+      }
+      context.store.recordFactAccess(factId);
+      return {
+        ok: true,
+        tool: "memory_strengthen",
+        message: `Fact ${factId} strengthened (usage count: ${accessResult.accessCount}).`,
+        data: { factId, usageCount: accessResult.accessCount },
       };
     }
 
