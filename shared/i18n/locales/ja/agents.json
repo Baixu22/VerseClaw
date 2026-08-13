@@ -682,6 +682,7 @@
         "agentModelUpdateFailed": "Agent モデルの更新に失敗しました: {{error}}",
         "agentModelReset": "Agent モデルをデフォルトに戻しました",
         "agentModelResetFailed": "Agent モデルのリセットに失敗しました: {{error}}",
+        "agentModelRuntimeSyncWarning": "モデルは更新されましたが、ランタイムへの同期に失敗しました。ゲートウェイの再読み込み後に反映されます。",
         "channelAssigned": "{{channel}} を Agent に割り当てました",
         "channelAssignFailed": "Channel の割り当てに失敗しました: {{error}}",
         "channelRemoved": "{{channel}} を削除しました",

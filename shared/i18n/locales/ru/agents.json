@@ -682,6 +682,7 @@
         "agentModelUpdateFailed": "Не удалось обновить модель агента: {{error}}",
         "agentModelReset": "Модель агента сброшена до значения по умолчанию",
         "agentModelResetFailed": "Не удалось сбросить модель агента: {{error}}",
+        "agentModelRuntimeSyncWarning": "Модель обновлена, но синхронизация со средой выполнения не удалась. Изменение вступит в силу после перезагрузки шлюза.",
         "channelAssigned": "{{channel}} назначен агенту",
         "channelAssignFailed": "Не удалось назначить канал: {{error}}",
         "channelRemoved": "{{channel}} удалён",
