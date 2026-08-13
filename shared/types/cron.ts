@@ -102,6 +102,12 @@ export interface CronJob {
   lastRun?: CronJobLastRun;
   nextRun?: string;
   agentId: string;
+  /**
+   * True when a background auto-repair (delivery/agentId) failed and the
+   * gateway copy is unchanged. The UI should surface this instead of
+   * pretending the repair succeeded.
+   */
+  repairDegraded?: boolean;
 }
 
 /**
