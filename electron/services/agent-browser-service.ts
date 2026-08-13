@@ -344,29 +344,57 @@ function normalizeMaxOutput(value: unknown): number | undefined {
     : undefined;
 }
 
-async function waitForWebContents(
+/** R0-4: navigation must not hang forever — stop the load and fail after this. */
+const NAVIGATION_TIMEOUT_MS = 30_000;
+
+/**
+ * Wait for a webContents navigation event with a hard wall-clock cap.
+ * Exported for tests (R0-4.2).
+ */
+export async function waitForWebContents(
   webContents: AgentBrowserWebContents,
   eventName: 'did-finish-load' | 'dom-ready',
+  timeoutMs: number = NAVIGATION_TIMEOUT_MS,
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const events = webContents as unknown as {
       once: (eventName: string, listener: (...args: unknown[]) => void) => void;
       removeListener: (eventName: string, listener: (...args: unknown[]) => void) => void;
+      stop: () => void;
     };
+    let settled = false;
     const cleanup = () => {
+      clearTimeout(timer);
       events.removeListener(eventName, onReady);
       events.removeListener('did-fail-load', onFail);
     };
     const onReady = () => {
+      if (settled) return;
+      settled = true;
       cleanup();
       resolve();
     };
     const onFail = (...args: unknown[]) => {
+      if (settled) return;
+      settled = true;
       const errorCode = typeof args[1] === 'number' ? args[1] : 0;
       const errorDescription = typeof args[2] === 'string' ? args[2] : 'unknown error';
       cleanup();
       reject(new Error(`Agent browser navigation failed (${errorCode}): ${errorDescription}`));
     };
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      try {
+        events.stop();
+      } catch {
+        // stop() may throw when the contents were destroyed meanwhile — the
+        // timeout rejection below is the authoritative failure signal.
+      }
+      reject(new Error(`Agent browser navigation timed out after ${Math.round(timeoutMs / 1000)}s (${eventName})`));
+    }, timeoutMs);
+    timer.unref?.();
     events.once(eventName, onReady);
     events.once('did-fail-load', onFail);
   });
