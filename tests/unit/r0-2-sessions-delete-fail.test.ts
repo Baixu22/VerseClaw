@@ -1,0 +1,172 @@
+// @vitest-environment node
+// R0-2: session hard-delete / emptyArchive must report partial failures
+// instead of returning success:true when unlinks or index writes fail.
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const state = vi.hoisted(() => ({
+  configDir: null as string | null,
+  failUnlinkSuffix: null as string | null,
+  failWriteSuffix: null as string | null,
+}));
+
+// session-files.ts sweeps via node:fs promises, while deleteSession's index
+// RMW uses the dynamic node:fs/promises import. Mock both specifiers with the
+// same injected failure surfaces.
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs')>();
+  return {
+    ...actual,
+    promises: {
+      ...actual.promises,
+      unlink: async (target: string | URL) => {
+        if (state.failUnlinkSuffix && String(target).includes(state.failUnlinkSuffix)) {
+          const err: NodeJS.ErrnoException = new Error('EACCES: permission denied, unlink ' + String(target));
+          err.code = 'EACCES';
+          throw err;
+        }
+        return actual.promises.unlink(target);
+      },
+      writeFile: async (target: string | URL, data: unknown, options?: unknown) => {
+        if (state.failWriteSuffix && String(target).includes(state.failWriteSuffix)) {
+          const err: NodeJS.ErrnoException = new Error('EBUSY: resource busy, open ' + String(target));
+          err.code = 'EBUSY';
+          throw err;
+        }
+        return (actual.promises.writeFile as (t: string | URL, d: unknown, o?: unknown) => Promise<void>)(target, data, options);
+      },
+    },
+  };
+});
+
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return {
+    ...actual,
+    writeFile: async (target: string | URL, data: unknown, options?: unknown) => {
+      if (state.failWriteSuffix && String(target).includes(state.failWriteSuffix)) {
+        const err: NodeJS.ErrnoException = new Error('EBUSY: resource busy, open ' + String(target));
+        err.code = 'EBUSY';
+        throw err;
+      }
+      return (actual.writeFile as (t: string | URL, d: unknown, o?: unknown) => Promise<void>)(target, data, options);
+    },
+  };
+});
+
+vi.mock('@electron/utils/paths', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@electron/utils/paths')>();
+  return {
+    ...actual,
+    getOpenClawConfigDir: () => state.configDir as string,
+  };
+});
+
+vi.mock('@electron/services/session-cascade-delete', () => ({
+  runHostSessionDerivativeCascade: vi.fn(async () => ({ success: true, removed: [], errors: [], retryable: false })),
+}));
+
+vi.mock('@electron/services/resource-tracker', () => ({
+  getResourceTracker: () => ({ unregisterBySession: vi.fn(async () => 0) }),
+}));
+
+const tempRoots: string[] = [];
+
+async function makeConfigDir(): Promise<string> {
+  const root = await mkdtemp(join(tmpdir(), 'clawx-r0-2-sessions-'));
+  tempRoots.push(root);
+  const sessionsDir = join(root, 'agents', 'main', 'sessions');
+  await mkdir(sessionsDir, { recursive: true });
+  state.configDir = root;
+  return sessionsDir;
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  state.failUnlinkSuffix = null;
+  state.failWriteSuffix = null;
+});
+
+afterEach(async () => {
+  state.configDir = null;
+  await Promise.all(tempRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+});
+
+describe('R0-2 sessions.delete partial failures', () => {
+  it('returns partial with remainingPaths and keeps the index entry when an artefact unlink fails', async () => {
+    const sessionsDir = await makeConfigDir();
+    await writeFile(join(sessionsDir, 'sessions.json'), JSON.stringify({ 'agent:main:abc123': 'abc123.jsonl' }), 'utf8');
+    await writeFile(join(sessionsDir, 'abc123.jsonl'), '{}', 'utf8');
+    await writeFile(join(sessionsDir, 'abc123.jsonl.reset.bak'), '{}', 'utf8');
+    state.failUnlinkSuffix = 'abc123.jsonl.reset.bak';
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi();
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+
+    expect(result.success).toBe(false);
+    expect(result.partial).toBe(true);
+    expect(result.remainingPaths?.some((path) => path.includes('abc123.jsonl.reset.bak'))).toBe(true);
+    expect(result.error).toContain('Failed to unlink');
+
+    // The entry must stay so the user can retry instead of seeing a fake success.
+    const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, unknown>;
+    expect(indexAfter['agent:main:abc123']).toBe('abc123.jsonl');
+  });
+
+  it('returns partial when sessions.json read-modify-write fails after files were removed', async () => {
+    const sessionsDir = await makeConfigDir();
+    await writeFile(join(sessionsDir, 'sessions.json'), JSON.stringify({ 'agent:main:abc123': 'abc123.jsonl' }), 'utf8');
+    await writeFile(join(sessionsDir, 'abc123.jsonl'), '{}', 'utf8');
+    state.failWriteSuffix = 'sessions.json';
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi();
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+
+    expect(result.success).toBe(false);
+    expect(result.partial).toBe(true);
+    expect(result.error).toContain('sessions.json');
+  });
+
+  it('reports success only when every artefact and the index update succeed', async () => {
+    const sessionsDir = await makeConfigDir();
+    await writeFile(join(sessionsDir, 'sessions.json'), JSON.stringify({ 'agent:main:abc123': 'abc123.jsonl' }), 'utf8');
+    await writeFile(join(sessionsDir, 'abc123.jsonl'), '{}', 'utf8');
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi();
+    const result = await api.delete({ sessionKey: 'agent:main:abc123' });
+
+    expect(result.success).toBe(true);
+    const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, unknown>;
+    expect(indexAfter['agent:main:abc123']).toBeUndefined();
+  });
+});
+
+describe('R0-2 sessions.emptyArchive failures', () => {
+  it('does not report success when an archived file could not be removed', async () => {
+    const sessionsDir = await makeConfigDir();
+    await writeFile(join(sessionsDir, 'sessions.archives.json'), JSON.stringify({
+      version: 1,
+      entries: [{
+        sessionKey: 'agent:main:arch1',
+        agentId: 'main',
+        transcriptPath: join(sessionsDir, 'arch1.archived.jsonl'),
+      }],
+    }), 'utf8');
+    await writeFile(join(sessionsDir, 'arch1.archived.jsonl'), '{}', 'utf8');
+    await writeFile(join(sessionsDir, 'arch1.deleted.jsonl'), '{}', 'utf8');
+    state.failUnlinkSuffix = 'arch1.deleted.jsonl';
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const api = createSessionsApi();
+    const result = await api.emptyArchive({ agentId: 'main' });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('could not be removed');
+  });
+});
