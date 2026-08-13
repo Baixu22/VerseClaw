@@ -682,6 +682,7 @@
         "agentModelUpdateFailed": "更新 Agent 模型失败：{{error}}",
         "agentModelReset": "Agent 模型已恢复为默认",
         "agentModelResetFailed": "恢复 Agent 默认模型失败：{{error}}",
+        "agentModelRuntimeSyncWarning": "模型已更新，但同步到运行时失败，将在网关重载后生效。",
         "channelAssigned": "{{channel}} 已分配给 Agent",
         "channelAssignFailed": "分配频道失败：{{error}}",
         "channelRemoved": "{{channel}} 已移除",

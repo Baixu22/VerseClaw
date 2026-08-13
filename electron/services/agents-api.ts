@@ -125,10 +125,18 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
       try {
         await syncAllProviderAuthToRuntime();
         await syncAgentModelOverrideToRuntime(agentId);
+        return { success: true, runtimeSynced: true, ...snapshot };
       } catch (syncError) {
+        // R0-2: the local model override succeeded — do not report a plain
+        // failure. Flag the runtime sync explicitly so the renderer can warn.
         console.warn('[agents] Failed to sync runtime after updating agent model:', syncError);
+        return {
+          success: true,
+          runtimeSynced: false,
+          warning: `Agent model saved locally, but runtime sync failed: ${String(syncError)}`,
+          ...snapshot,
+        };
       }
-      return { success: true, ...snapshot };
     },
     updateReasoningEffort: async (payload) => {
       const agentId = requireString(payload, 'id');

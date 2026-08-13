@@ -682,6 +682,7 @@
         "agentModelUpdateFailed": "Failed to update agent model: {{error}}",
         "agentModelReset": "Agent model reset to default",
         "agentModelResetFailed": "Failed to reset agent model: {{error}}",
+        "agentModelRuntimeSyncWarning": "Model updated, but syncing it to the runtime failed. It will take effect after the gateway reloads.",
         "channelAssigned": "{{channel}} assigned to agent",
         "channelAssignFailed": "Failed to assign channel: {{error}}",
         "channelRemoved": "{{channel}} removed",

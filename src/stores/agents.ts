@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import i18n from 'i18next';
+import { toast } from 'sonner';
 import { hostApi } from '@/lib/host-api';
 import type { ChannelType } from '@/types/channel';
 import type { AgentAvatarPreset, AgentReasoningEffort, AgentSummary, AgentsSnapshot } from '@/types/agent';
@@ -88,6 +90,9 @@ export const useAgentsStore = create<AgentsState>((set) => ({
     set({ error: null });
     try {
       const snapshot = await hostApi.agents.updateModel(agentId, modelRef);
+      if (snapshot.runtimeSynced === false) {
+        toast.warning(i18n.t('agents:toast.agentModelRuntimeSyncWarning'));
+      }
       set(applySnapshot(snapshot));
     } catch (error) {
       set({ error: String(error) });
