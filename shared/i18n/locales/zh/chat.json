@@ -2046,5 +2046,15 @@
       "validationError": "验证错误",
       "error": "错误"
     }
-  }
+  },
+  "sessionTaskCard":   {
+      "goal": { "none": "????" },
+      "goalStatus": { "active": "???", "paused": "???", "blocked": "???", "complete": "???" },
+      "parent": "???",
+      "forked": "??",
+      "children": "{{count}} ????",
+      "compaction": { "inProgress": "?????", "truncated": "??? {{count}} ???", "pressure": "??????{{pressure}}" },
+      "longTask": { "queued": "{{count}} ?????" },
+      "goalActions": { "start": "??", "pause": "??", "resume": "??", "complete": "??", "block": "??" }
+    }
 }

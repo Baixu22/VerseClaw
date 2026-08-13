@@ -12,9 +12,10 @@ export function buildOpenClawToolFallbackText(params: {
   surface: AgentPromptSurfaceKind;
   execToolName: string;
   processToolName: string;
+  sessionControlEnabled?: boolean;
 }): string {
   if (isOpenClawMainPromptSurface(params.surface)) {
-    return [
+    const base = [
       "OpenClaw lists the standard tools above. This runtime enables:",
       "- grep: search file contents for patterns",
       "- find: find files by glob pattern",
@@ -26,6 +27,16 @@ export function buildOpenClawToolFallbackText(params: {
       "- canvas: present/eval/snapshot the Canvas",
       "- nodes: list/describe/notify/camera/screen on paired nodes",
       "- cron: manage cron jobs and wake events (use for reminders; when scheduling a reminder, write the systemEvent text as something that will read like a reminder when it fires, and mention that it is a reminder depending on the time gap between setting and firing; include recent context in reminder text if appropriate)",
+    ];
+    if (params.sessionControlEnabled) {
+      return [
+        ...base,
+        "- session_control: the consolidated session/task surface. Use its actions (spawn, send, status, list, history, compact, yield, goal, subagents) instead of the legacy sessions_*/goal/subagents tools, which remain executable compatibility aliases.",
+        "- After spawning children, do not poll; use session_control yield and wait for pushed completion events.",
+      ].join("\n");
+    }
+    return [
+      ...base,
       "- sessions_compact: compact the current session after this turn",
       "- sessions_list: list sessions",
       "- sessions_history: fetch session history",

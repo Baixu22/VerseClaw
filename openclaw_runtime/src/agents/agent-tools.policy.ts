@@ -185,7 +185,31 @@ export function filterToolsByPolicy(tools: AnyAgentTool[], policy?: SandboxToolP
   if (!policy) {
     return tools;
   }
-  return tools.filter((tool) => isToolAllowedByPolicyName(tool.name, policy));
+  const filtered: AnyAgentTool[] = [];
+  for (const tool of tools) {
+    const actions = tool.sessionControlActions;
+    const actionPolicyNames = tool.sessionControlActionPolicyNames;
+    if (actions && actionPolicyNames) {
+      // Narrow the consolidated tool to the actions this caller may use, so
+      // existing per-tool deny semantics (leaf spawn/list/history/subagents,
+      // subagent session_status/sessions_send) stay enforced per action.
+      const allowed = actions.filter((action) =>
+        isToolAllowedByPolicyName(actionPolicyNames[action], policy),
+      );
+      if (allowed.length === 0) {
+        continue;
+      }
+      if (tool.sessionControlAllowedActionsRef) {
+        tool.sessionControlAllowedActionsRef.current = allowed;
+      }
+      filtered.push(tool);
+      continue;
+    }
+    if (isToolAllowedByPolicyName(tool.name, policy)) {
+      filtered.push(tool);
+    }
+  }
+  return filtered;
 }
 
 type ToolPolicyConfig = {

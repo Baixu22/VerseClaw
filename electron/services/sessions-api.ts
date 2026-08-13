@@ -1384,6 +1384,52 @@ export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {})
       logger.info('[session:patchRuntimeModel]', { sessionKey, modelRef });
       return { success: true, result };
     },
+    describe: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      const body = isRecord(payload) ? (payload as Record<string, unknown>) : {};
+      const includeDerivedTitles = body.includeDerivedTitles === true;
+      if (!ctx.gatewayManager) {
+        return { success: false, error: 'Gateway manager unavailable' };
+      }
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>(
+        'sessions.describe',
+        {
+          key: sessionKey,
+          ...(agentId ? { agentId } : {}),
+          ...(includeDerivedTitles ? { includeDerivedTitles } : {}),
+        },
+        10_000,
+      );
+      const row = (result.session ?? result) as Record<string, unknown>;
+      const goalRaw = row.goal as Record<string, unknown> | null | undefined;
+      const goal =
+        goalRaw && typeof goalRaw === 'object'
+          ? {
+              objective: typeof goalRaw.objective === 'string' ? goalRaw.objective : undefined,
+              status: typeof goalRaw.status === 'string' ? goalRaw.status : undefined,
+              tokenBudget: toNumber(goalRaw.tokenBudget),
+              tokensUsed: toNumber(goalRaw.tokensUsed),
+              createdAt: toNumber(goalRaw.createdAt),
+              updatedAt: toNumber(goalRaw.updatedAt),
+            }
+          : null;
+      return {
+        success: true,
+        session: {
+          key: typeof row.key === 'string' ? row.key : sessionKey,
+          label: typeof row.label === 'string' ? row.label : null,
+          displayName: typeof row.displayName === 'string' ? row.displayName : null,
+          goal,
+          parentSessionKey: typeof row.parentSessionKey === 'string' ? row.parentSessionKey : null,
+          forkedFromParent: row.forkedFromParent === true,
+          childSessions: Array.isArray(row.childSessions)
+            ? row.childSessions.filter((value): value is string => typeof value === 'string')
+            : [],
+          compactionCheckpointCount: toNumber(row.compactionCheckpointCount),
+        },
+      };
+    },
     compactionStatus: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const agentId = getOptionalAgentId(payload);

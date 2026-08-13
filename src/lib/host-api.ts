@@ -374,6 +374,8 @@ import type {
   SessionCompressionArtifactResult,
   SessionCompactionHistoryResult,
   SessionCompactionHistoryPayload,
+  SessionDescribePayload,
+  SessionDescribeResult,
   SessionCompactionPayload,
   SessionCompactionResult,
   SessionCompactionStatusResult,
@@ -1360,6 +1362,9 @@ export const hostApi = {
     summaries: (input?: { sessionKeys?: string[]; limit?: number }) => invokeHost('sessions', 'summaries', input),
     history: (input: { sessionKey?: string; agentId?: string; sessionId?: string; limit?: number }) => (
       invokeHost('sessions', 'history', input)
+    ),
+    describe: (input: SessionDescribePayload): Promise<SessionDescribeResult> => (
+      invokeHost('sessions', 'describe', input)
     ),
     patchThinking: (input: SessionPatchThinkingPayload) => invokeHost('sessions', 'patchThinking', input),
     patchRuntimeModel: (input: SessionPatchRuntimeModelPayload) => invokeHost('sessions', 'patchRuntimeModel', input),

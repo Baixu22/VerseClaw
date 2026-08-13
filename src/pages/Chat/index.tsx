@@ -47,6 +47,7 @@ import { CompactionArtifactViewer } from './CompactionArtifactViewer';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
+import { SessionTaskHeaderCard } from './SessionTaskHeaderCard';
 import { SessionActivityPanel } from './SessionActivityPanel';
 import { useSessionActivityStore } from '@/stores/session-activity';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
@@ -2655,6 +2656,7 @@ export function Chat() {
             </div>
           )}
         </div>
+        <SessionTaskHeaderCard />
         <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex items-center gap-2">
           {showSyncStatus && (
             <div

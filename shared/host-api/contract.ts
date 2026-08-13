@@ -2886,6 +2886,31 @@ export type SessionForkResult = HostSuccess & {
   forkedFromParent?: boolean;
   warnings?: string[];
 };
+export type SessionDescribePayload = {
+  sessionKey: string;
+  agentId?: string;
+  includeDerivedTitles?: boolean;
+};
+export type SessionDescribeGoal = {
+  objective?: string;
+  status?: string;
+  tokenBudget?: number;
+  tokensUsed?: number;
+  createdAt?: number;
+  updatedAt?: number;
+};
+export type SessionDescribeResult = HostSuccess & {
+  session?: {
+    key?: string;
+    label?: string | null;
+    displayName?: string | null;
+    goal?: SessionDescribeGoal | null;
+    parentSessionKey?: string | null;
+    forkedFromParent?: boolean;
+    childSessions?: string[];
+    compactionCheckpointCount?: number;
+  } | null;
+};
 export type SessionTruncatePayload = {
   sessionKey: string;
   agentId?: string;
@@ -5093,6 +5118,7 @@ export type HostApiContract = {
     permanentDelete: (payload: SessionPermanentDeletePayload) => HostSuccess;
     listArchived: (payload?: SessionListArchivedPayload) => SessionListArchivedResult;
     emptyArchive: (payload: SessionEmptyArchivePayload) => HostSuccess;
+    describe: (payload: SessionDescribePayload) => SessionDescribeResult;
   };
   chat: {
     sendWithMedia: (payload: ChatSendWithMediaPayload) => ChatSendWithMediaResult;

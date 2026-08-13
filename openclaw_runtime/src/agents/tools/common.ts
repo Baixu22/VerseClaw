@@ -70,6 +70,11 @@ export type AnyAgentTool = Omit<AgentTool, "execute"> &
     risk?: "readonly" | "write" | "destructive";
     /** A1 Stage 2: static write-path declaration. */
     writeRiskProfile?: WriteRiskProfile;
+    /** session_control integration: action inventory and per-action policy names. */
+    sessionControlActions?: readonly string[];
+    sessionControlActionPolicyNames?: Readonly<Record<string, string>>;
+    /** Mutable narrowing applied by filterToolsByPolicy for the active caller. */
+    sessionControlAllowedActionsRef?: { current: readonly string[] };
   };
 
 export function asToolParamsRecord(params: unknown): Record<string, unknown> {

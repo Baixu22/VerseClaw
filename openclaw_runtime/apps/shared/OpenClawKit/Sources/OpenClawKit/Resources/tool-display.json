@@ -1124,6 +1124,13 @@
         "message"
       ]
     },
+    "session_control": {
+      "emoji": "🎛️",
+      "title": "Session Control",
+      "detailKeys": [
+        "action"
+      ]
+    },
     "tts": {
       "emoji": "🔊",
       "title": "TTS",

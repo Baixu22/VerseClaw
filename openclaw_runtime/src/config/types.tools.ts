@@ -752,6 +752,8 @@ export type ToolsConfig = {
   experimental?: {
     /** Enable the structured `update_plan` tool explicitly outside strict-agentic execution mode. */
     planTool?: boolean;
+    /** Enable the consolidated `session_control` tool; legacy session/goal tools stay available as aliases. */
+    sessionControl?: boolean;
   };
 };
 

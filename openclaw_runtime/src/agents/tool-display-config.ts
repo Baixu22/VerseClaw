@@ -721,6 +721,11 @@ export const TOOL_DISPLAY_CONFIG: ToolDisplayConfig = {
       title: "Yield",
       detailKeys: ["message"],
     },
+    session_control: {
+      emoji: "🎛️",
+      title: "Session Control",
+      detailKeys: ["action"],
+    },
     tts: {
       emoji: "🔊",
       title: "TTS",

@@ -1043,6 +1043,8 @@ export function buildAgentSystemPrompt(params: {
             surface: promptSurface,
             execToolName,
             processToolName,
+            sessionControlEnabled:
+              params.toolNames?.includes("session_control") ?? false,
           }),
       "TOOLS.md is usage guidance, not availability.",
       ...(renderOpenClawToolWorkflowHints

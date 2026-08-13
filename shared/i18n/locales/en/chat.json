@@ -2046,5 +2046,15 @@
       "validationError": "Validation Error",
       "error": "Error"
     }
-  }
+  },
+  "sessionTaskCard":   {
+      "goal": { "none": "No goal" },
+      "goalStatus": { "active": "Active", "paused": "Paused", "blocked": "Blocked", "complete": "Complete" },
+      "parent": "Parent",
+      "forked": "Forked",
+      "children": "{{count}} children",
+      "compaction": { "inProgress": "Compacting?", "truncated": "{{count}} messages truncated", "pressure": "Pressure: {{pressure}}" },
+      "longTask": { "queued": "{{count}} queued follow-ups" },
+      "goalActions": { "start": "Start", "pause": "Pause", "resume": "Resume", "complete": "Complete", "block": "Block" }
+    }
 }

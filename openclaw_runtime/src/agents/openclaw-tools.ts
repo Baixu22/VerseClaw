@@ -80,6 +80,7 @@ import { createSessionsListTool } from "./tools/sessions-list-tool.js";
 import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
 import { createSessionsSpawnTool } from "./tools/sessions-spawn-tool.js";
 import { createSessionsYieldTool } from "./tools/sessions-yield-tool.js";
+import { createSessionControlToolFromInventory } from "./tools/session-control-tool.js";
 import { createSkillWorkshopTool } from "./tools/skill-workshop-tool.js";
 import { createSubagentsTool } from "./tools/subagents-tool.js";
 import { createTaskLoopTool } from "./tools/task-loop-tool.js";
@@ -675,6 +676,12 @@ export function createOpenClawTools(
       pdfTool,
     ]),
   ];
+  if (resolvedConfig?.tools?.experimental?.sessionControl === true) {
+    const sessionControl = createSessionControlToolFromInventory(tools, resolvedConfig);
+    if (sessionControl) {
+      tools.push(sessionControl);
+    }
+  }
   options?.recordToolPrepStage?.("openclaw-tools:core-tool-list");
   let allTools = tools;
   if (!options?.disablePluginTools) {

@@ -7,6 +7,8 @@ export const SESSIONS_LIST_TOOL_DISPLAY_SUMMARY = "List visible sessions; filter
 export const SESSIONS_HISTORY_TOOL_DISPLAY_SUMMARY = "Read sanitized session history.";
 export const SESSIONS_SEND_TOOL_DISPLAY_SUMMARY = "Message session or configured agent.";
 export const SESSIONS_SPAWN_TOOL_DISPLAY_SUMMARY = "Spawn subagent or ACP session.";
+export const SESSION_CONTROL_TOOL_DISPLAY_SUMMARY =
+  "Control sessions, goals, and subagents (spawn, send, view, compact, goal).";
 export const SESSIONS_SPAWN_SUBAGENT_TOOL_DISPLAY_SUMMARY = "Spawn subagent session.";
 export const TEAM_ORCHESTRATE_TOOL_DISPLAY_SUMMARY = "Plan and spawn a role-first subagent team.";
 export const TASK_LOOP_TOOL_DISPLAY_SUMMARY = "Run a bounded self-checking task loop.";
