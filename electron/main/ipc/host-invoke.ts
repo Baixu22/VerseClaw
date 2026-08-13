@@ -13,6 +13,34 @@ import {
   type HostSenderAuthorization,
   type IpcEventLike,
 } from './host-invoke-security';
+import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
+
+class HostActionTimeoutError extends Error {
+  constructor(moduleName: string, actionName: string, timeoutMs: number) {
+    super(`Host action ${moduleName}.${actionName} timed out after ${Math.round(timeoutMs / 1000)}s`);
+    this.name = 'HostActionTimeoutError';
+  }
+}
+
+async function withHostActionTimeout<T>(
+  promise: Promise<T>,
+  moduleName: string,
+  actionName: string,
+): Promise<T> {
+  const timeoutMs = hostActionTimeoutMs(moduleName, actionName);
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new HostActionTimeoutError(moduleName, actionName, timeoutMs)), timeoutMs);
+        timer.unref?.();
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 type RegisteredHostAction = {
   action: RuntimeHostAction;
@@ -163,9 +191,20 @@ export function createHostInvokeDispatcher(
     }
 
     try {
-      const data = await action(request.payload);
+      // R0-4: per-action timeout — a hung host action must fail closed with a
+      // TIMEOUT code instead of leaving the renderer waiting forever. Long
+      // actions (git fetch/pull/push, installs, doctor, downloads, …) get the
+      // extended budget from the shared whitelist.
+      const data = await withHostActionTimeout(Promise.resolve(action(request.payload)), request.module, request.action);
       return { id: request.id, ok: true, data };
     } catch (error) {
+      if (error instanceof HostActionTimeoutError) {
+        return {
+          id: request.id,
+          ok: false,
+          error: { code: 'TIMEOUT', message: sanitizeHostErrorMessage(error.message) },
+        };
+      }
       const rawMessage = error instanceof Error ? error.message : String(error);
       return {
         id: request.id,

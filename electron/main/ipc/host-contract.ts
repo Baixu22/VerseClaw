@@ -7,7 +7,7 @@ export type HostRequest = {
   payload?: unknown;
 };
 
-export type HostErrorCode = 'VALIDATION' | 'UNSUPPORTED' | 'INTERNAL';
+export type HostErrorCode = 'VALIDATION' | 'UNSUPPORTED' | 'INTERNAL' | 'TIMEOUT';
 
 export type HostResponse<T = unknown> =
   | { id?: string; ok: true; data: T }
