@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-001",
-  "checkedAt": "2026-07-31T07:52:18.368Z",
+  "checkedAt": "2026-08-13T02:37:11.316Z",
   "ok": true,
   "fail": [],
   "warn": [
@@ -33,6 +33,7 @@
     "manifest hash mismatch (non-strict): electron/services/terminal-api.ts",
     "manifest hash mismatch (non-strict): electron/services/permissions-api.ts",
     "manifest hash mismatch (non-strict): electron/services/git-api.ts",
+    "manifest hash mismatch (non-strict): electron/services/terminal-session-manager.ts",
     "manifest hash mismatch (non-strict): electron/services/agent-browser-service.ts",
     "manifest hash mismatch (non-strict): electron/services/updates-api.ts",
     "manifest hash mismatch (non-strict): electron/utils/store.ts",
@@ -49,7 +50,9 @@
     "manifest hash mismatch (non-strict): openclaw_runtime/src/context-engine/assembler.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/memory/gatekeeper.ts",
     "manifest hash mismatch (non-strict): openclaw_runtime/src/cron/store.ts",
+    "manifest hash mismatch (non-strict): openclaw_runtime/src/agents/mcp-http-fetch.ts",
     "manifest hash mismatch (non-strict): electron-builder.yml",
+    "manifest hash mismatch (non-strict): artifacts/agent-dev-audit/report.json",
     "manifest hash mismatch (non-strict): artifacts/agent-dev-deep-test/report.json",
     "manifest hash mismatch (non-strict): shared/agent-browser/browser-control.ts",
     "manifest hash mismatch (non-strict): electron/services/agent-browser/browser-control/tab-manager.ts",
@@ -68,7 +71,7 @@
     "known post-audit content drift allowed: shared/dcs/prod-flags-catalog.ts",
     "known post-audit content drift allowed: package.json",
     "known post-audit content drift allowed: electron/services/mcp-api.ts",
-    "manifest files: matched=24 lfNorm=0 drift=57 missing=0",
+    "manifest files: matched=21 lfNorm=0 drift=60 missing=0",
     "A2 unique Finding IDs: 35",
     "A2 related links OK",
     "A2 task Finding refs resolve (38 tasks scanned)"
