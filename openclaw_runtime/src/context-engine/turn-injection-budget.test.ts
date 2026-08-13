@@ -12,7 +12,6 @@ import {
   decayFactorFor,
   endTurnInjectionBudget,
   getTurnInjectionBudget,
-  getEffectiveChannelDecay,
   getEffectiveDropAlertRatio,
   getEffectiveTurnInjectionCharBudget,
   precedenceIndexOf,
