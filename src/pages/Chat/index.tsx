@@ -1456,7 +1456,7 @@ export function Chat() {
       toast.success(t('knowledgeDraft.applied'));
       setKnowledgeDraftOpen(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : String(err));
+      toast.error(err instanceof Error ? err.message : t('knowledgeDraft.applyFailed'));
     } finally {
       setKnowledgeDraftApplying(false);
     }
@@ -1597,7 +1597,7 @@ export function Chat() {
       } else {
         toast.error(result.reason || t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
       }
-    } catch (err) {
+    } catch {
       toast.error(t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
     }
   }, [activeWorkspaceId, t]);
@@ -1615,7 +1615,7 @@ export function Chat() {
       } else {
         toast.error(result.reason || t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
       }
-    } catch (err) {
+    } catch {
       toast.error(t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
     }
   }, [activeWorkspaceId, openWorkspacePanel, t]);
@@ -1632,7 +1632,7 @@ export function Chat() {
       } else {
         toast.error(result.reason || t('chat:sessionRail.git.pushFailed', 'Failed to push'));
       }
-    } catch (err) {
+    } catch {
       toast.error(t('chat:sessionRail.git.pushFailed', 'Failed to push'));
     }
   }, [activeWorkspaceId, openWorkspacePanel, t]);
