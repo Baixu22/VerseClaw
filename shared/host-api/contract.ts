@@ -241,6 +241,21 @@ export type {
 
 export type JsonRecord = Record<string, unknown>;
 export type HostSuccess = { success: boolean; error?: string };
+export type ProviderDefaultSyncResult = HostSuccess & {
+  /** True when the default was saved but the runtime model registry sync
+   * (per-agent models.json) failed partially. */
+  degraded?: boolean;
+  /** Diagnostic detail for the degraded sync (not user-facing copy). */
+  reason?: string;
+};
+export type SessionDeleteResult = HostSuccess & {
+  /** True when the transcript was removed but side artefacts or the
+   * sessions.json update failed — the session entry is kept so the user can
+   * retry instead of seeing a fake success. */
+  partial?: boolean;
+  /** Paths that could not be unlinked (only meaningful when partial). */
+  remainingPaths?: string[];
+};
 export type AppUpdateStatus = {
   status: 'available' | 'not-available' | 'downloaded' | 'error';
   version?: string;
@@ -1850,6 +1865,13 @@ export type ChannelSaveConfigResult = HostSuccess & {
 export type ChannelConfiguredResult = HostSuccess & { channels?: Array<string | JsonRecord> };
 
 export type AgentSnapshotResult = AgentsSnapshot & OptionalHostSuccess;
+export type AgentModelUpdateResult = AgentSnapshotResult & {
+  /** False when the model override was saved locally but the runtime
+   * (models.json / provider auth) could not be synced. */
+  runtimeSynced?: boolean;
+  /** Machine-readable sync failure detail (diagnostic only, not user copy). */
+  warning?: string;
+};
 export type AgentCreatePayload = { name: string; inheritWorkspace?: boolean };
 export type AgentUpdatePayload = { id: string; name: string };
 export type AgentUpdateModelPayload = { id: string; modelRef: string | null };
@@ -4972,7 +4994,7 @@ export type HostApiContract = {
     list: () => AgentSnapshotResult;
     create: (payload: AgentCreatePayload) => AgentSnapshotResult;
     update: (payload: AgentUpdatePayload) => AgentSnapshotResult;
-    updateModel: (payload: AgentUpdateModelPayload) => AgentSnapshotResult;
+    updateModel: (payload: AgentUpdateModelPayload) => AgentModelUpdateResult;
     updateReasoningEffort: (payload: AgentUpdateReasoningEffortPayload) => AgentSnapshotResult;
     updateAvatar: (payload: AgentUpdateAvatarPayload) => AgentSnapshotResult;
     resetAvatar: (payload: AgentIdPayload) => AgentSnapshotResult;
@@ -5031,7 +5053,7 @@ export type HostApiContract = {
     setApiKey: (payload: ProviderApiKeyPayload) => HostSuccess;
     updateWithKey: (payload: ProviderUpdateWithKeyPayload) => HostSuccess;
     deleteApiKey: (payload: ProviderIdPayload) => HostSuccess;
-    setDefault: (payload: ProviderIdPayload) => HostSuccess;
+    setDefault: (payload: ProviderIdPayload) => ProviderDefaultSyncResult;
     accounts: () => ProviderAccount[];
     vendors: () => ProviderVendorInfo[];
     accountKeyInfo: () => ProviderAccountKeyInfo[];
@@ -5042,7 +5064,7 @@ export type HostApiContract = {
     updateAccount: (payload: ProviderUpdateAccountPayload) => HostSuccess;
     deleteAccount: (payload: ProviderAccountIdPayload) => HostSuccess;
     deleteAccountApiKey: (payload: ProviderAccountIdPayload) => HostSuccess;
-    setDefaultAccount: (payload: ProviderAccountIdPayload) => HostSuccess;
+    setDefaultAccount: (payload: ProviderAccountIdPayload) => ProviderDefaultSyncResult;
     requestOAuth: (payload: ProviderOAuthRequestPayload) => HostSuccess;
     cancelOAuth: () => HostSuccess;
     submitOAuth: (payload: ProviderOAuthSubmitPayload) => HostSuccess;
@@ -5066,7 +5088,7 @@ export type HostApiContract = {
     testImageGeneration: (payload: ImageGenerationTestPayload) => ImageGenerationTestResult;
   };
   sessions: {
-    delete: (payload: SessionDeletePayload) => HostSuccess;
+    delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
     history: (payload: SessionHistoryPayload) => SessionHistoryResult;
