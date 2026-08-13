@@ -584,6 +584,7 @@ describe('host services', () => {
 
   it('sets the default provider account and syncs runtime defaults', async () => {
     providerServiceMock.getDefaultAccountId.mockResolvedValue('old-default');
+    syncDefaultProviderToRuntimeMock.mockResolvedValue({ degraded: false });
     const gatewayManager = { debouncedReload: vi.fn() };
     const { createProvidersApi } = await import('@electron/services/providers-api');
 
@@ -594,6 +595,21 @@ describe('host services', () => {
 
     expect(providerServiceMock.setDefaultAccount).toHaveBeenCalledWith('custom-local');
     expect(syncDefaultProviderToRuntimeMock).toHaveBeenCalledWith('custom-local', gatewayManager);
+  });
+
+  it('reports degraded when the default account sync fails partially (R0-2)', async () => {
+    providerServiceMock.getDefaultAccountId.mockResolvedValue('old-default');
+    syncDefaultProviderToRuntimeMock.mockResolvedValue({ degraded: true, reason: 'models.json busy' });
+    const { createProvidersApi } = await import('@electron/services/providers-api');
+
+    await expect(createProvidersApi({
+      gatewayManager: { debouncedReload: vi.fn() } as never,
+      mainWindow: {} as never,
+    }).setDefaultAccount({ accountId: 'custom-local' })).resolves.toEqual({
+      success: true,
+      degraded: true,
+      reason: 'models.json busy',
+    });
   });
 
   it('builds channel accounts from config without gateway rpc in config mode', async () => {
