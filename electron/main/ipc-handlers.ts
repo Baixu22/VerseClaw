@@ -23,8 +23,7 @@ import {
 } from '../utils/openclaw-auth';
 import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
 import { logger } from '../utils/logger';
-import { resolveAgentIdFromChannel } from '../utils/agent-config';
-import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
+import { startCronAgentRepair } from '../services/cron-maintenance';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { getProviderConfig } from '../utils/provider-registry';
 import { deviceOAuthManager } from '../utils/device-oauth';
@@ -83,7 +82,7 @@ import { createOrchestrationPresetsApi } from '../services/orchestration-presets
 import { createTerminalApi } from '../services/terminal-api';
 import { createSessionActivityApi } from '../services/session-activity-api';
 import { createGitApi } from '../services/git-api';
-import { createTerminalSessionManager } from '../services/terminal-session-manager';
+import { createTerminalSessionManager, type TerminalSessionManager } from '../services/terminal-session-manager';
 import { createWebPreviewApi } from '../services/web-preview-api';
 import { createWebPreviewManager } from '../services/web-preview-manager';
 import { createWorkspacesApi } from '../services/workspaces-api';
@@ -114,6 +113,14 @@ const gatewayRpcBackpressure = new GatewayRpcBackpressure();
 /**
  * Register all IPC handlers
  */
+// R0-3: the terminal manager is created during typed-handler registration;
+// the quit path needs a handle on it to reclaim every pty session.
+let terminalManagerRef: TerminalSessionManager | null = null;
+
+export function getTerminalSessionManager(): TerminalSessionManager | null {
+  return terminalManagerRef;
+}
+
 export function registerIpcHandlers(
   gatewayManager: GatewayManager,
   clawHubService: ClawHubService,
@@ -180,6 +187,7 @@ function registerTypedHostHandlers(
       }
     },
   });
+  terminalManagerRef = terminalManager;
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
   registerAgentBrowserGatewayBridge(gatewayManager);
   const knowledgeApi = createKnowledgeApi({ gatewayManager });
@@ -674,64 +682,10 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
  * Cron maintenance
  */
 function registerCronHandlers(gatewayManager: GatewayManager): void {
-  // Periodic cron job repair: checks for jobs with undefined agentId and repairs them
-  // This handles cases where cron jobs were created via openclaw CLI without specifying agent
-  const CRON_AGENT_REPAIR_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-  let _lastRepairErrorLogAt = 0;
-  const REPAIR_ERROR_LOG_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
-  setInterval(async () => {
-    try {
-      const status = gatewayManager.getStatus();
-      if (status.state !== 'running') return;
-
-      const result = await gatewayManager.rpc('cron.list', { includeDisabled: true });
-      const jobs = Array.isArray(result)
-        ? result
-        : (result as { jobs?: Array<{ id: string; name: string; sessionTarget?: string; payload?: { kind: string }; delivery?: { mode: string; channel?: string; to?: string; accountId?: string }; state?: Record<string, unknown> }> })?.jobs ?? [];
-
-      for (const job of jobs) {
-        const jobAgentId = (job as unknown as { agentId?: string }).agentId;
-        if (
-          (job.sessionTarget === 'isolated' || !job.sessionTarget) &&
-          job.payload?.kind === 'agentTurn' &&
-          job.delivery?.mode === 'announce' &&
-          job.delivery?.channel &&
-          jobAgentId === undefined
-        ) {
-          const channel = job.delivery.channel;
-          const accountId = job.delivery.accountId;
-          const toAddress = job.delivery.to;
-
-          let correctAgentId = await resolveAgentIdFromChannel(channel, accountId);
-
-          // If no accountId, try to resolve it from session history
-          let resolvedAccountId: string | null = null;
-          if (!correctAgentId && !accountId && toAddress) {
-            resolvedAccountId = await resolveAccountIdFromSessionHistory(toAddress, channel);
-            if (resolvedAccountId) {
-              correctAgentId = await resolveAgentIdFromChannel(channel, resolvedAccountId);
-            }
-          }
-
-          if (correctAgentId) {
-            console.debug(`Periodic repair: job "${job.name}" agentId undefined -> "${correctAgentId}"`);
-            // When accountId was resolved via to address, include it in the patch
-            const patch: Record<string, unknown> = { agentId: correctAgentId };
-            if (resolvedAccountId && !accountId) {
-              patch.delivery = { accountId: resolvedAccountId };
-            }
-            await gatewayManager.rpc('cron.update', { id: job.id, patch });
-          }
-        }
-      }
-    } catch (error) {
-      const now = Date.now();
-      if (now - _lastRepairErrorLogAt >= REPAIR_ERROR_LOG_INTERVAL_MS) {
-        _lastRepairErrorLogAt = now;
-        console.debug('Periodic cron repair error:', error);
-      }
-    }
-  }, CRON_AGENT_REPAIR_INTERVAL_MS);
+  // Periodic cron job repair: checks for jobs with undefined agentId and repairs them.
+  // R0-3: lives in cron-maintenance.ts — the interval handle is saved/unref'd,
+  // disposed on app quit, and failure counts are exposed via diagnostics.
+  startCronAgentRepair(gatewayManager);
 }
 
 /**

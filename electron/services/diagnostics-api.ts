@@ -8,6 +8,7 @@ import { buildGatewayHealthSummary } from '../utils/gateway-health';
 import { buildChannelAccountsView, getChannelStatusDiagnostics } from './channels-api';
 import { buildSandboxStatus } from './sandbox-api';
 import { exportSupportBundle } from './support-bundle';
+import { getCronRepairStats } from './cron-maintenance';
 
 const DEFAULT_TAIL_LINES = 200;
 
@@ -78,6 +79,10 @@ export function createDiagnosticsApi(ctx: DiagnosticsApiContext): CompleteHostSe
         gateway,
         sandbox,
         channels,
+        // R0-3: periodic cron repair is a background maintenance loop — its
+        // failures are otherwise invisible. Surface counters here (diagnostics
+        // snapshot is a JsonRecord, so no contract change is needed).
+        cronRepairStats: getCronRepairStats(),
         verseClawLogTail: await logger.readLogFile(DEFAULT_TAIL_LINES),
         gatewayLogTail: await readTail(join(openClawDir, 'logs', 'gateway.log')),
         gatewayErrLogTail: await readTail(join(openClawDir, 'logs', 'gateway.err.log')),
