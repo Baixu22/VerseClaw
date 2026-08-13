@@ -5,6 +5,7 @@
     "openFolder": "Open Skills Folder",
     "gatewayWarning": "Gateway is not running. Local skills are still available, but runtime status is unavailable.",
     "gatewayStarting": "Gateway is starting. Local skills are available now; runtime status will appear once it is ready.",
+    "marketplaceFallback": "ClawHub marketplace is unavailable — showing the built-in catalog.",
     "tabs": {
         "skills": "Skills",
         "installed": "Installed",

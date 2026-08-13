@@ -3,6 +3,8 @@
  * Manages skill/plugin state
  */
 import { create } from 'zustand';
+import i18n from '@/i18n';
+import { toast } from 'sonner';
 import { hostApi } from '@/lib/host-api';
 import { AppError, normalizeAppError } from '@/lib/error-model';
 import type { Skill, MarketplaceSkill } from '../types/skill';
@@ -36,9 +38,12 @@ interface SkillsState {
   searchError: string | null;
   installing: Record<string, boolean>;
   error: string | null;
+  /** R0-5: set when the ClawHub marketplace degraded to the built-in catalog. */
+  marketplaceFallbackReason: string | null;
 
   fetchSkills: () => Promise<boolean>;
   searchSkills: (query: string) => Promise<void>;
+  checkMarketplaceCapability: () => Promise<void>;
   installSkill: (slug: string, version?: string) => Promise<void>;
   uninstallSkill: (slug: string) => Promise<void>;
   enableSkill: (skillId: string) => Promise<void>;
@@ -56,6 +61,7 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
   searchError: null,
   installing: {},
   error: null,
+  marketplaceFallbackReason: null,
 
   fetchSkills: async () => {
     if (get().skills.length === 0) {
@@ -82,6 +88,9 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
 
   searchSkills: async (query: string) => {
     set({ searching: true, searchError: null });
+    // R0-5: surface marketplace degradation (fallbackReason) while searching —
+    // the capability result is otherwise never consumed by the UI.
+    void get().checkMarketplaceCapability();
     try {
       const result = await hostApi.skills.clawhubSearch({ query });
       if (result.success) {
@@ -98,6 +107,22 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
       set({ searchError: errorKey ?? appError.message });
     } finally {
       set({ searching: false });
+    }
+  },
+
+  checkMarketplaceCapability: async () => {
+    try {
+      const result = await hostApi.skills.clawhubCapability();
+      const reason = result?.capability?.fallbackReason;
+      const fallbackReason = typeof reason === 'string' && reason ? reason : null;
+      if (fallbackReason && fallbackReason !== get().marketplaceFallbackReason) {
+        set({ marketplaceFallbackReason: fallbackReason });
+        toast.warning(i18n.t('skills:marketplaceFallback'));
+      } else if (!fallbackReason && get().marketplaceFallbackReason) {
+        set({ marketplaceFallbackReason: null });
+      }
+    } catch (error) {
+      console.warn('[skills] Marketplace capability check failed:', error);
     }
   },
 

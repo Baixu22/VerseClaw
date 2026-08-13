@@ -5,6 +5,7 @@
     "openFolder": "打开技能文件夹",
     "gatewayWarning": "网关未运行。你仍可查看本地技能，但运行时状态暂不可用。",
     "gatewayStarting": "网关正在启动。本地技能已可用，运行时状态会在就绪后自动补充。",
+    "marketplaceFallback": "ClawHub 市场不可用，已显示内置目录。",
     "tabs": {
         "skills": "技能",
         "installed": "已安装",
