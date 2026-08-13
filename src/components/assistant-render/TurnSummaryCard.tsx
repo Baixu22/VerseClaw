@@ -33,12 +33,58 @@ const RUN_TO_ORB: Record<UserRunStatus, OrbStatusState> = {
   aborted: 'stopped',
 };
 
+export type TurnSummaryCounts = {
+  plan?: number;
+  files?: number;
+  diffs?: number;
+  agents?: number;
+  terminals?: number;
+  approvals?: number;
+};
+
+/** Order is deliberate: the most consequential artifact leads. */
+const BADGE_ORDER = ['approvals', 'plan', 'agents', 'diffs', 'files', 'terminals'] as const;
+
+/**
+ * Collapsed turns used to say only "Worked for 12s", so a plan, three
+ * sub-agents and five changed files were indistinguishable from an empty run.
+ * These counts are the collapsed header's contents label — enough to tell the
+ * user whether opening it is worth it, without reproducing what is inside.
+ */
+function TurnSummaryBadges({ counts }: { counts: TurnSummaryCounts }) {
+  const { t } = useTranslation('chat');
+  const entries = BADGE_ORDER
+    .map((key) => ({ key, value: counts[key] ?? 0 }))
+    .filter((entry) => entry.value > 0);
+  if (entries.length === 0) return null;
+
+  return (
+    <span className="flex min-w-0 shrink-0 items-center gap-1" data-testid="chat-turn-summary-badges">
+      {entries.map((entry) => (
+        <span
+          key={entry.key}
+          data-testid={`chat-turn-summary-badge-${entry.key}`}
+          className={cn(
+            'inline-flex items-center whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] font-medium leading-4',
+            entry.key === 'approvals'
+              ? 'bg-destructive/10 text-destructive'
+              : 'bg-black/[0.05] text-muted-foreground dark:bg-white/[0.07]',
+          )}
+        >
+          {t(`turnSummary.badge.${entry.key}`, { count: entry.value })}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function TurnSummaryCard({
   status,
   startedAt,
   endedAt,
   now,
   expanded,
+  summary,
   onExpandedChange,
   children,
 }: {
@@ -47,6 +93,7 @@ export function TurnSummaryCard({
   endedAt?: number;
   now: number;
   expanded: boolean;
+  summary?: TurnSummaryCounts;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
@@ -107,6 +154,9 @@ export function TurnSummaryCard({
             data-testid="chat-turn-summary-toggle"
           >
             <span className="shrink-0 whitespace-nowrap">{label}</span>
+            {/* Only while collapsed — once open the contents speak for
+                themselves and the chips would just be a second index. */}
+            {!expanded && summary && <TurnSummaryBadges counts={summary} />}
             <span className="h-px min-w-4 flex-1 bg-border/70" aria-hidden="true" />
             <ChevronRight
               className={cn(

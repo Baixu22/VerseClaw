@@ -1,15 +1,23 @@
 import { ThinkingOrb, type OrbState } from 'thinking-orbs';
+import { DotMatrix, type DotMatrixState } from '@/components/assistant-ui/dot-matrix';
 import { cn } from '@/lib/utils';
 
 /**
- * State mapping — DotMatrix's 21 states onto the 9 thinking-orbs shapes.
+ * OrbStatus — one status glyph, two engines.
  *
- * thinking-orbs is strictly monochrome (light ink on dark, dark ink on light),
- * so states that previously carried a semantic COLOR (success/error/warning/…)
- * keep their meaning through a small colored dot rendered beside the orb —
- * Plan B per design decision. The orb shape itself still conveys motion/activity
- * for every state, and the colored dot restores the at-a-glance semantic cue
- * the 5×5 dot-matrix used to provide.
+ * MOTION states (loading / streaming / searching / …) render the monochrome
+ * `thinking-orbs` canvas: continuous motion reads as "the agent is doing
+ * something right now", and the orb shapes are tuned for exactly that.
+ *
+ * SETTLED states (success / error / stopped / …) render the 5×5 DotMatrix
+ * glyph instead: a colored, nearly-still figure (emerald ✓, red ✕, STOP
+ * square, pause bars…). A terminal state must not keep breathing — an
+ * animated orb after `run.ended` reads as "still running", which is the
+ * regression this split repairs. The matrix also restores the at-a-glance
+ * semantic color the monochrome orb cannot carry.
+ *
+ * Same public API as before — callers pick a state, this module picks the
+ * engine. `data-state` stays on the wrapper for tests and styling.
  */
 
 /** DotMatrix-compatible states we still accept (superset of what callers use). */
@@ -19,8 +27,8 @@ export type OrbStatusState =
   | 'speaking' | 'recording' | 'success' | 'error' | 'warning' | 'info'
   | 'paused' | 'stopped' | 'offline';
 
-const ANIMATED_ORB: Record<OrbStatusState, OrbState> = {
-  idle: 'breathing',
+/** Motion states → thinking-orbs shape. Anything not listed here is settled. */
+const ANIMATED_ORB: Partial<Record<OrbStatusState, OrbState>> = {
   loading: 'solving',
   thinking: 'breathing',
   streaming: 'composing',
@@ -33,27 +41,24 @@ const ANIMATED_ORB: Record<OrbStatusState, OrbState> = {
   downloading: 'weaving',
   listening: 'listening',
   speaking: 'listening',
-  recording: 'listening',
-  // Semantic states — motion via orb, meaning via colored dot below.
-  success: 'breathing',
-  error: 'breathing',
-  warning: 'breathing',
-  info: 'breathing',
-  paused: 'breathing',
-  stopped: 'breathing',
-  offline: 'breathing',
 };
 
-/** Colored dot shown next to the orb for states that carry semantic color. */
-const SEMANTIC_DOT: Partial<Record<OrbStatusState, string>> = {
-  success: 'bg-emerald-500',
-  error: 'bg-red-500',
-  warning: 'bg-amber-500',
-  info: 'bg-blue-500',
-  recording: 'bg-red-500',
-  paused: 'bg-muted-foreground',
-  stopped: 'bg-muted-foreground',
-  offline: 'bg-muted-foreground',
+/**
+ * Settled / semantic states → DotMatrix state. The matrix names match ours
+ * one-to-one; `idle` and `recording` live here too — an idle session row
+ * must not pulse like a working one, and the red record pulse is the
+ * matrix's own classic design.
+ */
+const SETTLED_MATRIX: Partial<Record<OrbStatusState, DotMatrixState>> = {
+  idle: 'idle',
+  recording: 'recording',
+  success: 'success',
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+  paused: 'paused',
+  stopped: 'stopped',
+  offline: 'offline',
 };
 
 export type OrbStatusProps = {
@@ -68,7 +73,7 @@ export type OrbStatusProps = {
   size?: 64 | 20 | 'md';
   /** Accessible label; defaults to the state name. */
   label?: string;
-  /** Semantic dot size — 'sm' inside the row, 'lg' beside a lead orb. */
+  /** Kept for API compatibility; the settled matrix carries its own color now. */
   dotSize?: 'sm' | 'lg';
   className?: string;
   /** Passed through to the underlying orb (for test ids etc.). */
@@ -78,22 +83,44 @@ export type OrbStatusProps = {
 /** CSS size for the 'md' preset — roughly 2× the 14px body text. */
 const MD_SIZE_CSS = 28;
 
+/** Matrix render sizes per preset — the 5×5 glyph reads best a notch smaller than the orb. */
+const MATRIX_SIZE_CSS: Record<'md' | '20' | '64', number> = { md: 22, 20: 16, 64: 40 };
+
 export function OrbStatus({
   state = 'loading',
   size = 20,
   label,
-  dotSize = 'sm',
   className,
   ...rest
 }: OrbStatusProps) {
-  const orbState = ANIMATED_ORB[state] ?? 'breathing';
-  const dotClass = SEMANTIC_DOT[state];
-  const dot = dotSize === 'lg' ? 'h-2 w-2' : 'h-1.5 w-1.5';
+  const matrixState = SETTLED_MATRIX[state];
   const isMd = size === 'md';
 
+  if (matrixState) {
+    // Callers that size the wrapper (`size-3.5` on session rows) own the box;
+    // otherwise fall back to the preset so the lead orb slot keeps its weight.
+    const hasExplicitSize = /\bsize-/.test(className ?? '');
+    const matrixCss = MATRIX_SIZE_CSS[isMd ? 'md' : (String(size) as '20' | '64')];
+    return (
+      <span
+        className={cn('inline-flex shrink-0 items-center justify-center', className)}
+        data-testid={rest['data-testid']}
+        data-state={state}
+      >
+        <DotMatrix
+          state={matrixState}
+          label={label ?? state}
+          className="size-full"
+          style={hasExplicitSize ? undefined : { width: matrixCss, height: matrixCss }}
+        />
+      </span>
+    );
+  }
+
+  const orbState = ANIMATED_ORB[state] ?? 'breathing';
   return (
     <span
-      className={cn('inline-flex shrink-0 items-center justify-center gap-1', className)}
+      className={cn('inline-flex shrink-0 items-center justify-center', className)}
       data-testid={rest['data-testid']}
       data-state={state}
     >
@@ -104,9 +131,8 @@ export function OrbStatus({
         aria-label={label ?? state}
         style={isMd ? { width: MD_SIZE_CSS, height: MD_SIZE_CSS } : undefined}
       />
-      {dotClass && <span aria-hidden className={cn('rounded-full', dot, dotClass)} />}
     </span>
   );
 }
 
-export { ANIMATED_ORB, SEMANTIC_DOT };
+export { ANIMATED_ORB, SETTLED_MATRIX };

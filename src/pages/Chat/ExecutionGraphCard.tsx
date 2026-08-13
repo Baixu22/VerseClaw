@@ -24,17 +24,14 @@ function StepDetailRow({ step }: { step: TaskStep }) {
   const hasDetail = Boolean(step.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
-  const isThinking = step.kind === 'thinking';
   const isSystem = step.kind === 'system';
   const displayToolLabel = isTool && step.label === 'image_generate'
     ? t('executionGraph.imageGenerateLabel')
     : step.label;
-  const displayLabel = isThinking
-    ? t('executionGraph.thinkingLabel')
-    : displayToolLabel;
+  const displayLabel = displayToolLabel;
   const detailPreview = step.detail?.replace(/\s+/g, ' ').trim();
   const summary = isNarration && detailPreview ? detailPreview : displayLabel;
-  const showRunning = step.status === 'running' && (isTool || isThinking || isSystem);
+  const showRunning = step.status === 'running' && (isTool || isSystem);
   const showError = step.status === 'error';
 
   let formattedDetail = step.detail;
@@ -72,7 +69,7 @@ function StepDetailRow({ step }: { step: TaskStep }) {
             </span>
           )}
           {showRunning && (
-            <OrbStatus state={isThinking ? 'thinking' : 'syncing'} label={displayLabel} className="mt-1 size-3.5 shrink-0 text-primary" />
+            <OrbStatus state="syncing" label={displayLabel} className="mt-1 size-3.5 shrink-0 text-primary" />
           )}
           {showError && (
             <span className="shrink-0 whitespace-nowrap text-xs font-normal text-destructive">
@@ -117,7 +114,7 @@ function StepDetailRow({ step }: { step: TaskStep }) {
 function StepIcon({ step }: { step: TaskStep }) {
   if (step.status === 'error') return <XCircle className="h-3.5 w-3.5 text-destructive" />;
   if (step.kind === 'tool') return <Wrench className="h-3.5 w-3.5" />;
-  if (step.kind === 'message' || step.kind === 'thinking') return <MessageSquare className="h-3.5 w-3.5" />;
+  if (step.kind === 'message') return <MessageSquare className="h-3.5 w-3.5" />;
   return <GitBranch className="h-3.5 w-3.5" />;
 }
 
@@ -131,6 +128,16 @@ export function ExecutionGraphCard({
   const { t } = useTranslation('chat');
   const shouldShowTrailingThinking = active && !suppressThinking;
   const traceHref = traceId ? `#/observability?traceId=${encodeURIComponent(traceId)}` : null;
+
+  // A run whose rows were all promoted to rich cards (a plan-only or
+  // command-only turn) has nothing left to draw. Rendering anyway leaves a bare
+  // "Main execution" header with an empty tree under it. The sibling surfaces
+  // — RunTerminalSurfaces, RunMutationDiffs, PendingRunApprovals — all guard
+  // their empty state; this was the one that did not.
+  //
+  // The trailing thinking shimmer is real content, so an active run without
+  // steps yet still renders.
+  if (steps.length === 0 && !shouldShowTrailingThinking) return null;
 
   return (
     <div
@@ -162,7 +169,6 @@ export function ExecutionGraphCard({
           const alignedIndentOffset = (
             step.kind === 'tool'
             || step.kind === 'message'
-            || step.kind === 'thinking'
           ) ? TOOL_ROW_EXTRA_INDENT_PX : 0;
           const rowMarginLeft = (Math.max(step.depth - 1, 0) * 24) + alignedIndentOffset;
           return (

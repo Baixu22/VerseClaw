@@ -1,4 +1,5 @@
 import type { ChatRuntimeRunState, RawMessage, ToolStatus } from '@/stores/chat';
+import type { PermissionApprovalEvent } from '@shared/types/workspace';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import {
   extractImages,
@@ -24,6 +25,11 @@ import {
 } from './task-visualization';
 import { deriveTeamOrchestrationViews, type TeamOrchestrationView } from './team-orchestration-visualization';
 import { hasDeliveredImageGenerationResult, isImageGenerationPending } from './image-generation-status';
+import {
+  isPlanToolName,
+  promoteRunSurfaces,
+  type PromotedRunSurfaces,
+} from './run-surface-promotion';
 
 type AgentLike = {
   id: string;
@@ -58,7 +64,19 @@ export type UserRunCard = {
   messageStepTexts: string[];
   streamingReplyText: string | null;
   traceId?: string;
+  /**
+   * Runtime run this card renders. Only the latest segment can know it today —
+   * history carries no run id — so it is how `assignApprovalsToRunCards` tells
+   * "this approval belongs to the turn you are looking at" from "this approval
+   * is older than anything we can place".
+   */
+  runId?: string;
   suppressThinking: boolean;
+  /**
+   * Runtime events promoted out of the execution graph into rich Tool UI cards.
+   * The graph never renders these — see run-surface-promotion.ts.
+   */
+  surfaces: PromotedRunSurfaces;
 };
 
 export type ExecutionStreamMessage = {
@@ -106,10 +124,14 @@ export function getPrimaryMessageStepTexts(steps: TaskStep[]): string[] {
     .map((step) => step.detail!);
 }
 
-export function sanitizeGraphSteps(steps: TaskStep[]): TaskStep[] {
+export function sanitizeGraphSteps(steps: TaskStep[], promotedStepIds?: ReadonlySet<string>): TaskStep[] {
   return steps.filter((step) => {
-    if (step.kind === 'thinking') return false;
     if (step.kind === 'message' && step.detail && isInternalProcessNarration(step.detail)) return false;
+    // Rows already rendered by a rich card — see run-surface-promotion.ts for
+    // the promotion table. Plan tools are filtered by name because the history
+    // path derives its step ids from message ids rather than runtime ids.
+    if (step.kind === 'tool' && isPlanToolName(step.label)) return false;
+    if (promotedStepIds?.has(step.id)) return false;
     return true;
   });
 }
@@ -352,6 +374,20 @@ function deriveRunLifecycle(input: {
   return { status, startedAt, endedAt, hasVisibleReply: input.hasVisibleReply };
 }
 
+function latestRuntimeRunForSession(
+  runtimeRuns: Record<string, ChatRuntimeRunState>,
+  sessionKey: string,
+): ChatRuntimeRunState | null {
+  let latest: ChatRuntimeRunState | null = null;
+  for (const run of Object.values(runtimeRuns)) {
+    if (run.sessionKey && run.sessionKey !== sessionKey) continue;
+    const startedAt = normalizeRunTimestamp(run.startedAt) ?? 0;
+    const latestStartedAt = latest ? normalizeRunTimestamp(latest.startedAt) ?? 0 : -1;
+    if (startedAt >= latestStartedAt) latest = run;
+  }
+  return latest;
+}
+
 export function deriveUserRunProjection({
   messages,
   subagentCompletionInfos,
@@ -422,6 +458,27 @@ export function deriveUserRunProjection({
     const runtimeHasToolActivity = runtimeRunHasToolActivity(activeRuntimeRun);
     const runtimeHasRunningTool = hasRunningRuntimeTool(activeRuntimeRun);
     const teamOrchestrations = deriveTeamOrchestrationViews(segmentMessages, activeRuntimeRun);
+    // Rich cards outlive `activeRunId`: once a run ends the store keeps its
+    // event log, and a completed turn must still show the terminal output and
+    // plan it produced. Lifecycle decisions below deliberately keep using
+    // `activeRuntimeRun` so ending a run still collapses the graph.
+    const surfaceRuntimeRun = isLatestRunSegment
+      ? activeRuntimeRun ?? latestRuntimeRunForSession(runtimeRuns, currentSessionKey)
+      : null;
+    const surfaces = promoteRunSurfaces({
+      runState: surfaceRuntimeRun,
+      segmentMessages: postTriggerMessages,
+    });
+    /**
+     * Lifecycle reads the run that is still active, plus — once it is not — the
+     * TERMINAL status of the run we just watched. Without the fallback, hitting
+     * Stop clears `activeRunId` and the turn settles as "completed" instead of
+     * "stopped", because the aborted status only ever lived on the run object.
+     * Only terminal statuses are adopted: a stale `running` must never
+     * resurrect a turn the rest of the projection considers finished.
+     */
+    const lifecycleRuntimeRun = activeRuntimeRun
+      ?? (surfaceRuntimeRun && surfaceRuntimeRun.status !== 'running' ? surfaceRuntimeRun : null);
     const hasToolActivity = runtimeHasToolActivity || postTriggerMessages.some((m) =>
       m.role === 'assistant' && extractToolUse(m).length > 0,
     );
@@ -484,8 +541,8 @@ export function deriveUserRunProjection({
       && !runtimeHasRunningTool;
 
     let steps = activeRuntimeRun && runtimeHasToolActivity
-      ? sanitizeGraphSteps(deriveRuntimeTaskSteps(activeRuntimeRun))
-      : sanitizeGraphSteps(buildSteps(rawStreamingReplyCandidate));
+      ? sanitizeGraphSteps(deriveRuntimeTaskSteps(activeRuntimeRun), surfaces.promotedStepIds)
+      : sanitizeGraphSteps(buildSteps(rawStreamingReplyCandidate), surfaces.promotedStepIds);
     let streamingReplyText: string | null = null;
     if (rawStreamingReplyCandidate) {
       const candidateReplyText = stream.hasStreamText ? stream.streamText : runtimeReplyText;
@@ -496,8 +553,8 @@ export function deriveUserRunProjection({
         streamingReplyText = hasReplyText ? trimmedReplyText : '';
       } else {
         steps = activeRuntimeRun && runtimeHasToolActivity
-          ? sanitizeGraphSteps(deriveRuntimeTaskSteps(activeRuntimeRun))
-          : sanitizeGraphSteps(buildSteps(false));
+          ? sanitizeGraphSteps(deriveRuntimeTaskSteps(activeRuntimeRun), surfaces.promotedStepIds)
+          : sanitizeGraphSteps(buildSteps(false), surfaces.promotedStepIds);
       }
     }
 
@@ -512,7 +569,11 @@ export function deriveUserRunProjection({
     const segmentAgentLabel = getAgentLabel(agents, currentAgentId);
     const segmentSessionLabel = sessionLabels[currentSessionKey] || currentSessionKey;
 
-    if (steps.length === 0) {
+    // A run whose only output was promoted to a rich card (e.g. a single
+    // `command.output`) has no graph rows left — it must still render.
+    const hasSurfaceContent = surfaces.terminals.length > 0 || surfaces.plan != null;
+
+    if (steps.length === 0 && !hasSurfaceContent) {
       if (isLatestOpenRun && streamingReplyText != null) {
         cards.push({
           runKey,
@@ -520,7 +581,7 @@ export function deriveUserRunProjection({
           replyIndex,
           active: true,
           ...deriveRunLifecycle({
-            runtimeRun: activeRuntimeRun,
+            runtimeRun: lifecycleRuntimeRun,
             active: true,
             steps: [],
             triggerMessage: message,
@@ -536,7 +597,9 @@ export function deriveUserRunProjection({
           messageStepTexts: [],
           streamingReplyText,
           traceId,
+          runId: surfaceRuntimeRun?.runId,
           suppressThinking: false,
+          surfaces,
         });
         return;
       }
@@ -551,7 +614,7 @@ export function deriveUserRunProjection({
           replyIndex,
           active: true,
           ...deriveRunLifecycle({
-            runtimeRun: activeRuntimeRun,
+            runtimeRun: lifecycleRuntimeRun,
             active: true,
             steps: [],
             triggerMessage: message,
@@ -567,7 +630,9 @@ export function deriveUserRunProjection({
           messageStepTexts: [],
           streamingReplyText: null,
           traceId,
+          runId: surfaceRuntimeRun?.runId,
           suppressThinking: false,
+          surfaces,
         });
         return;
       }
@@ -576,7 +641,7 @@ export function deriveUserRunProjection({
       if (!cached) return;
       const cleanedSteps = sanitizeGraphSteps(cached.steps.filter(
         (s) => !(s.kind === 'message' && s.id.startsWith('stream-message')),
-      ));
+      ), surfaces.promotedStepIds);
       const cachedReplyIndex = cached.replyIndex;
       cards.push({
         runKey,
@@ -584,7 +649,7 @@ export function deriveUserRunProjection({
         replyIndex: cachedReplyIndex,
         active: false,
         ...deriveRunLifecycle({
-          runtimeRun: activeRuntimeRun,
+          runtimeRun: lifecycleRuntimeRun,
           active: false,
           steps: cleanedSteps,
           triggerMessage: message,
@@ -599,7 +664,9 @@ export function deriveUserRunProjection({
         orchestrations: teamOrchestrations,
         messageStepTexts: getPrimaryMessageStepTexts(cleanedSteps),
         streamingReplyText: null,
+        runId: surfaceRuntimeRun?.runId,
         suppressThinking: false,
+        surfaces,
       });
       return;
     }
@@ -625,7 +692,7 @@ export function deriveUserRunProjection({
       replyIndex,
       active: isLatestOpenRun,
       ...deriveRunLifecycle({
-        runtimeRun: activeRuntimeRun,
+        runtimeRun: lifecycleRuntimeRun,
         active: isLatestOpenRun,
         steps,
         triggerMessage: message,
@@ -641,13 +708,20 @@ export function deriveUserRunProjection({
       messageStepTexts: getPrimaryMessageStepTexts(steps),
       streamingReplyText,
       traceId,
+      runId: surfaceRuntimeRun?.runId,
       suppressThinking,
+      surfaces,
     });
   });
 
   const hasActiveExecutionGraph = cards.some((card) => card.active);
   const hasAssistiveWorkContext = cards.some((card) =>
-    card.active || card.steps.length > 0 || card.orchestrations.length > 0 || !!card.traceId,
+    card.active
+    || card.steps.length > 0
+    || card.orchestrations.length > 0
+    || card.surfaces.terminals.length > 0
+    || card.surfaces.plan != null
+    || !!card.traceId,
   );
   const streamBlocksHistoryCompletion = stream.hasHistoryCompletionBlockingStream && !latestImageGenerationSettledInHistory;
   const runSettledInHistory = latestImageGenerationSettledInHistory || (!currentRuntimeRunActive && (latestRunSegmentCompletion.hasFinalReply
@@ -758,6 +832,45 @@ export function groupRunCardsByTriggerIndex(cards: UserRunCard[]): Map<number, U
     }
   }
   return map;
+}
+
+/**
+ * Decide which turn shows each pending approval, keyed by `runKey`.
+ *
+ * Two rules, in order:
+ *
+ *   1. An approval whose `runId` matches a card's `runId` belongs to that turn.
+ *      This is the honest attribution — the user sees the request next to the
+ *      work that raised it.
+ *   2. Everything else lands on the newest turn. That covers approvals raised
+ *      before the host learned a run id, and approvals left undecided when the
+ *      user moved on to the next message. They are still actionable, so they
+ *      must appear somewhere; the newest turn is where the user is looking.
+ *
+ * Rule 2 is what makes an undecided approval survive the next turn. Dropping it
+ * would leave the host holding a request the UI no longer offers any way to
+ * answer.
+ */
+export function assignApprovalsToRunCards(
+  cards: UserRunCard[],
+  approvals: PermissionApprovalEvent[],
+): Map<string, PermissionApprovalEvent[]> {
+  const byRunKey = new Map<string, PermissionApprovalEvent[]>();
+  if (cards.length === 0 || approvals.length === 0) return byRunKey;
+
+  const runKeyByRunId = new Map<string, string>();
+  for (const card of cards) {
+    if (card.runId) runKeyByRunId.set(card.runId, card.runKey);
+  }
+  const fallbackRunKey = cards[cards.length - 1].runKey;
+
+  for (const approval of approvals) {
+    const runKey = (approval.runId && runKeyByRunId.get(approval.runId)) || fallbackRunKey;
+    const existing = byRunKey.get(runKey);
+    if (existing) existing.push(approval);
+    else byRunKey.set(runKey, [approval]);
+  }
+  return byRunKey;
 }
 
 export function buildStreamingRenderMessage({

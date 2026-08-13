@@ -206,6 +206,16 @@ if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
   });
 }
 
+// jsdom ships the `CSS` object without `supports()`. Components that
+// feature-detect CSS capabilities at mount must take their real fallback path.
+if (typeof window !== 'undefined') {
+  const cssObject = (window as unknown as { CSS?: Record<string, unknown> }).CSS ?? {};
+  if (typeof cssObject.supports !== 'function') {
+    cssObject.supports = () => false;
+    Object.defineProperty(window, 'CSS', { writable: true, configurable: true, value: cssObject });
+  }
+}
+
 // Reset mocks after each test
 afterEach(() => {
   vi.clearAllMocks();

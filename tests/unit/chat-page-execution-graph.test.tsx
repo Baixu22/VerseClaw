@@ -55,10 +55,14 @@ vi.mock('@/lib/host-api', () => ({
   hostApiFetch: (...args: unknown[]) => hostApiFetchMock(...args),
   hostApi: {
     git: {
-      status: vi.fn(async () => ({ success: true, status: null })),
+      status: vi.fn(async () => ({ success: true, status: { isRepository: false } })),
     },
     sessionActivity: {
       snapshot: vi.fn(async () => ({ success: true, snapshot: null })),
+    },
+    permissions: {
+      approvals: vi.fn(async () => ({ ok: true, approvals: [] })),
+      decideApproval: vi.fn(async () => ({ ok: true, success: true })),
     },
     topics: {
       list: vi.fn(async () => ({ topics: [], activeTopicId: null })),

@@ -220,20 +220,56 @@ describe('Tool UI runtime surface projection', () => {
     });
   });
 
-  it('selects pending approvals only for the active workspace, session, and run', () => {
+  it('selects every pending approval for the workspace + session, whichever run raised it', () => {
     const selected = selectPendingApprovals([
       approval(),
       approval({ id: 'legacy', runId: null }),
       approval({ id: 'other-run', runId: 'run-2' }),
       approval({ id: 'resolved', status: 'approved' }),
       approval({ id: 'other-session', sessionKey: 'agent:main:other' }),
+      approval({ id: 'other-workspace', workspaceId: 'workspace-2' }),
     ], {
       workspaceId: 'workspace-1',
       sessionKey: 'agent:main:main',
       activeRunId: 'run-1',
-      includeLegacyForLatestActiveRun: true,
     });
 
-    expect(selected.map((entry) => entry.id)).toEqual(['approval-1', 'legacy']);
+    // `other-run` and `legacy` survive: the host is still holding them, so the
+    // UI must keep offering a way to decide them. Filtering by the active run
+    // is what used to make an undecided approval vanish on the next message.
+    expect(selected.map((entry) => entry.id)).toEqual(['approval-1', 'legacy', 'other-run']);
+  });
+
+  it('keeps a pending approval visible after the run that raised it is gone', () => {
+    const approvals = [approval({ id: 'stale', runId: 'run-1' })];
+
+    // The user sent another message: run-1 finished, run-2 is now active.
+    const selected = selectPendingApprovals(approvals, {
+      workspaceId: 'workspace-1',
+      sessionKey: 'agent:main:main',
+      activeRunId: 'run-2',
+    });
+    expect(selected.map((entry) => entry.id)).toEqual(['stale']);
+
+    // And with no active run at all (run errored out, activeRunId cleared).
+    expect(selectPendingApprovals(approvals, {
+      workspaceId: 'workspace-1',
+      sessionKey: 'agent:main:main',
+      activeRunId: null,
+    }).map((entry) => entry.id)).toEqual(['stale']);
+  });
+
+  it('orders approvals from the active run first', () => {
+    const selected = selectPendingApprovals([
+      approval({ id: 'older', runId: 'run-1' }),
+      approval({ id: 'legacy', runId: null }),
+      approval({ id: 'current', runId: 'run-2' }),
+    ], {
+      workspaceId: 'workspace-1',
+      sessionKey: 'agent:main:main',
+      activeRunId: 'run-2',
+    });
+
+    expect(selected.map((entry) => entry.id)).toEqual(['current', 'older', 'legacy']);
   });
 });

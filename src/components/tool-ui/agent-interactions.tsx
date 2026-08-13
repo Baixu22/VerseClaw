@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useCallback, useMemo, useState } from 'react';
-import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, Table as TableIcon, CloudSun, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
-import { ListChecks, SlidersHorizontal } from '@/components/icons/codex-icons';
+import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, Table as TableIcon, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
+import { SlidersHorizontal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,13 +19,24 @@ import { ApprovalCard } from './approval-card';
 import { CodeDiff } from './code-diff';
 import { ProgressTracker } from './progress-tracker';
 import { Terminal } from './terminal';
+import { WeatherWidget } from './weather-widget/runtime';
+import type {
+  ForecastDay,
+  PrecipitationLevel,
+  WeatherConditionCode,
+} from './weather-widget/schema-runtime';
 
 type PlanTodoStatus = ToolUiPlanTodoStatus;
 
 type PlanInteraction = {
   type: 'plan';
   id: string;
-  title: string;
+  /**
+   * Absent for runtime plan tools (`update_plan` carries only `explanation`).
+   * Renderers must fall back to their own heading instead of showing an empty
+   * title row.
+   */
+  title?: string;
   description?: string;
   todos: Array<{
     id: string;
@@ -143,7 +154,22 @@ type WeatherInteraction = {
   humidity?: number;
   windSpeed?: number;
   windUnit?: string;
-  forecast?: Array<{ day: string; condition: string; high: number; low: number }>;
+  /** Drives the widget's animated scene; derived from `condition`/`icon` when absent. */
+  conditionCode?: WeatherConditionCode;
+  tempMin?: number;
+  tempMax?: number;
+  precipitationLevel?: PrecipitationLevel;
+  visibility?: number;
+  /** 0–23 local hour; picks the widget's day/night lighting. */
+  localTimeOfDay?: number;
+  updatedAt?: string;
+  forecast?: Array<{
+    day: string;
+    condition: string;
+    high: number;
+    low: number;
+    conditionCode?: WeatherConditionCode;
+  }>;
 };
 
 type DirectiveTextInteraction = {
@@ -455,6 +481,8 @@ function normalizeId(value: string): string {
 function normalizeInteractionType(value: unknown, payload: Record<string, unknown>): ToolUiInteraction['type'] | null {
   const normalized = normalizeType(value);
   if (normalized === 'plan' || normalized === 'show-plan' || normalized === 'task-plan' || normalized === 'todo-list') return 'plan';
+  // Runtime plan tools (openclaw_runtime/src/agents/tools/update-plan-tool.ts).
+  if (normalized === 'update-plan' || normalized === 'plan-update' || normalized === 'todowrite' || normalized === 'todo-write') return 'plan';
   if (normalized === 'option-list' || normalized === 'options' || normalized === 'option-list-tool' || normalized === 'choice-list') return 'option-list';
   if (normalized === 'question-flow' || normalized === 'question' || normalized === 'question-flow-tool' || normalized === 'questionnaire') return 'question-flow';
   if (normalized === 'preferences-panel' || normalized === 'preferences' || normalized === 'preference-panel' || normalized === 'settings-panel') return 'preferences-panel';
@@ -481,7 +509,7 @@ function normalizeInteractionType(value: unknown, payload: Record<string, unknow
   // Shape-based fallbacks
   if (Array.isArray(payload.suites) || (isRecord(payload.summary) && Array.isArray(payload.tests))) return 'test-results';
   if (typeof payload.stack === 'string' || typeof payload.trace === 'string') return 'stack-trace';
-  if (Array.isArray(payload.todos) || Array.isArray(payload.tasks)) return 'plan';
+  if (Array.isArray(payload.todos) || Array.isArray(payload.tasks) || Array.isArray(payload.plan)) return 'plan';
   if (Array.isArray(payload.sections) || Array.isArray(payload.preferences)) return 'preferences-panel';
   if (Array.isArray(payload.steps) || (Array.isArray(payload.options) && payload.step !== undefined)) return 'question-flow';
   if (Array.isArray(payload.options)) return 'option-list';
@@ -549,7 +577,13 @@ function parseOptions(value: unknown): QuestionFlowStep['options'] {
 }
 
 function parsePlan(payload: Record<string, unknown>, fallbackId: string): PlanInteraction | null {
-  const todoSource = payload.todos ?? payload.tasks ?? payload.items ?? (payload.type || payload.component ? payload.steps : undefined);
+  // `plan` is the runtime `update_plan` tool's argument name; the rest are the
+  // model-authored Tool UI spellings.
+  const todoSource = payload.todos
+    ?? payload.tasks
+    ?? payload.plan
+    ?? payload.items
+    ?? (payload.type || payload.component ? payload.steps : undefined);
   const todos = Array.isArray(todoSource)
     ? todoSource
       .map((entry, index) => {
@@ -562,7 +596,12 @@ function parsePlan(payload: Record<string, unknown>, fallbackId: string): PlanIn
           } : null;
         }
         if (!isRecord(entry)) return null;
-        const label = asString(entry.label) ?? asString(entry.title) ?? asString(entry.text) ?? asString(entry.task) ?? asString(entry.content);
+        const label = asString(entry.label)
+          ?? asString(entry.title)
+          ?? asString(entry.text)
+          ?? asString(entry.task)
+          ?? asString(entry.step)
+          ?? asString(entry.content);
         if (!label) return null;
         return {
           id: asString(entry.id) ?? `todo-${index + 1}`,
@@ -574,12 +613,12 @@ function parsePlan(payload: Record<string, unknown>, fallbackId: string): PlanIn
       .filter((entry): entry is NonNullable<typeof entry> => entry != null)
     : [];
   const title = asString(payload.title) ?? asString(payload.name) ?? asString(payload.heading);
-  if (!title || todos.length === 0) return null;
+  if (todos.length === 0) return null;
   return {
     type: 'plan',
     id: asString(payload.id) ?? fallbackId,
-    title,
-    description: asString(payload.description),
+    ...(title ? { title } : {}),
+    description: asString(payload.description) ?? asString(payload.explanation),
     todos,
     maxVisibleTodos: asNumber(payload.maxVisibleTodos),
   };
@@ -628,7 +667,9 @@ function parseQuestionFlow(payload: Record<string, unknown>, fallbackId: string)
     const steps = payload.steps
       .map((entry, index) => {
         if (!isRecord(entry)) return null;
-        const title = asString(entry.title);
+        // `question` / `prompt` are what models reach for when writing a
+        // question flow by hand; accept them alongside the canonical `title`.
+        const title = asString(entry.title) ?? asString(entry.question) ?? asString(entry.prompt);
         const options = parseOptions(entry.options);
         if (!title || options.length === 0) return null;
         return {
@@ -825,6 +866,56 @@ function parseTable(payload: Record<string, unknown>, fallbackId: string): Table
   };
 }
 
+const WEATHER_CONDITION_CODES: ReadonlySet<string> = new Set([
+  'clear', 'partly-cloudy', 'cloudy', 'overcast', 'fog', 'drizzle', 'rain',
+  'heavy-rain', 'thunderstorm', 'snow', 'sleet', 'hail', 'windy',
+]);
+
+/**
+ * Map free-text weather wording onto the widget's scene codes.
+ *
+ * The animated background is driven entirely by `conditionCode`, but models
+ * write prose ("Light rain", "多云"). Order matters: the more specific phrases
+ * must be tested before their substrings ("heavy rain" before "rain",
+ * "partly cloudy" before "cloudy").
+ */
+const WEATHER_CONDITION_PATTERNS: ReadonlyArray<[RegExp, WeatherConditionCode]> = [
+  [/thunder|storm|lightning|雷/i, 'thunderstorm'],
+  [/heavy rain|downpour|torrential|暴雨|大雨/i, 'heavy-rain'],
+  [/drizzle|light rain|小雨|毛毛/i, 'drizzle'],
+  [/sleet|freezing rain|雨夹雪/i, 'sleet'],
+  [/hail|冰雹/i, 'hail'],
+  [/snow|blizzard|雪/i, 'snow'],
+  [/rain|shower|雨/i, 'rain'],
+  [/fog|mist|haze|smoke|雾|霾/i, 'fog'],
+  [/overcast|阴/i, 'overcast'],
+  [/partly|mostly sunny|partial|few clouds|多云转晴|少云/i, 'partly-cloudy'],
+  [/cloud|多云/i, 'cloudy'],
+  [/wind|breez|风/i, 'windy'],
+  [/clear|sunny|fair|晴/i, 'clear'],
+];
+
+function toWeatherConditionCode(...candidates: Array<unknown>): WeatherConditionCode | undefined {
+  for (const candidate of candidates) {
+    const raw = asString(candidate);
+    if (!raw) continue;
+    const normalized = normalizeType(raw);
+    if (WEATHER_CONDITION_CODES.has(normalized)) return normalized as WeatherConditionCode;
+    for (const [pattern, code] of WEATHER_CONDITION_PATTERNS) {
+      if (pattern.test(raw)) return code;
+    }
+  }
+  return undefined;
+}
+
+function normalizePrecipitationLevel(value: unknown): PrecipitationLevel | undefined {
+  const normalized = normalizeType(value);
+  if (normalized === 'none' || normalized === 'light' || normalized === 'moderate' || normalized === 'heavy') {
+    return normalized;
+  }
+  return undefined;
+}
+
 function parseWeather(payload: Record<string, unknown>, fallbackId: string): WeatherInteraction | null {
   const location = asString(payload.location) ?? asString(payload.city) ?? asString(payload.place);
   if (!location) return null;
@@ -834,23 +925,32 @@ function parseWeather(payload: Record<string, unknown>, fallbackId: string): Wea
     ? payload.forecast
       .filter(isRecord)
       .map((f) => ({
-        day: asString(f.day) ?? '',
+        day: asString(f.day) ?? asString(f.label) ?? '',
         condition: asString(f.condition) ?? asString(f.text) ?? '',
         high: asNumber(f.high) ?? asNumber(f.tempMax) ?? 0,
         low: asNumber(f.low) ?? asNumber(f.tempMin) ?? 0,
+        conditionCode: toWeatherConditionCode(f.conditionCode, f.condition, f.text, f.icon),
       }))
     : undefined;
+  const temperature = asNumber(payload.temperature) ?? asNumber(payload.temp);
   return {
     type: 'weather',
     id: asString(payload.id) ?? fallbackId,
     location,
-    temperature: asNumber(payload.temperature) ?? asNumber(payload.temp),
+    temperature,
     unit,
     condition: asString(payload.condition) ?? asString(payload.summary),
     icon: asString(payload.icon) ?? asString(payload.weatherIcon),
     humidity: asNumber(payload.humidity),
     windSpeed: asNumber(payload.windSpeed) ?? asNumber(payload.wind_speed),
     windUnit: asString(payload.windUnit) ?? asString(payload.wind_unit) ?? undefined,
+    conditionCode: toWeatherConditionCode(payload.conditionCode, payload.condition, payload.summary, payload.icon, payload.weatherIcon),
+    tempMin: asNumber(payload.tempMin) ?? asNumber(payload.low) ?? asNumber(payload.tempLow),
+    tempMax: asNumber(payload.tempMax) ?? asNumber(payload.high) ?? asNumber(payload.tempHigh),
+    precipitationLevel: normalizePrecipitationLevel(payload.precipitationLevel),
+    visibility: asNumber(payload.visibility),
+    localTimeOfDay: asNumber(payload.localTimeOfDay) ?? asNumber(payload.timeOfDay) ?? asNumber(payload.hour),
+    updatedAt: asString(payload.updatedAt) ?? asString(payload.observedAt),
     forecast,
   };
 }
@@ -2192,17 +2292,16 @@ function ToolUiShell({
 }
 
 function PlanCard({ interaction }: { interaction: PlanInteraction }) {
-  const { t } = useTranslation('chat');
-
+  // No ToolUiShell wrapper: the plan view ships its own collapsible header
+  // (icon + title + done/total counter), so the shell would double it up.
   return (
-    <ToolUiShell icon={<ListChecks className="h-3.5 w-3.5" />} label={t('toolUi.plan.label')}>
-      <ToolUiPlanView
-        title={interaction.title}
-        description={interaction.description}
-        todos={interaction.todos}
-        maxVisibleTodos={interaction.maxVisibleTodos}
-      />
-    </ToolUiShell>
+    <ToolUiPlanView
+      title={interaction.title ?? ''}
+      showTitle={Boolean(interaction.title)}
+      description={interaction.description}
+      todos={interaction.todos}
+      maxVisibleTodos={interaction.maxVisibleTodos}
+    />
   );
 }
 
@@ -2673,40 +2772,58 @@ function TableCard({ interaction }: { interaction: TableInteraction }) {
   );
 }
 
+/**
+ * Weather renders through the official `@tool-ui/weather-widget` block, not a
+ * local card: the animated sky/precipitation scene, the day-night lighting and
+ * the forecast strip all live in that component's generated runtime and cannot
+ * be approximated with a flex row. Everything this function does is translate
+ * the loose model-authored payload into the widget's strict contract.
+ */
 function WeatherCard({ interaction }: { interaction: WeatherInteraction }) {
-  const { t } = useTranslation('chat');
-  const tempDisplay = interaction.temperature != null
-    ? `${Math.round(interaction.temperature)}°${interaction.unit === 'f' ? 'F' : 'C'}`
-    : '--';
-  const windUnit = interaction.windUnit || (interaction.unit === 'f' ? 'mph' : 'km/h');
+  const conditionCode: WeatherConditionCode = interaction.conditionCode ?? 'partly-cloudy';
+  const temperature = interaction.temperature ?? interaction.tempMax ?? interaction.tempMin ?? 0;
+  // The widget always draws an H/L row, so derive a sane span when the model
+  // only sent the current reading rather than rendering two identical numbers.
+  const forecastHighs = interaction.forecast?.map((day) => day.high) ?? [];
+  const forecastLows = interaction.forecast?.map((day) => day.low) ?? [];
+  const tempMax = interaction.tempMax
+    ?? (forecastHighs.length > 0 ? Math.max(...forecastHighs) : undefined)
+    ?? temperature;
+  const tempMin = interaction.tempMin
+    ?? (forecastLows.length > 0 ? Math.min(...forecastLows) : undefined)
+    ?? temperature;
+  const forecast: ForecastDay[] = (interaction.forecast ?? []).map((day) => ({
+    label: day.day,
+    conditionCode: day.conditionCode ?? conditionCode,
+    tempMin: day.low,
+    tempMax: day.high,
+  }));
+
   return (
-    <ToolUiShell icon={<CloudSun className="h-3.5 w-3.5" />} label={t('toolUi.weather.label', 'Weather')}>
-      <div className="flex items-center gap-4" data-testid="chat-tool-ui-weather">
-        {interaction.icon ? (
-          <span data-testid="chat-tool-ui-weather-icon" data-weather-icon={interaction.icon} className="sr-only">{interaction.icon}</span>
-        ) : null}
-        <div className="text-3xl font-light text-foreground tabular-nums">{tempDisplay}</div>
-        <div className="space-y-0.5">
-          <p className="text-sm font-medium text-foreground">{interaction.location}</p>
-          {interaction.condition && <p className="text-xs text-muted-foreground">{interaction.condition}</p>}
-          <div className="flex gap-3 text-meta text-muted-foreground/70">
-            {interaction.humidity != null && <span>{t('toolUi.weather.humidity', 'Humidity')}: {interaction.humidity}%</span>}
-            {interaction.windSpeed != null && <span>{t('toolUi.weather.wind', 'Wind')}: {interaction.windSpeed} {windUnit}</span>}
-          </div>
-        </div>
-      </div>
-      {interaction.forecast && interaction.forecast.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-          {interaction.forecast.map((f, i) => (
-            <div key={i} className="rounded-md bg-black/[0.03] p-2 text-center dark:bg-white/[0.04]">
-              <p className="text-meta font-medium text-foreground/70">{f.day}</p>
-              <p className="text-xs text-muted-foreground">{f.condition}</p>
-              <p className="text-xs text-foreground tabular-nums">{Math.round(f.high)}° / {Math.round(f.low)}°</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </ToolUiShell>
+    <div data-testid="chat-tool-ui-weather" className="w-full">
+      {interaction.icon ? (
+        <span data-testid="chat-tool-ui-weather-icon" data-weather-icon={interaction.icon} className="sr-only">{interaction.icon}</span>
+      ) : null}
+      <WeatherWidget
+        version="3.1"
+        id={interaction.id}
+        location={{ name: interaction.location }}
+        units={{ temperature: interaction.unit === 'f' ? 'fahrenheit' : 'celsius' }}
+        current={{
+          conditionCode,
+          temperature,
+          tempMin,
+          tempMax,
+          ...(interaction.windSpeed != null ? { windSpeed: interaction.windSpeed } : {}),
+          ...(interaction.precipitationLevel ? { precipitationLevel: interaction.precipitationLevel } : {}),
+          ...(interaction.visibility != null ? { visibility: interaction.visibility } : {}),
+        }}
+        forecast={forecast}
+        time={interaction.localTimeOfDay != null ? { localTimeOfDay: interaction.localTimeOfDay } : {}}
+        {...(interaction.updatedAt ? { updatedAt: interaction.updatedAt } : {})}
+        className="max-w-md"
+      />
+    </div>
   );
 }
 
