@@ -195,15 +195,18 @@ export function createTopicsApi(): CompleteHostServiceRegistry['topics'] {
       const idx = index.topics.findIndex((t) => t.id === id);
       if (idx === -1) throw new Error(`Topic "${id}" not found`);
 
-      index.topics.splice(idx, 1);
-      await writeTopicIndex(workspacePath, index);
-
-      // Remove topic directory
+      // R0-2: remove the topic directory FIRST. If it cannot be removed, keep
+      // the index entry so the topic stays visible/retryable — a half-deleted
+      // topic must not be reported as success.
       const topicDir = join(resolveTopicsDir(workspacePath), id);
       try {
         await rm(topicDir, { recursive: true, force: true });
-      } catch { /* ignore */ }
+      } catch (error) {
+        return { success: false, error: `Could not remove topic directory "${id}": ${String(error)}` };
+      }
 
+      index.topics.splice(idx, 1);
+      await writeTopicIndex(workspacePath, index);
       return { success: true };
     },
 
