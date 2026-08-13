@@ -1029,6 +1029,7 @@
     "skillEmpty": "No matching skills found",
     "pickAgent": "Choose agent",
     "pickModel": "Choose model",
+    "abortFailed": "Failed to stop — the run is still going.",
     "actions": {
       "add": "Add",
       "context": "Add context",
