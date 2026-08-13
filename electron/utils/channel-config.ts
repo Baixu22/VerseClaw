@@ -499,7 +499,10 @@ export async function readOpenClawConfig(): Promise<OpenClawConfig> {
         if (error instanceof AtomicWriteError && error.code === 'CORRUPT') {
             logger.error('Failed to read OpenClaw config (corrupt, no backup)', error);
             console.error('Failed to read OpenClaw config (corrupt, no backup):', error);
-            return {};
+            // R0-5: fail closed. Returning {} here lets any read-modify-write
+            // caller overwrite the entire config from an empty projection —
+            // total config loss. Callers must decide how to recover.
+            throw error;
         }
         logger.error('Failed to read OpenClaw config', error);
         console.error('Failed to read OpenClaw config:', error);
