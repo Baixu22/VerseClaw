@@ -37,6 +37,7 @@ describe("runtime.contextBlock role-memory config", () => {
           injectionBudget?: {
             totalChars?: number;
             dropAlertRatio?: number;
+            channelDecay?: Record<string, number>;
           };
           "context-write"?: {
             role?: string;
