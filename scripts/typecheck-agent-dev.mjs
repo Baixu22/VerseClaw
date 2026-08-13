@@ -17,6 +17,7 @@ const CACHE_INPUTS = [
   'tsconfig.json',
   'tsconfig.node.json',
   'tsconfig.web.json',
+  'tsconfig.test.json',
   'vite.config.ts',
   'scripts/generate-ext-bridge.mjs',
   'scripts/typecheck-agent-dev.mjs',
@@ -68,15 +69,17 @@ if (bridge.exitCode !== 0) {
     const report = createCacheHitReport({ bridge, cached, fingerprint, startedAt });
     console.log(JSON.stringify(report, null, 2));
   } else {
-    const [nodeCheck, webCheck] = await Promise.all([
+    const [nodeCheck, webCheck, testCheck] = await Promise.all([
       run('pnpm', ['run', 'typecheck:node']),
       run('pnpm', ['run', 'typecheck:web']),
+      runObservation('pnpm', ['run', 'typecheck:test']),
     ]);
     const results = [bridge, nodeCheck, webCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {
       success,
       mode: 'parallel',
+      testTypes: testCheck,
       cache: {
         enabled: cacheEnabled,
         status: cacheEnabled ? (force ? 'force' : 'miss') : 'disabled',
@@ -85,7 +88,7 @@ if (bridge.exitCode !== 0) {
         report: CACHE_REPORT,
       },
       totalDurationMs: Math.round(performance.now() - startedAt),
-      coverageNote: 'Runs the same node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, but executes the two project checks concurrently.',
+      coverageNote: 'Runs the node and web TypeScript projects as pnpm run typecheck after generating the extension bridge, and additionally typechecks tests/ (tsconfig.test.json) in observation mode: its legacy errors are reported under testTypes but do not fail the gate.',
       results,
     };
     console.log(JSON.stringify(report, null, 2));
@@ -117,6 +120,49 @@ function run(command, args) {
         exitCode: code ?? 1,
         durationMs: Math.round(performance.now() - commandStartedAt),
       });
+    });
+  });
+}
+
+/**
+ * Run a typecheck command in observation mode: capture its output so the
+ * legacy error count can be reported without failing the gate, and persist the
+ * full output for a follow-up dispatch. Used for tests/ (tsconfig.test.json),
+ * which has a large pre-existing type-error surface that must not block CI.
+ */
+function runObservation(command, args) {
+  return new Promise((resolveRun) => {
+    const commandStartedAt = performance.now();
+    const commandLine = [command, ...args].join(' ');
+    const childCommand = process.platform === 'win32' && command === 'pnpm'
+      ? process.env.ComSpec ?? 'cmd.exe'
+      : command;
+    const childArgs = process.platform === 'win32' && command === 'pnpm'
+      ? ['/d', '/s', '/c', commandLine]
+      : args;
+    let output = '';
+    const child = spawn(childCommand, childArgs, {
+      cwd: ROOT,
+      windowsHide: true,
+    });
+    child.stdout.on('data', (chunk) => { output += chunk; });
+    child.stderr.on('data', (chunk) => { output += chunk; });
+    child.on('close', (code) => {
+      const errorCount = (output.match(/error TS\d+/g) ?? []).length;
+      const errorLog = resolve(CACHE_DIR, 'test-typecheck-errors.log');
+      const result = {
+        commandLine,
+        exitCode: code ?? 1,
+        durationMs: Math.round(performance.now() - commandStartedAt),
+        observationMode: true,
+        errorCount,
+        errorLog,
+      };
+      // Observation-only: a failure to persist the log must not fail the gate.
+      mkdir(CACHE_DIR, { recursive: true })
+        .then(() => writeFile(errorLog, output, 'utf8'))
+        .catch(() => {})
+        .finally(() => resolveRun(result));
     });
   });
 }
