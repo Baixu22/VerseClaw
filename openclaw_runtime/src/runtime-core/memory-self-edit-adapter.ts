@@ -7,10 +7,14 @@
  * ones, forget invalid ones, and strengthen useful ones.
  *
  * 设计:
- *   - 门控: runtime.memory.persist 关闭时返回 [] (与 memory_query 一致)
+ *   - 门控: runtime.memory.persist 关闭时返回 [] (与 memory_query 一致)。
+ *     self-edit 是「持久记忆」的编辑面, 依赖 persist=true 是显式决策:
+ *     没有 SQLite 语料库时注册这些工具只会产生假成功。
  *   - store 来源: integration.loadStore() (30s TTL 缓存同源)
- *   - 写操作 (update/forget/strengthen) 通过 integration.invalidateFact /
- *     appendFact / persistRelation 回放落库, 不只在内存 store 生效
+ *   - 写操作 (update/forget) 通过 integration.invalidateFact / appendFact /
+ *     persistRelation 回放落库; strengthen 通过 integration.recordFactAccess
+ *     写 runtime_memory_fact_usage。持久化失败一律返回 ok:false (fail-closed),
+ *     绝不「成功但只改内存快照」— store 是每次调用重建的副本, 只改它等于丢弃。
  *   - 与 memory_query 的区别: 后者走 hybrid retrieval (BM25 + 向量 + RRF),
  *     本工具走 RuntimeMemoryStore 直接查询/修改 (fact 层)
  */
@@ -111,7 +115,7 @@ export function createMemorySelfEditTools(options: {
   const resolveContext = (): MemorySelfEditToolContext => {
     const integration = createRuntimeMemoryRuntimeIntegration({ config: cfg });
     const { store } = integration.loadStore();
-    return { store };
+    return { store, persistence: integration };
   };
 
   return TOOL_DEFS.map((def) => ({

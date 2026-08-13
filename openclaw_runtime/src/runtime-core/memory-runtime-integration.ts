@@ -12,9 +12,11 @@ import {
 } from "./memory-context.js";
 import {
   createRuntimeMemoryPersistenceStore,
+  type RuntimeMemoryPersistenceAccessResult,
   type RuntimeMemoryPersistenceLoadResult,
   type RuntimeMemoryPersistenceMigrationResult,
   type RuntimeMemoryPersistenceOptions,
+  type RuntimeMemoryPersistenceRelationResult,
   type RuntimeMemoryPersistenceWriteResult,
 } from "./memory-persistence.js";
 import { RuntimeMemoryStore, type RuntimeMemoryStoreOptions } from "./memory-store.js";
@@ -37,7 +39,8 @@ export type RuntimeMemoryRuntimeIntegrationPort = {
   ): RuntimeMemoryPersistenceWriteResult<RuntimeMemoryInvalidationProposal>;
   persistRelation(
     relation: Omit<RuntimeMemoryFactRelation, "relationId" | "createdAt">,
-  ): void;
+  ): RuntimeMemoryPersistenceRelationResult;
+  recordFactAccess(factId: string): RuntimeMemoryPersistenceAccessResult;
   loadStore(): RuntimeMemoryPersistenceLoadResult;
 };
 
@@ -206,6 +209,22 @@ export class RuntimeMemoryRuntimeIntegration {
       return disabledWriteResult();
     }
     return this.#persistence.invalidateFact(proposal);
+  }
+
+  persistRelation(
+    relation: Omit<RuntimeMemoryFactRelation, "relationId" | "createdAt">,
+  ): RuntimeMemoryPersistenceRelationResult {
+    if (!this.persistEnabled()) {
+      return { status: "skipped", reason: "flag_disabled", persisted: false };
+    }
+    return this.#persistence.persistRelation(relation);
+  }
+
+  recordFactAccess(factId: string): RuntimeMemoryPersistenceAccessResult {
+    if (!this.persistEnabled()) {
+      return { status: "skipped", reason: "flag_disabled", persisted: false };
+    }
+    return this.#persistence.recordFactAccess(factId);
   }
 
   loadStore(): RuntimeMemoryPersistenceLoadResult {

@@ -2059,7 +2059,7 @@ export const FIELD_HELP: Record<string, string> = {
   "runtime.memory.proposeFacts":
     "Allow candidate memory fact proposals only when the shadow path is explicitly enabled (default: false). This does not promote facts, enable durable facts, or bypass verifier, human, or deterministic-rule evidence requirements.",
   "runtime.memory.persist":
-    "Default-off gate for the local sanitized persistence foundation and explicit adapter paths (default: false). The TaskLoop sanitized episode pilot requires this flag plus runtime.memory.shadow; persist alone does not enable TaskLoop writes, Gateway cutover, provider output, default-on memory, fact extraction or promotion, user-facing persistence flows, or runtime authority.",
+    "Default-off gate for the local sanitized persistence foundation and explicit adapter paths (default: false). The TaskLoop sanitized episode pilot requires this flag plus runtime.memory.shadow; persist alone does not enable TaskLoop writes, Gateway cutover, provider output, default-on memory, fact extraction or promotion, user-facing persistence flows, or runtime authority. The agent memory self-edit tools (memory_recall/update/forget/strengthen) are only registered when this flag is on: their writes replay through SQLite and fail closed, so without persist there is no durable corpus for them to edit.",
   "runtime.memory.injectPilot":
     "Area 4 chat-turn memory injection pilot gate (default off). When enabled, the agent gateway queries registered memory context providers and appends a `## Memory Context` block to extraSystemPrompt for matching sessions. When disabled (or omitted), prompt bytes are byte-identical to today (comms replay parity).",
   "runtime.memory.injectPilot.enabled":
