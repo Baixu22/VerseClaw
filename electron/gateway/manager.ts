@@ -241,6 +241,8 @@ export class GatewayManager extends EventEmitter {
   private reconnectAttempts = 0;
   /** R0-4: wall-clock moment of the last successful reconnect; attempts reset only after 60s of proven stability. */
   private reconnectStableSince: number | null = null;
+  /** R0-5: background self-heal probe timer armed when reconnect attempts are exhausted. */
+  private reconnectSelfHealTimer: ReturnType<typeof setTimeout> | null = null;
   private reconnectConfig: ReconnectConfig;
   private shouldReconnect = true;
   private startLock = false;
@@ -268,6 +270,8 @@ export class GatewayManager extends EventEmitter {
   public static readonly RESTART_COOLDOWN_MS = 5_000;
   /** R0-4: a reconnect only settles the attempt counter after this much proven uptime. */
   public static readonly RECONNECT_STABLE_RESET_MS = 60_000;
+  /** R0-5: self-heal probe cadence after reconnect attempts are exhausted. */
+  public static readonly RECONNECT_SELF_HEAL_PROBE_MS = 5 * 60_000;
   private static readonly GATEWAY_READY_FALLBACK_PROBE_DELAYS_MS = [1_500, 3_000, 5_000, 8_000, 12_000, 30_000] as const;
   private static readonly INITIAL_READY_HEARTBEAT_RECOVERY_GRACE_MS = 5 * 60_000;
   private lastRestartAt = 0;
@@ -489,6 +493,7 @@ export class GatewayManager extends EventEmitter {
     // accumulate attempts so the maxAttempts cap works correctly.
     if (!this.isAutoReconnectStart) {
       this.reconnectAttempts = 0;
+      this.clearReconnectSelfHealProbe();
     }
     this.isAutoReconnectStart = false; // consume the flag
     this.setStatus({ state: 'starting', reconnectAttempts: this.reconnectAttempts, gatewayReady: false });
@@ -1474,6 +1479,30 @@ export class GatewayManager extends EventEmitter {
     this.initialReadyHeartbeatRecoveryTimer = null;
   }
 
+  /** R0-5: clear the self-heal probe once the gateway is healthy again. */
+  private clearReconnectSelfHealProbe(): void {
+    if (this.reconnectSelfHealTimer) {
+      clearTimeout(this.reconnectSelfHealTimer);
+      this.reconnectSelfHealTimer = null;
+    }
+  }
+
+  /** R0-5: after max attempts, probe every 5 minutes and restart the cycle if still down. */
+  private armReconnectSelfHealProbe(): void {
+    if (this.reconnectSelfHealTimer) return;
+    this.reconnectSelfHealTimer = setTimeout(() => {
+      this.reconnectSelfHealTimer = null;
+      const status = this.getStatus();
+      if (!this.shouldReconnect) return;
+      if (status.state === 'running' || status.state === 'starting' || status.state === 'reconnecting') return;
+      logger.warn('Gateway reconnect self-heal probe: gateway still down — resetting attempt counter for a fresh cycle');
+      this.reconnectAttempts = 0;
+      this.reconnectStableSince = null;
+      this.scheduleReconnect();
+    }, GatewayManager.RECONNECT_SELF_HEAL_PROBE_MS);
+    this.reconnectSelfHealTimer.unref?.();
+  }
+
   /** R0-4: reset the reconnect attempt counter only after the process proved stable for ≥60s. */
   private maybeSettleReconnectStability(): void {
     if (
@@ -1516,6 +1545,10 @@ export class GatewayManager extends EventEmitter {
         error: 'Failed to reconnect after maximum attempts',
         reconnectAttempts: this.reconnectAttempts
       });
+      // R0-5: the error state must not be permanent — arm a low-frequency
+      // background self-heal probe that restarts the attempt cycle if the
+      // gateway is still down five minutes later.
+      this.armReconnectSelfHealProbe();
       return;
     }
 
@@ -1560,6 +1593,7 @@ export class GatewayManager extends EventEmitter {
         // otherwise crash-loops reconnect forever. The counter only settles
         // once the process has proven stable (see maybeSettleReconnectStability).
         this.reconnectStableSince = Date.now();
+        this.clearReconnectSelfHealProbe();
       } catch (error) {
         logger.error('Gateway reconnection attempt failed:', error);
         this.emitReconnectMetric('failure', {
