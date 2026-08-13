@@ -9,6 +9,8 @@ import type {
 // Traces are not persisted to disk in MVP — they reset on app restart.
 
 const MAX_TRACES = 200;
+/** A running trace older than this is considered stuck and evictable. */
+const RUNNING_TRACE_MAX_AGE_MS = 30 * 60 * 1000;
 const traces = new Map<string, ObservabilityTrace>();
 // Scorecards merged from the runtime; keyed by traceId.
 const scorecards = new Map<string, ObservabilityScorecard>();
@@ -16,12 +18,19 @@ const scorecards = new Map<string, ObservabilityScorecard>();
 export function upsertObservabilityTrace(trace: ObservabilityTrace): void {
   traces.set(trace.id, trace);
   if (traces.size > MAX_TRACES) {
+    const now = Date.now();
     const evictable = [...traces.values()]
-      .filter((candidate) => candidate.status !== 'running')
+      .filter((candidate) => (
+        candidate.status !== 'running'
+        || now - candidate.startedAt > RUNNING_TRACE_MAX_AGE_MS
+      ))
       .sort((a, b) => a.startedAt - b.startedAt);
     for (const candidate of evictable) {
       if (traces.size <= MAX_TRACES) break;
       traces.delete(candidate.id);
+      // R0-3: keep scorecards in lockstep with the trace store — evicted
+      // traces must not leak scorecard entries forever.
+      scorecards.delete(candidate.id);
     }
   }
 }
