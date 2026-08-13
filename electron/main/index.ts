@@ -2,7 +2,7 @@
  * Electron Main Process Entry
  * Manages window creation, system tray, and IPC handlers
  */
-import { app, BrowserWindow, nativeTheme, session } from 'electron';
+import { app, BrowserWindow, dialog, nativeTheme, session } from 'electron';
 import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { registerWebViewSecurity } from '../utils/register-webview-security';
@@ -17,7 +17,7 @@ import { applySystemThemeIcons, getWindowIcon } from './theme-icons';
 
 import { logger } from '../utils/logger';
 import { warmupNetworkOptimization } from '../utils/uv-env';
-import { initTelemetry } from '../utils/telemetry';
+import { initTelemetry, captureTelemetryEvent } from '../utils/telemetry';
 
 import { ClawHubService } from '../gateway/clawhub';
 import { extensionRegistry } from '../extensions/registry';
@@ -31,6 +31,7 @@ import {
 } from '../utils/openclaw-workspace';
 import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToProfile } from '../utils/openclaw-cli';
 import { isQuitting, setQuitting } from './app-state';
+import { handleUncaughtException, handleUnhandledRejection } from './process-error-handlers';
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
 import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
@@ -872,19 +873,25 @@ async function createWindow(): Promise<BrowserWindow> {
     return { action: 'deny' };
   });
 
+  installRendererCrashRecovery(win);
+
   // Load the app
   if (process.env.VITE_DEV_SERVER_URL) {
     const rendererUrl = new URL(process.env.VITE_DEV_SERVER_URL);
     for (const [key, value] of Object.entries(rendererQuery)) {
       rendererUrl.searchParams.set(key, value);
     }
-    win.loadURL(rendererUrl.toString());
+    win.loadURL(rendererUrl.toString()).catch((error) => {
+      showFatalLoadErrorDialog(error);
+    });
     if (!isE2EMode) {
       win.webContents.openDevTools();
     }
   } else {
     win.loadFile(join(__dirname, '../../dist/index.html'), {
       query: rendererQuery,
+    }).catch((error) => {
+      showFatalLoadErrorDialog(error);
     });
   }
 
@@ -902,6 +909,58 @@ function focusWindow(win: BrowserWindow): void {
 
   win.show();
   win.focus();
+}
+
+const DEGRADED_RENDERER_PAGE = 'data:text/html;charset=utf-8,' + encodeURIComponent(
+  '<!doctype html><html><body style="font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#1b1b1d;color:#e4e4e7"><div style="text-align:center"><h2 style="font-weight:600">The app interface became unresponsive.</h2><p style="color:#a1a1aa">Restart the app to continue. The process is still running, so your data is safe.</p></div></body></html>',
+);
+
+/**
+ * Show a native fatal-error dialog. `dialog.showErrorBox` is synchronous and
+ * safe to call even while the main process is in a degraded state (e.g. a
+ * renderer load failure), so it never risks an unhandled rejection itself.
+ */
+function showFatalLoadErrorDialog(error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  logger.error('Fatal renderer load failure:', error);
+  const logPath = logger.getLogFilePath() ?? '(log file unavailable)';
+  dialog.showErrorBox(
+    'Verse Claw failed to load',
+    `The app window could not be loaded.\n\n${message}\n\nLog file: ${logPath}`,
+  );
+}
+
+/**
+ * Recover from a crashed or hung renderer process:
+ * - On the first crash/hang, reload once.
+ * - On a subsequent failure, show a degraded page instead of a blank window
+ *   (the app process itself stays alive, so user data is not lost).
+ */
+function installRendererCrashRecovery(win: BrowserWindow): void {
+  let rendererFailureCount = 0;
+
+  const showDegradedPage = (reason: string): void => {
+    logger.warn(`Renderer ${reason}; showing degraded page (failures: ${rendererFailureCount})`);
+    void win.loadURL(DEGRADED_RENDERER_PAGE).catch(() => {});
+  };
+
+  const reloadOrDegrade = (reason: string): void => {
+    rendererFailureCount += 1;
+    if (rendererFailureCount === 1) {
+      logger.warn(`Renderer ${reason}; attempting one automatic reload`);
+      win.webContents.reload();
+      return;
+    }
+    showDegradedPage(reason);
+  };
+
+  win.webContents.on('render-process-gone', (_event, details) => {
+    reloadOrDegrade(`render-process-gone (${details.reason})`);
+  });
+
+  win.webContents.on('unresponsive', () => {
+    reloadOrDegrade('unresponsive');
+  });
 }
 
 function focusMainWindow(): void {
@@ -925,6 +984,8 @@ async function createMainWindow(): Promise<BrowserWindow> {
     if (process.platform === 'darwin') {
       void getSetting('sidebarCollapsed').then((sidebarCollapsed) => {
         syncMacTrafficLightPosition(win, sidebarCollapsed);
+      }).catch((error) => {
+        logger.warn('Failed to read sidebarCollapsed setting:', error);
       });
     }
 
@@ -979,7 +1040,9 @@ async function initialize(): Promise<void> {
 
   if (!isE2EMode) {
     // Warm up network optimization (non-blocking)
-    void warmupNetworkOptimization();
+    void warmupNetworkOptimization().catch((error) => {
+      logger.warn('Network optimization warmup failed:', error);
+    });
 
     // Initialize Telemetry early
     await initTelemetry();
@@ -1092,6 +1155,8 @@ async function initialize(): Promise<void> {
           `Trimmed bundled OpenClaw skills: removed ${removed}, pruned configs ${removedConfigs}, kept ${kept.join(', ')}`,
         );
       }
+    }).catch((error) => {
+      logger.warn('Failed to trim bundled OpenClaw skills:', error);
     });
   }
 
@@ -1363,7 +1428,9 @@ if (gotTheLock) {
       return;
     }
 
-    void extensionRegistry.teardownAll();
+    void extensionRegistry.teardownAll().catch((error) => {
+      logger.warn('extensionRegistry.teardownAll() failed during quit:', error);
+    });
 
     const stopPromise = gatewayManager.stop().catch((err) => {
       logger.warn('gatewayManager.stop() error during quit:', err);
@@ -1405,11 +1472,31 @@ if (gotTheLock) {
   };
 
   process.on('uncaughtException', (error) => {
+    // Fail-closed on truly fatal errors: surface a native dialog with the log
+    // path BEFORE the best-effort gateway cleanup and forced exit, so the user
+    // is not left with a silent quit.
+    handleUncaughtException(
+      {
+        logger,
+        captureTelemetry: captureTelemetryEvent,
+        showErrorBox: (title, content) => dialog.showErrorBox(title, content),
+      },
+      error,
+    );
     emergencyGatewayCleanup('Uncaught exception in main process', error);
   });
 
   process.on('unhandledRejection', (reason) => {
-    emergencyGatewayCleanup('Unhandled promise rejection in main process', reason);
+    // A rejected promise is not necessarily fatal — log and report it (visible
+    // in the diagnostics panel log tail and telemetry) instead of exiting.
+    handleUnhandledRejection(
+      {
+        logger,
+        captureTelemetry: captureTelemetryEvent,
+        showErrorBox: (title, content) => dialog.showErrorBox(title, content),
+      },
+      reason,
+    );
   });
 }
 
