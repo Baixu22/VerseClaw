@@ -37,10 +37,13 @@ jobs:
         run: pnpm run ext:bridge
 
       - name: Run linter
-        run: pnpm run lint
+        run: pnpm run lint:check
 
       - name: Run typecheck
         run: pnpm run typecheck
+
+      - name: Run openclaw_runtime typecheck (tsgo)
+        run: pnpm --dir openclaw_runtime run tsgo:prod
 
       - name: Run host-api contract check
         run: pnpm run contract:check
