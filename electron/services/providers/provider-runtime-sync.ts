@@ -583,14 +583,23 @@ export async function syncDeletedProviderApiKeyToRuntime(
   await removeProviderKeyFromOpenClaw(ock);
 }
 
+export type ProviderRuntimeSyncOutcome = {
+  /** True when the default provider was saved but part of the runtime
+   * registry sync (per-agent models.json) failed. */
+  degraded: boolean;
+  /** Diagnostic detail for the degraded sync (not user-facing copy). */
+  reason?: string;
+};
+
 export async function syncDefaultProviderToRuntime(
   providerId: string,
   gatewayManager?: GatewayManager,
-): Promise<void> {
+): Promise<ProviderRuntimeSyncOutcome> {
   const provider = await getProvider(providerId);
   if (!provider) {
-    return;
+    return { degraded: false };
   }
+  let degradedReason: string | undefined;
 
   // Self-heal: opportunistically remove any pre-existing models.providers
   // entries with an invalid `api` field so a switch to a healthy provider
@@ -695,13 +704,14 @@ export async function syncDefaultProviderToRuntime(
       try {
         await syncAgentModelsToRuntime();
       } catch (err) {
+        degradedReason = `Failed to sync per-agent model registries after browser OAuth switch: ${String(err)}`;
         logger.warn('[provider-runtime] Failed to sync per-agent model registries after browser OAuth switch:', err);
       }
       scheduleGatewayRefresh(
         gatewayManager,
         `Scheduling Gateway reload after provider switch to "${browserOAuthRuntimeProvider}"`,
       );
-      return;
+      return { degraded: Boolean(degradedReason), reason: degradedReason };
     }
 
     const defaultBaseUrl = provider.type === 'minimax-portal'
@@ -735,6 +745,7 @@ export async function syncDefaultProviderToRuntime(
         models: defaultModelId ? [piAiModelsJsonModelEntry(defaultModelId)] : [],
       });
     } catch (err) {
+      degradedReason = `Failed to update models.json for OAuth provider "${targetProviderKey}": ${String(err)}`;
       logger.warn(`Failed to update models.json for OAuth provider "${targetProviderKey}":`, err);
     }
   }
@@ -756,6 +767,8 @@ export async function syncDefaultProviderToRuntime(
   try {
     await syncAgentModelsToRuntime();
   } catch (err) {
+    degradedReason = degradedReason
+      ?? `Failed to sync per-agent model registries after default provider switch: ${String(err)}`;
     logger.warn('[provider-runtime] Failed to sync per-agent model registries after default provider switch:', err);
   }
 
@@ -764,4 +777,6 @@ export async function syncDefaultProviderToRuntime(
     `Scheduling Gateway reload after provider switch to "${ock}"`,
     { onlyIfRunning: true },
   );
+
+  return { degraded: Boolean(degradedReason), reason: degradedReason };
 }

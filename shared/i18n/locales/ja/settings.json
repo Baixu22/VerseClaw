@@ -185,6 +185,7 @@
       "deleted": "プロバイダーが削除されました",
       "failedDelete": "プロバイダーの削除に失敗しました",
       "defaultUpdated": "デフォルトプロバイダーが更新されました",
+      "defaultRuntimeSyncDegraded": "デフォルトプロバイダーは保存されましたが、モデルのランタイムレジストリへの同期が一部失敗しました。",
       "failedDefault": "デフォルトの設定に失敗しました",
       "updated": "プロバイダーが更新されました",
       "failedUpdate": "プロバイダーの更新に失敗しました",

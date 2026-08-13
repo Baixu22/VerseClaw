@@ -185,6 +185,7 @@
       "deleted": "Provider deleted",
       "failedDelete": "Failed to delete provider",
       "defaultUpdated": "Default provider updated",
+      "defaultRuntimeSyncDegraded": "Default provider saved, but syncing its models to the runtime registry failed partially.",
       "failedDefault": "Failed to set default",
       "updated": "Provider updated",
       "failedUpdate": "Failed to update provider",

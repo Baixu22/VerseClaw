@@ -3,6 +3,8 @@
  * Manages AI provider configurations
  */
 import { create } from 'zustand';
+import i18n from 'i18next';
+import { toast } from 'sonner';
 import type {
   ProviderAccount,
   ProviderConfig,
@@ -255,6 +257,10 @@ export const useProviderStore = create<ProviderState>((set, get) => ({
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to set default provider account');
+      }
+
+      if (result.degraded) {
+        toast.warning(i18n.t('settings:aiProviders.toast.defaultRuntimeSyncDegraded'));
       }
 
       set({ defaultAccountId: accountId });
