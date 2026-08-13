@@ -226,9 +226,20 @@ export class TerminalSessionManager {
 
   list(input: { workspaceId?: string; sessionKey?: string } = {}): TerminalSessionSnapshot[] {
     return Array.from(this.sessions.values())
+      .filter((session) => session.status !== 'exited')
       .filter((session) => !input.workspaceId || session.workspaceId === input.workspaceId)
       .filter((session) => !input.sessionKey || session.sessionKey === input.sessionKey)
       .map((session) => this.toSnapshot(session, false));
+  }
+
+  /** Kill every live session and drop all bookkeeping (app quit path). */
+  shutdownAll(): void {
+    for (const session of Array.from(this.sessions.values())) {
+      this.closeSession(session, 'app-shutdown');
+    }
+    this.sessions.clear();
+    this.activeByWorkspaceSession.clear();
+    this.registeredWorkspaces.clear();
   }
 
   stopForWorkspace(workspaceId: string, reason: TerminalCloseReason): void {
@@ -252,6 +263,9 @@ export class TerminalSessionManager {
       }
     }
     this.deleteActiveKey(session);
+    // R0-3: reclaim the record — exited sessions must not accumulate in the
+    // map for the lifetime of the app.
+    this.sessions.delete(session.id);
   }
 
   private handleData(sessionId: string, data: string): void {
@@ -284,6 +298,8 @@ export class TerminalSessionManager {
     const reason = session.closeReason ?? 'process-exit';
     this.emit(HOST_EVENT_CHANNELS.terminal.exit, this.toExitEvent(session, exitCode, reason));
     this.emit(HOST_EVENT_CHANNELS.terminal.statusChanged, this.toEvent(session));
+    // R0-3: reclaim the record once the exit has been surfaced.
+    this.sessions.delete(session.id);
   }
 
   private deleteActiveKey(session: TerminalSessionRecord): void {
