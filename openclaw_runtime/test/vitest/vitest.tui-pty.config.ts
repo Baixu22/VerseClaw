@@ -4,8 +4,6 @@ import { loadPatternListFromEnv, narrowIncludePatternsForCli } from "./vitest.pa
 import { resolveRepoRootPath, sharedVitestConfig } from "./vitest.shared.config.ts";
 
 const targetableIncludes = [
-  "src/tui/tui-pty-harness.e2e.test.ts",
-  "src/tui/tui-pty-local.e2e.test.ts",
   "tui/tui-pty-harness.e2e.test.ts",
   "tui/tui-pty-local.e2e.test.ts",
 ];
@@ -55,3 +53,4 @@ export function createTuiPtyVitestConfig(env?: Record<string, string | undefined
 }
 
 export default createTuiPtyVitestConfig();
+

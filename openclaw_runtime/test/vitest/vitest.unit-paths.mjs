@@ -9,25 +9,11 @@ export const unitTestIncludePatterns = [
 ];
 
 export const boundaryTestFiles = [
-  "src/infra/boundary-path.test.ts",
-  "src/infra/git-root.test.ts",
-  "src/infra/home-dir.test.ts",
-  "src/infra/openclaw-exec-env.test.ts",
-  "src/infra/openclaw-root.test.ts",
-  "src/infra/package-json.test.ts",
-  "src/infra/path-env.test.ts",
-  "src/infra/stable-node-path.test.ts",
   "test/extension-import-boundaries.test.ts",
-  "test/extension-test-boundary.test.ts",
-  "test/plugin-extension-import-boundary.test.ts",
   "test/web-provider-boundary.test.ts",
 ];
 
-export const bundledPluginDependentUnitTestFiles = [
-  "src/infra/matrix-plugin-helper.test.ts",
-  "src/plugin-sdk/facade-runtime.test.ts",
-  "src/plugins/loader.test.ts",
-];
+export const bundledPluginDependentUnitTestFiles = [];
 
 export const unitTestAdditionalExcludePatterns = [
   "src/gateway/**",
@@ -58,18 +44,6 @@ export const unitTestAdditionalExcludePatterns = [
   "src/wizard/**",
   "src/plugins/contracts/**",
   "src/scripts/**",
-  "src/infra/boundary-path.test.ts",
-  "src/infra/git-root.test.ts",
-  "src/infra/home-dir.test.ts",
-  "src/infra/openclaw-exec-env.test.ts",
-  "src/infra/openclaw-root.test.ts",
-  "src/infra/package-json.test.ts",
-  "src/infra/path-env.test.ts",
-  "src/infra/stable-node-path.test.ts",
-  ...bundledPluginDependentUnitTestFiles,
-  "src/config/doc-baseline.integration.test.ts",
-  "src/config/schema.base.generated.test.ts",
-  "src/config/schema.help.quality.test.ts",
   "test/**",
 ];
 

@@ -25,10 +25,7 @@ const { projects: _projects, ...baseTest } = baseTestWithProjects as {
   projects?: string[];
   setupFiles?: string[];
 };
-const tuiPtyExcludes = [
-  "src/tui/tui-pty-harness.e2e.test.ts",
-  ...(process.arch === "arm64" ? ["src/tui/tui-pty-local.e2e.test.ts"] : []),
-];
+const tuiPtyExcludes = [];
 const exclude = [
   ...(baseTest.exclude ?? []).filter((p) => p !== "**/*.e2e.test.ts"),
   ...tuiPtyExcludes,
@@ -49,11 +46,9 @@ export default defineConfig({
       "test/**/*.e2e.test.ts",
       "src/**/*.e2e.test.ts",
       "packages/**/*.e2e.test.ts",
-      "src/gateway/gateway.test.ts",
-      "src/gateway/server.startup-matrix-migration.integration.test.ts",
-      "src/gateway/sessions-history-http.test.ts",
       BUNDLED_PLUGIN_E2E_TEST_GLOB,
     ],
     exclude,
   },
 });
+
