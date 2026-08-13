@@ -25,6 +25,7 @@ import { applyDocumentTheme } from './lib/theme';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
 import { resolveUiVersion } from './lib/ui-version';
 import type { WorkspacePanelIntent } from '@shared/types/workspace';
+import { sanitizeUiErrorText } from '@shared/privacy/ui-error-sanitize';
 import { UiOverlayProvider } from './components/layout/ui-overlay-context';
 import { toRoutePath } from './lib/settings-overlay-routing';
 import { OverlayPortalProvider } from './components/ui/overlay-portal';
@@ -153,19 +154,26 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
 ));
 
 /**
- * Error Boundary to catch and display React rendering errors
+ * Error Boundary to catch and display React rendering errors.
+ * The raw message / stack are logged to the developer console only; the UI
+ * renders a sanitized message so internal paths, module names, stack frames,
+ * and secret-shaped text never reach the user.
  */
+function generateErrorReference(): string {
+  return `err-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 class ErrorBoundary extends Component<
   { children: ReactNode },
-  { hasError: boolean; error: Error | null }
+  { hasError: boolean; error: Error | null; errorId: string | null }
 > {
   constructor(props: { children: ReactNode }) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorId: null };
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
+    return { hasError: true, error, errorId: generateErrorReference() };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -179,6 +187,7 @@ class ErrorBoundary extends Component<
 
   render() {
     if (this.state.hasError) {
+      const safeMessage = sanitizeUiErrorText(this.state.error);
       return (
         <div style={{
           padding: '40px',
@@ -190,20 +199,33 @@ class ErrorBoundary extends Component<
           <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>
             {i18n.t('common:status.error')}
           </h1>
-          <pre style={{
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all',
-            background: '#1e293b',
-            padding: '16px',
-            borderRadius: '8px',
-            fontSize: '14px'
+          <p style={{
+            color: '#94a3b8',
+            fontSize: '14px',
+            marginBottom: '16px',
+            maxWidth: '640px'
           }}>
-            {this.state.error?.message}
-            {'\n\n'}
-            {this.state.error?.stack}
-          </pre>
+            {i18n.t('common:errorBoundary.description')}
+          </p>
+          {safeMessage && (
+            <pre style={{
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+              background: '#1e293b',
+              padding: '16px',
+              borderRadius: '8px',
+              fontSize: '14px'
+            }}>
+              {safeMessage}
+            </pre>
+          )}
+          {this.state.errorId && (
+            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '16px' }}>
+              {i18n.t('common:errorBoundary.errorReference')} <code>{this.state.errorId}</code>
+            </div>
+          )}
           <button
-            onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
+            onClick={() => { this.setState({ hasError: false, error: null, errorId: null }); window.location.reload(); }}
             style={{
               marginTop: '16px',
               padding: '8px 16px',

@@ -26,118 +26,122 @@
     "motionNormal": "モーション有効",
     "motionReduced": "視差効果を減らす"
   },
-    "sidebar": {
-        "chat": "チャット",
-        "newChat": "新しいチャット",
-        "newTask": "新しいタスク",
-        "inbox": "受信トレイ",
-        "scheduled": "予定済み",
-        "knowledge": "ナレッジ",
-        "cronTasks": "定期タスク",
-        "skills": "ツール",
-        "agents": "Agents",
-        "channels": "チャンネル",
-        "dashboard": "ダッシュボード",
-        "settings": "設定",
-        "devConsole": "開発者コンソール",
-        "models": "モデル",
-        "deleteSessionConfirm": "「{{label}}」を削除しますか？",
-        "openClawPage": "OpenClaw ページ",
-        "openClawDreams": "夢",
-        "renameSession": "名前を変更",
-        "deleteSession": "削除",
-        "renameSessionPlaceholder": "セッションタイトル",
-        "saveSessionRename": "セッションタイトルを保存",
-        "cancelSessionRename": "名前変更をキャンセル",
-        "imageGeneration": "画像生成",
-        "observability": "可観測性",
-        "billing": "課金",
-        "remoteTasks": "リモートタスク",
-        "browser": "ブラウザ",
-        "collapseSidebar": "サイドバーを折りたたむ",
-        "expandSidebar": "サイドバーを展開"
+  "sidebar": {
+    "chat": "チャット",
+    "newChat": "新しいチャット",
+    "newTask": "新しいタスク",
+    "inbox": "受信トレイ",
+    "scheduled": "予定済み",
+    "knowledge": "ナレッジ",
+    "cronTasks": "定期タスク",
+    "skills": "ツール",
+    "agents": "Agents",
+    "channels": "チャンネル",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "devConsole": "開発者コンソール",
+    "models": "モデル",
+    "deleteSessionConfirm": "「{{label}}」を削除しますか？",
+    "openClawPage": "OpenClaw ページ",
+    "openClawDreams": "夢",
+    "renameSession": "名前を変更",
+    "deleteSession": "削除",
+    "renameSessionPlaceholder": "セッションタイトル",
+    "saveSessionRename": "セッションタイトルを保存",
+    "cancelSessionRename": "名前変更をキャンセル",
+    "imageGeneration": "画像生成",
+    "observability": "可観測性",
+    "billing": "課金",
+    "remoteTasks": "リモートタスク",
+    "browser": "ブラウザ",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "expandSidebar": "サイドバーを展開"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "refresh": "更新",
+    "close": "閉じる",
+    "copy": "コピー",
+    "search": "検索",
+    "confirm": "確認",
+    "dismiss": "閉じる",
+    "load": "読み込み",
+    "install": "インストール",
+    "uninstall": "アンインストール",
+    "enable": "有効にする",
+    "disable": "無効にする",
+    "back": "戻る",
+    "next": "次へ",
+    "skip": "スキップ",
+    "restart": "再起動",
+    "show": "表示",
+    "hide": "非表示",
+    "clear": "クリア"
+  },
+  "window": {
+    "minimize": "ウィンドウを最小化",
+    "maximize": "ウィンドウを最大化",
+    "restore": "ウィンドウを元に戻す",
+    "close": "ウィンドウを閉じる"
+  },
+  "status": {
+    "running": "実行中",
+    "stopped": "停止",
+    "error": "エラー",
+    "connected": "接続済み",
+    "disconnected": "切断",
+    "enabled": "有効",
+    "disabled": "無効",
+    "active": "アクティブ",
+    "paused": "一時停止",
+    "configured": "設定済み",
+    "loading": "読み込み中...",
+    "saving": "保存中..."
+  },
+  "gateway": {
+    "notRunning": "ゲートウェイが停止中",
+    "notRunningDesc": "この機能を使用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
+    "restarting": "ゲートウェイを再起動中",
+    "warning": "ゲートウェイが停止中です。"
+  },
+  "storageHealth": {
+    "ramLow": "メモリが不足しています",
+    "diskLow": "ディスク容量が不足しています",
+    "bannerLow": "ストレージ不足 — クリックして整理"
+  },
+  "resourceTracker": {
+    "chip": {
+      "ariaLabel": "実行中のリソース {{count}} 件",
+      "tooltip": "実行中のリソース {{count}} 件",
+      "warningCount": "アイドル {{count}} 件"
     },
-    "actions": {
-        "save": "保存",
-        "cancel": "キャンセル",
-        "delete": "削除",
-        "edit": "編集",
-        "refresh": "更新",
-        "close": "閉じる",
-        "copy": "コピー",
-        "search": "検索",
-        "confirm": "確認",
-        "dismiss": "閉じる",
-        "load": "読み込み",
-        "install": "インストール",
-        "uninstall": "アンインストール",
-        "enable": "有効にする",
-        "disable": "無効にする",
-        "back": "戻る",
-        "next": "次へ",
-        "skip": "スキップ",
-        "restart": "再起動",
-        "show": "表示",
-        "hide": "非表示",
-        "clear": "クリア"
-    },
-    "window": {
-        "minimize": "ウィンドウを最小化",
-        "maximize": "ウィンドウを最大化",
-        "restore": "ウィンドウを元に戻す",
-        "close": "ウィンドウを閉じる"
+    "popover": {
+      "title": "実行中のリソース",
+      "close": "リソース一覧を閉じる",
+      "empty": "追跡中のリソースはありません",
+      "stopAll": "すべて停止",
+      "autoCleanup": "アイドル状態のリソースは {{minutes}} 分後に自動クリーンアップされます。"
     },
     "status": {
-        "running": "実行中",
-        "stopped": "停止",
-        "error": "エラー",
-        "connected": "接続済み",
-        "disconnected": "切断",
-        "enabled": "有効",
-        "disabled": "無効",
-        "active": "アクティブ",
-        "paused": "一時停止",
-        "configured": "設定済み",
-        "loading": "読み込み中...",
-        "saving": "保存中..."
+      "healthy": "アクティブ",
+      "idle": "アイドル",
+      "unreachable": "停止中"
     },
-    "gateway": {
-        "notRunning": "ゲートウェイが停止中",
-        "notRunningDesc": "この機能を使用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
-        "restarting": "ゲートウェイを再起動中",
-        "warning": "ゲートウェイが停止中です。"
+    "timeAgo": {
+      "justNow": "たった今",
+      "m": "{{count}} 分",
+      "h": "{{count}} 時間"
     },
-    "storageHealth": {
-        "ramLow": "メモリが不足しています",
-        "diskLow": "ディスク容量が不足しています",
-        "bannerLow": "ストレージ不足 — クリックして整理"
-    },
-    "resourceTracker": {
-        "chip": {
-            "ariaLabel": "実行中のリソース {{count}} 件",
-            "tooltip": "実行中のリソース {{count}} 件",
-            "warningCount": "アイドル {{count}} 件"
-        },
-        "popover": {
-            "title": "実行中のリソース",
-            "close": "リソース一覧を閉じる",
-            "empty": "追跡中のリソースはありません",
-            "stopAll": "すべて停止",
-            "autoCleanup": "アイドル状態のリソースは {{minutes}} 分後に自動クリーンアップされます。"
-        },
-        "status": {
-            "healthy": "アクティブ",
-            "idle": "アイドル",
-            "unreachable": "停止中"
-        },
-        "timeAgo": {
-            "justNow": "たった今",
-            "m": "{{count}} 分",
-            "h": "{{count}} 時間"
-        },
-        "pid": "pid {{pid}}",
-        "fromSession": "{{session}} から",
-        "stop": "停止",
-        "stopResource": "{{label}} を停止"
-    }
+    "pid": "pid {{pid}}",
+    "fromSession": "{{session}} から",
+    "stop": "停止",
+    "stopResource": "{{label}} を停止"
+  },
+  "errorBoundary": {
+    "description": "予期しないエラーが発生しました。再読み込みして続行するか、以下のエラー参照番号をサポートにお知らせください。",
+    "errorReference": "エラー参照番号:"
+  }
 }
