@@ -32,6 +32,9 @@ vi.mock('@/stores/agents', () => ({
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
+    git: {
+      status: vi.fn().mockResolvedValue({ success: true, status: { isRepository: false } }),
+    },
     skills: {
       local: vi.fn().mockResolvedValue({ success: true, skills: [] }),
     },

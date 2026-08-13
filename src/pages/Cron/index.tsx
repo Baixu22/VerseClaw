@@ -5,7 +5,6 @@
 import { useEffect, useMemo, useState, useCallback, type ReactNode } from 'react';
 import {
   Plus,
-  Clock,
   Trash2,
   RefreshCw,
   X,
@@ -2197,10 +2196,10 @@ export function Cron() {
     <div data-testid="cron-page" className="relative -m-6 flex h-[calc(100vh-2.5rem)] overflow-hidden bg-background">
       <main className={cn('min-w-0 flex-1 flex-col overflow-hidden', selectedItem ? 'hidden lg:flex' : 'flex')}>
         <div className={cn('mx-auto flex h-full w-full flex-col px-6 pb-8 pt-8', selectedItem ? 'max-w-4xl' : 'max-w-5xl')}>
-          <div className="flex shrink-0 items-start justify-between gap-5">
+          <div className="flex min-h-10 shrink-0 items-start justify-between gap-4 border-b border-border pb-3">
             <div className="min-w-0">
               <h1 className="text-2xl font-semibold tracking-normal text-foreground">{t('title')}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
+              <p className="mt-1 max-w-3xl text-[13px] leading-5 text-muted-foreground">{t('subtitle')}</p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <Button
@@ -2245,18 +2244,18 @@ export function Cron() {
             </div>
           </div>
 
-          <div className="mt-6 flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-surface-input px-3">
-            <CodexSearch className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <div className="mt-4 flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border bg-surface-input px-2">
+            <CodexSearch className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <input
               data-testid="cron-search-input"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('workbench.searchPlaceholder')}
-              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-w-0 flex-1 border-0 bg-transparent text-[12.5px] text-foreground outline-none placeholder:text-muted-foreground"
             />
           </div>
 
-          <div className="mt-4 flex shrink-0 items-center gap-1" role="tablist" aria-label={t('scheduled.sourcesLabel')} data-testid="scheduled-source-filter">
+          <div className="mt-3 flex h-9 shrink-0 items-end gap-1 overflow-x-auto" role="tablist" aria-label={t('scheduled.sourcesLabel')} data-testid="scheduled-source-filter">
             {([
               ['all', t('scheduled.allSources'), scheduledItems.length],
               ['cron-job', t('scheduled.cronSource'), safeJobs.length],
@@ -2273,13 +2272,13 @@ export function Cron() {
                   if (value === 'browser-task') setFilter('all');
                 }}
                 className={cn(
-                  'rounded-md px-3 py-1.5 text-sm transition-colors duration-150',
+                  'flex h-8 shrink-0 items-center gap-1.5 border-b-2 px-3 text-[13px] transition-colors duration-150',
                   sourceFilter === value
-                    ? 'bg-black/5 font-medium text-foreground dark:bg-white/10'
-                    : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5',
+                    ? 'border-foreground font-medium text-foreground'
+                    : 'border-transparent text-muted-foreground hover:border-black/20 hover:text-foreground dark:hover:border-white/20',
                 )}
               >
-                {label}<span className="ml-1 text-xs text-muted-foreground">{count}</span>
+                {label}<span className="font-mono text-[11px] tabular-nums text-muted-foreground">{count}</span>
               </button>
             ))}
           </div>
@@ -2336,13 +2335,12 @@ export function Cron() {
             </div>
 
             {scheduledItems.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-6 py-16 text-center">
-                <Clock className="mb-4 h-9 w-9 text-muted-foreground/50" />
-                <h2 className="text-lg font-medium text-foreground">{t('scheduled.emptyTitle')}</h2>
-                <p className="mt-2 max-w-md text-sm text-muted-foreground">{t('scheduled.emptyDescription')}</p>
+              <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+                <p className="text-[13px] font-medium text-foreground">{t('scheduled.emptyTitle')}</p>
+                <p className="mt-1 max-w-md text-xs leading-5 text-muted-foreground">{t('scheduled.emptyDescription')}</p>
               </div>
             ) : visibleItems.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+              <div className="px-6 py-12 text-center text-xs text-muted-foreground">
                 {t('workbench.noMatches')}
               </div>
             ) : (

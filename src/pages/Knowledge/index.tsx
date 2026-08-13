@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -100,11 +100,25 @@ type InboxScoreDimension = 'reusability' | 'uniqueness' | 'confidence';
 type InboxSourceDisplay = KnowledgeInboxItem['sourceRefs'][number];
 type SourceSetRef = KnowledgeSourceSet['sourceRefs'][number];
 
+/**
+ * Knowledge surface ladder — three tiers, no ad-hoc alpha.
+ *
+ * Before this pass the page mixed 10 different translucent surface values
+ * (`bg-background/40|50|60|70|80`, `bg-surface-input/50|70|80|90`,
+ * `bg-surface-modal/70`). Because each composited against whatever sat behind
+ * it, one workspace rendered 6 distinct greys and the left rail never matched
+ * the global sidebar. The tiers below are the only surfaces this page uses:
+ *
+ *   canvas  bg-background       page + editor + preview (matches <main>)
+ *   rail    bg-surface-sidebar  document rail (matches the global left sidebar)
+ *   panel   bg-surface-modal    raised cards and popovers
+ *   control bg-surface-input    inputs, code panes, recessed rows
+ */
 const PANEL_CLASS = 'rounded-xl border border-black/10 bg-surface-modal shadow-sm dark:border-white/10';
 const QUIET_BUTTON_CLASS = 'h-9 rounded-lg border border-black/10 bg-transparent px-3 text-meta font-medium text-foreground/80 shadow-none transition-colors hover:bg-black/5 hover:text-foreground dark:border-white/10 dark:hover:bg-white/5';
 const MENU_ITEM_CLASS = 'flex h-9 cursor-default select-none items-center gap-2 rounded-md px-2.5 text-sm outline-none transition-colors data-[disabled]:opacity-40 data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10 motion-reduce:transition-none';
 const ROW_CLASS = 'flex items-center justify-between gap-4 rounded-lg bg-surface-input px-3 py-2';
-const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-input/70 dark:bg-surface-input/80';
+const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-sidebar';
 const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
 const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'runtime'];
@@ -430,7 +444,7 @@ function KnowledgeAssistantMessage({
       data-testid={`knowledge-librarian-message-${message.role}`}
     >
       {!isUser ? (
-        <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+        <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-surface-input text-muted-foreground dark:border-white/10">
           <Bot className="h-3.5 w-3.5" />
         </div>
       ) : null}
@@ -451,51 +465,39 @@ function KnowledgeAssistantMessage({
         </div>
         <div
           className={cn(
-            'rounded-xl border px-3.5 py-2.5 text-sm leading-6 shadow-sm',
+            'rounded-xl px-3.5 py-2.5 text-sm leading-6',
             isUser
-              ? 'border-primary/20 bg-primary/10 text-foreground'
-              : 'border-black/10 bg-surface-input/90 text-foreground dark:border-white/10',
+              ? 'border border-black/10 bg-surface-input text-foreground dark:border-white/10'
+              : 'text-foreground',
           )}
         >
           {isUser ? (
             <div className="whitespace-pre-wrap break-words">{message.content}</div>
           ) : groundedAnswer ? (
             <div className="space-y-3" data-testid="knowledge-librarian-grounded-answer">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+              {/* Restraint: the grounding badge only earns space when grounding is
+                  imperfect. A fully grounded answer says so by simply citing sources. */}
+              {groundedAnswer.groundingStatus !== 'grounded' ? (
+                <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] font-medium text-muted-foreground dark:border-white/10 dark:bg-white/10">
                   {sectionLabels.groundingStatus[groundedAnswer.groundingStatus]}
                 </Badge>
-                <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
-                  {sectionLabels.confidence}: {Math.round(groundedAnswer.confidence * 100)}%
-                </Badge>
+              ) : null}
+              <div className="prose prose-sm max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary" data-testid="knowledge-librarian-answer-section">
+                <KnowledgeAssistantMarkdown content={groundedAnswer.answer} />
               </div>
-              <section data-testid="knowledge-librarian-answer-section">
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.answer}</h4>
-                <div className="prose prose-sm mt-1 max-w-none break-words text-foreground dark:prose-invert prose-headings:font-serif prose-headings:font-normal prose-a:text-primary">
-                  <KnowledgeAssistantMarkdown content={groundedAnswer.answer} />
-                </div>
-              </section>
               <section data-testid="knowledge-librarian-sources-section">
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.sources}</h4>
-                <div className="mt-2 grid gap-2">
+                <div className="grid gap-1.5">
                   {groundedAnswer.sources.map((source, index) => (
                     <button
                       key={`${message.id}:source:${source.lookup}`}
                       type="button"
-                      className="rounded-lg border border-black/10 bg-background/70 px-3 py-2 text-left text-xs shadow-sm transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                      className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                       onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
                       data-testid="knowledge-librarian-source"
                     >
-                      <span className="flex items-start gap-2">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 font-mono text-[10px] text-emerald-700 dark:text-emerald-400">
-                          {index + 1}
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block truncate font-medium text-foreground">{source.title}</span>
-                          <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">{source.path || source.lookup}</span>
-                          <span className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted-foreground">{source.excerpt}</span>
-                        </span>
-                      </span>
+                      <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>
+                      <span className="min-w-0 flex-1 truncate font-medium text-foreground/90">{source.title}</span>
+                      <span className="min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground">{source.path || source.lookup}</span>
                     </button>
                   ))}
                   {groundedAnswer.sources.length === 0 ? (
@@ -503,38 +505,47 @@ function KnowledgeAssistantMessage({
                   ) : null}
                 </div>
               </section>
-              <section data-testid="knowledge-librarian-unknowns-section">
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.unknowns}</h4>
-                <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-5 text-muted-foreground">
-                  {groundedAnswer.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}
-                </ul>
-              </section>
-              <section data-testid="knowledge-librarian-next-action-section">
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground">{sectionLabels.nextAction}</h4>
-                <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-5 text-muted-foreground">
-                  {groundedAnswer.nextActions.map((action) => <li key={action}>{action}</li>)}
-                </ul>
-              </section>
-              <details className="rounded-lg border border-black/10 bg-background/60 px-3 py-2 text-xs dark:border-white/10" data-testid="knowledge-librarian-retrieval-inspector">
-                <summary className="cursor-pointer font-medium text-foreground">{sectionLabels.retrieval}</summary>
-                <dl className="mt-2 grid gap-1.5 text-muted-foreground">
-                  <div className="flex justify-between gap-3"><dt>{sectionLabels.query}</dt><dd className="min-w-0 truncate font-mono">{groundedAnswer.retrieval.query}</dd></div>
-                  <div className="flex justify-between gap-3"><dt>{sectionLabels.corpus}</dt><dd>{groundedAnswer.retrieval.corpus}</dd></div>
-                  <div className="flex justify-between gap-3"><dt>{sectionLabels.roleTag}</dt><dd>{groundedAnswer.retrieval.roleTag}</dd></div>
-                  <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
-                  <div className="flex justify-between gap-3"><dt>{sectionLabels.selectedSources}</dt><dd>{groundedAnswer.retrieval.selectedSources.length}</dd></div>
-                </dl>
+              {/* Restraint: unknowns, next actions and the retrieval trace are
+                  diagnostics. They stay reachable, but folded by default so the
+                  answer itself is what the reader meets first. */}
+              <details className="group text-xs" data-testid="knowledge-librarian-retrieval-inspector">
+                <summary className="inline-flex cursor-pointer select-none items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground">
+                  {sectionLabels.retrieval}
+                </summary>
+                <div className="mt-2 space-y-2 border-l border-black/10 pl-3 dark:border-white/10">
+                  {groundedAnswer.unknowns.length > 0 ? (
+                    <div data-testid="knowledge-librarian-unknowns-section">
+                      <div className="text-[11px] font-medium text-foreground/70">{sectionLabels.unknowns}</div>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[11px] leading-5 text-muted-foreground">
+                        {groundedAnswer.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}
+                      </ul>
+                    </div>
+                  ) : null}
+                  {groundedAnswer.nextActions.length > 0 ? (
+                    <div data-testid="knowledge-librarian-next-action-section">
+                      <div className="text-[11px] font-medium text-foreground/70">{sectionLabels.nextAction}</div>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[11px] leading-5 text-muted-foreground">
+                        {groundedAnswer.nextActions.map((action) => <li key={action}>{action}</li>)}
+                      </ul>
+                    </div>
+                  ) : null}
+                  <dl className="grid gap-1 text-[11px] text-muted-foreground">
+                    <div className="flex justify-between gap-3"><dt>{sectionLabels.query}</dt><dd className="min-w-0 truncate font-mono">{groundedAnswer.retrieval.query}</dd></div>
+                    <div className="flex justify-between gap-3"><dt>{sectionLabels.resultCount}</dt><dd>{groundedAnswer.retrieval.resultCount}</dd></div>
+                    <div className="flex justify-between gap-3"><dt>{sectionLabels.confidence}</dt><dd>{Math.round(groundedAnswer.confidence * 100)}%</dd></div>
+                  </dl>
+                </div>
               </details>
-              <div className="flex flex-wrap gap-2" data-testid="knowledge-librarian-candidate-actions">
-                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
+              <div className="flex flex-wrap gap-1" data-testid="knowledge-librarian-candidate-actions">
+                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onSaveDraft(groundedAnswer)} data-testid="knowledge-librarian-save-draft">
                   <FilePlus2 className="mr-1.5 h-3 w-3" />
                   {actionLabels.saveDraft}
                 </Button>
-                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
+                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onCreateErrorExperience(groundedAnswer)} data-testid="knowledge-librarian-create-error-experience">
                   <Wrench className="mr-1.5 h-3 w-3" />
                   {actionLabels.createErrorExperience}
                 </Button>
-                <Button type="button" variant="outline" size="sm" className="h-7 rounded-md px-2 text-[11px]" onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
+                <Button type="button" variant="ghost" size="sm" className="h-7 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground" onClick={() => onSendToSteward(groundedAnswer)} data-testid="knowledge-librarian-send-steward">
                   <ShieldCheck className="mr-1.5 h-3 w-3" />
                   {actionLabels.sendToSteward}
                 </Button>
@@ -546,25 +557,19 @@ function KnowledgeAssistantMessage({
             </div>
           )}
         </div>
-        {message.citations && message.citations.length > 0 ? (
-          <div className="mt-2 grid gap-2" data-testid="knowledge-librarian-citations" aria-label={citationsLabel}>
+        {message.citations && message.citations.length > 0 && !groundedAnswer ? (
+          <div className="mt-1.5 grid gap-0.5" data-testid="knowledge-librarian-citations" aria-label={citationsLabel}>
             {message.citations.map((citation, index) => (
               <button
                 key={`${message.id}:${citation.lookup}`}
                 type="button"
-                className="rounded-lg border border-black/10 bg-background/70 px-3 py-2 text-left text-xs shadow-sm transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                 onClick={() => onOpenCitation(citation)}
                 data-testid="knowledge-librarian-citation"
               >
-                <span className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 font-mono text-[10px] text-emerald-700 dark:text-emerald-400">
-                    {index + 1}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium text-foreground">{citation.title}</span>
-                    <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">{citation.lookup}</span>
-                  </span>
-                </span>
+                <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>
+                <span className="min-w-0 flex-1 truncate font-medium text-foreground/90">{citation.title}</span>
+                <span className="min-w-0 max-w-[45%] shrink-0 truncate font-mono text-[10px] text-muted-foreground">{citation.lookup}</span>
               </button>
             ))}
           </div>
@@ -604,7 +609,7 @@ function KnowledgeAssistantPromptInput({
 
   return (
     <form
-      className="rounded-xl border border-black/10 bg-background px-3 py-2 shadow-sm transition-colors focus-within:border-primary/35 dark:border-white/10"
+      className="rounded-xl border border-black/10 bg-surface-input px-3 py-2 transition-colors focus-within:border-primary/35 dark:border-white/10"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -1905,11 +1910,11 @@ export function Knowledge() {
   return (
     <div data-testid="knowledge-page" className="flex h-[calc(100vh-2.5rem)] min-h-0 flex-col overflow-hidden -m-6 bg-background">
       <TooltipProvider delayDuration={250}>
-      <header className="shrink-0 border-b border-black/10 bg-surface-modal/70 px-5 pt-4 dark:border-white/10 md:px-6">
+      <header className="shrink-0 border-b border-black/10 bg-surface-modal px-5 pt-4 dark:border-white/10 md:px-6">
         <div className="flex min-w-0 items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <BookOpen className="h-5 w-5 shrink-0 text-foreground/65" />
-            <h1 className="truncate font-serif text-3xl font-normal tracking-tight text-foreground">{t('title')}</h1>
+            <h1 className="truncate text-2xl font-semibold tracking-normal text-foreground">{t('title')}</h1>
             <button
               type="button"
               className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5', statusTone)}
@@ -2051,50 +2056,38 @@ export function Knowledge() {
         )}
 
         <Card className={cn(PANEL_CLASS, 'flex min-h-0 flex-1 flex-col overflow-hidden')}>
-          {workbenchTab !== 'library' ? (
-            <CardHeader className="shrink-0 border-b border-black/10 p-4 dark:border-white/10">
-              <CardTitle className="flex items-center justify-between gap-3 text-base">
-                <span className="flex min-w-0 items-center gap-2">
-                  {(() => {
-                    const ActiveIcon = TAB_ICONS[workbenchTab];
-                    return <ActiveIcon className="h-4 w-4 shrink-0 text-muted-foreground" />;
-                  })()}
-                  <span className="truncate">{t(workbenchTab === 'inbox' ? 'inbox.title' : workbenchTab === 'drafts' ? 'draft.title' : workbenchTab === 'review' ? 'review.title' : workbenchTab === 'runtime' ? 'runtime.title' : 'governance.title')}</span>
-                </span>
-                <Badge variant="outline" className="shrink-0 border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">
-                  {t('governance.readOnlyBadge')}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-          ) : null}
+          {/* Restraint: the workbench tab strip already names the active view, so a
+              card header repeating that name plus a read-only badge on every tab was
+              duplicated chrome. Boundary wording now lives once per flow, at the
+              point of action, rather than as a standing banner. */}
           <CardContent className={cn('min-h-0 flex-1', workbenchTab === 'library' ? 'p-0' : 'overflow-y-auto p-4')}>
             {workbenchTab === 'library' && (
-              <div className="grid h-full min-h-0 grid-cols-[280px_minmax(0,1fr)]" data-testid="knowledge-library">
+              <div className="grid h-full min-h-0 grid-cols-[232px_minmax(0,1fr)]" data-testid="knowledge-library">
                 <aside className={cn('flex min-h-0 flex-col border-r border-black/10 dark:border-white/10', WORKSPACE_SECTION_CLASS)} data-testid="knowledge-vault-sidebar">
-                  <div className="space-y-2 border-b border-black/10 p-3 dark:border-white/10">
-                    <Button type="button" className="h-9 w-full justify-start shadow-none" onClick={createEditorNote} data-testid="knowledge-new-note">
-                      <Plus className="mr-2 h-4 w-4" />
-                      {t('workspace.newNote')}
-                    </Button>
-                    <div className="flex gap-2">
+                  <div className="space-y-1.5 border-b border-black/10 p-3 dark:border-white/10">
+                    <div className="flex gap-1.5">
                       <div className="relative min-w-0 flex-1">
                         <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                        <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="h-9 bg-background/70 pl-8 text-xs shadow-none" />
+                        <Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void searchWiki(); }} placeholder={t('search.placeholder')} data-testid="knowledge-search-input" className="h-8 border-black/10 bg-surface-input pl-8 text-xs shadow-none dark:border-white/10" />
                       </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button type="button" size="icon" className="h-9 w-9 shrink-0" onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" aria-label={t('search.button')}>
-                            {running === 'search' ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Search className="h-4 w-4" />}
+                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground" onClick={() => void searchWiki()} disabled={busy || !query.trim()} data-testid="knowledge-search-submit" aria-label={t('search.button')}>
+                            {running === 'search' ? <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Search className="h-3.5 w-3.5" />}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>{t('search.button')}</TooltipContent>
                       </Tooltip>
                     </div>
+                    <Button type="button" variant="ghost" className="h-8 w-full justify-start px-2 text-xs font-normal text-muted-foreground shadow-none hover:text-foreground" onClick={createEditorNote} data-testid="knowledge-new-note">
+                      <Plus className="mr-2 h-3.5 w-3.5" />
+                      {t('workspace.newNote')}
+                    </Button>
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
-                        <Button type="button" variant="outline" className="h-8 w-full justify-between rounded-md border-black/10 bg-background/50 px-2.5 text-xs shadow-none dark:border-white/10" data-testid="knowledge-type-menu">
+                        <Button type="button" variant="ghost" className="h-8 w-full justify-between px-2 text-xs font-normal text-muted-foreground shadow-none hover:text-foreground" data-testid="knowledge-type-menu">
                           <span className="flex items-center gap-2"><Tags className="h-3.5 w-3.5" />{t('workspace.browseTypes')}</span>
-                          <Ellipsis className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Ellipsis className="h-3.5 w-3.5" />
                         </Button>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Portal>
@@ -2113,11 +2106,11 @@ export function Knowledge() {
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>
                   </div>
-                  <div className="min-h-0 flex-1 overflow-auto p-2.5">
-                    <div className="mb-2 px-1 text-[11px] font-semibold uppercase text-muted-foreground">{t('workspace.documents')}</div>
-                    <div className="space-y-1.5" data-testid="knowledge-document-list">
+                  <div className="min-h-0 flex-1 overflow-auto p-2">
+                    <div className="mb-1.5 px-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">{t('workspace.documents')}</div>
+                    <div className="space-y-0.5" data-testid="knowledge-document-list">
                       {rows.length === 0 && (
-                        <div className="rounded-md border border-dashed border-black/10 p-3 text-xs leading-5 text-muted-foreground dark:border-white/10">
+                        <div className="px-2 py-0.5 text-xs text-muted-foreground">
                           {t('workspace.emptyDocuments')}
                         </div>
                       )}
@@ -2128,23 +2121,23 @@ export function Knowledge() {
                           <div
                             key={`${lookup || index}:workspace`}
                             className={cn(
-                              'flex items-center gap-1 rounded-md border pr-1 transition-colors',
+                              'group flex items-center gap-1 rounded-[6px] pr-1 transition-colors',
                               selected
-                                ? 'border-primary/30 bg-primary/5 text-foreground shadow-sm'
-                                : 'border-transparent hover:border-black/10 hover:bg-black/5 dark:hover:border-white/10 dark:hover:bg-white/5',
+                                ? 'bg-black/[0.06] text-foreground dark:bg-white/10'
+                                : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
                             )}
                             data-testid="knowledge-document-row"
                           >
-                            <button type="button" className="flex min-w-0 flex-1 items-start gap-2 px-2 py-2 text-left" onClick={() => void openResult(row)} data-testid="knowledge-search-result">
+                            <button type="button" className="flex min-w-0 flex-1 items-start gap-2 px-2 py-1.5 text-left" onClick={() => void openResult(row)} data-testid="knowledge-search-result">
                               <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                               <span className="min-w-0 flex-1">
-                                <span className="block truncate text-xs font-medium">{getTitle(row)}</span>
+                                <span className="block truncate text-[12.5px] leading-5">{getTitle(row)}</span>
                                 <span className="block truncate font-mono text-[10px] text-muted-foreground">{lookup || t('workspace.localDraft')}</span>
                               </span>
                             </button>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0 rounded-md" data-testid="knowledge-source-set-add-result" onClick={() => addSourceToCurrentSet(sourceRefFromSearchRow(row))} disabled={!lookup} aria-label={t('sourceSet.addResult')}>
+                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6 shrink-0 rounded-[4px] text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100" data-testid="knowledge-source-set-add-result" onClick={() => addSourceToCurrentSet(sourceRefFromSearchRow(row))} disabled={!lookup} aria-label={t('sourceSet.addResult')}>
                                   <Plus className="h-3.5 w-3.5" />
                                 </Button>
                               </TooltipTrigger>
@@ -2156,8 +2149,8 @@ export function Knowledge() {
                     </div>
                   </div>
                 </aside>
-                <section className="flex min-h-0 flex-col bg-background/70" data-testid="knowledge-markdown-workspace">
-                  <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background/60 p-3 dark:border-white/10">
+                <section className="flex min-h-0 flex-col bg-background" data-testid="knowledge-markdown-workspace">
+                  <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-background p-3 dark:border-white/10">
                     <div className="min-w-0 flex-1">
                       <Input value={editorTitle} onChange={(event) => setEditorTitle(event.target.value)} className="h-8 border-transparent bg-transparent px-0 font-serif text-xl tracking-tight shadow-none focus-visible:ring-0" data-testid="knowledge-editor-title" />
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
@@ -2173,7 +2166,7 @@ export function Knowledge() {
                       <Button type="button" variant="ghost" className="h-8 rounded-md px-2.5 text-xs" onClick={() => setUtilityPanel('sources')} data-testid="knowledge-source-tools">
                         <Layers className="mr-1.5 h-3.5 w-3.5" />{t('workspace.sourceTools')}
                       </Button>
-                      <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-background/50 p-1 dark:border-white/10">
+                      <div className="flex items-center gap-1 rounded-lg border border-black/10 bg-background p-1 dark:border-white/10">
                         {(['edit', 'preview', 'split'] as MarkdownEditorMode[]).map((mode) => {
                           const ModeIcon = mode === 'edit' ? Edit3 : mode === 'preview' ? Eye : Columns3;
                           return (
@@ -2185,11 +2178,11 @@ export function Knowledge() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input/50 p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
-                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-background/70 px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
+                  <div className="grid shrink-0 gap-2 border-b border-black/10 bg-surface-input p-2.5 dark:border-white/10 md:grid-cols-[160px_minmax(0,1fr)_150px]">
+                    <select value={editorType} onChange={(event) => setEditorType(event.target.value as KnowledgeDraftType)} className="h-9 rounded-lg border border-black/10 bg-surface-input px-3 text-sm shadow-none dark:border-white/10" data-testid="knowledge-editor-type" aria-label={t('draft.typeLabel')}>
                       {KNOWLEDGE_TYPES.map((type) => <option key={type} value={type}>{t(`types.${type}`)}</option>)}
                     </select>
-                    <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 bg-background/70 shadow-none" data-testid="knowledge-editor-tags" />
+                    <Input value={editorTags} onChange={(event) => setEditorTags(event.target.value)} placeholder={t('workspace.tagsPlaceholder')} className="h-9 bg-surface-input shadow-none" data-testid="knowledge-editor-tags" />
                     <Button type="button" className="shadow-none" onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-editor-save-draft">
                       {running === 'editorDraft' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                       {t('workspace.submitReview')}
@@ -2197,10 +2190,10 @@ export function Knowledge() {
                   </div>
                   <div className={cn('grid min-h-0 flex-1 gap-0', editorMode === 'split' ? 'lg:grid-cols-2' : 'grid-cols-1')}>
                     {(editorMode === 'edit' || editorMode === 'split') && (
-                      <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="h-full min-h-0 resize-none rounded-none border-0 bg-background/40 p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
+                      <Textarea value={editorBody} onChange={(event) => setEditorBody(event.target.value)} className="h-full min-h-0 resize-none rounded-none border-0 bg-background p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0" data-testid="knowledge-markdown-editor" />
                     )}
                     {(editorMode === 'preview' || editorMode === 'split') && (
-                      <div className="h-full min-h-0 overflow-auto border-black/10 bg-background/80 p-5 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
+                      <div className="h-full min-h-0 overflow-auto border-black/10 bg-background p-5 text-sm leading-7 dark:border-white/10 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
                       </div>
                     )}
@@ -2358,19 +2351,19 @@ export function Knowledge() {
                         {(inboxTriage(selectedInboxItem).duplicateOf || (inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 || (inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0) && (
                           <div className="mt-3 grid gap-2 text-xs" data-testid="knowledge-inbox-triage-details">
                             {inboxTriage(selectedInboxItem).duplicateOf && (
-                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.duplicateOf')}: </span>
                                 <span className="font-mono text-[11px] text-muted-foreground">{inboxTriage(selectedInboxItem).duplicateOf}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).conflictWith ?? []).length > 0 && (
-                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
                                 <span className="font-medium text-foreground/80">{t('inbox.triage.conflictWith')}: </span>
                                 <span className="font-mono text-[11px] text-muted-foreground">{(inboxTriage(selectedInboxItem).conflictWith ?? []).join(', ')}</span>
                               </div>
                             )}
                             {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).length > 0 && (
-                              <div className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                              <div className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
                                 <div className="font-medium text-foreground/80">{t('inbox.triage.suggestedEdits')}</div>
                                 <ul className="mt-1 space-y-1 text-muted-foreground">
                                   {(inboxTriage(selectedInboxItem).suggestedEdits ?? []).map((edit) => (
@@ -2385,7 +2378,7 @@ export function Knowledge() {
                           {INBOX_SCORE_DIMENSIONS.map((dimension) => {
                             const percent = inboxScorePercent(selectedInboxItem, dimension);
                             return (
-                              <div key={dimension} className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10">
+                              <div key={dimension} className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10">
                                 <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{t(`inbox.scoreDimensions.${dimension}`)}</div>
                                 <div className="mt-1 text-sm font-semibold tabular-nums">{percent == null ? t('inbox.notAvailable') : t('inbox.percentValue', { percent })}</div>
                               </div>
@@ -2432,7 +2425,7 @@ export function Knowledge() {
                           )}
                         </dl>
                         {inboxMetadataString(selectedInboxItem, 'captureKey') && (
-                          <details className="mt-3 rounded-md border border-black/10 bg-background/50 p-2 text-xs dark:border-white/10" data-testid="knowledge-inbox-audit">
+                          <details className="mt-3 rounded-md border border-black/10 bg-background p-2 text-xs dark:border-white/10" data-testid="knowledge-inbox-audit">
                             <summary className="cursor-pointer select-none font-medium text-muted-foreground">{t('inbox.auditDetails')}</summary>
                             <div className="mt-2 min-w-0 break-all font-mono text-[11px] text-muted-foreground">
                               <span className="font-sans text-muted-foreground">{t('inbox.captureKey')}: </span>
@@ -2446,7 +2439,7 @@ export function Knowledge() {
                         <div className="mt-2 space-y-2">
                           {selectedInboxItem.sourceRefs.length === 0 && selectedInboxItem.sourceIds.length === 0 && <p className="text-xs text-muted-foreground">{t('inbox.noSources')}</p>}
                           {inboxSourceDisplays(selectedInboxItem).map((ref) => (
-                            <div key={ref.id} className="rounded-md border border-black/10 bg-background/50 p-2 dark:border-white/10" data-testid="knowledge-inbox-source">
+                            <div key={ref.id} className="rounded-md border border-black/10 bg-background p-2 dark:border-white/10" data-testid="knowledge-inbox-source">
                               <div className="flex min-w-0 items-center gap-2">
                                 <Badge variant="outline" className="shrink-0 border-black/10 bg-transparent text-[10px] font-medium dark:border-white/10">
                                   {t(inboxSourceKindLabel(ref.kind))}
@@ -2583,12 +2576,9 @@ export function Knowledge() {
                 <div className="space-y-3">
                   <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10">
                     <div className="text-sm font-semibold">{t('review.diffTitle')}</div>
-                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background/60 p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
+                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
                   </div>
-                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
-                    {t('review.confirmationBoundary')}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Button onClick={() => void reviewAndApply()} disabled={busy || !selectedDraft || !selectedProposal} data-testid="knowledge-review-apply">
                       {running === 'applyReviewedChange' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                       {t('review.approveAndApply')}
@@ -2604,6 +2594,9 @@ export function Knowledge() {
                       {t('review.steward.configure')}
                     </Button>
                   </div>
+                  {/* The apply boundary still has to be stated, but it belongs next to
+                      the button that crosses it — not as a standing yellow banner. */}
+                  <p className="text-[11px] leading-4 text-muted-foreground">{t('review.confirmationBoundary')}</p>
 
                   {/* Area 5 §3.5 — Steward review result for the current draft */}
                   <div className="rounded-lg border border-black/10 bg-surface-input p-3 dark:border-white/10" data-testid="knowledge-steward-review-result">
@@ -2680,11 +2673,13 @@ export function Knowledge() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-sm font-semibold">{t('runtime.title')}</h3>
-                      <Badge variant="outline" className="border-yellow-500/30 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
+                      <Badge variant="outline" className="border-black/10 bg-black/5 text-[10px] font-medium text-muted-foreground dark:border-white/10 dark:bg-white/10">
                         {t('runtime.reviewOnlyBadge')}
                       </Badge>
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('runtime.subtitle')}</p>
+                    {/* The badge, this line and a standing yellow banner all said
+                        "review only". One statement is enough. */}
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('runtime.reviewBoundary')}</p>
                   </div>
                   <Button
                     type="button"
@@ -2698,10 +2693,6 @@ export function Knowledge() {
                     {runtimeLessonsLoading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="mr-1.5 h-3.5 w-3.5" />}
                     {t('runtime.refresh')}
                   </Button>
-                </div>
-
-                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-5 text-yellow-700 dark:text-yellow-400">
-                  {t('runtime.reviewBoundary')}
                 </div>
 
                 {runtimeLessonsLoading && !runtimeLessons ? (
@@ -3136,13 +3127,13 @@ export function Knowledge() {
                             <div className="truncate text-xs font-semibold text-foreground">{label}</div>
                             <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{hint}</p>
                           </div>
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-current/20 bg-background/50">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-current/20 bg-background">
                             <MetricIcon className="h-4 w-4" />
                           </div>
                         </div>
                         <div className="mt-3 flex items-center justify-between gap-2">
                           <span className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">{count}</span>
-                          <span className="rounded-md border border-current/20 bg-background/40 px-1.5 py-0.5 text-[10px] font-medium uppercase">
+                          <span className="rounded-md border border-current/20 bg-background px-1.5 py-0.5 text-[10px] font-medium uppercase">
                             {t(`governance.qualityMetrics.severity.${severity}`)}
                           </span>
                         </div>
@@ -3424,175 +3415,138 @@ export function Knowledge() {
         </SheetContent>
       </Sheet>
 
-      {librarianOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/35 p-3 backdrop-blur-[2px] md:items-stretch md:p-4" role="dialog" aria-modal="true" data-testid="knowledge-librarian-modal">
-          <div className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-black/10 bg-surface-modal shadow-2xl dark:border-white/10 md:max-h-none">
-            <div className="flex items-center justify-between gap-3 border-b border-black/10 bg-emerald-500/10 px-4 py-3 dark:border-white/10">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
-                  <Bot className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
-                </div>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">{t('librarian.modalTitle')}</div>
-                  <div className="truncate text-xs text-muted-foreground">{t('librarian.modalSubtitle')}</div>
-                </div>
-              </div>
-              <button type="button" className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5" onClick={() => setLibrarianOpen(false)} aria-label={t('review.steward.close')}>
-                <X className="h-4 w-4" />
-              </button>
+      {/* The librarian rides the shared Sheet rather than a hand-rolled fixed
+          overlay: it inherits the app's slide-in-from-right motion, the modal
+          z-index and backdrop tokens, and — importantly — Radix's focus trap,
+          Escape-to-close and scroll lock. The previous markup declared
+          aria-modal without any of that behaviour. */}
+      <Sheet open={librarianOpen} onOpenChange={setLibrarianOpen}>
+        <SheetContent
+          side="right"
+          className="bottom-0 top-10 flex h-auto w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-xl"
+          data-testid="knowledge-librarian-modal"
+        >
+          <SheetHeader className="shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-b border-black/10 px-4 py-3 pr-14 text-left dark:border-white/10">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Bot className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <SheetTitle className="truncate text-sm font-medium">{t('librarian.modalTitle')}</SheetTitle>
+              <SheetDescription className="sr-only">{t('librarian.modalSubtitle')}</SheetDescription>
             </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 shrink-0 rounded-md px-2 text-[11px] font-normal text-muted-foreground hover:text-foreground"
+              onClick={clearLibrarianThread}
+              disabled={librarianMessages.length === 0}
+              data-testid="knowledge-librarian-clear"
+            >
+              {t('librarian.clearThread')}
+            </Button>
+          </SheetHeader>
+          <SheetClose asChild>
+            <Button type="button" variant="ghost" size="icon" className="absolute right-3 top-2.5 h-9 w-9 rounded-lg" aria-label={t('review.steward.close')}>
+              <X className="h-4 w-4" />
+            </Button>
+          </SheetClose>
 
-            <div className="min-h-0 flex-1 overflow-auto p-4">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-black/10 bg-surface-input/80 px-3 py-2 text-xs text-muted-foreground dark:border-white/10" data-testid="knowledge-librarian-checkpoint">
-                <span className="flex min-w-0 items-center gap-2">
-                  <History className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">
-                    {librarianCheckpointAt ? t('librarian.checkpointSaved', { time: new Date(librarianCheckpointAt).toLocaleTimeString() }) : t('librarian.noCheckpoint')}
-                  </span>
-                </span>
-                <Button type="button" variant="ghost" className="h-7 rounded-md px-2 text-[11px]" onClick={clearLibrarianThread} disabled={librarianMessages.length === 0} data-testid="knowledge-librarian-clear">
-                  {t('librarian.clearThread')}
-                </Button>
-              </div>
-
-              <div className="grid gap-3 md:grid-cols-3">
-                {(['ask', 'organize', 'review'] as const).map((mode) => (
-                  <div key={mode} className="rounded-lg border border-black/10 bg-surface-input/80 p-3 dark:border-white/10" data-testid={`knowledge-librarian-capability-${mode}`}>
-                    <div className="text-sm font-semibold">{t(`librarian.capabilities.${mode}.title`)}</div>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t(`librarian.capabilities.${mode}.body`)}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 rounded-lg border border-black/10 bg-surface-input/80 p-3 dark:border-white/10">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold">{editorTitle}</div>
-                    <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">{editorSource || t('workspace.localDraft')}</div>
-                  </div>
-                  <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{t(`types.${editorType}`)}</Badge>
+          {/* Restraint: the thread is the panel. Capability cards, the current-note
+              card, the quick-action grid and the write-boundary banner were resident
+              chrome that squeezed the conversation; their functions all remain
+              reachable from the workbench tabs and per-answer actions. */}
+          <div className="min-h-0 flex-1 overflow-auto px-4 py-3" data-testid="knowledge-librarian-thread">
+            <div className="space-y-3">
+              {librarianMessages.length === 0 ? (
+                <p className="px-1 py-8 text-center text-xs leading-5 text-muted-foreground">
+                  {t('librarian.threadEmpty')}
+                </p>
+              ) : librarianMessages.map((message) => (
+                <KnowledgeAssistantMessage
+                  key={message.id}
+                  message={message}
+                  copied={copiedLibrarianMessageId === message.id}
+                  copyLabel={t('librarian.copy')}
+                  copiedLabel={t('librarian.copied')}
+                  roleLabel={t('librarian.roleId')}
+                  userLabel={t('librarian.you')}
+                  citationsLabel={t('librarian.citations')}
+                  sectionLabels={{
+                    answer: t('librarian.sections.answer'),
+                    sources: t('librarian.sections.sources'),
+                    unknowns: t('librarian.sections.unknowns'),
+                    nextAction: t('librarian.sections.nextAction'),
+                    retrieval: t('librarian.sections.retrieval'),
+                    query: t('librarian.retrieval.query'),
+                    corpus: t('librarian.retrieval.corpus'),
+                    roleTag: t('librarian.retrieval.roleTag'),
+                    resultCount: t('librarian.retrieval.resultCount'),
+                    selectedSources: t('librarian.retrieval.selectedSources'),
+                    confidence: t('librarian.confidence'),
+                    groundingStatus: {
+                      grounded: t('librarian.groundingStatus.grounded'),
+                      partial: t('librarian.groundingStatus.partial'),
+                      missing_sources: t('librarian.groundingStatus.missingSources'),
+                    },
+                  }}
+                  actionLabels={{
+                    saveDraft: t('librarian.actions.saveDraft'),
+                    createErrorExperience: t('librarian.actions.createErrorExperience'),
+                    sendToSteward: t('librarian.actions.sendToSteward'),
+                  }}
+                  onCopy={(content) => void copyLibrarianMessage(message.id, content)}
+                  onOpenCitation={(citation) => void openResult({ title: citation.title, pagePath: citation.lookup, snippet: citation.excerpt })}
+                  onSaveDraft={(answer) => void saveGroundedAnswerDraft(answer)}
+                  onCreateErrorExperience={(answer) => void createGroundedAnswerErrorExperience(answer)}
+                  onSendToSteward={(answer) => void sendGroundedAnswerToSteward(answer)}
+                />
+              ))}
+              {running === 'librarianAsk' ? (
+                <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground" data-testid="knowledge-librarian-loading">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
+                  {t('librarian.searching')}
                 </div>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">{editorSummary || t('librarian.noSummary')}</p>
-              </div>
-
-              <div className="mt-4 rounded-xl border border-black/10 bg-background/60 p-3 dark:border-white/10" data-testid="knowledge-librarian-thread">
-                <div className="mb-3 flex flex-wrap gap-2" data-testid="knowledge-librarian-suggestions">
-                  {librarianPromptSuggestions.map((suggestion) => (
-                    <button
-                      key={suggestion.id}
-                      type="button"
-                      className="rounded-full border border-black/10 bg-surface-input px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:hover:bg-white/5"
-                      onClick={() => void askLibrarian(suggestion.prompt)}
-                      disabled={busy}
-                      data-testid={`knowledge-librarian-suggestion-${suggestion.id}`}
-                    >
-                      {suggestion.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="space-y-3">
-                  {librarianMessages.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-black/10 bg-surface-input/50 p-4 text-center text-xs leading-5 text-muted-foreground dark:border-white/10">
-                      {t('librarian.threadEmpty')}
-                    </div>
-                  ) : librarianMessages.map((message) => (
-                    <KnowledgeAssistantMessage
-                      key={message.id}
-                      message={message}
-                      copied={copiedLibrarianMessageId === message.id}
-                      copyLabel={t('librarian.copy')}
-                      copiedLabel={t('librarian.copied')}
-                      roleLabel={t('librarian.roleId')}
-                      userLabel={t('librarian.you')}
-                      citationsLabel={t('librarian.citations')}
-                      sectionLabels={{
-                        answer: t('librarian.sections.answer'),
-                        sources: t('librarian.sections.sources'),
-                        unknowns: t('librarian.sections.unknowns'),
-                        nextAction: t('librarian.sections.nextAction'),
-                        retrieval: t('librarian.sections.retrieval'),
-                        query: t('librarian.retrieval.query'),
-                        corpus: t('librarian.retrieval.corpus'),
-                        roleTag: t('librarian.retrieval.roleTag'),
-                        resultCount: t('librarian.retrieval.resultCount'),
-                        selectedSources: t('librarian.retrieval.selectedSources'),
-                        confidence: t('librarian.confidence'),
-                        groundingStatus: {
-                          grounded: t('librarian.groundingStatus.grounded'),
-                          partial: t('librarian.groundingStatus.partial'),
-                          missing_sources: t('librarian.groundingStatus.missingSources'),
-                        },
-                      }}
-                      actionLabels={{
-                        saveDraft: t('librarian.actions.saveDraft'),
-                        createErrorExperience: t('librarian.actions.createErrorExperience'),
-                        sendToSteward: t('librarian.actions.sendToSteward'),
-                      }}
-                      onCopy={(content) => void copyLibrarianMessage(message.id, content)}
-                      onOpenCitation={(citation) => void openResult({ title: citation.title, pagePath: citation.lookup, snippet: citation.excerpt })}
-                      onSaveDraft={(answer) => void saveGroundedAnswerDraft(answer)}
-                      onCreateErrorExperience={(answer) => void createGroundedAnswerErrorExperience(answer)}
-                      onSendToSteward={(answer) => void sendGroundedAnswerToSteward(answer)}
-                    />
-                  ))}
-                  {running === 'librarianAsk' ? (
-                    <div className="flex items-center gap-2 rounded-xl border border-black/10 bg-surface-input/80 px-3 py-2 text-xs text-muted-foreground dark:border-white/10" data-testid="knowledge-librarian-loading">
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      {t('librarian.searching')}
-                    </div>
-                  ) : null}
-                  {librarianError ? (
-                    <KnowledgeAssistantErrorCard
-                      error={librarianError}
-                      title={t('librarian.errorTitle')}
-                      retryLabel={t('librarian.retry')}
-                      dismissLabel={t('librarian.dismissError')}
-                      onRetry={() => void askLibrarian(lastLibrarianQuestion)}
-                      onDismiss={() => setLibrarianError(null)}
-                    />
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void searchWiki(editorTitle)} disabled={busy || !editorTitle.trim()} data-testid="knowledge-librarian-search">
-                  <Search className="mr-2 h-3.5 w-3.5" />
-                  {t('librarian.actions.searchRelated')}
-                </Button>
-                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void askSteward(null)} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-steward">
-                  <ShieldCheck className="mr-2 h-3.5 w-3.5" />
-                  {t('librarian.actions.stewardReview')}
-                </Button>
-                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => setWorkbenchTab('inbox')} data-testid="knowledge-librarian-inbox">
-                  <Inbox className="mr-2 h-3.5 w-3.5" />
-                  {t('librarian.actions.openInbox')}
-                </Button>
-                <Button type="button" variant="outline" className={QUIET_BUTTON_CLASS} onClick={() => void sendEditorToReview()} disabled={busy || !editorBody.trim()} data-testid="knowledge-librarian-submit">
-                  <Save className="mr-2 h-3.5 w-3.5" />
-                  {t('librarian.actions.submitDraft')}
-                </Button>
-              </div>
-
-              <div className="mt-4 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs leading-5 text-yellow-700 dark:text-yellow-400">
-                {t('librarian.writeBoundary')}
-              </div>
-            </div>
-
-            <div className="border-t border-black/10 bg-surface-input/70 p-3 dark:border-white/10">
-              <KnowledgeAssistantPromptInput
-                value={librarianQuestion}
-                onChange={setLibrarianQuestion}
-                onSubmit={() => void askLibrarian()}
-                disabled={busy}
-                running={running === 'librarianAsk'}
-                placeholder={t('librarian.askPlaceholder')}
-                askLabel={t('librarian.askButton')}
-                hint={t('librarian.askHint')}
-              />
+              ) : null}
+              {librarianError ? (
+                <KnowledgeAssistantErrorCard
+                  error={librarianError}
+                  title={t('librarian.errorTitle')}
+                  retryLabel={t('librarian.retry')}
+                  dismissLabel={t('librarian.dismissError')}
+                  onRetry={() => void askLibrarian(lastLibrarianQuestion)}
+                  onDismiss={() => setLibrarianError(null)}
+                />
+              ) : null}
             </div>
           </div>
-        </div>
-      ) : null}
+
+          <div className="shrink-0 border-t border-black/10 px-4 pb-3 pt-2.5 dark:border-white/10">
+            <div className="mb-2 flex flex-wrap gap-1.5" data-testid="knowledge-librarian-suggestions">
+              {librarianPromptSuggestions.map((suggestion) => (
+                <button
+                  key={suggestion.id}
+                  type="button"
+                  className="rounded-full border border-black/10 px-2.5 py-1 text-[11px] font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none dark:border-white/10 dark:hover:bg-white/5"
+                  onClick={() => void askLibrarian(suggestion.prompt)}
+                  disabled={busy}
+                  data-testid={`knowledge-librarian-suggestion-${suggestion.id}`}
+                >
+                  {suggestion.label}
+                </button>
+              ))}
+            </div>
+            <KnowledgeAssistantPromptInput
+              value={librarianQuestion}
+              onChange={setLibrarianQuestion}
+              onSubmit={() => void askLibrarian()}
+              disabled={busy}
+              running={running === 'librarianAsk'}
+              placeholder={t('librarian.askPlaceholder')}
+              askLabel={t('librarian.askButton')}
+              hint={librarianCheckpointAt ? t('librarian.checkpointSaved', { time: new Date(librarianCheckpointAt).toLocaleTimeString() }) : t('librarian.askHint')}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Area 5 §3.5 — Configure Steward modal: variant list + active selection */}
       {showStewardConfig ? (

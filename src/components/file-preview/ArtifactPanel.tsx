@@ -31,6 +31,7 @@ import { useArtifactPanel, type PanelTabInstance, type PanelTabKind } from '@/st
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { WorkspaceBrowserBody } from './WorkspaceBrowserBody';
 import { WorkspaceAuditPanel } from './WorkspaceAuditPanel';
+import { WorkspaceAgentsPanel } from './WorkspaceAgentsPanel';
 import { WorkspaceTerminalPanel } from './WorkspaceTerminalPanel';
 import { WorkspaceBrowserPanel } from './WorkspaceBrowserPanel';
 import { WorkspaceReviewPanel } from './WorkspaceReviewPanel';
@@ -112,6 +113,9 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
         break;
       case 'audit':
         openWorkspacePanel({ panel: 'audit' });
+        break;
+      case 'agents':
+        openWorkspacePanel({ panel: 'agents' });
         break;
     }
     setNewTabMenuOpen(false);
@@ -362,6 +366,8 @@ function PanelContent({
       );
     case 'audit':
       return <WorkspaceAuditPanel />;
+    case 'agents':
+      return <WorkspaceAgentsPanel />;
   }
 }
 

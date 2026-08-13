@@ -1,7 +1,10 @@
 /**
  * Chat Input Component
  * Textarea with send button and universal file upload support.
- * Enter to send, Shift+Enter for new line unless an active run is being interrupted.
+ * Five states: targeted no message, has message, message just sent,
+ * system overall hot start, session running, session temporarily paused
+ * (SVG style preserved for paused sessions due to state save).
+ * Enter to send (queue default), Ctrl+Enter for guide.
  * Supports: native file picker, clipboard paste, drag & drop.
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
@@ -53,7 +56,6 @@ import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
-import { useSettingsStore } from '@/stores/settings';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
@@ -92,7 +94,6 @@ import type {
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
-import type { SessionContinuityPreflight, SessionContinuityRecommendation } from './session-continuity';
 import { useResolvedTheme } from '@/lib/theme';
 import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
@@ -119,7 +120,6 @@ export interface FileAttachment {
 
 interface ChatInputProps {
   onSend: (text: string, opts?: SendOptions) => void;
-  onStop?: () => void;
   disabled?: boolean;
   sending?: boolean;
   workspace?: WorkspaceProfile | null;
@@ -141,8 +141,6 @@ interface ChatInputProps {
   onNewSession?: () => void | Promise<void>;
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
-  continuityRecommendation?: SessionContinuityRecommendation;
-  continuityPreflight?: SessionContinuityPreflight;
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
@@ -154,10 +152,7 @@ interface ChatInputProps {
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
   onManualCompact?: (customInstructions?: string) => Promise<void>;
-  onViewCompactionArtifact?: () => void;
   longTaskControlStatus?: LongTaskControlStatus | null;
-  queueDrainBusy?: boolean;
-  onDrainQueuedFollowup?: () => Promise<void>;
   taskLoopUpgradeBusy?: boolean;
   onConfirmTaskLoopUpgrade?: (suggestion: TaskLoopUpgradeSuggestion) => Promise<void> | void;
   /** Extra classes on the composer host — used for the empty-state send transition. */
@@ -809,7 +804,6 @@ function readFileAsBase64(file: globalThis.File): Promise<string> {
 
 export function ChatInput({
   onSend,
-  onStop,
   disabled = false,
   sending = false,
   contextRange,
@@ -826,8 +820,6 @@ export function ChatInput({
   onNewSession,
   onForkSession,
   onHandoffSession,
-  continuityRecommendation,
-  continuityPreflight,
   forkDisabled = false,
   forkBusy = false,
   handoffDisabled = false,
@@ -839,10 +831,7 @@ export function ChatInput({
   compactionStatus,
   compactionBusy = false,
   onManualCompact,
-  onViewCompactionArtifact,
   longTaskControlStatus,
-  queueDrainBusy = false,
-  onDrainQueuedFollowup,
   taskLoopUpgradeBusy = false,
   onConfirmTaskLoopUpgrade,
   className,
@@ -851,8 +840,6 @@ export function ChatInput({
   const isUiV2 = uiVersion === 'v2';
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
-  const uiDepthMode = useSettingsStore((state) => state.uiDepthMode);
-  const showAdvancedDetails = uiDepthMode === 'advanced';
   const [input, setInput] = useState(() => draftValue ?? '');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
@@ -1221,54 +1208,6 @@ export function ChatInput({
   }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const compactAttention = compactionStatus?.pressure === 'high';
-  const compactionQuality = compactionStatus?.lastCompaction?.quality;
-  const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
-  const effectiveContinuityRecommendation = continuityPreflight?.recommendation ?? continuityRecommendation;
-  const continuityHealth = continuityPreflight?.health;
-  const recommendedContinuityAction = effectiveContinuityRecommendation?.action ?? 'fork';
-  const composerContinuityAction = recommendedContinuityAction === 'handoff' && onHandoffSession
-    ? {
-      id: 'handoff' as const,
-      testId: 'chat-composer-handoff',
-      busy: handoffBusy,
-      disabled: handoffDisabled,
-      onClick: onHandoffSession,
-      icon: FileText,
-    }
-    : onForkSession
-      ? {
-        id: 'fork' as const,
-        testId: 'chat-composer-fork',
-        busy: forkBusy,
-        disabled: forkDisabled,
-        onClick: onForkSession,
-        icon: GitBranchPlus,
-      }
-      : onHandoffSession
-        ? {
-          id: 'handoff' as const,
-          testId: 'chat-composer-handoff',
-          busy: handoffBusy,
-          disabled: handoffDisabled,
-          onClick: onHandoffSession,
-          icon: FileText,
-        }
-        : null;
-  const composerContinuityTooltip = composerContinuityAction
-    ? composerContinuityAction.disabled
-      ? t(`composer.${composerContinuityAction.id}.disabledActiveRun`)
-      : [
-        continuityHealth
-          ? t(`composer.continuity.health.${continuityHealth.status}`, {
-            defaultValue: t('composer.continuity.health.healthy'),
-          })
-          : '',
-        t(`composer.continuity.tooltip.${composerContinuityAction.id}.${effectiveContinuityRecommendation?.reason ?? 'default'}`, {
-          defaultValue: t(`composer.${composerContinuityAction.id}.tooltip`),
-        }),
-      ].filter(Boolean).join(' - ')
-    : '';
-  const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
   const slashInput = useMemo(() => parseSlashInput(input), [input]);
   const slashItems = useMemo<SlashPaletteItem[]>(() => {
     if (!slashInput.active) return [];
@@ -1995,8 +1934,6 @@ export function ChatInput({
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
   const hasComposerDraft = Boolean(input.trim() || selectedKnowledgeRefs.length > 0);
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
-  const canStop = sending && !inputDisabled && !!onStop;
-  const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting;
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || Boolean(longTaskControlStatus)
@@ -2543,22 +2480,13 @@ export function ChatInput({
     }
   }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
-  const handleStop = useCallback(() => {
-    if (!canStop) return;
-    onStop?.();
-  }, [canStop, onStop]);
-
   const handlePrimaryComposerAction = useCallback(() => {
     if (sending) {
-      if (canIntervene) {
-        void handleInterventionSend('queue');
-        return;
-      }
-      handleStop();
+      void handleInterventionSend('queue');
       return;
     }
     void handleSend();
-  }, [canIntervene, handleInterventionSend, handleSend, handleStop, sending]);
+  }, [handleInterventionSend, sending]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -2568,7 +2496,6 @@ export function ChatInput({
           return;
         }
         e.preventDefault();
-        if (!canIntervene) return;
         void handleInterventionSend(e.shiftKey ? 'interrupt' : 'guide');
         return;
       }
@@ -2671,14 +2598,13 @@ export function ChatInput({
         }
         e.preventDefault();
         if (sending) {
-          if (canIntervene) void handleInterventionSend('queue');
+          void handleInterventionSend('queue');
           return;
         }
         handleSend();
       }
     },
     [
-      canIntervene,
       findExactSlashItem,
       handleInterventionSend,
       handleSend,
@@ -3007,58 +2933,6 @@ export function ChatInput({
             </div>
           )}
 
-          {sending && (
-            <div
-              className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1.5 text-meta text-amber-800 dark:text-amber-300"
-              data-testid="chat-intervention-controls"
-            >
-              <span className="min-w-0 truncate font-medium">
-                {t('composer.intervention.queueDefault')}
-              </span>
-              <div className="ml-auto flex shrink-0 items-center gap-1">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        data-testid="chat-intervention-guide"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('guide')}
-                        className="h-7 rounded-md px-2 text-[11px] font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                      >
-                        {t('composer.intervention.guide')}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.intervention.guideTooltip')}
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        data-testid="chat-intervention-interrupt"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('interrupt')}
-                        className="h-7 rounded-md px-2 text-[11px] font-medium text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400"
-                      >
-                        {t('composer.intervention.interrupt')}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.intervention.interruptTooltip')}
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-          )}
 
           <div className="relative min-h-[48px]">
             {skillTokenRanges.length > 0 && (
@@ -3802,7 +3676,7 @@ export function ChatInput({
                 <span className="inline-flex">
             <Button
               onClick={handlePrimaryComposerAction}
-              disabled={sending ? !(canIntervene || canStop) : !canSend}
+              disabled={sending ? false : !canSend}
               size="icon"
               data-testid="chat-composer-send"
               className={`shrink-0 h-8 w-8 rounded-lg transition-colors ${
@@ -3811,18 +3685,18 @@ export function ChatInput({
                   : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'
               }`}
               variant="ghost"
-              aria-label={sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
+              aria-label={t('composer.send')}
             >
-              {sending && !canIntervene ? (
-                <Square className="h-3.5 w-3.5" fill="currentColor" />
-              ) : (
-                <SendHorizontal className="h-4 w-4" strokeWidth={2} />
-              )}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M22 2L11 13M11 13L2 16L2 16L22 22Z" />
+              </svg>
             </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>
-                {sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
+                {sending
+                  ? '发送 (默认排队) | Ctrl+Enter 引导'
+                  : t('composer.send')}
               </TooltipContent>
             </Tooltip>
             </div>
@@ -3857,7 +3731,7 @@ export function ChatInput({
               ))}
             </div>
           )}
-          {(composerContextParts.length > 0 || longTaskControlStatus || onManualCompact || onForkSession || onHandoffSession) && (
+          {composerContextParts.length > 0 && (
             <div
               className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
               data-testid="chat-composer-context-status"
@@ -3868,194 +3742,6 @@ export function ChatInput({
                   <span>{part}</span>
                 </span>
               ))}
-              {longTaskControlStatus && (
-                <>
-                  {queuedFollowupCount > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md border-amber-500/30 bg-amber-500/10 px-2 text-[11px] font-medium text-amber-700 dark:text-amber-400"
-                      data-testid="chat-long-task-queue-count"
-                    >
-                      {t('composer.longTaskControl.queued', { count: queuedFollowupCount })}
-                    </Badge>
-                  )}
-                  {longTaskControlStatus.latestCheckpoint?.trigger && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md px-2 text-[11px] font-medium text-muted-foreground"
-                      data-testid="chat-long-task-checkpoint"
-                    >
-                      {t('composer.longTaskControl.checkpoint', {
-                        trigger: t(`composer.longTaskControl.trigger.${longTaskControlStatus.latestCheckpoint.trigger}`, {
-                          defaultValue: longTaskControlStatus.latestCheckpoint.trigger,
-                        }),
-                      })}
-                    </Badge>
-                  )}
-                  {longTaskControlStatus.latestIntervention && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md px-2 text-[11px] font-medium text-muted-foreground"
-                      data-testid="chat-long-task-intervention"
-                    >
-                      {t('composer.longTaskControl.intervention', {
-                        mode: longTaskControlStatus.latestIntervention.mode
-                          ? t(`composer.longTaskControl.mode.${longTaskControlStatus.latestIntervention.mode}`, { defaultValue: longTaskControlStatus.latestIntervention.mode })
-                          : t('composer.longTaskControl.mode.unknown'),
-                        status: t(`composer.longTaskControl.status.${longTaskControlStatus.latestIntervention.status}`, {
-                          defaultValue: longTaskControlStatus.latestIntervention.status,
-                        }),
-                      })}
-                    </Badge>
-                  )}
-                  {(longTaskControlStatus.warnings?.length ?? 0) > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md border-amber-500/30 px-2 text-[11px] font-medium text-amber-700 dark:text-amber-400"
-                      data-testid="chat-long-task-warnings"
-                    >
-                      {t('composer.longTaskControl.warnings', { count: longTaskControlStatus.warnings?.length ?? 0 })}
-                    </Badge>
-                  )}
-                  {queuedFollowupCount > 0 && onDrainQueuedFollowup && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex">
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            data-testid="chat-long-task-drain"
-                            disabled={sending || queueDrainBusy}
-                            onClick={() => void onDrainQueuedFollowup()}
-                            className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                            aria-label={t('composer.longTaskControl.drainNow')}
-                          >
-                            {queueDrainBusy ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <MessageSquarePlus className="h-3.5 w-3.5" />
-                            )}
-                          </Button>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs text-xs">
-                        {sending
-                          ? t('composer.longTaskControl.drainActiveRun')
-                          : t('composer.longTaskControl.drainTooltip')}
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </>
-              )}
-              {showAdvancedDetails && compactionQuality && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'h-6 rounded-md px-2 text-[11px] font-medium',
-                    compactionQuality.level === 'high' && 'border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400',
-                    compactionQuality.level === 'medium' && 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400',
-                    compactionQuality.level === 'low' && 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400',
-                  )}
-                  data-testid="chat-compaction-quality"
-                >
-                  {t('composer.compaction.quality', {
-                    level: t(`composer.compaction.qualityLevel.${compactionQuality.level}`),
-                    score: Math.round(compactionQuality.score * 100),
-                  })}
-                </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.compaction.qualityTitle', {
-                      evidence: Math.round(compactionQuality.evidenceCoverage * 100),
-                      fields: Math.round(compactionQuality.fieldCoverage * 100),
-                      tokens: compactionQuality.projectionTokens,
-                      unverified: compactionStatus?.lastCompaction?.unverifiedCount ?? 0,
-                    })}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {showAdvancedDetails && compactionQuality && onViewCompactionArtifact && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-compaction-view-artifact"
-                        onClick={onViewCompactionArtifact}
-                        className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                        aria-label={t('composer.compaction.viewEvidence')}
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.compaction.viewEvidenceTooltip')}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {onManualCompact && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-composer-compact"
-                        disabled={compactDisabled}
-                        onClick={() => setCompactionDialogOpen(true)}
-                        className={cn(
-                          'h-6 w-6 rounded-md text-muted-foreground transition-colors',
-                          compactAttention && !compactDisabled && 'text-amber-700 hover:bg-amber-500/10 dark:text-amber-400',
-                        )}
-                        aria-label={t('composer.compaction.compress')}
-                      >
-                        {compactionBusy ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <Archive className="h-3.5 w-3.5" />
-                        )}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {compactDisabledReason ?? t('composer.compaction.compressTooltip')}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {composerContinuityAction && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid={composerContinuityAction.testId}
-                        disabled={composerContinuityAction.disabled || composerContinuityAction.busy}
-                        onClick={() => void composerContinuityAction.onClick()}
-                        className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                        aria-label={t(`composer.${composerContinuityAction.id}.action`)}
-                      >
-                        {composerContinuityAction.busy ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <ComposerContinuityIcon className="h-3.5 w-3.5" />
-                        )}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {composerContinuityTooltip}
-                  </TooltipContent>
-                </Tooltip>
-              )}
             </div>
           )}
           <TaskNodeSelector

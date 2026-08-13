@@ -164,6 +164,70 @@ if (typeof window !== 'undefined') {
   });
 }
 
+// jsdom ships the `CSS` object without `supports()`. Components that
+// feature-detect CSS capabilities at mount (e.g. the Tool UI weather widget's
+// generated runtime) throw without it. Report "unsupported" so those code
+// paths take their documented fallback rather than a fabricated success.
+if (typeof window !== 'undefined') {
+  const cssObject = (window as unknown as { CSS?: Record<string, unknown> }).CSS ?? {};
+  if (typeof cssObject.supports !== 'function') {
+    cssObject.supports = () => false;
+    Object.defineProperty(window, 'CSS', { writable: true, configurable: true, value: cssObject });
+  }
+}
+
+// jsdom has no IntersectionObserver. `framer-motion`'s `useInView` (behind the
+// DiaTextReveal brand sweep used on loading surfaces) constructs one on mount
+// and throws without it. The stub never reports intersection, which is the
+// correct default for an element that is never scrolled into view in jsdom.
+if (typeof globalThis !== 'undefined' && typeof (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver === 'undefined') {
+  class IntersectionObserverStub {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds: readonly number[] = [];
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): [] { return []; }
+  }
+  Object.defineProperty(globalThis, 'IntersectionObserver', {
+    writable: true,
+    configurable: true,
+    value: IntersectionObserverStub,
+  });
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'IntersectionObserver', {
+      writable: true,
+      configurable: true,
+      value: IntersectionObserverStub,
+    });
+  }
+}
+
+// jsdom has no ResizeObserver. The composer's plus-menu morph measures itself
+// on mount and throws without it, which fails every test that renders the
+// composer. The stub never fires: jsdom reports zero-size boxes anyway, so a
+// measurement callback would carry no real geometry.
+if (typeof globalThis !== 'undefined' && typeof (globalThis as { ResizeObserver?: unknown }).ResizeObserver === 'undefined') {
+  class ResizeObserverStub {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+  }
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    writable: true,
+    configurable: true,
+    value: ResizeObserverStub,
+  });
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'ResizeObserver', {
+      writable: true,
+      configurable: true,
+      value: ResizeObserverStub,
+    });
+  }
+}
+
 // Reset mocks after each test
 afterEach(() => {
   vi.clearAllMocks();

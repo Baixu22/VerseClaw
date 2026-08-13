@@ -371,6 +371,22 @@ export function extractThinkingSegments(message: RawMessage | unknown): string[]
   return splitProgressiveParts(parts);
 }
 
+/**
+ * Split a raw thinking string into display segments.
+ *
+ * The streaming path accumulates thinking as one growing string on the runtime
+ * run (`ChatRuntimeRunState.thinkingText`) rather than as content blocks, so it
+ * cannot go through `extractThinkingSegments`. Both end up in the same
+ * `ThinkingReasoning` panel, so they must break lines the same way.
+ */
+export function splitThinkingIntoSegments(thinkingText: string | undefined | null): string[] {
+  if (!thinkingText) return [];
+  return thinkingText
+    .split(/\n{2,}/)
+    .map((segment) => normalizeProgressiveText(segment))
+    .filter((segment) => segment.length > 0);
+}
+
 export function stripProcessMessagePrefix(text: string, processSegments: string[]): string {
   let remaining = text;
   let strippedAny = false;

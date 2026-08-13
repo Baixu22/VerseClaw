@@ -22,10 +22,10 @@ import { cn } from '@/lib/utils';
 import { statFile } from '@/lib/file-preview-client';
 import { hostApi } from '@/lib/host-api';
 import type { RawMessage, AttachedFileMeta } from '@/stores/chat';
-import { AgentInteractionRenderer, parseToolUiContent, parseToolUiToolUses } from '@/components/tool-ui/agent-interactions';
-import { BranchPicker, ReasoningPanel, ToolFallbackCard } from '@/components/assistant-render/AssistantRender';
+import { AgentInteractionRenderer } from '@/components/tool-ui/agent-interactions';
+import { ThinkingReasoning } from '@/components/assistant-render/ThinkingReasoning';
 import { TokenUsageBadge } from '@/components/assistant-render/TokenUsageBadge';
-import { extractAssistantBranches, extractAssistantReasoning, extractAssistantToolFallbacks } from '@/components/assistant-render/model';
+import type { AssistantReasoning } from '@/components/assistant-render/model';
 import { KnowledgeDirectiveChip } from '@/components/assistant-render/KnowledgeDirectiveChip';
 import { GitHubCard, isGitHubUrl } from '@/components/assistant-render/GitHubCard';
 import { OrbStatus } from '@/components/assistant-ui/orb-status';
@@ -36,7 +36,13 @@ import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import type { AgentSummary } from '@/types/agent';
 
-import { extractText, extractImages, extractToolUse, formatTimestamp, isUnresolvableImageUrl } from './message-utils';
+import { formatTimestamp, isUnresolvableImageUrl } from './message-utils';
+import {
+  fileNameFromPath,
+  imageSrc,
+  previewMimeFromPath,
+  projectMessageRender,
+} from './message-render-projection';
 import { copyImageToClipboard, type ImageCopyTarget } from './copy-image';
 
 interface ChatMessageProps {
@@ -54,6 +60,12 @@ interface ChatMessageProps {
    */
   suppressAssistantText?: boolean;
   isStreaming?: boolean;
+  /**
+   * Reasoning to show instead of whatever the message itself carries. Used for
+   * the streaming turn, whose thinking lives on the runtime run
+   * (`ChatRuntimeRunState.thinkingText`) rather than on a message.
+   */
+  reasoningOverride?: AssistantReasoning[];
   streamingTools?: Array<{
     id?: string;
     toolCallId?: string;
@@ -94,8 +106,6 @@ interface ChatMessageProps {
     estimatedCostUsd?: number;
   } | null;
 }
-
-interface ExtractedImage { url?: string; data?: string; mimeType: string; }
 
 function isChatPreviewDocument(file: AttachedFileMeta): boolean {
   const name = file.fileName.toLowerCase();
@@ -158,83 +168,6 @@ function validationKindForAttachment(file: AttachedFileMeta): 'file' | 'dir' | n
   return isDirectoryAttachment(file) ? 'dir' : 'file';
 }
 
-function previewMimeFromPath(filePath: string): string | null {
-  const lower = filePath.toLowerCase();
-  if (lower.endsWith('.md') || lower.endsWith('.markdown')) return 'text/markdown';
-  if (lower.endsWith('.html') || lower.endsWith('.htm')) return 'text/html';
-  if (lower.endsWith('.pdf')) return 'application/pdf';
-  if (lower.endsWith('.xls')) return 'application/vnd.ms-excel';
-  if (lower.endsWith('.xlsx')) return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  return null;
-}
-
-function fileNameFromPath(filePath: string): string {
-  return filePath.split(/[\\/]/).pop() || 'file';
-}
-
-function trimPathTerminators(filePath: string): string {
-  return filePath.replace(/[，。；;,.!?]+$/u, '');
-}
-
-function extractPreviewDocumentPaths(text: string): AttachedFileMeta[] {
-  if (!text) return [];
-  const refs: AttachedFileMeta[] = [];
-  const seen = new Set<string>();
-  const pushRef = (filePath: string, mimeType: string) => {
-    const normalizedPath = trimPathTerminators(filePath);
-    if (!normalizedPath || seen.has(normalizedPath)) return;
-    seen.add(normalizedPath);
-    refs.push({
-      fileName: fileNameFromPath(normalizedPath),
-      mimeType,
-      fileSize: 0,
-      preview: null,
-      filePath: normalizedPath,
-      source: 'message-ref',
-    });
-  };
-  // Deliberately narrow this render-layer fallback to user-facing artifacts:
-  // HTML / Markdown / PDF / spreadsheet previews and OpenClaw skill directories.
-  // The store-level extractor still handles broad file categories; this keeps
-  // visible outputs clickable even before history enrichment runs.
-  const exts = 'html?|md|markdown|pdf|xlsx?|HTML?|MD|MARKDOWN|PDF|XLSX?';
-  const taggedRegex = new RegExp(`(?:^|[\\s(\\[{>])(?:MEDIA|media):((?:\\/|~\\/)[^\\s\\n"'()\\[\\],<>]*?\\.(?:${exts}))`, 'g');
-  const unixRegex = new RegExp('(?<![\\w./:])((?:\\/|~\\/)[^\\s\\n"\'`()\\[\\],<>]*?\\.(?:' + exts + '))', 'g');
-  const skillPathBoundary = '(?=$|\\s|[\\x5b\\x5d"\'`(),<>，。；;,.!?])';
-  const skillPathPart = '[^\\\\/\\s\\n"\'`()\\x5b\\x5d,<>]+';
-  const skillPathTail = '[^\\s\\n"\'`()\\x5b\\x5d,<>]*?';
-  const skillDirRegex = new RegExp(
-    `(?<![\\w./:])((?:~[\\\\/]\\.openclaw[\\\\/]skills[\\\\/]${skillPathPart})|(?:(?:\\/|[A-Za-z]:\\\\)${skillPathTail}[\\\\/]\\.openclaw[\\\\/]skills[\\\\/]${skillPathPart}))${skillPathBoundary}`,
-    'gi',
-  );
-  const skillMarkdownRegex = new RegExp(
-    `(?<![\\w./:])((?:~[\\\\/]\\.openclaw[\\\\/]skills[\\\\/]${skillPathTail}\\.md)|(?:(?:\\/|[A-Za-z]:\\\\)${skillPathTail}[\\\\/]\\.openclaw[\\\\/]skills[\\\\/]${skillPathTail}\\.md))${skillPathBoundary}`,
-    'gi',
-  );
-
-  let workingText = text;
-  let taggedMatch: RegExpExecArray | null;
-  while ((taggedMatch = taggedRegex.exec(text)) !== null) {
-    const filePath = taggedMatch[1];
-    const mimeType = previewMimeFromPath(filePath);
-    if (mimeType) pushRef(filePath, mimeType);
-    const start = taggedMatch.index;
-    const end = start + taggedMatch[0].length;
-    workingText = workingText.slice(0, start) + ' '.repeat(end - start) + workingText.slice(end);
-  }
-
-  for (const regex of [unixRegex, skillMarkdownRegex, skillDirRegex]) {
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(workingText)) !== null) {
-      const filePath = match[1];
-      const mimeType = regex === skillDirRegex ? DIRECTORY_MIME_TYPE : previewMimeFromPath(filePath);
-      if (mimeType) pushRef(filePath, mimeType);
-    }
-  }
-
-  return refs;
-}
-
 /**
  * Normalize LaTeX delimiters so `remark-math` can detect them.
  *
@@ -265,13 +198,6 @@ function normalizeLatexDelimiters(input: string): string {
   return parts.join('');
 }
 
-/** Resolve an ExtractedImage to a displayable src string, or null if not possible. */
-function imageSrc(img: ExtractedImage): string | null {
-  if (img.url) return isUnresolvableImageUrl(img.url) ? null : img.url;
-  if (img.data) return `data:${img.mimeType};base64,${img.data}`;
-  return null;
-}
-
 export const ChatMessage = memo(function ChatMessage({
   message,
   agent,
@@ -280,6 +206,7 @@ export const ChatMessage = memo(function ChatMessage({
   suppressProcessAttachments = false,
   suppressAssistantText = false,
   isStreaming = false,
+  reasoningOverride,
   streamingTools = [],
   onOpenFile,
   onSubmitInteractionResponse,
@@ -294,65 +221,26 @@ export const ChatMessage = memo(function ChatMessage({
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
   const isToolResult = role === 'toolresult' || role === 'tool_result';
-  const rawText = useMemo(() => textOverride ?? extractText(message), [message, textOverride]);
-  const toolUiContent = useMemo(
-    () => (!isUser ? parseToolUiContent(rawText) : { displayText: rawText, interactions: [] }),
-    [isUser, rawText],
+  // One projection, shared with Chat/index.tsx's row-visibility decision. See
+  // message-render-projection.ts for why these two must not derive separately.
+  const projection = useMemo(
+    () => projectMessageRender(message, {
+      isUser,
+      suppressAssistantText,
+      suppressToolCards,
+      textOverride,
+    }),
+    [isUser, message, suppressAssistantText, suppressToolCards, textOverride],
   );
-  const branches = useMemo(
-    () => (!isUser ? extractAssistantBranches(message) : []),
-    [isUser, message],
-  );
-  const [selectedBranchText, setSelectedBranchText] = useState<string | null>(null);
-  const text = selectedBranchText ?? toolUiContent.displayText;
-  const reasoning = useMemo(
-    () => (!isUser ? extractAssistantReasoning(message) : []),
-    [isUser, message],
-  );
-  const toolFallbacks = useMemo(
-    () => (!isUser && !suppressToolCards ? extractAssistantToolFallbacks(message) : []),
-    [isUser, message, suppressToolCards],
-  );
-  // When text is folded into an ExecutionGraphCard, treat the message as
-  // having no text for rendering purposes. Keeping this behind a flag (vs
-  // blanking `text` outright) lets future hover affordances still read the
-  // original content without surfacing the bubble.
-  const hideAssistantText = suppressAssistantText && !isUser;
-  const hasText = !hideAssistantText && text.trim().length > 0;
-  const images = useMemo(() => extractImages(message), [message]);
-  const resolvableContentImages = useMemo(
-    () => images.filter((img) => imageSrc(img) != null),
-    [images],
-  );
-  const tools = useMemo(() => extractToolUse(message), [message]);
-  const visibleTools = useMemo(
-    () => (suppressToolCards ? [] : tools),
-    [suppressToolCards, tools],
-  );
-  const toolUiInteractions = useMemo(
-    () => (!isUser && !suppressToolCards
-      ? [...toolUiContent.interactions, ...parseToolUiToolUses(visibleTools)]
-      : toolUiContent.interactions),
-    [isUser, suppressToolCards, toolUiContent.interactions, visibleTools],
-  );
+  const text = projection.displayText;
+  const reasoning = reasoningOverride ?? projection.reasoning;
+  const hasText = projection.hasText;
+  const resolvableContentImages = projection.contentImages;
+  const visibleTools = projection.visibleTools;
+  const toolUiInteractions = projection.toolUiInteractions;
   const [validatedPaths, setValidatedPaths] = useState<Record<string, boolean>>({});
-  const rawAttachedFiles = useMemo(() => message._attachedFiles || [], [message._attachedFiles]);
-  const knowledgeRefs = useMemo(() => message._knowledgeRefs || [], [message._knowledgeRefs]);
-  const textPreviewFiles = useMemo(
-    () => (isUser ? [] : extractPreviewDocumentPaths(text)),
-    [isUser, text],
-  );
-  const rawAttachedPaths = useMemo(
-    () => new Set(rawAttachedFiles.map((file) => file.filePath).filter(Boolean)),
-    [rawAttachedFiles],
-  );
-  const derivedAttachedFiles = useMemo(
-    () => [
-      ...rawAttachedFiles,
-      ...textPreviewFiles.filter((file) => !file.filePath || !rawAttachedPaths.has(file.filePath)),
-    ],
-    [rawAttachedFiles, rawAttachedPaths, textPreviewFiles],
-  );
+  const knowledgeRefs = projection.knowledgeRefs;
+  const derivedAttachedFiles = projection.candidateAttachments;
   const validationTargets = useMemo(
     () => derivedAttachedFiles
       .map((file) => {
@@ -494,7 +382,11 @@ export const ChatMessage = memo(function ChatMessage({
 
   const hasStreamingToolStatus = isStreaming && streamingTools.length > 0;
   const showStreamStatus = !isUser && !!streamStatus?.active;
-  if (!hasText && resolvableContentImages.length === 0 && visibleTools.length === 0 && toolUiInteractions.length === 0 && attachedFiles.length === 0 && knowledgeRefs.length === 0 && reasoning.length === 0 && toolFallbacks.length === 0 && !hasStreamingToolStatus && !showStreamStatus) return null;
+  // Same authority index.tsx uses for `row.hidden` — see
+  // message-render-projection.ts. Reasoning may also arrive as an override on
+  // the streaming turn, which the projection cannot know about.
+  const hasProjectedContent = projection.hasRenderableContent || reasoning.length > 0;
+  if (!hasProjectedContent && !hasStreamingToolStatus && !showStreamStatus) return null;
 
   return (
     <div
@@ -532,16 +424,11 @@ export const ChatMessage = memo(function ChatMessage({
           <ToolStatusBar tools={streamingTools} />
         )}
 
-        {!isUser && branches.length > 1 && (
-          <BranchPicker
-            branches={branches}
-            storageKey={`assistant-branch:${message.id ?? message.timestamp ?? rawText.slice(0, 32)}`}
-            onSelect={(branch) => setSelectedBranchText(branch?.text ?? null)}
-          />
-        )}
-
         {!isUser && reasoning.length > 0 && (
-          <ReasoningPanel items={reasoning} />
+          <ThinkingReasoning
+            items={reasoning}
+            streaming={isStreaming && streamStatus?.state === 'thinking'}
+          />
         )}
 
         {/* Images — rendered ABOVE text bubble for user messages */}
@@ -634,10 +521,6 @@ export const ChatMessage = memo(function ChatMessage({
             onDraftResponse={onDraftInteractionResponse}
             onOpenFilePath={handleOpenToolUiFilePath}
           />
-        )}
-
-        {!isUser && toolFallbacks.length > 0 && (
-          <ToolFallbackCard tools={toolFallbacks} />
         )}
 
         {/* Images from content blocks — assistant messages (below text) */}

@@ -114,11 +114,18 @@
     "source": {
       "terminal": "Terminal",
       "file": "File",
-      "remoteControl": "Remote control"
+      "remoteControl": "Remote control",
+      "gateway": "Gateway",
+      "mcp": "MCP",
+      "git": "Git",
+      "cleaner": "Cleanup"
     },
     "risk": {
       "write": "Write",
-      "dangerous": "High risk"
+      "dangerous": "High risk",
+      "network": "Network",
+      "external-write": "External write",
+      "destructive": "Destructive"
     },
     "status": {
       "pending": "Pending",
@@ -168,6 +175,14 @@
     }
   },
   "toolUi": {
+    "approval": {
+      "host": {
+        "title": "Permission required",
+        "approve": "Approve",
+        "deny": "Deny",
+        "retryRequired": "Decision recorded — ask the agent to retry the action."
+      }
+    },
     "actions": {
       "back": "Back",
       "next": "Next",
@@ -362,7 +377,8 @@
       "review": "Review",
       "terminal": "Terminal",
       "files": "Files",
-      "audit": "Audit"
+      "audit": "Audit",
+      "agents": "Sub-agents"
     },
     "workspaceTabs": {
       "files": "Files",
@@ -391,7 +407,8 @@
         "review": "Review changes, branches, stashes, and PRs.",
         "reviewBranch": "Review changes on {{branch}}.",
         "web": "Open a local preview or inspect a URL.",
-        "audit": "Inspect permission requests and recent approvals."
+        "audit": "Inspect permission requests and recent approvals.",
+        "agents": "Read a sub-agent transcript and dispatch new work."
       },
       "badges": {
         "changes": "{{count}} changes",
@@ -414,6 +431,22 @@
     "preview": {
       "emptyTitle": "No file selected",
       "emptyHint": "Click a file card in the chat first; the selected file will preview here."
+    }
+  },
+  "agentsPanel": {
+    "title": "Sub-agents",
+    "description": "Transcripts and dispatch for this session",
+    "empty": "This session has not spawned any sub-agents yet.",
+    "transcriptEmpty": "No messages in this sub-agent transcript yet.",
+    "transcriptUnavailable": "This sub-agent has no readable session yet.",
+    "dispatchPlaceholder": "Send a task to {{role}}…",
+    "dispatchStarted": "Dispatched to {{role}}",
+    "dispatchFailed": "Failed to dispatch the task",
+    "role": {
+      "user": "You",
+      "assistant": "Agent",
+      "system": "System",
+      "toolresult": "Tool"
     }
   },
   "filePreview": {
@@ -528,10 +561,19 @@
       "more": "More file actions"
     },
     "review": {
-      "views": { "label": "Review view", "changes": "Changes", "ai-review": "AI Review", "pull-requests": "Pull Requests" }
+      "views": {
+        "label": "Review view",
+        "changes": "Changes",
+        "ai-review": "AI Review",
+        "pull-requests": "Pull Requests"
+      }
     },
     "browser": {
-      "views": { "label": "Browser view", "preview": "Preview", "live": "Live" }
+      "views": {
+        "label": "Browser view",
+        "preview": "Preview",
+        "live": "Live"
+      }
     },
     "terminal": {
       "title": "Workspace terminal",
@@ -1730,13 +1772,13 @@
     "noFolder": "No folder"
   },
   "workgroups": {
-    "create": "New workgroup",
-    "namePlaceholder": "Workgroup name",
-    "rename": "Rename workgroup",
-    "delete": "Delete workgroup",
-    "moveTo": "Move to workgroup",
-    "noWorkgroup": "No workgroup",
-    "ungrouped": "Ungrouped",
+    "create": "New workstream",
+    "namePlaceholder": "Workstream name",
+    "rename": "Rename workstream",
+    "delete": "Delete workstream",
+    "moveTo": "Move to workstream",
+    "noWorkgroup": "No workstream",
+    "ungrouped": "Unfiled",
     "sessionCount": "{{count}} conversations",
     "status": {
       "running": "Running",
@@ -1745,6 +1787,13 @@
       "done": "Done",
       "stopped": "Stopped",
       "idle": "Idle"
+    },
+    "newStream": "New workstream…",
+    "origin": "From {{name}}",
+    "timeSlice": {
+      "today": "Today",
+      "week": "This week",
+      "earlier": "Earlier"
     }
   },
   "archive": {
@@ -1773,6 +1822,70 @@
     "title": "Question directory",
     "fallback": "Question {{number}}",
     "moreHint": "{{count}} more questions not shown"
+  },
+  "sessionRail": {
+    "title": "Session status",
+    "collapse": "Collapse session status",
+    "expand": "Expand session status",
+    "git": {
+      "title": "Git",
+      "loading": "Reading repository status…",
+      "notARepository": "This project is not a Git repository",
+      "changes": "Changes",
+      "clean": "Clean",
+      "noLineStats": "No line stats",
+      "changeCount": "{{count}} changed file(s)",
+      "tracking": "{{ahead}} ahead · {{behind}} behind",
+      "commitOrPush": "Commit or push",
+      "stash": "Stash",
+      "commit": "Commit",
+      "push": "Push",
+      "stashSuccess": "Changes stashed",
+      "stashFailed": "Failed to stash changes",
+      "commitSuccess": "Changes committed",
+      "commitFailed": "Failed to commit",
+      "pushSuccess": "Changes pushed",
+      "pushFailed": "Failed to push",
+      "approvalRequired": "Approval required - check review panel",
+      "commitMessagePlaceholder": "Enter commit message…",
+      "commitMessageRequired": "Please enter a commit message"
+    },
+    "process": {
+      "title": "Process",
+      "empty": "Nothing running yet",
+      "planTitle": "Plan",
+      "ledgerFallback": "No current goal",
+      "ledgerCounts": "{{active}} active · {{review}} review · {{blocked}} blocked",
+      "queued": "{{count}} queued",
+      "checkpoint": "{{trigger}} checkpoint",
+      "warnings": "{{count}} warning(s)",
+      "drain": "Send now"
+    },
+    "agents": {
+      "title": "Sub-agents",
+      "empty": "No sub-agents in this session",
+      "running": "{{count}} running",
+      "orchestration": "Orchestration: {{workers}} workers · {{pending}} pending · {{failures}} failed",
+      "status": {
+        "started": "Running",
+        "completed": "Done",
+        "error": "Error",
+        "aborted": "Aborted",
+        "verified": "Verified"
+      }
+    },
+    "terminal": {
+      "title": "Terminal",
+      "idleHint": "Open terminal",
+      "pid": "pid {{pid}}",
+      "state": {
+        "idle": "Idle",
+        "starting": "Starting",
+        "running": "Running",
+        "exited": "Exited",
+        "blocked": "Blocked"
+      }
+    }
   },
   "workModePanel": {
     "knowledge": "Knowledge: {{scope}}",
@@ -1832,18 +1945,12 @@
     }
   },
   "assistantRender": {
-    "branch": {
-      "previous": "Previous branch",
-      "next": "Next branch",
-      "count": "{{current}} / {{total}}"
-    },
     "reasoning": {
+      "thinking": "Thinking…",
+      "thought": "Thought",
+      "thoughtFor": "Thought for {{seconds}}s",
+      "toggle": "Toggle thought",
       "title": "Reasoning summary"
-    },
-    "tool": {
-      "running": "Running",
-      "completed": "Done",
-      "error": "Error"
     },
     "usage": {
       "tokens": "tokens"
@@ -1898,6 +2005,14 @@
       "minutes_one": "{{count}} minute",
       "minutes_other": "{{count}} minutes",
       "minutesSeconds": "{{minutes}}m {{seconds}}s"
+    },
+    "badge": {
+      "approvals": "{{count}} approvals",
+      "plan": "{{count}} steps",
+      "agents": "{{count}} agents",
+      "diffs": "{{count}} diffs",
+      "files": "{{count}} files",
+      "terminals": "{{count}} commands"
     }
   },
   "turnWork": {

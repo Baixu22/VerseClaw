@@ -1,7 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { fireEvent, render as rtlRender, screen } from '@testing-library/react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import type { RawMessage } from '@/stores/chat';
+
+/**
+ * ChatMessage mounts Radix tooltips (attachment cards, hover action bars, the
+ * markdown code header). The Chat page supplies the context — src/pages/Chat/
+ * index.tsx wraps its whole tree in `<TooltipProvider>` — so a bare component
+ * render has to supply it too, or every one of those tooltips throws
+ * "`Tooltip` must be used within `TooltipProvider`".
+ */
+function render(ui: ReactElement) {
+  return rtlRender(<TooltipProvider>{ui}</TooltipProvider>);
+}
 
 vi.mock('@/lib/file-preview-client', () => ({
   readBinaryFile: vi.fn(),

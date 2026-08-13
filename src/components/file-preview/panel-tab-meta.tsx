@@ -6,7 +6,7 @@
  * `+` new-tab menu. Both draw labels from the same i18n keys so a chip and
  * its launcher card never drift apart.
  */
-import { History, Layers } from 'lucide-react';
+import { History, Layers, Users } from 'lucide-react';
 import {
   OfficialBrowserIcon,
   OfficialFilesIcon,
@@ -75,6 +75,13 @@ export const PANEL_TAB_META: Record<PanelTabKind, PanelTabMeta> = {
     shortcut: 'A',
     icon: History,
   },
+  agents: {
+    labelKey: 'artifactPanel.tabs.agents',
+    labelFallback: 'Sub-agents',
+    descriptionKey: 'artifactPanel.launcher.entries.agents',
+    descriptionFallback: 'Read a sub-agent transcript and dispatch new work.',
+    icon: Users,
+  },
 };
 
 /** Launcher cards: high-frequency workspace entries first, file views after. */
@@ -85,6 +92,7 @@ export const LAUNCHER_TAB_KINDS: readonly PanelTabKind[] = [
   'files',
   'artifact',
   'audit',
+  'agents',
 ];
 
 /** `+` menu order mirrors the launcher so the two never feel unrelated. */

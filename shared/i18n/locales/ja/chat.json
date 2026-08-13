@@ -114,11 +114,18 @@
     "source": {
       "terminal": "ターミナル",
       "file": "ファイル",
-      "remoteControl": "リモート制御"
+      "remoteControl": "リモート制御",
+      "gateway": "ゲートウェイ",
+      "mcp": "MCP",
+      "git": "Git",
+      "cleaner": "クリーンアップ"
     },
     "risk": {
       "write": "書き込み",
-      "dangerous": "高リスク"
+      "dangerous": "高リスク",
+      "network": "ネットワーク",
+      "external-write": "外部書き込み",
+      "destructive": "破壊的"
     },
     "status": {
       "pending": "保留中",
@@ -168,6 +175,14 @@
     }
   },
   "toolUi": {
+    "approval": {
+      "host": {
+        "title": "許可が必要です",
+        "approve": "承認",
+        "deny": "拒否",
+        "retryRequired": "決定を記録しました。エージェントに操作の再試行を依頼してください。"
+      }
+    },
     "actions": {
       "back": "戻る",
       "next": "次へ",
@@ -362,7 +377,8 @@
       "review": "レビュー",
       "terminal": "ターミナル",
       "files": "ファイル",
-      "audit": "監査"
+      "audit": "監査",
+      "agents": "サブエージェント"
     },
     "workspaceTabs": {
       "files": "ファイル",
@@ -391,7 +407,8 @@
         "review": "変更、ブランチ、stash、PR をレビューします。",
         "reviewBranch": "{{branch}} の変更をレビューします。",
         "web": "ローカルプレビューを開くか URL を確認します。",
-        "audit": "権限リクエストと最近の承認を確認します。"
+        "audit": "権限リクエストと最近の承認を確認します。",
+        "agents": "サブエージェントの記録を確認し、新しいタスクを割り当てます。"
       },
       "badges": {
         "changes": "{{count}} 件の変更",
@@ -414,6 +431,22 @@
     "preview": {
       "emptyTitle": "ファイルが選択されていません",
       "emptyHint": "まず会話内のファイルカードをクリックしてファイルを選択すると、ここにプレビューが表示されます。"
+    }
+  },
+  "agentsPanel": {
+    "title": "サブエージェント",
+    "description": "このセッションの記録とタスク割り当て",
+    "empty": "このセッションではまだサブエージェントが生成されていません。",
+    "transcriptEmpty": "このサブエージェントにはまだメッセージがありません。",
+    "transcriptUnavailable": "このサブエージェントには読み取れるセッションがまだありません。",
+    "dispatchPlaceholder": "{{role}} にタスクを送信…",
+    "dispatchStarted": "{{role}} に割り当てました",
+    "dispatchFailed": "タスクの割り当てに失敗しました",
+    "role": {
+      "user": "あなた",
+      "assistant": "エージェント",
+      "system": "システム",
+      "toolresult": "ツール"
     }
   },
   "filePreview": {
@@ -528,10 +561,19 @@
       "more": "その他のファイル操作"
     },
     "review": {
-      "views": { "label": "レビュー表示", "changes": "変更", "ai-review": "AI レビュー", "pull-requests": "プルリクエスト" }
+      "views": {
+        "label": "レビュー表示",
+        "changes": "変更",
+        "ai-review": "AI レビュー",
+        "pull-requests": "プルリクエスト"
+      }
     },
     "browser": {
-      "views": { "label": "ブラウザー表示", "preview": "プレビュー", "live": "ライブ" }
+      "views": {
+        "label": "ブラウザー表示",
+        "preview": "プレビュー",
+        "live": "ライブ"
+      }
     },
     "terminal": {
       "title": "ワークスペース端末",
@@ -1730,12 +1772,12 @@
     "noFolder": "フォルダなし"
   },
   "workgroups": {
-    "create": "新しいワークグループ",
-    "namePlaceholder": "ワークグループ名",
-    "rename": "ワークグループ名を変更",
-    "delete": "ワークグループを削除",
-    "moveTo": "ワークグループへ移動",
-    "noWorkgroup": "ワークグループなし",
+    "create": "新しいワークストリーム",
+    "namePlaceholder": "ワークストリーム名",
+    "rename": "ワークストリーム名を変更",
+    "delete": "ワークストリームを削除",
+    "moveTo": "ワークストリームへ移動",
+    "noWorkgroup": "ワークストリームなし",
     "ungrouped": "未分類",
     "sessionCount": "{{count}} 件の会話",
     "status": {
@@ -1745,6 +1787,13 @@
       "done": "完了",
       "stopped": "停止",
       "idle": "待機"
+    },
+    "newStream": "新しいワークストリーム…",
+    "origin": "{{name}} から派生",
+    "timeSlice": {
+      "today": "今日",
+      "week": "今週",
+      "earlier": "それ以前"
     }
   },
   "archive": {
@@ -1773,6 +1822,58 @@
     "title": "質問目次",
     "fallback": "質問 {{number}}",
     "moreHint": "さらに {{count}} 件の質問は表示されていません"
+  },
+  "sessionRail": {
+    "title": "セッション状態",
+    "collapse": "セッション状態を折りたたむ",
+    "expand": "セッション状態を展開",
+    "git": {
+      "title": "Git",
+      "loading": "リポジトリの状態を読み込み中…",
+      "notARepository": "このプロジェクトは Git リポジトリではありません",
+      "changes": "変更",
+      "clean": "クリーン",
+      "noLineStats": "行数の統計なし",
+      "changeCount": "{{count}} 個のファイルが変更されています",
+      "tracking": "{{ahead}} 先行 · {{behind}} 遅れ",
+      "commitOrPush": "コミットまたはプッシュ"
+    },
+    "process": {
+      "title": "プロセス",
+      "empty": "実行中のタスクはありません",
+      "planTitle": "計画",
+      "ledgerFallback": "現在の目標はありません",
+      "ledgerCounts": "進行中 {{active}} · レビュー {{review}} · ブロック {{blocked}}",
+      "queued": "待機 {{count}}",
+      "checkpoint": "チェックポイント {{trigger}}",
+      "warnings": "警告 {{count}}",
+      "drain": "今すぐ処理"
+    },
+    "agents": {
+      "title": "サブエージェント",
+      "empty": "このセッションにサブエージェントはありません",
+      "running": "{{count}} 件実行中",
+      "orchestration": "オーケストレーション: worker {{workers}} · 保留 {{pending}} · 失敗 {{failures}}",
+      "status": {
+        "started": "実行中",
+        "completed": "完了",
+        "error": "エラー",
+        "aborted": "中止",
+        "verified": "検証済み"
+      }
+    },
+    "terminal": {
+      "title": "ターミナル",
+      "idleHint": "ターミナルを開く",
+      "pid": "pid {{pid}}",
+      "state": {
+        "idle": "アイドル",
+        "starting": "起動中",
+        "running": "実行中",
+        "exited": "終了",
+        "blocked": "ブロック"
+      }
+    }
   },
   "workModePanel": {
     "knowledge": "ナレッジ: {{scope}}",
@@ -1832,18 +1933,12 @@
     }
   },
   "assistantRender": {
-    "branch": {
-      "previous": "????",
-      "next": "????",
-      "count": "{{current}} / {{total}}"
-    },
     "reasoning": {
+      "thinking": "思考中…",
+      "thought": "思考完了",
+      "thoughtFor": "{{seconds}} 秒間思考",
+      "toggle": "思考の表示を切り替える",
       "title": "??????"
-    },
-    "tool": {
-      "running": "???",
-      "completed": "??",
-      "error": "???"
     },
     "usage": {
       "tokens": "tokens"
@@ -1898,6 +1993,14 @@
       "minutes_one": "{{count}} 分",
       "minutes_other": "{{count}} 分",
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
+    },
+    "badge": {
+      "approvals": "承認待ち {{count}} 件",
+      "plan": "計画 {{count}} ステップ",
+      "agents": "エージェント {{count}} 体",
+      "diffs": "差分 {{count}} 件",
+      "files": "ファイル {{count}} 件",
+      "terminals": "コマンド {{count}} 件"
     }
   },
   "turnWork": {
