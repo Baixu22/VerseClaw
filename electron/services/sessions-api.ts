@@ -19,6 +19,7 @@ import type {
 import type {
   CompressionArtifact,
   CompressionArtifactQuality,
+  SessionDeleteResult,
   SessionExpandSelectorResult,
   SessionHandoffSource,
   SessionRecallDiagnostic,
@@ -941,7 +942,7 @@ async function loadSessionTranscriptByKey(sessionKey: string, limit: number): Pr
   }
 }
 
-async function deleteSession(sessionKey: string): Promise<{ success: boolean; error?: string }> {
+async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
   if (!sessionKey || !sessionKey.startsWith('agent:')) {
     return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
   }
@@ -1014,6 +1015,24 @@ async function deleteSession(sessionKey: string): Promise<{ success: boolean; er
     logger.warn(`[session:delete] Failed to unlink context archive ${failedPath}: ${error}`);
   }
 
+  // R0-2: unlink failures must be visible. Keep the sessions.json entry so
+  // the user can retry the delete instead of seeing a fake success with
+  // orphaned artefacts on disk.
+  const unlinkErrors = [...sweep.errors, ...archiveCleanup.errors];
+  if (unlinkErrors.length > 0) {
+    const remainingPaths = unlinkErrors.map(({ path }) => path);
+    const detail = unlinkErrors
+      .map(({ path, error }) => `${path} (${String(error)})`)
+      .join('; ');
+    logger.warn(`[session:delete] ${unlinkErrors.length} artefact(s) could not be unlinked for ${baseId}; keeping sessions.json entry for retry`);
+    return {
+      success: false,
+      partial: true,
+      error: `Failed to unlink ${unlinkErrors.length} session artefact(s): ${detail}`,
+      remainingPaths,
+    };
+  }
+
   try {
     const raw2 = await fsP.readFile(sessionsJsonPath, 'utf8');
     const json2 = JSON.parse(raw2) as Record<string, unknown>;
@@ -1022,6 +1041,11 @@ async function deleteSession(sessionKey: string): Promise<{ success: boolean; er
     logger.info(`[session:delete] Removed "${sessionKey}" from sessions.json`);
   } catch (error) {
     logger.warn(`[session:delete] Could not update sessions.json: ${String(error)}`);
+    return {
+      success: false,
+      partial: true,
+      error: `Session files were removed but sessions.json could not be updated: ${String(error)}`,
+    };
   }
 
   return { success: true };
@@ -1296,7 +1320,10 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
 
   await writeArchiveIndex(archiveIndexPath, { version: 1, entries: [] });
   logger.info(`[session:emptyArchive] Cleared ${index.entries.length} archive entries for ${agentId}`);
-  return firstError ? { success: true, error: firstError } : { success: true };
+  if (firstError) {
+    return { success: false, error: `Some archived session files could not be removed: ${firstError}` };
+  }
+  return { success: true };
 }
 
 export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {}): CompleteHostServiceRegistry['sessions'] {
