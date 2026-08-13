@@ -39,6 +39,21 @@ const execFileAsync = promisify(execFile);
 const OFFICE_WATCH_READY_TIMEOUT_MS = 8_000;
 const OFFICE_WATCH_CONNECT_TIMEOUT_MS = 500;
 const MAX_OFFICE_WATCHES = 32;
+
+/**
+ * R0-5: on Windows the patched Node (CVE-2024-27980) rejects spawning
+ * .cmd/.bat files directly with EINVAL. Route those through COMSPEC.
+ */
+export function spawnOfficeCli(
+  binary: string,
+  args: string[],
+  options: Parameters<typeof spawn>[2],
+): OfficeWatchChild {
+  if (process.platform === 'win32' && /\.(cmd|bat)$/i.test(binary)) {
+    return spawn(process.env.COMSPEC || 'cmd.exe', ['/d', '/s', '/c', binary, ...args], options) as OfficeWatchChild;
+  }
+  return spawn(binary, args, options) as OfficeWatchChild;
+}
 const OFFICECLI_INSTALL_TIMEOUT_MS = 600_000;
 const OFFICECLI_INSTALL_PS1_MIRROR_URL = 'https://d.officecli.ai/install.ps1';
 const OFFICECLI_INSTALL_PS1_GITHUB_URL = 'https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.ps1';
@@ -1142,7 +1157,11 @@ export function createOfficeToolsApi(options: OfficeToolsApiOptions = {}): Compl
         if (!binary) throw new Error('NOT_INSTALLED: officecli is not installed');
         const port = await allocateFreePort();
         const cap = randomUUID().replace(/-/g, '');
-        const child = spawn(binary, ['watch', target, '--port', String(port)], {
+        // R0-5: PATH resolution can yield officecli.CMD/.BAT on Windows — the
+        // CVE-2024-27980 patched Node rejects spawning those directly with
+        // EINVAL. Route .cmd/.bat through the COMSPEC shell instead (see
+        // openclaw_runtime/src/process/exec.ts resolveNpmArgvForWindows).
+        const child = spawnOfficeCli(binary, ['watch', target, '--port', String(port)], {
           windowsHide: true,
           stdio: ['ignore', 'pipe', 'pipe'],
           cwd: dirname(target),
