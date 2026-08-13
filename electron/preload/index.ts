@@ -9,6 +9,13 @@ import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
 const validStaticEventChannels: Set<string> = new Set(
   Object.values(HOST_EVENT_CHANNELS).flatMap((moduleChannels) => Object.values(moduleChannels)),
 );
+// R0-5: on()/once() wrap callbacks to strip the IpcRendererEvent arg — off()
+// must remove the WRAPPER, not the raw callback, or listeners leak forever.
+// Keyed by callback (WeakMap) -> channel -> wrapper.
+const eventWrapperByCallback = new WeakMap<
+  (...args: unknown[]) => void,
+  Map<string, (event: Electron.IpcRendererEvent, ...args: unknown[]) => void>
+>();
 const DYNAMIC_CHANNEL_EVENT_RE = /^channel:[a-z0-9_-]+-(?:qr|success|error)$/i;
 
 function isValidEventChannel(channel: string): boolean {
@@ -100,10 +107,17 @@ const electronAPI = {
           callback(...args);
         };
         ipcRenderer.on(channel, subscription);
+        let byChannel = eventWrapperByCallback.get(callback);
+        if (!byChannel) {
+          byChannel = new Map();
+          eventWrapperByCallback.set(callback, byChannel);
+        }
+        byChannel.set(channel, subscription);
 
         // Return unsubscribe function
         return () => {
           ipcRenderer.removeListener(channel, subscription);
+          byChannel?.delete(channel);
         };
       }
 
@@ -115,20 +129,35 @@ const electronAPI = {
      */
     once: (channel: string, callback: (...args: unknown[]) => void) => {
       if (isValidEventChannel(channel)) {
-        ipcRenderer.once(channel, (_event, ...args) => callback(...args));
-        return;
+        const subscription = (_event: Electron.IpcRendererEvent, ...args: unknown[]) => {
+          callback(...args);
+        };
+        ipcRenderer.once(channel, subscription);
+        // R0-5: cancellable one-shot — the returned unsubscribe removes the
+        // wrapper before it fires.
+        return () => {
+          ipcRenderer.removeListener(channel, subscription);
+        };
       }
 
       throw new Error(`Invalid IPC channel: ${channel}`);
     },
 
     /**
-     * Remove all listeners for a channel
+     * Remove listeners for a channel
      */
     off: (channel: string, callback?: (...args: unknown[]) => void) => {
       if (callback) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ipcRenderer.removeListener(channel, callback as any);
+        const wrapper = eventWrapperByCallback.get(callback)?.get(channel);
+        if (wrapper) {
+          // Remove the registered wrapper (the raw callback was never added).
+          ipcRenderer.removeListener(channel, wrapper);
+          eventWrapperByCallback.get(callback)?.delete(channel);
+        } else {
+          // Fallback for listeners registered outside this bridge.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ipcRenderer.removeListener(channel, callback as any);
+        }
       } else {
         ipcRenderer.removeAllListeners(channel);
       }
