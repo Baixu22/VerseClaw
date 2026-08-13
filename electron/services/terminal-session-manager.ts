@@ -206,7 +206,11 @@ export class TerminalSessionManager {
   }
 
   close(sessionId: string, reason: TerminalCloseReason = 'user-close'): TerminalSessionSnapshot {
-    const session = this.requireSession(sessionId);
+    const session = this.sessions.get(sessionId);
+    // R0-3: records are reclaimed on exit — closing an already-reclaimed (or
+    // unknown) session is an idempotent no-op, mirroring status()'s idle
+    // semantics, so a renderer "End" click after exit cannot throw.
+    if (!session) return this.idleSnapshot();
     this.closeSession(session, reason);
     return this.toSnapshot(session, true);
   }
