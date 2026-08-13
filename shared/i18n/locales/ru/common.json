@@ -26,118 +26,122 @@
     "motionNormal": "Анимация включена",
     "motionReduced": "Уменьшение движения"
   },
-    "sidebar": {
-        "chat": "Чат",
-        "newChat": "Новый чат",
-        "newTask": "Новая задача",
-        "inbox": "Входящие",
-        "scheduled": "Запланировано",
-        "knowledge": "Знания",
-        "cronTasks": "Расписание",
-        "skills": "Инструменты",
-        "agents": "Агенты",
-        "channels": "Каналы",
-        "dashboard": "Панель",
-        "settings": "Настройки",
-        "devConsole": "Консоль разработчика",
-        "models": "Модели",
-        "deleteSessionConfirm": "Удалить \"{{label}}\"?",
-        "openClawPage": "Страница OpenClaw",
-        "openClawDreams": "Dreams",
-        "renameSession": "Переименовать",
-        "deleteSession": "Удалить",
-        "renameSessionPlaceholder": "Название сессии",
-        "saveSessionRename": "Сохранить название",
-        "cancelSessionRename": "Отменить переименование",
-        "imageGeneration": "Генерация изображений",
-        "observability": "Наблюдаемость",
-        "billing": "Биллинг",
-        "remoteTasks": "Удалённые задачи",
-        "browser": "Браузер",
-        "collapseSidebar": "Свернуть боковую панель",
-        "expandSidebar": "Развернуть боковую панель"
+  "sidebar": {
+    "chat": "Чат",
+    "newChat": "Новый чат",
+    "newTask": "Новая задача",
+    "inbox": "Входящие",
+    "scheduled": "Запланировано",
+    "knowledge": "Знания",
+    "cronTasks": "Расписание",
+    "skills": "Инструменты",
+    "agents": "Агенты",
+    "channels": "Каналы",
+    "dashboard": "Панель",
+    "settings": "Настройки",
+    "devConsole": "Консоль разработчика",
+    "models": "Модели",
+    "deleteSessionConfirm": "Удалить \"{{label}}\"?",
+    "openClawPage": "Страница OpenClaw",
+    "openClawDreams": "Dreams",
+    "renameSession": "Переименовать",
+    "deleteSession": "Удалить",
+    "renameSessionPlaceholder": "Название сессии",
+    "saveSessionRename": "Сохранить название",
+    "cancelSessionRename": "Отменить переименование",
+    "imageGeneration": "Генерация изображений",
+    "observability": "Наблюдаемость",
+    "billing": "Биллинг",
+    "remoteTasks": "Удалённые задачи",
+    "browser": "Браузер",
+    "collapseSidebar": "Свернуть боковую панель",
+    "expandSidebar": "Развернуть боковую панель"
+  },
+  "actions": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "refresh": "Обновить",
+    "close": "Закрыть",
+    "copy": "Копировать",
+    "search": "Поиск",
+    "confirm": "Подтвердить",
+    "dismiss": "Отклонить",
+    "load": "Загрузить",
+    "install": "Установить",
+    "uninstall": "Удалить",
+    "enable": "Включить",
+    "disable": "Выключить",
+    "back": "Назад",
+    "next": "Далее",
+    "skip": "Пропустить",
+    "restart": "Перезапустить",
+    "show": "Показать",
+    "hide": "Скрыть",
+    "clear": "Очистить"
+  },
+  "window": {
+    "minimize": "Свернуть окно",
+    "maximize": "Развернуть окно",
+    "restore": "Восстановить окно",
+    "close": "Закрыть окно"
+  },
+  "status": {
+    "running": "Запущен",
+    "stopped": "Остановлен",
+    "error": "Ошибка",
+    "connected": "Подключён",
+    "disconnected": "Отключён",
+    "enabled": "Включён",
+    "disabled": "Выключен",
+    "active": "Активен",
+    "paused": "Приостановлен",
+    "configured": "Настроен",
+    "loading": "Загрузка...",
+    "saving": "Сохранение..."
+  },
+  "gateway": {
+    "notRunning": "Шлюз не запущен",
+    "notRunningDesc": "Для использования этой функции требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
+    "restarting": "Шлюз перезапускается",
+    "warning": "Шлюз не запущен."
+  },
+  "storageHealth": {
+    "ramLow": "Память заканчивается",
+    "diskLow": "Дисковое пространство заканчивается",
+    "bannerLow": "Мало места — нажмите для очистки"
+  },
+  "resourceTracker": {
+    "chip": {
+      "ariaLabel": "{{count}} активных ресурсов",
+      "tooltip": "{{count}} активных ресурсов",
+      "warningCount": "{{count}} простаивает"
     },
-    "actions": {
-        "save": "Сохранить",
-        "cancel": "Отмена",
-        "delete": "Удалить",
-        "edit": "Редактировать",
-        "refresh": "Обновить",
-        "close": "Закрыть",
-        "copy": "Копировать",
-        "search": "Поиск",
-        "confirm": "Подтвердить",
-        "dismiss": "Отклонить",
-        "load": "Загрузить",
-        "install": "Установить",
-        "uninstall": "Удалить",
-        "enable": "Включить",
-        "disable": "Выключить",
-        "back": "Назад",
-        "next": "Далее",
-        "skip": "Пропустить",
-        "restart": "Перезапустить",
-        "show": "Показать",
-        "hide": "Скрыть",
-        "clear": "Очистить"
-    },
-    "window": {
-        "minimize": "Свернуть окно",
-        "maximize": "Развернуть окно",
-        "restore": "Восстановить окно",
-        "close": "Закрыть окно"
+    "popover": {
+      "title": "Активные ресурсы",
+      "close": "Закрыть список ресурсов",
+      "empty": "Отслеживаемых ресурсов нет",
+      "stopAll": "Остановить все",
+      "autoCleanup": "Неактивные ресурсы автоматически очищаются через {{minutes}} минут."
     },
     "status": {
-        "running": "Запущен",
-        "stopped": "Остановлен",
-        "error": "Ошибка",
-        "connected": "Подключён",
-        "disconnected": "Отключён",
-        "enabled": "Включён",
-        "disabled": "Выключен",
-        "active": "Активен",
-        "paused": "Приостановлен",
-        "configured": "Настроен",
-        "loading": "Загрузка...",
-        "saving": "Сохранение..."
+      "healthy": "активен",
+      "idle": "простаивает",
+      "unreachable": "недоступен"
     },
-    "gateway": {
-        "notRunning": "Шлюз не запущен",
-        "notRunningDesc": "Для использования этой функции требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
-        "restarting": "Шлюз перезапускается",
-        "warning": "Шлюз не запущен."
+    "timeAgo": {
+      "justNow": "только что",
+      "m": "{{count}} мин",
+      "h": "{{count}} ч"
     },
-    "storageHealth": {
-        "ramLow": "Память заканчивается",
-        "diskLow": "Дисковое пространство заканчивается",
-        "bannerLow": "Мало места — нажмите для очистки"
-    },
-    "resourceTracker": {
-        "chip": {
-            "ariaLabel": "{{count}} активных ресурсов",
-            "tooltip": "{{count}} активных ресурсов",
-            "warningCount": "{{count}} простаивает"
-        },
-        "popover": {
-            "title": "Активные ресурсы",
-            "close": "Закрыть список ресурсов",
-            "empty": "Отслеживаемых ресурсов нет",
-            "stopAll": "Остановить все",
-            "autoCleanup": "Неактивные ресурсы автоматически очищаются через {{minutes}} минут."
-        },
-        "status": {
-            "healthy": "активен",
-            "idle": "простаивает",
-            "unreachable": "недоступен"
-        },
-        "timeAgo": {
-            "justNow": "только что",
-            "m": "{{count}} мин",
-            "h": "{{count}} ч"
-        },
-        "pid": "pid {{pid}}",
-        "fromSession": "из {{session}}",
-        "stop": "Остановить",
-        "stopResource": "Остановить {{label}}"
-    }
+    "pid": "pid {{pid}}",
+    "fromSession": "из {{session}}",
+    "stop": "Остановить",
+    "stopResource": "Остановить {{label}}"
+  },
+  "errorBoundary": {
+    "description": "Произошла непредвиденная ошибка. Перезагрузите, чтобы продолжить, или сообщите указанный ниже код ошибки в поддержку.",
+    "errorReference": "Код ошибки:"
+  }
 }
