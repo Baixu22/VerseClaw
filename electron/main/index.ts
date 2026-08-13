@@ -7,7 +7,8 @@ import { join } from 'path';
 import { openExternalSafe } from '../utils/safe-open-external';
 import { registerWebViewSecurity } from '../utils/register-webview-security';
 import { GatewayManager } from '../gateway/manager';
-import { registerIpcHandlers } from './ipc-handlers';
+import { getTerminalSessionManager, registerIpcHandlers } from './ipc-handlers';
+import { disposeCronMaintenance } from '../services/cron-maintenance';
 import { HostApiRegistry } from './ipc/host-invoke';
 import { getResourceTracker } from '../services/resource-tracker';
 import { createTray, syncTrayIconWithSystemTheme } from './tray';
@@ -1353,7 +1354,11 @@ if (gotTheLock) {
   app.on('will-quit', () => {
     disposeVtokenBridge();
     stopAllOfficeWatches();
-    getResourceTracker().stop();
+    // R0-3: reclaim every live pty session and stop tracked resources
+    // (shutdown() = stop timers + kill tracked processes, best-effort).
+    getTerminalSessionManager()?.shutdownAll();
+    void getResourceTracker().shutdown();
+    disposeCronMaintenance();
     releaseProcessInstanceFileLock();
   });
 
