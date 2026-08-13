@@ -412,25 +412,7 @@ export class WebPreviewManager {
         res.end(String(error));
       });
     });
-    server.on('upgrade', (req, socket, head) => {
-      const target = new URL(req.url || '/', baseUrl);
-      const port = Number(target.port || (target.protocol === 'https:' ? 443 : 80));
-      const upstream = netConnect(port, target.hostname, () => {
-        upstream.write(`${req.method} ${target.pathname}${target.search} HTTP/${req.httpVersion}\r\n`);
-        for (const [name, value] of Object.entries(req.headers)) {
-          if (Array.isArray(value)) {
-            for (const entry of value) upstream.write(`${name}: ${entry}\r\n`);
-          } else if (value !== undefined) {
-            upstream.write(`${name}: ${value}\r\n`);
-          }
-        }
-        upstream.write('\r\n');
-        if (head.length > 0) upstream.write(head);
-        upstream.pipe(socket);
-        socket.pipe(upstream);
-      });
-      upstream.on('error', () => socket.destroy());
-    });
+    attachWebSocketProxyUpgrade(server, baseUrl);
     await listen(server);
     const address = server.address() as AddressInfo;
     return { server, previewUrl: `http://127.0.0.1:${address.port}/`, port: address.port };
@@ -541,6 +523,59 @@ function listen(server: Server): Promise<void> {
   return new Promise((resolvePromise, reject) => {
     server.once('error', reject);
     server.listen(0, '127.0.0.1', () => resolvePromise());
+  });
+}
+
+type UpgradeConnect = (port: number, host: string) => import('node:net').Socket;
+
+/**
+ * Wire WebSocket upgrade proxying onto `server`. `connect` is injectable so the
+ * upgrade path can be unit-tested without a real upstream TCP endpoint.
+ *
+ * Fail-closed guarantees (see R0-1):
+ * - The downstream client socket gets an `error` listener so an ECONNRESET from
+ *   a refresh/close is destroyed instead of escalating to an uncaughtException.
+ * - A never-connecting upstream is destroyed (along with the client socket)
+ *   after a hard timeout, so a hung proxy cannot pin sockets open forever.
+ */
+export function attachWebSocketProxyUpgrade(
+  server: Server,
+  baseUrl: URL,
+  connect: UpgradeConnect = (port, host) => netConnect(port, host),
+): void {
+  server.on('upgrade', (req, socket, head) => {
+    const target = new URL(req.url || '/', baseUrl);
+    const port = Number(target.port || (target.protocol === 'https:' ? 443 : 80));
+    const upstream = connect(port, target.hostname);
+
+    // A client refresh/close mid-upgrade emits ECONNRESET on the downstream
+    // socket; without an error listener Node escalates it to an
+    // uncaughtException that tears down the whole app. Destroy instead.
+    socket.on('error', () => socket.destroy());
+
+    // A never-connecting upstream must not hold the socket open forever.
+    const connectTimeout = setTimeout(() => {
+      upstream.destroy();
+      socket.destroy();
+    }, 30_000);
+    connectTimeout.unref();
+
+    upstream.once('connect', () => {
+      clearTimeout(connectTimeout);
+      upstream.write(`${req.method} ${target.pathname}${target.search} HTTP/${req.httpVersion}\r\n`);
+      for (const [name, value] of Object.entries(req.headers)) {
+        if (Array.isArray(value)) {
+          for (const entry of value) upstream.write(`${name}: ${entry}\r\n`);
+        } else if (value !== undefined) {
+          upstream.write(`${name}: ${value}\r\n`);
+        }
+      }
+      upstream.write('\r\n');
+      if (head.length > 0) upstream.write(head);
+      upstream.pipe(socket);
+      socket.pipe(upstream);
+    });
+    upstream.on('error', () => socket.destroy());
   });
 }
 
