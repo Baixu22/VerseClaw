@@ -271,6 +271,7 @@
         "lastRun": "Last run",
         "success": "Success",
         "failed": "Failed",
+        "repairDegraded": "Auto-repair failed — this task could not be fixed.",
         "loading": "Loading run details...",
         "empty": "No run details are available yet.",
         "structuredResult": "Structured result",

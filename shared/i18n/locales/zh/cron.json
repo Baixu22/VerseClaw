@@ -271,6 +271,7 @@
         "lastRun": "Last run",
         "success": "Success",
         "failed": "Failed",
+        "repairDegraded": "自动修复失败——无法修复此任务。",
         "loading": "Loading run details...",
         "empty": "No run details are available yet.",
         "structuredResult": "Structured result",

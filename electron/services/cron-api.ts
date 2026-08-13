@@ -74,6 +74,8 @@ interface GatewayCronJob {
     lastError?: string;
     lastDurationMs?: number;
   };
+  /** Set when an auto-repair (delivery/agentId) RPC failed — the gateway copy is unchanged. */
+  repairDegraded?: boolean;
 }
 
 interface CronRunLogEntry {
@@ -507,6 +509,7 @@ function transformCronJob(job: GatewayCronJob, source: CronJobSource = 'gateway'
     lastRun,
     nextRun,
     agentId,
+    ...(job.repairDegraded ? { repairDegraded: true } : {}),
   };
 }
 
@@ -531,40 +534,42 @@ async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> 
   }
 
   if (!usedFallback && jobs.length > 0) {
-    repairCronJobsInBackground(gatewayManager, jobs);
+    await repairCronJobs(gatewayManager, jobs);
   }
 
   return jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
 }
 
-function repairCronJobsInBackground(gatewayManager: GatewayManager, jobs: GatewayCronJob[]): void {
+/**
+ * Repair known gateway-side cron misconfigurations (announce delivery without
+ * a channel, missing agentId). Each repair is an RPC round-trip: the local job
+ * projection is only mutated AFTER the RPC succeeds. Failures leave the
+ * gateway copy untouched and mark the job `repairDegraded` so the UI shows
+ * the repair did not happen instead of a fake success.
+ */
+async function repairCronJobs(gatewayManager: GatewayManager, jobs: GatewayCronJob[]): Promise<void> {
   const jobsToRepairDelivery = jobs.filter((job) => {
     const isIsolatedAgent = (job.sessionTarget === 'isolated' || !job.sessionTarget)
       && job.payload?.kind === 'agentTurn';
     return isIsolatedAgent && job.delivery?.mode === 'announce' && !job.delivery?.channel;
   });
 
-  if (jobsToRepairDelivery.length > 0) {
-    void (async () => {
-      for (const job of jobsToRepairDelivery) {
-        try {
-          await gatewayManager.rpc('cron.update', {
-            id: job.id,
-            patch: { delivery: { mode: 'none' } },
-          });
-        } catch {
-          // ignore per-job repair failure
-        }
-      }
-    })();
-    for (const job of jobsToRepairDelivery) {
+  await Promise.all(jobsToRepairDelivery.map(async (job) => {
+    try {
+      await gatewayManager.rpc('cron.update', {
+        id: job.id,
+        patch: { delivery: { mode: 'none' } },
+      }, 8000);
       job.delivery = { mode: 'none' };
       if (job.state?.lastError?.includes('Channel is required')) {
         job.state.lastError = undefined;
         job.state.lastStatus = 'ok';
       }
+    } catch (error) {
+      job.repairDegraded = true;
+      console.warn(`[cron] Failed to repair delivery for job "${job.id}":`, error);
     }
-  }
+  }));
 
   const jobsToRepairAgent = jobs.filter((job) => {
     const jobAgentId = (job as unknown as { agentId?: string }).agentId;
@@ -577,34 +582,31 @@ function repairCronJobsInBackground(gatewayManager: GatewayManager, jobs: Gatewa
     );
   });
 
-  if (jobsToRepairAgent.length > 0) {
-    void (async () => {
-      for (const job of jobsToRepairAgent) {
-        try {
-          const channel = toOpenClawChannelType(job.delivery!.channel!);
-          const accountId = job.delivery!.accountId;
-          const toAddress = job.delivery!.to;
-          let correctAgentId = await resolveAgentIdFromChannel(channel, accountId);
-          let resolvedAccountId: string | null = null;
-          if (!correctAgentId && !accountId && toAddress) {
-            resolvedAccountId = await resolveAccountIdFromSessionHistory(toAddress, channel);
-            if (resolvedAccountId) {
-              correctAgentId = await resolveAgentIdFromChannel(channel, resolvedAccountId);
-            }
-          }
-          if (correctAgentId) {
-            const patch: Record<string, unknown> = { agentId: correctAgentId };
-            if (resolvedAccountId && !accountId) patch.delivery = { accountId: resolvedAccountId };
-            await gatewayManager.rpc('cron.update', { id: job.id, patch });
-            (job as unknown as { agentId: string }).agentId = correctAgentId;
-            if (resolvedAccountId && !accountId && job.delivery) job.delivery.accountId = resolvedAccountId;
-          }
-        } catch {
-          // ignore per-job repair failure
+  await Promise.all(jobsToRepairAgent.map(async (job) => {
+    try {
+      const channel = toOpenClawChannelType(job.delivery!.channel!);
+      const accountId = job.delivery!.accountId;
+      const toAddress = job.delivery!.to;
+      let correctAgentId = await resolveAgentIdFromChannel(channel, accountId);
+      let resolvedAccountId: string | null = null;
+      if (!correctAgentId && !accountId && toAddress) {
+        resolvedAccountId = await resolveAccountIdFromSessionHistory(toAddress, channel);
+        if (resolvedAccountId) {
+          correctAgentId = await resolveAgentIdFromChannel(channel, resolvedAccountId);
         }
       }
-    })();
-  }
+      if (correctAgentId) {
+        const patch: Record<string, unknown> = { agentId: correctAgentId };
+        if (resolvedAccountId && !accountId) patch.delivery = { accountId: resolvedAccountId };
+        await gatewayManager.rpc('cron.update', { id: job.id, patch }, 8000);
+        (job as unknown as { agentId: string }).agentId = correctAgentId;
+        if (resolvedAccountId && !accountId && job.delivery) job.delivery.accountId = resolvedAccountId;
+      }
+    } catch (error) {
+      job.repairDegraded = true;
+      console.warn(`[cron] Failed to repair agentId for job "${job.id}":`, error);
+    }
+  }));
 }
 
 function getId(payload: unknown): string {

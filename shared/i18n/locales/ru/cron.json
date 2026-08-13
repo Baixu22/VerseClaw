@@ -271,6 +271,7 @@
         "lastRun": "Last run",
         "success": "Success",
         "failed": "Failed",
+        "repairDegraded": "Автоисправление не удалось — задачу не удалось исправить.",
         "loading": "Loading run details...",
         "empty": "No run details are available yet.",
         "structuredResult": "Structured result",

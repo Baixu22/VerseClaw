@@ -1907,15 +1907,22 @@ function CronJobDetailsPanel({
       className="absolute inset-y-0 right-0 z-20 flex w-full max-w-none flex-col border-l border-border bg-background shadow-2xl lg:static lg:z-auto lg:w-[min(42vw,36rem)] lg:min-w-[22rem] lg:max-w-xl lg:shadow-none"
     >
       <div className="flex h-14 shrink-0 items-center justify-between gap-3 px-5">
-        <span
-          className={cn(
-            'rounded-full px-2 py-0.5 text-meta font-medium',
-            job.enabled
-              ? 'bg-green-500/10 text-green-700 dark:text-green-400'
-              : 'bg-black/5 text-muted-foreground dark:bg-white/10',
-          )}
-        >
-          {job.enabled ? t('stats.active') : t('stats.paused')}
+        <span className="flex items-center gap-2">
+          <span
+            className={cn(
+              'rounded-full px-2 py-0.5 text-meta font-medium',
+              job.enabled
+                ? 'bg-green-500/10 text-green-700 dark:text-green-400'
+                : 'bg-black/5 text-muted-foreground dark:bg-white/10',
+            )}
+          >
+            {job.enabled ? t('stats.active') : t('stats.paused')}
+          </span>
+          {job.repairDegraded ? (
+            <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-meta font-medium text-amber-700 dark:text-amber-400">
+              {t('details.repairDegraded')}
+            </span>
+          ) : null}
         </span>
         <div className="flex items-center gap-1">
           <Button
