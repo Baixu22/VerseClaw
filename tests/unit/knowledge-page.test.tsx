@@ -1250,12 +1250,16 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.get).toHaveBeenCalledWith({ lookup: 'notes/decision.md', lineCount: 80, corpus: 'wiki' }));
     await screen.findByText(/I searched the vault/);
     expect(screen.getByTestId('knowledge-librarian-message-assistant')).toHaveTextContent('Decision');
-    expect(screen.getByTestId('knowledge-librarian-grounded-answer')).toHaveTextContent('Answer');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('I searched the vault');
     expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('Decision');
     expect(screen.getByTestId('knowledge-librarian-unknowns-section')).toHaveTextContent('Grounding is page/snippet level.');
     expect(screen.getByTestId('knowledge-librarian-next-action-section')).toHaveTextContent('Save the grounded answer');
     expect(screen.getByTestId('knowledge-librarian-retrieval-inspector')).toHaveTextContent('Why use native wiki?');
-    expect(screen.getByTestId('knowledge-librarian-citations')).toHaveTextContent('notes/decision.md');
+    // A grounded answer lists its sources once, in the sources section. The separate
+    // citation strip is only rendered for plain (non-grounded) replies, so asserting
+    // the path here is what proves we did not lose the reference.
+    expect(screen.getByTestId('knowledge-librarian-sources-section')).toHaveTextContent('notes/decision.md');
+    expect(screen.queryByTestId('knowledge-librarian-citations')).toBeNull();
 
     fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
     await waitFor(() => expect(hostApiMock.createDraft).toHaveBeenCalledWith(expect.objectContaining({

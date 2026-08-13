@@ -26,6 +26,7 @@ import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import { buildBaselineRunKey, getBaseline } from '@/stores/baseline-cache';
 import { useGatewayStore } from '@/stores/gateway';
+import { useSettingsStore } from '@/stores/settings';
 import { useAgentsStore } from '@/stores/agents';
 import { useProviderStore } from '@/stores/providers';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -37,7 +38,7 @@ import {
 import { hostApi } from '@/lib/host-api';
 import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
 import { ShimmerBlock } from '@/components/ai-elements/shimmer';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
@@ -54,12 +55,15 @@ import {
 } from './session-continuity';
 import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
-import { extractText, extractThinking, extractToolUse, normalizeMessageRole } from './message-utils';
+import { SessionStatusRail } from '@/components/chat/SessionStatusRail';
+import type { TeamOrchestrationView } from './team-orchestration-visualization';
+import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
+import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
 import {
   buildReplyTextOverrides,
   buildStreamingRenderMessage,
+  assignApprovalsToRunCards,
   deriveExecutionStreamState,
   deriveNextUserMessageIndexes,
   deriveRunSegmentMessageIndices,
@@ -87,6 +91,12 @@ import { extractGeneratedFiles, generatedFileHasDiffPayload, isHtmlPreviewExt, t
 import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistant-render/AssistantRender';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
+import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
+import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
+import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
+import { ToolUiPlanView, type ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
+import { projectGeneratedFileDiff, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
+import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
 import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
@@ -187,6 +197,15 @@ type SessionLineageOverride = {
 };
 
 const QUESTION_DIRECTORY_RENDER_LIMIT = 300;
+
+/* Below this the conversation column would be squeezed under its own
+ * 820px reading measure once the rail takes its 320px, so the rail folds
+ * into its 44px strip instead. */
+const SESSION_RAIL_MIN_VIEWPORT = 1280;
+
+/** Stable identity so an absent run never re-renders the rail. */
+const EMPTY_ORCHESTRATIONS: TeamOrchestrationView[] = [];
+const EMPTY_PLAN_TODOS: ToolUiPlanTodo[] = [];
 
 function buildQuestionDirectoryTitle(message: RawMessage, fallback: string): string {
   const normalized = extractText(message).replace(/\s+/g, ' ').trim();
@@ -816,6 +835,7 @@ export function Chat() {
   const uiVersion = useUiVersion();
   const navigate = useNavigate();
   const location = useLocation();
+  const uiDepthMode = useSettingsStore((s) => s.uiDepthMode);
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
 
@@ -877,13 +897,24 @@ export function Chat() {
   const [knowledgeErrorAdvisory, setKnowledgeErrorAdvisory] = useState<KnowledgeErrorGuardAdvisory | null>(null);
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
-  const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
   const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
+  /* The rail's own collapse preference, restored per session. Narrow viewports
+   * force it shut without touching the preference, so widening the window
+   * brings back whatever the user last chose. */
+  const [sessionRailCollapsed, setSessionRailCollapsed] = useState(false);
+  const [viewportTooNarrowForRail, setViewportTooNarrowForRail] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < SESSION_RAIL_MIN_VIEWPORT,
+  );
 
   useEffect(() => {
-    setTaskLedgerSummaryVisible(true);
     setRollbackPlanDismissed(false);
   }, [activeWorkspaceId, currentSessionKey]);
+
+  useEffect(() => {
+    const sync = () => setViewportTooNarrowForRail(window.innerWidth < SESSION_RAIL_MIN_VIEWPORT);
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
+  }, []);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -1262,8 +1293,15 @@ export function Chat() {
     });
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
+    // `workContextVisible` predates the rail and stored the same idea (does the
+    // session want its work context beside the transcript), so it is reused
+    // rather than adding a second flag that would disagree with it.
+    setSessionRailCollapsed(sessionState.chatFooter?.workContextVisible === false);
     void clearActiveTopicMarker(activeWorkspace.rootPath);
-    restoreArtifactPanelState(sessionState.artifactPanel ?? { open: false });
+    /* Panel state is per session, not per workspace: `getWorkspaceSessionState`
+     * falls back to the workspace-level blob for legacy profiles, which made one
+     * session's open panel reappear in every other session of that project. */
+    restoreArtifactPanelState(activeWorkspace.sessionStates?.[currentSessionKey]?.artifactPanel ?? { open: false });
   }, [activeWorkspace, clearActiveTopicMarker, currentSessionKey, restoreArtifactPanelState]);
 
   useEffect(() => {
@@ -1496,6 +1534,91 @@ export function Chat() {
       },
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
+
+  const handleOpenTerminalPanel = useCallback(() => {
+    openWorkspacePanel({ panel: 'terminal' });
+    if (!activeWorkspaceId) return;
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      state: {
+        artifactPanel: { open: true, activeTabKind: 'terminal' },
+      },
+    });
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
+
+  const handleOpenAgentsPanel = useCallback((childSessionKey?: string) => {
+    openWorkspacePanel({ panel: 'agents', sessionKey: childSessionKey });
+    if (!activeWorkspaceId) return;
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      state: {
+        artifactPanel: { open: true, activeTabKind: 'agents' },
+      },
+    });
+  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
+
+  const handleGitStash = useCallback(async () => {
+    if (!activeWorkspaceId) return;
+    try {
+      const result = await hostApi.git.stashPush();
+      if (result.success) {
+        toast.success(t('chat:sessionRail.git.stashSuccess', 'Changes stashed'));
+      } else {
+        toast.error(result.reason || t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
+      }
+    } catch (err) {
+      toast.error(t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
+    }
+  }, [activeWorkspaceId, t]);
+
+  const handleGitCommit = useCallback(async (message: string) => {
+    if (!activeWorkspaceId || !message.trim()) return;
+    try {
+      const result = await hostApi.git.commit({ message: message.trim() });
+      if (result.success) {
+        toast.success(t('chat:sessionRail.git.commitSuccess', 'Changes committed'));
+      } else if (result.blocked || result.approvalRequired) {
+        // If approval is required, open the review panel where user can handle it
+        openWorkspacePanel({ panel: 'review', view: 'changes' });
+        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
+      } else {
+        toast.error(result.reason || t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
+      }
+    } catch (err) {
+      toast.error(t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
+    }
+  }, [activeWorkspaceId, openWorkspacePanel, t]);
+
+  const handleGitPush = useCallback(async () => {
+    if (!activeWorkspaceId) return;
+    try {
+      const result = await hostApi.git.push();
+      if (result.success) {
+        toast.success(t('chat:sessionRail.git.pushSuccess', 'Changes pushed'));
+      } else if (result.blocked || result.approvalRequired) {
+        openWorkspacePanel({ panel: 'review', view: 'changes' });
+        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
+      } else {
+        toast.error(result.reason || t('chat:sessionRail.git.pushFailed', 'Failed to push'));
+      }
+    } catch (err) {
+      toast.error(t('chat:sessionRail.git.pushFailed', 'Failed to push'));
+    }
+  }, [activeWorkspaceId, openWorkspacePanel, t]);
+
+  const handleSessionRailCollapsedChange = useCallback((collapsed: boolean) => {
+    setSessionRailCollapsed(collapsed);
+    if (!activeWorkspaceId) return;
+    void saveWorkspaceState({
+      id: activeWorkspaceId,
+      sessionKey: currentSessionKey,
+      state: {
+        chatFooter: { workContextVisible: !collapsed },
+      },
+    });
+  }, [activeWorkspaceId, currentSessionKey, saveWorkspaceState]);
 
   const handleInterruptTerminal = useCallback(async () => {
     openWorkspacePanel({ panel: 'terminal' });
@@ -2386,12 +2509,47 @@ export function Chat() {
     runtimeRuns,
   ]);
   const userRunCards = executionProjection.cards;
+  // Pending approvals belong to the newest turn regardless of whether the run
+  // still counts as "active" — a run that stalled waiting for permission gets
+  // flagged as errored, and gating on `active` would hide the one control that
+  // can unblock it.
   const foldedNarrationIndices = executionProjection.foldedNarrationIndices;
   const hasActiveExecutionGraph = executionProjection.hasActiveExecutionGraph;
   const pendingImageGeneration = executionProjection.pendingImageGeneration;
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
+  /* The rail reports the turn in flight, so it reads the newest card rather
+   * than folding every card in the transcript — an older run's finished plan is
+   * history, not status. */
+  const latestRunCard = userRunCards.length > 0 ? userRunCards[userRunCards.length - 1] : null;
+  const sessionRailPlan = latestRunCard?.surfaces.plan ?? null;
+  const sessionRailOrchestrations = latestRunCard?.orchestrations ?? EMPTY_ORCHESTRATIONS;
+  // Host permission approvals for the run in flight. Rendered inside the turn
+  // summary so a blocked run is actionable from the transcript instead of only
+  // from the workspace side panels.
+  const { pendingApprovals, decideApproval } = useRunApprovals({
+    workspaceId: activeWorkspaceId,
+    sessionKey: currentSessionKey,
+    activeRunId,
+    runState: activeRunId ? runtimeRuns[activeRunId] ?? null : null,
+    runActive: inputRunActive,
+  });
+  const handleApprovalDecision = useCallback(async (id: string, decision: 'approved' | 'denied') => {
+    try {
+      await decideApproval(id, decision);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+      throw error;
+    }
+  }, [decideApproval]);
+  // Which turn shows which approval. Undecided approvals outlive the run that
+  // raised them, so this cannot be "whatever the latest run is" — see
+  // assignApprovalsToRunCards.
+  const approvalsByRunKey = useMemo(
+    () => assignApprovalsToRunCards(userRunCards, pendingApprovals),
+    [pendingApprovals, userRunCards],
+  );
   const handleResendUserMessage = useCallback((input: {
     messageText: string;
     messageId?: string;
@@ -2408,10 +2566,9 @@ export function Chat() {
       toast.error(t('messageActions.resendFailed'));
     });
   }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
-  const showTaskLedgerSummaryPanel = canShowChatSideRail
-    && !isEmpty
-    && !!activeWorkspaceId
-    && taskLedgerSummaryVisible;
+  /* The task ledger moved into the session status rail, which is always on
+   * screen; the assistive rail now carries only the rollback plan, an
+   * event-driven alert rather than standing state. */
   const showRollbackPlanPanel = canShowChatSideRail
     && hasRollbackPlanSidebarTrigger(rollbackPlan)
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
@@ -2420,8 +2577,10 @@ export function Chat() {
     && chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
-    && (showTaskLedgerSummaryPanel || showRollbackPlanPanel);
+    && showRollbackPlanPanel;
   const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
+  const sessionRailVisible = startupPhase === 'ready' && !!activeWorkspaceId;
+  const sessionRailFolded = sessionRailCollapsed || viewportTooNarrowForRail;
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -2452,17 +2611,30 @@ export function Chat() {
     const hasUserFacingImages = hasUserFacingImageAttachments(msg);
     const suppressAssistantText = foldedNarrationIndices.has(idx);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
+    const textOverride = replyTextOverrides.get(idx);
+    /*
+     * Row visibility has exactly ONE authority, shared with `<ChatMessage>`.
+     *
+     * This check used to reason about the message independently — "tool-only
+     * assistant inside a run segment" and "narration folded into the graph"
+     * both dropped the whole row — while ChatMessage separately believed Tool
+     * UI cards survived a run segment. This fired first, so they never met, and
+     * every tool-call-driven card (weather, question-flow, option-list, …) was
+     * unreachable mid-run. Deriving both sides from `projectMessageRender`
+     * makes that class of drift structurally impossible.
+     *
+     * `isUser` deliberately mirrors ChatMessage's own `message.role === 'user'`
+     * so the two calls share a projection-cache entry rather than parsing twice.
+     */
+    const projection = projectMessageRender(msg, {
+      isUser: msg.role === 'user',
+      suppressAssistantText,
+      suppressToolCards,
+      textOverride,
+    });
     const hidden = isInternalMessage(msg) && !hasUserFacingImages
       ? true
-      : suppressAssistantText && !hasUserFacingImages
-        ? true
-        : (() => {
-      const isToolOnlyAssistant = normalizeMessageRole(msg.role) === 'assistant'
-        && extractToolUse(msg).length > 0
-        && extractText(msg).trim().length === 0
-        && !extractThinking(msg);
-      return suppressToolCards && isToolOnlyAssistant && !(msg._attachedFiles?.length);
-    })();
+      : !projection.hasRenderableContent;
 
     return {
       index: idx,
@@ -2471,7 +2643,7 @@ export function Chat() {
       hidden,
       suppressAssistantText,
       suppressToolCards,
-      textOverride: replyTextOverrides.get(idx),
+      textOverride,
       runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
     };
   }), [
@@ -2492,6 +2664,19 @@ export function Chat() {
     [hasActiveExecutionGraph, streamingReplyText, streamingTools],
   );
   const activeRuntimeRun = activeRunId ? runtimeRuns[activeRunId] : null;
+  /**
+   * Thinking for the turn in flight. `buildStreamingRenderMessage` strips
+   * `thinking` blocks off the streaming message once reply text arrives, and the
+   * runtime accumulates the same content on the run instead — so the streaming
+   * bubble has to be told about it explicitly rather than deriving it.
+   */
+  const streamingReasoning = useMemo(
+    () => splitThinkingIntoSegments(activeRuntimeRun?.thinkingText).map((summary, index) => ({
+      id: `stream-thinking-${index + 1}`,
+      summary,
+    })),
+    [activeRuntimeRun?.thinkingText],
+  );
   const activeRuntimeRunStartedAt = activeRuntimeRun?.startedAt ?? lastUserMessageAt ?? null;
   const shouldRenderAssistantStreamMessage = shouldRenderStreaming || streamingReplyText != null;
   const assistantStreamStatus = inputRunActive
@@ -2540,6 +2725,42 @@ export function Chat() {
     for (const files of filesByRun.values()) all.push(...files);
     return all;
   }, [filesByRun]);
+  // Inline transcript diffs. `projectGeneratedFileDiff` returns null whenever a
+  // trustworthy before/after pair is unavailable, so the file chips stay the
+  // only affordance for files we cannot render honestly.
+  /**
+   * F8a: one file, one owner.
+   *
+   * A run's generated files fed two surfaces at once — `RunMutationDiffs` (a
+   * full diff) and `GeneratedFilesPanel` (a name chip) — so every file with a
+   * renderable diff was announced twice in the same card. `projectGeneratedFileDiff`
+   * is the discriminator: if it yields a surface, the diff owns that file and the
+   * chip row must not repeat it. Files it can't project (binaries, artifacts with
+   * no before/after) still need the chip, which is the only way to open them.
+   */
+  const diffsByRun = useMemo(() => {
+    const map = new Map<number, RunCodeDiffSurface[]>();
+    for (const [triggerIndex, files] of filesByRun) {
+      const surfaces = files
+        .map((file) => projectGeneratedFileDiff(file))
+        .filter((surface): surface is RunCodeDiffSurface => surface != null);
+      if (surfaces.length > 0) map.set(triggerIndex, surfaces);
+    }
+    return map;
+  }, [filesByRun]);
+
+  /** Per-run chip files, minus whatever the diff surface already owns. */
+  const chipFilesByRun = useMemo(() => {
+    const map = new Map<number, GeneratedFile[]>();
+    for (const [triggerIndex, files] of filesByRun) {
+      const ownedByDiff = new Set(
+        (diffsByRun.get(triggerIndex) ?? []).map((surface) => surface.filePath),
+      );
+      const remaining = files.filter((file) => !ownedByDiff.has(file.filePath));
+      if (remaining.length > 0) map.set(triggerIndex, remaining);
+    }
+    return map;
+  }, [filesByRun, diffsByRun]);
 
   // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
   const artifacts = useMemo(() => {
@@ -2614,7 +2835,13 @@ export function Chat() {
       {/* Left column: chat */}
       <div
         data-testid="chat-conversation-column"
-        className="flex min-w-0 flex-1 flex-col"
+        className={cn(
+          'flex min-w-0 flex-1 flex-col',
+          // The status rail floats over this column rather than sitting beside
+          // it, so the offset is padding here instead of a flex sibling.
+          sessionRailVisible && 'codex-conversation-inset',
+        )}
+        data-rail={sessionRailVisible ? (sessionRailFolded ? 'collapsed' : 'expanded') : undefined}
         style={terminalBottomOpen ? { paddingBottom: terminalBottomHeight } : undefined}
       >
       {/* Toolbar */}
@@ -2808,16 +3035,30 @@ export function Chat() {
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
+                        const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
+                        // Chips cover only what the diff surface does not — see
+                        // `chipFilesByRun`. `generatedFiles` stays the full set
+                        // for activity/summary purposes.
+                        const chipFiles = chipFilesByRun.get(card.triggerIndex) ?? [];
+                        const diffSurfaces = diffsByRun.get(card.triggerIndex) ?? [];
+                        const cardApprovals = approvalsByRunKey.get(runKey) ?? [];
                         const defaultExpanded = card.status === 'error'
                           || card.status === 'aborted'
                           || (card.active && card.streamingReplyText == null)
                           || !card.hasVisibleReply;
-                        const expanded = runActivityExpandedOverrides[runKey] ?? defaultExpanded;
-                        const generatedFiles = filesByRun.get(card.triggerIndex) ?? [];
+                        // A pending approval blocks the run and is the only way
+                        // to unblock it. It overrides the user's own collapse —
+                        // a decision the agent is waiting on must never be
+                        // hidden behind a disclosure the user forgot they shut.
+                        const expanded = cardApprovals.length > 0
+                          || (runActivityExpandedOverrides[runKey] ?? defaultExpanded);
                         const hasActivity = card.active
                           || card.steps.length > 0
                           || generatedFiles.length > 0
                           || card.orchestrations.length > 0
+                          || card.surfaces.terminals.length > 0
+                          || card.surfaces.plan != null
+                          || cardApprovals.length > 0
                           || Boolean(card.traceId);
                         if (!hasActivity) return null;
 
@@ -2829,13 +3070,38 @@ export function Chat() {
                               endedAt={card.endedAt}
                               now={streamStatusNow}
                               expanded={expanded}
+                              summary={{
+                                plan: card.surfaces.plan?.todos.length ?? 0,
+                                files: generatedFiles.length,
+                                diffs: diffSurfaces.length,
+                                agents: card.orchestrations.length,
+                                terminals: card.surfaces.terminals.length,
+                                approvals: cardApprovals.length,
+                              }}
                               onExpandedChange={(next) =>
                                 setRunActivityExpandedOverrides((prev) => ({ ...prev, [runKey]: next }))
                               }
                             >
-                              {generatedFiles.length > 0 && (
+                              {/* Pending approvals first — the run is blocked on them. */}
+                              {cardApprovals.length > 0 && (
+                                <PendingRunApprovals
+                                  approvals={cardApprovals}
+                                  onDecision={handleApprovalDecision}
+                                />
+                              )}
+                              {card.surfaces.plan && (
+                                <ToolUiPlanView
+                                  title={card.surfaces.plan.title ?? ''}
+                                  showTitle={Boolean(card.surfaces.plan.title)}
+                                  description={card.surfaces.plan.description}
+                                  todos={card.surfaces.plan.todos}
+                                  compact
+                                  testId="chat-run-plan"
+                                />
+                              )}
+                              {chipFiles.length > 0 && (
                                 <GeneratedFilesPanel
-                                  files={generatedFiles}
+                                  files={chipFiles}
                                   onOpen={(file) => {
                                     const target = generatedFileToTarget(file);
                                     if (isHtmlPreviewExt(file.ext)) {
@@ -2846,6 +3112,9 @@ export function Chat() {
                                   }}
                                 />
                               )}
+                              {diffSurfaces.length > 0 && (
+                                <RunMutationDiffs surfaces={diffSurfaces} />
+                              )}
                               <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
@@ -2854,6 +3123,7 @@ export function Chat() {
                                 suppressThinking={card.suppressThinking}
                                 traceId={card.traceId}
                               />
+                              <RunTerminalSurfaces surfaces={card.surfaces.terminals} />
                               {card.orchestrations.map((orchestration) => (
                                 <TeamOrchestrationCard
                                   key={`team-orchestration-${orchestration.id}`}
@@ -2869,6 +3139,21 @@ export function Chat() {
                     );
                   })}
 
+                  {/* A pending approval must NEVER be invisible — it is the only
+                      control that can unblock the agent. Attribution to a turn
+                      is best-effort: a turn whose whole output was "I need
+                      permission" plus a text reply produces no activity card at
+                      all once its run ends, and with no card there is nowhere
+                      for approvalsByRunKey to land. This standalone section is
+                      the floor under that case (the audit's F4 tail, found by
+                      the carryover mock scenario). */}
+                  {pendingApprovals.length > 0 && userRunCards.length === 0 && (
+                    <PendingRunApprovals
+                      approvals={pendingApprovals}
+                      onDecision={handleApprovalDecision}
+                    />
+                  )}
+
                   {/* Streaming message — render when reply text is separated from graph,
                       OR when there's streaming content without an active graph */}
                   {showStandaloneStreamStatus && (
@@ -2881,6 +3166,7 @@ export function Chat() {
                       }}
                       isStreaming
                       streamStatus={assistantStreamStatus}
+                      reasoningOverride={streamingReasoning}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
                     />
@@ -2902,6 +3188,7 @@ export function Chat() {
                       textOverride={streamingReplyText ?? undefined}
                       isStreaming
                       streamStatus={assistantStreamStatus}
+                      reasoningOverride={streamingReasoning}
                       streamingTools={streamingToolsForMessage}
                       liveUsage={liveUsage}
                       onOpenFile={handleOpenAttachedFile}
@@ -2947,15 +3234,6 @@ export function Chat() {
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
-              {showTaskLedgerSummaryPanel && (
-                <TaskLedgerSummaryPanel
-                  workspaceId={activeWorkspace?.id}
-                  compact
-                  hideWhenEmpty
-                  className="w-full lg:w-full xl:w-full"
-                  onVisibilityChange={setTaskLedgerSummaryVisible}
-                />
-              )}
               {showRollbackPlanPanel && (
                 <RollbackPlanPanel
                   plan={rollbackPlan}
@@ -3007,7 +3285,6 @@ export function Chat() {
       {/* Input Area */}
       <ChatInput
         onSend={handleSendMessage}
-        onStop={abortRun}
         disabled={!isGatewayRunning}
         sending={inputRunActive}
         workspace={activeWorkspace}
@@ -3022,8 +3299,6 @@ export function Chat() {
         onSwitchAgent={handleSwitchAgent}
         onNewSession={handleCreateNewSession}
         onForkSession={handleForkSession}
-        continuityRecommendation={continuityRecommendation}
-        continuityPreflight={continuityPreflight}
         forkDisabled={forkDisabled}
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
@@ -3036,10 +3311,7 @@ export function Chat() {
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
         onManualCompact={handleManualCompact}
-        onViewCompactionArtifact={handleViewCompactionArtifact}
         longTaskControlStatus={longTaskControlStatus}
-        queueDrainBusy={queueDrainBusy}
-        onDrainQueuedFollowup={handleDrainQueuedFollowup}
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
         className={cn(sendingAnimation && 'codex-composer-host--sending')}
@@ -3159,6 +3431,35 @@ export function Chat() {
       </Dialog>
       </div>
 
+      {/* Third column: session status rail */}
+      {sessionRailVisible && (
+        <SessionStatusRail
+          workspaceId={activeWorkspaceId}
+          sessionKey={currentSessionKey}
+          refreshSignal={refreshSignal}
+          collapsed={sessionRailFolded}
+          onCollapsedChange={handleSessionRailCollapsedChange}
+          planTitle={sessionRailPlan?.title ?? undefined}
+          planTodos={sessionRailPlan?.todos ?? EMPTY_PLAN_TODOS}
+          orchestrations={sessionRailOrchestrations}
+          longTaskControlStatus={longTaskControlStatus}
+          queueDrainBusy={queueDrainBusy}
+          runActive={inputRunActive}
+          showCompactionArtifact={
+            uiDepthMode === 'advanced' &&
+            Boolean(compactionStatus?.lastCompaction?.quality)
+          }
+          onOpenGit={handleOpenGitPanel}
+          onOpenTerminal={handleOpenTerminalPanel}
+          onOpenAgents={handleOpenAgentsPanel}
+          onGitStash={handleGitStash}
+          onGitCommit={handleGitCommit}
+          onGitPush={handleGitPush}
+          onDrainQueuedFollowup={handleDrainQueuedFollowup}
+          onViewCompactionArtifact={handleViewCompactionArtifact}
+        />
+      )}
+
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
@@ -3195,8 +3496,12 @@ export function Chat() {
             )}
             <Suspense
               fallback={
-                <div className="flex h-full items-center justify-center">
-                  <LoadingSpinner size="md" />
+                <div
+                  className="flex h-full items-center justify-center"
+                  data-testid="workspace-panel-loading"
+                  aria-busy="true"
+                >
+                  <VerseRouteBrand className="text-base" />
                 </div>
               }
             >
@@ -3315,11 +3620,14 @@ function ChatLoadingSkeleton({
       {showStatus && (
         <div
           data-testid="chat-startup-status"
-          className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+          className="flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground"
           role="status"
         >
-          <OrbStatus state="connecting" label={t(statusKey)} className="size-4 text-primary" />
-          <span>{t(statusKey)}</span>
+          <VerseRouteBrand className="text-base" />
+          <span className="flex items-center gap-2">
+            <OrbStatus state="connecting" label={t(statusKey)} className="size-4 text-primary" />
+            {t(statusKey)}
+          </span>
         </div>
       )}
       <div className="flex items-start gap-3">

@@ -47,15 +47,20 @@ function SkeletonLine({ className }: { className: string }) {
   return <ShimmerBlock className={cn('rounded-full', className)} />;
 }
 
-/** Small brand mark that sweeps once on route-level loading shells. */
-function VerseRouteBrand() {
+/**
+ * Small brand mark that sweeps once on loading surfaces.
+ *
+ * Exported so every "we are loading something" surface reuses one
+ * configuration of the sweep instead of each growing its own copy.
+ */
+export function VerseRouteBrand({ className }: { className?: string } = {}) {
   return (
     <DiaTextReveal
       text="verse"
       duration={1.2}
       startOnView={false}
       once
-      className="text-sm font-medium tracking-tight text-muted-foreground"
+      className={cn('text-sm font-medium tracking-tight text-muted-foreground', className)}
     />
   );
 }

@@ -19,6 +19,7 @@
 @import './plus-menu-morph.css';
 @import './codex-welcome-hero.css';
 @import './codex-workspace-panel.css';
+@import './codex-session-rail.css';
 @import './codex-setup-motion.css';
 
 @tailwind base;

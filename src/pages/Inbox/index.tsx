@@ -13,12 +13,11 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Inbox as InboxIcon, MessageSquare } from '@/components/icons/codex-icons';
+import { MessageSquare } from '@/components/icons/codex-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WorkbenchPageShell } from '@/components/ui/page-shell';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import {
   isInboxItemActionable,
@@ -195,16 +194,29 @@ export function Inbox() {
     >
       <div className="flex min-h-0 flex-1 flex-col border-y border-border bg-material-panel">
         <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-3 py-2">
-          <Tabs value={view} onValueChange={(value) => { setView(value as InboxView); setSelectedKey(null); }}>
-            <TabsList aria-label={t('filters.view')}>
-              <TabsTrigger value="actionable" data-testid="inbox-view-actionable">
-                {t('filters.actionable')}
-              </TabsTrigger>
-              <TabsTrigger value="history" data-testid="inbox-view-history">
-                {t('filters.history')}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex items-center gap-1" role="tablist" aria-label={t('filters.view')}>
+            {(['actionable', 'history'] as const).map((value) => {
+              const isActive = view === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  data-testid={`inbox-view-${value}`}
+                  className={cn(
+                    'flex h-8 shrink-0 items-center gap-2 border-b-2 px-3 text-[13px] font-medium transition-colors',
+                    isActive
+                      ? 'border-foreground text-foreground'
+                      : 'border-transparent text-muted-foreground hover:border-black/20 hover:text-foreground dark:hover:border-white/20',
+                  )}
+                  onClick={() => { setView(value); setSelectedKey(null); }}
+                >
+                  {t(`filters.${value}`)}
+                </button>
+              );
+            })}
+          </div>
           <div className="flex items-center gap-2">
             {lastUpdatedAt ? (
               <span className="hidden text-xs text-muted-foreground sm:inline">
@@ -250,10 +262,8 @@ export function Inbox() {
             {!loaded && loading ? (
               <InboxListLoading />
             ) : filteredItems.length === 0 ? (
-              <div className="flex min-h-64 flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
-                <InboxIcon className="h-6 w-6 text-muted-foreground" />
-                <p className="text-sm font-medium text-foreground">{t(`empty.${view}.title`)}</p>
-                <p className="max-w-xs text-xs leading-5 text-muted-foreground">{t(`empty.${view}.description`)}</p>
+              <div className="px-3 py-2 text-xs leading-5 text-muted-foreground">
+                {t(`empty.${view}.title`)}
               </div>
             ) : (
               <div className="divide-y divide-border">

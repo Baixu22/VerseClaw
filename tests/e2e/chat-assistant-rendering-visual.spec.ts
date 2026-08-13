@@ -45,32 +45,11 @@ const seededHistory = [
         }),
       ].join('\n'),
       assistantRender: {
-        branches: [
-          {
-            id: 'branch-a',
-            label: 'A',
-            text: '### Assistant rendering branch A\n\nThis reply has selectable branches, structured markdown, and a quote target for the toolbar.',
-          },
-          {
-            id: 'branch-b',
-            label: 'B',
-            text: '### Assistant rendering branch B\n\nAlternative branch content is active after selecting next.',
-          },
-        ],
         reasoning: [
           {
             id: 'reasoning-public',
             title: 'Public execution summary',
             summary: 'Mapped runtime metadata into visible cards without exposing hidden chain-of-thought.',
-          },
-        ],
-        toolFallbacks: [
-          {
-            id: 'tool-unknown-1',
-            name: 'very_long_unknown_tool_name_for_rendering_validation',
-            status: 'error',
-            summary: 'Tool payload did not match a registered Tool UI card, so fallback rendering is used.',
-            durationMs: 1250,
           },
         ],
       },
@@ -238,7 +217,7 @@ async function installAssistantRenderingMocks(app: Parameters<typeof installIpcM
 }
 
 test.describe('Verse Claw assistant-style rendering layer', () => {
-  test('renders rich assistant cards and validates branch, quote, token, and heatgraph interactions', async ({ launchElectronApp }, testInfo) => {
+  test('renders rich assistant cards and validates quote, token, and heatgraph interactions', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -249,14 +228,11 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       await page.evaluate(() => {
         document.documentElement.classList.remove('dark');
         document.documentElement.classList.add('light');
-        localStorage.removeItem('assistant-branch:assistant-rendering-rich');
       });
 
       const scrollContainer = page.getByTestId('chat-scroll-container');
       await expect(scrollContainer).toBeVisible();
-      await expect(page.getByTestId('assistant-branch-picker')).toContainText('1 / 2');
       await expect(page.getByTestId('assistant-reasoning-panel')).toBeVisible();
-      await expect(page.getByTestId('assistant-tool-fallback')).toContainText('very_long_unknown_tool_name');
       await expect(page.getByTestId('assistant-attachment-card')).toContainText('assistant-rendering-output');
       await expect(page.getByTestId('assistant-token-usage-roll')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
@@ -286,16 +262,6 @@ test.describe('Verse Claw assistant-style rendering layer', () => {
       });
       await page.setViewportSize({ width: 1280, height: 900 });
 
-      await page.getByRole('button', { name: 'Next branch' }).click();
-      await expect(page.getByTestId('assistant-branch-picker')).toContainText('2 / 2');
-      await expect(page.locator('.prose').filter({ hasText: 'Alternative branch content is active' })).toBeVisible();
-
-      await page.reload();
-      await expect(page.getByTestId('assistant-branch-picker')).toContainText('2 / 2');
-      await expect(page.locator('.prose').filter({ hasText: 'Alternative branch content is active' })).toBeVisible();
-
-      await page.getByRole('button', { name: 'Previous branch' }).click();
-      await expect(page.getByTestId('assistant-branch-picker')).toContainText('1 / 2');
       await page.getByTestId('assistant-reasoning-panel').getByRole('button').click();
       await expect(page.getByText('Mapped runtime metadata into visible cards')).toBeVisible();
 

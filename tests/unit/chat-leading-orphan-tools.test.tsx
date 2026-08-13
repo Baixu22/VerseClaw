@@ -32,6 +32,12 @@ vi.mock('@/stores/agents', () => ({
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
+    // The Chat page probes git on mount to drive the composer's branch strip.
+    // Without this the effect throws on `result.status` and takes the whole
+    // render down before any assertion runs.
+    git: {
+      status: vi.fn().mockResolvedValue({ success: true, status: { isRepository: false } }),
+    },
     topics: {
       list: vi.fn().mockResolvedValue({ topics: [], activeTopicId: null }),
     },
