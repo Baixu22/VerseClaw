@@ -419,42 +419,7 @@ export class WebPreviewManager {
   }
 
   private async proxyHttpRequest(baseUrl: URL, previewId: string, inspectorEnabled: boolean, req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const target = new URL(req.url || '/', baseUrl);
-    const requestImpl = target.protocol === 'https:' ? httpsRequest : httpRequest;
-    await new Promise<void>((resolvePromise) => {
-      const proxyReq = requestImpl(target, {
-        method: req.method,
-        headers: {
-          ...req.headers,
-          host: target.host,
-        },
-      }, (proxyRes) => {
-        const chunks: Buffer[] = [];
-        proxyRes.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        proxyRes.on('end', () => {
-          const headers = { ...proxyRes.headers };
-          delete headers['content-security-policy'];
-          delete headers['x-frame-options'];
-          const contentType = headers['content-type'];
-          const body = Buffer.concat(chunks);
-          if (inspectorEnabled && isHtmlContentType(contentType)) {
-            delete headers['content-length'];
-            res.writeHead(proxyRes.statusCode ?? 200, headers);
-            res.end(injectInspectorScript(body.toString('utf8'), previewId));
-          } else {
-            res.writeHead(proxyRes.statusCode ?? 200, headers);
-            res.end(body);
-          }
-          resolvePromise();
-        });
-      });
-      proxyReq.on('error', (error) => {
-        res.statusCode = 502;
-        res.end(String(error));
-        resolvePromise();
-      });
-      req.pipe(proxyReq);
-    });
+    await proxyHttpRequestImpl(baseUrl, previewId, inspectorEnabled, req, res);
   }
 
   private createRuntime(input: Omit<RuntimeRecord, 'logsSeq' | 'error'>): RuntimeRecord {
@@ -591,4 +556,114 @@ function closeServer(server: Server | null): Promise<void> {
 
 export function createWebPreviewManager(ctx: WebPreviewManagerContext = {}): WebPreviewManager {
   return new WebPreviewManager(ctx);
+}
+
+/** R0-4: HTML responses are buffered only for inspector injection — cap it. */
+export const WEB_PREVIEW_MAX_HTML_BUFFER_BYTES = 5 * 1024 * 1024;
+/** R0-4: idle timeout for the upstream request socket (hanging upstreams must die). */
+export const WEB_PREVIEW_UPSTREAM_IDLE_TIMEOUT_MS = 30_000;
+
+export type WebPreviewProxyOptions = {
+  idleTimeoutMs?: number;
+  maxHtmlBytes?: number;
+};
+
+/**
+ * Proxy a single HTTP request to the preview target. Exported for tests
+ * (R0-4.4). Non-HTML responses stream straight through without buffering;
+ * HTML is buffered up to maxHtmlBytes for inspector injection.
+ */
+export async function proxyHttpRequestImpl(
+  baseUrl: URL,
+  previewId: string,
+  inspectorEnabled: boolean,
+  req: IncomingMessage,
+  res: ServerResponse,
+  options: WebPreviewProxyOptions = {},
+): Promise<void> {
+  const idleTimeoutMs = options.idleTimeoutMs ?? WEB_PREVIEW_UPSTREAM_IDLE_TIMEOUT_MS;
+  const maxHtmlBytes = options.maxHtmlBytes ?? WEB_PREVIEW_MAX_HTML_BUFFER_BYTES;
+  const target = new URL(req.url || '/', baseUrl);
+  const requestImpl = target.protocol === 'https:' ? httpsRequest : httpRequest;
+  await new Promise<void>((resolvePromise) => {
+    let settled = false;
+    const settle = () => {
+      if (!settled) {
+        settled = true;
+        resolvePromise();
+      }
+    };
+    const proxyReq = requestImpl(target, {
+      method: req.method,
+      headers: {
+        ...req.headers,
+        host: target.host,
+      },
+    }, (proxyRes) => {
+      const headers = { ...proxyRes.headers };
+      delete headers['content-security-policy'];
+      delete headers['x-frame-options'];
+      const contentType = headers['content-type'];
+      const shouldInject = inspectorEnabled && isHtmlContentType(contentType);
+
+      if (!shouldInject) {
+        // Non-HTML (or inspector disabled): stream straight through — no
+        // unbounded buffering of large assets.
+        proxyRes.on('error', (error) => {
+          res.destroy(error);
+          settle();
+        });
+        proxyRes.on('end', () => settle());
+        res.writeHead(proxyRes.statusCode ?? 200, headers);
+        proxyRes.pipe(res);
+        return;
+      }
+
+      // HTML: buffer with a hard cap so a runaway response cannot exhaust memory.
+      const chunks: Buffer[] = [];
+      let total = 0;
+      let aborted = false;
+      proxyRes.on('data', (chunk) => {
+        if (aborted) return;
+        total += chunk.length;
+        if (total > maxHtmlBytes) {
+          aborted = true;
+          // Silent destroy: the client response below is the authoritative
+          // failure signal — an errored destroy would fire the proxyReq error
+          // handler and double-write on an already-ended response.
+          proxyReq.destroy();
+          res.statusCode = 502;
+          res.end('Preview HTML exceeds buffer limit');
+          settle();
+          return;
+        }
+        chunks.push(Buffer.from(chunk));
+      });
+      proxyRes.on('end', () => {
+        if (aborted) return;
+        delete headers['content-length'];
+        res.writeHead(proxyRes.statusCode ?? 200, headers);
+        res.end(injectInspectorScript(Buffer.concat(chunks).toString('utf8'), previewId));
+        settle();
+      });
+    });
+
+    proxyReq.on('error', (error) => {
+      if (res.writableEnded) {
+        res.destroy();
+      } else {
+        if (!res.headersSent) {
+          res.statusCode = 502;
+        }
+        res.end(String(error));
+      }
+      settle();
+    });
+
+    // R0-4: a hanging upstream must not pin the proxy forever.
+    proxyReq.setTimeout(idleTimeoutMs, () => {
+      proxyReq.destroy(new Error(`Upstream preview server idle for ${Math.round(idleTimeoutMs / 1000)}s`));
+    });
+    req.pipe(proxyReq);
+  });
 }
