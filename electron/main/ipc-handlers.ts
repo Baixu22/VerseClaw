@@ -532,7 +532,11 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
               const provider = await providerService.getLegacyProvider(providerId);
               if (provider) {
                 try {
-                  await syncDefaultProviderToRuntime(providerId, gatewayManager);
+                  const outcome = await syncDefaultProviderToRuntime(providerId, gatewayManager);
+                  if (outcome.degraded) {
+                    console.warn('Failed to set OpenClaw default model:', outcome.reason);
+                    data = { success: true, degraded: true, reason: outcome.reason };
+                  }
                 } catch (err) {
                   console.warn('Failed to set OpenClaw default model:', err);
                 }
@@ -1046,7 +1050,11 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
 
       // Update OpenClaw config to use this provider's default model
       try {
-        await syncDefaultProviderToRuntime(providerId, gatewayManager);
+        const outcome = await syncDefaultProviderToRuntime(providerId, gatewayManager);
+        if (outcome.degraded) {
+          console.warn('Failed to set OpenClaw default model:', outcome.reason);
+          return { success: true, degraded: true, reason: outcome.reason };
+        }
       } catch (err) {
         console.warn('Failed to set OpenClaw default model:', err);
       }

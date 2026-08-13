@@ -353,7 +353,11 @@ async function setDefaultProvider(payload: ProviderPayload<'setDefault'>, gatewa
   const providerId = getProviderId(payload, 'setDefault');
   try {
     await providerService._setDefaultProviderInternal(providerId);
-    await syncDefaultProviderToRuntime(providerId, gatewayManager);
+    const outcome = await syncDefaultProviderToRuntime(providerId, gatewayManager);
+    if (outcome.degraded) {
+      console.warn(`[providers] Default provider saved but runtime sync degraded: ${outcome.reason}`);
+      return { success: true, degraded: true, reason: outcome.reason };
+    }
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
@@ -449,7 +453,11 @@ async function setDefaultAccount(payload: ProviderPayload<'setDefaultAccount'>, 
       return { success: true, noChange: true };
     }
     await providerService.setDefaultAccount(accountId);
-    await syncDefaultProviderToRuntime(accountId, gatewayManager);
+    const outcome = await syncDefaultProviderToRuntime(accountId, gatewayManager);
+    if (outcome.degraded) {
+      console.warn(`[providers] Default account saved but runtime sync degraded: ${outcome.reason}`);
+      return { success: true, degraded: true, reason: outcome.reason };
+    }
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };

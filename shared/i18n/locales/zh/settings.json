@@ -185,6 +185,7 @@
       "deleted": "提供商已删除",
       "failedDelete": "删除提供商失败",
       "defaultUpdated": "默认提供商已更新",
+      "defaultRuntimeSyncDegraded": "默认提供商已保存，但将其模型同步到运行时注册表时部分失败。",
       "failedDefault": "设置默认失败",
       "updated": "提供商已更新",
       "failedUpdate": "更新提供商失败",

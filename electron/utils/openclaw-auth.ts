@@ -975,20 +975,24 @@ export async function removeProviderFromOpenClaw(provider: string): Promise<void
   // 2. Remove from models.json (per-agent model registry used by pi-ai directly)
   for (const id of agentIds) {
     const modelsPath = join(getOpenClawConfigDir(), 'agents', id, 'agent', 'models.json');
-    try {
-      if (await fileExists(modelsPath)) {
-        const raw = await readFile(modelsPath, 'utf-8');
-        const data = JSON.parse(raw) as Record<string, unknown>;
-        const providers = data.providers as Record<string, unknown> | undefined;
-        if (providers && providers[provider]) {
-          delete providers[provider];
-          await writeJsonAtomic(modelsPath, data);
-          console.log(`Removed models.json entry for provider "${provider}" (agent "${id}")`);
+    // R0-2: same RMW lock as updateModelsJsonProviderEntriesForAgents so
+    // concurrent writers cannot clobber each other's changes.
+    await withConfigLock(async () => {
+      try {
+        if (await fileExists(modelsPath)) {
+          const raw = await readFile(modelsPath, 'utf-8');
+          const data = JSON.parse(raw) as Record<string, unknown>;
+          const providers = data.providers as Record<string, unknown> | undefined;
+          if (providers && providers[provider]) {
+            delete providers[provider];
+            await writeJsonAtomic(modelsPath, data);
+            console.log(`Removed models.json entry for provider "${provider}" (agent "${id}")`);
+          }
         }
+      } catch (err) {
+        console.warn(`Failed to remove provider ${provider} from models.json (agent "${id}"):`, err);
       }
-    } catch (err) {
-      console.warn(`Failed to remove provider ${provider} from models.json (agent "${id}"):`, err);
-    }
+    }, { lockTargetPath: modelsPath });
   }
 
   // 3. Remove from openclaw.json
@@ -2382,51 +2386,61 @@ async function updateModelsJsonProviderEntriesForAgents(
 ): Promise<void> {
   for (const agentId of agentIds) {
     const modelsPath = join(getOpenClawConfigDir(), 'agents', agentId, 'agent', 'models.json');
-    let data: Record<string, unknown> = {};
-    try {
-      data = (await readJsonFile<Record<string, unknown>>(modelsPath)) ?? {};
-    } catch {
-      // corrupt / missing – start with an empty object
-    }
+    // R0-2: the read-modify-write cycle runs under the same config lock the
+    // other models.json writers (provider-runtime-sync, removeProviderFromOpenClaw)
+    // use, so concurrent writer paths cannot interleave stale reads.
+    await withConfigLock(async () => {
+      let data: Record<string, unknown> = {};
+      if (await fileExists(modelsPath)) {
+        let raw: string;
+        try {
+          raw = await readFile(modelsPath, 'utf-8');
+        } catch (error) {
+          throw new Error(`Could not read models.json at ${modelsPath}: ${String(error)}`, { cause: error });
+        }
+        try {
+          data = JSON.parse(raw) as Record<string, unknown>;
+        } catch (error) {
+          // Fail closed: never rewrite a corrupt registry from an empty object.
+          throw new Error(`Corrupt models.json at ${modelsPath}; refusing to overwrite it: ${String(error)}`, { cause: error });
+        }
+      }
 
-    const providers = (
-      data.providers && typeof data.providers === 'object' ? data.providers : {}
-    ) as Record<string, Record<string, unknown>>;
+      const providers = (
+        data.providers && typeof data.providers === 'object' ? data.providers : {}
+      ) as Record<string, Record<string, unknown>>;
 
-    const existing: Record<string, unknown> =
-      providers[providerType] && typeof providers[providerType] === 'object'
-        ? { ...providers[providerType] }
-        : {};
+      const existing: Record<string, unknown> =
+        providers[providerType] && typeof providers[providerType] === 'object'
+          ? { ...providers[providerType] }
+          : {};
 
-    const existingModels = Array.isArray(existing.models)
-      ? (existing.models as Array<Record<string, unknown>>)
-      : [];
+      const existingModels = Array.isArray(existing.models)
+        ? (existing.models as Array<Record<string, unknown>>)
+        : [];
 
-    const mergedModels = (entry.models ?? []).map((m) => {
-      const prev = existingModels.find((e) => e.id === m.id);
-      const base = prev ? { ...prev, id: m.id, name: m.name } : { ...m };
-      return {
-        ...base,
-        cost: normalizePiAiModelCost((base as { cost?: unknown }).cost),
-      };
-    });
+      const mergedModels = (entry.models ?? []).map((m) => {
+        const prev = existingModels.find((e) => e.id === m.id);
+        const base = prev ? { ...prev, id: m.id, name: m.name } : { ...m };
+        return {
+          ...base,
+          cost: normalizePiAiModelCost((base as { cost?: unknown }).cost),
+        };
+      });
 
-    if (entry.baseUrl !== undefined) existing.baseUrl = entry.baseUrl;
-    if (entry.api !== undefined) existing.api = entry.api;
-    if (mergedModels.length > 0) existing.models = mergedModels;
-    if (entry.apiKey !== undefined) existing.apiKey = entry.apiKey;
-    if (entry.authHeader !== undefined) existing.authHeader = entry.authHeader;
-    ensureAnthropicMessagesProviderDefaults(existing, providerType);
+      if (entry.baseUrl !== undefined) existing.baseUrl = entry.baseUrl;
+      if (entry.api !== undefined) existing.api = entry.api;
+      if (mergedModels.length > 0) existing.models = mergedModels;
+      if (entry.apiKey !== undefined) existing.apiKey = entry.apiKey;
+      if (entry.authHeader !== undefined) existing.authHeader = entry.authHeader;
+      ensureAnthropicMessagesProviderDefaults(existing, providerType);
 
-    providers[providerType] = existing;
-    data.providers = providers;
+      providers[providerType] = existing;
+      data.providers = providers;
 
-    try {
       await writeJsonFile(modelsPath, data);
       console.log(`Updated models.json for agent "${agentId}" provider "${providerType}"`);
-    } catch (err) {
-      console.warn(`Failed to update models.json for agent "${agentId}":`, err);
-    }
+    }, { lockTargetPath: modelsPath });
   }
 }
 

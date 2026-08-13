@@ -536,7 +536,10 @@ export async function syncDefaultProviderRuntimeBeforeLaunch(): Promise<void> {
     if (!defaultProviderId) {
       return;
     }
-    await syncDefaultProviderToRuntime(defaultProviderId);
+    const outcome = await syncDefaultProviderToRuntime(defaultProviderId);
+    if (outcome.degraded) {
+      logger.warn(`Default provider model synced before Gateway launch, but per-agent models.json sync degraded: ${outcome.reason}`);
+    }
   } catch (err) {
     logger.warn('Failed to sync default provider model before Gateway launch:', err);
   }
