@@ -70,20 +70,38 @@ export async function probeGatewayReady(
   });
 }
 
+/** R0-4: hard wall-clock ceiling for the readiness wait, independent of retry counts. */
+export const GATEWAY_READY_HARD_LIMIT_MS = 90_000;
+
 export async function waitForGatewayReady(options: {
   port: number;
   getProcessExitCode: () => number | null;
   retries?: number;
   intervalMs?: number;
+  hardLimitMs?: number;
 }): Promise<void> {
   const retries = options.retries ?? 2400;
   const intervalMs = options.intervalMs ?? 200;
+  const hardLimitMs = options.hardLimitMs ?? GATEWAY_READY_HARD_LIMIT_MS;
+  const startedAt = Date.now();
 
   for (let i = 0; i < retries; i++) {
     const exitCode = options.getProcessExitCode();
     if (exitCode !== null) {
       logger.error(`Gateway process exited before ready (code=${exitCode})`);
       throw new Error(`Gateway process exited before becoming ready (code=${exitCode})`);
+    }
+
+    // R0-4: even a live-but-never-ready gateway process must not hang the
+    // startup path forever. Enter an explicit error state with diagnostics.
+    const elapsedMs = Date.now() - startedAt;
+    if (elapsedMs >= hardLimitMs) {
+      logger.error(
+        `Gateway did not become ready within ${Math.round(hardLimitMs / 1000)}s on port ${options.port} (process alive, ${i + 1} probe attempt(s) made)`,
+      );
+      throw new Error(
+        `Gateway failed to become ready within ${Math.round(hardLimitMs / 1000)}s on port ${options.port} — process is alive but not responding to the readiness challenge. Check the gateway logs for startup errors.`,
+      );
     }
 
     try {
