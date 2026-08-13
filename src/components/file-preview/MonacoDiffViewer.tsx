@@ -2,6 +2,10 @@
  * Monaco split diff editor — minimalist premium shell.
  * Renders a clean VS Code–style diff with no extra chrome: no minimap,
  * no overview ruler, no indicators clutter. Just the diff.
+ *
+ * Boundary: this is the SIDE-PANEL, whole-file diff. The chat transcript uses
+ * `components/tool-ui/code-diff` instead — it must not lazy-load an editor per
+ * turn. See src/pages/Chat/run-surface-promotion.ts for the full boundary table.
  */
 import { useMemo } from 'react';
 import { DiffEditor, languageForPath } from '@/lib/monaco/loader';

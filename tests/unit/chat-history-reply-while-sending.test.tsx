@@ -33,7 +33,7 @@ vi.mock('@/stores/agents', () => ({
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
     git: {
-      status: vi.fn().mockResolvedValue({ success: true, status: null }),
+      status: vi.fn().mockResolvedValue({ success: true, status: { isRepository: false } }),
     },
     sessionActivity: {
       snapshot: vi.fn().mockResolvedValue({ success: true, snapshot: null }),

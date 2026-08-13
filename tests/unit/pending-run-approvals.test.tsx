@@ -61,3 +61,41 @@ describe('PendingRunApprovals', () => {
     await waitFor(() => expect(onDecision).toHaveBeenCalledWith('approval-1', 'denied'));
   });
 });
+
+describe('PendingRunApprovals translations', () => {
+  it('every key the card renders exists in all shipped locales', async () => {
+    // The component shipped for months with four keys that existed in no
+    // language pack; the mock above hid it. Assert against the real bundles.
+    const { I18N_RESOURCES } = await import('@shared/i18n/resources');
+    const keys = [
+      'toolUi.approval.host.title',
+      'toolUi.approval.host.approve',
+      'toolUi.approval.host.deny',
+      'toolUi.approval.host.retryRequired',
+      'approvals.source.terminal',
+      'approvals.source.gateway',
+      'approvals.source.mcp',
+      'approvals.source.file',
+      'approvals.source.git',
+      'approvals.source.cleaner',
+      'approvals.source.remoteControl',
+      'approvals.risk.write',
+      'approvals.risk.network',
+      'approvals.risk.destructive',
+      'approvals.risk.external-write',
+      'approvals.risk.dangerous',
+    ];
+    const read = (bundle: unknown, path: string): unknown => path
+      .split('.')
+      .reduce<unknown>((node, part) => (
+        node && typeof node === 'object' ? (node as Record<string, unknown>)[part] : undefined
+      ), bundle);
+
+    for (const [language, namespaces] of Object.entries(I18N_RESOURCES)) {
+      const chat = (namespaces as Record<string, unknown>).chat;
+      for (const key of keys) {
+        expect(read(chat, key), `${language}:${key}`).toBeTypeOf('string');
+      }
+    }
+  });
+});

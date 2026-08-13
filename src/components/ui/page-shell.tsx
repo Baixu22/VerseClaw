@@ -42,7 +42,7 @@ export function PageShell({
     <div data-testid={testId} className={cn('mx-auto flex min-h-full w-full max-w-[1180px] flex-col gap-4', className)}>
       <header className="flex min-h-10 shrink-0 items-start justify-between gap-4 border-b border-border pb-3">
         <div className="min-w-0">
-          <h1 className="text-[28px] font-normal leading-[34px] tracking-normal text-foreground">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-normal text-foreground">{title}</h1>
           {description ? <p className="mt-1 max-w-3xl text-[13px] leading-5 text-muted-foreground">{description}</p> : null}
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

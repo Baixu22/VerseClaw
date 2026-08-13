@@ -2,141 +2,17 @@ import { useCallback, useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 import {
   AlertCircle,
-  Brain,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  CircleDollarSign,
-  GitBranch,
   Quote,
-  Wrench,
   X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
-import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
-import type {
-  AssistantBranch,
-  AssistantReasoning,
-  AssistantStatusDimension,
-  AssistantToolFallback,
-  AssistantUsageModel,
-} from './model';
 
-export function BranchPicker({
-  branches,
-  storageKey,
-  onSelect,
-}: {
-  branches: AssistantBranch[];
-  storageKey: string;
-  onSelect: (branch: AssistantBranch | null) => void;
-}) {
-  const { t } = useTranslation('chat');
-  const [index, setIndex] = useState(() => {
-    const stored = localStorage.getItem(storageKey);
-    const parsed = stored ? Number(stored) : 0;
-    return Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
-  });
-  const safeIndex = branches.length > 0 ? Math.min(index, branches.length - 1) : 0;
-
-  useEffect(() => {
-    const branch = branches[safeIndex] ?? null;
-    onSelect(branch);
-    if (branches.length > 0) localStorage.setItem(storageKey, String(safeIndex));
-  }, [branches, onSelect, safeIndex, storageKey]);
-
-  if (branches.length <= 1) return null;
-
-  const move = (delta: number) => {
-    setIndex((current) => (current + delta + branches.length) % branches.length);
-  };
-
-  return (
-    <div
-      className="inline-flex items-center gap-1 rounded-md border border-conversation bg-background/70 p-1 text-xs text-muted-foreground"
-      data-testid="assistant-branch-picker"
-    >
-      <GitBranch className="h-3.5 w-3.5" />
-      <button
-        type="button"
-        className="inline-flex h-6 w-6 items-center justify-center rounded-md transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-        onClick={() => move(-1)}
-        aria-label={t('assistantRender.branch.previous')}
-      >
-        <ChevronLeft className="h-3.5 w-3.5" />
-      </button>
-      <span className="min-w-16 px-1 text-center font-mono text-[11px]">
-        {t('assistantRender.branch.count', { current: safeIndex + 1, total: branches.length })}
-      </span>
-      <button
-        type="button"
-        className="inline-flex h-6 w-6 items-center justify-center rounded-md transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-        onClick={() => move(1)}
-        aria-label={t('assistantRender.branch.next')}
-      >
-        <ChevronRight className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
-}
-
-export function ReasoningPanel({ items }: { items: AssistantReasoning[] }) {
-  const { t } = useTranslation('chat');
-  const [open, setOpen] = useState(false);
-  if (items.length === 0) return null;
-  return (
-    <div className="w-full text-muted-foreground" data-testid="assistant-reasoning-panel">
-      <button
-        type="button"
-        className="flex w-full items-center justify-between gap-3 rounded-sm py-1 text-left text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
-        onClick={() => setOpen((value) => !value)}
-      >
-        <span className="flex min-w-0 items-center gap-2">
-          <Brain className="h-3.5 w-3.5 shrink-0 opacity-70" />
-          <span className="truncate">{items[0]?.title || t('assistantRender.reasoning.title')}</span>
-        </span>
-        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform duration-150', open && 'rotate-180')} />
-      </button>
-      {open && (
-        <div className="space-y-2 border-l border-conversation py-1 pl-3 text-sm leading-[1.65] text-muted-foreground">
-          {items.map((item) => (
-            <p key={item.id} className="whitespace-pre-wrap break-words">{item.summary}</p>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ToolFallbackCard({ tools }: { tools: AssistantToolFallback[] }) {
-  const { t } = useTranslation('chat');
-  if (tools.length === 0) return null;
-  return (
-    <div className="w-full space-y-1.5" data-testid="assistant-tool-fallback">
-      {tools.map((tool) => (
-        <div
-          key={tool.id}
-          className={cn(
-            'rounded-md border px-3 py-2 text-sm',
-            tool.status === 'error' && 'border-destructive/25 bg-destructive/[0.04] text-destructive',
-            tool.status === 'running' && 'border-primary/25 bg-background/60 text-foreground',
-            tool.status === 'completed' && 'border-conversation text-muted-foreground',
-          )}
-        >
-          <div className="flex items-center gap-2">
-            <Wrench className="h-3.5 w-3.5 shrink-0 opacity-70" />
-            <span className="min-w-0 truncate font-mono font-medium">{tool.name}</span>
-            <span className="ml-auto shrink-0 rounded-md border border-conversation px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
-              {t(`assistantRender.tool.${tool.status}`)}
-            </span>
-          </div>
-          {tool.summary && <p className="mt-1 line-clamp-2 break-words opacity-80">{tool.summary}</p>}
-        </div>
-      ))}
-    </div>
-  );
-}
+/*
+ * F6 note: `BranchPicker` (multi-draft switcher) and `ToolFallbackCard`
+ * (degraded tool card) were removed from this file. Their metadata never had a
+ * producer, so neither rendered a single frame in production. Recover
+ * BranchPicker from commit ac5a06830 if a regenerate feature lands.
+ */
 
 export function AssistantErrorCard({
   title,
@@ -166,93 +42,6 @@ export function AssistantErrorCard({
             <X className="h-3.5 w-3.5" />
           </button>
         )}
-      </div>
-    </div>
-  );
-}
-
-function formatCompact(value: number): string {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}m`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
-  return String(value);
-}
-
-export function TokenUsageRoll({ usage }: { usage: AssistantUsageModel }) {
-  const { t } = useTranslation('chat');
-  const percentage = usage.maxTokens ? Math.min(100, Math.round((usage.totalTokens / usage.maxTokens) * 100)) : null;
-  return (
-    <div className="flex min-w-0 flex-wrap items-center gap-2 py-1 pl-1 text-xs text-muted-foreground" data-testid="assistant-token-usage-roll">
-      <CircleDollarSign className="h-3.5 w-3.5 text-foreground/70" />
-      <span className="font-mono text-foreground">{formatCompact(usage.totalTokens)}</span>
-      <span>{t('assistantRender.usage.tokens')}</span>
-      {percentage != null && (
-        <span className="rounded-md bg-black/5 px-1.5 py-0.5 font-mono text-xs dark:bg-white/10">{percentage}%</span>
-      )}
-      {usage.estimatedCostUsd != null && (
-        <span className="font-mono text-xs">${usage.estimatedCostUsd.toFixed(4)}</span>
-      )}
-    </div>
-  );
-}
-
-export function StatusChips({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
-  const { t } = useTranslation('chat');
-  return (
-    <div className="flex items-center gap-1 py-1 pl-1" data-testid="assistant-dot-matrix-status">
-      {dimensions.map((item) => (
-        <span
-          key={item.id}
-          className={cn(
-            'h-2.5 w-2.5 rounded-sm',
-            item.state === 'active' && 'bg-primary animate-pulse',
-            item.state === 'ok' && 'bg-green-500',
-            item.state === 'warning' && 'bg-amber-500',
-            item.state === 'error' && 'bg-destructive',
-            item.state === 'idle' && 'bg-muted-foreground/25',
-          )}
-          title={t(`assistantRender.status.${item.id}`, { defaultValue: item.label })}
-        />
-      ))}
-    </div>
-  );
-}
-
-function resolveAssistantStatusMatrixState(dimensions: AssistantStatusDimension[]): OrbStatusState {
-  const byId = new Map(dimensions.map((dimension) => [dimension.id, dimension]));
-  if (dimensions.some((dimension) => dimension.state === 'error')) return 'error';
-  if (byId.get('tools')?.state === 'active') return 'syncing';
-  if (byId.get('run')?.state === 'active') return 'streaming';
-  if (byId.get('gateway')?.state === 'warning') return 'connecting';
-  if (dimensions.some((dimension) => dimension.state === 'warning')) return 'warning';
-  if (dimensions.some((dimension) => dimension.state === 'ok')) return 'success';
-  return 'idle';
-}
-
-export function AssistantStatusIndicator({ dimensions }: { dimensions: AssistantStatusDimension[] }) {
-  const { t } = useTranslation('chat');
-  const state = resolveAssistantStatusMatrixState(dimensions);
-  return (
-    <div
-      tabIndex={0}
-      className="group/status relative inline-flex items-center"
-      data-testid="assistant-status-indicator"
-      aria-label={t('assistantRender.statusIndicator.label')}
-      title={t('assistantRender.statusIndicator.label')}
-    >
-      <OrbStatus
-        state={state}
-        label={t('assistantRender.statusIndicator.label')}
-        className="size-4 text-foreground/75"
-        data-testid="assistant-status-dot-matrix"
-      />
-      <div
-        className={cn(
-          'pointer-events-none absolute bottom-full right-0 z-30 mb-2 translate-y-1 opacity-0',
-          'transition-all duration-150 group-hover/status:translate-y-0 group-hover/status:opacity-100',
-          'group-focus-within/status:translate-y-0 group-focus-within/status:opacity-100',
-        )}
-      >
-        <StatusChips dimensions={dimensions} />
       </div>
     </div>
   );

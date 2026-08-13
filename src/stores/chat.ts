@@ -2850,6 +2850,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             updatedAt: parseSessionUpdatedAtMs(s.updatedAt),
             status: parseSessionStatus(s.status),
             hasActiveRun: typeof s.hasActiveRun === 'boolean' ? s.hasActiveRun : undefined,
+            // Fork/handoff lineage — the sidebar's workstream view threads
+            // descendants beneath their origin session from these two fields.
+            parentSessionKey: s.parentSessionKey ? String(s.parentSessionKey) : undefined,
+            forkedFromParent: typeof s.forkedFromParent === 'boolean' ? s.forkedFromParent : undefined,
           })).filter((s: ChatSession) => s.key);
 
           const canonicalBySuffix = new Map<string, string>();

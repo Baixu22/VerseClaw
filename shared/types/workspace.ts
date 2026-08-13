@@ -32,7 +32,9 @@ export type WorkspacePanelIntent =
   | { panel: 'files'; filePath?: string }
   | { panel: 'terminal'; placement?: WorkspaceTerminalPlacement }
   | { panel: 'artifact'; artifactId?: string }
-  | { panel: 'audit' };
+  | { panel: 'audit' }
+  /** `sessionKey` focuses one sub-agent's transcript on open. */
+  | { panel: 'agents'; sessionKey?: string };
 
 export type PermissionApprovalStatus = 'pending' | 'approved' | 'denied' | 'expired';
 export type PermissionApprovalDecision = 'approved' | 'denied';

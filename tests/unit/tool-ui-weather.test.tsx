@@ -24,7 +24,7 @@ describe('Tool UI weather rendering', () => {
     });
   });
 
-  it('renders supplied weather data with its condition icon and units', () => {
+  it('renders supplied weather data through the official weather widget', () => {
     const source = [
       'Current conditions:',
       '',
@@ -51,10 +51,40 @@ describe('Tool UI weather rendering', () => {
 
     render(<AgentInteractionRenderer interactions={parsed.interactions} />);
 
-    expect(screen.getByTestId('chat-tool-ui-weather')).toHaveTextContent('Seattle, WA');
-    expect(screen.getByTestId('chat-tool-ui-weather')).toHaveTextContent('52°F');
-    expect(screen.getByTestId('chat-tool-ui-weather')).toHaveTextContent('9 mph');
+    const widget = screen.getByTestId('chat-tool-ui-weather');
+    expect(widget).toHaveTextContent('Seattle, WA');
+    expect(widget).toHaveTextContent('52');
+    expect(widget).toHaveTextContent('°F');
+    // H/L is derived from the forecast span when the payload omits it.
+    expect(widget).toHaveTextContent('57°');
+    expect(widget).toHaveTextContent('45°');
     expect(screen.getByTestId('chat-tool-ui-weather-icon')).toHaveAttribute('data-weather-icon', 'rain');
     expect(parsed.displayText).not.toContain('"windUnit"');
+  });
+
+  it('maps prose conditions onto the widget scene codes', () => {
+    const parsed = parseToolUiContent([
+      '```tool-ui',
+      JSON.stringify({
+        type: 'weather-widget',
+        id: 'w1',
+        location: 'Kansas City, MO',
+        temperature: 72,
+        unit: 'fahrenheit',
+        condition: 'Heavy rain',
+        localTimeOfDay: 22,
+        forecast: [{ day: 'TUE', condition: 'Partly cloudy', high: 75, low: 62 }],
+      }),
+      '```',
+    ].join('\n'));
+
+    // `heavy rain` must win over the `rain` substring, and the forecast entry
+    // keeps its own scene rather than inheriting the current one.
+    expect(parsed.interactions[0]).toMatchObject({
+      type: 'weather',
+      conditionCode: 'heavy-rain',
+      localTimeOfDay: 22,
+      forecast: [{ conditionCode: 'partly-cloudy' }],
+    });
   });
 });

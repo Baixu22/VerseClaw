@@ -619,12 +619,20 @@ export function Sidebar() {
     return () => window.clearTimeout(timer);
   }, [deleteDialogOpen, sessionToDelete]);
 
-  const handleStartRename = (key: string, currentLabel: string) => {
+  /*
+   * These four are `useCallback` because `renderSessionRow` depends on them and
+   * is itself a prop of the memoized `SessionFolderTree` / `SessionRowMemo`.
+   * As plain function declarations they got a new identity every render, which
+   * invalidated `renderSessionRow`, which invalidated both memos — so every
+   * session row re-rendered on every sidebar render. Combined with the runtime
+   * subscription below, that meant a full list re-render per streamed token.
+   */
+  const handleStartRename = useCallback((key: string, currentLabel: string) => {
     setEditingSessionKey(key);
     setEditingLabel(currentLabel);
-  };
+  }, []);
 
-  const handleRenameSubmit = async () => {
+  const handleRenameSubmit = useCallback(async () => {
     if (!editingSessionKey || !editingLabel.trim()) {
       setEditingSessionKey(null);
       return;
@@ -635,11 +643,11 @@ export function Sidebar() {
       console.error('Failed to rename session:', err);
     }
     setEditingSessionKey(null);
-  };
+  }, [editingLabel, editingSessionKey, renameSession]);
 
-  const handleRenameCancel = () => {
+  const handleRenameCancel = useCallback(() => {
     setEditingSessionKey(null);
-  };
+  }, []);
 
   const toggleWorkspaceGroup = useCallback((workspaceId: string) => {
     setCollapsedWorkspaceIds((current) => ({
@@ -690,7 +698,9 @@ export function Sidebar() {
   }, []);
 
   const handleCreateFolder = useCallback(async (workspaceId: string, name: string, parentId: string | null) => {
-    await createWorkspaceFolder(workspaceId, name, parentId);
+    // Return the created folder — the move menu's one-step "create stream and
+    // file this session there" flow needs the new id.
+    return createWorkspaceFolder(workspaceId, name, parentId);
   }, [createWorkspaceFolder]);
 
   const handleRenameFolder = useCallback(async (workspaceId: string, folderId: string, name: string) => {
@@ -705,14 +715,14 @@ export function Sidebar() {
     await moveSessionToFolder(workspaceId, sessionKey, folderId);
   }, [moveSessionToFolder]);
 
-  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
+  const handleRenameKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       void handleRenameSubmit();
     } else if (e.key === 'Escape') {
       handleRenameCancel();
     }
-  };
+  }, [handleRenameCancel, handleRenameSubmit]);
 
   const stopResizing = useCallback(() => {
     stopResizeRef.current?.();
@@ -795,23 +805,30 @@ export function Sidebar() {
     [runtimeRuns],
   );
 
-  const sessionStatuses = useMemo(() => {
-    const entries = sidebarSessions
-      .map((session) => [
-        session.key,
-        buildSidebarSessionStatus({
-          session,
-          latestRun: latestRuntimeRunBySession.get(session.key) ?? null,
-          currentSessionKey,
-          activeRunId,
-          sending,
-          pendingFinal,
-          runError,
-          dismissedCompletedSignature: dismissedCompletedStatuses[session.key],
-        }),
-      ] as const)
-      .filter((entry): entry is readonly [string, SidebarSessionStatus] => entry[1] != null);
-    return Object.fromEntries(entries);
+  /*
+   * Runtime events land on `runtimeRuns` continuously while a run streams, so
+   * `buildSidebarSessionStatus` produces a fresh status object per event even
+   * when nothing a row displays has changed. `SessionRowMemo` compares
+   * `sessionStatus` by SIGNATURE rather than identity (see its comparator), so
+   * that churn stops here instead of re-rendering every row per token.
+   */
+  const rawSessionStatuses = useMemo(() => {
+    const next: Record<string, SidebarSessionStatus> = {};
+    for (const session of sidebarSessions) {
+      const status = buildSidebarSessionStatus({
+        session,
+        latestRun: latestRuntimeRunBySession.get(session.key) ?? null,
+        currentSessionKey,
+        activeRunId,
+        sending,
+        pendingFinal,
+        runError,
+        dismissedCompletedSignature: dismissedCompletedStatuses[session.key],
+      });
+      if (!status) continue;
+      next[session.key] = status;
+    }
+    return next;
   }, [
     activeRunId,
     currentSessionKey,
@@ -823,12 +840,36 @@ export function Sidebar() {
     sidebarSessions,
   ]);
 
+  const handleSessionDeleteClick = useCallback((key: string, label: string) => {
+    setSessionToDelete({ key, label });
+    setDeleteDialogOpen(true);
+  }, []);
+
   const handleDismissSessionStatus = useCallback((key: string, signature: string) => {
     setDismissedCompletedStatuses((current) => ({
       ...current,
       [key]: signature,
     }));
   }, []);
+
+  /*
+   * Freeze the status map on VALUE, not on how often it was rebuilt.
+   *
+   * `buildSidebarSessionStatus` allocates a new object per runtime event even
+   * when nothing a row displays changed, and `renderSessionRow` closes over
+   * this map — so a fresh container per token invalidated `renderSessionRow`,
+   * which is a prop of the memoized `SessionFolderTree`, which re-rendered
+   * every session row. `signature` already encodes everything a row shows
+   * (kind + session + run + timestamp), so a digest over it is exactly the
+   * "did anything visible change" question, and `useMemo` keyed on that digest
+   * hands back the same object until the answer is yes.
+   */
+  const sessionStatusDigest = Object.entries(rawSessionStatuses)
+    .map(([key, status]) => `${key}=${status.signature}`)
+    .sort()
+    .join('|');
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- digest is the value identity; rawSessionStatuses churns per event by design
+  const sessionStatuses = useMemo(() => rawSessionStatuses, [sessionStatusDigest]);
 
   const sessionStatusKinds = useMemo(() => Object.fromEntries(
     Object.entries(sessionStatuses).map(([key, status]) => [key, status.kind]),
@@ -869,10 +910,7 @@ export function Sidebar() {
       onSwitch={switchSession}
       onLoadHistory={loadHistory}
       navigate={navigate}
-      onDeleteClick={(key: string, label: string) => {
-        setSessionToDelete({ key, label });
-        setDeleteDialogOpen(true);
-      }}
+      onDeleteClick={handleSessionDeleteClick}
       onDismissSessionStatus={handleDismissSessionStatus}
       leadingActions={options?.leadingActions}
       forceActionsVisible={options?.forceActionsVisible}
@@ -881,7 +919,7 @@ export function Sidebar() {
     agentNameById, editingSessionKey, editingLabel, sessionLabels, sessionStatuses,
     currentSessionKey, isOnChat, switchSession, loadHistory, navigate,
     handleStartRename, handleRenameSubmit, handleRenameCancel, handleRenameKeyDown,
-    handleDismissSessionStatus, workspaceProfiles,
+    handleSessionDeleteClick, handleDismissSessionStatus, workspaceProfiles,
   ]);
 
   const sidebarSessionEntries = sessionView === 'time' || (workspaceProfiles.length === 0 && sidebarSessions.length > 0 && !workspacesLoading)

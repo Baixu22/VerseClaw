@@ -256,3 +256,135 @@ export function collectFolderSessionKeys(node: SidebarFolderNode): string[] {
   }
   return keys;
 }
+
+/* ─── Workstream view (flat streams + lineage threads + time slices) ────────
+ *
+ * The sidebar renders folders as ONE flat level of "workstreams". These pure
+ * helpers carry the whole restructuring so it stays unit-testable:
+ *   - flattenFolderNodes: legacy nested folders → flat list with a path prefix
+ *   - threadSessionsByLineage: fork/handoff children attach under their origin
+ *   - sliceSessionsByTime: unfiled sessions fall into today / week / earlier
+ */
+
+export type FlatWorkstream = {
+  node: SidebarFolderNode;
+  /** Ancestor names for legacy nested folders, e.g. ['审计回归'] — [] for roots. */
+  pathPrefix: string[];
+};
+
+/** Depth-first flatten so a legacy child stream stays adjacent to its parent. */
+export function flattenFolderNodes(nodes: SidebarFolderNode[]): FlatWorkstream[] {
+  const out: FlatWorkstream[] = [];
+  const walk = (node: SidebarFolderNode, prefix: string[]) => {
+    out.push({ node, pathPrefix: prefix });
+    for (const child of node.children) walk(child, [...prefix, node.folder.name]);
+  };
+  for (const node of nodes) walk(node, []);
+  return out;
+}
+
+/** Stable 8-way palette index for a workstream accent, keyed by folder id. */
+export function workstreamColorIndex(folderId: string): number {
+  let hashed = 0;
+  for (let index = 0; index < folderId.length; index += 1) {
+    hashed = (Math.imul(hashed, 31) + folderId.charCodeAt(index)) >>> 0;
+  }
+  return hashed % 8;
+}
+
+export type LineageRow = {
+  entry: SidebarSessionEntry;
+  /** 0 = top-level row; 1 = fork/handoff descendant attached under its origin. */
+  lineageDepth: 0 | 1;
+  /** Set on depth-1 rows: the session key of the origin row it attaches to. */
+  originKey?: string;
+};
+
+/**
+ * Attach fork/handoff descendants beneath their origin session WITHIN one
+ * list. Chains (A→B→C) collapse onto the topmost ancestor present in the
+ * list, so attachment depth never exceeds one visual level; parent pointers
+ * that loop or point outside the list degrade to plain rows. Order: top-level
+ * rows keep the incoming (activity) order, descendants keep it within their
+ * origin's block.
+ */
+export function threadSessionsByLineage(entries: SidebarSessionEntry[]): LineageRow[] {
+  const byKey = new Map(entries.map((entry) => [entry.session.key, entry]));
+
+  const resolveOrigin = (entry: SidebarSessionEntry): string | undefined => {
+    const seen = new Set<string>([entry.session.key]);
+    let cursor = entry.session.parentSessionKey;
+    let origin: string | undefined;
+    while (cursor && byKey.has(cursor) && !seen.has(cursor)) {
+      origin = cursor;
+      seen.add(cursor);
+      cursor = byKey.get(cursor)?.session.parentSessionKey;
+    }
+    return origin;
+  };
+
+  const childrenByOrigin = new Map<string, SidebarSessionEntry[]>();
+  const topLevel: SidebarSessionEntry[] = [];
+  for (const entry of entries) {
+    const origin = resolveOrigin(entry);
+    if (origin) {
+      const list = childrenByOrigin.get(origin) ?? [];
+      list.push(entry);
+      childrenByOrigin.set(origin, list);
+    } else {
+      topLevel.push(entry);
+    }
+  }
+
+  const rows: LineageRow[] = [];
+  const emitted = new Set<string>();
+  for (const entry of topLevel) {
+    rows.push({ entry, lineageDepth: 0 });
+    emitted.add(entry.session.key);
+    for (const child of childrenByOrigin.get(entry.session.key) ?? []) {
+      rows.push({ entry: child, lineageDepth: 1, originKey: entry.session.key });
+      emitted.add(child.session.key);
+    }
+  }
+  // Lost-and-found: a cyclic parent chain can classify every member as a
+  // child, leaving no top-level host — those rows MUST NOT vanish. Emit them
+  // as plain rows in incoming order.
+  for (const entry of entries) {
+    if (!emitted.has(entry.session.key)) {
+      rows.push({ entry, lineageDepth: 0 });
+      emitted.add(entry.session.key);
+    }
+  }
+  return rows;
+}
+
+export type SessionTimeSliceKey = 'today' | 'week' | 'earlier';
+
+export type SessionTimeSlice = {
+  key: SessionTimeSliceKey;
+  entries: SidebarSessionEntry[];
+};
+
+/**
+ * Split unfiled sessions into "today / this week / earlier" by activity.
+ * "today" is the local calendar day; "week" is the trailing 7 days beyond it;
+ * unknown activity (0) sinks to "earlier". Empty slices are dropped.
+ */
+export function sliceSessionsByTime(entries: SidebarSessionEntry[], nowMs: number): SessionTimeSlice[] {
+  const dayStart = new Date(nowMs);
+  dayStart.setHours(0, 0, 0, 0);
+  const todayStartMs = dayStart.getTime();
+  const weekStartMs = nowMs - 7 * 24 * 60 * 60 * 1000;
+
+  const buckets: Record<SessionTimeSliceKey, SidebarSessionEntry[]> = { today: [], week: [], earlier: [] };
+  for (const entry of entries) {
+    const activity = entry.activityMs;
+    if (activity >= todayStartMs) buckets.today.push(entry);
+    else if (activity >= weekStartMs && activity > 0) buckets.week.push(entry);
+    else buckets.earlier.push(entry);
+  }
+
+  return (['today', 'week', 'earlier'] as const)
+    .map((key) => ({ key, entries: buckets[key] }))
+    .filter((slice) => slice.entries.length > 0);
+}

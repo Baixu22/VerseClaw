@@ -370,17 +370,22 @@ test.describe('Knowledge Hub UX', () => {
 
     await page.getByTestId('knowledge-librarian-open').click();
     await expect(page.getByTestId('knowledge-librarian-modal')).toBeVisible();
-    await expect(page.getByTestId('knowledge-librarian-capability-ask')).toBeVisible();
+    await expect(page.getByTestId('knowledge-librarian-thread')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-composer')).toBeVisible();
     await expect(page.getByTestId('knowledge-librarian-suggestions')).toContainText('Summarize');
     await page.getByTestId('knowledge-librarian-question').fill('What is this note about?');
     await expect(page.getByTestId('knowledge-librarian-ask')).toBeEnabled();
     await page.getByTestId('knowledge-librarian-ask').click();
     await expect(page.getByTestId('knowledge-librarian-message-assistant')).toContainText('Local operating notes');
-    await expect(page.getByTestId('knowledge-librarian-grounded-answer')).toContainText('Answer');
     await expect(page.getByTestId('knowledge-librarian-sources-section')).toContainText('Local operating notes');
+
+    // Unknowns and next actions now live inside the collapsed retrieval inspector,
+    // so they are present but not competing with the answer until asked for.
+    const inspector = page.getByTestId('knowledge-librarian-retrieval-inspector');
+    await expect(page.getByTestId('knowledge-librarian-unknowns-section')).not.toBeVisible();
+    await inspector.locator('summary').click();
     await expect(page.getByTestId('knowledge-librarian-unknowns-section')).toBeVisible();
-    await expect(page.getByTestId('knowledge-librarian-retrieval-inspector')).toContainText('What is this note about?');
+    await expect(inspector).toContainText('What is this note about?');
     await expect(page.getByTestId('knowledge-librarian-citation')).toContainText('notes/local-operating-notes.md');
     await page.getByTestId('knowledge-librarian-create-error-experience').click();
     await expect.poll(async () => {

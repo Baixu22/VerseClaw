@@ -1,0 +1,459 @@
+/* Session status rail — a floating status card on the chat page.
+ *
+ * Not a sidebar. The rail is an absolutely-positioned card inside
+ * `chat-page`, inset from the top-right corner, and the conversation column
+ * pays for it with padding (`.codex-conversation-inset`) rather than losing a
+ * flex sibling's worth of width. That keeps the transcript centred on its own
+ * reading measure instead of being squeezed against a hard column edge.
+ *
+ * Surface, radius, and shadow are the composer dropdown's recipe
+ * (codex-composer-menu.css) so the card reads as the same family of floating
+ * panel: elevated-primary fill, hairline + xl shadow, xl radius, sm blur.
+ * Nothing here invents a new colour.
+ */
+
+.codex-session-rail {
+  position: absolute;
+  /* Aligned with the toolbar's own action buttons (8px from the page top), so
+   * the collapsed toggle reads as one more control in that row rather than a
+   * stray button floating below it. */
+  top: 8px;
+  right: 16px;
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 300px;
+  /* Height follows content — a card with one Git section should not stretch to
+   * the bottom of the window. The body scrolls once sections outgrow this. */
+  max-height: calc(100% - 24px);
+  padding: 4px;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--color-background-elevated-primary);
+  box-shadow: var(--shadow-xl-spread);
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  backdrop-filter: blur(var(--blur-sm));
+  overflow: hidden;
+  animation: codex-session-rail-in 160ms var(--ease-enter);
+}
+
+@keyframes codex-session-rail-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-session-rail { animation: none; }
+}
+
+/* Collapsed is a single round button, not a strip: there is nothing to read
+ * while shut, so the card gets out of the way entirely. */
+.codex-session-rail.codex-session-rail--collapsed {
+  width: 32px;
+  height: 32px;
+  max-height: 32px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Conversation offset. Applied to the scroll column so the transcript slides
+ * rather than reflowing its measure. */
+.codex-conversation-inset {
+  transition: padding-right 200ms var(--ease-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-conversation-inset { transition: none; }
+}
+
+.codex-conversation-inset[data-rail='expanded'] {
+  padding-right: 316px;
+}
+
+.codex-conversation-inset[data-rail='collapsed'] {
+  padding-right: 56px;
+}
+
+/* ── Head ────────────────────────────────────────────────────────────────── */
+
+.codex-session-rail .codex-session-rail__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: none;
+  min-height: 32px;
+  padding: 6px 6px 4px 10px;
+}
+
+.codex-session-rail .codex-session-rail__title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.codex-session-rail .codex-session-rail__toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-icon-secondary);
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-session-rail.codex-session-rail--collapsed .codex-session-rail__toggle {
+  width: 32px;
+  height: 32px;
+}
+
+.codex-session-rail .codex-session-rail__toggle:hover,
+.codex-session-rail .codex-session-rail__toggle:focus-visible {
+  background: var(--color-background-row-hover);
+  color: var(--color-text-foreground);
+  outline: none;
+}
+
+.codex-session-rail .codex-session-rail__collapsed-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-icon-warning);
+  color: var(--gray-0);
+  font-size: 9px;
+  line-height: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── Body ────────────────────────────────────────────────────────────────── */
+
+.codex-session-rail .codex-session-rail__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Sections are separated by a hairline, matching the reference card. The last
+ * one carries none so the card does not end on a rule. */
+.codex-session-rail .codex-session-rail__section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 4px 0;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.codex-session-rail .codex-session-rail__section:last-of-type {
+  border-bottom: 0;
+}
+
+.codex-session-rail .codex-session-rail__section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+.codex-session-rail .codex-session-rail__section-head:hover,
+.codex-session-rail .codex-session-rail__section-head:focus-visible {
+  background: var(--color-background-row-hover);
+  outline: none;
+}
+
+.codex-session-rail .codex-session-rail__section-chevron {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-foreground-tertiary);
+  transition: transform 160ms var(--ease-enter);
+}
+
+.codex-session-rail .codex-session-rail__section-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-text-foreground-secondary);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+
+.codex-session-rail .codex-session-rail__section-summary {
+  margin-left: auto;
+  flex: none;
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Plan progress. Green once every step is done — the reference card uses the
+ * count itself as the completion signal rather than adding a separate badge. */
+.codex-session-rail .codex-session-rail__progress {
+  color: var(--color-text-foreground-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codex-session-rail .codex-session-rail__progress.is-complete {
+  color: var(--color-text-success);
+}
+
+.codex-session-rail .codex-session-rail__section-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 2px 0 6px;
+}
+
+/* ── Rows ────────────────────────────────────────────────────────────────────
+ *
+ * 32px rows on the same 10px gutter as the section heads, so labels line up
+ * down the whole card regardless of which section they sit in.
+ */
+
+.codex-session-rail .codex-session-rail__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-foreground);
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.codex-session-rail .codex-session-rail__row.is-interactive {
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+.codex-session-rail .codex-session-rail__row.is-interactive:hover,
+.codex-session-rail .codex-session-rail__row.is-interactive:focus-visible {
+  background: var(--color-background-row-hover);
+  outline: none;
+}
+
+.codex-session-rail .codex-session-rail__row-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--color-icon-secondary);
+}
+
+.codex-session-rail .codex-session-rail__row-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.codex-session-rail .codex-session-rail__row-value {
+  margin-left: auto;
+  flex: none;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.codex-session-rail .codex-session-rail__row-muted {
+  color: var(--color-text-foreground-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.codex-session-rail .codex-session-rail__status-error {
+  color: var(--color-text-error);
+}
+
+.codex-session-rail .codex-session-rail__status-done {
+  color: var(--color-text-foreground-tertiary);
+}
+
+/* ── Git delta ───────────────────────────────────────────────────────────────
+ *
+ * Monospaced and tabular so the two numbers keep their columns as the diff
+ * grows. Green/red come from the shared success/error text tokens rather than
+ * literal hues, so both themes stay coherent.
+ */
+
+.codex-session-rail .codex-session-rail__delta {
+  display: inline-flex;
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codex-session-rail .codex-session-rail__delta-add {
+  color: var(--color-text-success);
+}
+
+.codex-session-rail .codex-session-rail__delta-remove {
+  color: var(--color-text-error);
+}
+
+/* The branch picker is borrowed from the welcome hero; reset its hero sizing so
+ * it reads as a rail row rather than a floating pill. */
+.codex-session-rail .codex-session-rail__branch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 6px;
+}
+
+.codex-session-rail .codex-session-rail__branch .codex-welcome-context__subcontrol {
+  min-width: 0;
+  max-width: 100%;
+  height: 26px;
+  padding: 0 6px;
+  font-size: 13px;
+}
+
+/* ── Agent rows ──────────────────────────────────────────────────────────────
+ *
+ * Taller than a plain row to seat the 24px avatar, with the role name and its
+ * status stacked so the avatar has something to align against.
+ */
+
+.codex-session-rail .codex-session-rail__agent-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+.codex-session-rail .codex-session-rail__agent-row:hover,
+.codex-session-rail .codex-session-rail__agent-row:focus-visible {
+  background: var(--color-background-row-hover);
+  outline: none;
+}
+
+.codex-session-rail .codex-session-rail__agent-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+  color: var(--color-text-foreground);
+  font-size: 13px;
+  line-height: 17px;
+}
+
+/* ── Plan + ledger + long-task control ───────────────────────────────────────
+ *
+ * The plan card and the process list are borrowed components that bring their
+ * own chrome; the rail only supplies the shared 10px gutter.
+ */
+
+.codex-session-rail .codex-session-rail__section-body [data-testid='session-status-rail-plan'],
+.codex-session-rail .codex-session-rail__section-body [data-testid='session-status-rail-process-list'] {
+  padding: 0 10px;
+}
+
+.codex-session-rail .codex-session-rail__control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 4px 10px 0;
+}
+
+.codex-session-rail .codex-session-rail__action {
+  flex: none;
+  margin-left: auto;
+  height: 22px;
+  padding: 0 8px;
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-foreground-secondary);
+  font-size: 12px;
+  line-height: 21px;
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.codex-session-rail .codex-session-rail__action:hover:not(:disabled) {
+  background: var(--color-background-row-hover);
+  color: var(--color-text-foreground);
+}
+
+.codex-session-rail .codex-session-rail__action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Empty + footer ──────────────────────────────────────────────────────── */
+
+.codex-session-rail .codex-session-rail__empty {
+  padding: 2px 10px 4px;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.codex-session-rail .codex-session-rail__footer-link {
+  align-self: flex-start;
+  margin: 2px 10px 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-foreground-tertiary);
+  font-size: 12px;
+  line-height: 17px;
+  cursor: pointer;
+  transition: color 100ms ease;
+}
+
+.codex-session-rail .codex-session-rail__footer-link:hover {
+  color: var(--color-text-foreground);
+}

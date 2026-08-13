@@ -40,7 +40,8 @@ export type PanelTabKind =
   | 'browser'
   | 'files'
   | 'artifact'
-  | 'audit';
+  | 'audit'
+  | 'agents';
 
 export interface PanelTabInstance {
   id: string;
@@ -56,6 +57,7 @@ const PANEL_TAB_KINDS: readonly PanelTabKind[] = [
   'files',
   'artifact',
   'audit',
+  'agents',
 ];
 
 export function isPanelTabKind(value: unknown): value is PanelTabKind {
@@ -108,6 +110,8 @@ interface ArtifactPanelState {
   browserView: WorkspaceBrowserView;
   browserSessionId: string | null;
   browserUrl: string | null;
+  /** Which sub-agent transcript the Agents tab has focused. */
+  agentsSessionKey: string | null;
   terminalPlacement: WorkspaceTerminalPlacement;
   /** Persisted panel width as a % of the chat container (clamped on read). */
   widthPct: number;
@@ -121,6 +125,7 @@ interface ArtifactPanelState {
   setReviewView: (view: WorkspaceReviewView) => void;
   setBrowserView: (view: WorkspaceBrowserView) => void;
   setBrowserSessionId: (sessionId: string | null) => void;
+  setAgentsSessionKey: (sessionKey: string | null) => void;
   setTerminalPlacement: (placement: WorkspaceTerminalPlacement) => void;
   openWorkspacePanel: (intent: WorkspacePanelIntent) => void;
   setExpanded: (expanded: boolean) => void;
@@ -219,6 +224,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
       browserView: 'preview',
       browserSessionId: null,
       browserUrl: null,
+      agentsSessionKey: null,
       terminalPlacement: 'side',
       widthPct: ARTIFACT_PANEL_DEFAULT_WIDTH,
       closeTab: (tabId) => set((s) => {
@@ -243,6 +249,7 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
       setReviewView: (reviewView) => set({ reviewView }),
       setBrowserView: (browserView) => set({ browserView }),
       setBrowserSessionId: (browserSessionId) => set({ browserSessionId }),
+      setAgentsSessionKey: (agentsSessionKey) => set({ agentsSessionKey }),
       setTerminalPlacement: (terminalPlacement) => set({
         terminalPlacement: window.innerWidth <= 960 ? 'bottom' : terminalPlacement,
       }),
@@ -275,11 +282,16 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
           openCanonicalTab('files');
           return;
         }
+        if (intent.panel === 'agents') {
+          set({ agentsSessionKey: intent.sessionKey ?? null });
+          openCanonicalTab('agents');
+          return;
+        }
         openCanonicalTab(intent.panel);
       },
       setExpanded: (expanded) => set({ expanded }),
       toggle: () => set((s) => ({ open: !s.open })),
-      close: () => set({ open: false, expanded: false, tabs: [], activeTabId: null, focusedFile: null, selectedPath: null }),
+      close: () => set({ open: false, expanded: false, tabs: [], activeTabId: null, focusedFile: null, selectedPath: null, agentsSessionKey: null }),
       setWidthPct: (pct) => set({ widthPct: clampWidth(pct) }),
       restoreSessionState: (state) => set(() => {
         const tabs = restoreTabs(state);
@@ -298,6 +310,9 @@ export const useArtifactPanel = create<ArtifactPanelState>()(
           reviewView: state.reviewView ?? 'changes',
           browserView: state.browserView ?? 'preview',
           browserSessionId: state.browserSessionId ?? null,
+          // Sub-agent focus is per-run, not per-session: a restored transcript
+          // would point at a run that is no longer in flight.
+          agentsSessionKey: null,
           terminalPlacement: window.innerWidth <= 960 ? 'bottom' : (state.terminalPlacement ?? 'side'),
         };
       }),

@@ -17,7 +17,13 @@ export interface TaskStep {
   id: string;
   label: string;
   status: TaskStepStatus;
-  kind: 'thinking' | 'tool' | 'system' | 'message';
+  /**
+   * No `thinking` variant: neither `deriveTaskSteps` nor
+   * `deriveRuntimeTaskSteps` has ever emitted one, and `sanitizeGraphSteps`
+   * filtered it out anyway. Reasoning reaches the transcript through
+   * `ThinkingReasoning` instead (assistant-render/model.ts).
+   */
+  kind: 'tool' | 'system' | 'message';
   detail?: string;
   depth: number;
   parentId?: string;
@@ -292,7 +298,7 @@ function attachTopology(steps: TaskStep[]): TaskStep[] {
       continue;
     }
 
-    if (step.kind === 'thinking' || step.kind === 'message') {
+    if (step.kind === 'message') {
       withTopology.push({
         ...step,
         depth: activeBranchNodeId ? 3 : 1,
@@ -326,7 +332,7 @@ function appendDetailSegments(
   options: {
     idPrefix: string;
     label: string;
-    kind: Extract<TaskStep['kind'], 'thinking' | 'message'>;
+    kind: Extract<TaskStep['kind'], 'message'>;
     running: boolean;
     upsertStep: (step: TaskStep) => void;
   },
@@ -368,6 +374,37 @@ function toolResultDetail(value: unknown): string | undefined {
   const text = extractText({ role: 'toolresult', content: value } as RawMessage);
   if (text.trim()) return normalizeText(text);
   return runtimeDetail(value);
+}
+
+/*
+ * Runtime step-id helpers.
+ *
+ * These are the SINGLE source of truth for the ids `deriveRuntimeTaskSteps`
+ * assigns to runtime events. `run-surface-promotion.ts` reuses them to decide
+ * which graph rows have been promoted to a rich card, so the two sides can
+ * never drift into rendering the same event twice.
+ */
+export function runtimeCommandStepId(event: {
+  itemId?: string;
+  toolCallId?: string;
+  name?: string;
+}): string {
+  return event.itemId || `${event.toolCallId || event.name || 'command'}:output`;
+}
+
+export function runtimePatchStepId(event: {
+  itemId?: string;
+  toolCallId?: string;
+  name?: string;
+}): string {
+  return event.itemId || `${event.toolCallId || event.name || 'patch'}:patch`;
+}
+
+export function runtimeApprovalStepId(event: {
+  itemId?: string;
+  toolCallId?: string;
+}): string {
+  return event.itemId || `${event.toolCallId || 'approval'}:approval`;
 }
 
 export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | undefined): TaskStep[] {
@@ -430,7 +467,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
         break;
       }
       case 'command.output': {
-        const id = event.itemId || `${event.toolCallId || event.name || 'command'}:output`;
+        const id = runtimeCommandStepId(event);
         upsertStep({
           id,
           label: event.title || `${event.name || 'Command'} output`,
@@ -442,7 +479,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
         break;
       }
       case 'patch.completed': {
-        const id = event.itemId || `${event.toolCallId || event.name || 'patch'}:patch`;
+        const id = runtimePatchStepId(event);
         upsertStep({
           id,
           label: event.title || event.name || 'Patch',
@@ -454,7 +491,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
         break;
       }
       case 'approval.updated': {
-        const id = event.itemId || `${event.toolCallId || 'approval'}:approval`;
+        const id = runtimeApprovalStepId(event);
         upsertStep({
           id,
           label: event.title || 'Approval',

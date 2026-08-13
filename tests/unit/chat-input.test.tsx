@@ -1444,46 +1444,6 @@ describe('ChatInput slash commands', () => {
   });
 });
 
-describe('ChatInput continuity recommendation', () => {
-  beforeEach(() => {
-    gatewayState.status = { state: 'running', port: 18789 };
-  });
-
-  it('shows only the recommended Fork action in the composer context area', () => {
-    renderChatInput(vi.fn(), {
-      onForkSession: vi.fn(),
-      onHandoffSession: vi.fn(),
-      continuityRecommendation: { action: 'fork', reason: 'default', disabled: false },
-    });
-
-    expect(screen.getByTestId('chat-composer-fork')).toBeInTheDocument();
-    expect(screen.queryByTestId('chat-composer-handoff')).not.toBeInTheDocument();
-  });
-
-  it('shows only the recommended Handoff action in the composer context area', () => {
-    renderChatInput(vi.fn(), {
-      onForkSession: vi.fn(),
-      onHandoffSession: vi.fn(),
-      continuityRecommendation: { action: 'handoff', reason: 'high_pressure', disabled: false },
-    });
-
-    expect(screen.getByTestId('chat-composer-handoff')).toBeInTheDocument();
-    expect(screen.queryByTestId('chat-composer-fork')).not.toBeInTheDocument();
-  });
-
-  it('disables the recommended continuity action while a run is active', () => {
-    renderChatInput(vi.fn(), {
-      onForkSession: vi.fn(),
-      onHandoffSession: vi.fn(),
-      forkDisabled: true,
-      handoffDisabled: true,
-      continuityRecommendation: { action: 'fork', reason: 'active_run', disabled: true },
-    });
-
-    expect(screen.getByTestId('chat-composer-fork')).toBeDisabled();
-  });
-});
-
 describe('ChatInput capability action preflight', () => {
   beforeEach(() => {
     agentsState.agents = [];
@@ -1937,60 +1897,6 @@ describe('ChatInput read-only context status', () => {
     expect(status).toHaveTextContent('2 hidden');
   });
 
-  it('renders long-task recovery status and drains queued follow-up', async () => {
-    const onDrainQueuedFollowup = vi.fn().mockResolvedValue(undefined);
-    renderChatInput(vi.fn(), {
-      longTaskControlStatus: {
-        available: true,
-        queueCount: 2,
-        latestCheckpoint: {
-          id: 'ltcp-1',
-          sessionKey: 'agent:main:main',
-          trigger: 'queue_drain',
-          status: 'active',
-          checkpoint: {
-            schemaVersion: 1,
-            trigger: 'queue_drain',
-            openBlockers: [],
-            decisions: [],
-            deviations: [],
-            filesTouched: [],
-            testsRun: [],
-            reviewNeededItems: [],
-            evidenceRefs: [{ type: 'session', ref: 'agent:main:main' }],
-            createdAt: new Date(1).toISOString(),
-          },
-          createdAt: 1,
-          updatedAt: 1,
-        },
-        latestIntervention: {
-          id: 'ltie-1',
-          sessionKey: 'agent:main:main',
-          mode: 'queue',
-          trigger: 'queue_drain',
-          status: 'queued',
-          payload: {},
-          createdAt: 2,
-          updatedAt: 2,
-        },
-        warnings: ['gateway_unavailable'],
-      },
-      onDrainQueuedFollowup,
-    });
-
-    expect(screen.getByTestId('chat-composer-context-status')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-long-task-queue-count')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-long-task-checkpoint')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-long-task-intervention')).toBeInTheDocument();
-    expect(screen.getByTestId('chat-long-task-warnings')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId('chat-long-task-drain'));
-
-    await waitFor(() => {
-      expect(onDrainQueuedFollowup).toHaveBeenCalled();
-    });
-  });
-
   it('defaults active-run drafts to queued follow-up and keeps guide and interrupt as explicit strategies', async () => {
     const onSend = vi.fn();
     const view = renderChatInput(onSend, {
@@ -2071,7 +1977,7 @@ describe('ChatInput read-only context status', () => {
     expect(screen.queryByTestId('chat-composer-context-status')).not.toBeInTheDocument();
   });
 
-  it('opens the manual compaction dialog and confirms with extra instructions', async () => {
+  it('opens the manual compaction dialog from /compact and confirms with extra instructions', async () => {
     const onManualCompact = vi.fn().mockResolvedValue(undefined);
     renderChatInput(vi.fn(), {
       messageCount: 4,
@@ -2088,7 +1994,9 @@ describe('ChatInput read-only context status', () => {
       onManualCompact,
     });
 
-    fireEvent.click(screen.getByTestId('chat-composer-compact'));
+    // The composer icon is gone; the slash palette is the entry point now.
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+    fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
 
     expect(screen.getByTestId('chat-compaction-dialog')).toBeInTheDocument();
     fireEvent.change(screen.getByTestId('chat-compaction-instructions'), {
@@ -2101,7 +2009,11 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
-  it('shows compression quality when the latest compaction has artifact metrics', () => {
+  /* Compaction quality and the evidence viewer moved to the session status
+   * rail — the composer's status line is text only now. Their behaviour is
+   * covered by the rail; what matters here is that the composer no longer
+   * renders them at any depth mode. */
+  it('no longer renders compaction diagnostics in the composer status line', () => {
     settingsState.uiDepthMode = 'advanced';
     renderChatInput(vi.fn(), {
       messageCount: 4,
@@ -2131,45 +2043,9 @@ describe('ChatInput read-only context status', () => {
       onManualCompact: vi.fn(),
     });
 
-    expect(screen.getByTestId('chat-compaction-quality')).toBeInTheDocument();
-  });
-
-  it('offers a manual compression evidence viewer entry when artifact metadata exists', () => {
-    settingsState.uiDepthMode = 'advanced';
-    const onViewCompactionArtifact = vi.fn();
-    renderChatInput(vi.fn(), {
-      messageCount: 4,
-      compactionStatus: {
-        available: true,
-        canCompact: true,
-        inProgress: false,
-        pressure: 'low',
-        truncatedMessageCount: 0,
-        lastCompaction: {
-          id: 'cp-1',
-          timestamp: Date.now(),
-          trigger: 'manual',
-          quality: {
-            score: 0.78,
-            level: 'medium',
-            fieldCoverage: 0.9,
-            evidenceCoverage: 0.75,
-            artifactTokens: 900,
-            projectionTokens: 420,
-            warnings: ['review source metadata'],
-          },
-          unverifiedCount: 1,
-        },
-        warnings: [],
-      },
-      onManualCompact: vi.fn(),
-      onViewCompactionArtifact,
-    });
-
-    fireEvent.click(screen.getByTestId('chat-compaction-view-artifact'));
-
-    expect(onViewCompactionArtifact).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText(/lossless|无损/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-compaction-quality')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-compaction-view-artifact')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-composer-compact')).not.toBeInTheDocument();
   });
 
   it('keeps compaction diagnostics hidden in basic mode while preserving send payload', async () => {
@@ -2220,7 +2096,7 @@ describe('ChatInput read-only context status', () => {
     });
   });
 
-  it('disables manual compaction while the session is sending', () => {
+  it('refuses /compact while the session is sending', () => {
     renderChatInput(vi.fn(), {
       sending: true,
       compactionStatus: {
@@ -2234,7 +2110,11 @@ describe('ChatInput read-only context status', () => {
       onManualCompact: vi.fn(),
     });
 
-    expect(screen.getByTestId('chat-composer-compact')).toBeDisabled();
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: '/compact' } });
+    fireEvent.click(screen.getByTestId('chat-slash-command-option-compact'));
+
+    // The command toasts its disabled reason instead of opening the dialog.
+    expect(screen.queryByTestId('chat-compaction-dialog')).not.toBeInTheDocument();
   });
 });
 

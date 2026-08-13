@@ -132,11 +132,18 @@
     "source": {
       "terminal": "Терминал",
       "file": "Файл",
-      "remoteControl": "Удалённое управление"
+      "remoteControl": "Удалённое управление",
+      "gateway": "Шлюз",
+      "mcp": "MCP",
+      "git": "Git",
+      "cleaner": "Очистка"
     },
     "risk": {
       "write": "Запись",
-      "dangerous": "Высокий риск"
+      "dangerous": "Высокий риск",
+      "network": "Сеть",
+      "external-write": "Внешняя запись",
+      "destructive": "Разрушительная"
     },
     "status": {
       "pending": "Ожидает",
@@ -186,6 +193,14 @@
     }
   },
   "toolUi": {
+    "approval": {
+      "host": {
+        "title": "Требуется разрешение",
+        "approve": "Одобрить",
+        "deny": "Отклонить",
+        "retryRequired": "Решение записано — попросите агента повторить действие."
+      }
+    },
     "actions": {
       "back": "Назад",
       "next": "Далее",
@@ -380,7 +395,8 @@
       "review": "Проверка",
       "terminal": "Терминал",
       "files": "Файлы",
-      "audit": "Аудит"
+      "audit": "Аудит",
+      "agents": "Субагенты"
     },
     "workspaceTabs": {
       "files": "Файлы",
@@ -409,7 +425,8 @@
         "review": "Проверьте изменения, ветки, stash и PR.",
         "reviewBranch": "Проверьте изменения в {{branch}}.",
         "web": "Откройте локальный предпросмотр или проверьте URL.",
-        "audit": "Просмотрите запросы разрешений и последние подтверждения."
+        "audit": "Просмотрите запросы разрешений и последние подтверждения.",
+        "agents": "Просмотр переписки субагента и назначение новых задач."
       },
       "badges": {
         "changes": "{{count}} изменений",
@@ -432,6 +449,22 @@
     "preview": {
       "emptyTitle": "Файл не выбран",
       "emptyHint": "Сначала откройте файл через карточку в чате — выбранный файл появится в этом предпросмотре."
+    }
+  },
+  "agentsPanel": {
+    "title": "Субагенты",
+    "description": "Переписка и назначение задач для этой сессии",
+    "empty": "В этой сессии субагенты ещё не создавались.",
+    "transcriptEmpty": "В переписке этого субагента пока нет сообщений.",
+    "transcriptUnavailable": "У этого субагента пока нет доступной сессии.",
+    "dispatchPlaceholder": "Отправить задачу {{role}}…",
+    "dispatchStarted": "Задача отправлена {{role}}",
+    "dispatchFailed": "Не удалось отправить задачу",
+    "role": {
+      "user": "Вы",
+      "assistant": "Агент",
+      "system": "Система",
+      "toolresult": "Инструмент"
     }
   },
   "filePreview": {
@@ -565,10 +598,19 @@
       "more": "Другие действия с файлами"
     },
     "review": {
-      "views": { "label": "Режим проверки", "changes": "Изменения", "ai-review": "AI-проверка", "pull-requests": "Pull Requests" }
+      "views": {
+        "label": "Режим проверки",
+        "changes": "Изменения",
+        "ai-review": "AI-проверка",
+        "pull-requests": "Pull Requests"
+      }
     },
     "browser": {
-      "views": { "label": "Режим браузера", "preview": "Предпросмотр", "live": "Live" }
+      "views": {
+        "label": "Режим браузера",
+        "preview": "Предпросмотр",
+        "live": "Live"
+      }
     },
     "terminal": {
       "title": "Терминал рабочей области",
@@ -1821,13 +1863,13 @@
     "noFolder": "Без папки"
   },
   "workgroups": {
-    "create": "Новая рабочая группа",
-    "namePlaceholder": "Имя рабочей группы",
-    "rename": "Переименовать рабочую группу",
-    "delete": "Удалить рабочую группу",
-    "moveTo": "Переместить в рабочую группу",
-    "noWorkgroup": "Без рабочей группы",
-    "ungrouped": "Без группы",
+    "create": "Новый рабочий поток",
+    "namePlaceholder": "Имя рабочего потока",
+    "rename": "Переименовать рабочий поток",
+    "delete": "Удалить рабочий поток",
+    "moveTo": "Переместить в рабочий поток",
+    "noWorkgroup": "Без рабочего потока",
+    "ungrouped": "Вне потоков",
     "sessionCount": "{{count}} диалогов",
     "status": {
       "running": "В работе",
@@ -1836,6 +1878,13 @@
       "done": "Готово",
       "stopped": "Остановлено",
       "idle": "Нет активности"
+    },
+    "newStream": "Новый рабочий поток…",
+    "origin": "Из {{name}}",
+    "timeSlice": {
+      "today": "Сегодня",
+      "week": "На этой неделе",
+      "earlier": "Ранее"
     }
   },
   "archive": {
@@ -1864,6 +1913,70 @@
     "title": "Список вопросов",
     "fallback": "Вопрос {{number}}",
     "moreHint": "Ещё {{count}} вопросов не показано"
+  },
+  "sessionRail": {
+    "title": "Состояние сессии",
+    "collapse": "Свернуть состояние сессии",
+    "expand": "Развернуть состояние сессии",
+    "git": {
+      "title": "Git",
+      "loading": "Чтение состояния репозитория…",
+      "notARepository": "Проект не является Git-репозиторием",
+      "changes": "Изменения",
+      "clean": "Чисто",
+      "noLineStats": "Нет статистики строк",
+      "changeCount": "Изменено файлов: {{count}}",
+      "tracking": "Впереди {{ahead}} · позади {{behind}}",
+      "commitOrPush": "Коммит или push",
+      "stash": "Отложить",
+      "commit": "Коммит",
+      "push": "Отправить",
+      "stashSuccess": "Изменения отложены",
+      "stashFailed": "Не удалось отложить изменения",
+      "commitSuccess": "Изменения закоммичены",
+      "commitFailed": "Не удалось создать коммит",
+      "pushSuccess": "Изменения отправлены",
+      "pushFailed": "Не удалось отправить изменения",
+      "approvalRequired": "Требуется одобрение - проверьте панель проверки",
+      "commitMessagePlaceholder": "Введите сообщение коммита…",
+      "commitMessageRequired": "Введите сообщение коммита"
+    },
+    "process": {
+      "title": "Процесс",
+      "empty": "Пока ничего не выполняется",
+      "planTitle": "План",
+      "ledgerFallback": "Текущая цель не задана",
+      "ledgerCounts": "Активных {{active}} · на проверке {{review}} · заблокировано {{blocked}}",
+      "queued": "В очереди {{count}}",
+      "checkpoint": "Чекпоинт {{trigger}}",
+      "warnings": "Предупреждений {{count}}",
+      "drain": "Отправить сейчас"
+    },
+    "agents": {
+      "title": "Субагенты",
+      "empty": "В этой сессии нет субагентов",
+      "running": "Выполняется: {{count}}",
+      "orchestration": "Оркестрация: воркеров {{workers}} · в ожидании {{pending}} · с ошибкой {{failures}}",
+      "status": {
+        "started": "Выполняется",
+        "completed": "Готово",
+        "error": "Ошибка",
+        "aborted": "Прервано",
+        "verified": "Проверено"
+      }
+    },
+    "terminal": {
+      "title": "Терминал",
+      "idleHint": "Открыть терминал",
+      "pid": "pid {{pid}}",
+      "state": {
+        "idle": "Простой",
+        "starting": "Запуск",
+        "running": "Выполняется",
+        "exited": "Завершён",
+        "blocked": "Заблокирован"
+      }
+    }
   },
   "workModePanel": {
     "knowledge": "Знания: {{scope}}",
@@ -1923,18 +2036,12 @@
     }
   },
   "assistantRender": {
-    "branch": {
-      "previous": "?????????? ?????",
-      "next": "????????? ?????",
-      "count": "{{current}} / {{total}}"
-    },
     "reasoning": {
+      "thinking": "Думаю…",
+      "thought": "Обдумано",
+      "thoughtFor": "Думал {{seconds}} с",
+      "toggle": "Показать или скрыть рассуждение",
       "title": "?????? ???????????"
-    },
-    "tool": {
-      "running": "???????????",
-      "completed": "??????",
-      "error": "??????"
     },
     "usage": {
       "tokens": "???????"
@@ -1989,6 +2096,14 @@
       "minutes_one": "{{count}} минута",
       "minutes_other": "{{count}} минут",
       "minutesSeconds": "{{minutes}} мин {{seconds}} сек"
+    },
+    "badge": {
+      "approvals": "{{count}} запросов",
+      "plan": "{{count}} шагов",
+      "agents": "{{count}} агентов",
+      "diffs": "{{count}} правок",
+      "files": "{{count}} файлов",
+      "terminals": "{{count}} команд"
     }
   },
   "turnWork": {

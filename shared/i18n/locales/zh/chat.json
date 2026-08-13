@@ -132,11 +132,18 @@
     "source": {
       "terminal": "终端",
       "file": "文件",
-      "remoteControl": "远程控制"
+      "remoteControl": "远程控制",
+      "gateway": "网关",
+      "mcp": "MCP",
+      "git": "Git",
+      "cleaner": "清理"
     },
     "risk": {
       "write": "写入",
-      "dangerous": "高风险"
+      "dangerous": "高风险",
+      "network": "网络",
+      "external-write": "外部写入",
+      "destructive": "破坏性"
     },
     "status": {
       "pending": "待处理",
@@ -186,6 +193,14 @@
     }
   },
   "toolUi": {
+    "approval": {
+      "host": {
+        "title": "需要授权",
+        "approve": "批准",
+        "deny": "拒绝",
+        "retryRequired": "已记录决定，请让智能体重试该操作。"
+      }
+    },
     "actions": {
       "back": "返回",
       "next": "下一步",
@@ -380,7 +395,8 @@
       "review": "审查",
       "terminal": "终端",
       "files": "文件",
-      "audit": "审计"
+      "audit": "审计",
+      "agents": "子智能体"
     },
     "workspaceTabs": {
       "files": "文件",
@@ -409,7 +425,8 @@
         "review": "审查变更、分支、暂存和 PR。",
         "reviewBranch": "审查 {{branch}} 上的变更。",
         "web": "打开本地预览或检查 URL。",
-        "audit": "查看权限请求和最近的审批。"
+        "audit": "查看权限请求和最近的审批。",
+        "agents": "查看子智能体的对话并派发新任务。"
       },
       "badges": {
         "changes": "{{count}} 个变更",
@@ -432,6 +449,22 @@
     "preview": {
       "emptyTitle": "尚未选择文件",
       "emptyHint": "请先点击对话里的文件卡片，侧栏会选中该文件后在此预览。"
+    }
+  },
+  "agentsPanel": {
+    "title": "子智能体",
+    "description": "本次会话的对话记录与任务派发",
+    "empty": "本次会话还没有派生子智能体。",
+    "transcriptEmpty": "该子智能体还没有消息。",
+    "transcriptUnavailable": "该子智能体还没有可读取的会话。",
+    "dispatchPlaceholder": "给 {{role}} 派发任务…",
+    "dispatchStarted": "已派发给 {{role}}",
+    "dispatchFailed": "派发任务失败",
+    "role": {
+      "user": "你",
+      "assistant": "智能体",
+      "system": "系统",
+      "toolresult": "工具"
     }
   },
   "filePreview": {
@@ -565,10 +598,19 @@
       "more": "更多文件操作"
     },
     "review": {
-      "views": { "label": "审查视图", "changes": "变更", "ai-review": "AI 审查", "pull-requests": "拉取请求" }
+      "views": {
+        "label": "审查视图",
+        "changes": "变更",
+        "ai-review": "AI 审查",
+        "pull-requests": "拉取请求"
+      }
     },
     "browser": {
-      "views": { "label": "浏览器视图", "preview": "预览", "live": "实时" }
+      "views": {
+        "label": "浏览器视图",
+        "preview": "预览",
+        "live": "实时"
+      }
     },
     "terminal": {
       "title": "工作区终端",
@@ -1821,13 +1863,13 @@
     "noFolder": "未分组"
   },
   "workgroups": {
-    "create": "新建工作组",
-    "namePlaceholder": "工作组名称",
-    "rename": "重命名工作组",
-    "delete": "删除工作组",
-    "moveTo": "移至工作组",
-    "noWorkgroup": "无工作组",
-    "ungrouped": "未归组",
+    "create": "新建工作线",
+    "namePlaceholder": "工作线名称",
+    "rename": "重命名工作线",
+    "delete": "删除工作线",
+    "moveTo": "移至工作线",
+    "noWorkgroup": "无工作线",
+    "ungrouped": "未归线",
     "sessionCount": "{{count}} 个会话",
     "status": {
       "running": "进行中",
@@ -1836,6 +1878,13 @@
       "done": "已完成",
       "stopped": "已停止",
       "idle": "空闲"
+    },
+    "newStream": "新建工作线…",
+    "origin": "源自 {{name}}",
+    "timeSlice": {
+      "today": "今天",
+      "week": "本周",
+      "earlier": "更早"
     }
   },
   "archive": {
@@ -1864,6 +1913,70 @@
     "title": "问题目录",
     "fallback": "问题 {{number}}",
     "moreHint": "还有 {{count}} 个问题未显示"
+  },
+  "sessionRail": {
+    "title": "会话状态",
+    "collapse": "收起会话状态",
+    "expand": "展开会话状态",
+    "git": {
+      "title": "Git",
+      "loading": "读取仓库状态…",
+      "notARepository": "当前项目不是 Git 仓库",
+      "changes": "更改",
+      "clean": "干净",
+      "noLineStats": "无行数统计",
+      "changeCount": "{{count}} 个文件有改动",
+      "tracking": "领先 {{ahead}} · 落后 {{behind}}",
+      "commitOrPush": "提交或推送",
+      "stash": "暂存",
+      "commit": "提交",
+      "push": "推送",
+      "stashSuccess": "更改已暂存",
+      "stashFailed": "暂存失败",
+      "commitSuccess": "更改已提交",
+      "commitFailed": "提交失败",
+      "pushSuccess": "更改已推送",
+      "pushFailed": "推送失败",
+      "approvalRequired": "需要审批 - 请查看审查面板",
+      "commitMessagePlaceholder": "输入提交信息…",
+      "commitMessageRequired": "请输入提交信息"
+    },
+    "process": {
+      "title": "进程",
+      "empty": "还没有正在进行的任务",
+      "planTitle": "计划",
+      "ledgerFallback": "暂无当前目标",
+      "ledgerCounts": "活跃 {{active}} · 复核 {{review}} · 阻塞 {{blocked}}",
+      "queued": "排队 {{count}}",
+      "checkpoint": "检查点 {{trigger}}",
+      "warnings": "告警 {{count}}",
+      "drain": "立即处理"
+    },
+    "agents": {
+      "title": "子智能体",
+      "empty": "本次会话还没有子智能体",
+      "running": "{{count}} 个运行中",
+      "orchestration": "编排：worker {{workers}} · 待处理 {{pending}} · 失败 {{failures}}",
+      "status": {
+        "started": "运行中",
+        "completed": "已完成",
+        "error": "出错",
+        "aborted": "已中止",
+        "verified": "已验证"
+      }
+    },
+    "terminal": {
+      "title": "终端",
+      "idleHint": "打开终端",
+      "pid": "pid {{pid}}",
+      "state": {
+        "idle": "空闲",
+        "starting": "启动中",
+        "running": "运行中",
+        "exited": "已退出",
+        "blocked": "已阻止"
+      }
+    }
   },
   "workModePanel": {
     "knowledge": "知识：{{scope}}",
@@ -1923,18 +2036,12 @@
     }
   },
   "assistantRender": {
-    "branch": {
-      "previous": "?????",
-      "next": "?????",
-      "count": "{{current}} / {{total}}"
-    },
     "reasoning": {
+      "thinking": "思考中…",
+      "thought": "已思考",
+      "thoughtFor": "思考了 {{seconds}} 秒",
+      "toggle": "展开/收起思考过程",
       "title": "????"
-    },
-    "tool": {
-      "running": "???",
-      "completed": "??",
-      "error": "??"
     },
     "usage": {
       "tokens": "tokens"
@@ -1989,6 +2096,14 @@
       "minutes_one": "{{count}} 分钟",
       "minutes_other": "{{count}} 分钟",
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
+    },
+    "badge": {
+      "approvals": "{{count}} 项待批准",
+      "plan": "{{count}} 步计划",
+      "agents": "{{count}} 个 Agent",
+      "diffs": "{{count}} 处改动",
+      "files": "{{count}} 个文件",
+      "terminals": "{{count}} 条命令"
     }
   },
   "turnWork": {

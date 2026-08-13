@@ -1,7 +1,10 @@
 /**
  * Chat Input Component
  * Textarea with send button and universal file upload support.
- * Enter to send, Shift+Enter for new line unless an active run is being interrupted.
+ * Five states: targeted no message, has message, message just sent,
+ * system overall hot start, session running, session temporarily paused
+ * (SVG style preserved for paused sessions due to state save).
+ * Enter to send (queue default), Ctrl+Enter for guide.
  * Supports: native file picker, clipboard paste, drag & drop.
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
@@ -59,7 +62,6 @@ import { useUiVersion } from '@/components/layout/ui-overlay-context';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
-import { useSettingsStore } from '@/stores/settings';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
@@ -160,7 +162,6 @@ interface ChatInputProps {
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
   onManualCompact?: (customInstructions?: string) => Promise<void>;
-  onViewCompactionArtifact?: () => void;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
@@ -866,7 +867,6 @@ export function ChatInput({
   compactionStatus,
   compactionBusy = false,
   onManualCompact,
-  onViewCompactionArtifact,
   longTaskControlStatus,
   queueDrainBusy = false,
   onDrainQueuedFollowup,
@@ -878,8 +878,6 @@ export function ChatInput({
   const isUiV2 = uiVersion === 'v2';
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
-  const uiDepthMode = useSettingsStore((state) => state.uiDepthMode);
-  const showAdvancedDetails = uiDepthMode === 'advanced';
   const [input, setInput] = useState(() => draftValue ?? '');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
@@ -1250,7 +1248,6 @@ export function ChatInput({
   }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const compactAttention = compactionStatus?.pressure === 'high';
-  const compactionQuality = compactionStatus?.lastCompaction?.quality;
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
   const effectiveContinuityRecommendation = continuityPreflight?.recommendation ?? continuityRecommendation;
   const continuityHealth = continuityPreflight?.health;
@@ -4107,7 +4104,7 @@ export function ChatInput({
               ))}
             </div>
           )}
-          {(composerContextParts.length > 0 || longTaskControlStatus || onManualCompact || onForkSession || onHandoffSession) && (
+          {(composerContextParts.length > 0 || longTaskControlStatus || composerContinuityAction) && (
             <div
               className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
               data-testid="chat-composer-context-status"
@@ -4206,87 +4203,6 @@ export function ChatInput({
                     </Tooltip>
                   )}
                 </>
-              )}
-              {showAdvancedDetails && compactionQuality && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'h-6 rounded-md px-2 text-[11px] font-medium',
-                    compactionQuality.level === 'high' && 'border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400',
-                    compactionQuality.level === 'medium' && 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400',
-                    compactionQuality.level === 'low' && 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400',
-                  )}
-                  data-testid="chat-compaction-quality"
-                >
-                  {t('composer.compaction.quality', {
-                    level: t(`composer.compaction.qualityLevel.${compactionQuality.level}`),
-                    score: Math.round(compactionQuality.score * 100),
-                  })}
-                </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.compaction.qualityTitle', {
-                      evidence: Math.round(compactionQuality.evidenceCoverage * 100),
-                      fields: Math.round(compactionQuality.fieldCoverage * 100),
-                      tokens: compactionQuality.projectionTokens,
-                      unverified: compactionStatus?.lastCompaction?.unverifiedCount ?? 0,
-                    })}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {showAdvancedDetails && compactionQuality && onViewCompactionArtifact && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-compaction-view-artifact"
-                        onClick={onViewCompactionArtifact}
-                        className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                        aria-label={t('composer.compaction.viewEvidence')}
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {t('composer.compaction.viewEvidenceTooltip')}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {onManualCompact && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        data-testid="chat-composer-compact"
-                        disabled={compactDisabled}
-                        onClick={() => setCompactionDialogOpen(true)}
-                        className={cn(
-                          'h-6 w-6 rounded-md text-muted-foreground transition-colors',
-                          compactAttention && !compactDisabled && 'text-amber-700 hover:bg-amber-500/10 dark:text-amber-400',
-                        )}
-                        aria-label={t('composer.compaction.compress')}
-                      >
-                        {compactionBusy ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <Archive className="h-3.5 w-3.5" />
-                        )}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {compactDisabledReason ?? t('composer.compaction.compressTooltip')}
-                  </TooltipContent>
-                </Tooltip>
               )}
               {composerContinuityAction && (
                 <Tooltip>

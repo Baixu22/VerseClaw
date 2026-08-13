@@ -292,19 +292,39 @@ export function projectApprovalSurface(approval: PermissionApprovalEvent): RunAp
   };
 }
 
+/**
+ * Every approval the host is still holding for this session.
+ *
+ * Deliberately NOT filtered by run id. Approvals used to be matched against the
+ * active run, which meant that sending the next message silently dropped an
+ * undecided approval from the UI while the host went on holding it — the user
+ * lost the only affordance that could unblock it, with no trace. A pending
+ * approval stays actionable until somebody decides it, so it stays visible.
+ *
+ * `activeRunId` only affects ORDER: approvals belonging to the run in flight
+ * sort first, so the one the user is currently waiting on leads.
+ */
 export function selectPendingApprovals(
   approvals: PermissionApprovalEvent[],
   input: {
     workspaceId: string;
     sessionKey: string;
-    activeRunId: string | null;
-    includeLegacyForLatestActiveRun: boolean;
+    activeRunId?: string | null;
   },
 ): PermissionApprovalEvent[] {
-  return approvals.filter((approval) => {
-    if (approval.status !== 'pending') return false;
-    if (approval.workspaceId !== input.workspaceId || approval.sessionKey !== input.sessionKey) return false;
-    if (approval.runId) return approval.runId === input.activeRunId;
-    return input.includeLegacyForLatestActiveRun && input.activeRunId != null;
-  });
+  const pending = approvals.filter((approval) => (
+    approval.status === 'pending'
+    && approval.workspaceId === input.workspaceId
+    && approval.sessionKey === input.sessionKey
+  ));
+  if (!input.activeRunId) return pending;
+
+  // Stable partition rather than a sort — equal-priority approvals keep the
+  // host's ordering, which is the order they were requested in.
+  const active: PermissionApprovalEvent[] = [];
+  const rest: PermissionApprovalEvent[] = [];
+  for (const approval of pending) {
+    (approval.runId === input.activeRunId ? active : rest).push(approval);
+  }
+  return [...active, ...rest];
 }
