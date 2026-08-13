@@ -5,6 +5,10 @@ import type {
   HostApiResult,
 } from '@shared/host-api/contract';
 import type { TypedHostRequest } from '@shared/host-api/types';
+import { hostActionTimeoutMs } from '@shared/host-api/host-action-timeouts';
+
+/** Renderer-side margin above the Main-process budget (Main wins the race). */
+const RENDERER_TIMEOUT_MARGIN_MS = 10_000;
 
 type AgentDevMockReplayMode = 'off' | 'record' | 'replay';
 type AgentDevHostApiFixture = {
@@ -179,7 +183,21 @@ export async function invokeHost<
     throw new Error('Host invoke bridge is unavailable');
   }
 
-  const response = await bridge<HostApiResult<M, A>>(request);
+  // R0-4: last-line renderer fallback. The Main dispatcher enforces the
+  // same budget (shared table) and normally answers first with a TIMEOUT
+  // code; this race only fires when Main itself hangs and never responds.
+  const timeoutMs = hostActionTimeoutMs(module, action) + RENDERER_TIMEOUT_MARGIN_MS;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const response = await Promise.race([
+    bridge<HostApiResult<M, A>>(request),
+    new Promise<HostApiResult<M, A>>((_, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error(`Host request timed out: ${module}.${action}`));
+      }, timeoutMs);
+    }),
+  ]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
   call.endedAt = Date.now();
   call.durationMs = call.endedAt - startedAt;
 
