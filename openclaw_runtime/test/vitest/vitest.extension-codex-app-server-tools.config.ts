@@ -6,25 +6,14 @@ export function createExtensionCodexAppServerToolsVitestConfig(
 ) {
   return createScopedVitestConfig(
     [
-      "extensions/codex/src/app-server/approval-bridge.test.ts",
-      "extensions/codex/src/app-server/computer-use.test.ts",
       "extensions/codex/src/app-server/dynamic-tool*.test.ts",
-      "extensions/codex/src/app-server/dynamic-tools.test.ts",
-      "extensions/codex/src/app-server/elicitation-bridge.test.ts",
-      "extensions/codex/src/app-server/native-execution-policy.test.ts",
-      "extensions/codex/src/app-server/native-hook-relay.test.ts",
-      "extensions/codex/src/app-server/openclaw-owned-tool-runtime-contract.test.ts",
-      "extensions/codex/src/app-server/request.test.ts",
       "extensions/codex/src/app-server/sandbox-exec-server*.test.ts",
-      "extensions/codex/src/app-server/schema-normalization-runtime-contract.test.ts",
-      "extensions/codex/src/app-server/user-input-bridge.test.ts",
     ],
     {
       dir: "extensions",
       env,
       fileParallelism: false,
       name: "extension-codex-app-server-tools",
-      passWithNoTests: true,
       setupFiles: ["test/setup.extensions.ts"],
     },
   );

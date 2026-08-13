@@ -5,11 +5,10 @@ export function createPluginsVitestConfig(env?: Record<string, string | undefine
   return createScopedVitestConfig(["src/plugins/**/*.test.ts"], {
     dir: "src/plugins",
     env,
-    exclude: ["src/plugins/contracts/**", "src/plugins/loader.test.ts"],
+    exclude: ["src/plugins/contracts/**"],
     fileParallelism: false,
     isolate: false,
     name: "plugins",
-    passWithNoTests: true,
   });
 }
 

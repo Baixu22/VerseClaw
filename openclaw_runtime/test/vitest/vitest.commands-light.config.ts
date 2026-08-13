@@ -10,7 +10,6 @@ export function createCommandsLightVitestConfig(env?: Record<string, string | un
     exclude: getUnitFastTestFiles(),
     includeOpenClawRuntimeSetup: false,
     name: "commands-light",
-    passWithNoTests: true,
   });
 }
 

@@ -14,9 +14,6 @@ export function createGatewayVitestConfig(env?: Record<string, string | undefine
     dir: "src/gateway",
     env,
     exclude: [
-      "src/gateway/gateway.test.ts",
-      "src/gateway/server.startup-matrix-migration.integration.test.ts",
-      "src/gateway/sessions-history-http.test.ts",
     ],
     name: "gateway",
   });
@@ -29,3 +26,4 @@ export function createGatewayProjectShardVitestConfig() {
 export default process.env.OPENCLAW_GATEWAY_PROJECT_SHARDS === "0"
   ? createGatewayVitestConfig()
   : createGatewayProjectShardVitestConfig();
+
