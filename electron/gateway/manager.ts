@@ -239,6 +239,8 @@ export class GatewayManager extends EventEmitter {
   private readonly stateController: GatewayStateController;
   private reconnectTimer: NodeJS.Timeout | null = null;
   private reconnectAttempts = 0;
+  /** R0-4: wall-clock moment of the last successful reconnect; attempts reset only after 60s of proven stability. */
+  private reconnectStableSince: number | null = null;
   private reconnectConfig: ReconnectConfig;
   private shouldReconnect = true;
   private startLock = false;
@@ -264,6 +266,8 @@ export class GatewayManager extends EventEmitter {
   private static readonly HEARTBEAT_TIMEOUT_MS = 30_000;
   private static readonly HEARTBEAT_MAX_MISSES = 4;
   public static readonly RESTART_COOLDOWN_MS = 5_000;
+  /** R0-4: a reconnect only settles the attempt counter after this much proven uptime. */
+  public static readonly RECONNECT_STABLE_RESET_MS = 60_000;
   private static readonly GATEWAY_READY_FALLBACK_PROBE_DELAYS_MS = [1_500, 3_000, 5_000, 8_000, 12_000, 30_000] as const;
   private static readonly INITIAL_READY_HEARTBEAT_RECOVERY_GRACE_MS = 5 * 60_000;
   private lastRestartAt = 0;
@@ -1470,10 +1474,23 @@ export class GatewayManager extends EventEmitter {
     this.initialReadyHeartbeatRecoveryTimer = null;
   }
 
+  /** R0-4: reset the reconnect attempt counter only after the process proved stable for ≥60s. */
+  private maybeSettleReconnectStability(): void {
+    if (
+      this.reconnectStableSince !== null
+      && Date.now() - this.reconnectStableSince >= GatewayManager.RECONNECT_STABLE_RESET_MS
+    ) {
+      this.reconnectStableSince = null;
+      this.reconnectAttempts = 0;
+      logger.info('Gateway ran stably after reconnect; reconnect attempt counter settled');
+    }
+  }
+
   /**
    * Schedule reconnection attempt with exponential backoff
    */
   private scheduleReconnect(): void {
+    this.maybeSettleReconnectStability();
     const decision = getReconnectScheduleDecision({
       shouldReconnect: this.shouldReconnect,
       hasReconnectTimer: this.reconnectTimer !== null,
@@ -1538,7 +1555,11 @@ export class GatewayManager extends EventEmitter {
           maxAttempts,
           delayMs: effectiveDelay,
         });
-        this.reconnectAttempts = 0;
+        // R0-4: do NOT reset the attempt counter yet — a "successful" start
+        // that crashes seconds later must keep counting toward maxAttempts,
+        // otherwise crash-loops reconnect forever. The counter only settles
+        // once the process has proven stable (see maybeSettleReconnectStability).
+        this.reconnectStableSince = Date.now();
       } catch (error) {
         logger.error('Gateway reconnection attempt failed:', error);
         this.emitReconnectMetric('failure', {
