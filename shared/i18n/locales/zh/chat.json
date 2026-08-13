@@ -1029,6 +1029,7 @@
     "skillEmpty": "未找到匹配的技能",
     "pickAgent": "选择 Agent",
     "pickModel": "选择模型",
+    "abortFailed": "停止失败,运行仍在继续",
     "actions": {
       "add": "添加",
       "context": "添加上下文",

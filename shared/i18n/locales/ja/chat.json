@@ -1029,6 +1029,7 @@
     "skillEmpty": "一致する Skill がありません",
     "pickAgent": "Agent を選択",
     "pickModel": "モデルを選択",
+    "abortFailed": "停止に失敗しました。実行は継続中です。",
     "actions": {
       "add": "追加",
       "context": "コンテキストを追加",

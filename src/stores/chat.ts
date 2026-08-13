@@ -35,6 +35,7 @@ import {
   isTurnTimedOut,
 } from '../../shared/agent-resource-limits';
 import i18n from '@/i18n';
+import { toast } from 'sonner';
 import { hydrateGatewayHistoryFromTranscript } from './chat/history-transcript-hydrate';
 import {
   LABEL_FETCH_RETRY_DELAYS_MS,
@@ -104,6 +105,19 @@ let _historyPollTimer: ReturnType<typeof setTimeout> | null = null;
 // before committing the error to give the recovery path a chance.
 let _errorRecoveryTimer: ReturnType<typeof setTimeout> | null = null;
 let _turnTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
+
+// R0-3: the no-response checkStuck reschedule chain. Single live chain only —
+// a new send invalidates the previous generation and clears its pending timer,
+// so two rapid sends can never leave two parallel chains polling forever.
+let _checkStuckTimer: ReturnType<typeof setTimeout> | null = null;
+let _checkStuckGeneration = 0;
+function clearCheckStuckTimer(): void {
+  _checkStuckGeneration += 1;
+  if (_checkStuckTimer) {
+    clearTimeout(_checkStuckTimer);
+    _checkStuckTimer = null;
+  }
+}
 function clearTurnTimeoutTimer(): void {
   if (_turnTimeoutTimer) {
     clearTimeout(_turnTimeoutTimer);
@@ -4208,8 +4222,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     _lastChatEventAt = Date.now();
     clearHistoryPoll();
     clearErrorRecoveryTimer();
+    clearCheckStuckTimer();
+    const stuckGeneration = _checkStuckGeneration;
 
     const checkStuck = () => {
+      if (stuckGeneration !== _checkStuckGeneration) return;
       const state = get();
       if (!state.sending) return;
 
@@ -4219,7 +4236,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         state.streamingTools,
       );
       if (hasStream) {
-        setTimeout(checkStuck, 10_000);
+        _checkStuckTimer = setTimeout(checkStuck, 10_000);
         return;
       }
 
@@ -4242,7 +4259,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       if (state.pendingFinal) {
         if (hasProgress) {
-          setTimeout(checkStuck, 10_000);
+          _checkStuckTimer = setTimeout(checkStuck, 10_000);
           return;
         }
         set({ pendingFinal: false });
@@ -4253,12 +4270,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (state.error || state.runError) {
           set({ error: null, runError: null });
         }
-        setTimeout(checkStuck, 10_000);
+        _checkStuckTimer = setTimeout(checkStuck, 10_000);
         return;
       }
 
       if (Date.now() - _lastChatEventAt < NO_RESPONSE_SAFETY_TIMEOUT_MS) {
-        setTimeout(checkStuck, 10_000);
+        _checkStuckTimer = setTimeout(checkStuck, 10_000);
         return;
       }
 
@@ -4273,7 +4290,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         streamingText: '',
       });
     };
-    setTimeout(checkStuck, 30_000);
+    _checkStuckTimer = setTimeout(checkStuck, 30_000);
 
     const clearSendGenerationIfCurrent = () => {
       if (_activeSendGenerationBySession.get(currentSessionKey) === sendGeneration) {
@@ -4455,10 +4472,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // ── Abort active run ──
 
   abortRun: async () => {
+    clearCheckStuckTimer();
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey } = get();
+    const { currentSessionKey, sending } = get();
+
+    // R0-3: abort the run FIRST. Only release UI state once the Main process
+    // confirms the abort — a failed stop must not masquerade as stopped.
+    try {
+      await abortChatRunViaHostApi(currentSessionKey);
+    } catch (err) {
+      console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
+      set({ error: String(err), sending });
+      toast.warning(i18n.t('chat:composer.abortFailed'));
+      return;
+    }
+
     // Release all in-flight UI/run resources (P5-004 A3).
     set({
       sending: false,
@@ -4471,12 +4501,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       streamingTools: [],
     });
     captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
-
-    try {
-      await abortChatRunViaHostApi(currentSessionKey);
-    } catch (err) {
-      set({ error: String(err) });
-    }
   },
 
   // ── Handle incoming chat events from Gateway ──
