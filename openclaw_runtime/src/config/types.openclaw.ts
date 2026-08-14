@@ -431,6 +431,11 @@ export type RuntimeFeatureConfig = {
      */
     anomalyClassifierPilot?: "off" | "shadow";
   };
+  /** RC-03 pre-seal semantic producer seal gate. Default off; env OPENCLAW_RC03_SEAL. */
+  rc03?: {
+    /** Enable the RC-03 seal hook (default: false). Env: OPENCLAW_RC03_SEAL. */
+    seal?: boolean;
+  };
   /** RC-05 minimal Operator governance slice flags. Defaults off. */
   rc05?: {
     /** Enable the Operator slice on the cron announce path (durable approval +
