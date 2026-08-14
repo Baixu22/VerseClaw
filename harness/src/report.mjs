@@ -30,6 +30,7 @@ function renderMarkdownReport(report) {
     `- Spec: ${report.specPath}`,
     `- Scenario: ${report.scenario}`,
     `- Result: ${report.result}`,
+    `- residualPaths: ${report.residualPaths?.join(', ') || 'none'}`,
     `- Started: ${report.startedAt}`,
     `- Finished: ${report.finishedAt}`,
     '',
