@@ -1,0 +1,190 @@
+{
+  "applied_at": "2026-08-14T08:27:29.299553Z",
+  "base_graph_hash": "53e18d5e56e573cd89f68f3ba291497e2e8c83704e1408ebd4f1483aabfa08f1",
+  "base_summary": {
+    "edge_count": 98,
+    "node_count": 55,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b0"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "wv-root",
+      "node": {
+        "acceptance_criteria": [
+          "任务树结构经用户确认后可应用并通过 task-forest validate/export。",
+          "唯一 ready 子任务为 WV-B1-01。"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "在独立工作树中执行 WV-B1-01 轨迹事件 Schema 契约化。",
+          "validation_plan": [
+            "用户确认 proposal 与基线后应用 proposal。",
+            "运行 task-forest validate 与 export。",
+            "仅推进 WV-B1-01 并执行其 Harness、runtime 单测、类型、构建、通信回归和 clean detached worktree 验证。"
+          ],
+          "why_not_enough": "本 proposal 只建立任务结构，不代表已应用、已创建分支或已实现代码。",
+          "why_this_task": "独立根任务能承载 Workflow Viz 的事实源路线，同时隔离 UI-only 与 Runtime Authority 两条禁止归属主线。"
+        },
+        "assumptions": [
+          "当前 main accepted base SHA 98174768efeaba01b63f6623e12a91fded0fcd26 仅作为待用户确认的基线候选。",
+          "B0 handoff 的 wv/b0-stopgap 工作树不作为本阶段开发基线。"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "b1-01"
+        ],
+        "desired_outcomes": [
+          "Workflow Viz 拥有独立且可审计的事实源重建路线。",
+          "当前只开放 WV-B1-01 作为唯一 ready 子任务。",
+          "后续 B1-02/B1-03/B1-04/B2/B3 保持未授权，不因本 proposal 自动执行。"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 1440,
+        "kind": "global_task",
+        "non_goals": [
+          "WV-B1-02 普通会话 producer 接入。",
+          "WV-B1-03 Gateway RPC/订阅与 gap repair。",
+          "WV-B1-04 Electron 供数改造。",
+          "WV-B2 装配层。",
+          "WV-B3 展示层。",
+          "TF-0021 UI 迁移。",
+          "TF-0010 Runtime Authority 收敛。"
+        ],
+        "priority": 1,
+        "purpose": "让 Workflow Viz 的轨迹、活动、工作流和图视图都能从同一条可持久化事件日志确定性重放和恢复。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "独立于 wv/b0-stopgap 的 worktree/branch。",
+          "B1-01 task spec 必须引用 gateway-backend-communication。",
+          "不修改 main、不 rebase、不 merge、不 push。",
+          "不把 B1-01 挂到 TF-0021 或 TF-0010。"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "B1-01 完成后有 v2 schema/type/replay 契约与单元测试证据。",
+          "v1 读取兼容和边界验证可复现。"
+        ],
+        "summary": "以 openclaw-trajectory v2 作为 Workflow Viz 唯一事实源，按批次推进事件契约、生产者、Gateway/恢复供数、装配投影与展示层；每次只推进一个 ready 子任务。",
+        "title": "Workflow Viz 事实源与可恢复投影重建"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-01",
+      "node": {
+        "acceptance_criteria": [
+          "无效事件被拒绝或显式标记。",
+          "seq 非单调时行为确定。",
+          "稳定 ID 缺失不会通过猜最近 context 修复。",
+          "start/update/end replay 与全量 replace 结果一致。",
+          "v1 文件可读取。",
+          "JSON 序列化/反序列化保持语义一致。",
+          "新增文件无 BOM，且无 renderer 直接 IPC/Gateway HTTP/WebSocket 调用。",
+          "新增 schema/type/replay 单元测试通过。"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "只完成 WV-B1-01 轨迹事件 Schema 契约化。",
+          "validation_plan": [
+            "pnpm harness context/validate/run --dry-run 对应 B1-01 spec。",
+            "runtime 新增 schema/type/replay vitest。",
+            "pnpm run typecheck:node、typecheck:web、build:runtime。",
+            "pnpm run comms:replay、comms:compare、lint:bom 和改动文件 ESLint。",
+            "clean detached worktree 复测关键测试与构建。"
+          ],
+          "why_not_enough": "不会产生真实普通会话 v2 事件，也不会提供实时订阅或 UI 投影。",
+          "why_this_task": "该任务直接建立后续所有 Workflow Viz 事件生产与 replay 的契约基础，且可在不触碰 Gateway/Electron/renderer 的前提下独立验收。"
+        },
+        "assumptions": [
+          "实现范围优先位于 openclaw_runtime/src/trajectory 与对应 runtime 单测。",
+          "v2 在现有 traceSchema=openclaw-trajectory 命名空间内演进，不创建平行格式。"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "schema-v2",
+          "gateway-backend-communication"
+        ],
+        "desired_outcomes": [
+          "覆盖 run/turn/step/tool 的 start/update/end 生命周期角色。",
+          "事件具备单调 seq、稳定业务 ID、schemaVersion 和变更后全量状态值。",
+          "按 seq 升序 replay 得到确定性状态，且 v1 轨迹文件仍可读取。"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 720,
+        "kind": "task",
+        "non_goals": [
+          "B1-02 producer 接线。",
+          "B1-03 Gateway readFrom/subscribe。",
+          "B1-04 Electron 供数。",
+          "B2 装配层和 B3 展示层。"
+        ],
+        "priority": 1,
+        "purpose": "为后续 Workflow Viz producer、恢复供数、装配与展示提供单一、可重放、可验证的事件契约。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "创建或明确 B1-01 Harness task spec，并引用 gateway-backend-communication。",
+          "不接入普通会话 producer。",
+          "不新增 Gateway RPC 或订阅接口。",
+          "不修改 Electron 供数。",
+          "不修改 lint:dcs 清单文件。",
+          "不引入第三方图形库、平行轨迹格式或第二套事件真源。"
+        ],
+        "status": "ready",
+        "summary": "在现有 openclaw-trajectory v1 基础上定义 v2 生命周期事件 schema/type/replay 契约，保留 v1 兼容读取声明或适配入口。",
+        "title": "WV-B1-01 轨迹事件 Schema 契约化"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.98,
+        "reason": "WV-B1-01 是 Workflow Viz 事实源重建的第一张且当前唯一 ready 卡。"
+      },
+      "from": "wv-b1-01",
+      "to": "wv-root",
+      "type": "child_of"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "候选归属：挂 TF-0021（拒绝，UI-only）；挂 TF-0010（拒绝，Runtime Authority 收敛）；建立独立 Workflow Viz 根任务（采用）。",
+        "confidence": 0.98,
+        "created_at": "2026-08-14T07:36:54.815075Z",
+        "id": "TFA-71c8df1070",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "只推进 WV-B1-01 轨迹事件 Schema 契约化。",
+          "validation_plan": [
+            "用户确认后 proposal-apply、validate、export。"
+          ],
+          "why_not_enough": "proposal 尚未应用，基线和 worktree/branch 仍待用户确认。",
+          "why_this_task": "独立根任务保留所有 Workflow Viz 依赖关系，同时把当前 ready 面限制为 B1-01。"
+        },
+        "reason": "用户明确禁止前两种归属，且 B1-01 需要承载后续 B1/B2/B3 的独立事实源路线。",
+        "rejected_options": [
+          "TF-0021",
+          "TF-0010"
+        ],
+        "related_task_ids": [],
+        "selected_option": "独立 Workflow Viz 根任务",
+        "user_goal": "在独立 worktree/branch 中执行 WV-B1-01，不扩展 B0，不混入 UI-only 或 Runtime Authority 主线。"
+      }
+    }
+  ],
+  "created_at": "2026-08-14T07:36:54.808675Z",
+  "proposal_id": "TFP-WV-B1-01-20260814",
+  "rationale": "为 Verse Claw Workflow Viz 建立独立事实源与可恢复投影任务树；本轮只推进 WV-B1-01，明确不挂 TF-0021 UI-only，也不混入 TF-0010 Runtime Authority 收敛主线。基线仍待用户确认当前 main accepted base SHA 后再创建独立 worktree/branch。",
+  "session_id": "session-2026-08-14-wv-b1-01",
+  "status": "applied"
+}

@@ -1174,5 +1174,17 @@
     "to": "TF-0010",
     "type": "child_of",
     "updated_at": "2026-08-12T04:33:41.813808Z"
+  },
+  "TFE-0100": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-14T08:27:29.281134Z",
+    "created_from_session": null,
+    "from": "TF-0057",
+    "id": "TFE-0100",
+    "reason": "WV-B1-01 是 Workflow Viz 事实源重建的第一张且当前唯一 ready 卡。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T08:27:29.281134Z"
   }
 }
