@@ -250,4 +250,40 @@ describe('RC-03 receipts through ReceiptStore', () => {
     expect(rows).toHaveLength(3);
     expect(rows.map((r) => r.attempt_index).sort()).toEqual([0, 0, 1]);
   });
+
+  it('R5-3: joinByCorrelation pairs v1 context+wire receipts sharing one correlation digest', () => {
+    const plan = makePlan();
+    const bundle = sealContextBundle(createContextBundle({ plan, systemPrompt: 's', messages: [{ role: 'user', content: 'hi' }] }));
+    const identity = { runtimeMode: 'source' as const, providerId: 'anthropic', adapterId: 'anthropic-messages', sessionKey: 'sess-rc03', runId: 'run-rc03' };
+    const correlation = 'ab'.repeat(32);
+    const store = newStore();
+    expect(store.put(buildContextReceiptInput({ plan, bundle, identity, correlationDigest: correlation })).ok).toBe(true);
+    expect(store.put(buildWireReceiptInput({
+      plan,
+      wireDigest: '9cb06a8c1329ecefbc08037434974e36277e14db2444175858bc062d5c850496',
+      logicalDigest: bundle.bundleDigest,
+      identity,
+      correlationDigest: correlation,
+      transformIds: ['transport-wire-serialization'],
+    })).ok).toBe(true);
+
+    // 同 correlation 的 context+wire 配对成功。
+    const pairs = store.joinByCorrelation({ runId: 'run-rc03' });
+    expect(pairs).toHaveLength(1);
+    expect(pairs[0].correlationDigest).toBe(correlation);
+    expect(pairs[0].context.kind).toBe('context');
+    expect(pairs[0].wire.kind).toBe('wire');
+    expect(pairs[0].wire.wire_digest).toBe('9cb06a8c1329ecefbc08037434974e36277e14db2444175858bc062d5c850496');
+
+    // list() 的 correlationDigest/modelCallIndex 过滤。
+    expect(store.list({ kind: 'wire', correlationDigest: correlation, modelCallIndex: 0 })).toHaveLength(1);
+    expect(store.list({ kind: 'wire', correlationDigest: correlation, modelCallIndex: 1 })).toHaveLength(0);
+    expect(store.list({ kind: 'context', correlationDigest: 'a'.repeat(64) })).toHaveLength(0);
+
+    // 只有单侧收据(缺 wire)不产生配对。
+    const orphanPlan = nextModelCall(plan);
+    const orphanBundle = sealContextBundle(createContextBundle({ plan: orphanPlan, systemPrompt: 's2', messages: [] }));
+    expect(store.put(buildContextReceiptInput({ plan: orphanPlan, bundle: orphanBundle, identity, correlationDigest: 'b'.repeat(64) })).ok).toBe(true);
+    expect(store.joinByCorrelation({ runId: 'run-rc03', correlationDigest: 'b'.repeat(64) })).toHaveLength(0);
+  });
 });

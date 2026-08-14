@@ -47,6 +47,13 @@ export type RuntimeReceiptInsert = Insertable<OpenClawStateKyselyDatabase["runti
 export type RuntimeReceiptRow = Selectable<OpenClawStateKyselyDatabase["runtime_receipts"]>;
 export type RuntimeReceiptDatabase = Pick<OpenClawStateKyselyDatabase, "runtime_receipts">;
 
+/** R5-3: one correlated v1 ContextReceipt + WireReceipt pair sharing a correlation_digest. */
+export type RuntimeReceiptPair = {
+  correlationDigest: string;
+  context: RuntimeReceiptRow;
+  wire: RuntimeReceiptRow;
+};
+
 export type ReceiptIdentity = {
   /** Session key, when the call is bound to a session. */
   sessionKey?: string;
@@ -549,12 +556,14 @@ export class ReceiptStore {
     );
   }
 
-  /** Query receipts by kind, optionally scoped to a run and attempt indexes. */
+  /** Query receipts by kind, optionally scoped to a run, attempt/call indexes, or correlation digest. */
   list(
     options: {
       kind?: RuntimeReceiptKind;
       runId?: string;
       attemptIndex?: number;
+      modelCallIndex?: number;
+      correlationDigest?: string;
       limit?: number;
     } = {},
   ): RuntimeReceiptRow[] {
@@ -565,9 +574,55 @@ export class ReceiptStore {
     if (options.runId) builder = builder.where("run_id", "=", options.runId);
     if (options.attemptIndex !== undefined)
       builder = builder.where("attempt_index", "=", options.attemptIndex);
+    if (options.modelCallIndex !== undefined)
+      builder = builder.where("model_call_index", "=", options.modelCallIndex);
+    if (options.correlationDigest)
+      builder = builder.where("correlation_digest", "=", options.correlationDigest);
     builder = builder.orderBy("created_at", "desc");
     if (options.limit) builder = builder.limit(options.limit);
     return executeSqliteQuerySync<RuntimeReceiptRow>(db, builder).rows;
+  }
+
+  /**
+   * R5-3: join v1 ContextReceipt and WireReceipt rows that share one
+   * correlation_digest. Returns only complete pairs; no new table.
+   */
+  joinByCorrelation(
+    options: {
+      runId?: string;
+      correlationDigest?: string;
+      limit?: number;
+    } = {},
+  ): RuntimeReceiptPair[] {
+    const { db } = openOpenClawStateDatabase(this.#database);
+    const query = getNodeSqliteKysely<RuntimeReceiptDatabase>(db);
+    let builder = query
+      .selectFrom("runtime_receipts")
+      .selectAll()
+      .where("kind", "in", ["context", "wire"] as const)
+      .where("version", "=", "1");
+    if (options.runId) builder = builder.where("run_id", "=", options.runId);
+    if (options.correlationDigest)
+      builder = builder.where("correlation_digest", "=", options.correlationDigest);
+    builder = builder.orderBy("created_at", "desc");
+    if (options.limit) builder = builder.limit(options.limit);
+    const rows = executeSqliteQuerySync<RuntimeReceiptRow>(db, builder).rows;
+    const byCorrelation = new Map<string, { context?: RuntimeReceiptRow; wire?: RuntimeReceiptRow }>();
+    for (const row of rows) {
+      const digest = row.correlation_digest;
+      if (!digest) continue;
+      const entry = byCorrelation.get(digest) ?? {};
+      if (row.kind === "context" && !entry.context) entry.context = row;
+      if (row.kind === "wire" && !entry.wire) entry.wire = row;
+      byCorrelation.set(digest, entry);
+    }
+    return [...byCorrelation.entries()]
+      .filter(([, entry]) => entry.context !== undefined && entry.wire !== undefined)
+      .map(([correlationDigest, entry]) => ({
+        correlationDigest,
+        context: entry.context!,
+        wire: entry.wire!,
+      }));
   }
 
   /**

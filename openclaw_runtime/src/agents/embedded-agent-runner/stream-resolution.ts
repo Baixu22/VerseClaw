@@ -8,6 +8,7 @@ import { createBoundaryAwareStreamFnForModel } from "../provider-transport-strea
 import {
   attachShadowReceiptOptions,
   beginShadowModelCall,
+  resolveRc03WireCorrelationDigest,
 } from "../shadow-census.js";
 import { getRc03SealPlan } from "../../context-engine/rc03-seal-hook.js";
 import type { StreamFn } from "../runtime/index.js";
@@ -311,7 +312,20 @@ function wrapEmbeddedAgentStreamFn(
     // guarded wire boundary so WireReceipt/v1 can be persisted with the final
     // body digest of the same model call.
     const plan = getRc03SealPlan(runId, modelCallIndex);
-    const shadowOptions = plan ? { ...shadowCall.options, rc03Plan: plan } : shadowCall.options;
+    // R5-3: overwrite the wire-side correlation with the sealed
+    // ContextReceipt's correlation digest (the bundle digest) so
+    // WireReceipt/v1 and ContextReceipt/v1 join on the same value. A miss
+    // keeps any caller-provided correlation; the emit boundary falls back to
+    // the identity-derived digest as before.
+    const shadowOptions = plan
+      ? {
+          ...shadowCall.options,
+          rc03Plan: plan,
+          correlationDigest:
+            resolveRc03WireCorrelationDigest(shadowCall.options, plan) ??
+            shadowCall.options.correlationDigest,
+        }
+      : shadowCall.options;
     return attachShadowReceiptOptions(options, shadowOptions);
   };
   if (!params.authStorage && !params.resolvedApiKey) {

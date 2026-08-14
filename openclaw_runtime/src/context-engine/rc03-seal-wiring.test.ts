@@ -103,6 +103,9 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     expect(rows).toHaveLength(1);
     expect(rows[0].provider_id).toBe('anthropic');
     expect(rows[0].session_key).toBe('sess-rc03');
+    // R5-1: receipt run_id mirrors the runner-provided runId verbatim — this is
+    // the hop that joins cron receipts to the canonical cron execution id.
+    expect(rows[0].run_id).toBe('run-rc03');
     expect(rows[0].attempt_index).toBe(0);
     expect(rows[0].runtime_mode).toBe('source');
   });
@@ -370,6 +373,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
 
     const { attachShadowReceiptOptions, getShadowReceiptOptions } = await import('../agents/shadow-census.js');
     const { buildGuardedModelFetch } = await import('../agents/provider-transport-fetch.js');
+    const { resolveEmbeddedAgentStreamFn } = await import('../agents/embedded-agent-runner/stream-resolution.js');
     const requestBodies: string[] = [];
     const originalFetch = globalThis.fetch;
     globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -381,30 +385,60 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
       );
     }) as typeof fetch;
     try {
+      // R5-3: drive the real production path — the embedded stream wrapper
+      // resolves the sealed plan from the registry and overwrites the wire
+      // correlation with the ContextReceipt's digest. The only mocks are the
+      // model boundary (inner stream records the options it receives) and the
+      // network; correlationDigest/logicalDigest/rc03Plan are never injected.
       const model = {
         provider: 'anthropic',
         api: 'anthropic-messages',
         id: 'claude-wire-v1',
+        name: 'claude-wire-v1',
         baseUrl: 'http://127.0.0.1:40123/v1',
+        reasoning: false,
+        input: ['text'],
+        maxTokens: 4096,
+        contextWindow: 200000,
+        cost: { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
       } as never;
-      const attached = attachShadowReceiptOptions(
-        { apiKey: 'fixture-key' },
-        {
-          enabled: true,
-          sourceRuntime: true,
-          database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') },
-          runId: 'run-wire-v1',
-          sessionKey: 'sess-wire-v1',
-          providerId: 'anthropic',
-          adapterId: 'anthropic-messages',
-          attemptIndex: 0,
-          modelCallIndex: 0,
-          correlationDigest: plan!.planDigest,
-          logicalDigest: plan!.planDigest,
-          rc03Plan: plan,
-        },
-      );
-      const fetch = buildGuardedModelFetch(model, 5000, undefined, getShadowReceiptOptions(attached));
+      let capturedOptions: unknown;
+      const wrapped = resolveEmbeddedAgentStreamFn({
+        currentStreamFn: ((_m: never, _c: never, o?: never) => {
+          capturedOptions = o;
+          return {};
+        }) as never,
+        sessionId: 'sess-wire-v1',
+        runId: 'run-wire-v1',
+        attemptIndex: 0,
+        model: model as never,
+      });
+      const streamOptions = attachShadowReceiptOptions({ apiKey: 'fixture-key' }, {
+        enabled: true,
+        sourceRuntime: true,
+        database: { env: process.env, path: path.join(stateDir, 'openclaw-state.db') },
+        runId: 'run-wire-v1',
+        sessionKey: 'sess-wire-v1',
+        providerId: 'anthropic',
+        adapterId: 'anthropic-messages',
+        attemptIndex: 0,
+        modelCallIndex: 0,
+      });
+      await wrapped(model as never, {
+        systemPrompt: '',
+        messages: [{ role: 'user', content: 'hi' }],
+      } as never, streamOptions as never);
+      const shadow = getShadowReceiptOptions(capturedOptions);
+      expect(shadow).toBeDefined();
+      expect(shadow!.rc03Plan).toBeDefined();
+      // Production stream-resolution overwrote the correlation with the
+      // ContextReceipt's bundle digest (no manual injection above).
+      const contextCorrelation = newStore().list({ kind: 'context', runId: 'run-wire-v1', modelCallIndex: 0 })
+        .filter((row) => row.version === '1')[0]?.correlation_digest;
+      expect(contextCorrelation).toBeDefined();
+      expect(shadow!.correlationDigest).toBe(contextCorrelation);
+
+      const fetch = buildGuardedModelFetch(model, 5000, undefined, shadow);
       const response = await fetch('http://127.0.0.1:40123/v1/messages', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -429,5 +463,15 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
     expect(wire.wire_digest).toBe(wireBodyDigest(requestBodies[0]));
     // Registered non-semantic transport transforms ride on the wire identity.
     expect(wire.transform_ids_json).toContain('transport-wire-serialization');
+    // R5-3: production correlation equals the ContextReceipt's bundle digest —
+    // the pair joins through the receipt store without manual digests.
+    const contextRows = store.list({ kind: 'context', runId: 'run-wire-v1', modelCallIndex: 0 })
+      .filter((row) => row.version === '1');
+    expect(contextRows).toHaveLength(1);
+    expect(wire.correlation_digest).toBe(contextRows[0].correlation_digest);
+    const pairs = store.joinByCorrelation({ runId: 'run-wire-v1' });
+    expect(pairs).toHaveLength(1);
+    expect(pairs[0].context.receipt_id).toBe(contextRows[0].receipt_id);
+    expect(pairs[0].wire.receipt_id).toBe(wire.receipt_id);
   });
 });
