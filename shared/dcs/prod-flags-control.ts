@@ -227,6 +227,14 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     unavailableReason: 'R3-1 审计: role-memory provider 不读此开关,接线断线。',
   },
   {
+    id: 'runtime-memory-candidate-generation',
+    catalog: mustFlag('runtime-memory-candidate-generation'),
+    controlKind: 'config',
+    storeKey: 'dcsRuntimeMemoryCandidateGenerationEnabled',
+    targetKey: 'runtime.memory.candidateGeneration',
+    defaultEnabled: false,
+  },
+  {
     id: 'role-memory',
     catalog: mustFlag('role-memory'),
     controlKind: 'config',

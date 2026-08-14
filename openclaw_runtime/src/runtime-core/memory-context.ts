@@ -178,6 +178,8 @@ export const RUNTIME_MEMORY_CONTEXT_FLAG_PATHS = {
   provider: "runtime.memory.provider",
   proposeFacts: "runtime.memory.proposeFacts",
   persist: "runtime.memory.persist",
+  // KE-P1-1: task-terminal candidate generation (failure-guard -> Review Queue).
+  candidateGeneration: "runtime.memory.candidateGeneration",
 } as const;
 
 export type RuntimeMemoryFeatureFlag =
@@ -193,6 +195,7 @@ export const DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS = {
   provider: false,
   proposeFacts: false,
   persist: false,
+  candidateGeneration: false,
 } as const satisfies RuntimeMemoryFeatureFlags;
 
 export type RuntimeMemorySourceRef = {
@@ -827,6 +830,7 @@ export function resolveRuntimeMemoryFeatureFlags(
     provider: strictFlag(memory, "provider"),
     proposeFacts: strictFlag(memory, "proposeFacts"),
     persist: strictFlag(memory, "persist"),
+    candidateGeneration: strictFlag(memory, "candidateGeneration"),
   };
 }
 
