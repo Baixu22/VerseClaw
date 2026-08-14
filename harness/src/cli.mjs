@@ -18,6 +18,7 @@ import {
 import {
   scanBackendCommunicationBoundary,
   touchesCommunicationPath,
+  classifyChangedPathOwnership,
   validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
@@ -120,7 +121,8 @@ async function validate(specPath, options = {}) {
     }
   }
 
-  return { spec, scenario, changedFiles, failures };
+  const ownership = classifyChangedPathOwnership(spec, scenario, changedFiles);
+  return { spec, scenario, changedFiles, failures, ownership };
 }
 
 async function explain(specPath, options = {}) {
@@ -135,6 +137,9 @@ async function explain(specPath, options = {}) {
   if (result.changedFiles.length > 0) {
     console.log('\nChanged files:');
     for (const file of result.changedFiles) console.log(`- ${file}`);
+  }
+  if (result.ownership.residual.length > 0) {
+    console.log(`\nRESIDUAL: residualPaths=${result.ownership.residual.join(', ')}`);
   }
   console.log('\nSelected steps:');
   for (const step of selectSteps(profiles)) {
@@ -199,13 +204,26 @@ async function run(specPath, options = {}) {
     startedAt,
     finishedAt: new Date().toISOString(),
     changedFiles: validation.changedFiles,
+    residualPaths: validation.ownership.residual,
+    ownership: {
+      covered: validation.ownership.covered,
+      residual: validation.ownership.residual,
+      uncovered: validation.ownership.uncovered,
+    },
     selectedProfiles: profiles,
     steps,
     failures,
-    result: failures.length === 0 ? 'pass' : 'fail',
+    result: failures.length === 0
+      ? (validation.ownership.residual.length > 0 ? 'pass_with_residual' : 'pass')
+      : 'fail',
   };
   const paths = await writeReport(report);
   console.log(`Harness report: ${paths.markdownPath}`);
+  console.log(`Harness result: ${report.result}`);
+  if (report.residualPaths.length > 0) {
+    console.log(`RESIDUAL: residualPaths=${report.residualPaths.join(', ')}`);
+    if (report.result === 'pass_with_residual') console.log('PASS WITH RESIDUAL');
+  }
   if (failures.length > 0) {
     console.error(failures.map((failure) => `- ${failure}`).join('\n'));
     return 1;
@@ -257,6 +275,10 @@ async function main() {
       checkDiff: Boolean(args.since),
       noDiff: Boolean(args['no-diff']),
     });
+    if (result.ownership.residual.length > 0) {
+      console.log(`RESIDUAL: residualPaths=${result.ownership.residual.join(', ')}`);
+      if (result.failures.length === 0) console.log('PASS WITH RESIDUAL');
+    }
     if (result.failures.length > 0) {
       console.error(result.failures.map((failure) => `- ${failure}`).join('\n'));
       return 1;

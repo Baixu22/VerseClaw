@@ -17,6 +17,7 @@ import {
   scanBackendCommunicationBoundary,
   scanBackendCommunicationBoundaryText,
   touchesCommunicationPath,
+  classifyChangedPathOwnership,
   validateChangedPathOwnership,
   validateGatewayTaskSpec,
   validatePluginLifecycleTaskSpec,
@@ -270,6 +271,190 @@ Body`);
       expect(validateChangedPathOwnership(bare, null, ['scripts/x.mjs'])).toHaveLength(1);
       // No changed files is the only case that legitimately produces no failure.
       expect(validateChangedPathOwnership(bare, null, [])).toEqual([]);
+    });
+
+    it('classifies only the exact Task Forest export paths as residual', () => {
+      const residualPaths = [
+        '.agent-workbench/task-forest/exports/task-forest.graph.json',
+        '.agent-workbench/task-forest/exports/task-forest.html',
+        '.agent-workbench/task-forest/graph/forest.json',
+      ];
+      const specWithResidual = {
+        ...spec,
+        data: { ...spec.data, residualPaths },
+      };
+      const ownership = classifyChangedPathOwnership(specWithResidual, null, residualPaths);
+
+      expect(ownership.residual).toEqual(residualPaths);
+      expect(ownership.uncovered).toEqual([]);
+      expect(ownership.allowedPaths).not.toContain('.agent-workbench/task-forest/**');
+      expect(validateChangedPathOwnership(specWithResidual, null, residualPaths)).toEqual([]);
+      expect(validateChangedPathOwnership(
+        { path: 'harness/specs/tasks/residual-only.md', data: { residualPaths } },
+        null,
+        residualPaths,
+      )).toEqual([]);
+    });
+
+    it('keeps near-miss Task Forest paths fail-closed', () => {
+      const specWithResidual = {
+        ...spec,
+        data: {
+          ...spec.data,
+          residualPaths: [
+            '.agent-workbench/task-forest/exports/task-forest.graph.json',
+            '.agent-workbench/task-forest/exports/task-forest.html',
+            '.agent-workbench/task-forest/graph/forest.json',
+          ],
+        },
+      };
+      const nearMisses = [
+        '.agent-workbench/task-forest/other.json',
+        '.agent-workbench/task-forest/graph/other.json',
+      ];
+      const ownership = classifyChangedPathOwnership(specWithResidual, null, nearMisses);
+
+      expect(ownership.residual).toEqual([]);
+      expect(ownership.uncovered).toEqual(nearMisses);
+      expect(validateChangedPathOwnership(specWithResidual, null, nearMisses)[0]).toContain(
+        nearMisses.join(', '),
+      );
+    });
+
+    it.each([
+      ['**'],
+      ['src/**'],
+      ['*'],
+      ['?'],
+      ['[abc]'],
+      ['{a,b}'],
+      ['../secret.txt'],
+      ['C:\\secret.txt'],
+      ['C:/secret.txt'],
+      ['/abs/secret.txt'],
+      ['.'],
+      ['..'],
+      [''],
+      ['src/'],
+      ['src'],
+      ['./nested/file.txt'],
+      ['src\\file.txt'],
+    ])('rejects non-exact residualPaths entry %j', (entry) => {
+      const specWithResidual = {
+        ...spec,
+        data: { ...spec.data, residualPaths: [entry] },
+      };
+      const failures = validateChangedPathOwnership(specWithResidual, null, []);
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toContain('residualPaths must be exact');
+      expect(failures[0]).toContain(JSON.stringify(entry));
+      // An invalid entry must never classify a changed file as residual.
+      const ownership = classifyChangedPathOwnership(specWithResidual, null, ['anything.txt']);
+      expect(ownership.residual).toEqual([]);
+    });
+
+    it('fails closed with a non-zero exit when a spec declares residualPaths: ["**"]', () => {
+      const fixtureRoot = mkdtempSync(join(tmpdir(), 'harness-residual-glob-cli-'));
+      try {
+        cpSync(join(process.cwd(), 'harness', 'src'), join(fixtureRoot, 'harness', 'src'), {
+          recursive: true,
+        });
+        mkdirSync(join(fixtureRoot, 'harness', 'specs', 'tasks'), { recursive: true });
+        writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'residual-glob-fixture.md'), `---
+id: residual-glob-fixture
+title: Residual glob fixture
+touchedAreas:
+  - owned.txt
+residualPaths:
+  - "**"
+---
+`, 'utf8');
+        writeFileSync(join(fixtureRoot, 'owned.txt'), 'base\n', 'utf8');
+
+        execFileSync('git', ['init', '--quiet'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.email', 'harness-fixture@example.invalid'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.name', 'Harness Fixture'], { cwd: fixtureRoot });
+        execFileSync('git', ['add', '.'], { cwd: fixtureRoot });
+        execFileSync('git', ['commit', '--quiet', '-m', 'fixture base'], { cwd: fixtureRoot });
+
+        writeFileSync(join(fixtureRoot, 'anything.txt'), 'changed\n', 'utf8');
+        const result = spawnSync(
+          process.execPath,
+          [
+            join(fixtureRoot, 'harness', 'src', 'cli.mjs'),
+            'validate',
+            '--spec',
+            'harness/specs/tasks/residual-glob-fixture.md',
+            '--since',
+            'HEAD',
+          ],
+          { cwd: fixtureRoot, encoding: 'utf8' },
+        );
+        const output = `${result.stdout}\n${result.stderr}`;
+
+        expect(result.status).toBe(1);
+        expect(output).toContain('residualPaths must be exact');
+        expect(output).toContain('**');
+        expect(output).not.toContain('PASS WITH RESIDUAL');
+        expect(output).not.toContain('Spec is valid');
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 3 });
+      }
+    });
+
+    it('returns non-zero when a residual is accompanied by another uncovered path', () => {
+      const fixtureRoot = mkdtempSync(join(tmpdir(), 'harness-residual-cli-'));
+      try {
+        cpSync(join(process.cwd(), 'harness', 'src'), join(fixtureRoot, 'harness', 'src'), {
+          recursive: true,
+        });
+        mkdirSync(join(fixtureRoot, 'harness', 'specs', 'tasks'), { recursive: true });
+        writeFileSync(join(fixtureRoot, 'harness', 'specs', 'tasks', 'residual-fixture.md'), `---
+id: residual-fixture
+title: Residual fixture
+touchedAreas:
+  - owned.txt
+residualPaths:
+  - .agent-workbench/task-forest/exports/task-forest.graph.json
+---
+
+# Residual fixture
+`, 'utf8');
+        writeFileSync(join(fixtureRoot, 'owned.txt'), 'base\n', 'utf8');
+
+        execFileSync('git', ['init', '--quiet'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.email', 'harness-fixture@example.invalid'], { cwd: fixtureRoot });
+        execFileSync('git', ['config', 'user.name', 'Harness Fixture'], { cwd: fixtureRoot });
+        execFileSync('git', ['add', '.'], { cwd: fixtureRoot });
+        execFileSync('git', ['commit', '--quiet', '-m', 'fixture base'], { cwd: fixtureRoot });
+
+        mkdirSync(join(fixtureRoot, '.agent-workbench', 'task-forest', 'exports'), { recursive: true });
+        writeFileSync(
+          join(fixtureRoot, '.agent-workbench', 'task-forest', 'exports', 'task-forest.graph.json'),
+          '{}\n',
+          'utf8',
+        );
+        writeFileSync(join(fixtureRoot, 'other.json'), '{}\n', 'utf8');
+        const result = spawnSync(
+          process.execPath,
+          [
+            join(fixtureRoot, 'harness', 'src', 'cli.mjs'),
+            'validate',
+            '--spec',
+            'harness/specs/tasks/residual-fixture.md',
+            '--since',
+            'HEAD',
+          ],
+          { cwd: fixtureRoot, encoding: 'utf8' },
+        );
+        const output = `${result.stdout}\n${result.stderr}`;
+
+        expect(result.status).toBe(1);
+        expect(output).toContain('RESIDUAL: residualPaths=.agent-workbench/task-forest/exports/task-forest.graph.json');
+        expect(output).toContain('other.json');
+      } finally {
+        rmSync(fixtureRoot, { recursive: true, force: true, maxRetries: 3 });
+      }
     });
 
     it('runs the CLI ownership branch for a scenario-less spec', () => {
