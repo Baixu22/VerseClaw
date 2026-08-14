@@ -1,6 +1,7 @@
 // Shared media-understanding types for attachments, provider hooks, request
 // auth, decisions, and structured extraction inputs.
 import type { AuthProfileStore } from "../agents/auth-profiles/types.js";
+import type { ProviderRequestAuthOverride } from "../agents/provider-request-auth.js";
 import type { ModelProviderConfig } from "../config/types.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 
@@ -59,10 +60,8 @@ export type MediaUnderstandingDecision = {
   attachments: MediaUnderstandingAttachmentDecision[];
 };
 
-type MediaUnderstandingProviderRequestAuthOverride =
-  | { mode: "provider-default" }
-  | { mode: "authorization-bearer"; token: string }
-  | { mode: "header"; headerName: string; value: string; prefix?: string };
+// Same auth override union as provider requests (single source).
+type MediaUnderstandingProviderRequestAuthOverride = ProviderRequestAuthOverride;
 
 type MediaUnderstandingProviderRequestTlsOverride = {
   ca?: string;

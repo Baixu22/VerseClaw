@@ -1006,15 +1006,17 @@ export const FIELD_HELP: Record<string, string> = {
   "models.providers.*.request.auth":
     "Override provider request authentication behavior for this provider.",
   "models.providers.*.request.auth.mode":
-    'Auth override mode: "provider-default", "authorization-bearer", or "header".',
+    'Auth override mode: "provider-default", "authorization-bearer", "header", or "query".',
   "models.providers.*.request.auth.token":
     "Bearer token used when auth mode is authorization-bearer.",
   "models.providers.*.request.auth.headerName":
     "Custom auth header name used when auth mode is header.",
   "models.providers.*.request.auth.value":
-    "Custom auth header value used when auth mode is header.",
+    "Custom auth header value used when auth mode is header, or query parameter value when auth mode is query.",
   "models.providers.*.request.auth.prefix":
     "Optional prefix prepended to request.auth.value when auth mode is header.",
+  "models.providers.*.request.auth.parameterName":
+    "Query parameter name appended to the request URL when auth mode is query.",
   "models.providers.*.request.proxy":
     'Optional proxy override for model-provider requests. Use "env-proxy" to honor environment proxy settings or "explicit-proxy" to route through a specific proxy URL.',
   "models.providers.*.request.proxy.mode":
@@ -2149,6 +2151,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Runtime resilience pilot flags (Area 3 Round 2). All default off; when omitted, MissionReviewerInput.anomalyPattern is undefined and the Mission reviewer behaves exactly as before (flag-off parity).",
   "runtime.resilience.anomalyClassifierPilot":
     "Anomaly classifier pilot (Area 3 Round 2 §1.2). 'off' (default) = anomalyPattern always undefined. 'shadow' = classifyAnomalyPattern invoked before Mission reviewer; result injected as anomalyPattern? (advisory only — reviewer MAY ignore it, observe-only honesty §9.1). Does NOT trigger executeReplayRollback; that requires an explicit Mission decision of repair + repairStrategy: 'replay_rollback'.",
+  "runtime.rc03":
+    "RC-03 pre-seal semantic producer seal gate. Default off; the enhancement kill switch and environment always take precedence, and any failure fails closed.",
+  "runtime.rc03.seal":
+    "Enable the RC-03 context seal hook so every DCS semantic producer is registered before the bundle is sealed (default: false). Env: OPENCLAW_RC03_SEAL. The enhancement kill switch wins; failures fail closed.",
   "agents.list.*.heartbeat.directPolicy":
     'Per-agent override for heartbeat direct/DM delivery policy; use "block" for agents that should only send heartbeat alerts to non-DM destinations.',
   "agents.list.*.heartbeat.skipWhenBusy":
