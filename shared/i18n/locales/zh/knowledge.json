@@ -249,6 +249,14 @@
     "reason": "推荐理由",
     "noReason": "未记录推荐理由。",
     "boundary": "仅进入草稿审核",
+    "sensitivityLabel": "敏感级 {{level}}",
+    "sensitivity": {
+      "normal": "普通",
+      "secret_adjacent": "临近敏感",
+      "secret": "机密"
+    },
+    "tokenCost": "约 {{tokens}} token",
+    "keUnavailable": "KE 审核队列不可用 — 请开启 runtime.memory.candidateGeneration。",
     "context": "捕获上下文",
     "statusLabel": "状态",
     "missionId": "Mission",

@@ -773,6 +773,26 @@ function inboxEvidenceCount(item: KnowledgeInboxItem): number {
   return Math.max(item.sourceRefs.length, item.sourceIds.length);
 }
 
+function inboxSensitivity(item: KnowledgeInboxItem): 'normal' | 'secret_adjacent' | 'secret' {
+  const sensitivity = inboxMetadata(item).sensitivity;
+  return sensitivity === 'secret' || sensitivity === 'secret_adjacent' ? sensitivity : 'normal';
+}
+
+function inboxTokenCost(item: KnowledgeInboxItem): number | null {
+  const cost = inboxMetadata(item).tokenCost;
+  if (typeof cost === 'number' && Number.isFinite(cost) && cost >= 0) return cost;
+  const body = item.body.trim();
+  if (!body) return null;
+  // Bounded display estimate (~4 chars/token), not an LLM token count.
+  return Math.max(1, Math.ceil(body.length / 4));
+}
+
+function inboxSensitivityClass(sensitivity: 'normal' | 'secret_adjacent' | 'secret'): string {
+  if (sensitivity === 'secret') return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400';
+  if (sensitivity === 'secret_adjacent') return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
+  return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
+}
+
 function inboxRecommendationClass(recommendation: InboxRecommendation): string {
   if (recommendation === 'save') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400';
   if (recommendation === 'archive-only') return 'border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-400';
@@ -816,6 +836,7 @@ export function Knowledge() {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [keReviewQueueEnabled, setKeReviewQueueEnabled] = useState<boolean | null>(null);
   const [query, setQuery] = useState('');
   const [searchResult, setSearchResult] = useState<KnowledgeSearchResult | null>(null);
   const [selectedPage, setSelectedPage] = useState<Record<string, unknown> | null>(null);
@@ -1034,6 +1055,13 @@ export function Knowledge() {
     if (draftResult.success) setDrafts(draftResult.drafts);
     if (proposalResult.success) setProposals(proposalResult.proposals);
     if (sourceSetResult.success) setSourceSets(sourceSetResult.sourceSets);
+    try {
+      const snapshot = await hostApi.dcsProdFlags.getFlags();
+      const flag = snapshot.flags.find((entry) => entry.id === 'runtime-memory-candidate-generation');
+      setKeReviewQueueEnabled(flag ? flag.enabled === true : false);
+    } catch {
+      setKeReviewQueueEnabled(null);
+    }
   }, []);
 
   useEffect(() => {
@@ -2286,6 +2314,11 @@ export function Knowledge() {
             {workbenchTab === 'inbox' && (
               <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]" data-testid="knowledge-inbox">
                 <div className="space-y-3">
+                  {keReviewQueueEnabled === false && (
+                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400" data-testid="knowledge-inbox-ke-unavailable">
+                      {t('inbox.keUnavailable')}
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 rounded-lg bg-surface-input p-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
                       <Inbox className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
@@ -2372,6 +2405,14 @@ export function Knowledge() {
                             <Badge variant="outline" className="border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-400" data-testid="knowledge-inbox-boundary">
                               {t('inbox.boundary')}
                             </Badge>
+                            {keReviewQueueEnabled === true && (
+                              <Badge variant="outline" className={cn('border text-[10px]', inboxSensitivityClass(inboxSensitivity(selectedInboxItem)))} data-testid="knowledge-inbox-sensitivity">
+                                {t('inbox.sensitivityLabel', { level: t(`inbox.sensitivity.${inboxSensitivity(selectedInboxItem)}`) })}
+                              </Badge>
+                            )}
+                            {keReviewQueueEnabled === true && inboxTokenCost(selectedInboxItem) != null && (
+                              <span className="text-muted-foreground" data-testid="knowledge-inbox-token-cost">{t('inbox.tokenCost', { tokens: inboxTokenCost(selectedInboxItem) })}</span>
+                            )}
                             <span className="text-muted-foreground">{t('inbox.evidenceCount', { count: inboxEvidenceCount(selectedInboxItem) })}</span>
                             {inboxOverallScore(selectedInboxItem) != null && (
                               <span className="text-muted-foreground">{t('inbox.score', { score: Math.round((inboxOverallScore(selectedInboxItem) ?? 0) * 100) })}</span>

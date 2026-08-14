@@ -249,6 +249,14 @@
     "reason": "Причина рекомендации",
     "noReason": "Причина рекомендации не записана.",
     "boundary": "Только черновик",
+    "sensitivityLabel": "Чувствительность {{level}}",
+    "sensitivity": {
+      "normal": "Обычная",
+      "secret_adjacent": "Околосекретная",
+      "secret": "Секретная"
+    },
+    "tokenCost": "~{{tokens}} токенов",
+    "keUnavailable": "Очередь проверки KE недоступна — включите runtime.memory.candidateGeneration.",
     "context": "Контекст захвата",
     "statusLabel": "Статус",
     "missionId": "Mission",
