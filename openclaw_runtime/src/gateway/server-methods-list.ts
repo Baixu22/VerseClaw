@@ -59,6 +59,7 @@ export const GATEWAY_EVENTS = [
   "device.pair.resolved",
   "voicewake.changed",
   "voicewake.routing.changed",
+  "observability.trajectory",
   "exec.approval.requested",
   "exec.approval.resolved",
   "plugin.approval.requested",
