@@ -54,6 +54,11 @@ import {
   type RuntimeMemoryRuntimeIntegrationPort,
 } from "../runtime-core/memory-runtime-integration.js";
 import { createRuntimeTaskEventLogRuntimeIntegration } from "../runtime-core/event-log-persistence.js";
+import {
+  buildKeCandidateGenerationDiagnostics,
+  runKeCandidateGenerationForTerminal,
+  type KeCandidateGenerationDiagnostics,
+} from "../runtime-core/ke-candidate-generation.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { runAgentHarnessTaskPhaseChangeHook } from "./harness/lifecycle-hook-helpers.js";
 
@@ -337,6 +342,8 @@ export type TaskLoopRunRecord = {
   updatedAt: number;
   iterations: TaskLoopIterationSnapshot[];
   runtimeMemoryReadHydrationShadowOnlyDiagnostics?: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics;
+  /** KE-P1-1: candidate generation diagnostics at task-loop terminal (flag-gated, advisory only). */
+  keCandidateGenerationDiagnostics?: KeCandidateGenerationDiagnostics;
 };
 
 export type TaskLoopRunResult = TaskLoopRunRecord;
@@ -2042,6 +2049,29 @@ function recordTaskLoopRuntimeMemoryEpisode(
   }
 }
 
+function recordTaskLoopKeCandidates(
+  record: TaskLoopRunRecord,
+  cfg: OpenClawConfig | undefined,
+): void {
+  try {
+    const run = runKeCandidateGenerationForTerminal(cfg, {
+      taskId: record.loopRunId,
+      status: record.status,
+      error: record.error,
+      sourceRefs: [
+        `task-loop:${record.loopRunId}:${record.phase}:${record.status}`,
+        ...(record.traceId ? [record.traceId] : []),
+        ...(record.taskLedgerRootId ? [`task-ledger:${record.taskLedgerRootId}`] : []),
+      ],
+      now: record.updatedAt,
+    });
+    if (!run.enabled) return;
+    record.keCandidateGenerationDiagnostics = buildKeCandidateGenerationDiagnostics(run);
+  } catch {
+    // KE-P1-1 candidate generation is advisory only; must not perturb TaskLoop results.
+  }
+}
+
 function buildTaskLoopRuntimeMemoryEpisode(
   record: TaskLoopRunRecord,
 ): RuntimeMemoryEpisodeRecord {
@@ -3335,6 +3365,7 @@ export async function runTaskLoop(
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
+    recordTaskLoopKeCandidates(record, cfg);
     if (deps.runtimeMemoryReadHydrationShadowOnly) {
       record.runtimeMemoryReadHydrationShadowOnlyDiagnostics =
         buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
@@ -3361,6 +3392,7 @@ export async function runTaskLoop(
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
     recordTaskLoopRuntimeMemoryEpisode(record, cfg, deps);
+    recordTaskLoopKeCandidates(record, cfg);
     if (deps.runtimeMemoryReadHydrationShadowOnly) {
       record.runtimeMemoryReadHydrationShadowOnlyDiagnostics =
         buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
