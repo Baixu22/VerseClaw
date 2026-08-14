@@ -81,6 +81,7 @@ import {
   createTrajectoryRuntimeRecorder,
   toTrajectoryToolDefinitions,
 } from "../../../trajectory/runtime.js";
+import { createTrajectoryLifecycleProducer } from "../../../trajectory/producer.js";
 import { resolveUserPath } from "../../../utils.js";
 import { normalizeMessageChannel } from "../../../utils/message-channel.js";
 import { isReasoningTagProvider } from "../../../utils/provider-utils.js";
@@ -2251,6 +2252,7 @@ export async function runEmbeddedAttempt(
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let removeToolResultContextGuard: (() => void) | undefined;
     let trajectoryRecorder: ReturnType<typeof createTrajectoryRuntimeRecorder> | null = null;
+    let trajectoryProducer: ReturnType<typeof createTrajectoryLifecycleProducer> | null = null;
     let trajectoryEndRecorded = false;
     let buildAbortSettlePromise: () => Promise<void> | null = () => null;
     let cleanupYieldAborted = false;
@@ -2807,6 +2809,38 @@ export async function runEmbeddedAttempt(
         modelApi: params.model.api,
         workspaceDir: params.workspaceDir,
       });
+      if (trajectoryRecorder) {
+        trajectoryProducer = createTrajectoryLifecycleProducer({
+          recorder: trajectoryRecorder,
+          runId: params.runId,
+          turnId: `${params.runId}:turn`,
+          onMissingIdentity: (info) => {
+            log.warn(
+              `trajectory v2 event skipped: stream=${info.stream} phase=${info.phase ?? "unknown"} ` +
+                `reason=${info.reason} runId=${params.runId} ` +
+                `toolCallId=${info.toolCallId ?? "unknown"}`,
+            );
+          },
+        });
+        trajectoryProducer.startRun(
+          {
+            status: "running",
+            sessionId: activeSession.sessionId,
+            trigger: params.trigger ?? "manual",
+            attemptIndex: params.attemptIndex ?? 0,
+          },
+          { sessionKey: params.sessionKey, workspaceDir: effectiveWorkspace },
+        );
+        trajectoryProducer.startTurn(
+          {
+            status: "running",
+            sessionId: activeSession.sessionId,
+            turnId: `${params.runId}:turn`,
+            prompt: params.prompt,
+          },
+          { trigger: params.trigger ?? "manual" },
+        );
+      }
       trajectoryRecorder?.recordEvent("session.started", {
         trigger: params.trigger,
         sessionFile: params.sessionFile,
@@ -3168,13 +3202,40 @@ export async function runEmbeddedAttempt(
           trace: runTrace,
           contentCapture: resolveDiagnosticModelContentCapturePolicy(params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
-          onStarted: () => {
+          onStarted: ({ callId }) => {
+            const trajectoryStepId =
+              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            trajectoryProducer?.startStep(
+              trajectoryStepId,
+              {
+                status: "running",
+                callId: trajectoryStepId,
+                provider: params.provider,
+                model: params.modelId,
+              },
+              { kind: "model_call", callId, trajectoryStepId },
+            );
             params.onExecutionPhase?.({
               phase: "model_call_started",
               provider: params.provider,
               model: params.modelId,
               firstModelCallStarted: true,
             });
+          },
+          onFinished: ({ callId, outcome, durationMs, errorCategory }) => {
+            const trajectoryStepId =
+              `${params.runId}:attempt:${params.attemptIndex ?? 0}:step:${callId}`;
+            const state = {
+              status: outcome,
+              callId,
+              durationMs,
+              ...(errorCategory ? { errorCategory } : {}),
+            };
+            if (outcome === "error") {
+              trajectoryProducer?.endStep(trajectoryStepId, state, { kind: "model_call", callId });
+            } else {
+              trajectoryProducer?.updateStep(trajectoryStepId, state);
+            }
           },
         },
       );
@@ -3582,6 +3643,14 @@ export async function runEmbeddedAttempt(
         : undefined;
 
       let toolMetasForTerminal: readonly AsyncStartedToolMeta[] = [];
+      const onTrajectoryAgentEvent = (evt: {
+        stream: string;
+        data: Record<string, unknown>;
+        sessionKey?: string;
+      }) => {
+        trajectoryProducer?.recordAgentEvent(evt);
+        return params.onAgentEvent?.(evt);
+      };
       const subscription = subscribeEmbeddedAgentSession(
         buildEmbeddedSubscriptionParams({
           session: activeSession,
@@ -3607,7 +3676,7 @@ export async function runEmbeddedAttempt(
           onPartialReply: params.onPartialReply,
           onAssistantMessageStart: params.onAssistantMessageStart,
           onExecutionPhase: params.onExecutionPhase,
-          onAgentEvent: params.onAgentEvent,
+          onAgentEvent: onTrajectoryAgentEvent,
           terminalLifecyclePhase: params.deferTerminalLifecycleEnd ? "finishing" : "end",
           isTerminalAborted: () => aborted,
           onBeforeLifecycleTerminal: () => {
@@ -5612,6 +5681,24 @@ export async function runEmbeddedAttempt(
         promptError: promptError ? formatErrorMessage(promptError) : undefined,
         terminalError: attemptTrajectoryTerminal.terminalError,
       });
+      const trajectoryTerminalState = {
+        status: attemptTrajectoryTerminal.status,
+        aborted,
+        externalAbort,
+        timedOut,
+        idleTimedOut,
+        timedOutDuringCompaction,
+        timedOutDuringToolExecution,
+        ...(attemptTrajectoryTerminal.terminalError
+          ? { terminalError: attemptTrajectoryTerminal.terminalError }
+          : {}),
+      };
+      trajectoryProducer?.endTurn(trajectoryTerminalState, {
+        terminalError: attemptTrajectoryTerminal.terminalError,
+      });
+      trajectoryProducer?.endRun(trajectoryTerminalState, {
+        sessionId: activeSession.sessionId,
+      });
       trajectoryEndRecorded = true;
 
       return {
@@ -5677,7 +5764,7 @@ export async function runEmbeddedAttempt(
       // turns. Safe when no source ever charged it (returns undefined).
       endTurnInjectionBudget(injectionTurnId);
       if (trajectoryRecorder && !trajectoryEndRecorded) {
-        trajectoryRecorder.recordEvent("session.ended", {
+        const cleanupTrajectoryState = {
           status: promptError ? "error" : aborted || timedOut ? "interrupted" : "cleanup",
           aborted,
           externalAbort,
@@ -5686,7 +5773,10 @@ export async function runEmbeddedAttempt(
           timedOutDuringCompaction,
           timedOutDuringToolExecution,
           promptError: promptError ? formatErrorMessage(promptError) : undefined,
-        });
+        };
+        trajectoryRecorder.recordEvent("session.ended", cleanupTrajectoryState);
+        trajectoryProducer?.endTurn(cleanupTrajectoryState);
+        trajectoryProducer?.endRun(cleanupTrajectoryState, { cleanup: true });
       }
       await flushEmbeddedAttemptTrajectoryRecorder({
         runId: params.runId,
