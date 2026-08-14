@@ -108,6 +108,7 @@ export interface AppSettings {
   // UI State
   sidebarCollapsed: boolean;
   devModeUnlocked: boolean;
+  runActivityKeepExpandedOnComplete: boolean;
 
   /**
    * FP-P1-01: sanitized Setup provider verification state (no key material).
@@ -200,6 +201,7 @@ function createDefaultSettings(): AppSettings {
     // UI State
     sidebarCollapsed: false,
     devModeUnlocked: false,
+    runActivityKeepExpandedOnComplete: true,
     setupProviderVerification: { status: 'unverified' },
 
     // DCS production opt-in (default off / fail-closed)

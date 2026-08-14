@@ -186,6 +186,7 @@ export interface WorkspaceUiState {
   chatFooter?: WorkspaceChatFooterState;
   graphExpanded?: Record<string, boolean>;
   turnSummaryExpanded?: Record<string, boolean>;
+  turnSummaryStepDetailsExpanded?: Record<string, Record<string, boolean>>;
   recentFiles?: string[];
 }
 

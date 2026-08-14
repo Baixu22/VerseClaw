@@ -242,6 +242,7 @@ test.describe('Chat recovery assist', () => {
       // Long-term configuration is present.
       await expect(section.getByTestId('settings-session-activity-enabled')).toBeVisible();
       await expect(section.getByTestId('settings-session-activity-auto-expand')).toBeVisible();
+      await expect(section.getByTestId('settings-run-activity-completed-expanded')).toBeVisible();
       await expect(section.getByTestId('settings-session-activity-show-git')).toBeVisible();
       await expect(section.getByTestId('settings-session-activity-show-commands')).toBeVisible();
       await expect(section.getByTestId('settings-session-recovery-notifications')).toBeVisible();

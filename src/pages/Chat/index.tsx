@@ -908,6 +908,7 @@ export function Chat() {
   const sessionActivityShowGit = useSettingsStore((state) => state.sessionActivityShowGit);
   const sessionActivityShowCommands = useSettingsStore((state) => state.sessionActivityShowCommands);
   const sessionActivityRetentionMinutes = useSettingsStore((state) => state.sessionActivityRetentionMinutes);
+  const runActivityKeepExpandedOnComplete = useSettingsStore((state) => state.runActivityKeepExpandedOnComplete);
 
   useEffect(() => {
     if (!currentSessionKey) return;
@@ -1008,6 +1009,7 @@ export function Chat() {
   const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
+  const [runActivityStepDetailsExpanded, setRunActivityStepDetailsExpanded] = useState<Record<string, Record<string, boolean>>>({});
   useEffect(() => {
     setSessionActivitySheetOpen(false);
   }, [currentSessionKey, panelOpen]);
@@ -1031,8 +1033,9 @@ export function Chat() {
         activeTabKind: artifactTabs.find((tab) => tab.id === artifactActiveTabId)?.kind,
       },
       turnSummaryExpanded: runActivityExpandedOverrides,
+      turnSummaryStepDetailsExpanded: runActivityStepDetailsExpanded,
     };
-  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides, runActivityStepDetailsExpanded]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1066,6 +1069,7 @@ export function Chat() {
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       setComposerDraft('');
       setRunActivityExpandedOverrides({});
+      setRunActivityStepDetailsExpanded({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -1091,6 +1095,7 @@ export function Chat() {
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
       setComposerDraft('');
       setRunActivityExpandedOverrides({});
+      setRunActivityStepDetailsExpanded({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -1133,6 +1138,7 @@ export function Chat() {
     if (target.isFresh) {
       setComposerDraft('');
       setRunActivityExpandedOverrides({});
+      setRunActivityStepDetailsExpanded({});
       setKnowledgeScope('none');
       void clearActiveTopicMarker(activeWorkspace.rootPath);
     }
@@ -1159,6 +1165,7 @@ export function Chat() {
     workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
     setComposerDraft('');
     setRunActivityExpandedOverrides({});
+    setRunActivityStepDetailsExpanded({});
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
@@ -1218,6 +1225,7 @@ export function Chat() {
         workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
         setComposerDraft('');
         setRunActivityExpandedOverrides({});
+        setRunActivityStepDetailsExpanded({});
         setContextRange(null);
         setLiveUsage(null);
         resetSessionView(nextSessionKey);
@@ -1320,6 +1328,7 @@ export function Chat() {
       ...(sessionState.graphExpanded ?? {}),
       ...(sessionState.turnSummaryExpanded ?? {}),
     });
+    setRunActivityStepDetailsExpanded(sessionState.turnSummaryStepDetailsExpanded ?? {});
     setKnowledgeScope(sessionState.knowledgeScope ?? 'none');
     setKnowledgeMode(sessionState.knowledgeMode ?? 'suggest');
     // `workContextVisible` predates the rail and stored the same idea (does the
@@ -2321,6 +2330,7 @@ export function Chat() {
       resetSessionView(nextSessionKey);
       setComposerDraft(draft);
       setRunActivityExpandedOverrides({});
+      setRunActivityStepDetailsExpanded({});
       setContextRange(null);
       setLiveUsage(null);
       setKnowledgeScope('none');
@@ -3105,6 +3115,7 @@ export function Chat() {
                         const cardApprovals = approvalsByRunKey.get(runKey) ?? [];
                         const defaultExpanded = card.status === 'error'
                           || card.status === 'aborted'
+                          || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
                           || (card.active && card.streamingReplyText == null)
                           || !card.hasVisibleReply;
                         // A pending approval blocks the run and is the only way
@@ -3190,6 +3201,20 @@ export function Chat() {
                                 active={card.active}
                                 suppressThinking={card.suppressThinking}
                                 traceId={card.traceId}
+                                expandedStepIds={new Set(
+                                  Object.entries(runActivityStepDetailsExpanded[runKey] ?? {})
+                                    .filter(([, expanded]) => expanded)
+                                    .map(([stepId]) => stepId),
+                                )}
+                                onStepExpandedChange={(stepId, nextExpanded) => {
+                                  setRunActivityStepDetailsExpanded((previous) => ({
+                                    ...previous,
+                                    [runKey]: {
+                                      ...(previous[runKey] ?? {}),
+                                      [stepId]: nextExpanded,
+                                    },
+                                  }));
+                                }}
                               />
                               <RunTerminalSurfaces surfaces={card.surfaces.terminals} />
                               {card.orchestrations.map((orchestration) => (

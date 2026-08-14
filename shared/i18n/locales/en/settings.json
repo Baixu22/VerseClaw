@@ -66,6 +66,7 @@
     "currentTitle": "Current session recovery",
     "enabled": { "title": "Show session activity panel", "description": "Show structured runtime status beside Chat when real activity exists." },
     "autoExpand": { "title": "Automatic expansion", "description": "Choose when the activity panel opens on desktop.", "active": "When active", "attention": "When attention is needed", "never": "Never" },
+    "completedRunsExpanded": { "title": "Keep completed run activity expanded", "description": "Show completed run details by default. Manually collapsed runs stay collapsed for that session." },
     "showGit": { "title": "Show workspace Git", "description": "Include workspace-scoped branch and change status." },
     "showCommands": { "title": "Show Agent commands", "description": "Include structured command summaries alongside interactive terminals." },
     "notifications": { "title": "Recovery and blocked notifications", "description": "Notify when a real recovery or blocked signal needs review." },

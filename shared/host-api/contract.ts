@@ -354,6 +354,7 @@ export type SettingsSnapshot = Partial<{
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
+  runActivityKeepExpandedOnComplete: boolean;
   setupComplete: boolean;
   /**
    * FP-P1-01: sanitized Setup provider verification state (no key material).
