@@ -120,6 +120,43 @@ export type ToolSearchCatalogRef = {
   current?: ToolSearchCatalogSession;
 };
 
+/** Bridge exposed to the existing Tool Search Code Mode sandbox. */
+export type ToolSearchCodeModeBridge = {
+  search(query: string, options?: { limit?: number }): Promise<unknown>;
+  describe(id: string): Promise<unknown>;
+  call(
+    id: string,
+    input: unknown,
+    options?: ToolSearchCodeModeCallOptions,
+  ): Promise<unknown>;
+};
+
+export type ToolSearchCodeModeCallOptions = {
+  parentToolCallId?: string;
+  signal?: AbortSignal;
+  onUpdate?: AgentToolUpdateCallback;
+  /** Stable only within one sandbox run; used for bridge-side idempotency. */
+  requestId?: string;
+};
+
+export type ToolSearchCodeModeRunInput = {
+  code: string;
+  config: ToolSearchConfig;
+  parentToolCallId: string;
+  bridge: ToolSearchCodeModeBridge;
+  signal?: AbortSignal;
+  onUpdate?: AgentToolUpdateCallback;
+};
+
+export type ToolSearchCodeModeRunResult = {
+  value: unknown;
+  logs: string[];
+};
+
+export type ToolSearchCodeModeRunner = (
+  params: ToolSearchCodeModeRunInput,
+) => Promise<ToolSearchCodeModeRunResult>;
+
 type CodeModeBridgeMethod = "search" | "describe" | "call";
 
 type CodeModeChildMessage =
@@ -1435,23 +1472,57 @@ async function runCodeMode(params: {
   onUpdate?: AgentToolUpdateCallback;
 }) {
   const runtime = new ToolSearchRuntime(params.ctx, params.config);
-  const logs: string[] = [];
-  const value = await runCodeModeChild({
+  const result = await runToolSearchCodeMode({
     code: params.code,
     config: params.config,
-    logs,
     parentToolCallId: params.toolCallId,
-    runtime,
+    bridge: createToolSearchRuntimeCodeModeBridge(runtime),
     signal: params.signal,
     onUpdate: params.onUpdate,
   });
   return {
     ok: true,
-    value: toJsonSafe(value),
-    logs,
+    value: result.value,
+    logs: result.logs,
     telemetry: runtime.telemetry(),
   };
 }
+
+function createToolSearchRuntimeCodeModeBridge(
+  runtime: ToolSearchRuntime,
+): ToolSearchCodeModeBridge {
+  return {
+    search: async (query, options) => await runtime.search(query, options),
+    describe: async (id) => await runtime.describe(id),
+    call: async (id, input, options) =>
+      await runtime.call(id, input, {
+        ...(options?.parentToolCallId
+          ? { parentToolCallId: options.parentToolCallId }
+          : {}),
+        ...(options?.signal ? { signal: options.signal } : {}),
+        ...(options?.onUpdate ? { onUpdate: options.onUpdate } : {}),
+      }),
+  };
+}
+
+/**
+ * Runs the single existing Tool Search Code Mode sandbox with a caller-owned
+ * bridge. The legacy caller supplies a ToolSearchRuntime bridge above; opt-in
+ * adapters may supply a different bridge without creating another sandbox.
+ */
+export const runToolSearchCodeMode: ToolSearchCodeModeRunner = async (params) => {
+  const logs: string[] = [];
+  const value = await runCodeModeChild({
+    code: params.code,
+    config: params.config,
+    logs,
+    parentToolCallId: params.parentToolCallId,
+    bridge: params.bridge,
+    signal: params.signal,
+    onUpdate: params.onUpdate,
+  });
+  return { value: toJsonSafe(value), logs };
+};
 
 function buildCodeModeChildArgs(): string[] {
   if (!process.allowedNodeEnvironmentFlags.has("--permission")) {
@@ -1465,14 +1536,10 @@ function isCodeModeBridgeMethod(value: unknown): value is CodeModeBridgeMethod {
 }
 
 async function runCodeModeBridgeRequest(
-  runtime: ToolSearchRuntime,
+  bridge: ToolSearchCodeModeBridge,
   method: CodeModeBridgeMethod,
   args: unknown,
-  options?: {
-    parentToolCallId?: string;
-    signal?: AbortSignal;
-    onUpdate?: AgentToolUpdateCallback;
-  },
+  options?: ToolSearchCodeModeCallOptions,
 ): Promise<unknown> {
   const values = Array.isArray(args) ? args : [];
   switch (method) {
@@ -1482,7 +1549,7 @@ async function runCodeModeBridgeRequest(
         throw new ToolInputError("search query must be a string.");
       }
       const optionsLocal = isRecord(values[1]) ? values[1] : undefined;
-      return await runtime.search(query, {
+      return await bridge.search(query, {
         limit: typeof optionsLocal?.limit === "number" ? optionsLocal.limit : undefined,
       });
     }
@@ -1491,14 +1558,14 @@ async function runCodeModeBridgeRequest(
       if (typeof id !== "string") {
         throw new ToolInputError("describe id must be a string.");
       }
-      return await runtime.describe(id);
+      return await bridge.describe(id);
     }
     case "call": {
       const id = values[0];
       if (typeof id !== "string") {
         throw new ToolInputError("call id must be a string.");
       }
-      return await runtime.call(id, values[1] ?? {}, options);
+      return await bridge.call(id, values[1] ?? {}, options);
     }
   }
   throw new ToolInputError("Unsupported tool_search_code bridge method.");
@@ -1509,7 +1576,7 @@ function runCodeModeChild(params: {
   config: ToolSearchConfig;
   logs: string[];
   parentToolCallId: string;
-  runtime: ToolSearchRuntime;
+  bridge: ToolSearchCodeModeBridge;
   signal?: AbortSignal;
   onUpdate?: AgentToolUpdateCallback;
 }): Promise<unknown> {
@@ -1619,10 +1686,11 @@ function runCodeModeChild(params: {
       if (!id || !method) {
         return;
       }
-      void runCodeModeBridgeRequest(params.runtime, method, message.args, {
+      void runCodeModeBridgeRequest(params.bridge, method, message.args, {
         parentToolCallId: params.parentToolCallId,
         signal: bridgeAbortController.signal,
         onUpdate: params.onUpdate,
+        requestId: id,
       })
         .then((value) => {
           if (settled || !child.connected) {
