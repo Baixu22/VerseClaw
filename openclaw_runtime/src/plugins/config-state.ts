@@ -19,6 +19,7 @@ import {
   isBundledChannelEnabledByChannelConfig as isBundledChannelEnabledByChannelConfigShared,
   normalizePluginsConfigWithResolver,
   type NormalizePluginId,
+  type NormalizePluginsConfigOptions,
   type NormalizedPluginsConfig as SharedNormalizedPluginsConfig,
 } from "./config-normalization-shared.js";
 import type { PluginOrigin } from "./plugin-origin.types.js";
@@ -81,8 +82,9 @@ export function normalizePluginId(id: string): string {
 
 export const normalizePluginsConfig = (
   config?: OpenClawConfig["plugins"],
+  options?: NormalizePluginsConfigOptions,
 ): NormalizedPluginsConfig => {
-  return normalizePluginsConfigWithResolver(config, createScopedPluginIdNormalizer());
+  return normalizePluginsConfigWithResolver(config, createScopedPluginIdNormalizer(), options);
 };
 
 export function createPluginActivationSource(params: {

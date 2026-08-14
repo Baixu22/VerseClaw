@@ -6,7 +6,11 @@ import {
 import { normalizeArrayBackedTrimmedStringList } from "@openclaw/normalization-core/string-normalization";
 import { normalizeChatChannelId } from "../channels/ids.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { assertSingleContextEngineSlot, assertSingleMemorySlotOwner } from "../agents/slot-convergence.js";
+import {
+  assertRuntimeMemoryOwnerConvergence,
+  assertSingleContextEngineSlot,
+  assertSingleMemorySlotOwner,
+} from "../agents/slot-convergence.js";
 import { defaultSlotIdForKey } from "./slots.js";
 
 /** Canonical plugin config shape consumed by runtime policy and loaders. */
@@ -227,10 +231,17 @@ function normalizePluginEntries(
   return normalized;
 }
 
+/** Options threaded into plugin config normalization from the full config. */
+export type NormalizePluginsConfigOptions = {
+  /** runtime.memory.persist (E-1 ruling): true = second durable memory authority. */
+  runtimeMemoryPersist?: boolean;
+};
+
 /** Normalizes plugin config while allowing callers to resolve aliases first. */
 export function normalizePluginsConfigWithResolver(
   config?: OpenClawConfig["plugins"],
   normalizePluginId: NormalizePluginId = identityNormalizePluginId,
+  options?: NormalizePluginsConfigOptions,
 ): NormalizedPluginsConfig {
   const memorySlot = normalizeSlotValue(config?.slots?.memory);
   const contextEngineSlot = normalizeSlotValue(config?.slots?.contextEngine);
@@ -249,7 +260,18 @@ export function normalizePluginsConfigWithResolver(
     contextEngineSlot !== undefined
       ? assertSingleContextEngineSlot({ contextEngineId: contextEngineSlot ?? undefined })
       : { ok: true as const, errors: [] as string[] };
-  const convergenceErrors = [...convergenceMemory.errors, ...convergenceContext.errors];
+  // R3-1 E-1 ruling (b): runtime.memory.persist=true creates a second durable
+  // memory authority outside the selected slot owner, so it is rejected
+  // fail-closed through the same slotConvergenceErrors chain.
+  const convergenceRuntimeMemory =
+    options?.runtimeMemoryPersist === true
+      ? assertRuntimeMemoryOwnerConvergence({ runtimeMemoryPersist: true })
+      : { ok: true as const, errors: [] as string[] };
+  const convergenceErrors = [
+    ...convergenceMemory.errors,
+    ...convergenceContext.errors,
+    ...convergenceRuntimeMemory.errors,
+  ];
   return {
     enabled: config?.enabled !== false,
     allow: normalizeList(config?.allow, normalizePluginId),

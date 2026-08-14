@@ -1326,7 +1326,9 @@ function resolvePluginLoadCacheContext(options: PluginLoadOptions = {}) {
         onMissing: () => undefined,
       }) as OpenClawConfig)
     : rawActivationSourceConfig;
-  const normalized = normalizePluginsConfig(cfg.plugins);
+  const normalized = normalizePluginsConfig(cfg.plugins, {
+    runtimeMemoryPersist: cfg.runtime?.memory?.persist === true,
+  });
   // RC-07 fail-closed: an illegal memory/contextEngine slot configuration must
   // never become the active plugin set. The loader is a mandatory production
   // entry (Gateway startup and plugin reload both flow through
