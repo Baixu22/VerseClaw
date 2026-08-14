@@ -597,6 +597,46 @@ describe('agent browser service', () => {
     }
   });
 
+  it('records a caller-provided canonical runId verbatim with a dir-safe artifact path', async () => {
+    const userDataPath = await mkdtemp(join(tmpdir(), 'agent-browser-validate-runid-'));
+    const service = new AgentBrowserService({
+      userDataPath,
+      createWindow: () => new FakeWindow() as never,
+      now: () => new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    try {
+      const result = await service.validate({
+        url: 'https://example.com/check-in',
+        runId: 'cron:job-1:1720000000000',
+        expectedDomains: ['example.com'],
+        diagnostics: { snapshot: true },
+      });
+
+      expect(result.ok).toBe(true);
+      // R5-1: logical runId is the caller's canonical id, not a freshly minted UUID.
+      expect(result.runResult?.runId).toBe('cron:job-1:1720000000000');
+      // The artifact directory uses a deterministic dir-safe projection (colons
+      // are illegal in Windows path segments); manifest.json keeps the raw id.
+      const manifestPath = join(userDataPath, 'agent-browser', 'run-artifacts', 'cron-job-1-1720000000000', 'manifest.json');
+      await expect(readFile(manifestPath, 'utf8')).resolves.toContain('"runId": "cron:job-1:1720000000000"');
+    } finally {
+      await rm(userDataPath, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects traversal-shaped external runIds instead of minting a new id', async () => {
+    const service = new AgentBrowserService({
+      createWindow: () => new FakeWindow() as never,
+      now: () => new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    await expect(service.validate({ url: 'https://example.com/', runId: '../escape' }))
+      .rejects.toThrow(/runId is invalid/);
+    await expect(service.validate({ url: 'https://example.com/', runId: 'a\\b' }))
+      .rejects.toThrow(/runId is invalid/);
+  });
+
   it('returns validation failures without keeping the session open', async () => {
     const windows: FakeWindow[] = [];
     const service = new AgentBrowserService({
