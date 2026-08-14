@@ -486,4 +486,59 @@ export function buildKeCandidateGenerationDiagnostics(
   };
 }
 
+/**
+ * Runtime-owned shape of an error-card candidate as a knowledge-inbox draft.
+ * The electron bridge maps this 1:1 into KnowledgeCreateInboxItemPayload and
+ * calls createInboxItem — the cross-process push stays out of the runtime.
+ */
+export type KeErrorCardInboxDraft = {
+  title: string;
+  body: string;
+  kind: "task-ledger";
+  type: "troubleshooting";
+  sourceIds: string[];
+  sourceRefs: Array<{ id: string; kind: string; label?: string }>;
+  tags: string[];
+  createdBy: "agent";
+  warnings: string[];
+  metadata: Record<string, unknown>;
+};
+
+/** Map one error-card proposal into a knowledge-inbox draft (content-light). */
+export function buildKeErrorCardInboxDraft(
+  proposal: KeErrorCardProposal,
+): KeErrorCardInboxDraft {
+  return {
+    title: proposal.trigger,
+    body: [proposal.rootCause, proposal.resolution, proposal.verification]
+      .filter((part) => part.trim().length > 0)
+      .join("\n\n"),
+    kind: "task-ledger",
+    type: "troubleshooting",
+    sourceIds: proposal.sourceRefs,
+    sourceRefs: proposal.sourceRefs.map((ref) => ({ id: ref, kind: "task_loop" })),
+    tags: [
+      "ke-candidate",
+      ...(proposal.proposalOnly ? ["l4-proposal-only"] : []),
+    ],
+    createdBy: "agent",
+    warnings: proposal.proposalOnly ? ["L4 proposal-only: never auto-apply"] : [],
+    metadata: {
+      envelopeId: proposal.envelopeId,
+      contentVersion: proposal.contentVersion,
+      verificationStatus: proposal.verificationStatus,
+      sensitivity: proposal.sensitivity,
+      proposalOnly: proposal.proposalOnly,
+    },
+  };
+}
+
+/** Map all error-card proposals into knowledge-inbox drafts. */
+export function buildKeErrorCardInboxDrafts(
+  proposals: readonly KeErrorCardProposal[],
+): KeErrorCardInboxDraft[] {
+  return proposals.map(buildKeErrorCardInboxDraft);
+}
+
+
 
