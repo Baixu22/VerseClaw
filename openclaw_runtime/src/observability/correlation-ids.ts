@@ -38,6 +38,15 @@ export function correlationDigest(segments: CorrelationSegments): string {
     .digest('hex');
 }
 
+/**
+ * R5-3: canonical stable-JSON hasher shared with the receipt correlation
+ * digests (shadow-census), so RC-08B correlation ids and receipt
+ * correlation_digest values hash through one module/source.
+ */
+export function digestStableJson(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(value ?? null)).digest('hex');
+}
+
 export function buildCorrelationIdentity(segments: CorrelationSegments): CorrelationIdentity {
   return { correlationDigest: correlationDigest(segments), segments };
 }

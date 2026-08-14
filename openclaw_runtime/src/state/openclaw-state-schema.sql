@@ -1584,6 +1584,9 @@ CREATE INDEX IF NOT EXISTS idx_runtime_receipts_run_attempt
 CREATE INDEX IF NOT EXISTS idx_runtime_receipts_session
   ON runtime_receipts(session_key, created_at DESC);
 
+CREATE INDEX IF NOT EXISTS idx_runtime_receipts_correlation
+  ON runtime_receipts(correlation_digest);
+
 -- RC-04 durable approval owner: replaces the Gateway process Map pending/resolved
 -- truth with a durable ledger in the existing openclaw-state SQLite. State
 -- sequence: intent_reserved -> approval_pending -> approved|denied ->

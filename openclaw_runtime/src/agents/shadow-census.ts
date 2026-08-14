@@ -3,6 +3,7 @@
 // metadata travels on a symbol so it can never change provider request bytes.
 import { createHash } from 'node:crypto';
 
+import { digestStableJson } from '../observability/correlation-ids.js';
 import {
   ReceiptStore,
   type PutReceiptResult,
@@ -221,6 +222,36 @@ function shadowStore(options: ShadowReceiptOptions): Pick<ReceiptStore, 'put'> {
   return options.receiptStore ?? (options.database ? new ReceiptStore(options.database) : new ReceiptStore());
 }
 
+/**
+ * R5-3: resolve the wire-side correlation from the same source the
+ * ContextReceipt used — the sealed bundle digest persisted as the v1
+ * ContextReceipt correlation_digest of the same run and model call. The seal
+ * plan registry only carries CompilePlan and rc03-seal-hook.ts is read-only
+ * for this batch, so the receipt store is the single production join source.
+ * Observational: a miss or failure leaves correlationDigest unset and the
+ * emit boundary falls back to the identity-derived digest.
+ */
+export function resolveRc03WireCorrelationDigest(
+  options: ShadowReceiptOptions,
+  plan: { runId?: string; callIndex: { modelCallIndex: number } },
+): string | undefined {
+  const runId = options.runId ?? plan.runId;
+  if (!runId || options.receiptStore) return undefined;
+  try {
+    const store = options.database ? new ReceiptStore(options.database) : new ReceiptStore();
+    const rows = store.list({
+      kind: 'context',
+      runId,
+      modelCallIndex: plan.callIndex.modelCallIndex,
+      limit: 16,
+    });
+    const v1 = rows.find((row) => row.version === '1' && typeof row.correlation_digest === 'string' && row.correlation_digest);
+    return v1?.correlation_digest ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function isEnabled(options: ShadowReceiptOptions): boolean {
   if (options.enabled !== undefined) return options.enabled === true;
   const value = process.env.OPENCLAW_RC02_SHADOW_CENSUS?.trim().toLowerCase();
@@ -246,7 +277,10 @@ function runtimeMode(options: ShadowReceiptOptions): RuntimeReceiptRuntimeMode {
 }
 
 function correlationDigest(input: ShadowReceiptCallContext): string {
-  return digestStable({
+  // R5-3: receipt correlation digests hash through the RC-08B correlation
+  // module so both stay on one source; the segment projection stays the
+  // receipt call identity (byte-identical to the previous local hasher).
+  return digestStableJson({
     provider: input.providerId ?? input.adapterId ?? 'unknown',
     model: input.modelId ?? null,
     sessionKey: input.sessionKey ?? null,
