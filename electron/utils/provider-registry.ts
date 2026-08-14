@@ -9,7 +9,6 @@ export {
 } from '../shared/providers/types';
 import {
   type ProviderBackendConfig,
-  type ProviderModelEntry,
 } from '../shared/providers/types';
 import {
   getKeyableProviderTypes as getSharedKeyableProviderTypes,
@@ -44,10 +43,8 @@ export function getProviderDefaultModel(type: string): string | undefined {
 }
 
 /** Get the OpenClaw provider config (baseUrl, api, apiKeyEnv, models, headers) */
-export function getProviderConfig(
-  type: string
-): { baseUrl: string; api: string; apiKeyEnv: string; models?: ProviderModelEntry[]; headers?: Record<string, string> } | undefined {
-  return getProviderBackendConfig(type) as ProviderBackendConfig | undefined;
+export function getProviderConfig(type: string): ProviderBackendConfig | undefined {
+  return getProviderBackendConfig(type);
 }
 
 /**

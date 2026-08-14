@@ -1218,6 +1218,9 @@ interface RuntimeProviderConfigOverride {
   apiKeyEnv?: string;
   headers?: Record<string, string>;
   authHeader?: boolean;
+  request?: Record<string, unknown>;
+  /** Full model entries (with capability metadata) instead of bare model ids. */
+  modelEntries?: Array<Record<string, unknown>>;
 }
 
 type ProviderEntryBuildOptions = {
@@ -1228,6 +1231,7 @@ type ProviderEntryBuildOptions = {
   authHeader?: boolean;
   request?: Record<string, unknown>;
   modelIds?: string[];
+  modelEntries?: Array<Record<string, unknown>>;
   includeRegistryModels?: boolean;
   mergeExistingModels?: boolean;
 };
@@ -1524,7 +1528,7 @@ function upsertOpenClawProviderEntry(
   const registryModels = options.includeRegistryModels
     ? ((getProviderConfig(provider)?.models ?? []).map((m) => ({ ...m })) as Array<Record<string, unknown>>)
     : [];
-  const runtimeModels = (options.modelIds ?? []).map((id) => ({ id, name: id }));
+  const runtimeModels = (options.modelEntries ?? (options.modelIds ?? []).map((id) => ({ id, name: id }))) as Array<Record<string, unknown>>;
   let mergedModels = mergeProviderModels(registryModels, existingModels, runtimeModels);
   if (options.api === 'anthropic-messages') {
     mergedModels = mergedModels.map((model) => ensureAnthropicMessagesModelEntry(model, provider, existingProvider));
@@ -1694,7 +1698,9 @@ export async function syncProviderConfigToOpenClaw(
         api: override.api,
         apiKeyEnv: override.apiKeyEnv,
         headers: override.headers,
+        request: override.request,
         modelIds: modelId ? [modelId] : [],
+        modelEntries: override.modelEntries,
       });
     }
 
@@ -2377,6 +2383,8 @@ type AgentModelProviderEntry = {
   apiKey?: string;
   /** When true, pi-ai sends Authorization: Bearer instead of x-api-key */
   authHeader?: boolean;
+  /** Request overrides (auth/headers/…) mirrored into the agent models.json provider entry. */
+  request?: Record<string, unknown>;
 };
 
 async function updateModelsJsonProviderEntriesForAgents(
@@ -2433,6 +2441,13 @@ async function updateModelsJsonProviderEntriesForAgents(
       if (mergedModels.length > 0) existing.models = mergedModels;
       if (entry.apiKey !== undefined) existing.apiKey = entry.apiKey;
       if (entry.authHeader !== undefined) existing.authHeader = entry.authHeader;
+      if (entry.request !== undefined) {
+        if (Object.keys(entry.request).length > 0) {
+          existing.request = entry.request;
+        } else {
+          delete existing.request;
+        }
+      }
       ensureAnthropicMessagesProviderDefaults(existing, providerType);
 
       providers[providerType] = existing;

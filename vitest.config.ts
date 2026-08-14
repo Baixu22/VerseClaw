@@ -146,6 +146,7 @@ export default defineConfig({
       '@electron': resolve(__dirname, 'electron'),
       '@shared': resolve(__dirname, 'shared'),
       '@openclaw/runtime-redaction': resolve(__dirname, 'openclaw_runtime/src/logging/redact.ts'),
+      '@openclaw/provider-request-auth': resolve(__dirname, 'openclaw_runtime/src/agents/provider-request-auth.ts'),
       rastermill: resolve(__dirname, 'tests/fixtures/rastermill.ts'),
     },
   },

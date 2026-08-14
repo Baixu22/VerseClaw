@@ -244,6 +244,8 @@ export const PROVIDER_DEFINITIONS: ProviderDefinition[] = [
       baseUrl: 'https://api.minimax.io/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'MINIMAX_API_KEY',
+      oauthApiKeyMarker: 'minimax-oauth',
+      oauthAuthHeader: true,
       models: [
         {
           id: 'MiniMax-M3',
@@ -288,6 +290,8 @@ export const PROVIDER_DEFINITIONS: ProviderDefinition[] = [
       baseUrl: 'https://api.minimaxi.com/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'MINIMAX_CN_API_KEY',
+      oauthApiKeyMarker: 'minimax-oauth',
+      oauthAuthHeader: true,
       models: [
         {
           id: 'MiniMax-M3',

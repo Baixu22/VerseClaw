@@ -34,6 +34,12 @@ type ProviderPayload<Action extends keyof HostApiContract['providers']> =
 type ValidationOptions = {
   baseUrl?: string;
   apiProtocol?: string;
+  auth?: {
+    mode: 'bearer' | 'custom-header' | 'query' | 'none';
+    headerName?: string;
+    prefix?: string;
+    parameterName?: string;
+  };
 };
 
 type ResolvedProviderAuthContext = {
@@ -171,6 +177,7 @@ async function resolveProviderAuthContext(
   const registryBaseUrl = getProviderConfig(providerType)?.baseUrl;
   const resolvedBaseUrl = options?.baseUrl || account?.baseUrl || legacyProvider?.baseUrl || registryBaseUrl;
   const resolvedProtocol = options?.apiProtocol || account?.apiProtocol || legacyProvider?.apiProtocol;
+  const resolvedAuth = options?.auth || account?.requestAuth;
   const storedApiKey = accountId || account?.id
     ? await providerService.getAccountApiKey(accountId || account?.id || '')
     : providerId
@@ -184,6 +191,7 @@ async function resolveProviderAuthContext(
     options: {
       baseUrl: resolvedBaseUrl,
       apiProtocol: resolvedProtocol,
+      auth: resolvedAuth,
     },
   };
 }
