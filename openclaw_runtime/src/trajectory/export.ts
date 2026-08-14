@@ -23,10 +23,12 @@ import { redactSecrets, redactToolPayloadText } from "../logging/redact.js";
 import { safeJsonStringify } from "../utils/safe-json.js";
 import { TRAJECTORY_RUNTIME_FILE_MAX_BYTES, safeTrajectorySessionFileName } from "./paths.js";
 import { isRegularNonSymlinkFile, resolveTrajectoryRuntimeFile } from "./runtime-file.js";
+import { safeParseTrajectoryEvent } from "./schema.js";
 import type {
   TrajectoryBundleManifest,
   TrajectoryBundleWarning,
   TrajectoryEvent,
+  TrajectoryReadableEvent,
   TrajectoryToolDefinition,
 } from "./types.js";
 
@@ -63,10 +65,6 @@ const MAX_TRAJECTORY_RUNTIME_EVENTS = 200_000;
 const MAX_TRAJECTORY_TOTAL_EVENTS = 250_000;
 const MAX_TRAJECTORY_SESSION_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_TRAJECTORY_WARNING_ROWS = 20;
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
-}
 
 function isSessionFileEntry(value: unknown): value is FileEntry {
   if (!isRecord(value) || typeof value.type !== "string") {
@@ -293,21 +291,17 @@ async function parseJsonlFile<T>(
   return { events: parsed, warnings };
 }
 
-function isRuntimeTrajectoryEvent(value: unknown): value is TrajectoryEvent {
-  if (!isRecord(value)) {
-    return false;
-  }
-  return (
-    value.traceSchema === "openclaw-trajectory" &&
-    value.schemaVersion === 1 &&
-    value.source === "runtime" &&
-    typeof value.type === "string" &&
-    typeof value.ts === "string" &&
-    !Number.isNaN(Date.parse(value.ts)) &&
-    isFiniteNumber(value.seq) &&
-    typeof value.sessionId === "string" &&
-    (!("data" in value) || value.data === undefined || isRecord(value.data))
-  );
+function isRuntimeTrajectoryEvent(value: unknown): value is TrajectoryReadableEvent {
+  const parsed = safeParseTrajectoryEvent(value);
+  return parsed.success && parsed.event.source === "runtime";
+}
+
+function isV1TrajectoryEvent(value: TrajectoryReadableEvent): value is TrajectoryEvent {
+  return value.schemaVersion === 1;
+}
+
+function belongsToSession(value: TrajectoryReadableEvent, sessionId: string): boolean {
+  return value.schemaVersion === 1 ? value.sessionId === sessionId : value.traceId === sessionId;
 }
 
 function summarizeJsonlWarnings(warnings: JsonlParseWarning[]): TrajectoryBundleWarning[] {
@@ -503,8 +497,8 @@ function buildTranscriptEvents(params: {
   return events;
 }
 
-function sortTrajectoryEvents(events: TrajectoryEvent[]): TrajectoryEvent[] {
-  const sourceOrder: Record<TrajectoryEvent["source"], number> = {
+function sortTrajectoryEvents(events: TrajectoryReadableEvent[]): TrajectoryReadableEvent[] {
+  const sourceOrder: Record<TrajectoryReadableEvent["source"], number> = {
     runtime: 0,
     transcript: 1,
     export: 2,
@@ -518,7 +512,9 @@ function sortTrajectoryEvents(events: TrajectoryEvent[]): TrajectoryEvent[] {
     if (bySource !== 0) {
       return bySource;
     }
-    return (left.sourceSeq ?? left.seq) - (right.sourceSeq ?? right.seq);
+    const leftSequence = left.schemaVersion === 1 ? (left.sourceSeq ?? left.seq) : left.seq;
+    const rightSequence = right.schemaVersion === 1 ? (right.sourceSeq ?? right.seq) : right.seq;
+    return leftSequence - rightSequence;
   });
   for (const [index, event] of sorted.entries()) {
     event.seq = index + 1;
@@ -528,7 +524,7 @@ function sortTrajectoryEvents(events: TrajectoryEvent[]): TrajectoryEvent[] {
 
 function trajectoryJsonlFile(
   pathName: string,
-  events: TrajectoryEvent[],
+  events: TrajectoryReadableEvent[],
 ): DiagnosticSupportBundleFile {
   const lines = events
     .map((event) => safeJsonStringify(event))
@@ -654,10 +650,10 @@ function redactTrajectoryExportValue(
 }
 
 function redactEventForExport(
-  event: TrajectoryEvent,
+  event: TrajectoryReadableEvent,
   redaction: TrajectoryExportRedaction,
-): TrajectoryEvent {
-  return redactTrajectoryExportValue(event, redaction) as TrajectoryEvent;
+): TrajectoryReadableEvent {
+  return redactTrajectoryExportValue(event, redaction) as TrajectoryReadableEvent;
 }
 
 function resolveRuntimeContext(runtimeEvents: TrajectoryEvent[]): RuntimeTrajectoryContext {
@@ -720,7 +716,7 @@ function collectPotentialPathStrings(value: unknown): string[] {
   return [...found];
 }
 
-function markInvokedSkills(params: { skills: unknown; events: TrajectoryEvent[] }): unknown {
+function markInvokedSkills(params: { skills: unknown; events: TrajectoryReadableEvent[] }): unknown {
   if (!params.skills || typeof params.skills !== "object") {
     return params.skills;
   }
@@ -776,7 +772,7 @@ function markInvokedSkills(params: { skills: unknown; events: TrajectoryEvent[] 
 function buildMetadataCapture(params: {
   manifest: TrajectoryBundleManifest;
   runtimeEvents: TrajectoryEvent[];
-  events: TrajectoryEvent[];
+  events: TrajectoryReadableEvent[];
 }): JsonRecord | undefined {
   const runtimeMetadata = resolveLatestRuntimeEventData(params.runtimeEvents, "trace.metadata");
   if (!runtimeMetadata) {
@@ -937,7 +933,7 @@ export function resolveDefaultTrajectoryExportDir(params: {
 export async function exportTrajectoryBundle(params: BuildTrajectoryBundleParams): Promise<{
   manifest: TrajectoryBundleManifest;
   outputDir: string;
-  events: TrajectoryEvent[];
+  events: TrajectoryReadableEvent[];
   header: SessionHeader | null;
   runtimeFile?: string;
   supplementalFiles: string[];
@@ -963,14 +959,15 @@ export async function exportTrajectoryBundle(params: BuildTrajectoryBundleParams
     sessionId: params.sessionId,
   });
   const runtimeParse = runtimeFile
-    ? await parseJsonlFile<TrajectoryEvent>(runtimeFile, {
+    ? await parseJsonlFile<TrajectoryReadableEvent>(runtimeFile, {
         maxBytes: TRAJECTORY_RUNTIME_FILE_MAX_BYTES,
         maxEvents: MAX_TRAJECTORY_RUNTIME_EVENTS,
-        include: (value) => value.sessionId === params.sessionId,
+        include: (value) => belongsToSession(value, params.sessionId),
         validate: isRuntimeTrajectoryEvent,
       })
     : { events: [], warnings: [] };
   const runtimeEvents = runtimeParse.events;
+  const runtimeV1Events = runtimeEvents.filter(isV1TrajectoryEvent);
   const transcriptEvents = buildTranscriptEvents({
     entries: branchEntries,
     sessionId: params.sessionId,
@@ -1012,21 +1009,21 @@ export async function exportTrajectoryBundle(params: BuildTrajectoryBundleParams
     manifest.warnings = warnings;
   }
 
-  const bundleRuntimeContext = resolveRuntimeContext(runtimeEvents);
+  const bundleRuntimeContext = resolveRuntimeContext(runtimeV1Events);
   const files: DiagnosticSupportBundleFile[] = [];
   const supplementalFiles: string[] = [];
   const metadataCapture = buildMetadataCapture({
     manifest,
-    runtimeEvents,
+    runtimeEvents: runtimeV1Events,
     events: rawEvents,
   });
   const artifactsCapture = buildArtifactsCapture({
     manifest,
-    runtimeEvents,
+    runtimeEvents: runtimeV1Events,
   });
   const promptsCapture = buildPromptsCapture({
     manifest,
-    runtimeEvents,
+    runtimeEvents: runtimeV1Events,
     runtimeContext: bundleRuntimeContext,
   });
   if (metadataCapture) {
