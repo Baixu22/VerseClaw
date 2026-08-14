@@ -42,6 +42,64 @@ type RuntimeProviderSyncContext = {
   api: string;
 };
 
+/**
+ * Translates the UI auth selection into the runtime `request.auth` override.
+ * The value is the provider API key; the runtime resolver shared with the
+ * save-time validator converts it into the concrete header/query format.
+ */
+function buildRuntimeProviderRequestAuth(
+  config: ProviderConfig,
+  apiKey: string | undefined,
+): { auth: Record<string, unknown> } | undefined {
+  const auth = config.requestAuth;
+  if (!auth || auth.mode === 'none') {
+    return undefined;
+  }
+  const value = (apiKey ?? '').trim();
+  if (!value) {
+    return undefined;
+  }
+  if (auth.mode === 'bearer') {
+    return { auth: { mode: 'authorization-bearer', token: value } };
+  }
+  if (auth.mode === 'custom-header' && auth.headerName?.trim()) {
+    return {
+      auth: {
+        mode: 'header',
+        headerName: auth.headerName.trim(),
+        value,
+        ...(auth.prefix && auth.prefix.trim() ? { prefix: auth.prefix } : {}),
+      },
+    };
+  }
+  if (auth.mode === 'query' && auth.parameterName?.trim()) {
+    return {
+      auth: { mode: 'query', parameterName: auth.parameterName.trim(), value },
+    };
+  }
+  return undefined;
+}
+
+/**
+ * Declared model capability metadata (R4). Fields are only written when the
+ * user declared them; absence keeps the runtime default and the UI marks the
+ * value as "undeclared".
+ */
+function buildRuntimeModelProfileEntry(config: ProviderConfig, modelId: string): ReturnType<typeof piAiModelsJsonModelEntry> {
+  const profile = config.modelProfile;
+  return piAiModelsJsonModelEntry(modelId, modelId, {
+    contextWindow: profile?.contextWindow,
+    maxTokens: profile?.maxTokens,
+    input:
+      profile?.supportsVision === true
+        ? ['text', 'image']
+        : profile?.supportsVision === false
+          ? ['text']
+          : undefined,
+    reasoning: profile?.supportsReasoning,
+  });
+}
+
 function normalizeProviderBaseUrl(
   config: ProviderConfig,
   baseUrl?: string,
@@ -311,12 +369,20 @@ async function resolveRuntimeSyncContext(config: ProviderConfig): Promise<Runtim
 async function syncRuntimeProviderConfig(
   config: ProviderConfig,
   context: RuntimeProviderSyncContext,
+  apiKey: string | undefined,
 ): Promise<void> {
+  const request = buildRuntimeProviderRequestAuth(config, apiKey);
+  const modelEntry = config.model
+    ? buildRuntimeModelProfileEntry(config, config.model)
+    : undefined;
   await syncProviderConfigToOpenClaw(context.runtimeProviderKey, config.model, {
     baseUrl: normalizeProviderBaseUrl(config, config.baseUrl || context.meta?.baseUrl, context.api),
     api: context.api,
     apiKeyEnv: context.meta?.apiKeyEnv,
-    headers: config.headers ?? context.meta?.headers,
+    // Merge instead of replace so a User-Agent/custom header never wipes vendor defaults.
+    headers: { ...(context.meta?.headers ?? {}), ...(config.headers ?? {}) },
+    ...(request ? { request } : {}),
+    ...(modelEntry ? { modelEntries: [modelEntry] } : {}),
   });
 }
 
@@ -335,11 +401,13 @@ async function syncCustomProviderAgentModel(
   }
 
   const modelId = config.model;
+  const request = buildRuntimeProviderRequestAuth(config, resolvedKey);
   await updateAgentModelProvider(runtimeProviderKey, {
     baseUrl: normalizeProviderBaseUrl(config, config.baseUrl, config.apiProtocol || 'openai-completions'),
     api: config.apiProtocol || 'openai-completions',
-    models: modelId ? [piAiModelsJsonModelEntry(modelId)] : [],
+    models: modelId ? [buildRuntimeModelProfileEntry(config, modelId)] : [],
     apiKey: resolvedKey,
+    ...(request ? { request } : {}),
   });
 }
 
@@ -353,7 +421,7 @@ async function syncProviderToRuntime(
   }
 
   await syncProviderSecretToRuntime(config, context.runtimeProviderKey, apiKey);
-  await syncRuntimeProviderConfig(config, context);
+  await syncRuntimeProviderConfig(config, context, apiKey);
   await syncCustomProviderAgentModel(config, context.runtimeProviderKey, apiKey);
   return context;
 }
@@ -407,9 +475,10 @@ async function buildAgentModelProviderEntry(
 ): Promise<{
   baseUrl?: string;
   api?: string;
-  models?: Array<{ id: string; name: string; cost: PiAiModelCostRates }>;
+  models?: Array<{ id: string; name: string; cost?: PiAiModelCostRates; [key: string]: unknown }>;
   apiKey?: string;
   authHeader?: boolean;
+  request?: Record<string, unknown>;
 } | null> {
   const meta = getProviderConfig(config.type);
   const api = config.apiProtocol || (isUnregisteredProviderType(config.type) ? 'openai-completions' : meta?.api);
@@ -425,20 +494,26 @@ async function buildAgentModelProviderEntry(
     apiKey = (await getApiKey(config.id)) || undefined;
   } else if (config.type === 'minimax-portal' || config.type === 'minimax-portal-cn') {
     const accountApiKey = await getApiKey(config.id);
+    const oauthMarker = meta?.oauthApiKeyMarker;
     if (accountApiKey) {
       apiKey = accountApiKey;
-    } else {
-      authHeader = true;
-      apiKey = 'minimax-oauth';
+    } else if (oauthMarker) {
+      // OAuth-backed marker from provider metadata (single source instead of a
+      // minimax-only hardcode); the runtime resolves the real token from auth-profiles.
+      authHeader = meta?.oauthAuthHeader ?? false;
+      apiKey = oauthMarker;
     }
   }
+
+  const request = buildRuntimeProviderRequestAuth(config, apiKey);
 
   return {
     baseUrl,
     api,
-    models: [piAiModelsJsonModelEntry(modelId)],
+    models: [buildRuntimeModelProfileEntry(config, modelId)],
     apiKey,
     authHeader,
+    ...(request ? { request } : {}),
   };
 }
 
@@ -724,29 +799,38 @@ export async function syncDefaultProviderToRuntime(
       baseUrl = baseUrl.replace(/\/v1$/, '').replace(/\/anthropic$/, '').replace(/\/$/, '') + '/anthropic';
     }
 
-    const targetProviderKey = 'minimax-portal';
+    // OAuth auth format comes from provider metadata, not a minimax-only hardcode.
+    const portalMeta = getProviderConfig(provider.type);
+    const oauthApiKeyMarker = portalMeta?.oauthApiKeyMarker;
+    if (!oauthApiKeyMarker) {
+      degradedReason = `OAuth provider "${provider.type}" has no OAuth API-key marker configured`;
+      logger.warn(`[provider-runtime] ${degradedReason}`);
+    } else {
+      const targetProviderKey = ock;
+      const oauthAuthHeader = portalMeta?.oauthAuthHeader ?? false;
 
-    await setOpenClawDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
-      baseUrl,
-      api,
-      authHeader: targetProviderKey === 'minimax-portal' ? true : undefined,
-      apiKeyEnv: targetProviderKey === 'minimax-portal' ? 'minimax-oauth' : 'qwen-oauth',
-    }, fallbackModels);
-
-    logger.info(`Configured openclaw.json for OAuth provider "${provider.type}"`);
-
-    try {
-      const defaultModelId = provider.model?.split('/').pop();
-      await updateAgentModelProvider(targetProviderKey, {
+      await setOpenClawDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
         baseUrl,
         api,
-        authHeader: targetProviderKey === 'minimax-portal' ? true : undefined,
-        apiKey: targetProviderKey === 'minimax-portal' ? 'minimax-oauth' : 'qwen-oauth',
-        models: defaultModelId ? [piAiModelsJsonModelEntry(defaultModelId)] : [],
-      });
-    } catch (err) {
-      degradedReason = `Failed to update models.json for OAuth provider "${targetProviderKey}": ${String(err)}`;
-      logger.warn(`Failed to update models.json for OAuth provider "${targetProviderKey}":`, err);
+        authHeader: oauthAuthHeader,
+        apiKeyEnv: oauthApiKeyMarker,
+      }, fallbackModels);
+
+      logger.info(`Configured openclaw.json for OAuth provider "${provider.type}"`);
+
+      try {
+        const defaultModelId = provider.model?.split('/').pop();
+        await updateAgentModelProvider(targetProviderKey, {
+          baseUrl,
+          api,
+          authHeader: oauthAuthHeader,
+          apiKey: oauthApiKeyMarker,
+          models: defaultModelId ? [piAiModelsJsonModelEntry(defaultModelId)] : [],
+        });
+      } catch (err) {
+        degradedReason = `Failed to update models.json for OAuth provider "${targetProviderKey}": ${String(err)}`;
+        logger.warn(`Failed to update models.json for OAuth provider "${targetProviderKey}":`, err);
+      }
     }
   }
 
@@ -756,11 +840,13 @@ export async function syncDefaultProviderToRuntime(
     provider.baseUrl
   ) {
     const modelId = provider.model;
+    const request = buildRuntimeProviderRequestAuth(provider, providerKey);
     await updateAgentModelProvider(ock, {
       baseUrl: normalizeProviderBaseUrl(provider, provider.baseUrl, provider.apiProtocol || 'openai-completions'),
       api: provider.apiProtocol || 'openai-completions',
-      models: modelId ? [piAiModelsJsonModelEntry(modelId)] : [],
+      models: modelId ? [buildRuntimeModelProfileEntry(provider, modelId)] : [],
       apiKey: providerKey,
+      ...(request ? { request } : {}),
     });
   }
 

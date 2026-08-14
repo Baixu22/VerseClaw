@@ -2414,6 +2414,13 @@ export type ProviderDefaultAccountResult = { accountId: string | null };
 export type ProviderValidationOptions = {
   baseUrl?: string;
   apiProtocol?: string;
+  /** Custom-provider auth format; mirrors ProviderRequestAuthConfig (electron/shared/providers/types). */
+  auth?: {
+    mode: 'bearer' | 'custom-header' | 'query' | 'none';
+    headerName?: string;
+    prefix?: string;
+    parameterName?: string;
+  };
 };
 export type ProviderValidationPayload = {
   accountId?: string;

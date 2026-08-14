@@ -60,6 +60,15 @@ export interface ProviderConfig {
   baseUrl?: string;
   apiProtocol?: ProviderProtocol;
   headers?: Record<string, string>;
+  /** Auth format for custom providers; synced to `models.providers.*.request.auth`. */
+  requestAuth?: ProviderRequestAuthConfig;
+  /** Declared model capability metadata (R4); absence means "undeclared" in UI. */
+  modelProfile?: {
+    contextWindow?: number;
+    maxTokens?: number;
+    supportsVision?: boolean;
+    supportsReasoning?: boolean;
+  };
   model?: string;
   fallbackModels?: string[];
   fallbackProviderIds?: string[];
@@ -106,6 +115,13 @@ export type ProviderAuthMode =
   | 'oauth_browser'
   | 'local';
 
+/** UI-level auth shape for custom providers (R4). */
+export type ProviderRequestAuthConfig =
+  | { mode: 'bearer' }
+  | { mode: 'custom-header'; headerName: string; prefix?: string }
+  | { mode: 'query'; parameterName: string }
+  | { mode: 'none' };
+
 export type ProviderVendorCategory =
   | 'official'
   | 'compatible'
@@ -128,6 +144,13 @@ export interface ProviderAccount {
   baseUrl?: string;
   apiProtocol?: ProviderProtocol;
   headers?: Record<string, string>;
+  requestAuth?: ProviderRequestAuthConfig;
+  modelProfile?: {
+    contextWindow?: number;
+    maxTokens?: number;
+    supportsVision?: boolean;
+    supportsReasoning?: boolean;
+  };
   model?: string;
   fallbackModels?: string[];
   fallbackAccountIds?: string[];

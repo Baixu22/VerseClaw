@@ -34,10 +34,31 @@ export function normalizePiAiModelCost(existing: unknown): PiAiModelCostRates {
   };
 }
 
+/** Declared capability metadata written into models.json entries (R4). */
+export type PiAiModelProfile = {
+  contextWindow?: number;
+  maxTokens?: number;
+  input?: string[];
+  reasoning?: boolean;
+};
+
 /** Entry shape suitable for OpenClaw agent `models.json` provider.models[]. */
 export function piAiModelsJsonModelEntry(
   id: string,
   name: string = id,
-): { id: string; name: string; cost: PiAiModelCostRates } {
-  return { id, name, cost: normalizePiAiModelCost(undefined) };
+  profile?: PiAiModelProfile,
+): { id: string; name: string; cost: PiAiModelCostRates } & Record<string, unknown> {
+  return {
+    id,
+    name,
+    cost: normalizePiAiModelCost(undefined),
+    ...(typeof profile?.contextWindow === 'number' && profile.contextWindow > 0
+      ? { contextWindow: Math.floor(profile.contextWindow) }
+      : {}),
+    ...(typeof profile?.maxTokens === 'number' && profile.maxTokens > 0
+      ? { maxTokens: Math.floor(profile.maxTokens) }
+      : {}),
+    ...(Array.isArray(profile?.input) && profile.input.length > 0 ? { input: profile.input } : {}),
+    ...(profile?.reasoning !== undefined ? { reasoning: profile.reasoning } : {}),
+  };
 }

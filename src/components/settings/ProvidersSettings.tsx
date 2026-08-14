@@ -121,6 +121,23 @@ function mergeHeadersWithUserAgent(
   return next;
 }
 
+/** Parses an optional positive integer form value; non-numeric input yields undefined (undeclared). */
+function parsePositiveIntegerInput(raw: string): number | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
+}
+
+const AUTH_METHOD_I18N_KEY: Record<'bearer' | 'custom-header' | 'query' | 'none', string> = {
+  bearer: 'aiProviders.dialog.authMethodBearer',
+  'custom-header': 'aiProviders.dialog.authMethodCustomHeader',
+  query: 'aiProviders.dialog.authMethodQuery',
+  none: 'aiProviders.dialog.authMethodNone',
+};
+
 function isArkCodePlanMode(
   vendorId: string,
   baseUrl: string | undefined,
@@ -317,6 +334,8 @@ export function ProvidersSettings() {
       authMode?: ProviderAccount['authMode'];
       apiProtocol?: ProviderAccount['apiProtocol'];
       headers?: Record<string, string>;
+      requestAuth?: ProviderAccount['requestAuth'];
+      modelProfile?: ProviderAccount['modelProfile'];
     }
   ) => {
     const vendor = vendorMap.get(type);
@@ -331,6 +350,8 @@ export function ProvidersSettings() {
         baseUrl: options?.baseUrl,
         apiProtocol: options?.apiProtocol,
         headers: options?.headers,
+        requestAuth: options?.requestAuth,
+        modelProfile: options?.modelProfile,
         model: options?.model,
         enabled: true,
         isDefault: false,
@@ -348,6 +369,7 @@ export function ProvidersSettings() {
       const testResult = await validateAccountApiKey(id, effectiveApiKey || undefined, {
         baseUrl: options?.baseUrl,
         apiProtocol: options?.apiProtocol,
+        auth: options?.requestAuth,
       });
       if (testResult.valid) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(testResult.durationMs ?? 0) }));
@@ -1131,17 +1153,27 @@ interface AddProviderDialogProps {
       authMode?: ProviderAccount['authMode'];
       apiProtocol?: ProviderAccount['apiProtocol'];
       headers?: Record<string, string>;
+      requestAuth?: ProviderAccount['requestAuth'];
+      modelProfile?: ProviderAccount['modelProfile'];
     }
   ) => Promise<void>;
   onValidateKey: (
     type: string,
     apiKey?: string,
-    options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
+    options?: {
+      baseUrl?: string;
+      apiProtocol?: ProviderAccount['apiProtocol'];
+      auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
+    }
   ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
   onListModels: (
     type: string,
     apiKey?: string,
-    options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
+    options?: {
+      baseUrl?: string;
+      apiProtocol?: ProviderAccount['apiProtocol'];
+      auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
+    }
   ) => Promise<{ success: boolean; models: string[]; error?: string; durationMs?: number }>;
   devModeUnlocked: boolean;
 }
@@ -1170,6 +1202,16 @@ function AddProviderDialog({
   const [saving, setSaving] = useState(false);
   const [testingConnection, setTestingConnection] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // R4: custom provider auth format + declared model capability metadata.
+  const [requestAuthMode, setRequestAuthMode] = useState<'bearer' | 'custom-header' | 'query' | 'none'>('bearer');
+  const [authHeaderName, setAuthHeaderName] = useState('');
+  const [authHeaderPrefix, setAuthHeaderPrefix] = useState('');
+  const [authQueryParam, setAuthQueryParam] = useState('');
+  const [contextWindow, setContextWindow] = useState('');
+  const [maxTokens, setMaxTokens] = useState('');
+  const [supportsVision, setSupportsVision] = useState(false);
+  const [supportsReasoning, setSupportsReasoning] = useState(false);
 
   // OAuth Flow State
   const [oauthFlowing, setOauthFlowing] = useState(false);
@@ -1206,6 +1248,14 @@ function AddProviderDialog({
       setShowKey(false);
       setSaving(false);
       setValidationError(null);
+      setRequestAuthMode('bearer');
+      setAuthHeaderName('');
+      setAuthHeaderPrefix('');
+      setAuthQueryParam('');
+      setContextWindow('');
+      setMaxTokens('');
+      setSupportsVision(false);
+      setSupportsReasoning(false);
       setOauthFlowing(false);
       setOauthData(null);
       setManualCodeInput('');
@@ -1419,6 +1469,59 @@ function AddProviderDialog({
     return vendor.supportsMultipleAccounts || !existingVendorIds.has(type.id);
   });
 
+  const buildRequestAuth = (): ProviderAccount['requestAuth'] | undefined => {
+    if (selectedType !== 'custom') {
+      return undefined;
+    }
+    if (requestAuthMode === 'none') {
+      return { mode: 'none' };
+    }
+    if (requestAuthMode === 'custom-header') {
+      return authHeaderName.trim()
+        ? {
+            mode: 'custom-header',
+            headerName: authHeaderName.trim(),
+            ...(authHeaderPrefix.trim() ? { prefix: authHeaderPrefix } : {}),
+          }
+        : { mode: 'bearer' };
+    }
+    if (requestAuthMode === 'query') {
+      return authQueryParam.trim()
+        ? { mode: 'query', parameterName: authQueryParam.trim() }
+        : { mode: 'bearer' };
+    }
+    return { mode: 'bearer' };
+  };
+
+  const buildModelProfile = (): ProviderAccount['modelProfile'] | undefined => {
+    if (selectedType !== 'custom') {
+      return undefined;
+    }
+    const parsedContextWindow = parsePositiveIntegerInput(contextWindow);
+    const parsedMaxTokens = parsePositiveIntegerInput(maxTokens);
+    if (parsedContextWindow === undefined && parsedMaxTokens === undefined && !supportsVision && !supportsReasoning) {
+      return undefined;
+    }
+    return {
+      ...(parsedContextWindow !== undefined ? { contextWindow: parsedContextWindow } : {}),
+      ...(parsedMaxTokens !== undefined ? { maxTokens: parsedMaxTokens } : {}),
+      ...(supportsVision ? { supportsVision: true } : {}),
+      ...(supportsReasoning ? { supportsReasoning: true } : {}),
+    };
+  };
+
+  const buildValidationAuth = () => {
+    const requestAuth = buildRequestAuth();
+    if (!requestAuth) {
+      return undefined;
+    }
+    return {
+      mode: requestAuth.mode,
+      ...(requestAuth.mode === 'custom-header' ? { headerName: requestAuth.headerName, ...(requestAuth.prefix ? { prefix: requestAuth.prefix } : {}) } : {}),
+      ...(requestAuth.mode === 'query' ? { parameterName: requestAuth.parameterName } : {}),
+    };
+  };
+
   const handleAdd = async () => {
     if (!selectedType) return;
 
@@ -1444,6 +1547,7 @@ function AddProviderDialog({
         const result = await onValidateKey(selectedType, normalizedApiKey, {
           baseUrl: baseUrl.trim() || undefined,
           apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
+          auth: buildValidationAuth(),
         });
         if (!result.valid) {
           setValidationError(result.error || t('aiProviders.toast.invalidKey'));
@@ -1468,6 +1572,8 @@ function AddProviderDialog({
           apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
           headers: userAgent.trim() ? { 'User-Agent': userAgent.trim() } : undefined,
           model: resolveProviderModelForSave(typeInfo, modelId, devModeUnlocked),
+          requestAuth: buildRequestAuth(),
+          modelProfile: buildModelProfile(),
           authMode: useOAuthFlow ? (preferredOAuthMode || 'oauth_device') : selectedType === 'ollama'
             ? 'local'
             : (isOAuth && supportsApiKey && authMode === 'apikey')
@@ -1490,6 +1596,7 @@ function AddProviderDialog({
       const result = await onValidateKey(selectedType, normalizeProviderApiKeyInput(apiKey) || undefined, {
         baseUrl: baseUrl.trim() || undefined,
         apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
+        auth: buildValidationAuth(),
       });
       if (result.valid) {
         toast.success(t('aiProviders.toast.connectionOk', { ms: Math.round(result.durationMs ?? 0) }));
@@ -1720,6 +1827,7 @@ function AddProviderDialog({
                         return onListModels(selectedType, normalizeProviderApiKeyInput(apiKey) || undefined, {
                           baseUrl: baseUrl.trim() || undefined,
                           apiProtocol: (selectedType === 'custom' || selectedType === 'ollama') ? apiProtocol : undefined,
+                          auth: buildValidationAuth(),
                         });
                       }}
                     />
@@ -1801,6 +1909,109 @@ function AddProviderDialog({
                       className={cn("flex-1 py-1.5 px-3 rounded-lg border transition-colors", apiProtocol === 'anthropic-messages' ? "bg-surface-modal border-black/20 dark:border-white/20 shadow-sm font-medium" : "border-transparent bg-black/5 dark:bg-white/5 text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10")}
                       >
                         {t('aiProviders.protocols.anthropic', 'Anthropic')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {selectedType === 'custom' && (
+                  <div className="space-y-2.5">
+                    <Label className={labelClasses}>{t('aiProviders.dialog.authMethod', 'Auth method')}</Label>
+                    <div className="flex flex-wrap gap-2 text-meta">
+                      {(['bearer', 'custom-header', 'query', 'none'] as const).map((mode) => (
+                        <button
+                          key={mode}
+                          type="button"
+                          data-testid={`add-provider-auth-method-${mode}`}
+                          onClick={() => setRequestAuthMode(mode)}
+                          className={cn("flex-1 py-1.5 px-3 rounded-lg border transition-colors", requestAuthMode === mode ? "bg-surface-modal border-black/20 dark:border-white/20 shadow-sm font-medium" : "border-transparent bg-black/5 dark:bg-white/5 text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10")}
+                        >
+                          {t(AUTH_METHOD_I18N_KEY[mode])}
+                        </button>
+                      ))}
+                    </div>
+                    {requestAuthMode === 'custom-header' && (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <Label className={labelClasses}>{t('aiProviders.dialog.authHeaderName')}</Label>
+                          <Input
+                            data-testid="add-provider-auth-header-name"
+                            value={authHeaderName}
+                            placeholder={t('aiProviders.dialog.authHeaderNamePlaceholder')}
+                            onChange={(e) => setAuthHeaderName(e.target.value)}
+                            className={inputClasses}
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className={labelClasses}>{t('aiProviders.dialog.authHeaderPrefix')}</Label>
+                          <Input
+                            data-testid="add-provider-auth-header-prefix"
+                            value={authHeaderPrefix}
+                            placeholder={t('aiProviders.dialog.authHeaderPrefixPlaceholder')}
+                            onChange={(e) => setAuthHeaderPrefix(e.target.value)}
+                            className={inputClasses}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {requestAuthMode === 'query' && (
+                      <div className="space-y-1.5">
+                        <Label className={labelClasses}>{t('aiProviders.dialog.authQueryParam')}</Label>
+                        <Input
+                          data-testid="add-provider-auth-query-param"
+                          value={authQueryParam}
+                          placeholder={t('aiProviders.dialog.authQueryParamPlaceholder')}
+                          onChange={(e) => setAuthQueryParam(e.target.value)}
+                          className={inputClasses}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+                {selectedType === 'custom' && (
+                  <div className="space-y-2.5">
+                    <Label className={labelClasses}>{t('aiProviders.dialog.modelCapabilities', 'Model capabilities')}</Label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="space-y-1.5">
+                        <Label className={labelClasses}>{t('aiProviders.dialog.contextWindow')}</Label>
+                        <Input
+                          data-testid="add-provider-context-window"
+                          type="number"
+                          min={1}
+                          value={contextWindow}
+                          placeholder={t('aiProviders.dialog.undeclaredPlaceholder')}
+                          onChange={(e) => setContextWindow(e.target.value)}
+                          className={inputClasses}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className={labelClasses}>{t('aiProviders.dialog.maxTokens')}</Label>
+                        <Input
+                          data-testid="add-provider-max-tokens"
+                          type="number"
+                          min={1}
+                          value={maxTokens}
+                          placeholder={t('aiProviders.dialog.undeclaredPlaceholder')}
+                          onChange={(e) => setMaxTokens(e.target.value)}
+                          className={inputClasses}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 text-meta">
+                      <button
+                        type="button"
+                        data-testid="add-provider-supports-vision"
+                        onClick={() => setSupportsVision((v) => !v)}
+                        className={cn("flex-1 py-1.5 px-3 rounded-lg border transition-colors", supportsVision ? "bg-surface-modal border-black/20 dark:border-white/20 shadow-sm font-medium" : "border-transparent bg-black/5 dark:bg-white/5 text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10")}
+                      >
+                        {t('aiProviders.dialog.supportsVision')}
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="add-provider-supports-reasoning"
+                        onClick={() => setSupportsReasoning((v) => !v)}
+                        className={cn("flex-1 py-1.5 px-3 rounded-lg border transition-colors", supportsReasoning ? "bg-surface-modal border-black/20 dark:border-white/20 shadow-sm font-medium" : "border-transparent bg-black/5 dark:bg-white/5 text-muted-foreground hover:bg-black/10 dark:hover:bg-white/10")}
+                      >
+                        {t('aiProviders.dialog.supportsReasoning')}
                       </button>
                     </div>
                   </div>

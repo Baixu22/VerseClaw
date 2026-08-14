@@ -1,5 +1,11 @@
 import { proxyAwareFetch } from '../../utils/proxy-fetch';
 import { getProviderConfig } from '../../utils/provider-registry';
+import {
+  appendProviderRequestAuthQuery,
+  providerRequestAuthHeaders,
+  resolveProviderRequestAuth,
+  type ProviderRequestAuthOverride,
+} from '@openclaw/provider-request-auth';
 
 type ValidationProfile =
   | 'openai-completions'
@@ -12,6 +18,83 @@ type ValidationProfile =
 type ValidationResult = { valid: boolean; error?: string; status?: number };
 export type ProviderModelListResult = { success: boolean; models: string[]; error?: string; status?: number };
 type ClassifiedValidationResult = ValidationResult & { authFailure?: boolean };
+
+/** UI-level auth format accepted from the custom provider dialog. */
+export type ProviderValidationAuthInput = {
+  mode: 'bearer' | 'custom-header' | 'query' | 'none';
+  headerName?: string;
+  prefix?: string;
+  parameterName?: string;
+};
+
+type ValidationOptions = {
+  baseUrl?: string;
+  apiProtocol?: string;
+  auth?: ProviderValidationAuthInput;
+};
+
+/**
+ * Converts the UI auth selection + API key into the runtime auth override and
+ * resolves it through the SAME shared resolver the transport uses
+ * (openclaw_runtime/src/agents/provider-request-auth.ts), so a probe that
+ * passes validation can never be sent with a different format by the real
+ * transport.
+ */
+export function buildProviderValidationAuth(
+  auth: ProviderValidationAuthInput | undefined,
+  apiKey: string,
+): { headers?: Record<string, string>; query?: Record<string, string> } {
+  // No auth input: callers keep their legacy default (Bearer / x-api-key).
+  if (!auth) {
+    return { headers: undefined };
+  }
+  // Explicit "none": no auth header at all (empty object suppresses the fallback).
+  if (auth.mode === 'none') {
+    return { headers: {} };
+  }
+  const value = apiKey.trim();
+  let override: ProviderRequestAuthOverride | undefined;
+  if (auth.mode === 'bearer' && value) {
+    override = { mode: 'authorization-bearer', token: value };
+  } else if (auth.mode === 'custom-header' && auth.headerName?.trim() && value) {
+    override = {
+      mode: 'header',
+      headerName: auth.headerName.trim(),
+      value,
+      ...(auth.prefix && auth.prefix.trim() ? { prefix: auth.prefix } : {}),
+    };
+  } else if (auth.mode === 'query' && auth.parameterName?.trim() && value) {
+    override = { mode: 'query', parameterName: auth.parameterName.trim(), value };
+  }
+  if (!override) {
+    return {};
+  }
+  const resolved = resolveProviderRequestAuth({ auth: override });
+  return {
+    ...(providerRequestAuthHeaders(resolved) ? { headers: providerRequestAuthHeaders(resolved) } : {}),
+    ...(resolved.configured && resolved.mode === 'query'
+      ? { query: { [resolved.parameterName]: resolved.value } }
+      : {}),
+  };
+}
+
+/** Appends resolved auth query params to a validation probe URL. */
+export function applyProviderValidationAuthQuery(
+  url: string,
+  auth: ProviderValidationAuthInput | undefined,
+  apiKey: string,
+): string {
+  const value = apiKey.trim();
+  if (auth?.mode !== 'query' || !auth.parameterName?.trim() || !value) {
+    return url;
+  }
+  return appendProviderRequestAuthQuery(
+    url,
+    resolveProviderRequestAuth({
+      auth: { mode: 'query', parameterName: auth.parameterName.trim(), value },
+    }),
+  );
+}
 
 const AUTH_ERROR_PATTERN = /\b(unauthorized|forbidden|access denied|invalid api key|api key invalid|incorrect api key|api key incorrect|authentication failed|auth failed|invalid credential|credential invalid|invalid signature|signature invalid|invalid access token|access token invalid|invalid bearer token|bearer token invalid|access token expired)\b|鉴权失败|認証失敗|认证失败|無效密鑰|无效密钥|密钥无效|密鑰無效|憑證無效|凭证无效/i;
 const AUTH_ERROR_CODE_PATTERN = /\b(unauthorized|forbidden|access[_-]?denied|invalid[_-]?api[_-]?key|api[_-]?key[_-]?invalid|incorrect[_-]?api[_-]?key|api[_-]?key[_-]?incorrect|authentication[_-]?failed|auth[_-]?failed|invalid[_-]?credential|credential[_-]?invalid|invalid[_-]?signature|signature[_-]?invalid|invalid[_-]?access[_-]?token|access[_-]?token[_-]?invalid|invalid[_-]?bearer[_-]?token|bearer[_-]?token[_-]?invalid|access[_-]?token[_-]?expired|invalid[_-]?token|token[_-]?invalid|token[_-]?expired)\b/i;
@@ -235,24 +318,29 @@ async function validateOpenAiCompatibleKey(
   apiKey: string,
   apiProtocol: 'openai-completions' | 'openai-responses',
   baseUrl?: string,
+  auth?: ProviderValidationAuthInput,
 ): Promise<ValidationResult> {
   const trimmedBaseUrl = baseUrl?.trim();
   if (!trimmedBaseUrl) {
     return { valid: false, error: `Base URL is required for provider "${providerType}" validation` };
   }
 
-  const headers = { Authorization: `Bearer ${apiKey}` };
+  const authHeaders = buildProviderValidationAuth(auth, apiKey).headers ?? {
+    Authorization: `Bearer ${apiKey}`,
+  };
   const { modelsUrl, probeUrl } = resolveOpenAiProbeUrls(trimmedBaseUrl, apiProtocol);
-  const modelsResult = await performProviderValidationRequest(providerType, modelsUrl, headers);
+  const authModelsUrl = applyProviderValidationAuthQuery(modelsUrl, auth, apiKey);
+  const authProbeUrl = applyProviderValidationAuthQuery(probeUrl, auth, apiKey);
+  const modelsResult = await performProviderValidationRequest(providerType, authModelsUrl, authHeaders);
 
   if (shouldFallbackFromModelsProbe(modelsResult)) {
     console.log(
       `[clawx-validate] ${providerType} /models returned ${modelsResult.status}, falling back to ${apiProtocol} probe`,
     );
     if (apiProtocol === 'openai-responses') {
-      return await performResponsesProbe(providerType, probeUrl, headers);
+      return await performResponsesProbe(providerType, authProbeUrl, authHeaders);
     }
-    return await performChatCompletionsProbe(providerType, probeUrl, headers);
+    return await performChatCompletionsProbe(providerType, authProbeUrl, authHeaders);
   }
 
   return modelsResult;
@@ -352,13 +440,18 @@ async function validateAnthropicHeaderKey(
   providerType: string,
   apiKey: string,
   baseUrl?: string,
+  auth?: ProviderValidationAuthInput,
 ): Promise<ValidationResult> {
   const rawBase = normalizeBaseUrl(baseUrl || 'https://api.anthropic.com/v1');
   const base = rawBase.endsWith('/v1') ? rawBase : `${rawBase}/v1`;
-  const url = `${base}/models?limit=1`;
-  const headers = {
+  const authHeaders = buildProviderValidationAuth(auth, apiKey).headers ?? {
     'x-api-key': apiKey,
     'anthropic-version': '2023-06-01',
+  };
+  const url = applyProviderValidationAuthQuery(`${base}/models?limit=1`, auth, apiKey);
+  const headers = {
+    ...(authHeaders['anthropic-version'] ? {} : { 'anthropic-version': '2023-06-01' }),
+    ...authHeaders,
   };
 
   const modelsResult = await performProviderValidationRequest(providerType, url, headers);
@@ -373,7 +466,7 @@ async function validateAnthropicHeaderKey(
     console.log(
       `[clawx-validate] ${providerType} /models returned error, falling back to /messages probe`,
     );
-    const messagesUrl = `${base}/messages`;
+    const messagesUrl = applyProviderValidationAuthQuery(`${base}/messages`, auth, apiKey);
     return await performAnthropicMessagesProbe(providerType, messagesUrl, headers);
   }
 
@@ -393,14 +486,21 @@ async function listOpenAiCompatibleModels(
   providerType: string,
   apiKey: string,
   baseUrl?: string,
+  auth?: ProviderValidationAuthInput,
 ): Promise<ProviderModelListResult> {
   const trimmedBaseUrl = baseUrl?.trim();
   if (!trimmedBaseUrl) {
     return { success: false, models: [], error: `Base URL is required for provider "${providerType}" model discovery` };
   }
 
-  const url = buildOpenAiFullModelsUrl(trimmedBaseUrl.replace(/(\/responses?|\/chat\/completions)$/, ''));
-  const headers = { Authorization: `Bearer ${apiKey}` };
+  const url = applyProviderValidationAuthQuery(
+    buildOpenAiFullModelsUrl(trimmedBaseUrl.replace(/(\/responses?|\/chat\/completions)$/, '')),
+    auth,
+    apiKey,
+  );
+  const headers = buildProviderValidationAuth(auth, apiKey).headers ?? {
+    Authorization: `Bearer ${apiKey}`,
+  };
   try {
     logValidationRequest(providerType, 'GET', url, headers);
     const response = await proxyAwareFetch(url, { headers });
@@ -447,13 +547,18 @@ async function listAnthropicModels(
   providerType: string,
   apiKey: string,
   baseUrl?: string,
+  auth?: ProviderValidationAuthInput,
 ): Promise<ProviderModelListResult> {
   const rawBase = normalizeBaseUrl(baseUrl || 'https://api.anthropic.com/v1');
   const base = rawBase.endsWith('/v1') ? rawBase : `${rawBase}/v1`;
-  const url = `${base}/models`;
-  const headers = {
+  const url = applyProviderValidationAuthQuery(`${base}/models`, auth, apiKey);
+  const authHeaders = buildProviderValidationAuth(auth, apiKey).headers ?? {
     'x-api-key': apiKey,
     'anthropic-version': '2023-06-01',
+  };
+  const headers = {
+    ...(authHeaders['anthropic-version'] ? {} : { 'anthropic-version': '2023-06-01' }),
+    ...authHeaders,
   };
   try {
     logValidationRequest(providerType, 'GET', url, headers);
@@ -477,10 +582,11 @@ async function listAnthropicModels(
 export async function validateApiKeyWithProvider(
   providerType: string,
   apiKey: string,
-  options?: { baseUrl?: string; apiProtocol?: string },
+  options?: ValidationOptions,
 ): Promise<ValidationResult> {
   const profile = getValidationProfile(providerType, options);
   const resolvedBaseUrl = options?.baseUrl || getProviderConfig(providerType)?.baseUrl;
+  const auth = options?.auth;
 
   if (profile === 'none') {
     return { valid: true };
@@ -499,6 +605,7 @@ export async function validateApiKeyWithProvider(
           trimmedKey,
           'openai-completions',
           resolvedBaseUrl,
+          auth,
         );
       case 'openai-responses':
         return await validateOpenAiCompatibleKey(
@@ -506,11 +613,12 @@ export async function validateApiKeyWithProvider(
           trimmedKey,
           'openai-responses',
           resolvedBaseUrl,
+          auth,
         );
       case 'google-query-key':
         return await validateGoogleQueryKey(providerType, trimmedKey, resolvedBaseUrl);
       case 'anthropic-header':
-        return await validateAnthropicHeaderKey(providerType, trimmedKey, resolvedBaseUrl);
+        return await validateAnthropicHeaderKey(providerType, trimmedKey, resolvedBaseUrl, auth);
       case 'openrouter':
         return await validateOpenRouterKey(providerType, trimmedKey);
       default:
@@ -525,11 +633,12 @@ export async function validateApiKeyWithProvider(
 export async function listModelsWithProvider(
   providerType: string,
   apiKey: string,
-  options?: { baseUrl?: string; apiProtocol?: string },
+  options?: ValidationOptions,
 ): Promise<ProviderModelListResult> {
   const profile = getValidationProfile(providerType, options);
   const resolvedBaseUrl = options?.baseUrl || getProviderConfig(providerType)?.baseUrl;
   const trimmedKey = apiKey.trim();
+  const auth = options?.auth;
 
   if (profile === 'none') {
     return { success: true, models: [] };
@@ -542,11 +651,11 @@ export async function listModelsWithProvider(
     case 'google-query-key':
       return await listGoogleModels(providerType, trimmedKey, resolvedBaseUrl);
     case 'anthropic-header':
-      return await listAnthropicModels(providerType, trimmedKey, resolvedBaseUrl);
+      return await listAnthropicModels(providerType, trimmedKey, resolvedBaseUrl, auth);
     case 'openrouter':
     case 'openai-completions':
     case 'openai-responses':
-      return await listOpenAiCompatibleModels(providerType, trimmedKey, resolvedBaseUrl);
+      return await listOpenAiCompatibleModels(providerType, trimmedKey, resolvedBaseUrl, auth);
     default:
       return { success: false, models: [], error: `Unsupported model discovery profile for provider: ${providerType}` };
   }

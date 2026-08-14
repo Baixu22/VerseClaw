@@ -40,12 +40,20 @@ interface ProviderState {
   validateAccountApiKey: (
     accountId: string,
     apiKey?: string,
-    options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
+    options?: {
+      baseUrl?: string;
+      apiProtocol?: ProviderAccount['apiProtocol'];
+      auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
+    }
   ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
   listAccountModels: (
     accountId: string,
     apiKey?: string,
-    options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
+    options?: {
+      baseUrl?: string;
+      apiProtocol?: ProviderAccount['apiProtocol'];
+      auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
+    }
   ) => Promise<{ success: boolean; models: string[]; error?: string; durationMs?: number }>;
 
   // Legacy compatibility aliases
@@ -68,7 +76,11 @@ interface ProviderState {
   validateApiKey: (
     providerId: string,
     apiKey?: string,
-    options?: { baseUrl?: string; apiProtocol?: ProviderAccount['apiProtocol'] }
+    options?: {
+      baseUrl?: string;
+      apiProtocol?: ProviderAccount['apiProtocol'];
+      auth?: { mode: 'bearer' | 'custom-header' | 'query' | 'none'; headerName?: string; prefix?: string; parameterName?: string };
+    }
   ) => Promise<{ valid: boolean; error?: string; durationMs?: number }>;
 }
 
