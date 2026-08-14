@@ -77,6 +77,7 @@ const FULL_BASELINE_STEPS = [
   { id: 'vite-build', profile: 'baseline', name: 'Vite production build', command: 'pnpm', args: ['run', 'build:vite'] },
   { id: 'runtime-build', profile: 'baseline', name: 'OpenClaw runtime build', command: 'pnpm', args: ['run', 'build:runtime'] },
   { id: 'runtime-smoke', profile: 'baseline', name: 'OpenClaw runtime smoke', command: 'node', args: ['scripts/smoke-openclaw-runtime.mjs'] },
+  { id: 'agent-dev-audit', profile: 'baseline', name: 'Agent Dev evidence audit (hard-veto freshness gate)', command: 'pnpm', args: ['agent-dev:audit'] },
 ];
 
 const EXTRA_PROFILE_STEPS = {
