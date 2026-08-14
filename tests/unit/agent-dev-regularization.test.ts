@@ -71,6 +71,11 @@ describe('agent dev regularization contracts', () => {
     ]);
   });
 
+  // The runner spawns a full `pnpm --dir openclaw_runtime exec vitest` child
+  // (channel-conformance.mjs runFixtureSuite), which takes ~10-15s on this
+  // machine — far beyond vitest's 5s default. Explicit timeout instead of
+  // betting on machine speed: this pre-existing timeout aborted agent-dev
+  // deep-test before its playwright step (R6 prerequisite cleanup).
   it('writes fail-closed channel conformance reports for a scaffold-shaped channel', async () => {
     const originalRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ROOT;
     const originalArtifactRoot = process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT;
@@ -104,7 +109,7 @@ describe('agent dev regularization contracts', () => {
         process.env.CLAWX_CHANNEL_CONFORMANCE_ARTIFACT_ROOT = originalArtifactRoot;
       }
     }
-  });
+  }, 120_000);
 
   it('scaffolds scenarios into the shared registry and snapshot-backed E2E', async () => {
     const root = join(tmpdir(), `clawx-agent-dev-scenario-scaffold-${Date.now()}`);
