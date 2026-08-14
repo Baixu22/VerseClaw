@@ -142,6 +142,8 @@ export type DcsWritableFlagSpec = {
   /** Optional alias env var (set/cleared with primary). */
   envAlias?: string;
   defaultEnabled: boolean;
+  /** When set, the switch is surfaced but disabled (negative-effect wiring not yet fixed). */
+  unavailableReason?: string;
 };
 
 /**
@@ -205,6 +207,33 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     storeKey: 'dcsSekbExperienceShadowEnabled',
     targetKey: 'runtime.coding.sekb.experienceShadow',
     defaultEnabled: false,
+  },
+  {
+    id: 'runtime-memory-persist',
+    catalog: mustFlag('runtime-memory-persist'),
+    controlKind: 'config',
+    storeKey: 'dcsRuntimeMemoryPersistEnabled',
+    targetKey: 'runtime.memory.persist',
+    defaultEnabled: false,
+    unavailableReason: 'R3-1 E-1 裁决: persist=true 构成 owner 漂移,fail-closed 拒绝。',
+  },
+  {
+    id: 'runtime-memory-inject-pilot',
+    catalog: mustFlag('runtime-memory-inject-pilot'),
+    controlKind: 'config',
+    storeKey: 'dcsRuntimeMemoryInjectPilotEnabled',
+    targetKey: 'runtime.memory.injectPilot.enabled',
+    defaultEnabled: false,
+    unavailableReason: 'R3-1 审计: role-memory provider 不读此开关,接线断线。',
+  },
+  {
+    id: 'role-memory',
+    catalog: mustFlag('role-memory'),
+    controlKind: 'config',
+    storeKey: 'dcsRoleMemoryEnabled',
+    targetKey: 'runtime.contextBlock.role-memory.enabled',
+    defaultEnabled: false,
+    unavailableReason: 'R3-1 审计: 假活面 + 负作用(开而 producer 未接会替换在跑 provider)。',
   },
 ] as const;
 

@@ -213,6 +213,42 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     rollback: 'experienceShadow=false / omit options.',
     riskNote: 'Shadow journal only; experienceHitRate still fixture-level. No default knowledge injection.',
   },
+  {
+    id: 'runtime-memory-persist',
+    wave: 'R3',
+    kind: 'config',
+    key: 'runtime.memory.persist',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable: 'runtime.memory.persist=true.',
+    rollback: 'runtime.memory.persist=false (default).',
+    riskNote: 'R3-1 E-1 裁决选 (b): persist=true 构成第二个 durable authority (runtime_memory_* 表),fail-closed 拒绝。Settings 标不可用。',
+  },
+  {
+    id: 'runtime-memory-inject-pilot',
+    wave: 'R3',
+    kind: 'config',
+    key: 'runtime.memory.injectPilot.enabled',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable: 'runtime.memory.injectPilot.enabled=true.',
+    rollback: 'runtime.memory.injectPilot.enabled=false (default).',
+    riskNote: 'R3-1 审计: role-memory provider 门不读 injectPilot (接线断线)。Settings 标不可用。',
+  },
+  {
+    id: 'role-memory',
+    wave: 'R3',
+    kind: 'config',
+    key: 'runtime.contextBlock.role-memory.enabled',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'read-only',
+    enable: 'runtime.contextBlock.role-memory.enabled=true.',
+    rollback: 'runtime.contextBlock.role-memory.enabled=false (default).',
+    riskNote: 'R3-1 审计: role-memory contextBlock 假活面 + 负作用(开而 producer 未接会替换在跑 provider)。Settings 标不可用。',
+  },
 ] as const;
 
 export const DCS_PROD_METRIC_EXPORT = {
@@ -268,6 +304,9 @@ export function assertCatalogDefaultHonesty(): { ok: true } {
     'patch-flow',
     'routing-memo-shadow',
     'sekb-experience-shadow',
+    'runtime-memory-persist',
+    'runtime-memory-inject-pilot',
+    'role-memory',
   ];
   for (const id of mustStayOff) {
     const entry = DCS_PROD_FLAGS.find((f) => f.id === id);
