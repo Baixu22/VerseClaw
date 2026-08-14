@@ -30,7 +30,7 @@ import { deviceOAuthManager } from '../utils/device-oauth';
 import { browserOAuthManager } from '../utils/browser-oauth';
 import { applyProxySettings } from './proxy';
 import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
-import { getRecentTokenUsageHistory } from '../utils/token-usage';
+import { getRecentTokenUsageHistory, getUsageAggregateSummary } from '../utils/token-usage';
 import { getProviderService } from '../services/providers/provider-service';
 import {
   getOpenClawProviderKey,
@@ -573,6 +573,14 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
               ? Math.max(Math.floor(limit), 1)
               : undefined;
             data = await getRecentTokenUsageHistory(safeLimit);
+            break;
+          }
+          if (request.action === 'aggregateSummary') {
+            const payload = request.payload as { window?: string } | undefined;
+            const windowValue = payload?.window;
+            data = await getUsageAggregateSummary(
+              windowValue === '7d' || windowValue === '30d' || windowValue === 'all' ? windowValue : '30d',
+            );
             break;
           }
           return {

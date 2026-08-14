@@ -134,13 +134,25 @@
             "estimated": "Estimated from provider usage",
             "activeModels": "In the selected window",
             "perRecord": "Per usage record",
-            "recordsWithUsage": "{{count}} billable records"
+            "recordsWithUsage": "{{count}} billable records",
+            "cacheHitRate": "Cache hit rate",
+            "cacheReadTokens": "Cache read tokens",
+            "cacheWriteTokens": "Cache write tokens",
+            "promptTokens": "Prompt tokens",
+            "hitRateDetail": "Share of prompt served from cache",
+            "cacheReadDetail": "Tokens served from cache",
+            "cacheWriteDetail": "Tokens written to cache",
+            "promptDetail": "Input + cache tokens"
         },
         "estimateNote": "All amounts are estimates: they are aggregated from usage.estimatedCostUsd in local session transcripts and converted at configured prices. They are not a bill and do not include billing, refund, or discount semantics.",
         "chart": {
             "title": "Daily token usage stays complete",
             "description": "Every day in the selected window has a stable bucket, with input, output, and cache tokens stacked together.",
             "peakDay": "Peak {{day}} - {{tokens}} tokens"
+        },
+        "costChart": {
+            "title": "Cost & cache trends",
+            "description": "Daily estimated cost and cache hit rate in the selected window — the dashed line marks the window average hit rate."
         },
         "modelChart": {
             "title": "Model concentration",
@@ -154,17 +166,43 @@
         },
         "recent": {
             "title": "Recent billing records",
-            "description": "Raw transcript usage rows, including unavailable or parse-error records."
+            "description": "Raw transcript usage rows, including unavailable or parse-error records.",
+            "cacheHit": "Cache hit {{value}}"
         },
         "transcriptSource": "Transcript history",
         "refreshing": "Refreshing",
         "dataQuality": {
             "scanned": "Records scanned",
+            "scannedFiles": "Transcript files",
             "billable": "Billable records",
             "unavailable": "Unavailable records",
             "unavailableWithErrors": "{{unavailable}} unavailable, {{errors}} errors",
+            "cacheRead": "Cache read tokens",
             "latest": "Latest record"
         },
+        "tableSection": {
+            "title": "Breakdown",
+            "description": "Per-model and per-agent aggregates in the selected window."
+        },
+        "modelTable": {
+            "title": "By model"
+        },
+        "agentTable": {
+            "title": "By agent"
+        },
+        "table": {
+            "name": "Name",
+            "records": "Records",
+            "tokens": "Tokens",
+            "input": "Input",
+            "output": "Output",
+            "cacheRead": "Cache read",
+            "hitRate": "Hit rate",
+            "cost": "Est. cost"
+        },
+        "aggregateNote": "Totals aggregate every local transcript ({{files}} files scanned) — including history beyond the recent list.",
+        "aggregateNoteFallback": "Totals are computed from the recent records list only.",
+        "noHitRateData": "No prompt tokens recorded yet.",
         "status": {
             "available": "Available",
             "missing": "No usage",

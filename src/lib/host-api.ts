@@ -475,6 +475,7 @@ import { invokeHost } from './host-api-client';
 
 type PromptCacheStatusFn = HostApiContract['usage']['promptCacheStatus'];
 type PromptCacheRiskEventFn = HostApiContract['usage']['recordPromptCacheRiskEvent'];
+type UsageAggregateSummaryFn = HostApiContract['usage']['aggregateSummary'];
 
 export type { ChatKnowledgeReference, KnowledgeSekbDistillationSuggestion } from '@shared/host-api/contract';
 
@@ -1685,6 +1686,9 @@ export const hostApi = {
   usage: {
     recentTokenHistory: (limit?: number) => (
       invokeHost('usage', 'recentTokenHistory', { limit })
+    ),
+    aggregateSummary: (input?: Parameters<UsageAggregateSummaryFn>[0]): Promise<ReturnType<UsageAggregateSummaryFn>> => (
+      invokeHost('usage', 'aggregateSummary', input)
     ),
     live: (sessionKey: string, runId?: string | null, streaming?: boolean) => (
       invokeHost('usage', 'live', { sessionKey, runId, streaming })

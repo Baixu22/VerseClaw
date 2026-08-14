@@ -1,7 +1,8 @@
 import { resolveContextWindow } from '../utils/context-window';
 import { assessPromptCacheStatus } from '../utils/prompt-cache-status';
 import { getSetting, setSetting } from '../utils/store';
-import { getRecentTokenUsageHistory, getSessionTokenUsageSummary } from '../utils/token-usage';
+import { getRecentTokenUsageHistory, getSessionTokenUsageSummary, getUsageAggregateSummary } from '../utils/token-usage';
+import type { UsageAggregateWindow } from '@shared/host-api/contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { isRecord } from './payload-utils';
 import type {
@@ -28,6 +29,14 @@ function getSafeLimit(payload: unknown): number | undefined {
     }
   }
   return undefined;
+}
+
+function readAggregateWindow(payload: unknown): UsageAggregateWindow {
+  const value = isRecord(payload) ? payload.window : undefined;
+  if (value === '7d' || value === '30d' || value === 'all') {
+    return value;
+  }
+  return '30d';
 }
 
 const PROMPT_CACHE_RISK_LEDGER_LIMIT = 200;
@@ -93,6 +102,7 @@ function readNumber(payload: unknown, key: string): number | null {
 export function createUsageApi(): CompleteHostServiceRegistry['usage'] {
   return {
     recentTokenHistory: async (payload) => getRecentTokenUsageHistory(getSafeLimit(payload)),
+    aggregateSummary: async (payload) => getUsageAggregateSummary(readAggregateWindow(payload)),
     live: async (payload) => {
       const sessionKey = isRecord(payload) && typeof payload.sessionKey === 'string'
         ? payload.sessionKey

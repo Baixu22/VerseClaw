@@ -22,6 +22,10 @@ vi.mock('@/lib/host-api', () => ({
   hostApi: {
     usage: {
       recentTokenHistory: () => hostApiFetchMock(),
+      // Aggregate route is exercised but returns nothing, so the page falls
+      // back to the client-side totals — which keeps the money math below
+      // byte-identical to the pre-aggregate behavior.
+      aggregateSummary: () => Promise.resolve(null),
     },
   },
 }));

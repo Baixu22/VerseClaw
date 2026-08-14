@@ -4562,6 +4562,47 @@ export type UsageHistoryEntry = {
   costUsd?: number;
 };
 export type UsageHistoryPayload = { limit?: number };
+
+export type UsageAggregateWindow = '7d' | '30d' | 'all';
+export type UsageAggregateSummaryPayload = { window?: UsageAggregateWindow };
+export type UsageAggregateDimension = {
+  key: string;
+  label: string;
+  records: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  totalTokens: number;
+  costUsd: number;
+  promptTokens: number;
+  cacheHitRate: number | null;
+};
+export type UsageAggregateDayBucket = UsageAggregateDimension & { date: string };
+export type UsageAggregateSummary = {
+  window: UsageAggregateWindow;
+  generatedAt: number;
+  scannedFiles: number;
+  scannedEntries: number;
+  entriesInWindow: number;
+  billableEntries: number;
+  missingEntries: number;
+  errorEntries: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  totalTokens: number;
+  costUsd: number;
+  promptTokens: number;
+  cacheHitRate: number | null;
+  earliestTimestamp: string | null;
+  latestTimestamp: string | null;
+  days: UsageAggregateDayBucket[];
+  models: UsageAggregateDimension[];
+  agents: UsageAggregateDimension[];
+};
+
 export type WorkspaceLiveUsagePayload = { sessionKey: string; runId?: string | null; streaming?: boolean };
 export type WorkspaceLiveUsageResult = HostSuccess & { usage: LiveTokenUsage };
 export type WorkspaceContextRangePayload = {
@@ -5281,6 +5322,7 @@ export type HostApiContract = {
   };
   usage: {
     recentTokenHistory: (payload?: UsageHistoryPayload) => UsageHistoryEntry[];
+    aggregateSummary: (payload?: UsageAggregateSummaryPayload) => UsageAggregateSummary;
     live: (payload: WorkspaceLiveUsagePayload) => WorkspaceLiveUsageResult;
     contextRange: (payload: WorkspaceContextRangePayload) => WorkspaceContextRangeResult;
     promptCacheStatus: (payload: PromptCacheStatusPayload) => PromptCacheStatusResult;
