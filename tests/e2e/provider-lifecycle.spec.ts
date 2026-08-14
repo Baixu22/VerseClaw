@@ -372,8 +372,12 @@ test.describe('Verse Claw provider lifecycle', () => {
     }
   });
 
-  test('add dialog persists query auth and declared model capabilities', async ({ page }) => {
+  test('add dialog persists query auth and declared model capabilities', async ({ electronApp, page }) => {
     const probe = await startValidationProbeServer();
+    const mainLogs: string[] = [];
+    electronApp.process().stdout?.on('data', (chunk: Buffer | string) => {
+      mainLogs.push(String(chunk));
+    });
     try {
       await completeSetup(page);
       await fillCustomProviderBasics(page, 'Query Auth Custom', probe.baseUrl);
@@ -389,7 +393,7 @@ test.describe('Verse Claw provider lifecycle', () => {
       // The REAL validation probe carried the credential as a query parameter.
       await expect.poll(
         async () => probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test')),
-        { timeout: 20_000 },
+        { timeout: 20_000, message: `main validate logs: ${JSON.stringify(mainLogs.filter((line) => line.includes('validate') || line.includes('provider')).slice(-20))}` },
       ).toBe(true);
       expect(probe.authHeaders.every((headers) => Object.keys(headers).length === 0)).toBe(true);
 
