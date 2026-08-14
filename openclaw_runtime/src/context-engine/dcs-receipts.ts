@@ -6,6 +6,7 @@
 // changes send behavior but must fail the RC-03 acceptance run.
 import type {
   ReceiptBudget,
+  ReceiptCallIndex,
   ReceiptContent,
   ReceiptIdentity,
   PutReceiptInput,
@@ -78,6 +79,56 @@ export function buildContextReceiptInput(input: {
       wireAttemptIndex: plan.callIndex.wireAttemptIndex,
     },
     content,
+  };
+}
+
+export const MEMORY_INJECTION_RECEIPT_SCHEMA = 'MemoryInjectionReceipt/v1' as const;
+
+/**
+ * Sanitized memory-injection receipt (R3-2.1). Captures only selected/omitted
+ * fact refs, char counts, and the producer source — never raw fact content.
+ * Latency is carried in the idempotency-key correlation, not a new column, to
+ * keep the append-only receipt table schema frozen.
+ */
+export type MemoryInjectionReceiptSummary = {
+  /** Injected fact ids (sanitized to ref:memory:* refs). */
+  selectedFactIds: string[];
+  /** Candidate fact ids that were omitted by budget/ranking. */
+  omittedFactIds: string[];
+  /** Characters actually injected (budget charsApplied). */
+  selectedChars: number;
+  /** Characters requested across selected+omitted (budget charsRequested). */
+  requestedChars: number;
+  /** Producer source tag (e.g. 'compass-pre-reply-retrieval'). */
+  source: string;
+};
+
+export function buildMemoryInjectionReceiptInput(input: {
+  identity: ReceiptIdentity;
+  callIndex: ReceiptCallIndex;
+  correlationDigest: string;
+  summary: MemoryInjectionReceiptSummary;
+}): PutReceiptInput {
+  const { identity, callIndex, correlationDigest, summary } = input;
+  const selected = summary.selectedFactIds.map((id) => `ref:memory:${id}`);
+  const omitted = summary.omittedFactIds.map((id) => `ref:memory:${id}`);
+  return {
+    idempotencyKey: `memory:v1:${correlationDigest}`,
+    kind: 'context',
+    version: '1',
+    identity,
+    callIndex,
+    content: {
+      correlationDigest,
+      selected,
+      omitted,
+      budget: {
+        unit: 'chars',
+        charsRequested: summary.requestedChars,
+        charsApplied: summary.selectedChars,
+      },
+      policyDigest: summary.source,
+    },
   };
 }
 

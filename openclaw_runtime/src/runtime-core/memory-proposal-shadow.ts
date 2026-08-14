@@ -138,6 +138,34 @@ export function buildRuntimeMemoryFactProposalShadow(
   };
 }
 
+/**
+ * R3-2.4 proposeFacts confirm: promote a shadow candidate into a durable
+ * human-approved fact. The caller then persists it through the P0-B port
+ * (memory-runtime-integration appendFact) — never a second authority.
+ */
+export function promoteRuntimeMemoryFactCandidate(
+  candidate: RuntimeMemoryTemporalFactCandidate,
+  input: {
+    acceptedAt: number;
+    approvedBy?: string;
+    evidenceRefs: EvidenceRef[];
+  },
+): RuntimeMemoryTemporalFact {
+  const { proposedAt: _proposedAt, verificationStatus: _candidateStatus, ...fact } = candidate;
+  void _proposedAt;
+  void _candidateStatus;
+  return {
+    ...fact,
+    verificationStatus: "human_approved",
+    acceptedAt: input.acceptedAt,
+    promotion: {
+      promotedBy: "human",
+      evidenceRefs: input.evidenceRefs,
+      ...(input.approvedBy !== undefined ? { approvedBy: input.approvedBy } : {}),
+    },
+  };
+}
+
 export function sanitizeRuntimeMemoryFactProposalInput(
   input: unknown,
 ):
