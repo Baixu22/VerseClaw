@@ -497,7 +497,13 @@
         "fastPr": "Fast PR",
         "fullLocal": "Full local",
         "nightlyRelease": "Nightly / release"
-      }
+      },
+      "evidenceAge": "Возраст доказательств",
+      "evidenceWindow": "Окно: {{hours}} ч",
+      "unavailable": "Недоступно",
+      "decisionStatus": "Решение deep-test",
+      "requiredGates": "Требуемые полные проверки",
+      "requiredGatesNone": "Нет"
     },
     "installCmd": "Установить команду \"openclaw\"",
     "installCmdDesc": "Устанавливает ~/.local/bin/openclaw (без прав администратора)",

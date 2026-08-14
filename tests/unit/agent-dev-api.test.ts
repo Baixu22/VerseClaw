@@ -128,7 +128,8 @@ describe('agent dev api', () => {
       success: true,
       requiredAttributes: ['data-testid'],
     });
-    await expect(api.workbenchEvidence()).resolves.toMatchObject({
+    const workbench = await api.workbenchEvidence();
+    expect(workbench).toMatchObject({
       success: true,
       evidence: {
         scenarioCount: expect.any(Number),
@@ -144,6 +145,12 @@ describe('agent dev api', () => {
         },
       },
     });
+    // R5-2: Workbench evidence 必须暴露审计证据年龄与 deep-test 决策(报告缺失时为 null/空)。
+    expect(Object.hasOwn(workbench.evidence, 'evidenceAgeHours')).toBe(true);
+    expect(workbench.evidence.evidenceAgeHours === null || typeof workbench.evidence.evidenceAgeHours === 'number').toBe(true);
+    expect(workbench.evidence.maxEvidenceAgeHours === null || typeof workbench.evidence.maxEvidenceAgeHours === 'number').toBe(true);
+    expect(Array.isArray(workbench.evidence.requiredFullGates)).toBe(true);
+    expect(workbench.evidence.decisionStatus === null || typeof workbench.evidence.decisionStatus === 'string').toBe(true);
   });
 
   it('records redacted scenario artifacts with a human promotion checklist', async () => {

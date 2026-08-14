@@ -338,20 +338,55 @@ function extractAgentDevServiceActions(serviceText: string): string[] {
     .sort();
 }
 
+function parseProjectJson(text: string): Record<string, unknown> | null {
+  if (!text) return null;
+  try {
+    const parsed: unknown = JSON.parse(text);
+    return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? parsed as Record<string, unknown>
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 async function buildWorkbenchEvidence(): Promise<AgentDevWorkbenchEvidence> {
-  const [contractText, hostApiText, serviceText, traceContractText] = await Promise.all([
+  const [contractText, hostApiText, serviceText, traceContractText, auditText, deepTestText] = await Promise.all([
     readProjectFile('shared/host-api/contract.ts'),
     readProjectFile('src/lib/host-api.ts'),
     readProjectFile('electron/services/agent-dev-api.ts'),
     readProjectFile('shared/agent-dev/trace-contract.ts'),
+    readProjectFile('artifacts/agent-dev-audit/report.json'),
+    readProjectFile('artifacts/agent-dev-deep-test/report.json'),
   ]);
   const contractActions = extractAgentDevContractActions(contractText);
   const facadeActions = extractAgentDevFacadeActions(hostApiText);
   const serviceActions = extractAgentDevServiceActions(serviceText);
+  const auditReport = parseProjectJson(auditText);
+  const deepTestReport = parseProjectJson(deepTestText);
+  const evidenceInventory = Array.isArray(auditReport?.evidenceInventory)
+    ? auditReport.evidenceInventory as Array<{ generated?: boolean; ageHours?: number | null }>
+    : [];
+  const generatedAges = evidenceInventory
+    .filter((item) => item.generated && typeof item.ageHours === 'number')
+    .map((item) => item.ageHours as number);
+  const maxEvidenceAgeHours = typeof auditReport?.policy === 'object' && auditReport.policy !== null
+    && typeof (auditReport.policy as { maxEvidenceAgeHours?: unknown }).maxEvidenceAgeHours === 'number'
+    ? (auditReport.policy as { maxEvidenceAgeHours: number }).maxEvidenceAgeHours
+    : null;
+  const deepDecision = typeof deepTestReport?.decision === 'object' && deepTestReport.decision !== null
+    ? deepTestReport.decision as { status?: unknown; requiredFullGates?: unknown }
+    : null;
 
   return {
     generatedAt: new Date().toISOString(),
     scenarioCount: listAgentDevScenarios().length,
+    evidenceAgeHours: generatedAges.length > 0 ? Math.max(...generatedAges) : null,
+    maxEvidenceAgeHours,
+    requiredFullGates: Array.isArray(deepDecision?.requiredFullGates)
+      ? deepDecision.requiredFullGates.filter((entry): entry is string => typeof entry === 'string')
+      : [],
+    decisionStatus: typeof deepDecision?.status === 'string' ? deepDecision.status : null,
     artifactStatus: {
       workbench: existsSync(resolve(process.cwd(), 'artifacts', 'agent-dev-workbench')),
       quality: existsSync(resolve(process.cwd(), 'artifacts', 'agent-dev-quality')),
