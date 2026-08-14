@@ -4,12 +4,20 @@
  * back into runtime output blocks, and applies provider request policy.
  */
 import { AzureOpenAI, OpenAI } from "openai";
+import type {
+  EasyInputMessage,
+  ResponseFunctionToolCall,
+  ResponseInputItem,
+  ResponseInputMessageContentList,
+  ResponseOutputText,
+} from "openai/resources/responses/responses";
 import { getEnvApiKey } from "../llm/env-api-keys.js";
 import { calculateCost } from "../llm/model-utils.js";
 import type { Context, Message, Model, SimpleStreamOptions } from "../llm/types.js";
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
 import { recordProviderPayloadTrace } from "./provider-payload-trace.js";
 import { buildGuardedModelFetch } from "./provider-transport-fetch.js";
+import { sanitizeResponsesImagePayload } from "./responses-image-payload-sanitizer.js";
 import { beginShadowModelCall } from "./shadow-census.js";
 import {
   canonicalizeProviderToolSchema,
@@ -280,12 +288,13 @@ function convertUserContent(
 
 // ── message conversion: Responses API ────────────────────────────────────────
 
-type ResponsesInputItem =
-  | { type: "message"; role: "system" | "developer" | "user" | "assistant"; content: unknown[] }
-  | { type: "function_call_output"; call_id: string; output: string };
-
-function toResponsesInput(context: Context): ResponsesInputItem[] {
-  const items: ResponsesInputItem[] = [];
+// toResponsesInput returns SDK-typed items so drift from the official Responses
+// input schema is a compile error instead of a runtime 400. The outbound
+// boundary converts the internal image block ({mimeType,data}) into the official
+// `image_url` data URL shape — the gateway's `input_image.source.{url,base64}`
+// shape is the inbound /v1/responses contract and never leaves this runtime.
+function toResponsesInput(context: Context): ResponseInputItem[] {
+  const items: ResponseInputItem[] = [];
 
   if (context.systemPrompt) {
     items.push({
@@ -297,7 +306,7 @@ function toResponsesInput(context: Context): ResponsesInputItem[] {
 
   for (const msg of context.messages) {
     if (msg.role === "user") {
-      const content: unknown[] = [];
+      const content: ResponseInputItem.Message["content"] = [];
       const userContent = msg.content;
       if (typeof userContent === "string") {
         content.push({ type: "input_text", text: userContent });
@@ -308,11 +317,8 @@ function toResponsesInput(context: Context): ResponsesInputItem[] {
           } else if (block.type === "image") {
             content.push({
               type: "input_image",
-              source: {
-                type: "base64",
-                media_type: block.mimeType,
-                data: block.data,
-              },
+              image_url: `data:${block.mimeType};base64,${block.data}`,
+              detail: "auto",
             });
           }
         }
@@ -323,21 +329,36 @@ function toResponsesInput(context: Context): ResponsesInputItem[] {
         content: content.length > 0 ? content : [{ type: "input_text", text: "" }],
       });
     } else if (msg.role === "assistant") {
-      const content: unknown[] = [];
+      const content: ResponseOutputText[] = [];
+      const toolCalls: ResponseFunctionToolCall[] = [];
       for (const block of msg.content) {
         if (block.type === "text") {
-          content.push({ type: "output_text", text: block.text });
+          content.push({ type: "output_text", text: block.text, annotations: [] });
         } else if (block.type === "thinking") {
           // thinking is not replayed in input; skip
         } else if (block.type === "toolCall") {
-          // In responses API, tool calls appear as function_call items
-          // but for replay we typically just include the assistant message
-          // with text content and let the API handle it
+          // Replay each assistant tool call as a `function_call` item so the
+          // paired `function_call_output` below is never an isolated output.
+          toolCalls.push({
+            type: "function_call",
+            call_id: block.id,
+            name: block.name,
+            arguments: JSON.stringify(block.arguments ?? {}),
+          });
         }
       }
       if (content.length > 0) {
-        items.push({ type: "message", role: "assistant", content });
+        // The official API accepts `output_text` content parts when replaying
+        // prior assistant messages; the SDK's input message content-list type
+        // omits them, so only this one field needs a narrow cast.
+        const assistantItem: EasyInputMessage = {
+          type: "message",
+          role: "assistant",
+          content: content as unknown as ResponseInputMessageContentList,
+        };
+        items.push(assistantItem);
       }
+      items.push(...toolCalls);
     } else if (msg.role === "toolResult") {
       const textContent = msg.content
         .filter((c) => c.type === "text")
@@ -433,7 +454,6 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         });
 
         const input = toResponsesInput(context);
-        const tools = toResponsesTools(context);
 
         const params: Record<string, unknown> = {
           model: model.id,
@@ -447,6 +467,7 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         if (options?.maxTokens !== undefined) {
           params.max_output_tokens = options.maxTokens;
         }
+        const tools = toResponsesTools(context);
         if (tools) {
           params.tools = tools;
         }
@@ -458,11 +479,14 @@ export function createOpenAIResponsesTransportStreamFn(): StreamFn {
         if (nextParams !== undefined) {
           Object.assign(params, nextParams);
         }
-        finalizeOpenAIProviderParams(params);
-        recordFinalOpenAIProviderPayload(options, params, "openai-responses-transport");
+        // Fail-closed at the outbound boundary: invalid inline image payloads
+        // become visible text placeholders instead of provider-side 400s.
+        const sendParams = sanitizeResponsesImagePayload(params);
+        finalizeOpenAIProviderParams(sendParams);
+        recordFinalOpenAIProviderPayload(options, sendParams, "openai-responses-transport");
 
         const responseStream = await client.responses.create(
-          params as unknown as Record<string, unknown>,
+          sendParams as unknown as Record<string, unknown>,
         );
 
         // Cast to get the async iterable shape
@@ -1587,4 +1611,6 @@ export const testing = {
   resolveResponsesEventType,
   resolveResponsesFunctionCallId,
   resolveResponsesStopReason,
+  toResponsesInput,
+  toResponsesTools,
 };

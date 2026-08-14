@@ -27,7 +27,11 @@ export const OutputTextContentPartSchema = z
   })
   .strict();
 
-// OpenResponses Image Content: Supports URL or base64 sources
+// OpenResponses Image Content: Supports URL or base64 sources.
+// This is the INBOUND /v1/responses contract (open-responses.com `source` shape).
+// The outbound OpenAI transport converts the internal image block to the official
+// `input_image.image_url` data URL at the send boundary — see
+// agents/openai-transport-stream.ts `toResponsesInput`.
 export const InputImageSourceSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("url"),
