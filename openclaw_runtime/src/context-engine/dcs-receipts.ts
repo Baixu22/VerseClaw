@@ -4,6 +4,7 @@
 // digest/refs/indexes only; content-sensitive idempotency; explicit
 // attempt/model-call/wire-attempt identity; observational write failure never
 // changes send behavior but must fail the RC-03 acceptance run.
+import { createHash } from "node:crypto";
 import type {
   ReceiptBudget,
   ReceiptCallIndex,
@@ -112,6 +113,19 @@ export function buildMemoryInjectionReceiptInput(input: {
   const { identity, callIndex, correlationDigest, summary } = input;
   const selected = summary.selectedFactIds.map((id) => `ref:memory:${id}`);
   const omitted = summary.omittedFactIds.map((id) => `ref:memory:${id}`);
+  const logicalDigest = createHash("sha256")
+    .update(
+      JSON.stringify({
+        source: summary.source,
+        selected: summary.selectedFactIds,
+        omitted: summary.omittedFactIds,
+        selectedChars: summary.selectedChars,
+      }),
+    )
+    .digest("hex");
+  const policyDigest = createHash("sha256")
+    .update(`memory-injection:${summary.source}`)
+    .digest("hex");
   return {
     idempotencyKey: `memory:v1:${correlationDigest}`,
     kind: 'context',
@@ -119,6 +133,7 @@ export function buildMemoryInjectionReceiptInput(input: {
     identity,
     callIndex,
     content: {
+      logicalDigest,
       correlationDigest,
       selected,
       omitted,
@@ -127,7 +142,7 @@ export function buildMemoryInjectionReceiptInput(input: {
         charsRequested: summary.requestedChars,
         charsApplied: summary.selectedChars,
       },
-      policyDigest: summary.source,
+      policyDigest,
     },
   };
 }

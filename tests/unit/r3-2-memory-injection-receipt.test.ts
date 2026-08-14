@@ -7,12 +7,21 @@ import {
   buildMemoryInjectionReceiptSummary,
 } from '../../openclaw_runtime/src/context-engine/dcs-receipts';
 
+const DIGEST = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+const IDENTITY = {
+  runtimeMode: 'source' as const,
+  sessionKey: 's1',
+  runId: 'r1',
+  providerId: 'compass',
+  adapterId: 'compass-pre-reply-retrieval',
+};
+
 describe('R3-2: memory injection receipt (sanitized)', () => {
   it('maps selected/omitted fact ids to sanitized refs with a char budget', () => {
     const input = buildMemoryInjectionReceiptInput({
-      identity: { runtimeMode: 'source', sessionKey: 's1', runId: 'r1' },
+      identity: IDENTITY,
       callIndex: { attemptIndex: 0, modelCallIndex: 1, wireAttemptIndex: 0 },
-      correlationDigest: 'abc123',
+      correlationDigest: DIGEST,
       summary: {
         selectedFactIds: ['fact-a', 'fact-b'],
         omittedFactIds: ['fact-c'],
@@ -27,8 +36,9 @@ describe('R3-2: memory injection receipt (sanitized)', () => {
     expect(input.content.selected).toEqual(['ref:memory:fact-a', 'ref:memory:fact-b']);
     expect(input.content.omitted).toEqual(['ref:memory:fact-c']);
     expect(input.content.budget).toEqual({ unit: 'chars', charsRequested: 300, charsApplied: 120 });
-    expect(input.content.policyDigest).toBe('compass-pre-reply-retrieval');
-    expect(input.content.correlationDigest).toBe('abc123');
+    expect(input.content.policyDigest).toMatch(/^[0-9a-f]{64}$/);
+    expect(input.content.logicalDigest).toMatch(/^[0-9a-f]{64}$/);
+    expect(input.content.correlationDigest).toBe(DIGEST);
   });
 
   it('computes selected/omitted summary from injectedFactIds + candidate facts', () => {
@@ -42,11 +52,10 @@ describe('R3-2: memory injection receipt (sanitized)', () => {
     expect(summary.selectedChars).toBe(40);
     expect(summary.source).toBe('compass-pre-reply-retrieval');
 
-    // Full bridge: summary → sanitized receipt input.
     const input = buildMemoryInjectionReceiptInput({
-      identity: { runtimeMode: 'source' },
+      identity: IDENTITY,
       callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
-      correlationDigest: 'd2',
+      correlationDigest: DIGEST,
       summary,
     });
     expect(input.content.selected).toEqual(['ref:memory:fact-a']);
@@ -56,9 +65,9 @@ describe('R3-2: memory injection receipt (sanitized)', () => {
 
   it('never carries raw fact content — only refs, digests, and counts', () => {
     const input = buildMemoryInjectionReceiptInput({
-      identity: { runtimeMode: 'source' },
+      identity: IDENTITY,
       callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
-      correlationDigest: 'd1',
+      correlationDigest: DIGEST,
       summary: {
         selectedFactIds: ['fact-a'],
         omittedFactIds: [],
@@ -68,12 +77,11 @@ describe('R3-2: memory injection receipt (sanitized)', () => {
       },
     });
 
-    // The receipt content shape has no field for subject/predicate/object text.
-    expect(input.content).not.toHaveProperty('logicalDigest');
     expect(input.content).not.toHaveProperty('wireDigest');
     expect(Object.keys(input.content).sort()).toEqual([
       'budget',
       'correlationDigest',
+      'logicalDigest',
       'omitted',
       'policyDigest',
       'selected',
