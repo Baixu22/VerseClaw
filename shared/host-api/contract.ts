@@ -1133,6 +1133,8 @@ export type AgentBrowserProfileSaveResult = HostSuccess & {
   profile: AgentBrowserProfileEntry;
 };
 export type AgentBrowserValidatePayload = AgentBrowserOpenPayload & {
+  /** R5-1: canonical run id (e.g. `cron:<jobId>:<startedAt>`). When provided, validate() records it verbatim instead of minting a new UUID. */
+  runId?: string;
   expectedDomains?: string[];
   diagnostics?: {
     snapshot?: boolean;
@@ -2257,6 +2259,14 @@ export type AgentDevSkillSandboxReportResult = HostSuccess & {
 export type AgentDevWorkbenchEvidence = {
   generatedAt: string;
   scenarioCount: number;
+  /** Max ageHours across the generated evidence inventory in artifacts/agent-dev-audit/report.json; null when the audit report is unavailable. */
+  evidenceAgeHours: number | null;
+  /** Freshness window from the audit report policy; null when the audit report is unavailable. */
+  maxEvidenceAgeHours: number | null;
+  /** Deep-test decision.requiredFullGates from artifacts/agent-dev-deep-test/report.json. */
+  requiredFullGates: string[];
+  /** Deep-test decision.status from artifacts/agent-dev-deep-test/report.json; null when the report is unavailable. */
+  decisionStatus: string | null;
   artifactStatus: {
     workbench: boolean;
     quality: boolean;
