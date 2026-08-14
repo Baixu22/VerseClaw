@@ -238,7 +238,18 @@ function buildContextBlockFactory(params: {
     if (!existingCollection?.diagnostics.finalized) {
       const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
       const store = hasProjectionSource ? getBlockStore() : undefined;
-      const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
+      // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
+      // knowledge Block writes are real when inputs are supplied (v3 task 3).
+      const assembler = new Assembler(
+        store || params.contextBlockSink
+          ? {
+              ...(store ? { workingMemoryStore: store } : {}),
+              ...(params.contextBlockSink
+                ? { contextBlockSink: params.contextBlockSink }
+                : {}),
+            }
+          : {},
+      );
       await assembler.assemble(
         {
           session_id: sessionId ?? "",
@@ -390,7 +401,17 @@ function buildContextBlockFactory(params: {
       // Legacy callers without a turn id retain the direct Assembler path.
       await enqueue(async () => undefined);
       const store = getBlockStore();
-      const assembler = new Assembler(store ? { workingMemoryStore: store } : {});
+      // DCS Stage 4: same production sink wiring as the F-01 path (v3 task 3).
+      const assembler = new Assembler(
+        store || params.contextBlockSink
+          ? {
+              ...(store ? { workingMemoryStore: store } : {}),
+              ...(params.contextBlockSink
+                ? { contextBlockSink: params.contextBlockSink }
+                : {}),
+            }
+          : {},
+      );
       // FP-P0-02: `cfg` is intentionally omitted, NOT forgotten. The factory only
       // holds a construction-time config snapshot, and a snapshot would pin the
       // config-form kill switch to whatever was true when the agent started.
