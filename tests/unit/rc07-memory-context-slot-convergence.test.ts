@@ -12,7 +12,9 @@ import { describe, expect, it } from 'vitest';
  *   triggering SEKB auto-writeback.
  */
 import {
+  assertRuntimeMemoryOwnerConvergence,
   assertSingleMemorySlotOwner,
+  buildRuntimeMemoryWriterCensus,
   buildSlotMechanismCensus,
   classifySlotMechanisms,
 } from '../../openclaw_runtime/src/agents/slot-convergence.js';
@@ -102,6 +104,47 @@ describe('RC-07 memory/context slot convergence (root acceptance)', () => {
     // Only the memory slot owner may write — regardless of any flag state.
     expect(census.memory.filter((m) => m.mayWriteMemory).map((m) => m.id)).toEqual(['memory-core']);
   });
+
+
+describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
+  it('default-off yields zero parallel writers and 100% production writer coverage', () => {
+    const census = buildRuntimeMemoryWriterCensus();
+    expect(census.authorities.filter((a) => a.mayWriteMemory).map((a) => a.id)).toEqual(['memory-core']);
+    expect(census.parallelMemoryWriters).toBe(0);
+    expect(census.autoWritebackCount).toBe(0);
+    expect(census.surfaces.map((s) => s.id)).toEqual([
+      'memory-core-store',
+      'runtime-memory-append-invalidate-api',
+      'task-loop-episode-journal',
+      'gateway-consolidation-timer',
+      'compass-pre-reply-retrieval',
+    ]);
+    expect(census.bypassProducers).toEqual([]);
+  });
+
+  it('runtime.memory.persist=true surfaces the owner drift as one parallel writer', () => {
+    const census = buildRuntimeMemoryWriterCensus({ runtimeMemoryPersist: true });
+    expect(census.parallelMemoryWriters).toBe(1);
+    expect(census.authorities.filter((a) => a.mayWriteMemory).map((a) => a.id)).toEqual([
+      'memory-core',
+      'runtime-memory-persistence',
+    ]);
+  });
+
+  it('fail-closed: assertRuntimeMemoryOwnerConvergence rejects the drift, accepts default-off', () => {
+    expect(assertRuntimeMemoryOwnerConvergence({ runtimeMemoryPersist: false }).ok).toBe(true);
+    const drifted = assertRuntimeMemoryOwnerConvergence({ runtimeMemoryPersist: true });
+    expect(drifted.ok).toBe(false);
+    expect(drifted.errors.join(' ')).toContain('runtime-memory-persistence');
+    expect(drifted.errors.join(' ')).toContain('parallel memory writer');
+  });
+
+  it('registers the COMPASS pre-reply retrieval bypass as an explicit degradation', () => {
+    const census = buildRuntimeMemoryWriterCensus({ compassRetrievalEnabled: true });
+    expect(census.bypassProducers.map((p) => p.id)).toEqual(['compass-pre-reply-retrieval']);
+    expect(census.bypassProducers[0]?.note).toContain('bypasses the DCS context-engine');
+  });
+});
 
   it('delete/correction propagates without SEKB auto-writeback (contract level)', () => {
     // SEKB is review-proposal governance: human confirmation only, no
