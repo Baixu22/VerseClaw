@@ -132,6 +132,25 @@ export function buildMemoryInjectionReceiptInput(input: {
   };
 }
 
+export function buildMemoryInjectionReceiptSummary(input: {
+  injectedFactIds: readonly string[];
+  candidateFacts: readonly { factId: string }[];
+  injectedChars: number;
+  source?: string;
+}): MemoryInjectionReceiptSummary {
+  const selected = new Set(input.injectedFactIds);
+  const omitted = input.candidateFacts
+    .map((fact) => fact.factId)
+    .filter((id) => !selected.has(id));
+  return {
+    selectedFactIds: [...input.injectedFactIds],
+    omittedFactIds: omitted,
+    selectedChars: input.injectedChars,
+    requestedChars: input.injectedChars,
+    source: input.source ?? "compass-pre-reply-retrieval",
+  };
+}
+
 export function buildWireReceiptInput(input: {
   plan: CompilePlan;
   wireDigest: string;
