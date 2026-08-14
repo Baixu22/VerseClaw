@@ -235,6 +235,15 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     defaultEnabled: false,
   },
   {
+    id: 'compass-context-block',
+    catalog: mustFlag('compass-context-block'),
+    controlKind: 'config',
+    storeKey: 'dcsCompassContextBlockEnabled',
+    targetKey: 'runtime.contextBlock.compass.enabled',
+    defaultEnabled: false,
+    unavailableReason: 'R3-1 v3 审计: Assembler compass handler 无生产 inputs.compass(auto-reply compass 走旁路注入)。',
+  },
+  {
     id: 'role-memory',
     catalog: mustFlag('role-memory'),
     controlKind: 'config',

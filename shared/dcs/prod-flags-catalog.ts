@@ -250,6 +250,18 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     riskNote: 'KE-P1-1: task-terminal candidate generation (failure-guard -> Review Queue). Queue-visible only; never auto-persisted.',
   },
   {
+    id: 'compass-context-block',
+    wave: 'R3',
+    kind: 'config',
+    key: 'runtime.contextBlock.compass.enabled',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'read-only',
+    enable: 'runtime.contextBlock.compass.enabled=true.',
+    rollback: 'runtime.contextBlock.compass.enabled=false (default).',
+    riskNote: 'R3-1 v3 审计: Assembler compass handler 无生产 inputs.compass(auto-reply compass 走旁路 extraSystemPromptParts,已登记 bypass producer + receipt)。Settings 标不可用。',
+  },
+  {
     id: 'role-memory',
     wave: 'R3',
     kind: 'config',
@@ -319,6 +331,7 @@ export function assertCatalogDefaultHonesty(): { ok: true } {
     'runtime-memory-persist',
     'runtime-memory-inject-pilot',
     'runtime-memory-candidate-generation',
+    'compass-context-block',
     'role-memory',
   ];
   for (const id of mustStayOff) {
