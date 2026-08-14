@@ -8,6 +8,7 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { SourceDeliveryPlan } from "../../infra/outbound/source-delivery-plan.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
 import type { SkillSnapshot } from "../../skills/types.js";
+import { createCronExecutionId } from "../run-id.js";
 import type { CronAgentExecutionPhaseUpdate, CronJob } from "../types.js";
 import {
   resolveCronChannelOutputPolicy,
@@ -127,6 +128,8 @@ export function createCronPromptExecutor(params: {
   agentDir: string;
   agentSessionKey: string;
   runSessionKey: string;
+  /** Canonical cron execution id (`cron:<jobId>:<startedAt>`) — single runId fact source for receipts and browser results. */
+  runExecutionId: string;
   workspaceDir: string;
   lane?: string;
   resolvedVerboseLevel: VerboseLevel;
@@ -190,7 +193,7 @@ export function createCronPromptExecutor(params: {
       cfg: params.cfgWithAgentDefaults,
       provider: params.liveSelection.provider,
       model: params.liveSelection.model,
-      runId: params.cronSession.sessionEntry.sessionId,
+      runId: params.runExecutionId,
       sessionId: params.cronSession.sessionEntry.sessionId,
       lane: resolveCronAgentLane(params.lane),
       agentDir: params.agentDir,
@@ -242,7 +245,7 @@ export function createCronPromptExecutor(params: {
             model: modelOverride,
             thinkLevel: params.thinkLevel,
             timeoutMs: params.timeoutMs,
-            runId: params.cronSession.sessionEntry.sessionId,
+            runId: params.runExecutionId,
             lane: resolveCronAgentLane(params.lane),
             cliSessionId,
             skillsSnapshot: params.skillsSnapshot,
@@ -325,7 +328,7 @@ export function createCronPromptExecutor(params: {
               }
             : undefined,
           sourceReplyDeliveryMode,
-          runId: params.cronSession.sessionEntry.sessionId,
+          runId: params.runExecutionId,
           requireExplicitMessageTarget: params.sourceDelivery.messageTool.requireExplicitTarget,
           disableMessageTool: !params.sourceDelivery.messageTool.enabled,
           forceMessageTool: params.sourceDelivery.messageTool.force,
@@ -415,6 +418,11 @@ export async function executeCronRun(params: {
     sessionId: params.cronSession.sessionEntry.sessionId,
     verboseLevel: resolvedVerboseLevel,
   });
+  // R5-1: the canonical execution id is derived once from the run start and
+  // threaded as the single runId fact source — receipts, browser results, and
+  // delivery idempotency all key off this same value.
+  const runStartedAt = params.runStartedAt ?? Date.now();
+  const runExecutionId = createCronExecutionId(params.job.id, runStartedAt);
   const executor = createCronPromptExecutor({
     cfg: params.cfg,
     cfgWithAgentDefaults: params.cfgWithAgentDefaults,
@@ -423,6 +431,7 @@ export async function executeCronRun(params: {
     agentDir: params.agentDir,
     agentSessionKey: params.agentSessionKey,
     runSessionKey: params.runSessionKey,
+    runExecutionId,
     workspaceDir: params.workspaceDir,
     lane: params.lane,
     resolvedVerboseLevel,
@@ -446,7 +455,6 @@ export async function executeCronRun(params: {
     onExecutionPhase: params.onExecutionPhase,
   });
 
-  const runStartedAt = params.runStartedAt ?? Date.now();
   const MAX_MODEL_SWITCH_RETRIES = 2;
   let modelSwitchRetries = 0;
   while (true) {

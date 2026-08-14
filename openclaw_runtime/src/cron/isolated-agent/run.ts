@@ -41,6 +41,7 @@ import {
   mergeCronRunDiagnostics,
 } from "../run-diagnostics.js";
 import { buildCronBrowserAutomationRunResultWithArtifacts } from "../browser-automation-result.js";
+import { createCronExecutionId } from "../run-id.js";
 import type {
   CronAgentExecutionPhaseUpdate,
   CronAgentExecutionStarted,
@@ -1068,7 +1069,10 @@ async function finalizeCronRun(params: {
   });
   const browserAutomationResult = await buildCronBrowserAutomationRunResultWithArtifacts({
     job: prepared.input.job,
-    runId: prepared.runSessionId,
+    // R5-1: browser result runId uses the canonical cron execution id (same
+    // value threaded to the runner and persisted as receipt run_id); the
+    // session UUID stays in sessionId/runSessionKey fields only.
+    runId: createCronExecutionId(prepared.input.job.id, execution.runStartedAt),
     status: hasFatalErrorPayload ? "failed" : "success",
     startedAt: execution.runStartedAt,
     endedAt: execution.runEndedAt,
