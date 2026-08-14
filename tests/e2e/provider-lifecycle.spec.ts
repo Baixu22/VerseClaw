@@ -267,4 +267,227 @@ test.describe('Verse Claw provider lifecycle', () => {
 
     await expect(page.getByTestId('provider-edit-save-moonshot-edit')).toHaveCount(0);
   });
+
+  test('add dialog persists custom-header auth format through validation and save', async ({ electronApp, page }) => {
+    await completeSetup(page);
+
+    await electronApp.evaluate(async ({ app: _app }) => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+
+      const validateCalls: Array<Record<string, unknown>> = [];
+      const savedAccounts: Array<Record<string, unknown>> = [];
+      let accounts: Array<Record<string, unknown>> = [];
+      let statuses: Array<Record<string, unknown>> = [];
+      const originalHostInvoke = (ipcMain as unknown as {
+        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+      })._invokeHandlers?.get('host:invoke');
+
+      const respond = (id: unknown, data: unknown) => ({
+        id: typeof id === 'string' ? id : undefined,
+        ok: true,
+        data,
+      });
+
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event: unknown, request: {
+        id?: string;
+        module?: string;
+        action?: string;
+        payload?: Record<string, unknown>;
+      }) => {
+        if (request?.module !== 'providers') {
+          return originalHostInvoke?.(event, request) ?? respond(request?.id, undefined);
+        }
+
+        const body = request.payload ?? {};
+        if (request.action === 'accounts') return respond(request.id, accounts);
+        if (request.action === 'accountKeyInfo') return respond(request.id, []);
+        if (request.action === 'vendors') return respond(request.id, []);
+        if (request.action === 'getDefaultAccount') return respond(request.id, { accountId: null });
+        if (request.action === 'list') return respond(request.id, statuses);
+
+        if (request.action === 'validateKey') {
+          validateCalls.push(body);
+          return respond(request.id, { valid: true });
+        }
+
+        if (request.action === 'createAccount') {
+          const account = body.account as Record<string, unknown>;
+          savedAccounts.push(account);
+          accounts = [account];
+          statuses = [{
+            id: account.id,
+            name: account.label,
+            type: account.vendorId,
+            baseUrl: account.baseUrl,
+            model: account.model,
+            enabled: account.enabled,
+            hasKey: Boolean(body.apiKey),
+            keyMasked: body.apiKey ? 'sk-***' : null,
+          }];
+          return respond(request.id, { success: true, account });
+        }
+
+        if (request.action === 'setDefaultAccount') {
+          return respond(request.id, { success: true });
+        }
+
+        // Live references captured for the test assertions below.
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts };
+
+        return respond(request.id, {});
+      });
+    });
+
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
+    await expect(page.getByTestId('providers-settings')).toBeVisible();
+
+    await page.getByTestId('providers-add-button').click();
+    await expect(page.getByTestId('add-provider-dialog')).toBeVisible();
+
+    await page.getByTestId('add-provider-type-custom').click();
+    await page.getByTestId('add-provider-auth-method-custom-header').click();
+    await expect(page.getByTestId('add-provider-auth-header-name')).toBeVisible();
+    await page.getByTestId('add-provider-auth-header-name').fill('X-API-Key');
+    await page.getByTestId('add-provider-auth-header-prefix').fill('Bearer ');
+    await page.getByTestId('add-provider-name-input').fill('Header Auth Custom');
+    await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
+    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
+    await page.getByTestId('add-provider-model-id-input').fill('local-model');
+    await page.getByTestId('add-provider-submit-button').click();
+
+    await expect(page.getByTestId('provider-card-custom')).toContainText('Header Auth Custom');
+
+    const captured = await electronApp.evaluate(async () => {
+      const g = globalThis as unknown as {
+        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>> };
+      };
+      return { validateCalls: g.__r4E2eCapture?.validateCalls ?? [], savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [] };
+    });
+
+    expect(captured.validateCalls.length).toBeGreaterThan(0);
+    expect(captured.validateCalls[0].options).toMatchObject({
+      auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' },
+    });
+    expect(captured.savedAccounts.length).toBeGreaterThan(0);
+    expect(captured.savedAccounts[0]).toMatchObject({
+      requestAuth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' },
+    });
+  });
+
+  test('add dialog persists query auth and declared model capabilities', async ({ electronApp, page }) => {
+    await completeSetup(page);
+
+    await electronApp.evaluate(async ({ app: _app }) => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+
+      const validateCalls: Array<Record<string, unknown>> = [];
+      const savedAccounts: Array<Record<string, unknown>> = [];
+      let accounts: Array<Record<string, unknown>> = [];
+      let statuses: Array<Record<string, unknown>> = [];
+      const originalHostInvoke = (ipcMain as unknown as {
+        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+      })._invokeHandlers?.get('host:invoke');
+
+      const respond = (id: unknown, data: unknown) => ({
+        id: typeof id === 'string' ? id : undefined,
+        ok: true,
+        data,
+      });
+
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event: unknown, request: {
+        id?: string;
+        module?: string;
+        action?: string;
+        payload?: Record<string, unknown>;
+      }) => {
+        if (request?.module !== 'providers') {
+          return originalHostInvoke?.(event, request) ?? respond(request?.id, undefined);
+        }
+
+        const body = request.payload ?? {};
+        if (request.action === 'accounts') return respond(request.id, accounts);
+        if (request.action === 'accountKeyInfo') return respond(request.id, []);
+        if (request.action === 'vendors') return respond(request.id, []);
+        if (request.action === 'getDefaultAccount') return respond(request.id, { accountId: null });
+        if (request.action === 'list') return respond(request.id, statuses);
+
+        if (request.action === 'validateKey') {
+          validateCalls.push(body);
+          return respond(request.id, { valid: true });
+        }
+
+        if (request.action === 'createAccount') {
+          const account = body.account as Record<string, unknown>;
+          savedAccounts.push(account);
+          accounts = [account];
+          statuses = [{
+            id: account.id,
+            name: account.label,
+            type: account.vendorId,
+            baseUrl: account.baseUrl,
+            model: account.model,
+            enabled: account.enabled,
+            hasKey: Boolean(body.apiKey),
+            keyMasked: body.apiKey ? 'sk-***' : null,
+          }];
+          return respond(request.id, { success: true, account });
+        }
+
+        if (request.action === 'setDefaultAccount') {
+          return respond(request.id, { success: true });
+        }
+
+        // Live references captured for the test assertions below.
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts };
+
+        return respond(request.id, {});
+      });
+    });
+
+    await page.getByTestId('sidebar-nav-settings').click();
+    await page.getByTestId('settings-nav-models').click();
+    await expect(page.getByTestId('providers-settings')).toBeVisible();
+
+    await page.getByTestId('providers-add-button').click();
+    await expect(page.getByTestId('add-provider-dialog')).toBeVisible();
+
+    await page.getByTestId('add-provider-type-custom').click();
+    await page.getByTestId('add-provider-auth-method-query').click();
+    await expect(page.getByTestId('add-provider-auth-query-param')).toBeVisible();
+    await page.getByTestId('add-provider-auth-query-param').fill('key');
+    await page.getByTestId('add-provider-context-window').fill('128000');
+    await page.getByTestId('add-provider-max-tokens').fill('8192');
+    await page.getByTestId('add-provider-supports-vision').click();
+    await page.getByTestId('add-provider-name-input').fill('Query Auth Custom');
+    await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
+    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
+    await page.getByTestId('add-provider-model-id-input').fill('local-model');
+    await page.getByTestId('add-provider-submit-button').click();
+
+    await expect(page.getByTestId('provider-card-custom')).toContainText('Query Auth Custom');
+
+    const captured = await electronApp.evaluate(async () => {
+      const g = globalThis as unknown as {
+        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>> };
+      };
+      return { validateCalls: g.__r4E2eCapture?.validateCalls ?? [], savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [] };
+    });
+
+    expect(captured.validateCalls.length).toBeGreaterThan(0);
+    expect(captured.validateCalls[0].options).toMatchObject({
+      auth: { mode: 'query', parameterName: 'key' },
+    });
+    expect(captured.savedAccounts.length).toBeGreaterThan(0);
+    expect(captured.savedAccounts[0]).toMatchObject({
+      requestAuth: { mode: 'query', parameterName: 'key' },
+      modelProfile: {
+        contextWindow: 128000,
+        maxTokens: 8192,
+        supportsVision: true,
+      },
+    });
+  });
 });
