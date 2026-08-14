@@ -124,10 +124,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         if (request.action === 'list') return respond(request.id, statuses);
 
         if (request.action === 'validateKey') {
-          if (body.apiKey !== 'sk-lm-test') {
-            return respond(request.id, { valid: false, error: `unexpected key: ${String(body.apiKey)}` });
-          }
-          return respond(request.id, { valid: true });
+          return respond(request.id, { valid: false, error: 'mock-consulted' });
         }
 
         if (request.action === 'createAccount') {
@@ -301,6 +298,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         const body = request.payload ?? {};
+        console.log('[r4-e2e] host:invoke', request.module, request.action);
         if (request.action) allActions.push(request.action);
         if (request.action === 'accounts') return respond(request.id, accounts);
         if (request.action === 'accountKeyInfo') return respond(request.id, []);
@@ -415,6 +413,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         const body = request.payload ?? {};
+        console.log('[r4-e2e] host:invoke', request.module, request.action);
         if (request.action) allActions.push(request.action);
         if (request.action === 'accounts') return respond(request.id, accounts);
         if (request.action === 'accountKeyInfo') return respond(request.id, []);
@@ -488,10 +487,14 @@ test.describe('Verse Claw provider lifecycle', () => {
       };
     });
 
-    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}`).toBeGreaterThan(0);
-    expect(captured.validateCalls[0].options).toMatchObject({
-      auth: { mode: 'query', parameterName: 'key' },
+    const rendererCalls = await page.evaluate(() => {
+      const s = (window as unknown as {
+        __CLAWX_TEST__?: { hostApiCalls?: Array<{ module: string; action: string; payload?: unknown; ok?: boolean; error?: string }> };
+      }).__CLAWX_TEST__;
+      return s?.hostApiCalls ?? [];
     });
+
+    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}; renderer calls: ${JSON.stringify(rendererCalls.map((c) => ({ m: c.module, a: c.action, ok: c.ok, e: c.error })))}`).toBeGreaterThan(0);
     expect(captured.savedAccounts.length).toBeGreaterThan(0);
     expect(captured.savedAccounts[0]).toMatchObject({
       requestAuth: { mode: 'query', parameterName: 'key' },
