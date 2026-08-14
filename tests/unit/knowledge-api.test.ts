@@ -340,6 +340,95 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalled();
   });
 
+  it('runs the semantic steward invoker through the gateway agent RPC when the active role is semantic', async () => {
+    // Earlier tests may have loaded the default (heuristic) registry into the
+    // module-level cache; reset so the semantic registry below is read.
+    const { __resetRoleRegistryCacheForTests } = await import('@electron/services/knowledge-api');
+    __resetRoleRegistryCacheForTests();
+
+    // Semantic role registry so the steward review opts into the LLM pass.
+    const knowledgeDir = join(root, 'knowledge');
+    mkdirSync(knowledgeDir, { recursive: true });
+    writeFileSync(
+      join(knowledgeDir, 'steward-roles.json'),
+      JSON.stringify({
+        version: 1,
+        defaultRoleId: 'knowledge-steward-semantic',
+        roles: [
+          {
+            roleId: 'knowledge-steward-semantic',
+            enabled: true,
+            displayName: 'Semantic Steward',
+            classification: 'semantic',
+            capabilities: {
+              canSearch: true,
+              canRead: true,
+              canProposeDraft: true,
+              canClassify: true,
+              canSuggestMerge: true,
+              canSuggestArchive: true,
+              canApplyDirectly: false,
+            },
+            scope: { workspace: true, agent: false, global: false },
+          },
+        ],
+      }),
+      'utf8',
+    );
+
+    // Gateway mock that accepts the steward run and streams an assistant delta.
+    const listeners = new Set<(event: unknown) => void>();
+    const emit = (event: unknown) => {
+      for (const listener of listeners) listener(event);
+    };
+    const gatewayManager = {
+      on: vi.fn((_event: string, listener: (event: unknown) => void) => {
+        listeners.add(listener);
+      }),
+      off: vi.fn((_event: string, listener: (event: unknown) => void) => {
+        listeners.delete(listener);
+      }),
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'agent') {
+          return { runId: 'steward-run-1' };
+        }
+        if (method === 'agent.wait') {
+          // The invoker only starts collecting deltas after `agent` resolves and
+          // modelRunId is known, so stream the reply here (matching real timing).
+          emit({ runId: 'steward-run-1', type: 'assistant.delta', text: JSON.stringify({
+            type: 'synthesis',
+            tags: ['governance'],
+            warnings: [{ kind: 'quality', message: 'Body lacks evidence chain.' }],
+            confidence: 0.85,
+          }) });
+          return { status: 'completed' };
+        }
+        return {};
+      }),
+    };
+
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+
+    const created = await api.createDraft({
+      title: 'Semantic governance',
+      body: 'Agents must route knowledge changes through the steward review.',
+      type: 'decision',
+      sourceIds: ['chat-session-1'],
+      createdBy: 'agent',
+    });
+    expect(created.success).toBe(true);
+
+    const review = await api.stewardReview({ draftId: created.draft!.id });
+    expect(review.success).toBe(true);
+    expect(review.type).toBe('synthesis');
+    expect(review.tags).toContain('governance');
+    expect(review.notes).toContain('Semantic steward pass');
+    expect(review.warnings.some((w) => w.includes('[quality]'))).toBe(true);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true }), 60000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent.wait', expect.objectContaining({ runId: 'steward-run-1' }), 65000);
+  });
+
   it('orchestrates inbox candidates into drafts without applying wiki writes', async () => {
     const gatewayManager = {
       rpc: vi.fn(async () => {

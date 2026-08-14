@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
+import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 import { expandPath, getDataDir, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
 // DCS Stage 5: real BlockStore-backed experience write-back. Electron imports
@@ -2336,6 +2337,173 @@ export function getSemanticStewardInvoker(): SemanticStewardInvoker | null {
 }
 
 /**
+ * R3-1 v3 task 5: production Semantic Steward invoker backed by a real
+ * embedded-agent turn through the gateway `agent` RPC (the same pattern the
+ * Code Review Center uses). Runs a one-shot model-only turn with the steward
+ * contract as the prompt, collects assistant deltas, waits for completion, and
+ * parses the JSON review. Every failure path returns null so the caller's
+ * heuristic result stands (degradation is explicit in the notes).
+ */
+export async function runSemanticStewardInvoker(
+  gatewayManager: GatewayManager,
+  context: SemanticStewardContext,
+  timeoutMs = 60_000,
+): Promise<StewardSemanticReview | null> {
+  try {
+    const deltas: string[] = [];
+    let modelRunId: string | undefined;
+    const sessionKey = `agent:main:steward-${createHash('sha256').update(context.title + context.body).digest('hex').slice(0, 8)}`;
+    const onRuntimeEvent = (event: ChatRuntimeEvent) => {
+      if (event.runId !== modelRunId) return;
+      if (event.type === 'assistant.delta') deltas.push(event.text ?? event.delta ?? '');
+    };
+
+    gatewayManager.on('chat:runtime-event', onRuntimeEvent);
+    try {
+      const accepted = await gatewayManager.rpc<Record<string, unknown>>('agent', {
+        sessionKey,
+        message: buildSemanticStewardPrompt(context),
+        deliver: false,
+        idempotencyKey: `steward:${sessionKey}:${context.sourceIds.join(',')}`,
+        modelRun: true,
+        promptMode: 'none',
+        disableMessageTool: true,
+        bestEffortDeliver: false,
+        label: 'Knowledge Steward',
+        timeout: Math.ceil(timeoutMs / 1000),
+      }, timeoutMs);
+      modelRunId = typeof accepted?.runId === 'string' ? accepted.runId : undefined;
+      if (!modelRunId) throw new Error('Runtime did not accept the steward run');
+
+      const wait = await gatewayManager.rpc<Record<string, unknown>>('agent.wait', {
+        runId: modelRunId,
+        timeoutMs,
+      }, timeoutMs + 5_000);
+      if (wait?.status === 'timeout' || wait?.status === 'pending') {
+        throw new Error('Semantic steward run timed out');
+      }
+      if (wait?.status === 'error') {
+        throw new Error(typeof wait.error === 'string' ? wait.error : 'Semantic steward run failed');
+      }
+
+      const streamedText = deltas.join('').trim();
+      if (streamedText) return parseStewardSemanticReview(streamedText);
+
+      const history = await gatewayManager.rpc<Record<string, unknown>>('chat.history', {
+        sessionKey,
+        limit: 20,
+        maxChars: 200_000,
+      }, 30_000).catch(() => undefined);
+      const latestText = extractLatestAssistantText(history?.messages);
+      return latestText ? parseStewardSemanticReview(latestText) : null;
+    } finally {
+      gatewayManager.off('chat:runtime-event', onRuntimeEvent);
+    }
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Builds the steward contract prompt for one draft review. The model must reply
+ * with ONLY a JSON object matching StewardSemanticReview.
+ */
+export function buildSemanticStewardPrompt(context: SemanticStewardContext): string {
+  const searchSection =
+    context.searchResults.length > 0
+      ? context.searchResults
+          .map((result) => `- ${result.title}${result.pagePath ? ` (${result.pagePath})` : ''}: ${result.snippet}`)
+          .join('\n')
+      : '(no wiki search results)';
+  return [
+    'You are the Knowledge Steward semantic reviewer.',
+    'Classify the knowledge draft below and identify quality issues.',
+    'Allowed draft types: source-note, synthesis, decision, architecture, command, troubleshooting, glossary, procedure.',
+    'Warning kinds: duplicate, conflict, stale, quality.',
+    'Respond with ONLY a JSON object in this exact shape:',
+    '{"type":"<draft type>","tags":["<tag>"],"warnings":[{"kind":"<warning kind>","message":"<text>","relatedPageId":"<optional>"}],"confidence":<0..1>}',
+    '',
+    '--- DRAFT ---',
+    `Title: ${context.title}`,
+    `Body: ${context.body}`,
+    `Tags: ${context.tags.join(', ') || '(none)'}`,
+    `Source ids: ${context.sourceIds.join(', ') || '(none)'}`,
+    '',
+    '--- WIKI SEARCH RESULTS (context) ---',
+    searchSection,
+  ].join('\n');
+}
+
+/**
+ * Parses the steward model reply into a StewardSemanticReview. Returns null
+ * when the reply is not a valid review object (degradation to heuristic).
+ */
+export function parseStewardSemanticReview(text: string): StewardSemanticReview | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonCandidateFromText(text));
+  } catch {
+    return null;
+  }
+  if (!isRecord(parsed)) return null;
+  const type = KNOWLEDGE_DRAFT_TYPES.has(parsed.type as KnowledgeDraftType)
+    ? (parsed.type as KnowledgeDraftType)
+    : undefined;
+  if (!type) return null;
+  const confidence = typeof parsed.confidence === 'number' && Number.isFinite(parsed.confidence)
+    ? Math.max(0, Math.min(1, parsed.confidence))
+    : 0;
+  const tags = Array.isArray(parsed.tags)
+    ? parsed.tags.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0).map((tag) => tag.trim())
+    : [];
+  const warnings = Array.isArray(parsed.warnings)
+    ? parsed.warnings.flatMap((entry) => {
+        if (!isRecord(entry)) return [];
+        const kind = entry.kind;
+        if (kind !== 'duplicate' && kind !== 'conflict' && kind !== 'stale' && kind !== 'quality') return [];
+        const message = typeof entry.message === 'string' && entry.message.trim() ? entry.message.trim() : '';
+        if (!message) return [];
+        const relatedPageId = typeof entry.relatedPageId === 'string' && entry.relatedPageId.trim() ? entry.relatedPageId.trim() : undefined;
+        const warning: StewardSemanticReview['warnings'][number] = {
+          kind: kind as StewardSemanticReview['warnings'][number]['kind'],
+          message,
+          ...(relatedPageId ? { relatedPageId } : {}),
+        };
+        return [warning];
+      })
+    : [];
+  return { type, tags, warnings, confidence };
+}
+
+function jsonCandidateFromText(text: string): string {
+  const trimmed = text.trim();
+  const start = trimmed.indexOf('{');
+  if (start < 0) return trimmed;
+  const end = trimmed.lastIndexOf('}');
+  if (end <= start) return trimmed;
+  return trimmed.slice(start, end + 1);
+}
+
+function extractLatestAssistantText(messages: unknown): string | undefined {
+  if (!Array.isArray(messages)) return undefined;
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const message = messages[i];
+    if (!isRecord(message) || message.role !== 'assistant') continue;
+    const content = message.content;
+    if (typeof content === 'string' && content.trim()) return content.trim();
+    if (Array.isArray(content)) {
+      const textParts = content
+        .filter((part): part is { type: string; text?: string } => isRecord(part) && part.type === 'text')
+        .map((part) => (typeof part.text === 'string' ? part.text : ''))
+        .filter((text) => text.length > 0);
+      if (textParts.length > 0) return textParts.join('').trim();
+    }
+  }
+  return undefined;
+}
+
+
+/**
  * Pure merge of heuristic + semantic review results. Exported for unit testing.
  * - Semantic type overrides heuristic when confidence >= 0.7 (spec: "below threshold → keep heuristic result").
  * - Tags are unioned and deduped.
@@ -2391,6 +2559,12 @@ export function createKnowledgeApi({
 }): CompleteHostServiceRegistry['knowledge'] {
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
+
+  // R3-1 v3 task 5: wire the production semantic steward invoker. The default
+  // registry role stays 'heuristic', so the semantic pass only runs when an
+  // operator configures a role with classification 'semantic' — and the
+  // heuristic result remains the explicit degradation on any invoker failure.
+  setSemanticStewardInvoker((context) => runSemanticStewardInvoker(gatewayManager, context));
 
   async function readSourceSetAnswerSource(ref: KnowledgeSourceRef): Promise<KnowledgeSourceSetAnswerSource | null> {
     const lookup = ref.path || ref.id;
