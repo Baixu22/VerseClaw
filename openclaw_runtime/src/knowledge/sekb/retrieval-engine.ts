@@ -1,8 +1,24 @@
 import type { KnowledgeStore } from "./knowledge-store.js";
+import {
+  persistKeRetrievalShadowReceipt,
+  runKeRetrievalShadow,
+  type KeReceiptWriter,
+  type KeRetrievalCandidate,
+  type KeRetrievalShadowContext,
+  type KeRetrievalShadowResult,
+} from "../../runtime-core/ke-retrieval-shadow.js";
 import { normalizeTags, type Principle } from "./types.js";
 
 export type RetrievalEngineOptions = {
   store: KnowledgeStore;
+  /** KE-P1-2 shadow retrieval config (runtime.coding.sekb.retrievalShadow). Off => no shadow. */
+  config?: unknown;
+  /** Receipt writer to persist the shadow_context receipt (optional). */
+  receiptWriter?: KeReceiptWriter;
+  /** Shadow result sink (tests/diagnostics). */
+  onRetrievalShadow?: (result: KeRetrievalShadowResult) => void;
+  /** Base context (taskId/runId/sessionKey/configDigest) for the shadow event. */
+  shadowBase?: Partial<KeRetrievalShadowContext>;
 };
 
 type ScoredPrinciple = {
@@ -13,9 +29,17 @@ type ScoredPrinciple = {
 /** Deterministic advisory retriever for SEKB principles. */
 export class RetrievalEngine {
   readonly #store: KnowledgeStore;
+  readonly #config: unknown;
+  readonly #receiptWriter: KeReceiptWriter | undefined;
+  readonly #onRetrievalShadow: ((result: KeRetrievalShadowResult) => void) | undefined;
+  readonly #shadowBase: Partial<KeRetrievalShadowContext>;
 
   constructor(options: RetrievalEngineOptions) {
     this.#store = options.store;
+    this.#config = options.config;
+    this.#receiptWriter = options.receiptWriter;
+    this.#onRetrievalShadow = options.onRetrievalShadow;
+    this.#shadowBase = options.shadowBase ?? {};
   }
 
   retrieve_for_task(
@@ -31,6 +55,7 @@ export class RetrievalEngine {
         tags.length === 0 || tags.some((tag) => principle.context_tags.includes(tag))
       );
     const query = [task_intent, taskType, ...tags].join(" ");
+    this.#recordShadow(query, candidates, { taskType, contextTags: tags }, top_k);
     return this.#rank(candidates, query, top_k);
   }
 
@@ -38,6 +63,7 @@ export class RetrievalEngine {
     const tags = normalizeTags(context_tags);
     const candidates = this.#store.query_principles({ status: "active" });
     const query = [error_signature, ...tags].join(" ");
+    this.#recordShadow(query, candidates, { taskType: "error", contextTags: tags, errorSignature: error_signature }, top_k);
     return this.#rank(candidates, query, top_k);
   }
 
@@ -57,6 +83,39 @@ export class RetrievalEngine {
 
   create_context_injector(): ContextInjector {
     return new ContextInjector(this);
+  }
+
+  /** KE-P1-2 shadow: record would_retrieve + receipt without changing retrieval. */
+  #recordShadow(
+    query: string,
+    candidates: readonly Principle[],
+    context: { taskType: string; contextTags: string[]; errorSignature?: string },
+    topK: number,
+  ): void {
+    if (!this.#config) return;
+    try {
+      const result = runKeRetrievalShadow(
+        this.#config,
+        query,
+        candidates.map((principle) => principleToKeCandidate(principle)),
+        {
+          taskId: this.#shadowBase.taskId ?? "sekb-retrieval",
+          taskType: context.taskType,
+          configDigest: this.#shadowBase.configDigest ?? "sekb-retrieval",
+          ...this.#shadowBase,
+          contextTags: context.contextTags,
+          ...(context.errorSignature !== undefined ? { errorSignature: context.errorSignature } : {}),
+        },
+        topK,
+      );
+      if (!result.enabled) return;
+      if (result.receipt && this.#receiptWriter) {
+        persistKeRetrievalShadowReceipt(result, this.#receiptWriter);
+      }
+      this.#onRetrievalShadow?.(result);
+    } catch {
+      // Shadow retrieval must never perturb SEKB retrieval or injection.
+    }
   }
 
   #rank(candidates: Principle[], query: string, topK: number): Principle[] {
@@ -138,4 +197,21 @@ function metadataScore(principle: Principle): number {
 
 function tokens(value: string): Set<string> {
   return new Set(value.toLowerCase().match(/[\p{L}\p{N}_]+/gu) ?? []);
+}
+
+function principleToKeCandidate(principle: Principle): KeRetrievalCandidate {
+  return {
+    envelopeId: principle.principle_id,
+    contentVersion: principle.updated_at || principle.created_at,
+    text: [
+      principle.title,
+      principle.condition,
+      principle.action,
+      principle.reason,
+      principle.full_content,
+    ].join(" "),
+    tags: principle.context_tags,
+    capturedAt: Date.parse(principle.created_at) || undefined,
+    quality: { criticality: principle.criticality, pinned: principle.pinned },
+  };
 }
