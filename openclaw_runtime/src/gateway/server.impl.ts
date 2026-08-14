@@ -90,6 +90,7 @@ import { createLazyGatewayCronState } from "./server-cron-lazy.js";
 import { applyGatewayLaneConcurrency } from "./server-lanes.js";
 import { createGatewayServerLiveState, type GatewayServerLiveState } from "./server-live-state.js";
 import { GATEWAY_EVENTS } from "./server-methods-list.js";
+import { unsubscribeTrajectory } from "./trajectory-gateway.js";
 import type { GatewayRequestContext, GatewayRequestHandlers } from "./server-methods/types.js";
 import { setFallbackGatewayContextResolver } from "./server-plugins.js";
 import type { GatewayPluginReloadResult } from "./server-reload-handlers.js";
@@ -1434,6 +1435,7 @@ export async function startGatewayServer(
           unsubscribeAllSessionEvents: (connId: string) => {
             sessionEventSubscribers.unsubscribe(connId);
             sessionMessageSubscribers.unsubscribeAll(connId);
+            unsubscribeTrajectory(connId);
           },
           getSessionEventSubscriberConnIds: sessionEventSubscribers.getAll,
           registerToolEventRecipient: toolEventRecipients.add,
