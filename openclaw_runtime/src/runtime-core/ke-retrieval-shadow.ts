@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type {
   PutReceiptInput,
+  PutReceiptResult,
   ReceiptIdentity,
 } from "../agents/receipt-store.js";
 
@@ -308,22 +309,28 @@ export function buildKeRetrievalShadowReceipt(
   query: string,
 ): PutReceiptInput | null {
   if (wouldRetrieve.length === 0) return null;
-  const queryDigest = queryDigestFor(query);
+  // ReceiptStore.assertDigest requires a bare 64-hex sha256 (no "sha256:" prefix).
+  const bareQueryDigest = sha256Hex(query);
   const identity: ReceiptIdentity = {
     ...(context.runId !== undefined ? { runId: context.runId } : {}),
     ...(context.sessionKey !== undefined ? { sessionKey: context.sessionKey } : {}),
     ...(context.traceId !== undefined ? { traceId: context.traceId } : {}),
+    // shadow_context requires provider/adapter identity; the retrieval broker
+    // is the producer here (not a model provider).
+    providerId: "ke-retrieval",
+    adapterId: "ke-retrieval-broker",
     runtimeMode: "source",
   };
   return {
-    idempotencyKey: `ke-retrieval-shadow:${context.taskId}:${queryDigest}`,
+    idempotencyKey: `ke-retrieval-shadow:${context.taskId}:${bareQueryDigest}`,
     kind: "shadow_context",
-    version: "1",
+    version: "0",
     identity,
     callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
     content: {
-      correlationDigest: queryDigest,
-      selected: wouldRetrieve.map((candidate) => `ke-retrieved:${candidate.envelopeId}:${candidate.rank}`),
+      logicalDigest: bareQueryDigest,
+      correlationDigest: bareQueryDigest,
+      selected: wouldRetrieve.map((candidate) => `ref:context:${candidate.envelopeId}:${candidate.rank}`),
       omitted: [],
       ...(context.tokenBudget !== undefined && context.tokenBudget > 0
         ? { budget: { unit: "tokens" as const, inputLimit: context.tokenBudget, outputLimit: 0 } }
@@ -356,4 +363,22 @@ export function runKeRetrievalShadow(
   );
   const receipt = buildKeRetrievalShadowReceipt(wouldRetrieve, context, query);
   return { enabled: true, wouldRetrieve, retrievedAtEvents, receipt };
+}
+
+/** A narrow put-writer (e.g. ReceiptStore.put) that persists the shadow receipt. */
+export type KeReceiptWriter = {
+  put: (input: PutReceiptInput) => PutReceiptResult;
+};
+
+/**
+ * Persist the shadow_context receipt through the caller's receipt writer.
+ * Returns null when the shadow produced no receipt (zero behavior). The receipt
+ * carries digest/refs only — no raw candidate body.
+ */
+export function persistKeRetrievalShadowReceipt(
+  result: KeRetrievalShadowResult,
+  writer: KeReceiptWriter,
+): PutReceiptResult | null {
+  if (!result.receipt) return null;
+  return writer.put(result.receipt);
 }
