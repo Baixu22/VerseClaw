@@ -256,3 +256,191 @@ export function assertSingleContextEngineSlot(config: {
   }
   return { ok: errors.length === 0, errors, resolvedId };
 }
+// ---------------------------------------------------------------------------
+// R3-1: dynamic Runtime Memory writer census.
+//
+// The static RC07_MEMORY_MECHANISMS table only registers the plugin-slot
+// mechanisms. Runtime Memory (runtime-core/memory-persistence.ts) is a SECOND
+// durable authority that self-declares owner RUNTIME_MEMORY_PERSISTENCE_OWNER
+// and persists episodes/facts/invalidations to the runtime_memory_* tables
+// when runtime.memory.persist=true — outside the selected memory slot
+// (memory-core). The static census's parallelMemoryWriters=0 therefore hid
+// that owner drift. The census below registers the real production writer
+// surface so parallelMemoryWriters is derived from real inputs, and the
+// fail-closed guard rejects the drift.
+// ---------------------------------------------------------------------------
+
+export type RuntimeMemoryAuthorityRole = "slot-owner" | "parallel-writer";
+
+export type RuntimeMemoryAuthority = {
+  id: string;
+  ownerPath: string;
+  role: RuntimeMemoryAuthorityRole;
+  mayWriteMemory: boolean;
+  /** The config/flag that activates this authority's durable writes. */
+  activation: string;
+};
+
+export type RuntimeMemoryWriterSurfaceKind =
+  | "store"
+  | "append-invalidate-api"
+  | "episode-journal"
+  | "consolidation-timer"
+  | "retrieval-reader";
+
+export type RuntimeMemoryWriterSurface = {
+  id: string;
+  ownerPath: string;
+  authority: "memory-core" | "runtime-memory";
+  kind: RuntimeMemoryWriterSurfaceKind;
+  /** Whether this surface performs durable writes when its authority is active. */
+  writesWhenActive: boolean;
+  activation: string;
+};
+
+export type RuntimeMemoryBypassProducer = {
+  id: string;
+  ownerPath: string;
+  /** Explicit degradation note: this producer does not enter the DCS context-engine. */
+  note: string;
+};
+
+export type RuntimeMemoryWriterCensusInput = {
+  /** Selected memory slot owner id. Defaults to memory-core. */
+  memorySlotId?: string;
+  /** runtime.memory.persist (default false). */
+  runtimeMemoryPersist?: boolean;
+  /** TaskLoop shadow flag; episode journal requires shadow && persist. */
+  runtimeMemoryShadow?: boolean;
+  /** COMPASS pre-reply retrieval (OPENCLAW_COMPASS_RETRIEVAL=1 + persist). */
+  compassRetrievalEnabled?: boolean;
+};
+
+export type RuntimeMemoryWriterCensus = {
+  authorities: RuntimeMemoryAuthority[];
+  surfaces: RuntimeMemoryWriterSurface[];
+  /** Distinct durable authorities beyond the single slot owner. 0 = converged. */
+  parallelMemoryWriters: number;
+  autoWritebackCount: number;
+  /** Provider-facing semantic producers that bypass the DCS context-engine. */
+  bypassProducers: RuntimeMemoryBypassProducer[];
+};
+
+/**
+ * Build the Runtime Memory writer census from the real production writer
+ * surface (SQLite owner, append/invalidate API, TaskLoop episode journal,
+ * Gateway consolidation timer, pre-reply retrieval) instead of a hardcoded
+ * "only memory-core writes" table. Default-off yields zero parallel writers;
+ * runtime.memory.persist=true surfaces the owner drift as one parallel writer.
+ */
+export function buildRuntimeMemoryWriterCensus(
+  input: RuntimeMemoryWriterCensusInput = {},
+): RuntimeMemoryWriterCensus {
+  const memorySlotId = input.memorySlotId ?? "memory-core";
+  const persist = input.runtimeMemoryPersist === true;
+  const shadow = input.runtimeMemoryShadow === true;
+  const retrieval = input.compassRetrievalEnabled === true;
+
+  const authorities: RuntimeMemoryAuthority[] = [
+    {
+      id: "memory-core",
+      ownerPath: "openclaw_runtime/src/memory/memory-store.ts",
+      role: "slot-owner",
+      mayWriteMemory: memorySlotId === "memory-core",
+      activation: `plugins.slots.memory=${memorySlotId}`,
+    },
+    {
+      id: "runtime-memory-persistence",
+      ownerPath: "openclaw_runtime/src/runtime-core/memory-persistence.ts",
+      role: "parallel-writer",
+      mayWriteMemory: persist,
+      activation: "runtime.memory.persist=true",
+    },
+  ];
+
+  const surfaces: RuntimeMemoryWriterSurface[] = [
+    {
+      id: "memory-core-store",
+      ownerPath: "openclaw_runtime/src/memory/memory-store.ts",
+      authority: "memory-core",
+      kind: "store",
+      writesWhenActive: memorySlotId === "memory-core",
+      activation: `plugins.slots.memory=${memorySlotId}`,
+    },
+    {
+      id: "runtime-memory-append-invalidate-api",
+      ownerPath: "openclaw_runtime/src/runtime-core/memory-runtime-integration.ts",
+      authority: "runtime-memory",
+      kind: "append-invalidate-api",
+      writesWhenActive: persist,
+      activation: "runtime.memory.persist=true",
+    },
+    {
+      id: "task-loop-episode-journal",
+      ownerPath: "openclaw_runtime/src/agents/task-loop-controller.ts",
+      authority: "runtime-memory",
+      kind: "episode-journal",
+      writesWhenActive: persist && shadow,
+      activation: "runtime.memory.persist=true && shadow",
+    },
+    {
+      id: "gateway-consolidation-timer",
+      ownerPath: "openclaw_runtime/src/gateway/runtime-memory-consolidation-service.ts",
+      authority: "runtime-memory",
+      kind: "consolidation-timer",
+      writesWhenActive: persist,
+      activation: "runtime.memory.persist=true",
+    },
+    {
+      id: "compass-pre-reply-retrieval",
+      ownerPath: "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts",
+      authority: "runtime-memory",
+      kind: "retrieval-reader",
+      writesWhenActive: false,
+      activation: "OPENCLAW_COMPASS_RETRIEVAL=1 && runtime.memory.persist=true",
+    },
+  ];
+
+  const writingAuthorities = authorities.filter((a) => a.mayWriteMemory).length;
+  const parallelMemoryWriters = Math.max(0, writingAuthorities - 1);
+
+  const bypassProducers: RuntimeMemoryBypassProducer[] = retrieval
+    ? [
+        {
+          id: "compass-pre-reply-retrieval",
+          ownerPath: "openclaw_runtime/src/runtime-core/memory-pre-reply-injection.ts",
+          note: "bypasses the DCS context-engine: retrieved facts unshift into extraSystemPromptParts (get-reply-run.ts)",
+        },
+      ]
+    : [];
+
+  return {
+    authorities,
+    surfaces,
+    parallelMemoryWriters,
+    autoWritebackCount: 0,
+    bypassProducers,
+  };
+}
+
+/**
+ * Fail-closed owner convergence for Runtime Memory. runtime.memory.persist=true
+ * creates a second durable authority next to the selected memory slot owner, so
+ * it must be constrained by (or rejected as) the memory slot. A non-empty
+ * errors result MUST block activation — never ignored.
+ */
+export function assertRuntimeMemoryOwnerConvergence(
+  input: RuntimeMemoryWriterCensusInput = {},
+): { ok: boolean; errors: string[] } {
+  const census = buildRuntimeMemoryWriterCensus(input);
+  const errors: string[] = [];
+  for (const authority of census.authorities) {
+    if (authority.role === "parallel-writer" && authority.mayWriteMemory) {
+      errors.push(
+        `${authority.id} (${authority.activation}) is a parallel memory writer outside the selected slot owner (memory-core); runtime.memory.persist must be constrained by the memory slot or rejected`,
+      );
+    }
+  }
+  return { ok: errors.length === 0, errors };
+}
+
