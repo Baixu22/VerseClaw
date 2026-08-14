@@ -20,7 +20,17 @@ import {
   resolveTrajectoryPointerFilePath,
   resolveTrajectoryPointerOpenFlags,
 } from "./paths.js";
-import type { TrajectoryEvent, TrajectoryToolDefinition } from "./types.js";
+import type {
+  TrajectoryEvent,
+  TrajectoryEventV2,
+  TrajectoryEventV2Type,
+  TrajectoryJsonValue,
+  TrajectoryLifecyclePhase,
+  TrajectoryLifecycleRole,
+  TrajectoryReadableEvent,
+  TrajectoryToolDefinition,
+} from "./types.js";
+import { safeParseTrajectoryEventV2 } from "./schema.js";
 
 export {
   TRAJECTORY_RUNTIME_CAPTURE_MAX_BYTES,
@@ -32,7 +42,7 @@ export {
   safeTrajectorySessionFileName,
 } from "./paths.js";
 
-type TrajectoryRuntimeInit = {
+export type TrajectoryRuntimeInit = {
   cfg?: OpenClawConfig;
   env?: NodeJS.ProcessEnv;
   maxRuntimeFileBytes?: number;
@@ -47,10 +57,24 @@ type TrajectoryRuntimeInit = {
   writer?: TrajectoryRuntimeWriter;
 };
 
-type TrajectoryRuntimeRecorder = {
+export type TrajectoryRuntimeV2EventInput = {
+  type: TrajectoryEventV2Type;
+  role: TrajectoryLifecycleRole;
+  phase: TrajectoryLifecyclePhase;
+  runId: string;
+  loopRunId?: string;
+  turnId?: string;
+  stepId?: string;
+  toolCallId?: string;
+  state: Record<string, unknown>;
+  data?: Record<string, unknown>;
+};
+
+export type TrajectoryRuntimeRecorder = {
   enabled: true;
   filePath: string;
   recordEvent: (type: string, data?: Record<string, unknown>) => void;
+  recordEventV2: (event: TrajectoryRuntimeV2EventInput) => boolean;
   flush: () => Promise<void>;
   describeFlushState: () => string | undefined;
 };
@@ -70,6 +94,7 @@ type TrajectoryRuntimeWriterDiagnostics = Omit<QueuedFileWriterDiagnostics, "act
 type TrajectoryRuntimeWriter = Omit<QueuedFileWriter, "describeQueue"> & {
   describeQueue?: () => TrajectoryRuntimeWriterDiagnostics;
   nextSourceSeq?: () => number;
+  nextSeq?: () => number;
 };
 
 function writeTrajectoryPointerBestEffort(params: {
@@ -131,22 +156,23 @@ function trimTrajectoryWriterCache(): void {
 }
 
 function truncateOversizedTrajectoryEvent(
-  event: TrajectoryEvent,
+  event: TrajectoryReadableEvent,
   line: string,
 ): string | undefined {
   const bytes = Buffer.byteLength(line, "utf8");
   if (bytes <= TRAJECTORY_RUNTIME_EVENT_MAX_BYTES) {
     return line;
   }
-  const truncated = safeJsonStringify({
-    ...event,
-    data: {
-      truncated: true,
-      originalBytes: bytes,
-      limitBytes: TRAJECTORY_RUNTIME_EVENT_MAX_BYTES,
-      reason: "trajectory-event-size-limit",
-    },
-  });
+  const truncation = {
+    truncated: true,
+    originalBytes: bytes,
+    limitBytes: TRAJECTORY_RUNTIME_EVENT_MAX_BYTES,
+    reason: "trajectory-event-size-limit",
+  } satisfies Record<string, TrajectoryJsonValue>;
+  const truncated =
+    event.schemaVersion === 2
+      ? safeJsonStringify({ ...event, state: truncation })
+      : safeJsonStringify({ ...event, data: truncation });
   if (truncated && Buffer.byteLength(truncated, "utf8") <= TRAJECTORY_RUNTIME_EVENT_MAX_BYTES) {
     return truncated;
   }
@@ -307,6 +333,22 @@ function readMaxTrajectorySourceSeq(filePath: string): number {
   );
 }
 
+function readMaxTrajectoryEventSeq(filePath: string): number {
+  return readTrajectoryWindowLines(filePath, TRAJECTORY_RUNTIME_FILE_MAX_BYTES).reduce(
+    (max, line) => {
+      try {
+        const parsed = JSON.parse(line) as { seq?: unknown };
+        return typeof parsed.seq === "number" && Number.isFinite(parsed.seq)
+          ? Math.max(max, parsed.seq)
+          : max;
+      } catch {
+        return max;
+      }
+    },
+    0,
+  );
+}
+
 function readTrajectoryWindowLines(filePath: string, maxBytes: number): string[] {
   try {
     const raw = readRegularFileSync({
@@ -388,6 +430,7 @@ function createTrajectoryWindowWriter(
   let activeOperation: TrajectoryRuntimeWriterDiagnostics["activeOperation"] = "idle";
   let queue: Promise<unknown> = Promise.resolve();
   let sourceSeq = readMaxTrajectorySourceSeq(filePath);
+  let eventSeq = readMaxTrajectoryEventSeq(filePath);
 
   return {
     filePath,
@@ -437,6 +480,10 @@ function createTrajectoryWindowWriter(
     nextSourceSeq: () => {
       sourceSeq += 1;
       return sourceSeq;
+    },
+    nextSeq: () => {
+      eventSeq += 1;
+      return eventSeq;
     },
   };
 }
@@ -501,8 +548,13 @@ export function createTrajectoryRuntimeRecorder(
     sessionFile: params.sessionFile,
     sessionId: params.sessionId,
   });
-  let seq = 0;
+  let localSeq = 0;
   const traceId = params.sessionId;
+
+  const nextSeq = (): number => {
+    localSeq = Math.max(localSeq, writer.nextSeq?.() ?? localSeq + 1);
+    return localSeq;
+  };
 
   const writeBoundedLine = (line: string): void => {
     const jsonlLine = `${line}\n`;
@@ -510,8 +562,8 @@ export function createTrajectoryRuntimeRecorder(
   };
 
   const buildEventLine = (type: string, data?: Record<string, unknown>): string | undefined => {
-    const nextSeq = seq + 1;
-    const sourceSeq = writer.nextSourceSeq?.() ?? nextSeq;
+    const seq = nextSeq();
+    const sourceSeq = writer.nextSourceSeq?.() ?? seq;
     const event: TrajectoryEvent = {
       traceSchema: "openclaw-trajectory",
       schemaVersion: 1,
@@ -519,7 +571,7 @@ export function createTrajectoryRuntimeRecorder(
       source: "runtime",
       type,
       ts: new Date().toISOString(),
-      seq: nextSeq,
+      seq,
       sourceSeq,
       sessionId: params.sessionId,
       sessionKey: params.sessionKey,
@@ -538,8 +590,61 @@ export function createTrajectoryRuntimeRecorder(
     if (!boundedLine) {
       return undefined;
     }
-    seq = nextSeq;
     return boundedLine;
+  };
+
+  const buildV2EventLine = (input: TrajectoryRuntimeV2EventInput): string | undefined => {
+    const sanitizedState = sanitizeTrajectoryPayload(input.state) as Record<string, TrajectoryJsonValue>;
+    const sanitizedData = input.data
+      ? (sanitizeTrajectoryPayload(input.data) as Record<string, TrajectoryJsonValue>)
+      : undefined;
+    const preflightEvent = {
+      traceSchema: "openclaw-trajectory" as const,
+      schemaVersion: 2 as const,
+      traceId,
+      source: "runtime" as const,
+      ts: new Date(0).toISOString(),
+      seq: 1,
+      type: input.type,
+      role: input.role,
+      phase: input.phase,
+      runId: input.runId,
+      ...(input.loopRunId ? { loopRunId: input.loopRunId } : {}),
+      ...(input.turnId ? { turnId: input.turnId } : {}),
+      ...(input.stepId ? { stepId: input.stepId } : {}),
+      ...(input.toolCallId ? { toolCallId: input.toolCallId } : {}),
+      state: sanitizedState,
+      ...(sanitizedData ? { data: sanitizedData } : {}),
+    } as TrajectoryEventV2;
+    if (!safeParseTrajectoryEventV2(preflightEvent).success) {
+      return undefined;
+    }
+    const event: TrajectoryEventV2 = {
+      traceSchema: "openclaw-trajectory",
+      schemaVersion: 2,
+      traceId,
+      source: "runtime",
+      ts: new Date().toISOString(),
+      seq: nextSeq(),
+      type: input.type,
+      role: input.role,
+      phase: input.phase,
+      runId: input.runId,
+      ...(input.loopRunId ? { loopRunId: input.loopRunId } : {}),
+      ...(input.turnId ? { turnId: input.turnId } : {}),
+      ...(input.stepId ? { stepId: input.stepId } : {}),
+      ...(input.toolCallId ? { toolCallId: input.toolCallId } : {}),
+      state: sanitizedState,
+      ...(sanitizedData ? { data: sanitizedData } : {}),
+    } as TrajectoryEventV2;
+    if (!safeParseTrajectoryEventV2(event).success) {
+      return undefined;
+    }
+    const line = safeJsonStringify(event);
+    if (!line) {
+      return undefined;
+    }
+    return truncateOversizedTrajectoryEvent(event, line);
   };
 
   return {
@@ -551,6 +656,14 @@ export function createTrajectoryRuntimeRecorder(
         return;
       }
       writeBoundedLine(line);
+    },
+    recordEventV2: (input) => {
+      const line = buildV2EventLine(input);
+      if (line) {
+        writeBoundedLine(line);
+        return true;
+      }
+      return false;
     },
     flush: async () => {
       await writer.flush();
