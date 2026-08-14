@@ -497,7 +497,13 @@
         "fastPr": "Fast PR",
         "fullLocal": "Full local",
         "nightlyRelease": "Nightly / release"
-      }
+      },
+      "evidenceAge": "Evidence age",
+      "evidenceWindow": "Window: {{hours}}h",
+      "unavailable": "Unavailable",
+      "decisionStatus": "Deep-test decision",
+      "requiredGates": "Required full gates",
+      "requiredGatesNone": "None"
     },
     "installCmd": "Install \"openclaw\" Command",
     "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",

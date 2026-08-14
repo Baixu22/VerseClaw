@@ -24,6 +24,13 @@ function statusTone(ok: boolean): string {
     : 'border-amber-500/30 text-amber-700 dark:text-amber-400';
 }
 
+function decisionTone(status: string | null): string {
+  if (status === 'blocked') return 'text-red-700 dark:text-red-400';
+  if (status === 'needs-full-gate') return 'text-amber-700 dark:text-amber-400';
+  if (status === 'daily-loop-ok') return 'text-emerald-700 dark:text-emerald-400';
+  return '';
+}
+
 export function AgentDevWorkbenchPanel() {
   const { t, i18n } = useTranslation('settings');
   const [snapshot, setSnapshot] = useState<AgentDevWorkbenchSnapshot | null>(null);
@@ -155,6 +162,52 @@ export function AgentDevWorkbenchPanel() {
         <div className="rounded-lg bg-surface-modal p-3" data-testid="settings-agent-dev-workbench-total-tokens">
           <p className="text-tiny uppercase text-muted-foreground">{t('developer.agentDevWorkbench.totalTokens')}</p>
           <p className="mt-1 text-2xl font-semibold">{snapshot?.cost.report.totals.totalTokens ?? '-'}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-lg bg-surface-modal p-3" data-testid="settings-agent-dev-workbench-evidence-age">
+          <p className="text-tiny uppercase text-muted-foreground">{t('developer.agentDevWorkbench.evidenceAge')}</p>
+          <p className={cn(
+            'mt-1 text-2xl font-semibold',
+            snapshot
+              && snapshot.evidence.evidenceAgeHours != null
+              && (snapshot.evidence.maxEvidenceAgeHours == null || snapshot.evidence.evidenceAgeHours > snapshot.evidence.maxEvidenceAgeHours)
+              && 'text-red-700 dark:text-red-400',
+          )}>
+            {snapshot
+              ? (snapshot.evidence.evidenceAgeHours == null
+                ? t('developer.agentDevWorkbench.unavailable')
+                : `${snapshot.evidence.evidenceAgeHours.toFixed(1)}h`)
+              : '-'}
+          </p>
+          {snapshot && snapshot.evidence.maxEvidenceAgeHours != null && (
+            <p className="mt-0.5 text-tiny text-muted-foreground">
+              {t('developer.agentDevWorkbench.evidenceWindow', { hours: snapshot.evidence.maxEvidenceAgeHours })}
+            </p>
+          )}
+        </div>
+        <div className="rounded-lg bg-surface-modal p-3" data-testid="settings-agent-dev-workbench-decision">
+          <p className="text-tiny uppercase text-muted-foreground">{t('developer.agentDevWorkbench.decisionStatus')}</p>
+          <p className={cn('mt-1 text-2xl font-semibold', snapshot && decisionTone(snapshot.evidence.decisionStatus))}>
+            {snapshot
+              ? (snapshot.evidence.decisionStatus ?? t('developer.agentDevWorkbench.unavailable'))
+              : '-'}
+          </p>
+        </div>
+        <div className="rounded-lg bg-surface-modal p-3 sm:col-span-2" data-testid="settings-agent-dev-workbench-required-gates">
+          <p className="text-tiny uppercase text-muted-foreground">{t('developer.agentDevWorkbench.requiredGates')}</p>
+          {snapshot && snapshot.evidence.requiredFullGates.length > 0 ? (
+            <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
+              {snapshot.evidence.requiredFullGates.map((command) => (
+                <li key={command} className="font-mono">{command}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-1 text-2xl font-semibold">
+              {snapshot ? t('developer.agentDevWorkbench.requiredGatesNone') : '-'}
+            </p>
+          )}
         </div>
       </div>
 

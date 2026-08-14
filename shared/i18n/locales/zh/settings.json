@@ -497,7 +497,13 @@
         "fastPr": "Fast PR",
         "fullLocal": "Full local",
         "nightlyRelease": "Nightly / release"
-      }
+      },
+      "evidenceAge": "证据年龄",
+      "evidenceWindow": "窗口:{{hours}} 小时",
+      "unavailable": "不可用",
+      "decisionStatus": "深度测试决策",
+      "requiredGates": "待执行的完整门禁",
+      "requiredGatesNone": "无"
     },
     "installCmd": "安装 \"openclaw\" 命令",
     "installCmdDesc": "安装 ~/.local/bin/openclaw（无需管理员权限）",

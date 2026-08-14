@@ -497,7 +497,13 @@
         "fastPr": "Fast PR",
         "fullLocal": "Full local",
         "nightlyRelease": "Nightly / release"
-      }
+      },
+      "evidenceAge": "証拠の経過時間",
+      "evidenceWindow": "ウィンドウ:{{hours}}時間",
+      "unavailable": "利用不可",
+      "decisionStatus": "ディープテスト判定",
+      "requiredGates": "必要なフルゲート",
+      "requiredGatesNone": "なし"
     },
     "installCmd": "\"openclaw\" コマンドをインストール",
     "installCmdDesc": "~/.local/bin/openclaw をインストール（管理者権限不要）",

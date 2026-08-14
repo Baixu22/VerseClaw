@@ -90,6 +90,9 @@ test.describe('agent dev quality gates', () => {
     await expect(page.getByTestId('settings-agent-dev-workbench-scenarios')).toContainText(/\d+/);
     await expect(page.getByTestId('settings-agent-dev-workbench-contract-gaps')).toContainText('0');
     await expect(page.getByTestId('settings-agent-dev-workbench-diagnostics')).toBeVisible();
+    // R5-2: 面板必须展示证据年龄(或 unavailable)与 deep-test 决策,数据来自真实报告字段。
+    await expect(page.getByTestId('settings-agent-dev-workbench-evidence-age')).toBeVisible();
+    await expect(page.getByTestId('settings-agent-dev-workbench-decision')).toBeVisible();
 
     await page.getByTestId('settings-agent-dev-workbench-record').click();
     await expect(page.getByTestId('settings-agent-dev-workbench-refresh')).toBeEnabled();
