@@ -1,5 +1,7 @@
 /** Prepares and runs auto-reply agent turns, including prompt context and session policy. */
 import crypto from "node:crypto";
+import { buildMemoryInjectionReceiptSummary } from "../../context-engine/dcs-receipts.js";
+import { persistMemoryInjectionReceipt } from "../../context-engine/memory-injection-receipt.js";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import { asDateTimestampMs } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
@@ -639,6 +641,29 @@ export async function runPreparedReply(
     config: compassConfig,
     facts: compassFacts,
   });
+  // R3-2.1: record a sanitized memory-injection receipt (observational, never throws).
+  if (compassInjection.injectedFactIds && compassInjection.injectedFactIds.length > 0) {
+    const memoryReceiptSessionKey = runtimePolicySessionKey ?? sessionKey ?? sessionId;
+    const correlationDigest = crypto
+      .createHash("sha256")
+      .update(`${memoryReceiptSessionKey ?? ""}:${compassInjection.injectedFactIds.join(",")}`)
+      .digest("hex");
+    persistMemoryInjectionReceipt({
+      identity: {
+        runtimeMode: "source",
+        ...(memoryReceiptSessionKey ? { sessionKey: memoryReceiptSessionKey } : {}),
+        providerId: "compass",
+        adapterId: "compass-pre-reply-retrieval",
+      },
+      callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
+      correlationDigest,
+      summary: buildMemoryInjectionReceiptSummary({
+        injectedFactIds: compassInjection.injectedFactIds,
+        candidateFacts: compassFacts,
+        injectedChars: compassInjection.top5FactsString?.length ?? 0,
+      }),
+    });
+  }
   const extraSystemPromptParts = [
     compassInjection.sspString,        // COMPASS: SSP 注入 (最前)
     compassInjection.top5FactsString,  // COMPASS: Hybrid retrieval top-5
