@@ -276,6 +276,7 @@ test.describe('Verse Claw provider lifecycle', () => {
 
       const validateCalls: Array<Record<string, unknown>> = [];
       const savedAccounts: Array<Record<string, unknown>> = [];
+      const allActions: string[] = [];
       let accounts: Array<Record<string, unknown>> = [];
       let statuses: Array<Record<string, unknown>> = [];
       const originalHostInvoke = (ipcMain as unknown as {
@@ -300,6 +301,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         const body = request.payload ?? {};
+        if (request.action) allActions.push(request.action);
         if (request.action === 'accounts') return respond(request.id, accounts);
         if (request.action === 'accountKeyInfo') return respond(request.id, []);
         if (request.action === 'vendors') return respond(request.id, []);
@@ -333,7 +335,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         // Live references captured for the test assertions below.
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts };
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions };
 
         return respond(request.id, {});
       });
@@ -361,12 +363,16 @@ test.describe('Verse Claw provider lifecycle', () => {
 
     const captured = await electronApp.evaluate(async () => {
       const g = globalThis as unknown as {
-        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>> };
+        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[] };
       };
-      return { validateCalls: g.__r4E2eCapture?.validateCalls ?? [], savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [] };
+      return {
+        validateCalls: g.__r4E2eCapture?.validateCalls ?? [],
+        savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [],
+        allActions: g.__r4E2eCapture?.allActions ?? [],
+      };
     });
 
-    expect(captured.validateCalls.length).toBeGreaterThan(0);
+    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}`).toBeGreaterThan(0);
     expect(captured.validateCalls[0].options).toMatchObject({
       auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' },
     });
@@ -384,6 +390,7 @@ test.describe('Verse Claw provider lifecycle', () => {
 
       const validateCalls: Array<Record<string, unknown>> = [];
       const savedAccounts: Array<Record<string, unknown>> = [];
+      const allActions: string[] = [];
       let accounts: Array<Record<string, unknown>> = [];
       let statuses: Array<Record<string, unknown>> = [];
       const originalHostInvoke = (ipcMain as unknown as {
@@ -408,6 +415,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         const body = request.payload ?? {};
+        if (request.action) allActions.push(request.action);
         if (request.action === 'accounts') return respond(request.id, accounts);
         if (request.action === 'accountKeyInfo') return respond(request.id, []);
         if (request.action === 'vendors') return respond(request.id, []);
@@ -441,7 +449,7 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         // Live references captured for the test assertions below.
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts };
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions };
 
         return respond(request.id, {});
       });
@@ -471,12 +479,16 @@ test.describe('Verse Claw provider lifecycle', () => {
 
     const captured = await electronApp.evaluate(async () => {
       const g = globalThis as unknown as {
-        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>> };
+        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[] };
       };
-      return { validateCalls: g.__r4E2eCapture?.validateCalls ?? [], savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [] };
+      return {
+        validateCalls: g.__r4E2eCapture?.validateCalls ?? [],
+        savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [],
+        allActions: g.__r4E2eCapture?.allActions ?? [],
+      };
     });
 
-    expect(captured.validateCalls.length).toBeGreaterThan(0);
+    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}`).toBeGreaterThan(0);
     expect(captured.validateCalls[0].options).toMatchObject({
       auth: { mode: 'query', parameterName: 'key' },
     });
