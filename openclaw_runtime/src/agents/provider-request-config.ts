@@ -13,6 +13,11 @@ import { assertSecretInputResolved } from "../config/types.secrets.js";
 import type { PinnedDispatcherPolicy } from "../infra/net/ssrf.js";
 import type { Api } from "../llm/types.js";
 import { COPILOT_INTEGRATION_ID, buildCopilotIdeHeaders } from "./copilot-dynamic-headers.js";
+import {
+  resolveProviderRequestAuth,
+  type ProviderRequestAuthOverride,
+  type ResolvedProviderRequestAuth,
+} from "./provider-request-auth.js";
 import type {
   ProviderRequestCapabilities,
   ProviderRequestCapability,
@@ -24,23 +29,9 @@ import {
   type ProviderRequestPolicyResolution,
 } from "./provider-attribution.js";
 
-type RequestApi = Api | ModelDefinitionConfig["api"];
+export type { ProviderRequestAuthOverride } from "./provider-request-auth.js";
 
-/** Auth override accepted from sanitized provider/model request config. */
-export type ProviderRequestAuthOverride =
-  | {
-      mode: "provider-default";
-    }
-  | {
-      mode: "authorization-bearer";
-      token: string;
-    }
-  | {
-      mode: "header";
-      headerName: string;
-      value: string;
-      prefix?: string;
-    };
+type RequestApi = Api | ModelDefinitionConfig["api"];
 
 /** TLS override accepted from sanitized provider/model request config. */
 export type ProviderRequestTlsOverride = {
@@ -79,27 +70,7 @@ export type ModelProviderRequestTransportOverrides = ProviderRequestTransportOve
 
 // Resolved request config separates configured vs default state so transports
 // can decide whether to inject provider defaults or operator-provided headers.
-type ResolvedProviderRequestAuthConfig =
-  | {
-      configured: false;
-      mode: "provider-default" | "authorization-bearer";
-      injectAuthorizationHeader: boolean;
-    }
-  | {
-      configured: true;
-      mode: "authorization-bearer";
-      headerName: "Authorization";
-      value: string;
-      injectAuthorizationHeader: true;
-    }
-  | {
-      configured: true;
-      mode: "header";
-      headerName: string;
-      value: string;
-      prefix?: string;
-      injectAuthorizationHeader: false;
-    };
+type ResolvedProviderRequestAuthConfig = ResolvedProviderRequestAuth;
 
 type ResolvedProviderRequestProxyConfig =
   | {
@@ -252,7 +223,11 @@ export function sanitizeConfiguredProviderRequest(
         "request.auth.headerName",
       );
       const value = sanitizeConfiguredRequestString(rawAuth.value, "request.auth.value");
-      const prefix = sanitizeConfiguredRequestString(rawAuth.prefix, "request.auth.prefix");
+      // Prefix keeps its exact value (trailing spaces are part of the separator).
+      const prefix =
+        typeof rawAuth.prefix === "string" && rawAuth.prefix.trim()
+          ? rawAuth.prefix
+          : undefined;
       if (headerName && value) {
         auth = {
           mode: "header",
@@ -260,6 +235,15 @@ export function sanitizeConfiguredProviderRequest(
           value,
           ...(prefix ? { prefix } : {}),
         };
+      }
+    } else if (rawAuth.mode === "query") {
+      const parameterName = sanitizeConfiguredRequestString(
+        rawAuth.parameterName,
+        "request.auth.parameterName",
+      );
+      const value = sanitizeConfiguredRequestString(rawAuth.value, "request.auth.value");
+      if (parameterName && value) {
+        auth = { mode: "query", parameterName, value };
       }
     }
   }
@@ -495,39 +479,10 @@ function resolveAuthOverride(params: {
   authHeader?: boolean;
   request?: ProviderRequestTransportOverrides;
 }): ResolvedProviderRequestAuthConfig {
-  const auth = params.request?.auth;
-  if (auth?.mode === "authorization-bearer") {
-    const value = auth.token.trim();
-    if (value) {
-      return {
-        configured: true,
-        mode: "authorization-bearer",
-        headerName: "Authorization",
-        value,
-        injectAuthorizationHeader: true,
-      };
-    }
-  }
-  if (auth?.mode === "header") {
-    const headerName = auth.headerName.trim();
-    const value = auth.value.trim();
-    const prefix = auth.prefix?.trim();
-    if (headerName && value) {
-      return {
-        configured: true,
-        mode: "header",
-        headerName,
-        value,
-        ...(prefix ? { prefix } : {}),
-        injectAuthorizationHeader: false,
-      };
-    }
-  }
-  return {
-    configured: false,
-    mode: params.authHeader ? "authorization-bearer" : "provider-default",
-    injectAuthorizationHeader: params.authHeader === true,
-  };
+  return resolveProviderRequestAuth({
+    authHeader: params.authHeader,
+    auth: params.request?.auth,
+  });
 }
 
 /** Sanitizes runtime-only provider request overrides for auth request paths. */
@@ -582,7 +537,8 @@ function applyResolvedAuthHeader(
   headers: Record<string, string> | undefined,
   auth: ResolvedProviderRequestAuthConfig,
 ): Record<string, string> | undefined {
-  if (!auth.configured) {
+  if (!auth.configured || auth.mode === "query") {
+    // Query auth rides on the request URL (see providerRequestAuthQuery), not headers.
     return headers;
   }
   const next = mergeProviderRequestHeaders(headers) ?? Object.create(null);

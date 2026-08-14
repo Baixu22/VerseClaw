@@ -284,6 +284,13 @@ const ConfiguredProviderRequestAuthSchema = z
         prefix: z.string().optional(),
       })
       .strict(),
+    z
+      .object({
+        mode: z.literal("query"),
+        parameterName: z.string().min(1),
+        value: SecretInputSchema.register(sensitive),
+      })
+      .strict(),
   ])
   .optional();
 

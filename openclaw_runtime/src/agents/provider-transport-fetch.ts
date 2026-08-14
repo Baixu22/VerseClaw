@@ -31,6 +31,7 @@ import { resolveDebugProxySettings } from "../proxy-capture/env.js";
 import { emitModelTransportDebug } from "./model-transport-debug.js";
 import { formatModelTransportDebugUrl } from "./model-transport-url.js";
 import { ProviderHttpError, readResponseTextLimited } from "./provider-http-errors.js";
+import { appendProviderRequestAuthQuery } from "./provider-request-auth.js";
 import {
   isProviderPayloadTraceEnabled,
   recordProviderPayloadTrace,
@@ -809,15 +810,17 @@ export function buildGuardedModelFetch(
   return async (input, init) => {
     let localServiceLease: ProviderLocalServiceLease | undefined;
     const request = input instanceof Request ? new Request(input, init) : undefined;
-    const url =
+    const url = appendProviderRequestAuthQuery(
       request?.url ??
-      (input instanceof URL
-        ? input.toString()
-        : typeof input === "string"
-          ? input
-          : (() => {
-              throw new Error("Unsupported fetch input for transport-aware model request");
-            })());
+        (input instanceof URL
+          ? input.toString()
+          : typeof input === "string"
+            ? input
+            : (() => {
+                throw new Error("Unsupported fetch input for transport-aware model request");
+              })()),
+      requestConfig.auth,
+    );
     const policy = resolveModelTransportSsrFPolicy({
       model,
       url,

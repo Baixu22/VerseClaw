@@ -18,6 +18,11 @@ export type ConfiguredProviderRequestAuth =
       headerName: string;
       value: SecretInput;
       prefix?: string;
+    }
+  | {
+      mode: "query";
+      parameterName: string;
+      value: SecretInput;
     };
 
 /** TLS material and verification knobs for provider or proxy connections. */
