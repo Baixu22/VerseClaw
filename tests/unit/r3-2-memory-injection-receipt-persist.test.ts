@@ -3,7 +3,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { persistMemoryInjectionReceipt } from "../../openclaw_runtime/src/context-engine/memory-injection-receipt";
+import {
+  listMemoryInjectionReceipts,
+  persistMemoryInjectionReceipt,
+} from "../../openclaw_runtime/src/context-engine/memory-injection-receipt";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
 
 const tempRoots: string[] = [];
@@ -50,6 +53,40 @@ describe("R3-2: memory injection receipt persistence", () => {
       database: { env: process.env, path: path.join(stateDir, "openclaw-state.db") },
     });
     expect(result.persisted).toBe(true);
+  });
+
+  it("lists sanitized panel-ready receipts (persist -> list roundtrip)", () => {
+    const database = { env: process.env, path: path.join(stateDir, "openclaw-state.db") };
+    const persistResult = persistMemoryInjectionReceipt({
+      identity: {
+        runtimeMode: "source",
+        sessionKey: "s1",
+        providerId: "compass",
+        adapterId: "compass-pre-reply-retrieval",
+      },
+      callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
+      correlationDigest: DIGEST,
+      summary: {
+        selectedFactIds: ["fact-a"],
+        omittedFactIds: ["fact-b"],
+        selectedChars: 40,
+        requestedChars: 90,
+        source: "compass-pre-reply-retrieval",
+      },
+      database,
+    });
+    expect(persistResult.persisted).toBe(true);
+
+    const entries = listMemoryInjectionReceipts({ sessionKey: "s1", database });
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.source).toBe("compass-pre-reply-retrieval");
+    expect(entries[0]?.selected).toEqual(["ref:memory:fact-a"]);
+    expect(entries[0]?.omitted).toEqual(["ref:memory:fact-b"]);
+    expect(entries[0]?.budgetCharsApplied).toBe(40);
+    expect(entries[0]?.budgetCharsRequested).toBe(90);
+
+    // Other sessions do not see this receipt.
+    expect(listMemoryInjectionReceipts({ sessionKey: "other", database })).toHaveLength(0);
   });
 
   it("returns persisted:false when the database cannot open (observational, no throw)", () => {
