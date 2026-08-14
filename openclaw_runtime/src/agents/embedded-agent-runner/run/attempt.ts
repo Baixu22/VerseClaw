@@ -250,6 +250,10 @@ import {
   createMemoryContextProviders,
   defaultMainSessionRoleResolver,
 } from "../../../context-engine/register-memory-providers.js";
+import { resolveMemoryInjectPilotConfig } from "../../../context-engine/chat-turn-memory-injection.js";
+import { createRuntimeMemoryContextProvider } from "../../../context-engine/memory-context-provider.js";
+import { createRuntimeMemoryRuntimeIntegration } from "../../../runtime-core/memory-runtime-integration.js";
+import type { RuntimeMemoryQueryableFact } from "../../../runtime-core/memory-context.js";
 import {
   bindSessionWorkspaceFingerprint,
   resolveTrustedWorkspaceFingerprint,
@@ -2044,14 +2048,42 @@ export async function runEmbeddedAttempt(
                 ),
             }
           : {}),
-        memoryProviderFactory: () =>
-          roleMemoryProjectionEnabled
-            ? []
-            : createMemoryContextProviders({
+        memoryProviderFactory: () => {
+          // R3-1.2: build the memory provider set additively — opening the
+          // role-memory contextBlock projection must never REPLACE the working
+          // provider list with []. It only skips the role-memory provider that
+          // the projection now owns (avoiding double injection); other
+          // providers (e.g. runtime-memory below) survive.
+          const providers = !roleMemoryProjectionEnabled
+            ? createMemoryContextProviders({
                 roleMemory: {
                   resolveRoleName: defaultMainSessionRoleResolver,
                 },
+              })
+            : [];
+          // R3-1.1: wire the Runtime Memory provider when the pilot requests it
+          // (runtime.memory.injectPilot.enabled + providers includes
+          // 'runtime-memory'). The provider self-gates on runtime.memory.provider.
+          const pilotConfig = resolveMemoryInjectPilotConfig(params.config);
+          if (
+            pilotConfig.enabled &&
+            pilotConfig.providers.includes("runtime-memory")
+          ) {
+            providers.push(
+              createRuntimeMemoryContextProvider({
+                config: params.config,
+                queryFacts: (query) => {
+                  const integration = createRuntimeMemoryRuntimeIntegration({
+                    config: params.config,
+                  });
+                  const { store } = integration.loadStore();
+                  return store.queryFacts(query) as readonly RuntimeMemoryQueryableFact[];
+                },
               }),
+            );
+          }
+          return providers;
+        },
         deferProjection: true,
       },
       {
