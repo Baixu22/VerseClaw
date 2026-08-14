@@ -44,6 +44,7 @@ interface SettingsState {
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
+  runActivityKeepExpandedOnComplete: boolean;
   uiDepthMode: UiDepthMode;
   workProviders: WorkProviderConfig;
   sessionActivityPanelEnabled: boolean;
@@ -80,6 +81,7 @@ interface SettingsState {
   setSidebarCollapsed: (value: boolean) => void;
   setSidebarWidth: (value: number) => void;
   setDevModeUnlocked: (value: boolean) => void;
+  setRunActivityKeepExpandedOnComplete: (value: boolean) => void;
   setUiDepthMode: (value: UiDepthMode) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   setSessionActivityPanelEnabled: (value: boolean) => void;
@@ -114,6 +116,7 @@ const defaultSettings = {
   sidebarCollapsed: false,
   sidebarWidth: 275,
   devModeUnlocked: false,
+  runActivityKeepExpandedOnComplete: true,
   uiDepthMode: 'basic' as UiDepthMode,
   workProviders: {} as WorkProviderConfig,
   sessionActivityPanelEnabled: true,
@@ -211,6 +214,10 @@ export const useSettingsStore = create<SettingsState>()(
       setDevModeUnlocked: (devModeUnlocked) => {
         set({ devModeUnlocked });
         void hostApi.settings.set('devModeUnlocked', devModeUnlocked).catch(() => { });
+      },
+      setRunActivityKeepExpandedOnComplete: (runActivityKeepExpandedOnComplete) => {
+        set({ runActivityKeepExpandedOnComplete });
+        void hostApi.settings.set('runActivityKeepExpandedOnComplete', runActivityKeepExpandedOnComplete).catch(() => { });
       },
       setUiDepthMode: (uiDepthMode) => set({ uiDepthMode }),
       setWorkProviderEnabled: (providerId, enabled) => {

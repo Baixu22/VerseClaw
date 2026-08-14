@@ -84,4 +84,32 @@ describe('ExecutionGraphCard flat activity rows', () => {
     expect(pre!.textContent).toBe(subagentStep.detail);
     expect(pre!.parentElement?.className).toContain('border-l');
   });
+
+  it('supports controlled detail expansion for card-level persistence', () => {
+    const onStepExpandedChange = vi.fn();
+    const { rerender } = render(
+      <ExecutionGraphCard
+        agentLabel="main"
+        steps={[subagentStep]}
+        active={false}
+        expandedStepIds={new Set()}
+        onStepExpandedChange={onStepExpandedChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('main subagent'));
+    expect(onStepExpandedChange).toHaveBeenCalledWith(subagentStep.id, true);
+    expect(screen.queryByTestId('chat-execution-step-detail')).not.toBeInTheDocument();
+
+    rerender(
+      <ExecutionGraphCard
+        agentLabel="main"
+        steps={[subagentStep]}
+        active={false}
+        expandedStepIds={new Set([subagentStep.id])}
+        onStepExpandedChange={onStepExpandedChange}
+      />,
+    );
+    expect(screen.getByTestId('chat-execution-step-detail')).toHaveTextContent(subagentStep.detail!);
+  });
 });

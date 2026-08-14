@@ -113,6 +113,18 @@ export function RecoverySettingsSection() {
           ]} />}
         />
         <SettingsRow
+          title={t('settings:recovery.completedRunsExpanded.title')}
+          description={t('settings:recovery.completedRunsExpanded.description')}
+          control={(
+            <SettingsSwitch
+              ariaLabel={t('settings:recovery.completedRunsExpanded.title')}
+              checked={settings.runActivityKeepExpandedOnComplete}
+              onChange={settings.setRunActivityKeepExpandedOnComplete}
+              testId="settings-run-activity-completed-expanded"
+            />
+          )}
+        />
+        <SettingsRow
           title={t('settings:recovery.showGit.title')}
           description={t('settings:recovery.showGit.description')}
           control={<SettingsSwitch ariaLabel={t('settings:recovery.showGit.title')} checked={settings.sessionActivityShowGit} onChange={settings.setSessionActivityShowGit} testId="settings-session-activity-show-git" />}
