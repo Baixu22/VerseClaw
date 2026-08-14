@@ -249,6 +249,14 @@
     "reason": "推奨理由",
     "noReason": "推奨理由は記録されていません。",
     "boundary": "ドラフトレビューのみ",
+    "sensitivityLabel": "機密度 {{level}}",
+    "sensitivity": {
+      "normal": "通常",
+      "secret_adjacent": "機密隣接",
+      "secret": "機密"
+    },
+    "tokenCost": "約 {{tokens}} トークン",
+    "keUnavailable": "KE レビューキューは利用不可 — runtime.memory.candidateGeneration を有効にしてください。",
     "context": "捕捉コンテキスト",
     "statusLabel": "ステータス",
     "missionId": "Mission",

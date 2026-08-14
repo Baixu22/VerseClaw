@@ -276,6 +276,14 @@
     "reason": "Recommendation",
     "noReason": "No recommendation reason recorded.",
     "boundary": "Draft review only",
+    "sensitivityLabel": "Sensitivity {{level}}",
+    "sensitivity": {
+      "normal": "Normal",
+      "secret_adjacent": "Secret-adjacent",
+      "secret": "Secret"
+    },
+    "tokenCost": "~{{tokens}} tokens",
+    "keUnavailable": "KE review queue unavailable — enable runtime.memory.candidateGeneration.",
     "context": "Capture Context",
     "statusLabel": "Status",
     "missionId": "Mission",
