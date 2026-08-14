@@ -46,7 +46,11 @@
     "TFE-0083",
     "TFE-0084",
     "TFE-0085",
-    "TFE-0086"
+    "TFE-0086",
+    "TFE-0104",
+    "TFE-0105",
+    "TFE-0106",
+    "TFE-0107"
   ],
   "edge_index": {
     "TF-0001": {
@@ -1099,13 +1103,106 @@
       ],
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0099"
+    },
+    "TF-0056": {
+      "blocking_edges": [],
+      "cross_edges": [],
+      "incoming": [
+        "TFE-0100",
+        "TFE-0101",
+        "TFE-0102",
+        "TFE-0103"
+      ],
+      "outgoing": [],
+      "tree_child_edges": [
+        "TFE-0100",
+        "TFE-0101",
+        "TFE-0102",
+        "TFE-0103"
+      ],
+      "tree_parent_edge": null
+    },
+    "TF-0057": {
+      "blocking_edges": [
+        "TFE-0100"
+      ],
+      "cross_edges": [
+        "TFE-0104",
+        "TFE-0105"
+      ],
+      "incoming": [
+        "TFE-0104",
+        "TFE-0105"
+      ],
+      "outgoing": [
+        "TFE-0100"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0100"
+    },
+    "TF-0058": {
+      "blocking_edges": [
+        "TFE-0101",
+        "TFE-0104"
+      ],
+      "cross_edges": [
+        "TFE-0104",
+        "TFE-0106"
+      ],
+      "incoming": [
+        "TFE-0106"
+      ],
+      "outgoing": [
+        "TFE-0101",
+        "TFE-0104"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0101"
+    },
+    "TF-0059": {
+      "blocking_edges": [
+        "TFE-0102",
+        "TFE-0105"
+      ],
+      "cross_edges": [
+        "TFE-0105",
+        "TFE-0107"
+      ],
+      "incoming": [
+        "TFE-0107"
+      ],
+      "outgoing": [
+        "TFE-0102",
+        "TFE-0105"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0102"
+    },
+    "TF-0060": {
+      "blocking_edges": [
+        "TFE-0103",
+        "TFE-0106",
+        "TFE-0107"
+      ],
+      "cross_edges": [
+        "TFE-0106",
+        "TFE-0107"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0103",
+        "TFE-0106",
+        "TFE-0107"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0103"
     }
   },
   "edge_type_counts": {
-    "child_of": 51,
+    "child_of": 55,
     "clarifies": 0,
     "contributes_to": 4,
-    "depends_on": 35,
+    "depends_on": 39,
     "derived_from": 3,
     "duplicates": 0,
     "related_to": 2,
@@ -2297,10 +2394,106 @@
       "to": "TF-0010",
       "type": "child_of",
       "updated_at": "2026-08-12T04:33:41.813808Z"
+    },
+    "TFE-0100": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.009807Z",
+      "created_from_session": null,
+      "from": "TF-0057",
+      "id": "TFE-0100",
+      "reason": "B1 schema 是独立 Workflow Viz 重建的事实源基础。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-14T16:31:44.009807Z"
+    },
+    "TFE-0101": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.010535Z",
+      "created_from_session": null,
+      "from": "TF-0058",
+      "id": "TFE-0101",
+      "reason": "普通会话 producer 是 B1 事实源产写。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-14T16:31:44.010535Z"
+    },
+    "TFE-0102": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.010535Z",
+      "created_from_session": null,
+      "from": "TF-0059",
+      "id": "TFE-0102",
+      "reason": "Gateway 流是 B1 事实源读取接口。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-14T16:31:44.010535Z"
+    },
+    "TFE-0103": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.011108Z",
+      "created_from_session": null,
+      "from": "TF-0060",
+      "id": "TFE-0103",
+      "reason": "Electron 可恢复供数是 B1 的最后一张卡。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-14T16:31:44.011108Z"
+    },
+    "TFE-0104": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.011108Z",
+      "created_from_session": null,
+      "from": "TF-0058",
+      "id": "TFE-0104",
+      "reason": "B1-02 消费 v2 schema。",
+      "to": "TF-0057",
+      "type": "depends_on",
+      "updated_at": "2026-08-14T16:31:44.011108Z"
+    },
+    "TFE-0105": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.013899Z",
+      "created_from_session": null,
+      "from": "TF-0059",
+      "id": "TFE-0105",
+      "reason": "B1-03 消费 v2 解析与回放契约。",
+      "to": "TF-0057",
+      "type": "depends_on",
+      "updated_at": "2026-08-14T16:31:44.013899Z"
+    },
+    "TFE-0106": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.013899Z",
+      "created_from_session": null,
+      "from": "TF-0060",
+      "id": "TFE-0106",
+      "reason": "Electron 供数依赖普通会话 v2 producer。",
+      "to": "TF-0058",
+      "type": "depends_on",
+      "updated_at": "2026-08-14T16:31:44.013899Z"
+    },
+    "TFE-0107": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-14T16:31:44.014432Z",
+      "created_from_session": null,
+      "from": "TF-0060",
+      "id": "TFE-0107",
+      "reason": "Electron 供数依赖 Gateway readFrom/subscribe。",
+      "to": "TF-0059",
+      "type": "depends_on",
+      "updated_at": "2026-08-14T16:31:44.014432Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-08-12T10:47:53.056699Z",
+  "generated_at": "2026-08-14T17:13:49.497602Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -6095,6 +6288,271 @@
       "summary": "GitHub #28 相对路径解析错误已修复：ls/read/write/exec 等相对路径按 session 可信 workspace 解析，不再落到 ~/.openclaw/workspace 触发全盘搜索；与 #31 同根因同 spec，测试矩阵全绿。",
       "title": "修复 GitHub #28：agent 相对路径解析到错误 workspace",
       "updated_at": "2026-08-12T10:47:49.078426Z"
+    },
+    "TF-0056": {
+      "acceptance_criteria": [
+        "各批次按依赖和 Harness task spec 验收",
+        "clean detached worktree 复测关键测试与构建"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.94,
+        "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+        "validation_plan": [
+          "每卡先运行 Harness context",
+          "运行 task spec、类型检查、构建、comms 与 clean detached 验证",
+          "检查不新增 renderer 直连 IPC/Gateway 调用"
+        ],
+        "why_not_enough": "B1-04 之后仍需要 B2/B3 的独立实现与验收。",
+        "why_this_task": "该独立任务树准确表达事件事实源到可恢复投影的依赖，避免混入 UI 或 Runtime Authority 主线。"
+      },
+      "alignment_records": [],
+      "assumptions": [
+        "当前分支 codex/wv-b1-02-03 保持为 WV 后续开发分支且不自行 rebase/merge",
+        "B1-01 至 B1-03 的三个现有提交为已完成事实"
+      ],
+      "children": [
+        "TF-0057",
+        "TF-0058",
+        "TF-0059",
+        "TF-0060"
+      ],
+      "confidence": 0.94,
+      "context_tags": [
+        "workflow-viz",
+        "trajectory",
+        "recoverable-projection"
+      ],
+      "created_at": "2026-08-14T16:31:44.008782Z",
+      "deprecated_at": null,
+      "derived_progress": 0.0,
+      "desired_outcomes": [
+        "v2 生命周期事件成为统一事实源",
+        "Electron 可从事件流和持久日志恢复",
+        "装配和展示层只消费确定性投影"
+      ],
+      "deviations": [],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [],
+      "execution_hints": [],
+      "id": "TF-0056",
+      "kind": "global_task",
+      "non_goals": [
+        "TF-0021 UI-only 工作",
+        "TF-0010 Runtime Authority 收敛",
+        "提前实施 B2 或 B3"
+      ],
+      "primary_parent": null,
+      "priority": 1,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "让 Workflow Viz 基于可验证、可重放、可恢复的运行轨迹，而非内存快照和并行 reducer。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "稳定 ID、全量状态与 seq 回放",
+        "v1 文件迁移期兼容",
+        "不创建第二轨迹格式或权威来源"
+      ],
+      "source_sessions": [],
+      "status": "in_progress",
+      "success_metrics": [],
+      "summary": "以 openclaw-trajectory v2 作为唯一事实源，按可恢复事件流供给 Electron、装配层和展示层。",
+      "title": "Workflow Viz 事实源与可恢复投影重建",
+      "updated_at": "2026-08-14T16:31:44.009807Z"
+    },
+    "TF-0057": {
+      "acceptance_criteria": [],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [],
+      "created_at": "2026-08-14T16:31:44.009807Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "unknown",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "c9d48b580",
+        "harness/specs/tasks/workflow-viz-b1-01-trajectory-event-schema.md"
+      ],
+      "execution_hints": [],
+      "id": "TF-0057",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0056",
+      "priority": 3,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "v2 schema/replay 与 v1 兼容读取已在 c9d48b580 完成。",
+      "title": "WV-B1-01 轨迹事件 Schema 契约化",
+      "updated_at": "2026-08-14T16:31:44.009807Z"
+    },
+    "TF-0058": {
+      "acceptance_criteria": [],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [],
+      "created_at": "2026-08-14T16:31:44.009807Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "unknown",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "4451f2704",
+        "harness/specs/tasks/workflow-viz-b1-02-ordinary-session-producer.md"
+      ],
+      "execution_hints": [],
+      "id": "TF-0058",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0056",
+      "priority": 3,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "普通 embedded session v2 producer 已在 4451f2704 完成。",
+      "title": "WV-B1-02 普通会话结构事件产写",
+      "updated_at": "2026-08-14T16:31:44.009807Z"
+    },
+    "TF-0059": {
+      "acceptance_criteria": [],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [],
+      "created_at": "2026-08-14T16:31:44.009807Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "unknown",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "71d7268a0",
+        "harness/specs/tasks/workflow-viz-b1-03-gateway-trajectory-stream.md"
+      ],
+      "execution_hints": [],
+      "id": "TF-0059",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0056",
+      "priority": 3,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "Gateway readFrom/subscribe/unsubscribe 与 gap repair 已在 71d7268a0 完成。",
+      "title": "WV-B1-03 Gateway 轨迹订阅与补拉",
+      "updated_at": "2026-08-14T16:31:44.009807Z"
+    },
+    "TF-0060": {
+      "acceptance_criteria": [
+        "重启后历史会话从持久日志重建",
+        "B0-03 回归基线通过",
+        "无 renderer 直连 IPC/Gateway 调用"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.96,
+        "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+        "validation_plan": [
+          "B1-04 Harness task spec",
+          "Electron/Main 单测",
+          "comms、构建和 clean detached 复测"
+        ],
+        "why_not_enough": "B2/B3 仍需后续独立卡完成。",
+        "why_this_task": "B1-02 与 B1-03 已完成，B1-04 是关键路径上唯一依赖已满足的供数卡。"
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.96,
+      "context_tags": [],
+      "created_at": "2026-08-14T16:31:44.009807Z",
+      "deprecated_at": null,
+      "derived_progress": 0.0,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [],
+      "execution_hints": [],
+      "id": "TF-0060",
+      "kind": "task",
+      "non_goals": [
+        "客户端装配和展示层迁移",
+        "新增 Gateway RPC 或第二轨迹格式"
+      ],
+      "primary_parent": "TF-0056",
+      "priority": 1,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "让桌面供数基于可恢复的持久事件流。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "消费 B1-02/B1-03 的同一轨迹事实源",
+        "保留 v1 历史读取",
+        "不改 renderer、B2/B3 或 DCS 文件"
+      ],
+      "source_sessions": [],
+      "status": "in_progress",
+      "success_metrics": [],
+      "summary": "Electron Main 改为订阅 v2 轨迹事件并按需 readFrom；trajectory-index 仅保留 v1 历史兼容兜底。",
+      "title": "WV-B1-04 Electron 供数改造",
+      "updated_at": "2026-08-14T16:55:58.421901Z"
     }
   },
   "reason": "rebuild",
@@ -6102,7 +6560,8 @@
     "TF-0001",
     "TF-0007",
     "TF-0010",
-    "TF-0021"
+    "TF-0021",
+    "TF-0056"
   ],
   "schema_version": 1,
   "status_legend": {
@@ -6124,6 +6583,7 @@
       "TF-0021",
       "TF-0025",
       "TF-0028",
+      "TF-0060",
       "TF-0006",
       "TF-0027",
       "TF-0038",
@@ -6189,7 +6649,10 @@
         "TF-0052",
         "TF-0053",
         "TF-0054",
-        "TF-0055"
+        "TF-0055",
+        "TF-0057",
+        "TF-0058",
+        "TF-0059"
       ],
       "in_progress": [
         "TF-0007",
@@ -6197,7 +6660,9 @@
         "TF-0021",
         "TF-0025",
         "TF-0028",
-        "TF-0029"
+        "TF-0029",
+        "TF-0056",
+        "TF-0060"
       ],
       "proposed": [
         "TF-0026",
@@ -6222,7 +6687,8 @@
       ]
     },
     "evergreen_open_goals": [
-      "TF-0010"
+      "TF-0010",
+      "TF-0056"
     ],
     "open": [
       "TF-0006",
@@ -6250,7 +6716,9 @@
       "TF-0040",
       "TF-0041",
       "TF-0042",
-      "TF-0047"
+      "TF-0047",
+      "TF-0056",
+      "TF-0060"
     ],
     "ready": [],
     "review_needed": [
@@ -6260,10 +6728,10 @@
   },
   "summary": {
     "blocked_count": 4,
-    "done_count": 26,
-    "edge_count": 98,
-    "node_count": 55,
-    "open_count": 26,
+    "done_count": 29,
+    "edge_count": 106,
+    "node_count": 60,
+    "open_count": 28,
     "review_needed_count": 2
   },
   "tree_edges": [
@@ -6317,7 +6785,11 @@
     "TFE-0096",
     "TFE-0097",
     "TFE-0098",
-    "TFE-0099"
+    "TFE-0099",
+    "TFE-0100",
+    "TFE-0101",
+    "TFE-0102",
+    "TFE-0103"
   ],
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }

@@ -1174,5 +1174,101 @@
     "to": "TF-0010",
     "type": "child_of",
     "updated_at": "2026-08-12T04:33:41.813808Z"
+  },
+  "TFE-0100": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.009807Z",
+    "created_from_session": null,
+    "from": "TF-0057",
+    "id": "TFE-0100",
+    "reason": "B1 schema 是独立 Workflow Viz 重建的事实源基础。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T16:31:44.009807Z"
+  },
+  "TFE-0101": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.010535Z",
+    "created_from_session": null,
+    "from": "TF-0058",
+    "id": "TFE-0101",
+    "reason": "普通会话 producer 是 B1 事实源产写。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T16:31:44.010535Z"
+  },
+  "TFE-0102": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.010535Z",
+    "created_from_session": null,
+    "from": "TF-0059",
+    "id": "TFE-0102",
+    "reason": "Gateway 流是 B1 事实源读取接口。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T16:31:44.010535Z"
+  },
+  "TFE-0103": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.011108Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0103",
+    "reason": "Electron 可恢复供数是 B1 的最后一张卡。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T16:31:44.011108Z"
+  },
+  "TFE-0104": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.011108Z",
+    "created_from_session": null,
+    "from": "TF-0058",
+    "id": "TFE-0104",
+    "reason": "B1-02 消费 v2 schema。",
+    "to": "TF-0057",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T16:31:44.011108Z"
+  },
+  "TFE-0105": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.013899Z",
+    "created_from_session": null,
+    "from": "TF-0059",
+    "id": "TFE-0105",
+    "reason": "B1-03 消费 v2 解析与回放契约。",
+    "to": "TF-0057",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T16:31:44.013899Z"
+  },
+  "TFE-0106": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.013899Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0106",
+    "reason": "Electron 供数依赖普通会话 v2 producer。",
+    "to": "TF-0058",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T16:31:44.013899Z"
+  },
+  "TFE-0107": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-14T16:31:44.014432Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0107",
+    "reason": "Electron 供数依赖 Gateway readFrom/subscribe。",
+    "to": "TF-0059",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T16:31:44.014432Z"
   }
 }

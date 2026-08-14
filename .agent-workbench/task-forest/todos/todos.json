@@ -293,6 +293,76 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+      "validation_plan": [
+        "每卡先运行 Harness context",
+        "运行 task spec、类型检查、构建、comms 与 clean detached 验证",
+        "检查不新增 renderer 直连 IPC/Gateway 调用"
+      ],
+      "why_not_enough": "B1-04 之后仍需要 B2/B3 的独立实现与验收。",
+      "why_this_task": "该独立任务树准确表达事件事实源到可恢复投影的依赖，避免混入 UI 或 Runtime Authority 主线。"
+    },
+    "blocked_by": [],
+    "confidence": 0.94,
+    "context_tags": [
+      "workflow-viz",
+      "trajectory",
+      "recoverable-projection"
+    ],
+    "desired_outcomes": [
+      "v2 生命周期事件成为统一事实源",
+      "Electron 可从事件流和持久日志恢复",
+      "装配和展示层只消费确定性投影"
+    ],
+    "difficulty": "high",
+    "id": "TF-0056",
+    "kind": "global_task",
+    "next_action": "各批次按依赖和 Harness task spec 验收",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让 Workflow Viz 基于可验证、可重放、可恢复的运行轨迹，而非内存快照和并行 reducer。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [],
+    "title": "Workflow Viz 事实源与可恢复投影重建"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+      "validation_plan": [
+        "B1-04 Harness task spec",
+        "Electron/Main 单测",
+        "comms、构建和 clean detached 复测"
+      ],
+      "why_not_enough": "B2/B3 仍需后续独立卡完成。",
+      "why_this_task": "B1-02 与 B1-03 已完成，B1-04 是关键路径上唯一依赖已满足的供数卡。"
+    },
+    "blocked_by": [],
+    "confidence": 0.96,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0060",
+    "kind": "task",
+    "next_action": "重启后历史会话从持久日志重建",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让桌面供数基于可恢复的持久事件流。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [],
+    "title": "WV-B1-04 Electron 供数改造"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
