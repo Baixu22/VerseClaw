@@ -333,7 +333,21 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         // Live references captured for the test assertions below.
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions };
+        const invokeMap = (ipcMain as unknown as { _invokeHandlers?: Map<string, unknown> })._invokeHandlers;
+        let selfTest = 'n/a';
+        try {
+          const installed = invokeMap?.get('host:invoke') as unknown as
+            | ((event: unknown, request: unknown) => Promise<unknown>)
+            | undefined;
+          selfTest = JSON.stringify({
+            handlerCount: invokeMap?.size ?? -1,
+            installedIsFunction: typeof installed === 'function',
+            probe: await installed?.({ sender: null }, { id: 'probe', module: 'providers', action: 'probeAction', payload: {} }),
+          });
+        } catch (error) {
+          selfTest = `self-test error: ${String(error)}`;
+        }
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions, selfTest };
 
         return respond(request.id, {});
       });
@@ -448,7 +462,21 @@ test.describe('Verse Claw provider lifecycle', () => {
         }
 
         // Live references captured for the test assertions below.
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions };
+        const invokeMap = (ipcMain as unknown as { _invokeHandlers?: Map<string, unknown> })._invokeHandlers;
+        let selfTest = 'n/a';
+        try {
+          const installed = invokeMap?.get('host:invoke') as unknown as
+            | ((event: unknown, request: unknown) => Promise<unknown>)
+            | undefined;
+          selfTest = JSON.stringify({
+            handlerCount: invokeMap?.size ?? -1,
+            installedIsFunction: typeof installed === 'function',
+            probe: await installed?.({ sender: null }, { id: 'probe', module: 'providers', action: 'probeAction', payload: {} }),
+          });
+        } catch (error) {
+          selfTest = `self-test error: ${String(error)}`;
+        }
+        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions, selfTest };
 
         return respond(request.id, {});
       });
@@ -478,12 +506,13 @@ test.describe('Verse Claw provider lifecycle', () => {
 
     const captured = await electronApp.evaluate(async () => {
       const g = globalThis as unknown as {
-        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[] };
+        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[]; selfTest: string };
       };
       return {
         validateCalls: g.__r4E2eCapture?.validateCalls ?? [],
         savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [],
         allActions: g.__r4E2eCapture?.allActions ?? [],
+        selfTest: g.__r4E2eCapture?.selfTest ?? 'missing',
       };
     });
 
@@ -494,7 +523,7 @@ test.describe('Verse Claw provider lifecycle', () => {
       return s?.hostApiCalls ?? [];
     });
 
-    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}; renderer calls: ${JSON.stringify(rendererCalls.map((c) => ({ m: c.module, a: c.action, ok: c.ok, e: c.error })))}`).toBeGreaterThan(0);
+    expect(captured.validateCalls.length, `selfTest: ${captured.selfTest}; providers actions seen: ${JSON.stringify(captured.allActions)}; renderer validate/create: ${JSON.stringify(rendererCalls.filter((c) => c.module === 'providers' && (c.action === 'validateKey' || c.action === 'createAccount')).map((c) => ({ a: c.action, ok: c.ok, p: c.payload })))}`).toBeGreaterThan(0);
     expect(captured.savedAccounts.length).toBeGreaterThan(0);
     expect(captured.savedAccounts[0]).toMatchObject({
       requestAuth: { mode: 'query', parameterName: 'key' },
