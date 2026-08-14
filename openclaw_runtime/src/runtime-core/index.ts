@@ -25,6 +25,7 @@ export * from "./memory-embedding-provider.js";
 export * from "./memory-self-edit-tools.js";
 export * from "./memory-proposal-shadow.js";
 export * from "./ke-candidate-generation.js";
+export * from "./ke-retrieval-shadow.js";
 export * from "./memory-operator-inspection.js";
 export * from "./memory-read-hydration-shadow.js";
 export * from "./memory-read-hydration-consumer.js";

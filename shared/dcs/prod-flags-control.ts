@@ -209,6 +209,14 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     defaultEnabled: false,
   },
   {
+    id: 'sekb-retrieval-shadow',
+    catalog: mustFlag('sekb-retrieval-shadow'),
+    controlKind: 'config',
+    storeKey: 'dcsSekbRetrievalShadowEnabled',
+    targetKey: 'runtime.coding.sekb.retrievalShadow',
+    defaultEnabled: false,
+  },
+  {
     id: 'runtime-memory-persist',
     catalog: mustFlag('runtime-memory-persist'),
     controlKind: 'config',
