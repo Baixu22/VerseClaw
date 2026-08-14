@@ -124,7 +124,10 @@ test.describe('Verse Claw provider lifecycle', () => {
         if (request.action === 'list') return respond(request.id, statuses);
 
         if (request.action === 'validateKey') {
-          return respond(request.id, { valid: false, error: 'mock-consulted' });
+          if (body.apiKey !== 'sk-lm-test') {
+            return respond(request.id, { valid: false, error: `unexpected key: ${String(body.apiKey)}` });
+          }
+          return respond(request.id, { valid: true });
         }
 
         if (request.action === 'createAccount') {
@@ -265,94 +268,25 @@ test.describe('Verse Claw provider lifecycle', () => {
     await expect(page.getByTestId('provider-edit-save-moonshot-edit')).toHaveCount(0);
   });
 
-  test('add dialog persists custom-header auth format through validation and save', async ({ electronApp, page }) => {
-    await completeSetup(page);
-
-    await electronApp.evaluate(async ({ app: _app }) => {
-      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-
-      const validateCalls: Array<Record<string, unknown>> = [];
-      const savedAccounts: Array<Record<string, unknown>> = [];
-      const allActions: string[] = [];
-      let accounts: Array<Record<string, unknown>> = [];
-      let statuses: Array<Record<string, unknown>> = [];
-      const originalHostInvoke = (ipcMain as unknown as {
-        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
-      })._invokeHandlers?.get('host:invoke');
-
-      const respond = (id: unknown, data: unknown) => ({
-        id: typeof id === 'string' ? id : undefined,
-        ok: true,
-        data,
-      });
-
-      ipcMain.removeHandler('host:invoke');
-      ipcMain.handle('host:invoke', async (event: unknown, request: {
-        id?: string;
-        module?: string;
-        action?: string;
-        payload?: Record<string, unknown>;
-      }) => {
-        if (request?.module !== 'providers') {
-          return originalHostInvoke?.(event, request) ?? respond(request?.id, undefined);
-        }
-
-        const body = request.payload ?? {};
-        console.log('[r4-e2e] host:invoke', request.module, request.action);
-        if (request.action) allActions.push(request.action);
-        if (request.action === 'accounts') return respond(request.id, accounts);
-        if (request.action === 'accountKeyInfo') return respond(request.id, []);
-        if (request.action === 'vendors') return respond(request.id, []);
-        if (request.action === 'getDefaultAccount') return respond(request.id, { accountId: null });
-        if (request.action === 'list') return respond(request.id, statuses);
-
-        if (request.action === 'validateKey') {
-          validateCalls.push(body);
-          return respond(request.id, { valid: true });
-        }
-
-        if (request.action === 'createAccount') {
-          const account = body.account as Record<string, unknown>;
-          savedAccounts.push(account);
-          accounts = [account];
-          statuses = [{
-            id: account.id,
-            name: account.label,
-            type: account.vendorId,
-            baseUrl: account.baseUrl,
-            model: account.model,
-            enabled: account.enabled,
-            hasKey: Boolean(body.apiKey),
-            keyMasked: body.apiKey ? 'sk-***' : null,
-          }];
-          return respond(request.id, { success: true, account });
-        }
-
-        if (request.action === 'setDefaultAccount') {
-          return respond(request.id, { success: true });
-        }
-
-        // Live references captured for the test assertions below.
-        const invokeMap = (ipcMain as unknown as { _invokeHandlers?: Map<string, unknown> })._invokeHandlers;
-        let selfTest = 'n/a';
-        try {
-          const installed = invokeMap?.get('host:invoke') as unknown as
-            | ((event: unknown, request: unknown) => Promise<unknown>)
-            | undefined;
-          selfTest = JSON.stringify({
-            handlerCount: invokeMap?.size ?? -1,
-            installedIsFunction: typeof installed === 'function',
-            probe: await installed?.({ sender: null }, { id: 'probe', module: 'providers', action: 'probeAction', payload: {} }),
-          });
-        } catch (error) {
-          selfTest = `self-test error: ${String(error)}`;
-        }
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions, selfTest };
-
-        return respond(request.id, {});
-      });
+  // R4: custom provider auth format + capability metadata. Assertions read the
+  // renderer-side host call capture (window.__CLAWX_TEST__.hostApiCalls) so the
+  // real IPC chain (UI -> host-api -> Main) is exercised end to end.
+  async function providerHostCalls(page: Parameters<typeof completeSetup>[0]): Promise<Array<{
+    module: string;
+    action: string;
+    payload?: unknown;
+  }>> {
+    return page.evaluate(() => {
+      const surface = (window as unknown as {
+        __CLAWX_TEST__?: { hostApiCalls?: Array<{ module: string; action: string; payload?: unknown }> };
+      }).__CLAWX_TEST__;
+      return (surface?.hostApiCalls ?? []).filter(
+        (call) => call.module === 'providers' && (call.action === 'validateKey' || call.action === 'createAccount'),
+      );
     });
+  }
 
+  async function fillCustomProviderBasics(page: Parameters<typeof completeSetup>[0], label: string): Promise<void> {
     await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
@@ -361,176 +295,65 @@ test.describe('Verse Claw provider lifecycle', () => {
     await expect(page.getByTestId('add-provider-dialog')).toBeVisible();
 
     await page.getByTestId('add-provider-type-custom').click();
+    await page.getByTestId('add-provider-name-input').fill(label);
+    await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
+    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
+    await page.getByTestId('add-provider-model-id-input').fill('local-model');
+  }
+
+  test('add dialog sends the custom-header auth format to validation and save', async ({ page }) => {
+    await completeSetup(page);
+    await fillCustomProviderBasics(page, 'Header Auth Custom');
+
     await page.getByTestId('add-provider-auth-method-custom-header').click();
     await expect(page.getByTestId('add-provider-auth-header-name')).toBeVisible();
     await page.getByTestId('add-provider-auth-header-name').fill('X-API-Key');
     await page.getByTestId('add-provider-auth-header-prefix').fill('Bearer ');
-    await page.getByTestId('add-provider-name-input').fill('Header Auth Custom');
-    await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
-    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
-    await page.getByTestId('add-provider-model-id-input').fill('local-model');
     await page.getByTestId('add-provider-submit-button').click();
 
     await expect(page.getByTestId('provider-card-custom')).toContainText('Header Auth Custom');
 
-    const captured = await electronApp.evaluate(async () => {
-      const g = globalThis as unknown as {
-        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[] };
-      };
-      return {
-        validateCalls: g.__r4E2eCapture?.validateCalls ?? [],
-        savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [],
-        allActions: g.__r4E2eCapture?.allActions ?? [],
-      };
-    });
+    const calls = await providerHostCalls(page);
+    const validateCall = calls.find((call) => call.action === 'validateKey');
+    const createCall = calls.find((call) => call.action === 'createAccount');
 
-    expect(captured.validateCalls.length, `providers actions seen: ${JSON.stringify(captured.allActions)}`).toBeGreaterThan(0);
-    expect(captured.validateCalls[0].options).toMatchObject({
-      auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' },
+    expect(validateCall?.payload).toMatchObject({
+      options: { auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
     });
-    expect(captured.savedAccounts.length).toBeGreaterThan(0);
-    expect(captured.savedAccounts[0]).toMatchObject({
-      requestAuth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' },
+    expect(createCall?.payload).toMatchObject({
+      account: { requestAuth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
     });
   });
 
-  test('add dialog persists query auth and declared model capabilities', async ({ electronApp, page }) => {
+  test('add dialog persists query auth and declared model capabilities', async ({ page }) => {
     await completeSetup(page);
+    await fillCustomProviderBasics(page, 'Query Auth Custom');
 
-    await electronApp.evaluate(async ({ app: _app }) => {
-      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-
-      const validateCalls: Array<Record<string, unknown>> = [];
-      const savedAccounts: Array<Record<string, unknown>> = [];
-      const allActions: string[] = [];
-      let accounts: Array<Record<string, unknown>> = [];
-      let statuses: Array<Record<string, unknown>> = [];
-      const originalHostInvoke = (ipcMain as unknown as {
-        _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
-      })._invokeHandlers?.get('host:invoke');
-
-      const respond = (id: unknown, data: unknown) => ({
-        id: typeof id === 'string' ? id : undefined,
-        ok: true,
-        data,
-      });
-
-      ipcMain.removeHandler('host:invoke');
-      ipcMain.handle('host:invoke', async (event: unknown, request: {
-        id?: string;
-        module?: string;
-        action?: string;
-        payload?: Record<string, unknown>;
-      }) => {
-        if (request?.module !== 'providers') {
-          return originalHostInvoke?.(event, request) ?? respond(request?.id, undefined);
-        }
-
-        const body = request.payload ?? {};
-        console.log('[r4-e2e] host:invoke', request.module, request.action);
-        if (request.action) allActions.push(request.action);
-        if (request.action === 'accounts') return respond(request.id, accounts);
-        if (request.action === 'accountKeyInfo') return respond(request.id, []);
-        if (request.action === 'vendors') return respond(request.id, []);
-        if (request.action === 'getDefaultAccount') return respond(request.id, { accountId: null });
-        if (request.action === 'list') return respond(request.id, statuses);
-
-        if (request.action === 'validateKey') {
-          validateCalls.push(body);
-          return respond(request.id, { valid: true });
-        }
-
-        if (request.action === 'createAccount') {
-          const account = body.account as Record<string, unknown>;
-          savedAccounts.push(account);
-          accounts = [account];
-          statuses = [{
-            id: account.id,
-            name: account.label,
-            type: account.vendorId,
-            baseUrl: account.baseUrl,
-            model: account.model,
-            enabled: account.enabled,
-            hasKey: Boolean(body.apiKey),
-            keyMasked: body.apiKey ? 'sk-***' : null,
-          }];
-          return respond(request.id, { success: true, account });
-        }
-
-        if (request.action === 'setDefaultAccount') {
-          return respond(request.id, { success: true });
-        }
-
-        // Live references captured for the test assertions below.
-        const invokeMap = (ipcMain as unknown as { _invokeHandlers?: Map<string, unknown> })._invokeHandlers;
-        let selfTest = 'n/a';
-        try {
-          const installed = invokeMap?.get('host:invoke') as unknown as
-            | ((event: unknown, request: unknown) => Promise<unknown>)
-            | undefined;
-          selfTest = JSON.stringify({
-            handlerCount: invokeMap?.size ?? -1,
-            installedIsFunction: typeof installed === 'function',
-            probe: await installed?.({ sender: null }, { id: 'probe', module: 'providers', action: 'probeAction', payload: {} }),
-          });
-        } catch (error) {
-          selfTest = `self-test error: ${String(error)}`;
-        }
-        (globalThis as unknown as Record<string, unknown>).__r4E2eCapture = { validateCalls, savedAccounts, allActions, selfTest };
-
-        return respond(request.id, {});
-      });
-    });
-
-    await page.getByTestId('sidebar-nav-settings').click();
-    await page.getByTestId('settings-nav-models').click();
-    await expect(page.getByTestId('providers-settings')).toBeVisible();
-
-    await page.getByTestId('providers-add-button').click();
-    await expect(page.getByTestId('add-provider-dialog')).toBeVisible();
-
-    await page.getByTestId('add-provider-type-custom').click();
     await page.getByTestId('add-provider-auth-method-query').click();
     await expect(page.getByTestId('add-provider-auth-query-param')).toBeVisible();
     await page.getByTestId('add-provider-auth-query-param').fill('key');
     await page.getByTestId('add-provider-context-window').fill('128000');
     await page.getByTestId('add-provider-max-tokens').fill('8192');
     await page.getByTestId('add-provider-supports-vision').click();
-    await page.getByTestId('add-provider-name-input').fill('Query Auth Custom');
-    await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
-    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
-    await page.getByTestId('add-provider-model-id-input').fill('local-model');
     await page.getByTestId('add-provider-submit-button').click();
 
     await expect(page.getByTestId('provider-card-custom')).toContainText('Query Auth Custom');
 
-    const captured = await electronApp.evaluate(async () => {
-      const g = globalThis as unknown as {
-        __r4E2eCapture?: { validateCalls: Array<Record<string, unknown>>; savedAccounts: Array<Record<string, unknown>>; allActions: string[]; selfTest: string };
-      };
-      return {
-        validateCalls: g.__r4E2eCapture?.validateCalls ?? [],
-        savedAccounts: g.__r4E2eCapture?.savedAccounts ?? [],
-        allActions: g.__r4E2eCapture?.allActions ?? [],
-        selfTest: g.__r4E2eCapture?.selfTest ?? 'missing',
-      };
-    });
+    const calls = await providerHostCalls(page);
+    const validateCall = calls.find((call) => call.action === 'validateKey');
+    const createCall = calls.find((call) => call.action === 'createAccount');
 
-    const rendererCalls = await page.evaluate(() => {
-      const s = (window as unknown as {
-        __CLAWX_TEST__?: { hostApiCalls?: Array<{ module: string; action: string; payload?: unknown; ok?: boolean; error?: string }> };
-      }).__CLAWX_TEST__;
-      return s?.hostApiCalls ?? [];
+    expect(validateCall?.payload).toMatchObject({
+      options: { auth: { mode: 'query', parameterName: 'key' } },
     });
-
-    expect(captured.validateCalls.length, `selfTest: ${captured.selfTest}; providers actions seen: ${JSON.stringify(captured.allActions)}; renderer validate/create: ${JSON.stringify(rendererCalls.filter((c) => c.module === 'providers' && (c.action === 'validateKey' || c.action === 'createAccount')).map((c) => ({ a: c.action, ok: c.ok, p: c.payload })))}`).toBeGreaterThan(0);
-    expect(captured.savedAccounts.length).toBeGreaterThan(0);
-    expect(captured.savedAccounts[0]).toMatchObject({
-      requestAuth: { mode: 'query', parameterName: 'key' },
-      modelProfile: {
-        contextWindow: 128000,
-        maxTokens: 8192,
-        supportsVision: true,
+    expect(createCall?.payload).toMatchObject({
+      account: {
+        requestAuth: { mode: 'query', parameterName: 'key' },
+        modelProfile: {
+          contextWindow: 128000,
+          maxTokens: 8192,
+          supportsVision: true,
+        },
       },
     });
   });
