@@ -86,6 +86,35 @@ export class CircuitBreaker {
     }
   }
 
+  async executeAsync<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.#state === "open") {
+      if (this.#shouldTransitionToHalfOpen()) {
+        this.#transitionToHalfOpen();
+      } else {
+        throw new CircuitBreakerOpenError(this.getSnapshot());
+      }
+    }
+    if (this.#state === "half-open" && this.#halfOpenInProgress >= this.#halfOpenMaxCalls) {
+      throw new CircuitBreakerOpenError(this.getSnapshot());
+    }
+    const halfOpenCall = this.#state === "half-open";
+    if (halfOpenCall) {
+      this.#halfOpenInProgress += 1;
+    }
+    try {
+      const result = await fn();
+      this.#onSuccess();
+      return result;
+    } catch (error) {
+      this.#onFailure();
+      throw error;
+    } finally {
+      if (halfOpenCall) {
+        this.#halfOpenInProgress = Math.max(0, this.#halfOpenInProgress - 1);
+      }
+    }
+  }
+
   getState(): CircuitBreakerState {
     if (this.#state === "open" && this.#shouldTransitionToHalfOpen()) {
       return "half-open";
