@@ -899,8 +899,14 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
     }));
     expect(stale.dimensions.find((dimension) => dimension.id === 'evidence-completeness')?.findings)
       .toEqual(expect.arrayContaining([
-        expect.objectContaining({ id: 'evidence-stale:deep-test', severity: 'warn' }),
+        expect.objectContaining({ id: 'evidence-stale:deep-test', severity: 'fail' }),
       ]));
+    // R5-2: 过期证据是 hard veto —— 必须让报告整体 fail、成熟度 blocked、进入 disqualifiers。
+    expect(stale.status).toBe('fail');
+    expect(stale.maturityLevel).toBe('blocked');
+    expect(stale.disqualifiers).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'evidence-stale:deep-test', severity: 'fail' }),
+    ]));
 
     const sourceNewer = buildAuditReport({
       ...baseInputs,
@@ -919,8 +925,13 @@ dist-electron/main/index.js  834.50 kB │ gzip: 247.48 kB
     });
     expect(sourceNewer.dimensions.find((dimension) => dimension.id === 'evidence-completeness')?.findings)
       .toEqual(expect.arrayContaining([
-        expect.objectContaining({ id: 'evidence-source-newer:deep-test', severity: 'warn' }),
+        expect.objectContaining({ id: 'evidence-source-newer:deep-test', severity: 'fail' }),
       ]));
+    // R5-2: 证据比 Agent Dev 源文件旧同样是 hard veto。
+    expect(sourceNewer.status).toBe('fail');
+    expect(sourceNewer.disqualifiers).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'evidence-source-newer:deep-test', severity: 'fail' }),
+    ]));
   });
 
   it('parses audit CLI reporting mode and classifies maturity levels', () => {

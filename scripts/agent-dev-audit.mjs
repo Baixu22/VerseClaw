@@ -422,14 +422,14 @@ function evaluateEvidenceFreshness({ evidenceInventory }) {
     } else if (item.generated && item.ageHours != null && item.ageHours > AUDIT_POLICY.maxEvidenceAgeHours) {
       findings.push(finding(
         `evidence-stale:${item.id}`,
-        'warn',
+        'fail',
         `${item.path} is ${item.ageHours}h old, beyond the ${AUDIT_POLICY.maxEvidenceAgeHours}h freshness window.`,
         'Refresh Workbench, deep-test, quality, and audit evidence before final review.',
       ));
     } else if (item.generated && item.sourceFresh === false) {
       findings.push(finding(
         `evidence-source-newer:${item.id}`,
-        'warn',
+        'fail',
         `${item.path} is older than relevant Agent Dev source ${item.newestRelevantSource?.path ?? 'unknown'}.`,
         'Regenerate Agent Dev Workbench, deep-test, quality, and audit evidence after changing Agent Dev control-plane files.',
       ));
