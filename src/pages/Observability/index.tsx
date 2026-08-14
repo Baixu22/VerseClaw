@@ -34,8 +34,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useObservabilityStore } from '@/stores/observability';
 import type {
+  ObservabilityDashboardSnapshot,
   ObservabilityGraphNode,
   ObservabilityNodeDiagnostics,
+  ObservabilitySourceHealthEntry,
   ObservabilityTraceGraph,
   ObservabilityTraceGraphResult,
   ObservabilityTraceStatus,
@@ -175,6 +177,64 @@ function sourceStatusClass(status?: string): string {
     default:
       return 'border-black/10 text-muted-foreground dark:border-white/10';
   }
+}
+
+function sourceHealthClass(status: ObservabilitySourceHealthEntry['status']): string {
+  if (status === 'ok') return 'text-emerald-700 dark:text-emerald-400';
+  if (status === 'error') return 'text-red-700 dark:text-red-400';
+  return 'text-muted-foreground';
+}
+
+function sourceHealthIcon(status: ObservabilitySourceHealthEntry['status']) {
+  if (status === 'ok') return <CheckCircle2 className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />;
+  if (status === 'error') return <AlertTriangle className="h-4 w-4 text-red-700 dark:text-red-400" />;
+  return <Activity className="h-4 w-4 text-muted-foreground" />;
+}
+
+function SourceHealthPanel({ sourceHealth }: { sourceHealth?: ObservabilityDashboardSnapshot['sourceHealth'] }) {
+  const { t } = useTranslation('observability');
+  const unavailable: ObservabilitySourceHealthEntry = { status: 'empty', reason: 'not-configured' };
+  const sources: Array<{ id: 'runtime' | 'index' | 'trajectory'; health: ObservabilitySourceHealthEntry }> = [
+    { id: 'runtime', health: sourceHealth?.runtime ?? unavailable },
+    { id: 'index', health: sourceHealth?.index ?? unavailable },
+    { id: 'trajectory', health: sourceHealth?.trajectory ?? unavailable },
+  ];
+
+  return (
+    <section
+      className="flex h-full min-h-[520px] flex-col justify-center border border-dashed border-black/10 bg-black/[0.015] p-6 dark:border-white/10 dark:bg-white/[0.02]"
+      data-testid="observability-source-health"
+    >
+      <div className="mx-auto w-full max-w-xl">
+        <div className="flex items-start gap-3">
+          <Activity className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+          <div>
+            <h3 className="text-sm font-medium">{t('sourceHealth.title')}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{t('sourceHealth.subtitle')}</p>
+          </div>
+        </div>
+        <div className="mt-5 divide-y divide-black/10 border-y border-black/10 dark:divide-white/10 dark:border-white/10">
+          {sources.map(({ id, health }) => (
+            <div key={id} className="py-3" data-testid={`observability-source-health-${id}`}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  {sourceHealthIcon(health.status)}
+                  <span className="truncate text-xs font-medium">{t(`sourceHealth.sources.${id}`)}</span>
+                </div>
+                <span className={cn('shrink-0 text-xs font-medium', sourceHealthClass(health.status))}>
+                  {t(`sourceHealth.status.${health.status}`)}
+                </span>
+              </div>
+              <p className="mt-1 pl-6 text-xs text-muted-foreground">{t(`sourceHealth.reason.${health.reason}`)}</p>
+              {health.detail && (
+                <p className="mt-1 truncate pl-6 text-2xs text-muted-foreground" title={health.detail}>{health.detail}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function nodeDetailValue(value?: string | number | null): string {
@@ -350,6 +410,7 @@ export function ObservabilityDashboard() {
   const allTraceRows = useMemo(() => queryResult?.items ?? snapshot?.traces ?? [], [queryResult?.items, snapshot?.traces]);
   const selectedTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === selectedTraceId) ?? null, [allTraceRows, selectedTraceId]);
   const compareTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === compareTraceId) ?? null, [allTraceRows, compareTraceId]);
+  const hasNoTraceData = snapshot !== null && snapshot.traces.length === 0 && (queryResult?.total ?? 0) === 0;
   const selectedAnnotation = selectedTraceId ? annotations[selectedTraceId] : undefined;
   const primaryMetricIds = new Set(['traces', 'errors', 'avg-duration', 'running']);
   const primaryMetrics = snapshot?.cards.filter((card) => primaryMetricIds.has(card.id)) ?? [];
@@ -770,6 +831,8 @@ export function ObservabilityDashboard() {
                 />
               )}
             </>
+          ) : hasNoTraceData ? (
+            <SourceHealthPanel sourceHealth={snapshot?.sourceHealth} />
           ) : (
             <div className="flex h-full min-h-[520px] flex-col items-center justify-center rounded-md border border-dashed border-black/10 dark:border-white/10 bg-black/[0.015] dark:bg-white/[0.02] p-8 text-center">
               <GitBranch className="h-8 w-8 text-muted-foreground" />

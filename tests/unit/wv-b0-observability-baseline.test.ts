@@ -104,6 +104,25 @@ describe('WV-B0 observability data-path baseline', () => {
     expect(traces[0]).toMatchObject({ id: 'runtime-trace', name: 'refreshed snapshot', startedAt: 200 });
   });
 
+  it('records runtime fetch failures in the dashboard source health without failing the snapshot', async () => {
+    setRuntimeTraceFetcher(async () => {
+      throw new Error('Gateway trace RPC unavailable');
+    });
+
+    const snapshot = await createObservabilityApi().observability.dashboardSnapshot();
+
+    expect(snapshot.traces).toEqual([]);
+    expect(snapshot.sourceHealth).toMatchObject({
+      runtime: {
+        status: 'error',
+        reason: 'failed',
+        detail: 'Gateway trace RPC unavailable',
+      },
+      index: { status: 'empty', reason: 'no-data' },
+      trajectory: { status: 'empty', reason: 'no-data' },
+    });
+  });
+
   it('keeps the 200-trace cap while only evicting completed or over-age running traces', () => {
     vi.useFakeTimers();
     const now = new Date('2026-08-14T10:00:00.000Z');

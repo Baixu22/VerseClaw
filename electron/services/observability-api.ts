@@ -18,15 +18,23 @@ import {
 import { refreshObservabilityTrajectoryIndex } from './observability-trajectory-index';
 import { readTrajectoryEventsForTrace } from './observability-trajectory';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
+import { logger } from '../utils/logger';
 import type {
   ObservabilityRuntimeEvent,
   ObservabilityScorecard,
+  ObservabilitySourceHealth,
+  ObservabilitySourceHealthEntry,
   ObservabilityTrace,
   ObservabilityTraceQuery,
 } from '../../shared/types/observability';
 
 /** Optional fetcher that pulls runtime-process traces + scorecards via Gateway RPC. */
-type RuntimeTraceFetcher = () => Promise<{ traces: Array<Record<string, unknown>>; scorecards?: Array<Record<string, unknown>> }>;
+type RuntimeTraceFetchResult = {
+  traces: Array<Record<string, unknown>>;
+  scorecards?: Array<Record<string, unknown>>;
+  error?: string;
+};
+type RuntimeTraceFetcher = () => Promise<RuntimeTraceFetchResult>;
 let runtimeTraceFetcher: RuntimeTraceFetcher | undefined;
 type ObservabilityApiContext = {
   onRuntimeEvent?: (event: ObservabilityRuntimeEvent) => void;
@@ -36,10 +44,24 @@ export function setRuntimeTraceFetcher(fetcher: RuntimeTraceFetcher): void {
   runtimeTraceFetcher = fetcher;
 }
 
-async function ingestRuntimeTraces(): Promise<void> {
-  if (!runtimeTraceFetcher) return;
+function errorDetail(error: unknown): string {
+  const detail = error instanceof Error ? error.message : String(error);
+  return detail.trim().slice(0, 320) || 'Unknown error';
+}
+
+function sourceHealth(
+  status: ObservabilitySourceHealthEntry['status'],
+  reason: ObservabilitySourceHealthEntry['reason'],
+  detail?: string,
+): ObservabilitySourceHealthEntry {
+  return detail ? { status, reason, detail } : { status, reason };
+}
+
+async function ingestRuntimeTraces(): Promise<ObservabilitySourceHealthEntry> {
+  if (!runtimeTraceFetcher) return sourceHealth('empty', 'not-configured');
   try {
-    const { traces, scorecards } = await runtimeTraceFetcher();
+    const { traces, scorecards, error } = await runtimeTraceFetcher();
+    if (error) return sourceHealth('error', 'failed', error.slice(0, 320));
     for (const entry of traces) {
       upsertObservabilityTrace(entry as ObservabilityTrace);
     }
@@ -48,29 +70,72 @@ async function ingestRuntimeTraces(): Promise<void> {
         upsertObservabilityScorecard(entry as ObservabilityScorecard);
       }
     }
-  } catch {
-    // Runtime trace fetch is best-effort — the UI must not break if the
-    // gateway doesn't respond or the runtime hasn't produced any traces.
+    return traces.length > 0 || (scorecards?.length ?? 0) > 0
+      ? sourceHealth('ok', 'available')
+      : sourceHealth('empty', 'no-data');
+  } catch (error) {
+    const detail = errorDetail(error);
+    logger.warn(`[observability] runtime trace fetch failed: ${detail}`);
+    return sourceHealth('error', 'failed', detail);
   }
 }
 
-async function refreshTraceIndex(): Promise<void> {
-  await loadObservabilityIndex();
-  await refreshObservabilityTrajectoryIndex();
+async function refreshTraceIndex(): Promise<Pick<ObservabilitySourceHealth, 'index' | 'trajectory'>> {
+  let index: ObservabilitySourceHealthEntry;
+  let trajectory: ObservabilitySourceHealthEntry;
+
+  try {
+    const entries = await loadObservabilityIndex();
+    index = entries.length > 0 ? sourceHealth('ok', 'available') : sourceHealth('empty', 'no-data');
+  } catch (error) {
+    const detail = errorDetail(error);
+    logger.warn(`[observability] trace index load failed: ${detail}`);
+    index = sourceHealth('error', 'failed', detail);
+  }
+
+  try {
+    const indexedTrajectories = await refreshObservabilityTrajectoryIndex();
+    trajectory = indexedTrajectories > 0 ? sourceHealth('ok', 'available') : sourceHealth('empty', 'no-data');
+    if (indexedTrajectories > 0) index = sourceHealth('ok', 'available');
+  } catch (error) {
+    const detail = errorDetail(error);
+    logger.warn(`[observability] trajectory refresh failed: ${detail}`);
+    trajectory = sourceHealth('error', 'failed', detail);
+  }
+
   const memoryTraces = getObservabilityTraceBuffer();
   if (memoryTraces.length > 0) {
-    await persistObservabilityTracesToIndex(memoryTraces);
+    try {
+      await persistObservabilityTracesToIndex(memoryTraces);
+      index = sourceHealth('ok', 'available');
+    } catch (error) {
+      const detail = errorDetail(error);
+      logger.warn(`[observability] trace index persist failed: ${detail}`);
+      index = sourceHealth('error', 'failed', detail);
+    }
   }
+
+  return { index, trajectory };
 }
 
 export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<CompleteHostServiceRegistry, 'observability'> {
   return {
     observability: {
       dashboardSnapshot: async () => {
-        await ingestRuntimeTraces();
-        await refreshTraceIndex();
-        const queryResult = await queryObservabilityTraces({ pageSize: 1000 }, getObservabilityTraceBuffer());
-        return buildObservabilityDashboardSnapshot(queryResult.items);
+        const runtime = await ingestRuntimeTraces();
+        const { index, trajectory } = await refreshTraceIndex();
+        const health = { runtime, index, trajectory };
+        try {
+          const queryResult = await queryObservabilityTraces({ pageSize: 1000 }, getObservabilityTraceBuffer());
+          return buildObservabilityDashboardSnapshot(queryResult.items, health);
+        } catch (error) {
+          const detail = errorDetail(error);
+          logger.warn(`[observability] dashboard trace query failed: ${detail}`);
+          return buildObservabilityDashboardSnapshot([], {
+            ...health,
+            index: sourceHealth('error', 'failed', detail),
+          });
+        }
       },
       traces: async () => {
         await ingestRuntimeTraces();
