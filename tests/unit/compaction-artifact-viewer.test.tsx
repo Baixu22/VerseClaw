@@ -25,6 +25,7 @@ vi.mock('react-i18next', () => ({
         'composer.compaction.artifactViewer.prepareRecovery': 'Prepare recovery context',
         'composer.compaction.artifactViewer.forkSession': 'Fork/branch session',
         'composer.compaction.artifactViewer.close': 'Close',
+        'composer.fork.boundaryNote': 'Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied.',
         'composer.compaction.artifactViewer.qualityScore': `Score ${values?.score}%`,
         'composer.compaction.artifactViewer.qualityCoverage': `Evidence ${values?.evidence}% · fields ${values?.fields}% · recovery ${values?.tokens} tokens`,
         'composer.compaction.artifactViewer.checkpointId': `Checkpoint ${values?.checkpointId}`,
@@ -141,6 +142,26 @@ describe('CompactionArtifactViewer', () => {
 
     expect(onPrepareRecovery).toHaveBeenCalledTimes(1);
     expect(onForkSession).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the fork boundary note on the fork trigger (R7-1 T3)', () => {
+    render(
+      <CompactionArtifactViewer
+        open
+        onOpenChange={vi.fn()}
+        sessionKey="agent:main:main"
+        artifact={artifactFixture()}
+        onPrepareRecovery={vi.fn()}
+        onForkSession={vi.fn()}
+      />,
+    );
+
+    const forkButton = screen.getByRole('button', { name: 'Fork/branch session' });
+    // Pre-fix red proof: the fork trigger carries no boundary explanation.
+    expect(forkButton).toHaveAttribute(
+      'title',
+      'Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied.',
+    );
   });
 
   it('keeps evidence references visible near their facts', () => {

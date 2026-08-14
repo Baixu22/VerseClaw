@@ -1292,6 +1292,8 @@ export function ChatInput({
         t(`composer.continuity.tooltip.${composerContinuityAction.id}.${effectiveContinuityRecommendation?.reason ?? 'default'}`, {
           defaultValue: t(`composer.${composerContinuityAction.id}.tooltip`),
         }),
+        // R7-1 T3: fork must say what it copies and what it does not.
+        composerContinuityAction.id === 'fork' ? t('composer.fork.boundaryNote') : '',
       ].filter(Boolean).join(' - ')
     : '';
   const ComposerContinuityIcon = composerContinuityAction?.icon ?? GitBranchPlus;
@@ -3503,6 +3505,7 @@ export function ChatInput({
                           label={t('composer.actions.fork')}
                           testId="chat-composer-action-fork"
                           disabled={forkDisabled || forkBusy}
+                          title={t('composer.fork.boundaryNote')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onForkSession();
@@ -4521,6 +4524,7 @@ function ComposerActionButton({
   description,
   testId,
   disabled = false,
+  title,
   onClick,
 }: {
   icon: LucideIcon;
@@ -4528,6 +4532,7 @@ function ComposerActionButton({
   description?: string;
   testId: string;
   disabled?: boolean;
+  title?: string;
   onClick: () => void;
 }) {
   return (
@@ -4541,6 +4546,7 @@ function ComposerActionButton({
       )}
       data-testid={testId}
       disabled={disabled}
+      title={title}
       onClick={onClick}
     >
       <span className="flex h-7 w-7 shrink-0 items-center justify-center text-muted-foreground">

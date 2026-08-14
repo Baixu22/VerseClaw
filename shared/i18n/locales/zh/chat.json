@@ -1597,7 +1597,8 @@
       "tooltip": "从当前 transcript 创建新的对话分支",
       "disabledActiveRun": "当前运行结束后可用",
       "toastCreated": "已创建 Fork 对话",
-      "toastFailed": "Fork 对话失败"
+      "toastFailed": "Fork 对话失败",
+      "boundaryNote": "复制截至此处之前的对话,以及提供方/模型/思考设置与工作区界面状态;任务台账、记忆与知识内容不会被复制。"
     },
     "handoff": {
       "action": "接力到新对话",
@@ -1613,6 +1614,7 @@
       "toastCreated": "已创建接力会话",
       "ledgerSummary": "从 {{source}} 创建的接力会话"
     },
+    "runLogReplay": "来自运行日志(非会话原文)",
     "workspaceActions": "工作区操作",
     "workspaceActionFailed": "工作区操作失败：{{error}}",
     "permissionModeTitle": "权限模式",

@@ -14,14 +14,15 @@ import {
   type DcsProdFlagEntry,
   type DcsProdFlagRisk,
 } from '@shared/dcs/prod-flags-catalog';
-import type {
-  DcsPreviewSetResult,
-  DcsPreviewState,
-  DcsProdFlagApplyStatus,
-  DcsProdFlagSetResult,
-  DcsProdFlagStateRow,
-  DcsProdFlagsSnapshot,
-  DcsProdObservabilitySnapshot,
+import {
+  getWritableFlagSpec,
+  type DcsPreviewSetResult,
+  type DcsPreviewState,
+  type DcsProdFlagApplyStatus,
+  type DcsProdFlagSetResult,
+  type DcsProdFlagStateRow,
+  type DcsProdFlagsSnapshot,
+  type DcsProdObservabilitySnapshot,
 } from '@shared/dcs/prod-flags-control';
 
 /**
@@ -41,6 +42,17 @@ const VIEW_TOOL_NAMES = [
   'context_impact',
   'context_reuse',
   'context_verify',
+] as const;
+
+/**
+ * R7-1 T4: the three memory switches R3-2 catalogued as unavailable
+ * (R3-1 audit: persist rejected by E-1, injectPilot unwired, role-memory
+ * fake-surface). Only these get the memory-channel boundary note.
+ */
+const MEMORY_FLAG_IDS = [
+  'runtime-memory-persist',
+  'runtime-memory-inject-pilot',
+  'role-memory',
 ] as const;
 
 function riskTone(risk: DcsProdFlagRisk): string {
@@ -503,6 +515,12 @@ export function DcsProdFlagsPanel() {
   }, [snapshot]);
 
   const selectedState = selected ? stateById.get(selected.id) : undefined;
+  // R7-1 T4: reuse the R3-2 unavailableReason field (no new state shape) and
+  // scope the memory-channel boundary note to the three memory switches.
+  const selectedUnavailableReason = selected
+    ? getWritableFlagSpec(selected.id)?.unavailableReason
+    : undefined;
+  const showMemoryBoundary = MEMORY_FLAG_IDS.some((id) => id === selected?.id);
   const viewToolsState = stateById.get(VIEW_TOOLS_FLAG_ID);
   const viewToolsEnabled = viewToolsState ? viewToolsState.enabled : null;
   const observability: DcsProdObservabilitySnapshot | undefined = snapshot?.observability;
@@ -732,6 +750,24 @@ export function DcsProdFlagsPanel() {
               <BookOpen className="h-4 w-4" />
               {selected.key}
             </div>
+
+            {selectedUnavailableReason ? (
+              <p
+                className="text-tiny text-amber-700 dark:text-amber-400"
+                data-testid="settings-dcs-prod-flag-unavailable-reason"
+              >
+                {t('developer.dcsProdFlags.unavailableReasonLabel')}: {selectedUnavailableReason}
+              </p>
+            ) : null}
+
+            {showMemoryBoundary ? (
+              <p
+                className="text-tiny text-muted-foreground"
+                data-testid="settings-dcs-prod-flag-memory-boundary"
+              >
+                {t('developer.dcsProdFlags.memoryBoundaryNote')}
+              </p>
+            ) : null}
 
             {selected.id === VIEW_TOOLS_FLAG_ID ? (
               <p

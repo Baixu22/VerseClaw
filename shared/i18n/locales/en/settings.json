@@ -522,6 +522,8 @@
       "enableViaSettings": "Use the switch above (Settings control plane). Advanced: env/config as in runbook.",
       "rollbackViaSettings": "Turn the switch off (Settings). Gateway restarts when running.",
       "toggleLabel": "Enable (opt-in)",
+      "unavailableReasonLabel": "Unavailable reason",
+      "memoryBoundaryNote": "Memory switches control the injection/write channel only. Injected facts are candidate hints the model may ignore; durable persistence requires human confirmation; turning a switch off never deletes existing memory.",
       "on": "on",
       "off": "off",
       "refresh": "Refresh",

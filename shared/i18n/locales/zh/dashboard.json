@@ -129,13 +129,14 @@
             "tokens": "总 Token",
             "cost": "预估费用",
             "models": "活跃模型",
-            "averageCost": "平均费用",
+            "averageCost": "平均预估费用",
             "records": "{{count}} 条记录",
             "estimated": "按提供方用量估算",
             "activeModels": "选中时间范围内",
             "perRecord": "每条用量记录",
             "recordsWithUsage": "{{count}} 条可计费记录"
         },
+        "estimateNote": "所有金额均为估算:由本地会话 transcript 中的 usage.estimatedCostUsd 按价目换算后聚合而成,并非账单,不含账单/退款/折扣语义。",
         "chart": {
             "title": "每日 Token 消耗保持完整",
             "description": "选中时间范围内每天都有稳定桶位，并按输入、输出和缓存堆叠展示。",

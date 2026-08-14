@@ -35,6 +35,9 @@ export interface RawMessage {
   toolName?: string;
   details?: unknown;
   isError?: boolean;
+  /** R7-1 T2: true when the message was synthesized from cron run logs
+   *  (session-history fallback), not read from the real chat transcript. */
+  isRunLogReplay?: boolean;
   stopReason?: string;
   stop_reason?: string;
   errorMessage?: string;
