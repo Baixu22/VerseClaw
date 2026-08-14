@@ -31,6 +31,8 @@ import {
   type RuntimeMemoryTemporalFactCandidate,
   type RuntimeMemoryTemporalFields,
 } from "./memory-context.js";
+import { assertRuntimeMemoryOwnerConvergence } from "../agents/slot-convergence.js";
+import type { RuntimeMemoryRuntimeIntegrationPort } from "./memory-runtime-integration.js";
 
 export const RUNTIME_MEMORY_FACT_PROPOSAL_INPUT_SOURCES = [
   "task_event",
@@ -163,6 +165,55 @@ export function promoteRuntimeMemoryFactCandidate(
       evidenceRefs: input.evidenceRefs,
       ...(input.approvedBy !== undefined ? { approvedBy: input.approvedBy } : {}),
     },
+  };
+}
+
+export type RuntimeMemoryFactConfirmationResult =
+  | { ok: true; fact: RuntimeMemoryTemporalFact; message: string }
+  | { ok: false; message: string; fact?: undefined };
+
+/**
+ * R3-2.4 proposeFacts confirm: promote a shadow candidate into a durable
+ * human-approved fact and persist it through the P0-B appendFact port.
+ *
+ * Fail-closed per the R3-1 E-1 authority ruling: persist=true is currently
+ * owner drift (a second durable authority next to memory-core), so the confirm
+ * entry must reject before persisting — it never creates a second authority.
+ */
+export function confirmRuntimeMemoryFactProposal(input: {
+  candidate: RuntimeMemoryTemporalFactCandidate;
+  acceptedAt?: number;
+  approvedBy?: string;
+  evidenceRefs: EvidenceRef[];
+  persistence?: RuntimeMemoryRuntimeIntegrationPort;
+}): RuntimeMemoryFactConfirmationResult {
+  const ownerCheck = assertRuntimeMemoryOwnerConvergence({
+    runtimeMemoryPersist: true,
+  });
+  if (!ownerCheck.ok) {
+    return {
+      ok: false,
+      message: `confirm blocked by E-1 owner convergence: ${ownerCheck.errors.join("; ")}`,
+    };
+  }
+  if (!input.persistence) {
+    return { ok: false, message: "no persistence port provided" };
+  }
+  const fact = promoteRuntimeMemoryFactCandidate(input.candidate, {
+    acceptedAt: input.acceptedAt ?? Date.now(),
+    ...(input.approvedBy !== undefined ? { approvedBy: input.approvedBy } : {}),
+    evidenceRefs: input.evidenceRefs,
+  });
+  const result = input.persistence.appendFact(fact);
+  if (result.status === "persisted") {
+    return { ok: true, fact, message: "confirmed and persisted" };
+  }
+  return {
+    ok: false,
+    message:
+      result.status === "rejected"
+        ? `persistence rejected: ${result.message}`
+        : `persistence skipped (${result.reason})`,
   };
 }
 
