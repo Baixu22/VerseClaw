@@ -391,9 +391,29 @@ test.describe('Verse Claw provider lifecycle', () => {
       await page.getByTestId('add-provider-submit-button').click();
 
       // The REAL validation probe carried the credential as a query parameter.
+      const directProbe = await page.evaluate(async (baseUrl) => {
+        const bridge = (window as unknown as {
+          verseClaw?: { hostInvoke: (request: unknown) => Promise<unknown> };
+        }).verseClaw?.hostInvoke;
+        if (!bridge) return 'no-bridge';
+        try {
+          return await bridge({
+            id: 'diag-probe',
+            module: 'providers',
+            action: 'validateKey',
+            payload: {
+              providerId: 'custom',
+              apiKey: 'sk-lm-test',
+              options: { baseUrl, apiProtocol: 'openai-completions', auth: { mode: 'query', parameterName: 'key' } },
+            },
+          });
+        } catch (error) {
+          return `bridge-error: ${String(error)}`;
+        }
+      }, probe.baseUrl);
       await expect.poll(
         async () => probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test')),
-        { timeout: 20_000, message: `main validate logs: ${JSON.stringify(mainLogs.filter((line) => line.includes('validate') || line.includes('provider')).slice(-20))}` },
+        { timeout: 20_000, message: `directProbe=${JSON.stringify(directProbe)}; urls=${JSON.stringify(probe.urls)}` },
       ).toBe(true);
       expect(probe.authHeaders.every((headers) => Object.keys(headers).length === 0)).toBe(true);
 
