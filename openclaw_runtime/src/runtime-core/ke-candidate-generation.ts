@@ -386,4 +386,91 @@ export function runKeCandidateGeneration(
     }),
   };
 }
+/** Map a TaskLoop terminal status to the agent-run terminal reason vocabulary. */
+export function mapTaskLoopStatusToTerminalReason(status: string): string {
+  switch (status) {
+    case "complete":
+      return "completed";
+    case "blocked":
+      return "blocked";
+    case "error":
+      return "failed";
+    case "cancelled":
+      return "cancelled";
+    default:
+      // Fail-closed: an unknown terminal status is treated as failure, never success.
+      return "failed";
+  }
+}
+
+/** Terminal data a task-loop / task-registry hook can supply from REAL run state. */
+export type KeTerminalInput = {
+  taskId: string;
+  taskType?: string;
+  /** TaskLoop status: "complete" | "blocked" | "error" | "cancelled" | ... */
+  status: string;
+  error?: string;
+  sourceRefs: string[];
+  /** Prior failures with the same error signature (cross-task history; injected by the caller). */
+  priorFailureCount?: number;
+  /** Explicit user correction tied to this task (injected by the caller). */
+  userCorrection?: boolean;
+  now?: number;
+};
+
+/**
+ * Build candidate-generation evidence from REAL terminal run state (status +
+ * error + evidence refs), never from model self-report. priorFailureCount and
+ * userCorrection are injected by the caller that owns task history / messages.
+ */
+export function buildKeTaskTerminalEvidence(terminal: KeTerminalInput): KeTaskTerminalEvidence {
+  return {
+    taskId: terminal.taskId,
+    taskType: terminal.taskType ?? "task_loop",
+    terminalReason: mapTaskLoopStatusToTerminalReason(terminal.status),
+    error: terminal.error,
+    priorFailureCount: terminal.priorFailureCount ?? 0,
+    userCorrection: terminal.userCorrection ?? false,
+    sourceRefs: terminal.sourceRefs,
+    now: terminal.now,
+  };
+}
+
+/** Observable, content-light summary of a KE-P1-1 candidate generation run. */
+export type KeCandidateGenerationDiagnostics = {
+  enabled: true;
+  factCandidateCount: number;
+  errorCardProposalCount: number;
+  failureGuardTriggered: boolean;
+  envelopeIds: string[];
+};
+
+/**
+ * Terminal-hook entry: build evidence from real terminal state and run the
+ * candidate generation (flag-gated, pure). Returns a disabled run when the
+ * flag is off; the caller records nothing in that case (zero behavior).
+ */
+export function runKeCandidateGenerationForTerminal(
+  config: unknown,
+  terminal: KeTerminalInput,
+): KeCandidateGenerationRun {
+  return runKeCandidateGeneration(config, buildKeTaskTerminalEvidence(terminal));
+}
+
+/** Reduce a run to the observable diagnostic the terminal hook records. */
+export function buildKeCandidateGenerationDiagnostics(
+  run: KeCandidateGenerationRun,
+): KeCandidateGenerationDiagnostics {
+  return {
+    enabled: true,
+    factCandidateCount: run.factCandidates.length,
+    errorCardProposalCount: run.errorCardProposals.length,
+    failureGuardTriggered: run.factCandidates.length + run.errorCardProposals.length > 0,
+    envelopeIds: [
+      ...run.factCandidates.map((c) => c.envelopeId),
+      ...run.errorCardProposals.map((c) => c.envelopeId),
+    ],
+  };
+}
+
 
