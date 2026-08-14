@@ -238,6 +238,18 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     riskNote: 'R3-1 审计: role-memory provider 门不读 injectPilot (接线断线)。Settings 标不可用。',
   },
   {
+    id: 'runtime-memory-candidate-generation',
+    wave: 'KE-P1',
+    kind: 'config',
+    key: 'runtime.memory.candidateGeneration',
+    defaultDisplay: 'false',
+    defaultValue: false,
+    risk: 'opt-in',
+    enable: 'runtime.memory.candidateGeneration=true.',
+    rollback: 'runtime.memory.candidateGeneration=false (default).',
+    riskNote: 'KE-P1-1: task-terminal candidate generation (failure-guard -> Review Queue). Queue-visible only; never auto-persisted.',
+  },
+  {
     id: 'role-memory',
     wave: 'R3',
     kind: 'config',
@@ -306,6 +318,7 @@ export function assertCatalogDefaultHonesty(): { ok: true } {
     'sekb-experience-shadow',
     'runtime-memory-persist',
     'runtime-memory-inject-pilot',
+    'runtime-memory-candidate-generation',
     'role-memory',
   ];
   for (const id of mustStayOff) {

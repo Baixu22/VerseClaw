@@ -296,6 +296,7 @@ const RuntimeFeatureSchema = z
         provider: z.boolean().optional(),
         proposeFacts: z.boolean().optional(),
         persist: z.boolean().optional(),
+        candidateGeneration: z.boolean().optional(),
         // FP-P0-06: existed in types.openclaw.ts + schema.labels/help but was missing
         // from this strict schema, so writing the documented pilot config made the
         // gateway exit code=1 (same class as the contextEnhancement defect).
