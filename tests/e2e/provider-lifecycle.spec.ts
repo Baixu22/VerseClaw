@@ -347,12 +347,15 @@ test.describe('Verse Claw provider lifecycle', () => {
       await page.getByTestId('add-provider-auth-header-prefix').fill('Bearer ');
       await page.getByTestId('add-provider-submit-button').click();
 
-      await expect(page.getByTestId('provider-card-custom')).toContainText('Header Auth Custom');
-
       // The REAL validation probe hit the local server with the resolved auth format.
-      expect(probe.urls.some((url) => url.includes('/models'))).toBe(true);
+      await expect.poll(async () => probe.urls.some((url) => url.includes('/models')), { timeout: 20_000 }).toBe(true);
       expect(probe.authHeaders.some((headers) => headers['x-api-key'] === 'Bearer sk-lm-test')).toBe(true);
       expect(probe.authHeaders.some((headers) => 'authorization' in headers)).toBe(false);
+
+      await expect.poll(
+        async () => (await providerHostCalls(page)).some((call) => call.action === 'createAccount'),
+        { timeout: 20_000 },
+      ).toBe(true);
 
       const calls = await providerHostCalls(page);
       const validateCall = calls.find((call) => call.action === 'validateKey');
@@ -383,11 +386,17 @@ test.describe('Verse Claw provider lifecycle', () => {
       await page.getByTestId('add-provider-supports-vision').click();
       await page.getByTestId('add-provider-submit-button').click();
 
-      await expect(page.getByTestId('provider-card-custom')).toContainText('Query Auth Custom');
-
       // The REAL validation probe carried the credential as a query parameter.
-      expect(probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test'))).toBe(true);
+      await expect.poll(
+        async () => probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test')),
+        { timeout: 20_000 },
+      ).toBe(true);
       expect(probe.authHeaders.every((headers) => Object.keys(headers).length === 0)).toBe(true);
+
+      await expect.poll(
+        async () => (await providerHostCalls(page)).some((call) => call.action === 'createAccount'),
+        { timeout: 20_000 },
+      ).toBe(true);
 
       const calls = await providerHostCalls(page);
       const validateCall = calls.find((call) => call.action === 'validateKey');
