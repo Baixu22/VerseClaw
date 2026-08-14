@@ -92,6 +92,22 @@ The generated static Workbench also indexes the latest deep-test bottlenecks, re
 
 `channel:conformance` owns channel adapter evidence, `contract:check` owns host-api drift, `i18n:lint` owns locale/key coverage, Workbench indexes evidence, and Agent Dev E2E proves registry-to-renderer behavior. These gates should not grow parallel scenario lists or duplicate each other's source of truth.
 
+## Generated Catalog Discipline (R6-4)
+
+`docs/generated/catalogs/` holds the first generated catalogs: `tools.md` (core tool catalog) and `prod-flags.md` (DCS production opt-in flags). They are **generated, never hand-edited** — the single sources of truth are `openclaw_runtime/src/agents/tool-catalog.ts` and `shared/dcs/prod-flags-catalog.ts`, and `scripts/generate-catalogs.mjs` imports the same module exports (same-source generation, so the files cannot drift structurally).
+
+Rules every future generated catalog must follow:
+
+1. One source of truth; the generator imports it — never copies a list.
+2. Generated files are committed in the same change set as source edits.
+3. `pnpm catalogs:check` fails closed (exit 1) on stale, hand-edited, or missing output; it never writes disk. It is mounted in `harness:ci` before `agent-dev:audit`.
+4. Nothing at runtime may import a generated file as a fact source — generated output is documentation surface only.
+
+```bash
+pnpm catalogs:gen     # regenerate after source edits
+pnpm catalogs:check   # fail-closed freshness gate
+```
+
 ## P0 Guardrails
 
 Agent Dev scenario metadata lives in `shared/agent-dev/scenarios.ts`; renderer/Main/workbench code must consume that registry instead of maintaining local scenario id lists. Composition logic lives in `shared/agent-dev/scenario-composer.ts` and supports `+` separated ids with later seed values overriding earlier ones. Query parameters other than `devScenario` are exposed as override metadata and invalid scenario ids are ignored rather than crashing the app.
