@@ -8,10 +8,13 @@ import {
   type ReceiptIdentity,
 } from "../agents/receipt-store.js";
 import type { OpenClawStateDatabaseOptions } from "../state/openclaw-state-db.js";
+import { createHash } from "node:crypto";
 import {
   buildMemoryInjectionReceiptInput,
+  buildMemoryInjectionReceiptSummary,
   type MemoryInjectionReceiptSummary,
 } from "./dcs-receipts.js";
+import type { PreReplyInjection } from "../runtime-core/memory-pre-reply-injection.js";
 
 export function persistMemoryInjectionReceipt(input: {
   identity: ReceiptIdentity;
@@ -34,6 +37,44 @@ export function persistMemoryInjectionReceipt(input: {
   } catch {
     return { persisted: false };
   }
+}
+
+/**
+ * R3-2.1: record a sanitized memory-injection receipt for the COMPASS
+ * pre-reply retrieval bypass (observational, never throws). The injection only
+ * happens when the pre-reply switch is on AND facts were actually injected;
+ * switch-off yields zero writes (acceptance: coverage 100% when on, zero when off).
+ */
+export function recordCompassMemoryInjectionReceipt(params: {
+  sessionKey?: string;
+  injection: PreReplyInjection;
+  candidateFacts: readonly { factId: string }[];
+  database?: OpenClawStateDatabaseOptions;
+}): { persisted: boolean } {
+  const injectedFactIds = params.injection.injectedFactIds;
+  if (!injectedFactIds || injectedFactIds.length === 0) {
+    return { persisted: false };
+  }
+  const memoryReceiptSessionKey = params.sessionKey;
+  const correlationDigest = createHash("sha256")
+    .update(`${memoryReceiptSessionKey ?? ""}:${injectedFactIds.join(",")}`)
+    .digest("hex");
+  return persistMemoryInjectionReceipt({
+    identity: {
+      runtimeMode: "source",
+      ...(memoryReceiptSessionKey ? { sessionKey: memoryReceiptSessionKey } : {}),
+      providerId: "compass",
+      adapterId: "compass-pre-reply-retrieval",
+    },
+    callIndex: { attemptIndex: 0, modelCallIndex: 0, wireAttemptIndex: 0 },
+    correlationDigest,
+    summary: buildMemoryInjectionReceiptSummary({
+      injectedFactIds,
+      candidateFacts: params.candidateFacts,
+      injectedChars: params.injection.top5FactsString?.length ?? 0,
+    }),
+    ...(params.database ? { database: params.database } : {}),
+  });
 }
 
 /**
