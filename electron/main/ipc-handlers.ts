@@ -266,8 +266,10 @@ function registerTypedHostHandlers(
         traces: Array.isArray(data?.traces) ? (data!.traces as Array<Record<string, unknown>>) : [],
         scorecards: Array.isArray(data?.scorecards) ? (data!.scorecards as Array<Record<string, unknown>>) : [],
       };
-    } catch {
-      return { traces: [], scorecards: [] };
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      logger.warn(`[observability] runtime trace RPC failed: ${detail}`);
+      return { traces: [], scorecards: [], error: detail };
     }
   });
 

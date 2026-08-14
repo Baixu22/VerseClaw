@@ -397,6 +397,23 @@ export type ObservabilityTraceQueryResult = {
   };
 };
 
+export type ObservabilitySourceHealthStatus = 'ok' | 'empty' | 'error';
+
+export type ObservabilitySourceHealthReason = 'available' | 'not-configured' | 'no-data' | 'failed';
+
+export type ObservabilitySourceHealthEntry = {
+  status: ObservabilitySourceHealthStatus;
+  reason: ObservabilitySourceHealthReason;
+  /** Bounded diagnostic detail for a failed source; never used for raw trace data. */
+  detail?: string;
+};
+
+export type ObservabilitySourceHealth = {
+  runtime: ObservabilitySourceHealthEntry;
+  index: ObservabilitySourceHealthEntry;
+  trajectory: ObservabilitySourceHealthEntry;
+};
+
 export type ObservabilityDashboardSnapshot = {
   generatedAt: number;
   cards: ObservabilityMetricCard[];
@@ -437,6 +454,7 @@ export type ObservabilityDashboardSnapshot = {
     correlation?: ObservabilityTraceCorrelation;
   }>;
   alerts: string[];
+  sourceHealth: ObservabilitySourceHealth;
 };
 
 export type ObservabilityRuntimeEvent =
