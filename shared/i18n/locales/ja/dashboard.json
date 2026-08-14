@@ -134,13 +134,25 @@
             "estimated": "プロバイダーの使用量から推定",
             "activeModels": "選択期間内",
             "perRecord": "使用記録あたり",
-            "recordsWithUsage": "{{count}} 件の課金対象記録"
+            "recordsWithUsage": "{{count}} 件の課金対象記録",
+            "cacheHitRate": "キャッシュヒット率",
+            "cacheReadTokens": "キャッシュ読み取りトークン",
+            "cacheWriteTokens": "キャッシュ書き込みトークン",
+            "promptTokens": "プロンプトトークン",
+            "hitRateDetail": "キャッシュから提供されたプロンプトの割合",
+            "cacheReadDetail": "キャッシュから提供されたトークン",
+            "cacheWriteDetail": "キャッシュに書き込まれたトークン",
+            "promptDetail": "入力 + キャッシュトークン"
         },
         "estimateNote": "金額はすべて推定値です。ローカルセッションの transcript 内の usage.estimatedCostUsd を料金表で換算して集計したものであり、請求書ではなく、請求・返金・割引の意味は含みません。",
         "chart": {
             "title": "日別トークン使用量を欠けなく表示",
             "description": "選択期間の各日に固定の枠を用意し、入力・出力・キャッシュを積み上げて表示します。",
             "peakDay": "ピーク {{day}} - {{tokens}} tokens"
+        },
+        "costChart": {
+            "title": "コストとキャッシュの推移",
+            "description": "選択期間の日次推定コストとキャッシュヒット率。破線は期間平均のヒット率です。"
         },
         "modelChart": {
             "title": "モデル別の集中度",
@@ -154,17 +166,43 @@
         },
         "recent": {
             "title": "最近の課金記録",
-            "description": "Transcript 由来の使用量行です。利用不可や解析エラーの記録も含みます。"
+            "description": "Transcript 由来の使用量行です。利用不可や解析エラーの記録も含みます。",
+            "cacheHit": "キャッシュヒット {{value}}"
         },
         "transcriptSource": "Transcript 履歴",
         "refreshing": "更新中",
         "dataQuality": {
             "scanned": "スキャン済み記録",
+            "scannedFiles": "トランスクリプトファイル",
             "billable": "課金対象記録",
             "unavailable": "利用不可の記録",
             "unavailableWithErrors": "{{unavailable}} 件利用不可、{{errors}} 件エラー",
+            "cacheRead": "キャッシュ読み取りトークン",
             "latest": "最新記録"
         },
+        "tableSection": {
+            "title": "内訳",
+            "description": "選択期間のモデル別・エージェント別集計。"
+        },
+        "modelTable": {
+            "title": "モデル別"
+        },
+        "agentTable": {
+            "title": "エージェント別"
+        },
+        "table": {
+            "name": "名前",
+            "records": "レコード",
+            "tokens": "トークン",
+            "input": "入力",
+            "output": "出力",
+            "cacheRead": "キャッシュ読み取り",
+            "hitRate": "ヒット率",
+            "cost": "推定コスト"
+        },
+        "aggregateNote": "集計はローカルの全トランスクリプトを対象にしています（{{files}} ファイルをスキャン）。最近のリストより前の履歴も含みます。",
+        "aggregateNoteFallback": "集計は最近のレコードのみから算出されています。",
+        "noHitRateData": "プロンプトトークンの記録がまだありません。",
         "status": {
             "available": "利用可能",
             "missing": "使用量なし",

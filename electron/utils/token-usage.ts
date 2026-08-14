@@ -3,13 +3,16 @@ import { join } from 'path';
 import { getDataDir, getOpenClawConfigDir } from './paths';
 import { logger } from './logger';
 import {
+  aggregateUsageEntries,
   extractSessionIdFromTranscriptFileName,
+  normalizeUsageAggregateWindow,
   parseOpenClawSessionKey,
   parseUsageEntriesFromJsonl,
   summarizeUsageEntries,
   type TokenUsageHistoryEntry,
   type TokenUsageSummary,
 } from './token-usage-core';
+import type { UsageAggregateSummary, UsageAggregateWindow } from '@shared/host-api/contract';
 import { listConfiguredAgentIds } from './agent-config';
 import { resolveSessionTranscriptPath } from './session-files';
 
@@ -165,6 +168,32 @@ export async function getRecentTokenUsageHistory(limit?: number): Promise<TokenU
 
   results.sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
   return Number.isFinite(maxEntries) ? results.slice(0, maxEntries) : results;
+}
+
+/**
+ * Aggregate ALL local transcripts into window-scoped totals, per-day
+ * buckets, and per-model / per-agent dimensions. Unlike
+ * `getRecentTokenUsageHistory`, this applies no entry cap: the "All"
+ * window reflects complete local history.
+ */
+export async function getUsageAggregateSummary(window?: UsageAggregateWindow): Promise<UsageAggregateSummary> {
+  const normalizedWindow = normalizeUsageAggregateWindow(window);
+  const files = await listRecentSessionFiles();
+  const entries: TokenUsageHistoryEntry[] = [];
+
+  for (const file of files) {
+    try {
+      const content = await readFile(file.filePath, 'utf8');
+      entries.push(...parseUsageEntriesFromJsonl(content, {
+        sessionId: file.sessionId,
+        agentId: file.agentId,
+      }));
+    } catch (error) {
+      logger.debug(`Failed to read token usage transcript ${file.filePath}:`, error);
+    }
+  }
+
+  return aggregateUsageEntries(entries, normalizedWindow, { scannedFiles: files.length });
 }
 
 export function getTranscriptPathForSessionKey(sessionKey: string): {

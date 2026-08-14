@@ -82,6 +82,126 @@ const usageHistory = [
   },
 ];
 
+function aggregateDimension(record: (typeof usageHistory)[number] & { costUsd?: number }) {
+  const promptTokens = record.inputTokens + record.cacheReadTokens + record.cacheWriteTokens;
+  return {
+    key: record.model,
+    label: record.model,
+    records: 1,
+    inputTokens: record.inputTokens,
+    outputTokens: record.outputTokens,
+    cacheReadTokens: record.cacheReadTokens,
+    cacheWriteTokens: record.cacheWriteTokens,
+    totalTokens: record.totalTokens,
+    costUsd: record.costUsd ?? 0,
+    promptTokens,
+    cacheHitRate: promptTokens > 0 ? record.cacheReadTokens / promptTokens : null,
+  };
+}
+
+function buildAggregateSummary() {
+  const billable = usageHistory.filter((record) => record.usageStatus === 'available');
+  const totals = billable.reduce(
+    (sum, record) => ({
+      inputTokens: sum.inputTokens + record.inputTokens,
+      outputTokens: sum.outputTokens + record.outputTokens,
+      cacheReadTokens: sum.cacheReadTokens + record.cacheReadTokens,
+      cacheWriteTokens: sum.cacheWriteTokens + record.cacheWriteTokens,
+      totalTokens: sum.totalTokens + record.totalTokens,
+      costUsd: sum.costUsd + (record.costUsd ?? 0),
+      promptTokens: sum.promptTokens + record.inputTokens + record.cacheReadTokens + record.cacheWriteTokens,
+    }),
+    { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, totalTokens: 0, costUsd: 0, promptTokens: 0 },
+  );
+
+  return {
+    window: '30d',
+    generatedAt: Date.now(),
+    scannedFiles: 4,
+    scannedEntries: 4,
+    entriesInWindow: 4,
+    billableEntries: 3,
+    missingEntries: 1,
+    errorEntries: 0,
+    ...totals,
+    cacheHitRate: totals.promptTokens > 0 ? totals.cacheReadTokens / totals.promptTokens : null,
+    earliestTimestamp: usageHistory[3].timestamp,
+    latestTimestamp: usageHistory[0].timestamp,
+    days: billable.map((record) => ({
+      ...aggregateDimension(record),
+      date: usageDayKey(record.timestamp),
+    })),
+    models: [
+      (() => {
+        const proRecords = billable.filter((record) => record.model === 'e2e-model-pro');
+        const dimension = proRecords.map((record) => aggregateDimension(record));
+        const merged = dimension.reduce(
+          (sum, item) => ({
+            ...sum,
+            records: sum.records + item.records,
+            inputTokens: sum.inputTokens + item.inputTokens,
+            outputTokens: sum.outputTokens + item.outputTokens,
+            cacheReadTokens: sum.cacheReadTokens + item.cacheReadTokens,
+            cacheWriteTokens: sum.cacheWriteTokens + item.cacheWriteTokens,
+            totalTokens: sum.totalTokens + item.totalTokens,
+            costUsd: sum.costUsd + item.costUsd,
+            promptTokens: sum.promptTokens + item.promptTokens,
+          }),
+          { ...dimension[0], records: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, totalTokens: 0, costUsd: 0, promptTokens: 0 },
+        );
+        return { ...merged, cacheHitRate: merged.promptTokens > 0 ? merged.cacheReadTokens / merged.promptTokens : null };
+      })(),
+      aggregateDimension(billable.find((record) => record.model === 'e2e-model-lite')!),
+    ],
+    agents: [
+      (() => {
+        const dimensions = billable.map((record) => aggregateDimension(record));
+        const merged = dimensions.reduce(
+          (sum, item) => ({
+            ...sum,
+            records: sum.records + item.records,
+            inputTokens: sum.inputTokens + item.inputTokens,
+            outputTokens: sum.outputTokens + item.outputTokens,
+            cacheReadTokens: sum.cacheReadTokens + item.cacheReadTokens,
+            cacheWriteTokens: sum.cacheWriteTokens + item.cacheWriteTokens,
+            totalTokens: sum.totalTokens + item.totalTokens,
+            costUsd: sum.costUsd + item.costUsd,
+            promptTokens: sum.promptTokens + item.promptTokens,
+          }),
+          { ...dimensions[0], key: 'main', label: 'main', records: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, totalTokens: 0, costUsd: 0, promptTokens: 0 },
+        );
+        return { ...merged, cacheHitRate: merged.promptTokens > 0 ? merged.cacheReadTokens / merged.promptTokens : null };
+      })(),
+    ],
+  };
+}
+
+function buildEmptyAggregateSummary() {
+  return {
+    window: '30d',
+    generatedAt: Date.now(),
+    scannedFiles: 0,
+    scannedEntries: 0,
+    entriesInWindow: 0,
+    billableEntries: 0,
+    missingEntries: 0,
+    errorEntries: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+    totalTokens: 0,
+    costUsd: 0,
+    promptTokens: 0,
+    cacheHitRate: null,
+    earliestTimestamp: null,
+    latestTimestamp: null,
+    days: [],
+    models: [],
+    agents: [],
+  };
+}
+
 async function openBillingSettingsPage(page: Awaited<ReturnType<typeof getStableWindow>>) {
   await page.evaluate(() => {
     window.location.hash = '#/settings/billing';
@@ -99,6 +219,7 @@ test('shows no-data guidance when billing history is empty', async ({ launchElec
       gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
       hostApi: {
         [stableStringify(['usage', 'recentTokenHistory', { limit: 800 }])]: [],
+        [stableStringify(['usage', 'aggregateSummary', { window: '30d' }])]: buildEmptyAggregateSummary(),
       },
     });
 
@@ -134,6 +255,7 @@ test.describe('Billing page', () => {
         },
         hostApi: {
           [stableStringify(['usage', 'recentTokenHistory', { limit: 800 }])]: usageHistory,
+          [stableStringify(['usage', 'aggregateSummary', { window: '30d' }])]: buildAggregateSummary(),
         },
       });
 
@@ -148,6 +270,7 @@ test.describe('Billing page', () => {
       await expect(page.getByTestId('billing-window-controls')).toBeVisible();
       await expect(page.getByTestId('billing-data-quality')).toBeVisible();
       await expect(page.getByTestId('billing-data-quality')).toContainText('Billable records');
+      await expect(page.getByTestId('billing-data-quality')).toContainText('Transcript files');
 
       await expect(page.getByTestId('billing-token-chart')).toBeVisible();
       await expect(page.getByTestId('billing-token-chart').locator('svg')).toBeVisible();
@@ -155,8 +278,8 @@ test.describe('Billing page', () => {
       expect(await page.getByTestId('billing-usage-heatmap-day').count()).toBeGreaterThanOrEqual(30);
       await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('border-radius', '2px');
       await page.setViewportSize({ width: 800, height: 760 });
-      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('width', '10px');
-      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('height', '10px');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('width', '12px');
+      await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('height', '12px');
       await page.setViewportSize({ width: 1280, height: 900 });
       await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('width', '13px');
       await expect(page.getByTestId('billing-usage-heatmap-day').first()).toHaveCSS('height', '13px');
@@ -177,6 +300,17 @@ test.describe('Billing page', () => {
       await expect(page.getByTestId('billing-recent-list')).toContainText('billing-session-a');
       await expect(page.getByTestId('billing-recent-list')).toContainText('No usage');
 
+      await expect(page.getByTestId('billing-kpi-hit-rate')).toBeVisible();
+      await expect(page.getByTestId('billing-cost-chart')).toBeVisible();
+      await expect(page.getByTestId('billing-cost-chart').locator('svg')).toBeVisible();
+      await expect(page.getByTestId('billing-hit-rate-chart')).toBeVisible();
+      await expect(page.getByTestId('billing-hit-rate-chart').locator('svg')).toBeVisible();
+      await expect(page.getByTestId('billing-model-table')).toContainText('e2e-model-pro');
+      await expect(page.getByTestId('billing-model-table')).not.toContainText('e2e-model-pending');
+      await expect(page.getByTestId('billing-agent-table')).toContainText('main');
+      await expect(page.getByTestId('billing-aggregate-note')).toContainText('4');
+      await expect(page.getByTestId('billing-recent-list')).toContainText('Cache hit');
+
       await page.getByTestId('billing-back-to-models').click();
       await expect(page.getByTestId('models-page')).toBeVisible();
     } finally {
@@ -192,6 +326,7 @@ test.describe('Billing page', () => {
         gatewayStatus: { state: 'stopped' },
         hostApi: {
           [stableStringify(['usage', 'recentTokenHistory', { limit: 800 }])]: usageHistory,
+          [stableStringify(['usage', 'aggregateSummary', { window: '30d' }])]: buildAggregateSummary(),
         },
       });
 
@@ -201,6 +336,7 @@ test.describe('Billing page', () => {
       await openBillingSettingsPage(page);
       await expect(page.getByTestId('billing-page')).toBeVisible();
       await expect(page.getByTestId('billing-token-chart').locator('svg')).toBeVisible();
+      await expect(page.getByTestId('billing-hit-rate-chart').locator('svg')).toBeVisible();
       await expect(page.getByTestId('billing-model-chart')).toContainText('e2e-model-pro');
       await expect(page.getByText('Gateway offline')).toBeVisible();
     } finally {

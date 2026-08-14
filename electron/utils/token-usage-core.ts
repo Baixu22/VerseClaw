@@ -1,3 +1,6 @@
+import { computeCacheHitRate as hitRateForUsage, isHiddenUsageSource, promptTokensForUsage } from '@shared/types/usage';
+import type { UsageAggregateDayBucket, UsageAggregateDimension, UsageAggregateSummary, UsageAggregateWindow } from '@shared/host-api/contract';
+
 export interface TokenUsageHistoryEntry {
   timestamp: string;
   sessionId: string;
@@ -149,23 +152,6 @@ function firstUsageNumber(usage: TranscriptUsageShape | undefined, candidates: s
 function nestedCachedTokens(usage: TranscriptUsageShape): number | undefined {
   return normalizeUsageNumber(usage.input_tokens_details?.cached_tokens)
     ?? normalizeUsageNumber(usage.prompt_tokens_details?.cached_tokens);
-}
-
-function promptTokensForUsage(entry: {
-  inputTokens: number;
-  cacheReadTokens: number;
-  cacheWriteTokens: number;
-}): number {
-  return entry.inputTokens + entry.cacheReadTokens + entry.cacheWriteTokens;
-}
-
-function hitRateForUsage(entry: {
-  inputTokens: number;
-  cacheReadTokens: number;
-  cacheWriteTokens: number;
-}): number | null {
-  const promptTokens = promptTokensForUsage(entry);
-  return promptTokens > 0 ? entry.cacheReadTokens / promptTokens : null;
 }
 
 function parseUsageFromShape(usage: unknown): ParsedUsageTokens | undefined {
@@ -497,4 +483,193 @@ export function summarizeUsageEntries(
     : null;
 
   return summary;
+}
+
+function localDayKey(timestamp: string): string | null {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return null;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const USAGE_AGGREGATE_WINDOWS = new Set<UsageAggregateWindow>(['7d', '30d', 'all']);
+const USAGE_AGGREGATE_DEFAULT_WINDOW: UsageAggregateWindow = '30d';
+const USAGE_AGGREGATE_MODEL_CAP = 12;
+
+export function normalizeUsageAggregateWindow(value: unknown): UsageAggregateWindow {
+  if (typeof value === 'string' && USAGE_AGGREGATE_WINDOWS.has(value as UsageAggregateWindow)) {
+    return value as UsageAggregateWindow;
+  }
+  return USAGE_AGGREGATE_DEFAULT_WINDOW;
+}
+
+function emptyUsageAggregateDimension(key: string, label: string): UsageAggregateDimension {
+  return {
+    key,
+    label,
+    records: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+    totalTokens: 0,
+    costUsd: 0,
+    promptTokens: 0,
+    cacheHitRate: null,
+  };
+}
+
+function isBillableUsageEntry(entry: TokenUsageHistoryEntry): boolean {
+  return entry.usageStatus === 'available' && entry.totalTokens > 0;
+}
+
+function foldUsageIntoDimension(dimension: UsageAggregateDimension, entry: TokenUsageHistoryEntry): void {
+  dimension.records += 1;
+  dimension.inputTokens += entry.inputTokens;
+  dimension.outputTokens += entry.outputTokens;
+  dimension.cacheReadTokens += entry.cacheReadTokens;
+  dimension.cacheWriteTokens += entry.cacheWriteTokens;
+  dimension.totalTokens += entry.totalTokens;
+  dimension.costUsd += typeof entry.costUsd === 'number' && Number.isFinite(entry.costUsd) ? entry.costUsd : 0;
+  dimension.promptTokens += promptTokensForUsage(entry);
+}
+
+/**
+ * Aggregate every scanned usage entry into window-scoped totals, stable
+ * per-day buckets, and per-model / per-agent dimensions — with no entry
+ * cap, so the "All" window reflects complete local history rather than
+ * just the recent-records list.
+ */
+export function aggregateUsageEntries(
+  entries: TokenUsageHistoryEntry[],
+  window: UsageAggregateWindow,
+  options: { now?: number; scannedFiles?: number } = {},
+): UsageAggregateSummary {
+  const now = typeof options.now === 'number' && Number.isFinite(options.now) ? options.now : Date.now();
+  const normalizedWindow = normalizeUsageAggregateWindow(window);
+
+  const inWindowEntries = normalizedWindow === 'all'
+    ? entries
+    : (() => {
+      const days = normalizedWindow === '7d' ? 7 : 30;
+      const cutoff = now - days * 24 * 60 * 60 * 1000;
+      return entries.filter((entry) => {
+        const timestamp = Date.parse(entry.timestamp);
+        return Number.isFinite(timestamp) && timestamp >= cutoff;
+      });
+    })();
+
+  const visibleEntries = inWindowEntries.filter((entry) => (
+    !isHiddenUsageSource(entry.provider) && !isHiddenUsageSource(entry.model)
+  ));
+
+  const dayBuckets = new Map<string, UsageAggregateDayBucket>();
+  if (normalizedWindow !== 'all') {
+    const dayCount = normalizedWindow === '7d' ? 7 : 30;
+    for (let index = dayCount - 1; index >= 0; index -= 1) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - index);
+      const key = localDayKey(date.toISOString());
+      if (key) {
+        dayBuckets.set(key, { ...emptyUsageAggregateDimension(key, key), date: key });
+      }
+    }
+  }
+
+  const models = new Map<string, UsageAggregateDimension>();
+  const agents = new Map<string, UsageAggregateDimension>();
+
+  const totals: UsageAggregateDimension = emptyUsageAggregateDimension('totals', 'totals');
+  let billableEntries = 0;
+  let missingEntries = 0;
+  let errorEntries = 0;
+  let earliestTimestamp: string | null = null;
+  let latestTimestamp: string | null = null;
+
+  for (const entry of visibleEntries) {
+    if (entry.usageStatus === 'missing') {
+      missingEntries += 1;
+      continue;
+    }
+    if (entry.usageStatus === 'error') {
+      errorEntries += 1;
+      continue;
+    }
+
+    const timestampMs = Date.parse(entry.timestamp);
+    if (Number.isFinite(timestampMs)) {
+      if (earliestTimestamp === null || timestampMs < Date.parse(earliestTimestamp)) {
+        earliestTimestamp = entry.timestamp;
+      }
+      if (latestTimestamp === null || timestampMs > Date.parse(latestTimestamp)) {
+        latestTimestamp = entry.timestamp;
+      }
+    }
+
+    if (!isBillableUsageEntry(entry)) continue;
+    billableEntries += 1;
+    foldUsageIntoDimension(totals, entry);
+
+    const dayKey = localDayKey(entry.timestamp);
+    if (dayKey) {
+      if (!dayBuckets.has(dayKey)) {
+        dayBuckets.set(dayKey, { ...emptyUsageAggregateDimension(dayKey, dayKey), date: dayKey });
+      }
+      foldUsageIntoDimension(dayBuckets.get(dayKey)!, entry);
+    }
+
+    const modelLabel = entry.model?.trim() || 'Unknown';
+    if (!models.has(modelLabel)) {
+      models.set(modelLabel, emptyUsageAggregateDimension(modelLabel, modelLabel));
+    }
+    foldUsageIntoDimension(models.get(modelLabel)!, entry);
+
+    const agentLabel = entry.agentId?.trim() || 'Unknown';
+    if (!agents.has(agentLabel)) {
+      agents.set(agentLabel, emptyUsageAggregateDimension(agentLabel, agentLabel));
+    }
+    foldUsageIntoDimension(agents.get(agentLabel)!, entry);
+  }
+
+  const finalizeDimension = <T extends UsageAggregateDimension>(dimension: T): T => ({
+    ...dimension,
+    cacheHitRate: dimension.promptTokens > 0 ? dimension.cacheReadTokens / dimension.promptTokens : null,
+  });
+
+  const sortDimensionsByTokens = (dimensions: UsageAggregateDimension[]): UsageAggregateDimension[] => (
+    dimensions
+      .sort((left, right) => right.totalTokens - left.totalTokens || left.label.localeCompare(right.label))
+  );
+
+  const days = Array.from(dayBuckets.values())
+    .map(finalizeDimension)
+    .sort((left, right) => left.date.localeCompare(right.date));
+
+  const finalizedTotals = finalizeDimension(totals);
+
+  return {
+    window: normalizedWindow,
+    generatedAt: now,
+    scannedFiles: typeof options.scannedFiles === 'number' ? Math.max(0, Math.floor(options.scannedFiles)) : 0,
+    scannedEntries: entries.length,
+    entriesInWindow: visibleEntries.length,
+    billableEntries,
+    missingEntries,
+    errorEntries,
+    inputTokens: finalizedTotals.inputTokens,
+    outputTokens: finalizedTotals.outputTokens,
+    cacheReadTokens: finalizedTotals.cacheReadTokens,
+    cacheWriteTokens: finalizedTotals.cacheWriteTokens,
+    totalTokens: finalizedTotals.totalTokens,
+    costUsd: finalizedTotals.costUsd,
+    promptTokens: finalizedTotals.promptTokens,
+    cacheHitRate: finalizedTotals.cacheHitRate,
+    earliestTimestamp,
+    latestTimestamp,
+    days,
+    models: sortDimensionsByTokens(Array.from(models.values()).map(finalizeDimension)).slice(0, USAGE_AGGREGATE_MODEL_CAP),
+    agents: sortDimensionsByTokens(Array.from(agents.values()).map(finalizeDimension)),
+  };
 }

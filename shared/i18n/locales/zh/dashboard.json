@@ -134,13 +134,25 @@
             "estimated": "按提供方用量估算",
             "activeModels": "选中时间范围内",
             "perRecord": "每条用量记录",
-            "recordsWithUsage": "{{count}} 条可计费记录"
+            "recordsWithUsage": "{{count}} 条可计费记录",
+            "cacheHitRate": "缓存命中率",
+            "cacheReadTokens": "缓存读取 Token",
+            "cacheWriteTokens": "缓存写入 Token",
+            "promptTokens": "提示 Token",
+            "hitRateDetail": "提示中由缓存提供的占比",
+            "cacheReadDetail": "由缓存提供的 Token",
+            "cacheWriteDetail": "写入缓存的 Token",
+            "promptDetail": "输入 + 缓存 Token"
         },
         "estimateNote": "所有金额均为估算:由本地会话 transcript 中的 usage.estimatedCostUsd 按价目换算后聚合而成,并非账单,不含账单/退款/折扣语义。",
         "chart": {
             "title": "每日 Token 消耗保持完整",
             "description": "选中时间范围内每天都有稳定桶位，并按输入、输出和缓存堆叠展示。",
             "peakDay": "峰值 {{day}} - {{tokens}} Token"
+        },
+        "costChart": {
+            "title": "成本与缓存趋势",
+            "description": "选中时间范围内的每日预估成本与缓存命中率，虚线标记窗口平均命中率。"
         },
         "modelChart": {
             "title": "模型消耗排行",
@@ -154,17 +166,43 @@
         },
         "recent": {
             "title": "最近计费记录",
-            "description": "来自 transcript 的原始用量记录，包括不可用或解析失败的记录。"
+            "description": "来自 transcript 的原始用量记录，包括不可用或解析失败的记录。",
+            "cacheHit": "缓存命中 {{value}}"
         },
         "transcriptSource": "Transcript 历史",
         "refreshing": "刷新中",
         "dataQuality": {
             "scanned": "已扫描记录",
+            "scannedFiles": "Transcript 文件",
             "billable": "可计费记录",
             "unavailable": "不可用记录",
             "unavailableWithErrors": "{{unavailable}} 条不可用，{{errors}} 条错误",
+            "cacheRead": "缓存读取 Token",
             "latest": "最新记录"
         },
+        "tableSection": {
+            "title": "明细分解",
+            "description": "选中时间范围内按模型与按代理的汇总。"
+        },
+        "modelTable": {
+            "title": "按模型"
+        },
+        "agentTable": {
+            "title": "按代理"
+        },
+        "table": {
+            "name": "名称",
+            "records": "记录数",
+            "tokens": "Token",
+            "input": "输入",
+            "output": "输出",
+            "cacheRead": "缓存读取",
+            "hitRate": "命中率",
+            "cost": "预估成本"
+        },
+        "aggregateNote": "总计聚合了全部本地转录（扫描 {{files}} 个文件），包含最近列表之外的更早历史。",
+        "aggregateNoteFallback": "总计仅基于最近记录列表计算。",
+        "noHitRateData": "暂无提示 Token 记录。",
         "status": {
             "available": "可用",
             "missing": "无用量",
