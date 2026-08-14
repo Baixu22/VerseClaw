@@ -1,3 +1,5 @@
+import { createServer, type Server } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { completeSetup, expect, test } from './fixtures/electron';
 
 const TEST_PROVIDER_ID = 'moonshot-e2e';
@@ -268,9 +270,11 @@ test.describe('Verse Claw provider lifecycle', () => {
     await expect(page.getByTestId('provider-edit-save-moonshot-edit')).toHaveCount(0);
   });
 
-  // R4: custom provider auth format + capability metadata. Assertions read the
-  // renderer-side host call capture (window.__CLAWX_TEST__.hostApiCalls) so the
-  // real IPC chain (UI -> host-api -> Main) is exercised end to end.
+  // R4: custom provider auth format + capability metadata. Each test spins up a
+  // real local HTTP server so the save-time validator performs a REAL probe. The
+  // server asserts the wire-level auth shape (custom header name+prefix / query
+  // parameter), and the renderer-side host-call capture asserts the payloads the
+  // dialog sent to validation and persistence.
   async function providerHostCalls(page: Parameters<typeof completeSetup>[0]): Promise<Array<{
     module: string;
     action: string;
@@ -286,7 +290,37 @@ test.describe('Verse Claw provider lifecycle', () => {
     });
   }
 
-  async function fillCustomProviderBasics(page: Parameters<typeof completeSetup>[0], label: string): Promise<void> {
+  async function startValidationProbeServer(): Promise<{
+    server: Server;
+    baseUrl: string;
+    urls: string[];
+    authHeaders: Array<Record<string, string>>;
+  }> {
+    const urls: string[] = [];
+    const authHeaders: Array<Record<string, string>> = [];
+    const server = createServer((request, response) => {
+      urls.push(request.url ?? '');
+      const seenAuth: Record<string, string> = {};
+      if (request.headers['x-api-key'] !== undefined) {
+        seenAuth['x-api-key'] = String(request.headers['x-api-key']);
+      }
+      if (request.headers.authorization !== undefined) {
+        seenAuth.authorization = String(request.headers.authorization);
+      }
+      authHeaders.push(seenAuth);
+      response.writeHead(200, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ data: [{ id: 'local-model' }] }));
+    });
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address() as AddressInfo;
+    return { server, baseUrl: `http://127.0.0.1:${address.port}/v1`, urls, authHeaders };
+  }
+
+  async function fillCustomProviderBasics(
+    page: Parameters<typeof completeSetup>[0],
+    label: string,
+    baseUrl: string,
+  ): Promise<void> {
     await page.getByTestId('sidebar-nav-settings').click();
     await page.getByTestId('settings-nav-models').click();
     await expect(page.getByTestId('providers-settings')).toBeVisible();
@@ -297,64 +331,83 @@ test.describe('Verse Claw provider lifecycle', () => {
     await page.getByTestId('add-provider-type-custom').click();
     await page.getByTestId('add-provider-name-input').fill(label);
     await page.getByTestId('add-provider-api-key-input').fill('sk-lm-test');
-    await page.getByTestId('add-provider-base-url-input').fill('http://127.0.0.1:1234/v1');
+    await page.getByTestId('add-provider-base-url-input').fill(baseUrl);
     await page.getByTestId('add-provider-model-id-input').fill('local-model');
   }
 
   test('add dialog sends the custom-header auth format to validation and save', async ({ page }) => {
-    await completeSetup(page);
-    await fillCustomProviderBasics(page, 'Header Auth Custom');
+    const probe = await startValidationProbeServer();
+    try {
+      await completeSetup(page);
+      await fillCustomProviderBasics(page, 'Header Auth Custom', probe.baseUrl);
 
-    await page.getByTestId('add-provider-auth-method-custom-header').click();
-    await expect(page.getByTestId('add-provider-auth-header-name')).toBeVisible();
-    await page.getByTestId('add-provider-auth-header-name').fill('X-API-Key');
-    await page.getByTestId('add-provider-auth-header-prefix').fill('Bearer ');
-    await page.getByTestId('add-provider-submit-button').click();
+      await page.getByTestId('add-provider-auth-method-custom-header').click();
+      await expect(page.getByTestId('add-provider-auth-header-name')).toBeVisible();
+      await page.getByTestId('add-provider-auth-header-name').fill('X-API-Key');
+      await page.getByTestId('add-provider-auth-header-prefix').fill('Bearer ');
+      await page.getByTestId('add-provider-submit-button').click();
 
-    await expect(page.getByTestId('provider-card-custom')).toContainText('Header Auth Custom');
+      await expect(page.getByTestId('provider-card-custom')).toContainText('Header Auth Custom');
 
-    const calls = await providerHostCalls(page);
-    const validateCall = calls.find((call) => call.action === 'validateKey');
-    const createCall = calls.find((call) => call.action === 'createAccount');
+      // The REAL validation probe hit the local server with the resolved auth format.
+      expect(probe.urls.some((url) => url.includes('/models'))).toBe(true);
+      expect(probe.authHeaders.some((headers) => headers['x-api-key'] === 'Bearer sk-lm-test')).toBe(true);
+      expect(probe.authHeaders.some((headers) => 'authorization' in headers)).toBe(false);
 
-    expect(validateCall?.payload).toMatchObject({
-      options: { auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
-    });
-    expect(createCall?.payload).toMatchObject({
-      account: { requestAuth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
-    });
+      const calls = await providerHostCalls(page);
+      const validateCall = calls.find((call) => call.action === 'validateKey');
+      const createCall = calls.find((call) => call.action === 'createAccount');
+
+      expect(validateCall?.payload).toMatchObject({
+        options: { auth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
+      });
+      expect(createCall?.payload).toMatchObject({
+        account: { requestAuth: { mode: 'custom-header', headerName: 'X-API-Key', prefix: 'Bearer ' } },
+      });
+    } finally {
+      await new Promise<void>((resolve) => probe.server.close(() => resolve()));
+    }
   });
 
   test('add dialog persists query auth and declared model capabilities', async ({ page }) => {
-    await completeSetup(page);
-    await fillCustomProviderBasics(page, 'Query Auth Custom');
+    const probe = await startValidationProbeServer();
+    try {
+      await completeSetup(page);
+      await fillCustomProviderBasics(page, 'Query Auth Custom', probe.baseUrl);
 
-    await page.getByTestId('add-provider-auth-method-query').click();
-    await expect(page.getByTestId('add-provider-auth-query-param')).toBeVisible();
-    await page.getByTestId('add-provider-auth-query-param').fill('key');
-    await page.getByTestId('add-provider-context-window').fill('128000');
-    await page.getByTestId('add-provider-max-tokens').fill('8192');
-    await page.getByTestId('add-provider-supports-vision').click();
-    await page.getByTestId('add-provider-submit-button').click();
+      await page.getByTestId('add-provider-auth-method-query').click();
+      await expect(page.getByTestId('add-provider-auth-query-param')).toBeVisible();
+      await page.getByTestId('add-provider-auth-query-param').fill('key');
+      await page.getByTestId('add-provider-context-window').fill('128000');
+      await page.getByTestId('add-provider-max-tokens').fill('8192');
+      await page.getByTestId('add-provider-supports-vision').click();
+      await page.getByTestId('add-provider-submit-button').click();
 
-    await expect(page.getByTestId('provider-card-custom')).toContainText('Query Auth Custom');
+      await expect(page.getByTestId('provider-card-custom')).toContainText('Query Auth Custom');
 
-    const calls = await providerHostCalls(page);
-    const validateCall = calls.find((call) => call.action === 'validateKey');
-    const createCall = calls.find((call) => call.action === 'createAccount');
+      // The REAL validation probe carried the credential as a query parameter.
+      expect(probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test'))).toBe(true);
+      expect(probe.authHeaders.every((headers) => Object.keys(headers).length === 0)).toBe(true);
 
-    expect(validateCall?.payload).toMatchObject({
-      options: { auth: { mode: 'query', parameterName: 'key' } },
-    });
-    expect(createCall?.payload).toMatchObject({
-      account: {
-        requestAuth: { mode: 'query', parameterName: 'key' },
-        modelProfile: {
-          contextWindow: 128000,
-          maxTokens: 8192,
-          supportsVision: true,
+      const calls = await providerHostCalls(page);
+      const validateCall = calls.find((call) => call.action === 'validateKey');
+      const createCall = calls.find((call) => call.action === 'createAccount');
+
+      expect(validateCall?.payload).toMatchObject({
+        options: { auth: { mode: 'query', parameterName: 'key' } },
+      });
+      expect(createCall?.payload).toMatchObject({
+        account: {
+          requestAuth: { mode: 'query', parameterName: 'key' },
+          modelProfile: {
+            contextWindow: 128000,
+            maxTokens: 8192,
+            supportsVision: true,
+          },
         },
-      },
-    });
+      });
+    } finally {
+      await new Promise<void>((resolve) => probe.server.close(() => resolve()));
+    }
   });
 });
