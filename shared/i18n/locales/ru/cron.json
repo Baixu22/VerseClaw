@@ -275,6 +275,7 @@
         "loading": "Loading run details...",
         "empty": "No run details are available yet.",
         "structuredResult": "Structured result",
+        "runLogReplay": "Из журнала запусков (не исходный текст сессии)",
         "loginState": "Login state",
         "finalUrl": "Final URL",
         "artifacts": "Artifacts",

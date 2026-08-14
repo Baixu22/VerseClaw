@@ -129,13 +129,14 @@
             "tokens": "Total tokens",
             "cost": "Estimated cost",
             "models": "Active models",
-            "averageCost": "Average cost",
+            "averageCost": "Average estimated cost",
             "records": "{{count}} records",
             "estimated": "Estimated from provider usage",
             "activeModels": "In the selected window",
             "perRecord": "Per usage record",
             "recordsWithUsage": "{{count}} billable records"
         },
+        "estimateNote": "All amounts are estimates: they are aggregated from usage.estimatedCostUsd in local session transcripts and converted at configured prices. They are not a bill and do not include billing, refund, or discount semantics.",
         "chart": {
             "title": "Daily token usage stays complete",
             "description": "Every day in the selected window has a stable bucket, with input, output, and cache tokens stacked together.",

@@ -263,6 +263,7 @@ export function CompactionArtifactViewer({
             type="button"
             onClick={onForkSession}
             disabled={!onForkSession || forkBusy}
+            title={t('composer.fork.boundaryNote')}
           >
             <GitBranchPlus className="mr-2 h-4 w-4" />
             {t('composer.compaction.artifactViewer.forkSession')}

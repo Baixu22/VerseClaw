@@ -275,6 +275,7 @@
         "loading": "Loading run details...",
         "empty": "No run details are available yet.",
         "structuredResult": "Structured result",
+        "runLogReplay": "実行ログから(セッションの原文ではありません)",
         "loginState": "Login state",
         "finalUrl": "Final URL",
         "artifacts": "Artifacts",

@@ -1597,7 +1597,8 @@
       "tooltip": "この transcript から新しい会話ブランチを作成します",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
       "toastCreated": "Fork 会話を作成しました",
-      "toastFailed": "会話の Fork に失敗しました"
+      "toastFailed": "会話の Fork に失敗しました",
+      "boundaryNote": "ここまでの会話と、プロバイダー/モデル/思考の設定、ワークスペースの UI 状態をコピーします。タスク台帳・メモリ・ナレッジの内容はコピーされません。"
     },
     "handoff": {
       "action": "新しい会話へ Handoff",
@@ -1613,6 +1614,7 @@
       "toastCreated": "Handoff セッションを作成しました",
       "ledgerSummary": "{{source}} から作成した Handoff セッション"
     },
+    "runLogReplay": "実行ログから(セッションの原文ではありません)",
     "workspaceActions": "ワークスペース操作",
     "workspaceActionFailed": "ワークスペース操作に失敗しました: {{error}}",
     "permissionModeTitle": "権限モード",

@@ -946,6 +946,13 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                 />
               </div>
 
+              <p
+                className="text-tiny text-muted-foreground"
+                data-testid="billing-estimate-note"
+              >
+                {t('dashboard:billing.estimateNote')}
+              </p>
+
               <div
                 className="grid gap-4 rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10 sm:grid-cols-2 lg:grid-cols-4"
                 data-testid="billing-data-quality"
@@ -1229,6 +1236,13 @@ export function Billing({ embedded }: { embedded?: boolean } = {}) {
                   detail={t('dashboard:billing.kpi.perRecord')}
                 />
               </div>
+
+              <p
+                className="text-tiny text-muted-foreground"
+                data-testid="billing-estimate-note"
+              >
+                {t('dashboard:billing.estimateNote')}
+              </p>
 
               <div
                 className="grid gap-4 rounded-lg border border-black/10 bg-surface-modal p-4 dark:border-white/10 sm:grid-cols-2 lg:grid-cols-4"

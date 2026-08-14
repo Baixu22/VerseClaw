@@ -1609,7 +1609,8 @@
       "tooltip": "Create a new conversation branch from this transcript",
       "disabledActiveRun": "Available after the current run finishes",
       "toastCreated": "Forked conversation created",
-      "toastFailed": "Failed to fork conversation"
+      "toastFailed": "Failed to fork conversation",
+      "boundaryNote": "Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied."
     },
     "handoff": {
       "action": "Handoff to new conversation",
@@ -1625,6 +1626,7 @@
       "toastCreated": "Handoff session created",
       "ledgerSummary": "Handoff session created from {{source}}"
     },
+    "runLogReplay": "From run log (not the session transcript)",
     "workspaceActions": "Workspace actions",
     "workspaceActionFailed": "Workspace action failed: {{error}}",
     "permissionModeTitle": "Permission mode",

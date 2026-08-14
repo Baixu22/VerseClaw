@@ -129,13 +129,14 @@
             "tokens": "合計トークン",
             "cost": "推定コスト",
             "models": "利用モデル",
-            "averageCost": "平均コスト",
+            "averageCost": "平均推定コスト",
             "records": "{{count}} 件",
             "estimated": "プロバイダーの使用量から推定",
             "activeModels": "選択期間内",
             "perRecord": "使用記録あたり",
             "recordsWithUsage": "{{count}} 件の課金対象記録"
         },
+        "estimateNote": "金額はすべて推定値です。ローカルセッションの transcript 内の usage.estimatedCostUsd を料金表で換算して集計したものであり、請求書ではなく、請求・返金・割引の意味は含みません。",
         "chart": {
             "title": "日別トークン使用量を欠けなく表示",
             "description": "選択期間の各日に固定の枠を用意し、入力・出力・キャッシュを積み上げて表示します。",

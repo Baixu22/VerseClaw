@@ -106,6 +106,9 @@ interface CronSessionFallbackMessage {
   content: string;
   timestamp: number;
   isError?: boolean;
+  // R7-1 T2: every message from this fallback chain is synthesized from
+  // cron_run_logs/job config, never from the real session transcript.
+  isRunLogReplay: true;
 }
 
 type JsonRecord = Record<string, unknown>;
@@ -210,6 +213,7 @@ function buildCronRunMessage(entry: CronRunLogEntry, index: number): CronSession
     role: status === 'error' ? 'system' : 'assistant',
     content,
     timestamp,
+    isRunLogReplay: true,
     ...(status === 'error' ? { isError: true } : {}),
   };
 }
@@ -326,6 +330,7 @@ function buildCronSessionFallbackMessages(params: {
       role: 'system',
       content: lines.join('\n'),
       timestamp: Math.max(0, (firstRelevantTimestamp ?? Date.now()) - 1),
+      isRunLogReplay: true,
     });
   }
 
@@ -342,6 +347,7 @@ function buildCronSessionFallbackMessages(params: {
         role: 'system',
         content: 'This scheduled task is still running in OpenClaw, but no chat transcript is available yet.',
         timestamp: runningAt,
+        isRunLogReplay: true,
       });
     } else if (messages.length === 0) {
       messages.push({
@@ -349,6 +355,7 @@ function buildCronSessionFallbackMessages(params: {
         role: 'system',
         content: 'No chat transcript is available for this scheduled task yet.',
         timestamp: params.sessionEntry?.updatedAt ?? Date.now(),
+        isRunLogReplay: true,
       });
     }
   }

@@ -522,6 +522,8 @@
       "enableViaSettings": "使用上方开关（Settings 控制面）。高级：按 runbook 改 env/config。",
       "rollbackViaSettings": "关闭开关（Settings）。Gateway 运行中会尝试重启。",
       "toggleLabel": "启用（opt-in）",
+      "unavailableReasonLabel": "不可用原因",
+      "memoryBoundaryNote": "记忆开关只控制注入/写入通道:注入的内容是候选提示,模型可能忽略;持久化需要人工确认;关闭开关不会删除已有记忆。",
       "on": "开",
       "off": "关",
       "refresh": "刷新",

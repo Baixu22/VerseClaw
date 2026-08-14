@@ -41,6 +41,7 @@ import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shar
 import { hostEvents } from '@/lib/host-events';
 import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
 import { ShimmerBlock } from '@/components/ai-elements/shimmer';
+import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { CompactionArtifactViewer } from './CompactionArtifactViewer';
@@ -3076,6 +3077,16 @@ export function Chat() {
                       id={`chat-message-${row.index}`}
                       data-testid={`chat-message-${row.index}`}
                     >
+                      {row.message.isRunLogReplay ? (
+                        <div data-testid={`chat-message-run-log-replay-${row.index}`}>
+                          <Badge
+                            variant="outline"
+                            className="text-tiny font-normal text-muted-foreground"
+                          >
+                            {t('runLogReplay')}
+                          </Badge>
+                        </div>
+                      ) : null}
                       <ChatMessage
                         message={row.message}
                         agent={currentAgent}

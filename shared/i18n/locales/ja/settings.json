@@ -530,6 +530,8 @@
       "enableViaSettings": "上のスイッチ（Settings コントロールプレーン）を使用します。高度な設定は runbook の env/config を参照してください。",
       "rollbackViaSettings": "スイッチをオフにします。Gateway が実行中の場合は再起動されます。",
       "toggleLabel": "有効化（オプトイン）",
+      "unavailableReasonLabel": "利用不可の理由",
+      "memoryBoundaryNote": "メモリスイッチは注入/書き込みチャネルのみを制御します。注入された内容はモデルが無視しうる候補ヒントであり、永続化には人間の確認が必要です。スイッチをオフにしても既存の記憶は削除されません。",
       "on": "オン",
       "off": "オフ",
       "refresh": "更新",

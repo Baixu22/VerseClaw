@@ -18,6 +18,7 @@ import {
   ClipboardCheck,
   KeyRound,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -1628,7 +1629,18 @@ function CronRunDetailsDialog({
                   )}
                 >
                   <div className="mb-1 flex items-center justify-between gap-3 text-xs text-muted-foreground">
-                    <span className="font-semibold">{message.role}</span>
+                    <span className="flex items-center gap-2 font-semibold">
+                      {message.role}
+                      {message.isRunLogReplay ? (
+                        <Badge
+                          variant="outline"
+                          className="text-tiny font-normal text-muted-foreground"
+                          data-testid="cron-run-log-replay-badge"
+                        >
+                          {t('details.runLogReplay')}
+                        </Badge>
+                      ) : null}
+                    </span>
                     {message.timestamp ? <span>{new Date(message.timestamp).toLocaleString()}</span> : null}
                   </div>
                   <p className="whitespace-pre-wrap break-words leading-6">{summarizeMessageContent(message.content)}</p>
