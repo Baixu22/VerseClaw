@@ -199,6 +199,31 @@ const CONTROLLED_CLI_FLAGS = new Set([
   '--executable-path',
 ]);
 
+function resolveExternalRunId(value: unknown): string | undefined {
+  // R5-1: callers may hand validate() a canonical cron execution id
+  // (`cron:<jobId>:<startedAt>`). Accept it verbatim; fail closed on any
+  // traversal-shaped or oversized value instead of silently minting a new id.
+  if (value === undefined || value === null || value === '') return undefined;
+  if (typeof value !== 'string') {
+    throw new Error('Agent browser runId must be a string');
+  }
+  const trimmed = value.trim();
+  if (
+    trimmed.length === 0
+    || trimmed.length > 128
+    || trimmed === '.'
+    || trimmed === '..'
+    || trimmed.includes('..')
+    || trimmed.includes('/')
+    || trimmed.includes('\\')
+    // eslint-disable-next-line no-control-regex
+    || /[\u0000-\u001f\u007f]/u.test(trimmed)
+  ) {
+    throw new Error('Agent browser runId is invalid');
+  }
+  return trimmed;
+}
+
 function normalizeMode(value: unknown): AgentBrowserSessionMode {
   return value === 'visible' ? 'visible' : 'headless';
 }
@@ -528,7 +553,9 @@ export class AgentBrowserService {
 
   async validate(payload: AgentBrowserValidatePayload = {}): Promise<AgentBrowserValidateResult> {
     let sessionId: string | undefined;
-    const runId = randomUUID();
+    // R5-1: reuse the caller-provided canonical run id when given; only mint a
+    // UUID when the caller has no run identity of its own.
+    const runId = resolveExternalRunId(payload.runId) ?? randomUUID();
     const startedAt = this.now().toISOString();
     const steps: BrowserAutomationRunStep[] = [];
     const markStep = (
@@ -1661,7 +1688,13 @@ export class AgentBrowserService {
 
   private runArtifactRootDir(runId: string): string {
     // P4-002 A3: refuse traversal/absolute runIds and stay under agent-browser root.
-    return agentBrowserRunArtifactDir(this.getUserDataPath(), runId);
+    // R5-1: canonical run ids contain `:` (illegal in Windows path segments);
+    // the directory uses a deterministic dir-safe projection while
+    // manifest.json / runResult keep the raw logical runId verbatim.
+    return agentBrowserRunArtifactDir(
+      this.getUserDataPath(),
+      runId.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 96) || 'unknown',
+    );
   }
 
   private detectLoginState(params: {
