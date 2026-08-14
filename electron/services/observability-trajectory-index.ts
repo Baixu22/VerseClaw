@@ -10,11 +10,13 @@ import type {
   ObservabilityTraceStatus,
   ObservabilityTokenUsage,
 } from '../../shared/types/observability';
+import { safeParseTrajectoryEvent } from '../../openclaw_runtime/src/trajectory/schema';
+import type { TrajectoryReadableEvent } from '../../openclaw_runtime/src/trajectory/types';
 import { extractSessionIdFromTranscriptFileName, getOpenClawUsageDirs } from '../utils/token-usage';
 import { persistObservabilityTraceToIndex } from './observability-index';
 import { isRecord, readNumber, readString, truncatePreview } from './observability-redaction';
 
-type SessionCandidate = {
+export type SessionCandidate = {
   agentId: string;
   sessionId: string;
   filePath: string;
@@ -23,9 +25,18 @@ type SessionCandidate = {
 
 type TrajectoryEventLike = {
   traceSchema?: unknown;
+  schemaVersion?: unknown;
   traceId?: unknown;
+  source?: unknown;
   sessionKey?: unknown;
+  sessionId?: unknown;
   runId?: unknown;
+  loopRunId?: unknown;
+  turnId?: unknown;
+  stepId?: unknown;
+  toolCallId?: unknown;
+  role?: unknown;
+  phase?: unknown;
   type?: unknown;
   ts?: unknown;
   seq?: unknown;
@@ -33,6 +44,7 @@ type TrajectoryEventLike = {
   modelId?: unknown;
   modelApi?: unknown;
   data?: unknown;
+  state?: unknown;
 };
 
 type TranscriptMessageLike = {
@@ -70,6 +82,52 @@ function readTimestamp(value: unknown): number | undefined {
   if (typeof value !== 'string') return undefined;
   const parsed = Date.parse(value);
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function isV2Event(event: TrajectoryEventLike): boolean {
+  return event.schemaVersion === 2;
+}
+
+function stableEventIdentity(event: TrajectoryEventLike): string | undefined {
+  if (!isV2Event(event)) {
+    return readString(event.traceId) ?? readString(event.runId);
+  }
+  switch (readString(event.role)) {
+    case 'run':
+      return readString(event.runId);
+    case 'turn':
+      return readString(event.turnId);
+    case 'step':
+      return readString(event.stepId);
+    case 'tool':
+      return readString(event.toolCallId);
+    default:
+      return undefined;
+  }
+}
+
+function normalizeTrajectoryEvent(
+  event: TrajectoryReadableEvent,
+  sessionKey: string,
+): TrajectoryEventLike {
+  if (event.schemaVersion !== 2) {
+    return { ...event, sessionKey };
+  }
+  const state = isRecord(event.state) ? event.state : {};
+  const data = isRecord(event.data) ? event.data : {};
+  return {
+    ...event,
+    sessionKey,
+    // Keep the post-change full state available to the existing trace mapper.
+    // The nested copy prevents lifecycle metadata from being mistaken for user data.
+    data: {
+      ...state,
+      ...data,
+      trajectoryRole: event.role,
+      trajectoryPhase: event.phase,
+      trajectoryState: state,
+    },
+  };
 }
 
 function trajectoryPathBesideTranscript(filePath: string): string {
@@ -198,6 +256,30 @@ async function readTrajectoryFiles(candidate: SessionCandidate): Promise<Traject
   return events;
 }
 
+export type LegacyTrajectorySession = {
+  candidate: SessionCandidate;
+  sessionKey: string;
+  events: TrajectoryEventLike[];
+  transcriptMessages: TranscriptMessageLike[];
+};
+
+/**
+ * Read persisted trajectory files once during Main startup. This is a v1
+ * migration fallback and is intentionally not called from dashboard reads.
+ */
+export async function readLegacyTrajectorySessions(): Promise<LegacyTrajectorySession[]> {
+  const sessions: LegacyTrajectorySession[] = [];
+  for (const candidate of await listRecentSessionCandidates()) {
+    const events = await readTrajectoryFiles(candidate);
+    if (events.length === 0) continue;
+    const transcriptMessages = await readTranscriptMessages(candidate.filePath);
+    const sessionKey = events.map((event) => readString(event.sessionKey)).find(Boolean)
+      ?? `agent:${candidate.agentId}:${candidate.sessionId}`;
+    sessions.push({ candidate, sessionKey, events, transcriptMessages });
+  }
+  return sessions;
+}
+
 function eventGroupKey(event: TrajectoryEventLike, candidate: SessionCandidate): string {
   return readString(event.runId)
     ?? readString(event.traceId)
@@ -245,9 +327,12 @@ function spanKindForTrajectoryType(type: string): ObservabilitySpanKind {
   return 'custom';
 }
 
-function statusForTrajectoryType(type: string): ObservabilityTraceStatus {
+function statusForTrajectoryType(type: string, data: Record<string, unknown> = {}): ObservabilityTraceStatus {
   if (/error|failed|failure|warning/iu.test(type)) return 'error';
   if (/abort|cancel/iu.test(type)) return 'aborted';
+  if (/\/(?:start|update)$/u.test(type) || data.trajectoryPhase === 'start' || data.trajectoryPhase === 'update') {
+    return 'running';
+  }
   return 'completed';
 }
 
@@ -458,7 +543,7 @@ function buildSpan(
   const type = readString(event.type) ?? 'runtime.event';
   const data = isRecord(event.data) ? event.data : {};
   const timestamp = readTimestamp(event.ts) ?? startedAt + index;
-  const status = statusForTrajectoryType(type);
+  const status = statusForTrajectoryType(type, data);
   const tokenUsage = tokenUsageFromTrajectoryEvent(event);
   return {
     id: `trajectory:${stableIdPart(readString(event.seq) ?? `${type}:${index}`)}`,
@@ -589,11 +674,12 @@ function buildTraceEvent(
   };
 }
 
-function buildTraceFromTrajectoryGroup(
+export function buildTraceFromTrajectoryGroup(
   candidate: SessionCandidate,
   groupKey: string,
   eventsInput: TrajectoryEventLike[],
   transcriptMessagesInput: TranscriptMessageLike[] = [],
+  options: { legacyFallback?: boolean } = {},
 ): ObservabilityTrace | null {
   const events = eventsInput.slice(-MAX_EVENTS_PER_TRACE);
   if (events.length === 0) return null;
@@ -607,12 +693,15 @@ function buildTraceFromTrajectoryGroup(
   const startedAt = readTimestamp(first.ts) ?? candidate.mtimeMs;
   const endedAt = readTimestamp(last.ts) ?? startedAt;
   const sessionKey = events.map((event) => readString(event.sessionKey)).find(Boolean) ?? `agent:${candidate.agentId}:${candidate.sessionId}`;
-  const statuses = events.map((event) => statusForTrajectoryType(readString(event.type) ?? 'runtime.event'));
+  const statuses = events.map((event) => statusForTrajectoryType(
+    readString(event.type) ?? 'runtime.event',
+    isRecord(event.data) ? event.data : {},
+  ));
   const status: ObservabilityTraceStatus = statuses.includes('error')
     ? 'error'
     : statuses.includes('aborted')
       ? 'aborted'
-      : 'completed';
+      : statuses.at(-1) === 'running' ? 'running' : 'completed';
   const transcriptMessages = selectedTranscriptMessagesForGroup(transcriptMessagesInput, events);
   const spans = [
     ...events.map((event, index) => buildSpan(traceId, event, index, startedAt)),
@@ -639,8 +728,11 @@ function buildTraceFromTrajectoryGroup(
     spans,
     events: traceEvents,
     tokenUsage,
-    metrics: { trajectoryEvents: events.length },
-    tags: ['runtime', 'trajectory'],
+    metrics: {
+      trajectoryEvents: events.length,
+      ...(options.legacyFallback ? { legacyFallback: 1 } : {}),
+    },
+    tags: ['runtime', 'trajectory', ...(options.legacyFallback ? ['legacy-v1-fallback'] : [])],
     error: status === 'error'
       ? events.map((event) => isRecord(event.data) ? firstString(event.data.error, event.data.warning) : undefined).find(Boolean)
       : undefined,
@@ -649,21 +741,254 @@ function buildTraceFromTrajectoryGroup(
 
 export async function refreshObservabilityTrajectoryIndex(): Promise<number> {
   let indexed = 0;
-  for (const candidate of await listRecentSessionCandidates()) {
-    const events = await readTrajectoryFiles(candidate);
-    if (events.length === 0) continue;
-    const transcriptMessages = await readTranscriptMessages(candidate.filePath);
+  for (const session of await readLegacyTrajectorySessions()) {
+    const { candidate, events, transcriptMessages } = session;
     const groups = new Map<string, TrajectoryEventLike[]>();
     for (const event of events) {
       const key = eventGroupKey(event, candidate);
       groups.set(key, [...(groups.get(key) ?? []), event]);
     }
     for (const [groupKey, groupEvents] of groups) {
-      const trace = buildTraceFromTrajectoryGroup(candidate, groupKey, groupEvents, transcriptMessages);
+      const trace = buildTraceFromTrajectoryGroup(candidate, groupKey, groupEvents, transcriptMessages, {
+        legacyFallback: groupEvents.every((event) => !isV2Event(event)),
+      });
       if (!trace) continue;
       await persistObservabilityTraceToIndex(trace, { sourceStatus: 'partial' });
       indexed += 1;
     }
   }
   return indexed;
+}
+
+export type TrajectoryProjectionDiagnostic = {
+  sessionKey: string;
+  kind: 'invalid' | 'duplicate' | 'out-of-order' | 'gap' | 'missing-identity';
+  message: string;
+  seq?: number;
+};
+
+export type TrajectoryProjectionApplyResult = {
+  accepted: number;
+  rejected: number;
+  lastSeq: number;
+  gap?: { expectedSeq: number; actualSeq: number };
+  diagnostics: TrajectoryProjectionDiagnostic[];
+};
+
+type ProjectionState = {
+  sessionKey: string;
+  lastSeq: number;
+  events: TrajectoryEventLike[];
+  traceIdByGroup: Map<string, string>;
+  legacyFallback?: boolean;
+  allowGaps?: boolean;
+  allowLegacyRows?: boolean;
+  transcriptMessages?: TranscriptMessageLike[];
+};
+
+export type ObservabilityTrajectoryProjector = {
+  ingest: (sessionKey: string, events: readonly unknown[]) => Promise<TrajectoryProjectionApplyResult>;
+  replace: (
+    sessionKey: string,
+    events: readonly unknown[],
+    options?: {
+      legacyFallback?: boolean;
+      allowGaps?: boolean;
+      allowLegacyRows?: boolean;
+      transcriptMessages?: TranscriptMessageLike[];
+    },
+  ) => Promise<TrajectoryProjectionApplyResult>;
+  reset: () => void;
+  getLastSeq: (sessionKey: string) => number;
+  getKnownSessionKeys: () => string[];
+};
+
+function projectionCandidate(sessionKey: string, events: TrajectoryEventLike[]): SessionCandidate {
+  const parts = sessionKey.split(':').filter(Boolean);
+  const agentId = parts[1] ?? 'runtime';
+  const sessionId = parts.at(-1) ?? sessionKey;
+  const firstTimestamp = events.map((event) => readTimestamp(event.ts)).find((value): value is number => value != null);
+  return {
+    agentId,
+    sessionId,
+    filePath: `gateway:${sessionKey}`,
+    mtimeMs: firstTimestamp ?? Date.now(),
+  };
+}
+
+function projectionGroupKey(event: TrajectoryEventLike): string {
+  return readString(event.runId) ?? readString(event.traceId) ?? 'unknown';
+}
+
+function projectionDiagnostic(
+  sessionKey: string,
+  kind: TrajectoryProjectionDiagnostic['kind'],
+  message: string,
+  seq?: number,
+): TrajectoryProjectionDiagnostic {
+  return { sessionKey, kind, message, ...(seq == null ? {} : { seq }) };
+}
+
+/**
+ * Deterministic Main-process projection for the Gateway trajectory stream.
+ * It deliberately accepts only ordered, schema-validated rows. Missing rows
+ * are reported to the caller so the caller can use observability.readFrom.
+ */
+export function createObservabilityTrajectoryProjector(options: {
+  onTrace: (trace: ObservabilityTrace) => void | Promise<void>;
+  onDiagnostic?: (diagnostic: TrajectoryProjectionDiagnostic) => void;
+}): ObservabilityTrajectoryProjector {
+  const states = new Map<string, ProjectionState>();
+  const queues = new Map<string, Promise<unknown>>();
+
+  const stateFor = (sessionKey: string): ProjectionState => {
+    const existing = states.get(sessionKey);
+    if (existing) return existing;
+    const created: ProjectionState = {
+      sessionKey,
+      lastSeq: 0,
+      events: [],
+      traceIdByGroup: new Map(),
+    };
+    states.set(sessionKey, created);
+    return created;
+  };
+
+  const publish = async (state: ProjectionState): Promise<void> => {
+    const groups = new Map<string, TrajectoryEventLike[]>();
+    for (const event of state.events) {
+      const key = projectionGroupKey(event);
+      groups.set(key, [...(groups.get(key) ?? []), event]);
+    }
+    const candidate = projectionCandidate(state.sessionKey, state.events);
+    for (const [groupKey, events] of groups) {
+      const trace = buildTraceFromTrajectoryGroup(candidate, groupKey, events, state.transcriptMessages, {
+        legacyFallback: state.legacyFallback,
+      });
+      if (trace) await options.onTrace(trace);
+    }
+  };
+
+  const apply = async (
+    sessionKeyInput: string,
+    eventsInput: readonly unknown[],
+  ): Promise<TrajectoryProjectionApplyResult> => {
+    const sessionKey = sessionKeyInput.trim();
+    const state = stateFor(sessionKey);
+    const diagnostics: TrajectoryProjectionDiagnostic[] = [];
+    let accepted = 0;
+    let rejected = 0;
+    let gap: TrajectoryProjectionApplyResult['gap'];
+
+    for (const raw of eventsInput) {
+      const parsed = safeParseTrajectoryEvent(raw);
+      let event: TrajectoryEventLike | undefined;
+      if (parsed.success) {
+        event = normalizeTrajectoryEvent(parsed.event, sessionKey);
+      } else if (state.allowLegacyRows && isRecord(raw) && raw.traceSchema === 'openclaw-trajectory' && raw.schemaVersion === 1) {
+        // v1 files predate the strict runtime envelope; preserve their
+        // compatibility read path without allowing the relaxed shape on the
+        // live Gateway stream.
+        event = { ...raw, sessionKey };
+      }
+      if (!event) {
+        const diagnostic = projectionDiagnostic(sessionKey, 'invalid', 'Gateway trajectory event failed schema validation');
+        diagnostics.push(diagnostic);
+        options.onDiagnostic?.(diagnostic);
+        rejected += 1;
+        continue;
+      }
+      const seq = readNumber(event.seq);
+      const identity = stableEventIdentity(event);
+      if (seq == null || !identity) {
+        const diagnostic = projectionDiagnostic(
+          sessionKey,
+          'missing-identity',
+          'Trajectory event is missing a stable lifecycle identity',
+          seq,
+        );
+        diagnostics.push(diagnostic);
+        options.onDiagnostic?.(diagnostic);
+        rejected += 1;
+        continue;
+      }
+      if (seq <= state.lastSeq) {
+        const kind = seq === state.lastSeq ? 'duplicate' : 'out-of-order';
+        const diagnostic = projectionDiagnostic(
+          sessionKey,
+          kind,
+          `Trajectory seq ${seq} is not greater than accepted seq ${state.lastSeq}`,
+          seq,
+        );
+        diagnostics.push(diagnostic);
+        options.onDiagnostic?.(diagnostic);
+        rejected += 1;
+        continue;
+      }
+      if (!state.allowGaps && state.events.length > 0 && seq > state.lastSeq + 1) {
+        gap = { expectedSeq: state.lastSeq + 1, actualSeq: seq };
+        const diagnostic = projectionDiagnostic(
+          sessionKey,
+          'gap',
+          `Trajectory seq gap: expected ${state.lastSeq + 1}, received ${seq}`,
+          seq,
+        );
+        diagnostics.push(diagnostic);
+        options.onDiagnostic?.(diagnostic);
+        rejected += 1;
+        break;
+      }
+      const groupKey = projectionGroupKey(event);
+      const traceId = readString(event.traceId);
+      const previousTraceId = state.traceIdByGroup.get(groupKey);
+      if (previousTraceId && traceId && previousTraceId !== traceId) {
+        const diagnostic = projectionDiagnostic(
+          sessionKey,
+          'invalid',
+          `Trajectory group ${groupKey} changed traceId from ${previousTraceId} to ${traceId}`,
+          seq,
+        );
+        diagnostics.push(diagnostic);
+        options.onDiagnostic?.(diagnostic);
+        rejected += 1;
+        continue;
+      }
+      if (traceId) state.traceIdByGroup.set(groupKey, traceId);
+      state.events.push(event);
+      state.lastSeq = seq;
+      accepted += 1;
+    }
+
+    if (accepted > 0) await publish(state);
+    return { accepted, rejected, lastSeq: state.lastSeq, ...(gap ? { gap } : {}), diagnostics };
+  };
+
+  const enqueue = (
+    sessionKey: string,
+    task: () => Promise<TrajectoryProjectionApplyResult>,
+  ): Promise<TrajectoryProjectionApplyResult> => {
+    const previous = queues.get(sessionKey) ?? Promise.resolve();
+    const next = previous.then(task);
+    queues.set(sessionKey, next.catch(() => undefined));
+    return next;
+  };
+
+  return {
+    ingest: (sessionKey, events) => enqueue(sessionKey, () => apply(sessionKey, events)),
+    replace: (sessionKey, events, options = {}) => enqueue(sessionKey, async () => {
+      states.delete(sessionKey);
+      const state = stateFor(sessionKey);
+      state.legacyFallback = options.legacyFallback;
+      state.allowGaps = options.allowGaps;
+      state.allowLegacyRows = options.allowLegacyRows;
+      state.transcriptMessages = options.transcriptMessages ?? [];
+      return apply(sessionKey, events);
+    }),
+    reset: () => {
+      states.clear();
+      queues.clear();
+    },
+    getLastSeq: (sessionKey) => states.get(sessionKey)?.lastSeq ?? 0,
+    getKnownSessionKeys: () => [...states.keys()].sort(),
+  };
 }
