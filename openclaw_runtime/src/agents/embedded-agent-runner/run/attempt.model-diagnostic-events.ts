@@ -48,7 +48,13 @@ type ModelCallDiagnosticContext = {
   trace: DiagnosticTraceContext;
   contentCapture?: DiagnosticModelContentCapturePolicy;
   nextCallId: () => string;
-  onStarted?: () => void;
+  onStarted?: (info: { callId: string }) => void;
+  onFinished?: (info: {
+    callId: string;
+    outcome: "completed" | "error";
+    durationMs: number;
+    errorCategory?: string;
+  }) => void;
 };
 
 type ModelCallEventBase = Omit<
@@ -82,6 +88,7 @@ type ModelCallObservationState = {
   outputMessages?: unknown[];
   contentCapture?: DiagnosticModelContentCapturePolicy;
   lastStreamProgressAt?: number;
+  onFinished?: ModelCallDiagnosticContext["onFinished"];
 };
 
 const MODEL_CALL_STREAM_PROGRESS_INTERVAL_MS = 30_000;
@@ -445,6 +452,11 @@ function emitModelCallCompleted(
     outcome: "completed",
     ...sizeTimingFields,
   });
+  state.onFinished?.({
+    callId: eventBase.callId,
+    outcome: "completed",
+    durationMs,
+  });
 }
 
 function emitModelCallError(
@@ -470,6 +482,12 @@ function emitModelCallError(
     outcome: "error",
     ...sizeTimingFields,
     ...fields,
+  });
+  state.onFinished?.({
+    callId: eventBase.callId,
+    outcome: "error",
+    durationMs,
+    ...(fields.errorCategory ? { errorCategory: fields.errorCategory } : {}),
   });
 }
 
@@ -652,12 +670,13 @@ export function wrapStreamFnWithDiagnosticModelCallEvents(
     const eventBase = baseModelCallEvent(ctx, callId, trace);
     const modelContent = streamContextModelContentFields(ctx.contentCapture, streamContext);
     emitModelCallStarted(eventBase, modelContent);
-    ctx.onStarted?.();
+    ctx.onStarted?.({ callId });
     const startedAt = Date.now();
     const state: ModelCallObservationState = {
       responseStreamBytes: 0,
       modelContent,
       contentCapture: ctx.contentCapture,
+      onFinished: ctx.onFinished,
     };
     const propagatedOptions = withDiagnosticTraceparentHeader(options, trace, state);
 
