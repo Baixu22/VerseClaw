@@ -19,6 +19,23 @@ test.describe('Chat recovery assist', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: {
+              messages: [{
+                id: 'assistant-failure',
+                role: 'assistant',
+                content: 'The previous task failed during validation.',
+                timestamp: new Date(1).toISOString(),
+              }],
+            },
+          },
+        },
         hostApi: {
           [stableStringify(['/api/settings', 'GET'])]: {
             ok: true,
@@ -66,7 +83,7 @@ test.describe('Chat recovery assist', () => {
                   name: 'Recovery Assist Workspace',
                   rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX-knowledge-ux-polish',
                   activeSessionKey: SESSION_KEY,
-                  permissionMode: 'workspace-write',
+                  permissionMode: 'acceptEdits',
                   state: {},
                   sessionStates: {},
                 }],
@@ -80,7 +97,7 @@ test.describe('Chat recovery assist', () => {
               name: 'Recovery Assist Workspace',
               rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX-knowledge-ux-polish',
               activeSessionKey: SESSION_KEY,
-              permissionMode: 'workspace-write',
+              permissionMode: 'acceptEdits',
               state: {},
               sessionStates: {},
             }],
@@ -90,7 +107,7 @@ test.describe('Chat recovery assist', () => {
               name: 'Recovery Assist Workspace',
               rootPath: 'C:\\Users\\27933\\Desktop\\clawx\\ClawX-knowledge-ux-polish',
               activeSessionKey: SESSION_KEY,
-              permissionMode: 'workspace-write',
+              permissionMode: 'acceptEdits',
               state: {},
               sessionStates: {},
             },
@@ -249,7 +266,10 @@ test.describe('Chat recovery assist', () => {
       await expect(section.getByTestId('settings-session-activity-retention')).toBeVisible();
 
       // Per-session recovery is scoped to the handed-over session.
-      await expect(section.getByTestId('settings-recovery-session')).toHaveValue(SESSION_KEY);
+      const sessionSelect = section.getByTestId('settings-recovery-session');
+      await expect(sessionSelect).toContainText('main');
+      await sessionSelect.click();
+      await expect(page.getByRole('option', { name: 'main', exact: true })).toHaveAttribute('aria-selected', 'true');
 
       // Copy resolves through i18n (a broken key path would surface the raw
       // dotted key) and must not overclaim what recovery can undo.
