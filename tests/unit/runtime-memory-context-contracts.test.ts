@@ -106,18 +106,21 @@ describe("runtime memory context contracts", () => {
       provider: "runtime.memory.provider",
       proposeFacts: "runtime.memory.proposeFacts",
       persist: "runtime.memory.persist",
+      candidateGeneration: "runtime.memory.candidateGeneration",
     });
     expect(DEFAULT_RUNTIME_MEMORY_FEATURE_FLAGS).toEqual({
       shadow: false,
       provider: false,
       proposeFacts: false,
       persist: false,
+      candidateGeneration: false,
     });
     expect(resolveRuntimeMemoryFeatureFlags({})).toEqual({
       shadow: false,
       provider: false,
       proposeFacts: false,
       persist: false,
+      candidateGeneration: false,
     });
     expect(resolveRuntimeMemoryFeatureFlags({
       runtime: {
@@ -126,6 +129,7 @@ describe("runtime memory context contracts", () => {
           provider: true,
           proposeFacts: true,
           persist: true,
+          candidateGeneration: true,
           rawChat: true,
         },
       },
@@ -134,6 +138,7 @@ describe("runtime memory context contracts", () => {
       provider: true,
       proposeFacts: true,
       persist: true,
+      candidateGeneration: true,
     });
     expect(resolveRuntimeMemoryFeatureFlags({
       memory: {
@@ -141,12 +146,14 @@ describe("runtime memory context contracts", () => {
         provider: 1,
         proposeFacts: false,
         persist: null,
+        candidateGeneration: null,
       },
     })).toEqual({
       shadow: false,
       provider: false,
       proposeFacts: false,
       persist: false,
+      candidateGeneration: false,
     });
     expect(runtimeMemoryFlagEnabled({}, "shadow")).toBe(false);
   });
