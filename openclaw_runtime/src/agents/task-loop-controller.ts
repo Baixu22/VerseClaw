@@ -2063,6 +2063,9 @@ function recordTaskLoopKeCandidates(
         ...(record.traceId ? [record.traceId] : []),
         ...(record.taskLedgerRootId ? [`task-ledger:${record.taskLedgerRootId}`] : []),
       ],
+      // Within-loop repair iterations are the available repeat-failure signal;
+      // the full cross-task registry query is the remaining wiring.
+      priorFailureCount: record.iterations.filter((snapshot) => snapshot.phase === "repair").length,
       now: record.updatedAt,
     });
     if (!run.enabled) return;

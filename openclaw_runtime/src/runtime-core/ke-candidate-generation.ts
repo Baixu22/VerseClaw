@@ -436,6 +436,19 @@ export function buildKeTaskTerminalEvidence(terminal: KeTerminalInput): KeTaskTe
   };
 }
 
+/**
+ * Count prior failures whose error signature matches the current one. Used by
+ * the terminal hook to feed a real (not default-0) repeat-failure signal; the
+ * full cross-task registry query is the caller's source of prior signatures.
+ */
+export function countKePriorFailures(
+  priorErrorSignatures: readonly (string | undefined)[],
+  currentSignature: string | undefined,
+): number {
+  if (!currentSignature) return 0;
+  return priorErrorSignatures.filter((signature) => signature === currentSignature).length;
+}
+
 /** Observable, content-light summary of a KE-P1-1 candidate generation run. */
 export type KeCandidateGenerationDiagnostics = {
   enabled: true;
