@@ -411,9 +411,10 @@ test.describe('Verse Claw provider lifecycle', () => {
           return `bridge-error: ${String(error)}`;
         }
       }, probe.baseUrl);
+      expect(directProbe, `probe urls=${JSON.stringify(probe.urls)}`).toMatchObject({ ok: true });
       await expect.poll(
         async () => probe.urls.some((url) => url.includes('/models') && url.includes('key=sk-lm-test')),
-        { timeout: 20_000, message: `directProbe=${JSON.stringify(directProbe)}; urls=${JSON.stringify(probe.urls)}` },
+        { timeout: 20_000 },
       ).toBe(true);
       expect(probe.authHeaders.every((headers) => Object.keys(headers).length === 0)).toBe(true);
 
