@@ -144,6 +144,34 @@ describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
     expect(census.bypassProducers.map((p) => p.id)).toEqual(['compass-pre-reply-retrieval']);
     expect(census.bypassProducers[0]?.note).toContain('bypasses the DCS context-engine');
   });
+
+  it('fail-closed: the activation planner rejects runtime.memory.persist=true through slotConvergenceErrors', () => {
+    // Legal default: persist off (or omitted) normalizes without errors.
+    const legal = resolveManifestActivationPlan({
+      config: {
+        plugins: { slots: { memory: 'memory-core' } },
+        runtime: { memory: { persist: false } },
+      } as never,
+      workspaceDir: process.cwd(),
+      trigger: { kind: 'capability', capability: 'anything' } as never,
+      manifestRecords: [],
+    });
+    expect(Array.isArray(legal.pluginIds)).toBe(true);
+
+    // E-1 ruling (b): persist=true is a second durable memory authority, so the
+    // activation planner (runtime startup / plugin reload) must fail closed.
+    expect(() =>
+      resolveManifestActivationPlan({
+        config: {
+          plugins: { slots: { memory: 'memory-core' } },
+          runtime: { memory: { persist: true } },
+        } as never,
+        workspaceDir: process.cwd(),
+        trigger: { kind: 'capability', capability: 'anything' } as never,
+        manifestRecords: [],
+      }),
+    ).toThrow(/slot convergence rejected/);
+  });
 });
 
   it('delete/correction propagates without SEKB auto-writeback (contract level)', () => {

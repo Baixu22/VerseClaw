@@ -71,7 +71,9 @@ export function resolveManifestActivationPlan(
   params: ResolveManifestActivationPlanParams,
 ): PluginActivationPlan {
   const onlyPluginIdSet = createPluginIdScopeSet(normalizePluginIdScope(params.onlyPluginIds));
-  const normalizedConfig = normalizePluginsConfig(params.config?.plugins);
+  const normalizedConfig = normalizePluginsConfig(params.config?.plugins, {
+    runtimeMemoryPersist: params.config?.runtime?.memory?.persist === true,
+  });
   // RC-07 fail-closed: an illegal memory/contextEngine slot configuration is
   // rejected at activation planning time (runtime startup and plugin reload
   // both flow through here). The error list is consumed, never ignored.
