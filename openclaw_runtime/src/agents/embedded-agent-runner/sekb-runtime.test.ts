@@ -3,9 +3,10 @@
  *
  * Proves:
  * - enable (config/env) installs harness hooks and sets trajectoryCapture
- * - production-shaped confirm_and_save writes experience via sink
  * - disable path installs nothing / does not leak
  * - ANTI-8: suggest path never writes Blocks
+ * - R3-1 v3: runtime confirm helpers were dead code and removed; durable
+ *   confirmation stays host-side (knowledge-api sekbConfirmPrinciple).
  */
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
@@ -15,7 +16,6 @@ import type { ExtensionAPI, SessionManager } from "../sessions/index.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { ContextBlockSink } from "../../context-engine/block.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
-import type { DistillationSuggestion } from "../../knowledge/sekb/types.js";
 import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
 import {
   clearTaskStateHandlerConfig,
@@ -23,8 +23,6 @@ import {
 } from "../harness/lifecycle-hook-helpers.js";
 import { buildEmbeddedExtensionFactories } from "./extensions.js";
 import {
-  confirmAndSaveSekbExperience,
-  confirmAndSaveSekbExperienceFromRuntime,
   installEmbeddedSekbHarnessHooks,
   isSekbBatchDistillationAssistantEnabled,
   isSekbEnabled,
@@ -263,96 +261,7 @@ describe("production factory wiring", () => {
   });
 });
 
-describe("production confirm_and_save experience bridge", () => {
-  it("writes experience Block through sink when enabled and sink+sessionId provided", async () => {
-    const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-w4-confirm-"));
-    tempRoots.push(root);
-    process.env.OPENCLAW_STATE_DIR = root;
-
-    const cfg = {
-      runtime: { contextBlock: { sekb: { enabled: true } } },
-    } as OpenClawConfig;
-    const runtime = resolveEmbeddedSekbRuntime({ cfg, env: {} });
-    expect(runtime).toBeDefined();
-    if (!runtime) {
-      return;
-    }
-
-    // Seed two trajectories so confirm can mark distilled.
-    for (const id of ["traj-w4-a", "traj-w4-b"]) {
-      runtime.store.save_trajectory({
-        trajectory_id: id,
-        created_at: "2026-07-14T00:00:00.000Z",
-        task_intent: "connect to PostgreSQL",
-        task_type: "config/db",
-        context_fingerprint: ["postgresql"],
-        steps: [],
-        outcome: "failure",
-        error_signature: null,
-        cost: { tokens: 10, duration_seconds: 1, retries: 0 },
-        distilled: false,
-        distilled_into: [],
-        expires_at: null,
-        metadata: {},
-      });
-    }
-
-    const sink: ContextBlockSink = vi.fn(async (writes) =>
-      writes.map(() => ({ accepted: true })),
-    );
-    const suggestion = makeSuggestion();
-
-    const principleId = confirmAndSaveSekbExperience({
-      distiller: runtime.distiller,
-      suggestion,
-      sessionId: "session-w4-prod",
-      contextBlockSink: sink,
-    });
-    expect(typeof principleId).toBe("string");
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    expect(sink).toHaveBeenCalledTimes(1);
-    const writeArg = (sink as ReturnType<typeof vi.fn>).mock.calls[0][0] as Array<{
-      block: { block_type: string; source_system: string; session_id: string };
-      admission: {
-        confirmed: boolean;
-        confidence: number;
-        write_origin: string;
-        session_id: string;
-        provenance_source: string;
-        integrity: string;
-        verification_status: string;
-        high_trust_eligible: boolean;
-      };
-    }>;
-    expect(writeArg[0]?.block.block_type).toBe("experience");
-    expect(writeArg[0]?.block.source_system).toBe("sekb");
-    expect(writeArg[0]?.block.session_id).toBe("session-w4-prod");
-    expect(writeArg[0]?.admission).toMatchObject({
-      confirmed: true,
-      confidence: 0.9,
-      write_origin: "handler",
-      session_id: "session-w4-prod",
-      provenance_source: "sekb",
-      integrity: "confirmed",
-      verification_status: "confirmed",
-      high_trust_eligible: true,
-    });
-  });
-
-  it("fromRuntime returns undefined when SEKB disabled (no leak)", () => {
-    const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
-    const result = confirmAndSaveSekbExperienceFromRuntime({
-      cfg: {} as OpenClawConfig,
-      env: {},
-      suggestion: makeSuggestion(),
-      sessionId: "session-off",
-      contextBlockSink: sink,
-    });
-    expect(result).toBeUndefined();
-    expect(sink).not.toHaveBeenCalled();
-  });
-
+describe("SEKB distillation write discipline", () => {
   it("ANTI-8: suggest_principles_from_trajectories does not write Blocks", () => {
     const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-w4-anti8-"));
     tempRoots.push(root);
@@ -404,24 +313,4 @@ function createAgentRecorder() {
 
 function countHandlers(agent: { handlers: Record<string, RegisteredHandler[]> }): number {
   return Object.values(agent.handlers).reduce((sum, list) => sum + list.length, 0);
-}
-
-function makeSuggestion(
-  overrides: Partial<DistillationSuggestion> = {},
-): DistillationSuggestion {
-  return {
-    cluster_summary: "PostgreSQL connection refused failures",
-    source_trajectory_ids: ["traj-w4-a", "traj-w4-b"],
-    suggested_principle: {
-      title: "Check PG access",
-      condition: "When PostgreSQL reports Connection refused",
-      action: "Check pg_hba.conf and firewall rules",
-      reason: "Most connection refusals are environment issues",
-      task_types: ["config/db"],
-      context_tags: ["postgresql"],
-      criticality: "high",
-    },
-    confidence: 0.9,
-    ...overrides,
-  };
 }

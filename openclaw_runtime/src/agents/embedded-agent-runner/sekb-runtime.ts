@@ -3,11 +3,12 @@
  *
  * Flag-gated: runtime.contextBlock.sekb.enabled (default false) or
  * OPENCLAW_SEKB_ENABLED=true|1|yes|on. When enabled, production attempt/compact
- * can install harness hooks, supply trajectoryCapture to task-state handler
- * config, and confirm_and_save with contextBlockSink + sessionId.
+ * can install harness hooks and supply trajectoryCapture to task-state handler
+ * config. Durable principle confirmation stays host-side (knowledge-api
+ * sekbConfirmPrinciple -> confirm_and_save with a BlockStore sink); the runtime
+ * never auto-confirms or writes back (default-off, human-review queue only).
  */
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
-import type { ContextBlockSink } from "../../context-engine/block.js";
 import { DistillationTool } from "../../knowledge/sekb/distillation-tool.js";
 import {
   isSekbBatchDistillationAssistantEnabled as resolveSekbBatchDistillationAssistantEnabled,
@@ -29,10 +30,6 @@ import {
   type ContextInjector,
 } from "../../knowledge/sekb/retrieval-engine.js";
 import { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
-import type {
-  DistillationSuggestion,
-  Principle,
-} from "../../knowledge/sekb/types.js";
 import { log } from "./logger.js";
 
 export type EmbeddedSekbRuntime = {
@@ -155,64 +152,6 @@ export function installEmbeddedSekbHarnessHooks(
     onError: (error) => {
       log.warn(`sekb harness hook failed: ${String(error)}`);
     },
-  });
-}
-
-/**
- * Production distillation completion path: confirm_and_save with optional
- * experience Block write when sink + sessionId are available.
- * ANTI-8: only this confirmed path writes experience (not suggest_*).
- */
-export function confirmAndSaveSekbExperience(params: {
-  distiller: DistillationTool;
-  suggestion: DistillationSuggestion;
-  edits?: Partial<Principle> | null;
-  sessionId?: string;
-  contextBlockSink?: ContextBlockSink;
-}): string {
-  const options =
-    params.contextBlockSink && params.sessionId
-      ? {
-          contextBlockSink: params.contextBlockSink,
-          sessionId: params.sessionId,
-        }
-      : {};
-  return params.distiller.confirm_and_save(
-    params.suggestion,
-    params.edits ?? null,
-    options,
-  );
-}
-
-/**
- * Production-shaped confirm path: resolves SEKB runtime when enabled, then
- * confirms with sink/sessionId when available. Returns undefined when SEKB is
- * disabled so callers stay no-op safe.
- */
-export function confirmAndSaveSekbExperienceFromRuntime(params: {
-  cfg?: OpenClawConfig;
-  env?: NodeJS.ProcessEnv;
-  suggestion: DistillationSuggestion;
-  edits?: Partial<Principle> | null;
-  sessionId?: string;
-  contextBlockSink?: ContextBlockSink;
-  runtime?: EmbeddedSekbRuntime;
-}): string | undefined {
-  const runtime =
-    params.runtime ??
-    resolveEmbeddedSekbRuntime({
-      cfg: params.cfg,
-      env: params.env,
-    });
-  if (!runtime) {
-    return undefined;
-  }
-  return confirmAndSaveSekbExperience({
-    distiller: runtime.distiller,
-    suggestion: params.suggestion,
-    edits: params.edits,
-    sessionId: params.sessionId,
-    contextBlockSink: params.contextBlockSink,
   });
 }
 
