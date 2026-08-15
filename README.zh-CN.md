@@ -146,6 +146,7 @@ Settings → System & Runtime 还提供 Project Rules Center，可检查当前 w
 输入框的上下文状态现在提供需要确认的“压缩当前会话”操作，可展示 token 压力、已隐藏消息数量、上次压缩时间和压缩质量；长期任务状态仍进入 Task Ledger / Context Pack，而不是依赖无限增长的 transcript。压缩还会保存高密度 recovery artifact，接力到新对话时会优先使用它，再回退到 transcript 证据。运行时会先在手动/显式 opt-in 压缩中使用分层渐进式压缩计划；自动压缩路径先记录遥测，等质量门禁证明稳定后再接管。
 输入框还会显示长对话的 checkpoint 恢复状态：排队后续、最近一次人工介入/checkpoint、恢复警告，以及在会话空闲时立即发送已持久化排队后续的操作；这些排队消息可在 Gateway 重启后继续恢复。
 当 Gateway 重启中断正在运行的主 Agent turn 时，重启恢复会继续执行未完成的 assistant/tool transcript 尾部，同时保护已完成、出错和等待审批的 turn，避免重复执行。
+运行期间，Queue、Guide 和 Interrupt 是三个独立操作；主控件会从发送切换为保存 checkpoint 的暂停，重新进入会话后仍显示可继续的状态。
 Chat 回滚方案现在提供复核优先的恢复面板，显示安全/复核/高风险计数，以及检查点、队列、上下文、终端、Git、Task Ledger、记忆信号；破坏性操作会进入带审批的工具链，记忆事实会变成 Knowledge 草稿或提案。
 
 Agents 编排面板现在也提供有界的 **任务循环** 操作，用于受控自治任务。它通过现有 Gateway RPC 路径启动 `task_loop.run`，编排角色子 Agent，执行自检与限定返工轮次，并在界面中显示实时阶段、轮次、reviewer 结论、终态和 trace 证据，不新增 renderer 直连 Gateway 通道。

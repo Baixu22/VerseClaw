@@ -1375,6 +1375,9 @@
     "gatewayDisconnectedPlaceholder": "网关未连接...",
     "send": "发送",
     "stop": "停止",
+    "resume": "继续",
+    "pauseTooltip": "暂停当前运行，并保存可继续的会话状态。",
+    "resumeTooltip": "继续这个已暂停的会话。",
     "gatewayConnected": "已连接",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextMenu": {
