@@ -13,6 +13,7 @@ import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, typ
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
+  ArrowUp,
   AtSign,
   BookOpen,
   Briefcase,
@@ -28,11 +29,13 @@ import {
   Gauge,
   GitBranchPlus,
   Loader2,
+  ListPlus,
   MessageSquarePlus,
   Paperclip,
   Plus,
   Search,
-  SendHorizontal,
+  Navigation,
+  Play,
   Shield,
   ShieldCheck,
   Sparkles,
@@ -122,6 +125,10 @@ interface ChatInputProps {
   onSend: (text: string, opts?: SendOptions) => void;
   disabled?: boolean;
   sending?: boolean;
+  /** A checkpointed stop keeps its affordance when the session is reopened. */
+  paused?: boolean;
+  onPauseSession?: () => void | Promise<void>;
+  onResumeSession?: () => void | Promise<void>;
   workspace?: WorkspaceProfile | null;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
@@ -806,6 +813,9 @@ export function ChatInput({
   onSend,
   disabled = false,
   sending = false,
+  paused = false,
+  onPauseSession,
+  onResumeSession,
   contextRange,
   liveUsage,
   messageCount,
@@ -841,6 +851,7 @@ export function ChatInput({
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
+  const [runStarting, setRunStarting] = useState(false);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
   /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
@@ -883,6 +894,8 @@ export function ChatInput({
     useChatStore.setState({ activeTaskNodeId: nodeId });
   }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const runStartTimerRef = useRef<number | null>(null);
+  const previousSendingRef = useRef(sending);
   const composerHostRef = useRef<HTMLDivElement>(null);
   const heroComposerRectRef = useRef<{ top: number } | null>(null);
   const composerTransitionRef = useRef<Animation | null>(null);
@@ -982,6 +995,31 @@ export function ChatInput({
   const inputDisabled = disabled || !isGatewayUsable;
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
+
+  useEffect(() => {
+    const wasSending = previousSendingRef.current;
+    previousSendingRef.current = sending;
+    if (!sending || wasSending) return;
+    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
+    setRunStarting(true);
+    runStartTimerRef.current = window.setTimeout(() => {
+      setRunStarting(false);
+      runStartTimerRef.current = null;
+    }, 620);
+    return () => {
+      if (runStartTimerRef.current != null) {
+        window.clearTimeout(runStartTimerRef.current);
+        runStartTimerRef.current = null;
+      }
+      setRunStarting(false);
+    };
+  }, [sending]);
+
+  useEffect(() => () => {
+    if (runStartTimerRef.current != null) {
+      window.clearTimeout(runStartTimerRef.current);
+    }
+  }, []);
 
   // The first optimistic message changes the page from a centered hero layout
   // to the docked conversation layout. Animate that real layout delta so the
@@ -1932,8 +1970,21 @@ export function ChatInput({
 
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
-  const hasComposerDraft = Boolean(input.trim() || selectedKnowledgeRefs.length > 0);
+  const hasComposerDraft = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
+  const canIntervene = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0)
+    && allReady
+    && !inputDisabled
+    && !capabilityExecuting;
+  const composerSendState = paused
+    ? 'paused'
+    : runStarting
+      ? 'starting'
+      : sending
+        ? 'running'
+        : canSend
+          ? 'ready'
+          : 'idle';
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || Boolean(longTaskControlStatus)
@@ -2481,12 +2532,22 @@ export function ChatInput({
   }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
   const handlePrimaryComposerAction = useCallback(() => {
-    if (sending) {
-      void handleInterventionSend('queue');
+    if (paused) {
+      void onResumeSession?.();
       return;
     }
+    if (sending) {
+      void onPauseSession?.();
+      return;
+    }
+    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
+    setRunStarting(true);
+    runStartTimerRef.current = window.setTimeout(() => {
+      setRunStarting(false);
+      runStartTimerRef.current = null;
+    }, 620);
     void handleSend();
-  }, [handleInterventionSend, sending]);
+  }, [handleSend, onPauseSession, onResumeSession, paused, sending]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -3671,32 +3732,99 @@ export function ChatInput({
                 )}
               </div>
             )}
+            {sending && !paused && hasComposerDraft && (
+              <div className="composer-intervention-controls" data-testid="chat-intervention-controls">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-guide"
+                        className="composer-intervention-button"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('guide')}
+                        aria-label={t('composer.intervention.guide')}
+                      >
+                        <Navigation className="h-4 w-4" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.guideTooltip')}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-queue"
+                        className="composer-intervention-button composer-intervention-button--queue"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('queue')}
+                        aria-label={t('composer.intervention.queue')}
+                      >
+                        <ListPlus className="h-4 w-4" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.queueTooltip')}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-interrupt"
+                        className="composer-intervention-button composer-intervention-button--interrupt"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('interrupt')}
+                        aria-label={t('composer.intervention.interrupt')}
+                      >
+                        <Square className="h-3.5 w-3.5 fill-current" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.interruptTooltip')}</TooltipContent>
+                </Tooltip>
+              </div>
+            )}
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
             <Button
               onClick={handlePrimaryComposerAction}
-              disabled={sending ? false : !canSend}
+              disabled={composerSendState === 'idle' || composerSendState === 'starting'}
               size="icon"
               data-testid="chat-composer-send"
-              className={`shrink-0 h-8 w-8 rounded-lg transition-colors ${
-                (sending || canSend)
-                  ? 'bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20'
-                  : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'
-              }`}
+              data-send-state={composerSendState}
+              className="composer-send-button"
               variant="ghost"
-              aria-label={t('composer.send')}
+              aria-label={
+                composerSendState === 'paused'
+                  ? t('composer.resume')
+                  : composerSendState === 'running' || composerSendState === 'starting'
+                    ? t('composer.stop')
+                    : t('composer.send')
+              }
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M22 2L11 13M11 13L2 16L2 16L22 22Z" />
-              </svg>
+              {composerSendState === 'starting' && <Loader2 className="h-4 w-4 animate-spin" />}
+              {composerSendState === 'running' && <Square className="h-3.5 w-3.5 fill-current" />}
+              {composerSendState === 'paused' && <Play className="ml-0.5 h-4 w-4 fill-current" />}
+              {(composerSendState === 'idle' || composerSendState === 'ready') && <ArrowUp className="h-5 w-5" />}
             </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>
-                {sending
-                  ? '发送 (默认排队) | Ctrl+Enter 引导'
-                  : t('composer.send')}
+                {composerSendState === 'paused'
+                  ? t('composer.resumeTooltip')
+                  : composerSendState === 'running' || composerSendState === 'starting'
+                    ? t('composer.pauseTooltip')
+                    : t('composer.send')}
               </TooltipContent>
             </Tooltip>
             </div>

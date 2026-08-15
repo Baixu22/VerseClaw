@@ -1283,6 +1283,9 @@
     "gatewayDisconnectedPlaceholder": "ゲートウェイ未接続...",
     "send": "送信",
     "stop": "停止",
+    "resume": "再開",
+    "pauseTooltip": "実行を一時停止し、再開できるセッション状態を保存します。",
+    "resumeTooltip": "一時停止したセッションを再開します。",
     "gatewayConnected": "接続済み",
     "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
     "contextMenu": {

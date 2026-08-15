@@ -1283,6 +1283,9 @@
     "gatewayDisconnectedPlaceholder": "Шлюз не подключён...",
     "send": "Отправить",
     "stop": "Остановить",
+    "resume": "Продолжить",
+    "pauseTooltip": "Приостановить запуск и сохранить состояние сеанса для продолжения.",
+    "resumeTooltip": "Продолжить приостановленный сеанс.",
     "gatewayConnected": "подключён",
     "gatewayStatus": "шлюз {{state}} | порт: {{port}} {{pid}}",
     "contextMenu": {
