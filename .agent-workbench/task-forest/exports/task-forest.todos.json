@@ -293,15 +293,15 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+      "fit_confidence": 0.9,
+      "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
       "validation_plan": [
-        "每卡先运行 Harness context",
-        "运行 task spec、类型检查、构建、comms 与 clean detached 验证",
-        "检查不新增 renderer 直连 IPC/Gateway 调用"
+        "B2-01 Harness task spec 与 context",
+        "六项装配等价/节流单测",
+        "Node/Web 类型检查、BOM、ESLint 与 clean detached 复测"
       ],
-      "why_not_enough": "B1-04 之后仍需要 B2/B3 的独立实现与验收。",
-      "why_this_task": "该独立任务树准确表达事件事实源到可恢复投影的依赖，避免混入 UI 或 Runtime Authority 主线。"
+      "why_not_enough": "它不迁移现有 store，也不提供用户界面，仍需 B2-02 和 B3 独立完成。",
+      "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
     },
     "blocked_by": [],
     "confidence": 0.94,
@@ -328,37 +328,6 @@
     "status": "in_progress",
     "success_metrics": [],
     "title": "Workflow Viz 事实源与可恢复投影重建"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
-      "validation_plan": [
-        "B1-04 Harness task spec",
-        "Electron/Main 单测",
-        "comms、构建和 clean detached 复测"
-      ],
-      "why_not_enough": "B2/B3 仍需后续独立卡完成。",
-      "why_this_task": "B1-02 与 B1-03 已完成，B1-04 是关键路径上唯一依赖已满足的供数卡。"
-    },
-    "blocked_by": [],
-    "confidence": 0.96,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0060",
-    "kind": "task",
-    "next_action": "重启后历史会话从持久日志重建",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让桌面供数基于可恢复的持久事件流。",
-    "ready": true,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "in_progress",
-    "success_metrics": [],
-    "title": "WV-B1-04 Electron 供数改造"
   },
   {
     "alignment": {

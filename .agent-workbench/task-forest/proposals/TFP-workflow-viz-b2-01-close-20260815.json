@@ -1,0 +1,35 @@
+{
+  "applied_at": "2026-08-15T03:42:12.393072Z",
+  "base_graph_hash": "46e3697a45fe073c16db12abb99a0e1f2d97bee64a2fc1067491a4128ac96e7a",
+  "base_summary": {
+    "edge_count": 108,
+    "node_count": 61,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b0"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0061",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "fefd81991 feat(trajectory): add deterministic assembler core",
+          "harness/specs/tasks/workflow-viz-b2-01-trajectory-assembler.md",
+          "tests/unit/trajectory-assembler.test.ts (6/6)",
+          "clean detached worktree: C:/Users/27933/Desktop/clawx/ClawX-wv-b2-01-clean"
+        ],
+        "summary": "fixture-first 确定性装配引擎已在 fefd81991 完成：v2 事件支持 replace/prepend/append、pending context、O(D) append 与发布节流。"
+      },
+      "id": "TF-0061"
+    }
+  ],
+  "created_at": "2026-08-15T03:25:54.649022Z",
+  "proposal_id": "TFP-workflow-viz-b2-01-close-20260815",
+  "rationale": "WV-B2-01 已在 fefd81991 完成，并已通过 scoped Harness、六项 fixture 单测、Node/Web 类型检查、runtime 构建、comms、BOM、ESLint 与 clean detached 复测；仅关闭该卡，不启动 B2-02/B3。",
+  "session_id": "workflow-viz-b2-01-close-20260815",
+  "status": "applied"
+}

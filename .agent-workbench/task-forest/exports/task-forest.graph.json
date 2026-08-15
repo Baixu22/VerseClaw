@@ -50,7 +50,8 @@
     "TFE-0104",
     "TFE-0105",
     "TFE-0106",
-    "TFE-0107"
+    "TFE-0107",
+    "TFE-0109"
   ],
   "edge_index": {
     "TF-0001": {
@@ -1111,14 +1112,16 @@
         "TFE-0100",
         "TFE-0101",
         "TFE-0102",
-        "TFE-0103"
+        "TFE-0103",
+        "TFE-0108"
       ],
       "outgoing": [],
       "tree_child_edges": [
         "TFE-0100",
         "TFE-0101",
         "TFE-0102",
-        "TFE-0103"
+        "TFE-0103",
+        "TFE-0108"
       ],
       "tree_parent_edge": null
     },
@@ -1128,11 +1131,13 @@
       ],
       "cross_edges": [
         "TFE-0104",
-        "TFE-0105"
+        "TFE-0105",
+        "TFE-0109"
       ],
       "incoming": [
         "TFE-0104",
-        "TFE-0105"
+        "TFE-0105",
+        "TFE-0109"
       ],
       "outgoing": [
         "TFE-0100"
@@ -1196,13 +1201,29 @@
       ],
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0103"
+    },
+    "TF-0061": {
+      "blocking_edges": [
+        "TFE-0108",
+        "TFE-0109"
+      ],
+      "cross_edges": [
+        "TFE-0109"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0108",
+        "TFE-0109"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0108"
     }
   },
   "edge_type_counts": {
-    "child_of": 55,
+    "child_of": 56,
     "clarifies": 0,
     "contributes_to": 4,
-    "depends_on": 39,
+    "depends_on": 40,
     "derived_from": 3,
     "duplicates": 0,
     "related_to": 2,
@@ -2490,10 +2511,34 @@
       "to": "TF-0059",
       "type": "depends_on",
       "updated_at": "2026-08-14T16:31:44.014432Z"
+    },
+    "TFE-0108": {
+      "blocking": true,
+      "confidence": 0.95,
+      "created_at": "2026-08-15T02:58:13.444553Z",
+      "created_from_session": null,
+      "from": "TF-0061",
+      "id": "TFE-0108",
+      "reason": "B2-01 是 Workflow Viz 事实源到展示层之间的装配子任务。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-15T02:58:13.444553Z"
+    },
+    "TFE-0109": {
+      "blocking": true,
+      "confidence": 0.95,
+      "created_at": "2026-08-15T02:58:13.444553Z",
+      "created_from_session": null,
+      "from": "TF-0061",
+      "id": "TFE-0109",
+      "reason": "装配器只建立在已完成的 B1-01 v2 schema/replay 契约上。",
+      "to": "TF-0057",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T02:58:13.444553Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-08-14T17:13:49.497602Z",
+  "generated_at": "2026-08-15T03:46:20.923156Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -6296,17 +6341,19 @@
       ],
       "alignment": {
         "fit": "aligned",
-        "fit_confidence": 0.94,
-        "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+        "fit_confidence": 0.9,
+        "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
         "validation_plan": [
-          "每卡先运行 Harness context",
-          "运行 task spec、类型检查、构建、comms 与 clean detached 验证",
-          "检查不新增 renderer 直连 IPC/Gateway 调用"
+          "B2-01 Harness task spec 与 context",
+          "六项装配等价/节流单测",
+          "Node/Web 类型检查、BOM、ESLint 与 clean detached 复测"
         ],
-        "why_not_enough": "B1-04 之后仍需要 B2/B3 的独立实现与验收。",
-        "why_this_task": "该独立任务树准确表达事件事实源到可恢复投影的依赖，避免混入 UI 或 Runtime Authority 主线。"
+        "why_not_enough": "它不迁移现有 store，也不提供用户界面，仍需 B2-02 和 B3 独立完成。",
+        "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
       },
-      "alignment_records": [],
+      "alignment_records": [
+        "TFA-2a37bb3b9f"
+      ],
       "assumptions": [
         "当前分支 codex/wv-b1-02-03 保持为 WV 后续开发分支且不自行 rebase/merge",
         "B1-01 至 B1-03 的三个现有提交为已完成事实"
@@ -6315,7 +6362,8 @@
         "TF-0057",
         "TF-0058",
         "TF-0059",
-        "TF-0060"
+        "TF-0060",
+        "TF-0061"
       ],
       "confidence": 0.94,
       "context_tags": [
@@ -6360,7 +6408,7 @@
       "success_metrics": [],
       "summary": "以 openclaw-trajectory v2 作为唯一事实源，按可恢复事件流供给 Electron、装配层和展示层。",
       "title": "Workflow Viz 事实源与可恢复投影重建",
-      "updated_at": "2026-08-14T16:31:44.009807Z"
+      "updated_at": "2026-08-15T02:58:13.444553Z"
     },
     "TF-0057": {
       "acceptance_criteria": [],
@@ -6522,12 +6570,17 @@
       "context_tags": [],
       "created_at": "2026-08-14T16:31:44.009807Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "high",
       "estimated_total_minutes": null,
-      "evidence": [],
+      "evidence": [
+        "429fd39f1 feat(trajectory): wire Electron trajectory supply",
+        "harness/specs/tasks/workflow-viz-b1-04-electron-trajectory-supply.md",
+        "tests/unit/observability-trajectory-projection.test.ts",
+        "clean detached worktree: C:/Users/27933/Desktop/clawx/ClawX-wv-b1-04-clean"
+      ],
       "execution_hints": [],
       "id": "TF-0060",
       "kind": "task",
@@ -6537,7 +6590,7 @@
       ],
       "primary_parent": "TF-0056",
       "priority": 1,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "让桌面供数基于可恢复的持久事件流。",
       "remaining_minutes_max": null,
@@ -6548,11 +6601,91 @@
         "不改 renderer、B2/B3 或 DCS 文件"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
-      "summary": "Electron Main 改为订阅 v2 轨迹事件并按需 readFrom；trajectory-index 仅保留 v1 历史兼容兜底。",
+      "summary": "Electron Main 已在 429fd39f1 改为 readFrom 恢复加单连接实时订阅；v1 仅保留标记的兼容兜底，验证与 clean detached 复测已通过。",
       "title": "WV-B1-04 Electron 供数改造",
-      "updated_at": "2026-08-14T16:55:58.421901Z"
+      "updated_at": "2026-08-15T02:58:13.444553Z"
+    },
+    "TF-0061": {
+      "acceptance_criteria": [
+        "replace 终态正确",
+        "只有 update 的窗口保持 pending，prepend 补 start 后等价于全量 replace",
+        "历史 prepend 加实时 append 与完整回放等价",
+        "prepend 不替换未变化 keyed node",
+        "animation-frame 每帧最多发布一次",
+        "renderer 视图目标只消费 node.data"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.9,
+        "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+        "validation_plan": [
+          "B2-01 Harness task spec 与 context",
+          "六项装配等价/节流单测",
+          "Node/Web 类型检查、BOM、ESLint 与 clean detached 复测"
+        ],
+        "why_not_enough": "它不迁移现有 store，也不提供用户界面，仍需 B2-02 和 B3 独立完成。",
+        "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
+      },
+      "alignment_records": [
+        "TFA-2a37bb3b9f"
+      ],
+      "assumptions": [
+        "B1-01 v2 schema 与 replay 契约保持稳定",
+        "B2-01 可先以 fixture 验证装配，不增加生产会话 producer"
+      ],
+      "children": [],
+      "confidence": 0.9,
+      "context_tags": [],
+      "created_at": "2026-08-15T02:58:13.444553Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [
+        "单一轻量注册表定义 NodeDefinition 的 match/start/update 语义",
+        "replace、prepend、append 三种摄入路径得到一致的装配结果",
+        "多个视图目标仅消费 node.data 快照"
+      ],
+      "deviations": [],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "fefd81991 feat(trajectory): add deterministic assembler core",
+        "harness/specs/tasks/workflow-viz-b2-01-trajectory-assembler.md",
+        "tests/unit/trajectory-assembler.test.ts (6/6)",
+        "clean detached worktree: C:/Users/27933/Desktop/clawx/ClawX-wv-b2-01-clean"
+      ],
+      "execution_hints": [
+        "先建立 Harness task spec 并运行 harness context",
+        "参考 docs/cookbook/adding-a-conversation-node.zh.md 与编排计划的六项单测",
+        "完成后为 B2-02 单独提案，不与本卡混合"
+      ],
+      "id": "TF-0061",
+      "kind": "task",
+      "non_goals": [
+        "并轨 session-activity 或 observability store",
+        "改 Electron/Gateway、B1 事件契约、DCS、TF-0021 或 Runtime Authority",
+        "提前实施 B2-02、B3 或第三方图形库"
+      ],
+      "primary_parent": "TF-0056",
+      "priority": 1,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "将同一 v2 轨迹事件流确定性装配为可供多个 renderer 视图消费的增量节点快照。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "新增 src/lib/trajectory-assembler/ 或同级实现，不引入 Cordis 或第二事件真源",
+        "热路径每个新事件至多对每个 Definition 执行一次 match，保持 O(D)",
+        "支持 immediate 与 animation-frame publication",
+        "只消费 B1-01 v2 schema 的 fixture/事件，不改 B2-02 store、B3 展示或 TF-0021"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "fixture-first 确定性装配引擎已在 fefd81991 完成：v2 事件支持 replace/prepend/append、pending context、O(D) append 与发布节流。",
+      "title": "WV-B2-01 装配引擎核心",
+      "updated_at": "2026-08-15T03:42:12.383550Z"
     }
   },
   "reason": "rebuild",
@@ -6583,7 +6716,6 @@
       "TF-0021",
       "TF-0025",
       "TF-0028",
-      "TF-0060",
       "TF-0006",
       "TF-0027",
       "TF-0038",
@@ -6652,7 +6784,9 @@
         "TF-0055",
         "TF-0057",
         "TF-0058",
-        "TF-0059"
+        "TF-0059",
+        "TF-0060",
+        "TF-0061"
       ],
       "in_progress": [
         "TF-0007",
@@ -6661,8 +6795,7 @@
         "TF-0025",
         "TF-0028",
         "TF-0029",
-        "TF-0056",
-        "TF-0060"
+        "TF-0056"
       ],
       "proposed": [
         "TF-0026",
@@ -6717,8 +6850,7 @@
       "TF-0041",
       "TF-0042",
       "TF-0047",
-      "TF-0056",
-      "TF-0060"
+      "TF-0056"
     ],
     "ready": [],
     "review_needed": [
@@ -6728,10 +6860,10 @@
   },
   "summary": {
     "blocked_count": 4,
-    "done_count": 29,
-    "edge_count": 106,
-    "node_count": 60,
-    "open_count": 28,
+    "done_count": 31,
+    "edge_count": 108,
+    "node_count": 61,
+    "open_count": 27,
     "review_needed_count": 2
   },
   "tree_edges": [
@@ -6789,7 +6921,8 @@
     "TFE-0100",
     "TFE-0101",
     "TFE-0102",
-    "TFE-0103"
+    "TFE-0103",
+    "TFE-0108"
   ],
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }

@@ -1270,5 +1270,29 @@
     "to": "TF-0059",
     "type": "depends_on",
     "updated_at": "2026-08-14T16:31:44.014432Z"
+  },
+  "TFE-0108": {
+    "blocking": true,
+    "confidence": 0.95,
+    "created_at": "2026-08-15T02:58:13.444553Z",
+    "created_from_session": null,
+    "from": "TF-0061",
+    "id": "TFE-0108",
+    "reason": "B2-01 是 Workflow Viz 事实源到展示层之间的装配子任务。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-15T02:58:13.444553Z"
+  },
+  "TFE-0109": {
+    "blocking": true,
+    "confidence": 0.95,
+    "created_at": "2026-08-15T02:58:13.444553Z",
+    "created_from_session": null,
+    "from": "TF-0061",
+    "id": "TFE-0109",
+    "reason": "装配器只建立在已完成的 B1-01 v2 schema/replay 契约上。",
+    "to": "TF-0057",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T02:58:13.444553Z"
   }
 }
