@@ -13,6 +13,7 @@ import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, typ
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
+  ArrowUp,
   AtSign,
   BookOpen,
   Briefcase,
@@ -31,13 +32,15 @@ import {
   GitBranchPlus,
   History,
   Loader2,
+  ListPlus,
   MessageSquarePlus,
   Paperclip,
   PencilLine,
   Plus,
   RotateCcw,
   Search,
-  SendHorizontal,
+  Navigation,
+  Play,
   Shield,
   ShieldCheck,
   Sparkles,
@@ -128,9 +131,12 @@ export interface FileAttachment {
 
 interface ChatInputProps {
   onSend: (text: string, opts?: SendOptions) => void;
-  onStop?: () => void;
   disabled?: boolean;
   sending?: boolean;
+  /** A checkpointed stop keeps its affordance when the session is reopened. */
+  paused?: boolean;
+  onPauseSession?: () => void | Promise<void>;
+  onResumeSession?: () => void | Promise<void>;
   workspace?: WorkspaceProfile | null;
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
@@ -838,9 +844,11 @@ function readFileAsBase64(file: globalThis.File): Promise<string> {
 
 export function ChatInput({
   onSend,
-  onStop,
   disabled = false,
   sending = false,
+  paused = false,
+  onPauseSession,
+  onResumeSession,
   contextRange,
   liveUsage,
   messageCount,
@@ -880,6 +888,7 @@ export function ChatInput({
   const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
+  const [runStarting, setRunStarting] = useState(false);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [targetAgentId, setTargetAgentId] = useState<string | null>(null);
   /** Area 2 §3.1: turn-scoped model override; cleared after each send. */
@@ -923,6 +932,8 @@ export function ChatInput({
     useChatStore.setState({ activeTaskNodeId: nodeId });
   }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const runStartTimerRef = useRef<number | null>(null);
+  const previousSendingRef = useRef(sending);
   const composerHostRef = useRef<HTMLDivElement>(null);
   const heroComposerRectRef = useRef<{ top: number } | null>(null);
   const composerTransitionRef = useRef<Animation | null>(null);
@@ -1023,6 +1034,31 @@ export function ChatInput({
   const inputDisabled = disabled || !isGatewayUsable;
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
+
+  useEffect(() => {
+    const wasSending = previousSendingRef.current;
+    previousSendingRef.current = sending;
+    if (!sending || wasSending) return;
+    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
+    setRunStarting(true);
+    runStartTimerRef.current = window.setTimeout(() => {
+      setRunStarting(false);
+      runStartTimerRef.current = null;
+    }, 620);
+    return () => {
+      if (runStartTimerRef.current != null) {
+        window.clearTimeout(runStartTimerRef.current);
+        runStartTimerRef.current = null;
+      }
+      setRunStarting(false);
+    };
+  }, [sending]);
+
+  useEffect(() => () => {
+    if (runStartTimerRef.current != null) {
+      window.clearTimeout(runStartTimerRef.current);
+    }
+  }, []);
 
   // The first optimistic message changes the page from a centered hero layout
   // to the docked conversation layout. Animate that real layout delta so the
@@ -2053,13 +2089,21 @@ export function ChatInput({
 
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
-  const hasComposerDraft = Boolean(input.trim() || selectedKnowledgeRefs.length > 0);
+  const hasComposerDraft = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
   const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
-  const canStop = sending && !inputDisabled && !!onStop;
   // 干预门禁（对齐 P1-4）：无 /loop Task Ledger root（available:false）时
   // 运行时会对显式 inputMode 返回 INVALID_REQUEST——禁用并提示，避免"按钮可点但不可用"。
   const longTaskAvailable = longTaskControlStatus?.available !== false;
   const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting && longTaskAvailable;
+  const composerSendState = paused
+    ? 'paused'
+    : runStarting
+      ? 'starting'
+      : sending
+        ? 'running'
+        : canSend
+          ? 'ready'
+          : 'idle';
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || Boolean(longTaskControlStatus)
@@ -2767,22 +2811,23 @@ export function ChatInput({
     }
   }, [capabilityExecuting, completeSend, confirmPromptCacheRisk, currentAgentId, pendingCapabilitySend, t, workspace?.id]);
 
-  const handleStop = useCallback(() => {
-    if (!canStop) return;
-    onStop?.();
-  }, [canStop, onStop]);
-
   const handlePrimaryComposerAction = useCallback(() => {
-    if (sending) {
-      if (canIntervene) {
-        void handleInterventionSend('queue');
-        return;
-      }
-      handleStop();
+    if (paused) {
+      void onResumeSession?.();
       return;
     }
+    if (sending) {
+      void onPauseSession?.();
+      return;
+    }
+    if (runStartTimerRef.current != null) window.clearTimeout(runStartTimerRef.current);
+    setRunStarting(true);
+    runStartTimerRef.current = window.setTimeout(() => {
+      setRunStarting(false);
+      runStartTimerRef.current = null;
+    }, 620);
     void handleSend();
-  }, [canIntervene, handleInterventionSend, handleSend, handleStop, sending]);
+  }, [handleSend, onPauseSession, onResumeSession, paused, sending]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -3227,85 +3272,6 @@ export function ChatInput({
                     ? t('composer.taskLoopUpgrade.starting')
                     : t('composer.taskLoopUpgrade.confirm')}
                 </button>
-              </div>
-            </div>
-          )}
-
-          {sending && (
-            <div
-              className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1.5 text-meta text-amber-800 dark:text-amber-300"
-              data-testid="chat-intervention-controls"
-            >
-              <span className="min-w-0 truncate font-medium">
-                {t('composer.intervention.queueDefault')}
-              </span>
-              <div className="ml-auto flex shrink-0 items-center gap-1">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        data-testid="chat-intervention-guide"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('guide')}
-                        className="h-7 rounded-md px-2 text-[11px] font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                      >
-                        {t('composer.intervention.guide')}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {canIntervene
-                      ? t('composer.intervention.guideTooltip')
-                      : t('composer.intervention.longTaskRequired')}
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        data-testid="chat-intervention-revise-goal"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('revise-goal')}
-                        className="h-7 rounded-md px-2 text-[11px] font-medium text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
-                      >
-                        {t('composer.intervention.reviseGoal')}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {canIntervene
-                      ? t('composer.intervention.reviseGoalTooltip')
-                      : t('composer.intervention.longTaskRequired')}
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        data-testid="chat-intervention-interrupt"
-                        disabled={!canIntervene}
-                        onClick={() => void handleInterventionSend('interrupt')}
-                        className="h-7 rounded-md px-2 text-[11px] font-medium text-red-700 hover:bg-red-500/10 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400"
-                      >
-                        {t('composer.intervention.interrupt')}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs text-xs">
-                    {canIntervene
-                      ? t('composer.intervention.interruptTooltip')
-                      : t('composer.intervention.longTaskRequired')}
-                  </TooltipContent>
-                </Tooltip>
               </div>
             </div>
           )}
@@ -4048,32 +4014,118 @@ export function ChatInput({
                 )}
               </div>
             )}
+            {sending && !paused && hasComposerDraft && (
+              <div className="composer-intervention-controls" data-testid="chat-intervention-controls">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-guide"
+                        className="composer-intervention-button"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('guide')}
+                        aria-label={t('composer.intervention.guide')}
+                      >
+                        <Navigation className="h-4 w-4" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.guideTooltip')}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-revise-goal"
+                        className="composer-intervention-button"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('revise-goal')}
+                        aria-label={t('composer.intervention.reviseGoal')}
+                      >
+                        <PencilLine className="h-4 w-4" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.reviseGoalTooltip')}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-queue"
+                        className="composer-intervention-button composer-intervention-button--queue"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('queue')}
+                        aria-label={t('composer.intervention.queue')}
+                      >
+                        <ListPlus className="h-4 w-4" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.queueTooltip')}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        data-testid="chat-intervention-interrupt"
+                        className="composer-intervention-button composer-intervention-button--interrupt"
+                        disabled={!canIntervene}
+                        onClick={() => void handleInterventionSend('interrupt')}
+                        aria-label={t('composer.intervention.interrupt')}
+                      >
+                        <Square className="h-3.5 w-3.5 fill-current" />
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" collisionPadding={8}>{t('composer.intervention.interruptTooltip')}</TooltipContent>
+                </Tooltip>
+              </div>
+            )}
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
-            <Button
-              onClick={handlePrimaryComposerAction}
-              disabled={sending ? !(canIntervene || canStop) : !canSend}
-              size="icon"
-              data-testid="chat-composer-send"
-              className={`shrink-0 h-8 w-8 rounded-lg transition-colors ${
-                (sending || canSend)
-                  ? 'bg-black/5 dark:bg-white/10 text-foreground hover:bg-black/10 dark:hover:bg-white/20'
-                  : 'text-muted-foreground/50 hover:bg-transparent bg-transparent'
-              }`}
-              variant="ghost"
-              aria-label={sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
-            >
-              {sending && !canIntervene ? (
-                <Square className="h-3.5 w-3.5" fill="currentColor" />
-              ) : (
-                <SendHorizontal className="h-4 w-4" strokeWidth={2} />
-              )}
-            </Button>
+              <Button
+                onClick={handlePrimaryComposerAction}
+                disabled={composerSendState === 'idle' || composerSendState === 'starting'}
+                size="icon"
+                data-testid="chat-composer-send"
+                data-send-state={composerSendState}
+                className="composer-send-button"
+                variant="ghost"
+                aria-label={
+                  composerSendState === 'paused'
+                    ? t('composer.resume')
+                    : composerSendState === 'running' || composerSendState === 'starting'
+                      ? t('composer.stop')
+                      : t('composer.send')
+                }
+              >
+                {composerSendState === 'starting' && <Loader2 className="h-4 w-4 animate-spin" />}
+                {composerSendState === 'running' && <Square className="h-3.5 w-3.5 fill-current" />}
+                {composerSendState === 'paused' && <Play className="ml-0.5 h-4 w-4 fill-current" />}
+                {(composerSendState === 'idle' || composerSendState === 'ready') && <ArrowUp className="h-5 w-5" />}
+              </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>
-                {sending && canIntervene ? t('composer.intervention.queue') : sending ? t('composer.stop') : t('composer.send')}
+                {composerSendState === 'paused'
+                  ? t('composer.resumeTooltip')
+                  : composerSendState === 'running' || composerSendState === 'starting'
+                    ? t('composer.pauseTooltip')
+                    : t('composer.send')}
               </TooltipContent>
             </Tooltip>
             </div>

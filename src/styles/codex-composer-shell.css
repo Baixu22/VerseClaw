@@ -78,6 +78,77 @@
 .codex-composer-beam[data-beam] {
   pointer-events: none;
 }
+
+/* Stable 32px primary affordance: idle, ready, startup, pause, and resume do
+ * not move the composer controls while the run lifecycle changes. */
+.composer-send-button {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 999px;
+  color: var(--color-icon-tertiary);
+  background: transparent;
+}
+
+.composer-send-button[data-send-state='ready'],
+.composer-send-button[data-send-state='running'],
+.composer-send-button[data-send-state='paused'] {
+  color: var(--color-text-button-primary);
+  background: var(--color-background-button-primary);
+}
+
+.composer-send-button[data-send-state='starting'] {
+  color: var(--color-icon-primary);
+  background: var(--color-background-button-secondary);
+}
+
+.composer-send-button[data-send-state='idle']:not(:disabled):hover,
+.composer-send-button[data-send-state='starting']:hover {
+  color: var(--color-icon-primary);
+  background: var(--color-background-button-secondary-hover);
+}
+
+.composer-send-button[data-send-state='ready']:hover,
+.composer-send-button[data-send-state='running']:hover,
+.composer-send-button[data-send-state='paused']:hover {
+  color: var(--color-text-button-primary);
+  background: color-mix(in oklab, var(--color-background-button-primary) 84%, var(--color-background-surface));
+}
+
+.composer-send-button[data-send-state='idle']:disabled {
+  opacity: 0.42;
+}
+
+.composer-intervention-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.composer-intervention-button {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 999px;
+  color: var(--color-icon-tertiary);
+  background: var(--color-background-button-secondary);
+}
+
+.composer-intervention-button:hover:not(:disabled) {
+  color: var(--color-icon-primary);
+  background: var(--color-background-button-secondary-hover);
+}
+
+.composer-intervention-button--queue {
+  color: var(--color-icon-accent);
+}
+
+.composer-intervention-button--interrupt {
+  color: var(--color-icon-error);
+  border-color: var(--color-border-error);
+}
+
 .codex-composer-attachments:not(:has(> .smoky-dissolve-root:not([data-smoky-state='dissolving']))) {
   padding-bottom: 0;
 }
