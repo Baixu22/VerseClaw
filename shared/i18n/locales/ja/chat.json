@@ -1,5 +1,6 @@
 {
   "gatewayNotRunning": "ゲートウェイが停止中",
+  "retry": "再試行",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
   "startup": {
     "waitingForGateway": "OpenClaw に接続しています…",
@@ -457,6 +458,7 @@
     "empty": "このセッションではまだサブエージェントが生成されていません。",
     "transcriptEmpty": "このサブエージェントにはまだメッセージがありません。",
     "transcriptUnavailable": "このサブエージェントには読み取れるセッションがまだありません。",
+    "transcriptFailed": "このエージェントのトランスクリプトを読み込めませんでした。",
     "dispatchPlaceholder": "{{role}} にタスクを送信…",
     "dispatchStarted": "{{role}} に割り当てました",
     "dispatchFailed": "タスクの割り当てに失敗しました",
@@ -649,7 +651,8 @@
         "blocked": "端末の起動がブロックされました",
         "approvalFailed": "承認に失敗しました",
         "interruptFailed": "ターミナルを中断できませんでした",
-        "closeFailed": "ターミナルを終了できませんでした"
+        "closeFailed": "ターミナルを終了できませんでした",
+        "statusFailed": "ターミナルの状態を一時的に取得できません。"
       }
     },
     "web": {
@@ -1925,6 +1928,7 @@
       "title": "Git",
       "loading": "リポジトリの状態を読み込み中…",
       "notARepository": "このプロジェクトは Git リポジトリではありません",
+      "unavailable": "Git の状態を一時的に取得できません。",
       "changes": "変更",
       "clean": "クリーン",
       "noLineStats": "行数の統計なし",
@@ -1971,6 +1975,7 @@
     "terminal": {
       "title": "ターミナル",
       "idleHint": "ターミナルを開く",
+      "unavailable": "ターミナルの状態を一時的に取得できません。",
       "pid": "pid {{pid}}",
       "state": {
         "idle": "アイドル",

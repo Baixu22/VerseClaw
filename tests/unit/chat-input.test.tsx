@@ -731,11 +731,15 @@ function translate(key: string, vars?: Record<string, unknown>): string {
   }
 }
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: translate,
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: translate,
+    }),
+  };
+});
 
 function renderChatInput(
   onSend = vi.fn(),

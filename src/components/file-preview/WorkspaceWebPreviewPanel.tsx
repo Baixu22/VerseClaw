@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Loader2, MousePointer2, Send, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { toastUserError } from '@/lib/user-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -244,7 +245,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       setSelectedConfigName(result.preferred?.name ?? result.configs?.[0]?.name ?? '');
       if (!result.configs?.length) toast.info(t('workspace.web.toast.noScripts', 'No package scripts were detected'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setBusy(false);
     }
@@ -281,7 +282,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       });
       toast.success(t('workspace.web.toast.started', 'Web preview started'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error, { fallback: t('workspace.web.toast.startFailed', 'Failed to start preview') });
     } finally {
       setBusy(false);
     }
@@ -360,7 +361,7 @@ export function WorkspaceWebPreviewPanel({ onOpenWorkspaceWebView, onAppendCompo
       }
       toast.success(t('workspace.web.toast.agentBrowserOpened', 'Agent Browser opened'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setAgentBrowserBusy(false);
     }

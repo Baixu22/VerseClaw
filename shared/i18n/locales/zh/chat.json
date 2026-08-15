@@ -1,5 +1,6 @@
 {
   "gatewayNotRunning": "网关未运行",
+  "retry": "重试",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
   "startup": {
     "waitingForGateway": "正在连接 OpenClaw…",
@@ -457,6 +458,7 @@
     "empty": "本次会话还没有派生子智能体。",
     "transcriptEmpty": "该子智能体还没有消息。",
     "transcriptUnavailable": "该子智能体还没有可读取的会话。",
+    "transcriptFailed": "无法加载该子智能体的会话记录。",
     "dispatchPlaceholder": "给 {{role}} 派发任务…",
     "dispatchStarted": "已派发给 {{role}}",
     "dispatchFailed": "派发任务失败",
@@ -649,7 +651,8 @@
         "blocked": "终端启动被阻止",
         "approvalFailed": "审批失败",
         "interruptFailed": "无法中断终端",
-        "closeFailed": "无法结束终端"
+        "closeFailed": "无法结束终端",
+        "statusFailed": "终端状态暂时不可用。"
       }
     },
     "web": {
@@ -1925,6 +1928,7 @@
       "title": "Git",
       "loading": "读取仓库状态…",
       "notARepository": "当前项目不是 Git 仓库",
+      "unavailable": "Git 状态暂时不可用。",
       "changes": "更改",
       "clean": "干净",
       "noLineStats": "无行数统计",
@@ -1971,6 +1975,7 @@
     "terminal": {
       "title": "终端",
       "idleHint": "打开终端",
+      "unavailable": "终端状态暂时不可用。",
       "pid": "pid {{pid}}",
       "state": {
         "idle": "空闲",

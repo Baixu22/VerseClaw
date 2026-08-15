@@ -41,6 +41,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import type { AsyncSurfaceState } from '@/lib/async-surface-state';
 import { useAgentsStore } from '@/stores/agents';
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import type { TeamOrchestrationView } from '@/pages/Chat/team-orchestration-visualization';
@@ -169,7 +170,7 @@ function RailRow({
 
 const GitSection = memo(function GitSection({
   git,
-  loading,
+  gitState,
   open,
   onOpenChange,
   onOpenGit,
@@ -179,7 +180,7 @@ const GitSection = memo(function GitSection({
   onPush,
 }: {
   git: SessionGitSummary | null;
-  loading: boolean;
+  gitState: AsyncSurfaceState<SessionGitSummary | null>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onOpenGit: () => void;
@@ -241,10 +242,30 @@ const GitSection = memo(function GitSection({
       onOpenChange={onOpenChange}
       testId="session-status-rail-git"
     >
-      {!git ? (
-        <p className="codex-session-rail__empty">
-          {loading ? t('sessionRail.git.loading') : t('sessionRail.git.notARepository')}
-        </p>
+      {gitState.status === 'loading' ? (
+        <p className="codex-session-rail__empty">{t('sessionRail.git.loading')}</p>
+      ) : gitState.status === 'failed' || gitState.status === 'unavailable' ? (
+        <div className="codex-session-rail__empty" data-testid="session-status-rail-git-error">
+          <p>{t(gitState.error.messageKey)}</p>
+          {gitState.error.errorId ? (
+            <p className="codex-session-rail__row-muted">
+              {t('common:errorBoundary.errorReference')} {gitState.error.errorId}
+            </p>
+          ) : null}
+          {gitState.error.retry ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={gitState.error.retry}
+              data-testid="session-status-rail-git-retry"
+            >
+              {t('retry')}
+            </Button>
+          ) : null}
+        </div>
+      ) : !git ? (
+        <p className="codex-session-rail__empty">{t('sessionRail.git.notARepository')}</p>
       ) : (
         <>
           <RailRow
@@ -549,16 +570,50 @@ const AgentsSection = memo(function AgentsSection({
 
 const TerminalSection = memo(function TerminalSection({
   terminal,
+  terminalState,
   open,
   onOpenChange,
   onOpenTerminal,
 }: {
   terminal: SessionTerminalSummary | null;
+  terminalState: AsyncSurfaceState<SessionTerminalSummary | null>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onOpenTerminal: () => void;
 }) {
   const { t } = useTranslation('chat');
+  // R2: a failed status query is NOT "no terminal" — show it with retry.
+  if (terminalState.status === 'failed' || terminalState.status === 'unavailable') {
+    return (
+      <RailSection
+        title={t('sessionRail.terminal.title')}
+        summary={<span className="codex-session-rail__row-muted">{t('sessionRail.terminal.unavailable')}</span>}
+        open={open}
+        onOpenChange={onOpenChange}
+        testId="session-status-rail-terminal"
+      >
+        <div className="codex-session-rail__empty" data-testid="session-status-rail-terminal-error">
+          <p>{t(terminalState.error.messageKey)}</p>
+          {terminalState.error.errorId ? (
+            <p className="codex-session-rail__row-muted">
+              {t('common:errorBoundary.errorReference')} {terminalState.error.errorId}
+            </p>
+          ) : null}
+          {terminalState.error.retry ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={terminalState.error.retry}
+              data-testid="session-status-rail-terminal-retry"
+            >
+              {t('retry')}
+            </Button>
+          ) : null}
+        </div>
+      </RailSection>
+    );
+  }
   // An idle or absent terminal is not worth a section; the `+` menu in the
   // workspace panel is how you start one.
   if (!terminal || terminal.state === 'idle' || terminal.state === 'exited') return null;
@@ -675,7 +730,7 @@ export function SessionStatusRail({
       <div className="codex-session-rail__body">
         <GitSection
           git={status.git}
-          loading={status.gitLoading}
+          gitState={status.gitState}
           open={openSections.git}
           onOpenChange={(open) => setSectionOpen('git', open)}
           onOpenGit={onOpenGit}
@@ -704,6 +759,7 @@ export function SessionStatusRail({
         />
         <TerminalSection
           terminal={status.terminal}
+          terminalState={status.terminalState}
           open={openSections.terminal}
           onOpenChange={(open) => setSectionOpen('terminal', open)}
           onOpenTerminal={onOpenTerminal}

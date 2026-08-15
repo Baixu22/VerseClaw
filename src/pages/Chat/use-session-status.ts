@@ -15,6 +15,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { describeUserError } from '@/lib/user-error';
+import type { AsyncSurfaceState, SurfaceErrorState } from '@/lib/async-surface-state';
 import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 import type { SubagentRuntimeLifecycleEvent } from '@shared/host-events/contract';
 import type { GitRepositoryStatus } from '@shared/types/git';
@@ -55,10 +57,15 @@ export type SessionTerminalSummary = {
 export type SessionStatusSnapshot = {
   git: SessionGitSummary | null;
   gitLoading: boolean;
+  /** R2 five-state: failed git queries render failed+retry, not "not a repository". */
+  gitState: AsyncSurfaceState<SessionGitSummary | null>;
   subagents: SessionSubagentEntry[];
   runningSubagentCount: number;
   terminal: SessionTerminalSummary | null;
+  /** R2 five-state: a failed terminal query is distinguishable from "no terminal". */
+  terminalState: AsyncSurfaceState<SessionTerminalSummary | null>;
   refreshGit: () => void;
+  refreshTerminal: () => void;
 };
 
 /** Sums the per-file diff stats the main process attaches to `git.status()`. */
@@ -151,16 +158,21 @@ export function useSessionStatus({
   refreshSignal?: number;
 }): SessionStatusSnapshot {
   const [git, setGit] = useState<{ token: string; workspaceId: string; summary: SessionGitSummary | null } | null>(null);
+  const [gitError, setGitError] = useState<SurfaceErrorState | null>(null);
   const [terminal, setTerminal] = useState<{ workspaceId: string; summary: SessionTerminalSummary | null } | null>(null);
+  const [terminalError, setTerminalError] = useState<SurfaceErrorState | null>(null);
   const [roster, setRoster] = useState<{ owner: string; entries: ReadonlyMap<string, SessionSubagentEntry> }>(
     () => ({ owner: '', entries: EMPTY_ROSTER }),
   );
   const [gitNonce, setGitNonce] = useState(0);
+  const [terminalNonce, setTerminalNonce] = useState(0);
 
   const rosterOwner = `${workspaceId ?? ''}::${sessionKey}`;
   const gitToken = `${workspaceId ?? ''}::${refreshSignal ?? 0}::${gitNonce}`;
+  const terminalToken = `${workspaceId ?? ''}::${refreshSignal ?? 0}::${terminalNonce}`;
 
   const refreshGit = useCallback(() => setGitNonce((value) => value + 1), []);
+  const refreshTerminal = useCallback(() => setTerminalNonce((value) => value + 1), []);
 
   // No reset when the workspace clears: the snapshot below only surfaces a
   // summary whose workspaceId still matches, so stale state cannot leak out.
@@ -172,38 +184,53 @@ export function useSessionStatus({
       .then((result) => {
         if (cancelled) return;
         setGit({ token: gitToken, workspaceId, summary: summarizeGitStatus(result?.status) });
+        setGitError(null);
       })
-      .catch(() => {
+      .catch((error) => {
         if (cancelled) return;
+        // R2: a failed git query is NOT "not a repository" — surface it.
         setGit({ token: gitToken, workspaceId, summary: null });
+        setGitError({
+          messageKey: 'sessionRail.git.unavailable',
+          errorId: describeUserError(error).errorId,
+          retry: refreshGit,
+        });
       });
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, gitToken]);
+  }, [workspaceId, gitToken, refreshGit]);
 
   useEffect(() => {
     if (!workspaceId) return;
     let cancelled = false;
+    const token = terminalToken;
     // The rail is decorative: a host build without terminal support degrades to
     // an absent summary rather than taking the conversation down with it.
     void Promise.resolve()
       .then(() => hostApi.terminal?.status?.({ workspaceId, sessionKey }))
       .then((result) => {
-        if (cancelled) return;
+        if (cancelled || token !== terminalToken) return;
         setTerminal({
           workspaceId,
           summary: result?.status ? { state: result.status, pid: result.pid ?? null } : null,
         });
+        setTerminalError(null);
       })
-      .catch(() => {
-        if (cancelled) return;
+      .catch((error) => {
+        if (cancelled || token !== terminalToken) return;
+        // R2: a failed terminal query is NOT "no terminal" — surface it.
         setTerminal({ workspaceId, summary: null });
+        setTerminalError({
+          messageKey: 'sessionRail.terminal.unavailable',
+          errorId: describeUserError(error).errorId,
+          retry: refreshTerminal,
+        });
       });
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, sessionKey, refreshSignal]);
+  }, [workspaceId, sessionKey, terminalToken, refreshTerminal]);
 
   useEffect(() => {
     const unsubscribe = hostEvents.onSubagentLifecycle?.((event) => {
@@ -234,12 +261,24 @@ export function useSessionStatus({
   // as the newest settled result is still tagged to an earlier request.
   const gitLoading = Boolean(workspaceId) && git?.token !== gitToken;
 
+  const resolvedGit = git && git.workspaceId === workspaceId ? git.summary : null;
+  const resolvedTerminal = terminal && terminal.workspaceId === workspaceId ? terminal.summary : null;
+
   return useMemo(() => ({
-    git: git && git.workspaceId === workspaceId ? git.summary : null,
+    git: resolvedGit,
     gitLoading,
+    gitState: gitLoading
+      ? { status: 'loading' }
+      : gitError
+        ? { status: 'failed', error: gitError }
+        : { status: 'ready', data: resolvedGit },
     subagents,
     runningSubagentCount,
-    terminal: terminal && terminal.workspaceId === workspaceId ? terminal.summary : null,
+    terminal: resolvedTerminal,
+    terminalState: terminalError
+      ? { status: 'failed', error: terminalError }
+      : { status: 'ready', data: resolvedTerminal },
     refreshGit,
-  }), [git, gitLoading, refreshGit, runningSubagentCount, subagents, terminal, workspaceId]);
+    refreshTerminal,
+  }), [gitError, gitLoading, refreshGit, refreshTerminal, resolvedGit, resolvedTerminal, runningSubagentCount, subagents, terminalError]);
 }

@@ -22,6 +22,8 @@ import { AgentRoleIdentity } from '@/components/agents/AgentAvatar';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
+import { describeUserError, toastUserError } from '@/lib/user-error';
+import type { SurfaceErrorState } from '@/lib/async-surface-state';
 import { extractText, normalizeMessageRole } from '@/pages/Chat/message-utils';
 import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
@@ -90,6 +92,7 @@ export function WorkspaceAgentsPanel() {
   const [roster, setRoster] = useState<ReadonlyMap<string, RosterEntry>>(() => new Map());
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<{ key: string; messages: RawMessage[] } | null>(null);
+  const [transcriptError, setTranscriptError] = useState<SurfaceErrorState | null>(null);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
   const [dispatching, setDispatching] = useState(false);
@@ -99,6 +102,7 @@ export function WorkspaceAgentsPanel() {
     setRoster(new Map());
     setSelectedKey(null);
     setTranscript(null);
+    setTranscriptError(null);
   }, [sessionKey]);
 
   useEffect(() => {
@@ -138,6 +142,7 @@ export function WorkspaceAgentsPanel() {
   const loadTranscript = useCallback(async (entry: RosterEntry | null) => {
     if (!entry?.childSessionKey) {
       setTranscript(null);
+      setTranscriptError(null);
       return;
     }
     const childAgentId = entry.agentId ?? agentIdFromSessionKey(entry.childSessionKey) ?? anchorAgentId;
@@ -148,8 +153,15 @@ export function WorkspaceAgentsPanel() {
         agentId: childAgentId,
       });
       setTranscript({ key: entry.key, messages: result.messages ?? [] });
-    } catch {
+      setTranscriptError(null);
+    } catch (error) {
+      // R2: a failed history query is NOT an empty transcript — surface it.
       setTranscript({ key: entry.key, messages: [] });
+      setTranscriptError({
+        messageKey: 'agentsPanel.transcriptFailed',
+        errorId: describeUserError(error).errorId,
+        retry: () => void loadTranscript(entry),
+      });
     } finally {
       setTranscriptLoading(false);
     }
@@ -186,13 +198,15 @@ export function WorkspaceAgentsPanel() {
       setDispatchTask('');
       toast.success(t('agentsPanel.dispatchStarted', { role: roleName }));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error, { fallback: t('agentsPanel.dispatchFailed') });
     } finally {
       setDispatching(false);
     }
   }, [anchorAgentId, dispatchTask, dispatching, selected?.roleName, sessionKey, t]);
 
-  const selectedTranscript = transcript?.key === selected?.key ? transcript.messages : [];
+  // null-safe: with an empty roster both sides are null and `?.` equality
+  // would still evaluate to true, crashing on the property read (R2).
+  const selectedTranscript = transcript && transcript.key === selected?.key ? transcript.messages : [];
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
@@ -291,7 +305,30 @@ export function WorkspaceAgentsPanel() {
               className="min-h-0 flex-1 overflow-y-auto rounded-md border border-black/10 dark:border-white/10"
               data-testid="workspace-agents-transcript"
             >
-              {transcriptLoading ? (
+              {transcriptError ? (
+                <div
+                  className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center"
+                  data-testid="workspace-agents-transcript-failed"
+                >
+                  <p className="text-xs text-destructive">{t(transcriptError.messageKey)}</p>
+                  {transcriptError.errorId ? (
+                    <p className="text-[11px] text-muted-foreground">
+                      {t('common:errorBoundary.errorReference')} {transcriptError.errorId}
+                    </p>
+                  ) : null}
+                  {transcriptError.retry ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={transcriptError.retry}
+                      data-testid="workspace-agents-transcript-retry"
+                    >
+                      {t('retry')}
+                    </Button>
+                  ) : null}
+                </div>
+              ) : transcriptLoading ? (
                 <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden="true" />
                 </div>

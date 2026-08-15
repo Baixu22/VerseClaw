@@ -278,6 +278,7 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
     fetchSkills,
     enableSkill,
     disableSkill,
+    marketplaceFallbackReason,
   } = useSkillsStore();
   const { t } = useTranslation('skills');
   const gatewayStatus = useGatewayStore((state) => state.status);
@@ -632,6 +633,14 @@ export function Skills({ embedded = false }: { embedded?: boolean } = {}) {
                     'The ClawHub marketplace is not available in this build. Marketplace support is coming soon.',
                 })}
               </p>
+              {marketplaceFallbackReason ? (
+                <p
+                  className="max-w-sm rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-center text-xs text-amber-800 dark:text-amber-300"
+                  data-testid="skills-marketplace-fallback"
+                >
+                  {t('marketplace.degradedHint')}: {marketplaceFallbackReason}
+                </p>
+              ) : null}
             </div>
           ) : (
             <>

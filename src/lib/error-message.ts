@@ -1,3 +1,4 @@
+import { sanitizeUiErrorText } from '@shared/privacy/ui-error-sanitize';
 import { AppError, normalizeAppError } from './error-model';
 
 export { AppError } from './error-model';
@@ -23,6 +24,8 @@ export function toUserMessage(error: unknown): string {
     case 'GATEWAY':
       return 'Gateway is unavailable. Start or restart the gateway and retry.';
     default:
-      return appError.message || 'Unexpected error occurred.';
+      // R2: the UNKNOWN branch must stay inside the sanitize boundary —
+      // raw backend messages may carry paths, stack frames or secret shapes.
+      return sanitizeUiErrorText(appError.message) || 'Unexpected error occurred.';
   }
 }

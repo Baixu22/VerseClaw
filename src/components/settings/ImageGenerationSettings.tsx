@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Eye, EyeOff, ImagePlus, Loader2, Play, RefreshCw, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { toastUserError } from '@/lib/user-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,7 +69,7 @@ export function ImageGenerationSettings() {
       setShowRelayApiKey(false);
       setTestAgentId(settings.defaultAgentId);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +135,7 @@ export function ImageGenerationSettings() {
       setShowRelayApiKey(false);
       toast.success(t('imageGeneration.toast.saved'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setSaving(false);
     }
@@ -152,7 +153,7 @@ export function ImageGenerationSettings() {
       setClearConfirmOpen(false);
       toast.success(t('imageGeneration.toast.cleared'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setClearing(false);
     }
@@ -183,10 +184,10 @@ export function ImageGenerationSettings() {
           toast.success(t('imageGeneration.toast.testSuccess', { ms: Math.round(result.durationMs) }));
         }
       } else {
-        toast.error(result.error || result.stderr || t('imageGeneration.toast.testFailed'));
+        toastUserError(new Error(result.error || result.stderr || ''), { fallback: t('imageGeneration.toast.testFailed') });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error, { fallback: t('imageGeneration.toast.testFailed') });
     } finally {
       setTesting(false);
     }

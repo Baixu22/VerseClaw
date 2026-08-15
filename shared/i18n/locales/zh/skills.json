@@ -224,6 +224,7 @@
         "title": "市场",
         "localOnlyTitle": "仅本地技能",
         "localOnlyHint": "本版本未启用 ClawHub 市场。市场上线后会尽快通知。",
+        "degradedHint": "市场功能已降级",
         "installDialogTitle": "安装技能",
         "installDialogSubtitle": "默认展示 Explore，输入关键词后执行搜索。",
         "sourceLabel": "来源",

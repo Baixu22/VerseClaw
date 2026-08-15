@@ -486,11 +486,15 @@ i18nTest.t = (key: string, options?: Record<string, unknown>) => {
   return template.replace(/\{\{(\w+)\}\}/g, (_match: string, name: string) => String(options?.[name] ?? ''));
 };
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: i18nTest.t,
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: i18nTest.t,
+    }),
+  };
+});
 
 describe('Knowledge page', () => {
   afterEach(() => {

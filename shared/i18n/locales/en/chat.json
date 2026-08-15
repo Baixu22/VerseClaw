@@ -1,5 +1,6 @@
 {
   "gatewayNotRunning": "Gateway Not Running",
+  "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
   "startup": {
     "waitingForGateway": "Connecting to OpenClaw…",
@@ -457,6 +458,7 @@
     "empty": "This session has not spawned any sub-agents yet.",
     "transcriptEmpty": "No messages in this sub-agent transcript yet.",
     "transcriptUnavailable": "This sub-agent has no readable session yet.",
+    "transcriptFailed": "Could not load this agent's transcript.",
     "dispatchPlaceholder": "Send a task to {{role}}…",
     "dispatchStarted": "Dispatched to {{role}}",
     "dispatchFailed": "Failed to dispatch the task",
@@ -649,7 +651,8 @@
         "blocked": "Terminal launch was blocked",
         "approvalFailed": "Approval failed",
         "interruptFailed": "Could not interrupt terminal",
-        "closeFailed": "Could not end terminal"
+        "closeFailed": "Could not end terminal",
+        "statusFailed": "Terminal status is temporarily unavailable."
       }
     },
     "web": {
@@ -1925,6 +1928,7 @@
       "title": "Git",
       "loading": "Reading repository status…",
       "notARepository": "This project is not a Git repository",
+      "unavailable": "Git status is temporarily unavailable.",
       "changes": "Changes",
       "clean": "Clean",
       "noLineStats": "No line stats",
@@ -1971,6 +1975,7 @@
     "terminal": {
       "title": "Terminal",
       "idleHint": "Open terminal",
+      "unavailable": "Terminal status is temporarily unavailable.",
       "pid": "pid {{pid}}",
       "state": {
         "idle": "Idle",
