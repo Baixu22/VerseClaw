@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { hostApi, type WorkspaceTerminalSessionResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
+import { describeUserError, toastUserError } from '@/lib/user-error';
+import type { SurfaceErrorState } from '@/lib/async-surface-state';
 import { X } from '@/components/icons/codex-icons';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -72,6 +74,7 @@ export function WorkspaceTerminalPanel() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [pendingApproval, setPendingApproval] = useState<PermissionApprovalEvent | null>(null);
   const [busy, setBusy] = useState(false);
+  const [statusError, setStatusError] = useState<SurfaceErrorState | null>(null);
 
   const persistTerminalState = useCallback((patch: Record<string, unknown>) => {
     if (!workspaceId) return;
@@ -108,7 +111,7 @@ export function WorkspaceTerminalPanel() {
       const id = sessionIdRef.current;
       if (!id) return;
       void hostApi.terminal.write({ sessionId: id, data }).catch((error) => {
-        toast.error(error instanceof Error ? error.message : String(error));
+        toastUserError(error);
       });
     });
     const resizeObserver = new ResizeObserver(() => {
@@ -169,23 +172,35 @@ export function WorkspaceTerminalPanel() {
     };
   }, [currentSessionKey, persistTerminalState, workspaceId, workspaceRootPath]);
 
+  const loadStatus = useCallback(async () => {
+    if (!workspaceId) return;
+    try {
+      const result = await hostApi.terminal.status({ workspaceId, sessionKey: currentSessionKey });
+      setStatus(result.status ?? 'idle');
+      setSessionId(result.sessionId ?? null);
+      if (result.scrollback) terminalRef.current?.write(result.scrollback);
+      setStatusError(null);
+    } catch (error) {
+      // R2: a failed status query is NOT "no terminal" — surface it.
+      setStatus('idle');
+      setSessionId(null);
+      setStatusError({
+        messageKey: 'workspace.terminal.toast.statusFailed',
+        errorId: describeUserError(error).errorId,
+        retry: () => void loadStatus(),
+      });
+    }
+  }, [currentSessionKey, workspaceId]);
+
   useEffect(() => {
     if (!workspaceId) {
       setStatus('idle');
       setSessionId(null);
+      setStatusError(null);
       return;
     }
-    void hostApi.terminal.status({ workspaceId, sessionKey: currentSessionKey })
-      .then((result) => {
-        setStatus(result.status ?? 'idle');
-        setSessionId(result.sessionId ?? null);
-        if (result.scrollback) terminalRef.current?.write(result.scrollback);
-      })
-      .catch(() => {
-        setStatus('idle');
-        setSessionId(null);
-      });
-  }, [currentSessionKey, workspaceId]);
+    void loadStatus();
+  }, [loadStatus, workspaceId]);
 
   const openTerminal = async (approvalId?: string) => {
     if (!workspaceId) return;
@@ -217,7 +232,7 @@ export function WorkspaceTerminalPanel() {
       terminalRef.current?.focus();
       persistTerminalState({ sessionId: result.sessionId ?? null, cwd: result.cwd ?? workspaceRootPath, status: result.status ?? 'running', cols: result.cols, rows: result.rows, activeProcessId: result.pid ? String(result.pid) : null });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setBusy(false);
     }
@@ -248,7 +263,7 @@ export function WorkspaceTerminalPanel() {
       }
       terminalRef.current?.focus();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setBusy(false);
     }
@@ -267,7 +282,7 @@ export function WorkspaceTerminalPanel() {
       setStatus('idle');
       persistTerminalState({ sessionId: null, status: 'idle', activeProcessId: null });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     } finally {
       setBusy(false);
     }
@@ -313,6 +328,24 @@ export function WorkspaceTerminalPanel() {
           )}
         </div>
       </div>
+
+      {statusError && (
+        <div
+          className="flex items-center justify-between gap-2 border-b border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-800 dark:text-amber-300"
+          data-testid="workspace-terminal-status-error"
+        >
+          <span className="truncate">{t(statusError.messageKey)}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 shrink-0 text-[11px]"
+            onClick={() => statusError.retry?.()}
+            data-testid="workspace-terminal-status-retry"
+          >
+            {t('retry')}
+          </Button>
+        </div>
+      )}
 
       {blocked && (
         <div className="flex items-start gap-2 border-b border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs">

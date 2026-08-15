@@ -37,6 +37,7 @@ import {
   useArtifactPanel,
 } from '@/stores/artifact-panel';
 import { hostApi } from '@/lib/host-api';
+import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import { getAgentResourceLimits, selectMessageRenderWindow } from '../../../shared/agent-resource-limits';
 import { hostEvents } from '@/lib/host-events';
 import { VerseRouteBrand } from '@/components/loading/RouteLoadingShell';
@@ -519,7 +520,7 @@ function ProjectSessionHeader({
       await renameSession(currentSessionKey, nextLabel);
       setEditingSession(false);
     } catch (error) {
-      toast.error(t('session.renameFailed', { error: error instanceof Error ? error.message : String(error) }));
+      toast.error(t('session.renameFailed', { error: errorMessageFrom(error) }));
     } finally {
       setRenaming(false);
     }
@@ -1173,7 +1174,7 @@ export function Chat() {
       void hostApi.shell.openPath(file.filePath)
         .then((error) => {
           if (typeof error === 'string' && error) {
-            toast.error(error);
+            toastUserError(error);
           }
         })
         .catch(() => {
@@ -1225,7 +1226,7 @@ export function Chat() {
         toast.success(t('workspace.addedAndSwitched'));
       }
     } catch (error) {
-      toast.error(t('workspace.switchFailed', { error: error instanceof Error ? error.message : String(error) }));
+      toast.error(t('workspace.switchFailed', { error: errorMessageFrom(error) }));
     }
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
   useEffect(() => {
@@ -1457,7 +1458,7 @@ export function Chat() {
       toast.success(t('knowledgeDraft.applied'));
       setKnowledgeDraftOpen(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('knowledgeDraft.applyFailed'));
+      toastUserError(err, { fallback: t('knowledgeDraft.applyFailed') });
     } finally {
       setKnowledgeDraftApplying(false);
     }
@@ -1673,7 +1674,7 @@ export function Chat() {
       }
       toast.message(t('composer.rollbackPlan.terminal.opened'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
     }
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState, t]);
 
@@ -2361,7 +2362,7 @@ export function Chat() {
     if (!activeWorkspace?.id) return;
     void setPermissionMode(activeWorkspace.id, mode)
       .then(() => toast.success(t('workspace.permissionModeUpdated')))
-      .catch((error) => toast.error(error instanceof Error ? error.message : String(error)));
+      .catch((error) => toastUserError(error));
   }, [activeWorkspace?.id, setPermissionMode, t]);
 
   useEffect(() => {
@@ -2573,7 +2574,7 @@ export function Chat() {
     try {
       await decideApproval(id, decision);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error));
+      toastUserError(error);
       throw error;
     }
   }, [decideApproval]);

@@ -224,6 +224,7 @@
         "title": "Marketplace",
         "localOnlyTitle": "Local skills only",
         "localOnlyHint": "The ClawHub marketplace is not available in this build. Marketplace support is coming soon.",
+        "degradedHint": "Marketplace degraded",
         "installDialogTitle": "Install Skills",
         "installDialogSubtitle": "Browse Explore by default, or enter keywords to search.",
         "sourceLabel": "Source",

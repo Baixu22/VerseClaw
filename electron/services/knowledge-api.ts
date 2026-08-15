@@ -10,6 +10,9 @@ import type { GatewayManager } from '../gateway/manager';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 import { expandPath, getDataDir, getOpenClawConfigDir, getOpenClawRuntimeDir } from '../utils/paths';
 import { isRecord } from './payload-utils';
+// R2: main-side error returns must stay inside the sanitize boundary — the
+// renderer renders these strings directly in banners/toasts.
+import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
 // DCS Stage 5: real BlockStore-backed experience write-back. Electron imports
 // the runtime source directly (same pattern as agency-role-package-store), so
 // confirmed SEKB principles land in the same openclaw-state SQLite that
@@ -1742,7 +1745,7 @@ async function collectCandidates(paths: string[], maxFiles: number, maxBytes: nu
         await addFile(expanded, expanded, basename(expanded, extname(expanded)));
       }
     } catch (error) {
-      errors.push({ inputPath: expanded, error: error instanceof Error ? error.message : String(error) });
+      errors.push({ inputPath: expanded, error: sanitizeUiErrorText(error) });
     }
   }
 
@@ -1905,7 +1908,7 @@ async function collectOkfMarkdownFiles(rootPath: string): Promise<OkfFileCollect
     try {
       entries = await readdir(dirPath, { withFileTypes: true });
     } catch (error) {
-      errors.push(okfIssue('readDirectoryFailed', error instanceof Error ? error.message : String(error), { filePath: dirPath }));
+      errors.push(okfIssue('readDirectoryFailed', sanitizeUiErrorText(error), { filePath: dirPath }));
       return;
     }
     for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
@@ -1938,7 +1941,7 @@ async function collectOkfMarkdownFiles(rootPath: string): Promise<OkfFileCollect
           reserved: isReservedOkfFile(nextPath),
         });
       } catch (error) {
-        errors.push(okfIssue('statFailed', error instanceof Error ? error.message : String(error), { filePath: nextPath }));
+        errors.push(okfIssue('statFailed', sanitizeUiErrorText(error), { filePath: nextPath }));
       }
     }
   };
@@ -1959,7 +1962,7 @@ async function readRootOkfVersion(rootIndexPath: string, warnings: KnowledgeOkfW
     }
     return getString(parsed.okf_version);
   } catch (error) {
-    warnings.push(okfIssue('indexReadFailed', error instanceof Error ? error.message : String(error), { filePath: rootIndexPath }));
+    warnings.push(okfIssue('indexReadFailed', sanitizeUiErrorText(error), { filePath: rootIndexPath }));
     return undefined;
   }
 }
@@ -1974,7 +1977,7 @@ async function validateOkfBundleAtPath(inputPath: string): Promise<KnowledgeOkfV
       return emptyOkfValidationResult('OKF bundle path must be a local directory', bundlePath);
     }
   } catch (error) {
-    return emptyOkfValidationResult(error instanceof Error ? error.message : String(error), bundlePath);
+    return emptyOkfValidationResult(sanitizeUiErrorText(error), bundlePath);
   }
 
   const collection = await collectOkfMarkdownFiles(bundlePath);
@@ -2000,7 +2003,7 @@ async function validateOkfBundleAtPath(inputPath: string): Promise<KnowledgeOkfV
     try {
       content = await readFile(file.filePath, 'utf8');
     } catch (error) {
-      errors.push(okfIssue('readConceptFailed', error instanceof Error ? error.message : String(error), { conceptId, filePath: file.filePath }));
+      errors.push(okfIssue('readConceptFailed', sanitizeUiErrorText(error), { conceptId, filePath: file.filePath }));
       continue;
     }
 
@@ -2014,7 +2017,7 @@ async function validateOkfBundleAtPath(inputPath: string): Promise<KnowledgeOkfV
     try {
       parsed = parseYaml(split.yaml) as unknown;
     } catch (error) {
-      errors.push(okfIssue('invalidFrontmatter', error instanceof Error ? error.message : String(error), { conceptId, filePath: file.filePath }));
+      errors.push(okfIssue('invalidFrontmatter', sanitizeUiErrorText(error), { conceptId, filePath: file.filePath }));
       continue;
     }
     if (!isRecord(parsed)) {
@@ -2544,7 +2547,7 @@ async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsR
       success: false,
       available: false,
       reason: 'reportFailed',
-      error: error instanceof Error ? error.message : String(error),
+      error: sanitizeUiErrorText(error),
       ...EMPTY_RUNTIME_LESSONS_REPORT,
     };
   }
@@ -2893,7 +2896,7 @@ export function createKnowledgeApi({
       try {
         return { success: true, status: await rpc('wiki.status', {}, 12_000) };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -2902,7 +2905,7 @@ export function createKnowledgeApi({
         const result = await rpc<Record<string, unknown>>('wiki.init', {}, 30_000);
         return { success: true, ...result };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -2917,7 +2920,7 @@ export function createKnowledgeApi({
         }, 30_000);
         return { success: true };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -2951,7 +2954,7 @@ export function createKnowledgeApi({
         } catch (error) {
           items.push({
             inputPath: candidate.inputPath,
-            error: error instanceof Error ? error.message : String(error),
+            error: sanitizeUiErrorText(error),
           });
         }
       }
@@ -3059,7 +3062,7 @@ export function createKnowledgeApi({
             title: okfImportTitle(concept),
             frontmatter: concept.frontmatter,
             warnings: concept.warnings,
-            error: error instanceof Error ? error.message : String(error),
+            error: sanitizeUiErrorText(error),
           });
         }
       }
@@ -3157,7 +3160,7 @@ export function createKnowledgeApi({
           }),
         };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error), results: [] };
+        return { success: false, error: sanitizeUiErrorText(error), results: [] };
       }
     },
 
@@ -3174,7 +3177,7 @@ export function createKnowledgeApi({
         }, 30_000);
         return { success: true, ...result };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3182,7 +3185,7 @@ export function createKnowledgeApi({
       try {
         return { success: true, ...(await rpc<Record<string, unknown>>('wiki.compile', {}, 120_000)) };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3190,7 +3193,7 @@ export function createKnowledgeApi({
       try {
         return { success: true, ...(await rpc<Record<string, unknown>>('wiki.lint', {}, 120_000)) };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3243,7 +3246,7 @@ export function createKnowledgeApi({
           proposal,
         };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3255,7 +3258,7 @@ export function createKnowledgeApi({
         const error = await shell.openPath(vaultPath);
         return error ? { success: false, error, path: vaultPath } : { success: true, path: vaultPath };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3677,7 +3680,7 @@ export function createKnowledgeApi({
         await appendAudit({ type: 'reviewed_change_applied', proposalId: proposal.id, draftId: draft.id, operation: proposal.operation });
         return { success: true, proposal: appliedProposal, draft: appliedDraft, ...result };
       } catch (error) {
-        return { success: false, proposal, draft, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, proposal, draft, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3738,7 +3741,7 @@ export function createKnowledgeApi({
               review = { ...review, notes: `${review.notes}\nSemantic steward pass unavailable: invoker returned null.` };
             }
           } catch (error) {
-            const reason = error instanceof Error ? error.message : String(error);
+            const reason = sanitizeUiErrorText(error);
             review = { ...review, notes: `${review.notes}\nSemantic steward pass unavailable: ${reason}.` };
           }
         } else {
@@ -3807,7 +3810,7 @@ export function createKnowledgeApi({
         await writeRoleRegistry(nextRegistry);
         return { success: true, registry: nextRegistry, ...(issues.length > 0 ? { issues } : {}) };
       } catch (error) {
-        return { success: false, registry: currentRegistry, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, registry: currentRegistry, error: sanitizeUiErrorText(error) };
       }
     },
 
@@ -3886,7 +3889,7 @@ export function createKnowledgeApi({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
           decision: 'skip',
           reason: 'knowledge routing search failed',
           candidates: [],
@@ -3971,7 +3974,7 @@ export function createKnowledgeApi({
           available: false,
           reason: 'exportFailed',
           authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4057,7 +4060,7 @@ export function createKnowledgeApi({
           available: false,
           reason: 'protocolFailed',
           authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4115,7 +4118,7 @@ export function createKnowledgeApi({
           available: false,
           reason: 'reportFailed',
           authority: 'offline_evaluation_evidence_not_runtime_source_of_truth',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4154,7 +4157,7 @@ export function createKnowledgeApi({
           reason: 'suggestFailed',
           mode: 'deterministic',
           suggestions: [],
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4221,7 +4224,7 @@ export function createKnowledgeApi({
           mode: 'deterministic_fallback',
           userVisibleStatus: 'suggestFailed',
           suggestions: [],
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4295,7 +4298,7 @@ export function createKnowledgeApi({
           principleOnly: dcsWrite !== 'written',
         };
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
+        const message = sanitizeUiErrorText(error);
         const missingSession =
           /sessionId/i.test(message) ||
           (error && typeof error === 'object' && (error as { code?: string }).code === 'missing_session');
@@ -4338,7 +4341,7 @@ export function createKnowledgeApi({
           success: false,
           available: false,
           reason: 'rejectFailed',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4403,7 +4406,7 @@ export function createKnowledgeApi({
           success: false,
           available: false,
           reason: 'captureFailed',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4452,7 +4455,7 @@ export function createKnowledgeApi({
           reason: 'retrieveFailed',
           principles: [],
           injection: '',
-          error: error instanceof Error ? error.message : String(error),
+          error: sanitizeUiErrorText(error),
         };
       }
     },
@@ -4495,7 +4498,7 @@ export function createKnowledgeApi({
         }
         return { success: true, advisories };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error), advisories: [] };
+        return { success: false, error: sanitizeUiErrorText(error), advisories: [] };
       }
     },
 
@@ -4523,7 +4526,7 @@ export function createKnowledgeApi({
         });
         return { success: true, effectiveness };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : String(error) };
+        return { success: false, error: sanitizeUiErrorText(error) };
       }
     },
 

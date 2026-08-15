@@ -28,6 +28,10 @@ import type {
 /** Optional fetcher that pulls runtime-process traces + scorecards via Gateway RPC. */
 type RuntimeTraceFetcher = () => Promise<{ traces: Array<Record<string, unknown>>; scorecards?: Array<Record<string, unknown>> }>;
 let runtimeTraceFetcher: RuntimeTraceFetcher | undefined;
+// R2: the runtime trace fetch is still best-effort, but its failure is no
+// longer silent — the dashboard snapshot carries an explicit alert so the UI
+// can distinguish "no data" from "data source unavailable".
+let runtimeTraceFetchFailed = false;
 type ObservabilityApiContext = {
   onRuntimeEvent?: (event: ObservabilityRuntimeEvent) => void;
 };
@@ -48,9 +52,13 @@ async function ingestRuntimeTraces(): Promise<void> {
         upsertObservabilityScorecard(entry as ObservabilityScorecard);
       }
     }
-  } catch {
+    runtimeTraceFetchFailed = false;
+  } catch (error) {
     // Runtime trace fetch is best-effort — the UI must not break if the
     // gateway doesn't respond or the runtime hasn't produced any traces.
+    // The failure is still surfaced as a snapshot alert (R2).
+    runtimeTraceFetchFailed = true;
+    console.warn('[observability] runtime trace fetch degraded:', error);
   }
 }
 
@@ -70,7 +78,14 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
         await ingestRuntimeTraces();
         await refreshTraceIndex();
         const queryResult = await queryObservabilityTraces({ pageSize: 1000 }, getObservabilityTraceBuffer());
-        return buildObservabilityDashboardSnapshot(queryResult.items);
+        const snapshot = buildObservabilityDashboardSnapshot(queryResult.items);
+        if (runtimeTraceFetchFailed) {
+          snapshot.alerts = [
+            ...(snapshot.alerts ?? []),
+            'Runtime trace fetch unavailable — showing local/indexed traces only.',
+          ];
+        }
+        return snapshot;
       },
       traces: async () => {
         await ingestRuntimeTraces();

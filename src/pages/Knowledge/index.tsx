@@ -40,6 +40,7 @@ import {
   type KnowledgeStewardTriage,
   type KnowledgeStewardTriageAction,
 } from '@/lib/host-api';
+import { errorMessageFrom } from '@/lib/user-error';
 import {
   buildGroundedLibrarianAnswer,
   createDraftPayloadFromGroundedAnswer,
@@ -1034,7 +1035,7 @@ export function Knowledge() {
       if (!result.success) throw new Error(result.error || t('errors.status'));
       setStatus(result.status ?? null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(errorMessageFrom(err));
     } finally {
       setLoading(false);
     }
@@ -1077,7 +1078,7 @@ export function Knowledge() {
       if (!result.success) throw new Error(result.error || t('runtime.errors.report'));
       setRuntimeLessons(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(errorMessageFrom(err));
     } finally {
       setRuntimeLessonsLoading(false);
     }
@@ -1103,7 +1104,7 @@ export function Knowledge() {
       setRuntimeConfirmResult(null);
       toast.success(t('runtime.toasts.suggested', { count: result.suggestions.length }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1133,7 +1134,7 @@ export function Knowledge() {
       toast.success(t('runtime.toasts.confirmed'));
       await refreshRuntimeLessons();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1160,7 +1161,7 @@ export function Knowledge() {
       toast.success(t('runtime.toasts.rejected'));
       await refreshRuntimeLessons();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1186,7 +1187,7 @@ export function Knowledge() {
       setRuntimeRetrieveResult(result);
       toast.success(t('runtime.toasts.retrieved', { count: result.principles.length }));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1213,7 +1214,7 @@ export function Knowledge() {
       setRuntimeCaptureResult(result);
       toast.success(t('runtime.toasts.captured'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1234,7 +1235,7 @@ export function Knowledge() {
         toast.success(t('runtime.toasts.distilled', { count: result.suggestions.length }));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1256,7 +1257,7 @@ export function Knowledge() {
       setRuntimeShadowResult(result);
       toast.success(t('runtime.toasts.shadow'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1337,7 +1338,7 @@ export function Knowledge() {
       toast.success(t(`toasts.${key}`));
       await refreshStatus();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1377,7 +1378,7 @@ export function Knowledge() {
       }
       toast.success(t('toasts.validateOkf'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1416,7 +1417,7 @@ export function Knowledge() {
       toast.success(t('toasts.importOkf'));
       await refreshStatus();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1438,7 +1439,7 @@ export function Knowledge() {
       setSelectedRow(null);
       setSelectedLookup('');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1480,7 +1481,7 @@ export function Knowledge() {
       setSourceSets((current) => [result.sourceSet!, ...current.filter((item) => item.id !== result.sourceSet!.id)]);
       toast.success(t('sourceSet.saved'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1507,7 +1508,7 @@ export function Knowledge() {
       await refreshGovernance();
       toast.success(t('studio.artifactCreated'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1650,7 +1651,7 @@ export function Knowledge() {
       });
       setLibrarianMessages((messages) => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       setLibrarianError(message);
       toast.error(message);
@@ -1682,7 +1683,7 @@ export function Knowledge() {
       await refreshGovernance();
       setWorkbenchTab('drafts');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1703,7 +1704,7 @@ export function Knowledge() {
       await refreshGovernance();
       setWorkbenchTab('inbox');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1726,7 +1727,7 @@ export function Knowledge() {
       await refreshGovernance();
       setWorkbenchTab('review');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1769,7 +1770,7 @@ export function Knowledge() {
       }
       if (!draftSources.trim()) setDraftSources(getString(row, ['id', 'pageId', 'pagePath', 'path', 'relativePath']) || lookup);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1823,7 +1824,7 @@ export function Knowledge() {
       if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
       setWorkbenchTab('review');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1845,7 +1846,7 @@ export function Knowledge() {
       if (result.proposal) setSelectedProposalId(result.proposal.id);
       setWorkbenchTab('review');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1865,7 +1866,7 @@ export function Knowledge() {
       await refreshGovernance();
       setSelectedInboxId(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1916,7 +1917,7 @@ export function Knowledge() {
       if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
       setWorkbenchTab('review');
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1947,7 +1948,7 @@ export function Knowledge() {
       toast.success(t('toasts.stewardReview'));
       await refreshGovernance();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -1975,7 +1976,7 @@ export function Knowledge() {
       setStewardConfig({ success: true, registry: result.registry, activeRole: result.registry.roles.find((r) => r.roleId === result.registry.defaultRoleId) });
       toast.success(t('toasts.stewardReview'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       toast.error(message);
     } finally {
       setRunning(null);
@@ -2000,7 +2001,7 @@ export function Knowledge() {
       toast.success(t('toasts.applyReviewedChange'));
       await refreshGovernance();
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = errorMessageFrom(err);
       setError(message);
       toast.error(message);
     } finally {

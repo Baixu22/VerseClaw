@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { describeUserError } from '@/lib/user-error';
 import type {
   ObservabilityDashboardSnapshot,
   ObservabilityNodeDiagnostics,
@@ -16,6 +17,8 @@ export type ObservabilityState = {
   queryResult: ObservabilityTraceQueryResult | null;
   loading: boolean;
   error: string | null;
+  /** R2: developer-log reference minted by describeUserError. */
+  errorId: string | null;
 
   selectedTraceId: string | null;
   selectedTrace: ObservabilityTrace | null;
@@ -40,6 +43,7 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
   queryResult: null,
   loading: false,
   error: null,
+  errorId: null,
   selectedTraceId: null,
   selectedTrace: null,
   selectedGraph: null,
@@ -48,26 +52,28 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
   diagnosticsLoading: false,
 
   fetchDashboard: async (opts) => {
-    if (!opts?.silent) set({ loading: true, error: null });
+    if (!opts?.silent) set({ loading: true, error: null, errorId: null });
     try {
       const snapshot = await hostApi.observability.dashboardSnapshot();
       const query = get().query;
       const queryResult = await hostApi.observability.queryTraces(query);
       set({ snapshot, queryResult, loading: false });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : String(error), loading: false });
+      const details = describeUserError(error);
+      set({ error: details.message, errorId: details.errorId, loading: false });
     }
   },
 
   queryTraces: async (queryPatch, opts) => {
     const query = { ...get().query, ...(queryPatch ?? {}) };
-    if (!opts?.silent) set({ loading: true, error: null, query });
+    if (!opts?.silent) set({ loading: true, error: null, errorId: null, query });
     else set({ query });
     try {
       const queryResult = await hostApi.observability.queryTraces(query);
       set({ queryResult, loading: false });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : String(error), loading: false });
+      const details = describeUserError(error);
+      set({ error: details.message, errorId: details.errorId, loading: false });
     }
   },
 
@@ -76,7 +82,8 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
       await hostApi.observability.clearTraces();
       set({ snapshot: null, queryResult: null, selectedTraceId: null, selectedTrace: null, selectedGraph: null, selectedNodeDiagnostics: null });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : String(error) });
+      const details = describeUserError(error);
+      set({ error: details.message, errorId: details.errorId });
     }
   },
 
@@ -90,7 +97,8 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
       }
     } catch (error) {
       if (get().selectedTraceId === id) {
-        set({ error: error instanceof Error ? error.message : String(error), traceLoading: false });
+        const details = describeUserError(error);
+        set({ error: details.message, errorId: details.errorId, traceLoading: false });
       }
     }
   },
@@ -104,7 +112,8 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
       }
     } catch (error) {
       if (get().selectedTraceId === traceId) {
-        set({ error: error instanceof Error ? error.message : String(error), diagnosticsLoading: false });
+        const details = describeUserError(error);
+        set({ error: details.message, errorId: details.errorId, diagnosticsLoading: false });
       }
     }
   },

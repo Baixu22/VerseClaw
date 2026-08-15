@@ -56,6 +56,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
+import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
 import { useUiVersion } from '@/components/layout/ui-overlay-context';
@@ -1442,9 +1443,9 @@ export function ChatInput({
       if (!result.success) throw new Error(result.error || t('composer.knowledgeAttach.searchFailed'));
       setKnowledgeSearchResult(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = errorMessageFrom(error);
       setKnowledgeSearchError(message);
-      toast.error(message);
+      toastUserError(error);
     } finally {
       setKnowledgeSearching(false);
     }
@@ -2261,7 +2262,7 @@ export function ChatInput({
         await hostApi.knowledge.governanceAudit();
         toast.success(t('composer.slashCommands.toasts.stewardAuditStarted'));
       } catch (error) {
-        toast.error(String(error));
+        toastUserError(error);
       }
       window.location.hash = '#/knowledge?tab=governance';
       return;

@@ -3,6 +3,7 @@
   "subtitle": "Full-chain agent runtime traces, metrics, and scorecards.",
   "refresh": "Refresh",
   "retry": "Retry",
+  "errorRef": "Error reference",
   "clear": "Clear",
   "empty": "No observability data yet. Run a role-first task to populate traces.",
   "alerts": "Alerts",

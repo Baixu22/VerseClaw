@@ -224,6 +224,7 @@
         "title": "マーケットプレイス",
         "localOnlyTitle": "ローカルのスキルのみ",
         "localOnlyHint": "このビルドでは ClawHub マーケットプレイスは利用できません。近日公開予定です。",
+        "degradedHint": "マーケットプレイスは縮退動作中",
         "installDialogTitle": "スキルをインストール",
         "installDialogSubtitle": "初期表示は Explore、キーワード入力時は検索します。",
         "sourceLabel": "ソース",

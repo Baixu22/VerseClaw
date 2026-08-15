@@ -7,13 +7,17 @@ import {
   useArtifactPanel,
 } from '@/stores/artifact-panel';
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (_key: string, fallback?: string | Record<string, unknown>) => (
-      typeof fallback === 'string' ? fallback : ''
-    ),
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (_key: string, fallback?: string | Record<string, unknown>) => (
+        typeof fallback === 'string' ? fallback : ''
+      ),
+    }),
+  };
+});
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {

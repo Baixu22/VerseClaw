@@ -187,6 +187,7 @@ export function ObservabilityDashboard() {
     snapshot,
     loading,
     error,
+    errorId,
     fetchDashboard,
     queryResult,
     queryTraces,
@@ -454,6 +455,11 @@ export function ObservabilityDashboard() {
       <div className="flex h-64 flex-col items-center justify-center gap-4">
         <AlertTriangle className="h-8 w-8 text-red-500" />
         <p className="text-muted-foreground">{error}</p>
+        {errorId ? (
+          <p className="text-xs text-muted-foreground" data-testid="observability-error-reference">
+            {t('errorRef')} {errorId}
+          </p>
+        ) : null}
         <Button variant="outline" onClick={() => fetchDashboard()} className="h-9 rounded-md px-4">
           {t('retry')}
         </Button>

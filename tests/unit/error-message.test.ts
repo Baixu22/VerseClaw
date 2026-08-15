@@ -17,4 +17,13 @@ describe('error-message', () => {
     const msg = toUserMessage(new AppError('CHANNEL_UNAVAILABLE', 'Invalid IPC channel'));
     expect(msg).toContain('Service channel unavailable');
   });
+
+  it('sanitizes the UNKNOWN branch instead of returning the raw message (R2)', () => {
+    const raw = 'read failed at C:\\Users\\me\\secret\\file.ts sk-proj-1234567890abcdefgh'
+      + '\n    at Module.load (node:internal)';
+    const msg = toUserMessage(new AppError('UNKNOWN', raw));
+    expect(msg).not.toContain('at Module.load');
+    expect(msg).not.toContain('sk-proj-1234567890abcdefgh');
+    expect(msg.length).toBeGreaterThan(0);
+  });
 });
