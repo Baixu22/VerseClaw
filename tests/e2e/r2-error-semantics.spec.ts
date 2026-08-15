@@ -81,11 +81,29 @@ test.describe('R2 renderer error semantics (SessionStatusRail)', () => {
         },
         hostApi: {
           ...baseMocks(),
-          [stableStringify(['git', 'status', null])]: {
-            ok: false,
-            error: { code: 'INTERNAL', message: 'E2E injected git status failure' },
-          },
         },
+      });
+      // The fixture's hostApi values always ride an ok:true envelope, so a
+      // host REJECTION needs a custom host:invoke that fails the route — the
+      // same ok:false envelope a downed Main route produces in production.
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const originalHostInvoke = (ipcMain as unknown as {
+          _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        })._invokeHandlers?.get('host:invoke');
+        const fail = (id: unknown, message: string) => ({
+          id: typeof id === 'string' ? id : undefined,
+          ok: false,
+          error: { code: 'INTERNAL', message },
+        });
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event: unknown, request: unknown) => {
+          const req = request as { id?: string; module?: string; action?: string };
+          if (req?.module === 'git' && req?.action === 'status') {
+            return fail(req.id, 'E2E injected git status failure');
+          }
+          return originalHostInvoke?.(event, request) ?? { id: req?.id, ok: true, data: {} };
+        });
       });
       const page = await getStableWindow(app);
       await page.reload();
