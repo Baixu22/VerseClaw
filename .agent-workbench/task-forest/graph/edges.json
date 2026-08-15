@@ -1294,5 +1294,89 @@
     "to": "TF-0057",
     "type": "depends_on",
     "updated_at": "2026-08-15T02:58:13.444553Z"
+  },
+  "TFE-0110": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-08-15T04:35:33.871192Z",
+    "created_from_session": null,
+    "from": "TF-0062",
+    "id": "TFE-0110",
+    "reason": "v2 供数桥接是 Workflow Viz 从事实源到 renderer 装配层的明确边界子任务。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-15T04:35:33.871192Z"
+  },
+  "TFE-0111": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-15T04:35:33.871783Z",
+    "created_from_session": null,
+    "from": "TF-0062",
+    "id": "TFE-0111",
+    "reason": "桥接只能传递已经定义并验证过的 B1-01 v2 schema。",
+    "to": "TF-0057",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T04:35:33.871783Z"
+  },
+  "TFE-0112": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-08-15T04:35:33.872101Z",
+    "created_from_session": null,
+    "from": "TF-0062",
+    "id": "TFE-0112",
+    "reason": "历史恢复和实时传递必须复用 B1-03 已有的 Main-owned readFrom/subscribe 链路。",
+    "to": "TF-0059",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T04:35:33.872101Z"
+  },
+  "TFE-0113": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-08-15T04:35:33.872101Z",
+    "created_from_session": null,
+    "from": "TF-0063",
+    "id": "TFE-0113",
+    "reason": "现有 store 并轨是 Workflow Viz 可恢复投影重建的装配层子任务。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-15T04:35:33.872101Z"
+  },
+  "TFE-0114": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-15T04:35:33.873249Z",
+    "created_from_session": null,
+    "from": "TF-0063",
+    "id": "TFE-0114",
+    "reason": "store 必须消费已验证的 B2-01 assembler 输出。",
+    "to": "TF-0061",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T04:35:33.873249Z"
+  },
+  "TFE-0115": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-08-15T04:35:33.873249Z",
+    "created_from_session": null,
+    "from": "TF-0063",
+    "id": "TFE-0115",
+    "reason": "B2-02 依赖 Electron/Main 供数链路已具备的 B1-04 恢复与订阅能力。",
+    "to": "TF-0060",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T04:35:33.873249Z"
+  },
+  "TFE-0116": {
+    "blocking": true,
+    "confidence": 0.99,
+    "created_at": "2026-08-15T04:35:33.873249Z",
+    "created_from_session": null,
+    "from": "TF-0063",
+    "id": "TFE-0116",
+    "reason": "store 只能在 renderer 已收到原始 v2 事件后合法消费装配结果。",
+    "to": "TF-0062",
+    "type": "depends_on",
+    "updated_at": "2026-08-15T04:35:33.873249Z"
   }
 }

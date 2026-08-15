@@ -332,6 +332,42 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.91,
+      "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+      "validation_plan": [
+        "B2-02 Harness context/validate/run dry-run",
+        "store/fixture 定向 Vitest 与相关 mock 场景",
+        "typecheck:node、typecheck:web、build:runtime、comms、BOM、ESLint",
+        "clean detached worktree 重跑关键测试与构建"
+      ],
+      "why_not_enough": "它不实现 B3 轨迹账本、树或时间线，也不会替代未表达领域的独立 owner。",
+      "why_this_task": "它直接落实编排计划中的 B2-02，但只在原始 v2 供数可靠后消费 B2-01 装配结果，避免新平行 reducer。"
+    },
+    "blocked_by": [],
+    "confidence": 0.91,
+    "context_tags": [],
+    "desired_outcomes": [
+      "run/turn/step/tool 生命周期在两处 store 中均只由 B2-01 节点 data 驱动",
+      "v2 覆盖的状态不再使用 Date.now 兜底、字段摸探或最近 context 猜测，历史加实时与完整 replace 等价",
+      "现有 ?mock=1 场景使用带固定 seq/时间戳的装配 fixture 注入，保留现有体验"
+    ],
+    "difficulty": "high",
+    "id": "TF-0063",
+    "kind": "task",
+    "next_action": "只在 WV-B2-02A 通过并关闭后开始；先建立 task spec，再运行 harness context",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让 session-activity 与 observability 成为 B2-01 确定性装配结果的消费者，消除它们对同一生命周期的平行手写 reducer 和壁钟 last-wins。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "WV-B2-02 现有 store 并轨"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [

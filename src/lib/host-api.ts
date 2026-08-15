@@ -470,7 +470,10 @@ import type {
   ObservabilityTraceGraphResult,
   ObservabilityTraceQuery,
   ObservabilityTraceQueryResult,
+  ObservabilityTrajectoryHistoryPage,
+  ObservabilityTrajectorySessionSupply,
 } from '@shared/types/observability';
+import type { TrajectoryEventV2 } from '../../openclaw_runtime/src/trajectory/types';
 import { invokeHost } from './host-api-client';
 
 type PromptCacheStatusFn = HostApiContract['usage']['promptCacheStatus'];
@@ -1761,6 +1764,12 @@ export const hostApi = {
     traceGraph: (id: string): Promise<ObservabilityTraceGraphResult | null> => invokeHost('observability', 'traceGraph', { id }),
     traceNodeDiagnostics: (traceId: string, nodeId: string): Promise<ObservabilityNodeDiagnostics | null> =>
       invokeHost('observability', 'traceNodeDiagnostics', { traceId, nodeId }),
+    trajectorySessions: (): Promise<{ sessions: ObservabilityTrajectorySessionSupply[] }> =>
+      invokeHost('observability', 'trajectorySessions'),
+    // Main re-validates every row against the B1-01 v2 schema before it
+    // crosses the host boundary, so the renderer surface is typed as raw v2.
+    trajectoryHistory: (payload: { sessionKey: string; fromSeq?: number; limit?: number }): Promise<ObservabilityTrajectoryHistoryPage<TrajectoryEventV2>> =>
+      invokeHost('observability', 'trajectoryHistory', payload) as Promise<ObservabilityTrajectoryHistoryPage<TrajectoryEventV2>>,
     clearTraces: () => invokeHost('observability', 'clearTraces'),
   },
 };

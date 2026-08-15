@@ -457,6 +457,50 @@ export type ObservabilityDashboardSnapshot = {
   sourceHealth: ObservabilitySourceHealth;
 };
 
+// ---------------------------------------------------------------------------
+// WV-B2-02A raw v2 trajectory supply (Main-owned bridge to the renderer).
+//
+// These payloads carry validated raw `TrajectoryEventV2` rows exactly as the
+// B1-01 schema in `openclaw_runtime/src/trajectory` defines them. The shared
+// layer stays runtime-agnostic, so the event rows are generic here; Main and
+// the renderer entrypoints bind `Event` to `TrajectoryEventV2`, and Main
+// re-validates every row against the B1-01 schema before it crosses the host
+// boundary. v1 rows never appear here: sessions that only hold legacy v1 data
+// are reported through `legacyFallback` and supply no events. `asOfSeq` is the
+// cold-history/realtime handoff point — the renderer drops any buffered
+// realtime event with `seq <= asOfSeq` before appending.
+
+export type ObservabilityTrajectorySessionSupply = {
+  sessionKey: string;
+  /** Last validated v2 seq accepted by Main for this session (0 when none). */
+  lastSeq: number;
+  /** Earliest v2 seq still retained in Main memory (0 when none). */
+  earliestRetainedSeq: number;
+  /** True when the session only has explicit v1 legacy data (no v2 supply). */
+  legacyFallback: boolean;
+};
+
+export type ObservabilityTrajectoryHistoryPage<Event = unknown> = {
+  sessionKey: string;
+  schemaVersion: 2;
+  fromSeq: number;
+  /** Validated raw v2 events in strictly ascending seq order, all > fromSeq. */
+  events: Event[];
+  /** Seq of the last event in this page, or fromSeq when the page is empty. */
+  asOfSeq: number;
+  hasMore: boolean;
+  legacyFallback: boolean;
+  /** Rows dropped by Main's boundary re-validation (invalid, v1, or out-of-order). */
+  rejected: number;
+};
+
+export type ObservabilityTrajectorySupplyEvent<Event = unknown> = {
+  sessionKey: string;
+  schemaVersion: 2;
+  /** Validated raw v2 events in strictly ascending seq order. */
+  events: Event[];
+};
+
 export type ObservabilityRuntimeEvent =
   | { type: 'trace.started'; trace: ObservabilityTrace }
   | { type: 'trace.updated'; trace: ObservabilityTrace }

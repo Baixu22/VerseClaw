@@ -24,6 +24,9 @@ import {
   type TrajectoryProjectionDiagnostic,
 } from './observability-trajectory-index';
 import { readTrajectoryEventsForTrace } from './observability-trajectory';
+import { isRecord } from './payload-utils';
+import { safeParseTrajectoryEventV2 } from '../../openclaw_runtime/src/trajectory/schema';
+import type { TrajectoryEventV2 } from '../../openclaw_runtime/src/trajectory/types';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
 import type {
@@ -33,6 +36,9 @@ import type {
   ObservabilitySourceHealthEntry,
   ObservabilityTrace,
   ObservabilityTraceQuery,
+  ObservabilityTrajectoryHistoryPage,
+  ObservabilityTrajectorySessionSupply,
+  ObservabilityTrajectorySupplyEvent,
 } from '../../shared/types/observability';
 
 /** Optional fetcher that pulls runtime-process traces + scorecards via Gateway RPC. */
@@ -45,6 +51,7 @@ type RuntimeTraceFetcher = () => Promise<RuntimeTraceFetchResult>;
 let runtimeTraceFetcher: RuntimeTraceFetcher | undefined;
 type ObservabilityApiContext = {
   onRuntimeEvent?: (event: ObservabilityRuntimeEvent) => void;
+  onTrajectoryEvent?: (event: ObservabilityTrajectorySupplyEvent<TrajectoryEventV2>) => void;
   onProjectionDiagnostic?: (diagnostic: TrajectoryProjectionDiagnostic) => void;
   gatewayManager?: GatewayTrajectoryManager;
 };
@@ -144,10 +151,6 @@ async function refreshTraceIndex(): Promise<Pick<ObservabilitySourceHealth, 'ind
   return { index, trajectory };
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
 function readString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
@@ -183,6 +186,34 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
           + `${diagnostic.seq == null ? '' : ` seq=${diagnostic.seq}`}: ${diagnostic.message}`,
       );
       ctx.onProjectionDiagnostic?.(diagnostic);
+    },
+    // Raw v2 renderer supply: the projector only reports validated v2 rows
+    // here, and Main still re-validates every row against the B1-01 schema
+    // immediately before it crosses the host boundary.
+    onV2Events: (sessionKey, events) => {
+      if (!ctx.onTrajectoryEvent) return;
+      const validated: TrajectoryEventV2[] = [];
+      for (const event of events) {
+        const parsed = safeParseTrajectoryEventV2(event);
+        if (parsed.success) {
+          validated.push(parsed.event);
+          continue;
+        }
+        const diagnostic: TrajectoryProjectionDiagnostic = {
+          sessionKey,
+          kind: 'invalid',
+          message: 'Trajectory v2 event failed boundary re-validation',
+          seq: event.seq,
+        };
+        logger.warn(
+          `[observability-trajectory] boundary rejected session=${sessionKey}`
+            + `${diagnostic.seq == null ? '' : ` seq=${diagnostic.seq}`}: ${diagnostic.message}`,
+        );
+        ctx.onProjectionDiagnostic?.(diagnostic);
+      }
+      if (validated.length > 0) {
+        ctx.onTrajectoryEvent({ sessionKey, schemaVersion: 2, events: validated });
+      }
     },
   });
   const hydratedSessions = new Set<string>();
@@ -332,6 +363,101 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
     if (includeLegacyIndex) await refreshTraceIndex();
   };
 
+  const trajectorySessionSupply = (sessionKey: string): ObservabilityTrajectorySessionSupply => {
+    const retained = projector.getV2Events(sessionKey);
+    return {
+      sessionKey,
+      lastSeq: retained.at(-1)?.seq ?? 0,
+      earliestRetainedSeq: retained[0]?.seq ?? 0,
+      legacyFallback: projector.isLegacyFallback(sessionKey),
+    };
+  };
+
+  /**
+   * Main-owned v2 history read for the renderer supply bridge. Serves the
+   * projector's already-validated in-memory v2 rows when they cover fromSeq,
+   * and otherwise cold-recovers through B1-03's existing observability.readFrom.
+   * Every row is re-validated against the B1-01 v2 schema before it crosses
+   * the host boundary; v1 rows never pass and are counted as rejected.
+   */
+  const readTrajectoryHistory = async (
+    payload: { sessionKey: string; fromSeq?: number; limit?: number },
+  ): Promise<ObservabilityTrajectoryHistoryPage<TrajectoryEventV2>> => {
+    const sessionKey = (payload?.sessionKey ?? '').trim();
+    const fromSeq = Number.isInteger(payload?.fromSeq) && (payload.fromSeq as number) >= 0
+      ? payload.fromSeq as number
+      : 0;
+    const requestedLimit = payload?.limit;
+    const limit = Number.isInteger(requestedLimit) && (requestedLimit as number) > 0
+      ? Math.min(requestedLimit as number, 1_000)
+      : 500;
+
+    const retained = projector.getV2Events(sessionKey);
+    const earliestRetainedSeq = retained[0]?.seq ?? 0;
+    let candidates: readonly unknown[] = retained;
+    let remoteHasMore = false;
+    const retainedCoversFrom = retained.length > 0 && earliestRetainedSeq <= fromSeq + 1;
+    if (!retainedCoversFrom && ctx.gatewayManager && statusIsReady(ctx.gatewayManager.getStatus?.())) {
+      try {
+        const page = await ctx.gatewayManager.rpc<Record<string, unknown>>('observability.readFrom', {
+          sessionKey,
+          fromSeq,
+          limit,
+        });
+        if (isRecord(page) && Array.isArray(page.events)) {
+          candidates = page.events;
+          remoteHasMore = page.hasMore === true;
+        } else {
+          logger.warn(`[observability-trajectory] history readFrom returned an invalid page for session=${sessionKey}`);
+        }
+      } catch (error) {
+        logger.warn(`[observability-trajectory] history readFrom failed for session=${sessionKey}: ${errorDetail(error)}`);
+      }
+    }
+
+    const events: TrajectoryEventV2[] = [];
+    let rejected = 0;
+    let truncated = false;
+    let cursor = fromSeq;
+    for (const row of candidates) {
+      if (events.length >= limit) {
+        truncated = true;
+        break;
+      }
+      const parsed = safeParseTrajectoryEventV2(row);
+      if (!parsed.success) {
+        rejected += 1;
+        continue;
+      }
+      const seq = parsed.event.seq;
+      // Rows at or below fromSeq were already delivered before this page.
+      if (seq <= fromSeq) continue;
+      // Duplicate or older-than-cursor rows are deterministically dropped.
+      if (seq <= cursor) {
+        rejected += 1;
+        continue;
+      }
+      events.push(parsed.event);
+      cursor = seq;
+    }
+    if (rejected > 0) {
+      logger.warn(
+        `[observability-trajectory] history rejected ${rejected} row(s) at the v2 boundary for session=${sessionKey}`,
+      );
+    }
+
+    return {
+      sessionKey,
+      schemaVersion: 2,
+      fromSeq,
+      events,
+      asOfSeq: events.at(-1)?.seq ?? fromSeq,
+      hasMore: truncated || remoteHasMore,
+      legacyFallback: projector.isLegacyFallback(sessionKey),
+      rejected,
+    };
+  };
+
   return {
     observability: {
       dashboardSnapshot: async () => {
@@ -407,6 +533,14 @@ export function createObservabilityApi(ctx: ObservabilityApiContext = {}): Pick<
         if (!trace) return null;
         const trajectoryEvents = await readTrajectoryEventsForTrace(trace);
         return buildObservabilityNodeDiagnostics(trace, nodeId, trajectoryEvents);
+      },
+      trajectorySessions: async () => {
+        await prepare(false);
+        return { sessions: projector.getKnownSessionKeys().map(trajectorySessionSupply) };
+      },
+      trajectoryHistory: async (payload: { sessionKey: string; fromSeq?: number; limit?: number }) => {
+        await prepare(false);
+        return readTrajectoryHistory(payload);
       },
       clearTraces: async () => {
         clearObservabilityTraceBuffer();

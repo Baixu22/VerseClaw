@@ -51,7 +51,12 @@
     "TFE-0105",
     "TFE-0106",
     "TFE-0107",
-    "TFE-0109"
+    "TFE-0109",
+    "TFE-0111",
+    "TFE-0112",
+    "TFE-0114",
+    "TFE-0115",
+    "TFE-0116"
   ],
   "edge_index": {
     "TF-0001": {
@@ -1113,7 +1118,9 @@
         "TFE-0101",
         "TFE-0102",
         "TFE-0103",
-        "TFE-0108"
+        "TFE-0108",
+        "TFE-0110",
+        "TFE-0113"
       ],
       "outgoing": [],
       "tree_child_edges": [
@@ -1121,7 +1128,9 @@
         "TFE-0101",
         "TFE-0102",
         "TFE-0103",
-        "TFE-0108"
+        "TFE-0108",
+        "TFE-0110",
+        "TFE-0113"
       ],
       "tree_parent_edge": null
     },
@@ -1132,12 +1141,14 @@
       "cross_edges": [
         "TFE-0104",
         "TFE-0105",
-        "TFE-0109"
+        "TFE-0109",
+        "TFE-0111"
       ],
       "incoming": [
         "TFE-0104",
         "TFE-0105",
-        "TFE-0109"
+        "TFE-0109",
+        "TFE-0111"
       ],
       "outgoing": [
         "TFE-0100"
@@ -1171,10 +1182,12 @@
       ],
       "cross_edges": [
         "TFE-0105",
-        "TFE-0107"
+        "TFE-0107",
+        "TFE-0112"
       ],
       "incoming": [
-        "TFE-0107"
+        "TFE-0107",
+        "TFE-0112"
       ],
       "outgoing": [
         "TFE-0102",
@@ -1191,9 +1204,12 @@
       ],
       "cross_edges": [
         "TFE-0106",
-        "TFE-0107"
+        "TFE-0107",
+        "TFE-0115"
       ],
-      "incoming": [],
+      "incoming": [
+        "TFE-0115"
+      ],
       "outgoing": [
         "TFE-0103",
         "TFE-0106",
@@ -1208,22 +1224,69 @@
         "TFE-0109"
       ],
       "cross_edges": [
-        "TFE-0109"
+        "TFE-0109",
+        "TFE-0114"
       ],
-      "incoming": [],
+      "incoming": [
+        "TFE-0114"
+      ],
       "outgoing": [
         "TFE-0108",
         "TFE-0109"
       ],
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0108"
+    },
+    "TF-0062": {
+      "blocking_edges": [
+        "TFE-0110",
+        "TFE-0111",
+        "TFE-0112"
+      ],
+      "cross_edges": [
+        "TFE-0111",
+        "TFE-0112",
+        "TFE-0116"
+      ],
+      "incoming": [
+        "TFE-0116"
+      ],
+      "outgoing": [
+        "TFE-0110",
+        "TFE-0111",
+        "TFE-0112"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0110"
+    },
+    "TF-0063": {
+      "blocking_edges": [
+        "TFE-0113",
+        "TFE-0114",
+        "TFE-0115",
+        "TFE-0116"
+      ],
+      "cross_edges": [
+        "TFE-0114",
+        "TFE-0115",
+        "TFE-0116"
+      ],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0113",
+        "TFE-0114",
+        "TFE-0115",
+        "TFE-0116"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0113"
     }
   },
   "edge_type_counts": {
-    "child_of": 56,
+    "child_of": 58,
     "clarifies": 0,
     "contributes_to": 4,
-    "depends_on": 40,
+    "depends_on": 45,
     "derived_from": 3,
     "duplicates": 0,
     "related_to": 2,
@@ -2535,10 +2598,94 @@
       "to": "TF-0057",
       "type": "depends_on",
       "updated_at": "2026-08-15T02:58:13.444553Z"
+    },
+    "TFE-0110": {
+      "blocking": true,
+      "confidence": 0.96,
+      "created_at": "2026-08-15T04:35:33.871192Z",
+      "created_from_session": null,
+      "from": "TF-0062",
+      "id": "TFE-0110",
+      "reason": "v2 供数桥接是 Workflow Viz 从事实源到 renderer 装配层的明确边界子任务。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-15T04:35:33.871192Z"
+    },
+    "TFE-0111": {
+      "blocking": true,
+      "confidence": 0.98,
+      "created_at": "2026-08-15T04:35:33.871783Z",
+      "created_from_session": null,
+      "from": "TF-0062",
+      "id": "TFE-0111",
+      "reason": "桥接只能传递已经定义并验证过的 B1-01 v2 schema。",
+      "to": "TF-0057",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T04:35:33.871783Z"
+    },
+    "TFE-0112": {
+      "blocking": true,
+      "confidence": 0.96,
+      "created_at": "2026-08-15T04:35:33.872101Z",
+      "created_from_session": null,
+      "from": "TF-0062",
+      "id": "TFE-0112",
+      "reason": "历史恢复和实时传递必须复用 B1-03 已有的 Main-owned readFrom/subscribe 链路。",
+      "to": "TF-0059",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T04:35:33.872101Z"
+    },
+    "TFE-0113": {
+      "blocking": true,
+      "confidence": 0.96,
+      "created_at": "2026-08-15T04:35:33.872101Z",
+      "created_from_session": null,
+      "from": "TF-0063",
+      "id": "TFE-0113",
+      "reason": "现有 store 并轨是 Workflow Viz 可恢复投影重建的装配层子任务。",
+      "to": "TF-0056",
+      "type": "child_of",
+      "updated_at": "2026-08-15T04:35:33.872101Z"
+    },
+    "TFE-0114": {
+      "blocking": true,
+      "confidence": 0.98,
+      "created_at": "2026-08-15T04:35:33.873249Z",
+      "created_from_session": null,
+      "from": "TF-0063",
+      "id": "TFE-0114",
+      "reason": "store 必须消费已验证的 B2-01 assembler 输出。",
+      "to": "TF-0061",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T04:35:33.873249Z"
+    },
+    "TFE-0115": {
+      "blocking": true,
+      "confidence": 0.96,
+      "created_at": "2026-08-15T04:35:33.873249Z",
+      "created_from_session": null,
+      "from": "TF-0063",
+      "id": "TFE-0115",
+      "reason": "B2-02 依赖 Electron/Main 供数链路已具备的 B1-04 恢复与订阅能力。",
+      "to": "TF-0060",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T04:35:33.873249Z"
+    },
+    "TFE-0116": {
+      "blocking": true,
+      "confidence": 0.99,
+      "created_at": "2026-08-15T04:35:33.873249Z",
+      "created_from_session": null,
+      "from": "TF-0063",
+      "id": "TFE-0116",
+      "reason": "store 只能在 renderer 已收到原始 v2 事件后合法消费装配结果。",
+      "to": "TF-0062",
+      "type": "depends_on",
+      "updated_at": "2026-08-15T04:35:33.873249Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-08-15T03:46:20.923156Z",
+  "generated_at": "2026-08-15T05:49:40.802574Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -6352,7 +6499,8 @@
         "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
       },
       "alignment_records": [
-        "TFA-2a37bb3b9f"
+        "TFA-2a37bb3b9f",
+        "TFA-e95adf6346"
       ],
       "assumptions": [
         "当前分支 codex/wv-b1-02-03 保持为 WV 后续开发分支且不自行 rebase/merge",
@@ -6363,7 +6511,9 @@
         "TF-0058",
         "TF-0059",
         "TF-0060",
-        "TF-0061"
+        "TF-0061",
+        "TF-0062",
+        "TF-0063"
       ],
       "confidence": 0.94,
       "context_tags": [
@@ -6408,7 +6558,7 @@
       "success_metrics": [],
       "summary": "以 openclaw-trajectory v2 作为唯一事实源，按可恢复事件流供给 Electron、装配层和展示层。",
       "title": "Workflow Viz 事实源与可恢复投影重建",
-      "updated_at": "2026-08-15T02:58:13.444553Z"
+      "updated_at": "2026-08-15T04:35:33.873249Z"
     },
     "TF-0057": {
       "acceptance_criteria": [],
@@ -6420,7 +6570,9 @@
         "why_not_enough": "",
         "why_this_task": ""
       },
-      "alignment_records": [],
+      "alignment_records": [
+        "TFA-e95adf6346"
+      ],
       "assumptions": [],
       "children": [],
       "confidence": 0.95,
@@ -6453,7 +6605,7 @@
       "success_metrics": [],
       "summary": "v2 schema/replay 与 v1 兼容读取已在 c9d48b580 完成。",
       "title": "WV-B1-01 轨迹事件 Schema 契约化",
-      "updated_at": "2026-08-14T16:31:44.009807Z"
+      "updated_at": "2026-08-15T04:35:33.873249Z"
     },
     "TF-0058": {
       "acceptance_criteria": [],
@@ -6510,7 +6662,9 @@
         "why_not_enough": "",
         "why_this_task": ""
       },
-      "alignment_records": [],
+      "alignment_records": [
+        "TFA-e95adf6346"
+      ],
       "assumptions": [],
       "children": [],
       "confidence": 0.95,
@@ -6543,7 +6697,7 @@
       "success_metrics": [],
       "summary": "Gateway readFrom/subscribe/unsubscribe 与 gap repair 已在 71d7268a0 完成。",
       "title": "WV-B1-03 Gateway 轨迹订阅与补拉",
-      "updated_at": "2026-08-14T16:31:44.009807Z"
+      "updated_at": "2026-08-15T04:35:33.873249Z"
     },
     "TF-0060": {
       "acceptance_criteria": [
@@ -6563,7 +6717,9 @@
         "why_not_enough": "B2/B3 仍需后续独立卡完成。",
         "why_this_task": "B1-02 与 B1-03 已完成，B1-04 是关键路径上唯一依赖已满足的供数卡。"
       },
-      "alignment_records": [],
+      "alignment_records": [
+        "TFA-e95adf6346"
+      ],
       "assumptions": [],
       "children": [],
       "confidence": 0.96,
@@ -6605,7 +6761,7 @@
       "success_metrics": [],
       "summary": "Electron Main 已在 429fd39f1 改为 readFrom 恢复加单连接实时订阅；v1 仅保留标记的兼容兜底，验证与 clean detached 复测已通过。",
       "title": "WV-B1-04 Electron 供数改造",
-      "updated_at": "2026-08-15T02:58:13.444553Z"
+      "updated_at": "2026-08-15T04:35:33.873249Z"
     },
     "TF-0061": {
       "acceptance_criteria": [
@@ -6629,7 +6785,8 @@
         "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
       },
       "alignment_records": [
-        "TFA-2a37bb3b9f"
+        "TFA-2a37bb3b9f",
+        "TFA-e95adf6346"
       ],
       "assumptions": [
         "B1-01 v2 schema 与 replay 契约保持稳定",
@@ -6685,7 +6842,158 @@
       "success_metrics": [],
       "summary": "fixture-first 确定性装配引擎已在 fefd81991 完成：v2 事件支持 replace/prepend/append、pending context、O(D) append 与发布节流。",
       "title": "WV-B2-01 装配引擎核心",
-      "updated_at": "2026-08-15T03:42:12.383550Z"
+      "updated_at": "2026-08-15T04:35:33.874283Z"
+    },
+    "TF-0062": {
+      "acceptance_criteria": [
+        "相同 v2 历史加实时流在 renderer 边界可按 seq 得到与完整 Main 回放等价的事件序列",
+        "跨边界无效事件被 Main 拒绝或显式诊断，稳定 ID 和 state 不因投影而丢失",
+        "没有新增 Gateway RPC/订阅接口，也没有新增 renderer 直接 IPC、Gateway HTTP 或 WebSocket 调用",
+        "聚焦单测、Harness、类型检查、runtime 构建、comms、BOM、显式 ESLint 与 clean detached 复测通过"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.93,
+        "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+        "validation_plan": [
+          "B2-02A Harness context/validate/run dry-run",
+          "Main/host contract 单测和目标 ESLint",
+          "typecheck:node、typecheck:web、build:runtime、comms:replay、comms:compare、lint:bom",
+          "clean detached worktree 重跑关键测试与构建"
+        ],
+        "why_not_enough": "它不迁移现有 store，也不实现用户可见 B3 视图；两者仍需后续独立卡完成。",
+        "why_this_task": "它补齐 B2-02 对 B1 v2 真源的唯一缺失接入点，并保持远端事实源、Main 边界与 renderer 装配职责分离。"
+      },
+      "alignment_records": [],
+      "assumptions": [
+        "B1-01 的 v2 schema/replay 契约保持稳定，B1-03 的 Main-owned Gateway readFrom/subscribe 可复用",
+        "Main 进程的 trajectory projector 已持有按 seq 验证过的事件，因而可以作为同一事实源的边界投影，而不是新真源"
+      ],
+      "children": [],
+      "confidence": 0.93,
+      "context_tags": [],
+      "created_at": "2026-08-15T04:35:33.871192Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [
+        "历史 v2 事件可由 Main 按 seq 升序提供，冷启动与实时交接不漏事件",
+        "实时事件保持 B1 的原始 schema、稳定业务 ID、全量 state 与 seq，不从 ObservabilityTrace 反向推导",
+        "renderer 仅经 host-api 和 host-events 接收数据，B1 的 Gateway readFrom/subscribe 仍为唯一远端事件来源"
+      ],
+      "deviations": [],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "branch codex/wv-b1-02-03 single B2-02A commit (code+spec+tests+task-forest closure)",
+        "harness/specs/tasks/workflow-viz-b2-02a-renderer-v2-trajectory-supply.md (validate + dry-run green)",
+        "tests/unit/observability-trajectory-supply.test.ts (7/7) + projection/index/host-events/facade/invoke 全绿 (82/82)",
+        "typecheck:node + typecheck:web + build:runtime + comms:replay/compare + lint:bom + contract-check + changed-file ESLint 全绿",
+        "clean detached worktree C:/tmp/clawx-wv-b202a-clean 复测全绿;父提交基线证实 facade isRecord 守卫红为预存债并已修复"
+      ],
+      "execution_hints": [
+        "先定义并验证跨进程事件契约，再实现 Main 的历史/实时供数；不要从 ObservabilityTrace 或 graph 反推轨迹",
+        "保持 host-events 为 renderer 的唯一事件入口，Host API 为查询入口",
+        "完成后仅关闭本卡并单独为 B2-02 申请执行，不提前实现 store 或 B3"
+      ],
+      "id": "TF-0062",
+      "kind": "task",
+      "non_goals": [
+        "迁移 src/stores/session-activity.ts 或 src/stores/observability.ts",
+        "修改 B1 事件 schema、普通会话 producer、Gateway 方法或订阅协议",
+        "B3 展示、TF-0021、Runtime Authority、DCS 或第三方图形库"
+      ],
+      "primary_parent": "TF-0056",
+      "priority": 1,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "让 renderer 通过既有 Main-owned Host API 与 host event 边界接收 B1 的原始 v2 事件，并能从持久事实源按 seq 恢复，供 B2-02 装配消费。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "在现有 Main-owned observability 供数链路中暴露已验证的 TrajectoryEventV2 历史读取和实时传递；历史与实时使用确定的 seq 交接和去重规则",
+        "新增或收紧的 Host API/host event 契约必须直接携带原始 TrajectoryEventV2，且 Main 在跨边界前重新验证 schema；v1 只作为显式 legacy 状态，不适配成 v2",
+        "历史读取只能复用 B1-03 已有 observability.readFrom 或 Main 已持有的同一 v2 投影状态；不得让 renderer 扫描轨迹文件或建立缓存型第二真源",
+        "为该卡创建 Harness task spec，并引用 gateway-backend-communication、renderer-main-boundary、backend-communication-boundary 与 comms-regression；实现前运行 harness context",
+        "覆盖无效跨边界事件拒绝、seq 排序/去重、冷启动与实时交接等价、JSON round-trip、v1 明确不进入 v2 装配输入，以及 renderer 无 Gateway HTTP/WebSocket/direct IPC 调用"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "Renderer v2 轨迹供数桥接已落地:projector 并行保留原始已验证 v2 行(cap 1000),trajectorySessions/trajectoryHistory 经 host-api 供历史(asOfSeq 交接、确定性去重、B1-03 readFrom 冷恢复),observability:trajectory-event 经 host-events 供实时,跨边界前 schema 再验证,v1 显式 legacyFallback 且零 v2 泄漏。",
+      "title": "WV-B2-02A Renderer v2 轨迹供数桥接",
+      "updated_at": "2026-08-15T05:49:37.900386Z"
+    },
+    "TF-0063": {
+      "acceptance_criteria": [
+        "真实会话中的活动面板和 Observability 页行为等价或改进，且生命周期状态可从 v2 事件确定性恢复",
+        "session-activity mock 场景保留并由装配 fixture 驱动",
+        "无 renderer 直接 IPC、Gateway HTTP/WebSocket、新图形库、平行轨迹格式或第二事件真源",
+        "Harness、聚焦测试、类型检查、构建、comms、BOM、ESLint 和 clean detached 复测通过"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.91,
+        "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+        "validation_plan": [
+          "B2-02 Harness context/validate/run dry-run",
+          "store/fixture 定向 Vitest 与相关 mock 场景",
+          "typecheck:node、typecheck:web、build:runtime、comms、BOM、ESLint",
+          "clean detached worktree 重跑关键测试与构建"
+        ],
+        "why_not_enough": "它不实现 B3 轨迹账本、树或时间线，也不会替代未表达领域的独立 owner。",
+        "why_this_task": "它直接落实编排计划中的 B2-02，但只在原始 v2 供数可靠后消费 B2-01 装配结果，避免新平行 reducer。"
+      },
+      "alignment_records": [],
+      "assumptions": [
+        "WV-B2-02A 已将原始 v2 历史和实时事件通过现有 Main-owned 边界可靠供给 renderer",
+        "B2-01 assembler 核心的 replace/prepend/append 与发布契约保持稳定"
+      ],
+      "children": [],
+      "confidence": 0.91,
+      "context_tags": [],
+      "created_at": "2026-08-15T04:35:33.872101Z",
+      "deprecated_at": null,
+      "derived_progress": 0.0,
+      "desired_outcomes": [
+        "run/turn/step/tool 生命周期在两处 store 中均只由 B2-01 节点 data 驱动",
+        "v2 覆盖的状态不再使用 Date.now 兜底、字段摸探或最近 context 猜测，历史加实时与完整 replace 等价",
+        "现有 ?mock=1 场景使用带固定 seq/时间戳的装配 fixture 注入，保留现有体验"
+      ],
+      "deviations": [],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [],
+      "execution_hints": [
+        "只在 WV-B2-02A 通过并关闭后开始；先建立 task spec，再运行 harness context",
+        "先为两个 store 明确 NodeDefinition 和 fixture，再删除对应手写生命周期 reducer",
+        "完成后单独提案关闭，不提前启动 B3"
+      ],
+      "id": "TF-0063",
+      "kind": "task",
+      "non_goals": [
+        "补齐 renderer v2 供数桥接",
+        "修改 Gateway、普通会话 producer、B1 schema、B3 展示、TF-0021、Runtime Authority 或 DCS"
+      ],
+      "primary_parent": "TF-0056",
+      "priority": 1,
+      "progress": 0.0,
+      "progress_source": "manual",
+      "purpose": "让 session-activity 与 observability 成为 B2-01 确定性装配结果的消费者，消除它们对同一生命周期的平行手写 reducer 和壁钟 last-wins。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "改动面以 src/stores/session-activity.ts 与 src/stores/observability.ts 为核心；两者只能消费 B2-01 的确定性节点快照",
+        "无轨迹表达的 Git、终端和其它非生命周期领域数据保持其既有明确 owner，不反向合成为轨迹，也不得覆盖由 v2 驱动的生命周期状态",
+        "移除 v2 覆盖路径的手写 reducer、wall-clock last-wins 和 Date.now 事件兜底；按 seq 排序并定义重复/乱序的确定性处理",
+        "为本卡创建 Harness task spec，引用 gateway-backend-communication，并在实现前运行 harness context",
+        "新增或迁移 store/fixture 单测，覆盖 mock、replace/prepend/append 等价、缺少稳定 ID 不猜测、实时不再通过 150ms 拉取刷新来重放 lifecycle"
+      ],
+      "source_sessions": [],
+      "status": "proposed",
+      "success_metrics": [],
+      "summary": "",
+      "title": "WV-B2-02 现有 store 并轨",
+      "updated_at": "2026-08-15T04:35:33.872101Z"
     }
   },
   "reason": "rebuild",
@@ -6716,6 +7024,7 @@
       "TF-0021",
       "TF-0025",
       "TF-0028",
+      "TF-0063",
       "TF-0006",
       "TF-0027",
       "TF-0038",
@@ -6786,7 +7095,8 @@
         "TF-0058",
         "TF-0059",
         "TF-0060",
-        "TF-0061"
+        "TF-0061",
+        "TF-0062"
       ],
       "in_progress": [
         "TF-0007",
@@ -6811,7 +7121,8 @@
         "TF-0038",
         "TF-0039",
         "TF-0040",
-        "TF-0041"
+        "TF-0041",
+        "TF-0063"
       ],
       "ready": [],
       "review_needed": [
@@ -6850,7 +7161,8 @@
       "TF-0041",
       "TF-0042",
       "TF-0047",
-      "TF-0056"
+      "TF-0056",
+      "TF-0063"
     ],
     "ready": [],
     "review_needed": [
@@ -6860,10 +7172,10 @@
   },
   "summary": {
     "blocked_count": 4,
-    "done_count": 31,
-    "edge_count": 108,
-    "node_count": 61,
-    "open_count": 27,
+    "done_count": 32,
+    "edge_count": 115,
+    "node_count": 63,
+    "open_count": 28,
     "review_needed_count": 2
   },
   "tree_edges": [
@@ -6922,7 +7234,9 @@
     "TFE-0101",
     "TFE-0102",
     "TFE-0103",
-    "TFE-0108"
+    "TFE-0108",
+    "TFE-0110",
+    "TFE-0113"
   ],
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }
