@@ -985,12 +985,14 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
+  const [composerPaused, setComposerPaused] = useState(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
       draftInput: draft,
+      composerRunState: composerPaused ? 'paused' : 'idle',
       activeTopicId: null,
       knowledgeScope,
       knowledgeMode,
@@ -1003,7 +1005,7 @@ export function Chat() {
       },
       turnSummaryExpanded: runActivityExpandedOverrides,
     };
-  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, composerPaused, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1129,6 +1131,7 @@ export function Chat() {
     lastObservedSessionKeyRef.current = nextSessionKey;
     workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
     setComposerDraft('');
+    setComposerPaused(false);
     setRunActivityExpandedOverrides({});
     setContextRange(null);
     setLiveUsage(null);
@@ -1287,6 +1290,7 @@ export function Chat() {
       sessionKey: currentSessionKey,
     };
     setComposerDraft(sessionState.draftInput ?? '');
+    setComposerPaused(sessionState.composerRunState === 'paused');
     setRunActivityExpandedOverrides({
       ...(sessionState.graphExpanded ?? {}),
       ...(sessionState.turnSummaryExpanded ?? {}),
@@ -2519,6 +2523,30 @@ export function Chat() {
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
+  const handlePauseComposerSession = useCallback(async () => {
+    if (!inputRunActive) return;
+    setComposerPaused(true);
+    if (activeWorkspace?.id) {
+      await saveWorkspaceState({
+        id: activeWorkspace.id,
+        sessionKey: currentSessionKey,
+        state: { composerRunState: 'paused' },
+      });
+    }
+    await abortRun();
+  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
+
+  const handleResumeComposerSession = useCallback(async () => {
+    if (!composerPaused) return;
+    setComposerPaused(false);
+    if (activeWorkspace?.id) {
+      await saveWorkspaceState({
+        id: activeWorkspace.id,
+        sessionKey: currentSessionKey,
+        state: { composerRunState: 'idle' },
+      });
+    }
+  }, [activeWorkspace?.id, composerPaused, currentSessionKey, saveWorkspaceState]);
   /* The rail reports the turn in flight, so it reads the newest card rather
    * than folding every card in the transcript — an older run's finished plan is
    * history, not status. */
@@ -3287,6 +3315,9 @@ export function Chat() {
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}
         sending={inputRunActive}
+        paused={composerPaused}
+        onPauseSession={handlePauseComposerSession}
+        onResumeSession={handleResumeComposerSession}
         workspace={activeWorkspace}
         contextRange={contextRange}
         liveUsage={liveUsage}

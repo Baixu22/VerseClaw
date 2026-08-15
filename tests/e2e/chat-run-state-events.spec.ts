@@ -37,6 +37,24 @@ const PROVIDER_HOST_API_MOCKS: Record<string, unknown> = {
   [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'anthropic-e2e' },
 };
 
+const COMPOSER_WORKSPACE_ID = 'workspace-composer-state';
+const COMPOSER_WORKSPACE = {
+  id: COMPOSER_WORKSPACE_ID,
+  name: 'Composer State Workspace',
+  rootPath: 'C:/composer-state-workspace',
+  agentId: 'main',
+  selectedAgentId: 'main',
+  activeSessionKey: MAIN_SESSION_KEY,
+  permissionMode: 'acceptEdits',
+  createdAt: 1,
+  updatedAt: 1,
+  lastOpenedAt: 1,
+  state: {},
+  sessionStates: {
+    [MAIN_SESSION_KEY]: {},
+  },
+};
+
 test.describe('Verse Claw chat run state events', () => {
   test('anchors the live thinking matrix to the latest assistant output and clears it after completion', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
@@ -372,6 +390,133 @@ test.describe('Verse Claw chat run state events', () => {
       }, MAIN_SESSION_KEY);
 
       await expect(sendButton).toHaveAttribute('aria-label', /Send|发送/);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
+  test('accepts the five-state composer contract and separates guide, queue, interrupt, pause, and resume', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: [] },
+          },
+          [stableStringify(['chat.send', null])]: {
+            success: true,
+            result: { runId: 'run-composer-state' },
+          },
+          [stableStringify(['chat.abort', { sessionKey: MAIN_SESSION_KEY }])]: {
+            success: true,
+            result: {},
+          },
+        },
+        hostApi: {
+          ...PROVIDER_HOST_API_MOCKS,
+          [stableStringify(['workspaces', 'list', null])]: {
+            success: true,
+            profiles: [COMPOSER_WORKSPACE],
+            activeWorkspaceId: COMPOSER_WORKSPACE_ID,
+            activeWorkspace: COMPOSER_WORKSPACE,
+          },
+          [stableStringify(['workspaces', 'getActive', null])]: {
+            success: true,
+            activeWorkspaceId: COMPOSER_WORKSPACE_ID,
+            activeWorkspace: COMPOSER_WORKSPACE,
+          },
+          [stableStringify(['workspaces', 'saveState', null])]: { success: true },
+          [stableStringify(['/api/gateway/status', 'GET'])]: {
+            ok: true,
+            data: { status: 200, ok: true, json: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } },
+          },
+          [stableStringify(['/api/agents', 'GET'])]: {
+            ok: true,
+            data: { status: 200, ok: true, json: { success: true, agents: [{ id: 'main', name: 'Main' }] } },
+          },
+          [stableStringify(['chat', 'sendWithMedia', null])]: {
+            success: true,
+            result: { runId: 'run-composer-state' },
+          },
+        },
+      });
+
+      const page = await getStableWindow(app);
+      try {
+        await page.reload();
+      } catch (error) {
+        if (!String(error).includes('ERR_FILE_NOT_FOUND')) throw error;
+      }
+
+      const input = page.getByTestId('chat-composer-input');
+      const primary = page.getByTestId('chat-composer-send');
+      await expect(input).toBeEnabled({ timeout: 30_000 });
+      await expect(primary).toHaveAttribute('data-send-state', 'idle');
+
+      await input.fill('Create the acceptance evidence.');
+      await expect(primary).toHaveAttribute('data-send-state', 'ready');
+      await primary.click();
+      await expect(primary).toHaveAttribute('data-send-state', /starting|running/);
+
+      await app.evaluate(({ BrowserWindow }, sessionKey) => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          win.webContents.send('chat:runtime-event', {
+            type: 'run.started',
+            runId: 'run-composer-state',
+            sessionKey,
+            startedAt: Date.now(),
+          });
+        }
+      }, MAIN_SESSION_KEY);
+      await expect(primary).toHaveAttribute('data-send-state', 'running');
+
+      await input.fill('Keep the test evidence.');
+      await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
+      for (const mode of ['guide', 'queue', 'interrupt'] as const) {
+        await page.getByTestId(`chat-intervention-${mode}`).click();
+        await expect.poll(async () => app.evaluate((_context, expectedMode) => {
+          const calls = (globalThis as typeof globalThis & {
+            __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: { inputMode?: string } }>;
+          }).__verseClawE2eHostCalls ?? [];
+          return calls.some((call) => call.module === 'chat'
+            && call.action === 'sendWithMedia'
+            && call.payload?.inputMode === expectedMode);
+        }, mode)).toBe(true);
+        if (mode !== 'interrupt') await input.fill('Keep the test evidence.');
+      }
+
+      await primary.click();
+      await expect(primary).toHaveAttribute('data-send-state', 'paused');
+      await expect.poll(async () => app.evaluate(() => {
+        const calls = (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: { state?: { composerRunState?: string } } }>;
+        }).__verseClawE2eHostCalls ?? [];
+        return calls.some((call) => call.module === 'workspaces'
+          && call.action === 'saveState'
+          && call.payload?.state?.composerRunState === 'paused');
+      })).toBe(true);
+
+      await primary.click();
+      await expect(primary).toHaveAttribute('data-send-state', 'idle');
+      await expect.poll(async () => app.evaluate(() => {
+        const calls = (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: { state?: { composerRunState?: string } } }>;
+        }).__verseClawE2eHostCalls ?? [];
+        return calls.some((call) => call.module === 'workspaces'
+          && call.action === 'saveState'
+          && call.payload?.state?.composerRunState === 'idle');
+      })).toBe(true);
     } finally {
       await closeElectronApp(app);
     }

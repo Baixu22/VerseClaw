@@ -516,6 +516,12 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Gateway not connected...';
     case 'composer.send':
       return 'Send';
+    case 'composer.resume':
+      return 'Resume';
+    case 'composer.pauseTooltip':
+      return 'Pause this run and save a resumable session state.';
+    case 'composer.resumeTooltip':
+      return 'Resume this paused session.';
     case 'composer.taskLoopUpgrade.title':
       return 'Task Loop available';
     case 'composer.taskLoopUpgrade.summary':
@@ -1614,17 +1620,26 @@ describe('ChatInput read-only context status', () => {
     expect(status).toHaveTextContent('2 hidden');
   });
 
-  it('defaults active-run drafts to queued follow-up and keeps guide and interrupt as explicit strategies', async () => {
+  it('keeps active-run interventions explicit while the primary control pauses the session', async () => {
     const onSend = vi.fn();
+    const onPauseSession = vi.fn();
     const view = renderChatInput(onSend, {
       sending: true,
       draftValue: 'please keep the current validation evidence queued',
+      onPauseSession,
     });
 
     expect(screen.getByTestId('chat-intervention-controls')).toBeInTheDocument();
-    expect(screen.queryByTestId('chat-intervention-queue')).not.toBeInTheDocument();
-    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');
+    expect(screen.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Stop');
+    expect(screen.getByTestId('chat-intervention-guide')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-intervention-queue')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-intervention-interrupt')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('chat-composer-send'));
+    expect(onPauseSession).toHaveBeenCalledTimes(1);
+    expect(onSend).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('chat-intervention-queue'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
@@ -1639,6 +1654,7 @@ describe('ChatInput read-only context status', () => {
           onSend={onSend}
           sending
           draftValue="please keep the current validation evidence"
+          onPauseSession={onPauseSession}
         />
       </TooltipProvider>,
     );
@@ -1656,36 +1672,30 @@ describe('ChatInput read-only context status', () => {
         <ChatInput
           onSend={onSend}
           sending
-          draftValue="guide the active run from the keyboard"
+          draftValue="stop the active run now"
+          onPauseSession={onPauseSession}
         />
       </TooltipProvider>,
     );
-    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', ctrlKey: true });
+    fireEvent.click(screen.getByTestId('chat-intervention-interrupt'));
 
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
-        'guide the active run from the keyboard',
-        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'guide' }),
-      );
-    });
-
-    view.rerender(
-      <TooltipProvider>
-        <ChatInput
-          onSend={onSend}
-          sending
-          draftValue="replace the current run direction"
-        />
-      </TooltipProvider>,
-    );
-    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', shiftKey: true });
-
-    await waitFor(() => {
-      expect(onSend).toHaveBeenCalledWith(
-        'replace the current run direction',
+        'stop the active run now',
         expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'interrupt' }),
       );
     });
+  });
+
+  it('renders a persisted pause as a resume action', () => {
+    const onResumeSession = vi.fn();
+    renderChatInput(vi.fn(), { paused: true, onResumeSession });
+
+    const primary = screen.getByTestId('chat-composer-send');
+    expect(primary).toHaveAttribute('data-send-state', 'paused');
+    expect(primary).toHaveAttribute('aria-label', 'Resume');
+    fireEvent.click(primary);
+    expect(onResumeSession).toHaveBeenCalledTimes(1);
   });
 
   it('omits the context status when no context data is available', () => {
