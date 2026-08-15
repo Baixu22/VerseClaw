@@ -251,6 +251,9 @@ function registerTypedHostHandlers(
     observability: createObservabilityApi({
       gatewayManager,
       onRuntimeEvent: (event) => mainWindow.webContents.send('observability:runtime-event', event),
+      onTrajectoryEvent: (event) => (
+        mainWindow.webContents.send(HOST_EVENT_CHANNELS.observability.trajectoryEvent, event)
+      ),
     }).observability,
     system: createSystemApi(),
     resourceTracker: createResourceTrackerApi(),

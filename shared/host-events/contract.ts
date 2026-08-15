@@ -6,7 +6,10 @@ import type {
   LongConversationValidationState,
 } from '../types/long-task-control';
 import type { MissionLifecycleEvent } from '../types/mission-control';
-import type { ObservabilityRuntimeEvent } from '../types/observability';
+import type {
+  ObservabilityRuntimeEvent,
+  ObservabilityTrajectorySupplyEvent,
+} from '../types/observability';
 import type { WorkspacePreviewMode, WorkspaceWebPreviewLaunchConfig, WorkspaceWebPreviewStatus } from '../types/workspace';
 
 /** Event fired when a user message is queued or drained (queue input-mode). */
@@ -209,6 +212,7 @@ export type HostEventContract = {
   };
   observability: {
     runtimeEvent: (payload: ObservabilityRuntimeEvent) => void;
+    trajectoryEvent: (payload: ObservabilityTrajectorySupplyEvent) => void;
   };
   officeTools: {
     installEvent: (payload: OfficecliInstallEvent) => void;
@@ -282,6 +286,7 @@ export const HOST_EVENT_CHANNELS = {
   },
   observability: {
     runtimeEvent: 'observability:runtime-event',
+    trajectoryEvent: 'observability:trajectory-event',
   },
   officeTools: {
     installEvent: 'office-tools:install-event',

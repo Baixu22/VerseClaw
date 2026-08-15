@@ -11,7 +11,7 @@ import type {
   ObservabilityTokenUsage,
 } from '../../shared/types/observability';
 import { safeParseTrajectoryEvent } from '../../openclaw_runtime/src/trajectory/schema';
-import type { TrajectoryReadableEvent } from '../../openclaw_runtime/src/trajectory/types';
+import type { TrajectoryEventV2, TrajectoryReadableEvent } from '../../openclaw_runtime/src/trajectory/types';
 import { extractSessionIdFromTranscriptFileName, getOpenClawUsageDirs } from '../utils/token-usage';
 import { persistObservabilityTraceToIndex } from './observability-index';
 import { isRecord, readNumber, readString, truncatePreview } from './observability-redaction';
@@ -60,6 +60,7 @@ type TranscriptMessageLike = {
 const MAX_SESSION_FILES = 40;
 const MAX_TRAJECTORY_READ_BYTES = 2 * 1024 * 1024;
 const MAX_EVENTS_PER_TRACE = 300;
+const MAX_RETAINED_V2_EVENTS = 1_000;
 const TRANSCRIPT_RUN_WINDOW_MARGIN_MS = 5_000;
 const EMPTY_TOKEN_USAGE: ObservabilityTokenUsage = {
   input: 0,
@@ -806,6 +807,9 @@ type ProjectionState = {
   sessionKey: string;
   lastSeq: number;
   events: TrajectoryEventLike[];
+  // Raw validated v2 rows retained verbatim for the renderer supply bridge.
+  // Legacy v1 rows are never stored here.
+  v2Events: TrajectoryEventV2[];
   traceIdByGroup: Map<string, string>;
   legacyFallback: boolean;
   allowGaps: boolean;
@@ -829,6 +833,8 @@ export type ObservabilityTrajectoryProjector = {
   reset: () => void;
   getLastSeq: (sessionKey: string) => number;
   getKnownSessionKeys: () => string[];
+  getV2Events: (sessionKey: string) => readonly TrajectoryEventV2[];
+  isLegacyFallback: (sessionKey: string) => boolean;
 };
 
 function projectionCandidate(sessionKey: string, events: TrajectoryEventLike[]): SessionCandidate {
@@ -866,6 +872,7 @@ function projectionDiagnostic(
 export function createObservabilityTrajectoryProjector(options: {
   onTrace: (trace: ObservabilityTrace) => void | Promise<void>;
   onDiagnostic?: (diagnostic: TrajectoryProjectionDiagnostic) => void;
+  onV2Events?: (sessionKey: string, events: readonly TrajectoryEventV2[]) => void;
 }): ObservabilityTrajectoryProjector {
   const states = new Map<string, ProjectionState>();
   const queues = new Map<string, Promise<unknown>>();
@@ -877,6 +884,7 @@ export function createObservabilityTrajectoryProjector(options: {
       sessionKey,
       lastSeq: 0,
       events: [],
+      v2Events: [],
       traceIdByGroup: new Map(),
       legacyFallback: false,
       allowGaps: false,
@@ -921,6 +929,7 @@ export function createObservabilityTrajectoryProjector(options: {
     const sessionKey = sessionKeyInput.trim();
     const state = stateFor(sessionKey);
     const diagnostics: TrajectoryProjectionDiagnostic[] = [];
+    const acceptedV2: TrajectoryEventV2[] = [];
     let accepted = 0;
     let rejected = 0;
     let gap: TrajectoryProjectionApplyResult['gap'];
@@ -928,7 +937,9 @@ export function createObservabilityTrajectoryProjector(options: {
     for (const raw of eventsInput) {
       const parsed = safeParseTrajectoryEvent(raw);
       let event: TrajectoryEventLike | undefined;
+      let rawV2: TrajectoryEventV2 | undefined;
       if (parsed.success) {
+        if (parsed.version === 2) rawV2 = parsed.event;
         event = normalizeTrajectoryEvent(parsed.event, sessionKey);
       } else if (
         state.allowLegacyRows
@@ -1002,11 +1013,19 @@ export function createObservabilityTrajectoryProjector(options: {
       if (state.events.length > MAX_EVENTS_PER_TRACE) {
         state.events.splice(0, state.events.length - MAX_EVENTS_PER_TRACE);
       }
+      if (rawV2) {
+        state.v2Events.push(rawV2);
+        if (state.v2Events.length > MAX_RETAINED_V2_EVENTS) {
+          state.v2Events.splice(0, state.v2Events.length - MAX_RETAINED_V2_EVENTS);
+        }
+        acceptedV2.push(rawV2);
+      }
       state.lastSeq = seq;
       accepted += 1;
     }
 
     if (accepted > 0) await publish(state);
+    if (acceptedV2.length > 0) options.onV2Events?.(sessionKey, acceptedV2);
     return { accepted, rejected, lastSeq: state.lastSeq, ...(gap ? { gap } : {}), diagnostics };
   };
 
@@ -1040,5 +1059,7 @@ export function createObservabilityTrajectoryProjector(options: {
     },
     getLastSeq: (sessionKey) => states.get(sessionKey)?.lastSeq ?? 0,
     getKnownSessionKeys: () => [...states.keys()].sort(),
+    getV2Events: (sessionKey) => states.get(sessionKey)?.v2Events ?? [],
+    isLegacyFallback: (sessionKey) => states.get(sessionKey)?.legacyFallback ?? false,
   };
 }

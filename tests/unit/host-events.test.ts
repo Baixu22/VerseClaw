@@ -103,6 +103,35 @@ describe('hostEvents', () => {
     expect(handler).toHaveBeenCalledWith({ type: 'trace.started', trace: { id: 'trace-1' } });
   });
 
+  it('subscribes to observability trajectory supply events over IPC', async () => {
+    const { hostEvents } = await import('@/lib/host-events');
+    const handler = vi.fn();
+
+    hostEvents.onObservabilityTrajectoryEvent(handler);
+    const callback = on.mock.calls[0]?.[1] as ((payload: unknown) => void) | undefined;
+    const payload = {
+      sessionKey: 'agent:main:session',
+      schemaVersion: 2,
+      events: [{
+        traceSchema: 'openclaw-trajectory',
+        schemaVersion: 2,
+        traceId: 'trace-1',
+        source: 'runtime',
+        ts: '2026-08-15T00:00:01.000Z',
+        seq: 1,
+        type: 'run/start',
+        role: 'run',
+        phase: 'start',
+        runId: 'run-1',
+        state: { status: 'running' },
+      }],
+    };
+    callback?.(payload);
+
+    expect(on).toHaveBeenCalledWith('observability:trajectory-event', expect.any(Function));
+    expect(handler).toHaveBeenCalledWith(payload);
+  });
+
   it('subscribes to Office Tools install events over IPC', async () => {
     const { hostEvents } = await import('@/lib/host-events');
     const handler = vi.fn();
