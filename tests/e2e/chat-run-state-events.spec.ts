@@ -628,13 +628,22 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(page.getByTestId('chat-message-2').getByText('Fixed subtract and tests now pass.')).toBeVisible();
       const summary = page.getByTestId('chat-turn-summary-card');
       await expect(summary).toBeVisible();
-      if (await summary.getByTestId('chat-turn-summary-details').count() === 0) {
-        await summary.getByTestId('chat-turn-summary-toggle').click();
-      }
+      await expect(summary.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
 
       const graph = summary.getByTestId('chat-execution-graph');
       await expect(graph).toBeVisible({ timeout: 30_000 });
       await expect(graph).toHaveAttribute('data-collapsed', 'false');
+
+      const readStep = graph.getByTestId('chat-execution-step').filter({ hasText: 'read' }).first();
+      await readStep.getByTestId('chat-execution-step-toggle').click();
+      await expect(readStep.getByTestId('chat-execution-step-detail')).toContainText('src/math.js');
+
+      await summary.getByTestId('chat-turn-summary-toggle').click();
+      await expect(summary.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+      await expect(summary.getByTestId('chat-turn-summary-details')).toHaveCount(0);
+      await summary.getByTestId('chat-turn-summary-toggle').click();
+      await expect(summary.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+      await expect(summary.getByTestId('chat-execution-step-detail')).toContainText('src/math.js');
 
       await expect(graph.getByText('read', { exact: true })).toBeVisible();
       await expect(graph.getByText('edit', { exact: true })).toBeVisible();

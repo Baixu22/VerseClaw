@@ -1397,18 +1397,18 @@ export function Sidebar() {
               <span className="codex-dropdown__text">{t('common:storageHealth.bannerLow')}</span>
             </button>
           )}
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="sidebar-more-observability"
+            className="codex-dropdown__item"
+            onClick={() => { setFooterMenu(null); navigate('/observability'); }}
+          >
+            <Activity className="h-4 w-4" />
+            <span className="codex-dropdown__text">{t('common:sidebar.observability')}</span>
+          </button>
           {devModeUnlocked && (
             <>
-              <button
-                type="button"
-                role="menuitem"
-                data-testid="sidebar-more-observability"
-                className="codex-dropdown__item"
-                onClick={() => { setFooterMenu(null); navigate('/observability'); }}
-              >
-                <Activity className="h-4 w-4" />
-                <span className="codex-dropdown__text">{t('common:sidebar.observability')}</span>
-              </button>
               <button
                 type="button"
                 role="menuitem"

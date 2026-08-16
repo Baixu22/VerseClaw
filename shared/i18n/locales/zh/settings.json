@@ -66,6 +66,7 @@
     "currentTitle": "当前会话恢复",
     "enabled": { "title": "显示会话状态面板", "description": "存在真实活动时，在聊天旁显示结构化运行状态。" },
     "autoExpand": { "title": "自动展开", "description": "选择桌面端打开状态面板的时机。", "active": "活跃时", "attention": "需要关注时", "never": "从不" },
+    "completedRunsExpanded": { "title": "完成后保持运行活动展开", "description": "默认显示已完成运行的详情；在当前会话中手动收起后仍保持收起。" },
     "showGit": { "title": "显示工作区 Git", "description": "包含工作区范围的分支和变更状态。" },
     "showCommands": { "title": "显示 Agent 命令", "description": "在交互终端旁显示结构化命令摘要。" },
     "notifications": { "title": "恢复与阻塞通知", "description": "真实恢复或阻塞信号需要复核时发出通知。" },

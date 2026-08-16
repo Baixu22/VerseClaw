@@ -6,6 +6,26 @@
   "errorRef": "Error reference",
   "clear": "Clear",
   "empty": "No observability data yet. Run a role-first task to populate traces.",
+  "sourceHealth": {
+    "title": "Why no traces are shown",
+    "subtitle": "Each source was checked during the latest refresh.",
+    "sources": {
+      "runtime": "Runtime trace feed",
+      "index": "Local trace index",
+      "trajectory": "Session trajectory scan"
+    },
+    "status": {
+      "ok": "Available",
+      "empty": "No data",
+      "error": "Unavailable"
+    },
+    "reason": {
+      "available": "Records are available from this source.",
+      "not-configured": "This source is not configured in the current app process.",
+      "no-data": "No records were found for this source.",
+      "failed": "The latest source check failed."
+    }
+  },
   "alerts": "Alerts",
   "scorecards": "Scorecards",
   "scorecardTrace": "Trace {{id}}...",

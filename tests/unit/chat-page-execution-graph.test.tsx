@@ -214,6 +214,9 @@ describe('Chat execution graph lifecycle', () => {
     hostApiFetchMock.mockResolvedValue({ success: true, messages: [] });
     agentsState.fetchAgents.mockReset();
 
+    const { useSettingsStore } = await import('@/stores/settings');
+    useSettingsStore.setState({ runActivityKeepExpandedOnComplete: true });
+
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -279,7 +282,7 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.queryByText('Checked X. Here is the summary.')).not.toBeInTheDocument();
   });
 
-  it('collapses completed long task work into a deterministic summary card by default', async () => {
+  it('keeps completed long task work visible by default and remembers a manual collapse', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -331,13 +334,67 @@ describe('Chat execution graph lifecycle', () => {
     await waitFor(() => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
-    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
     expect(screen.getAllByText('Workspace summary is ready.').length).toBeGreaterThan(0);
+
+    const stepToggle = screen.getAllByTestId('chat-execution-step-toggle')
+      .find((element) => element.getAttribute('aria-expanded') === 'false');
+    expect(stepToggle).toBeDefined();
+    fireEvent.click(stepToggle!);
+    expect(screen.getByTestId('chat-execution-step-detail')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-execution-step-detail')).toBeInTheDocument();
+  });
+
+  it('uses the completed-run preference only as a default and allows it to be disabled', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({
+      messages: [
+        { role: 'user', content: 'Inspect the workspace' },
+        {
+          role: 'assistant',
+          id: 'read-step',
+          content: [{ type: 'tool_use', id: 'read-1', name: 'read_file', input: { path: '/tmp/a.ts' } }],
+        },
+        { role: 'assistant', id: 'final-summary', content: [{ type: 'text', text: 'Inspection complete.' }] },
+      ],
+      loading: false,
+      error: null,
+      runError: null,
+      sending: false,
+      activeRunId: null,
+      streamingText: '',
+      streamingMessage: null,
+      streamingTools: [],
+      pendingFinal: false,
+      lastUserMessageAt: Date.now(),
+      pendingToolImages: [],
+      runtimeRuns: {},
+      sessions: [{ key: 'agent:main:main' }],
+      currentSessionKey: 'agent:main:main',
+      currentAgentId: 'main',
+      sessionLabels: {},
+      sessionLastActivity: {},
+      thinkingLevel: null,
+    });
+    const { useSettingsStore } = await import('@/stores/settings');
+    useSettingsStore.setState({ runActivityKeepExpandedOnComplete: false });
+
+    const { Chat } = await import('@/pages/Chat/index');
+    render(<Chat />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    });
+    expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
   });
 
   it('keeps short conversations as normal messages without a turn summary card', async () => {
@@ -784,7 +841,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
     });
 
     expect(screen.queryByText('demo.ts')).not.toBeInTheDocument();
@@ -1165,7 +1222,7 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-typing-indicator')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-activity-indicator')).not.toBeInTheDocument();

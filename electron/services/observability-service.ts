@@ -1,6 +1,7 @@
 import type {
   ObservabilityDashboardSnapshot,
   ObservabilityScorecard,
+  ObservabilitySourceHealth,
   ObservabilityTrace,
   ObservabilityTraceIndexEntry,
 } from '../../shared/types/observability';
@@ -92,7 +93,24 @@ function dashboardRowFromIndex(entry: ObservabilityTraceIndexEntry): Observabili
   };
 }
 
-export function buildObservabilityDashboardSnapshot(indexEntries: ObservabilityTraceIndexEntry[] = []): ObservabilityDashboardSnapshot {
+function defaultSourceHealth(memoryTraceCount: number, indexEntryCount: number): ObservabilitySourceHealth {
+  return {
+    runtime: {
+      status: memoryTraceCount > 0 ? 'ok' : 'empty',
+      reason: memoryTraceCount > 0 ? 'available' : 'no-data',
+    },
+    index: {
+      status: indexEntryCount > 0 ? 'ok' : 'empty',
+      reason: indexEntryCount > 0 ? 'available' : 'no-data',
+    },
+    trajectory: { status: 'empty', reason: 'no-data' },
+  };
+}
+
+export function buildObservabilityDashboardSnapshot(
+  indexEntries: ObservabilityTraceIndexEntry[] = [],
+  sourceHealth?: ObservabilitySourceHealth,
+): ObservabilityDashboardSnapshot {
   const now = Date.now();
   const allTraces = getObservabilityTraceBuffer();
 
@@ -200,5 +218,6 @@ export function buildObservabilityDashboardSnapshot(indexEntries: ObservabilityT
     scorecards: [...scorecards.values()],
     traces: dashboardRows,
     alerts,
+    sourceHealth: sourceHealth ?? defaultSourceHealth(allTraces.length, indexEntries.length),
   };
 }

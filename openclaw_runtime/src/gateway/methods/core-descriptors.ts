@@ -110,6 +110,9 @@ export const CORE_GATEWAY_METHOD_SPECS: readonly CoreGatewayMethodSpec[] = [
   // Observability bridge: reportTraces writes, traces read.
   { name: "observability.reportTrace", scope: "operator.write" },
   { name: "observability.traces", scope: "operator.read" },
+  { name: "observability.readFrom", scope: "operator.read" },
+  { name: "observability.subscribe", scope: "operator.read" },
+  { name: "observability.unsubscribe", scope: "operator.read" },
   // Security/verification shadow MVP: read/simulate only; no active enforcement.
   { name: "security.health", scope: "operator.read" },
   { name: "security.policy.get", scope: "operator.read" },

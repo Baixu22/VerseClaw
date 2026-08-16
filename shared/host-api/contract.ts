@@ -140,6 +140,8 @@ import type {
   ObservabilityTraceGraphResult,
   ObservabilityTraceQuery,
   ObservabilityTraceQueryResult,
+  ObservabilityTrajectoryHistoryPage,
+  ObservabilityTrajectorySessionSupply,
 } from '../types/observability';
 
 export type {
@@ -354,6 +356,7 @@ export type SettingsSnapshot = Partial<{
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   devModeUnlocked: boolean;
+  runActivityKeepExpandedOnComplete: boolean;
   setupComplete: boolean;
   /**
    * FP-P1-01: sanitized Setup provider verification state (no key material).
@@ -5343,6 +5346,8 @@ export type HostApiContract = {
     queryTraces: (payload?: ObservabilityTraceQuery) => ObservabilityTraceQueryResult;
     traceGraph: (payload: { id: string }) => ObservabilityTraceGraphResult | null;
     traceNodeDiagnostics: (payload: { traceId: string; nodeId: string }) => ObservabilityNodeDiagnostics | null;
+    trajectorySessions: () => { sessions: ObservabilityTrajectorySessionSupply[] };
+    trajectoryHistory: (payload: { sessionKey: string; fromSeq?: number; limit?: number }) => ObservabilityTrajectoryHistoryPage;
     clearTraces: () => HostSuccess;
   };
   system: {

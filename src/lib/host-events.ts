@@ -145,6 +145,9 @@ export const hostEvents = {
   onObservabilityRuntimeEvent: (handler: HostEventHandler<'observability', 'runtimeEvent'>) => (
     onObservabilityEvent('runtimeEvent', handler)
   ),
+  onObservabilityTrajectoryEvent: (handler: HostEventHandler<'observability', 'trajectoryEvent'>) => (
+    onObservabilityEvent('trajectoryEvent', handler)
+  ),
   onOfficeToolsInstallEvent: (handler: HostEventHandler<'officeTools', 'installEvent'>) => (
     onOfficeToolsEvent('installEvent', handler)
   ),

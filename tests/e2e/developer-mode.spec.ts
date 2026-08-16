@@ -13,6 +13,12 @@ test.describe('Verse Claw developer-mode gated UI', () => {
   test('keeps developer-only configuration hidden until dev mode is enabled', async ({ page }) => {
     await completeSetup(page);
 
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
+    await expect(page.getByTestId('sidebar-more-observability')).toBeVisible();
+    await expect(page.getByTestId('sidebar-more-image-generation')).toHaveCount(0);
+    await expect(page.getByTestId('sidebar-more-dreams')).toHaveCount(0);
+    await page.getByTestId('sidebar-footer-menu-trigger').click();
+
     await page.getByTestId('sidebar-nav-settings').click();
     await expect(page.getByTestId('settings-page')).toBeVisible();
     await expect(page.getByTestId('settings-nav-developer')).toBeVisible();
