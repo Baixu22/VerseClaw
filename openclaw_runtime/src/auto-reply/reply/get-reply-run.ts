@@ -18,6 +18,10 @@ import { resolveFastModeState } from "../../agents/fast-mode.js";
 import { runAgentHarnessBeforeMessageWriteHook } from "../../agents/harness/hook-helpers.js";
 import { resolveAgentHarnessPolicy } from "../../agents/harness/policy.js";
 import { listOpenAIAuthProfileProvidersForAgentRuntime } from "../../agents/openai-routing.js";
+import {
+  resolveRequestedRuntimeIntensity,
+  type RuntimeIntensitySource,
+} from "../../agents/intensity-policy.js";
 import { resolveIngressWorkspaceOverrideForSpawnedRun } from "../../agents/spawned-context.js";
 import type { SilentReplyPromptMode } from "../../agents/system-prompt.types.js";
 import { normalizeChatType } from "../../channels/chat-type.js";
@@ -905,6 +909,19 @@ export async function runPreparedReply(
       modelState.resolveDefaultThinkingLevel(),
     );
   }
+  // Linked-v1: capture the requested reasoning effort BEFORE capability
+  // downgrade. Runtime intensity is derived from this requested value so a
+  // model fallback can change effective thinking without changing prompt
+  // density or tool-result policy.
+  const requestedReasoningEffort = opts?.reasoningEffortOverride ?? resolvedThinkLevel;
+  const requestedRuntimeIntensity =
+    opts?.runtimeIntensityOverride ??
+    resolveRequestedRuntimeIntensity({
+      reasoningEffort: requestedReasoningEffort,
+    });
+  const runtimeIntensitySource: RuntimeIntensitySource = opts?.runtimeIntensityOverride
+    ? "explicit"
+    : "legacy-thinking-level";
   const allowedThinkingCatalog = modelState.allowedModelCatalog ?? [];
   let thinkingCatalog = allowedThinkingCatalog.length > 0 ? allowedThinkingCatalog : undefined;
   let thinkingLevelSupported = isThinkingLevelSupported({
@@ -1346,6 +1363,9 @@ export async function runPreparedReply(
       authProfileId,
       authProfileIdSource,
       thinkLevel: resolvedThinkLevel,
+      requestedReasoningEffort,
+      requestedRuntimeIntensity,
+      runtimeIntensitySource,
       promptMode: resolvedPromptMode,
       fastMode: useFastReplyRuntime
         ? false

@@ -721,6 +721,13 @@ export type SessionSystemPromptReport = {
     level: string;
     policyId: string;
     promptMode: "full" | "minimal" | "none";
+    requestedReasoning?: string;
+    effectiveReasoning?: string;
+    requestedIntensity?: string;
+    effectiveIntensity?: string;
+    intensitySource?: "explicit" | "legacy-thinking-level";
+    couplingMode?: "linked-v1";
+    policyAdherence?: "full" | "prompt-only";
     skillsMode: string;
     shellOutputMode: string;
     shellOutputRecovery?: string;
@@ -746,6 +753,8 @@ export type SessionSystemPromptReport = {
   tools: {
     listChars: number;
     schemaChars: number;
+    /** listChars + schemaChars: full outbound tool-definition footprint. */
+    definitionChars: number;
     entries: Array<{
       name: string;
       summaryChars: number;

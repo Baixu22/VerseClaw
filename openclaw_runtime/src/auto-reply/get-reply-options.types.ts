@@ -1,4 +1,5 @@
 /** Public option types for reply generation callbacks, streaming, and delivery policy. */
+import type { RuntimeIntensityPreference } from "../agents/intensity-policy.js";
 import type { ImageContent } from "../llm/types.js";
 import type { PromptImageOrderEntry } from "../media/prompt-image-order.js";
 import type { UserTurnTranscriptRecorder } from "../sessions/user-turn-transcript.js";
@@ -81,6 +82,10 @@ export type GetReplyOptions = {
   heartbeatModelOverride?: string;
   /** One-shot thinking level override for this run; does not persist to the session. */
   thinkingLevelOverride?: string;
+  /** One-shot reasoning-effort override captured before provider downgrade. */
+  reasoningEffortOverride?: string;
+  /** One-shot linked runtime intensity override for this run. */
+  runtimeIntensityOverride?: RuntimeIntensityPreference;
   /** One-shot fast-mode override for this run; does not persist to the session. */
   fastModeOverride?: boolean;
   /**

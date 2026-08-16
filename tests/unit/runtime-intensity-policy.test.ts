@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { resolveRuntimeIntensityPolicy } from '../../openclaw_runtime/src/agents/intensity-policy';
+import {
+  resolveRequestedRuntimeIntensity,
+  resolveRuntimeIntensityPolicy,
+} from '../../openclaw_runtime/src/agents/intensity-policy';
 import { resolveLiveToolResultMaxChars } from '../../openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation';
 import { resolveToolResultContextGuardLimits } from '../../openclaw_runtime/src/agents/embedded-agent-runner/tool-result-context-guard';
 import { buildSystemPromptReport } from '../../openclaw_runtime/src/agents/system-prompt-report';
@@ -126,6 +129,48 @@ describe('resolveRuntimeIntensityPolicy', () => {
         requestedPromptMode: 'none',
       }).promptMode,
     ).toBe('preserve');
+  });
+});
+
+describe('linked-v1 requested intensity resolution', () => {
+  it('maps the linked product table without depending on model defaults', () => {
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'auto' })).toBe('baseline');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'minimal' })).toBe('minimal');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'low' })).toBe('low');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'medium' })).toBe('baseline');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'high' })).toBe('high');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'xhigh' })).toBe('xhigh');
+    expect(resolveRequestedRuntimeIntensity({ reasoningEffort: 'max' })).toBe('xhigh');
+    expect(
+      resolveRequestedRuntimeIntensity({
+        reasoningEffort: 'auto',
+        modelDefaultThinkLevel: 'high',
+      }),
+    ).toBe('baseline');
+  });
+
+  it('keeps the anti-drift invariant when reasoning effort is downgraded later', () => {
+    const requested = resolveRequestedRuntimeIntensity({ reasoningEffort: 'high' });
+    const before = resolveRuntimeIntensityPolicy({
+      requestedRuntimeIntensity: requested,
+      requestedReasoningEffort: 'high',
+      intensitySource: 'explicit',
+      thinkLevel: 'high',
+    });
+    const after = resolveRuntimeIntensityPolicy({
+      requestedRuntimeIntensity: requested,
+      requestedReasoningEffort: 'high',
+      intensitySource: 'explicit',
+      thinkLevel: 'medium', // model downgrade
+    });
+
+    expect(before.level).toBe('high');
+    expect(after.level).toBe('high');
+  });
+
+  it('uses the legacy thinkLevel path when no linked fields are present', () => {
+    expect(resolveRuntimeIntensityPolicy({ thinkLevel: 'medium' }).level).toBe('baseline');
+    expect(resolveRuntimeIntensityPolicy({ thinkLevel: 'max' }).level).toBe('xhigh');
   });
 });
 
@@ -258,6 +303,47 @@ describe('runtime intensity system prompt reporting', () => {
       estimatedSavedTokens: 63,
     });
     expect(JSON.stringify(report)).not.toContain('system prompt text');
+  });
+
+  it('records requested and effective reasoning/intensity for linked-v1 evidence', () => {
+    const high = resolveRuntimeIntensityPolicy({
+      requestedRuntimeIntensity: 'high',
+      requestedReasoningEffort: 'high',
+      thinkLevel: 'medium', // model downgrade
+    });
+
+    const report = buildSystemPromptReport({
+      source: 'run',
+      generatedAt: 123,
+      bootstrapMaxChars: 1000,
+      systemPrompt: 'system prompt text',
+      bootstrapFiles: [],
+      injectedFiles: [],
+      skillsPrompt: '',
+      tools: [],
+      runtimeIntensity: {
+        policy: high,
+        promptMode: 'full',
+        requestedReasoning: 'high',
+        effectiveReasoning: 'medium',
+        requestedIntensity: 'high',
+        effectiveIntensity: 'high',
+        intensitySource: 'legacy-thinking-level',
+        couplingMode: 'linked-v1',
+        policyAdherence: 'full',
+      },
+    });
+
+    expect(report.runtimeIntensity).toMatchObject({
+      level: 'high',
+      requestedReasoning: 'high',
+      effectiveReasoning: 'medium',
+      requestedIntensity: 'high',
+      effectiveIntensity: 'high',
+      intensitySource: 'legacy-thinking-level',
+      couplingMode: 'linked-v1',
+      policyAdherence: 'full',
+    });
   });
 
   it('keeps required zero-valued savings fields in runtime intensity metadata', () => {

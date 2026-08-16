@@ -22,6 +22,7 @@ import type {
   MessagingToolSourceReplyPayload,
 } from "../../embedded-agent-messaging.types.js";
 import type { AgentRunTimeoutPhase } from "../../run-timeout-attribution.js";
+import type { RuntimeIntensityPolicy } from "../../intensity-policy.js";
 import type { AgentRuntimePlan } from "../../runtime-plan/types.js";
 import type { AgentMessage } from "../../runtime/index.js";
 import type { AuthStorage, ModelRegistry } from "../../sessions/index.js";
@@ -65,6 +66,8 @@ export type EmbeddedRunAttemptParams = EmbeddedRunAttemptBase & {
   agentHarnessId?: string;
   /** OpenClaw-owned runtime policy prepared by the orchestrator for this attempt. */
   runtimePlan?: AgentRuntimePlan;
+  /** Optional runtime intensity policy resolved before attempt dispatch. */
+  runtimeIntensityPolicy?: RuntimeIntensityPolicy;
   /** Host-issued scope for harnesses that mirror native child runs into task state. */
   agentHarnessTaskRuntimeScope?: AgentHarnessTaskRuntimeScope;
   /** Live observer called after wrapped tool outcomes are recorded. */
