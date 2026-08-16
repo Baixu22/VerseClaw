@@ -14,6 +14,8 @@ import { ensureVerseClawWorkspaceHarness } from './clawx-harness-template';
 
 const VERSE_CLAW_BEGIN = '<!-- verse-claw:begin -->';
 const VERSE_CLAW_END = '<!-- verse-claw:end -->';
+const LEGACY_CLAWX_BEGIN = '<!-- clawx:begin -->';
+const LEGACY_CLAWX_END = '<!-- clawx:end -->';
 const DEFAULT_BOOTSTRAP_FILENAME = 'BOOTSTRAP.md';
 const DEFAULT_IDENTITY_FILENAME = 'IDENTITY.md';
 
@@ -136,6 +138,28 @@ export function mergeVerseClawSection(existing: string, section: string): string
   return existing.trimEnd() + '\n\n' + wrapped + '\n';
 }
 
+/**
+ * Remove a legacy `clawx:begin/end` block from workspace bootstrap content.
+ *
+ * Early Verse Claw builds wrote a ClawX-branded context block and the current
+ * merger appends a Verse Claw block instead of replacing it.  Keeping both
+ * blocks doubles near-identical instructions in the final prompt, so drop the
+ * legacy block before merging the current one.
+ */
+export function stripLegacyClawxSection(content: string): string {
+  const beginIdx = content.indexOf(LEGACY_CLAWX_BEGIN);
+  if (beginIdx === -1) {
+    return content;
+  }
+  const endIdx = content.indexOf(LEGACY_CLAWX_END, beginIdx + LEGACY_CLAWX_BEGIN.length);
+  if (endIdx === -1) {
+    return content;
+  }
+  const before = content.slice(0, beginIdx);
+  const after = content.slice(endIdx + LEGACY_CLAWX_END.length);
+  // Drop one surrounding blank line so removed blocks do not leave triple gaps.
+  return `${before.trimEnd()}\n\n${after.trimStart()}`.replace(/\n{3,}/g, '\n\n');
+}
 /**
  * Strip the "## First Run" section from workspace AGENTS.md content.
  * This section is seeded by the OpenClaw Gateway but is unnecessary
@@ -375,13 +399,18 @@ async function mergeVerseClawContextOnce(options: ensureVerseClawContextOptions 
       const originalExisting = await readFile(targetPath, 'utf-8');
       let existing = originalExisting;
 
-      // Strip unwanted Gateway-seeded sections before merging
+      // Strip unwanted Gateway-seeded and legacy brand sections before merging
       if (targetName === 'AGENTS.md') {
         const stripped = stripFirstRunSection(existing);
         if (stripped !== existing) {
           existing = stripped;
           logger.info(`Stripped First Run section from ${targetName} (${workspaceDir})`);
         }
+      }
+      const legacyStripped = stripLegacyClawxSection(existing);
+      if (legacyStripped !== existing) {
+        existing = legacyStripped;
+        logger.info(`Stripped legacy ClawX section from ${targetName} (${workspaceDir})`);
       }
 
       const merged = mergeVerseClawSection(existing, section);

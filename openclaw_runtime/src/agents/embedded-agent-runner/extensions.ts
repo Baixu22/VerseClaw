@@ -24,6 +24,7 @@ import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../.
 import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
 import { createWorkspaceFactStoreBridge } from "../../context-engine/views/factstore-bridge.js";
 import { resolveCompassConfig } from "../../runtime-core/memory-pre-reply-injection.js";
+import type { RuntimeMemoryQueryableFact } from "../../runtime-core/memory-context.js";
 import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
@@ -221,9 +222,13 @@ function buildContextBlockFactory(params: {
         params.cfg?.runtime?.memory?.persist === true
           ? (() => {
               try {
-                return createRuntimeMemoryRuntimeIntegration({ config: params.cfg })
+                const frozenFacts = createRuntimeMemoryRuntimeIntegration({ config: params.cfg })
                   .loadStore()
                   .store.queryFacts({ limit: 24 });
+                // The memory store intentionally returns deep-frozen snapshots.
+                // buildPreReplyInjection only reads them, so clone into mutable
+                // plain objects for the legacy assembler input contract.
+                return frozenFacts.map((fact) => structuredClone(fact)) as RuntimeMemoryQueryableFact[];
               } catch {
                 return undefined;
               }

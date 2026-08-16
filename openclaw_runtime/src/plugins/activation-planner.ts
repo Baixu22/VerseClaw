@@ -135,7 +135,7 @@ export function resolveManifestActivationPlan(
       ? [normalizedConfig.slots.contextEngine]
       : [],
     memoryStoreConfigured: normalizedConfig.slots.memory === "memory-core",
-    memorySlotId: normalizedConfig.slots.memory,
+    memorySlotId: normalizedConfig.slots.memory ?? undefined,
     runtimeMemoryPersist: params.config?.runtime?.memory?.persist === true,
   });
   if (census.parallelMemoryWriters > 0) {

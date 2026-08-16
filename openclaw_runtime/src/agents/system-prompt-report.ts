@@ -124,6 +124,13 @@ function buildRuntimeIntensityReport(
         skillsTotal?: number;
         toolResultMaxChars?: number;
         estimatedSavedChars?: number;
+        requestedReasoning?: string;
+        effectiveReasoning?: string;
+        requestedIntensity?: string;
+        effectiveIntensity?: string;
+        intensitySource?: "explicit" | "legacy-thinking-level";
+        couplingMode?: "linked-v1";
+        policyAdherence?: "full" | "prompt-only";
       }
     | undefined,
 ): SessionSystemPromptReport["runtimeIntensity"] | undefined {
@@ -145,6 +152,21 @@ function buildRuntimeIntensityReport(
     toolResultMaxChars: normalizeNonNegativeInteger(params.toolResultMaxChars),
     estimatedSavedChars,
     estimatedSavedTokens: estimateSavedTokens(estimatedSavedChars),
+    ...(params.requestedReasoning !== undefined
+      ? { requestedReasoning: params.requestedReasoning }
+      : {}),
+    ...(params.effectiveReasoning !== undefined
+      ? { effectiveReasoning: params.effectiveReasoning }
+      : {}),
+    ...(params.requestedIntensity !== undefined
+      ? { requestedIntensity: params.requestedIntensity }
+      : {}),
+    ...(params.effectiveIntensity !== undefined
+      ? { effectiveIntensity: params.effectiveIntensity }
+      : {}),
+    ...(params.intensitySource ? { intensitySource: params.intensitySource } : {}),
+    ...(params.couplingMode ? { couplingMode: params.couplingMode } : {}),
+    ...(params.policyAdherence ? { policyAdherence: params.policyAdherence } : {}),
   };
 }
 
@@ -172,6 +194,7 @@ export function buildSystemPromptReport(params: {
   const systemPromptChars = params.systemPrompt.length;
   const projectContextChars = measureRenderedProjectContextChars(params.systemPrompt);
   const toolsEntries = buildToolsEntries(params.tools);
+  const toolsListChars = toolsEntries.reduce((sum, t) => sum + t.summaryChars, 0);
   const toolsSchemaChars = toolsEntries.reduce((sum, t) => sum + (t.schemaChars ?? 0), 0);
   const skillsEntries = parseSkillBlocks(params.skillsPrompt);
 
@@ -207,8 +230,9 @@ export function buildSystemPromptReport(params: {
       entries: skillsEntries,
     },
     tools: {
-      listChars: 0,
+      listChars: toolsListChars,
       schemaChars: toolsSchemaChars,
+      definitionChars: toolsListChars + toolsSchemaChars,
       entries: toolsEntries,
     },
   };

@@ -47,6 +47,7 @@ const REASONING_EFFORTS = new Set<AgentReasoningEffort>([
   'medium',
   'high',
   'xhigh',
+  'max',
 ]);
 
 function requireReasoningEffort(payload: unknown): AgentReasoningEffort {
