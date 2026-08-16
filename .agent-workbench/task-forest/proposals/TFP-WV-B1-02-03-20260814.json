@@ -1,0 +1,145 @@
+{
+  "applied_at": "2026-08-14T09:34:15.333876Z",
+  "base_graph_hash": "9a3e74bb9df3fb002b1cc92a05db9f5deb50ed4ad422c376b1ed6dba2aebfdea",
+  "base_summary": {
+    "edge_count": 99,
+    "node_count": 57,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b1-01"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "openclaw_runtime/src/trajectory/types.ts",
+          "openclaw_runtime/src/trajectory/schema.ts",
+          "openclaw_runtime/src/trajectory/replay.ts",
+          "openclaw_runtime/src/trajectory/trajectory-schema.test.ts",
+          "harness/specs/tasks/workflow-viz-b1-01-trajectory-event-schema.md"
+        ],
+        "progress": 100,
+        "status": "done",
+        "summary": "B1-01 v2 事件 schema、类型、确定性 replay 与 v1 兼容读取入口已完成；未接入 producer、Gateway、Electron 或 renderer。"
+      },
+      "id": "TF-0057"
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-02",
+      "node": {
+        "acceptance_criteria": [
+          "普通会话 producer 输出 run/turn/step/tool 生命周期 v2 事件。",
+          "producer 使用真实稳定业务 ID、单调 seq 和全量 post-change state。",
+          "无 producer 回退到猜最近 context；非法事件在写入边界被拒绝或显式标记。",
+          "B1-01 replay 测试与 comms/typecheck/build 门禁保持通过。",
+          "无 Gateway/Electron/renderer 传输接口改动。"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "b1-02",
+          "gateway-backend-communication"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 720,
+        "kind": "task",
+        "non_goals": [
+          "B1-03 Gateway read/subscribe 与 gap repair。",
+          "B1-04 Electron 供数。",
+          "B2 装配层与 B3 展示层。"
+        ],
+        "priority": 1,
+        "purpose": "让真实普通会话 producer 输出可持久化、可按 seq 重放的 v2 生命周期事件。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "只接入普通会话 producer，不新增 Gateway RPC/订阅，不修改 Electron 供数或 renderer。",
+          "复用 openclaw-trajectory v2 schema/type/replay，不创建平行轨迹格式或第二事件真源。",
+          "新增或更新 Harness task spec，引用 gateway-backend-communication。",
+          "保持 TF-0021 UI-only 与 TF-0010 Runtime Authority 收敛边界不变。"
+        ],
+        "status": "ready",
+        "summary": "将普通会话运行路径产生的轨迹生命周期事件接入 openclaw-trajectory v2，保持 B1-01 schema/replay 为唯一事件真源。",
+        "title": "WV-B1-02 普通会话 producer 接入"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-03",
+      "node": {
+        "acceptance_criteria": [
+          "支持按 seq 范围读取轨迹事件，并对非法范围给出确定性错误。",
+          "订阅增量保持 seq 顺序，检测并暴露 gap，不猜测缺失事件。",
+          "gap repair 与全量 replay 结果一致，重复/乱序输入行为确定。",
+          "Gateway/backend communication、typecheck、build 和 comms 回归门禁通过。"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "b1-03",
+          "gateway-backend-communication"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 960,
+        "kind": "task",
+        "non_goals": [
+          "B1-04 Electron 供数。",
+          "B2 装配层与 B3 展示层。"
+        ],
+        "priority": 1,
+        "purpose": "让上层能够从同一 v2 轨迹事实源恢复历史、接收增量并确定性修复 seq 缺口。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "依赖 B1-02 producer 接入完成后再实施。",
+          "Gateway 接口必须复用 B1-01 schema/replay，不创建第二事件真源。",
+          "新增或更新 Harness task spec，引用 gateway-backend-communication。",
+          "不修改 Electron 供数、renderer 投影或 B2/B3。"
+        ],
+        "status": "proposed",
+        "summary": "为 Workflow Viz 提供轨迹文件按 seq 读取、实时订阅和缺口修复的 Gateway 后端边界。",
+        "title": "WV-B1-03 Gateway read/subscribe 与 gap repair"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.95,
+        "reason": "B1-02 是 Workflow Viz 事实源路线的 producer 接入阶段。"
+      },
+      "from": "wv-b1-02",
+      "to": "TF-0056",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.95,
+        "reason": "B1-03 是 Workflow Viz 事实源路线的 Gateway 恢复供数阶段。"
+      },
+      "from": "wv-b1-03",
+      "to": "TF-0056",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.98,
+        "reason": "Gateway read/subscribe 必须建立在真实 producer 输出 v2 事件之后。"
+      },
+      "from": "wv-b1-03",
+      "to": "wv-b1-02",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-08-14T09:32:27.098999Z",
+  "proposal_id": "TFP-WV-B1-02-03-20260814",
+  "rationale": "B1-01 已完成事件契约基础。按单一 ready 节点和依赖顺序，先推进普通会话 producer 接入（B1-02），再推进 Gateway read/subscribe 与 gap repair（B1-03）。两张卡继续挂在独立 Workflow Viz 根任务下，不挂 TF-0021 UI-only，也不混入 TF-0010 Runtime Authority 收敛。",
+  "session_id": "session-2026-08-14-wv-b1-02-03",
+  "status": "applied"
+}

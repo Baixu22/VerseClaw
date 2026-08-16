@@ -3575,7 +3575,7 @@
   "TF-0056": {
     "acceptance_criteria": [
       "任务树结构经用户确认后可应用并通过 task-forest validate/export。",
-      "唯一 ready 子任务为 WV-B1-01。"
+      "B1-04 是当前唯一 ready 子任务；B2/B3 及其他 Workflow Viz 节点保持未授权。"
     ],
     "alignment": {
       "fit": "aligned",
@@ -3614,11 +3614,9 @@
     "execution_hints": [],
     "id": "TF-0056",
     "kind": "global_task",
+    "next_action": "推进唯一 ready 节点 WV-B1-04 Electron 供数改造。",
     "non_goals": [
-      "WV-B1-02 普通会话 producer 接入。",
-      "WV-B1-03 Gateway RPC/订阅与 gap repair。",
-      "WV-B1-04 Electron 供数改造。",
-      "WV-B2 装配层。",
+      "WV-B2 配置层。",
       "WV-B3 展示层。",
       "TF-0021 UI 迁移。",
       "TF-0010 Runtime Authority 收敛。"
@@ -3643,7 +3641,7 @@
     ],
     "summary": "以 openclaw-trajectory v2 作为 Workflow Viz 唯一事实源，按批次推进事件契约、生产者、Gateway/恢复供数、装配投影与展示层；每次只推进一个 ready 子任务。",
     "title": "Workflow Viz 事实源与可恢复投影重建",
-    "updated_at": "2026-08-14T08:27:29.281134Z"
+    "updated_at": "2026-08-14T11:45:42.904538Z"
   },
   "TF-0057": {
     "acceptance_criteria": [
@@ -3692,7 +3690,13 @@
     "deviations": [],
     "difficulty": "high",
     "estimated_total_minutes": 720,
-    "evidence": [],
+    "evidence": [
+      "openclaw_runtime/src/trajectory/types.ts",
+      "openclaw_runtime/src/trajectory/schema.ts",
+      "openclaw_runtime/src/trajectory/replay.ts",
+      "openclaw_runtime/src/trajectory/trajectory-schema.test.ts",
+      "harness/specs/tasks/workflow-viz-b1-01-trajectory-event-schema.md"
+    ],
     "execution_hints": [],
     "id": "TF-0057",
     "kind": "task",
@@ -3703,7 +3707,7 @@
       "B2 装配层和 B3 展示层。"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "为后续 Workflow Viz producer、恢复供数、装配与展示提供单一、可重放、可验证的事件契约。",
     "remaining_minutes_max": 720,
@@ -3717,10 +3721,215 @@
       "不引入第三方图形库、平行轨迹格式或第二套事件真源。"
     ],
     "source_sessions": [],
-    "status": "ready",
+    "status": "done",
     "success_metrics": [],
-    "summary": "在现有 openclaw-trajectory v1 基础上定义 v2 生命周期事件 schema/type/replay 契约，保留 v1 兼容读取声明或适配入口。",
+    "summary": "B1-01 v2 事件 schema、类型、确定性 replay 与 v1 兼容读取入口已完成；未接入 producer、Gateway、Electron 或 renderer。",
     "title": "WV-B1-01 轨迹事件 Schema 契约化",
-    "updated_at": "2026-08-14T08:27:29.281134Z"
+    "updated_at": "2026-08-14T09:34:15.324876Z"
+  },
+  "TF-0058": {
+    "acceptance_criteria": [
+      "普通会话 producer 输出 run/turn/step/tool 生命周期 v2 事件。",
+      "producer 使用真实稳定业务 ID、单调 seq 和全量 post-change state。",
+      "无 producer 回退到猜最近 context；非法事件在写入边界被拒绝或显式标记。",
+      "B1-01 replay 测试与 comms/typecheck/build 门禁保持通过。",
+      "无 Gateway/Electron/renderer 传输接口改动。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.85,
+    "context_tags": [
+      "workflow-viz",
+      "trajectory",
+      "b1-02",
+      "gateway-backend-communication"
+    ],
+    "created_at": "2026-08-14T09:34:15.324876Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "617540b0a feat(trajectory): wire ordinary session v2 producer",
+      "src/trajectory/trajectory-producer.test.ts: 3 producer tests + trajectory-schema.test.ts",
+      "pnpm run typecheck:node; pnpm run typecheck:web; pnpm run build:runtime"
+    ],
+    "execution_hints": [
+      "B1-03 为下一张 ready 卡；task-loop-controller.ts 仍受 lint:dcs 禁区约束"
+    ],
+    "id": "TF-0058",
+    "kind": "task",
+    "non_goals": [
+      "B1-03 Gateway read/subscribe 与 gap repair。",
+      "B1-04 Electron 供数。",
+      "B2 装配层与 B3 展示层。"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让真实普通会话 producer 输出可持久化、可按 seq 重放的 v2 生命周期事件。",
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "只接入普通会话 producer，不新增 Gateway RPC/订阅，不修改 Electron 供数或 renderer。",
+      "复用 openclaw-trajectory v2 schema/type/replay，不创建平行轨迹格式或第二事件真源。",
+      "新增或更新 Harness task spec，引用 gateway-backend-communication。",
+      "保持 TF-0021 UI-only 与 TF-0010 Runtime Authority 收敛边界不变。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "普通 embedded session 已接入 v2 run/turn/step/tool producer；共享 seq、显式稳定 ID、全量 tool state 与 v1 exporter 兼容通过验证。task-loop/DCS producer 按边界留待后续授权。",
+    "title": "WV-B1-02 普通会话 producer 接入",
+    "updated_at": "2026-08-14T10:17:42.908696Z"
+  },
+  "TF-0059": {
+    "acceptance_criteria": [
+      "支持按 seq 范围读取轨迹事件，并对非法范围给出确定性错误。",
+      "订阅增量保持 seq 顺序，检测并暴露 gap，不猜测缺失事件。",
+      "gap repair 与全量 replay 结果一致，重复/乱序输入行为确定。",
+      "Gateway/backend communication、typecheck、build 和 comms 回归门禁通过。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "workflow-viz",
+      "trajectory",
+      "b1-03",
+      "gateway-backend-communication"
+    ],
+    "created_at": "2026-08-14T09:34:15.324876Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 960,
+    "evidence": [
+      "harness/specs/tasks/workflow-viz-b1-03-gateway-trajectory-stream.md",
+      "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+      "openclaw_runtime/src/gateway/trajectory-gateway.test.ts?4 tests passed?",
+      "pnpm harness context --spec harness/specs/tasks/workflow-viz-b1-03-gateway-trajectory-stream.md?passed?",
+      "pnpm --dir openclaw_runtime exec vitest run --config test/vitest/vitest.gateway-server.config.ts src/gateway/trajectory-gateway.server.test.ts?4/4 passed?",
+      "pnpm run typecheck:node?passed?",
+      "pnpm run typecheck:web?passed?",
+      "pnpm run build:runtime?passed?",
+      "pnpm run comms:replay?passed?",
+      "pnpm run comms:compare?PASS?",
+      "pnpm run lint:bom?passed?",
+      "targeted ESLint on all B1-03 files?passed?",
+      "pnpm harness validate/run --dry-run?blocked by pre-existing unrelated workspace diff; no rule bypass?"
+    ],
+    "execution_hints": [
+      "先创建并运行 B1-03 Harness context，再实现 Gateway read/subscribe 与 gap repair",
+      "B1-03 ????B1-04?B2?B3 ??????"
+    ],
+    "id": "TF-0059",
+    "kind": "task",
+    "non_goals": [
+      "B1-04 Electron 供数。",
+      "B2 装配层与 B3 展示层。"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让上层能够从同一 v2 轨迹事实源恢复历史、接收增量并确定性修复 seq 缺口。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "依赖 B1-02 producer 接入完成后再实施。",
+      "Gateway 接口必须复用 B1-01 schema/replay，不创建第二事件真源。",
+      "新增或更新 Harness task spec，引用 gateway-backend-communication。",
+      "不修改 Electron 供数、renderer 投影或 B2/B3。"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Gateway ??? v1/v2 ??? seq ? bounded read?connection-scoped subscribe/unsubscribe??? gap/??/????????? observability.traces?B1-04 Electron ????????",
+    "title": "WV-B1-03 Gateway read/subscribe 与 gap repair",
+    "updated_at": "2026-08-14T10:43:18.549006Z"
+  },
+  "TF-0060": {
+    "acceptance_criteria": [
+      "订阅注册、Gateway 重连重订阅、seq 增量合并和 gap readFrom 补洞有单测。",
+      "非法、重复、跨 trace 或缺少稳定 ID 的事件被拒绝或显式记录，不通过猜 context 修复。",
+      "stream projection 与完整有序 replay 结果一致，旧 v1 文件仍可重建历史。",
+      "现有 observability runtime event 形状保持兼容，不新增 renderer 传输接口。",
+      "Harness、类型检查、runtime build、comms replay/compare、BOM 和改动文件 ESLint 可复现。"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.86,
+    "context_tags": [
+      "workflow-viz",
+      "trajectory",
+      "b1-04",
+      "gateway-backend-communication"
+    ],
+    "created_at": "2026-08-14T11:45:42.904538Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "Main 按 sessionKey 维护最后接受 seq 并在 Gateway 恢复后重新订阅。",
+      "通知 gap 只通过 readFrom 补拉，不猜缺失事件。",
+      "v1 历史文件仍可读取且明确标记为 legacy fallback。"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "harness/specs/tasks/workflow-viz-b1-04-electron-trajectory-supply.md"
+    ],
+    "execution_hints": [
+      "已完成 Gateway 投影核心与 focused tests；继续做 clean worktree 和集成门禁。"
+    ],
+    "id": "TF-0060",
+    "kind": "task",
+    "non_goals": [
+      "B2 配置层和 renderer store 并行迁移。",
+      "B3 轨迹账本、时间线和 workflow 展示。",
+      "普通会话 producer、Gateway RPC/订阅接口、Electron preload 或 renderer 供数改造。"
+    ],
+    "priority": 1,
+    "progress": 45.0,
+    "progress_source": "manual",
+    "purpose": "让 Electron 重启和 Gateway 重连后都能从同一条 v2 轨迹事实源确定性重建现有 ObservabilityTrace/index。",
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "新增或更新 Harness task spec 并引用 gateway-backend-communication。",
+      "只修改 Electron Main 供数、轨迹索引和聚焦单测；不修改 renderer、DCS lint 清单、B2/B3、TF-0021 或 TF-0010。",
+      "不以定时 runtime snapshot 拉取作为轨迹主来源，不创建第二套轨迹事实源。"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [],
+    "summary": "将 Electron Main observability 供数切换到 Gateway trajectory subscribe 与按 seq readFrom 补洞，保留 v1 扫盘读取作为迁移期兜底。",
+    "title": "WV-B1-04 Electron 供数改造",
+    "updated_at": "2026-08-14T12:15:30.689769Z"
   }
 }

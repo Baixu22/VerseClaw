@@ -334,45 +334,39 @@
   },
   {
     "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.98,
-      "user_goal": "只完成 WV-B1-01 轨迹事件 Schema 契约化。",
-      "validation_plan": [
-        "pnpm harness context/validate/run --dry-run 对应 B1-01 spec。",
-        "runtime 新增 schema/type/replay vitest。",
-        "pnpm run typecheck:node、typecheck:web、build:runtime。",
-        "pnpm run comms:replay、comms:compare、lint:bom 和改动文件 ESLint。",
-        "clean detached worktree 复测关键测试与构建。"
-      ],
-      "why_not_enough": "不会产生真实普通会话 v2 事件，也不会提供实时订阅或 UI 投影。",
-      "why_this_task": "该任务直接建立后续所有 Workflow Viz 事件生产与 replay 的契约基础，且可在不触碰 Gateway/Electron/renderer 的前提下独立验收。"
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
     },
     "blocked_by": [],
-    "confidence": 0.85,
+    "confidence": 0.86,
     "context_tags": [
       "workflow-viz",
       "trajectory",
-      "schema-v2",
+      "b1-04",
       "gateway-backend-communication"
     ],
     "desired_outcomes": [
-      "覆盖 run/turn/step/tool 的 start/update/end 生命周期角色。",
-      "事件具备单调 seq、稳定业务 ID、schemaVersion 和变更后全量状态值。",
-      "按 seq 升序 replay 得到确定性状态，且 v1 轨迹文件仍可读取。"
+      "Main 按 sessionKey 维护最后接受 seq 并在 Gateway 恢复后重新订阅。",
+      "通知 gap 只通过 readFrom 补拉，不猜缺失事件。",
+      "v1 历史文件仍可读取且明确标记为 legacy fallback。"
     ],
     "difficulty": "high",
-    "id": "TF-0057",
+    "id": "TF-0060",
     "kind": "task",
-    "next_action": "无效事件被拒绝或显式标记。",
+    "next_action": "已完成 Gateway 投影核心与 focused tests；继续做 clean worktree 和集成门禁。",
     "priority": 1,
-    "progress": 0.0,
-    "purpose": "为后续 Workflow Viz producer、恢复供数、装配与展示提供单一、可重放、可验证的事件契约。",
+    "progress": 45.0,
+    "purpose": "让 Electron 重启和 Gateway 重连后都能从同一条 v2 轨迹事实源确定性重建现有 ObservabilityTrace/index。",
     "ready": true,
     "remaining_minutes_max": 720,
     "remaining_minutes_min": 360,
-    "status": "ready",
+    "status": "in_progress",
     "success_metrics": [],
-    "title": "WV-B1-01 轨迹事件 Schema 契约化"
+    "title": "WV-B1-04 Electron 供数改造"
   },
   {
     "alignment": {

@@ -1186,5 +1186,77 @@
     "to": "TF-0056",
     "type": "child_of",
     "updated_at": "2026-08-14T08:27:29.281134Z"
+  },
+  "TFE-0101": {
+    "blocking": true,
+    "confidence": 0.95,
+    "created_at": "2026-08-14T09:34:15.324876Z",
+    "created_from_session": null,
+    "from": "TF-0058",
+    "id": "TFE-0101",
+    "reason": "B1-02 是 Workflow Viz 事实源路线的 producer 接入阶段。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T09:34:15.324876Z"
+  },
+  "TFE-0102": {
+    "blocking": true,
+    "confidence": 0.95,
+    "created_at": "2026-08-14T09:34:15.324876Z",
+    "created_from_session": null,
+    "from": "TF-0059",
+    "id": "TFE-0102",
+    "reason": "B1-03 是 Workflow Viz 事实源路线的 Gateway 恢复供数阶段。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T09:34:15.324876Z"
+  },
+  "TFE-0103": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-14T09:34:15.325875Z",
+    "created_from_session": null,
+    "from": "TF-0059",
+    "id": "TFE-0103",
+    "reason": "Gateway read/subscribe 必须建立在真实 producer 输出 v2 事件之后。",
+    "to": "TF-0058",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T09:34:15.325875Z"
+  },
+  "TFE-0104": {
+    "blocking": true,
+    "confidence": 0.96,
+    "created_at": "2026-08-14T11:45:42.904538Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0104",
+    "reason": "B1-04 是 Workflow Viz 事实源路线的 Electron Main 供数阶段。",
+    "to": "TF-0056",
+    "type": "child_of",
+    "updated_at": "2026-08-14T11:45:42.904538Z"
+  },
+  "TFE-0105": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-14T11:45:42.904538Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0105",
+    "reason": "Electron 投影必须消费 B1-02 产生的 v2 producer 事件。",
+    "to": "TF-0058",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T11:45:42.904538Z"
+  },
+  "TFE-0106": {
+    "blocking": true,
+    "confidence": 0.98,
+    "created_at": "2026-08-14T11:45:42.904538Z",
+    "created_from_session": null,
+    "from": "TF-0060",
+    "id": "TFE-0106",
+    "reason": "Electron 供数必须使用 B1-03 提供的 Gateway subscribe/readFrom/gap 边界。",
+    "to": "TF-0059",
+    "type": "depends_on",
+    "updated_at": "2026-08-14T11:45:42.904538Z"
   }
 }

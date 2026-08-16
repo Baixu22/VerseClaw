@@ -1,0 +1,28 @@
+{
+  "applied_at": "2026-08-14T12:15:30.697114Z",
+  "base_graph_hash": "fbfc12ddff62956f6bfe79d17b28e8d94f1b18faff5a47bf6fe2cf84b171fd77",
+  "base_summary": {
+    "edge_count": 105,
+    "node_count": 60,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b1-01"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "已完成 Gateway 投影核心与 focused tests；继续做 clean worktree 和集成门禁。"
+        ],
+        "progress": 45,
+        "progress_source": "manual",
+        "status": "in_progress"
+      },
+      "id": "TF-0060"
+    }
+  ],
+  "created_at": "2026-08-14T12:15:30.546629Z",
+  "proposal_id": "TFP-WV-B1-04-progress-20260814",
+  "rationale": "B1-04 已开始实现并完成投影核心与 focused tests，节点状态应反映当前执行中。",
+  "session_id": "session-2026-08-14-wv-b1-04-progress",
+  "status": "applied"
+}

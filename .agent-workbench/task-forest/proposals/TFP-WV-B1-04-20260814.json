@@ -1,0 +1,115 @@
+{
+  "applied_at": "2026-08-14T11:45:42.914538Z",
+  "base_graph_hash": "88f7689ba51ba5a2b9e3a99e7214dd070e8251e7a70feea80b473e8807f6531a",
+  "base_summary": {
+    "edge_count": 102,
+    "node_count": 59,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b1-01"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "任务树结构经用户确认后可应用并通过 task-forest validate/export。",
+          "B1-04 是当前唯一 ready 子任务；B2/B3 及其他 Workflow Viz 节点保持未授权。"
+        ],
+        "next_action": "推进唯一 ready 节点 WV-B1-04 Electron 供数改造。",
+        "non_goals": [
+          "WV-B2 配置层。",
+          "WV-B3 展示层。",
+          "TF-0021 UI 迁移。",
+          "TF-0010 Runtime Authority 收敛。"
+        ]
+      },
+      "id": "TF-0056"
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-04",
+      "node": {
+        "acceptance_criteria": [
+          "订阅注册、Gateway 重连重订阅、seq 增量合并和 gap readFrom 补洞有单测。",
+          "非法、重复、跨 trace 或缺少稳定 ID 的事件被拒绝或显式记录，不通过猜 context 修复。",
+          "stream projection 与完整有序 replay 结果一致，旧 v1 文件仍可重建历史。",
+          "现有 observability runtime event 形状保持兼容，不新增 renderer 传输接口。",
+          "Harness、类型检查、runtime build、comms replay/compare、BOM 和改动文件 ESLint 可复现。"
+        ],
+        "confidence": 0.86,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "b1-04",
+          "gateway-backend-communication"
+        ],
+        "desired_outcomes": [
+          "Main 按 sessionKey 维护最后接受 seq 并在 Gateway 恢复后重新订阅。",
+          "通知 gap 只通过 readFrom 补拉，不猜缺失事件。",
+          "v1 历史文件仍可读取且明确标记为 legacy fallback。"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 720,
+        "evidence": [
+          "harness/specs/tasks/workflow-viz-b1-04-electron-trajectory-supply.md"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "B2 配置层和 renderer store 并行迁移。",
+          "B3 轨迹账本、时间线和 workflow 展示。",
+          "普通会话 producer、Gateway RPC/订阅接口、Electron preload 或 renderer 供数改造。"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让 Electron 重启和 Gateway 重连后都能从同一条 v2 轨迹事实源确定性重建现有 ObservabilityTrace/index。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "新增或更新 Harness task spec 并引用 gateway-backend-communication。",
+          "只修改 Electron Main 供数、轨迹索引和聚焦单测；不修改 renderer、DCS lint 清单、B2/B3、TF-0021 或 TF-0010。",
+          "不以定时 runtime snapshot 拉取作为轨迹主来源，不创建第二套轨迹事实源。"
+        ],
+        "status": "ready",
+        "summary": "将 Electron Main observability 供数切换到 Gateway trajectory subscribe 与按 seq readFrom 补洞，保留 v1 扫盘读取作为迁移期兜底。",
+        "title": "WV-B1-04 Electron 供数改造"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.96,
+        "reason": "B1-04 是 Workflow Viz 事实源路线的 Electron Main 供数阶段。"
+      },
+      "from": "wv-b1-04",
+      "to": "TF-0056",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.98,
+        "reason": "Electron 投影必须消费 B1-02 产生的 v2 producer 事件。"
+      },
+      "from": "wv-b1-04",
+      "to": "TF-0058",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.98,
+        "reason": "Electron 供数必须使用 B1-03 提供的 Gateway subscribe/readFrom/gap 边界。"
+      },
+      "from": "wv-b1-04",
+      "to": "TF-0059",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-08-14T11:45:27.095769Z",
+  "proposal_id": "TFP-WV-B1-04-20260814",
+  "rationale": "B1-01、B1-02 和 B1-03 已完成。按 Workflow Viz 事实源路线，当前唯一可推进节点切换为 B1-04；它继续挂在独立 Workflow Viz 根任务下，依赖已完成的 producer 和 Gateway stream，不挂到 TF-0021，也不混入 TF-0010。",
+  "session_id": "session-2026-08-14-wv-b1-04",
+  "status": "applied"
+}
