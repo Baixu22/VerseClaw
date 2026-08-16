@@ -7,22 +7,4 @@ read_when:
 
 # USER.md - About Your Human
 
-_Learn about the person you're helping. Update this as you go._
-
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
-
-## Context
-
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
-
----
-
-The more you know, the better you can help. But remember - you're learning about a person, not building a dossier. Respect the difference.
-
-## Related
-
-- [Agent workspace](/concepts/agent-workspace)
+Fill in only what you actually learn: name, what to call them, pronouns (optional), timezone, and short factual notes. Do not leave tutorial text or empty placeholders in this file.

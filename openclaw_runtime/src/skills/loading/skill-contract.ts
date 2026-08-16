@@ -50,6 +50,16 @@ function escapeXml(str: string): string {
  * package root on the cold skills path. Visibility policy is applied upstream
  * before calling this helper.
  */
+const MAX_SKILL_DESCRIPTION_CHARS = 480;
+
+function truncateSkillDescription(description: string): string {
+  const trimmed = description.trim();
+  if (trimmed.length <= MAX_SKILL_DESCRIPTION_CHARS) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, MAX_SKILL_DESCRIPTION_CHARS).trimEnd()}...`;
+}
+
 export function formatSkillsForPrompt(skills: Skill[]): string {
   if (skills.length === 0) {
     return "";
@@ -65,7 +75,7 @@ export function formatSkillsForPrompt(skills: Skill[]): string {
   for (const skill of skills) {
     lines.push("  <skill>");
     lines.push(`    <name>${escapeXml(skill.name)}</name>`);
-    lines.push(`    <description>${escapeXml(skill.description)}</description>`);
+    lines.push(`    <description>${escapeXml(truncateSkillDescription(skill.description))}</description>`);
     lines.push(`    <location>${escapeXml(skill.filePath)}</location>`);
     if (skill.promptVersion) {
       lines.push(`    <version>${escapeXml(skill.promptVersion)}</version>`);

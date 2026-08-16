@@ -380,7 +380,23 @@ function isDisabledDeepSeekV4ThinkingLevel(thinkingLevel: DeepSeekV4ThinkingLeve
 function resolveDeepSeekV4ReasoningEffort(
   thinkingLevel: DeepSeekV4ThinkingLevel,
 ): DeepSeekV4ReasoningEffort {
-  return thinkingLevel === "xhigh" || thinkingLevel === "max" ? "max" : "high";
+  // DeepSeek V4 documents `low | high | max` as the real effort levels and
+  // aliases `medium`/`xhigh` to `high`. Keep the app-level `minimal` value
+  // from producing an unsupported payload by clamping it to `low`.
+  // https://api-docs.deepseek.com/guides/thinking_mode
+  switch (thinkingLevel) {
+    case "minimal":
+    case "low":
+      return "low";
+    case "max":
+      return "max";
+    case "off":
+    case "medium":
+    case "high":
+    case "xhigh":
+    default:
+      return "high";
+  }
 }
 
 function stripDeepSeekV4ReasoningContent(payload: Record<string, unknown>): void {

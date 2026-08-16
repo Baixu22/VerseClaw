@@ -128,7 +128,18 @@ const CODEX_TEST_API_MODULE_ID = resolveRelativeBundledPluginPublicModuleId({
 
 /** Load the Codex public test API without hardcoding plugin-private paths. */
 async function loadCodexPromptSnapshotApi(): Promise<CodexPromptSnapshotApi> {
-  return (await import(CODEX_TEST_API_MODULE_ID)) as CodexPromptSnapshotApi;
+  try {
+    return (await import(CODEX_TEST_API_MODULE_ID)) as CodexPromptSnapshotApi;
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "ERR_MODULE_NOT_FOUND") {
+      throw new Error(
+        `Codex prompt snapshot test API is missing at ${CODEX_TEST_API_MODULE_ID}. ` +
+          "This source distribution does not vendor the Codex test-api artifact. " +
+          "Install/build the bundled Codex plugin first, or run prompt snapshots in an upstream-complete checkout.",
+      );
+    }
+    throw error;
+  }
 }
 
 const CODEX_WORKSPACE_BOOTSTRAP_CONTEXT_FILES = [

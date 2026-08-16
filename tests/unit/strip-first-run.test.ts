@@ -24,6 +24,7 @@ import {
   ensureVerseClawIdentityFile,
   mergeVerseClawSection,
   stripFirstRunSection,
+  stripLegacyClawxSection,
 } from '../../electron/utils/openclaw-workspace';
 
 beforeEach(async () => {
@@ -157,13 +158,45 @@ describe('stripFirstRunSection', () => {
     ].join('\n');
 
     const stripped = stripFirstRunSection(original);
-    const merged = mergeVerseClawSection(stripped, section);
+    const merged = mergeVerseClawSection(stripLegacyClawxSection(stripped), section);
 
     expect(merged).not.toBe(original);
     expect(merged).not.toContain('## First Run');
     expect(merged).toContain('## Session Startup');
-    expect(merged).toContain('<!-- clawx:begin -->');
-    expect(merged).toContain('<!-- clawx:end -->');
+    expect(merged).not.toContain('<!-- clawx:begin -->');
+    expect(merged).not.toContain('<!-- clawx:end -->');
+  });
+});
+
+describe('stripLegacyClawxSection', () => {
+  it('removes a legacy ClawX block while preserving surrounding content', () => {
+    const input = [
+      'before',
+      '',
+      '<!-- clawx:begin -->',
+      '## ClawX Environment',
+      'duplicated legacy text',
+      '<!-- clawx:end -->',
+      '',
+      'after',
+    ].join('\n');
+
+    const result = stripLegacyClawxSection(input);
+    expect(result).not.toContain('<!-- clawx:begin -->');
+    expect(result).not.toContain('duplicated legacy text');
+    expect(result).toContain('before');
+    expect(result).toContain('after');
+    expect(result).not.toMatch(/\n{3,}/);
+  });
+
+  it('returns content unchanged when no legacy block exists', () => {
+    const input = '# AGENTS.md\n\nContent.\n';
+    expect(stripLegacyClawxSection(input)).toBe(input);
+  });
+
+  it('returns content unchanged for a dangling legacy begin marker', () => {
+    const input = '# AGENTS.md\n\n<!-- clawx:begin -->\nno end marker';
+    expect(stripLegacyClawxSection(input)).toBe(input);
   });
 });
 
