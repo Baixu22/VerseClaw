@@ -31,7 +31,6 @@ const AGENT_BOOTSTRAP_FILES = [
   'USER.md',
   'IDENTITY.md',
   'HEARTBEAT.md',
-  'BOOT.md',
 ];
 const AGENT_RUNTIME_FILES = [
   'auth-profiles.json',
@@ -697,7 +696,6 @@ const ALL_BOOTSTRAP_FILES = [
   'USER.md',
   'IDENTITY.md',
   'HEARTBEAT.md',
-  'BOOT.md',
 ] as const;
 
 type BootstrapFileName = typeof ALL_BOOTSTRAP_FILES[number];

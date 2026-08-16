@@ -1695,7 +1695,7 @@
     },
     "effortButton": "Effort",
     "effortTitle": "Reasoning effort",
-    "effortHelpTooltip": "Higher effort lets the agent think longer before answering.",
+    "effortHelpTooltip": "Sets reasoning depth and runtime context density: higher levels think longer, while minimal/low also load a leaner prompt, fewer skill summaries, and tighter tool-output context. Auto keeps baseline context density.",
     "effortFaster": "Faster",
     "effortSmarter": "Smarter",
     "effortStatusAuto": "Auto",

@@ -1683,7 +1683,7 @@
     },
     "effortButton": "強度",
     "effortTitle": "推論強度",
-    "effortHelpTooltip": "強度を上げると、エージェントが回答前により長く考えます。",
+    "effortHelpTooltip": "推論の深さと実行時コンテキスト密度の両方を設定します。高いほど深く考え、minimal/low ではより簡潔なプロンプト、少ないスキル概要、コンパクトなツール出力も使います。Auto は baseline のコンテキスト密度を維持します。",
     "effortFaster": "より高速",
     "effortSmarter": "より深く",
     "effortStatusAuto": "自動",

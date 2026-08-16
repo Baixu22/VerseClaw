@@ -71,7 +71,7 @@ type AgentBootstrapUpdateBody = {
   roleProfile?: unknown;
 };
 
-type BootstrapFileName = 'AGENTS.md' | 'TOOLS.md' | 'USER.md' | 'IDENTITY.md' | 'HEARTBEAT.md' | 'BOOT.md';
+type BootstrapFileName = 'AGENTS.md' | 'TOOLS.md' | 'USER.md' | 'IDENTITY.md' | 'HEARTBEAT.md';
 
 function optionalStringArray(value: unknown): string[] | undefined {
   return Array.isArray(value)
@@ -160,7 +160,7 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
     },
     getBootstrap: async (payload) => {
       const agentId = requireString(payload, 'id');
-      const [result, tools, roleProfile, agentsMd, toolsMd, userMd, identityMd, heartbeatMd, bootMd] = await Promise.all([
+      const [result, tools, roleProfile, agentsMd, toolsMd, userMd, identityMd, heartbeatMd] = await Promise.all([
         readAgentSoul(agentId),
         readAgentBootstrapTools(agentId),
         readAgentRoleProfile(agentId).catch(() => null),
@@ -169,7 +169,6 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         readAgentBootstrapFile(agentId, 'USER.md').catch(() => ({ content: '', path: '' })),
         readAgentBootstrapFile(agentId, 'IDENTITY.md').catch(() => ({ content: '', path: '' })),
         readAgentBootstrapFile(agentId, 'HEARTBEAT.md').catch(() => ({ content: '', path: '' })),
-        readAgentBootstrapFile(agentId, 'BOOT.md').catch(() => ({ content: '', path: '' })),
       ]);
       return {
         success: true,
@@ -189,8 +188,14 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         identityMdPath: identityMd.path,
         heartbeatMd: heartbeatMd.content,
         heartbeatMdPath: heartbeatMd.path,
-        bootMd: bootMd.content,
-        bootMdPath: bootMd.path,
+        bootMd: '',
+        bootMdPath: '',
+        bootDeprecated: {
+          supported: false,
+          code: 'BOOT_MD_DEPRECATED',
+          message:
+            'BOOT.md is deprecated. Existing files are left untouched; export/migration requires explicit user confirmation.',
+        },
       };
     },
     updateBootstrap: async (payload) => {
@@ -212,6 +217,21 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         soulResult = await readAgentSoul(agentId);
       }
 
+      if (body.bootMd !== undefined) {
+        return {
+          success: false,
+          agentId,
+          soulMd: '',
+          error: 'BOOT.md writes are deprecated and were not performed.',
+          bootDeprecated: {
+            supported: false,
+            code: 'BOOT_MD_DEPRECATED',
+            message:
+              'BOOT.md writes are disabled. Existing files are left untouched; export/migration requires explicit user confirmation.',
+          },
+        };
+      }
+
       // Write other bootstrap files if provided
       const bootstrapFiles: Partial<Record<BootstrapFileName, string>> = {
         'AGENTS.md': typeof body.agentsMd === 'string' ? body.agentsMd : undefined,
@@ -219,7 +239,6 @@ export function createAgentsApi(ctx: AgentsApiContext): CompleteHostServiceRegis
         'USER.md': typeof body.userMd === 'string' ? body.userMd : undefined,
         'IDENTITY.md': typeof body.identityMd === 'string' ? body.identityMd : undefined,
         'HEARTBEAT.md': typeof body.heartbeatMd === 'string' ? body.heartbeatMd : undefined,
-        'BOOT.md': typeof body.bootMd === 'string' ? body.bootMd : undefined,
       };
 
       const bootstrapWrites: Promise<unknown>[] = [];
