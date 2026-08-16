@@ -52,6 +52,30 @@ describe('R3-2: proposeFacts confirm (candidate promotion)', () => {
     // The persistence port must NOT be reached while owner drift exists.
   });
 
+  it('accepts persist=true only when runtime-memory is the selected memory-slot owner', () => {
+    const candidate = buildRuntimeMemoryTemporalFactCandidateFixture({ factId: 'c4' });
+    let appendReached = false;
+    const result = confirmRuntimeMemoryFactProposal({
+      candidate,
+      evidenceRefs: [{ type: 'test', ref: 'x' }],
+      memorySlotId: 'runtime-memory',
+      persistence: {
+        migrate: () => ({ status: 'skipped', reason: 'flag_disabled', migrated: false }),
+        appendEpisode: () => ({ status: 'skipped', reason: 'flag_disabled', persisted: false }),
+        appendFact: () => {
+          appendReached = true;
+          return { status: 'persisted', stored: true, duplicate: false, persisted: true, value: {} as never };
+        },
+        invalidateFact: () => ({ status: 'skipped', reason: 'flag_disabled', persisted: false }),
+        persistRelation: () => ({ status: 'persisted', persisted: true }),
+        recordFactAccess: () => ({ status: 'skipped', reason: 'flag_disabled', persisted: false }),
+        loadStore: () => ({ status: 'skipped', reason: 'flag_disabled', store: {} as never }),
+      },
+    });
+    expect(result.ok).toBe(true);
+    expect(appendReached).toBe(true);
+  });
+
   it('omits approvedBy when no operator is supplied', () => {
     const candidate = buildRuntimeMemoryTemporalFactCandidateFixture({ factId: 'c2' });
     const fact = promoteRuntimeMemoryFactCandidate(candidate, {

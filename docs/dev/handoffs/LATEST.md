@@ -1,3 +1,37 @@
+## 当前接力入口（2026-08-14）
+
+当前接力主题是 VerseShell `TF-0065` / P2-02 argv-only command profiles，已全部收尾：Windows batch 元数据补丁已审查并补齐验证，测试矩阵与 governed contract 测试已完成，证据文档/STATUS/编排计划/三份 README 已同步，全部工程门禁全绿，Task Forest closeout proposal `TFP-verseshell-p2-02-closeout-20260814` 已保存并应用（validate/export PASS），`TF-0065` 为 `done` 100%，唯一下一节点 `TF-0066` / VS-P2-03 diagnostics 已解锁为 `ready`。下一会话只允许启动 `TF-0066` / P2-03。详细交接见本文件后部“接力交接：VerseShell P2-02 中断点”章节。
+
+产品锁不变：`default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false`。不要并行启动 P3、P5 或任何 rollout。
+
+---
+
+## VerseShell Foundation：VS-P1-01 supervised ACI 工程包（2026-08-14）
+
+> 状态：`TF-0060` / P0-03 closeout 已确认应用；`TF-0061` / VS-P1-01 是 VerseShell 链唯一解锁且正在执行的工作包。P1 保持严格串行、default-off、fail-closed，不代表 canary、GA 或产品批准。
+
+- 新增 scoped spec：`harness/specs/tasks/verseshell-p1-supervised-aci.md`；生命周期 rule 已补充 process-manager `handshaking`、request/trace/deadline/process-key 关联、有界错误 metadata、只读 retry 与 kill-switch 约束。
+- 实现：`aci-client.ts` / `process-manager.ts` / `governed-process.ts` 现在提供 host-owned correlation、`starting -> handshaking -> ready -> backoff/stopped/failed`、一次受控只读 retry、restart exhaustion 和 operator kill switch；effectful/unknown 请求不重放且无 native/MCP/legacy fallback。
+- 验证：process-manager 24/24、governed lifecycle 6/6、VerseShell OpenClaw 目录 11 files / 61 tests、`pnpm verseshell:test` bundle 13/13 + runtime-bundle 11/11 + focused OpenClaw 57/57；Harness context 与 `--no-diff validate` PASS，证据见 `docs/dev/verseshell-foundation/P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md`。
+- residual：`typecheck:node` 与 `typecheck:web` 的直接复跑均通过；完整聚合 `pnpm run typecheck` 与 `pnpm run lint:check` 在 5 分钟窗口内未完成。P1 scoped ESLint/oxlint 均通过（仅两个 warning）。共享工作树 diff ownership 和 harness dry-run 依赖缺失均已明确记录；不通过扩大 touchedAreas 或跳过规则规避。
+- 下一动作：在 comms replay/compare 最终复跑并完成 P1 closeout evidence 后，用 Task Forest CLI 创建并应用 `TF-0061` closeout proposal，解锁唯一下一节点 `TF-0062`；P1-02 之前不扩展 facade/MCP/write/canary。
+
+---
+
+## VerseShell Foundation：VS-P0-03 governed real probe 工程门禁已完成，等待 Task Forest 收尾（2026-08-14）
+
+> 状态：应用 A 继续严格串行执行。`TF-0059` / VS-P0-02 与 `TF-0060` / VS-P0-03 工程证据均已完成；P0-03 closeout proposal 已确认应用，后续由 `TF-0061` / VS-P1-01 承接。全局与产品边界保持 `default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false`。
+
+- 对应源码：固定提交 `c3983694407a9ddb23505e05fad4a9eae653b283`，按 `source-inputs.json` 顺序应用四个 tracked patch；八个 ACI-Bench Python 输入、final assertions、Cargo.lock、toolchain 和禁止的 generated/ignored 输入均纳入 fail-closed 验证。
+- 构建证明：Rust `1.94.0`、`--locked`、`CARGO_INCREMENTAL=0`、固定 `SOURCE_DATE_EPOCH`、source remap 与 `/Brepro`；两套独立 source/target roots 的 `ae.exe` byte-identical，SHA-256 `ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786`，大小 `14879232`。
+- 测试证明：完整 Rust `cargo test` 与 `--no-run`、当前解释器 `python -m pytest -q` 2/2、双 handshake/catalog 校验均通过；bundle negative tests 13/13，运行时/manifest/UAS-05 聚焦测试 22/22。
+- 文档与验证器：`resources/verseshell/SOURCE.md`、`BUILD.md`、v2 manifest/source-inputs、Electron packaging 清单和 release toolchain 已同步；详细记录见 `docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md`。
+- 门禁结果：`pnpm verseshell:test`、`pnpm run typecheck`、按顺序执行的 comms replay/compare、manifest/package validation、`node --test scripts/verseshell-bundle.test.mjs` 和 `git diff --check` 均通过。Harness context 通过；diff-aware validate 与 `pnpm run harness:ci` 被共享工作树无关 changed paths 阻断，且 harness dry-run 子包缺少本地 `node_modules`，已记录为环境残余。
+- P0-03 证据：当前 verified `ae.exe` 的真实 approval denial、approved retry 一次、token isolation、artifact recovery 与 no-native-fallback 通过；详见 `docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md`。scoped Harness context/结构校验、`pnpm verseshell:test`、typecheck、comms replay/compare、manifest/package validation 与 `git diff --check` 已记录。
+- 该段为 P0 历史收尾记录；当前下一动作以本文件顶部的 P1-01 段为准。diff-aware Harness residual 继续诚实记录，不扩大 `touchedAreas` 或跳过规则。
+
+---
+
 ## 清理（2026-08-12）
 
 - 删除本轮产生的临时物：`scripts/issue-13-real-gateway-ab.mjs`、`scripts/issue-13-aimock-gateway-ab.mjs`（含 openclaw_runtime 下副本）、`.git/index.lock`（stale 空锁）、aimock 失败残留 `/tmp/openclaw/openclaw-qa-suite-*`、`artifacts/chain-audit/evidence/gateway.log`（A/B 尝试日志）、根目录 `.tmp-tf-list*.json`。
@@ -832,3 +866,134 @@ ode scripts/validate-runtime-authority-convergence.mjs --phase human ... 通过 
 用户最终判定：**accepted**（human-verdict.yaml：candidate 3209f0981、manifest file sha 2ea05762…、final-report sha 108a9906…、accepted_scenarios=[H-01..H-06]、failed_scenarios=[]；H-03 以 channel-conformance fixture 9/9 证据按用户明确 override 通过）。候选 worktree --phase human validator **PASS（exit 0）**。STATUS.md → program_status: done，accepted_work_packages = RC-00..RC-10。
 
 后续跟进（不阻塞，已记录）：H-01 FP-P1-11 DCS budget-channel 偏差（working_memory 未计费、cvk_addition 计费）与 FP-P1-01 Setup 验证方差，建议 runtime owner 复核。product locks 保持 false——done 不自动改变 default-on/release/GA/TF-0006。Task Forest closeout proposal 待受支持 CLI 恢复后创建。
+## VerseShell Foundation: VS-P1-02 observation/artifact engineering package (2026-08-14)
+
+Current state: `TF-0061` / VS-P1-01 is closed and `TF-0062` / VS-P1-02 is the only active
+VerseShell package. The work remains strictly serial, default-off, and fail-closed; it does not
+represent canary, GA, release, or product approval.
+
+- Scoped spec: `harness/specs/tasks/verseshell-p1-observation-artifact.md`.
+- Implemented shared artifact descriptors and lineage validation, independent JSON/observation and
+  stream bounds, explicit truncation/omitted-byte evidence, expiry/owner/digest checks, and bounded
+  `result.query` modes.
+- Wired `normalizer.ts` and `governed-exec.ts` to reject malformed handles, response-op drift, empty
+  successful query responses, oversized query results, expired/missing/owner-drift artifacts, and
+  effectful replay. The existing `verseshell_result` gate remains behind the existing rollout flags.
+- Verification: `pnpm verseshell:test` PASS (13 bundle, 11 runtime-bundle, 64 OpenClaw tests);
+  shared focused tests 15/15; node/web typecheck, scoped ESLint/oxlint, comms replay/compare PASS.
+- Harness: `context` and `--no-diff validate` PASS. Ordinary diff-aware validate remains blocked by
+  unrelated shared-worktree paths and missing harness child dependencies; this is recorded in the
+  P1-02 evidence and is not bypassed.
+- Documentation updated: `STATUS.md`, `FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md`, all three README
+  variants, and `P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md`.
+- Next action: create and apply the `TF-0062` closeout proposal only after final diff review and
+  Task Forest validation. Until then, do not unlock `TF-0063` or any P2+, write, MCP, or canary work.
+- Locks remain `default-off`, `liveReady=false`, `productApproved=false`, `defaultOn=false`.
+---
+## VerseShell Foundation：VS-P1-03 MCP 兼容层收紧（2026-08-14）
+
+> 状态：`TF-0062` / VS-P1-02 closeout 已通过 stale review 并应用；`TF-0063` / VS-P1-03 已完成实现与 scoped evidence，Task Forest closeout 尚待保存/应用。继续严格串行，`default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false` 不变。
+
+- 新增 `harness/specs/tasks/verseshell-p1-mcp-compatibility.md` 与 `harness/specs/rules/verseshell-mcp-compatibility-boundary.md`，定义外部兼容 adapter、默认 deny、拒绝 `cap all`、development-only eval/shell、显式 argv 和版本单源约束。
+- `resources/verseshell-mcp` 已加入根 workspace；frozen lockfile 解析 `@modelcontextprotocol/sdk`；`src/identity.js` 从 package.json 与 runtime manifest 读取版本/protocol/catalog identity；`src/policy.js` 实现与 pinned runtime 对齐的 capability/profile/argv fail-closed 策略，并隐藏 P1 effectful compatibility tools。
+- 产品 profile 无 grant 时只列出 `verseshell_health` 且不启动 runtime；`verseshell_eval` 与 shell-string compatibility 只在 development profile；shell 兼容只构造显式 `shell.exec([...])`。
+- 验证：Harness context/`--no-diff` validate PASS；MCP policy/start/runtime smoke 11/11；`pnpm verseshell:test` bundle 13/13 + runtime-bundle 11/11 + OpenClaw 64/64 + MCP 11/11；`typecheck:node` PASS；comms replay→compare PASS；`git diff --check` PASS。
+- 证据见 `docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md`。普通 diff-aware validate、aggregate lint/typecheck 与 repository-wide diff residual 仍须诚实记录，不能当作 release/canary 证据。
+
+下一步：通过 Task Forest CLI 保存并应用 `TF-0063` closeout，运行 validate/export；然后只启动 `TF-0064` / VS-P2-01 只读 facade。不得并行启动 P2-02、P3 写入、provider canary 或任何 rollout。
+
+---
+## VerseShell Foundation：VS-P2-01 只读 facade 工程包（2026-08-14）
+
+> 状态：`TF-0064` / VS-P2-01 已完成实现和 focused 验证，等待 Task Forest closeout；严格串行、
+> default-off、fail-closed。P2-02、写入、provider canary 和 rollout 未启动。
+
+- 新增 `openclaw_runtime/src/agents/verseshell/readonly-facade.ts`，仅提供稳定模型面的
+  `read_file`、`search_content`、`result_query`。路径、glob、窗口、query 和 result ranges 均有界；
+  绝对路径、workspace escape、NUL、malformed handle 和 owner drift fail-closed。
+- adapter 复用 `VerseShellAciClient`/`VerseShellProcessManager`，仅调用 `file.view`、`repo.search`、
+  `result.query`，没有 direct spawn、MCP、Gateway HTTP 或 native fallback。cache key 绑定
+  workspace/revision/policy/operation/args，并有 TTL/容量上限。
+- `agent-tools.ts` 仅在 shell-tools 阶段接入可选数组；任一 readiness flag 缺失或 kill switch 触发时
+  工具完全不可见。模型 facade 四项顺序仍为 `read_file -> search_content -> run_command -> result_query`。
+- 证据：VerseShell 13 files / 71 tests PASS；root facade contract 3/3；`pnpm run typecheck:node`、
+  `pnpm run comms:replay`、`pnpm run comms:compare`、`git diff --check`、Harness `--no-diff validate`
+  PASS。普通 diff-aware validate 被共享工作树无关 ownership paths 阻塞，已诚实记录在
+  `docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md`。
+- 锁保持：`default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false`。
+
+下一步：完成 `TF-0064` closeout proposal 的 Task Forest validate/export；应用后才解锁唯一的
+`TF-0065` / VS-P2-02 argv-only command profiles。不要并行启动 P2-03、P3、provider canary 或任何 rollout。
+## 接力交接：VerseShell P2-02 中断点（2026-08-14）
+
+### 当前目标
+
+本任务的总目标仍是：无预算限制完成 `docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md` 的全部 VerseShell 开发规划。已确认采用严格串行路线：
+
+`P0 -> P1-01 -> P1-02 -> P1-03 -> P2-01 -> P2-02 -> P2-03 -> P3 journal/write -> P5 真实 canary`
+
+产品锁必须始终保持：`default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false`。不得提前做 provider rollout、canary、GA 或 native fallback。
+
+### 已完成并有证据的工作包
+
+- `TF-0058` / P0-01 runtime startup
+- `TF-0059` / P0-02 reproducible bundle
+- `TF-0060` / P0-03 governed approval probe
+- `TF-0061` / P1-01 supervised ACI lifecycle
+- `TF-0062` / P1-02 bounded observation/artifact/result query
+- `TF-0063` / P1-03 MCP compatibility adapter
+- `TF-0064` / P2-01 read-only facade（`read_file`、`search_content`、`result_query`）
+
+Task Forest 当前真实状态：`TF-0061`、`TF-0062`、`TF-0063`、`TF-0064` 为 `done`；`TF-0065` / P2-02 仍显示为唯一 `ready` 节点。不要把它标为 done，直到剩余矩阵、证据和文档收尾完成。
+
+### 本轮 P2-02 已落盘的实现
+
+已新增/修改 argv-only command profile 路径：
+
+- `openclaw_runtime/src/agents/verseshell/command-profiles.ts`
+- `openclaw_runtime/src/agents/verseshell/command-profiles.test.ts`
+- `tests/unit/verseshell-command-profiles.test.ts`
+- `harness/specs/tasks/verseshell-p2-command-profiles.md`
+- `harness/specs/rules/verseshell-command-profile-boundary.md`
+- `openclaw_runtime/src/agents/verseshell/shell-command.ts`（+ 新增 `shell-command.test.ts`）
+- `openclaw_runtime/src/agents/verseshell/governed-exec.ts`
+- `openclaw_runtime/src/agents/verseshell/governed-process.ts`
+- `openclaw_runtime/src/agents/bash-tools.exec.ts`
+- `openclaw_runtime/src/agents/bash-tools.exec-host-gateway.ts`
+- `openclaw_runtime/src/agents/bash-tools.exec-runtime.ts`
+- `openclaw_runtime/test/vitest/vitest.verseshell.config.ts`（include 增补 `shell-command.test.ts`）
+
+设计结果：普通单段命令在 approval 前生成 host-owned immutable execution plan，直接传递 effective argv；`pnpm/npm/corepack/test/build/lint/git` 由 host 推导 profile（含 `exec`/`dlx` 常见单动词 runner 透传，cargo/go/dotnet 保持保守 generic），模型不能选择 profile；pipeline/chain/redirect/heredoc/inline evaluation/显式 interpreter 只进入显式 terminal-shell 兼容边界；approval 后不再从 display command 重解析；cwd/env/timeout/output/write-policy 都是有界 metadata。
+
+Windows batch 元数据补丁已审查并验证：`.cmd/.bat` 需要已解析脚本路径和可审计 `ComSpec`/`SystemRoot`，plan 记录 `resolvedScript`、`interpreter`、`interpreterProfile: "windows-cmd"`；缺少脚本身份或解释器身份时 fail-closed；`governed-process` 在 process 边界校验 windows-cmd plan 的 argv[0]===resolvedScript，漂移即 `E_VERSESHELL_SCRIPT_IDENTITY`。`.exe/.com` 保持直接 argv。Rust `StartArgs` 不接受 interpreter 字段，运行时自行从 resolved script + env 推导 cmd 并在 observation 回传 `interpreter`。
+
+### 最终验证（Windows batch 补丁之后，2026-08-14 全绿）
+
+- `pnpm verseshell:test`：PASS（bundle 13/13、runtime bundle 11/11、OpenClaw VerseShell 15 files / 141 tests、MCP 11/11）
+- `pnpm exec vitest run tests/unit/verseshell-command-profiles.test.ts --maxWorkers=1`：PASS 6/6
+- `pnpm run typecheck:node`：PASS（exit 0）
+- `pnpm run typecheck`（聚合 node+web+ext bridge）：PASS（三者 exit 0，约 101s）
+- `pnpm run comms:replay`：PASS
+- `pnpm run comms:compare`：PASS（0 丢失/重复/乱序，吞吐/延迟 delta 0.00%）
+- `git diff --check`：PASS（tracked）；untracked 文件的 trailing-whitespace/final-newline 扫描干净
+- scoped ESLint（8 个改动 TS 文件）：PASS（0 errors / 0 warnings）
+- `pnpm harness context --spec harness/specs/tasks/verseshell-p2-command-profiles.md`：PASS
+- `pnpm harness validate --no-diff --spec harness/specs/tasks/verseshell-p2-command-profiles.md`：PASS（普通 diff-aware validate 被共享工作树无关 ownership 与 harness 子包缺 node_modules 阻断，已如实记录，未扩大 touchedAreas）
+
+这些是工程/回归门禁，不是 canary、GA 或产品批准证据。
+
+### 接力 agent 必须完成的事项
+
+1. ✅ Windows batch 补丁已审查并验证：`.exe/.com` direct argv、`.cmd/.bat` audited `cmd.exe`、resolved script identity、PATH/PATHEXT（analysis effectiveArgv）matrix 全覆盖。
+2. ✅ spaces/Unicode executable/cwd/argv、pnpm/npm/corepack 组合、sanitized env bounds（keys/bytes/NUL）、timeout clamp（1ms floor/profile max）、output clamp、non-zero exit、large output/result recovery（oversized/missing result.query 拒绝）、no-native-fallback paired test（governed-exec-runtime 3/3）均补齐。
+3. ✅ `governed-process` 边界新增 windows-cmd 身份审计（不重新解释 display command），contract 测试覆盖 plan argv 透传、drift fail-closed、clamp。
+4. ✅ `docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md` 已创建（base SHA `b04c22a6`、spec/rule、命令与退出码、矩阵、dirty-worktree residual、四个产品锁）。
+5. ✅ `STATUS.md`、`FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md`（v1.2）、本文件顶部旧段落、`README.md`/zh/ja 已同步，不再声称 P1-01/P1-02 或 P2-01 是当前工作包。
+6. ✅ `TFP-verseshell-p2-02-closeout-20260814` 已通过 Task Forest CLI `proposal-save`（预校验 + base_graph_hash）→ `proposal-apply --yes` 应用，`validate`（校验通过）与 `export`（HTML 已导出）均 PASS；未直接编辑 `.agent-workbench/task-forest/` 图文件。
+7. ✅ `TF-0065` 为 `done` 100%，`TF-0066` / P2-03 diagnostics 已解锁为唯一 `ready` 节点；P3 或 P5 未启动，禁止并行启动。
+
+### 工作树和交接边界
+
+当前工作树包含此前多个 VerseShell 阶段的未提交修改和新文件；本轮没有 commit、push 或 reset。不要回滚其他 agent/user 的改动。继续前先 `git status --short`、`git diff --stat`，并保留所有已生成 evidence/proposal 文件。
+
+---

@@ -45,9 +45,9 @@ const VIEW_TOOL_NAMES = [
 ] as const;
 
 /**
- * R7-1 T4: the three memory switches R3-2 catalogued as unavailable
- * (R3-1 audit: persist rejected by E-1, injectPilot unwired, role-memory
- * fake-surface). Only these get the memory-channel boundary note.
+ * R7-1 T4: memory-channel switches get the semantic boundary note.
+ * runtime-memory-persist stays UI-unavailable until Settings can select the
+ * runtime-memory slot owner; injectPilot and role-memory are wired producers.
  */
 const MEMORY_FLAG_IDS = [
   'runtime-memory-persist',
@@ -798,7 +798,7 @@ export function DcsProdFlagsPanel() {
                 </div>
                 <Switch
                   checked={selectedState.enabled}
-                  disabled={busyId === selected.id || loading}
+                  disabled={busyId === selected.id || loading || Boolean(selectedUnavailableReason)}
                   onCheckedChange={(checked) => void onToggle(selected.id, checked)}
                   data-testid={`settings-dcs-prod-flag-switch-${selected.id}`}
                 />

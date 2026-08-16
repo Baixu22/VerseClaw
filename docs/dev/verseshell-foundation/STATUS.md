@@ -2,7 +2,169 @@
 
 Status: default-off controlled canary foundation. The strict typed ACI route is wired, but no VerseShell capability is enabled by default and this is not GA or release approval.
 
+## P0-02 reproducible bundle update (2026-08-14)
+
+`TF-0059` / VS-P0-02 now has a tracked source-input manifest and an ordered four-patch
+corresponding-source stack. The clean reconstruction records the pinned commit, eight recovered
+ACI-Bench Python inputs, final source assertions, Cargo lockfile/toolchain, current-interpreter
+Python contract, handshake/catalog identity, and deterministic build controls. Two independent
+Windows x64 release builds are byte-identical (`ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786`,
+14,879,232 bytes), and the full Rust/Python qualification proof is recorded in
+[`P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md`](./P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md).
+
+The bundle, focused regression, typecheck, communication replay/compare, manifest, and package
+validation gates are green. Harness diff-aware validation remains blocked by the shared worktree's
+unrelated changed paths (and its dry-run child lacks local harness dependencies); this is recorded
+as an environment/ownership residual rather than bypassed. This closes the source/build identity
+portion of P0-02 only. It does not authorize P0-03 governed approval probes, lifecycle/product
+rollout, canary traffic, or default-on. Keep `default-off`, `liveReady=false`,
+`productApproved=false`, and `defaultOn=false`.
+
 The capability-gap audit, target architecture, rejected surfaces, and dependency-ordered implementation schedule are documented in [CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md](./CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md). That report is planning input; this file remains authoritative for current rollout status.
+
+## P0-03 governed real probe update (2026-08-14)
+
+`TF-0060` / VS-P0-03 has now exercised the current verified Windows x64 binary through the real
+OpenClaw governed route. The probe preserves `E_NEEDS_APPROVAL` before host approval, rejects the
+parent `AETHER_APPROVE_ALL` escape, retries exactly once in an action-bound token transport,
+closes that transport after the action, reduces large output to bounded observation plus a
+`result://` artifact, and recovers the artifact through `result.query`. Runtime/default-off tests
+also prove that contract failure and compatibility fallback settings remain fail-closed with no
+native-shell handoff.
+
+The focused OpenClaw suite is 11 files / 57 tests; `pnpm verseshell:test` is 13 bundle tests + 11
+runtime-bundle tests + 57 OpenClaw tests. Node/web typecheck, manifest package validation, comms
+replay/compare, and `git diff --check` pass. The test tsconfig retains 1028 pre-existing
+observation-only errors; they are reported but do not fail the node/web gate. Full details are in
+[`P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md`](./P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md).
+
+This is engineering evidence only. It does not provide provider receipts, human recovery,
+paired A/B, soak, canary eligibility, default-on, GA, or product approval. The P0-03 closeout
+proposal has been confirmed and applied; P1-01 and P1-02 closeouts are also applied, with the
+VS-P1-03 compatibility boundary now under review.
+Keep `default-off`, `liveReady=false`, `productApproved=false`, and `defaultOn=false`.
+
+## P1-01 supervised ACI update (2026-08-14)
+
+`TF-0061` / VS-P1-01 adds the supervised execution-kernel contract on top of the verified P0
+route. `VerseShellProcessManager` now exposes the explicit `starting -> handshaking -> ready ->
+backoff/stopped/failed` state machine, host-owned request/trace/deadline metadata, bounded lifecycle
+error metadata, explicit read-only/idempotent retry opt-in, restart exhaustion, and an operator kill
+switch that fails closed without native/MCP/legacy fallback. The governed process adapter carries one
+parent trace through start, poll, stdin, EOF, and kill while preserving owner and cursor checks.
+
+Focused process-manager coverage is 24/24 and governed lifecycle coverage is 6/6. The full
+`pnpm verseshell:test` route is green (13 bundle tests, 11 runtime-bundle tests, 57 focused OpenClaw
+tests); the complete VerseShell OpenClaw directory is 11 files / 61 tests. The evidence is recorded
+in [`P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md`](./P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md).
+
+The current repository-wide node typecheck still reports two unrelated provider model typing errors
+(`electron/services/providers/provider-runtime-sync.ts` and `electron/utils/provider-registry.ts`);
+web typecheck passes and the test-project observation errors remain non-fatal. This residual is not
+waived or broadened into the P1 touched areas. Harness `--no-diff` validation and focused comms/diff
+gates are recorded in the evidence; shared-worktree diff ownership remains a known residual.
+P1 engineering evidence does not authorize canary traffic, provider claims, default-on, GA, or
+product approval. Keep all rollout/product locks closed.
+
+## P1-02 bounded observation and artifact update (2026-08-14)
+
+`TF-0062` / VS-P1-02 extends the P1-01 process owner with a shared, fail-closed result contract.
+The shared VerseShell types and validators now cover independent JSON-frame and observation bounds,
+bounded stdout/stderr projections, explicit `raw_bytes`/`retained_bytes`/`omitted_bytes` evidence,
+content-addressed artifact digest and handle identity, owner/process lineage, retention expiry, and
+bounded `meta`/`head`/`tail`/`slice`/`grep`/`raw` query modes. Runtime output fields that are not
+authoritatively verifiable are rejected or kept outside the model-visible projection; raw command,
+approval token, and unbounded stderr are not promoted into metadata.
+
+`normalizer.ts` rejects malformed result handles and projects only validated stream/artifact metadata.
+`governed-exec.ts` validates query bounds before transport, checks the `result.query` response
+operation and response size, classifies missing/expired/owner-drift artifacts fail-closed, and does
+not retry or switch execution owners. The existing real Windows artifact recovery path remains green,
+including the runtime's `encoding`, `raw_complete`, and `returned_bytes` fields.
+
+Focused evidence is recorded in
+[`P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md`](./P1-OBSERVATION-ARTIFACT-EVIDENCE-2026-08-14.md).
+The P1-02 closeout proposal has been applied. The implementation remains engineering evidence only:
+it does not authorize read/write adapters, provider traffic, canary, default-on, GA, or product approval. Keep
+`default-off`, `liveReady=false`, `productApproved=false`, and `defaultOn=false`.
+
+## P1-03 MCP compatibility boundary update (2026-08-14)
+
+`TF-0063` / VS-P1-03 hardens `resources/verseshell-mcp` as an external compatibility adapter.
+The package is now a tracked workspace member with a frozen lockfile and a real
+`@modelcontextprotocol/sdk` dependency. Product profile capability grants are deny-by-default;
+`all`, `*`, and unknown capabilities fail before startup, and `tools/list` is filtered by the exact
+profile/grant. The adapter reads package/runtime/protocol/catalog identity from tracked metadata and
+the health payload omits workspace, executable path, approval token, and raw command data.
+
+`verseshell_eval` and shell-string compatibility are development-profile-only. The development shell
+adapter accepts explicit argv, rejects shell metacharacters and malformed quoting, then forwards only
+the typed `shell.exec([...])` expression through the runtime capability boundary. Product startup with
+no grants lists only health and does not spawn the runtime. Focused policy and JSON-RPC startup smoke
+coverage is 11/11; the full VerseShell route is bundle 13/13, runtime-bundle 11/11, OpenClaw 64/64,
+and MCP 11/11. Capability names are aligned with the pinned runtime grant vocabulary, effectful
+compatibility tools remain deferred, and a real Windows x64 read smoke covers the startup path.
+Details are in
+[`P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md`](./P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md).
+
+This remains engineering evidence only. MCP is not an internal dependency and this package does not
+authorize read/write adapters, provider traffic, canary, default-on, GA, or product approval. Keep
+all rollout/product locks closed.
+
+## P2-01 read-only facade update (2026-08-14)
+
+`TF-0064` / VS-P2-01 now connects the stable `read_file`, `search_content`, and `result_query`
+model surface to the existing host-owned `VerseShellAciClient`. The adapter is materialized only
+when `verifiedRuntime`, `typedAci`, `facade`, `governedExec`, and `artifactResults` are explicitly
+enabled; default-off and the operator kill switch keep all three tools absent. It validates
+workspace-relative paths, bounded search/read/query inputs, result handles, artifact digest/expiry,
+and workspace owner lineage. Read/search cache keys include workspace, revision, policy digest,
+operation, and canonical arguments, with bounded TTL and capacity.
+
+P2-01 uses only `file.view`, `repo.search`, and `result.query` through the supervised ACI owner. It
+does not spawn a process, call MCP or Gateway HTTP, expose internal VerseShell operations, add a
+native fallback, or perform writes. Focused coverage is VerseShell 13 files / 71 tests plus the root
+facade contract 3/3; node typecheck, comms replay/compare, and diff check pass. Ordinary diff-aware
+Harness validation remains blocked by unrelated shared-worktree ownership paths; `--no-diff`
+validation passes and the residual is recorded in
+[`P2-READONLY-FACADE-EVIDENCE-2026-08-14.md`](./P2-READONLY-FACADE-EVIDENCE-2026-08-14.md).
+
+This is engineering evidence only. P2-02 command profiles, diagnostics, writes, provider-backed
+canary, default-on, GA, and product approval remain out of scope. Keep `default-off`,
+`liveReady=false`, `productApproved=false`, and `defaultOn=false`.
+
+## P2-02 argv-only command profiles update (2026-08-14)
+
+`TF-0065` / VS-P2-02 converts OpenClaw's pre-approval command analysis into an immutable
+host-owned execution plan. Single-segment ordinary coding commands run as direct argv; pipelines,
+chains, redirects, heredocs, inline evaluation, and explicit interpreters stay explicit
+terminal-shell payloads. The host derives `test`/`build`/`lint`/`git`/`generic` profiles
+from the analysis (including `pnpm`/`npm`/`corepack` `exec`/`dlx` runner passthrough);
+the model never selects a profile, interpreter, PATH/PATHEXT resolution, policy, or approval token.
+
+The plan binds before the approval wait and flows through the gateway allowlist into the governed
+process start; approval never re-parses the display command. Windows `.exe`/`.com` stay direct
+argv; `.cmd`/`.bat` retain resolved script identity plus an audited
+`ComSpec`/`SystemRoot` `cmd.exe` interpreter (`interpreterProfile: "windows-cmd"`), and the
+runtime derives the interpreter from the resolved script path plus env. A drifted windows-cmd plan
+fails closed at the process boundary. cwd/env/argv/timeout/output bounds are carried on the plan
+with fail-closed errors; effectful requests are never replayed and no native/MCP/legacy fallback is
+reachable.
+
+Focused coverage: `pnpm verseshell:test` PASS (bundle 13/13, runtime-bundle 11/11, OpenClaw
+VerseShell 15 files / 141 tests, MCP 11/11); root contract 6/6; node typecheck and the aggregate
+node+web typecheck, comms replay/compare, scoped ESLint, and diff check PASS. Harness
+`--no-diff` validation passes;
+ordinary diff-aware validation remains blocked by the recorded shared-worktree residual. Details
+are in
+[`P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md`](./P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md).
+The `TF-0065` closeout proposal `TFP-verseshell-p2-02-closeout-20260814` has been saved and
+applied through the Task Forest CLI (`validate`/`export` PASS); `TF-0065` is `done` at 100%
+and the only next node `TF-0066` / VS-P2-03 diagnostics is now `ready`.
+
+This is engineering evidence only. P2-03 diagnostics, P3 writes, provider-backed canary,
+default-on, GA, and product approval remain unauthorized. Keep `default-off`,
+`liveReady=false`, `productApproved=false`, and `defaultOn=false`.
 
 ## Non-negotiable decisions
 

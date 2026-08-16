@@ -406,6 +406,36 @@ Verse Claw employs a **dual-process architecture** with a unified host API layer
 
 VerseShell is an optional Windows x64 execution backend for internal canaries. It is disabled by default and is not a general-availability or native-shell replacement. When explicitly enabled, Agent `exec` calls still pass OpenClaw's allowlist/approval policy, then run through the verified bundled `ae.exe` with a workspace jail, strict repository-owned policy, only the `shell.exec` capability, and an action-bound one-time approval token. Runtime, protocol, catalog, workspace, capability, or policy drift fails closed; governed execution never falls back to the native shell.
 
+The bundled runtime is accepted only from the pinned corresponding source in
+[`resources/verseshell/source-inputs.json`](resources/verseshell/source-inputs.json): a clean commit,
+ordered tracked patches, allowlisted recovered inputs, locked Rust qualification, current-interpreter
+Python verification, and two byte-identical Windows builds. See [`SOURCE.md`](resources/verseshell/SOURCE.md),
+[`BUILD.md`](resources/verseshell/BUILD.md), and the [P0-02 evidence](docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md).
+This source/build gate does not enable the canary or change the default-off rollout locks.
+The governed approval denial, one-time token-isolated retry, bounded artifact recovery, and no-native-fallback probe are recorded separately in the [P0-03 evidence](docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md); this engineering result does not qualify provider-backed canary or product approval.
+The P1 supervised ACI kernel now records explicit `starting`/`handshaking`/`ready`/`backoff`/`stopped`/`failed` lifecycle, host-owned request/trace/deadline metadata, bounded lifecycle errors, opt-in read-only retry, and an operator kill switch that fails closed. See the [P1-01 evidence](docs/dev/verseshell-foundation/P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md); this remains engineering evidence only and does not enable rollout.
+The external `resources/verseshell-mcp` compatibility adapter is now a tracked workspace package with a frozen SDK lockfile, deny-by-default product profile, runtime-aligned capability filtering, strict agent startup, and package/runtime/protocol identity checks. `verseshell_eval` and shell-string compatibility are development-profile-only; effectful compatibility tools remain deferred, the compatibility shell path accepts explicit argv, and nothing becomes ClawX's internal execution route. See the [P1-03 evidence](docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md). Keep MCP compatibility, writes, native fallback, canary traffic, and rollout locks disabled by default.
+
+The P2-01 read-only facade now connects only the stable `read_file`, `search_content`, and
+`result_query` surface to the host-owned typed ACI route. It is independently default-off and
+materializes only when all five readiness flags are explicit and the kill switch is clear. Workspace
+escapes, absolute paths, NULs, unbounded queries, malformed result handles, expired artifacts, and
+owner drift fail closed; cache identity includes workspace, revision, policy, operation, and args.
+This is engineering evidence only and does not enable command profiles, writes, canary traffic,
+default-on, GA, or product approval. See the [P2-01 evidence](docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md).
+
+The P2-02 argv-only command profiles now turn OpenClaw's pre-approval command analysis into an
+immutable host-owned execution plan. Ordinary test/build/lint/git commands run as direct argv;
+pipelines, chains, redirects, heredocs, inline evaluation, and explicit interpreters remain
+separate terminal-shell payloads. The host derives the profile (including `pnpm`/`npm`/`corepack`
+`exec`/`dlx` runner passthrough); the model never selects a profile, interpreter, PATH/PATHEXT
+resolution, policy, or approval token. Windows `.exe`/`.com` stay direct argv, `.cmd`/`.bat`
+keep their resolved script identity under an audited `cmd.exe` interpreter, and approval never
+re-parses the display command. cwd/env/argv/timeout/output bounds fail closed and no
+native/MCP/legacy fallback is reachable. This is engineering evidence only and does not enable
+diagnostics, writes, canary traffic, default-on, GA, or product approval. See the
+[P2-02 evidence](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md).
+
 Use this conservative `openclaw.json` configuration:
 
 ```json
@@ -429,7 +459,7 @@ Use this conservative `openclaw.json` configuration:
 }
 ```
 
-`tools.exec.host=verseshell` is an operator-owned global or per-agent cohort selection. The session directive `/exec host=verseshell security=allowlist ask=on-miss` may select the same host when configuration allows the override; VerseShell is not exposed as a per-call model host. Sandbox, node, remote/provider-native, and elevated execution retain their existing owners. Large outputs return `result://sha256/...` handles; the Agent can inspect bounded slices with `verseshell_result`. Keep `legacyEval`, `mcpCompatibility`, and `compatibilityNativeFallback` disabled. For immediate rollback, set `runtime.verseShellFoundation.killSwitch` to `true` or export `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`, then restart the Gateway. Local engineering coverage is not real cohort, provider-usage, ROI, soak, or product-graduation evidence.
+`tools.exec.host=verseshell` is an operator-owned global or per-agent cohort selection. The session directive `/exec host=verseshell security=allowlist ask=on-miss` may select the same host when configuration allows the override; VerseShell is not exposed as a per-call model host. Sandbox, node, remote/provider-native, and elevated execution retain their existing owners. Large outputs return `result://sha256/...` handles; the Agent can inspect bounded slices with `verseshell_result`. Result handles and lineage are runtime-owned and content-addressed; expired, missing, digest-mismatched, or owner-mismatched artifacts fail closed, and truncation reports retained/omitted byte counts instead of silently dropping output. Keep `legacyEval`, `mcpCompatibility`, and `compatibilityNativeFallback` disabled. For immediate rollback, set `runtime.verseShellFoundation.killSwitch` to `true` or export `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`, then restart the Gateway. Local engineering coverage is not real cohort, provider-usage, ROI, soak, or product-graduation evidence.
 
 ---
 

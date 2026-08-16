@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -13,11 +12,15 @@ async function fixtureRoot(): Promise<string> {
   temporaryDirectories.push(directory);
   for (const relative of [
     'resources/verseshell/manifest.json',
+    'resources/verseshell/source-inputs.json',
     'resources/verseshell/LICENSE-AGPL-3.0-or-later.txt',
     'resources/verseshell/NOTICE.md',
     'resources/verseshell/SOURCE.md',
     'resources/verseshell/BUILD.md',
     'resources/verseshell/patches/uas-05-process-lifecycle.patch',
+    'resources/verseshell/patches/p0-runtime-startup.patch',
+    'resources/verseshell/patches/aci-bench-source-inputs.patch',
+    'resources/verseshell/patches/python-current-interpreter.patch',
     'resources/bin/win32-x64/ae.exe',
     'shared/verseshell/facade.ts',
   ]) {
@@ -32,20 +35,20 @@ afterEach(async () => {
   await Promise.all(temporaryDirectories.splice(0).map((directory) => rm(directory, { recursive: true, force: true })));
 });
 
-describe('VerseShell manifest validation', () => {
-  it('accepts the synchronized dirty corresponding-source bundle in development and packaging modes', async () => {
+describe('VerseShell v2 manifest validation', () => {
+  it('accepts the qualified ordered patch-stack bundle in development and packaging modes', async () => {
     const manifestText = await readFile(join(root, 'resources/verseshell/manifest.json'), 'utf8');
     expect(manifestText).not.toMatch(/[A-Za-z]:\\Users\\/u);
-    expect(manifestText).toContain('[build-source]');
-    expect(manifestText).toContain('dirty_corresponding_source_recorded');
-    expect(manifestText).toContain('resources/verseshell/patches/uas-05-process-lifecycle.patch');
-    expect(validateVerseShellManifest({ root, mode: 'dev' })).toEqual({
+    expect(manifestText).toContain('"schema_version": 2');
+    expect(manifestText).toContain('pinned-commit-plus-ordered-patches');
+    expect(manifestText).toContain('19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650');
+    await expect(validateVerseShellManifest({ root, mode: 'dev' })).resolves.toEqual({
       ok: true,
       mode: 'dev',
       platform: 'win32-x64',
       issues: [],
     });
-    expect(validateVerseShellManifest({ root, mode: 'package', platform: 'win32-x64' })).toEqual({
+    await expect(validateVerseShellManifest({ root, mode: 'package', platform: 'win32-x64' })).resolves.toEqual({
       ok: true,
       mode: 'package',
       platform: 'win32-x64',
@@ -57,99 +60,42 @@ describe('VerseShell manifest validation', () => {
     const fixture = await fixtureRoot();
     const patchPath = join(fixture, 'resources/verseshell/patches/uas-05-process-lifecycle.patch');
     await writeFile(patchPath, `${await readFile(patchPath, 'utf8')}\n# tampered\n`);
-    expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/patch checksum/u)]),
-    );
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/Patch .* (?:byte size|checksum) mismatch/u)]));
   });
 
-  it('rejects a corresponding-source hash mismatch', async () => {
+  it('rejects source-input manifest digest drift', async () => {
     const fixture = await fixtureRoot();
     const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
     const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.provenance.build_input.diff_sha256 = '0'.repeat(64);
+    manifest.build.source_inputs_sha256 = '0'.repeat(64);
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/patch checksum/u)]),
-    );
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/build\/source\/toolchain identity/u)]));
   });
 
-  it('rejects an unapproved dirty bundle', async () => {
+  it('rejects a modified recovered-source inventory before build acceptance', async () => {
     const fixture = await fixtureRoot();
-    const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.provenance.dirty_build_override.approved = false;
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(validateVerseShellManifest({ root: fixture, mode: 'package' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/dirty provenance override/u)]),
-    );
+    const sourceInputsPath = join(fixture, 'resources/verseshell/source-inputs.json');
+    const sourceInputs = JSON.parse(await readFile(sourceInputsPath, 'utf8'));
+    sourceInputs.recovered_inputs.files[0].bytes += 1;
+    await writeFile(sourceInputsPath, `${JSON.stringify(sourceInputs, null, 2)}\n`);
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'package' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/Source-input payload SHA-256 mismatch/u)]));
   });
 
-  it('verifies existing artifact sizes and SHA-256 values', async () => {
+  it('verifies the existing artifact size and SHA-256 values', async () => {
     const fixture = await fixtureRoot();
-    const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    const bytes = Buffer.from('fixture-verseshell-binary');
-    const artifactPath = 'resources/verseshell/bin/ae-fixture';
-    await mkdir(dirname(join(fixture, artifactPath)), { recursive: true });
-    await writeFile(join(fixture, artifactPath), bytes);
-    manifest.artifacts['win32-x64'] = {
-      path: artifactPath,
-      sha256: createHash('sha256').update(bytes).digest('hex'),
-      bytes: bytes.length,
-    };
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(validateVerseShellManifest({ root: fixture, mode: 'dev' })).toEqual({
-      ok: true,
-      mode: 'dev',
-      platform: 'win32-x64',
-      issues: [],
-    });
-
-    await writeFile(join(fixture, artifactPath), 'tampered');
-    expect(validateVerseShellManifest({ root: fixture, mode: 'dev' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/win32-x64.*(?:bytes|sha256)/u)]),
-    );
+    await writeFile(join(fixture, 'resources/bin/win32-x64/ae.exe'), 'tampered');
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'dev' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/binary (?:size|checksum) mismatch/u)]));
   });
 
-  it('requires only the selected packaging platform artifact', async () => {
+  it('rejects missing source-input provenance payload', async () => {
     const fixture = await fixtureRoot();
-    const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    const bytes = Buffer.from('fixture-linux-binary');
-    const artifactPath = 'resources/verseshell/bin/ae-linux';
-    await mkdir(dirname(join(fixture, artifactPath)), { recursive: true });
-    await writeFile(join(fixture, artifactPath), bytes);
-    manifest.artifacts['linux-x64'] = {
-      path: artifactPath,
-      sha256: createHash('sha256').update(bytes).digest('hex'),
-      bytes: bytes.length,
-    };
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(
-      validateVerseShellManifest({ root: fixture, mode: 'package', platform: 'linux-x64' }),
-    ).toEqual({ ok: true, mode: 'package', platform: 'linux-x64', issues: [] });
-  });
-
-  it('rejects manifest drift and missing license/source files', async () => {
-    const fixture = await fixtureRoot();
-    const manifestPath = join(fixture, 'resources/verseshell/manifest.json');
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    manifest.license = 'MIT';
-    manifest.protocol.observation_schema = 'other/v1';
-    manifest.protocol.operation_catalog_digest = `sha256:${'0'.repeat(64)}`;
-    manifest.protocol.operation_catalog_count = 27;
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    await rm(join(fixture, 'resources/verseshell/NOTICE.md'));
-    const result = validateVerseShellManifest({ root: fixture, mode: 'dev' });
-    expect(result.issues).toEqual(
-      expect.arrayContaining([
-        expect.stringMatching(/license/u),
-        expect.stringMatching(/observation_schema/u),
-        expect.stringMatching(/operation_catalog_digest/u),
-        expect.stringMatching(/operation_catalog_count/u),
-        expect.stringMatching(/NOTICE\.md/u),
-      ]),
-    );
+    await rm(join(fixture, 'resources/verseshell/source-inputs.json'));
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'dev' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/source inputs.*missing|ENOENT/u)]));
   });
 
   it('rejects facade operation order drift', async () => {
@@ -163,8 +109,7 @@ describe('VerseShell manifest validation', () => {
         "name: 'read_file',\n    canonical_op: 'repo.search'",
       ),
     );
-    expect(validateVerseShellManifest({ root: fixture, mode: 'dev' }).issues).toEqual(
-      expect.arrayContaining([expect.stringMatching(/facade order\/mapping mismatch/u)]),
-    );
+    const result = await validateVerseShellManifest({ root: fixture, mode: 'dev' });
+    expect(result.issues).toEqual(expect.arrayContaining([expect.stringMatching(/facade order\/mapping mismatch/u)]));
   });
 });

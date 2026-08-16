@@ -110,7 +110,7 @@ describe("VerseShell governed exec adaptation", () => {
       data: {
         exit_code: 0,
         timed_out: false,
-        stdout: { status: "reduced", summary: "3 tests passed", artifact: "result://sha256/stdout" },
+        stdout: { status: "reduced", summary: "3 tests passed", artifact: `result://sha256/${"d".repeat(64)}` },
         stderr: { status: "empty" },
       },
       diagnostics: [{ tool: "pytest", severity: "warning", message: "slow test", path: "tests/a.py", line: 4 }],
@@ -131,7 +131,7 @@ describe("VerseShell governed exec adaptation", () => {
     expect(fake.shutdownProcess).toHaveBeenCalledWith("process-2");
     expect(result).toMatchObject({ success: true, profile: "pytest", tokenEstimate: 22 });
     expect(result.stdout).toContain("3 tests passed");
-    expect(result.stdout).toContain("result://sha256/stdout");
+    expect(result.stdout).toContain(`result://sha256/${"d".repeat(64)}`);
     expect(result.stderr).toContain("tests/a.py:4: warning: slow test");
   });
 
@@ -216,5 +216,80 @@ describe("VerseShell governed exec adaptation", () => {
         max_matches: 200,
       },
     }]);
+  });
+
+  it("reports a non-zero exit as a bounded failure without success", async () => {
+    const completed = observation({
+      ok: false,
+      error: { code: "E_PROCESS_EXIT", message: "exit 1", recoverable: false },
+      data: {
+        exit_code: 1,
+        timed_out: false,
+        stdout: { status: "empty" },
+        stderr: { status: "reduced", summary: "test failed", artifact: `result://sha256/${"e".repeat(64)}` },
+      },
+    });
+    const fake = fakeManager([completed]);
+    const result = await executeGovernedVerseShell({
+      command: "pytest -q",
+      cwd: process.cwd(),
+      hostPolicyApproved: true,
+      env: CONTRACT_ENV,
+      manager: fake.manager,
+    });
+    expect(result).toMatchObject({ success: false, exitCode: 1, timedOut: false });
+    expect(result.stderr).toContain("test failed");
+    expect(result.artifacts).toHaveLength(1);
+  });
+
+  it("reports a runtime timeout as a bounded failure", async () => {
+    const completed = observation({
+      ok: false,
+      error: { code: "E_TIMEOUT", message: "timed out", recoverable: false },
+      data: {
+        exit_code: null,
+        timed_out: true,
+        stdout: { status: "reduced", summary: "partial output", artifact: `result://sha256/${"f".repeat(64)}` },
+        stderr: { status: "empty" },
+      },
+    });
+    const fake = fakeManager([completed]);
+    const result = await executeGovernedVerseShell({
+      command: "pytest -q",
+      cwd: process.cwd(),
+      hostPolicyApproved: true,
+      env: CONTRACT_ENV,
+      manager: fake.manager,
+    });
+    expect(result).toMatchObject({ success: false, timedOut: true });
+    expect(result.stdout).toContain("partial output");
+  });
+
+  it("rejects an oversized result.query response before returning it", async () => {
+    const completed = observation({
+      op: "result.query",
+      data: { mode: "head", text: "x".repeat(64 * 1024 + 1) },
+    });
+    const fake = fakeResultManager(completed);
+    await expect(queryGovernedVerseShellResult({
+      handle: `result://sha256/${"b".repeat(64)}`,
+      mode: "head",
+      cwd: process.cwd(),
+      env: CONTRACT_ENV,
+      manager: fake.manager,
+    })).rejects.toMatchObject({ code: "E_VERSESHELL_RESULT_QUERY" });
+    expect(fake.queries).toHaveLength(1);
+  });
+
+  it("rejects a result.query response without bounded data", async () => {
+    const completed = observation({ op: "result.query", data: {} });
+    const fake = fakeResultManager(completed);
+    await expect(queryGovernedVerseShellResult({
+      handle: `result://sha256/${"b".repeat(64)}`,
+      mode: "head",
+      cwd: process.cwd(),
+      env: CONTRACT_ENV,
+      manager: fake.manager,
+    })).rejects.toMatchObject({ code: "E_VERSESHELL_RESULT_MISSING" });
   });
 });

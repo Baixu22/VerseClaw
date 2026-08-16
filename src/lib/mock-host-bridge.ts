@@ -236,7 +236,6 @@ export function installMockHostBridge(): boolean {
       platform: 'win32',
       versions: { chrome: '', electron: '' },
       ipcRenderer: undefined,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as unknown as Window['electron'];
   }
 

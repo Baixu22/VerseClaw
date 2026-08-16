@@ -61,6 +61,10 @@ import type {
   ExecToolDetails,
 } from "./bash-tools.exec-types.js";
 import type { AgentToolResult } from "./runtime/index.js";
+import {
+  resolveVerseShellCommandPlan,
+  type VerseShellCommandPlan,
+} from "./verseshell/command-profiles.js";
 
 /** Full input bundle for gateway-host allowlist and approval processing. */
 export type ProcessGatewayAllowlistParams = {
@@ -70,6 +74,8 @@ export type ProcessGatewayAllowlistParams = {
   command: string;
   workdir: string;
   env: Record<string, string>;
+  /** Plan created by OpenClaw before the approval wait. */
+  executionPlan?: VerseShellCommandPlan;
   pathPrepend?: string[];
   requestedEnv?: Record<string, string>;
   pty: boolean;
@@ -110,6 +116,8 @@ export type ProcessGatewayAllowlistParams = {
 /** Gateway allowlist outcome before command execution continues. */
 export type ProcessGatewayAllowlistResult = {
   execCommandOverride?: string;
+  /** Pre-approval, host-owned plan used by the governed VerseShell route. */
+  executionPlan?: VerseShellCommandPlan;
   allowWithoutEnforcedCommand?: boolean;
   pendingResult?: AgentToolResult<ExecToolDetails>;
   deniedResult?: AgentToolResult<ExecToolDetails>;
@@ -401,6 +409,17 @@ export async function processGatewayAllowlist(
       enforcedCommand = enforced.command;
     }
   }
+  const executionPlan =
+    params.executionHost === "verseshell"
+      ? params.executionPlan ?? resolveVerseShellCommandPlan({
+          command: params.command,
+          cwd: params.workdir,
+          env: params.env,
+          platform: process.platform,
+          segments: allowlistEval.segments,
+          allowExplicitShell: true,
+        })
+      : undefined;
   const recordMatchedAllowlistUse = (resolvedPath?: string) =>
     recordAllowlistMatchesUse({
       approvals: approvals.file,
@@ -513,6 +532,7 @@ export async function processGatewayAllowlist(
         );
         return {
           execCommandOverride: enforcedCommand,
+          ...(executionPlan ? { executionPlan } : {}),
           allowWithoutEnforcedCommand: enforcedCommand === undefined,
         };
       }
@@ -602,6 +622,7 @@ export async function processGatewayAllowlist(
       );
       return {
         execCommandOverride: enforcedCommand,
+        ...(executionPlan ? { executionPlan } : {}),
         allowWithoutEnforcedCommand: enforcedCommand === undefined,
       };
     }
@@ -701,6 +722,7 @@ export async function processGatewayAllowlist(
       recordMatchedAllowlistUse(resolvedPath ?? undefined);
       return {
         execCommandOverride: enforcedCommand,
+        ...(executionPlan ? { executionPlan } : {}),
         allowWithoutEnforcedCommand: enforcedCommand === undefined,
       };
     }
@@ -747,6 +769,7 @@ export async function processGatewayAllowlist(
         run = await runExecProcess({
           command: params.command,
           execCommand: enforcedCommand,
+          executionPlan,
           execHost: params.executionHost,
           hostPolicyApproved: params.executionHost === "verseshell",
           config: params.config,
@@ -829,5 +852,8 @@ export async function processGatewayAllowlist(
     resolveApprovalAuditTrustPath(allowlistEval.segments[0]?.resolution ?? null, params.workdir),
   );
 
-  return { execCommandOverride: enforcedCommand };
+  return {
+    execCommandOverride: enforcedCommand,
+    ...(executionPlan ? { executionPlan } : {}),
+  };
 }

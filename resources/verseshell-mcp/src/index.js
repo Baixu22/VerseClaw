@@ -3,15 +3,15 @@
  * VerseShell MCP Server — bridges VerseShell (ae --serve) to MCP-compatible AI agents.
  *
  * Usage:
- *   node verseshell-mcp-server.js [--ae-path <path>] [--workspace <dir>] [--cap <caps>] [--no-compact]
+ *   node verseshell-mcp-server.js [--ae-path <path>] [--workspace <dir>] [--profile product|development] [--cap <caps>] [--no-compact]
  *
  * The server spawns `ae --serve --format compact` as a child process and forwards
  * MCP tool calls to it via JSON-RPC over stdin/stdout. Compact protocol saves
  * 50-70% tokens vs JSON. Pass --no-compact to fall back to JSON.
  *
- * Capabilities (v2 security model, 27 granular caps) can be granted via --cap:
- *   --cap all                                  (default: grant everything)
- *   --cap file.read,file.write,net.http.get    (grant specific caps)
+ * Capabilities are deny-by-default and can be granted only by explicit names:
+ *   --cap file.read,shell.exec
+ * Wildcard grants such as `--cap all` are rejected.
  *
  * Configure in ClawX's openclaw.json:
  *   "mcp": { "servers": { "verseshell": {
@@ -19,7 +19,9 @@
  *     "args": ["resources/verseshell-mcp/src/index.js", "--ae-path", "./verseshell/ae"]
  *   }}}
  *
- * Aligned with verseshell v0.3.0 native ae-mcp capabilities:
+ * Aligned with the pinned VerseShell runtime and its externally compatible
+ * legacy command surface. The MCP package remains an adapter, not an
+ * internal execution path.
  *   - verseshell_health tool (protocol/runtime metadata)
  *   - verseshell_transpile_bash tool (bash → verseshell)
  *   - verseshell_list_commands tool (enumerate 650+ builtins)
@@ -37,6 +39,21 @@ import { spawn } from "child_process";
 import { createInterface } from "readline";
 import path, { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
+import {
+  MCP_PROTOCOL_VERSION,
+  MCP_SERVER_NAME,
+  MCP_SERVER_VERSION,
+  OPERATION_CATALOG_COUNT,
+  OPERATION_CATALOG_DIGEST,
+  RUNTIME_SERVER_PROTOCOL,
+  RUNTIME_VERSION,
+} from "./identity.js";
+import {
+  assertToolAllowed,
+  filterTools,
+  parseRestrictedArgv,
+  resolveMcpPolicy,
+} from "./policy.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -50,19 +67,23 @@ const WORKSPACE = process.argv.includes("--workspace")
   ? process.argv[process.argv.indexOf("--workspace") + 1]
   : process.env.VERSESHELL_WORKSPACE || process.cwd();
 
-const AGENT_MODE = process.argv.includes("--agent") || process.env.VERSESHELL_AGENT === "1";
-
-// Capability grants (v2 security model). Default: all. Pass --cap to restrict.
+const PROFILE_FLAG_INDEX = process.argv.indexOf("--profile");
+const PROFILE = PROFILE_FLAG_INDEX >= 0 ? process.argv[PROFILE_FLAG_INDEX + 1] : (process.env.VERSESHELL_PROFILE || "product");
 const CAP_FLAG_INDEX = process.argv.indexOf("--cap");
-const CAPS = CAP_FLAG_INDEX >= 0 ? process.argv[CAP_FLAG_INDEX + 1] : (process.env.VERSESHELL_CAPS || "all");
+const CAPABILITY_RAW = CAP_FLAG_INDEX >= 0 ? process.argv[CAP_FLAG_INDEX + 1] : process.env.VERSESHELL_CAPS;
+const MCP_POLICY = resolveMcpPolicy({ profile: PROFILE, caps: CAPABILITY_RAW });
+const CAPS = MCP_POLICY.capabilities.join(",");
+const RUNTIME_CAPS = MCP_POLICY.capabilities.filter((capability) => ![
+  "catalog.read",
+  "compat.transpile",
+  "health.read",
+].includes(capability)).join(",");
 
 // Compact protocol toggle (parity with TS bridge). Pass --no-compact to disable.
 const USE_COMPACT = !process.argv.includes("--no-compact") && process.env.VERSESHELL_NO_COMPACT !== "1";
 
 const DEFAULT_TOOL_TIMEOUT_MS = 30_000;
 const MAX_TOOL_TIMEOUT_MS = 10 * 60_000;
-
-const MCP_SERVER_VERSION = "0.3.1";
 
 function clampTimeoutMs(value, fallback = DEFAULT_TOOL_TIMEOUT_MS) {
   const n = Number(value);
@@ -128,34 +149,15 @@ function shellExecArgv(argv) {
   return `shell.exec([${argv.map(aeString).join(", ")}])`;
 }
 
-function osShellArgv(command) {
-  const requested = (process.env.VERSESHELL_OS_SHELL || "").toLowerCase();
-  const windowsCmd = process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe";
-  if (requested === "git-bash" || requested === "bash") {
-    return ["C:\\Program Files\\Git\\bin\\bash.exe", "-lc", command];
-  }
-  if (requested === "powershell") {
-    return ["powershell", "-NoProfile", "-Command", command];
-  }
-  if (requested === "pwsh") {
-    return ["pwsh", "-NoProfile", "-Command", command];
-  }
-  if (requested === "cmd") {
-    return [windowsCmd, "/C", command];
-  }
-  return process.platform === "win32"
-    ? [windowsCmd, "/C", command]
-    : ["sh", "-lc", command];
-}
-
-function toolErrorPayload(error, cmd) {
+function toolErrorPayload(error, toolName, extra = {}) {
   return {
-    error: error?.message || String(error),
+    tool: toolName,
+    error: String(error?.message || error).slice(0, 512),
     code: error?.code,
     timed_out: error?.timedOut === true,
     timeoutMs: error?.timeoutMs,
     serverRestarted: error?.serverRestarted,
-    cmd,
+    ...extra,
   };
 }
 
@@ -393,18 +395,22 @@ let aeReady = false;
 const readyWaiters = [];
 
 function startAeShell() {
-  const args = ["--serve"];
+  const needsCatalogRuntime = MCP_POLICY.capabilities.includes("catalog.read");
+  if (!RUNTIME_CAPS && !needsCatalogRuntime) {
+    console.error("[verseshell-mcp] Runtime start skipped: no runtime capability is enabled.");
+    return;
+  }
+  const args = ["--serve", "--agent", "--policy", "strict"];
   if (USE_COMPACT) {
     args.push("--format", "compact");
   } else {
     args.push("--json");
   }
-  if (AGENT_MODE) args.push("--agent");
   if (WORKSPACE) args.push("--workspace", WORKSPACE);
-  if (CAPS) args.push("--cap", CAPS);
+  args.push("--cap", RUNTIME_CAPS);
 
   console.error(`[verseshell-mcp] Starting: ${AE_PATH} ${args.join(" ")}`);
-  console.error(`[verseshell-mcp] Protocol: ${USE_COMPACT ? "compact" : "json"} | Caps: ${CAPS}`);
+  console.error(`[verseshell-mcp] Protocol: ${USE_COMPACT ? "compact" : "json"} | Profile: ${MCP_POLICY.profile} | Caps: ${CAPS || "<none>"}`);
 
   aeProcess = spawn(AE_PATH, args, {
     stdio: ["pipe", "pipe", "pipe"],
@@ -482,6 +488,7 @@ function startAeShell() {
   aeProcess.on("close", (code) => {
     console.error(`[verseshell-mcp] VerseShell exited (code=${code}). Restarting in 1s...`);
     aeReady = false;
+    aeProcess = null;
     for (const [id, entry] of responseResolvers) {
       clearTimeout(entry.timer);
       responseResolvers.delete(id);
@@ -494,7 +501,9 @@ function startAeShell() {
 }
 
 async function waitForReady(timeoutMs = 10000) {
-  if (aeReady) return;
+  if (aeReady || (aeProcess && !aeProcess.killed)) return;
+  if (!aeProcess) startAeShell();
+  if (aeReady || (aeProcess && !aeProcess.killed)) return;
   return new Promise((resolve, reject) => {
     readyWaiters.push(resolve);
     setTimeout(() => {
@@ -567,7 +576,7 @@ const KNOWN_MODULES = [
 
 // ── Tool Definitions ──────────────────────────────────────────────────
 
-const TOOLS = [
+const ALL_TOOLS = [
   // ── Aligned with verseshell v0.3.0 native ae-mcp ──────────────────────
   { name: "verseshell_health", description: "Check whether the VerseShell MCP server is responsive and report protocol/runtime metadata (modules, commands, protocol version).", parameters: { type: "object", properties: {} } },
   { name: "verseshell_transpile_bash", description: "Transpile a bash script into VerseShell syntax using the ae --bash transpiler. Useful for migrating shell scripts to typed pipelines.", parameters: { type: "object", properties: { bash_code: { type: "string", description: "Bash script to transpile into verseshell" } }, required: ["bash_code"] } },
@@ -603,7 +612,7 @@ const TOOLS = [
   { name: "verseshell_win_is_admin", description: "Check if running with administrator privileges", parameters: { type: "object", properties: {} } },
 
   // Shell
-  { name: "verseshell_shell_exec", description: "Execute an OS shell script (structured output: stdout, stderr, exit_code). On Windows defaults to cmd /C; set VERSESHELL_OS_SHELL=git-bash|cmd|powershell|pwsh to choose.", parameters: { type: "object", properties: { cmd: { type: "string", description: "Shell command to execute" }, command: { type: "string", description: "Alias for cmd" }, timeoutMs: { type: "number", description: "Optional MCP-side timeout in milliseconds (default 30000)." } } } },
+  { name: "verseshell_shell_exec", description: "Development-only compatibility adapter. Execute an explicit argv vector through the governed shell.exec boundary.", parameters: { type: "object", properties: { argv: { type: "array", items: { type: "string" }, minItems: 1, description: "Explicit executable and arguments; shell strings are not accepted." }, timeoutMs: { type: "number", description: "Optional MCP-side timeout in milliseconds (default 30000)." } }, required: ["argv"] } },
   { name: "verseshell_process_exec", description: "Execute a process through VerseShell with explicit argv. Preferred for commands with spaces, quotes, Windows paths, or -c script arguments.", parameters: { type: "object", properties: { program: { type: "string", description: "Executable path or name" }, args: { type: "array", items: { type: "string" }, description: "Argument vector, one argument per item" }, timeoutMs: { type: "number", description: "Optional MCP-side timeout in milliseconds (default 30000)." } }, required: ["program"] } },
   { name: "verseshell_shell_echo", description: "Print a message (for debugging)", parameters: { type: "object", properties: { msg: { type: "string" } }, required: ["msg"] } },
 
@@ -684,6 +693,10 @@ const TOOLS = [
   { name: "verseshell_clipboard_write", description: "Write text to the clipboard", parameters: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } },
 ];
 
+// The MCP catalog is a capability-filtered compatibility view. Internal
+// foundation callers never consume this list; they use the typed facade.
+const TOOLS = filterTools(ALL_TOOLS, MCP_POLICY);
+
 // ── Tool → Command Mapping ────────────────────────────────────────────
 //
 // Tools marked with `__special__: true` in the map value are handled by
@@ -719,8 +732,8 @@ const COMMAND_MAP = {
   "verseshell_win_service_status": (args) => `win.service_status(${aeString(args.name)})`,
   "verseshell_win_env_path": 'win.env_path()',
   "verseshell_win_is_admin": 'win.is_admin()',
-  "verseshell_shell_exec": (args) => shellExecArgv(osShellArgv(args.command ?? args.cmd)),
-  "verseshell_process_exec": (args) => shellExecArgv([args.program, ...(Array.isArray(args.args) ? args.args : [])]),
+  "verseshell_shell_exec": (args) => shellExecArgv(parseRestrictedArgv(args.argv)),
+  "verseshell_process_exec": (args) => shellExecArgv(parseRestrictedArgv([args.program, ...(Array.isArray(args.args) ? args.args : [])])),
   "verseshell_shell_echo": (args) => `shell.echo(${JSON.stringify(args.msg)})`,
   "verseshell_crypto_hash": (args) => `crypto.hash(${aeString(args.data)}, ${aeString(args.algo || "sha256")})`,
   "verseshell_crypto_uuid": 'crypto.uuid()',
@@ -803,7 +816,7 @@ async function main() {
   startAeShell();
 
   const server = new Server(
-    { name: "verseshell", version: MCP_SERVER_VERSION },
+    { name: MCP_SERVER_NAME, version: MCP_SERVER_VERSION },
     { capabilities: { tools: {} } }
   );
 
@@ -814,6 +827,15 @@ async function main() {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
     const toolArgs = args || {};
+
+    try {
+      assertToolAllowed(name, MCP_POLICY);
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: JSON.stringify(toolErrorPayload(error, name)) }],
+        isError: true,
+      };
+    }
 
     // ── Special handlers (aligned with verseshell v0.3.0 ae-mcp) ──────────
     if (SPECIAL_HANDLERS[name]) {
@@ -852,7 +874,7 @@ async function main() {
         // Smart hint: catch common LLM API mistakes to save retry tokens.
         const errMsg = result.error?.message || "";
         const hint = suggestHint(cmd, errMsg);
-        const payload = { error: result.error, cmd };
+        const payload = toolErrorPayload(result.error, name);
         if (hint) payload.hint = hint;
         return {
           content: [{ type: "text", text: JSON.stringify(payload) }],
@@ -861,7 +883,7 @@ async function main() {
       }
     } catch (e) {
       const hint = suggestHint(cmd, e?.message || "");
-      const payload = toolErrorPayload(e, cmd);
+      const payload = toolErrorPayload(e, name);
       if (hint) payload.hint = hint;
       return {
         content: [{ type: "text", text: JSON.stringify(payload) }],
@@ -910,18 +932,25 @@ async function runSpecialHandler(kind, args) {
 function healthPayload() {
   return {
     ok: true,
-    server: "verseshell-mcp",
+    server: MCP_SERVER_NAME,
     version: MCP_SERVER_VERSION,
+    protocol_version: MCP_PROTOCOL_VERSION,
+    runtime_version: RUNTIME_VERSION,
+    runtime_server_protocol: RUNTIME_SERVER_PROTOCOL,
+    operation_catalog: {
+      digest: OPERATION_CATALOG_DIGEST,
+      count: OPERATION_CATALOG_COUNT,
+    },
     protocol: USE_COMPACT ? "compact" : "json",
-    capabilities_granted: CAPS,
-    agent_mode: AGENT_MODE,
-    workspace: WORKSPACE,
-    ae_path: AE_PATH,
+    profile: MCP_POLICY.profile,
+    capabilities_granted: MCP_POLICY.capabilities,
+    agent_mode: true,
+    runtime_policy: "agent_strict",
     ae_ready: aeReady,
     tools: TOOLS.length,
     known_modules: KNOWN_MODULES.length,
     mcp_transport: "stdio",
-    aligned_with: "verseshell v0.3.0 ae-mcp",
+    compatibility_only: true,
   };
 }
 
@@ -982,7 +1011,7 @@ async function transpileBash(bashCode, timeoutMs) {
  * and aggregates the results. Missing modules are silently skipped
  * (their request returns an error which we ignore).
  *
- * Mirrors `list_commands` in ae-mcp.
+ * Mirrors the external compatibility `list_commands` surface.
  */
 async function listCommands() {
   const results = await Promise.all(

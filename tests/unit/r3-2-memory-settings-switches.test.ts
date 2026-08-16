@@ -1,8 +1,7 @@
 // R3-2: memory settings switch group (opt-in cohort). Asserts runtime.memory.*
-// flags are registered in the DCS catalog and writable specs with their
-// negative-effect switches marked unavailable (R3-1 E-1 ruling + audit).
-// R3-1 v3 task 3 adds the compass contextBlock switch (Assembler handler has no
-// production inputs.compass caller; auto-reply compass uses the bypass path).
+// flags are registered in the DCS catalog. Runtime-memory persistence remains
+// unavailable until Settings can select its slot owner; the injection and
+// context-block switches are now wired production surfaces.
 import { describe, expect, it } from 'vitest';
 import { assertCatalogDefaultHonesty, DCS_PROD_FLAGS } from '../../shared/dcs/prod-flags-catalog';
 import { DCS_WRITABLE_FLAG_SPECS, getWritableFlagSpec } from '../../shared/dcs/prod-flags-control';
@@ -24,16 +23,18 @@ describe('R3-2: memory settings switches (opt-in cohort)', () => {
     expect(assertCatalogDefaultHonesty()).toEqual({ ok: true });
   });
 
-  it('marks negative-effect memory switches unavailable in the writable specs', () => {
+  it('keeps only the unconstrained persistence switch unavailable', () => {
     for (const id of MEMORY_FLAG_IDS) {
       const spec = getWritableFlagSpec(id);
       expect(spec, id).toBeDefined();
       expect(spec?.defaultEnabled, id).toBe(false);
-      expect(spec?.unavailableReason, id).toBeDefined();
     }
-    // Exactly these three are surfaced-but-disabled; no other spec is unavailable.
+    expect(getWritableFlagSpec('runtime-memory-persist')?.unavailableReason).toBeDefined();
+    expect(getWritableFlagSpec('runtime-memory-inject-pilot')?.unavailableReason).toBeUndefined();
+    expect(getWritableFlagSpec('compass-context-block')?.unavailableReason).toBeUndefined();
+    expect(getWritableFlagSpec('role-memory')?.unavailableReason).toBeUndefined();
     expect(
       DCS_WRITABLE_FLAG_SPECS.filter((s) => s.unavailableReason !== undefined).map((s) => s.id),
-    ).toEqual([...MEMORY_FLAG_IDS]);
+    ).toEqual(['runtime-memory-persist']);
   });
 });

@@ -36,10 +36,13 @@ function createMockVtokenClient(prompt = "packed working context"): VtokenRpcCli
   } as unknown as VtokenRpcClient;
 }
 
-function createMemoryProvider(text = "role card memory"): RuntimeContextProvider {
+function createMemoryProvider(
+  text = "role card memory",
+  providerId: "role-memory" | "runtime-memory" = "role-memory",
+): RuntimeContextProvider {
   return {
     manifest: {
-      id: "role-memory",
+      id: providerId,
       kind: "context",
       title: "Role Memory",
       source: "runtime-core",
@@ -62,9 +65,9 @@ function createMemoryProvider(text = "role card memory"): RuntimeContextProvider
             id: "m1",
             kind: "memory",
             text,
-            source: "role-memory:bucket",
+            source: `${providerId}:bucket`,
             evidenceRefs: [],
-            metadata: { providerId: "role-memory" },
+            metadata: { providerId },
           },
         ],
         diagnostics: [],
@@ -131,6 +134,44 @@ describe("computeContextExtraSystemPrompt", () => {
     expect(extraSystemPrompt).toContain("remembered fact");
     expect(lineage.sources).toHaveLength(1);
     expect(lineage.sources[0]?.applied).toBe(true);
+  });
+
+  it("keeps the selected runtime-memory provider in deferred lineage", async () => {
+    const turnId = "orchestrator-runtime-memory-lineage";
+    await computeContextExtraSystemPrompt(
+      "base",
+      {
+        runtime: {
+          memory: {
+            provider: true,
+            persist: true,
+            injectPilot: { enabled: true, providers: ["runtime-memory"] },
+          },
+        },
+      },
+      {
+        turnId,
+        deferProjection: true,
+        sessionKey: "agent:main:main",
+        memoryProviderIds: ["runtime-memory"],
+        memoryProviderFactory: () => [createMemoryProvider("persisted fact", "runtime-memory")],
+      },
+      { stages: ["memory"] },
+    );
+
+    const collected = getContextOrchestratorCollection(turnId);
+    expect(collected?.lineage).toEqual([
+      expect.objectContaining({
+        sourceId: "memory-inject-pilot:runtime-memory",
+        charsRequested: expect.any(Number),
+      }),
+    ]);
+    const finalized = finalizeContextOrchestratorTurn({ turnId, messages: [] });
+    expect(finalized.projection.lineage).toEqual([
+      expect.objectContaining({ sourceId: "memory-inject-pilot:runtime-memory", charsApplied: expect.any(Number) }),
+    ]);
+    endContextOrchestratorTurn(turnId);
+    endTurnInjectionBudget(turnId);
   });
 
   it("vtoken-only canary injects Working Context", async () => {

@@ -1,46 +1,35 @@
-# VerseShell Source and Build Instructions
+# VerseShell Corresponding Source
 
-The bundled Windows x64 `ae.exe` is built from one pinned upstream commit plus the tracked UAS-05
-corresponding-source patch recorded in `manifest.json`:
+The Windows x64 runtime is reproducible from the exact upstream commit plus the ordered, tracked
+patch stack in `source-inputs.json`. The pinned commit by itself is not the shipped source identity.
 
-- Source repository: `https://github.com/Baixu22/VerseShell.git`
-- Pinned commit: `c3983694407a9ddb23505e05fad4a9eae653b283`
-- Source patch: `resources/verseshell/patches/uas-05-process-lifecycle.patch`
-- Patch SHA-256: `cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098`
-- Binary SHA-256: `19ca598916077f677722b4f82d8dfc1c24c4e88ace9809abe681255370702699`
-- Binary size: `14880256` bytes
+- Repository: `https://github.com/Baixu22/VerseShell.git`
+- Commit: `c3983694407a9ddb23505e05fad4a9eae653b283`
+- Commit epoch: `1785123525`
+- Source identity: `sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650`
+- Patch stack: four entries, applied in manifest order with `git apply`
+- Recovered ignored inputs: eight allowlisted Python files; generated files are excluded
 
-The patch is part of the corresponding source. The pinned commit alone does not reproduce this
-binary and must not be presented as a clean-build identity.
+`source-inputs.json` records every patch path, byte count, SHA-256, recovered input, final source
+assertion, test command, toolchain, and reproducibility control. A validator must reject missing,
+reordered, modified, undeclared, or generated inputs before a build is accepted.
 
-## Obtain the corresponding source
+## Reconstruct the source
 
-Clone the repository, check out the exact base commit, and apply the tracked patch from the ClawX
-source tree:
-
-```text
-git clone https://github.com/Baixu22/VerseShell.git verseshell
-git -C verseshell checkout c3983694407a9ddb23505e05fad4a9eae653b283
-git -C verseshell apply C:\path\to\ClawX\resources\verseshell\patches\uas-05-process-lifecycle.patch
-git -C verseshell status --porcelain=v1
-```
-
-The final status must identify the same 13 tracked/untracked inputs recorded under
-`provenance.build_input.status_porcelain`. Re-capture the patch if any source input changes; never
-reuse the recorded patch or binary hash for a different worktree.
-
-## Rebuild and synchronize
-
-First capture the complete tracked diff plus untracked source files:
+From the ClawX repository root, use the bundle script so the clean detached reconstruction and all
+source assertions are checked consistently:
 
 ```text
-node scripts/verseshell-bundle.mjs capture-patch --source C:\path\to\verseshell --output resources/verseshell/patches/uas-05-process-lifecycle.patch
+node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode package
 ```
 
-Then run the package synchronization command described in `BUILD.md`, including
-`--allow-dirty-provenance`, `--source-patch`, `--source-snapshot`, and `--patch-instructions`.
-The synchronization command builds `cargo build --release --bin ae`, copies only `ae.exe`, and
-updates the manifest after validating that the patch SHA-256 equals the recorded build-input digest.
+For an explicit source checkout, clone the repository, check out the pinned commit, then apply all
+four paths in `source-inputs.json` in ascending `order` with `git apply --check` followed by
+`git apply`. Do not copy an ignored `ae.exe`, `target`, `.ae`, Python cache, log, PDB, or result file
+into the corresponding source.
 
-The source repository, patch, this notice, the AGPL license text, and the build instructions must
-remain available to recipients as required by AGPL-3.0-or-later.
+## License and corresponding-source delivery
+
+Keep this file, `BUILD.md`, `NOTICE.md`, the official AGPL-3.0-or-later text, `source-inputs.json`,
+and every declared patch alongside the packaged runtime. The manifest locator binds the repository,
+commit, source-input digest, and combined source identity into one corresponding-source record.

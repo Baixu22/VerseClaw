@@ -99,6 +99,8 @@ export type ContextOrchestratorInput = {
    * requested and the inject pilot flag is enabled.
    */
   memoryProviderFactory?: () => readonly RuntimeContextProvider[];
+  /** Provider ids selected for the memory pilot, used to keep lineage/receipts honest. */
+  memoryProviderIds?: readonly string[];
   /** Optional VT RPC client (tests / shared worker). */
   vtokenClient?: VtokenRpcClient;
   /**
@@ -125,6 +127,11 @@ export type ContextOrchestratorResult = {
   extraSystemPrompt: string | undefined;
   lineage: ContextOrchestratorLineage;
 };
+
+function resolveMemoryLineageSourceId(providerIds: readonly string[] | undefined): string {
+  const ids = [...new Set((providerIds ?? []).map((id) => id.trim()).filter(Boolean))].toSorted();
+  return ids.length > 0 ? `memory-inject-pilot:${ids.join("+")}` : "memory-inject-pilot";
+}
 
 const DEFAULT_STAGES: ContextOrchestratorStage[] = ["memory", "vtoken"];
 
@@ -416,6 +423,7 @@ export async function computeContextExtraSystemPrompt(
         killed: isContextEnhancementKillSwitchEngaged(cfg),
       })
     : undefined;
+  const memorySourceId = resolveMemoryLineageSourceId(input.memoryProviderIds);
 
   try {
     if (isContextEnhancementKillSwitchEngaged(cfg)) {
@@ -423,14 +431,14 @@ export async function computeContextExtraSystemPrompt(
       for (const stage of stagesRequested) {
         if (deferProjection) {
           recordContextOrchestratorSourceDecision(input.turnId!, {
-            sourceId: stage === "memory" ? "memory-inject-pilot" : "vtoken-assembly",
+            sourceId: stage === "memory" ? memorySourceId : "vtoken-assembly",
             channel: stage === "memory" ? "memory_pilot" : "vtoken",
             target: "system_prompt",
             reason: "kill-switch",
           });
         }
         lineage.sources.push({
-          id: stage === "memory" ? "memory-inject-pilot" : "vtoken-assembly",
+          id: stage === "memory" ? memorySourceId : "vtoken-assembly",
           stage,
           enabled: false,
           applied: false,
@@ -456,14 +464,14 @@ export async function computeContextExtraSystemPrompt(
       if (!enabled) {
         if (deferProjection) {
           recordContextOrchestratorSourceDecision(input.turnId!, {
-            sourceId: "memory-inject-pilot",
+            sourceId: memorySourceId,
             channel: "memory_pilot",
             target: "system_prompt",
             reason: "flag-off",
           });
         }
         lineage.sources.push({
-          id: "memory-inject-pilot",
+          id: memorySourceId,
           stage: "memory",
           enabled: false,
           applied: false,
@@ -473,14 +481,14 @@ export async function computeContextExtraSystemPrompt(
       } else if (!input.memoryProviderFactory) {
         if (deferProjection) {
           recordContextOrchestratorSourceDecision(input.turnId!, {
-            sourceId: "memory-inject-pilot",
+            sourceId: memorySourceId,
             channel: "memory_pilot",
             target: "system_prompt",
             reason: "empty",
           });
         }
         lineage.sources.push({
-          id: "memory-inject-pilot",
+          id: memorySourceId,
           stage: "memory",
           enabled: true,
           applied: false,
@@ -500,16 +508,16 @@ export async function computeContextExtraSystemPrompt(
           const text = computed?.trim();
           if (text) {
             collectContextOrchestratorCandidate(input.turnId!, {
-              authorityObjectId: "memory-inject-pilot",
+              authorityObjectId: memorySourceId,
               authorityVersion: String(lineage.budget.memoryTokenBudget ?? "default"),
-              sourceId: "memory-inject-pilot",
+              sourceId: memorySourceId,
               channel: "memory_pilot",
               target: "system_prompt",
               text,
             });
           } else {
             recordContextOrchestratorSourceDecision(input.turnId!, {
-              sourceId: "memory-inject-pilot",
+              sourceId: memorySourceId,
               channel: "memory_pilot",
               target: "system_prompt",
               reason: "empty",
@@ -517,7 +525,7 @@ export async function computeContextExtraSystemPrompt(
           }
           const chars = text?.length ?? 0;
           lineage.sources.push({
-            id: "memory-inject-pilot",
+            id: memorySourceId,
             stage: "memory",
             enabled: true,
             applied: false,
@@ -534,7 +542,7 @@ export async function computeContextExtraSystemPrompt(
           result = charged.text;
           const chars = charged.charsApplied;
           lineage.sources.push({
-            id: "memory-inject-pilot",
+            id: memorySourceId,
             stage: "memory",
             enabled: true,
             applied: chars > 0,

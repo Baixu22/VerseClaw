@@ -439,6 +439,14 @@ importers:
         specifier: ^8.8.5
         version: 8.8.5
 
+  harness: {}
+
+  resources/verseshell-mcp:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.0.0
+        version: 1.29.0(zod@4.4.3)
+
 packages:
 
   7zip-bin@5.2.0:

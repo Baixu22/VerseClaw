@@ -467,12 +467,9 @@ function buildGates(profiles, options = {}) {
     args: ['--dir', 'openclaw_runtime', 'install', '--offline', '--frozen-lockfile', '--ignore-scripts'],
   });
   // resources/bin/win32-x64/ae.exe is a source-built VerseShell binary that is
-  // gitignored by design (reproducible via scripts/verseshell-bundle.mjs sync)
-  // and required by tests/unit/verseshell-manifest.test.ts and the UAS-05/06
-  // lifecycle tests. A clean detached worktree has no copy, so provision it
-  // from the source repository with fail-closed integrity verification against
-  // the committed manifest. The binary stays gitignored, so the worktree
-  // remains clean under repositoryIdentity. The UAS-06 canary stub
+  // gitignored by design and required by the lifecycle tests. A clean detached
+  // worktree reconstructs it from the pinned source and tracked patch stack;
+  // an existing binary is never copied as evidence. The UAS-06 canary stub
   // artifacts/uas-06-single-local-exec-canary/live-observations.json is also
   // gitignored (artifacts/*) yet read by
   // tests/unit/uas-06-single-local-exec-canary.test.ts; it is a fixed empty
@@ -480,7 +477,7 @@ function buildGates(profiles, options = {}) {
   add({
     id: 'provision-verseshell-resources',
     profile: 'environment',
-    name: 'Provision VerseShell gitignored resources (ae.exe + canary stub)',
+    name: 'Reconstruct VerseShell resources (ae.exe + canary stub)',
     command: 'internal',
     args: [
       '--manifest', 'resources/verseshell/manifest.json',
@@ -1027,15 +1024,10 @@ function runTf0009Adapter(gate, options = {}) {
 }
 
 /**
- * Provision a gitignored, source-built binary into the detached acceptance
- * worktree with fail-closed integrity verification against the committed
- * manifest. The binary (e.g. resources/bin/win32-x64/ae.exe for the VerseShell
- * process-lifecycle tests) is reproducible from source via
- * scripts/verseshell-bundle.mjs sync but is not part of git state, so a clean
- * detached worktree has no copy. This gate copies it from the source
- * repository and verifies its SHA-256 and byte length against the manifest's
- * recorded artifact entry. Missing source binary, missing manifest entry, or a
- * hash/size mismatch all fail the gate.
+ * Reconstruct a gitignored VerseShell binary inside the detached acceptance
+ * worktree. The ordered patch stack and pinned source are rebuilt by the
+ * bundle qualification command; no binary is copied from the caller's dirty
+ * repository or cited as source-of-truth evidence.
  */
 function runVerseShellBinaryProvision(gate, options = {}) {
   const startedAt = new Date().toISOString();
@@ -1075,28 +1067,40 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     const manifestRelative = argv[argv.indexOf('--manifest') + 1];
     const binaryRelative = argv[argv.indexOf('--binary') + 1];
     if (!manifestRelative || !binaryRelative) return fail('provision gate requires --manifest and --binary');
-    const sourceRoot = options.sourceRoot;
     const worktree = options.cwd;
-    if (!sourceRoot || !worktree) return fail('provision gate requires sourceRoot and cwd');
-    const sourceBinary = resolve(sourceRoot, binaryRelative);
-    if (!existsSync(sourceBinary)) {
-      return fail(`source binary missing: ${binaryRelative} (build it with scripts/verseshell-bundle.mjs sync)`);
-    }
+    if (!worktree) return fail('provision gate requires cwd');
     const manifestPath = resolve(worktree, manifestRelative);
     if (!existsSync(manifestPath)) return fail(`committed manifest missing in worktree: ${manifestRelative}`);
+    const rebuildArgs = ['scripts/verseshell-bundle.mjs', 'rebuild', '--mode', 'package'];
+    if (process.env.VERSESHELL_SOURCE_MIRROR) {
+      rebuildArgs.push('--source-mirror', process.env.VERSESHELL_SOURCE_MIRROR);
+    }
+    const rebuild = spawnSync(process.execPath, rebuildArgs, {
+      cwd: worktree,
+      encoding: 'utf8',
+      env: { ...process.env, ...(options.env ?? {}) },
+      maxBuffer: MAX_OUTPUT_BYTES,
+      shell: false,
+      timeout: gate.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+      windowsHide: true,
+    });
+    if (rebuild.error || rebuild.status !== 0) {
+      return fail(`clean VerseShell reconstruction failed: ${rebuild.error?.message || rebuild.stderr || `exit ${rebuild.status}`}`);
+    }
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
     const artifact = manifest.artifacts?.['win32-x64'];
     if (!artifact || typeof artifact.sha256 !== 'string' || !Number.isSafeInteger(artifact.bytes)) {
-      return fail('committed manifest lacks win32-x64 artifact sha256/bytes');
+      return fail('reconstructed manifest lacks win32-x64 artifact sha256/bytes');
     }
+    const sourceBinary = resolve(worktree, binaryRelative);
+    if (!existsSync(sourceBinary)) return fail(`reconstructed binary missing: ${binaryRelative}`);
     const sourceBytes = readFileSync(sourceBinary);
     const sourceDigest = createHash('sha256').update(sourceBytes).digest('hex');
     if (sourceDigest !== artifact.sha256 || sourceBytes.length !== artifact.bytes) {
       return fail(`source binary does not match committed manifest (sha256 ${sourceDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${sourceBytes.length} expected ${artifact.bytes})`);
     }
-    const dest = resolve(worktree, binaryRelative);
+    const dest = sourceBinary;
     mkdirSync(dirname(dest), { recursive: true });
-    copyFileSync(sourceBinary, dest);
     const provisionedBytes = readFileSync(dest);
     const provisionedDigest = createHash('sha256').update(provisionedBytes).digest('hex');
     if (provisionedDigest !== artifact.sha256 || provisionedBytes.length !== artifact.bytes) {
@@ -1104,6 +1108,8 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     }
     let stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
     const copied = [];
+    const sourceRoot = options.sourceRoot;
+    if (!sourceRoot) return fail('provision copy requires sourceRoot and cwd');
     const copyIndex = argv.indexOf('--copy');
     const copyRelativePaths = copyIndex >= 0
       ? argv.slice(copyIndex + 1).filter((value) => !value.startsWith('--'))

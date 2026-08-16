@@ -147,7 +147,11 @@ function resolveMemorySlotStartupPluginId(params: {
     }
     return defaultSlot;
   }
-  return normalizePluginId(configuredSlot);
+  const normalized = normalizePluginId(configuredSlot);
+  // Runtime Memory is a built-in persistence owner, not a loadable plugin.
+  // Selecting it under the memory slot prevents memory-core activation while
+  // keeping the startup plugin plan free of a fictitious manifest id.
+  return normalized === "runtime-memory" ? undefined : normalized;
 }
 
 function resolveContextEngineSlotStartupPluginId(params: {

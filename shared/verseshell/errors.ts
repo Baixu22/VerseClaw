@@ -12,7 +12,13 @@ export type VerseShellContractErrorCode =
   | 'version_mismatch'
   | 'request_id_mismatch'
   | 'operation_mismatch'
-  | 'argument_schema_mismatch';
+  | 'argument_schema_mismatch'
+  | 'artifact_invalid'
+  | 'artifact_digest_mismatch'
+  | 'artifact_expired'
+  | 'artifact_missing'
+  | 'artifact_owner_mismatch'
+  | 'result_query_invalid';
 
 export interface VerseShellErrorOptions {
   path?: string;

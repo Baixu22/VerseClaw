@@ -1,5 +1,6 @@
 import { VerseShellContractError } from './errors';
-import type { JsonObject, JsonValue, Observation } from './types';
+import { decodeArtifactDescriptor, decodeStreamCapture } from './validation.js';
+import type { ArtifactDescriptor, JsonObject, JsonValue, Observation, StreamCapture } from './types';
 
 export const VERSESHELL_ARTIFACT_HANDLE_PATTERN = /^result:\/\/sha256\/[0-9a-f]{64}$/u;
 export const VERSESHELL_APPROVAL_TOKEN_PATTERN = /^apv_[0-9a-f]{16}$/u;
@@ -58,6 +59,40 @@ export function extractArtifactHandles(observation: Observation): string[] {
   visit(observation.data);
   observation.suggested_next?.forEach((action) => visit(action.args));
   return handles;
+}
+
+/** Extract runtime-owned artifact descriptors; malformed lineage is rejected instead of downgraded to text. */
+export function extractArtifactDescriptors(
+  observation: Observation,
+  options: Parameters<typeof decodeArtifactDescriptor>[1] = {},
+): ArtifactDescriptor[] {
+  const descriptors: ArtifactDescriptor[] = [];
+  const seen = new Set<string>();
+  const visit = (value: JsonValue | undefined): void => {
+    if (value === undefined || value === null) return;
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+    if (typeof value !== 'object') return;
+    const record = value as Record<string, JsonValue>;
+    if (typeof record.handle === 'string') {
+      const descriptor = decodeArtifactDescriptor(record, options);
+      if (!seen.has(descriptor.handle)) {
+        seen.add(descriptor.handle);
+        descriptors.push(descriptor);
+      }
+      return;
+    }
+    Object.values(record).forEach(visit);
+  };
+  visit(observation.data);
+  return descriptors;
+}
+
+/** Decode a stream projection only when the runtime supplied the complete bounded metadata. */
+export function extractStreamCapture(value: unknown, path = '$stream'): StreamCapture {
+  return decodeStreamCapture(value, path);
 }
 
 export function extractApprovalRequest(observation: Observation): ApprovalRequest | undefined {

@@ -24,13 +24,15 @@ describe("UAS-05 VerseShell process lifecycle boundary", () => {
       operation_catalog_digest:
         "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
     });
-    expect(manifest.provenance.dirty).toBe(true);
-    expect(manifest.provenance.dirty_build_override.approved).toBe(true);
+    expect(manifest.provenance.unrecorded_changes).toBe(false);
+    expect(manifest.provenance.source_inputs.identity_sha256).toBe(
+      "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+    );
     expect(manifest.compliance).toMatchObject({
-      corresponding_source_path: patchPath,
-      corresponding_source_status: "dirty_corresponding_source_recorded",
+      corresponding_source_status: "tracked_ordered_patch_stack",
+      patch_paths: expect.arrayContaining([patchPath]),
     });
-    expect(sha256(patchPath)).toBe(manifest.provenance.build_input.diff_sha256);
+    expect(sha256("resources/verseshell/source-inputs.json")).toBe(manifest.provenance.source_inputs.sha256);
     expect(sha256(binaryPath)).toBe(manifest.artifacts["win32-x64"].sha256);
     expect(statSync(binaryPath).size).toBe(manifest.artifacts["win32-x64"].bytes);
   });

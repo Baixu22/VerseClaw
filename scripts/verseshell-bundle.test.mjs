@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import {
   VerseShellBundleError,
   atomicCopy,
+  calculateSourceIdentity,
   collectSourceDiff,
+  PROJECT_ROOT,
   validatePackagedBundle,
 } from './verseshell-bundle.mjs';
 
@@ -24,60 +26,50 @@ async function makeBundle() {
   await writeFile(join(compliance, 'NOTICE.md'), '# Notice\n');
   await writeFile(join(compliance, 'SOURCE.md'), '# Source\n');
   await writeFile(join(compliance, 'BUILD.md'), '# Build\n');
-  const locator = 'source-snapshot://verseshell-test';
-  const manifest = {
-    schema_version: 1,
-    component: 'verseshell',
-    upstream: {
-      source_repository: 'https://github.com/Baixu22/VerseShell.git',
-      pinned_commit: '15c027d72807d231a98b795ea2d1112654710add',
-    },
-    crate: { name: 'verseshell', version: '1.0.0', rust_version: '1.75' },
-    protocol: {
-      observation_schema: 'verseshell.observation/v1',
-      mcp_protocol_version: '2024-11-05',
-      expected_server_protocol: 'verseshell.jsonl/v1',
-      operation_catalog_schema: 'verseshell.operation-catalog/v1',
-      operation_catalog_digest: `sha256:${'a'.repeat(64)}`,
-      operation_catalog_count: 26,
-      server_version: '1.0.0',
-    },
-    build: {
-      command: 'cargo build --release --bin ae',
-      cargo_version: 'cargo 1.75.0',
-      rustc_version: 'rustc 1.75.0',
-      cargo_target: 'x86_64-pc-windows-msvc',
-    },
-    provenance: {
-      repository: 'https://github.com/Baixu22/VerseShell.git',
-      commit: '15c027d72807d231a98b795ea2d1112654710add',
-      dirty: false,
-      build_input: { status_porcelain: [], diff_sha256: '0'.repeat(64) },
-      corresponding_source: { locator, patch_instructions: null },
-      dirty_build_override: { approved: false },
-    },
-    compliance: {
-      license_file: 'LICENSE-AGPL-3.0-or-later.txt',
-      notice_file: 'NOTICE.md',
-      source_file: 'SOURCE.md',
-      build_file: 'BUILD.md',
-      corresponding_source_locator: locator,
-    },
-    artifacts: {
-      'win32-x64': {
-        path: 'resources/bin/win32-x64/ae.exe',
-        packaged_path: 'bin/ae.exe',
-        sha256: digest,
-        bytes: binary.length,
-        version: '1.0.0',
-      },
-    },
-  };
+  const sourceInputsPath = join(PROJECT_ROOT, 'resources', 'verseshell', 'source-inputs.json');
+  await cp(sourceInputsPath, join(compliance, 'source-inputs.json'));
+  const sourceInputs = JSON.parse(await readFile(sourceInputsPath, 'utf8'));
+  for (const patch of sourceInputs.patches) {
+    const destination = join(compliance, patch.path.replace('resources/verseshell/', ''));
+    await mkdir(join(destination, '..'), { recursive: true });
+    await cp(join(PROJECT_ROOT, patch.path), destination);
+  }
+  const manifest = JSON.parse(await readFile(join(PROJECT_ROOT, 'resources', 'verseshell', 'manifest.json'), 'utf8'));
+  manifest.build.reproducibility.binary_sha256 = digest;
+  manifest.build.reproducibility.bytes = binary.length;
+  manifest.build.reproducibility.builds = manifest.build.reproducibility.builds.map((build) => ({
+    ...build,
+    sha256: digest,
+    bytes: binary.length,
+  }));
+  manifest.artifacts['win32-x64'].sha256 = digest;
+  manifest.artifacts['win32-x64'].bytes = binary.length;
   await writeFile(join(compliance, 'manifest.json'), JSON.stringify(manifest), 'utf8');
   return { root, compliance, manifest };
 }
 
-test('packaged validator accepts the unified Task14 schema', async (t) => {
+async function rewriteSourceInputs(bundle, mutate) {
+  const path = join(bundle.compliance, 'source-inputs.json');
+  const sourceInputs = JSON.parse(await readFile(path, 'utf8'));
+  mutate(sourceInputs);
+  const calculated = calculateSourceIdentity(sourceInputs);
+  sourceInputs.identity = {
+    algorithm: sourceInputs.identity.algorithm,
+    payload_sha256: calculated.payloadSha256,
+    combined_algorithm: sourceInputs.identity.combined_algorithm,
+    combined_sha256: calculated.combinedSha256,
+  };
+  await writeFile(path, `${JSON.stringify(sourceInputs, null, 2)}\n`, 'utf8');
+}
+
+async function rewriteManifest(bundle, mutate) {
+  const path = join(bundle.compliance, 'manifest.json');
+  const manifest = JSON.parse(await readFile(path, 'utf8'));
+  mutate(manifest);
+  await writeFile(path, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+}
+
+test('packaged validator accepts the v2 ordered patch-stack schema', async (t) => {
   const bundle = await makeBundle();
   t.after(() => rm(bundle.root, { recursive: true, force: true }));
   const result = await validatePackagedBundle({ resourcesPath: bundle.root });
@@ -138,17 +130,59 @@ test('package validator rejects non-whitespace license preambles', async (t) => 
   );
 });
 
-test('package validator rejects dirty source without patch provenance', async (t) => {
+test('package validator rejects patch reorder after identity recalculation', async (t) => {
   const bundle = await makeBundle();
   t.after(() => rm(bundle.root, { recursive: true, force: true }));
-  bundle.manifest.provenance.dirty = true;
-  bundle.manifest.provenance.dirty_build_override.approved = true;
-  bundle.manifest.provenance.corresponding_source.patch_instructions = null;
-  await writeFile(join(bundle.compliance, 'manifest.json'), JSON.stringify(bundle.manifest));
+  await rewriteSourceInputs(bundle, (sourceInputs) => sourceInputs.patches.reverse());
   await assert.rejects(
     validatePackagedBundle({ resourcesPath: bundle.root }),
-    (error) => error instanceof VerseShellBundleError && /patch\/source-snapshot instructions/.test(error.message),
+    (error) => error instanceof VerseShellBundleError && /patch order\/role\/path drifted/.test(error.message),
   );
+});
+
+test('package validator rejects patch byte-size drift', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteSourceInputs(bundle, (sourceInputs) => { sourceInputs.patches[0].bytes += 1; });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /byte size mismatch/);
+});
+
+test('package validator rejects source-input digest drift in the package manifest', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteManifest(bundle, (manifest) => { manifest.build.source_inputs_sha256 = '0'.repeat(64); });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /build\/source\/toolchain identity drifted/);
+});
+
+test('package validator rejects an undeclared ignored source input', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteSourceInputs(bundle, (sourceInputs) => {
+    sourceInputs.recovered_inputs.files.push({
+      path: 'bench/aci/fixtures/undeclared.py',
+      bytes: 1,
+      sha256: '0'.repeat(64),
+    });
+  });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /Recovered input allowlist mismatch/);
+});
+
+test('package validator rejects a non-identical reproducibility proof', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteManifest(bundle, (manifest) => {
+    manifest.build.reproducibility.builds[1].sha256 = '0'.repeat(64);
+  });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /reproducibility build 2 identity drifted/);
+});
+
+test('package validator rejects a missing required final source assertion', async (t) => {
+  const bundle = await makeBundle();
+  t.after(() => rm(bundle.root, { recursive: true, force: true }));
+  await rewriteSourceInputs(bundle, (sourceInputs) => {
+    sourceInputs.final_assertions = sourceInputs.final_assertions.filter((entry) => entry.path !== 'src/cache.rs');
+  });
+  await assert.rejects(validatePackagedBundle({ resourcesPath: bundle.root }), /Final source assertions omit src\/cache\.rs/);
 });
 
 test('atomicCopy preserves destination and removes temp file when rename fails', async (t) => {

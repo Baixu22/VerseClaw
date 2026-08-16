@@ -1,58 +1,45 @@
 # Building the bundled VerseShell runtime
 
-These instructions supplement `SOURCE.md`; they do not replace its corresponding-source
-requirements.
+The only accepted product artifact is a Windows x64 `ae.exe` produced by two independent clean
+reconstructions described by `SOURCE.md` and `source-inputs.json`.
 
-## Supported product target
+## Fixed build contract
 
-- Platform: Windows (`win32`)
-- Architecture: x64
-- Rust package: `verseshell` version `1.0.0`
-- Minimum declared Rust version: `1.75`
-- Shipped binary: `ae.exe` only (`ae-mcp.exe`, PDB files, and dependency output are not copied)
+- Target: `x86_64-pc-windows-msvc`
+- Crate: `verseshell` `1.0.0`; packaged binary: `ae.exe` only
+- Cargo/rustc: `1.94.0`
+- Cargo command: `cargo build --locked --release --bin ae`
+- `CARGO_INCREMENTAL=0`, `SOURCE_DATE_EPOCH=1785123525`
+- Rust source/target roots are remapped to stable `/verseshell/source` and `/verseshell/target`
+- MSVC linker uses `/Brepro` and the recorded PDB path control
 
-## Build and synchronize the UAS-05 source
+## Rebuild and synchronize
 
-From the ClawX repository root, with Cargo and rustc available for the
-`x86_64-pc-windows-msvc` host, first capture the complete source delta:
-
-```text
-node scripts/verseshell-bundle.mjs capture-patch --source C:\path\to\verseshell --output resources/verseshell/patches/uas-05-process-lifecycle.patch
-```
-
-Then synchronize the authorized dirty base-plus-patch build:
+Run this from the ClawX repository root on the supported Windows host:
 
 ```text
-node scripts/verseshell-bundle.mjs sync --source C:\path\to\verseshell --platform win32 --arch x64 --mode package --allow-dirty-provenance --source-patch resources/verseshell/patches/uas-05-process-lifecycle.patch --source-snapshot https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch --patch-instructions "Clone the recorded repository, checkout c3983694407a9ddb23505e05fad4a9eae653b283, then apply resources/verseshell/patches/uas-05-process-lifecycle.patch from the ClawX source tree with git apply."
+node scripts/verseshell-bundle.mjs rebuild --platform win32 --arch x64 --mode package
 ```
 
-The script runs exactly:
+The script creates a fresh detached worktree for qualification and two more independent worktrees
+and target directories for release builds. It applies every tracked patch in order, checks the
+allowlisted ignored inputs and final assertions, runs complete locked Rust tests plus `--no-run`,
+and runs the optional Python fixtures through the current interpreter as `python -m pytest -q`.
+Each release binary must pass the typed `runtime.handshake` and catalog checks. The two binaries
+must have identical byte length and SHA-256 before the existing binary or manifest is replaced.
 
-```text
-cargo build --release --bin ae
-```
+The replacement is atomic and fail-closed. A legacy ignored `resources/bin/win32-x64/ae.exe` is
+never copied as input or used as evidence; it can only be replaced by the newly qualified output.
 
-It atomically copies `target/release/ae.exe` to `resources/bin/win32-x64/ae.exe` and records the
-source status, complete patch digest, Cargo metadata, toolchain identity, exact byte length, binary
-SHA-256, protocol, and operation catalog. Package mode fails unless the patch exists, its digest
-matches `provenance.build_input.diff_sha256`, and the explicit dirty-source approval metadata points
-to the same corresponding source.
-
-## Validation
-
-Validate source resources without rebuilding:
+## Validation and packaging
 
 ```text
 node --test scripts/verseshell-bundle.test.mjs
 node scripts/verseshell-bundle.mjs validate --platform win32 --arch x64 --mode package
-```
-
-Validate an unpacked Electron application's resource directory:
-
-```text
 node scripts/verseshell-bundle.mjs verify-package --resources release\win-unpacked\resources --platform win32 --arch x64
 ```
 
-Both validators require the binary, manifest, official AGPL license text, notice, source
-instructions, build file, and UAS-05 patch. They verify target identity, protocol/catalog metadata,
-exact size, binary SHA-256, patch SHA-256, and corresponding-source approval.
+Package validation requires the binary, v2 manifest, source-input manifest, all four patches,
+official AGPL text, notice, source instructions, and build instructions. It verifies source digest
+and identity, patch order/size/hash, recovered-input inventory, Rust/Python qualification proof,
+reproducibility proof, handshake/catalog identity, exact artifact size, and binary SHA-256.

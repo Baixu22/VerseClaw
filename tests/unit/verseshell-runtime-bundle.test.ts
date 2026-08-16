@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { createHash } from 'node:crypto';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   VERSESHELL_DEV_OVERRIDE_FLAG,
@@ -15,56 +15,138 @@ import { isVerseShellRuntimeRequestedByRollout } from '@electron/utils/verseshel
 
 const roots: string[] = [];
 const LICENSE = 'GNU AFFERO GENERAL PUBLIC LICENSE\nVersion 3, 19 November 2007\n';
+const PROJECT_ROOT = resolve(__dirname, '../..');
+const SOURCE_INPUTS_SHA256 = '158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489';
+const SOURCE_IDENTITY_SHA256 = '19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650';
+const SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
+const SOURCE_COMMIT = 'c3983694407a9ddb23505e05fad4a9eae653b283';
+const SOURCE_LOCATOR = `${SOURCE_REPOSITORY}@${SOURCE_COMMIT}+resources/verseshell/source-inputs.json#sha256:${SOURCE_IDENTITY_SHA256}`;
+const PATCHES = [
+  'resources/verseshell/patches/uas-05-process-lifecycle.patch',
+  'resources/verseshell/patches/p0-runtime-startup.patch',
+  'resources/verseshell/patches/aci-bench-source-inputs.patch',
+  'resources/verseshell/patches/python-current-interpreter.patch',
+];
 
 function digest(content: Buffer | string): string {
   return createHash('sha256').update(content).digest('hex');
 }
 
 function manifestFor(binary: Buffer, overrides: Record<string, unknown> = {}) {
+  const binaryDigest = digest(binary);
+  const handshake = {
+    runtime_version: '1.0.0',
+    server_protocol: 'verseshell.jsonl/v1',
+    operation_catalog_schema: 'verseshell.operation-catalog/v1',
+    operation_catalog_digest: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
+    operation_catalog_count: 31,
+  };
   return {
-    schema_version: 1,
+    schema_version: 2,
     component: 'verseshell',
     upstream: {
+      cargo_repository: 'https://github.com/nervosys/verseshell',
       source_repository: 'https://github.com/Baixu22/VerseShell.git',
-      pinned_commit: '15c027d72807d231a98b795ea2d1112654710add',
+      pinned_commit: SOURCE_COMMIT,
+      pinned_commit_epoch: 1785123525,
+      source_model: 'pinned-commit-plus-ordered-patches',
+      pinned_commit_status: 'qualified_ordered_patch_stack',
     },
-    crate: { name: 'verseshell', version: '1.0.0', rust_version: '1.75' },
+    license: 'AGPL-3.0-or-later',
+    crate: { name: 'verseshell', version: '1.0.0', rust_version: '1.75', edition: '2021' },
     protocol: {
       observation_schema: 'verseshell.observation/v1',
       mcp_protocol_version: '2024-11-05',
       expected_server_protocol: 'verseshell.jsonl/v1',
       operation_catalog_schema: 'verseshell.operation-catalog/v1',
-      operation_catalog_digest: `sha256:${'a'.repeat(64)}`,
-      operation_catalog_count: 26,
+      operation_catalog_digest: handshake.operation_catalog_digest,
+      operation_catalog_count: handshake.operation_catalog_count,
+      handshake_operation: 'runtime.handshake',
       server_name: 'ae-mcp',
       server_version: '1.0.0',
-    },
-    build: {
-      cargo_version: 'cargo 1.75.0',
-      rustc_version: 'rustc 1.75.0\nhost: x86_64-pc-windows-msvc',
-      cargo_target: 'x86_64-pc-windows-msvc',
-    },
-    provenance: {
-      repository: 'https://github.com/Baixu22/VerseShell.git',
-      commit: '15c027d72807d231a98b795ea2d1112654710add',
-      dirty: false,
-      corresponding_source: {
-        locator: 'https://github.com/Baixu22/VerseShell.git@15c027d72807d231a98b795ea2d1112654710add',
-        patch_instructions: null,
-      },
     },
     compliance: {
       license_file: 'LICENSE-AGPL-3.0-or-later.txt',
       notice_file: 'NOTICE.md',
       source_file: 'SOURCE.md',
       build_file: 'BUILD.md',
-      corresponding_source_locator: 'https://github.com/Baixu22/VerseShell.git@15c027d72807d231a98b795ea2d1112654710add',
+      source_inputs_file: 'source-inputs.json',
+      notice_path: 'resources/verseshell/NOTICE.md',
+      source_instructions_path: 'resources/verseshell/SOURCE.md',
+      build_instructions_path: 'resources/verseshell/BUILD.md',
+      source_inputs_path: 'resources/verseshell/source-inputs.json',
+      corresponding_source_locator: SOURCE_LOCATOR,
+      corresponding_source_status: 'tracked_ordered_patch_stack',
+      patch_paths: PATCHES,
+    },
+    build: {
+      instructions_path: 'resources/verseshell/BUILD.md',
+      command: 'cargo build --locked --release --bin ae',
+      primary_binary: 'ae',
+      mcp_binary: 'not_packaged',
+      cargo_version: 'cargo 1.94.0 (test)',
+      rustc_version: 'rustc 1.94.0\nrelease: 1.94.0\nhost: x86_64-pc-windows-msvc',
+      cargo_target: 'x86_64-pc-windows-msvc',
+      cargo_metadata: {
+        package_name: 'verseshell',
+        package_version: '1.0.0',
+        target_directory: '[independent-build-root]/target',
+      },
+      cargo_toml_sha256: 'd49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d',
+      cargo_lock_sha256: '2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2',
+      source_inputs_sha256: SOURCE_INPUTS_SHA256,
+      source_identity_sha256: SOURCE_IDENTITY_SHA256,
+      controls: {
+        cargo_incremental: '0',
+        source_date_epoch: 1785123525,
+        encoded_rustflags: [
+          '--remap-path-prefix={source_root}=/verseshell/source',
+          '--remap-path-prefix={target_root}=/verseshell/target',
+          '-C', 'link-arg=/Brepro', '-C', 'link-arg=/PDBALTPATH:%_PDB%',
+        ],
+      },
+      qualification: {
+        status: 'passed',
+        rust_tests: [
+          { argv: ['cargo', 'test', '--locked', '-j', '1'], exit_code: 0 },
+          { argv: ['cargo', 'test', '--locked', '--no-run', '-j', '1'], exit_code: 0 },
+        ],
+        python_optional_verify: {
+          status: 'passed', interpreter_version: 'Python 3.10.3',
+          task_ids: ['python_edit_and_retest', 'python_fix_pytest_fail'], passed: 2, failed: 0,
+        },
+      },
+      reproducibility: {
+        status: 'passed', independent_source_roots: 2, independent_target_roots: 2,
+        byte_identical: true, binary_sha256: binaryDigest, bytes: binary.length,
+        builds: [
+          { ordinal: 1, sha256: binaryDigest, bytes: binary.length, handshake },
+          { ordinal: 2, sha256: binaryDigest, bytes: binary.length, handshake },
+        ],
+      },
+      synchronized_at: '2026-08-14T00:00:00.000Z',
+    },
+    provenance: {
+      repository: SOURCE_REPOSITORY,
+      commit: SOURCE_COMMIT,
+      commit_epoch: 1785123525,
+      source_model: 'pinned-commit-plus-ordered-patches',
+      unrecorded_changes: false,
+      source_inputs: {
+        path: 'resources/verseshell/source-inputs.json', sha256: SOURCE_INPUTS_SHA256,
+        identity_sha256: SOURCE_IDENTITY_SHA256, patch_count: 4, recovered_input_count: 8,
+      },
+      corresponding_source: {
+        locator: SOURCE_LOCATOR,
+        patch_paths: PATCHES,
+        instructions: 'Clone the HTTPS repository, checkout the pinned commit, then apply every source-input manifest patch in ascending order with git apply.',
+      },
     },
     artifacts: {
       'win32-x64': {
         path: 'resources/bin/win32-x64/ae.exe',
         packaged_path: 'bin/ae.exe',
-        sha256: digest(binary),
+        sha256: binaryDigest,
         bytes: binary.length,
         version: '1.0.0',
       },
@@ -94,6 +176,14 @@ async function makePackagedBundle(
   for (const [filename, content] of Object.entries(files)) {
     if (options.omit !== filename) await writeFile(join(compliance, filename), content);
   }
+  if (options.omit !== 'source-inputs.json') {
+    await cp(join(PROJECT_ROOT, 'resources/verseshell/source-inputs.json'), join(compliance, 'source-inputs.json'));
+    for (const patch of PATCHES) {
+      const destination = join(compliance, patch.replace('resources/verseshell/', ''));
+      await mkdir(join(destination, '..'), { recursive: true });
+      await cp(join(PROJECT_ROOT, patch), destination);
+    }
+  }
   const manifest = options.manifest ?? manifestFor(binary);
   await writeFile(join(compliance, 'manifest.json'), JSON.stringify(manifest), 'utf8');
   return { root, binary, manifest, executablePath: join(bin, 'ae.exe') };
@@ -120,16 +210,18 @@ describe('resolveVerseShellRuntimeBundle', () => {
       sha256: digest(bundle.binary),
       version: '1.0.0',
       protocolVersion: 'verseshell.jsonl/v1',
-      operationCatalogDigest: `sha256:${'a'.repeat(64)}`,
-      operationCatalogCount: 26,
-      dirty: false,
+      operationCatalogDigest: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
+      operationCatalogCount: 31,
+      commitEpoch: 1785123525,
+      sourceIdentitySha256: SOURCE_IDENTITY_SHA256,
+      unrecordedChanges: false,
     });
     expect(buildVerseShellRuntimeEnv(result)).toMatchObject({
       VERSESHELL_RUNTIME_PROVENANCE: 'verified',
       VERSESHELL_RUNTIME_VERSION: '1.0.0',
       VERSESHELL_SERVER_PROTOCOL: 'verseshell.jsonl/v1',
-      VERSESHELL_OPERATION_CATALOG_DIGEST: `sha256:${'a'.repeat(64)}`,
-      VERSESHELL_OPERATION_CATALOG_COUNT: '26',
+      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
+      VERSESHELL_OPERATION_CATALOG_COUNT: '31',
     });
   });
 
@@ -160,8 +252,8 @@ describe('resolveVerseShellRuntimeBundle', () => {
       VERSESHELL_AE_SHA256: digest(bundle.binary),
       VERSESHELL_RUNTIME_VERSION: '1.0.0',
       VERSESHELL_SERVER_PROTOCOL: 'verseshell.jsonl/v1',
-      VERSESHELL_OPERATION_CATALOG_DIGEST: `sha256:${'a'.repeat(64)}`,
-      VERSESHELL_OPERATION_CATALOG_COUNT: '26',
+      VERSESHELL_OPERATION_CATALOG_DIGEST: 'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7',
+      VERSESHELL_OPERATION_CATALOG_COUNT: '31',
     });
 
     const resolver = vi.fn(async () => runtime);
@@ -231,6 +323,15 @@ describe('resolveVerseShellRuntimeBundle', () => {
       arch: 'x64',
       env: {},
     })).rejects.toThrow(/compliance source_file file is missing/);
+
+    const missingSourceInputs = await makePackagedBundle('verseshell-source-inputs', { omit: 'source-inputs.json' });
+    await expect(resolveVerseShellRuntimeBundle({
+      isPackaged: true,
+      resourcesPath: missingSourceInputs.root,
+      platform: 'win32',
+      arch: 'x64',
+      env: {},
+    })).rejects.toThrow(/source-input|ENOENT/);
   });
 
   it('rejects wrong target or manifest architecture', async () => {
@@ -306,11 +407,10 @@ describe('resolveVerseShellRuntimeBundle', () => {
     });
   });
 
-  it('requires dirty manifests to carry patch instructions', async () => {
-    const bundle = await makePackagedBundle('verseshell-dirty');
+  it('rejects a provenance lock drift even when the binary itself is intact', async () => {
+    const bundle = await makePackagedBundle('verseshell-provenance-drift');
     const raw = JSON.parse(await readFile(join(bundle.root, 'resources', 'verseshell', 'manifest.json'), 'utf8'));
-    raw.provenance.dirty = true;
-    raw.provenance.corresponding_source.patch_instructions = null;
+    raw.provenance.unrecorded_changes = true;
     await writeFile(join(bundle.root, 'resources', 'verseshell', 'manifest.json'), JSON.stringify(raw));
     await expect(resolveVerseShellRuntimeBundle({
       isPackaged: true,
@@ -318,6 +418,6 @@ describe('resolveVerseShellRuntimeBundle', () => {
       platform: 'win32',
       arch: 'x64',
       env: {},
-    })).rejects.toThrow(/Dirty VerseShell manifest lacks patch/);
+    })).rejects.toThrow(/source provenance|corresponding-source/);
   });
 });

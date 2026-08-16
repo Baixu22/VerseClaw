@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: openclaw_runtime/src/agents/tool-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-08-14T12:28:25.633Z
+Generated at: 2026-08-15T17:56:49.354Z
 -->
 
 Built-in core tool sections with their profiles. This file is generated —
@@ -16,11 +16,21 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 - `write` — Create or overwrite files — profiles: `coding`
 - `edit` — Make precise edits — profiles: `coding`
 - `apply_patch` — Patch files — profiles: `coding`
+- `read_file` — Read a workspace file through the VerseShell read-only facade — profiles: `coding`
+- `search_content` — Search file contents through the VerseShell read-only facade — profiles: `coding`
+- `result_query` — Query a VerseShell result artifact handle by mode (meta/head/tail/slice/grep) — profiles: `coding`
+- `undo_write` — Restore the previous snapshot of a file from the write journal — profiles: `coding`
 
 ## Runtime (`runtime`)
 
 - `exec` — Run shell now. — profiles: `coding`
 - `process` — Inspect/control exec sessions. — profiles: `coding`
+- `wait` — Resume a suspended Code Mode run returned by exec — profiles: `coding`
+- `verseshell_result` — Inspect a result:// artifact returned by exec (bounded slice) — profiles: `coding`
+- `tool_search` — Search the session tool catalog by name or description — profiles: `coding`
+- `tool_search_code` — Run JavaScript in the Tool Search sandbox to query the session tool catalog — profiles: `coding`
+- `tool_describe` — Show the schema and description of a tool found via tool_search — profiles: `coding`
+- `tool_call` — Invoke a tool found via tool_search — profiles: `coding`
 - `code_execution` — Run sandboxed remote analysis — profiles: `coding`
 
 ## Web (`web`)
@@ -33,6 +43,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 
 - `memory_search` — Semantic search — profiles: `coding`
 - `memory_get` — Read memory files — profiles: `coding`
+- `memory_query` — Search the agent's long-term memory store for stored facts — profiles: `coding`
 - `context_read` — Read full context blocks on demand — profiles: `coding`
 - `context_search` — Search context blocks by entity/query — profiles: `coding`
 - `context_write` — Update agent notes context block — profiles: `coding`
@@ -58,6 +69,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 ## UI (`ui`)
 
 - `browser` — Control web browser — profiles: —
+- `agent_browser` — Drive the internal Agent Browser for web automation — profiles: `coding`
 - `canvas` — Control node Canvas surfaces when the Canvas plugin is enabled — profiles: —
 
 ## Messaging (`messaging`)
@@ -68,6 +80,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 
 - `heartbeat_respond` — Record heartbeat outcomes — profiles: —
 - `cron` — Schedule reminders, cron, wake events. — profiles: `coding`
+- `select_automation_playbook` — Pick a browser-automation playbook for the current request — profiles: `coding`
 - `gateway` — Gateway control — profiles: —
 
 ## Nodes (`nodes`)
@@ -89,5 +102,7 @@ edit the source of truth instead, then run pnpm catalogs:gen.
 - `image_generate` — Image generation — profiles: `coding`
 - `music_generate` — Music generation — profiles: `coding`
 - `video_generate` — Video generation — profiles: `coding`
+- `pdf` — Convert HTML to PDF documents — profiles: `coding`
+- `transcripts` — Start, stop, import, summarize, or inspect meeting transcripts — profiles: `coding`
 - `tts` — Text-to-speech conversion — profiles: —
 

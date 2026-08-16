@@ -33,6 +33,8 @@ extraResources:
       - "NOTICE.md"
       - "SOURCE.md"
       - "BUILD.md"
+      - "source-inputs.json"
+      - "patches/*.patch"
   # OpenClaw package (node_modules copied separately by afterPack hook
   # because electron-builder respects .gitignore which excludes node_modules/)
   - from: build/openclaw/

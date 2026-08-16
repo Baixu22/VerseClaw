@@ -1,6 +1,10 @@
 import { VerseShellContractError } from './errors.js';
 import {
   DEFAULT_MAX_HANDSHAKE_BYTES,
+  DEFAULT_MAX_RESULT_BYTES,
+  DEFAULT_MAX_RESULT_LINES,
+  DEFAULT_MAX_RESULT_MATCHES,
+  DEFAULT_MAX_RESULT_TOKENS,
   DEFAULT_MAX_OBSERVATION_BYTES,
   DEFAULT_MAX_REQUEST_BYTES,
   DEFAULT_OBSERVATION_MAX_TOKENS,
@@ -12,6 +16,9 @@ import {
   VERSESHELL_SERVER_NAME,
   VERSESHELL_SERVER_PROTOCOL,
   type Diagnostic,
+  type ArtifactDescriptor,
+  type ArtifactOwnerLineage,
+  type ArtifactQueryCapabilities,
   type JsonObject,
   type JsonSchema,
   type JsonValue,
@@ -23,6 +30,10 @@ import {
   type ProtocolHandshake,
   type ProtocolManifest,
   type RuntimeHandshakeData,
+  type ResultQueryMode,
+  type ResultQueryRequest,
+  type StreamCapture,
+  type VerseShellArtifactStream,
   type SuggestedAction,
   type SuggestedFix,
 } from './types.js';
@@ -725,4 +736,191 @@ export function decodeProtocolManifest(input: string | unknown): ProtocolManifes
       decodeOperationCatalogEntry(entry, `$protocol_manifest.operations[${index}]`),
     ),
   };
+}
+
+const ARTIFACT_DIGEST = /^sha256:[a-f0-9]{64}$/u;
+const ARTIFACT_HANDLE = /^result:\/\/sha256\/[a-f0-9]{64}$/u;
+const RESULT_MODES: readonly ResultQueryMode[] = ['meta', 'head', 'tail', 'slice', 'grep', 'raw'];
+const STREAMS: readonly VerseShellArtifactStream[] = ['stdout', 'stderr', 'json', 'observation', 'combined'];
+
+function boundedCount(value: unknown, path: string, maximum: number): number {
+  const result = integer(value, path, 0);
+  if (result > maximum) fail('artifact_invalid', path, `value exceeds ${maximum}`, maximum, result);
+  return result;
+}
+
+function boundedPositive(value: unknown, path: string, maximum: number): number {
+  const result = integer(value, path, 1);
+  if (result > maximum) fail('result_query_invalid', path, `value exceeds ${maximum}`, maximum, result);
+  return result;
+}
+
+function decodeArtifactOwner(value: unknown, path: string): ArtifactOwnerLineage {
+  const object = record(value, path);
+  exactKeys(object, ['workspace_id', 'runtime_id', 'process_id', 'request_id', 'agent_id', 'session_id', 'trace_id'], path);
+  const result: ArtifactOwnerLineage = {
+    workspace_id: string(object.workspace_id, `${path}.workspace_id`),
+    runtime_id: string(object.runtime_id, `${path}.runtime_id`),
+    process_id: string(object.process_id, `${path}.process_id`),
+    request_id: string(object.request_id, `${path}.request_id`),
+  };
+  for (const key of ['agent_id', 'session_id', 'trace_id'] as const) {
+    const value = object[key];
+    if (value !== undefined) result[key] = string(value, `${path}.${key}`);
+  }
+  return result;
+}
+
+function decodeArtifactQuery(value: unknown, path: string): ArtifactQueryCapabilities {
+  const object = record(value, path);
+  exactKeys(object, ['modes', 'max_bytes', 'max_tokens', 'max_lines', 'max_matches'], path);
+  if (!Array.isArray(object.modes) || object.modes.length === 0) {
+    fail('artifact_invalid', `${path}.modes`, 'expected a non-empty array');
+  }
+  const modes = object.modes.map((entry, index) => {
+    const mode = string(entry, `${path}.modes[${index}`) as ResultQueryMode;
+    if (!RESULT_MODES.includes(mode)) fail('artifact_invalid', `${path}.modes[${index}]`, 'unsupported query mode');
+    return mode;
+  });
+  if (new Set(modes).size !== modes.length) fail('artifact_invalid', `${path}.modes`, 'query modes must be unique');
+  return {
+    modes,
+    max_bytes: boundedCount(object.max_bytes, `${path}.max_bytes`, DEFAULT_MAX_RESULT_BYTES),
+    max_tokens: boundedCount(object.max_tokens, `${path}.max_tokens`, DEFAULT_MAX_RESULT_TOKENS),
+    max_lines: boundedCount(object.max_lines, `${path}.max_lines`, DEFAULT_MAX_RESULT_LINES),
+    max_matches: boundedCount(object.max_matches, `${path}.max_matches`, DEFAULT_MAX_RESULT_MATCHES),
+  };
+}
+
+export interface DecodeArtifactDescriptorOptions {
+  now_ms?: number;
+  expected_owner?: Partial<ArtifactOwnerLineage>;
+}
+
+export function decodeArtifactDescriptor(input: unknown, options: DecodeArtifactDescriptorOptions = {}): ArtifactDescriptor {
+  const object = record(input, '$artifact');
+  exactKeys(object, ['handle', 'digest', 'stream', 'raw_bytes', 'retained_bytes', 'omitted_bytes', 'created_at', 'expires_at', 'owner', 'query'], '$artifact');
+  const handle = string(object.handle, '$artifact.handle');
+  const digest = string(object.digest, '$artifact.digest');
+  if (!ARTIFACT_HANDLE.test(handle)) fail('artifact_invalid', '$artifact.handle', 'artifact handle is malformed');
+  if (!ARTIFACT_DIGEST.test(digest)) fail('artifact_invalid', '$artifact.digest', 'artifact digest is malformed');
+  if (handle.replace('result://sha256/', 'sha256:') !== digest) {
+    fail('artifact_digest_mismatch', '$artifact.digest', 'artifact handle and digest do not match');
+  }
+  const stream = string(object.stream, '$artifact.stream') as VerseShellArtifactStream;
+  if (!STREAMS.includes(stream)) fail('artifact_invalid', '$artifact.stream', 'artifact stream is unsupported');
+  const rawBytes = boundedCount(object.raw_bytes, '$artifact.raw_bytes', Number.MAX_SAFE_INTEGER);
+  const retainedBytes = boundedCount(object.retained_bytes, '$artifact.retained_bytes', rawBytes);
+  const omittedBytes = boundedCount(object.omitted_bytes, '$artifact.omitted_bytes', rawBytes);
+  if (retainedBytes + omittedBytes !== rawBytes) {
+    fail('artifact_invalid', '$artifact', 'raw_bytes must equal retained_bytes + omitted_bytes');
+  }
+  const createdAt = integer(object.created_at, '$artifact.created_at', 0);
+  const expiresAt = integer(object.expires_at, '$artifact.expires_at', 1);
+  if (expiresAt <= createdAt) fail('artifact_invalid', '$artifact.expires_at', 'expiry must be after creation');
+  if (options.now_ms !== undefined && expiresAt <= options.now_ms) {
+    fail('artifact_expired', '$artifact.expires_at', 'artifact retention has expired');
+  }
+  const owner = decodeArtifactOwner(object.owner, '$artifact.owner');
+  for (const [key, expected] of Object.entries(options.expected_owner ?? {})) {
+    if (expected !== undefined && owner[key as keyof ArtifactOwnerLineage] !== expected) {
+      fail('artifact_owner_mismatch', `$artifact.owner.${key}`, 'artifact owner does not match request owner', expected, owner[key as keyof ArtifactOwnerLineage]);
+    }
+  }
+  return {
+    handle,
+    digest,
+    stream,
+    raw_bytes: rawBytes,
+    retained_bytes: retainedBytes,
+    omitted_bytes: omittedBytes,
+    created_at: createdAt,
+    expires_at: expiresAt,
+    owner,
+    query: decodeArtifactQuery(object.query, '$artifact.query'),
+  };
+}
+
+export function decodeStreamCapture(input: unknown, path = '$stream'): StreamCapture {
+  const object = record(input, path);
+  exactKeys(object, ['status', 'text', 'summary', 'artifact', 'encoding', 'raw_complete', 'retained_complete', 'returned_bytes', 'raw_bytes', 'retained_bytes', 'omitted_bytes', 'truncated'], path);
+  const status = string(object.status, `${path}.status`) as StreamCapture['status'];
+  if (!['empty', 'complete', 'reduced', 'truncated'].includes(status)) fail('artifact_invalid', `${path}.status`, 'stream status is unsupported');
+  const rawBytes = boundedCount(object.raw_bytes, `${path}.raw_bytes`, Number.MAX_SAFE_INTEGER);
+  const omittedBytes = boundedCount(object.omitted_bytes, `${path}.omitted_bytes`, rawBytes);
+  const retainedBytes = object.retained_bytes === undefined
+    ? rawBytes - omittedBytes
+    : boundedCount(object.retained_bytes, `${path}.retained_bytes`, rawBytes);
+  const result: StreamCapture = {
+    status,
+    raw_bytes: rawBytes,
+    retained_bytes: retainedBytes,
+    omitted_bytes: omittedBytes,
+    truncated: object.truncated === undefined
+      ? status === 'truncated' || omittedBytes > 0
+      : boolean(object.truncated, `${path}.truncated`),
+  };
+  if (result.retained_bytes > result.raw_bytes || result.retained_bytes + result.omitted_bytes !== result.raw_bytes) {
+    fail('artifact_invalid', path, 'stream byte counts are inconsistent');
+  }
+  if (result.truncated !== (result.omitted_bytes > 0 || status === 'truncated')) {
+    fail('artifact_invalid', `${path}.truncated`, 'truncated flag does not match omitted bytes/status');
+  }
+  if (object.text !== undefined) result.text = string(object.text, `${path}.text`, true);
+  if (object.summary !== undefined) result.summary = string(object.summary, `${path}.summary`, true);
+  if (object.encoding !== undefined) result.encoding = string(object.encoding, `${path}.encoding`);
+  if (object.raw_complete !== undefined) result.raw_complete = boolean(object.raw_complete, `${path}.raw_complete`);
+  if (object.retained_complete !== undefined) result.retained_complete = boolean(object.retained_complete, `${path}.retained_complete`);
+  if (object.returned_bytes !== undefined) {
+    const returnedBytes = boundedCount(object.returned_bytes, `${path}.returned_bytes`, result.retained_bytes);
+    if (returnedBytes !== result.retained_bytes) fail('artifact_invalid', `${path}.returned_bytes`, 'returned_bytes must equal retained_bytes');
+    result.returned_bytes = returnedBytes;
+  }
+  if (object.artifact !== undefined) {
+    const handle = string(object.artifact, `${path}.artifact`);
+    if (!ARTIFACT_HANDLE.test(handle)) fail('artifact_invalid', `${path}.artifact`, 'artifact handle is malformed');
+    result.artifact = handle;
+  }
+  return result;
+}
+
+export interface DecodeResultQueryOptions {
+  max_bytes?: number;
+  max_tokens?: number;
+  max_lines?: number;
+  max_matches?: number;
+}
+
+export function decodeResultQueryRequest(input: unknown, options: DecodeResultQueryOptions = {}): ResultQueryRequest {
+  const object = record(input, '$result_query');
+  exactKeys(object, ['handle', 'mode', 'lines', 'start_line', 'end_line', 'pattern', 'max_matches', 'max_bytes', 'max_tokens'], '$result_query');
+  const handle = string(object.handle, '$result_query.handle');
+  if (!ARTIFACT_HANDLE.test(handle)) fail('result_query_invalid', '$result_query.handle', 'artifact handle is malformed');
+  const mode = string(object.mode, '$result_query.mode') as ResultQueryMode;
+  if (!RESULT_MODES.includes(mode)) fail('result_query_invalid', '$result_query.mode', 'query mode is unsupported');
+  const maxBytes = options.max_bytes ?? DEFAULT_MAX_RESULT_BYTES;
+  const maxTokens = options.max_tokens ?? DEFAULT_MAX_RESULT_TOKENS;
+  const maxLines = options.max_lines ?? DEFAULT_MAX_RESULT_LINES;
+  const maxMatches = options.max_matches ?? DEFAULT_MAX_RESULT_MATCHES;
+  const result: ResultQueryRequest = { handle, mode };
+  if (object.lines !== undefined) result.lines = boundedPositive(object.lines, '$result_query.lines', maxLines);
+  if (object.start_line !== undefined) result.start_line = boundedPositive(object.start_line, '$result_query.start_line', 1_000_000);
+  if (object.end_line !== undefined) result.end_line = boundedPositive(object.end_line, '$result_query.end_line', 1_000_000);
+  if (result.start_line !== undefined && result.end_line !== undefined && result.end_line < result.start_line) {
+    fail('result_query_invalid', '$result_query', 'end_line must be >= start_line');
+  }
+  if (mode === 'slice' && result.start_line !== undefined && result.end_line !== undefined && result.end_line - result.start_line + 1 > maxLines) {
+    fail('result_query_invalid', '$result_query', `slice is limited to ${maxLines} lines`);
+  }
+  if (mode === 'grep') {
+    if (object.pattern === undefined || string(object.pattern, '$result_query.pattern').trim().length === 0) {
+      fail('result_query_invalid', '$result_query.pattern', 'grep requires a pattern');
+    }
+    result.pattern = string(object.pattern, '$result_query.pattern').trim();
+    if (result.pattern.length > 500) fail('result_query_invalid', '$result_query.pattern', 'pattern exceeds 500 characters');
+  }
+  if (object.max_matches !== undefined) result.max_matches = boundedPositive(object.max_matches, '$result_query.max_matches', maxMatches);
+  if (object.max_bytes !== undefined) result.max_bytes = boundedPositive(object.max_bytes, '$result_query.max_bytes', maxBytes);
+  if (object.max_tokens !== undefined) result.max_tokens = boundedPositive(object.max_tokens, '$result_query.max_tokens', maxTokens);
+  return result;
 }

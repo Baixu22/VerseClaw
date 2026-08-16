@@ -61,6 +61,24 @@ function buildAnthropicVertexCatalog(): ModelDefinitionConfig[] {
       cost: { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
       maxTokens: 128000,
     }),
+    buildAnthropicVertexModel({
+      id: "claude-sonnet-5",
+      name: "Claude Sonnet 5",
+      reasoning: true,
+      input: ["text", "image"],
+      // Introductory $2/$10 pricing through 2026-08-31 (then $3/$15);
+      // cache read 0.1x and cache write 1.25x of input.
+      cost: { input: 2, output: 10, cacheRead: 0.2, cacheWrite: 2.5 },
+      maxTokens: 64000,
+    }),
+    buildAnthropicVertexModel({
+      id: "claude-fable-5",
+      name: "Claude Fable 5",
+      reasoning: true,
+      input: ["text", "image"],
+      cost: { input: 10, output: 50, cacheRead: 1, cacheWrite: 12.5 },
+      maxTokens: 64000,
+    }),
   ];
 }
 

@@ -8,6 +8,7 @@ import { getEnvApiKey } from "../llm/env-api-keys.js";
 import { calculateCost } from "../llm/model-utils.js";
 import type { Context, Model, SimpleStreamOptions, ThinkingLevel } from "../llm/types.js";
 import { parseStreamingJson } from "../llm/utils/json-parse.js";
+import { logWarn } from "../logger.js";
 import { MALFORMED_STREAMING_FRAGMENT_ERROR_MESSAGE } from "../shared/assistant-error-format.js";
 import {
   applyAnthropicPayloadPolicyToParams,
@@ -69,6 +70,10 @@ type AnthropicOptions = SimpleStreamOptions & {
   effort?: string;
   interleavedThinking?: boolean;
   metadata?: { user_id?: string };
+  /** Opt into server-side compaction (beta compact-2026-01-12). */
+  serverCompaction?: boolean;
+  /** Explicit server compaction threshold in tokens. */
+  serverCompactionThreshold?: number;
   temperature?: number;
   thinkingBudgetTokens?: number;
   thinkingEnabled?: boolean;
@@ -134,6 +139,30 @@ type MutableAssistantOutput = {
 
 const EMPTY_ANTHROPIC_MESSAGES_FALLBACK_TEXT = ".";
 
+/** Beta header enabling server-side compaction on the Anthropic Messages API. */
+const ANTHROPIC_SERVER_COMPACTION_BETA = "compact-2026-01-12";
+
+/** Stable, machine-readable refusal marker carried in assistant error messages.
+ *  `classifyFailoverReason` keys off this text to classify the refusal reason,
+ *  and runner completion telemetry derives `refusal: true` from it. */
+const ANTHROPIC_MODEL_REFUSAL_MESSAGE =
+  "refusal: The model declined this request (stop_reason: refusal). Try rephrasing or using a different model.";
+
+const adaptiveOnlyThinkingDisabledWarnedModels = new Set<string>();
+
+function warnAdaptiveOnlyThinkingDisabled(modelId: string): void {
+  if (adaptiveOnlyThinkingDisabledWarnedModels.has(modelId)) {
+    return;
+  }
+  if (adaptiveOnlyThinkingDisabledWarnedModels.size >= 64) {
+    adaptiveOnlyThinkingDisabledWarnedModels.clear();
+  }
+  adaptiveOnlyThinkingDisabledWarnedModels.add(modelId);
+  logWarn(
+    `Anthropic model ${modelId} does not support disabling thinking; the request will run with model-managed thinking.`,
+  );
+}
+
 function isClaudeOpus47OrNewerModel(modelId: string): boolean {
   return (
     modelId.includes("opus-4-8") ||
@@ -152,8 +181,20 @@ function supportsAdaptiveThinking(modelId: string): boolean {
     isClaudeOpus47OrNewerModel(modelId) ||
     isClaudeOpus46Model(modelId) ||
     modelId.includes("sonnet-4-6") ||
-    modelId.includes("sonnet-4.6")
+    modelId.includes("sonnet-4.6") ||
+    // Sonnet 5 and the Fable/Mythos 5 family are adaptive-only models:
+    // budget_tokens extended thinking is removed and thinking cannot be
+    // disabled on the wire (explicit thinking.type="disabled" is rejected).
+    modelId.includes("sonnet-5") ||
+    modelId.includes("fable-5") ||
+    modelId.includes("mythos-5")
   );
+}
+
+/** True when the model accepts an explicit thinking.type="disabled" payload.
+ *  Adaptive-only models reject the field; callers must omit thinking instead. */
+function supportsExplicitThinkingDisabled(modelId: string): boolean {
+  return !modelId.includes("fable-5") && !modelId.includes("mythos-5");
 }
 
 function mapThinkingLevelToEffort(level: ThinkingLevel, modelId: string): AnthropicAdaptiveEffort {
@@ -780,6 +821,9 @@ function createAnthropicTransportClient(params: {
   if (needsInterleavedBeta) {
     betaFeatures.push("interleaved-thinking-2025-05-14");
   }
+  if (options?.serverCompaction) {
+    betaFeatures.push(ANTHROPIC_SERVER_COMPACTION_BETA);
+  }
   if (isAnthropicOAuthToken(apiKey)) {
     const betaHeader = buildAnthropicBetaHeader(model, betaFeatures, { oauth: true });
     return {
@@ -844,6 +888,8 @@ function buildAnthropicParams(
     baseUrl: model.baseUrl,
     cacheRetention: options?.cacheRetention,
     enableCacheControl: true,
+    serverCompaction: options?.serverCompaction,
+    compactThreshold: options?.serverCompactionThreshold,
   });
   const params: Record<string, unknown> = {
     model: resolveAnthropicRequestModelId(model),
@@ -900,8 +946,18 @@ function buildAnthropicParams(
           budget_tokens: options.thinkingBudgetTokens || 1024,
         };
       }
-    } else if (options?.thinkingEnabled === false) {
+    } else if (
+      options?.thinkingEnabled === false &&
+      supportsExplicitThinkingDisabled(model.id)
+    ) {
       params.thinking = { type: "disabled" };
+      // Adaptive-only models (Fable 5 / Mythos 5) fall through: thinking is
+      // omitted entirely because an explicit disabled payload is a 400. The
+      // model stays in control of its thinking behavior.
+    } else if (options?.thinkingEnabled === false) {
+      // Adaptive-only models cannot disable thinking on the wire. Omit the
+      // field and tell the operator instead of silently changing semantics.
+      warnAdaptiveOnlyThinkingDisabled(model.id);
     }
   }
   if (options?.metadata && typeof options.metadata.user_id === "string") {
@@ -948,6 +1004,8 @@ function resolveAnthropicTransportOptions(
     toolChoice: options?.toolChoice,
     thinkingBudgets: options?.thinkingBudgets,
     reasoning: options?.reasoning,
+    serverCompaction: options?.serverCompaction,
+    serverCompactionThreshold: options?.serverCompactionThreshold,
     ...(getShadowReceiptOptions(options)
       ? { [RC02_SHADOW_OPTIONS]: getShadowReceiptOptions(options) }
       : {}),
@@ -1422,6 +1480,9 @@ export function createAnthropicMessagesTransportStreamFn(): StreamFn {
             const usage = event.usage as Record<string, unknown> | undefined;
             if (delta?.stop_reason) {
               output.stopReason = mapStopReason(delta.stop_reason);
+              if (delta.stop_reason === "refusal" || delta.stop_reason === "sensitive") {
+                output.errorMessage = ANTHROPIC_MODEL_REFUSAL_MESSAGE;
+              }
             }
             if (typeof usage?.input_tokens === "number") {
               output.usage.input = usage.input_tokens;
@@ -1442,6 +1503,20 @@ export function createAnthropicMessagesTransportStreamFn(): StreamFn {
               output.usage.cacheWrite;
             calculateCost(model, output.usage);
           }
+        }
+        if (
+          output.stopReason === "error" &&
+          output.errorMessage === ANTHROPIC_MODEL_REFUSAL_MESSAGE
+        ) {
+          // Refusals keep the terminal "error" classification for the runner,
+          // but emit the stable refusal message instead of the generic
+          // "An unknown error occurred" that finalizeTransportStream throws.
+          for (const block of output.content) {
+            delete block.index;
+          }
+          stream.push({ type: "error", reason: "error" as never, error: output as never });
+          stream.end();
+          return;
         }
         finalizeTransportStream({ stream, output, signal: transportOptions.signal });
       } catch (error) {

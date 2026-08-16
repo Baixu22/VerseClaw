@@ -1,11 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "component": "verseshell",
   "upstream": {
     "cargo_repository": "https://github.com/nervosys/verseshell",
     "source_repository": "https://github.com/Baixu22/VerseShell.git",
     "pinned_commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "pinned_commit_status": "dirty_build_input_recorded"
+    "pinned_commit_epoch": 1785123525,
+    "source_model": "pinned-commit-plus-ordered-patches",
+    "pinned_commit_status": "qualified_ordered_patch_stack"
   },
   "license": "AGPL-3.0-or-later",
   "crate": {
@@ -30,16 +32,23 @@
     "notice_file": "NOTICE.md",
     "source_file": "SOURCE.md",
     "build_file": "BUILD.md",
+    "source_inputs_file": "source-inputs.json",
     "notice_path": "resources/verseshell/NOTICE.md",
     "source_instructions_path": "resources/verseshell/SOURCE.md",
     "build_instructions_path": "resources/verseshell/BUILD.md",
-    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
-    "corresponding_source_path": "resources/verseshell/patches/uas-05-process-lifecycle.patch",
-    "corresponding_source_status": "dirty_corresponding_source_recorded"
+    "source_inputs_path": "resources/verseshell/source-inputs.json",
+    "corresponding_source_locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+    "corresponding_source_status": "tracked_ordered_patch_stack",
+    "patch_paths": [
+      "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "resources/verseshell/patches/p0-runtime-startup.patch",
+      "resources/verseshell/patches/aci-bench-source-inputs.patch",
+      "resources/verseshell/patches/python-current-interpreter.patch"
+    ]
   },
   "build": {
     "instructions_path": "resources/verseshell/BUILD.md",
-    "command": "cargo build --release --bin ae",
+    "command": "cargo build --locked --release --bin ae",
     "primary_binary": "ae",
     "mcp_binary": "not_packaged",
     "cargo_version": "cargo 1.94.0 (85eff7c80 2026-01-15)",
@@ -48,73 +57,155 @@
     "cargo_metadata": {
       "package_name": "verseshell",
       "package_version": "1.0.0",
-      "target_directory": "[build-source]/target"
+      "target_directory": "[independent-build-root]/target"
     },
     "cargo_toml_sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d",
     "cargo_lock_sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2",
-    "synchronized_at": "2026-07-30T06:37:27.157Z"
+    "source_inputs_sha256": "158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489",
+    "source_identity_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+    "controls": {
+      "cargo_incremental": "0",
+      "source_date_epoch": 1785123525,
+      "encoded_rustflags": [
+        "--remap-path-prefix={source_root}=/verseshell/source",
+        "--remap-path-prefix={target_root}=/verseshell/target",
+        "-C",
+        "link-arg=/Brepro",
+        "-C",
+        "link-arg=/PDBALTPATH:%_PDB%"
+      ]
+    },
+    "qualification": {
+      "status": "passed",
+      "rust_tests": [
+        {
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "-j",
+            "1"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--no-run",
+            "-j",
+            "1"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "python_optional_verify": {
+        "status": "passed",
+        "interpreter_version": "Python 3.10.3",
+        "task_ids": [
+          "python_edit_and_retest",
+          "python_fix_pytest_fail"
+        ],
+        "passed": 2,
+        "failed": 0
+      }
+    },
+    "reproducibility": {
+      "status": "passed",
+      "independent_source_roots": 2,
+      "independent_target_roots": 2,
+      "byte_identical": true,
+      "binary_sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+      "bytes": 14879232,
+      "builds": [
+        {
+          "ordinal": 1,
+          "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+          "bytes": 14879232,
+          "handshake": {
+            "runtime_version": "1.0.0",
+            "server_protocol": "verseshell.jsonl/v1",
+            "operation_catalog_schema": "verseshell.operation-catalog/v1",
+            "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
+            "operation_catalog_count": 31
+          }
+        },
+        {
+          "ordinal": 2,
+          "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+          "bytes": 14879232,
+          "handshake": {
+            "runtime_version": "1.0.0",
+            "server_protocol": "verseshell.jsonl/v1",
+            "operation_catalog_schema": "verseshell.operation-catalog/v1",
+            "operation_catalog_digest": "sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7",
+            "operation_catalog_count": 31
+          }
+        }
+      ]
+    },
+    "synchronized_at": "2026-08-14T04:40:20.574Z"
   },
   "artifacts": {
     "win32-x64": {
       "path": "resources/bin/win32-x64/ae.exe",
       "packaged_path": "bin/ae.exe",
-      "sha256": "19ca598916077f677722b4f82d8dfc1c24c4e88ace9809abe681255370702699",
-      "bytes": 14880256,
+      "sha256": "ac6a7a15dac0a9dc7d15ec975fc65276f25c871bbc0174197731947df6460786",
+      "bytes": 14879232,
       "version": "1.0.0"
     },
     "darwin-x64": {
       "path": null,
+      "packaged_path": null,
       "sha256": null,
-      "bytes": null
+      "bytes": null,
+      "version": null
     },
     "darwin-arm64": {
       "path": null,
+      "packaged_path": null,
       "sha256": null,
-      "bytes": null
+      "bytes": null,
+      "version": null
     },
     "linux-x64": {
       "path": null,
+      "packaged_path": null,
       "sha256": null,
-      "bytes": null
+      "bytes": null,
+      "version": null
     },
     "linux-arm64": {
       "path": null,
+      "packaged_path": null,
       "sha256": null,
-      "bytes": null
+      "bytes": null,
+      "version": null
     }
   },
   "provenance": {
     "repository": "https://github.com/Baixu22/VerseShell.git",
     "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
-    "dirty": true,
-    "build_input": {
-      "source_directory": "[build-source]",
-      "status_porcelain": [
-        " M Cargo.toml",
-        " M src/lib.rs",
-        " M src/mcp/tools.rs",
-        " M src/ops/mod.rs",
-        " M src/ops/runtime_ops.rs",
-        " M src/process_runner.rs",
-        " M src/server.rs",
-        " M tests/operation_protocol_tests.rs",
-        "?? src/ops/process_ops.rs",
-        "?? src/process_command.rs",
-        "?? src/process_lifecycle.rs",
-        "?? src/process_lifecycle_windows.rs",
-        "?? tests/process_lifecycle_tests.rs"
-      ],
-      "diff_sha256": "cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098",
-      "dirty_entry_count": 13
+    "commit_epoch": 1785123525,
+    "source_model": "pinned-commit-plus-ordered-patches",
+    "unrecorded_changes": false,
+    "source_inputs": {
+      "path": "resources/verseshell/source-inputs.json",
+      "sha256": "158d0ca4d2ec51080b2aa0bdeb6274755c7009af9a904f86eacf624993dcd489",
+      "identity_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+      "patch_count": 4,
+      "recovered_input_count": 8
     },
     "corresponding_source": {
-      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
-      "patch_instructions": "Clone the recorded repository, checkout c3983694407a9ddb23505e05fad4a9eae653b283, then apply resources/verseshell/patches/uas-05-process-lifecycle.patch from the ClawX source tree with git apply."
-    },
-    "dirty_build_override": {
-      "approved": true,
-      "source_snapshot": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/patches/uas-05-process-lifecycle.patch",
-      "patch_instructions": "Clone the recorded repository, checkout c3983694407a9ddb23505e05fad4a9eae653b283, then apply resources/verseshell/patches/uas-05-process-lifecycle.patch from the ClawX source tree with git apply."
+      "locator": "https://github.com/Baixu22/VerseShell.git@c3983694407a9ddb23505e05fad4a9eae653b283+resources/verseshell/source-inputs.json#sha256:19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650",
+      "patch_paths": [
+        "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+        "resources/verseshell/patches/p0-runtime-startup.patch",
+        "resources/verseshell/patches/aci-bench-source-inputs.patch",
+        "resources/verseshell/patches/python-current-interpreter.patch"
+      ],
+      "instructions": "Clone the HTTPS repository, checkout the pinned commit, then apply every source-input manifest patch in ascending order with git apply."
     }
   }
 }

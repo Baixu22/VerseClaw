@@ -14,8 +14,11 @@ function cmdCdPath(value: string): string {
   return `"${value.replace(/"/g, '""')}"`;
 }
 
-/** Preserve the exec tool's shell-string contract while sending typed argv to VerseShell. */
-export function resolveVerseShellCommandArgv(
+/**
+ * Explicit terminal-shell compatibility only. Ordinary coding commands must
+ * use command-profiles.ts and direct argv; this helper is never the default.
+ */
+export function resolveExplicitVerseShellCommandArgv(
   command: string,
   cwd?: string,
   env: NodeJS.ProcessEnv = process.env,
@@ -38,4 +41,7 @@ export function resolveVerseShellCommandArgv(
   const prefix = cwd ? `cd ${quotePosix(cwd)} && ` : "";
   return ["sh", "-lc", `${prefix}${command}`];
 }
+
+/** @deprecated Use resolveExplicitVerseShellCommandArgv for explicit shell payloads. */
+export const resolveVerseShellCommandArgv = resolveExplicitVerseShellCommandArgv;
 

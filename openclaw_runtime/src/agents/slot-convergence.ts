@@ -111,6 +111,8 @@ export function buildSlotMechanismCensus(input: {
   registeredPluginIds?: string[];
   contextEngineIds?: string[];
   memoryStoreConfigured?: boolean;
+  memorySlotId?: string;
+  runtimeMemoryPersist?: boolean;
 }): {
   memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }>;
   context: Array<{ id: string; role: SlotConvergenceRole; isContextEngineSlot: boolean }>;
@@ -120,16 +122,22 @@ export function buildSlotMechanismCensus(input: {
   const pluginIds = input.registeredPluginIds ?? RC07_MEMORY_MECHANISMS.map((m) => m.id);
   const engineIds = input.contextEngineIds ?? RC07_CONTEXT_MECHANISMS.map((c) => c.id);
   const memoryStoreConfigured = input.memoryStoreConfigured ?? true;
+  const memorySlotId = input.memorySlotId ?? "memory-core";
+  const runtimeMemoryPersist = input.runtimeMemoryPersist === true;
 
   // The active memory store owner: memory-core persists only when the real
-  // MemoryStore binding is configured. All other mechanisms never write.
+  // MemoryStore binding is configured; the built-in runtime-memory owner
+  // persists only when it is selected and runtime.memory.persist is on.
   const memory: Array<{ id: string; role: SlotConvergenceRole; mayWriteMemory: boolean }> = [];
   for (const id of pluginIds) {
     const known = RC07_MEMORY_MECHANISMS.find((m) => m.id === id);
     memory.push({
       id,
-      role: known?.role ?? 'candidate-producer',
-      mayWriteMemory: id === 'memory-core' && memoryStoreConfigured,
+      role: id === "runtime-memory" ? "store-owner" : known?.role ?? 'candidate-producer',
+      mayWriteMemory:
+        id === "runtime-memory"
+          ? memorySlotId === "runtime-memory" && runtimeMemoryPersist
+          : id === 'memory-core' && memoryStoreConfigured && memorySlotId === "memory-core",
     });
   }
 
@@ -158,8 +166,12 @@ export function enforceSlotConvergenceForConfig(config: {
   memorySlotId?: string;
   contextEngineId?: string;
   crkEnabled?: boolean;
+  runtimeMemoryPersist?: boolean;
 }): { ok: boolean; errors: string[] } {
-  const memory = assertSingleMemorySlotOwner({ memorySlotId: config.memorySlotId });
+  const memory = assertSingleMemorySlotOwner({
+    memorySlotId: config.memorySlotId,
+    runtimeMemoryPersist: config.runtimeMemoryPersist,
+  });
   const context = assertSingleContextEngineSlot({
     contextEngineId: config.contextEngineId,
     crkEnabled: config.crkEnabled,
@@ -185,12 +197,22 @@ export function resolveActiveMemorySlotOwner(config: {
 }
 
 /**
- * Enforce that an explicit memory slot selects the single store-owner
- * (memory-core). A non-owner selection is rejected.
+ * Enforce that an explicit memory slot selects a single store-owner:
+ * memory-core by default, or the built-in runtime-memory owner when
+ * runtime.memory.persist=true. Any other selection is rejected.
  */
-export function assertSingleMemorySlotOwner(config: { memorySlotId?: string }): { ok: boolean; errors: string[] } {
+export function assertSingleMemorySlotOwner(config: {
+  memorySlotId?: string;
+  runtimeMemoryPersist?: boolean;
+}): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
   const slotId = config.memorySlotId ?? defaultSlotIdForKey('memory');
+  if (slotId === 'runtime-memory') {
+    if (config.runtimeMemoryPersist !== true) {
+      errors.push('runtime-memory memory slot requires runtime.memory.persist=true');
+    }
+    return { ok: errors.length === 0, errors };
+  }
   const owner = RC07_MEMORY_MECHANISMS.find((m) => m.id === slotId);
   if (!owner || !owner.mayWriteMemory) {
     errors.push(`memory slot must be the single store-owner (memory-core), got ${slotId}`);
@@ -352,7 +374,7 @@ export function buildRuntimeMemoryWriterCensus(
     {
       id: "runtime-memory-persistence",
       ownerPath: "openclaw_runtime/src/runtime-core/memory-persistence.ts",
-      role: "parallel-writer",
+      role: memorySlotId === "runtime-memory" ? "slot-owner" : "parallel-writer",
       mayWriteMemory: persist,
       activation: "runtime.memory.persist=true",
     },
@@ -434,10 +456,21 @@ export function assertRuntimeMemoryOwnerConvergence(
 ): { ok: boolean; errors: string[] } {
   const census = buildRuntimeMemoryWriterCensus(input);
   const errors: string[] = [];
+  const memorySlotId = input.memorySlotId ?? "memory-core";
+  const persist = input.runtimeMemoryPersist === true;
+  if (memorySlotId === "runtime-memory" && !persist) {
+    errors.push(
+      "runtime-memory memory slot requires runtime.memory.persist=true so the selected owner is durable",
+    );
+  }
   for (const authority of census.authorities) {
-    if (authority.role === "parallel-writer" && authority.mayWriteMemory) {
+    if (
+      authority.id === "runtime-memory-persistence" &&
+      authority.role === "parallel-writer" &&
+      authority.mayWriteMemory
+    ) {
       errors.push(
-        `${authority.id} (${authority.activation}) is a parallel memory writer outside the selected slot owner (memory-core); runtime.memory.persist must be constrained by the memory slot or rejected`,
+        `${authority.id} (${authority.activation}) is a parallel memory writer outside the selected slot owner (${memorySlotId}); runtime.memory.persist must be constrained by the memory slot or rejected`,
       );
     }
   }

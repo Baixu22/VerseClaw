@@ -122,13 +122,30 @@ describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
     expect(census.bypassProducers).toEqual([]);
   });
 
-  it('runtime.memory.persist=true surfaces the owner drift as one parallel writer', () => {
+  it('runtime.memory.persist=true surfaces the owner drift on the default memory-core slot', () => {
     const census = buildRuntimeMemoryWriterCensus({ runtimeMemoryPersist: true });
     expect(census.parallelMemoryWriters).toBe(1);
     expect(census.authorities.filter((a) => a.mayWriteMemory).map((a) => a.id)).toEqual([
       'memory-core',
       'runtime-memory-persistence',
     ]);
+  });
+
+  it('accepts runtime.memory.persist=true when runtime-memory owns the memory slot', () => {
+    const census = buildRuntimeMemoryWriterCensus({
+      memorySlotId: 'runtime-memory',
+      runtimeMemoryPersist: true,
+    });
+    expect(census.parallelMemoryWriters).toBe(0);
+    expect(census.authorities.filter((a) => a.mayWriteMemory).map((a) => a.id)).toEqual([
+      'runtime-memory-persistence',
+    ]);
+    expect(
+      assertRuntimeMemoryOwnerConvergence({
+        memorySlotId: 'runtime-memory',
+        runtimeMemoryPersist: true,
+      }),
+    ).toEqual({ ok: true, errors: [] });
   });
 
   it('fail-closed: assertRuntimeMemoryOwnerConvergence rejects the drift, accepts default-off', () => {
@@ -145,7 +162,7 @@ describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
     expect(census.bypassProducers[0]?.note).toContain('bypasses the DCS context-engine');
   });
 
-  it('fail-closed: the activation planner rejects runtime.memory.persist=true through slotConvergenceErrors', () => {
+  it('fail-closed: the activation planner rejects an unconstrained writer and accepts the selected runtime-memory owner', () => {
     // Legal default: persist off (or omitted) normalizes without errors.
     const legal = resolveManifestActivationPlan({
       config: {
@@ -158,8 +175,7 @@ describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
     });
     expect(Array.isArray(legal.pluginIds)).toBe(true);
 
-    // E-1 ruling (b): persist=true is a second durable memory authority, so the
-    // activation planner (runtime startup / plugin reload) must fail closed.
+    // E-1 ruling (a): the default memory-core slot remains fail-closed.
     expect(() =>
       resolveManifestActivationPlan({
         config: {
@@ -171,6 +187,17 @@ describe('R3-1: dynamic Runtime Memory writer census (root acceptance)', () => {
         manifestRecords: [],
       }),
     ).toThrow(/slot convergence rejected/);
+
+    const selected = resolveManifestActivationPlan({
+      config: {
+        plugins: { slots: { memory: 'runtime-memory' } },
+        runtime: { memory: { persist: true } },
+      } as never,
+      workspaceDir: process.cwd(),
+      trigger: { kind: 'capability', capability: 'anything' } as never,
+      manifestRecords: [],
+    });
+    expect(selected.pluginIds).toEqual([]);
   });
 });
 

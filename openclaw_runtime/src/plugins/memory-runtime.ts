@@ -15,6 +15,11 @@ function resolveMemoryRuntimePluginIds(config: OpenClawConfig): string[] {
     return [];
   }
   const pluginId = memorySlot.trim();
+  // Runtime Memory is the built-in persistence owner selected by the slot
+  // convergence guard; it does not expose a plugin-backed search manager.
+  if (pluginId === "runtime-memory") {
+    return [];
+  }
   if (plugins.deny.includes(pluginId) || plugins.entries[pluginId]?.enabled === false) {
     return [];
   }

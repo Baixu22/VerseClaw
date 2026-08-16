@@ -2012,8 +2012,11 @@ export async function runEmbeddedAttempt(
     const contextBlockProjectionEnabled = isContextBlockProjectionEnabled(params.config);
     const roleMemoryProjectionEnabled =
       params.config?.runtime?.contextBlock?.["role-memory"]?.enabled === true;
+    const roleMemoryProjectionApplies =
+      roleMemoryProjectionEnabled && isSubagentSessionKey(params.sessionKey);
     const toolRegistryProjectionEnabled =
       params.config?.runtime?.contextBlock?.["tool-registry"]?.enabled === true;
+    const memoryPilotConfig = resolveMemoryInjectPilotConfig(params.config);
     // TF-0002: single Context Orchestrator entry for memory inject + VToken.
     const contextOrchestration = await computeContextExtraSystemPrompt(
       params.extraSystemPrompt,
@@ -2054,7 +2057,7 @@ export async function runEmbeddedAttempt(
           // provider list with []. It only skips the role-memory provider that
           // the projection now owns (avoiding double injection); other
           // providers (e.g. runtime-memory below) survive.
-          const providers = !roleMemoryProjectionEnabled
+          const providers = !roleMemoryProjectionApplies
             ? createMemoryContextProviders({
                 roleMemory: {
                   resolveRoleName: defaultMainSessionRoleResolver,
@@ -2064,10 +2067,9 @@ export async function runEmbeddedAttempt(
           // R3-1.1: wire the Runtime Memory provider when the pilot requests it
           // (runtime.memory.injectPilot.enabled + providers includes
           // 'runtime-memory'). The provider self-gates on runtime.memory.provider.
-          const pilotConfig = resolveMemoryInjectPilotConfig(params.config);
           if (
-            pilotConfig.enabled &&
-            pilotConfig.providers.includes("runtime-memory")
+            memoryPilotConfig.enabled &&
+            memoryPilotConfig.providers.includes("runtime-memory")
           ) {
             providers.push(
               createRuntimeMemoryContextProvider({
@@ -2084,6 +2086,9 @@ export async function runEmbeddedAttempt(
           }
           return providers;
         },
+        ...(memoryPilotConfig.enabled
+          ? { memoryProviderIds: memoryPilotConfig.providers }
+          : {}),
         deferProjection: true,
       },
       {
