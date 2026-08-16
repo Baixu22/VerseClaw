@@ -1,3 +1,28 @@
+## 当前交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
+
+**WV-B2-02A / TF-0062 已完成并单提交 `b58350a2f`（feat(trajectory): bridge raw v2 renderer supply）。** 提案 `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 与收卡提案 `TFP-workflow-viz-b2-02a-close-20260815` 均已经用户确认后应用；task-forest validate/export PASS；TF-0062=done(100%)，TF-0063（WV-B2-02 现有 store 并轨）保持 `proposed`。
+
+本卡落地（详见 `harness/specs/tasks/workflow-viz-b2-02a-renderer-v2-trajectory-supply.md`）：
+
+- `ObservabilityTrajectoryProjector` 并行保留**原始已验证** `TrajectoryEventV2` 行（cap 1000，`getV2Events`/`isLegacyFallback`，接受批次经 `onV2Events` 上报）；normalize 后的 trace 投影路径不变。
+- Host API 新增 `observability.trajectorySessions` / `observability.trajectoryHistory`（fromSeq/limit、`asOfSeq` 冷/热交接、确定性去重、保留态不覆盖时经 B1-03 `observability.readFrom` 冷恢复；跨边界前按 B1-01 schema 再验证）。
+- Host event 新增 `observability:trajectory-event`（`ObservabilityTrajectorySupplyEvent`，原始 v2 批次）。
+- shared 供数类型为泛型 `<Event = unknown>`（shared 层不得 import openclaw_runtime——facade 守卫强制）；electron/service 与 `src/lib/host-api.ts` 两端绑定 `TrajectoryEventV2`。
+- v1 仅显式 `legacyFallback` 报告，零 v2 泄漏；renderer 仍只经 host-api/host-events 单入口。
+- 顺带清偿基线预存红：`observability-api.ts` 本地 `isRecord` → 共享 `payload-utils`（facade 守卫测试在父提交本来就红，已在干净树对照证实）。
+
+验证：`tests/unit/observability-trajectory-supply.test.ts`(7) + projection/index/host-events/facade/invoke 共 82/82;typecheck:node/web、build:runtime、comms:replay/compare、lint:bom、contract-check、changed-file ESLint、harness validate/dry-run 全绿;clean detached worktree（HEAD=9be4f9f06 + patch）复测全绿。
+
+**下一步（新会话）**：TF-0063 WV-B2-02「现有 store 并轨」——先为其单独立卡确认（其 status 仍为 proposed，需经 update/确认流转为 ready），创建 B2-02 task spec 并跑 harness context；只消费 B2-01 装配快照，删 v2 覆盖路径的手写 reducer/Date.now 兜底/壁钟 last-wins;mock 场景迁移为装配 fixture。禁改 B1 schema/producer/Gateway 协议与 B3。历史约束详见 [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)（其中「B2-02A 未开始」等状态描述已过时，以本节为准）。
+
+---
+
+## 历史交接：Workflow Viz B2-02（2026-08-15，已完成 B2-02A 部分）
+
+请先阅读 [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)。当前工作树包含一个未应用、待用户确认的 task-forest proposal：`TFP-workflow-viz-b2-02-bridge-and-store-20260815`。在确认前不得应用 proposal 或开始 B2-02A 实现。（状态更新：该 proposal 已于 2026-08-15 经用户确认应用，B2-02A 已完成，见上节。）
+
+---
+
 ## 清理（2026-08-12）
 
 - 删除本轮产生的临时物：`scripts/issue-13-real-gateway-ab.mjs`、`scripts/issue-13-aimock-gateway-ab.mjs`（含 openclaw_runtime 下副本）、`.git/index.lock`（stale 空锁）、aimock 失败残留 `/tmp/openclaw/openclaw-qa-suite-*`、`artifacts/chain-audit/evidence/gateway.log`（A/B 尝试日志）、根目录 `.tmp-tf-list*.json`。
