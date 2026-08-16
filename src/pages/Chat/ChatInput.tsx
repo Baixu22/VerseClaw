@@ -6,7 +6,7 @@
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
@@ -117,6 +117,12 @@ interface ChatInputProps {
   contextRange?: WorkspaceContextRange | null;
   liveUsage?: LiveTokenUsage | null;
   messageCount?: number;
+  /**
+   * Empty-state presentation. The composer is the same component in both
+   * states — remounting it on first send would drop the draft, the caret and
+   * any in-flight attachment — so the hero look is a prop, not a second copy.
+   */
+  hero?: boolean;
   draftValue?: string;
   slashRequest?: number;
   onDraftChange?: (value: string) => void;
@@ -168,19 +174,15 @@ function ComposerTooltip({ children, shortcut }: { children: ReactNode; shortcut
 }
 
 const WORKSPACE_PERMISSION_MODES: WorkspacePermissionMode[] = ['readOnly', 'plan', 'acceptEdits', 'fullAccess'];
-// Mode accent is expressed as a small leading dot + tinted icon (macOS-style),
-// not as a full-color chip. PERMISSION_MODE_STYLES tints the icon/dot only.
-const PERMISSION_MODE_STYLES: Record<WorkspacePermissionMode, string> = {
-  readOnly: 'text-sky-600 dark:text-sky-400',
-  plan: 'text-amber-600 dark:text-amber-400',
-  acceptEdits: 'text-emerald-600 dark:text-emerald-400',
-  fullAccess: 'text-rose-600 dark:text-rose-400',
-};
-const PERMISSION_MODE_DOTS: Record<WorkspacePermissionMode, string> = {
-  readOnly: 'bg-sky-500 dark:bg-sky-400',
-  plan: 'bg-amber-500 dark:bg-amber-400',
-  acceptEdits: 'bg-emerald-500 dark:bg-emerald-400',
-  fullAccess: 'bg-rose-500 dark:bg-rose-400',
+// Codex-alignment: each mode maps to a specific glyph (no colour tinting except
+// fullAccess, which carries the orange warning). Mirrors the FakeCoding
+// approvalOptions icon set — hand/lightbulb/ShieldCheck/shield-alert.
+type PermissionModeIcon = ComponentType<{ className?: string }>;
+const PERMISSION_MODE_ICONS: Record<WorkspacePermissionMode, PermissionModeIcon> = {
+  readOnly: CodexHand as unknown as PermissionModeIcon,
+  plan: CodexLightbulb as unknown as PermissionModeIcon,
+  acceptEdits: ShieldCheck as unknown as PermissionModeIcon,
+  fullAccess: CodexShieldAlert as unknown as PermissionModeIcon,
 };
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
 const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
@@ -803,6 +805,7 @@ export function ChatInput({
   contextRange,
   liveUsage,
   messageCount,
+  hero = false,
   draftValue,
   slashRequest = 0,
   onDraftChange,
@@ -2666,7 +2669,9 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl'
+        'codex-composer-host',
+        hero && 'codex-composer-host--hero',
+        isUiV2 ? 'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2' : 'p-4 pb-6 w-full mx-auto max-w-3xl',
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -2687,14 +2692,19 @@ export function ChatInput({
         )}
 
         {/* Input Container */}
-        <div data-testid="chat-composer-shell" className={cn(
-          'relative rounded-[25px] border px-3 pb-1.5 pt-2.5 min-h-[98px]',
-          'transition-[border-color,box-shadow,background-color,transform] duration-180',
-          isUiV2
-            ? 'border-white/70 bg-material-elevated/94 shadow-[0_16px_46px_rgba(31,27,20,0.10),0_1px_4px_rgba(31,27,20,0.06),inset_0_1px_0_rgba(255,255,255,0.74)] backdrop-blur-[22px] backdrop-saturate-[1.24] dark:border-white/10 dark:bg-[#2d2d2d]/90'
-            : 'bg-surface-modal shadow-sm',
-          dragOver ? 'border-primary ring-1 ring-primary' : 'border-black/10 dark:border-white/10',
-        )}>
+        {/* Geometry stays here (asserted by chat-layout-cdp.spec.ts); surface,
+          * border and elevation come from .codex-composer-shell so the card and
+          * the menus that open out of it read from the same tokens. */}
+        <div
+          data-testid="chat-composer-shell"
+          data-drag-over={dragOver ? 'true' : undefined}
+          className={cn(
+            'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
+            'transition-[border-color,box-shadow,background-color,transform] duration-180',
+            isUiV2 ? 'codex-composer-shell' : 'border border-black/10 bg-surface-modal shadow-sm dark:border-white/10',
+            !isUiV2 && dragOver && 'border-primary ring-1 ring-primary',
+          )}
+        >
           {slashMenuOpen && (
             <SlashCommandPalette
               items={slashItems}
@@ -3123,40 +3133,60 @@ export function ChatInput({
               <div ref={workspaceMenuRef} className="relative shrink-0">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      data-testid="chat-composer-permission-mode"
-                      className={cn(
-                        'inline-flex h-8 w-8 items-center justify-center rounded-lg border px-0 text-2xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
-                        workspace && onPermissionModeChange
-                          ? 'border-black/[0.08] bg-black/[0.03] text-foreground/80 shadow-sm hover:bg-black/[0.06] hover:text-foreground dark:border-white/[0.08] dark:bg-white/[0.06] dark:hover:bg-white/[0.09]'
-                          : 'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
-                        workspaceMenuOpen && 'ring-1 ring-primary/20',
-                      )}
-                      onClick={() => {
-                        setSlashMenuDismissed(true);
-                        setPickerOpen(false);
-                        setModelPickerOpen(false);
-                        setKnowledgePickerOpen(false);
-                        setWorkspaceMenuOpen((open) => !open);
-                      }}
-                      disabled={inputDisabled || sending}
-                      title={workspaceMenuTitle}
-                      aria-label={workspaceMenuTitle}
-                      aria-expanded={workspaceMenuOpen}
-                    >
-                      {workspace && onPermissionModeChange ? (
-                        <>
-                          <span
-                            aria-hidden="true"
-                            className={cn('h-1.5 w-1.5 shrink-0 rounded-full', PERMISSION_MODE_DOTS[activePermissionMode])}
-                          />
-                          <Shield className={cn('h-3.5 w-3.5 shrink-0', PERMISSION_MODE_STYLES[activePermissionMode])} />
-                        </>
-                      ) : (
+                    {workspace && onPermissionModeChange ? (
+                      <button
+                        type="button"
+                        data-testid="chat-composer-permission-mode"
+                        className={cn(
+                          'codex-approval-trigger',
+                          activePermissionMode === 'fullAccess' && 'codex-approval-trigger--warning',
+                        )}
+                        onClick={() => {
+                          setSlashMenuDismissed(true);
+                          setPickerOpen(false);
+                          setModelPickerOpen(false);
+                          setKnowledgePickerOpen(false);
+                          setWorkspaceMenuOpen((open) => !open);
+                        }}
+                        disabled={inputDisabled || sending}
+                        title={workspaceMenuTitle}
+                        aria-label={workspaceMenuTitle}
+                        aria-expanded={workspaceMenuOpen}
+                      >
+                        <span className="codex-approval-trigger__icon">
+                          {(() => {
+                            const Icon = PERMISSION_MODE_ICONS[activePermissionMode];
+                            return <Icon className="h-4 w-4" />;
+                          })()}
+                        </span>
+                        <span className="codex-approval-trigger__label">
+                          {t(`composer.permissionMode.${activePermissionMode}`)}
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        data-testid="chat-composer-permission-mode"
+                        className={cn(
+                          'inline-flex h-8 w-8 items-center justify-center rounded-lg border px-0 text-2xs font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50',
+                          'border-transparent text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
+                          workspaceMenuOpen && 'ring-1 ring-primary/20',
+                        )}
+                        onClick={() => {
+                          setSlashMenuDismissed(true);
+                          setPickerOpen(false);
+                          setModelPickerOpen(false);
+                          setKnowledgePickerOpen(false);
+                          setWorkspaceMenuOpen((open) => !open);
+                        }}
+                        disabled={inputDisabled || sending}
+                        title={workspaceMenuTitle}
+                        aria-label={workspaceMenuTitle}
+                        aria-expanded={workspaceMenuOpen}
+                      >
                         <Briefcase className="h-3.5 w-3.5 shrink-0" />
-                      )}
-                    </button>
+                      </button>
+                    )}
                   </TooltipTrigger>
                   <TooltipContent side="top" collisionPadding={8} className="max-w-xs text-xs">
                     {workspaceMenuTitle}
@@ -3166,61 +3196,65 @@ export function ChatInput({
                 {workspaceMenuOpen && (
                   <div
                     data-testid="chat-composer-permission-menu"
-                    className="absolute bottom-full left-0 z-30 mb-2 w-[min(336px,calc(100vw-2rem))] overflow-hidden rounded-[15px] border border-black/[0.08] bg-surface-modal/95 p-1.5 shadow-lg shadow-black/[0.08] backdrop-blur-[8px] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-150 motion-reduce:animate-none dark:border-white/[0.08] dark:shadow-black/40"
+                    className="codex-composer-menu codex-composer-menu--approval"
                   >
                     {workspace && (
-                      <div className="border-b border-black/5 px-3 py-2 dark:border-white/10">
-                        <div className="truncate text-xs font-medium text-foreground">
+                      <div className="codex-composer-menu__label codex-composer-menu__label--divider">
+                        <span className="truncate text-foreground">
                           {workspace.name || t('composer.workspaceActions')}
-                        </div>
+                        </span>
                         {workspace.rootPath && (
-                          <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                          <span className="truncate font-mono text-[11px] text-muted-foreground">
                             {workspace.rootPath}
-                          </div>
+                          </span>
                         )}
                       </div>
                     )}
 
                     {workspace && onPermissionModeChange && (
-                      <div className="py-1.5">
-                        <div className="border-b border-black/5 px-2.5 pb-2 text-xs font-medium text-foreground dark:border-white/10">
-                          {t('composer.permissionMenuTitle')}
-                        </div>
-                        <div className="flex items-center gap-1.5 px-2.5 pb-1 text-tiny font-medium text-muted-foreground/80">
-                          <Shield className="h-3 w-3" />
-                          <span>{t('composer.permissionModeTitle')}</span>
+                      <>
+                        <div className="codex-composer-menu__label">
+                          <span>{t('composer.permissionMenuTitle')}</span>
+                          <button
+                            type="button"
+                            className="codex-composer-menu__label-action"
+                            onClick={() => handleWorkspaceAction(() => setWorkspaceMenuOpen(false))}
+                          >
+                            {t('composer.permissionLearnMore')}
+                          </button>
                         </div>
                         {WORKSPACE_PERMISSION_MODES.map((mode) => {
                           const selected = activePermissionMode === mode;
+                          const isFull = mode === 'fullAccess';
+                          const Icon = PERMISSION_MODE_ICONS[mode];
                           return (
                             <button
                               key={mode}
                               type="button"
                               className={cn(
-                                'flex min-h-[47px] w-full items-center gap-2.5 rounded-[12.5px] px-2.5 py-2 text-left transition-colors duration-150',
-                                selected
-                                  ? 'bg-black/[0.05] dark:bg-white/[0.08]'
-                                  : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.06]',
+                                'codex-composer-menu__item codex-composer-menu__option',
+                                isFull && 'codex-composer-menu__option--warning',
                               )}
                               data-testid={`chat-composer-permission-option-${mode}`}
                               onClick={() => handleWorkspaceAction(() => onPermissionModeChange(mode))}
                             >
-                              <Shield className={cn('h-4 w-4 shrink-0', PERMISSION_MODE_STYLES[mode], !selected && 'opacity-70')} />
-                              <span
-                                className="min-w-0 flex-1"
-                              >
-                                <span className={cn('block truncate text-[13px] font-medium leading-5', selected ? 'text-foreground' : 'text-foreground/75')}>
-                                  {t(`composer.permissionMode.${mode}`)}
-                                </span>
-                                <span className="block truncate text-[11px] leading-4 text-muted-foreground">
-                                  {t(`composer.permissionModeDescription.${mode}`)}
-                                </span>
+                              <span className="codex-composer-menu__icon">
+                                <Icon className="h-4 w-4" />
                               </span>
-                              {selected && <Check className="h-3.5 w-3.5 shrink-0 text-foreground/70" />}
+                              <span className="codex-composer-menu__option-text">
+                                <b>{t(`composer.permissionMode.${mode}`)}</b>
+                                <small>{t(`composer.permissionModeDescription.${mode}`)}</small>
+                              </span>
+                              <span
+                                className="codex-composer-menu__check"
+                                data-hidden={selected ? undefined : 'true'}
+                              >
+                                <Check className="h-4 w-4" />
+                              </span>
                             </button>
                           );
                         })}
-                      </div>
+                      </>
                     )}
 
                     {(onPickWorkspaceFolder || onNewSession) && (
@@ -3366,11 +3400,11 @@ export function ChatInput({
               </Button>
               {knowledgePickerOpen && (
                 <div
-                  className="absolute left-0 bottom-full z-20 mb-2 w-[360px] overflow-hidden rounded-2xl border border-black/10 bg-surface-modal p-1.5 shadow-xl dark:border-white/10"
+                  className="codex-composer-menu codex-composer-menu--approval"
                   data-testid="chat-knowledge-scope-menu"
                 >
-                  <div className="px-3 py-2 text-tiny font-medium text-muted-foreground/80">
-                    {t('composer.knowledgeScopeTitle')}
+                  <div className="codex-composer-menu__label">
+                    <span>{t('composer.knowledgeScopeTitle')}</span>
                   </div>
                   {KNOWLEDGE_SCOPES.map((scope) => {
                     const isActive = scope === knowledgeScope;
@@ -3379,10 +3413,8 @@ export function ChatInput({
                       key={scope}
                       type="button"
                       className={cn(
-                        'flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200',
-                        isActive
-                          ? 'bg-primary/5 text-foreground font-medium'
-                          : 'hover:bg-black/5 dark:hover:bg-white/5',
+                        'codex-composer-menu__item codex-composer-menu__option',
+                        !isActive && 'opacity-80',
                       )}
                       data-testid={`chat-knowledge-scope-${scope}`}
                       onClick={() => {
@@ -3391,42 +3423,42 @@ export function ChatInput({
                         textareaRef.current?.focus();
                       }}
                     >
-                      <span className="min-w-0">
-                        <span className="block font-medium">{t(`composer.knowledgeScope.${scope}`)}</span>
-                        <span className="mt-0.5 block text-tiny leading-4 text-muted-foreground">{t(`composer.knowledgeScopeDescription.${scope}`)}</span>
+                      <span className="codex-composer-menu__icon">
+                        {isActive && <Check className="h-4 w-4" />}
                       </span>
-                      {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+                      <span className="codex-composer-menu__option-text">
+                        <b>{t(`composer.knowledgeScope.${scope}`)}</b>
+                        <small>{t(`composer.knowledgeScopeDescription.${scope}`)}</small>
+                      </span>
                     </button>
                     );
                   })}
-                  <div className="mx-3 my-2 rounded-xl border border-black/10 bg-surface-input p-1 dark:border-white/10">
-                    <div className="px-2 pb-1 text-tiny font-medium text-muted-foreground/80">
-                      {t('composer.knowledgeModeTitle')}
-                    </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      {KNOWLEDGE_MODES.map((mode) => {
-                        const isActive = mode === knowledgeMode;
-                        return (
-                          <button
-                            key={mode}
-                            type="button"
-                            className={cn(
-                              'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
-                              isActive
-                                ? 'bg-black/5 text-foreground dark:bg-white/10'
-                                : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
-                            )}
-                            data-testid={`chat-knowledge-mode-${mode}`}
-                            onClick={() => {
-                              void onKnowledgeModeChange?.(mode);
-                              textareaRef.current?.focus();
-                            }}
-                          >
-                            {t(`composer.knowledgeMode.${mode}`)}
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="codex-composer-menu__label codex-composer-menu__label--divider">
+                    <span>{t('composer.knowledgeModeTitle')}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 px-2 pb-2">
+                    {KNOWLEDGE_MODES.map((mode) => {
+                      const isActive = mode === knowledgeMode;
+                      return (
+                        <button
+                          key={mode}
+                          type="button"
+                          className={cn(
+                            'h-8 rounded-lg px-2 text-tiny font-medium transition-colors',
+                            isActive
+                              ? 'bg-black/5 text-foreground dark:bg-white/10'
+                              : 'text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5',
+                          )}
+                          data-testid={`chat-knowledge-mode-${mode}`}
+                          onClick={() => {
+                            void onKnowledgeModeChange?.(mode);
+                            textareaRef.current?.focus();
+                          }}
+                        >
+                          {t(`composer.knowledgeMode.${mode}`)}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="my-1.5 h-px bg-border/70" />
                   <div className="px-3 py-2">
@@ -3512,7 +3544,6 @@ export function ChatInput({
                 <ChatAgentEffortButton
                   agentId={currentAgent?.id ?? currentAgentId}
                   disabled={inputDisabled || sending}
-                  compact
                 />
               </div>
             )}
