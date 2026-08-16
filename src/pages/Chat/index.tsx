@@ -7,7 +7,7 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, FolderPlus, GitBranchPlus, Loader2, Pencil, Workflow, X } from 'lucide-react';
-import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { ArrowRight, FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -492,19 +492,19 @@ function ProjectSessionHeader({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
         {open === 'workspace' && (
-          <div className="absolute left-0 top-full z-30 mt-1 w-72 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
-            <div className="px-2 pb-0.5 pt-1.5 text-2xs font-medium uppercase tracking-wide text-muted-foreground/60">{t('workspace.recent')}</div>
+          <div className="codex-header-menu motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none">
+            <div className="codex-header-menu__label">{t('workspace.recent')}</div>
             {sortedWorkspaces.map((workspace) => (
               <button
                 key={workspace.id}
                 type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                className="codex-header-menu__item"
                 onClick={() => {
                   setOpen(null);
                   void switchWorkspace(workspace.id);
                 }}
               >
-                <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <Folder className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-medium text-foreground">{workspace.name}</span>
                   <span className="block truncate font-mono text-2xs text-muted-foreground">{workspace.rootPath}</span>
@@ -512,29 +512,28 @@ function ProjectSessionHeader({
               </button>
             ))}
             {sortedWorkspaces.length === 0 && (
-              <div className="px-2 py-2 text-2xs text-muted-foreground">{t('workspace.noRecent')}</div>
+              <div className="codex-header-menu__label">{t('workspace.noRecent')}</div>
             )}
-            <div className="mt-1 border-t border-black/5 pt-1 dark:border-white/5">
-              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
-                <ListChecks className="h-3.5 w-3.5" />
+            <hr className="codex-header-menu__sep" />
+            <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
+              <ListChecks className="h-4 w-4" />
                 {t('workspace.actions.openTaskLedger')}
               </button>
-              <button type="button" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
-                <Workflow className="h-3.5 w-3.5" />
+              <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
+              <Workflow className="h-4 w-4" />
                 {t('workspace.actions.openClawGraph')}
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                className="codex-header-menu__item codex-header-menu__item--muted"
                 onClick={() => {
                   setOpen(null);
                   void pickWorkspaceFolder();
                 }}
               >
-                <FolderPlus className="h-3.5 w-3.5" />
+                <FolderPlus className="h-4 w-4" />
                 {t('workspace.chooseNew')}
               </button>
-            </div>
           </div>
         )}
       </div>
@@ -583,18 +582,18 @@ function ProjectSessionHeader({
           </button>
         )}
         {open === 'session' && (
-            <div className="absolute left-0 top-full z-30 mt-1 w-80 origin-top-left overflow-hidden rounded-lg border border-black/10 bg-surface-modal p-1 shadow-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 dark:border-white/10">
+            <div className="codex-header-menu motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none">
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               onClick={startRenameSession}
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <Pencil className="h-4 w-4" />
               {t('session.renameCurrent')}
             </button>
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               data-testid="chat-session-fork"
               disabled={forkDisabled || forkBusy}
               onClick={() => {
@@ -603,7 +602,7 @@ function ProjectSessionHeader({
               }}
             >
               <span className="flex min-w-0 items-center gap-2">
-                {forkBusy ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <GitBranchPlus className="h-3.5 w-3.5 shrink-0" />}
+                {forkBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <GitBranchPlus className="h-4 w-4 shrink-0" />}
                 <span className="truncate">{t('composer.fork.action')}</span>
               </span>
               {recommendedContinuityAction === 'fork' && (
@@ -617,7 +616,7 @@ function ProjectSessionHeader({
             </button>
             <button
               type="button"
-              className="mb-0.5 flex w-full items-center justify-between gap-3 rounded-md px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+              className="codex-header-menu__item codex-header-menu__item--muted"
               data-testid="chat-session-handoff"
               disabled={handoffDisabled || handoffBusy}
               onClick={() => {
@@ -626,7 +625,7 @@ function ProjectSessionHeader({
               }}
             >
               <span className="flex min-w-0 items-center gap-2">
-                {handoffBusy ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <FileText className="h-3.5 w-3.5 shrink-0" />}
+                {handoffBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <FileText className="h-4 w-4 shrink-0" />}
                 <span className="truncate">{t('composer.handoff.action')}</span>
               </span>
               {recommendedContinuityAction === 'handoff' && (
@@ -638,7 +637,7 @@ function ProjectSessionHeader({
                 </span>
               )}
             </button>
-            <div className="mb-0.5 border-t border-black/5 dark:border-white/5" />
+            <hr className="codex-header-menu__sep" />
             {recentSessions.map((session) => {
               const forkSourceSessionKey = session.forkedFromParent && session.parentSessionKey
                 ? session.parentSessionKey
@@ -658,16 +657,16 @@ function ProjectSessionHeader({
                 <button
                   key={session.key}
                   type="button"
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+                  className="codex-header-menu__item"
                   onClick={() => {
                     setOpen(null);
                     switchSession(session.key);
                   }}
                 >
                   {dotState ? (
-                    <DotMatrix state={dotState} className="size-3.5 shrink-0" />
+                    <DotMatrix state={dotState} className="size-4 shrink-0" />
                   ) : (
-                    <span className="size-3.5 shrink-0" />
+                    <span className="size-4 shrink-0" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-medium text-foreground">
@@ -843,9 +842,11 @@ export function Chat() {
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
   const [taskLedgerSummaryVisible, setTaskLedgerSummaryVisible] = useState(true);
+  const [rollbackPlanDismissed, setRollbackPlanDismissed] = useState(false);
 
   useEffect(() => {
     setTaskLedgerSummaryVisible(true);
+    setRollbackPlanDismissed(false);
   }, [activeWorkspaceId, currentSessionKey]);
 
   // Refresh Task Ledger snapshot when workspace changes
@@ -917,7 +918,6 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
-  const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
@@ -1490,10 +1490,6 @@ export function Chat() {
       : text;
     handleComposerDraftChange(nextDraft);
   }, [composerDraft, handleComposerDraftChange]);
-
-  const handleOpenSlashCommands = useCallback(() => {
-    setComposerSlashRequest((value) => value + 1);
-  }, []);
 
   const handleQuoteSelection = useCallback((text: string) => {
     const clipped = text.replace(/\s+/g, ' ').trim().slice(0, 1200);
@@ -2368,7 +2364,8 @@ export function Chat() {
     && taskLedgerSummaryVisible;
   const showRollbackPlanPanel = canShowChatSideRail
     && hasRollbackPlanSidebarTrigger(rollbackPlan)
-    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus);
+    && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
+    && !rollbackPlanDismissed;
   const showChatAssistiveRail = canShowChatSideRail
     && chatAssistiveRailVisible
     && !isEmpty
@@ -2624,7 +2621,6 @@ export function Chat() {
           <ChatToolbar
             questionDirectoryOpen={questionDirectoryVisible}
             questionDirectoryCount={questionDirectoryItems.length}
-            onOpenSlashCommands={handleOpenSlashCommands}
             promptCacheStatus={promptCacheStatus}
             onToggleQuestionDirectory={() =>
               setQuestionDirectoryOpenSessionKey((openSessionKey) =>
@@ -2650,7 +2646,9 @@ export function Chat() {
               ref={contentRef}
               className={cn(
                 "mx-auto space-y-4",
-                isEmpty ? "w-full max-w-[820px]" : "max-w-[820px]",
+                // The empty-state heading is bottom-aligned against the composer
+                // via min-height:100%, which needs a definite height to resolve.
+                isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
               )}
             >
               {messageAreaLoading ? (
@@ -2666,7 +2664,6 @@ export function Chat() {
               ) : isEmpty ? (
                 <>
                   <WelcomeScreen
-                    onSend={handleSendMessage}
                     onPickFolder={handlePickWorkspaceFolder}
                     disabled={!isGatewayRunning}
                   />
@@ -2681,6 +2678,7 @@ export function Chat() {
                       onOpenTaskLedger={handleOpenTaskLedger}
                       onInterruptTerminal={handleInterruptTerminal}
                       onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
+                      onDismiss={() => setRollbackPlanDismissed(true)}
                     />
                   )}
                 </>
@@ -2886,6 +2884,7 @@ export function Chat() {
                   onOpenTaskLedger={handleOpenTaskLedger}
                   onInterruptTerminal={handleInterruptTerminal}
                   onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
+                  onDismiss={() => setRollbackPlanDismissed(true)}
                 />
               )}
             </aside>
@@ -2931,8 +2930,8 @@ export function Chat() {
         contextRange={contextRange}
         liveUsage={liveUsage}
         messageCount={messages.length}
+        hero={isEmpty}
         draftValue={composerDraft}
-        slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}
@@ -2960,6 +2959,15 @@ export function Chat() {
         taskLoopUpgradeBusy={taskLoopUpgradeBusy}
         onConfirmTaskLoopUpgrade={handleConfirmTaskLoopUpgrade}
       />
+      {/* Chips sit below the composer, then a spacer that grows like the message
+        * area above it — the two together centre the heading/composer/chips
+        * group in the pane without the composer leaving its fixed slot. */}
+      {isEmpty && (
+        <>
+          <WelcomeChips onSend={handleSendMessage} disabled={!isGatewayRunning} />
+          <div className="codex-welcome-tail-spacer" aria-hidden="true" />
+        </>
+      )}
       <CompactionArtifactViewer
         open={compactionArtifactOpen}
         onOpenChange={setCompactionArtifactOpen}
@@ -3052,7 +3060,7 @@ export function Chat() {
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (
         <>
-          {panelExpanded && !terminalBottomOpen && (
+          {!terminalBottomOpen && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
@@ -3062,13 +3070,12 @@ export function Chat() {
             data-expanded={panelExpanded ? 'true' : 'false'}
             data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
-              'absolute z-30 flex shrink-0 flex-col bg-surface-modal shadow-2xl',
+              'flex shrink-0 flex-col bg-surface-modal',
               terminalBottomOpen
-                ? 'inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10'
-                : 'inset-y-0 right-0 border-l border-black/5 dark:border-white/10',
-              panelExpanded && !terminalBottomOpen && 'xl:relative xl:z-20 xl:shadow-none',
+                ? 'absolute z-30 inset-x-0 bottom-0 border-t border-black/5 dark:border-white/10 shadow-2xl'
+                : 'relative border-l border-black/5 dark:border-white/10',
               !terminalBottomOpen && 'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-right-4 motion-safe:duration-150 motion-reduce:transition-none',
-              isMac && 'no-drag',
+              'no-drag',
             )}
             style={terminalBottomOpen
               ? { width: '100%', height: terminalBottomHeight }
@@ -3409,29 +3416,17 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
   return <AuiProvider value={aui}>{children}</AuiProvider>;
 }
 
-function WelcomeScreen({ disabled = false, onPickFolder, onSend }: WelcomeScreenProps) {
+/**
+ * Empty-state heading. Lives in the scroll area, bottom-aligned, so it sits
+ * directly above the composer instead of floating in the middle of the pane —
+ * the two are one composition, not two centred things that happen to stack.
+ */
+function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
   const { t } = useTranslation('chat');
   const hasWorkspace = useWorkspacesStore((s) => Boolean(s.activeWorkspace));
-  const quickActions = useMemo<SuggestionConfig[]>(() => [
-    {
-      title: t('welcome.askQuestions'),
-      label: t('welcome.askQuestionsDesc'),
-      prompt: t('welcome.askQuestions'),
-    },
-    {
-      title: t('welcome.creativeTasks'),
-      label: t('welcome.creativeTasksDesc'),
-      prompt: t('welcome.creativeTasks'),
-    },
-    {
-      title: t('welcome.brainstorming'),
-      label: t('welcome.brainstormingDesc'),
-      prompt: t('welcome.brainstorming'),
-    },
-  ], [t]);
 
   return (
-    <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+    <div className="codex-welcome-stage codex-welcome-stage--heading">
       <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/55 bg-material-elevated/72 text-primary shadow-lg backdrop-blur-[18px] dark:border-white/10">
         <Sparkles className="h-5 w-5" />
       </div>
@@ -3451,33 +3446,57 @@ function WelcomeScreen({ disabled = false, onPickFolder, onSend }: WelcomeScreen
           t('welcome.titleNoProject')
         )}
       </h1>
-
-      <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
-        <div className="grid w-full max-w-[680px] grid-cols-1 gap-2.5 sm:grid-cols-2" data-testid="chat-welcome-suggestions">
-          <ThreadPrimitive.Suggestions>
-            {() => <SuggestionItem disabled={disabled} />}
-          </ThreadPrimitive.Suggestions>
-        </div>
-      </WelcomeSuggestionRuntime>
     </div>
+  );
+}
+
+/**
+ * Quick-action chips. Rendered *below* the composer to match the reference
+ * ordering — above, a row of suggestions reads as a menu the input belongs to;
+ * below, it reads as shortcuts you may ignore.
+ */
+function WelcomeChips({ disabled = false, onSend }: Pick<WelcomeScreenProps, 'disabled' | 'onSend'>) {
+  const { t } = useTranslation('chat');
+  const quickActions = useMemo<SuggestionConfig[]>(() => [
+    {
+      title: t('welcome.askQuestions'),
+      label: t('welcome.askQuestionsDesc'),
+      prompt: t('welcome.askQuestions'),
+    },
+    {
+      title: t('welcome.creativeTasks'),
+      label: t('welcome.creativeTasksDesc'),
+      prompt: t('welcome.creativeTasks'),
+    },
+    {
+      title: t('welcome.brainstorming'),
+      label: t('welcome.brainstormingDesc'),
+      prompt: t('welcome.brainstorming'),
+    },
+  ], [t]);
+
+  return (
+    <WelcomeSuggestionRuntime onSend={onSend} suggestions={quickActions}>
+      <div className="codex-welcome-chips" data-testid="chat-welcome-suggestions">
+        <ThreadPrimitive.Suggestions>
+          {() => <SuggestionItem disabled={disabled} />}
+        </ThreadPrimitive.Suggestions>
+      </div>
+    </WelcomeSuggestionRuntime>
   );
 }
 
 function SuggestionItem({ disabled = false }: { disabled?: boolean }) {
   return (
-    <SuggestionPrimitive.Trigger
-      send
-      disabled={disabled}
-      className={cn(
-        'flex min-h-[82px] flex-col items-start gap-1 rounded-[14px] border border-white/55 bg-material-panel/72 px-4 py-3 text-left text-sm shadow-sm backdrop-blur-[16px]',
-        'transition-[background-color,border-color,box-shadow] duration-150 hover:bg-material-elevated/80 dark:border-white/10',
-        'disabled:cursor-not-allowed disabled:opacity-60',
-      )}
-    >
-      <span className="font-medium text-foreground">
+    <SuggestionPrimitive.Trigger send disabled={disabled} className="codex-welcome-chip">
+      <ArrowRight className="codex-welcome-chip__icon" aria-hidden="true" />
+      <span className="codex-welcome-chip__label">
         <SuggestionPrimitive.Title />
       </span>
-      <span className="text-muted-foreground">
+      {/* The reference chip is a single short phrase, so the description is not
+        * drawn — but it is still the only thing that says what the action does,
+        * so it stays in the accessibility tree rather than being deleted. */}
+      <span className="codex-welcome-chip__desc">
         <SuggestionPrimitive.Description />
       </span>
     </SuggestionPrimitive.Trigger>

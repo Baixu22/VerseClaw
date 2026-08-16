@@ -46,6 +46,179 @@
   --cwh-underline-hover: color-mix(in srgb, hsl(var(--foreground)) 72%, transparent);
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+ * The empty-state stage.
+ * ──────────────────────────────────────────────────────────────────────────
+ *
+ * PROPORTION, ported from the rc-00r reference composition. The stage there is
+ * one vertical stack, optically centred, with the input card as the largest
+ * element on the screen and everything else deferring to it:
+ *
+ *   heading   -> 28px, sits directly above the card
+ *   card      -> min(780px, 100%)   the widest thing in the column
+ *   chips     -> 30px below the card, pill row, wraps centred
+ *
+ * ORDER MATTERS: the chips sit *below* the card in the reference, not above.
+ * Above, they read as a menu the composer belongs to; below, they read as
+ * optional shortcuts you may ignore — which is what they are.
+ *
+ * HOW IT CENTRES, given that the composer is a fixed sibling of the scroll
+ * area and cannot be moved into this stack without remounting it: the scroll
+ * area above (flex-1, heading bottom-aligned) and `.codex-welcome-tail-spacer`
+ * below (also flex-1) grow equally, so the heading/card/chips group lands in
+ * the middle of what is left. This is why the spacer exists and why it must
+ * keep the same flex-grow as the message area.
+ *
+ * WIDTH. The reference card is 780px. ClawX's composer column is 768px (736px
+ * of content inside 16px gutters) and is pinned there by
+ * tests/e2e/chat-layout-cdp.spec.ts. The 44px difference is not worth breaking
+ * that contract over, so the *proportion* is ported and the measurement is not:
+ * the chips adopt the composer's column instead of the reference's, which is
+ * what keeps the two edges flush. Ratios travel between designs; pixel widths
+ * do not.
+ *
+ * Declared on :root, not on the stage: the composer host and the chips row are
+ * siblings of the stage rather than children of it (the composer is mounted
+ * once, outside the scroll area, so that sending the first message does not
+ * remount it). A var on .codex-welcome-stage would not inherit to either.
+ */
+:root {
+  --cws-width: 768px;
+  --cws-gutter: 16px;
+}
+
+/* Heading hugs the composer instead of floating in the middle of the scroll
+ * area, so the two read as one composition.
+ *
+ * The 28px heading-to-card gap is assembled from the surrounding boxes, not
+ * declared: 8px here + 12px of message-area py-3 + 8px of composer pt-2. The
+ * title's own 28px bottom margin is zeroed or the gap doubles to 56px
+ * (measured). */
+.codex-welcome-stage--heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 100%;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.codex-welcome-stage--heading .codex-welcome-title {
+  margin-bottom: 0;
+}
+
+.codex-welcome-tail-spacer {
+  flex: 1 1 0%;
+  min-height: 0;
+}
+
+/* Composer in its empty-state role. The docked bottom padding is released
+ * because the chips below now own that gap.
+ *
+ * `!important` because these rules are unlayered and so tie with Tailwind's
+ * `pb-5` on specificity, and the utility wins on source order — measured: the
+ * padding did not drop until this was marked. The alternative is stripping the
+ * utility from the markup and restating all four sides here, which would move
+ * the composer's docked geometry out of the file the layout test reads. */
+.codex-composer-host--hero {
+  padding-bottom: 0 !important;
+}
+
+.codex-welcome-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  /* Flush with the composer: same column, same gutters. */
+  width: 100%;
+  max-width: var(--cws-width);
+  margin: 30px auto 0;
+  padding: 0 var(--cws-gutter);
+}
+
+/* Pill, not card. The reference chip is a single line: an accent glyph, the
+ * label, and nothing else competing for the row. The old 82px two-line cards
+ * in a 2-up grid read as three primary choices; these read as shortcuts. */
+.codex-welcome-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-background-elevated-secondary);
+  color: var(--color-text-foreground);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-duration-basic) var(--ease-out),
+    border-color var(--transition-duration-basic) var(--ease-out),
+    box-shadow var(--transition-duration-basic) var(--ease-out),
+    transform var(--transition-duration-basic) var(--ease-out);
+}
+
+.codex-welcome-chip:hover:not(:disabled) {
+  border-color: var(--color-border-heavy);
+  background: var(--color-background-row-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.codex-welcome-chip:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.codex-welcome-chip:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.codex-welcome-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* The accent is the only colour on the stage; it marks these as actionable. */
+.codex-welcome-chip__icon {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: var(--color-icon-accent);
+}
+
+.codex-welcome-chip__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Visually hidden, not removed: see the note at the call site. */
+.codex-welcome-chip__desc {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codex-welcome-chip { transition: none; }
+  .codex-welcome-chip:hover:not(:disabled) { transform: none; }
+}
+
+@media (max-width: 640px) {
+  .codex-welcome-chips { gap: 8px; }
+}
+
 :root.dark .codex-welcome-hero {
   --cwh-underline: rgba(255, 255, 255, 0.498);
   --cwh-underline-hover: rgba(255, 255, 255, 0.72);
