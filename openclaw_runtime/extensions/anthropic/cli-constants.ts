@@ -12,6 +12,8 @@ export const CLAUDE_CLI_DEFAULT_ALLOWLIST_REFS = [
   `${CLAUDE_CLI_BACKEND_ID}/claude-opus-4-7`,
   `${CLAUDE_CLI_BACKEND_ID}/claude-sonnet-4-6`,
   `${CLAUDE_CLI_BACKEND_ID}/claude-opus-4-6`,
+  `${CLAUDE_CLI_BACKEND_ID}/claude-sonnet-5`,
+  `${CLAUDE_CLI_BACKEND_ID}/claude-fable-5`,
 ] as const;
 
 /** User-facing Claude CLI model aliases normalized before execution. */
@@ -26,6 +28,11 @@ export const CLAUDE_CLI_MODEL_ALIASES: Record<string, string> = {
   sonnet: "sonnet",
   "sonnet-4.6": "claude-sonnet-4-6",
   "claude-sonnet-4-6": "claude-sonnet-4-6",
+  "sonnet-5": "claude-sonnet-5",
+  "claude-sonnet-5": "claude-sonnet-5",
+  fable: "fable",
+  "fable-5": "claude-fable-5",
+  "claude-fable-5": "claude-fable-5",
   haiku: "haiku",
 };
 

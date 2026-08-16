@@ -1,6 +1,7 @@
 packages:
   - '.'
   - 'harness'
+  - 'resources/verseshell-mcp'
 
 overrides:
   isbinaryfile: ^5.0.0

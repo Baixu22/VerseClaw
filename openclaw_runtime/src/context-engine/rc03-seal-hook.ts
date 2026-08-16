@@ -180,6 +180,9 @@ function producerIdForLineageSource(sourceId: string): string | undefined {
     case 'memory-inject-pilot':
       return 'memory-pilot-injection';
     default:
+      if (sourceId.startsWith('memory-inject-pilot:')) {
+        return 'memory-pilot-injection';
+      }
       return undefined;
   }
 }

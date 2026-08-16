@@ -6,6 +6,7 @@ import {
   type GovernedVerseShellProcessOptions,
 } from "./governed-process.js";
 import type { VerseShellProcessConfig, VerseShellProcessManager } from "./process-manager.js";
+import { getVerseShellCommandProfileDefinition } from "./command-profiles.js";
 
 const CONTRACT_ENV = {
   VERSESHELL_RUNTIME_VERSION: "1.0.0",
@@ -119,6 +120,36 @@ function fakeManager(
 }
 
 describe("VerseShell governed process lifecycle", () => {
+  it("uses the pre-approval argv plan without reparsing the display command", async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: "preplanned",
+      execute: vi.fn(async (op: string, args: JsonObject, options?: AciExecuteOptions) => {
+        calls.push({ op, args, options });
+        return observation(op, snapshot({ state: "exited", exitCode: 0 }));
+      }),
+    };
+    const fake = fakeManager([client]);
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      command: "pnpm test && this text is never reparsed",
+      executionPlan: {
+        mode: "argv",
+        profile: "test",
+        argv: ["pnpm", "test", "argument with spaces && literals"],
+        displayCommand: "pnpm test && this text is never reparsed",
+        executable: "pnpm",
+        profileDefinition: getVerseShellCommandProfileDefinition("test"),
+      },
+    }));
+
+    await expect(handle.wait()).resolves.toMatchObject({ state: "exited", exitCode: 0 });
+    expect(calls.find((call) => call.op === "process.start")?.args.argv).toEqual([
+      "pnpm",
+      "test",
+      "argument with spaces && literals",
+    ]);
+  });
+
   it("retries effectful start exactly once in the approval-scoped transport", async () => {
     const unapprovedCalls: ExecuteCall[] = [];
     const approvedCalls: ExecuteCall[] = [];
@@ -311,5 +342,112 @@ describe("VerseShell governed process lifecycle", () => {
 
     finishPoll(observation("process.poll", snapshot({ state: "exited", exitCode: 0 })));
     await handle.wait();
+  });
+
+  it("keeps a windows-cmd plan auditable without reparsing the display command", async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: "batch",
+      execute: vi.fn(async (op: string, args: JsonObject, options?: AciExecuteOptions) => {
+        calls.push({ op, args, options });
+        return observation(op, snapshot({ state: "exited", exitCode: 0 }));
+      }),
+    };
+    const fake = fakeManager([client]);
+    const script = "C:\\repo\\build.cmd";
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      command: "build.cmd && this text is never reparsed",
+      executionPlan: {
+        mode: "argv",
+        profile: "build",
+        argv: [script, "--watch"],
+        displayCommand: "build.cmd && this text is never reparsed",
+        executable: script,
+        resolvedExecutable: script,
+        resolvedScript: script,
+        interpreter: "C:\\Windows\\System32\\cmd.exe",
+        interpreterProfile: "windows-cmd",
+        profileDefinition: getVerseShellCommandProfileDefinition("build"),
+      },
+    }));
+
+    await expect(handle.wait()).resolves.toMatchObject({ state: "exited", exitCode: 0 });
+    const start = calls.find((call) => call.op === "process.start");
+    expect(start?.args.argv).toEqual([script, "--watch"]);
+    expect(start?.args.argv[0]).not.toMatch(/cmd(?:\\|\.exe)/iu);
+    expect(start?.args).not.toHaveProperty("interpreter");
+  });
+
+  it("fails closed when a windows-cmd plan drifts from its script identity", async () => {
+    const fake = fakeManager([]);
+    await expect(startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      command: "ignored",
+      executionPlan: {
+        mode: "argv",
+        profile: "build",
+        argv: ["C:\\other\\path.cmd"],
+        displayCommand: "ignored",
+        executable: "C:\\other\\path.cmd",
+        resolvedScript: "C:\\repo\\build.cmd",
+        interpreter: "C:\\Windows\\System32\\cmd.exe",
+        interpreterProfile: "windows-cmd",
+        profileDefinition: getVerseShellCommandProfileDefinition("build"),
+      },
+    }))).rejects.toMatchObject({ code: "E_VERSESHELL_SCRIPT_IDENTITY" });
+    expect(fake.manager.getClient).not.toHaveBeenCalled();
+  });
+
+  it("clamps timeout and output above the profile bounds", async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: "clamp",
+      execute: vi.fn(async (op: string, args: JsonObject, options?: AciExecuteOptions) => {
+        calls.push({ op, args, options });
+        return observation(op, snapshot({ state: "exited", exitCode: 0 }));
+      }),
+    };
+    const fake = fakeManager([client]);
+    const handle = await startGovernedVerseShellProcess(baseOptions(fake.manager, {
+      timeoutMs: 2 * 60 * 60 * 1000,
+      maxOutputBytes: 128 * 1024 * 1024,
+      executionPlan: {
+        mode: "argv",
+        profile: "build",
+        argv: ["pnpm", "run", "build"],
+        displayCommand: "pnpm run build",
+        executable: "pnpm",
+        profileDefinition: getVerseShellCommandProfileDefinition("build"),
+      },
+    }));
+
+    await expect(handle.wait()).resolves.toMatchObject({ state: "exited", exitCode: 0 });
+    const start = calls.find((call) => call.op === "process.start");
+    expect(start?.args.timeout_ms).toBe(60 * 60 * 1000);
+    expect(start?.args.max_output_bytes).toBe(32 * 1024 * 1024);
+  });
+
+  it("clamps the timeout floor to 1ms and uses the profile default when unset", async () => {
+    const calls: ExecuteCall[] = [];
+    const client = {
+      processKey: "floor",
+      execute: vi.fn(async (op: string, args: JsonObject, options?: AciExecuteOptions) => {
+        calls.push({ op, args, options });
+        return observation(op, snapshot({ state: "exited", exitCode: 0 }));
+      }),
+    };
+    const fake = fakeManager([client, client]);
+    const plan = {
+      mode: "argv" as const,
+      profile: "generic" as const,
+      argv: ["node", "--version"],
+      displayCommand: "node --version",
+      executable: "node",
+      profileDefinition: getVerseShellCommandProfileDefinition("generic"),
+    };
+    const floored = await startGovernedVerseShellProcess(baseOptions(fake.manager, { timeoutMs: 0, executionPlan: plan }));
+    const defaulted = await startGovernedVerseShellProcess(baseOptions(fake.manager, { timeoutMs: undefined, executionPlan: plan }));
+    await expect(floored.wait()).resolves.toMatchObject({ state: "exited" });
+    await expect(defaulted.wait()).resolves.toMatchObject({ state: "exited" });
+    expect(calls.filter((call) => call.op === "process.start").map((call) => call.args.timeout_ms)).toEqual([1, 10 * 60 * 1000]);
   });
 });

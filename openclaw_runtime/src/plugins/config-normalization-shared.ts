@@ -233,7 +233,7 @@ function normalizePluginEntries(
 
 /** Options threaded into plugin config normalization from the full config. */
 export type NormalizePluginsConfigOptions = {
-  /** runtime.memory.persist (E-1 ruling): true = second durable memory authority. */
+  /** runtime.memory.persist (E-1 ruling (a)): true is legal only when runtime-memory owns plugins.slots.memory. */
   runtimeMemoryPersist?: boolean;
 };
 
@@ -246,26 +246,34 @@ export function normalizePluginsConfigWithResolver(
   const memorySlot = normalizeSlotValue(config?.slots?.memory);
   const contextEngineSlot = normalizeSlotValue(config?.slots?.contextEngine);
   // RC-07 slot convergence: when an explicit memory slot is configured, the
-  // memory slot must be the single owner (default memory-core). A non-owner
-  // selection is rejected so parallel memory writers stay zero. The
+  // memory slot must be the single owner (default memory-core). Runtime Memory
+  // is the one built-in alternative, but only with persistence enabled. A
+  // non-owner selection is rejected so parallel memory writers stay zero. The
   // contextEngine slot is checked the same way (single DCS slot occupant).
   // Consumers (activation planner / runtime startup) MUST fail closed on a
   // non-empty slotConvergenceErrors list; an illegal configuration never
   // becomes the normalized active config.
   const convergenceMemory =
-    memorySlot !== undefined
-      ? assertSingleMemorySlotOwner({ memorySlotId: memorySlot ?? undefined })
+    memorySlot !== undefined &&
+    !(memorySlot === "runtime-memory" && options?.runtimeMemoryPersist === undefined)
+      ? assertSingleMemorySlotOwner({
+          memorySlotId: memorySlot ?? undefined,
+          runtimeMemoryPersist: options?.runtimeMemoryPersist,
+        })
       : { ok: true as const, errors: [] as string[] };
   const convergenceContext =
     contextEngineSlot !== undefined
       ? assertSingleContextEngineSlot({ contextEngineId: contextEngineSlot ?? undefined })
       : { ok: true as const, errors: [] as string[] };
-  // R3-1 E-1 ruling (b): runtime.memory.persist=true creates a second durable
-  // memory authority outside the selected slot owner, so it is rejected
-  // fail-closed through the same slotConvergenceErrors chain.
+  // R3-1 E-1 ruling (a): runtime.memory.persist=true is legal only when the
+  // built-in runtime-memory owner is selected under the memory slot. The
+  // default memory-core slot remains fail-closed against a second writer.
   const convergenceRuntimeMemory =
-    options?.runtimeMemoryPersist === true
-      ? assertRuntimeMemoryOwnerConvergence({ runtimeMemoryPersist: true })
+    options?.runtimeMemoryPersist !== undefined
+      ? assertRuntimeMemoryOwnerConvergence({
+          memorySlotId: memorySlot ?? defaultSlotIdForKey("memory"),
+          runtimeMemoryPersist: options?.runtimeMemoryPersist,
+        })
       : { ok: true as const, errors: [] as string[] };
   const convergenceErrors = [
     ...convergenceMemory.errors,

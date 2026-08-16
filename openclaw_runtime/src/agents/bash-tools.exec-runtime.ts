@@ -64,6 +64,10 @@ import { getShellConfig, sanitizeBinaryOutput } from "./shell-utils.js";
 import { resolveVerseShellFoundationRollout } from "./verseshell-foundation-flags.js";
 import { verseshellExec } from "./verseshell-runtime.js";
 import { startGovernedVerseShellProcess } from "./verseshell/governed-process.js";
+import {
+  resolveVerseShellCommandPlan,
+  type VerseShellCommandPlan,
+} from "./verseshell/command-profiles.js";
 
 export { execSchema } from "./bash-tools.schemas.js";
 
@@ -681,6 +685,8 @@ export async function runExecProcess(opts: {
   // Execute this instead of `command` (which is kept for display/session/logging).
   // Used to sanitize safeBins execution while preserving the original user input.
   execCommand?: string;
+  /** OpenClaw's pre-approval, immutable VerseShell command plan. */
+  executionPlan?: VerseShellCommandPlan;
   /** The execution host to use. "verseshell" routes through ae --serve. */
   execHost?: ExecHost;
   /** Set only after the OpenClaw exec policy allowed this exact command. */
@@ -838,6 +844,15 @@ export async function runExecProcess(opts: {
     // while the typed process manager is default-off. Failure on the selected
     // VerseShell host is fail-closed unless a separate compatibility flag opts in.
     const rollout = resolveVerseShellFoundationRollout({ config: opts.config });
+    const resolvedExecutionPlan =
+      opts.executionPlan ??
+      resolveVerseShellCommandPlan({
+        command: execCommand,
+        cwd: opts.workdir,
+        env: shellRuntimeEnv,
+        platform: process.platform,
+        allowExplicitShell: true,
+      });
     const failClosedVerseShell = (error: unknown): ExecProcessHandle => {
       const message = String(error);
       for (const chunk of chunkString(message)) {
@@ -946,6 +961,7 @@ export async function runExecProcess(opts: {
       try {
         const lifecycle = await startGovernedVerseShellProcess({
           command: execCommand,
+          executionPlan: resolvedExecutionPlan,
           cwd: opts.workdir,
           processEnv: shellRuntimeEnv,
           timeoutMs,

@@ -1,0 +1,58 @@
+{
+  "applied_at": "2026-08-14T06:07:00.779737Z",
+  "base_graph_hash": "c30c4dcf928ced1bdedbca30a11fb6af564009b455886b677042436f33a8dc6a",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md",
+          "resources/verseshell/source-inputs.json",
+          "resources/verseshell/manifest.json",
+          "resources/verseshell/SOURCE.md",
+          "resources/verseshell/BUILD.md",
+          "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+          "resources/verseshell/patches/p0-runtime-startup.patch",
+          "resources/verseshell/patches/aci-bench-source-inputs.patch",
+          "resources/verseshell/patches/python-current-interpreter.patch",
+          "node --test scripts/verseshell-bundle.test.mjs: 13/13",
+          "pnpm verseshell:test: 13 + 11 + 57 passed",
+          "pnpm run typecheck: node/web pass",
+          "pnpm run comms:replay + pnpm run comms:compare: pass",
+          "node scripts/validate-verseshell-manifest.mjs --package: pass",
+          "git diff --check: pass",
+          "pnpm harness context: pass; diff-aware validate/harness:ci blocked by shared worktree residual"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "已完成 VerseShell 1.0 Windows x64 clean source/build identity：固定 commit + 四个 ordered tracked patch、8 项 recovered Python 输入、final assertions、Cargo.lock/toolchain、当前解释器 verifier、双独立 release build、handshake/catalog、manifest/package/runtime fail-closed 校验全部形成证据。功能性门禁通过；Harness diff-aware 残余因共享工作树与缺少 harness 子包依赖已诚实记录，不扩大 touchedAreas。"
+      },
+      "id": "TF-0059"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "只在用户确认 TF-0059 closeout proposal 后启动。",
+          "先运行 verseshell-p0-governed-probe scoped Harness context/validate；不得并行启动 P1+。",
+          "使用 resources/verseshell/manifest.json 当前 verified binary；任何 identity/protocol/approval mismatch 均 fail-closed。"
+        ],
+        "status": "ready",
+        "summary": "VS-P0-02 source/build identity 已形成 fresh evidence；下一唯一串行节点为 VS-P0-03 governed real probe。开始前必须保持 default-off，并使用已验证 binary 证明 approval denial、approved retry、token isolation、artifact recovery 和无 native fallback。"
+      },
+      "id": "TF-0060"
+    }
+  ],
+  "created_at": "2026-08-14T05:25:32.602148Z",
+  "proposal_id": "TFP-verseshell-p0-02-closeout-20260814",
+  "rationale": "VS-P0-02 的 clean pinned reconstruction、ordered tracked patch stack、8 项 recovered input inventory、无跳过 Rust gate、当前解释器 Python verifier、两次独立可重复构建、manifest/package/runtime 校验和功能性仓库门禁均已完成。Harness diff-aware validate 受共享工作树无关改动与 harness 子包依赖缺失阻断，已在 evidence/STATUS/handoff 中诚实记录；不以该残余扩大 touchedAreas 或绕过校验。提案只收口 TF-0059，并将 TF-0060 标为待确认的唯一下一节点；所有 rollout 锁继续关闭。",
+  "session_id": "session-2026-08-14-verseshell-p0-02-closeout",
+  "status": "applied"
+}

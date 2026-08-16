@@ -39,6 +39,10 @@ export type ToolPolicyPipelineStep = {
   policy: ToolPolicyLike | undefined;
   label: string;
   stripPluginOnlyAllowlist?: boolean;
+  /** True for profile allowlists derived from the core tool catalog. Drops at these
+   *  layers must be intentional catalog decisions, so catalog-less constructed
+   *  core tools are reported instead of silently filtered. */
+  isCatalogDerivedProfile?: boolean;
   suppressUnavailableCoreToolWarning?: boolean;
   suppressUnavailableCoreToolWarningAllowlist?: string[];
   unavailableCoreToolReason?: string;
@@ -70,6 +74,7 @@ export function buildDefaultToolPolicyPipelineSteps(params: {
       policy: params.profilePolicy,
       label: profile ? `tools.profile (${profile})` : "tools.profile",
       stripPluginOnlyAllowlist: true,
+      isCatalogDerivedProfile: true,
       suppressUnavailableCoreToolWarningAllowlist: params.profileUnavailableCoreWarningAllowlist,
       unavailableCoreToolReason,
     },
@@ -79,6 +84,7 @@ export function buildDefaultToolPolicyPipelineSteps(params: {
         ? `tools.byProvider.profile (${providerProfile})`
         : "tools.byProvider.profile",
       stripPluginOnlyAllowlist: true,
+      isCatalogDerivedProfile: true,
       suppressUnavailableCoreToolWarningAllowlist:
         params.providerProfileUnavailableCoreWarningAllowlist,
       unavailableCoreToolReason,
@@ -196,6 +202,30 @@ export function applyToolPolicyPipeline(params: {
     }
     const before = filtered;
     filtered = filterToolsByPolicy(before, expanded);
+    if (step.isCatalogDerivedProfile) {
+      // Profile allowlists are derived from CORE_TOOL_DEFINITIONS. A constructed
+      // OpenClaw tool dropped here without a catalog entry is catalog drift:
+      // profile filtering would silently hide a shipped tool. Report it so the
+      // drift is repaired instead of surfacing as missing-tool bugs.
+      const kept = new Set(filtered.map((tool) => normalizeToolName(tool.name)));
+      for (const tool of before) {
+        const name = normalizeToolName(tool.name);
+        if (!name || kept.has(name)) {
+          continue;
+        }
+        if (params.toolMeta(tool) || isKnownCoreToolId(name)) {
+          // Plugin tools and cataloged tools (including intentional empty-profile
+          // exclusions) drop silently by design.
+          continue;
+        }
+        const warning =
+          `tools: ${step.label} dropped constructed core tool "${tool.name}" with no ` +
+          `entry in CORE_TOOL_DEFINITIONS. Add a catalog entry so profile filtering stays intentional.`;
+        if (rememberToolPolicyWarning(warning)) {
+          params.warn(warning);
+        }
+      }
+    }
     // [SPINE] Legacy policy filtering remains authoritative; runtime-spine observes only diagnostics.
     auditToolPolicyFilter({
       stepLabel: step.label,

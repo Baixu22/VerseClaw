@@ -7,6 +7,7 @@ import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import {
   Assembler,
   contextBlockFlagNameForSourceSystem,
+  type AssemblerLegacyInputs,
   type ContextBlockFeatureFlags,
 } from "../../context-engine/assembler.js";
 import {
@@ -22,6 +23,8 @@ import { handleWorkingMemoryAction } from "../../context-engine/handlers/working
 import { handleBeforeAgentStartToolRegistry, type ToolRegistryEntry } from "../../context-engine/handlers/tool-registry-handler.js";
 import { restoreChildState, buildChildHandoffFromParent, writeChildHandoffPack, CHILD_CONTEXT_READ_INSTRUCTION } from "../../context-engine/handlers/task-loop-handler.js";
 import { createWorkspaceFactStoreBridge } from "../../context-engine/views/factstore-bridge.js";
+import { resolveCompassConfig } from "../../runtime-core/memory-pre-reply-injection.js";
+import { createRuntimeMemoryRuntimeIntegration } from "../../runtime-core/memory-runtime-integration.js";
 import type { TrajectoryCapture } from "../../knowledge/sekb/trajectory-capture.js";
 import type { EmbeddedSekbRuntime, SekbInstallableAgent } from "./sekb-runtime.js";
 import { installEmbeddedSekbHarnessHooks } from "./sekb-runtime.js";
@@ -174,6 +177,7 @@ function buildContextBlockFactory(params: {
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   /** Real source-runtime config: the RC-03 seal switch resolves from it. */
   cfg?: OpenClawConfig | undefined;
+  objective?: string;
 }): ExtensionFactory {
   const sessionId = params.sessionKey?.trim() || params.sessionId?.trim();
   let currentBlockStore: Pick<BlockStoreApi, "query" | "upsert"> | undefined =
@@ -203,6 +207,45 @@ function buildContextBlockFactory(params: {
   let baselineLoaded = false;
   let acceptedBaseline: ContextBlock | undefined;
   let projectionObservabilityRecorded = false;
+
+  function buildKnowledgeInputs<TExistingOutput>(
+    messages: TExistingOutput,
+  ): AssemblerLegacyInputs<TExistingOutput> {
+    const inputs: AssemblerLegacyInputs<TExistingOutput> = {
+      existing_output: messages,
+    };
+    if (params.projectionFlags[contextBlockFlagNameForSourceSystem("compass")]) {
+      const compassConfig = resolveCompassConfig(params.cfg);
+      const compassFacts =
+        compassConfig.featureFlags.enablePreReplyRetrieval &&
+        params.cfg?.runtime?.memory?.persist === true
+          ? (() => {
+              try {
+                return createRuntimeMemoryRuntimeIntegration({ config: params.cfg })
+                  .loadStore()
+                  .store.queryFacts({ limit: 24 });
+              } catch {
+                return undefined;
+              }
+            })()
+          : undefined;
+      inputs.compass = {
+        userInputText: params.objective?.trim() || "current task",
+        config: compassConfig,
+        ...(compassFacts ? { facts: compassFacts } : {}),
+      };
+    }
+    if (
+      params.projectionFlags[contextBlockFlagNameForSourceSystem("role-memory")] &&
+      isSubagentSessionKey(params.sessionKey)
+    ) {
+      inputs.role_memory = {
+        roleName: params.sessionKey?.split(":").at(-1) || "subagent",
+        ...(params.objective?.trim() ? { taskState: params.objective.trim() } : {}),
+      };
+    }
+    return inputs;
+  }
   // F-01: model-call identity inside the attempt. The first finalize (from
   // before_agent_start and the first context callback) seals modelCallIndex 0;
   // every later context callback — one per model call of the tool loop — opens
@@ -259,7 +302,7 @@ function buildContextBlockFactory(params: {
             ? { skipChannels: options.skipChannels }
             : {}),
         },
-        { existing_output: messages },
+        buildKnowledgeInputs(messages),
         params.projectionFlags,
       );
     }
@@ -419,7 +462,7 @@ function buildContextBlockFactory(params: {
       // `resolveAssembleKillSwitchConfig`, so a mid-session kill takes effect.
       const result = await assembler.assemble(
         { session_id: sessionId },
-        { existing_output: messages },
+        buildKnowledgeInputs(messages),
         params.projectionFlags,
       );
       return { messages: result.output };

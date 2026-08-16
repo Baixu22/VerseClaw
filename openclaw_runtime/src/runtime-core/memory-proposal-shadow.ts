@@ -176,9 +176,10 @@ export type RuntimeMemoryFactConfirmationResult =
  * R3-2.4 proposeFacts confirm: promote a shadow candidate into a durable
  * human-approved fact and persist it through the P0-B appendFact port.
  *
- * Fail-closed per the R3-1 E-1 authority ruling: persist=true is currently
- * owner drift (a second durable authority next to memory-core), so the confirm
- * entry must reject before persisting — it never creates a second authority.
+ * Fail-closed per the R3-1 E-1 authority ruling (a): persist=true is legal
+ * only when runtime-memory is the selected plugins.slots.memory owner. Callers
+ * must pass that selected owner id; omission is treated as the default
+ * memory-core owner and is rejected before persisting.
  */
 export function confirmRuntimeMemoryFactProposal(input: {
   candidate: RuntimeMemoryTemporalFactCandidate;
@@ -186,8 +187,11 @@ export function confirmRuntimeMemoryFactProposal(input: {
   approvedBy?: string;
   evidenceRefs: EvidenceRef[];
   persistence?: RuntimeMemoryRuntimeIntegrationPort;
+  /** Selected plugins.slots.memory owner. Defaults to memory-core (fail-closed). */
+  memorySlotId?: string;
 }): RuntimeMemoryFactConfirmationResult {
   const ownerCheck = assertRuntimeMemoryOwnerConvergence({
+    memorySlotId: input.memorySlotId,
     runtimeMemoryPersist: true,
   });
   if (!ownerCheck.ok) {

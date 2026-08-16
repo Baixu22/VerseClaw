@@ -1,6 +1,5 @@
-// R7-1 T4: the DCS prod-flags panel renders the R3-2 unavailableReason for
-// the three memory switches plus a semantic-boundary explanation, in the
-// user's language. Data reuse only — no new state fields.
+// DCS memory switches keep the persistence owner boundary visible and disable
+// only the unavailable switch at the UI control itself.
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -96,6 +95,7 @@ describe('DCS prod flags memory semantics (R7-1 T4)', () => {
     // memory-channel boundary explanation.
     const reason = screen.getByTestId('settings-dcs-prod-flag-unavailable-reason');
     expect(reason).toHaveTextContent('E-1');
+    expect(screen.getByTestId('settings-dcs-prod-flag-switch-runtime-memory-persist')).toBeDisabled();
     const boundary = screen.getByTestId('settings-dcs-prod-flag-memory-boundary');
     expect(boundary).toHaveTextContent('injection/write channel only');
   });

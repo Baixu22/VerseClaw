@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "component": "verseshell",
+  "repository": "https://github.com/Baixu22/VerseShell.git",
+  "commit": "c3983694407a9ddb23505e05fad4a9eae653b283",
+  "commit_epoch": 1785123525,
+  "patches": [
+    {
+      "order": 1,
+      "role": "process-lifecycle",
+      "path": "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "bytes": 106755,
+      "sha256": "cabfb192f6f9688156f5a3ab5a19307fcd1af3fb2ee2c59b2d494a557d417098",
+      "changed_paths": [
+        "Cargo.toml",
+        "src/lib.rs",
+        "src/mcp/tools.rs",
+        "src/ops/mod.rs",
+        "src/ops/runtime_ops.rs",
+        "src/process_runner.rs",
+        "src/server.rs",
+        "tests/operation_protocol_tests.rs",
+        "src/ops/process_ops.rs",
+        "src/process_command.rs",
+        "src/process_lifecycle_windows.rs",
+        "src/process_lifecycle.rs",
+        "tests/process_lifecycle_tests.rs"
+      ]
+    },
+    {
+      "order": 2,
+      "role": "runtime-startup",
+      "path": "resources/verseshell/patches/p0-runtime-startup.patch",
+      "bytes": 1645,
+      "sha256": "17214efd7bf09e009256eb149c84a84e8fe85afcd467968ac2a6e472fbdb5aba",
+      "changed_paths": [
+        "src/cache.rs"
+      ]
+    },
+    {
+      "order": 3,
+      "role": "recovered-ignored-source-inputs",
+      "path": "resources/verseshell/patches/aci-bench-source-inputs.patch",
+      "bytes": 32136,
+      "sha256": "f05d7bacdb2c754cd76a5f57a4ef9b1735ce95a76007bda69badaf99c887b72e",
+      "changed_paths": [
+        "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
+        "bench/aci/fixtures/python_edit_and_retest/greet.py",
+        "bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py",
+        "bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py",
+        "bench/aci/fixtures/python_fix_pytest_fail/mathlib.py",
+        "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
+        "bench/aci/runners/run_suite.py",
+        "bench/aci/scorers/score.py"
+      ]
+    },
+    {
+      "order": 4,
+      "role": "python-current-interpreter",
+      "path": "resources/verseshell/patches/python-current-interpreter.patch",
+      "bytes": 2444,
+      "sha256": "ccc4a92220dd3ca47a142ded6c3734749918f3d86b5014f1e5444ffd53bc0922",
+      "changed_paths": [
+        "bench/aci/runners/run_suite.py",
+        "bench/aci/tasks/python_edit_and_retest.json",
+        "bench/aci/tasks/python_fix_pytest_fail.json"
+      ]
+    }
+  ],
+  "recovered_inputs": {
+    "verified_after_patch_order": 3,
+    "upstream_ignore_rule": "*.py",
+    "files": [
+      {
+        "path": "bench/aci/runners/run_suite.py",
+        "bytes": 27489,
+        "sha256": "2cbfab0553f40da8c86202697151a54b5c1e39adfc3120508dbc4343328f11b6"
+      },
+      {
+        "path": "bench/aci/scorers/score.py",
+        "bytes": 1081,
+        "sha256": "9ae6f43cd8b739192061259935ebad1ab32b7cc188cd29bfe2c75b421fafaaf9"
+      },
+      {
+        "path": "bench/aci/fixtures/python_edit_and_retest/greet.py",
+        "bytes": 41,
+        "sha256": "3ab4a6cd647afe331b3f14443f8e612f820d5ac9aa50380f608306859defb964"
+      },
+      {
+        "path": "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
+        "bytes": 46,
+        "sha256": "a55c14346b5c0e11da873793db175efd28d4840a330a5edba18d03d7d7310626"
+      },
+      {
+        "path": "bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py",
+        "bytes": 84,
+        "sha256": "b1a1f584dd86105d98bc0c55c94853f7b50be059193cb4b973a2fb791de84af3"
+      },
+      {
+        "path": "bench/aci/fixtures/python_fix_pytest_fail/mathlib.py",
+        "bytes": 32,
+        "sha256": "4fb46b3507c096aece05e92b88ce528ab2ee3c2c42657ba218d09dfdf5c02418"
+      },
+      {
+        "path": "bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py",
+        "bytes": 32,
+        "sha256": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772"
+      },
+      {
+        "path": "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
+        "bytes": 67,
+        "sha256": "a8a48514048ab1e8543f3d7626fc9f40d322009f679deb1e441b38b0daecfe8f"
+      }
+    ]
+  },
+  "ignored_input_policy": {
+    "allowlist": "recovered_inputs.files",
+    "forbidden_patterns": [
+      "**/__pycache__/**",
+      "**/*.pyc",
+      "target/**",
+      ".ae/**",
+      "**/*.exe",
+      "**/*.pdb",
+      "**/*.log",
+      "bench/aci/results/**"
+    ]
+  },
+  "final_assertions": [
+    {
+      "path": ".gitignore",
+      "bytes": 627,
+      "sha256": "c975d8a4a216b88fb8930bd067066e05ec1f9cd9be4ee675b63810a0c6c37ba1"
+    },
+    {
+      "path": "Cargo.toml",
+      "bytes": 2836,
+      "sha256": "d49679a726c368babae6302b3dbe97bcc99eefc4fdf533aeb5a6f67a22521b6d"
+    },
+    {
+      "path": "Cargo.lock",
+      "bytes": 100003,
+      "sha256": "2970a2ad51f0f63ed66c51cf6935dbfd57ec0a1b19c78a4312d1eafe8b3a95e2"
+    },
+    {
+      "path": "src/cache.rs",
+      "bytes": 9692,
+      "sha256": "f53fbbd4a0c0a36f85931b36e17f264eade4aef85d70cba5651bc0cda3979a1b"
+    },
+    {
+      "path": "src/lib.rs",
+      "bytes": 2170,
+      "sha256": "15c5cf30d3cd9c9ee482bbbc4e86605e3fc47450d7542acae24924f7b92a0728"
+    },
+    {
+      "path": "src/mcp/tools.rs",
+      "bytes": 39687,
+      "sha256": "f425c222ac207bf1bf17054b716c3cd2b4399ff76d21bd07c89543f98a93ae7b"
+    },
+    {
+      "path": "src/ops/process_ops.rs",
+      "bytes": 6242,
+      "sha256": "f2a026a30dd9f01ab0dcb830b53bcf7087d6f51e9c58df9ac888dc24ebc8883b"
+    },
+    {
+      "path": "src/ops/runtime_ops.rs",
+      "bytes": 4381,
+      "sha256": "8f276ebb33529c7d1fb170e267699db18b22ac2948b34b236e965cd09a843a47"
+    },
+    {
+      "path": "src/process_command.rs",
+      "bytes": 7952,
+      "sha256": "3412637b82e804851cac17953f3db4240e468b78c909eebd064b4b113e13ebe3"
+    },
+    {
+      "path": "src/process_lifecycle.rs",
+      "bytes": 47466,
+      "sha256": "ec54738b29301f71a7b0b611a0f1276369fcd5ced1f10800ee73df2f8e46cb0d"
+    },
+    {
+      "path": "src/process_lifecycle_windows.rs",
+      "bytes": 12085,
+      "sha256": "d6dbf4fc293fb0f69bc733fe6f9a687c8a14e672f62e41b024daa789ff08fc76"
+    },
+    {
+      "path": "src/process_runner.rs",
+      "bytes": 14351,
+      "sha256": "66e4bb5183fdafb4f0ba299eae3f1e21c4886b63fbc9580a7303b63630dab9aa"
+    },
+    {
+      "path": "src/server.rs",
+      "bytes": 12186,
+      "sha256": "3a79eb935b2e91ca0e49aadae40cf21bebc537aa8ca64847c8c083d8e7ab73dc"
+    },
+    {
+      "path": "tests/operation_protocol_tests.rs",
+      "bytes": 14614,
+      "sha256": "7fdb1cd225ef03c657fa9a392223560e37d88ea8c963e3875638d2fac1835a8c"
+    },
+    {
+      "path": "tests/process_lifecycle_tests.rs",
+      "bytes": 18787,
+      "sha256": "79f424ef63a437790be3590c4799753028c6ed93b40dec7f5b5e376e8db2065e"
+    },
+    {
+      "path": "bench/aci/tasks/manifest.json",
+      "bytes": 480,
+      "sha256": "59aeab316577efc881d236dcc2eca1ad5a3c289149ad73b10c2d96eee982d679"
+    },
+    {
+      "path": "bench/aci/runners/run_suite.py",
+      "bytes": 27900,
+      "sha256": "7eb3ad291ebf1f705bf27721388b934e30f98d591b89ec5bc8b4b4ee7ff3b0d0"
+    },
+    {
+      "path": "bench/aci/scorers/score.py",
+      "bytes": 1081,
+      "sha256": "9ae6f43cd8b739192061259935ebad1ab32b7cc188cd29bfe2c75b421fafaaf9"
+    },
+    {
+      "path": "bench/aci/tasks/python_edit_and_retest.json",
+      "bytes": 599,
+      "sha256": "ffd1e63e90aec3169bff1fc7ebe215fa14ee4fb46851c9bbc263a49d66e49883"
+    },
+    {
+      "path": "bench/aci/tasks/python_fix_pytest_fail.json",
+      "bytes": 583,
+      "sha256": "f61b0a62aba46284b876f6101b5c0d3f5d4b9ec5095f956ebb2131938a6f1514"
+    },
+    {
+      "path": "bench/aci/fixtures/python_edit_and_retest/greet.py",
+      "bytes": 41,
+      "sha256": "3ab4a6cd647afe331b3f14443f8e612f820d5ac9aa50380f608306859defb964"
+    },
+    {
+      "path": "bench/aci/fixtures/python_edit_and_retest/GOLDEN/greet.py",
+      "bytes": 46,
+      "sha256": "a55c14346b5c0e11da873793db175efd28d4840a330a5edba18d03d7d7310626"
+    },
+    {
+      "path": "bench/aci/fixtures/python_edit_and_retest/tests/test_greet.py",
+      "bytes": 84,
+      "sha256": "b1a1f584dd86105d98bc0c55c94853f7b50be059193cb4b973a2fb791de84af3"
+    },
+    {
+      "path": "bench/aci/fixtures/python_fix_pytest_fail/mathlib.py",
+      "bytes": 32,
+      "sha256": "4fb46b3507c096aece05e92b88ce528ab2ee3c2c42657ba218d09dfdf5c02418"
+    },
+    {
+      "path": "bench/aci/fixtures/python_fix_pytest_fail/GOLDEN/mathlib.py",
+      "bytes": 32,
+      "sha256": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772"
+    },
+    {
+      "path": "bench/aci/fixtures/python_fix_pytest_fail/tests/test_math.py",
+      "bytes": 67,
+      "sha256": "a8a48514048ab1e8543f3d7626fc9f40d322009f679deb1e441b38b0daecfe8f"
+    }
+  ],
+  "test_contract": {
+    "rust": [
+      [
+        "cargo",
+        "test",
+        "--locked",
+        "-j",
+        "1"
+      ],
+      [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-run",
+        "-j",
+        "1"
+      ]
+    ],
+    "python_optional_verify": {
+      "runner": "bench/aci/runners/run_suite.py",
+      "interpreter_token": "{current_python}",
+      "module_argv": [
+        "{current_python}",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "task_ids": [
+        "python_edit_and_retest",
+        "python_fix_pytest_fail"
+      ]
+    }
+  },
+  "toolchain": {
+    "cargo_version": "1.94.0",
+    "rustc_version": "1.94.0",
+    "target": "x86_64-pc-windows-msvc"
+  },
+  "build": {
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--bin",
+      "ae"
+    ],
+    "independent_source_roots": 2,
+    "independent_target_roots": 2,
+    "environment": {
+      "CARGO_INCREMENTAL": "0",
+      "SOURCE_DATE_EPOCH": "1785123525"
+    },
+    "encoded_rustflags": [
+      "--remap-path-prefix={source_root}=/verseshell/source",
+      "--remap-path-prefix={target_root}=/verseshell/target",
+      "-C",
+      "link-arg=/Brepro",
+      "-C",
+      "link-arg=/PDBALTPATH:%_PDB%"
+    ],
+    "binary_relative_path": "release/ae.exe",
+    "comparison": "byte-identical-sha256"
+  },
+  "identity": {
+    "algorithm": "sha256(canonical-json-without-identity)",
+    "payload_sha256": "ea9d12f54dab1ce0fc6f3f29bb526f8d5e20b9e903df2a2ee46e93adb81a8880",
+    "combined_algorithm": "sha256(verseshell.source-identity/v1\\n + payload_sha256)",
+    "combined_sha256": "19008cf2844aac688cfc74276db3babf64d416d2c3ba9497cda632cfff75d650"
+  }
+}

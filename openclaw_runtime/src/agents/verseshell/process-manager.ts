@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { spawn, type ChildProcessWithoutNullStreams, type SpawnOptions } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -9,7 +9,9 @@ import {
   AciProtocolError,
   AciTimeoutError,
   AciTransportError,
+  type AciErrorMetadata,
   type AciExecuteOptions,
+  type AciLifecycleStage,
   type AciTransport,
   VerseShellAciClient,
 } from "./aci-client.js";
@@ -80,6 +82,8 @@ export type VerseShellProcessManagerOptions = {
   resolveBinary?: VerseShellBinaryResolver;
   spawnProcess?: AciSpawn;
   now?: () => number;
+  /** Optional external kill switch. A true value fails closed and prevents new work. */
+  killSwitch?: () => boolean;
 };
 
 export type VerseShellProcessHealth = {
@@ -93,13 +97,15 @@ export type VerseShellProcessHealth = {
   protocolVersion: string;
   catalogDigest: string;
   catalogCount: number;
-  state: "starting" | "ready" | "backoff" | "stopped" | "failed";
+  state: AciLifecycleStage;
   pid: number | null;
   active: number;
   queued: number;
   restartAttempts: number;
   lastUsedAt: number;
   lastError?: string;
+  lastErrorCode?: string;
+  lastErrorMetadata?: AciErrorMetadata;
 };
 
 type ImmutableProcessConfig = Readonly<{
@@ -126,11 +132,29 @@ type RequestEntry = {
   id: string;
   op: string;
   args: JsonObject;
+  traceId: string;
+  deadlineAt: number;
   timeoutMs: number;
   resolve: (observation: Observation) => void;
   reject: (error: Error) => void;
   timer: NodeJS.Timeout;
   sent: boolean;
+  retryable: boolean;
+  retryCount: number;
+};
+
+type ManagedAciProcessOptions = Required<
+  Pick<
+    VerseShellProcessManagerOptions,
+    | "maxRestarts"
+    | "restartBaseDelayMs"
+    | "restartMaxDelayMs"
+    | "shutdownGraceMs"
+    | "spawnProcess"
+    | "now"
+  >
+> & {
+  isKillSwitchTripped: () => boolean;
 };
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
@@ -145,6 +169,20 @@ const SHA256_DIGEST = /^sha256:[a-f0-9]{64}$/;
 const BINARY_SHA256 = /^[a-f0-9]{64}$/;
 const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/;
 const APPROVAL_TOKEN_IN_TEXT = /apv_[a-f0-9]{16}/giu;
+const TRACE_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
+const MAX_READ_ONLY_RETRIES = 1;
+const READ_ONLY_IDEMPOTENT_OPS = new Set([
+  "file.view",
+  "file.read_range",
+  "file.hash",
+  "repo.search",
+  "repo.summary",
+  "result.query",
+  "runtime.handshake",
+  "ops.list",
+  "process.poll",
+  "process.list",
+]);
 
 let cachedDefaultBinary:
   | { key: string; promise: Promise<ResolvedVerseShellBinary> }
@@ -222,6 +260,36 @@ function validateCatalogCount(value: number): number {
 
 function redactApprovalTokens(value: string): string {
   return value.replace(APPROVAL_TOKEN_IN_TEXT, "[REDACTED_APPROVAL_TOKEN]");
+}
+
+function normalizeTraceId(value: string | undefined): string {
+  const normalized = value?.trim();
+  if (normalized && TRACE_ID.test(normalized)) return normalized;
+  return `trace-${randomUUID()}`;
+}
+
+function lifecycleMetadata(
+  processKey: string,
+  stage: AciLifecycleStage,
+  entry?: Pick<RequestEntry, "id" | "traceId" | "deadlineAt">,
+  extra: Partial<AciErrorMetadata> = {},
+): AciErrorMetadata {
+  return {
+    processKey,
+    lifecycleStage: stage,
+    ...(entry
+      ? {
+          requestId: entry.id,
+          traceId: entry.traceId,
+          deadlineAt: entry.deadlineAt,
+        }
+      : {}),
+    ...extra,
+  };
+}
+
+function isReadOnlyIdempotentOperation(op: string): boolean {
+  return READ_ONLY_IDEMPOTENT_OPS.has(op);
 }
 
 async function canonicalWorkspace(workspace: string): Promise<string> {
@@ -306,23 +374,16 @@ class ManagedAciProcess implements AciTransport {
   private stdoutBuffer = Buffer.alloc(0);
   private intentionallyStopping = false;
   private disposed = false;
+  private killSwitchTripped = false;
   private lastError: string | undefined;
+  private lastErrorCode: string | undefined;
+  private lastErrorMetadata: AciErrorMetadata | undefined;
   private _lastUsedAt: number;
 
   constructor(
     private readonly config: ImmutableProcessConfig,
     private readonly binary: ResolvedVerseShellBinary,
-    private readonly options: Required<
-      Pick<
-        VerseShellProcessManagerOptions,
-        | "maxRestarts"
-        | "restartBaseDelayMs"
-        | "restartMaxDelayMs"
-        | "shutdownGraceMs"
-        | "spawnProcess"
-        | "now"
-      >
-    >,
+    private readonly options: ManagedAciProcessOptions,
   ) {
     this.key = config.key;
     this.workspace = config.workspace;
@@ -360,11 +421,16 @@ class ManagedAciProcess implements AciTransport {
       restartAttempts: this.restartAttempts,
       lastUsedAt: this.lastUsedAt,
       lastError: this.lastError,
+      lastErrorCode: this.lastErrorCode,
+      lastErrorMetadata: this.lastErrorMetadata,
     };
   }
 
   async ensureStarted(): Promise<void> {
     if (this.disposed) throw new AciTransportError("E_ACI_SHUTDOWN", "ACI process is shut down");
+    if (this.killSwitchTripped || this.options.isKillSwitchTripped()) {
+      throw this.killSwitchError();
+    }
     if (this.state === "ready" && this.child) return;
     if (this.restartTimer) {
       throw new AciTransportError("E_ACI_BACKOFF", "VerseShell process is restarting");
@@ -381,8 +447,21 @@ class ManagedAciProcess implements AciTransport {
     if (this.disposed) {
       return Promise.reject(new AciTransportError("E_ACI_SHUTDOWN", "ACI process is shut down"));
     }
+    if (this.killSwitchTripped || this.options.isKillSwitchTripped()) {
+      return Promise.reject(this.killSwitchError());
+    }
     if (opts.signal?.aborted) {
       return Promise.reject(new AciTransportError("E_ACI_ABORTED", "ACI request was aborted"));
+    }
+    if (opts.retryable && (opts.effectful === true || !isReadOnlyIdempotentOperation(op))) {
+      return Promise.reject(
+        new AciTransportError(
+          "E_ACI_RETRY_FORBIDDEN",
+          `Operation ${op} is not eligible for automatic retry`,
+          undefined,
+          lifecycleMetadata(this.key, this.state),
+        ),
+      );
     }
     if (this.queue.length >= this.config.maxQueueSize) {
       return Promise.reject(new AciTransportError("E_ACI_QUEUE_FULL", "VerseShell request queue is full"));
@@ -393,22 +472,45 @@ class ManagedAciProcess implements AciTransport {
       this.config.requestTimeoutMs,
       MAX_REQUEST_TIMEOUT_MS,
     );
+    const now = this.options.now();
+    const deadlineAt = opts.deadlineAt === undefined
+      ? now + timeoutMs
+      : Math.trunc(opts.deadlineAt);
+    if (
+      !Number.isSafeInteger(deadlineAt) ||
+      deadlineAt <= now ||
+      deadlineAt > now + MAX_REQUEST_TIMEOUT_MS
+    ) {
+      return Promise.reject(
+        new AciTransportError(
+          "E_ACI_DEADLINE",
+          "ACI request deadline is expired or invalid",
+          undefined,
+          lifecycleMetadata(this.key, this.state),
+        ),
+      );
+    }
     const id = `aci-${++this.requestCounter}`;
-    this._lastUsedAt = this.options.now();
+    const traceId = normalizeTraceId(opts.traceId);
+    this._lastUsedAt = now;
 
     return new Promise<Observation>((resolve, reject) => {
       const timer = unrefTimer(
-        setTimeout(() => this.timeoutRequest(id), timeoutMs),
+        setTimeout(() => this.timeoutRequest(id), Math.max(1, deadlineAt - this.options.now())),
       );
       const entry: RequestEntry = {
         id,
         op,
         args,
+        traceId,
+        deadlineAt,
         timeoutMs,
         resolve,
         reject,
         timer,
         sent: false,
+        retryable: opts.retryable === true,
+        retryCount: 0,
       };
       this.queue.push(entry);
       if (opts.signal) {
@@ -425,6 +527,9 @@ class ManagedAciProcess implements AciTransport {
   }
 
   private async start(): Promise<void> {
+    if (this.killSwitchTripped || this.options.isKillSwitchTripped()) {
+      throw this.killSwitchError();
+    }
     this.state = "starting";
     this.intentionallyStopping = false;
     this.stdoutBuffer = Buffer.alloc(0);
@@ -490,6 +595,7 @@ class ManagedAciProcess implements AciTransport {
     child.once("error", (error) => this.handleProcessFailure(error));
     child.once("close", (code, signal) => this.handleProcessClose(code, signal));
 
+    this.state = "handshaking";
     const observation = await this.sendHandshake();
     this.validateHandshake(observation);
     this.state = "ready";
@@ -499,6 +605,8 @@ class ManagedAciProcess implements AciTransport {
 
   private sendHandshake(): Promise<Observation> {
     const id = `aci-handshake-${++this.requestCounter}`;
+    const traceId = `trace-handshake-${randomUUID()}`;
+    const deadlineAt = this.options.now() + this.config.handshakeTimeoutMs;
     return new Promise((resolve, reject) => {
       const timer = unrefTimer(
         setTimeout(() => {
@@ -506,6 +614,9 @@ class ManagedAciProcess implements AciTransport {
           const error = new AciTimeoutError(
             `VerseShell runtime.handshake timed out after ${this.config.handshakeTimeoutMs}ms`,
             this.config.handshakeTimeoutMs,
+            lifecycleMetadata(this.key, this.state, { id, traceId, deadlineAt }, {
+              restartAttempt: this.restartAttempts,
+            }),
           );
           this.failProtocol(error);
           reject(error);
@@ -515,11 +626,15 @@ class ManagedAciProcess implements AciTransport {
         id,
         op: "runtime.handshake",
         args: {},
+        traceId,
+        deadlineAt,
         timeoutMs: this.config.handshakeTimeoutMs,
         resolve,
         reject,
         timer,
         sent: true,
+        retryable: false,
+        retryCount: 0,
       };
       this.pending.set(id, entry);
       this.writeEntry(entry);
@@ -648,12 +763,17 @@ class ManagedAciProcess implements AciTransport {
       this.rejectEntry(entry, new AciTransportError("E_ACI_NOT_RUNNING", "VerseShell is not running"));
       return;
     }
+    const remainingMs = entry.deadlineAt - this.options.now();
+    if (remainingMs <= 0) {
+      this.timeoutRequest(entry.id);
+      return;
+    }
     const request = JSON.stringify({
       id: entry.id,
       op: entry.op,
       args: entry.args,
       agent: this.config.agentId,
-      timeout_ms: entry.timeoutMs,
+      timeout_ms: Math.max(1, Math.min(entry.timeoutMs, remainingMs)),
       budget: { max_tokens: 4_000 },
     });
     try {
@@ -674,7 +794,11 @@ class ManagedAciProcess implements AciTransport {
       const [entry] = this.queue.splice(queuedIndex, 1);
       this.rejectEntry(
         entry,
-        new AciTimeoutError(`ACI request ${entry.op} timed out in queue`, entry.timeoutMs),
+        new AciTimeoutError(
+          `ACI request ${entry.op} timed out in queue`,
+          entry.timeoutMs,
+          lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+        ),
       );
       return;
     }
@@ -684,24 +808,47 @@ class ManagedAciProcess implements AciTransport {
     if (entry.op !== "runtime.handshake") this.active--;
     this.rejectEntry(
       entry,
-      new AciTimeoutError(`ACI request ${entry.op} timed out`, entry.timeoutMs),
+      new AciTimeoutError(
+        `ACI request ${entry.op} timed out`,
+        entry.timeoutMs,
+        lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+      ),
     );
     // The server cannot cancel a single evaluation. Kill without replaying any request.
-    this.failProtocol(new AciTimeoutError("VerseShell process reset after request timeout", entry.timeoutMs));
+    this.failProtocol(
+      new AciTimeoutError(
+        "VerseShell process reset after request timeout",
+        entry.timeoutMs,
+        lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+      ),
+    );
   }
 
   private abortRequest(id: string): void {
-    const error = new AciTransportError("E_ACI_ABORTED", "ACI request was aborted");
     const queuedIndex = this.queue.findIndex((entry) => entry.id === id);
     if (queuedIndex >= 0) {
       const [entry] = this.queue.splice(queuedIndex, 1);
-      this.rejectEntry(entry, error);
+      this.rejectEntry(
+        entry,
+        new AciTransportError(
+          "E_ACI_ABORTED",
+          "ACI request was aborted",
+          undefined,
+          lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+        ),
+      );
       return;
     }
     const entry = this.pending.get(id);
     if (!entry) return;
     this.pending.delete(id);
     if (entry.op !== "runtime.handshake") this.active--;
+    const error = new AciTransportError(
+      "E_ACI_ABORTED",
+      "ACI request was aborted",
+      undefined,
+      lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+    );
     this.rejectEntry(entry, error);
     this.failProtocol(error);
   }
@@ -715,30 +862,45 @@ class ManagedAciProcess implements AciTransport {
 
   private rejectEntry(entry: RequestEntry, error: Error): void {
     clearTimeout(entry.timer);
+    if (error instanceof AciTransportError) {
+      const metadata = lifecycleMetadata(this.key, this.state, entry, {
+        ...error.metadata,
+        restartAttempt: this.restartAttempts,
+      });
+      error.metadata = metadata;
+      this.lastErrorMetadata = metadata;
+      this.lastErrorCode = error.code;
+    }
     entry.reject(error);
   }
 
   private failProtocol(error: Error): void {
-    this.lastError = redactApprovalTokens(error.message);
+    this.recordError(error);
     this.rejectAll(error);
     this.terminateNow();
   }
 
   private failStart(error: Error): void {
-    this.lastError = redactApprovalTokens(error.message);
+    this.recordError(error);
     this.state = "failed";
     this.rejectAll(error);
   }
 
   private handleProcessFailure(error: Error): void {
     if (this.intentionallyStopping) return;
-    this.lastError = redactApprovalTokens(error.message);
+    this.recordError(error);
   }
 
   private handleProcessClose(code: number | null, signal: NodeJS.Signals | null): void {
-    const wasIntentional = this.intentionallyStopping || this.disposed;
+    const killSwitchTripped = this.killSwitchTripped || this.options.isKillSwitchTripped();
+    const wasIntentional = this.intentionallyStopping || this.disposed || killSwitchTripped;
     this.child = null;
     this.stdoutBuffer = Buffer.alloc(0);
+    if (killSwitchTripped) {
+      this.state = "failed";
+      this.rejectAll(this.killSwitchError());
+      return;
+    }
     if (wasIntentional) {
       this.state = "stopped";
       return;
@@ -747,9 +909,48 @@ class ManagedAciProcess implements AciTransport {
       `VerseShell process exited (code=${code}, signal=${signal})`,
       code,
       signal,
+      lifecycleMetadata(this.key, this.state, undefined, {
+        exitCode: code,
+        signal,
+        restartAttempt: this.restartAttempts,
+      }),
     );
-    this.lastError = redactApprovalTokens(error.message);
-    this.rejectAll(error);
+    this.recordError(error);
+
+    const retryable: RequestEntry[] = [];
+    for (const entry of this.pending.values()) {
+      this.pending.delete(entry.id);
+      if (
+        entry.retryable &&
+        entry.retryCount < MAX_READ_ONLY_RETRIES &&
+        entry.deadlineAt > this.options.now()
+      ) {
+        entry.retryCount++;
+        entry.sent = false;
+        retryable.push(entry);
+      } else {
+        clearTimeout(entry.timer);
+        this.rejectEntry(entry, error);
+      }
+    }
+    this.active = 0;
+    const queued = this.queue.splice(0);
+    const now = this.options.now();
+    for (const entry of queued) {
+      if (entry.deadlineAt > now) {
+        this.queue.push(entry);
+      } else {
+        this.rejectEntry(
+          entry,
+          new AciTimeoutError(
+            `ACI request ${entry.op} timed out while VerseShell restarted`,
+            entry.timeoutMs,
+            lifecycleMetadata(this.key, this.state, entry, { restartAttempt: this.restartAttempts }),
+          ),
+        );
+      }
+    }
+    this.queue.unshift(...retryable.reverse());
     this.scheduleRestart();
   }
 
@@ -760,10 +961,59 @@ class ManagedAciProcess implements AciTransport {
     this.active = 0;
   }
 
+  private recordError(error: Error): void {
+    this.lastError = redactApprovalTokens(error.message).slice(0, 2_000);
+    if (error instanceof AciTransportError) {
+      this.lastErrorCode = error.code;
+      this.lastErrorMetadata = {
+        ...lifecycleMetadata(this.key, this.state, undefined, error.metadata),
+        restartAttempt: this.restartAttempts,
+      };
+      error.metadata = this.lastErrorMetadata;
+    }
+  }
+
+  private killSwitchError(entry?: RequestEntry): AciTransportError {
+    return new AciTransportError(
+      "E_ACI_KILL_SWITCH",
+      "VerseShell execution is disabled by the operator kill switch",
+      undefined,
+      lifecycleMetadata(this.key, "failed", entry, {
+        restartAttempt: this.restartAttempts,
+      }),
+    );
+  }
+
+  tripKillSwitch(reason = "operator"): void {
+    this.killSwitchTripped = true;
+    this.intentionallyStopping = true;
+    if (this.restartTimer) clearTimeout(this.restartTimer);
+    this.restartTimer = null;
+    const error = this.killSwitchError();
+    this.lastError = `${error.message} (${reason.slice(0, 64)})`;
+    this.lastErrorCode = error.code;
+    this.lastErrorMetadata = error.metadata;
+    this.state = "failed";
+    this.rejectAll(error);
+    this.terminateNow(false);
+  }
+
   private scheduleRestart(): void {
-    if (this.disposed || this.intentionallyStopping) return;
+    if (this.disposed || this.intentionallyStopping || this.killSwitchTripped || this.options.isKillSwitchTripped()) {
+      return;
+    }
     if (this.restartAttempts >= this.options.maxRestarts) {
       this.state = "failed";
+      this.rejectAll(
+        new AciTransportError(
+          "E_ACI_RESTART_EXHAUSTED",
+          "VerseShell restart budget is exhausted",
+          undefined,
+          lifecycleMetadata(this.key, this.state, undefined, {
+            restartAttempt: this.restartAttempts,
+          }),
+        ),
+      );
       return;
     }
     const delayMs = Math.min(
@@ -777,17 +1027,17 @@ class ManagedAciProcess implements AciTransport {
         this.restartTimer = null;
         if (this.disposed) return;
         void this.ensureStarted().catch((error) => {
-          this.lastError = redactApprovalTokens(String(error));
+          this.recordError(error instanceof Error ? error : new Error(String(error)));
           this.scheduleRestart();
         });
       }, delayMs),
     );
   }
 
-  private terminateNow(): void {
+  private terminateNow(resetIntentional = true): void {
     const child = this.child;
     if (!child) return;
-    this.intentionallyStopping = false;
+    if (resetIntentional) this.intentionallyStopping = false;
     if (child.pid) {
       killProcessTree(child.pid, { graceMs: this.options.shutdownGraceMs });
     } else {
@@ -832,9 +1082,12 @@ function asTransportError(error: unknown): Error {
 
 export class VerseShellProcessManager {
   private readonly processes = new Map<string, ManagedAciProcess>();
-  private readonly options: Required<VerseShellProcessManagerOptions>;
+  private readonly options: Required<VerseShellProcessManagerOptions> & {
+    isKillSwitchTripped: () => boolean;
+  };
   private readonly idleTimer: NodeJS.Timeout;
   private shuttingDown = false;
+  private killSwitchTripped = false;
 
   constructor(options: VerseShellProcessManagerOptions = {}) {
     const idleTtlMs = clampPositive(options.idleTtlMs, 5 * 60_000);
@@ -849,15 +1102,42 @@ export class VerseShellProcessManager {
       resolveBinary: options.resolveBinary ?? resolveDefaultVerseShellBinary,
       spawnProcess: options.spawnProcess ?? defaultSpawn,
       now: options.now ?? Date.now,
+      killSwitch: options.killSwitch ?? (() => false),
+      isKillSwitchTripped: () => this.killSwitchTripped || this.options.killSwitch(),
     };
     this.idleTimer = unrefTimer(
       setInterval(() => void this.collectIdle(), this.options.idleSweepMs),
     );
   }
 
+  isKillSwitchTripped(): boolean {
+    return this.killSwitchTripped || this.options.killSwitch();
+  }
+
+  /** Trip the operator kill switch and fail closed for all current and future clients. */
+  async setKillSwitch(active: boolean, reason = "operator"): Promise<void> {
+    this.killSwitchTripped = active;
+    if (!active) return;
+    await Promise.allSettled(
+      Array.from(this.processes.values(), (managed) => {
+        managed.tripKillSwitch(reason);
+      }),
+    );
+  }
+
+  async tripKillSwitch(reason = "operator"): Promise<void> {
+    await this.setKillSwitch(true, reason);
+  }
+
   async getClient(config: VerseShellProcessConfig): Promise<VerseShellAciClient> {
     if (this.shuttingDown) {
       throw new AciTransportError("E_ACI_SHUTDOWN", "ACI manager is shutting down");
+    }
+    if (this.isKillSwitchTripped()) {
+      throw new AciTransportError(
+        "E_ACI_KILL_SWITCH",
+        "VerseShell execution is disabled by the operator kill switch",
+      );
     }
     const workspace = await canonicalWorkspace(config.workspace);
     const profile = resolveVerseShellPolicyProfile(config.policyProfile);

@@ -22,12 +22,17 @@ requiredProfiles:
 
 ## State And Identity
 
-- The lifecycle state machine is `planned -> starting -> running -> exited | killed | lost`.
+- The process-manager state machine is `starting -> handshaking -> ready -> backoff | stopped | failed`;
+  the payload lifecycle remains `planned -> starting -> running -> exited | killed | lost`.
 - A failed start is terminal and must not publish a running id.
 - A lifecycle id is bound to one runtime instance, canonical workspace, agent id, and session id.
   Operations with a mismatched owner fail closed.
 - Restart or transport failure never replays `process.start`. Reconciliation observes retained
   durable metadata and reports `running`, `exited`, `killed`, or `lost` explicitly.
+- Every transport request carries a host-owned request id, trace id, absolute deadline and process key.
+  Callers cannot override those fields from operation args or inherited environment. A response with
+  an unknown id, mismatched operation, expired deadline, or mismatched process context is a protocol
+  failure and terminates the current transport.
 
 ## Input And Output
 
@@ -49,6 +54,18 @@ requiredProfiles:
   terminal state. Repeated kill is idempotent.
 - Shutdown may mark an unrecoverable running record `lost`; it must not silently orphan, adopt, or
   recreate the payload.
+
+## Retry And Diagnostics
+
+- Only explicitly classified read-only, idempotent requests may use a bounded retry after transport
+  restart. `process.start`, `process.write`, `process.kill`, writes, and unknown operations are never
+  replayed when delivery is uncertain.
+- Timeout, abort, exit, handshake, protocol, backoff exhaustion and kill-switch failures expose stable
+  error codes with bounded metadata: request id, trace id, process key, lifecycle stage, deadline,
+  exit code/signal and restart attempt. Raw stderr, command text, approval tokens and unbounded output
+  are redacted or retained only behind an artifact handle.
+- An operator kill switch rejects new work, terminates in-flight work and prevents restart. It never
+  transfers execution to native shell, MCP, legacy eval or another owner.
 
 ## Rollout Locks
 

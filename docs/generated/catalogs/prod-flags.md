@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-08-14T12:28:25.633Z
+Generated at: 2026-08-15T17:56:49.354Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -215,7 +215,7 @@ This file is generated — edit the source of truth instead.
 - enable: runtime.memory.persist=true.
 - rollback: runtime.memory.persist=false (default).
 
-> R3-1 E-1 裁决选 (b): persist=true 构成第二个 durable authority (runtime_memory_* 表),fail-closed 拒绝。Settings 标不可用。
+> R3-1 E-1: persist=true 只有在 runtime-memory 被选为 plugins.slots.memory owner 时才合法；Settings 默认关闭。
 
 ## runtime-memory-inject-pilot
 
@@ -228,7 +228,7 @@ This file is generated — edit the source of truth instead.
 - enable: runtime.memory.injectPilot.enabled=true.
 - rollback: runtime.memory.injectPilot.enabled=false (default).
 
-> R3-1 审计: role-memory provider 门不读 injectPilot (接线断线)。Settings 标不可用。
+> R3-1: injectPilot 通过 Context Orchestrator 接入 role-memory/runtime-memory provider；runtime-memory 仅在 E-1 合法面（plugins.slots.memory=runtime-memory + persist=true + provider=true）下读真实持久库，默认关闭。
 
 ## runtime-memory-candidate-generation
 
@@ -254,7 +254,7 @@ This file is generated — edit the source of truth instead.
 - enable: runtime.contextBlock.compass.enabled=true.
 - rollback: runtime.contextBlock.compass.enabled=false (default).
 
-> R3-1 v3 审计: Assembler compass handler 无生产 inputs.compass(auto-reply compass 走旁路 extraSystemPromptParts,已登记 bypass producer + receipt)。Settings 标不可用。
+> R3-1: Assembler compass handler 接收生产检索输入；默认关闭。
 
 ## role-memory
 
@@ -267,5 +267,5 @@ This file is generated — edit the source of truth instead.
 - enable: runtime.contextBlock.role-memory.enabled=true.
 - rollback: runtime.contextBlock.role-memory.enabled=false (default).
 
-> R3-1 审计: role-memory contextBlock 假活面 + 负作用(开而 producer 未接会替换在跑 provider)。Settings 标不可用。
+> R3-1: role-memory projection 接收真实 role/task 输入且不移除其他 provider；默认关闭。
 

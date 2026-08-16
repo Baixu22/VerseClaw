@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateSourceBundle } from './verseshell-bundle.mjs';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const expectedFacade = [
@@ -11,27 +11,6 @@ const expectedFacade = [
   ['run_command', 'exec.run'],
   ['result_query', 'result.query'],
 ];
-const expectedOperationCatalogDigest =
-  'sha256:0685f5a168785c6e64eb084c01b8acbf76c5786ca00e7784be09608e9dd23ce7';
-const expectedOperationCatalogCount = 31;
-
-function readJson(path) {
-  return JSON.parse(readFileSync(path, 'utf8').replace(/^﻿/u, ''));
-}
-
-function string(value, path, issues) {
-  if (typeof value !== 'string' || value.length === 0) issues.push(`${path}: non-empty string required`);
-}
-
-function exactKeys(value, allowed, path, issues) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    issues.push(`${path}: object required`);
-    return;
-  }
-  for (const key of Object.keys(value)) {
-    if (!allowed.includes(key)) issues.push(`${path}.${key}: unexpected field`);
-  }
-}
 
 function validateFacadeSource(root, issues) {
   const path = resolve(root, 'shared/verseshell/facade.ts');
@@ -57,311 +36,38 @@ function validateFacadeSource(root, issues) {
   }
 }
 
-function validateArtifact(root, platform, artifact, requiredForPackage, issues) {
-  const pathLabel = `artifacts.${platform}`;
-  exactKeys(artifact, ['path', 'packaged_path', 'sha256', 'bytes', 'version'], pathLabel, issues);
-  const values = [artifact?.path, artifact?.sha256, artifact?.bytes];
-  const missing = values.filter((value) => value === null).length;
-  if (missing !== 0 && missing !== 3) issues.push(`${pathLabel}: path, sha256, and bytes must be populated together`);
-  if (missing === 3) {
-    if (requiredForPackage) issues.push(`${pathLabel}: artifact and checksum required in package mode`);
-    return;
-  }
-  if (typeof artifact.path !== 'string' || artifact.path.length === 0) {
-    issues.push(`${pathLabel}.path: non-empty string required`);
-    return;
-  }
-  if (!/^[0-9a-f]{64}$/u.test(artifact.sha256 || '')) {
-    issues.push(`${pathLabel}.sha256: lowercase SHA-256 required`);
-  }
-  if (!Number.isSafeInteger(artifact.bytes) || artifact.bytes <= 0) {
-    issues.push(`${pathLabel}.bytes: positive safe integer required`);
-  }
-  const absolute = resolve(root, artifact.path);
-  if (!existsSync(absolute)) {
-    issues.push(`${pathLabel}.path: file does not exist: ${artifact.path}`);
-    return;
-  }
-  const bytes = readFileSync(absolute);
-  if (bytes.length !== artifact.bytes) issues.push(`${pathLabel}.bytes: expected ${artifact.bytes}, got ${bytes.length}`);
-  const digest = createHash('sha256').update(bytes).digest('hex');
-  if (digest !== artifact.sha256) issues.push(`${pathLabel}.sha256: expected ${artifact.sha256}, got ${digest}`);
-}
-
-export function validateVerseShellManifest({ root = repositoryRoot, mode = 'dev', platform = 'win32-x64' } = {}) {
+export async function validateVerseShellManifest({ root = repositoryRoot, mode = 'dev', platform = 'win32-x64' } = {}) {
   if (!['dev', 'package'].includes(mode)) throw new Error(`unsupported validation mode: ${mode}`);
-  const supportedPlatforms = ['win32-x64', 'darwin-x64', 'darwin-arm64', 'linux-x64', 'linux-arm64'];
-  if (!supportedPlatforms.includes(platform)) throw new Error(`unsupported packaging platform: ${platform}`);
+  if (platform !== 'win32-x64') throw new Error(`unsupported packaging platform: ${platform}`);
   const issues = [];
-  const manifestPath = resolve(root, 'resources/verseshell/manifest.json');
-  if (!existsSync(manifestPath)) return { ok: false, mode, platform, issues: ['resources/verseshell/manifest.json: missing'] };
-
-  let manifest;
   try {
-    manifest = readJson(manifestPath);
+    await validateSourceBundle({ root, platform: 'win32', arch: 'x64', mode });
   } catch (error) {
-    return { ok: false, mode, platform, issues: [`manifest JSON parse failed: ${error instanceof Error ? error.message : error}`] };
-  }
-
-  exactKeys(
-    manifest,
-    ['schema_version', 'component', 'upstream', 'license', 'crate', 'protocol', 'provenance', 'compliance', 'build', 'artifacts'],
-    'manifest',
-    issues,
-  );
-  if (manifest.schema_version !== 1) issues.push('schema_version: expected 1');
-  if (manifest.component !== 'verseshell') issues.push('component: expected verseshell');
-  if (manifest.license !== 'AGPL-3.0-or-later') issues.push('license: expected AGPL-3.0-or-later');
-
-  exactKeys(manifest.upstream, ['cargo_repository', 'source_repository', 'pinned_commit', 'pinned_commit_status'], 'upstream', issues);
-  string(manifest.upstream?.cargo_repository, 'upstream.cargo_repository', issues);
-  string(manifest.upstream?.source_repository, 'upstream.source_repository', issues);
-  if (manifest.upstream?.pinned_commit !== null && !/^[0-9a-f]{40}$/u.test(manifest.upstream.pinned_commit || '')) {
-    issues.push('upstream.pinned_commit: full lowercase Git commit required');
-  }
-  if (manifest.upstream?.pinned_commit === null) {
-    string(manifest.upstream?.pinned_commit_status, 'upstream.pinned_commit_status', issues);
-    if (mode === 'package') issues.push('upstream.pinned_commit: required in package mode');
-  }
-
-  exactKeys(
-    manifest.provenance,
-    ['repository', 'commit', 'dirty', 'build_input', 'corresponding_source', 'dirty_build_override'],
-    'manifest.provenance',
-    issues,
-  );
-  if (manifest.provenance) {
-    if (manifest.provenance.repository !== manifest.upstream?.source_repository) {
-      issues.push('provenance.repository must match upstream.source_repository');
-    }
-    if (manifest.provenance.commit !== manifest.upstream?.pinned_commit || !/^[0-9a-f]{40}$/u.test(manifest.provenance.commit || '')) {
-      issues.push('provenance.commit must match the pinned full lowercase Git commit');
-    }
-    if (typeof manifest.provenance.dirty !== 'boolean') {
-      issues.push('provenance.dirty must be boolean');
-    }
-    exactKeys(manifest.provenance.build_input, ['source_directory', 'status_porcelain', 'diff_sha256', 'dirty_entry_count'], 'provenance.build_input', issues);
-    string(manifest.provenance.build_input?.source_directory, 'provenance.build_input.source_directory', issues);
-    exactKeys(manifest.provenance.corresponding_source, ['locator', 'patch_instructions'], 'provenance.corresponding_source', issues);
-    const expectedLocator = `${manifest.upstream?.source_repository}@${manifest.upstream?.pinned_commit}`;
-    exactKeys(manifest.provenance.dirty_build_override, ['approved', 'source_snapshot', 'patch_instructions'], 'provenance.dirty_build_override', issues);
-    const statusPorcelain = manifest.provenance.build_input?.status_porcelain;
-    const diffSha256 = manifest.provenance.build_input?.diff_sha256;
-    const dirtyEntryCount = manifest.provenance.build_input?.dirty_entry_count;
-    if (manifest.provenance.dirty === true) {
-      if (!Array.isArray(statusPorcelain) || statusPorcelain.length === 0) {
-        issues.push('dirty provenance.build_input.status_porcelain must be non-empty');
-      }
-      if (!/^[0-9a-f]{64}$/u.test(diffSha256 || '') || diffSha256 === 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
-        issues.push('dirty provenance.build_input.diff_sha256 must identify the captured source patch');
-      }
-      if (!Array.isArray(statusPorcelain) || dirtyEntryCount !== statusPorcelain.length) {
-        issues.push('dirty provenance.build_input.dirty_entry_count must match status_porcelain');
-      }
-      string(manifest.provenance.corresponding_source?.locator, 'provenance.corresponding_source.locator', issues);
-      string(manifest.provenance.corresponding_source?.patch_instructions, 'provenance.corresponding_source.patch_instructions', issues);
-      if (!manifest.provenance.corresponding_source?.locator?.startsWith(`${expectedLocator}+`)) {
-        issues.push('dirty provenance.corresponding_source.locator must identify the pinned commit plus patch');
-      }
-      if (manifest.provenance.dirty_build_override?.approved !== true
-        || manifest.provenance.dirty_build_override?.source_snapshot !== manifest.provenance.corresponding_source?.locator
-        || manifest.provenance.dirty_build_override?.patch_instructions !== manifest.provenance.corresponding_source?.patch_instructions) {
-        issues.push('dirty provenance override must match the recorded corresponding source');
-      }
-    } else {
-      if (!Array.isArray(statusPorcelain) || statusPorcelain.length !== 0) {
-        issues.push('provenance.build_input.status_porcelain must be an empty array for a clean bundle');
-      }
-      if (diffSha256 !== 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
-        issues.push('provenance.build_input.diff_sha256 must be the empty Git diff SHA-256');
-      }
-      if (dirtyEntryCount !== 0) {
-        issues.push('provenance.build_input.dirty_entry_count must be 0 for a clean bundle');
-      }
-      if (manifest.provenance.corresponding_source?.locator !== expectedLocator) {
-        issues.push('provenance.corresponding_source.locator must identify the pinned upstream commit');
-      }
-      if (manifest.provenance.corresponding_source?.patch_instructions !== null) {
-        issues.push('provenance.corresponding_source.patch_instructions must be null for a clean bundle');
-      }
-      if (manifest.provenance.dirty_build_override?.approved !== false
-        || manifest.provenance.dirty_build_override?.source_snapshot !== null
-        || manifest.provenance.dirty_build_override?.patch_instructions !== null) {
-        issues.push('provenance.dirty_build_override must record no override for a clean bundle');
-      }
-    }
-  } else {
-    issues.push('manifest.provenance: required for a synchronized binary bundle');
-  }
-
-  exactKeys(manifest.crate, ['name', 'version', 'rust_version', 'edition'], 'crate', issues);
-  if (manifest.crate?.name !== 'verseshell') issues.push('crate.name: expected verseshell');
-  if (manifest.crate?.version !== '1.0.0') issues.push('crate.version: expected 1.0.0');
-  if (manifest.crate?.rust_version !== '1.75') issues.push('crate.rust_version: expected 1.75');
-  if (manifest.crate?.edition !== '2021') issues.push('crate.edition: expected 2021');
-
-  exactKeys(
-    manifest.protocol,
-    [
-      'observation_schema',
-      'mcp_protocol_version',
-      'expected_server_protocol',
-      'operation_catalog_schema',
-      'operation_catalog_digest',
-      'operation_catalog_count',
-      'handshake_operation',
-      'server_name',
-      'server_version',
-    ],
-    'protocol',
-    issues,
-  );
-  if (manifest.protocol?.observation_schema !== 'verseshell.observation/v1') {
-    issues.push('protocol.observation_schema: expected verseshell.observation/v1');
-  }
-  if (manifest.protocol?.mcp_protocol_version !== '2024-11-05') {
-    issues.push('protocol.mcp_protocol_version: expected 2024-11-05');
-  }
-  if (manifest.protocol?.expected_server_protocol !== 'verseshell.jsonl/v1') {
-    issues.push('protocol.expected_server_protocol: expected verseshell.jsonl/v1');
-  }
-  if (manifest.protocol?.operation_catalog_schema !== 'verseshell.operation-catalog/v1') {
-    issues.push('protocol.operation_catalog_schema mismatch');
-  }
-  if (manifest.protocol?.operation_catalog_digest !== expectedOperationCatalogDigest) {
-    issues.push(`protocol.operation_catalog_digest: expected ${expectedOperationCatalogDigest}`);
-  }
-  if (manifest.protocol?.operation_catalog_count !== expectedOperationCatalogCount) {
-    issues.push(`protocol.operation_catalog_count: expected ${expectedOperationCatalogCount}`);
-  }
-  if (manifest.protocol?.handshake_operation !== 'runtime.handshake') {
-    issues.push('protocol.handshake_operation mismatch');
-  }
-  if (manifest.protocol?.server_name !== 'ae-mcp' || manifest.protocol?.server_version !== '1.0.0') {
-    issues.push('protocol server identity mismatch');
-  }
-
-  exactKeys(
-    manifest.compliance,
-    [
-      'license_file',
-      'notice_file',
-      'source_file',
-      'build_file',
-      'notice_path',
-      'source_instructions_path',
-      'build_instructions_path',
-      'corresponding_source_locator',
-      'corresponding_source_path',
-      'corresponding_source_status',
-    ],
-    'compliance',
-    issues,
-  );
-  for (const [field, expected] of [
-    ['license_file', 'LICENSE-AGPL-3.0-or-later.txt'],
-    ['notice_file', 'NOTICE.md'],
-    ['source_file', 'SOURCE.md'],
-    ['build_file', 'BUILD.md'],
-    ['notice_path', 'resources/verseshell/NOTICE.md'],
-    ['source_instructions_path', 'resources/verseshell/SOURCE.md'],
-    ['build_instructions_path', 'resources/verseshell/BUILD.md'],
-  ]) {
-    if (manifest.compliance?.[field] !== expected) issues.push(`compliance.${field}: expected ${expected}`);
-    const relative = expected.startsWith('resources/') ? expected : `resources/verseshell/${expected}`;
-    const absolute = resolve(root, relative);
-    if (!existsSync(absolute) || statSync(absolute).size === 0) issues.push(`${relative}: required non-empty file missing`);
-  }
-  const correspondingLocator = manifest.compliance?.corresponding_source_locator;
-  const correspondingSourcePath = manifest.compliance?.corresponding_source_path;
-  const expectedLocator = `${manifest.upstream?.source_repository}@${manifest.upstream?.pinned_commit}`;
-  if (correspondingLocator !== manifest.provenance?.corresponding_source?.locator) {
-    issues.push('compliance.corresponding_source_locator must match provenance');
-  }
-  if (manifest.provenance?.dirty === true) {
-    if (typeof correspondingSourcePath !== 'string' || correspondingSourcePath.length === 0) {
-      issues.push('dirty compliance.corresponding_source_path must identify the captured patch');
-    } else {
-      const sourcePath = resolve(root, correspondingSourcePath);
-      if (!existsSync(sourcePath)) {
-        issues.push('compliance.corresponding_source_path does not exist');
-      } else {
-        const patchSha256 = createHash('sha256').update(readFileSync(sourcePath)).digest('hex');
-        if (patchSha256 !== manifest.provenance?.build_input?.diff_sha256) {
-          issues.push('compliance corresponding-source patch checksum does not match build input');
-        }
-      }
-    }
-    if (manifest.compliance?.corresponding_source_status !== 'dirty_corresponding_source_recorded') {
-      issues.push('dirty compliance.corresponding_source_status must attest recorded corresponding source');
-    }
-  } else if (correspondingLocator !== expectedLocator) {
-    issues.push('compliance.corresponding_source_locator must identify the pinned upstream commit');
-  } else if (correspondingSourcePath !== null) {
-    if (typeof correspondingSourcePath !== 'string' || correspondingSourcePath.length === 0) {
-      issues.push('compliance.corresponding_source_path: string or null required');
-    } else if (!existsSync(resolve(root, correspondingSourcePath))) {
-      issues.push('compliance.corresponding_source_path does not exist');
-    }
-  } else if (manifest.compliance?.corresponding_source_status !== 'identified_by_repository_and_commit') {
-    issues.push('compliance.corresponding_source_status must attest a clean pinned source commit');
-  }
-
-  exactKeys(
-    manifest.build,
-    ['instructions_path', 'command', 'primary_binary', 'mcp_binary', 'cargo_version', 'rustc_version', 'cargo_target', 'cargo_metadata', 'cargo_toml_sha256', 'cargo_lock_sha256', 'synchronized_at'],
-    'build',
-    issues,
-  );
-  if (manifest.build?.instructions_path !== 'resources/verseshell/BUILD.md') issues.push('build.instructions_path mismatch');
-  if (manifest.build?.command !== 'cargo build --release --bin ae') issues.push('build.command mismatch');
-  if (manifest.build?.primary_binary !== 'ae' || manifest.build?.mcp_binary !== 'not_packaged') {
-    issues.push('build binary names mismatch');
-  }
-  for (const field of ['cargo_version', 'rustc_version', 'cargo_target', 'cargo_toml_sha256', 'cargo_lock_sha256', 'synchronized_at']) {
-    string(manifest.build?.[field], `build.${field}`, issues);
-  }
-  if (!/^[0-9a-f]{64}$/u.test(manifest.build?.cargo_toml_sha256 || '')) issues.push('build.cargo_toml_sha256: lowercase SHA-256 required');
-  if (!/^[0-9a-f]{64}$/u.test(manifest.build?.cargo_lock_sha256 || '')) issues.push('build.cargo_lock_sha256: lowercase SHA-256 required');
-  exactKeys(manifest.build?.cargo_metadata, ['package_name', 'package_version', 'target_directory'], 'build.cargo_metadata', issues);
-  if (manifest.build?.cargo_metadata?.package_name !== 'verseshell' || manifest.build?.cargo_metadata?.package_version !== manifest.crate?.version) {
-    issues.push('build.cargo_metadata package identity mismatch');
-  }
-  string(manifest.build?.cargo_metadata?.target_directory, 'build.cargo_metadata.target_directory', issues);
-
-  exactKeys(
-    manifest.artifacts,
-    ['win32-x64', 'darwin-x64', 'darwin-arm64', 'linux-x64', 'linux-arm64'],
-    'artifacts',
-    issues,
-  );
-  for (const artifactPlatform of supportedPlatforms) {
-    validateArtifact(
-      root,
-      artifactPlatform,
-      manifest.artifacts?.[artifactPlatform],
-      mode === 'package' && artifactPlatform === platform,
-      issues,
-    );
+    issues.push(error instanceof Error ? error.message : String(error));
   }
   validateFacadeSource(root, issues);
   return { ok: issues.length === 0, mode, platform, issues };
 }
 
-function readArg(name) {
-  const index = process.argv.indexOf(name);
-  return index >= 0 ? process.argv[index + 1] : undefined;
-}
-
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const result = validateVerseShellManifest({
-    root: readArg('--root') || repositoryRoot,
+async function main() {
+  const result = await validateVerseShellManifest({
+    root: process.argv.includes('--root')
+      ? process.argv[process.argv.indexOf('--root') + 1]
+      : repositoryRoot,
     mode: process.argv.includes('--package') ? 'package' : 'dev',
-    platform: readArg('--platform') || 'win32-x64',
+    platform: 'win32-x64',
   });
   if (!result.ok) {
     for (const issue of result.issues) console.error(`[verseshell-manifest] FAIL: ${issue}`);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   console.log(`[verseshell-manifest] OK: mode=${result.mode} platform=${result.platform}`);
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(`[verseshell-manifest] ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
 }

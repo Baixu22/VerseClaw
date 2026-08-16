@@ -35,14 +35,19 @@ const MODEL_BASE = {
   maxTokens: 4096,
 };
 
-function makeModel(overrides: { input?: Array<"text" | "image"> } = {}): Model {
+function makeModel(overrides: {
+  input?: Array<"text" | "image">;
+  id?: string;
+  reasoning?: boolean;
+  baseUrl?: string;
+} = {}): Model {
   return attachModelProviderRequestTransport(
     {
       ...MODEL_BASE,
       api: "anthropic-messages",
       provider: "anthropic",
-      id: MODEL_ID,
-      baseUrl: "http://127.0.0.1:40123/v1",
+      id: overrides.id ?? MODEL_ID,
+      baseUrl: overrides.baseUrl ?? "http://127.0.0.1:40123/v1",
       ...overrides,
     } as never,
     { allowPrivateNetwork: true },
@@ -103,7 +108,12 @@ type CapturedRequest = {
 async function runStream(params: {
   model?: Model;
   context: Context;
-  options?: SimpleStreamOptions;
+  options?: SimpleStreamOptions & {
+    thinkingEnabled?: boolean;
+    effort?: string;
+    serverCompaction?: boolean;
+    serverCompactionThreshold?: number;
+  };
   sseBody?: string;
 }): Promise<{ events: AssistantMessageEvent[]; captured: CapturedRequest }> {
   const originalFetch = globalThis.fetch;
@@ -278,5 +288,118 @@ describe("Anthropic Messages transport", () => {
     expect(errorEvent).toBeDefined();
     expect(errorEvent?.error.stopReason).toBe("error");
     expect(errorEvent?.error.errorMessage).toBe("boom");
+  });
+
+  it("sends adaptive thinking and output_config effort for Sonnet 5", async () => {
+    const { captured } = await runStream({
+      model: makeModel({ id: "claude-sonnet-5", reasoning: true }),
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: {
+        apiKey: "fixture-key",
+        cacheRetention: "none",
+        reasoning: "medium",
+      },
+    });
+
+    expect(captured.body.thinking).toEqual({ type: "adaptive" });
+    expect(captured.body.output_config).toEqual({ effort: "medium" });
+  });
+
+  it("omits the thinking field for adaptive-only Fable 5 when thinking is disabled", async () => {
+    const { captured } = await runStream({
+      model: makeModel({ id: "claude-fable-5", reasoning: true }),
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: { apiKey: "fixture-key", cacheRetention: "none", thinkingEnabled: false },
+    });
+
+    expect(captured.body).not.toHaveProperty("thinking");
+  });
+
+  it("keeps explicit thinking disabled for models that support the field", async () => {
+    const { captured } = await runStream({
+      model: makeModel({ id: "claude-opus-4-8", reasoning: true }),
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: { apiKey: "fixture-key", cacheRetention: "none", thinkingEnabled: false },
+    });
+
+    expect(captured.body.thinking).toEqual({ type: "disabled" });
+  });
+
+  it("maps a refusal stop reason to an error outcome", async () => {
+    const { events } = await runStream({
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: { apiKey: "fixture-key", cacheRetention: "none" },
+      sseBody: sseBodyFrom([
+        {
+          type: "message_start",
+          message: { id: "msg_refusal", usage: { input_tokens: 10, output_tokens: 0 } },
+        },
+        { type: "message_delta", delta: { stop_reason: "refusal" }, usage: { output_tokens: 0 } },
+      ]),
+    });
+
+    const errorEvent = events.find(
+      (event): event is Extract<AssistantMessageEvent, { type: "error" }> =>
+        event.type === "error",
+    );
+    expect(errorEvent).toBeDefined();
+    expect(errorEvent?.error.stopReason).toBe("error");
+    expect(errorEvent?.error.errorMessage).toContain("refusal:");
+    expect(errorEvent?.error.errorMessage).toContain("stop_reason: refusal");
+  });
+
+  it("maps a sensitive stop reason to the same refusal error outcome", async () => {
+    const { events } = await runStream({
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: { apiKey: "fixture-key", cacheRetention: "none" },
+      sseBody: sseBodyFrom([
+        {
+          type: "message_start",
+          message: { id: "msg_sensitive", usage: { input_tokens: 10, output_tokens: 0 } },
+        },
+        { type: "message_delta", delta: { stop_reason: "sensitive" }, usage: { output_tokens: 0 } },
+      ]),
+    });
+
+    const errorEvent = events.find(
+      (event): event is Extract<AssistantMessageEvent, { type: "error" }> =>
+        event.type === "error",
+    );
+    expect(errorEvent?.error.errorMessage).toContain("refusal:");
+  });
+
+  it("warns when thinking is disabled on an adaptive-only model", async () => {
+    const loggerModule = await import("../logger.js");
+    const spy = vi.spyOn(loggerModule, "logWarn").mockImplementation(() => {});
+
+    try {
+      await runStream({
+        model: makeModel({ id: "claude-mythos-5", reasoning: true }),
+        context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+        options: { apiKey: "fixture-key", cacheRetention: "none", thinkingEnabled: false },
+      });
+      expect(spy).toHaveBeenCalledWith(expect.stringContaining("claude-mythos-5"));
+      expect(spy).toHaveBeenCalledWith(expect.stringContaining("does not support disabling thinking"));
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("sends context_management and the compaction beta when server compaction is enabled", async () => {
+    const { captured } = await runStream({
+      model: makeModel({ id: "claude-sonnet-5", baseUrl: "https://api.anthropic.com" }),
+      context: { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+      options: {
+        apiKey: "fixture-key",
+        cacheRetention: "none",
+        serverCompaction: true,
+        serverCompactionThreshold: 175_000,
+      },
+    });
+
+    expect(captured.body.context_management).toEqual([
+      { type: "compaction", compact_threshold: 175_000 },
+    ]);
+    expect(captured.headers["anthropic-beta"]).toContain("compact-2026-01-12");
   });
 });

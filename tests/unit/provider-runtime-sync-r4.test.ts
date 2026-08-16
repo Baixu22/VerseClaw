@@ -66,7 +66,10 @@ vi.mock('@electron/utils/logger', () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { syncSavedProviderToRuntime } from '@electron/services/providers/provider-runtime-sync';
+import {
+  syncDefaultProviderToRuntime,
+  syncSavedProviderToRuntime,
+} from '@electron/services/providers/provider-runtime-sync';
 
 function createCustomProvider(overrides: Partial<ProviderConfig> = {}): ProviderConfig {
   return {
@@ -236,5 +239,31 @@ describe('R4 provider-runtime-sync auth / headers / capability metadata', () => 
     expect(openClawModel).not.toHaveProperty('maxTokens');
     expect(openClawModel).not.toHaveProperty('input');
     expect(openClawModel).not.toHaveProperty('reasoning');
+  });
+
+  it('falls back to the historical MiniMax OAuth marker and still updates models.json', async () => {
+    mocks.getProvider.mockResolvedValue(
+      createCustomProvider({ id: 'mm', type: 'minimax-portal', model: 'MiniMax-M2' }),
+    );
+    mocks.getApiKey.mockResolvedValue(undefined);
+    mocks.getProviderConfig.mockReturnValue({
+      api: 'anthropic-messages',
+      baseUrl: 'https://api.minimax.io/anthropic',
+      apiKeyEnv: undefined,
+    });
+
+    const outcome = await syncDefaultProviderToRuntime('mm');
+
+    expect(outcome.degraded).toBe(false);
+    expect(mocks.setOpenClawDefaultModelWithOverride).toHaveBeenCalledWith(
+      'minimax-portal',
+      expect.any(String),
+      expect.objectContaining({ apiKeyEnv: 'minimax-oauth' }),
+      expect.any(Array),
+    );
+    expect(mocks.updateAgentModelProvider).toHaveBeenCalledWith(
+      'minimax-portal',
+      expect.objectContaining({ apiKey: 'minimax-oauth' }),
+    );
   });
 });

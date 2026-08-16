@@ -30,7 +30,11 @@ The active phase file is binding. If the phase file conflicts with a later desig
 - `phase-06-tool-call-gate.md`
 - `phase-07-compression-artifact-integration.md`
 - `phase-08-recovery-context.md`
-- `phase-09-codebase-index.md`
+- ~~`phase-09-codebase-index.md`~~ (removed 2026-08-15: the orphaned in-memory
+  codebase index was superseded by the FactStore tree-sitter pipeline —
+  symbols, `calls`/`imports`/`tested_by` edges via
+  `openclaw_runtime/src/context-engine/producers/analyzers/*` — which is the
+  canonical content-level code-understanding path)
 - `phase-10-eval-reporting.md`
 
 ## Default-On Promotion

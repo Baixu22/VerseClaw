@@ -1,0 +1,59 @@
+diff --git a/src/cache.rs b/src/cache.rs
+index d8b5d54..3540ade 100644
+--- a/src/cache.rs
++++ b/src/cache.rs
+@@ -103,13 +103,7 @@ pub struct SystemSnapshot {
+ }
+ 
+ impl SystemSnapshot {
+-    pub fn expired(&self) -> bool {
+-        self.taken_at.elapsed() >= self.ttl
+-    }
+-}
+-
+-impl Default for SystemSnapshot {
+-    fn default() -> Self {
++    fn empty_at(taken_at: Instant) -> Self {
+         Self {
+             cpu_info: crate::value::Value::Null,
+             mem_info: crate::value::Value::Null,
+@@ -119,10 +113,20 @@ impl Default for SystemSnapshot {
+             os: String::new(),
+             process_list: crate::value::Value::Null,
+             sys_info: crate::value::Value::Null,
+-            taken_at: Instant::now() - Duration::from_secs(3600),
++            taken_at,
+             ttl: Duration::from_secs(5),
+         }
+     }
++
++    pub fn expired(&self) -> bool {
++        self.cpu_info == crate::value::Value::Null || self.taken_at.elapsed() >= self.ttl
++    }
++}
++
++impl Default for SystemSnapshot {
++    fn default() -> Self {
++        Self::empty_at(Instant::now())
++    }
+ }
+ 
+ // ── Global cache (v0.6.0: atomic stats, compiled IR tier) ────────────
+@@ -266,3 +270,17 @@ pub struct CacheStatsSnapshot {
+     pub ast_cache_size: usize,
+     pub ir_cache_size: usize,
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn empty_system_snapshot_is_expired_without_backdating_instant() {
++        let now = Instant::now();
++        let snapshot = SystemSnapshot::empty_at(now);
++
++        assert_eq!(snapshot.taken_at, now);
++        assert!(snapshot.expired());
++    }
++}

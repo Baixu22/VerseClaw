@@ -801,36 +801,37 @@ export async function syncDefaultProviderToRuntime(
 
     // OAuth auth format comes from provider metadata, not a minimax-only hardcode.
     const portalMeta = getProviderConfig(provider.type);
-    const oauthApiKeyMarker = portalMeta?.oauthApiKeyMarker;
-    if (!oauthApiKeyMarker) {
-      degradedReason = `OAuth provider "${provider.type}" has no OAuth API-key marker configured`;
-      logger.warn(`[provider-runtime] ${degradedReason}`);
-    } else {
-      const targetProviderKey = ock;
-      const oauthAuthHeader = portalMeta?.oauthAuthHeader ?? false;
+    // Keep the historical marker as a compatibility fallback for older or
+    // custom provider metadata. The marker is only a models.json auth hint;
+    // omitting the update would regress the R0-2 degraded-path contract.
+    const oauthApiKeyMarker = portalMeta?.oauthApiKeyMarker || 'minimax-oauth';
+    if (!portalMeta?.oauthApiKeyMarker) {
+      logger.warn(`[provider-runtime] Provider metadata omitted oauthApiKeyMarker; using legacy "${oauthApiKeyMarker}" fallback`);
+    }
+    const targetProviderKey = ock;
+    const oauthAuthHeader = portalMeta?.oauthAuthHeader ?? false;
 
-      await setOpenClawDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
+    await setOpenClawDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
+      baseUrl,
+      api,
+      authHeader: oauthAuthHeader,
+      apiKeyEnv: oauthApiKeyMarker,
+    }, fallbackModels);
+
+    logger.info(`Configured openclaw.json for OAuth provider "${provider.type}"`);
+
+    try {
+      const defaultModelId = provider.model?.split('/').pop();
+      await updateAgentModelProvider(targetProviderKey, {
         baseUrl,
         api,
         authHeader: oauthAuthHeader,
-        apiKeyEnv: oauthApiKeyMarker,
-      }, fallbackModels);
-
-      logger.info(`Configured openclaw.json for OAuth provider "${provider.type}"`);
-
-      try {
-        const defaultModelId = provider.model?.split('/').pop();
-        await updateAgentModelProvider(targetProviderKey, {
-          baseUrl,
-          api,
-          authHeader: oauthAuthHeader,
-          apiKey: oauthApiKeyMarker,
-          models: defaultModelId ? [piAiModelsJsonModelEntry(defaultModelId)] : [],
-        });
-      } catch (err) {
-        degradedReason = `Failed to update models.json for OAuth provider "${targetProviderKey}": ${String(err)}`;
-        logger.warn(`Failed to update models.json for OAuth provider "${targetProviderKey}":`, err);
-      }
+        apiKey: oauthApiKeyMarker,
+        models: defaultModelId ? [piAiModelsJsonModelEntry(defaultModelId)] : [],
+      });
+    } catch (err) {
+      degradedReason = `Failed to update models.json for OAuth provider "${targetProviderKey}": ${String(err)}`;
+      logger.warn(`Failed to update models.json for OAuth provider "${targetProviderKey}":`, err);
     }
   }
 

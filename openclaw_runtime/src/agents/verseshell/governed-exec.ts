@@ -1,14 +1,20 @@
-import type { Diagnostic, JsonObject, Observation } from "../../../../shared/verseshell/types.js";
+import { extractArtifactDescriptors, extractArtifactHandles, extractStreamCapture } from "../../../../shared/verseshell/extraction.js";
+import { decodeResultQueryRequest } from "../../../../shared/verseshell/validation.js";
+import type { ArtifactDescriptor, ArtifactOwnerLineage, Diagnostic, JsonObject, Observation, StreamCapture } from "../../../../shared/verseshell/types.js";
 import { VerseShellProcessManager, type VerseShellProcessConfig } from "./process-manager.js";
-import { VERSESHELL_GOVERNED_EXEC_PROFILE_ID } from "./policy-profile.js";
-import { resolveVerseShellCommandArgv } from "./shell-command.js";
+import {
+  VERSESHELL_GOVERNED_EXEC_PROFILE_ID,
+  VERSESHELL_READONLY_FACADE_PROFILE_ID,
+} from "./policy-profile.js";
+import {
+  resolveVerseShellCommandPlan,
+  type VerseShellCommandPlan,
+} from "./command-profiles.js";
 
 const SHA256_DIGEST = /^sha256:[a-f0-9]{64}$/;
 const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/;
 const RESULT_HANDLE = /^result:\/\/sha256\/[a-f0-9]{64}$/u;
-const RESULT_QUERY_MODES = new Set(["meta", "head", "tail", "slice", "grep", "raw"]);
 const MAX_RESULT_LINES = 500;
-const MAX_RESULT_PATTERN_LENGTH = 500;
 const MAX_RESULT_MATCHES = 200;
 const MAX_RESULT_BYTES = 64 * 1024;
 const MAX_RESULT_TOKENS = 4_000;
@@ -22,10 +28,19 @@ export type GovernedVerseShellExecResult = {
   profile: string;
   tokenEstimate: number;
   artifacts: string[];
+  artifactMetadata?: ArtifactDescriptor[];
+  stdoutCapture?: StreamCapture;
+  stderrCapture?: StreamCapture;
 };
 
 export type GovernedVerseShellExecOptions = {
   command: string;
+  /** Host-owned argv produced before approval. */
+  argv?: readonly string[];
+  /** Immutable plan produced by OpenClaw's approval pipeline. */
+  executionPlan?: VerseShellCommandPlan;
+  /** Explicit terminal-shell compatibility; argv is the default. */
+  shellMode?: "argv" | "explicit-shell";
   cwd: string;
   timeoutMs?: number;
   agentId?: string;
@@ -47,6 +62,7 @@ export type GovernedVerseShellResultQueryOptions = {
   maxMatches?: number;
   env?: NodeJS.ProcessEnv;
   manager?: VerseShellProcessManager;
+  expectedOwner?: Partial<ArtifactOwnerLineage>;
 };
 
 export class GovernedVerseShellError extends Error {
@@ -125,6 +141,20 @@ export function createGovernedVerseShellProcessConfig(options: {
   };
 }
 
+/** Process config for the P2 read/search/result facade. It has no command
+ * approval token and is still supervised by the same ACI manager. */
+export function createReadonlyVerseShellProcessConfig(options: {
+  cwd: string;
+  timeoutMs?: number;
+  agentId?: string;
+  env?: NodeJS.ProcessEnv;
+}): VerseShellProcessConfig {
+  return {
+    ...createGovernedVerseShellProcessConfig(options),
+    policyProfile: VERSESHELL_READONLY_FACADE_PROFILE_ID,
+  };
+}
+
 function processConfig(options: {
   cwd: string;
   timeoutMs?: number;
@@ -140,44 +170,34 @@ function boundedInteger(value: number | undefined, fallback: number, maximum: nu
 }
 
 function validateResultQuery(options: GovernedVerseShellResultQueryOptions): void {
-  if (!RESULT_QUERY_MODES.has(options.mode)) {
-    throw new GovernedVerseShellError(
-      "E_VERSESHELL_RESULT_MODE",
-      "VerseShell result query mode is invalid",
-    );
-  }
-  if (options.mode === "grep") {
-    const pattern = options.pattern?.trim();
-    if (!pattern) {
-      throw new GovernedVerseShellError(
-        "E_VERSESHELL_RESULT_PATTERN",
-        "VerseShell grep result query requires a pattern",
-      );
-    }
-    if (pattern.length > MAX_RESULT_PATTERN_LENGTH) {
-      throw new GovernedVerseShellError(
-        "E_VERSESHELL_RESULT_PATTERN",
-        `VerseShell grep pattern exceeds ${MAX_RESULT_PATTERN_LENGTH} characters`,
-      );
-    }
-  }
-  if (options.mode === "slice") {
-    const startLine = boundedInteger(options.startLine, 1, 1_000_000);
-    const endLine = options.endLine === undefined
-      ? startLine + boundedInteger(options.lines, 40, MAX_RESULT_LINES) - 1
-      : boundedInteger(options.endLine, startLine, 1_000_000);
-    if (endLine < startLine) {
-      throw new GovernedVerseShellError(
-        "E_VERSESHELL_RESULT_RANGE",
-        "VerseShell result slice endLine must be greater than or equal to startLine",
-      );
-    }
-    if (endLine - startLine + 1 > MAX_RESULT_LINES) {
-      throw new GovernedVerseShellError(
-        "E_VERSESHELL_RESULT_RANGE",
-        `VerseShell result slices are limited to ${MAX_RESULT_LINES} lines`,
-      );
-    }
+  try {
+    decodeResultQueryRequest({
+      handle: options.handle,
+      mode: options.mode,
+      ...(options.lines === undefined ? {} : { lines: options.lines }),
+      ...(options.startLine === undefined ? {} : { start_line: options.startLine }),
+      ...(options.endLine === undefined ? {} : { end_line: options.endLine }),
+      ...(options.pattern === undefined ? {} : { pattern: options.pattern }),
+      ...(options.maxMatches === undefined ? {} : { max_matches: Math.min(options.maxMatches, MAX_RESULT_MATCHES) }),
+    }, {
+      max_bytes: MAX_RESULT_BYTES,
+      max_tokens: MAX_RESULT_TOKENS,
+      max_lines: MAX_RESULT_LINES,
+      max_matches: MAX_RESULT_MATCHES,
+    });
+  } catch (error) {
+    const code = error instanceof Error && "code" in error ? String((error as { code?: unknown }).code) : "E_VERSESHELL_RESULT_QUERY";
+    const message = error instanceof Error ? error.message : "VerseShell result query is invalid";
+    const mapped = code === "result_query_invalid"
+      ? message.includes("handle")
+        ? "E_VERSESHELL_RESULT_HANDLE"
+        : message.includes("pattern")
+          ? "E_VERSESHELL_RESULT_PATTERN"
+          : message.includes("slice") || message.includes("end_line")
+            ? "E_VERSESHELL_RESULT_RANGE"
+            : "E_VERSESHELL_RESULT_QUERY"
+      : code;
+    throw new GovernedVerseShellError(mapped, message);
   }
 }
 
@@ -211,6 +231,9 @@ function streamText(value: unknown): { text: string; artifact?: string } {
   const artifact = typeof stream.artifact === "string" && stream.artifact.startsWith("result://")
     ? stream.artifact
     : undefined;
+  if (artifact && !RESULT_HANDLE.test(artifact)) {
+    throw new GovernedVerseShellError("E_VERSESHELL_RESULT_HANDLE", "VerseShell returned a malformed artifact handle");
+  }
   return { text, artifact };
 }
 
@@ -226,6 +249,15 @@ function formatObservation(observation: Observation): GovernedVerseShellExecResu
     stderr.artifact ? `[VerseShell stderr artifact: ${stderr.artifact}]` : "",
   ];
   const artifacts = [stdout.artifact, stderr.artifact].filter((value): value is string => Boolean(value));
+  const stdoutCapture = asRecord(data.stdout) && "raw_bytes" in (data.stdout as Record<string, unknown>)
+    ? extractStreamCapture(data.stdout, "$observation.data.stdout")
+    : undefined;
+  const stderrCapture = asRecord(data.stderr) && "raw_bytes" in (data.stderr as Record<string, unknown>)
+    ? extractStreamCapture(data.stderr, "$observation.data.stderr")
+    : undefined;
+  const artifactMetadata = Array.isArray(data.artifacts) && data.artifacts.some((entry) => asRecord(entry)?.digest !== undefined)
+    ? extractArtifactDescriptors(observation)
+    : undefined;
   const exitCode = typeof data.exit_code === "number" && Number.isInteger(data.exit_code)
     ? data.exit_code
     : observation.ok
@@ -249,6 +281,9 @@ function formatObservation(observation: Observation): GovernedVerseShellExecResu
     profile: observation.meta.profile,
     tokenEstimate: observation.meta.token_estimate,
     artifacts,
+    ...(artifactMetadata ? { artifactMetadata } : {}),
+    ...(stdoutCapture ? { stdoutCapture } : {}),
+    ...(stderrCapture ? { stderrCapture } : {}),
   };
 }
 
@@ -274,9 +309,15 @@ export async function executeGovernedVerseShell(
   const manager = managerFor(options);
   const config = processConfig(options);
   const timeoutMs = options.timeoutMs;
-  const argv = resolveVerseShellCommandArgv(options.command, undefined, options.env ?? process.env);
+  const plan = options.executionPlan ?? resolveVerseShellCommandPlan({
+    command: options.command,
+    argv: options.argv,
+    cwd: options.cwd,
+    env: options.env,
+    allowExplicitShell: options.shellMode !== "argv",
+  });
   const args: JsonObject = {
-    argv,
+    argv: plan.argv,
     cwd: ".",
     profile: "auto",
     artifact: "auto",
@@ -343,11 +384,37 @@ export async function queryGovernedVerseShellResult(
       : {}),
   };
   const observation = await client.queryResult(options.handle, args);
+  if (observation.op !== "result.query") {
+    throw new GovernedVerseShellError(
+      "E_VERSESHELL_RESULT_QUERY",
+      `VerseShell result query response operation mismatch: ${observation.op}`,
+    );
+  }
+  extractArtifactHandles(observation);
+  const queryData = asRecord(observation.data);
+  if (Array.isArray(queryData?.artifacts) && queryData.artifacts.length > 0) {
+    extractArtifactDescriptors(observation, { now_ms: Date.now(), expected_owner: options.expectedOwner });
+  }
+  if (queryData !== undefined) {
+    const bytes = new TextEncoder().encode(JSON.stringify(queryData)).byteLength;
+    if (bytes > MAX_RESULT_BYTES) {
+      throw new GovernedVerseShellError(
+        "E_VERSESHELL_RESULT_QUERY",
+        `VerseShell result query response exceeds ${MAX_RESULT_BYTES} bytes`,
+      );
+    }
+  }
   if (!observation.ok) {
     throw new GovernedVerseShellError(
       observation.error?.code ?? "E_VERSESHELL_RESULT_QUERY",
       observation.error?.message ?? "VerseShell result query failed",
       observation.error?.hint,
+    );
+  }
+  if (!queryData || Object.keys(queryData).length === 0) {
+    throw new GovernedVerseShellError(
+      "E_VERSESHELL_RESULT_MISSING",
+      "VerseShell result query returned no bounded data",
     );
   }
   return observation;

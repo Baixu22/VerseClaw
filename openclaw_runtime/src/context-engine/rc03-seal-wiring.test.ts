@@ -255,6 +255,7 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
         // Context Orchestrator ids.
         { sourceId: 'vtoken-assembly', channel: 'vtoken', target: 'system_prompt', candidateId: 'cand-5', charsRequested: 7, charsApplied: 7 },
         { sourceId: 'memory-inject-pilot', channel: 'memory_pilot', target: 'system_prompt', candidateId: 'cand-6', charsRequested: 7, charsApplied: 7 },
+        { sourceId: 'memory-inject-pilot:runtime-memory', channel: 'memory_pilot', target: 'system_prompt', candidateId: 'cand-7', charsRequested: 11, charsApplied: 11 },
       ],
       systemPromptAddition: undefined,
     } as never;
@@ -269,6 +270,44 @@ describe('RC-03 production wiring (seal hook at the pre-seal convergence point)'
       ]),
     );
     expect(applied).not.toContain('role-memory-injection');
+  });
+
+  it('R3-1: runtime-memory provider id survives ContextReceipt selection refs', () => {
+    const turnId = 'turn-runtime-memory-receipt';
+    beginContextCandidateCollection(turnId);
+    collectContextCandidate(
+      turnId,
+      createContextCandidate({
+        authorityObjectId: 'memory-inject-pilot:runtime-memory',
+        authorityVersion: 'v1',
+        sourceId: 'memory-inject-pilot:runtime-memory',
+        channel: 'memory_pilot',
+        target: 'system_prompt',
+        text: '## Memory Context\n\n### runtime-memory:fact\n\npersisted fact',
+      }),
+    );
+
+    const database = { env: process.env, path: path.join(stateDir, 'openclaw-state.db') };
+    const result = finalizeContextOrchestratorTurn({
+      turnId,
+      messages: [],
+      sessionKey: 'agent:main:main',
+      runId: 'run-runtime-memory-receipt',
+      providerId: 'runtime-memory',
+      cfg: { runtime: { rc03: { seal: true } } },
+      rc03Seal: { database },
+    });
+    expect(result.projection.lineage).toEqual([
+      expect.objectContaining({ sourceId: 'memory-inject-pilot:runtime-memory', charsApplied: expect.any(Number) }),
+    ]);
+    const row = newStore().list({ kind: 'context', runId: 'run-runtime-memory-receipt' })[0];
+    expect(row).toBeDefined();
+    expect(JSON.parse(row!.selected_json ?? '[]')).toEqual(
+      expect.arrayContaining([expect.stringContaining('runtime-memory')]),
+    );
+    expect(getRc03SealPlan('run-runtime-memory-receipt')?.preSealProducers).toEqual(
+      expect.arrayContaining([expect.objectContaining({ producerId: 'memory-pilot-injection', applied: true })]),
+    );
   });
 
   it('RC-03R/F-02: the persisted ContextReceipt budget is the real char summary, not silently omitted', () => {

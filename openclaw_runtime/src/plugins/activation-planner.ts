@@ -127,11 +127,16 @@ export function resolveManifestActivationPlan(
   // non-zero parallel-memory-writer census is fail-closed — the plan is not
   // produced and the illegal configuration can never activate.
   const census = buildSlotMechanismCensus({
-    registeredPluginIds: registry.plugins.map((plugin) => plugin.id),
+    registeredPluginIds: [
+      ...registry.plugins.map((plugin) => plugin.id),
+      ...(normalizedConfig.slots.memory === "runtime-memory" ? ["runtime-memory"] : []),
+    ],
     contextEngineIds: normalizedConfig.slots.contextEngine
       ? [normalizedConfig.slots.contextEngine]
       : [],
     memoryStoreConfigured: normalizedConfig.slots.memory === "memory-core",
+    memorySlotId: normalizedConfig.slots.memory,
+    runtimeMemoryPersist: params.config?.runtime?.memory?.persist === true,
   });
   if (census.parallelMemoryWriters > 0) {
     throw new Error(

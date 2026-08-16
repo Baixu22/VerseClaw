@@ -624,3 +624,16 @@
   - `git diff --check`: passed with LF-to-CRLF working-copy warnings only.
   - `git -c core.autocrlf=false diff --check --no-index -- <empty-temp-file> <untracked default-on file>`: passed with no whitespace errors.
   - `corepack pnpm run typecheck`: still fails in `typecheck:node` before web typecheck on unrelated existing drift: missing `@openclaw/normalization-core/*`, missing `@openclaw/acp-core/runtime/types`, missing `@ast-grep/napi`, missing runtime-memory infra modules, missing `shared/number-coercion.ts` exports, and ES lib errors for `toSorted`/`findLast` in unrelated files.
+
+## Phase 09 removal (2026-08-15) — superseded by FactStore
+
+Phase 09's codebase index MVP (`openclaw_runtime/src/context-engine/cvk/codebase-index.ts`
+and `tests/unit/context-runtime-kit-codebase-index.test.ts`) was removed. It had zero
+production callers and no call relations, while content-level code understanding is now
+served by the canonical FactStore tree-sitter pipeline
+(`openclaw_runtime/src/context-engine/producers/analyzers/*`: TypeScript/JavaScript/Python/
+Go/Rust/Java analyzers producing symbol, `calls`, `imports`, `exports`, `definitions`,
+`framework_routes`, and `tests` edges), consumed by the C1 view tools
+(`context_impact` / `context_reuse` / `context_understand` / `context_verify`) and the
+rebuild providers. The `phase-09-codebase-index.md` constraint file was removed with the
+module; earlier phase-09 entries above remain historical records.

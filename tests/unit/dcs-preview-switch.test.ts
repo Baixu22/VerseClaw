@@ -52,6 +52,7 @@ vi.mock('@electron/gateway/generation', () => ({
 import {
   getDcsPreviewState,
   resolveDcsPreviewPrereqs,
+  setDcsProdFlag,
   setDcsPreview,
 } from '@electron/services/dcs-prod-flags-api';
 import { DCS_PREVIEW_COMBO_FLAG_IDS } from '@shared/dcs/prod-flags-control';
@@ -234,6 +235,20 @@ describe('FP-P1-03 setDcsPreview', () => {
     const result = await setDcsPreview({ enabled: true, restartGateway: true }, manager);
     expect(result.status).toBe('failed');
     expect(result.failureReason).toBe('flag-rejected');
+  });
+});
+
+describe('R3-1 unavailable flag boundary', () => {
+  it('rejects runtime-memory persistence before any Settings/config write', async () => {
+    const result = await setDcsProdFlag(
+      { id: 'runtime-memory-persist', enabled: true, restartGateway: false },
+      gatewayManager(),
+    );
+    expect(result.success).toBe(false);
+    expect(result.status).toBe('unsupported');
+    expect(result.error).toContain('plugins.slots.memory=runtime-memory');
+    expect(state.settingWrites).toHaveLength(0);
+    expect(state.configWrites).toHaveLength(0);
   });
 });
 

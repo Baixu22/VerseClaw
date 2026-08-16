@@ -293,6 +293,97 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "读取 VerseShell foundation 路线图后，开始完整的可执行、可验证编排计划。",
+      "validation_plan": [
+        "Task Forest validate/export",
+        "每包 Harness/测试/independent evidence",
+        "STATUS.md rollout review"
+      ],
+      "why_not_enough": "DAG 不能代替每包的 scoped spec、实际实现、clean evidence 和产品 owner 决策。",
+      "why_this_task": "独立 foundation DAG 覆盖路线图的所有阶段和责任层，不把基础设施误并入现有 DCS 或 Runtime 收敛主线。"
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseshell",
+      "coding-foundation",
+      "execution-plane",
+      "default-off",
+      "fail-closed"
+    ],
+    "desired_outcomes": [
+      "OpenClaw policy/approval、ClawX workspace/journal 与 VerseShell execution/artifact 责任唯一且可验证",
+      "模型只使用 read_file、search_content、run_command、result_query 四个稳定 facade",
+      "coding 组件通过 adapter 复用同一 ACI、生命周期、输出和恢复契约",
+      "只有经真实证据和 STATUS.md 明确裁决后才讨论扩大 canary"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0056",
+    "kind": "global_task",
+    "next_action": "只启动 TF-0059 / VS-P0-02；不并行启动 P0-03 或任何 P1+ 工作包。",
+    "priority": 1,
+    "progress": 12.0,
+    "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [
+      "未授权执行、隐式 native fallback、effectful replay、workspace 越界和敏感输出泄漏均为 0",
+      "二进制、source、patch、lockfile、crate、handshake 和 catalog identity 漂移为 0",
+      "截断输出均有 omitted metadata 和 artifact；写入均有明确 journal 或 external_write 语义",
+      "真实 canary 的 provider usage、recovery、rollback 和安全事件有独立、低敏、可审阅记录"
+    ],
+    "title": "VerseShell 本地 Coding 执行基座（非 GA）"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "统一诊断和结果查看。",
+      "validation_plan": [
+        "lineage tests",
+        "failure fixtures",
+        "redaction/E2E/comms tests"
+      ],
+      "why_not_enough": "没有写入或 canary 语义。",
+      "why_this_task": "trace/diagnostics 让 execution foundation 可被 operator、agent 与 support 共同解释。"
+    },
+    "blocked_by": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseshell",
+      "p2",
+      "trace",
+      "diagnostics"
+    ],
+    "desired_outcomes": [
+      "search/read/modify/test/result_query 可关联",
+      "编译、测试、工具缺失、权限、环境、runtime 失败分类稳定",
+      "诊断不保留 raw command/prompt/output/secret"
+    ],
+    "difficulty": "high",
+    "id": "TF-0066",
+    "kind": "task",
+    "next_action": "先定义唯一诊断 schema 和 redaction policy，再接入各 adapter。",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让多步 coding 工作流具有可追踪因果链，且 UI/agent/support 不各自解析日志。",
+    "ready": true,
+    "remaining_minutes_max": 1200,
+    "remaining_minutes_min": 480,
+    "status": "ready",
+    "success_metrics": [
+      "孤立执行记录 0",
+      "敏感诊断泄漏 0",
+      "重复日志解析器 0"
+    ],
+    "title": "VS-P2-03 Trace Correlation、Failure Taxonomy 与共享诊断"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
@@ -878,5 +969,147 @@
     "status": "blocked",
     "success_metrics": [],
     "title": "RC-10 最终真人 Provider/Channel/Recovery 验收"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "让 coding 写入具备受治理、可恢复语义。",
+      "validation_plan": [
+        "journal/precondition tests",
+        "concurrency/recovery tests",
+        "approval/diff artifact integration"
+      ],
+      "why_not_enough": "外部 write 仍需独立 policy。",
+      "why_this_task": "写入必须以现有 ClawX journal 为 authority，而不是由 execution runtime 越权。"
+    },
+    "blocked_by": [
+      "TF-0066"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseshell",
+      "p3",
+      "write",
+      "journal"
+    ],
+    "desired_outcomes": [
+      "patch preview 不直接提交",
+      "commit 前有 baseline hash/operation id/change list",
+      "journal commit/undo/stale-write guard 可审计",
+      "并发/失败/abort/undo 有确定状态"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0067",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0066",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "为文件改动提供确定的冲突、提交和恢复语义，同时避免建立第二个 VerseShell transaction owner。",
+    "ready": false,
+    "remaining_minutes_max": 1800,
+    "remaining_minutes_min": 720,
+    "status": "proposed",
+    "success_metrics": [
+      "无 journal 的 commit 0",
+      "静默 partial mutation 0",
+      "stale write 漏检 0"
+    ],
+    "title": "VS-P3-01 File Patch Preview 与 ClawX Journal Bridge"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "在不扩大风险的前提下完成写入协作。",
+      "validation_plan": [
+        "effect/policy fixtures",
+        "UI confirmation E2E",
+        "audit/redaction review"
+      ],
+      "why_not_enough": "不提供 default-on 或全自动 rollback。",
+      "why_this_task": "外部写入的真实边界必须在 canary 前透明化，不能依赖错误的 transaction 叙事。"
+    },
+    "blocked_by": [
+      "TF-0067"
+    ],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseshell",
+      "p3",
+      "external-write",
+      "security"
+    ],
+    "desired_outcomes": [
+      "external_write effect 明确可见",
+      "允许条件、风险、快照和用户确认有产品层语义",
+      "不具备 rollback 的写入不会被报告为可恢复"
+    ],
+    "difficulty": "high",
+    "id": "TF-0068",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0067",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "防止用户和 agent 对外部进程写入的恢复能力产生错误预期。",
+    "ready": false,
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 360,
+    "status": "proposed",
+    "success_metrics": [
+      "未声明 external write 0",
+      "错误 rollback 承诺 0",
+      "effectful automatic replay 0"
+    ],
+    "title": "VS-P3-02 External Write Policy、确认与不可回滚边界"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "完整编排 VerseShell foundation 并以真实 evidence 决定扩大范围。",
+      "validation_plan": [
+        "reviewed live evidence check",
+        "paired/rollback/soak audit",
+        "STATUS.md owner review"
+      ],
+      "why_not_enough": "即使证据充分，仍需 STATUS.md 和产品 owner 单独决定 rollout；不自动授权 GA。",
+      "why_this_task": "真实 canary 是路线图唯一允许评估扩大范围的阶段，且必须与工程 evidence 严格分离。"
+    },
+    "blocked_by": [
+      "TF-0068"
+    ],
+    "confidence": 0.6,
+    "context_tags": [
+      "verseshell",
+      "p5",
+      "canary",
+      "provider-evidence",
+      "operator"
+    ],
+    "desired_outcomes": [
+      "paired task 有 actual provider usage、latency/resource、completion 和 recovery evidence",
+      "kill-switch/explicit rollback 有 reviewed record",
+      "artifact recovery 和安全 veto 被真实验证",
+      "Windows x64 以外的平台具备最小 build/handshake evidence"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0069",
+    "kind": "milestone",
+    "next_action": "先完成依赖：TF-0068",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "用真实运营和 provider 证据决定是否值得扩大 VerseShell 范围，而不把工程矩阵误当成产品资格。",
+    "ready": false,
+    "remaining_minutes_max": 5760,
+    "remaining_minutes_min": 1440,
+    "status": "proposed",
+    "success_metrics": [
+      "eligible local native fallback 0",
+      "未授权执行/越权/敏感泄漏 0",
+      "provider actual usage 覆盖率 100%",
+      "rollback drill 成功率 100%"
+    ],
+    "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决"
   }
 ]

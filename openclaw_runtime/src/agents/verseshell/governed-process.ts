@@ -6,7 +6,10 @@ import {
   GovernedVerseShellError,
 } from "./governed-exec.js";
 import type { VerseShellProcessManager } from "./process-manager.js";
-import { resolveVerseShellCommandArgv } from "./shell-command.js";
+import {
+  resolveVerseShellCommandPlan,
+  type VerseShellCommandPlan,
+} from "./command-profiles.js";
 
 const APPROVAL_TOKEN = /^apv_[a-f0-9]{16}$/u;
 const POLL_WAIT_MS = 1_000;
@@ -63,6 +66,12 @@ export type GovernedVerseShellProcessHandle = {
 
 export type GovernedVerseShellProcessOptions = {
   command: string;
+  /** Host-owned argv produced before approval. */
+  argv?: readonly string[];
+  /** Immutable plan produced by OpenClaw's approval pipeline. */
+  executionPlan?: VerseShellCommandPlan;
+  /** Explicit terminal-shell compatibility; argv is the default. */
+  shellMode?: "argv" | "explicit-shell";
   cwd: string;
   processEnv: Record<string, string>;
   timeoutMs?: number;
@@ -70,6 +79,8 @@ export type GovernedVerseShellProcessOptions = {
   usePty: boolean;
   agentId: string;
   sessionId: string;
+  /** Host-owned parent trace for the complete lifecycle, never taken from operation args. */
+  traceId?: string;
   hostPolicyApproved: boolean;
   runtimeEnv?: NodeJS.ProcessEnv;
   manager?: VerseShellProcessManager;
@@ -226,24 +237,49 @@ export async function startGovernedVerseShellProcess(
     agentId: options.agentId,
     env: options.runtimeEnv,
   });
-  const argv = resolveVerseShellCommandArgv(options.command, undefined, options.processEnv);
+  const plan = options.executionPlan ?? resolveVerseShellCommandPlan({
+    command: options.command,
+    argv: options.argv,
+    cwd: options.cwd,
+    env: options.processEnv,
+    allowExplicitShell: options.shellMode !== "argv",
+  });
+  // The runtime derives cmd.exe itself from the resolved script path plus env;
+  // this check keeps the pre-approval script identity auditable at the process
+  // boundary instead of letting a drifted plan silently re-route execution.
+  if (plan.interpreterProfile === "windows-cmd" && (plan.argv[0] !== plan.resolvedScript || !plan.interpreter)) {
+    throw new GovernedVerseShellError(
+      "E_VERSESHELL_SCRIPT_IDENTITY",
+      "windows-cmd plan script identity drifted from the pre-approval argv",
+    );
+  }
+  const profile = plan.profileDefinition;
+  const boundedTimeoutMs = options.timeoutMs === undefined
+    ? profile.maxTimeoutMs
+    : Math.min(Math.max(1, options.timeoutMs), profile.maxTimeoutMs);
+  const boundedOutputBytes = Math.min(
+    Math.max(1, options.maxOutputBytes),
+    profile.maxOutputBytes,
+  );
   const startArgs: JsonObject = {
-    argv,
+    argv: plan.argv,
     cwd: ".",
     agent_id: options.agentId,
     session_id: options.sessionId,
     env: options.processEnv,
     stdin_mode: "pipe",
     pty: options.usePty,
-    max_output_bytes: Math.max(1, Math.min(options.maxOutputBytes, 64 * 1024 * 1024)),
+    max_output_bytes: boundedOutputBytes,
     wait_ms: 0,
-    ...(options.timeoutMs === undefined ? {} : { timeout_ms: options.timeoutMs }),
+    timeout_ms: boundedTimeoutMs,
   };
 
   const firstClient = await manager.getClient(baseConfig);
+  const traceId = options.traceId?.trim() || `verseshell-process:${options.sessionId}`;
   const first = await firstClient.execute("process.start", startArgs, {
     timeoutMs: POLL_REQUEST_TIMEOUT_MS,
     effectful: true,
+    traceId,
   });
   let client = firstClient;
   let startObservation = first;
@@ -260,6 +296,7 @@ export async function startGovernedVerseShellProcess(
     startObservation = await client.execute("process.start", startArgs, {
       timeoutMs: POLL_REQUEST_TIMEOUT_MS,
       effectful: true,
+      traceId,
     });
   }
   if (!startObservation.ok) {
@@ -288,7 +325,7 @@ export async function startGovernedVerseShellProcess(
       const observation = await client.execute(
         "process.write",
         { ...ownerArgs(identity), data, encoding: "utf8", eof },
-        { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true },
+        { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true, traceId },
       );
       if (!observation.ok) throw observationError(observation);
     });
@@ -351,7 +388,7 @@ export async function startGovernedVerseShellProcess(
               max_bytes: 64 * 1024,
               wait_ms: POLL_WAIT_MS,
             },
-            { timeoutMs: POLL_REQUEST_TIMEOUT_MS },
+            { timeoutMs: POLL_REQUEST_TIMEOUT_MS, traceId },
           );
           retries = 0;
         } catch (error) {
@@ -394,7 +431,7 @@ export async function startGovernedVerseShellProcess(
       const observation = await client.execute(
         "process.kill",
         { ...ownerArgs(identity), reason, wait_ms: 0 },
-        { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true },
+        { timeoutMs: POLL_REQUEST_TIMEOUT_MS, effectful: true, traceId },
       );
       if (!observation.ok) throw observationError(observation);
     },

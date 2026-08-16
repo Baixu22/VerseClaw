@@ -13,7 +13,11 @@ const CLAUDE_CLI_MODEL_LABELS: Record<string, string> = {
   "claude-opus-4-7": "Claude Opus 4.7 (Claude CLI)",
   "claude-opus-4-6": "Claude Opus 4.6 (Claude CLI)",
   "claude-sonnet-4-6": "Claude Sonnet 4.6 (Claude CLI)",
+  "claude-sonnet-5": "Claude Sonnet 5 (Claude CLI)",
+  "claude-fable-5": "Claude Fable 5 (Claude CLI)",
 };
+
+const CLAUDE_CLI_GA_1M_MODEL_IDS = new Set(["claude-opus-4-8", "claude-sonnet-5", "claude-fable-5"]);
 
 function resolveClaudeCliImageMediaInput(id: string): ModelCatalogEntry["mediaInput"] {
   const maxSidePx = id === "claude-opus-4-8" || id === "claude-opus-4-7" ? 2576 : 1568;
@@ -53,7 +57,9 @@ export function buildClaudeCliCatalogEntries(): ModelCatalogEntry[] {
       reasoning: true,
       input: ["text", "image"],
       mediaInput: resolveClaudeCliImageMediaInput(id),
-      contextWindow: id === "claude-opus-4-8" ? 1_048_576 : CLAUDE_CLI_DEFAULT_CONTEXT_WINDOW,
+      contextWindow: CLAUDE_CLI_GA_1M_MODEL_IDS.has(id)
+        ? 1_048_576
+        : CLAUDE_CLI_DEFAULT_CONTEXT_WINDOW,
     };
   });
 }

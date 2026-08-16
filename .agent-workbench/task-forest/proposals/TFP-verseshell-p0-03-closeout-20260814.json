@@ -1,0 +1,78 @@
+{
+  "applied_at": "2026-08-14T06:28:44.695519Z",
+  "base_graph_hash": "7709f8fa8b1456f8442040169a13a3251fd11876d3b8ff6f1bdee892456f7d7f",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/verseshell-p0-governed-probe.md",
+          "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md",
+          "docs/dev/verseshell-foundation/STATUS.md",
+          "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+          "docs/dev/handoffs/LATEST.md",
+          "pnpm --dir openclaw_runtime exec vitest ...: 11 files / 57 tests",
+          "pnpm verseshell:test: bundle 13/13 + runtime 11/11 + OpenClaw 57/57",
+          "node scripts/validate-verseshell-manifest.mjs --package: pass",
+          "pnpm run typecheck: node/web pass; test tsconfig observation-only",
+          "pnpm run comms:replay + pnpm run comms:compare: pass",
+          "git diff --check: pass",
+          "pnpm harness context: pass; --no-diff validate: pass; diff-aware residual recorded"
+        ],
+        "execution_hints": [
+          "P0-03 engineering closeout is complete; do not start VS-P1-01 until this proposal is explicitly confirmed.",
+          "Keep default-off, liveReady=false, productApproved=false, defaultOn=false.",
+          "Provider receipts, human recovery, paired A/B, soak, canary, GA and product approval remain out of scope."
+        ],
+        "next_action": "仅在用户确认本 closeout proposal 后启动 TF-0061 / VS-P1-01。",
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "VS-P0-03 已完成真实 governed probe：当前 verified binary 在 host approval 前稳定返回 E_NEEDS_APPROVAL，父进程 AETHER_APPROVE_ALL 不得绕过；批准后仅在 action-bound token transport 中重试一次并关闭该 transport；bounded output、result:// artifact recovery、contract failure 和无 native fallback 均通过。工程证据不等于 provider canary、GA 或产品批准。"
+      },
+      "id": "TF-0060"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "仅在用户确认 TF-0060 closeout proposal 后启动。",
+          "先运行 verseshell-p1-supervised-aci scoped Harness context/validate；不得并行启动 P1-02、P1-03 或任何 P2+。",
+          "不得增加 model-visible facade、native fallback、effectful replay、MCP permission 或 canary traffic。"
+        ],
+        "next_action": "先建立并验证 verseshell-p1-supervised-aci scoped Harness task spec。",
+        "status": "ready",
+        "summary": "VS-P0-03 governed probe 已闭合工程门禁；下一唯一串行节点为 VS-P1-01 受监督 ACI 生命周期、关联与稳定错误码。开始前继续使用当前 verified binary，任何 identity、protocol、policy、approval 或 workspace mismatch 必须 fail-closed。"
+      },
+      "id": "TF-0061"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md",
+          "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md",
+          "docs/dev/verseshell-foundation/STATUS.md",
+          "harness/specs/tasks/verseshell-typed-aci-adaptation.md",
+          "docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md",
+          "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md"
+        ],
+        "next_action": "只在 TF-0060 closeout proposal 确认后启动 TF-0061 / VS-P1-01；不并行启动 P1-02、P1-03 或任何 P2+ 工作包。",
+        "summary": "VerseShell P0 治理、Rust startup、可重建 source/build identity 与 governed real probe 均已形成 fresh engineering evidence；当前仅等待 TF-0060 closeout 确认，所有 rollout/product locks 继续关闭。"
+      },
+      "id": "TF-0056"
+    }
+  ],
+  "created_at": "2026-08-14T06:24:29.070405Z",
+  "proposal_id": "TFP-verseshell-p0-03-closeout-20260814",
+  "rationale": "VS-P0-03 governed real probe 已使用 VS-P0-02 verified Windows x64 binary 完成真实 approval denial、approved retry 一次、action-bound token isolation、artifact recovery、fail-closed 和 no-native-fallback 验证。所有工程门禁已通过；diff-aware Harness residual 与 test-tsconfig observation-only 错误均诚实保留。提案只收尾 TF-0060，并把 TF-0061 标为唯一下一 ready 节点，不改变 rollout/product locks。",
+  "session_id": "session-2026-08-14-verseshell-p0-03-closeout",
+  "status": "applied"
+}

@@ -241,6 +241,16 @@ export async function setDcsProdFlag(
       ? payload.restartGateway
       : process.env.VERSE_CLAW_E2E !== '1';
   const spec = getWritableFlagSpec(id)!;
+  if (spec.unavailableReason) {
+    return {
+      success: false,
+      id,
+      enabled,
+      status: 'unsupported',
+      restartedGateway: false,
+      error: `Flag unavailable from Settings: ${spec.unavailableReason}`,
+    };
+  }
 
   try {
     await setSetting(spec.storeKey as keyof AppSettings, enabled as never);

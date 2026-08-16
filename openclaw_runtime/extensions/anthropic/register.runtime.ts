@@ -67,6 +67,8 @@ const ANTHROPIC_OPUS_47_TEMPLATE_MODEL_IDS = [
 ] as const;
 const ANTHROPIC_SONNET_46_MODEL_ID = "claude-sonnet-4-6";
 const ANTHROPIC_SONNET_46_DOT_MODEL_ID = "claude-sonnet-4.6";
+const ANTHROPIC_SONNET_5_MODEL_ID = "claude-sonnet-5";
+const ANTHROPIC_FABLE_5_MODEL_ID = "claude-fable-5";
 const ANTHROPIC_GA_1M_MODEL_PREFIXES = [
   ANTHROPIC_OPUS_48_MODEL_ID,
   ANTHROPIC_OPUS_48_DOT_MODEL_ID,
@@ -76,6 +78,8 @@ const ANTHROPIC_GA_1M_MODEL_PREFIXES = [
   ANTHROPIC_OPUS_47_DOT_MODEL_ID,
   ANTHROPIC_SONNET_46_MODEL_ID,
   ANTHROPIC_SONNET_46_DOT_MODEL_ID,
+  ANTHROPIC_SONNET_5_MODEL_ID,
+  ANTHROPIC_FABLE_5_MODEL_ID,
 ] as const;
 const ANTHROPIC_MODERN_MODEL_PREFIXES = [
   "claude-opus-4-8",
@@ -86,6 +90,8 @@ const ANTHROPIC_MODERN_MODEL_PREFIXES = [
   "claude-opus-4.6",
   "claude-sonnet-4-6",
   "claude-sonnet-4.6",
+  ANTHROPIC_SONNET_5_MODEL_ID,
+  ANTHROPIC_FABLE_5_MODEL_ID,
 ] as const;
 const ANTHROPIC_SETUP_TOKEN_NOTE_LINES = [
   "Anthropic setup-token auth is supported in OpenClaw.",
@@ -277,6 +283,25 @@ function resolveAnthropic46ForwardCompatModel(params: {
   });
 }
 
+function resolveAnthropicForwardCompatModelCost(modelId: string): {
+  input: number;
+  output: number;
+  cacheRead: number;
+  cacheWrite: number;
+} {
+  // Published Anthropic API pricing: Fable 5 $10/$50 per MTok; Sonnet 5
+  // introductory $2/$10 per MTok through 2026-08-31. Cache read is 0.1x and
+  // cache write 1.25x of input. Unknown/forward-compat models stay zero-cost
+  // until verified rates are published.
+  if (modelId.startsWith("claude-fable-5")) {
+    return { input: 10, output: 50, cacheRead: 1, cacheWrite: 12.5 };
+  }
+  if (modelId.startsWith("claude-sonnet-5")) {
+    return { input: 2, output: 10, cacheRead: 0.2, cacheWrite: 2.5 };
+  }
+  return { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+}
+
 function buildAnthropicForwardCompatModel(
   ctx: ProviderResolveDynamicModelContext,
 ): ProviderRuntimeModel | undefined {
@@ -297,7 +322,7 @@ function buildAnthropicForwardCompatModel(
     baseUrl: "https://api.anthropic.com",
     reasoning: true,
     input: ["text", "image"],
-    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+    cost: resolveAnthropicForwardCompatModelCost(trimmedModelId),
     contextWindow: isAnthropicGa1MModel(trimmedModelId) ? ANTHROPIC_GA_1M_CONTEXT_TOKENS : 200_000,
     maxTokens: isAnthropicOpus48Model(trimmedModelId)
       ? ANTHROPIC_OPUS_48_MAX_OUTPUT_TOKENS

@@ -903,6 +903,13 @@ function isExactUnknownNoDetailsError(raw: string): boolean {
   );
 }
 
+function isModelRefusalErrorMessage(raw: string): boolean {
+  return (
+    /\brefusal:\s*the model declined this request\b/i.test(raw) ||
+    /\bstop_reason:\s*(refusal|sensitive)\b/i.test(raw)
+  );
+}
+
 function classifyFailoverClassificationFromMessage(
   raw: string,
   provider?: string,
@@ -919,6 +926,9 @@ function classifyFailoverClassificationFromMessage(
   }
   if (isModelNotFoundErrorMessage(raw)) {
     return toReasonClassification("model_not_found");
+  }
+  if (isModelRefusalErrorMessage(raw)) {
+    return toReasonClassification("refusal");
   }
   if (isContextOverflowError(raw)) {
     return { kind: "context_overflow" };

@@ -141,6 +141,7 @@ import {
 } from "./tool-search.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 import { createVerseShellResultTool } from "./verseshell/result-tool.js";
+import { createVerseShellReadonlyFacadeTools } from "./verseshell/readonly-facade.js";
 
 const MEMORY_FLUSH_ALLOWED_TOOL_NAMES = new Set(["read", "write"]);
 
@@ -464,6 +465,8 @@ export function createOpenClawCodingTools(options?: {
   agentDir?: string;
   /** Task working directory for coding tools. Defaults to workspaceDir. */
   cwd?: string;
+  /** Workspace revision used to isolate read-only VerseShell facade cache entries. */
+  workspaceRevision?: string;
   workspaceDir?: string;
   /**
    * Workspace directory that spawned subagents should inherit.
@@ -1103,6 +1106,14 @@ export function createOpenClawCodingTools(options?: {
         config: options?.config,
       })
     : null;
+  const verseShellReadonlyFacadeTools = includeShellTools
+    ? createVerseShellReadonlyFacadeTools({
+        cwd: codingRoot,
+        agentId,
+        revision: options?.workspaceRevision,
+        config: options?.config,
+      })
+    : null;
   const applyPatchToolRaw =
     !includeShellTools || !applyPatchEnabled || (sandboxRoot && !allowWorkspaceWrites)
       ? null
@@ -1223,6 +1234,7 @@ export function createOpenClawCodingTools(options?: {
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
     ...(verseShellResultTool ? [verseShellResultTool] : []),
+    ...(verseShellReadonlyFacadeTools ?? []),
     // Channel docking: include channel-defined agent tools (login, etc.).
     ...(includeChannelTools ? listChannelAgentTools({ cfg: options?.config }) : []),
     ...(includeOpenClawTools

@@ -223,7 +223,7 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     storeKey: 'dcsRuntimeMemoryPersistEnabled',
     targetKey: 'runtime.memory.persist',
     defaultEnabled: false,
-    unavailableReason: 'R3-1 E-1 裁决: persist=true 构成 owner 漂移,fail-closed 拒绝。',
+    unavailableReason: 'R3-1 E-1: persist=true 仅在 plugins.slots.memory=runtime-memory 时合法；owner 选择由运行时配置面控制。',
   },
   {
     id: 'runtime-memory-inject-pilot',
@@ -232,7 +232,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     storeKey: 'dcsRuntimeMemoryInjectPilotEnabled',
     targetKey: 'runtime.memory.injectPilot.enabled',
     defaultEnabled: false,
-    unavailableReason: 'R3-1 审计: role-memory provider 不读此开关,接线断线。',
   },
   {
     id: 'runtime-memory-candidate-generation',
@@ -249,7 +248,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     storeKey: 'dcsCompassContextBlockEnabled',
     targetKey: 'runtime.contextBlock.compass.enabled',
     defaultEnabled: false,
-    unavailableReason: 'R3-1 v3 审计: Assembler compass handler 无生产 inputs.compass(auto-reply compass 走旁路注入)。',
   },
   {
     id: 'role-memory',
@@ -258,7 +256,6 @@ export const DCS_WRITABLE_FLAG_SPECS: readonly DcsWritableFlagSpec[] = [
     storeKey: 'dcsRoleMemoryEnabled',
     targetKey: 'runtime.contextBlock.role-memory.enabled',
     defaultEnabled: false,
-    unavailableReason: 'R3-1 审计: 假活面 + 负作用(开而 producer 未接会替换在跑 provider)。',
   },
 ] as const;
 

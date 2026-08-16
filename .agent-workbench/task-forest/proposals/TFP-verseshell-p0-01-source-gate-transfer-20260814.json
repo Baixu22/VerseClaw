@@ -1,0 +1,139 @@
+{
+  "base_graph_hash": "494038ad2d38d0b4ec01e2dabcbb822aa541ea500ba14d99ac51e812ee870005",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-14T02:54:30.081361Z",
+        "evidence": "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md 的 Controlled Source-Input Recovery Experiment；git check-ignore；clean worktree cargo test --locked -j 1；fixture pytest invocation matrix。",
+        "expected_requirement": "固定源码应能在 clean checkout 中执行 P0 所需的完整 Rust 测试，且可选 Python fixture 验证不得依赖平台特定 PATH/import 行为。",
+        "id": "TFD-0b4ace6690",
+        "observed_action_or_result": "pinned commit 的 *.py ignore 规则排除了 8 个 ACI-Bench source inputs；完整 cargo test 因缺文件退出 101。恢复输入后 Rust gate 通过，但两个 task 的 pytest -q optional verifier 在 Windows entry point 下退出 2；python -m pytest 对同一 fixture 2/2 通过。",
+        "recommendation": "由 TF-0059 将 8 个已登记 SHA-256 的 source inputs 纳入 tracked patch/source snapshot，拒绝 __pycache__/binary/target 等派生产物，执行无跳过 cargo test --locked，并将 Python optional verifier 绑定到解释器或显式标为不支持。",
+        "related_task_ids": [
+          "TF-0058",
+          "TF-0059"
+        ],
+        "severity": "medium",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "A：将遗漏的 8 个 clean-source benchmark inputs、完整 Rust gate 与 Python optional verifier portability 交给 VS-P0-02；B：把 assets patch 并入 VS-P0-01。",
+        "confidence": 0.99,
+        "created_at": "2026-08-14T02:54:30.081361Z",
+        "id": "TFA-c55695fc48",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "建立可信、可验证、受治理的 VerseShell execution foundation。",
+          "validation_plan": [
+            "8-file source-input inventory with SHA-256",
+            "clean reconstruction and binary digest comparison",
+            "unskipped cargo test --locked",
+            "Python optional verifier invocation matrix",
+            "manifest/catalog/handshake drift denial"
+          ],
+          "why_not_enough": "仍需 TF-0059 的 tracked source/patch inventory、clean reconstruction、unskipped cargo test、optional verifier contract 和 digest comparison，之后还有 governed probe、lifecycle、adapter、write 与 canary 阶段。",
+          "why_this_task": "将 clean-source 完整性、可重建 bundle 和跨平台 test input contract 放在唯一 owner 下，避免并行 authority 和无声跳过 Rust gate。"
+        },
+        "reason": "A 保留 P0-01 的 cache/startup 责任，将所有 clean-source 与 test-contract 问题置于唯一 source/bundle owner；不放松 P0 总门槛，也不会把 dirty source 当作正式证据。",
+        "rejected_options": [
+          "B：会扩大 P0-01 的单文件 startup 修复边界，并与 VS-P0-02 的 source/provenance owner 重叠。"
+        ],
+        "related_task_ids": [
+          "TF-0058",
+          "TF-0059"
+        ],
+        "selected_option": "A",
+        "user_goal": "无预算限制完成 VerseShell foundation 的全部开发规划，同时保持真实证据、严格串行和 default-off。"
+      }
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "resources/verseshell/patches/p0-runtime-startup.patch",
+          "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+          "clean worktree: UAS-05 then P0 patch apply checks",
+          "cargo test --locked --no-run -j 1 PASS",
+          "source-built JSON/compact x agent/non-agent runtime.handshake PASS"
+        ],
+        "execution_hints": [
+          "不得把 TF-0058 completion 解释为 unskipped cargo test、可重建 bundle、optional verifier、governed approval 或 rollout 通过。",
+          "TF-0059 必须先将 8 个 ACI-Bench source inputs 变为 tracked provenance，并解决/显式界定 Python optional verifier，再运行无跳过 cargo test --locked。",
+          "所有 rollout lock 持续 default-off。"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "已在 pinned VerseShell 1.0 source 上交付并复验 cache 短 uptime 修复、全部 test-target 编译和四象限 source-built startup。8 个缺失 benchmark source inputs、无跳过 cargo test、optional verifier portability 和可重建身份已明确转移到 TF-0059，不视为已通过。"
+      },
+      "id": "TF-0058"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "acceptance_criteria": [
+          "clean rebuild 输出的 binary digest 与 manifest 一致",
+          "crate version、handshake、catalog count/digest 和 typed op/args contract 一致",
+          "bundle/manifest 验证与 checksum mismatch denial 在 CI/测试中覆盖",
+          "clean pinned source 加完整 tracked patch stack 后，8 项 source input 的 SHA-256 均匹配清单，cargo test --locked 无跳过通过",
+          "Python fixture optional verification 的支持/不支持判定可复现且不依赖 PATH 隐式行为"
+        ],
+        "desired_outcomes": [
+          "clean checkout 重建可验证 ae.exe",
+          "crate/protocol/catalog/manifest/binary identity 单源一致",
+          "CI 在 digest 或 handshake drift 时 fail-closed",
+          "所有 Rust test inputs 均由 tracked source/patch 提供，full cargo test 不依赖 dirty workspace",
+          "ACI-Bench optional verifier 的平台行为可解释、可验证"
+        ],
+        "evidence": [
+          "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+          "harness/specs/rules/supply-chain-integrity-pinning.md"
+        ],
+        "execution_hints": [
+          "先冻结 source/patch/lockfile 和 8 项 ACI-Bench assets，再从 clean checkout 重建、比较 identity，并执行 unskipped cargo test。",
+          "禁止复制主工作树被忽略的 ae.exe、Python cache、runner/scorer/fixtures 或其他未追踪输入。",
+          "对 Python optional verification 使用显式解释器调用或记录平台不支持，禁止将当前 pytest PATH 行为误报为通过。"
+        ],
+        "requirements": [
+          "外部 binary/source/patch/lockfile 均 tracked 且具 version/size/SHA256",
+          "不维护 manifest 1.0 与 runtime 0.3 的平行协议",
+          "不允许 dirty build input 掩盖 source provenance",
+          "将 8 个 ACI-Bench runner/scorer/fixture/test Python inputs 以 reviewed tracked source/patch 交付，禁止依赖 ignored local tree，排除 __pycache__、binary 和 Cargo target",
+          "optional Python fixture verifier 使用明确解释器契约并在支持平台通过，或明确报告为 unsupported"
+        ],
+        "status": "ready",
+        "summary": "统一 source、patch、lockfile、Cargo package、manifest、handshake、catalog 与 binary digest；将 pinned source 缺失的 8 个 ACI-Bench Python inputs 纳入 tracked provenance，并修正或显式界定 optional Python verifier 的跨平台契约。"
+      },
+      "id": "TF-0059"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "只启动 TF-0059 / VS-P0-02；不并行启动 P0-03 或任何 P1+ 工作包。",
+          "TF-0059 必须以 clean pinned source、tracked patch stack、8-file SHA-256 inventory、无跳过 cargo test 和明确 Python verifier contract 消除 dirty input，再进入 governed probe。"
+        ],
+        "progress": 12,
+        "summary": "VS-G0-01 与 VS-P0-01 已按 scope 完成；下一唯一串行节点为 VS-P0-02，负责可重建 bundle、8 项 tracked source input、无跳过 Rust gate 与 optional verifier contract。所有 rollout 继续 default-off。"
+      },
+      "id": "TF-0056"
+    }
+  ],
+  "created_at": "2026-08-14T02:54:30.077938Z",
+  "proposal_id": "TFP-verseshell-p0-01-source-gate-transfer-20260814",
+  "rationale": "清洁 pinned 1.0 source 已证明 P0-01 cache/startup 修复、全部 Rust test target 编译和 JSON/compact x agent/non-agent startup matrix。完整 cargo test 的唯一失败来自上游 *.py ignore 规则遗漏 8 个 ACI-Bench 源输入；在隔离 clean worktree 恢复这 8 个经 SHA-256 登记的文件后，无跳过 cargo test --locked -j 1 全部通过。另发现 Python optional verifier 使用 pytest entry point 在 Windows import path 下退出 2，而 python -m pytest 对相同 fixture 2/2 通过。推荐保持 P0-01 单文件 startup patch 边界，把 source input、完整 Rust gate、可重建身份及 optional verifier portability 一并转移至 VS-P0-02。P0 总体退出门槛不降低，default-off 不变。",
+  "session_id": "session-2026-08-14-verseshell-p0-01-source-gate",
+  "status": "proposed"
+}

@@ -1,0 +1,1352 @@
+{
+  "applied_at": "2026-08-13T17:21:51.279716Z",
+  "base_graph_hash": "53e18d5e56e573cd89f68f3ba291497e2e8c83704e1408ebd4f1483aabfa08f1",
+  "base_summary": {
+    "edge_count": 98,
+    "node_count": 55,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "vs-foundation",
+      "node": {
+        "acceptance_criteria": [
+          "路线图 Phase 0 到 Phase 4 的各工作包按依赖串行完成、独立验收并形成可复现 evidence",
+          "模型工具面不扩张到内部 VerseShell operation，policy/approval/workspace/journal owner 不漂移",
+          "真实 canary 只在路线图 Phase 0 到 Phase 4 完成且 operator/reviewer 证据齐全后进入评审",
+          "任一阶段不满足 STATUS.md 放行条件时保持 default-off，且不宣称 GA 或产品批准"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "读取 VerseShell foundation 路线图后，开始完整、可执行、可验证的编排计划。",
+          "validation_plan": [
+            "应用后运行 task_forest validate 和 export，并审阅 DAG/HTML",
+            "每包运行 scoped Harness、Rust/typed ACI/comms/TypeScript/E2E 门禁（按实际触及范围）",
+            "每个阶段关闭前检查 STATUS.md、fresh evidence 和独立复跑记录"
+          ],
+          "why_not_enough": "任务图只定义顺序、边界和验证；每个节点仍需单独 Harness spec、实现、clean-candidate evidence 与用户确认的状态更新。",
+          "why_this_task": "该独立全局目标覆盖路线图所要求的 execution plane、facade、transaction 和真实 canary，不把长期基础设施误归类为既有 DCS 内测收口。"
+        },
+        "assumptions": [
+          "STATUS.md 持续作为 rollout 状态权威来源",
+          "历史 UAS-05/UAS-06 工程资产可被重新审计，但不能绕过当前 P0 重资格化",
+          "每个实施包会先新增或更新 scoped Harness spec，并在 clean candidate 上生成证据"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "verseshell",
+          "coding-foundation",
+          "execution-plane",
+          "default-off",
+          "fail-closed"
+        ],
+        "desired_outcomes": [
+          "OpenClaw policy/approval、ClawX workspace/journal 与 VerseShell execution/artifact 责任唯一且可验证",
+          "模型只使用 read_file、search_content、run_command、result_query 四个稳定 facade",
+          "coding 组件通过 adapter 复用同一 ACI、生命周期、输出和恢复契约",
+          "只有经真实证据和 STATUS.md 明确裁决后才讨论扩大 canary"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md",
+          "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md",
+          "docs/dev/verseshell-foundation/STATUS.md",
+          "harness/specs/tasks/verseshell-typed-aci-adaptation.md"
+        ],
+        "execution_hints": [
+          "待用户确认 proposal 后，仅启动 VS-G0-01：治理登记、P0 evidence freeze 和 scoped Harness spec。"
+        ],
+        "kind": "global_task",
+        "non_goals": [
+          "立即删除 PowerShell、Git Bash 或 native terminal",
+          "向模型暴露所有 31 个 VerseShell operation",
+          "模型选择 host、capability、policy 或 approval token",
+          "以 MCP 作为 ClawX 内部主通道",
+          "把 workspace jail 宣传为 OS/container sandbox",
+          "自动 native fallback、外部 shell 写入自动事务化、default-on 或 GA"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "为文件、仓库、进程、测试、构建、Git、诊断和结果查询提供统一、受治理的本地执行契约，同时保持模型工具面小且稳定。",
+        "remaining_minutes_max": null,
+        "remaining_minutes_min": null,
+        "requirements": [
+          "P0 失败时保持 default-off，历史工程报告不替代 fresh binary、Rust、probe 和供应链证据",
+          "每次只推进一个 ready 工作包与一个 scoped Harness task spec",
+          "任何 Renderer/Main/Gateway/OpenClaw 通信改动遵守 gateway-backend-communication 并运行 comms 门禁",
+          "代码或架构改动均复核 README.md、README.zh-CN.md、README.ja-JP.md",
+          "不把 workspace jail 描述为 OS sandbox，不在 governed 路径自动 native fallback 或 effectful replay"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "未授权执行、隐式 native fallback、effectful replay、workspace 越界和敏感输出泄漏均为 0",
+          "二进制、source、patch、lockfile、crate、handshake 和 catalog identity 漂移为 0",
+          "截断输出均有 omitted metadata 和 artifact；写入均有明确 journal 或 external_write 语义",
+          "真实 canary 的 provider usage、recovery、rollback 和安全事件有独立、低敏、可审阅记录"
+        ],
+        "summary": "将 VerseShell 发展为受监督的本地 coding 执行与结果平面：稳定 facade、明确 policy/workspace/journal 责任边界、受控进程生命周期与可审计 artifact；在 P0 和真实 canary 证据完成前始终 default-off。",
+        "title": "VerseShell 本地 Coding 执行基座（非 GA）"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-g0-01",
+      "node": {
+        "acceptance_criteria": [
+          "P0 scoped spec、必要 rule/scenario 关系和 touchedAreas 已审阅并可由 harness context/validate 读取",
+          "P0 baseline 记录包含二进制/source/manifest/catalog 版本、失败重现、命令和预期修复证据",
+          "README 三语和 STATUS.md 的文档职责已复核，未发生行为改变时明确不更新 public 文案",
+          "git diff --check 与 task-forest proposal/graph 校验通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "建立完整而可执行的 VerseShell foundation 编排。",
+          "validation_plan": [
+            "pnpm harness context/validate",
+            "核对 owner map 与 P0 evidence",
+            "task-forest validate/export"
+          ],
+          "why_not_enough": "G0 只建立可信实施入口，不能关闭任何 P0 缺口。",
+          "why_this_task": "路线图明确要求先完成治理登记和 scoped Harness，P0 前不扩大能力。"
+        },
+        "assumptions": [
+          "当前 audit 文件反映 fresh evidence；如复现出现差异，优先更新审计和 spec，再排期 P0 修复。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "verseshell",
+          "governance",
+          "harness",
+          "p0"
+        ],
+        "desired_outcomes": [
+          "新 scoped Harness task spec 和必要规则明确 P0 touched areas、非目标、测试与 rollback",
+          "短 uptime panic、governed approval probe、source/build/protocol drift 的当前复现和基线已登记",
+          "owner matrix 明确 OpenClaw、ClawX Main、VerseShell、MCP 的责任与禁止越界",
+          "Task Forest、编排文档和 handoff 相互一致"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md#4-工作包-dag"
+        ],
+        "execution_hints": [
+          "创建并读取 P0 scoped Harness spec；先复现并冻结 baseline，不改实现。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "修复 runtime",
+          "扩展 facade",
+          "改变 feature flag",
+          "启动 canary",
+          "改变产品锁或运行时配置"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "为所有后续 VerseShell foundation 代码改动建立唯一工作包边界、验收依据和 fail-closed 证据起点。",
+        "remaining_minutes_max": 360,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "先运行 pnpm harness context --spec <new-spec>，再实施 P0",
+          "新 spec 引用 gateway-backend-communication、supply-chain-integrity-pinning、backend-communication-boundary、docs-sync 和 active-config-guards",
+          "验证命令区分工程 readiness 与产品/canary evidence，不得使用历史报告掩盖 fresh failure",
+          "不修改 liveReady、productApproved、defaultOn、TF-0006、TF-0009 或 rollout config"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "P0 owner 未分类项为 0",
+          "P0 failure evidence 缺失项为 0",
+          "错误引用历史工程绿色报告作为 release evidence 为 0"
+        ],
+        "summary": "在不修改 runtime 行为、flag 或产品锁的前提下，将路线图固定为 scoped spec、责任图、当前失败复现、供应链基线和可执行门禁。",
+        "title": "VS-G0-01 治理登记、P0 证据冻结与 Harness 边界"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p0-01",
+      "node": {
+        "acceptance_criteria": [
+          "cache panic fresh reproduction 消失",
+          "最小 handshake/request 不发生 process exit",
+          "cargo test --no-run 通过且不以 TypeScript/bundle 成功替代 Rust 编译"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "把 VerseShell 变为可信本地 coding 执行基座。",
+          "validation_plan": [
+            "Rust focused regression",
+            "fresh real ae server smoke",
+            "cargo test --no-run"
+          ],
+          "why_not_enough": "仅修复启动，仍不解决 bundle/protocol 与 governed probe。",
+          "why_this_task": "P0-01 是当前全链路启动阻断，未关闭前任何上层功能均不可验收。"
+        },
+        "assumptions": [
+          "根因仍位于 verseshell-runtime/src/cache.rs；若变更，更新 scoped audit/spec 后继续。"
+        ],
+        "confidence": 0.92,
+        "context_tags": [
+          "verseshell",
+          "p0",
+          "rust",
+          "startup"
+        ],
+        "desired_outcomes": [
+          "short uptime 与 restart 后 server 不 panic",
+          "agent/non-agent 与 JSON/compact smoke 可得到协议响应",
+          "cargo test 与 cargo test --no-run 覆盖真实 runtime 测试目标"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p0-1"
+        ],
+        "execution_hints": [
+          "先用新 scoped spec 复现 short uptime panic，再实现最小修复与 Rust/real binary 回归。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "扩大 operation",
+          "启用 canary",
+          "改变 model tools",
+          "默认启用 VerseShell"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "消除所有后续 typed ACI、facade 与 governed execution 之前的 runtime panic 阻断。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 240,
+        "requirements": [
+          "使用 checked_sub 或显式 empty 语义，不能依赖系统 uptime",
+          "回归覆盖 restart、short uptime、--agent/non-agent、JSON/compact",
+          "失败保持 default-off"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "startup panic 0",
+          "short-uptime smoke 通过率 100%",
+          "Rust test compile failure 0"
+        ],
+        "summary": "修复 cache Instant 下溢，恢复 server/ACI 的可启动性，并让 Rust test compile 成为真实门禁。",
+        "title": "VS-P0-01 短 uptime 启动稳定性与 Rust 测试门禁"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p0-02",
+      "node": {
+        "acceptance_criteria": [
+          "clean rebuild 输出的 binary digest 与 manifest 一致",
+          "crate version、handshake、catalog count/digest 和 typed op/args contract 一致",
+          "bundle/manifest 验证与 checksum mismatch denial 在 CI/测试中覆盖"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "建立可信且可验证的 VerseShell execution foundation。",
+          "validation_plan": [
+            "clean checkout rebuild",
+            "manifest/catalog/handshake validation",
+            "checksum and drift failure tests"
+          ],
+          "why_not_enough": "bundle 一致不能证明 approval/deny 和 process semantics 正确。",
+          "why_this_task": "typed ACI 的安全边界依赖 runtime identity 可重建、可验证且与实际协议相符。"
+        },
+        "assumptions": [
+          "Windows x64 是当前唯一 packaged target；其他平台在 P5 之前仅做计划，不视为交付。"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "verseshell",
+          "p0",
+          "supply-chain",
+          "typed-aci"
+        ],
+        "desired_outcomes": [
+          "clean checkout 重建可验证 ae.exe",
+          "crate/protocol/catalog/manifest/binary identity 单源一致",
+          "CI 在 digest 或 handshake drift 时 fail-closed"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p0-3",
+          "harness/specs/rules/supply-chain-integrity-pinning.md"
+        ],
+        "execution_hints": [
+          "先冻结 source/patch/lockfile，再从 clean checkout 重建和比较 identity；禁止用旧 manifest 掩盖协议差异。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "扩大 facade",
+          "产品发布",
+          "隐式下载/执行未验证工件"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让 Electron 和 OpenClaw 仅接受可从 clean checkout 重建、身份可验证的 typed ACI runtime。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "外部 binary/source/patch/lockfile 均 tracked 且具 version/size/SHA256",
+          "不维护 manifest 1.0 与 runtime 0.3 的平行协议",
+          "不允许 dirty build input 掩盖 source provenance"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "source/build/protocol drift 0",
+          "未跟踪 release input 0",
+          "identity mismatch fail-closed 覆盖率 100%"
+        ],
+        "summary": "统一 source、patch、lockfile、Cargo package、manifest、handshake、catalog 与 binary digest，消除 dirty build input 和旧 cmd 协议漂移。",
+        "title": "VS-P0-02 1.0 Typed ACI 可重建 Bundle 与供应链一致性"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p0-03",
+      "node": {
+        "acceptance_criteria": [
+          "fresh pnpm verseshell:test real probe 通过",
+          "denial、approved retry、semantic reduction、artifact recovery 使用新 binary 覆盖",
+          "governed failures 返回稳定 error/observation，绝不自动转 native shell"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.99,
+          "user_goal": "让 VerseShell 成为受治理的本地执行基础。",
+          "validation_plan": [
+            "real binary deny/approve/artifact probe",
+            "focused OpenClaw suite",
+            "comms and typecheck gates"
+          ],
+          "why_not_enough": "仍需完整 lifecycle、observation、facade 与真实 cohort evidence。",
+          "why_this_task": "审批语义是 governed path 的最低可信门槛，错误分类或崩溃不能被工程矩阵替代。"
+        },
+        "assumptions": [
+          "P0-01 和 P0-02 产生的新 binary/contract 可用于 fresh probe；否则停止在前置节点。"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "verseshell",
+          "p0",
+          "approval",
+          "governed-exec"
+        ],
+        "desired_outcomes": [
+          "approval deny 返回 E_NEEDS_APPROVAL",
+          "approved retry 最多一次且 action-bound token 隔离",
+          "outage/timeout/protocol mismatch/command failure 无 native fallback",
+          "artifact recovery 与有界 diagnostics 可用"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p0-2",
+          "harness/specs/tasks/verseshell-typed-aci-adaptation.md"
+        ],
+        "execution_hints": [
+          "以 fresh real binary 测试作为唯一放行事实；先修 E_NEEDS_APPROVAL 分类，再扩展任何 capability。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "default-on",
+          "model-facing approval API",
+          "MCP 主路径",
+          "扩大 cohort"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "证明已验证的 typed ACI 能在 OpenClaw policy/approval 边界下产生语义正确的 observation，而不是在拒绝前崩溃。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "approval/capability/policy/binary identity 只由 host/runtime 注入",
+          "模型或任意环境变量不得授予 approval",
+          "transport 与业务错误分类分离"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "approval denial misclassification 0",
+          "governed native fallback 0",
+          "未经 token 执行 0"
+        ],
+        "summary": "修复真实 governed-exec probe，使审批拒绝稳定返回 E_NEEDS_APPROVAL，批准 token 隔离的一次重试可验证，所有故障保持 fail-closed。",
+        "title": "VS-P0-03 Governed 真实 Probe、审批拒绝与单次批准重试"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p1-01",
+      "node": {
+        "acceptance_criteria": [
+          "短/长/timeout/cancel/crash/restart matrix 均有稳定 observation",
+          "owner mismatch 和 response mismatch fail-closed",
+          "restart 不重新发送 effectful request"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "统一、受监督的本地执行内核。",
+          "validation_plan": [
+            "lifecycle failure matrix",
+            "correlation mismatch tests",
+            "no-replay tests"
+          ],
+          "why_not_enough": "尚未建立统一 observation/artifact 或上层 facade。",
+          "why_this_task": "稳定 lifecycle 是让多个 coding 组件共享执行服务的必要条件。"
+        },
+        "assumptions": [
+          "P0 typed ACI 和 approval 证据已经重建，历史 UAS-05 实现仅作可复用输入。"
+        ],
+        "confidence": 0.78,
+        "context_tags": [
+          "verseshell",
+          "p1",
+          "lifecycle",
+          "fail-closed"
+        ],
+        "desired_outcomes": [
+          "starting/handshaking/ready/backoff/stopped/failed 状态可观察",
+          "response id mismatch 被归类为协议错误",
+          "crash/timeout/cancel/restart 有 exit/signal/phase/restart metadata",
+          "仅幂等 read 可受控 retry"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-1"
+        ],
+        "execution_hints": [
+          "复用而不盲信 UAS-05 lifecycle 资产；以 P0 新 binary contract 重跑 crash/timeout/cancel/restart matrix。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "增加模型工具",
+          "默认路由切换",
+          "产品 canary"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让短命令、长命令、timeout、cancel、crash、restart 都返回可审计的稳定结果，且 effectful 请求不重放。",
+        "remaining_minutes_max": 1800,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "requestId、traceId、deadline、process key 由 ExecutionContext 注入",
+          "effectful/unknown side effect 禁止自动 replay",
+          "kill switch 停止新执行且不 native fallback"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "未关联请求 0",
+          "effectful replay 0",
+          "未分类 lifecycle failure 0"
+        ],
+        "summary": "将 VerseShellProcessManager/VerseShellAciClient 收敛为受控进程执行入口，明确 lifecycle、deadline、request/trace correlation、retry 和 fail-closed crash semantics。",
+        "title": "VS-P1-01 受监督 ACI 生命周期、关联与稳定错误码"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p1-02",
+      "node": {
+        "acceptance_criteria": [
+          "oversized stdout/stderr/JSON/observation 均覆盖",
+          "artifact query/recovery/expiry 有回归",
+          "silent truncation 和无 artifact 丢失为 0"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "统一执行与结果查看契约。",
+          "validation_plan": [
+            "truncation/artifact tests",
+            "result query/recovery tests",
+            "error taxonomy contract tests"
+          ],
+          "why_not_enough": "不解决 MCP 收紧或读写 adapter 接入。",
+          "why_this_task": "结果平面是 stable facade 和可诊断 coding workflow 的共享基础。"
+        },
+        "assumptions": [
+          "P1-01 已提供可信 process/lifecycle identity。"
+        ],
+        "confidence": 0.84,
+        "context_tags": [
+          "verseshell",
+          "p1",
+          "observation",
+          "artifact"
+        ],
+        "desired_outcomes": [
+          "截断有 omitted bytes、cursor/retention metadata 和 artifact",
+          "result.query 支持 bounded slice/head/tail/grep",
+          "业务、协议、生命周期、契约失败稳定区分",
+          "敏感内容不被无界回传"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "shared/verseshell/types.ts",
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#52-观察结果契约"
+        ],
+        "execution_hints": [
+          "先固定 observation schema 和 error taxonomy，再接入任何 coding adapter。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "新的 model-facing operation",
+          "写入 transaction",
+          "canary"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让模型、UI 和 support bundle 获得可审计的有限结果，而不是全量日志或静默丢失。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "所有 operation 返回 verseshell.observation/v1",
+          "artifact 生命周期、过期、丢失和恢复有明确结果",
+          "不把原始 stderr 直接交给模型"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "静默输出丢失 0",
+          "无界日志返回 0",
+          "artifact recovery 失败未分类 0"
+        ],
+        "summary": "统一 stdout/stderr/line JSON/observation 上限、截断 metadata、artifact lineage、result.query 和 transport/lifecycle/contract error taxonomy。",
+        "title": "VS-P1-02 Bounded Observation、Artifact 与 Result Query 统一"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p1-03",
+      "node": {
+        "acceptance_criteria": [
+          "安装、打包、启动 smoke 和 deny-by-default 安全测试通过",
+          "任意 eval 无法在产品 profile 使用",
+          "MCP consumer telemetry 与 governed facade usage 分开统计"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "保持受治理的本地 execution boundary。",
+          "validation_plan": [
+            "install/start smoke",
+            "deny/eval policy tests",
+            "version/source consistency tests"
+          ],
+          "why_not_enough": "MCP 安全不等于只读 adapter 或 command profile 已落地。",
+          "why_this_task": "当前 MCP 宽权限/不可启动是独立攻击面，必须在 coding facade 前收紧。"
+        },
+        "assumptions": [
+          "P1-02 observation/artifact 契约可供兼容层复用。"
+        ],
+        "confidence": 0.85,
+        "context_tags": [
+          "verseshell",
+          "p1",
+          "mcp",
+          "compatibility"
+        ],
+        "desired_outcomes": [
+          "CAPS 默认 deny 且无 cap all",
+          "eval 仅开发 profile，产品路径不注册或不打包",
+          "shell exec 经 argv 和相同 policy boundary",
+          "MCP 安装/启动/包版本可验证"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p1-1",
+          "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p1-2"
+        ],
+        "execution_hints": [
+          "先决定移除或开发 profile 隔离 eval，再修复 package/版本单源和启动 smoke。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "新增 MCP 功能",
+          "用 MCP 取代 typed ACI",
+          "扩大模型工具面"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "防止 MCP 宽权限、缺失依赖或版本漂移绕过 typed ACI 的 policy/workspace/governed owner。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "MCP 不成为内部依赖",
+          "兼容层失败不触发 governed native fallback",
+          "版本、runtime 与 package 保持单源"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "默认 cap all 0",
+          "产品 arbitrary eval 0",
+          "MCP dependency resolution failure 0"
+        ],
+        "summary": "把 MCP 固定为外部 compatibility adapter：default deny、无任意 eval、明确 argv、单源版本和安装/打包/启动 smoke。",
+        "title": "VS-P1-03 MCP 默认拒绝、依赖可运行与兼容层收紧"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p2-01",
+      "node": {
+        "acceptance_criteria": [
+          "read/search/result 在 real repo E2E/集成测试通过",
+          "workspace 外读取和敏感输出泄漏被拒绝或遮蔽",
+          "cache key 包含 workspace/revision/args/policy"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "建立可承载 coding 工作流的基座。",
+          "validation_plan": [
+            "real repo integration",
+            "path/security tests",
+            "cache fingerprint tests"
+          ],
+          "why_not_enough": "不覆盖 process/write 行为。",
+          "why_this_task": "只读路径风险最低，能先验证 facade、workspace 和 observation 复用。"
+        },
+        "assumptions": [
+          "P1 contract 已稳定，现有 shared facade 可作为唯一模型表面。"
+        ],
+        "confidence": 0.82,
+        "context_tags": [
+          "verseshell",
+          "p2",
+          "facade",
+          "read-only"
+        ],
+        "desired_outcomes": [
+          "真实仓库可定位文件、搜索符号、读取上下文、查询测试报告",
+          "UI/agent/support bundle 使用同一 observation contract",
+          "workspace/revision/policy-aware cache 不越界"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "shared/verseshell/facade.ts",
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-2"
+        ],
+        "execution_hints": [
+          "在 shared/verseshell/facade.ts 定义的稳定表面内实现 adapter，禁止组件私自 spawn 或扩大工具表。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "file.patch commit",
+          "test/build process",
+          "transaction",
+          "default-on"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "先以低风险、可重复的 coding 读取工作流验证 VerseShell foundation 的共享契约。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "模型可见操作不增加",
+          "adapter 不自行 spawn 子进程",
+          "路径、glob、结果和敏感输出保持有界"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "越界读取 0",
+          "重复无效扫描 0",
+          "未通过 artifact 的大结果返回 0"
+        ],
+        "summary": "将 read_file、search_content、result_query 接入真实 facade/adapter 路径，复用 workspace broker、revision-aware cache 和 bounded observation。",
+        "title": "VS-P2-01 只读 File/Search/Result Facade Adapter"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p2-02",
+      "node": {
+        "acceptance_criteria": [
+          "exe/com/cmd/bat、pnpm/npm/corepack、spaces/Unicode/cwd/env/non-zero/timeout/large output matrix 通过",
+          "paired task 对比不以 native fallback 伪装成功",
+          "command profile policy/output tests 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "统一 process、测试、构建和 Git 的执行契约。",
+          "validation_plan": [
+            "Windows argv compatibility matrix",
+            "policy/profile tests",
+            "paired execution comparison"
+          ],
+          "why_not_enough": "不处理写入 journal 或真实 canary。",
+          "why_this_task": "command profile 是避免审批内容与实际执行二次解释漂移的核心。"
+        },
+        "assumptions": [
+          "P2-01 已验证 workspace/facade 基础；P1 lifecycle 支持必要 foreground process。"
+        ],
+        "confidence": 0.78,
+        "context_tags": [
+          "verseshell",
+          "p2",
+          "argv",
+          "command-profile"
+        ],
+        "desired_outcomes": [
+          "test/build/lint/git 有受限 cwd/env/timeout/write-dir profile",
+          "argv、executable identity、stdin/output budget 可审计",
+          "结果归一化为诊断和 artifact"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md#g1"
+        ],
+        "execution_hints": [
+          "先实现 normalized execution plan 和 Windows resolver contract；不以 cmd /C、PowerShell 或 Git Bash wrapper 替代。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "PTY/background 扩面",
+          "任意 package manager 网络权限",
+          "模型直接选择 command profile"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让常见 coding process 在统一 execution plane 上运行，而不把普通命令默认二次解释为 shell string。",
+        "remaining_minutes_max": 1800,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "OpenClaw 在 approval 前产生 normalized execution plan",
+          "VerseShell 不在 approval 后重新解析 command string",
+          "shell interpreter 只作为显式、受控 user terminal payload"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "普通命令默认 shell wrapper 0",
+          "governed implicit native fallback 0",
+          "未审计 env/cwd 0"
+        ],
+        "summary": "建立 test/build/lint/git command profile registry；批准后只提交不可变 argv 计划，统一 output/artifact 与诊断归一化。",
+        "title": "VS-P2-02 Argv-only Command Profile 与 Test/Build/Lint/Git Adapter"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p2-03",
+      "node": {
+        "acceptance_criteria": [
+          "request/trace lineage 覆盖 100%",
+          "failure taxonomy 有 fixtures 和建议动作",
+          "support bundle/redaction tests 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "统一诊断和结果查看。",
+          "validation_plan": [
+            "lineage tests",
+            "failure fixtures",
+            "redaction/E2E/comms tests"
+          ],
+          "why_not_enough": "没有写入或 canary 语义。",
+          "why_this_task": "trace/diagnostics 让 execution foundation 可被 operator、agent 与 support 共同解释。"
+        },
+        "assumptions": [
+          "P2-02 已产生统一 command observation；现有 diagnostics 可扩展而不增加平行 owner。"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "verseshell",
+          "p2",
+          "trace",
+          "diagnostics"
+        ],
+        "desired_outcomes": [
+          "search/read/modify/test/result_query 可关联",
+          "编译、测试、工具缺失、权限、环境、runtime 失败分类稳定",
+          "诊断不保留 raw command/prompt/output/secret"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#75-p2-面向-coding-工作流的针对性优化"
+        ],
+        "execution_hints": [
+          "先定义唯一诊断 schema 和 redaction policy，再接入各 adapter。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "新增 telemetry authority",
+          "原始日志无限保留",
+          "default-on"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "让多步 coding 工作流具有可追踪因果链，且 UI/agent/support 不各自解析日志。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "trace context 由 host 注入，不接受模型伪造 governance 字段",
+          "UI 使用 host-api/api-client，不直接控制 transport",
+          "用户可见诊断变更配套 Electron E2E"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "孤立执行记录 0",
+          "敏感诊断泄漏 0",
+          "重复日志解析器 0"
+        ],
+        "summary": "把 parent trace/child request id、command/test/lint/Git 结果和可执行 suggested action 归一为共享、低敏诊断模型。",
+        "title": "VS-P2-03 Trace Correlation、Failure Taxonomy 与共享诊断"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p3-01",
+      "node": {
+        "acceptance_criteria": [
+          "precondition conflict、concurrent mutation、failed commit、abort、undo 和 restart recovery 测试通过",
+          "仅 ClawX journal 可提交",
+          "diff artifact 与 approval/change summary 关联"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "让 coding 写入具备受治理、可恢复语义。",
+          "validation_plan": [
+            "journal/precondition tests",
+            "concurrency/recovery tests",
+            "approval/diff artifact integration"
+          ],
+          "why_not_enough": "外部 write 仍需独立 policy。",
+          "why_this_task": "写入必须以现有 ClawX journal 为 authority，而不是由 execution runtime 越权。"
+        },
+        "assumptions": [
+          "P2 trace/diagnostics 已可关联 patch operation 与结果。"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "verseshell",
+          "p3",
+          "write",
+          "journal"
+        ],
+        "desired_outcomes": [
+          "patch preview 不直接提交",
+          "commit 前有 baseline hash/operation id/change list",
+          "journal commit/undo/stale-write guard 可审计",
+          "并发/失败/abort/undo 有确定状态"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "TF-0015 historical journal evidence",
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-4"
+        ],
+        "execution_hints": [
+          "从 preview/precondition 开始；在明确唯一 journal authority 前不得启用 tx.commit。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "目录删除恢复",
+          "external command write transaction",
+          "第二 journal"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "为文件改动提供确定的冲突、提交和恢复语义，同时避免建立第二个 VerseShell transaction owner。",
+        "remaining_minutes_max": 1800,
+        "remaining_minutes_min": 720,
+        "requirements": [
+          "adapter 只使用 VerseShellAciClient、ClawX journal API、OpenClaw policy API",
+          "预计算、queue/lease 和 recovery 复用既有 write journal",
+          "不声称跨文件系统真实原子事务"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "无 journal 的 commit 0",
+          "静默 partial mutation 0",
+          "stale write 漏检 0"
+        ],
+        "summary": "让 file.patch 只产生 preview、base hash、precondition 和 diff artifact；ClawX write journal 保持唯一 commit/undo/stale guard/recovery authority。",
+        "title": "VS-P3-01 File Patch Preview 与 ClawX Journal Bridge"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p3-02",
+      "node": {
+        "acceptance_criteria": [
+          "compiler/script/Git hook representative cases 被标记并通过 policy tests",
+          "UI confirmation 与 audit artifact 不泄漏敏感命令内容",
+          "rollback claim false-positive 为 0"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "在不扩大风险的前提下完成写入协作。",
+          "validation_plan": [
+            "effect/policy fixtures",
+            "UI confirmation E2E",
+            "audit/redaction review"
+          ],
+          "why_not_enough": "不提供 default-on 或全自动 rollback。",
+          "why_this_task": "外部写入的真实边界必须在 canary 前透明化，不能依赖错误的 transaction 叙事。"
+        },
+        "assumptions": [
+          "P3-01 已闭合 file.patch 的内部 journal 路径。"
+        ],
+        "confidence": 0.83,
+        "context_tags": [
+          "verseshell",
+          "p3",
+          "external-write",
+          "security"
+        ],
+        "desired_outcomes": [
+          "external_write effect 明确可见",
+          "允许条件、风险、快照和用户确认有产品层语义",
+          "不具备 rollback 的写入不会被报告为可恢复"
+        ],
+        "difficulty": "high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#73-p1-统一写入和恢复语义"
+        ],
+        "execution_hints": [
+          "先列出 external write 类型和 policy owner，再实现 UI/adapter 语义。"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "强行事务化所有 shell 写入",
+          "绕过用户确认",
+          "自动清理外部副作用"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "防止用户和 agent 对外部进程写入的恢复能力产生错误预期。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "external write 由 ClawX product policy 决定",
+          "effectful request 不自动 replay",
+          "每个 external write 适配器声明 effect level 和 tests"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "未声明 external write 0",
+          "错误 rollback 承诺 0",
+          "effectful automatic replay 0"
+        ],
+        "summary": "定义 compiler/script/Git hook 等 external_write 的 effect 标识、policy、approval、snapshot/prompt 和不可回滚限制，不把它们伪装成 VerseShell transaction。",
+        "title": "VS-P3-02 External Write Policy、确认与不可回滚边界"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "vs-p5-01",
+      "node": {
+        "acceptance_criteria": [
+          "每条 live observation 有 pairedTaskId、dropped=0 diagnostic window、provider receipt digest/actual usage、human recovery record",
+          "rollback drill 由 reviewer 确认且显式 operator configuration 恢复 prior host",
+          "soak、平台 build/handshake 与 continue/reduce/stop 决策有 owner/date",
+          "无条件修改 defaultOn/liveReady/productApproved 的路径为 0"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "完整编排 VerseShell foundation 并以真实 evidence 决定扩大范围。",
+          "validation_plan": [
+            "reviewed live evidence check",
+            "paired/rollback/soak audit",
+            "STATUS.md owner review"
+          ],
+          "why_not_enough": "即使证据充分，仍需 STATUS.md 和产品 owner 单独决定 rollout；不自动授权 GA。",
+          "why_this_task": "真实 canary 是路线图唯一允许评估扩大范围的阶段，且必须与工程 evidence 严格分离。"
+        },
+        "assumptions": [
+          "operator 可提供受控 cohort、provider receipt 和独立 reviewer；缺失任一条件时本节点保持 blocked/review_needed。"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "verseshell",
+          "p5",
+          "canary",
+          "provider-evidence",
+          "operator"
+        ],
+        "desired_outcomes": [
+          "paired task 有 actual provider usage、latency/resource、completion 和 recovery evidence",
+          "kill-switch/explicit rollback 有 reviewed record",
+          "artifact recovery 和安全 veto 被真实验证",
+          "Windows x64 以外的平台具备最小 build/handshake evidence"
+        ],
+        "difficulty": "very_high",
+        "evidence": [
+          "docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md",
+          "docs/dev/verseshell-foundation/STATUS.md"
+        ],
+        "execution_hints": [
+          "仅在路线图 Phase 0 到 Phase 4 的全部节点 done 且独立审阅后启动；若证据不足，记录 continue/reduce/stop 而非推断产品批准。"
+        ],
+        "kind": "milestone",
+        "non_goals": [
+          "自动 default-on",
+          "用 heuristic token 声称成本收益",
+          "使用 synthetic matrix 替代 live canary",
+          "自动解锁 TF-0006"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "purpose": "用真实运营和 provider 证据决定是否值得扩大 VerseShell 范围，而不把工程矩阵误当成产品资格。",
+        "remaining_minutes_max": 5760,
+        "remaining_minutes_min": 1440,
+        "requirements": [
+          "只在 VS-P3-02 done 后启动",
+          "保护原始 provider receipts/diagnostics 于仓库外；仓库仅保留低敏摘要/digest",
+          "native fallback 目标为 0，任何 security veto 停止扩大",
+          "STATUS.md 是唯一 rollout/产品锁裁决来源"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "eligible local native fallback 0",
+          "未授权执行/越权/敏感泄漏 0",
+          "provider actual usage 覆盖率 100%",
+          "rollback drill 成功率 100%"
+        ],
+        "summary": "在所有工程前置完成后，采集 reviewed paired baseline/VerseShell 真实 evidence、operator kill/rollback、artifact recovery、soak 和平台握手，并输出 continue/reduce/stop 建议。",
+        "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "G0 为 VerseShell foundation 建立唯一 spec、证据和实施入口。"
+      },
+      "from": "vs-g0-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P0 启动稳定性是 foundation 的直接交付切片。"
+      },
+      "from": "vs-p0-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P0 可重建 bundle 是 foundation 的直接交付切片。"
+      },
+      "from": "vs-p0-02",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P0 governed probe 是 foundation 的直接交付切片。"
+      },
+      "from": "vs-p0-03",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P1 受监督执行内核属于 foundation。"
+      },
+      "from": "vs-p1-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P1 结果平面属于 foundation。"
+      },
+      "from": "vs-p1-02",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P1 兼容层收紧属于 foundation。"
+      },
+      "from": "vs-p1-03",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P2 只读 facade 属于 foundation。"
+      },
+      "from": "vs-p2-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P2 command profile 属于 foundation。"
+      },
+      "from": "vs-p2-02",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P2 trace/diagnostics 属于 foundation。"
+      },
+      "from": "vs-p2-03",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P3 patch/journal bridge 属于 foundation。"
+      },
+      "from": "vs-p3-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P3 external write policy 属于 foundation。"
+      },
+      "from": "vs-p3-02",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "P5 real canary 是 foundation 的扩大裁决里程碑。"
+      },
+      "from": "vs-p5-01",
+      "to": "vs-foundation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "先完成治理登记、spec 和 P0 baseline，才能修改 runtime。"
+      },
+      "from": "vs-p0-01",
+      "to": "vs-g0-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "先恢复 runtime 可启动与 Rust 测试，再冻结可重建 release identity。"
+      },
+      "from": "vs-p0-02",
+      "to": "vs-p0-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "governed real probe 必须使用已验证、可重建且协议一致的 binary。"
+      },
+      "from": "vs-p0-03",
+      "to": "vs-p0-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "生命周期扩展前必须先证明 approval/deny/approved retry 的真实 typed ACI 语义。"
+      },
+      "from": "vs-p1-01",
+      "to": "vs-p0-03",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "observation/artifact 要绑定可信 lifecycle、request 和 error state。"
+      },
+      "from": "vs-p1-02",
+      "to": "vs-p1-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.97,
+        "reason": "MCP compatibility 必须复用已稳定的 bounded observation/artifact 与错误契约。"
+      },
+      "from": "vs-p1-03",
+      "to": "vs-p1-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "先收紧兼容攻击面，再交付只读 coding facade。"
+      },
+      "from": "vs-p2-01",
+      "to": "vs-p1-03",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "先验证 workspace/facade/observation 的只读路径，再接入受控 command profiles。"
+      },
+      "from": "vs-p2-02",
+      "to": "vs-p2-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "trace/failure diagnostics 以统一 command observation 为输入。"
+      },
+      "from": "vs-p2-03",
+      "to": "vs-p2-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "写入 bridge 需要完整 trace、diagnostics 和稳定的 execution contract。"
+      },
+      "from": "vs-p3-01",
+      "to": "vs-p2-03",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "先完成 ClawX journal 唯一 authority，再定义外部写入不可回滚边界。"
+      },
+      "from": "vs-p3-02",
+      "to": "vs-p3-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.99,
+        "reason": "真实 canary 必须等路线图 Phase 0 到 Phase 4 的全部工程切片完成并可审计后才可开始。"
+      },
+      "from": "vs-p5-01",
+      "to": "vs-p3-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "VerseShell foundation 会支持受控内部使用，但范围超出 TF-0007 的 DCS 受控内测收口；不改变 TF-0007 owner 或状态。"
+      },
+      "from": "vs-foundation",
+      "to": "TF-0007",
+      "type": "related_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "统一受治理 execution/artifact 基础可支撑 Runtime Authority Convergence，但不替代其 RC 依赖或验收链。"
+      },
+      "from": "vs-foundation",
+      "to": "TF-0010",
+      "type": "contributes_to"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.88,
+        "reason": "真实 provider-backed canary 可成为未来 M2/M3 evidence upgrade 的候选输入，但不自动解阻、default-on 或 GA。"
+      },
+      "from": "vs-p5-01",
+      "to": "TF-0006",
+      "type": "contributes_to"
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-13T16:54:30.072984Z",
+        "evidence": "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md §§4-6；docs/dev/verseshell-foundation/STATUS.md。",
+        "expected_requirement": "历史 VerseShell 工程/生命周期 evidence 必须与当前 fresh binary、source/build/protocol、Rust compile 和 governed real probe 一致，才可用于放行。",
+        "id": "TFD-e2db1829ca",
+        "observed_action_or_result": "REAL-CAPABILITY-AUDIT 发现短 uptime panic、E_NEEDS_APPROVAL 被 E_ACI_PROCESS_EXITED 替代，以及 manifest 1.0/source 0.3/旧 cmd protocol 漂移；这些与历史 UAS-05/UAS-06 绿色工程结论不一致。",
+        "recommendation": "将 VS-P0-01/02/03 设为串行重新资格化门槛；在新鲜 evidence 一致前保持 default-off，禁止 canary/GA 或使用旧报告覆盖现场失败。",
+        "related_task_ids": [
+          "TF-0056"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "A：直接延续旧 UAS-05/UAS-06 canary；B：证据优先、严格串行、P0 重新资格化后依次交付 execution/result/facade/write/canary；C：并行扩展 file/repo/test/transaction/MCP。",
+        "confidence": 0.96,
+        "created_at": "2026-08-13T16:54:30.072984Z",
+        "id": "TFA-e948656f79",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "读取 VerseShell foundation 路线图后，开始完整的可执行、可验证编排计划。",
+          "validation_plan": [
+            "Task Forest validate/export",
+            "每包 Harness/测试/independent evidence",
+            "STATUS.md rollout review"
+          ],
+          "why_not_enough": "DAG 不能代替每包的 scoped spec、实际实现、clean evidence 和产品 owner 决策。",
+          "why_this_task": "独立 foundation DAG 覆盖路线图的所有阶段和责任层，不把基础设施误并入现有 DCS 或 Runtime 收敛主线。"
+        },
+        "reason": "该方案最直接地满足路线图的执行基座目标，同时保留 fail-closed、最小模型工具面、唯一 owner 与真实 canary 的放行边界。",
+        "rejected_options": [
+          "A：旧 evidence 与 fresh audit 冲突，无法证明当前 runtime 可用",
+          "C：执行内核未可信时扩大 capability 和安全面"
+        ],
+        "related_task_ids": [
+          "TF-0056"
+        ],
+        "selected_option": "B：证据优先的 P0-P5 严格串行 foundation 路线",
+        "user_goal": "读取 VerseShell foundation 路线图后，开始完整的可执行、可验证编排计划。"
+      }
+    }
+  ],
+  "created_at": "2026-08-13T16:54:30.061530Z",
+  "notes": "本提案不修改 TF-0006、TF-0009、TF-0016、任何产品锁、feature flag、STATUS.md、runtime 配置或 release 状态。应用后仅 VS-G0-01 可开始；default-off、liveReady=false、productApproved=false、defaultOn=false 维持不变。",
+  "proposal_id": "TFP-verseshell-foundation-orchestration-20260814",
+  "rationale": "将 FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md、REAL-CAPABILITY-AUDIT.zh-CN.md 和 STATUS.md 转化为严格串行的 VerseShell foundation 工程 DAG。新鲜审计已证明短 uptime panic、真实 governed probe 和 source/build/protocol 一致性仍为 P0 阻断；因此保留历史 UAS-05/UAS-06 作为实现输入，但不作为新的放行证据。",
+  "session_id": "session-2026-08-14-verseshell-foundation-orchestration",
+  "status": "applied"
+}

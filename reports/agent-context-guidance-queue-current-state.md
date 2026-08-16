@@ -400,7 +400,11 @@ checkpoint 记录：
 - `openclaw_runtime/src/context-engine/cvk/recovery.ts`
 - `openclaw_runtime/src/context-engine/cvk/recovery-default.ts`
 - `openclaw_runtime/src/context-engine/cvk/eval-report.ts`
-- `openclaw_runtime/src/context-engine/cvk/codebase-index.ts`
+
+> 2026-08-15: `cvk/codebase-index.ts` 已移除（零生产调用方；内容级代码理解由
+> FactStore tree-sitter 管线承接：`context-engine/producers/analyzers/*` 的
+> symbols/calls/imports/tested_by 边，被 C1 view tools 与 rebuild providers 消费）。
+
 
 协议类型已经存在：
 

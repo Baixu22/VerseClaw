@@ -108,7 +108,10 @@ vi.mock('@/lib/host-api', () => ({
 vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
   useTranslation: () => ({
-    t: (key: string, params?: Record<string, unknown> | string) => (typeof params === 'string' ? params : key),
+    t: (key: string, params?: Record<string, unknown> | string) => {
+      if (typeof params === 'string') return params;
+      return key === 'composer.runLogReplay' ? 'From run log (not the session transcript)' : key;
+    },
     i18n: { language: 'en' },
   }),
 }));
@@ -169,6 +172,32 @@ async function mountChat() {
   const { Chat } = await import('@/pages/Chat/index');
   return render(<MemoryRouter><Chat /></MemoryRouter>);
 }
+
+describe('Run-log replay provenance badge', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
+  });
+
+  it('renders the translated badge instead of the raw i18n key', async () => {
+    await seedChat({
+      messages: [
+        { role: 'user', content: 'show the replay' },
+        {
+          role: 'assistant',
+          id: 'run-log-replay',
+          isRunLogReplay: true,
+          content: [{ type: 'text', text: 'Replayed response.' }],
+        },
+      ],
+    });
+    await mountChat();
+
+    const badge = await screen.findByTestId('chat-message-run-log-replay-1');
+    expect(badge).toHaveTextContent('From run log (not the session transcript)');
+    expect(badge).not.toHaveTextContent('runLogReplay');
+  });
+});
 
 /** Expand the turn summary — completed turns collapse their work details. */
 function expandTurnSummary() {

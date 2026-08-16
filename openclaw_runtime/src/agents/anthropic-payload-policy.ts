@@ -25,15 +25,24 @@ type AnthropicPayloadPolicyInput = {
   enableCacheControl?: boolean;
   provider?: string;
   serviceTier?: AnthropicServiceTier;
+  /** Opt into server-side compaction (compact-2026-01-12). */
+  serverCompaction?: boolean;
+  /** Explicit compact threshold in tokens; defaults to a conservative floor. */
+  compactThreshold?: number;
 };
 
 const ANTHROPIC_CACHE_CONTROL_LIMIT = 4;
+
+/** Conservative fallback for the Anthropic server compaction threshold. */
+export const DEFAULT_ANTHROPIC_SERVER_COMPACT_THRESHOLD = 200_000;
 
 /** @deprecated Anthropic-family provider payload helper; do not use from third-party plugins. */
 export type AnthropicPayloadPolicy = {
   allowsServiceTier: boolean;
   cacheControl: AnthropicEphemeralCacheControl | undefined;
   serviceTier: AnthropicServiceTier | undefined;
+  useServerCompaction: boolean;
+  compactThreshold: number | undefined;
 };
 
 function resolveBaseUrlHostname(baseUrl: string): string | undefined {
@@ -248,6 +257,13 @@ export function resolveAnthropicPayloadPolicy(
         ? resolveAnthropicEphemeralCacheControl(input.baseUrl, input.cacheRetention)
         : undefined,
     serviceTier: input.serviceTier,
+    useServerCompaction: input.serverCompaction === true,
+    compactThreshold:
+      typeof input.compactThreshold === "number" &&
+      Number.isFinite(input.compactThreshold) &&
+      input.compactThreshold > 0
+        ? Math.floor(input.compactThreshold)
+        : undefined,
   };
 }
 
@@ -268,6 +284,19 @@ export function applyAnthropicPayloadPolicyToParams(
     applyAnthropicCacheControlToSystem(payloadObj.system, policy.cacheControl);
   } else {
     stripAnthropicSystemPromptBoundary(payloadObj.system);
+  }
+
+  if (
+    policy.useServerCompaction &&
+    payloadObj.context_management === undefined
+  ) {
+    payloadObj.context_management = [
+      {
+        type: "compaction",
+        compact_threshold:
+          policy.compactThreshold ?? DEFAULT_ANTHROPIC_SERVER_COMPACT_THRESHOLD,
+      },
+    ];
   }
 
   if (!policy.cacheControl) {

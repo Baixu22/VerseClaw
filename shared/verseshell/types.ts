@@ -10,6 +10,13 @@ export const DEFAULT_OBSERVATION_MAX_TOKENS = 4_000;
 export const DEFAULT_MAX_REQUEST_BYTES = 256 * 1024;
 export const DEFAULT_MAX_OBSERVATION_BYTES = 4 * 1024 * 1024;
 export const DEFAULT_MAX_HANDSHAKE_BYTES = 64 * 1024;
+export const DEFAULT_MAX_STDOUT_BYTES = 64 * 1024;
+export const DEFAULT_MAX_STDERR_BYTES = 64 * 1024;
+export const DEFAULT_MAX_JSON_FRAME_BYTES = 256 * 1024;
+export const DEFAULT_MAX_RESULT_BYTES = 64 * 1024;
+export const DEFAULT_MAX_RESULT_TOKENS = 4_000;
+export const DEFAULT_MAX_RESULT_LINES = 500;
+export const DEFAULT_MAX_RESULT_MATCHES = 200;
 
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
@@ -93,6 +100,68 @@ export interface ObservationMeta {
   token_estimate: number;
   effects?: string[];
   capabilities_used?: string[];
+}
+
+export type VerseShellArtifactStream = 'stdout' | 'stderr' | 'json' | 'observation' | 'combined';
+export type ResultQueryMode = 'meta' | 'head' | 'tail' | 'slice' | 'grep' | 'raw';
+
+export interface ArtifactOwnerLineage {
+  workspace_id: string;
+  runtime_id: string;
+  process_id: string;
+  request_id: string;
+  agent_id?: string;
+  session_id?: string;
+  trace_id?: string;
+}
+
+export interface ArtifactQueryCapabilities {
+  modes: ResultQueryMode[];
+  max_bytes: number;
+  max_tokens: number;
+  max_lines: number;
+  max_matches: number;
+}
+
+/** Runtime-owned, content-addressed output retained outside the observation envelope. */
+export interface ArtifactDescriptor {
+  handle: string;
+  digest: string;
+  stream: VerseShellArtifactStream;
+  raw_bytes: number;
+  retained_bytes: number;
+  omitted_bytes: number;
+  created_at: number;
+  expires_at: number;
+  owner: ArtifactOwnerLineage;
+  query: ArtifactQueryCapabilities;
+}
+
+export interface StreamCapture {
+  status: 'empty' | 'complete' | 'reduced' | 'truncated';
+  encoding?: string;
+  raw_complete?: boolean;
+  retained_complete?: boolean;
+  returned_bytes?: number;
+  text?: string;
+  summary?: string;
+  artifact?: string;
+  raw_bytes: number;
+  retained_bytes: number;
+  omitted_bytes: number;
+  truncated: boolean;
+}
+
+export interface ResultQueryRequest {
+  handle: string;
+  mode: ResultQueryMode;
+  lines?: number;
+  start_line?: number;
+  end_line?: number;
+  pattern?: string;
+  max_matches?: number;
+  max_bytes?: number;
+  max_tokens?: number;
 }
 
 /** Mirrors `operation::Observation`; this is the sole semantic result envelope. */

@@ -1,0 +1,70 @@
+{
+  "applied_at": "2026-08-13T17:53:20.002502Z",
+  "base_graph_hash": "0e9805c9020694518f6b5274da76c7be978d0b0ec16c76342db2ececd3fe5778",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "execution_hints": [
+          "只启动 TF-0058 / VS-P0-01；不并行启动 P0-02/P0-03 或任何 P1+ 工作包。",
+          "每个后续工作包必须先有 scoped Harness spec，并在 clean candidate 上生成独立证据。"
+        ],
+        "progress": 8,
+        "summary": "VerseShell foundation 编排已落图；G0 治理和 P0 证据冻结完成。后续严格按 P0-P5 串行，所有放行前持续 default-off。"
+      },
+      "id": "TF-0056"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/verseshell-foundation-governance.md",
+          "harness/specs/rules/verseshell-foundation-p0-boundary.md",
+          "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+          "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+          "Task Forest validate/export 2026-08-14",
+          "pnpm harness context/validate --no-diff for verseshell-foundation-governance"
+        ],
+        "execution_hints": [
+          "G0 已关闭；只允许开始 TF-0058 / VS-P0-01。",
+          "先读取 harness/specs/tasks/verseshell-foundation-governance.md 和 P0 baseline，再创建 VS-P0-01 scoped spec。",
+          "不得把 packaged handshake 或 57/57 TypeScript suite 当作 Rust compile、clean rebuild、governed probe 或产品放行证据。"
+        ],
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "已建立唯一 P0 scoped Harness 规约、owner map、当前证据基线和可执行门禁；未修改 runtime、flag、STATUS.md 或产品锁。"
+      },
+      "id": "TF-0057"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+          "verseshell-runtime/src/cache.rs:88",
+          "cargo test --manifest-path verseshell-runtime/Cargo.toml --no-run exit 101 (2026-08-14)"
+        ],
+        "execution_hints": [
+          "先新增并运行 verseshell-p0-runtime-startup scoped spec。",
+          "创建可控制的 short-uptime 回归测试，不依赖当前机器 uptime。",
+          "修复后运行 Rust focused tests、cargo test、cargo test --no-run、agent/non-agent JSON/compact smoke；保持 default-off。"
+        ],
+        "status": "ready",
+        "summary": "在 G0 已冻结的边界内，修复 cache 短 uptime 下溢并恢复 Rust 测试编译门禁；不处理 bundle/protocol 漂移或 governed rollout。"
+      },
+      "id": "TF-0058"
+    }
+  ],
+  "created_at": "2026-08-13T17:53:10.764309Z",
+  "proposal_id": "TFP-verseshell-g0-governance-complete-20260814",
+  "rationale": "VS-G0-01 已完成 scoped Harness 规约、P0 owner map、当前 P0 evidence baseline、Task Forest validate/export 和交接同步。当前证据仍显示 Rust test compile 失败及 source/build/protocol drift，因此只允许下一个串行节点 VS-P0-01 进入 ready，且持续 default-off。",
+  "session_id": "session-2026-08-14-verseshell-foundation-g0",
+  "status": "applied"
+}

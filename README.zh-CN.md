@@ -407,6 +407,14 @@ Verse Claw 采用 **双进程 + Host API 统一接入架构**。渲染进程只�
 
 VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认关闭，不代表正式发布，也不是原生 shell 的无条件替代。显式开启后，Agent 的 `exec` 调用仍须先通过 OpenClaw allowlist/approval；随后才由已验证的内置 `ae.exe` 在 workspace jail、仓库自有严格策略、唯一 `shell.exec` capability 和一次性动作绑定 approval token 下执行。runtime、protocol、catalog、workspace、capability 或 policy 任一漂移都会失败关闭；governed 路径绝不回退到原生 shell。
 
+内置 runtime 只有在 [`resources/verseshell/source-inputs.json`](resources/verseshell/source-inputs.json) 所记录的对应源码链通过后才会被接受：固定 commit、按序 tracked patches、allowlist 恢复输入、锁定 Rust 全量验证、当前解释器 Python 验证，以及两次 byte-identical Windows 构建。详见 [`SOURCE.md`](resources/verseshell/SOURCE.md)、[`BUILD.md`](resources/verseshell/BUILD.md) 和 [P0-02 证据](docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md)。该 source/build gate 不会开启 canary，也不会改变 default-off rollout 锁。真实 governed approval denial、一次性 token 隔离重试、有界 artifact 恢复和无 native fallback 的 P0-03 工程 probe 记录在 [P0-03 证据](docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md)；该结果不等于 provider-backed canary 或产品批准。
+P1 受监督 ACI 内核进一步记录明确的 `starting`/`handshaking`/`ready`/`backoff`/`stopped`/`failed` 生命周期、host 生成的 request/trace/deadline 关联、有界生命周期错误、显式只读重试和 fail-closed operator kill switch。详见 [P1-01 证据](docs/dev/verseshell-foundation/P1-SUPERVISED-ACI-EVIDENCE-2026-08-14.md)；这仍是工程证据，不会开启 rollout。
+外部 `resources/verseshell-mcp` 兼容包现在是受根 workspace 和 frozen SDK lockfile 管理的独立包；产品 profile 默认 deny，capability 与 pinned runtime vocabulary 对齐，启动强制 strict agent policy，package/runtime/protocol identity 必须匹配。`verseshell_eval` 和 shell 字符串兼容只在 development profile 注册，effectful 兼容工具继续 deferred，兼容 shell 路径只接受显式 argv，也不会成为 ClawX 内部执行通道。详见 [P1-03 证据](docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md)。请继续保持 MCP 兼容、写入、native fallback、canary 和 rollout 默认关闭。
+
+P2-01 只读 facade 现在只把稳定的 `read_file`、`search_content`、`result_query` 接到 host-owned typed ACI 路径。它独立保持 default-off，只有五个 readiness flag 全部显式开启且 kill switch 未触发时才物化。workspace 越界、绝对路径、NUL、无界 query、malformed result handle、过期 artifact 和 owner 漂移都会 fail-closed；cache identity 绑定 workspace、revision、policy、operation 和 args。这只是 engineering evidence，不开启 command profile、写入、canary、default-on、GA 或 product approval。详见 [P2-01 证据](docs/dev/verseshell-foundation/P2-READONLY-FACADE-EVIDENCE-2026-08-14.md)。
+
+P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis 收敛为不可变 host-owned execution plan。普通 test/build/lint/git 命令以 direct argv 执行；pipeline、chain、redirect、heredoc、inline evaluation 和显式解释器保持独立的 terminal-shell 边界。profile（含 `pnpm`/`npm`/`corepack` `exec`/`dlx` runner 透传）由 host 推导，模型不能选择 profile、interpreter、PATH/PATHEXT、policy 或 approval token。Windows `.exe`/`.com` 保持 direct argv，`.cmd`/`.bat` 在经审计的 `cmd.exe` interpreter 下保留 resolved script identity，审批后不再重解析 display command。cwd/env/argv/timeout/output 越界一律 fail-closed，且没有 native/MCP/legacy fallback。这只是 engineering evidence，不开启 diagnostics、写入、canary、default-on、GA 或 product approval。详见 [P2-02 证据](docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md)。
+
 推荐使用以下保守的 `openclaw.json` 配置：
 
 ```json
@@ -430,7 +438,7 @@ VerseShell 是仅用于 Windows x64 内部 canary 的可选执行后端，默认
 }
 ```
 
-`tools.exec.host=verseshell` 是由操作员在全局或单个 agent 范围选择的 cohort 配置。配置允许覆盖时，也可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端；模型不能在单次调用中选择 VerseShell host。sandbox、node、remote/provider-native 和 elevated 执行继续由原 owner 负责。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。本地工程覆盖不等于真实 cohort、provider usage、ROI、soak 或产品毕业证据。
+`tools.exec.host=verseshell` 是由操作员在全局或单个 agent 范围选择的 cohort 配置。配置允许覆盖时，也可用会话指令 `/exec host=verseshell security=allowlist ask=on-miss` 选择同一后端；模型不能在单次调用中选择 VerseShell host。sandbox、node、remote/provider-native 和 elevated 执行继续由原 owner 负责。长输出会返回 `result://sha256/...` handle，Agent 可通过 `verseshell_result` 查询有界片段。handle 和 lineage 由 runtime 负责并绑定内容摘要；artifact 过期、丢失、摘要不匹配或 owner 不匹配时会 fail-closed，截断会返回 retained/omitted bytes 证据而不是静默丢失。请保持 `legacyEval`、`mcpCompatibility` 和 `compatibilityNativeFallback` 关闭。紧急回退时，将 `runtime.verseShellFoundation.killSwitch` 设为 `true`，或设置 `VERSE_VERSESHELL_FOUNDATION_KILL_SWITCH=1`，然后重启 Gateway。本地工程覆盖不等于真实 cohort、provider usage、ROI、soak 或产品毕业证据。
 
 ---
 

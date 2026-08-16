@@ -1,6 +1,7 @@
 /**
  * Anthropic stream wrappers. They add beta headers, service tier/fast-mode
- * payload fields, and thinking-prefill cleanup around provider stream functions.
+ * payload fields, server-side compaction, and thinking-prefill cleanup around
+ * provider stream functions.
  */
 import type { StreamFn } from "openclaw/plugin-sdk/agent-core";
 import { streamSimple } from "openclaw/plugin-sdk/llm";
@@ -32,6 +33,8 @@ const ANTHROPIC_GA_1M_MODEL_PREFIXES = [
   "claude-opus-4.7",
   "claude-sonnet-4-6",
   "claude-sonnet-4.6",
+  "claude-sonnet-5",
+  "claude-fable-5",
 ] as const;
 const OPENCLAW_DEFAULT_ANTHROPIC_BETAS = [
   "fine-grained-tool-streaming-2025-05-14",
@@ -42,6 +45,77 @@ const OPENCLAW_OAUTH_ANTHROPIC_BETAS = [
   "oauth-2025-04-20",
   ...OPENCLAW_DEFAULT_ANTHROPIC_BETAS,
 ] as const;
+
+/** Beta header enabling server-side compaction on the Anthropic Messages API. */
+const ANTHROPIC_SERVER_COMPACTION_BETA = "compact-2026-01-12";
+const DEFAULT_ANTHROPIC_SERVER_COMPACT_THRESHOLD = 200_000;
+
+function resolvePositiveIntegerParam(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return Math.floor(value);
+  }
+  if (typeof value === "string") {
+    const parsed = Number(value.trim());
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return Math.floor(parsed);
+    }
+  }
+  return undefined;
+}
+
+/** Resolve whether server-side compaction applies for this Anthropic request.
+ *  Default-on for the official Anthropic provider; other Anthropic-family
+ *  backends opt in explicitly via extraParams.anthropicServerCompaction. */
+export function resolveAnthropicServerCompaction(
+  provider: string | undefined,
+  extraParams: Record<string, unknown> | undefined,
+): boolean {
+  const configured = extraParams?.anthropicServerCompaction;
+  if (configured === true) {
+    return true;
+  }
+  if (configured === false) {
+    return false;
+  }
+  return normalizeLowercaseStringOrEmpty(provider) === "anthropic";
+}
+
+/** Resolve the server compaction threshold (tokens) for this Anthropic request. */
+export function resolveAnthropicServerCompactionThreshold(
+  extraParams: Record<string, unknown> | undefined,
+): number {
+  return (
+    resolvePositiveIntegerParam(extraParams?.anthropicCompactThreshold) ??
+    DEFAULT_ANTHROPIC_SERVER_COMPACT_THRESHOLD
+  );
+}
+
+/** Wrap a stream function with server-side compaction: context_management
+ *  payload plus the compact-2026-01-12 beta header. */
+export function createAnthropicServerCompactionWrapper(
+  baseStreamFn: StreamFn | undefined,
+  threshold: number,
+): StreamFn {
+  const underlying = baseStreamFn ?? streamSimple;
+  return (model, context, options) => {
+    return streamWithPayloadPatch(
+      underlying,
+      model,
+      context,
+      {
+        ...options,
+        headers: mergeAnthropicBetaHeader(options?.headers, [ANTHROPIC_SERVER_COMPACTION_BETA]),
+      },
+      (payloadObj) => {
+        if (payloadObj.context_management === undefined) {
+          payloadObj.context_management = [
+            { type: "compaction", compact_threshold: threshold },
+          ];
+        }
+      },
+    );
+  };
+}
 
 type AnthropicServiceTier = "auto" | "standard_only";
 
@@ -233,10 +307,15 @@ export function wrapAnthropicProviderStream(
     (ctx.extraParams?.context1m === true && isAnthropic1MModel(ctx.modelId));
   const serviceTier = resolveAnthropicServiceTier(ctx.extraParams);
   const fastMode = resolveAnthropicFastMode(ctx.extraParams);
+  const serverCompaction = resolveAnthropicServerCompaction(ctx.provider, ctx.extraParams);
+  const serverCompactionThreshold = resolveAnthropicServerCompactionThreshold(ctx.extraParams);
   return composeProviderStreamWrappers(
     ctx.streamFn,
     needsAnthropicBetaWrapper
       ? (streamFn) => createAnthropicBetaHeadersWrapper(streamFn, anthropicBetas ?? [])
+      : undefined,
+    serverCompaction
+      ? (streamFn) => createAnthropicServerCompactionWrapper(streamFn, serverCompactionThreshold)
       : undefined,
     serviceTier
       ? (streamFn) => createAnthropicServiceTierWrapper(streamFn, serviceTier)

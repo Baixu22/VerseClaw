@@ -1822,7 +1822,11 @@ function validateConfigObjectWithPluginsBase(
     hasExplicitMemorySlot &&
     typeof memorySlot === "string" &&
     memorySlot.trim() &&
-    !knownIds.has(memorySlot)
+    !knownIds.has(memorySlot) &&
+    !(
+      memorySlot === "runtime-memory" &&
+      effectiveConfig.runtime?.memory?.persist === true
+    )
   ) {
     const isMissingOfficialExternalMemorySlot =
       memorySlot === "memory-lancedb" &&

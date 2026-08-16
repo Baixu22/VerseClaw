@@ -43,6 +43,7 @@ export type AgentRuntimeFailoverReason =
   | "timeout"
   | "model_not_found"
   | "session_expired"
+  | "refusal"
   | "empty_response"
   | "no_error_details"
   | "unclassified"

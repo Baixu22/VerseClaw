@@ -82,6 +82,10 @@ import { createModelExecAutoReviewer } from "./exec-auto-reviewer.js";
 import type { AgentToolResult } from "./runtime/index.js";
 import { EXEC_TOOL_DISPLAY_SUMMARY } from "./tool-description-presets.js";
 import { type AgentToolWithMeta, failedTextResult, textResult } from "./tools/common.js";
+import {
+  resolveVerseShellCommandPlan,
+  type VerseShellCommandPlan,
+} from "./verseshell/command-profiles.js";
 
 export type { BashSandboxConfig } from "./bash-tools.shared.js";
 export type {
@@ -1504,6 +1508,7 @@ export function createExecTool(
         warnings.push(approvalWarningText);
       }
       let execCommandOverride: string | undefined;
+      let executionPlan: import("./verseshell/command-profiles.js").VerseShellCommandPlan | undefined;
       const backgroundRequested = params.background === true;
       const yieldRequested = typeof params.yieldMs === "number";
       if (!allowBackground && (backgroundRequested || yieldRequested)) {
@@ -1800,6 +1805,19 @@ export function createExecTool(
         throw new Error("exec internal error: local execution requires a resolved workdir");
       }
 
+      // Bind the command plan before an approval wait. The governed VerseShell
+      // route receives this exact plan and never reparses the display string.
+      const preResolvedVerseShellPlan: VerseShellCommandPlan | undefined =
+        host === "verseshell"
+          ? resolveVerseShellCommandPlan({
+              command: params.command,
+              cwd: workdir,
+              env,
+              platform: process.platform,
+              allowExplicitShell: true,
+            })
+          : undefined;
+
       if ((host === "gateway" || host === "verseshell") && !bypassApprovals) {
         const gatewayResult = await processGatewayAllowlist({
           executionHost: host,
@@ -1807,6 +1825,7 @@ export function createExecTool(
           command: params.command,
           workdir,
           env,
+          executionPlan: preResolvedVerseShellPlan,
           pathPrepend: defaultPathPrepend,
           requestedEnv,
           pty: params.pty === true && !sandbox,
@@ -1848,6 +1867,7 @@ export function createExecTool(
           return gatewayResult.deniedResult;
         }
         execCommandOverride = gatewayResult.execCommandOverride;
+        executionPlan = gatewayResult.executionPlan ?? preResolvedVerseShellPlan;
         if (gatewayResult.allowWithoutEnforcedCommand) {
           execCommandOverride = undefined;
         }
@@ -1868,6 +1888,7 @@ export function createExecTool(
       const run = await runExecProcess({
         command: params.command,
         execCommand: execCommandOverride,
+        executionPlan: executionPlan ?? preResolvedVerseShellPlan,
         execHost: host,
         hostPolicyApproved,
         config: defaults?.config,

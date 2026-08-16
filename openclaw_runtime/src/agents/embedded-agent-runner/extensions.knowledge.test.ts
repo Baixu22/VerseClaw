@@ -52,6 +52,14 @@ function baseFactoryParams(
   };
 }
 
+function sinkBlockWrites(
+  sink: ContextBlockSink,
+): Array<{ block: ContextBlock }> {
+  return (sink as ReturnType<typeof vi.fn>).mock.calls.flatMap(
+    ([writes]) => writes as Array<{ block: ContextBlock }>,
+  );
+}
+
 describe("DCS Stage 4 knowledge extension wiring", () => {
   it("compass flag on: registers the shared context projection factory", () => {
     const compassCfg: OpenClawConfig = {
@@ -91,6 +99,78 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
     );
 
     expect(factoriesWithRoleMemory.length).toBe(factoriesWithoutRoleMemory.length + 1);
+  });
+
+  it("role-memory projection keeps an existing memory candidate in the same pass", async () => {
+    const turnId = "extension-role-memory-preserves-provider";
+    const roleMemoryCfg: OpenClawConfig = {
+      runtime: { contextBlock: { "role-memory": { enabled: true } } },
+    } as OpenClawConfig;
+    const roleBlock: ContextBlock = {
+      block_id: "knowledge:role-memory:agent:test:worker",
+      block_type: "knowledge",
+      source_system: "role-memory",
+      session_id: "agent:test:subagent:worker",
+      presence: { always_on: false, background: true },
+      entities: [],
+      valid_at: new Date("2026-07-28T00:00:00.000Z"),
+      mutability: "system_managed",
+      summary: "Role memory",
+      full_content: "role provider context",
+      compression_depth: 0,
+      entity_extraction_status: "empty",
+    };
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async (params: { block_types?: string[]; source_systems?: string[] }) =>
+        params.block_types?.includes("knowledge") && params.source_systems?.includes("role-memory")
+          ? [roleBlock]
+          : [],
+      ),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
+    collectContextOrchestratorCandidate(turnId, {
+      authorityObjectId: "memory-provider-runtime",
+      authorityVersion: "v1",
+      sourceId: "memory-inject-pilot:runtime-memory",
+      channel: "memory_pilot",
+      target: "system_prompt",
+      text: "runtime memory candidate",
+    });
+
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories({
+      ...baseFactoryParams(roleMemoryCfg, sink, store),
+      sessionKey: "agent:test:subagent:worker",
+      injectionTurnId: turnId,
+    })) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+
+    try {
+      for (const handler of agent.handlers.before_agent_start ?? []) {
+        await handler({ type: "before_agent_start", systemPrompt: "base" }, {});
+      }
+      const result = (await agent.handlers.context?.[0]?.(
+        { type: "context", messages: [{ role: "user", content: "next" }] },
+        {},
+      )) as { messages?: Array<{ content?: unknown }> };
+      expect(getContextOrchestratorCollection(turnId)?.lineage).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ sourceId: "memory-inject-pilot:runtime-memory", charsApplied: expect.any(Number) }),
+          expect.objectContaining({ sourceId: "context-block:role-memory:knowledge", charsApplied: expect.any(Number) }),
+        ]),
+      );
+      expect(result.messages?.some((message) => message.content === "## Knowledge\nrole provider context")).toBe(true);
+      const roleWrite = sinkBlockWrites(sink).find(
+        (write) => write.block.source_system === "role-memory",
+      );
+      expect(roleWrite?.block.full_content).toBeTruthy();
+      expect(roleWrite?.block.session_id).toBe("agent:test:subagent:worker");
+    } finally {
+      endContextOrchestratorTurn(turnId);
+      endTurnInjectionBudget(turnId);
+    }
   });
 
   it("passes compass projection and injectionTurnId into the shared ledger", async () => {
@@ -150,6 +230,36 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
     } finally {
       endTurnInjectionBudget(turnId);
     }
+  });
+
+  it("compass flag on + sink: production inputs write a non-empty compass knowledge Block", async () => {
+    const compassCfg: OpenClawConfig = {
+      runtime: { contextBlock: { compass: { enabled: true } } },
+    } as OpenClawConfig;
+    const sink: ContextBlockSink = vi.fn(async () => [{ accepted: true }]);
+    const store: Pick<BlockStoreApi, "query" | "upsert"> = {
+      query: vi.fn(async () => []),
+      upsert: vi.fn(async () => ({ accepted: true })),
+    };
+    const agent = createAgentRecorder();
+    for (const factory of buildEmbeddedExtensionFactories({
+      ...baseFactoryParams(compassCfg, sink, store),
+      objective: "build the production bridge",
+    })) {
+      void factory(agent as unknown as ExtensionAPI);
+    }
+
+    await agent.handlers.context?.[0]?.(
+      { type: "context", messages: [{ role: "user", content: "next" }] },
+      {},
+    );
+
+    const compassWrite = sinkBlockWrites(sink).find(
+      (write) => write.block.source_system === "compass",
+    );
+    expect(compassWrite).toBeDefined();
+    expect(compassWrite?.block.full_content).toBeTruthy();
+    expect(compassWrite?.block.summary).toContain("context_search");
   });
 
   it("compass flag on + sink: no before_agent_start handler writes a knowledge Block (assembler owns production)", async () => {
@@ -353,7 +463,9 @@ describe("DCS Stage 4 knowledge extension wiring", () => {
       expect(projectedSystemPrompt).toBe(
         "base\n\ncvk addition\n\nvtoken addition\n\nmemory addition",
       );
-      expect(sink).toHaveBeenCalledTimes(1);
+      // Tool-registry and compass are both real producers when their flags and
+      // inputs are present; each writes through the shared sink once.
+      expect(sink).toHaveBeenCalledTimes(2);
       expect(getContextOrchestratorCollection(turnId)?.diagnostics).toMatchObject({
         finalized: true,
         collected: 7,

@@ -1,0 +1,65 @@
+{
+  "applied_at": "2026-08-14T11:52:27.611909Z",
+  "base_graph_hash": "4458328d0f09a90a853111c588d267b797ae8e966ae82f9e3d0edd65b0cb8ca1",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/verseshell-p1-mcp-compatibility.md",
+          "harness/specs/rules/verseshell-mcp-compatibility-boundary.md",
+          "resources/verseshell-mcp/package.json",
+          "resources/verseshell-mcp/src/index.js",
+          "resources/verseshell-mcp/src/identity.js",
+          "resources/verseshell-mcp/src/policy.js",
+          "resources/verseshell-mcp/test/policy.test.mjs",
+          "resources/verseshell-mcp/test/start-smoke.test.mjs",
+          "pnpm-workspace.yaml",
+          "pnpm-lock.yaml",
+          "docs/dev/verseshell-foundation/P1-MCP-COMPATIBILITY-EVIDENCE-2026-08-14.md",
+          "pnpm run verseshell:mcp:install: PASS",
+          "pnpm run verseshell:mcp:test: PASS (8/8)",
+          "pnpm verseshell:test: PASS (bundle 13/13 + runtime-bundle 11/11 + OpenClaw 64/64 + MCP 8/8)",
+          "pnpm run typecheck:node: PASS",
+          "pnpm run comms:replay + pnpm run comms:compare: PASS",
+          "pnpm harness context + pnpm harness validate --no-diff: PASS"
+        ],
+        "next_action": "??? TF-0064 / VS-P2-01?????? facade scoped Harness context????? default-off?????? provider canary?? rollout?",
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "VS-P1-03 MCP ?????????package ?? workspace ?? frozen lockfile ?? SDK?product profile ?? deny?cap all?* ??? capability ??????eval ? shell-string ?? development profile ???shell ????? explicit argv ??? shell.exec capability boundary?package/runtime/protocol/catalog identity ? tracked metadata ??????8/8 policy/start smoke?VerseShell ????? comms/typecheck ?????? evidence ??? canary?GA ??????"
+      },
+      "id": "TF-0063"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "?????? verseshell-p2-readonly-facade scoped Harness task spec???? read_file?search_content?result_query ??? facade/adapter ???????? TF-0065???? canary?",
+        "progress": 0,
+        "status": "ready",
+        "summary": "VS-P2-01 ?? TF-0063 closeout ???????????? file/search/result facade??? workspace broker?revision-aware cache?bounded observation ??????? facade?"
+      },
+      "id": "TF-0064"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "TF-0063 ??????? TF-0064 / VS-P2-01????????????? TF-0065?P3 ???provider canary ??? rollout?",
+        "summary": "VerseShell P0?P1-01?P1-02?P1-03 ?? evidence ????????????????? VS-P2-01 ?? facade??? rollout/product locks ?????"
+      },
+      "id": "TF-0056"
+    }
+  ],
+  "created_at": "2026-08-14T11:25:34.162096Z",
+  "proposal_id": "TFP-verseshell-p1-03-closeout-20260814",
+  "rationale": "VS-P1-03 ????? MCP compatibility adapter ???workspace/frozen SDK lockfile?product deny-by-default?cap all/unknown fail-closed?development-only eval/shell?explicit argv?package/runtime/protocol/catalog identity???? JSON-RPC startup smoke ?? scoped evidence?????? facade????native fallback ? rollout locks?",
+  "session_id": "session-2026-08-14-verseshell-p1-03-closeout",
+  "status": "applied"
+}

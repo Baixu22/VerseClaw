@@ -3802,7 +3802,10 @@ export async function runEmbeddedAgent(
               completion: {
                 ...(stopReason ? { stopReason } : {}),
                 ...(stopReason ? { finishReason: stopReason } : {}),
-                ...(stopReason?.toLowerCase().includes("refusal") ? { refusal: true } : {}),
+                ...(stopReason?.toLowerCase().includes("refusal") ||
+                sessionLastAssistant?.errorMessage?.toLowerCase().includes("refusal")
+                  ? { refusal: true }
+                  : {}),
               },
               contextManagement:
                 autoCompactionCount > 0 ? { lastTurnCompactions: autoCompactionCount } : undefined,

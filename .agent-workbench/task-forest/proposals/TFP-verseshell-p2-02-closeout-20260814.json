@@ -1,0 +1,68 @@
+{
+  "applied_at": "2026-08-14T15:19:17.827331Z",
+  "base_graph_hash": "3af56e22cccb04a7915d3fe99e3821040962e78a56bd82325de882bf54cda829",
+  "base_summary": {
+    "edge_count": 126,
+    "node_count": 69,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/verseshell-p2-command-profiles.md",
+          "harness/specs/rules/verseshell-command-profile-boundary.md",
+          "openclaw_runtime/src/agents/verseshell/command-profiles.ts",
+          "openclaw_runtime/src/agents/verseshell/command-profiles.test.ts",
+          "openclaw_runtime/src/agents/verseshell/shell-command.ts",
+          "openclaw_runtime/src/agents/verseshell/shell-command.test.ts",
+          "openclaw_runtime/src/agents/verseshell/governed-exec.ts",
+          "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec-host-gateway.ts",
+          "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+          "openclaw_runtime/test/vitest/vitest.verseshell.config.ts",
+          "tests/unit/verseshell-command-profiles.test.ts",
+          "docs/dev/verseshell-foundation/P2-COMMAND-PROFILES-EVIDENCE-2026-08-14.md",
+          "pnpm verseshell:test: bundle 13/13 + runtime-bundle 11/11 + OpenClaw VerseShell 15 files / 141 tests + MCP 11/11 PASS",
+          "pnpm exec vitest run tests/unit/verseshell-command-profiles.test.ts: 6/6 PASS",
+          "pnpm run typecheck:node: PASS",
+          "pnpm run comms:replay + pnpm run comms:compare: PASS (0 loss/duplicate/reorder, deltas 0.00%)",
+          "scoped eslint over changed TS files: 0 errors / 0 warnings",
+          "pnpm harness context + validate --no-diff: PASS; ordinary diff-aware residual recorded",
+          "git diff --check + untracked whitespace scan: PASS"
+        ],
+        "next_action": "closeout 已应用；仅解锁并启动 TF-0066 / VS-P2-03 diagnostics，先运行其 scoped Harness context；不得并行启动 P3、P5 或 provider canary。",
+        "progress": 100,
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "status": "done",
+        "summary": "VS-P2-02 argv-only command profiles 已完成：普通单段命令在审批前生成 host-owned immutable execution plan 并以 direct argv 进入 governed process；test/build/lint/git/generic profile 由 host 从审批前 analysis 推导（含 pnpm/npm/corepack exec/dlx runner 透传），模型不能选择 profile/interpreter/policy；pipeline/chain/redirect/heredoc/inline evaluation/显式解释器保持独立 terminal-shell 边界；Windows .exe/.com direct argv，.cmd/.bat 保留 resolved script identity 与经审计的 ComSpec/SystemRoot cmd.exe interpreter，governed-process 边界审计身份漂移 fail-closed；cwd/env/argv/timeout/output 全部有界且失败不切换 native/MCP/legacy fallback。工程门禁全绿（verseshell:test 15 files/141 tests、root contract 6/6、typecheck:node、comms replay/compare、scoped ESLint、git diff --check、Harness --no-diff validate），仍是 engineering-only evidence。"
+      },
+      "id": "TF-0065"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "运行 harness context --spec harness/specs/tasks/verseshell-p2-trace-diagnostics.md（若 spec 尚未创建则先按其任务边界创建）；仅在 TF-0065 closeout 应用后开始。",
+        "status": "ready",
+        "summary": "VS-P2-03 trace correlation / failure taxonomy 已由 P2-02 closeout 解锁为唯一下一工作包；仍不处理写入或 canary。"
+      },
+      "id": "TF-0066"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "TF-0065 closeout 已应用；仅启动 TF-0066 / VS-P2-03 diagnostics，保持严格串行，不得并行启动 write、provider canary 或 rollout。",
+        "summary": "VerseShell foundation 已完成 P0/P1 工程门禁、P2-01 只读 facade 与 P2-02 argv-only command profiles evidence；P2-02 closeout 后仅解锁 P2-03，所有 rollout/product locks 继续关闭。"
+      },
+      "id": "TF-0056"
+    }
+  ],
+  "created_at": "2026-08-14T15:19:06.942837Z",
+  "proposal_id": "TFP-verseshell-p2-02-closeout-20260814",
+  "rationale": "VS-P2-02 argv-only command profiles 已完成实现、focused/regression 测试和 scoped evidence：普通单段 coding 命令在审批前收敛为 host-owned 不可变 execution plan 并以 direct argv 进入 governed process；显式 shell payload 保持独立 terminal-shell 边界；profile 由 host 从 analysis 推导（含 exec/dlx runner 透传），模型不能选择 profile/interpreter/PATH/PATHEXT/policy/approval token。Windows .exe/.com 保持 direct argv，.cmd/.bat 保留 resolved script identity 和经审计的 ComSpec/SystemRoot cmd.exe interpreter，审批后不重解析 display command，身份漂移在 process 边界 fail-closed。cwd/env/argv/timeout/output 均为有界 metadata，失败不切换 native/MCP/legacy fallback。pnpm verseshell:test PASS（bundle 13/13、runtime-bundle 11/11、OpenClaw VerseShell 15 files / 141 tests、MCP 11/11），root contract 6/6，typecheck:node、comms replay/compare、scoped ESLint、git diff --check、Harness --no-diff validate 全 PASS；普通 diff-aware validate 受共享工作树无关 ownership 与 harness 子包依赖缺失阻断，已如实记录。应用本提案只关闭 TF-0065 并解锁唯一下一节点 TF-0066，不改变 default-off、liveReady、productApproved、defaultOn 或 canary 语义。",
+  "session_id": "session-2026-08-14-verseshell-p2-02-closeout",
+  "status": "applied"
+}

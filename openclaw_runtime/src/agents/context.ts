@@ -44,6 +44,8 @@ const ANTHROPIC_GA_1M_MODEL_PREFIXES = [
   "claude-opus-4.7",
   "claude-sonnet-4-6",
   "claude-sonnet-4.6",
+  "claude-sonnet-5",
+  "claude-fable-5",
 ] as const;
 export const ANTHROPIC_CONTEXT_1M_TOKENS = 1_048_576;
 const CONFIG_LOAD_RETRY_POLICY: BackoffPolicy = {

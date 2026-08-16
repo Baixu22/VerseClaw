@@ -4,7 +4,11 @@ import { EventEmitter } from "node:events";
 import path from "node:path";
 import { PassThrough, Writable } from "node:stream";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AciProcessExitedError, AciProtocolError, AciTimeoutError } from "./aci-client.js";
+import {
+  AciProcessExitedError,
+  AciProtocolError,
+  AciTimeoutError,
+} from "./aci-client.js";
 import {
   type AciChildProcess,
   type AciSpawn,
@@ -545,5 +549,93 @@ describe("VerseShellProcessManager", () => {
     await h.manager.shutdownAll();
     expect(h.manager.list()).toEqual([]);
     expect(h.children[0].exitCode).toBe(0);
+  });
+
+  it("binds timeout errors to host-owned request and trace metadata", async () => {
+    const config = baseConfig();
+    const h = harness((request, child) => {
+      if (request.op === "runtime.handshake") {
+        child.respond(request, { data: handshakeData(config) });
+      }
+    });
+    managers.push(h.manager);
+    const client = await h.manager.getClient(config);
+
+    await expect(
+      client.execute("file.view", { path: "slow" }, { timeoutMs: 20, traceId: "trace-p1" }),
+    ).rejects.toMatchObject({
+      code: "E_ACI_TIMEOUT",
+      metadata: {
+        requestId: expect.stringMatching(/^aci-/u),
+        traceId: "trace-p1",
+        processKey: client.processKey,
+        lifecycleStage: "ready",
+      },
+    });
+  });
+
+  it("retries one explicitly read-only request after a transport restart", async () => {
+    const config = baseConfig();
+    let firstChild: FakeChild | undefined;
+    const h = harness((request, child) => {
+      if (request.op === "runtime.handshake") {
+        firstChild ??= child;
+        child.respond(request, { data: handshakeData(config) });
+      } else if (firstChild === child) {
+        child.crash(9);
+      } else {
+        child.respond(request);
+      }
+    });
+    managers.push(h.manager);
+    const client = await h.manager.getClient(config);
+
+    await expect(
+      client.execute("file.view", { path: "readonly" }, {
+        timeoutMs: 1_000,
+        traceId: "trace-retry",
+        retryable: true,
+      }),
+    ).resolves.toMatchObject({ op: "file.view", ok: true });
+    expect(h.children.length).toBeGreaterThanOrEqual(2);
+    expect(h.children[0].requests.filter((request) => request.op === "file.view")).toHaveLength(1);
+    expect(h.children[1].requests.filter((request) => request.op === "file.view")).toHaveLength(1);
+  });
+
+  it("rejects retry opt-in for effectful and unknown operations", async () => {
+    const h = harness();
+    managers.push(h.manager);
+    const config = baseConfig();
+    const client = await h.manager.getClient(config);
+
+    await expect(
+      client.execute("exec.run", {}, { retryable: true, effectful: true }),
+    ).rejects.toMatchObject({ code: "E_ACI_RETRY_FORBIDDEN" });
+    await expect(
+      client.execute("custom.unknown", {}, { retryable: true }),
+    ).rejects.toMatchObject({ code: "E_ACI_RETRY_FORBIDDEN" });
+  });
+
+  it("exposes handshaking health and fails closed on the operator kill switch", async () => {
+    const config = baseConfig();
+    let handshakeChild: FakeChild | undefined;
+    let handshakeRequest: Request | undefined;
+    const h = harness((request, _child) => {
+      if (request.op !== "runtime.handshake") return;
+      handshakeRequest = request;
+      handshakeChild = _child;
+      // Keep readiness pending long enough to inspect the handshaking state.
+    });
+    managers.push(h.manager);
+    const pendingClient = h.manager.getClient(config);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(h.manager.list()[0]?.state).toBe("handshaking");
+
+    handshakeChild!.respond(handshakeRequest!, { data: handshakeData(config) });
+    const client = await pendingClient;
+    expect(client.processKey).toBe(h.manager.list()[0]?.key);
+    await h.manager.tripKillSwitch("operator-test");
+    await expect(h.manager.getClient(config)).rejects.toMatchObject({ code: "E_ACI_KILL_SWITCH" });
+    expect(h.manager.list()[0]?.lastErrorCode).toBe("E_ACI_KILL_SWITCH");
   });
 });
