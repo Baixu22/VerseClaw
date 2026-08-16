@@ -361,7 +361,7 @@
     "ready": true,
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
-    "status": "proposed",
+    "status": "ready",
     "success_metrics": [],
     "title": "WV-B2-02 现有 store 并轨"
   },

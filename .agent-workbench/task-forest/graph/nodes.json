@@ -4048,10 +4048,10 @@
       "新增或迁移 store/fixture 单测，覆盖 mock、replace/prepend/append 等价、缺少稳定 ID 不猜测、实时不再通过 150ms 拉取刷新来重放 lifecycle"
     ],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "ready",
     "success_metrics": [],
     "summary": "",
     "title": "WV-B2-02 现有 store 并轨",
-    "updated_at": "2026-08-15T04:35:33.872101Z"
+    "updated_at": "2026-08-15T14:25:31.922297Z"
   }
 }
