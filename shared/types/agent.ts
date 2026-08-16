@@ -1,5 +1,16 @@
 export type AgentReasoningEffort = 'auto' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
+/** Runtime context/output density preference linked to AgentReasoningEffort. */
+export type RuntimeIntensityPreference = 'baseline' | 'minimal' | 'low' | 'high' | 'xhigh';
+
+export const RUNTIME_INTENSITY_PREFERENCES: readonly RuntimeIntensityPreference[] = [
+  'baseline',
+  'minimal',
+  'low',
+  'high',
+  'xhigh',
+];
+
 export const AGENT_AVATAR_STYLES = [
   'lorelei-neutral',
   'notionists-neutral',

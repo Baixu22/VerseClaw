@@ -1,6 +1,7 @@
 import type { ChatRuntimeEvent } from '../chat-runtime-events';
 import type { ChatKnowledgeReference } from '../host-api/contract';
 import type { KnowledgeInvocationMode, WorkspaceKnowledgeScope } from '../types/workspace';
+import type { AgentReasoningEffort, RuntimeIntensityPreference } from '../types/agent';
 import type { TaskLedgerSnapshot } from '../types/task-ledger';
 import type { SessionArchiveEntry } from '../types/workspace';
 
@@ -153,6 +154,10 @@ export type SendOptions = {
    * persisted to Agent.modelRef.
    */
   modelRefOverride?: string | null;
+  /** Per-send reasoning effort; overrides the agent default for this turn only. */
+  reasoningEffort?: AgentReasoningEffort;
+  /** Per-send linked runtime intensity; when omitted the runtime derives it from reasoning effort. */
+  runtimeIntensity?: RuntimeIntensityPreference;
 };
 
 /**

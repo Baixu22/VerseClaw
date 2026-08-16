@@ -46,6 +46,8 @@ type ChatSendWithMediaPayload = {
   activeTaskNodeId?: unknown;
   /** Area 2 §3.2: turn-scoped model override. */
   modelRef?: unknown;
+  reasoningEffort?: unknown;
+  runtimeIntensity?: unknown;
 };
 
 type MediaPayload = {
@@ -338,6 +340,17 @@ function applyToolUiResponseContract(message: string): string {
   return `${block}\n\n${message}`;
 }
 
+const REASONING_EFFORT_VALUES = new Set(['auto', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max']);
+const RUNTIME_INTENSITY_VALUES = new Set(['baseline', 'minimal', 'low', 'high', 'xhigh']);
+
+function normalizeReasoningEffort(value: unknown): string | undefined {
+  return typeof value === 'string' && REASONING_EFFORT_VALUES.has(value) ? value : undefined;
+}
+
+function normalizeRuntimeIntensity(value: unknown): string | undefined {
+  return typeof value === 'string' && RUNTIME_INTENSITY_VALUES.has(value) ? value : undefined;
+}
+
 export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManager }): CompleteHostServiceRegistry['chat'] {
   return {
     sendWithMedia: async (payload) => {
@@ -346,6 +359,20 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
       const idempotencyKey = typeof body.idempotencyKey === 'string' ? body.idempotencyKey : '';
       if (!sessionKey || !idempotencyKey) {
         return { success: false, error: 'Invalid chat send payload' };
+      }
+      const requestedReasoningEffort =
+        body.reasoningEffort === undefined
+          ? undefined
+          : normalizeReasoningEffort(body.reasoningEffort);
+      const requestedRuntimeIntensity =
+        body.runtimeIntensity === undefined
+          ? undefined
+          : normalizeRuntimeIntensity(body.runtimeIntensity);
+      if (
+        (body.reasoningEffort !== undefined && requestedReasoningEffort === undefined) ||
+        (body.runtimeIntensity !== undefined && requestedRuntimeIntensity === undefined)
+      ) {
+        return { success: false, error: 'Invalid reasoning effort or runtime intensity' };
       }
 
       try {
@@ -468,6 +495,12 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         // Empty/null means "no turn override" — omit so resolution falls through.
         if (typeof body.modelRef === 'string' && body.modelRef.trim()) {
           rpcParams.model = body.modelRef.trim();
+        }
+        if (requestedReasoningEffort) {
+          rpcParams.reasoningEffort = requestedReasoningEffort;
+        }
+        if (requestedRuntimeIntensity) {
+          rpcParams.runtimeIntensity = requestedRuntimeIntensity;
         }
         if (imageAttachments.length > 0) {
           rpcParams.attachments = imageAttachments;

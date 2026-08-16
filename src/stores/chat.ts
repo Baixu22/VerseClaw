@@ -4108,6 +4108,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         knowledgeReferences: opts?.knowledgeReferences,
         activeTaskNodeId: opts?.activeTaskNodeId,
         modelRefOverride: opts?.modelRefOverride,
+        reasoningEffort: opts?.reasoningEffort,
+        runtimeIntensity: opts?.runtimeIntensity,
         // Queued sends are ordinary chat messages, never long-task interventions.
       },
     };
@@ -4145,6 +4147,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const knowledgeReferences = opts?.knowledgeReferences;
     const activeTaskNodeId = opts?.activeTaskNodeId;
     const modelRefOverride = opts?.modelRefOverride ?? null;
+    const reasoningEffort = opts?.reasoningEffort;
+    const runtimeIntensity = opts?.runtimeIntensity;
     const trimmed = text.trim();
     if (!trimmed && (!attachments || attachments.length === 0)) return;
 
@@ -4364,6 +4368,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           ...(inputMode ? { inputMode } : {}),
           ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
           ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
+          ...(reasoningEffort ? { reasoningEffort } : {}),
+          ...(runtimeIntensity ? { runtimeIntensity } : {}),
           media: attachments.map((a) => ({
             filePath: a.stagedPath,
             mimeType: a.mimeType,
@@ -4383,6 +4389,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           ...(inputMode ? { inputMode } : {}),
           ...(activeTaskNodeId ? { activeTaskNodeId } : {}),
           ...(modelRefOverride ? { modelRef: modelRefOverride } : {}),
+          ...(reasoningEffort ? { reasoningEffort } : {}),
+          ...(runtimeIntensity ? { runtimeIntensity } : {}),
         });
       }
 

@@ -197,7 +197,17 @@ export async function prepareCliRunContext(
     });
     authCredential = authStore.profiles[effectiveAuthProfileId];
   }
-  const extraSystemPrompt = params.extraSystemPrompt?.trim() ?? "";
+  const runtimeIntensityPolicy = params.runtimeIntensityPolicy;
+  const runtimeIntensityPromptLines =
+    runtimeIntensityPolicy && runtimeIntensityPolicy.systemPromptLines.length > 0
+      ? ["## Runtime Intensity", ...runtimeIntensityPolicy.systemPromptLines]
+      : [];
+  const extraSystemPrompt = [
+    params.extraSystemPrompt?.trim(),
+    ...runtimeIntensityPromptLines,
+  ]
+    .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
+    .join("\n\n");
   // Use the static portion (excluding per-message inbound metadata) for session reuse hashing.
   // Per-message metadata (timestamps, message IDs) changes every turn and must not trigger session resets.
   const extraSystemPromptHash =
@@ -450,11 +460,19 @@ export async function prepareCliRunContext(
     cwd,
     moduleUrl: import.meta.url,
   });
+  const skillsTransientLimits =
+    runtimeIntensityPolicy && runtimeIntensityPolicy.skills.mode !== "preserve"
+      ? {
+          maxSkillsInPrompt: runtimeIntensityPolicy.skills.maxSkillsInPrompt,
+          preferCompact: runtimeIntensityPolicy.skills.preferCompact,
+        }
+      : undefined;
   const skillsPrompt = resolveSkillsPromptForRun({
     skillsSnapshot: params.skillsSnapshot,
     workspaceDir,
     config: params.config,
     agentId: sessionAgentId,
+    transientLimits: skillsTransientLimits,
   });
   const systemPromptSkillsPrompt = claudeSkillsPlugin.args.length > 0 ? "" : skillsPrompt;
   const builtSystemPrompt = buildCliAgentSystemPrompt({
@@ -474,6 +492,9 @@ export async function prepareCliRunContext(
     contextFiles,
     modelDisplay,
     agentId: sessionAgentId,
+    ...(runtimeIntensityPolicy && runtimeIntensityPolicy.promptMode !== "preserve"
+      ? { promptMode: runtimeIntensityPolicy.promptMode }
+      : {}),
   });
   const transformedSystemPrompt =
     backendResolved.transformSystemPrompt?.({
@@ -613,6 +634,18 @@ export async function prepareCliRunContext(
       promptChars: preparedPrompt.length,
       runtimeContextChars: 0,
     },
+    ...(runtimeIntensityPolicy
+      ? {
+          runtimeIntensity: {
+            policy: runtimeIntensityPolicy,
+            promptMode:
+              runtimeIntensityPolicy.promptMode === "preserve"
+                ? "full"
+                : runtimeIntensityPolicy.promptMode,
+            policyAdherence: "prompt-only",
+          },
+        }
+      : {}),
   });
   const contextEngineConfig = params.config ?? getRuntimeConfig();
   try {
