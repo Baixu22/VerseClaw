@@ -941,6 +941,38 @@ describe('hostApi facade', () => {
     }));
   });
 
+  it('calls observability trajectorySessions and trajectoryHistory through hostInvoke', async () => {
+    hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { sessions: [] } });
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req',
+      ok: true,
+      data: {
+        sessionKey: 'agent:main:session',
+        schemaVersion: 2,
+        fromSeq: 0,
+        events: [],
+        asOfSeq: 0,
+        hasMore: false,
+        legacyFallback: false,
+        rejected: 0,
+      },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await hostApi.observability.trajectorySessions();
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'observability',
+      action: 'trajectorySessions',
+    }));
+
+    await hostApi.observability.trajectoryHistory({ sessionKey: 'agent:main:session', fromSeq: 0, limit: 100 });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'observability',
+      action: 'trajectoryHistory',
+      payload: { sessionKey: 'agent:main:session', fromSeq: 0, limit: 100 },
+    }));
+  });
+
   it('calls observability reportTrace through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({
       id: 'req',

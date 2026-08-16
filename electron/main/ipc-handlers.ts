@@ -95,7 +95,7 @@ import { createTopicsApi } from '../services/topics-api';
 import { createTaskLedgerApi } from '../services/task-ledger-api';
 import { createRemoteTasksApi } from '../services/remote-tasks-api';
 import { createClawGraphApi } from '../services/clawgraph-api';
-import { createObservabilityApi, setRuntimeTraceFetcher } from '../services/observability-api';
+import { createObservabilityApi } from '../services/observability-api';
 import { createSystemApi } from '../services/system-api';
 import { createResourceTrackerApi } from '../services/resource-tracker-api';
 import { HOST_EVENT_CHANNELS } from '@shared/host-events/contract';
@@ -249,28 +249,16 @@ function registerTypedHostHandlers(
     remoteTasks: createRemoteTasksApi({ gatewayManager }),
     clawGraph: createClawGraphApi({ gatewayManager }),
     observability: createObservabilityApi({
+      gatewayManager,
       onRuntimeEvent: (event) => mainWindow.webContents.send('observability:runtime-event', event),
+      onTrajectoryEvent: (event) => (
+        mainWindow.webContents.send(HOST_EVENT_CHANNELS.observability.trajectoryEvent, event)
+      ),
     }).observability,
     system: createSystemApi(),
     resourceTracker: createResourceTrackerApi(),
     memory: createMemoryApi({ gatewayManager }),
   });
-    // Bridge runtime-process traces into the electron observability store.
-  // The gateway's `observability.traces` RPC returns role-first traces + scorecards;
-  // we merge them so the Observability UI page sees both sources.
-  setRuntimeTraceFetcher(async () => {
-    try {
-      const result = await gatewayManager.rpc('observability.traces', {});
-      const data = result as Record<string, unknown> | undefined;
-      return {
-        traces: Array.isArray(data?.traces) ? (data!.traces as Array<Record<string, unknown>>) : [],
-        scorecards: Array.isArray(data?.scorecards) ? (data!.scorecards as Array<Record<string, unknown>>) : [],
-      };
-    } catch {
-      return { traces: [], scorecards: [] };
-    }
-  });
-
   registerHostInvokeHandler(hostApiRegistry, {
     senderAuth: {
       allowedWebContentsIds: new Set([mainWindow.webContents.id]),

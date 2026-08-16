@@ -1,0 +1,145 @@
+{
+  "applied_at": "2026-08-15T02:58:13.456776Z",
+  "base_graph_hash": "f359faf54434c12ee021aaa606825e00b80d94c3a57efd14c84f642b3870e462",
+  "base_summary": {
+    "edge_count": 106,
+    "node_count": 60,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b0"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0060",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "429fd39f1 feat(trajectory): wire Electron trajectory supply",
+          "harness/specs/tasks/workflow-viz-b1-04-electron-trajectory-supply.md",
+          "tests/unit/observability-trajectory-projection.test.ts",
+          "clean detached worktree: C:/Users/27933/Desktop/clawx/ClawX-wv-b1-04-clean"
+        ],
+        "summary": "Electron Main 已在 429fd39f1 改为 readFrom 恢复加单连接实时订阅；v1 仅保留标记的兼容兜底，验证与 clean detached 复测已通过。"
+      },
+      "id": "TF-0060"
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b2-01",
+      "node": {
+        "acceptance_criteria": [
+          "replace 终态正确",
+          "只有 update 的窗口保持 pending，prepend 补 start 后等价于全量 replace",
+          "历史 prepend 加实时 append 与完整回放等价",
+          "prepend 不替换未变化 keyed node",
+          "animation-frame 每帧最多发布一次",
+          "renderer 视图目标只消费 node.data"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+          "validation_plan": [
+            "B2-01 Harness task spec 与 context",
+            "六项装配等价/节流单测",
+            "Node/Web 类型检查、BOM、ESLint 与 clean detached 复测"
+          ],
+          "why_not_enough": "它不迁移现有 store，也不提供用户界面，仍需 B2-02 和 B3 独立完成。",
+          "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
+        },
+        "assumptions": [
+          "B1-01 v2 schema 与 replay 契约保持稳定",
+          "B2-01 可先以 fixture 验证装配，不增加生产会话 producer"
+        ],
+        "confidence": 0.9,
+        "desired_outcomes": [
+          "单一轻量注册表定义 NodeDefinition 的 match/start/update 语义",
+          "replace、prepend、append 三种摄入路径得到一致的装配结果",
+          "多个视图目标仅消费 node.data 快照"
+        ],
+        "difficulty": "high",
+        "execution_hints": [
+          "先建立 Harness task spec 并运行 harness context",
+          "参考 docs/cookbook/adding-a-conversation-node.zh.md 与编排计划的六项单测",
+          "完成后为 B2-02 单独提案，不与本卡混合"
+        ],
+        "kind": "task",
+        "non_goals": [
+          "并轨 session-activity 或 observability store",
+          "改 Electron/Gateway、B1 事件契约、DCS、TF-0021 或 Runtime Authority",
+          "提前实施 B2-02、B3 或第三方图形库"
+        ],
+        "priority": 1,
+        "purpose": "将同一 v2 轨迹事件流确定性装配为可供多个 renderer 视图消费的增量节点快照。",
+        "requirements": [
+          "新增 src/lib/trajectory-assembler/ 或同级实现，不引入 Cordis 或第二事件真源",
+          "热路径每个新事件至多对每个 Definition 执行一次 match，保持 O(D)",
+          "支持 immediate 与 animation-frame publication",
+          "只消费 B1-01 v2 schema 的 fixture/事件，不改 B2-02 store、B3 展示或 TF-0021"
+        ],
+        "status": "ready",
+        "title": "WV-B2-01 装配引擎核心"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "B2-01 是 Workflow Viz 事实源到展示层之间的装配子任务。"
+      },
+      "from": "wv-b2-01",
+      "to": "TF-0056",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "装配器只建立在已完成的 B1-01 v2 schema/replay 契约上。"
+      },
+      "from": "wv-b2-01",
+      "to": "TF-0057",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "关闭已验证的 B1-04，并只开放 B2-01 的 fixture-first 装配核心；不提前迁移 store 或展示层。",
+        "confidence": 0.9,
+        "created_at": "2026-08-14T17:28:20.257863Z",
+        "id": "TFA-2a37bb3b9f",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。",
+          "validation_plan": [
+            "B2-01 Harness task spec 与 context",
+            "六项装配等价/节流单测",
+            "Node/Web 类型检查、BOM、ESLint 与 clean detached 复测"
+          ],
+          "why_not_enough": "它不迁移现有 store，也不提供用户界面，仍需 B2-02 和 B3 独立完成。",
+          "why_this_task": "B2-01 将 B1 的统一事件事实源转换为确定性 renderer 装配结果，是 B2-02 与 B3 的共同前置。"
+        },
+        "reason": "B2-01 是 B2-02 和 B3 的共同依赖，先完成它能避免再次引入平行 reducer 或 UI 侧事件真源。",
+        "rejected_options": [
+          "直接实现 B2-02 并轨 store",
+          "并行启动 B3 展示层"
+        ],
+        "related_task_ids": [
+          "TF-0056",
+          "TF-0061"
+        ],
+        "selected_option": "按编排计划的最小 B2-01 卡推进",
+        "user_goal": "继续完成 Workflow Viz 的可恢复投影与展示链路，同时保持独立工作流边界。"
+      }
+    }
+  ],
+  "created_at": "2026-08-14T17:28:20.251940Z",
+  "proposal_id": "TFP-workflow-viz-b1-04-close-b2-01-20260815",
+  "rationale": "B1-04 已在 429fd39f1 完成并通过 Harness scoped、22 项聚焦单测、类型检查、runtime 构建、comms、BOM 与 clean detached 复测。后续最小独立工作是 B2-01 装配引擎核心；B2-02 仍等待 B2-01，B3 仍不启动。",
+  "session_id": "workflow-viz-b1-04-close-and-b2-01-proposal-20260815",
+  "status": "applied"
+}

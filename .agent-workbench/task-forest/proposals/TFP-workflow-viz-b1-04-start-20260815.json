@@ -1,0 +1,21 @@
+{
+  "applied_at": "2026-08-14T16:55:58.438874Z",
+  "base_graph_hash": "7adf4c5d9a32ab0762ac0a7615889cf456db7466e145a56741c3bee888553a05",
+  "base_summary": {
+    "edge_count": 106,
+    "node_count": 60,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b0"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0060",
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-08-14T16:55:49.192695Z",
+  "proposal_id": "TFP-workflow-viz-b1-04-start-20260815",
+  "rationale": "用户已授权在当前独立 WV 分支推进 B1-04；实现和验证正在进行，因此将唯一 ready 的 WV-B1-04 标记为 in_progress。",
+  "session_id": "workflow-viz-b1-04-implementation-20260815",
+  "status": "applied"
+}

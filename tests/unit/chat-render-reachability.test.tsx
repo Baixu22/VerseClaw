@@ -199,10 +199,10 @@ describe('Run-log replay provenance badge', () => {
   });
 });
 
-/** Expand the turn summary — completed turns collapse their work details. */
+/** Expand the turn summary only when the current preference left it closed. */
 function expandTurnSummary() {
   const toggle = screen.queryByTestId('chat-turn-summary-toggle');
-  if (toggle) fireEvent.click(toggle);
+  if (toggle?.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
 }
 
 const WEATHER_INPUT = { location: 'Tokyo', temperature: 21, condition: 'sunny' };
@@ -807,7 +807,7 @@ describe('Turn summary contents badges', () => {
     approvalsMock.mockResolvedValue({ ok: true, approvals: [] });
   });
 
-  it('labels a collapsed turn with what it contains, and drops the labels once open', async () => {
+  it('shows completed contents by default, then labels them when manually collapsed', async () => {
     await seedChat({
       messages: [
         { role: 'user', content: 'do the thing' },
@@ -833,15 +833,15 @@ describe('Turn summary contents badges', () => {
 
     await waitFor(() => expect(screen.getAllByText('Done.').length).toBeGreaterThan(0));
 
-    // Collapsed by default: a completed turn with a visible reply.
-    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
-    expect(screen.getByTestId('chat-turn-summary-badge-plan')).toBeInTheDocument();
-
-    expandTurnSummary();
-
-    // Open: the contents themselves are the index, so the chips step aside.
+    // Completed run activity is visible by default.
     expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
     expect(screen.queryByTestId('chat-turn-summary-badges')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+
+    // Once manually collapsed, the badge row becomes the compact index.
+    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-turn-summary-badge-plan')).toBeInTheDocument();
   });
 
   it('marks a pending approval in the badge row', async () => {

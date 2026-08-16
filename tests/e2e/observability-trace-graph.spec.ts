@@ -330,6 +330,11 @@ test.describe('Observability trace graph workbench', () => {
           ],
           scorecards: [],
           alerts: ['1 trace contains an error'],
+          sourceHealth: {
+            runtime: { status: 'ok', reason: 'available' },
+            index: { status: 'ok', reason: 'available' },
+            trajectory: { status: 'ok', reason: 'available' },
+          },
           traces: [
             { ...traceIndexEntry },
             { ...compareTraceIndexEntry },
@@ -352,7 +357,7 @@ test.describe('Observability trace graph workbench', () => {
     await expect(page.getByTestId('observability-page')).toBeVisible();
     await expect(page.getByTestId('observability-primary-metrics')).toBeVisible();
     await expect(page.getByTestId('observability-secondary-metrics')).toHaveCount(0);
-    await page.getByTestId('observability-metrics-toggle').click();
+    await page.getByTestId('observability-metrics-toggle').dispatchEvent('click');
     await expect(page.getByTestId('observability-secondary-metrics')).toBeVisible();
 
     await page.getByTestId('observability-trace-row').first().click();
@@ -422,5 +427,45 @@ test.describe('Observability trace graph workbench', () => {
     await expect(page.getByTestId('observability-detail-panel')).toContainText('Command failed');
     await page.getByTestId('observability-detail-panel').getByRole('button', { name: /src\/App\.tsx/ }).click();
     await expect(page.getByTestId('observability-detail-panel')).toContainText('src/App.tsx');
+  });
+
+  test('shows each source health and diagnostic reason when no trace is available', async ({ electronApp, page }) => {
+    await installIpcMocks(electronApp, {
+      gatewayStatus: { running: true, ready: true },
+      hostApi: {
+        [stableStringify(['observability', 'dashboardSnapshot', null])]: {
+          generatedAt: startedAt + 5000,
+          cards: [{ id: 'traces', label: 'Traces', value: 0, tone: 'neutral' }],
+          scorecards: [],
+          alerts: [],
+          traces: [],
+          sourceHealth: {
+            runtime: { status: 'error', reason: 'failed', detail: 'Gateway trace RPC unavailable' },
+            index: { status: 'empty', reason: 'no-data' },
+            trajectory: { status: 'ok', reason: 'available' },
+          },
+        },
+        [stableStringify(['observability', 'queryTraces', null])]: {
+          generatedAt: startedAt + 5000,
+          items: [],
+          total: 0,
+          page: 1,
+          pageSize: 100,
+          facets: { status: [], agent: [], role: [], model: [], sourceStatus: [] },
+        },
+      },
+    });
+
+    await completeSetup(page);
+    await page.evaluate(() => {
+      window.location.hash = '/observability';
+    });
+
+    await expect(page.getByTestId('observability-source-health')).toBeVisible();
+    await expect(page.getByTestId('observability-source-health-runtime')).toContainText('Runtime trace feed');
+    await expect(page.getByTestId('observability-source-health-runtime')).toContainText('Unavailable');
+    await expect(page.getByTestId('observability-source-health-runtime')).toContainText('Gateway trace RPC unavailable');
+    await expect(page.getByTestId('observability-source-health-index')).toContainText('No data');
+    await expect(page.getByTestId('observability-source-health-trajectory')).toContainText('Available');
   });
 });

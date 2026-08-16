@@ -1,3 +1,53 @@
+## 当前交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
+
+**WV-B2-02A / TF-0062 已完成并单提交 `b58350a2f`（feat(trajectory): bridge raw v2 renderer supply）。** 提案 `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 与收卡提案 `TFP-workflow-viz-b2-02a-close-20260815` 均已经用户确认后应用；task-forest validate/export PASS；TF-0062=done(100%)，TF-0063（WV-B2-02 现有 store 并轨）保持 `proposed`。
+
+本卡落地（详见 `harness/specs/tasks/workflow-viz-b2-02a-renderer-v2-trajectory-supply.md`）：
+
+- `ObservabilityTrajectoryProjector` 并行保留**原始已验证** `TrajectoryEventV2` 行（cap 1000，`getV2Events`/`isLegacyFallback`，接受批次经 `onV2Events` 上报）；normalize 后的 trace 投影路径不变。
+- Host API 新增 `observability.trajectorySessions` / `observability.trajectoryHistory`（fromSeq/limit、`asOfSeq` 冷/热交接、确定性去重、保留态不覆盖时经 B1-03 `observability.readFrom` 冷恢复；跨边界前按 B1-01 schema 再验证）。
+- Host event 新增 `observability:trajectory-event`（`ObservabilityTrajectorySupplyEvent`，原始 v2 批次）。
+- shared 供数类型为泛型 `<Event = unknown>`（shared 层不得 import openclaw_runtime——facade 守卫强制）；electron/service 与 `src/lib/host-api.ts` 两端绑定 `TrajectoryEventV2`。
+- v1 仅显式 `legacyFallback` 报告，零 v2 泄漏；renderer 仍只经 host-api/host-events 单入口。
+- 顺带清偿基线预存红：`observability-api.ts` 本地 `isRecord` → 共享 `payload-utils`（facade 守卫测试在父提交本来就红，已在干净树对照证实）。
+
+验证：`tests/unit/observability-trajectory-supply.test.ts`(7) + projection/index/host-events/facade/invoke 共 82/82;typecheck:node/web、build:runtime、comms:replay/compare、lint:bom、contract-check、changed-file ESLint、harness validate/dry-run 全绿;clean detached worktree（HEAD=9be4f9f06 + patch）复测全绿。
+
+**下一步（新会话）**：TF-0063 WV-B2-02「现有 store 并轨」——先为其单独立卡确认（其 status 仍为 proposed，需经 update/确认流转为 ready），创建 B2-02 task spec 并跑 harness context；只消费 B2-01 装配快照，删 v2 覆盖路径的手写 reducer/Date.now 兜底/壁钟 last-wins;mock 场景迁移为装配 fixture。禁改 B1 schema/producer/Gateway 协议与 B3。历史约束详见 [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)（其中「B2-02A 未开始」等状态描述已过时，以本节为准）。
+
+---
+
+## 历史交接：Workflow Viz B2-02（2026-08-15，已完成 B2-02A 部分）
+
+请先阅读 [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)。当前工作树包含一个未应用、待用户确认的 task-forest proposal：`TFP-workflow-viz-b2-02-bridge-and-store-20260815`。在确认前不得应用 proposal 或开始 B2-02A 实现。（状态更新：该 proposal 已于 2026-08-15 经用户确认应用，B2-02A 已完成，见上节。）
+
+---
+
+## 褰撳墠浜ゆ帴锛歐orkflow Viz B2-02A 宸插畬鎴愶紝涓嬩竴姝� B2-02锛�2026-08-15锛�
+
+**WV-B2-02A / TF-0062 宸插畬鎴愬苟鍗曟彁浜� `b58350a2f`锛坒eat(trajectory): bridge raw v2 renderer supply锛夈��** 鎻愭�� `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 涓庢敹鍗℃彁妗� `TFP-workflow-viz-b2-02a-close-20260815` 鍧囧凡缁忕敤鎴风‘璁ゅ悗搴旂敤锛泃ask-forest validate/export PASS锛汿F-0062=done(100%)锛孴F-0063锛圵V-B2-02 鐜版湁 store 骞惰建锛変繚鎸� `proposed`銆�
+
+鏈�鍗¤惤鍦帮紙璇﹁�� `harness/specs/tasks/workflow-viz-b2-02a-renderer-v2-trajectory-supply.md`锛夛細
+
+- `ObservabilityTrajectoryProjector` 骞惰�屼繚鐣�**鍘熷�嬪凡楠岃瘉** `TrajectoryEventV2` 琛岋紙cap 1000锛宍getV2Events`/`isLegacyFallback`锛屾帴鍙楁壒娆＄粡 `onV2Events` 涓婃姤锛夛紱normalize 鍚庣殑 trace 鎶曞奖璺�寰勪笉鍙樸��
+- Host API 鏂板�� `observability.trajectorySessions` / `observability.trajectoryHistory`锛坒romSeq/limit銆乣asOfSeq` 鍐�/鐑�浜ゆ帴銆佺‘瀹氭�у幓閲嶃�佷繚鐣欐�佷笉瑕嗙洊鏃剁粡 B1-03 `observability.readFrom` 鍐锋仮澶嶏紱璺ㄨ竟鐣屽墠鎸� B1-01 schema 鍐嶉獙璇侊級銆�
+- Host event 鏂板�� `observability:trajectory-event`锛坄ObservabilityTrajectorySupplyEvent`锛屽師濮� v2 鎵规�★級銆�
+- shared 渚涙暟绫诲瀷涓烘硾鍨� `<Event = unknown>`锛坰hared 灞備笉寰� import openclaw_runtime鈥斺�攆acade 瀹堝崼寮哄埗锛夛紱electron/service 涓� `src/lib/host-api.ts` 涓ょ��缁戝畾 `TrajectoryEventV2`銆�
+- v1 浠呮樉寮� `legacyFallback` 鎶ュ憡锛岄浂 v2 娉勬紡锛況enderer 浠嶅彧缁� host-api/host-events 鍗曞叆鍙ｃ��
+- 椤哄甫娓呭伩鍩虹嚎棰勫瓨绾�锛歚observability-api.ts` 鏈�鍦� `isRecord` 鈫� 鍏变韩 `payload-utils`锛坒acade 瀹堝崼娴嬭瘯鍦ㄧ埗鎻愪氦鏈�鏉ュ氨绾�锛屽凡鍦ㄥ共鍑�鏍戝�圭収璇佸疄锛夈��
+
+楠岃瘉锛歚tests/unit/observability-trajectory-supply.test.ts`(7) + projection/index/host-events/facade/invoke 鍏� 82/82;typecheck:node/web銆乥uild:runtime銆乧omms:replay/compare銆乴int:bom銆乧ontract-check銆乧hanged-file ESLint銆乭arness validate/dry-run 鍏ㄧ豢;clean detached worktree锛圚EAD=9be4f9f06 + patch锛夊�嶆祴鍏ㄧ豢銆�
+
+**涓嬩竴姝ワ紙鏂颁細璇濓級**锛歍F-0063 WV-B2-02銆岀幇鏈� store 骞惰建銆嶁�斺�斿厛涓哄叾鍗曠嫭绔嬪崱纭�璁わ紙鍏� status 浠嶄负 proposed锛岄渶缁� update/纭�璁ゆ祦杞�涓� ready锛夛紝鍒涘缓 B2-02 task spec 骞惰窇 harness context锛涘彧娑堣垂 B2-01 瑁呴厤蹇�鐓э紝鍒� v2 瑕嗙洊璺�寰勭殑鎵嬪啓 reducer/Date.now 鍏滃簳/澹侀挓 last-wins;mock 鍦烘櫙杩佺Щ涓鸿�呴厤 fixture銆傜�佹敼 B1 schema/producer/Gateway 鍗忚��涓� B3銆傚巻鍙茬害鏉熻�﹁�� [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)锛堝叾涓�銆孊2-02A 鏈�寮�濮嬨�嶇瓑鐘舵�佹弿杩板凡杩囨椂锛屼互鏈�鑺備负鍑嗭級銆�
+
+---
+
+## 鍘嗗彶浜ゆ帴锛歐orkflow Viz B2-02锛�2026-08-15锛屽凡瀹屾垚 B2-02A 閮ㄥ垎锛�
+
+璇峰厛闃呰�� [WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md](WORKFLOW-VIZ-B2-02-HANDOFF-20260815.md)銆傚綋鍓嶅伐浣滄爲鍖呭惈涓�涓�鏈�搴旂敤銆佸緟鐢ㄦ埛纭�璁ょ殑 task-forest proposal锛歚TFP-workflow-viz-b2-02-bridge-and-store-20260815`銆傚湪纭�璁ゅ墠涓嶅緱搴旂敤 proposal 鎴栧紑濮� B2-02A 瀹炵幇銆傦紙鐘舵�佹洿鏂帮細璇� proposal 宸蹭簬 2026-08-15 缁忕敤鎴风‘璁ゅ簲鐢�锛孊2-02A 宸插畬鎴愶紝瑙佷笂鑺傘�傦級
+
+---
+
 ## 当前接力入口（2026-08-14）
 
 当前接力主题是 VerseShell `TF-0065` / P2-02 argv-only command profiles，已全部收尾：Windows batch 元数据补丁已审查并补齐验证，测试矩阵与 governed contract 测试已完成，证据文档/STATUS/编排计划/三份 README 已同步，全部工程门禁全绿，Task Forest closeout proposal `TFP-verseshell-p2-02-closeout-20260814` 已保存并应用（validate/export PASS），`TF-0065` 为 `done` 100%，唯一下一节点 `TF-0066` / VS-P2-03 diagnostics 已解锁为 `ready`。下一会话只允许启动 `TF-0066` / P2-03。详细交接见本文件后部“接力交接：VerseShell P2-02 中断点”章节。
@@ -797,7 +847,8 @@ maturity 修复本身引入的 38 个 system-maturity 文件（artifacts/plans�
    - final spec requiredTests --since 固定为完整 acceptedBaseSha（validator baseRef 相等校验）。
 5. **最终验收**：pnpm acceptance:agent:full --spec runtime-authority-convergence-final-acceptance.md --executor rc09r-executor-4 --verifier rc09r-verifier-4 --since b8a6c1832ef... --output-dir artifacts/agent-engineering-acceptance/runtime-authority-convergence-final。executor pass（failures 空）；verifier pass + engineeringAcceptedByAgent=true + review_needed + humanEvidenceRequired=true。
 ode scripts/validate-runtime-authority-convergence.mjs --phase engineering ... PASS（manifest/report digest + baseRef + changed-path ownership 校验）。status 查询 pass。
-6. **证据**：候选 worktree C:\Users\27933\Desktop\clawx\ClawX-rc01r-candidate（branch rc09-final-candidate，HEAD 3209f0981）内 rtifacts/agent-engineering-acceptance/runtime-authority-convergence-final/{plan,manifest,executor-report,verifier-report,final-report,changed-path-ownership}.json + logs/ + evidence/。旧 21-gate rejected 证据保留于 untime-authority-convergence-final.archive-21gate-20260809/（只读）。
+6. **证据**：候选 worktree C:\Users\27933\Desktop\clawx\ClawX-rc01r-candidate（branch rc09-final-candidate，HEAD 3209f0981）内 rtifacts/agent-engineering-acceptance/runtime-authority-convergence-final/{plan,manifest,executor-report,verifier-report,final-report,changed-path-ownership}.json + logs/ + evidence/。旧 21-gate rejected 证据保留于 
+untime-authority-convergence-final.archive-21gate-20260809/（只读）。
 
 ## 保持项
 

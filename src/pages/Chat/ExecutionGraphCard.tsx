@@ -14,13 +14,24 @@ interface ExecutionGraphCardProps {
   active: boolean;
   suppressThinking?: boolean;
   traceId?: string;
+  expandedStepIds?: ReadonlySet<string>;
+  onStepExpandedChange?: (stepId: string, expanded: boolean) => void;
 }
 
 const TOOL_ROW_EXTRA_INDENT_PX = 8;
 
-function StepDetailRow({ step }: { step: TaskStep }) {
+function StepDetailRow({
+  step,
+  expanded: controlledExpanded,
+  onExpandedChange,
+}: {
+  step: TaskStep;
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+}) {
   const { t } = useTranslation('chat');
-  const [expanded, setExpanded] = useState(false);
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const expanded = controlledExpanded ?? localExpanded;
   const hasDetail = Boolean(step.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
@@ -43,6 +54,13 @@ function StepDetailRow({ step }: { step: TaskStep }) {
     }
   }
 
+  const toggleExpanded = () => {
+    if (!hasDetail) return;
+    const nextExpanded = !expanded;
+    if (controlledExpanded === undefined) setLocalExpanded(nextExpanded);
+    onExpandedChange?.(nextExpanded);
+  };
+
   return (
     <div className="group/execution-step min-w-0 flex-1">
       <div className="relative flex min-w-0 items-start gap-1.5">
@@ -53,8 +71,9 @@ function StepDetailRow({ step }: { step: TaskStep }) {
             'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1',
             hasDetail ? 'cursor-pointer hover:text-foreground' : 'cursor-default',
           )}
-          onClick={() => hasDetail && setExpanded((value) => !value)}
+          onClick={toggleExpanded}
           aria-expanded={hasDetail ? expanded : undefined}
+          data-testid="chat-execution-step-toggle"
         >
           <span className={cn(
             'min-w-0 truncate text-muted-foreground',
@@ -101,7 +120,7 @@ function StepDetailRow({ step }: { step: TaskStep }) {
         )}
       </div>
       {formattedDetail && expanded && (
-        <div className="mt-1 border-l border-border/70 pl-3">
+        <div className="mt-1 border-l border-border/70 pl-3" data-testid="chat-execution-step-detail">
           <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-muted-foreground/80">
             {formattedDetail}
           </pre>
@@ -124,6 +143,8 @@ export function ExecutionGraphCard({
   active,
   suppressThinking = false,
   traceId,
+  expandedStepIds,
+  onStepExpandedChange,
 }: ExecutionGraphCardProps) {
   const { t } = useTranslation('chat');
   const shouldShowTrailingThinking = active && !suppressThinking;
@@ -184,7 +205,11 @@ export function ExecutionGraphCard({
                   )}
                   <StepIcon step={step} />
                 </div>
-                <StepDetailRow step={step} />
+                <StepDetailRow
+                  step={step}
+                  expanded={expandedStepIds?.has(step.id)}
+                  onExpandedChange={(expanded) => onStepExpandedChange?.(step.id, expanded)}
+                />
               </div>
             </div>
           );

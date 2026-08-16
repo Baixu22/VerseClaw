@@ -77,6 +77,12 @@ import type { MemoryFeedbackOutcome, MemoryPhaseTag, MemoryProposal, MemoryReten
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { resolveControlPlaneActor, formatControlPlaneActor } from "../control-plane-audit.js";
 import type { GatewayRequestHandlers, RespondFn } from "./types.js";
+import {
+  readTrajectoryPage,
+  subscribeTrajectory,
+  TrajectoryGatewayRequestError,
+  unsubscribeTrajectory,
+} from "../trajectory-gateway.js";
 
 function readString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
@@ -94,6 +100,22 @@ function readStringArray(value: unknown): string[] {
 
 function readBoolean(value: unknown): boolean | undefined {
   return typeof value === "boolean" ? value : undefined;
+}
+
+function readInteger(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isInteger(value) ? value : undefined;
+}
+
+function findInvalidIntegerParam(
+  params: Record<string, unknown>,
+  names: readonly string[],
+): string | undefined {
+  return names.find((name) => {
+    if (!Object.prototype.hasOwnProperty.call(params, name) || params[name] === undefined) {
+      return false;
+    }
+    return typeof params[name] !== "number" || !Number.isInteger(params[name]);
+  });
 }
 
 function resolveQualityAuthority(
@@ -651,6 +673,94 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
 
   "observability.traces": async ({ respond }) => {
     respond(true, { traces: getRuntimeTraceBuffer(), scorecards: getRuntimeScorecards() }, undefined);
+  },
+
+  "observability.readFrom": async ({ params, respond }) => {
+    const sessionKey = readString(params.sessionKey);
+    if (!sessionKey) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "sessionKey is required"));
+      return;
+    }
+    const invalidIntegerParam = findInvalidIntegerParam(params, ["fromSeq", "toSeq", "limit"]);
+    if (invalidIntegerParam) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, `${invalidIntegerParam} must be an integer`),
+      );
+      return;
+    }
+    try {
+      const page = await readTrajectoryPage({
+        sessionKey,
+        fromSeq: readInteger(params.fromSeq),
+        toSeq: readInteger(params.toSeq),
+        limit: readInteger(params.limit),
+      });
+      respond(true, page, undefined);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const code =
+        error instanceof TrajectoryGatewayRequestError && error.code === "source-too-large"
+          ? ErrorCodes.UNAVAILABLE
+          : ErrorCodes.INVALID_REQUEST;
+      respond(false, undefined, errorShape(code, message));
+    }
+  },
+
+  "observability.subscribe": async ({ params, respond, client, context }) => {
+    const sessionKey = readString(params.sessionKey);
+    const connId = client?.connId;
+    const invalidIntegerParam = findInvalidIntegerParam(params, ["fromSeq"]);
+    const fromSeq = readInteger(params.fromSeq);
+    if (!sessionKey || !connId) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "observability.subscribe requires sessionKey and an authenticated connection"),
+      );
+      return;
+    }
+    if (invalidIntegerParam || (typeof fromSeq !== "undefined" && fromSeq < 0)) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "fromSeq must be a non-negative integer"),
+      );
+      return;
+    }
+    try {
+      const initial = await readTrajectoryPage({ sessionKey, fromSeq: fromSeq ?? 0, limit: 1 });
+      const subscription = subscribeTrajectory({
+        connId,
+        sessionKey,
+        fromSeq: fromSeq ?? 0,
+        broadcastToConnIds: context.broadcastToConnIds,
+      });
+      respond(
+        true,
+        {
+          subscriptionId: subscription.subscriptionId,
+          sessionKey,
+          fromSeq: subscription.fromSeq,
+          nextSeq: initial.nextSeq,
+          sourceAvailable: initial.sourceAvailable,
+        },
+        undefined,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, message));
+    }
+  },
+
+  "observability.unsubscribe": async ({ respond, client }) => {
+    const connId = client?.connId;
+    if (!connId) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "authenticated connection required"));
+      return;
+    }
+    respond(true, { unsubscribed: unsubscribeTrajectory(connId) }, undefined);
   },
 
   // ── Memory subsystem ──

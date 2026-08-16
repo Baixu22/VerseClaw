@@ -1,0 +1,227 @@
+{
+  "applied_at": "2026-08-14T16:31:44.031736Z",
+  "base_graph_hash": "53e18d5e56e573cd89f68f3ba291497e2e8c83704e1408ebd4f1483aabfa08f1",
+  "base_summary": {
+    "edge_count": 98,
+    "node_count": 55,
+    "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX-wv-b0"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "wv-root",
+      "node": {
+        "acceptance_criteria": [
+          "各批次按依赖和 Harness task spec 验收",
+          "clean detached worktree 复测关键测试与构建"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+          "validation_plan": [
+            "每卡先运行 Harness context",
+            "运行 task spec、类型检查、构建、comms 与 clean detached 验证",
+            "检查不新增 renderer 直连 IPC/Gateway 调用"
+          ],
+          "why_not_enough": "B1-04 之后仍需要 B2/B3 的独立实现与验收。",
+          "why_this_task": "该独立任务树准确表达事件事实源到可恢复投影的依赖，避免混入 UI 或 Runtime Authority 主线。"
+        },
+        "assumptions": [
+          "当前分支 codex/wv-b1-02-03 保持为 WV 后续开发分支且不自行 rebase/merge",
+          "B1-01 至 B1-03 的三个现有提交为已完成事实"
+        ],
+        "confidence": 0.94,
+        "context_tags": [
+          "workflow-viz",
+          "trajectory",
+          "recoverable-projection"
+        ],
+        "desired_outcomes": [
+          "v2 生命周期事件成为统一事实源",
+          "Electron 可从事件流和持久日志恢复",
+          "装配和展示层只消费确定性投影"
+        ],
+        "difficulty": "high",
+        "kind": "global_task",
+        "non_goals": [
+          "TF-0021 UI-only 工作",
+          "TF-0010 Runtime Authority 收敛",
+          "提前实施 B2 或 B3"
+        ],
+        "priority": 1,
+        "purpose": "让 Workflow Viz 基于可验证、可重放、可恢复的运行轨迹，而非内存快照和并行 reducer。",
+        "requirements": [
+          "稳定 ID、全量状态与 seq 回放",
+          "v1 文件迁移期兼容",
+          "不创建第二轨迹格式或权威来源"
+        ],
+        "status": "in_progress",
+        "summary": "以 openclaw-trajectory v2 作为唯一事实源，按可恢复事件流供给 Electron、装配层和展示层。",
+        "title": "Workflow Viz 事实源与可恢复投影重建"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-01",
+      "node": {
+        "confidence": 0.95,
+        "evidence": [
+          "c9d48b580",
+          "harness/specs/tasks/workflow-viz-b1-01-trajectory-event-schema.md"
+        ],
+        "kind": "task",
+        "status": "done",
+        "summary": "v2 schema/replay 与 v1 兼容读取已在 c9d48b580 完成。",
+        "title": "WV-B1-01 轨迹事件 Schema 契约化"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-02",
+      "node": {
+        "confidence": 0.95,
+        "evidence": [
+          "4451f2704",
+          "harness/specs/tasks/workflow-viz-b1-02-ordinary-session-producer.md"
+        ],
+        "kind": "task",
+        "status": "done",
+        "summary": "普通 embedded session v2 producer 已在 4451f2704 完成。",
+        "title": "WV-B1-02 普通会话结构事件产写"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-03",
+      "node": {
+        "confidence": 0.95,
+        "evidence": [
+          "71d7268a0",
+          "harness/specs/tasks/workflow-viz-b1-03-gateway-trajectory-stream.md"
+        ],
+        "kind": "task",
+        "status": "done",
+        "summary": "Gateway readFrom/subscribe/unsubscribe 与 gap repair 已在 71d7268a0 完成。",
+        "title": "WV-B1-03 Gateway 轨迹订阅与补拉"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "wv-b1-04",
+      "node": {
+        "acceptance_criteria": [
+          "重启后历史会话从持久日志重建",
+          "B0-03 回归基线通过",
+          "无 renderer 直连 IPC/Gateway 调用"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "完成 Workflow Viz 后续开发工作并保持独立工作流边界",
+          "validation_plan": [
+            "B1-04 Harness task spec",
+            "Electron/Main 单测",
+            "comms、构建和 clean detached 复测"
+          ],
+          "why_not_enough": "B2/B3 仍需后续独立卡完成。",
+          "why_this_task": "B1-02 与 B1-03 已完成，B1-04 是关键路径上唯一依赖已满足的供数卡。"
+        },
+        "confidence": 0.96,
+        "difficulty": "high",
+        "kind": "task",
+        "non_goals": [
+          "客户端装配和展示层迁移",
+          "新增 Gateway RPC 或第二轨迹格式"
+        ],
+        "priority": 1,
+        "purpose": "让桌面供数基于可恢复的持久事件流。",
+        "requirements": [
+          "消费 B1-02/B1-03 的同一轨迹事实源",
+          "保留 v1 历史读取",
+          "不改 renderer、B2/B3 或 DCS 文件"
+        ],
+        "status": "ready",
+        "summary": "Electron Main 改为订阅 v2 轨迹事件并按需 readFrom；trajectory-index 仅保留 v1 历史兼容兜底。",
+        "title": "WV-B1-04 Electron 供数改造"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "B1 schema 是独立 Workflow Viz 重建的事实源基础。"
+      },
+      "from": "wv-b1-01",
+      "to": "wv-root",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "普通会话 producer 是 B1 事实源产写。"
+      },
+      "from": "wv-b1-02",
+      "to": "wv-root",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "Gateway 流是 B1 事实源读取接口。"
+      },
+      "from": "wv-b1-03",
+      "to": "wv-root",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "Electron 可恢复供数是 B1 的最后一张卡。"
+      },
+      "from": "wv-b1-04",
+      "to": "wv-root",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "B1-02 消费 v2 schema。"
+      },
+      "from": "wv-b1-02",
+      "to": "wv-b1-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "B1-03 消费 v2 解析与回放契约。"
+      },
+      "from": "wv-b1-03",
+      "to": "wv-b1-01",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "Electron 供数依赖普通会话 v2 producer。"
+      },
+      "from": "wv-b1-04",
+      "to": "wv-b1-02",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "reason": "Electron 供数依赖 Gateway readFrom/subscribe。"
+      },
+      "from": "wv-b1-04",
+      "to": "wv-b1-03",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-08-14T16:31:15.821660Z",
+  "proposal_id": "TFP-workflow-viz-fact-source-rebuild-20260815",
+  "rationale": "为已完成的 WV-B1-01、WV-B1-02、WV-B1-03 补建独立 Workflow Viz 任务树，并将依赖已满足的 WV-B1-04 列为唯一 ready 卡。该树不属于 TF-0021 UI-only 迁移，也不属于 TF-0010 Runtime Authority 收敛。",
+  "session_id": "workflow-viz-b1-04-20260815",
+  "status": "applied"
+}

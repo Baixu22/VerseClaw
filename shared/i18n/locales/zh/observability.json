@@ -6,6 +6,26 @@
   "errorRef": "错误引用",
   "clear": "清空",
   "empty": "暂无可观测性数据。运行一次角色优先任务即可生成追踪。",
+  "sourceHealth": {
+    "title": "暂无追踪的原因",
+    "subtitle": "已在最近一次刷新中检查每个数据源。",
+    "sources": {
+      "runtime": "运行时追踪流",
+      "index": "本地追踪索引",
+      "trajectory": "会话轨迹扫描"
+    },
+    "status": {
+      "ok": "可用",
+      "empty": "无数据",
+      "error": "不可用"
+    },
+    "reason": {
+      "available": "该数据源中有可用记录。",
+      "not-configured": "当前应用进程未配置该数据源。",
+      "no-data": "该数据源中未找到记录。",
+      "failed": "最近一次数据源检查失败。"
+    }
+  },
   "alerts": "告警",
   "scorecards": "评分卡",
   "scorecardTrace": "追踪 {{id}}...",
