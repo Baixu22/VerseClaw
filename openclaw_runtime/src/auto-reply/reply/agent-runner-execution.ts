@@ -43,6 +43,7 @@ import { isMessagingToolSendAction } from "../../agents/embedded-agent-messaging
 import { runEmbeddedAgent } from "../../agents/embedded-agent.js";
 import { isFailoverError } from "../../agents/failover-error.js";
 import { resolveAgentHarnessPolicy } from "../../agents/harness/policy.js";
+import { resolveRuntimeIntensityPolicy } from "../../agents/intensity-policy.js";
 import { ensureSelectedAgentHarnessPlugin } from "../../agents/harness/runtime-plugin.js";
 import { LiveSessionModelSwitchError } from "../../agents/live-model-switch-error.js";
 import { isMissingProviderAuthError } from "../../agents/model-auth.js";
@@ -2183,6 +2184,12 @@ export async function runAgentTurnWithFallback(params: {
                     model,
                     classifyCommentaryText: params.opts?.commentaryProgressEnabled !== undefined,
                     thinkLevel: params.followupRun.run.thinkLevel,
+                    runtimeIntensityPolicy: resolveRuntimeIntensityPolicy({
+                      thinkLevel: params.followupRun.run.thinkLevel,
+                      requestedRuntimeIntensity: params.followupRun.run.requestedRuntimeIntensity,
+                      requestedReasoningEffort: params.followupRun.run.requestedReasoningEffort,
+                      intensitySource: params.followupRun.run.runtimeIntensitySource,
+                    }),
                     timeoutMs: params.followupRun.run.timeoutMs,
                     runId,
                     lane: runLane,

@@ -22,6 +22,7 @@ import type { BootstrapContextMode } from "../bootstrap-files.js";
 import type { ResolvedCliBackend } from "../cli-backends.js";
 import type { ContextWindowInfo } from "../context-window-guard.js";
 import type { FailoverReason } from "../embedded-agent-helpers.js";
+import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { EmbeddedAgentExecutionPhase } from "../embedded-agent-runner/execution-phase.js";
 import type {
   CurrentInboundPromptContext,
@@ -52,6 +53,8 @@ export type RunCliAgentParams = {
   provider: string;
   model?: string;
   thinkLevel?: ThinkLevel;
+  /** Runtime intensity policy resolved before CLI dispatch. */
+  runtimeIntensityPolicy?: RuntimeIntensityPolicy;
   timeoutMs: number;
   runId: string;
   lane?: string;

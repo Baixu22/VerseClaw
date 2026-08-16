@@ -38,6 +38,7 @@ import {
   resolveSessionAgentId,
 } from "../../agents/agent-scope.js";
 import { resolveSessionWorkspaceDir } from "../../agents/spawned-context.js";
+import { normalizeRuntimeIntensityPreference } from "../../agents/intensity-policy.js";
 import { rewriteTranscriptEntriesInSessionFile } from "../../agents/embedded-agent-runner/transcript-rewrite.js";
 import { runAgentHarnessBeforeMessageWriteHook } from "../../agents/harness/hook-helpers.js";
 import { resolveProviderIdForAuth } from "../../agents/provider-auth-aliases.js";
@@ -3183,6 +3184,8 @@ export const chatHandlers: GatewayRequestHandlers = {
        */
       workspaceFingerprint?: string;
       inputMode?: unknown;
+      reasoningEffort?: unknown;
+      runtimeIntensity?: unknown;
       promptMode?: "full" | "minimal" | "none";
       systemInputProvenance?: InputProvenance;
       systemProvenanceReceipt?: string;
@@ -3272,6 +3275,31 @@ export const chatHandlers: GatewayRequestHandlers = {
     // Chat→Main→Gateway chain drives `bindSessionWorkspaceFingerprint`'s
     // mismatch-invalidate semantics. Empty/absent → agent-config fallback.
     const workspaceFingerprint = normalizeOptionalText(p.workspaceFingerprint);
+    const requestedReasoningEffort =
+      typeof p.reasoningEffort === "string" ? p.reasoningEffort.trim().toLowerCase() : undefined;
+    if (
+      p.reasoningEffort !== undefined &&
+      (!requestedReasoningEffort ||
+        !["auto", "minimal", "low", "medium", "high", "xhigh", "max"].includes(
+          requestedReasoningEffort,
+        ))
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "invalid reasoning effort"),
+      );
+      return;
+    }
+    const requestedRuntimeIntensity = normalizeRuntimeIntensityPreference(p.runtimeIntensity);
+    if (p.runtimeIntensity !== undefined && !requestedRuntimeIntensity) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "invalid runtime intensity"),
+      );
+      return;
+    }
     const requestedAgentId = resolveRequestedChatAgentId({
       cfg: (context as { getRuntimeConfig?: () => OpenClawConfig }).getRuntimeConfig?.(),
       requestedSessionKey: rawSessionKey,
@@ -4357,6 +4385,12 @@ export const chatHandlers: GatewayRequestHandlers = {
               images: replyOptionImages,
               imageOrder: imageOrder.length > 0 ? imageOrder : undefined,
               thinkingLevelOverride: p.thinking,
+              ...(requestedReasoningEffort
+                ? { reasoningEffortOverride: requestedReasoningEffort }
+                : {}),
+              ...(requestedRuntimeIntensity
+                ? { runtimeIntensityOverride: requestedRuntimeIntensity }
+                : {}),
               fastModeOverride: p.fastMode,
               /** Turn-scoped model override (Area 2 §3.2); resolves above session/agent defaults. */
               modelRefOverride: p.model,

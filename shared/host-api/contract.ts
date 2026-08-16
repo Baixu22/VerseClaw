@@ -26,7 +26,12 @@ import type {
   DcsProdFlagsSnapshot,
 } from '../dcs/prod-flags-control';
 import type { PermissionDecisionEvent } from '../product-semantics';
-import type { AgentAvatarPreset, AgentReasoningEffort, AgentsSnapshot } from '../types/agent';
+import type {
+  AgentAvatarPreset,
+  AgentReasoningEffort,
+  AgentsSnapshot,
+  RuntimeIntensityPreference,
+} from '../types/agent';
 import type { CronJob, CronJobCreateInput, CronJobUpdateInput } from '../types/cron';
 import type { GatewayHealth, GatewayStatus } from '../types/gateway';
 import type { ArchiveHandle } from '../types/context-family';
@@ -3142,6 +3147,10 @@ export type ChatSendWithMediaPayload = {
    * config). Never persisted to Agent.modelRef.
    */
   modelRef?: string | null;
+  /** Per-send reasoning effort (turn-scoped, never persisted). */
+  reasoningEffort?: AgentReasoningEffort;
+  /** Per-send linked runtime intensity (turn-scoped, never persisted). */
+  runtimeIntensity?: RuntimeIntensityPreference;
 };
 export type ChatSendWithMediaResult = HostSuccess & {
   result?: { runId?: string };

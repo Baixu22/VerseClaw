@@ -32,7 +32,7 @@ import { detectRuntimeShell } from "../shell-utils.js";
 import { stripSystemPromptCacheBoundary } from "../system-prompt-cache-boundary.js";
 import { buildConfiguredAgentSystemPrompt } from "../system-prompt-config.js";
 import { buildSystemPromptParams } from "../system-prompt-params.js";
-import type { SilentReplyPromptMode } from "../system-prompt.types.js";
+import type { PromptMode, SilentReplyPromptMode } from "../system-prompt.types.js";
 import { sanitizeImageBlocks } from "../tool-images.js";
 import { formatTomlConfigOverride } from "./toml-inline.js";
 /** Re-export CLI reliability helpers used by older runner call sites. */
@@ -91,6 +91,7 @@ export function buildCliAgentSystemPrompt(params: {
   skillsPrompt?: string;
   modelDisplay: string;
   agentId?: string;
+  promptMode?: PromptMode;
 }) {
   const runtimeWorkspaceDir = params.cwd?.trim() || params.workspaceDir;
   const defaultModelRef = resolveDefaultModelForAgent({
@@ -119,6 +120,7 @@ export function buildCliAgentSystemPrompt(params: {
     workspaceDir: runtimeWorkspaceDir,
     defaultThinkLevel: params.defaultThinkLevel,
     extraSystemPrompt: params.extraSystemPrompt,
+    promptMode: params.promptMode,
     sourceReplyDeliveryMode: params.sourceReplyDeliveryMode,
     silentReplyPromptMode: params.silentReplyPromptMode,
     ownerNumbers: params.ownerNumbers,
