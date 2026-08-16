@@ -1,0 +1,5003 @@
+﻿[
+  {
+    "acceptance_criteria": [
+      "1) Ψһ Context Orchestrator �������� turn��2) Ĭ�ϲ��Ծ��������� VToken/DCS/Browser ������ì�ܣ�3) SEKB ���Զ��ջ� E2E �̣�4) Browser private network Ĭ�� false + ����ɻָ���5) liveReady/productApproved �Կɱ��� false �� residual ��ʵ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "����� DCS �͹������Ͷ��ʹ��",
+      "validation_plan": [
+        "P0 �Ž�ȫ��",
+        "�ܿ� canary �� rollback ��¼",
+        "���� TF-0006 blocked"
+      ],
+      "why_not_enough": "����� TF-0006 �� default-on/GA ֤�ݡ�",
+      "why_this_task": "�۽�ΨһӲ���������ܿ� canary ��֤��ʵ��Ӫ�ԡ�"
+    },
+    "alignment_records": [
+      "TFA-4a4979781c"
+    ],
+    "assumptions": [],
+    "children": [
+      "TF-0002",
+      "TF-0003",
+      "TF-0004",
+      "TF-0005",
+      "TF-0006"
+    ],
+    "confidence": 0.85,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:57:16.728332Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/tf0001-controlled-operable-closeout.md",
+      "artifacts/tf0001-closeout/evidence.json",
+      "tests/unit/tf0001-controlled-operable-closeout.test.ts",
+      "docs/dev/context-orchestrator.md (TF-0002)",
+      "docs/dev/default-config-matrix.md (TF-0003)",
+      "artifacts/sekb-golden-path/evidence.json (TF-0004)",
+      "artifacts/browser-security-recovery/evidence.json (TF-0005)",
+      "docs/dev/Sustained-Development-Playbook.md ��7"
+    ],
+    "execution_hints": [
+      "��һ�Ự�����û���ȷҪ�� residual �ӹ̣����ƽ� TF-0006��������ʵ corpus/live A/B��",
+      "��ֹ��default-on ��ҵ��SEKB �Զ�д�ء�����ϵͳ GA ����"
+    ],
+    "id": "TF-0001",
+    "kind": "global_task",
+    "non_goals": [],
+    "primary_parent": null,
+    "priority": 3,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "��������ϵͳȫ�� default-on ΪĿ�ꣻ����ͳһ���š���ȫĬ�ϡ�һ������ջ�E2E��Browser��ȫ�ɻָ�����ά�� canary ֤�ݳ�ʵ��"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "P0 �ܿؿ���Ӫ���������գ���ȫ�� GA���������տ�+Ĭ�ϲ���+SEKB ���Զ��ջ�+Browser ��ȫ�ָ�����֤��������liveReady/productApproved=false��accept-with-residuals��TF-0006 �� blocked��",
+    "title": "����-������-����-��������ϵͳ�ܿؿ���Ӫ����ȫ��GA��",
+    "updated_at": "2026-07-19T17:29:59.646228Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�ؼ��ļ�ȫ���� Git ����",
+      "maturity:validate exit 0",
+      "�ؼ� Electron E2E 6/6 ͨ��",
+      "���һ���м�¼���ܿ��ڲ� canary �� rollback ����"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "��û����������ʱ���ú������̽���� Agent �Զ����ϸ����ղ���֤���̹��ܹ���",
+      "validation_plan": [
+        "Verifier ����ȫ�� profile",
+        "��鱨�� SHA/��־������",
+        "ȷ�ϲ�Ʒ�������ر�"
+      ],
+      "why_not_enough": "���������/live/product ֤��",
+      "why_this_task": "ͳһ�Ž��Ͷ��� Verifier ֱ�ӷ��񹤳���ȷ����������"
+    },
+    "alignment_records": [
+      "TFA-0026758811",
+      "TFA-32a1af6c38"
+    ],
+    "assumptions": [
+      "��ǰ�������Ķ�����ƻ��������������",
+      "�ڲ� canary ��ʹ����ʽ feature flags ������ cohort"
+    ],
+    "children": [
+      "TF-0008",
+      "TF-0009"
+    ],
+    "confidence": 0.75,
+    "context_tags": [],
+    "created_at": "2026-07-19T17:29:59.646228Z",
+    "deprecated_at": null,
+    "derived_progress": 50.0,
+    "desired_outcomes": [
+      "�ؼ�ʵ�֡����ԡ��ĵ���֤�ݿ��� clean checkout ����",
+      "DCS/SEKB/Browser �ؼ� Electron ·�� 6/6 ͨ��",
+      "�γ� owner/cohort/metrics/kill/rollback �������ڲ� canary ��"
+    ],
+    "deviations": [
+      "TFD-94c0816e91"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 960,
+    "evidence": [
+      "TF-0008 done��docs/dev/component-controlled-rollout-p0-closeout.md",
+      "TF-0009 ready��docs/dev/component-controlled-rollout-plan.md#p1С��Χ�ܿ��ڲ����а�"
+    ],
+    "execution_hints": [
+      "һ��ֻ�ƽ�һ�� ready �ڵ�",
+      "�ȷ�װ�������ߣ������������"
+    ],
+    "id": "TF-0007",
+    "kind": "global_task",
+    "non_goals": [
+      "default-on",
+      "����ϵͳ GA",
+      "SEKB �Զ�д��",
+      "�޼ල Browser",
+      "����� agent �Զ��޸���"
+    ],
+    "primary_parent": null,
+    "priority": 1,
+    "progress": 50.0,
+    "progress_source": "manual",
+    "purpose": "���콫�����������Ͷ�밲ȫ������ơ��ɻع����ڲ�ʹ�ã������Ǽ����������ǰ default-on��",
+    "remaining_minutes_max": 1440,
+    "remaining_minutes_min": 720,
+    "requirements": [
+      "Ĭ�ϲ��Ա��� fail-closed/opt-in",
+      "������ host sender/workspace/approval ��ȫ�߽�",
+      "����� TF-0006 ������ joint-system GA"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "δ��Ȩд�� 0",
+      "SEKB δȷ��д�� 0",
+      "Browser ˽���ƹ� 0",
+      "kill switch �����ɹ��� 100%"
+    ],
+    "summary": "P0 ��������ʵ����֤������ɣ���һ�׶�Ϊ TF-0009 С��Χ�ܿ� canary������ʵ canary ��δִ�У�ȫ��������� in_progress��",
+    "title": "DCS ���������ܿ��ڲ�Ͷ���տڣ���GA��",
+    "updated_at": "2026-07-31T06:14:56.840368Z"
+  },
+  {
+    "acceptance_criteria": [
+      "RC-06D �� TaskFlow/TaskRegistry ��Ψһ workflow lifecycle writer",
+      "ÿ�� model call �пɹ����� ContextReceipt �� WireReceipt",
+      "ÿ���ܿ��ⲿ�������� EffectReceipt ���ݵ�/�ָ�֤��",
+      "Memory/Context/MCP/OTel ownership ��ƽ�� authority",
+      "���� clean candidate ͨ������ Executor/Verifier ��������",
+      "�û���������������ղ���ȷ accepted ������� done"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "���������ԺͶ�������������ɺ����û�ִ�������������ա�",
+      "validation_plan": [
+        "��� Harness ����� Agent Engineering Acceptance",
+        "����ȫ������ gate �� manifest",
+        "�û�ִ�� H-01 �� H-06"
+      ],
+      "why_not_enough": "û���û����� accepted verdict ʱֻ�ܵ� human_acceptance_pending��",
+      "why_this_task": "�����������ظ� authority ����Ҫ��Դ������ Operator �ջ��������ϸ�֤����״̬�Ž���"
+    },
+    "alignment_records": [
+      "TFA-32a1af6c38",
+      "TFA-50501c2045"
+    ],
+    "assumptions": [
+      "source openclaw_runtime ������Ϊ��������ʵ��·��",
+      "RC-00 �� RC-06A ֤��ʧ��ʱ����ͣ�� review_needed�������ǵ����¿��",
+      "�û����ڿ�����ʼǰ��ȷȷ�ϲ�Ӧ�ñ��᰸"
+    ],
+    "children": [
+      "TF-0011",
+      "TF-0012",
+      "TF-0013",
+      "TF-0014",
+      "TF-0015",
+      "TF-0016",
+      "TF-0017",
+      "TF-0018",
+      "TF-0019",
+      "TF-0020",
+      "TF-0028",
+      "TF-0043",
+      "TF-0044",
+      "TF-0045",
+      "TF-0046",
+      "TF-0047",
+      "TF-0048",
+      "TF-0049",
+      "TF-0050",
+      "TF-0051",
+      "TF-0052",
+      "TF-0053",
+      "TF-0054",
+      "TF-0055"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "unified-agent",
+      "verseshell",
+      "context",
+      "vtoken",
+      "coding",
+      "memory"
+    ],
+    "created_at": "2026-07-27T13:16:29.657781Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "ÿ��ģ�͵��á��������ⲿ effect �ͻָ�������ɹ����ҿɽ���",
+      "ÿ������������ֻ��һ��Ȩ�� writer",
+      "����֤��ͨ������ Agent ���飬���˲���ֻ�����ս׶�ִ��"
+    ],
+    "deviations": [
+      "TFD-94c0816e91",
+      "TFD-67e4e8fbdf",
+      "TFD-4b64829dbf"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 19200,
+    "evidence": [
+      "docs/dev/unified-agent-system/runtime-convergence/",
+      "harness/specs/tasks/runtime-authority-convergence-program.md",
+      "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+      "docs/dev/full-chain-maturity-audit-2026-08-02.md"
+    ],
+    "execution_hints": [
+      "Ψһ���Ϊ docs/dev/unified-agent-system/runtime-convergence/README.md",
+      "���� RC-00����ֹԤ��ʵ�ֺ���������",
+      "�� UAS done ֤��ֻ���� provenance��freshness �� candidate SHA ƥ��ʱ�ſɸ���"
+    ],
+    "id": "TF-0010",
+    "kind": "global_task",
+    "next_action": "�û�ȷ�ϲ�Ӧ�ñ��᰸��ֻ��� RC-00��",
+    "non_goals": [
+      "default-on��GA��������׼�� TF-0006 ����",
+      "���� Agent loop��workflow engine��memory/context store��Э�顢telemetry store �� LLM router",
+      "�� runtime-spine �� diagnostic_only ����ΪȨ��",
+      "�Զ� SEKB д�ػ����� replay"
+    ],
+    "primary_parent": null,
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "ֹͣͨ������ͨ��ģ��֤����Ʒ��ֵ�������й��̻�������ΪΨһȨ����·���Ϳ����յ� Operator ��Ʒ�ջ���",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "һ��ֻ�ƽ�һ�� ready �������һ�� Harness task spec",
+      "TaskFlow/TaskRegistry ���� RC-06A ����֤��������Ǩ�ƺ��Ϊ workflow lifecycle owner",
+      "ֻ����һ�� memory slot owner ��һ�� DCS contextEngine owner",
+      "MCP �� OTel �ֱ����ⲿ����Э��� telemetry export ��׼",
+      "���� provider/channel/recovery ����ֻ�����չ����Ž�֮��ִ��",
+      "backend communication �Ķ��������� gateway-backend-communication"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "δ�Ǽ� semantic mutation 0",
+      "�ظ������� 0",
+      "ƽ�� workflow/memory/telemetry writer 0",
+      "�Զ��� human/live �������� 0",
+      "���蹤���Ž�ͨ���� 100%"
+    ],
+    "summary": "���� OpenClaw ����ʱ������ۡ�MCP��OTel �ͼ�����ִ��������֤������ƽ�� Workflow/Context/Memory/Tool/Telemetry authority�����Կ���� Context/Effect/Recovery lineage �γ� Operator Desktop ���컯��",
+    "title": "OpenClaw Runtime Authority �� Operator ��Ʒ�������� GA��",
+    "updated_at": "2026-08-02T13:08:00.002884Z"
+  },
+  {
+    "acceptance_criteria": [
+      "����ҵ�����ǡΪ�ռ��䡢�Ѱ��š�֪ʶ��������������Ϊ������ڶ�������",
+      "ÿ���ɼ�״̬���һ������������ͨҳ�治������ɫʵ������ť",
+      "Browser �� Review ���ٱ��������ظ���һ�����",
+      "Knowledge ���������� Library �� Review Queue",
+      "1280x800 �� 960x800 �� Light/Dark ��֤�޺�����������ֶ��ѡ��ص����ظ�������",
+      "��� i18n��lint��typecheck��build��E2E �� Harness ��֤ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "����Ǩ�� FakeCoding �Ŀ��������ѧ����Ϣ�ܹ���ͬʱ��֤ Verse Claw ����ʵ���������ɴ",
+      "validation_plan": [
+        "��ڵ����� Harness context/validate �;۽� E2E",
+        "�������� i18n lint��ESLint��typecheck��build:vite��harness:ci",
+        "�� 1280x800 �� 960x800 ��֤ Light/Dark ��ͼ�ͽ���"
+      ],
+      "why_not_enough": "���밴���нڵ���ʵ�ֺ����գ������õ�����ʽ�滻�������ȫ��Ǩ�ơ�",
+      "why_this_task": "����ͬʱ�����Ӿ�ϵͳ����ھ�����ʵ������λ�Ϳ�ƽ̨���գ����û���ȷ�Ϸ�����ֱ�ӹ���ӳ�䡣"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "���� host-api ���㹻֧�� Inbox��Scheduled��Review �� Browser ���������",
+      "Task Ledger �� ClawGraph ������ҳ�������Ϊ�����ݹ���������"
+    ],
+    "children": [
+      "TF-0022",
+      "TF-0023",
+      "TF-0024",
+      "TF-0025",
+      "TF-0026",
+      "TF-0027"
+    ],
+    "confidence": 0.82,
+    "context_tags": [
+      "ui-polish",
+      "fakecoding",
+      "information-architecture",
+      "cross-platform"
+    ],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "һ�������̶�Ϊ�������ռ��䡢�Ѱ��š�֪ʶ����������Ŀ���Ự�͵ײ�����",
+      "Browser��Review��Task Ledger��ClawGraph��Cron��Remote Tasks �� Knowledge ����Ψһ����ʵ�Ĳ�Ʒ����",
+      "ȫ�ֿؼ���SVG���ҽ� token���ܶȺͶ�Ч�� FakeCoding �������һ��",
+      "��ͨ����ʹ��ֱ���İ���Developer/Advanced ����׼ȷ����"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 7200,
+    "evidence": [],
+    "execution_hints": [
+      "һ��ֻ�ƽ�һ�������ӽڵ�",
+      "ÿ���ڵ��ȸ��� Harness �� E2E���������Ӿ�Ǩ����"
+    ],
+    "id": "TF-0021",
+    "kind": "global_task",
+    "non_goals": [
+      "��д Gateway��Host API ��������ģ��",
+      "�ϲ� Task Ledger �� ClawGraph ��״̬��Դ",
+      "������ȫ������ǿ������խ�Ự����",
+      "�� Agent Browser �|���ͨ�����������"
+    ],
+    "primary_parent": null,
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "���͵�����ҳ����֪�������ڲ�������ʵ������ǰ�����γ�һ�¡��������ɷ��ֵĿ�ƽ̨�������顣",
+    "remaining_minutes_max": 9600,
+    "remaining_minutes_min": 4800,
+    "requirements": [
+      "��ɾ����α�����д���к�������밲ȫ����",
+      "Remote Tasks ������� Inbox�����ù���Ϊ Automations �� Scheduled",
+      "��������δ�ύ Cron �޸Ĳ������ϼ�������",
+      "���������ɼ��İ����� en��zh��ja��ru�����пɼ��������� Electron E2E",
+      "960x800 ������ʹ�ø��ǲ����ͼ������ǿ������"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "����ҳ H1 ������ 28px",
+      "һ��ҵ���������Ϊ 3",
+      "Knowledge ����ҵ����ͼ����Ϊ 2",
+      "Ǩ��·������ E2E ������Ϊ 100%"
+    ],
+    "summary": "�Կ��ƵĻҽ׹��������ع� Verse Claw��ͬʱ����ʵʹ�����������¹�λ����������",
+    "title": "FakeCoding �����ϵ���Ʒ��Ϣ�ܹ�Ǩ��",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
+  },
+  {
+    "acceptance_criteria": [
+      "·��ͼ Phase 0 �� Phase 4 �ĸ�������������������ɡ��������ղ��γɿɸ��� evidence",
+      "ģ�͹����治���ŵ��ڲ� VerseShell operation��policy/approval/workspace/journal owner ��Ư��",
+      "��ʵ canary ֻ��·��ͼ Phase 0 �� Phase 4 ����� operator/reviewer ֤����ȫ���������",
+      "��һ�׶β����� STATUS.md ��������ʱ���� default-off���Ҳ����� GA ���Ʒ��׼"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "��ȡ VerseShell foundation ·��ͼ�󣬿�ʼ�����Ŀ�ִ�С�����֤���żƻ���",
+      "validation_plan": [
+        "Task Forest validate/export",
+        "ÿ�� Harness/����/independent evidence",
+        "STATUS.md rollout review"
+      ],
+      "why_not_enough": "DAG ���ܴ���ÿ���� scoped spec��ʵ��ʵ�֡�clean evidence �Ͳ�Ʒ owner ���ߡ�",
+      "why_this_task": "���� foundation DAG ����·��ͼ�����н׶κ����β㣬���ѻ�����ʩ�������� DCS �� Runtime �������ߡ�"
+    },
+    "alignment_records": [
+      "TFA-e948656f79"
+    ],
+    "assumptions": [
+      "STATUS.md ������Ϊ rollout ״̬Ȩ����Դ",
+      "��ʷ UAS-05/UAS-06 �����ʲ��ɱ�������ƣ��������ƹ���ǰ P0 ���ʸ�",
+      "ÿ��ʵʩ��������������� scoped Harness spec������ clean candidate ������֤��"
+    ],
+    "children": [
+      "TF-0057",
+      "TF-0058",
+      "TF-0059",
+      "TF-0060",
+      "TF-0061",
+      "TF-0062",
+      "TF-0063",
+      "TF-0064",
+      "TF-0065",
+      "TF-0066",
+      "TF-0067",
+      "TF-0068",
+      "TF-0069"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseshell",
+      "coding-foundation",
+      "execution-plane",
+      "default-off",
+      "fail-closed"
+    ],
+    "created_at": "2026-08-13T17:21:51.259406Z",
+    "deprecated_at": null,
+    "derived_progress": 12.0,
+    "desired_outcomes": [
+      "OpenClaw policy/approval��ClawX workspace/journal �� VerseShell execution/artifact ����Ψһ�ҿ���֤",
+      "ģ��ֻʹ�� read_file��search_content��run_command��result_query �ĸ��ȶ� facade",
+      "coding ���ͨ�� adapter ����ͬһ ACI���������ڡ�����ͻָ���Լ",
+      "ֻ�о���ʵ֤�ݺ� STATUS.md ��ȷ�þ������������ canary"
+    ],
+    "deviations": [
+      "TFD-e2db1829ca"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md",
+      "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+      "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md",
+      "docs/dev/verseshell-foundation/STATUS.md",
+      "harness/specs/tasks/verseshell-typed-aci-adaptation.md",
+      "docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md",
+      "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md"
+    ],
+    "execution_hints": [
+      "ֻ��� TF-0059 / VS-P0-02����������� P0-03 ���κ� P1+ ��������",
+      "TF-0059 ������ clean pinned source��tracked ordered patch stack��8-file SHA-256 inventory�������� cargo test ����ȷ Python verifier contract ���� dirty input���ٽ��� governed probe��"
+    ],
+    "id": "TF-0056",
+    "kind": "global_task",
+    "next_action": "ֻ�� TF-0060 closeout proposal ȷ�Ϻ���� TF-0061 / VS-P1-01����������� P1-02��P1-03 ���κ� P2+ ��������",
+    "non_goals": [
+      "����ɾ�� PowerShell��Git Bash �� native terminal",
+      "��ģ�ͱ�¶���� 31 �� VerseShell operation",
+      "ģ��ѡ�� host��capability��policy �� approval token",
+      "�� MCP ��Ϊ ClawX �ڲ���ͨ��",
+      "�� workspace jail ����Ϊ OS/container sandbox",
+      "�Զ� native fallback���ⲿ shell д���Զ����񻯡�default-on �� GA"
+    ],
+    "primary_parent": null,
+    "priority": 1,
+    "progress": 12.0,
+    "progress_source": "manual",
+    "purpose": "Ϊ�ļ����ֿ⡢���̡����ԡ�������Git����Ϻͽ����ѯ�ṩͳһ��������ı���ִ����Լ��ͬʱ����ģ�͹�����С���ȶ���",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "P0 ʧ��ʱ���� default-off����ʷ���̱��治��� fresh binary��Rust��probe �͹�Ӧ��֤��",
+      "ÿ��ֻ�ƽ�һ�� ready ��������һ�� scoped Harness task spec",
+      "�κ� Renderer/Main/Gateway/OpenClaw ͨ�ŸĶ����� gateway-backend-communication ������ comms �Ž�",
+      "�����ܹ��Ķ������� README.md��README.zh-CN.md��README.ja-JP.md",
+      "���� workspace jail ����Ϊ OS sandbox������ governed ·���Զ� native fallback �� effectful replay"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "δ��Ȩִ�С���ʽ native fallback��effectful replay��workspace Խ���������й©��Ϊ 0",
+      "�����ơ�source��patch��lockfile��crate��handshake �� catalog identity Ư��Ϊ 0",
+      "�ض�������� omitted metadata �� artifact��д�������ȷ journal �� external_write ����",
+      "��ʵ canary �� provider usage��recovery��rollback �Ͱ�ȫ�¼��ж���������������ļ�¼"
+    ],
+    "summary": "VerseShell P0 �����Rust startup�����ؽ� source/build identity �� governed real probe �����γ� fresh engineering evidence����ǰ���ȴ� TF-0060 closeout ȷ�ϣ����� rollout/product locks �����رա�",
+    "title": "VerseShell ���� Coding ִ�л������� GA��",
+    "updated_at": "2026-08-14T06:28:44.681462Z"
+  },
+  {
+    "acceptance_criteria": [
+      "����·����̬ɨ���1���������",
+      "flag off ��ע���㸱����",
+      "��Ͼ��󵥲�ͨ��",
+      "������ɼ��� turn sources+token"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "��������ͳһ Agent ��Ʒϵͳ",
+      "validation_plan": [
+        "��ڵ� Harness �����֤��",
+        "Windows �������ھ���",
+        "��ʵ cohort paired A/B �� soak"
+      ],
+      "why_not_enough": "�Բ��Զ��ṩ default-on��TF-0006 ����� GA ��Ȩ��",
+      "why_this_task": "�������������ʶ���������ϼ��͸߷���ȱ�ڡ�"
+    },
+    "alignment_records": [
+      "TFA-0026758811"
+    ],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:58:00.180073Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "docs/dev/context-orchestrator.md",
+      "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "openclaw_runtime/src/gateway/server-methods/agent.ts (pass-through)",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts (6 passed)",
+      "tests/unit/context-orchestrator-entry-scan.test.ts",
+      "tests/unit/chat-turn-memory-injection.test.ts (30 passed)",
+      "openclaw_runtime chat-turn-vtoken + dcs-observability (21 passed)"
+    ],
+    "execution_hints": [
+      "��һ�Ự��TF-0004 SEKB ���Զ��ջ� �� TF-0005 Browser ����ָ�",
+      "�����Assembler/CVK dual-injection �Է� orchestrator ͳһ��flag Ĭ�� off��"
+    ],
+    "id": "TF-0002",
+    "kind": "subtask",
+    "non_goals": [],
+    "primary_parent": "TF-0001",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "����������µ���ͳһ memory/context ����ע�����",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "�տ� computeMemoryExtraSystemPrompt �� VToken attempt ע�뵽��һ���",
+      "ͳһ���� BlockStore/WM/VToken/Runtime Memory/SEKB/FactStore/ѹ��ժҪ",
+      "��� lineage: sessionId/runId/requestId/workspace/sources/budget"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "ͳһ Context Orchestrator ����أ�computeContextExtraSystemPrompt ΪΨһ������ڣ�attempt ���� memory+VToken��gateway ͸����flag ����/kill switch/lineage/��̬ɨ�赥���̡�",
+    "title": "P0-1 ͳһ Context Orchestrator",
+    "updated_at": "2026-07-27T13:16:29.660683Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Ĭ�����þ����ĵ����������",
+      "kill switch ���ж�ȫ�� memory/context ��ǿ",
+      "private network Ĭ�������лع�"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:58:00.333089Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/default-config-matrix.md",
+      "tests/unit/default-config-matrix.test.ts",
+      "tests/unit/openclaw-auth.test.ts (private network defaults)",
+      "tests/unit/vtoken-bridge.test.ts",
+      "openclaw_runtime/src/context-engine/enhancement-kill-switch.ts",
+      "openclaw_runtime/src/context-engine/enhancement-kill-switch.test.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "electron/utils/openclaw-auth.ts",
+      "electron/services/vtoken-bridge.ts",
+      "harness/specs/rules/vtoken-foundation-boundary.md",
+      "vitest: default-config-matrix + vtoken-bridge 12 passed; openclaw-auth private network 4 passed; openclaw_runtime vtoken+kill-switch 21 passed; chat-turn-memory 30 passed"
+    ],
+    "execution_hints": [
+      "��һ�Ự���� TF-0002 Context Orchestrator ͳһ���",
+      "��������� openclaw.json ����д�� dangerouslyAllowPrivateNetwork=true ���ᱻ�Զ���д���� undefined ���� false"
+    ],
+    "id": "TF-0003",
+    "kind": "subtask",
+    "non_goals": [],
+    "primary_parent": "TF-0001",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "���� VToken Ĭ��ON �� DCS memory Ĭ��OFF ��ì�ܣ��޸� Browser ����ȫĬ��",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "VToken �ҶȻ� opt-in������ kill switch",
+      "working-memory canary opt-in",
+      "Runtime Memory �� SEKB writeback Ĭ�� off",
+      "dangerouslyAllowPrivateNetwork Ĭ�� false"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Ĭ�ϲ����Ѷ���Ϊ fail-closed/opt-in��Browser ˽��Ĭ�� false��VToken assembly/bridge Ĭ�� false��working-memory / Runtime Memory inject / SEKB ����Ĭ�� off������ context enhancement kill switch��",
+    "title": "P0-2 Ĭ�ϲ��Զ������۶�",
+    "updated_at": "2026-07-19T09:24:02.163862Z"
+  },
+  {
+    "acceptance_criteria": [
+      "����1�� Electron/Playwright E2E �ȶ���",
+      "artifact �� lineage",
+      "�����������Զ�д��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:58:00.485328Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "openclaw_runtime/src/knowledge/sekb/golden-path.ts",
+      "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts",
+      "tests/e2e/sekb-golden-path.spec.ts",
+      "artifacts/sekb-golden-path/evidence.json",
+      "docs/dev/sekb-golden-path.md",
+      "electron/services/knowledge-api.ts",
+      "shared/host-api/contract.ts",
+      "src/lib/host-api.ts"
+    ],
+    "execution_hints": [
+      "��������� live agent �Ի��е� SEKB ע������ feature flag Լ�������ڵ�֤�����Զ��ջ�����ȫ�� GA"
+    ],
+    "id": "TF-0004",
+    "kind": "subtask",
+    "non_goals": [],
+    "primary_parent": "TF-0001",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "֤������ջ����ǰ�̣����ǿ����յ�һ���ƽ�·��",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "ִ�С�ѹ������ѡ�����ˡ�ȷ�ϡ��־û����ٻء���Ϊ�仯������",
+      "�����˹� confirm������ȫ�Զ�д��"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "SEKB ���Զ��ƽ�·������أ�runSekbGoldenPath + host capture/suggest/confirm/retrieve + Electron E2E��֤�ݺ� lineage��ȷ��ǰ��д principle���� auto writeback����",
+    "title": "P0-3 SEKB ���Զ��ƽ�ջ� E2E",
+    "updated_at": "2026-07-19T10:37:03.875577Z"
+  },
+  {
+    "acceptance_criteria": [
+      "��ȫĬ�ϻع����",
+      "����1����ʵ workflow E2E",
+      "���������״̬�ɽ���"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:58:00.643584Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "electron/services/agent-browser-task-service.ts (persist + recoverTasksAfterRestart)",
+      "electron/services/agent-browser-vault.ts (health states)",
+      "electron/services/agent-browser-service.ts (requestModeUpgrade userApproval gate)",
+      "electron/services/agent-browser-api.ts (tasks storagePath + approval/vaultHealth)",
+      "shared/host-api/contract.ts + src/lib/host-api.ts",
+      "tests/unit/agent-browser-task-service.test.ts",
+      "tests/unit/agent-browser-vault.test.ts",
+      "tests/unit/agent-browser-runtime-mode.test.ts",
+      "tests/unit/default-config-matrix.test.ts",
+      "tests/e2e/browser-security-recovery.spec.ts",
+      "artifacts/browser-security-recovery/evidence.json",
+      "docs/dev/browser-security-recovery.md",
+      "vitest 30 passed; contract:check ok; playwright 1 passed (7.2s)"
+    ],
+    "execution_hints": [
+      "��һ�Ự���� TF-0001 �տڣ���ȷ�� TF-0002/3/4/5 ��Ϊ done��TF-0006 �� blocked",
+      "�����openclaw.json private-network=true ���Զ�Ǩ�ƣ�CLI open �ڲ��� E2E ����ʧ�ܣ�restart �� unit ������"
+    ],
+    "id": "TF-0005",
+    "kind": "subtask",
+    "non_goals": [],
+    "primary_parent": "TF-0001",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� Browser �ʺ��ڲ��Ҷȣ���������չ����������",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "˽��Ĭ�Ϲر���ֲ����",
+      "mode upgrade �û���׼��",
+      "����־û��������״̬�ɽ���",
+      "Vault ����δ���ÿ�����"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Browser �ڲ���˿ȸ�Ž�����أ�mode upgrade �� userApproval��������̳־û��� running��interrupted �ɽ��ͣ�Vault health ����δ����/�𻵣�˽��Ĭ�� false �ع�������Electron host E2E �̡�",
+    "title": "P0-4 Browser ��ȫ������ָ�",
+    "updated_at": "2026-07-19T10:37:03.875577Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�� synthetic �� liveReady ·������",
+      "�����۷�ϵͳ default-on"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "��������ͳһ Agent ��Ʒϵͳ",
+      "validation_plan": [
+        "��ڵ� Harness �����֤��",
+        "Windows �������ھ���",
+        "��ʵ cohort paired A/B �� soak"
+      ],
+      "why_not_enough": "�Բ��Զ��ṩ default-on��TF-0006 ����� GA ��Ȩ��",
+      "why_this_task": "�������������ʶ���������ϼ��͸߷���ȱ�ڡ�"
+    },
+    "alignment_records": [
+      "TFA-4a4979781c",
+      "TFA-0026758811"
+    ],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-07-19T08:58:00.813415Z",
+    "deprecated_at": null,
+    "derived_progress": 10.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/tf0006-evidence-upgrade-unblock.md",
+      "artifacts/tf0006-evidence-upgrade/status.json",
+      "tests/unit/tf0006-evidence-upgrade-blocked.test.ts",
+      "docs/dev/Sustained-Development-Playbook.md ��8",
+      "docs/dev/tf0001-controlled-operable-closeout.md (liveReady=false)"
+    ],
+    "execution_hints": [
+      "���ǰ�����ķ�֤���뱸��corpus-manifest / live-ab-report / soak-report / product-approval",
+      "���Ʒ���� M2/M3 default-on����Ϊ deprecated ������ readyForDefaultFlagGraduation=false",
+      "��ֹ���� Agent Dev/P0 E2E �̵ƽ� liveReady ��Ϊ true"
+    ],
+    "id": "TF-0006",
+    "kind": "subtask",
+    "non_goals": [],
+    "primary_parent": "TF-0001",
+    "priority": 3,
+    "progress": 10.0,
+    "progress_source": "manual",
+    "purpose": "����ʵ corpus �� live A/B ֧�� default-on ���ۣ�������д honesty pack",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "��ʵ64K corpus �� human live A/B",
+      "soak �� productApproved ����"
+    ],
+    "source_sessions": [],
+    "status": "blocked",
+    "success_metrics": [],
+    "summary": "���� blocked��ȱ��ʵ corpus��human live A/B��soak �� product approval��P0/shadow/synthetic �̵ƾ������ɽ���֤�ݡ�",
+    "title": "M2/M3 ֤���������Ӻ�",
+    "updated_at": "2026-07-27T13:16:29.660683Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�ؼ� Electron E2E 6/6 ͨ��",
+      "maturity:validate exit 0",
+      "�ؼ�ê���� UNTRACKED",
+      "git diff --check ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "��������Ͷ��ʹ��",
+      "validation_plan": [
+        "���� Harness task spec ȫ���Ž�",
+        "�� clean checkout ���� E2E �� maturity validation"
+      ],
+      "why_not_enough": "ֻ�ָ�Ͷ���ʸ񣬲��ṩ��ʵЧ����ҵ֤�ݡ�",
+      "why_this_task": "���ǽ����κ��ȶ� canary ǰΨһ��Ӳ�������ϡ�"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "W5 ����ʧ�ܹ������ helper �� sender ����"
+    ],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-07-19T17:29:59.646228Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "docs/dev/component-controlled-rollout-p0-closeout.md",
+      "artifacts/component-controlled-rollout-p0/final-report.json",
+      "tests/e2e/dcs-production-wiring-w5.spec.ts",
+      "tests/unit/host-invoke.test.ts",
+      "harness/specs/tasks/component-controlled-rollout-readiness.md",
+      "���������ؼ� Electron 6/6��shadow �ؼ� Electron 6/6��671.4s��",
+      "pnpm run maturity:validate exit 0��traceability 35 fresh / 0 stale"
+    ],
+    "execution_hints": [
+      "P0 ����ɣ�������Ҫ�ؿ� W5/maturity��������֤����ʾ�ع�",
+      "shadow Electron �����˱��� pnpm ��������/junction������д����ȫ���߹�Ӧ������"
+    ],
+    "id": "TF-0008",
+    "kind": "task",
+    "non_goals": [
+      "��������",
+      "Ĭ��ֵ��ת",
+      "���� CVK/assembler �ع�"
+    ],
+    "primary_parent": "TF-0007",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�ѱ����̵�ת��Ϊ����顢�ɺϲ����ɸ��ֵ��ܿ�Ͷ�û��ߡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���÷ſ� senderAuth �������������Ժ���",
+      "���к���ʵ��/E2E/docs/evidence ����ͬһ change set",
+      "�� collector ˢ�� evidence�����ָ� frozen hash"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "DCS W5 3/3 ͨ��",
+      "evidence hash failure 0"
+    ],
+    "summary": "P0 ���������ѱպϣ�Goal inventory ��׼ staged��W5 ����Ȩ sender/Main-owned Gateway ·���� 3/3���ؼ� Electron 6/6��maturity exit 0��shadow staged patch runtime build ��ؼ� 6/6 ����ͨ����",
+    "title": "P0 ���������� DCS ��ʵ����֤�ݻָ�",
+    "updated_at": "2026-07-19T21:05:19.359255Z"
+  },
+  {
+    "acceptance_criteria": [
+      "agent-surrogate��DCS��SEKB��Browser �� 10/10 ���˱��ɸ��飨�����㣩",
+      "agent-surrogate��δ��Ȩд�� 0��agent kill/rollback �ɹ��� 100%�������㣩",
+      "human/live��ÿ�� profile ���� 10 �ξ������˲�Ʒ·������deferred����ǰ 0/10��",
+      "human/live���������尲ȫ�ʡ�canary drill ����� owner continue/shrink/stop �þ���deferred��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�������˲��Գɱ�ʱ��֤������ʵ������",
+      "validation_plan": [
+        "agent campaign 10/10/10",
+        "preflight agent true/human L3 false",
+        "Task Forest ���α��� blocked"
+      ],
+      "why_not_enough": "review_needed �Բ����� human/live/product ��ɡ�",
+      "why_this_task": "TF-0009 ���� profile �������̺� canary ֤�ݵ����� owner��"
+    },
+    "alignment_records": [
+      "TFA-0026758811",
+      "TFA-782616115f"
+    ],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.7,
+    "context_tags": [],
+    "created_at": "2026-07-19T17:29:59.646228Z",
+    "deprecated_at": null,
+    "derived_progress": 50.0,
+    "desired_outcomes": [
+      "����ʵ������ profile ���̿��� agent �� clean checkout �ظ�ִ��",
+      "agent �� human/live ֤���� schema�������ͽ�������ȫ����",
+      "�������˿����ܴ���ȷ residual ����������������������"
+    ],
+    "deviations": [
+      "TFD-tf0009-agent-surrogate-downgrade-20260729",
+      "TFD-tf0009-human-engineering-dependency-split-20260729"
+    ],
+    "difficulty": "medium",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "docs/dev/component-controlled-rollout-plan.md#p1С��Χ�ܿ��ڲ����а�",
+      "docs/dev/component-operational-readiness-checklist.md",
+      "docs/dev/tf0009-engineering-evidence-audit.md",
+      "artifacts/first-product-preview/TF-0009/evidence-audit.json",
+      "artifacts/first-product-preview/TF-0009/agent-surrogate-charter.json",
+      "artifacts/first-product-preview/TF-0009/agent-surrogate-report.json",
+      "harness/specs/rules/tf0009-real-canary-authority.md",
+      "harness/specs/tasks/tf0009-engineering-evidence-audit.md",
+      "artifacts/dcs-deep-test-week1/day1-gates.json",
+      "docs/dev/handoffs/LATEST.md"
+    ],
+    "execution_hints": [
+      "���� pnpm run tf0009:agent-surrogate������ pnpm run dcs:ops:preflight��Ԥ�� agentSurrogateReady=true �� l3Ready=false",
+      "�� review_needed ����Ϊ degraded-agent-complete�����ý���Ϊ���� canary ���",
+      "δ��ֻ�в���ÿ profile 10 �ξ��������������� drill �� owner �þ���ſ����� done proposal",
+      "TF-0011 �������� agent-surrogate ����֤�ݣ����ƽ��������� TF-0009 ���˼�����liveReady �� productApproved",
+      "���� liveReady=false��productApproved=false��defaultOn=false��C1 4.5x/keep-off��TF-0006 blocked"
+    ],
+    "id": "TF-0009",
+    "kind": "task",
+    "non_goals": [
+      "default-on",
+      "�޽� cohort",
+      "TF-0006 ����"
+    ],
+    "primary_parent": "TF-0007",
+    "priority": 2,
+    "progress": 50.0,
+    "progress_source": "agent-surrogate-plus-residual-audit",
+    "purpose": "��û�����˲��Գɱ�ʱ������������ agent �������̡��˱��ͻع��ջ���ͬʱ�Ѳ����������֤������ȷ residual��",
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "P0 �� Day-1 L0/L1/L2 �����ű���ȫ��",
+      "agent-surrogate ÿ�� profile ǡ�� 10 ������������ʵ������ lineage���� humanEquivalent=false��liveEvidence=false",
+      "SEKB agent ����ִ�� positive human-confirm write��Browser agent ����ð����ʵ������������׼",
+      "���� owner/cohort/budget/privacy/rollback �����˺ϸ� run ������Ϊ���� residual",
+      "Runtime Memory ���� diagnostics-only��������Ʒ���� TF-0006 ״̬����"
+    ],
+    "source_sessions": [],
+    "status": "review_needed",
+    "success_metrics": [
+      "agent-surrogate ��¼ 30/30 ͨ��",
+      "agent campaign δȷ�� SEKB principle д�� 0",
+      "agent campaign Browser ˽�������������ƹ� 0",
+      "���˼������� 0",
+      "TF-0009 �Ƿ� done ���Ʒ��Ư�� 0"
+    ],
+    "summary": "agent-surrogate ������������ɣ�DCS��SEKB��Browser �� 10/10��agent kill/rollback ͨ�������м�¼�̶��� human/live�������� profile ��Ϊ 0/10������ canary drill ����� owner �þ��Ӻ�����Ϊ degraded-agent-complete������ review_needed�������� UAS ���������乤��֤�ݼ��������ⲻ���� TF-0009 done��",
+    "title": "P1 ���С��Χ�ܿ��ڲ����а�",
+    "updated_at": "2026-07-29T14:55:37.638857Z"
+  },
+  {
+    "acceptance_criteria": [
+      "audit-manifest �ɻ�����ȡ",
+      "Task Forest��Harness��Ĭ�Ͼ���� owner matrix �޳�ͻ",
+      "�������/����ļ�����ͬһ�ɽ��� change set"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "��ͳһ Agent �����ɳ����Ҳ������������",
+      "validation_plan": [
+        "���� task-forest validate/export",
+        "���� Harness context/validate",
+        "�ڶ�����պ˶� manifest"
+      ],
+      "why_not_enough": "ֻ���������֤�ݣ����޸�����ʱȱ�ڣ�Ҳ������ TF-0009 ����֤�ݡ�",
+      "why_this_task": "����������ÿ�����������ܸ��ֺ�����Ȩ����ڣ������� agent ����֤�������� residual��"
+    },
+    "alignment_records": [
+      "TFA-782616115f",
+      "TFA-tf0011-engineering-chain-release-20260729"
+    ],
+    "assumptions": [
+      "TF-0009 agent-surrogate ����������ɲ��ṩ����ǰ���̻���",
+      "TF-0009 ����/live residual ������������Ϊ review_needed"
+    ],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ÿ����ȷ����ʵ��׷�ݵ�Դ����ա���������",
+      "ͳһ Agent �Ķ����Ψһ Harness �� Task Forest ���"
+    ],
+    "deviations": [
+      "TFD-tf0009-human-engineering-dependency-split-20260729",
+      "TFD-tf0011-historical-workspace-metadata-20260729"
+    ],
+    "difficulty": "medium",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "artifacts/unified-agent-system/TF-0011/audit-manifest.json",
+      "artifacts/harness/latest.md",
+      "harness/specs/tasks/uas-00-evidence-freeze-governance.md",
+      "harness/specs/rules/uas-00-evidence-freeze-boundary.md",
+      "scripts/uas-00-evidence-freeze.mjs",
+      "tests/unit/uas-00-evidence-freeze.test.ts",
+      "docs/dev/handoffs/LATEST.md",
+      "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#3-�о�������֤�ݵȼ�"
+    ],
+    "execution_hints": [
+      "TF-0011 ֻ����֤�ݣ������� live/product/default-on Ȩ��",
+      "TF-0009 ���� review_needed/50%�������� profile ��Ϊ 0/10",
+      "��һ�Ựֻ�ƽ� TF-0012/UAS-01�����Ƚ������� gateway-backend-communication �� Harness task spec",
+      "��ֹԽ��ʵʩ TF-0013/14��FP-P4-03/04"
+    ],
+    "id": "TF-0011",
+    "kind": "task",
+    "non_goals": [
+      "�޸�������Ϊ",
+      "�����κ�Ĭ�� flag"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "������ 344 ��������״̬��δ��������ĵ���ֱ��ʵʩ�����졣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "��¼ HEAD��dirty diff hash�������������� hash �;�ȷ����",
+      "Harness spec ���� gateway-backend-communication",
+      "�޸� VToken default-ON spec drift"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "δ��Դ����յ���ƽ��� 0",
+      "��֪ spec drift 0"
+    ],
+    "summary": "UAS-00 �����տ���ɣ������ɶ� manifest ���� HEAD��dirty diff��untracked files������������ƣ�Harness/Task Forest/Ĭ�Ͼ���/owner matrix ����һ�£�agent ������/live ֤���ϸ���롣",
+    "title": "UAS-00 ֤�ݶ���������Ǽ�",
+    "updated_at": "2026-07-29T15:49:51.013110Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�ظ��ύͬһ idempotencyKey �������ڶ�������",
+      "�¼� replay ��ԭ״̬�����߽��һ��",
+      "����ֶ� redaction/retention ����ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "�������졢�ɻָ���ͳһ Agent ������",
+      "validation_plan": [
+        "schema compatibility tests",
+        "crash/replay tests",
+        "contract drift check",
+        "comms replay/compare"
+      ],
+      "why_not_enough": "ֻ�������ɣ����տھ��� context �� execution ʵ�֡�",
+      "why_this_task": "�ָ�����ƺͺ�����һ·��Ǩ�ƶ������ȶ��¼����ݵ���Լ��"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "���� trajectory/event ����ΪΨһ�־��¼� owner"
+    ],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ͳһ plan/handle/observation/artifact/event schema",
+      "�ط��ܹ���ԭ run��turn��process �� policy decision"
+    ],
+    "deviations": [
+      "TFD-tf0012-repository-baseline-gates-20260730"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 1440,
+    "evidence": [
+      "harness/specs/tasks/uas-01-unified-contract-event-spine.md",
+      "openclaw_runtime/src/runtime-core/agent-run-contracts.ts",
+      "openclaw_runtime/src/runtime-core/agent-run-event-spine.ts",
+      "openclaw_runtime/src/runtime-core/index.ts",
+      "tests/unit/agent-run-contracts.test.ts",
+      "tests/unit/agent-run-event-spine.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#12-tf-0012uas-01-����ʵ�����ȷ���տ�2026-07-30",
+      "pnpm exec vitest run: 6 files / 59 tests passed",
+      "pnpm run typecheck; targeted ESLint; comms replay/compare; UAS-01 scoped diff check: passed"
+    ],
+    "execution_hints": [
+      "���ڵ�ֻ���� contract ��־��¼����ɣ�����Ȩ TaskLoop cutover��event-log-first resume �� replay side effects",
+      "long_task_checkpoints ������Ĭ�ϻָ���Դ��runtime_task_event_log_records ��Ψһ�־� UAS event-log owner",
+      "���� Kysely/generated �� shared dirty Harness residual ������ʽ����ͨ���� ownership ���޹�����������",
+      "��ʽ apply ����һ�Ựֻ���ƽ� TF-0013/UAS-02����ֹԽ�� TF-0014 �� FP-P4-03/04"
+    ],
+    "id": "TF-0012",
+    "kind": "task",
+    "next_action": "��һ�Ự�Ƚ��� UAS-01 Harness task spec������ harness context����ֻʵ��ͳһ Contract ��־��¼����ɡ�",
+    "non_goals": [
+      "�л� VerseShell Ĭ��·��",
+      "����ֲ�ʽ���������"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "��ִ�С������ĺ� Memory ״̬�߱������ϵ���ݵȺ�����ָ����塣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���� AgentRunEvent/v1��ExecutionPlan/v1��ProcessHandle/v1��Observation/v2��ArtifactRef/v1",
+      "���� eventId��causationId��idempotencyKey��schemaVersion��redaction �� retention",
+      "�������� trajectory/event���������ڶ� run journal"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "�ظ�ִ�и����� 0",
+      "�޷������¼� 0",
+      "�ڶ� run journal 0"
+    ],
+    "summary": "UAS-01 ����ʵ����ɣ�ͳһ�汾�� plan/process/observation/artifact/policy/event contract ֻͶӰ������ RuntimeTaskEventLog SQLite owner��ͬ task �ݵȼ����ظ������ã��� replay ������״̬һ�£�checkpoint/trajectory/diagnostics authority ������ԭ�߽硣",
+    "title": "UAS-01 ͳһ Contract ��־��¼�����",
+    "updated_at": "2026-07-29T16:35:03.568177Z"
+  },
+  {
+    "acceptance_criteria": [
+      "������̬ɨ��ֻ��һ�� assembly authority",
+      "���� source �����ƹ���Ԥ��",
+      "��ϲ��Ը��� working-memory��role-memory��CVK��VToken ͬʱ����",
+      "flag off/kill switch ���ѯ��ע��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "ʵ��ͳһ�����ظ��� Context ��·��",
+      "validation_plan": [
+        "entry scan",
+        "candidate ordering/dedup tests",
+        "combined provider integration tests",
+        "lineage assertions"
+      ],
+      "why_not_enough": "���� UAS-03 �Ƴ� VToken ����ҵ��״̬���޹ش��С�",
+      "why_this_task": "��ֱ�ӽ����ǰ˫��ڡ�˽�˺��ظ�ͶӰ���⡣"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "���� TF-0002 ������ʷ done��������ֻ�պ� residual"
+    ],
+    "children": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 60.0,
+    "desired_outcomes": [
+      "���� context source �Ȳ��� ContextCandidate",
+      "������ȥ�����շ�",
+      "���� lineage ������¼������ضϺͶ���ԭ��"
+    ],
+    "deviations": [
+      "TFD-67e4e8fbdf"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 2400,
+    "evidence": [
+      "harness/specs/tasks/uas-02-context-orchestrator-authority-closure.md",
+      "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
+      "docs/dev/full-chain-maturity-audit-2026-08-02.md"
+    ],
+    "execution_hints": [
+      "Context Orchestrator ������ selection��dedup��budget��projection �� lineage authority����ֹ�ָ�˽������Ԥ������˳�����ȼ�",
+      "�� turnId ˽��Ԥ��ֻ�������·�����������½��� attempt �� compaction �������",
+      "������Ʒ����C1 keep-off��TF-0006 blocked��Runtime Memory diagnostics-only �� SEKB ���Զ�д�ر��ֲ���",
+      "��һ�Ựֻ�ɴ� TF-0014/UAS-03 ��ʼ�����ȶ�ȡ·���ĵ���������ȷ�� Harness task spec������ harness context"
+    ],
+    "id": "TF-0013",
+    "kind": "task",
+    "next_action": "�� RC-02 ��������Ϊ�仯 full-payload census������ RC-03 ���� DCS authority cutover��",
+    "non_goals": [
+      "learned context manager",
+      "�Զ� Memory д��"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 60.0,
+    "progress_source": "post-audit-reassessment",
+    "purpose": "������̬ Assembler ˽��Ԥ�㡢����˳��ð�����ȼ��Ϳ� provider �ظ�ͶӰ��",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "���� working-memory��CVK��role/runtime memory �� VToken",
+      "ʹ���ȶ� candidateId/dedupKey",
+      "P0 ȥ��ʹ�� authority object identity/version/content digest��������ģ������ȥ��"
+    ],
+    "source_sessions": [],
+    "status": "blocked",
+    "success_metrics": [
+      "˽�� context budget 0",
+      "�ظ� authority object ע�� 0",
+      "������ʵ�����ȼ�ƫ�� 0"
+    ],
+    "summary": "UAS-02 �ѱպ��ܹ���ǿ��ѡ������ȥ�ء�Ԥ��� lineage���� 2026-08-02 �������֤������δ�������� provider payload��ContextEngine messages replacement��COMPASS SSP ������ wire boundary��",
+    "title": "UAS-02 Context Orchestrator residual �տ�",
+    "updated_at": "2026-08-02T13:07:59.996410Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���� pack ������ MemStore/WAL/lock",
+      "����ѹ�������޿� session ��Ⱦ��ȫ�ִ���",
+      "token schema ��� estimate_method",
+      "�����ز��Ծ�����ȷ������ϻ��˳���������"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "����ͳһ Context ��·���ĸ��ӶȺͿ�����ά���ɱ�",
+      "validation_plan": [
+        "filesystem side-effect tests",
+        "multi-workspace concurrency tests",
+        "token estimate schema tests",
+        "pnpm vtoken:test"
+      ],
+      "why_not_enough": "���޸� Coding д��� VerseShell �������ڡ�",
+      "why_this_task": "������ VerseToken ���ļ�ֵ��ͬʱɾ����������Ҫ��״̬ authority��"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "parser��graph selection �� renderer �ɶ�������"
+    ],
+    "children": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ֻ�� pack ��ҵ��־ø�����",
+      "�� workspace/session �������� reopen",
+      "estimate �� provider actual usage ��ȷ����"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 1920,
+    "evidence": [
+      "harness/specs/tasks/uas-03-vtoken-stateless-packing.md",
+      "harness/specs/rules/vtoken-foundation-boundary.md",
+      "packages/vtoken/src/vtoken/host_rpc.py",
+      "packages/vtoken/src/vtoken/store.py",
+      "packages/vtoken/tests/test_host_rpc.py",
+      "packages/vtoken/tests/test_store.py",
+      "packages/vtoken/README.HOST.md",
+      "openclaw_runtime/src/context-engine/vtoken-rpc-client.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts",
+      "openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.test.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "openclaw_runtime/src/context-engine/context-orchestrator.test.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.ts",
+      "openclaw_runtime/src/context-engine/dcs-observability.test.ts",
+      "tests/unit/uas-03-vtoken-stateless-packing.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#14-tf-0014uas-03-����ʵ���������Ž�2026-07-30",
+      "VToken 251; runtime 34; root 14 tests: passed",
+      "typecheck; Ruff/oxlint/ESLint; comms replay/compare: passed",
+      "isolated diff-aware Harness validate and dry-run: passed at C:\\uas03v-c3309527a74345e6a3860dbf6c896526"
+    ],
+    "execution_hints": [
+      "���� Working Context ֻ����ʹ�� VtokenPackRequest/v1�����ûָ� open-ingest-assemble transaction��session state ��ȫ�ֻ���β����",
+      "Context Orchestrator �������պ�ѡ��ȥ�ء�allowance��projection �� lineage authority��VerseToken estimate ����ð�� provider actual usage ��ɱ�",
+      "������Ʒ����C1 keep-off��TF-0006 blocked��TF-0009 review_needed��Runtime Memory diagnostics-only �� SEKB ���Զ�д�ر��ֲ���",
+      "�������ڻع鷢������״̬�����á����󽻲���Ⱦ���ظ���ѡδ�ܾ������������ϻ� estimate ����Ư��ʱ�ؿ�"
+    ],
+    "id": "TF-0014",
+    "kind": "task",
+    "next_action": "���ڵ�����ɣ�����ֻ������ contract �ع�ʱ�ؿ���",
+    "non_goals": [
+      "�� VerseToken ��Ϊ���� Memory store",
+      "���� Developer smoke Ȩ��"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�Ƴ�ֻ�� assembly ������ MemStore/WAL/lock ��ȫ���޹ش��С�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���� stateless pack request ����� worker pool",
+      "Orchestrator ������ȥ�غ�ѡ�� allowance",
+      "�޸����ض��� hot reload completion ����"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "ֻ���־ø����� 0",
+      "�޹� session ������ 0",
+      "estimate ð�� actual 0"
+    ],
+    "summary": "UAS-03 �����տ���ɣ����� Working Context ÿ turn ֻ����һ�� VtokenPackRequest/v1��ÿ��������ڴ� graph�������� sessionDir/session��MemStore��WAL��lock ��ȫ�� runExclusive��Context Orchestrator ��ʽӵ�� allowance�����ֻ���� chars_div_4 estimate��stateful API ������� package consumer ��Ĭ�Ϲر� diagnostics��",
+    "title": "UAS-03 VerseToken ��״̬װ�仯",
+    "updated_at": "2026-07-30T02:31:13.418276Z"
+  },
+  {
+    "acceptance_criteria": [
+      "��;ʧ�ܺ����� rollback �򷵻� recovery_required",
+      "����г��������޸��ļ��� recoveryRef",
+      "lease ʵ������ journal snapshot",
+      "crash injection ��ɻָ�"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.93,
+      "user_goal": "���� Coding ��Ϥ�������ͬʱ�ﵽ�����Ʒд��ɿ���",
+      "validation_plan": [
+        "multi-file failure tests",
+        "concurrent patch tests",
+        "wrapper order tests",
+        "crash recovery tests"
+      ],
+      "why_not_enough": "���ṩ���ؽ����������ڵȼۡ�",
+      "why_this_task": "Coding ���ļ� mutation authority��������ִ��ƽ��Ǩ��ǰ�պ�ʧ�����塣"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "Ӧ�ò� prepare/commit/rollback �ܸ���Ŀ���ļ�����"
+    ],
+    "children": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ͬ�ļ����� mutation ������",
+      "ʧ��״̬��֤��",
+      "journal/undo �� partial failure �ɼ�"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 2640,
+    "evidence": [
+      "harness/specs/tasks/uas-04-coding-mutation-consistency.md",
+      "harness/specs/rules/coding-mutation-consistency-boundary.md",
+      "openclaw_runtime/src/agents/apply-patch.ts",
+      "openclaw_runtime/src/agents/apply-patch-types.ts",
+      "openclaw_runtime/src/agents/apply-patch-batch-lock.ts",
+      "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+      "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
+      "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "openclaw_runtime/src/agents/tools/write-journal.test.ts",
+      "openclaw_runtime/src/agents/agent-tools.ts",
+      "tests/unit/uas-04-coding-mutation-consistency.test.ts",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#15-tf-0015uas-04-����ʵ���뱾���Ž�2026-07-30",
+      "runtime focused: 6 files / 96 tests passed; root contract: 1 file / 3 tests passed",
+      "root typecheck; targeted type-aware oxlint; root ESLint; comms replay/compare: passed",
+      "Harness structural validate and isolated diff-aware validate/dry-run: passed at C:\\uas04v-100730b39e9e4a3b9600a98fa0804a5d"
+    ],
+    "execution_hints": [
+      "apply_patch ������ԭʼ���ݶ�ȡ�� hunk Ԥ����ǰ��ȡ�淶������·����Լ�������е� commit/rollback �� journal ��̬д�����",
+      "write-journal.ts ����Ψһ mutation recovery evidence owner�����ûָ���Լ�� apply_patch ���ջ򴴽��ڶ� journal",
+      "rolled_back ����ָ�ȫ������·�����ָ����������� fail closed Ϊ recovery_required ������ recoveryRef",
+      "post-write verify ���ûع����ط��� committed mutation��������Ʒ����C1 keep-off��TF-0006 blocked��TF-0009 review_needed��Runtime Memory diagnostics-only �� SEKB ���Զ�д�ر��ֲ���"
+    ],
+    "id": "TF-0015",
+    "kind": "task",
+    "next_action": "���ڵ�����ɣ�����ֻ�ھ�Ĭ partial mutation���ص� patch �����journal ����֤�ݶ�ʧ��������ʧЧ�� verify �ع� committed mutation ʱ�ؿ���",
+    "non_goals": [
+      "���ƿ��ļ�ϵͳ��ʵԭ������",
+      "��д�� journal Ǩ�� VerseShell"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�������ļ� patch �״��Ĭ���� partial mutation �Ĳ�ȷ���ԡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "patch ������������Ԥ����",
+      "�����ȡ���ļ� lease/queue",
+      "ʹ�� prepared/committed/rolled_back/recovery_required ״̬",
+      "�������� write journal���������ڶ� journal"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "��Ĭ partial mutation 0",
+      "ͬ�ļ�д�뽻�� 0",
+      "�޷���λ�ָ����ϵ�ʧ�� 0"
+    ],
+    "summary": "UAS-04 �����տ���ɣ�apply_patch �ڶ�ȡ/Ԥ����ǰ��ȡ����·����Լ��ȫ�� prepared ��� mutation�����ʧ�������ָ�Ϊ rolled_back���ָ�������Ϊ recovery_required ��������� write-journal recoveryRef������ɼ�� prepared ���Σ�post-write verify ���ع� committed mutation��",
+    "title": "UAS-04 Coding д��һ������ָ�",
+    "updated_at": "2026-07-30T03:39:30.285944Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Windows Node/pnpm/git/python/PowerShell/Git Bash ��Ϊ����ͨ��",
+      "�ظ����󲻴����ظ�����",
+      "��ʱ��ȡ��ֻӰ��Ŀ�� process",
+      "����� running/exited/lost/expired ״̬�ɽ���",
+      "junction/UNC/�ո�/Unicode/PATHEXT ��ȫ����ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.91,
+      "user_goal": "������ VerseShell ��� PowerShell/Git Bash ��Ϊ����ִ�п���ƽ��",
+      "validation_plan": [
+        "Windows command matrix",
+        "PTY/stdin/cancel tests",
+        "crash/reconcile tests",
+        "real ae.exe E2E",
+        "comms replay/compare"
+      ],
+      "why_not_enough": "��������������������� cohort������ UAS-06 canary��",
+      "why_this_task": "���Ǳ���ִ�е�һ·���л�ǰ�ĺ��Ĺ��ܵȼ��ż���"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "��Ҫ VerseShell ������ ClawX adapter Эͬ�޸�",
+      "ԭ�� Windows contained ģʽ������������ VM/WSL2 �߽�"
+    ],
+    "children": [],
+    "confidence": 0.98,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ǰ̨����̨��PTY �� stdin ·�����ܵȼ�",
+      "����״̬�ɿ�����ʱ�������",
+      "����е��� cursor �� artifact lineage"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 6000,
+    "evidence": [
+      "harness/specs/tasks/uas-05-verseshell-process-lifecycle.md",
+      "harness/specs/rules/verseshell-process-lifecycle-boundary.md",
+      "resources/verseshell/manifest.json",
+      "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+      "openclaw_runtime/src/agents/verseshell/governed-process.test.ts",
+      "openclaw_runtime/src/agents/bash-tools.exec-runtime.ts",
+      "openclaw_runtime/src/agents/bash-tools.process.ts",
+      "openclaw_runtime/src/agents/bash-process-registry.ts",
+      "tests/unit/uas-05-verseshell-process-lifecycle.test.ts",
+      "docs/dev/verseshell-foundation/STATUS.md#uas-05-engineering-update-2026-07-30",
+      "docs/dev/unified-agent-system/DEVELOPMENT-LOG.zh-CN.md#16-tf-0016uas-05-����ʵ���뱾���Ž�2026-07-30",
+      "Rust operation protocol 9/9 and lifecycle 3/3 passed; cargo release ae build passed",
+      "pnpm verseshell:test: bundle 8/8, runtime bundle 11/11, focused runtime 8 files / 47 tests passed",
+      "root manifest plus UAS-05: 2 files / 12 tests passed; exact UAS-05: 1 file / 4 tests passed",
+      "root typecheck, comms replay/compare, package manifest validation, and both workspace git diff --check passed",
+      "Harness structural validate and isolated diff-aware validate/dry-run passed at C:\\uas05v-290ec773e2e14f4d8b16416bb3f1677c; shared default diff-aware validate correctly refused unrelated dirty paths"
+    ],
+    "execution_hints": [
+      "process.start ���� replay��owner key ������ process/runtime/workspace/agent/session��mismatch ���� fail closed",
+      "poll cursor ���뵥������ʽ���� retained_start_cursor/lost_bytes/truncated������� terminal record �����н�",
+      "VerseShell lifecycle owner ���봦�� stdin/ConPTY/timeout/cancel/tree cleanup�����ö� VerseShell PID ʹ�� native fallback",
+      "��ӦԴ����뱣�� base commit + tracked patch + binary/catalog immutable identity��dirty package δ������¼��δ��׼����ܾ�",
+      "���� TF-0017 ֻ��������ȷ�ϵ� cohort canary��������Ʒ����C1 keep-off��TF-0006 blocked��TF-0009 review_needed��Runtime Memory diagnostics-only �� SEKB ���Զ�д�ر��ֲ���"
+    ],
+    "id": "TF-0016",
+    "kind": "task",
+    "next_action": "���ڵ�����ɣ����� process replay��owner Խ�硢cursor ����/��Ĭ��ʧ��stdin/ConPTY �ع顢������������manifest/patch identity Ư�ƻ� governed native fallback ʱ�ؿ���",
+    "non_goals": [
+      "�� host-governed ����Ϊ sandbox",
+      "��Զ�̻� provider-native ִ��ǿ�ƾ��� VerseShell"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "ʹ VerseShell �߱�������б��� exec/process ���������壬�������� shell string ��װ��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "֧�� argv��envDelta��PATH/PATHEXT��stdin��background��ConPTY��poll/read/write/kill/cancel",
+      "�����ݵ� process create��owner lease��heartbeat��reconcile �� tombstone",
+      "���� host-governed �� contained ģʽ",
+      "����·������ʽ native fallback"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "�ظ����� 0",
+      "���������� 0",
+      "��ʧ��� cursor 0",
+      "��ʽ fallback 0"
+    ],
+    "summary": "UAS-05 �����տ���ɣ�VerseShell ���ڲ� process.start/poll/write/kill/list ӵ�� governed �����������ڣ�Windows argv/env/PATH/PATHEXT��pipe/ConPTY��cursor/retention��artifact lineage��owner isolation��kill/timeout/crash ��������� restart lost ������ʵ binary ֤�ݣ�OpenClaw exec/process ʹ��ͬһ lifecycle owner��MCP ���� process.*��governed ·���� native PID fallback��",
+    "title": "UAS-05 VerseShell �����������ڵȼ�",
+    "updated_at": "2026-07-30T07:24:21.056847Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���ٸ��Ƕ���������񡢺�̨��PTY��ȡ�����������",
+      "native fallback 0",
+      "kill switch �� rollback �����ɹ��� 100%",
+      "��δ��Ȩִ�С��ظ����̡���ʧ�����ȫй©"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "���ͳһ Agent ��һ����ִ��·����ͬʱ������ʵ֤�ݡ����������Ͳ�Ʒ����ʵ��",
+      "validation_plan": [
+        "���� generated UAS-06 evidence report",
+        "������ʵ paired cohort ��������¼ provider/human recovery",
+        "ִ�о���� operator kill/rollback drill",
+        "��ʵ֤�����ĺ��ٵ������ closeout proposal"
+      ],
+      "why_not_enough": "����֤�ݲ���֤����ʵ provider �ɱ����˹��ָ����ڲ� cohort ��ȫ��Ӫ�������档",
+      "why_this_task": "TF-0017 ����ȷ��ִ������·���гн� VerseShell lifecycle parity ��Ψһ cohort ��֤�ڵ㡣"
+    },
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
+    "assumptions": [
+      "UAS-05 ���ܾ�����ͨ��",
+      "����ȷ�ڲ� owner ��ع�����"
+    ],
+    "children": [],
+    "confidence": 0.7,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": "2026-08-02T13:07:59.996410Z",
+    "derived_progress": 35.0,
+    "desired_outcomes": [
+      "cohort �ںϸ񱾵�ִ�и����� 100%",
+      "verseshell_result �ϲ��ؼ��� process ����",
+      "�γɶ��ջ��ߺͿɽ���ʧ�ܷ���"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 3120,
+    "evidence": [
+      "harness/specs/tasks/uas-06-single-local-exec-canary.md",
+      "harness/specs/rules/verseshell-single-local-exec-canary-boundary.md",
+      "artifacts/uas-06-single-local-exec-canary/report.json",
+      "openclaw_runtime/src/agents/verseshell/single-plane-canary.ts",
+      "openclaw_runtime/src/logging/diagnostic-stability.exec.test.ts",
+      "UAS-06 report: engineering-only, needs-real-canary, 9/9 scenarios, governed coverage 100%, native fallback 0, hard vetoes 0",
+      "UAS-06 focused config/evidence/diagnostic tests, verseshell:test, root typecheck, comms replay/compare, and isolated diff-aware Harness validate/dry-run passed"
+    ],
+    "execution_hints": [
+      "���ɲ���Ա�� global/agent/session scope ѡ�� tools.exec.host=verseshell��ģ�Ͳ� host enum �������� VerseShell",
+      "�κ� governed ʧ�ܱ��� fail-closed��rollback ��������ʽ host ���ñ���������� native fallback",
+      "��һ���ɼ���ʵ�ڲ� cohort paired baseline/VerseShell task��������¼ actual provider usage �� human recovery minutes����ִ�о���˵� operator kill/rollback drill",
+      "����ʵ�������Ĳ����� closeout ǰ��TF-0018/UAS-07 �� TF-0019/UAS-08 ���� proposed"
+    ],
+    "id": "TF-0017",
+    "kind": "task",
+    "next_action": "���ܿ��ڲ� cohort ���� paired native-baseline/VerseShell ���񣬼�¼ÿ�� live observation �� actual provider usage���˹��ָ����ӡ�lifecycle/security ����;���˵� operator kill/rollback drill��ͨ����ʵ֤������ǰ���ùرձ��ڵ����� TF-0018��",
+    "non_goals": [
+      "default-on",
+      "�޽� cohort",
+      "�õ��� demo ���� ROI"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 35.0,
+    "progress_source": "manual",
+    "purpose": "����ʵ������֤��һ·������ȷ�ԡ���ȫ�ԡ���Ӫ�Ժͻع�������",
+    "remaining_minutes_max": 2280,
+    "remaining_minutes_min": 1560,
+    "requirements": [
+      "�� cohort ���ö��� per-call LLM ·��",
+      "���� governed ʧ�ܱ��� fail-closed",
+      "sandbox/remote/provider-native owner ����",
+      "��¼ provider usage��latency��resource��recovery ���˹�ʱ��"
+    ],
+    "source_sessions": [],
+    "status": "deprecated",
+    "success_metrics": [
+      "����ִ�и����� 100%",
+      "native fallback 0",
+      "�ؼ��������ڳɹ��� 100%",
+      "��ȫΥ��۲� 0"
+    ],
+    "summary": "UAS-06 ��ʵ canary ·���� RC-10 �� H-01 �� H-06 ȡ����������й���֤�ݣ���������Ϊƽ�п�ִ������",
+    "title": "UAS-06 ��һ����ִ��ƽ�� canary",
+    "updated_at": "2026-08-02T13:07:59.996410Z"
+  },
+  {
+    "acceptance_criteria": [
+      "δ��׼��ѡ���ܳ־û�",
+      "�û�������ɾ���ܴ��������� context",
+      "��ͻ��ʵ����Ĭ����",
+      "�� workspace/session ��Ⱦ 0",
+      "SEKB �Զ�д�� 0"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "���ͳһ Agent ��һ����ִ��·����ͬʱ������ʵ֤�ݡ����������Ͳ�Ʒ����ʵ��",
+      "validation_plan": [
+        "���� generated UAS-06 evidence report",
+        "������ʵ paired cohort ��������¼ provider/human recovery",
+        "ִ�о���� operator kill/rollback drill",
+        "��ʵ֤�����ĺ��ٵ������ closeout proposal"
+      ],
+      "why_not_enough": "����֤�ݲ���֤����ʵ provider �ɱ����˹��ָ����ڲ� cohort ��ȫ��Ӫ�������档",
+      "why_this_task": "TF-0017 ����ȷ��ִ������·���гн� VerseShell lifecycle parity ��Ψһ cohort ��֤�ڵ㡣"
+    },
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
+    "assumptions": [
+      "UAS-01 �� UAS-06 ���ṩ�ȶ� artifact��trace ��ִ����·��"
+    ],
+    "children": [],
+    "confidence": 0.5,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": "2026-08-02T13:07:59.996410Z",
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "MemoryCandidate ����֤����׼�����ΨһĿ�� store",
+      "��ʵ֧�� TTL����������ͻ��supersede �� revoke",
+      "SEKB ʼ���˹�ȷ��"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3600,
+    "evidence": [
+      "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#107-memorycandidatev1"
+    ],
+    "execution_hints": [
+      "�ȶ��� lifecycle state machine",
+      "����д��ʼ����Ҫ policy �� approval"
+    ],
+    "id": "TF-0018",
+    "kind": "task",
+    "non_goals": [
+      "��ȫ���� Memory д��",
+      "�� Memory ���� VerseShell",
+      "��ǰ��� TF-0006"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�� Runtime Memory �� SEKB �ṩ���ڼ�ֵ��ͬʱ�������ԽȨ���ظ� authority��",
+    "remaining_minutes_max": 4800,
+    "remaining_minutes_min": 2400,
+    "requirements": [
+      "artifact ֻ��֤�ݣ����Զ���Ϊ Memory",
+      "Runtime Memory �� SEKB authority ����",
+      "��¼ source digest��scope��sensitivity��retention �� correctionRef",
+      "learned manager ������ shadow"
+    ],
+    "source_sessions": [],
+    "status": "deprecated",
+    "success_metrics": [
+      "δ��Ȩ�־û� 0",
+      "�޷�׷�� Memory 0",
+      "�������δ��Ч 0",
+      "SEKB δȷ��д�� 0"
+    ],
+    "summary": "UAS-07 Memory ����·���� RC-07 �� memory/context slot ����ȡ����������ʷ֤�ݡ�",
+    "title": "UAS-07 ���� Memory ����ջ�",
+    "updated_at": "2026-08-02T13:07:59.996410Z"
+  },
+  {
+    "acceptance_criteria": [
+      "paired A/B �ɸ���",
+      "soak ���� 14-28 ����Ӳ�� NO-GO δ����",
+      "����һ�� provider ���á������ִλ��˹��ָ�ʱ���ȶ������ҹؼ�����������",
+      "��� continue/reduce/stop ����",
+      "���Զ��޸� TF-0006 ״̬"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "���ͳһ Agent ��һ����ִ��·����ͬʱ������ʵ֤�ݡ����������Ͳ�Ʒ����ʵ��",
+      "validation_plan": [
+        "���� generated UAS-06 evidence report",
+        "������ʵ paired cohort ��������¼ provider/human recovery",
+        "ִ�о���� operator kill/rollback drill",
+        "��ʵ֤�����ĺ��ٵ������ closeout proposal"
+      ],
+      "why_not_enough": "����֤�ݲ���֤����ʵ provider �ɱ����˹��ָ����ڲ� cohort ��ȫ��Ӫ�������档",
+      "why_this_task": "TF-0017 ����ȷ��ִ������·���гн� VerseShell lifecycle parity ��Ψһ cohort ��֤�ڵ㡣"
+    },
+    "alignment_records": [
+      "TFA-6b8a0379a5"
+    ],
+    "assumptions": [
+      "������ʵ�ڲ� cohort ���ȶ� baseline",
+      "��Ʒ owner ����ɱ�ҵ����"
+    ],
+    "children": [],
+    "confidence": 0.46,
+    "context_tags": [],
+    "created_at": "2026-07-27T13:16:29.659095Z",
+    "deprecated_at": "2026-08-02T13:07:59.996410Z",
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "���Ԥע��ʵ��Э��",
+      "���ʵ�� provider��ִ�С��ָ�����Ӫ��ά���ɱ�",
+      "�γɲ�Ʒ������ǩ��ı�ҵ����"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 1440,
+    "evidence": [
+      "docs/dev/unified-agent-system/CAPABILITY-INTEGRATION-AUDIT-AND-ROADMAP.zh-CN.md#12-С��Χ�ر�����",
+      "docs/dev/tf0006-evidence-upgrade-unblock.md"
+    ],
+    "execution_hints": [
+      "14-28 ��Ϊ���� soak������ͬ��������ʱ",
+      "�κ� TF-0006 ״̬�仯�����᰸"
+    ],
+    "id": "TF-0019",
+    "kind": "milestone",
+    "non_goals": [
+      "�� VToken heuristic �Ƶ��ɱ�",
+      "�� synthetic benchmark ���� GA",
+      "�Զ���� TF-0006"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "����ʵ��Ʒ֤���ж�ͳһ Agent ϵͳ�Ƿ�ر�����Ϊ TF-0006 �ṩ��ѡ֤�ݶ����Զ����衣",
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "requirements": [
+      "�� pilot ���Ʒ����������",
+      "�������Ч��ֵ����ָ�ꡢ��ʱ��ֹͣ����",
+      "�ֲ�ͳ�� cold/warm��ǰ̨/��̨����������",
+      "��ȫ�¼�������۲��ѹ�����Ժ������Ͻ�"
+    ],
+    "source_sessions": [],
+    "status": "deprecated",
+    "success_metrics": [
+      "ʵ�� provider usage ������ 100%",
+      "ʵ������������׷���� 100%",
+      "Ӳ�԰�ȫ veto 0",
+      "��Ʒ��������ȷ owner ������"
+    ],
+    "summary": "UAS-08 ROI/soak ��ҵ·�߲����ڱ��ַ� GA �������������� Provider/Channel/Recovery ������ RC-10 ȡ����",
+    "title": "UAS-08 ��ʵ ROI��soak ���ҵ�þ�",
+    "updated_at": "2026-08-02T13:07:59.996410Z"
+  },
+  {
+    "acceptance_criteria": [
+      "clean fixture candidate �����ȶ� manifest",
+      "���� Executor ����� Verifier �� fail closed",
+      "invalid/missing --since ���û���Ϊ HEAD �ļ��б�",
+      "ȱʧ���쳣 actor����ͬ Executor/Verifier ��ݡ������ȱʧ semantic reportDigest �� NO-GO",
+      "��ʽ output-dir ���� manifest��executor��verifier �� final report",
+      "��ʵ���� fixture ������ɫ verifier-report.json �� final-report.json"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "���������ԺͶ�������������ɺ����û�ִ�������������ա�",
+      "validation_plan": [
+        "��� Harness ����� Agent Engineering Acceptance",
+        "����ȫ������ gate �� manifest",
+        "�û�ִ�� H-01 �� H-06"
+      ],
+      "why_not_enough": "û���û����� accepted verdict ʱֻ�ܵ� human_acceptance_pending��",
+      "why_this_task": "�����������ظ� authority ����Ҫ��Դ������ Operator �ջ��������ϸ�֤����״̬�Ž���"
+    },
+    "alignment_records": [
+      "TFA-32a1af6c38",
+      "TFA-50501c2045"
+    ],
+    "assumptions": [
+      "�û�����Ȩ���������ձ��ż��� task-forest Ӧ��",
+      "�����๤�������뱣������ʽ֤���ڸ��� worktree ������"
+    ],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "agent-acceptance",
+      "engineering-evidence",
+      "fail-closed"
+    ],
+    "created_at": "2026-07-31T06:14:56.840368Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "ÿ������ RC ���ɸ���ͬһ���ձ�����",
+      "��ѡ SHA��base ref�������־�Ͳ��� digest �ɸ���"
+    ],
+    "deviations": [
+      "TFD-RC00R-F5-20260804"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 1440,
+    "evidence": [
+      "RC-00 independent Verifier VERDICT=pass: clean isolated fixture produced green executor/verifier/final reports; 22/22 unit tests; invalid/missing --since fail closed; actor/digest tamper NO-GO; identity separation enforced"
+    ],
+    "execution_hints": [
+      "���ڵ�ֱ�ӳе� RC-00���������ڶ�������",
+      "��֤������ acceptance:agent �������پ����Ƿ��޸�",
+      "����� RC-09 ������ clean-candidate ������"
+    ],
+    "id": "TF-0020",
+    "kind": "task",
+    "next_action": "F5 �����û��þ�Ϊ RC-01R-first���ȴ� RC-01R �԰�������ȫ�̣��ٲ� F4 ���ָ� RC-00R ��˫ detached worktree �������ա�",
+    "non_goals": [
+      "�޸�ȫ�� runtime/E2E/maturity/release ʧ��",
+      "�����������",
+      "��Ʒ������������default-on �� GA"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�����������������£���ÿ���������񶼾��пɸ��ܡ�����ơ�fail-closed �� Agent ���ս����",
+    "remaining_minutes_max": 1920,
+    "remaining_minutes_min": 960,
+    "requirements": [
+      "Agent ֤���� human/live/product ֤����ȫ����",
+      "invalid �� missing base ref ��������˳�",
+      "Executor evidence actor �� semantic reportDigest ���������ҿɸ���",
+      "��ʽ�������ʹ����ʽ output-dir",
+      "��������򸲸��û����й�����"
+    ],
+    "source_sessions": [],
+    "status": "blocked",
+    "success_metrics": [
+      "bootstrap fixture Executor/Verifier ͨ���� 100%",
+      "��Ч base ��Ĭ fallback 0",
+      "actor/digest �۸������ 0",
+      "����/live ��Ʒ�������� 0"
+    ],
+    "summary": "RC-00 ���ò��޸����� Executor/Verifier ��������֤����ʽ��Ч base��clean fixture�����븴�ܡ������ digest �����ԡ��̶� skip budget��������־����ʽ����Ŀ¼����ʵ��ɫ fail-closed verdict��",
+    "title": "RC-00 Agent �������� Bootstrap",
+    "updated_at": "2026-08-04T08:10:29.841266Z"
+  },
+  {
+    "acceptance_criteria": [
+      "RC-00 �� RC-09 ��������ͨ��",
+      "���� evidence manifest �ɸ���",
+      "�û���� RC-10 ����ȷ��¼ accepted verdict"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "���������ԺͶ�������������ɺ����û�ִ�������������ա�",
+      "validation_plan": [
+        "��� Harness ����� Agent Engineering Acceptance",
+        "RC-09 ȫ���Ž������� manifest",
+        "�û�ִ�� H-01 �� H-06"
+      ],
+      "why_not_enough": "û���û����� accepted verdict ʱֻ��ͣ�� human_acceptance_pending��",
+      "why_this_task": "��Ȩ���������ͨ���������ţ����Ѳ��컯���ڿɼ�������Ƶ� Operator �ջ���"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [
+      "TF-0029",
+      "TF-0030",
+      "TF-0031",
+      "TF-0032",
+      "TF-0033",
+      "TF-0034",
+      "TF-0035",
+      "TF-0036",
+      "TF-0037",
+      "TF-0038",
+      "TF-0039",
+      "TF-0040",
+      "TF-0041",
+      "TF-0042"
+    ],
+    "confidence": 0.88,
+    "context_tags": [
+      "runtime-convergence",
+      "operator-desktop",
+      "authority"
+    ],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [
+      "TFD-RC09-HISTORICAL-20260803"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0028",
+    "kind": "milestone",
+    "non_goals": [
+      "����ϵͳ GA",
+      "Ĭ�Ͽ���ʵ������",
+      "ƽ���ƽ� UI ��β"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�� TF-0010 �������þ���ɿɻָ�������֤������������ƫ�Ĺ������С�",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "ִ��˳���� runtime-convergence/WORK-PACKAGES.md Ϊ׼",
+      "ÿ����ͨ������ Agent Engineering Acceptance",
+      "�����û�����ǰ��ִ�����˲���"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "���� RC �������� 100%",
+      "���� active RC �� 0",
+      "δ��Ȩ�� authority 0"
+    ],
+    "summary": "�ϸ���������ջ�����Ȩ���ػ��ߡ�DCS��Effect��Operator ��Ƭ��workflow/memory/standards �������������������պ������û����ա�",
+    "title": "Runtime Authority Convergence �� Operator ����",
+    "updated_at": "2026-08-02T13:07:59.996410Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Ŀ¼���벻����ԭʼ EISDIR",
+      "��ͨ��ɳ��·����ָ�� ls"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "�����޸����رտ���֤��ɵ� GitHub issues",
+      "validation_plan": [
+        "�۽���Ԫ����",
+        "����ʱ���ͼ��",
+        "��������Ž�"
+      ],
+      "why_not_enough": "���� issue ��ɲ�����ʣ�� backlog �����",
+      "why_this_task": "������ֱ������ OpenClaw ����ʱ���������ʵ����"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.166996Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "�۽��ع� 3 �ļ� 34 ����ͨ��",
+      "#10 �Ѱ� completed �ر�"
+    ],
+    "execution_hints": [],
+    "id": "TF-0043",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�ָ����� agent ��Ŀ¼����·��",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "read ��Ŀ¼���뷵�ؿɲ����� ls ָ��������й©ԭʼ EISDIR��",
+    "title": "�޸� GitHub #10��read Ŀ¼���� EISDIR",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  {
+    "acceptance_criteria": [
+      "coding profile ��¶ ls",
+      "ֻ��ɳ�䱣�� ls",
+      "Խ��Ŀ¼���ܾ�"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "�����޸����رտ���֤��ɵ� GitHub issues",
+      "validation_plan": [
+        "�۽���Ԫ����",
+        "����ʱ���ͼ��",
+        "��������Ž�"
+      ],
+      "why_not_enough": "���� issue ��ɲ�����ʣ�� backlog �����",
+      "why_this_task": "������ֱ������ OpenClaw ����ʱ���������ʵ����"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "�۽��ع� 3 �ļ� 34 ����ͨ��",
+      "#12 �Ѱ� completed �ر�"
+    ],
+    "execution_hints": [],
+    "id": "TF-0044",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� agent ���� shell ������ȷ��Ŀ¼",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "���� coding �����������ܹ����������� ls����ע�ᵽ Files �� coding profile��",
+    "title": "�޸� GitHub #12��Ŀ¼����ѡ������",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Ĭ�ϵ��������� file-transfer ����",
+      "��ʽ��д���԰���������",
+      "denyCommands ����"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "�����޸����رտ���֤��ɵ� GitHub issues",
+      "validation_plan": [
+        "�۽���Ԫ����",
+        "����ʱ���ͼ��",
+        "��������Ž�"
+      ],
+      "why_not_enough": "���� issue ��ɲ�����ʣ�� backlog �����",
+      "why_this_task": "������ֱ������ OpenClaw ����ʱ���������ʵ����"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.93,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "����ع� 6/6 ͨ��",
+      "extensions tsgo��lint��format��comms replay/compare ͨ��",
+      "#17 �Ѱ� completed �ر�"
+    ],
+    "execution_hints": [],
+    "id": "TF-0045",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "���ⵥ�� agent ѡ���Ȼʧ�ܵ� paired-node �ļ�����",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "file-transfer ���߽�������������ڵ��д���Ծ���Чʱ������",
+    "title": "�޸� GitHub #17���������� paired-node ������",
+    "updated_at": "2026-08-11T14:26:21.167996Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���� workspaceOnly ������Խ��·��",
+      "д��־�� undo ���ƹ���Ч�ļ�����",
+      "�۽�����ʱ���Ժ����ͼ��ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "�����޸�ʣ�� GitHub issues�������ȴ��� P1 ���߰�ȫһ����",
+      "validation_plan": [
+        "�˶�������Լ��ȫ��д���ߵ�����",
+        "���ӿ繤�߽߱�ع�",
+        "���� runtime tsgo ����� harness/comms �Ž�"
+      ],
+      "why_not_enough": "��ɺ��������� provider��memory��compaction �� browser issues",
+      "why_this_task": "#16 ��ʣ�� P1 �п������й��߲��Ա߽�ֱ���޸�����֤������"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.82,
+    "context_tags": [],
+    "created_at": "2026-08-11T14:26:21.167996Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "ͬһ workspace ����������д����һ�������ܾ�",
+      "Խ�����ɲ����Ҳ���ģ���Դ�"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 300,
+    "evidence": [
+      "GitHub #16 �� 2026-08-11 �� completed �ر�",
+      "װ��� 3/3��write-journal 19/19��runtime ���ͼ�顢Ŀ�� lint��comms replay/compare ��ͨ��"
+    ],
+    "execution_hints": [],
+    "id": "TF-0046",
+    "kind": "task",
+    "non_goals": [
+      "��Ĭ��������������·��",
+      "����������������ɳ�䰲ȫ�߽�"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�ñ��빤������ͬ��������������Ϊһ���ҿ�Ԥ��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "apply_patch��write��edit �� undo_write ��ͳһ������Ч workspace ���ԣ�GitHub #16 �Ѱ� completed �رա�",
+    "title": "�޸� GitHub #16��ͳһ����д���߹������߽�",
+    "updated_at": "2026-08-12T00:55:16.915975Z"
+  },
+  {
+    "acceptance_criteria": [
+      "scripts/docker/sandbox/Dockerfile ���������� setup ��ڶ��ܽ�������",
+      "��������̶� digest�������� python3��ripgrep ��� root sandbox �û�",
+      "�� Docker daemon ���û������� scripts/sandbox-setup.sh �����ɹ�"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "����ȷ�����޸�����֤�� GitHub issue",
+      "validation_plan": [
+        "���о�̬��Լ Vitest",
+        "����Ŀ�� ESLint �� setup shell �﷨���",
+        "�� Docker �������� scripts/sandbox-setup.sh"
+      ],
+      "why_not_enough": "��ǰ����û�� Docker CLI����ȱ��ʵ���񹹽�֤�ݡ�",
+      "why_this_task": "#22 ������ȷ��Ӱ����ʵ sandbox �������ҿ�������ͬ·����Լ���ͷ��ջָ���"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.94,
+    "context_tags": [
+      "runtime",
+      "sandbox",
+      "docker",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T00:55:16.915975Z",
+    "deprecated_at": null,
+    "derived_progress": 90.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 60,
+    "evidence": [
+      "pnpm exec vitest run tests/unit/sandbox-dockerfile-contract.test.ts --reporter=verbose��1/1 PASS",
+      "pnpm exec eslint tests/unit/sandbox-dockerfile-contract.test.ts��PASS",
+      "Git Bash bash -n openclaw_runtime/scripts/sandbox-setup.sh �� openclaw_runtime/scripts/docker/setup.sh��PASS",
+      "git diff --check��Issue ��ؽű�����PASS",
+      "Docker CLI unavailable��δִ����ʵ���񹹽�"
+    ],
+    "execution_hints": [
+      "�ھ߱� Docker daemon �Ļ������� openclaw_runtime/scripts/sandbox-setup.sh��ȷ�� openclaw-sandbox:bookworm-slim ��ʵ�ʹ�����ͨ������ת done��"
+    ],
+    "id": "TF-0047",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 90.0,
+    "progress_source": "manual",
+    "purpose": "�ָ� openclaw-sandbox:bookworm-slim ��Դ�빹����������� Docker sandbox ����ǰ��ȱʧ��",
+    "remaining_minutes_max": 30,
+    "remaining_minutes_min": 10,
+    "requirements": [],
+    "source_sessions": [
+      "issue-fix-20260812-issue22"
+    ],
+    "status": "review_needed",
+    "success_metrics": [],
+    "summary": "GitHub #22 �Ѳ��ع̶� digest �� Debian sandbox ���� Dockerfile������ setup �����Լ���Ժ� shell �﷨�����֤����ǰ����û�� Docker CLI����ʵ���񹹽����߱� Docker daemon �Ļ������ˡ�",
+    "title": "�޸� GitHub #22���ָ� Docker sandbox �����������",
+    "updated_at": "2026-08-12T04:13:05.670448Z"
+  },
+  {
+    "acceptance_criteria": [
+      "ʡ�Ի���հ׵� path ʱ��ѯ��·�� .",
+      "��Ч dot path ԭ��ת�����������н��",
+      "��Ч path ���� recoveryPath=. �� agents.defaults ��ʾ",
+      "�۽� runtime��Harness �� comms �Ž�ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�����޸��������ڵ����Ⲣ�رն�Ӧ issue",
+      "validation_plan": [
+        "���� gateway tool �۽���Ԫ����",
+        "���� scoped Harness validate",
+        "���� runtime ���ͼ���� comms replay/compare"
+      ],
+      "why_not_enough": "��� #21 ���������� open issues ����ɡ�",
+      "why_this_task": "#21 ���ȶ����֣����޸���ֱ�ӻָ� agent ������������������"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.91,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "config-schema",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T01:01:14.610892Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "gateway-tool.schema-lookup.test.ts 5/5 PASS",
+      "Ŀ�� oxfmt �� type-aware oxlint PASS",
+      "comms replay/compare PASS��ȫ��ָ�������һ��",
+      "��ʵ schema ֤���� . ���� agents��agents.defaults.compaction �ɽ�����context.compaction ������",
+      "Harness validate ����ǰ���������ٸ��޹�·������ touchedAreas �оܾ�",
+      "tsgo:core ������ session-entry-slot-keys.ts:140 ��ϣ�tsgo:core:test ������ model-auth.auth-json-migration.test.ts:18 ���"
+    ],
+    "execution_hints": [],
+    "id": "TF-0048",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� agent �ܴ� schema ���ڵ㷢����Ч����·�����Ӵ����ѯ�����лָ���",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "config.schema.lookup ʡ�� path ʱ���ѯ���ڵ㣻��Ч·�����ظ��ָ���ں� agents.defaults ָ������Ч·������ԭ Gateway RPC��",
+    "title": "�޸� GitHub #21�������� schema lookup �ɷ���",
+    "updated_at": "2026-08-12T01:14:26.397768Z"
+  },
+  {
+    "acceptance_criteria": [
+      "tools.exec.security �� tools.exec.ask ������Ϊ hot",
+      "tools-only �仯������ Gateway ���޹���ϵͳ",
+      "���� no-op/restart ���಻�ع�",
+      "�۽� runtime��Harness �� comms �Ž�ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�����޸��������ڵ����Ⲣ�رն�Ӧ issue",
+      "validation_plan": [
+        "���� reload planner �۽�����",
+        "���� scoped Harness �� runtime �����Ž�",
+        "���� comms replay/compare"
+      ],
+      "why_not_enough": "��� #14 ���������� runtime issues ����ɡ�",
+      "why_this_task": "#14 ���ɴ� reload planner �����ȶ����֣���ֱ��Ӱ�� exec ���õ���ʵ��Ч��"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "hot-reload",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T01:19:49.640698Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 90,
+    "evidence": [
+      "config-reload-plan.tools.test.ts 3/3 PASS",
+      "Ŀ�� oxfmt --check �� type-aware oxlint PASS",
+      "comms replay/compare PASS��ȫ��ָ�������һ��",
+      "README �����Ѹ��ˣ�δ��¼�ֶμ� reload ���࣬�������",
+      "Harness validate ����ǰ�����������޹�·������ touchedAreas �оܾ�",
+      "tsgo:core ������ session-entry-slot-keys.ts:140 ��ϣ�tsgo:core:test ������ model-auth.auth-json-migration.test.ts:18 ���"
+    ],
+    "execution_hints": [],
+    "id": "TF-0049",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "���û��޸� tools.exec Ȩ�޺��������� Gateway �����ں��� agent turn ��Ч��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "tools ��������ͨ�������� hot reload ˢ�» runtime config�������½� exec tool ��ʹ�ø��º�� security/ask ���ԣ��Ҳ������� Gateway ���޹���ϵͳ��",
+    "title": "�޸� GitHub #14��tools.exec ����������",
+    "updated_at": "2026-08-12T01:26:16.796596Z"
+  },
+  {
+    "acceptance_criteria": [
+      "sessions.fork��sessions.resumeCheckpoints��sessions.checkpointDiff �ɴ� gateway ���ߵ���",
+      "memory.propose��memory.store��memory.update �ɴ� gateway ���ߵ���",
+      "ת������ʹ�� Gateway ��ʵ key/proposal ��Լ",
+      "�������ⷽ����sessions.restoreCheckpoint ���ܱ��� config/restart action ���ɾ�ͨ��ת���ƹ�",
+      "��ʽ������ lint��agents-tools ��Ƭ�� comms ����ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�����޸����ڵ����Ⲣ�رն�Ӧ issue",
+      "validation_plan": [
+        "��֤ agent tool schema ����ʵЭ�����",
+        "��֤ core operator scope �͸���������߽�",
+        "�������� agents-tools ��Ƭ��ͨ�ŻطűȽ�"
+      ],
+      "why_not_enough": "�����񲻿������� Gateway ������Ҳ�����ר�� task_loop��mission �� workspace ������ơ�",
+      "why_this_task": "#26 ������ Gateway ������ agent ������֮�����ȷ�ɴ���ȱ�ڣ��ҿ���С�� fail-closed �����������޸���"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "gateway",
+      "agent-tools",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T02:06:42.873615Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "agents-tools Vitest 8/8 files��68/68 tests PASS��gateway-tool ���� 9/9 PASS",
+      "Ŀ�� oxfmt --check �� type-aware oxlint PASS",
+      "sessions.fork ������ Gateway protocol validator ��֤��memory.propose ������ MemoryProposal ����Լ��",
+      "comms replay/compare PASS��ȫ��ָ�������һ��",
+      "README �����Ѹ��ˣ�δ��¼ agent �ڽ� gateway ���� action���������",
+      "Harness validate ����ǰ�����������޹�·������ touchedAreas �оܾ�",
+      "tsgo:core ������ session-entry-slot-keys.ts:140 ��ϣ�tsgo:core:test ������ model-auth.auth-json-migration.test.ts:18 ���",
+      "δ������ʵ Gateway RPC ������ת�����ʹ�� mock��Э���ֶΡ�schema �� handler ��Լͨ����̬�͵�����֤"
+    ],
+    "execution_hints": [],
+    "id": "TF-0050",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� agent ʹ������ Gateway ������ͬʱ���⿪��ͨ�� operator RPC ���ƹ�����������ָ���ȫ�߽硣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "gateway ��������ͨ����ʽ������ת�� session fork��checkpoint ��ѯ���� gatekeeper ����� memory д RPC�����⡢������� destructive restore �����Բ��ɴ",
+    "title": "�޸� GitHub #26���ܿؿ��� agent Gateway RPC",
+    "updated_at": "2026-08-12T02:06:42.873615Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�ջỰ�� bootstrap/system prompt ����Ԥ���Ԥ��ʱ��ѡ�� compact_only",
+      "������ʵ�Ự��ʷʱ����ԭ�� compact_only ·��",
+      "ʹ�ù��� real-conversation classifier������ windowed �� unwindowed transcript",
+      "������ԡ���ʽ��type-aware lint��comms replay/compare ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�����޸��������ڵ����⣬ͬʱ�رն�Ӧ issue",
+      "validation_plan": [
+        "��֤����ʷ����ѡ��ѹ��·��",
+        "��֤�ǿ���ʷ��ѡ��ԭѹ��·��",
+        "���и�ʽ��lint�����ͼ����ͨ�Żع�"
+      ],
+      "why_not_enough": "�����񲻴����Զ���ģ�� context window Ԫ�������� #15/#18��",
+      "why_this_task": "#23 �ǿɶ������ֺ���֤�� P2 �Ự��������⣬�޸����ֱ�ӹرա�"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime",
+      "compaction",
+      "context-window",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T02:32:00.961952Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 90,
+    "evidence": [
+      "preemptive-compaction ���� Vitest 1 file��2/2 tests PASS",
+      "Ŀ�� oxfmt --check �� type-aware oxlint PASS",
+      "comms replay/compare PASS��ȫ��ָ�������һ��",
+      "tsgo:core �������� src/plugins/session-entry-slot-keys.ts:140 �������",
+      "Harness validate ����ǰ�����������޹�·������ touchedAreas �ж� fail-closed"
+    ],
+    "execution_hints": [],
+    "id": "TF-0051",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�����С contextTokens �����������û���Ϣ�ڿջỰѹ�������ж�ʧ��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Ԥ��ʾԤ��������ֻ�ڴ��ڿ�ѹ������ʵ�Ự��ʷʱѡ��ѹ��·�ɣ�bootstrap-only ������ʾֱ���ύһ�Σ����ٶԿ� transcript �ظ�ѹ����",
+    "title": "�޸� GitHub #23���ջỰ�Զ�ѹ��ѭ��",
+    "updated_at": "2026-08-12T02:32:00.961952Z"
+  },
+  {
+    "acceptance_criteria": [
+      "sessions_compact ������ʵ���� inventory��Ĭ�ϲ��ԡ�catalog����ʾ�ʺ͹���չʾ����",
+      "ͬһ attempt �ظ�����ֻ�����״�����",
+      "attempt ���ز��ͷ�����ִ�� forced threshold compaction",
+      "�ɹ���ʧ�ܡ�no-op ������쳣���н紦��",
+      "������ԡ�type-aware lint��tool-display check��comms replay/compare ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "�����޸��������ڵ����⣬ͬʱ�رն�Ӧ Issue",
+      "validation_plan": [
+        "���й����� deferred compaction �������",
+        "���� type-aware lint��tool-display snapshot check ��������ͼ��",
+        "���� comms replay/compare ������Ȩ�ޱ߽�"
+      ],
+      "why_not_enough": "�����񲻴������� compaction��provider ��ʣ�� GitHub issues �ѽ����",
+      "why_this_task": "#20 �� agent ������ȱ�ٵ�ǰ�Ựѹ����ڵĶ����ɴ������⣬�޸����ֱ����֤���رա�"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.96,
+    "context_tags": [
+      "runtime",
+      "compaction",
+      "agent-tools",
+      "github-issue"
+    ],
+    "created_at": "2026-08-12T03:45:07.878545Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "agent ������ѹ����ǰ�󶨻Ự",
+      "ѹ�������жϵ�ǰ���ߵ��û��� transcript lock ����",
+      "ʧ�����ظ����󱣳��н��Ҳ�������ģ�� turn"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "sessions-compact-tool.test.ts 4/4 PASS����֧�������ķ�������֧�������Ĳ�������",
+      "manual-compaction.test.ts 3/3 PASS",
+      "Ŀ�� type-aware oxlint PASS",
+      "tool-display:check PASS",
+      "comms replay/compare PASS��ȫ��ָ�������һ��",
+      "README ���︴�ˣ�û������ renderer ���û��������̣��������",
+      "tsgo:core �������� src/plugins/session-entry-slot-keys.ts:140 spawnedWriteSet �������",
+      "Harness validate ����ǰ�����������޹�·������ touchedAreas �ж� fail-closed",
+      "GitHub #20 ���� 2026-08-12 �� completed �رգ�https://github.com/Baixu22/VerseClaw/issues/20#issuecomment-5262061420"
+    ],
+    "execution_hints": [],
+    "id": "TF-0052",
+    "kind": "task",
+    "non_goals": [
+      "���������� Gateway RPC",
+      "������û��� /compact ����",
+      "�������Զ���ģ�� context window Ԫ��������"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� agent ����������������Ự�����ģ�ͬʱ����ÿ�Ự������ Gateway Ȩ�ޡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���߲������ý��� sessionKey��sessionId ������Ŀ��ѡ����",
+      "����ͨ�� sessions.compact Gateway RPC �� operator.admin ʵ��",
+      "�ɹ�ѹ������ͬ�� session id��session file��ѹ�������� token Ԫ����"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "��ỰĿ���������Ϊ 0",
+      "ÿ�� attempt ���ִ�� 1 ���ֶ�ѹ��",
+      "ͨ�Żع�ָ��ʧ������Ϊ 0"
+    ],
+    "summary": "���� sessions_compact ���ߣ����ý��Ǽǵ�ǰ attempt ��ѹ�����󣬴� transcript lock �ͷź����ѽ����� ContextEngine ǿ��ѹ����ǰ�Ự����ͬ����ת��� session Ԫ���ݡ�",
+    "title": "�޸� GitHub #20��agent ��ǰ�Ự�ֶ�ѹ��",
+    "updated_at": "2026-08-12T03:52:33.829564Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�����ɸ��ֵ� plugin-tools ���ܻ�����ع���ԡ�",
+      "�Ż��󹤾��嵥�Ͳ�����Ϊ�ع�ͨ����",
+      "��¼�Ż�ǰ���ʱ�� RSS�����޷��ڵ�ǰ���������ʵ��·����ȷ���� residual��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "��ǰ openclaw_runtime/src/agents/openclaw-plugin-tools.ts �� plugin-tools ��·������Ҫʵ�֡�"
+    ],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "github-issue",
+      "runtime",
+      "performance",
+      "plugin-tools"
+    ],
+    "created_at": "2026-08-12T04:02:14.894652Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "plugin-tools �׶β���ռ�ù̶� 16 �뼶��������������ֹ����嵥��allow/deny �� auth ��Ϊһ�¡�"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "GitHub #13 ���� completed �رգ��ر����۸�����֤�����ʵ residual��",
+      "����������������棺warm ���������� factory��execute/prepareArguments ����������ʱ���߲��� registry ���� memo",
+      "������� tool-descriptor-cache.test.ts 4/4 PASS��plugins �׼� 3/3��8 tests��PASS��agents-core 32/32��249 tests��PASS",
+      "��׼ perf:issue-13 --runs 5��cold 22.63ms vs warm 0.56ms��-97.53%��warm factory ���� 0 �Σ�reports/plugin-tools-descriptor-cache-benchmark-2026-08-12.json��",
+      "tsgo:core �� tsgo:core:test PASS��harness validate --no-diff PASS",
+      "��ʵ Gateway stream-ready/RSS A/B �ڱ��������ɲɼ����� provider key auth ǰ�����أ�Windows fs.symlink Ȩ�޵� QA aimock�����ѳ�ʵ��¼�� artifacts/issue-13/real-gateway/report.json"
+    ],
+    "execution_hints": [
+      "��ʵ Gateway A/B ������ provider key / �� symlink Ȩ�����ƻ����ĸ������������ fixture ��׼�뵥�⸲�ǡ�"
+    ],
+    "id": "TF-0053",
+    "kind": "task",
+    "non_goals": [
+      "����չ�µĲ��������ı�Ĭ�Ϲ�����Ȩ��"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "����ÿ�� agent session �̶��� plugin-tools ������ӳ٣����� stream-ready ������Ӧ��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "�������� plugin tool allowlist/denylist��auth��delivery-context �Ͱ�ȫ�߽硣"
+    ],
+    "source_sessions": [
+      "issue-fix-20260812-issue13"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "stream-ready �� plugin-tools �׶���Ի��������½����ҹ��ܻع�Ϊ�㡣"
+    ],
+    "summary": "GitHub #13 �������������������ʵ�ֲ���֤��warm �����������ܲ�� factory����׼ -97.53%��warm factory 0 �Σ���ע���������������ڱ߽�ʧЧ��ȷ��policy/��֤/ִ����Լ�������ʵ��· A/B �ܻ���������ʵ��¼ residual��",
+    "title": "�޸� GitHub #13��������߼�������",
+    "updated_at": "2026-08-12T10:47:49.078426Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���� recovery �ж��ع����",
+      "Ŀ�� runtime ���ԡ�lint��typecheck �� comms �Ž���֤��",
+      "README ����������"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "�����޸����µĿ��� issue ���رն�Ӧ issue",
+      "validation_plan": [
+        "����Ŀ��ָ����Ժ� type-aware lint",
+        "���� comms replay/compare",
+        "�� gh ����֤�ݲ��ر� #33"
+      ],
+      "why_not_enough": "��� #33 �������������� issue �Ѵ����",
+      "why_this_task": "#33 ֱ�ӱ��� Gateway ������������е� agent �������ö�ʧ���޸��ָ��ж����ɸ����û�������·��"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.98,
+    "context_tags": [
+      "github-issue",
+      "gateway",
+      "runtime-recovery",
+      "sessions"
+    ],
+    "created_at": "2026-08-12T04:08:47.462033Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "main-session restart recovery ���� Vitest��2 files��15/15 tests PASS",
+      "���� restart-recovery Electron E2E��2/2 PASS��������ʵ Gateway �����ָ�Ԥ�� in-flight assistant/aborted turn ������ԭ sessionId",
+      "pnpm run build:runtime PASS��runtime smoke Gateway ready",
+      "Ŀ�� oxfmt��type-aware oxlint �� E2E ESLint PASS",
+      "comms replay/compare PASS����Ϣ��ʧ���ظ�������� RPC ��ʱ��Ϊ 0",
+      "Harness task spec context �� validate --no-diff PASS",
+      "README Ӣ�ġ����ġ�������ͬ���ָ�����",
+      "���� typecheck �� web ��Ŀ PASS��node ��Ŀ�������� openclaw_runtime/src/plugins/session-entry-slot-keys.ts:140 spawnedWriteSet �������"
+    ],
+    "execution_hints": [
+      "GitHub #33 ������֤֤�ݲ��رպ��Ӧ�ñ�����᰸����Ҫ�Ѽ���ȫ�� typecheck ������뱾����"
+    ],
+    "id": "TF-0054",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�ָ� Gateway ����ʱ����������Ŀ�����������������ʵʧ�����塣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "δ��� assistant/tool transcript tail ���Զ��ָ�",
+      "��ɡ������ approval-pending transcript �����ظ�ִ��",
+      "�ָ�ʧ��ʱ���� abortedLastRun ����������"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "Gateway ����ָ�����ʶ�� aborted/toolUse assistant β������ͬһ sessionId �ϼ������У���ɡ�����ȱʧ stopReason �� approval-pending β�������Զ��طţ��ָ�����ʧ��ʱ����������Ա�ǡ�",
+    "title": "�޸� GitHub #33��Gateway ����ָ������е����Ự",
+    "updated_at": "2026-08-12T06:33:49.764000Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�� spawnedWorkspaceDir �� session �� ls path=src/... ��������Ŀ¼",
+      "ȱ�ٻ���Ч session workspace ʱ���� resolveAgentWorkspaceDir",
+      "Ŀ�� runtime Vitest��lint �� typecheck ͨ������֤ residual ����ȷ��¼"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "����ʹ�� gh CLI ���첢�޸�һ����δ����� GitHub issue",
+      "validation_plan": [
+        "����Ŀ�� Gateway/agent-tools Vitest",
+        "���� scoped lint �� typecheck",
+        "ʹ�� gh issue view ���� issue ״̬����¼֤��"
+      ],
+      "why_not_enough": "��� #28 �������������� issue �Ѵ����",
+      "why_this_task": "#28 �ĸ�����·ֱ��ָ�� Gateway ���ߴ���ʱ���� session workspace���޸�����ȷ�ҿ������·���ع������֤��"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.92,
+    "context_tags": [
+      "github-issue",
+      "gateway",
+      "agent-tools",
+      "workspace"
+    ],
+    "created_at": "2026-08-12T04:33:41.813808Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "session ����ĿĿ¼ʱ��Gateway ������ coding tools ʹ�ø�Ŀ¼��Ϊ cwd",
+      "û�� session-specific workspace ʱ���� agent Ĭ�� workspace ��Ϊ"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "GitHub #28 ���� completed �رգ��� #31 ͬ����ͬ spec fix-gateway-session-workspace-resolution.md��",
+      "ÿ�� workspace �������ȼ���spawnedWorkspaceDir > trusted request workspaceDir > �־û� session workspaceDir > agent Ĭ�ϣ�resolveSessionWorkspaceDir��",
+      "agent-command��tools.effective��tools.invoke��MCP loopback��auto-reply ·��ȫ���ӻỰ�־û�״̬ȡ workspace��Backend RPC ���ܿ��� workspaceDir�������ͻ��� INVALID_REQUEST��",
+      "spawned-context + subagent-spawn ������� PASS��gateway �׼� 18/18��103 tests��PASS��#31 ͬ���� agents-core 32/32��embedded-agent-runner��auto-reply��comms replay/compare PASS",
+      "tsgo:core �� tsgo:core:test PASS��harness validate --no-diff PASS"
+    ],
+    "execution_hints": [
+      "�����ٶ������·�����ڰ� session workspace ������agent �������䵽Ĭ�� workspace ������ȫ��������"
+    ],
+    "id": "TF-0055",
+    "kind": "task",
+    "non_goals": [
+      "���ı� process poll ��ʱ����",
+      "���Զ�Ϊ GitHub issue ����Զ�� assignee"
+    ],
+    "primary_parent": "TF-0010",
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�޸����������� agent ʹ�����·��ʱ���� ~/.openclaw/workspace���̶�����ȫ�����������⡣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���ѳ־û��� SessionEntry ��ȡ spawnedWorkspaceDir",
+      "���ı乤����Ȩ��·����ȫ�߽��� session ���ߵ�����Ϊ",
+      "�������·�������ع����"
+    ],
+    "source_sessions": [
+      "issue-fix-20260812-issue28"
+    ],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "GitHub #28 ���·�������������޸���ls/read/write/exec �����·���� session ���� workspace �����������䵽 ~/.openclaw/workspace ����ȫ���������� #31 ͬ����ͬ spec�����Ծ���ȫ�̡�",
+    "title": "�޸� GitHub #28��agent ���·������������ workspace",
+    "updated_at": "2026-08-12T10:47:49.078426Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���� fakecoding-ui-convergence Harness task",
+      "UI v2 Ĭ�ϸ��� Windows��macOS��Linux",
+      "��ť�����롢�˵�����ǩ��Tooltip ��Ӧ�ÿ������³ߴ�����ɫ��Լ",
+      "UI showcase ��Ӧ�ÿǾ۽� E2E ͨ��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.88,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 900,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-ui-convergence.md��pnpm harness validate��ͨ��",
+      "tests/unit/ui-version.test.ts��tests/unit/fakecoding-design-system.test.ts��8/8 ͨ��",
+      "tests/e2e/windows-ui-v2.spec.ts��4/4 ͨ����Showcase ���վ۽����� 1/1",
+      "tests/e2e/settings-drawer.spec.ts��tests/e2e/startup-loading-experience.spec.ts��8/8 ͨ��",
+      "pnpm run i18n:lint��pnpm run typecheck��pnpm run build:vite��ͨ��",
+      "��ȷ ESLint��0 error���� 5 ������ Hook/Fast Refresh warning",
+      "playwright-report/data��1280x800��960x800 �� Light/Dark ���� Showcase ��ͼ���˹���飬�޺�����������ֶ��ѡ��ؼ��ص����ظ�������"
+    ],
+    "execution_hints": [
+      "��һ�ڵ�ֻ�ƽ� TF-0023������ڵ�������ʵ Inbox �ۺ�",
+      "�������� ?uiVersion=legacy��ֱ�� TF-0027 ȫ����β",
+      "���ø����û�����δ�ύ Cron �޸�"
+    ],
+    "id": "TF-0022",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0021",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "���ṩ��������ҳ��Ǩ�ƹ�ͬ�����Ŀ���֤�Ӿ��Ͳ��ֻ��ߡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���� ?uiVersion=legacy �ع�",
+      "�Ƴ�Ĭ����ɫ primary��ҳ�� serif ����ͳ��� active:scale",
+      "Ǩ��ʵ��ʹ�õ� FakeCoding SVG ������ stroke/fill ����"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "FakeCoding ��ƽ̨�ҽ����ϵͳ��Ӧ�ÿǻ����������տڣ�����ؼ���SVG�����������桢Ӧ�ü����� portal�����ƶ�Ч��˫���˫�����Ӿ�֤�ݾ�����֤��",
+    "title": "FakeCoding ���ϵͳ��Ӧ�ÿǻ���",
+    "updated_at": "2026-07-31T12:22:41.803066Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Sidebar �������ĸ��̶���������/ҵ�����",
+      "Inbox ������Դ������ʾ���ա�֤�ݡ�ʱ�����ʵ����",
+      "������ɺ�ۺ�״̬����ˢ��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 960,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-inbox-navigation.md",
+      "src/pages/Inbox/index.tsx",
+      "src/stores/inbox.ts",
+      "src/components/layout/Sidebar.tsx",
+      "tests/unit/inbox-store.test.ts (10 focused tests pass)",
+      "tests/unit/fakecoding-design-system.test.ts (design contract pass)",
+      "tests/e2e/fakecoding-inbox-navigation.spec.ts (2/2 pass)",
+      "tests/e2e/agent-browser-workbench.spec.ts (deep menu pass)",
+      "tests/e2e/clawgraph.spec.ts (deep menu pass)",
+      "tests/e2e/code-review-center.spec.ts (deep menu pass)",
+      "tests/e2e/remote-forge-controlled-preview.spec.ts (3/3 deep menu pass)",
+      "tests/e2e/openclaw-dreams.spec.ts (3/3 deep menu pass)",
+      "tests/e2e/remote-tasks.spec.ts (Developer creator pass)",
+      "tests/e2e/developer-mode.spec.ts (1/1 pass)",
+      "tests/e2e/image-generation-settings.spec.ts (4/4 pass)",
+      "tests/e2e/system-maturity-p45.spec.ts Browser isolation (1/1 pass)",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-1280-light.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-960-light.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-1280-dark.png",
+      "test-results/fakecoding-inbox-navigatio-69fd9-refreshes-the-pending-count/inbox-960-dark.png",
+      "pnpm run i18n:lint",
+      "pnpm run typecheck",
+      "pnpm run build:vite"
+    ],
+    "execution_hints": [
+      "�������� permissions��remoteTasks �� agentBrowser host-api�����ı���ģ�ͺͰ�ȫ����",
+      "ֻ�ƽ� TF-0023����ʵ�� TF-0024 Scheduled/Browser Runs ��λ",
+      "���ø����û�����δ�ύ Cron �޸�"
+    ],
+    "id": "TF-0023",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0021",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�ѷ�ɢ�Ĵ���������������һ����ʵ�ռ��䣬ͬʱ����һ����������֪������",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "Remote Tasks ���� Inbox",
+      "��·�ɱ��������ת",
+      "������ʾ��ʵ����������"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "����� Sidebar��/inbox ��������ʵ��Դ�ۺ�����ɣ�Ȩ�ޡ�Remote Task������׼ Browser Task �ķ���/֤��/��ʷ/���߾��ɴ������ˢ�´������������·������㹦����ڱ��ּ��ݡ�",
+    "title": "����ڵ�������ʵ Inbox �ۺ�",
+    "updated_at": "2026-07-31T13:53:11.977560Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�Ѱ���ҳ����ʵչʾ Cron �� Browser Runs",
+      "960px ����ʹ�ø���ʽ����",
+      "Browser ������ھ߱� Profile �� Vault ��������"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "�� FakeCoding ʽ���ƽ��澫��ҳ�棬ͬʱ�ö�ʱ����� Browser ���а���ʵ����չʾ��",
+      "validation_plan": [
+        "���� Harness context/validate��i18n���۽����⡢typecheck �� build",
+        "Electron E2E ���� Cron ȫ���ܡ�Browser task ������ Profile/Vault ���",
+        "��� 1280x800 �� 960x800 Light/Dark"
+      ],
+      "why_not_enough": "���ڵ㲻����Ự Browser/Review��Knowledge ������ Legacy �Ƴ���",
+      "why_this_task": "�Ѱ����� Cron ���ܼල Browser Tasks �Ĺ�ͬʱ�������ģ�ͳһ����ܼ��ٵ�����������������������"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.76,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "�Ѱ����ṩ Cron �� Browser Runs ��ͳһ��ɨ���б����ʵ����",
+      "խ�������б�������֮���л������γ�ӵ������",
+      "Browser Profile �� Vault ���Ѱ��ſɷ��ֲ���������ʹ��"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1200,
+    "evidence": [
+      "harness/specs/tasks/fakecoding-scheduled-browser-runs.md",
+      "src/stores/scheduled.ts",
+      "src/pages/Cron/index.tsx",
+      "src/pages/Cron/BrowserTaskDetailsPanel.tsx",
+      "src/components/settings/BrowserSettingsPanel.tsx",
+      "src/pages/Settings/SettingsSidebar.tsx (FakeCoding browser SVG entry)",
+      "src/pages/Settings/SettingsDrawerRoute.tsx",
+      "README.md / README.zh-CN.md / README.ja-JP.md",
+      "tests/unit/scheduled-store.test.ts",
+      "tests/e2e/fakecoding-scheduled-browser-runs.spec.ts (1/1 pass)",
+      "tests/e2e/cron-browser-automation.spec.ts (1/1 isolated retry pass after Electron teardown timeout)",
+      "tests/e2e/cron-card-long-title.spec.ts (1/1 pass)",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-1280-light.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-960-light.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-1280-dark.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/scheduled-960-dark.png",
+      "test-results/fakecoding-scheduled-brows-3c783-nd-manages-Browser-settings/browser-settings-1280-dark.png",
+      "pnpm harness validate --spec harness/specs/tasks/fakecoding-scheduled-browser-runs.md",
+      "pnpm run i18n:lint",
+      "focused ESLint (0 errors, 0 warnings)",
+      "focused Vitest (13/13 pass)",
+      "pnpm run typecheck",
+      "pnpm run build:vite"
+    ],
+    "execution_hints": [
+      "�Ƚ��� Harness task �� ScheduledItem renderer ͶӰ���ٸ�ҳ��",
+      "�������� cron �� agentBrowser host-api�����ĺ��ģ�͡���ȫ���Ի�ͨ�ű߽�",
+      "������ TF-0025 �ĻỰ Browser/Review ������",
+      "���ø����û�����δ�ύ Cron �޸�"
+    ],
+    "id": "TF-0024",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0021",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "����ʱ�������ܼල���������ͳһ�����Ѱ��ţ�ͬʱ�������������������Ͱ�ȫ���ߡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "���� Cron �������༭����ͣ��ɾ�����������С�Ͷ����������ʷ",
+      "���� Browser task ���������ԡ�ȡ��������ͽ��",
+      "���ø����û�δ�ύ Cron �޸�"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "�Ѱ���ҳ������ ScheduledItem ͳһͶӰ Cron ��ලʽ Browser Runs����������������ʵ����������֤�ݺͰ�ȫ�߽磻960px �����滻�б��Profile/Vault ����ɷ��ֵ� Settings > Browser��",
+    "title": "�Ѱ����� Browser �����λ",
+    "updated_at": "2026-07-31T15:22:04.533274Z"
+  },
+  {
+    "acceptance_criteria": [
+      "Browser��Terminal��Files��Review ����ʵ������ FakeCoding ��ʽ�����ڻỰ����������",
+      "/browser �� /code-review ��ȷ�����Ӧ�����������ģ�/task-ledger �� /clawgraph �����ɾ۽�",
+      "SVG ������֤ viewBox��fill/stroke���ؼ� path �� stroke ����",
+      "1280x800 �� 960x800 �� Light/Dark ��������ڵ����ظ�������ظ�������",
+      "i18n��focused tests��typecheck��build����� Electron E2E��Harness validate �� harness:ci ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "����ʵ�ֻỰ������ FakeCoding ���룬���䱣֤ Browser��Terminal��Files��Review ����ʵ���ܺͶ�Ӧ SVG ��ʽ������",
+      "validation_plan": [
+        "���� TF-0025 Harness context/validate �;۽���Ԫ����",
+        "���� i18n��ESLint��typecheck��build:vite ����� Electron E2E",
+        "��� 1280x800��960x800 Light/Dark �� SVG ������Լ"
+      ],
+      "why_not_enough": "���ڵ㲻�ᴦ�� Knowledge ������ legacy �Ƴ�����Щ������ TF-0026 �� TF-0027 �е���",
+      "why_this_task": "TF-0025 �������Ӧ�ÿǡ�Inbox �� Scheduled ֮��Ψһ ready �Ĵ��нڵ㣬ֱ�Ӹ����û���ǰҪ��"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "���� hostApi �Ѿ߱��ƻ������ Browser��Terminal��Code Review��Remote Forge��Task Ledger �� ClawGraph ����",
+      "�ɹ������־û�״̬������ renderer ��ȡʱ�淶����������Ǩ��"
+    ],
+    "children": [],
+    "confidence": 0.86,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "������������ Review��Terminal��Browser��Files��Artifacts��Audit ����ɼ���ǩ",
+      "Browser Preview/Live��Terminal bottom/side��Files��Review ������ͼȫ������������ʵ����",
+      "���й�������ǩ������ SVG ���� FakeCoding ԭʼ���μ� fill/stroke ����",
+      "960x800 �²�����ӵ������������������ܲ��ɴ�"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1500,
+    "evidence": [],
+    "execution_hints": [
+      "�Ƚ��� Harness task������� renderer �������״̬Ǩ��",
+      "���ȳ�ȡ���� Terminal controller �Ϳ�Ƕ�� Review �����",
+      "���� FakeCoding ԭʼ SVG ·�������� Lucide �������",
+      "�����û�����δ�ύ�޸ġ�legacy �ع���ָ����ʱ�ļ�"
+    ],
+    "id": "TF-0025",
+    "kind": "task",
+    "non_goals": [
+      "Knowledge ��Ϣ�ܹ�����",
+      "�Ƴ� ?uiVersion=legacy",
+      "�� Browser Tasks��Profiles �� Vault �ŻػỰ Browser",
+      "��д Host API��Gateway����ȫ��������״̬ģ��"
+    ],
+    "primary_parent": "TF-0021",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "���Ự�� Browser��Terminal��Files �� Review ����Ϊ���ơ������ҹ�����ʵ�� FakeCoding ʽ�������������ظ�һ��ҳ�沢�������������",
+    "remaining_minutes_max": 2100,
+    "remaining_minutes_min": 1200,
+    "requirements": [
+      "Review �ں� Changes��AI Review��Pull Requests�������������� fail-closed ��Ϊ",
+      "Browser �ں� Preview��Live���ӹܡ�ֹͣ����ͼ��snapshot �� UID ����",
+      "Terminal �ײ����Ҳ���ֹ���ͬһ�� sessionId��scrollback ��Ȩ��״̬",
+      "Files ����˫����960px ����ͼ��֧��ͨ�� intent ��λ�ļ�",
+      "ͳһ openWorkspacePanel(intent)������ Task Ledger �� ClawGraph ȫ�����ҳ��",
+      "���޸ĺ�ˡ�Host API��Gateway��Browser ��ȫ��־û���Լ"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [
+      "�������ɼ���ǩ�����̶�Ϊ 6",
+      "ͬһ Terminal intent �����ĺ�� shell ����Ϊ 1",
+      "Browser �� Review �����ظ�һ��ҳ������Ϊ 0",
+      "�����û��İ� en��zh��ja��ru ������Ϊ 100%"
+    ],
+    "summary": "��չ�Ự Browser �� Review ��ǩ��ͳһ openWorkspacePanel(intent)�����ṩ Task Ledger/ClawGraph ��������ڡ�",
+    "title": "�Ự Browser/Review �빤����������",
+    "updated_at": "2026-07-31T16:58:41.165423Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�������� Library �� Review Queue",
+      "Inbox��Drafts��Proposal ʹ��ͳһ KnowledgeReviewItem ͶӰ",
+      "Maintenance/Source tools ����ȫ���߼�����",
+      "���á�����ݸ塢�ύ������������"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.68,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1500,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0026",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0021",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "�༭������ʽ����",
+      "խ���� Preview �� Edit ��ͬʱ�ѵ�",
+      "Librarian Ǩ�� Chat ��ѯ��֪ʶ��ģʽ"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "��� Knowledge ����ҳ���� Library �� Review Queue Ϊ�����������߼��������Դ���߰�����¶��",
+    "title": "Knowledge Library �� Review Queue ����",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
+  },
+  {
+    "acceptance_criteria": [
+      "��Ƶҳ��ȫ��ʹ��ͬһ�ؼ���ϵ",
+      "ȫ���Ӿ�Լ������ͨ��",
+      "i18n��lint��typecheck��build���ֽ׶� E2E��harness:ci ȫ��",
+      "ȷ���޻ع���Ҫ���Ƴ� legacy"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.66,
+    "context_tags": [],
+    "created_at": "2026-07-31T11:00:30.784356Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 1200,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0027",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0021",
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "������ɫ CTA��serif hero��Ƕ�׿�Ƭ����ͨ���� ToB ����",
+      "���ǰ���� legacy �ع�",
+      "ͬ������ README �����˵��"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "ͳһ Settings��Setup��Agents��Models��Channels��Skills��Observability ��ҳ�棬������ĵ���ȫ���Ž���",
+    "title": "�μ�ҳ���Ӿ���β�� Legacy �Ƴ�",
+    "updated_at": "2026-07-31T11:00:30.784356Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���������� writer ����Ψһ�����Դ��·��",
+      "receipt owner ͨ�� durability/atomicity/retention/privacy/restart ֤��",
+      "source/npm �汾�� accepted base SHA �Ѽ�¼",
+      "runtime-family �Ѷ���"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 1.0,
+      "user_goal": "�����ȫ�� lint/typecheck ծ������ RC-00R �� fail-closed �����ڸɾ���ѡ�ϲ�����ʵ��ɫ final-report.json��",
+      "validation_plan": [
+        "�ɾ� worktree ���ֲ���� lint/typecheck ծ",
+        "RC-01R scoped Harness ��ȫ���Ž�",
+        "�ָ� RC-00R ������˫ detached worktree ����"
+      ],
+      "why_not_enough": "RC-01R ����� RC-00R �� F4 ���������� Executor/Verifier �������������ա�",
+      "why_this_task": "RC-01R ֱ������ clean candidate �� Chat/UI lint �� nested runtime typecheck ������"
+    },
+    "alignment_records": [
+      "TFA-64b346a25c"
+    ],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.93,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [
+      "TFD-RC00R-F5-20260804"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-00 accepted by independent Verifier; RC-01 authority inventory begins",
+      "RC-01 independent Verifier VERDICT=PASS: baseline schema v1, acceptedBaseSha 6493d5cce..., 39/39 writers classified, 16/16 modules, runtime-family/runtime-spine frozen, receipt-owner decision review_needed with blocker",
+      "BLOCKER: receipt-owner-not-selected �� no existing durable owner satisfies the RC-01 receipt persistence contract (schema/atomicity/retention/lookup/idempotency/failure/privacy/restart); per TARGET-ARCHITECTURE a new table or sidecar is forbidden by default. RC-02 cannot start until an explicit owner decision is made.",
+      "Receipt-owner decision user-confirmed and accepted (runtime_receipts via ReceiptStore in openclaw-state SQLite, 7 hard constraints); RC-01 independent Verifier VERDICT=pass (41/41 classified, 16/16 modules, decision accepted, source spot-checks consistent)"
+    ],
+    "execution_hints": [],
+    "id": "TF-0029",
+    "kind": "task",
+    "next_action": "���µ� clean worktree ���� lint/typecheck ���ߣ����� RC-01R scoped Harness spec�������С�޸���ȫ���Ž��������֤֤�ݡ�",
+    "non_goals": [
+      "��������Ķ�",
+      "authority cutover"
+    ],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "ʹ Runtime Authority Convergence �ĺ������ջ�����ʵȫ�����ߣ����Ǵ��� UI ���������� lint �޸��� nested runtime typecheck ծ�ų���",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [],
+    "summary": "�ڸɾ���ѡ������ ChatInput lint �� openclaw_runtime typecheck ծ���ؽ��ɸ���ȫ�����ߣ����Ϊ RC-00R ���������ṩ�������๤������ǰ�û��ߡ�",
+    "title": "RC-01R �԰���������ȫ������",
+    "updated_at": "2026-08-04T08:10:29.841266Z"
+  },
+  {
+    "acceptance_criteria": [
+      "�Զ���ھ���ÿ�� source-runtime model call ˫�վݸ��� 100%",
+      "owner-classification coverage 100% �� unknown Ϊ 0",
+      "payload/order/tool/retry/approval/delivery parity 100%",
+      "npm fallback ֻ���� degraded"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.88,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-01 accepted with receipt-owner decision resolved (runtime_receipts via ReceiptStore); RC-02 full-payload shadow census may start",
+      "RC-02 independent Verifier VERDICT=pass: runtime_receipts+ReceiptStore+ShadowContextReceipt/v0+ShadowWireReceipt/v0, zero-byte parity, 40/40 tests, schema verify clean"
+    ],
+    "execution_hints": [],
+    "id": "TF-0030",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "�� logical ������ guarded request-body �߽�����˫ shadow receipt������ȫ payload ��ĸ�ұ�������Ϊ�仯��",
+    "title": "RC-02 Full-payload Shadow Census",
+    "updated_at": "2026-08-03T08:02:21.715406Z"
+  },
+  {
+    "acceptance_criteria": [
+      "δ֪ semantic mutation 0",
+      "tool loop/retry/fallback/compact/fork/handoff receipt �ɹ���",
+      "COMPASS SSP �� ContextEngine replacement ���� seal ǰ�Ǽ�",
+      "kill switch �ָ� legacy path"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.86,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-02 accepted; RC-03 DCS seal and dual receipts starts",
+      "RC-03 independent Verifier NO-GO: seal infrastructure modules correct (13/13 tests, 53/53 full) but NO production wiring �� seal registry/ContextBundle/receipts/8 semantic producers have zero production call sites, no feature-flag/kill-switch gate, ownedPaths production files (assembler/orchestrator/transport) don't reference seal. Blocker: rc03-no-production-wiring",
+      "RC-03 independent Verifier VERDICT=pass after production wiring: seal-hook in context-orchestrator pre-seal convergence point, 17+57+36 tests green, CompilePlan/seal-registry/ContextBundle/ContextReceipt-v1 all wired"
+    ],
+    "execution_hints": [],
+    "id": "TF-0031",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "���� attempt CompilePlan��per-model-call ContextBundle��ContextReceipt ������ WireReceipt�����ձ��������� producer��",
+    "title": "RC-03 DCS Seal ��˫�վ�",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "pending/resolved approval ���������",
+      "�ظ� resolve �ݵ��� denial effect Ϊ 0",
+      "�� crash point ���� domain journal ����",
+      "unknown outcome ͣ�� needs_reconciliation �Ҳ��Զ� replay"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.88,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-03 accepted; RC-04 durable approval and effect reconciliation starts",
+      "RC-04 independent Verifier VERDICT=pass: approval_ledger+effect_receipts, ApprovalLedger state sequence, EffectReceiptStore, ExecApprovalManager durableLedger production wiring, 24+81+36 tests green"
+    ],
+    "execution_hints": [],
+    "id": "TF-0032",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "�ѽ����� approval truth ���������г־ñ߽磬���� EffectReceipt ��δ֪����˹� reconciliation��������ȫ�� exactly-once��",
+    "title": "RC-04 Durable Approval �� Effect Reconciliation",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "duplicate effect 0 �� denial effect 0",
+      "pending/completed truth ������ָ�",
+      "Context/Effect/Recovery lineage �� UI �ɼ�",
+      "������ Electron E2E ͨ����δ������ʵ�ⲿ�˻�"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.84,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-04 accepted; RC-05 minimal Operator governance slice starts",
+      "RC-05 independent Verifier VERDICT=pass (3rd pass after channel-conformance fixture + cron-delivery production wiring + zod-schema parity fix): operator-slice, rc05-operator-fixture channel, 103+36 tests green"
+    ],
+    "execution_hints": [],
+    "id": "TF-0033",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "�� Cron��Desktop Inbox��DCS receipt��durable approval����һ bounded effect��restart recovery �� channel fixture �����ɼ��ջ���",
+    "title": "RC-05 ��С Operator ������Ƭ",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "SQLite-level expected-revision CAS ͨ��",
+      "�Ƿ� transition ���ܾ�",
+      "restart �� concurrent-writer ����ͨ��",
+      "ʧ��ʱͣ�¸����Ҳ��Զ�����������"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-06A independent Verifier VERDICT=pass: expected-revision CAS + legal transition graph + restart + concurrent-writer rejection + delivery consistency, 6+34+36 tests; TaskFlow stays candidate, legacy blind upsert is active path"
+    ],
+    "execution_hints": [],
+    "id": "TF-0034",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "֤����ʵ�� SQLite CAS���Ϸ� transition graph��restart persistence��concurrent-writer rejection �� delivery consistency��ͨ��ǰ TaskFlow ���Ǻ�ѡ��",
+    "title": "RC-06A TaskFlow �����벢������֤��",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "restart/cancel/child-task/projection ����ͨ��",
+      "Ǩ�ƺ� ClawGraph ����д lifecycle truth",
+      "rollback �� compatibility read ��֤��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.78,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-06A accepted; RC-06B ClawGraph lifecycle migration starts",
+      "RC-06B independent Verifier VERDICT=pass: ClawGraph->TaskFlow read-only projection, event mapping, flag-off no-op, restart, child-task, idempotent, legacy Map authoritative, 18+36 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0035",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "���� compiler/UI���� ClawGraph process Map �е� run lifecycle ��Ǩ����֤���� TaskFlow��",
+    "title": "RC-06B ClawGraph Lifecycle Ǩ��",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "mission restart/wait/resume/cancel ���屣��",
+      "�� mission_runs/events ��������ݶ�ȡ",
+      "migration �� rollback ͨ��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.76,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-06B accepted; RC-06C Mission lifecycle migration starts",
+      "RC-06C independent Verifier VERDICT=pass: Mission->TaskFlow projection + controller emit production wiring, wait/restart/resume/cancel semantics preserved, 14+22+36 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0036",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "�� Mission definitions ����Ϊ TaskFlow templates/controllers������Ǩ��֤�������۾� lifecycle writer��",
+    "title": "RC-06C Mission Lifecycle Ǩ��",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "wait/resume/cancel/terminal/restart ����ͨ��",
+      "TaskFlow/TaskRegistry ��ΪΨһ workflow lifecycle writer",
+      "checkpoint �� lifecycle authority ����",
+      "side-effect replay 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-06D independent Verifier VERDICT=pass (zero findings): TaskLoop->TaskFlow projection + controller emit production wiring, wait/terminal/restart/checkpoint-separation/replay-0, 14+46+36 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0037",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "���Ǩ�� Task Loop lifecycle��long_task_checkpoints ֻ���� checkpoint material��replay ����ִ�� effect��",
+    "title": "RC-06D Task Loop Lifecycle Ǩ��",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "ƽ�� memory writer 0",
+      "flag-off ���ѯ��д��",
+      "Working Context �޵ڶ��洢",
+      "delete/correction propagation ͨ���� SEKB �Զ�д�� 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-06D accepted; RC-07 memory/context slot convergence starts",
+      "RC-07 independent Verifier VERDICT=pass (after NO-GO fix): slot-convergence classification + config-normalization production wiring, single memory slot owner, single contextEngine slot (CRK hosts DCS assembly), parallel writers 0, SEKB auto-writeback 0, 12+40+10 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0038",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "ǿ��һ�� configured memory slot owner ��һ�� DCS contextEngine owner��������ƽ�Ϊ candidate��proposal��benchmark �� projection��",
+    "title": "RC-07 Memory �� Context ���������",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "MCP real handshake/conformance ͨ��",
+      "catalog �� runtime support һ��",
+      "fake connected 0",
+      "approval/SecretRef/network policy/hot reload ����"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.84,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-08A independent Verifier VERDICT=pass: tool-convergence classification + connectedAfterMcpHandshake production wiring, real SDK handshake health, no fake-connected, websocket rejected, Streamable HTTP accurate, 12+45 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0039",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "���� MCP SDK Ϊ�ⲿЭ��Ȩ������ Work Provider ��Ϊ catalog/projection������ʵ��� host-native ���ߡ�",
+    "title": "RC-08A MCP �� Host-native Tool ����",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "exporter-off parity ͨ��",
+      "Ĭ�� raw prompt/tool й© 0",
+      "neutral OTLP golden trace ͨ��",
+      "�ڶ� trace schema/store 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.85,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-08A accepted; RC-08B OTel/observability convergence starts",
+      "RC-08B independent Verifier VERDICT=pass: correlation-ids 5-segment digest + exporter-parity (exporter-off no second store, raw leakage 0) + official OTLP exporters, 48 tests"
+    ],
+    "execution_hints": [],
+    "id": "TF-0040",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "OTel/OTLP ֻ���� trace export��receipts/domain journals ������ʵ��trajectory �н磬Observability JSONL ���ؽ���",
+    "title": "RC-08B OTel �� Observability ����",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "���б����Ž�ͨ���� skip budget ��Ư��",
+      "Executor/Verifier ��ݶ����� verdict һ��",
+      "manifest �� candidate/base SHA�������־�Ͳ��� digest",
+      "STATUS Ϊ human_acceptance_pending ���� done"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [
+      "TFD-RC09-HISTORICAL-20260803"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "RC-08B accepted; RC-09 final engineering acceptance ready",
+      "RC-09 final-acceptance spec + validate-runtime-authority-convergence.mjs delivered (fail-closed verified). BLOCKER: pnpm run typecheck final gate fails on 330 pre-existing typecheck debt errors (ACP manager.*, agent-loop, replay-tool-executor), all NOT introduced by RC-00..08B (verified zero new errors). Hard Stops forbid widening owned paths. Needs user decision on typecheck debt remediation or gate-scope adjustment."
+    ],
+    "execution_hints": [],
+    "id": "TF-0041",
+    "kind": "task",
+    "non_goals": [],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "�� clean candidate �����ȫ���Ž��Ͷ��� Executor/Verifier ���ܣ��������� manifest��ֻ�ܽ��� human_acceptance_pending��",
+    "title": "RC-09 ����������������֤�ݷ��",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "H-01 �� H-06 ���� run/receipt/result ��¼",
+      "candidate �� manifest digest ��ȫƥ��",
+      "�û���ȷ verdict=accepted �� failed_scenarios Ϊ��"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "children": [],
+    "confidence": 0.86,
+    "context_tags": [],
+    "created_at": "2026-08-02T13:07:59.996410Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0042",
+    "kind": "milestone",
+    "non_goals": [
+      "�Զ��޸� default-on��release��GA �� TF-0006"
+    ],
+    "primary_parent": "TF-0028",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "blocked",
+    "success_metrics": [],
+    "summary": "�����û��ڹ��������պ�ִ����ʵ Desktop/Cron/Channel/Restart/Fork/Handoff ���������� accepted/rejected/blocked��",
+    "title": "RC-10 �������� Provider/Channel/Recovery ����",
+    "updated_at": "2026-08-03T08:02:21.717409Z"
+  },
+  {
+    "acceptance_criteria": [
+      "P0 scoped spec����Ҫ rule/scenario ��ϵ�� touchedAreas �����Ĳ����� harness context/validate ��ȡ",
+      "P0 baseline ��¼����������/source/manifest/catalog �汾��ʧ�����֡������Ԥ���޸�֤��",
+      "README ����� STATUS.md ���ĵ�ְ���Ѹ��ˣ�δ������Ϊ�ı�ʱ��ȷ������ public �İ�",
+      "git diff --check �� task-forest proposal/graph У��ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "������������ִ�е� VerseShell foundation ���š�",
+      "validation_plan": [
+        "pnpm harness context/validate",
+        "�˶� owner map �� P0 evidence",
+        "task-forest validate/export"
+      ],
+      "why_not_enough": "G0 ֻ��������ʵʩ��ڣ����ܹر��κ� P0 ȱ�ڡ�",
+      "why_this_task": "·��ͼ��ȷҪ�����������ǼǺ� scoped Harness��P0 ǰ������������"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "��ǰ audit �ļ���ӳ fresh evidence���縴�ֳ��ֲ��죬���ȸ�����ƺ� spec�������� P0 �޸���"
+    ],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseshell",
+      "governance",
+      "harness",
+      "p0"
+    ],
+    "created_at": "2026-08-13T17:21:51.259406Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "�� scoped Harness task spec �ͱ�Ҫ������ȷ P0 touched areas����Ŀ�ꡢ������ rollback",
+      "�� uptime panic��governed approval probe��source/build/protocol drift �ĵ�ǰ���ֺͻ����ѵǼ�",
+      "owner matrix ��ȷ OpenClaw��ClawX Main��VerseShell��MCP ���������ֹԽ��",
+      "Task Forest�������ĵ��� handoff �໥һ��"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "harness/specs/tasks/verseshell-foundation-governance.md",
+      "harness/specs/rules/verseshell-foundation-p0-boundary.md",
+      "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+      "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+      "Task Forest validate/export 2026-08-14",
+      "pnpm harness context/validate --no-diff for verseshell-foundation-governance"
+    ],
+    "execution_hints": [
+      "G0 �ѹرգ�ֻ�����ʼ TF-0058 / VS-P0-01��",
+      "�ȶ�ȡ harness/specs/tasks/verseshell-foundation-governance.md �� P0 baseline���ٴ��� VS-P0-01 scoped spec��",
+      "���ð� packaged handshake �� 57/57 TypeScript suite ���� Rust compile��clean rebuild��governed probe ���Ʒ����֤�ݡ�"
+    ],
+    "id": "TF-0057",
+    "kind": "task",
+    "non_goals": [
+      "�޸� runtime",
+      "��չ facade",
+      "�ı� feature flag",
+      "��� canary",
+      "�ı��Ʒ��������ʱ����"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "Ϊ���к��� VerseShell foundation ����Ķ�����Ψһ�������߽硢�������ݺ� fail-closed ֤����㡣",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "������ pnpm harness context --spec <new-spec>����ʵʩ P0",
+      "�� spec ���� gateway-backend-communication��supply-chain-integrity-pinning��backend-communication-boundary��docs-sync �� active-config-guards",
+      "��֤�������ֹ��� readiness ���Ʒ/canary evidence������ʹ����ʷ�����ڸ� fresh failure",
+      "���޸� liveReady��productApproved��defaultOn��TF-0006��TF-0009 �� rollout config"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "P0 owner δ������Ϊ 0",
+      "P0 failure evidence ȱʧ��Ϊ 0",
+      "����������ʷ������ɫ������Ϊ release evidence Ϊ 0"
+    ],
+    "summary": "�ѽ���Ψһ P0 scoped Harness ��Լ��owner map����ǰ֤�ݻ��ߺͿ�ִ���Ž���δ�޸� runtime��flag��STATUS.md ���Ʒ����",
+    "title": "VS-G0-01 ����Ǽǡ�P0 ֤�ݶ����� Harness �߽�",
+    "updated_at": "2026-08-13T17:53:19.976573Z"
+  },
+  {
+    "acceptance_criteria": [
+      "cache panic fresh reproduction ��ʧ",
+      "JSON/compact �� agent/non-agent ����С handshake �������� process exit",
+      "cargo test --locked --no-run ͨ��������ȫ��ʵ�� Rust test targets������������ cargo test ��Ϊ P0 ���ż�ת�� TF-0059 �� clean-source gate"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "�������š�����֤��������� VerseShell execution foundation��",
+      "validation_plan": [
+        "8-file source-input inventory with SHA-256",
+        "ordered patch stack clean application",
+        "unskipped cargo test --locked",
+        "Python optional verifier invocation matrix",
+        "two clean release builds with binary digest comparison",
+        "manifest/catalog/handshake drift denial"
+      ],
+      "why_not_enough": "���� TF-0059 �� tracked source/patch inventory��clean reconstruction�������� cargo test��optional verifier contract �Ͷ�����ժҪ�Ƚϣ�֮������ governed probe��lifecycle��adapter��write �� canary �׶Ρ�",
+      "why_this_task": "�� clean-source �����ԡ����ؽ� bundle �Ϳ�ƽ̨����������Լ����Ψһ source/bundle owner �£����Ⲣ�� authority �;�Ĭ���� Rust gate��"
+    },
+    "alignment_records": [
+      "TFA-8eab7cab7e"
+    ],
+    "assumptions": [
+      "������λ�� verseshell-runtime/src/cache.rs������������ scoped audit/spec �������"
+    ],
+    "children": [],
+    "confidence": 0.92,
+    "context_tags": [
+      "verseshell",
+      "p0",
+      "rust",
+      "startup"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "short uptime �� restart �� server �� panic",
+      "agent/non-agent �� JSON/compact smoke �ɵõ�Э����Ӧ",
+      "cargo test �� cargo test --no-run ������ʵ runtime ����Ŀ��"
+    ],
+    "deviations": [
+      "TFD-d7e52bfa77"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "resources/verseshell/patches/p0-runtime-startup.patch",
+      "docs/dev/verseshell-foundation/P0-EVIDENCE-BASELINE-2026-08-14.md",
+      "clean worktree: UAS-05 then P0 patch apply checks",
+      "cargo test --locked --no-run -j 1 PASS",
+      "source-built JSON/compact �� agent/non-agent runtime.handshake PASS"
+    ],
+    "execution_hints": [
+      "���ð� TF-0058 completion ����Ϊ������ cargo test�����ؽ� bundle��optional verifier��governed approval �� rollout ͨ����",
+      "TF-0059 �����Ȱ� 8 �� ACI-Bench source inputs ��Ϊ tracked provenance�����������ʽ�綨 Python optional verifier�������������� cargo test��",
+      "���� rollout lock ���� default-off��"
+    ],
+    "id": "TF-0058",
+    "kind": "task",
+    "non_goals": [
+      "���� operation",
+      "���� canary",
+      "�ı� model tools",
+      "Ĭ������ VerseShell"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�������к��� typed ACI��facade �� governed execution ֮ǰ�� runtime panic ��ϡ�",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "ʹ�� checked_sub ����ʽ empty ���壬��������ϵͳ uptime",
+      "�ع鸲�� restart��short uptime��--agent/non-agent��JSON/compact",
+      "ʧ�ܱ��� default-off"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "startup panic 0",
+      "short-uptime smoke ͨ���� 100%",
+      "Rust test compile failure 0"
+    ],
+    "summary": "���ڹ̶� VerseShell 1.0 source �Ͻ��������� cache �� uptime �޸���ȫ�� Rust test-target ����������� source-built startup���̶��ύ��©�� 8 �� benchmark source inputs�������� cargo test��optional verifier portability ����ؽ��������������ȷת�� TF-0059���Ҳ���Ϊ�Ѿ�ͨ����",
+    "title": "VS-P0-01 �� uptime ����ȶ����� Rust �����Ž�",
+    "updated_at": "2026-08-14T03:22:04.207241Z"
+  },
+  {
+    "acceptance_criteria": [
+      "clean reconstruction ����� binary digest �� manifest һ�£��������ζ��� clean build ֤�����ظ�",
+      "crate version��handshake��catalog count/digest �� typed op/args contract һ��",
+      "bundle/manifest ��֤�� source/patch/input/binary checksum mismatch denial �ڲ����и���",
+      "clean pinned source ������ tracked ordered patch stack ��8 �� source input SHA-256 ��ƥ���嵥�� cargo test --locked ������ͨ��",
+      "Python fixture optional verification ��֧�ֻ�֧���ж��ɸ����Ҳ����� PATH ��ʽ��Ϊ"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "�������š�����֤��������� VerseShell execution foundation��",
+      "validation_plan": [
+        "8-file source-input inventory with SHA-256",
+        "ordered patch stack clean application",
+        "unskipped cargo test --locked",
+        "Python optional verifier invocation matrix",
+        "two clean release builds with binary digest comparison",
+        "manifest/catalog/handshake drift denial"
+      ],
+      "why_not_enough": "���� TF-0059 �� tracked source/patch inventory��clean reconstruction�������� cargo test��optional verifier contract �Ͷ�����ժҪ�Ƚϣ�֮������ governed probe��lifecycle��adapter��write �� canary �׶Ρ�",
+      "why_this_task": "�� clean-source �����ԡ����ؽ� bundle �Ϳ�ƽ̨����������Լ����Ψһ source/bundle owner �£����Ⲣ�� authority �;�Ĭ���� Rust gate��"
+    },
+    "alignment_records": [
+      "TFA-8eab7cab7e"
+    ],
+    "assumptions": [
+      "Windows x64 �ǵ�ǰΨһ packaged target������ƽ̨�� P5 ֮ǰ�����ƻ�������Ϊ������"
+    ],
+    "children": [],
+    "confidence": 0.85,
+    "context_tags": [
+      "verseshell",
+      "p0",
+      "supply-chain",
+      "typed-aci"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "clean checkout/reconstruction �ɹ�������֤ ae.exe",
+      "crate/protocol/catalog/manifest/binary identity ��Դһ��",
+      "CI �� source��patch��input��digest �� handshake drift ʱ fail-closed",
+      "���� Rust test inputs ���� tracked source/patch �ṩ������ cargo test ������ dirty workspace",
+      "ACI-Bench optional verifier ��ƽ̨��Ϊ�ɽ��͡�����֤"
+    ],
+    "deviations": [
+      "TFD-d7e52bfa77"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/P0-REPRODUCIBLE-BUNDLE-EVIDENCE-2026-08-14.md",
+      "resources/verseshell/source-inputs.json",
+      "resources/verseshell/manifest.json",
+      "resources/verseshell/SOURCE.md",
+      "resources/verseshell/BUILD.md",
+      "resources/verseshell/patches/uas-05-process-lifecycle.patch",
+      "resources/verseshell/patches/p0-runtime-startup.patch",
+      "resources/verseshell/patches/aci-bench-source-inputs.patch",
+      "resources/verseshell/patches/python-current-interpreter.patch",
+      "node --test scripts/verseshell-bundle.test.mjs: 13/13",
+      "pnpm verseshell:test: 13 + 11 + 57 passed",
+      "pnpm run typecheck: node/web pass",
+      "pnpm run comms:replay + pnpm run comms:compare: pass",
+      "node scripts/validate-verseshell-manifest.mjs --package: pass",
+      "git diff --check: pass",
+      "pnpm harness context: pass; diff-aware validate/harness:ci blocked by shared worktree residual"
+    ],
+    "execution_hints": [
+      "�ȶ��� source��ordered patch stack��lockfile �� 8 �� ACI-Bench assets���ٴ� clean reconstruction �ؽ����Ƚ� identity ��ִ�� unskipped cargo test��",
+      "��ֹ�����������������Ե� ae.exe��Python cache��Cargo target ������δ׷���������롣",
+      "�� Python optional verification ʹ����ʽ���������û��¼ƽ̨��֧�֣���ֹ����ǰ pytest PATH ��Ϊ��Ϊͨ����"
+    ],
+    "id": "TF-0059",
+    "kind": "task",
+    "non_goals": [
+      "���� facade",
+      "��Ʒ����",
+      "��ʽ����/ִ��δ��֤����"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "�� Electron �� OpenClaw �����ܿɴ� clean checkout �ؽ�����ݿ���֤�� typed ACI runtime��",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "�ⲿ source��patch��lockfile �� release inputs �� tracked �Ҿ� version/size/SHA256��ae.exe ������ clean reconstruction ���������ܸ��� ignored legacy binary ��Ϊ����֤��",
+      "��ά�� manifest 1.0 �� runtime 0.3 ��ƽ��Э��",
+      "������ dirty build input �ڸ� source provenance",
+      "�� 8 �� ACI-Bench runner/scorer/fixture/test Python inputs �� reviewed tracked patch/source inventory ��������ֹ���� ignored local tree�����ų� __pycache__��binary��Cargo target �����ɽ��",
+      "optional Python fixture verifier ʹ����ȷ��������Լ����֧��ƽ̨ͨ��������ȷ����Ϊ unsupported",
+      "���ζ��� clean release build ʹ�ù̶� Rust/Cargo 1.94.0��CARGO_INCREMENTAL=0 �� Windows /Brepro �ȼۿ��ƣ����Ƚ� binary SHA-256"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "source/build/protocol drift 0",
+      "δ���� release input 0",
+      "identity mismatch fail-closed ������ 100%"
+    ],
+    "summary": "����� VerseShell 1.0 Windows x64 clean source/build identity���̶� commit + �ĸ� ordered tracked patch��8 �� recovered Python ���롢final assertions��Cargo.lock/toolchain����ǰ������ verifier��˫���� release build��handshake/catalog��manifest/package/runtime fail-closed У��ȫ���γ�֤�ݡ��������Ž�ͨ����Harness diff-aware ���������������ȱ�� harness �Ӱ������ѳ�ʵ��¼�������� touchedAreas��",
+    "title": "VS-P0-02 1.0 Typed ACI ���ؽ� Bundle �빩Ӧ��һ����",
+    "updated_at": "2026-08-14T06:07:00.770241Z"
+  },
+  {
+    "acceptance_criteria": [
+      "fresh pnpm verseshell:test real probe ͨ��",
+      "denial��approved retry��semantic reduction��artifact recovery ʹ���� binary ����",
+      "governed failures �����ȶ� error/observation�������Զ�ת native shell"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.99,
+      "user_goal": "�� VerseShell ��Ϊ������ı���ִ�л�����",
+      "validation_plan": [
+        "real binary deny/approve/artifact probe",
+        "focused OpenClaw suite",
+        "comms and typecheck gates"
+      ],
+      "why_not_enough": "�������� lifecycle��observation��facade ����ʵ cohort evidence��",
+      "why_this_task": "���������� governed path ����Ϳ����ż�����������������ܱ����̾��������"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P0-01 �� P0-02 �������� binary/contract ������ fresh probe������ֹͣ��ǰ�ýڵ㡣"
+    ],
+    "children": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "verseshell",
+      "p0",
+      "approval",
+      "governed-exec"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 100.0,
+    "desired_outcomes": [
+      "approval deny ���� E_NEEDS_APPROVAL",
+      "approved retry ���һ���� action-bound token ����",
+      "outage/timeout/protocol mismatch/command failure �� native fallback",
+      "artifact recovery ���н� diagnostics ����"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "harness/specs/tasks/verseshell-p0-governed-probe.md",
+      "docs/dev/verseshell-foundation/P0-GOVERNED-PROBE-EVIDENCE-2026-08-14.md",
+      "docs/dev/verseshell-foundation/STATUS.md",
+      "docs/dev/verseshell-foundation/FOUNDATION-ORCHESTRATION-PLAN.zh-CN.md",
+      "docs/dev/handoffs/LATEST.md",
+      "pnpm --dir openclaw_runtime exec vitest ...: 11 files / 57 tests",
+      "pnpm verseshell:test: bundle 13/13 + runtime 11/11 + OpenClaw 57/57",
+      "node scripts/validate-verseshell-manifest.mjs --package: pass",
+      "pnpm run typecheck: node/web pass; test tsconfig observation-only",
+      "pnpm run comms:replay + pnpm run comms:compare: pass",
+      "git diff --check: pass",
+      "pnpm harness context: pass; --no-diff validate: pass; diff-aware residual recorded"
+    ],
+    "execution_hints": [
+      "P0-03 engineering closeout is complete; do not start VS-P1-01 until this proposal is explicitly confirmed.",
+      "Keep default-off, liveReady=false, productApproved=false, defaultOn=false.",
+      "Provider receipts, human recovery, paired A/B, soak, canary, GA and product approval remain out of scope."
+    ],
+    "id": "TF-0060",
+    "kind": "task",
+    "next_action": "�����û�ȷ�ϱ� closeout proposal ����� TF-0061 / VS-P1-01��",
+    "non_goals": [
+      "default-on",
+      "model-facing approval API",
+      "MCP ��·��",
+      "���� cohort"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "֤������֤�� typed ACI ���� OpenClaw policy/approval �߽��²���������ȷ�� observation���������ھܾ�ǰ������",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "approval/capability/policy/binary identity ֻ�� host/runtime ע��",
+      "ģ�ͻ����⻷�������������� approval",
+      "transport ��ҵ�����������"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "approval denial misclassification 0",
+      "governed native fallback 0",
+      "δ�� token ִ�� 0"
+    ],
+    "summary": "VS-P0-03 �������ʵ governed probe����ǰ verified binary �� host approval ǰ�ȶ����� E_NEEDS_APPROVAL�������� AETHER_APPROVE_ALL �����ƹ�����׼����� action-bound token transport ������һ�β��رո� transport��bounded output��result:// artifact recovery��contract failure ���� native fallback ��ͨ��������֤�ݲ����� provider canary��GA ���Ʒ��׼��",
+    "title": "VS-P0-03 Governed ��ʵ Probe�������ܾ��뵥����׼����",
+    "updated_at": "2026-08-14T06:28:44.681462Z"
+  },
+  {
+    "acceptance_criteria": [
+      "��/��/timeout/cancel/crash/restart matrix �����ȶ� observation",
+      "owner mismatch �� response mismatch fail-closed",
+      "restart �����·��� effectful request"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "ͳһ���ܼල�ı���ִ���ںˡ�",
+      "validation_plan": [
+        "lifecycle failure matrix",
+        "correlation mismatch tests",
+        "no-replay tests"
+      ],
+      "why_not_enough": "��δ����ͳһ observation/artifact ���ϲ� facade��",
+      "why_this_task": "�ȶ� lifecycle ���ö�� coding �������ִ�з���ı�Ҫ������"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P0 typed ACI �� approval ֤���Ѿ��ؽ�����ʷ UAS-05 ʵ�ֽ����ɸ������롣"
+    ],
+    "children": [],
+    "confidence": 0.78,
+    "context_tags": [
+      "verseshell",
+      "p1",
+      "lifecycle",
+      "fail-closed"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "starting/handshaking/ready/backoff/stopped/failed ״̬�ɹ۲�",
+      "response id mismatch ������ΪЭ�����",
+      "crash/timeout/cancel/restart �� exit/signal/phase/restart metadata",
+      "���ݵ� read ���ܿ� retry"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-1"
+    ],
+    "execution_hints": [
+      "�����û�ȷ�� TF-0060 closeout proposal �������",
+      "������ verseshell-p1-supervised-aci scoped Harness context/validate�����ò������ P1-02��P1-03 ���κ� P2+��",
+      "�������� model-visible facade��native fallback��effectful replay��MCP permission �� canary traffic��"
+    ],
+    "id": "TF-0061",
+    "kind": "task",
+    "next_action": "�Ƚ�������֤ verseshell-p1-supervised-aci scoped Harness task spec��",
+    "non_goals": [
+      "����ģ�͹���",
+      "Ĭ��·���л�",
+      "��Ʒ canary"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�ö���������timeout��cancel��crash��restart �����ؿ���Ƶ��ȶ�������� effectful �����طš�",
+    "remaining_minutes_max": 1800,
+    "remaining_minutes_min": 720,
+    "requirements": [
+      "requestId��traceId��deadline��process key �� ExecutionContext ע��",
+      "effectful/unknown side effect ��ֹ�Զ� replay",
+      "kill switch ֹͣ��ִ���Ҳ� native fallback"
+    ],
+    "source_sessions": [],
+    "status": "ready",
+    "success_metrics": [
+      "δ�������� 0",
+      "effectful replay 0",
+      "δ���� lifecycle failure 0"
+    ],
+    "summary": "VS-P0-03 governed probe �ѱպϹ����Ž�����һΨһ���нڵ�Ϊ VS-P1-01 �ܼල ACI �������ڡ��������ȶ������롣��ʼǰ����ʹ�õ�ǰ verified binary���κ� identity��protocol��policy��approval �� workspace mismatch ���� fail-closed��",
+    "title": "VS-P1-01 �ܼල ACI �������ڡ��������ȶ�������",
+    "updated_at": "2026-08-14T06:28:44.681462Z"
+  },
+  {
+    "acceptance_criteria": [
+      "oversized stdout/stderr/JSON/observation ������",
+      "artifact query/recovery/expiry �лع�",
+      "silent truncation ���� artifact ��ʧΪ 0"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "ͳһִ�������鿴��Լ��",
+      "validation_plan": [
+        "truncation/artifact tests",
+        "result query/recovery tests",
+        "error taxonomy contract tests"
+      ],
+      "why_not_enough": "����� MCP �ս���д adapter ���롣",
+      "why_this_task": "���ƽ���� stable facade �Ϳ���� coding workflow �Ĺ��������"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P1-01 ���ṩ���� process/lifecycle identity��"
+    ],
+    "children": [],
+    "confidence": 0.84,
+    "context_tags": [
+      "verseshell",
+      "p1",
+      "observation",
+      "artifact"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "�ض��� omitted bytes��cursor/retention metadata �� artifact",
+      "result.query ֧�� bounded slice/head/tail/grep",
+      "ҵ��Э�顢�������ڡ���Լʧ���ȶ�����",
+      "������ݲ����޽�ش�"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "shared/verseshell/types.ts",
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#52-�۲�����Լ"
+    ],
+    "execution_hints": [
+      "�ȹ̶� observation schema �� error taxonomy���ٽ����κ� coding adapter��"
+    ],
+    "id": "TF-0062",
+    "kind": "task",
+    "non_goals": [
+      "�µ� model-facing operation",
+      "д�� transaction",
+      "canary"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "��ģ�͡�UI �� support bundle ��ÿ���Ƶ����޽����������ȫ����־��Ĭ��ʧ��",
+    "remaining_minutes_max": 1200,
+    "remaining_minutes_min": 480,
+    "requirements": [
+      "���� operation ���� verseshell.observation/v1",
+      "artifact �������ڡ����ڡ���ʧ�ͻָ�����ȷ���",
+      "����ԭʼ stderr ֱ�ӽ���ģ��"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "��Ĭ�����ʧ 0",
+      "�޽���־���� 0",
+      "artifact recovery ʧ��δ���� 0"
+    ],
+    "summary": "ͳһ stdout/stderr/line JSON/observation ���ޡ��ض� metadata��artifact lineage��result.query �� transport/lifecycle/contract error taxonomy��",
+    "title": "VS-P1-02 Bounded Observation��Artifact �� Result Query ͳһ",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "��װ���������� smoke �� deny-by-default ��ȫ����ͨ��",
+      "���� eval �޷��ڲ�Ʒ profile ʹ��",
+      "MCP consumer telemetry �� governed facade usage �ֿ�ͳ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "����������ı��� execution boundary��",
+      "validation_plan": [
+        "install/start smoke",
+        "deny/eval policy tests",
+        "version/source consistency tests"
+      ],
+      "why_not_enough": "MCP ��ȫ������ֻ�� adapter �� command profile ����ء�",
+      "why_this_task": "��ǰ MCP ��Ȩ��/��������Ƕ��������棬������ coding facade ǰ�ս��"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P1-02 observation/artifact ��Լ�ɹ����ݲ㸴�á�"
+    ],
+    "children": [],
+    "confidence": 0.85,
+    "context_tags": [
+      "verseshell",
+      "p1",
+      "mcp",
+      "compatibility"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "CAPS Ĭ�� deny ���� cap all",
+      "eval ������ profile����Ʒ·����ע��򲻴��",
+      "shell exec �� argv ����ͬ policy boundary",
+      "MCP ��װ/���/���汾����֤"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p1-1",
+      "docs/dev/verseshell-foundation/REAL-CAPABILITY-AUDIT.zh-CN.md#p1-2"
+    ],
+    "execution_hints": [
+      "�Ⱦ����Ƴ��򿪷� profile ���� eval�����޸� package/�汾��Դ����� smoke��"
+    ],
+    "id": "TF-0063",
+    "kind": "task",
+    "non_goals": [
+      "���� MCP ����",
+      "�� MCP ȡ�� typed ACI",
+      "����ģ�͹�����"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "��ֹ MCP ��Ȩ�ޡ�ȱʧ������汾Ư���ƹ� typed ACI �� policy/workspace/governed owner��",
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "MCP ����Ϊ�ڲ�����",
+      "���ݲ�ʧ�ܲ����� governed native fallback",
+      "�汾��runtime �� package ���ֵ�Դ"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "Ĭ�� cap all 0",
+      "��Ʒ arbitrary eval 0",
+      "MCP dependency resolution failure 0"
+    ],
+    "summary": "�� MCP �̶�Ϊ�ⲿ compatibility adapter��default deny�������� eval����ȷ argv����Դ�汾�Ͱ�װ/���/��� smoke��",
+    "title": "VS-P1-03 MCP Ĭ�Ͼܾ�����������������ݲ��ս�",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "read/search/result �� real repo E2E/���ɲ���ͨ��",
+      "workspace ���ȡ��������й©���ܾ����ڱ�",
+      "cache key ���� workspace/revision/args/policy"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "�����ɳ��� coding �������Ļ�����",
+      "validation_plan": [
+        "real repo integration",
+        "path/security tests",
+        "cache fingerprint tests"
+      ],
+      "why_not_enough": "������ process/write ��Ϊ��",
+      "why_this_task": "ֻ��·��������ͣ�������֤ facade��workspace �� observation ���á�"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P1 contract ���ȶ������� shared facade ����ΪΨһģ�ͱ��档"
+    ],
+    "children": [],
+    "confidence": 0.82,
+    "context_tags": [
+      "verseshell",
+      "p2",
+      "facade",
+      "read-only"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "��ʵ�ֿ�ɶ�λ�ļ����������š���ȡ�����ġ���ѯ���Ա���",
+      "UI/agent/support bundle ʹ��ͬһ observation contract",
+      "workspace/revision/policy-aware cache ��Խ��"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "shared/verseshell/facade.ts",
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-2"
+    ],
+    "execution_hints": [
+      "�� shared/verseshell/facade.ts ������ȶ�������ʵ�� adapter����ֹ���˽�� spawn �����󹤾߱��"
+    ],
+    "id": "TF-0064",
+    "kind": "task",
+    "non_goals": [
+      "file.patch commit",
+      "test/build process",
+      "transaction",
+      "default-on"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "���Եͷ��ա����ظ��� coding ��ȡ��������֤ VerseShell foundation �Ĺ�����Լ��",
+    "remaining_minutes_max": 1200,
+    "remaining_minutes_min": 480,
+    "requirements": [
+      "ģ�Ϳɼ�����������",
+      "adapter ������ spawn �ӽ���",
+      "·����glob������������������н�"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "Խ���ȡ 0",
+      "�ظ���Чɨ�� 0",
+      "δͨ�� artifact �Ĵ������� 0"
+    ],
+    "summary": "�� read_file��search_content��result_query ������ʵ facade/adapter ·�������� workspace broker��revision-aware cache �� bounded observation��",
+    "title": "VS-P2-01 ֻ�� File/Search/Result Facade Adapter",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "exe/com/cmd/bat��pnpm/npm/corepack��spaces/Unicode/cwd/env/non-zero/timeout/large output matrix ͨ��",
+      "paired task �ԱȲ��� native fallback αװ�ɹ�",
+      "command profile policy/output tests ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "ͳһ process�����ԡ������� Git ��ִ����Լ��",
+      "validation_plan": [
+        "Windows argv compatibility matrix",
+        "policy/profile tests",
+        "paired execution comparison"
+      ],
+      "why_not_enough": "������д�� journal ����ʵ canary��",
+      "why_this_task": "command profile �Ǳ�������������ʵ��ִ�ж��ν���Ư�Ƶĺ��ġ�"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P2-01 ����֤ workspace/facade ������P1 lifecycle ֧�ֱ�Ҫ foreground process��"
+    ],
+    "children": [],
+    "confidence": 0.78,
+    "context_tags": [
+      "verseshell",
+      "p2",
+      "argv",
+      "command-profile"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "test/build/lint/git ������ cwd/env/timeout/write-dir profile",
+      "argv��executable identity��stdin/output budget �����",
+      "�����һ��Ϊ��Ϻ� artifact"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/CAPABILITY-AUDIT-AND-IMPLEMENTATION-PLAN.zh-CN.md#g1"
+    ],
+    "execution_hints": [
+      "��ʵ�� normalized execution plan �� Windows resolver contract������ cmd /C��PowerShell �� Git Bash wrapper �����"
+    ],
+    "id": "TF-0065",
+    "kind": "task",
+    "non_goals": [
+      "PTY/background ����",
+      "���� package manager ����Ȩ��",
+      "ģ��ֱ��ѡ�� command profile"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�ó��� coding process ��ͳһ execution plane �����У���������ͨ����Ĭ�϶��ν���Ϊ shell string��",
+    "remaining_minutes_max": 1800,
+    "remaining_minutes_min": 720,
+    "requirements": [
+      "OpenClaw �� approval ǰ���� normalized execution plan",
+      "VerseShell ���� approval �����½��� command string",
+      "shell interpreter ֻ��Ϊ��ʽ���ܿ� user terminal payload"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "��ͨ����Ĭ�� shell wrapper 0",
+      "governed implicit native fallback 0",
+      "δ��� env/cwd 0"
+    ],
+    "summary": "���� test/build/lint/git command profile registry����׼��ֻ�ύ���ɱ� argv �ƻ���ͳһ output/artifact ����Ϲ�һ����",
+    "title": "VS-P2-02 Argv-only Command Profile �� Test/Build/Lint/Git Adapter",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "request/trace lineage ���� 100%",
+      "failure taxonomy �� fixtures �ͽ��鶯��",
+      "support bundle/redaction tests ͨ��"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "ͳһ��Ϻͽ���鿴��",
+      "validation_plan": [
+        "lineage tests",
+        "failure fixtures",
+        "redaction/E2E/comms tests"
+      ],
+      "why_not_enough": "û��д��� canary ���塣",
+      "why_this_task": "trace/diagnostics �� execution foundation �ɱ� operator��agent �� support ��ͬ���͡�"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P2-02 �Ѳ���ͳһ command observation������ diagnostics ����չ��������ƽ�� owner��"
+    ],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseshell",
+      "p2",
+      "trace",
+      "diagnostics"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "search/read/modify/test/result_query �ɹ���",
+      "���롢���ԡ�����ȱʧ��Ȩ�ޡ�������runtime ʧ�ܷ����ȶ�",
+      "��ϲ����� raw command/prompt/output/secret"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#75-p2-����-coding-��������������Ż�"
+    ],
+    "execution_hints": [
+      "�ȶ���Ψһ��� schema �� redaction policy���ٽ���� adapter��"
+    ],
+    "id": "TF-0066",
+    "kind": "task",
+    "non_goals": [
+      "���� telemetry authority",
+      "ԭʼ��־���ޱ���",
+      "default-on"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "�öಽ coding ���������п�׷����������� UI/agent/support �����Խ�����־��",
+    "remaining_minutes_max": 1200,
+    "remaining_minutes_min": 480,
+    "requirements": [
+      "trace context �� host ע�룬������ģ��α�� governance �ֶ�",
+      "UI ʹ�� host-api/api-client����ֱ�ӿ��� transport",
+      "�û��ɼ���ϱ������ Electron E2E"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "����ִ�м�¼ 0",
+      "������й© 0",
+      "�ظ���־������ 0"
+    ],
+    "summary": "�� parent trace/child request id��command/test/lint/Git ����Ϳ�ִ�� suggested action ��һΪ������������ģ�͡�",
+    "title": "VS-P2-03 Trace Correlation��Failure Taxonomy �빲�����",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "precondition conflict��concurrent mutation��failed commit��abort��undo �� restart recovery ����ͨ��",
+      "�� ClawX journal ���ύ",
+      "diff artifact �� approval/change summary ����"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "�� coding д��߱���������ɻָ����塣",
+      "validation_plan": [
+        "journal/precondition tests",
+        "concurrency/recovery tests",
+        "approval/diff artifact integration"
+      ],
+      "why_not_enough": "�ⲿ write ������� policy��",
+      "why_this_task": "д����������� ClawX journal Ϊ authority���������� execution runtime ԽȨ��"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P2 trace/diagnostics �ѿɹ��� patch operation ������"
+    ],
+    "children": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "verseshell",
+      "p3",
+      "write",
+      "journal"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "patch preview ��ֱ���ύ",
+      "commit ǰ�� baseline hash/operation id/change list",
+      "journal commit/undo/stale-write guard �����",
+      "����/ʧ��/abort/undo ��ȷ��״̬"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "TF-0015 historical journal evidence",
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#phase-4"
+    ],
+    "execution_hints": [
+      "�� preview/precondition ��ʼ������ȷΨһ journal authority ǰ�������� tx.commit��"
+    ],
+    "id": "TF-0067",
+    "kind": "task",
+    "non_goals": [
+      "Ŀ¼ɾ���ָ�",
+      "external command write transaction",
+      "�ڶ� journal"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "Ϊ�ļ��Ķ��ṩȷ���ĳ�ͻ���ύ�ͻָ����壬ͬʱ���⽨���ڶ��� VerseShell transaction owner��",
+    "remaining_minutes_max": 1800,
+    "remaining_minutes_min": 720,
+    "requirements": [
+      "adapter ֻʹ�� VerseShellAciClient��ClawX journal API��OpenClaw policy API",
+      "Ԥ���㡢queue/lease �� recovery ���ü��� write journal",
+      "�����ƿ��ļ�ϵͳ��ʵԭ������"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "�� journal �� commit 0",
+      "��Ĭ partial mutation 0",
+      "stale write ©�� 0"
+    ],
+    "summary": "�� file.patch ֻ���� preview��base hash��precondition �� diff artifact��ClawX write journal ����Ψһ commit/undo/stale guard/recovery authority��",
+    "title": "VS-P3-01 File Patch Preview �� ClawX Journal Bridge",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "compiler/script/Git hook representative cases ����ǲ�ͨ�� policy tests",
+      "UI confirmation �� audit artifact ��й©�����������",
+      "rollback claim false-positive Ϊ 0"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "�ڲ�������յ�ǰ�������д��Э����",
+      "validation_plan": [
+        "effect/policy fixtures",
+        "UI confirmation E2E",
+        "audit/redaction review"
+      ],
+      "why_not_enough": "���ṩ default-on ��ȫ�Զ� rollback��",
+      "why_this_task": "�ⲿд�����ʵ�߽������ canary ǰ͸������������������� transaction ���¡�"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "P3-01 �ѱպ� file.patch ���ڲ� journal ·����"
+    ],
+    "children": [],
+    "confidence": 0.83,
+    "context_tags": [
+      "verseshell",
+      "p3",
+      "external-write",
+      "security"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "external_write effect ��ȷ�ɼ�",
+      "�������������ա����պ��û�ȷ���в�Ʒ������",
+      "���߱� rollback ��д�벻�ᱻ����Ϊ�ɻָ�"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/FOUNDATION-DEVELOPMENT-ROADMAP.zh-CN.md#73-p1-ͳһд��ͻָ�����"
+    ],
+    "execution_hints": [
+      "���г� external write ���ͺ� policy owner����ʵ�� UI/adapter ���塣"
+    ],
+    "id": "TF-0068",
+    "kind": "task",
+    "non_goals": [
+      "ǿ���������� shell д��",
+      "�ƹ��û�ȷ��",
+      "�Զ������ⲿ������"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "��ֹ�û��� agent ���ⲿ����д��Ļָ�������������Ԥ�ڡ�",
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "external write �� ClawX product policy ����",
+      "effectful request ���Զ� replay",
+      "ÿ�� external write ���������� effect level �� tests"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "δ���� external write 0",
+      "���� rollback ��ŵ 0",
+      "effectful automatic replay 0"
+    ],
+    "summary": "���� compiler/script/Git hook �� external_write �� effect ��ʶ��policy��approval��snapshot/prompt �Ͳ��ɻع����ƣ���������αװ�� VerseShell transaction��",
+    "title": "VS-P3-02 External Write Policy��ȷ���벻�ɻع��߽�",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  {
+    "acceptance_criteria": [
+      "ÿ�� live observation �� pairedTaskId��dropped=0 diagnostic window��provider receipt digest/actual usage��human recovery record",
+      "rollback drill �� reviewer ȷ������ʽ operator configuration �ָ� prior host",
+      "soak��ƽ̨ build/handshake �� continue/reduce/stop ������ owner/date",
+      "�������޸� defaultOn/liveReady/productApproved ��·��Ϊ 0"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "�������� VerseShell foundation ������ʵ evidence ��������Χ��",
+      "validation_plan": [
+        "reviewed live evidence check",
+        "paired/rollback/soak audit",
+        "STATUS.md owner review"
+      ],
+      "why_not_enough": "��ʹ֤�ݳ�֣����� STATUS.md �Ͳ�Ʒ owner �������� rollout�����Զ���Ȩ GA��",
+      "why_this_task": "��ʵ canary ��·��ͼΨһ������������Χ�Ľ׶Σ��ұ����빤�� evidence �ϸ���롣"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "operator ���ṩ�ܿ� cohort��provider receipt �Ͷ��� reviewer��ȱʧ��һ����ʱ���ڵ㱣�� blocked/review_needed��"
+    ],
+    "children": [],
+    "confidence": 0.6,
+    "context_tags": [
+      "verseshell",
+      "p5",
+      "canary",
+      "provider-evidence",
+      "operator"
+    ],
+    "created_at": "2026-08-13T17:21:51.259920Z",
+    "deprecated_at": null,
+    "derived_progress": 0.0,
+    "desired_outcomes": [
+      "paired task �� actual provider usage��latency/resource��completion �� recovery evidence",
+      "kill-switch/explicit rollback �� reviewed record",
+      "artifact recovery �Ͱ�ȫ veto ����ʵ��֤",
+      "Windows x64 �����ƽ̨�߱���С build/handshake evidence"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "docs/dev/verseshell-foundation/UAS-06-REAL-CANARY-RUNBOOK.md",
+      "docs/dev/verseshell-foundation/STATUS.md"
+    ],
+    "execution_hints": [
+      "����·��ͼ Phase 0 �� Phase 4 ��ȫ���ڵ� done �Ҷ������ĺ��������֤�ݲ��㣬��¼ continue/reduce/stop �����ƶϲ�Ʒ��׼��"
+    ],
+    "id": "TF-0069",
+    "kind": "milestone",
+    "non_goals": [
+      "�Զ� default-on",
+      "�� heuristic token ���Ƴɱ�����",
+      "ʹ�� synthetic matrix ��� live canary",
+      "�Զ����� TF-0006"
+    ],
+    "primary_parent": "TF-0056",
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "����ʵ��Ӫ�� provider ֤�ݾ����Ƿ�ֵ������ VerseShell ��Χ�������ѹ��̾����󵱳ɲ�Ʒ�ʸ�",
+    "remaining_minutes_max": 5760,
+    "remaining_minutes_min": 1440,
+    "requirements": [
+      "ֻ�� VS-P3-02 done �����",
+      "����ԭʼ provider receipts/diagnostics �ڲֿ��⣻�ֿ���������ժҪ/digest",
+      "native fallback Ŀ��Ϊ 0���κ� security veto ֹͣ����",
+      "STATUS.md ��Ψһ rollout/��Ʒ���þ���Դ"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [
+      "eligible local native fallback 0",
+      "δ��Ȩִ��/ԽȨ/���й© 0",
+      "provider actual usage ������ 100%",
+      "rollback drill �ɹ��� 100%"
+    ],
+    "summary": "�����й���ǰ����ɺ󣬲ɼ� reviewed paired baseline/VerseShell ��ʵ evidence��operator kill/rollback��artifact recovery��soak ��ƽ̨���֣������ continue/reduce/stop ���顣",
+    "title": "VS-P5-01 Provider-backed ��ʵ Canary��Rollback ������þ�",
+    "updated_at": "2026-08-13T17:21:51.259920Z"
+  }
+]
