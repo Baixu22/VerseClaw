@@ -189,6 +189,7 @@ import { resolveSandboxRuntimeStatus } from "../../sandbox/runtime-status.js";
 import { repairSessionFileIfNeeded } from "../../session-file-repair.js";
 import { guardSessionManager } from "../../session-tool-result-guard-wrapper.js";
 import { resolveRuntimeIntensityPolicy } from "../../intensity-policy.js";
+import { recordRuntimeIntensityLedgerEntries } from "../../prompt-governance/prompt-assembly-ledger.js";
 import { sanitizeToolUseResultPairing } from "../../session-transcript-repair.js";
 import { acquireSessionWriteLock } from "../../session-write-lock.js";
 import { createAgentSession, SessionManager } from "../../sessions/index.js";
@@ -1110,12 +1111,17 @@ export async function runEmbeddedAttempt(
       skillsPromptWorkspaceDir: effectiveSkillsPromptWorkspace,
     });
     const rawModelRunForIntensity = params.modelRun === true || params.promptMode === "none";
-    const runtimeIntensityPolicy = resolveRuntimeIntensityPolicy({
-      thinkLevel: params.thinkLevel,
-      promptModeExplicit: params.promptMode !== undefined,
-      requestedPromptMode: params.promptMode,
-      rawModelRun: rawModelRunForIntensity,
-    });
+    const runtimeIntensityPolicy =
+      params.runtimeIntensityPolicy ??
+      resolveRuntimeIntensityPolicy({
+        thinkLevel: params.thinkLevel,
+        requestedRuntimeIntensity: params.requestedRuntimeIntensity,
+        requestedReasoningEffort: params.requestedReasoningEffort,
+        intensitySource: params.runtimeIntensitySource,
+        promptModeExplicit: params.promptMode !== undefined,
+        requestedPromptMode: params.promptMode,
+        rawModelRun: rawModelRunForIntensity,
+      });
     const skillsTransientLimits =
       runtimeIntensityPolicy.skills.mode === "preserve"
         ? undefined
@@ -2227,7 +2233,30 @@ export async function runEmbeddedAttempt(
         skillsTotal: runtimeIntensitySkillsTotal,
         toolResultMaxChars: runtimeIntensityToolResultMaxChars,
         estimatedSavedChars: estimatedSkillsPromptSavedChars,
+        requestedReasoning:
+          params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+        effectiveReasoning: params.thinkLevel,
+        requestedIntensity:
+          params.requestedRuntimeIntensity ??
+          runtimeIntensityPolicy.level,
+        effectiveIntensity: runtimeIntensityPolicy.level,
+        intensitySource: params.runtimeIntensitySource,
+        couplingMode: "linked-v1",
+        policyAdherence: "full",
       },
+    });
+    recordRuntimeIntensityLedgerEntries({
+      systemPrompt: appendPrompt,
+      promptMode: effectivePromptMode,
+      policy: runtimeIntensityPolicy,
+      requestedReasoning:
+        params.requestedReasoningEffort ?? params.thinkLevel ?? undefined,
+      effectiveReasoning: params.thinkLevel,
+      requestedIntensity:
+        params.requestedRuntimeIntensity ?? runtimeIntensityPolicy.level,
+      effectiveIntensity: runtimeIntensityPolicy.level,
+      intensitySource: params.runtimeIntensitySource,
+      policyAdherence: "full",
     });
     let systemPromptText = attemptSystemPrompt.systemPrompt;
     prepStages.mark("system-prompt");

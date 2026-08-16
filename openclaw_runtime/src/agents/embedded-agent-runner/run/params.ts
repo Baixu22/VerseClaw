@@ -26,6 +26,10 @@ import type {
 } from "../../embedded-agent-subscribe.shared-types.js";
 import type { AgentInternalEvent } from "../../internal-events.js";
 import type { AgentMessage } from "../../runtime/index.js";
+import type {
+  RuntimeIntensityPreference,
+  RuntimeIntensitySource,
+} from "../../intensity-policy.js";
 import type { SilentReplyPromptMode } from "../../system-prompt.types.js";
 import type { PromptMode } from "../../system-prompt.types.js";
 import type { EmbeddedAgentExecutionPhase } from "../execution-phase.js";
@@ -147,6 +151,11 @@ export type RunEmbeddedAgentParams = {
   authProfileId?: string;
   authProfileIdSource?: "auto" | "user";
   thinkLevel?: ThinkLevel;
+  /** Requested thinking level captured before provider/model capability downgrade. */
+  requestedReasoningEffort?: string | null;
+  /** Linked-v1 runtime intensity requested for this run. */
+  requestedRuntimeIntensity?: RuntimeIntensityPreference | null;
+  runtimeIntensitySource?: RuntimeIntensitySource;
   fastMode?: boolean;
   verboseLevel?: VerboseLevel;
   reasoningLevel?: ReasoningLevel;

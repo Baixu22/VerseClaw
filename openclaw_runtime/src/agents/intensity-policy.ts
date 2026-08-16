@@ -2,6 +2,30 @@ import type { ThinkLevel } from "../auto-reply/thinking.shared.js";
 import type { PromptMode } from "./system-prompt.types.js";
 
 export type RuntimeIntensityLevel = "baseline" | "minimal" | "low" | "high" | "xhigh";
+export type RuntimeIntensityPreference = "baseline" | "minimal" | "low" | "high" | "xhigh";
+
+const RUNTIME_INTENSITY_PREFERENCES: readonly RuntimeIntensityPreference[] = [
+  "baseline",
+  "minimal",
+  "low",
+  "high",
+  "xhigh",
+];
+
+export function normalizeRuntimeIntensityPreference(
+  value: unknown,
+): RuntimeIntensityPreference | undefined {
+  return typeof value === "string" &&
+    (RUNTIME_INTENSITY_PREFERENCES as readonly string[]).includes(value)
+    ? (value as RuntimeIntensityPreference)
+    : undefined;
+}
+export type RuntimeIntensitySource = "explicit" | "legacy-thinking-level";
+export type LinkedRuntimeIntensityRequest = {
+  reasoningEffort?: string | null;
+  /** Reserved for future model-aware linking; linked-v1 keeps auto at baseline. */
+  modelDefaultThinkLevel?: ThinkLevel | null;
+};
 export type RuntimeIntensityPromptMode = "preserve" | "minimal" | "full";
 export type RuntimeIntensityResponseStyle = "normal" | "brief" | "concise" | "detailed" | "comprehensive";
 export type RuntimeIntensityOrchestrationGuidance =
@@ -58,11 +82,46 @@ export type RuntimeIntensityPolicy = {
 };
 
 export type ResolveRuntimeIntensityPolicyInput = {
-  thinkLevel?: ThinkLevel | "auto" | string | null;
+  thinkLevel?: string | null;
+  /** Linked-v1 explicit intensity; when present it wins over legacy thinkLevel. */
+  requestedRuntimeIntensity?: RuntimeIntensityPreference | null;
+  /** Requested reasoning effort captured before provider/model downgrade. */
+  requestedReasoningEffort?: string | null;
+  intensitySource?: RuntimeIntensitySource;
+  /** Reserved for future model-aware linking. */
+  modelDefaultThinkLevel?: ThinkLevel | null;
   promptModeExplicit?: boolean;
   requestedPromptMode?: PromptMode | null;
   rawModelRun?: boolean;
 };
+
+const REASONING_EFFORT_TO_INTENSITY: Record<string, RuntimeIntensityPreference> = {
+  minimal: "minimal",
+  low: "low",
+  medium: "baseline",
+  high: "high",
+  xhigh: "xhigh",
+  max: "xhigh",
+};
+
+/**
+ * Linked-v1 mapping: reasoning effort and runtime intensity stay coupled at
+ * the product level, but intensity is resolved from the requested value so a
+ * later provider/model downgrade cannot silently change prompt density.
+ *
+ * `auto`, `off`, `adaptive`, unset, and `medium` all keep baseline density.
+ */
+export function resolveRequestedRuntimeIntensity(
+  params: LinkedRuntimeIntensityRequest = {},
+): RuntimeIntensityPreference {
+  const normalized = typeof params.reasoningEffort === "string"
+    ? params.reasoningEffort.trim().toLowerCase()
+    : "";
+  // Linked-v1 deliberately ignores modelDefaultThinkLevel for now: auto stays
+  // baseline regardless of what the model's own default happens to be.
+  void params.modelDefaultThinkLevel;
+  return REASONING_EFFORT_TO_INTENSITY[normalized] ?? "baseline";
+}
 
 const BASELINE_POLICY: RuntimeIntensityPolicy = {
   level: "baseline",
@@ -108,7 +167,15 @@ function withPromptModeProtection(
 export function resolveRuntimeIntensityPolicy(
   params: ResolveRuntimeIntensityPolicyInput,
 ): RuntimeIntensityPolicy {
-  const level = normalizeIntensityLevel(params.thinkLevel);
+  const requestedLevel =
+    params.requestedRuntimeIntensity ??
+    (params.requestedReasoningEffort !== undefined && params.requestedReasoningEffort !== null
+      ? resolveRequestedRuntimeIntensity({
+          reasoningEffort: params.requestedReasoningEffort,
+          modelDefaultThinkLevel: params.modelDefaultThinkLevel,
+        })
+      : undefined);
+  const level = requestedLevel ?? normalizeIntensityLevel(params.thinkLevel);
   if (level === "minimal") {
     return withPromptModeProtection(
       {
@@ -124,7 +191,7 @@ export function resolveRuntimeIntensityPolicy(
         systemPromptLines: [
           "Runtime intensity: minimal. Prefer short answers, small context reads, compact tool-output summaries, and expand only when the user asks or correctness requires it.",
           "When compact shell output is available, prefer it while preserving the raw-output recovery path for missing details.",
-          "For long-task graphs, ClawGraph, subagents, or multi-model orchestration, explain the tradeoff and ask before escalating.",
+          "For long-task graphs or multi-model orchestration, explain the tradeoff and ask before escalating.",
         ],
       },
       params,

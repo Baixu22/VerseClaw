@@ -32,7 +32,7 @@ requiredTests:
   - pnpm test tests/unit/chat-agent-effort-popover.test.tsx tests/unit/agent-config.test.ts
   - pnpm run typecheck
 acceptance:
-  - Runtime resolves one additive intensity policy per embedded agent attempt from the effective thinking level.
+  - Runtime resolves one additive intensity policy per embedded agent attempt from the requested thinking level before model downgrade (linked-v1), while legacy paths still derive it from the effective thinking level.
   - Explicit prompt mode overrides, raw model runs, and promptMode none are not overridden by intensity policy.
   - Minimal and low may select minimal prompt density, compact/top-K skills prompt exposure, and tighter tool-result/context-pressure thresholds for the current run only.
   - Runtime skill registry, user-invocable skills, tool allowlists, provider capabilities, approvals, Task Ledger state, ClawGraph, Mission, and `/loop` entry behavior are unchanged by low/minimal intensity.
