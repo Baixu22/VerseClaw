@@ -1683,7 +1683,7 @@
     },
     "effortButton": "强度",
     "effortTitle": "思考强度",
-    "effortHelpTooltip": "更高的强度会让 Agent 在回答前思考更久。",
+    "effortHelpTooltip": "同时设置推理深度与运行时上下文密度：档位越高思考越充分；极简/低档还会使用更精简的提示词、更少的技能摘要和更紧凑的工具输出上下文。Auto 保持 baseline 上下文密度。",
     "effortFaster": "更快速",
     "effortSmarter": "更深入",
     "effortStatusAuto": "自动",

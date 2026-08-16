@@ -2087,6 +2087,11 @@ export type AgentBootstrapResult = HostSuccess & {
   heartbeatMdPath?: string;
   bootMd?: string;
   bootMdPath?: string;
+  bootDeprecated?: {
+    supported: false;
+    code: 'BOOT_MD_DEPRECATED';
+    message: string;
+  };
 };
 export type AgentBootstrapUpdatePayload = {
   id: string;
@@ -2098,6 +2103,8 @@ export type AgentBootstrapUpdatePayload = {
   userMd?: string;
   identityMd?: string;
   heartbeatMd?: string;
+  /** Deprecated: writes are rejected with BOOT_MD_DEPRECATED during the compatibility window. */
+  bootMd?: string;
   roleProfile?: import('@shared/types/agent').AgentRoleProfile;
 };
 
