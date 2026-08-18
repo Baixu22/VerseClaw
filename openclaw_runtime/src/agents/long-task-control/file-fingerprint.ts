@@ -18,8 +18,8 @@
  * - A1 imports `getFileFingerprint` / `computeFileFingerprintsForDirectory`
  *   READ-ONLY; A6 imports them WRITE.
  *
- * See: net use/designs/development-manual.md §1.3 (A6), Stage 2 Stream 2B
- *      net use/designs/area-6-long-running-persistence.md §9.1 (file fingerprint ownership)
+ * See: docs/runtime-design/development-manual.md §1.3 (A6), Stage 2 Stream 2B
+ *      docs/runtime-design/area-6-long-running-persistence.md §9.1 (file fingerprint ownership)
  */
 
 import { createHash } from "node:crypto";

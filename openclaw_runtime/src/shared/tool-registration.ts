@@ -6,8 +6,8 @@
  * enforced at tool registration time. The snapshotter trusts
  * `declaredWritePaths ∩ actual_fs_diff` instead of runtime path tracking.
  *
- * See: net use/designs/area-1-layered-execution-isolation.md §9.2
- *      net use/designs/development-manual.md §1.1, Stage 2
+ * See: docs/runtime-design/area-1-layered-execution-isolation.md §9.2
+ *      docs/runtime-design/development-manual.md §1.1, Stage 2
  */
 
 export type WriteRiskProfile =

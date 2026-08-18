@@ -5,7 +5,7 @@
 // namespace are rejected at recording time. This prevents cross-area event
 // pollution and makes traces human-readable.
 //
-// See: net use/designs/development-manual.md §1.1, Stage 3 (criterion 3.10/3.13)
+// See: docs/runtime-design/development-manual.md §1.1, Stage 3 (criterion 3.10/3.13)
 // Mirrors: shared/types/observability.ts (renderer-side copy)
 // ---------------------------------------------------------------------------
 

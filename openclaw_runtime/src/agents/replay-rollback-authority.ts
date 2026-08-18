@@ -17,8 +17,8 @@
  * - MUST fall back to legacy checkpoint when pilot gate is disabled.
  * - MUST NOT promote event-log replay without pilot.
  *
- * See: net use/designs/development-manual.md §1.2 (A3), Stage 1 Stream 1B
- *      net use/designs/area-3-runtime-resilience.md §9.2 (serial chain dissolution)
+ * See: docs/runtime-design/development-manual.md §1.2 (A3), Stage 1 Stream 1B
+ *      docs/runtime-design/area-3-runtime-resilience.md §9.2 (serial chain dissolution)
  */
 
 /** A Mission decision that requests replay-rollback. Must be `repair` + `replay_rollback`. */

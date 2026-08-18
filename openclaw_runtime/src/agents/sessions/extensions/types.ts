@@ -547,7 +547,7 @@ export interface ToolDefinition<
    * - "dynamic_writes": tool writes to arbitrary paths (full fs-diff required).
    *
    * See: openclaw_runtime/src/shared/tool-registration.ts
-   *      net use/designs/development-manual.md §1.1 (A1), Stage 2 Stream 2A
+   *      docs/runtime-design/development-manual.md §1.1 (A1), Stage 2 Stream 2A
    */
   writeRiskProfile?:
     | { kind: "no_writes" }
