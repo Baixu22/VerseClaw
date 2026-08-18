@@ -25,8 +25,8 @@
  * - When 'shadow', calls `classifyAnomalyPattern` and returns the result
  *   (which may be `null` if no anomaly is detected).
  *
- * See: net use/designs/development-manual.md §1.2 (A3), Stage 1 Stream 1B
- *      net use/designs/area-3-runtime-resilience.md §9.1 (observe-only honesty)
+ * See: docs/runtime-design/development-manual.md §1.2 (A3), Stage 1 Stream 1B
+ *      docs/runtime-design/area-3-runtime-resilience.md §9.1 (observe-only honesty)
  */
 
 import type { RuntimeFeatureConfig } from "../config/types.openclaw.js";

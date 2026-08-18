@@ -20,8 +20,8 @@
  * Flag-off parity (acceptance 2.11): when A1 flag is off, the snapshotter
  * returns a no-op handle — `begin()` / `commit()` / `rollback()` are no-ops.
  *
- * See: net use/designs/development-manual.md §1.1 (A1), Stage 2 Stream 2A
- *      net use/designs/area-1-layered-execution-isolation.md §9.1, §9.2
+ * See: docs/runtime-design/development-manual.md §1.1 (A1), Stage 2 Stream 2A
+ *      docs/runtime-design/area-1-layered-execution-isolation.md §9.1, §9.2
  */
 
 import { execFile } from "node:child_process";

@@ -516,7 +516,7 @@ export type ObservabilityRuntimeEvent =
 // namespace are rejected at recording time. This prevents cross-area span
 // pollution and makes traces human-readable.
 //
-// See: net use/designs/development-manual.md §1.1, Stage 3
+// See: docs/runtime-design/development-manual.md §1.1, Stage 3
 // ---------------------------------------------------------------------------
 
 /** The area prefix of the observability namespace. */

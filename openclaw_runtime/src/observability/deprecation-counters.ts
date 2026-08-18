@@ -10,7 +10,7 @@
 // touch production state. They are read via `snapshot()` for the Workbench
 // and audit reports.
 //
-// See: net use/designs/development-manual.md §1.1, Stage 4
+// See: docs/runtime-design/development-manual.md §1.1, Stage 4
 // ---------------------------------------------------------------------------
 
 /** Lowercase area identifier used by deprecation counters. Includes A3/A4
