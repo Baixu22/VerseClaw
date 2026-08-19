@@ -30,21 +30,29 @@
   },
   "sessionActivity": {
     "title": "会话状态",
-    "description": "当前会话的实时运行、任务、Git、子 Agent 和终端状态。",
+    "description": "当前会话的实时运行、任务、Git、目标、进程、谱系、子 Agent 和终端状态。",
     "openRecovery": "打开会话恢复",
     "createMemoryDraft": "存为记忆草稿",
     "duration": "持续时间",
     "notAvailable": "暂无",
-    "sections": { "session": "会话", "git": "工作区 Git", "tasks": "实时任务", "subagents": "子 Agent", "terminals": "终端", "continuity": "连续性" },
+    "sections": { "session": "会话", "git": "工作区 Git", "tasks": "实时任务", "subagents": "子 Agent", "goals": "目标与等待", "processes": "进程", "lineage": "谱系", "terminals": "终端", "continuity": "连续性", "environment": "环境", "plan": "开发任务" },
     "status": { "idle": "空闲", "running": "运行中", "waiting_approval": "等待批准", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
-    "git": { "detached": "游离 HEAD", "changes": "{{count}} 项变更", "conflicts": "冲突" },
+    "git": { "detached": "游离 HEAD", "changes": "{{count}} 项变更", "conflicts": "冲突", "clean": "干净" },
     "taskKinds": { "mission": "任务目标", "taskLoop": "任务循环", "clawGraph": "ClawGraph", "taskLedger": "任务账本" },
     "taskStatus": { "queued": "排队中", "running": "运行中", "review": "待复核", "blocked": "已阻塞", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
-    "subagents": { "unknown": "Agent" },
+    "subagents": { "unknown": "Agent", "openTranscript": "在工作空间中打开 {{role}} 的会话记录" },
     "subagentStatus": { "started": "运行中", "completed": "已完成", "error": "错误", "aborted": "已中止", "verified": "已验证" },
     "terminals": { "interactive": "交互终端", "agentCommand": "Agent 命令", "webPreview": "Web 预览服务" },
     "terminalStatus": { "idle": "空闲", "starting": "启动中", "running": "运行中", "exited": "已退出", "blocked": "已阻塞", "completed": "已完成", "error": "错误" },
-    "continuity": { "queue": "{{count}} 个排队中的后续任务", "context": "上下文压力：{{pressure}}", "checkpoint": "可用恢复检查点", "pressure": { "low": "低", "medium": "中", "high": "高" } }
+    "continuity": { "queue": "{{count}} 个排队中的后续任务", "context": "上下文压力：{{pressure}}", "checkpoint": "可用恢复检查点", "pressure": { "low": "低", "medium": "中", "high": "高" } },
+    "goalKinds": { "mission": "任务目标", "flow": "目标等待" },
+    "goalStatus": { "queued": "排队中", "waiting": "等待中", "running": "运行中", "sleeping": "休眠中", "paused": "已暂停", "blocked": "已阻塞", "completed": "已完成", "failed": "失败", "aborted": "已中止", "lost": "已丢失" },
+    "processKinds": { "bash": "进程", "supervisor": "受监管进程", "goalOwned": "目标进程" },
+    "processStatus": { "queued": "排队中", "starting": "启动中", "running": "运行中", "exiting": "退出中", "exited": "已退出", "completed": "已完成", "failed": "失败", "killed": "已终止", "aborted": "已中止", "lost": "已丢失" },
+    "lineage": { "parent": "父会话", "child": "子会话" },
+    "lineageStatus": { "started": "运行中", "completed": "已完成", "aborted": "已中止", "error": "错误" },
+    "runningCount": "{{count}} 个运行中",
+    "processes": { "openOutput": "查看 {{command}} 的输出" }
   },
   "noLogs": "（暂无日志）",
   "scrollToLatest": "回到底部",
@@ -146,12 +154,33 @@
       "external-write": "外部写入",
       "destructive": "破坏性"
     },
+    "riskLabel": "风险",
+    "modeLabel": "模式",
     "status": {
       "pending": "待处理",
       "approved": "已批准",
       "denied": "已拒绝",
       "expired": "已消费"
-    }
+    },
+    "workspaceSummary": "{{branch}} · {{state}}",
+    "repository": "仓库",
+    "notRepository": "当前工作区不是 Git 仓库",
+    "timeline": "Git 生命周期",
+    "timelineDescription": "提交、切换、重置、变基及其他引用移动",
+    "timelineEmpty": "暂无 Git 生命周期记录",
+    "timelineUnavailable": "Git 生命周期暂不可用",
+    "filterAll": "全部",
+    "filterApprovals": "审批",
+    "filterGit": "Git",
+    "approvalCount": "{{count}} 项审批",
+    "gitCount": "{{count}} 个 Git 事件",
+    "operationCount": "{{count}} 个事件",
+    "showDetails": "展开详情",
+    "hideDetails": "收起详情",
+    "branch": "分支",
+    "clean": "干净",
+    "dirty": "{{count}} 项变更",
+    "conflicts": "{{count}} 个冲突"
   },
   "gitPanel": {
     "title": "Git",
@@ -397,7 +426,9 @@
       "terminal": "终端",
       "files": "文件",
       "audit": "审计",
-      "agents": "子智能体"
+      "agents": "子智能体",
+      "subagent": "子智能体",
+      "process": "进程"
     },
     "workspaceTabs": {
       "files": "文件",
@@ -768,6 +799,9 @@
         "fetch": "Fetch",
         "pull": "拉取",
         "push": "推送",
+        "merge": "合并",
+        "rebase": "变基",
+        "reset": "重置",
         "addWorktree": "添加 worktree",
         "removeWorktree": "移除",
         "pruneWorktrees": "清理",
@@ -819,6 +853,7 @@
         "worktrees": "Worktree",
         "commit": "提交",
         "branch": "分支",
+        "integrate": "集成",
         "stash": "Stash",
         "github": "PR",
         "compactHint": "紧凑工具"
@@ -838,6 +873,14 @@
         "title": "分支和 worktree",
         "branchPlaceholder": "新分支",
         "worktreePlaceholder": "worktree 分支"
+      },
+      "integrate": {
+        "title": "集成",
+        "help": "合并或变基当前分支，也可以将它重置到指定引用。",
+        "refLabel": "集成引用",
+        "refPlaceholder": "选择分支",
+        "resetMode": "重置模式",
+        "resetHelp": "重置会改变历史，始终需要审批。"
       },
       "worktrees": {
         "title": "Worktrees",
@@ -1378,6 +1421,9 @@
     "resume": "继续",
     "pauseTooltip": "暂停当前运行，并保存可继续的会话状态。",
     "resumeTooltip": "继续这个已暂停的会话。",
+    "resumeDisabled": "此会话当前无法在这里继续。",
+    "startingTooltip": "正在启动…点击可取消本次发送，或暂停当前运行。",
+    "queueTooltip": "将这条草稿排队，待当前运行结束后发送。双击改为暂停。",
     "gatewayConnected": "已连接",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextMenu": {
@@ -1833,15 +1879,25 @@
     "work": "任务"
   },
   "sessionView": {
-    "project": "工作组",
+    "project": "项目",
     "time": "时间"
   },
   "sidebar": {
     "sectionConversations": "会话",
     "organizeSessions": "整理会话",
+    "pinSession": "置顶会话",
+    "unpinSession": "取消置顶",
+    "markRead": "标为已读",
+    "markUnread": "标为未读",
+    "pinnedSession": "已置顶会话",
+    "unreadSession": "未读会话",
     "searchSessions": "搜索会话",
     "addProject": "引入新项目",
+    "viewBy": "展示方式",
     "sortBy": "排序方式",
+    "sortNewest": "最新",
+    "sortActive": "最活跃",
+    "sortPriority": "优先",
     "newSessionInProject": "在 {{name}} 中新建任务",
     "projectOptions": "{{name}} 的项目操作",
     "createFolder": "新建分组",
@@ -1875,7 +1931,7 @@
     "create": "新建工作线",
     "namePlaceholder": "工作线名称",
     "rename": "重命名工作线",
-    "delete": "删除工作线",
+    "delete": "移除分组",
     "moveTo": "移至工作线",
     "noWorkgroup": "无工作线",
     "ungrouped": "未归线",
@@ -1894,7 +1950,9 @@
       "today": "今天",
       "week": "本周",
       "earlier": "更早"
-    }
+    },
+    "autoGroupName": "{{name}} 分组",
+    "dropHint": "拖到另一个会话上即可归为一组"
   },
   "archive": {
     "searchPlaceholder": "搜索已归档会话",
@@ -1922,6 +1980,10 @@
     "title": "问题目录",
     "fallback": "问题 {{number}}",
     "moreHint": "还有 {{count}} 个问题未显示"
+  },
+  "messageNav": {
+    "label": "提问导航",
+    "jumpTo": "跳到第 {{ordinal}} 条提问"
   },
   "sessionRail": {
     "title": "会话状态",
@@ -2109,6 +2171,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "thoughts": "{{count}} 段思考",
       "approvals": "{{count}} 项待批准",
       "plan": "{{count}} 步计划",
       "agents": "{{count}} 个 Agent",
@@ -2172,5 +2235,13 @@
       "validationError": "验证错误",
       "error": "错误"
     }
+  },
+  "processPanel": {
+    "gone": "这个进程已不在当前运行里。",
+    "exitCode": "退出 {{code}}",
+    "truncated": "较早的输出已被截断。",
+    "waiting": "等待输出…",
+    "noOutput": "这个进程没有输出。",
+    "status": { "running": "运行中", "completed": "已完成", "failed": "失败" }
   }
 }

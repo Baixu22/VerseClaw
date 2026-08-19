@@ -6,6 +6,7 @@ import {
   countLongTaskQueuedMessages,
   getLatestLongTaskCheckpoint,
 } from "../../agents/long-task-control/store.js";
+import { collectSessionActivityReadProjection } from "./session-activity-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
 
 function readSessionKey(params: Record<string, unknown>): string | null {
@@ -90,6 +91,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
     }));
     const queueCount = countLongTaskQueuedMessages(sessionKey);
     const checkpoint = getLatestLongTaskCheckpoint(sessionKey);
+    const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
     const now = Date.now();
 
     respond(true, {
@@ -106,6 +108,9 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
         },
         tasks,
         subagents,
+        goals: readProjection.goals,
+        processes: readProjection.processes,
+        lineage: readProjection.lineage,
         continuity: {
           queueCount,
           checkpoint: Boolean(checkpoint),
