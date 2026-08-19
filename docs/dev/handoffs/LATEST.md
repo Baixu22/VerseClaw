@@ -1,3 +1,28 @@
+# 会话交接（LATEST）
+
+> 更新：2026-08-19（Runtime Lifecycle Governance Phase 0-6 closeout + GA hardening）
+> 上一节点：`TF-0077`（Runtime Lifecycle Governance Phase 0-6 Closeout）= **done**
+> 当前分支：`feat/runtime-lifecycle-governance`（未合并）
+
+---
+
+## 0. Runtime Lifecycle Governance Phase 6 closeout（2026-08-19）
+
+- 状态：七阶段程序已整体收卡；`pnpm run runtime-lifecycle-audit --phase all` 实测 exit 0，`audit-0.json` 至 `audit-6.json` 全部 PASS score=100。
+- 关键证据：`audit-5.json`（`activitySnapshotWriteFindings=0`）、`audit-6.json`（Phase 6 evidence-only closeout）；`deleteCommitTxCount=1`、`armTxCount=1`、`processPollToolCalls=0`、`secretPersistenceFindings=0` 全部保持。
+- Residual：本程序无未决 residual；跨 workstream 的共享脏工作树仍由各自 owner 处理，不在 RLG 范围内。
+
+### 0b. RLG GA hardening（2026-08-19，只动 RLG 证据与验证脚本）
+
+- 状态：RLG-only 验收为无条件 PASS；`audit-0..6` 仍全部 PASS score=100。
+- 新增：`harness/specs/tasks/runtime-lifecycle-governance-ga-hardening.md`、`scripts/verify-runtime-lifecycle-packaged-electron.mjs`、`scripts/runtime-lifecycle-goal-wake-canary.mjs`、`pnpm run verify:runtime-lifecycle-ga`。
+- 实测：真实 `electron.exe` + `ELECTRON_RUN_AS_NODE=1` + `openclaw_runtime/dist/entry.js goal-wake-helper-run` 的 normal-exit 与 cancel 双周期通过，`rawSecretPersistenceFindings=0`；10 周期真实进程 goal-wake canary 全过，每周期 `processPollToolCalls=0`、`duplicateWakeTickCount=1`、flag-off parity 2/2。
+- 已把 `future-work.json` 的 `packaged-electron-live-verification` 从 deferred 移到 delivered。
+- 边界未变：goal-wake / durable-helper 仍 default-off；VerseShell `liveReady/productApproved/defaultOn` 未动；本硬化不是 default-on 授权，也不是 joint-system GA 声明。
+- 下一步：是否把 goal-wake/durable-helper 设为默认开启需要单独授权与新 spec；在收到该授权前不翻任何 default。
+
+---
+
 ## 当前交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
 
 **WV-B2-02A / TF-0062 已完成并单提交 `b58350a2f`（feat(trajectory): bridge raw v2 renderer supply）。** 提案 `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 与收卡提案 `TFP-workflow-viz-b2-02a-close-20260815` 均已经用户确认后应用；task-forest validate/export PASS；TF-0062=done(100%)，TF-0063（WV-B2-02 现有 store 并轨）保持 `proposed`。
