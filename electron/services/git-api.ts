@@ -390,7 +390,12 @@ function resolveWorkspacePath(ctx: RepoContext, rawPath: string): string {
 function isPathInsideRepoSiblingArea(target: string, repoRoot: string): boolean {
   const parent = dirname(repoRoot);
   const relativePath = relative(parent, target);
-  return Boolean(relativePath) && !relativePath.startsWith('..') && !isAbsolute(relativePath);
+  const repoFolder = basename(repoRoot);
+  return Boolean(relativePath)
+    && !relativePath.startsWith('..')
+    && !isAbsolute(relativePath)
+    && relativePath.startsWith(`${repoFolder}-`)
+    && !relativePath.includes(sep);
 }
 
 function isConflictStatus(status: string): boolean {

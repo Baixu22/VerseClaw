@@ -8,12 +8,18 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const repoRoot = resolve(dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..');
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SCHEMA = 'runtime-authority-convergence-baseline/v1';
 
 function git(root, args) {
-  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8', shell: false });
+  const result = spawnSync('git', args, {
+    cwd: root,
+    encoding: 'utf8',
+    shell: false,
+    maxBuffer: 16 * 1024 * 1024,
+  });
   if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${String(result.stderr ?? '')}`);
   return String(result.stdout ?? '').trim();
 }

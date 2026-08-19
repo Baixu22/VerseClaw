@@ -118,6 +118,10 @@ function readUtf8(file) {
   return fs.readFileSync(file, "utf8");
 }
 
+function sameGeneratedText(left, right) {
+  return left.replaceAll("\r\n", "\n") === right.replaceAll("\r\n", "\n");
+}
+
 function generatedSchemaModule(schema) {
   const source = readUtf8(schema.schema).trimEnd();
   const literal = source.replaceAll("\\", "\\\\").replaceAll("`", "\\`").replaceAll("${", "\\${");
@@ -140,11 +144,11 @@ function generate(schema) {
     const schemaSource = generatedSchemaModule(schema);
 
     if (verify) {
-      if (typesSource !== readUtf8(schema.outFile)) {
+      if (!sameGeneratedText(typesSource, readUtf8(schema.outFile))) {
         console.error(`${schema.outFile} is out of date. Run pnpm db:kysely:gen.`);
         process.exitCode = 1;
       }
-      if (schemaSource !== readUtf8(schema.schemaOutFile)) {
+      if (!sameGeneratedText(schemaSource, readUtf8(schema.schemaOutFile))) {
         console.error(`${schema.schemaOutFile} is out of date. Run pnpm db:kysely:gen.`);
         process.exitCode = 1;
       }

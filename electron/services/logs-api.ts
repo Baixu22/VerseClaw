@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { extname, relative, resolve, sep } from 'node:path';
+import { resolve } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
 import { isRecord } from './payload-utils';
@@ -21,13 +21,6 @@ function safePositiveInteger(value: unknown, fallback: number): number {
   return Math.max(1, Math.floor(value));
 }
 
-function isPathInside(parentDir: string, childPath: string): boolean {
-  const relativePath = relative(parentDir, childPath);
-  return relativePath.length > 0
-    && !relativePath.startsWith('..')
-    && !relativePath.includes(`..${sep}`);
-}
-
 async function validateLogFilePath(path: unknown): Promise<string> {
   if (typeof path !== 'string' || path.length === 0) {
     throw new Error('Invalid log file path');
@@ -39,16 +32,7 @@ async function validateLogFilePath(path: unknown): Promise<string> {
     return resolvedPath;
   }
 
-  const logDir = logger.getLogDir();
-  if (!logDir) {
-    throw new Error('Invalid log file path');
-  }
-
-  const resolvedLogDir = resolve(logDir);
-  if (!isPathInside(resolvedLogDir, resolvedPath) || extname(resolvedPath) !== '.log') {
-    throw new Error('Invalid log file path');
-  }
-  return resolvedPath;
+  throw new Error('Invalid log file path');
 }
 
 async function readLogFileTail(path: string, tailLines: number): Promise<string> {
