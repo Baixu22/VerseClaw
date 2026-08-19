@@ -1,0 +1,195 @@
+{
+  "schema": "KnowledgeSurfacePlan/v1",
+  "version": 1,
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "surfaces": [
+    {
+      "id": "explicit-pinned-refs",
+      "title": "Explicit / pinned Knowledge refs",
+      "currentStage": "opt-in",
+      "stageRationale": "Manual chat chips and slash-palette attachment require an explicit per-turn user action; no default-on or automatic attachment exists.",
+      "nextPromotionGate": "A real provider/user task cohort with recorded usefulness evidence (E4) before any canary or soak discussion.",
+      "residual": [
+        "E4 real user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked",
+        "Denied-ref delivery remains zero in committed unit and Electron E2E evidence"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "explicit-pinned-runtime",
+            "label": "chat-knowledge-intent runtime unit",
+            "kind": "runtime-unit",
+            "files": ["src/context-engine/chat-knowledge-intent.test.ts"]
+          },
+          {
+            "id": "explicit-pinned-root",
+            "label": "chat-knowledge-scope root unit",
+            "kind": "root-unit",
+            "files": ["tests/unit/chat-knowledge-scope.test.ts"]
+          },
+          {
+            "id": "explicit-pinned-e2e",
+            "label": "KS-04 denial toast Electron E2E",
+            "kind": "e2e",
+            "files": ["tests/e2e/knowledge-ks04-chat-dcs.spec.ts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "automatic-knowledge-retrieval",
+      "title": "Automatic Knowledge retrieval",
+      "currentStage": "opt-in",
+      "stageRationale": "Invocation mode defaults to Suggest; Auto-read is an explicit opt-in and only attaches a bounded read-only set.",
+      "nextPromotionGate": "Real provider cohort evidence that automatic retrieval improves task outcomes without regressions (E4).",
+      "residual": [
+        "E4 real provider/user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked",
+        "No automatic durable write path is enabled"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "automatic-runtime",
+            "label": "chat knowledge intent runtime unit",
+            "kind": "runtime-unit",
+            "files": ["src/context-engine/chat-knowledge-intent.test.ts"]
+          },
+          {
+            "id": "automatic-root",
+            "label": "chat-knowledge-scope root unit",
+            "kind": "root-unit",
+            "files": ["tests/unit/chat-knowledge-scope.test.ts"]
+          },
+          {
+            "id": "automatic-e2e",
+            "label": "Knowledge Hub Electron E2E",
+            "kind": "e2e",
+            "files": ["tests/e2e/knowledge-hub.spec.ts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "role-memory-retrieval",
+      "title": "Role Memory retrieval",
+      "currentStage": "shadow",
+      "stageRationale": "runtime.contextBlock.role-memory remains default-off; only the governed adapter boundary and handler tests are package evidence.",
+      "nextPromotionGate": "An explicit opt-in decision by the user, then E4 real task evidence before canary discussion.",
+      "residual": [
+        "E3 Electron E2E is not present for automatic Role Memory retrieval",
+        "E4 real user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "role-memory-handler",
+            "label": "role-memory handler runtime unit",
+            "kind": "runtime-unit",
+            "files": ["src/context-engine/handlers/role-memory-handler.test.ts"]
+          },
+          {
+            "id": "role-memory-config",
+            "label": "role-memory config default-off",
+            "kind": "runtime-config",
+            "files": ["src/config/runtime-context-block-role-memory.test.ts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sekb-experience-retrieval",
+      "title": "SEKB experience retrieval",
+      "currentStage": "opt-in",
+      "stageRationale": "A principle enters retrieval only after explicit human confirm; the golden path Electron E2E exercises confirm, recall, and citation.",
+      "nextPromotionGate": "Real provider/user task cohorts proving retrieved SEKB principles change outcomes (E4), followed by soak and product approval.",
+      "residual": [
+        "E4 real provider/user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked",
+        "Unattended auto-writeback remains off"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "sekb-runtime",
+            "label": "SEKB store and closed-loop runtime tests",
+            "kind": "runtime-unit",
+            "files": ["src/knowledge/sekb/sekb.test.ts", "src/knowledge/sekb/experience-closed-loop.test.ts"]
+          },
+          {
+            "id": "sekb-e2e",
+            "label": "SEKB golden path Electron E2E",
+            "kind": "e2e",
+            "files": ["tests/e2e/sekb-golden-path.spec.ts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "semantic-source-set-synthesis",
+      "title": "Semantic Source Set synthesis",
+      "currentStage": "shadow",
+      "stageRationale": "KS-07 SourceSet engine is package-gated and the committed quality run has no real embedding provider; semantic lane degrades to lexical.",
+      "nextPromotionGate": "A configured real embedding provider and E4 usefulness evidence before any opt-in/canary discussion.",
+      "residual": [
+        "Committed quality run is lexical/exact because no real provider is configured",
+        "E3 Electron E2E is not present for the KS-07 SourceSet engine",
+        "E4 real provider/user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "source-set-runtime",
+            "label": "SourceSet behavior and committed corpus tests",
+            "kind": "runtime-unit",
+            "files": ["src/context-engine/source-set.test.ts", "src/context-engine/source-set-quality.test.ts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "post-task-candidate-capture",
+      "title": "Post-task candidate capture",
+      "currentStage": "shadow",
+      "stageRationale": "SEKB shadowEvaluation remains default-off; trajectory capture can only produce advisory candidates and never writes principles automatically.",
+      "nextPromotionGate": "An explicit opt-in decision by the user, then E4 real task cohort evidence before canary discussion.",
+      "residual": [
+        "No automatic post-task durable write path is enabled",
+        "E3 Electron E2E is not present for post-task capture",
+        "E4 real user task evidence is not-evaluated",
+        "E5 soak and product approval are blocked"
+      ],
+      "evaluation": {
+        "commands": [
+          {
+            "id": "post-task-runtime",
+            "label": "SEKB experience projection bridge tests",
+            "kind": "runtime-unit",
+            "files": ["src/knowledge/sekb/experience-block-bridge.test.ts"]
+          },
+          {
+            "id": "post-task-agents",
+            "label": "embedded knowledge extension tests",
+            "kind": "runtime-agents",
+            "files": ["src/agents/embedded-agent-runner/extensions.knowledge.test.ts"]
+          }
+        ]
+      }
+    }
+  ],
+  "guardCommands": [
+    {
+      "id": "canary-graduation-guard",
+      "label": "C1 canary and graduation decision hard rules",
+      "kind": "runtime-unit",
+      "files": ["src/context-engine/dcs-canary-c1.test.ts", "src/context-engine/dcs-graduation-decision.test.ts"]
+    }
+  ]
+}

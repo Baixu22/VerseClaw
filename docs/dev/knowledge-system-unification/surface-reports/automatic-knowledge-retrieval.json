@@ -1,0 +1,58 @@
+{
+  "schema": "KnowledgeSurfaceReport/v1",
+  "surfaceId": "automatic-knowledge-retrieval",
+  "title": "Automatic Knowledge retrieval",
+  "currentStage": "opt-in",
+  "stageRationale": "Invocation mode defaults to Suggest; Auto-read is an explicit opt-in and only attaches a bounded read-only set.",
+  "evidenceLevel": "E3",
+  "e4": "not-evaluated",
+  "e5": "blocked",
+  "metrics": [
+    {
+      "commandId": "automatic-runtime",
+      "label": "chat knowledge intent runtime unit",
+      "kind": "runtime-unit",
+      "testsPassed": 7,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 1884,
+      "outputSummary": "RUN  v4.1.7 D:/verse_claw_worktree_knowledge/openclaw_runtime | ✓  unit  src/context-engine/chat-knowledge-intent.test.ts (7 tests) 99ms | Test Files  1 passed (1) | Tests  7 passed (7) | Start at  08:12:09 | Duration  794ms (transform 460ms, setup 285ms, import 55ms, tests 99ms, environment 0ms)"
+    },
+    {
+      "commandId": "automatic-root",
+      "label": "chat-knowledge-scope root unit",
+      "kind": "root-unit",
+      "testsPassed": 8,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 3011,
+      "outputSummary": "✓ tests/unit/chat-knowledge-scope.test.ts (8 tests) 866ms | ✓ forwards wiki scope as typed retrieval intent without prompt metadata  506ms | Test Files  1 passed (1) | Tests  8 passed (8) | Start at  08:12:11 | Duration  1.83s (transform 412ms, setup 119ms, import 21ms, tests 866ms, environment 637ms)"
+    },
+    {
+      "commandId": "automatic-e2e",
+      "label": "Knowledge Hub Electron E2E",
+      "kind": "e2e",
+      "testsPassed": 4,
+      "testsFailed": 0,
+      "testFilesPassed": 4,
+      "exitCode": 0,
+      "durationMs": 47338,
+      "outputSummary": "✓  1 tests\\e2e\\knowledge-hub.spec.ts:173:7 › Knowledge Hub MVP › initializes, imports, searches, inspects, and applies an editable draft (23.5s) | ✓  2 tests\\e2e\\knowledge-hub.spec.ts:660:7 › Knowledge Hub MVP › creates a Source Set from search results and generates a review-only Studio draft (7.8s) | ✓  3 tests\\e2e\\knowledge-hub.spec.ts:796:7 › Knowledge Hub MVP › enables wiki knowledge from the chat composer scope picker (7.4s) | ✓  4 tests\\e2e\\knowledge-hub.spec.ts:827:7 › Knowledge Hub MVP › attaches wiki context through slash palette before sending (6.8s) | 4 passed (46.2s) | $ playwright test \"tests/e2e/knowledge-hub.spec.ts\""
+    }
+  ],
+  "nextPromotionGate": "Real provider cohort evidence that automatic retrieval improves task outcomes without regressions (E4).",
+  "residual": [
+    "E4 real provider/user task evidence is not-evaluated",
+    "E5 soak and product approval are blocked",
+    "No automatic durable write path is enabled"
+  ],
+  "claims": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "ga": false
+  },
+  "generatedAt": "2026-08-19T00:11:49.072Z"
+}

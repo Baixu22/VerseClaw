@@ -52,17 +52,77 @@ type UpdateMetadataMemoryWikiMutation = {
   status?: string;
 };
 
+type LifecycleMutationBase = {
+  lookup: string;
+  expectedRevision?: number;
+  idempotencyKey?: string;
+  reason?: string;
+};
+
+export type UpdateWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "update_page";
+  title?: string;
+  body?: string;
+  sourceIds?: string[];
+  claims?: WikiClaim[];
+  contradictions?: string[];
+  questions?: string[];
+  confidence?: number | null;
+  status?: string;
+};
+
+export type MergeWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "merge_page";
+  sourceLookup?: string;
+  body?: string;
+  sourceIds?: string[];
+  claims?: WikiClaim[];
+};
+
+export type ArchiveWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "archive_page";
+};
+
+export type RevokeWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "revoke_page";
+};
+
+export type DeleteWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "delete_page";
+};
+
+export type RestoreWikiPageMemoryWikiMutation = LifecycleMutationBase & {
+  op: "restore_page";
+};
+
 export type ApplyMemoryWikiMutation =
   | CreateSynthesisMemoryWikiMutation
-  | UpdateMetadataMemoryWikiMutation;
+  | UpdateMetadataMemoryWikiMutation
+  | UpdateWikiPageMemoryWikiMutation
+  | MergeWikiPageMemoryWikiMutation
+  | ArchiveWikiPageMemoryWikiMutation
+  | RevokeWikiPageMemoryWikiMutation
+  | DeleteWikiPageMemoryWikiMutation
+  | RestoreWikiPageMemoryWikiMutation;
 
-type MemoryWikiMutationInputOp = ApplyMemoryWikiMutation["op"] | "synthesis" | "metadata";
+type MemoryWikiMutationInputOp =
+  | ApplyMemoryWikiMutation["op"]
+  | "synthesis"
+  | "metadata"
+  | "update"
+  | "merge"
+  | "archive"
+  | "revoke"
+  | "delete"
+  | "restore";
 
 type ApplyMemoryWikiMutationResult = {
   changed: boolean;
   operation: ApplyMemoryWikiMutation["op"];
   pagePath: string;
   pageId?: string;
+  status?: string;
+  revision?: number;
   compile: CompileMemoryWikiResult;
 };
 
@@ -90,12 +150,14 @@ function normalizeMutationConfidence(
 function normalizeMemoryWikiMutationOp(
   op: MemoryWikiMutationInputOp,
 ): ApplyMemoryWikiMutation["op"] {
-  if (op === "synthesis") {
-    return "create_synthesis";
-  }
-  if (op === "metadata") {
-    return "update_metadata";
-  }
+  if (op === "synthesis") return "create_synthesis";
+  if (op === "metadata") return "update_metadata";
+  if (op === "update") return "update_page";
+  if (op === "merge") return "merge_page";
+  if (op === "archive") return "archive_page";
+  if (op === "revoke") return "revoke_page";
+  if (op === "delete") return "delete_page";
+  if (op === "restore") return "restore_page";
   return op;
 }
 
@@ -105,12 +167,16 @@ export function normalizeMemoryWikiMutationInput(rawParams: unknown): ApplyMemor
     title?: string;
     body?: string;
     lookup?: string;
+    sourceLookup?: string;
     sourceIds?: string[];
     claims?: WikiClaim[];
     contradictions?: string[];
     questions?: string[];
     confidence?: number | null;
     status?: string;
+    expectedRevision?: number;
+    idempotencyKey?: string;
+    reason?: string;
   };
   const op = normalizeMemoryWikiMutationOp(params.op);
   if (op === "create_synthesis") {
@@ -139,21 +205,57 @@ export function normalizeMemoryWikiMutationInput(rawParams: unknown): ApplyMemor
     };
   }
   if (!params.lookup?.trim()) {
-    throw new Error("wiki mutation requires lookup for update_metadata.");
+    throw new Error("wiki mutation requires lookup.");
   }
   const confidence = normalizeMutationConfidence(params as Record<string, unknown>, {
     allowNull: true,
   });
-  return {
-    op: "update_metadata",
+  const lifecycleBase = {
     lookup: params.lookup,
-    ...(params.sourceIds ? { sourceIds: params.sourceIds } : {}),
-    ...(Array.isArray(params.claims) ? { claims: normalizeWikiClaims(params.claims) } : {}),
-    ...(params.contradictions ? { contradictions: params.contradictions } : {}),
-    ...(params.questions ? { questions: params.questions } : {}),
-    ...(confidence !== undefined ? { confidence } : {}),
-    ...(params.status ? { status: params.status } : {}),
+    ...(typeof params.expectedRevision === "number" ? { expectedRevision: params.expectedRevision } : {}),
+    ...(typeof params.idempotencyKey === "string" && params.idempotencyKey.trim() ? { idempotencyKey: params.idempotencyKey.trim() } : {}),
+    ...(typeof params.reason === "string" && params.reason.trim() ? { reason: params.reason.trim() } : {}),
   };
+  if (op === "update_metadata") {
+    return {
+      op: "update_metadata",
+      ...lifecycleBase,
+      ...(params.sourceIds ? { sourceIds: params.sourceIds } : {}),
+      ...(Array.isArray(params.claims) ? { claims: normalizeWikiClaims(params.claims) } : {}),
+      ...(params.contradictions ? { contradictions: params.contradictions } : {}),
+      ...(params.questions ? { questions: params.questions } : {}),
+      ...(confidence !== undefined ? { confidence } : {}),
+      ...(params.status ? { status: params.status } : {}),
+    };
+  }
+  if (op === "update_page") {
+    return {
+      op: "update_page",
+      ...lifecycleBase,
+      ...(typeof params.title === "string" && params.title.trim() ? { title: params.title.trim() } : {}),
+      ...(typeof params.body === "string" ? { body: params.body } : {}),
+      ...(params.sourceIds ? { sourceIds: params.sourceIds } : {}),
+      ...(Array.isArray(params.claims) ? { claims: normalizeWikiClaims(params.claims) } : {}),
+      ...(params.contradictions ? { contradictions: params.contradictions } : {}),
+      ...(params.questions ? { questions: params.questions } : {}),
+      ...(confidence !== undefined ? { confidence } : {}),
+      ...(params.status ? { status: params.status } : {}),
+    };
+  }
+  if (op === "merge_page") {
+    return {
+      op: "merge_page",
+      ...lifecycleBase,
+      ...(typeof params.sourceLookup === "string" && params.sourceLookup.trim() ? { sourceLookup: params.sourceLookup.trim() } : {}),
+      ...(typeof params.body === "string" ? { body: params.body } : {}),
+      ...(params.sourceIds ? { sourceIds: params.sourceIds } : {}),
+      ...(Array.isArray(params.claims) ? { claims: normalizeWikiClaims(params.claims) } : {}),
+    };
+  }
+  return {
+    op,
+    ...lifecycleBase,
+  } as ApplyMemoryWikiMutation;
 }
 
 function normalizeUniqueStrings(values: string[] | undefined): string[] | undefined {
@@ -336,6 +438,276 @@ async function applyUpdateMetadataMutation(params: {
   };
 }
 
+type LifecycleMutationResult = {
+  changed: boolean;
+  pagePath: string;
+  pageId?: string;
+  status?: string;
+  revision?: number;
+};
+
+function wikiPageRevision(frontmatter: Record<string, unknown>): number {
+  const value = frontmatter.revision;
+  return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : 1;
+}
+
+function assertExpectedWikiRevision(
+  page: QueryableWikiPage,
+  parsed: { frontmatter: Record<string, unknown>; body: string },
+  expectedRevision: number | undefined,
+): number {
+  const current = wikiPageRevision(parsed.frontmatter);
+  if (expectedRevision !== undefined && current !== expectedRevision) {
+    throw new Error(
+      `stale_revision for ${page.relativePath}: expected ${expectedRevision}, actual ${current}`,
+    );
+  }
+  return current;
+}
+
+async function resolveRequiredWritablePage(params: {
+  config: ResolvedMemoryWikiConfig;
+  lookup: string;
+}): Promise<QueryableWikiPage> {
+  const page = await resolveWritablePage({
+    config: params.config,
+    lookup: params.lookup,
+  });
+  if (!page) {
+    throw new Error(`Wiki page not found: ${params.lookup}`);
+  }
+  return page;
+}
+
+function withLifecycleRevision(
+  frontmatter: Record<string, unknown>,
+  revision: number,
+  status: string,
+): Record<string, unknown> {
+  const next: Record<string, unknown> = {
+    ...frontmatter,
+    status,
+    revision: revision + 1,
+    updatedAt: new Date().toISOString(),
+  };
+  if (status === "active") {
+    delete next.archivedAt;
+    delete next.revokedAt;
+  } else {
+    next[status === "revoked" ? "revokedAt" : "archivedAt"] = new Date().toISOString();
+  }
+  return next;
+}
+
+async function applyUpdateWikiPageMutation(params: {
+  config: ResolvedMemoryWikiConfig;
+  mutation: UpdateWikiPageMemoryWikiMutation;
+}): Promise<LifecycleMutationResult> {
+  const page = await resolveRequiredWritablePage({
+    config: params.config,
+    lookup: params.mutation.lookup,
+  });
+  const parsed = parseWikiMarkdown(page.raw);
+  const currentRevision = assertExpectedWikiRevision(page, parsed, params.mutation.expectedRevision);
+  const status = params.mutation.status?.trim() || "active";
+  const nextFrontmatter: Record<string, unknown> = {
+    ...parsed.frontmatter,
+    ...(params.mutation.title?.trim() ? { title: params.mutation.title.trim() } : {}),
+    ...(params.mutation.sourceIds
+      ? { sourceIds: normalizeSourceIds(params.mutation.sourceIds) }
+      : {}),
+    ...(Array.isArray(params.mutation.claims)
+      ? (() => {
+          const claims = normalizeWikiClaims(params.mutation.claims);
+          return claims.length > 0 ? { claims } : {};
+        })()
+      : {}),
+    ...(params.mutation.contradictions
+      ? { contradictions: normalizeUniqueStrings(params.mutation.contradictions) ?? [] }
+      : {}),
+    ...(params.mutation.questions
+      ? { questions: normalizeUniqueStrings(params.mutation.questions) ?? [] }
+      : {}),
+    ...(params.mutation.confidence === null
+      ? {}
+      : typeof params.mutation.confidence === "number"
+        ? { confidence: params.mutation.confidence }
+        : {}),
+    status,
+    revision: currentRevision + 1,
+    updatedAt: new Date().toISOString(),
+  };
+  if (params.mutation.confidence === null) delete nextFrontmatter.confidence;
+  const changed = await writeWikiPage({
+    rootDir: params.config.vault.path,
+    relativePath: page.relativePath,
+    frontmatter: nextFrontmatter,
+    body: typeof params.mutation.body === "string" ? params.mutation.body : parsed.body,
+  });
+  return {
+    changed,
+    pagePath: page.relativePath,
+    ...(page.id ? { pageId: page.id } : {}),
+    status,
+    revision: currentRevision + 1,
+  };
+}
+
+async function applyMergeWikiPageMutation(params: {
+  config: ResolvedMemoryWikiConfig;
+  mutation: MergeWikiPageMemoryWikiMutation;
+}): Promise<LifecycleMutationResult> {
+  const page = await resolveRequiredWritablePage({
+    config: params.config,
+    lookup: params.mutation.lookup,
+  });
+  const parsed = parseWikiMarkdown(page.raw);
+  const currentRevision = assertExpectedWikiRevision(page, parsed, params.mutation.expectedRevision);
+  const source = params.mutation.sourceLookup
+    ? await resolveRequiredWritablePage({
+        config: params.config,
+        lookup: params.mutation.sourceLookup,
+      })
+    : null;
+  if (source && source.relativePath === page.relativePath) {
+    throw new Error("merge source must differ from the target page");
+  }
+  const sourceParsed = source ? parseWikiMarkdown(source.raw) : null;
+  const sourceIds = [
+    ...normalizeSourceIds(parsed.frontmatter.sourceIds),
+    ...(source ? normalizeSourceIds(sourceParsed!.frontmatter.sourceIds) : []),
+    ...normalizeSourceIds(params.mutation.sourceIds),
+  ];
+  const claims = [
+    ...normalizeWikiClaims(parsed.frontmatter.claims),
+    ...(source ? normalizeWikiClaims(sourceParsed!.frontmatter.claims) : []),
+    ...normalizeWikiClaims(params.mutation.claims),
+  ];
+  const bodyParts = [parsed.body.trimEnd()];
+  if (params.mutation.body?.trim()) {
+    bodyParts.push(`## Merged content\n${params.mutation.body.trim()}`);
+  }
+  if (source) {
+    bodyParts.push(`## Merged from ${source.title}\n${sourceParsed!.body.trimEnd()}`);
+  }
+  const nextFrontmatter: Record<string, unknown> = {
+    ...parsed.frontmatter,
+    sourceIds,
+    ...(claims.length > 0 ? { claims } : {}),
+    status: "active",
+    revision: currentRevision + 1,
+    updatedAt: new Date().toISOString(),
+  };
+  const changed = await writeWikiPage({
+    rootDir: params.config.vault.path,
+    relativePath: page.relativePath,
+    frontmatter: nextFrontmatter,
+    body: bodyParts.join("\n\n"),
+  });
+  return {
+    changed,
+    pagePath: page.relativePath,
+    ...(page.id ? { pageId: page.id } : {}),
+    status: "active",
+    revision: currentRevision + 1,
+  };
+}
+
+async function applyWikiPageStatusMutation(params: {
+  config: ResolvedMemoryWikiConfig;
+  lookup: string;
+  expectedRevision?: number;
+  status: "archived" | "revoked" | "active";
+}): Promise<LifecycleMutationResult> {
+  const page = await resolveRequiredWritablePage({
+    config: params.config,
+    lookup: params.lookup,
+  });
+  const parsed = parseWikiMarkdown(page.raw);
+  const currentRevision = assertExpectedWikiRevision(page, parsed, params.expectedRevision);
+  const changed = await writeWikiPage({
+    rootDir: params.config.vault.path,
+    relativePath: page.relativePath,
+    frontmatter: withLifecycleRevision(parsed.frontmatter, currentRevision, params.status),
+    body: parsed.body,
+  });
+  return {
+    changed,
+    pagePath: page.relativePath,
+    ...(page.id ? { pageId: page.id } : {}),
+    status: params.status,
+    revision: currentRevision + 1,
+  };
+}
+
+async function applyDeleteWikiPageMutation(params: {
+  config: ResolvedMemoryWikiConfig;
+  mutation: DeleteWikiPageMemoryWikiMutation;
+}): Promise<LifecycleMutationResult> {
+  const page = await resolveRequiredWritablePage({
+    config: params.config,
+    lookup: params.mutation.lookup,
+  });
+  const parsed = parseWikiMarkdown(page.raw);
+  const currentRevision = assertExpectedWikiRevision(page, parsed, params.mutation.expectedRevision);
+  const root = await fsRoot(params.config.vault.path);
+  await root.remove(page.relativePath);
+  return {
+    changed: true,
+    pagePath: page.relativePath,
+    ...(page.id ? { pageId: page.id } : {}),
+    status: "deleted",
+    revision: currentRevision + 1,
+  };
+}
+
+async function applyLifecycleMutation(params: {
+  config: ResolvedMemoryWikiConfig;
+  mutation: ApplyMemoryWikiMutation;
+}): Promise<LifecycleMutationResult> {
+  if (params.mutation.op === "update_page") {
+    return applyUpdateWikiPageMutation({
+      config: params.config,
+      mutation: params.mutation,
+    });
+  }
+  if (params.mutation.op === "merge_page") {
+    return applyMergeWikiPageMutation({
+      config: params.config,
+      mutation: params.mutation,
+    });
+  }
+  if (params.mutation.op === "archive_page") {
+    return applyWikiPageStatusMutation({
+      config: params.config,
+      lookup: params.mutation.lookup,
+      expectedRevision: params.mutation.expectedRevision,
+      status: "archived",
+    });
+  }
+  if (params.mutation.op === "revoke_page") {
+    return applyWikiPageStatusMutation({
+      config: params.config,
+      lookup: params.mutation.lookup,
+      expectedRevision: params.mutation.expectedRevision,
+      status: "revoked",
+    });
+  }
+  if (params.mutation.op === "delete_page") {
+    return applyDeleteWikiPageMutation({
+      config: params.config,
+      mutation: params.mutation,
+    });
+  }
+  return applyWikiPageStatusMutation({
+    config: params.config,
+    lookup: params.mutation.lookup,
+    expectedRevision: params.mutation.expectedRevision,
+    status: "active",
+  });
+}
+
+
 export async function applyMemoryWikiMutation(params: {
   config: ResolvedMemoryWikiConfig;
   mutation: ApplyMemoryWikiMutation;
@@ -347,16 +719,23 @@ export async function applyMemoryWikiMutation(params: {
           config: params.config,
           mutation: params.mutation,
         })
-      : await applyUpdateMetadataMutation({
-          config: params.config,
-          mutation: params.mutation,
-        });
+      : params.mutation.op === "update_metadata"
+        ? await applyUpdateMetadataMutation({
+            config: params.config,
+            mutation: params.mutation,
+          })
+        : await applyLifecycleMutation({
+            config: params.config,
+            mutation: params.mutation,
+          });
   const compile = await compileMemoryWikiVault(params.config);
   return {
     changed: result.changed,
     operation: params.mutation.op,
     pagePath: result.pagePath,
     ...(result.pageId ? { pageId: result.pageId } : {}),
+    ...(result.status ? { status: result.status } : {}),
+    ...(typeof result.revision === "number" ? { revision: result.revision } : {}),
     compile,
   };
 }

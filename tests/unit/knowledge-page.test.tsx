@@ -31,6 +31,8 @@ const hostApiMock = vi.hoisted(() => ({
   reviewDraft: vi.fn(),
   proposeChange: vi.fn(),
   listProposals: vi.fn(),
+  listReviewBundles: vi.fn(),
+  listGovernanceReceipts: vi.fn(),
   previewChange: vi.fn(),
   applyReviewedChange: vi.fn(),
   stewardReview: vi.fn(),
@@ -83,6 +85,8 @@ vi.mock('@/lib/host-api', () => ({
       reviewDraft: hostApiMock.reviewDraft,
       proposeChange: hostApiMock.proposeChange,
       listProposals: hostApiMock.listProposals,
+      listReviewBundles: hostApiMock.listReviewBundles,
+      listGovernanceReceipts: hostApiMock.listGovernanceReceipts,
       previewChange: hostApiMock.previewChange,
       applyReviewedChange: hostApiMock.applyReviewedChange,
       stewardReview: hostApiMock.stewardReview,
@@ -532,6 +536,8 @@ describe('Knowledge page', () => {
     hostApiMock.reviewDraft.mockReset();
     hostApiMock.proposeChange.mockReset();
     hostApiMock.listProposals.mockReset();
+    hostApiMock.listReviewBundles.mockReset();
+    hostApiMock.listGovernanceReceipts.mockResolvedValue({ success: true, receipts: [] });
     hostApiMock.previewChange.mockReset();
     hostApiMock.applyReviewedChange.mockReset();
     hostApiMock.stewardReview.mockReset();
@@ -894,6 +900,43 @@ describe('Knowledge page', () => {
         updatedAt: '2026-06-19T00:00:00.000Z',
       }],
     });
+    hostApiMock.listReviewBundles.mockResolvedValue({
+      success: true,
+      bundles: [{
+        id: 'kb_proposal-1_draft-1',
+        draftId: 'draft-1',
+        proposalId: 'proposal-1',
+        operation: 'create',
+        status: 'proposed',
+        draftStatus: 'draft',
+        draft: {
+          id: 'draft-1',
+          title: 'Session synthesis',
+          body: 'Use native wiki for the MVP.',
+          type: 'synthesis',
+          status: 'draft',
+          sourceIds: ['notes/decision.md'],
+          sourceRefs: [],
+          tags: [],
+          workspaceId: null,
+          agentId: null,
+          createdBy: 'user',
+          createdAt: '2026-06-19T00:00:00.000Z',
+          updatedAt: '2026-06-19T00:00:00.000Z',
+        },
+        proposal: {
+          id: 'proposal-1',
+          operation: 'create',
+          status: 'proposed',
+          draftId: 'draft-1',
+          reason: 'User-created knowledge draft awaiting explicit review and apply.',
+          sources: [{ id: 'notes/decision.md', kind: 'manual' }],
+          requiresUserConfirmation: true,
+          createdAt: '2026-06-19T00:00:00.000Z',
+          updatedAt: '2026-06-19T00:00:00.000Z',
+        },
+      }],
+    });
     hostApiMock.createDraft.mockResolvedValue({
       success: true,
       draft: {
@@ -1105,7 +1148,7 @@ describe('Knowledge page', () => {
 
     fireEvent.click(screen.getByTestId('knowledge-review-apply'));
     await waitFor(() => expect(hostApiMock.reviewDraft).toHaveBeenCalledWith({ id: 'draft-1', action: 'approve', stewardNotes: undefined }));
-    await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ id: 'proposal-1' }));
+    await waitFor(() => expect(hostApiMock.applyReviewedChange).toHaveBeenCalledWith({ reviewBundleId: 'kb_proposal-1_draft-1' }));
   });
 
   it('builds a Source Set from search results and creates Studio artifact drafts without applying', async () => {

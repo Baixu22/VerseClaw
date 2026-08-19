@@ -61,7 +61,7 @@ describe("SEKB-MVP", () => {
     expect(approxTokens(index)).toBeLessThanOrEqual(2_000);
 
     store.increment_retrieval_count(principleId);
-    store.record_adoption(principleId, true);
+    store.record_adoption(principleId, { trigger: "outcome", taskSucceeded: true, taskType: "config/db" });
     const counted = store.get_principle(principleId);
     expect(counted.retrieval_count).toBe(1);
     expect(counted.adoption_count).toBe(1);

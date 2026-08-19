@@ -14,6 +14,7 @@ export type CascadeTargetKind =
   | "sekb_trajectory"
   | "memory_card"
   | "dcs_experience_journal"
+  | "dcs_experience_block"
   | "session_file";
 
 export type CascadeTarget = {
@@ -50,6 +51,9 @@ export type SessionCascadeStores = {
   deleteMemoryCard: (id: string) => void;
   listDcsExperienceJournalIds: () => string[];
   deleteDcsExperienceJournal: (id: string) => void;
+  /** KS-02 optional real BlockStore projection owner API. */
+  listDcsExperienceBlockIds?: () => string[];
+  deleteDcsExperienceBlock?: (id: string) => void;
   /** Optional probe for canary residual search across serialized stores. */
   searchPlaintext?: (canary: string) => string[];
 };
@@ -145,6 +149,18 @@ export function collectSessionCascadeTargets(
     }
   }
 
+  if (stores.listDcsExperienceBlockIds && stores.deleteDcsExperienceBlock) {
+    for (const blockId of stores.listDcsExperienceBlockIds()) {
+      if (blockId.includes(sessionId)) {
+        targets.push({
+          kind: "dcs_experience_block",
+          id: blockId,
+          lineage: [`session:${sessionId}`, `dcs-block:${blockId}`],
+        });
+      }
+    }
+  }
+
   return targets;
 }
 
@@ -171,6 +187,9 @@ export function executeSessionCascadeDelete(
           break;
         case "dcs_experience_journal":
           stores.deleteDcsExperienceJournal(target.id);
+          break;
+        case "dcs_experience_block":
+          stores.deleteDcsExperienceBlock?.(target.id);
           break;
         default:
           break;
@@ -305,6 +324,8 @@ export function createKnowledgeStoreCascadeAdapter(
     deleteMemoryCard?: (id: string) => void;
     listDcsExperienceJournalIds?: () => string[];
     deleteDcsExperienceJournal?: (id: string) => void;
+    listDcsExperienceBlockIds?: () => string[];
+    deleteDcsExperienceBlock?: (id: string) => void;
   } = {},
 ): SessionCascadeStores {
   return {
@@ -332,6 +353,10 @@ export function createKnowledgeStoreCascadeAdapter(
     listDcsExperienceJournalIds: () => extras.listDcsExperienceJournalIds?.() ?? [],
     deleteDcsExperienceJournal: (id) => {
       extras.deleteDcsExperienceJournal?.(id);
+    },
+    listDcsExperienceBlockIds: () => extras.listDcsExperienceBlockIds?.() ?? [],
+    deleteDcsExperienceBlock: (id) => {
+      extras.deleteDcsExperienceBlock?.(id);
     },
   };
 }

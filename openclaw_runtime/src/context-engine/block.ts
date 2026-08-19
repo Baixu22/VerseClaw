@@ -160,6 +160,11 @@ export interface BlockStoreStats {
   authorization_rejections: number;
 }
 
+export interface BlockDeleteResult {
+  deleted: number;
+  remaining: number;
+}
+
 export interface BlockStoreApi {
   upsert(
     block: ContextBlock,
@@ -168,5 +173,14 @@ export interface BlockStoreApi {
   query(params: BlockQuery): Promise<ContextBlock[]>;
   queryByEntity(params: BlockEntityQuery): Promise<ContextBlock[]>;
   invalidate(block_id: string): Promise<void>;
+  /** KS-02 owner API: enumerate every row owned by a source ref or session id. */
+  enumerateBySource(sourceRef: string): Promise<ContextBlock[]>;
+  enumerateBySession(sessionId: string): Promise<ContextBlock[]>;
+  /** KS-02 owner API: hard-delete one block plus its entity map rows. */
+  deleteBlock(blockId: string): Promise<number>;
+  /** KS-02 owner API: hard-delete all blocks for a session and verify residual count. */
+  deleteBySession(sessionId: string): Promise<BlockDeleteResult>;
+  /** KS-02 owner API: invalidate all currently-valid blocks for a session. */
+  invalidateBySession(sessionId: string): Promise<number>;
   stats(source_system?: SourceSystem): Promise<BlockStoreStats>;
 }

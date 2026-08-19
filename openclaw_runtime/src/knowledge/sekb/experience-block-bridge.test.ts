@@ -4,9 +4,11 @@ import {
   buildExperienceBlock,
   handleConfirmAndSave,
 } from "./experience-block-bridge.js";
+import { BlockStore } from "../../context-engine/block-store.js";
+import { createContextBlockSink } from "../../agents/harness/hook-context.js";
 import { DistillationTool } from "./distillation-tool.js";
 import { KnowledgeStore } from "./knowledge-store.js";
-import { closeOpenClawStateDatabaseForTest } from "../../state/openclaw-state-db.js";
+import { closeOpenClawStateDatabaseForTest, openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -143,7 +145,7 @@ describe("DCS Stage 5 experience-block-bridge", () => {
       });
 
       expect(block.block_id).toBe(
-        "experience:sekb:agent:alpha:main:principle-001",
+        "experience:sekb:experience-projection/v1:agent:alpha:main:principle-001:32d1a375b1d22008",
       );
     });
   });
@@ -171,7 +173,8 @@ describe("DCS Stage 5 experience-block-bridge", () => {
         contextBlockSink: sink,
       });
 
-      expect(result).toEqual({ accepted: true });
+      expect(result).toMatchObject({ accepted: true });
+      expect(result?.blockId).toContain('experience-projection/v1');
       expect(sink).toHaveBeenCalledTimes(1);
       const writeArg = (sink as ReturnType<typeof vi.fn>).mock.calls[0][0] as Array<{
         block: { block_type: string; source_system: string };
@@ -202,7 +205,8 @@ describe("DCS Stage 5 experience-block-bridge", () => {
         contextBlockSink: sink,
       });
 
-      expect(result).toEqual({ accepted: false });
+      expect(result).toMatchObject({ accepted: false });
+      expect(result?.blockId).toContain('experience-projection/v1');
     });
   });
 
@@ -458,4 +462,97 @@ describe("DCS Stage 5 experience-block-bridge", () => {
       expect(rejectingSink).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("KS-02 confirm lineage truth and idempotency", () => {
+    function seedTrajectories(store: KnowledgeStore, ids: string[]) {
+      for (const id of ids) {
+        store.save_trajectory({
+          trajectory_id: id,
+          created_at: "2026-07-12T00:00:00.000Z",
+          task_intent: "connect to PostgreSQL",
+          task_type: "config/db",
+          context_fingerprint: ["postgresql"],
+          steps: [],
+          outcome: "failure",
+          error_signature: null,
+          cost: { tokens: 10, duration_seconds: 1, retries: 0 },
+          distilled: false,
+          distilled_into: [],
+          expires_at: null,
+          metadata: {},
+        });
+      }
+    }
+
+    it("awaits exactly one projection commit and reports persisted for a blockstore sink", async () => {
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-lineage-"));
+      tempRoots.push(root);
+      const database = openOpenClawStateDatabase({ path: path.join(root, "state.sqlite") });
+      const blockStore = new BlockStore(database.db);
+      const store = new KnowledgeStore({ database: { path: database.path } });
+      seedTrajectories(store, ["traj-lineage-1", "traj-lineage-2"]);
+      const sink = vi.fn(createContextBlockSink(blockStore)) as unknown as ContextBlockSink;
+      const tool = new DistillationTool({ store });
+      const result = await tool.confirm_and_save_with_lineage(makeSuggestion({
+        source_trajectory_ids: ["traj-lineage-1", "traj-lineage-2"],
+      }), null, {
+        sessionId: "session-lineage",
+        contextBlockSink: sink,
+        contextBlockSinkKind: "blockstore",
+      });
+      expect(result.dcsWrite).toBe("persisted");
+      expect(sink).toHaveBeenCalledTimes(1);
+      expect(result.projectionBlockId).toContain("experience-projection/v1");
+      const blocks = await blockStore.query({
+        requester_session_id: "session-lineage",
+        session_id: "session-lineage",
+        block_types: ["experience"],
+      });
+      expect(blocks).toHaveLength(1);
+    });
+
+    it("reports journaled_degraded for a journal sink", async () => {
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-journal-"));
+      tempRoots.push(root);
+      const store = new KnowledgeStore({ database: { path: path.join(root, "sekb.sqlite") } });
+      seedTrajectories(store, ["traj-journal"]);
+      const sink: ContextBlockSink = vi.fn(async (writes) => writes.map(() => ({ accepted: true })));
+      const result = await new DistillationTool({ store }).confirm_and_save_with_lineage(makeSuggestion({
+        source_trajectory_ids: ["traj-journal"],
+      }), null, {
+        sessionId: "session-journal",
+        contextBlockSink: sink,
+        contextBlockSinkKind: "journal",
+      });
+      expect(result.dcsWrite).toBe("journaled_degraded");
+      expect(sink).toHaveBeenCalledTimes(1);
+    });
+
+    it("concurrent lineage confirms create one Principle row and one projection row", async () => {
+      const root = mkdtempSync(path.join(os.tmpdir(), "openclaw-sekb-concurrent-"));
+      tempRoots.push(root);
+      const database = openOpenClawStateDatabase({ path: path.join(root, "state.sqlite") });
+      const blockStore = new BlockStore(database.db);
+      const store = new KnowledgeStore({ database: { path: database.path } });
+      seedTrajectories(store, ["traj-concurrent-1", "traj-concurrent-2"]);
+      const sink = createContextBlockSink(blockStore);
+      const tool = new DistillationTool({ store });
+      const suggestion = makeSuggestion({ source_trajectory_ids: ["traj-concurrent-1", "traj-concurrent-2"] });
+      const results = await Promise.all([1, 2, 3].map(() => tool.confirm_and_save_with_lineage(suggestion, null, {
+        sessionId: "session-concurrent",
+        contextBlockSink: sink,
+        contextBlockSinkKind: "blockstore",
+      })));
+      expect(results.every((result) => result.dcsWrite === "persisted")).toBe(true);
+      expect(new Set(results.map((result) => result.principleId)).size).toBe(1);
+      expect(store.query_principles({})).toHaveLength(1);
+      const blocks = await blockStore.query({
+        requester_session_id: "session-concurrent",
+        session_id: "session-concurrent",
+        block_types: ["experience"],
+      });
+      expect(blocks).toHaveLength(1);
+    });
+  });
+
 });

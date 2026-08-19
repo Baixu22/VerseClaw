@@ -1,0 +1,58 @@
+{
+  "schema": "KnowledgeSurfaceReport/v1",
+  "surfaceId": "explicit-pinned-refs",
+  "title": "Explicit / pinned Knowledge refs",
+  "currentStage": "opt-in",
+  "stageRationale": "Manual chat chips and slash-palette attachment require an explicit per-turn user action; no default-on or automatic attachment exists.",
+  "evidenceLevel": "E3",
+  "e4": "not-evaluated",
+  "e5": "blocked",
+  "metrics": [
+    {
+      "commandId": "explicit-pinned-runtime",
+      "label": "chat-knowledge-intent runtime unit",
+      "kind": "runtime-unit",
+      "testsPassed": 7,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 1637,
+      "outputSummary": "RUN  v4.1.7 D:/verse_claw_worktree_knowledge/openclaw_runtime | ✓  unit  src/context-engine/chat-knowledge-intent.test.ts (7 tests) 88ms | Test Files  1 passed (1) | Tests  7 passed (7) | Start at  08:11:51 | Duration  701ms (transform 391ms, setup 256ms, import 50ms, tests 88ms, environment 0ms)"
+    },
+    {
+      "commandId": "explicit-pinned-root",
+      "label": "chat-knowledge-scope root unit",
+      "kind": "root-unit",
+      "testsPassed": 8,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 3671,
+      "outputSummary": "✓ tests/unit/chat-knowledge-scope.test.ts (8 tests) 861ms | ✓ forwards wiki scope as typed retrieval intent without prompt metadata  541ms | Test Files  1 passed (1) | Tests  8 passed (8) | Start at  08:11:53 | Duration  2.43s (transform 424ms, setup 210ms, import 22ms, tests 861ms, environment 1.15s)"
+    },
+    {
+      "commandId": "explicit-pinned-e2e",
+      "label": "KS-04 denial toast Electron E2E",
+      "kind": "e2e",
+      "testsPassed": 1,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 12208,
+      "outputSummary": "Running 1 test using 1 worker | ✓  1 tests\\e2e\\knowledge-ks04-chat-dcs.spec.ts:70:7 › KS-04 Chat/DCS single consumption path › shows a visible reason toast when a selected knowledge reference is denied (10.3s) | 1 passed (10.8s) | $ playwright test \"tests/e2e/knowledge-ks04-chat-dcs.spec.ts\""
+    }
+  ],
+  "nextPromotionGate": "A real provider/user task cohort with recorded usefulness evidence (E4) before any canary or soak discussion.",
+  "residual": [
+    "E4 real user task evidence is not-evaluated",
+    "E5 soak and product approval are blocked",
+    "Denied-ref delivery remains zero in committed unit and Electron E2E evidence"
+  ],
+  "claims": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "ga": false
+  },
+  "generatedAt": "2026-08-19T00:11:49.072Z"
+}

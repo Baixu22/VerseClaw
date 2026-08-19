@@ -1,0 +1,48 @@
+{
+  "schema": "KnowledgeSurfaceReport/v1",
+  "surfaceId": "post-task-candidate-capture",
+  "title": "Post-task candidate capture",
+  "currentStage": "shadow",
+  "stageRationale": "SEKB shadowEvaluation remains default-off; trajectory capture can only produce advisory candidates and never writes principles automatically.",
+  "evidenceLevel": "E2",
+  "e4": "not-evaluated",
+  "e5": "blocked",
+  "metrics": [
+    {
+      "commandId": "post-task-runtime",
+      "label": "SEKB experience projection bridge tests",
+      "kind": "runtime-unit",
+      "testsPassed": 17,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 2719,
+      "outputSummary": "RUN  v4.1.7 D:/verse_claw_worktree_knowledge/openclaw_runtime | ✓  unit  src/knowledge/sekb/experience-block-bridge.test.ts (17 tests) 612ms | Test Files  1 passed (1) | Tests  17 passed (17) | Start at  08:13:18 | Duration  1.65s (transform 625ms, setup 291ms, import 369ms, tests 612ms, environment 0ms)"
+    },
+    {
+      "commandId": "post-task-agents",
+      "label": "embedded knowledge extension tests",
+      "kind": "runtime-agents",
+      "testsPassed": 8,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 9832,
+      "outputSummary": "RUN  v4.1.7 D:/verse_claw_worktree_knowledge/openclaw_runtime | ✓  agents  src/agents/embedded-agent-runner/extensions.knowledge.test.ts (8 tests) 66ms | Test Files  1 passed (1) | Tests  8 passed (8) | Start at  08:13:21 | Duration  8.74s (transform 5.71s, setup 284ms, import 8.04s, tests 66ms, environment 0ms)"
+    }
+  ],
+  "nextPromotionGate": "An explicit opt-in decision by the user, then E4 real task cohort evidence before canary discussion.",
+  "residual": [
+    "No automatic post-task durable write path is enabled",
+    "E3 Electron E2E is not present for post-task capture",
+    "E4 real user task evidence is not-evaluated",
+    "E5 soak and product approval are blocked"
+  ],
+  "claims": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "ga": false
+  },
+  "generatedAt": "2026-08-19T00:11:49.072Z"
+}

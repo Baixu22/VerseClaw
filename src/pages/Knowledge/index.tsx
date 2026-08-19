@@ -17,8 +17,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import {
   hostApi,
   type KnowledgeArtifactType,
+  type KnowledgeApplyReviewedChangeResult,
+  type KnowledgeChangeOperation,
   type KnowledgeChangeProposal,
   type KnowledgeDraft,
+  type KnowledgeGovernanceReceipt,
+  type KnowledgeReviewBundle,
   type KnowledgeDraftType,
   type KnowledgeInboxItem,
   type KnowledgeOkfConcept,
@@ -126,6 +130,7 @@ const WORKSPACE_SECTION_CLASS = 'min-h-0 bg-surface-sidebar';
 const KNOWLEDGE_LIBRARIAN_STORAGE_KEY = 'clawx.knowledge.librarian.checkpoint.v1';
 const KNOWLEDGE_TYPES: KnowledgeDraftType[] = ['decision', 'architecture', 'command', 'troubleshooting', 'glossary', 'source-note', 'synthesis', 'procedure'];
 const PRIMARY_WORKBENCH_TABS: WorkbenchTab[] = ['library', 'inbox', 'drafts', 'review', 'runtime'];
+const LIFECYCLE_OPERATIONS: KnowledgeChangeOperation[] = ['update', 'merge', 'archive', 'revoke', 'delete', 'restore'];
 const QUALITY_METRIC_KINDS: KnowledgeQualityMetricKind[] = [
   'stale_cards',
   'duplicate_clusters',
@@ -876,9 +881,19 @@ export function Knowledge() {
   const [drafts, setDrafts] = useState<KnowledgeDraft[]>([]);
   const [inboxItems, setInboxItems] = useState<KnowledgeInboxItem[]>([]);
   const [proposals, setProposals] = useState<KnowledgeChangeProposal[]>([]);
+  const [reviewBundles, setReviewBundles] = useState<KnowledgeReviewBundle[]>([]);
+  const [lifecycleOperation, setLifecycleOperation] = useState<KnowledgeChangeOperation>('update');
+  const [lifecycleTarget, setLifecycleTarget] = useState('');
+  const [lifecycleMergeSource, setLifecycleMergeSource] = useState('');
+  const [lifecycleTitle, setLifecycleTitle] = useState('');
+  const [lifecycleBody, setLifecycleBody] = useState('');
+  const [lifecycleReason, setLifecycleReason] = useState('');
+  const [lifecyclePreview, setLifecyclePreview] = useState<string | null>(null);
+  const [lastApplyResult, setLastApplyResult] = useState<KnowledgeApplyReviewedChangeResult | null>(null);
+  const [receiptHistory, setReceiptHistory] = useState<KnowledgeGovernanceReceipt[]>([]);
   const [selectedInboxId, setSelectedInboxId] = useState<string | null>(null);
-  const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
-  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
+  // KS-01: review/apply flow keeps exactly one selected ReviewBundle.
+  const [selectedReviewBundleId, setSelectedReviewBundleId] = useState<string | null>(null);
   const [stewardReview, setStewardReview] = useState<KnowledgeStewardReviewResult | null>(null);
   const [stewardConfig, setStewardConfig] = useState<KnowledgeStewardConfigGetResult | null>(null);
   const [showStewardConfig, setShowStewardConfig] = useState(false);
@@ -935,9 +950,13 @@ export function Knowledge() {
     return groups;
   }, [inboxItems]);
   const orderedInboxItems = useMemo(() => INBOX_TRIAGE_ORDER.flatMap((key) => groupedInboxItems[key]), [groupedInboxItems]);
-  const selectedDraft = useMemo(() => drafts.find((draft) => draft.id === selectedDraftId) ?? drafts[0] ?? null, [drafts, selectedDraftId]);
+  const selectedBundle = useMemo(
+    () => reviewBundles.find((bundle) => bundle.id === selectedReviewBundleId) ?? reviewBundles[0] ?? null,
+    [reviewBundles, selectedReviewBundleId],
+  );
+  const selectedDraft = useMemo(() => selectedBundle?.draft ?? drafts[0] ?? null, [drafts, selectedBundle]);
   const selectedInboxItem = useMemo(() => inboxItems.find((item) => item.id === selectedInboxId) ?? orderedInboxItems[0] ?? null, [inboxItems, orderedInboxItems, selectedInboxId]);
-  const selectedProposal = useMemo(() => proposals.find((proposal) => proposal.id === selectedProposalId) ?? proposals[0] ?? null, [proposals, selectedProposalId]);
+  const selectedProposal = useMemo(() => selectedBundle?.proposal ?? proposals.find((proposal) => proposal.id === selectedBundle?.proposalId) ?? null, [proposals, selectedBundle]);
   const draftCounts = useMemo(() => drafts.reduce<Record<string, number>>((acc, draft) => {
     acc[draft.status] = (acc[draft.status] ?? 0) + 1;
     return acc;
@@ -1046,16 +1065,20 @@ export function Knowledge() {
   }, [refreshStatus]);
 
   const refreshGovernance = useCallback(async () => {
-    const [inboxResult, draftResult, proposalResult, sourceSetResult] = await Promise.all([
+    const [inboxResult, draftResult, proposalResult, bundleResult, sourceSetResult, receiptResult] = await Promise.all([
       hostApi.knowledge.listInboxItems({ status: 'pending', limit: 100 }),
       hostApi.knowledge.listDrafts({ status: 'all', limit: 100 }),
       hostApi.knowledge.listProposals({ status: 'all', limit: 100 }),
+      hostApi.knowledge.listReviewBundles({ status: 'all', limit: 100 }),
       hostApi.knowledge.listSourceSets(),
+      hostApi.knowledge.listGovernanceReceipts(),
     ]);
     if (inboxResult.success) setInboxItems(inboxResult.items);
     if (draftResult.success) setDrafts(draftResult.drafts);
     if (proposalResult.success) setProposals(proposalResult.proposals);
+    if (bundleResult.success) setReviewBundles(bundleResult.bundles);
     if (sourceSetResult.success) setSourceSets(sourceSetResult.sourceSets);
+    if (receiptResult.success) setReceiptHistory(receiptResult.receipts);
     try {
       const snapshot = await hostApi.dcsProdFlags.getFlags();
       const flag = snapshot.flags.find((entry) => entry.id === 'runtime-memory-candidate-generation');
@@ -1502,7 +1525,7 @@ export function Knowledge() {
         ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
       });
       if (!result.success || !result.draft) throw new Error(result.error || t('errors.action'));
-      setSelectedDraftId(result.draft.id);
+      setSelectedReviewBundleId(null);
       setUtilityPanel(null);
       setWorkbenchTab('drafts');
       await refreshGovernance();
@@ -1819,10 +1842,11 @@ export function Knowledge() {
       });
       if (!proposalResult.success) throw new Error(proposalResult.error || t('errors.action'));
       toast.success(t('toasts.createDraft'));
-      await refreshGovernance();
-      setSelectedDraftId(draftResult.draft.id);
-      if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
       setWorkbenchTab('review');
+      await refreshGovernance();
+      if (proposalResult.proposal) {
+        setSelectedReviewBundleId(`kb_${proposalResult.proposal.id}_${draftResult.draft.id}`);
+      }
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
@@ -1841,10 +1865,11 @@ export function Knowledge() {
       const result = await hostApi.knowledge.promoteInboxItemToDraft({ id: target.id });
       if (!result.success) throw new Error(result.error || t('errors.action'));
       toast.success(t('toasts.promoteInbox'));
-      await refreshGovernance();
-      if (result.draft) setSelectedDraftId(result.draft.id);
-      if (result.proposal) setSelectedProposalId(result.proposal.id);
       setWorkbenchTab('review');
+      await refreshGovernance();
+      if (result.draft && result.proposal) {
+        setSelectedReviewBundleId(`kb_${result.proposal.id}_${result.draft.id}`);
+      }
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
@@ -1912,10 +1937,11 @@ export function Knowledge() {
       });
       if (!proposalResult.success) throw new Error(proposalResult.error || t('errors.action'));
       toast.success(t('toasts.createDraft'));
-      await refreshGovernance();
-      setSelectedDraftId(draftResult.draft.id);
-      if (proposalResult.proposal) setSelectedProposalId(proposalResult.proposal.id);
       setWorkbenchTab('review');
+      await refreshGovernance();
+      if (proposalResult.proposal) {
+        setSelectedReviewBundleId(`kb_${proposalResult.proposal.id}_${draftResult.draft.id}`);
+      }
     } catch (err) {
       const message = errorMessageFrom(err);
       setError(message);
@@ -1989,15 +2015,63 @@ export function Knowledge() {
     void loadStewardConfig();
   }, [loadStewardConfig]);
 
+  const createLifecycleProposal = useCallback(async () => {
+    const target = lifecycleTarget.trim();
+    if (!target || !lifecycleReason.trim()) return;
+    const source = lifecycleMergeSource.trim();
+    setRunning('lifecyclePropose');
+    setError(null);
+    setLastApplyResult(null);
+    try {
+      const draftResult = await hostApi.knowledge.createDraft({
+        title: lifecycleTitle.trim() || `${lifecycleOperation} ${target}`,
+        body: lifecycleBody.trim(),
+        type: 'procedure',
+        sourceIds: source ? [source] : [],
+        createdBy: 'user',
+      });
+      if (!draftResult.success || !draftResult.draft) throw new Error(draftResult.error || t('errors.action'));
+      const proposalResult = await hostApi.knowledge.proposeChange({
+        operation: lifecycleOperation,
+        targetPageIds: lifecycleOperation === 'merge' && source ? [target, source] : [target],
+        draftId: draftResult.draft.id,
+        reason: lifecycleReason.trim(),
+        ...(lifecycleOperation === 'update' || lifecycleOperation === 'merge'
+          ? { diff: lifecycleBody.trim() }
+          : {}),
+        sources: [{ id: target, kind: 'wiki' as const }],
+      });
+      if (!proposalResult.success || !proposalResult.proposal) {
+        throw new Error(proposalResult.error || t('errors.action'));
+      }
+      const previewResult = await hostApi.knowledge.previewChange({ id: proposalResult.proposal.id });
+      setLifecyclePreview(previewResult.preview ?? proposalResult.proposal.diff ?? lifecycleBody.trim());
+      setSelectedReviewBundleId(`kb_${proposalResult.proposal.id}_${draftResult.draft.id}`);
+      setWorkbenchTab('review');
+      toast.success(t('lifecycle.toasts.proposed'));
+      await refreshGovernance();
+    } catch (err) {
+      const message = errorMessageFrom(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setRunning(null);
+    }
+  }, [lifecycleBody, lifecycleMergeSource, lifecycleOperation, lifecycleReason, lifecycleTarget, lifecycleTitle, refreshGovernance, t]);
+
   const reviewAndApply = useCallback(async () => {
-    if (!selectedDraft || !selectedProposal) return;
+    if (!selectedDraft || !selectedBundle) return;
     setRunning('applyReviewedChange');
     setError(null);
     try {
       const reviewResult = await hostApi.knowledge.reviewDraft({ id: selectedDraft.id, action: 'approve', stewardNotes: selectedDraft.stewardNotes });
       if (!reviewResult.success) throw new Error(reviewResult.error || t('errors.action'));
-      const applyResult = await hostApi.knowledge.applyReviewedChange({ id: selectedProposal.id });
+      // KS-01: single ReviewBundle selection; Host re-reads the bundle and
+      // validates digest/revision/workspace/status before the wiki effect.
+      const applyResult = await hostApi.knowledge.applyReviewedChange({ reviewBundleId: selectedBundle.id });
+      setLastApplyResult(applyResult);
       if (!applyResult.success) throw new Error(applyResult.error || t('errors.action'));
+      setLifecyclePreview(applyResult.receipt ? JSON.stringify(applyResult.receipt, null, 2) : lifecyclePreview);
       toast.success(t('toasts.applyReviewedChange'));
       await refreshGovernance();
     } catch (err) {
@@ -2007,7 +2081,7 @@ export function Knowledge() {
     } finally {
       setRunning(null);
     }
-  }, [refreshGovernance, selectedDraft, selectedProposal, t]);
+  }, [lifecyclePreview, refreshGovernance, selectedBundle, selectedDraft, t]);
 
   const rejectDraft = useCallback(async () => {
     if (!selectedDraft) return;
@@ -2619,7 +2693,8 @@ export function Knowledge() {
                             : 'hover:bg-black/5 hover:border-black/20 dark:hover:bg-white/5 dark:hover:border-white/20',
                         )}
                         onClick={() => {
-                          setSelectedDraftId(draft.id);
+                          const bundle = reviewBundles.find((candidate) => candidate.draftId === draft.id);
+                          setSelectedReviewBundleId(bundle?.id ?? null);
                           setWorkbenchTab('review');
                         }}
                         data-testid="knowledge-draft-row"
@@ -2681,7 +2756,8 @@ export function Knowledge() {
             )}
 
             {workbenchTab === 'review' && (
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" data-testid="knowledge-review">
+              <>
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" data-testid="knowledge-review">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 rounded-lg bg-surface-input p-3">
                     <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border', TYPE_COLOR[selectedDraft?.type ?? 'synthesis'])}>
@@ -2702,7 +2778,7 @@ export function Knowledge() {
                     <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-background p-2 text-xs leading-relaxed text-muted-foreground">{selectedProposal?.diff ?? selectedDraft?.body ?? t('review.noProposal')}</pre>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button onClick={() => void reviewAndApply()} disabled={busy || !selectedDraft || !selectedProposal} data-testid="knowledge-review-apply">
+                    <Button onClick={() => void reviewAndApply()} disabled={busy || !selectedDraft || !selectedBundle} data-testid="knowledge-review-apply">
                       {running === 'applyReviewedChange' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                       {t('review.approveAndApply')}
                     </Button>
@@ -2774,7 +2850,10 @@ export function Knowledge() {
                             <button
                               type="button"
                               className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                              onClick={() => setSelectedDraftId(draft.id)}
+                              onClick={() => {
+                                const bundle = reviewBundles.find((candidate) => candidate.draftId === draft.id);
+                                setSelectedReviewBundleId(bundle?.id ?? null);
+                              }}
                             >
                               <span className="truncate font-medium text-foreground/80">{draft.title}</span>
                               <span className="shrink-0 text-muted-foreground">{t(`types.${draft.type}`)}</span>
@@ -2788,6 +2867,126 @@ export function Knowledge() {
                   </div>
                 </div>
               </div>
+              <div className="mt-5 space-y-4" data-testid="knowledge-lifecycle">
+                <div className={PANEL_CLASS}>
+                  <div className="p-4">
+                    <div className="text-sm font-semibold">{t('lifecycle.title')}</div>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{t('lifecycle.description')}</p>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>{t('lifecycle.operationLabel')}</Label>
+                        <select
+                          value={lifecycleOperation}
+                          onChange={(event) => setLifecycleOperation(event.target.value as KnowledgeChangeOperation)}
+                          className="h-9 w-full rounded-lg border border-black/10 bg-surface-input px-3 text-sm dark:border-white/10"
+                          data-testid="knowledge-lifecycle-operation"
+                        >
+                          {LIFECYCLE_OPERATIONS.map((operation) => (
+                            <option key={operation} value={operation}>{t(`lifecycle.operation.${operation}`)}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>{t('lifecycle.targetLabel')}</Label>
+                        <Input
+                          value={lifecycleTarget}
+                          onChange={(event) => setLifecycleTarget(event.target.value)}
+                          placeholder={t('lifecycle.targetPlaceholder')}
+                          data-testid="knowledge-lifecycle-target"
+                        />
+                      </div>
+                      {lifecycleOperation === 'merge' ? (
+                        <div className="space-y-2">
+                          <Label>{t('lifecycle.mergeSourceLabel')}</Label>
+                          <Input
+                            value={lifecycleMergeSource}
+                            onChange={(event) => setLifecycleMergeSource(event.target.value)}
+                            placeholder={t('lifecycle.mergeSourcePlaceholder')}
+                            data-testid="knowledge-lifecycle-merge-source"
+                          />
+                        </div>
+                      ) : null}
+                      <div className="space-y-2">
+                        <Label>{t('lifecycle.titleLabel')}</Label>
+                        <Input value={lifecycleTitle} onChange={(event) => setLifecycleTitle(event.target.value)} data-testid="knowledge-lifecycle-title" />
+                      </div>
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      <Label>{t('lifecycle.bodyLabel')}</Label>
+                      <Textarea value={lifecycleBody} onChange={(event) => setLifecycleBody(event.target.value)} rows={4} className="font-mono text-xs" data-testid="knowledge-lifecycle-body" />
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      <Label>{t('lifecycle.reasonLabel')}</Label>
+                      <Input value={lifecycleReason} onChange={(event) => setLifecycleReason(event.target.value)} data-testid="knowledge-lifecycle-reason" />
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <Button
+                        onClick={() => void createLifecycleProposal()}
+                        disabled={busy || !lifecycleTarget.trim() || !lifecycleReason.trim() || (lifecycleOperation === 'merge' && !lifecycleMergeSource.trim())}
+                        data-testid="knowledge-lifecycle-propose"
+                      >
+                        {running === 'lifecyclePropose' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FilePlus2 className="mr-2 h-4 w-4" />}
+                        {t('lifecycle.propose')}
+                      </Button>
+                      <p className="text-[11px] leading-4 text-muted-foreground">{t('lifecycle.policyBoundary')}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className={PANEL_CLASS}>
+                  <div className="p-4">
+                    <div className="text-sm font-semibold">{t('lifecycle.previewTitle')}</div>
+                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-surface-input p-3 text-xs leading-relaxed" data-testid="knowledge-lifecycle-preview">
+                      {lifecyclePreview ?? t('lifecycle.previewEmpty')}
+                    </pre>
+                    {selectedProposal?.expectedRevision !== undefined ? (
+                      <div className="mt-2 text-xs text-muted-foreground" data-testid="knowledge-lifecycle-expected-revision">
+                        {t('lifecycle.expectedRevision')}: <span className="font-mono">{selectedProposal.expectedRevision}</span> · {t('lifecycle.idempotencyKey')}: <span className="font-mono">{selectedProposal.idempotencyKey ?? '-'}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                <div className={PANEL_CLASS} data-testid="knowledge-lifecycle-receipt">
+                  <div className="p-4">
+                    <div className="text-sm font-semibold">{t('lifecycle.receiptTitle')}</div>
+                    {lastApplyResult?.receipt ? (
+                      <pre className="mt-2 overflow-auto rounded-md bg-surface-input p-3 text-xs leading-relaxed" data-testid="knowledge-lifecycle-receipt-json">
+                        {JSON.stringify(lastApplyResult.receipt, null, 2)}
+                      </pre>
+                    ) : (
+                      <p className="mt-2 text-xs text-muted-foreground">{t('lifecycle.receiptEmpty')}</p>
+                    )}
+                    {lastApplyResult?.compensation ? (
+                      <div className="mt-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-2 text-xs text-amber-700 dark:text-amber-400" data-testid="knowledge-lifecycle-compensation">
+                        {t(`lifecycle.compensation.${lastApplyResult.compensation.status}`)}: {lastApplyResult.compensation.reason ?? '-'}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                <div className={PANEL_CLASS} data-testid="knowledge-receipt-history">
+                  <div className="p-4">
+                    <div className="text-sm font-semibold">{t('lifecycle.historyTitle')}</div>
+                    {receiptHistory.length > 0 ? (
+                      <ul className="mt-2 space-y-2">
+                        {receiptHistory.slice(0, 12).map((receipt) => (
+                          <li key={receipt.receiptId} className="rounded-md border border-black/10 bg-surface-input p-2 text-xs dark:border-white/10">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge variant="outline" className="border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/10">{receipt.operation}</Badge>
+                              <span className="font-mono">{receipt.subjectId}@{receipt.subjectRevision ?? '-'}</span>
+                              <span className="text-muted-foreground">{receipt.status}</span>
+                              {receipt.compensation?.status === 'unrecoverable' ? <Badge variant="outline" className="border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400">{t('lifecycle.compensation.unrecoverable')}</Badge> : null}
+                            </div>
+                            <div className="mt-1 truncate font-mono text-[10px] text-muted-foreground">{receipt.receiptId} · {receipt.idempotencyKey}</div>
+                            {receipt.compensation?.reason ? <div className="mt-1 text-amber-700 dark:text-amber-400">{receipt.compensation.reason}</div> : null}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-2 text-xs text-muted-foreground">{t('lifecycle.historyEmpty')}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              </>
             )}
 
             {workbenchTab === 'runtime' && (
@@ -2987,6 +3186,19 @@ export function Knowledge() {
                       {runtimeConfirmResult?.principleId ? (
                         <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400" data-testid="knowledge-runtime-confirm-result">
                           {t('runtime.confirmResult')}: <span className="font-mono">{runtimeConfirmResult.principleId}</span>
+                          {runtimeConfirmResult.dcsWrite ? (
+                            <span
+                              className={cn(
+                                'ml-2 inline-flex rounded-md px-2 py-0.5 text-xs',
+                                runtimeConfirmResult.dcsWrite === 'persisted'
+                                  ? 'bg-green-500/15 text-green-700 dark:text-green-400'
+                                  : 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+                              )}
+                              data-testid="knowledge-runtime-confirm-dcs-write"
+                            >
+                              {t('runtime.dcsWriteLabel')}: {runtimeConfirmResult.dcsWrite}
+                            </span>
+                          ) : null}
                         </div>
                       ) : null}
                     </section>

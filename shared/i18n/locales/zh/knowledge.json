@@ -505,7 +505,8 @@
     "shadowKey": "伪匿名密钥",
     "shadowKeyPlaceholder": "离线评测证据的密钥",
     "shadowReport": "生成报告",
-    "shadowRunning": "生成中…"
+    "shadowRunning": "生成中…",
+    "dcsWriteLabel": "DCS 写入"
   },
   "governance": {
     "title": "治理",
@@ -621,5 +622,43 @@
     "troubleshootingRecipe": "排障",
     "artifactCreated": "Studio 草稿已创建",
     "question": "基于当前 Source Set 创建 {{artifact}}。"
+  },
+  "lifecycle": {
+    "title": "页面生命周期治理",
+    "description": "为 memory-wiki 页面创建受治理的 update/merge/archive/revoke/delete/restore 提案。每次应用都会重新校验 expectedRevision 并返回 EffectReceipt。",
+    "operationLabel": "操作",
+    "targetLabel": "目标页面 lookup",
+    "targetPlaceholder": "notes/target.md",
+    "mergeSourceLabel": "合并来源 lookup",
+    "mergeSourcePlaceholder": "notes/source.md",
+    "titleLabel": "草稿标题",
+    "bodyLabel": "正文 / diff",
+    "reasonLabel": "策略原因",
+    "propose": "创建生命周期提案",
+    "policyBoundary": "提案必须经用户显式确认后才会执行 wiki RPC。",
+    "previewTitle": "预览 / diff",
+    "previewEmpty": "暂无生命周期预览。",
+    "expectedRevision": "expectedRevision",
+    "idempotencyKey": "idempotencyKey",
+    "receiptTitle": "EffectReceipt",
+    "receiptEmpty": "应用提案后在此显示 EffectReceipt。",
+    "historyTitle": "Receipt 历史",
+    "historyEmpty": "暂无治理 receipt。",
+    "operation": {
+      "update": "更新",
+      "merge": "合并",
+      "archive": "归档",
+      "revoke": "撤销",
+      "delete": "删除",
+      "restore": "恢复"
+    },
+    "compensation": {
+      "compensated": "已补偿",
+      "partial": "部分补偿",
+      "unrecoverable": "不可恢复"
+    },
+    "toasts": {
+      "proposed": "生命周期提案已创建，等待确认。"
+    }
   }
 }

@@ -6,12 +6,12 @@ vi.mock('@electron/services/task-ledger-service', () => ({
   loadTaskLedgerSnapshot: (...args: unknown[]) => loadTaskLedgerSnapshotMock(...args),
 }));
 
-describe('chat knowledge scope metadata', () => {
+describe('chat knowledge retrieval intent (KS-04)', () => {
   beforeEach(() => {
     loadTaskLedgerSnapshotMock.mockReset();
   });
 
-  it('injects hidden knowledge metadata for wiki scope', async () => {
+  it('forwards wiki scope as typed retrieval intent without prompt metadata', async () => {
     const gatewayManager = {
       rpc: vi.fn(async () => ({ runId: 'run-wiki' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
@@ -27,19 +27,20 @@ describe('chat knowledge scope metadata', () => {
       knowledgeMode: 'auto-read',
     })).resolves.toEqual({ success: true, result: { runId: 'run-wiki' } });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
-    expect(payload.message).toContain('Conversation info (untrusted metadata)');
-    expect(payload.message).toContain('"clawxKnowledgeScope":"wiki"');
-    expect(payload.message).toContain('"clawxKnowledgeMode":"auto-read"');
-    expect(payload.message).toContain('"corpus":"wiki"');
-    expect(payload.message).toContain('"access":"read-only"');
-    expect(payload.message).toContain('"allowedKnowledgeActions":["search","get"]');
-    expect(payload.message).toContain('"deniedKnowledgeActions":["apply","update","delete","archive","merge"]');
-    expect(payload.message).toContain('Do not save, modify, merge, archive, delete, or apply knowledge');
-    expect(payload.message).toContain('Use the project notes');
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as {
+      message: string;
+      knowledgeScope?: string;
+      knowledgeMode?: string;
+    };
+    expect(payload.message).toBe('Use the project notes');
+    expect(payload.message).not.toContain('Conversation info (untrusted metadata)');
+    expect(payload.message).not.toContain('clawxKnowledgeScope');
+    expect(payload.knowledgeScope).toBe('wiki');
+    expect(payload.knowledgeMode).toBe('auto-read');
+    expect(gatewayManager.rpc.mock.calls.every((call) => call[0] !== 'wiki.get')).toBe(true);
   });
 
-  it('injects selected knowledge references as read-only metadata', async () => {
+  it('forwards selected references as typed refs and drops renderer snippets', async () => {
     const gatewayManager = {
       rpc: vi.fn(async () => ({ runId: 'run-selected-knowledge' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
@@ -67,17 +68,31 @@ describe('chat knowledge scope metadata', () => {
       }],
     });
 
-    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as { message: string };
-    expect(payload.message).toContain('"selectedKnowledgeReferences":[{"id":"decision-page"');
-    expect(payload.message).toContain('"lookup":"notes/decision.md"');
-    expect(payload.message).toContain('"attachKind":"auto"');
-    expect(payload.message).toContain('"confidence":0.91');
-    expect(payload.message).toContain('prefer knowledge.get with each lookup');
-    expect(payload.message).toContain('"allowedKnowledgeActions":["search","get"]');
-    expect(payload.message).toContain('"deniedKnowledgeActions":["apply","update","delete","archive","merge"]');
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as {
+      message: string;
+      knowledgeReferences?: Array<Record<string, unknown>>;
+    };
+    expect(payload.message).toBe('Use the attached page');
+    expect(payload.message).not.toContain('selectedKnowledgeReferences');
+    expect(payload.knowledgeReferences).toHaveLength(1);
+    expect(payload.knowledgeReferences?.[0]).toEqual({
+      id: 'decision-page',
+      title: 'Knowledge Hub decision',
+      lookup: 'notes/decision.md',
+      corpus: 'wiki',
+      attachKind: 'auto',
+      routingReason: 'project knowledge intent detected',
+      confidence: 0.91,
+      freshnessLevel: 'fresh',
+      matchedClaimStatus: 'supported',
+      pagePath: 'notes/decision.md',
+    });
+    expect(JSON.stringify(payload.knowledgeReferences?.[0])).not.toContain('snippet');
+    expect(JSON.stringify(payload.knowledgeReferences?.[0])).not.toContain('Keep Obsidian optional.');
+    expect(gatewayManager.rpc.mock.calls.every((call) => call[0] !== 'wiki.get')).toBe(true);
   });
 
-  it('auto-reads selected knowledge references before sending the chat turn', async () => {
+  it('does not pre-read selected references in Main for auto-read mode', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'wiki.get') {
@@ -110,37 +125,22 @@ describe('chat knowledge scope metadata', () => {
       }],
     });
 
-    expect(gatewayManager.rpc.mock.calls[0]).toEqual([
-      'wiki.get',
-      {
-        lookup: 'notes/decision.md',
-        corpus: 'wiki',
-        lineCount: 80,
-      },
-      30000,
-    ]);
-    expect(gatewayManager.rpc.mock.calls[1]?.[0]).toBe('chat.send');
-    const payload = gatewayManager.rpc.mock.calls[1]?.[1] as { message: string };
-    expect(payload.message).toContain('Knowledge read citations (untrusted metadata)');
-    expect(payload.message).toContain('"clawxKnowledgeReads"');
-    expect(payload.message).toContain('"lookup":"notes/decision.md"');
-    expect(payload.message).toContain('"citation":"Keep the Task Ledger projection durable and cite this page."');
-    expect(payload.message).toContain('Use the decision page');
+    expect(gatewayManager.rpc.mock.calls[0]?.[0]).toBe('chat.send');
+    expect(gatewayManager.rpc.mock.calls.every((call) => call[0] !== 'wiki.get')).toBe(true);
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as {
+      message: string;
+      knowledgeReferences?: Array<Record<string, unknown>>;
+    };
+    expect(payload.message).toBe('Use the decision page');
+    expect(payload.message).not.toContain('Knowledge read citations');
+    expect(payload.knowledgeReferences).toHaveLength(1);
+    expect(payload.knowledgeReferences?.[0]?.lookup).toBe('notes/decision.md');
   });
 
-  it('bounds injected knowledge context fragments even for huge references', async () => {
+  it('drops huge renderer snippets instead of injecting them', async () => {
     const hugeText = 'x'.repeat(50_000);
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.get') {
-          return {
-            found: true,
-            pagePath: 'notes/huge.md',
-            content: hugeText,
-          };
-        }
-        return { runId: 'run-bounded-context' };
-      }),
+      rpc: vi.fn(async () => ({ runId: 'run-bounded-context' })),
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
@@ -161,10 +161,14 @@ describe('chat knowledge scope metadata', () => {
       })),
     });
 
-    const payload = gatewayManager.rpc.mock.calls.at(-1)?.[1] as { message: string };
-    expect(payload.message.length).toBeLessThan(20_000);
+    const payload = gatewayManager.rpc.mock.calls[0]?.[1] as {
+      message: string;
+      knowledgeReferences?: Array<Record<string, unknown>>;
+    };
+    expect(payload.message).toBe('Use huge context');
     expect(payload.message).not.toContain(hugeText);
-    expect(payload.message).toContain('Use huge context');
+    expect(payload.knowledgeReferences).toHaveLength(8);
+    expect(JSON.stringify(payload.knowledgeReferences)).not.toContain(hugeText);
   });
 
   it('ignores legacy workMode fields for ordinary chat sends', async () => {
@@ -273,5 +277,50 @@ describe('chat knowledge scope metadata', () => {
 
     expect((gatewayManager.rpc.mock.calls[0]?.[1] as { message: string }).message).toBe('Plain message');
     expect((gatewayManager.rpc.mock.calls[1]?.[1] as { message: string }).message).toBe('Unknown scope message');
+  });
+
+  it('returns knowledgeDenials from the gateway ack when present', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async () => ({
+        runId: 'run-denials',
+        knowledgeDenials: [
+          {
+            id: 'denied-page',
+            title: 'Denied page',
+            lookup: 'notes/denied.md',
+            reason: 'acl_denied',
+            visibleReason: 'ACL denied for "Denied page".',
+          },
+        ],
+      })),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+
+    await expect(api.sendWithMedia({
+      sessionKey: 'agent:main:main',
+      message: 'Use the denied page',
+      idempotencyKey: 'idem-denials',
+      knowledgeScope: 'wiki',
+      knowledgeReferences: [{
+        id: 'denied-page',
+        title: 'Denied page',
+        lookup: 'notes/denied.md',
+        corpus: 'wiki',
+      }],
+    })).resolves.toEqual({
+      success: true,
+      result: { runId: 'run-denials' },
+      knowledgeDenials: [
+        {
+          id: 'denied-page',
+          title: 'Denied page',
+          lookup: 'notes/denied.md',
+          reason: 'acl_denied',
+          visibleReason: 'ACL denied for "Denied page".',
+        },
+      ],
+    });
   });
 });

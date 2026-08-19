@@ -2436,6 +2436,7 @@ export async function runEmbeddedAttempt(
         // B-3 v3: write-set coordinate for the child handoff.
         ...(dcsExtensionDeps?.writeSet?.length ? { writeSet: [...dcsExtensionDeps.writeSet] } : {}),
         toolEntries,
+        chatKnowledgeRefs: params.chatKnowledgeRefs,
       });
       const resourceLoader = createEmbeddedAgentResourceLoader({
         cwd: effectiveCwd,
