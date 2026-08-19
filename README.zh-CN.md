@@ -460,6 +460,10 @@ P2-02 argv-only command profile 现在把 OpenClaw 审批前的 command analysis
 
 ## 开发指南
 
+### Runtime Lifecycle Governance（Phase 2，默认关闭）
+
+Runtime Lifecycle Governance 按阶段交付。Phase 0 落地共享基础（`SessionAdmissionRegistry`、`flow_runs` goal-wake SQL CAS、mission fencing、operation-journal primitive）。Phase 1 交付唯一 canonical cleanup finalizer 与 drain 管线。Phase 2 交付 delete operation journal（`cache_entries` 行删除与 `store_committed` 在同一个 per-agent SQLite immediate transaction）、由调用方持久化 `operationId` 驱动的 Electron mirror gate，以及终端 keep-on-leave 与全局 `terminal.list({})`。Phase 3 交付默认关闭的同 Gateway goal wake loop：单个 SQLite immediate arm 事务、run 完全 idle 后持久化 `turnBarrier` ack、仅 mission owner/lead 顶层 turn 可用的 `goal_wait`、`exec(background=true, wait="goal")`，以及进程退出 level-check 唤醒与重复 wake 去重。Phase 4 交付默认关闭的 durable helper 文件协议（`intent.json -> started.json -> exit.json`，位于 `<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` 启动/低频 sweep 恢复、session reset/delete 的 ownerEpoch 失效、runDir 配额/TTL/redaction，以及 Windows detached helper 路径；恢复绝不重放命令，`intent` 无 `started` 且无存活 helper 判为 `lost`。Phase 5 扩展 `SessionActivity` 只读模型，新增 goal、process、lineage 投影，数据只来自现有只读 probe（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）。Electron 服务仅转发并做类型化聚合，Chat 会话状态面板经 `react-i18next` 与现有 design token 渲染新状态，不新增任何生命周期按钮或删除/恢复入口；只读投影测试报告 `activitySnapshotWriteFindings=0`。审计保持 `armTxCount=1`、`processPollToolCalls=0`，Phase 4 增加 `secretPersistenceFindings=0`；普通 Chat 与默认 `background=true` 行为不变。Phase 6 完成 evidence-only 生产收尾：`audit-0.json` 至 `audit-6.json` 全部通过 `pnpm run runtime-lifecycle-audit --phase all`；已删除 superseded 阶段临时提示词，closeout 记录于 `docs/dev/handoffs/LATEST.md` 与 task-forest `TF-0077`，后续想法保留在 `future-work.json`。2026-08-19 的 GA hardening 补齐 packaged Electron durable-helper 验证与 10 周期真实进程 goal-wake canary；RLG-only 验收现为无条件 PASS，goal-wake/durable-helper 默认关闭与全部产品锁保持不变。详见 `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json` 与 `artifacts/runtime-lifecycle-governance/ga-acceptance.json`。
+
 ### 前置要求
 
 - **Node.js**：22+（推荐 LTS 版本）

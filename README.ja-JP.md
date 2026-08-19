@@ -456,6 +456,10 @@ AI を開発ワークフローに統合できます。エージェントを使�
 
 ## 開発
 
+### Runtime Lifecycle Governance（Phase 2、デフォルト無効）
+
+Runtime Lifecycle Governance は段階的に提供されます。Phase 0 では共有基盤を、Phase 1 では canonical cleanup finalizer と drain パイプラインを、Phase 2 では delete operation journal、`operationId` 駆動の Electron mirror gate、端末 keep-on-leave を追加しました。Phase 3 ではデフォルト無効の同一 Gateway goal wake loop（1 つの SQLite immediate arm トランザクション、完全 idle 後の `turnBarrier` ack、mission owner/lead 限定の `goal_wait`、`exec(background=true, wait="goal")`、プロセス終了 level-check と重複 wake 除去）を追加しました。Phase 4 ではデフォルト無効の durable helper ファイルプロトコル（`intent.json -> started.json -> exit.json`、`<trusted-root>/background-processes/<runId>/`）、`ProcessRunReconciler` の起動/低頻度 sweep 復旧、session reset/delete の ownerEpoch 失効、runDir クォータ/TTL/redaction、Windows detached helper パスを追加しました。復旧はコマンドを再実行せず、`intent` に `started` がなく live helper もない場合は `lost` と判定します。Phase 5 では `SessionActivity` 読み取りモデルを拡張し、既存の読み取り専用プローブ（`mission_runs`、goal-wake `flow_runs`/`task_runs`、bash process registry、supervisor snapshot、subagent lineage）だけを情報源とする goal / process / lineage 投影を追加しました。Electron サービスは転送と型付き集約のみを行い、Chat のセッション状態パネルは `react-i18next` と既存デザイントークンで新しい状態を表示し、ライフサイクルボタンや削除・復旧操作は追加しません。読み取りモデルテストは `activitySnapshotWriteFindings=0` を報告します。監査は `armTxCount=1`、`processPollToolCalls=0`、Phase 4 で `secretPersistenceFindings=0` を維持し、通常の Chat と既定の `background=true` 動作は変わりません。Phase 6 では evidence-only の本番クローズアウトを完了しました。`audit-0.json` から `audit-6.json` までが `pnpm run runtime-lifecycle-audit --phase all` ですべて検証され、旧フェーズの一時プロンプトは削除済みです。クローズアウトは `docs/dev/handoffs/LATEST.md` とタスクフォレスト `TF-0077` に記録し、将来のアイデアは `future-work.json` に保持しています。2026-08-19 の GA hardening で packaged Electron durable-helper 検証と 10 サイクルの実プロセス goal-wake canary を追加し、RLG-only 受け入れは無条件 PASS になりました。goal-wake / durable-helper のデフォルトとすべての製品ロックは変更していません。詳細は `docs/dev/runtime-lifecycle-governance/README.zh-CN.md`、`artifacts/runtime-lifecycle-governance/audit-6.json`、`artifacts/runtime-lifecycle-governance/ga-acceptance.json` を参照してください。
+
 ### 前提条件
 
 - **Node.js**: 22以上（LTS推奨）
