@@ -21,7 +21,11 @@ type CandidateDir = {
   origin?: string;
 };
 
-const OPENCLAW_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
+// Vitest SSR may expose import.meta.url as a Windows path rather than a file URL.
+const modulePath = import.meta.url.startsWith("file:")
+  ? fileURLToPath(import.meta.url)
+  : import.meta.url;
+const OPENCLAW_PACKAGE_ROOT = path.resolve(path.dirname(modulePath), "../..");
 const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
 let manifestMetadataCache:
   | {
