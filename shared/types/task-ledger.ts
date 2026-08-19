@@ -34,7 +34,135 @@ export type TaskLedgerEventType =
   | 'deviation_logged'
   | 'review_requested'
   | 'review_cleared'
-  | 'session_linked';
+  | 'session_linked'
+  | 'working_context_proposed'
+  | 'working_context_proposal_accepted'
+  | 'working_context_proposal_rejected';
+
+export const TASK_LEDGER_WORKING_CONTEXT_FIELDS = [
+  'Objective',
+  'Constraints',
+  'ConfirmedFacts',
+  'Decisions',
+  'OpenRisks',
+  'ActiveFiles',
+  'Evidence',
+  'NextAction',
+] as const;
+
+export type TaskLedgerWorkingContextField = (typeof TASK_LEDGER_WORKING_CONTEXT_FIELDS)[number];
+export type TaskLedgerWorkingContextSensitivity = 'public' | 'workspace' | 'secret-adjacent';
+export type TaskLedgerWorkingContextTrust = 'confirmed' | 'proposed' | 'uncertain';
+
+/** Bounded Working Context values. Evidence is refs only; raw payload is forbidden. */
+export type TaskLedgerWorkingContextFieldValue = string | string[] | TaskLedgerEvidenceRef[];
+
+export type TaskLedgerWorkingContextProposal = {
+  proposalId: string;
+  field: TaskLedgerWorkingContextField;
+  value: TaskLedgerWorkingContextFieldValue;
+  version: number;
+  evidenceRefs: TaskLedgerEvidenceRef[];
+  ttl: { issuedAt: string; expiresAt: string };
+  sensitivity: TaskLedgerWorkingContextSensitivity;
+  trust: TaskLedgerWorkingContextTrust;
+};
+
+export type TaskLedgerWorkingContextDecision = {
+  proposalId: string;
+  field: TaskLedgerWorkingContextField;
+  version: number;
+  decision: 'accepted' | 'rejected';
+  policyDigest: string;
+  rejectionReason?: string;
+};
+
+export type TaskLedgerMemPromotionCandidate = {
+  schema: 'MemPromotionCandidate/v1';
+  proposalId: string;
+  field: TaskLedgerWorkingContextField;
+  value: TaskLedgerWorkingContextFieldValue;
+  version: number;
+  actor: TaskLedgerActor;
+  evidenceRefs: TaskLedgerEvidenceRef[];
+  sensitivity: TaskLedgerWorkingContextSensitivity;
+  trust: TaskLedgerWorkingContextTrust;
+  acceptedAt: string;
+  policyDigest: string;
+};
+
+export type TaskLedgerWorkingContextWarningType =
+  | 'invalid_event'
+  | 'invalid_value'
+  | 'invalid_ttl'
+  | 'missing_actor'
+  | 'missing_task_id'
+  | 'missing_policy_digest'
+  | 'missing_proposal'
+  | 'version_mismatch'
+  | 'duplicate_proposal'
+  | 'duplicate_accept'
+  | 'expired_accept'
+  | 'illegal_actor'
+  | 'invalid_decision';
+
+export type TaskLedgerWorkingContextWarning = {
+  type: TaskLedgerWorkingContextWarningType;
+  message: string;
+  eventId?: string;
+  proposalId?: string;
+  field?: TaskLedgerWorkingContextField;
+};
+
+export type TaskLedgerWorkingContextProposalRecord = {
+  proposalId: string;
+  field: TaskLedgerWorkingContextField;
+  value: TaskLedgerWorkingContextFieldValue;
+  version: number;
+  actor: TaskLedgerActor;
+  evidenceRefs: TaskLedgerEvidenceRef[];
+  ttl: { issuedAt: string; expiresAt: string };
+  sensitivity: TaskLedgerWorkingContextSensitivity;
+  trust: TaskLedgerWorkingContextTrust;
+  eventId: string;
+  taskId: string;
+  sessionId?: string | null;
+  createdAt: string;
+};
+
+export type TaskLedgerWorkingContextAcceptedRecord = TaskLedgerWorkingContextProposalRecord & {
+  acceptedEventId: string;
+  policyDigest: string;
+  acceptedAt: string;
+};
+
+export type TaskLedgerWorkingContextRejectedRecord = {
+  proposalId: string;
+  field: TaskLedgerWorkingContextField;
+  version: number;
+  actor: TaskLedgerActor;
+  policyDigest: string;
+  rejectionReason: string;
+  eventId: string;
+  taskId: string;
+  createdAt: string;
+};
+
+export type TaskLedgerWorkingContextFieldProjection = {
+  current?: TaskLedgerWorkingContextAcceptedRecord;
+  history: TaskLedgerWorkingContextAcceptedRecord[];
+  pending: TaskLedgerWorkingContextProposalRecord[];
+  conflicts: TaskLedgerWorkingContextProposalRecord[];
+  rejected: TaskLedgerWorkingContextRejectedRecord[];
+  expired: TaskLedgerWorkingContextProposalRecord[];
+};
+
+export type TaskLedgerWorkingContextSnapshot = {
+  schemaVersion: 1;
+  fields: Record<TaskLedgerWorkingContextField, TaskLedgerWorkingContextFieldProjection>;
+  promotionCandidates: TaskLedgerMemPromotionCandidate[];
+  warnings: TaskLedgerWorkingContextWarning[];
+};
 
 export type TaskLedgerEvidenceRef = {
   type: 'session' | 'trace' | 'file' | 'memory' | 'manual' | 'tool' | 'other';
@@ -95,6 +223,8 @@ export type TaskLedgerEventPayload = {
   decision?: string;
   deviation?: string;
   note?: string;
+  workingContextProposal?: TaskLedgerWorkingContextProposal;
+  workingContextDecision?: TaskLedgerWorkingContextDecision;
 };
 
 export type TaskLedgerEvent = {

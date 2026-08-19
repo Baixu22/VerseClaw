@@ -1747,6 +1747,11 @@ CREATE TABLE IF NOT EXISTS effect_receipts (
   artifact_ref TEXT,
   journal_ref TEXT,
   recoverability TEXT NOT NULL,
+  -- Stage 1 logical EffectReceipt/v1 correlation. Digest/ref/identifier facts
+  -- only; raw proposal, tool arguments, and tool output never enter this JSON.
+  effect_context_json TEXT NOT NULL DEFAULT '{}' CHECK (
+    json_valid(effect_context_json) AND json_type(effect_context_json) = 'object'
+  ),
   -- Idempotency comparison includes the schema version so a format change
   -- conflicts instead of silently matching an old receipt.
   schema_version TEXT NOT NULL DEFAULT '2',

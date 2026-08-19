@@ -77,6 +77,14 @@ import {
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
+import {
+  wrapToolWithStage1ToolGuard,
+  type Stage1ToolGuardOptions,
+} from "./stage1-tool-guard.js";
+import {
+  wrapToolWithStage4ToolGuard,
+  type Stage4ToolGuardOptions,
+} from "./stage4-tool-guard.js";
 import { type TestRunnerExecutor, wrapToolWithWriteSideEffects } from "./write-side-effects.js";
 import { wrapToolWithSoftWriteGates } from "./write-soft-gates.js";
 import { wrapToolWithDestructiveTier } from "./write-destructive-tier.js";
@@ -570,6 +578,18 @@ export function createOpenClawCodingTools(options?: {
   toolPolicyAuditLogLevel?: "info" | "debug";
   /** Live observer called after wrapped tool outcomes are recorded. */
   onToolOutcome?: ToolOutcomeObserver;
+  /**
+   * Stage 1 golden-runner opt-in. When omitted, tool construction is
+   * byte-for-byte equivalent to the legacy path and no Tool Guard runs.
+   */
+  stage1ToolGuard?: Stage1ToolGuardOptions;
+  /**
+   * Stage 4 unified CapabilityGrant Tool Guard opt-in. When omitted, tool
+   * construction is byte-for-byte equivalent to the legacy path and no Tool
+   * Guard runs. When both Stage 1 and Stage 4 options are present, Stage 4
+   * wins for the guarded tool.
+   */
+  stage4ToolGuard?: Stage4ToolGuardOptions;
   /**
    * DCS Stage 5: session-scoped BlockStore for context_read / context_search.
    * When provided with sessionId, registers real context_* agent tools.
@@ -1398,7 +1418,11 @@ export function createOpenClawCodingTools(options?: {
   options?.recordToolPrepStage?.("schema-normalization");
   const withHooks = normalized.map((tool) =>
     wrapToolWithBeforeToolCallHook(
-      tool,
+      options?.stage4ToolGuard
+        ? wrapToolWithStage4ToolGuard(tool, options.stage4ToolGuard)
+        : options?.stage1ToolGuard
+          ? wrapToolWithStage1ToolGuard(tool, options.stage1ToolGuard)
+          : tool,
       {
         agentId,
         ...(options?.config ? { config: options.config } : {}),

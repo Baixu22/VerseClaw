@@ -1,0 +1,37 @@
+{
+  "schema": "Stage3RealRunEvidence/v1",
+  "generatedAt": "2026-08-19T02:15:51.118Z",
+  "model": "deepseek/deepseek-v4-flash",
+  "runId": "run:stage3-golden:1787105742179",
+  "taskLedgerRootId": "tlroot_1369f637980d1e0b",
+  "proposalId": "wc-stage3-real:run:stage3-golden:1787105742179",
+  "revisionBefore": {
+    "eventCount": 2,
+    "revision": "rev_2_240ba90241b3e195",
+    "contentDigest": "sha256:240ba90241b3e19510ec0d91532586d4363a02bf0b155b31fcef1d486e978358"
+  },
+  "revisionAfter": {
+    "eventCount": 4,
+    "revision": "rev_4_48da4086aa6ec7ef",
+    "contentDigest": "sha256:48da4086aa6ec7ef74efa0b0540f1d846f1da83893e413e75c00c2bc4a1ab22c"
+  },
+  "stage2": {
+    "toolCallId": "call_2178c166d06d42b7a233ff44",
+    "approvalId": "aprv_f5ca7894-1823-4a6c-8479-942ed95214da",
+    "effectReceiptId": "efx_078daef9-513d-4808-a391-b7d76e9126fa",
+    "journalRef": "write-journal:stage1:sess:stage3-golden:run:stage3-golden:1787105742179:1",
+    "envelopeDigest": "sha256:43c5d764f0be52398ecbecb3d0152a8659dbc6dc959741f743df7e589fc943e9",
+    "envelopeRef": "ref:request-envelope:43c5d764f0be52398ecbecb3d0152a8659dbc6dc959741f743df7e589fc943e9",
+    "wireReceiptId": "rcpt_e94c84ef-3834-44a6-a239-7a8d3c6017f4",
+    "wireDigest": "df05d6e198641cd491fce7e49ff48fb7474f903776f9b4e831ce94a74df5ddd5",
+    "preSnapshotDigest": "sha256:4a0d27b8ef28d60cbce22a561a790843bfcee16392b2b6c3bb0964627db53f73",
+    "prePlanDigest": "sha256:7ec6f6f955820596556eb9547b44abf06eda90b390a8219b1f4004b2235a1ce1",
+    "postSnapshotDigest": "sha256:a8b3a6b803050eec7f6c916362c64f783f2c30b7c7a16d7c9b3cb139e16cb210",
+    "postPlanDigest": "sha256:9decf8aea9889c24efcfb1b8c8c7368f7a0c9fc155001a97f783ec6c67557538",
+    "postContextRefKinds": [
+      "task_ledger",
+      "tool_result",
+      "user_intent"
+    ]
+  }
+}

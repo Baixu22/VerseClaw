@@ -37,6 +37,24 @@ export type EffectReceiptDatabase = Pick<OpenClawStateKyselyDatabase, 'effect_re
 
 export type EffectReceiptOptions = OpenClawStateDatabaseOptions;
 
+export type Stage1EffectReceiptContext = {
+  /** Digest of the approval policy that produced the decision. Digest only. */
+  approvalPolicyDigest?: string;
+  actor?: {
+    sessionKey: string;
+    runId: string;
+    attemptIndex: number;
+    modelCallIndex: number;
+    actorKind: 'principal' | 'delegate';
+  };
+  effect?: {
+    toolCallId: string;
+    toolName: string;
+    resource: string;
+    action: string;
+  };
+};
+
 export type EffectReceiptInput = {
   idempotencyKey: string;
   approvalId?: string;
@@ -47,6 +65,8 @@ export type EffectReceiptInput = {
   artifactRef?: string;
   journalRef?: string;
   recoverability: string;
+  /** Stage 1 logical EffectReceipt/v1 identifier facts. Never raw content. */
+  stage1Context?: Stage1EffectReceiptContext;
   createdAt?: number;
 };
 
@@ -95,6 +115,7 @@ CREATE TABLE effect_receipts_rc04_new (
   artifact_ref TEXT,
   journal_ref TEXT,
   recoverability TEXT NOT NULL,
+  effect_context_json TEXT NOT NULL DEFAULT '{}',
   schema_version TEXT NOT NULL DEFAULT '2',
   created_at INTEGER NOT NULL
 );
@@ -124,11 +145,14 @@ function ensureEffectReceiptsIndexes(db: import('node:sqlite').DatabaseSync): vo
  */
 function migrateEffectReceiptsShape(db: import('node:sqlite').DatabaseSync): void {
   if (tableHasColumn(db, 'effect_receipts', 'proposal_json')) {
+    if (tableHasColumn(db, 'effect_receipts', 'effect_context_json') === false) {
+      db.exec(`ALTER TABLE effect_receipts ADD COLUMN effect_context_json TEXT NOT NULL DEFAULT '{}';`);
+    }
     const legacyRows = db
       .prepare(
         `SELECT effect_receipt_id, idempotency_key, approval_id, proposal_json,
                 approval_decision, domain_executor, outcome, artifact_ref,
-                journal_ref, recoverability, created_at
+                journal_ref, recoverability, effect_context_json, created_at
            FROM effect_receipts`,
       )
       .all() as Array<Record<string, unknown>>;
@@ -138,8 +162,8 @@ function migrateEffectReceiptsShape(db: import('node:sqlite').DatabaseSync): voi
       `INSERT INTO effect_receipts_rc04_new (
          effect_receipt_id, idempotency_key, approval_id, proposal_digest,
          approval_decision, domain_executor, outcome, artifact_ref,
-         journal_ref, recoverability, schema_version, created_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         journal_ref, recoverability, effect_context_json, schema_version, created_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     );
     for (const row of legacyRows) {
       const rawJson = typeof row.proposal_json === 'string' ? row.proposal_json : '{}';
@@ -160,6 +184,7 @@ function migrateEffectReceiptsShape(db: import('node:sqlite').DatabaseSync): voi
         asSqlValue(row.artifact_ref),
         asSqlValue(row.journal_ref),
         asSqlValue(row.recoverability),
+        asSqlValue(typeof row.effect_context_json === 'string' ? row.effect_context_json : '{}'),
         EFFECT_RECEIPT_SCHEMA_VERSION,
         asSqlValue(row.created_at),
       );
@@ -171,6 +196,9 @@ function migrateEffectReceiptsShape(db: import('node:sqlite').DatabaseSync): voi
   }
   if (tableHasColumn(db, 'effect_receipts', 'schema_version') === false) {
     db.exec(`ALTER TABLE effect_receipts ADD COLUMN schema_version TEXT NOT NULL DEFAULT '2';`);
+  }
+  if (tableHasColumn(db, 'effect_receipts', 'effect_context_json') === false) {
+    db.exec(`ALTER TABLE effect_receipts ADD COLUMN effect_context_json TEXT NOT NULL DEFAULT '{}';`);
   }
   ensureEffectReceiptsIndexes(db);
 }
@@ -192,6 +220,79 @@ function sameOptionalString(left: string | null, right: string | undefined | nul
   return (left ?? null) === (right ?? null);
 }
 
+const STAGE1_ACTOR_KINDS = new Set(["principal", "delegate"]);
+
+function sanitizeStage1Actor(value: unknown): Stage1EffectReceiptContext["actor"] | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const actor = value as Record<string, unknown>;
+  if (
+    typeof actor.sessionKey !== "string" ||
+    typeof actor.runId !== "string" ||
+    typeof actor.attemptIndex !== "number" ||
+    typeof actor.modelCallIndex !== "number" ||
+    typeof actor.actorKind !== "string" ||
+    !STAGE1_ACTOR_KINDS.has(actor.actorKind)
+  ) {
+    return undefined;
+  }
+  return {
+    sessionKey: actor.sessionKey,
+    runId: actor.runId,
+    attemptIndex: actor.attemptIndex,
+    modelCallIndex: actor.modelCallIndex,
+    actorKind: actor.actorKind as "principal" | "delegate",
+  };
+}
+
+function sanitizeStage1Effect(value: unknown): Stage1EffectReceiptContext["effect"] | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const effect = value as Record<string, unknown>;
+  if (
+    typeof effect.toolCallId !== "string" ||
+    typeof effect.toolName !== "string" ||
+    typeof effect.resource !== "string" ||
+    typeof effect.action !== "string"
+  ) {
+    return undefined;
+  }
+  return {
+    toolCallId: effect.toolCallId,
+    toolName: effect.toolName,
+    resource: effect.resource,
+    action: effect.action,
+  };
+}
+
+/**
+ * Stage 1 context is a runtime allowlist, not a JSON passthrough. Unknown
+ * fields (raw proposal, tool arguments, tool output, secrets) are stripped
+ * before the value reaches effect_context_json.
+ */
+export function serializeStage1EffectContext(context?: Stage1EffectReceiptContext): string {
+  if (!context || typeof context !== "object" || Array.isArray(context)) return "{}";
+  const sanitized: Record<string, unknown> = {};
+  if (typeof context.approvalPolicyDigest === "string" && context.approvalPolicyDigest) {
+    sanitized.approvalPolicyDigest = context.approvalPolicyDigest;
+  }
+  const actor = sanitizeStage1Actor(context.actor);
+  const effect = sanitizeStage1Effect(context.effect);
+  if (actor) sanitized.actor = actor;
+  if (effect) sanitized.effect = effect;
+  return JSON.stringify(actor || effect ? sanitized : {});
+}
+
+export function parseStage1EffectContext(value: string | null | undefined): Record<string, unknown> {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 function receiptContentMatches(existing: EffectReceiptRow, input: EffectReceiptInput): boolean {
   return (
     existing.proposal_digest === effectProposalDigest(input.proposal) &&
@@ -202,6 +303,7 @@ function receiptContentMatches(existing: EffectReceiptRow, input: EffectReceiptI
     sameOptionalString(existing.artifact_ref, input.artifactRef) &&
     sameOptionalString(existing.journal_ref, input.journalRef) &&
     existing.recoverability === input.recoverability &&
+    existing.effect_context_json === serializeStage1EffectContext(input.stage1Context) &&
     existing.schema_version === EFFECT_RECEIPT_SCHEMA_VERSION
   );
 }
@@ -245,6 +347,7 @@ export class EffectReceiptStore {
         artifact_ref: input.artifactRef ?? null,
         journal_ref: input.journalRef ?? null,
         recoverability: input.recoverability,
+        effect_context_json: serializeStage1EffectContext(input.stage1Context),
         schema_version: EFFECT_RECEIPT_SCHEMA_VERSION,
         created_at: input.createdAt ?? Date.now(),
       };

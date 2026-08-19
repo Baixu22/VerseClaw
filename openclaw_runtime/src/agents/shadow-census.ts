@@ -12,6 +12,8 @@ import {
   type RuntimeReceiptRuntimeMode,
 } from './receipt-store.js';
 
+import type { RegisteredTransform } from '../../../shared/types/context-control-plane/artifacts.js';
+
 export const RC02_SHADOW_CENSUS_FLAG = 'rc02.shadowCensus';
 export const SHADOW_CONTEXT_RECEIPT_VERSION = '0';
 export const SHADOW_WIRE_RECEIPT_VERSION = '0';
@@ -28,6 +30,33 @@ export type ShadowReceiptCallContext = {
   attemptIndex?: number;
   modelCallIndex?: number;
   wireAttemptIndex?: number;
+};
+
+export type Stage2PromptPlanCarrier = {
+  schema: 'PromptPlan/v1';
+  planId: string;
+  snapshotId: string;
+  planDigest: string;
+  sealed: boolean;
+  identity: {
+    sessionKey: string;
+    runId: string;
+    attemptIndex: number;
+    modelCallIndex: number;
+  };
+};
+
+export type Stage2SnapshotCarrier = {
+  schema: 'CompilationSnapshot/v1';
+  snapshotId: string;
+  snapshotDigest: string;
+  policyDigest: string;
+  modelProfile: {
+    providerId: string;
+    modelId: string;
+    adapterId: string;
+  };
+  transformGraph: RegisteredTransform[];
 };
 
 export type ShadowReceiptOptions = {
@@ -51,6 +80,15 @@ export type ShadowReceiptOptions = {
   /** Internal correlation state populated after the context receipt is written. */
   correlationDigest?: string;
   logicalDigest?: string;
+  /** Stage 1 RequestEnvelope ref. Digest/ref only; raw prompt content never
+   *  travels on shadow options or enters provider bytes. */
+  requestEnvelopeRef?: string;
+
+  /** Stage 2 sealed PromptPlan carrier produced by DCS. Provider Guard reads
+   *  these fields only; it never recompiles. */
+  stage2PromptPlan?: Stage2PromptPlanCarrier;
+  /** Matching Stage 2 snapshot carrier. */
+  stage2Snapshot?: Stage2SnapshotCarrier;
   /** RC-03 sealed plan attached by the embedded runner so the guarded wire
    *  boundary can persist WireReceipt/v1 correlated to the sealed bundle.
    *  Structural subset of CompilePlan to avoid an agents->context-engine
@@ -62,6 +100,12 @@ export type ShadowReceiptOptions = {
     providerId?: string;
     adapterId?: string;
     policyDigest: string;
+    /** Registered pre-seal producers and whether they actually ran. */
+    preSealProducers: Array<{
+      producerId: string;
+      producerVersion: string;
+      applied: boolean;
+    }>;
     postSealTransformIds: string[];
     callIndex: {
       attemptIndex: number;
@@ -129,7 +173,11 @@ export type ShadowCensusFailureDiagnostic = {
     | "receipt-content-conflict"
     | "final-wire-body-unavailable"
     | "final-wire-body-invalid"
-    | "wire-owner-incomplete";
+    | "wire-owner-incomplete"
+    | "request-envelope-incomplete"
+    | "prompt-plan-not-sealed"
+    | "snapshot-plan-mismatch"
+    | "unregistered-transform";
   count: number;
 };
 
@@ -478,7 +526,10 @@ export function emitShadowWireReceipt(
         logicalDigest: options.logicalDigest,
         wireDigest,
         correlationDigest: correlation,
-        selected: [ownerCensus.proofRef],
+        selected: [
+          ownerCensus.proofRef,
+          ...(options.requestEnvelopeRef ? [options.requestEnvelopeRef] : []),
+        ],
       },
     });
   } catch {
@@ -556,6 +607,7 @@ export function emitRc03WireReceipt(
         logicalDigest: options.logicalDigest,
         wireDigest,
         correlationDigest: correlation,
+        ...(options.requestEnvelopeRef ? { selected: [options.requestEnvelopeRef] } : {}),
       },
     });
   } catch {

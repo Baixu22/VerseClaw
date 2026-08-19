@@ -2,11 +2,22 @@
 
 | 字段 | 值 |
 |---|---|
-| 状态 | `proposed`（待 owner 批准；批准前不实施） |
+| 状态 | `accepted-in-principle`（已接受北星与六 artifact；经最终裁决修正，实施仍未授权） |
 | 日期 | 2026-08-16 |
 | 基线 | `033469f07cd4810f5fb6e521fc3c600a0d4d2cfc`（当前工作树 dirty） |
 | 范围 | Tool/Skill 能力目录、DCS 上下文投影、Mem 语义记忆、Working Context、Provider Guard、Receipt |
 | 关联文档 | `docs/dev/context-capability-blueprint.md`、`docs/dev/dcs-first-context-engineering.md`、`docs/dev/capability-registry-v3-development-plan.md`、`docs/context-family/axioms.md` |
+
+## 0. 最终裁决修订记录（rev3）
+
+2026-08-16 最终裁决：**总体认可约 80%**，但不把初稿直接当作可执行路线。本 ADR 按裁决做如下修订：
+
+1. “不新增 authority 组件”改为“不新增真相源，但必须新增统一逻辑契约与适配层”；
+2. Tool Guard 契约提前到 Stage 0 冻结；黄金路径必须包含至少一个真实工具调用；
+3. DCS 服务可丢弃，但 `CompilationSnapshot / PromptPlan / Receipt` 必须可恢复；
+4. 现有 ReceiptStore / EffectReceipt / approval ledger 是可复用工程资产，不是已闭合的可信控制平面；
+5. 硬门槛禁止“未声明、未登记、未经过 sealed plan 的 mutation”，并限定 egress 证明范围与 break-glass 审计；
+6. Memory 检索可后接，但 Memory 写入从黄金路径开始必须经过 effect boundary。
 
 ---
 
@@ -98,6 +109,11 @@ Working Context 的 owner 是任务账本，不是 Mem；它消费 user intent�
   - 禁止绕过 DCS 直接 mutation。
 - 先以 **observational / read-only** 上线，只计算 digest 和登记 bypass；不因新增观测改变发送行为。
 - 后续在证据充分后，才允许 fail-closed 拒绝未登记旁路。
+- 覆盖范围分阶段：
+  - Stage 1：黄金路径范围内未登记 egress 为 0；
+  - 后续阶段：逐 provider、逐 channel、逐 plugin 扩大覆盖；
+  - 最终全局不变量：系统级未登记旁路为 0，break-glass 必须有审计记录。
+- Stage 1 的工具调用使用现有 approval/effect 链派生**临时最小 grant**；Stage 4 才将该临时适配提升为统一、可衰减、可撤销的 `CapabilityGrant` 契约。
 
 ### 决策 6：Receipt 只做审计可追溯，不承诺无条件下重放
 
@@ -116,25 +132,51 @@ Working Context 的 owner 是任务账本，不是 Mem；它消费 user intent�
 |---|---|---|
 | CapabilityDescriptor | V3 Capability Catalog | Tool/Skill/Context-provider 发现元数据 |
 | 原始 payload | Owner stores | transcript、workspace、tool registry、skill loader、memory stores、archive |
-| ContextUnit 归一化与裁决 | DCS | admission/resolve/pack/compile/lineage |
+| ContextRef | Owner stores | owner、source reference、revision、content digest、ACL、retention、provenance |
+| CompilationSnapshot | DCS | 编译输入冻结：refs、catalog epoch、policy epoch、model profile、Task Ledger revision |
+| PromptPlan | DCS | selected/omitted/order/budget/why |
+| RequestEnvelope | Provider Guard | provider 最终请求 |
+| CapabilityGrant | 现有 policy/approval/session identity 派生 | 主体、任务分支、资源、动作、purpose、TTL、revocation epoch |
+| EffectReceipt | Effect boundary | 工具/写入真实执行后的证据 |
 | 持久语义记忆 | Mem | durable memory、retrieval、summarization candidates |
 | Working Context | Task Context Ledger | task-scoped 工作集、版本、TTL、晋升 |
-| 最终请求 | Provider Guard | RequestEnvelope digest、transform 登记 |
 | 审计链 | Receipt / Archive journal | selected/omitted、digest、provenance |
+
+### 决策 7：六 artifact 取代“万能 ContextUnit”
+
+`ContextUnit` 不承载全部职责。拆为：
+
+- `ContextRef`：owner、revision、content digest、ACL、retention、provenance；
+- `CompilationSnapshot`：refs、catalog epoch、policy epoch、model profile、Task Ledger revision；
+- `PromptPlan`：DCS 的 selected/omitted/order/budget/why；
+- `RequestEnvelope`：provider adapter 的规范化最终请求；
+- `CapabilityGrant`：主体、任务分支、资源、动作、purpose、TTL、revocation epoch；
+- `EffectReceipt`：工具或写入真实执行后的证据。
+
+### 决策 8：现有资产必须降级为工程资产
+
+- ReceiptStore / EffectReceipt / approval ledger 是**可复用工程资产**；
+- 它们不是已经闭合的可信控制平面；
+- Tool-call gate 仍 `report_only`；
+- TaskFlow CAS 仍 candidate；
+- runtime-convergence 仍 `human_acceptance_pending`、产品锁 false；
+- 统一逻辑契约和真实 runtime enforcement 补齐后，才可称为控制平面能力。
 
 ---
 
-## 4. 实施顺序
+## 4. 实施顺序（rev3 最终裁决后）
 
-1. 本 ADR 批准。
-2. Provider Guard（observational）。
-3. `ContextUnit/v1` 完整字段。
-4. Task Context Ledger / Working Context。
-5. Memory 收敛。
-6. Unit-aware token packer 与真实任务证据。
-7. 逐表面毕业。
+```text
+Stage 0  冻结五平面、六 artifact、policy/grant/effect 契约
+Stage 1  Provider Guard + 一个真实工具调用 + EffectReceipt
+Stage 2  ContextRef -> CompilationSnapshot -> DCS -> PromptPlan
+Stage 3  Task Ledger proposal / accept / reject + 物化投影
+Stage 4  CapabilityGrant、子 agent 衰减授权、重启恢复
+Stage 5  Memory 收敛、unit-aware packing、真实任务对照
+Stage 6  Context diff、why-included、policy simulation、replay debugger
+```
 
-细节见 `docs/dev/context-capability-blueprint.md`（rev2）。
+细节见 `docs/dev/context-capability-blueprint.md`（rev3）。
 
 ---
 
@@ -151,7 +193,7 @@ Working Context 的 owner 是任务账本，不是 Mem；它消费 user intent�
 ### 成本与风险
 
 - Provider Guard 增加一次 digest/登记开销，必须先做观测并证明零/低性能影响；
-- 完整 `ContextUnit/v1` 增加 producer 适配成本；
+- 六 artifact 最小契约增加 producer/authority 适配成本；
 - Task Context Ledger 增加 fork/compact/handoff 合并复杂度；
 - legacy hook 迁移可能改变插件行为，需要兼容窗口。
 
@@ -163,9 +205,10 @@ Working Context 的 owner 是任务账本，不是 Mem；它消费 user intent�
 - 不新增第四个能力目录；
 - 不新增第二个上下文投影 authority；
 - 不新增第三个 durable memory writer；
-- 不允许任何未登记旁路进入最终 RequestEnvelope；
+- 最终全局不变量：系统级未登记旁路为 0；break-glass 必须有审计记录。
+- Stage 1：黄金路径范围内未登记 egress 为 0；后续逐 provider/channel/plugin 扩大覆盖。
 - 不用 synthetic/agent-surrogate 证据推进 default-on。
 
 ---
 
-*本 ADR 与 `context-capability-blueprint.md` rev2 一并提交独立审计。*
+*本 ADR 与 `context-capability-blueprint.md` rev3 一并提交独立审计。*
