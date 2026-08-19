@@ -60,7 +60,7 @@ requiredTests:
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/session-activity.test.ts src/gateway/server-methods/session-activity-projection.test.ts
   - pnpm exec vitest run tests/unit/runtime-lifecycle-governance.test.ts --maxWorkers=1
   - unset ELECTRON_RUN_AS_NODE && pnpm run test:e2e:run tests/e2e/runtime-lifecycle-governance.spec.ts
-  - unset ELECTRON_RUN_AS_NODE && pnpm run test:e2e:run tests/e2e/session-activity-panel.spec.ts
+  - pnpm exec vitest run tests/unit/session-activity-panel.test.tsx --maxWorkers=1
   - pnpm run runtime-lifecycle-audit --phase all
   - pnpm run typecheck
   - pnpm run lint:check
