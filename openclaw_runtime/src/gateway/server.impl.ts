@@ -969,6 +969,7 @@ export async function startGatewayServer(
 
   let closePreludeStarted = false;
   let postReadyMaintenanceTimer: ReturnType<typeof setTimeout> | null = null;
+  let stopDurableHelperRecovery = (): void => {};
   const clearPostReadyMaintenanceTimer = () => {
     if (!postReadyMaintenanceTimer) {
       return;
@@ -979,6 +980,7 @@ export async function startGatewayServer(
   const markClosePreludeStarted = () => {
     closePreludeStarted = true;
     clearPostReadyMaintenanceTimer();
+    stopDurableHelperRecovery();
   };
   const runClosePrelude = async () => {
     markClosePreludeStarted();
@@ -1729,6 +1731,15 @@ export async function startGatewayServer(
         log.warn(`gateway: failed to promote config last-known-good backup: ${String(err)}`);
       });
       if (!minimalTestGateway) {
+        // Phase 4 durable helper recovery is default-off and watches only the
+        // bounded background-processes file protocol.
+        const { startDurableHelperRecoveryService } = await import(
+          "../agents/goal-wake-recovery.js"
+        );
+        const recovery = startDurableHelperRecoveryService({
+          cfg: getRuntimeConfig(),
+        });
+        stopDurableHelperRecovery = recovery.stop;
         const gatewayRuntimeServices = await loadScheduledServicesModule();
         if (closePreludeStarted) {
           return;

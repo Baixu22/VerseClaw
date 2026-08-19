@@ -65,6 +65,8 @@ import {
   createUpdateGoalTool,
 } from "./tools/goal-tools.js";
 import { createHeartbeatResponseTool } from "./tools/heartbeat-response-tool.js";
+import { goalWakeController } from "./goal-wake-controller.js";
+import { createGoalWaitTool } from "./tools/goal-wait-tool.js";
 import { createImageGenerateTool } from "./tools/image-generate-tool.js";
 import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
@@ -642,6 +644,23 @@ export function createOpenClawTools(
           createSessionsCompactTool({
             sessionId: options.sessionId,
             onRequest: options.onManualCompactionRequest,
+          }),
+        ]
+      : []),
+    ...(options?.sessionId &&
+    !options?.sandboxed &&
+    goalWakeController.goalWakeEnabled(resolvedConfig) &&
+    goalWakeController.getLatestMissionForSession(
+      options?.runSessionKey ?? options?.agentSessionKey ?? "",
+    )?.status === "running"
+      ? [
+          createGoalWaitTool({
+            agentSessionKey: options?.agentSessionKey,
+            runSessionKey: options?.runSessionKey,
+            agentId: options?.requesterAgentIdOverride ?? sessionAgentId,
+            sessionId: options?.sessionId,
+            config: resolvedConfig,
+            onYield: options?.onYield,
           }),
         ]
       : []),

@@ -42,6 +42,7 @@ import { extractMemoryProposalDrafts } from "../../memory/memory-extractor.js";
 import type { MemoryEvidenceRef, MemoryProposal } from "../../memory/types.js";
 import { resolveAnomalyPatternForReviewer } from "../anomaly-classifier.js";
 import { buildMissionContextPack } from "./context.js";
+import { goalWakeController } from "../goal-wake-controller.js";
 import { runMissionReviewer } from "./reviewer.js";
 import {
   getLatestMissionForSession,
@@ -922,9 +923,14 @@ export async function tickMission(
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
   const getMission = deps.getMission ?? getMissionRunFromStore;
-  const saveMission = deps.saveMission ?? saveMissionRun;
   const record = getMission(input.missionId);
   if (!record) throw new Error(`unknown mission "${input.missionId}"`);
+  const missionFencingEnabled = goalWakeController.isMissionFencingEnabled();
+  const saveMission =
+    deps.saveMission ??
+    (missionFencingEnabled
+      ? goalWakeController.saveMissionRunFenced
+      : saveMissionRun);
   missionLocalControlPlaneConfigs.set(record, cfg);
   const config = resolveAgentMissionConfig(cfg, record.agentId);
   const now = deps.now ?? Date.now;
@@ -951,10 +957,47 @@ export async function tickMission(
     attributes: { missionId: record.missionId, nextTick: record.tick + 1 },
   });
 
+  let fencedTickClaimed = false;
+  const goalWakePreClaim = input.wake?.preClaimed;
+  if (goalWakePreClaim && missionFencingEnabled) {
+    record.revision = goalWakePreClaim.revision;
+    record.activeTickId = goalWakePreClaim.activeTickId;
+    record.tick = goalWakePreClaim.tick;
+    record.lastWakeId = input.wake?.wakeId;
+    record.status = "running";
+    record.metadata = {
+      ...(record.metadata ?? {}),
+      ...(input.wakePayload ? { lastGoalWake: input.wakePayload } : {}),
+      lastGoalWakeAt: now(),
+    };
+    fencedTickClaimed = true;
+  } else if (missionFencingEnabled) {
+    const claim = goalWakeController.claimMissionTick({
+      missionId: record.missionId,
+      expectedRevision: record.revision ?? 0,
+      activeTickId: traceRunId,
+      allowedStatuses: ["idle", "sleeping", "ask_user"],
+    });
+    if (!claim.ok) {
+      throw new Error(
+        `mission tick fencing claim failed for "${input.missionId}": ${claim.reason}${
+          claim.message ? ` (${claim.message})` : ""
+        }`,
+      );
+    }
+    record.revision = claim.revision;
+    record.activeTickId = claim.row.active_tick_id;
+    record.tick = claim.row.tick_count;
+    record.status = "running";
+    fencedTickClaimed = true;
+  }
+
   let taskLoopResult: TaskLoopRunResult | undefined;
   try {
-    record.tick += 1;
-    record.status = "running";
+    if (!fencedTickClaimed) {
+      record.tick += 1;
+      record.status = "running";
+    }
     record.phase = "context_pack";
     emit(record, deps);
 
@@ -1304,7 +1347,26 @@ export async function tickMission(
     );
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
-    saveMission(record);
+    if (missionFencingEnabled && record.activeTickId) {
+      const finish = goalWakeController.finishMissionTick({
+        missionId: record.missionId,
+        expectedRevision: record.revision ?? 0,
+        activeTickId: record.activeTickId,
+        status: record.status,
+      });
+      if (!finish.ok) {
+        throw new Error(
+          `mission tick fencing finish failed for "${input.missionId}": ${finish.reason}${
+            finish.message ? ` (${finish.message})` : ""
+          }`,
+        );
+      }
+      record.revision = finish.revision;
+      record.activeTickId = null;
+      record.updatedAt = finish.row.updated_at;
+    }
+    const saved = saveMission(record);
+    if (typeof saved.revision === "number") record.revision = saved.revision;
     emit(record, deps, {
       traceId: record.traceId,
       reviewerDecision: record.lastDecision,
@@ -1322,7 +1384,21 @@ export async function tickMission(
     const { trace, scorecard } = completeObservedRun(recorder, "error", message);
     record.traceId = trace.id;
     (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
-    saveMission(record);
+    if (missionFencingEnabled && record.activeTickId) {
+      const finish = goalWakeController.finishMissionTick({
+        missionId: record.missionId,
+        expectedRevision: record.revision ?? 0,
+        activeTickId: record.activeTickId,
+        status: record.status,
+      });
+      if (finish.ok) {
+        record.revision = finish.revision;
+        record.activeTickId = null;
+        record.updatedAt = finish.row.updated_at;
+      }
+    }
+    const saved = saveMission(record);
+    if (typeof saved.revision === "number") record.revision = saved.revision;
     return clone(record);
   }
 }
