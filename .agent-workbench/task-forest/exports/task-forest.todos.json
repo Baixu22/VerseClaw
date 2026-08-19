@@ -415,7 +415,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -444,7 +444,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -474,7 +474,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -503,7 +503,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -617,7 +617,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -646,7 +646,7 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 1.0,
+      "fit_confidence": 1,
       "user_goal": "先清除全局 lint/typecheck 债，再让 RC-00R 的 fail-closed 验收在干净候选上产生真实绿色 final-report.json。",
       "validation_plan": [
         "干净 worktree 复现并清除 lint/typecheck 债",
@@ -679,7 +679,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -708,7 +708,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -737,7 +737,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -766,7 +766,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -796,7 +796,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -825,7 +825,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -854,7 +854,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -883,7 +883,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -912,7 +912,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
@@ -944,7 +944,7 @@
   {
     "alignment": {
       "fit": "unknown",
-      "fit_confidence": 0.0,
+      "fit_confidence": 0,
       "user_goal": "",
       "validation_plan": [],
       "why_not_enough": "",
