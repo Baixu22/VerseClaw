@@ -18,6 +18,7 @@ import type {
   SessionActivityTerminalStatus,
 } from '@shared/types/session-activity';
 import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
+import { subagentLifecycleIdentityKey } from '@shared/subagent-lifecycle';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 
@@ -49,6 +50,26 @@ function eventSessionKey(payload: Record<string, unknown>): string | null {
   return typeof sessionKey === 'string' && sessionKey.length > 0 ? sessionKey : null;
 }
 
+/**
+ * Which session's snapshot an event belongs to.
+ *
+ * A sub-agent lifecycle event describes the activity of the session that
+ * SPAWNED the worker; its `childSessionKey` names the worker's own session.
+ * The generic `sessionKey ?? childSessionKey` fallback therefore files a worker
+ * under its own snapshot when the parent key is missing, and the parent's
+ * status card — the only place the worker was going to be listed — never sees
+ * it. Every other channel reports about the session it names, so they keep the
+ * generic resolution.
+ */
+function routingSessionKey(event: SessionActivityEvent): string | null {
+  const payload = event.payload as unknown as Record<string, unknown>;
+  if (event.channel === 'subagent') {
+    const parent = payload.sessionKey;
+    return typeof parent === 'string' && parent.length > 0 ? parent : null;
+  }
+  return eventSessionKey(payload);
+}
+
 function shouldApply(updatedAt: number, current: number): boolean {
   return updatedAt >= current;
 }
@@ -74,18 +95,30 @@ function terminalKind(kind: TerminalSessionEvent['kind'] | undefined): SessionAc
   return kind === 'webPreviewDevServer' ? 'webPreviewDevServer' : 'interactive';
 }
 
+/**
+ * Merge by id, newest-wins per field.
+ *
+ * `undefined` in the incoming item means "this event did not carry the field",
+ * not "clear it". Runtimes commonly report identity fields (`childSessionKey`,
+ * `task`) on the opening event only, so a plain object spread would erase them
+ * the moment the closing event arrived — and a sub-agent that lost its child
+ * session key silently stops being openable.
+ */
 function upsert<T extends { id: string; updatedAt: number }>(items: T[], next: T): T[] {
   const index = items.findIndex((item) => item.id === next.id);
   if (index < 0) return [...items, next];
   if (!shouldApply(next.updatedAt, items[index].updatedAt)) return items;
+  const defined = Object.fromEntries(
+    Object.entries(next).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
   const copy = items.slice();
-  copy[index] = { ...items[index], ...next };
+  copy[index] = { ...items[index], ...defined };
   return copy;
 }
 
 export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: SessionActivityEvent): SessionActivitySnapshot {
   const payload = event.payload as unknown as Record<string, unknown>;
-  const key = eventSessionKey(payload);
+  const key = routingSessionKey(event);
   if (key && key !== snapshot.session.sessionKey) return snapshot;
   const updatedAt = eventTime(payload);
   const next = { ...snapshot, capturedAt: Math.max(snapshot.capturedAt, updatedAt) };
@@ -143,13 +176,15 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
 
   if (event.channel === 'subagent') {
     const data = event.payload;
-    const id = data.taskNodeId ?? data.roleInstanceId ?? data.childRunId ?? `${data.roleName ?? 'agent'}:${data.task ?? ''}`;
     const subagent: SessionActivitySubagent = {
-      id,
+      id: subagentLifecycleIdentityKey(data),
       role: data.roleName,
       task: data.task,
-      summary: data.summary ?? data.error,
+      summary: data.summary,
+      error: data.error,
       status: data.status,
+      childSessionKey: data.childSessionKey,
+      agentId: data.agentId,
       updatedAt,
       source: 'event',
     };
@@ -226,7 +261,11 @@ export function reduceSessionActivity(snapshot: SessionActivitySnapshot, event: 
 function mockScenario(): SessionActivityMockScenario {
   if (typeof window === 'undefined') return 'idle-clean';
   const params = new URLSearchParams(window.location.search);
-  const value = params.get('mockScenario') ?? params.get('scenario');
+  // Preserve the existing preview URL after the legacy SessionStatusRail was
+  // removed: `script=rail` now showcases the replacement activity panel.
+  const value = params.get('mockScenario')
+    ?? params.get('scenario')
+    ?? (params.get('script') === 'rail' ? 'multi-subagent' : null);
   const scenarios: SessionActivityMockScenario[] = ['idle-clean', 'git-dirty', 'running-task', 'multi-subagent', 'terminal-active', 'blocked-recovery', 'completed-recently'];
   return scenarios.includes(value as SessionActivityMockScenario) ? value as SessionActivityMockScenario : 'idle-clean';
 }
@@ -248,10 +287,19 @@ function mockSnapshot(sessionKey: string, scenario: SessionActivityMockScenario)
     snapshot.availability.tasks = true;
   }
   if (scenario === 'multi-subagent') {
+    /* Ids and `childSessionKey`s match what the `rail` run-script emits and what
+     * `DEMO_CHILD_TRANSCRIPTS` in mock-host-bridge serves. Two consequences,
+     * both wanted: clicking a row opens a populated transcript instead of the
+     * "no transcript" arm, and a live run settles THESE rows rather than
+     * appending a second copy of every worker — which is what hydrating from a
+     * host snapshot and then receiving lifecycle events does in production.
+     * Both start running so the section survives the completed-item retention
+     * window while the demo is being looked at. */
     snapshot.subagents = [
-      { id: 'mock-research', role: 'Researcher', task: 'Inspect existing contracts', status: 'verified', updatedAt: now - 5_000, source: 'snapshot' },
-      { id: 'mock-builder', role: 'Builder', task: 'Implement the activity panel', status: 'started', updatedAt: now, source: 'snapshot' },
+      { id: 'rail-node-1', role: 'explorer', task: '检索 rail 相关渲染路径与既有组件', status: 'started', childSessionKey: 'agent:explorer:rail-scout', agentId: 'explorer', updatedAt: now - 5_000, source: 'snapshot' },
+      { id: 'rail-node-2', role: 'reviewer', task: '核对 rail 与 composer 下拉的样式一致性', status: 'started', childSessionKey: 'agent:reviewer:rail-review', agentId: 'reviewer', updatedAt: now, source: 'snapshot' },
     ];
+    snapshot.availability.subagents = true;
   }
   if (scenario === 'terminal-active') {
     snapshot.terminals = [{ id: 'mock-terminal', kind: 'interactive', cwd: 'C:\\workspace', status: 'running', updatedAt: now }];
@@ -275,7 +323,10 @@ function scheduleMock(sessionKey: string, scenario: SessionActivityMockScenario,
     timers.push(setTimeout(() => apply({ channel: 'runtime', payload: { type: 'run.ended', runId: 'mock-run', sessionKey, status: 'completed', endedAt: Date.now() } }), 4_500));
   }
   if (scenario === 'multi-subagent') {
-    timers.push(setTimeout(() => apply({ channel: 'subagent', payload: { runId: 'mock-child', sessionKey, roleName: 'Builder', task: 'Implement the activity panel', status: 'completed', ts: Date.now() } }), 3_200));
+    // `taskNodeId` must equal the seeded row's id, or `subagentLifecycleIdentityKey`
+    // derives a different key and the event appends a duplicate instead of
+    // settling the row that is already on screen.
+    timers.push(setTimeout(() => apply({ channel: 'subagent', payload: { runId: 'mock-child', taskNodeId: 'rail-node-1', sessionKey, roleName: 'explorer', childSessionKey: 'agent:explorer:rail-scout', agentId: 'explorer', status: 'completed', summary: '已定位 3 处可复用组件', ts: Date.now() } }), 3_200));
   }
   mockTimers.set(sessionKey, timers);
 }
@@ -291,7 +342,7 @@ export type SessionActivityState = {
 
 export const useSessionActivityStore = create<SessionActivityState>((set, get) => {
   const applyEvent = (event: SessionActivityEvent) => {
-    const key = eventSessionKey(event.payload as unknown as Record<string, unknown>);
+    const key = routingSessionKey(event);
     if (!key) return;
     const current = get().snapshots[key] ?? createEmptySessionActivitySnapshot(key);
     const next = reduceSessionActivity(current, event);
@@ -332,6 +383,11 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
 
       if (isMockMode) {
         sessionSnapshots.set(sessionKey, initial);
+        /* Git comes from `git.status()` even under mock, because the mock host
+         * bridge answers that call with the same fixture the review tab reads.
+         * Seeding a second git object into each scenario would let the status
+         * card's changed-line figures disagree with the diff they link to. */
+        void get().refreshGit(workspaceId, sessionKey);
         return initial;
       }
 
