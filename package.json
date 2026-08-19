@@ -57,6 +57,7 @@
     "test:e2e:chat-cache-live": "pnpm run build:vite && playwright test tests/e2e/chat-cache-live-model.spec.ts",
     "test:e2e:headed": "pnpm run build:vite && playwright test --headed",
     "runtime-lifecycle-audit": "node scripts/check-runtime-lifecycle-audit.mjs",
+    "verify:runtime-lifecycle-ga": "node scripts/verify-runtime-lifecycle-packaged-electron.mjs && node scripts/runtime-lifecycle-goal-wake-canary.mjs",
     "harness": "pnpm --filter @verse-claw/harness start --",
     "harness:ci": "pnpm harness list && pnpm harness validate --spec harness/specs/scenarios/gateway-backend-communication.md && pnpm harness validate --spec harness/specs/tasks/fix-chat-history-gateway-timeout.example.md --no-diff && pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run && pnpm exec vitest run tests/unit/harness-specs.test.ts tests/unit/harness-git.test.ts && pnpm catalogs:check && pnpm agent-dev:audit",
     "agent-map:validate": "node scripts/agent-map-validation.mjs",
