@@ -240,6 +240,8 @@ export type RuntimeFeatureConfig = {
     shadow?: boolean;
     /** Allow an explicitly provided append-only shadow store to persist event-log records. */
     persist?: boolean;
+    /** Allow candidate fact generation behind the memory pilot gate. */
+    candidateGeneration?: boolean;
   };
   /** Checkpoint serializer shadow flags. Defaults off. */
   checkpointSerializer?: {
