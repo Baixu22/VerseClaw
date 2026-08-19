@@ -532,7 +532,8 @@
     "shadowKey": "Pseudonymization key",
     "shadowKeyPlaceholder": "Key for offline evaluation evidence",
     "shadowReport": "Generate report",
-    "shadowRunning": "Generating…"
+    "shadowRunning": "Generating…",
+    "dcsWriteLabel": "DCS write"
   },
   "governance": {
     "title": "Governance",
@@ -621,5 +622,43 @@
     "okfImport": "OKF import failed.",
     "search": "Search failed.",
     "get": "Failed to load knowledge page."
+  },
+  "lifecycle": {
+    "title": "Page lifecycle governance",
+    "description": "Create governed update/merge/archive/revoke/delete/restore proposals for memory-wiki pages. Every apply re-checks expectedRevision and returns an EffectReceipt.",
+    "operationLabel": "Operation",
+    "targetLabel": "Target page lookup",
+    "targetPlaceholder": "notes/target.md",
+    "mergeSourceLabel": "Merge source lookup",
+    "mergeSourcePlaceholder": "notes/source.md",
+    "titleLabel": "Draft title",
+    "bodyLabel": "Body / diff",
+    "reasonLabel": "Policy reason",
+    "propose": "Create lifecycle proposal",
+    "policyBoundary": "Proposals require explicit user confirmation before the wiki RPC runs.",
+    "previewTitle": "Preview / diff",
+    "previewEmpty": "No lifecycle preview yet.",
+    "expectedRevision": "expectedRevision",
+    "idempotencyKey": "idempotencyKey",
+    "receiptTitle": "EffectReceipt",
+    "receiptEmpty": "Apply a proposal to see its EffectReceipt here.",
+    "historyTitle": "Receipt history",
+    "historyEmpty": "No governed receipts yet.",
+    "operation": {
+      "update": "Update",
+      "merge": "Merge",
+      "archive": "Archive",
+      "revoke": "Revoke",
+      "delete": "Delete",
+      "restore": "Restore"
+    },
+    "compensation": {
+      "compensated": "Compensated",
+      "partial": "Partial compensation",
+      "unrecoverable": "Unrecoverable"
+    },
+    "toasts": {
+      "proposed": "Lifecycle proposal created and awaiting confirmation."
+    }
   }
 }

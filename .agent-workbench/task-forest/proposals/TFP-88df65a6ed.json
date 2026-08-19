@@ -1,0 +1,63 @@
+{
+  "applied_at": "2026-08-17T15:24:22.925616Z",
+  "base_graph_hash": "1163fccb29e6d77e773a507851971ad5fd3fe2ef68c3089383d29683f0e32c00",
+  "base_summary": {
+    "edge_count": 148,
+    "node_count": 80,
+    "workspace_path": "D:\\verse_claw_worktree_knowledge"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0075",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/knowledge-system-ks04-chat-dcs-single-path.md",
+          "docs/dev/knowledge-system-unification/evidence/KS-04-CHAT-DCS-ACCEPTANCE.md",
+          "openclaw_runtime/src/context-engine/chat-knowledge-intent.test.ts (7/7)",
+          "tests/unit/chat-knowledge-scope.test.ts (8/8)",
+          "test:dcs 344/344, rc03/context 49/49, host-api-facade 43/43"
+        ],
+        "next_action": "After user confirmation apply this proposal, validate/export, then start TF-0076 KS-05 experience closed loop.",
+        "summary": "KS-04 Chat/DCS single consumption path implemented. Renderer refs are typed retrieval intent only; Main no longer calls wiki.get or splices knowledge bodies into chat.send; Gateway resolves through memory-wiki / Role Memory / SEKB source adapters and injects admitted refs as dcs-knowledge ContextCandidates; denied refs return visible reasons."
+      },
+      "id": "TF-0075"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0076",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "KS-05 experience closed loop: failure task -> redacted trajectory -> deterministic gate -> Inbox candidate -> duplicate/conflict detection -> human confirm/reject -> next fresh session recalls Principle via KS-04 single path -> cited/adopted/outcome -> effectiveness update -> delete/revoke prevents recall."
+      },
+      "id": "TF-0076"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0070",
+      "progress": 50,
+      "status": "in_progress"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "Unified knowledge system lifecycle: KS-00..KS-04 implemented and package-gated. KS-04 awaits user confirmation before Task Forest apply. Next serial node after confirmation is KS-05 (TF-0076). Product locks remain false."
+      },
+      "id": "TF-0070"
+    }
+  ],
+  "created_at": "2026-08-17T14:07:14.620807Z",
+  "proposal_id": "TFP-88df65a6ed",
+  "rationale": "KS-04 Chat/DCS single consumption path implemented and package-level gates passed (spec validate without --no-diff, root/runtime focused tests, test:dcs, typecheck, contract, db check, builds, comms replay/compare, changed-file ESLint). Main no longer pre-reads wiki.get or splices refs into the prompt; Gateway resolves typed refs through owner source adapters and injects admitted refs through the dcs-knowledge ContextCandidate path. Denied refs return visible reasons. TF-0075 closes done(100%); TF-0076 becomes the single ready next node and must wait for user confirmation of KS-04 before starting.",
+  "session_id": "knowledge-system-ks04-chat-dcs-single-path-20260817",
+  "status": "applied"
+}

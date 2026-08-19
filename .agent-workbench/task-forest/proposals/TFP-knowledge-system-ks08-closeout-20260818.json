@@ -1,0 +1,67 @@
+{
+  "applied_at": "2026-08-18T15:07:47.938399Z",
+  "base_graph_hash": "a648a15739f0c559540d667be0c0e7dcc5298624dbcdfd3fe06817a847a7bc3d",
+  "base_summary": {
+    "edge_count": 148,
+    "node_count": 80,
+    "workspace_path": "D:\\verse_claw_worktree_knowledge"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0079",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/knowledge-system-ks08-ui-observability.md context + validate PASS (no --no-diff)",
+          "docs/dev/knowledge-system-unification/evidence/KS-08-UI-OBSERVABILITY-ACCEPTANCE.md",
+          "openclaw_runtime/extensions/memory-wiki/src/apply-lifecycle.test.ts 6/6 real temp-vault owner mutations with read-back",
+          "tests/unit/knowledge-lifecycle.test.ts 8/8 Main RPC wiring/CAS/idempotency/receipt; knowledge-api 33/33; static gate 2/2; chat-knowledge-scope 8/8; knowledge-page 8/8",
+          "tests/e2e/knowledge-lifecycle.spec.ts 6/6 + tests/e2e/knowledge-hub.spec.ts 4/4",
+          "test:dcs 344/344; typecheck node/web success; contract:check; db:kysely:check; build:vite; runtime build first-run success; comms replay/compare PASS; changed-file ESLint 0 errors/34 existing warnings; git diff --check clean",
+          "Honest residual: full-repo lint/test baseline red recorded; E2E patches gatewayManager.rpc with an Electron test stub while exercising real Main createKnowledgeApi"
+        ],
+        "next_action": "After user confirmation and proposal-apply, start only TF-0080 / KS-09 canary, optimization and graduation. KS-09 must keep product locks false and must not claim default-on/GA without E4/E5 product evidence.",
+        "progress_source": "manual",
+        "summary": "KS-08 UI and observability convergence implemented and package-gated. Both KS-06 carry-over items are closed: memory-wiki wiki.update/merge/archive/revoke/delete/restore real owner mutations + Main RPC wiring, and Knowledge page lifecycle UI with six per-operation Electron E2E. Additional KS-07 SourceSet visibility and honest dcsWrite display are also closed."
+      },
+      "id": "TF-0079"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0080",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "KS-09 Canary, optimization and graduation, now the single ready next serial node. Evaluate six surfaces independently (explicit/pinned Knowledge refs, automatic Knowledge retrieval, Role Memory retrieval, SEKB experience retrieval, semantic Source Set synthesis, post-task candidate capture) through shadow -> opt-in -> canary -> soak -> product approval -> consider-default-on. E1-E3 may use committed corpus/unit/integration/E2E; E4 requires real provider/user task; E5 requires soak + product approval. Missing evidence must be written not-evaluated/blocked."
+      },
+      "id": "TF-0080"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0070",
+      "progress": 90,
+      "status": "in_progress"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress_source": "manual",
+        "summary": "Unified knowledge system lifecycle: KS-00..KS-08 implemented and package-gated. KS-08 closes both KS-06 carry-over items plus the KS-07 SourceSet visibility carry-over. TF-0079 done, TF-0080 (KS-09) ready, KS-08 close-out proposal is saved and waits for user confirmation. Product locks remain false."
+      },
+      "id": "TF-0070"
+    }
+  ],
+  "created_at": "2026-08-18T14:53:57.781037Z",
+  "proposal_id": "TFP-knowledge-system-ks08-closeout-20260818",
+  "rationale": "KS-08 UI and observability convergence implemented and package-gated. memory-wiki plugin now owns wiki.update/merge/archive/revoke/delete/restore with real vault mutations and revision CAS; Electron Main routes lifecycle ReviewBundle proposals to the matching wiki.* RPC with expectedRevision and idempotencyKey, writes governance operation receipts, and exposes receipt history through host-api; Knowledge page adds a lifecycle panel, EffectReceipt/compensation display, receipt history, and honest dcsWrite status; all new UI text is en/zh/ja/ru. Gates passed: harness validate, extension owner mutation 6/6, root lifecycle/api/static/chat-scope 51/51 + knowledge-page 8/8, test:dcs 344/344, typecheck node/web success, contract:check, db:kysely:check, build:vite, lifecycle Electron E2E 6/6 + knowledge-hub 4/4, runtime build first-run success, comms replay/compare PASS, changed-file ESLint 0 errors/34 existing warnings, git diff --check clean. Full-repo lint/test baseline red recorded. TF-0079 closes done(100%), TF-0080 becomes ready KS-09, TF-0070 moves to 90%.",
+  "session_id": "knowledge-system-ks08-ui-observability-20260818",
+  "status": "applied"
+}

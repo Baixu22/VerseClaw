@@ -2,8 +2,8 @@ import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { logger } from '../utils/logger';
 import { handleMockChatSend } from './mock-provider';
-import { findStewardNotesForReferences } from './knowledge-api';
 import { isRecord } from './payload-utils';
+import type { ChatKnowledgeDenial } from '../../shared/host-api/contract';
 import { loadTaskLedgerSnapshot } from './task-ledger-service';
 import { getResourceTracker } from './resource-tracker';
 import { evaluateTurnBudget } from '../../shared/agent-resource-limits';
@@ -20,14 +20,6 @@ const VISION_MIME_TYPES = new Set([
 ]);
 
 const CONTEXT_FRAGMENT_LIMITS = {
-  knowledgeMetadataChars: 8_000,
-  knowledgeReadCitationsChars: 6_000,
-  // Area 5 §3.3 — Steward Notes injection budget. Smaller than the metadata
-  // and citations blocks: notes are short persisted-state warnings/flags
-  // (typically 1-3 lines per reference), not full page content. 2_000 chars
-  // covers ~10 references with a warning each while keeping the chat send
-  // path fast and the prompt budget impact bounded.
-  knowledgeStewardNotesChars: 2_000,
   taskLedgerMetadataChars: 4_000,
   toolUiResponseContractChars: 2_000,
 } as const;
@@ -92,7 +84,6 @@ type NormalizedKnowledgeReference = {
   pageId?: string;
   pagePath?: string;
   sourcePath?: string;
-  snippet?: string;
   attachKind?: 'manual' | 'suggested' | 'auto';
   routingReason?: string;
   confidence?: number;
@@ -117,7 +108,6 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
     const pageId = typeof entry.pageId === 'string' && entry.pageId.trim() ? entry.pageId.trim() : undefined;
     const pagePath = typeof entry.pagePath === 'string' && entry.pagePath.trim() ? entry.pagePath.trim() : undefined;
     const sourcePath = typeof entry.sourcePath === 'string' && entry.sourcePath.trim() ? entry.sourcePath.trim() : undefined;
-    const snippet = typeof entry.snippet === 'string' && entry.snippet.trim() ? entry.snippet.trim().slice(0, 800) : undefined;
     const attachKind = entry.attachKind === 'suggested' || entry.attachKind === 'auto' ? entry.attachKind : entry.attachKind === 'manual' ? 'manual' : undefined;
     const routingReason = typeof entry.routingReason === 'string' && entry.routingReason.trim() ? entry.routingReason.trim() : undefined;
     const confidence = typeof entry.confidence === 'number' && Number.isFinite(entry.confidence) ? entry.confidence : undefined;
@@ -131,7 +121,6 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
       ...(pageId ? { pageId } : {}),
       ...(pagePath ? { pagePath } : {}),
       ...(sourcePath ? { sourcePath } : {}),
-      ...(snippet ? { snippet } : {}),
       ...(attachKind ? { attachKind } : {}),
       ...(routingReason ? { routingReason } : {}),
       ...(typeof confidence === 'number' ? { confidence } : {}),
@@ -139,147 +128,6 @@ function normalizeKnowledgeReferences(value: unknown): NormalizedKnowledgeRefere
       ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
     }];
   }).slice(0, 8);
-}
-
-function applyKnowledgeMetadata(message: string, knowledgeScope: 'none' | 'memory' | 'wiki' | 'all', knowledgeMode: 'manual' | 'suggest' | 'auto-read', knowledgeReferences: NormalizedKnowledgeReference[] = []): string {
-  if (knowledgeScope === 'none' && knowledgeReferences.length === 0) return message;
-  const corpus = knowledgeScope === 'memory' ? 'memory' : knowledgeScope === 'wiki' ? 'wiki' : knowledgeScope === 'all' ? 'all' : 'wiki';
-  const instruction = knowledgeScope === 'memory'
-    ? 'Read durable memory when prior preferences, decisions, or remembered work may be relevant.'
-    : knowledgeScope === 'wiki'
-      ? 'Read compiled wiki knowledge when accumulated project knowledge, source-backed notes, or syntheses may be relevant.'
-      : knowledgeScope === 'all'
-        ? 'Read durable memory and compiled wiki knowledge when either corpus may be relevant.'
-        : 'Use the selected knowledge references for this turn when relevant.';
-  const metadata = JSON.stringify({
-    clawxKnowledgeScope: knowledgeScope,
-    clawxKnowledgeMode: knowledgeMode,
-    corpus,
-    access: 'read-only',
-    allowedKnowledgeActions: ['search', 'get'],
-    deniedKnowledgeActions: ['apply', 'update', 'delete', 'archive', 'merge'],
-    selectedKnowledgeReferences: knowledgeReferences,
-    instruction: `${instruction} This scope is read-only: use knowledge search/get only. If selectedKnowledgeReferences is non-empty, prefer knowledge.get with each lookup before answering when relevant. Do not save, modify, merge, archive, delete, or apply knowledge because of this scope or these references. If something seems worth saving, suggest it or create a pending draft only when the user explicitly asks; any write still requires user confirmation.`,
-  });
-  const block = capContextText(
-    `Conversation info (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
-    CONTEXT_FRAGMENT_LIMITS.knowledgeMetadataChars,
-  );
-  return message ? `${block}\n\n${message}` : block;
-}
-
-function summarizeKnowledgeReadResult(reference: NormalizedKnowledgeReference, result: unknown): Record<string, unknown> {
-  const record = isRecord(result) ? result : {};
-  const found = record.found !== false;
-  const content = typeof record.content === 'string'
-    ? record.content
-    : typeof record.text === 'string'
-      ? record.text
-      : typeof reference.snippet === 'string'
-        ? reference.snippet
-        : '';
-  return {
-    id: reference.id,
-    title: reference.title,
-    lookup: reference.lookup,
-    corpus: reference.corpus ?? 'wiki',
-    found,
-    pageId: typeof record.pageId === 'string' ? record.pageId : reference.pageId,
-    pagePath: typeof record.pagePath === 'string' ? record.pagePath : reference.pagePath,
-    sourcePath: typeof record.sourcePath === 'string' ? record.sourcePath : reference.sourcePath,
-    citation: content.slice(0, 600),
-  };
-}
-
-async function readSelectedKnowledgeReferences(
-  gatewayManager: GatewayManager,
-  knowledgeScope: 'none' | 'memory' | 'wiki' | 'all',
-  knowledgeMode: 'manual' | 'suggest' | 'auto-read',
-  knowledgeReferences: NormalizedKnowledgeReference[],
-): Promise<Array<Record<string, unknown>>> {
-  if (knowledgeMode !== 'auto-read' || knowledgeReferences.length === 0) return [];
-  if (knowledgeScope === 'none' && knowledgeReferences.every((reference) => !reference.corpus)) return [];
-  const reads: Array<Record<string, unknown>> = [];
-  for (const reference of knowledgeReferences.slice(0, 5)) {
-    try {
-      const result = await gatewayManager.rpc('wiki.get', {
-        lookup: reference.lookup,
-        corpus: reference.corpus === 'memory' || reference.corpus === 'all' ? reference.corpus : knowledgeScope === 'memory' || knowledgeScope === 'all' ? knowledgeScope : 'wiki',
-        lineCount: 80,
-      }, 30000);
-      reads.push(summarizeKnowledgeReadResult(reference, result));
-    } catch (error) {
-      reads.push({
-        id: reference.id,
-        title: reference.title,
-        lookup: reference.lookup,
-        corpus: reference.corpus ?? knowledgeScope,
-        found: false,
-        error: String(error),
-      });
-    }
-  }
-  return reads;
-}
-
-function applyKnowledgeReadCitations(message: string, reads: Array<Record<string, unknown>>): string {
-  if (reads.length === 0) return message;
-  const metadata = JSON.stringify({
-    clawxKnowledgeReads: reads,
-    instruction: 'These read-only knowledge references were fetched before this turn. Treat them as citations/provenance hints, cite them when used, and do not modify knowledge from this metadata.',
-  });
-  const block = capContextText(
-    `Knowledge read citations (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
-    CONTEXT_FRAGMENT_LIMITS.knowledgeReadCitationsChars,
-  );
-  return message ? `${block}\n\n${message}` : block;
-}
-
-/**
- * Area 5 §3.3 — Steward Notes injection. Third metadata block alongside
- * `applyKnowledgeMetadata` and `applyKnowledgeReadCitations`, carrying the
- * Steward's persisted opinions (warnings, review status, suggestions) for
- * the references actually attached this turn.
- *
- * Notes come from persisted state only — NO turn-time LLM call. The block:
- *   - is absent when `notes` is empty (zero overhead for non-KB turns)
- *   - respects the 2_000-char cap (older notes truncated by `capContextText`)
- *   - carries an explicit "do not modify knowledge" instruction (read-only
- *     discipline extends unchanged from the existing two blocks)
- *   - attributes each note to the steward variant that produced it (so the
- *     model can weigh conflicting opinions from different variants)
- *
- * Lookup failure for any reference → that reference's notes are skipped
- * (callers filter before calling). The block never throws.
- */
-function applyKnowledgeStewardNotes(
-  message: string,
-  notes: Array<{
-    referenceId: string;
-    roleId: string;
-    warnings: string[];
-    reviewStatus?: 'steward_reviewed' | 'unreviewed';
-    suggestion?: 'merge' | 'archive' | null;
-  }>,
-): string {
-  if (notes.length === 0) return message;
-  // Filter out notes with no signal (empty warnings + no suggestion + unreviewed).
-  // This keeps the block absent when none of the attached refs have steward state.
-  const meaningful = notes.filter((note) => (
-    note.warnings.length > 0
-    || note.suggestion !== undefined && note.suggestion !== null
-    || note.reviewStatus === 'steward_reviewed'
-  ));
-  if (meaningful.length === 0) return message;
-  const metadata = JSON.stringify({
-    clawxKnowledgeStewardNotes: meaningful,
-    instruction: 'Advisory steward notes about the attached references. Consider the warnings when citing; do not modify knowledge because of these notes. Each note names the steward variant (roleId) that produced it. Notes are persisted review state, not live steward judgment.',
-  });
-  const block = capContextText(
-    `Knowledge steward notes (untrusted metadata): \`\`\`json\n${metadata}\n\`\`\``,
-    CONTEXT_FRAGMENT_LIMITS.knowledgeStewardNotesChars,
-  );
-  return message ? `${block}\n\n${message}` : block;
 }
 
 async function applyTaskLedgerContext(
@@ -410,20 +258,7 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         const knowledgeScope = normalizeKnowledgeScope(body.knowledgeScope);
         const knowledgeMode = normalizeKnowledgeMode(body.knowledgeMode);
         const knowledgeReferences = normalizeKnowledgeReferences(body.knowledgeReferences);
-        const knowledgeReads = await readSelectedKnowledgeReferences(
-          gatewayManager,
-          knowledgeScope,
-          knowledgeMode,
-          knowledgeReferences,
-        );
-        // Area 5 §3.3 — Load persisted steward notes for the attached references.
-        // Best-effort: never throws; absent when no drafts match (zero overhead
-        // for non-KB turns). Reads only persisted state — no turn-time LLM call.
-        const stewardNotes = await findStewardNotesForReferences(knowledgeReferences);
         let message = applyToolUiResponseContract(typeof body.message === 'string' ? body.message : '');
-        message = applyKnowledgeMetadata(message, knowledgeScope, knowledgeMode, knowledgeReferences);
-        message = applyKnowledgeReadCitations(message, knowledgeReads);
-        message = applyKnowledgeStewardNotes(message, stewardNotes);
         message = await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
@@ -491,6 +326,15 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         ) {
           rpcParams.inputMode = body.inputMode;
         }
+        // KS-04: renderer refs are untrusted retrieval intent. Main forwards
+        // typed refs only; runtime resolves them through DCS owner adapters.
+        if (knowledgeScope !== 'none' || knowledgeReferences.length > 0) {
+          rpcParams.knowledgeScope = knowledgeScope;
+          rpcParams.knowledgeMode = knowledgeMode;
+          if (knowledgeReferences.length > 0) {
+            rpcParams.knowledgeReferences = knowledgeReferences;
+          }
+        }
         // Area 2 §3.2: forward turn-scoped model override to runtime chat.send.
         // Empty/null means "no turn override" — omit so resolution falls through.
         if (typeof body.modelRef === 'string' && body.modelRef.trim()) {
@@ -526,7 +370,21 @@ export function createChatApi({ gatewayManager }: { gatewayManager: GatewayManag
         const response = isRecord(result) && typeof result.runId === 'string'
           ? { runId: result.runId }
           : undefined;
-        return { success: true, ...(response ? { result: response } : {}) };
+        const knowledgeDenials = isRecord(result) && Array.isArray(result.knowledgeDenials)
+          ? result.knowledgeDenials
+              .filter((entry): entry is ChatKnowledgeDenial =>
+                isRecord(entry) &&
+                typeof entry.id === 'string' &&
+                typeof entry.title === 'string' &&
+                typeof entry.lookup === 'string' &&
+                typeof entry.reason === 'string' &&
+                typeof entry.visibleReason === 'string')
+          : [];
+        return {
+          success: true,
+          ...(response ? { result: response } : {}),
+          ...(knowledgeDenials.length > 0 ? { knowledgeDenials } : {}),
+        };
       } catch (error) {
         logger.error(`[chat:sendWithMedia] Error: ${String(error)}`);
         return { success: false, error: String(error) };

@@ -627,19 +627,20 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+      "fit_confidence": 0.96,
+      "user_goal": "交付可直接开发的统一知识系统架构与完整开发路线",
       "validation_plan": [
-        "逐包 Harness 与独立 Agent Engineering Acceptance",
-        "最终全量工程 gate 和 manifest",
-        "用户执行 H-01 至 H-06"
+        "逐包 Harness 与包级 diff ownership",
+        "unit/integration/Electron E2E/comms 门禁",
+        "真实 retrieval/adoption/outcome 与 session residual 证据"
       ],
-      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+      "why_not_enough": "工程闭环完成后仍需要 real corpus、真人 A/B、soak 和产品批准才能讨论 default-on",
+      "why_this_task": "覆盖治理、owner commit、DCS 消费、Chat 使用、经验反馈、删除和产品验收的完整闭环"
     },
     "alignment_records": [
       "TFA-32a1af6c38",
-      "TFA-50501c2045"
+      "TFA-50501c2045",
+      "TFA-da6710c783"
     ],
     "assumptions": [
       "source openclaw_runtime 继续作为收敛能力实现路径",
@@ -670,10 +671,10 @@
     "difficulty": "very_high",
     "estimated_total_minutes": 19200,
     "evidence": [
-      "docs/dev/unified-agent-system/runtime-convergence/",
-      "harness/specs/tasks/runtime-authority-convergence-program.md",
-      "C:/Users/27933/Desktop/result/final/dcs-first-architecture-synthesis-final-2026-08-02.md",
-      "docs/dev/full-chain-maturity-audit-2026-08-02.md"
+      "docs/dev/unified-agent-system/runtime-convergence/README.md (done, user-accepted)",
+      "docs/dev/unified-agent-system/runtime-convergence/STATUS.md (program_status=done, human_verdict=accepted after KS-00 sync)",
+      "artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/final-report.json",
+      "Task Forest children TF-0070..TF-0080 unified knowledge system serial route"
     ],
     "execution_hints": [
       "唯一入口为 docs/dev/unified-agent-system/runtime-convergence/README.md",
@@ -682,7 +683,7 @@
     ],
     "id": "TF-0010",
     "kind": "global_task",
-    "next_action": "用户确认并应用本提案后，只启动 RC-00。",
+    "next_action": "Execute TF-0075 KS-04 only after user confirmation; keep one ready node.",
     "non_goals": [
       "default-on、GA、发布批准或 TF-0006 解阻",
       "新增 Agent loop、workflow engine、memory/context store、协议、telemetry store 或 LLM router",
@@ -690,7 +691,7 @@
       "自动 SEKB 写回或副作用 replay"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "停止通过新增通用模块证明产品价值，把现有工程基础收敛为唯一权威主路径和可验收的 Operator 产品闭环。",
     "remaining_minutes_max": null,
@@ -704,7 +705,7 @@
       "backend communication 改动必须引用 gateway-backend-communication"
     ],
     "source_sessions": [],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "未登记 semantic mutation 0",
       "重复副作用 0",
@@ -712,9 +713,9 @@
       "自动化 human/live 计数误增 0",
       "必需工程门禁通过率 100%"
     ],
-    "summary": "复用 OpenClaw 运行时、插件槽、MCP、OTel 和既有域执行器，按证据消除平行 Workflow/Context/Memory/Tool/Telemetry authority，并以跨入口 Context/Effect/Recovery lineage 形成 Operator Desktop 差异化。",
+    "summary": "Runtime authority convergence program closed with user acceptance; product locks stay false. Unified knowledge system lifecycle is the active serial child, currently KS-04 ready after KS-00..KS-03 done.",
     "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-    "updated_at": "2026-08-02T13:08:00.002884Z"
+    "updated_at": "2026-08-17T00:55:31.354804Z"
   },
   "TF-0011": {
     "acceptance_criteria": [
@@ -1953,14 +1954,20 @@
       "引用、保存草稿、提交复核完整可用"
     ],
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "交付可直接开发的统一知识系统架构与完整开发路线",
+      "validation_plan": [
+        "逐包 Harness 与包级 diff ownership",
+        "unit/integration/Electron E2E/comms 门禁",
+        "真实 retrieval/adoption/outcome 与 session residual 证据"
+      ],
+      "why_not_enough": "工程闭环完成后仍需要 real corpus、真人 A/B、soak 和产品批准才能讨论 default-on",
+      "why_this_task": "覆盖治理、owner commit、DCS 消费、Chat 使用、经验反馈、删除和产品验收的完整闭环"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-da6710c783"
+    ],
     "assumptions": [],
     "confidence": 0.68,
     "context_tags": [],
@@ -1991,7 +1998,7 @@
     "success_metrics": [],
     "summary": "拆分 Knowledge 单体页，以 Library 和 Review Queue 为首屏，并将高级治理和来源工具按需披露。",
     "title": "Knowledge Library 与 Review Queue 收敛",
-    "updated_at": "2026-07-31T11:00:30.784356Z"
+    "updated_at": "2026-08-17T00:42:19.849694Z"
   },
   "TF-0027": {
     "acceptance_criteria": [
@@ -2548,14 +2555,20 @@
       "delete/correction propagation 通过且 SEKB 自动写回 0"
     ],
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "交付可直接开发的统一知识系统架构与完整开发路线",
+      "validation_plan": [
+        "逐包 Harness 与包级 diff ownership",
+        "unit/integration/Electron E2E/comms 门禁",
+        "真实 retrieval/adoption/outcome 与 session residual 证据"
+      ],
+      "why_not_enough": "工程闭环完成后仍需要 real corpus、真人 A/B、soak 和产品批准才能讨论 default-on",
+      "why_this_task": "覆盖治理、owner commit、DCS 消费、Chat 使用、经验反馈、删除和产品验收的完整闭环"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-da6710c783"
+    ],
     "assumptions": [],
     "confidence": 0.8,
     "context_tags": [],
@@ -2566,26 +2579,27 @@
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
-      "RC-06D accepted; RC-07 memory/context slot convergence starts",
-      "RC-07 independent Verifier VERDICT=pass (after NO-GO fix): slot-convergence classification + config-normalization production wiring, single memory slot owner, single contextEngine slot (CRK hosts DCS assembly), parallel writers 0, SEKB auto-writeback 0, 12+40+10 tests"
+      "RC-07 independent Verifier VERDICT=pass after NO-GO fix",
+      "single configured memory slot owner + single DCS contextEngine owner",
+      "parallel writers 0; SEKB auto-writeback 0"
     ],
     "execution_hints": [],
     "id": "TF-0038",
     "kind": "task",
     "non_goals": [],
     "priority": 2,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
     "remaining_minutes_min": null,
     "requirements": [],
     "source_sessions": [],
-    "status": "proposed",
+    "status": "done",
     "success_metrics": [],
-    "summary": "强制一个 configured memory slot owner 和一个 DCS contextEngine owner；其余机制降为 candidate、proposal、benchmark 或 projection。",
+    "summary": "RC-07 Memory and Context slot convergence closed from accepted runtime-convergence evidence. Unified knowledge system KS nodes carry the follow-on lifecycle work under TF-0070.",
     "title": "RC-07 Memory 与 Context 插件槽收敛",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-08-17T00:55:31.354804Z"
   },
   "TF-0039": {
     "acceptance_criteria": [
@@ -4819,5 +4833,837 @@
     "summary": "在所有工程前置完成后，采集 reviewed paired baseline/VerseShell 真实 evidence、operator kill/rollback、artifact recovery、soak 和平台握手，并输出 continue/reduce/stop 建议。",
     "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决",
     "updated_at": "2026-08-13T17:21:51.259920Z"
+  },
+  "TF-0070": {
+    "acceptance_criteria": [
+      "KS-00 至 KS-09 串行完成",
+      "错误 apply、重复 effect、假 persisted、删除 residual 和隐藏 prompt mutation均为 0",
+      "Wiki、Memory、SEKB 各只有一个 canonical writer",
+      "工程通过不外推为 default-on 或 GA"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "交付统一知识系统而不是独立组件分支",
+      "validation_plan": [
+        "task-forest validate/export",
+        "逐包 Harness",
+        "E1-E5 分级证据"
+      ],
+      "why_not_enough": "仍需逐包实现和真实产品证据",
+      "why_this_task": "一个 milestone 统一承载全部串行工作包并保持现有 runtime authority"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "memory-wiki、Role Memory、SEKB 和 DCS 保留现有 owner",
+      "现有 openclaw-state SQLite 可承载 governance metadata",
+      "Task Forest proposal 需用户确认后应用"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "knowledge-system",
+      "governance",
+      "dcs",
+      "memory",
+      "sekb",
+      "session-lifecycle"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "一个治理入口和 owner matrix",
+      "一个 DCS/Provider Guard 消费路径",
+      "一条人工确认的经验复用闭环",
+      "包级可恢复、可回滚、可验收"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 42000,
+    "evidence": [
+      "docs/dev/knowledge-system-unification-development-plan.zh-CN.md",
+      "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md",
+      "docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md"
+    ],
+    "execution_hints": [
+      "入口为 docs/dev/knowledge-system-unification-development-plan.zh-CN.md",
+      "先完成 KS-00，只允许首个未完成节点 ready",
+      "产品锁始终保持 false"
+    ],
+    "id": "TF-0070",
+    "kind": "milestone",
+    "non_goals": [
+      "联合系统 GA",
+      "新向量数据库或 sidecar",
+      "第二 memory/context authority",
+      "自动长期写回"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "停止平行组件扩张，形成一个从候选治理到会话使用、经验反馈和可验证删除的统一知识系统。",
+    "remaining_minutes_max": 52000,
+    "remaining_minutes_min": 26000,
+    "requirements": [
+      "任一时刻只有一个 KS 节点 ready/in_progress",
+      "不新增数据库或第二 authority",
+      "普通 Chat 自动捕获、SEKB 自动写回、Runtime Memory 默认注入保持关闭",
+      "每包使用独立 Harness task spec 和证据"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "并行 active KS 包 0",
+      "未确认 durable write 0",
+      "active memory writer 1",
+      "session delete residual 0",
+      "必需包级 gate 通过率 100%"
+    ],
+    "summary": "Unified knowledge system lifecycle engineering loop complete: KS-00..KS-09 implemented and package-gated. KS-09 produced six per-surface canary/graduation reports with shadow/opt-in stages and honest E4/E5 not-evaluated/blocked. Default-on/GA remains an independent product-approval gate; product locks remain false.",
+    "title": "统一知识系统生命周期（治理、会话使用与经验闭环）",
+    "updated_at": "2026-08-18T16:25:50.337260Z"
+  },
+  "TF-0071": {
+    "acceptance_criteria": [
+      "ADR/规划/规格无冲突",
+      "KS-01 至 KS-03 规格结构有效",
+      "没有新增 authority"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "KS-00 是首个节点，不依赖前序 KS 包"
+    ],
+    "confidence": 0.94,
+    "context_tags": [
+      "knowledge-system",
+      "ks00"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "冻结 authority、schema、状态源、dirty WIP 归属和执行规格。"
+    ],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 960,
+    "evidence": [
+      "docs/dev/knowledge-system-unification-development-plan.zh-CN.md",
+      "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md",
+      "docs/dev/knowledge-system-unification/evidence/KS-00-BASELINE-DIFF.md",
+      "harness/specs/tasks/knowledge-system-integrity-foundation.md validate --no-diff PASS",
+      "TFP-knowledge-system-unification-20260817 applied; only KS-00 was ready at proposal time"
+    ],
+    "execution_hints": [
+      "读取 KS-00 Harness task spec",
+      "复核 dirty WIP、ADR 与状态源",
+      "完成后经确认解锁 KS-01"
+    ],
+    "id": "TF-0071",
+    "kind": "task",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "在生产实现前消除文档、任务图和共享 WIP 的冲突。",
+    "remaining_minutes_max": 1296,
+    "remaining_minutes_min": 720,
+    "requirements": [
+      "审阅基线差异",
+      "冻结七类 artifact",
+      "保存但不擅自应用 Task Forest proposal"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "ADR/规划/规格无冲突",
+      "KS-01 至 KS-03 规格结构有效",
+      "没有新增 authority"
+    ],
+    "summary": "冻结 authority、schema、状态源、dirty WIP 归属和执行规格。",
+    "title": "KS-00 基线与契约冻结",
+    "updated_at": "2026-08-17T00:43:08.584274Z"
+  },
+  "TF-0072": {
+    "acceptance_criteria": [
+      "错配 0",
+      "stale approval 接受 0",
+      "并发重复 candidate 0",
+      "孤儿状态 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "knowledge-system",
+      "ks01"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "修复 Draft/Proposal 错配并建立 atomic、CAS、serialized、journaled 的治理写入。"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 2400,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks01-review-bundle-integrity.md context + validate PASS",
+      "tests/unit/knowledge-api.test.ts 33/33 incl 10-draft/proposal cross-pairing, stale CAS conflict, concurrent captureKey dedupe, idempotent apply/journal",
+      "tests/unit/knowledge-page.test.tsx 8/8 single selectedReviewBundleId flow",
+      "tests/unit/knowledge-steward-semantic-pass.test.ts 10/10 DI fixed",
+      "tests/e2e/knowledge-hub.spec.ts 4/4 PASS after ReviewBundle mock update"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0072",
+    "kind": "task",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让审核和应用始终绑定同一内容 revision。",
+    "remaining_minutes_max": 3240,
+    "remaining_minutes_min": 1800,
+    "requirements": [
+      "单一 reviewBundleId",
+      "atomic fsync rename",
+      "captureKey 临界区",
+      "operation journal"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "错配 0",
+      "stale approval 接受 0",
+      "并发重复 candidate 0",
+      "孤儿状态 0"
+    ],
+    "summary": "修复 Draft/Proposal 错配并建立 atomic、CAS、serialized、journaled 的治理写入。",
+    "title": "KS-01 ReviewBundle 与 Governance Integrity",
+    "updated_at": "2026-08-17T00:43:08.584274Z"
+  },
+  "TF-0073": {
+    "acceptance_criteria": [
+      "重复 Principle/projection 0",
+      "假 persisted 0",
+      "session residual 0",
+      "fresh session 旧经验召回 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.88,
+    "context_tags": [
+      "knowledge-system",
+      "ks02"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "收敛 SEKB/DCS 单次提交、真实 persisted 状态和 session 派生删除。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3000,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks02-experience-session-truth.md context + validate PASS",
+      "openclaw_runtime experience-block-bridge.test.ts 17/17 incl lineage one-commit, journaled_degraded, concurrent one Principle + one projection",
+      "context-engine/knowledge-system-ks02-block-store-owner.test.ts 4/4 enumerate/invalidate/delete/residual zero",
+      "tests/unit/session-cascade-delete.test.ts 2/2 real BlockStore hard delete + retryable failure",
+      "comms:replay + comms:compare PASS; pnpm run test:dcs 20+5+10 files all PASS"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0073",
+    "kind": "task",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "消除假成功、重复投影和删除残留。",
+    "remaining_minutes_max": 4050,
+    "remaining_minutes_min": 2250,
+    "requirements": [
+      "单一 confirm coordinator",
+      "BlockStore read-back",
+      "journaled_degraded",
+      "delete incomplete/retryable"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "重复 Principle/projection 0",
+      "假 persisted 0",
+      "session residual 0",
+      "fresh session 旧经验召回 0"
+    ],
+    "summary": "收敛 SEKB/DCS 单次提交、真实 persisted 状态和 session 派生删除。",
+    "title": "KS-02 Experience Write Truth 与 Session Cascade",
+    "updated_at": "2026-08-17T00:43:08.584274Z"
+  },
+  "TF-0074": {
+    "acceptance_criteria": [
+      "parity 100%",
+      "JSON writer 0",
+      "adapter contract 全绿",
+      "Runtime Memory persist/inject 关闭"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.86,
+    "context_tags": [
+      "knowledge-system",
+      "ks03"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "把治理 metadata 迁入 existing openclaw-state SQLite，并注册 Wiki/Role Memory/SEKB adapter。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3900,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks03-governance-store-adapters.md context + validate PASS",
+      "openclaw_runtime governance-store.test.ts 4/4 + governance-adapters.test.ts 5/5 (single active memory writer)",
+      "knowledge-api tests prove new Inbox/Draft/Proposal rows in openclaw-state SQLite with legacy JSON writer 0 and import parity 100%",
+      "pnpm --dir openclaw_runtime db:kysely:check PASS; pnpm contract:check PASS; typecheck node+web PASS"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0074",
+    "kind": "task",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "建立单 writer governance store 和 owner mutation 边界。",
+    "remaining_minutes_max": 5265,
+    "remaining_minutes_min": 2925,
+    "requirements": [
+      "单事务 legacy import",
+      "count/digest parity",
+      "JSON read-only compatibility",
+      "拒绝第二 active memory writer"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "parity 100%",
+      "JSON writer 0",
+      "adapter contract 全绿",
+      "Runtime Memory persist/inject 关闭"
+    ],
+    "summary": "把治理 metadata 迁入 existing openclaw-state SQLite，并注册 Wiki/Role Memory/SEKB adapter。",
+    "title": "KS-03 GovernanceStore 与 Owner Adapters",
+    "updated_at": "2026-08-17T00:43:08.584274Z"
+  },
+  "TF-0075": {
+    "acceptance_criteria": [
+      "未登记 semantic mutation 0",
+      "active pinned delivery 100%",
+      "revoked/denied delivery 0"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.82,
+    "context_tags": [
+      "knowledge-system",
+      "ks04"
+    ],
+    "created_at": "2026-08-17T00:42:19.849694Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "把 pinned 和自动检索统一为 ContextRef -> DCS -> Provider Guard 路径。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3900,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks04-chat-dcs-single-path.md",
+      "docs/dev/knowledge-system-unification/evidence/KS-04-CHAT-DCS-ACCEPTANCE.md",
+      "openclaw_runtime/src/context-engine/chat-knowledge-intent.test.ts (7/7)",
+      "tests/unit/chat-knowledge-scope.test.ts (8/8)",
+      "test:dcs 344/344, rc03/context 49/49, host-api-facade 43/43"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0075",
+    "kind": "task",
+    "next_action": "After user confirmation apply this proposal, validate/export, then start TF-0076 KS-05 experience closed loop.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "消除 renderer/role/memory 的隐藏 prompt 旁路。",
+    "remaining_minutes_max": 5265,
+    "remaining_minutes_min": 2925,
+    "requirements": [
+      "typed ref",
+      "统一 admission/compile",
+      "Context/Wire receipt",
+      "comms gate"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "未登记 semantic mutation 0",
+      "active pinned delivery 100%",
+      "revoked/denied delivery 0"
+    ],
+    "summary": "KS-04 Chat/DCS single consumption path implemented. Renderer refs are typed retrieval intent only; Main no longer calls wiki.get or splices knowledge bodies into chat.send; Gateway resolves through memory-wiki / Role Memory / SEKB source adapters and injects admitted refs as dcs-knowledge ContextCandidates; denied refs return visible reasons.",
+    "title": "KS-04 Chat/DCS 单一消费路径",
+    "updated_at": "2026-08-17T15:24:22.913093Z"
+  },
+  "TF-0076": {
+    "acceptance_criteria": [
+      "未确认 write 0",
+      "真实 fresh-session recall",
+      "引用和结果可关联",
+      "删除/撤销后不再召回"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "knowledge-system",
+      "ks05"
+    ],
+    "created_at": "2026-08-17T00:42:19.853288Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "闭合 outcome -> candidate -> human confirm -> recall -> feedback。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 4800,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks05-experience-closed-loop.md",
+      "docs/dev/knowledge-system-unification/evidence/KS-05-EXPERIENCE-CLOSED-LOOP-ACCEPTANCE.md",
+      "openclaw_runtime/src/knowledge/sekb/experience-closed-loop.test.ts (2/2)",
+      "openclaw_runtime/src/knowledge/sekb/sekb.test.ts (9/9)",
+      "openclaw_runtime/src/knowledge/sekb/golden-path.test.ts (2/2)",
+      "test:dcs 344/344"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0076",
+    "kind": "task",
+    "next_action": "After user confirmation apply this proposal, validate/export, then start TF-0077 KS-06 complete governance lifecycle.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让经验在后续任务中产生可证明价值，而不是只写入存储。",
+    "remaining_minutes_max": 6480,
+    "remaining_minutes_min": 3600,
+    "requirements": [
+      "人工确认",
+      "DCS 召回",
+      "cited/adopted/outcome 分级",
+      "不自动 revoke"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "未确认 write 0",
+      "真实 fresh-session recall",
+      "引用和结果可关联",
+      "删除/撤销后不再召回"
+    ],
+    "summary": "KS-05 experience closed loop implemented. Failure trajectories produce advisory candidates only; human confirm persists one canonical Principle; fresh task recalls it through RetrievalEngine; record_adoption requires cited/adopted/outcome evidence; archive/delete prevents later recall.",
+    "title": "KS-05 经验闭环",
+    "updated_at": "2026-08-17T16:15:36.571657Z"
+  },
+  "TF-0077": {
+    "acceptance_criteria": [
+      "每种已显示 operation 均有 E2E",
+      "未支持 operation 不显示",
+      "修正与删除传播完整"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.78,
+    "context_tags": [
+      "knowledge-system",
+      "ks06"
+    ],
+    "created_at": "2026-08-17T00:42:19.853288Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "实现 create/update/merge/archive/revoke/delete/restore 的 owner-specific mutation plan。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3900,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks06-governance-lifecycle.md context + validate PASS",
+      "docs/dev/knowledge-system-unification/evidence/KS-06-GOVERNANCE-LIFECYCLE-ACCEPTANCE.md",
+      "openclaw_runtime/src/knowledge/governance-lifecycle.test.ts 14/14 (includes idempotency duplicate vi.fn count + conflict)",
+      "openclaw_runtime/src/knowledge/governance-store.test.ts 4/4 + governance-adapters.test.ts 5/5",
+      "tests/unit/knowledge-governance-ui-lifecycle.test.ts 1/1 unsupported lifecycle UI hidden",
+      "test:dcs 344/344; typecheck node/web success; contract check; db:kysely:check; build:vite; runtime build first-run success; comms replay/compare PASS; changed-file ESLint 0/0",
+      "Honest residual: memory-wiki Main RPC lifecycle writes + lifecycle UI/per-operation Electron E2E are KS-08 carry-over; full-repo lint/test baseline red recorded"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0077",
+    "kind": "task",
+    "next_action": "After user acceptance of KS-06 close-out, do not start KS-07. TF-0078 remains ready and waits for the user's later explicit confirmation.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让治理 contract 与真实产品能力一致。",
+    "remaining_minutes_max": 5265,
+    "remaining_minutes_min": 2925,
+    "requirements": [
+      "preview/diff",
+      "expectedRevision",
+      "EffectReceipt",
+      "projection invalidation/rebuild",
+      "补偿说明"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "每种已显示 operation 均有 E2E",
+      "未支持 operation 不显示",
+      "修正与删除传播完整"
+    ],
+    "summary": "KS-06 complete governance lifecycle closed under plan B runtime-authority scope. GovernanceStore CAS transitions and audit events; GovernanceLifecycleCoordinator idempotent prepare->commit->compensate with governance-lifecycle-receipt.v1; real SEKB and Role Memory update/merge/archive/revoke/delete/restore adapters; memory-wiki remains host-owned boundary. Unsupported lifecycle operations have no usable UI entry. Full-repo baseline lint/test red stays non-KS and is recorded honestly.",
+    "title": "KS-06 完整治理生命周期",
+    "updated_at": "2026-08-18T12:14:26.106650Z"
+  },
+  "TF-0078": {
+    "acceptance_criteria": [
+      "引用有效率 100%",
+      "标注冲突披露 100%",
+      "stale inclusion 达门槛",
+      "质量/成本报告完整"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.76,
+    "context_tags": [
+      "knowledge-system",
+      "ks07"
+    ],
+    "created_at": "2026-08-17T00:42:19.853288Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "实现 hybrid retrieval、冲突集合、可解析引用和 grounded synthesis。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 4200,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks07-semantic-retrieval-source-set.md context + validate PASS (no --no-diff)",
+      "docs/dev/knowledge-system-unification/evidence/KS-07-SEMANTIC-RETRIEVAL-SOURCE-SET-ACCEPTANCE.md",
+      "openclaw_runtime/src/context-engine/source-set.test.ts + source-set-quality.test.ts 19/19",
+      "docs/dev/knowledge-system-unification/quality/KS-07-SOURCE-SET-QUALITY.json",
+      "KS-04 regression: chat-knowledge-intent 7/7 + context-orchestrator 10/10 + context-candidate 4/4 + chat-knowledge-scope 8/8",
+      "test:dcs 344/344; typecheck node/web success; contract:check; db:kysely:check; build:vite; runtime build first-run success; comms replay/compare PASS; changed-file ESLint 0 errors; git diff --check clean",
+      "Honest residual: committed quality run has no real embedding provider (semantic lane unavailable); human usefulness E4 missing; SourceSet UI visibility + memory-wiki wiki.* lifecycle Main RPC + lifecycle UI/per-operation Electron E2E remain KS-08 carry-over; full-repo lint/test baseline red recorded"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0078",
+    "kind": "task",
+    "next_action": "After user confirmation and proposal-apply, start only TF-0079 / KS-08. KS-08 must consume the two KS-06 carry-over items plus the KS-07 SourceSet visibility requirement. Do not start KS-09.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "提升相关性，同时诚实呈现冲突与未知项。",
+    "remaining_minutes_max": 5670,
+    "remaining_minutes_min": 3150,
+    "requirements": [
+      "exact/lexical/semantic",
+      "freshness/conflict rerank",
+      "citation-resolvable",
+      "unknown fallback"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "引用有效率 100%",
+      "标注冲突披露 100%",
+      "stale inclusion 达门槛",
+      "质量/成本报告完整"
+    ],
+    "summary": "KS-07 Semantic Retrieval and Source Set implemented and package-gated. SourceSet/v1 exact/lexical/semantic hybrid retrieval with task-context/role/scope shaping, sensitivity/ACL/status filtering, explicit conflict disclosure, freshness rerank, citation-resolvable claims, unknown/next-action output, Runtime Memory shadow-only comparison, and dcs-knowledge candidate packing. Committed corpus quality report: Recall@5=1, Precision@5=1, citation validity=1, stale inclusion=0, conflict disclosure=1; human usefulness not-evaluated (E4 missing).",
+    "title": "KS-07 Semantic Retrieval 与 Source Set",
+    "updated_at": "2026-08-18T13:41:56.270648Z"
+  },
+  "TF-0079": {
+    "acceptance_criteria": [
+      "用户路径 E2E 全绿",
+      "错误/降级状态真实可见",
+      "高级工具仍可达"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "knowledge-system",
+      "ks08"
+    ],
+    "created_at": "2026-08-17T00:42:19.853288Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "统一 Knowledge 三视图、Chat why-included、degraded/delete/receipt 状态。"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 4200,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks08-ui-observability.md context + validate PASS (no --no-diff)",
+      "docs/dev/knowledge-system-unification/evidence/KS-08-UI-OBSERVABILITY-ACCEPTANCE.md",
+      "openclaw_runtime/extensions/memory-wiki/src/apply-lifecycle.test.ts 6/6 real temp-vault owner mutations with read-back",
+      "tests/unit/knowledge-lifecycle.test.ts 8/8 Main RPC wiring/CAS/idempotency/receipt; knowledge-api 33/33; static gate 2/2; chat-knowledge-scope 8/8; knowledge-page 8/8",
+      "tests/e2e/knowledge-lifecycle.spec.ts 6/6 + tests/e2e/knowledge-hub.spec.ts 4/4",
+      "test:dcs 344/344; typecheck node/web success; contract:check; db:kysely:check; build:vite; runtime build first-run success; comms replay/compare PASS; changed-file ESLint 0 errors/34 existing warnings; git diff --check clean",
+      "Honest residual: full-repo lint/test baseline red recorded; E2E patches gatewayManager.rpc with an Electron test stub while exercising real Main createKnowledgeApi"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0079",
+    "kind": "task",
+    "next_action": "After user confirmation and proposal-apply, start only TF-0080 / KS-09 canary, optimization and graduation. KS-09 must keep product locks false and must not claim default-on/GA without E4/E5 product evidence.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让统一架构成为可操作、可解释的产品界面。",
+    "remaining_minutes_max": 5670,
+    "remaining_minutes_min": 3150,
+    "requirements": [
+      "en/zh/ja/ru i18n",
+      "Electron E2E",
+      "无假开关",
+      "不嵌套平行治理入口"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "用户路径 E2E 全绿",
+      "错误/降级状态真实可见",
+      "高级工具仍可达"
+    ],
+    "summary": "KS-08 UI and observability convergence implemented and package-gated. Both KS-06 carry-over items are closed: memory-wiki wiki.update/merge/archive/revoke/delete/restore real owner mutations + Main RPC wiring, and Knowledge page lifecycle UI with six per-operation Electron E2E. Additional KS-07 SourceSet visibility and honest dcsWrite display are also closed.",
+    "title": "KS-08 UI 与 Observability 收敛",
+    "updated_at": "2026-08-18T15:07:47.927897Z"
+  },
+  "TF-0080": {
+    "acceptance_criteria": [
+      "E1-E5 证据不越级",
+      "每个表面独立 verdict",
+      "任何 default-on 均需另行批准"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前序 KS 包已通过包级验收"
+    ],
+    "confidence": 0.65,
+    "context_tags": [
+      "knowledge-system",
+      "ks09"
+    ],
+    "created_at": "2026-08-17T00:42:19.853288Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "按能力表面执行 real corpus、A/B、soak、成本和产品裁决。"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 9600,
+    "evidence": [
+      "harness/specs/tasks/knowledge-system-ks09-canary-optimization-graduation.md context + validate PASS (no --no-diff)",
+      "docs/dev/knowledge-system-unification/evidence/KS-09-CANARY-GRADUATION-ACCEPTANCE.md",
+      "openclaw_runtime/src/knowledge/ks09-surface-report.test.ts 4/4",
+      "openclaw_runtime/scripts/knowledge-surface-reports.mts --include-e2e PASS with real committed unit/E2E metrics",
+      "docs/dev/knowledge-system-unification/surface-reports/KS-09-SUMMARY.json",
+      "guard dcs-canary-c1 + dcs-graduation-decision 7/7; test:dcs 344/344; typecheck node/web success; contract/db/build/comms/changed-file lint PASS",
+      "Honest residual: E4 not-evaluated and E5 blocked for all six surfaces; full-repo lint/test baseline red recorded"
+    ],
+    "execution_hints": [
+      "读取对应 Harness task spec",
+      "先 RED test 后实现",
+      "完成后生成证据并经确认解锁下一节点"
+    ],
+    "id": "TF-0080",
+    "kind": "milestone",
+    "next_action": "After user confirmation and proposal-apply, the KS-00..KS-09 engineering loop is closed. Default-on/GA remains a separate product-approval gate requiring real E4 provider/user-task evidence and E5 soak + product approval; product locks stay false.",
+    "non_goals": [
+      "新增平行 authority",
+      "提前 default-on 或 GA"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "用真实证据决定各表面是否扩大，而不外推联合系统 GA。",
+    "remaining_minutes_max": 12960,
+    "remaining_minutes_min": 7200,
+    "requirements": [
+      "分表面 shadow/opt-in/canary",
+      "real provider/user evidence",
+      "kill switch/rollback",
+      "产品批准独立"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "E1-E5 证据不越级",
+      "每个表面独立 verdict",
+      "任何 default-on 均需另行批准"
+    ],
+    "summary": "KS-09 canary/optimization/graduation engineering loop complete. Six reproducible per-surface reports under docs/dev/knowledge-system-unification/surface-reports/: explicit/pinned refs opt-in/E3, automatic retrieval opt-in/E3, Role Memory shadow/E2, SEKB retrieval opt-in/E3, semantic SourceSet shadow/E2, post-task capture shadow/E2. E4 all not-evaluated, E5 all blocked; zero default-on/GA/productApproved claims; product locks remain false.",
+    "title": "KS-09 Canary、优化与毕业裁决",
+    "updated_at": "2026-08-18T16:25:50.337260Z"
   }
 }

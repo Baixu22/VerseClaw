@@ -615,6 +615,78 @@ export interface InstalledPluginIndex {
   warning: string | null;
 }
 
+export interface KnowledgeCandidates {
+  agent_id: string | null;
+  applied_at: string | null;
+  body: string;
+  capture_key: string | null;
+  confidence: number | null;
+  content_digest: string;
+  created_at: string;
+  created_by: string;
+  dismissed_at: string | null;
+  id: string;
+  kind: string;
+  metadata_json: string | null;
+  promoted_at: string | null;
+  promoted_draft_id: string | null;
+  promoted_proposal_id: string | null;
+  record_kind: string;
+  reviewed_at: string | null;
+  revision: Generated<number>;
+  role_tags_json: string | null;
+  source_ids_json: string;
+  source_refs_json: string;
+  status: string;
+  steward_notes: string | null;
+  tags_json: string;
+  title: string;
+  type: string;
+  updated_at: string;
+  warnings_json: string | null;
+  workspace_id: string | null;
+}
+
+export interface KnowledgeGovernanceEvents {
+  created_at: string;
+  event_type: string;
+  id: string;
+  payload_json: string;
+  stream: string;
+}
+
+export interface KnowledgeGovernanceProposals {
+  applied_at: string | null;
+  content_digest: string | null;
+  created_at: string;
+  diff: string | null;
+  draft_id: string | null;
+  expected_revision: number | null;
+  id: string;
+  idempotency_key: string | null;
+  operation: string;
+  reason: string;
+  requires_user_confirmation: Generated<number>;
+  reviewed_digest: string | null;
+  revision: Generated<number>;
+  sources_json: string;
+  status: string;
+  target_page_ids_json: string | null;
+  updated_at: string;
+  workspace_id: string | null;
+}
+
+export interface KnowledgeOwnerLinks {
+  content_digest: string;
+  created_at: string;
+  owner: string;
+  revision: Generated<number>;
+  source_ref: string;
+  subject_id: string;
+  subject_kind: string;
+  updated_at: string;
+}
+
 export interface LongTaskCheckpoints {
   agent_id: string | null;
   checkpoint_json: string;
@@ -1261,6 +1333,10 @@ export interface DB {
   gateway_restart_intent: GatewayRestartIntent;
   gateway_restart_sentinel: GatewayRestartSentinel;
   installed_plugin_index: InstalledPluginIndex;
+  knowledge_candidates: KnowledgeCandidates;
+  knowledge_governance_events: KnowledgeGovernanceEvents;
+  knowledge_governance_proposals: KnowledgeGovernanceProposals;
+  knowledge_owner_links: KnowledgeOwnerLinks;
   long_task_checkpoints: LongTaskCheckpoints;
   long_task_intervention_events: LongTaskInterventionEvents;
   long_task_user_queue: LongTaskUserQueue;

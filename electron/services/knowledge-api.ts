@@ -1,7 +1,7 @@
 import { shell } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, watch as fsWatch, type Dirent, type FSWatcher } from 'node:fs';
-import { mkdir, readFile, readdir, writeFile, appendFile, stat, unlink } from 'node:fs/promises';
+import { mkdir, open as openFile, readFile, readdir, rename, rm, stat, unlink, writeFile, appendFile } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
@@ -19,6 +19,18 @@ import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
 // runtime context_search / context_read consume, instead of a detached journal.
 import { openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { BlockStore } from '../../openclaw_runtime/src/context-engine/block-store';
+import {
+  GovernanceStore,
+  type GovernanceCandidateRecord,
+  type GovernanceProposalRecord,
+  type GovernanceImportParity,
+} from '../../openclaw_runtime/src/knowledge/governance-store';
+import {
+  createMemoryWikiGovernedAdapter,
+  createRoleMemoryGovernedAdapter,
+  createSekbGovernedAdapter,
+  governedAdapterRegistry,
+} from '../../openclaw_runtime/src/knowledge/governance-adapters';
 import { createContextBlockSink } from '../../openclaw_runtime/src/agents/harness/hook-context';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
@@ -48,8 +60,12 @@ import type {
   KnowledgeSekbShadowEvaluationReportResult,
   KnowledgeSekbSuggestPrinciplesPayload,
   KnowledgeSekbSuggestPrinciplesResult,
+  KnowledgeApplyReviewedChangeResult,
   KnowledgeChangeOperation,
   KnowledgeChangeProposal,
+  KnowledgeGovernanceCompensation,
+  KnowledgeGovernanceReceipt,
+  KnowledgeListGovernanceReceiptsResult,
   KnowledgeCreateDraftPayload,
   KnowledgeCreateArtifactDraftPayload,
   KnowledgeCreateInboxItemPayload,
@@ -255,7 +271,7 @@ type SekbRuntimeModule = {
         sourceSystem?: unknown;
         integrityClaim?: unknown;
         summaryOnly?: boolean;
-        contextBlockSink?: ReturnType<typeof createHostExperienceJournalSink>;
+        contextBlockSink?: ContextBlockSink;
       },
     ) => string;
     confirm_and_save_with_lineage?: (
@@ -267,12 +283,14 @@ type SekbRuntimeModule = {
         sourceSystem?: unknown;
         integrityClaim?: unknown;
         summaryOnly?: boolean;
-        contextBlockSink?: ReturnType<typeof createHostExperienceJournalSink>;
+        contextBlockSink?: ContextBlockSink;
+        contextBlockSinkKind?: 'blockstore' | 'journal';
       },
     ) => Promise<{
       principleId: string;
       provenance?: KnowledgeSekbConfirmPrincipleResult['provenance'];
-      dcsWrite: 'written' | 'skipped' | 'rejected' | 'not_attempted';
+      dcsWrite: 'persisted' | 'journaled_degraded' | 'rejected' | 'not_attempted' | 'written' | 'skipped';
+      projectionBlockId?: string;
       highTrustEligible: boolean;
     }>;
     reject_suggestion: (suggestion: unknown, reason?: string) => void;
@@ -395,28 +413,45 @@ function createHostSekbStore(sekb: SekbRuntimeModule) {
   });
 }
 
+type HostExperienceProjectionSink = {
+  kind: 'blockstore' | 'journal';
+  sink: ContextBlockSink;
+  verifyBlock?: (blockId: string, sessionId: string) => Promise<boolean>;
+};
+
 /**
  * Build a real DCS ContextBlockSink backed by the shared openclaw-state
  * SQLite. This is the same BlockStore that runtime context_search /
  * context_read consume, so confirmed SEKB experience Blocks become visible to
  * the DCS context tools instead of only a detached journal file.
- * Returns null when the shared state DB cannot be opened (best-effort).
+ * Returns a journal sink when the shared state DB cannot be opened (best-effort),
+ * and the sink kind is surfaced so the UI can be truthful about degradation.
  */
-function createHostBlockStoreSink():
-  | ReturnType<typeof createContextBlockSink>
-  | null {
+export function createHostExperienceProjectionSink(stateDir: string): HostExperienceProjectionSink {
   try {
     const database = openOpenClawStateDatabase({
       env: {
         ...process.env,
-        OPENCLAW_STATE_DIR: resolveHostOpenClawStateDir(),
+        OPENCLAW_STATE_DIR: stateDir,
       },
     });
     const blockStore = new BlockStore(database.db);
-    return createContextBlockSink(blockStore);
+    return {
+      kind: 'blockstore',
+      sink: createContextBlockSink(blockStore),
+      verifyBlock: async (blockId, sessionId) => {
+        const blocks = await blockStore.query({
+          requester_session_id: sessionId,
+          session_id: sessionId,
+          block_types: ['experience'],
+          source_systems: ['sekb'],
+        });
+        return blocks.some((block) => block.block_id === blockId);
+      },
+    };
   } catch (error) {
     console.warn('[knowledge-api] BlockStore sink unavailable, falling back to journal:', error);
-    return null;
+    return { kind: 'journal', sink: createHostExperienceJournalSink(stateDir) };
   }
 }
 
@@ -474,7 +509,9 @@ const KNOWLEDGE_CHANGE_OPERATIONS = new Set<KnowledgeChangeOperation>([
   'update',
   'merge',
   'archive',
+  'revoke',
   'delete',
+  'restore',
 ]);
 const KNOWLEDGE_INBOX_KINDS = new Set<KnowledgeInboxKind>([
   'chat-session',
@@ -775,6 +812,55 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
+
+/**
+ * KS-01: canonical digest for governance CAS. Only content-bearing fields are
+ * hashed; timestamps, status, revision, and transport-only metadata are not.
+ */
+export function knowledgeContentDigest(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex');
+}
+
+function draftDigestInput(draft: KnowledgeDraft): Record<string, unknown> {
+  return {
+    id: draft.id,
+    title: draft.title,
+    body: draft.body,
+    type: draft.type,
+    sourceIds: draft.sourceIds,
+    sourceRefs: draft.sourceRefs,
+    tags: draft.tags,
+    workspaceId: draft.workspaceId ?? null,
+    agentId: draft.agentId ?? null,
+    ...(Array.isArray(draft.roleTags) ? { roleTags: draft.roleTags } : {}),
+    ...(isRecord(draft.metadata) ? { metadata: draft.metadata } : {}),
+  };
+}
+
+export function draftDigest(draft: KnowledgeDraft): string {
+  return knowledgeContentDigest(draftDigestInput(draft));
+}
+
+function withNextRevision<T extends { revision?: number }>(record: T, fallback = 0): T {
+  return { ...record, revision: Math.max(record.revision ?? fallback, fallback + 1, 1) };
+}
+
+function withFirstRevision<T extends { revision?: number }>(record: T): T {
+  return { ...record, revision: record.revision ?? 1 };
+}
+
+/** KS-01 single in-process writer queue. All governance mutation critical sections pass here. */
+let governanceWriterQueue: Promise<unknown> = Promise.resolve();
+function withGovernanceWriteLock<T>(operation: () => Promise<T>): Promise<T> {
+  const next = governanceWriterQueue.then(operation, operation);
+  governanceWriterQueue = next.catch(() => undefined);
+  return next;
+}
+
+export function __resetGovernanceWriterQueueForTests(): void {
+  governanceWriterQueue = Promise.resolve();
+}
+
 function getKnowledgeDir(): string {
   return join(getOpenClawConfigDir(), 'knowledge');
 }
@@ -1020,8 +1106,26 @@ function hasSourceSetShape(value: unknown): value is KnowledgeSourceSet {
 }
 
 async function appendAudit(event: Record<string, unknown>): Promise<void> {
+  const timestamp = nowIso();
   await mkdir(getKnowledgeDir(), { recursive: true });
-  await appendFile(getAuditPath(), `${JSON.stringify({ ...event, timestamp: nowIso() })}\n`, 'utf8');
+  await appendFile(getAuditPath(), `${JSON.stringify({ ...event, timestamp })}
+`, 'utf8');
+  // KS-03: governance events are also persisted in the SQLite event table.
+  // The JSON audit line remains a legacy/debug artifact, not governance authority.
+  try {
+    const store = getGovernanceStore();
+    if (store) {
+      store.saveEvent({
+        id: `kge_${randomUUID()}`,
+        stream: 'knowledge-governance',
+        eventType: typeof event.type === 'string' ? event.type : 'knowledge_event',
+        payload: event,
+        createdAt: timestamp,
+      });
+    }
+  } catch {
+    // Audit write must never block the governed operation.
+  }
 }
 
 async function readJsonFile<T>(path: string, guard: (value: unknown) => value is T): Promise<T | null> {
@@ -1033,18 +1137,293 @@ async function readJsonFile<T>(path: string, guard: (value: unknown) => value is
   }
 }
 
+/**
+ * KS-01: atomic governance JSON write. Write same-directory temp file,
+ * fsync file handle, close, then atomic rename over the target. Fallback only
+ * for Windows rename-over-existing EPERM/EEXIST after a failed atomic attempt.
+ */
 async function writeJsonFile(path: string, value: unknown): Promise<void> {
-  await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  const tempPath = `${path}.${process.pid}.${randomUUID()}.tmp`;
+  const serialized = `${JSON.stringify(value, null, 2)}
+`;
+  const handle = await openFile(tempPath, 'wx', 0o600);
+  try {
+    await handle.writeFile(serialized, 'utf8');
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+  try {
+    await rename(tempPath, path);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code !== 'EEXIST' && code !== 'EPERM') {
+      await rm(tempPath, { force: true }).catch(() => undefined);
+      throw error;
+    }
+    await rm(path, { force: true });
+    await rename(tempPath, path);
+  }
 }
 
+
+let cachedGovernanceStore: GovernanceStore | null = null;
+let governanceMigrationPromise: Promise<GovernanceImportParity | null> | null = null;
+
+function getGovernanceStore(): GovernanceStore | null {
+  if (cachedGovernanceStore) return cachedGovernanceStore;
+  try {
+    const database = openOpenClawStateDatabase({
+      env: { ...process.env, OPENCLAW_STATE_DIR: resolveHostOpenClawStateDir() },
+    });
+    cachedGovernanceStore = new GovernanceStore({ database: { path: database.path } });
+    return cachedGovernanceStore;
+  } catch (error) {
+    console.warn('[knowledge-api] GovernanceStore unavailable:', error);
+    return null;
+  }
+}
+
+function governanceMigrationPath(): string {
+  return join(getKnowledgeDir(), 'governance-migration.json');
+}
+
+async function readLegacyGovernanceJsonRecords(): Promise<{
+  candidates: GovernanceCandidateRecord[];
+  proposals: GovernanceProposalRecord[];
+}> {
+  await ensureKnowledgeDirs();
+  const draftNames = await readdir(getDraftsDir()).catch(() => []);
+  const inboxNames = await readdir(getInboxDir()).catch(() => []);
+  const proposalNames = await readdir(getProposalsDir()).catch(() => []);
+  const readAll = async (dir: string, names: string[], guard: (value: unknown) => boolean): Promise<unknown[]> => (
+    await Promise.all(names
+      .filter((name) => name.endsWith('.json'))
+      .map(async (name) => {
+        try {
+          const value = JSON.parse(await readFile(join(dir, name), 'utf8')) as unknown;
+          return guard(value) ? value : null;
+        } catch {
+          return null;
+        }
+      }))
+  ).filter((value): value is Record<string, unknown> => isRecord(value));
+  const drafts = await readAll(getDraftsDir(), draftNames, hasDraftShape);
+  const inbox = await readAll(getInboxDir(), inboxNames, hasInboxShape);
+  const proposals = await readAll(getProposalsDir(), proposalNames, hasProposalShape);
+  return {
+    candidates: [
+      ...drafts.map((draft) => draftToGovernanceCandidate(draft as KnowledgeDraft)),
+      ...inbox.map((item) => inboxToGovernanceCandidate(item as KnowledgeInboxItem)),
+    ],
+    proposals: proposals.map((proposal) => proposalToGovernanceRecord(proposal as KnowledgeChangeProposal)),
+  };
+}
+
+async function migrateLegacyGovernanceJsonOnce(): Promise<GovernanceImportParity | null> {
+  if (governanceMigrationPromise) return governanceMigrationPromise;
+  governanceMigrationPromise = (async () => {
+    const store = getGovernanceStore();
+    if (!store) return null;
+    if (existsSync(governanceMigrationPath())) {
+      return (await readJsonFile(governanceMigrationPath(), (value): value is GovernanceImportParity => (
+        isRecord(value) && value.schema === 'knowledge-governance-import-parity.v1'
+      ))) as GovernanceImportParity | null;
+    }
+    const legacy = await readLegacyGovernanceJsonRecords();
+    const report = store.importBatch(legacy);
+    await mkdir(getKnowledgeDir(), { recursive: true });
+    await writeJsonFile(governanceMigrationPath(), report);
+    return report;
+  })().catch((error) => {
+    governanceMigrationPromise = null;
+    console.warn('[knowledge-api] Governance JSON migration failed:', error);
+    return null;
+  });
+  return governanceMigrationPromise;
+}
+
+export function __resetKnowledgeGovernanceForTests(): void {
+  cachedGovernanceStore = null;
+  governanceMigrationPromise = null;
+}
+
+function draftToGovernanceCandidate(draft: KnowledgeDraft): GovernanceCandidateRecord {
+  return {
+    id: draft.id,
+    recordKind: 'draft',
+    kind: draft.type,
+    type: draft.type,
+    status: draft.status,
+    title: draft.title,
+    body: draft.body,
+    sourceIds: draft.sourceIds,
+    sourceRefs: draft.sourceRefs,
+    tags: draft.tags,
+    workspaceId: draft.workspaceId,
+    agentId: draft.agentId,
+    ...(Array.isArray(draft.roleTags) ? { roleTags: draft.roleTags } : {}),
+    createdBy: draft.createdBy,
+    warnings: draft.warnings,
+    metadata: draft.metadata,
+    revision: draft.revision,
+    contentDigest: draft.contentDigest,
+    ...(draft.stewardNotes ? { stewardNotes: draft.stewardNotes } : {}),
+    ...(typeof draft.confidence === 'number' ? { confidence: draft.confidence } : {}),
+    createdAt: draft.createdAt,
+    updatedAt: draft.updatedAt,
+    ...(draft.reviewedAt ? { reviewedAt: draft.reviewedAt } : {}),
+    ...(draft.appliedAt ? { appliedAt: draft.appliedAt } : {}),
+  };
+}
+
+function inboxToGovernanceCandidate(item: KnowledgeInboxItem): GovernanceCandidateRecord {
+  const metadata = isRecord(item.metadata) ? item.metadata : {};
+  const captureKey = typeof metadata.captureKey === 'string' && metadata.captureKey.trim() ? metadata.captureKey.trim() : undefined;
+  return {
+    id: item.id,
+    recordKind: 'inbox',
+    kind: item.kind,
+    type: item.type,
+    status: item.status,
+    title: item.title,
+    body: item.body,
+    sourceIds: item.sourceIds,
+    sourceRefs: item.sourceRefs,
+    tags: item.tags,
+    workspaceId: item.workspaceId,
+    agentId: item.agentId,
+    ...(Array.isArray(item.roleTags) ? { roleTags: item.roleTags } : {}),
+    createdBy: item.createdBy,
+    warnings: item.warnings,
+    metadata: item.metadata,
+    ...(captureKey ? { captureKey } : {}),
+    ...(item.promotedDraftId ? { promotedDraftId: item.promotedDraftId } : {}),
+    ...(item.promotedProposalId ? { promotedProposalId: item.promotedProposalId } : {}),
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    ...(item.promotedAt ? { promotedAt: item.promotedAt } : {}),
+    ...(item.dismissedAt ? { dismissedAt: item.dismissedAt } : {}),
+  };
+}
+
+function proposalToGovernanceRecord(proposal: KnowledgeChangeProposal): GovernanceProposalRecord {
+  return {
+    id: proposal.id,
+    operation: proposal.operation,
+    status: proposal.status,
+    ...(Array.isArray(proposal.targetPageIds) ? { targetPageIds: proposal.targetPageIds } : {}),
+    ...(proposal.draftId ? { draftId: proposal.draftId } : {}),
+    ...(proposal.diff ? { diff: proposal.diff } : {}),
+    reason: proposal.reason,
+    sources: proposal.sources,
+    requiresUserConfirmation: proposal.requiresUserConfirmation,
+    workspaceId: proposal.workspaceId,
+    revision: proposal.revision,
+    ...(proposal.contentDigest ? { contentDigest: proposal.contentDigest } : {}),
+    ...(proposal.reviewedDigest ? { reviewedDigest: proposal.reviewedDigest } : {}),
+    ...(typeof proposal.expectedRevision === 'number' ? { expectedRevision: proposal.expectedRevision } : {}),
+    ...(proposal.idempotencyKey ? { idempotencyKey: proposal.idempotencyKey } : {}),
+    createdAt: proposal.createdAt,
+    updatedAt: proposal.updatedAt,
+    ...(proposal.appliedAt ? { appliedAt: proposal.appliedAt } : {}),
+  };
+}
+
+function draftFromGovernanceCandidate(record: GovernanceCandidateRecord): KnowledgeDraft {
+  return {
+    id: record.id,
+    title: record.title,
+    body: record.body,
+    type: normalizeDraftType(record.type),
+    status: record.status as KnowledgeDraftStatus,
+    sourceIds: record.sourceIds,
+    sourceRefs: record.sourceRefs as KnowledgeSourceRef[],
+    tags: record.tags,
+    workspaceId: record.workspaceId,
+    agentId: record.agentId,
+    ...(record.roleTags && record.roleTags.length > 0 ? { roleTags: record.roleTags } : {}),
+    createdBy: normalizeDraftActor(record.createdBy),
+    warnings: record.warnings,
+    ...(record.metadata && Object.keys(record.metadata).length > 0 ? { metadata: record.metadata } : {}),
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    revision: record.revision,
+    contentDigest: record.contentDigest,
+    ...(record.stewardNotes ? { stewardNotes: record.stewardNotes } : {}),
+    ...(typeof record.confidence === 'number' ? { confidence: record.confidence } : {}),
+    ...(record.reviewedAt ? { reviewedAt: record.reviewedAt } : {}),
+    ...(record.appliedAt ? { appliedAt: record.appliedAt } : {}),
+  };
+}
+
+function inboxFromGovernanceCandidate(record: GovernanceCandidateRecord): KnowledgeInboxItem {
+  return {
+    id: record.id,
+    title: record.title,
+    body: record.body,
+    kind: normalizeInboxKind(record.kind),
+    type: normalizeDraftType(record.type),
+    status: normalizeInboxStatus(record.status),
+    sourceIds: record.sourceIds,
+    sourceRefs: record.sourceRefs as KnowledgeSourceRef[],
+    tags: record.tags,
+    workspaceId: record.workspaceId,
+    agentId: record.agentId,
+    ...(record.roleTags && record.roleTags.length > 0 ? { roleTags: record.roleTags } : {}),
+    createdBy: normalizeDraftActor(record.createdBy),
+    warnings: record.warnings,
+    ...(record.metadata && Object.keys(record.metadata).length > 0 ? { metadata: record.metadata } : {}),
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    ...(record.promotedAt ? { promotedAt: record.promotedAt } : {}),
+    ...(record.dismissedAt ? { dismissedAt: record.dismissedAt } : {}),
+    ...(record.promotedDraftId ? { promotedDraftId: record.promotedDraftId } : {}),
+    ...(record.promotedProposalId ? { promotedProposalId: record.promotedProposalId } : {}),
+  };
+}
+
+function proposalFromGovernanceRecord(record: GovernanceProposalRecord): KnowledgeChangeProposal {
+  return {
+    id: record.id,
+    operation: record.operation as KnowledgeChangeProposal['operation'],
+    status: record.status as KnowledgeChangeProposal['status'],
+    ...(record.targetPageIds && record.targetPageIds.length > 0 ? { targetPageIds: record.targetPageIds } : {}),
+    ...(record.draftId ? { draftId: record.draftId } : {}),
+    ...(record.diff ? { diff: record.diff } : {}),
+    reason: record.reason,
+    sources: record.sources as KnowledgeChangeProposal['sources'],
+    requiresUserConfirmation: true,
+    workspaceId: record.workspaceId,
+    revision: record.revision,
+    ...(record.contentDigest ? { contentDigest: record.contentDigest } : {}),
+    ...(record.reviewedDigest ? { reviewedDigest: record.reviewedDigest } : {}),
+    ...(typeof record.expectedRevision === 'number' ? { expectedRevision: record.expectedRevision } : {}),
+    ...(record.idempotencyKey ? { idempotencyKey: record.idempotencyKey } : {}),
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    ...(record.appliedAt ? { appliedAt: record.appliedAt } : {}),
+  };
+}
 async function readDraft(id: string): Promise<KnowledgeDraft | null> {
   if (!id.trim()) return null;
-  return readJsonFile(getDraftPath(id.trim()), hasDraftShape);
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  const record = store?.getCandidate(id.trim());
+  if (record) return draftFromGovernanceCandidate(record);
+  // Legacy JSON compatibility read only (KS-03). New records never write here.
+  const draft = await readJsonFile(getDraftPath(id.trim()), hasDraftShape);
+  return draft ? withFirstRevision(draft) : null;
 }
 
 async function readInboxItem(id: string): Promise<KnowledgeInboxItem | null> {
   if (!id.trim()) return null;
-  return readJsonFile(getInboxPath(id.trim()), hasInboxShape);
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  const record = store?.getCandidate(id.trim());
+  if (record) return inboxFromGovernanceCandidate(record);
+  const item = await readJsonFile(getInboxPath(id.trim()), hasInboxShape);
+  return item ? item : null;
 }
 
 async function readSourceSet(id: string): Promise<KnowledgeSourceSet | null> {
@@ -1053,8 +1432,12 @@ async function readSourceSet(id: string): Promise<KnowledgeSourceSet | null> {
 }
 
 async function writeDraft(draft: KnowledgeDraft): Promise<void> {
-  await ensureKnowledgeDirs();
-  await writeJsonFile(getDraftPath(draft.id), draft);
+  await migrateLegacyGovernanceJsonOnce();
+  const existing = await readDraft(draft.id);
+  const next = withNextRevision(draft, existing?.revision ?? 0);
+  const store = getGovernanceStore();
+  if (!store) throw new Error('GovernanceStore unavailable; refusing legacy JSON dual-write');
+  store.saveCandidate(draftToGovernanceCandidate(next));
 }
 
 async function writeSourceSet(sourceSet: KnowledgeSourceSet): Promise<void> {
@@ -1063,11 +1446,21 @@ async function writeSourceSet(sourceSet: KnowledgeSourceSet): Promise<void> {
 }
 
 async function writeInboxItem(item: KnowledgeInboxItem): Promise<void> {
-  await ensureKnowledgeDirs();
-  await writeJsonFile(getInboxPath(item.id), item);
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  if (!store) throw new Error('GovernanceStore unavailable; refusing legacy JSON dual-write');
+  store.saveCandidate(inboxToGovernanceCandidate(item));
 }
 
 async function listDraftRecords(): Promise<KnowledgeDraft[]> {
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  if (store) {
+    return store.listCandidates({ recordKind: 'draft' })
+      .map(draftFromGovernanceCandidate)
+      .map(withFirstRevision)
+      .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+  }
   await ensureKnowledgeDirs();
   const names = await readdir(getDraftsDir()).catch(() => []);
   const drafts = await Promise.all(names
@@ -1075,6 +1468,7 @@ async function listDraftRecords(): Promise<KnowledgeDraft[]> {
     .map((name) => readJsonFile(join(getDraftsDir(), name), hasDraftShape)));
   return drafts
     .filter((draft): draft is KnowledgeDraft => Boolean(draft))
+    .map(withFirstRevision)
     .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
 }
 
@@ -1168,6 +1562,13 @@ export async function findStewardNotesForReferences(
 }
 
 async function listInboxRecords(): Promise<KnowledgeInboxItem[]> {
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  if (store) {
+    return store.listCandidates({ recordKind: 'inbox' })
+      .map(inboxFromGovernanceCandidate)
+      .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+  }
   await ensureKnowledgeDirs();
   const names = await readdir(getInboxDir()).catch(() => []);
   const items = await Promise.all(names
@@ -1335,15 +1736,32 @@ function sortInboxByTriagePriority(items: KnowledgeInboxItem[]): KnowledgeInboxI
 
 async function readProposal(id: string): Promise<KnowledgeChangeProposal | null> {
   if (!id.trim()) return null;
-  return readJsonFile(getProposalPath(id.trim()), hasProposalShape);
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  const record = store?.getProposal(id.trim());
+  if (record) return proposalFromGovernanceRecord(record);
+  const proposal = await readJsonFile(getProposalPath(id.trim()), hasProposalShape);
+  return proposal ? withFirstRevision(proposal) : null;
 }
 
 async function writeProposal(proposal: KnowledgeChangeProposal): Promise<void> {
-  await ensureKnowledgeDirs();
-  await writeJsonFile(getProposalPath(proposal.id), proposal);
+  await migrateLegacyGovernanceJsonOnce();
+  const existing = await readProposal(proposal.id);
+  const next = withNextRevision(proposal, existing?.revision ?? 0);
+  const store = getGovernanceStore();
+  if (!store) throw new Error('GovernanceStore unavailable; refusing legacy JSON dual-write');
+  store.saveProposal(proposalToGovernanceRecord(next));
 }
 
 async function listProposalRecords(): Promise<KnowledgeChangeProposal[]> {
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  if (store) {
+    return store.listProposals({})
+      .map(proposalFromGovernanceRecord)
+      .map(withFirstRevision)
+      .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+  }
   await ensureKnowledgeDirs();
   const names = await readdir(getProposalsDir()).catch(() => []);
   const proposals = await Promise.all(names
@@ -1351,7 +1769,265 @@ async function listProposalRecords(): Promise<KnowledgeChangeProposal[]> {
     .map((name) => readJsonFile(join(getProposalsDir(), name), hasProposalShape)));
   return proposals
     .filter((proposal): proposal is KnowledgeChangeProposal => Boolean(proposal))
+    .map(withFirstRevision)
     .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+}
+
+
+function getOperationsDir(): string {
+  return join(getKnowledgeDir(), 'operations');
+}
+
+function getOperationJournalPath(operationId: string): string {
+  return join(getOperationsDir(), `${operationId}.json`);
+}
+
+type GovernanceOperationJournalEntry = {
+  schema: 'knowledge-governance-operation.v1';
+  operationId: string;
+  kind: 'review_apply';
+  proposalId: string;
+  draftId: string;
+  idempotencyKey: string;
+  state: 'intent' | 'wiki_committed' | 'json_committed' | 'failed';
+  contentDigest: string;
+  reviewedDigest?: string;
+  expectedRevision?: number;
+  operation?: KnowledgeChangeOperation;
+  owner?: 'memory-wiki' | 'memory-slot' | 'sekb';
+  subjectId?: string;
+  subjectRevision?: string;
+  receiptId?: string;
+  compensation?: KnowledgeGovernanceCompensation;
+  createdAt: string;
+  updatedAt: string;
+  error?: string;
+};
+
+async function readOperationJournal(operationId: string): Promise<GovernanceOperationJournalEntry | null> {
+  return readJsonFile(getOperationJournalPath(operationId), (value): value is GovernanceOperationJournalEntry => {
+    if (!isRecord(value)) return false;
+    return value.schema === 'knowledge-governance-operation.v1'
+      && typeof value.operationId === 'string'
+      && typeof value.proposalId === 'string'
+      && typeof value.draftId === 'string'
+      && typeof value.state === 'string';
+  });
+}
+
+async function writeOperationJournal(entry: GovernanceOperationJournalEntry): Promise<void> {
+  await ensureKnowledgeDirs();
+  await mkdir(getOperationsDir(), { recursive: true });
+  await writeJsonFile(getOperationJournalPath(entry.operationId), entry);
+}
+
+function operationJournalId(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): string {
+  return createHash('sha256')
+    .update(`${proposal.id}:${draft.id}:${proposal.idempotencyKey ?? proposal.revision ?? 'v1'}`)
+    .digest('hex')
+    .slice(0, 24);
+}
+
+function compensationForOperation(operation: KnowledgeChangeOperation): KnowledgeGovernanceCompensation {
+  if (operation === 'delete') {
+    return {
+      status: 'unrecoverable',
+      reason: 'memory-wiki page deletion is not automatically reversible without a restore source',
+    };
+  }
+  return {
+    status: 'partial',
+    reason: 'Automatic rollback is not attempted; use a new governed update/restore proposal to reverse this effect.',
+  };
+}
+
+function receiptFromOperationJournal(
+  entry: GovernanceOperationJournalEntry,
+  proposal: KnowledgeChangeProposal | null,
+  draft: KnowledgeDraft | null,
+): KnowledgeGovernanceReceipt | null {
+  const operation = entry.operation ?? proposal?.operation;
+  const owner = entry.owner ?? 'memory-wiki';
+  const subjectId = entry.subjectId ?? proposal?.targetPageIds?.[0] ?? draft?.sourceIds[0];
+  if (!operation || !subjectId || !entry.idempotencyKey) return null;
+  return {
+    schema: 'knowledge-governance-receipt.v1',
+    receiptId: entry.receiptId ?? `kgr_${entry.operationId}`,
+    operation,
+    owner,
+    subjectId,
+    ...(entry.subjectRevision !== undefined
+      ? { subjectRevision: String(entry.subjectRevision) }
+      : entry.expectedRevision !== undefined
+        ? { subjectRevision: String(entry.expectedRevision) }
+        : {}),
+    contentDigest: entry.contentDigest,
+    idempotencyKey: entry.idempotencyKey,
+    status: entry.state === 'failed' ? 'failed' : 'committed',
+    committedAt: entry.updatedAt,
+    evidenceRefs: [entry.proposalId, entry.draftId],
+    compensation: entry.compensation ?? compensationForOperation(operation),
+  };
+}
+
+async function listOperationReceipts(): Promise<KnowledgeGovernanceReceipt[]> {
+  await ensureKnowledgeDirs();
+  const names = await readdir(getOperationsDir()).catch(() => []);
+  const receipts: KnowledgeGovernanceReceipt[] = [];
+  for (const name of names.filter((entry) => entry.endsWith('.json'))) {
+    const entry = await readOperationJournal(name.slice(0, -'.json'.length));
+    if (!entry) continue;
+    const proposal = entry.proposalId ? await readProposal(entry.proposalId) : null;
+    const draft = entry.draftId ? await readDraft(entry.draftId) : null;
+    const receipt = receiptFromOperationJournal(entry, proposal, draft);
+    if (receipt) receipts.push(receipt);
+  }
+  return receipts.sort((left, right) => right.committedAt.localeCompare(left.committedAt));
+}
+
+function proposalIdempotencyKey(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): string {
+  const existing = getString(proposal.idempotencyKey);
+  if (existing) return existing;
+  return createHash('sha256')
+    .update(JSON.stringify({
+      draftId: proposal.draftId,
+      operation: proposal.operation,
+      targetPageIds: proposal.targetPageIds ?? [],
+      digest: draftDigest(draft),
+    }))
+    .digest('hex')
+    .slice(0, 32);
+}
+
+function reviewBundleId(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): string {
+  return `kb_${proposal.id}_${draft.id}`;
+}
+
+type KnowledgeReviewBundleInternal = {
+  id: string;
+  draftId: string;
+  proposalId: string;
+  operation: KnowledgeChangeOperation;
+  status: KnowledgeChangeProposal['status'];
+  draftStatus: KnowledgeDraftStatus;
+  reviewedDigest?: string;
+  expectedRevision?: number;
+  workspaceId?: string | null;
+  contentDigest?: string;
+  idempotencyKey?: string;
+  draft?: KnowledgeDraft;
+  proposal?: KnowledgeChangeProposal;
+};
+
+function buildReviewBundle(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): KnowledgeReviewBundleInternal {
+  return {
+    id: reviewBundleId(proposal, draft),
+    draftId: draft.id,
+    proposalId: proposal.id,
+    operation: proposal.operation,
+    status: proposal.status,
+    draftStatus: draft.status,
+    ...(getString(proposal.reviewedDigest) ? { reviewedDigest: getString(proposal.reviewedDigest) } : {}),
+    ...(typeof proposal.expectedRevision === 'number' ? { expectedRevision: proposal.expectedRevision } : {}),
+    ...(typeof draft.workspaceId === 'string' || draft.workspaceId === null ? { workspaceId: draft.workspaceId } : {}),
+    ...(getString(proposal.contentDigest) ? { contentDigest: getString(proposal.contentDigest) } : {}),
+    ...(getString(proposal.idempotencyKey) ? { idempotencyKey: getString(proposal.idempotencyKey) } : {}),
+    draft,
+    proposal,
+  };
+}
+
+async function listReviewBundleRecords(): Promise<KnowledgeReviewBundleInternal[]> {
+  const [proposals, drafts] = await Promise.all([listProposalRecords(), listDraftRecords()]);
+  const draftsById = new Map(drafts.map((draft) => [draft.id, draft]));
+  const bundles: KnowledgeReviewBundleInternal[] = [];
+  for (const proposal of proposals) {
+    if (!proposal.draftId) continue;
+    const draft = draftsById.get(proposal.draftId);
+    if (!draft) continue;
+    bundles.push(buildReviewBundle(proposal, draft));
+  }
+  return bundles.sort((left, right) => (
+    Date.parse(right.proposal?.updatedAt ?? right.draft?.updatedAt ?? '') -
+    Date.parse(left.proposal?.updatedAt ?? left.draft?.updatedAt ?? '')
+  ));
+}
+
+async function readReviewBundle(id: string): Promise<KnowledgeReviewBundleInternal | null> {
+  if (!id.trim()) return null;
+  const bundles = await listReviewBundleRecords();
+  return bundles.find((bundle) => bundle.id === id.trim()) ?? null;
+}
+
+const KNOWLEDGE_LIFECYCLE_WIKI_RPC: Record<
+  Exclude<KnowledgeChangeOperation, 'create'>,
+  'wiki.update' | 'wiki.merge' | 'wiki.archive' | 'wiki.revoke' | 'wiki.delete' | 'wiki.restore'
+> = {
+  update: 'wiki.update',
+  merge: 'wiki.merge',
+  archive: 'wiki.archive',
+  revoke: 'wiki.revoke',
+  delete: 'wiki.delete',
+  restore: 'wiki.restore',
+};
+
+function wikiLifecycleRpcPayload(params: {
+  operation: Exclude<KnowledgeChangeOperation, 'create'>;
+  draft: KnowledgeDraft;
+  proposal: KnowledgeChangeProposal;
+  idempotencyKey: string;
+}): Record<string, unknown> {
+  const { operation, draft, proposal, idempotencyKey } = params;
+  const lookup = proposal.targetPageIds?.[0];
+  const base = {
+    lookup,
+    expectedRevision: proposal.expectedRevision,
+    idempotencyKey,
+    reason: proposal.reason,
+  };
+  switch (operation) {
+    case 'update':
+      return {
+        ...base,
+        title: draft.title,
+        body: draft.body,
+        ...(draft.sourceIds.length > 0 ? { sourceIds: draft.sourceIds } : {}),
+      };
+    case 'merge':
+      return {
+        ...base,
+        ...(proposal.targetPageIds?.[1] ? { sourceLookup: proposal.targetPageIds[1] } : {}),
+        body: draft.body,
+        ...(draft.sourceIds.length > 0 ? { sourceIds: draft.sourceIds } : {}),
+      };
+    case 'archive':
+    case 'revoke':
+    case 'delete':
+    case 'restore':
+      return base;
+  }
+}
+
+function applyConflict(
+  code: NonNullable<KnowledgeApplyReviewedChangeResult['conflict']>['code'],
+  reason: string,
+  bundle: KnowledgeReviewBundleInternal,
+  actualRevision?: number,
+): KnowledgeApplyReviewedChangeResult {
+  const expectedRevision = typeof bundle.expectedRevision === 'number' ? bundle.expectedRevision : undefined;
+  return {
+    success: false,
+    error: reason,
+    reviewBundle: bundle,
+    proposal: bundle.proposal,
+    draft: bundle.draft,
+    conflict: {
+      code,
+      reason,
+      ...(expectedRevision !== undefined ? { expectedRevision } : {}),
+      ...(actualRevision !== undefined ? { actualRevision } : {}),
+    },
+  };
 }
 
 async function readProvenance(targetKind: KnowledgeProvenanceTargetKind, targetId: string): Promise<KnowledgeProvenanceRecord | null> {
@@ -1433,7 +2109,7 @@ function createDraftFromPayload(payload: KnowledgeCreateDraftPayload): Knowledge
   // Area 5 §3.4 — normalize roleTags (dedupe/trim/filter-empty). Absent or
   // empty payload field → omitted from the draft (ranking-only, default-off).
   const roleTags = normalizeStringList(payload.roleTags);
-  return {
+  const draft: KnowledgeDraft = {
     id: `kd_${randomUUID()}`,
     title,
     body,
@@ -1451,6 +2127,11 @@ function createDraftFromPayload(payload: KnowledgeCreateDraftPayload): Knowledge
     ...(isRecord(payload.metadata) ? { metadata: payload.metadata } : {}),
     createdAt: timestamp,
     updatedAt: timestamp,
+  };
+  return {
+    ...draft,
+    revision: 1,
+    contentDigest: draftDigest(draft),
   };
 }
 
@@ -1544,7 +2225,7 @@ function createInboxItemFromPayload(payload: KnowledgeCreateInboxItemPayload): K
 
 function draftFromInboxItem(item: KnowledgeInboxItem): KnowledgeDraft {
   const timestamp = nowIso();
-  return {
+  const draft: KnowledgeDraft = {
     id: `kd_${randomUUID()}`,
     title: item.title,
     body: item.body,
@@ -1563,11 +2244,16 @@ function draftFromInboxItem(item: KnowledgeInboxItem): KnowledgeDraft {
     createdAt: timestamp,
     updatedAt: timestamp,
   };
+  return {
+    ...draft,
+    revision: 1,
+    contentDigest: draftDigest(draft),
+  };
 }
 
 function createProposalForDraft(draft: KnowledgeDraft, reason: string): KnowledgeChangeProposal {
   const timestamp = nowIso();
-  return {
+  const proposal: KnowledgeChangeProposal = {
     id: `kp_${randomUUID()}`,
     operation: 'create',
     status: 'proposed',
@@ -1577,8 +2263,15 @@ function createProposalForDraft(draft: KnowledgeDraft, reason: string): Knowledg
       ? draft.sourceRefs
       : draft.sourceIds.map((id) => ({ id, kind: 'manual' as const })),
     requiresUserConfirmation: true,
+    workspaceId: draft.workspaceId,
     createdAt: timestamp,
     updatedAt: timestamp,
+  };
+  return {
+    ...proposal,
+    revision: 1,
+    contentDigest: draftDigest(draft),
+    idempotencyKey: proposalIdempotencyKey(proposal, draft),
   };
 }
 
@@ -1601,6 +2294,10 @@ function knowledgeCaptureKey(value: unknown): string | null {
 }
 
 async function findInboxItemByCaptureKey(captureKey: string): Promise<KnowledgeInboxItem | null> {
+  await migrateLegacyGovernanceJsonOnce();
+  const store = getGovernanceStore();
+  const records = store?.listCandidates({ recordKind: 'inbox', captureKey }) ?? [];
+  if (records[0]) return inboxFromGovernanceCandidate(records[0]);
   const items = await listInboxRecords();
   return items.find((item) => knowledgeCaptureKey(item.metadata) === captureKey) ?? null;
 }
@@ -2330,9 +3027,14 @@ export type SemanticStewardContext = {
 export type SemanticStewardInvoker = (context: SemanticStewardContext) => Promise<StewardSemanticReview | null>;
 
 let semanticStewardInvoker: SemanticStewardInvoker | null = null;
+let semanticStewardInvokerExplicitlyInjected = false;
 
 export function setSemanticStewardInvoker(invoker: SemanticStewardInvoker | null): void {
   semanticStewardInvoker = invoker;
+  // null is the test/production reset sentinel: it clears any prior explicit DI
+  // marker so a later createKnowledgeApi with a real gateway can install the
+  // production invoker again.
+  semanticStewardInvokerExplicitlyInjected = invoker !== null;
 }
 
 export function getSemanticStewardInvoker(): SemanticStewardInvoker | null {
@@ -2553,6 +3255,21 @@ async function defaultRuntimeLessonsReporter(): Promise<KnowledgeRuntimeLessonsR
   }
 }
 
+let hostGovernedAdaptersRegistered = false;
+
+function registerHostGovernedAdapters(): void {
+  if (hostGovernedAdaptersRegistered) return;
+  governedAdapterRegistry.register(createMemoryWikiGovernedAdapter());
+  governedAdapterRegistry.register(createRoleMemoryGovernedAdapter({ activeMemorySlot: 'role-memory' }));
+  governedAdapterRegistry.register(createSekbGovernedAdapter());
+  hostGovernedAdaptersRegistered = true;
+}
+
+export function __resetHostGovernedAdaptersForTests(): void {
+  governedAdapterRegistry.clearForTests();
+  hostGovernedAdaptersRegistered = false;
+}
+
 export function createKnowledgeApi({
   gatewayManager,
   runtimeLessonsReporter = defaultRuntimeLessonsReporter,
@@ -2563,11 +3280,16 @@ export function createKnowledgeApi({
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
 
-  // R3-1 v3 task 5: wire the production semantic steward invoker. The default
-  // registry role stays 'heuristic', so the semantic pass only runs when an
-  // operator configures a role with classification 'semantic' — and the
-  // heuristic result remains the explicit degradation on any invoker failure.
-  setSemanticStewardInvoker((context) => runSemanticStewardInvoker(gatewayManager, context));
+  // KS-03: register the three governed target adapters once per process.
+  registerHostGovernedAdapters();
+
+  // KS-01 / R3-1 v3 task 5: wire the production semantic steward invoker only
+  // when a real gateway manager is available and no explicit invoker was
+  // injected by the caller. Tests that call setSemanticStewardInvoker before
+  // createKnowledgeApi keep their injected invoker (dependency injection).
+  if (gatewayManager && !semanticStewardInvokerExplicitlyInjected) {
+    semanticStewardInvoker = (context) => runSemanticStewardInvoker(gatewayManager, context);
+  }
 
   async function readSourceSetAnswerSource(ref: KnowledgeSourceRef): Promise<KnowledgeSourceSetAnswerSource | null> {
     const lookup = ref.path || ref.id;
@@ -3262,9 +3984,11 @@ export function createKnowledgeApi({
       }
     },
 
-    createInboxItem: async (payload) => {
+    createInboxItem: async (payload) => withGovernanceWriteLock(async () => {
       const item = createInboxItemFromPayload(payload);
       if (!item) return { success: false, error: 'title and body are required' };
+      // KS-01: captureKey dedupe check and insert stay in the same critical
+      // section; concurrent calls with the same key can only create one record.
       const captureKey = knowledgeCaptureKey(item.metadata);
       if (captureKey) {
         const existing = await findInboxItemByCaptureKey(captureKey);
@@ -3274,7 +3998,7 @@ export function createKnowledgeApi({
       await writeInboxItem(triagedItem);
       await appendAudit({ type: 'inbox_created', inboxId: triagedItem.id, kind: triagedItem.kind, createdBy: triagedItem.createdBy });
       return { success: true, item: triagedItem };
-    },
+    }),
 
     listInboxItems: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
@@ -3520,17 +4244,16 @@ export function createKnowledgeApi({
       return draft ? { success: true, draft } : { success: false, error: 'draft not found' };
     },
 
-    updateDraft: async (payload) => {
+    updateDraft: async (payload) => withGovernanceWriteLock(async () => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const id = getString(body.id);
       const draft = id ? await readDraft(id) : null;
       if (!draft) return { success: false, error: 'draft not found' };
       if (draft.status === 'applied') return { success: false, error: 'applied drafts cannot be edited' };
-      // Area 5 §3.4 — roleTags update. Explicit array (even empty) replaces;
-      // absent payload field preserves existing. Empty array drops the field.
       const roleTagsUpdate = Array.isArray(body.roleTags)
         ? normalizeStringList(body.roleTags)
         : undefined;
+      const nextRevision = Math.max(1, (draft.revision ?? 1) + 1);
       const updated: KnowledgeDraft = {
         ...draft,
         ...(getString(body.title) ? { title: getString(body.title)! } : {}),
@@ -3547,17 +4270,19 @@ export function createKnowledgeApi({
           ? (roleTagsUpdate.length > 0 ? { roleTags: roleTagsUpdate } : { roleTags: undefined })
           : {}),
         status: draft.status === 'approved' ? 'draft' : draft.status,
+        revision: nextRevision,
         updatedAt: nowIso(),
       };
       if (roleTagsUpdate !== undefined && roleTagsUpdate.length === 0) {
         delete (updated as { roleTags?: string[] }).roleTags;
       }
+      updated.contentDigest = draftDigest(updated);
       await writeDraft(updated);
-      await appendAudit({ type: 'draft_updated', draftId: updated.id });
+      await appendAudit({ type: 'draft_updated', draftId: updated.id, revision: updated.revision });
       return { success: true, draft: updated };
-    },
+    }),
 
-    reviewDraft: async (payload) => {
+    reviewDraft: async (payload) => withGovernanceWriteLock(async () => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const id = getString(body.id);
       const draft = id ? await readDraft(id) : null;
@@ -3572,29 +4297,42 @@ export function createKnowledgeApi({
             ? 'steward_reviewed'
             : null;
       if (!nextStatus) return { success: false, error: 'invalid review action' };
+      const nextRevision = Math.max(1, (draft.revision ?? 1) + 1);
       const updated: KnowledgeDraft = {
         ...draft,
         status: nextStatus,
         stewardNotes: getString(body.stewardNotes) ?? draft.stewardNotes,
         warnings: Array.isArray(body.warnings) ? normalizeStringList(body.warnings) : draft.warnings,
+        revision: nextRevision,
         reviewedAt: nowIso(),
         updatedAt: nowIso(),
+        contentDigest: draftDigest(draft),
       };
+      if (nextStatus === 'approved') {
+        updated.reviewedDigest = draftDigest(updated);
+      }
       await writeDraft(updated);
       if (nextStatus === 'approved') {
         const proposals = await listProposalRecords();
-        await Promise.all(proposals
-          .filter((proposal) => proposal.draftId === updated.id && proposal.status === 'proposed')
-          .map(async (proposal) => {
-            const approved: KnowledgeChangeProposal = { ...proposal, status: 'approved', updatedAt: nowIso() };
-            await writeProposal(approved);
-          }));
+        for (const proposal of proposals.filter((candidate) => candidate.draftId === updated.id && candidate.status === 'proposed')) {
+          const approved: KnowledgeChangeProposal = {
+            ...proposal,
+            status: 'approved',
+            reviewedDigest: draftDigest(updated),
+            // create uses the draft revision; lifecycle operations keep the
+            // target wiki page revision captured by proposeChange.
+            expectedRevision: proposal.operation === 'create' ? updated.revision : proposal.expectedRevision,
+            workspaceId: updated.workspaceId,
+            updatedAt: nowIso(),
+          };
+          await writeProposal(approved);
+        }
       }
-      await appendAudit({ type: 'draft_reviewed', draftId: updated.id, action });
+      await appendAudit({ type: 'draft_reviewed', draftId: updated.id, action, revision: updated.revision });
       return { success: true, draft: updated };
-    },
+    }),
 
-    proposeChange: async (payload) => {
+    proposeChange: async (payload) => withGovernanceWriteLock(async () => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const operation = typeof body.operation === 'string' && KNOWLEDGE_CHANGE_OPERATIONS.has(body.operation as KnowledgeChangeOperation)
         ? body.operation as KnowledgeChangeOperation
@@ -3602,30 +4340,70 @@ export function createKnowledgeApi({
       const reason = getString(body.reason);
       if (!operation || !reason) return { success: false, error: 'operation and reason are required' };
       const targetPageIds = normalizeStringList(body.targetPageIds);
-      if (['update', 'merge', 'archive', 'delete'].includes(operation) && targetPageIds.length === 0) {
+      if (operation !== 'create' && targetPageIds.length === 0) {
         return { success: false, error: 'targetPageIds are required for this operation' };
       }
       if (['update', 'merge'].includes(operation) && !getString(body.diff)) {
         return { success: false, error: 'diff is required for update or merge proposals' };
       }
+      const draftId = getString(body.draftId);
+      const draft = draftId ? await readDraft(draftId) : null;
+      if (draftId && !draft) return { success: false, error: 'draft not found' };
+      let expectedWikiRevision: number | undefined;
+      if (operation !== 'create') {
+        const targetLookup = targetPageIds[0]!;
+        try {
+          const wikiPage = await rpc<Record<string, unknown>>('wiki.get', {
+            lookup: targetLookup,
+            lineCount: 1,
+            corpus: 'wiki',
+          }, 10_000);
+          const revision = wikiPage?.revision;
+          if (typeof revision === 'number' && Number.isInteger(revision) && revision > 0) {
+            expectedWikiRevision = revision;
+          } else if (!wikiPage) {
+            return { success: false, error: `target wiki page not found: ${targetLookup}` };
+          } else {
+            expectedWikiRevision = 1;
+          }
+        } catch (error) {
+          return { success: false, error: sanitizeUiErrorText(error) };
+        }
+      }
       const timestamp = nowIso();
-      const proposal: KnowledgeChangeProposal = {
+      const base: KnowledgeChangeProposal = {
         id: `kp_${randomUUID()}`,
         operation,
         status: 'proposed',
         ...(targetPageIds.length > 0 ? { targetPageIds } : {}),
-        ...(getString(body.draftId) ? { draftId: getString(body.draftId) } : {}),
+        ...(draftId ? { draftId } : {}),
         ...(getString(body.diff) ? { diff: getString(body.diff) } : {}),
         reason,
         sources: normalizeSourceRefs(body.sources),
         requiresUserConfirmation: true,
+        ...(draft ? { workspaceId: draft.workspaceId, contentDigest: draftDigest(draft) } : {}),
+        ...(expectedWikiRevision !== undefined ? { expectedRevision: expectedWikiRevision } : {}),
         createdAt: timestamp,
         updatedAt: timestamp,
       };
+      const proposal: KnowledgeChangeProposal = {
+        ...base,
+        revision: 1,
+        ...(getString(body.idempotencyKey) ?? (draft ? proposalIdempotencyKey(base, draft) : undefined)
+          ? { idempotencyKey: getString(body.idempotencyKey) ?? proposalIdempotencyKey(base, draft!) }
+          : {}),
+      };
+      if (proposal.idempotencyKey) {
+        const existing = (await listProposalRecords()).find((candidate) => candidate.idempotencyKey === proposal.idempotencyKey);
+        if (existing) {
+          if (existing.contentDigest === proposal.contentDigest) return { success: true, proposal: existing };
+          return { success: false, error: 'idempotency conflict: same key with different digest', proposal: existing };
+        }
+      }
       await writeProposal(proposal);
       await appendAudit({ type: 'proposal_created', proposalId: proposal.id, operation });
       return { success: true, proposal };
-    },
+    }),
 
     listProposals: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
@@ -3637,6 +4415,16 @@ export function createKnowledgeApi({
       return { success: true, proposals };
     },
 
+    listReviewBundles: async (payload) => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const status = typeof body.status === 'string' ? body.status : 'all';
+      const limit = clampPositiveInt(body.limit, 50, 200);
+      const bundles = (await listReviewBundleRecords())
+        .filter((bundle) => status === 'all' || bundle.status === status)
+        .slice(0, limit);
+      return { success: true, bundles };
+    },
+
     previewChange: async (payload) => {
       const id = isRecord(payload) ? getString(payload.id) : undefined;
       const proposal = id ? await readProposal(id) : null;
@@ -3646,43 +4434,212 @@ export function createKnowledgeApi({
       return { success: true, proposal, ...(draft ? { draft } : {}), preview };
     },
 
-    applyReviewedChange: async (payload) => {
-      const id = isRecord(payload) ? getString(payload.id) : undefined;
-      const proposal = id ? await readProposal(id) : null;
-      if (!proposal) return { success: false, error: 'proposal not found' };
+    applyReviewedChange: async (payload) => withGovernanceWriteLock(async () => {
+      const body: Record<string, unknown> = isRecord(payload) ? payload : {};
+      const bundleId = getString(body.reviewBundleId) ?? getString(body.id);
+      const bundle = bundleId ? await readReviewBundle(bundleId) : null;
+      const legacyProposal = !bundle && getString(body.id) ? await readProposal(getString(body.id)!) : null;
+      const resolvedBundle = bundle
+        ?? (legacyProposal?.draftId
+          ? (await listReviewBundleRecords()).find((candidate) => candidate.proposalId === legacyProposal.id)
+          : undefined);
+      if (!resolvedBundle?.proposal || !resolvedBundle.draft) {
+        return { success: false, error: 'review bundle not found' };
+      }
+      const proposal = resolvedBundle.proposal;
+      const draft = resolvedBundle.draft;
+      if (proposal.draftId !== draft.id) {
+        return applyConflict('draft_proposal_mismatch', 'proposal.draftId does not match the selected draft', resolvedBundle);
+      }
+      const currentDigest = draftDigest(draft);
+      const idempotencyKey = proposalIdempotencyKey(proposal, draft);
+      const operationId = operationJournalId(proposal, draft);
+      const journal = await readOperationJournal(operationId);
+      if (proposal.status === 'applied') {
+        if (proposal.contentDigest !== currentDigest) {
+          return { success: false, error: 'idempotency conflict: applied proposal digest differs', proposal, draft, reviewBundle: resolvedBundle };
+        }
+        const existingReceipt = journal ? receiptFromOperationJournal(journal, proposal, draft) : undefined;
+        return {
+          success: true,
+          changed: false,
+          operation: 'duplicate',
+          proposal,
+          draft,
+          reviewBundle: resolvedBundle,
+          ...(existingReceipt ? { receipt: existingReceipt, compensation: existingReceipt.compensation } : {}),
+        };
+      }
       if (proposal.status !== 'approved') {
-        return { success: false, error: 'proposal must be approved by the user before apply' };
+        return applyConflict('not_approved', 'proposal must be approved by the user before apply', resolvedBundle);
       }
-      const draft = proposal.draftId ? await readDraft(proposal.draftId) : null;
-      if (proposal.operation !== 'create') {
-        return { success: false, error: 'Only create proposals can be applied to memory-wiki in this MVP' };
+      if (getString(proposal.reviewedDigest) && proposal.reviewedDigest !== currentDigest) {
+        return applyConflict('stale_digest', 'draft content changed after review approval', resolvedBundle);
       }
-      if (!draft || draft.status !== 'approved') {
-        return { success: false, error: 'approved draft is required before apply' };
+      if (draft.status !== 'approved') {
+        return applyConflict('draft_not_approved', 'approved draft is required before apply', resolvedBundle);
       }
-      if (draft.sourceIds.length === 0) {
-        return { success: false, error: 'draft sourceIds are required before apply' };
+      if (getString(proposal.workspaceId) !== undefined && proposal.workspaceId !== draft.workspaceId) {
+        return applyConflict('workspace_mismatch', 'draft workspace changed after review approval', resolvedBundle);
       }
-      try {
-        const result = await rpc<Record<string, unknown>>('wiki.apply', {
-          op: 'create_synthesis',
-          title: draft.title,
-          body: draft.body,
-          sourceIds: draft.sourceIds,
-          ...(typeof draft.confidence === 'number' ? { confidence: draft.confidence } : {}),
-          status: 'draft',
-        }, 120_000);
-        const timestamp = nowIso();
-        const appliedDraft: KnowledgeDraft = { ...draft, status: 'applied', appliedAt: timestamp, updatedAt: timestamp };
-        const appliedProposal: KnowledgeChangeProposal = { ...proposal, status: 'applied', appliedAt: timestamp, updatedAt: timestamp };
-        await writeDraft(appliedDraft);
-        await writeProposal(appliedProposal);
-        await appendAudit({ type: 'reviewed_change_applied', proposalId: proposal.id, draftId: draft.id, operation: proposal.operation });
-        return { success: true, proposal: appliedProposal, draft: appliedDraft, ...result };
-      } catch (error) {
-        return { success: false, proposal, draft, error: sanitizeUiErrorText(error) };
+
+      let targetWikiRevision: number | undefined;
+      if (proposal.operation === 'create') {
+        if (typeof proposal.expectedRevision === 'number' && proposal.expectedRevision !== draft.revision) {
+          return applyConflict('stale_revision', 'draft revision changed after review approval', resolvedBundle, draft.revision);
+        }
+        if (draft.sourceIds.length === 0) {
+          return { success: false, error: 'draft sourceIds are required before apply', proposal, draft };
+        }
+      } else {
+        const targetLookup = proposal.targetPageIds?.[0];
+        if (!targetLookup) {
+          return applyConflict('target_not_found', 'lifecycle proposal has no target wiki page', resolvedBundle);
+        }
+        let currentWikiPage: Record<string, unknown> | null;
+        try {
+          currentWikiPage = await rpc<Record<string, unknown>>('wiki.get', {
+            lookup: targetLookup,
+            lineCount: 1,
+            corpus: 'wiki',
+          }, 10_000) as Record<string, unknown> | null;
+        } catch {
+          currentWikiPage = null;
+        }
+        if (!currentWikiPage) {
+          return applyConflict('target_not_found', `target wiki page not found: ${targetLookup}`, resolvedBundle);
+        }
+        targetWikiRevision = typeof currentWikiPage.revision === 'number' && currentWikiPage.revision > 0
+          ? currentWikiPage.revision
+          : 1;
+        if (typeof proposal.expectedRevision === 'number' && proposal.expectedRevision !== targetWikiRevision) {
+          return applyConflict('stale_revision', 'target wiki page revision changed after review approval', resolvedBundle, targetWikiRevision);
+        }
       }
-    },
+
+      const subjectId = proposal.operation === 'create'
+        ? draft.sourceIds[0] ?? draft.title
+        : proposal.targetPageIds?.[0] ?? draft.title;
+      const subjectRevision = proposal.operation === 'create'
+        ? String(draft.revision)
+        : String(targetWikiRevision);
+      const baseEntry: GovernanceOperationJournalEntry = journal ?? {
+        schema: 'knowledge-governance-operation.v1',
+        operationId,
+        kind: 'review_apply',
+        proposalId: proposal.id,
+        draftId: draft.id,
+        idempotencyKey,
+        state: 'intent',
+        contentDigest: currentDigest,
+        operation: proposal.operation,
+        owner: 'memory-wiki',
+        subjectId,
+        ...(subjectRevision ? { subjectRevision } : {}),
+        receiptId: `kgr_${operationId}`,
+        ...(getString(proposal.reviewedDigest) ? { reviewedDigest: getString(proposal.reviewedDigest) } : {}),
+        ...(typeof proposal.expectedRevision === 'number' ? { expectedRevision: proposal.expectedRevision } : {}),
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      };
+      if (!journal) {
+        await writeOperationJournal(baseEntry);
+      }
+
+      let wikiResult: Record<string, unknown>;
+      if (journal?.state === 'wiki_committed' || journal?.state === 'json_committed') {
+        wikiResult = {};
+      } else {
+        try {
+          if (proposal.operation === 'create') {
+            wikiResult = await rpc<Record<string, unknown>>('wiki.apply', {
+              op: 'create_synthesis',
+              title: draft.title,
+              body: draft.body,
+              sourceIds: draft.sourceIds,
+              ...(typeof draft.confidence === 'number' ? { confidence: draft.confidence } : {}),
+              status: 'draft',
+            }, 120_000);
+          } else {
+            wikiResult = await rpc<Record<string, unknown>>(
+              KNOWLEDGE_LIFECYCLE_WIKI_RPC[proposal.operation],
+              wikiLifecycleRpcPayload({
+                operation: proposal.operation,
+                draft,
+                proposal,
+                idempotencyKey,
+              }),
+              120_000,
+            );
+          }
+          await writeOperationJournal({
+            ...baseEntry,
+            state: 'wiki_committed',
+            updatedAt: nowIso(),
+            ...(typeof wikiResult.revision === 'number' ? { subjectRevision: String(wikiResult.revision) } : {}),
+          });
+        } catch (error) {
+          await writeOperationJournal({
+            ...baseEntry,
+            state: 'failed',
+            updatedAt: nowIso(),
+            error: sanitizeUiErrorText(error),
+            compensation: compensationForOperation(proposal.operation),
+          }).catch(() => undefined);
+          return {
+            success: false,
+            proposal,
+            draft,
+            reviewBundle: resolvedBundle,
+            error: sanitizeUiErrorText(error),
+            compensation: compensationForOperation(proposal.operation),
+          };
+        }
+      }
+
+      const timestamp = nowIso();
+      const appliedDraft: KnowledgeDraft = {
+        ...draft,
+        status: 'applied',
+        appliedAt: timestamp,
+        updatedAt: timestamp,
+        revision: (draft.revision ?? 1) + 1,
+      };
+      const appliedProposal: KnowledgeChangeProposal = {
+        ...proposal,
+        status: 'applied',
+        appliedAt: timestamp,
+        updatedAt: timestamp,
+        idempotencyKey,
+      };
+      const finalEntry: GovernanceOperationJournalEntry = {
+        ...baseEntry,
+        state: 'json_committed',
+        updatedAt: nowIso(),
+        compensation: compensationForOperation(proposal.operation),
+        ...(typeof wikiResult.revision === 'number' ? { subjectRevision: String(wikiResult.revision) } : {}),
+      };
+      await writeDraft(appliedDraft);
+      await writeProposal(appliedProposal);
+      await writeOperationJournal(finalEntry);
+      await appendAudit({
+        type: 'reviewed_change_applied',
+        proposalId: proposal.id,
+        draftId: draft.id,
+        operation: proposal.operation,
+        operationId,
+      });
+      const receipt = receiptFromOperationJournal(finalEntry, appliedProposal, appliedDraft);
+      return {
+        success: true,
+        changed: true,
+        proposal: appliedProposal,
+        draft: appliedDraft,
+        reviewBundle: buildReviewBundle(appliedProposal, appliedDraft),
+        ...(receipt ? { receipt, compensation: receipt.compensation } : {}),
+        ...wikiResult,
+      };
+    }),
 
     stewardReview: async (payload) => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
@@ -4263,9 +5220,9 @@ export function createKnowledgeApi({
         const stateDir = resolveHostOpenClawStateDir();
         // Prefer a real DCS BlockStore sink so confirmed experience Blocks are
         // visible to runtime context_search / context_read. Fall back to the
-        // journal sink when the shared state DB cannot be opened.
-        const blockStoreSink = createHostBlockStoreSink();
-        const sink = blockStoreSink ?? createHostExperienceJournalSink(stateDir);
+        // journal sink when the shared state DB cannot be opened, and label it
+        // journaled_degraded instead of pretending the write persisted.
+        const projection = createHostExperienceProjectionSink(stateDir);
         const lineage =
           typeof distiller.confirm_and_save_with_lineage === 'function'
             ? await distiller.confirm_and_save_with_lineage(body.suggestion, body.edits ?? null, {
@@ -4274,20 +5231,30 @@ export function createKnowledgeApi({
                 sourceSystem: body.sourceSystem ?? payload.sourceSystem ?? 'ui-confirm',
                 integrityClaim: body.integrityClaim ?? payload.integrityClaim ?? 'confirmed',
                 summaryOnly: body.summaryOnly === true || payload.summaryOnly === true,
-                contextBlockSink: sink,
+                contextBlockSink: projection.sink,
+                contextBlockSinkKind: projection.kind,
               })
             : {
                 principleId: distiller.confirm_and_save(body.suggestion, body.edits ?? null, {
                   sessionId,
                   requireSession: true,
                   sourceSystem: body.sourceSystem ?? 'ui-confirm',
-                  contextBlockSink: sink,
+                  contextBlockSink: projection.sink,
                 }),
                 provenance: undefined,
                 dcsWrite: 'skipped' as const,
+                projectionBlockId: undefined,
                 highTrustEligible: false,
               };
-        const dcsWrite = lineage.dcsWrite === 'written' ? 'written' : lineage.dcsWrite === 'rejected' ? 'rejected' : 'principle_only';
+        let dcsWrite: KnowledgeSekbConfirmPrincipleResult['dcsWrite'] = lineage.dcsWrite;
+        // KS-02 persisted requires a real BlockStore read-back. If verification
+        // fails, degrade the status instead of reporting a false persisted write.
+        if (dcsWrite === 'persisted' && lineage.projectionBlockId && projection.verifyBlock) {
+          const verified = await projection.verifyBlock(lineage.projectionBlockId, sessionId);
+          if (!verified) dcsWrite = 'journaled_degraded';
+        }
+        if (dcsWrite === 'written') dcsWrite = projection.kind === 'blockstore' ? 'persisted' : 'journaled_degraded';
+        const persisted = dcsWrite === 'persisted';
         return {
           success: true,
           available: true,
@@ -4295,7 +5262,7 @@ export function createKnowledgeApi({
           provenance: lineage.provenance,
           dcsWrite,
           highTrustEligible: lineage.highTrustEligible,
-          principleOnly: dcsWrite !== 'written',
+          principleOnly: !persisted,
         };
       } catch (error) {
         const message = sanitizeUiErrorText(error);
@@ -4578,6 +5545,10 @@ export function createKnowledgeApi({
       return { success: true, ...(record ? { record } : {}) };
     },
 
+
+    listGovernanceReceipts: async (): Promise<KnowledgeListGovernanceReceiptsResult> => {
+      return { success: true, receipts: await listOperationReceipts() };
+    },
 
     governanceAudit: async (): Promise<KnowledgeGovernanceResult> => {
       let compileResult: KnowledgeCompileResult | null = null;

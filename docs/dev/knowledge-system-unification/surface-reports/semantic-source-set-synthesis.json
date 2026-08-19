@@ -1,0 +1,37 @@
+{
+  "schema": "KnowledgeSurfaceReport/v1",
+  "surfaceId": "semantic-source-set-synthesis",
+  "title": "Semantic Source Set synthesis",
+  "currentStage": "shadow",
+  "stageRationale": "KS-07 SourceSet engine is package-gated and the committed quality run has no real embedding provider; semantic lane degrades to lexical.",
+  "evidenceLevel": "E2",
+  "e4": "not-evaluated",
+  "e5": "blocked",
+  "metrics": [
+    {
+      "commandId": "source-set-runtime",
+      "label": "SourceSet behavior and committed corpus tests",
+      "kind": "runtime-unit",
+      "testsPassed": 19,
+      "testsFailed": 0,
+      "testFilesPassed": 2,
+      "exitCode": 0,
+      "durationMs": 1871,
+      "outputSummary": "✓  unit  src/context-engine/source-set-quality.test.ts (2 tests) 137ms | ✓  unit  src/context-engine/source-set.test.ts (17 tests) 60ms | Test Files  2 passed (2) | Tests  19 passed (19) | Start at  08:13:16 | Duration  847ms (transform 877ms, setup 571ms, import 163ms, tests 198ms, environment 0ms)"
+    }
+  ],
+  "nextPromotionGate": "A configured real embedding provider and E4 usefulness evidence before any opt-in/canary discussion.",
+  "residual": [
+    "Committed quality run is lexical/exact because no real provider is configured",
+    "E3 Electron E2E is not present for the KS-07 SourceSet engine",
+    "E4 real provider/user task evidence is not-evaluated",
+    "E5 soak and product approval are blocked"
+  ],
+  "claims": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "ga": false
+  },
+  "generatedAt": "2026-08-19T00:11:49.072Z"
+}

@@ -78,6 +78,19 @@ export type PrincipleQuery = {
   task_types?: string[] | null;
 };
 
+export type SekbAdoptionTrigger = "cited" | "adopted" | "outcome";
+
+export type SekbAdoptionEvidence = {
+  trigger: SekbAdoptionTrigger;
+  taskSucceeded: boolean;
+  taskType?: string;
+  contextTags?: string[];
+  sessionKey?: string;
+  sourceRunId?: string;
+  citationText?: string;
+  at?: string;
+};
+
 export type DistillationSuggestion = {
   cluster_summary: string;
   source_trajectory_ids: string[];

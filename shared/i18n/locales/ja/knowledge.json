@@ -505,7 +505,8 @@
     "shadowKey": "仮名化キー",
     "shadowKeyPlaceholder": "オフライン評価証拠のキー",
     "shadowReport": "レポートを生成",
-    "shadowRunning": "生成中…"
+    "shadowRunning": "生成中…",
+    "dcsWriteLabel": "DCS 書き込み"
   },
   "governance": {
     "title": "Governance",
@@ -621,5 +622,43 @@
     "troubleshootingRecipe": "トラブルシュート",
     "artifactCreated": "Studio 草稿を作成しました",
     "question": "現在の Source Set から {{artifact}} を作成します。"
+  },
+  "lifecycle": {
+    "title": "ページライフサイクルガバナンス",
+    "description": "memory-wiki ページに対して governed な update/merge/archive/revoke/delete/restore 提案を作成します。適用ごとに expectedRevision を再検証し EffectReceipt を返します。",
+    "operationLabel": "操作",
+    "targetLabel": "対象ページ lookup",
+    "targetPlaceholder": "notes/target.md",
+    "mergeSourceLabel": "マージ元 lookup",
+    "mergeSourcePlaceholder": "notes/source.md",
+    "titleLabel": "ドラフトタイトル",
+    "bodyLabel": "本文 / diff",
+    "reasonLabel": "ポリシー理由",
+    "propose": "ライフサイクル提案を作成",
+    "policyBoundary": "提案はユーザーの明示的な確認後にのみ wiki RPC を実行します。",
+    "previewTitle": "プレビュー / diff",
+    "previewEmpty": "ライフサイクルのプレビューはまだありません。",
+    "expectedRevision": "expectedRevision",
+    "idempotencyKey": "idempotencyKey",
+    "receiptTitle": "EffectReceipt",
+    "receiptEmpty": "提案を適用すると EffectReceipt がここに表示されます。",
+    "historyTitle": "Receipt 履歴",
+    "historyEmpty": "governed receipt はまだありません。",
+    "operation": {
+      "update": "更新",
+      "merge": "マージ",
+      "archive": "アーカイブ",
+      "revoke": "失効",
+      "delete": "削除",
+      "restore": "復元"
+    },
+    "compensation": {
+      "compensated": "補償済み",
+      "partial": "部分補償",
+      "unrecoverable": "復元不能"
+    },
+    "toasts": {
+      "proposed": "ライフサイクル提案を作成しました。確認待ちです。"
+    }
   }
 }

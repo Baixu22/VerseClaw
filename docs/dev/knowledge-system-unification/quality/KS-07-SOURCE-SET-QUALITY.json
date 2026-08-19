@@ -1,0 +1,265 @@
+{
+  "schema": "SourceSetQualityReport/v1",
+  "fixturePath": "D:\\verse_claw_worktree_knowledge\\openclaw_runtime\\src\\context-engine\\fixtures\\source-set-ks07-corpus.json",
+  "fixtureSha256": "69a85796ad88ca2b92aa771ccbb13bfac25ea80d3df8439c66f5a56d5043d7cc",
+  "generatedAt": "2026-08-18T13:30:30.483Z",
+  "semanticAvailability": false,
+  "metrics": {
+    "recallAt5": 1,
+    "precisionAt5": 1,
+    "citationValidity": 1,
+    "staleInclusion": {
+      "retrieved": 0,
+      "groundedClaims": 0
+    },
+    "conflictDisclosure": 1,
+    "latencyMs": {
+      "total": 10,
+      "avg": 1.6666666666666667,
+      "max": 8
+    },
+    "tokenCost": {
+      "chars": 7365,
+      "estimatedTokens": 1842
+    }
+  },
+  "queryReports": [
+    {
+      "queryId": "q-gateway-deploy-conflict",
+      "evidenceStatus": "partial",
+      "retrievedRefIds": [
+        "wiki:deploy-runbook",
+        "wiki:deploy-legacy"
+      ],
+      "rejectedRefIds": [
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ],
+      "expectedConflicts": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ],
+      "conflictDisclosure": 1,
+      "relevantSourceIds": [
+        "wiki:deploy-runbook",
+        "wiki:deploy-legacy"
+      ],
+      "recallAt5": 1,
+      "precisionAt5": 1,
+      "citationCount": 1,
+      "validCitationCount": 1,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 8,
+      "tokenCost": {
+        "chars": 1439,
+        "estimatedTokens": 360
+      }
+    },
+    {
+      "queryId": "q-session-pinning",
+      "evidenceStatus": "grounded",
+      "retrievedRefIds": [
+        "memory-slot:session-pinning"
+      ],
+      "rejectedRefIds": [
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [],
+      "expectedConflicts": [],
+      "conflictDisclosure": 0,
+      "relevantSourceIds": [
+        "memory-slot:session-pinning"
+      ],
+      "recallAt5": 1,
+      "precisionAt5": 1,
+      "citationCount": 1,
+      "validCitationCount": 1,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 0,
+      "tokenCost": {
+        "chars": 1035,
+        "estimatedTokens": 259
+      }
+    },
+    {
+      "queryId": "q-retry-policy",
+      "evidenceStatus": "grounded",
+      "retrievedRefIds": [
+        "sekb:retry-idempotent"
+      ],
+      "rejectedRefIds": [
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [],
+      "expectedConflicts": [],
+      "conflictDisclosure": 0,
+      "relevantSourceIds": [
+        "sekb:retry-idempotent"
+      ],
+      "recallAt5": 1,
+      "precisionAt5": 1,
+      "citationCount": 1,
+      "validCitationCount": 1,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 1,
+      "tokenCost": {
+        "chars": 1061,
+        "estimatedTokens": 266
+      }
+    },
+    {
+      "queryId": "q-filtered-statuses",
+      "evidenceStatus": "partial",
+      "retrievedRefIds": [
+        "wiki:deploy-legacy",
+        "wiki:deploy-runbook"
+      ],
+      "rejectedRefIds": [
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ],
+      "expectedConflicts": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ],
+      "conflictDisclosure": 1,
+      "relevantSourceIds": [
+        "wiki:deploy-runbook",
+        "wiki:deploy-legacy"
+      ],
+      "recallAt5": 1,
+      "precisionAt5": 1,
+      "citationCount": 1,
+      "validCitationCount": 1,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 0,
+      "tokenCost": {
+        "chars": 1439,
+        "estimatedTokens": 360
+      }
+    },
+    {
+      "queryId": "q-partial-pinned",
+      "evidenceStatus": "partial",
+      "retrievedRefIds": [
+        "wiki:deploy-runbook"
+      ],
+      "rejectedRefIds": [
+        "memory-wiki:missing-page",
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [],
+      "expectedConflicts": [],
+      "conflictDisclosure": 0,
+      "relevantSourceIds": [
+        "wiki:deploy-runbook"
+      ],
+      "recallAt5": 1,
+      "precisionAt5": 1,
+      "citationCount": 2,
+      "validCitationCount": 2,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 1,
+      "tokenCost": {
+        "chars": 1430,
+        "estimatedTokens": 358
+      }
+    },
+    {
+      "queryId": "q-missing",
+      "evidenceStatus": "missing_sources",
+      "retrievedRefIds": [],
+      "rejectedRefIds": [
+        "wiki:stale-page",
+        "wiki:archived-page",
+        "wiki:revoked-page",
+        "wiki:deleted-page",
+        "wiki:denied-page",
+        "wiki:secret-page",
+        "wiki:acl-page",
+        "wiki:scope-other-workspace"
+      ],
+      "conflictKeys": [],
+      "expectedConflicts": [],
+      "conflictDisclosure": 0,
+      "relevantSourceIds": [],
+      "recallAt5": 0,
+      "precisionAt5": 0,
+      "citationCount": 0,
+      "validCitationCount": 0,
+      "citationValidity": 1,
+      "staleInclusion": {
+        "retrieved": 0,
+        "groundedClaims": 0
+      },
+      "latencyMs": 0,
+      "tokenCost": {
+        "chars": 961,
+        "estimatedTokens": 241
+      }
+    }
+  ],
+  "humanUsefulness": "not-evaluated (E4 missing)",
+  "evidenceLevel": "E1-E2 fixture evaluation only; not E4/E5"
+}

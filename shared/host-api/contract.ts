@@ -3166,6 +3166,22 @@ export type ChatSendWithMediaResult = HostSuccess & {
     limit: number;
     used: number;
   };
+  knowledgeDenials?: ChatKnowledgeDenial[];
+};
+
+export type ChatKnowledgeDenial = {
+  id: string;
+  title: string;
+  lookup: string;
+  reason:
+    | 'invalid_ref'
+    | 'unsupported_owner'
+    | 'not_found'
+    | 'acl_denied'
+    | 'sensitive'
+    | 'stale'
+    | 'revoked';
+  visibleReason: string;
 };
 
 export type ChatKnowledgeReference = {
@@ -3430,7 +3446,7 @@ export type KnowledgeSekbConfirmPrincipleResult = HostSuccess & {
   reason?: 'runtimeUnavailable' | 'confirmFailed' | 'missingSession';
   principleId?: string;
   provenance?: KnowledgeSekbConfirmProvenance;
-  dcsWrite?: 'written' | 'skipped' | 'rejected' | 'not_attempted' | 'principle_only';
+  dcsWrite?: KnowledgeDcsWriteStatus;
   highTrustEligible?: boolean;
   /** When true, only the SEKB principle was saved (no DCS experience record). */
   principleOnly?: boolean;
@@ -3853,6 +3869,12 @@ export type KnowledgeDraft = {
   updatedAt: string;
   reviewedAt?: string;
   appliedAt?: string;
+  /** KS-01: monotonically increasing governance object revision. Legacy records read as 1. */
+  revision?: number;
+  /** KS-01: digest of the reviewed content at approval time. */
+  reviewedDigest?: string;
+  /** KS-01: canonical digest of content-bearing draft fields. */
+  contentDigest?: string;
 };
 export type KnowledgeInboxKind = 'chat-session' | 'task-ledger' | 'clawgraph' | 'file' | 'okf' | 'manual' | 'wiki-result';
 export type KnowledgeInboxStatus = 'pending' | 'promoted' | 'dismissed';
@@ -3912,7 +3934,7 @@ export type KnowledgeUpdateInboxItemPayload = {
   id: string;
 } & Partial<Omit<KnowledgeCreateInboxItemPayload, 'createdBy'>>;
 export type KnowledgeInboxItemIdPayload = { id: string };
-export type KnowledgeChangeOperation = 'create' | 'update' | 'merge' | 'archive' | 'delete';
+export type KnowledgeChangeOperation = 'create' | 'update' | 'merge' | 'archive' | 'revoke' | 'delete' | 'restore';
 export type KnowledgeChangeProposal = {
   id: string;
   operation: KnowledgeChangeOperation;
@@ -3926,7 +3948,49 @@ export type KnowledgeChangeProposal = {
   createdAt: string;
   updatedAt: string;
   appliedAt?: string;
+  /** KS-01: monotonically increasing governance object revision. Legacy records read as 1. */
+  revision?: number;
+  /** KS-01: canonical digest of the target draft content at proposal creation. */
+  contentDigest?: string;
+  /** KS-01: digest approved by the reviewer; apply must recompute and match. */
+  reviewedDigest?: string;
+  /** KS-01: draft revision expected at apply time. */
+  expectedRevision?: number;
+  /** KS-01: stable idempotency key for the governed effect. */
+  idempotencyKey?: string;
+  workspaceId?: string | null;
 };
+export type KnowledgeReviewBundle = {
+  /** Stable read-model id derived from proposalId:draftId. */
+  id: string;
+  draftId: string;
+  proposalId: string;
+  operation: KnowledgeChangeOperation;
+  status: KnowledgeChangeProposal['status'];
+  draftStatus: KnowledgeDraftStatus;
+  reviewedDigest?: string;
+  expectedRevision?: number;
+  workspaceId?: string | null;
+  contentDigest?: string;
+  idempotencyKey?: string;
+  draft?: KnowledgeDraft;
+  proposal?: KnowledgeChangeProposal;
+};
+export type KnowledgeListReviewBundlesPayload = {
+  status?: KnowledgeChangeProposal['status'] | 'all';
+  limit?: number;
+};
+export type KnowledgeListReviewBundlesResult = HostSuccess & {
+  bundles: KnowledgeReviewBundle[];
+};
+export type KnowledgeDcsWriteStatus =
+  | 'persisted'
+  | 'journaled_degraded'
+  | 'rejected'
+  | 'not_attempted'
+  | 'principle_only'
+  | 'written'
+  | 'skipped';
 export type KnowledgeStewardConfig = {
   enabled: boolean;
   roleId: string;
@@ -4078,6 +4142,7 @@ export type KnowledgeProposeChangePayload = {
   diff?: string;
   reason: string;
   sources?: KnowledgeSourceRef[];
+  idempotencyKey?: string;
 };
 export type KnowledgeProposalResult = HostSuccess & { proposal?: KnowledgeChangeProposal };
 export type KnowledgeListProposalsPayload = {
@@ -4091,10 +4156,57 @@ export type KnowledgePreviewChangeResult = HostSuccess & {
   draft?: KnowledgeDraft;
   preview?: string;
 };
-export type KnowledgeApplyReviewedChangePayload = { id: string };
+export type KnowledgeApplyReviewedChangePayload = {
+  /** KS-01 single ReviewBundle selection. */
+  reviewBundleId?: string;
+  /** Legacy read compatibility. Do not use for new mutations. */
+  id?: string;
+};
+export type KnowledgeReviewApplyConflict = {
+  code:
+    | 'bundle_not_found'
+    | 'draft_proposal_mismatch'
+    | 'stale_revision'
+    | 'stale_digest'
+    | 'workspace_mismatch'
+    | 'target_not_found'
+    | 'not_approved'
+    | 'draft_not_approved';
+  reason: string;
+  expectedRevision?: number;
+  actualRevision?: number;
+};
+export type KnowledgeGovernanceCompensation = {
+  status: 'compensated' | 'partial' | 'unrecoverable';
+  reason?: string;
+};
+
+export type KnowledgeGovernanceReceipt = {
+  schema: 'knowledge-governance-receipt.v1';
+  receiptId: string;
+  operation: KnowledgeChangeOperation;
+  owner: 'memory-wiki' | 'memory-slot' | 'sekb';
+  subjectId: string;
+  subjectRevision?: string;
+  contentDigest: string;
+  idempotencyKey: string;
+  status: 'committed' | 'failed';
+  committedAt: string;
+  evidenceRefs: string[];
+  compensation?: KnowledgeGovernanceCompensation;
+};
+
 export type KnowledgeApplyReviewedChangeResult = KnowledgeApplyDraftResult & {
   proposal?: KnowledgeChangeProposal;
   draft?: KnowledgeDraft;
+  reviewBundle?: KnowledgeReviewBundle;
+  conflict?: KnowledgeReviewApplyConflict;
+  receipt?: KnowledgeGovernanceReceipt;
+  compensation?: KnowledgeGovernanceCompensation;
+};
+
+export type KnowledgeListGovernanceReceiptsResult = HostSuccess & {
+  receipts: KnowledgeGovernanceReceipt[];
 };
 export type KnowledgeStewardReviewPayload = {
   draftId?: string;
@@ -5232,6 +5344,7 @@ export type HostApiContract = {
     proposeChange: (payload: KnowledgeProposeChangePayload) => KnowledgeProposalResult;
     listProposals: (payload?: KnowledgeListProposalsPayload) => KnowledgeListProposalsResult;
     previewChange: (payload: KnowledgePreviewChangePayload) => KnowledgePreviewChangeResult;
+    listReviewBundles: (payload?: KnowledgeListReviewBundlesPayload) => KnowledgeListReviewBundlesResult;
     applyReviewedChange: (payload: KnowledgeApplyReviewedChangePayload) => KnowledgeApplyReviewedChangeResult;
     stewardReview: (payload: KnowledgeStewardReviewPayload) => KnowledgeStewardReviewResult;
     stewardConfigGet: () => KnowledgeStewardConfigGetResult;
@@ -5253,6 +5366,7 @@ export type HostApiContract = {
     getProvenance: (payload: KnowledgeProvenancePayload) => KnowledgeProvenanceResult;
 
     governanceAudit: () => KnowledgeGovernanceResult;
+    listGovernanceReceipts: () => KnowledgeListGovernanceReceiptsResult;
     listWatchedDirectories: () => KnowledgeWatchedDirectoryConfig[];
     addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig) => HostSuccess;
     updateWatchedDirectory: (payload: { id: string; config: Partial<KnowledgeWatchedDirectoryConfig> }) => HostSuccess;

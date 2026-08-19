@@ -28,6 +28,7 @@ import {
   type TrajectoryOutcome,
   type TrajectoryQuery,
   type TrajectoryStep,
+  type SekbAdoptionEvidence,
   type SekbBatchDistillationEvent,
   type SekbBatchDistillationFallbackReason,
 } from "./types.js";
@@ -318,11 +319,40 @@ export class KnowledgeStore {
     });
   }
 
-  record_adoption(principle_id: string, task_succeeded: boolean): void {
+  /**
+   * KS-05: adoption evidence gate. Only real cited/adopted/outcome evidence may
+   * move adoption_count / post_adoption_success. retrieval_count is a separate
+   * metric and must never be passed here.
+   */
+  record_adoption(principle_id: string, evidence: SekbAdoptionEvidence): void {
+    if (!evidence || (evidence.trigger !== "cited" && evidence.trigger !== "adopted" && evidence.trigger !== "outcome")) {
+      throw new Error("SEKB adoption requires cited/adopted/outcome evidence");
+    }
+    if (typeof evidence.taskSucceeded !== "boolean") {
+      throw new Error("SEKB adoption evidence requires taskSucceeded boolean");
+    }
     const principle = this.get_principle(principle_id);
+    const at = evidence.at ?? isoNow(this.#now);
+    const record: Record<string, unknown> = {
+      trigger: evidence.trigger,
+      taskSucceeded: evidence.taskSucceeded,
+      at,
+    };
+    if (evidence.taskType) record.taskType = evidence.taskType;
+    if (evidence.contextTags && evidence.contextTags.length > 0) record.contextTags = normalizeTags(evidence.contextTags);
+    if (evidence.sessionKey) record.sessionKey = evidence.sessionKey;
+    if (evidence.sourceRunId) record.sourceRunId = evidence.sourceRunId;
+    if (evidence.citationText) record.citationText = evidence.citationText.slice(0, 400);
+    const existing = Array.isArray(principle.metadata.sekbAdoptionEvidence)
+      ? (principle.metadata.sekbAdoptionEvidence as Record<string, unknown>[])
+      : [];
     this.update_principle(principle_id, {
       adoption_count: principle.adoption_count + 1,
-      post_adoption_success: principle.post_adoption_success + (task_succeeded ? 1 : 0),
+      post_adoption_success: principle.post_adoption_success + (evidence.taskSucceeded ? 1 : 0),
+      metadata: {
+        ...principle.metadata,
+        sekbAdoptionEvidence: [...existing, record].slice(-20),
+      },
     });
   }
 

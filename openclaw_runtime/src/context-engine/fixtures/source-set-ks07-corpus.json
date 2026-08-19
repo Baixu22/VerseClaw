@@ -1,0 +1,559 @@
+{
+  "version": 1,
+  "corpusId": "ks07-source-set-committed-corpus",
+  "kind": "synthetic-agent",
+  "notes": [
+    "committed offline corpus for KS-07 SourceSet quality metrics",
+    "semantic lane intentionally runs unavailable in the committed quality report; no real provider is configured",
+    "human usefulness must remain not-evaluated (E4 missing)"
+  ],
+  "sources": [
+    {
+      "refId": "wiki:deploy-runbook",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "deploy-runbook",
+      "revision": "rev-2",
+      "contentDigest": "sha256:9e34147f8dcac6c8fdd780a6c7aba43a3aa9dbfd6ee30632fcd6e3db6640e2be",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:deploy-runbook"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Production gateway deploy runbook: bind the gateway to localhost, run health checks, roll back before retrying. The gateway control port is 8080.",
+      "status": "active",
+      "indexedAt": "2026-08-18T10:00:00.000Z",
+      "claims": [
+        {
+          "claimId": "port",
+          "statement": "Gateway control port",
+          "stance": "8080"
+        },
+        {
+          "claimId": "deploy-order",
+          "statement": "Deploy order",
+          "stance": "health-check-before-rollback"
+        }
+      ],
+      "conflictKeys": [
+        "gateway-deploy-port"
+      ]
+    },
+    {
+      "refId": "wiki:deploy-legacy",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "deploy-legacy",
+      "revision": "rev-1",
+      "contentDigest": "sha256:1f70e9e219448c5d229dd06a594f9fdc5fa825b5182870356c53352cce9de5ce",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:deploy-legacy"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Legacy deployment notes still describe the gateway control port as 9090.",
+      "status": "active",
+      "indexedAt": "2026-08-01T10:00:00.000Z",
+      "claims": [
+        {
+          "claimId": "port",
+          "statement": "Gateway control port",
+          "stance": "9090"
+        }
+      ],
+      "conflictKeys": [
+        "gateway-deploy-port"
+      ]
+    },
+    {
+      "refId": "memory-slot:session-pinning",
+      "owner": "memory-slot",
+      "subjectKind": "memory-card",
+      "subjectId": "session-pinning",
+      "revision": "7",
+      "contentDigest": "sha256:5aea7c720898eddc06dac5f6b1a1f63f9c7f098a1562a0deaa5dc07d1ad6e335",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "confirmed",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-slot:session-pinning"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Pin sessions to the primary agent and keep the Task Ledger projection durable.",
+      "status": "active",
+      "indexedAt": "2026-08-17T10:00:00.000Z",
+      "claims": [
+        {
+          "claimId": "pinning",
+          "statement": "Session pinning policy",
+          "stance": "primary-agent"
+        }
+      ]
+    },
+    {
+      "refId": "sekb:retry-idempotent",
+      "owner": "sekb",
+      "subjectKind": "experience-principle",
+      "subjectId": "retry-idempotent",
+      "revision": "2026-08-17T10:00:00.000Z",
+      "contentDigest": "sha256:be5ade5b6b96317511154e604254b420720e0794d74e65216215e70cd9676320",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "confirmed",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "sekb:retry-idempotent"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Retry only idempotent writes before reporting a task as failed.",
+      "status": "active",
+      "indexedAt": "2026-08-16T10:00:00.000Z",
+      "claims": [
+        {
+          "claimId": "retry",
+          "statement": "Retry policy",
+          "stance": "idempotent-only"
+        }
+      ]
+    },
+    {
+      "refId": "wiki:stale-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "stale-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:83634996f71d0f8c34c60ffdc2b5ffb9eadeb091f72d58143aea2d35837ff255",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:stale-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Stale gateway deploy notes that must never ground an answer.",
+      "status": "stale",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:archived-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "archived-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:42c02c932edbca1d92a4a0279898d56dedf34d3b4f644e1aefa7f0e16aab0aba",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:archived-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Archived gateway deploy notes.",
+      "status": "archived",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:revoked-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "revoked-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:585b19b66da8ab1977215256d166ccd6c2eeccfd112f9d0d0d74d21d090fb761",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:revoked-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Revoked gateway deploy notes.",
+      "status": "revoked",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:deleted-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "deleted-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:a887cb5f926684c28946c739761a47e87affffcd3d7a8f04c3e2a40e691f61f6",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:deleted-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Deleted gateway deploy notes.",
+      "status": "deleted",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:denied-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "denied-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:94a1dd0a7fadd0bc70c2adf8d3faa1fc191d49f85ea61acb06624f57e84baaea",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:denied-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Denied gateway deploy notes.",
+      "status": "denied",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:secret-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "secret-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:d91646d7b5d04f9502927e773419b991211c8e06f9935b21c5e054545ffa9f8e",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "secret",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:secret-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Secret gateway deploy notes.",
+      "status": "active",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:acl-page",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "acl-page",
+      "revision": "rev-1",
+      "contentDigest": "sha256:365a8b66359f5ee9df1df54d5f2280a37c4027cdaa10d437f7c3f2db0f18cb7b",
+      "scope": {
+        "workspaceId": "ws-verse",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": [
+          "ops-agent"
+        ]
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:acl-page"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "ACL-gated gateway deploy notes.",
+      "status": "active",
+      "indexedAt": "2026-08-01T10:00:00.000Z"
+    },
+    {
+      "refId": "wiki:scope-other-workspace",
+      "owner": "memory-wiki",
+      "subjectKind": "wiki-page",
+      "subjectId": "scope-other-workspace",
+      "revision": "rev-1",
+      "contentDigest": "sha256:790c5186ee9842a2f102c6e307cfd2af4b70d1888be9b1bd11136690a60f4a18",
+      "scope": {
+        "workspaceId": "ws-other",
+        "roleTags": [
+          "ops"
+        ]
+      },
+      "trust": "advisory",
+      "sensitivity": "workspace",
+      "acl": {
+        "read": []
+      },
+      "provenance": {
+        "sourceRefs": [
+          "memory-wiki:scope-other-workspace"
+        ],
+        "evidenceRefs": [
+          "fixture:ks07"
+        ]
+      },
+      "content": "Gateway deploy notes from a different workspace.",
+      "status": "active",
+      "indexedAt": "2026-08-10T10:00:00.000Z"
+    }
+  ],
+  "queries": [
+    {
+      "id": "q-gateway-deploy-conflict",
+      "text": "How do I deploy the gateway and choose the control port?",
+      "taskContext": {
+        "taskId": "task-deploy",
+        "taskIntent": "deploy gateway safely",
+        "taskType": "deploy",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "relevantSourceIds": [
+        "wiki:deploy-runbook",
+        "wiki:deploy-legacy"
+      ],
+      "expectedConflicts": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ]
+    },
+    {
+      "id": "q-session-pinning",
+      "text": "Which agent should pinned sessions use?",
+      "taskContext": {
+        "taskId": "task-pinning",
+        "taskIntent": "pin session to agent",
+        "taskType": "session",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "relevantSourceIds": [
+        "memory-slot:session-pinning"
+      ],
+      "expectedConflicts": []
+    },
+    {
+      "id": "q-retry-policy",
+      "text": "Should we retry idempotent writes after failure?",
+      "taskContext": {
+        "taskId": "task-retry",
+        "taskIntent": "idempotent retry policy",
+        "taskType": "coding",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "relevantSourceIds": [
+        "sekb:retry-idempotent"
+      ],
+      "expectedConflicts": []
+    },
+    {
+      "id": "q-filtered-statuses",
+      "text": "Show every gateway deploy note including legacy and operational notes.",
+      "taskContext": {
+        "taskId": "task-filter",
+        "taskIntent": "enumerate gateway deploy notes",
+        "taskType": "audit",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "relevantSourceIds": [
+        "wiki:deploy-runbook",
+        "wiki:deploy-legacy"
+      ],
+      "expectedConflicts": [
+        "claim:port",
+        "source:gateway-deploy-port"
+      ]
+    },
+    {
+      "id": "q-partial-pinned",
+      "text": "Resolve the pinned runbook and a missing page.",
+      "taskContext": {
+        "taskId": "task-pinned",
+        "taskIntent": "resolve pinned knowledge",
+        "taskType": "audit",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "pinnedRefs": [
+        {
+          "owner": "memory-wiki",
+          "subjectId": "deploy-runbook",
+          "revision": "rev-2"
+        },
+        {
+          "owner": "memory-wiki",
+          "subjectId": "missing-page",
+          "revision": "rev-1"
+        }
+      ],
+      "relevantSourceIds": [
+        "wiki:deploy-runbook"
+      ],
+      "expectedConflicts": []
+    },
+    {
+      "id": "q-missing",
+      "text": "zqxxwvyj",
+      "taskContext": {
+        "taskId": "task-missing",
+        "taskIntent": "no source matches",
+        "taskType": "audit",
+        "roleTags": [
+          "ops"
+        ],
+        "workspaceId": "ws-verse"
+      },
+      "aclSubjects": [
+        "chat-user"
+      ],
+      "sensitivityCeiling": "workspace",
+      "relevantSourceIds": [],
+      "expectedConflicts": []
+    }
+  ]
+}

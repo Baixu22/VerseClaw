@@ -1,0 +1,104 @@
+{
+  "schema": "KnowledgeSurfaceSummary/v1",
+  "generatedAt": "2026-08-19T00:11:49.072Z",
+  "includeE2e": true,
+  "productLocks": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false
+  },
+  "failedCommands": 0,
+  "guardResults": [
+    {
+      "commandId": "canary-graduation-guard",
+      "exitCode": 0,
+      "testsPassed": 7
+    }
+  ],
+  "surfaces": [
+    {
+      "surfaceId": "explicit-pinned-refs",
+      "title": "Explicit / pinned Knowledge refs",
+      "currentStage": "opt-in",
+      "evidenceLevel": "E3",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    },
+    {
+      "surfaceId": "automatic-knowledge-retrieval",
+      "title": "Automatic Knowledge retrieval",
+      "currentStage": "opt-in",
+      "evidenceLevel": "E3",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    },
+    {
+      "surfaceId": "role-memory-retrieval",
+      "title": "Role Memory retrieval",
+      "currentStage": "shadow",
+      "evidenceLevel": "E2",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    },
+    {
+      "surfaceId": "sekb-experience-retrieval",
+      "title": "SEKB experience retrieval",
+      "currentStage": "opt-in",
+      "evidenceLevel": "E3",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    },
+    {
+      "surfaceId": "semantic-source-set-synthesis",
+      "title": "Semantic Source Set synthesis",
+      "currentStage": "shadow",
+      "evidenceLevel": "E2",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    },
+    {
+      "surfaceId": "post-task-candidate-capture",
+      "title": "Post-task candidate capture",
+      "currentStage": "shadow",
+      "evidenceLevel": "E2",
+      "e4": "not-evaluated",
+      "e5": "blocked",
+      "claims": {
+        "liveReady": false,
+        "productApproved": false,
+        "defaultOn": false,
+        "ga": false
+      }
+    }
+  ]
+}
