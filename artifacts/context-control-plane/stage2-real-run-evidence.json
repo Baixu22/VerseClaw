@@ -1,0 +1,36 @@
+{
+  "schema": "Stage2RealRunEvidence/v1",
+  "generatedAt": "2026-08-19T02:15:42.168Z",
+  "model": "deepseek/deepseek-v4-flash",
+  "runId": "run:stage2-golden:1787105732981",
+  "toolCallId": "call_e1fedaf517004ea49be06546",
+  "approvalId": "aprv_11ac78bf-6b81-43bc-a82a-50be7b6fbdf1",
+  "effectReceiptId": "efx_75a3c22f-7a43-4ced-91af-0fd417f1f955",
+  "journalRef": "write-journal:stage1:sess:stage2-golden:run:stage2-golden:1787105732981:1",
+  "envelopeDigest": "sha256:8a6ef91eda608ac994aee776c84f0bbfba853ea3bb8042384009f6f270663881",
+  "envelopeRef": "ref:request-envelope:8a6ef91eda608ac994aee776c84f0bbfba853ea3bb8042384009f6f270663881",
+  "wireReceiptId": "rcpt_b31cc7a0-6a98-4d09-92b7-aada6646530a",
+  "wireDigest": "d04d41fb8d8711c8e49bed49e2c065c942032d1a349dad1690fcab5811cc4ed6",
+  "preSnapshotId": "snap_b626372e-d886-c770-5369-d70c9e707a3a",
+  "preSnapshotDigest": "sha256:0a266caa8ba79fe398f3cea15f81138b953ca7cc3f5cb19d4d5a145e1290e8bf",
+  "prePlanId": "plan_3446c86e-a72f-d6eb-b387-fe905018fd24",
+  "prePlanDigest": "sha256:da6e7829a3753e5891d6b963976f4cebe569d707fa2d4d8b56df3c8e7c5523bd",
+  "postSnapshotId": "snap_2adb3da9-ceba-68ce-4618-91b6ed57fe35",
+  "postSnapshotDigest": "sha256:75a86eb37de8af905a3b4adde933cb5dee1c6e34b7f7956f8417c919ed616772",
+  "postPlanId": "plan_9fbce1b8-43f0-419f-9244-c4ed1a0c59ca",
+  "postPlanDigest": "sha256:93f9b10749e89ceb92be74bacd4ccee61ef3d29cead23119ce695ca1a8cf377b",
+  "postContextRefKinds": [
+    "task_ledger",
+    "tool_result",
+    "user_intent"
+  ],
+  "postSelectedRefIds": [
+    "ctxref:transcript:entry_587c75447aa2252c",
+    "ctxref:task_ledger:tlroot_620fb6794280ac67",
+    "ctxref:archive:845c4c3ef713091b"
+  ],
+  "census": {
+    "failedWrites": 0,
+    "acceptanceReady": true
+  }
+}

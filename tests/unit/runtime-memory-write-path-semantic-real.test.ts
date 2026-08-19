@@ -120,7 +120,7 @@ describe("Layer 1: write-path real filtering — syntactic noise rejected", () =
     const persistence = makePersistence(dbPath);
     const fact = makeRawContentFact({
       factId: "fact_secret",
-      objectSummary: "User API key is sk-9b4abb43c812453eadede49a42c8de6d",
+      objectSummary: "User API key is sk-test-not-a-real-key-0000000000000000",
     });
     const result = persistence.appendFact(fact);
     expect(result).toMatchObject({ status: "rejected", persisted: false });

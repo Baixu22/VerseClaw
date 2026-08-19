@@ -168,7 +168,7 @@ const RECEIPT_BUDGET_KEYS = new Set([
 const SHA256_DIGEST_RE = /^[a-f0-9]{64}$/;
 const RECEIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:@/-]*$/;
 const RECEIPT_REFERENCE_RE =
-  /^(?:ref:(?:context|file|memory|message|tool):[A-Za-z0-9][A-Za-z0-9._:@/+%-]*|owner-census:v0:[1-9]\d{0,5}:[a-f0-9]{64})$/;
+  /^(?:ref:(?:context|file|memory|message|tool|request-envelope|compilation-snapshot|prompt-plan):[A-Za-z0-9][A-Za-z0-9._:@/+%-]*|owner-census:v0:[1-9]\d{0,5}:[a-f0-9]{64})$/;
 const MAX_IDEMPOTENCY_KEY_LENGTH = 512;
 const MAX_IDENTITY_LENGTH = 256;
 const MAX_TRANSFORM_ID_LENGTH = 128;

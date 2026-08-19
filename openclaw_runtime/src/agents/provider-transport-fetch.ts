@@ -52,6 +52,7 @@ import {
   recordShadowCensusFailure,
   type ShadowReceiptOptions,
 } from "./shadow-census.js";
+import { buildStage1RequestEnvelope } from "./stage1-request-envelope.js";
 
 const DEFAULT_MAX_SDK_RETRY_WAIT_SECONDS = 60;
 const OPENAI_SDK_STREAM_CONTENT_SNIFF_BYTES = 2 * 1024;
@@ -857,8 +858,37 @@ export function buildGuardedModelFetch(
     if (shadow) {
       const wireAttemptIndex = nextWireAttemptIndex;
       nextWireAttemptIndex += 1;
-      const wireShadow = { ...shadow, wireAttemptIndex };
+      let wireShadow: ShadowReceiptOptions = { ...shadow, wireAttemptIndex };
       if (providerBody) {
+        // Stage 1 observational envelope. Digest/ref only; request bytes do not change.
+        const endpointClass =
+          requestConfig.policy?.endpointClass === "custom"
+            ? "custom"
+            : requestConfig.policy?.endpointClass === "local"
+              ? "local"
+              : "public";
+        const envelope = buildStage1RequestEnvelope({
+          body: providerBody.payload,
+          bodyText: providerBody.text,
+          providerId: model.provider,
+          adapterId: model.api,
+          modelId: model.id,
+          url,
+          method: request?.method ?? baseInit?.method ?? "POST",
+          endpointClass,
+          wireAttemptIndex,
+          shadow: wireShadow,
+        });
+        if (envelope.ok) {
+          wireShadow = { ...wireShadow, requestEnvelopeRef: envelope.envelopeRef };
+        } else {
+          recordShadowCensusFailure(
+            "wire-capture",
+            envelope.reason === "unregistered-transform"
+              ? "unregistered-transform"
+              : "request-envelope-incomplete",
+          );
+        }
         // Receipt writes are observational. A persistence failure is recorded by the
         // census diagnostics, while the guarded provider request continues unchanged.
         emitShadowWireReceipt(
