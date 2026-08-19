@@ -57,6 +57,7 @@ export const LEGAL_FLOW_TRANSITIONS: ReadonlyArray<readonly [FlowStatus, FlowSta
   ['running', 'failed'],
   ['running', 'cancelled'],
   ['waiting', 'running'],
+    ['waiting', 'failed'],
   ['waiting', 'cancelled'],
   ['blocked', 'running'],
   ['blocked', 'cancelled'],
@@ -103,6 +104,12 @@ export type CasUpsertInput = {
    *  row/transaction as the lifecycle transition (never declared but dropped).
    *  Explicit null clears the field. */
   deliveryState?: string | null;
+    /** Managed-flow controller ownership. `goal-wake` rows are the wait
+     *  ledger and may only be created through this CAS writer. */
+    controllerId?: string | null;
+    /** Single dependency reference used by the goal-wake wait ledger. */
+    blockedTaskId?: string | null;
+    blockedSummary?: string | null;
 };
 
 /**
@@ -155,14 +162,14 @@ export class TaskFlowCasStore {
           sync_mode: 'managed',
           owner_key: input.ownerKey ?? 'cas-proof',
           requester_origin_json: null,
-          controller_id: null,
+          controller_id: input.controllerId ?? null,
           revision: 0,
           status: input.status,
           notify_policy: 'done_only',
           goal: `cas-${input.flowId}`,
           current_step: input.currentStep ?? null,
-          blocked_task_id: null,
-          blocked_summary: null,
+          blocked_task_id: input.blockedTaskId ?? null,
+          blocked_summary: input.blockedSummary ?? null,
           state_json: input.stateJson ?? null,
           wait_json: input.waitJson ?? null,
           delivery_state: input.deliveryState ?? null,
@@ -191,6 +198,18 @@ export class TaskFlowCasStore {
         return;
       }
       const currentStatus = existing.status as FlowStatus;
+      if (
+        input.controllerId !== undefined
+        && existing.controller_id != null
+        && existing.controller_id !== input.controllerId
+      ) {
+        result = {
+          ok: false,
+          reason: 'illegal-transition',
+          message: `controller ownership is immutable (${existing.controller_id}->${input.controllerId ?? 'null'})`,
+        };
+        return;
+      }
       if (!isLegalTransition(currentStatus, input.status)) {
         result = { ok: false, reason: 'illegal-transition', message: `${currentStatus}->${input.status}` };
         return;
@@ -209,7 +228,10 @@ export class TaskFlowCasStore {
             status: input.status,
             revision: nextRevision,
             owner_key: input.ownerKey ?? existing.owner_key,
+            controller_id: input.controllerId !== undefined ? input.controllerId : existing.controller_id,
             current_step: input.currentStep ?? existing.current_step,
+            blocked_task_id: input.blockedTaskId !== undefined ? input.blockedTaskId : existing.blocked_task_id,
+            blocked_summary: input.blockedSummary !== undefined ? input.blockedSummary : existing.blocked_summary,
             state_json: input.stateJson !== undefined ? input.stateJson : existing.state_json,
             wait_json: input.waitJson !== undefined ? input.waitJson : existing.wait_json,
             delivery_state: input.deliveryState !== undefined ? input.deliveryState : existing.delivery_state,

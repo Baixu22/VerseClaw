@@ -508,9 +508,10 @@ export function createTerminalApi({
     },
     list: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceTerminalListPayload : {};
-      const workspace = await getActiveWorkspaceProfile();
+      // Global listing reuses terminal.list({}). Do not inject the active
+      // workspace when the renderer omitted workspaceId.
       const sessions = terminalManager.list({
-        workspaceId: body.workspaceId ?? workspace?.id,
+        workspaceId: body.workspaceId,
         sessionKey: body.sessionKey,
       });
       return {

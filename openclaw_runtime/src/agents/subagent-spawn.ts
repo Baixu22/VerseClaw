@@ -62,6 +62,7 @@ import {
   type SubagentAttachmentReceiptFile,
 } from "./subagent-attachments.js";
 import { resolveSubagentCapabilities } from "./subagent-capabilities.js";
+import { acquireSessionAdmissionPermit, sessionAdmissionEnabled } from "../sessions/session-admission-registry.js";
 import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
 import { countActiveRunsForSession, registerSubagentRun } from "./subagent-registry.js";
@@ -1578,6 +1579,23 @@ export async function spawnSubagentDirect(
   const shouldAnnounceCompletion = deliverInitialChildRunDirectly
     ? false
     : expectsCompletionMessage;
+  let releaseSubagentPermit = (): void => {};
+  if (sessionAdmissionEnabled()) {
+    const parentAdmissionTarget = resolveGatewaySessionStoreTarget({
+      cfg,
+      key: requesterInternalKey,
+    });
+    const parentAdmissionStore = loadSessionStore(parentAdmissionTarget.storePath, { clone: false });
+    const parentAdmissionEntry = resolveStoreEntryByKeys(parentAdmissionStore, parentAdmissionTarget.storeKeys);
+    releaseSubagentPermit = acquireSessionAdmissionPermit(
+      {
+        agentId: requesterAgentId,
+        canonicalSessionKey: parentAdmissionTarget.canonicalKey ?? requesterInternalKey,
+        expectedSessionId: parentAdmissionEntry?.sessionId ?? requesterInternalKey,
+      },
+      "subagent-spawn",
+    );
+  }
   try {
     const {
       spawnedBy: _spawnedBy,
@@ -1628,6 +1646,7 @@ export async function spawnSubagentDirect(
         // Best-effort cleanup only.
       }
     }
+    releaseSubagentPermit();
     let emitLifecycleHooks = false;
     if (threadBindingReady) {
       const hasEndedHook = hookRunner?.hasHooks("subagent_ended") === true;
@@ -1705,7 +1724,9 @@ export async function spawnSubagentDirect(
       retainAttachmentsOnKeep: retainOnSessionKeep,
       orchestration: params.orchestration,
     });
+    releaseSubagentPermit();
   } catch (err) {
+    releaseSubagentPermit();
     await rollbackPreparedContextEngine(contextEnginePreparation);
     if (attachmentAbsDir) {
       try {

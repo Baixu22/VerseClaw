@@ -193,12 +193,16 @@ function pruneRowsNotInSnapshot(params: {
   for (const id of params.ids) {
     insert.run(id);
   }
+  const preserveSql =
+    params.tableName === "task_runs"
+      ? ` AND ${params.tableName}.runtime <> 'process'`
+      : "";
   params.db.exec(`
     DELETE FROM ${params.tableName}
     WHERE NOT EXISTS (
       SELECT 1 FROM ${params.tempTableName}
       WHERE ${params.tempTableName}.id = ${params.tableName}.${params.columnName}
-    )
+    )${preserveSql}
   `);
   params.db.exec(`DELETE FROM ${params.tempTableName}`);
 }

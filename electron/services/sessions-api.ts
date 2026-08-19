@@ -9,6 +9,12 @@ import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledg
 import { getOpenClawConfigDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import type { GatewayManager } from '../gateway/manager';
+import type { TerminalSessionManager } from './terminal-session-manager';
+import {
+  clearSessionDeleteGate,
+  findSessionDeleteGateBySession,
+  persistSessionDeleteGate,
+} from './session-delete-gate';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
   LongTaskCheckpointRecord,
@@ -54,6 +60,7 @@ type SessionSummary = {
   sessionKey: string;
   firstUserText: string | null;
   lastTimestamp: number | null;
+  messageCount: number;
 };
 
 type TranscriptMessage = RawMessage;
@@ -224,11 +231,15 @@ async function readAllTranscriptMessages(transcriptPath: string): Promise<Transc
 function summarizeTranscriptMessages(sessionKey: string, messages: TranscriptMessage[]): SessionSummary {
   let firstUserText: string | null = null;
   let lastTimestamp: number | null = null;
+  let messageCount = 0;
 
   for (const message of messages) {
     const normalizedTs = normalizeTimestamp(message.timestamp);
     if (normalizedTs != null) {
       lastTimestamp = normalizedTs;
+    }
+    if (message.role === 'user') {
+      messageCount += 1;
     }
     if (firstUserText == null && message.role === 'user') {
       const text = cleanSummaryUserText(extractMessageText(message.content));
@@ -238,7 +249,7 @@ function summarizeTranscriptMessages(sessionKey: string, messages: TranscriptMes
     }
   }
 
-  return { sessionKey, firstUserText, lastTimestamp };
+  return { sessionKey, firstUserText, lastTimestamp, messageCount };
 }
 
 function parseSessionKey(sessionKey: string): { agentId: string; suffix: string } | null {
@@ -908,7 +919,7 @@ function resolveSessionTranscriptPathByKey(
 async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) {
-    return { sessionKey, firstUserText: null, lastTimestamp: null };
+    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
   }
 
   try {
@@ -916,13 +927,13 @@ async function loadSessionSummary(sessionKey: string): Promise<SessionSummary> {
     const sessionsJson = await readSessionsJson(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) {
-      return { sessionKey, firstUserText: null, lastTimestamp: null };
+      return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
     }
 
     const messages = await readAllTranscriptMessages(transcriptPath);
     return summarizeTranscriptMessages(sessionKey, messages);
   } catch {
-    return { sessionKey, firstUserText: null, lastTimestamp: null };
+    return { sessionKey, firstUserText: null, lastTimestamp: null, messageCount: 0 };
   }
 }
 
@@ -1326,11 +1337,81 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
   return { success: true };
 }
 
-export function createSessionsApi(ctx: { gatewayManager?: GatewayManager } = {}): CompleteHostServiceRegistry['sessions'] {
+type GatewaySessionDeleteResult = {
+  ok?: boolean;
+  deleted?: boolean;
+  archived?: string[];
+  operationId?: string;
+  journalState?: string;
+  error?: string;
+  message?: string;
+};
+
+async function deleteSessionViaRuntime(
+  sessionKey: string,
+  gatewayManager: GatewayManager,
+  terminalManager?: TerminalSessionManager,
+): Promise<SessionDeleteResult> {
+  const parsed = parseSessionKey(sessionKey);
+  if (!parsed) {
+    return { success: false, error: `Invalid sessionKey: ${sessionKey}` };
+  }
+
+  // Electron mirror gate: reuse a previously persisted operationId when the
+  // previous RPC failed or its outcome is unknown. A fresh operationId is
+  // generated and persisted before the first RPC for a session.
+  const existingGate = await findSessionDeleteGateBySession(sessionKey);
+  const gate = existingGate ?? await persistSessionDeleteGate(sessionKey, parsed.agentId);
+
+  try {
+    const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
+      'sessions.delete',
+      { key: sessionKey, operationId: gate.operationId, deleteTranscript: true },
+    );
+
+    if (result?.ok !== true) {
+      const errorText =
+        result && (result.error || result.message)
+          ? String(result.error ?? result.message)
+          : JSON.stringify(result ?? {});
+      return { success: false, error: errorText };
+    }
+
+    if (result.deleted === true) {
+      // Committed receipt received: only now close the terminal gate and sweep
+      // the Electron mirror artifacts.
+      terminalManager?.closeForSessionKey(sessionKey, 'session-delete');
+      const sweepResult = await deleteSession(sessionKey);
+      if (!sweepResult.success) {
+        // Keep the gate so a retry reuses the committed operationId and only
+        // re-runs the local mirror sweep.
+        return sweepResult;
+      }
+    }
+
+    await clearSessionDeleteGate(gate.operationId);
+    return { success: true };
+  } catch (error) {
+    // RPC unknown (timeout, socket drop, reconnect): do not sweep, do not
+    // release the mirror gate. The persisted operationId makes the next delete
+    // a retry of the same operation.
+    return {
+      success: false,
+      error: `Gateway delete did not return a committed receipt: ${error instanceof Error ? error.message : String(error)}`,
+    };
+  }
+}
+
+export function createSessionsApi(ctx: {
+  gatewayManager?: GatewayManager;
+  terminalManager?: TerminalSessionManager;
+} = {}): CompleteHostServiceRegistry['sessions'] {
   return {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
-      const result = await deleteSession(sessionKey);
+      const result = ctx.gatewayManager
+        ? await deleteSessionViaRuntime(sessionKey, ctx.gatewayManager, ctx.terminalManager)
+        : await deleteSession(sessionKey);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
       }

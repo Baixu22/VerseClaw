@@ -786,6 +786,8 @@ export async function processGatewayAllowlist(
           notifyOnExitEmptySuccess: false,
           scopeKey: params.scopeKey,
           sessionKey: params.notifySessionKey ?? params.sessionKey,
+          agentId: params.agentId,
+          expectedSessionId: params.sessionId,
           timeoutSec: effectiveTimeout,
         });
       } catch {

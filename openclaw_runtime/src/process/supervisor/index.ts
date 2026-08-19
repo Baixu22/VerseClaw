@@ -22,5 +22,6 @@ export type {
   RunState,
   SpawnInput,
   SpawnMode,
+  SupervisorSessionRunSnapshot,
   TerminationReason,
 } from "./types.js";
