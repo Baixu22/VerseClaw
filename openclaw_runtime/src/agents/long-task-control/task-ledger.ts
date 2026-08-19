@@ -2,6 +2,10 @@ import { createHash, randomUUID } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { resolveConfigDir } from "../../utils.js";
+import type {
+  TaskLedgerWorkingContextDecision,
+  TaskLedgerWorkingContextProposal,
+} from "../../../../shared/types/task-ledger.js";
 import type { RuntimeResumeCheckpoint, LongTaskInterventionEventRecord } from "./store.js";
 
 type TaskLedgerNodeKind =
@@ -20,7 +24,10 @@ type TaskLedgerEventType =
   | "decision_recorded"
   | "deviation_logged"
   | "review_requested"
-  | "session_linked";
+  | "session_linked"
+  | "working_context_proposed"
+  | "working_context_proposal_accepted"
+  | "working_context_proposal_rejected";
 
 type TaskLedgerEvidenceRef = {
   type: "session" | "trace" | "file" | "memory" | "manual" | "tool" | "other";
@@ -70,6 +77,8 @@ type TaskLedgerEventInput = {
     decision?: string;
     deviation?: string;
     note?: string;
+    workingContextProposal?: TaskLedgerWorkingContextProposal;
+    workingContextDecision?: TaskLedgerWorkingContextDecision;
   };
   createdAt?: string;
 };
@@ -90,6 +99,8 @@ export type LongTaskLedgerRootInput = {
   source: "task_loop" | "mission_loop";
   createdAt?: number;
   metadata?: Record<string, unknown>;
+  /** Test/runner-owned process env used to resolve OPENCLAW_STATE_DIR. */
+  env?: NodeJS.ProcessEnv;
 };
 
 function hashText(value: string): string {
@@ -122,9 +133,12 @@ function normalizeTaskLedgerWorkspaceId(workspaceId?: string | null): string {
   return `${slug || "workspace"}-${hash}`;
 }
 
-function taskLedgerEventsPath(workspaceId?: string | null): string {
+function taskLedgerEventsPath(
+  workspaceId?: string | null,
+  env: NodeJS.ProcessEnv = process.env,
+): string {
   return join(
-    resolveConfigDir(),
+    resolveConfigDir(env),
     "task-ledgers",
     "workspaces",
     normalizeTaskLedgerWorkspaceId(workspaceId),
@@ -158,9 +172,10 @@ function eventAlreadyExists(pathname: string, idempotencyKey?: string | null): b
 export function appendLongTaskLedgerEvents(
   workspaceId: string | null | undefined,
   inputs: TaskLedgerEventInput[],
+  env: NodeJS.ProcessEnv = process.env,
 ): void {
   if (inputs.length === 0) return;
-  const pathname = taskLedgerEventsPath(workspaceId);
+  const pathname = taskLedgerEventsPath(workspaceId, env);
   mkdirSync(dirname(pathname), { recursive: true });
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
   const events = inputs.flatMap((input): TaskLedgerEvent[] => {
@@ -266,8 +281,54 @@ export function ensureLongTaskLedgerRoot(input: LongTaskLedgerRootInput): string
         },
       },
     },
-  ]);
+  ], input.env);
   return rootId;
+}
+
+export type LongTaskLedgerRevision = {
+  eventCount: number;
+  revision: string;
+  contentDigest: string;
+};
+
+/**
+ * Read-only Task Ledger projection for DCS Stage 2. It reads the existing
+ * append-only events.jsonl, filters rows owned by rootId, and returns a
+ * revision plus sha256 content digest. It never writes and never returns
+ * event payloads.
+ */
+export function readLongTaskLedgerRevision(input: {
+  workspaceId?: string | null;
+  taskLedgerRootId: string;
+  env?: NodeJS.ProcessEnv;
+}): LongTaskLedgerRevision | undefined {
+  const pathname = taskLedgerEventsPath(input.workspaceId, input.env);
+  if (!existsSync(pathname)) return undefined;
+  let raw: string;
+  try {
+    raw = readFileSync(pathname, 'utf8');
+  } catch {
+    return undefined;
+  }
+  const ownedLines: string[] = [];
+  for (const line of raw.split(String.fromCharCode(10))) {
+    if (!line.trim()) continue;
+    try {
+      const parsed = JSON.parse(line) as { taskId?: unknown };
+      if (parsed.taskId === input.taskLedgerRootId) {
+        ownedLines.push(line);
+      }
+    } catch {
+      // A malformed unrelated line must not poison the projection.
+    }
+  }
+  if (ownedLines.length === 0) return undefined;
+  const contentDigest = createHash('sha256').update(ownedLines.join(String.fromCharCode(10))).digest('hex');
+  return {
+    eventCount: ownedLines.length,
+    revision: `rev_${ownedLines.length}_${contentDigest.slice(0, 16)}`,
+    contentDigest: `sha256:${contentDigest}`,
+  };
 }
 
 function statusFromLongTask(status: string): TaskLedgerNodeStatus {
