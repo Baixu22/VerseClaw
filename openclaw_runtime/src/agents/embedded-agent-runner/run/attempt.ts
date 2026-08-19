@@ -199,6 +199,8 @@ import {
   isSubagentEnvelopeSession,
   resolveSubagentCapabilityStore,
 } from "../../subagent-capabilities.js";
+import { goalWakeController } from "../../goal-wake-controller.js";
+import { acquireSessionAdmissionPermit } from "../../../sessions/session-admission-registry.js";
 import {
   ackPendingAgentSteeringItems,
   leasePendingAgentSteeringItems,
@@ -4993,6 +4995,25 @@ export async function runEmbeddedAttempt(
                 await persistSessionsYieldContextMessage(activeSession, yieldMessage);
               }
             });
+            // Turn barrier: the run is fully idle here. Take the admission
+            // permit before persisting the barrier ack so a concurrent
+            // delete/reset fence cannot race the ack side effect.
+            const releaseGoalWakeAck = acquireSessionAdmissionPermit(
+              {
+                agentId: sessionAgentId,
+                canonicalSessionKey: params.sessionKey ?? "",
+                expectedSessionId: params.sessionId,
+              },
+              "goal-wake-ack",
+            );
+            try {
+              await goalWakeController.ackPendingGoalWaitFlowsForSession(
+                params.sessionKey ?? "",
+                params.config,
+              );
+            } finally {
+              releaseGoalWakeAck();
+            }
           } else if (isMidTurnPrecheckSignal(err)) {
             await sessionLockController.waitForSessionEvents(activeSession);
             await sessionLockController.withSessionWriteLock(() => {

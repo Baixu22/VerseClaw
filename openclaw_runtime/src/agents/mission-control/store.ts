@@ -90,6 +90,9 @@ function rowToMission(row: MissionRunRow): MissionRunRecord {
     phase: row.phase as MissionPhase,
     tick: row.tick_count,
     repairTicks: row.repair_tick_count,
+    revision: row.revision,
+    activeTickId: row.active_tick_id,
+    lastWakeId: row.last_wake_id,
     maxTicks: row.max_ticks,
     maxRepairTicks: row.max_repair_ticks,
     progress: row.progress,
@@ -148,12 +151,15 @@ function updateFromValues(values: MissionRunInsert): MissionRunUpdate {
     no_progress_hash: values.no_progress_hash ?? null,
     schedule_json: values.schedule_json ?? "{}",
     metadata_json: values.metadata_json ?? "{}",
+    ...(values.revision !== undefined ? { revision: values.revision } : {}),
+    ...(values.active_tick_id !== undefined ? { active_tick_id: values.active_tick_id } : {}),
+    ...(values.last_wake_id !== undefined ? { last_wake_id: values.last_wake_id } : {}),
     updated_at: values.updated_at,
     completed_at: values.completed_at ?? null,
   };
 }
 
-export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
+export function buildMissionRunInsertValues(record: MissionRunRecord): MissionRunInsert {
   const metadata = {
     ...(record.metadata ?? {}),
     longConversationControl: {
@@ -162,7 +168,7 @@ export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
       ...(record.acceptanceStatus ? { acceptanceStatus: record.acceptanceStatus } : {}),
     },
   };
-  const values: MissionRunInsert = {
+  return {
     mission_id: record.missionId,
     session_key: record.sessionKey,
     agent_id: nonEmpty(record.agentId),
@@ -189,10 +195,22 @@ export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
     no_progress_hash: record.noProgressHash ?? null,
     schedule_json: "{}",
     metadata_json: JSON.stringify(metadata),
+    ...(typeof record.revision === "number" ? { revision: record.revision } : {}),
+    ...(record.activeTickId !== undefined ? { active_tick_id: record.activeTickId } : {}),
+    ...(record.lastWakeId !== undefined ? { last_wake_id: record.lastWakeId } : {}),
     created_at: record.createdAt,
     updated_at: record.updatedAt,
     completed_at: record.completedAt ?? null,
   };
+}
+
+/** Update set for a record, including fencing columns when present. */
+export function buildMissionRunUpdateSet(record: MissionRunRecord): MissionRunUpdate {
+  return updateFromValues(buildMissionRunInsertValues(record));
+}
+
+export function saveMissionRun(record: MissionRunRecord): MissionRunRecord {
+  const values = buildMissionRunInsertValues(record);
   runOpenClawStateWriteTransaction(({ db }) => {
     const query = getNodeSqliteKysely<MissionDatabase>(db);
     executeSqliteQuerySync(

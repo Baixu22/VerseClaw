@@ -137,6 +137,10 @@ export type MissionRunRecord = {
   validationState?: LongConversationValidationState;
   acceptanceStatus?: LongConversationAcceptanceStatus;
   noProgressHash?: string;
+  /** Mission fencing revision (Phase 0). Populated by the store read model. */
+  revision?: number;
+  activeTickId?: string | null;
+  lastWakeId?: string | null;
   /** Guardian circuit breaker (P2-7) 触发标记：checkpoint trigger 用 audit_fail。 */
   guardianTripped?: boolean;
   metadata?: Record<string, unknown>;
@@ -199,6 +203,21 @@ export type MissionTickInput = {
   openBlockers?: string[];
   reviewItems?: string[];
   repairBrief?: string;
+  /**
+   * Phase 3 goal-wake continuation. `preClaimed` is produced by the SQL
+   * mission fencing claim immediately before this tick so the dispatcher and
+   * the tick body never race for the same wake effect.
+   */
+  wake?: {
+    wakeId: string;
+    preClaimed?: {
+      revision: number;
+      activeTickId: string;
+      tick: number;
+    };
+  };
+  /** Sanitized process completion payload injected into the tick context. */
+  wakePayload?: Record<string, unknown>;
 };
 
 export type MissionReviewerInput = {
