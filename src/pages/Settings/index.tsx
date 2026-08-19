@@ -109,6 +109,7 @@ const settingsSkills = createPreloadableLazy<{ embedded?: boolean }>(() => impor
 const settingsBilling = createPreloadableLazy<{ embedded?: boolean }>(() => import('@/pages/Billing').then((m) => ({ default: m.Billing })));
 const settingsProjectRules = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ProjectRulesCenter').then((m) => ({ default: m.ProjectRulesCenter as ComponentType<Record<string, never>> })));
 const settingsAgentDev = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/AgentDevWorkbenchPanel').then((m) => ({ default: m.AgentDevWorkbenchPanel as ComponentType<Record<string, never>> })));
+const settingsContextControlPlane = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/ContextControlPlanePanel').then((m) => ({ default: m.ContextControlPlanePanel as ComponentType<Record<string, never>> })));
 const settingsRemoteTaskDeveloper = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/RemoteTaskDeveloperPanel').then((m) => ({ default: m.RemoteTaskDeveloperPanel as ComponentType<Record<string, never>> })));
 const settingsDcsProdFlags = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/DcsProdFlagsPanel').then((m) => ({ default: m.DcsProdFlagsPanel as ComponentType<Record<string, never>> })));
 const settingsVtokenBridge = createPreloadableLazy<Record<string, never>>(() => import('@/components/settings/VtokenBridgePanel').then((m) => ({ default: m.VtokenBridgePanel as ComponentType<Record<string, never>> })));
@@ -123,6 +124,7 @@ const SettingsSkillsLazy = settingsSkills.Component;
 const SettingsBillingLazy = settingsBilling.Component;
 const ProjectRulesCenterLazy = settingsProjectRules.Component;
 const AgentDevWorkbenchPanelLazy = settingsAgentDev.Component;
+const ContextControlPlanePanelLazy = settingsContextControlPlane.Component;
 const RemoteTaskDeveloperPanelLazy = settingsRemoteTaskDeveloper.Component;
 const DcsProdFlagsPanelLazy = settingsDcsProdFlags.Component;
 const VtokenBridgePanelLazy = settingsVtokenBridge.Component;
@@ -141,7 +143,7 @@ function preloadSettingsSection(section: SettingsSectionId) {
     case 'skills': settingsSkills.preload(); break;
     case 'billing': settingsBilling.preload(); break;
     case 'system': settingsProjectRules.preload(); break;
-    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); break;
+    case 'developer': settingsAgentDev.preload(); settingsRemoteTaskDeveloper.preload(); settingsDcsProdFlags.preload(); settingsVtokenBridge.preload(); settingsContextControlPlane.preload(); break;
     case 'storage': settingsStorage.preload(); break;
     case 'recovery': settingsRecovery.preload(); break;
     default: break;
@@ -2067,6 +2069,7 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                       <VtokenBridgePanelLazy />
                       <RemoteTaskDeveloperPanelLazy />
                       <AgentDevWorkbenchPanelLazy />
+                      <ContextControlPlanePanelLazy />
                     </div>
                   </Suspense>
 
