@@ -1268,6 +1268,7 @@ export async function dispatchReplyFromConfig(
       routeThreadId,
       upstreamAbortSignal: params.replyOptions?.abortSignal,
       waitForActive: !allowActivePreDispatch && !allowSlackRoutedThreadBypass,
+      agentId: sessionAgentId,
     });
     if (admission.status === "skipped") {
       if (allowActivePreDispatch && admission.reason === "active-run") {

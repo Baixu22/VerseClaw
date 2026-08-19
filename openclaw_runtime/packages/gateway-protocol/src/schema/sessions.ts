@@ -275,6 +275,27 @@ export const SessionsAbortParamsSchema = Type.Object(
   { additionalProperties: false },
 );
 
+/**
+ * Stops all runtime activity owned by one session generation without mutating
+ * the session store or transcript.
+ */
+export const SessionsStopParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+/** Result returned after the session stop pipeline drains. */
+export const SessionsStopResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+  },
+  { additionalProperties: false },
+);
+
 /** Mutable per-session preferences and routing metadata. */
 export const SessionsPatchParamsSchema = Type.Object(
   {
@@ -362,6 +383,9 @@ export const SessionsDeleteParamsSchema = Type.Object(
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
     deleteTranscript: Type.Optional(Type.Boolean()),
+    // Caller-generated durable operation id for the delete operation journal.
+    // The Electron mirror gate is released only after the matching committed receipt.
+    operationId: Type.Optional(NonEmptyString),
     // Internal control: when false, still unbind thread bindings but skip hook emission.
     emitLifecycleHooks: Type.Optional(Type.Boolean()),
   },

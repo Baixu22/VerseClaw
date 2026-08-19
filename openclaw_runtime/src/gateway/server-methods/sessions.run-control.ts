@@ -15,6 +15,7 @@ import {
   validateSessionsResumeCheckpointsParams,
   validateSessionsRestoreCheckpointParams,
   validateSessionsSendParams,
+  validateSessionsStopParams,
 } from "../../../packages/gateway-protocol/src/index.js";
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
@@ -39,6 +40,7 @@ import {
   resolveDeletedAgentIdFromSessionKey,
 } from "../session-utils.js";
 import { setGatewayDedupeEntry } from "./agent-wait-dedupe.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 import {
   drainQueuedUserMessagesForSession,
   installQueueDrainCallback,
@@ -70,9 +72,11 @@ import {
   sessionKeyBelongsToAgent,
   resolveScopedAbortKey,
   resolveRequestedGlobalAgentId,
+  resolveGatewaySessionTargetFromKey,
   interruptSessionRunIfActive,
   compressionArtifactFromCheckpoint,
   estimateProjectionTokens,
+  loadSessionsRuntimeModule,
 } from "./sessions.shared.js";
 import { sessionsLifecycleHandlers } from "./sessions.lifecycle.js";
 
@@ -221,23 +225,35 @@ async function handleSessionSend(params: {
     return;
   }
 
-  let interruptedActiveRun = false;
-  if (params.interruptIfActive) {
-    const interruptResult = await interruptSessionRunIfActive({
-      req: params.req,
-      context: params.context,
-      client: params.client,
-      isWebchatConnect: params.isWebchatConnect,
-      requestedKey: key,
-      canonicalKey,
+  const releaseSessionsSendPermit = acquireSessionAdmissionPermit(
+    {
       agentId: requestedAgentId,
-      sessionId: entry.sessionId,
-    });
-    if (interruptResult.error) {
-      params.respond(false, undefined, interruptResult.error);
-      return;
+      canonicalSessionKey: canonicalKey,
+      expectedSessionId: entry.sessionId,
+    },
+    params.interruptIfActive ? "sessions-steer" : "sessions-send",
+  );
+  let interruptedActiveRun = false;
+  try {
+    if (params.interruptIfActive) {
+      const interruptResult = await interruptSessionRunIfActive({
+        req: params.req,
+        context: params.context,
+        client: params.client,
+        isWebchatConnect: params.isWebchatConnect,
+        requestedKey: key,
+        canonicalKey,
+        agentId: requestedAgentId,
+        sessionId: entry.sessionId,
+      });
+      if (interruptResult.error) {
+        params.respond(false, undefined, interruptResult.error);
+        return;
+      }
+      interruptedActiveRun = interruptResult.interrupted;
     }
-    interruptedActiveRun = interruptResult.interrupted;
+  } finally {
+    releaseSessionsSendPermit();
   }
 
   const messageSeq =
@@ -884,5 +900,40 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
         reason: "abort",
       });
     }
+  },
+  "sessions.stop": async ({ params, respond, context }) => {
+    if (!assertValidParams(params, validateSessionsStopParams, "sessions.stop", respond)) {
+      return;
+    }
+    const key = requireSessionKey(params.key, respond);
+    if (!key) {
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, params.agentId);
+    if (!requestedAgent.ok) {
+      respond(false, undefined, requestedAgent.error);
+      return;
+    }
+    const { target } = resolveGatewaySessionTargetFromKey(key, cfg, {
+      agentId: requestedAgent.agentId,
+    });
+    const { entry, legacyKey, canonicalKey } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId,
+    });
+    const { stopSessionRuntime } = await loadSessionsRuntimeModule();
+    const result = await stopSessionRuntime({
+      cfg,
+      key,
+      target,
+      entry,
+      legacyKey,
+      canonicalKey,
+    });
+    if (!result.ok) {
+      respond(false, undefined, result.error);
+      return;
+    }
+    respond(true, { ok: true, key: result.key }, undefined);
   },
 };

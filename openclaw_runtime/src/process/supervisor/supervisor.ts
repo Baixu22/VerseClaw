@@ -3,15 +3,20 @@ import crypto from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { getShellConfig } from "../../agents/shell-utils.js";
+import { signalProcessTree } from "../kill-tree.js";
 import { createChildAdapter } from "./adapters/child.js";
 import { createPtyAdapter } from "./adapters/pty.js";
 import { createRunRegistry } from "./registry.js";
 import type {
+  DrainLifecycleResult,
+  LifecycleRunSnapshot,
   ManagedRun,
+  ProcessLifecycleIdentity,
   ProcessSupervisor,
   RunExit,
   RunRecord,
   SpawnInput,
+  SupervisorSessionRunSnapshot,
   TerminationReason,
 } from "./types.js";
 
@@ -20,6 +25,7 @@ type SupervisorLogRuntime = typeof import("./supervisor-log.runtime.js");
 type ActiveRun = {
   run: ManagedRun;
   scopeKey?: string;
+  lifecycle?: ProcessLifecycleIdentity;
 };
 
 const GRACEFUL_CANCEL_TIMEOUT_MS = 5000;
@@ -37,6 +43,29 @@ function clampTimeout(value?: number): number | undefined {
     return undefined;
   }
   return Math.max(1, Math.floor(value));
+}
+
+function normalizeLifecycleIdentity(
+  identity: ProcessLifecycleIdentity,
+): ProcessLifecycleIdentity | undefined {
+  const agentId = normalizeOptionalString(identity.agentId);
+  const canonicalSessionKey = normalizeOptionalString(identity.canonicalSessionKey);
+  const expectedSessionId = normalizeOptionalString(identity.expectedSessionId);
+  if (!agentId || !canonicalSessionKey || !expectedSessionId) {
+    return undefined;
+  }
+  return { agentId, canonicalSessionKey, expectedSessionId };
+}
+
+function identityMatches(
+  left: ProcessLifecycleIdentity | undefined,
+  right: ProcessLifecycleIdentity,
+): boolean {
+  return (
+    left?.agentId === right.agentId &&
+    left?.canonicalSessionKey === right.canonicalSessionKey &&
+    left?.expectedSessionId === right.expectedSessionId
+  );
 }
 
 function clampCapturedOutputChars(value?: number): number {
@@ -126,12 +155,24 @@ export function createProcessSupervisor(): ProcessSupervisor {
     if (input.replaceExistingScope && scopeKey) {
       cancelScope(scopeKey, "manual-cancel");
     }
+    const lifecycle = normalizeLifecycleIdentity({
+      agentId: input.lifecycleAgentId ?? "",
+      canonicalSessionKey: input.lifecycleCanonicalSessionKey ?? "",
+      expectedSessionId: input.lifecycleExpectedSessionId ?? "",
+    });
     const startedAtMs = Date.now();
     const record: RunRecord = {
       runId,
       sessionId: input.sessionId,
       backendId: input.backendId,
       scopeKey,
+      ...(lifecycle
+        ? {
+            lifecycleAgentId: lifecycle.agentId,
+            lifecycleCanonicalSessionKey: lifecycle.canonicalSessionKey,
+            lifecycleExpectedSessionId: lifecycle.expectedSessionId,
+          }
+        : {}),
       state: "starting",
       startedAtMs,
       lastOutputAtMs: startedAtMs,
@@ -342,6 +383,7 @@ export function createProcessSupervisor(): ProcessSupervisor {
       active.set(runId, {
         run: managedRun,
         scopeKey,
+        lifecycle,
       });
       return managedRun;
     } catch (err) {
@@ -356,10 +398,129 @@ export function createProcessSupervisor(): ProcessSupervisor {
     }
   };
 
+  const snapshotRunsForLifecycle = (
+    identity: ProcessLifecycleIdentity,
+  ): LifecycleRunSnapshot[] => {
+    const normalized = normalizeLifecycleIdentity(identity);
+    if (!normalized) {
+      return [];
+    }
+    const snapshots: LifecycleRunSnapshot[] = [];
+    for (const [runId, entry] of active.entries()) {
+      if (!identityMatches(entry.lifecycle, normalized)) {
+        continue;
+      }
+      snapshots.push({
+        runId,
+        pid: entry.run.pid,
+        lifecycle: entry.lifecycle ?? normalized,
+        cancel: () => {
+          cancel(runId, "manual-cancel");
+        },
+        wait: async () => await entry.run.wait(),
+      });
+    }
+    return snapshots;
+  };
+
+  const snapshotRunsForSession = (
+    canonicalSessionKey: string,
+  ): SupervisorSessionRunSnapshot[] => {
+    const key = normalizeOptionalString(canonicalSessionKey);
+    if (!key) {
+      return [];
+    }
+    const snapshots: SupervisorSessionRunSnapshot[] = [];
+    for (const [runId, entry] of active.entries()) {
+      if (entry.lifecycle?.canonicalSessionKey !== key) {
+        continue;
+      }
+      const record = registry.get(runId);
+      snapshots.push({
+        runId,
+        pid: entry.run.pid,
+        state: record?.state ?? "running",
+        lifecycleCanonicalSessionKey: key,
+        startedAtMs: record?.startedAtMs ?? entry.run.startedAtMs,
+        updatedAtMs: record?.updatedAtMs ?? entry.run.startedAtMs,
+      });
+    }
+    return snapshots;
+  };
+
+  const countActiveRunsForLifecycle = (identity: ProcessLifecycleIdentity): number => {
+    const normalized = normalizeLifecycleIdentity(identity);
+    if (!normalized) {
+      return 0;
+    }
+    let count = 0;
+    for (const entry of active.values()) {
+      if (identityMatches(entry.lifecycle, normalized)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+
+  const drainRunsForLifecycle = async (
+    identity: ProcessLifecycleIdentity,
+    timeoutMs: number,
+  ): Promise<DrainLifecycleResult> => {
+    const snapshot = snapshotRunsForLifecycle(identity);
+    if (snapshot.length === 0) {
+      return { drained: true, timedOut: false, runIds: [], pids: [] };
+    }
+    for (const run of snapshot) {
+      run.cancel();
+      // Windows console children often ignore the graceful `taskkill /T`
+      // SIGTERM-equivalent request and would otherwise wait for the adapter's
+      // 5s SIGKILL timer. Lifecycle drain is a terminal operation: escalate to
+      // force tree termination immediately so reset/delete/stop stay bounded.
+      if (process.platform === "win32" && typeof run.pid === "number" && run.pid > 0) {
+        signalProcessTree(run.pid, "SIGKILL");
+      }
+    }
+    const deadline = Date.now() + Math.max(1, Math.floor(timeoutMs));
+    let timedOut = false;
+    await Promise.all(
+      snapshot.map(async (run) => {
+        const remainingMs = deadline - Date.now();
+        if (remainingMs <= 0) {
+          timedOut = true;
+          return;
+        }
+        const outcome = await Promise.race([
+          run.wait().then(
+            () => true,
+            () => false,
+          ),
+          new Promise<"timeout">((resolve) => {
+            setTimeout(() => resolve("timeout"), remainingMs).unref?.();
+          }),
+        ]);
+        if (outcome === "timeout") {
+          timedOut = true;
+        }
+      }),
+    );
+    return {
+      drained: !timedOut && countActiveRunsForLifecycle(identity) === 0,
+      timedOut,
+      runIds: snapshot.map((run) => run.runId),
+      pids: snapshot
+        .map((run) => run.pid)
+        .filter((pid): pid is number => typeof pid === "number" && pid > 0),
+    };
+  };
+
   return {
     spawn,
     cancel,
     cancelScope,
+    snapshotRunsForLifecycle,
+    snapshotRunsForSession,
+    countActiveRunsForLifecycle,
+    drainRunsForLifecycle,
     reconcileOrphans: async () => {
       // Deliberate no-op: this supervisor uses in-memory ownership only.
       // Active runs are not recovered after process restart in the current model.

@@ -10,7 +10,7 @@ import { isPathInsideWorkspace } from './workspace-permissions';
 
 export type TerminalSessionKind = 'interactive' | 'webPreviewDevServer';
 export type TerminalSessionStatus = 'idle' | 'starting' | 'running' | 'exited' | 'blocked';
-export type TerminalCloseReason = 'user-close' | 'workspace-switch' | 'workspace-delete' | 'permission-change' | 'process-exit' | 'replaced' | 'app-shutdown';
+export type TerminalCloseReason = 'user-close' | 'session-end' | 'session-reset' | 'session-delete' | 'workspace-switch' | 'workspace-delete' | 'permission-change' | 'process-exit' | 'replaced' | 'app-shutdown';
 
 type PtyProcess = ReturnType<typeof pty.spawn>;
 
@@ -248,6 +248,15 @@ export class TerminalSessionManager {
 
   stopForWorkspace(workspaceId: string, reason: TerminalCloseReason): void {
     this.unregisterWorkspace(workspaceId, reason);
+  }
+
+  /** Close every live terminal for a conversation/session key. */
+  closeForSessionKey(sessionKey: string, reason: TerminalCloseReason = 'session-delete'): void {
+    for (const session of Array.from(this.sessions.values())) {
+      if (session.sessionKey === sessionKey) {
+        this.closeSession(session, reason);
+      }
+    }
   }
 
   private closeSession(session: TerminalSessionRecord, reason: TerminalCloseReason): void {

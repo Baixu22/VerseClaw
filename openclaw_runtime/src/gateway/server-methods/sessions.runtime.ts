@@ -9,4 +9,5 @@ export {
   emitGatewaySessionStartPluginHook,
   emitSessionUnboundLifecycleEvent,
   performGatewaySessionReset,
+  stopSessionRuntime,
 } from "../session-reset-service.js";

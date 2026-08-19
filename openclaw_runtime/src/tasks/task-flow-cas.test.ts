@@ -334,4 +334,110 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     expect(row?.wait_json).toBeNull();
     expect(row?.delivery_state).toBeNull();
   });
+
+  it('creates a controller_id="goal-wake" waiting flow with blocked_task_id and persists both', () => {
+    const store = new TaskFlowCasStore(options());
+    const result = store.casUpsert({
+      flowId: 'flow-goal-wake',
+      expectedRevision: CAS_CREATE_SENTINEL,
+      status: 'waiting',
+      controllerId: 'goal-wake',
+      ownerKey: 'agent:agent-a:main',
+      blockedTaskId: 'task-process-1',
+      blockedSummary: 'waiting-for-process',
+      waitJson: JSON.stringify({ v: 1, turnBarrier: 'pending' }),
+      stateJson: JSON.stringify({ v: 1 }),
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.controller_id).toBe('goal-wake');
+    expect(result.row.status).toBe('waiting');
+    expect(result.row.blocked_task_id).toBe('task-process-1');
+    expect(result.row.wait_json).toContain('turnBarrier');
+  });
+
+  it('goal-wake transitions follow the legal graph including waiting -> failed', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: 0,
+        status: 'running',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-transitions',
+        expectedRevision: 1,
+        status: 'succeeded',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+  });
+
+  it('waiting -> failed is now legal and waiting -> succeeded remains illegal', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-failed',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-failed',
+        expectedRevision: 0,
+        status: 'failed',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-illegal',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    const illegal = store.casUpsert({
+      flowId: 'flow-goal-wake-illegal',
+      expectedRevision: 0,
+      status: 'succeeded',
+      controllerId: 'goal-wake',
+    });
+    expect(illegal.ok).toBe(false);
+    if (!illegal.ok) expect(illegal.reason).toBe('illegal-transition');
+  });
+
+  it('controller ownership is immutable once a flow row exists', () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: 'flow-goal-wake-controller',
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: 'waiting',
+        controllerId: 'goal-wake',
+      }).ok,
+    ).toBe(true);
+    const reassign = store.casUpsert({
+      flowId: 'flow-goal-wake-controller',
+      expectedRevision: 0,
+      status: 'running',
+      controllerId: 'other-controller',
+    });
+    expect(reassign.ok).toBe(false);
+    if (!reassign.ok) expect(reassign.reason).toBe('illegal-transition');
+  });
+
 });

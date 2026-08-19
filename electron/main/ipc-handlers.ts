@@ -229,7 +229,7 @@ function registerTypedHostHandlers(
     providers: createProvidersApi({ gatewayManager, mainWindow }),
     files: createFilesApi(),
     media: createMediaApi(),
-    sessions: createSessionsApi({ gatewayManager }),
+    sessions: createSessionsApi({ gatewayManager, terminalManager }),
     chat: createChatApi({ gatewayManager }),
     codeReview: createCodeReviewApi({ gatewayManager }),
     remoteForge: remoteForgeApi,

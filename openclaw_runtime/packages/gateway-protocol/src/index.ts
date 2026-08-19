@@ -309,6 +309,10 @@ import {
   SecretsResolveResultSchema,
   type SessionsAbortParams,
   SessionsAbortParamsSchema,
+  type SessionsStopParams,
+  SessionsStopParamsSchema,
+  type SessionsStopResult,
+  SessionsStopResultSchema,
   type SessionsCompactParams,
   SessionsCompactParamsSchema,
   type SessionsCleanupParams,
@@ -687,6 +691,10 @@ export const validateSessionsMessagesUnsubscribeParams =
   lazyCompile<SessionsMessagesUnsubscribeParams>(SessionsMessagesUnsubscribeParamsSchema);
 export const validateSessionsAbortParams =
   lazyCompile<SessionsAbortParams>(SessionsAbortParamsSchema);
+export const validateSessionsStopParams =
+  lazyCompile<SessionsStopParams>(SessionsStopParamsSchema);
+export const validateSessionsStopResult =
+  lazyCompile<SessionsStopResult>(SessionsStopResultSchema);
 export const validateSessionsPatchParams =
   lazyCompile<SessionsPatchParams>(SessionsPatchParamsSchema);
 export const validateSessionsPluginPatchParams = lazyCompile<SessionsPluginPatchParams>(
@@ -1100,6 +1108,8 @@ export {
   SessionsCreateParamsSchema,
   SessionsSendParamsSchema,
   SessionsAbortParamsSchema,
+  SessionsStopParamsSchema,
+  SessionsStopResultSchema,
   SessionsPatchParamsSchema,
   SessionsPluginPatchParamsSchema,
   SessionsResetParamsSchema,
@@ -1425,6 +1435,8 @@ export type {
   SessionsResumeCheckpointsResult,
   SessionsQueueDrainParams,
   SessionsQueueDrainResult,
+  SessionsStopParams,
+  SessionsStopResult,
   SessionsPatchParams,
   SessionsPatchResult,
   SessionsResetParams,
