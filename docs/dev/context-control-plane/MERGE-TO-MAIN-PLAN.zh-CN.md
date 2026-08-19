@@ -1,6 +1,6 @@
 # DCS 工作树提交 main 调研与准备方案
 
-> 状态：调研完成，尚未执行任何 commit / rebase / push / PR。
+> 状态：commits 与 rebase 已完成；push / PR 尚未执行，等待 owner 授权。
 > 日期：2026-08-19
 > 工作树：`D:\verse_claw_worktree`
 > 分支：`codex/context-control-plane-stage0`
@@ -18,6 +18,27 @@
 | 工作树状态 | 86 行 dirty（25 tracked modified + 61 untracked paths），另 84 个 untracked 文件 |
 | 远程 | `https://github.com/Baixu22/VerseClaw.git`，可达 |
 | 上游 tracking | 当前分支无 upstream |
+
+
+## 0.1 实际执行状态（2026-08-19）
+
+- 已按 §3 策略在当前分支完成 9 个 stage 提交，并成功 rebase 到 `origin/main`。
+- 当前 HEAD：`f3d9881fe`；相对 `origin/main`：**ahead 9，behind 0**。
+- 工作树：clean，0 未提交改动。
+- 提交序列：
+  1. `985d83de1` Stage 0
+  2. `326c2fba8` Stage 1
+  3. `d2ae03c4c` Stage 2
+  4. `676a30601` Stage 3
+  5. `109c1c557` Stage 4
+  6. `c65523d02` Stage 5
+  7. `9a26e7835` Stage 6
+  8. `f9214b8b6` Stage 5 L7 soak
+  9. `f3d9881fe` docs
+- rebase 全程无冲突；baseline 修复切片已按推荐策略排除。
+- rebase 后 DCS 聚焦矩阵全过；`pnpm run lint:check` 的 3 个 errors 均位于 origin/main 既有文件（`electron/utils/verseshell-runtime-bundle.ts`、`openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts`、`openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts`），本分支未触碰，留给 main 后续处理。
+- 下一步仅剩：push 分支 + 创建 PR（待 owner 明确授权）。
+
 
 `f552..origin/main` 的 4 个提交：
 

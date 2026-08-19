@@ -1973,3 +1973,26 @@ DEEPSEEK_API_KEY=<owner-temp-env> pnpm --dir openclaw_runtime exec vitest run --
 - 全仓/全项目综合问题（既有回归失败、产品发布、主树合并）按 owner 决定移交主树，不作为本工作树 DCS 目标的阻断项。
 - 本工作树现在处于可清理状态：无临时探针、无真实 key 残留、无 commit/push/PR。
 
+
+
+## 2026-08-19 提交 main 前准备执行记录（commits + rebase 已完成）
+
+- owner 决定采用推荐策略：按 stage 拆分提交，baseline 修复切片留 main，目标先以 `origin/main` 为基。
+- 已完成 9 个提交并成功 rebase 到 `origin/main`，rebase 无冲突：
+  - `985d83de1` docs(dcs): stage0 contracts and authority baseline
+  - `326c2fba8` feat(dcs): stage1 provider guard minimal grant tool guard and effect receipt
+  - `d2ae03c4c` feat(dcs): stage2 context refs snapshot prompt plan and provider guard carriers
+  - `676a30601` feat(dcs): stage3 task ledger working context
+  - `109c1c557` feat(dcs): stage4 unified capability grant and tool guard
+  - `c65523d02` feat(dcs): stage5 memory facade unit-aware packer and golden run
+  - `9a26e7835` feat(dcs): stage6 read-only explanation projection and developer panel
+  - `f9214b8b6` feat(dcs): stage5 l7 soak baseline evidence and metrics
+  - `f3d9881fe` docs(dcs): prompts devlog roadmap and merge plan
+- rebase 后状态：工作树 clean；HEAD `f3d9881fe`；相对 `origin/main` ahead 9 / behind 0。
+- rebase 后 DCS 聚焦矩阵、typecheck、contract、i18n、Stage6 E2E 全部通过。
+- `pnpm run lint:check` 仍 exit 1，3 个 errors 全部在 origin/main 既有文件中，本分支未触碰：
+  - `electron/utils/verseshell-runtime-bundle.ts:291` preserve-caught-error
+  - `openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts:7` unused PayloadPatchFn
+  - `openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts:135` preserve-caught-error
+- 下一步待 owner 授权：`git push -u origin codex/context-control-plane-stage0`，然后在 GitHub 向 main 创建 PR。
+
