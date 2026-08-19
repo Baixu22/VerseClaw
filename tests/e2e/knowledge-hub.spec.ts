@@ -117,6 +117,49 @@ async function installKnowledgeGovernanceRecorder(app: ElectronApplication): Pro
         if (request.action === 'reviewDraft') {
           return { id: request.id as string | undefined, ok: true, data: { success: true, draft: { id: 'draft-1', status: 'approved' } } };
         }
+        if (request.action === 'listReviewBundles') {
+          return {
+            id: request.id as string | undefined,
+            ok: true,
+            data: {
+              success: true,
+              bundles: [{
+                id: 'kb_proposal-1_draft-1',
+                draftId: 'draft-1',
+                proposalId: 'proposal-1',
+                operation: 'create',
+                status: 'proposed',
+                draftStatus: 'draft',
+                draft: {
+                  id: 'draft-1',
+                  title: 'Knowledge Hub decision',
+                  body: 'Keep Obsidian optional.',
+                  type: 'synthesis',
+                  status: 'draft',
+                  sourceIds: ['notes/decision.md'],
+                  sourceRefs: [],
+                  tags: [],
+                  workspaceId: null,
+                  agentId: null,
+                  createdBy: 'user',
+                  createdAt: '2026-06-19T00:00:00.000Z',
+                  updatedAt: '2026-06-19T00:00:00.000Z',
+                },
+                proposal: {
+                  id: 'proposal-1',
+                  operation: 'create',
+                  status: 'proposed',
+                  draftId: 'draft-1',
+                  reason: 'User-created knowledge draft awaiting explicit review and apply.',
+                  sources: [{ id: 'notes/decision.md', kind: 'manual' }],
+                  requiresUserConfirmation: true,
+                  createdAt: '2026-06-19T00:00:00.000Z',
+                  updatedAt: '2026-06-19T00:00:00.000Z',
+                },
+              }],
+            },
+          };
+        }
         if (request.action === 'applyReviewedChange') {
           return { id: request.id as string | undefined, ok: true, data: { success: true } };
         }
@@ -481,7 +524,7 @@ test.describe('Knowledge Hub MVP', () => {
           action: 'approve',
           stewardNotes: undefined,
         })]: { success: true, draft: { id: 'draft-1', status: 'approved' } },
-        [typed('knowledge', 'applyReviewedChange', { id: 'proposal-1' })]: { success: true },
+        [typed('knowledge', 'applyReviewedChange', { reviewBundleId: 'kb_proposal-1_draft-1' })]: { success: true },
         [typed('dialog', 'open', {
           title: 'Import knowledge files',
           properties: ['openFile', 'multiSelections'],
@@ -502,6 +545,8 @@ test.describe('Knowledge Hub MVP', () => {
     await expect(page.getByTestId('knowledge-assistant-overview')).not.toBeVisible();
     await expect(page.getByTestId('knowledge-metrics')).not.toBeVisible();
 
+    await page.getByTestId('knowledge-tab-runtime').click();
+    await expect(page.getByTestId('knowledge-runtime-suggest')).toBeVisible();
     await page.getByTestId('knowledge-runtime-suggest').click();
     await expect(page.getByTestId('knowledge-runtime-suggestion-list')).toContainText('Review before durable knowledge writes');
     const preConfirmKnowledgeActions = await electronApp.evaluate(() => (

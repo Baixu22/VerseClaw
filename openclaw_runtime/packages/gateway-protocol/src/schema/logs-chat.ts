@@ -74,6 +74,33 @@ export const ChatMessageGetResultSchema = Type.Object(
 /** Typed result shape for callers that branch on message availability. */
 export type ChatMessageGetResult = Static<typeof ChatMessageGetResultSchema>;
 
+/** Typed, renderer-supplied knowledge retrieval intent. Body fields are intentionally absent. */
+export const ChatKnowledgeReferenceSchema = Type.Object(
+  {
+    id: Type.String({ minLength: 1 }),
+    title: Type.String({ minLength: 1 }),
+    lookup: Type.String({ minLength: 1 }),
+    corpus: Type.Optional(Type.Union([
+      Type.Literal('wiki'),
+      Type.Literal('memory'),
+      Type.Literal('all'),
+    ])),
+    pageId: Type.Optional(Type.String()),
+    pagePath: Type.Optional(Type.String()),
+    sourcePath: Type.Optional(Type.String()),
+    attachKind: Type.Optional(Type.Union([
+      Type.Literal('manual'),
+      Type.Literal('suggested'),
+      Type.Literal('auto'),
+    ])),
+    routingReason: Type.Optional(Type.String()),
+    confidence: Type.Optional(Type.Number({ minimum: 0, maximum: 1 })),
+    freshnessLevel: Type.Optional(Type.String()),
+    matchedClaimStatus: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
 /** User-to-agent send request; idempotency key lets clients safely retry transport failures. */
 export const ChatSendParamsSchema = Type.Object(
   {
@@ -120,6 +147,18 @@ export const ChatSendParamsSchema = Type.Object(
       Type.Literal('minimal'),
       Type.Literal('none'),
     ])),
+    knowledgeScope: Type.Optional(Type.Union([
+      Type.Literal('none'),
+      Type.Literal('memory'),
+      Type.Literal('wiki'),
+      Type.Literal('all'),
+    ])),
+    knowledgeMode: Type.Optional(Type.Union([
+      Type.Literal('manual'),
+      Type.Literal('suggest'),
+      Type.Literal('auto-read'),
+    ])),
+    knowledgeReferences: Type.Optional(Type.Array(ChatKnowledgeReferenceSchema, { maxItems: 8 })),
   },
   { additionalProperties: false },
 );

@@ -1,0 +1,47 @@
+{
+  "schema": "KnowledgeSurfaceReport/v1",
+  "surfaceId": "sekb-experience-retrieval",
+  "title": "SEKB experience retrieval",
+  "currentStage": "opt-in",
+  "stageRationale": "A principle enters retrieval only after explicit human confirm; the golden path Electron E2E exercises confirm, recall, and citation.",
+  "evidenceLevel": "E3",
+  "e4": "not-evaluated",
+  "e5": "blocked",
+  "metrics": [
+    {
+      "commandId": "sekb-runtime",
+      "label": "SEKB store and closed-loop runtime tests",
+      "kind": "runtime-unit",
+      "testsPassed": 11,
+      "testsFailed": 0,
+      "testFilesPassed": 2,
+      "exitCode": 0,
+      "durationMs": 2823,
+      "outputSummary": "✓  unit  src/knowledge/sekb/experience-closed-loop.test.ts (2 tests) 257ms | ✓  unit  src/knowledge/sekb/sekb.test.ts (9 tests) 727ms | Test Files  2 passed (2) | Tests  11 passed (11) | Start at  08:13:05 | Duration  1.74s (transform 1.04s, setup 603ms, import 677ms, tests 984ms, environment 0ms)"
+    },
+    {
+      "commandId": "sekb-e2e",
+      "label": "SEKB golden path Electron E2E",
+      "kind": "e2e",
+      "testsPassed": 1,
+      "testsFailed": 0,
+      "testFilesPassed": 1,
+      "exitCode": 0,
+      "durationMs": 8487,
+      "outputSummary": "Running 1 test using 1 worker | ✓  1 tests\\e2e\\sekb-golden-path.spec.ts:105:7 › SEKB golden path (TF-0004) › semi-auto write → human confirm → recall → behavior delta with lineage (6.7s) | 1 passed (7.4s) | $ playwright test \"tests/e2e/sekb-golden-path.spec.ts\""
+    }
+  ],
+  "nextPromotionGate": "Real provider/user task cohorts proving retrieved SEKB principles change outcomes (E4), followed by soak and product approval.",
+  "residual": [
+    "E4 real provider/user task evidence is not-evaluated",
+    "E5 soak and product approval are blocked",
+    "Unattended auto-writeback remains off"
+  ],
+  "claims": {
+    "liveReady": false,
+    "productApproved": false,
+    "defaultOn": false,
+    "ga": false
+  },
+  "generatedAt": "2026-08-19T00:11:49.072Z"
+}

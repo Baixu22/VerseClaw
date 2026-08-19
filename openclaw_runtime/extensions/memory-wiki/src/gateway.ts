@@ -319,6 +319,38 @@ export function registerMemoryWikiGatewayMethods(params: {
     { scope: WRITE_SCOPE },
   );
 
+  const wikiLifecycleMethods = [
+    ["wiki.update", "update"],
+    ["wiki.merge", "merge"],
+    ["wiki.archive", "archive"],
+    ["wiki.revoke", "revoke"],
+    ["wiki.delete", "delete"],
+    ["wiki.restore", "restore"],
+  ] as const;
+  for (const [method, op] of wikiLifecycleMethods) {
+    api.registerGatewayMethod(
+      method,
+      async ({ params: requestParams, respond }) => {
+        try {
+          await syncImportedSourcesIfNeeded(config, appConfig);
+          respond(
+            true,
+            await applyMemoryWikiMutation({
+              config,
+              mutation: normalizeMemoryWikiMutationInput({
+                ...requestParams,
+                op,
+              }),
+            }),
+          );
+        } catch (error) {
+          respondError(respond, error);
+        }
+      },
+      { scope: WRITE_SCOPE },
+    );
+  }
+
   api.registerGatewayMethod(
     "wiki.get",
     async ({ params: requestParams, respond }) => {

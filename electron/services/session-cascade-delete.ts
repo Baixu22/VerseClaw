@@ -5,6 +5,8 @@
 import { existsSync, readdirSync, unlinkSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { BlockStore } from '../../openclaw_runtime/src/context-engine/block-store';
 import { getOpenClawRuntimeDir } from '../utils/paths';
 import { resolveHostOpenClawStateDir } from './knowledge-api';
 import { logger } from '../utils/logger';
@@ -22,6 +24,40 @@ export async function runHostSessionDerivativeCascade(
 ): Promise<HostCascadeReport> {
   const removed: HostCascadeReport['removed'] = [];
   const errors: HostCascadeReport['errors'] = [];
+
+  // KS-02: real DCS BlockStore cleanup first. This is the same SQLite that
+  // runtime context_search/context_read consume; journal cleanup alone is not
+  // enough to prove residual zero.
+  try {
+    const database = openOpenClawStateDatabase({
+      env: {
+        ...process.env,
+        OPENCLAW_STATE_DIR: resolveHostOpenClawStateDir(),
+      },
+    });
+    const blockStore = new BlockStore(database.db);
+    const blocks = await blockStore.enumerateBySession(sessionKey);
+    for (const block of blocks) {
+      await blockStore.deleteBlock(block.block_id);
+      removed.push({ kind: 'dcs_experience_block', id: block.block_id });
+    }
+    const { remaining } = await blockStore.deleteBySession(sessionKey);
+    if (remaining > 0) {
+      errors.push({
+        kind: 'dcs_experience_block',
+        id: `session:${sessionKey}`,
+        error: `${remaining} context_blocks row(s) remain for session ${sessionKey}`,
+        retryable: true,
+      });
+    }
+  } catch (error) {
+    errors.push({
+      kind: 'dcs_experience_block',
+      id: `session:${sessionKey}`,
+      error: error instanceof Error ? error.message : String(error),
+      retryable: true,
+    });
+  }
 
   // DCS experience journal (host-written by P3-002)
   try {

@@ -11,6 +11,7 @@ import { isRuntimeTaskStatus } from "../runtime-core/types.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import type {
   BlockAdmissionContext,
+  BlockDeleteResult,
   BlockEntityQuery,
   BlockQuery,
   BlockStoreApi,
@@ -217,6 +218,75 @@ export class BlockStore implements BlockStoreApi {
         : this.#admissionRejections,
       authorization_rejections: this.#authorizationRejections,
     };
+  }
+
+  async enumerateBySource(sourceRef: string): Promise<ContextBlock[]> {
+    const sessionId = sourceRef.startsWith("session:")
+      ? sourceRef.slice("session:".length)
+      : sourceRef;
+    return this.enumerateBySession(sessionId);
+  }
+
+  async enumerateBySession(sessionId: string): Promise<ContextBlock[]> {
+    const rows = executeSqliteQuerySync(
+      this.#db,
+      this.#kysely
+        .selectFrom("context_blocks")
+        .selectAll()
+        .where("session_id", "=", sessionId)
+        .orderBy("created_at", "asc")
+        .orderBy("block_id", "asc"),
+    ).rows as ContextBlockRow[];
+    return rows.map(contextBlockFromRow);
+  }
+
+  async deleteBlock(blockId: string): Promise<number> {
+    let deleted = 0;
+    runSqliteImmediateTransactionSync(this.#db, () => {
+      const entityResult = executeSqliteQuerySync(
+        this.#db,
+        this.#kysely.deleteFrom("block_entity_map").where("block_id", "=", blockId),
+      );
+      const blockResult = executeSqliteQuerySync(
+        this.#db,
+        this.#kysely.deleteFrom("context_blocks").where("block_id", "=", blockId),
+      );
+      deleted = Math.max(Number(entityResult.numAffectedRows), Number(blockResult.numAffectedRows));
+    });
+    return deleted;
+  }
+
+  async deleteBySession(sessionId: string): Promise<BlockDeleteResult> {
+    const blockIds = (await this.enumerateBySession(sessionId)).map((block) => block.block_id);
+    let deleted = 0;
+    runSqliteImmediateTransactionSync(this.#db, () => {
+      for (const blockId of blockIds) {
+        executeSqliteQuerySync(
+          this.#db,
+          this.#kysely.deleteFrom("block_entity_map").where("block_id", "=", blockId),
+        );
+        const result = executeSqliteQuerySync(
+          this.#db,
+          this.#kysely.deleteFrom("context_blocks").where("block_id", "=", blockId),
+        );
+        deleted += Number(result.numAffectedRows);
+      }
+    });
+    const remaining = (await this.enumerateBySession(sessionId)).length;
+    return { deleted, remaining };
+  }
+
+  async invalidateBySession(sessionId: string): Promise<number> {
+    const now = this.#now().getTime();
+    const result = executeSqliteQuerySync(
+      this.#db,
+      this.#kysely
+        .updateTable("context_blocks")
+        .set({ invalid_at: now })
+        .where("session_id", "=", sessionId)
+        .where((eb) => eb.or([eb("invalid_at", "is", null), eb("invalid_at", ">", now)])),
+    );
+    return Number(result.numAffectedRows);
   }
 
   #recordAdmissionRejection(sourceSystem: SourceSystem): void {

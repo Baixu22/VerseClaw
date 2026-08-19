@@ -1420,6 +1420,101 @@ CREATE INDEX IF NOT EXISTS idx_flow_runs_status ON flow_runs(status);
 CREATE INDEX IF NOT EXISTS idx_flow_runs_owner_key ON flow_runs(owner_key);
 CREATE INDEX IF NOT EXISTS idx_flow_runs_updated_at ON flow_runs(updated_at);
 
+-- KS-03 unified knowledge governance metadata. Candidate rows store inbox/draft
+-- bodies and metadata only; Wiki/Memory/Principle canonical payloads remain in
+-- their domain owners. Legacy JSON under <config>/knowledge is read-only after
+-- one-shot import.
+CREATE TABLE IF NOT EXISTS knowledge_candidates (
+  id TEXT NOT NULL PRIMARY KEY,
+  record_kind TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  type TEXT NOT NULL,
+  status TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  source_ids_json TEXT NOT NULL,
+  source_refs_json TEXT NOT NULL,
+  tags_json TEXT NOT NULL,
+  workspace_id TEXT,
+  agent_id TEXT,
+  role_tags_json TEXT,
+  created_by TEXT NOT NULL,
+  warnings_json TEXT,
+  metadata_json TEXT,
+  capture_key TEXT,
+  revision INTEGER NOT NULL DEFAULT 1,
+  content_digest TEXT NOT NULL,
+  steward_notes TEXT,
+  confidence REAL,
+  promoted_draft_id TEXT,
+  promoted_proposal_id TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  reviewed_at TEXT,
+  applied_at TEXT,
+  promoted_at TEXT,
+  dismissed_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_candidates_capture
+  ON knowledge_candidates(capture_key) WHERE capture_key IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_candidates_status
+  ON knowledge_candidates(status, record_kind, updated_at);
+
+CREATE TABLE IF NOT EXISTS knowledge_governance_proposals (
+  id TEXT NOT NULL PRIMARY KEY,
+  operation TEXT NOT NULL,
+  status TEXT NOT NULL,
+  target_page_ids_json TEXT,
+  draft_id TEXT,
+  diff TEXT,
+  reason TEXT NOT NULL,
+  sources_json TEXT NOT NULL,
+  requires_user_confirmation INTEGER NOT NULL DEFAULT 1,
+  workspace_id TEXT,
+  revision INTEGER NOT NULL DEFAULT 1,
+  content_digest TEXT,
+  reviewed_digest TEXT,
+  expected_revision INTEGER,
+  idempotency_key TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  applied_at TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_proposals_idempotency
+  ON knowledge_governance_proposals(idempotency_key)
+  WHERE idempotency_key IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_proposals_draft
+  ON knowledge_governance_proposals(draft_id, status);
+
+CREATE TABLE IF NOT EXISTS knowledge_governance_events (
+  id TEXT NOT NULL PRIMARY KEY,
+  stream TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_governance_events_stream
+  ON knowledge_governance_events(stream, created_at);
+
+CREATE TABLE IF NOT EXISTS knowledge_owner_links (
+  source_ref TEXT NOT NULL PRIMARY KEY,
+  owner TEXT NOT NULL,
+  subject_kind TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  revision INTEGER NOT NULL DEFAULT 1,
+  content_digest TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_owner_links_subject
+  ON knowledge_owner_links(owner, subject_kind, subject_id);
+
 CREATE TABLE IF NOT EXISTS context_blocks (
   block_id TEXT NOT NULL PRIMARY KEY,
   block_type TEXT NOT NULL,

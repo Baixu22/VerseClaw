@@ -100,6 +100,8 @@ export type WikiPageSummary = {
   unsafeLocalRelativePath?: string;
   lastRefreshedAt?: string;
   updatedAt?: string;
+  status?: string;
+  revision?: number;
 };
 
 const FRONTMATTER_PATTERN = /^---\n([\s\S]*?)\n---\n?/;
@@ -494,5 +496,12 @@ export function toWikiPageSummary(params: {
     unsafeLocalRelativePath: normalizeOptionalString(parsed.frontmatter.unsafeLocalRelativePath),
     lastRefreshedAt: normalizeOptionalString(parsed.frontmatter.lastRefreshedAt),
     updatedAt: normalizeOptionalString(parsed.frontmatter.updatedAt),
+    status: normalizeOptionalString(parsed.frontmatter.status),
+    revision:
+      typeof parsed.frontmatter.revision === "number" &&
+      Number.isInteger(parsed.frontmatter.revision) &&
+      parsed.frontmatter.revision > 0
+        ? parsed.frontmatter.revision
+        : 1,
   };
 }
