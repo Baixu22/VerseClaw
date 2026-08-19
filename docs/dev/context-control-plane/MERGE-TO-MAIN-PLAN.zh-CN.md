@@ -1,6 +1,6 @@
 # DCS 工作树提交 main 调研与准备方案
 
-> 状态：commits 与 rebase 已完成；push / PR 尚未执行，等待 owner 授权。
+> 状态：commits、rebase、push 与 PR 已完成；PR #38 待 review/merge。
 > 日期：2026-08-19
 > 工作树：`D:\verse_claw_worktree`
 > 分支：`codex/context-control-plane-stage0`
@@ -37,7 +37,7 @@
   9. `f3d9881fe` docs
 - rebase 全程无冲突；baseline 修复切片已按推荐策略排除。
 - rebase 后 DCS 聚焦矩阵全过；`pnpm run lint:check` 的 3 个 errors 均位于 origin/main 既有文件（`electron/utils/verseshell-runtime-bundle.ts`、`openclaw_runtime/src/plugin-sdk/provider-stream-shared.test.ts`、`openclaw_runtime/test/helpers/agents/happy-path-prompt-snapshots.ts`），本分支未触碰，留给 main 后续处理。
-- 下一步仅剩：push 分支 + 创建 PR（待 owner 明确授权）。
+- 下一步：PR review / merge（PR #38：https://github.com/Baixu22/VerseClaw/pull/38）。
 
 
 `f552..origin/main` 的 4 个提交：
