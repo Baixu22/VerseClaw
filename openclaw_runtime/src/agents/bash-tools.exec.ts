@@ -3,6 +3,7 @@
  * Resolves host/sandbox/node target, policy, approval, env, script preflight,
  * process launch, foreground result, and background session handoff.
  */
+import { createHash, randomUUID } from "node:crypto";
 import { constants as fsConstants } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -46,12 +47,24 @@ import {
   resolveAgentIdFromSessionKey,
 } from "../routing/session-key.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
+import { resolveConfigDir } from "../utils.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.js";
 import { splitShellArgs } from "../utils/shell-argv.js";
 import type { HookContext } from "./agent-tools.before-tool-call.js";
 import { stripMalformedXmlArgValueSuffixFromKeys } from "./agent-tools.params.js";
 import { markBackgrounded } from "./bash-process-registry.js";
 import { describeExecTool } from "./bash-tools.descriptions.js";
+import { goalWakeController, type GoalWakeArmResult } from "./goal-wake-controller.js";
+import {
+  countActiveDurableHelperRunsForSession,
+  markSessionDurableHelpersNeedsCleanup,
+} from "./goal-wake-durable-cleanup.js";
+import {
+  createDurableHelperIntent,
+  removeDurableHelperRunDir,
+  resolveDurableHelperRoot,
+} from "./goal-wake-helper-protocol.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { processGatewayAllowlist } from "./bash-tools.exec-host-gateway.js";
 import { executeNodeHostCommand } from "./bash-tools.exec-host-node.js";
 import { renderExecOutputText } from "./bash-tools.exec-output.js";
@@ -103,6 +116,7 @@ type ExecToolArgs = Record<string, unknown> & {
   timeout?: number;
   pty?: boolean;
   elevated?: boolean;
+  wait?: "none" | "session" | "goal";
   host?: string;
   security?: string;
   ask?: string;
@@ -1885,33 +1899,216 @@ export function createExecTool(
         await validateScriptFileForShellBleed({ command: params.command, workdir });
       }
 
-      const run = await runExecProcess({
-        command: params.command,
-        execCommand: execCommandOverride,
-        executionPlan: executionPlan ?? preResolvedVerseShellPlan,
-        execHost: host,
-        hostPolicyApproved,
-        config: defaults?.config,
-        workdir,
-        env,
-        pathPrepend: defaultPathPrepend,
-        sandbox,
-        containerWorkdir,
-        usePty,
-        warnings,
-        maxOutput,
-        pendingMaxOutput,
-        notifyOnExit,
-        notifyOnExitEmptySuccess,
-        scopeKey: defaults?.scopeKey,
-        sessionKey: notifySessionKey,
-        mainKey: defaults?.mainKey,
-        sessionScope: defaults?.sessionScope,
-        eventRouting: defaults?.eventRouting,
-        notifyDeliveryContext,
-        timeoutSec: effectiveTimeout,
-        onUpdate,
-      });
+      let goalWaitArm: GoalWakeArmResult | undefined;
+      let goalYieldTriggered = false;
+      let releaseGoalWaitPermit = (): void => {};
+      let durableRunMeta:
+        | {
+            runId: string;
+            nonce: string;
+            ownerEpoch: string;
+            rootDir: string;
+            commandDigest: string;
+          }
+        | undefined;
+      if (goalWaitRequested) {
+        if (host === "sandbox") {
+          throw new Error('exec wait="goal" is only supported for local gateway execution in P0');
+        }
+        const boundSessionKey = notifySessionKey?.trim() || defaults?.sessionKey?.trim();
+        const mission = boundSessionKey
+          ? goalWakeController.getLatestMissionForSession(boundSessionKey)
+          : undefined;
+        if (!mission || mission.status !== "running") {
+          throw new Error('exec wait="goal" requires an active bound mission owner turn');
+        }
+        if (mission.agentId && agentId && mission.agentId !== agentId) {
+          throw new Error('exec wait="goal" is restricted to the mission owner/lead agent');
+        }
+        if (!defaults?.sessionId) {
+          throw new Error('exec wait="goal" requires an active session context');
+        }
+        releaseGoalWaitPermit = acquireSessionAdmissionPermit(
+          {
+            agentId,
+            canonicalSessionKey: mission.sessionKey,
+            expectedSessionId: defaults.sessionId,
+          },
+          "goal-wake-arm",
+        );
+        const commandDigest = createHash("sha256")
+          .update(`${execCommandOverride ?? params.command}\u0000${workdir}`)
+          .digest("hex");
+        const durableEnabled =
+          host === "gateway" && goalWakeController.durableHelperEnabled(defaults?.config);
+        if (durableEnabled) {
+          const policy = goalWakeController.resolveDurableHelperPolicy(defaults?.config);
+          if (
+            policy.maxRunsPerSession > 0 &&
+            (await countActiveDurableHelperRunsForSession(mission.sessionKey)) >=
+              policy.maxRunsPerSession
+          ) {
+            await markSessionDurableHelpersNeedsCleanup(mission.sessionKey, {
+              rootDir: resolveDurableHelperRoot(resolveConfigDir()),
+            });
+            throw new Error(
+              `exec wait="goal" durable helper quota reached (${policy.maxRunsPerSession} per session)`,
+            );
+          }
+          durableRunMeta = {
+            runId: `run_${randomUUID()}`,
+            nonce: randomUUID(),
+            ownerEpoch: createHash("sha256")
+              .update(`${defaults.sessionId}\u0000${mission.missionId}`)
+              .digest("hex"),
+            rootDir: resolveDurableHelperRoot(resolveConfigDir()),
+            commandDigest,
+          };
+          await createDurableHelperIntent(
+            {
+              runId: durableRunMeta.runId,
+              nonce: durableRunMeta.nonce,
+              commandDigest,
+              policyRevision: "runtime-lifecycle-phase4-v1",
+              ownerEpoch: durableRunMeta.ownerEpoch,
+            },
+            { rootDir: durableRunMeta.rootDir },
+          );
+        }
+        goalWaitArm = await goalWakeController.armGoalWaitProcess(
+          {
+            missionId: mission.missionId,
+            sessionKey: mission.sessionKey,
+            agentId,
+            expectedRevision: mission.revision ?? 0,
+            ...(mission.activeTickId ? { activeTickId: mission.activeTickId } : {}),
+            label: `goal-owned process (sha256:${commandDigest.slice(0, 16)})`,
+            commandDigest,
+            ...(durableRunMeta
+              ? {
+                  durableRun: {
+                    runId: durableRunMeta.runId,
+                    ownerEpoch: durableRunMeta.ownerEpoch,
+                    nonce: durableRunMeta.nonce,
+                    policyRevision: "runtime-lifecycle-phase4-v1",
+                  },
+                }
+              : {}),
+          },
+          defaults?.config,
+        );
+        if (!goalWaitArm.ok) {
+          if (durableRunMeta) {
+            await removeDurableHelperRunDir(durableRunMeta.runId, {
+              rootDir: durableRunMeta.rootDir,
+            }).catch(() => undefined);
+          }
+          throw new Error(
+            `goal-wake arm failed: ${goalWaitArm.reason}${
+              goalWaitArm.message ? ` (${goalWaitArm.message})` : ""
+            }`,
+          );
+        }
+      }
+
+      let run: Awaited<ReturnType<typeof runExecProcess>>;
+      try {
+        run = await runExecProcess({
+          command: params.command,
+          execCommand: execCommandOverride,
+          executionPlan: executionPlan ?? preResolvedVerseShellPlan,
+          execHost: host,
+          hostPolicyApproved,
+          config: defaults?.config,
+          workdir,
+          env,
+          pathPrepend: defaultPathPrepend,
+          sandbox,
+          containerWorkdir,
+          usePty,
+          warnings,
+          maxOutput,
+          pendingMaxOutput,
+          notifyOnExit,
+          notifyOnExitEmptySuccess,
+          scopeKey: defaults?.scopeKey,
+          sessionKey: notifySessionKey,
+          agentId,
+          expectedSessionId: defaults?.sessionId,
+          mainKey: defaults?.mainKey,
+          sessionScope: defaults?.sessionScope,
+          eventRouting: defaults?.eventRouting,
+          notifyDeliveryContext,
+          timeoutSec: effectiveTimeout,
+          onUpdate,
+          ...(goalWaitArm?.ok && durableRunMeta
+            ? {
+                durableHelper: {
+                  runId: durableRunMeta.runId,
+                  nonce: durableRunMeta.nonce,
+                  ownerEpoch: durableRunMeta.ownerEpoch,
+                  rootDir: durableRunMeta.rootDir,
+                  commandDigest: durableRunMeta.commandDigest,
+                },
+              }
+            : {}),
+        });
+      } catch (error) {
+        if (goalWaitArm?.ok) {
+          await goalWakeController.markGoalWaitSpawnUnknown(
+            goalWaitArm.taskId,
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+        throw error;
+      } finally {
+        releaseGoalWaitPermit();
+      }
+
+      if (goalWaitArm?.ok) {
+        void run.promise
+          .then((outcome) =>
+            goalWakeController.finalizeGoalWaitTaskProcess({
+              taskId: goalWaitArm!.taskId,
+              status:
+                outcome.status === "completed"
+                  ? "succeeded"
+                  : outcome.timedOut
+                    ? "timed_out"
+                    : outcome.failureKind === "runtime-error"
+                      ? "lost"
+                      : outcome.failureKind === "signal" || outcome.failureKind === "aborted"
+                        ? "cancelled"
+                        : "failed",
+              exitCode: outcome.exitCode,
+              exitSignal: outcome.exitSignal == null ? null : String(outcome.exitSignal),
+              endedAt: Date.now(),
+              ...(outcome.status === "failed" ? { error: outcome.reason } : {}),
+              terminalSummary:
+                outcome.status === "completed"
+                  ? `goal-owned process exited ${outcome.exitCode}`
+                  : outcome.reason,
+            }),
+          )
+          .catch((error) =>
+            goalWakeController.markGoalWaitSpawnUnknown(
+              goalWaitArm!.taskId,
+              error instanceof Error ? error.message : String(error),
+            ),
+          );
+        // A committed arm immediately performs a terminal level-check; the
+        // process-exit hook above is only the normal fast-path accelerator.
+        await goalWakeController.runGoalWakeLevelCheckForTask(goalWaitArm.taskId, {
+          cfg: defaults?.config,
+        });
+        if (defaults?.onYield) {
+          await defaults.onYield(
+            `Goal-owned process armed: taskId=${goalWaitArm.taskId} flowId=${goalWaitArm.flowId}. ` +
+              "The mission tick resumes from process exit without polling.",
+          );
+          goalYieldTriggered = true;
+        }
+      }
 
       let yielded = false;
       let yieldTimer: NodeJS.Timeout | null = null;
@@ -1970,6 +2167,14 @@ export function createExecTool(
               startedAt: run.startedAt,
               cwd: run.session.cwd,
               tail: run.session.tail,
+              ...(goalWaitArm?.ok
+                ? {
+                    wait: "goal" as const,
+                    taskId: goalWaitArm.taskId,
+                    flowId: goalWaitArm.flowId,
+                    turnBarrier: goalWaitArm.turnBarrier,
+                  }
+                : {}),
             },
           });
         };
@@ -1983,7 +2188,11 @@ export function createExecTool(
           resolveRunning();
         };
 
-        if (allowBackground && yieldWindow !== null) {
+        if (goalYieldTriggered) {
+          yielded = true;
+          markBackgrounded(run.session);
+          resolveRunning();
+        } else if (allowBackground && yieldWindow !== null) {
           if (yieldWindow === 0) {
             onYieldNow();
           } else {

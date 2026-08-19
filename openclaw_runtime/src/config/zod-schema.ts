@@ -245,6 +245,25 @@ const RuntimeFeatureSchema = z
           })
           .strict()
           .optional(),
+        goalWake: z
+          .object({
+            enabled: z.boolean().optional(),
+            maxActiveGoalWaits: z.number().int().min(0).max(10000).optional(),
+            maxFlows: z.number().int().min(0).max(100000).optional(),
+            tickFailureBackoffMs: z.number().int().min(0).max(86_400_000).optional(),
+            durableHelper: z
+              .object({
+                enabled: z.boolean().optional(),
+                maxRunsPerSession: z.number().int().min(0).max(1000).optional(),
+                maxOutputBytesPerRun: z.number().int().min(1024).max(1024 * 1024 * 1024).optional(),
+                runTtlMs: z.number().int().min(0).max(30 * 24 * 60 * 60 * 1000).optional(),
+                sweepIntervalMs: z.number().int().min(1000).max(24 * 60 * 60 * 1000).optional(),
+              })
+              .strict()
+              .optional(),
+          })
+          .strict()
+          .optional(),
       })
       .strict()
       .optional(),
