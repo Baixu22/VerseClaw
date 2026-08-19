@@ -1524,20 +1524,30 @@ export function createExecTool(
       let execCommandOverride: string | undefined;
       let executionPlan: import("./verseshell/command-profiles.js").VerseShellCommandPlan | undefined;
       const backgroundRequested = params.background === true;
+      const requestedWait =
+        params.wait === "session" || params.wait === "goal" || params.wait === "none"
+          ? params.wait
+          : "none";
+      const goalWaitRequested = requestedWait === "goal";
+      if (goalWaitRequested && !backgroundRequested) {
+        throw new Error('exec wait="goal" requires background=true');
+      }
       const yieldRequested = typeof params.yieldMs === "number";
       if (!allowBackground && (backgroundRequested || yieldRequested)) {
         warnings.push("Warning: background execution is disabled; running synchronously.");
       }
-      const yieldWindow = allowBackground
-        ? backgroundRequested
-          ? 0
-          : clampWithDefault(
-              params.yieldMs ?? defaultBackgroundMs,
-              defaultBackgroundMs,
-              10,
-              120_000,
-            )
-        : null;
+      const yieldWindow = goalWaitRequested
+        ? 0
+        : allowBackground
+          ? backgroundRequested
+            ? 0
+            : clampWithDefault(
+                params.yieldMs ?? defaultBackgroundMs,
+                defaultBackgroundMs,
+                10,
+                120_000,
+              )
+          : null;
       const elevatedDefaults = defaults?.elevated;
       const elevatedAllowed = Boolean(elevatedDefaults?.enabled && elevatedDefaults.allowed);
       const elevatedDefaultMode =
