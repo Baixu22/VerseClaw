@@ -9,6 +9,7 @@ import type { CommandTurnContext } from "./command-turn-context.js";
 import type { CommandArgs } from "./commands-args.types.js";
 import type { HistoryEntry } from "./reply/history.types.js";
 import type { ReplyThreadingPolicy } from "./types.js";
+import type { ResolvedChatKnowledgeRef } from "../context-engine/chat-knowledge-intent.js";
 
 /** Valid message channels for routing. */
 export type OriginatingChannelType = string & { readonly __originatingChannelBrand?: never };
@@ -330,6 +331,12 @@ export type MsgContext = {
    * mismatch-invalidate semantics. Absent → agent-config fallback path.
    */
   WorkspaceFingerprint?: string;
+  /**
+   * KS-04: DCS-admitted typed knowledge refs resolved by Gateway from the
+   * renderer's untrusted retrieval intent. Embedded attempt collects these as
+   * dcs-knowledge ContextCandidates; the prompt is never edited in Main.
+   */
+  ChatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
 };
 
 export type FinalizedMsgContext = Omit<MsgContext, "CommandAuthorized"> & {

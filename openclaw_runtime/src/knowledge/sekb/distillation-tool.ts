@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { ContextBlockSink } from "../../context-engine/block.js";
 import {
   assertConfirmSession,
@@ -52,14 +52,42 @@ export type ConfirmAndSaveOptions = {
     enabled: boolean;
     dualWrite?: boolean;
   };
+  /** KS-02: truthful sink classification for host UI status. */
+  contextBlockSinkKind?: "blockstore" | "journal";
+  /** KS-02: internal flag used by the lineage coordinator to avoid double projection. */
+  deferContextBlockWrite?: boolean;
 };
 
 export type ConfirmAndSaveResult = {
   principleId: string;
   provenance?: ConfirmProvenance;
-  dcsWrite: "written" | "skipped" | "rejected" | "not_attempted";
+  dcsWrite:
+    | "persisted"
+    | "journaled_degraded"
+    | "rejected"
+    | "not_attempted"
+    | "written"
+    | "skipped";
+  projectionBlockId?: string;
   highTrustEligible: boolean;
 };
+
+function stablePrincipleId(suggestion: DistillationSuggestion): string {
+  const explicit = suggestion.suggested_principle.principle_id;
+  if (explicit && explicit.trim()) return explicit.trim();
+  const sourceIds = [...new Set(suggestion.source_trajectory_ids)].toSorted();
+  const suggested = suggestion.suggested_principle;
+  return `principle-${createHash("sha256")
+    .update(JSON.stringify({
+      sourceIds,
+      title: suggested.title ?? "",
+      condition: suggested.condition ?? "",
+      action: suggested.action ?? "",
+      reason: suggested.reason ?? "",
+    }))
+    .digest("hex")
+    .slice(0, 24)}`;
+}
 
 /** Manual SEKB distillation flow: suggestions are advisory until confirmed. */
 export class DistillationTool {
@@ -131,7 +159,7 @@ export class DistillationTool {
     const action = nonEmpty(suggested.action) ?? "Review the captured trajectory before continuing";
     const reason = nonEmpty(suggested.reason) ?? "Prior outcomes can reveal reusable constraints";
     const principle: Principle = {
-      principle_id: nonEmpty(suggested.principle_id) ?? randomUUID(),
+      principle_id: stablePrincipleId(suggestion),
       created_at: nonEmpty(suggested.created_at) ?? now.toISOString(),
       updated_at: now.toISOString(),
       title: nonEmpty(suggested.title) ?? "Review history",
@@ -202,7 +230,8 @@ export class DistillationTool {
     // only confirm_and_save (here) writes experience Blocks.
     // Production BlockStore write when sink+session present (unchanged).
     // C7-2 experience shadow is opt-in only via options.experienceShadow.enabled.
-    if ((options.contextBlockSink && sessionId) || (options.experienceShadow?.enabled && sessionId)) {
+    if (options.deferContextBlockWrite !== true &&
+        ((options.contextBlockSink && sessionId) || (options.experienceShadow?.enabled && sessionId))) {
       const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
       void handleConfirmAndSave({
         principle,
@@ -236,10 +265,12 @@ export class DistillationTool {
       sessionId,
       requireSession: true,
       sourceSystem: options.sourceSystem ?? "ui-confirm",
+      deferContextBlockWrite: options.contextBlockSink !== undefined,
     });
     const principle = this.#store.get_principle(principleId);
     const provenance = principle.metadata.confirmProvenance as ConfirmProvenance | undefined;
     let dcsWrite: ConfirmAndSaveResult["dcsWrite"];
+    let projectionBlockId: string | undefined;
     if (options.contextBlockSink && sessionId) {
       try {
         const result = await handleConfirmAndSave({
@@ -260,8 +291,16 @@ export class DistillationTool {
           ),
           ...(options.experienceShadow ? { experienceShadow: options.experienceShadow } : {}),
         });
-        if (!result) dcsWrite = "skipped";
-        else dcsWrite = result.accepted ? "written" : "rejected";
+        if (!result) {
+          dcsWrite = "skipped";
+        } else {
+          projectionBlockId = result.blockId;
+          if (!result.accepted) {
+            dcsWrite = "rejected";
+          } else {
+            dcsWrite = options.contextBlockSinkKind === "journal" ? "journaled_degraded" : "persisted";
+          }
+        }
       } catch {
         dcsWrite = "skipped";
       }
@@ -272,6 +311,7 @@ export class DistillationTool {
       principleId,
       provenance,
       dcsWrite,
+      ...(projectionBlockId ? { projectionBlockId } : {}),
       highTrustEligible: Boolean(provenance?.highTrustEligible),
     };
   }

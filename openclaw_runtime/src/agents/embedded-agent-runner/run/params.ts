@@ -34,6 +34,7 @@ import type { SilentReplyPromptMode } from "../../system-prompt.types.js";
 import type { PromptMode } from "../../system-prompt.types.js";
 import type { EmbeddedAgentExecutionPhase } from "../execution-phase.js";
 import type { AuthProfileFailurePolicy } from "./auth-profile-failure-policy.types.js";
+import type { ResolvedChatKnowledgeRef } from "../../../context-engine/chat-knowledge-intent.js";
 export type { ClientToolDefinition } from "../../command/shared-types.js";
 
 export type EmbeddedRunTrigger = "cron" | "heartbeat" | "manual" | "memory" | "overflow" | "user";
@@ -126,6 +127,8 @@ export type RunEmbeddedAgentParams = {
    * Absent → agent-config fallback path uses the local compute.
    */
   workspaceFingerprint?: string;
+  /** KS-04: DCS-admitted typed knowledge refs to inject via dcs-knowledge candidates. */
+  chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
   agentDir?: string;
   config?: OpenClawConfig;
   skillsSnapshot?: SkillSnapshot;

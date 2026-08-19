@@ -985,6 +985,34 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
 
   const { resolvedSrcPath, sessionsDirAbs, baseId } = resolution;
   logger.info(`[session:delete] file: ${resolvedSrcPath}`);
+  // KS-02: coordinate derivative cleanup before transcript mutation. If any
+  // derivative residual remains, keep the transcript and the operation
+  // incomplete/retryable instead of reporting best-effort success.
+  try {
+    const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
+    const cascade = await runHostSessionDerivativeCascade(sessionKey, baseId);
+    if (!cascade.success) {
+        const detail = cascade.errors
+        .map((entry) => `${entry.kind}:${entry.id} (${entry.error})`)
+        .join('; ');
+      logger.warn(`[session:delete] derivative cascade incomplete retryable=${cascade.retryable}: ${detail}`);
+      return {
+        success: false,
+        partial: true,
+        error: `Derivative cascade incomplete: ${detail}`,
+        remainingPaths: [],
+      };
+    }
+    logger.info(`[session:delete] derivative cascade removed ${cascade.removed.length} item(s)`);
+  } catch (error) {
+    logger.warn(`[session:delete] derivative cascade failed: ${String(error)}`);
+    return {
+      success: false,
+      partial: true,
+      error: `Derivative cascade failed: ${String(error)}`,
+      remainingPaths: [],
+    };
+  }
   const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
   for (const removedPath of sweep.removed) {
     logger.info(`[session:delete] Unlinked ${removedPath}`);
@@ -993,18 +1021,6 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
     logger.warn(`[session:delete] Failed to unlink ${failedPath}: ${String(error)}`);
   }
   logger.info(`[session:delete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
-  // P3-004: cascade SEKB / memory / DCS journal derivatives (best-effort, retriable report).
-  try {
-    const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
-    const cascade = await runHostSessionDerivativeCascade(sessionKey, baseId);
-    if (!cascade.success) {
-      logger.warn(`[session:delete] derivative cascade incomplete retryable=${cascade.retryable} errors=${cascade.errors.length}`);
-    } else {
-      logger.info(`[session:delete] derivative cascade removed ${cascade.removed.length} item(s)`);
-    }
-  } catch (error) {
-    logger.warn(`[session:delete] derivative cascade failed: ${String(error)}`);
-  }
   const archiveCleanup = await cleanupContextArchiveArtifacts({
     sessionIds: [baseId],
   });
@@ -1254,12 +1270,27 @@ async function permanentDeleteSession(payload: SessionPayload): Promise<{ succes
   const transcriptPath = removed.transcriptPath;
   const sessionsDirAbs = dirname(transcriptPath);
   const baseId = basename(transcriptPath).replace(/\.archived\.jsonl$/, '');
+  try {
+    const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
+    const cascade = await runHostSessionDerivativeCascade(sessionKey, baseId);
+    if (!cascade.success) {
+      const detail = cascade.errors.map((entry) => `${entry.kind}:${entry.id} (${entry.error})`).join('; ');
+      await upsertArchiveEntry(archiveIndexPath, removed);
+      return { success: false, error: `Derivative cascade incomplete: ${detail}` };
+    }
+  } catch (error) {
+    await upsertArchiveEntry(archiveIndexPath, removed).catch(() => undefined);
+    return { success: false, error: `Derivative cascade failed: ${String(error)}` };
+  }
   const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
   for (const removedPath of sweep.removed) {
     logger.info(`[session:permanentDelete] Unlinked ${removedPath}`);
   }
   for (const { path: failedPath, error } of sweep.errors) {
     logger.warn(`[session:permanentDelete] Failed to unlink ${failedPath}: ${String(error)}`);
+  }
+  if (sweep.errors.length > 0) {
+    return { success: false, error: `Some archived session files could not be removed: ${String(sweep.errors[0].error)}` };
   }
   logger.info(`[session:permanentDelete] Hard-deleted ${sweep.removed.length} file(s) for ${baseId}`);
   return { success: true };
@@ -1301,25 +1332,35 @@ async function emptyArchive(payload: SessionPayload): Promise<{ success: boolean
   if (index.entries.length === 0) return { success: true };
 
   let firstError: string | undefined;
+  const retained: SessionArchiveEntry[] = [];
   for (const entry of index.entries) {
     try {
       const sessionsDirAbs = dirname(entry.transcriptPath);
       const baseId = basename(entry.transcriptPath).replace(/\.archived\.jsonl$/, '');
+      const { runHostSessionDerivativeCascade } = await import('./session-cascade-delete');
+      const cascade = await runHostSessionDerivativeCascade(entry.sessionKey, baseId);
+      if (!cascade.success) {
+        firstError ??= cascade.errors[0]?.error ?? 'derivative cascade incomplete';
+        retained.push(entry);
+        continue;
+      }
       const sweep = await sweepSessionArtefacts(sessionsDirAbs, baseId);
       for (const removedPath of sweep.removed) {
         logger.info(`[session:emptyArchive] Unlinked ${removedPath}`);
       }
-      if (sweep.errors.length > 0 && !firstError) {
-        firstError = String(sweep.errors[0].error);
+      if (sweep.errors.length > 0) {
+        firstError ??= String(sweep.errors[0].error);
+        retained.push(entry);
       }
     } catch (error) {
-      if (!firstError) firstError = String(error);
+      firstError ??= String(error);
+      retained.push(entry);
       logger.warn(`[session:emptyArchive] Failed for ${entry.sessionKey}: ${String(error)}`);
     }
   }
 
-  await writeArchiveIndex(archiveIndexPath, { version: 1, entries: [] });
-  logger.info(`[session:emptyArchive] Cleared ${index.entries.length} archive entries for ${agentId}`);
+  await writeArchiveIndex(archiveIndexPath, { version: 1, entries: retained });
+  logger.info(`[session:emptyArchive] Retained ${retained.length}/${index.entries.length} archive entries for ${agentId}`);
   if (firstError) {
     return { success: false, error: `Some archived session files could not be removed: ${firstError}` };
   }

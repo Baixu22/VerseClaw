@@ -237,6 +237,9 @@ import type {
   KnowledgeListInboxItemsResult,
   KnowledgeListProposalsPayload,
   KnowledgeListProposalsResult,
+  KnowledgeListGovernanceReceiptsResult,
+  KnowledgeListReviewBundlesPayload,
+  KnowledgeListReviewBundlesResult,
   KnowledgeListSourceSetsResult,
   KnowledgeLintResult,
   KnowledgeMatchErrorExperiencePayload,
@@ -540,6 +543,8 @@ export type {
   ImageGenerationSettingsResult,
   KnowledgeApplyDraftResult,
   KnowledgeApplyReviewedChangeResult,
+  KnowledgeChangeOperation,
+  KnowledgeGovernanceReceipt,
   KnowledgeAnswerFromSourceSetResult,
   KnowledgeCompileResult,
   KnowledgeArtifactType,
@@ -561,6 +566,10 @@ export type {
   KnowledgeInitResult,
   KnowledgeListDraftsResult,
   KnowledgeListProposalsResult,
+  KnowledgeListReviewBundlesResult,
+  KnowledgeListGovernanceReceiptsResult,
+  KnowledgeReviewBundle,
+  KnowledgeDcsWriteStatus,
   KnowledgeListSourceSetsResult,
   KnowledgeLintResult,
   KnowledgeOpenVaultResult,
@@ -1550,6 +1559,9 @@ export const hostApi = {
     listProposals: (input?: KnowledgeListProposalsPayload): Promise<KnowledgeListProposalsResult> => (
       invokeHost('knowledge', 'listProposals', input)
     ),
+    listReviewBundles: (input?: KnowledgeListReviewBundlesPayload): Promise<KnowledgeListReviewBundlesResult> => (
+      invokeHost('knowledge', 'listReviewBundles', input)
+    ),
     previewChange: (input: KnowledgePreviewChangePayload): Promise<KnowledgePreviewChangeResult> => (
       invokeHost('knowledge', 'previewChange', input)
     ),
@@ -1611,6 +1623,9 @@ export const hostApi = {
       invokeHost('knowledge', 'getProvenance', input)
     ),
     governanceAudit: (): Promise<KnowledgeGovernanceResult> => invokeHost('knowledge', 'governanceAudit'),
+    listGovernanceReceipts: (): Promise<KnowledgeListGovernanceReceiptsResult> => (
+      invokeHost('knowledge', 'listGovernanceReceipts')
+    ),
     listWatchedDirectories: (): Promise<KnowledgeWatchedDirectoryConfig[]> => invokeHost('knowledge', 'listWatchedDirectories'),
     addWatchedDirectory: (config: KnowledgeWatchedDirectoryConfig): Promise<HostSuccess> => invokeHost('knowledge', 'addWatchedDirectory', config),
     updateWatchedDirectory: (id: string, config: Partial<KnowledgeWatchedDirectoryConfig>): Promise<HostSuccess> => invokeHost('knowledge', 'updateWatchedDirectory', { id, config }),

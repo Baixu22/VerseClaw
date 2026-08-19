@@ -35,16 +35,76 @@
     "createMemoryDraft": "Сохранить как черновик памяти",
     "duration": "Длительность",
     "notAvailable": "Нет данных",
-    "sections": { "session": "Сессия", "git": "Git рабочей области", "tasks": "Активные задачи", "subagents": "Субагенты", "terminals": "Терминалы", "continuity": "Непрерывность" },
-    "status": { "idle": "Ожидание", "running": "Выполняется", "waiting_approval": "Ожидает одобрения", "completed": "Завершено", "failed": "Ошибка", "aborted": "Прервано" },
-    "git": { "detached": "Отсоединённый HEAD", "changes": "Изменений: {{count}}", "conflicts": "Конфликты" },
-    "taskKinds": { "mission": "Миссия", "taskLoop": "Цикл задач", "clawGraph": "ClawGraph", "taskLedger": "Журнал задач" },
-    "taskStatus": { "queued": "В очереди", "running": "Выполняется", "review": "Проверка", "blocked": "Заблокировано", "completed": "Готово", "failed": "Ошибка", "aborted": "Прервано" },
-    "subagents": { "unknown": "Агент" },
-    "subagentStatus": { "started": "Выполняется", "completed": "Готово", "error": "Ошибка", "aborted": "Прервано", "verified": "Проверено" },
-    "terminals": { "interactive": "Интерактивный терминал", "agentCommand": "Команда агента", "webPreview": "Сервер Web-просмотра" },
-    "terminalStatus": { "idle": "Ожидание", "starting": "Запускается", "running": "Выполняется", "exited": "Завершён", "blocked": "Заблокирован", "completed": "Готово", "error": "Ошибка" },
-    "continuity": { "queue": "Продолжений в очереди: {{count}}", "context": "Нагрузка контекста: {{pressure}}", "checkpoint": "Доступна точка восстановления", "pressure": { "low": "низкая", "medium": "средняя", "high": "высокая" } }
+    "sections": {
+      "session": "Сессия",
+      "git": "Git рабочей области",
+      "tasks": "Активные задачи",
+      "subagents": "Субагенты",
+      "terminals": "Терминалы",
+      "continuity": "Непрерывность"
+    },
+    "status": {
+      "idle": "Ожидание",
+      "running": "Выполняется",
+      "waiting_approval": "Ожидает одобрения",
+      "completed": "Завершено",
+      "failed": "Ошибка",
+      "aborted": "Прервано"
+    },
+    "git": {
+      "detached": "Отсоединённый HEAD",
+      "changes": "Изменений: {{count}}",
+      "conflicts": "Конфликты"
+    },
+    "taskKinds": {
+      "mission": "Миссия",
+      "taskLoop": "Цикл задач",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "Журнал задач"
+    },
+    "taskStatus": {
+      "queued": "В очереди",
+      "running": "Выполняется",
+      "review": "Проверка",
+      "blocked": "Заблокировано",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "aborted": "Прервано"
+    },
+    "subagents": {
+      "unknown": "Агент"
+    },
+    "subagentStatus": {
+      "started": "Выполняется",
+      "completed": "Готово",
+      "error": "Ошибка",
+      "aborted": "Прервано",
+      "verified": "Проверено"
+    },
+    "terminals": {
+      "interactive": "Интерактивный терминал",
+      "agentCommand": "Команда агента",
+      "webPreview": "Сервер Web-просмотра"
+    },
+    "terminalStatus": {
+      "idle": "Ожидание",
+      "starting": "Запускается",
+      "running": "Выполняется",
+      "exited": "Завершён",
+      "blocked": "Заблокирован",
+      "completed": "Готово",
+      "error": "Ошибка"
+    },
+    "continuity": {
+      "queue": "Продолжений в очереди: {{count}}",
+      "context": "Нагрузка контекста: {{pressure}}",
+      "checkpoint": "Доступна точка восстановления",
+      "pressure": {
+        "low": "низкая",
+        "medium": "средняя",
+        "high": "высокая"
+      }
+    }
   },
   "noLogs": "(Журналы ещё недоступны)",
   "scrollToLatest": "Вернуться вниз",
@@ -2172,5 +2232,9 @@
       "validationError": "Ошибка проверки",
       "error": "Ошибка"
     }
+  },
+  "knowledgeDenial": {
+    "toast_one": "{{count}} ссылка на знания не была включена: {{reason}}",
+    "toast_other": "{{count}} ссылок на знания не были включены: {{reason}}"
   }
 }

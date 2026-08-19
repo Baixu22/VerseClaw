@@ -1,4 +1,5 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -20,12 +21,18 @@ vi.mock('@electron/utils/paths', () => ({
 }));
 
 describe('knowledge host API', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    closeOpenClawStateDatabaseForTest();
+    const mod = await import('@electron/services/knowledge-api');
+    mod.__resetKnowledgeGovernanceForTests();
+    mod.__resetGovernanceWriterQueueForTests();
+    mod.__resetHostGovernedAdaptersForTests();
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
   });
 
   afterEach(() => {
+    closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
   });
 
@@ -1449,4 +1456,260 @@ describe('knowledge host API', () => {
     expect(result.draft?.body).toContain('Decision note');
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
+
+  describe('KS-01 ReviewBundle and governance integrity hard acceptance', () => {
+    it('pairs 10 drafts and 10 proposals without cross-selection', async () => {
+      const gatewayManager = { rpc: vi.fn(async () => { throw new Error('no wiki.apply expected'); }) };
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      const pairs: Array<{ draftId: string; proposalId: string }> = [];
+      for (let index = 0; index < 10; index += 1) {
+        const draft = await api.createDraft({
+          title: `Cross draft ${index}`,
+          body: `Cross-body ${index} with enough source evidence for review.`,
+          type: 'synthesis',
+          sourceIds: [`notes/cross-${index}.md`],
+          createdBy: 'user',
+        });
+        const proposal = await api.proposeChange({
+          operation: 'create',
+          draftId: draft.draft!.id,
+          reason: `Cross proposal ${index}`,
+          sources: [{ id: `notes/cross-${index}.md`, kind: 'wiki' }],
+        });
+        pairs.push({ draftId: draft.draft!.id, proposalId: proposal.proposal!.id });
+      }
+      const listed = await api.listReviewBundles({ status: 'all' });
+      expect(listed.success).toBe(true);
+      expect(listed.bundles).toHaveLength(10);
+      for (const bundle of listed.bundles) {
+        const pair = pairs.find((candidate) => candidate.proposalId === bundle.proposalId);
+        expect(pair).toBeTruthy();
+        expect(bundle.draftId).toBe(pair!.draftId);
+        expect(bundle.id).toBe(`kb_${bundle.proposalId}_${bundle.draftId}`);
+      }
+      expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    });
+
+    it('rejects stale approvals as conflicts and never calls wiki.apply', async () => {
+      const gatewayManager = { rpc: vi.fn(async () => { throw new Error('wiki.apply must not be called'); }) };
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      const draft = await api.createDraft({
+        title: 'Stale CAS',
+        body: 'Approved content must not apply after a later edit changes the digest.',
+        type: 'synthesis',
+        sourceIds: ['notes/stale.md'],
+        createdBy: 'user',
+      });
+      const proposal = await api.proposeChange({
+        operation: 'create',
+        draftId: draft.draft!.id,
+        reason: 'review',
+        sources: [{ id: 'notes/stale.md', kind: 'wiki' }],
+      });
+      const reviewed = await api.reviewDraft({ id: draft.draft!.id, action: 'approve' });
+      expect(reviewed.success).toBe(true);
+      await api.updateDraft({ id: draft.draft!.id, body: 'Edited after approval must invalidate the reviewed digest.' });
+      const applied = await api.applyReviewedChange({
+        reviewBundleId: `kb_${proposal.proposal!.id}_${draft.draft!.id}`,
+      });
+      expect(applied.success).toBe(false);
+      expect(applied.conflict?.code === 'stale_revision' || applied.conflict?.code === 'stale_digest').toBe(true);
+      expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    });
+
+    it('concurrent same captureKey calls create exactly one inbox candidate', async () => {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+      const payloads = Array.from({ length: 12 }, (_, index) => ({
+        title: `Concurrent candidate ${index}`,
+        body: 'Concurrent captures with the same key must dedupe inside one critical section.',
+        kind: 'task-ledger' as const,
+        type: 'decision' as const,
+        sourceIds: [`task-${index}`],
+        createdBy: 'agent' as const,
+        metadata: { captureKey: 'mission:concurrent:capture:stable-key' },
+      }));
+      const results = await Promise.all(payloads.map((payload) => api.createInboxItem(payload)));
+      expect(results.every((result) => result.success)).toBe(true);
+      const ids = new Set(results.map((result) => result.item?.id).filter(Boolean));
+      expect(ids.size).toBe(1);
+      const listed = await api.listInboxItems({ status: 'pending' });
+      expect(listed.items).toHaveLength(1);
+    });
+
+    it('idempotent apply retry is duplicate success and writes an operation journal', async () => {
+      const gatewayManager = {
+        rpc: vi.fn(async (method: string) => {
+          if (method === 'wiki.apply') return { pageId: 'idempotent-page' };
+          throw new Error(`unexpected rpc ${method}`);
+        }),
+      };
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      const draft = await api.createDraft({
+        title: 'Idempotent apply',
+        body: 'The same effect key and digest must never call wiki.apply twice.',
+        type: 'synthesis',
+        sourceIds: ['notes/idempotent.md'],
+        createdBy: 'user',
+      });
+      const proposal = await api.proposeChange({
+        operation: 'create',
+        draftId: draft.draft!.id,
+        reason: 'review',
+        sources: [{ id: 'notes/idempotent.md', kind: 'wiki' }],
+      });
+      const bundleId = `kb_${proposal.proposal!.id}_${draft.draft!.id}`;
+      await api.reviewDraft({ id: draft.draft!.id, action: 'approve' });
+      const first = await api.applyReviewedChange({ reviewBundleId: bundleId });
+      const second = await api.applyReviewedChange({ reviewBundleId: bundleId });
+      expect(first.success).toBe(true);
+      expect(second).toMatchObject({ success: true, changed: false, operation: 'duplicate' });
+      expect(gatewayManager.rpc).toHaveBeenCalledTimes(1);
+      const operationsDir = join(root, 'knowledge', 'operations');
+      expect(readdirSync(operationsDir).filter((name) => name.endsWith('.json'))).toHaveLength(1);
+      const journal = JSON.parse(readFileSync(join(operationsDir, readdirSync(operationsDir)[0]), 'utf8'));
+      expect(journal.state).toBe('json_committed');
+      expect(journal.idempotencyKey).toBeTruthy();
+    });
+  });
+
+
+  describe('KS-03 GovernanceStore cutover hard acceptance', () => {
+    it('new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero', async () => {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+      const inbox = await api.createInboxItem({
+        title: 'SQLite inbox',
+        body: 'Inbox records must persist in openclaw-state after KS-03 cutover.',
+        kind: 'manual',
+        createdBy: 'user',
+      });
+      const draft = await api.createDraft({
+        title: 'SQLite draft',
+        body: 'Draft records must persist in openclaw-state after KS-03 cutover.',
+        type: 'synthesis',
+        sourceIds: ['notes/sqlite.md'],
+        createdBy: 'user',
+      });
+      const proposal = await api.proposeChange({
+        operation: 'create',
+        draftId: draft.draft!.id,
+        reason: 'cutover',
+        sources: [{ id: 'notes/sqlite.md', kind: 'wiki' }],
+      });
+      expect(inbox.success).toBe(true);
+      expect(draft.success).toBe(true);
+      expect(proposal.success).toBe(true);
+      expect(readdirSync(join(root, 'knowledge', 'inbox')).filter((name) => name.endsWith('.json'))).toEqual([]);
+      expect(readdirSync(join(root, 'knowledge', 'drafts')).filter((name) => name.endsWith('.json'))).toEqual([]);
+      expect(readdirSync(join(root, 'knowledge', 'proposals')).filter((name) => name.endsWith('.json'))).toEqual([]);
+      const { GovernanceStore } = await import('../../openclaw_runtime/src/knowledge/governance-store');
+      const { openOpenClawStateDatabase } = await import('../../openclaw_runtime/src/state/openclaw-state-db');
+      const database = openOpenClawStateDatabase({
+        env: { ...process.env, OPENCLAW_STATE_DIR: join(root, 'userData', 'openclaw-source-state') },
+      });
+      const store = new GovernanceStore({ database: { path: database.path } });
+      expect(store.listCandidates({ recordKind: 'inbox' })).toHaveLength(1);
+      expect(store.listCandidates({ recordKind: 'draft' })).toHaveLength(1);
+      expect(store.listProposals({ draftId: draft.draft!.id })).toHaveLength(1);
+    });
+
+    it('imports legacy JSON in one transaction and leaves it read-only with parity 100%', async () => {
+      const legacyDraft = {
+        id: 'kd_legacy_import',
+        title: 'Legacy JSON draft',
+        body: 'This record predates the SQLite GovernanceStore cutover.',
+        type: 'synthesis',
+        status: 'draft',
+        sourceIds: ['notes/legacy.md'],
+        sourceRefs: [{ id: 'notes/legacy.md', kind: 'wiki' }],
+        tags: [],
+        workspaceId: null,
+        agentId: null,
+        createdBy: 'user',
+        warnings: [],
+        createdAt: '2026-08-17T00:00:00.000Z',
+        updatedAt: '2026-08-17T00:00:00.000Z',
+      };
+      const legacyProposal = {
+        id: 'kp_legacy_import',
+        operation: 'create',
+        status: 'proposed',
+        draftId: 'kd_legacy_import',
+        reason: 'legacy',
+        sources: [{ id: 'notes/legacy.md', kind: 'wiki' }],
+        requiresUserConfirmation: true,
+        createdAt: '2026-08-17T00:00:00.000Z',
+        updatedAt: '2026-08-17T00:00:00.000Z',
+      };
+      mkdirSync(join(root, 'knowledge', 'drafts'), { recursive: true });
+      mkdirSync(join(root, 'knowledge', 'proposals'), { recursive: true });
+      writeFileSync(join(root, 'knowledge', 'drafts', 'kd_legacy_import.json'), JSON.stringify(legacyDraft));
+      writeFileSync(join(root, 'knowledge', 'proposals', 'kp_legacy_import.json'), JSON.stringify(legacyProposal));
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+      const listed = await api.listDrafts({ status: 'all' });
+      const proposals = await api.listProposals({ status: 'all' });
+      expect(listed.drafts.some((draft) => draft.id === 'kd_legacy_import')).toBe(true);
+      expect(proposals.proposals.some((proposal) => proposal.id === 'kp_legacy_import')).toBe(true);
+      const report = JSON.parse(readFileSync(join(root, 'knowledge', 'governance-migration.json'), 'utf8'));
+      expect(report.candidates.jsonCount).toBe(1);
+      expect(report.candidates.importedCount).toBe(1);
+      expect(report.proposals.jsonCount).toBe(1);
+      expect(report.proposals.importedCount).toBe(1);
+      expect(report.legacyJsonMode).toBe('read-only');
+      expect(readFileSync(join(root, 'knowledge', 'drafts', 'kd_legacy_import.json'), 'utf8')).toContain('Legacy JSON draft');
+    });
+  });
+
+
+  describe('KS-02 truthful DCS projection sink', () => {
+    it('exposes a blockstore sink with read-back verification when state DB opens', async () => {
+      const { createHostExperienceProjectionSink } = await import('@electron/services/knowledge-api');
+      const stateDir = join(root, 'userData', 'openclaw-source-state');
+      const projection = createHostExperienceProjectionSink(stateDir);
+      expect(projection.kind).toBe('blockstore');
+      const blockId = 'experience:sekb:experience-projection/v1:agent:alpha:main:principle-verify:rev1';
+      const result = await projection.sink([{
+        block: {
+          block_id: blockId,
+          block_type: 'experience',
+          source_system: 'sekb',
+          session_id: 'agent:alpha:main',
+          presence: { always_on: false, on_demand: { expand_tool: 'context_search', auto_register: false }, background: true },
+          entities: ['postgresql'],
+          valid_at: new Date('2020-01-01T00:00:00.000Z'),
+          created_at: new Date('2020-01-01T00:00:00.000Z'),
+          mutability: 'system_managed',
+          summary: 'Verify',
+          full_content: 'Read-back before persisted.',
+          compression_depth: 0,
+          entity_extraction_status: 'empty',
+        },
+        admission: {
+          confirmed: true,
+          confidence: 0.8,
+          write_origin: 'handler',
+          integrity: 'confirmed',
+          session_id: 'agent:alpha:main',
+          provenance_source: 'sekb',
+        },
+      }]);
+      expect(result[0].accepted).toBe(true);
+      expect(await projection.verifyBlock!(blockId, 'agent:alpha:main')).toBe(true);
+    });
+
+    it('falls back to a journal sink and never claims blockstore when state DB cannot open', async () => {
+      const { createHostExperienceProjectionSink } = await import('@electron/services/knowledge-api');
+      const statePath = join(root, 'state-as-file');
+      writeFileSync(statePath, 'not-a-directory');
+      const projection = createHostExperienceProjectionSink(statePath);
+      expect(projection.kind).toBe('journal');
+      expect(projection.verifyBlock).toBeUndefined();
+    });
+  });
+
 });

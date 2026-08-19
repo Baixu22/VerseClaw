@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { tmpdir } from 'node:os';
 
 // Area 5 §3.1 — KB Role Registry tests. The registry loader is exercised
@@ -21,6 +22,7 @@ const root = join(tmpdir(), `clawx-kb-steward-test-${Date.now()}`);
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
   getOpenClawConfigDir: () => root,
+  getDataDir: () => join(root, 'userData'),
 }));
 
 function writeRegistryFile(content: unknown) {
@@ -43,12 +45,18 @@ async function getApi() {
 }
 
 describe('Area 5 §3.1 — KB Role Registry', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    closeOpenClawStateDatabaseForTest();
+    const mod = await import('@electron/services/knowledge-api');
+    mod.__resetKnowledgeGovernanceForTests();
+    mod.__resetGovernanceWriterQueueForTests();
+    mod.__resetHostGovernedAdaptersForTests();
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
   });
 
   afterEach(() => {
+    closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
   });
 

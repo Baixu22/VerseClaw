@@ -42,6 +42,33 @@
   },
   {
     "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.84,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0039",
+    "kind": "task",
+    "next_action": "MCP real handshake/conformance 通过",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "RC-08A MCP 与 Host-native Tool 收敛"
+  },
+  {
+    "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.97,
       "user_goal": "继续确定并修复可验证的 GitHub issue",
@@ -115,54 +142,6 @@
       "kill switch 演练成功率 100%"
     ],
     "title": "DCS 与关联组件受控内测投用收口（非GA）"
-  },
-  {
-    "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
-      "validation_plan": [
-        "逐包 Harness 与独立 Agent Engineering Acceptance",
-        "最终全量工程 gate 和 manifest",
-        "用户执行 H-01 至 H-06"
-      ],
-      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [
-      "unified-agent",
-      "verseshell",
-      "context",
-      "vtoken",
-      "coding",
-      "memory"
-    ],
-    "desired_outcomes": [
-      "每次模型调用、审批、外部 effect 和恢复结果均可关联且可解释",
-      "每个运行域最终只有一个权威 writer",
-      "工程证据通过独立 Agent 复验，真人操作只在最终阶段执行"
-    ],
-    "difficulty": "very_high",
-    "id": "TF-0010",
-    "kind": "global_task",
-    "next_action": "唯一入口为 docs/dev/unified-agent-system/runtime-convergence/README.md",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "停止通过新增通用模块证明产品价值，把现有工程基础收敛为唯一权威主路径和可验收的 Operator 产品闭环。",
-    "ready": true,
-    "remaining_minutes_max": 19200,
-    "remaining_minutes_min": 19200,
-    "status": "in_progress",
-    "success_metrics": [
-      "未登记 semantic mutation 0",
-      "重复副作用 0",
-      "平行 workflow/memory/telemetry writer 0",
-      "自动化 human/live 计数误增 0",
-      "必需工程门禁通过率 100%"
-    ],
-    "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）"
   },
   {
     "alignment": {
@@ -451,65 +430,6 @@
       "why_this_task": ""
     },
     "blocked_by": [
-      "TF-0031",
-      "TF-0037"
-    ],
-    "confidence": 0.8,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "very_high",
-    "id": "TF-0038",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0031, TF-0037",
-    "priority": 2,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-07 Memory 与 Context 插件槽收敛"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
-      "TF-0038"
-    ],
-    "confidence": 0.84,
-    "context_tags": [],
-    "desired_outcomes": [],
-    "difficulty": "high",
-    "id": "TF-0039",
-    "kind": "task",
-    "next_action": "先完成依赖：TF-0038",
-    "priority": 2,
-    "progress": 0.0,
-    "purpose": "",
-    "ready": false,
-    "remaining_minutes_max": null,
-    "remaining_minutes_min": null,
-    "status": "proposed",
-    "success_metrics": [],
-    "title": "RC-08A MCP 与 Host-native Tool 收敛"
-  },
-  {
-    "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
-    },
-    "blocked_by": [
       "TF-0039",
       "TF-0032",
       "TF-0033"
@@ -616,12 +536,16 @@
   },
   {
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0.0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "交付可直接开发的统一知识系统架构与完整开发路线",
+      "validation_plan": [
+        "逐包 Harness 与包级 diff ownership",
+        "unit/integration/Electron E2E/comms 门禁",
+        "真实 retrieval/adoption/outcome 与 session residual 证据"
+      ],
+      "why_not_enough": "工程闭环完成后仍需要 real corpus、真人 A/B、soak 和产品批准才能讨论 default-on",
+      "why_this_task": "覆盖治理、owner commit、DCS 消费、Chat 使用、经验反馈、删除和产品验收的完整闭环"
     },
     "blocked_by": [
       "TF-0025"
@@ -920,7 +844,6 @@
     },
     "blocked_by": [
       "TF-0037",
-      "TF-0038",
       "TF-0039",
       "TF-0040"
     ],
@@ -930,7 +853,7 @@
     "difficulty": "high",
     "id": "TF-0041",
     "kind": "task",
-    "next_action": "先完成依赖：TF-0037, TF-0038, TF-0039, TF-0040",
+    "next_action": "先完成依赖：TF-0037, TF-0039, TF-0040",
     "priority": 1,
     "progress": 0.0,
     "purpose": "",

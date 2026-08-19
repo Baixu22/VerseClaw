@@ -14,7 +14,15 @@ import {
   finalizeContextOrchestratorTurn,
   getContextOrchestratorCollection,
 } from "../../context-engine/context-orchestrator.js";
-import { reopenContextCandidateCollection } from "../../context-engine/context-candidate.js";
+import {
+  collectContextCandidate,
+  createContextCandidate,
+  reopenContextCandidateCollection,
+} from "../../context-engine/context-candidate.js";
+import {
+  packResolvedChatKnowledgeRef,
+  type ResolvedChatKnowledgeRef,
+} from "../../context-engine/chat-knowledge-intent.js";
 import type { TurnInjectionChannel } from "../../context-engine/turn-injection-budget.js";
 import { dcsObservability } from "../../context-engine/dcs-observability.js";
 import type { BlockStoreApi, ContextBlock, ContextBlockSink } from "../../context-engine/block.js";
@@ -178,6 +186,8 @@ function buildContextBlockFactory(params: {
   workingMemoryStore?: Pick<BlockStoreApi, "query" | "upsert">;
   /** Real source-runtime config: the RC-03 seal switch resolves from it. */
   cfg?: OpenClawConfig | undefined;
+  /** KS-04: DCS-admitted typed knowledge refs for this model call. */
+  chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
   objective?: string;
 }): ExtensionFactory {
   const sessionId = params.sessionKey?.trim() || params.sessionId?.trim();
@@ -284,6 +294,26 @@ function buildContextBlockFactory(params: {
       existingCollection = undefined;
     }
     if (!existingCollection?.diagnostics.finalized) {
+      // KS-04: inject DCS-admitted typed knowledge refs through the same
+      // dcs-knowledge candidate channel used by the DCS Assembler. Denied refs
+      // are not injected and were already reported to the renderer. Once the
+      // knowledge channel was applied in an earlier model call of this attempt,
+      // later calls skip it (same exactly-once rule as the assembler channels).
+      if (!options.skipChannels?.includes("knowledge")) {
+        for (const ref of params.chatKnowledgeRefs ?? []) {
+        collectContextCandidate(
+          turnId,
+          createContextCandidate({
+            authorityObjectId: `chat-knowledge:${ref.owner}:${ref.subjectId}`,
+            authorityVersion: ref.revision,
+            sourceId: "dcs-knowledge",
+            channel: "knowledge",
+            target: "message",
+            text: packResolvedChatKnowledgeRef(ref),
+          }),
+        );
+        }
+      }
       const hasProjectionSource = hasContextBlockProjection(params.projectionFlags);
       const store = hasProjectionSource ? getBlockStore() : undefined;
       // DCS Stage 4: pass the production contextBlockSink so compass/role-memory
@@ -741,6 +771,7 @@ export function buildEmbeddedExtensionFactories(params: {
   /** B-3 v3: write-set coordinate forwarded into the child handoff. */
   writeSet?: string[];
   toolEntries?: ToolRegistryEntry[];
+  chatKnowledgeRefs?: ResolvedChatKnowledgeRef[];
 }): ExtensionFactory[] {
   const factories: ExtensionFactory[] = [];
   if (resolveEffectiveCompactionMode(params.cfg) === "safeguard") {

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type {
   ContextBlock,
   ContextBlockSink,
@@ -25,6 +26,21 @@ import { productizeExperienceShadow } from "./experience-shadow-product.js";
  *   `write_origin="handler"`
  */
 
+export const EXPERIENCE_PROJECTION_SCHEMA = "experience-projection/v1";
+
+/**
+ * KS-02: stable projection revision derived from canonical principle content.
+ * Same principle content + same session always maps to the same block_id, so
+ * BlockStore upsert makes confirm retry/concurrency idempotent.
+ */
+export function experienceProjectionRevision(principle: Principle): string {
+  return createHash("sha256").update(principle.full_content).digest("hex").slice(0, 16);
+}
+
+export function experienceProjectionBlockId(principle: Principle, sessionId: string): string {
+  return `experience:sekb:${EXPERIENCE_PROJECTION_SCHEMA}:${sessionId}:${principle.principle_id}:${experienceProjectionRevision(principle)}`;
+}
+
 export interface BuildExperienceBlockParams {
   principle: Principle;
   suggestion: DistillationSuggestion;
@@ -44,7 +60,7 @@ export function buildExperienceBlock(
   ];
 
   return {
-    block_id: `experience:sekb:${params.sessionId}:${principle.principle_id}`,
+    block_id: experienceProjectionBlockId(principle, params.sessionId),
     block_type: "experience",
     source_system: "sekb",
     session_id: params.sessionId,
@@ -86,7 +102,7 @@ export interface HandleConfirmAndSaveParams {
 
 export async function handleConfirmAndSave(
   params: HandleConfirmAndSaveParams,
-): Promise<{ accepted: boolean } | undefined> {
+): Promise<{ accepted: boolean; blockId: string } | undefined> {
   if (!params.contextBlockSink) {
     // Shadow-only confirm path: journal experience without production BlockStore write.
     if (params.experienceShadow?.enabled && params.experienceShadow.workspaceRoot) {
@@ -123,10 +139,10 @@ export async function handleConfirmAndSave(
       : false);
   // A3: unknown / non-lineage content never gets high-trust always_on presence.
   if (integrity === "high_trust" && !highTrust) {
-    return { accepted: false };
+    return { accepted: false, blockId: block.block_id };
   }
   if (params.provenance && !params.sessionId?.trim()) {
-    return { accepted: false };
+    return { accepted: false, blockId: block.block_id };
   }
   const [result] = await params.contextBlockSink([
     {
@@ -181,5 +197,7 @@ export async function handleConfirmAndSave(
     }
   }
 
-  return result ? { accepted: result.accepted } : undefined;
+  return result
+    ? { accepted: result.accepted, blockId: block.block_id }
+    : undefined;
 }

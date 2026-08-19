@@ -16,6 +16,7 @@ const root = join(tmpdir(), `clawx-kb-semantic-test-${Date.now()}`);
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
   getOpenClawConfigDir: () => root,
+  getDataDir: () => join(root, 'userData'),
 }));
 
 function writeRegistryFile(content: unknown) {
@@ -158,7 +159,16 @@ describe('Area 5 §3.2 — Semantic Steward pass', () => {
 
     it('appends "semantic pass unavailable" when classification is semantic but no invoker is set', async () => {
       writeSemanticRegistry();
-      const { setSemanticStewardInvoker } = await import('@electron/services/knowledge-api');
+      const mod = await import('@electron/services/knowledge-api');
+      // KS-01 DI regression: an explicit invoker must survive createKnowledgeApi
+      // even when a real gateway manager is supplied.
+      const injected = vi.fn(async () => null);
+      mod.setSemanticStewardInvoker(injected);
+      const apiWithGateway = mod.createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+      expect(mod.getSemanticStewardInvoker()).toBe(injected);
+      expect(apiWithGateway.stewardReview).toBeTypeOf('function');
+      mod.setSemanticStewardInvoker(null);
+      const { setSemanticStewardInvoker } = mod;
       setSemanticStewardInvoker(null);
       const api = await getApi();
       const result = await api.stewardReview({ title: 'Migration plan', body: 'We will migrate the database schema in Q3.', sourceIds: ['notes/migration.md'], tags: ['migration'] });

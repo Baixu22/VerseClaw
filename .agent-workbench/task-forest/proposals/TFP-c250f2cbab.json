@@ -1,0 +1,73 @@
+{
+  "applied_at": "2026-08-18T12:14:26.124423Z",
+  "base_graph_hash": "fd66cc6741becebdd7ad024f97370cb15426555f01b92045ce073458751e7012",
+  "base_summary": {
+    "edge_count": 148,
+    "node_count": 80,
+    "workspace_path": "D:\\verse_claw_worktree_knowledge"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0077",
+      "progress": 100,
+      "status": "done"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "harness/specs/tasks/knowledge-system-ks06-governance-lifecycle.md context + validate PASS",
+          "docs/dev/knowledge-system-unification/evidence/KS-06-GOVERNANCE-LIFECYCLE-ACCEPTANCE.md",
+          "openclaw_runtime/src/knowledge/governance-lifecycle.test.ts 14/14 (includes idempotency duplicate vi.fn count + conflict)",
+          "openclaw_runtime/src/knowledge/governance-store.test.ts 4/4 + governance-adapters.test.ts 5/5",
+          "tests/unit/knowledge-governance-ui-lifecycle.test.ts 1/1 unsupported lifecycle UI hidden",
+          "test:dcs 344/344; typecheck node/web success; contract check; db:kysely:check; build:vite; runtime build first-run success; comms replay/compare PASS; changed-file ESLint 0/0",
+          "Honest residual: memory-wiki Main RPC lifecycle writes + lifecycle UI/per-operation Electron E2E are KS-08 carry-over; full-repo lint/test baseline red recorded"
+        ],
+        "next_action": "After user acceptance of KS-06 close-out, do not start KS-07. TF-0078 remains ready and waits for the user's later explicit confirmation.",
+        "summary": "KS-06 complete governance lifecycle closed under plan B runtime-authority scope. GovernanceStore CAS transitions and audit events; GovernanceLifecycleCoordinator idempotent prepare->commit->compensate with governance-lifecycle-receipt.v1; real SEKB and Role Memory update/merge/archive/revoke/delete/restore adapters; memory-wiki remains host-owned boundary. Unsupported lifecycle operations have no usable UI entry. Full-repo baseline lint/test red stays non-KS and is recorded honestly."
+      },
+      "id": "TF-0077"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0078",
+      "progress": 0,
+      "status": "ready"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "KS-07 Semantic Retrieval and Source Set is the single ready next serial node after KS-06 close-out. It must only start after the user's later explicit confirmation; this proposal does not start KS-07."
+      },
+      "id": "TF-0078"
+    },
+    {
+      "action": "set_status",
+      "id": "TF-0070",
+      "progress": 70,
+      "status": "in_progress"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "progress_source": "manual",
+        "summary": "Unified knowledge system lifecycle: KS-00..KS-06 implemented and package-gated. KS-06 closed under plan B runtime-authority scope with honest KS-08 carry-over. TF-0078 (KS-07) is ready and must wait for the user's later explicit confirmation. Product locks remain false."
+      },
+      "id": "TF-0070"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "summary": "KS-08 UI and observability convergence. Mandatory KS-06 carry-over: (1) memory-wiki `wiki.*` lifecycle RPC write entry for update/merge/archive/revoke/delete/restore with real owner mutation/read-back evidence; (2) Knowledge page lifecycle UI plus at least one Electron E2E per supported operation."
+      },
+      "id": "TF-0079"
+    }
+  ],
+  "created_at": "2026-08-18T12:14:22.151166Z",
+  "proposal_id": "TFP-c250f2cbab",
+  "rationale": "KS-06 complete governance lifecycle closed under plan B (runtime-authority scope). GovernanceLifecycleCoordinator has instance-scoped idempotency (same key+digest duplicate success without adapter.commit; different digest idempotency_conflict), real SEKB/Role Memory governed adapters, and the memory-wiki host-owned boundary. Gates passed in order: harness context + validate, lifecycle 14/14, store+adapters 9/9, UI static gate 1/1, test:dcs 344/344, typecheck node/web success, contract check, db:kysely:check, build:vite, runtime build first-run success (no 3221226505), comms replay/compare PASS, changed-file ESLint 0/0, git diff --check clean. Honest residual recorded: memory-wiki real Main RPC lifecycle writes and lifecycle UI/per-operation Electron E2E are mandatory KS-08 carry-over; full-repo lint baseline 3 errors/126 warnings and pnpm test 21 failed files/31 failed tests remain non-KS baseline red. TF-0077 closes done(100%), TF-0078 becomes the ready KS-07 node and must wait for later user confirmation.",
+  "session_id": "knowledge-system-ks06-governance-lifecycle-closeout-20260818",
+  "status": "applied"
+}

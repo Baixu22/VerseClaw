@@ -505,7 +505,8 @@
     "shadowKey": "Ключ псевдонимизации",
     "shadowKeyPlaceholder": "Ключ для офлайн-данных оценки",
     "shadowReport": "Сгенерировать отчет",
-    "shadowRunning": "Генерация…"
+    "shadowRunning": "Генерация…",
+    "dcsWriteLabel": "Запись DCS"
   },
   "governance": {
     "title": "Governance",
@@ -621,5 +622,43 @@
     "troubleshootingRecipe": "Диагностика",
     "artifactCreated": "Studio-черновик создан",
     "question": "Создайте {{artifact}} из текущего Source Set."
+  },
+  "lifecycle": {
+    "title": "Управление жизненным циклом страниц",
+    "description": "Создавайте управляемые предложения update/merge/archive/revoke/delete/restore для страниц memory-wiki. При каждом применении повторно проверяется expectedRevision и возвращается EffectReceipt.",
+    "operationLabel": "Операция",
+    "targetLabel": "Lookup целевой страницы",
+    "targetPlaceholder": "notes/target.md",
+    "mergeSourceLabel": "Lookup источника слияния",
+    "mergeSourcePlaceholder": "notes/source.md",
+    "titleLabel": "Заголовок черновика",
+    "bodyLabel": "Текст / diff",
+    "reasonLabel": "Причина политики",
+    "propose": "Создать предложение жизненного цикла",
+    "policyBoundary": "Предложения выполняют wiki RPC только после явного подтверждения пользователем.",
+    "previewTitle": "Предпросмотр / diff",
+    "previewEmpty": "Предпросмотра жизненного цикла пока нет.",
+    "expectedRevision": "expectedRevision",
+    "idempotencyKey": "idempotencyKey",
+    "receiptTitle": "EffectReceipt",
+    "receiptEmpty": "Примените предложение, чтобы увидеть EffectReceipt.",
+    "historyTitle": "История receipt",
+    "historyEmpty": "Управляемых receipt пока нет.",
+    "operation": {
+      "update": "Обновить",
+      "merge": "Объединить",
+      "archive": "Архивировать",
+      "revoke": "Отозвать",
+      "delete": "Удалить",
+      "restore": "Восстановить"
+    },
+    "compensation": {
+      "compensated": "Компенсировано",
+      "partial": "Частичная компенсация",
+      "unrecoverable": "Необратимо"
+    },
+    "toasts": {
+      "proposed": "Предложение жизненного цикла создано и ожидает подтверждения."
+    }
   }
 }

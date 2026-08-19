@@ -164,6 +164,8 @@ type WikiSearchResult = {
   sourcePath?: string;
   provenanceLabel?: string;
   updatedAt?: string;
+  status?: string;
+  revision?: number;
   searchMode?: WikiSearchMode;
   entityType?: string;
   canonicalId?: string;
@@ -192,6 +194,8 @@ type WikiGetResult = {
   sourcePath?: string;
   provenanceLabel?: string;
   updatedAt?: string;
+  status?: string;
+  revision?: number;
 };
 
 export type QueryableWikiPage = WikiPageSummary & {
@@ -1136,6 +1140,8 @@ function buildWikiResultMetadata(
     | "canonicalId"
     | "aliases"
     | "privacyTier"
+    | "status"
+    | "revision"
   >,
 ): Partial<
   Pick<
@@ -1150,6 +1156,8 @@ function buildWikiResultMetadata(
     | "canonicalId"
     | "aliases"
     | "privacyTier"
+    | "status"
+    | "revision"
   >
 > {
   const provenanceLabel = buildWikiProvenanceLabel(page);
@@ -1164,6 +1172,8 @@ function buildWikiResultMetadata(
     ...("canonicalId" in page && page.canonicalId ? { canonicalId: page.canonicalId } : {}),
     ...("aliases" in page && page.aliases.length > 0 ? { aliases: [...page.aliases] } : {}),
     ...("privacyTier" in page && page.privacyTier ? { privacyTier: page.privacyTier } : {}),
+    ...("status" in page && page.status ? { status: page.status } : {}),
+    ...("revision" in page && typeof page.revision === "number" ? { revision: page.revision } : {}),
   };
 }
 

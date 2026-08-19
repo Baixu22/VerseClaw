@@ -35,16 +35,76 @@
     "createMemoryDraft": "Save session to Knowledge",
     "duration": "Duration",
     "notAvailable": "Not available",
-    "sections": { "session": "Session", "git": "Workspace Git", "tasks": "Live tasks", "subagents": "Sub-agents", "terminals": "Terminals", "continuity": "Continuity" },
-    "status": { "idle": "Idle", "running": "Running", "waiting_approval": "Waiting for approval", "completed": "Completed", "failed": "Failed", "aborted": "Aborted" },
-    "git": { "detached": "Detached HEAD", "changes": "{{count}} changes", "conflicts": "Conflicts" },
-    "taskKinds": { "mission": "Mission", "taskLoop": "Task Loop", "clawGraph": "ClawGraph", "taskLedger": "Task Ledger" },
-    "taskStatus": { "queued": "Queued", "running": "Running", "review": "Review", "blocked": "Blocked", "completed": "Done", "failed": "Failed", "aborted": "Aborted" },
-    "subagents": { "unknown": "Agent" },
-    "subagentStatus": { "started": "Running", "completed": "Done", "error": "Error", "aborted": "Aborted", "verified": "Verified" },
-    "terminals": { "interactive": "Interactive terminal", "agentCommand": "Agent command", "webPreview": "Web preview server" },
-    "terminalStatus": { "idle": "Idle", "starting": "Starting", "running": "Running", "exited": "Exited", "blocked": "Blocked", "completed": "Done", "error": "Error" },
-    "continuity": { "queue": "{{count}} queued follow-ups", "context": "Context pressure: {{pressure}}", "checkpoint": "Recovery checkpoint available", "pressure": { "low": "low", "medium": "medium", "high": "high" } }
+    "sections": {
+      "session": "Session",
+      "git": "Workspace Git",
+      "tasks": "Live tasks",
+      "subagents": "Sub-agents",
+      "terminals": "Terminals",
+      "continuity": "Continuity"
+    },
+    "status": {
+      "idle": "Idle",
+      "running": "Running",
+      "waiting_approval": "Waiting for approval",
+      "completed": "Completed",
+      "failed": "Failed",
+      "aborted": "Aborted"
+    },
+    "git": {
+      "detached": "Detached HEAD",
+      "changes": "{{count}} changes",
+      "conflicts": "Conflicts"
+    },
+    "taskKinds": {
+      "mission": "Mission",
+      "taskLoop": "Task Loop",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "Task Ledger"
+    },
+    "taskStatus": {
+      "queued": "Queued",
+      "running": "Running",
+      "review": "Review",
+      "blocked": "Blocked",
+      "completed": "Done",
+      "failed": "Failed",
+      "aborted": "Aborted"
+    },
+    "subagents": {
+      "unknown": "Agent"
+    },
+    "subagentStatus": {
+      "started": "Running",
+      "completed": "Done",
+      "error": "Error",
+      "aborted": "Aborted",
+      "verified": "Verified"
+    },
+    "terminals": {
+      "interactive": "Interactive terminal",
+      "agentCommand": "Agent command",
+      "webPreview": "Web preview server"
+    },
+    "terminalStatus": {
+      "idle": "Idle",
+      "starting": "Starting",
+      "running": "Running",
+      "exited": "Exited",
+      "blocked": "Blocked",
+      "completed": "Done",
+      "error": "Error"
+    },
+    "continuity": {
+      "queue": "{{count}} queued follow-ups",
+      "context": "Context pressure: {{pressure}}",
+      "checkpoint": "Recovery checkpoint available",
+      "pressure": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high"
+      }
+    }
   },
   "noLogs": "(No logs available yet)",
   "scrollToLatest": "Back to bottom",
@@ -2172,5 +2232,9 @@
       "validationError": "Validation Error",
       "error": "Error"
     }
+  },
+  "knowledgeDenial": {
+    "toast_one": "{{count}} knowledge reference was not included: {{reason}}",
+    "toast_other": "{{count}} knowledge references were not included: {{reason}}"
   }
 }

@@ -147,6 +147,14 @@ import {
   resolveEffectiveChatHistoryMaxChars,
 } from "../chat-display-projection.js";
 import { sanitizeChatSendMessageInput } from "../chat-input-sanitize.js";
+import {
+  emptyChatKnowledgeResolution,
+  normalizeChatKnowledgeMode,
+  normalizeChatKnowledgeScope,
+  resolveChatKnowledgeIntent,
+  type ChatKnowledgeDenial,
+} from "../../context-engine/chat-knowledge-intent.js";
+import { createProductionChatKnowledgeSourceAdapters } from "../../context-engine/chat-knowledge-source-adapters.js";
 import { stripEnvelopeFromMessage } from "../chat-sanitize.js";
 import { augmentChatHistoryWithCliSessionImports } from "../cli-session-history.js";
 import { isSuppressedControlReplyText } from "../control-reply-text.js";
@@ -3183,6 +3191,9 @@ export const chatHandlers: GatewayRequestHandlers = {
        * mismatch-invalidate semantics. Absent → agent-config fallback path.
        */
       workspaceFingerprint?: string;
+      knowledgeScope?: unknown;
+      knowledgeMode?: unknown;
+      knowledgeReferences?: unknown;
       inputMode?: unknown;
       reasoningEffort?: unknown;
       runtimeIntensity?: unknown;
@@ -3326,6 +3337,25 @@ export const chatHandlers: GatewayRequestHandlers = {
       requestWorkspaceDir: requestedWorkspaceDir,
       persistedWorkspaceDir: entry?.workspaceDir,
     });
+    // KS-04: renderer refs are an untrusted read-only retrieval intent. Resolve
+    // them through the owner source adapters before dispatch; denied refs are
+    // returned to the caller so the Chat UI can surface a visible reason.
+    const knowledgeScope = normalizeChatKnowledgeScope(p.knowledgeScope);
+    const knowledgeMode = normalizeChatKnowledgeMode(p.knowledgeMode);
+    let chatKnowledgeResolution = emptyChatKnowledgeResolution(knowledgeScope, knowledgeMode);
+    try {
+      chatKnowledgeResolution = await resolveChatKnowledgeIntent({
+        scope: p.knowledgeScope,
+        mode: p.knowledgeMode,
+        references: p.knowledgeReferences,
+        adapters: createProductionChatKnowledgeSourceAdapters(cfg),
+      });
+    } catch (error) {
+      context.logGateway.warn(
+        `chat.send knowledge ref resolution failed: ${String(error)}`,
+      );
+    }
+    const chatKnowledgeDenials: ChatKnowledgeDenial[] = chatKnowledgeResolution.denied;
     context.logGateway.info(
       `chat.send session loaded runId=${clientRunId} sessionKey=${sessionKey} loadSessionMs=${sessionLoadMs}`,
     );
@@ -3994,6 +4024,9 @@ export const chatHandlers: GatewayRequestHandlers = {
         runId: clientRunId,
         status: "started" as const,
         ...(serverTiming ? { serverTiming } : {}),
+        ...(chatKnowledgeDenials.length > 0
+          ? { knowledgeDenials: chatKnowledgeDenials }
+          : {}),
       };
       context.logGateway.info(`chat.send ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
       console.error(`[chat.send.trace] ack responding runId=${clientRunId} sessionKey=${sessionKey}`);
@@ -4120,6 +4153,9 @@ export const chatHandlers: GatewayRequestHandlers = {
         // computed `effectiveWorkspace` fingerprint. Absent → agent-config
         // fallback path (no false invalidation).
         ...(workspaceFingerprint ? { WorkspaceFingerprint: workspaceFingerprint } : {}),
+        ...(chatKnowledgeResolution.admitted.length > 0
+          ? { ChatKnowledgeRefs: chatKnowledgeResolution.admitted }
+          : {}),
       };
       if (mediaPathOffloadPaths.length > 0) {
         // Inject offloads via the same MsgContext fields the channel

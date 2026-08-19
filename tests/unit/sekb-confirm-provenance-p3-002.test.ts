@@ -89,7 +89,7 @@ describe('P3-002 DCS provenance / session lineage / confirm sink', () => {
       taskId: 'P3-002',
     });
     expect(result.provenance?.revokeKey).toContain(result.principleId);
-    expect(result.dcsWrite).toBe('written');
+    expect(result.dcsWrite).toBe('persisted');
 
     const principle = store.get_principle(result.principleId);
     expect(principle.metadata.confirmProvenance).toMatchObject({
@@ -176,7 +176,7 @@ describe('P3-002 DCS provenance / session lineage / confirm sink', () => {
 
     expect(result.provenance?.integrity).toBe('advisory');
     expect(result.highTrustEligible).toBe(false);
-    expect(result.dcsWrite).toBe('written');
+    expect(result.dcsWrite).toBe('persisted');
     const write = (sink as ReturnType<typeof vi.fn>).mock.calls.at(-1)[0][0];
     expect(write.admission.integrity).toBe('advisory');
     expect(write.block.presence.always_on).toBe(false);
@@ -213,7 +213,8 @@ describe('P3-002 DCS provenance / session lineage / confirm sink', () => {
       integrity: 'high_trust',
       highTrustEligible: false,
     });
-    expect(rejected).toEqual({ accepted: false });
+    expect(rejected).toMatchObject({ accepted: false });
+      expect(rejected.blockId).toContain('experience-projection/v1');
     expect(sink).not.toHaveBeenCalled();
   });
 });

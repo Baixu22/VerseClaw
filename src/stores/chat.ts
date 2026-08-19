@@ -4424,6 +4424,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
       } else if (result.result?.runId) {
         const returnedRunId = result.result.runId;
         const mockAssistantText = readMockAssistantText(result.result);
+        if (result.knowledgeDenials?.length) {
+          const firstDenial = result.knowledgeDenials[0]!;
+          toast.warning(
+            result.knowledgeDenials.length === 1
+              ? i18n.t('chat:knowledgeDenial.toast_one', {
+                  count: result.knowledgeDenials.length,
+                  reason: firstDenial.visibleReason || firstDenial.reason,
+                })
+              : i18n.t('chat:knowledgeDenial.toast_other', {
+                  count: result.knowledgeDenials.length,
+                  reason: firstDenial.visibleReason || firstDenial.reason,
+                }),
+          );
+        }
         const latest = get();
         const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
         const canAttachToCurrentSession = latest.currentSessionKey === currentSessionKey
