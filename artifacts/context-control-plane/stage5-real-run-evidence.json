@@ -1,0 +1,43 @@
+{
+  "schema": "Stage5RealRunEvidence/v1",
+  "generatedAt": "2026-08-19T02:15:57.613Z",
+  "model": "deepseek/deepseek-v4-flash",
+  "runId": "run:stage5-golden:1787105751129",
+  "observation": {
+    "authority": "candidate-only",
+    "tools": [
+      "memory_search",
+      "memory_get",
+      "memory_query",
+      "context_search",
+      "context_read"
+    ],
+    "candidateBackend": "adapter",
+    "candidateSource": "context",
+    "candidateFreshness": "fresh",
+    "evidenceDigestCount": 2,
+    "pack": {
+      "budgetTokens": 55,
+      "outputReserveTokens": 16,
+      "usedTokens": 39,
+      "status": "ok",
+      "selected": [
+        "stage5:user-intent",
+        "stage5:write-tool-schema",
+        "stage5:effect-receipt"
+      ],
+      "omitted": [],
+      "reasons": [
+        "output-reserve:16"
+      ]
+    }
+  },
+  "stage2": {
+    "toolCallId": "call_01664d62c47f48d5b6df6cbe",
+    "effectReceiptId": "efx_958de86c-a138-4224-b1cb-ebe410ca5477",
+    "prePlanDigest": "sha256:5d0fdb65a2958c8148acbc2e4fc03e1694d8d591249c3a4c7b08fb2bde92aa4e",
+    "postPlanDigest": "sha256:2d5dd82662dceee477f42c8971cd41b8cadc9e905fcc3c5a4edae7ee6f39078b",
+    "envelopeDigest": "sha256:fef1b72b5d6e7e4e07103991d2cb623d584cdc5565a163cf60fa2510c4b904e1",
+    "journalRef": "write-journal:stage1:sess:stage5-golden:run:stage5-golden:1787105751129:1"
+  }
+}

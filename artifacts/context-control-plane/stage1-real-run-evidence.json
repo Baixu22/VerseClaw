@@ -1,0 +1,18 @@
+{
+  "schema": "Stage1RealRunEvidence/v1",
+  "generatedAt": "2026-08-19T02:15:32.964Z",
+  "model": "deepseek/deepseek-v4-flash",
+  "runId": "run:golden-real:1787105725487",
+  "toolCallId": "call_c090232c4f6d4862b2449c61",
+  "approvalId": "aprv_860cc161-649d-4276-998f-63583b153673",
+  "effectReceiptId": "efx_3bc0c92b-ecc8-4d37-ad01-28f38824d6e4",
+  "journalRef": "write-journal:stage1:sess:golden-real:run:golden-real:1787105725487:1",
+  "envelopeDigest": "sha256:4c47b3d6fae2c8a7cf669adf1a3da77582332e19d3621bc826de233102f3eac8",
+  "envelopeRef": "ref:request-envelope:4c47b3d6fae2c8a7cf669adf1a3da77582332e19d3621bc826de233102f3eac8",
+  "wireReceiptId": "rcpt_58dd0849-41e1-403c-8fb8-d576ae8a8408",
+  "wireDigest": "2e58d70a78bba08b24d8235266632f0591dfc41a7152511a03b552fe3c1d04e1",
+  "census": {
+    "failedWrites": 0,
+    "acceptanceReady": true
+  }
+}
