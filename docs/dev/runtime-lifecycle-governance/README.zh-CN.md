@@ -52,7 +52,7 @@ pnpm run runtime-lifecycle-audit --phase <phase>
 
 - Phase 3 量化证据：`artifacts/runtime-lifecycle-governance/audit-3.json`（armTxCount=1、processPollToolCalls=0、重复 wake 不重复 tick/副作用）
 - Phase 4 量化证据：`artifacts/runtime-lifecycle-governance/audit-4.json`（secretPersistenceFindings=0、crash matrix 全绿、Windows detached helper 实测通过；Electron packaged build 未在本机复现时 fail-closed）
-- Phase 5 量化证据：`artifacts/runtime-lifecycle-governance/audit-5.json`（`activitySnapshotWriteFindings=0`、E2E `session-activity-panel.spec.ts` 覆盖 goal/process/lineage 面板状态、contract/comms/coverage/cycle/dup 门禁全绿）
+- Phase 5 量化证据：`artifacts/runtime-lifecycle-governance/audit-5.json`（`activitySnapshotWriteFindings=0`、组件级 `tests/unit/session-activity-panel.test.tsx` 覆盖 goal/process/lineage 面板状态、contract/comms/coverage/cycle/dup 门禁全绿）
 - Phase 6 收尾证据：`artifacts/runtime-lifecycle-governance/audit-6.json`；`pnpm run runtime-lifecycle-audit --phase all` 全部 PASS；superseded 临时提示词与 scratch 已删除
 - Phase 3/4/5 LOC 记账：`phase3-loc-accounting.mjs`、`phase4-loc-accounting.mjs`、`phase5-loc-accounting.mjs`；goal-wake 实现位于 `openclaw_runtime/src/agents/goal-wake-*.ts` 与 `process-run-reconciler.ts`
 
