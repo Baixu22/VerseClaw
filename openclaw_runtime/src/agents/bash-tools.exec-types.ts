@@ -5,6 +5,8 @@
  */
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { EventSessionRoutingPolicy } from "../infra/event-session-routing.js";
+import type { CodingCommandApprovalPolicy } from "./coding-runtime/command-approval-policy.js";
+import type { CaptureWorkspaceSnapshotOptions } from "./coding-runtime/exec-audit.js";
 import type { ExecApprovalDecision } from "../infra/exec-approvals.js";
 import type {
   ExecAsk,
@@ -78,6 +80,19 @@ export type ExecToolDefaults = {
    *  turn and acks the persisted turn barrier only after the run is idle. */
   onYield?: (message: string) => Promise<void> | void;
   cwd?: string;
+  /** P3 UFTK exec side-effect audit wiring. Default disabled. */
+  uftkExecAudit?: {
+    enabled?: boolean;
+    sideEffectsEnabled?: boolean;
+    workspaceRoot?: string;
+    sessionId?: string;
+    snapshot?: CaptureWorkspaceSnapshotOptions;
+  };
+  /** P3 UFTK command prefix approval policy wiring. Default disabled. */
+  uftkCommandApproval?: {
+    enabled?: boolean;
+    policy?: CodingCommandApprovalPolicy;
+  };
 };
 
 /** Outcome passed to approval follow-up factories after approved async exec. */

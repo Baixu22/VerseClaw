@@ -1,4 +1,5 @@
 import type { DecodedTextFile } from "./sessions/tools/text-file-codec.js";
+import type { FileVersion } from "../../../shared/coding-runtime/types.js";
 
 export type AddFileHunk = {
   kind: "add";
@@ -44,11 +45,18 @@ export type ApplyPatchJournalOptions = {
 export type ApplyPatchBatchOptions = {
   signal?: AbortSignal;
   journal?: ApplyPatchJournalOptions;
+  /**
+   * Internal optimistic-concurrency inputs for affected files. Never exposed
+   * through the model-facing apply_patch TypeBox schema.
+   */
+  baseVersions?: FileVersion[];
 };
 
 export type PatchFileOps = {
   exists: (filePath: string) => Promise<boolean>;
   readFile: (filePath: string) => Promise<DecodedTextFile>;
+  /** Optional stat used by optimistic baseVersions checks; absent => hash-only fallback. */
+  stat?: (filePath: string) => Promise<{ size: number; mtimeMs: number } | null>;
   writeFile: (filePath: string, content: Buffer | string) => Promise<void>;
   remove: (filePath: string) => Promise<void>;
   mkdirp: (dir: string) => Promise<void>;

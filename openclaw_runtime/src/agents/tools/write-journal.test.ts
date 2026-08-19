@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../../context-engine/coding-observability.js";
@@ -8,11 +8,16 @@ import {
   __resetWriteJournals,
   clearWriteJournal,
   createUndoWriteTool,
+  getOrCreateWriteJournal,
   listPreparedWriteJournalEntries,
   setWriteJournalBatchState,
+  snapshotBeforeDelete,
+  snapshotBeforeMove,
   snapshotBeforeWrite,
   snapshotPreparedWrite,
   undoLastWrites,
+  undoWriteJournalEntries,
+  updateWriteJournalAfterState,
   wrapToolWithWriteJournal,
 } from "./write-journal.js";
 
@@ -451,7 +456,6 @@ describe("write-journal (C2-8)", () => {
 // ---------------------------------------------------------------------------
 import { existsSync, readdirSync } from "node:fs";
 import {
-  getOrCreateWriteJournal,
   journalDirFor,
   listJournalSnapshotFiles,
 } from "./write-journal.js";
@@ -593,5 +597,145 @@ describe("write-journal FP-P1-04 semantics", () => {
     expect(outcome.errors).toEqual([]);
     expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(0);
     expect(getOrCreateWriteJournal(repoRoot, sessionId).entries).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// P1: delete/move pre-image sidecars and exact-entry restore.
+// ---------------------------------------------------------------------------
+describe("write-journal P1 delete/move pre-image", () => {
+  let repoRoot: string;
+  const sessionId = "sess-p1-preimage";
+
+  beforeEach(() => {
+    __resetWriteJournals();
+    codingObservability.reset();
+    repoRoot = mkdtempSync(path.join(tmpdir(), "write-journal-p1-"));
+  });
+
+  afterEach(() => {
+    __resetWriteJournals();
+    codingObservability.reset();
+    rmSync(repoRoot, { recursive: true, force: true });
+  });
+
+  it("snapshots delete pre-image content + stat and restores the deleted file", () => {
+    writeFileSync(path.join(repoRoot, "gone.ts"), "delete-me\n", "utf8");
+    const entry = snapshotBeforeDelete({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "gone.ts",
+      toolName: "delete",
+      requestId: "req-delete",
+      batch: { id: "batch-delete", state: "prepared" },
+    });
+    expect(entry).not.toBeNull();
+    expect(entry?.kind).toBe("delete");
+    expect(entry?.beforeHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(entry?.bytesBefore).toBe(10);
+    expect(entry?.beforeVersion?.mtimeMs).toBeGreaterThan(0);
+
+    rmSync(path.join(repoRoot, "gone.ts"));
+    expect(updateWriteJournalAfterState({ entry: entry!, afterExists: false })).toBe(true);
+    expect(entry?.bytesAfter).toBe(0);
+    expect(entry?.afterVersion).toBeUndefined();
+
+    const outcome = undoWriteJournalEntries({
+      workspaceRoot: repoRoot,
+      sessionId,
+      entries: [entry!],
+    });
+    expect(outcome.errors).toEqual([]);
+    expect(outcome.restored).toEqual(["gone.ts"]);
+    expect(readFileSync(path.join(repoRoot, "gone.ts"), "utf8")).toBe("delete-me\n");
+    expect(outcome.remainingEntries).toBe(0);
+  });
+
+  it("restores a created-then-deleted new file by removing it", () => {
+    const entry = snapshotPreparedWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: path.join(repoRoot, "new.txt"),
+      toolName: "write",
+      kind: "write",
+      requestId: "req-create",
+      batch: { id: "batch-create", state: "committed" },
+      hadPrior: false,
+    });
+    expect(entry).not.toBeNull();
+    writeFileSync(path.join(repoRoot, "new.txt"), "created\n", "utf8");
+    updateWriteJournalAfterState({
+      entry: entry!,
+      afterPath: path.join(repoRoot, "new.txt"),
+      afterContent: "created\n",
+    });
+
+    const outcome = undoWriteJournalEntries({
+      workspaceRoot: repoRoot,
+      sessionId,
+      entries: [entry!],
+    });
+    expect(outcome.errors).toEqual([]);
+    expect(existsSync(path.join(repoRoot, "new.txt"))).toBe(false);
+  });
+
+  it("snapshots both sides of a move and restores source plus overwritten destination", () => {
+    writeFileSync(path.join(repoRoot, "src.txt"), "source-v0\n", "utf8");
+    writeFileSync(path.join(repoRoot, "dst.txt"), "dest-v0\n", "utf8");
+    const entries = snapshotBeforeMove({
+      workspaceRoot: repoRoot,
+      sessionId,
+      sourcePath: "src.txt",
+      destinationPath: "dst.txt",
+      toolName: "move",
+      requestId: "req-move",
+      batch: { id: "batch-move", state: "prepared" },
+    });
+    expect(entries).not.toBeNull();
+    expect(entries).toHaveLength(2);
+    expect(entries?.[0]?.kind).toBe("move");
+    expect(entries?.[0]?.targetPath).toBe("dst.txt");
+    expect(entries?.[1]?.kind).toBe("move");
+    expect(entries?.[1]?.moveSourcePath).toBe("src.txt");
+
+    copyFileSync(path.join(repoRoot, "src.txt"), path.join(repoRoot, "dst.txt"));
+    rmSync(path.join(repoRoot, "src.txt"));
+    expect(updateWriteJournalAfterState({ entry: entries![0]!, afterExists: false })).toBe(true);
+    expect(
+      updateWriteJournalAfterState({
+        entry: entries![1]!,
+        afterPath: path.join(repoRoot, "dst.txt"),
+        afterContent: "source-v0\n",
+      }),
+    ).toBe(true);
+
+    const outcome = undoWriteJournalEntries({
+      workspaceRoot: repoRoot,
+      sessionId,
+      entries: entries!,
+    });
+    expect(outcome.errors).toEqual([]);
+    expect(readFileSync(path.join(repoRoot, "src.txt"), "utf8")).toBe("source-v0\n");
+    expect(readFileSync(path.join(repoRoot, "dst.txt"), "utf8")).toBe("dest-v0\n");
+    expect(codingObservability.snapshot().journalDeleteMoveSnapshots).toBe(1);
+  });
+
+  it("rehydrates P1 sidecar fields after an in-memory reset", () => {
+    writeFileSync(path.join(repoRoot, "f.ts"), "v0\n", "utf8");
+    const entry = snapshotBeforeDelete({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "delete",
+      batch: { id: "batch-rehydrate", state: "prepared" },
+    });
+    expect(entry).not.toBeNull();
+    __resetWriteJournals();
+
+    const entries = getOrCreateWriteJournal(repoRoot, sessionId).entries;
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.kind).toBe("delete");
+    expect(entries[0]?.beforeHash).toBe(entry?.beforeHash);
+    expect(entries[0]?.bytesBefore).toBe(entry?.bytesBefore);
   });
 });

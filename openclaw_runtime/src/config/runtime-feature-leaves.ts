@@ -78,6 +78,26 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
     sekb: { enabled: true, experienceShadow: true },
     routingMemo: { shadow: true, enabled: true },
     verifier: { noSelfRepair: true },
+    uftk: {
+      enabled: true,
+      baseVersionGuard: { enabled: true },
+      auditLog: { enabled: true },
+      gitCheckpoint: {
+        enabled: true,
+        pathScoped: { enabled: true },
+        safetySnapshot: { enabled: true },
+        lifecycle: { enabled: true },
+      },
+      concurrencyV2: { enabled: true },
+      execUndo: { enabled: true },
+      autoCheckpoint: { enabled: true },
+      execSideEffects: { enabled: true },
+      commandApproval: {
+        enabled: true,
+        defaultDecision: 'prompt',
+        rules: [{ prefix: 'git status', decision: 'allow', reason: 'read-only git status' }],
+      },
+    },
   },
   contextRuntimeKit: { enabled: true, shadow: true },
   contextFamily: {

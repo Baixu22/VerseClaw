@@ -36,6 +36,8 @@ import type { AgentToolResult } from "./runtime/index.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { createEditTool, createLsTool, createReadTool, createWriteTool } from "./sessions/index.js";
+import type { EditToolCodingRuntimeOptions } from "./sessions/tools/edit.js";
+import type { WriteToolCodingRuntimeOptions } from "./sessions/tools/write.js";
 import { sanitizeToolResultImages } from "./tool-images.js";
 
 export {
@@ -830,6 +832,8 @@ type SandboxToolParams = {
   bridge: SandboxFsBridge;
   modelContextWindowTokens?: number;
   imageSanitization?: ImageSanitizationLimits;
+  writeCodingRuntime?: WriteToolCodingRuntimeOptions;
+  editCodingRuntime?: EditToolCodingRuntimeOptions;
 };
 
 /** Create a sandbox-backed read tool with OpenClaw result normalization. */
@@ -854,6 +858,7 @@ export function createSandboxedLsTool(params: SandboxToolParams) {
 export function createSandboxedWriteTool(params: SandboxToolParams) {
   const base = createWriteTool(params.root, {
     operations: createSandboxWriteOperations(params),
+    ...(params.writeCodingRuntime ? { codingRuntime: params.writeCodingRuntime } : {}),
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.write);
 }
@@ -862,22 +867,31 @@ export function createSandboxedWriteTool(params: SandboxToolParams) {
 export function createSandboxedEditTool(params: SandboxToolParams) {
   const base = createEditTool(params.root, {
     operations: createSandboxEditOperations(params),
+    ...(params.editCodingRuntime ? { codingRuntime: params.editCodingRuntime } : {}),
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.edit);
 }
 
 /** Create a host workspace write tool using guarded filesystem operations. */
-export function createHostWorkspaceWriteTool(root: string, options?: { workspaceOnly?: boolean }) {
+export function createHostWorkspaceWriteTool(
+  root: string,
+  options?: { workspaceOnly?: boolean; codingRuntime?: WriteToolCodingRuntimeOptions },
+) {
   const base = createWriteTool(root, {
     operations: createHostWriteOperations(root, options),
+    ...(options?.codingRuntime ? { codingRuntime: options.codingRuntime } : {}),
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.write);
 }
 
 /** Create a host workspace edit tool using guarded filesystem operations. */
-export function createHostWorkspaceEditTool(root: string, options?: { workspaceOnly?: boolean }) {
+export function createHostWorkspaceEditTool(
+  root: string,
+  options?: { workspaceOnly?: boolean; codingRuntime?: EditToolCodingRuntimeOptions },
+) {
   const base = createEditTool(root, {
     operations: createHostEditOperations(root, options),
+    ...(options?.codingRuntime ? { codingRuntime: options.codingRuntime } : {}),
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.edit);
 }

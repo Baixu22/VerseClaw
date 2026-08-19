@@ -2,6 +2,7 @@
  * C2-8: write-journal snapshots + undo_write tool.
  * Fail-open: journal failures never block the write path.
  */
+import { createHash } from "node:crypto";
 import {
   copyFileSync,
   existsSync,
@@ -45,6 +46,14 @@ export type WriteJournalBatch = {
   state: WriteJournalBatchState;
 };
 
+export type WriteJournalMutationKind = "write" | "edit" | "apply_patch" | "delete" | "move";
+
+export type WriteJournalFileVersion = {
+  contentHash: string;
+  mtimeMs: number;
+  size: number;
+};
+
 export type WriteJournalEntry = {
   seq: number;
   relPath: string;
@@ -54,6 +63,19 @@ export type WriteJournalEntry = {
   hadPrior: boolean;
   toolName: string;
   createdAtMs: number;
+  /** P1: normalized mutation kind; absent on legacy P0 sidecars. */
+  kind?: WriteJournalMutationKind;
+  /** P1 move destination for the source pre-image entry. */
+  targetPath?: string;
+  /** P1 move source for the destination pre-image entry. */
+  moveSourcePath?: string;
+  /** P1: sidecar byte/hash/stat evidence. Absent fields remain readable as legacy P0 entries. */
+  beforeHash?: string;
+  afterHash?: string;
+  bytesBefore?: number;
+  bytesAfter?: number;
+  beforeVersion?: WriteJournalFileVersion;
+  afterVersion?: WriteJournalFileVersion;
   /** FP-P1-04: lineage — which request/session/workspace/flags produced this write. */
   lineage?: {
     sessionId: string;
@@ -90,6 +112,40 @@ function isWriteJournalBatchState(value: unknown): value is WriteJournalBatchSta
   );
 }
 
+function isWriteJournalMutationKind(value: unknown): value is WriteJournalMutationKind {
+  return (
+    value === "write" ||
+    value === "edit" ||
+    value === "apply_patch" ||
+    value === "delete" ||
+    value === "move"
+  );
+}
+
+function isWriteJournalFileVersion(value: unknown): value is WriteJournalFileVersion {
+  if (!value || typeof value !== "object") return false;
+  const version = value as Record<string, unknown>;
+  return (
+    typeof version.contentHash === "string" &&
+    typeof version.mtimeMs === "number" &&
+    typeof version.size === "number"
+  );
+}
+
+export function hashFileContent(content: Buffer | string): string {
+  return createHash("sha256").update(content).digest("hex");
+}
+
+function versionFromContent(
+  content: Buffer | string | undefined,
+  mtimeMs: number | undefined,
+  _relPath: string,
+): WriteJournalFileVersion | undefined {
+  if (content === undefined || mtimeMs === undefined) return undefined;
+  const bytes = Buffer.isBuffer(content) ? content : Buffer.from(content, "utf8");
+  return { contentHash: hashFileContent(bytes), mtimeMs, size: bytes.byteLength };
+}
+
 function persistWriteJournalEntry(entry: WriteJournalEntry): void {
   writeFileSync(
     `${entry.snapshotPath}.meta.json`,
@@ -102,6 +158,15 @@ function persistWriteJournalEntry(entry: WriteJournalEntry): void {
       createdAtMs: entry.createdAtMs,
       lineage: entry.lineage,
       batch: entry.batch,
+      kind: entry.kind,
+      targetPath: entry.targetPath,
+      moveSourcePath: entry.moveSourcePath,
+      beforeHash: entry.beforeHash,
+      afterHash: entry.afterHash,
+      bytesBefore: entry.bytesBefore,
+      bytesAfter: entry.bytesAfter,
+      beforeVersion: entry.beforeVersion,
+      afterVersion: entry.afterVersion,
     }),
     "utf8",
   );
@@ -280,6 +345,21 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
             hadPrior: parsed.hadPrior === true,
             toolName: typeof parsed.toolName === "string" ? parsed.toolName : "unknown",
             createdAtMs: typeof parsed.createdAtMs === "number" ? parsed.createdAtMs : 0,
+            ...(isWriteJournalMutationKind(parsed.kind) ? { kind: parsed.kind } : {}),
+            ...(typeof parsed.targetPath === "string" ? { targetPath: parsed.targetPath } : {}),
+            ...(typeof parsed.moveSourcePath === "string"
+              ? { moveSourcePath: parsed.moveSourcePath }
+              : {}),
+            ...(typeof parsed.beforeHash === "string" ? { beforeHash: parsed.beforeHash } : {}),
+            ...(typeof parsed.afterHash === "string" ? { afterHash: parsed.afterHash } : {}),
+            ...(typeof parsed.bytesBefore === "number" ? { bytesBefore: parsed.bytesBefore } : {}),
+            ...(typeof parsed.bytesAfter === "number" ? { bytesAfter: parsed.bytesAfter } : {}),
+            ...(isWriteJournalFileVersion(parsed.beforeVersion)
+              ? { beforeVersion: parsed.beforeVersion }
+              : {}),
+            ...(isWriteJournalFileVersion(parsed.afterVersion)
+              ? { afterVersion: parsed.afterVersion }
+              : {}),
             ...(parsed.lineage ? { lineage: parsed.lineage } : {}),
             ...(batch ? { batch } : {}),
           });
@@ -321,6 +401,12 @@ export function snapshotBeforeWrite(params: {
   sessionId?: string;
   filePath: string;
   toolName: string;
+  /** P1: normalized mutation kind recorded in the sidecar. */
+  kind?: WriteJournalMutationKind;
+  /** P1 move destination (source entry only). */
+  targetPath?: string;
+  /** P1 move source (destination entry only). */
+  moveSourcePath?: string;
   /** FP-P1-04: tool call id, recorded as the write's requestId. */
   requestId?: string;
   /** FP-P1-04: coding flags in force at write time. */
@@ -333,19 +419,25 @@ export function snapshotBeforeWrite(params: {
     : path.resolve(params.workspaceRoot, params.filePath);
   let hadPrior = false;
   let priorContent: Buffer | undefined;
+  let beforeStat: { mtimeMs: number; size: number } | undefined;
   try {
-    if (existsSync(absPath) && statSync(absPath).isFile()) {
+    const stat = statSync(absPath);
+    if (stat.isFile()) {
       hadPrior = true;
       priorContent = readFileSync(absPath);
+      beforeStat = { mtimeMs: stat.mtimeMs, size: stat.size };
+    } else {
+      return null;
     }
-  } catch {
-    return null;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") return null;
   }
   return snapshotPreparedWrite({
     ...params,
     filePath: absPath,
     hadPrior,
     ...(priorContent ? { priorContent } : {}),
+    ...(beforeStat ? { beforeStat } : {}),
   });
 }
 
@@ -355,11 +447,15 @@ export function snapshotPreparedWrite(params: {
   sessionId?: string;
   filePath: string;
   toolName: string;
+  kind?: WriteJournalMutationKind;
+  targetPath?: string;
+  moveSourcePath?: string;
   requestId?: string;
   flags?: Record<string, boolean | string>;
   batch?: WriteJournalBatch;
   hadPrior: boolean;
   priorContent?: Buffer | string;
+  beforeStat?: { mtimeMs: number; size: number };
 }): WriteJournalEntry | null {
   const sessionId = params.sessionId?.trim() || "default";
   const started = performance.now();
@@ -385,6 +481,29 @@ export function snapshotPreparedWrite(params: {
       // Marker for create: empty snapshot file with sidecar meta.
       writeFileSync(snapshotPath, "", "utf8");
     }
+    const beforeContent =
+      params.hadPrior && params.priorContent !== undefined
+        ? Buffer.isBuffer(params.priorContent)
+          ? params.priorContent
+          : Buffer.from(params.priorContent, "utf8")
+        : undefined;
+    const beforeStat =
+      params.beforeStat ??
+      (params.hadPrior
+        ? (() => {
+            try {
+              const stat = statSync(absPath);
+              return stat.isFile() ? { mtimeMs: stat.mtimeMs, size: stat.size } : undefined;
+            } catch {
+              return undefined;
+            }
+          })()
+        : undefined);
+    const beforeVersion = versionFromContent(
+      beforeContent,
+      beforeStat?.mtimeMs,
+      rel,
+    );
     const entry: WriteJournalEntry = {
       seq,
       relPath: rel,
@@ -393,6 +512,16 @@ export function snapshotPreparedWrite(params: {
       hadPrior: params.hadPrior,
       toolName: params.toolName,
       createdAtMs: Date.now(),
+      ...(params.kind ? { kind: params.kind } : {}),
+      ...(params.targetPath ? { targetPath: params.targetPath } : {}),
+      ...(params.moveSourcePath ? { moveSourcePath: params.moveSourcePath } : {}),
+      ...(beforeVersion
+        ? {
+            beforeHash: beforeVersion.contentHash,
+            bytesBefore: beforeVersion.size,
+            beforeVersion,
+          }
+        : { bytesBefore: 0 }),
       lineage: {
         sessionId,
         workspaceRoot: path.resolve(params.workspaceRoot),
@@ -412,6 +541,202 @@ export function snapshotPreparedWrite(params: {
     codingObservability.recordJournalLatency(performance.now() - started, false);
     return null;
   }
+}
+
+/** P1: snapshot a file that is about to be deleted. */
+export function snapshotBeforeDelete(params: {
+  workspaceRoot: string;
+  sessionId?: string;
+  filePath: string;
+  toolName: string;
+  requestId?: string;
+  flags?: Record<string, boolean | string>;
+  batch?: WriteJournalBatch;
+}): WriteJournalEntry | null {
+  const absPath = path.isAbsolute(params.filePath)
+    ? path.resolve(params.filePath)
+    : path.resolve(params.workspaceRoot, params.filePath);
+  try {
+    if (!existsSync(absPath) || !statSync(absPath).isFile()) return null;
+  } catch {
+    return null;
+  }
+  return snapshotBeforeWrite({ ...params, kind: "delete" });
+}
+
+/** P1: snapshot both sides of a move before the filesystem rename. */
+export function snapshotBeforeMove(params: {
+  workspaceRoot: string;
+  sessionId?: string;
+  sourcePath: string;
+  destinationPath: string;
+  toolName: string;
+  requestId?: string;
+  flags?: Record<string, boolean | string>;
+  batch?: WriteJournalBatch;
+}): WriteJournalEntry[] | null {
+  const sourceAbs = path.isAbsolute(params.sourcePath)
+    ? path.resolve(params.sourcePath)
+    : path.resolve(params.workspaceRoot, params.sourcePath);
+  const destinationAbs = path.isAbsolute(params.destinationPath)
+    ? path.resolve(params.destinationPath)
+    : path.resolve(params.workspaceRoot, params.destinationPath);
+  if (sourceAbs === destinationAbs) return null;
+
+  let sourceContent: Buffer | undefined;
+  let sourceStat: { mtimeMs: number; size: number } | undefined;
+  let destinationHadPrior = false;
+  let destinationContent: Buffer | undefined;
+  let destinationStat: { mtimeMs: number; size: number } | undefined;
+  try {
+    const stat = statSync(sourceAbs);
+    if (!stat.isFile()) return null;
+    sourceContent = readFileSync(sourceAbs);
+    sourceStat = { mtimeMs: stat.mtimeMs, size: stat.size };
+    if (existsSync(destinationAbs)) {
+      const destStat = statSync(destinationAbs);
+      if (!destStat.isFile()) return null;
+      destinationHadPrior = true;
+      destinationContent = readFileSync(destinationAbs);
+      destinationStat = { mtimeMs: destStat.mtimeMs, size: destStat.size };
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") return null;
+  }
+
+  const sourceRel =
+    toFactRelPath(sourceAbs, params.workspaceRoot) ??
+    path.relative(params.workspaceRoot, sourceAbs).replace(/\\/g, "/");
+  const destinationRel =
+    toFactRelPath(destinationAbs, params.workspaceRoot) ??
+    path.relative(params.workspaceRoot, destinationAbs).replace(/\\/g, "/");
+
+  const sourceEntry = snapshotPreparedWrite({
+    ...params,
+    filePath: sourceAbs,
+    kind: "move",
+    targetPath: destinationRel,
+    hadPrior: true,
+    ...(sourceContent ? { priorContent: sourceContent } : {}),
+    ...(sourceStat ? { beforeStat: sourceStat } : {}),
+  });
+  if (!sourceEntry) return null;
+
+  const destinationEntry = snapshotPreparedWrite({
+    ...params,
+    filePath: destinationAbs,
+    kind: "move",
+    moveSourcePath: sourceRel,
+    hadPrior: destinationHadPrior,
+    ...(destinationContent ? { priorContent: destinationContent } : {}),
+    ...(destinationStat ? { beforeStat: destinationStat } : {}),
+  });
+  if (!destinationEntry) {
+    discardWriteJournalEntries([sourceEntry]);
+    return null;
+  }
+  codingObservability.recordJournalDeleteMoveSnapshot();
+  return [sourceEntry, destinationEntry];
+}
+
+/** P1: persist after-image hash/bytes/version evidence into the sidecar. */
+export function updateWriteJournalAfterState(params: {
+  entry: WriteJournalEntry;
+  afterContent?: Buffer | string;
+  afterPath?: string;
+  afterExists?: boolean;
+}): boolean {
+  try {
+    if (params.afterExists === false) {
+      params.entry.afterHash = undefined;
+      params.entry.bytesAfter = 0;
+      params.entry.afterVersion = undefined;
+      persistWriteJournalEntry(params.entry);
+      return true;
+    }
+    const absPath = path.resolve(params.afterPath ?? params.entry.absPath);
+    const stat = statSync(absPath);
+    if (!stat.isFile()) return false;
+    const afterContent =
+      params.afterContent !== undefined ? params.afterContent : readFileSync(absPath);
+    const afterVersion = versionFromContent(afterContent, stat.mtimeMs, params.entry.relPath);
+    if (!afterVersion) return false;
+    params.entry.afterHash = afterVersion.contentHash;
+    params.entry.bytesAfter = afterVersion.size;
+    params.entry.afterVersion = afterVersion;
+    persistWriteJournalEntry(params.entry);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** P1: find retained journal evidence for one transaction batch. */
+export function getWriteJournalEntriesForBatch(
+  workspaceRoot: string,
+  sessionId: string,
+  batchId: string,
+): WriteJournalEntry[] {
+  return getOrCreateWriteJournal(workspaceRoot, sessionId).entries.filter(
+    (entry) => entry.batch?.id === batchId,
+  );
+}
+
+export type UndoWriteJournalEntriesResult = {
+  restored: string[];
+  errors: string[];
+  journalDir: string;
+  remainingEntries: number;
+};
+
+/**
+ * P1: restore one exact journal entry set newest-first. Stops at the first
+ * failure and keeps the failed entry plus all older evidence for recovery.
+ */
+export function undoWriteJournalEntries(params: {
+  workspaceRoot: string;
+  sessionId?: string;
+  entries: WriteJournalEntry[];
+  workspaceOnly?: boolean;
+}): UndoWriteJournalEntriesResult {
+  const sessionId = params.sessionId?.trim() || "default";
+  const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
+  const entries = [...params.entries].sort((a, b) => b.seq - a.seq);
+  const restored: string[] = [];
+  const errors: string[] = [];
+  for (const entry of entries) {
+    try {
+      if (params.workspaceOnly) {
+        toRelativeWorkspacePath(params.workspaceRoot, entry.absPath);
+      }
+      if (entry.hadPrior && existsSync(entry.snapshotPath)) {
+        mkdirSync(path.dirname(entry.absPath), { recursive: true });
+        copyFileSync(entry.snapshotPath, entry.absPath);
+      } else if (entry.hadPrior) {
+        throw new Error(`journal snapshot missing: ${entry.snapshotPath}`);
+      } else if (existsSync(entry.absPath)) {
+        unlinkSync(entry.absPath);
+      }
+      journal.entries = journal.entries.filter((candidate) => candidate.seq !== entry.seq);
+      try {
+        rmSync(`${entry.snapshotPath}.meta.json`, { force: true });
+        rmSync(entry.snapshotPath, { force: true });
+      } catch {
+        // Snapshot cleanup is best-effort; the restore already succeeded.
+      }
+      restored.push(entry.relPath);
+      codingObservability.recordUndo();
+    } catch (error) {
+      errors.push(`${entry.relPath}: ${error instanceof Error ? error.message : String(error)}`);
+      break;
+    }
+  }
+  return {
+    restored,
+    errors,
+    journalDir: journal.rootDir,
+    remainingEntries: journal.entries.length,
+  };
 }
 
 /** Update every entry in one apply_patch batch while preserving the journal as authority. */

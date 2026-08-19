@@ -209,6 +209,44 @@ export type RuntimeFeatureConfig = {
     sekb?: { enabled?: boolean; experienceShadow?: boolean };
     routingMemo?: { shadow?: boolean; enabled?: boolean };
     verifier?: { noSelfRepair?: boolean };
+    /** UFTK unified file transaction kernel. Default-off until its Phase gate is accepted. */
+    uftk?: {
+      enabled?: boolean;
+      /** P2 optimistic-concurrency guard; default false and never model-visible. */
+      baseVersionGuard?: { enabled?: boolean };
+      /** P4 durable coding audit log (JSONL + SQLite). Default false. */
+      auditLog?: { enabled?: boolean };
+      /** P5 git-backed checkpoint. Default false. */
+      gitCheckpoint?: {
+        enabled?: boolean;
+        /** P6B path-scoped create/restore. Default false. */
+        pathScoped?: { enabled?: boolean };
+        /** P6B mandatory safety snapshot before restore. Default false. */
+        safetySnapshot?: { enabled?: boolean };
+        /** P6B label / diff / exportPatch / retention / prune. Default false. */
+        lifecycle?: { enabled?: boolean };
+      };
+      /** P6A unified RW lock scheduler + cross-process shared reads + restore barrier + commit CAS + lock observability. Default false. */
+      concurrencyV2?: { enabled?: boolean };
+      /** P7 exec workspace file side-effect undo via path-scoped restore. Default false. */
+      execUndo?: { enabled?: boolean };
+      /** P7 turn / long-task automatic checkpoint. Default false. */
+      autoCheckpoint?: { enabled?: boolean };
+      /** P3 exec workspace side-effect fingerprinting. Default false. */
+      execSideEffects?: { enabled?: boolean };
+      /** P3 command prefix approval policy. Default false. */
+      commandApproval?: {
+        enabled?: boolean;
+        /** Decision used when no prefix rule matches. Defaults to "prompt" (fail-closed). */
+        defaultDecision?: 'allow' | 'prompt' | 'forbidden';
+        /** Prefix token rules evaluated by longest normalized prefix match. */
+        rules?: Array<{
+          prefix?: string;
+          decision?: 'allow' | 'prompt' | 'forbidden';
+          reason?: string;
+        }>;
+      };
+    };
   };
   /** Context Runtime Kit backend rollout flags. Defaults on for context/prompt/recovery when no explicit context engine slot is configured. */
   contextRuntimeKit?: {

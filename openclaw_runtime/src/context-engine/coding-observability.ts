@@ -20,6 +20,14 @@ export type CodingObservabilitySnapshot = {
   journalSnapshots: number;
   journalFailures: number;
   undoCount: number;
+  /** P1 UFTK: prepare/commit/rollback service invocations. */
+  uftkPrepareCount: number;
+  uftkCommitCount: number;
+  uftkRollbackCount: number;
+  /** P1 UFTK: atomic write outcomes and delete/move journal snapshots. */
+  atomicWriteSuccess: number;
+  atomicWriteFailure: number;
+  journalDeleteMoveSnapshots: number;
   syntaxCheckHits: number;
   syntaxCheckSilent: number;
   verifyConsumeHits: number;
@@ -48,6 +56,12 @@ export type CodingObservabilitySnapshot = {
   compactionLayerHits: Record<string, number>;
   taskStateRewriteOk: number;
   taskStateRewriteDrift: number;
+  /** P6A UFTK: lock scheduling wait / contention / timeout / stale / restore-barrier counters. */
+  lockWaitMs: number;
+  lockContention: number;
+  lockTimeout: number;
+  staleLockReclaimed: number;
+  restoreBarrierWaitMs: number;
 };
 
 const ZERO: CodingObservabilitySnapshot = {
@@ -68,6 +82,12 @@ const ZERO: CodingObservabilitySnapshot = {
   journalSnapshots: 0,
   journalFailures: 0,
   undoCount: 0,
+  uftkPrepareCount: 0,
+  uftkCommitCount: 0,
+  uftkRollbackCount: 0,
+  atomicWriteSuccess: 0,
+  atomicWriteFailure: 0,
+  journalDeleteMoveSnapshots: 0,
   syntaxCheckHits: 0,
   syntaxCheckSilent: 0,
   verifyConsumeHits: 0,
@@ -95,6 +115,11 @@ const ZERO: CodingObservabilitySnapshot = {
   compactionLayerHits: {},
   taskStateRewriteOk: 0,
   taskStateRewriteDrift: 0,
+  lockWaitMs: 0,
+  lockContention: 0,
+  lockTimeout: 0,
+  staleLockReclaimed: 0,
+  restoreBarrierWaitMs: 0,
 };
 
 class CodingObservabilityRegistry {
@@ -140,6 +165,14 @@ class CodingObservabilityRegistry {
   }
 
   recordUndo(): void { this.#counters.undoCount += 1; }
+  recordUftkPrepare(): void { this.#counters.uftkPrepareCount += 1; }
+  recordUftkCommit(): void { this.#counters.uftkCommitCount += 1; }
+  recordUftkRollback(): void { this.#counters.uftkRollbackCount += 1; }
+  recordAtomicWrite(ok: boolean): void {
+    if (ok) this.#counters.atomicWriteSuccess += 1;
+    else this.#counters.atomicWriteFailure += 1;
+  }
+  recordJournalDeleteMoveSnapshot(): void { this.#counters.journalDeleteMoveSnapshots += 1; }
   recordSyntaxCheck(hit: boolean): void {
     if (hit) this.#counters.syntaxCheckHits += 1;
     else this.#counters.syntaxCheckSilent += 1;
@@ -198,6 +231,24 @@ class CodingObservabilityRegistry {
     else this.#counters.taskStateRewriteDrift += 1;
   }
 
+  recordLockWaitMs(ms: number): void {
+    const latency = Math.max(0, ms);
+    this.#counters.lockContention += 1;
+    this.#counters.lockWaitMs += latency;
+  }
+
+  recordLockTimeout(): void {
+    this.#counters.lockTimeout += 1;
+  }
+
+  recordStaleLockReclaimed(): void {
+    this.#counters.staleLockReclaimed += 1;
+  }
+
+  recordRestoreBarrierWaitMs(ms: number): void {
+    this.#counters.restoreBarrierWaitMs += Math.max(0, ms);
+  }
+
   rates(): {
     approvalPromptRate: number;
     diagHitRate: number;
@@ -253,6 +304,12 @@ export const CODING_METRIC_NAMES = {
   falseBlockRate: "coding.write.falseBlockRate",
   journalLatencyMs: "coding.write.journalLatencyMs",
   undoCount: "coding.write.undoCount",
+  uftkPrepareCount: "coding.uftk.prepareCount",
+  uftkCommitCount: "coding.uftk.commitCount",
+  uftkRollbackCount: "coding.uftk.rollbackCount",
+  atomicWriteSuccess: "coding.uftk.atomicWriteSuccess",
+  atomicWriteFailure: "coding.uftk.atomicWriteFailure",
+  journalDeleteMoveSnapshots: "coding.uftk.journalDeleteMoveSnapshots",
   syntaxCheckHits: "coding.write.syntaxCheckHits",
   verifyHitRate: "coding.write.verifyHitRate",
   testRunnerDetected: "coding.write.testRunnerDetected",
@@ -269,4 +326,9 @@ export const CODING_METRIC_NAMES = {
   taskPassRate: "coding.read.taskPassRate",
   toolRoutingAccuracy: "coding.read.toolRoutingAccuracy",
   compactionLayerDist: "coding.context.compactionLayerDist",
+  lockWaitMs: "coding.lock.waitMs",
+  lockContention: "coding.lock.contention",
+  lockTimeout: "coding.lock.timeout",
+  staleLockReclaimed: "coding.lock.staleReclaimed",
+  restoreBarrierWaitMs: "coding.lock.restoreBarrierWaitMs",
 } as const;

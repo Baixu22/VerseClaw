@@ -10,7 +10,8 @@ import path from "node:path";
 import { MAX_TIMER_TIMEOUT_MS } from "@openclaw/normalization-core/number-coercion";
 import { createFileLockManager } from "../infra/file-lock-manager.js";
 import { readGatewayProcessArgsSync as readProcessArgsSync } from "../infra/gateway-processes.js";
-import { getProcessStartTime, isPidAlive } from "../shared/pid-alive.js";
+import { isPidAlive } from "../shared/pid-alive.js";
+import { getCachedProcessStartTime } from "../shared/process-start-time.js";
 import {
   SessionWriteLockStaleError,
   SessionWriteLockTimeoutError,
@@ -19,7 +20,13 @@ import {
 type LockFilePayload = {
   pid?: number;
   createdAt?: string;
-  /** Process start time in clock ticks (from /proc/pid/stat field 22). */
+  /**
+   * Opaque platform-local process-identity token from
+   * `getCachedProcessStartTime`. Only ever compared for equality against a value
+   * read on the same machine and platform: Linux clock ticks from
+   * `/proc/pid/stat` field 22, Windows FILETIME truncated to milliseconds, macOS
+   * epoch milliseconds. Never a portable timestamp, never subtracted.
+   */
   starttime?: number;
   maxHoldMs?: number;
 };
@@ -87,7 +94,19 @@ type LockInspectionDetails = Pick<
 >;
 
 const SESSION_LOCKS = createFileLockManager("openclaw.session-write-lock");
-let resolveProcessStartTimeForLock = getProcessStartTime;
+/**
+ * PID-recycling detection uses the cross-platform cached start-time provider, not
+ * the Linux-only `/proc` reader. With the Linux-only reader this check silently
+ * no-op'd on Windows and macOS, leaving "PID alive but recycled" indistinguishable
+ * from "PID alive and still ours" until the age bound expired.
+ *
+ * Compatibility with locks written by the previous code is safe in both
+ * directions: on Linux the provider delegates to the very same `/proc` reader, so
+ * the value and its unit are unchanged; on Windows/macOS the old reader always
+ * returned null, so no lock file there ever carried a `starttime` to be compared
+ * against a differently-scaled one.
+ */
+let resolveProcessStartTimeForLock = getCachedProcessStartTime;
 
 function isFileLockError(error: unknown, code: string): boolean {
   return (error as { code?: unknown } | null)?.code === code;
@@ -1041,7 +1060,7 @@ export const testing = {
   runLockWatchdogCheck,
   resolveRemainingAcquireTimeoutMs,
   setProcessStartTimeResolverForTest(resolver: ((pid: number) => number | null) | null): void {
-    resolveProcessStartTimeForLock = resolver ?? getProcessStartTime;
+    resolveProcessStartTimeForLock = resolver ?? getCachedProcessStartTime;
   },
 };
 
@@ -1055,6 +1074,6 @@ export function resetSessionWriteLockStateForTest(): void {
   releaseAllLocksSync();
   stopWatchdogTimer();
   unregisterCleanupHandlers();
-  resolveProcessStartTimeForLock = getProcessStartTime;
+  resolveProcessStartTimeForLock = getCachedProcessStartTime;
 }
 export { testing as __testing };

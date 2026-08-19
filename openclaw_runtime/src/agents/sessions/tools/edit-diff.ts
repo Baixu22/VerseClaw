@@ -417,8 +417,19 @@ export function generateUnifiedPatch(
   oldContent: string,
   newContent: string,
   contextLines = 4,
-  fileStatus: "modified" | "added" = "modified",
+  fileStatus: "modified" | "added" | "deleted" = "modified",
 ): string {
+  if (fileStatus === "deleted") {
+    return Diff.createTwoFilesPatch(
+      path,
+      "/dev/null",
+      oldContent,
+      newContent,
+      undefined,
+      undefined,
+      { context: contextLines, headerOptions: Diff.FILE_HEADERS_ONLY },
+    );
+  }
   if (fileStatus === "added" && newContent.length === 0) {
     const quotePath = (value: string): string =>
       /[\s"\\]/u.test(value) ? JSON.stringify(value) : value;

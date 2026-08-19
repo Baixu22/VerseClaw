@@ -92,6 +92,8 @@ import {
   truncateMiddle,
 } from "./bash-tools.shared.js";
 import { createModelExecAutoReviewer } from "./exec-auto-reviewer.js";
+import { CodingRuntimeError } from "./coding-runtime/coding-runtime-error.js";
+import { ExecAuditor } from "./coding-runtime/exec-audit.js";
 import type { AgentToolResult } from "./runtime/index.js";
 import { EXEC_TOOL_DISPLAY_SUMMARY } from "./tool-description-presets.js";
 import { type AgentToolWithMeta, failedTextResult, textResult } from "./tools/common.js";
@@ -1473,8 +1475,20 @@ export function createExecTool(
       agentId,
       reviewer: resolveExecReviewerDefaults({ defaults, agentId }),
     });
+  const uftkExecAuditor = defaults?.uftkExecAudit?.enabled
+    ? new ExecAuditor({
+        workspaceRoot:
+          defaults?.uftkExecAudit?.workspaceRoot ?? defaults?.cwd ?? process.cwd(),
+        sessionId: defaults?.uftkExecAudit?.sessionId ?? agentId ?? "default",
+        enabled: true,
+        sideEffectsEnabled: defaults?.uftkExecAudit?.sideEffectsEnabled,
+        snapshot: defaults?.uftkExecAudit?.snapshot,
+        commandApprovalEnabled: defaults?.uftkCommandApproval?.enabled,
+        commandApprovalPolicy: defaults?.uftkCommandApproval?.policy,
+      })
+    : undefined;
 
-  return {
+  const tool: AgentToolWithMeta<typeof execSchema, ExecToolDetails> = {
     name: "exec",
     label: "exec",
     displaySummary: EXEC_TOOL_DISPLAY_SUMMARY,
@@ -2241,6 +2255,93 @@ export function createExecTool(
       });
     },
   };
+
+  if (uftkExecAuditor) {
+    const innerExecute = tool.execute;
+    tool.execute = async (toolCallId, args, signal, onUpdate) => {
+      const command =
+        args && typeof args === "object" &&
+        typeof (args as { command?: unknown }).command === "string"
+          ? (args as { command: string }).command
+          : "";
+      if (!command) {
+        return innerExecute(toolCallId, args, signal, onUpdate);
+      }
+
+      const startedAtMs = Date.now();
+      const before = await uftkExecAuditor.captureBefore();
+      const approval = uftkExecAuditor.evaluateApproval(command);
+
+      if (approval?.decision === "forbidden") {
+        const forbiddenError = new CodingRuntimeError({
+          code: "E_COMMAND_FORBIDDEN",
+          message:
+            `Command forbidden by UFTK command approval policy` +
+            `${approval.matchedPrefix ? ` (prefix ${approval.matchedPrefix})` : ""}: ${command}`,
+        });
+        await uftkExecAuditor.recordExecEvent({
+          before,
+          command,
+          requestId: toolCallId,
+          startedAtMs,
+          approval,
+          status: "denied",
+          exitCode: null,
+          outputTruncated: false,
+          error: forbiddenError.message,
+        });
+        throw forbiddenError;
+      }
+
+      try {
+        const result = await innerExecute(toolCallId, args, signal, onUpdate);
+        const details = result?.details as ExecToolDetails | undefined;
+        let status: "succeeded" | "failed" | "running" | null = null;
+        let exitCode: number | null = null;
+        let outputTruncated = false;
+        if (details && typeof details === "object") {
+          if (details.status === "completed") {
+            exitCode = details.exitCode ?? null;
+            status = details.exitCode === 0 ? "succeeded" : "failed";
+          } else if (details.status === "failed") {
+            status = "failed";
+            exitCode = details.exitCode ?? null;
+          } else if (details.status === "running") {
+            status = "running";
+            outputTruncated = true;
+          }
+        }
+        if (status !== null) {
+          await uftkExecAuditor.recordExecEvent({
+            before,
+            command,
+            requestId: toolCallId,
+            startedAtMs,
+            approval,
+            status,
+            exitCode,
+            outputTruncated,
+          });
+        }
+        return result;
+      } catch (caught) {
+        await uftkExecAuditor.recordExecEvent({
+          before,
+          command,
+          requestId: toolCallId,
+          startedAtMs,
+          approval,
+          status: "failed",
+          exitCode: null,
+          outputTruncated: false,
+          error: caught instanceof Error ? caught.message : String(caught),
+        });
+        throw caught;
+      }
+    };
+  }
+
+  return tool;
 }
 
 /** Default exec tool instance used by agent tool registries. */

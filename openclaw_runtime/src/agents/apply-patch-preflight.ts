@@ -5,6 +5,7 @@ import { formatErrorMessage } from "../infra/errors.js";
 import { PATH_ALIAS_POLICIES, type PathAliasPolicy } from "../infra/path-alias-guards.js";
 import {
   discardWriteJournalEntries,
+  hashFileContent,
   journalEntryId,
   setWriteJournalBatchState,
   snapshotPreparedWrite,
@@ -12,11 +13,12 @@ import {
   type WriteJournalEntry,
 } from "./tools/write-journal.js";
 import { applyUpdateHunk } from "./apply-patch-update.js";
-import {
-  acquirePatchBatchLocks,
-  normalizePatchLockPath as lockKey,
-} from "./apply-patch-batch-lock.js";
-export { __resetBatchLocks } from "./apply-patch-batch-lock.js";
+import { normalizePatchLockPath as lockKey } from "./apply-patch-batch-lock.js";
+export { resetCodingRuntimeFileLocksForTest as __resetBatchLocks } from "./coding-runtime/file-lock-manager.js";
+import { acquireCodingRuntimeFileLocks } from "./coding-runtime/file-lock-manager.js";
+import type { FileVersion } from "../../../shared/coding-runtime/types.js";
+import { CodingRuntimeError } from "./coding-runtime/coding-runtime-error.js";
+import { buildVersionConflictDiff } from "./coding-runtime/turn-diff.js";
 import type {
   ApplyPatchBatchOptions,
   ApplyPatchSummary,
@@ -77,6 +79,7 @@ type OriginalPathState = ResolvedTarget & {
   existed: boolean;
   decoded?: DecodedTextFile;
   encoded?: Buffer | string;
+  version?: { contentHash: string; mtimeMs: number; size: number };
 };
 
 type VirtualPathState = {
@@ -186,14 +189,98 @@ async function readOriginals(
         `Failed to read patch target ${target.resolvedPath}: ${formatErrorMessage(error)}`,
       );
     });
+    const encoded = encodeDecodedFile(decoded);
+    const stat = await fileOps.stat?.(target.resolvedPath).catch(() => undefined) ?? undefined;
+    const bytes = typeof encoded === "string" ? Buffer.from(encoded, "utf8") : encoded;
     originals.set(lockKey(target.resolvedPath), {
       ...target,
       existed: true,
       decoded,
-      encoded: encodeDecodedFile(decoded),
+      encoded,
+      version: {
+        contentHash: hashFileContent(bytes),
+        mtimeMs: stat?.mtimeMs ?? 0,
+        size: stat?.size ?? bytes.byteLength,
+      },
     });
   }
   return originals;
+}
+
+function normalizedVersionPath(filePath: string): string {
+  return filePath.replace(/\\/g, "/").replace(/^\.\//, "");
+}
+
+function versionPathsMatch(left: string, right: string): boolean {
+  return normalizedVersionPath(left) === normalizedVersionPath(right);
+}
+
+function findOriginalForBaseVersion(
+  originals: Map<string, OriginalPathState>,
+  expected: FileVersion,
+): OriginalPathState | undefined {
+  for (const original of originals.values()) {
+    if (
+      versionPathsMatch(original.displayPath, expected.path) ||
+      versionPathsMatch(path.relative(process.cwd(), original.resolvedPath), expected.path)
+    ) {
+      return original;
+    }
+  }
+  return undefined;
+}
+
+function fileVersionMatches(expected: FileVersion, current: OriginalPathState["version"]): boolean {
+  if (!current) return false;
+  if (expected.contentHash !== current.contentHash) return false;
+  if (expected.size !== current.size) return false;
+  // mtimeMs is skipped when the fileOps layer cannot stat (sandbox/custom
+  // ops); contentHash + size still provide the optimistic-concurrency guard.
+  return current.mtimeMs === 0 || expected.mtimeMs === current.mtimeMs;
+}
+
+function assertApplyPatchBaseVersions(
+  originals: Map<string, OriginalPathState>,
+  baseVersions: readonly FileVersion[] | undefined,
+): void {
+  if (!baseVersions || baseVersions.length === 0) return;
+  for (const expected of [...baseVersions].toSorted((a, b) =>
+    normalizedVersionPath(a.path).localeCompare(normalizedVersionPath(b.path)),
+  )) {
+    const original = findOriginalForBaseVersion(originals, expected);
+    const current = original?.version;
+    if (fileVersionMatches(expected, current)) continue;
+    const pathLabel =
+      original?.displayPath ??
+      normalizedVersionPath(expected.path);
+    throw new CodingRuntimeError({
+      code: "E_CONFLICT",
+      message: `Base version changed for ${pathLabel}`,
+      path: pathLabel,
+      baseVersion: expected,
+      ...(current
+        ? {
+            currentVersion: {
+              path: pathLabel,
+              ...current,
+            },
+          }
+        : {}),
+      diff: buildVersionConflictDiff({
+        path: pathLabel,
+        baseVersion: expected,
+        ...(current
+          ? {
+              currentVersion: {
+                path: pathLabel,
+                ...current,
+              },
+            }
+          : {}),
+        ...(original?.decoded !== undefined ? { currentText: original.decoded.text } : {}),
+      }),
+    });
+  }
 }
 
 async function precomputeHunks(
@@ -275,6 +362,7 @@ function createJournalEntries(
       sessionId: journal.sessionId,
       filePath: original.resolvedPath,
       toolName: "apply_patch",
+      kind: "apply_patch",
       requestId: journal.requestId,
       flags: journal.flags,
       batch: { id: batchId, state: "prepared" },
@@ -301,9 +389,19 @@ export async function preflightPatch(
 ): Promise<PreparedPatchBatch> {
   const resolved = await resolveHunks(hunks, options, pathOps);
   const targets = collectTargets(resolved);
-  const release = await acquirePatchBatchLocks(targets.map((target) => target.resolvedPath));
+  const lockHandle = await acquireCodingRuntimeFileLocks(
+    targets.map((target) => target.resolvedPath),
+    {
+      mode: "write",
+      owner: options.journal?.sessionId?.trim() || `apply_patch:${process.pid}`,
+    },
+  );
+  const release = () => {
+    void lockHandle.release();
+  };
   try {
     const originals = await readOriginals(targets, fileOps);
+    assertApplyPatchBaseVersions(originals, options.baseVersions);
     const prepared = await precomputeHunks(resolved, originals, options);
     const batchId = options.journal?.requestId?.trim() || randomUUID();
     const journalEntries = createJournalEntries(batchId, originals, options);

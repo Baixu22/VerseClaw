@@ -16,6 +16,8 @@ import { keyHint } from "../../modes/interactive/components/keybinding-hints.js"
 import { getLanguageFromPath, highlightCode } from "../../modes/interactive/theme/theme.js";
 import type { AgentTool } from "../../runtime/index.js";
 import type { ToolDefinition, ToolRenderResultOptions } from "../extensions/types.js";
+import type { FileTransactionService } from "../../coding-runtime/file-transaction-service.js";
+import type { FileVersion } from "../../../../../shared/coding-runtime/types.js";
 import { withFileMutationQueue } from "./file-mutation-queue.js";
 import { resolveToCwd } from "./path-utils.js";
 import {
@@ -75,9 +77,21 @@ const defaultWriteOperations: WriteOperations = {
   },
 };
 
+export type WriteToolCodingRuntimeOptions = {
+  service: FileTransactionService;
+  sessionId: string;
+};
+
 export interface WriteToolOptions {
   /** Custom operations for file writing. Default: local filesystem */
   operations?: WriteOperations;
+  /**
+   * P1 UFTK opt-in. When present the write goes through
+   * prepare -> commit and local atomic write; the model-facing schema is unchanged.
+   */
+  codingRuntime?: WriteToolCodingRuntimeOptions;
+  /** P2 internal optimistic-concurrency input. Not part of the model schema. */
+  baseVersion?: FileVersion;
 }
 
 type WriteToolFileStat = {
@@ -396,6 +410,51 @@ export function createWriteToolDefinition(
       void ctx;
       const absolutePath = resolveToCwd(path, cwd);
       const dir = dirname(absolutePath);
+      const codingRuntime = options?.codingRuntime;
+      if (codingRuntime) {
+        // P6A: the FTS write lock (lock-core) is the single mutation scheduler,
+        // so no outer withFileMutationQueue wrapper here — a same-key nested
+        // acquire would self-deadlock on the unified lock core.
+        return (async () => {
+          if (signal?.aborted) {
+            throw new Error("Operation aborted");
+          }
+          const byteLength = Buffer.byteLength(content, "utf8");
+          const prepared = await codingRuntime.service.prepare(
+            {
+              kind: "write",
+              path,
+              content,
+              ...(options?.baseVersion ? { baseVersion: options.baseVersion } : {}),
+            },
+            {
+              sessionId: codingRuntime.sessionId,
+              requestId: toolCallId,
+              workspaceRoot: cwd,
+              toolName: "write",
+            },
+          );
+          const committed = await codingRuntime.service.commit(prepared);
+          if (committed.status === "recovery_required") {
+            throw new Error(`Write recovery_required: ${committed.error ?? "journal retained"}`);
+          }
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `Successfully wrote ${byteLength} bytes to ${path}`,
+              },
+            ],
+            details: {
+              working_memory: {
+                result_summary: `Wrote ${path}: ${byteLength} bytes`.slice(0, 100),
+                significance: "high",
+              },
+              write_journal: codingRuntime.service.writeJournalEvidence(prepared),
+            },
+          };
+        })();
+      }
       return withFileMutationQueue(absolutePath, async () => {
         const byteLength = Buffer.byteLength(content, "utf8");
         const precheck = await readOriginalWriteState(absolutePath, content, ops);

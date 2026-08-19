@@ -67,13 +67,24 @@ import type { BlockStoreApi, ContextBlockSink } from "../context-engine/block.js
 import { createDcsContextAgentTools } from "./tools/context-agent-tools.js";
 import type { WorkspaceFactService } from "../context-engine/factstore/workspace-fact-service.js";
 import {
+  isCodingAuditLogEnabled,
+  isCodingBaseVersionGuardEnabled,
+  isCodingCommandApprovalEnabled,
+  isCodingConcurrencyV2Enabled,
+  isCodingExecSideEffectsEnabled,
   isCodingParseOnTouchEnabled,
   isCodingStaleWriteGuardEnabled,
+  isCodingUftkEnabled,
   isCodingWriteJournalEnabled,
   isCodingSymbolLeaseEnabled,
   resolveCodingAutoVerifyConfig,
   resolveSymbolLeaseMode,
 } from "../context-engine/coding-runtime-flags.js";
+import { normalizeCommandApprovalPolicy } from "./coding-runtime/command-approval-policy.js";
+import { getOrCreatePersistentCodingAuditSink } from "./coding-runtime/audit-log.js";
+import { setCodingAuditSink } from "./coding-runtime/audit-sink.js";
+import { FileTransactionService } from "./coding-runtime/file-transaction-service.js";
+import { setCodingLockConcurrencyV2Enabled } from "./coding-runtime/file-lock-manager.js";
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
 import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
@@ -592,6 +603,18 @@ export function createOpenClawCodingTools(options?: {
   staleWriteGuardEnabled?: boolean;
   /** C2-8 override for write journal (default true). */
   writeJournalEnabled?: boolean;
+  /** P1 UFTK override for unified file transactions (default false). */
+  uftkEnabled?: boolean;
+  /** P2 UFTK override for optimistic baseVersion guard (default false). */
+  baseVersionGuardEnabled?: boolean;
+  /** P3 UFTK override for exec workspace side-effect audit (default false). */
+  execSideEffectsEnabled?: boolean;
+  /** P3 UFTK override for command prefix approval policy (default false). */
+  commandApprovalEnabled?: boolean;
+  /** P4 UFTK override for durable coding audit log (default false). */
+  auditLogEnabled?: boolean;
+  /** P6A UFTK override for unified RW locks + commit CAS + lock observability (default false). */
+  concurrencyV2Enabled?: boolean;
   /** C5-1 override for symbol lease on write tools (default false). */
   symbolLeaseEnabled?: boolean;
   /** Runtime-only resolved skill paths that the read tool may load under workspaceOnly. */
@@ -771,6 +794,28 @@ export function createOpenClawCodingTools(options?: {
   const writeJournalEnabled = isCodingWriteJournalEnabled(options?.config, {
     writeJournalEnabled: options?.writeJournalEnabled,
   });
+  const uftkEnabled = isCodingUftkEnabled(options?.config, {
+    uftkEnabled: options?.uftkEnabled,
+  });
+  const baseVersionGuardEnabled = isCodingBaseVersionGuardEnabled(options?.config, {
+    baseVersionGuardEnabled: options?.baseVersionGuardEnabled,
+  });
+  const execSideEffectsEnabled = isCodingExecSideEffectsEnabled(options?.config, {
+    execSideEffectsEnabled: options?.execSideEffectsEnabled,
+  });
+  const commandApprovalEnabled = isCodingCommandApprovalEnabled(options?.config, {
+    commandApprovalEnabled: options?.commandApprovalEnabled,
+  });
+  const auditLogEnabled = isCodingAuditLogEnabled(options?.config, {
+    auditLogEnabled: options?.auditLogEnabled,
+  });
+  const concurrencyV2Enabled = isCodingConcurrencyV2Enabled(options?.config, {
+    concurrencyV2Enabled: options?.concurrencyV2Enabled,
+  });
+  const commandApprovalPolicy = normalizeCommandApprovalPolicy(
+    (options?.config?.runtime?.coding as { uftk?: { commandApproval?: unknown } } | undefined)
+      ?.uftk?.commandApproval,
+  );
   const symbolLeaseEnabled = isCodingSymbolLeaseEnabled(options?.config, {
     symbolLeaseEnabled: options?.symbolLeaseEnabled,
   });
@@ -793,6 +838,33 @@ export function createOpenClawCodingTools(options?: {
       undefined,
     );
   const codingSessionId = options?.sessionId;
+  if (uftkEnabled && sandboxRoot) {
+    // P1 UFTK is host-workspace local. Enabling it behind a sandbox bridge must
+    // fail closed rather than silently bypass the transaction path.
+    throw new Error("runtime.coding.uftk.enabled is not supported with a sandbox filesystem bridge in P1");
+  }
+  const durableAuditSink =
+    uftkEnabled && auditLogEnabled
+      ? getOrCreatePersistentCodingAuditSink({})
+      : undefined;
+  if (durableAuditSink) {
+    setCodingAuditSink(durableAuditSink);
+  }
+  if (concurrencyV2Enabled) {
+    setCodingLockConcurrencyV2Enabled(true);
+  }
+  const fileTransactionService = uftkEnabled
+    ? new FileTransactionService({
+        workspaceRoot: codingRoot,
+        sessionId: codingSessionId ?? "default",
+        baseVersionGuardEnabled,
+        concurrencyV2Enabled,
+        ...(durableAuditSink ? { auditLogSink: durableAuditSink } : {}),
+      })
+    : undefined;
+  const codingRuntimeToolOptions = fileTransactionService
+    ? { service: fileTransactionService, sessionId: codingSessionId ?? "default" }
+    : undefined;
   const applyParseOnTouch = (tool: AnyAgentTool): AnyAgentTool =>
     wrapToolWithParseOnTouch(tool, {
       workspaceRoot: codingRoot,
@@ -806,6 +878,7 @@ export function createOpenClawCodingTools(options?: {
     staleWriteGuard: staleWriteGuardEnabled,
     writeJournal: writeJournalEnabled,
     symbolLease: symbolLeaseEnabled,
+    uftk: uftkEnabled,
   };
   const applyWriteKit = (
     tool: AnyAgentTool,
@@ -821,7 +894,7 @@ export function createOpenClawCodingTools(options?: {
     });
     // apply_patch journals inside its batch lease so the snapshot and preflight
     // cannot race another overlapping patch. Other writes keep the outer wrapper.
-    if (kind !== "apply_patch") {
+    if (kind !== "apply_patch" && !uftkEnabled) {
       next = wrapToolWithWriteJournal(next, {
         workspaceRoot: codingRoot,
         sessionId: codingSessionId,
@@ -955,8 +1028,15 @@ export function createOpenClawCodingTools(options?: {
       name: "edit",
       build: () => {
         const wrapped = sandboxRoot
-          ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
-          : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
+          ? createSandboxedEditTool({
+              root: sandboxRoot,
+              bridge: sandboxFsBridge!,
+              ...(codingRuntimeToolOptions ? { editCodingRuntime: codingRuntimeToolOptions } : {}),
+            })
+          : createHostWorkspaceEditTool(codingRoot, {
+              workspaceOnly,
+              ...(codingRuntimeToolOptions ? { codingRuntime: codingRuntimeToolOptions } : {}),
+            });
         if (!workspaceOnly) {
           return wrapped;
         }
@@ -971,8 +1051,15 @@ export function createOpenClawCodingTools(options?: {
       name: "write",
       build: () => {
         const wrapped = sandboxRoot
-          ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
-          : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
+          ? createSandboxedWriteTool({
+              root: sandboxRoot,
+              bridge: sandboxFsBridge!,
+              ...(codingRuntimeToolOptions ? { writeCodingRuntime: codingRuntimeToolOptions } : {}),
+            })
+          : createHostWorkspaceWriteTool(codingRoot, {
+              workspaceOnly,
+              ...(codingRuntimeToolOptions ? { codingRuntime: codingRuntimeToolOptions } : {}),
+            });
         if (!workspaceOnly) {
           return wrapped;
         }
@@ -1030,7 +1117,7 @@ export function createOpenClawCodingTools(options?: {
   const undoWriteTool = createUndoWriteTool({
     workspaceRoot: codingRoot,
     sessionId: codingSessionId,
-    enabled: writeJournalEnabled && includeBaseCodingTools,
+    enabled: (writeJournalEnabled || uftkEnabled) && includeBaseCodingTools,
     workspaceOnly,
   });
   if (undoWriteTool) {
@@ -1041,6 +1128,20 @@ export function createOpenClawCodingTools(options?: {
   const execTool = includeShellTools
     ? createLazyExecTool({
         ...execDefaults,
+        ...(execSideEffectsEnabled || commandApprovalEnabled || auditLogEnabled
+          ? {
+              uftkExecAudit: {
+                enabled: true,
+                sideEffectsEnabled: execSideEffectsEnabled,
+                workspaceRoot: codingRoot,
+                sessionId: codingSessionId,
+              },
+              uftkCommandApproval: {
+                enabled: commandApprovalEnabled,
+                policy: commandApprovalPolicy,
+              },
+            }
+          : {}),
         host: options?.exec?.host ?? execConfig.host,
         mode: effectiveExecPolicy.mode,
         security: effectiveExecPolicy.security,
@@ -1125,12 +1226,17 @@ export function createOpenClawCodingTools(options?: {
               ? { root: sandboxRoot, bridge: sandboxFsBridge! }
               : undefined,
           workspaceOnly: applyPatchWorkspaceOnly,
-          journal: {
-            workspaceRoot: codingRoot,
-            sessionId: codingSessionId,
-            enabled: writeJournalEnabled,
-            flags: writeJournalFlags,
-          },
+          ...(!uftkEnabled
+            ? {
+                journal: {
+                  workspaceRoot: codingRoot,
+                  sessionId: codingSessionId,
+                  enabled: writeJournalEnabled,
+                  flags: writeJournalFlags,
+                },
+              }
+            : {}),
+          ...(codingRuntimeToolOptions ? { codingRuntime: codingRuntimeToolOptions } : {}),
         });
   const applyPatchTool = applyPatchToolRaw
     ? applyWriteKit(applyPatchToolRaw as unknown as AnyAgentTool, "apply_patch")

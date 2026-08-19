@@ -21,12 +21,16 @@ import fs from "node:fs";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { resolveConfigPath } from "../config/paths.js";
 import {
+  isCodingBaseVersionGuardEnabled,
+  isCodingCommandApprovalEnabled,
+  isCodingExecSideEffectsEnabled,
   isCodingParseOnTouchEnabled,
   isCodingPatchFlowDefault,
   isCodingRoutingMemoShadowEnabled,
   isCodingSekbExperienceShadowEnabled,
   isCodingStaleWriteGuardEnabled,
   isCodingSymbolLeaseEnabled,
+  isCodingUftkEnabled,
   isCodingWriteJournalEnabled,
   resolveCodingAutoVerifyConfig,
   resolveSymbolLeaseMode,
@@ -275,6 +279,10 @@ export function resolveEffectiveRuntimeFlagsWithSources(
     "runtime.coding.patchFlow.default": isCodingPatchFlowDefault(cfg),
     "runtime.coding.sekb.experienceShadow": isCodingSekbExperienceShadowEnabled(cfg),
     "runtime.coding.routingMemo.shadow": isCodingRoutingMemoShadowEnabled(cfg),
+    "runtime.coding.uftk.enabled": isCodingUftkEnabled(cfg),
+    "runtime.coding.uftk.baseVersionGuard.enabled": isCodingBaseVersionGuardEnabled(cfg),
+    "runtime.coding.uftk.execSideEffects.enabled": isCodingExecSideEffectsEnabled(cfg),
+    "runtime.coding.uftk.commandApproval.enabled": isCodingCommandApprovalEnabled(cfg),
   };
 
   for (const [name, value] of Object.entries(codingFlat)) {

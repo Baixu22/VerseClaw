@@ -30,6 +30,8 @@ import {
   restoreLineEndings,
   stripBom,
 } from "./edit-diff.js";
+import type { FileTransactionService } from "../../coding-runtime/file-transaction-service.js";
+import type { FileVersion } from "../../../../../shared/coding-runtime/types.js";
 import { withFileMutationQueue } from "./file-mutation-queue.js";
 import { resolveToCwd } from "./path-utils.js";
 import { invalidArgText, shortenPath, str } from "./render-utils.js";
@@ -94,9 +96,21 @@ const defaultEditOperations: EditOperations = {
   access: (path) => fsAccess(path, constants.R_OK | constants.W_OK),
 };
 
+export type EditToolCodingRuntimeOptions = {
+  service: FileTransactionService;
+  sessionId: string;
+};
+
 export interface EditToolOptions {
   /** Custom operations for file editing. Default: local filesystem */
   operations?: EditOperations;
+  /**
+   * P1 UFTK opt-in. The edit computation stays identical; only the final
+   * write is routed through prepare -> commit + atomic write.
+   */
+  codingRuntime?: EditToolCodingRuntimeOptions;
+  /** P2 internal optimistic-concurrency input. Not part of the model schema. */
+  baseVersion?: FileVersion;
 }
 
 function prepareEditArguments(input: unknown): EditToolInput {
@@ -401,7 +415,7 @@ export function createEditToolDefinition(
       const { path, edits } = validateEditInput(input);
       const absolutePath = resolveToCwd(path, cwd);
 
-      return withFileMutationQueue(absolutePath, async () => {
+      const runEdit = async () => {
         if (signal?.aborted) {
           throw new Error("Operation aborted");
         }
@@ -441,7 +455,28 @@ export function createEditToolDefinition(
               : decoded.encoding === "utf8-bom"
                 ? `\uFEFF${finalContent}`
                 : encodeTextFile(finalContent, decoded.encoding);
-          await ops.writeFile(absolutePath, encoded);
+          if (options?.codingRuntime) {
+            const prepared = await options.codingRuntime.service.prepare(
+              {
+                kind: "edit",
+                path,
+                edits,
+                ...(options.baseVersion ? { baseVersion: options.baseVersion } : {}),
+              },
+              {
+                sessionId: options.codingRuntime.sessionId,
+                requestId: toolCallId,
+                workspaceRoot: cwd,
+                toolName: "edit",
+              },
+            );
+            const committed = await options.codingRuntime.service.commit(prepared);
+            if (committed.status === "recovery_required") {
+              throw new Error(`Edit recovery_required: ${committed.error ?? "journal retained"}`);
+            }
+          } else {
+            await ops.writeFile(absolutePath, encoded);
+          }
           if (signal?.aborted) {
             throw new Error("Operation aborted");
           }
@@ -456,7 +491,7 @@ export function createEditToolDefinition(
           return {
             content: [
               {
-                type: "text",
+                type: "text" as const,
                 text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
               },
             ],
@@ -475,7 +510,7 @@ export function createEditToolDefinition(
               firstChangedLine: diffResult.firstChangedLine,
               working_memory: {
                 result_summary: `Edited ${path}: ${edits.length} block(s)`.slice(0, 100),
-                significance: "high",
+                significance: "high" as const,
               },
             },
           };
@@ -489,7 +524,7 @@ export function createEditToolDefinition(
             return {
               content: [
                 {
-                  type: "text",
+                  type: "text" as const,
                   text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
                 },
               ],
@@ -513,7 +548,15 @@ export function createEditToolDefinition(
           }
           throw normalizedError;
         }
-      });
+      };
+
+      if (options?.codingRuntime) {
+        // P6A: the FTS edit lock (lock-core) is the single mutation scheduler,
+        // so no outer withFileMutationQueue wrapper here — a same-key nested
+        // acquire would self-deadlock on the unified lock core.
+        return runEdit();
+      }
+      return withFileMutationQueue(absolutePath, runEdit);
     },
     renderCall(args, theme, context) {
       const component = getEditCallRenderComponent(context.state, context.lastComponent);

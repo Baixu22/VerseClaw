@@ -17,6 +17,8 @@ import {
   type PatchBatchState,
 } from "./apply-patch-preflight.js";
 import { toRelativeSandboxPath, resolvePathFromInput } from "./path-policy.js";
+import type { FileTransactionService } from "./coding-runtime/file-transaction-service.js";
+import type { FileVersion } from "../../../shared/coding-runtime/types.js";
 import type { AgentToolWithMeta } from "./tools/common.js";
 import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
@@ -86,6 +88,16 @@ type CreateApplyPatchToolOptions = {
   sandbox?: SandboxApplyPatchConfig;
   workspaceOnly?: boolean;
   journal?: Omit<ApplyPatchJournalOptions, "requestId">;
+  /** P1 UFTK opt-in: the tool execute path goes through prepare -> commit. */
+  codingRuntime?: {
+    service: FileTransactionService;
+    sessionId: string;
+  };
+  /**
+   * P2 internal optimistic-concurrency inputs. Not part of the model-facing
+   * `input` TypeBox schema; callers opt in explicitly.
+   */
+  baseVersions?: FileVersion[];
 };
 
 const applyPatchSchema = Type.Object({
@@ -98,6 +110,11 @@ const applyPatchSchema = Type.Object({
 export function createApplyPatchTool(
   options: CreateApplyPatchToolOptions = {},
 ): AgentToolWithMeta<typeof applyPatchSchema, ApplyPatchToolDetails> {
+  if (options.codingRuntime && options.sandbox) {
+    // P1 UFTK is local-filesystem only. A sandbox bridge must fail closed
+    // rather than let the tool silently bypass the transaction path.
+    throw new Error("runtime.coding.uftk.enabled is not supported with a sandbox filesystem bridge in P1");
+  }
   const cwd = options.cwd ?? process.cwd();
   const sandbox = options.sandbox;
   const workspaceOnly = options.workspaceOnly !== false;
@@ -124,11 +141,56 @@ export function createApplyPatchTool(
         throw err;
       }
 
+      if (options.codingRuntime) {
+        const service = options.codingRuntime.service;
+        const prepared = await service.prepare(
+          {
+            kind: "apply_patch",
+            input,
+            ...(options.baseVersions?.length ? { baseVersions: options.baseVersions } : {}),
+          },
+          {
+            sessionId: options.codingRuntime.sessionId,
+            requestId: toolCallId,
+            workspaceRoot: cwd,
+            toolName: "apply_patch",
+          },
+        );
+        const result = await service.commitApplyPatch(prepared);
+        if (result.status === "recovery_required") {
+          const error = new Error(result.error ?? result.tool.text);
+          Object.assign(error, {
+            batchState: "recovery_required",
+            recoveryRef: result.recoveryRef,
+          });
+          throw error;
+        }
+        const summary = applyPatchSummaryFromCommit(result.files);
+        return {
+          content: [{ type: "text", text: result.tool.text }],
+          details: {
+            summary,
+            batchState: "committed",
+            modifiedFiles: [...summary.added, ...summary.modified, ...summary.deleted],
+            write_journal: service.writeJournalEvidence(prepared),
+            working_memory: {
+              result_summary:
+                `Patched: +${summary.added.length} ~${summary.modified.length} -${summary.deleted.length}`.slice(
+                  0,
+                  100,
+                ),
+              significance: "high",
+            },
+          },
+        };
+      }
+
       const result = await applyPatch(input, {
         cwd,
         sandbox,
         workspaceOnly,
         signal,
+        ...(options.baseVersions?.length ? { baseVersions: options.baseVersions } : {}),
         ...(options.journal
           ? {
               journal: {
@@ -207,6 +269,31 @@ export async function applyPatch(
   };
 }
 
+function applyPatchSummaryFromCommit(
+  files: Array<{ path: string; targetPath?: string; beforeVersion: unknown; afterVersion: unknown }>,
+): ApplyPatchSummary {
+  const added: string[] = [];
+  const modified: string[] = [];
+  const deleted: string[] = [];
+  const moveDestinations = new Set(
+    files.filter((file) => file.targetPath).map((file) => file.targetPath as string),
+  );
+  for (const file of files) {
+    if (file.targetPath && file.beforeVersion !== null && file.afterVersion === null) {
+      // The source side of a move: existing apply_patch reports the destination as M.
+      if (!modified.includes(file.targetPath)) modified.push(file.targetPath);
+      continue;
+    }
+    if (moveDestinations.has(file.path) && file.beforeVersion === null && file.afterVersion !== null) {
+      continue;
+    }
+    if (file.beforeVersion === null && file.afterVersion !== null) added.push(file.path);
+    else if (file.beforeVersion !== null && file.afterVersion === null) deleted.push(file.path);
+    else if (file.beforeVersion !== null && file.afterVersion !== null) modified.push(file.path);
+  }
+  return { added, modified, deleted };
+}
+
 function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
   if (options.sandbox) {
     const { root, bridge } = options.sandbox;
@@ -215,6 +302,12 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
       readFile: async (filePath) => {
         const buf = await bridge.readFile({ filePath, cwd: root });
         return decodeTextFile(buf, filePath);
+      },
+      stat: async (filePath) => {
+        const fileStat = await bridge.stat({ filePath, cwd: root });
+        return fileStat?.type === "file"
+          ? { mtimeMs: fileStat.mtimeMs, size: fileStat.size }
+          : null;
       },
       writeFile: (filePath, content) => bridge.writeFile({ filePath, cwd: root, data: content }),
       remove: (filePath) => bridge.remove({ filePath, cwd: root, force: false }),
@@ -230,6 +323,19 @@ function resolvePatchFileOps(options: ApplyPatchOptions): PatchFileOps {
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code === "ENOENT") {
           return false;
+        }
+        throw error;
+      }
+    },
+    stat: async (filePath) => {
+      try {
+        const fileStat = await fs.stat(filePath);
+        return fileStat.isFile()
+          ? { mtimeMs: fileStat.mtimeMs, size: fileStat.size }
+          : null;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+          return null;
         }
         throw error;
       }
