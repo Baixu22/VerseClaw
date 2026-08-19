@@ -505,6 +505,7 @@ export interface EffectReceipts {
   artifact_ref: string | null;
   created_at: number;
   domain_executor: string;
+  effect_context_json: Generated<string>;
   effect_receipt_id: string;
   idempotency_key: string;
   journal_ref: string | null;

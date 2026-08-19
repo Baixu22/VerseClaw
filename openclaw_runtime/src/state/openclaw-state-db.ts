@@ -787,6 +787,9 @@ function ensureAdditiveStateColumns(db: DatabaseSync): void {
   ensureColumn(db, "long_task_checkpoints", "task_ledger_root_id TEXT");
   ensureColumn(db, "long_task_intervention_events", "task_ledger_root_id TEXT");
   ensureColumn(db, "long_task_user_queue", "task_ledger_root_id TEXT");
+  // Stage 1 EffectReceipt/v1 logical correlation facts. Additive only: legacy
+  // effect_receipts rows keep the default empty object and project as legacy rows.
+  ensureColumn(db, "effect_receipts", "effect_context_json TEXT NOT NULL DEFAULT '{}'");
   if (tableExists(db, "long_task_checkpoints")) {
     db.exec(`
       CREATE INDEX IF NOT EXISTS idx_long_task_checkpoints_ledger_root
