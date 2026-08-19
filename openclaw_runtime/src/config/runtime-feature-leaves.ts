@@ -88,7 +88,22 @@ export const RUNTIME_FEATURE_EXHAUSTIVE: DeepRequired<RuntimeFeatureConfig> = {
   checkpointSerializer: { shadow: true },
   resume: { replayShadow: true },
   toolRegistry: { shadow: true },
-  mission: { rollback: { enabled: true } },
+  mission: {
+    rollback: { enabled: true },
+    goalWake: {
+      enabled: true,
+      maxActiveGoalWaits: 4,
+      maxFlows: 16,
+      tickFailureBackoffMs: 5000,
+      durableHelper: {
+        enabled: true,
+        maxRunsPerSession: 4,
+        maxOutputBytesPerRun: 10485760,
+        runTtlMs: 86400000,
+        sweepIntervalMs: 60000,
+      },
+    },
+  },
   registryDiagnostics: { collector: true },
   toolProtocol: { mcpShadow: true },
   toolGovernance: { destructiveOperationGuard: { preflight: { enabled: true } } },

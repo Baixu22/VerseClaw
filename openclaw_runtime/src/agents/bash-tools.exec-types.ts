@@ -74,6 +74,9 @@ export type ExecToolDefaults = {
   accountId?: string;
   notifyOnExit?: boolean;
   notifyOnExitEmptySuccess?: boolean;
+  /** Invoked when wait="goal" arms a process; the runtime aborts the current
+   *  turn and acks the persisted turn barrier only after the run is idle. */
+  onYield?: (message: string) => Promise<void> | void;
   cwd?: string;
 };
 
@@ -116,6 +119,10 @@ export type ExecToolDetails =
       startedAt: number;
       cwd?: string;
       tail?: string;
+      wait?: "none" | "session" | "goal";
+      taskId?: string;
+      flowId?: string;
+      turnBarrier?: "pending" | "acked";
     }
   | {
       status: "completed" | "failed";

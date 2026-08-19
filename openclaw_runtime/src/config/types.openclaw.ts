@@ -263,6 +263,33 @@ export type RuntimeFeatureConfig = {
       /** Allow Mission Control to invoke replay-rollback when repair evidence repeats without progress. */
       enabled?: boolean;
     };
+    /** Phase 3 same-gateway goal wake loop. Every leaf defaults off. */
+    goalWake?: {
+      /**
+       * Master opt-in for the goal-wake path. Requires mission fencing
+       * (`RUNTIME_LIFECYCLE_MISSION_FENCING_ENABLED`) at runtime.
+       */
+      enabled?: boolean;
+      /** Active waiting/running goal-wake flows allowed per agent (0 = unlimited). */
+      maxActiveGoalWaits?: number;
+      /** Total goal-wake flow rows allowed per agent (0 = unlimited). */
+      maxFlows?: number;
+      /** Retry delay after a mission-tick wake failure (0 = no automatic retry). */
+      tickFailureBackoffMs?: number;
+      /** Phase 4 durable helper file protocol + restart recovery. Default off. */
+      durableHelper?: {
+        /** Master opt-in. Requires the Phase 3 goal-wake gate. */
+        enabled?: boolean;
+        /** Concurrent durable helper runs allowed per session (0 = unlimited). */
+        maxRunsPerSession?: number;
+        /** Bound for stdout.log + tail.txt per runDir. */
+        maxOutputBytesPerRun?: number;
+        /** Global runDir retention before recovery marks needs_cleanup. */
+        runTtlMs?: number;
+        /** Low-frequency reconciliation sweep interval. */
+        sweepIntervalMs?: number;
+      };
+    };
   };
   /** Runtime registry diagnostic collector flags. Defaults off. */
   registryDiagnostics?: {
