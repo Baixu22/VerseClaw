@@ -1,0 +1,32 @@
+{
+  "applied_at": "2026-08-23T17:08:38.743125Z",
+  "base_graph_hash": "9e7068dfbb8b24715912971415ad31d043a642165105b0bb8189ba3f32763ae5",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "README.md 提交窗口内被他流并发修改，其 git workbench 段落随 4800bd758 入库（内容保全、归属混入）；提交后工作树对该文件干净，不影响后续开发"
+        ],
+        "evidence": [
+          "artifacts/tf0093-commit-readiness/report.json",
+          "用户裁定记录：暂不提交（工作树需整理）；TF-0078 保持 in_progress；未发生任何提交",
+          "拆分预案：artifacts/tf0093-commit-readiness/split-plan.md + chain-dirty-files.txt（123 文件，100% 已声明）",
+          "最终矩阵：227 测试全绿（50/38/7/68/13/12/16/23）；typecheck 0 错误；contract 0；comms replay+compare 0；9 份链 spec validate 全 0；git diff --check 0",
+          "2026-08-24 提交执行（用户授权）：5 个提交 —— 80b3fd794 specs/候选工具(10)、25df76ab5 runtime 核心(89)、57bc803b1 electron/renderer(18)、4800bd758 docs(4)、3b92660d2 task-forest(128)；249/250 文件内容与提交前快照逐 blob 一致；未触碰 257 个他流文件与 package.json；他人预暂存的 RollbackPlanPanel.tsx 删除已两次避让并恢复其暂存态。唯一归属瑕疵：README.md 在快照与 add 之间被他流改动的 git workbench 段落（01:05）随之入 docs 提交——内容无损、未重写历史，记录在案"
+        ]
+      },
+      "id": "TF-0093"
+    }
+  ],
+  "created_at": "2026-08-23T17:08:38.475984Z",
+  "proposal_id": "TFP-tf0093-commit-execution-20260824",
+  "rationale": "用户授权后执行链提交：5 个按层拆分的提交落盘，链持有脏文件全部入库，他流文件零触碰。记录提交 SHA、内容保全验证与 README 并发窗口的归属瑕疵。",
+  "session_id": "session-20260824-commit-execution",
+  "status": "applied"
+}
