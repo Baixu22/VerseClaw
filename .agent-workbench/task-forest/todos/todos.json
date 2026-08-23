@@ -500,62 +500,6 @@
   },
   {
     "alignment": {
-      "fit": "aligned",
-      "fit_confidence": 0.94,
-      "user_goal": "让当前对话生态真实可追踪、可监控、可跨会话控制、可等待恢复，并防止长时间闲置后的资源泄漏和假阳性验收。",
-      "validation_plan": [
-        "Task Forest validate/export 和每阶段 Harness context/validate",
-        "真实 Gateway method registry probe，证明 handler 与 descriptor 同时存在",
-        "session/process/subagent/goal-wake/cron 聚焦单测与当前源码 E2E",
-        "真实 Electron packaged helper、真实 OS process、Gateway restart/cancel/unknown-RPC 故障矩阵",
-        "独立 fresh acceptance report，列出未执行前置、退出码、测试数、artifact SHA 和产品锁"
-      ],
-      "why_not_enough": "工程收敛仍不能替代真实第三方 channel、真人 recovery、产品批准或 GA 授权；这些继续由既有最终验收边界控制。",
-      "why_this_task": "它直接覆盖本轮已证实的 production reachability、default-off safety、resource drain、cross-session control、goal loop 和 scheduler seam，且挂在既有 Runtime Authority 主线上。"
-    },
-    "blocked_by": [],
-    "confidence": 0.9,
-    "context_tags": [
-      "session-ecosystem",
-      "runtime-lifecycle",
-      "cross-session-control",
-      "subagent",
-      "goal-loop",
-      "scheduler",
-      "resource-reclamation",
-      "false-positive-prevention"
-    ],
-    "desired_outcomes": [
-      "真实 Gateway registry 与测试直接 handler 不再分叉，所有声明的生命周期 RPC 都可达",
-      "session safety gates 在生产生命周期 mutation 上生效，未知 RPC 结果不会造成镜像和 runtime 状态分裂",
-      "终端、普通后台进程、subagent 和 durable helper 具有明确 owner、TTL/回收边界和跨重启终态",
-      "跨会话控制和父子关系使用稳定 sessionId/runId/missionId/tickId/flowId/taskId lineage",
-      "Goal/Loop 支持 process exit、子智能体完成、显式 timer/Cron 触发的有界续跑，取消和超时级联且不重放命令",
-      "最终证据来自当前 HEAD 的真实 registry、真实进程、故障矩阵和独立报告，不复用旧 audit 数字"
-    ],
-    "difficulty": "very_high",
-    "id": "TF-0078",
-    "kind": "milestone",
-    "next_action": "先执行 TF-0079，修复 registry 可达性并建立 direct-handler versus production-dispatch gate",
-    "priority": 1,
-    "progress": 0.0,
-    "purpose": "让每个对话及其派生资源都有可追踪的身份、状态、所有权和终态；允许跨会话创建、截停、继续和等待，同时避免长时间闲置资源泄漏与代码存在但生产不可达的假阳性。",
-    "ready": true,
-    "remaining_minutes_max": 6000,
-    "remaining_minutes_min": 2400,
-    "status": "in_progress",
-    "success_metrics": [
-      "生产 registry 漏接的 lifecycle method=0",
-      "session reset/delete/stop 与 spawn/send/steer/arm 的 generation race=0",
-      "未知 RPC 结果导致的 mirror/runtime 分裂=0",
-      "50-cycle session/process/subagent drain 的 active records、timers、owned PIDs 残留=0",
-      "重复 wake/重复 completion/重复 continuation 的副作用重复=0",
-      "当前 HEAD 的 required gates 和真实闭环报告可复跑且不依赖旧 artifact 时间戳"
-    ],
-    "title": "会话生态生命周期生产收敛与真实恢复"
-  },
-  {
-    "alignment": {
       "fit": "unknown",
       "fit_confidence": 0.0,
       "user_goal": "",

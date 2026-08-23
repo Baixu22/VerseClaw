@@ -5510,7 +5510,8 @@
       "最终证据来自当前 HEAD 的真实 registry、真实进程、故障矩阵和独立报告，不复用旧 audit 数字"
     ],
     "deviations": [
-      "TFD-runtime-lifecycle-closeout-production-gap-20260821"
+      "TFD-runtime-lifecycle-closeout-production-gap-20260821",
+      "收口时工作树仍混有其他 workstream 未提交改动（按用户要求未清理）；链提交不含 11 个他流依赖文件，链的独立编译完整性待各 owner 提交后成立——用户知情并裁定收口"
     ],
     "difficulty": "very_high",
     "estimated_total_minutes": 3840,
@@ -5520,7 +5521,8 @@
       "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
       "本轮 sessions.stop registry probe、goal-wake canary exit=1、packaged Electron helper output",
       "docs/runtime-design/plan.md scheduled ticks planned but not shipped",
-      "2026-08-23/24 独立审计与整改收口：审计三线均 pass-with-findings（artifacts/tf0078-chain-health-audit/）；TF-0086 里程碑七步全部 done，4 major+7 minor 闭环，收口时刻全链 227 测试+根级门禁全绿（artifacts/tf0086-milestone-closeout/report.json）；用户裁定暂不提交，提交时按 artifacts/tf0093-commit-readiness/split-plan.md 执行，收口与否由用户提交后裁定"
+      "2026-08-23/24 独立审计与整改收口：审计三线均 pass-with-findings（artifacts/tf0078-chain-health-audit/）；TF-0086 里程碑七步全部 done，4 major+7 minor 闭环，收口时刻全链 227 测试+根级门禁全绿（artifacts/tf0086-milestone-closeout/report.json）；用户裁定暂不提交，提交时按 artifacts/tf0093-commit-readiness/split-plan.md 执行，收口与否由用户提交后裁定",
+      "2026-08-24 用户裁定收口为 done：链改动已全部提交（80b3fd794 specs、25df76ab5 runtime、57bc803b1 electron/renderer、4800bd758 docs、3b92660d2+f60b0aed0 task-forest）；独立审计三线均 pass-with-findings 且 4 major + 7 minor 经 TF-0086 七步整改全部闭环；收口时刻全链 227 测试与根级门禁全绿。遗留协调项：11 个他流依赖文件归各 workstream 自行提交（不影响本里程碑收口）"
     ],
     "execution_hints": [
       "先执行 TF-0079，修复 registry 可达性并建立 direct-handler versus production-dispatch gate",
@@ -5530,7 +5532,7 @@
     ],
     "id": "TF-0078",
     "kind": "milestone",
-    "next_action": "用户整理工作树后：按 artifacts/tf0093-commit-readiness/split-plan.md 协调 11 个跨流依赖并按节点序提交链改动（耦合文件按 hunk 拆分）→ 提交后重跑 diff-aware harness validate → 由用户裁定本里程碑是否收口为 done。整改侧条件已具备（见 artifacts/tf0086-milestone-closeout/report.json）。",
+    "next_action": "无（已按用户裁定收口；后续如有协调事项另立节点）",
     "non_goals": [
       "不把 goal-wake 或 durable helper 直接改为默认开启",
       "不宣称联合系统 GA、liveReady 或 productApproved",
@@ -5538,7 +5540,7 @@
       "不删除或重写 TF-0077、既有历史 evidence、其他 workstream 的 dirty WIP"
     ],
     "priority": 1,
-    "progress": 0.0,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "让每个对话及其派生资源都有可追踪的身份、状态、所有权和终态；允许跨会话创建、截停、继续和等待，同时避免长时间闲置资源泄漏与代码存在但生产不可达的假阳性。",
     "remaining_minutes_max": 6000,
@@ -5554,7 +5556,7 @@
     "source_sessions": [
       "session-20260821-session-ecosystem-audit"
     ],
-    "status": "in_progress",
+    "status": "done",
     "success_metrics": [
       "生产 registry 漏接的 lifecycle method=0",
       "session reset/delete/stop 与 spawn/send/steer/arm 的 generation race=0",
@@ -5565,7 +5567,7 @@
     ],
     "summary": "把会话、终端、普通后台进程、子智能体、Mission、Goal-wake 和 Cron 的生命周期收敛到可达、可编号、可回收、可恢复且可独立验收的生产链。",
     "title": "会话生态生命周期生产收敛与真实恢复",
-    "updated_at": "2026-08-23T16:50:54.207087Z"
+    "updated_at": "2026-08-23T17:17:03.579931Z"
   },
   "TF-0079": {
     "acceptance_criteria": [
