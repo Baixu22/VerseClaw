@@ -1,0 +1,13 @@
+[
+  "openclaw_runtime/src/runtime-core/lineage.ts",
+  "openclaw_runtime/src/runtime-core/index.ts",
+  "openclaw_runtime/src/agents/task-loop-controller.ts",
+  "openclaw_runtime/src/context-engine/block.ts",
+  "openclaw_runtime/src/context-engine/handlers/task-loop-handler.ts",
+  "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+  "openclaw_runtime/src/agents/harness/lifecycle-hook-helpers.ts",
+  "shared/types/git.ts",
+  "electron/services/git-api.ts",
+  "shared/chat/types.ts",
+  "openclaw_runtime/scripts/goal-wake-e2e-trace.ts"
+]
