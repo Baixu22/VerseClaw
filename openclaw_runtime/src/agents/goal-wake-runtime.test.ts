@@ -199,6 +199,63 @@ describe("goal-wake arm validation", () => {
     expect(second.reason).toBe("budget-exceeded");
     expect(resolveGoalWakeBudgets().maxFlows).toBe(1);
   });
+
+  it("frees flow budget as waits reach terminal so history never exhausts capacity", async () => {
+    enable();
+    process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_MAX_FLOWS = "2";
+    // Drive more waits than the budget through to terminal, one at a time.
+    // Before the active-row fix the third arm failed: two settled rows were
+    // still counted as held capacity, so the budget never recovered.
+    for (let index = 0; index < 4; index += 1) {
+      const missionId = `mission-budget-history-${index}`;
+      saveMissionRun(fixture({ missionId }));
+      const arm = await armGoalWaitProcess({
+        missionId,
+        sessionKey: "agent:runtime-main:main",
+        expectedRevision: 0,
+      });
+      expect(arm.ok, `arm #${index} must not be refused by historical rows`).toBe(true);
+      if (!arm.ok) return;
+      await finalizeGoalWaitTaskProcess({ taskId: arm.taskId, status: "succeeded" });
+      await ackGoalWaitYield({ flowId: arm.flowId });
+      await runGoalWakeLevelCheckForTask(arm.taskId, {
+        dispatch: async () => ({ ok: true, duplicate: false }),
+      });
+      expect(getGoalWakeFlowRow(arm.flowId)?.status).toBe("succeeded");
+    }
+
+    const dbPath = path.join(stateDir, "state", "openclaw.sqlite");
+    const db = new DatabaseSync(dbPath);
+    const total = db
+      .prepare("SELECT COUNT(*) AS count FROM flow_runs WHERE controller_id = 'goal-wake'")
+      .get() as { count: number | bigint };
+    db.close();
+    // History accumulated well past maxFlows without ever blocking an arm.
+    expect(Number(total.count)).toBe(4);
+  });
+
+  it("still refuses a new wait while the budget is genuinely held by active rows", async () => {
+    enable();
+    process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_MAX_FLOWS = "2";
+    for (let index = 0; index < 2; index += 1) {
+      saveMissionRun(fixture({ missionId: `mission-budget-active-${index}` }));
+      const arm = await armGoalWaitProcess({
+        missionId: `mission-budget-active-${index}`,
+        sessionKey: "agent:runtime-main:main",
+        expectedRevision: 0,
+      });
+      expect(arm.ok).toBe(true);
+    }
+    saveMissionRun(fixture({ missionId: "mission-budget-active-overflow" }));
+    const overflow = await armGoalWaitProcess({
+      missionId: "mission-budget-active-overflow",
+      sessionKey: "agent:runtime-main:main",
+      expectedRevision: 0,
+    });
+    expect(overflow.ok).toBe(false);
+    if (overflow.ok) return;
+    expect(overflow.reason).toBe("budget-exceeded");
+  });
 });
 
 describe("goal-wake barrier and task finalization", () => {

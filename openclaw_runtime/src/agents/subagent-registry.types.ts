@@ -140,6 +140,12 @@ export type SubagentRunRecord = {
   childSessionKey: string;
   controllerSessionKey?: string;
   requesterSessionKey: string;
+  /**
+   * TF-0082 generation pin: the requester session's sessionId snapshotted at
+   * spawn. A completion delivery arriving after the requester session was
+   * reset/forked to a new generation must never steer the new generation.
+   */
+  requesterSessionId?: string;
   requesterOrigin?: DeliveryContext;
   requesterDisplayKey: string;
   task: string;

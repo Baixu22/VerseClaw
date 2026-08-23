@@ -1,13 +1,8 @@
 // Runtime Lifecycle Governance — process-level session admission gate.
 //
-// Phase 0 foundation. This registry is intentionally default-off: production
-// entry points call `acquireSessionAdmissionPermit`, which is a no-op unless
-// RUNTIME_LIFECYCLE_ADMISSION_ENABLED is truthy. The registry itself has no
-// user-visible behavior in the default configuration.
-import { isTruthyEnvValue } from "../infra/env.js";
+// Phase 0 foundation. Production entry points always acquire a real permit;
+// lifecycle safety must not depend on an opt-in environment flag.
 import { parseAgentSessionKey } from "../routing/session-key.js";
-
-export const RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV = "RUNTIME_LIFECYCLE_ADMISSION_ENABLED";
 
 /** Side-effect entry-point kinds that must take an admission permit. */
 export type SessionAdmissionKind =
@@ -89,9 +84,11 @@ function assertIdentity(identity: SessionAdmissionIdentity): void {
   }
 }
 
-function defaultIdentity(identity: Omit<SessionAdmissionIdentity, "agentId"> & { agentId?: string }): SessionAdmissionIdentity {
-  const agentId = identity.agentId?.trim()
-    || parseAgentSessionKey(identity.canonicalSessionKey)?.agentId?.trim();
+function defaultIdentity(
+  identity: Omit<SessionAdmissionIdentity, "agentId"> & { agentId?: string },
+): SessionAdmissionIdentity {
+  const agentId =
+    identity.agentId?.trim() || parseAgentSessionKey(identity.canonicalSessionKey)?.agentId?.trim();
   if (!agentId) {
     throw new SessionAdmissionIdentityError(
       `unable to resolve agentId for admission identity ${identity.canonicalSessionKey}`,
@@ -104,8 +101,6 @@ function defaultIdentity(identity: Omit<SessionAdmissionIdentity, "agentId"> & {
   };
 }
 
-const noopRelease = (): void => {};
-
 /**
  * Process-level registry. JavaScript's single-threaded turn semantics make the
  * fenced check + active counter increment atomic with respect to `fence()`.
@@ -113,9 +108,12 @@ const noopRelease = (): void => {};
 export class SessionAdmissionRegistry {
   readonly #entries = new Map<string, AdmissionEntry>();
 
-  acquirePermit(identityInput: Omit<SessionAdmissionIdentity, "agentId"> & {
-    agentId?: string;
-  }, kind: SessionAdmissionKind): () => void {
+  acquirePermit(
+    identityInput: Omit<SessionAdmissionIdentity, "agentId"> & {
+      agentId?: string;
+    },
+    kind: SessionAdmissionKind,
+  ): () => void {
     const identity = defaultIdentity(identityInput);
     void kind;
     assertIdentity(identity);
@@ -140,9 +138,11 @@ export class SessionAdmissionRegistry {
    * critical sections to drain. Returns an exclusive token; `release()` (or
    * `removeFence`) reopens the identity.
    */
-  async fence(identityInput: Omit<SessionAdmissionIdentity, "agentId"> & {
-    agentId?: string;
-  }): Promise<FenceHandle> {
+  async fence(
+    identityInput: Omit<SessionAdmissionIdentity, "agentId"> & {
+      agentId?: string;
+    },
+  ): Promise<FenceHandle> {
     const identity = defaultIdentity(identityInput);
     assertIdentity(identity);
     const key = identityKey(identity);
@@ -214,18 +214,10 @@ export class SessionAdmissionRegistry {
 
 export const sessionAdmissionRegistry = new SessionAdmissionRegistry();
 
-export function sessionAdmissionEnabled(): boolean {
-  return isTruthyEnvValue(process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV]);
-}
-
-/**
- * Production entry-point hook. Default-off no-op; when enabled it acquires a
- * real permit and throws `SessionAdmissionFencedError` for a closed identity.
- */
+/** Required production entry-point hook. Never silently degrades to a no-op. */
 export function acquireSessionAdmissionPermit(
   identity: Omit<SessionAdmissionIdentity, "agentId"> & { agentId?: string },
   kind: SessionAdmissionKind,
 ): () => void {
-  if (!sessionAdmissionEnabled()) return noopRelease;
   return sessionAdmissionRegistry.acquirePermit(identity, kind);
 }

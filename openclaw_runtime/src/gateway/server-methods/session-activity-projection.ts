@@ -6,31 +6,43 @@
 //   - the bash process registry running/finished snapshots,
 //   - the process supervisor session snapshot,
 //   - the subagent registry lineage reads.
-import type { Selectable } from "kysely";
-
-import { GOAL_WAKE_CONTROLLER_ID } from "../../agents/goal-wake-read.js";
+//
+// TF-0082 owner path 5 adds the lineage join: each projected effect carries a
+// `lineage` correlation ref copied from the owner that already records it, so
+// mission / goal-wake flow / goal-owned process / subagent run all resolve to
+// the same session, run, and mission identifiers without a second identity
+// source and without deriving one identifier from another.
+// TF-0084 owner path 1 moved the owner reads into
+// `session-lifecycle-owner-views.ts` so this projection and the lifecycle ledger
+// describe the same owner records instead of each opening their own queries.
 import { parseGoalWakeWaitJson } from "../../agents/goal-wake-types.js";
 import {
   type FinishedSession,
   type ProcessSession,
-  listFinishedSessions,
-  listRunningSessions,
+  classifyBashProcessIdle,
 } from "../../agents/bash-process-registry.js";
-import { getLatestMissionForSession } from "../../agents/mission-control/store.js";
 import type { MissionRunRecord } from "../../agents/mission-control/types.js";
-import {
-  type SubagentRunRecord,
-  getLatestSubagentRunByChildSessionKey,
-  listSubagentRunsForRequester,
-} from "../../agents/subagent-registry.js";
-import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
-import { openOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
-import type { DB as OpenClawStateKyselyDatabase } from "../../state/openclaw-state-db.generated.js";
-import {
-  type ProcessSupervisor,
-  type SupervisorSessionRunSnapshot,
-  getProcessSupervisor,
+import type { SubagentRunRecord } from "../../agents/subagent-registry.js";
+import type {
+  ProcessSupervisor,
+  SupervisorSessionRunSnapshot,
 } from "../../process/supervisor/index.js";
+import {
+  GOAL_PROJECTION_LIMIT,
+  LINEAGE_PROJECTION_LIMIT,
+  PROCESS_PROJECTION_LIMIT,
+  type GoalWakeTaskJoin,
+  type SessionActivityLineageRef,
+  type SessionLifecycleFlowRow as SessionActivityFlowRow,
+  type SessionLifecycleTaskRunRow as SessionActivityTaskRunRow,
+  bashSessionMatches,
+  collectSessionLifecycleOwnerViews,
+  finiteNumber,
+  goalWakeJoinsByTaskId,
+  lineageRef,
+  nonEmptyString,
+  optionalFiniteNumber,
+} from "./session-lifecycle-owner-views.js";
 
 type SessionActivityGoalKind = "mission" | "flow";
 type SessionActivityGoalStatus =
@@ -45,6 +57,10 @@ type SessionActivityGoalStatus =
   | "aborted"
   | "lost";
 
+/**
+ * Correlation identity for one projected effect, re-exported from the shared
+ * owner-read layer so this projection and the lifecycle ledger cannot diverge.
+ */
 type SessionActivityGoalProjection = {
   id: string;
   kind: SessionActivityGoalKind;
@@ -53,6 +69,7 @@ type SessionActivityGoalProjection = {
   phase?: string;
   progress?: number;
   digest?: string;
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
@@ -76,11 +93,14 @@ type SessionActivityProcessProjection = {
   status: SessionActivityProcessStatus;
   pid?: number;
   digest?: string;
+  /** TF-0081 idle classification for still-running bash sessions (observability only). */
+  idleClassification?: "running-process" | "idle";
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
 type SessionActivityLineageKind = "parent" | "child";
-type SessionActivityLineageStatus = "started" | "completed" | "aborted" | "error";
+type SessionActivityLineageStatus = "started" | "yielded" | "completed" | "aborted" | "error";
 
 type SessionActivityLineageProjection = {
   id: string;
@@ -88,6 +108,7 @@ type SessionActivityLineageProjection = {
   sessionKey: string;
   role?: string;
   status: SessionActivityLineageStatus;
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
@@ -97,33 +118,9 @@ type SessionActivityReadProjection = {
   lineage: SessionActivityLineageProjection[];
 };
 
-type SessionActivityReadDatabase = Pick<
-  OpenClawStateKyselyDatabase,
-  "flow_runs" | "task_runs"
->;
-
-type SessionActivityFlowRow = Selectable<OpenClawStateKyselyDatabase["flow_runs"]>;
-type SessionActivityTaskRunRow = Selectable<OpenClawStateKyselyDatabase["task_runs"]>;
-
-const GOAL_PROJECTION_LIMIT = 4;
-const PROCESS_PROJECTION_LIMIT = 8;
-const LINEAGE_PROJECTION_LIMIT = 8;
-
-function finiteNumber(value: unknown, fallback = 0): number {
-  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
-}
-
-function optionalFiniteNumber(value: unknown): number | undefined {
-  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined;
-}
-
 function clampProgress(value: unknown): number | undefined {
   const progress = finiteNumber(value, Number.NaN);
   return Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : undefined;
-}
-
-function nonEmptyString(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function sortNewest<T extends { updatedAt: number }>(items: readonly T[]): T[] {
@@ -210,6 +207,12 @@ function subagentLineageStatus(run: SubagentRunRecord): SessionActivityLineageSt
   if (!run.endedAt) {
     return "started";
   }
+  // A yielded run sets endedAt but clears outcome and endedReason, so it must be
+  // matched before the terminal branches — otherwise a normal parent yield reads
+  // as an error and escalates the session to attention level.
+  if (run.pauseReason === "sessions_yield") {
+    return "yielded";
+  }
   if (run.outcome?.status === "ok") {
     return "completed";
   }
@@ -224,10 +227,20 @@ function missionToGoal(mission: MissionRunRecord): SessionActivityGoalProjection
     status: missionGoalStatus(mission.status),
     phase: nonEmptyString(mission.phase),
     progress: clampProgress(mission.progress),
+    lineage: lineageRef({
+      missionId: mission.missionId,
+      sessionId: mission.lineage?.sessionId,
+      runId: mission.lineage?.loopRunId ?? mission.taskLoopRunId,
+    }),
     updatedAt: finiteNumber(mission.updatedAt, finiteNumber(mission.createdAt)),
   };
 }
 
+/**
+ * Goal-wake join key lives in the shared owner-read layer so both read models
+ * resolve a goal-owned process to the same mission; see `goalWakeJoinsByTaskId`
+ * in `session-lifecycle-owner-views.ts`.
+ */
 function flowToGoal(row: SessionActivityFlowRow): SessionActivityGoalProjection {
   const wait = parseGoalWakeWaitJson(row.wait_json);
   return {
@@ -236,17 +249,31 @@ function flowToGoal(row: SessionActivityFlowRow): SessionActivityGoalProjection 
     label: `Goal wait ${row.flow_id}`,
     status: ledgerStatus(row.status).goal,
     digest: nonEmptyString(wait?.commandDigest),
+    lineage: lineageRef({
+      missionId: wait?.missionId,
+      runId: wait?.runId,
+      ownerEpoch: wait?.ownerEpoch,
+    }),
     updatedAt: finiteNumber(row.updated_at, finiteNumber(row.created_at)),
   };
 }
 
-function taskRunToProcess(row: SessionActivityTaskRunRow): SessionActivityProcessProjection {
+function taskRunToProcess(
+  row: SessionActivityTaskRunRow,
+  join?: GoalWakeTaskJoin,
+): SessionActivityProcessProjection {
   return {
     id: row.task_id,
     kind: "goalOwned",
     label: nonEmptyString(row.label) ?? `Goal process ${row.task_id}`,
     status: ledgerStatus(row.status).process,
     digest: nonEmptyString(sha256Prefix(row.task ?? "")),
+    lineage: lineageRef({
+      runId: nonEmptyString(row.run_id) ?? join?.runId,
+      parentSessionKey: row.requester_session_key,
+      missionId: join?.missionId,
+      ownerEpoch: join?.ownerEpoch,
+    }),
     updatedAt: finiteNumber(
       row.last_event_at,
       finiteNumber(row.ended_at, finiteNumber(row.created_at)),
@@ -255,12 +282,25 @@ function taskRunToProcess(row: SessionActivityTaskRunRow): SessionActivityProces
 }
 
 function bashToProcess(session: ProcessSession | FinishedSession): SessionActivityProcessProjection {
+  const running = "endedAt" in session ? null : session;
+  // exited:false can only yield running-process/idle; the explicit match keeps
+  // the projection field narrower than the classifier's full union.
+  const idle =
+    running && !running.exited
+      ? classifyBashProcessIdle({
+          exited: false,
+          lastActivityAtMs: running.lastOutputAt ?? running.startedAt,
+          nowMs: Date.now(),
+        })
+      : undefined;
   return {
     id: session.id,
     kind: "bash",
     label: `Process ${session.id}`,
     status: bashProcessStatus(session),
     pid: optionalFiniteNumber("pid" in session ? session.pid : undefined),
+    ...(idle === "running-process" || idle === "idle" ? { idleClassification: idle } : {}),
+    lineage: lineageRef({ sessionId: session.lifecycleExpectedSessionId }),
     updatedAt: "endedAt" in session ? finiteNumber(session.endedAt) : finiteNumber(session.startedAt),
   };
 }
@@ -272,6 +312,10 @@ function supervisorRunToProcess(run: SupervisorSessionRunSnapshot): SessionActiv
     label: `Supervised process ${run.runId}`,
     status: run.state,
     pid: optionalFiniteNumber(run.pid),
+    lineage: lineageRef({
+      runId: run.runId,
+      sessionId: run.lifecycleExpectedSessionId,
+    }),
     updatedAt: finiteNumber(run.updatedAtMs, finiteNumber(run.startedAtMs)),
   };
 }
@@ -286,22 +330,26 @@ function lineageFromRun(
     sessionKey: kind === "child" ? run.childSessionKey : run.requesterSessionKey,
     role: nonEmptyString(run.orchestration?.roleName) ?? nonEmptyString(run.label),
     status: subagentLineageStatus(run),
+    // `sessionId` is the TF-0082 spawn-time generation pin, so a reader can see
+    // which parent generation a completion is allowed to steer.
+    lineage: lineageRef({
+      runId: run.runId,
+      parentSessionKey: run.requesterSessionKey,
+      sessionId: run.requesterSessionId,
+    }),
     updatedAt: finiteNumber(run.endedAt, finiteNumber(run.startedAt, finiteNumber(run.createdAt))),
   };
-}
-
-function bashSessionMatches(session: ProcessSession | FinishedSession, sessionKey: string): boolean {
-  return (
-    ("sessionKey" in session && session.sessionKey === sessionKey) ||
-    session.lifecycleCanonicalSessionKey === sessionKey
-  );
 }
 
 /**
  * Builds the goal/process/lineage projection from already-read views.
  * All inputs are optional; empty and terminal-state inputs return empty arrays.
+ *
+ * Exported so the TF-0084 consistency check can build this projection and the
+ * lifecycle ledger from one identical owner snapshot, instead of reading the
+ * owners twice and assuming both reads saw the same thing.
  */
-function buildSessionActivityReadProjection(input: {
+export function buildSessionActivityReadProjection(input: {
   sessionKey: string;
   mission?: MissionRunRecord;
   flows?: readonly SessionActivityFlowRow[];
@@ -317,10 +365,12 @@ function buildSessionActivityReadProjection(input: {
   }
 
   const mission = input.mission?.sessionKey === key ? missionToGoal(input.mission) : undefined;
-  const flows = (input.flows ?? []).filter((row) => row.owner_key === key).map(flowToGoal);
+  const ownedFlows = (input.flows ?? []).filter((row) => row.owner_key === key);
+  const flows = ownedFlows.map(flowToGoal);
+  const goalWakeJoins = goalWakeJoinsByTaskId(ownedFlows);
   const goalTasks = (input.tasks ?? [])
     .filter((row) => row.runtime === "process" && row.owner_key === key)
-    .map(taskRunToProcess);
+    .map((row) => taskRunToProcess(row, goalWakeJoins.get(row.task_id)));
   const bashProcesses = (input.bashProcesses ?? [])
     .filter((session) => bashSessionMatches(session, key))
     .map(bashToProcess);
@@ -347,118 +397,21 @@ function buildSessionActivityReadProjection(input: {
 }
 
 /**
- * Read-only goal-wake ledger rows for one session. Failures degrade to empty
- * arrays; this function never writes and never throws.
- */
-function readGoalWakeRowsForSession(
-  sessionKey: string,
-): { flows: SessionActivityFlowRow[]; tasks: SessionActivityTaskRunRow[] } {
-  const key = nonEmptyString(sessionKey);
-  if (!key) {
-    return { flows: [], tasks: [] };
-  }
-  try {
-    const { db } = openOpenClawStateDatabase();
-    const query = getNodeSqliteKysely<SessionActivityReadDatabase>(db);
-    const flows = executeSqliteQuerySync(
-      db,
-      query
-        .selectFrom("flow_runs")
-        .selectAll()
-        .where("controller_id", "=", GOAL_WAKE_CONTROLLER_ID)
-        .where("owner_key", "=", key)
-        .orderBy("updated_at", "desc")
-        .orderBy("flow_id", "desc")
-        .limit(GOAL_PROJECTION_LIMIT),
-    ).rows;
-    const tasks = executeSqliteQuerySync(
-      db,
-      query
-        .selectFrom("task_runs")
-        .selectAll()
-        .where("runtime", "=", "process")
-        .where("owner_key", "=", key)
-        .orderBy("last_event_at", "desc")
-        .orderBy("task_id", "desc")
-        .limit(PROCESS_PROJECTION_LIMIT),
-    ).rows;
-    return { flows, tasks };
-  } catch {
-    return { flows: [], tasks: [] };
-  }
-}
-
-function readBashProcessesForSession(sessionKey: string): Array<ProcessSession | FinishedSession> {
-  const key = nonEmptyString(sessionKey);
-  if (!key) {
-    return [];
-  }
-  try {
-    return [
-      ...listRunningSessions().filter((session) => bashSessionMatches(session, key)),
-      ...listFinishedSessions().filter((session) => bashSessionMatches(session, key)),
-    ];
-  } catch {
-    return [];
-  }
-}
-
-function readLineageForSession(sessionKey: string): {
-  lineageRuns: SubagentRunRecord[];
-  parentRun?: SubagentRunRecord;
-} {
-  const key = nonEmptyString(sessionKey);
-  if (!key) {
-    return { lineageRuns: [] };
-  }
-  try {
-    return {
-      lineageRuns: listSubagentRunsForRequester(key),
-      parentRun: getLatestSubagentRunByChildSessionKey(key) ?? undefined,
-    };
-  } catch {
-    return { lineageRuns: [] };
-  }
-}
-
-/**
  * Collects the read-only projection for a session. The optional `mission` is
  * the same mission row already read by the activity handler; passing it avoids
  * a second mission query and keeps the handler on existing read models.
+ *
+ * The owner reads themselves live in `session-lifecycle-owner-views.ts`, shared
+ * with the TF-0084 lifecycle ledger so both describe the same owner records.
  */
 export function collectSessionActivityReadProjection(
   sessionKey: string,
   mission?: MissionRunRecord,
   options?: { supervisor?: Pick<ProcessSupervisor, "snapshotRunsForSession"> },
 ): SessionActivityReadProjection {
-  const key = nonEmptyString(sessionKey);
-  const { flows, tasks } = readGoalWakeRowsForSession(key ?? "");
-  const supervisor = options?.supervisor ?? getProcessSupervisor();
-  let supervisorRuns: SupervisorSessionRunSnapshot[] = [];
-  if (key) {
-    try {
-      supervisorRuns = supervisor.snapshotRunsForSession(key);
-    } catch {
-      supervisorRuns = [];
-    }
-  }
-  const lineage = readLineageForSession(key ?? "");
-  let resolvedMission = mission;
-  if (!resolvedMission && key) {
-    try {
-      resolvedMission = getLatestMissionForSession(key);
-    } catch {
-      resolvedMission = undefined;
-    }
-  }
-  return buildSessionActivityReadProjection({
-    sessionKey: key ?? "",
-    mission: resolvedMission,
-    flows,
-    tasks,
-    bashProcesses: readBashProcessesForSession(key ?? ""),
-    supervisorRuns,
-    lineageRuns: lineage.lineageRuns,
-    parentRun: lineage.parentRun,
+  const views = collectSessionLifecycleOwnerViews(sessionKey, {
+    mission,
+    supervisor: options?.supervisor,
   });
+  return buildSessionActivityReadProjection(views);
 }

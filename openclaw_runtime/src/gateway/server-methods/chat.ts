@@ -2721,7 +2721,21 @@ async function handleChatHistoryRequest({
 export async function drainQueuedUserMessagesForSession(
   context: GatewayRequestContext,
   sessionKey: string,
+  options?: { expectedSessionId?: string },
 ): Promise<{ drained: boolean; messageCount: number; queueCount: number; reason?: string }> {
+  // TF-0082 generation guard: refuse to dequeue for a pinned generation that
+  // no longer owns this session; queued messages must survive untouched.
+  if (options?.expectedSessionId) {
+    const { entry: currentEntry } = loadSessionEntry(sessionKey);
+    if (currentEntry && currentEntry.sessionId !== options.expectedSessionId) {
+      return {
+        drained: false,
+        messageCount: 0,
+        queueCount: peekUserMessageCount(sessionKey),
+        reason: "generation-mismatch",
+      };
+    }
+  }
   const messages = drainUserMessages(sessionKey);
   if (messages.length === 0) {
     return {

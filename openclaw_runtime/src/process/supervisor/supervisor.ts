@@ -7,6 +7,12 @@ import { signalProcessTree } from "../kill-tree.js";
 import { createChildAdapter } from "./adapters/child.js";
 import { createPtyAdapter } from "./adapters/pty.js";
 import { createRunRegistry } from "./registry.js";
+import { reconcileManifestOrphans } from "./reconcile.js";
+import type {
+  ReconcileDependencies,
+  SupervisorReconcileResult,
+} from "./reconcile.js";
+import type { SupervisorRunManifestStore } from "./run-manifest.js";
 import type {
   DrainLifecycleResult,
   LifecycleRunSnapshot,
@@ -122,9 +128,17 @@ function resolveElapsedTimeoutReason(params: {
   return elapsedDeadlines[0].reason;
 }
 
-export function createProcessSupervisor(): ProcessSupervisor {
+export type CreateProcessSupervisorOptions = {
+  /** Persisted active-run manifest enabling restart reconciliation. */
+  manifest?: SupervisorRunManifestStore;
+};
+
+export function createProcessSupervisor(
+  options: CreateProcessSupervisorOptions = {},
+): ProcessSupervisor {
   const registry = createRunRegistry();
   const active = new Map<string, ActiveRun>();
+  let manifest = options.manifest ?? null;
 
   const cancel = (runId: string, reason: TerminationReason = "manual-cancel") => {
     const current = active.get(runId);
@@ -353,6 +367,7 @@ export function createProcessSupervisor(): ProcessSupervisor {
           exitCode: exit.exitCode,
           exitSignal: exit.exitSignal,
         });
+        manifest?.remove(runId);
         return exit;
       })().catch((err: unknown) => {
         if (!settled) {
@@ -365,6 +380,7 @@ export function createProcessSupervisor(): ProcessSupervisor {
             exitCode: null,
             exitSignal: null,
           });
+          manifest?.remove(runId);
         }
         throw err;
       });
@@ -385,6 +401,19 @@ export function createProcessSupervisor(): ProcessSupervisor {
         scopeKey,
         lifecycle,
       });
+      // Only runs with a usable PID can be reconciled after a restart; runs
+      // without one stay in-memory-only (nothing to identify at the OS level).
+      if (manifest && typeof adapter.pid === "number" && adapter.pid > 0) {
+        manifest.add({
+          runId,
+          pid: adapter.pid,
+          ownerPid: manifest.ownerPid,
+          sessionId: input.sessionId,
+          scopeKey,
+          lifecycle: lifecycle ?? undefined,
+          startedAtMs,
+        });
+      }
       return managedRun;
     } catch (err) {
       registry.finalize(runId, {
@@ -392,6 +421,7 @@ export function createProcessSupervisor(): ProcessSupervisor {
         exitCode: null,
         exitSignal: null,
       });
+      manifest?.remove(runId);
       const { warnProcessSupervisorSpawnFailure } = await loadSupervisorLogRuntime();
       warnProcessSupervisorSpawnFailure(`spawn failed: runId=${runId} reason=${String(err)}`);
       throw err;
@@ -441,6 +471,9 @@ export function createProcessSupervisor(): ProcessSupervisor {
         pid: entry.run.pid,
         state: record?.state ?? "running",
         lifecycleCanonicalSessionKey: key,
+        ...(entry.lifecycle?.expectedSessionId
+          ? { lifecycleExpectedSessionId: entry.lifecycle.expectedSessionId }
+          : {}),
         startedAtMs: record?.startedAtMs ?? entry.run.startedAtMs,
         updatedAtMs: record?.updatedAtMs ?? entry.run.startedAtMs,
       });
@@ -521,9 +554,22 @@ export function createProcessSupervisor(): ProcessSupervisor {
     snapshotRunsForSession,
     countActiveRunsForLifecycle,
     drainRunsForLifecycle,
-    reconcileOrphans: async () => {
-      // Deliberate no-op: this supervisor uses in-memory ownership only.
-      // Active runs are not recovered after process restart in the current model.
+    attachRunManifest: (store: SupervisorRunManifestStore) => {
+      manifest = store;
+    },
+    reconcileOrphans: async (dependencies?: ReconcileDependencies) => {
+      if (!manifest) {
+        return {
+          status: "disabled",
+          ours: 0,
+          foreignOwner: 0,
+          lost: 0,
+          reconciled: 0,
+          containmentUnknown: 0,
+          residual: 0,
+        } satisfies SupervisorReconcileResult;
+      }
+      return await reconcileManifestOrphans(manifest, dependencies);
     },
     getRecord: (runId: string) => registry.get(runId),
   };

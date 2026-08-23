@@ -1,6 +1,7 @@
 // Shared sessions_spawn test harness for gateway, registry, and lifecycle mocks.
 import { vi, type Mock } from "vitest";
 import type { SubagentLifecycleHookRunner } from "../plugins/hooks.js";
+import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import { resolveRequesterStoreKey } from "./subagent-requester-store-key.js";
 
 type SessionsSpawnTestConfig = ReturnType<
@@ -86,6 +87,10 @@ const hoisted = vi.hoisted(() => {
         method: "sessions.delete",
         params: {
           key: params.childSessionKey,
+          operationId: buildSessionDeleteOperationId(
+            "test-harness-cleanup",
+            params.childSessionKey,
+          ),
           deleteTranscript: true,
           emitLifecycleHooks: params.spawnMode === "session",
         },

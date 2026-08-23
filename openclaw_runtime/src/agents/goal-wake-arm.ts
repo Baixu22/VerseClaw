@@ -11,7 +11,7 @@ import {
   type OpenClawStateDatabaseOptions,
 } from "../state/openclaw-state-db.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
-import { TaskFlowCasStore } from "../tasks/task-flow-cas.js";
+import { ACTIVE_FLOW_STATUSES, TaskFlowCasStore } from "../tasks/task-flow-cas.js";
 import { resolveGoalWakeBudgets } from "./goal-wake-config.js";
 import {
   GOAL_WAKE_CONTROLLER_ID,
@@ -157,12 +157,16 @@ function goalWaitArmTransaction(
       }
     }
     if (budgets.maxFlows > 0) {
+      // Budget is capacity, not history: terminal rows are settled truth and
+      // must never hold a slot, or a long-lived agent permanently loses the
+      // ability to arm a wait once maxFlows waits have ever completed.
       const flowCountResult = executeSqliteQuerySync(
         db,
         query
           .selectFrom("flow_runs")
           .select(({ fn }) => fn.countAll<number>().as("count"))
-          .where("controller_id", "=", GOAL_WAKE_CONTROLLER_ID),
+          .where("controller_id", "=", GOAL_WAKE_CONTROLLER_ID)
+          .where("status", "in", ACTIVE_FLOW_STATUSES),
       );
       const flowCount = Number(flowCountResult.rows[0]?.count ?? 0);
       if (flowCount >= budgets.maxFlows) {
@@ -174,8 +178,9 @@ function goalWaitArmTransaction(
     }
 
     const now = Date.now();
+    const triggerKind = input.trigger?.kind ?? "process";
     const commandDigest = input.commandDigest?.trim() || "unset";
-    const label = input.label?.trim() || `goal-owned process ${commandDigest.slice(0, 16)}`;
+    const label = input.label?.trim() || `goal-owned ${triggerKind} ${commandDigest.slice(0, 16)}`;
     const flowWaitJson: GoalWakeWaitJson = {
       v: 1,
       turnBarrier: "pending",
@@ -183,7 +188,18 @@ function goalWaitArmTransaction(
       missionId: input.missionId,
       sessionKey: input.sessionKey,
       ...(input.activeTickId?.trim() ? { tickId: input.activeTickId.trim() } : {}),
-      dependency: { kind: "process", taskId },
+      dependency: {
+        kind: triggerKind,
+        taskId,
+        ...(input.trigger?.childSessionKey
+          ? { childSessionKey: input.trigger.childSessionKey }
+          : {}),
+        ...(typeof input.trigger?.fireAt === "number" ? { fireAt: input.trigger.fireAt } : {}),
+        ...(input.trigger?.cronJobId ? { cronJobId: input.trigger.cronJobId } : {}),
+        ...(input.trigger?.approvalId ? { approvalId: input.trigger.approvalId } : {}),
+        ...(input.trigger?.eventId ? { eventId: input.trigger.eventId } : {}),
+        ...(input.trigger?.eventKind ? { eventKind: input.trigger.eventKind } : {}),
+      },
       ...(typeof input.timeoutMs === "number" ? { timeoutMs: input.timeoutMs } : {}),
       commandDigest,
       ...(input.durableRun
@@ -199,19 +215,22 @@ function goalWaitArmTransaction(
       db,
       query.insertInto("task_runs").values({
         task_id: taskId,
+        // Every trigger kind stays on the `process` runtime so the existing
+        // goal-wake queries (drain gating, active-row counts, helper reaping)
+        // keep working unchanged; the real kind rides on task_kind.
         runtime: "process",
-        task_kind: "goal-owned-process",
+        task_kind: `goal-owned-${triggerKind}`,
         source_id: `goal-wake:${input.missionId}`,
         requester_session_key: input.sessionKey,
         owner_key: input.sessionKey,
         scope_kind: "session",
-        child_session_key: null,
+        child_session_key: input.trigger?.childSessionKey ?? null,
         parent_flow_id: null,
         parent_task_id: null,
         agent_id: input.agentId ?? mission.agent_id ?? null,
         run_id: input.durableRun?.runId ?? null,
         label,
-        task: `goal-owned process (sha256:${commandDigest.slice(0, 24)})`,
+        task: `goal-owned ${triggerKind} (sha256:${commandDigest.slice(0, 24)})`,
         status: "queued",
         delivery_status: "not_applicable",
         notify_policy: "silent",

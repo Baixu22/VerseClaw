@@ -385,7 +385,7 @@ export const SessionsDeleteParamsSchema = Type.Object(
     deleteTranscript: Type.Optional(Type.Boolean()),
     // Caller-generated durable operation id for the delete operation journal.
     // The Electron mirror gate is released only after the matching committed receipt.
-    operationId: Type.Optional(NonEmptyString),
+    operationId: NonEmptyString,
     // Internal control: when false, still unbind thread bindings but skip hook emission.
     emitLifecycleHooks: Type.Optional(Type.Boolean()),
   },
@@ -733,6 +733,8 @@ export const SessionsQueueDrainParamsSchema = Type.Object(
   {
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
+    /** TF-0082 generation guard: refuse draining a post-reset/forked generation. */
+    expectedSessionId: Type.Optional(NonEmptyString),
   },
   { additionalProperties: false },
 );
@@ -797,6 +799,149 @@ export const SessionsQueueDrainResultSchema = Type.Object(
     queueCount: Type.Integer({ minimum: 0 }),
     messageCount: Type.Optional(Type.Integer({ minimum: 0 })),
     reason: Type.Optional(Type.String()),
+  },
+  { additionalProperties: false },
+);
+
+/**
+ * TF-0082 owner path 6: read-only yield / goal-wait surface.
+ *
+ * `sessions_yield` and `goal_wait` stay tool-only for arming (both bind mission,
+ * tick, and turn identity from the live run context). This RPC exposes the
+ * resulting state so a caller can observe a paused parent or an armed goal wait
+ * without polling a subagent roster, and without any new mutation path.
+ */
+export const SessionsYieldStateParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    /** TF-0082 generation guard: refuse reporting a post-reset/forked generation. */
+    expectedSessionId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+/**
+ * TF-0084 owner path 1: read-only lifecycle ledger.
+ *
+ * Joins the transitions the lifecycle owners already record (session store,
+ * mission runs, goal-wake flows, goal-owned tasks, bash registry, process
+ * supervisor, subagent registry) into one ordered list. Each entry names its
+ * owner and either carries the generation that owner pinned or declares why the
+ * owner records none, so a caller can tell a covered lifecycle from a gap. There
+ * is no mutation path and no second session identity source.
+ */
+export const SessionsLifecycleLedgerParamsSchema = Type.Object(
+  {
+    key: NonEmptyString,
+    agentId: Type.Optional(NonEmptyString),
+    /** Generation guard: a mismatch refuses before any owner read. */
+    expectedSessionId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+const SessionsLifecycleLedgerLineageSchema = Type.Object(
+  {
+    sessionId: Type.Optional(NonEmptyString),
+    runId: Type.Optional(NonEmptyString),
+    parentSessionKey: Type.Optional(NonEmptyString),
+    ownerEpoch: Type.Optional(NonEmptyString),
+    missionId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsLifecycleLedgerResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    sessionId: Type.Union([NonEmptyString, Type.Null()]),
+    /** Set when the request was refused; entries and census stay empty. */
+    reason: Type.Optional(Type.String()),
+    entries: Type.Array(
+      Type.Object(
+        {
+          id: NonEmptyString,
+          owner: NonEmptyString,
+          subject: NonEmptyString,
+          /** The owner's own status token, never a re-worded UI status. */
+          transition: NonEmptyString,
+          outcome: Type.Optional(NonEmptyString),
+          at: Type.Integer({ minimum: 0 }),
+          /** Present only when `generationSource` is `owner-pinned`. */
+          generation: Type.Optional(NonEmptyString),
+          generationSource: NonEmptyString,
+          lineage: Type.Optional(SessionsLifecycleLedgerLineageSchema),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    census: Type.Object(
+      {
+        total: Type.Integer({ minimum: 0 }),
+        byOwner: Type.Record(Type.String(), Type.Integer({ minimum: 0 })),
+        pinnedTransitions: Type.Integer({ minimum: 0 }),
+        explainedTransitions: Type.Integer({ minimum: 0 }),
+        /** TF-0084 success metric target is 0. */
+        unexplainedTransitions: Type.Integer({ minimum: 0 }),
+        unjoinedEntries: Type.Integer({ minimum: 0 }),
+      },
+      { additionalProperties: false },
+    ),
+    /** Owners whose transitions this projection cannot read, declared not dropped. */
+    declaredGaps: Type.Array(
+      Type.Object(
+        {
+          owner: NonEmptyString,
+          subject: NonEmptyString,
+          reason: NonEmptyString,
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    capturedAt: Type.Integer({ minimum: 0 }),
+  },
+  { additionalProperties: false },
+);
+
+export const SessionsYieldStateResultSchema = Type.Object(
+  {
+    ok: Type.Literal(true),
+    key: NonEmptyString,
+    sessionId: Type.Union([NonEmptyString, Type.Null()]),
+    /** Set when the request was refused; the state fields stay empty. */
+    reason: Type.Optional(Type.String()),
+    yield: Type.Object(
+      {
+        /** This session's own run is paused by `sessions_yield`. */
+        paused: Type.Boolean(),
+        runId: Type.Optional(NonEmptyString),
+        parentSessionKey: Type.Optional(NonEmptyString),
+        /** Generation pin recorded at spawn; a completion may only steer this one. */
+        parentSessionId: Type.Optional(NonEmptyString),
+        wakeOnDescendantSettle: Type.Boolean(),
+        /** Child runs of this session that have not settled yet. */
+        pendingChildren: Type.Integer({ minimum: 0 }),
+        updatedAt: Type.Optional(Type.Integer({ minimum: 0 })),
+      },
+      { additionalProperties: false },
+    ),
+    goalWait: Type.Object(
+      {
+        armed: Type.Boolean(),
+        flowId: Type.Optional(NonEmptyString),
+        taskId: Type.Optional(NonEmptyString),
+        missionId: Type.Optional(NonEmptyString),
+        status: Type.Optional(NonEmptyString),
+        turnBarrier: Type.Optional(NonEmptyString),
+        runId: Type.Optional(NonEmptyString),
+        ownerEpoch: Type.Optional(NonEmptyString),
+        timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
+        updatedAt: Type.Optional(Type.Integer({ minimum: 0 })),
+      },
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );

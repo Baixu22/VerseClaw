@@ -66,6 +66,7 @@ import {
 } from "./goal-wake-helper-protocol.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { processGatewayAllowlist } from "./bash-tools.exec-host-gateway.js";
+import { resolveCommandExecProvenancePolicy } from "./exec-provenance-policy.js";
 import { executeNodeHostCommand } from "./bash-tools.exec-host-node.js";
 import { renderExecOutputText } from "./bash-tools.exec-output.js";
 import {
@@ -1665,11 +1666,22 @@ export function createExecTool(
       const hostAsk = maxAsk(modePolicy.ask, approvalPolicy?.ask ?? modePolicy.ask);
       const trustedAsk = defaults?.messageProvider && hostAsk === "off" ? undefined : requestedAsk;
       let ask = maxAsk(hostAsk, trustedAsk ?? hostAsk);
+      const explicitFullAccess =
+        defaults?.mode === "full" || defaults?.security === "full";
+      const provenancePolicy = resolveCommandExecProvenancePolicy({
+        provenance: defaults?.contentProvenance,
+        security,
+        ask,
+        explicitFullAccess,
+      });
+      security = provenancePolicy.security;
+      ask = provenancePolicy.ask;
       const bypassApprovals =
         elevatedRequested &&
         elevatedMode === "full" &&
         modePolicyAllowsFullBypass &&
-        hostPolicyAllowsFullBypass;
+        hostPolicyAllowsFullBypass &&
+        !provenancePolicy.constrained;
       if (bypassApprovals) {
         ask = "off";
       }
@@ -2045,6 +2057,7 @@ export function createExecTool(
           sessionKey: notifySessionKey,
           agentId,
           expectedSessionId: defaults?.sessionId,
+          sessionStore: defaults?.sessionStore,
           mainKey: defaults?.mainKey,
           sessionScope: defaults?.sessionScope,
           eventRouting: defaults?.eventRouting,

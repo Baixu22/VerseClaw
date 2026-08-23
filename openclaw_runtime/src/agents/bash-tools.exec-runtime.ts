@@ -4,7 +4,10 @@
  * approval messaging constants, environment safety, and exit outcome shaping.
  */
 import path from "node:path";
+import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { normalizeStringEntries } from "@openclaw/normalization-core/string-normalization";
+import { resolveStorePath } from "../config/sessions/paths.js";
+import { loadSessionStore } from "../config/sessions/store-load.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { emitDiagnosticEvent } from "../infra/diagnostic-events.js";
 import {
@@ -23,9 +26,11 @@ import { requestHeartbeat } from "../infra/heartbeat-wake.js";
 import { isDangerousHostInheritedEnvVarName } from "../infra/host-env-security.js";
 import { findPathKey, mergePathPrepend, removePathPrepend } from "../infra/path-prepend.js";
 import { enqueueSystemEvent } from "../infra/system-events.js";
+import { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 import { isSubagentSessionKey } from "../sessions/session-key-utils.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import type { ProcessSession } from "./bash-process-registry.js";
+import { isExecApprovalFollowupSessionRebound } from "./bash-tools.exec-approval-followup-state.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
 import type { AgentToolResult } from "./runtime/index.js";
@@ -378,6 +383,51 @@ export function applyShellPath(env: Record<string, string>, shellPath?: string |
   }
 }
 
+/**
+ * TF-0087 generation guard for background-exit notifications.
+ *
+ * A backgrounded exec is pinned at spawn time to the requester session
+ * generation (`lifecycleExpectedSessionId`). If the session key has since been
+ * reset/forked to a new generation, injecting the old generation's exit
+ * notification into the new generation's system-event queue (and waking it)
+ * leaks stale content across generations. This mirrors the exec-approval
+ * followup rebind check (#59349): resolve the key's current sessionId from
+ * the start-time session store template and drop on mismatch.
+ *
+ * Fail-open conventions (matching the chain-wide guard precedents in
+ * session-lifecycle-state.ts and subagent-announce-delivery.ts):
+ * - no real pin (absent, blank, or equal to the canonical-key fallback the
+ *   spawn site substitutes when no generation is known) passes through;
+ * - an unresolvable current generation passes through;
+ * - store resolution failures pass through so a real exit notification is
+ *   never silently swallowed by an unreadable store.
+ */
+function isStaleGenerationExitNotification(
+  session: ProcessSession,
+  sessionKey: string,
+): boolean {
+  const pinned = normalizeOptionalString(session.lifecycleExpectedSessionId);
+  const canonicalKey = normalizeOptionalString(session.lifecycleCanonicalSessionKey);
+  if (!pinned || pinned === canonicalKey) {
+    return false;
+  }
+  try {
+    const storePath = resolveStorePath(
+      normalizeOptionalString(session.lifecycleSessionStoreTemplate),
+      { agentId: resolveAgentIdFromSessionKey(sessionKey) },
+    );
+    const resolvedSessionId = normalizeOptionalString(
+      loadSessionStore(storePath, { clone: false })?.[sessionKey]?.sessionId,
+    );
+    return isExecApprovalFollowupSessionRebound({
+      expectedSessionId: pinned,
+      resolvedSessionId,
+    });
+  } catch {
+    return false;
+  }
+}
+
 function maybeNotifyOnExit(session: ProcessSession, status: "completed" | "failed") {
   if (!session.backgrounded || !session.notifyOnExit || session.exitNotified) {
     return;
@@ -397,6 +447,14 @@ function maybeNotifyOnExit(session: ProcessSession, status: "completed" | "faile
     return;
   }
   if (status === "completed" && !output && session.notifyOnExitEmptySuccess !== true) {
+    return;
+  }
+  if (isStaleGenerationExitNotification(session, sessionKey)) {
+    // exitNotified stays set above: the drop decision is final for this exit.
+    logWarn(
+      "exec exit notification dropped: session generation changed " +
+        `(sessionKey=${sessionKey}, pinnedGeneration=${session.lifecycleExpectedSessionId})`,
+    );
     return;
   }
   const summary = output
@@ -718,6 +776,10 @@ export async function runExecProcess(opts: {
   /** Lifecycle identity additions. scopeKey is NOT identity. */
   agentId?: string;
   expectedSessionId?: string;
+  /** `session.store` template from the runtime config; snapshotted onto the
+   *  ProcessSession alongside `mainKey` so the exit-time generation guard can
+   *  resolve the key's current sessionId without an ambient config load. */
+  sessionStore?: string;
   /** `session.mainKey` from the runtime config; snapshotted onto the
    *  ProcessSession so background-exit notifications can remap cron-run
    *  keys without an ambient config load. Long-running background exits use
@@ -764,6 +826,7 @@ export async function runExecProcess(opts: {
     lifecycleAgentId: opts.agentId,
     lifecycleCanonicalSessionKey,
     lifecycleExpectedSessionId,
+    lifecycleSessionStoreTemplate: opts.sessionStore,
     mainKey: opts.mainKey,
     sessionScope: opts.sessionScope,
     eventRouting: opts.eventRouting,
@@ -1627,3 +1690,10 @@ export async function runExecProcess(opts: {
     },
   };
 }
+
+/** Test-only seams for the exit-notification generation guard. */
+export const testing = {
+  maybeNotifyOnExit,
+  isStaleGenerationExitNotification,
+};
+export { testing as __testing };

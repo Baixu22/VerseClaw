@@ -6,8 +6,10 @@ export {
   cleanupSessionBeforeMutation,
   emitGatewayBeforeResetPluginHook,
   emitGatewaySessionEndPluginHook,
+  emitGatewaySessionEndPluginHookAndWait,
   emitGatewaySessionStartPluginHook,
   emitSessionUnboundLifecycleEvent,
   performGatewaySessionReset,
+  resolveSessionTranscriptCandidates,
   stopSessionRuntime,
 } from "../session-reset-service.js";

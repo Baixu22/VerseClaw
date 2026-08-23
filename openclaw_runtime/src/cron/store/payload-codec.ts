@@ -105,6 +105,23 @@ export function bindPayloadColumns(
       payload_tools_allow_json: null,
     };
   }
+  if (payload.kind === "missionContinuation") {
+    return {
+      payload_kind: "missionContinuation",
+      payload_message: serializeJson({
+        taskId: payload.taskId,
+        missionId: payload.missionId,
+      }),
+      payload_model: null,
+      payload_fallbacks_json: null,
+      payload_thinking: null,
+      payload_timeout_seconds: null,
+      payload_allow_unsafe_external_content: null,
+      payload_external_content_source_json: null,
+      payload_light_context: null,
+      payload_tools_allow_json: null,
+    };
+  }
   return {
     payload_kind: "agentTurn",
     payload_message: payload.message,
@@ -168,6 +185,21 @@ export function payloadFromRow(row: CronJobRow): CronPayload | null {
       ...command,
       ...(timeoutSeconds != null ? { timeoutSeconds } : {}),
     };
+  }
+  if (row.payload_kind === "missionContinuation") {
+    const parsed = row.payload_message
+      ? parseJsonValue<unknown>(row.payload_message, undefined)
+      : undefined;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return null;
+    }
+    const record = parsed as Record<string, unknown>;
+    const taskId = typeof record.taskId === "string" ? record.taskId.trim() : "";
+    const missionId = typeof record.missionId === "string" ? record.missionId.trim() : "";
+    if (!taskId || !missionId) {
+      return null;
+    }
+    return { kind: "missionContinuation", taskId, missionId };
   }
   return null;
 }

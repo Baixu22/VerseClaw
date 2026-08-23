@@ -16,7 +16,8 @@ import {
 } from "../state/openclaw-state-db.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import { resolveConfigDir } from "../utils.js";
-import { resolveDurableHelperPolicy } from "./goal-wake-config.js";
+import { goalWakeEnabled, resolveDurableHelperPolicy } from "./goal-wake-config.js";
+import { expireOverdueGoalWaits } from "./goal-wake-timeout.js";
 import {
   durableRunOutputBytes,
   listDurableHelperRunIds,
@@ -373,7 +374,12 @@ export function startDurableHelperRecoveryService(params: {
   dispatch?: NonNullable<Parameters<typeof runGoalWakeLevelCheckForTask>[1]>["dispatch"];
 } = {}): DurableHelperRecoveryService {
   const policy = resolveDurableHelperPolicy(params.cfg);
-  if (!policy.enabled) {
+  // Wait deadlines must be enforced whenever goal-wake is on, not only when the
+  // Phase 4 durable helper is. A same-gateway wait has no run dir for the
+  // durable sweep to find, so gating deadline enforcement on the helper policy
+  // would leave `timeoutMs` unenforced on exactly the default path.
+  const deadlineSweepEnabled = goalWakeEnabled(params.cfg);
+  if (!policy.enabled && !deadlineSweepEnabled) {
     return {
       started: false,
       stop: () => {},
@@ -389,6 +395,17 @@ export function startDurableHelperRecoveryService(params: {
   const debounce = new Map<string, NodeJS.Timeout>();
 
   const sweepOnce = async (): Promise<DurableRecoveryOutcome[]> => {
+    // Deadline enforcement rides the same sweep tick; it never gets its own
+    // timer. Failures here must not skip the durable reconciliation below.
+    if (deadlineSweepEnabled) {
+      await expireOverdueGoalWaits({
+        ...(params.cfg ? { cfg: params.cfg } : {}),
+        ...(params.now ? { now: params.now() } : {}),
+        ...(params.dispatch ? { dispatch: params.dispatch } : {}),
+        options,
+      }).catch(() => undefined);
+    }
+    if (!policy.enabled) return [];
     const outcomes = await runDurableHelperSweepOnce({
       options,
       cfg: params.cfg,

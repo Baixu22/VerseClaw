@@ -167,6 +167,15 @@ export async function ackPendingGoalWaitFlowsForSession(
 /** Finalize only the task_runs row for a process exit. */
 export async function finalizeGoalWaitTaskProcess(
   input: GoalWakeTaskExitInput,
+  opts: {
+    dispatch?: NonNullable<Parameters<typeof runGoalWakeLevelCheckForTask>[1]>["dispatch"];
+    cfg?: OpenClawConfig;
+    /**
+     * Settle the row without waking. The timeout path needs this so it can
+     * contain the OS process before the mission is told the wait is over.
+     */
+    skipWake?: boolean;
+  } = {},
 ): Promise<{ task: GoalWakeTaskRunRow | undefined; levelCheck: GoalWakeLevelCheckResult }> {
   const { db } = openOpenClawStateDatabase();
   const query = getNodeSqliteKysely<GoalWakeFacadeDatabase>(db);
@@ -214,8 +223,82 @@ export async function finalizeGoalWaitTaskProcess(
     });
   }
   const task = getGoalWakeTaskRunRow(input.taskId);
-  const levelCheck = await runGoalWakeLevelCheckForTask(input.taskId);
+  if (opts.skipWake) {
+    return {
+      task,
+      levelCheck: {
+        taskId: input.taskId,
+        taskStatus: task?.status ?? input.status,
+        terminal: true,
+        flows: [],
+      },
+    };
+  }
+  const levelCheck = await runGoalWakeLevelCheckForTask(input.taskId, {
+    ...(opts.dispatch ? { dispatch: opts.dispatch } : {}),
+    ...(opts.cfg ? { cfg: opts.cfg } : {}),
+  });
   return { task, levelCheck };
+}
+
+/**
+ * Fire a `child` goal-wait when the spawned session it waits on has finished.
+ *
+ * This is the seam the subagent completion path calls. It owns no announce or
+ * generation logic of its own: the caller is responsible for having decided the
+ * completion is legitimate for the current parent generation, and this only
+ * records the outcome so the normal level check produces the continuation.
+ *
+ * Completion delivery is at-least-once, so this must be idempotent. It is: the
+ * task finalizer refuses to overwrite a terminal row, and the settled flow
+ * keeps the level check from dispatching a second continuation.
+ */
+export async function fireGoalWaitChild(input: {
+  taskId: string;
+  status?: "succeeded" | "failed" | "cancelled" | "lost";
+  endedAt?: number;
+  error?: string;
+  terminalSummary?: string;
+}): Promise<{ task: GoalWakeTaskRunRow | undefined; levelCheck: GoalWakeLevelCheckResult }> {
+  const endedAt = input.endedAt ?? Date.now();
+  const status = input.status ?? "succeeded";
+  return await finalizeGoalWaitTaskProcess({
+    taskId: input.taskId,
+    status,
+    endedAt,
+    lastEventAt: endedAt,
+    ...(input.error ? { error: input.error } : {}),
+    terminalSummary: input.terminalSummary ?? "subagent completed",
+    ...(status === "succeeded" ? { terminalOutcome: "succeeded" as const } : {}),
+  });
+}
+
+/**
+ * Fire a `timer` goal-wait.
+ *
+ * This is the seam the Cron service calls when an `at` job comes due. It
+ * deliberately owns no scheduling of its own: the existing single Cron
+ * `setTimeout` decides *when*, and this only records that the deadline passed
+ * and lets the normal level check produce the continuation.
+ *
+ * Cron delivery is at-least-once, so this must be idempotent. It is: the task
+ * finalizer refuses to overwrite a terminal row, and the settled flow keeps the
+ * level check from dispatching a second continuation.
+ */
+export async function fireGoalWaitTimer(input: {
+  taskId: string;
+  firedAt?: number;
+  reason?: string;
+}): Promise<{ task: GoalWakeTaskRunRow | undefined; levelCheck: GoalWakeLevelCheckResult }> {
+  const firedAt = input.firedAt ?? Date.now();
+  return await finalizeGoalWaitTaskProcess({
+    taskId: input.taskId,
+    status: "succeeded",
+    endedAt: firedAt,
+    lastEventAt: firedAt,
+    terminalSummary: input.reason ?? "timer fired",
+    terminalOutcome: "succeeded",
+  });
 }
 
 /** Spawn outcome is unknown: enter lost and wake the owner. Never replay spawn. */
@@ -238,6 +321,8 @@ export const goalWakeRuntime = {
   ackGoalWaitYield,
   ackPendingGoalWaitFlowsForSession,
   finalizeGoalWaitTaskProcess,
+  fireGoalWaitChild,
+  fireGoalWaitTimer,
   markGoalWaitSpawnUnknown,
   runGoalWakeLevelCheckForTask,
   getGoalWaitTask,

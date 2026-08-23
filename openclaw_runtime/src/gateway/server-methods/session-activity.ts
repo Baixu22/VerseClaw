@@ -81,11 +81,15 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       summary: run.outcome?.error,
       status: !run.endedAt
         ? "started"
-        : run.outcome?.status === "ok"
-          ? "completed"
-          : run.endedReason
-            ? "aborted"
-            : "error",
+        // A yielded run keeps endedAt but clears outcome/endedReason, so it must
+        // be matched before the terminal branches or it reads as an error.
+        : run.pauseReason === "sessions_yield"
+          ? "yielded"
+          : run.outcome?.status === "ok"
+            ? "completed"
+            : run.endedReason
+              ? "aborted"
+              : "error",
       updatedAt: run.endedAt ?? run.startedAt ?? run.createdAt,
       source: "snapshot",
     }));

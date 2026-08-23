@@ -24,6 +24,7 @@ import { isNixMode, normalizeStateDirEnv, resolveStateDir } from "../config/path
 import { applyConfigOverrides } from "../config/runtime-overrides.js";
 import { resolveMainSessionKey } from "../config/sessions.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { resolveConfigDir } from "../utils.js";
 import {
   isDiagnosticsEnabled,
   setDiagnosticsEnabledForProcess,
@@ -1740,6 +1741,27 @@ export async function startGatewayServer(
           cfg: getRuntimeConfig(),
         });
         stopDurableHelperRecovery = recovery.stop;
+        // TF-0081: reconcile supervisor runs orphaned by a previous gateway
+        // boot (persisted manifest + fail-closed OS containment). Never
+        // expands kill scope and never touches runs with a live owner.
+        try {
+          const { attachSupervisorRunManifestAndReconcile } = await import(
+            "../process/supervisor/index.js"
+          );
+          const reconciliation = await attachSupervisorRunManifestAndReconcile(
+            path.join(resolveConfigDir(), "process-supervisor"),
+          );
+          log.info(
+            `gateway: supervisor restart reconciliation ${reconciliation.status}` +
+              ` reconciled=${reconciliation.reconciled} lost=${reconciliation.lost}` +
+              ` ours=${reconciliation.ours} foreignOwner=${reconciliation.foreignOwner}` +
+              ` containmentUnknown=${reconciliation.containmentUnknown}` +
+              ` residual=${reconciliation.residual}` +
+              (reconciliation.detail ? ` detail=${reconciliation.detail}` : ""),
+          );
+        } catch (err) {
+          log.warn(`gateway: supervisor restart reconciliation failed: ${String(err)}`);
+        }
         const gatewayRuntimeServices = await loadScheduledServicesModule();
         if (closePreludeStarted) {
           return;

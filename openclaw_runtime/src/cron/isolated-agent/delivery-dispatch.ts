@@ -40,6 +40,7 @@ import {
   resolveAgentIdFromSessionKey,
 } from "../../routing/session-key.js";
 import { createLazyImportLoader } from "../../shared/lazy-promise.js";
+import { buildSessionDeleteOperationId } from "../../sessions/session-delete-operation-id.js";
 import { shouldAttemptTtsPayload } from "../../tts/tts-config.js";
 import { createCronExecutionId } from "../run-id.js";
 import { hasScheduledNextRunAtMs } from "../service/jobs.js";
@@ -264,6 +265,7 @@ export async function cleanupDirectCronSession(params: {
       method: "sessions.delete",
       params: {
         key: params.agentSessionKey,
+        operationId: buildSessionDeleteOperationId("cron-cleanup", params.sessionId),
         deleteTranscript: true,
         emitLifecycleHooks: false,
       },

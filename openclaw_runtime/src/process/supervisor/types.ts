@@ -134,6 +134,8 @@ export type SupervisorSessionRunSnapshot = {
   pid?: number;
   state: RunState;
   lifecycleCanonicalSessionKey: string;
+  /** Session generation the run is bound to (TF-0082 lineage join). */
+  lifecycleExpectedSessionId?: string;
   startedAtMs: number;
   updatedAtMs: number;
 };
@@ -149,7 +151,12 @@ export interface ProcessSupervisor {
   spawn(input: SpawnInput): Promise<ManagedRun>;
   cancel(runId: string, reason?: TerminationReason): void;
   cancelScope(scopeKey: string, reason?: TerminationReason): void;
-  reconcileOrphans(): Promise<void>;
+  /** Attaches (or replaces) the persisted run manifest used for restart reconciliation. */
+  attachRunManifest(store: import("./run-manifest.js").SupervisorRunManifestStore): void;
+  /** Reconciles manifest entries orphaned by previous owner processes, fail-closed. */
+  reconcileOrphans(
+    dependencies?: import("./reconcile.js").ReconcileDependencies,
+  ): Promise<import("./reconcile.js").SupervisorReconcileResult>;
   getRecord(runId: string): RunRecord | undefined;
   snapshotRunsForLifecycle(identity: ProcessLifecycleIdentity): LifecycleRunSnapshot[];
   snapshotRunsForSession(canonicalSessionKey: string): SupervisorSessionRunSnapshot[];

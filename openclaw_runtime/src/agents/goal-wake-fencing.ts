@@ -240,12 +240,25 @@ export function finishMissionTick(
     }
     const nextRevision = currentRevision + 1;
     const now = Date.now();
+    // A cancel that lands mid-tick must survive the tick's own completion
+    // write. The finishing tick carries a status from its in-memory record
+    // (e.g. "sleeping") that predates the cancel, and the revision guard alone
+    // does not catch it — cancel writes status without consuming the tick
+    // revision. Terminal statuses are absorbing here for the same reason they
+    // are absorbing in the flow CAS.
+    const existingStatus = existing.status as MissionStatus;
+    const existingIsTerminal =
+      existingStatus === "cancelled" ||
+      existingStatus === "complete" ||
+      existingStatus === "blocked" ||
+      existingStatus === "error";
+    const nextStatus = existingIsTerminal ? existingStatus : (input.status ?? existingStatus);
     const updateResult = executeSqliteQuerySync(
       db,
       query
         .updateTable("mission_runs")
         .set({
-          status: input.status ?? (existing.status as MissionStatus),
+          status: nextStatus,
           active_tick_id: null,
           last_wake_id: input.lastWakeId === undefined ? existing.last_wake_id : input.lastWakeId,
           revision: nextRevision,

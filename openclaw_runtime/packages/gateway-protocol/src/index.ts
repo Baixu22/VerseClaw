@@ -356,6 +356,14 @@ import {
   SessionsQueueDrainParamsSchema,
   type SessionsQueueDrainResult,
   SessionsQueueDrainResultSchema,
+  type SessionsYieldStateParams,
+  SessionsYieldStateParamsSchema,
+  type SessionsYieldStateResult,
+  SessionsYieldStateResultSchema,
+  type SessionsLifecycleLedgerParams,
+  SessionsLifecycleLedgerParamsSchema,
+  type SessionsLifecycleLedgerResult,
+  SessionsLifecycleLedgerResultSchema,
   type SessionsRecallOriginalParams,
   SessionsRecallOriginalParamsSchema,
   type SessionsResumeCheckpointsParams,
@@ -729,6 +737,10 @@ export const validateSessionsRestoreCheckpointParams =
   lazyCompile<SessionsRestoreCheckpointParams>(SessionsRestoreCheckpointParamsSchema);
 export const validateSessionsQueueDrainParams =
   lazyCompile<SessionsQueueDrainParams>(SessionsQueueDrainParamsSchema);
+export const validateSessionsYieldStateParams =
+  lazyCompile<SessionsYieldStateParams>(SessionsYieldStateParamsSchema);
+export const validateSessionsLifecycleLedgerParams =
+  lazyCompile<SessionsLifecycleLedgerParams>(SessionsLifecycleLedgerParamsSchema);
 export const validateSessionsCompactionListParams = lazyCompile<SessionsCompactionListParams>(
   SessionsCompactionListParamsSchema,
 );
@@ -1101,6 +1113,10 @@ export {
   SessionsResumeCheckpointsResultSchema,
   SessionsQueueDrainParamsSchema,
   SessionsQueueDrainResultSchema,
+  SessionsYieldStateParamsSchema,
+  SessionsYieldStateResultSchema,
+  SessionsLifecycleLedgerParamsSchema,
+  SessionsLifecycleLedgerResultSchema,
   SessionsCompactionListParamsSchema,
   SessionsCompactionGetParamsSchema,
   SessionsCompactionBranchParamsSchema,
@@ -1435,6 +1451,10 @@ export type {
   SessionsResumeCheckpointsResult,
   SessionsQueueDrainParams,
   SessionsQueueDrainResult,
+  SessionsYieldStateParams,
+  SessionsYieldStateResult,
+  SessionsLifecycleLedgerParams,
+  SessionsLifecycleLedgerResult,
   SessionsStopParams,
   SessionsStopResult,
   SessionsPatchParams,

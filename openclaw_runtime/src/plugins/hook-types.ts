@@ -12,6 +12,7 @@ import type { TtsAutoMode } from "../config/types.tts.js";
 import type { DiagnosticTraceContext } from "../infra/diagnostic-trace-context.js";
 import type { ContextBlockSink } from "../context-engine/block.js";
 import type { RuntimeTaskStatus } from "../runtime-core/types.js";
+import type { RuntimeLineage } from "../runtime-core/lineage.js";
 import type {
   PluginHookBeforeAgentStartEvent,
   PluginHookBeforeAgentStartResult,
@@ -368,6 +369,8 @@ export type PluginHookTaskPhaseChangeEvent = {
   taskId: string;
   fromStatus: RuntimeTaskStatus;
   toStatus: RuntimeTaskStatus;
+  /** Correlation metadata from the owning Mission/Task Loop run. */
+  lineage?: RuntimeLineage;
 };
 
 export type PluginHookBeforeAgentFinalizeEvent = {
@@ -621,6 +624,8 @@ export type PluginHookSessionEndReason =
 export type PluginHookSessionEndEvent = {
   sessionId: string;
   sessionKey?: string;
+  /** Stable idempotency key when the close is owned by a durable operation. */
+  operationId?: string;
   messageCount: number;
   durationMs?: number;
   reason?: PluginHookSessionEndReason;
@@ -729,6 +734,8 @@ export type PluginHookSubagentSpawnedEvent = PluginHookSubagentSpawnBase & {
 export type PluginHookSubagentEndedEvent = {
   targetSessionKey: string;
   targetKind: PluginHookSubagentTargetKind;
+  /** Stable idempotency key when emitted by a durable delete operation. */
+  operationId?: string;
   reason: string;
   sendFarewell?: boolean;
   accountId?: string;

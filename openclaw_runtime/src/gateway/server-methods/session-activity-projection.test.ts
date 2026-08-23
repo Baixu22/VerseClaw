@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   addSession,
+  markBackgrounded,
   markExited,
   resetProcessRegistryForTests,
   type ProcessSession,
@@ -301,6 +302,53 @@ describe("session activity read projection", () => {
     expect(serialized).not.toContain("C:/SECRET/CWD");
   });
 
+  it("stays consistent with the owner registry: idle classification matches and recycled records never appear", () => {
+    const now = Date.now();
+    // Running with fresh output -> running-process.
+    addSession(runningProcessFixture("bash-fresh"));
+    // Running with stale output (beyond the default 10min window) -> idle.
+    const stale = runningProcessFixture("bash-stale");
+    stale.startedAt = now - 60 * 60 * 1000;
+    stale.lastOutputAt = now - 59 * 60 * 1000;
+    addSession(stale);
+    // Finished backgrounded record -> completed, no idle classification.
+    const finished = runningProcessFixture("bash-done");
+    addSession(finished);
+    markBackgrounded(finished);
+    markExited(finished, 0, null, "completed");
+    // Reclaimed (drain-swept) record must never be projected.
+    const reclaimed = runningProcessFixture("bash-reclaimed");
+    addSession(reclaimed);
+    processRegistry.deleteSession(reclaimed.id);
+    // Foreign identity must never leak into this session's projection.
+    const foreign = runningProcessFixture("bash-foreign");
+    foreign.sessionKey = "agent:other:main";
+    foreign.lifecycleCanonicalSessionKey = "agent:other:main";
+    addSession(foreign);
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY);
+
+    const bashEntries = projection.processes.filter((process) => process.kind === "bash");
+    expect(bashEntries.map((process) => process.id).sort()).toEqual([
+      "bash-done",
+      "bash-fresh",
+      "bash-stale",
+    ]);
+    expect(bashEntries.find((process) => process.id === "bash-fresh")).toMatchObject({
+      status: "running",
+      idleClassification: "running-process",
+    });
+    expect(bashEntries.find((process) => process.id === "bash-stale")).toMatchObject({
+      status: "running",
+      idleClassification: "idle",
+    });
+    const done = bashEntries.find((process) => process.id === "bash-done");
+    expect(done).toMatchObject({ status: "completed" });
+    expect(done?.idleClassification).toBeUndefined();
+    expect(JSON.stringify(projection)).not.toContain("bash-reclaimed");
+    expect(JSON.stringify(projection)).not.toContain("bash-foreign");
+  });
+
   it("maps terminal goal/process/lineage states and malformed wait json safely", () => {
     const mission = missionFixture({ status: "cancelled" });
     saveMissionRun(mission);
@@ -355,6 +403,191 @@ describe("session activity read projection", () => {
       processes: [],
       lineage: [],
     });
+  });
+
+  it("joins mission, goal-wake flow, and goal-owned process through one lineage ref", () => {
+    const mission = missionFixture({ taskLoopRunId: "loop-run-phase5" });
+    saveMissionRun(mission);
+    seedFlow({
+      flowId: "flow-join",
+      status: "waiting",
+      waitJson: JSON.stringify({
+        v: 1,
+        turnBarrier: "acked",
+        continuation: "mission_tick",
+        missionId: mission.missionId,
+        sessionKey: SESSION_KEY,
+        dependency: { kind: "process", taskId: "task-join" },
+        commandDigest: "sha256:abc1234567890abcdef1234567890abcdef",
+        runId: "durable-run-join",
+        ownerEpoch: "epoch-join",
+      }),
+    });
+    seedTask({
+      taskId: "task-join",
+      status: "running",
+      label: "goal-owned process abc1234567890abc",
+      task: "goal-owned process (sha256:abc1234567890abcdef1234567890abcdef)",
+    });
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY, mission);
+
+    const missionGoal = projection.goals.find((goal) => goal.kind === "mission");
+    const flowGoal = projection.goals.find((goal) => goal.kind === "flow");
+    const process = projection.processes.find((entry) => entry.id === "task-join");
+
+    expect(missionGoal?.lineage).toEqual({
+      missionId: "mission-phase5",
+      runId: "loop-run-phase5",
+    });
+    expect(flowGoal?.lineage).toEqual({
+      missionId: "mission-phase5",
+      runId: "durable-run-join",
+      ownerEpoch: "epoch-join",
+    });
+    // The goal-owned process resolves to the same mission through the flow's
+    // dependency task id — that join is the point of this slice.
+    expect(process?.lineage).toEqual({
+      missionId: "mission-phase5",
+      runId: "run-task-join",
+      ownerEpoch: "epoch-join",
+      parentSessionKey: SESSION_KEY,
+    });
+    expect(new Set([missionGoal, flowGoal, process].map((entry) => entry?.lineage?.missionId))).toEqual(
+      new Set(["mission-phase5"]),
+    );
+  });
+
+  it("carries the mission lineage session pin when the mission records one", () => {
+    const mission = missionFixture({
+      lineage: {
+        schema: "runtime-lineage.v1",
+        sessionId: "session-generation-7",
+        missionId: "mission-phase5",
+        loopRunId: "loop-run-from-lineage",
+      },
+      taskLoopRunId: "loop-run-fallback",
+    });
+    saveMissionRun(mission);
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY, mission);
+
+    expect(projection.goals.find((goal) => goal.kind === "mission")?.lineage).toEqual({
+      missionId: "mission-phase5",
+      sessionId: "session-generation-7",
+      runId: "loop-run-from-lineage",
+    });
+  });
+
+  it("surfaces the spawn-time parent generation pin on lineage rows", () => {
+    addSubagentRunForTests(lineageFixture({
+      runId: "child-pinned",
+      requesterSessionId: "session-generation-1",
+    }));
+    addSubagentRunForTests(lineageFixture({
+      runId: "child-legacy",
+      childSessionKey: "agent:phase5:child-legacy",
+      requesterSessionId: undefined,
+    }));
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY);
+
+    expect(projection.lineage.find((entry) => entry.id === "child-pinned")?.lineage).toEqual({
+      runId: "child-pinned",
+      parentSessionKey: SESSION_KEY,
+      sessionId: "session-generation-1",
+    });
+    // A legacy unpinned run keeps its run/parent join but claims no generation.
+    expect(projection.lineage.find((entry) => entry.id === "child-legacy")?.lineage).toEqual({
+      runId: "child-legacy",
+      parentSessionKey: SESSION_KEY,
+    });
+  });
+
+  it("gives every projected effect the identity its owner records", () => {
+    const mission = missionFixture({ taskLoopRunId: "loop-run-complete" });
+    saveMissionRun(mission);
+    seedFlow({
+      flowId: "flow-complete",
+      status: "waiting",
+      waitJson: JSON.stringify({
+        v: 1,
+        turnBarrier: "acked",
+        continuation: "mission_tick",
+        missionId: mission.missionId,
+        sessionKey: SESSION_KEY,
+        dependency: { kind: "process", taskId: "task-complete" },
+        runId: "durable-run-complete",
+        ownerEpoch: "epoch-complete",
+      }),
+    });
+    seedTask({
+      taskId: "task-complete",
+      status: "running",
+      label: "goal-owned process",
+      task: "goal-owned process (sha256:1111222233334444555566667777888899990000)",
+    });
+    const bash = runningProcessFixture("bash-complete");
+    bash.lifecycleExpectedSessionId = "session-generation-3";
+    addSession(bash);
+    addSubagentRunForTests(lineageFixture({
+      runId: "child-complete",
+      requesterSessionId: "session-generation-3",
+    }));
+
+    const projection = collectWithSupervisor(mission, [
+      supervisorFixture({
+        runId: "supervisor-complete",
+        lifecycleExpectedSessionId: "session-generation-3",
+      }),
+    ]);
+
+    const entries = [...projection.goals, ...projection.processes, ...projection.lineage];
+    expect(entries.length).toBeGreaterThan(0);
+    const unjoined = entries.filter(
+      (entry) => !entry.lineage || Object.keys(entry.lineage).length === 0,
+    );
+    expect(unjoined).toEqual([]);
+    expect(projection.processes.find((entry) => entry.id === "bash-complete")?.lineage).toEqual({
+      sessionId: "session-generation-3",
+    });
+    expect(projection.processes.find((entry) => entry.id === "supervisor-complete")?.lineage).toEqual({
+      runId: "supervisor-complete",
+      sessionId: "session-generation-3",
+    });
+    console.log(`[runtime-lifecycle-audit] lineageUnjoinedEntries=${unjoined.length}`);
+  });
+
+  it("reports a yielded run as yielded instead of an error", () => {
+    // markSubagentRunPausedAfterYield sets endedAt and clears outcome/endedReason.
+    addSubagentRunForTests(lineageFixture({
+      runId: "child-yielded",
+      endedAt: Date.now() - 100,
+      outcome: undefined,
+      endedReason: undefined,
+      pauseReason: "sessions_yield",
+    }));
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY);
+
+    expect(projection.lineage.find((entry) => entry.id === "child-yielded")?.status).toBe("yielded");
+  });
+
+  it("drops unbounded lineage ids instead of projecting them", () => {
+    const oversized = "x".repeat(300);
+    addSubagentRunForTests(lineageFixture({
+      runId: "child-bounded",
+      requesterSessionId: oversized,
+    }));
+
+    const projection = collectSessionActivityReadProjection(SESSION_KEY);
+
+    const entry = projection.lineage.find((row) => row.id === "child-bounded");
+    expect(entry?.lineage).toEqual({
+      runId: "child-bounded",
+      parentSessionKey: SESSION_KEY,
+    });
+    expect(JSON.stringify(projection)).not.toContain(oversized);
   });
 
   it("keeps activitySnapshotWriteFindings=0 when the snapshot repeats without write API calls", () => {
