@@ -16,6 +16,7 @@ import {
   recordPermissionAudit,
 } from './permissions-api';
 import { TerminalSessionManager } from './terminal-session-manager';
+import { findSessionDeleteGateBySession, tryWithSessionDeleteGateLock } from './session-delete-gate';
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import {
@@ -461,16 +462,43 @@ export function createTerminalApi({
         });
       }
 
-      const snapshot = terminalManager.open({
-        workspace,
-        sessionKey,
-        cwd,
-        cols: normalizeDimension(body.cols),
-        rows: normalizeDimension(body.rows),
-        kind: body.kind,
-        command: body.command,
+      const openResult = tryWithSessionDeleteGateLock(sessionKey, async () => {
+        if (await findSessionDeleteGateBySession(sessionKey)) {
+          return {
+            success: false,
+            blocked: true,
+            reason: 'Session lifecycle mutation is in progress; terminal admission is fenced',
+            workspaceId: workspace.id,
+            sessionKey,
+            cwd,
+            status: 'blocked' as const,
+            exitCode: null,
+          };
+        }
+        const snapshot = terminalManager.open({
+          workspace,
+          sessionKey,
+          cwd,
+          cols: normalizeDimension(body.cols),
+          rows: normalizeDimension(body.rows),
+          kind: body.kind,
+          command: body.command,
+        });
+        return buildSessionResult(snapshot);
       });
-      return buildSessionResult(snapshot);
+      if (!openResult) {
+        return {
+          success: false,
+          blocked: true,
+          reason: 'Session lifecycle mutation is in progress; terminal admission is fenced',
+          workspaceId: workspace.id,
+          sessionKey,
+          cwd,
+          status: 'blocked' as const,
+          exitCode: null,
+        };
+      }
+      return openResult;
     },
     write: async (payload) => {
       terminalManager.write({

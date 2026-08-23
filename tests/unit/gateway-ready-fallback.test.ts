@@ -177,6 +177,7 @@ describe('GatewayManager gatewayReady fallback', () => {
           'sessions.list',
           'sessions.patch',
           'sessions.fork',
+          'sessions.stop',
           'sessions.delete',
           'cron.list',
           'cron.add',
@@ -225,5 +226,29 @@ describe('GatewayManager gatewayReady fallback', () => {
     expect(manager.getStatus().gatewayReady).toBe(false);
     expect(manager.getCapabilitySnapshot().core.rpcRouter).toBe('blocked');
     expect(manager.getCapabilitySnapshot().core.lastProbe?.error).toContain('Missing runtime methods');
+    expect(manager.getCapabilitySnapshot().core.lastProbe?.error).toContain('sessions.stop');
+  });
+
+  it('does not let ready events or the fallback probe override a missing required method gate', async () => {
+    vi.resetModules();
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const manager = new GatewayManager();
+    const stateController = (manager as unknown as { stateController: { setStatus: (u: Record<string, unknown>) => void } }).stateController;
+    stateController.setStatus({ state: 'running', connectedAt: Date.now(), gatewayReady: false });
+    (manager as unknown as { recordRuntimeHandshake: (payload: unknown) => void }).recordRuntimeHandshake({
+      protocol: 4,
+      features: { methods: ['health', 'status', 'system-presence'], events: [] },
+      snapshot: {},
+    });
+
+    manager.emit('gateway:ready', {});
+    expect(manager.getStatus().gatewayReady).toBe(false);
+
+    vi.spyOn(manager as unknown as { rpc: (method: string, params?: unknown, timeoutMs?: number) => Promise<unknown> }, 'rpc')
+      .mockResolvedValue({ ok: true });
+    await (manager as unknown as { probeGatewayReadyFallback: () => Promise<void> }).probeGatewayReadyFallback();
+
+    expect(manager.getStatus().gatewayReady).toBe(false);
+    expect(manager.getCapabilitySnapshot().core.lastProbe?.error).toContain('sessions.stop');
   });
 });

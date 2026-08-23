@@ -3,7 +3,7 @@
 // instead of returning success:true when unlinks or index writes fail.
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -144,6 +144,20 @@ describe('R0-2 sessions.delete partial failures', () => {
     expect(result.success).toBe(true);
     const indexAfter = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8')) as Record<string, unknown>;
     expect(indexAfter['agent:main:abc123']).toBeUndefined();
+  });
+
+  it('removes runtime .jsonl.deleted.<timestamp> transcripts during hard delete', async () => {
+    const sessionsDir = await makeConfigDir();
+    await writeFile(join(sessionsDir, 'sessions.json'), JSON.stringify({ 'agent:main:abc123': 'abc123.jsonl' }), 'utf8');
+    await writeFile(join(sessionsDir, 'abc123.jsonl'), '{}', 'utf8');
+    const deletedPath = join(sessionsDir, 'abc123.jsonl.deleted.2026-08-22T00-00-00.000Z');
+    await writeFile(deletedPath, '{}', 'utf8');
+
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const result = await createSessionsApi().delete({ sessionKey: 'agent:main:abc123' });
+
+    expect(result.success).toBe(true);
+    await expect(access(deletedPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
 

@@ -13,6 +13,24 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('routes the typed session stop surface through the sessions module', async () => {
+    hostInvoke.mockResolvedValueOnce({
+      id: 'req-stop',
+      ok: true,
+      data: { success: true, key: 'agent:main:main', stopped: true },
+    });
+    const { hostApi } = await import('@/lib/host-api');
+
+    await expect(
+      hostApi.sessions.stop({ sessionKey: 'agent:main:main' }),
+    ).resolves.toEqual({ success: true, key: 'agent:main:main', stopped: true });
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
+      module: 'sessions',
+      action: 'stop',
+      payload: { sessionKey: 'agent:main:main' },
+    }));
+  });
+
   it('calls settings.getAll through hostInvoke', async () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { theme: 'dark' } });
     const { hostApi } = await import('@/lib/host-api');
@@ -657,6 +675,12 @@ describe('hostApi facade', () => {
       taskType: 'config/db',
       outcome: 'failure',
       rawError: 'Connection refused',
+      runtimeLineage: {
+        schema: 'runtime-lineage.v1',
+        sessionId: 'session:facade-test',
+        loopRunId: 'loop:facade-test',
+        traceId: 'trace:facade-test',
+      },
     });
     await hostApi.knowledge.sekbRetrieveForTask({
       taskIntent: 'connect db',
@@ -738,6 +762,14 @@ describe('hostApi facade', () => {
     expect(hostInvoke).toHaveBeenNthCalledWith(16, expect.objectContaining({
       module: 'knowledge',
       action: 'sekbCaptureTrajectory',
+      payload: expect.objectContaining({
+        runtimeLineage: {
+          schema: 'runtime-lineage.v1',
+          sessionId: 'session:facade-test',
+          loopRunId: 'loop:facade-test',
+          traceId: 'trace:facade-test',
+        },
+      }),
     }));
     expect(hostInvoke).toHaveBeenNthCalledWith(17, expect.objectContaining({
       module: 'knowledge',
