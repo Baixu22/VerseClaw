@@ -1,8 +1,756 @@
 # 会话交接（LATEST）
 
+## 节点谱系与后继边界（读这份文件前先看这一段）
+
+- `TF-0010`（OpenClaw Runtime Authority 与 Operator 产品收敛，`global_task`）= `in_progress`，
+  是本条线的全局任务。
+- `TF-0077`（Runtime Lifecycle Governance Phase 0-6 Closeout，`global_task`）= `done`。
+  它交付的是 RLG 七阶段本身；**它不是本条线的终点**。
+- `TF-0078`（会话生态生命周期生产收敛与真实恢复，`milestone`）= `in_progress`，
+  `child_of TF-0010` 且 `derived_from TF-0077`，是 TF-0077 的正式后继。
+- `TF-0078` 下串行五节点全部 `done`：`TF-0079`（生产可达性）→ `TF-0080`（安全闸门）→
+  `TF-0081`（资源回收）→ `TF-0082`（跨会话控制与 lineage）→ `TF-0083`（Goal/Loop 唤醒）。
+- `TF-0084`（统一生命周期账本、活动投影与真实闭环验收，`milestone`）是 `TF-0078` 下
+  **最后一个**节点，状态见下一段。
+- `TF-0085`（TF-0079..TF-0084 链独立健康审计，`child_of TF-0078`）= `done`：
+  三线均 `pass-with-findings`（0 blocker / 4 major / 7 minor / 6 note），
+  产物 `artifacts/tf0078-chain-health-audit/report.md` + `findings.json`。
+- `TF-0086`（审计整改与收口，`milestone`，`child_of TF-0010`、`derived_from TF-0085`）
+  = `done`：线性七步 `TF-0087`（代际注入治理）→ `TF-0088`（归属声明）→
+  `TF-0089`（census+启动期守卫）→ `TF-0090`（dispatch 证明 12/12）→
+  `TF-0091`（明文决策与死面）→ `TF-0092`（工程卫生）→ `TF-0093`（拆分预案与决策记录）
+  全部 `done`；4 个 major + 7 个 minor 全部闭环，收口时刻全链 227 测试 + 根级门禁全绿。
+- `TF-0078` 收口待用户裁定：用户 2026-08-23 决定暂不提交（工作树需整理）；
+  提交时按 `artifacts/tf0093-commit-readiness/split-plan.md` 执行，提交后裁定收口。
+- 本文件顶部之后的所有章节都是历史快照。任何写着「当前唯一 active 节点」「下一唯一节点」
+  的历史段落，都以本段和下一段为准，不再代表当前状态。
+
+## TF-0087 审计整改第 1 步：迟到代际注入点治理（2026-08-23，done）
+
+- 背景：2026-08-23 独立健康审计（`artifacts/tf0078-chain-health-audit/report.md`、
+  `findings.json`，FP-07 major）确认 TF-0082 指标 `stale generation overwrite=0` 的
+  口径窄于 requirement；本步骤按线性整改流程（`TF-0086` 里程碑第 1 步）治理。
+- **新增守卫（注入点①）**：后台 exec 退出通知的代际守卫
+  （`openclaw_runtime/src/agents/bash-tools.exec-runtime.ts` 的 `maybeNotifyOnExit`）。
+  spawn 时钉扎的 `lifecycleExpectedSessionId` 与退出时刻 store 中的当前代际比对，
+  失配丢弃退出通知与心跳唤醒（一条 `logWarn`）；沿用链内惯例：无真实钉扎
+  （缺省/空白/回退为 canonicalSessionKey 本身）放行、当前代际不可解析放行、
+  store 读取失败放行（fail-open，不得误吞真实退出通知）。`sessionStore` 模板按
+  `mainKey`/`sessionScope` 同款 start-time 快照约定携带，退出时不做环境配置加载。
+  回归测试：`src/agents/bash-tools.exec-generation-guard.test.ts`（8 用例，agents-core
+  分片）；探针验证：移除守卫恰好 2 个丢弃用例变红、还原全绿。
+- **显式声明（注入点②）**：detached task 完成/阻塞通知（`tasks/task-registry.ts`）
+  按稳定 ownerKey 注入当前持有该 key 的代际，是**被接受的跨代际语义**，不计入
+  `stale generation overwrite`：TaskRecord 无代际字段、reset 刻意不取消任务、
+  跨重启存活与 `background-task` 一等唤醒源均为既定设计；风险边界是通知内容而非
+  状态覆盖。`emitExecSystemEvent`（全仓零调用方）同列「已知未守卫兄弟路径」，
+  未来接入调用方者须自带钉扎。
+- **三处灰色地带复核结论**：① announce 失配后的请求者-代理交接 = 已明认的设计选择
+  （注释 + 测试 + 本文件 TF-0082 段），维持；② restart-sentinel `systemEvent`
+  continuation 分支 = 防御性死分支（生产只产 `agentTurn`），维持，未来新增
+  systemEvent writer 必须先补代际字段与守卫；③ ACP 父流中继 = 可达性弱、HEAD 既有，
+  维持，若后续守卫方向是注册时钉扎父代际。
+- **已知窗口（未收口）**：`/reset` 后新一代 run 已活跃但 store 尚未旋转落盘之间，
+  守卫读到旧代际会放行旧通知（最坏退回治理前行为）；如需收口，先查内存活跃 run
+  （`resolveActiveEmbeddedRunSessionId`）再落 store。
+- 口径更新：`stale generation overwrite=0` 的守卫路径自本步起为四条（announce wake /
+  queue drain / send-steer run-start 窗口 / **后台 exec 退出通知**）；例外清单为
+  detached task 通知、announce 请求者-代理交接、restart-sentinel 降级唤醒、
+  ACP 父流中继（均声明在案，非遗漏）。
+- 边界未变：未放宽任何既有守卫，未翻动任何产品锁；
+  `session-ecosystem-cross-session-control.md` 失败矩阵与 requiredTests 同步更新。
+- 证据：`artifacts/tf0087-generation-injection-remediation/report.json`。
+
+## TF-0088 审计整改第 2 步：归属声明补齐（2026-08-23，done）
+
+- 背景：审计 FP-12（major）——38 个「继承」文件中 26 个是链自己的未声明产出，
+  TF-0083 整节点无 spec；`tf0084-candidate-inherited.json` 的定性整体偏了。
+- **新建两份 spec**：
+  - `harness/specs/tasks/session-ecosystem-goal-wake-continuation.md`（TF-0083 追溯声明）：
+    goal-wake arm/cancel/dispatch/fencing/runtime/timeout/timer/triggers/types、
+    cron missionContinuation 全套（types/normalize/persisted-shape/service state+timer/
+    store payload-codec/payload test）、`mission-control/types.ts`（与 TF-0082 共声明）、
+    `mission-control-methods.ts`（mission.cancel 级联 + mission.resume level-check）、
+    `server-cron.ts`（续跑接线）。
+  - `harness/specs/tasks/session-ecosystem-audit-remediation.md`（TF-0086 里程碑声明）：
+    TF-0087 守卫三文件（`bash-tools.exec.ts` 仅链的一行透传，余为 provenance workstream，
+    已在 spec 内点名耦合）+ 候选构建脚本与 inherited 清单。
+- **既有 spec 补声明**：cross-session-control 增 `acp-spawn.ts`、`subagent-spawn.ts`、
+  `mission-control/types.ts`；safety-gate 增 `subagent-session-cleanup.ts`、
+  `subagent-registry-lifecycle.ts`、`config/sessions/artifacts.ts`、
+  `cron/isolated-agent/delivery-dispatch.ts`，并**移除误声明**的
+  `src/stores/chat/runtime-send-actions.ts`（纯他流 6 行 messageCount）。
+- **inherited 清单重定性**：`scripts/tf0084-candidate-inherited.json` 38 → 11，
+  全部为真他流依赖（TF-0072 lineage 链、DCS/SEKB 桥接、git-api、sidebar、
+  content-provenance）；陈旧条目 `subagent-control.ts`（对 HEAD 零差异、已被声明）移除。
+  构建脚本 `scripts/tf0084-build-candidate.mjs` SPECS 并入两份新 spec。
+- **candidate 验证（新声明集）**：重建一次性 candidate（`D:/ClawX-tf0084-candidate`，
+  base=60d74ebb、candidate=c4588ab8）：baseOwnedFiles=115、inheritedFiles=11、
+  baseCopied=126、candidateDiff 恰为 TF-0084 六文件、worktreeClean=true；
+  diff-aware `harness validate --since <base>` 对 ledger-acceptance spec **exit 0**。
+- 新鲜门禁：两份新 spec 与两份修改 spec 全部 `validate --no-diff` 0、`context` 0；
+  goal-wake 8 文件 68 绿、cron 3 文件 13 绿（当前树重跑）。
+- 归属残留：`fenced-tick-wiring.test.ts` 经核为 DCS/SEKB 集成测试（依赖
+  lifecycle-hook-helpers + trajectory-capture），归他流；`bash-tools.exec-types.ts`、
+  `agent-tools.ts` hunk 全属 provenance workstream，未声明为链。
+- 证据：`artifacts/tf0088-ownership-declarations/report.json`。
+
+## TF-0089 审计整改第 3 步：census 扩容与启动期可达性守卫（2026-08-23，done）
+
+- 背景：审计 FP-01/FP-02（major）——census 只覆盖 8 个方法（漏 `sessions.send`、
+  `sessions.steer`、`mission.cancel`、`mission.resume`），且
+  `createCoreGatewayMethodDescriptors` 对「有 spec 无 handler」**静默跳过**，
+  正是 yieldState 型缺陷的结构性根源。
+- **census 扩至全部 12 个链方法**（`session-ecosystem-lifecycle-reachability.test.ts`）：
+  新增 4 方法逐项断言 handler+descriptor+scope+registry 解析；`sessions.steer`
+  以 `advertised: false` 单独口径（刻意不 advertise 的内部伴生方法）。
+- **启动期硬错误守卫**（`methods/core-descriptors.ts`）：spec 无 handler 不再静默
+  跳过，改为抛出命名错误；两类豁免显式建模——① `GATEWAY_AUX_METHODS`（14 个
+  approval/secret/inbox 方法，合法地经 aux 面服务，实测枚举确认）；② 存量例外白名单
+  `KNOWN_UNREGISTERED_CORE_METHOD_SPEC_REASONS`，**仅**含
+  `sessions.compressionArtifact` 与 `sessions.recoveryContext`（HEAD 即缺白名单条目，
+  注册属 checkpoint/recovery workstream，本步按 non-goal 只记录不修复）。白名单扩张
+  被守卫测试钉死（名单变化即红）。
+- **新回归测试** `src/gateway/session-ecosystem-descriptor-guard.test.ts`（4 用例）：
+  真实 map 构建通过；模拟 yieldState 型回归（删 `sessions.stop` 白名单效果）必红；
+  aux 豁免成立；例外白名单恰为两项。探针验证：把硬错误改回静默跳过，恰好该回归
+  用例失败，还原全绿。
+- 新鲜门禁：三可达性测试 10/10 绿；check:import-cycles 0；lint:core 0；tsgo:core 0；
+  build:runtime 0（启动冒烟「gateway ready」实证严格构建器不破坏生产启动）。
+- 移交记录：存量两方法的白名单缺口归 checkpoint/recovery owner（FP-15 note）。
+- dispatch 证明的补齐（其余 6 方法经 `handleGatewayRequest` 到校验层）归线性下一步
+  TF-0090。
+- 证据：`artifacts/tf0089-census-guard-remediation/report.json`。
+
+## TF-0090 审计整改第 4 步：全部 12 方法的生产-registry dispatch 证明（2026-08-23，done）
+
+- 背景：审计 FP-02（major）——spec 验收条款要求每个生命周期方法 “proven by
+  dispatching through the production registry”，实测仅 2/8 有 dispatch 证明，
+  其余为静态断言。
+- **交付**：`session-ecosystem-lifecycle-reachability.test.ts` 新增表驱动用例，
+  对**全部 12 个链方法**逐一经 `handleGatewayRequest`（生产请求路径）+ 生产
+  registry 构造实际 dispatch，断言到达各方法**自身的参数校验层**（各自的
+  校验错误子串，且非 “unknown method”）。至此 dispatch 证明覆盖 12/12，
+  与 `session-ecosystem-lifecycle-ledger-acceptance.md` 措辞闭合。
+- 工程细节：`sessions.cleanup` 的 schema 全字段可选（空参合法），空参会越过
+  校验触达 `context.getRuntimeConfig()`；表项改为以未知属性
+  （`additionalProperties: false` 必拒）强制走校验层，杜绝测试触发真实清理。
+- **探针**：把 `mission.cancel` 移出 lazy 白名单 → 全部 5 个 census 用例变红，
+  失败信息即 TF-0089 的启动期硬错误（两步整改的守卫链联动实证）；还原全绿、
+  标记 0 残留。
+- 新鲜门禁：三可达性测试 11/11 绿（census 5 + guard 4 + TF-0079 probe 2）；
+  tsgo:core 0；tsgo:core:test 中本文件 0 错误（其余 39 为既有）。
+- 证据：`artifacts/tf0090-dispatch-proofs/report.json`。
+
+## TF-0091 审计整改第 5 步：明文决策与死面治理（2026-08-23，done）
+
+- 背景：审计 FP-03/04/05/06（minor 组）——无消费面的数据面、死导出、死字段与
+  未挂载面缺少明文结论。本步逐项给出「清理 / 保留 / 延期」三选一的决定。
+- **FP-03 明文决策**：`sessions.lifecycleLedger` 为**只读诊断 RPC，暂不做 UI**——
+  对齐 `sessions.yieldState` 先例的明文形式（此前仅事实一致、无文字决策）。
+  未来如需面板，另立产品决策节点。
+- **FP-04 数据面处置（延期，非缺口）**：`yielded` 行级渲染与 i18n、
+  Electron 补齐的 `snapshot.terminals` 渲染、`idleClassification` 消费——
+  均为产品面决策，数据层保持就绪；未来进入产品面时补 i18n 键与行级渲染。
+  两组 `*_IDLE_MS` 环境变量保留（分类阈值的配置面，随分类消费面落地同时生效，
+  现状为测试专用通路——如实记录）。
+- **FP-05 死导出处置**：
+  - `archiveSessionTranscriptsForSession` 薄包装（链引入、全仓零调用方）——**已清理**，
+    底层 `archiveSessionTranscriptsForSessionDetailed` 有真实调用方，保留。
+  - `readLatestSessionUsageFromTranscript`、`readRecentSessionMessagesWithStats`（传递簇）、
+    `clearSessionTranscriptIndexCache`——HEAD 既有基线（对 HEAD 零差异），**非本链责任，不动**。
+  - `classifyTerminal`/`classifyBashProcessSession`/`subagentIdentityKey`/
+    `listOverdueGoalWaits`/`createSessionDeleteJournalEvent`/
+    `buildSessionDeleteManifestDigest`/`findGoalWait*`——测试缝隙/有意导出，**保留**。
+  - goal-wake child/timer 挂载面（`fireGoalWaitChild`/`armGoalWaitTimer` 等）——
+    **显式延期**：挂载点选择涉代际语义判断，由 owner 决策（沿用 TF-0083
+    deviations/next_action 与 `LATEST.md:163-168`）；goal-wake default-off 前提不变。
+- **FP-06 死值/只写字段处置**：`task_kind='goal-owned-*'`（durable truth 标记，
+  消费侧属未来面）与条目级 `lineage` ref（wire 面，顶层 `lineage[]` 已被消费）
+  **保留并声明**；`'verified'` subagent 状态为 **HEAD 既有死值**（链仅新增
+  `'yielded'`），非本链引入，不动。
+- 新鲜门禁：tsgo:core 0；contract:check 0；comms replay+compare 0；git diff --check 0。
+- 边界未变：未放宽任何守卫、未翻动产品锁；除一个死包装函数外零生产代码改动。
+- 证据：`artifacts/tf0091-dead-surface-decisions/report.json`。
+
+## TF-0092 审计整改第 6 步：工程卫生（2026-08-23，done）
+
+- **check:loc EMFILE 修复（FP-14）**：`scripts/check-ts-max-loc.ts` 原以无界
+  `Promise.all` 并发读取全部 `.ts/.tsx`，大仓上句柄耗尽（EMFILE），门禁从未
+  产出过判定。改为 64 并发分批读取，判定语义不变。修复后**首次真实判定**：
+  exit 1，**1048 个存量超限文件**（最大 `embedded-agent-helpers/errors.ts`
+  1598 行）——此前全部被崩溃掩盖；均归各 owner，本里程碑不处理。
+  链内唯一超限：`session-delete-operation-journal.test.ts`（603 行，纯测试文件，
+  TF-0084 已知项）；链的全部生产文件 <500 通过。
+- **行数口径统一（FP-11）**：以 `wc -l`（物理行，与 check:loc 一致）为准；
+  `session-activity-projection.ts` 实测 417 行，TF-0084 报告「413」为历史口径
+  小差，不追溯改历史报告，口径差异在此关闭。
+- **FD 测试正式决策（FP-08）**：在 `session-ecosystem-resource-reclamation.md`
+  新增「Measurement bounds」正式口径段——FD/handle 泄漏与 RSS 级增长**正式
+  排除出该 spec 验收**（理由：需 OS 级插桩/soak 测试，非逐变更门禁面；记录、
+  定时器、owned PID、finished 上界断言已覆盖回收契约；生产观测到 FD 泄漏再
+  重开）。此前仅以报告「notCovered」形式存在，现升为 spec 级裁定；
+  TF-0081 节点同步记入 deviation。
+- 新鲜门禁：修复后 check:loc 可运行（判定如上）；resource-reclamation spec
+  validate 0；git diff --check 0。
+- 边界未变：未翻动产品锁；未处理他流超限文件（各归 owner）。
+- 证据：`artifacts/tf0092-engineering-hygiene/report.json`。
+
+## TF-0093 审计整改第 7 步：提交拆分预案与收口决策记录（2026-08-24，done）
+
+- **用户裁定（2026-08-23，记录在案）**：**暂不提交**——工作树混乱度高，需要
+  时间整理；`TF-0078` 保持 `in_progress`，不收口。本步只完成开发层面工作，
+  未发生任何提交。
+- **提交拆分预案**（`artifacts/tf0093-commit-readiness/split-plan.md`）：
+  123 个链持有脏文件（100% 在 9 份链 spec 声明内，完整清单
+  `chain-dirty-files.txt`）；8 组多路耦合文件的按-hunk 拆分指引（`contract.ts`
+  五路汇流、`host-api.ts`、`mission-control/controller.ts`、`chat.ts`、
+  `bash-tools.exec.ts` 链仅 1 行等）；11 个跨 workstream 依赖带 owner 清单
+  （链独立编译依赖它们，提交须先协调）；建议提交顺序（依赖协调 → 按节点序
+  79→80→81→82→83→84→整改组 → hunk 拆分 → diff-aware 复验 → 用户裁定收口）。
+- **全链最终门禁矩阵（收口时刻新鲜重跑，全绿）**：227 个测试
+  （gateway-methods 50 / ecosystem+census+drain+journal 38 / process 7 /
+  goal-wake 68 / cron 13 / admission 12 / 守卫线 16 / 根侧 23）；
+  typecheck 0 错误；contract 0；comms replay+compare 0；9 份链 spec
+  validate --no-diff 全 0；git diff --check 0。
+- 至此 `TF-0086` 里程碑七个节点全部 done；`TF-0078` 何时收口由用户在整理
+  工作树并提交后裁定。整改全程未翻动任何产品锁与 default-off 边界。
+- 证据：`artifacts/tf0093-commit-readiness/report.json`。
+
+## 当前交接：TF-0084 统一生命周期账本、活动投影与真实闭环验收（2026-08-23 收口，done 100%）
+
+- 状态：四个 owner path 全部交付，**四条 acceptance criteria 全部 met**（含 AC1 的 clean/detached
+  candidate 重跑）。`TF-0078` 下五个前置节点已全部 done，TF-0084 是该里程碑的最后一个节点。
+- Spec：[session-ecosystem-lifecycle-ledger-acceptance.md](../../../harness/specs/tasks/session-ecosystem-lifecycle-ledger-acceptance.md)
+- 证据：`artifacts/session-ecosystem-lifecycle-ledger-acceptance/report.json`
+  （owner 盘点、缺陷记录、verificationMatrix 逐条命令/退出码/测试数、scopedCandidate、
+  notCovered、AC 逐条对照）。
+
+### 发现并修复的真实生产缺陷
+
+`sessions.yieldState`（TF-0082 owner path 6）有 handler 与 core descriptor spec，但从未加入
+`server-methods.ts` 的 lazy `loadSessionsHandlers` 方法表。`createCoreGatewayMethodDescriptors`
+会跳过 handler 缺失的 spec，于是实测 `handler=undefined / descriptor=false / advertised=false`，
+生产 Gateway 返回 `unknown method: sessions.yieldState`。TF-0082 的 7/7 单测直接 import handler
+模块所以全绿，而 TF-0079 的可达性探针只覆盖 `sessions.stop`——正是 TF-0079 要根除的
+direct-handler / production-dispatch 分叉。已补白名单；回归探针（移除后 census 4 例中 2 例失败
+并报 `unknown method`）已观测并撤回。
+
+### 四个 owner path
+
+1. **只读生命周期账本**。新增 `session-lifecycle-owner-views.ts`，把 Phase 5 活动投影原本私有的
+   owner 读取抽成**共享**读层（零行为变化，既有投影套件 11/11 原样通过）；在其上新增
+   `session-lifecycle-ledger.ts` 与 `sessions.lifecycleLedger`（`operator.read`，仿 TF-0082
+   `sessions.yieldState` 的只读面，无 arm/无 mutation，代际不匹配在**读任何 owner 之前** fail
+   closed）。每条 entry 记 owner、owner 自己的状态 token、TF-0082 correlation ref，并且要么带
+   owner 钉扎的 generation，要么声明结构性原因：`flow_runs.wait_json` 与 `task_runs` 结构上不记
+   session generation → `owner-records-no-generation`；无 spawn 钉扎的旧记录 → `legacy-unpinned`。
+   `census.unexplainedTransitions` 统计「声明与数据不符」，**因此可以失败**。读不到的 owner
+   （Electron 终端、durable helper runDir）以 `declaredGaps` 显式返回。会话 entry 的时间取
+   session store 自己的 `sessionStartedAt`，不用观测时刻冒充转移时刻。
+2. **生命周期方法面 census + 投影/账本/owner registry 集合核对**。可达性 census 覆盖 8 个方法
+   （handler + advertised descriptor + 预期 scope + 经生产 registry dispatch 到自己的参数校验）。
+   一致性核对用**同一份** owner 快照同时构建两个读模型（为此导出 `buildSessionActivityReadProjection`），
+   断言：集合与 owner registry 相等、外会话记录两边都不出现、被回收资源两边都消失、超出投影上界时
+   投影必须是按新旧排序的前缀而非任意子集、同一条 owner 记录两边状态一致。
+3. **fresh 全量验收矩阵**（当前树、当前 HEAD，未复用任何 audit-0..6 数字）：
+   50 周期真实父子进程树 drain `cycles=50 activeRecordResidual=0 ownedPidResidual=0
+   finishedResidual=0 sweeperActive=false exitedDiagnosticsRecords=50`（59.6s）；supervisor 重启
+   reconciliation 7/7；goal-wake cancel/timeout/recovery/runtime/durable-cleanup/helper-host/
+   helper-protocol 7 文件 55 测试；goal-wake triggers 13；cron 3 文件 13；delete operation journal 26；
+   admission fence 12；Electron 终端/镜像闸门/生命周期单测 5 文件 23；真实进程 goal-wake canary
+   10 周期全过（每周期 `processPollToolCalls=0`、`duplicateWakeTickCount=1`、
+   `flagOffGoalWaitBlocked=true`）；真实 packaged Electron durable helper normal-exit + cancel 双周期
+   PASS，`rawSecretPersistenceFindings=0`；runtime-lifecycle E2E 3/3。
+4. **证据分级与谱系一致性**。报告把工程验收与 human/live/product 批准分栏
+   （`liveReady=false`、`productApproved=false`、`formalAcceptance=false` 显式保留）；本文件顶部新增
+   「节点谱系与后继边界」段，并把三处写着「当前唯一 active 节点 / 当前接力入口」的历史段落显式标注为
+   历史快照；README 三语补 TF-0084 一段。
+
+### AC1：clean/detached candidate 重跑（已达成，附代价）
+
+用一次性 detached worktree 完成，**没有在共享分支上产生任何提交**；
+[tf0084-build-candidate.mjs](../../../scripts/tf0084-build-candidate.mjs) 可重建：
+HEAD `e07b874b3` → base commit（120 文件：TF-0079..0083 的 spec-owned 脏文件、TF-0084 对共享文件的
+改动、以及 38 个**其他 workstream 未提交的继承依赖**）→ candidate commit（TF-0084 的 6 个新文件）。
+
+- **diff-aware harness validate exit 0**，`--since` 的 diff 恰为 TF-0084 的 6 个新文件——这是本条线
+  第一次通过带改动归属校验的验证（此前每个节点都只能记 `--no-diff`）。
+- candidate 上：`typecheck:node` 0、`typecheck:web` 0、`contract:check` 0、
+  comms replay/compare 45 PASS / 0 FAIL、`build:runtime` 0（smoke gateway ready）、
+  **183 个 scoped 测试**跨六个 shard 全绿（gateway-methods 50、gateway 33、goal-wake 68、
+  cron 13、process 7、admission 12）。每一步 candidate 工作树都是 clean。
+- **代价即发现**：只按六个 spec 的 `touchedAreas` 并集构建的 candidate 既不 typecheck 也跑不起来，
+  需要额外 38 个未提交文件，清单见
+  [tf0084-candidate-inherited.json](../../../scripts/tf0084-candidate-inherited.json)。其中包含 TF-0083
+  自己的 goal-wake 与 cron 模块及测试（arm/cancel/dispatch/fencing/runtime/timeout/timer/triggers、
+  cron types/normalize/timer/state/payload-codec/mission-continuation-payload），以及
+  `mission-control/types.ts`、`goal-wake-types.ts`、`acp-spawn.ts`、`subagent-spawn.ts`、
+  `config/sessions/artifacts.ts`、`runtime-core/lineage.ts`、`shared/chat/types.ts`、
+  `shared/types/git.ts`——**这些文件不在任何 TF-0078 spec 的 `touchedAreas` 里**；
+  `shared/host-api/contract.ts`（属本链）还同时携带 git-api workstream 的 reflog/merge/rebase/reset
+  新增。归各自 owner 处理，本轮未代改。补齐这 38 个文件后 candidate 完全绿，所以本链**是可分离的**，
+  只是不能仅凭它自己声明的 `touchedAreas` 分离。
+- **一处如实记录的环境限制**：两个真实进程 GA 脚本（goal-wake canary、packaged Electron durable
+  helper）在 candidate 里跑不起来——它们会 spawn `pnpm`，而 pnpm 拒绝在 junction 出来的
+  `node_modules` 上运行（`ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`；在根与 `openclaw_runtime`
+  两处设 `verify-deps-before-run=false` 都到不了被 spawn 的子进程）。这两项改在权威树上跑，覆盖的
+  文件内容与 candidate 完全一致：canary 10/10 周期、`processPollToolCalls=0`、每周期
+  `duplicateWakeTickCount=1`；packaged Electron normal-exit + cancel 双周期 PASS，
+  `rawSecretPersistenceFindings=0`。记为限制，不当作豁免。
+
+### 门禁（当前树、HEAD `e07b874b3`）
+
+harness context 0；`validate --no-diff` 0；gateway-methods 批次 6 文件 45 测试 + 一致性 5；
+gateway 批次 3 文件 7；process 7；agents-core goal-wake 7 文件 55 + triggers 13；cron 13；
+journal 26；admission 12；root Electron 5 文件 23；`typecheck` 0（node 0 / web 0）；
+`contract:check` 0；comms replay/compare 全 PASS（丢失/重复/乱序/timeout 均 0，qps 与 p95 delta
+0.00%）；`build:runtime` 0；runtime-lifecycle E2E 3/3；touched 文件 eslint 0；check-no-bom ok；
+`git diff --check` 0。
+
+### 边界与遗留
+
+- 未变：`liveReady=false`、`productApproved=false`、`formalAcceptance=false`；goal-wake 与
+  durable helper 仍 default-off；SEKB 仍 confirm-only 无自动写回；无 lifecycle writer、无
+  `session_resources` 表、无第二个 session identity 源、无新的 arm/cancel mutation 面。
+- 未覆盖：FD/handle 泄漏（drain 夹具断言的是记录、定时器与 owned PID，不含文件描述符计数）；
+  RSS 级内存增长（只断言 finished 记录有界）。这两项未在报告里冒充已覆盖。
+- 账本输出上界 64 条（读取上界，不是保留策略）。
+- 遗留给各自 owner：上面那 38 个继承依赖文件应由 TF-0079..0083 与 git-api workstream 的 spec
+  补进各自 `touchedAreas`；两个真实进程 GA 脚本若要在 candidate 里跑，该 worktree 需要真实安装依赖。
+- 工作树保持不提交、不推送；一次性 candidate worktree 与 junction 已清理。
+- `TF-0078` 里程碑的五个前置节点加 TF-0084 全部 done，该里程碑本身是否收口为 done 属独立的
+  Task Forest 决策，本轮未代替用户裁定。
+
+## 历史交接：TF-0083 Goal/Loop 条件唤醒、取消级联与定时续跑（2026-08-23 收口，done 100%）
+
+- 状态：4 条 acceptance criteria、5 条 requirements、5 条 desired outcomes 全部达成，
+  收口后又做了一轮降风险复查（见下）。`TF-0084` 依赖随之解除，但未启动。
+- 五个 owner path：(1) flow budget 只统计非终态行——`maxFlows` 原先 COUNT 全部
+  goal-wake `flow_runs` 且无状态过滤，16 条历史完成行即永久耗尽预算，改为按
+  `ACTIVE_FLOW_STATUSES` 统计；(2) `mission.cancel` 级联（`goal-wake-cancel.ts`）——先写
+  durable terminal truth（`task_runs`→cancelled、flow→cancelled、`wait_json` 清空），
+  再做 helper 容器化，未证实时 RPC fail closed，并清空此前无人清理的
+  `activeWaitFlowIds`；(3) 统一 typed continuation contract——`dependency.kind` 覆盖
+  `process|child|timer|approval|event`，`wakePayload` 由 `Record<string, unknown>` 改为
+  `MissionContinuation` 判别联合，每类各产生且仅产生一次 continuation，双层去重
+  （flow 结算 + `last_wake_id`）；(4) timer 复用既有 Cron 单一 `setTimeout`——新增
+  `missionContinuation` payload kind（复用 `payload_message` JSON 列，无 schema 迁移），
+  一次性 `at` job + `deleteAfterRun`；(5) 超时路径（`goal-wake-timeout.ts`）——
+  `wait_json.timeoutMs` 此前是死字段、全仓库无人读取，依赖永不终止的 wait 会让 mission
+  永久停摆，现按 `flow.created_at + timeoutMs` 判定到期并沿用既有 sweep tick。
+- 顺带修掉三个此前未记录的真实缺陷：终态 mission 导致的
+  `dispatch-failed → scheduleRetry` 永久活锁（每 5s 一次、贯穿进程生命周期）；
+  `finishMissionTick` 用 tick 内存旧状态覆盖并发 cancel 写入的 `cancelled`；
+  `expectedRevision` 三元表达式两支完全相同，导致已 `running` 的 flow 被重新 dispatch 时
+  revision 差一而永远钉在 `running`。后两个由测试自然前置失败暴露，非推测。
+- 收口后降风险复查（本轮追加）：(a) Cron 的 `runMissionContinuationJob` 补上
+  `goalWakeEnabled` 门禁，避免 flag 关闭后遗留 job 仍改账本；门禁刻意放在 cron 侧而非
+  `fireGoalWaitTimer` 内，因为记录依赖结局在运行时层是刻意不设门禁的
+  （丢终态比关闭期间写入更糟）。(b) helper 容器化改为先核对 claim
+  （`containDurableHelper`）：intent 缺失/nonce 不匹配/已记录 exit 都判为
+  `already-gone` 而非失败——原实现会把「helper 早已消失」误报成容器化失败，让每次正常
+  cancel 都 fail closed。(c) 超时 sweep 补上孤儿 wake 收敛：task 已终态但 flow 仍存活时
+  改为重跑 level check 而非跳过，否则终态写入后唤醒失败的 wait 再无人回访。
+- 收口门禁（全部在最终树上重跑）：typecheck 0；lint 0；import cycles 0；
+  goal-wake 套件 8 文件 68 测试；cron 3 文件 13；mission-control 4 文件 32；
+  tasks/task-flow-cas 15；gateway-methods 10 文件 57；gateway-server 2 文件 7；
+  `build:runtime` 0；real-process canary exit 0；runtime-lifecycle E2E 3/3。
+  本任务累计新增 36 条测试。
+- 成功指标的诚实口径：`processPollToolCalls=0`、`duplicateWakeDeliveries=2` 而
+  `duplicateWakeTickCount=1`（真实子进程下的去重证据）；`flagOffGoalWaitBlocked=true`。
+  AC1 有回归探针（还原旧计数写法后第 3 次 arm 立即 `budget-exceeded`）。
+  `command replay=0` 指「重启只做 level-triggered reconciliation」，已由 restart matrix
+  覆盖（重启后 reconcile 一次、再重启 no-op、cancel/timeout 后重启不复活）。
+- 刻意未做（不是缺口）：child 与 timer 都没有生产调用方。接入点
+  （`fireGoalWaitChild` / `fireGoalWaitTimer`）、账本反查（按 `childSessionKey` /
+  `cronJobId`）与 `armGoalWaitTimer` 均已实现并单测覆盖，但没有工具/RPC 面去 arm，
+  子智能体完成路径上也未插入调用——requirement 1 要求 real-process gate 通过前保持
+  opt-in，且该完成路径（announce delivery + 代际钉扎）是 `TF-0082` 刚加固的，
+  选挂载点涉及代际语义判断，应由 owner 决定。
+- 未随收口改变：`liveReady=false`、`productApproved=false`、`formalAcceptance=false`；
+  真实验收仍归 `TF-0084`。
+- 已知非本期失败：`agents-core` 全 shard 有 3–4 个既有失败
+  （`bash-tools.exec.goal-wait.test.ts` ×3、`bash-tools.exec.durable-helper.test.ts` ×1，
+  另有偶发 `rc02-shadow-census`），均为 `ws://127.0.0.1:18789` gateway 未就绪的连接失败，
+  报错点在 `registerExecApprovalRequestForHost`，早于任何 goal-wake 代码；
+  这些文件 `git status` 未修改。`tsgo:core:test` 的既有错误亦与本任务无关
+  （含 `goal-wake-runtime.test.ts` 两处 `alreadyAcked` 收窄，已与 HEAD 对照确认）。
+- 遗留待办：`goal-wake-dispatch.ts` 已 489 行，逼近 `check:loc` 的 500 上限，
+  下次加分支前应先拆；该脚本本身在本仓库全局红（无 allowlist）且在 Windows 上会 EMFILE。
+  超时判定以 `flow_runs.created_at`（arm 时刻）为基准，严格说是「等待时长」而非
+  「进程时长」。
+- Spec：[runtime-lifecycle-governance.md](../../../harness/specs/tasks/runtime-lifecycle-governance.md)
+
+## TF-0082 跨会话控制与 lineage 统一（2026-08-22 收口，done 100%）
+
+- 状态：六个 owner path 全部完成，全门禁在最终树上重跑通过，本会话按用户「现在收口」
+  指示执行 closeout（done proposal 见 task-forest）。`TF-0083/0084` 依赖随之解除，
+  但未启动。
+- 收口门禁（全部在最终树上重跑，非沿用切片结论）：harness context 0；
+  validate --no-diff 0；agents-core announce 8/8；root shard（subagent-spawn +
+  admission registry + supervisor reconciliation）22/22；gateway-methods 40/40；
+  gateway production reachability 2/2；renderer/Electron（host-api-facade +
+  session-activity + panel-sections）63/63；typecheck 0；contract 0；
+  comms replay 0 + compare 8 项全 PASS；build:runtime 0；build:vite 0；
+  runtime-lifecycle E2E 3/3；touched 文件 lint 0；check-no-bom ok；diff-check 0。
+- 验收对照（六条 spec acceptance 全部 met，逐条证据见
+  `artifacts/session-ecosystem-cross-session-control/report.json` 的 `closeout.acceptance`）。
+- 成功指标的诚实口径：`stale generation overwrite=0` 仅覆盖本期加固的三条路径
+  （announce wake / queue drain / send-steer run-start 窗口），其余路径本期未重审；
+  `lineage completeness=100%` 指「owner 记录了身份的条目全部带非空 ref」
+  （断言 `lineageUnjoinedEntries=0`），生产完整度受 owner 实际记录内容限制，
+  未做任何推导填补。
+- 未随收口改变：`liveReady=false`、`productApproved=false`、`formalAcceptance=false`；
+  真实验收仍归 `TF-0084`。
+- 已知非本期失败：`tests/unit/session-activity-panel.test.tsx` 1 failed / 2 passed。
+  已提交的测试断言 goal 标签文本，而工作区里一份未提交的 `SessionActivityPanel.tsx`
+  重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀；已与 HEAD 版本对照确认
+  与本任务无关，未改动。
+- 遗留决策：lineage ref 与 `yielded` 状态是否要在会话状态面板上渲染——数据层已就绪，
+  但该面板当前有他人未提交的大改动，渲染是独立决策。
+- Spec：[session-ecosystem-cross-session-control.md](../harness/specs/tasks/session-ecosystem-cross-session-control.md)
+
+## TF-0082 启动与切片 1：generation-pin announce wake（2026-08-22）
+
+- Spec：[session-ecosystem-cross-session-control.md](../harness/specs/tasks/session-ecosystem-cross-session-control.md)
+  已创建并 validate 通过；失败矩阵覆盖迟到代际覆盖、重复 completion、跨会话控制
+  RPC 语义、queue drain 代际、fork lineage 追溯。
+- Owner 盘点：Gateway RPC（create/fork/send/steer/abort/stop/reset/delete/queueDrain
+  均有 operator scope；steer 未 advertise；无 sessions_yield/goal_wait RPC）；Host API
+  仅 fork + queueDrain 有 typed surface，stop 走 renderer 裸 `gateway.rpc`；ownerEpoch
+  只存在于 exec-durable/goal-wake-helper；lineage 靠 Phase 5 projection 但 mission/
+  flow 未做 runId 级 join。
+- 切片 1（owner path 1）：**generation-pin announce wake**——`SubagentRunRecord` 新增
+  `requesterSessionId`（spawn 时从 completion requester 的 store entry 快照）；
+  announce 流程仅在原始 requester 目标（无嵌套重定向）携带 pin；`maybeSteerSubagentAnnounce`
+  与 direct completion wake（`sendSubagentAnnounceDirectly`）都在代际不匹配时拒绝
+  steer/wake 新 generation（发现并封堵了两个洞）；legacy 无 pin 记录保持
+  liveness-only 行为。4/4 代际钉扎测试 + visible-reply 4/4 + subagent-spawn 3/3 回归。
+- 门禁：spec validate --no-diff；typecheck exit 0；contract 0；comms 全 PASS；
+  build:runtime + runtime-lifecycle E2E 3/3；touched 文件 lint 0；diff-check 0。
+- 证据：`artifacts/session-ecosystem-cross-session-control/report.json`。
+
+## TF-0082 切片 6：yield/goal-wait 只读 RPC + yielded 状态修复（2026-08-22）
+
+- 新增 `sessions.yieldState`（`operator.read`）：报告本会话自身的 run 是否被
+  `sessions_yield` 挂起（含 runId、parentSessionKey、切片 1 的父代际钉扎）、
+  还有几个子 run 欠一次 continuation，以及已 arm 的 goal-wake flow
+  （flowId/taskId/missionId/turnBarrier/runId/ownerEpoch/timeoutMs）。
+  代际不匹配时与 queueDrain 同样 fail-closed（`reason: generation-mismatch`，
+  一个 owner 都不读）；只读模型抛错时降级为空状态而不是整调用失败。
+- **arm 侧刻意不开放 RPC**：`sessions_yield` 结束的是调用方自己的 turn，
+  `goal_wait` 的 mission/tick 身份绑定自活动 run 上下文。turn 外的 arm RPC 要么
+  等价于 `chat.abort`，要么允许调用方在别人的 mission 上 arm——违反本任务
+  「不放宽 agent 控制权限」的 non-goal。取消已 arm 的等待属于 `TF-0083`
+  （mission cancel 级联），不在这里做。
+- **顺带修掉一个真实缺陷**：`markSubagentRunPausedAfterYield` 会写 `endedAt`
+  并清空 `outcome`/`endedReason`，于是一次正常的 parent yield 在 lineage 投影里
+  被判成 `error`，并把整个会话推到 attention 级。现在 lineage 投影与 subagents
+  列表都产出 `yielded`，且归入 active 而非 attention。
+- 测试：`sessions.yield-state.test.ts` 7/7（挂起父会话与代际钉扎 / pending 子计数
+  只算运行中与 yield 挂起的 / armed goal wait 全字段 / 代际不匹配零读取 /
+  匹配正常读 / 读模型抛错降级 / 非法参数在任何 store 读之前被拒）；
+  投影新增 yielded 用例 1 例。
+- 门禁：spec validate --no-diff exit 0；gateway-methods 批次 40/40；
+  production reachability 2/2；typecheck 0；contract 0；comms 全 PASS；
+  build:runtime 0；E2E 3/3；touched 文件 lint 0；check-no-bom ok；diff-check 0。
+
+## TF-0082 切片 5：lineage runId join（2026-08-22）
+
+- 问题：mission / goal-wake flow / goal-owned process / subagent run 四类效应各自
+  有 id，但 Phase 5 投影里彼此不带关联，missions/flows 没有 runId 级 join，
+  「每个 session effect 都能定位到 sessionId/runId/parentSessionKey/ownerEpoch」
+  无法验证。
+- 方案：投影里的每个 goal/process/lineage 条目挂一个**共享** `lineage` 关联对象
+  （`SessionActivityLineageRef`：sessionId / runId / parentSessionKey / ownerEpoch /
+  missionId）。每个字段都只从已经记录它的 owner 复制，**不从另一个标识推导**，
+  owner 没记录就缺省，全空则整个 ref 省略（可区分「owner 不记录」与「未知」）。
+  id 统一 256 字符上界，超长直接丢弃而不是投影出去。
+- 关键 join：goal-wake flow 的 `wait.dependency.taskId` 指向它等待的进程任务，
+  所以 flow 行就是把 goal-owned process 连回 mission 和 durable `ownerEpoch` 的那条边；
+  mission goal 与 flow goal 再通过 `missionId` 对齐。
+- 数据来源：mission `lineage`/`taskLoopRunId`；flow `wait_json`；`task_runs.run_id` +
+  `requester_session_key`；bash `lifecycleExpectedSessionId`；supervisor `runId` +
+  新暴露的 `lifecycleExpectedSessionId`（只读快照加一个可选字段）；subagent
+  `runId`/`requesterSessionKey`/切片 1 的 `requesterSessionId` 代际钉扎。
+- 边界：没有新增第二个 identity 源，没有新增只读 probe，本切片不动 UI 渲染；
+  完整度受 owner 实际记录的内容限制（bash 有 sessionId 无 runId；goal-owned
+  process 只有在被某条 flow 声明为依赖任务时才拿得到 missionId/ownerEpoch）。
+- 测试：`session-activity-projection.test.ts` 10/10（原 5 例 + 新 5 例：三方
+  missionId 对齐 / mission lineage 优先于 taskLoopRunId / 代际钉扎与 legacy 无钉扎 /
+  每个条目都有非空 ref（lineageUnjoinedEntries=0）/ 超长 id 被丢弃）。
+- 门禁：spec validate --no-diff exit 0；gateway-methods 批次 27/27；supervisor
+  restart reconciliation 7/7；typecheck 0；contract 0；comms replay/compare 全 PASS；
+  build:runtime 0；E2E 3/3；touched 文件 lint 0；check-no-bom ok；diff-check 0。
+- 已知非本期失败：`tests/unit/session-activity-panel.test.tsx` 在本树上失败——
+  已提交的测试断言 goal 标签文本，而工作区里一份未提交的 `SessionActivityPanel.tsx`
+  重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀。未改动，归该改动的 owner。
+
+## TF-0082 切片 4：send/steer permit 覆盖 run-start 窗口（2026-08-22）
+
+- 问题：`sessions.send/steer` 的 admission permit 原本在 steer interrupt 结束后立刻
+  释放，`readSessionMessageCountAsync` 与整个 `chat.send` 前导段（含 run 注册、
+  附件预处理）都在无 permit 状态下执行——此时并发 reset/delete 可以直接 fence 通过，
+  于是 run 被播种在旧 generation 上。
+- 修复：permit 覆盖整个 run-start 窗口（steer interrupt → transcript seq 读取 →
+  chat.send 前导 → run armed）。释放点统一为一个 release-once 助手：`chat.send` 第一次
+  `respond`（ack/runId 或失败）时释放，`finally` 兜底再调一次，因此**没有路径泄漏、
+  也没有路径重复释放**（重复释放会误伤同 identity 的并发 send permit）。
+- 边界：permit 只覆盖 run-start，不覆盖整轮 run；run armed 之后 reset 正常 fence，
+  并通过 canonical stop path 中止该 run。代价是 steer 打断 embedded run 时最长 15s
+  的等待会让并发 reset 排队（有意的 fail-safe 定序）。
+- 测试：`sessions.send-permit-lifetime.test.ts` 6/6（preamble 内 permit 仍在 / 中途
+  reset fence 直到 run armed 才 drain / steer interrupt 在同一窗口内 / interrupt 失败
+  也释放 / chat.send 抛错不泄漏 / 恰好释放一次）。回归探针：把释放点改回修复前位置，
+  6 例中 3 例失败，探针已移除。
+- 门禁：spec validate --no-diff exit 0；gateway-methods 批次 18/18；announce 代际
+  8/8；subagent-spawn + admission registry 15/15；host-api facade 44/44；typecheck 0；
+  contract 0；comms replay/compare 全 PASS；build:runtime 0；E2E 3/3；touched 文件
+  lint 0；check-no-bom ok；diff-check 0。
+
+## TF-0082 切片 3：queueDrain 代际守卫（2026-08-22）
+
+- `SessionsQueueDrainParamsSchema` 新增可选 `expectedSessionId`；handler 在
+  active-run 检查之前比对当前 entry sessionId——不匹配时 fail-closed 返回
+  `drained:false + reason:"generation-mismatch"`，**队列消息原样保留**，drain 执行器
+  与 queue 回调安装均不触达；`drainQueuedUserMessagesForSession` 内部同样守卫
+  （dequeue 之前），防其他调用方绕过。
+- Host 契约新增 `SessionQueueDrainPayload`（含可选 expectedSessionId），Electron
+  queueDrain handler 透传；不带 pin 的调用保持 legacy 行为。
+- 测试：代际守卫 3/3（mismatch 不取消息 / 匹配正常 drain / 缺省 legacy）；
+  run-control 回归 9/9；Electron facade + rollback-plan（queueDrain UI 侧）50/50。
+- 门禁：spec validate；typecheck 0；contract 0；comms 全 PASS；build:runtime +
+  E2E 3/3；lint 0；diff-check 0。
+
+## TF-0082 切片 2：typed Host API stop surface（2026-08-22）
+
+- `shared/host-api/contract.ts` 新增 `SessionStopPayload/Result` 并入 sessions 契约；
+  `hostApi.sessions.stop` facade（`invokeHost('sessions','stop',...)`）；Electron
+  `sessions-api.ts` 新增 `stop` handler，委托既有 `sessions.stop` Gateway RPC（operator.admin、
+  TF-0079 已接通 production readiness gate）。turn 级中止保持 `chat.abort`，会话级停止
+  走新 typed surface——验收标准 4 的 stop/continue/fork 三操作至此都有 typed Host API +
+  真实 Gateway RPC 路径（stop 新增、queueDrain 既有、fork 既有）。
+- Facade 测试 44/44（新增 typed stop 路由用例）；`contract:check` 三层对齐通过；
+  typecheck 0；comms 全 PASS；E2E 3/3；lint 0；diff-check 0。
+
+---
+
+## TF-0081 终端、后台进程与子智能体资源回收（2026-08-22 收口，done 100%）
+
+- 状态：`TF-0081` 四个 owner path 全部完成并全门禁通过，本会话已按用户确认执行
+  closeout（done proposal 见 task-forest）；`TF-0082` 依赖随之解除，但未启动。
+- 切片 1：Harness spec + 失败矩阵；50-cycle create/spawn/stop-reset-delete 泄漏夹具
+  首轮全绿（`activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0
+  sweeperActive=false`），runtime 资源半区无泄漏且已围栏。
+- 切片 2：supervisor 重启 reconciliation——OS containment 抽取为共享模块（drain 回归
+  12/12 零行为变化）、文件权威 run-manifest（原子写、corrupt fail-closed）、
+  owner-PID 守卫（活的 owner 一律跳过，宁漏杀不误杀）、仅 OS 证据可用时收割
+  （SIGKILL 树 + settle 验证）、gateway 启动接线；7/7 重启 reconciliation 测试。
+- 切片 3：idle 四分类（纯观测零自动回收）——Electron 终端 lastInteraction/lastOutput
+  追踪 + `classifyTerminal` + 快照 idle 报告（`CLAWX_TERMINAL_OUTPUT_IDLE_MS`/
+  `CLAWX_TERMINAL_INTERACTION_IDLE_MS`）；bash registry
+  `classifyBashProcessIdle/Session`（`OPENCLAW_BASH_RUNNING_IDLE_MS`）；输出新鲜度
+  永远优先于 wall clock，false kill = 0 结构性成立。
+- 切片 4：session activity projection 一致性——bash 条目携带 idleClassification，
+  新增 owner-registry 精确集合护栏（fresh/stale/finished/reclaimed/foreign 五态），
+  回收资源绝不出现在快照。
+- 最终门禁（最终树全量重跑）：harness context + validate --no-diff；focused 44 测试
+  （gateway cycle+drain 13 / process 7 / agents-core 6 / projection 5 / Electron
+  terminal 13）；typecheck exit 0；contract 0；comms replay/compare 全 PASS；
+  build:runtime + runtime-lifecycle E2E 3/3；touched 文件 lint 0；
+  `git diff --check` 0。
+- 证据：`artifacts/session-ecosystem-resource-reclamation/report.json`（四切片 +
+  最终 verdict）；README 三语含 TF-0081 两句。
+- 边界保持：无 universal resource ledger；keep-mode subagent 记录与 VerseShell
+  ownership 未动；`liveReady=false`、`productApproved=false` 不变。已知残留（非本
+  节点）：harness diff-aware validate 需 scoped clean candidate；4 个非本节点 lint
+  error 归各自 owner。
+- 下一步：`TF-0082`（会话生命周期下游）依赖已解除，是否启动为独立 Task Forest 决策。
+
+---
+
+## TF-0081 启动与切片 1（2026-08-22）
+- Spec：[session-ecosystem-resource-reclamation.md](../harness/specs/tasks/session-ecosystem-resource-reclamation.md)
+  已创建，`validate --no-diff` 通过；失败矩阵覆盖 50-cycle 归零、idle 分类、TTL 边界、
+  重启 reconciliation、fail-closed OS containment、keep-mode 边界。
+- Owner 盘点（唯一 writer 不变）：Electron `TerminalSessionManager`（exit/close/quit 回收 +
+  delete gate fence；缺口：无 idle TTL/心跳、无 reset 关闭调用方）；supervisor（exited 记录
+  按数量上限 2000 有界；缺口：`reconcileOrphans` 是显式 no-op）；bash registry（finished
+  30min TTL + sweeper 空停；缺口：running 无 idle 策略）；subagent sweeper（60s 清扫 +
+  stale 恢复；keep-mode 无界是刻意边界）；drain finalizer（fence + fail-closed OS
+  containment 已很强）。另确认 Electron/renderer 没有 `sessions.reset` 调用面。
+- 首个切片：50-cycle create/spawn/stop-reset/delete 泄漏夹具
+  （`src/gateway/session-ecosystem-reclamation-cycle.test.ts`）首轮全绿：
+  `cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0
+  sweeperActive=false`（每周期真实 parent+child 进程树 + OS 归零验证，~28s）。
+  结论：runtime stop/reset/delete 资源半区当前无泄漏，验收标准 1 的 runtime 半区已围栏。
+- Focused：gateway cycle+drain 13/13；Electron terminal 三件套 10/10。
+- 证据：`artifacts/session-ecosystem-resource-reclamation/report.json`。
+- 下一步（按单 owner path 纪律择一）：
+  1. supervisor 重启 reconciliation（读持久化状态，fail-closed，不做 PID fallback 扩大）；
+  2. terminal/bash running 记录 idle 分类（running/interactive/completed/orphaned，可配置，
+     false kill = 0）；
+  3. session activity snapshot 的 orphan/idle 投影一致性。
+
+## TF-0081 切片 3：idle 四分类（2026-08-22）
+
+- Electron `TerminalSessionManager`：记录 `lastInteractionAtMs`（write/interrupt）与
+  `lastOutputAtMs`（PTY 输出）；新增 `classifyTerminal()`，且所有快照（status/list）携带
+  `idle` 报告；阈值可经 `ctx.idlePolicy` 或环境变量 `CLAWX_TERMINAL_OUTPUT_IDLE_MS`
+  （默认 60s）/`CLAWX_TERMINAL_INTERACTION_IDLE_MS`（默认 30min）配置，夹取 1s–24h。
+- Runtime bash registry：新增 `classifyBashProcessIdle` / `classifyBashProcessSession`，
+  复用已有 `lastOutputAt`（缺失时回退 `startedAt`）；`OPENCLAW_BASH_RUNNING_IDLE_MS`
+  （默认 10min，夹取 1min–24h）。
+- 分类纯观测、零自动回收：输出新鲜度永远优先于 wall clock——存在真实子进程活动的
+  终端/会话绝不会被判定为 idle（结构上 false kill = 0）。orphaned 类由切片 2 的重启
+  reconciliation 负责，四类跨 owner 齐备。
+- 测试：Electron 4/4（纯分类、事件流全转换 interactive→running-process→interactive→
+  idle→interactive、回收后 null、env 覆盖）；runtime 6/6（completed/边界含 inclusive、
+  startedAt 回退、stale→idle、markExited→completed、未知→null）。
+- 门禁（切片 3 最终树）：gateway cycle+drain 13/13 回归；typecheck exit 0；contract 0；
+  comms 全 PASS；build:runtime + E2E 3/3；touched 文件 lint 0；`git diff --check` 0。
+- 剩余：owner path 4（session activity snapshot 的 idle/orphan 投影与 owner registry
+  一致性）+ 最终 closeout 全门禁重跑。
+
+## TF-0081 切片 2：supervisor 重启 reconciliation（2026-08-22）
+
+- OS containment 证据抽取为共享模块 `src/process/os-containment.ts`（wmic//proc 进程表、
+  PID-reuse token 守卫、树捕获与终止验证）；drain service 改为引用，drain 契约 12/12 回归
+  通过（重构零行为变化）。
+- 新增持久化 run 清单 `src/process/supervisor/run-manifest.ts`：文件为权威（每次
+  add/remove 重读-合并-原子重写，跨 boot 可见），corrupt 时 fail-closed——不覆盖文件、
+  reconciliation 拒绝杀任何进程。
+- `reconcileOrphans` 从显式 no-op 变为真实实现（`src/process/supervisor/reconcile.ts`）：
+  本进程 run 跳过；owner PID 仍存活的 run 一律跳过（宁可泄漏不误杀）；owner 已死且
+  run 存活的，仅在 OS 捕获证据可用时 `signalProcessTree` SIGKILL 并验证归零，证据不可用
+  或杀后未死则保留条目——无 PID fallback 范围扩大。
+- Gateway 启动接线：`server.impl.ts` 在 durable-helper 恢复块旁挂载清单并执行
+  reconciliation，结果写入启动日志；`minimalTestGateway` 下不启用。
+- 测试：`src/process/supervisor/restart-reconciliation.test.ts` 7/7（镜像生命周期、
+  孤儿树收割、foreign owner 不触碰、lost 清理、证据不可用保留后可再收敛、corrupt
+  fail-closed、无清单 no-op + 幂等）。
+- 门禁（本切片最终树）：process shard 7/7；gateway cycle+drain 13/13；Electron terminal
+  10/10；spec validate --no-diff；touched 文件 lint 0；typecheck exit 0；contract 0；
+  comms replay/compare 全 PASS；`build:runtime` + runtime-lifecycle E2E 3/3（gateway
+  带新接线启动）；`git diff --check` 0。
+- README 三语已补 TF-0081 重启回收一句；证据报告已更新。
+- 剩余：owner path 3（terminal/bash running idle 分类）、owner path 4（activity
+  orphan 投影）；最终 closeout 前需重跑全门禁。
+
+---
+
+## 历史交接：TF-0079 会话生命周期生产可达性（2026-08-21）
+
+- 状态：`TF-0079` 已由 Task Forest CLI 标记为 `done`（100%）；`validate` 与 `export` 通过。`TF-0080` 的依赖已解除，但节点保持 `proposed`，本轮未启动。
+- 修复：将已有 `sessions.stop` handler 接入 Gateway lazy method whitelist 与 core descriptor（`operator.admin`、advertised），并把它加入 Electron required-runtime-method gate。
+- Fail-closed：握手缺少任何 required method 时，后续 `gateway:ready` 事件和 `system-presence` fallback probe 都不能把 `gatewayReady` 提升为 true。
+- 证据：`artifacts/session-ecosystem-production-reachability/report.json`；基线探针为 `handler=false/descriptor=false`，当前探针为 `handler=function/descriptor=true/scope=operator.admin/advertised=true`。
+- 验证：Gateway reachability 2/2、`sessions.stop` handler 4/4、Electron readiness 8/8、Gateway permission 3/3、Host API facade 43/43、workspace permission 10/10；contract exit 0；comms replay/compare PASS；隔离 candidate 的 Harness `validate --since HEAD` exit 0。
+- 边界：未新增 renderer/Host API stop surface，未启用 Goal-wake 或 durable-helper；共享工作树仍有既有脏改动，报告明确 `formalCleanCandidate=false`、`liveReady=false`、`productApproved=false`。
+- 下一步：下一会话先读取 `TF-0080` 与其依赖规则，围绕 admission/generation fence 与 delete retry 做单节点开发；不要并行启动 `TF-0081+`。
+
+---
+
+## 历史交接：TF-0080 会话安全闸门续接（2026-08-22）
+
+> 历史快照。写作当时唯一 active 节点是 `TF-0080`；`TF-0079..TF-0084` 的当前状态以本文件顶部
+> 的 TF-0084 段落为准。
+
+本节写作时唯一 active 节点为 `TF-0080`（`in_progress`，canonical Task Forest 未 closeout）；
+`TF-0081`、`TF-0082`、`TF-0083`、`TF-0084` 当时继续保持顺序阻塞。未启动 Goal-wake/durable-helper
+下游，也未改变任何产品锁。
+
+本轮只处理 TF-0080 owner path：
+
+- Electron `session-delete-gate` 复用现有 `withFileLock` + atomic write，损坏/版本不符的 gate
+  fail-closed；不同 session 的 read-modify-write 不互相覆盖；同 session delete 请求复用同一个
+  in-flight Promise；terminal-open 与 delete 共用 session 临界区，锁占用时直接拒绝启动。
+- Runtime delete receipt 要求匹配 operationId、`runtime_committed` 和非空 `sessionId`；
+  `.jsonl.deleted.<timestamp>` 纳入 Electron hard-delete sweep；所有已搜索到的 production
+  `sessions.delete` caller 都带稳定 operationId，测试 harness 也已对齐。
+- Delete session/subagent hook payload 透传稳定 operationId；delete finalizer 等待当前 hook
+  dispatch settle 后再写 progress，既有 plugin hook 的 fail-open 语义保持不变，外部 hook
+  去重责任由 operationId 交给 effect owner。
+
+已验证：core tsgo 0；Runtime focused 28 + hook/operation-id 1；Electron focused 18/18；
+contract 0；comms replay/compare 0 丢失/重复/乱序；import-cycle 0；`git diff --check` 0。
+新增 gate race、legacy deleted transcript sweep、hook operationId contract 测试。
+
+## TF-0080 收口（2026-08-22，本会话）
+
+- 依赖恢复：`pnpm install --no-optimistic-repeat-install` 重建了 5 个空洞 `.pnpm` store 条目
+  （csstype、clsx、react、stylis、zod）。根因是 pnpm v11 的 optimistic-repeat-install 在
+  store 半空时仍报 up-to-date；修复只影响 node_modules，不动 tracked 文件。
+- Electron 二进制：按 CI Windows 配方（@electron/get + Expand-Archive + path.txt）本地补齐
+  `electron@40.8.4` dist，`pnpm exec electron --version` = v40.8.4。
+- Spec requiredTests 修正：admission registry 测试路由到 `vitest.unit-fast` shard
+  （内容分类归属），operation-id 测试保留 `vitest.unit` shard；两条命令均验证通过。
+- goal-wake E2E 修复：`goal-wake-e2e-trace.ts` 对 harness exec 声明 trusted
+  system-generated provenance，command-exec sink 策略本身未放宽；goal-wake 实现未改动。
+- Lint 收敛：TF-0080 范围内文件 lint 干净（acp-spawn/subagent-spawn permit 改 const、
+  删除未用 import）；剩余 4 个 lint error 均在其他阶段拥有的脏树文件里，未代改。
+- 最终门禁（最终代码树）：harness validate --no-diff 通过；runtime focused
+  admission 12 + journal/reachability 28 + hook/op-id 1 + subagent-spawn 3；
+  Electron 18 + 31；contract 0；comms replay/compare 全 PASS；`pnpm run typecheck`
+  exit 0（node 0 / web 0，testTypes 仅观察模式）；`build:vite`、`build:runtime`、
+  runtime-lifecycle E2E 3/3（两次）；`git diff --check` 0。
+- 证据：`artifacts/session-ecosystem-safety-gate-consistency/report.json` 已刷新；
+  `formalAcceptance=false`、`liveReady=false`、`productApproved=false` 边界保持不变。
+- 已知残留：harness diff-aware validate 仍被共享工作树无关 ownership 变更阻断
+  （非 TF-0080 文件）；4 个非本节点 lint error 待各自 owner 处理。
+- 下一步：保存 TF-0080 closeout proposal（用户 /goal 已确认可标记 done），apply 后
+  运行 task-forest `validate` + `export`。不启动 `TF-0081`。
+
+## Current handoff: TF-0074 real-use engineering acceptance (2026-08-21)
+
+- Status: `TF-0074` engineering acceptance is complete and closed through `TFP-close-TF-0074-20260821`.
+- Production fix: `knowledge.sekbCaptureTrajectory` now accepts only explicit valid `runtime-lineage.v1`, forwards it into trajectory metadata, and never infers lineage from `sessionKey`; invalid lineage fails as `invalidInput`.
+- Operator truthfulness: manual Knowledge trajectories are now described in all locales as audit-only and not distillation candidates. The Electron Knowledge test covers this boundary.
+- Verification: DCS 351/351; detached candidate at base `e07b874b3` passes normal diff-aware Harness validate/dry-run, focused agents 33/33, focused runtime 11/11, Host API facade 43/43, contract, and i18n. The authoritative worktree also passes `tsgo:core`, DCS lint, node/web typecheck, runtime/Vite builds, comms replay/compare, DCS preflight/C1 gate, and fresh-build Electron Knowledge + SEKB E2E 5/5.
+- Residual: the shared worktree remains dirty. A fresh candidate-only `tsgo:core` through junctioned dependencies hits `ui/vitest.config.ts` `TS2321`/`TS2769`, while the authoritative official gate exits 0; this is recorded as a worktree-link environment boundary, not hidden.
+- Evidence: `docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md`.
+- Product boundary unchanged: this is engineering evidence only. There is no real channel/human acceptance cohort, no automatic SEKB writeback, and no change to `liveReady=false`, `productApproved=false`, or `defaultOn=false`.
+- Next action: keep product locks unchanged and assess any successor as a separate Task Forest decision. `TASK-P2-01` remains human/live blocked; no successor was started during this closeout.
+
+---
+
+## Historical handoff: TF-0072 runtime lineage convergence (2026-08-20)
+
+- Status: implementation and current-source engineering gates are complete; Task Forest closeout is authorized and applied through `TFP-close-TF-0072-20260820`.
+- Production chain: one bounded `runtime-lineage.v1` now correlates Mission tick, Task Loop, DCS task-state/HandoffPack, SEKB trajectory, and confirmed-principle provenance without adding a workflow or memory authority.
+- Operator surface: Knowledge > Runtime Lessons displays available session/Mission/tick/loop/trace/Task Ledger lineage and rejects source-session conflicts during confirm.
+- Verification: `pnpm --dir openclaw_runtime tsgo:core`, `pnpm run typecheck`, `pnpm test:dcs` (351 tests), `pnpm lint:dcs`, `pnpm contract:check`, `pnpm i18n:lint`, `pnpm verseshell:test`, comms replay/compare, runtime build, and Knowledge Electron E2E 4/4 all pass. Harness structural validation passes with `--no-diff`; normal diff-aware validation remains outside this scoped claim because the shared worktree contains unrelated changes.
+- Evidence: `docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md`.
+- Product boundary unchanged: this is engineering closeout only; DCS/SEKB stay default-off and it does not set `liveReady`, `productApproved`, or `defaultOn`.
+- Historical next step was `TF-0073`; both TF-0073 and the start of TF-0074 have since been applied. The TF-0074 block above is authoritative.
+
+---
+
 > 更新：2026-08-19（Runtime Lifecycle Governance Phase 0-6 closeout + GA hardening）
 > 上一节点：`TF-0077`（Runtime Lifecycle Governance Phase 0-6 Closeout）= **done**
 > 当前分支：`feat/runtime-lifecycle-governance`（未合并）
+
+---
+
+## Historical handoff: TF-0071 Task Loop phase side-effect durability (2026-08-20)
+
+- Status: `TF-0071` is complete. Evidence: `docs/dev/dcs-visible-production/TF-0071-TASK-STATE-PHASE-SIDE-EFFECT-DURABILITY-EVIDENCE-2026-08-20.md`.
+- Implementation: phase hooks return structured task-state/trajectory results; each TaskLoop run drains a serialized side-effect queue before normal or error return; sink rejection reasons and capture failures are recorded as structured degradation evidence; cancellation checks prevent late orchestration from reviving a cancelled run.
+- Verification: `pnpm run test:dcs` passed with unit 251, runtime-config 10, agents 88; focused root/runtime tests, direct node typecheck, `pnpm run lint:dcs`, changed-file ESLint, `pnpm --dir openclaw_runtime db:kysely:check`, comms replay/compare, Harness `--no-diff` validation, and `git diff --check` passed.
+- Residuals: Harness diff-aware dry-run remains blocked by unrelated changed paths in the shared worktree and missing `harness/node_modules`; `pnpm --dir openclaw_runtime build` reaches runtime postbuild but exits 1 at the existing missing `goal_wait` tool-display metadata check. Neither is reported as a full-repository pass.
+- Product boundary unchanged: DCS/SEKB remain default-off; `liveReady=false`, `productApproved=false`, `defaultOn=false`; no automatic SEKB writeback. This historical handoff is superseded by the TF-0072 closeout above; TF-0073 is now the only eligible direct successor.
+
+---
+
+## 历史接力：TF-0070 DCS Task State 按运行实例隔离（2026-08-19）
+
+- 状态：`TF-0070` 已完成并通过 Task Forest `validate/export`；证据见
+  `docs/dev/dcs-visible-production/TF-0070-TASK-STATE-RUN-SCOPE-EVIDENCE-2026-08-19.md`。
+- 实现：`TaskStateHandlerConfig` 按 `runId + sessionId` 注册和解析；TaskLoop 的 `loopRunId` 显式绑定到唯一 session config；phase hook 在等待前固定当前 scope，terminal/cancelled 只清理当前 scope；agent-end 会清理 outer attempt 及其 loop aliases；无 DCS sink/store 的新初始化会清理该 scope 的 stale config。
+- 验证：`pnpm run test:dcs`（250 + 10 + 87 tests）、focused task-state/SEKB shards、`pnpm run typecheck:node`、changed-file ESLint、`pnpm harness validate --no-diff --spec harness/specs/tasks/dcs-stage2-task-state-handoff.md`、`pnpm run comms:replay`、`pnpm run comms:compare`、`git diff --check` 均通过。
+- Harness 普通 diff-aware validate 仍被共享工作树无关 changed paths 与 harness 子包缺少 node_modules 阻断，未扩大 touchedAreas；这不是 TF-0070 focused regression 的失败。
+- 产品边界保持：DCS/SEKB 默认关闭，`liveReady=false`、`productApproved=false`、`defaultOn=false`；下一唯一节点为 `TF-0071`，不得并行启动 `TF-0072+`。
 
 ---
 
@@ -23,7 +771,7 @@
 
 ---
 
-## 当前交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
+## 历史交接：Workflow Viz B2-02A 已完成，下一步 B2-02（2026-08-15）
 
 **WV-B2-02A / TF-0062 已完成并单提交 `b58350a2f`（feat(trajectory): bridge raw v2 renderer supply）。** 提案 `TFP-workflow-viz-b2-02-bridge-and-store-20260815` 与收卡提案 `TFP-workflow-viz-b2-02a-close-20260815` 均已经用户确认后应用；task-forest validate/export PASS；TF-0062=done(100%)，TF-0063（WV-B2-02 现有 store 并轨）保持 `proposed`。
 
@@ -73,9 +821,11 @@
 
 ---
 
-## 当前接力入口（2026-08-14）
+## 历史接力入口（2026-08-14）
 
-当前接力主题是 VerseShell `TF-0065` / P2-02 argv-only command profiles，已全部收尾：Windows batch 元数据补丁已审查并补齐验证，测试矩阵与 governed contract 测试已完成，证据文档/STATUS/编排计划/三份 README 已同步，全部工程门禁全绿，Task Forest closeout proposal `TFP-verseshell-p2-02-closeout-20260814` 已保存并应用（validate/export PASS），`TF-0065` 为 `done` 100%，唯一下一节点 `TF-0066` / VS-P2-03 diagnostics 已解锁为 `ready`。下一会话只允许启动 `TF-0066` / P2-03。详细交接见本文件后部“接力交接：VerseShell P2-02 中断点”章节。
+> 历史快照，已被后续节点取代；当前接力入口以本文件顶部的 TF-0084 段落为准。
+
+本节写作时的接力主题是 VerseShell `TF-0065` / P2-02 argv-only command profiles，已全部收尾：Windows batch 元数据补丁已审查并补齐验证，测试矩阵与 governed contract 测试已完成，证据文档/STATUS/编排计划/三份 README 已同步，全部工程门禁全绿，Task Forest closeout proposal `TFP-verseshell-p2-02-closeout-20260814` 已保存并应用（validate/export PASS），`TF-0065` 为 `done` 100%，唯一下一节点 `TF-0066` / VS-P2-03 diagnostics 已解锁为 `ready`。下一会话只允许启动 `TF-0066` / P2-03。详细交接见本文件后部“接力交接：VerseShell P2-02 中断点”章节。
 
 产品锁不变：`default-off`、`liveReady=false`、`productApproved=false`、`defaultOn=false`。不要并行启动 P3、P5 或任何 rollout。
 
