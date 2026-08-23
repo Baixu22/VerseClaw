@@ -12,8 +12,9 @@ import type { GatewayManager } from '../gateway/manager';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import {
   clearSessionDeleteGate,
-  findSessionDeleteGateBySession,
   persistSessionDeleteGate,
+  updateSessionDeleteGate,
+  withSessionDeleteGateLock,
 } from './session-delete-gate';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
@@ -984,8 +985,18 @@ async function deleteSession(sessionKey: string): Promise<SessionDeleteResult> {
   const resolution = resolveSessionTranscriptPath(sessionsJson, sessionsDir, sessionKey);
   if (!resolution.ok) {
     if (resolution.failure.kind === 'not-found') {
-      logger.warn(`[session:delete] Cannot resolve file for "${sessionKey}". Raw value: ${JSON.stringify(sessionsJson[sessionKey])}`);
-      return { success: false, error: `Cannot resolve file for session: ${sessionKey}` };
+      removeSessionEntry(sessionsJson, sessionKey);
+      try {
+        await fsP.writeFile(sessionsJsonPath, JSON.stringify(sessionsJson, null, 2), 'utf8');
+        logger.info(`[session:delete] Entry already absent on disk; removed stale index for "${sessionKey}"`);
+        return { success: true };
+      } catch (error) {
+        return {
+          success: false,
+          partial: true,
+          error: `Session files were already absent but sessions.json could not be updated: ${String(error)}`,
+        };
+      }
     }
     logger.warn(`[session:delete] Refusing to delete out-of-scope path for "${sessionKey}": ${resolution.failure.resolvedPath}`);
     return {
@@ -1341,11 +1352,14 @@ type GatewaySessionDeleteResult = {
   ok?: boolean;
   deleted?: boolean;
   archived?: string[];
+  sessionId?: string;
   operationId?: string;
   journalState?: string;
   error?: string;
   message?: string;
 };
+
+const sessionDeleteRequests = new Map<string, Promise<SessionDeleteResult>>();
 
 async function deleteSessionViaRuntime(
   sessionKey: string,
@@ -1360,8 +1374,7 @@ async function deleteSessionViaRuntime(
   // Electron mirror gate: reuse a previously persisted operationId when the
   // previous RPC failed or its outcome is unknown. A fresh operationId is
   // generated and persisted before the first RPC for a session.
-  const existingGate = await findSessionDeleteGateBySession(sessionKey);
-  const gate = existingGate ?? await persistSessionDeleteGate(sessionKey, parsed.agentId);
+  const gate = await persistSessionDeleteGate(sessionKey, parsed.agentId);
 
   try {
     const result = await gatewayManager.rpc<GatewaySessionDeleteResult>(
@@ -1377,16 +1390,49 @@ async function deleteSessionViaRuntime(
       return { success: false, error: errorText };
     }
 
-    if (result.deleted === true) {
-      // Committed receipt received: only now close the terminal gate and sweep
-      // the Electron mirror artifacts.
+    if (
+      result.deleted !== true ||
+      result.operationId !== gate.operationId ||
+      result.journalState !== 'runtime_committed' ||
+      typeof result.sessionId !== 'string' ||
+      !result.sessionId.trim()
+    ) {
+      return {
+        success: false,
+        error: 'Gateway delete returned no matching runtime_committed receipt',
+      };
+    }
+
+    if (
+      gate.expectedSessionId &&
+      gate.expectedSessionId !== result.sessionId
+    ) {
+      return {
+        success: false,
+        error: `Gateway delete receipt belongs to session ${result.sessionId}, expected ${gate.expectedSessionId}`,
+      };
+    }
+
+    let currentGate = gate;
+    if (!currentGate.expectedSessionId) {
+      currentGate = await updateSessionDeleteGate(gate.operationId, {
+        expectedSessionId: result.sessionId,
+      }) ?? currentGate;
+    }
+    if (currentGate.terminalClosed !== true) {
       terminalManager?.closeForSessionKey(sessionKey, 'session-delete');
+      currentGate = await updateSessionDeleteGate(gate.operationId, {
+        terminalClosed: true,
+      }) ?? currentGate;
+    }
+    if (currentGate.localSweepCommitted !== true) {
       const sweepResult = await deleteSession(sessionKey);
       if (!sweepResult.success) {
-        // Keep the gate so a retry reuses the committed operationId and only
-        // re-runs the local mirror sweep.
         return sweepResult;
       }
+      await updateSessionDeleteGate(gate.operationId, {
+        localSweepCommitted: true,
+      });
     }
 
     await clearSessionDeleteGate(gate.operationId);
@@ -1402,6 +1448,30 @@ async function deleteSessionViaRuntime(
   }
 }
 
+async function deleteSessionViaRuntimeSerialized(
+  sessionKey: string,
+  gatewayManager: GatewayManager,
+  terminalManager?: TerminalSessionManager,
+): Promise<SessionDeleteResult> {
+  const previous = sessionDeleteRequests.get(sessionKey);
+  if (previous) return previous;
+  const current = withSessionDeleteGateLock(
+    sessionKey,
+    () => deleteSessionViaRuntime(sessionKey, gatewayManager, terminalManager),
+  );
+  sessionDeleteRequests.set(sessionKey, current);
+  void current.then(() => {
+    if (sessionDeleteRequests.get(sessionKey) === current) {
+      sessionDeleteRequests.delete(sessionKey);
+    }
+  }, () => {
+    if (sessionDeleteRequests.get(sessionKey) === current) {
+      sessionDeleteRequests.delete(sessionKey);
+    }
+  });
+  return current;
+}
+
 export function createSessionsApi(ctx: {
   gatewayManager?: GatewayManager;
   terminalManager?: TerminalSessionManager;
@@ -1410,7 +1480,7 @@ export function createSessionsApi(ctx: {
     delete: async (payload) => {
       const sessionKey = getSessionKey(payload);
       const result = ctx.gatewayManager
-        ? await deleteSessionViaRuntime(sessionKey, ctx.gatewayManager, ctx.terminalManager)
+        ? await deleteSessionViaRuntimeSerialized(sessionKey, ctx.gatewayManager, ctx.terminalManager)
         : await deleteSession(sessionKey);
       if (result.success) {
         await getResourceTracker().unregisterBySession(sessionKey).catch(() => 0);
@@ -1770,6 +1840,9 @@ export function createSessionsApi(ctx: {
       const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.queueDrain', {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
+        ...(typeof payload.expectedSessionId === 'string' && payload.expectedSessionId.trim()
+          ? { expectedSessionId: payload.expectedSessionId.trim() }
+          : {}),
       }, 30_000);
       return {
         success: true,
@@ -1778,6 +1851,30 @@ export function createSessionsApi(ctx: {
         queueCount: toNumber(result.queueCount) ?? 0,
         ...(toNumber(result.messageCount) !== undefined ? { messageCount: toNumber(result.messageCount) } : {}),
         ...(typeof result.reason === 'string' ? { reason: result.reason } : {}),
+      };
+    },
+    stop: async (payload) => {
+      const sessionKey = getSessionKey(payload);
+      const agentId = getOptionalAgentId(payload);
+      if (!ctx.gatewayManager) {
+        return {
+          success: false,
+          error: 'Gateway manager unavailable',
+          key: sessionKey,
+          stopped: false,
+        };
+      }
+      // Session-level stop runs the canonical stop front (queued state clear,
+      // recursive subagent stop, process drain); turn-level abort stays on
+      // chat.abort.
+      const result = await ctx.gatewayManager.rpc<Record<string, unknown>>('sessions.stop', {
+        key: sessionKey,
+        ...(agentId ? { agentId } : {}),
+      }, 30_000);
+      return {
+        success: true,
+        key: typeof result.key === 'string' ? result.key : sessionKey,
+        stopped: result.ok === true,
       };
     },
     restoreCheckpoint: async (payload) => {

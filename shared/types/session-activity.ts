@@ -3,7 +3,7 @@ import type { GitRepositoryStatus } from './git';
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
 export type SessionActivityTaskStatus = 'queued' | 'running' | 'review' | 'blocked' | 'completed' | 'failed' | 'aborted';
-export type SessionActivitySubagentStatus = 'started' | 'completed' | 'error' | 'aborted' | 'verified';
+export type SessionActivitySubagentStatus = 'started' | 'yielded' | 'completed' | 'error' | 'aborted' | 'verified';
 export type SessionActivityTerminalKind = 'interactive' | 'agentCommand' | 'webPreviewDevServer';
 export type SessionActivityTerminalStatus = 'idle' | 'starting' | 'running' | 'exited' | 'blocked' | 'completed' | 'error';
 export type SessionActivityAttentionLevel = 'none' | 'passive' | 'active' | 'attention';
@@ -12,7 +12,28 @@ export type SessionActivityGoalStatus = 'queued' | 'waiting' | 'running' | 'slee
 export type SessionActivityProcessKind = 'bash' | 'supervisor' | 'goalOwned';
 export type SessionActivityProcessStatus = 'queued' | 'starting' | 'running' | 'exiting' | 'exited' | 'completed' | 'failed' | 'killed' | 'aborted' | 'lost';
 export type SessionActivityLineageKind = 'parent' | 'child';
-export type SessionActivityLineageStatus = 'started' | 'completed' | 'aborted' | 'error';
+export type SessionActivityLineageStatus = 'started' | 'yielded' | 'completed' | 'aborted' | 'error';
+
+/**
+ * Correlation identity for one projected session effect (TF-0082).
+ *
+ * Every field is copied from the owner that already records it; nothing is
+ * derived from another identifier, and a field is absent when its owner does
+ * not record one. This is the single lineage shape shared by goals, processes,
+ * and lineage rows — consumers must not build a second session identity.
+ */
+export type SessionActivityLineageRef = {
+  /** Session generation (`sessionId`) the effect is pinned to. */
+  sessionId?: string;
+  /** Run that produced the effect. */
+  runId?: string;
+  /** Session that requested the run, when the owner records a requester. */
+  parentSessionKey?: string;
+  /** Durable owner epoch, when the owner defines one. */
+  ownerEpoch?: string;
+  /** Mission correlation shared by mission goals, goal-wake flows, and their processes. */
+  missionId?: string;
+};
 
 export type SessionActivityTask = {
   id: string;
@@ -58,6 +79,8 @@ export type SessionActivityGoal = {
   progress?: number;
   /** Redacted command/objective digest only; raw text is never projected. */
   digest?: string;
+  /** Correlation identity for this goal; absent when no owner records one. */
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
@@ -70,6 +93,8 @@ export type SessionActivityProcess = {
   pid?: number;
   /** Redacted command digest only; raw text is never projected. */
   digest?: string;
+  /** Correlation identity for this process; absent when no owner records one. */
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
@@ -79,6 +104,8 @@ export type SessionActivityLineage = {
   sessionKey: string;
   role?: string;
   status: SessionActivityLineageStatus;
+  /** Correlation identity for this run, including the parent generation pin. */
+  lineage?: SessionActivityLineageRef;
   updatedAt: number;
 };
 
@@ -202,10 +229,10 @@ export function classifySessionActivity(
   const active = snapshot.session.status === 'running'
     || snapshot.session.status === 'waiting_approval'
     || snapshot.tasks.some((task) => task.status === 'running' || task.status === 'review')
-    || snapshot.subagents.some((agent) => agent.status === 'started')
+    || snapshot.subagents.some((agent) => agent.status === 'started' || agent.status === 'yielded')
     || snapshot.goals.some((goal) => goal.status === 'running' || goal.status === 'waiting' || goal.status === 'sleeping' || goal.status === 'paused')
     || snapshot.processes.some((process) => process.status === 'starting' || process.status === 'running' || process.status === 'exiting' || process.status === 'queued')
-    || snapshot.lineage.some((entry) => entry.status === 'started')
+    || snapshot.lineage.some((entry) => entry.status === 'started' || entry.status === 'yielded')
     || terminals.some((terminal) => terminal.status === 'starting' || terminal.status === 'running')
     || snapshot.continuity.contextPressure === 'medium';
   if (active) return 'active';

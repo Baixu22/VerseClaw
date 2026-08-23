@@ -10,23 +10,15 @@ import {
 } from "../../openclaw_runtime/src/agents/bash-process-registry.js";
 import {
   acquireSessionAdmissionPermit,
-  RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV,
-  sessionAdmissionEnabled,
   sessionAdmissionRegistry,
   type SessionAdmissionIdentity,
 } from "../../openclaw_runtime/src/sessions/session-admission-registry.js";
-import {
-  RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV,
-  sessionDeleteOperationJournalEnabled,
-} from "../../openclaw_runtime/src/gateway/session-delete-operation-journal.js";
 import { drainScope } from "../../openclaw_runtime/src/gateway/session-drain-service.js";
 import { getProcessSupervisor } from "../../openclaw_runtime/src/process/supervisor/index.js";
 import { isPidDefinitelyDead } from "../../openclaw_runtime/src/shared/pid-alive.js";
 import { goalWakeController } from "../../openclaw_runtime/src/agents/goal-wake-controller.js";
 
 afterEach(() => {
-  delete process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV];
-  delete process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV];
   delete process.env.RUNTIME_LIFECYCLE_MISSION_FENCING_ENABLED;
   delete process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_ENABLED;
   sessionAdmissionRegistry.clearForTests();
@@ -198,9 +190,8 @@ async function runLeakDrainCycle(index: number): Promise<number> {
   return bashRecords + supervisorRecords;
 }
 
-describe("Runtime Lifecycle Governance — Phase 0 default-off contract", () => {
-  it("admission permit hook is default-off and leaves the registry untouched", () => {
-    expect(sessionAdmissionEnabled()).toBe(false);
+describe("Runtime Lifecycle Governance — Phase 0 lifecycle safety contract", () => {
+  it("required admission permit hook is live without an env opt-in", () => {
     const release = acquireSessionAdmissionPermit(
       {
         agentId: "agent-a",
@@ -214,11 +205,7 @@ describe("Runtime Lifecycle Governance — Phase 0 default-off contract", () => 
       agentId: "agent-a",
       canonicalSessionKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
-    })?.totalPermits).toBeUndefined();
-  });
-
-  it("delete operation journal probe is default-off", () => {
-    expect(sessionDeleteOperationJournalEnabled()).toBe(false);
+    })?.totalPermits).toBe(1);
   });
 
   it("mission fencing save path is default-off", () => {
@@ -229,13 +216,9 @@ describe("Runtime Lifecycle Governance — Phase 0 default-off contract", () => 
     expect(goalWakeController.goalWakeEnabled()).toBe(false);
   });
 
-  it("all three Phase 0 flags are kill switches and only turn on with explicit truthy values", () => {
-    process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV] = "1";
-    process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV] = "1";
+  it("remaining Goal-wake flags are kill switches and only turn on with explicit truthy values", () => {
     process.env.RUNTIME_LIFECYCLE_MISSION_FENCING_ENABLED = "1";
     process.env.RUNTIME_LIFECYCLE_GOAL_WAKE_ENABLED = "1";
-    expect(sessionAdmissionEnabled()).toBe(true);
-    expect(sessionDeleteOperationJournalEnabled()).toBe(true);
     expect(goalWakeController.isMissionFencingEnabled()).toBe(true);
     expect(goalWakeController.goalWakeEnabled()).toBe(true);
   });
