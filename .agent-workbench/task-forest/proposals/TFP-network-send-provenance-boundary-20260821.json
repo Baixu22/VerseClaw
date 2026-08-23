@@ -1,0 +1,61 @@
+{
+  "applied_at": "2026-08-21T00:25:30.800030Z",
+  "base_graph_hash": "c8e8bdae8a074b57157d31b035df7233204cad3fa351ed9876938afdfb339274",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "network-send 的最小来源依赖切片：只限制 agent message 工具的隐式跨上下文重定向。",
+        "confidence": 0.99,
+        "created_at": "2026-08-21T00:30:00.000000Z",
+        "id": "TFA-network-send-provenance-boundary-20260821",
+        "reason": "复用唯一 ContentProvenance 合约和既有 outbound policy，避免全局 taint、提示词改写或统一审批。",
+        "rejected_options": [
+          "全量 network-send 动态 taint",
+          "统一人工审批",
+          "修改系统提示词"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "在 enforceCrossContextPolicy 边界读取 agent message 工具传入的 provenance；同目标回复保持可用，外部/未知来源不能使用隐式同 provider 跨目标许可，显式 allowWithinProvider、allowAcrossProviders、legacy operator override 与 fullAccess 语义保持不变。",
+        "validation_plan": [
+          "outbound policy、message wiring、exec 回归聚焦测试",
+          "external-content/inbound-trust/sanitize provenance fixtures",
+          "comms replay 与 compare",
+          "Harness context、validate 与 dry-run",
+          "runtime core typecheck"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T00:30:00.000000Z",
+        "evidence": "harness/specs/tasks/network-send-provenance-boundary.md；openclaw_runtime/src/infra/outbound/outbound-policy.ts；聚焦测试与 comms PASS。",
+        "expected_requirement": "来源标签最终应能影响各敏感 sink 的授权判断。",
+        "id": "TFD-network-send-provenance-boundary-20260821",
+        "observed_action_or_result": "本轮仅完成 agent message 工具 network-send 的跨上下文边界；CLI、system delivery、broadcast、webhook 等其他 network-send 调用方，以及 secret-read、external-write、browser-effect、credential-use 仍为 residual/classification-only。",
+        "recommendation": "下一轮只选择一个尚未接入的敏感 sink，复用同一权威 provenance 合约；不要扩大为全量 network-send 或全局 taint engine。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T00:25:21.841932Z",
+  "proposal_id": "TFP-network-send-provenance-boundary-20260821",
+  "rationale": "用户确认继续来源契约工作；本轮只在 agent message 工具的 network-send 跨上下文边界消费既有 provenance sidecar，保留当前回复、显式 operator 配置和既有投递策略。",
+  "session_id": "session-2026-08-21-network-send-provenance-continue",
+  "status": "applied"
+}

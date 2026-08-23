@@ -1,0 +1,31 @@
+{
+  "applied_at": "2026-08-22T01:30:50.118666Z",
+  "base_graph_hash": "2432bfb39aaafafaa923d5c90e21cf6c19565b48b8e75ae5b2cb08e2f1d1eb69",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先建立 TF-0081 Harness task spec 和 terminal/process/subagent 资源回收失败矩阵，再只修复一个 owner path。",
+        "progress": 5,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0081"
+        ],
+        "status": "in_progress",
+        "summary": "已启动 TF-0081：统一 terminal PTY、普通 exec/supervisor、subagent registry 与 durable cleanup 的 owner、activity、TTL、退出、重启和 session drain 语义；不建 universal resource ledger，不用 wall-clock inactivity 误杀有真实子进程活动的 terminal，OS containment 不可证实时 fail closed。"
+      },
+      "id": "TF-0081"
+    }
+  ],
+  "created_at": "2026-08-22T01:30:49.942347Z",
+  "proposal_id": "TFP-start-TF-0081-20260822",
+  "rationale": "用户明确指示启动 TF-0081（启动81）。TF-0080 已 done（100%），TF-0081 的唯一 depends_on 依赖已满足；按串行规则只启动这一个节点，TF-0082+ 继续保持阻塞。沿用 TF-0080 的收敛纪律：先建 Harness task spec 与资源回收失败矩阵，再只修复一个 owner path。",
+  "session_id": "session-20260822-start-tf0081",
+  "status": "applied"
+}

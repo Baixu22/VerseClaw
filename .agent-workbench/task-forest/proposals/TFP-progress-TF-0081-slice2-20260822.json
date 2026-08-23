@@ -1,0 +1,38 @@
+{
+  "applied_at": "2026-08-22T01:59:59.706548Z",
+  "base_graph_hash": "171dd4a435a13302f40bd045f752ad67e933c81b0042ddf02cade9f615cb0772",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "src/process/os-containment.ts（drain 与 reconciliation 共用 OS 证据源；drain 12/12 回归通过）",
+          "src/process/supervisor/run-manifest.ts（文件权威清单，原子写，corrupt fail-closed）",
+          "src/process/supervisor/reconcile.ts + supervisor.ts/types.ts/index.ts（owner PID 守卫、OS 捕获才杀、无 PID fallback、attachRunManifest 接口）",
+          "src/gateway/server.impl.ts 启动接线（minimalTestGateway 除外）",
+          "src/process/supervisor/restart-reconciliation.test.ts 7/7（含孤儿树收割与 foreign-owner 不触碰）",
+          "门禁：process 7/7；gateway cycle+drain 13/13；Electron terminal 10/10；typecheck 0；contract 0；comms PASS；E2E 3/3；git diff --check 0",
+          "artifacts/session-ecosystem-resource-reclamation/report.json 切片 2 更新；README 三语补充"
+        ],
+        "next_action": "第三个 owner path：terminal/bash running 记录 idle 四分类（running/interactive/completed/orphaned，可配置，false kill=0）；随后 activity snapshot orphan 投影一致性；最终 closeout 前重跑全门禁。",
+        "progress": 45,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0081"
+        ]
+      },
+      "id": "TF-0081"
+    }
+  ],
+  "created_at": "2026-08-22T01:59:59.541935Z",
+  "proposal_id": "TFP-progress-TF-0081-slice2-20260822",
+  "rationale": "TF-0081 第二个 owner path 完成：supervisor 重启 reconciliation 从显式 no-op 变为真实、持久化、fail-closed 的实现，并在 gateway 启动接线。所有 focused 与收口门禁（typecheck/contract/comms/E2E/diff-check）在最终树上通过。产品边界未动，未引入 universal ledger。",
+  "session_id": "session-20260822-start-tf0081",
+  "status": "applied"
+}

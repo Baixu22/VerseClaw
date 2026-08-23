@@ -1,0 +1,735 @@
+{
+  "applied_at": "2026-08-21T11:50:40.617292Z",
+  "base_graph_hash": "ae6f62e982ba1478e8b5dba85508532f1472ce220c537dae7a54aef5bfafe4bf",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "session-ecosystem-remediation",
+      "node": {
+        "acceptance_criteria": [
+          "六个实现阶段按依赖顺序完成，只有当前阶段为 ready",
+          "每个阶段有当前 HEAD 绑定的 Harness context/validate、聚焦单测、必要 E2E 和失败证据",
+          "最终验收能证明所有声明的 RPC 在真实 registry 中存在、所有活跃资源能按 owner 查询和回收、所有续跑触发能去重",
+          "工程验收、真实第三方 channel/真人验收、产品批准和 default-on 结论严格分开"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "让当前对话生态真实可追踪、可监控、可跨会话控制、可等待恢复，并防止长时间闲置后的资源泄漏和假阳性验收。",
+          "validation_plan": [
+            "Task Forest validate/export 和每阶段 Harness context/validate",
+            "真实 Gateway method registry probe，证明 handler 与 descriptor 同时存在",
+            "session/process/subagent/goal-wake/cron 聚焦单测与当前源码 E2E",
+            "真实 Electron packaged helper、真实 OS process、Gateway restart/cancel/unknown-RPC 故障矩阵",
+            "独立 fresh acceptance report，列出未执行前置、退出码、测试数、artifact SHA 和产品锁"
+          ],
+          "why_not_enough": "工程收敛仍不能替代真实第三方 channel、真人 recovery、产品批准或 GA 授权；这些继续由既有最终验收边界控制。",
+          "why_this_task": "它直接覆盖本轮已证实的 production reachability、default-off safety、resource drain、cross-session control、goal loop 和 scheduler seam，且挂在既有 Runtime Authority 主线上。"
+        },
+        "assumptions": [
+          "TF-0010 仍是 Runtime Authority 的唯一主线，TF-0077 是已关闭但证据边界不足的历史来源",
+          "当前 worktree 的大量未提交修改来自其他 workstream，执行时必须保持并以 detached candidate 做验收",
+          "Cron 作为现有 timer/scheduler authority 复用，不新增第二个 timer loop"
+        ],
+        "confidence": 0.9,
+        "context_tags": [
+          "session-ecosystem",
+          "runtime-lifecycle",
+          "cross-session-control",
+          "subagent",
+          "goal-loop",
+          "scheduler",
+          "resource-reclamation",
+          "false-positive-prevention"
+        ],
+        "desired_outcomes": [
+          "真实 Gateway registry 与测试直接 handler 不再分叉，所有声明的生命周期 RPC 都可达",
+          "session safety gates 在生产生命周期 mutation 上生效，未知 RPC 结果不会造成镜像和 runtime 状态分裂",
+          "终端、普通后台进程、subagent 和 durable helper 具有明确 owner、TTL/回收边界和跨重启终态",
+          "跨会话控制和父子关系使用稳定 sessionId/runId/missionId/tickId/flowId/taskId lineage",
+          "Goal/Loop 支持 process exit、子智能体完成、显式 timer/Cron 触发的有界续跑，取消和超时级联且不重放命令",
+          "最终证据来自当前 HEAD 的真实 registry、真实进程、故障矩阵和独立报告，不复用旧 audit 数字"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 3840,
+        "evidence": [
+          "docs/dev/handoffs/LATEST.md",
+          "harness/specs/tasks/runtime-lifecycle-governance.md",
+          "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
+          "本轮 sessions.stop registry probe、goal-wake canary exit=1、packaged Electron helper output",
+          "docs/runtime-design/plan.md scheduled ticks planned but not shipped"
+        ],
+        "execution_hints": [
+          "先执行 TF-0079，修复 registry 可达性并建立 direct-handler versus production-dispatch gate",
+          "每个阶段先建立最小失败测试，再修改唯一生产 owner；不要先扩展 UI",
+          "遇到 shared dirty worktree 时使用 detached candidate，保留 current HEAD/base/tree/manifest 绑定",
+          "旧 audit-0..6 只能作为历史背景，不能作为 successor 阶段的 acceptance evidence"
+        ],
+        "id": "TF-0078",
+        "kind": "milestone",
+        "non_goals": [
+          "不把 goal-wake 或 durable helper 直接改为默认开启",
+          "不宣称联合系统 GA、liveReady 或 productApproved",
+          "不实现跨机器多进程 scale-out、复杂多依赖 wait 或命令链，除非后续单独授权",
+          "不删除或重写 TF-0077、既有历史 evidence、其他 workstream 的 dirty WIP"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "让每个对话及其派生资源都有可追踪的身份、状态、所有权和终态；允许跨会话创建、截停、继续和等待，同时避免长时间闲置资源泄漏与代码存在但生产不可达的假阳性。",
+        "remaining_minutes_max": 6000,
+        "remaining_minutes_min": 2400,
+        "requirements": [
+          "主父节点为 TF-0010；不得重开或篡改 TF-0077 的历史 closeout 事实",
+          "一次只推进一个 ready 子节点和一个对应 Harness task spec",
+          "session admission、stop/delete/reset 的安全路径必须是生产默认保护；goal-wake/durable-helper 在真实闭环未通过前保持 opt-in",
+          "不引入第二个 universal resource ledger、desired-state controller 或并行 lifecycle writer",
+          "所有 renderer/backend 调用继续遵守 host-api、Gateway proxy、contract-first 和 comms regression 边界",
+          "liveReady、productApproved、defaultOn、SEKB auto-writeback 和 VerseShell 产品锁保持不变"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "生产 registry 漏接的 lifecycle method=0",
+          "session reset/delete/stop 与 spawn/send/steer/arm 的 generation race=0",
+          "未知 RPC 结果导致的 mirror/runtime 分裂=0",
+          "50-cycle session/process/subagent drain 的 active records、timers、owned PIDs 残留=0",
+          "重复 wake/重复 completion/重复 continuation 的副作用重复=0",
+          "当前 HEAD 的 required gates 和真实闭环报告可复跑且不依赖旧 artifact 时间戳"
+        ],
+        "summary": "把会话、终端、普通后台进程、子智能体、Mission、Goal-wake 和 Cron 的生命周期收敛到可达、可编号、可回收、可恢复且可独立验收的生产链。",
+        "title": "会话生态生命周期生产收敛与真实恢复"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "session-ecosystem-production-reachability",
+      "node": {
+        "acceptance_criteria": [
+          "真实 registry probe 报告 sessions.stop handler=true、descriptor=true、RPC dispatch=true",
+          "所有新增/修复 method 的 contract check、Gateway method tests 和必要 Electron facade tests 通过",
+          "直接 handler 测试与真实 registry 测试同时存在且不能互相替代",
+          "当前 HEAD/tree/base/manifest 绑定的 reachability report 生成成功"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "避免代码存在但根本没有使用的假阳性。",
+          "validation_plan": [
+            "Harness context/validate",
+            "真实 coreGatewayHandlers + createCoreGatewayMethodDescriptors probe",
+            "Gateway method shard、contract check、Host API facade test",
+            "当前源码 E2E 调用 sessions.stop"
+          ],
+          "why_not_enough": "它只修生产可达性，尚不解决资源回收和跨会话续跑。",
+          "why_this_task": "本轮已直接复现 sessions.stop handler=undefined、descriptor=false，这是最短且最高收益的第一修复切片。"
+        },
+        "confidence": 0.95,
+        "context_tags": [
+          "reachability",
+          "gateway-registry",
+          "false-positive",
+          "sessions-stop"
+        ],
+        "desired_outcomes": [
+          "sessions.stop 在 core method whitelist、descriptor、protocol contract、Gateway runtime 和 Electron host-api 中一致",
+          "所有 sessions.*、mission.*、goal-wake 相关 handler 都有 registry reachability probe",
+          "测试必须通过真实 registry dispatch 或真实 Gateway RPC，不再只直接调用内部 handler",
+          "旧 audit artifacts 与当前源码 SHA/registry manifest 的不一致会硬失败"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 480,
+        "execution_hints": [
+          "先补失败的 registry probe，再接 whitelist/descriptor/facade",
+          "禁止用修改测试 mock 的方式让 direct handler 继续绿",
+          "完成后才允许进入下一节点"
+        ],
+        "id": "TF-0079",
+        "kind": "task",
+        "non_goals": [
+          "不实现新的生命周期语义",
+          "不添加第二个 Gateway method registry",
+          "不修改产品 default-on 锁"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "先消灭最明确的代码存在但生产不可达假阳性，为后续所有生命周期修复提供真实入口和可信验证基线。",
+        "remaining_minutes_max": 720,
+        "remaining_minutes_min": 300,
+        "requirements": [
+          "不改变 stop/abort 语义，只修复生产装配和 contract 漂移",
+          "补充 sessions.stop 的 Electron/Host API 或明确其 operator-only 边界，不能留下隐式不可调用状态",
+          "新增 Harness task spec 和 gateway-backend-communication 引用",
+          "当前阶段不得启用 goal-wake/durable-helper"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "registry漏接 method=0",
+          "direct-only lifecycle tests=0",
+          "unknown method/handler not found errors=0"
+        ],
+        "summary": "补齐 sessions.stop 等生命周期 RPC 的 Gateway registry/descriptor/contract 接线，并建立直接 handler 不能冒充生产可达性的门禁。",
+        "title": "会话生命周期生产入口与验收防假阳性"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "session-safety-gates-and-delete-recovery",
+      "node": {
+        "acceptance_criteria": [
+          "session mutation race 100 次循环无新 permit/queue/process/child/goal row 越过 fence",
+          "RPC timeout/socket drop 后 retry 能恢复 committed receipt，mirror gate 不提前释放",
+          "删除事务、归档计划、runtime finalization 都有唯一 writer 和可重试 evidence",
+          "focused runtime + Electron E2E + typecheck/contract/comms gates 通过"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "避免旧会话继续产生不可见资源，并让截停/删除结果可追踪。",
+          "validation_plan": [
+            "race/failure matrix",
+            "delete journal integration",
+            "Electron mirror E2E",
+            "fresh receipt report"
+          ],
+          "why_not_enough": "仍不负责终端 idle 策略和 Goal scheduler。",
+          "why_this_task": "当前 admission/delete journal 都是默认关闭，且 Electron delete retry 已存在未知结果分裂路径。"
+        },
+        "confidence": 0.9,
+        "context_tags": [
+          "admission",
+          "generation-fence",
+          "delete-journal",
+          "idempotency"
+        ],
+        "desired_outcomes": [
+          "admission permit 不再仅由未设置环境变量时的 no-op 保护关键 lifecycle mutation",
+          "delete operationId/journal 在实际 production delete path 中具备一致启用策略",
+          "unknown RPC outcome 不会被当成 deleted=false 的成功重试而释放 Electron gate",
+          "generation mismatch、partial_committed、runtime_committed 的重试状态机可从当前 store 恢复"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 720,
+        "id": "TF-0080",
+        "kind": "task",
+        "non_goals": [
+          "不启用 Goal-wake durable helper",
+          "不新增 universal resource ledger",
+          "不改产品批准状态"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "保证 reset/delete/stop 与 send/spawn/arm 不竞态，且删除在回包丢失、重试、部分提交时保持单一终态。",
+        "remaining_minutes_max": 1080,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "session safety gates 可默认保护 reset/delete/stop；goal-wake 仍独立 opt-in",
+          "不允许 agent-wide kill fallback，不允许未知结果下文件 sweep",
+          "operation journal 与 Electron mirror 使用相同 operationId 和 committed receipt",
+          "必须覆盖 concurrent send/spawn/terminal-open/goal-arm 与 reset/delete 的 race matrix"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "fenced stale side effect=0",
+          "unknown-RPC mirror/runtime split=0",
+          "duplicate archive/terminal close=0"
+        ],
+        "summary": "让 session admission、generation fence 和 delete operation journal 真正覆盖生产 mutation，并修复未知 RPC 结果下 Electron mirror 与 runtime 分裂。",
+        "title": "会话安全闸门与删除重试一致性"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "resource-owner-reclamation",
+      "node": {
+        "acceptance_criteria": [
+          "50-cycle create/stop/reset/delete 的 active records、timers、owned PIDs、PTY records 和 child links 全部归零",
+          "idle policy 能区分 running process、interactive terminal、completed record 和 orphaned record",
+          "session activity snapshot 与真实 owner registry 一致，不显示已回收资源",
+          "Windows/Electron 与 runtime 两侧的回收证据都可复跑"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.93,
+          "user_goal": "避免长时间无人使用后的内存泄露，并监控终端和子智能体。",
+          "validation_plan": [
+            "leak fixture",
+            "resource owner snapshot",
+            "OS process containment",
+            "Electron terminal E2E"
+          ],
+          "why_not_enough": "不能单独实现跨会话控制或定时 Mission 续跑。",
+          "why_this_task": "当前终端无 idle TTL/heartbeat，普通 supervisor 重启恢复是 no-op，而 subagent 仅有自己的 registry sweeper。"
+        },
+        "confidence": 0.87,
+        "context_tags": [
+          "terminal",
+          "process",
+          "subagent",
+          "reclamation",
+          "memory-leak"
+        ],
+        "desired_outcomes": [
+          "每个资源都有 sessionId/ownerEpoch/runId 和可查询终态",
+          "普通 interactive terminal 的 keep-on-leave 与真正 idle/orphan 回收规则明确且可配置",
+          "completed/failed/abandoned subagent 和 process record 有 bounded retention",
+          "Gateway restart、Electron quit、workspace change、session reset/delete 的回收边界一致"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 720,
+        "id": "TF-0081",
+        "kind": "task",
+        "non_goals": [
+          "不建立 universal resource ledger",
+          "不把所有终端在切换会话时立即关闭",
+          "不替代 VerseShell owner"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "防止长时间无人使用后的内存、句柄、PTY、进程和子智能体记录泄漏，同时保留用户明确需要继续运行的资源。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "不要用 wall-clock inactivity 误杀有真实子进程活动的 terminal",
+          "以已有 resource tracker、supervisor、bash registry、subagent sweeper、durable cleanup 为唯一 owner",
+          "OS containment 不可证实时必须 fail closed，不得 PID fallback 扩大范围",
+          "补 50-cycle leak、timer、FD、PTY、subagent descendant 和 restart reconciliation tests"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "active resource residual=0",
+          "unbounded finished records=0",
+          "orphaned owned PID=0",
+          "false kill=0"
+        ],
+        "summary": "统一 terminal PTY、普通 exec/supervisor、subagent registry 和 durable helper 的 owner、activity、TTL、退出、重启和 session drain 语义。",
+        "title": "终端、后台进程与子智能体资源回收"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "cross-session-lineage-control",
+      "node": {
+        "acceptance_criteria": [
+          "每个 session effect 都能定位到 sessionId/runId/parentSessionKey/ownerEpoch",
+          "旧 generation late event 覆盖新 session 状态的次数为 0",
+          "parent yield 后所有 required child completion 到达一次且只产生一次 continuation",
+          "真实 Host API 与 Gateway RPC 可完成 stop/continue/fork 操作，非仅内部函数"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.95,
+          "user_goal": "会话之间可以产生影响，能自动生成、截停或继续会话，并能编号定位。",
+          "validation_plan": [
+            "contract and ownership tests",
+            "cross-session E2E",
+            "parent yield/announce replay",
+            "lineage report"
+          ],
+          "why_not_enough": "仍需要 Goal/Loop 的等待触发和 scheduler 统一。",
+          "why_this_task": "当前 runtime 有 send/steer/abort/fork 能力但桌面 Host 控制面不完整，且 subagent/mission/session lineage 仍是多套字段拼接。"
+        },
+        "confidence": 0.88,
+        "context_tags": [
+          "cross-session",
+          "lineage",
+          "fork",
+          "steer",
+          "yield",
+          "subagent"
+        ],
+        "desired_outcomes": [
+          "跨会话控制 API 统一使用 canonical sessionKey + expected sessionId/generation",
+          "父子会话、fork、subagent run、completion delivery 和 reactivation 能相互回溯",
+          "sessions_yield 是 push-based continuation，而不是隐式 polling loop",
+          "UI/Host/Runtime 都只消费同一 lineage projection，不维护第二套 session identity"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 720,
+        "id": "TF-0082",
+        "kind": "task",
+        "non_goals": [
+          "不引入新的 workflow engine",
+          "不开放跨 agent 无授权控制",
+          "不把 synthetic evidence 升级为 live-ready"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "让一个会话可以安全生成新会话、截停旧会话或继续旧会话，并能知道具体是哪个 session/run/child 在影响当前对话。",
+        "remaining_minutes_max": 1200,
+        "remaining_minutes_min": 480,
+        "requirements": [
+          "控制动作必须校验 requester ownership/operator scope",
+          "旧 run 的迟到事件不能覆盖 reset/fork 后新 generation",
+          "subagents list 只作为观察，不作为等待机制；completion event 必须可重放且去重",
+          "补跨 session send/steer/abort/stop/fork、child completion after parent yield、restart reactivation 测试"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "lineage completeness=100%",
+          "stale generation overwrite=0",
+          "duplicate completion side effect=0"
+        ],
+        "summary": "把 session create/fork/send/steer/abort/stop、subagent spawn/yield/announce/reactivate 和 Mission lineage 收敛为可定位、可授权、可恢复的父子关系。",
+        "title": "跨会话控制、身份 lineage 与父子续接"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "goal-loop-trigger-recovery",
+      "node": {
+        "acceptance_criteria": [
+          "连续超过默认 flow budget 后仍可创建新 wait，历史 terminal rows 不阻塞 active budget",
+          "mission.cancel 后 helper/task/flow/continuation 全部进入终态且无继续 tick",
+          "process/child/timer 三类 trigger 各自可产生一次去重后的 continuation",
+          "当前源码 real-process canary 在 Gateway ready 条件下通过，失败时报告明确未执行项和退出码"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.92,
+          "user_goal": "主进程停止等待特定条件、后台子进程完成或定时任务触发后继续工作。",
+          "validation_plan": [
+            "goal-wake unit/integration",
+            "Cron scheduler integration",
+            "restart/cancel matrix",
+            "real-process canary"
+          ],
+          "why_not_enough": "仍需要最后的统一账本和真实验收来证明跨层行为。",
+          "why_this_task": "当前 Goal-wake 只有 process-exit 条件路径，flow budget 会历史耗尽，Mission scheduled ticks 明确尚未交付。"
+        },
+        "confidence": 0.84,
+        "context_tags": [
+          "goal-wake",
+          "task-loop",
+          "mission",
+          "cron",
+          "timer",
+          "recovery"
+        ],
+        "desired_outcomes": [
+          "process exit、subagent completion、approval/event 和 Cron timer 都能进入同一个 typed continuation contract",
+          "goal-wake completed flow 有 bounded cleanup，不会因 maxFlows 历史累计永久耗尽",
+          "mission.pause/resume/cancel 级联到 active wait flow、task run、helper 和 pending continuation",
+          "timer continuation 复用现有 Cron scheduler，不新增第二个 setInterval scheduler",
+          "restart recovery 只做 level-triggered reconciliation，绝不重放模糊命令"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 840,
+        "id": "TF-0083",
+        "kind": "task",
+        "non_goals": [
+          "不支持任意多依赖 wait",
+          "不支持命令链自动重放",
+          "不把 Cron 与 Mission 拆成两个互相竞争的 scheduler authority"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "让主进程可以有界地停止等待进程退出、子智能体完成、用户批准或定时触发，再继续下一 tick；所有失败、取消、重启和重复通知都能收敛。",
+        "remaining_minutes_max": 1440,
+        "remaining_minutes_min": 600,
+        "requirements": [
+          "goal-wake/durable-helper 在 real-process gate 通过前保持 opt-in",
+          "wake 是 at-least-once delivery，effect owner 必须持久去重",
+          "maxActiveGoalWaits、maxFlows、TTL、backoff 的统计必须区分 active 与 historical rows",
+          "取消和超时必须先写 durable terminal truth，再清理 OS/helper，失败则 fail closed",
+          "补 process exit、duplicate wake、cancel/exit race、restart matrix、Cron-to-Mission continuation tests"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "active flow budget false exhaustion=0",
+          "cancel cascade residual=0",
+          "duplicate wake side effect=0",
+          "command replay=0"
+        ],
+        "summary": "修复 Goal-wake flow 历史累积、mission cancel 级联、helper/task/flow 清理，并复用 Cron 作为有界 timer trigger 让 Mission 能在条件满足后续跑。",
+        "title": "Goal/Loop 条件唤醒、取消级联与定时续跑"
+      }
+    },
+    {
+      "action": "add_node",
+      "alias": "lifecycle-ledger-and-real-acceptance",
+      "node": {
+        "acceptance_criteria": [
+          "当前 HEAD 的 full scoped acceptance report 可从 clean/detached candidate 重跑",
+          "生产 method registry、resource owner snapshot、lineage projection 和 lifecycle ledger 之间无未解释缺口",
+          "所有 required tests/gates exit 0；任何环境阻塞都明确标为 blocked/review_needed",
+          "TF-0010/TF-0077 的历史与 successor 边界在 handoff、Task Forest、Harness 和 docs 中一致"
+        ],
+        "alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.96,
+          "user_goal": "确认整个会话生态真实工作，而不是仅有代码、测试或报告。",
+          "validation_plan": [
+            "fresh scoped Harness",
+            "Gateway/Electron E2E",
+            "OS process and leak fixtures",
+            "independent final report"
+          ],
+          "why_not_enough": "仍不能替代正式产品批准和真实用户 cohort。",
+          "why_this_task": "用户最担心的是假阳性；最终阶段必须把真实生产可达性、故障恢复和资源回收证据统一到当前树。"
+        },
+        "confidence": 0.88,
+        "context_tags": [
+          "acceptance",
+          "lifecycle-ledger",
+          "session-activity",
+          "fresh-evidence",
+          "no-false-positive"
+        ],
+        "desired_outcomes": [
+          "每次 session/run/task/flow/helper/terminal/subagent transition 有可关联 event、owner 和 generation",
+          "SessionActivity 只读投影能展示 session、task、subagent、goal、process、terminal、lineage 和 blocked reason",
+          "报告包含真实 registry reachability、process tree、memory/timer/FD leak、restart/cancel/unknown RPC、Cron trigger 和 duplicate wake evidence",
+          "工程 acceptance 与 human/live/product approval 分栏，不把 synthetic fixture 写成 liveReady"
+        ],
+        "difficulty": "very_high",
+        "estimated_total_minutes": 600,
+        "id": "TF-0084",
+        "kind": "milestone",
+        "non_goals": [
+          "不进行真人 channel/product approval",
+          "不翻 default-on",
+          "不清理其他 workstream dirty changes"
+        ],
+        "priority": 1,
+        "progress": 0,
+        "progress_source": "manual",
+        "purpose": "把“代码存在”和“功能真实可用”分开，用一套当前 HEAD 绑定的证据证明每个会话及其资源的生命周期闭环。",
+        "remaining_minutes_max": 960,
+        "remaining_minutes_min": 360,
+        "requirements": [
+          "禁止复用旧 audit-0..6 的通过数字作为当前验收结果",
+          "每个证据必须记录 command、exit code、test count、artifact path、HEAD/base/tree 状态和未执行前置",
+          "生成新的 Harness task spec、fresh acceptance JSON/MD 和 handoff 更新 proposal",
+          "产品 locks 和 SEKB confirm-only/no-auto-writeback 继续不变"
+        ],
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "unexplained lifecycle transitions=0",
+          "fresh evidence stale binding=0",
+          "report narrative-only claims=0"
+        ],
+        "summary": "在前置修复完成后，以统一只读生命周期 ledger、SessionActivity projection、真实 Gateway/Electron/OS 运行和故障矩阵完成当前源码验收。",
+        "title": "统一生命周期账本、活动投影与真实闭环验收"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "会话生态生命周期是 Runtime Authority 与 Operator 产品收敛的直接生产缺口。"
+      },
+      "from": "session-ecosystem-remediation",
+      "to": "TF-0010",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.98,
+        "reason": "新程序来源于对 TF-0077 closeout 的当前 HEAD 独立复核；保留历史 closeout，不重开其阶段。"
+      },
+      "from": "session-ecosystem-remediation",
+      "to": "TF-0077",
+      "type": "derived_from"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.97,
+        "reason": "第一阶段先修复生产 registry 可达性和验收防假阳性。"
+      },
+      "from": "session-ecosystem-production-reachability",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "第二阶段收敛 session mutation safety 和 delete retry truth。"
+      },
+      "from": "session-safety-gates-and-delete-recovery",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "第三阶段统一 terminal/process/subagent/helper resource owner 与回收。"
+      },
+      "from": "resource-owner-reclamation",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "第四阶段提供跨会话控制、父子续接和稳定 lineage。"
+      },
+      "from": "cross-session-lineage-control",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.92,
+        "reason": "第五阶段收敛条件唤醒、取消级联和 Cron timer continuation。"
+      },
+      "from": "goal-loop-trigger-recovery",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "最终里程碑统一 ledger/projection 并执行 fresh real-path acceptance。"
+      },
+      "from": "lifecycle-ledger-and-real-acceptance",
+      "to": "session-ecosystem-remediation",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "只有 registry/contract 真实可达后才能启用并验收 safety gates。"
+      },
+      "from": "session-safety-gates-and-delete-recovery",
+      "to": "session-ecosystem-production-reachability",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.92,
+        "reason": "资源 drain 必须建立在 generation fence 和 delete retry truth 之上。"
+      },
+      "from": "resource-owner-reclamation",
+      "to": "session-safety-gates-and-delete-recovery",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "跨会话控制需要先知道资源 owner、generation 和回收边界。"
+      },
+      "from": "cross-session-lineage-control",
+      "to": "resource-owner-reclamation",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "continuation 必须绑定正确 parent session、mission、tick 和 owner epoch。"
+      },
+      "from": "goal-loop-trigger-recovery",
+      "to": "cross-session-lineage-control",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.94,
+        "reason": "最终闭环必须覆盖 process/child/timer 三类触发和 restart/cancel matrix。"
+      },
+      "from": "lifecycle-ledger-and-real-acceptance",
+      "to": "goal-loop-trigger-recovery",
+      "type": "depends_on"
+    },
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "采用七节点单主线方案：生产可达性 -> safety/delete truth -> 资源回收 -> 跨会话 lineage -> Goal/Loop/Cron trigger recovery -> fresh acceptance。",
+        "confidence": 0.94,
+        "created_at": "2026-08-21T11:30:40.450353Z",
+        "id": "TFA-session-ecosystem-lifecycle-remediation-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.94,
+          "user_goal": "让会话、终端、子智能体、Goal/Loop 和定时触发具有真实且可验证的生命周期。",
+          "validation_plan": [
+            "Task Forest/Harness",
+            "registry probe",
+            "race/leak/restart tests",
+            "fresh acceptance report"
+          ],
+          "why_not_enough": "不自动提供 live/product approval 或 GA。",
+          "why_this_task": "方案直接覆盖已复现缺口，并复用当前 Gateway、SessionAdmission、Supervisor、SubagentRegistry、Goal-wake、Cron 和 SessionActivity 组件。"
+        },
+        "reason": "本轮已复现 production registry 缺口、默认保护未启用、Goal flow 累计/取消缺陷和 scheduler 未并轨；只有按依赖顺序修复真实 owner 才能达到用户目的。",
+        "rejected_options": [
+          "只补文档/报告",
+          "直接把所有 flags default-on",
+          "另建 parallel universal lifecycle controller",
+          "只修 UI 而不修 Gateway registry"
+        ],
+        "related_task_ids": [
+          "TF-0010",
+          "TF-0077"
+        ],
+        "selected_option": "根因优先、严格串行、session safety 真实保护、goal-wake 保持 opt-in、fresh evidence closeout",
+        "user_goal": "让当前对话生态真实可追踪、可监控、可跨会话控制、可等待恢复，并防止资源泄漏和假阳性。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T11:30:40.450353Z",
+        "evidence": "openclaw_runtime/src/gateway/server-methods.ts:460-499; openclaw_runtime/src/gateway/methods/core-descriptors.ts:210-219; openclaw_runtime/src/agents/goal-wake-config.ts:50-95; docs/runtime-design/plan.md:86-90; current command outputs from session-20260821-session-ecosystem-audit",
+        "expected_requirement": "Runtime Lifecycle Governance closeout 应证明当前生产会话生态的 lifecycle methods、safety gates、resource drain 和 wake loop 可达且可复跑。",
+        "id": "TFD-runtime-lifecycle-closeout-production-gap-20260821",
+        "observed_action_or_result": "当前源码探针显示 sessions.stop handler=undefined、descriptor=false；五个关键 RLG flags 未启用；goal-wake canary 因 Gateway abnormal closure exit=1；Mission scheduled ticks 文档仍标记 planned/not shipped。",
+        "recommendation": "保持 TF-0077 历史工程 closeout，不把其 100 分 artifact 当作当前生产 acceptance；应用本 successor proposal 并从第一个 ready 节点开始修复。",
+        "related_task_ids": [
+          "TF-0077",
+          "TF-0078"
+        ],
+        "severity": "high",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T11:30:40.441264Z",
+  "proposal_id": "TFP-session-ecosystem-lifecycle-remediation-20260821",
+  "rationale": "本轮独立审计发现 Runtime Lifecycle Governance 的历史 closeout 不能证明当前生产生态已经可用：sessions.stop handler 未进入 Gateway registry，session admission/delete journal 默认未启用，Goal-wake flow 可能累积耗尽且 mission.cancel 不级联，Mission scheduled ticks 仍未交付，终端和普通后台进程也没有统一的跨会话资源回收与真实可达性验收。用户要求使用 Task Forest 全量规划并修复这些缺口，因此建立一个挂在 Runtime Authority 主线下、严格串行、以生产调用链和真实运行证据为准的 successor 程序。",
+  "session_id": "session-20260821-session-ecosystem-remediation-plan",
+  "status": "applied"
+}

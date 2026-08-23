@@ -1,0 +1,78 @@
+{
+  "applied_at": "2026-08-21T11:04:19.935830Z",
+  "base_graph_hash": "65d22a50ee17054b047659f372c872c6c5b303de02fc6d5692a3faee7465bdf9",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "browser-effect 的下一条最小切片：只在 agent_browser click 使用既有 sessionId 时检查 Main-owned connection.mode。",
+        "confidence": 0.98,
+        "created_at": "2026-08-21T10:57:05.6347545Z",
+        "id": "TFA-browser-effect-session-click-provenance-boundary-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.98,
+          "user_goal": "降低外部内容驱动浏览器副作用风险，同时保持普通 managed 浏览能力。",
+          "validation_plan": [
+            "策略单测覆盖 managed/external/missing/malformed/failed status",
+            "agent_browser click preflight 与 wiring 测试",
+            "AgentBrowserService connection immutability 和 Gateway bridge 回归",
+            "provenance、credential-use、command-exec 默认策略回归",
+            "comms replay/compare、runtime core typecheck、Harness validate"
+          ],
+          "why_not_enough": "type、evaluate、replay、full-access、UID browser-control、supervised task 和其他浏览器调用方仍未完成来源依赖执行检查，因此 browser-effect 全局分类仍不能升级。",
+          "why_this_task": "它直接覆盖上一阶段唯一未处理的 existing external session reuse，并复用已有 status bridge、provenance policy 与 Main session metadata。"
+        },
+        "reason": "现有 AgentBrowserSession 已由 Main 创建并带 connection.mode，Gateway status 已返回完整 session；只消费这个 host-owned 不变量即可覆盖 external sessionId residual，不新增协议、持久化或审批框架。",
+        "rejected_options": [
+          "给 AgentBrowserSession 新增 provenance 持久化字段或数据库",
+          "把 status preflight 扩到所有 browser actions",
+          "对每次 click 统一增加人工审批",
+          "启动全局 browser 动态 taint engine",
+          "直接推进 TF-0068 external-write policy"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "对 untrusted、derived-untrusted、missing 或 invalid provenance 的 click 请求执行一次现有 status bridge preflight；精确 session 且 connection.mode=managed 才放行，external/CDP/profile、缺失、非法或 status 失败均在 click 前拒绝；trusted/operator 不做 preflight。并保护 AgentBrowserService.refreshCli 不让 runner partial metadata 覆盖 session creation 时的 connection。",
+        "user_goal": "继续以最小、可审计的来源依赖授权边界降低外部内容驱动浏览器副作用风险，同时保持 managed 浏览器和 operator 行为可用。",
+        "validation_plan": [
+          "策略单测覆盖 managed/external/missing/malformed/failed status",
+          "agent_browser click preflight 与 wiring 测试",
+          "AgentBrowserService connection immutability 和 Gateway bridge 回归",
+          "provenance、credential-use、command-exec 默认策略回归",
+          "comms replay/compare、runtime core typecheck、Harness validate"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-21T10:57:05.6347545Z",
+        "evidence": "harness/specs/tasks/browser-effect-session-click-provenance-boundary.md；shared/host-api/contract.ts；electron/services/agent-browser-service.ts；electron/gateway/agent-browser-bridge.ts；openclaw_runtime/src/agents/tools/agent-browser-tool.ts",
+        "expected_requirement": "来源标签最终应影响敏感 browser-effect 边界的授权判断。",
+        "id": "TFD-browser-effect-click-partial-coverage-20260821",
+        "observed_action_or_result": "本轮只计划覆盖 agent_browser click 对 existing session 的 connection.mode 检查；其他 browser-effect 动作和调用方仍属 residual，全局 browser-effect 分类继续保持 classification-only。",
+        "recommendation": "完成本切片后停止；下一轮仍只选择一个已有 host-owned 授权边界，不能把局部 click 覆盖表述为 browser-effect 全面执行。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T10:57:05.6347545Z",
+  "proposal_id": "TFP-browser-effect-session-click-provenance-boundary-20260821",
+  "rationale": "用户要求进入 browser-effect 下一阶段；本轮只关闭上一阶段明确留下的 existing sessionId residual：外部或未知来源在 agent_browser click 前读取 Main-owned session.connection.mode，仅允许 managed session；不扩展到 type、evaluate、replay、full-access 或全局 browser taint。",
+  "session_id": "session-2026-08-21-browser-effect-session-click-continue",
+  "status": "applied"
+}

@@ -1,0 +1,44 @@
+{
+  "applied_at": "2026-08-23T14:46:41.892785Z",
+  "base_graph_hash": "cfe25a254816d5cc146617410e423a01beac0d3638175e8e7c4ce0ba491edd88",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0090-dispatch-proofs/report.json",
+          "dispatch 证明 12/12：表驱动用例逐一经生产请求路径到各方法自身校验层（含 cleanup 的 additionalProperties:false 强制校验技巧）",
+          "三可达性测试 11/11 绿；tsgo:core 0；tsgo:core:test 本文件 0 错误",
+          "探针：移除 mission.cancel 白名单条目 → 5 用例红（启动期硬错误信息），还原全绿、标记 0 残留"
+        ],
+        "next_action": "线性下一步：TF-0091 明文决策与死面治理",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0090-dispatch-proofs"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0090"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "第 4 步 TF-0090 done（2026-08-23）：dispatch 证明 12/12，见 artifacts/tf0090-dispatch-proofs/report.json"
+        ]
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T14:46:41.692843Z",
+  "proposal_id": "TFP-close-TF-0090-20260823",
+  "rationale": "TF-0090（审计整改第 4 步）完成：全部 12 个链方法逐一经 handleGatewayRequest + 生产 registry 实际 dispatch 到各自参数校验层（12/12），与 ledger-acceptance spec 措辞闭合；探针证明白名单移除即红（与 TF-0089 启动期守卫联动）。按线性流程解锁 TF-0091。",
+  "session_id": "session-20260823-tf0090-dispatch-proofs",
+  "status": "applied"
+}

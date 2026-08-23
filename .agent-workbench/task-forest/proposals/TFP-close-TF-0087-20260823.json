@@ -1,0 +1,58 @@
+{
+  "applied_at": "2026-08-23T12:40:34.187740Z",
+  "base_graph_hash": "10e1ae3f87a2a73f1d74d7a11846e5e88cc8c07f785e8a1d7bcc680cb8c49e16",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0078-generation-injection-remediation/report.json",
+          "守卫测试 8/8 绿（bash-tools.exec-generation-guard.test.ts，agents-core 分片）；requiredTests 行 16/16 绿",
+          "回归探针：移除守卫恰好 2 个丢弃用例变红，还原全绿，标记 0 残留",
+          "tsgo:core 0；lint:core 0；check:import-cycles 0；contract:check 0；harness validate --no-diff（cross-session-control spec）0；git diff --check 0",
+          "tsgo:core:test exit 2 = 39 个既有错误，0 个在本步新文件（observation，pre-existing）",
+          "governed-exec-runtime.test.ts 2 失败经双向补丁二分为脏树既有（与本步无关）",
+          "文档：docs/dev/handoffs/LATEST.md 新增 TF-0087 段；spec 失败矩阵 +1 行、Declared cross-generation exceptions 段、requiredTests 更新"
+        ],
+        "next_action": "线性下一步：TF-0088 补归属声明（TF-0083 建 spec + 26 个未声明文件入 touchedAreas）",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0087-generation-guard"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0087"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "success_metrics": [
+          "lineage completeness=100%",
+          "stale generation overwrite=0（口径 TF-0087 更新：守卫路径=announce wake / queue drain / send-steer run-start 窗口 / 后台 exec 退出通知；声明例外=detached task 通知、announce 请求者-代理交接、restart-sentinel 降级唤醒、ACP 父流中继）",
+          "duplicate completion side effect=0"
+        ]
+      },
+      "id": "TF-0082"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "第 1 步 TF-0087 done（2026-08-23）：迟到代际注入点治理完成，见 artifacts/tf0078-generation-injection-remediation/report.json"
+        ]
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T12:40:23.360126Z",
+  "proposal_id": "TFP-close-TF-0087-20260823",
+  "rationale": "TF-0087（审计整改第 1 步）完成：注入点①已加代际守卫（8 用例绿 + 改坏即红探针 + 还原验证），注入点②与三处灰色地带复核结论入文档口径，相关门禁新鲜重跑通过。按线性流程解锁 TF-0088。同时把 TF-0082 指标『stale generation overwrite=0』的口径更新为四条守卫路径 + 声明例外清单（用户已在整改计划中批准此口径更新）。",
+  "session_id": "session-20260823-tf0087-generation-guard",
+  "status": "applied"
+}

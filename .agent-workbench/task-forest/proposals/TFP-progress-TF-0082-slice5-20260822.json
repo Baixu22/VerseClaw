@@ -1,0 +1,52 @@
+{
+  "applied_at": "2026-08-22T08:18:22.253229Z",
+  "base_graph_hash": "ff224f67b35218e433af903ed395e6abb1eac6d2a7f2c9c79fa14b5e81b36dcc",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区仍是共享脏树（数百个与本任务无关的改动/未跟踪文件），未 reset/stash/clean/checkout；harness diff-aware validate 因 ownership 覆盖失败，--no-diff 结构校验 exit 0 为本期证据。",
+          "permit 只覆盖 run-start 窗口，不覆盖整轮 run：run armed 后按设计释放，之后 reset 正常 fence 并走 canonical stop path 中止该 run。",
+          "steer 打断 embedded run 时最长 15s 的等待现在发生在 permit 之内，并发 reset 会排队等待而非交错执行——这是有意的 fail-safe 定序，但会拉长该场景下 reset 的最坏延迟。",
+          "tests/unit/session-activity-panel.test.tsx 在本树上失败，且非本切片所致：已提交的测试断言 goal 标签文本，而工作区里一份未提交的 SessionActivityPanel.tsx 重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀。未改动，归该改动的 owner。",
+          "lineage 完整度受 owner 实际记录内容限制：bash 会话有 sessionId 无 runId；goal-owned process 只有在被某条 goal-wake flow 声明为依赖任务时才拿得到 missionId/ownerEpoch。不做任何推导填补。",
+          "本切片不新增 UI surface：面板渲染不变，lineage ref 由快照消费方使用；是否渲染是独立决策。"
+        ],
+        "evidence": [
+          "SessionsQueueDrainParamsSchema.expectedSessionId + handler 代际守卫（reason generation-mismatch，drain 执行器不触达）",
+          "drainQueuedUserMessagesForSession dequeue 前内部守卫（防绕过）",
+          "shared/host-api SessionQueueDrainPayload + Electron 透传",
+          "sessions.queue-drain-generation.test.ts 3/3 + run-control 回归 9/9 + Electron facade/rollback-plan 50/50",
+          "切片 4：sessions.run-control handleSessionSend 的 permit 覆盖 run-start 窗口，release-once 助手在首次 chat.send respond 释放 + finally 兜底",
+          "sessions.send-permit-lifetime.test.ts 6/6；回归探针（把释放点改回修复前）6 例中 3 例失败，探针已移除",
+          "切片 5：SessionActivityLineageRef 挂到每个 goal/process/lineage 条目；flow wait.dependency.taskId 把 goal-owned process 连回 mission/ownerEpoch；supervisor 快照新增可选 lifecycleExpectedSessionId；id 256 字符上界，超长丢弃",
+          "session-activity-projection.test.ts 10/10（三方 missionId 对齐 / mission lineage 优先于 taskLoopRunId / 代际钉扎与 legacy 无钉扎 / lineageUnjoinedEntries=0 / 超长 id 丢弃）",
+          "gateway-methods 批次 27/27；supervisor restart reconciliation 7/7；announce 代际 8/8；subagent-spawn + admission registry 15/15；host-api facade 44/44",
+          "门禁：harness validate --no-diff exit 0；typecheck 0；contract 0；comms replay/compare 全 PASS；build:runtime 0；runtime-lifecycle E2E 3/3；touched 文件 lint 0；check-no-bom ok；git diff --check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json 切片 4/5 更新；README 三语 + handoffs/LATEST.md 已同步"
+        ],
+        "next_action": "第六个 owner path（可选）：sessions_yield/goal_wait RPC surface —— 评估是否需要把目前 tool-only 的 yield/goal-wait 暴露为受 operator scope 约束的 RPC；若判定不需要则直接进入收口：全门禁重跑 + 出具 closeout proposal。收口前需先确认 lineage 是否要在 UI 渲染（本切片只做数据层）。",
+        "progress": 88,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082",
+          "session-20260822-tf0082-slice4",
+          "session-20260822-tf0082-slice5"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T08:14:26.758667Z",
+  "proposal_id": "TFP-progress-TF-0082-slice5-20260822",
+  "rationale": "TF-0082 第五个 owner path 完成：lineage runId join。session-activity 投影里的每个 goal/process/lineage 条目挂一个共享 SessionActivityLineageRef（sessionId / runId / parentSessionKey / ownerEpoch / missionId），每个字段只从已经记录它的 owner 复制，不从另一个标识推导，owner 未记录则缺省。goal-wake flow 的 wait.dependency.taskId 是把 goal-owned process 连回 mission 与 durable ownerEpoch 的那条边；mission goal 与 flow goal 再通过 missionId 对齐。supervisor 只读快照新增可选 lifecycleExpectedSessionId。未新增第二个 identity 源、未新增只读 probe、未改 UI 渲染。10/10 投影测试 + 全门禁通过。",
+  "session_id": "session-20260822-tf0082-slice5",
+  "status": "applied"
+}

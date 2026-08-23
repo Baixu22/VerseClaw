@@ -1,0 +1,63 @@
+{
+  "applied_at": "2026-08-23T00:18:06.203002Z",
+  "base_graph_hash": "5d746812059afc1f4274294537b57af2160e7548189c9f2908201b30a8dfed6e",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout，沿用 TF-0082 纪律。",
+          "child 与 timer 均无生产调用方：两者的接入点（fireGoalWaitChild / fireGoalWaitTimer）、账本反查与 armGoalWaitTimer 都已实现并单测覆盖，但没有工具/RPC 面去 arm，子智能体完成路径上也未插入调用。这是刻意的——requirement 1 要求 real-process gate 通过前保持 opt-in，且 subagent 完成路径（announce delivery + 代际钉扎）是 TF-0082 刚加固的，选择挂载点涉及代际语义判断，应由 owner 决定而非本轮推测。",
+          "tsgo:core:test 有既有错误（多为 test/*.mjs 缺声明）；其中 goal-wake-runtime.test.ts 的两处 alreadyAcked 收窄错误已用 git show HEAD 对照确认为既有，本任务未新增 test 类型错误。",
+          "check:loc 在本仓库本就全局红：脚本无 allowlist，src/cron/service/timer.ts 改前已 1792 行、normalize.ts、server-cron.ts 亦超限；本任务新增/改动文件均低于 500 行，但 goal-wake-dispatch.ts 已到 489 行，逼近上限，后续再加分支前应先拆分。该脚本在 Windows 上还会因并发打开全部文件而 EMFILE。",
+          "agents-core 全 shard 有 3–4 个既有失败（bash-tools.exec.goal-wait.test.ts ×3、bash-tools.exec.durable-helper.test.ts ×1，另有偶发 rc02-shadow-census）：均为 ws://127.0.0.1:18789 gateway 未就绪的连接失败，报错点在 registerExecApprovalRequestForHost，早于任何 goal-wake 代码；这些文件 git status 未修改。",
+          "五类 trigger 的 task_runs.runtime 一律保持 \"process\"，真实种类记在 task_kind（goal-owned-<kind>），以免改动 drain gating、活跃行计数、helper reaping 等既有查询语义。",
+          "missionContinuation 刻意不进 CronPayloadPatch：该 job 由 runtime 创建、由触发结算，不走人工编辑面；纳入会破坏 jobs.ts 现有收窄。",
+          "放宽 startDurableHelperRecoveryService 的启动条件后，goal-wake 开启但 durable helper 关闭时会新增一次 sweep 循环（复用同一个 unref 定时器，非第二个 scheduler）；这是强制 timeoutMs 的必要代价。",
+          "取消级联不主动删除仍在排期的 cron timer job：触发时 task 已终态，runner 返回 0 flow 的 ok，随 deleteAfterRun 自删，属自愈。",
+          "超时判定以 flow_runs.created_at 为基准（即 arm 时刻），未使用依赖进程的实际启动时刻；两者在 arm-before-spawn 契约下相差极小，但严格来说这是「等待时长」而非「进程时长」。",
+          "liveReady/productApproved/formalAcceptance 未改（仍 false），真实验收仍归 TF-0084。"
+        ],
+        "evidence": [
+          "typecheck：pnpm tsgo:core 0 error（最终树重跑）",
+          "lint：oxlint 覆盖全部改动文件，0",
+          "架构：pnpm check:import-cycles = 0 runtime value cycle(s)",
+          "goal-wake 套件（agents-core）8 文件 65 测试全过，本任务累计新增 33 条（budget 2 / cancel 9 / triggers 13 / timeout 5 / cron payload 4）",
+          "cron shard 3 文件 13 测试全过；mission-control 4 文件 32 测试全过；tasks/task-flow-cas 15 测试全过",
+          "gateway-methods 10 文件 57 测试全过；gateway-server 2 文件 7 测试全过",
+          "build:runtime exit 0（runtime-build-smoke gateway ready）",
+          "real-process canary：scripts/goal-wake-e2e-trace.ts exit 0；processPollToolCalls=0、duplicateWakeDeliveries=2 而 duplicateWakeTickCount=1、flagOffGoalWaitBlocked=true、goalWakeToolTrace=goal-wake.arm,supervisor.spawn,goal-wake.finalize,mission.tick",
+          "E2E：tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（须先 build:runtime；stale dist 被明确报错拦截，即 AC4 的失败可读性）",
+          "AC1 回归探针：还原旧计数写法后「arm #2 must not be refused by historical rows」失败，移除探针后恢复全绿",
+          "AC2 的两个缺陷由自然前置失败暴露：缺 mission-terminal guard 时 outcome 为 dispatch-failed 而非 mission-cancelled；revision 差一时 flow 停在 running 而非 succeeded",
+          "超时证据：到期产生恰好一次 timed_out continuation（task.error 含 bound 数值、flow→succeeded）；重复 sweep 不产生第二次；依赖抢先终止时 sweep 不介入；无 timeoutMs 的 wait 不被误判；重启后仍终态且不再产生 continuation",
+          "requirement 3 复审结论：maxActiveGoalWaits（waiting|running）、durable maxRunsPerSession（queued|running）、TTL（按 runDir age 且有 !isTerminalTaskStatus 守卫）本就只算 active；本轮修掉 backoff map 在成功派发后不回收的残留",
+          "requirement 5 五类测试齐备：process exit、duplicate wake、cancel/exit race（双向）、restart matrix（重启后 reconcile 一次、再重启 no-op、cancel 后重启不复活、timeout 后重启不复活）、Cron-to-Mission continuation"
+        ],
+        "next_action": "TF-0083 已关闭。交接给 TF-0084（已 depends_on 本节点）：(1) 决定 child wait 在 subagent 完成路径上的挂载点，需与 TF-0082 的代际钉扎（requesterSessionId 快照、maybeSteerSubagentAnnounce）对齐，确认迟到完成不能唤醒已 reset/fork 的父代际；(2) 为 child/timer/approval/event 提供 arm 的工具或 RPC 面，并把 armGoalWaitTimer 的 cron facade 接到真实 CronServiceContract；(3) 真实验收与 liveReady/productApproved/formalAcceptance 翻转。另需 owner 处理：goal-wake-dispatch.ts 已 489 行逼近 check:loc 上限；以及 agents-core 里依赖 gateway 就绪的既有失败测试的运行方式。",
+        "progress": 100,
+        "progress_source": "manual",
+        "remaining_minutes_max": 0,
+        "remaining_minutes_min": 0,
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260823-tf0083-slice1",
+          "session-20260823-tf0083-slice2"
+        ],
+        "status": "done",
+        "summary": "Goal/Loop 条件唤醒、取消级联与定时续跑全部收口。(1) flow budget 只统计非终态行：maxFlows 原先 COUNT 全部 goal-wake flow_runs 且无状态过滤，16 条历史完成行即永久耗尽预算，改为按 ACTIVE_FLOW_STATUSES 统计。(2) mission.cancel 级联（goal-wake-cancel.ts）：先写 durable terminal truth（task_runs→cancelled、flow→cancelled、wait_json 清空），再做 helper 容器化，未证实时 RPC fail closed（UNAVAILABLE），并清空此前无人清理的 activeWaitFlowIds；顺带修掉三个真实缺陷：终态 mission 导致的 dispatch-failed→scheduleRetry 永久活锁（每 5s 一次、贯穿进程生命周期）、finishMissionTick 用 tick 内存旧状态覆盖并发 cancel、expectedRevision 三元两支相同导致已 running 的 flow 永远钉住。pause 只停 tick 不销毁 wait，resume 走 level-triggered reconciliation。(3) 统一 typed continuation contract：dependency.kind 覆盖 process|child|timer|approval|event，wakePayload 由 Record<string, unknown> 改为 MissionContinuation 判别联合；每类各产生且仅产生一次 continuation，双层去重（flow 结算 + last_wake_id），旧行无 kind 回落 process；process/child/timer 三类均有独立接入点（finalizeGoalWaitTaskProcess / fireGoalWaitChild / fireGoalWaitTimer）与账本反查（按 childSessionKey / cronJobId）。(4) timer 复用既有 Cron 单一 setTimeout：新增 missionContinuation cron payload kind（复用 payload_message JSON 列，无 schema 迁移），一次性 at job + deleteAfterRun；armGoalWaitTimer 先建 job 再 arm，arm 失败即删 job。(5) 超时路径（goal-wake-timeout.ts）：wait_json.timeoutMs 此前是死字段、从无人读取，导致依赖永不终止的 wait 会让 mission 永久停摆；现按 flow.created_at + timeoutMs 判定到期，同样是「先 durable terminal truth（task→timed_out，skipWake）、再 OS/helper 容器化、最后唤醒」，容器化失败在结果里显式上报；到期沿用既有 sweep tick，未新增第二个定时器，且把 sweep 的启动条件从「durable helper 开启」放宽到「goal-wake 开启」，否则同网关路径的 timeoutMs 永远不会被强制。"
+      },
+      "id": "TF-0083"
+    }
+  ],
+  "created_at": "2026-08-23T00:17:54.340692Z",
+  "proposal_id": "TFP-close-TF-0083-20260823",
+  "rationale": "用户指示「继续」。本切片补齐上一轮列出的全部残留：超时路径（requirement 4 的另一半）、TTL/backoff 口径复审（requirement 3）、approval/event 并入 typed contract（desired outcome 1），并为 child 补上与 timer 同构的接入点与测试。至此 4 条 acceptance_criteria、5 条 requirements、5 条 desired_outcomes 全部达成，故收口为 done。刻意保留的边界：整体仍 default-off/opt-in（这是 requirement 1 的明确要求，不是缺口），child/timer 的生产调用点与 liveReady/productApproved/formalAcceptance 一并归 TF-0084。",
+  "session_id": "session-20260823-tf0083-slice2",
+  "status": "applied"
+}

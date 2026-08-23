@@ -1,0 +1,77 @@
+{
+  "applied_at": "2026-08-21T09:18:27.531092Z",
+  "base_graph_hash": "d41e9592896ddaa15f555468bc9dd24aecb948cf41daef5b16e4413ab642b5c8",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "browser-effect 的最小来源依赖切片：只限制 agent_browser 复用运行中浏览器、CDP endpoint 或既有外部浏览器 profile。",
+        "confidence": 0.97,
+        "created_at": "2026-08-21T09:15:46.0633562Z",
+        "id": "TFA-browser-effect-external-browser-provenance-boundary-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.97,
+          "user_goal": "降低外部内容驱动浏览器副作用的风险，同时保持普通浏览能力。",
+          "validation_plan": [
+            "纯策略、agent_browser 接入和 run wiring 聚焦测试",
+            "现有 Agent Browser tool/service 回归",
+            "provenance、credential-use、command-exec 默认策略回归",
+            "comms replay 与 compare",
+            "Harness validate 与 runtime core typecheck"
+          ],
+          "why_not_enough": "click、type、evaluate、replay、full-access browser tools 与其他浏览器调用方仍未全面执行来源依赖检查，不能宣称 browser-effect 已完整覆盖。",
+          "why_this_task": "复用唯一 ContentProvenance 合约和既有 agent_browser/Main 授权边界，只增加一个外部浏览器复用检查。"
+        },
+        "reason": "该边界已有明确的 connectionMode、Main-owned allowExternalBrowser 校验和 Gateway bridge 调用点，能阻止外部内容附着到可能含登录态的既有浏览器，同时不阻断 managed browser、网页阅读、搜索或诊断。",
+        "rejected_options": [
+          "启动 TF-0068 完整 external-write policy 与 UI",
+          "对所有 click/type/evaluate 统一增加人工审批",
+          "全局 browser 动态 taint engine",
+          "通过提示词或正则判断浏览器意图是否安全"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "在 agent_browser 完成 payload 归一化后、调用 Gateway/Electron bridge 前消费既有 ContentProvenance；外部、派生外部、缺失或非法来源只能使用 managed 模式，不能通过普通 allowExternalBrowser 字段切换到 auto-connect、cdp 或 external-profile；direct user 与 trusted system 来源保持现状。",
+        "user_goal": "继续用最小、可审计的来源依赖授权边界降低外部内容驱动浏览器副作用的风险，同时保留普通浏览与只读能力。",
+        "validation_plan": [
+          "纯策略、agent_browser 接入和 run wiring 聚焦测试",
+          "现有 Agent Browser tool/service 回归",
+          "provenance、credential-use、command-exec 默认策略回归",
+          "comms replay 与 compare",
+          "Harness validate 与 runtime core typecheck"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-21T09:15:46.0633562Z",
+        "evidence": "harness/specs/tasks/browser-effect-provenance-boundary.md；openclaw_runtime/src/agents/tools/agent-browser-tool.ts；electron/services/agent-browser-service.ts",
+        "expected_requirement": "来源标签最终应能影响敏感 browser-effect 边界的授权判断。",
+        "id": "TFD-browser-effect-partial-coverage-20260821",
+        "observed_action_or_result": "本轮仅计划覆盖 agent_browser 的外部浏览器复用；managed 浏览、click、type、evaluate、replay、full-access、其他 Electron Browser 路径和插件调用方不被宣称为全面来源依赖覆盖，因此全局 browser-effect 分类保持 classification-only。",
+        "recommendation": "完成本切片后停止；下一轮若继续，只选择另一个已有 host-owned 授权边界，且 external-write 必须尊重 TF-0068 的依赖和单独确认流程。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T09:15:46.0633562Z",
+  "proposal_id": "TFP-browser-effect-external-browser-provenance-boundary-20260821",
+  "rationale": "用户要求继续来源契约的下一条最小 sink 接入；本轮仅约束 agent_browser 对运行中浏览器、CDP endpoint 或外部浏览器 profile 的复用，不改变 managed browser、普通网页读取、搜索、截图、诊断或现有 Main 进程审批与校验。",
+  "session_id": "session-2026-08-21-browser-effect-provenance-continue",
+  "status": "applied"
+}

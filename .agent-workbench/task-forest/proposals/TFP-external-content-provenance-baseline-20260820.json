@@ -1,0 +1,59 @@
+{
+  "base_graph_hash": "a768c980206fd5ce572a3a8336f9a51908ae76929eb11764ff9cf6b22ba78ad7",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "候选方向包括全局动态 taint、提示词重写、以及旁路结构化来源标签。当前选择与现有工具授权边界并行的最小 provenance 契约。",
+        "confidence": 0.96,
+        "created_at": "2026-08-20T14:42:17.138972Z",
+        "id": "TFA-content-provenance-baseline-20260820",
+        "reason": "保持普通网页阅读、搜索、代码分析、只读工具和显式 fullAccess 行为不变，同时为下一轮 sink policy 提供可审计接口。",
+        "rejected_options": [
+          "不引入全局动态 taint engine",
+          "不通过模型系统提示词声称解决注入",
+          "不为每次工具调用增加统一人工审批"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "先落地单一 ContentProvenance 类型、三条真实入口和一条 derived-untrusted 传播路径；敏感 sink 先分类，不在本轮执行统一拦截。",
+        "validation_plan": [
+          "provenance、inbound-trust、external-content、handoff 聚焦测试",
+          "exec 默认策略与 allowlist 回归",
+          "comms replay/compare",
+          "Harness 规格 --no-diff 验证"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-20T14:42:17.138972Z",
+        "evidence": "shared/security/content-provenance.ts；shared/channels/inbound-trust.ts；openclaw_runtime/src/security/external-content.ts；openclaw_runtime/src/agents/tools/web-fetch.ts；openclaw_runtime/src/agents/handoff-artifacts.ts；harness/specs/tasks/external-content-source-provenance-baseline.md",
+        "expected_requirement": "外部内容从来源到敏感 sink 的完整授权检查最终应可审计并 fail-closed。",
+        "id": "TFD-content-provenance-execution-gap-20260820",
+        "observed_action_or_result": "本轮只完成来源契约、入口适配、derived-untrusted 传播和 sink 分类；敏感 sink 尚未读取 provenance 作出执行决策。",
+        "recommendation": "等待来源到 sink 的 broader proposal 经用户确认后，下一轮只选择一个敏感 sink 接入来源依赖检查，并保留现有审批与 fullAccess 边界。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-20T14:42:17.133481Z",
+  "proposal_id": "TFP-external-content-provenance-baseline-20260820",
+  "rationale": "本轮完成外部内容来源契约的最小实现切片：统一 sourceKind/trustLevel、渠道与网页入口旁路标签、工具结果与 Agent 交接的派生传播、缺失状态和敏感 sink 分类。更大范围的 source-to-sink 执行策略仍保留在已读但未确认的提案中。",
+  "session_id": "session-2026-08-20-external-content-provenance",
+  "status": "proposed"
+}

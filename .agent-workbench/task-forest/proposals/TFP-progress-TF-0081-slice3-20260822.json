@@ -1,0 +1,37 @@
+{
+  "applied_at": "2026-08-22T03:54:44.715510Z",
+  "base_graph_hash": "aefa454799f07fb8eeda9d8e3102882aba87ecef89a4215477c2f897237667d8",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "electron/services/terminal-session-manager.ts：lastInteraction/lastOutput 追踪 + classifyTerminal + 快照 idle 报告 + CLAWX_TERMINAL_* 环境变量配置",
+          "openclaw_runtime/src/agents/bash-process-registry.ts：classifyBashProcessIdle/Session + OPENCLAW_BASH_RUNNING_IDLE_MS",
+          "tests/unit/terminal-session-manager.test.ts 4/4（事件流转换 + env 覆盖 + 回收后 null）",
+          "src/agents/bash-process-registry.idle-classification.test.ts 6/6（agents-core shard）",
+          "门禁：gateway cycle+drain 13/13 回归；typecheck 0；contract 0；comms PASS；E2E 3/3；lint 0；diff-check 0",
+          "artifacts/session-ecosystem-resource-reclamation/report.json 切片 3 更新；README 三语补充"
+        ],
+        "next_action": "最后一个 owner path：session activity snapshot 的 idle/orphan 投影与 owner registry 一致性（快照已携带 terminal idle 报告，补 projection 侧一致性断言）；随后最终 closeout 重跑全门禁。",
+        "progress": 70,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0081"
+        ]
+      },
+      "id": "TF-0081"
+    }
+  ],
+  "created_at": "2026-08-22T03:54:44.554160Z",
+  "proposal_id": "TFP-progress-TF-0081-slice3-20260822",
+  "rationale": "TF-0081 第三个 owner path 完成：terminal 与 bash running 记录的 idle 四分类（running-process/interactive/idle/completed），纯观测零自动回收，输出新鲜度优先保证 false kill=0，阈值全环境变量可配。所有 focused 与收口门禁在最终树上通过。",
+  "session_id": "session-20260822-start-tf0081",
+  "status": "applied"
+}

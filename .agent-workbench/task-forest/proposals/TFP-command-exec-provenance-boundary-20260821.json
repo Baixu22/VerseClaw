@@ -1,0 +1,59 @@
+{
+  "base_graph_hash": "85de7f82d56c7af87fbdb19c516a322fc24866360b1b29a408f10cbf41f762e2",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "command-exec 是本轮唯一执行型 sink。",
+        "confidence": 0.97,
+        "created_at": "2026-08-20T17:16:55.652488Z",
+        "id": "TFA-command-exec-provenance-boundary-20260821",
+        "reason": "最小化接入并保持普通只读命令可用。",
+        "rejected_options": [
+          "全局动态 taint engine",
+          "统一人工审批",
+          "提示词重写"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "在现有 exec security/ask/bypass 边界读取 ContentProvenance；缺失或非法来源收紧隐式策略，显式 fullAccess 保持有效。",
+        "validation_plan": [
+          "provenance policy unit/integration tests",
+          "exec defaults/approval/env regression",
+          "comms replay and compare",
+          "Harness spec validation"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.99,
+        "created_at": "2026-08-20T17:16:55.653047Z",
+        "evidence": "openclaw_runtime/src/agents/exec-provenance-policy.ts；openclaw_runtime/src/agents/bash-tools.exec.ts；harness/specs/tasks/command-exec-provenance-boundary.md",
+        "expected_requirement": "来源标签最终应影响敏感 sink 的授权判断。",
+        "id": "TFD-command-exec-sink-only-20260821",
+        "observed_action_or_result": "command-exec 已接入来源依赖检查；secret-read、network-send、external-write、browser-effect、credential-use 目前仍为分类-only。",
+        "recommendation": "下一轮在确认 proposal 后选择一个剩余 sink，复用同一权威 provenance 合约。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-20T17:16:55.646131Z",
+  "proposal_id": "TFP-command-exec-provenance-boundary-20260821",
+  "rationale": "本轮仅将 command-exec 接入既有授权边界；保留 allowlist、审批和显式 fullAccess，其他敏感 sink 仍只做分类。",
+  "session_id": "session-2026-08-21-command-exec-provenance-continue",
+  "status": "proposed"
+}

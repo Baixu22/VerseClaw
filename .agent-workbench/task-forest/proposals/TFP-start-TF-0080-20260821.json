@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-08-21T13:44:30.081122Z",
+  "base_graph_hash": "5a858fe91485ab6939b47e26a86de5b4d735ccb77ca38088eec2b3374ebfa772",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先建立 TF-0080 Harness task spec 和 admission/delete 生产失败矩阵，再只修复一个 owner path。",
+        "progress": 5,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-start-tf0080"
+        ],
+        "status": "in_progress",
+        "summary": "已启动 TF-0080：先审计并修复 session mutation admission、generation fence、delete operation journal 与 Electron mirror retry 的真实生产路径；goal-wake/durable-helper 保持不变。"
+      },
+      "id": "TF-0080"
+    }
+  ],
+  "created_at": "2026-08-21T13:43:05.128403Z",
+  "proposal_id": "TFP-start-TF-0080-20260821",
+  "rationale": "用户已确认继续沿 Task Forest 开发；TF-0079 已完成，按串行规则启动唯一后续节点 TF-0080，聚焦 admission/generation fence 与 delete retry 一致性，不启动 TF-0081+。",
+  "session_id": "session-20260821-start-tf0080",
+  "status": "applied"
+}

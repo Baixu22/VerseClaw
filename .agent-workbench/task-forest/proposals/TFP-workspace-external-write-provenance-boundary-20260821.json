@@ -1,0 +1,71 @@
+{
+  "applied_at": "2026-08-21T13:42:51.334448Z",
+  "base_graph_hash": "023cd54d1cb3b851b84a529073f0f5a3fa49b66c4ffebc89c464937f1d08476f",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "候选 A 仅保留 external-write 分类；候选 B 在 runtime coding write/edit/apply_patch 的 workspace 外部目标前执行最小来源依赖检查；候选 C 启动完整 TF-0068 external-write UI。",
+        "confidence": 0.9,
+        "created_at": "2026-08-21T13:20:00.000000Z",
+        "id": "TFA-workspace-external-write-provenance-boundary-20260821",
+        "node_alignment": {
+          "fit": "aligned",
+          "fit_confidence": 0.9,
+          "validation_plan": [
+            "policy tests for workspace/external/missing/invalid provenance",
+            "write/edit/apply_patch no-mutation denial fixtures",
+            "existing workspace guard, journal and recovery regression",
+            "runtime core typecheck, comms replay/compare, Harness validation"
+          ],
+          "why_not_enough": "它不覆盖完整 external-write、VerseShell UI、MCP/Skill 写入或所有 Electron 文件 API。",
+          "why_this_task": "它把统一 provenance 合约接到一个真实文件写入 sink，并保留现有普通 coding 路径。"
+        },
+        "reason": "已有 runtime coding 工具和 workspace/journal 边界可作为稳定 sink；该方案不需要新协议、持久化、统一审批或模型提示词改写。",
+        "rejected_options": [
+          "A：继续 classification-only，无法推进 source-to-sink",
+          "C：完整 external-write UI 仍依赖 TF-0067，超出本轮最小范围"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010",
+          "TF-0015",
+          "TF-0067",
+          "TF-0068"
+        ],
+        "selected_option": "B：复用现有 workspace root guard、path extraction 和 write journal，只对 workspace 外部目标收紧 untrusted、derived-untrusted、missing、invalid provenance；in-workspace 写入保持可用。",
+        "user_goal": "继续把外部内容的来源依赖带到真实敏感 sink，同时保留普通编码和既有权限边界。"
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-21T13:20:00.000000Z",
+        "evidence": "harness/specs/tasks/workspace-external-write-provenance-boundary.md；openclaw_runtime/src/agents/agent-tools.ts；electron/services/files-api.ts；TF-0067/TF-0068 状态仍为 proposed。",
+        "expected_requirement": "来源依赖最终应覆盖 external-write 敏感 sink。",
+        "id": "TFD-workspace-external-write-slice-only-20260821",
+        "observed_action_or_result": "本候选仅覆盖 runtime coding write/edit/apply_patch 的 workspace 外部目标；完整 TF-0068 UI 及其他写入调用方仍未执行。",
+        "recommendation": "确认并完成本单一 runtime sink 后停止；只有 TF-0067 完成且单独授权时，才评估完整 external-write UI。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010",
+          "TF-0067",
+          "TF-0068"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-21T13:15:21.716883Z",
+  "proposal_id": "TFP-workspace-external-write-provenance-boundary-20260821",
+  "rationale": "下一条最小来源依赖切片选择 runtime coding 的 workspace 外部写入目标。它复用既有 path guard 和 write journal，只在 write/edit/apply_patch 已解析为 workspace 外部时读取 ContentProvenance；不启动完整 TF-0068 UI，不新增审批系统，不改变普通 workspace 写入。",
+  "session_id": "session-2026-08-21-workspace-external-write-provenance-continue",
+  "status": "applied"
+}

@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-08-20T16:20:17.522071Z",
+  "base_graph_hash": "1dd98f55843f3cfeb7de30d650306340da874961749990caf03a1773e83c8bf1",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "record_alignment",
+      "alignment": {
+        "candidate_summary": "候选方向包括全局动态 taint、提示词重写和旁路结构化来源标签；本轮已选择并完成最小 provenance 契约。",
+        "confidence": 0.96,
+        "created_at": "2026-08-21T00:00:00.000000Z",
+        "id": "TFA-content-provenance-baseline-20260821",
+        "reason": "该方案保持普通读取、现有审批和显式 fullAccess 行为不变，同时为单一敏感 sink 的后续接入提供可审计边界。",
+        "rejected_options": [
+          "全局动态 taint engine",
+          "通过系统提示词声称解决注入",
+          "每次工具调用统一人工审批"
+        ],
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "selected_option": "单一 ContentProvenance 类型、渠道和网页等真实入口、derived-untrusted 传播、缺失状态与敏感 sink 分类。",
+        "validation_plan": [
+          "provenance 与入口聚焦测试",
+          "exec 默认和 allowlist 回归",
+          "comms replay/compare",
+          "Harness 规格验证"
+        ]
+      }
+    },
+    {
+      "action": "record_deviation",
+      "deviation": {
+        "confidence": 0.98,
+        "created_at": "2026-08-21T00:00:00.000000Z",
+        "evidence": "shared/security/content-provenance.ts；shared/channels/inbound-trust.ts；openclaw_runtime/src/security/external-content.ts；openclaw_runtime/src/agents/tools/web-fetch.ts；openclaw_runtime/src/agents/handoff-artifacts.ts；harness/specs/tasks/external-content-source-provenance-baseline.md",
+        "expected_requirement": "外部内容到敏感 sink 的授权检查最终可审计且 fail-closed。",
+        "id": "TFD-content-provenance-execution-gap-20260821",
+        "observed_action_or_result": "来源契约、入口适配和派生传播已完成；敏感 sink 仍仅分类，尚未读取 provenance 作出执行决策。",
+        "recommendation": "下一轮只在 command-exec 现有授权边界接入来源依赖检查，保留审批、allowlist 和显式 fullAccess 语义。",
+        "related_task_ids": [
+          "TF-0007",
+          "TF-0010"
+        ],
+        "severity": "low",
+        "status": "open"
+      }
+    }
+  ],
+  "created_at": "2026-08-20T16:18:43.444929Z",
+  "proposal_id": "TFP-external-content-provenance-baseline-refresh-20260821",
+  "rationale": "用户确认继续上一轮来源契约工作；原 proposal 因任务图并发更新而过期，因此在当前任务图上重建等价 alignment/deviation，不新增平行任务节点。",
+  "session_id": "session-2026-08-21-external-content-provenance-continue",
+  "status": "applied"
+}

@@ -1,0 +1,565 @@
+{
+  "applied_at": "2026-08-23T10:30:18.301462Z",
+  "base_graph_hash": "b7d59ee5705c44dc322bdd009b08a09e2552727c3d51e614df405d36dd9bb4fa",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "add_node",
+      "alias": "audit-node",
+      "node": {
+        "acceptance_criteria": [
+          "三线判定给出",
+          "report.md + findings.json 落盘",
+          "探针全部还原且工作树无审计残留"
+        ],
+        "confidence": 0.95,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "audit"
+        ],
+        "desired_outcomes": [
+          "三线各自明确判定",
+          "两份交付物落盘",
+          "所有回归探针还原干净"
+        ],
+        "evidence": [
+          "artifacts/tf0078-chain-health-audit/report.md",
+          "artifacts/tf0078-chain-health-audit/findings.json",
+          "verdict: falsePositive=pass-with-findings, expectationConformance=pass-with-findings, boundary=pass-with-findings"
+        ],
+        "id": "TF-0085",
+        "kind": "task",
+        "non_goals": [
+          "不审计其他 workstream 质量",
+          "不裁定是否应当提交这条链"
+        ],
+        "purpose": "在提交/收口决策前，独立验证这条链是否真实交付、是否达到规划标准、是否越界",
+        "requirements": [
+          "报告是主张，逐条证伪",
+          "不复用任何历史数字",
+          "可达性结论必须经生产 registry dispatch",
+          "环境阻塞写 blocked 不写 pass",
+          "不修复、不提交、不动其他 workstream"
+        ],
+        "status": "done",
+        "success_metrics": [
+          "门禁重跑 16 项 + 2 GA 脚本全部亲自执行",
+          "finding 15 项（4 major）全部有证据链"
+        ],
+        "summary": "对 TF-0079..TF-0084 六节点声称交付执行三线独立审计：A 假阳性与缺口、B 预期达成度、C 越界。全部结论基于工作树 file:line 或亲自重跑的 exit code；自评报告仅作主张处理。",
+        "title": "TF-0079..TF-0084 链独立健康审计"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "该审计的对象是 TF-0078 链（TF-0079..TF-0084）"
+      },
+      "from": "audit-node",
+      "to": "TF-0078",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "remediation-milestone",
+      "node": {
+        "acceptance_criteria": [
+          "全部子节点 done 或被用户显式移出",
+          "收口节点记录用户对提交/关闭 TF-0078 的决定"
+        ],
+        "assumptions": [
+          "共享工作树在整改期间仍与其他 workstream 混布，需按 hunk 拆分提交"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "remediation"
+        ],
+        "desired_outcomes": [
+          "4 个 major 全部闭环",
+          "链可按声明边界独立验收",
+          "提交与收口决策有据可依"
+        ],
+        "id": "TF-0086",
+        "kind": "milestone",
+        "non_goals": [
+          "不在本里程碑内实现 goal-wake/durable-helper 的产品化",
+          "不处理其他 workstream 自身的缺陷"
+        ],
+        "purpose": "让 TF-0078 链达到可独立验收、可提交的状态，并消除审计发现的结构性守卫盲区",
+        "requirements": [
+          "线性推进：前一节点 done 才开始下一节点",
+          "每个节点产出当前树的新鲜证据，不复用审计或旧报告数字",
+          "不翻动任何产品锁与 default-off 边界",
+          "不清理、不回滚其他 workstream 的未提交改动"
+        ],
+        "status": "in_progress",
+        "success_metrics": [
+          "4 个 major finding 闭环",
+          "整改后链门禁全绿（重跑取证）"
+        ],
+        "summary": "按线性顺序消化 2026-08-23 独立审计的 4 个 major 与其余 finding，完成后把提交/收口决策交还用户。一次只推进一个 ready 子节点。",
+        "title": "TF-0078 链审计整改与收口"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "整改服务于 OpenClaw Runtime 治理总目标"
+      },
+      "from": "remediation-milestone",
+      "to": "TF-0010",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改范围直接来自审计的 15 项 finding"
+      },
+      "from": "remediation-milestone",
+      "to": "audit-node",
+      "type": "derived_from"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.9,
+        "reason": "整改完成后才具备收口 TF-0078 的条件"
+      },
+      "from": "remediation-milestone",
+      "to": "TF-0078",
+      "type": "related_to"
+    },
+    {
+      "action": "add_node",
+      "alias": "step1-generation-injection",
+      "node": {
+        "acceptance_criteria": [
+          "两个注入点有代际校验或显式声明",
+          "新增回归测试在当前树通过、破坏后失败",
+          "TF-0082 指标口径与 requirement 的落差被消除或被明文承认"
+        ],
+        "confidence": 0.5,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "generation-guard"
+        ],
+        "difficulty": "high",
+        "estimated_total_minutes": 300,
+        "execution_hints": [
+          "结构性成因：成功 reset 后旧代际 fence 即释放，延迟防护依赖写入点自查；部分钉扎以 sessionKey 兜底冒充 expectedSessionId",
+          "先做注入点，再复核灰色地带，最后更新口径文档"
+        ],
+        "id": "TF-0087",
+        "kind": "task",
+        "non_goals": [
+          "不重做 fence/permit 模型"
+        ],
+        "priority": 1,
+        "purpose": "闭合 TF-0082 requirement『旧 run 的迟到事件不能影响 reset/fork 后新 generation』的真实口径",
+        "remaining_minutes_max": 420,
+        "remaining_minutes_min": 180,
+        "requirements": [
+          "不得放宽既有守卫",
+          "任何『允许注入』的语义必须文档化并反映到指标口径",
+          "修复后补针对性回归测试（含改坏即红的探针）"
+        ],
+        "status": "ready",
+        "success_metrics": [
+          "迟到代际注入可触达点=0（或全部声明）"
+        ],
+        "summary": "FP-07（major）：bash 退出通知（maybeNotifyOnExit，bash-tools.exec-runtime.ts:381-429）与 detached task 完成事件（task-registry.ts:1254/1278）可把旧代际内容注入新代际系统事件队列并唤醒；补代际比对，或显式接受注入语义并在指标口径中写明。复核三处灰色：announce 失配后的请求者-代理交接、restart-sentinel 降级 wake、ACP 父流事件。",
+        "title": "治理两个迟到代际注入点与三处灰色地带"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 1 步（线性）"
+      },
+      "from": "step1-generation-injection",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_node",
+      "alias": "step2-ownership-declarations",
+      "node": {
+        "acceptance_criteria": [
+          "按新声明集重建的 candidate 通过 diff-aware harness validate",
+          "38 清单的每一项都有归属结论"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "ownership"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 240,
+        "execution_hints": [
+          "复用 scripts/tf0084-build-candidate.mjs 重建 candidate 验证",
+          "两张归属表见审计报告 §4"
+        ],
+        "id": "TF-0088",
+        "kind": "task",
+        "non_goals": [
+          "不提交任何代码"
+        ],
+        "priority": 2,
+        "purpose": "让链可按声明边界独立验收（diff-aware harness validate 通过），并让后续提交拆分有据可依",
+        "remaining_minutes_max": 360,
+        "remaining_minutes_min": 150,
+        "requirements": [
+          "只补声明，不代改其他 workstream 的代码",
+          "他流 12 个文件保持归各自 owner",
+          "contract.ts 等五路汇流文件的耦合点逐一点名"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "应声明未声明文件=0"
+        ],
+        "summary": "FP-12（major）：为 TF-0083 新建 harness spec（goal-wake-arm/cancel/dispatch/fencing/runtime/timeout/timer/triggers 与 cron missionContinuation 模块的 touchedAreas），把其余链内未声明文件（TF-0082 的 acp-spawn/subagent-spawn、TF-0080 的 4 个 operationId 消费侧文件、mission-control/types.ts）补进对应节点声明；修正 tf0084-candidate-inherited.json 定性（26 链内/12 他流/1 陈旧条目，移除 subagent-control.ts 陈旧项）；修正 runtime-send-actions.ts 被链 spec 整文件误声明。",
+        "title": "补归属声明：TF-0083 建 spec + 26 个未声明文件入 touchedAreas"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 2 步（线性）"
+      },
+      "from": "step2-ownership-declarations",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 1 步 done 后才开始"
+      },
+      "from": "step2-ownership-declarations",
+      "to": "step1-generation-injection",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "step3-census-guard",
+      "node": {
+        "acceptance_criteria": [
+          "census 覆盖本链全部 12 个方法",
+          "移除任一白名单条目时启动/构建期报错而非静默跳过"
+        ],
+        "confidence": 0.7,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "reachability"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 180,
+        "execution_hints": [
+          "census 位于 session-ecosystem-lifecycle-reachability.test.ts:29-38",
+          "静默跳过位于 core-descriptors.ts:349-352"
+        ],
+        "id": "TF-0089",
+        "kind": "task",
+        "non_goals": [
+          "不修复存量两方法的白名单缺口（仅移交记录）"
+        ],
+        "priority": 3,
+        "purpose": "消除 yieldState 型缺陷复发的结构盲区",
+        "remaining_minutes_max": 240,
+        "remaining_minutes_min": 120,
+        "requirements": [
+          "steer 的 advertise:false 不得被误判为缺陷",
+          "启动期守卫不得破坏既有延迟加载语义",
+          "新增守卫需有改坏即红的回归测试"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "census 外链方法=0",
+          "静默跳过路径=0"
+        ],
+        "summary": "FP-01（major）：把 sessions.send、sessions.steer（advertise:false 需单独口径）、mission.cancel、mission.resume 纳入可达性 census；把 createCoreGatewayMethodDescriptors 的『有 spec 无 handler 静默跳过』改为启动期硬错误，使守卫不再依赖测试期围栏。顺手记录存量缺口 sessions.compressionArtifact/sessions.recoveryContext 的移交（checkpoint/recovery owner，不阻塞本链）。",
+        "title": "census 扩至全部链方法并新增启动期守卫"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 3 步（线性）"
+      },
+      "from": "step3-census-guard",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 2 步 done 后才开始"
+      },
+      "from": "step3-census-guard",
+      "to": "step2-ownership-declarations",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "step4-dispatch-proof",
+      "node": {
+        "acceptance_criteria": [
+          "12 个链方法全部有 dispatch 级证明",
+          "移除任一白名单条目时对应测试失败"
+        ],
+        "confidence": 0.8,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "reachability"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 120,
+        "execution_hints": [
+          "参照现有两例：测试 :88-131"
+        ],
+        "id": "TF-0090",
+        "kind": "task",
+        "non_goals": [
+          "不改方法语义"
+        ],
+        "priority": 4,
+        "purpose": "让可达性证据与验收措辞一致，杜绝『静态绿、生产 unknown method』分叉",
+        "remaining_minutes_max": 180,
+        "remaining_minutes_min": 80,
+        "requirements": [
+          "断言必须穿过真实懒加载边界",
+          "不得用直接 import handler 替代"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "dispatch 证明覆盖=12/12"
+        ],
+        "summary": "FP-02（major）：当前仅 sessions.lifecycleLedger 与 sessions.yieldState 经 handleGatewayRequest 实际 dispatch；为其余 6 个（activitySnapshot、queueDrain、stop、reset、delete、cleanup）补经生产 registry 到参数校验层的 dispatch 断言，闭合与 spec『proven by dispatching through the production registry』的措辞落差。",
+        "title": "补齐其余 6 个方法的生产-registry dispatch 证明"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 4 步（线性）"
+      },
+      "from": "step4-dispatch-proof",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 3 步 done 后才开始（census 扩容先行）"
+      },
+      "from": "step4-dispatch-proof",
+      "to": "step3-census-guard",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "step5-dead-surfaces",
+      "node": {
+        "acceptance_criteria": [
+          "findings.json 中 FP-03..FP-06 全部有处置记录",
+          "typecheck/contract/comms 门禁重跑绿"
+        ],
+        "confidence": 0.55,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "hygiene"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 240,
+        "execution_hints": [
+          "死导出清单见审计报告 §2 A2/A3 表"
+        ],
+        "id": "TF-0091",
+        "kind": "task",
+        "non_goals": [
+          "不实现 yielded/terminals 的产品化渲染（除非用户决定）"
+        ],
+        "priority": 5,
+        "purpose": "消除『单测绿但生产零可达』与『数据备好无人显示』的误导面",
+        "remaining_minutes_max": 360,
+        "remaining_minutes_min": 150,
+        "requirements": [
+          "每项处置必须有明文结论（清理/保留/延期三选一）",
+          "不得在挂载 child/timer 时翻动 default-off 锁"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "无明文结论的死面=0"
+        ],
+        "summary": "FP-03/04/05/06（minor 组）：① 为 sessions.lifecycleLedger 写明『只读诊断、暂不做 UI』决策（对齐 yieldState 明文形式）；② 处置死导出/死字段/死值：idleClassification、verified、task_kind='goal-owned-*' 消费侧、4 个完全死的 session-utils 接口——清理或声明保留；③ 按 TF-0083 next_action 决定 child/timer arm 的挂载点或明确延期；④ 若 yielded/terminals 进入产品面则补 i18n 与行级渲染，否则降级说明。",
+        "title": "明文决策与死面治理（文档、死导出、死字段、child/timer 挂载决策）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 5 步（线性）"
+      },
+      "from": "step5-dead-surfaces",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 4 步 done 后才开始"
+      },
+      "from": "step5-dead-surfaces",
+      "to": "step4-dispatch-proof",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "step6-eng-hygiene",
+      "node": {
+        "acceptance_criteria": [
+          "check:loc 能输出 LOC 判定（无论红绿）",
+          "FD 项有正式决策记录"
+        ],
+        "confidence": 0.6,
+        "context_tags": [
+          "engineering-hygiene"
+        ],
+        "difficulty": "low",
+        "estimated_total_minutes": 120,
+        "execution_hints": [
+          "EMFILE 位于 scripts/check-ts-max-loc.ts:64 的 Promise.all"
+        ],
+        "id": "TF-0092",
+        "kind": "task",
+        "non_goals": [
+          "不处理全局红中的具体超限文件（归各 owner）"
+        ],
+        "priority": 6,
+        "purpose": "恢复门禁判定能力，消除 requirement 与交付的残余落差",
+        "remaining_minutes_max": 180,
+        "remaining_minutes_min": 60,
+        "requirements": [
+          "check:loc 修复不得改变其判定语义",
+          "FD 决策需用户可见的明文记录"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "环境性门禁崩溃=0"
+        ],
+        "summary": "FP-14/FP-11/FP-08：修复 check:loc 的 EMFILE 崩溃（并发限流）并复核全局红的真实构成；统一行数口径（413 vs 417 类）；对 TF-0081 requirement 中的 FD 测试项做正式决策（补句柄计数断言，或从 requirement 移出并记录理由）。",
+        "title": "工程卫生：check:loc 修复、行数口径、FD 测试决策"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 6 步（线性）"
+      },
+      "from": "step6-eng-hygiene",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 5 步 done 后才开始"
+      },
+      "from": "step6-eng-hygiene",
+      "to": "step5-dead-surfaces",
+      "type": "depends_on"
+    },
+    {
+      "action": "add_node",
+      "alias": "step7-commit-closeout",
+      "node": {
+        "acceptance_criteria": [
+          "用户对提交范围与 TF-0078 状态做出决定并记录",
+          "若提交：提交后门禁全绿且归属声明与提交内容一致"
+        ],
+        "confidence": 0.4,
+        "context_tags": [
+          "runtime-lifecycle-governance",
+          "closeout"
+        ],
+        "difficulty": "medium",
+        "estimated_total_minutes": 240,
+        "execution_hints": [
+          "耦合点清单见审计报告 §4 表二",
+          "提交前用 git status 相对审计起点核对"
+        ],
+        "id": "TF-0093",
+        "kind": "task",
+        "non_goals": [
+          "不处理其他 workstream 的提交"
+        ],
+        "priority": 7,
+        "purpose": "把整改成果固化为可追溯的提交与正式收口",
+        "remaining_minutes_max": 360,
+        "remaining_minutes_min": 120,
+        "requirements": [
+          "提交/收口决定权在用户，本节点不代裁",
+          "提交前工作树核对：探针无残留、他流改动未被裹挟",
+          "不推送除非用户明确要求"
+        ],
+        "status": "proposed",
+        "success_metrics": [
+          "提交内容与声明边界一致",
+          "TF-0078 状态有明确裁定"
+        ],
+        "summary": "整改完成后：① 按 hunk 拆分提交多路耦合文件（contract.ts 五路、host-api.ts、mission-control/controller.ts、chat.ts），链部分与他流部分分离；② 决定提交顺序与范围（含是否等待其他 workstream）；③ 由用户裁定 TF-0078 是否收口为 done；④ 提交后全量门禁新鲜重跑取证（不复用本次审计数字）。",
+        "title": "TF-0078 链提交拆分与收口决策（用户裁定）"
+      }
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "confidence": 0.95,
+        "reason": "整改第 7 步（线性，收尾）"
+      },
+      "from": "step7-commit-closeout",
+      "to": "remediation-milestone",
+      "type": "child_of"
+    },
+    {
+      "action": "add_edge",
+      "edge": {
+        "blocking": true,
+        "confidence": 0.9,
+        "reason": "线性纪律：第 6 步 done 后才开始"
+      },
+      "from": "step7-commit-closeout",
+      "to": "step6-eng-hygiene",
+      "type": "depends_on"
+    }
+  ],
+  "created_at": "2026-08-23T10:26:09.440708Z",
+  "proposal_id": "TFP-tf0078-audit-remediation-plan-20260823",
+  "rationale": "本轮完成 TF-0079..TF-0084 链独立健康审计（三线均 pass-with-findings，0 blocker / 4 major / 7 minor / 6 note，产物 artifacts/tf0078-chain-health-audit/report.md 与 findings.json）。审计确认链主体生产可达、边界未越界，但存在四个 major：① 两个未守卫且可触达的迟到代际注入点（口径窄于 TF-0082 requirement）；② 归属定性错误（38 个『继承』文件中 26 个是链自己的未声明产出，TF-0083 整节点无 spec）；③ census 漏 4 个链方法；④ 8 个 census 方法仅 2 个有生产-registry dispatch 证明。本提案将整改组织为线性流程（一次只推进一个 ready 节点，与 TF-0078 自身的推进纪律一致），以提交/收口决策节点收尾。同时补记本轮审计为一个已完成节点，保持会话历史可追溯。",
+  "session_id": "session-20260823-tf0078-chain-health-audit",
+  "status": "applied"
+}

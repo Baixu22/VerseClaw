@@ -1,0 +1,22 @@
+{
+  "applied_at": "2026-08-20T14:11:03.181011Z",
+  "base_graph_hash": "f9e3119edad879f352d2b3ccfef7596b7666f9f6c632b84cdcc6edcd050ba549",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "set_status",
+      "id": "TF-0073",
+      "progress": 0,
+      "status": "in_progress"
+    }
+  ],
+  "created_at": "2026-08-20T14:11:02.899893Z",
+  "proposal_id": "TFP-start-TF-0073-20260820",
+  "rationale": "用户明确要求开始 TF-0073；TF-0072 已完成且 TF-0074 依赖本节点。仅启动 TF-0073，保持 TF-0074 未启动以及 DCS/SEKB default-off、liveReady=false、productApproved=false、defaultOn=false。",
+  "session_id": "session-20260820-start-tf0073",
+  "status": "applied"
+}

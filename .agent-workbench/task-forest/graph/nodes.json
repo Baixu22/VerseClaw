@@ -383,18 +383,29 @@
     "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.96,
-      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
       "validation_plan": [
-        "Verifier 重跑全量 profile",
-        "检查报告 SHA/日志完整性",
-        "确认产品锁持续关闭"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "不替代真人/live/product 证据",
-      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "alignment_records": [
       "TFA-0026758811",
-      "TFA-32a1af6c38"
+      "TFA-32a1af6c38",
+      "TFA-content-provenance-baseline-20260821",
+      "TFA-command-exec-provenance-boundary-refresh-20260821",
+      "TFA-network-send-provenance-boundary-20260821",
+      "TFA-secret-read-provenance-boundary-20260821",
+      "TFA-credential-use-image-provider-provenance-boundary-20260821",
+      "TFA-browser-effect-external-browser-provenance-boundary-20260821",
+      "TFA-browser-effect-session-click-provenance-boundary-20260821",
+      "TFA-browser-effect-session-type-provenance-boundary-20260821",
+      "TFA-workspace-external-write-provenance-boundary-20260821",
+      "TFA-close-workspace-external-write-provenance-boundary-20260821"
     ],
     "assumptions": [
       "当前工作区改动代表计划交付的组件基线",
@@ -410,7 +421,17 @@
       "形成 owner/cohort/metrics/kill/rollback 完整的内部 canary 包"
     ],
     "deviations": [
-      "TFD-94c0816e91"
+      "TFD-94c0816e91",
+      "TFD-content-provenance-execution-gap-20260821",
+      "TFD-command-exec-sink-only-refresh-20260821",
+      "TFD-network-send-provenance-boundary-20260821",
+      "TFD-secret-read-partial-coverage-20260821",
+      "TFD-credential-use-partial-coverage-20260821",
+      "TFD-browser-effect-partial-coverage-20260821",
+      "TFD-browser-effect-click-partial-coverage-20260821",
+      "TFD-browser-effect-click-type-partial-coverage-20260821",
+      "TFD-workspace-external-write-slice-only-20260821",
+      "TFD-close-workspace-external-write-partial-coverage-20260821"
     ],
     "difficulty": "high",
     "estimated_total_minutes": 960,
@@ -432,7 +453,7 @@
       "扩大多 agent 自动修改面"
     ],
     "priority": 1,
-    "progress": 50,
+    "progress": 50.0,
     "progress_source": "manual",
     "purpose": "尽快将已有组件能力投入安全、可审计、可回滚的内部使用，而不是继续扩面或提前 default-on。",
     "remaining_minutes_max": 1440,
@@ -452,7 +473,7 @@
     ],
     "summary": "P0 交付与真实集成证据已完成；下一阶段为 TF-0009 小范围受控 canary。因真实 canary 尚未执行，全局任务继续 in_progress。",
     "title": "DCS 与关联组件受控内测投用收口（非GA）",
-    "updated_at": "2026-07-31T06:14:56.840368Z"
+    "updated_at": "2026-08-21T15:28:26.301914Z"
   },
   "TF-0008": {
     "acceptance_criteria": [
@@ -627,19 +648,32 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "逐包 Harness 与独立 Agent Engineering Acceptance",
-        "最终全量工程 gate 和 manifest",
-        "用户执行 H-01 至 H-06"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "alignment_records": [
       "TFA-32a1af6c38",
-      "TFA-50501c2045"
+      "TFA-50501c2045",
+      "TFA-runtime-authority-dcs-loop-sekb-20260819",
+      "TFA-content-provenance-baseline-20260821",
+      "TFA-command-exec-provenance-boundary-refresh-20260821",
+      "TFA-network-send-provenance-boundary-20260821",
+      "TFA-secret-read-provenance-boundary-20260821",
+      "TFA-credential-use-image-provider-provenance-boundary-20260821",
+      "TFA-browser-effect-external-browser-provenance-boundary-20260821",
+      "TFA-browser-effect-session-click-provenance-boundary-20260821",
+      "TFA-session-ecosystem-lifecycle-remediation-20260821",
+      "TFA-browser-effect-session-type-provenance-boundary-20260821",
+      "TFA-workspace-external-write-provenance-boundary-20260821",
+      "TFA-close-workspace-external-write-provenance-boundary-20260821"
     ],
     "assumptions": [
       "source openclaw_runtime 继续作为收敛能力实现路径",
@@ -665,7 +699,17 @@
     "deviations": [
       "TFD-94c0816e91",
       "TFD-67e4e8fbdf",
-      "TFD-4b64829dbf"
+      "TFD-4b64829dbf",
+      "TFD-content-provenance-execution-gap-20260821",
+      "TFD-command-exec-sink-only-refresh-20260821",
+      "TFD-network-send-provenance-boundary-20260821",
+      "TFD-secret-read-partial-coverage-20260821",
+      "TFD-credential-use-partial-coverage-20260821",
+      "TFD-browser-effect-partial-coverage-20260821",
+      "TFD-browser-effect-click-partial-coverage-20260821",
+      "TFD-browser-effect-click-type-partial-coverage-20260821",
+      "TFD-workspace-external-write-slice-only-20260821",
+      "TFD-close-workspace-external-write-partial-coverage-20260821"
     ],
     "difficulty": "very_high",
     "estimated_total_minutes": 19200,
@@ -690,7 +734,7 @@
       "自动 SEKB 写回或副作用 replay"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 0.0,
     "progress_source": "manual",
     "purpose": "停止通过新增通用模块证明产品价值，把现有工程基础收敛为唯一权威主路径和可验收的 Operator 产品闭环。",
     "remaining_minutes_max": null,
@@ -714,7 +758,7 @@
     ],
     "summary": "复用 OpenClaw 运行时、插件槽、MCP、OTel 和既有域执行器，按证据消除平行 Workflow/Context/Memory/Tool/Telemetry authority，并以跨入口 Context/Effect/Recovery lineage 形成 Operator Desktop 差异化。",
     "title": "OpenClaw Runtime Authority 与 Operator 产品收敛（非 GA）",
-    "updated_at": "2026-08-02T13:08:00.002884Z"
+    "updated_at": "2026-08-21T15:28:26.301914Z"
   },
   "TF-0011": {
     "acceptance_criteria": [
@@ -1060,18 +1104,21 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.93,
-      "user_goal": "保持 Coding 熟悉工具面的同时达到成熟产品写入可靠性",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "multi-file failure tests",
-        "concurrent patch tests",
-        "wrapper order tests",
-        "crash recovery tests"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "不提供本地进程生命周期等价。",
-      "why_this_task": "Coding 是文件 mutation authority，必须在执行平面迁移前闭合失败语义。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-workspace-external-write-provenance-boundary-20260821",
+      "TFA-close-workspace-external-write-provenance-boundary-20260821"
+    ],
     "assumptions": [
       "应用层 prepare/commit/rollback 能覆盖目标文件操作"
     ],
@@ -1118,7 +1165,7 @@
       "把写入 journal 迁入 VerseShell"
     ],
     "priority": 2,
-    "progress": 100,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "消除多文件 patch 抛错后静默保留 partial mutation 的不确定性。",
     "remaining_minutes_max": 0,
@@ -1138,7 +1185,7 @@
     ],
     "summary": "UAS-04 工程收口完成：apply_patch 在读取/预计算前获取排序路径租约，全批 prepared 后才 mutation；后段失败完整恢复为 rolled_back，恢复不完整为 recovery_required 并保留既有 write-journal recoveryRef；重启可检测 prepared 批次，post-write verify 不回滚 committed mutation。",
     "title": "UAS-04 Coding 写入一致性与恢复",
-    "updated_at": "2026-07-30T03:39:30.285944Z"
+    "updated_at": "2026-08-21T15:28:26.301914Z"
   },
   "TF-0016": {
     "acceptance_criteria": [
@@ -2502,14 +2549,21 @@
       "side-effect replay 0"
     ],
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "让功能都能正常投入使用",
+      "validation_plan": [
+        "task-forest validate/export",
+        "前置单测和集成测试",
+        "DCS/Knowledge E2E",
+        "fresh acceptance report"
+      ],
+      "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+      "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-runtime-authority-dcs-loop-sekb-20260819"
+    ],
     "assumptions": [],
     "confidence": 0.75,
     "context_tags": [],
@@ -2527,7 +2581,7 @@
     "kind": "task",
     "non_goals": [],
     "priority": 1,
-    "progress": 0,
+    "progress": 0.0,
     "progress_source": "manual",
     "purpose": "",
     "remaining_minutes_max": null,
@@ -2538,7 +2592,7 @@
     "success_metrics": [],
     "summary": "最后迁移 Task Loop lifecycle；long_task_checkpoints 只保留 checkpoint material，replay 永不执行 effect。",
     "title": "RC-06D Task Loop Lifecycle 迁移",
-    "updated_at": "2026-08-03T08:02:21.717409Z"
+    "updated_at": "2026-08-19T15:15:54.033484Z"
   },
   "TF-0038": {
     "acceptance_criteria": [
@@ -4597,17 +4651,21 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.97,
-      "user_goal": "让 coding 写入具备受治理、可恢复语义。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "journal/precondition tests",
-        "concurrency/recovery tests",
-        "approval/diff artifact integration"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "外部 write 仍需独立 policy。",
-      "why_this_task": "写入必须以现有 ClawX journal 为 authority，而不是由 execution runtime 越权。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-workspace-external-write-provenance-boundary-20260821",
+      "TFA-close-workspace-external-write-provenance-boundary-20260821"
+    ],
     "assumptions": [
       "P2 trace/diagnostics 已可关联 patch operation 与结果。"
     ],
@@ -4626,7 +4684,10 @@
       "journal commit/undo/stale-write guard 可审计",
       "并发/失败/abort/undo 有确定状态"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-workspace-external-write-slice-only-20260821",
+      "TFD-close-workspace-external-write-partial-coverage-20260821"
+    ],
     "difficulty": "very_high",
     "estimated_total_minutes": null,
     "evidence": [
@@ -4644,7 +4705,7 @@
       "第二 journal"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 0.0,
     "progress_source": "manual",
     "purpose": "为文件改动提供确定的冲突、提交和恢复语义，同时避免建立第二个 VerseShell transaction owner。",
     "remaining_minutes_max": 1800,
@@ -4663,7 +4724,7 @@
     ],
     "summary": "让 file.patch 只产生 preview、base hash、precondition 和 diff artifact；ClawX write journal 保持唯一 commit/undo/stale guard/recovery authority。",
     "title": "VS-P3-01 File Patch Preview 与 ClawX Journal Bridge",
-    "updated_at": "2026-08-13T17:21:51.259920Z"
+    "updated_at": "2026-08-21T15:28:26.301914Z"
   },
   "TF-0068": {
     "acceptance_criteria": [
@@ -4673,17 +4734,21 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "在不扩大风险的前提下完成写入协作。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "effect/policy fixtures",
-        "UI confirmation E2E",
-        "audit/redaction review"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "不提供 default-on 或全自动 rollback。",
-      "why_this_task": "外部写入的真实边界必须在 canary 前透明化，不能依赖错误的 transaction 叙事。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-workspace-external-write-provenance-boundary-20260821",
+      "TFA-close-workspace-external-write-provenance-boundary-20260821"
+    ],
     "assumptions": [
       "P3-01 已闭合 file.patch 的内部 journal 路径。"
     ],
@@ -4701,7 +4766,10 @@
       "允许条件、风险、快照和用户确认有产品层语义",
       "不具备 rollback 的写入不会被报告为可恢复"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-workspace-external-write-slice-only-20260821",
+      "TFD-close-workspace-external-write-partial-coverage-20260821"
+    ],
     "difficulty": "high",
     "estimated_total_minutes": null,
     "evidence": [
@@ -4718,7 +4786,7 @@
       "自动清理外部副作用"
     ],
     "priority": 1,
-    "progress": 0,
+    "progress": 0.0,
     "progress_source": "manual",
     "purpose": "防止用户和 agent 对外部进程写入的恢复能力产生错误预期。",
     "remaining_minutes_max": 960,
@@ -4737,7 +4805,7 @@
     ],
     "summary": "定义 compiler/script/Git hook 等 external_write 的 effect 标识、policy、approval、snapshot/prompt 和不可回滚限制，不把它们伪装成 VerseShell transaction。",
     "title": "VS-P3-02 External Write Policy、确认与不可回滚边界",
-    "updated_at": "2026-08-13T17:21:51.259920Z"
+    "updated_at": "2026-08-21T15:28:26.301914Z"
   },
   "TF-0069": {
     "acceptance_criteria": [
@@ -4820,6 +4888,482 @@
     "title": "VS-P5-01 Provider-backed 真实 Canary、Rollback 与扩大裁决",
     "updated_at": "2026-08-13T17:21:51.259920Z"
   },
+  "TF-0070": {
+    "acceptance_criteria": [
+      "两个并发 session 交错产生 phase transition 时，sink、session_id、objective 和 trajectory capture 始终一一对应",
+      "上一 run 的配置不会影响后续 DCS 初始化失败的 run",
+      "新增并发、清理和 stale-config 单测通过，现有 DCS agents shard 全部通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+      "validation_plan": [
+        "并发 phase producer 单测",
+        "DCS agents shard",
+        "task_state 数据库归属断言"
+      ],
+      "why_not_enough": "只解决运行上下文隔离，不会自动补齐 Mission 到 SEKB 的完整业务 lineage。",
+      "why_this_task": "并发串写会直接破坏任务状态和经验数据的可信度，是投入使用前必须消除的根因风险。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "task_phase_change 事件可继续携带 sessionId、taskId 和 runId",
+      "同一进程内需要支持多个 embedded run 并发"
+    ],
+    "confidence": 0.92,
+    "context_tags": [
+      "dcs",
+      "task-loop",
+      "concurrency",
+      "lineage"
+    ],
+    "created_at": "2026-08-19T15:15:54.029493Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "每个 embedded run 的 DCS 与 SEKB 依赖具有明确的 run/session 绑定",
+      "新 run 不会覆盖已有 run 的 handler 配置",
+      "run 结束、取消或依赖初始化失败后不会残留旧配置"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "docs/dev/dcs-visible-production/TF-0070-TASK-STATE-RUN-SCOPE-EVIDENCE-2026-08-19.md",
+      "openclaw_runtime/src/agents/embedded-agent-runner/extensions.task-state.test.ts (interleaved scope, terminal cleanup, stale initialization)",
+      "pnpm run test:dcs PASS (250 + 10 + 84 tests)",
+      "pnpm run typecheck:node PASS",
+      "TaskLoop loopRunId bridge + ambiguous same-session fail-closed + agent_end owner cleanup tests (extensions.task-state.test.ts)",
+      "pnpm run comms:replay PASS; pnpm run comms:compare PASS"
+    ],
+    "execution_hints": [
+      "先阅读 active Harness task spec，再实现最小运行上下文注册表",
+      "优先用交错 Promise/事件顺序构造并发回归测试",
+      "保留旧 API 的兼容适配，但禁止继续依赖无 key 的全局值"
+    ],
+    "id": "TF-0070",
+    "kind": "task",
+    "non_goals": [
+      "不重写 TaskFlow 或 Mission 的生命周期模型",
+      "不改变产品锁和默认开关",
+      "不引入第二套 DCS 存储"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "保证并发 Mission/Task Loop 不会把 task_state 或 terminal trajectory 写入其他 session、objective 或 sink。",
+    "remaining_minutes_max": 720,
+    "remaining_minutes_min": 240,
+    "requirements": [
+      "task_phase_change 必须使用事件 lineage 定位对应运行实例",
+      "兼容现有 task_state、child handoff、working-memory 和 SEKB hook 行为",
+      "默认开关保持不变，不能借机启用 DCS 或 SEKB"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "跨 session task_state 串写为 0",
+      "跨 run objective/trajectory 串写为 0",
+      "运行结束后的 handler 配置残留为 0"
+    ],
+    "summary": "已完成按 run/session 隔离 TaskStateHandlerConfig，并显式把 TaskLoop loopRunId 绑定到唯一 session DCS config；phase hook 使用事件 lineage 固定 sink/store/objective/trajectory，terminal/cancelled 与 agent_end 按 owner 清理，DCS 初始化失败清理 stale scope；并发、歧义 fail-closed、生命周期清理和 DCS shards 已通过。",
+    "title": "DCS Task State 按运行实例隔离",
+    "updated_at": "2026-08-19T16:27:41.367570Z"
+  },
+  "TF-0071": {
+    "acceptance_criteria": [
+      "phase hook 返回前可确定 DCS write 已 accepted、rejected 或明确失败",
+      "terminal trajectory capture 的结果可在 task_loop 返回前被测试观察",
+      "写入失败时有结构化日志/evidence，且不会产生未处理 Promise rejection",
+      "新增 durability 单测和现有 task-loop/DCS 测试通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+      "validation_plan": [
+        "延迟 sink 时序测试",
+        "terminal capture 可观察性测试",
+        "取消/失败清理回归"
+      ],
+      "why_not_enough": "不会单独解决跨 mission/tick 的身份关联。",
+      "why_this_task": "状态已经完成但持久化尚未完成会形成用户不可见的数据孤岛，直接影响恢复和验收。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "task_phase_change handler 可以改为返回受控 Promise 结果",
+      "现有 BlockStore 和 TrajectoryCapture API 足以表达写入结果"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "dcs",
+      "task-loop",
+      "persistence",
+      "recovery"
+    ],
+    "created_at": "2026-08-19T15:15:54.029493Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "phase transition 的异步副作用具有明确等待边界",
+      "写入失败可记录为 degradation/evidence，不改变 Loop 的控制结果",
+      "session 清理不会抢先于必要的 DCS/SEKB 写入"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 360,
+    "evidence": [
+      "docs/dev/dcs-visible-production/TF-0071-TASK-STATE-PHASE-SIDE-EFFECT-DURABILITY-EVIDENCE-2026-08-20.md",
+      "openclaw_runtime/src/agents/task-loop-controller.dcs-phase-producer.test.ts",
+      "tests/unit/task-loop-controller.test.ts",
+      "pnpm run test:dcs: PASS unit 251, runtime-config 10, agents 88",
+      "pnpm --dir openclaw_runtime db:kysely:check: PASS",
+      "pnpm --dir openclaw_runtime build: FAIL at existing missing goal_wait tool-display metadata"
+    ],
+    "execution_hints": [
+      "先定义等待/失败语义和测试时序，再改生产调用点",
+      "检查取消、异常退出和 session dispose 的 finally 顺序"
+    ],
+    "id": "TF-0071",
+    "kind": "task",
+    "non_goals": [
+      "不把 DCS 或 SEKB 写入失败升级为模型任务失败",
+      "不打开自动经验写回",
+      "不引入同步阻塞整个 agent runtime 的全局锁"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "避免 task_loop 已报告 completed/failed，但 task_state 或经验轨迹尚未写入甚至丢失。",
+    "remaining_minutes_max": 600,
+    "remaining_minutes_min": 180,
+    "requirements": [
+      "保持 Task Loop 主控制流的失败隔离策略",
+      "不得把最佳努力写入误报为已持久化",
+      "terminal phase 必须覆盖 completed、failed、cancelled 的策略边界"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "task_loop 完成后 DCS/SEKB side effect 未完成的窗口为 0",
+      "未处理 phase hook rejection 为 0",
+      "写入结果与 task lifecycle evidence 可关联"
+    ],
+    "summary": "已完成：TaskLoop phase side effect 采用每次运行串行等待队列；normal/error return 前排空 DCS task_state 与 terminal trajectory side effect；返回 accepted/rejected/failed/skipped 结构化结果并记录 rejection/capture failure；取消后的异步边界不会复活 run。test:dcs、focused shards、typecheck、lint、comms、Kysely check 和 Harness --no-diff 通过；runtime build 受既有 goal_wait tool-display 元数据缺失阻断，已记录证据。",
+    "title": "Task Loop phase side effect 持久化完成语义",
+    "updated_at": "2026-08-20T10:45:01.723793Z"
+  },
+  "TF-0072": {
+    "acceptance_criteria": [
+      "至少一条真实 Mission -> Task Loop -> DCS phase -> SEKB trajectory 链可以通过 ID 完整回溯",
+      "同一 session 的两个 mission/tick 不会只靠 sessionKey 混淆",
+      "Host Knowledge review 能显示来源 trajectory/lineage，confirm provenance 与来源一致",
+      "新增 lineage schema/contract 测试和相关 E2E 通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.97,
+      "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+      "validation_plan": [
+        "lineage contract 单测",
+        "Mission/Task/DCS/SEKB 纵向集成测试",
+        "Knowledge 来源回溯 E2E"
+      ],
+      "why_not_enough": "需要依赖运行上下文隔离和 phase 持久化语义先稳定。",
+      "why_this_task": "没有统一 lineage，功能即使分别可用也无法形成可审计、可恢复、可总结经验的闭环。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "TF-0037 的 lifecycle 迁移仍是上层执行边界",
+      "任务事件和共享 state DB 可以承载有限的 lineage metadata"
+    ],
+    "confidence": 0.85,
+    "context_tags": [
+      "mission",
+      "task-loop",
+      "dcs",
+      "sekb",
+      "lineage"
+    ],
+    "created_at": "2026-08-19T15:15:54.029493Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "Mission tick 调用 Task Loop 时传递稳定的 parent lineage",
+      "DCS Block 和 SEKB trajectory 可定位到 mission/tick/loop/trace/task ledger",
+      "知识候选和确认后的 principle 能回指真实来源轨迹"
+    ],
+    "deviations": [],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "harness/specs/tasks/runtime-lineage-convergence.md",
+      "harness/specs/rules/runtime-lineage-boundary.md",
+      "openclaw_runtime/src/runtime-core/lineage.ts",
+      "openclaw_runtime/src/runtime-core/lineage.test.ts",
+      "openclaw_runtime/src/agents/mission-control/fenced-tick-wiring.test.ts",
+      "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "openclaw_runtime/src/agents/task-loop-controller/producer-envelope.test.ts",
+      "openclaw_runtime/src/agents/dcs/lifecycle-hook-helpers.ts",
+      "openclaw_runtime/src/agents/dcs/context-blocks.ts",
+      "openclaw_runtime/src/knowledge/sekb/confirm-provenance.ts",
+      "openclaw_runtime/src/knowledge/sekb/trajectory-capture.ts",
+      "src/pages/Knowledge/index.tsx",
+      "tests/e2e/knowledge-hub.spec.ts",
+      "docs/dev/dcs-visible-production/TF-0072-MISSION-TASK-LOOP-DCS-SEKB-LINEAGE-EVIDENCE-2026-08-20.md",
+      "pnpm harness validate --spec harness/specs/tasks/runtime-lineage-convergence.md --no-diff: exit 0",
+      "focused lineage/runtime tests: 4 files / 49 tests plus 2 files / 7 tests passed",
+      "pnpm test:dcs: 351 tests passed",
+      "pnpm --dir openclaw_runtime tsgo:core: exit 0",
+      "pnpm run typecheck: exit 0; node/web exit 0; test project 1048 legacy errors remains observation-only by repository design",
+      "pnpm verseshell:test: bundle 13/13, runtime bundle 11/11, OpenClaw 15 files / 141 tests, MCP 11/11 passed",
+      "pnpm lint:dcs, pnpm contract:check, pnpm i18n:lint: exit 0",
+      "pnpm run comms:replay and pnpm run comms:compare: exit 0, result PASS",
+      "pnpm run build:vite: current-source frontend, Electron main and preload exit 0",
+      "pnpm build:runtime: exit 0; runtime smoke gateway ready",
+      "pnpm run test:e2e:run -- tests/e2e/knowledge-hub.spec.ts: 4/4 passed after current runtime rebuild",
+      "normal diff-aware Harness validation is not claimed because the shared dirty worktree includes unrelated paths; this is not a TF-0072 dependency or scoped acceptance failure",
+      "engineering closeout only: DCS/SEKB remain default-off; liveReady=false, productApproved=false, defaultOn=false"
+    ],
+    "execution_hints": [
+      "先输出 lineage 字段映射和缺失字段兼容策略",
+      "以一个完整黄金路径作为纵向切片，不要并行重构所有存储"
+    ],
+    "id": "TF-0072",
+    "kind": "task",
+    "next_action": "TF-0072 已关闭；TF-0073 是唯一新解锁节点。启动 TF-0073 前先运行对应 Harness context；TF-0073 关闭前不得启动 TF-0074。",
+    "non_goals": [
+      "不把 SEKB 自动蒸馏或自动写回打开",
+      "不替换 TaskFlow/TaskRegistry 的既定 authority 计划",
+      "不修改用户界面之外的产品锁状态"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让操作者能够从一个 Goal/Mission 回溯到具体 Task Loop、DCS 状态、工具证据和经验候选，而不是只有同 session 的弱关联。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "优先复用已有 session、trace、task ledger 和 DCS 字段",
+      "不得新建平行 workflow 或 memory authority",
+      "兼容现有查询和历史数据，旧记录缺字段时安全降级"
+    ],
+    "source_sessions": [
+      "session-20260820-start-tf0072",
+      "session-20260820-tf0072-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "关键 runtime artifact 的 lineage 完整率 100%",
+      "无法归属 mission/tick 的新 DCS/SEKB 记录为 0",
+      "来源 trajectory 与确认 principle 的关联错误为 0"
+    ],
+    "summary": "已用有界 runtime-lineage.v1 打通 Mission tick、Task Loop、DCS task-state/HandoffPack、SEKB trajectory 与 confirmed-principle provenance；Knowledge Runtime Lessons 可显示来源 lineage，SEKB confirm 对来源 session 冲突 fail-closed。未新增工作流、持久化或 memory authority，legacy 缺失字段不推断。当前源码工程门禁和 Knowledge Electron E2E 均通过。",
+    "title": "Mission、Task Loop、DCS、SEKB 统一 lineage",
+    "updated_at": "2026-08-20T14:01:45.765375Z"
+  },
+  "TF-0073": {
+    "acceptance_criteria": [
+      "terminal-only 空 trajectory 不会单独形成 distillation suggestion",
+      "带真实 tool steps 的 trajectory 可以被正常检索、建议、确认和召回",
+      "重复 capture 可通过 lineage/idempotency 识别并去重",
+      "SEKB golden path、distillation 和 terminal lifecycle 回归通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+      "validation_plan": [
+        "候选池过滤单测",
+        "重复 capture 集成测试",
+        "SEKB 黄金路径和 Knowledge E2E"
+      ],
+      "why_not_enough": "它不能替代 Mission/Loop 的 lineage 传递，只能消费并保护该 lineage。",
+      "why_this_task": "经验总结质量取决于候选是否是真实、可回溯、可复用的执行轨迹。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "统一 lineage 任务能够提供 run/trace 关联字段",
+      "distiller 可以增加候选质量过滤而不改变确认协议"
+    ],
+    "confidence": 0.88,
+    "context_tags": [
+      "sekb",
+      "distillation",
+      "trajectory",
+      "quality"
+    ],
+    "created_at": "2026-08-19T15:15:54.029493Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "一个真实 agent run 不会因为 agent_end 和 terminal phase 产生两个无关联候选",
+      "必要的 terminal 状态仍可记录，但与真实 trajectory 合并或标记为不可蒸馏",
+      "distillation suggestion 只消费满足质量和 lineage 条件的 trajectory"
+    ],
+    "deviations": [
+      "未运行 Electron E2E：本任务无 renderer/Electron 用户可见流程变化。",
+      "未更新 README 翻译：本任务为 runtime-side 内部候选门控与 lineage 语义，无用户导航或 UI 契约变化。",
+      "正常 diff-aware Harness 结果受既有共享脏树越界文件阻断，保留为正式证据边界。"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md",
+      "pnpm harness context --spec harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md: exit 0",
+      "pnpm harness validate --spec harness/specs/tasks/sekb-terminal-trajectory-candidate-gating.md --no-diff: exit 0",
+      "terminal-trajectory-gating.test.ts: 1 file / 5 tests passed",
+      "SEKB regression: 6 files / 47 tests passed",
+      "Agent regression: 3 files / 29 tests passed",
+      "pnpm lint:dcs: exit 0",
+      "targeted oxlint type-aware/type-check: exit 0",
+      "pnpm --dir openclaw_runtime tsgo:core: exit 0",
+      "targeted oxfmt --check: exit 0",
+      "pnpm run comms:replay: exit 0",
+      "pnpm run comms:compare: exit 0, Result PASS",
+      "docs/enhancements/sekb-mvp.md and docs/enhancements/sekb-runtime-roadmap.md updated",
+      "normal diff-aware Harness validate and dry-run: exit 1 because the shared dirty worktree contains unrelated changed files outside this task's touchedAreas; no --no-diff acceptance claim is made"
+    ],
+    "execution_hints": [
+      "先构造 terminal-only 与真实 agent_end 双轨迹样本",
+      "过滤必须发生在候选生成边界，不能破坏原始审计记录"
+    ],
+    "id": "TF-0073",
+    "kind": "task",
+    "next_action": "已完成；后续仅在用户授权并完成依赖评估后启动 TF-0074。",
+    "non_goals": [
+      "不删除已有历史 trajectory",
+      "不启用 batch distillation 或自动确认",
+      "不把状态摘要冒充工具轨迹"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "保证经验总结建立在真实工具步骤和可回溯来源上，避免 Task Loop 状态通知制造噪声候选。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "保持人工确认前不写入 experience Block 的规则",
+      "失败和取消状态仍有可审计记录",
+      "旧数据和默认关闭路径保持兼容"
+    ],
+    "source_sessions": [
+      "session-20260820-start-tf0073",
+      "session-20260820-tf0073-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "无步骤 trajectory 进入候选池为 0",
+      "同一 run 的重复经验候选为 0",
+      "真实 trajectory 的建议/确认/召回成功率保持 100%"
+    ],
+    "summary": "已完成 SEKB terminal trajectory 候选门控与去重：terminal-only 轨迹保留为审计记录但不进入建议；候选必须含真实 tool.call/tool.result、success/failure/partial 终态和完整 runtime-lineage.v1；重复 session/run/trace terminal capture 返回原轨迹；agent_end 与 custom abort 支持 Task Loop 晚绑定 lineage，abort 保持 partial 语义；重复 source id 与候选排序确定性保持；suggest 只读，confirm_and_save 仍是唯一 durable L2/experience 写入路径。SEKB default-off、liveReady=false、productApproved=false、defaultOn=false 未改变。",
+    "title": "SEKB terminal trajectory 候选门控与去重",
+    "updated_at": "2026-08-20T16:20:37.347638Z"
+  },
+  "TF-0074": {
+    "acceptance_criteria": [
+      "DCS agents/runtime-config/unit shards 通过",
+      "并发隔离、持久化时序、lineage 回溯和空 trajectory 门控全部有自动化证据",
+      "Knowledge golden path 与 Knowledge E2E 通过",
+      "STATUS.md、product locks 和 SEKB no-auto-writeback 约束保持正确"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "让 DCS、Goal/Loop、工具注册上下文和知识经验体系真正可投入使用",
+      "validation_plan": [
+        "Harness validate",
+        "官方 DCS runner",
+        "Knowledge E2E",
+        "fresh acceptance evidence"
+      ],
+      "why_not_enough": "工程验收不能替代用户本人进行的真实 channel 和产品批准。",
+      "why_this_task": "用户要求先规划后逐项开始，最终需要一个明确的可投入使用验收结论。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "前置任务按依赖顺序完成并各自产出测试证据",
+      "当前工作区的 Electron 锁定问题可以通过官方 runner 或环境恢复后重跑"
+    ],
+    "confidence": 0.92,
+    "context_tags": [
+      "acceptance",
+      "dcs",
+      "mission",
+      "task-loop",
+      "sekb"
+    ],
+    "created_at": "2026-08-19T15:15:54.029493Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "形成一份可复跑的 runtime acceptance evidence",
+      "明确孤岛已修复、残余风险和产品锁边界",
+      "不把工程 PASS 写成 live-ready、product-approved 或 default-on"
+    ],
+    "deviations": [
+      "共享主工作树仍包含大量其他任务改动；未 reset、stash、clean、checkout 或扩大 TF-0074 touchedAreas。",
+      "candidate fresh tsgo:core 通过 junctioned dependencies 触发 openclaw_runtime/ui/vitest.config.ts TS2321/TS2769；权威工作树官方 gate exit 0，candidate 任务特定测试均通过，该差异保留为环境 residual。",
+      "Electron 证据使用显式 fixture lineage，属于当前源码工程证据，不是真实第三方 channel 或真人 cohort。",
+      "DCS preflight 仍缺 week-one decision、L3 profiles、10 次真人替代运行且 TF-0006 blocked；产品建议保持 keep-off。"
+    ],
+    "difficulty": "high",
+    "estimated_total_minutes": 360,
+    "evidence": [
+      "harness/specs/tasks/tf0074-real-use-acceptance.md",
+      "docs/dev/dcs-visible-production/TF-0074-REAL-USE-ACCEPTANCE-EVIDENCE-2026-08-21.md",
+      "detached candidate D:\\ClawX-tf0074-closeout-20260821 at e07b874b30c31701b437b1e972c8a40b5ca5f8c4: 58 staged scoped paths",
+      "candidate Harness context: exit 0",
+      "candidate diff-aware Harness validate --since HEAD: exit 0",
+      "candidate Harness run --dry-run --since HEAD: exit 0, result pass",
+      "pnpm run test:dcs: exit 0, 351 tests passed",
+      "candidate focused agents: 4 files / 33 tests passed",
+      "candidate focused runtime lineage / terminal gating / golden path: 3 files / 11 tests passed",
+      "candidate Host API facade: 1 file / 43 tests passed",
+      "candidate contract check and i18n lint: exit 0",
+      "pnpm --dir openclaw_runtime tsgo:core on authoritative worktree: exit 0",
+      "pnpm run typecheck: node/web exit 0; test project retains 1048 observation-only legacy errors",
+      "pnpm run lint:dcs: exit 0",
+      "forced pnpm run build:runtime and pnpm run build:vite: exit 0",
+      "Electron Knowledge + SEKB E2E after forced runtime rebuild: 5/5 passed",
+      "pnpm run comms:replay and pnpm run comms:compare: exit 0, comparison PASS",
+      "pnpm run dcs:ops:preflight and pnpm run dcs:c1:gate: exit 0, recommendation keep-off"
+    ],
+    "execution_hints": [
+      "验收报告必须把代码证据与真人/live/product evidence 分开",
+      "若仍有阻断，保持 review_needed/blocked，不以文档声明替代测试"
+    ],
+    "id": "TF-0074",
+    "kind": "milestone",
+    "next_action": "TF-0074 工程节点已关闭。保持 liveReady=false、productApproved=false、defaultOn=false 和 SEKB 人工确认边界；TASK-P2-01 继续受真人/live 证据阻塞。任何 successor 必须单独评估和授权，本次不启动新节点。",
+    "non_goals": [
+      "不执行真实第三方 channel 人工验收",
+      "不解锁 live-ready/product-approved/default-on",
+      "不进行大范围 UI 或无关架构重构"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "把代码层修复转化为可证明的投入使用结论，并明确仍受 human/live/product lock 限制的部分。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "先完成四个前置实现任务",
+      "使用当前官方 DCS/Knowledge/E2E runner 和 Harness 规范",
+      "报告必须包含失败项、未验证项和实际环境限制"
+    ],
+    "source_sessions": [
+      "session-20260821-start-tf0074",
+      "session-20260821-tf0074-first-slice",
+      "session-20260821-tf0074-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "关键链路孤岛类缺陷为 0",
+      "工程验收报告可复跑且不依赖旧报告时间戳",
+      "live/product/default-on 结论与证据边界一致"
+    ],
+    "summary": "TF-0074 工程验收已闭环：DCS run-scope 隔离、Task Loop phase side-effect durability、runtime-lineage.v1、terminal trajectory 候选门控、Knowledge Host API 显式 lineage、人工确认后持久化及 Electron golden path 均有当前源码证据。独立候选补齐正常 diff-aware Harness validate/dry-run。该 done 仅关闭工程包；liveReady=false、productApproved=false、defaultOn=false，SEKB 无自动 writeback。",
+    "title": "DCS、Goal/Loop、SEKB 真实投入使用验收",
+    "updated_at": "2026-08-21T00:12:34.906650Z"
+  },
   "TF-0077": {
     "acceptance_criteria": [
       "audit-0.json 至 audit-6.json 均通过 pnpm run runtime-lifecycle-audit --phase all",
@@ -4830,17 +5374,20 @@
     ],
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "完成 Runtime Lifecycle Governance 全部阶段并留下可复算的量化验收证据",
+      "fit_confidence": 0.94,
+      "user_goal": "让会话、终端、子智能体、Goal/Loop 和定时触发具有真实且可验证的生命周期。",
       "validation_plan": [
-        "pnpm run runtime-lifecycle-audit --phase all exit 0",
-        "spot-check audit-5 gate logs for arm/poll/write findings",
-        "git diff --check exit 0"
+        "Task Forest/Harness",
+        "registry probe",
+        "race/leak/restart tests",
+        "fresh acceptance report"
       ],
-      "why_not_enough": "closeout 只证明工程证据；不授权任何新生命周期 action、生产接线或产品锁变更。",
-      "why_this_task": "Phase 6 是该程序规范定义的唯一 closeout 阶段；Phase 5 已全绿，用户明确授权进入。"
+      "why_not_enough": "不自动提供 live/product approval 或 GA。",
+      "why_this_task": "方案直接覆盖已复现缺口，并复用当前 Gateway、SessionAdmission、Supervisor、SubagentRegistry、Goal-wake、Cron 和 SessionActivity 组件。"
     },
-    "alignment_records": [],
+    "alignment_records": [
+      "TFA-session-ecosystem-lifecycle-remediation-20260821"
+    ],
     "assumptions": [
       "用户 2026-08-19 明确进入阶段 6，即确认本 closeout/task-forest proposal"
     ],
@@ -4861,7 +5408,9 @@
       "SessionActivity 只读投影 goal/process/lineage，snapshot 无任何写路径",
       "产品锁与 default-off gates 不变"
     ],
-    "deviations": [],
+    "deviations": [
+      "TFD-runtime-lifecycle-closeout-production-gap-20260821"
+    ],
     "difficulty": "medium",
     "estimated_total_minutes": 0,
     "evidence": [
@@ -4888,7 +5437,7 @@
       "不声称 VerseShell GA 或任何产品锁变更"
     ],
     "priority": 1,
-    "progress": 100,
+    "progress": 100.0,
     "progress_source": "manual",
     "purpose": "把一个跨会话/进程/终端的生命周期治理缺口收敛为可复算、可独立验收、边界冻结的单一程序，并以量化审计证明每个阶段。",
     "remaining_minutes_max": 0,
@@ -4910,6 +5459,1686 @@
     ],
     "summary": "Runtime Lifecycle Governance 七阶段全部交付：Phase 0 shared foundation；Phase 1 canonical cleanup finalizer/drain；Phase 2 delete operation journal + Electron mirror/terminal gate；Phase 3 same-gateway goal wake loop；Phase 4 durable helper + restart recovery；Phase 5 只读 SessionActivity goal/process/lineage 投影与 UI；Phase 6 production audit closeout。audit-0..6 全部通过 runtime-lifecycle-audit。",
     "title": "Runtime Lifecycle Governance Phase 0-6 Closeout",
-    "updated_at": "2026-08-18T16:29:57.313121Z"
+    "updated_at": "2026-08-21T11:50:40.603505Z"
+  },
+  "TF-0078": {
+    "acceptance_criteria": [
+      "六个实现阶段按依赖顺序完成，只有当前阶段为 ready",
+      "每个阶段有当前 HEAD 绑定的 Harness context/validate、聚焦单测、必要 E2E 和失败证据",
+      "最终验收能证明所有声明的 RPC 在真实 registry 中存在、所有活跃资源能按 owner 查询和回收、所有续跑触发能去重",
+      "工程验收、真实第三方 channel/真人验收、产品批准和 default-on 结论严格分开"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "让当前对话生态真实可追踪、可监控、可跨会话控制、可等待恢复，并防止长时间闲置后的资源泄漏和假阳性验收。",
+      "validation_plan": [
+        "Task Forest validate/export 和每阶段 Harness context/validate",
+        "真实 Gateway method registry probe，证明 handler 与 descriptor 同时存在",
+        "session/process/subagent/goal-wake/cron 聚焦单测与当前源码 E2E",
+        "真实 Electron packaged helper、真实 OS process、Gateway restart/cancel/unknown-RPC 故障矩阵",
+        "独立 fresh acceptance report，列出未执行前置、退出码、测试数、artifact SHA 和产品锁"
+      ],
+      "why_not_enough": "工程收敛仍不能替代真实第三方 channel、真人 recovery、产品批准或 GA 授权；这些继续由既有最终验收边界控制。",
+      "why_this_task": "它直接覆盖本轮已证实的 production reachability、default-off safety、resource drain、cross-session control、goal loop 和 scheduler seam，且挂在既有 Runtime Authority 主线上。"
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "TF-0010 仍是 Runtime Authority 的唯一主线，TF-0077 是已关闭但证据边界不足的历史来源",
+      "当前 worktree 的大量未提交修改来自其他 workstream，执行时必须保持并以 detached candidate 做验收",
+      "Cron 作为现有 timer/scheduler authority 复用，不新增第二个 timer loop"
+    ],
+    "confidence": 0.9,
+    "context_tags": [
+      "session-ecosystem",
+      "runtime-lifecycle",
+      "cross-session-control",
+      "subagent",
+      "goal-loop",
+      "scheduler",
+      "resource-reclamation",
+      "false-positive-prevention"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "真实 Gateway registry 与测试直接 handler 不再分叉，所有声明的生命周期 RPC 都可达",
+      "session safety gates 在生产生命周期 mutation 上生效，未知 RPC 结果不会造成镜像和 runtime 状态分裂",
+      "终端、普通后台进程、subagent 和 durable helper 具有明确 owner、TTL/回收边界和跨重启终态",
+      "跨会话控制和父子关系使用稳定 sessionId/runId/missionId/tickId/flowId/taskId lineage",
+      "Goal/Loop 支持 process exit、子智能体完成、显式 timer/Cron 触发的有界续跑，取消和超时级联且不重放命令",
+      "最终证据来自当前 HEAD 的真实 registry、真实进程、故障矩阵和独立报告，不复用旧 audit 数字"
+    ],
+    "deviations": [
+      "TFD-runtime-lifecycle-closeout-production-gap-20260821"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 3840,
+    "evidence": [
+      "docs/dev/handoffs/LATEST.md",
+      "harness/specs/tasks/runtime-lifecycle-governance.md",
+      "artifacts/runtime-lifecycle-governance/audit-0.json .. audit-6.json",
+      "本轮 sessions.stop registry probe、goal-wake canary exit=1、packaged Electron helper output",
+      "docs/runtime-design/plan.md scheduled ticks planned but not shipped",
+      "2026-08-23/24 独立审计与整改收口：审计三线均 pass-with-findings（artifacts/tf0078-chain-health-audit/）；TF-0086 里程碑七步全部 done，4 major+7 minor 闭环，收口时刻全链 227 测试+根级门禁全绿（artifacts/tf0086-milestone-closeout/report.json）；用户裁定暂不提交，提交时按 artifacts/tf0093-commit-readiness/split-plan.md 执行，收口与否由用户提交后裁定"
+    ],
+    "execution_hints": [
+      "先执行 TF-0079，修复 registry 可达性并建立 direct-handler versus production-dispatch gate",
+      "每个阶段先建立最小失败测试，再修改唯一生产 owner；不要先扩展 UI",
+      "遇到 shared dirty worktree 时使用 detached candidate，保留 current HEAD/base/tree/manifest 绑定",
+      "旧 audit-0..6 只能作为历史背景，不能作为 successor 阶段的 acceptance evidence"
+    ],
+    "id": "TF-0078",
+    "kind": "milestone",
+    "next_action": "用户整理工作树后：按 artifacts/tf0093-commit-readiness/split-plan.md 协调 11 个跨流依赖并按节点序提交链改动（耦合文件按 hunk 拆分）→ 提交后重跑 diff-aware harness validate → 由用户裁定本里程碑是否收口为 done。整改侧条件已具备（见 artifacts/tf0086-milestone-closeout/report.json）。",
+    "non_goals": [
+      "不把 goal-wake 或 durable helper 直接改为默认开启",
+      "不宣称联合系统 GA、liveReady 或 productApproved",
+      "不实现跨机器多进程 scale-out、复杂多依赖 wait 或命令链，除非后续单独授权",
+      "不删除或重写 TF-0077、既有历史 evidence、其他 workstream 的 dirty WIP"
+    ],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "让每个对话及其派生资源都有可追踪的身份、状态、所有权和终态；允许跨会话创建、截停、继续和等待，同时避免长时间闲置资源泄漏与代码存在但生产不可达的假阳性。",
+    "remaining_minutes_max": 6000,
+    "remaining_minutes_min": 2400,
+    "requirements": [
+      "主父节点为 TF-0010；不得重开或篡改 TF-0077 的历史 closeout 事实",
+      "一次只推进一个 ready 子节点和一个对应 Harness task spec",
+      "session admission、stop/delete/reset 的安全路径必须是生产默认保护；goal-wake/durable-helper 在真实闭环未通过前保持 opt-in",
+      "不引入第二个 universal resource ledger、desired-state controller 或并行 lifecycle writer",
+      "所有 renderer/backend 调用继续遵守 host-api、Gateway proxy、contract-first 和 comms regression 边界",
+      "liveReady、productApproved、defaultOn、SEKB auto-writeback 和 VerseShell 产品锁保持不变"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit"
+    ],
+    "status": "in_progress",
+    "success_metrics": [
+      "生产 registry 漏接的 lifecycle method=0",
+      "session reset/delete/stop 与 spawn/send/steer/arm 的 generation race=0",
+      "未知 RPC 结果导致的 mirror/runtime 分裂=0",
+      "50-cycle session/process/subagent drain 的 active records、timers、owned PIDs 残留=0",
+      "重复 wake/重复 completion/重复 continuation 的副作用重复=0",
+      "当前 HEAD 的 required gates 和真实闭环报告可复跑且不依赖旧 artifact 时间戳"
+    ],
+    "summary": "把会话、终端、普通后台进程、子智能体、Mission、Goal-wake 和 Cron 的生命周期收敛到可达、可编号、可回收、可恢复且可独立验收的生产链。",
+    "title": "会话生态生命周期生产收敛与真实恢复",
+    "updated_at": "2026-08-23T16:50:54.207087Z"
+  },
+  "TF-0079": {
+    "acceptance_criteria": [
+      "真实 registry probe 报告 sessions.stop handler=true、descriptor=true、RPC dispatch=true",
+      "所有新增/修复 method 的 contract check、Gateway method tests 和必要 Electron facade tests 通过",
+      "直接 handler 测试与真实 registry 测试同时存在且不能互相替代",
+      "当前 HEAD/tree/base/manifest 绑定的 reachability report 生成成功"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.98,
+      "user_goal": "避免代码存在但根本没有使用的假阳性。",
+      "validation_plan": [
+        "Harness context/validate",
+        "真实 coreGatewayHandlers + createCoreGatewayMethodDescriptors probe",
+        "Gateway method shard、contract check、Host API facade test",
+        "当前源码 E2E 调用 sessions.stop"
+      ],
+      "why_not_enough": "它只修生产可达性，尚不解决资源回收和跨会话续跑。",
+      "why_this_task": "本轮已直接复现 sessions.stop handler=undefined、descriptor=false，这是最短且最高收益的第一修复切片。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "reachability",
+      "gateway-registry",
+      "false-positive",
+      "sessions-stop"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "sessions.stop 在 core method whitelist、descriptor、protocol contract、Gateway runtime 和 Electron host-api 中一致",
+      "所有 sessions.*、mission.*、goal-wake 相关 handler 都有 registry reachability probe",
+      "测试必须通过真实 registry dispatch 或真实 Gateway RPC，不再只直接调用内部 handler",
+      "旧 audit artifacts 与当前源码 SHA/registry manifest 的不一致会硬失败"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [
+      "artifacts/session-ecosystem-production-reachability/report.json",
+      "base probe: handler=false descriptor=false",
+      "current probe: handler=function descriptor=true scope=operator.admin advertised=true",
+      "runtime reachability tests: 2 passed",
+      "sessions.stop handler tests: 4 passed",
+      "Electron readiness tests: 8 passed",
+      "Gateway permission API: 3 passed; Host API facade: 43 passed; workspace permission: 10 passed",
+      "contract check exit=0; comms replay/compare PASS",
+      "isolated Harness validate --since HEAD exit=0"
+    ],
+    "execution_hints": [
+      "先补失败的 registry probe，再接 whitelist/descriptor/facade",
+      "禁止用修改测试 mock 的方式让 direct handler 继续绿",
+      "完成后才允许进入下一节点"
+    ],
+    "id": "TF-0079",
+    "kind": "task",
+    "next_action": "保持 TF-0080 proposed；下一会话先按依赖启动会话安全闸门审计，不在本节点扩大 scope。",
+    "non_goals": [
+      "不实现新的生命周期语义",
+      "不添加第二个 Gateway method registry",
+      "不修改产品 default-on 锁"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "先消灭最明确的代码存在但生产不可达假阳性，为后续所有生命周期修复提供真实入口和可信验证基线。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "不改变 stop/abort 语义，只修复生产装配和 contract 漂移",
+      "补充 sessions.stop 的 Electron/Host API 或明确其 operator-only 边界，不能留下隐式不可调用状态",
+      "新增 Harness task spec 和 gateway-backend-communication 引用",
+      "当前阶段不得启用 goal-wake/durable-helper"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit",
+      "session-20260821-start-tf0079"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "registry漏接 method=0",
+      "direct-only lifecycle tests=0",
+      "unknown method/handler not found errors=0"
+    ],
+    "summary": "sessions.stop 已接入真实 Gateway registry、core descriptor 与 Electron readiness fail-closed gate；生产可达性和权限边界已由当前 HEAD 绑定 evidence 证明。",
+    "title": "会话生命周期生产入口与验收防假阳性",
+    "updated_at": "2026-08-21T13:11:31.387398Z"
+  },
+  "TF-0080": {
+    "acceptance_criteria": [
+      "session mutation race 100 次循环无新 permit/queue/process/child/goal row 越过 fence",
+      "RPC timeout/socket drop 后 retry 能恢复 committed receipt，mirror gate 不提前释放",
+      "删除事务、归档计划、runtime finalization 都有唯一 writer 和可重试 evidence",
+      "focused runtime + Electron E2E + typecheck/contract/comms gates 通过"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "避免旧会话继续产生不可见资源，并让截停/删除结果可追踪。",
+      "validation_plan": [
+        "race/failure matrix",
+        "delete journal integration",
+        "Electron mirror E2E",
+        "fresh receipt report"
+      ],
+      "why_not_enough": "仍不负责终端 idle 策略和 Goal scheduler。",
+      "why_this_task": "当前 admission/delete journal 都是默认关闭，且 Electron delete retry 已存在未知结果分裂路径。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "admission",
+      "generation-fence",
+      "delete-journal",
+      "idempotency"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "admission permit 不再仅由未设置环境变量时的 no-op 保护关键 lifecycle mutation",
+      "delete operationId/journal 在实际 production delete path 中具备一致启用策略",
+      "unknown RPC outcome 不会被当成 deleted=false 的成功重试而释放 Electron gate",
+      "generation mismatch、partial_committed、runtime_committed 的重试状态机可从当前 store 恢复"
+    ],
+    "deviations": [
+      "共享主工作树包含大量其他任务改动；全程未 reset、stash、clean、checkout，未扩大 harness touchedAreas。",
+      "harness diff-aware validate 被无关 shared-worktree ownership 变更阻断；以 --no-diff structural validate 通过作为本节点证据。",
+      "4 个 pre-existing lint error 位于非 TF-0080 文件（verseshell-runtime-bundle.ts:291、terminal-trajectory-gating.test.ts:170、provider-stream-shared.test.ts:7、happy-path-prompt-snapshots.ts:135），未代改。",
+      "本地 node_modules 曾有 5 个空洞 .pnpm store 条目；以 pnpm install --no-optimistic-repeat-install 重建（未改 tracked 文件）。",
+      "Electron 二进制按 CI Windows 配方本地补齐（allowBuilds 保持 electron: false）。",
+      "goal-wake-e2e-trace.ts 为 harness exec 声明 trusted system-generated provenance；command-exec sink 策略与 Goal-wake 实现均未改动。"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "harness/specs/tasks/session-ecosystem-safety-gate-consistency.md（requiredTests 修正后 validate --no-diff exit 0）",
+      "runtime unit-fast shard: session-admission-registry 12/12",
+      "runtime unit shard: session-delete-operation-id 1/1",
+      "runtime gateway shard: session-delete-operation-journal 26/26 + session-ecosystem-production-reachability 2/2",
+      "runtime root config: subagent-spawn 3/3（permit const 化后复验）",
+      "Electron focused: session-delete-gate + r0-2-sessions-delete-fail + runtime-lifecycle-governance + terminal-api 18/18",
+      "Electron touched extras: host-services + terminal-session-manager 31/31",
+      "pnpm run contract:check exit 0",
+      "pnpm run comms:replay + comms:compare 全 PASS（0 丢失/重复/乱序）",
+      "pnpm run typecheck exit 0（node 0 / web 0；testTypes 仅观察模式）",
+      "pnpm run build:vite + pnpm run build:runtime exit 0",
+      "pnpm run test:e2e:run tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（最终树两次通过）",
+      "git diff --check 0（仅 autocrlf 提示）",
+      "artifacts/session-ecosystem-safety-gate-consistency/report.json（2026-08-22 收口刷新）",
+      "pnpm run lint：TF-0080 范围文件 0 error（4 个非本节点 error 列表见 deviations）"
+    ],
+    "execution_hints": [],
+    "id": "TF-0080",
+    "kind": "task",
+    "next_action": "TF-0080 已关闭。保持 liveReady=false、productApproved=false、defaultOn=false 边界；不自动启动 TF-0081，任何 successor 需单独评估与授权。共享工作树残留的非本节点 lint error 与 harness diff-aware 阻断由各自 owner 处理。",
+    "non_goals": [
+      "不启用 Goal-wake durable helper",
+      "不新增 universal resource ledger",
+      "不改产品批准状态"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "保证 reset/delete/stop 与 send/spawn/arm 不竞态，且删除在回包丢失、重试、部分提交时保持单一终态。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "session safety gates 可默认保护 reset/delete/stop；goal-wake 仍独立 opt-in",
+      "不允许 agent-wide kill fallback，不允许未知结果下文件 sweep",
+      "operation journal 与 Electron mirror 使用相同 operationId 和 committed receipt",
+      "必须覆盖 concurrent send/spawn/terminal-open/goal-arm 与 reset/delete 的 race matrix"
+    ],
+    "source_sessions": [
+      "session-20260821-start-tf0080",
+      "session-20260822-tf0080-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "fenced stale side effect=0",
+      "unknown-RPC mirror/runtime split=0",
+      "duplicate archive/terminal close=0"
+    ],
+    "summary": "会话安全闸门与删除重试一致性闭环：admission registry 接入全部 production lifecycle caller（含 acp-spawn/subagent-spawn permit）、sessions.delete 稳定 operationId + SQLite journal intent/store_committed 同事务、递归 manifest digest 区分 archivePlan/generation/transcript/operation、runtime_committed/partial_committed 重试状态机、Electron mirror gate 原子锁 + fail-closed + 同 session 合并、hook payload 透传 operationId。收口会话补齐依赖恢复（5 个空洞 .pnpm store 条目）、Electron 二进制本地供给、spec requiredTests shard 修正、goal-wake trace provenance 声明与 lint 收敛，最终树上全部门禁绿色。",
+    "title": "会话安全闸门与删除重试一致性",
+    "updated_at": "2026-08-22T01:25:15.297483Z"
+  },
+  "TF-0081": {
+    "acceptance_criteria": [
+      "50-cycle create/stop/reset/delete 的 active records、timers、owned PIDs、PTY records 和 child links 全部归零",
+      "idle policy 能区分 running process、interactive terminal、completed record 和 orphaned record",
+      "session activity snapshot 与真实 owner registry 一致，不显示已回收资源",
+      "Windows/Electron 与 runtime 两侧的回收证据都可复跑"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.93,
+      "user_goal": "避免长时间无人使用后的内存泄露，并监控终端和子智能体。",
+      "validation_plan": [
+        "leak fixture",
+        "resource owner snapshot",
+        "OS process containment",
+        "Electron terminal E2E"
+      ],
+      "why_not_enough": "不能单独实现跨会话控制或定时 Mission 续跑。",
+      "why_this_task": "当前终端无 idle TTL/heartbeat，普通 supervisor 重启恢复是 no-op，而 subagent 仅有自己的 registry sweeper。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.87,
+    "context_tags": [
+      "terminal",
+      "process",
+      "subagent",
+      "reclamation",
+      "memory-leak"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "每个资源都有 sessionId/ownerEpoch/runId 和可查询终态",
+      "普通 interactive terminal 的 keep-on-leave 与真正 idle/orphan 回收规则明确且可配置",
+      "completed/failed/abandoned subagent 和 process record 有 bounded retention",
+      "Gateway restart、Electron quit、workspace change、session reset/delete 的回收边界一致"
+    ],
+    "deviations": [
+      "共享主工作树含其他任务改动；全程未 reset/stash/clean/checkout，未扩大 touchedAreas 绕过脏树失败。",
+      "harness diff-aware validate 仍被无关 shared-worktree ownership 变更阻断；以 --no-diff 通过为本节点证据。",
+      "4 个 pre-existing lint error 位于非本节点文件，未代改（与 TF-0080 closeout 记录一致）。",
+      "Electron/renderer 无 sessions.reset 调用面（new-session 刻意跳过），reset 关终端不是生产缺口；50-cycle 夹具以 fence+drain 覆盖 stop/reset/delete 共享资源半区。",
+      "idle 分类纯观测零自动回收：输出新鲜度优先保证 false kill=0，自动回收策略留待独立决策。",
+      "FD/handle 泄漏与 RSS 级增长正式排除出 TF-0081 spec 验收（TF-0092 裁定，2026-08-23）：需 OS 级插桩/soak 测试，非逐变更门禁面；记录/定时器/owned PID/finished 上界断言已覆盖回收契约；裁定落点 harness/specs/tasks/session-ecosystem-resource-reclamation.md『Measurement bounds』段；生产观测到 FD 泄漏再重开。"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "harness/specs/tasks/session-ecosystem-resource-reclamation.md（validate --no-diff exit 0）",
+      "src/gateway/session-ecosystem-reclamation-cycle.test.ts：cycles=50 全零审计（最终树复跑）",
+      "src/process/supervisor/restart-reconciliation.test.ts 7/7（孤儿树收割/foreign owner 不触碰/corrupt fail-closed/幂等）",
+      "tests/unit/terminal-session-manager.test.ts 4/4 + src/agents/bash-process-registry.idle-classification.test.ts 6/6",
+      "src/gateway/server-methods/session-activity-projection.test.ts 5/5（含 owner-registry 精确集合护栏）",
+      "最终门禁：focused 44 测试全绿；typecheck exit 0；contract 0；comms replay/compare 全 PASS；build:runtime + runtime-lifecycle E2E 3/3；touched 文件 lint 0；git diff --check 0",
+      "artifacts/session-ecosystem-resource-reclamation/report.json（四切片 + 最终 verdict）；README 三语；docs/dev/handoffs/LATEST.md 收口交接"
+    ],
+    "execution_hints": [],
+    "id": "TF-0081",
+    "kind": "task",
+    "next_action": "TF-0081 已关闭。保持 liveReady=false、productApproved=false；TF-0082 依赖已解除但是否启动是独立决策，本次不启动。已知非本节点残留：harness diff-aware validate 需 scoped clean candidate；4 个非本节点 lint error 归各自 owner。",
+    "non_goals": [
+      "不建立 universal resource ledger",
+      "不把所有终端在切换会话时立即关闭",
+      "不替代 VerseShell owner"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "防止长时间无人使用后的内存、句柄、PTY、进程和子智能体记录泄漏，同时保留用户明确需要继续运行的资源。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "不要用 wall-clock inactivity 误杀有真实子进程活动的 terminal",
+      "以已有 resource tracker、supervisor、bash registry、subagent sweeper、durable cleanup 为唯一 owner",
+      "OS containment 不可证实时必须 fail closed，不得 PID fallback 扩大范围",
+      "补 50-cycle leak、timer、FD、PTY、subagent descendant 和 restart reconciliation tests"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit",
+      "session-20260822-start-tf0081"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "active resource residual=0",
+      "unbounded finished records=0",
+      "orphaned owned PID=0",
+      "false kill=0"
+    ],
+    "summary": "终端、后台进程与子智能体资源回收闭环：50-cycle create/spawn/stop-reset-delete 夹具证明 runtime 资源半区零泄漏（active records/timers/owned PIDs/child links 全零，可复跑）；supervisor 重启 reconciliation 从 no-op 变为持久化 manifest + fail-closed 收割（owner PID 守卫、OS containment 证据必需、无 PID fallback）；terminal/bash idle 四分类纯观测落地（输出新鲜度优先，false kill=0，阈值环境变量可配）；session activity projection 与 owner registry 精确一致且绝不显示已回收资源。无 universal resource ledger，keep-mode/VerseShell 边界保持。",
+    "title": "终端、后台进程与子智能体资源回收",
+    "updated_at": "2026-08-23T14:56:55.854748Z"
+  },
+  "TF-0082": {
+    "acceptance_criteria": [
+      "每个 session effect 都能定位到 sessionId/runId/parentSessionKey/ownerEpoch",
+      "旧 generation late event 覆盖新 session 状态的次数为 0",
+      "parent yield 后所有 required child completion 到达一次且只产生一次 continuation",
+      "真实 Host API 与 Gateway RPC 可完成 stop/continue/fork 操作，非仅内部函数"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.95,
+      "user_goal": "会话之间可以产生影响，能自动生成、截停或继续会话，并能编号定位。",
+      "validation_plan": [
+        "contract and ownership tests",
+        "cross-session E2E",
+        "parent yield/announce replay",
+        "lineage report"
+      ],
+      "why_not_enough": "仍需要 Goal/Loop 的等待触发和 scheduler 统一。",
+      "why_this_task": "当前 runtime 有 send/steer/abort/fork 能力但桌面 Host 控制面不完整，且 subagent/mission/session lineage 仍是多套字段拼接。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.88,
+    "context_tags": [
+      "cross-session",
+      "lineage",
+      "fork",
+      "steer",
+      "yield",
+      "subagent"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "跨会话控制 API 统一使用 canonical sessionKey + expected sessionId/generation",
+      "父子会话、fork、subagent run、completion delivery 和 reactivation 能相互回溯",
+      "sessions_yield 是 push-based continuation，而不是隐式 polling loop",
+      "UI/Host/Runtime 都只消费同一 lineage projection，不维护第二套 session identity"
+    ],
+    "deviations": [
+      "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout；harness diff-aware validate 因 ownership 覆盖失败，--no-diff 结构校验 exit 0 为本期证据。",
+      "tests/unit/session-activity-panel.test.tsx 1 failed / 2 passed，非本期所致：已提交的测试断言 goal 标签文本，而工作区里一份未提交的 SessionActivityPanel.tsx 重写（698 行，他人 in-flight）给标签加了翻译后的 kind 前缀；已与 HEAD 版本对照确认无关，未改动。",
+      "send/steer permit 只覆盖 run-start 窗口，不覆盖整轮 run：run armed 后按设计释放，之后 reset 正常 fence 并走 canonical stop path 中止该 run。",
+      "steer 打断 embedded run 时最长 15s 的等待现在发生在 permit 之内，并发 reset 会排队等待——有意的 fail-safe 定序，但拉长该场景 reset 的最坏延迟。",
+      "lineage 完整度受 owner 实际记录内容限制：bash 会话有 sessionId 无 runId；goal-owned process 只有在被某条 goal-wake flow 声明为依赖任务时才拿得到 missionId/ownerEpoch。不做任何推导填补，故 completeness=100% 的口径是「owner 记录了身份的条目全部带非空 ref」。",
+      "stale generation overwrite=0 仅覆盖本期加固的三条路径（announce wake / queue drain / send-steer run-start 窗口），其余路径本期未重审。",
+      "sessions.yieldState 刻意只读：arm（sessions_yield/goal_wait）保持 tool-only，因为两者的 mission/tick/turn 身份都绑定自活动 run 上下文；取消已 arm 的等待属于 TF-0083 的 mission cancel 级联。",
+      "未为 sessions.yieldState 增加 typed Host API facade；验收标准只点名 stop/continue/fork 的 typed surface。",
+      "本任务不新增 UI 渲染：lineage ref 与 yielded 状态都只到数据层，面板渲染不变。",
+      "liveReady=false、productApproved=false、formalAcceptance=false 未随收口改变；真实验收归 TF-0084。"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 720,
+    "evidence": [
+      "收口门禁全部在最终树上重跑：harness context 0；validate --no-diff 0",
+      "agents-core announce 8/8；root shard（subagent-spawn + session-admission-registry + supervisor restart-reconciliation）22/22",
+      "gateway-methods 40/40（stop / queue-drain-generation / send-permit-lifetime / session-activity-projection / sessions.yield-state / session-activity / run-control.checkpoint-diff）",
+      "gateway session-ecosystem-production-reachability 2/2",
+      "renderer+Electron 63/63（host-api-facade 44 + session-activity + panel-sections）",
+      "typecheck 0；contract:check 0；comms replay 0 + compare 8 项全 PASS（0 丢失/重复/乱序）",
+      "build:runtime 0；build:vite 0；runtime-lifecycle E2E 3/3",
+      "touched 文件 lint 0；check-no-bom ok；git diff --check 0",
+      "六条 spec acceptance 逐条 met，证据见 artifacts/session-ecosystem-cross-session-control/report.json 的 closeout.acceptance",
+      "切片 4 回归探针：把 permit 释放点改回修复前位置，6 例中 3 例失败，探针已移除后重跑 6/6",
+      "切片 5 完整度断言：lineageUnjoinedEntries=0（每个投影条目都带非空 lineage ref）",
+      "README 三语 + docs/dev/handoffs/LATEST.md 已同步收口结论"
+    ],
+    "execution_hints": [],
+    "id": "TF-0082",
+    "kind": "task",
+    "next_action": "TF-0082 已关闭。边界：liveReady=false、productApproved=false、formalAcceptance=false，真实验收归 TF-0084；不自动启动 TF-0083，任何 successor 需单独确认。遗留决策交给 owner：lineage ref 与 yielded 状态是否要在会话状态面板渲染（数据层已就绪，但 SessionActivityPanel.tsx 当前有他人未提交的大改动）。另需 owner 处理：harness diff-aware validate 的 shared-worktree ownership 冲突，以及 session-activity-panel 单测所依赖的未提交面板改动。",
+    "non_goals": [
+      "不引入新的 workflow engine",
+      "不开放跨 agent 无授权控制",
+      "不把 synthetic evidence 升级为 live-ready"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让一个会话可以安全生成新会话、截停旧会话或继续旧会话，并能知道具体是哪个 session/run/child 在影响当前对话。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "控制动作必须校验 requester ownership/operator scope",
+      "旧 run 的迟到事件不能覆盖 reset/fork 后新 generation",
+      "subagents list 只作为观察，不作为等待机制；completion event 必须可重放且去重",
+      "补跨 session send/steer/abort/stop/fork、child completion after parent yield、restart reactivation 测试"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit",
+      "session-20260822-start-tf0082",
+      "session-20260822-tf0082-slice4",
+      "session-20260822-tf0082-slice5",
+      "session-20260822-tf0082-slice6",
+      "session-20260822-tf0082-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "lineage completeness=100%",
+      "stale generation overwrite=0（口径 TF-0087 更新：守卫路径=announce wake / queue drain / send-steer run-start 窗口 / 后台 exec 退出通知；声明例外=detached task 通知、announce 请求者-代理交接、restart-sentinel 降级唤醒、ACP 父流中继）",
+      "duplicate completion side effect=0"
+    ],
+    "summary": "跨会话控制与 lineage 统一闭环。六个 owner path：(1) announce wake 代际钉扎——spawn 时快照 requesterSessionId，maybeSteerSubagentAnnounce 与 direct completion wake 双洞封堵，迟到 completion 不能 steer/wake 已 reset/fork 的父代际；(2) typed Host API session stop surface，委托既有 sessions.stop RPC，stop/continue/fork 三操作至此都有 typed Host API + 真实 Gateway RPC 路径；(3) queueDrain expectedSessionId 代际守卫，handler 与 drain 执行器双层 fail-closed，队列消息原样保留；(4) send/steer admission permit 覆盖整个 run-start 窗口（steer 打断→transcript seq→chat.send 前导→run armed），release-once 助手首次 respond 释放 + finally 兜底，既不泄漏也不重复释放，并发 reset/delete 只能排队而无法把 run 播种在旧代际；(5) lineage runId join——共享 SessionActivityLineageRef（sessionId/runId/parentSessionKey/ownerEpoch/missionId）挂到每个 goal/process/lineage 条目，字段只从已记录它的 owner 复制，goal-wake flow 的 dependency taskId 把 goal-owned process 连回 mission 与 durable ownerEpoch，id 256 上界，无第二 identity 源；(6) sessions.yieldState（operator.read）只读暴露 yield/goal-wait 状态，代际不匹配 fail-closed 且零 owner 读取，arm 侧刻意保持 tool-only，并修掉「正常 parent yield 被判为 error 并推到 attention 级」的真实缺陷（新增 yielded 状态，归入 active）。",
+    "title": "跨会话控制、身份 lineage 与父子续接",
+    "updated_at": "2026-08-23T12:40:34.176508Z"
+  },
+  "TF-0083": {
+    "acceptance_criteria": [
+      "连续超过默认 flow budget 后仍可创建新 wait，历史 terminal rows 不阻塞 active budget",
+      "mission.cancel 后 helper/task/flow/continuation 全部进入终态且无继续 tick",
+      "process/child/timer 三类 trigger 各自可产生一次去重后的 continuation",
+      "当前源码 real-process canary 在 Gateway ready 条件下通过，失败时报告明确未执行项和退出码"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.92,
+      "user_goal": "主进程停止等待特定条件、后台子进程完成或定时任务触发后继续工作。",
+      "validation_plan": [
+        "goal-wake unit/integration",
+        "Cron scheduler integration",
+        "restart/cancel matrix",
+        "real-process canary"
+      ],
+      "why_not_enough": "仍需要最后的统一账本和真实验收来证明跨层行为。",
+      "why_this_task": "当前 Goal-wake 只有 process-exit 条件路径，flow budget 会历史耗尽，Mission scheduled ticks 明确尚未交付。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.84,
+    "context_tags": [
+      "goal-wake",
+      "task-loop",
+      "mission",
+      "cron",
+      "timer",
+      "recovery"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "process exit、subagent completion、approval/event 和 Cron timer 都能进入同一个 typed continuation contract",
+      "goal-wake completed flow 有 bounded cleanup，不会因 maxFlows 历史累计永久耗尽",
+      "mission.pause/resume/cancel 级联到 active wait flow、task run、helper 和 pending continuation",
+      "timer continuation 复用现有 Cron scheduler，不新增第二个 setInterval scheduler",
+      "restart recovery 只做 level-triggered reconciliation，绝不重放模糊命令"
+    ],
+    "deviations": [
+      "工作区是共享脏树（数百个与本任务无关的改动/未跟踪文件），全程未 reset/stash/clean/checkout，沿用 TF-0082 纪律。",
+      "child 与 timer 均无生产调用方：接入点（fireGoalWaitChild / fireGoalWaitTimer）、账本反查与 armGoalWaitTimer 都已实现并单测覆盖，但没有工具/RPC 面去 arm，子智能体完成路径上也未插入调用。这是刻意的——requirement 1 要求 real-process gate 通过前保持 opt-in，且该完成路径（announce delivery + 代际钉扎）是 TF-0082 刚加固的，选挂载点涉及代际语义判断，应由 owner 决定。",
+      "cron 侧的 goalWakeEnabled 门禁没有单测覆盖：runMissionContinuationJob 是 buildGatewayCronService 内的闭包，隔离测试需要搭起整个 gateway cron service；该门禁是 4 行 fail-closed 守卫，复用已被覆盖的 goalWakeEnabled 谓词，仅由 typecheck 与 gateway shard 回归保证。",
+      "opt-in 门禁刻意只加在 cron 侧，不加进 fireGoalWaitTimer/fireGoalWaitChild：运行时层的 finalizeGoalWaitTaskProcess 本来就不设门禁（丢终态比关闭期间写入更糟），沿用该既有不对称。",
+      "放宽 startDurableHelperRecoveryService 的启动条件后，goal-wake 开启但 durable helper 关闭时会新增一次 sweep 循环（复用同一个 unref 定时器，非第二个 scheduler）；默认配置两个 flag 都关，已用测试确认 started=false。",
+      "tsgo:core:test 有既有错误（多为 test/*.mjs 缺声明）；其中 goal-wake-runtime.test.ts 两处 alreadyAcked 收窄错误已用 git show HEAD 对照确认为既有，本任务未新增 test 类型错误。",
+      "check:loc 在本仓库本就全局红（脚本无 allowlist，src/cron/service/timer.ts 改前已 1792 行）；本任务文件均低于 500 行，但 goal-wake-dispatch.ts 已 489 行逼近上限。本轮刻意不拆分——降风险轮次不引入无功能价值的改动churn；下次加分支前应先拆。该脚本在 Windows 上还会因并发打开全部文件而 EMFILE。",
+      "agents-core 全 shard 有 3–4 个既有失败（bash-tools.exec.goal-wait.test.ts ×3、bash-tools.exec.durable-helper.test.ts ×1，另有偶发 rc02-shadow-census）：均为 ws://127.0.0.1:18789 gateway 未就绪的连接失败，报错点在 registerExecApprovalRequestForHost，早于任何 goal-wake 代码；这些文件 git status 未修改。",
+      "五类 trigger 的 task_runs.runtime 一律保持 \"process\"，真实种类记在 task_kind（goal-owned-<kind>），以免改动 drain gating、活跃行计数、helper reaping 等既有查询语义。",
+      "missionContinuation 刻意不进 CronPayloadPatch：该 job 由 runtime 创建、由触发结算，不走人工编辑面；纳入会破坏 jobs.ts 现有收窄。",
+      "取消级联不主动删除仍在排期的 cron timer job：触发时 task 已终态，runner 返回 0 flow 的 ok，随 deleteAfterRun 自删，属自愈。",
+      "超时判定以 flow_runs.created_at（arm 时刻）为基准，未使用依赖进程的实际启动时刻；在 arm-before-spawn 契约下相差极小，但严格说这是「等待时长」而非「进程时长」。",
+      "未新建任务级 spec 文件：TF-0083 的验收标准由 task-forest 节点承载，仓库里没有对应的 session-ecosystem-* 任务 spec，收尾按约定只同步 handoffs/LATEST.md，未凭空造文档。",
+      "liveReady/productApproved/formalAcceptance 未改（仍 false），真实验收仍归 TF-0084。"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 840,
+    "evidence": [
+      "typecheck：pnpm tsgo:core 0 error（降风险后最终树重跑）",
+      "lint：oxlint 覆盖全部改动文件，0",
+      "架构：pnpm check:import-cycles = 0 runtime value cycle(s)",
+      "goal-wake 套件（agents-core）8 文件 68 测试全过，本任务累计新增 36 条（budget 2 / cancel 9 / triggers 13 / timeout 8 / cron payload 4）",
+      "cron shard 3 文件 13 全过；mission-control 4 文件 32 全过；tasks/task-flow-cas 15 全过",
+      "gateway-methods 10 文件 57 全过；gateway-server 2 文件 7 全过",
+      "build:runtime exit 0（runtime-build-smoke gateway ready）",
+      "real-process canary：scripts/goal-wake-e2e-trace.ts exit 0；processPollToolCalls=0、duplicateWakeDeliveries=2 而 duplicateWakeTickCount=1、flagOffGoalWaitBlocked=true、goalWakeToolTrace=goal-wake.arm,supervisor.spawn,goal-wake.finalize,mission.tick",
+      "E2E：tests/e2e/runtime-lifecycle-governance.spec.ts 3/3（须先 build:runtime；stale dist 被明确报错拦截，即 AC4 的失败可读性）",
+      "AC1 回归探针：还原旧计数写法后「arm #2 must not be refused by historical rows」失败，移除探针后恢复全绿",
+      "AC2 的两个缺陷由自然前置失败暴露：缺 mission-terminal guard 时 outcome 为 dispatch-failed 而非 mission-cancelled；revision 差一时 flow 停在 running 而非 succeeded",
+      "超时证据：到期恰好一次 timed_out continuation（task.error 含 bound 数值、flow→succeeded）；重复 sweep 不产生第二次；无 timeoutMs 的 wait 不被误判；依赖抢先终止时不改写其 truth；重启后仍终态且不再产生 continuation",
+      "requirement 3 复审结论：maxActiveGoalWaits（waiting|running）、durable maxRunsPerSession（queued|running）、TTL（runDir age + !isTerminalTaskStatus 守卫）本就只算 active；本任务修掉 backoff map 在成功派发后不回收的残留",
+      "requirement 5 五类测试齐备：process exit、duplicate wake、cancel/exit race（双向）、restart matrix（重启后 reconcile 一次、再重启 no-op、cancel/timeout 后重启不复活）、Cron-to-Mission continuation",
+      "降风险证据：默认配置下 startDurableHelperRecoveryService 仍 started=false（放宽门禁未在无 flag 环境引入定时器）；containDurableHelper 对 intent 缺失判 already-gone 而非 failed；task 已终态但 flow 存活时 sweep 重跑 level check 并报 reconciledOnly=true，且不改写依赖自身的 succeeded",
+      "文档收尾：docs/dev/handoffs/LATEST.md 当前交接段已换为 TF-0083，含五个 owner path、三个顺带修掉的缺陷、降风险三项、门禁数字、诚实口径与遗留待办；git diff --check 0"
+    ],
+    "execution_hints": [],
+    "id": "TF-0083",
+    "kind": "task",
+    "next_action": "TF-0083 已关闭并完成降风险复查与文档收尾。交接给 TF-0084（已 depends_on 本节点）：(1) 决定 child wait 在 subagent 完成路径上的挂载点，需与 TF-0082 的代际钉扎（requesterSessionId 快照、maybeSteerSubagentAnnounce）对齐，确认迟到完成不能唤醒已 reset/fork 的父代际；(2) 为 child/timer/approval/event 提供 arm 的工具或 RPC 面，并把 armGoalWaitTimer 的 cron facade 接到真实 CronServiceContract；(3) 真实验收与 liveReady/productApproved/formalAcceptance 翻转。另需 owner 处理：goal-wake-dispatch.ts 已 489 行逼近 check:loc 上限，加分支前先拆；cron 侧 goalWakeEnabled 门禁若要单测，需要一个可注入的 gateway cron service 装配点；以及 agents-core 里依赖 gateway 就绪的既有失败测试的运行方式。",
+    "non_goals": [
+      "不支持任意多依赖 wait",
+      "不支持命令链自动重放",
+      "不把 Cron 与 Mission 拆成两个互相竞争的 scheduler authority"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让主进程可以有界地停止等待进程退出、子智能体完成、用户批准或定时触发，再继续下一 tick；所有失败、取消、重启和重复通知都能收敛。",
+    "remaining_minutes_max": 0,
+    "remaining_minutes_min": 0,
+    "requirements": [
+      "goal-wake/durable-helper 在 real-process gate 通过前保持 opt-in",
+      "wake 是 at-least-once delivery，effect owner 必须持久去重",
+      "maxActiveGoalWaits、maxFlows、TTL、backoff 的统计必须区分 active 与 historical rows",
+      "取消和超时必须先写 durable terminal truth，再清理 OS/helper，失败则 fail closed",
+      "补 process exit、duplicate wake、cancel/exit race、restart matrix、Cron-to-Mission continuation tests"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit",
+      "session-20260823-tf0083-slice1",
+      "session-20260823-tf0083-slice2",
+      "session-20260823-tf0083-derisk"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "active flow budget false exhaustion=0",
+      "cancel cascade residual=0",
+      "duplicate wake side effect=0",
+      "command replay=0"
+    ],
+    "summary": "Goal/Loop 条件唤醒、取消级联与定时续跑全部收口。(1) flow budget 只统计非终态行：maxFlows 原先 COUNT 全部 goal-wake flow_runs 且无状态过滤，16 条历史完成行即永久耗尽预算，改为按 ACTIVE_FLOW_STATUSES 统计。(2) mission.cancel 级联（goal-wake-cancel.ts）：先写 durable terminal truth（task_runs→cancelled、flow→cancelled、wait_json 清空），再做 helper 容器化，未证实时 RPC fail closed（UNAVAILABLE），并清空此前无人清理的 activeWaitFlowIds；顺带修掉三个真实缺陷：终态 mission 导致的 dispatch-failed→scheduleRetry 永久活锁（每 5s 一次、贯穿进程生命周期）、finishMissionTick 用 tick 内存旧状态覆盖并发 cancel、expectedRevision 三元两支相同导致已 running 的 flow 永远钉住。pause 只停 tick 不销毁 wait，resume 走 level-triggered reconciliation。(3) 统一 typed continuation contract：dependency.kind 覆盖 process|child|timer|approval|event，wakePayload 由 Record<string, unknown> 改为 MissionContinuation 判别联合；每类各产生且仅产生一次 continuation，双层去重（flow 结算 + last_wake_id），旧行无 kind 回落 process；process/child/timer 三类均有独立接入点（finalizeGoalWaitTaskProcess / fireGoalWaitChild / fireGoalWaitTimer）与账本反查（按 childSessionKey / cronJobId）。(4) timer 复用既有 Cron 单一 setTimeout：新增 missionContinuation cron payload kind（复用 payload_message JSON 列，无 schema 迁移），一次性 at job + deleteAfterRun；armGoalWaitTimer 先建 job 再 arm，arm 失败即删 job。(5) 超时路径（goal-wake-timeout.ts）：wait_json.timeoutMs 此前是死字段、从无人读取，导致依赖永不终止的 wait 会让 mission 永久停摆；现按 flow.created_at + timeoutMs 判定到期，同样是「先 durable terminal truth（task→timed_out，skipWake）、再 OS/helper 容器化、最后唤醒」，容器化失败在结果里显式上报；到期沿用既有 sweep tick，未新增第二个定时器，且把 sweep 的启动条件从「durable helper 开启」放宽到「goal-wake 开启」，否则同网关路径的 timeoutMs 永远不会被强制。",
+    "title": "Goal/Loop 条件唤醒、取消级联与定时续跑",
+    "updated_at": "2026-08-23T01:22:06.586891Z"
+  },
+  "TF-0084": {
+    "acceptance_criteria": [
+      "当前 HEAD 的 full scoped acceptance report 可从 clean/detached candidate 重跑",
+      "生产 method registry、resource owner snapshot、lineage projection 和 lifecycle ledger 之间无未解释缺口",
+      "所有 required tests/gates exit 0；任何环境阻塞都明确标为 blocked/review_needed",
+      "TF-0010/TF-0077 的历史与 successor 边界在 handoff、Task Forest、Harness 和 docs 中一致"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "确认整个会话生态真实工作，而不是仅有代码、测试或报告。",
+      "validation_plan": [
+        "fresh scoped Harness",
+        "Gateway/Electron E2E",
+        "OS process and leak fixtures",
+        "independent final report"
+      ],
+      "why_not_enough": "仍不能替代正式产品批准和真实用户 cohort。",
+      "why_this_task": "用户最担心的是假阳性；最终阶段必须把真实生产可达性、故障恢复和资源回收证据统一到当前树。"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.88,
+    "context_tags": [
+      "acceptance",
+      "lifecycle-ledger",
+      "session-activity",
+      "fresh-evidence",
+      "no-false-positive"
+    ],
+    "created_at": "2026-08-21T11:50:40.599577Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "每次 session/run/task/flow/helper/terminal/subagent transition 有可关联 event、owner 和 generation",
+      "SessionActivity 只读投影能展示 session、task、subagent、goal、process、terminal、lineage 和 blocked reason",
+      "报告包含真实 registry reachability、process tree、memory/timer/FD leak、restart/cancel/unknown RPC、Cron trigger 和 duplicate wake evidence",
+      "工程 acceptance 与 human/live/product approval 分栏，不把 synthetic fixture 写成 liveReady"
+    ],
+    "deviations": [
+      "发现并修复真实生产缺陷：sessions.yieldState（TF-0082 owner path 6）有 handler 与 core descriptor 但缺 lazy handler 白名单条目，createCoreGatewayMethodDescriptors 因此跳过该 spec，生产 Gateway 返回 unknown method；回归探针已证实（移除白名单后 census 4 例中 2 例失败）。属 TF-0079 本应根除的 direct-handler / production-dispatch 分叉，本轮把单方法探针推广为整面 census 以防复发。",
+      "量化归属缺口：只按六个 TF-0078 spec 的 touchedAreas 并集构建的 clean candidate 既不 typecheck 也跑不起来，需额外 38 个其他 workstream 未提交的文件（含 TF-0083 自己的 goal-wake/cron 模块与测试、mission-control/types.ts、goal-wake-types.ts、acp-spawn.ts、subagent-spawn.ts、config/sessions/artifacts.ts、runtime-core/lineage.ts、shared/chat/types.ts、shared/types/git.ts）；shared/host-api/contract.ts 还同时携带 git-api workstream 的 reflog/merge/rebase/reset。清单见 scripts/tf0084-candidate-inherited.json，归各自 owner，本轮未代改。",
+      "更正上一轮结论：上一轮提案称「共享工作树无法按节点切成独立 candidate」，那是在 4 轮收敛后过早下的判断——剩余错误报在消费者文件上，而其定义文件（SEKB trajectory-capture、context-engine block、shared/chat/types）同样未提交。补齐后闭包收敛在 38 个文件，candidate 完全绿。本链可分离，只是不能仅凭自己声明的 touchedAreas 分离。",
+      "如实记录的环境限制：两个真实进程 GA 脚本（goal-wake canary、packaged Electron durable helper）会 spawn pnpm，pnpm 拒绝在 junction 的 node_modules 上运行（ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY），在根与 openclaw_runtime 两处设 verify-deps-before-run=false 都到不了被 spawn 的子进程。这两项改在权威树上跑，覆盖内容与 candidate 一致；记为限制而非豁免。",
+      "未覆盖项如实记录：FD/handle 泄漏未测（drain 夹具断言记录、定时器、owned PID，不含文件描述符计数）；RSS 级内存增长未测（只断言 finished 记录有界）。",
+      "TFD-cd4385371b"
+    ],
+    "difficulty": "very_high",
+    "estimated_total_minutes": 600,
+    "evidence": [
+      "artifacts/session-ecosystem-lifecycle-ledger-acceptance/report.json（AC 逐条 met、verificationMatrix、scopedCandidate、notCovered、foundDefects 含更正说明）",
+      "candidate（base 9f45e45cd → candidate e0a7cb112，scripts/tf0084-build-candidate.mjs + tf0084-candidate-inherited.json 可重建）：diff-aware validate exit 0，diff 恰为 6 个新文件；typecheck:node 0；typecheck:web 0；contract 0；comms 45 PASS/0 FAIL；build:runtime 0（smoke gateway ready）；183 测试（gateway-methods 50、gateway 33、goal-wake 68、cron 13、process 7、admission 12）",
+      "权威树门禁：gateway-methods 7 文件 50；gateway 4 文件 33；process 7；agents-core 68；cron 13；admission 12；root Electron 5 文件 23；typecheck 0；contract 0；comms 45 PASS；build:runtime 0（首跑 0xC0000409 已记录，重跑 0）；E2E 3/3；eslint 0；check-no-bom ok；git diff --check 0",
+      "真实进程证据：goal-wake canary 10 周期 processPollToolCalls=0 duplicateWakeTickCount=1；packaged Electron helper normal-exit + cancel PASS，rawSecretPersistenceFindings=0；50 周期 drain cycles=50 activeRecordResidual=0 ownedPidResidual=0 finishedResidual=0 sweeperActive=false"
+    ],
+    "execution_hints": [],
+    "id": "TF-0084",
+    "kind": "milestone",
+    "next_action": "TF-0078 里程碑的六个节点全部 done；该里程碑本身是否收口，以及那 38 个继承依赖文件的归属补齐，均为独立决策，未代替用户裁定。",
+    "non_goals": [
+      "不进行真人 channel/product approval",
+      "不翻 default-on",
+      "不清理其他 workstream dirty changes"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "把“代码存在”和“功能真实可用”分开，用一套当前 HEAD 绑定的证据证明每个会话及其资源的生命周期闭环。",
+    "remaining_minutes_max": 960,
+    "remaining_minutes_min": 360,
+    "requirements": [
+      "禁止复用旧 audit-0..6 的通过数字作为当前验收结果",
+      "每个证据必须记录 command、exit code、test count、artifact path、HEAD/base/tree 状态和未执行前置",
+      "生成新的 Harness task spec、fresh acceptance JSON/MD 和 handoff 更新 proposal",
+      "产品 locks 和 SEKB confirm-only/no-auto-writeback 继续不变"
+    ],
+    "source_sessions": [
+      "session-20260821-session-ecosystem-audit",
+      "session-20260823-start-tf0084",
+      "session-20260823-tf0084-acceptance",
+      "session-20260823-tf0084-closeout"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "unexplained lifecycle transitions=0",
+      "fresh evidence stale binding=0",
+      "report narrative-only claims=0"
+    ],
+    "summary": "四个 owner path 全部交付，四条 acceptance criteria 全部 met。(1) 只读生命周期账本：把活动投影的 owner 读取抽成共享层（session-lifecycle-owner-views.ts，投影 11/11 零行为变化），在其上实现 session-lifecycle-ledger.ts 与 sessions.lifecycleLedger（operator.read，无 arm/无 mutation，代际不匹配在读任何 owner 之前 fail closed）；每条 transition 记 owner、owner 自己的状态 token、TF-0082 correlation ref，要么带 owner 钉扎的 generation，要么声明结构性原因；census 的 unexplainedTransitions 统计「声明与数据不符」因此可以失败；读不到的 owner（Electron 终端、durable helper runDir）以 declaredGaps 显式返回；会话 entry 用 session store 自己的 sessionStartedAt 而非观测时刻。(2) 生命周期方法面可达性 census（8 方法，经生产 registry dispatch）+ 用同一份 owner 快照构建两个读模型做集合交叉核对。(3) fresh 全量验收矩阵：50 周期真实进程树 drain 全零残留、supervisor 重启 7、goal-wake 8 文件 68、cron 13、delete journal 26、admission 12、Electron 5 文件 23、真实进程 canary 10 周期（processPollToolCalls=0、duplicateWakeTickCount=1）、真实 packaged Electron durable helper 双周期 PASS 且 rawSecretPersistenceFindings=0、E2E 3/3。(4) 证据分级与谱系一致性：报告分栏工程/human/live/product，handoff 新增节点谱系与后继边界段并把三处过时的「当前节点」段落标为历史，README 三语补 TF-0084。AC1 由一次性 detached candidate 达成：diff-aware validate exit 0（本条线首次），candidate 上双 typecheck、contract、comms、build:runtime 与 183 个 scoped 测试全绿。",
+    "title": "统一生命周期账本、活动投影与真实闭环验收",
+    "updated_at": "2026-08-23T04:57:01.474667Z"
+  },
+  "TF-0085": {
+    "acceptance_criteria": [
+      "三线判定给出",
+      "report.md + findings.json 落盘",
+      "探针全部还原且工作树无审计残留"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.95,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "audit"
+    ],
+    "created_at": "2026-08-23T10:30:18.281626Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "三线各自明确判定",
+      "两份交付物落盘",
+      "所有回归探针还原干净"
+    ],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "artifacts/tf0078-chain-health-audit/report.md",
+      "artifacts/tf0078-chain-health-audit/findings.json",
+      "verdict: falsePositive=pass-with-findings, expectationConformance=pass-with-findings, boundary=pass-with-findings"
+    ],
+    "execution_hints": [],
+    "id": "TF-0085",
+    "kind": "task",
+    "non_goals": [
+      "不审计其他 workstream 质量",
+      "不裁定是否应当提交这条链"
+    ],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "在提交/收口决策前，独立验证这条链是否真实交付、是否达到规划标准、是否越界",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "报告是主张，逐条证伪",
+      "不复用任何历史数字",
+      "可达性结论必须经生产 registry dispatch",
+      "环境阻塞写 blocked 不写 pass",
+      "不修复、不提交、不动其他 workstream"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "门禁重跑 16 项 + 2 GA 脚本全部亲自执行",
+      "finding 15 项（4 major）全部有证据链"
+    ],
+    "summary": "对 TF-0079..TF-0084 六节点声称交付执行三线独立审计：A 假阳性与缺口、B 预期达成度、C 越界。全部结论基于工作树 file:line 或亲自重跑的 exit code；自评报告仅作主张处理。",
+    "title": "TF-0079..TF-0084 链独立健康审计",
+    "updated_at": "2026-08-23T10:30:18.281626Z"
+  },
+  "TF-0086": {
+    "acceptance_criteria": [
+      "全部子节点 done 或被用户显式移出",
+      "收口节点记录用户对提交/关闭 TF-0078 的决定"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [
+      "共享工作树在整改期间仍与其他 workstream 混布，需按 hunk 拆分提交"
+    ],
+    "confidence": 0.8,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "remediation"
+    ],
+    "created_at": "2026-08-23T10:30:18.285523Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "4 个 major 全部闭环",
+      "链可按声明边界独立验收",
+      "提交与收口决策有据可依"
+    ],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [
+      "七个子节点（TF-0087..TF-0093）全部 done；4 个 major + 7 个 minor finding 全部闭环；全链门禁收口时刻重跑全绿；未翻动任何产品锁"
+    ],
+    "execution_hints": [],
+    "id": "TF-0086",
+    "kind": "milestone",
+    "non_goals": [
+      "不在本里程碑内实现 goal-wake/durable-helper 的产品化",
+      "不处理其他 workstream 自身的缺陷"
+    ],
+    "priority": 3,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让 TF-0078 链达到可独立验收、可提交的状态，并消除审计发现的结构性守卫盲区",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "线性推进：前一节点 done 才开始下一节点",
+      "每个节点产出当前树的新鲜证据，不复用审计或旧报告数字",
+      "不翻动任何产品锁与 default-off 边界",
+      "不清理、不回滚其他 workstream 的未提交改动"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [
+      "4 个 major finding 闭环",
+      "整改后链门禁全绿（重跑取证）"
+    ],
+    "summary": "按线性顺序消化 2026-08-23 独立审计的 4 个 major 与其余 finding，完成后把提交/收口决策交还用户。一次只推进一个 ready 子节点。",
+    "title": "TF-0078 链审计整改与收口",
+    "updated_at": "2026-08-23T16:25:35.862616Z"
+  },
+  "TF-0087": {
+    "acceptance_criteria": [
+      "两个注入点有代际校验或显式声明",
+      "新增回归测试在当前树通过、破坏后失败",
+      "TF-0082 指标口径与 requirement 的落差被消除或被明文承认"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.5,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "generation-guard"
+    ],
+    "created_at": "2026-08-23T10:30:18.285882Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 300,
+    "evidence": [
+      "artifacts/tf0078-generation-injection-remediation/report.json",
+      "守卫测试 8/8 绿（bash-tools.exec-generation-guard.test.ts，agents-core 分片）；requiredTests 行 16/16 绿",
+      "回归探针：移除守卫恰好 2 个丢弃用例变红，还原全绿，标记 0 残留",
+      "tsgo:core 0；lint:core 0；check:import-cycles 0；contract:check 0；harness validate --no-diff（cross-session-control spec）0；git diff --check 0",
+      "tsgo:core:test exit 2 = 39 个既有错误，0 个在本步新文件（observation，pre-existing）",
+      "governed-exec-runtime.test.ts 2 失败经双向补丁二分为脏树既有（与本步无关）",
+      "文档：docs/dev/handoffs/LATEST.md 新增 TF-0087 段；spec 失败矩阵 +1 行、Declared cross-generation exceptions 段、requiredTests 更新"
+    ],
+    "execution_hints": [
+      "结构性成因：成功 reset 后旧代际 fence 即释放，延迟防护依赖写入点自查；部分钉扎以 sessionKey 兜底冒充 expectedSessionId",
+      "先做注入点，再复核灰色地带，最后更新口径文档"
+    ],
+    "id": "TF-0087",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0088 补归属声明（TF-0083 建 spec + 26 个未声明文件入 touchedAreas）",
+    "non_goals": [
+      "不重做 fence/permit 模型"
+    ],
+    "priority": 1,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "闭合 TF-0082 requirement『旧 run 的迟到事件不能影响 reset/fork 后新 generation』的真实口径",
+    "remaining_minutes_max": 420,
+    "remaining_minutes_min": 180,
+    "requirements": [
+      "不得放宽既有守卫",
+      "任何『允许注入』的语义必须文档化并反映到指标口径",
+      "修复后补针对性回归测试（含改坏即红的探针）"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0087-generation-guard"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "迟到代际注入可触达点=0（或全部声明）"
+    ],
+    "summary": "FP-07（major）：bash 退出通知（maybeNotifyOnExit，bash-tools.exec-runtime.ts:381-429）与 detached task 完成事件（task-registry.ts:1254/1278）可把旧代际内容注入新代际系统事件队列并唤醒；补代际比对，或显式接受注入语义并在指标口径中写明。复核三处灰色：announce 失配后的请求者-代理交接、restart-sentinel 降级 wake、ACP 父流事件。",
+    "title": "治理两个迟到代际注入点与三处灰色地带",
+    "updated_at": "2026-08-23T12:40:34.176508Z"
+  },
+  "TF-0088": {
+    "acceptance_criteria": [
+      "按新声明集重建的 candidate 通过 diff-aware harness validate",
+      "38 清单的每一项都有归属结论"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.6,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "ownership"
+    ],
+    "created_at": "2026-08-23T10:30:18.285882Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 240,
+    "evidence": [
+      "artifacts/tf0088-ownership-declarations/report.json",
+      "新 spec：session-ecosystem-goal-wake-continuation.md（TF-0083，24 文件）与 session-ecosystem-audit-remediation.md（TF-0086，9 文件）；均 validate --no-diff 0、context 0",
+      "修订：cross-session-control +3 文件；safety-gate +4 文件并移除 runtime-send-actions.ts 误声明；均 validate 0",
+      "tf0084-candidate-inherited.json 38→11（26 链内入声明、1 陈旧移除、11 真他流保留）",
+      "candidate 重建：base 60d74ebb（owned 115 + inherited 11 = 126）、candidate c4588ab8、diff 恰为 TF-0084 六文件、worktreeClean=true",
+      "diff-aware harness validate（candidate 内，--since base，ledger-acceptance spec）exit 0",
+      "新鲜重跑：goal-wake 8 文件 68 绿、cron 3 文件 13 绿"
+    ],
+    "execution_hints": [
+      "复用 scripts/tf0084-build-candidate.mjs 重建 candidate 验证",
+      "两张归属表见审计报告 §4"
+    ],
+    "id": "TF-0088",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0089 census 扩容 + 启动期守卫（有 spec 无 handler 改硬错误）",
+    "non_goals": [
+      "不提交任何代码"
+    ],
+    "priority": 2,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让链可按声明边界独立验收（diff-aware harness validate 通过），并让后续提交拆分有据可依",
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 150,
+    "requirements": [
+      "只补声明，不代改其他 workstream 的代码",
+      "他流 12 个文件保持归各自 owner",
+      "contract.ts 等五路汇流文件的耦合点逐一点名"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0088-ownership-declarations"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "应声明未声明文件=0"
+    ],
+    "summary": "FP-12（major）：为 TF-0083 新建 harness spec（goal-wake-arm/cancel/dispatch/fencing/runtime/timeout/timer/triggers 与 cron missionContinuation 模块的 touchedAreas），把其余链内未声明文件（TF-0082 的 acp-spawn/subagent-spawn、TF-0080 的 4 个 operationId 消费侧文件、mission-control/types.ts）补进对应节点声明；修正 tf0084-candidate-inherited.json 定性（26 链内/12 他流/1 陈旧条目，移除 subagent-control.ts 陈旧项）；修正 runtime-send-actions.ts 被链 spec 整文件误声明。",
+    "title": "补归属声明：TF-0083 建 spec + 26 个未声明文件入 touchedAreas",
+    "updated_at": "2026-08-23T13:26:26.487558Z"
+  },
+  "TF-0089": {
+    "acceptance_criteria": [
+      "census 覆盖本链全部 12 个方法",
+      "移除任一白名单条目时启动/构建期报错而非静默跳过"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.7,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "reachability"
+    ],
+    "created_at": "2026-08-23T10:30:18.285882Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 180,
+    "evidence": [
+      "artifacts/tf0089-census-guard-remediation/report.json",
+      "census 12/12：新增 sessions.send、sessions.steer(advertise:false)、mission.cancel、mission.resume",
+      "启动期硬错误：无 handler 的 spec 抛命名错误；豁免=14 个 aux 方法（实测枚举确认）+ 2 项存量例外（白名单被测试钉死）",
+      "守卫测试 4 用例绿（session-ecosystem-descriptor-guard.test.ts）；三可达性文件 10/10 绿",
+      "探针：硬错误改回静默跳过 → 恰好回归模拟用例红；还原全绿、标记 0 残留",
+      "check:import-cycles 0；lint:core 0；tsgo:core 0；build:runtime 0（gateway ready 冒烟）",
+      "存量两方法按 non-goal 只记录移交（FP-15，checkpoint/recovery owner）"
+    ],
+    "execution_hints": [
+      "census 位于 session-ecosystem-lifecycle-reachability.test.ts:29-38",
+      "静默跳过位于 core-descriptors.ts:349-352"
+    ],
+    "id": "TF-0089",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0090 为其余 6 个方法补生产-registry dispatch 证明",
+    "non_goals": [
+      "不修复存量两方法的白名单缺口（仅移交记录）"
+    ],
+    "priority": 3,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "消除 yieldState 型缺陷复发的结构盲区",
+    "remaining_minutes_max": 240,
+    "remaining_minutes_min": 120,
+    "requirements": [
+      "steer 的 advertise:false 不得被误判为缺陷",
+      "启动期守卫不得破坏既有延迟加载语义",
+      "新增守卫需有改坏即红的回归测试"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0089-census-guard"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "census 外链方法=0",
+      "静默跳过路径=0"
+    ],
+    "summary": "FP-01（major）：把 sessions.send、sessions.steer（advertise:false 需单独口径）、mission.cancel、mission.resume 纳入可达性 census；把 createCoreGatewayMethodDescriptors 的『有 spec 无 handler 静默跳过』改为启动期硬错误，使守卫不再依赖测试期围栏。顺手记录存量缺口 sessions.compressionArtifact/sessions.recoveryContext 的移交（checkpoint/recovery owner，不阻塞本链）。",
+    "title": "census 扩至全部链方法并新增启动期守卫",
+    "updated_at": "2026-08-23T14:37:38.840481Z"
+  },
+  "TF-0090": {
+    "acceptance_criteria": [
+      "12 个链方法全部有 dispatch 级证明",
+      "移除任一白名单条目时对应测试失败"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "reachability"
+    ],
+    "created_at": "2026-08-23T10:30:18.285882Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "artifacts/tf0090-dispatch-proofs/report.json",
+      "dispatch 证明 12/12：表驱动用例逐一经生产请求路径到各方法自身校验层（含 cleanup 的 additionalProperties:false 强制校验技巧）",
+      "三可达性测试 11/11 绿；tsgo:core 0；tsgo:core:test 本文件 0 错误",
+      "探针：移除 mission.cancel 白名单条目 → 5 用例红（启动期硬错误信息），还原全绿、标记 0 残留"
+    ],
+    "execution_hints": [
+      "参照现有两例：测试 :88-131"
+    ],
+    "id": "TF-0090",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0091 明文决策与死面治理",
+    "non_goals": [
+      "不改方法语义"
+    ],
+    "priority": 4,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "让可达性证据与验收措辞一致，杜绝『静态绿、生产 unknown method』分叉",
+    "remaining_minutes_max": 180,
+    "remaining_minutes_min": 80,
+    "requirements": [
+      "断言必须穿过真实懒加载边界",
+      "不得用直接 import handler 替代"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0090-dispatch-proofs"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "dispatch 证明覆盖=12/12"
+    ],
+    "summary": "FP-02（major）：当前仅 sessions.lifecycleLedger 与 sessions.yieldState 经 handleGatewayRequest 实际 dispatch；为其余 6 个（activitySnapshot、queueDrain、stop、reset、delete、cleanup）补经生产 registry 到参数校验层的 dispatch 断言，闭合与 spec『proven by dispatching through the production registry』的措辞落差。",
+    "title": "补齐其余 6 个方法的生产-registry dispatch 证明",
+    "updated_at": "2026-08-23T14:46:41.880575Z"
+  },
+  "TF-0091": {
+    "acceptance_criteria": [
+      "findings.json 中 FP-03..FP-06 全部有处置记录",
+      "typecheck/contract/comms 门禁重跑绿"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.55,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "hygiene"
+    ],
+    "created_at": "2026-08-23T10:30:18.287599Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 240,
+    "evidence": [
+      "artifacts/tf0091-dead-surface-decisions/report.json",
+      "FP-03：lifecycleLedger 明文 no-UI 决策（LATEST.md TF-0091 段 + audit-remediation spec 决策段）",
+      "FP-04：yielded/terminals/idleClassification 延期产品面；*_IDLE_MS 保留为配置面（如实记录测试通路）",
+      "FP-05：清理 archiveSessionTranscriptsForSession 死包装（零调用方实证 + tsgo:core 验证）；既有死代码确认非链责任；测试缝隙保留；child/timer 挂载显式延期",
+      "FP-06：task_kind 与条目级 lineage ref 保留声明；'verified' 为 HEAD 既有死值不动",
+      "门禁：spec validate 0；tsgo:core 0；contract:check 0；comms replay+compare 0；git diff --check 0"
+    ],
+    "execution_hints": [
+      "死导出清单见审计报告 §2 A2/A3 表"
+    ],
+    "id": "TF-0091",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0092 工程卫生（check:loc EMFILE、行数口径、FD 测试决策）",
+    "non_goals": [
+      "不实现 yielded/terminals 的产品化渲染（除非用户决定）"
+    ],
+    "priority": 5,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "消除『单测绿但生产零可达』与『数据备好无人显示』的误导面",
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 150,
+    "requirements": [
+      "每项处置必须有明文结论（清理/保留/延期三选一）",
+      "不得在挂载 child/timer 时翻动 default-off 锁"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0091-dead-surfaces"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "无明文结论的死面=0"
+    ],
+    "summary": "FP-03/04/05/06（minor 组）：① 为 sessions.lifecycleLedger 写明『只读诊断、暂不做 UI』决策（对齐 yieldState 明文形式）；② 处置死导出/死字段/死值：idleClassification、verified、task_kind='goal-owned-*' 消费侧、4 个完全死的 session-utils 接口——清理或声明保留；③ 按 TF-0083 next_action 决定 child/timer arm 的挂载点或明确延期；④ 若 yielded/terminals 进入产品面则补 i18n 与行级渲染，否则降级说明。",
+    "title": "明文决策与死面治理（文档、死导出、死字段、child/timer 挂载决策）",
+    "updated_at": "2026-08-23T14:51:40.447876Z"
+  },
+  "TF-0092": {
+    "acceptance_criteria": [
+      "check:loc 能输出 LOC 判定（无论红绿）",
+      "FD 项有正式决策记录"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.6,
+    "context_tags": [
+      "engineering-hygiene"
+    ],
+    "created_at": "2026-08-23T10:30:18.288156Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimated_total_minutes": 120,
+    "evidence": [
+      "artifacts/tf0092-engineering-hygiene/report.json",
+      "check:loc 修复（64 并发分批，语义不变）：修复前 EMFILE 崩溃无判定，修复后 exit 1 + 1048 存量超限清单（全部存量、归各 owner）",
+      "链内唯一超限：session-delete-operation-journal.test.ts 603 行（纯测试，TF-0084 已知）；链生产文件全部 <500",
+      "行数口径统一为物理行（与门禁一致）；413 vs 417 差异关闭",
+      "FD/RSS 正式裁定：resource-reclamation spec『Measurement bounds』段 + 本 proposal 记入 TF-0081 deviation",
+      "门禁：修复后 check:loc 可运行；spec validate 0；git diff --check 0"
+    ],
+    "execution_hints": [
+      "EMFILE 位于 scripts/check-ts-max-loc.ts:64 的 Promise.all"
+    ],
+    "id": "TF-0092",
+    "kind": "task",
+    "next_action": "线性下一步：TF-0093 TF-0078 链提交拆分与收口决策（用户裁定）",
+    "non_goals": [
+      "不处理全局红中的具体超限文件（归各 owner）"
+    ],
+    "priority": 6,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "恢复门禁判定能力，消除 requirement 与交付的残余落差",
+    "remaining_minutes_max": 180,
+    "remaining_minutes_min": 60,
+    "requirements": [
+      "check:loc 修复不得改变其判定语义",
+      "FD 决策需用户可见的明文记录"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0092-engineering-hygiene"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "环境性门禁崩溃=0"
+    ],
+    "summary": "FP-14/FP-11/FP-08：修复 check:loc 的 EMFILE 崩溃（并发限流）并复核全局红的真实构成；统一行数口径（413 vs 417 类）；对 TF-0081 requirement 中的 FD 测试项做正式决策（补句柄计数断言，或从 requirement 移出并记录理由）。",
+    "title": "工程卫生：check:loc 修复、行数口径、FD 测试决策",
+    "updated_at": "2026-08-23T14:56:55.854748Z"
+  },
+  "TF-0093": {
+    "acceptance_criteria": [
+      "用户对提交范围与 TF-0078 状态做出决定并记录",
+      "若提交：提交后门禁全绿且归属声明与提交内容一致"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.4,
+    "context_tags": [
+      "runtime-lifecycle-governance",
+      "closeout"
+    ],
+    "created_at": "2026-08-23T10:30:18.288664Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimated_total_minutes": 240,
+    "evidence": [
+      "artifacts/tf0093-commit-readiness/report.json",
+      "用户裁定记录：暂不提交（工作树需整理）；TF-0078 保持 in_progress；未发生任何提交",
+      "拆分预案：artifacts/tf0093-commit-readiness/split-plan.md + chain-dirty-files.txt（123 文件，100% 已声明）",
+      "最终矩阵：227 测试全绿（50/38/7/68/13/12/16/23）；typecheck 0 错误；contract 0；comms replay+compare 0；9 份链 spec validate 全 0；git diff --check 0"
+    ],
+    "execution_hints": [
+      "耦合点清单见审计报告 §4 表二",
+      "提交前用 git status 相对审计起点核对"
+    ],
+    "id": "TF-0093",
+    "kind": "task",
+    "next_action": "无（里程碑收口）；用户整理工作树后按 split-plan.md 决定提交，届时再裁定 TF-0078 收口",
+    "non_goals": [
+      "不处理其他 workstream 的提交"
+    ],
+    "priority": 7,
+    "progress": 100.0,
+    "progress_source": "manual",
+    "purpose": "把整改成果固化为可追溯的提交与正式收口",
+    "remaining_minutes_max": 360,
+    "remaining_minutes_min": 120,
+    "requirements": [
+      "提交/收口决定权在用户，本节点不代裁",
+      "提交前工作树核对：探针无残留、他流改动未被裹挟",
+      "不推送除非用户明确要求"
+    ],
+    "source_sessions": [
+      "session-20260823-tf0093-commit-readiness"
+    ],
+    "status": "done",
+    "success_metrics": [
+      "提交内容与声明边界一致",
+      "TF-0078 状态有明确裁定"
+    ],
+    "summary": "整改完成后：① 按 hunk 拆分提交多路耦合文件（contract.ts 五路、host-api.ts、mission-control/controller.ts、chat.ts），链部分与他流部分分离；② 决定提交顺序与范围（含是否等待其他 workstream）；③ 由用户裁定 TF-0078 是否收口为 done；④ 提交后全量门禁新鲜重跑取证（不复用本次审计数字）。",
+    "title": "TF-0078 链提交拆分与收口决策（用户裁定）",
+    "updated_at": "2026-08-23T16:25:35.862616Z"
+  },
+  "TF-0094": {
+    "acceptance_criteria": [
+      "applyPatch 返回 applied/skipped/conflicted 路径列表且 malformed patch fail-closed",
+      "diffToBase 在无远程/无共同祖先时显式返回 unavailable 而非猜测",
+      "git -c core.pager=x status、--exec-path、--git-dir 注入向量被分类器正确拒绝或降级",
+      "README 三语同步更新能力边界"
+    ],
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.9,
+      "user_goal": "对标 Codex 补齐项目内 Git 能力差距",
+      "validation_plan": [
+        "每节点跑 focused vitest + typecheck + contract:check",
+        "E2E 用 workspace-git-mcp-runtime.spec 扩展真实仓库断言"
+      ],
+      "why_not_enough": "不覆盖 Remote Forge 远端合并与真人 canary 边界",
+      "why_this_task": "对照审计确认 apply-patch 引擎、祖先推导、子命令分类器是纯增益且与现有审批架构零冲突"
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [
+      "Agent/UI 可通过 typed hostApi.git.applyPatch 应用/预检/回滚统一 diff 并获得结构化结果",
+      "Review Center与会话面板可用 git.diffToBase 自动定位最近远程公共祖先",
+      "workspace-permissions 的 git 只读判定升级为子命令感知解析，封堵全局选项注入"
+    ],
+    "deviations": [],
+    "difficulty": "high",
+    "estimated_total_minutes": 480,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0094",
+    "kind": "milestone",
+    "non_goals": [
+      "不实现 merge readiness / Remote Forge 合并策略（归 FP-P2 系列）",
+      "不新增 MCP 工具数量上限外的暴露面",
+      "不改 UI 视觉风格"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
+    "remaining_minutes_max": 600,
+    "remaining_minutes_min": 300,
+    "requirements": [
+      "全部新 API 经 electron/services/git-api.ts 单一 Main owner，不引入第二 Git 服务",
+      "applyPatch 默认 preflight，写模式走既有 dangerous/write 风险模型与 requestHash 审批绑定",
+      "diffToBase 为只读操作，复用 GIT_OPTIONAL_LOCKS=0 等加固 env",
+      "每个子节点产出当前 HEAD 新鲜证据：focused unit tests + contract:check + 相关 E2E"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "",
+    "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0095": {
+    "acceptance_criteria": [
+      "unit: 正常应用、冲突路径、malformed 三态断言",
+      "MCP clawx-git 暴露 git_apply_patch 工具经同一服务",
+      "typecheck+contract+focused tests 全绿"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "high",
+    "estimate": 180,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0095",
+    "kind": "task",
+    "non_goals": [
+      "不做 hunk 级交互编辑",
+      "不做三方合并"
+    ],
+    "priority": 1,
+    "progress": 5.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "shared/host-api/contract.ts + shared/types/git.ts 类型契约先行",
+      "默认 preflight 不落盘；apply/revert 走 dangerous 审批并绑定 requestHash",
+      "malformed/truncated patch fail-closed 并返回结构化错误而非部分应用"
+    ],
+    "source_sessions": [],
+    "status": "in_progress",
+    "success_metrics": [],
+    "summary": "hostApi.git.applyPatch({patch, mode:'preflight'|'apply'|'revert'}) 返回 applied/skipped/conflicted 路径；借鉴 Codex parse_git_apply_output 解析语义",
+    "title": "A1: git.applyPatch 结构化补丁引擎",
+    "updated_at": "2026-08-23T11:47:29.841185Z"
+  },
+  "TF-0096": {
+    "acceptance_criteria": [
+      "origin 优先、多 remote 有序探测有单测覆盖",
+      "无远程/无祖先返回 {available:false} 不猜测",
+      "WorkspaceAuditPanel 头部与会话面板环境区可直接消费"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.85,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimate": 120,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0096",
+    "kind": "task",
+    "non_goals": [
+      "不改 Review Center 现有 baseBranch 手动流程"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "只读 hostApi.git.diffToBase()：分支祖先链 + for-each-ref --contains=HEAD 扫描 remote，取最近公共 SHA 并返回 diff；无远程时 unavailable",
+    "title": "A2: git.diffToBase 最近远程祖先推导",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0097": {
+    "acceptance_criteria": [
+      "git -c x status 判 read-only；git --git-dir=.evil diff 拒绝",
+      "现有 classifyWorkspaceCommand 行为回归测试通过",
+      "不放宽任何现有 destructive/network 判定"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimate": 120,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0097",
+    "kind": "task",
+    "non_goals": [
+      "不动 execpolicy Starlark 层"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "替换 READ_ONLY_COMMANDS 字符串前缀匹配为 find_git_subcommand 式解析：跳过合法全局选项定位子命令，显式拒绝 -c/--exec-path/--git-dir/--work-tree 注入向量",
+    "title": "A3: shell 安全分类器子命令感知改造",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0098": {
+    "acceptance_criteria": [
+      ".git 写入走 protected-path 审批流",
+      "revert/push 审批对话框可见分级原因文本",
+      "fsmonitor=true 仅在内置 daemon 可用时出现"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimate": 150,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0098",
+    "kind": "task",
+    "non_goals": [],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "三小项合并以控制节点数：(1) 可写根内 .git 目录与指针文件目标 gitdir 进默认只读集；(2) dangerous 审批 reason 附带分级依据（目标分支是否保护、refspec 范围）；(3) fsmonitor 内置 daemon 探测保留",
+    "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0099": {
+    "acceptance_criteria": [
+      "该决策被 B 线两个任务引用且无违反"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 1.0,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "unknown",
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0099",
+    "kind": "decision",
+    "non_goals": [],
+    "priority": 3,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "B 线任务 non_goals 必须包含『不做视觉风格调整』",
+      "已有减法修复（部分失败提示、截断标记、deprecated 标注）保持最小 diff",
+      "审美 agent 交接时以 B2 的 E2E 锚点为基线"
+    ],
+    "source_sessions": [],
+    "status": "done",
+    "success_metrics": [],
+    "summary": "用户裁定：前端能力受限，本期 UI 改动仅限删除死代码与诚实性修复验证；视觉风格、布局打磨交给后续专门 agent。所有相关任务不得引入新 CSS/组件面。",
+    "title": "决策：会话面板与工作区/Audit 本期只做减法收口，审美优化后置",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0100": {
+    "acceptance_criteria": [
+      "rg 无 SessionStatusRail 残留引用",
+      "等价错误态断言在 SessionActivityPanel 测试中通过",
+      "typecheck web/node 绿、focused tests 绿"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "low",
+    "estimate": 90,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0100",
+    "kind": "task",
+    "non_goals": [
+      "不做视觉风格调整",
+      "不重设计会话面板布局"
+    ],
+    "priority": 1,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "先确认生产代码零 import 后再删（当前已核实）",
+      "r2 spec 中 git/terminal 失败态+retry 断言语义在现役组件上保留等价覆盖",
+      "纯删除：不新增替代组件、不加样式"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "删除 src/components/chat/SessionStatusRail.tsx（已 deprecated 且生产零挂载）及其专属测试；处置 r2-error-semantics.spec：迁移仍有效的错误态断言到 SessionActivityPanel 或标记 skip 说明",
+    "title": "B1: 孤儿 SessionStatusRail 死代码退役",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TF-0101": {
+    "acceptance_criteria": [
+      "pnpm run test:e2e:run tests/e2e/workspace-git-panel.spec.ts exit 0 含新增断言",
+      "evidence.json 可独立复核且绑定当前树"
+    ],
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "alignment_records": [],
+    "assumptions": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "created_at": "2026-08-23T11:46:04.913782Z",
+    "deprecated_at": null,
+    "desired_outcomes": [],
+    "deviations": [],
+    "difficulty": "medium",
+    "estimate": 150,
+    "estimated_total_minutes": null,
+    "evidence": [],
+    "execution_hints": [],
+    "id": "TF-0101",
+    "kind": "task",
+    "non_goals": [
+      "不做视觉风格调整",
+      "不改面板信息架构"
+    ],
+    "priority": 2,
+    "progress": 0.0,
+    "progress_source": "manual",
+    "purpose": "",
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "requirements": [
+      "扩展 workspace-git-panel.spec audit 段：reflog 失败→partialFailure 提示可见、truncated 标记可见",
+      "扩展或新增盘根 worktreeAdd approvalRequired 的 E2E 断言",
+      "证据含命令、exit code、测试数、HEAD，存 artifacts/git-capability-ui/evidence.json"
+    ],
+    "source_sessions": [],
+    "status": "proposed",
+    "success_metrics": [],
+    "summary": "为本轮已落地修复（Audit 面板分区错误态+截断标记、gh auth JSON 优先、worktree 盘根审批）补充/扩展 Electron E2E 断言并留档运行证据，作为审美优化 agent 接手前的行为基线",
+    "title": "B2: Audit/会话面板诚实性修复 E2E 锚点固化",
+    "updated_at": "2026-08-23T11:46:04.913782Z"
   }
 }

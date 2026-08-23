@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-08-23T03:19:39.782770Z",
+  "base_graph_hash": "df20c0987d6c63a24a27cfc4ecac947d8d1d565ec52ab20ea3e308e6e2c03180",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "发现并修复真实生产缺陷：sessions.yieldState（TF-0082 owner path 6）有 handler 与 core descriptor 但缺 lazy handler 白名单条目，生产 Gateway 返回 unknown method；回归探针已证实。这属于 TF-0079 本应根除的 direct-handler / production-dispatch 分叉，本轮把单方法探针推广为整面 census 以防复发。"
+        ],
+        "evidence": [
+          "harness/specs/tasks/session-ecosystem-lifecycle-ledger-acceptance.md（context + validate --no-diff exit 0）",
+          "artifacts/session-ecosystem-lifecycle-ledger-acceptance/report.json",
+          "gateway-methods 批次 6 文件 45 测试（含 ledger 14、活动投影 11/11 零行为变化回归）",
+          "gateway 批次 3 文件 7 测试（生命周期可达性 census 4 + TF-0079 探针 2 + 回收周期 1）",
+          "typecheck exit 0；contract:check exit 0；comms replay/compare 全 PASS；build:runtime exit 0；runtime-lifecycle E2E 3/3；touched 文件 eslint 0；check-no-bom ok；git diff --check exit 0"
+        ],
+        "next_action": "继续 owner path 2 的剩余部分：投影、ledger 与 owner registry 的集合交叉核对；随后进入 owner path 3 的 fresh 全量验收矩阵。",
+        "progress": 0.2,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260823-start-tf0084"
+        ],
+        "status": "in_progress",
+        "summary": "已启动 TF-0084。owner path 1 完成：把活动投影的 owner 读取抽成共享层（session-lifecycle-owner-views.ts），并在其上实现只读生命周期 ledger（session-lifecycle-ledger.ts + sessions.lifecycleLedger, operator.read）；每条 transition 记录 owner、owner 自己的状态 token、TF-0082 correlation ref，且要么携带 owner 钉扎的 generation，要么声明结构性原因（goal-wake flow 与 goal-owned task 结构上不记 generation；无钉扎的旧记录声明为 legacy-unpinned）；census 的 unexplainedTransitions 统计「声明与数据不符」因此可以失败而非恒为 0；读不到的 owner（Electron 终端、durable helper runDir）在响应里显式声明为 declaredGaps 而不是静默丢弃。owner path 2 的可达性 census 完成，并发现 sessions.yieldState 在生产 Gateway 上不可达（缺 lazy 白名单条目，实测 unknown method）已修复。"
+      },
+      "id": "TF-0084"
+    }
+  ],
+  "created_at": "2026-08-23T03:19:03.774379Z",
+  "proposal_id": "TFP-start-TF-0084-20260823",
+  "rationale": "用户指示开始 TF-0084。父里程碑 TF-0078 为 in_progress，TF-0079..TF-0083 全部 done，TF-0084 的唯一 depends_on（TF-0083）已满足，按串行规则只启动这一个节点。本轮已完成启动动作与前两个 owner path 的第一批落地：新建 Harness spec（context + validate --no-diff exit 0）、抽出共享 owner-read 层（活动投影 11/11 零行为变化）、实现只读生命周期 ledger（sessions.lifecycleLedger, operator.read，14 测试）、把 TF-0079 单方法可达性探针推广为整个生命周期方法面的 census（4 测试）。census 发现并封堵一个真实生产缺陷：TF-0082 的 sessions.yieldState 有 handler 与 core descriptor 但从未加入 lazy handler 白名单，createCoreGatewayMethodDescriptors 因此跳过该 spec，生产 Gateway 实际返回 unknown method；已加回白名单并用回归探针证实。owner path 3（fresh 全量验收矩阵）与 owner path 4（证据分级与 TF-0010/TF-0077 历史一致性）未开始，因此本轮不是 TF-0084 验收结论。产品锁保持不变。",
+  "session_id": "session-20260823-start-tf0084",
+  "status": "applied"
+}

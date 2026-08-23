@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-08-22T07:02:10.432504Z",
+  "base_graph_hash": "4d568ff8cd32aa5a04a5ade481c1c8345f3eb6750fb29c7b5bd92abba91110f1",
+  "base_summary": {
+    "edge_count": 152,
+    "node_count": 82,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "工作区仍是共享脏树（数百个与本任务无关的改动/未跟踪文件），未 reset/stash/clean/checkout；harness diff-aware validate 因 ownership 覆盖失败，--no-diff 结构校验 exit 0 为本期证据。",
+          "permit 只覆盖 run-start 窗口，不覆盖整轮 run：run armed 后按设计释放，之后 reset 正常 fence 并走 canonical stop path 中止该 run。",
+          "steer 打断 embedded run 时最长 15s 的等待现在发生在 permit 之内，并发 reset 会排队等待而非交错执行——这是有意的 fail-safe 定序，但会拉长该场景下 reset 的最坏延迟。"
+        ],
+        "evidence": [
+          "SessionsQueueDrainParamsSchema.expectedSessionId + handler 代际守卫（reason generation-mismatch，drain 执行器不触达）",
+          "drainQueuedUserMessagesForSession dequeue 前内部守卫（防绕过）",
+          "shared/host-api SessionQueueDrainPayload + Electron 透传",
+          "sessions.queue-drain-generation.test.ts 3/3 + run-control 回归 9/9 + Electron facade/rollback-plan 50/50",
+          "切片 4：sessions.run-control handleSessionSend 的 permit 覆盖 run-start 窗口，release-once 助手在首次 chat.send respond 释放 + finally 兜底",
+          "sessions.send-permit-lifetime.test.ts 6/6（preamble 内 permit 仍在 / 中途 reset fence 直到 run armed 才 drain / steer interrupt 同窗口内 / interrupt 失败也释放 / chat.send 抛错不泄漏 / 恰好释放一次）",
+          "回归探针：临时把释放点改回修复前位置，6 例中 3 例失败；探针已移除后重跑 6/6 通过",
+          "gateway-methods 批次 18/18（stop + queue-drain-generation + send-permit-lifetime + run-control.checkpoint-diff）",
+          "announce 代际 8/8；subagent-spawn + session-admission-registry 15/15；host-api facade 44/44",
+          "门禁：harness validate --no-diff exit 0；typecheck 0；contract 0；comms replay/compare 全 PASS；build:runtime 0；runtime-lifecycle E2E 3/3；touched 文件 lint 0；check-no-bom ok；git diff --check 0",
+          "artifacts/session-ecosystem-cross-session-control/report.json 切片 4 更新；README 三语 + handoffs/LATEST.md 已同步"
+        ],
+        "next_action": "第五个 owner path：lineage runId join —— 把 mission/flow 的 runId 级关联并入 session-activity 单一 lineage 投影（不新增第二个 session identity 源）；随后可选的 sessions_yield/goal_wait RPC surface，最后收口前全门禁重跑。",
+        "progress": 78,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-session-ecosystem-audit",
+          "session-20260822-start-tf0082",
+          "session-20260822-tf0082-slice4"
+        ]
+      },
+      "id": "TF-0082"
+    }
+  ],
+  "created_at": "2026-08-22T07:00:41.923277Z",
+  "proposal_id": "TFP-progress-TF-0082-slice4-20260822",
+  "rationale": "TF-0082 第四个 owner path 完成：sessions.send/steer 的 admission permit 从「interrupt 结束即释放」扩展为覆盖整个 run-start 窗口（steer 打断 → transcript seq 读取 → chat.send 前导 → run armed），释放点统一为 release-once 助手（首次 respond 释放 + finally 兜底），既不泄漏也不重复释放。并发 reset/delete 因此只能在 run armed 之后才 drain fence，无法把 run 播种在旧代际上。新增 6 例专项测试并用回归探针验证（把释放点改回修复前，6 例中 3 例失败）。所有门禁在最终树上通过。",
+  "session_id": "session-20260822-tf0082-slice4",
+  "status": "applied"
+}

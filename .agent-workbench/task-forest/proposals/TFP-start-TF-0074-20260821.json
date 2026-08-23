@@ -1,0 +1,30 @@
+{
+  "applied_at": "2026-08-20T16:26:38.596242Z",
+  "base_graph_hash": "1070d36e96beddc431e16f803e2f3ce68f6de524fb7c4429e7bea41dbd635b85",
+  "base_summary": {
+    "edge_count": 139,
+    "node_count": 75,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "next_action": "先冻结 TF-0074 验收矩阵与当前证据基线：运行 harness context，核对 DCS/Knowledge/E2E/真实 channel 入口和 product locks；未完成独立证据前不得宣称投产或 GA。",
+        "progress": 5,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260821-start-tf0074"
+        ],
+        "status": "in_progress",
+        "summary": "已启动 TF-0074：在 TF-0070 至 TF-0073 完成后开展 DCS、Goal/Loop、SEKB 的真实投入使用工程验收。首步冻结验收矩阵、生产入口和证据边界；工程验收与 liveReady/productApproved/defaultOn 保持分离。"
+      },
+      "id": "TF-0074"
+    }
+  ],
+  "created_at": "2026-08-20T16:26:38.404082Z",
+  "proposal_id": "TFP-start-TF-0074-20260821",
+  "rationale": "用户明确要求在 TF-0073 收尾后立即投入下一个任务节点；TF-0074 的 TF-0070、TF-0071、TF-0072、TF-0073 四个硬依赖均已完成。启动真实投入使用验收，但不自动宣称 liveReady、productApproved 或 defaultOn。",
+  "session_id": "session-20260821-start-tf0074",
+  "status": "applied"
+}

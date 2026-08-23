@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-08-23T14:56:55.867268Z",
+  "base_graph_hash": "95b9cae7545b573d9ed7d5cf6297224bbdc9153ef336ac1d7d1d1f348fc2ee20",
+  "base_summary": {
+    "edge_count": 181,
+    "node_count": 99,
+    "workspace_path": "D:\\ClawX"
+  },
+  "changes": [
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "artifacts/tf0092-engineering-hygiene/report.json",
+          "check:loc 修复（64 并发分批，语义不变）：修复前 EMFILE 崩溃无判定，修复后 exit 1 + 1048 存量超限清单（全部存量、归各 owner）",
+          "链内唯一超限：session-delete-operation-journal.test.ts 603 行（纯测试，TF-0084 已知）；链生产文件全部 <500",
+          "行数口径统一为物理行（与门禁一致）；413 vs 417 差异关闭",
+          "FD/RSS 正式裁定：resource-reclamation spec『Measurement bounds』段 + 本 proposal 记入 TF-0081 deviation",
+          "门禁：修复后 check:loc 可运行；spec validate 0；git diff --check 0"
+        ],
+        "next_action": "线性下一步：TF-0093 TF-0078 链提交拆分与收口决策（用户裁定）",
+        "progress": 100,
+        "progress_source": "manual",
+        "source_sessions": [
+          "session-20260823-tf0092-engineering-hygiene"
+        ],
+        "status": "done"
+      },
+      "id": "TF-0092"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "deviations": [
+          "共享主工作树含其他任务改动；全程未 reset/stash/clean/checkout，未扩大 touchedAreas 绕过脏树失败。",
+          "harness diff-aware validate 仍被无关 shared-worktree ownership 变更阻断；以 --no-diff 通过为本节点证据。",
+          "4 个 pre-existing lint error 位于非本节点文件，未代改（与 TF-0080 closeout 记录一致）。",
+          "Electron/renderer 无 sessions.reset 调用面（new-session 刻意跳过），reset 关终端不是生产缺口；50-cycle 夹具以 fence+drain 覆盖 stop/reset/delete 共享资源半区。",
+          "idle 分类纯观测零自动回收：输出新鲜度优先保证 false kill=0，自动回收策略留待独立决策。",
+          "FD/handle 泄漏与 RSS 级增长正式排除出 TF-0081 spec 验收（TF-0092 裁定，2026-08-23）：需 OS 级插桩/soak 测试，非逐变更门禁面；记录/定时器/owned PID/finished 上界断言已覆盖回收契约；裁定落点 harness/specs/tasks/session-ecosystem-resource-reclamation.md『Measurement bounds』段；生产观测到 FD 泄漏再重开。"
+        ]
+      },
+      "id": "TF-0081"
+    },
+    {
+      "action": "update_node",
+      "fields": {
+        "evidence": [
+          "第 6 步 TF-0092 done（2026-08-23）：工程卫生，见 artifacts/tf0092-engineering-hygiene/report.json"
+        ]
+      },
+      "id": "TF-0086"
+    }
+  ],
+  "created_at": "2026-08-23T14:56:55.682539Z",
+  "proposal_id": "TFP-close-TF-0092-20260823",
+  "rationale": "TF-0092（审计整改第 6 步）完成：check:loc EMFILE 修复并产出首个真实判定（1048 存量超限，链内唯一为 603 行的纯测试文件）；行数口径统一为物理行；FD/RSS 排除升级为 spec 级正式裁定。按线性流程解锁 TF-0093（提交拆分与收口决策，用户裁定）。",
+  "session_id": "session-20260823-tf0092-engineering-hygiene",
+  "status": "applied"
+}

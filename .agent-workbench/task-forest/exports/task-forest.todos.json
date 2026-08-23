@@ -1,6 +1,33 @@
 [
   {
     "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0098",
+    "kind": "task",
+    "next_action": ".git 写入走 protected-path 审批流",
+    "priority": 3,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）"
+  },
+  {
+    "alignment": {
       "fit": "aligned",
       "fit_confidence": 0.98,
       "user_goal": "在无真人测试成本时保证流程与实现完整",
@@ -79,15 +106,104 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.96,
-      "user_goal": "在没有真人验收时，让后续工程结果由 Agent 自动化严格验收并保证工程功能过关",
+      "fit_confidence": 0.9,
+      "user_goal": "对标 Codex 补齐项目内 Git 能力差距",
       "validation_plan": [
-        "Verifier 重跑全量 profile",
-        "检查报告 SHA/日志完整性",
-        "确认产品锁持续关闭"
+        "每节点跑 focused vitest + typecheck + contract:check",
+        "E2E 用 workspace-git-mcp-runtime.spec 扩展真实仓库断言"
       ],
-      "why_not_enough": "不替代真人/live/product 证据",
-      "why_this_task": "统一门禁和独立 Verifier 直接服务工程正确性与可审计性"
+      "why_not_enough": "不覆盖 Remote Forge 远端合并与真人 canary 边界",
+      "why_this_task": "对照审计确认 apply-patch 引擎、祖先推导、子命令分类器是纯增益且与现有审批架构零冲突"
+    },
+    "blocked_by": [],
+    "confidence": 0.75,
+    "context_tags": [],
+    "desired_outcomes": [
+      "Agent/UI 可通过 typed hostApi.git.applyPatch 应用/预检/回滚统一 diff 并获得结构化结果",
+      "Review Center与会话面板可用 git.diffToBase 自动定位最近远程公共祖先",
+      "workspace-permissions 的 git 只读判定升级为子命令感知解析，封堵全局选项注入"
+    ],
+    "difficulty": "high",
+    "id": "TF-0094",
+    "kind": "milestone",
+    "next_action": "applyPatch 返回 applied/skipped/conflicted 路径列表且 malformed patch fail-closed",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
+    "ready": true,
+    "remaining_minutes_max": 600,
+    "remaining_minutes_min": 300,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.85,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0096",
+    "kind": "task",
+    "next_action": "origin 优先、多 remote 有序探测有单测覆盖",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "A2: git.diffToBase 最近远程祖先推导"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0097",
+    "kind": "task",
+    "next_action": "git -c x status 判 read-only；git --git-dir=.evil diff 拒绝",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "A3: shell 安全分类器子命令感知改造"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "validation_plan": [
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
+      ],
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "blocked_by": [],
     "confidence": 0.75,
@@ -119,15 +235,16 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "开发、测试和独立工程验收完成后，由用户执行最终真人验收。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "逐包 Harness 与独立 Agent Engineering Acceptance",
-        "最终全量工程 gate 和 manifest",
-        "用户执行 H-01 至 H-06"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "没有用户最终 accepted verdict 时只能到 human_acceptance_pending。",
-      "why_this_task": "工作包覆盖重复 authority 的主要来源和最终 Operator 闭环，并有严格证据与状态门禁。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "blocked_by": [],
     "confidence": 0.9,
@@ -384,6 +501,116 @@
   {
     "alignment": {
       "fit": "aligned",
+      "fit_confidence": 0.94,
+      "user_goal": "让当前对话生态真实可追踪、可监控、可跨会话控制、可等待恢复，并防止长时间闲置后的资源泄漏和假阳性验收。",
+      "validation_plan": [
+        "Task Forest validate/export 和每阶段 Harness context/validate",
+        "真实 Gateway method registry probe，证明 handler 与 descriptor 同时存在",
+        "session/process/subagent/goal-wake/cron 聚焦单测与当前源码 E2E",
+        "真实 Electron packaged helper、真实 OS process、Gateway restart/cancel/unknown-RPC 故障矩阵",
+        "独立 fresh acceptance report，列出未执行前置、退出码、测试数、artifact SHA 和产品锁"
+      ],
+      "why_not_enough": "工程收敛仍不能替代真实第三方 channel、真人 recovery、产品批准或 GA 授权；这些继续由既有最终验收边界控制。",
+      "why_this_task": "它直接覆盖本轮已证实的 production reachability、default-off safety、resource drain、cross-session control、goal loop 和 scheduler seam，且挂在既有 Runtime Authority 主线上。"
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [
+      "session-ecosystem",
+      "runtime-lifecycle",
+      "cross-session-control",
+      "subagent",
+      "goal-loop",
+      "scheduler",
+      "resource-reclamation",
+      "false-positive-prevention"
+    ],
+    "desired_outcomes": [
+      "真实 Gateway registry 与测试直接 handler 不再分叉，所有声明的生命周期 RPC 都可达",
+      "session safety gates 在生产生命周期 mutation 上生效，未知 RPC 结果不会造成镜像和 runtime 状态分裂",
+      "终端、普通后台进程、subagent 和 durable helper 具有明确 owner、TTL/回收边界和跨重启终态",
+      "跨会话控制和父子关系使用稳定 sessionId/runId/missionId/tickId/flowId/taskId lineage",
+      "Goal/Loop 支持 process exit、子智能体完成、显式 timer/Cron 触发的有界续跑，取消和超时级联且不重放命令",
+      "最终证据来自当前 HEAD 的真实 registry、真实进程、故障矩阵和独立报告，不复用旧 audit 数字"
+    ],
+    "difficulty": "very_high",
+    "id": "TF-0078",
+    "kind": "milestone",
+    "next_action": "先执行 TF-0079，修复 registry 可达性并建立 direct-handler versus production-dispatch gate",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "让每个对话及其派生资源都有可追踪的身份、状态、所有权和终态；允许跨会话创建、截停、继续和等待，同时避免长时间闲置资源泄漏与代码存在但生产不可达的假阳性。",
+    "ready": true,
+    "remaining_minutes_max": 6000,
+    "remaining_minutes_min": 2400,
+    "status": "in_progress",
+    "success_metrics": [
+      "生产 registry 漏接的 lifecycle method=0",
+      "session reset/delete/stop 与 spawn/send/steer/arm 的 generation race=0",
+      "未知 RPC 结果导致的 mirror/runtime 分裂=0",
+      "50-cycle session/process/subagent drain 的 active records、timers、owned PIDs 残留=0",
+      "重复 wake/重复 completion/重复 continuation 的副作用重复=0",
+      "当前 HEAD 的 required gates 和真实闭环报告可复跑且不依赖旧 artifact 时间戳"
+    ],
+    "title": "会话生态生命周期生产收敛与真实恢复"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "high",
+    "id": "TF-0095",
+    "kind": "task",
+    "next_action": "unit: 正常应用、冲突路径、malformed 三态断言",
+    "priority": 1,
+    "progress": 5.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "in_progress",
+    "success_metrics": [],
+    "title": "A1: git.applyPatch 结构化补丁引擎"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [],
+    "confidence": 0.9,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "low",
+    "id": "TF-0100",
+    "kind": "task",
+    "next_action": "rg 无 SessionStatusRail 残留引用",
+    "priority": 1,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": true,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "B1: 孤儿 SessionStatusRail 死代码退役"
+  },
+  {
+    "alignment": {
+      "fit": "aligned",
       "fit_confidence": 0.92,
       "user_goal": "构建成熟统一 Agent 产品系统",
       "validation_plan": [
@@ -530,6 +757,35 @@
     "status": "proposed",
     "success_metrics": [],
     "title": "RC-08B OTel 与 Observability 收敛"
+  },
+  {
+    "alignment": {
+      "fit": "unknown",
+      "fit_confidence": 0.0,
+      "user_goal": "",
+      "validation_plan": [],
+      "why_not_enough": "",
+      "why_this_task": ""
+    },
+    "blocked_by": [
+      "TF-0100"
+    ],
+    "confidence": 0.8,
+    "context_tags": [],
+    "desired_outcomes": [],
+    "difficulty": "medium",
+    "id": "TF-0101",
+    "kind": "task",
+    "next_action": "先完成依赖：TF-0100",
+    "priority": 2,
+    "progress": 0.0,
+    "purpose": "",
+    "ready": false,
+    "remaining_minutes_max": null,
+    "remaining_minutes_min": null,
+    "status": "proposed",
+    "success_metrics": [],
+    "title": "B2: Audit/会话面板诚实性修复 E2E 锚点固化"
   },
   {
     "alignment": {
@@ -882,12 +1138,17 @@
   },
   {
     "alignment": {
-      "fit": "unknown",
-      "fit_confidence": 0,
-      "user_goal": "",
-      "validation_plan": [],
-      "why_not_enough": "",
-      "why_this_task": ""
+      "fit": "aligned",
+      "fit_confidence": 0.96,
+      "user_goal": "让功能都能正常投入使用",
+      "validation_plan": [
+        "task-forest validate/export",
+        "前置单测和集成测试",
+        "DCS/Knowledge E2E",
+        "fresh acceptance report"
+      ],
+      "why_not_enough": "完成工程任务后仍需要用户进行真实 channel/product acceptance，不能自动解锁 GA。",
+      "why_this_task": "任务链直接覆盖当前发现的跨层串写、异步落库、lineage 缺失和经验噪声四类孤岛。"
     },
     "blocked_by": [
       "TF-0036"
@@ -973,15 +1234,16 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.97,
-      "user_goal": "让 coding 写入具备受治理、可恢复语义。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "journal/precondition tests",
-        "concurrency/recovery tests",
-        "approval/diff artifact integration"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "外部 write 仍需独立 policy。",
-      "why_this_task": "写入必须以现有 ClawX journal 为 authority，而不是由 execution runtime 越权。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "blocked_by": [
       "TF-0066"
@@ -1020,15 +1282,16 @@
   {
     "alignment": {
       "fit": "aligned",
-      "fit_confidence": 0.95,
-      "user_goal": "在不扩大风险的前提下完成写入协作。",
+      "fit_confidence": 0.96,
       "validation_plan": [
-        "effect/policy fixtures",
-        "UI confirmation E2E",
-        "audit/redaction review"
+        "runtime focused 9 files / 89 tests",
+        "cross-sink provenance 13 files / 108 tests",
+        "root provenance fixture 8 tests",
+        "runtime oxlint, oxfmt, tsgo:core, Main typecheck, comms replay/compare",
+        "Harness --no-diff and Task Forest validate/export"
       ],
-      "why_not_enough": "不提供 default-on 或全自动 rollback。",
-      "why_this_task": "外部写入的真实边界必须在 canary 前透明化，不能依赖错误的 transaction 叙事。"
+      "why_not_enough": "完整 external-write 分类仍只局部执行；其他 host/plugin/VerseShell 写入口未覆盖。",
+      "why_this_task": "它完成了一个可审计的 source-to-sink 文件写入边界，并保持普通 workspace coding 可用。"
     },
     "blocked_by": [
       "TF-0067"
