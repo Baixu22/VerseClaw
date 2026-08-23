@@ -210,7 +210,7 @@ Shadow V1 评分与阈值 50 冻结；标注工具包就绪不等于可晋级。
 
 ### Workspace Git 控制
 Workspace 侧栏现在会先打开精简入口面板；只有当前 workspace 是 Git 仓库时才显示“审查”入口，非 Git 项目不会暴露 Git 控件。
-Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree 和 GitHub Pull Request。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
+Workspace 侧栏提供 Git 工作台，可查看仓库状态、side-by-side 文件 diff、暂存、复制 patch、带审批的文件还原、提交、分支、stash、worktree、合并、变基、重置和 GitHub Pull Request。紧凑的 Audit 标签会把权限决策与最近的 `git reflog --all` 条目合并显示（有界视图，超出上限的较早条目会显式标记），包括提交、切换、重置、变基及其他引用移动。顶部 readiness 条会量化本机 Git、内置 Agent Git 工具、worktree 数量和 `gh` 登录状态，让面板直接显示当前哪些能力可用。Worktree 添加支持新分支和已有分支两种流程，新 worktree 默认放在仓库同级目录。统一 diff 可以通过结构化补丁引擎应用、回滚，或只做预检而不落盘，并分别报告已应用、已跳过与冲突的路径；格式损坏或被截断的补丁会在触碰任何文件之前被拒绝，而不是部分应用。只读的基线对比会把 HEAD 与最近的远程祖先做 diff——显式 ref、分支 upstream，或 `origin/HEAD`——并报告实际用的是哪一个；当不存在远程祖先，或两侧没有共同提交时，会把对比标记为不可用，而不是猜一个基线。同一套 Main 进程 Git service 也驱动内置 `clawx-git` MCP server，让 Agent 通过 Verse Claw 权限体系调用受控 Git 与 PR 工具，而不是直接拼 shell 命令；revert、pull、push、merge、rebase、reset、补丁应用/回滚、worktree remove/prune、创建 PR 等会改写或发布状态的操作仍需要审批。
 
 ### 📡 多频道管理
 同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
