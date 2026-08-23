@@ -6,7 +6,10 @@
 // `store_committed` journal write.
 import { createHash } from "node:crypto";
 
-import { isTruthyEnvValue } from "../infra/env.js";
+import {
+  formatSessionArchiveTimestamp,
+  isSessionArchiveTimestamp,
+} from "../config/sessions/artifacts.js";
 import {
   readSessionDeleteOperationJournalRow,
   type SessionDeleteOperationJournalRow,
@@ -15,16 +18,12 @@ import {
 } from "../config/sessions/store-sqlite.js";
 
 export const SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION = "1";
-export const RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV =
-  "RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED";
-
 export type SessionDeleteOperationKind = "session-delete";
 
 export type SessionDeleteArchivePlan = {
-  /** Archive destination is deterministic from the manifest (never wall-clock). */
-  destination: "session-store-relative";
-  relativeDir: string;
-  fileName: string;
+  /** Each source is renamed beside itself with the deterministic timestamp. */
+  destination: "session-artifact-sibling";
+  archiveTimestamp: string;
   /** Expected transcript/cache artifact paths, in deterministic order. */
   entries: string[];
 };
@@ -37,6 +36,7 @@ export type SessionDeleteOperationManifest = {
   canonicalKey: string;
   expectedSessionId: string;
   deleteTranscript: boolean;
+  emitLifecycleHooks: boolean;
   /** Original session file path hint, retained so a retry after store commit
    * can still archive custom transcript paths. */
   sessionFile?: string;
@@ -63,14 +63,86 @@ export type SessionDeleteOperationJournalReadResult = {
   event: SessionDeleteOperationJournalEvent;
 };
 
-/** Stable digest for content-sensitive idempotency (same id + same digest). */
-export function buildSessionDeleteManifestDigest(manifest: SessionDeleteOperationManifest): string {
-  const canonical = JSON.stringify(manifest, Object.keys(manifest).sort());
-  return createHash("sha256").update(canonical).digest("hex");
+export type SessionDeletePartialReceipt = {
+  ok: true;
+  key: string;
+  deleted: true;
+  archived: string[];
+  archivedTranscripts: Array<{ sourcePath: string; archivedPath: string }>;
+  sessionId?: string;
+  operationId: string;
+  journalState: "partial_committed";
+  finalization: {
+    archiveComplete: boolean;
+    sessionEndHookEmitted: boolean;
+    sessionUnbound: boolean;
+  };
+};
+
+export function parseSessionDeletePartialReceipt(
+  raw: string | null | undefined,
+): SessionDeletePartialReceipt | undefined {
+  if (!raw) return undefined;
+  let value: unknown;
+  try {
+    value = JSON.parse(raw) as unknown;
+  } catch {
+    return undefined;
+  }
+  if (!value || typeof value !== "object") return undefined;
+  const receipt = value as Partial<SessionDeletePartialReceipt>;
+  const finalization = receipt.finalization;
+  if (
+    receipt.ok !== true ||
+    receipt.deleted !== true ||
+    typeof receipt.key !== "string" ||
+    typeof receipt.operationId !== "string" ||
+    receipt.journalState !== "partial_committed" ||
+    !Array.isArray(receipt.archived) ||
+    !receipt.archived.every((entry) => typeof entry === "string") ||
+    !Array.isArray(receipt.archivedTranscripts) ||
+    !receipt.archivedTranscripts.every(
+      (entry) =>
+        entry &&
+        typeof entry === "object" &&
+        typeof entry.sourcePath === "string" &&
+        typeof entry.archivedPath === "string",
+    ) ||
+    !finalization ||
+    typeof finalization.archiveComplete !== "boolean" ||
+    typeof finalization.sessionEndHookEmitted !== "boolean" ||
+    typeof finalization.sessionUnbound !== "boolean"
+  ) {
+    return undefined;
+  }
+  return receipt as SessionDeletePartialReceipt;
 }
 
-export function sessionDeleteOperationJournalEnabled(): boolean {
-  return isTruthyEnvValue(process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV]);
+function comparePropertyNames(left: string, right: string): number {
+  // Code-unit ordering keeps the canonical form identical across machines,
+  // locales, and Node ICU builds; localeCompare does not guarantee that.
+  if (left === right) return 0;
+  return left < right ? -1 : 1;
+}
+
+function stableManifestJson(value: unknown): string {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableManifestJson(item)).join(",")}]`;
+  }
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => item !== undefined)
+    .sort(([left], [right]) => comparePropertyNames(left, right))
+    .map(([key, item]) => `${JSON.stringify(key)}:${stableManifestJson(item)}`);
+  return `{${entries.join(",")}}`;
+}
+
+/** Stable digest for content-sensitive idempotency (same id + same digest). */
+export function buildSessionDeleteManifestDigest(manifest: SessionDeleteOperationManifest): string {
+  const canonical = stableManifestJson(manifest);
+  return createHash("sha256").update(canonical).digest("hex");
 }
 
 /**
@@ -83,11 +155,18 @@ export function buildSessionDeleteOperationManifest(input: {
   canonicalKey: string;
   expectedSessionId: string;
   deleteTranscript: boolean;
+  emitLifecycleHooks: boolean;
   sessionFile?: string;
+  archiveTimestamp?: string;
+  archiveEntries?: string[];
 }): SessionDeleteOperationManifest {
   const operationId = input.operationId.trim();
   if (!operationId) {
     throw new Error("operationId must be non-empty");
+  }
+  const requestedArchiveTimestamp = input.archiveTimestamp?.trim();
+  if (requestedArchiveTimestamp && !isSessionArchiveTimestamp(requestedArchiveTimestamp)) {
+    throw new Error("archiveTimestamp must be an ISO filename timestamp");
   }
   return {
     version: SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION,
@@ -97,12 +176,12 @@ export function buildSessionDeleteOperationManifest(input: {
     canonicalKey: input.canonicalKey,
     expectedSessionId: input.expectedSessionId,
     deleteTranscript: input.deleteTranscript,
+    emitLifecycleHooks: input.emitLifecycleHooks,
     ...(input.sessionFile?.trim() ? { sessionFile: input.sessionFile.trim() } : {}),
     archivePlan: {
-      destination: "session-store-relative",
-      relativeDir: "deleted",
-      fileName: `${operationId}.jsonl`,
-      entries: [],
+      destination: "session-artifact-sibling",
+      archiveTimestamp: requestedArchiveTimestamp ?? formatSessionArchiveTimestamp(),
+      entries: [...(input.archiveEntries ?? [])],
     },
   };
 }
@@ -152,7 +231,36 @@ function parseManifestJson(raw: string): SessionDeleteOperationManifest {
     throw new Error("session delete journal manifest is not an object");
   }
   const manifest = parsed as SessionDeleteOperationManifest;
-  if (!manifest.version || !manifest.operation || !manifest.agentId || !manifest.canonicalKey || !manifest.expectedSessionId) {
+  // Legacy Phase 0 rows (schema "1" with a `session-store-relative` archive
+  // plan or without `emitLifecycleHooks`) must fail closed with an explicit
+  // migration error instead of being silently accepted.
+  if (
+    manifest.archivePlan &&
+    (manifest.archivePlan as { destination?: unknown }).destination === "session-store-relative"
+  ) {
+    throw new Error(
+      "session delete journal manifest uses unsupported legacy archive plan; rebuild the operation with a new operationId",
+    );
+  }
+  if (manifest.version !== SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION) {
+    throw new Error(
+      `session delete journal manifest schema version ${String(manifest.version)} is unsupported`,
+    );
+  }
+  if (
+    !manifest.version ||
+    !manifest.operation ||
+    !manifest.agentId ||
+    !manifest.canonicalKey ||
+    !manifest.expectedSessionId ||
+    typeof manifest.deleteTranscript !== "boolean" ||
+    typeof manifest.emitLifecycleHooks !== "boolean" ||
+    !manifest.archivePlan ||
+    manifest.archivePlan.destination !== "session-artifact-sibling" ||
+    !Array.isArray(manifest.archivePlan.entries) ||
+    !manifest.archivePlan.entries.every((entry) => typeof entry === "string" && entry.trim()) ||
+    !isSessionArchiveTimestamp(manifest.archivePlan.archiveTimestamp)
+  ) {
     throw new Error("session delete journal manifest is missing required fields");
   }
   return manifest;
@@ -168,6 +276,9 @@ export function readSessionDeleteOperationJournal(
     return undefined;
   }
   const manifest = parseManifestJson(row.manifest_json);
+  if (buildSessionDeleteManifestDigest(manifest) !== row.manifest_digest) {
+    throw new Error("session delete journal manifest digest mismatch");
+  }
   return {
     row,
     manifest,
@@ -221,42 +332,12 @@ export function finalizeSessionDeleteOperationJournal(
 export function markSessionDeleteOperationPartialCommitted(
   storePath: string,
   operationId: string,
+  receipt?: SessionDeletePartialReceipt,
 ): void {
   updateSessionDeleteOperationJournalState(
     storePath,
     operationId,
     "partial_committed",
-    null,
+    receipt ? JSON.stringify(receipt) : null,
   );
-}
-
-/**
- * Default-off production hook for `sessions.delete`. Kept for Phase 0
- * compatibility; the real Phase 2 path builds and persists the manifest
- * through the functions above.
- */
-export function probeSessionDeleteOperationJournal(input: {
-  operationId?: string;
-  agentId: string;
-  canonicalKey: string;
-  expectedSessionId?: string;
-  deleteTranscript: boolean;
-}): string | undefined {
-  if (!sessionDeleteOperationJournalEnabled()) return undefined;
-  if (!input.operationId?.trim()) return undefined;
-  if (!input.canonicalKey.trim() || !input.expectedSessionId?.trim()) {
-    return undefined;
-  }
-  const manifest = buildSessionDeleteOperationManifest({
-    operationId: input.operationId,
-    agentId: input.agentId,
-    canonicalKey: input.canonicalKey,
-    expectedSessionId: input.expectedSessionId,
-    deleteTranscript: input.deleteTranscript,
-  });
-  return createSessionDeleteJournalEvent({
-    operationId: input.operationId,
-    manifest,
-    state: "intent",
-  }).manifestDigest;
 }

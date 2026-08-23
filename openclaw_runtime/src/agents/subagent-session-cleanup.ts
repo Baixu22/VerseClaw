@@ -3,6 +3,7 @@
  * the gateway and preserves lifecycle-hook behavior for session-mode spawns.
  */
 import type { callGateway as defaultCallGateway } from "../gateway/call.js";
+import { buildSessionDeleteOperationId } from "../sessions/session-delete-operation-id.js";
 import type { SpawnSubagentMode } from "./subagent-spawn.types.js";
 
 type CallGateway = typeof defaultCallGateway;
@@ -11,6 +12,7 @@ type CallGateway = typeof defaultCallGateway;
 export async function deleteSubagentSessionForCleanup(params: {
   callGateway: CallGateway;
   childSessionKey: string;
+  runId: string;
   spawnMode?: SpawnSubagentMode;
   onError?: (error: unknown) => void;
 }): Promise<void> {
@@ -19,6 +21,7 @@ export async function deleteSubagentSessionForCleanup(params: {
       method: "sessions.delete",
       params: {
         key: params.childSessionKey,
+        operationId: buildSessionDeleteOperationId("subagent-cleanup", params.runId),
         deleteTranscript: true,
         emitLifecycleHooks: params.spawnMode === "session",
       },

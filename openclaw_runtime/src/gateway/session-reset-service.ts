@@ -72,6 +72,7 @@ import {
 import { findDirectChildSessionsForParent } from "./session-child-sessions.js";
 import {
   archiveSessionTranscriptsDetailed,
+  resolveSessionTranscriptCandidates,
   resolveStableSessionEndTranscript,
   type ArchivedSessionTranscript,
 } from "./session-transcript-files.fs.js";
@@ -133,17 +134,6 @@ function stripRuntimeModelState(entry?: SessionEntry): SessionEntry | undefined 
   };
 }
 
-export function archiveSessionTranscriptsForSession(params: {
-  sessionId: string | undefined;
-  storePath: string;
-  sessionFile?: string;
-  agentId?: string;
-  reason: "reset" | "deleted";
-  onArchiveError?: (err: unknown, sourcePath: string) => void;
-}): string[] {
-  return archiveSessionTranscriptsForSessionDetailed(params).map((entry) => entry.archivedPath);
-}
-
 export function archiveSessionTranscriptsForSessionDetailed(params: {
   sessionId: string | undefined;
   storePath: string;
@@ -151,6 +141,8 @@ export function archiveSessionTranscriptsForSessionDetailed(params: {
   agentId?: string;
   reason: "reset" | "deleted";
   onArchiveError?: (err: unknown, sourcePath: string) => void;
+  archiveTimestamp?: string;
+  candidatePaths?: string[];
 }): ArchivedSessionTranscript[] {
   if (!params.sessionId) {
     return [];
@@ -162,13 +154,18 @@ export function archiveSessionTranscriptsForSessionDetailed(params: {
     agentId: params.agentId,
     reason: params.reason,
     onArchiveError: params.onArchiveError,
+    archiveTimestamp: params.archiveTimestamp,
+    candidatePaths: params.candidatePaths,
   });
 }
+
+export { resolveSessionTranscriptCandidates };
 
 export function emitGatewaySessionEndPluginHook(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   sessionId?: string;
+  operationId?: string;
   storePath: string;
   sessionFile?: string;
   agentId?: string;
@@ -207,6 +204,7 @@ export function emitGatewaySessionEndPluginHook(params: {
   const payload = buildSessionEndHookPayload({
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
+    ...(params.operationId ? { operationId: params.operationId } : {}),
     cfg: params.cfg,
     reason: params.reason,
     sessionFile: transcript.sessionFile,
@@ -217,6 +215,39 @@ export function emitGatewaySessionEndPluginHook(params: {
   void hookRunner.runSessionEnd(payload.event, payload.context).catch((err: unknown) => {
     logVerbose(`session_end hook failed: ${String(err)}`);
   });
+}
+
+/** Awaitable delete finalizer variant; callers can checkpoint only after dispatch settles. */
+export async function emitGatewaySessionEndPluginHookAndWait(
+  params: Parameters<typeof emitGatewaySessionEndPluginHook>[0],
+): Promise<void> {
+  if (!params.sessionId) {
+    return;
+  }
+  forgetActiveSessionForShutdown(params.sessionId);
+  const hookRunner = getGlobalHookRunner();
+  if (!hookRunner?.hasHooks("session_end")) {
+    return;
+  }
+  const transcript = resolveStableSessionEndTranscript({
+    sessionId: params.sessionId,
+    storePath: params.storePath,
+    sessionFile: params.sessionFile,
+    agentId: params.agentId,
+    archivedTranscripts: params.archivedTranscripts,
+  });
+  const payload = buildSessionEndHookPayload({
+    sessionId: params.sessionId,
+    sessionKey: params.sessionKey,
+    ...(params.operationId ? { operationId: params.operationId } : {}),
+    cfg: params.cfg,
+    reason: params.reason,
+    sessionFile: transcript.sessionFile,
+    transcriptArchived: transcript.transcriptArchived,
+    nextSessionId: params.nextSessionId,
+    nextSessionKey: params.nextSessionKey,
+  });
+  await hookRunner.runSessionEnd(payload.event, payload.context);
 }
 
 export function emitGatewaySessionStartPluginHook(params: {
@@ -354,6 +385,7 @@ export async function emitSessionUnboundLifecycleEvent(params: {
   targetSessionKey: string;
   reason: "session-reset" | "session-delete";
   emitHooks?: boolean;
+  operationId?: string;
 }) {
   const targetKind = isSubagentSessionKey(params.targetSessionKey) ? "subagent" : "acp";
   await getSessionBindingService().unbind({
@@ -373,6 +405,7 @@ export async function emitSessionUnboundLifecycleEvent(params: {
     {
       targetSessionKey: params.targetSessionKey,
       targetKind,
+      ...(params.operationId ? { operationId: params.operationId } : {}),
       reason: params.reason,
       sendFarewell: true,
       outcome: params.reason === "session-reset" ? "reset" : "deleted",
@@ -1048,121 +1081,121 @@ export async function performGatewaySessionReset(params: {
   let next: SessionEntry;
   try {
     next = await updateSessionStore(storePath, (store) => {
-    const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
-      cfg,
-      key: params.key,
-      store,
-      ...(requestedAgentId ? { agentId: requestedAgentId } : {}),
+      const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
+        cfg,
+        key: params.key,
+        store,
+        ...(requestedAgentId ? { agentId: requestedAgentId } : {}),
+      });
+      const currentEntry = store[primaryKey];
+      resetSourceEntry = currentEntry ? { ...currentEntry } : undefined;
+      const parsed = parseAgentSessionKey(primaryKey);
+      const sessionAgentId = normalizeAgentId(
+        parsed?.agentId ?? target.agentId ?? requestedAgentId ?? resolveDefaultAgentId(cfg),
+      );
+      const resetPreservedSelection = resolveResetPreservedSelection({
+        entry: currentEntry,
+      });
+      const resetEntry = {
+        ...stripRuntimeModelState(currentEntry),
+        providerOverride: undefined,
+        modelOverride: undefined,
+        modelOverrideSource: undefined,
+        authProfileOverride: undefined,
+        authProfileOverrideSource: undefined,
+        authProfileOverrideCompactionCount: undefined,
+        ...resetPreservedSelection,
+      };
+      const resolvedModel = resolveSessionModelRef(cfg, resetEntry, sessionAgentId);
+      oldSessionId = currentEntry?.sessionId;
+      oldSessionFile = currentEntry?.sessionFile;
+      const now = Date.now();
+      const nextSessionId = randomUUID();
+      const sessionFile = resolveResetSessionFile({
+        nextSessionId,
+        currentEntry,
+        storePath,
+        agentId: sessionAgentId,
+      });
+      const nextEntry: SessionEntry = {
+        sessionId: nextSessionId,
+        sessionFile,
+        updatedAt: now,
+        systemSent: false,
+        abortedLastRun: false,
+        thinkingLevel: currentEntry?.thinkingLevel,
+        fastMode: currentEntry?.fastMode,
+        verboseLevel: currentEntry?.verboseLevel,
+        traceLevel: currentEntry?.traceLevel,
+        reasoningLevel: currentEntry?.reasoningLevel,
+        elevatedLevel: currentEntry?.elevatedLevel,
+        ttsAuto: currentEntry?.ttsAuto,
+        execHost: currentEntry?.execHost,
+        execSecurity: currentEntry?.execSecurity,
+        execAsk: currentEntry?.execAsk,
+        execNode: currentEntry?.execNode,
+        responseUsage: currentEntry?.responseUsage,
+        // Resets should keep the user's explicit selection, but clear any
+        // temporary fallback model that was pinned during the previous run.
+        ...resetPreservedSelection,
+        groupActivation: currentEntry?.groupActivation,
+        groupActivationNeedsSystemIntro: currentEntry?.groupActivationNeedsSystemIntro,
+        chatType: currentEntry?.chatType,
+        model: resolvedModel.model,
+        modelProvider: resolvedModel.provider,
+        contextTokens: resetEntry?.contextTokens,
+        compactionCount: currentEntry?.compactionCount,
+        compactionCheckpoints: currentEntry?.compactionCheckpoints,
+        sendPolicy: currentEntry?.sendPolicy,
+        queueMode: currentEntry?.queueMode,
+        queueDebounceMs: currentEntry?.queueDebounceMs,
+        queueCap: currentEntry?.queueCap,
+        queueDrop: currentEntry?.queueDrop,
+        spawnedBy: currentEntry?.spawnedBy,
+        spawnedWorkspaceDir: currentEntry?.spawnedWorkspaceDir,
+        spawnedCwd: currentEntry?.spawnedCwd,
+        parentSessionKey: currentEntry?.parentSessionKey,
+        forkedFromParent: currentEntry?.forkedFromParent,
+        spawnDepth: currentEntry?.spawnDepth,
+        subagentRole: currentEntry?.subagentRole,
+        subagentControlScope: currentEntry?.subagentControlScope,
+        label: currentEntry?.label,
+        displayName: currentEntry?.displayName,
+        channel: currentEntry?.channel,
+        groupId: currentEntry?.groupId,
+        subject: currentEntry?.subject,
+        groupChannel: currentEntry?.groupChannel,
+        space: currentEntry?.space,
+        origin: snapshotSessionOrigin(currentEntry),
+        deliveryContext: currentEntry?.deliveryContext,
+        cliSessionBindings: currentEntry?.cliSessionBindings,
+        cliSessionIds: currentEntry?.cliSessionIds,
+        claudeCliSessionId: currentEntry?.claudeCliSessionId,
+        lastChannel: currentEntry?.lastChannel,
+        lastTo: currentEntry?.lastTo,
+        lastAccountId: currentEntry?.lastAccountId,
+        lastThreadId: currentEntry?.lastThreadId,
+        // Do not carry the cached skills catalog across /new. Long-lived channel
+        // sessions (Signal DMs/groups in particular) otherwise keep advertising a
+        // stale <available_skills> block even after reset/restart, because the
+        // skills snapshot version is runtime-local and may reset to 0.
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        totalTokensFresh: true,
+      };
+      // Drop CLI provider bindings so the next turn after reset starts a fresh
+      // CLI conversation on the provider side. Preserved only for spawned
+      // subagents (canonical `:subagent:` keys), where Tak Hoffman's fa56682b3ced
+      // regression fix intentionally protects CLI continuity for
+      // orchestration-driven resets. Non-subagent sessions that happen to set
+      // `parentSessionKey` (e.g. dashboard children) are not exempt.
+      if (!isSubagentSessionKey(primaryKey)) {
+        clearAllCliSessions(nextEntry);
+      }
+      store[primaryKey] = nextEntry;
+      return nextEntry;
     });
-    const currentEntry = store[primaryKey];
-    resetSourceEntry = currentEntry ? { ...currentEntry } : undefined;
-    const parsed = parseAgentSessionKey(primaryKey);
-    const sessionAgentId = normalizeAgentId(
-      parsed?.agentId ?? target.agentId ?? requestedAgentId ?? resolveDefaultAgentId(cfg),
-    );
-    const resetPreservedSelection = resolveResetPreservedSelection({
-      entry: currentEntry,
-    });
-    const resetEntry = {
-      ...stripRuntimeModelState(currentEntry),
-      providerOverride: undefined,
-      modelOverride: undefined,
-      modelOverrideSource: undefined,
-      authProfileOverride: undefined,
-      authProfileOverrideSource: undefined,
-      authProfileOverrideCompactionCount: undefined,
-      ...resetPreservedSelection,
-    };
-    const resolvedModel = resolveSessionModelRef(cfg, resetEntry, sessionAgentId);
-    oldSessionId = currentEntry?.sessionId;
-    oldSessionFile = currentEntry?.sessionFile;
-    const now = Date.now();
-    const nextSessionId = randomUUID();
-    const sessionFile = resolveResetSessionFile({
-      nextSessionId,
-      currentEntry,
-      storePath,
-      agentId: sessionAgentId,
-    });
-    const nextEntry: SessionEntry = {
-      sessionId: nextSessionId,
-      sessionFile,
-      updatedAt: now,
-      systemSent: false,
-      abortedLastRun: false,
-      thinkingLevel: currentEntry?.thinkingLevel,
-      fastMode: currentEntry?.fastMode,
-      verboseLevel: currentEntry?.verboseLevel,
-      traceLevel: currentEntry?.traceLevel,
-      reasoningLevel: currentEntry?.reasoningLevel,
-      elevatedLevel: currentEntry?.elevatedLevel,
-      ttsAuto: currentEntry?.ttsAuto,
-      execHost: currentEntry?.execHost,
-      execSecurity: currentEntry?.execSecurity,
-      execAsk: currentEntry?.execAsk,
-      execNode: currentEntry?.execNode,
-      responseUsage: currentEntry?.responseUsage,
-      // Resets should keep the user's explicit selection, but clear any
-      // temporary fallback model that was pinned during the previous run.
-      ...resetPreservedSelection,
-      groupActivation: currentEntry?.groupActivation,
-      groupActivationNeedsSystemIntro: currentEntry?.groupActivationNeedsSystemIntro,
-      chatType: currentEntry?.chatType,
-      model: resolvedModel.model,
-      modelProvider: resolvedModel.provider,
-      contextTokens: resetEntry?.contextTokens,
-      compactionCount: currentEntry?.compactionCount,
-      compactionCheckpoints: currentEntry?.compactionCheckpoints,
-      sendPolicy: currentEntry?.sendPolicy,
-      queueMode: currentEntry?.queueMode,
-      queueDebounceMs: currentEntry?.queueDebounceMs,
-      queueCap: currentEntry?.queueCap,
-      queueDrop: currentEntry?.queueDrop,
-      spawnedBy: currentEntry?.spawnedBy,
-      spawnedWorkspaceDir: currentEntry?.spawnedWorkspaceDir,
-      spawnedCwd: currentEntry?.spawnedCwd,
-      parentSessionKey: currentEntry?.parentSessionKey,
-      forkedFromParent: currentEntry?.forkedFromParent,
-      spawnDepth: currentEntry?.spawnDepth,
-      subagentRole: currentEntry?.subagentRole,
-      subagentControlScope: currentEntry?.subagentControlScope,
-      label: currentEntry?.label,
-      displayName: currentEntry?.displayName,
-      channel: currentEntry?.channel,
-      groupId: currentEntry?.groupId,
-      subject: currentEntry?.subject,
-      groupChannel: currentEntry?.groupChannel,
-      space: currentEntry?.space,
-      origin: snapshotSessionOrigin(currentEntry),
-      deliveryContext: currentEntry?.deliveryContext,
-      cliSessionBindings: currentEntry?.cliSessionBindings,
-      cliSessionIds: currentEntry?.cliSessionIds,
-      claudeCliSessionId: currentEntry?.claudeCliSessionId,
-      lastChannel: currentEntry?.lastChannel,
-      lastTo: currentEntry?.lastTo,
-      lastAccountId: currentEntry?.lastAccountId,
-      lastThreadId: currentEntry?.lastThreadId,
-      // Do not carry the cached skills catalog across /new. Long-lived channel
-      // sessions (Signal DMs/groups in particular) otherwise keep advertising a
-      // stale <available_skills> block even after reset/restart, because the
-      // skills snapshot version is runtime-local and may reset to 0.
-      inputTokens: 0,
-      outputTokens: 0,
-      totalTokens: 0,
-      totalTokensFresh: true,
-    };
-    // Drop CLI provider bindings so the next turn after reset starts a fresh
-    // CLI conversation on the provider side. Preserved only for spawned
-    // subagents (canonical `:subagent:` keys), where Tak Hoffman's fa56682b3ced
-    // regression fix intentionally protects CLI continuity for
-    // orchestration-driven resets. Non-subagent sessions that happen to set
-    // `parentSessionKey` (e.g. dashboard children) are not exempt.
-    if (!isSubagentSessionKey(primaryKey)) {
-      clearAllCliSessions(nextEntry);
-    }
-    store[primaryKey] = nextEntry;
-    return nextEntry;
-  });
     resetMutationSucceeded = true;
   } finally {
     mutationCleanup.settle(resetMutationSucceeded);

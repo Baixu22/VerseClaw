@@ -2,9 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   acquireSessionAdmissionPermit,
-  RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV,
   SessionAdmissionFencedError,
-  sessionAdmissionEnabled,
   sessionAdmissionRegistry,
 } from "./session-admission-registry.js";
 
@@ -16,12 +14,10 @@ const identity = {
 
 beforeEach(() => {
   sessionAdmissionRegistry.clearForTests();
-  delete process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV];
 });
 
 afterEach(() => {
   sessionAdmissionRegistry.clearForTests();
-  delete process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV];
 });
 
 describe("SessionAdmissionRegistry", () => {
@@ -93,16 +89,13 @@ describe("SessionAdmissionRegistry", () => {
     token.release();
   });
 
-  it("default-off production hook is a no-op and does not touch the registry", () => {
-    expect(sessionAdmissionEnabled()).toBe(false);
+  it("required production hook acquires permits without an env opt-in", () => {
     const release = acquireSessionAdmissionPermit(identity, "chat-send");
-    expect(sessionAdmissionRegistry.snapshot(identity)?.totalPermits).toBeUndefined();
+    expect(sessionAdmissionRegistry.snapshot(identity)?.totalPermits).toBe(1);
     release();
   });
 
-  it("enabled production hook acquires real permits and respects fences", async () => {
-    process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV] = "1";
-    expect(sessionAdmissionEnabled()).toBe(true);
+  it("required production hook respects fences without an env opt-in", async () => {
     const release = acquireSessionAdmissionPermit(identity, "chat-send");
     expect(sessionAdmissionRegistry.snapshot(identity)?.active).toBe(1);
     release();
@@ -169,16 +162,7 @@ describe("SessionAdmissionRegistry", () => {
     second();
   });
 
-  it("default-off hook tolerates malformed identity because it never enters the registry", () => {
-    const release = acquireSessionAdmissionPermit(
-      { canonicalSessionKey: "unscoped", expectedSessionId: "session-1" },
-      "chat-send",
-    );
-    expect(() => release()).not.toThrow();
-  });
-
-  it("enabled hook fail-closes malformed identity instead of admitting with a guessed agent", () => {
-    process.env[RUNTIME_LIFECYCLE_ADMISSION_ENABLED_ENV] = "1";
+  it("required hook fail-closes malformed identity", () => {
     expect(() =>
       acquireSessionAdmissionPermit(
         { canonicalSessionKey: "unscoped", expectedSessionId: "session-1" },

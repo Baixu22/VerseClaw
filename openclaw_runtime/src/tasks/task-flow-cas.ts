@@ -39,6 +39,15 @@ export type FlowStatus = (typeof FLOW_STATUSES)[number];
 
 const TERMINAL_STATUSES: ReadonlySet<FlowStatus> = new Set(['succeeded', 'failed', 'cancelled', 'lost']);
 
+/**
+ * Non-terminal statuses, i.e. rows that still occupy an active budget slot.
+ * Budget accounting MUST filter on these so historical terminal rows can never
+ * exhaust a live budget (a terminal row is settled truth, not held capacity).
+ */
+export const ACTIVE_FLOW_STATUSES: readonly FlowStatus[] = FLOW_STATUSES.filter(
+  (status) => !TERMINAL_STATUSES.has(status),
+);
+
 /** Terminal statuses are absorbing and can never be an initial status. */
 export function isTerminalFlowStatus(status: FlowStatus): boolean {
   return TERMINAL_STATUSES.has(status);

@@ -8,6 +8,8 @@ import type {
 import type { TaskLoopRunResult } from "../task-loop-controller.js";
 import type { AnomalyPattern } from "../anomaly-classifier.js";
 import type { MissionContextPack } from "./context.js";
+import type { MissionContinuation } from "../goal-wake-types.js";
+import type { RuntimeLineage } from "../../runtime-core/lineage.js";
 
 export type MissionStatus =
   | "idle"
@@ -65,7 +67,17 @@ export type MissionConfig = {
 };
 
 export type MissionEvidenceRef = {
-  type: "session" | "trace" | "file" | "memory" | "tool" | "task_loop" | "clawgraph" | "task_ledger" | "manual" | "other";
+  type:
+    | "session"
+    | "trace"
+    | "file"
+    | "memory"
+    | "tool"
+    | "task_loop"
+    | "clawgraph"
+    | "task_ledger"
+    | "manual"
+    | "other";
   ref: string;
   label?: string;
   summary?: string;
@@ -101,6 +113,7 @@ export type MissionTickRecord = {
   decision?: MissionDecision;
   taskLoopRunId?: string;
   traceId?: string;
+  lineage?: RuntimeLineage;
   evidenceRefs: MissionEvidenceRef[];
   reviewer?: MissionReviewerResult;
   controlSignals?: LongConversationControlSignal[];
@@ -130,6 +143,7 @@ export type MissionRunRecord = {
   blockedReason?: string;
   traceId?: string;
   taskLoopRunId?: string;
+  lineage?: RuntimeLineage;
   evidenceRefs: MissionEvidenceRef[];
   risks: string[];
   remaining: string[];
@@ -164,6 +178,7 @@ export type MissionLifecycleEvent = {
   blockedReason?: string;
   taskLoopRunId?: string;
   traceId?: string;
+  lineage?: RuntimeLineage;
   controlSignals?: LongConversationControlSignal[];
   validationState?: LongConversationValidationState;
   error?: string;
@@ -216,8 +231,12 @@ export type MissionTickInput = {
       tick: number;
     };
   };
-  /** Sanitized process completion payload injected into the tick context. */
-  wakePayload?: Record<string, unknown>;
+  /**
+   * Typed continuation payload injected into the tick context. Produced by
+   * `buildMissionContinuation`; one discriminated shape for process, child and
+   * timer triggers alike.
+   */
+  wakePayload?: MissionContinuation;
 };
 
 export type MissionReviewerInput = {

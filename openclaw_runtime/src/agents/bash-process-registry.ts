@@ -73,6 +73,11 @@ export interface ProcessSession {
   lifecycleAgentId?: string;
   lifecycleCanonicalSessionKey?: string;
   lifecycleExpectedSessionId?: string;
+  /** `session.store` template from the runtime config, snapshotted at exec
+   *  start so the exit-time generation guard can resolve the key's current
+   *  sessionId without an ambient config load. Follows the same start-time
+   *  snapshot convention as `mainKey`/`sessionScope`. */
+  lifecycleSessionStoreTemplate?: string;
   /** Resolves when the owned process has actually exited (not merely closed stdio). */
   lifecycleExitPromise?: Promise<unknown>;
   lastOutputAt?: number;
@@ -505,6 +510,65 @@ export function getBashProcessRegistryState(): BashProcessRegistryState {
     finishedCount: finishedSessions.size,
     sweeperActive: sweeper !== null,
   };
+}
+
+/**
+ * TF-0081 idle classification for running bash sessions. Classification is
+ * observability only — nothing is killed automatically; a session with recent
+ * output is a live running process and is never a reclamation candidate.
+ */
+export type BashProcessIdleClassification = "running-process" | "idle" | "completed";
+
+const DEFAULT_RUNNING_IDLE_MS = 10 * 60 * 1000; // 10 minutes
+const MIN_RUNNING_IDLE_MS = 60 * 1000; // 1 minute
+const MAX_RUNNING_IDLE_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+const runningIdleMs = Math.min(
+  Math.max(
+    readEnvInt("OPENCLAW_BASH_RUNNING_IDLE_MS") ?? DEFAULT_RUNNING_IDLE_MS,
+    MIN_RUNNING_IDLE_MS,
+  ),
+  MAX_RUNNING_IDLE_MS,
+);
+
+/** Classifies one running session's idle state from its last activity time. */
+export function classifyBashProcessIdle(input: {
+  exited: boolean;
+  /** Last output time when present; falls back to the session start time. */
+  lastActivityAtMs: number;
+  nowMs: number;
+  idleMs?: number;
+}): BashProcessIdleClassification {
+  if (input.exited) {
+    return "completed";
+  }
+  const idleMs = input.idleMs ?? runningIdleMs;
+  return input.nowMs - input.lastActivityAtMs < idleMs ? "running-process" : "idle";
+}
+
+/** Classifies a registered session by id; null when the id is unknown. */
+export function classifyBashProcessSession(id: string): {
+  classification: BashProcessIdleClassification;
+  sinceActivityMs: number;
+} | null {
+  const nowMs = Date.now();
+  const running = runningSessions.get(id);
+  if (running) {
+    const lastActivityAtMs = running.lastOutputAt ?? running.startedAt;
+    return {
+      classification: classifyBashProcessIdle({
+        exited: false,
+        lastActivityAtMs,
+        nowMs,
+      }),
+      sinceActivityMs: nowMs - lastActivityAtMs,
+    };
+  }
+  const finished = finishedSessions.get(id);
+  if (finished) {
+    return { classification: "completed", sinceActivityMs: nowMs - finished.endedAt };
+  }
+  return null;
 }
 
 /** Clears retained finished sessions without touching running processes. */

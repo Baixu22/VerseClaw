@@ -10,11 +10,9 @@ import {
   createSessionDeleteJournalEvent,
   finalizeSessionDeleteOperationJournal,
   markSessionDeleteOperationPartialCommitted,
-  probeSessionDeleteOperationJournal,
+  parseSessionDeletePartialReceipt,
   readSessionDeleteOperationJournal,
   writeSessionDeleteOperationIntent,
-  RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV,
-  sessionDeleteOperationJournalEnabled,
   SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION,
   type SessionDeleteOperationManifest,
 } from "./session-delete-operation-journal.js";
@@ -31,7 +29,9 @@ import {
 } from "../config/sessions/store-sqlite.js";
 import type { SessionEntry } from "../config/sessions/types.js";
 
-function manifest(overrides: Partial<SessionDeleteOperationManifest> = {}): SessionDeleteOperationManifest {
+function manifest(
+  overrides: Partial<SessionDeleteOperationManifest> = {},
+): SessionDeleteOperationManifest {
   return {
     version: SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION,
     operation: "session-delete",
@@ -40,23 +40,15 @@ function manifest(overrides: Partial<SessionDeleteOperationManifest> = {}): Sess
     canonicalKey: "agent:agent-a:main",
     expectedSessionId: "session-1",
     deleteTranscript: true,
+    emitLifecycleHooks: true,
     archivePlan: {
-      destination: "session-store-relative",
-      relativeDir: "deleted",
-      fileName: "op-1.jsonl",
+      destination: "session-artifact-sibling",
+      archiveTimestamp: "2026-08-21T00-00-00.000Z",
       entries: ["transcript.jsonl"],
     },
     ...overrides,
   };
 }
-
-beforeEach(() => {
-  delete process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV];
-});
-
-afterEach(() => {
-  delete process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV];
-});
 
 describe("session delete operation journal primitive", () => {
   it("builds a deterministic manifest digest", () => {
@@ -68,13 +60,33 @@ describe("session delete operation journal primitive", () => {
 
   it("is content-sensitive: same operationId with different digest conflicts by digest comparison", () => {
     const originalDigest = buildSessionDeleteManifestDigest(manifest());
-    const changedDigest = buildSessionDeleteManifestDigest(
-      manifest({ deleteTranscript: false }),
-    );
+    const changedDigest = buildSessionDeleteManifestDigest(manifest({ deleteTranscript: false }));
     expect(originalDigest).not.toBe(changedDigest);
     // Phase 0 only provides the comparison primitive; retry conflict behavior
     // (same id + different digest -> conflict) is built on this in Phase 2.
     expect(originalDigest === changedDigest ? "same" : "conflict").toBe("conflict");
+  });
+
+  it("includes nested archive plan values in the digest", () => {
+    const original = manifest();
+    const changedArchive = manifest({
+      archivePlan: {
+        ...original.archivePlan,
+        archiveTimestamp: "2026-08-22T00-00-00.000Z",
+      },
+    });
+    const changedEntry = manifest({
+      archivePlan: {
+        ...original.archivePlan,
+        entries: ["different-transcript.jsonl"],
+      },
+    });
+    expect(buildSessionDeleteManifestDigest(original)).not.toBe(
+      buildSessionDeleteManifestDigest(changedArchive),
+    );
+    expect(buildSessionDeleteManifestDigest(original)).not.toBe(
+      buildSessionDeleteManifestDigest(changedEntry),
+    );
   });
 
   it("creates journal events in the documented state machine without persisting", () => {
@@ -94,63 +106,23 @@ describe("session delete operation journal primitive", () => {
     ).toThrow("operationId must be non-empty");
   });
 
-  it("default-off production hook does not probe or persist", () => {
-    expect(sessionDeleteOperationJournalEnabled()).toBe(false);
-    expect(
-      probeSessionDeleteOperationJournal({
-        operationId: "op-1",
-        agentId: "agent-a",
-        canonicalKey: "agent:agent-a:main",
-        expectedSessionId: "session-1",
-        deleteTranscript: true,
-      }),
-    ).toBeUndefined();
-  });
-
-  it("probe ignores incomplete requests even when the flag is enabled", () => {
-    process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV] = "1";
-    expect(
-      probeSessionDeleteOperationJournal({
-        operationId: "op-1",
-        agentId: "agent-a",
-        canonicalKey: "agent:agent-a:main",
-        expectedSessionId: undefined,
-        deleteTranscript: true,
-      }),
-    ).toBeUndefined();
-    expect(
-      probeSessionDeleteOperationJournal({
-        operationId: "",
-        agentId: "agent-a",
-        canonicalKey: "agent:agent-a:main",
-        expectedSessionId: "session-1",
-        deleteTranscript: true,
-      }),
-    ).toBeUndefined();
-  });
-
   it("event state transitions are ordered and receipts are optional", () => {
     const base = { operationId: "op-2", manifest: manifest() };
     const intent = createSessionDeleteJournalEvent({ ...base, state: "intent", createdAt: 1 });
-    const storeCommitted = createSessionDeleteJournalEvent({ ...base, state: "store_committed", createdAt: 2 });
-    const runtimeCommitted = createSessionDeleteJournalEvent({ ...base, state: "runtime_committed", createdAt: 3, receiptJson: "{\"ok\":true}" });
+    const storeCommitted = createSessionDeleteJournalEvent({
+      ...base,
+      state: "store_committed",
+      createdAt: 2,
+    });
+    const runtimeCommitted = createSessionDeleteJournalEvent({
+      ...base,
+      state: "runtime_committed",
+      createdAt: 3,
+      receiptJson: '{"ok":true}',
+    });
     expect(intent.createdAt).toBeLessThan(storeCommitted.createdAt);
     expect(storeCommitted.createdAt).toBeLessThan(runtimeCommitted.createdAt);
-    expect(runtimeCommitted.receiptJson).toBe("{\"ok\":true}");
-  });
-
-  it("enabled production hook computes a digest but still has no persistence side effects", () => {
-    process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV] = "1";
-    expect(sessionDeleteOperationJournalEnabled()).toBe(true);
-    expect(
-      probeSessionDeleteOperationJournal({
-        operationId: "op-1",
-        agentId: "agent-a",
-        canonicalKey: "agent:agent-a:main",
-        expectedSessionId: "session-1",
-        deleteTranscript: true,
-      }),
-    ).toMatch(/^[a-f0-9]{64}$/);
+    expect(runtimeCommitted.receiptJson).toBe('{"ok":true}');
   });
 });
 
@@ -164,13 +136,11 @@ describe("session delete operation journal persistence", () => {
   let storePath: string;
 
   beforeEach(() => {
-    process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV] = "1";
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-delete-journal-"));
     storePath = path.join(tmpDir, "sessions.json");
   });
 
   afterEach(() => {
-    delete process.env[RUNTIME_LIFECYCLE_DELETE_JOURNAL_ENABLED_ENV];
     closeOpenClawAgentDatabasesForTest();
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
@@ -183,6 +153,7 @@ describe("session delete operation journal persistence", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: true,
+      emitLifecycleHooks: true,
     });
     writeSessionDeleteOperationIntent(storePath, { operationId: "op-1", manifest: op });
     const journal = readSessionDeleteOperationJournal(storePath, "op-1");
@@ -199,6 +170,7 @@ describe("session delete operation journal persistence", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: true,
+      emitLifecycleHooks: true,
     });
     writeSessionDeleteOperationIntent(storePath, { operationId: "op-1", manifest: first });
     const second = buildSessionDeleteOperationManifest({
@@ -207,6 +179,7 @@ describe("session delete operation journal persistence", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: false,
+      emitLifecycleHooks: true,
     });
     const journal = readSessionDeleteOperationJournal(storePath, "op-1");
     expect(journal?.event.manifestDigest).toBe(buildSessionDeleteManifestDigest(first));
@@ -221,6 +194,7 @@ describe("session delete operation journal persistence", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: true,
+      emitLifecycleHooks: true,
     });
     writeSessionDeleteOperationIntent(storePath, { operationId: "op-1", manifest: op });
 
@@ -258,6 +232,7 @@ describe("session delete operation journal persistence", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: true,
+      emitLifecycleHooks: true,
     });
     const row: SessionDeleteOperationJournalRow = buildSessionDeleteOperationJournalRow({
       operationId: "op-tx",
@@ -281,6 +256,7 @@ describe("session delete operation journal manifest and row helpers", () => {
       canonicalKey: "agent:agent-a:main",
       expectedSessionId: "session-1",
       deleteTranscript: false,
+      emitLifecycleHooks: false,
       sessionFile: " /tmp/session-1.jsonl ",
     });
     expect(op.operation).toBe("session-delete");
@@ -291,9 +267,8 @@ describe("session delete operation journal manifest and row helpers", () => {
     expect(op.expectedSessionId).toBe("session-1");
     expect(op.deleteTranscript).toBe(false);
     expect(op.sessionFile).toBe("/tmp/session-1.jsonl");
-    expect(op.archivePlan.destination).toBe("session-store-relative");
-    expect(op.archivePlan.relativeDir).toBe("deleted");
-    expect(op.archivePlan.fileName).toBe("op-manifest.jsonl");
+    expect(op.archivePlan.destination).toBe("session-artifact-sibling");
+    expect(op.archivePlan.archiveTimestamp).toMatch(/^\d{4}-/);
     expect(op.archivePlan.entries).toEqual([]);
   });
 
@@ -305,8 +280,23 @@ describe("session delete operation journal manifest and row helpers", () => {
         canonicalKey: "agent:agent-a:main",
         expectedSessionId: "session-1",
         deleteTranscript: true,
+        emitLifecycleHooks: true,
       }),
     ).toThrow("operationId must be non-empty");
+  });
+
+  it("rejects a malformed deterministic archive timestamp", () => {
+    expect(() =>
+      buildSessionDeleteOperationManifest({
+        operationId: "op-invalid-archive",
+        agentId: "agent-a",
+        canonicalKey: "agent:agent-a:main",
+        expectedSessionId: "session-1",
+        deleteTranscript: true,
+        emitLifecycleHooks: true,
+        archiveTimestamp: "not-a-timestamp",
+      }),
+    ).toThrow("archiveTimestamp");
   });
 
   it("builds a journal row with snake_case sqlite columns", () => {
@@ -315,14 +305,14 @@ describe("session delete operation journal manifest and row helpers", () => {
       operationId: "op-row",
       manifest: op,
       state: "store_committed",
-      receiptJson: "{\"ok\":true}",
+      receiptJson: '{"ok":true}',
       createdAt: 42,
     });
     expect(row.operation_id).toBe("op-row");
     expect(row.manifest_digest).toBe(buildSessionDeleteManifestDigest(op));
     expect(row.manifest_json).toBe(JSON.stringify(op));
     expect(row.state).toBe("store_committed");
-    expect(row.receipt_json).toBe("{\"ok\":true}");
+    expect(row.receipt_json).toBe('{"ok":true}');
     expect(row.created_at).toBe(42);
     expect(row.updated_at).toBe(42);
   });
@@ -332,16 +322,66 @@ describe("session delete operation journal manifest and row helpers", () => {
     const second = manifest();
     expect(buildSessionDeleteManifestDigest(first)).toBe(buildSessionDeleteManifestDigest(second));
     const reordered = {
-      version: first.version,
-      operation: first.operation,
-      agentId: first.agentId,
-      storeIdentity: first.storeIdentity,
-      canonicalKey: first.canonicalKey,
-      expectedSessionId: first.expectedSessionId,
+      archivePlan: {
+        entries: [...first.archivePlan.entries],
+        archiveTimestamp: first.archivePlan.archiveTimestamp,
+        destination: first.archivePlan.destination,
+      },
+      sessionFile: first.sessionFile,
+      emitLifecycleHooks: first.emitLifecycleHooks,
       deleteTranscript: first.deleteTranscript,
-      archivePlan: first.archivePlan,
+      expectedSessionId: first.expectedSessionId,
+      canonicalKey: first.canonicalKey,
+      storeIdentity: first.storeIdentity,
+      agentId: first.agentId,
+      operation: first.operation,
+      version: first.version,
     } as SessionDeleteOperationManifest;
-    expect(buildSessionDeleteManifestDigest(reordered)).toBe(buildSessionDeleteManifestDigest(first));
+    expect(Object.keys(reordered)).not.toEqual(Object.keys(first));
+    expect(buildSessionDeleteManifestDigest(reordered)).toBe(
+      buildSessionDeleteManifestDigest(first),
+    );
+  });
+
+  it("rejects legacy session-store-relative manifests with an explicit migration error", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-delete-journal-"));
+    try {
+      const legacyStorePath = path.join(tmp, "sessions.json");
+      makeStore(legacyStorePath);
+      const legacy = {
+        version: SESSION_DELETE_OPERATION_JOURNAL_SCHEMA_VERSION,
+        operation: "session-delete",
+        agentId: "agent-a",
+        canonicalKey: "agent:agent-a:main",
+        expectedSessionId: "session-1",
+        deleteTranscript: true,
+        archivePlan: {
+          destination: "session-store-relative",
+          relativeDir: "deleted",
+          fileName: "legacy-op.jsonl",
+          entries: [],
+        },
+      };
+      expect(readSessionDeleteOperationJournal(legacyStorePath, "legacy-op")).toBeUndefined();
+      const row: SessionDeleteOperationJournalRow = {
+        operation_id: "legacy-op",
+        manifest_json: JSON.stringify(legacy),
+        manifest_digest: buildSessionDeleteManifestDigest(
+          legacy as unknown as SessionDeleteOperationManifest,
+        ),
+        state: "intent",
+        receipt_json: null,
+        created_at: 1,
+        updated_at: 1,
+      };
+      replaceSqliteSessionStore(legacyStorePath, {}, { journalRows: [row] });
+      expect(() => readSessionDeleteOperationJournal(legacyStorePath, "legacy-op")).toThrow(
+        "unsupported legacy archive plan",
+      );
+    } finally {
+      closeOpenClawAgentDatabasesForTest();
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
   });
 
   it("createSessionDeleteJournalEvent defaults createdAt and receipt", () => {
@@ -358,7 +398,9 @@ describe("session delete operation journal manifest and row helpers", () => {
   it("readSessionDeleteOperationJournal returns undefined when no row exists", () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-delete-journal-"));
     try {
-      expect(readSessionDeleteOperationJournal(path.join(tmp, "sessions.json"), "missing-op")).toBeUndefined();
+      expect(
+        readSessionDeleteOperationJournal(path.join(tmp, "sessions.json"), "missing-op"),
+      ).toBeUndefined();
     } finally {
       closeOpenClawAgentDatabasesForTest();
       fs.rmSync(tmp, { recursive: true, force: true });
@@ -388,7 +430,11 @@ describe("session delete operation journal sqlite row lifecycle", () => {
       manifest: op,
       state: "intent",
     });
-    replaceSqliteSessionStore(storePath, { "agent:agent-a:main": { sessionId: "session-1", updatedAt: 1 } as SessionEntry }, { journalRows: [first] });
+    replaceSqliteSessionStore(
+      storePath,
+      { "agent:agent-a:main": { sessionId: "session-1", updatedAt: 1 } as SessionEntry },
+      { journalRows: [first] },
+    );
     const before = readSessionDeleteOperationJournal(storePath, "op-upsert");
     expect(before?.event.state).toBe("intent");
     expect(before?.manifest).toEqual(op);
@@ -414,10 +460,15 @@ describe("session delete operation journal sqlite row lifecycle", () => {
     });
     replaceSqliteSessionStore(storePath, {}, { journalRows: [row] });
 
-    updateSessionDeleteOperationJournalState(storePath, "op-finalize", "runtime_committed", "{\"ok\":true}");
+    updateSessionDeleteOperationJournalState(
+      storePath,
+      "op-finalize",
+      "runtime_committed",
+      '{"ok":true}',
+    );
     const journal = readSessionDeleteOperationJournal(storePath, "op-finalize");
     expect(journal?.event.state).toBe("runtime_committed");
-    expect(journal?.event.receiptJson).toBe("{\"ok\":true}");
+    expect(journal?.event.receiptJson).toBe('{"ok":true}');
     expect(journal?.manifest).toEqual(op);
     expect(journal?.row.manifest_json).toBe(JSON.stringify(op));
   });
@@ -451,6 +502,46 @@ describe("session delete operation journal sqlite row lifecycle", () => {
     expect(journal?.manifest).toEqual(op);
   });
 
+  it("persists partial finalization progress for an idempotent retry", () => {
+    const op = manifest();
+    const row = buildSessionDeleteOperationJournalRow({
+      operationId: "op-partial-progress",
+      manifest: op,
+      state: "store_committed",
+    });
+    replaceSqliteSessionStore(storePath, {}, { journalRows: [row] });
+    markSessionDeleteOperationPartialCommitted(storePath, "op-partial-progress", {
+      ok: true,
+      key: op.canonicalKey,
+      deleted: true,
+      archived: ["/tmp/deleted.jsonl"],
+      archivedTranscripts: [
+        {
+          sourcePath: "/tmp/session.jsonl",
+          archivedPath: "/tmp/deleted.jsonl",
+        },
+      ],
+      sessionId: op.expectedSessionId,
+      operationId: "op-partial-progress",
+      journalState: "partial_committed",
+      finalization: {
+        archiveComplete: true,
+        sessionEndHookEmitted: true,
+        sessionUnbound: false,
+      },
+    });
+    const journal = readSessionDeleteOperationJournal(storePath, "op-partial-progress");
+    expect(JSON.parse(journal?.event.receiptJson ?? "null")).toMatchObject({
+      journalState: "partial_committed",
+      finalization: {
+        archiveComplete: true,
+        sessionEndHookEmitted: true,
+        sessionUnbound: false,
+      },
+    });
+    expect(parseSessionDeletePartialReceipt(journal?.event.receiptJson)).toBeDefined();
+  });
+
   it("replaceSqliteSessionStore removes cache entries and writes multiple journal rows in one store rewrite", () => {
     const first = buildSessionDeleteOperationJournalRow({
       operationId: "op-multi-1",
@@ -463,8 +554,12 @@ describe("session delete operation journal sqlite row lifecycle", () => {
       state: "store_committed",
     });
     replaceSqliteSessionStore(storePath, {}, { journalRows: [first, second] });
-    expect(readSessionDeleteOperationJournalRow(storePath, "op-multi-1")?.state).toBe("store_committed");
-    expect(readSessionDeleteOperationJournalRow(storePath, "op-multi-2")?.state).toBe("store_committed");
+    expect(readSessionDeleteOperationJournalRow(storePath, "op-multi-1")?.state).toBe(
+      "store_committed",
+    );
+    expect(readSessionDeleteOperationJournalRow(storePath, "op-multi-2")?.state).toBe(
+      "store_committed",
+    );
   });
 
   it("readSessionDeleteOperationJournalRow returns null for an unknown operationId", () => {
@@ -473,7 +568,10 @@ describe("session delete operation journal sqlite row lifecycle", () => {
 
   it("writeSessionDeleteOperationIntent and readSessionDeleteOperationJournal round-trip", () => {
     const op = manifest();
-    const event = writeSessionDeleteOperationIntent(storePath, { operationId: "op-intent-2", manifest: op });
+    const event = writeSessionDeleteOperationIntent(storePath, {
+      operationId: "op-intent-2",
+      manifest: op,
+    });
     expect(event.state).toBe("intent");
     expect(event.manifestDigest).toBe(buildSessionDeleteManifestDigest(op));
     const journal = readSessionDeleteOperationJournal(storePath, "op-intent-2");
@@ -492,9 +590,13 @@ describe("session delete operation journal sqlite row lifecycle", () => {
       state: "store_committed",
     });
     replaceSqliteSessionStore(storePath, {}, { journalRows: [committed] });
-    expect(readSessionDeleteOperationJournal(storePath, "op-flow")?.event.state).toBe("store_committed");
+    expect(readSessionDeleteOperationJournal(storePath, "op-flow")?.event.state).toBe(
+      "store_committed",
+    );
 
     finalizeSessionDeleteOperationJournal(storePath, "op-flow", { ok: true, deleted: true });
-    expect(readSessionDeleteOperationJournal(storePath, "op-flow")?.event.state).toBe("runtime_committed");
+    expect(readSessionDeleteOperationJournal(storePath, "op-flow")?.event.state).toBe(
+      "runtime_committed",
+    );
   });
 });
