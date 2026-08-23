@@ -6,8 +6,9 @@
   是本条线的全局任务。
 - `TF-0077`（Runtime Lifecycle Governance Phase 0-6 Closeout，`global_task`）= `done`。
   它交付的是 RLG 七阶段本身；**它不是本条线的终点**。
-- `TF-0078`（会话生态生命周期生产收敛与真实恢复，`milestone`）= `in_progress`，
-  `child_of TF-0010` 且 `derived_from TF-0077`，是 TF-0077 的正式后继。
+- `TF-0078`（会话生态生命周期生产收敛与真实恢复，`milestone`）= `done`
+  （2026-08-24 用户裁定收口），`child_of TF-0010` 且 `derived_from TF-0077`，
+  是 TF-0077 的正式后继。
 - `TF-0078` 下串行五节点全部 `done`：`TF-0079`（生产可达性）→ `TF-0080`（安全闸门）→
   `TF-0081`（资源回收）→ `TF-0082`（跨会话控制与 lineage）→ `TF-0083`（Goal/Loop 唤醒）。
 - `TF-0084`（统一生命周期账本、活动投影与真实闭环验收，`milestone`）是 `TF-0078` 下
@@ -20,8 +21,11 @@
   `TF-0089`（census+启动期守卫）→ `TF-0090`（dispatch 证明 12/12）→
   `TF-0091`（明文决策与死面）→ `TF-0092`（工程卫生）→ `TF-0093`（拆分预案与决策记录）
   全部 `done`；4 个 major + 7 个 minor 全部闭环，收口时刻全链 227 测试 + 根级门禁全绿。
-- `TF-0078` 收口待用户裁定：用户 2026-08-23 决定暂不提交（工作树需整理）；
-  提交时按 `artifacts/tf0093-commit-readiness/split-plan.md` 执行，提交后裁定收口。
+- `TF-0078` 已于 2026-08-24 收口为 `done`（用户裁定）：链改动已按层提交
+  （`80b3fd794` specs、`25df76ab5` runtime、`57bc803b1` electron/renderer、
+  `4800bd758` docs、`3b92660d2`/`f60b0aed0` task-forest）；提交拆分依据
+  `artifacts/tf0093-commit-readiness/split-plan.md`；遗留协调项：11 个他流依赖
+  文件归各 workstream 自行提交。
 - 本文件顶部之后的所有章节都是历史快照。任何写着「当前唯一 active 节点」「下一唯一节点」
   的历史段落，都以本段和下一段为准，不再代表当前状态。
 
