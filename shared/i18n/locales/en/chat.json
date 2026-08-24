@@ -1,4 +1,5 @@
 {
+  "sensitive": { "bannerTitle": "Detected {{count}} secret-shaped string(s) (API key / token) in this conversation. Review before sending.", "dismiss": "Dismiss" },
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
@@ -1062,6 +1063,7 @@
     }
   },
   "composer": {
+    "longText": { "showInTextbox": "Show in text box", "discard": "Discard long text" },
     "attachFiles": "Attach files",
     "placeholder": "Message...  / for commands and skills",
     "pickSkill": "Choose skill",

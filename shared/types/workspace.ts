@@ -170,6 +170,8 @@ export interface WorkspaceArtifactPanelState {
 
 export interface WorkspaceUiState {
   draftInput?: string;
+  /** Long-paste collapse chip buffer (composer long-text auto-collapse). */
+  collapsedDraftInput?: string;
   /** A deliberate stop is remembered so the composer can render its resume state. */
   composerRunState?: 'idle' | 'paused';
   selectedModelRef?: string | null;
@@ -351,3 +353,4 @@ export interface PermissionApprovalEvent {
   paramsPreview?: string;
   reason?: string;
 }
+

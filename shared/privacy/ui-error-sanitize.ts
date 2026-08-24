@@ -1,8 +1,11 @@
-const REDACTED = '[REDACTED]';
+import { findSecretRanges, redactSecretShapes } from './secret-shapes';
 
 /**
  * Sanitize error text for UI rendering.
  * Never include stack frames; strip secret-shaped content.
+ *
+ * Secret-shape patterns live in ./secret-shapes (single source of truth shared
+ * with the composer/message highlight surfaces) so the two can never drift.
  */
 export function sanitizeUiErrorText(input: unknown): string {
   let text: string;
@@ -25,12 +28,7 @@ export function sanitizeUiErrorText(input: unknown): string {
     .filter((line) => !/^\s*at\s+\S+/u.test(line))
     .join('\n');
 
-  text = text.replace(/\bCLAWX_CANARY_[A-Za-z0-9_-]{6,}\b/g, '[' + REDACTED + '_CANARY]');
-  text = text.replace(/\bOPENCLAW_CANARY_[A-Za-z0-9_-]{6,}\b/g, '[' + REDACTED + '_CANARY]');
-  text = text.replace(/\bBearer\s+[A-Za-z0-9._+=/-]{12,}\b/gi, 'Bearer ' + REDACTED);
-  text = text.replace(/\bsk-proj-[A-Za-z0-9_-]{16,}\b/g, 'sk-proj-' + REDACTED);
-  text = text.replace(/\bsk-ant-[A-Za-z0-9_-]{16,}\b/g, 'sk-ant-' + REDACTED);
-  text = text.replace(/\bsk-[A-Za-z0-9]{20,}\b/g, 'sk-' + REDACTED);
+  text = redactSecretShapes(text);
 
   text = text.replace(/\s+/g, ' ').trim();
   if (!text) text = 'Unexpected error';
@@ -41,8 +39,14 @@ export function sanitizeUiErrorText(input: unknown): string {
 export function assertNoStackOrSecret(text: string): string[] {
   const failures: string[] = [];
   if (/\bat\s+\S+/u.test(text)) failures.push('stack-frame');
-  if (/\bCLAWX_CANARY_[A-Za-z0-9_-]{6,}\b/.test(text)) failures.push('canary');
-  if (/\bsk-[A-Za-z0-9]{20,}\b/.test(text)) failures.push('api-key');
-  if (/\bBearer\s+[A-Za-z0-9._+=/-]{12,}\b/i.test(text)) failures.push('bearer');
-  return failures;
+  for (const range of findSecretRanges(text, 200)) {
+    if (range.kind === 'canary') failures.push('canary');
+    else if (range.kind === 'bearer-token') failures.push('bearer');
+    else if (
+      range.kind === 'openai-key'
+      || range.kind === 'openai-project-key'
+      || range.kind === 'anthropic-key'
+    ) failures.push('api-key');
+  }
+  return Array.from(new Set(failures));
 }

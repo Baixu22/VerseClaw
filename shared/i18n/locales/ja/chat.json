@@ -1,4 +1,5 @@
 {
+  "sensitive": { "bannerTitle": "この会話でシークレット形式の文字列を {{count}} 件検出しました。送信前にご確認ください。", "dismiss": "閉じる" },
   "gatewayNotRunning": "ゲートウェイが停止中",
   "retry": "再試行",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
@@ -1062,6 +1063,7 @@
     }
   },
   "composer": {
+    "longText": { "showInTextbox": "テキストボックスに表示", "discard": "長文を破棄" },
     "attachFiles": "ファイルを添付",
     "placeholder": "メッセージ...  / でコマンドと Skill",
     "pickSkill": "Skill を選択",

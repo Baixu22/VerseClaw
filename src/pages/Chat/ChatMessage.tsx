@@ -5,7 +5,7 @@
  * streaming runs may show a compact ToolStatusBar. Thinking output is
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
-import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
+import { useState, useCallback, useEffect, memo, useMemo, useRef, type ComponentProps, type ComponentType, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Copy, Check, Wrench, X, FolderOpen, ZoomIn, AlertCircle, Pencil, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, TextMessagePartProvider, type ThreadMessage } from '@assistant-ui/react';
@@ -13,6 +13,8 @@ import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import type { CodeHeaderProps } from '@assistant-ui/react-markdown';
 import 'katex/dist/katex.min.css';
 import remarkGfm from 'remark-gfm';
+import { findSecretRanges } from '@shared/privacy/secret-shapes';
+import { remarkSecretHighlight } from './remark-secret-highlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { createPortal } from 'react-dom';
@@ -1066,6 +1068,35 @@ function UserMessageEditor({
  * than 16px/10px. The v2 branch keeps its tinted glass treatment because that
  * is a deliberate Windows-material divergence, but adopts the same geometry.
  */
+const MESSAGE_SECRET_SPAN_CLASS =
+  'rounded-sm bg-red-500/10 text-red-700 dark:text-red-400';
+
+/**
+ * Renders user text with secret-shaped ranges highlighted red. Memoized per
+ * text value; single O(n) scan, no polling.
+ */
+function UserTextWithSecretHighlights({ text }: { text: string }) {
+  const ranges = useMemo(() => findSecretRanges(text), [text]);
+  if (ranges.length === 0) return <>{text}</>;
+  const chunks: ReactNode[] = [];
+  let cursor = 0;
+  for (const range of ranges) {
+    if (range.start > cursor) chunks.push(text.slice(cursor, range.start));
+    chunks.push(
+      <span
+        key={`msg-secret-${range.start}`}
+        data-testid="chat-message-secret-span"
+        className={MESSAGE_SECRET_SPAN_CLASS}
+      >
+        {text.slice(range.start, range.end)}
+      </span>,
+    );
+    cursor = range.end;
+  }
+  if (cursor < text.length) chunks.push(text.slice(cursor));
+  return <>{chunks}</>;
+}
+
 function UserMessageBubble({
   text,
 }: {
@@ -1083,7 +1114,9 @@ function UserMessageBubble({
       )}
       data-testid="chat-user-message-bubble"
     >
-      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>
+      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">
+        <UserTextWithSecretHighlights text={text} />
+      </p>
     </div>
   );
 }
@@ -1132,31 +1165,18 @@ function MarkdownCodeHeader({ language, code }: CodeHeaderProps) {
   );
 }
 
-function AssistantMarkdown({
-  text,
-  isStreaming,
-}: {
-  text: string;
-  isStreaming: boolean;
-}) {
-  return (
-    <>
-      <TextMessagePartProvider text={text} isRunning={isStreaming}>
-        <MarkdownTextPrimitive
-          className={cn(
-            /* `prose` is retained purely as a locator: eight e2e specs find
-             * assistant replies through `.prose`. The visual rules now come from
-             * `codex-markdown` (styles/codex-conversation.css), whose two-class
-             * descendant selectors outrank the `.prose x` rules in globals.css. */
-            'prose w-full max-w-none break-words text-foreground codex-markdown',
-            isStreaming && 'codex-markdown-streaming',
-          )}
-          smooth={false}
-          defer={isStreaming}
-          preprocess={normalizeLatexDelimiters}
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[[rehypeKatex, { strict: false, throwOnError: false, output: 'html' }]]}
-          components={{
+type AssistantMarkdownComponents = NonNullable<ComponentProps<typeof MarkdownTextPrimitive>['components']> & {
+  secretText?: ComponentType<{ node?: { value?: unknown } }>;
+};
+
+const assistantMarkdownComponents: AssistantMarkdownComponents = {
+  secretText({ node }) {
+    return (
+      <span data-testid="chat-message-secret-span" className={MESSAGE_SECRET_SPAN_CLASS}>
+        {String(node?.value ?? '')}
+      </span>
+    );
+  },
               a({ href, children, ...props }) {
                 if (href && isGitHubUrl(href)) {
                   return <GitHubCard url={href} />;
@@ -1229,7 +1249,38 @@ function AssistantMarkdown({
                 />
               );
             },
-          }}
+};
+
+function AssistantMarkdown({
+  text,
+  isStreaming,
+}: {
+  text: string;
+  isStreaming: boolean;
+}) {
+  // Highlighting is skipped while streaming so per-token updates stay cheap;
+  // the plugin mounts once when the reply finalizes.
+  const assistantRemarkPlugins = isStreaming
+    ? [remarkGfm, remarkMath]
+    : [remarkGfm, remarkMath, remarkSecretHighlight];
+  return (
+    <>
+      <TextMessagePartProvider text={text} isRunning={isStreaming}>
+        <MarkdownTextPrimitive
+          className={cn(
+            /* `prose` is retained purely as a locator: eight e2e specs find
+             * assistant replies through `.prose`. The visual rules now come from
+             * `codex-markdown` (styles/codex-conversation.css), whose two-class
+             * descendant selectors outrank the `.prose x` rules in globals.css. */
+            'prose w-full max-w-none break-words text-foreground codex-markdown',
+            isStreaming && 'codex-markdown-streaming',
+          )}
+          smooth={false}
+          defer={isStreaming}
+          preprocess={normalizeLatexDelimiters}
+          remarkPlugins={assistantRemarkPlugins}
+          rehypePlugins={[[rehypeKatex, { strict: false, throwOnError: false, output: 'html' }]]}
+          components={assistantMarkdownComponents}
         />
       </TextMessagePartProvider>
       {isStreaming && (

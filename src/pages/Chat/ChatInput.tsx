@@ -9,9 +9,10 @@
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, useDeferredValue, type ReactNode, type ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  AlignLeft,
   Archive,
   ArrowUp,
   AtSign,
@@ -68,6 +69,7 @@ import { useAgentsStore } from '@/stores/agents';
 import { useChatStore } from '@/stores/chat';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { TaskNodeSelector } from '@/components/task-ledger/TaskNodeSelector';
+import { findSecretRanges, summarizeSecretRanges } from '@shared/privacy/secret-shapes';
 import { buildPreviewTarget } from '@/components/file-preview/build-preview-target';
 import { AttachmentRemove, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE } from '@/components/assistant-ui/attachment';
 import { useProviderStore } from '@/stores/providers';
@@ -150,6 +152,11 @@ interface ChatInputProps {
   draftValue?: string;
   slashRequest?: number;
   onDraftChange?: (value: string) => void;
+  /** Long-paste collapse chip buffer (Codex-style auto-collapse). */
+  collapsedDraftValue?: string | null;
+  onCollapsedDraftChange?: (value: string | null) => void;
+  /** Reports composer secret-shape detections upward for the advisory banner. */
+  onSensitiveDetectionChange?: (summary: { count: number; kinds: string[] } | null) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
   onPickWorkspaceFolder?: () => void;
   onSwitchAgent?: (agentId: string) => void | Promise<void>;
@@ -261,6 +268,38 @@ type SlashPaletteItem = SlashPaletteCommandItem | SlashPaletteSkillItem;
 const SLASH_PALETTE_GROUP_ORDER: SlashPaletteGroup[] = ['skills', ...SLASH_COMMAND_GROUP_ORDER];
 const EMPTY_QUERY_SKILL_LIMIT = 6;
 const FILTERED_SKILL_LIMIT = 20;
+
+// ── Long-text paste collapse + secret-shape scan ───────────────
+const COLLAPSE_LINE_THRESHOLD = 12;
+const COLLAPSE_CHAR_THRESHOLD = 2000;
+const SECRET_SCAN_DEBOUNCE_MS = 150;
+
+function shouldCollapsePastedText(text: string): boolean {
+  if (!text) return false;
+  if (text.length > COLLAPSE_CHAR_THRESHOLD) return true;
+  let lines = 1;
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === '\n') {
+      lines += 1;
+      if (lines > COLLAPSE_LINE_THRESHOLD) return true;
+    }
+  }
+  return false;
+}
+
+function firstNonEmptyLine(value: string): string {
+  for (const line of value.split(/\r?\n/u)) {
+    const trimmed = line.trim();
+    if (trimmed) return trimmed;
+  }
+  return value.trim();
+}
+
+function composeCollapsedSendText(collapsed: string | null | undefined, typed: string): string {
+  const collapsedPart = (collapsed ?? '').trim();
+  if (collapsedPart && typed) return `${collapsedPart}\n\n${typed}`;
+  return collapsedPart || typed;
+}
 
 type SlashInputState = {
   active: boolean;
@@ -752,19 +791,45 @@ function findSkillTokenRanges(value: string): SkillTokenRange[] {
 const SKILL_TOKEN_BUTTON_CLASS =
   'rounded-md bg-skill-bg/14 text-skill-fg [-webkit-box-decoration-break:clone] [box-decoration-break:clone] [text-shadow:0_0_10px_rgba(47,107,255,0.38)] dark:bg-skill-bg/18 dark:text-skill-fg-dark dark:[text-shadow:0_0_12px_rgba(37,99,235,0.42)]';
 
+const SECRET_TOKEN_SPAN_CLASS =
+  'rounded-sm bg-red-500/10 text-red-700 dark:text-red-400 [-webkit-box-decoration-break:clone] [box-decoration-break:clone]';
+
 function renderHighlightedComposerText(
   value: string,
   tokenRanges: SkillTokenRange[],
+  secretRanges: readonly { start: number; end: number }[],
   options: { onPreviewSkill: (skillName: string) => void; previewTooltip: string },
 ) {
-  if (tokenRanges.length === 0) {
+  const highlightRanges: Array<{ kind: 'skill' | 'secret'; start: number; end: number }> = [
+    ...tokenRanges.map((range) => ({ kind: 'skill' as const, start: range.start, end: range.end })),
+    ...secretRanges.map((range) => ({ kind: 'secret' as const, start: range.start, end: range.end })),
+  ].sort((a, b) => a.start - b.start);
+
+  if (highlightRanges.length === 0) {
     return <>{value}{value.endsWith('\n') ? '\n' : '\u200b'}</>;
   }
 
   const chunks: React.ReactNode[] = [];
   let cursor = 0;
 
-  for (const tokenRange of tokenRanges) {
+  for (const tokenRange of highlightRanges) {
+    if (tokenRange.start < cursor) continue;
+    if (tokenRange.kind === 'secret') {
+      if (tokenRange.start > cursor) {
+        chunks.push(value.slice(cursor, tokenRange.start));
+      }
+      chunks.push(
+        <span
+          key={`secret-token-${tokenRange.start}`}
+          data-testid="chat-composer-secret-span"
+          className={SECRET_TOKEN_SPAN_CLASS}
+        >
+          {value.slice(tokenRange.start, tokenRange.end)}
+        </span>,
+      );
+      cursor = tokenRange.end;
+      continue;
+    }
     const token = value.slice(tokenRange.start, tokenRange.end);
     const tokenLabel = token.trimEnd();
     const tokenTrailingSpace = token.slice(tokenLabel.length);
@@ -856,6 +921,9 @@ export function ChatInput({
   draftValue,
   slashRequest = 0,
   onDraftChange,
+  collapsedDraftValue = null,
+  onCollapsedDraftChange,
+  onSensitiveDetectionChange,
   workspace,
   onPermissionModeChange,
   onPickWorkspaceFolder,
@@ -1033,6 +1101,31 @@ export function ChatInput({
   const isGatewayUsable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
   const inputDisabled = disabled || !isGatewayUsable;
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
+
+  // Secret-shape scan: event-driven only (debounced + deferred), never polled.
+  const deferredInput = useDeferredValue(input);
+  const [secretScanText, setSecretScanText] = useState(deferredInput);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSecretScanText(deferredInput), SECRET_SCAN_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [deferredInput]);
+  const secretRanges = useMemo(() => findSecretRanges(secretScanText), [secretScanText]);
+  const hasHighlightRanges = skillTokenRanges.length > 0 || secretRanges.length > 0;
+
+  const composerSecretSummary = useMemo(() => {
+    const live = summarizeSecretRanges(secretRanges);
+    const collapsed = summarizeSecretRanges(
+      collapsedDraftValue ? findSecretRanges(collapsedDraftValue, 200) : [],
+    );
+    const count = live.count + collapsed.count;
+    if (count === 0) return null;
+    const kinds = Array.from(new Set([...live.kinds, ...collapsed.kinds])).sort();
+    return { count, kinds };
+  }, [secretRanges, collapsedDraftValue]);
+
+  useEffect(() => {
+    onSensitiveDetectionChange?.(composerSecretSummary);
+  }, [composerSecretSummary, onSensitiveDetectionChange]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
 
   useEffect(() => {
@@ -1788,6 +1881,25 @@ export function ChatInput({
     }
   }, [moveCaretTo, skillTokenRanges]);
 
+  const expandCollapsedDraft = useCallback(() => {
+    if (!collapsedDraftValue) return;
+    const typed = input;
+    updateInput(typed.trim() ? `${collapsedDraftValue}\n\n${typed}` : collapsedDraftValue);
+    onCollapsedDraftChange?.(null);
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (el) {
+        el.focus();
+        el.setSelectionRange(el.value.length, el.value.length);
+      }
+    });
+  }, [collapsedDraftValue, input, onCollapsedDraftChange, updateInput]);
+
+  const dismissCollapsedDraft = useCallback(() => {
+    onCollapsedDraftChange?.(null);
+    textareaRef.current?.focus();
+  }, [onCollapsedDraftChange]);
+
   const insertSkillToken = useCallback((skill: QuickAccessSkill, options: { replaceSlashInput?: boolean } = {}) => {
     const textarea = textareaRef.current;
     const nextToken = getSkillPrefix(skill.name);
@@ -2089,8 +2201,8 @@ export function ChatInput({
 
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
-  const hasComposerDraft = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
-  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
+  const hasComposerDraft = Boolean((collapsedDraftValue ?? '').trim() || input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
+  const canSend = ((collapsedDraftValue ?? '').trim() || input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !sending && !capabilityExecuting;
   // 干预门禁（对齐 P1-4）：无 /loop Task Ledger root（available:false）时
   // 运行时会对显式 inputMode 返回 INVALID_REQUEST——禁用并提示，避免"按钮可点但不可用"。
   const longTaskAvailable = longTaskControlStatus?.available !== false;
@@ -2145,6 +2257,7 @@ export function ChatInput({
     }
     captureHeroComposerPosition();
     updateInput('');
+    onCollapsedDraftChange?.(null);
     setAttachments([]);
     setSelectedKnowledgeRefs([]);
     setSuggestedKnowledgeRefs([]);
@@ -2185,7 +2298,7 @@ export function ChatInput({
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
     return true;
-  }, [activeTaskNodeId, captureHeroComposerPosition, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
+  }, [activeTaskNodeId, captureHeroComposerPosition, onCollapsedDraftChange, onSend, pendingTurnModelRef, recordKnowledgeReferences, updateInput]);
 
   const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
     if (!sending) return;
@@ -2652,7 +2765,7 @@ export function ChatInput({
         if (input.trim() || attachments.some((a) => a.status === 'ready') || selectedKnowledgeRefs.length > 0) {
           const readyAttachments = attachments.filter((a) => a.status === 'ready');
           useChatStore.getState().queuePendingMessage(
-            input.trim() || (selectedKnowledgeRefs.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : ''),
+            composeCollapsedSendText(collapsedDraftValue, input.trim()) || (selectedKnowledgeRefs.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : ''),
             {
               attachments: readyAttachments.length > 0 ? readyAttachments : undefined,
               targetAgentId,
@@ -2679,7 +2792,7 @@ export function ChatInput({
     }
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
-    const baseTextToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
+    const baseTextToSend = composeCollapsedSendText(collapsedDraftValue, input.trim()) || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
     if (knowledgeMode === 'auto-read' && knowledgeReferencesToSend.length === 0 && baseTextToSend) {
       const routedReferences = await routeKnowledgeForMessage(baseTextToSend, 'auto-read');
       if (routedReferences.length > 0) {
@@ -2745,6 +2858,7 @@ export function ChatInput({
     }
     captureHeroComposerPosition();
     updateInput('');
+    onCollapsedDraftChange?.(null);
     setAttachments([]);
     setSelectedKnowledgeRefs([]);
     if (textareaRef.current) {
@@ -2767,7 +2881,7 @@ export function ChatInput({
     setTargetAgentId(null);
     setPickerOpen(false);
     setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, collapsedDraftValue, onCollapsedDraftChange, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -2980,9 +3094,19 @@ export function ChatInput({
       if (pastedFiles.length > 0) {
         e.preventDefault();
         stageBufferFiles(pastedFiles);
+        return;
+      }
+      const pastedText = e.clipboardData.getData('text');
+      if (shouldCollapsePastedText(pastedText)) {
+        // Long paste: keep it out of the textarea DOM entirely — the chip is the
+        // only surface that pays for it (no-polling perf contract).
+        e.preventDefault();
+        onCollapsedDraftChange?.(
+          collapsedDraftValue ? `${collapsedDraftValue}\n${pastedText}` : pastedText,
+        );
       }
     },
-    [stageBufferFiles],
+    [collapsedDraftValue, onCollapsedDraftChange, stageBufferFiles],
   );
 
   // Handle drag & drop
@@ -3066,6 +3190,38 @@ export function ChatInput({
           >
             <span aria-hidden />
           </BorderBeam>
+          {collapsedDraftValue && (
+            <div className="mb-2" data-testid="chat-composer-collapse-chip">
+              <div className="flex items-start gap-2.5 rounded-xl border border-black/[0.08] bg-surface-modal px-3 py-2.5 shadow-sm dark:border-white/[0.08]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/5 text-muted-foreground dark:bg-white/10">
+                  <AlignLeft className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {firstNonEmptyLine(collapsedDraftValue)}
+                  </p>
+                  <button
+                    type="button"
+                    data-testid="chat-composer-collapse-expand"
+                    className="mt-0.5 text-xs text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+                    onClick={expandCollapsedDraft}
+                  >
+                    {t('composer.longText.showInTextbox')}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  data-testid="chat-composer-collapse-dismiss"
+                  aria-label={t('composer.longText.discard')}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/10 text-muted-foreground transition-colors hover:bg-black/15 hover:text-foreground dark:bg-white/10 dark:hover:bg-white/15"
+                  onClick={dismissCollapsedDraft}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+
           {attachments.length > 0 && (
             <div
               className="codex-composer-attachments relative flex flex-wrap gap-2 pb-3"
@@ -3277,12 +3433,12 @@ export function ChatInput({
           )}
 
           <div className="relative min-h-[48px]">
-            {skillTokenRanges.length > 0 && (
+            {hasHighlightRanges && (
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 z-20 overflow-hidden whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground"
               >
-                {renderHighlightedComposerText(input, skillTokenRanges, {
+                {renderHighlightedComposerText(input, skillTokenRanges, secretRanges, {
                   onPreviewSkill: (name) => {
                     void handleSkillTokenPreview(name);
                   },
@@ -3309,7 +3465,7 @@ export function ChatInput({
               data-testid="chat-composer-input"
               className={cn(
                 'relative min-h-[48px] max-h-[240px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none bg-transparent p-0 text-sm leading-relaxed placeholder:text-muted-foreground/60',
-                skillTokenRanges.length > 0 ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
+                hasHighlightRanges ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
               )}
               rows={1}
             />

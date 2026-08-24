@@ -6,7 +6,7 @@
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
+import { AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, GitBranch, GitBranchPlus, Loader2, Pencil, RefreshCw, ShieldAlert, Users, Workflow, X } from 'lucide-react';
 import { FileText, Laptop, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
@@ -24,6 +24,7 @@ import type { LongTaskControlStatus } from '@shared/types/long-task-control';
 import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
+import { findSecretRanges } from '@shared/privacy/secret-shapes';
 import { isInternalMessage } from '@/stores/chat/helpers';
 import { buildBaselineRunKey, getBaseline } from '@/stores/baseline-cache';
 import { useGatewayStore } from '@/stores/gateway';
@@ -750,6 +751,35 @@ function ProjectSessionHeader({
   );
 }
 
+function SensitiveContentAdvisory({
+  count,
+  onDismiss,
+}: {
+  count: number;
+  onDismiss: () => void;
+}) {
+  const { t } = useTranslation('chat');
+  return (
+    <div className="px-4 pt-2" data-testid="chat-sensitive-advisory">
+      <div className="mx-auto flex max-w-4xl items-start gap-3 rounded-lg border border-red-500/25 bg-red-500/10 p-3 shadow-sm">
+        <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-red-700 dark:text-red-400" />
+        <p className="min-w-0 flex-1 text-xs leading-5 text-red-700 dark:text-red-400">
+          {t('sensitive.bannerTitle', { count })}
+        </p>
+        <button
+          type="button"
+          data-testid="chat-sensitive-advisory-dismiss"
+          aria-label={t('sensitive.dismiss')}
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-red-700 transition-colors hover:bg-red-500/15 dark:text-red-400"
+          onClick={onDismiss}
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function KnowledgeErrorAdvisoryCard({
   advisory,
   busy = false,
@@ -1008,6 +1038,10 @@ export function Chat() {
   const [sessionLineage, setSessionLineage] = useState<Record<string, SessionLineageOverride>>({});
   const [streamStatusNow, setStreamStatusNow] = useState(() => Date.now());
   const [composerDraft, setComposerDraft] = useState('');
+  const [composerCollapsedDraft, setComposerCollapsedDraft] = useState<string | null>(null);
+  const [composerSensitiveSummary, setComposerSensitiveSummary] = useState<{ count: number; kinds: string[] } | null>(null);
+  const [messageSensitiveSummary, setMessageSensitiveSummary] = useState<{ count: number; kinds: string[] } | null>(null);
+  const [dismissedSensitiveSignatures, setDismissedSensitiveSignatures] = useState<Set<string>>(() => new Set());
   const [composerSlashRequest, setComposerSlashRequest] = useState(0);
   const [composerPaused, setComposerPaused] = useState(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
@@ -1025,6 +1059,7 @@ export function Chat() {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
       draftInput: draft,
+      collapsedDraftInput: composerCollapsedDraft ?? undefined,
       composerRunState: composerPaused ? 'paused' : 'idle',
       activeTopicId: null,
       knowledgeScope,
@@ -1039,7 +1074,7 @@ export function Chat() {
       turnSummaryExpanded: runActivityExpandedOverrides,
       turnSummaryStepDetailsExpanded: runActivityStepDetailsExpanded,
     };
-  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, composerPaused, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides, runActivityStepDetailsExpanded]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerCollapsedDraft, composerDraft, composerPaused, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides, runActivityStepDetailsExpanded]);
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1329,6 +1364,7 @@ export function Chat() {
       sessionKey: currentSessionKey,
     };
     setComposerDraft(sessionState.draftInput ?? '');
+    setComposerCollapsedDraft(sessionState.collapsedDraftInput ?? null);
     setComposerPaused(sessionState.composerRunState === 'paused');
     setRunActivityExpandedOverrides({
       ...(sessionState.graphExpanded ?? {}),
@@ -1375,6 +1411,59 @@ export function Chat() {
       });
     }, 250);
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
+
+  const handleComposerCollapsedDraftChange = useCallback((value: string | null) => {
+    setComposerCollapsedDraft(value);
+    if (!activeWorkspace?.id) return;
+    void saveWorkspaceState({
+      id: activeWorkspace.id,
+      sessionKey: currentSessionKey,
+      state: {
+        ...captureCurrentWorkspaceSessionState(composerDraft),
+        collapsedDraftInput: value ?? undefined,
+      },
+    });
+  }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, composerDraft, currentSessionKey, saveWorkspaceState]);
+
+  const handleComposerSensitiveChange = useCallback((summary: { count: number; kinds: string[] } | null) => {
+    setComposerSensitiveSummary(summary);
+  }, []);
+
+  // Debounced, bounded scan of recent finalized messages — event-driven, never polled.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      let count = 0;
+      const kinds = new Set<string>();
+      for (const message of messages.slice(-50)) {
+        const text = extractText(message);
+        if (!text) continue;
+        const ranges = findSecretRanges(text, 20);
+        count += ranges.length;
+        for (const range of ranges) kinds.add(range.kind);
+        if (count >= 200) break;
+      }
+      setMessageSensitiveSummary(count > 0 ? { count, kinds: Array.from(kinds).sort() } : null);
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [messages]);
+
+  const sensitiveSignature = useMemo(() => {
+    const parts: string[] = [];
+    if (composerSensitiveSummary) {
+      parts.push(`composer:${composerSensitiveSummary.kinds.join(',')}:${composerSensitiveSummary.count}`);
+    }
+    if (messageSensitiveSummary) {
+      parts.push(`messages:${messageSensitiveSummary.kinds.join(',')}:${messageSensitiveSummary.count}`);
+    }
+    return parts.join('|');
+  }, [composerSensitiveSummary, messageSensitiveSummary]);
+
+  const sensitiveAdvisoryVisible = sensitiveSignature !== '' && !dismissedSensitiveSignatures.has(sensitiveSignature);
+  const sensitiveTotalCount = (composerSensitiveSummary?.count ?? 0) + (messageSensitiveSummary?.count ?? 0);
+
+  const handleDismissSensitiveAdvisory = useCallback(() => {
+    setDismissedSensitiveSignatures((current) => new Set(current).add(sensitiveSignature));
+  }, [sensitiveSignature]);
 
   const handleKnowledgeScopeChange = useCallback((scope: WorkspaceKnowledgeScope) => {
     setKnowledgeScope(scope);
@@ -3025,6 +3114,10 @@ export function Chat() {
         </div>
       </div>
 
+      {sensitiveAdvisoryVisible && sensitiveTotalCount > 0 ? (
+        <SensitiveContentAdvisory count={sensitiveTotalCount} onDismiss={handleDismissSensitiveAdvisory} />
+      ) : null}
+
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
         {/* verse-style background: grid, glows, noise — empty state only */}
@@ -3441,6 +3534,9 @@ export function Chat() {
         draftValue={composerDraft}
         slashRequest={composerSlashRequest}
         onDraftChange={handleComposerDraftChange}
+        collapsedDraftValue={composerCollapsedDraft}
+        onCollapsedDraftChange={handleComposerCollapsedDraftChange}
+        onSensitiveDetectionChange={handleComposerSensitiveChange}
         onPermissionModeChange={handlePermissionModeChange}
         onPickWorkspaceFolder={handlePickWorkspaceFolder}
         onSwitchAgent={handleSwitchAgent}

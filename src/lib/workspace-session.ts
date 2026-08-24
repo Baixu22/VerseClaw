@@ -118,6 +118,7 @@ export async function createWorkspaceScopedHandoffSession(draftInput: string): P
 function cloneForkableWorkspaceState(state: WorkspaceUiState | undefined): WorkspaceUiState {
   return {
     draftInput: state?.draftInput,
+    collapsedDraftInput: state?.collapsedDraftInput,
     selectedModelRef: state?.selectedModelRef,
     activeTopicId: state?.activeTopicId ?? null,
     knowledgeScope: state?.knowledgeScope,
@@ -170,3 +171,4 @@ export async function createWorkspaceScopedForkSession(sourceSessionKey: string)
   chatState.resetSessionView(result.sessionKey);
   return result.sessionKey;
 }
+

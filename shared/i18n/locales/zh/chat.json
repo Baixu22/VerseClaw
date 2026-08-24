@@ -1,4 +1,5 @@
 {
+  "sensitive": { "bannerTitle": "检测到 {{count}} 处疑似密钥/令牌内容，发送前请确认。", "dismiss": "关闭" },
   "gatewayNotRunning": "网关未运行",
   "retry": "重试",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
@@ -1062,6 +1063,7 @@
     }
   },
   "composer": {
+    "longText": { "showInTextbox": "在文本框中显示", "discard": "丢弃长文本" },
     "attachFiles": "添加文件",
     "placeholder": "输入消息...  / 打开命令与技能",
     "pickSkill": "选择技能",
