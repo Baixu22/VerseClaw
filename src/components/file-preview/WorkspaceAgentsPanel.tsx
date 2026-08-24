@@ -270,7 +270,7 @@ export function WorkspaceAgentsPanel() {
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-xs font-medium text-foreground">{entry.roleName}</span>
                       <span className={cn('block truncate text-[11px]', statusTone(entry.status))}>
-                        {t(`sessionRail.agents.status.${entry.status}`, { defaultValue: entry.status })}
+                        {t(`sessionActivity.subagentStatus.${entry.status}`, { defaultValue: entry.status })}
                       </span>
                     </span>
                     {entry.status === 'started' && (
@@ -288,7 +288,7 @@ export function WorkspaceAgentsPanel() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate text-xs font-medium text-foreground">{selected.roleName}</span>
                   <Badge variant={selected.status === 'error' ? 'destructive' : 'outline'}>
-                    {t(`sessionRail.agents.status.${selected.status}`, { defaultValue: selected.status })}
+                    {t(`sessionActivity.subagentStatus.${selected.status}`, { defaultValue: selected.status })}
                   </Badge>
                 </div>
                 {selected.task && (

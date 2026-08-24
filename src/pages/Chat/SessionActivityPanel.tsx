@@ -1,4 +1,4 @@
-import { Activity, Bot, CheckCircle2, CircleAlert, Clock3, Cpu, FilePlus2, GitBranch, GitCommitHorizontal, Goal, ListChecks, Loader2, Monitor, Network, RotateCcw, TerminalSquare } from 'lucide-react';
+import { Activity, Archive, Bot, CheckCircle2, CircleAlert, Clock3, Cpu, FilePlus2, GitBranch, GitCommitHorizontal, Goal, ListChecks, Loader2, Monitor, Network, RotateCcw, TerminalSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ type SessionActivityPanelProps = {
   onCreateMemoryDraft?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
-  showSubagents?: boolean;
+  onViewCompactionArtifact?: () => void;
 };
 
 function formatDuration(startedAt: number | null | undefined, endedAt: number | null | undefined, now: number): string {
@@ -72,7 +72,7 @@ export function SessionActivityPanel({
   onCreateMemoryDraft,
   showGit = true,
   showCommands = true,
-  showSubagents = true,
+  onViewCompactionArtifact,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
   const [now, setNow] = useState(() => Date.now());
@@ -84,7 +84,7 @@ export function SessionActivityPanel({
   }, [runActive, snapshot.session.startedAt]);
   const hasGit = showGit && Boolean(snapshot.git && snapshot.git.isRepository && !snapshot.git.clean);
   const hasTasks = snapshot.tasks.length > 0;
-  const hasSubagents = showSubagents && snapshot.subagents.length > 0;
+  const hasSubagents = snapshot.subagents.length > 0;
   const hasGoals = snapshot.goals.length > 0;
   const hasProcesses = snapshot.processes.length > 0;
   const hasLineage = snapshot.lineage.length > 0;
@@ -145,6 +145,22 @@ export function SessionActivityPanel({
               </button>
             </TooltipTrigger>
             <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.openRecovery')}</TooltipContent>
+          </Tooltip>
+        ) : null}
+        {onViewCompactionArtifact ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+                aria-label={t('sessionActivity.viewCompactionArtifact')}
+                onClick={onViewCompactionArtifact}
+                data-testid="session-activity-view-compaction-artifact"
+              >
+                <Archive className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" collisionPadding={8}>{t('sessionActivity.viewCompactionArtifact')}</TooltipContent>
           </Tooltip>
         ) : null}
       </header>

@@ -1,5 +1,8 @@
 {
-  "sensitive": { "bannerTitle": "检测到 {{count}} 处疑似密钥/令牌内容，发送前请确认。", "dismiss": "关闭" },
+  "sensitive": {
+    "bannerTitle": "检测到 {{count}} 处疑似密钥/令牌内容，发送前请确认。",
+    "dismiss": "关闭"
+  },
   "gatewayNotRunning": "网关未运行",
   "retry": "重试",
   "gatewayRequired": "OpenClaw 网关需要运行才能使用聊天。它将自动启动，或者您可以从设置中启动。",
@@ -30,30 +33,137 @@
     "brainstormingDesc": "让多个智能体协同拆分任务"
   },
   "sessionActivity": {
+    "viewCompactionArtifact": "查看压缩产物",
     "title": "会话状态",
     "description": "当前会话的实时运行、任务、Git、目标、进程、谱系、子 Agent 和终端状态。",
     "openRecovery": "打开会话恢复",
     "createMemoryDraft": "存为记忆草稿",
     "duration": "持续时间",
     "notAvailable": "暂无",
-    "sections": { "session": "会话", "git": "工作区 Git", "tasks": "实时任务", "subagents": "子 Agent", "goals": "目标与等待", "processes": "进程", "lineage": "谱系", "terminals": "终端", "continuity": "连续性", "environment": "环境", "plan": "开发任务" },
-    "status": { "idle": "空闲", "running": "运行中", "waiting_approval": "等待批准", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
-    "git": { "detached": "游离 HEAD", "changes": "{{count}} 项变更", "conflicts": "冲突", "clean": "干净" },
-    "taskKinds": { "mission": "任务目标", "taskLoop": "任务循环", "clawGraph": "ClawGraph", "taskLedger": "任务账本" },
-    "taskStatus": { "queued": "排队中", "running": "运行中", "review": "待复核", "blocked": "已阻塞", "completed": "已完成", "failed": "失败", "aborted": "已中止" },
-    "subagents": { "unknown": "Agent", "openTranscript": "在工作空间中打开 {{role}} 的会话记录" },
-    "subagentStatus": { "started": "运行中", "completed": "已完成", "error": "错误", "aborted": "已中止", "verified": "已验证" },
-    "terminals": { "interactive": "交互终端", "agentCommand": "Agent 命令", "webPreview": "Web 预览服务" },
-    "terminalStatus": { "idle": "空闲", "starting": "启动中", "running": "运行中", "exited": "已退出", "blocked": "已阻塞", "completed": "已完成", "error": "错误" },
-    "continuity": { "queue": "{{count}} 个排队中的后续任务", "context": "上下文压力：{{pressure}}", "checkpoint": "可用恢复检查点", "pressure": { "low": "低", "medium": "中", "high": "高" } },
-    "goalKinds": { "mission": "任务目标", "flow": "目标等待" },
-    "goalStatus": { "queued": "排队中", "waiting": "等待中", "running": "运行中", "sleeping": "休眠中", "paused": "已暂停", "blocked": "已阻塞", "completed": "已完成", "failed": "失败", "aborted": "已中止", "lost": "已丢失" },
-    "processKinds": { "bash": "进程", "supervisor": "受监管进程", "goalOwned": "目标进程" },
-    "processStatus": { "queued": "排队中", "starting": "启动中", "running": "运行中", "exiting": "退出中", "exited": "已退出", "completed": "已完成", "failed": "失败", "killed": "已终止", "aborted": "已中止", "lost": "已丢失" },
-    "lineage": { "parent": "父会话", "child": "子会话" },
-    "lineageStatus": { "started": "运行中", "completed": "已完成", "aborted": "已中止", "error": "错误" },
+    "sections": {
+      "session": "会话",
+      "git": "工作区 Git",
+      "tasks": "实时任务",
+      "subagents": "子 Agent",
+      "goals": "目标与等待",
+      "processes": "进程",
+      "lineage": "谱系",
+      "terminals": "终端",
+      "continuity": "连续性",
+      "environment": "环境",
+      "plan": "开发任务"
+    },
+    "status": {
+      "idle": "空闲",
+      "running": "运行中",
+      "waiting_approval": "等待批准",
+      "completed": "已完成",
+      "failed": "失败",
+      "aborted": "已中止"
+    },
+    "git": {
+      "detached": "游离 HEAD",
+      "changes": "{{count}} 项变更",
+      "conflicts": "冲突",
+      "clean": "干净"
+    },
+    "taskKinds": {
+      "mission": "任务目标",
+      "taskLoop": "任务循环",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "任务账本"
+    },
+    "taskStatus": {
+      "queued": "排队中",
+      "running": "运行中",
+      "review": "待复核",
+      "blocked": "已阻塞",
+      "completed": "已完成",
+      "failed": "失败",
+      "aborted": "已中止"
+    },
+    "subagents": {
+      "unknown": "Agent",
+      "openTranscript": "在工作空间中打开 {{role}} 的会话记录"
+    },
+    "subagentStatus": {
+      "started": "运行中",
+      "completed": "已完成",
+      "error": "错误",
+      "aborted": "已中止",
+      "verified": "已验证"
+    },
+    "terminals": {
+      "interactive": "交互终端",
+      "agentCommand": "Agent 命令",
+      "webPreview": "Web 预览服务"
+    },
+    "terminalStatus": {
+      "idle": "空闲",
+      "starting": "启动中",
+      "running": "运行中",
+      "exited": "已退出",
+      "blocked": "已阻塞",
+      "completed": "已完成",
+      "error": "错误"
+    },
+    "continuity": {
+      "queue": "{{count}} 个排队中的后续任务",
+      "context": "上下文压力：{{pressure}}",
+      "checkpoint": "可用恢复检查点",
+      "pressure": {
+        "low": "低",
+        "medium": "中",
+        "high": "高"
+      }
+    },
+    "goalKinds": {
+      "mission": "任务目标",
+      "flow": "目标等待"
+    },
+    "goalStatus": {
+      "queued": "排队中",
+      "waiting": "等待中",
+      "running": "运行中",
+      "sleeping": "休眠中",
+      "paused": "已暂停",
+      "blocked": "已阻塞",
+      "completed": "已完成",
+      "failed": "失败",
+      "aborted": "已中止",
+      "lost": "已丢失"
+    },
+    "processKinds": {
+      "bash": "进程",
+      "supervisor": "受监管进程",
+      "goalOwned": "目标进程"
+    },
+    "processStatus": {
+      "queued": "排队中",
+      "starting": "启动中",
+      "running": "运行中",
+      "exiting": "退出中",
+      "exited": "已退出",
+      "completed": "已完成",
+      "failed": "失败",
+      "killed": "已终止",
+      "aborted": "已中止",
+      "lost": "已丢失"
+    },
+    "lineage": {
+      "parent": "父会话",
+      "child": "子会话"
+    },
+    "lineageStatus": {
+      "started": "运行中",
+      "completed": "已完成",
+      "aborted": "已中止",
+      "error": "错误"
+    },
     "runningCount": "{{count}} 个运行中",
-    "processes": { "openOutput": "查看 {{command}} 的输出" }
+    "processes": {
+      "openOutput": "查看 {{command}} 的输出"
+    }
   },
   "noLogs": "（暂无日志）",
   "scrollToLatest": "回到底部",
@@ -1063,7 +1173,10 @@
     }
   },
   "composer": {
-    "longText": { "showInTextbox": "在文本框中显示", "discard": "丢弃长文本" },
+    "longText": {
+      "showInTextbox": "在文本框中显示",
+      "discard": "丢弃长文本"
+    },
     "attachFiles": "添加文件",
     "placeholder": "输入消息...  / 打开命令与技能",
     "pickSkill": "选择技能",
@@ -1987,72 +2100,6 @@
     "label": "提问导航",
     "jumpTo": "跳到第 {{ordinal}} 条提问"
   },
-  "sessionRail": {
-    "title": "会话状态",
-    "collapse": "收起会话状态",
-    "expand": "展开会话状态",
-    "git": {
-      "title": "Git",
-      "loading": "读取仓库状态…",
-      "notARepository": "当前项目不是 Git 仓库",
-      "unavailable": "Git 状态暂时不可用。",
-      "changes": "更改",
-      "clean": "干净",
-      "noLineStats": "无行数统计",
-      "changeCount": "{{count}} 个文件有改动",
-      "tracking": "领先 {{ahead}} · 落后 {{behind}}",
-      "commitOrPush": "提交或推送",
-      "stash": "暂存",
-      "commit": "提交",
-      "push": "推送",
-      "stashSuccess": "更改已暂存",
-      "stashFailed": "暂存失败",
-      "commitSuccess": "更改已提交",
-      "commitFailed": "提交失败",
-      "pushSuccess": "更改已推送",
-      "pushFailed": "推送失败",
-      "approvalRequired": "需要审批 - 请查看审查面板",
-      "commitMessagePlaceholder": "输入提交信息…",
-      "commitMessageRequired": "请输入提交信息"
-    },
-    "process": {
-      "title": "进程",
-      "empty": "还没有正在进行的任务",
-      "planTitle": "计划",
-      "ledgerFallback": "暂无当前目标",
-      "ledgerCounts": "活跃 {{active}} · 复核 {{review}} · 阻塞 {{blocked}}",
-      "queued": "排队 {{count}}",
-      "checkpoint": "检查点 {{trigger}}",
-      "warnings": "告警 {{count}}",
-      "drain": "立即处理"
-    },
-    "agents": {
-      "title": "子智能体",
-      "empty": "本次会话还没有子智能体",
-      "running": "{{count}} 个运行中",
-      "orchestration": "编排：worker {{workers}} · 待处理 {{pending}} · 失败 {{failures}}",
-      "status": {
-        "started": "运行中",
-        "completed": "已完成",
-        "error": "出错",
-        "aborted": "已中止",
-        "verified": "已验证"
-      }
-    },
-    "terminal": {
-      "title": "终端",
-      "idleHint": "打开终端",
-      "unavailable": "终端状态暂时不可用。",
-      "pid": "pid {{pid}}",
-      "state": {
-        "idle": "空闲",
-        "starting": "启动中",
-        "running": "运行中",
-        "exited": "已退出",
-        "blocked": "已阻止"
-      }
-    }
-  },
   "workModePanel": {
     "knowledge": "知识：{{scope}}",
     "permissionMismatch": "当前权限为 {{current}}；此模式建议使用 {{recommended}}。",
@@ -2244,6 +2291,10 @@
     "truncated": "较早的输出已被截断。",
     "waiting": "等待输出…",
     "noOutput": "这个进程没有输出。",
-    "status": { "running": "运行中", "completed": "已完成", "failed": "失败" }
+    "status": {
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败"
+    }
   }
 }

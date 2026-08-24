@@ -1,5 +1,8 @@
 {
-  "sensitive": { "bannerTitle": "Detected {{count}} secret-shaped string(s) (API key / token) in this conversation. Review before sending.", "dismiss": "Dismiss" },
+  "sensitive": {
+    "bannerTitle": "Detected {{count}} secret-shaped string(s) (API key / token) in this conversation. Review before sending.",
+    "dismiss": "Dismiss"
+  },
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
@@ -30,30 +33,137 @@
     "brainstormingDesc": "Split work across coordinated agents"
   },
   "sessionActivity": {
+    "viewCompactionArtifact": "View compaction artifact",
     "title": "Session status",
     "description": "Live runtime, task, Git, goal, process, lineage, agent, and terminal activity for this conversation.",
     "openRecovery": "Open session recovery",
     "createMemoryDraft": "Save session to Knowledge",
     "duration": "Duration",
     "notAvailable": "Not available",
-    "sections": { "session": "Session", "git": "Workspace Git", "tasks": "Live tasks", "subagents": "Sub-agents", "goals": "Goals & waits", "processes": "Processes", "lineage": "Lineage", "terminals": "Terminals", "continuity": "Continuity", "environment": "Environment", "plan": "Development tasks" },
-    "status": { "idle": "Idle", "running": "Running", "waiting_approval": "Waiting for approval", "completed": "Completed", "failed": "Failed", "aborted": "Aborted" },
-    "git": { "detached": "Detached HEAD", "changes": "{{count}} changes", "conflicts": "Conflicts", "clean": "Clean" },
-    "taskKinds": { "mission": "Mission", "taskLoop": "Task Loop", "clawGraph": "ClawGraph", "taskLedger": "Task Ledger" },
-    "taskStatus": { "queued": "Queued", "running": "Running", "review": "Review", "blocked": "Blocked", "completed": "Done", "failed": "Failed", "aborted": "Aborted" },
-    "subagents": { "unknown": "Agent", "openTranscript": "Open {{role}}'s transcript in the workspace" },
-    "subagentStatus": { "started": "Running", "completed": "Done", "error": "Error", "aborted": "Aborted", "verified": "Verified" },
-    "terminals": { "interactive": "Interactive terminal", "agentCommand": "Agent command", "webPreview": "Web preview server" },
-    "terminalStatus": { "idle": "Idle", "starting": "Starting", "running": "Running", "exited": "Exited", "blocked": "Blocked", "completed": "Done", "error": "Error" },
-    "continuity": { "queue": "{{count}} queued follow-ups", "context": "Context pressure: {{pressure}}", "checkpoint": "Recovery checkpoint available", "pressure": { "low": "low", "medium": "medium", "high": "high" } },
-    "goalKinds": { "mission": "Mission", "flow": "Goal wait" },
-    "goalStatus": { "queued": "Queued", "waiting": "Waiting", "running": "Running", "sleeping": "Sleeping", "paused": "Paused", "blocked": "Blocked", "completed": "Done", "failed": "Failed", "aborted": "Aborted", "lost": "Lost" },
-    "processKinds": { "bash": "Process", "supervisor": "Supervised process", "goalOwned": "Goal process" },
-    "processStatus": { "queued": "Queued", "starting": "Starting", "running": "Running", "exiting": "Exiting", "exited": "Exited", "completed": "Done", "failed": "Failed", "killed": "Killed", "aborted": "Aborted", "lost": "Lost" },
-    "lineage": { "parent": "Parent session", "child": "Child session" },
-    "lineageStatus": { "started": "Running", "completed": "Done", "aborted": "Aborted", "error": "Error" },
+    "sections": {
+      "session": "Session",
+      "git": "Workspace Git",
+      "tasks": "Live tasks",
+      "subagents": "Sub-agents",
+      "goals": "Goals & waits",
+      "processes": "Processes",
+      "lineage": "Lineage",
+      "terminals": "Terminals",
+      "continuity": "Continuity",
+      "environment": "Environment",
+      "plan": "Development tasks"
+    },
+    "status": {
+      "idle": "Idle",
+      "running": "Running",
+      "waiting_approval": "Waiting for approval",
+      "completed": "Completed",
+      "failed": "Failed",
+      "aborted": "Aborted"
+    },
+    "git": {
+      "detached": "Detached HEAD",
+      "changes": "{{count}} changes",
+      "conflicts": "Conflicts",
+      "clean": "Clean"
+    },
+    "taskKinds": {
+      "mission": "Mission",
+      "taskLoop": "Task Loop",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "Task Ledger"
+    },
+    "taskStatus": {
+      "queued": "Queued",
+      "running": "Running",
+      "review": "Review",
+      "blocked": "Blocked",
+      "completed": "Done",
+      "failed": "Failed",
+      "aborted": "Aborted"
+    },
+    "subagents": {
+      "unknown": "Agent",
+      "openTranscript": "Open {{role}}'s transcript in the workspace"
+    },
+    "subagentStatus": {
+      "started": "Running",
+      "completed": "Done",
+      "error": "Error",
+      "aborted": "Aborted",
+      "verified": "Verified"
+    },
+    "terminals": {
+      "interactive": "Interactive terminal",
+      "agentCommand": "Agent command",
+      "webPreview": "Web preview server"
+    },
+    "terminalStatus": {
+      "idle": "Idle",
+      "starting": "Starting",
+      "running": "Running",
+      "exited": "Exited",
+      "blocked": "Blocked",
+      "completed": "Done",
+      "error": "Error"
+    },
+    "continuity": {
+      "queue": "{{count}} queued follow-ups",
+      "context": "Context pressure: {{pressure}}",
+      "checkpoint": "Recovery checkpoint available",
+      "pressure": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high"
+      }
+    },
+    "goalKinds": {
+      "mission": "Mission",
+      "flow": "Goal wait"
+    },
+    "goalStatus": {
+      "queued": "Queued",
+      "waiting": "Waiting",
+      "running": "Running",
+      "sleeping": "Sleeping",
+      "paused": "Paused",
+      "blocked": "Blocked",
+      "completed": "Done",
+      "failed": "Failed",
+      "aborted": "Aborted",
+      "lost": "Lost"
+    },
+    "processKinds": {
+      "bash": "Process",
+      "supervisor": "Supervised process",
+      "goalOwned": "Goal process"
+    },
+    "processStatus": {
+      "queued": "Queued",
+      "starting": "Starting",
+      "running": "Running",
+      "exiting": "Exiting",
+      "exited": "Exited",
+      "completed": "Done",
+      "failed": "Failed",
+      "killed": "Killed",
+      "aborted": "Aborted",
+      "lost": "Lost"
+    },
+    "lineage": {
+      "parent": "Parent session",
+      "child": "Child session"
+    },
+    "lineageStatus": {
+      "started": "Running",
+      "completed": "Done",
+      "aborted": "Aborted",
+      "error": "Error"
+    },
     "runningCount": "{{count}} running",
-    "processes": { "openOutput": "Open the output of {{command}}" }
+    "processes": {
+      "openOutput": "Open the output of {{command}}"
+    }
   },
   "noLogs": "(No logs available yet)",
   "scrollToLatest": "Back to bottom",
@@ -1063,7 +1173,10 @@
     }
   },
   "composer": {
-    "longText": { "showInTextbox": "Show in text box", "discard": "Discard long text" },
+    "longText": {
+      "showInTextbox": "Show in text box",
+      "discard": "Discard long text"
+    },
     "attachFiles": "Attach files",
     "placeholder": "Message...  / for commands and skills",
     "pickSkill": "Choose skill",
@@ -1987,72 +2100,6 @@
     "label": "Prompt navigation",
     "jumpTo": "Jump to prompt {{ordinal}}"
   },
-  "sessionRail": {
-    "title": "Session status",
-    "collapse": "Collapse session status",
-    "expand": "Expand session status",
-    "git": {
-      "title": "Git",
-      "loading": "Reading repository status…",
-      "notARepository": "This project is not a Git repository",
-      "unavailable": "Git status is temporarily unavailable.",
-      "changes": "Changes",
-      "clean": "Clean",
-      "noLineStats": "No line stats",
-      "changeCount": "{{count}} changed file(s)",
-      "tracking": "{{ahead}} ahead · {{behind}} behind",
-      "commitOrPush": "Commit or push",
-      "stash": "Stash",
-      "commit": "Commit",
-      "push": "Push",
-      "stashSuccess": "Changes stashed",
-      "stashFailed": "Failed to stash changes",
-      "commitSuccess": "Changes committed",
-      "commitFailed": "Failed to commit",
-      "pushSuccess": "Changes pushed",
-      "pushFailed": "Failed to push",
-      "approvalRequired": "Approval required - check review panel",
-      "commitMessagePlaceholder": "Enter commit message…",
-      "commitMessageRequired": "Please enter a commit message"
-    },
-    "process": {
-      "title": "Process",
-      "empty": "Nothing running yet",
-      "planTitle": "Plan",
-      "ledgerFallback": "No current goal",
-      "ledgerCounts": "{{active}} active · {{review}} review · {{blocked}} blocked",
-      "queued": "{{count}} queued",
-      "checkpoint": "{{trigger}} checkpoint",
-      "warnings": "{{count}} warning(s)",
-      "drain": "Send now"
-    },
-    "agents": {
-      "title": "Sub-agents",
-      "empty": "No sub-agents in this session",
-      "running": "{{count}} running",
-      "orchestration": "Orchestration: {{workers}} workers · {{pending}} pending · {{failures}} failed",
-      "status": {
-        "started": "Running",
-        "completed": "Done",
-        "error": "Error",
-        "aborted": "Aborted",
-        "verified": "Verified"
-      }
-    },
-    "terminal": {
-      "title": "Terminal",
-      "idleHint": "Open terminal",
-      "unavailable": "Terminal status is temporarily unavailable.",
-      "pid": "pid {{pid}}",
-      "state": {
-        "idle": "Idle",
-        "starting": "Starting",
-        "running": "Running",
-        "exited": "Exited",
-        "blocked": "Blocked"
-      }
-    }
-  },
   "workModePanel": {
     "knowledge": "Knowledge: {{scope}}",
     "permissionMismatch": "Current permission is {{current}}; recommended for this mode is {{recommended}}.",
@@ -2244,6 +2291,10 @@
     "truncated": "Earlier output was trimmed.",
     "waiting": "Waiting for output…",
     "noOutput": "This process produced no output.",
-    "status": { "running": "Running", "completed": "Done", "failed": "Failed" }
+    "status": {
+      "running": "Running",
+      "completed": "Done",
+      "failed": "Failed"
+    }
   }
 }

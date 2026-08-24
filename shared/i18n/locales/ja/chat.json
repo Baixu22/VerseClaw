@@ -1,5 +1,8 @@
 {
-  "sensitive": { "bannerTitle": "この会話でシークレット形式の文字列を {{count}} 件検出しました。送信前にご確認ください。", "dismiss": "閉じる" },
+  "sensitive": {
+    "bannerTitle": "この会話でシークレット形式の文字列を {{count}} 件検出しました。送信前にご確認ください。",
+    "dismiss": "閉じる"
+  },
   "gatewayNotRunning": "ゲートウェイが停止中",
   "retry": "再試行",
   "gatewayRequired": "チャットを利用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
@@ -30,30 +33,137 @@
     "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
   "sessionActivity": {
+    "viewCompactionArtifact": "コンパクション成果物を表示",
     "title": "セッション状態",
     "description": "この会話のランタイム、タスク、Git、ゴール、プロセス、系統、サブエージェント、ターミナルのリアルタイム状態。",
     "openRecovery": "セッション復旧を開く",
     "createMemoryDraft": "メモリ草案として保存",
     "duration": "経過時間",
     "notAvailable": "利用不可",
-    "sections": { "session": "セッション", "git": "ワークスペース Git", "tasks": "実行中のタスク", "subagents": "サブエージェント", "goals": "ゴールと待機", "processes": "プロセス", "lineage": "系統", "terminals": "ターミナル", "continuity": "継続性", "environment": "環境", "plan": "開発タスク" },
-    "status": { "idle": "待機中", "running": "実行中", "waiting_approval": "承認待ち", "completed": "完了", "failed": "失敗", "aborted": "中止" },
-    "git": { "detached": "デタッチ HEAD", "changes": "{{count}} 件の変更", "conflicts": "競合", "clean": "クリーン" },
-    "taskKinds": { "mission": "ミッション", "taskLoop": "タスクループ", "clawGraph": "ClawGraph", "taskLedger": "タスク台帳" },
-    "taskStatus": { "queued": "待機中", "running": "実行中", "review": "レビュー", "blocked": "ブロック中", "completed": "完了", "failed": "失敗", "aborted": "中止" },
-    "subagents": { "unknown": "エージェント", "openTranscript": "ワークスペースで {{role}} の会話記録を開く" },
-    "subagentStatus": { "started": "実行中", "completed": "完了", "error": "エラー", "aborted": "中止", "verified": "検証済み" },
-    "terminals": { "interactive": "対話型ターミナル", "agentCommand": "エージェントコマンド", "webPreview": "Web プレビューサーバー" },
-    "terminalStatus": { "idle": "待機中", "starting": "起動中", "running": "実行中", "exited": "終了", "blocked": "ブロック中", "completed": "完了", "error": "エラー" },
-    "continuity": { "queue": "{{count}} 件のフォローアップが待機中", "context": "コンテキスト負荷: {{pressure}}", "checkpoint": "復旧チェックポイントあり", "pressure": { "low": "低", "medium": "中", "high": "高" } },
-    "goalKinds": { "mission": "ミッション", "flow": "ゴール待機" },
-    "goalStatus": { "queued": "待機中", "waiting": "待機中", "running": "実行中", "sleeping": "スリープ中", "paused": "一時停止中", "blocked": "ブロック中", "completed": "完了", "failed": "失敗", "aborted": "中止", "lost": "消失" },
-    "processKinds": { "bash": "プロセス", "supervisor": "監視プロセス", "goalOwned": "ゴールプロセス" },
-    "processStatus": { "queued": "待機中", "starting": "起動中", "running": "実行中", "exiting": "終了中", "exited": "終了", "completed": "完了", "failed": "失敗", "killed": "強制終了", "aborted": "中止", "lost": "消失" },
-    "lineage": { "parent": "親セッション", "child": "子セッション" },
-    "lineageStatus": { "started": "実行中", "completed": "完了", "aborted": "中止", "error": "エラー" },
+    "sections": {
+      "session": "セッション",
+      "git": "ワークスペース Git",
+      "tasks": "実行中のタスク",
+      "subagents": "サブエージェント",
+      "goals": "ゴールと待機",
+      "processes": "プロセス",
+      "lineage": "系統",
+      "terminals": "ターミナル",
+      "continuity": "継続性",
+      "environment": "環境",
+      "plan": "開発タスク"
+    },
+    "status": {
+      "idle": "待機中",
+      "running": "実行中",
+      "waiting_approval": "承認待ち",
+      "completed": "完了",
+      "failed": "失敗",
+      "aborted": "中止"
+    },
+    "git": {
+      "detached": "デタッチ HEAD",
+      "changes": "{{count}} 件の変更",
+      "conflicts": "競合",
+      "clean": "クリーン"
+    },
+    "taskKinds": {
+      "mission": "ミッション",
+      "taskLoop": "タスクループ",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "タスク台帳"
+    },
+    "taskStatus": {
+      "queued": "待機中",
+      "running": "実行中",
+      "review": "レビュー",
+      "blocked": "ブロック中",
+      "completed": "完了",
+      "failed": "失敗",
+      "aborted": "中止"
+    },
+    "subagents": {
+      "unknown": "エージェント",
+      "openTranscript": "ワークスペースで {{role}} の会話記録を開く"
+    },
+    "subagentStatus": {
+      "started": "実行中",
+      "completed": "完了",
+      "error": "エラー",
+      "aborted": "中止",
+      "verified": "検証済み"
+    },
+    "terminals": {
+      "interactive": "対話型ターミナル",
+      "agentCommand": "エージェントコマンド",
+      "webPreview": "Web プレビューサーバー"
+    },
+    "terminalStatus": {
+      "idle": "待機中",
+      "starting": "起動中",
+      "running": "実行中",
+      "exited": "終了",
+      "blocked": "ブロック中",
+      "completed": "完了",
+      "error": "エラー"
+    },
+    "continuity": {
+      "queue": "{{count}} 件のフォローアップが待機中",
+      "context": "コンテキスト負荷: {{pressure}}",
+      "checkpoint": "復旧チェックポイントあり",
+      "pressure": {
+        "low": "低",
+        "medium": "中",
+        "high": "高"
+      }
+    },
+    "goalKinds": {
+      "mission": "ミッション",
+      "flow": "ゴール待機"
+    },
+    "goalStatus": {
+      "queued": "待機中",
+      "waiting": "待機中",
+      "running": "実行中",
+      "sleeping": "スリープ中",
+      "paused": "一時停止中",
+      "blocked": "ブロック中",
+      "completed": "完了",
+      "failed": "失敗",
+      "aborted": "中止",
+      "lost": "消失"
+    },
+    "processKinds": {
+      "bash": "プロセス",
+      "supervisor": "監視プロセス",
+      "goalOwned": "ゴールプロセス"
+    },
+    "processStatus": {
+      "queued": "待機中",
+      "starting": "起動中",
+      "running": "実行中",
+      "exiting": "終了中",
+      "exited": "終了",
+      "completed": "完了",
+      "failed": "失敗",
+      "killed": "強制終了",
+      "aborted": "中止",
+      "lost": "消失"
+    },
+    "lineage": {
+      "parent": "親セッション",
+      "child": "子セッション"
+    },
+    "lineageStatus": {
+      "started": "実行中",
+      "completed": "完了",
+      "aborted": "中止",
+      "error": "エラー"
+    },
     "runningCount": "実行中 {{count}} 件",
-    "processes": { "openOutput": "{{command}} の出力を開く" }
+    "processes": {
+      "openOutput": "{{command}} の出力を開く"
+    }
   },
   "noLogs": "（ログはまだありません）",
   "scrollToLatest": "最下部に戻る",
@@ -1063,7 +1173,10 @@
     }
   },
   "composer": {
-    "longText": { "showInTextbox": "テキストボックスに表示", "discard": "長文を破棄" },
+    "longText": {
+      "showInTextbox": "テキストボックスに表示",
+      "discard": "長文を破棄"
+    },
     "attachFiles": "ファイルを添付",
     "placeholder": "メッセージ...  / でコマンドと Skill",
     "pickSkill": "Skill を選択",
@@ -1987,72 +2100,6 @@
     "label": "質問ナビゲーション",
     "jumpTo": "{{ordinal}} 番目の質問へ移動"
   },
-  "sessionRail": {
-    "title": "セッション状態",
-    "collapse": "セッション状態を折りたたむ",
-    "expand": "セッション状態を展開",
-    "git": {
-      "title": "Git",
-      "loading": "リポジトリの状態を読み込み中…",
-      "notARepository": "このプロジェクトは Git リポジトリではありません",
-      "unavailable": "Git の状態を一時的に取得できません。",
-      "changes": "変更",
-      "clean": "クリーン",
-      "noLineStats": "行数の統計なし",
-      "changeCount": "{{count}} 個のファイルが変更されています",
-      "tracking": "{{ahead}} 先行 · {{behind}} 遅れ",
-      "commitOrPush": "コミットまたはプッシュ",
-      "stash": "スタッシュ",
-      "commit": "コミット",
-      "push": "プッシュ",
-      "stashSuccess": "変更をスタッシュしました",
-      "stashFailed": "スタッシュに失敗しました",
-      "commitSuccess": "変更をコミットしました",
-      "commitFailed": "コミットに失敗しました",
-      "pushSuccess": "変更をプッシュしました",
-      "pushFailed": "プッシュに失敗しました",
-      "approvalRequired": "承認が必要です - レビューパネルを確認してください",
-      "commitMessagePlaceholder": "コミットメッセージを入力…",
-      "commitMessageRequired": "コミットメッセージを入力してください"
-    },
-    "process": {
-      "title": "プロセス",
-      "empty": "実行中のタスクはありません",
-      "planTitle": "計画",
-      "ledgerFallback": "現在の目標はありません",
-      "ledgerCounts": "進行中 {{active}} · レビュー {{review}} · ブロック {{blocked}}",
-      "queued": "待機 {{count}}",
-      "checkpoint": "チェックポイント {{trigger}}",
-      "warnings": "警告 {{count}}",
-      "drain": "今すぐ処理"
-    },
-    "agents": {
-      "title": "サブエージェント",
-      "empty": "このセッションにサブエージェントはありません",
-      "running": "{{count}} 件実行中",
-      "orchestration": "オーケストレーション: worker {{workers}} · 保留 {{pending}} · 失敗 {{failures}}",
-      "status": {
-        "started": "実行中",
-        "completed": "完了",
-        "error": "エラー",
-        "aborted": "中止",
-        "verified": "検証済み"
-      }
-    },
-    "terminal": {
-      "title": "ターミナル",
-      "idleHint": "ターミナルを開く",
-      "unavailable": "ターミナルの状態を一時的に取得できません。",
-      "pid": "pid {{pid}}",
-      "state": {
-        "idle": "アイドル",
-        "starting": "起動中",
-        "running": "実行中",
-        "exited": "終了",
-        "blocked": "ブロック"
-      }
-    }
-  },
   "workModePanel": {
     "knowledge": "ナレッジ: {{scope}}",
     "permissionMismatch": "現在の権限は {{current}} です。このモードの推奨は {{recommended}} です。",
@@ -2244,6 +2291,10 @@
     "truncated": "古い出力は切り詰められました。",
     "waiting": "出力を待機中…",
     "noOutput": "このプロセスは出力を生成しませんでした。",
-    "status": { "running": "実行中", "completed": "完了", "failed": "失敗" }
+    "status": {
+      "running": "実行中",
+      "completed": "完了",
+      "failed": "失敗"
+    }
   }
 }

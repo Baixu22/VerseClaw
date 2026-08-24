@@ -62,8 +62,6 @@ import {
 } from './session-continuity';
 import { buildRollbackPlan, hasRollbackPlanSidebarTrigger } from './rollback-plan';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { SessionStatusRail } from '@/components/chat/SessionStatusRail';
-import type { TeamOrchestrationView } from './team-orchestration-visualization';
 import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
 import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
@@ -101,7 +99,8 @@ import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
-import { ToolUiPlanView, type ToolUiPlanTodo } from '@/components/tool-ui/plan-view';
+
+import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { projectGeneratedFileDiff, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
@@ -204,15 +203,6 @@ type SessionLineageOverride = {
 };
 
 const QUESTION_DIRECTORY_RENDER_LIMIT = 300;
-
-/* Below this the conversation column would be squeezed under its own
- * 820px reading measure once the rail takes its 320px, so the rail folds
- * into its 44px strip instead. */
-const SESSION_RAIL_MIN_VIEWPORT = 1280;
-
-/** Stable identity so an absent run never re-renders the rail. */
-const EMPTY_ORCHESTRATIONS: TeamOrchestrationView[] = [];
-const EMPTY_PLAN_TODOS: ToolUiPlanTodo[] = [];
 
 function buildQuestionDirectoryTitle(message: RawMessage, fallback: string): string {
   const normalized = extractText(message).replace(/\s+/g, ' ').trim();
@@ -951,20 +941,10 @@ export function Chat() {
   /* The rail's own collapse preference, restored per session. Narrow viewports
    * force it shut without touching the preference, so widening the window
    * brings back whatever the user last chose. */
-  const [sessionRailCollapsed, setSessionRailCollapsed] = useState(false);
-  const [viewportTooNarrowForRail, setViewportTooNarrowForRail] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth < SESSION_RAIL_MIN_VIEWPORT,
-  );
 
   useEffect(() => {
     setRollbackPlanDismissed(false);
   }, [activeWorkspaceId, currentSessionKey]);
-
-  useEffect(() => {
-    const sync = () => setViewportTooNarrowForRail(window.innerWidth < SESSION_RAIL_MIN_VIEWPORT);
-    window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
-  }, []);
 
   // Refresh Task Ledger snapshot when workspace changes
   const refreshTaskLedger = useChatStore((s) => s.refreshTaskLedger);
@@ -1376,7 +1356,6 @@ export function Chat() {
     // `workContextVisible` predates the rail and stored the same idea (does the
     // session want its work context beside the transcript), so it is reused
     // rather than adding a second flag that would disagree with it.
-    setSessionRailCollapsed(sessionState.chatFooter?.workContextVisible === false);
     void clearActiveTopicMarker(activeWorkspace.rootPath);
     /* Panel state is per session, not per workspace: `getWorkspaceSessionState`
      * falls back to the workspace-level blob for legacy profiles, which made one
@@ -1668,90 +1647,7 @@ export function Chat() {
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenTerminalPanel = useCallback(() => {
-    openWorkspacePanel({ panel: 'terminal' });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'terminal' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenAgentsPanel = useCallback((childSessionKey?: string) => {
-    openWorkspacePanel({ panel: 'agents', sessionKey: childSessionKey });
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        artifactPanel: { open: true, activeTabKind: 'agents' },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
-
-  const handleGitStash = useCallback(async () => {
-    if (!activeWorkspaceId) return;
-    try {
-      const result = await hostApi.git.stashPush();
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.stashSuccess', 'Changes stashed'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.stashFailed', 'Failed to stash changes'));
-    }
-  }, [activeWorkspaceId, t]);
-
-  const handleGitCommit = useCallback(async (message: string) => {
-    if (!activeWorkspaceId || !message.trim()) return;
-    try {
-      const result = await hostApi.git.commit({ message: message.trim() });
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.commitSuccess', 'Changes committed'));
-      } else if (result.blocked || result.approvalRequired) {
-        // If approval is required, open the review panel where user can handle it
-        openWorkspacePanel({ panel: 'review', view: 'changes' });
-        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.commitFailed', 'Failed to commit'));
-    }
-  }, [activeWorkspaceId, openWorkspacePanel, t]);
-
-  const handleGitPush = useCallback(async () => {
-    if (!activeWorkspaceId) return;
-    try {
-      const result = await hostApi.git.push();
-      if (result.success) {
-        toast.success(t('chat:sessionRail.git.pushSuccess', 'Changes pushed'));
-      } else if (result.blocked || result.approvalRequired) {
-        openWorkspacePanel({ panel: 'review', view: 'changes' });
-        toast.info(t('chat:sessionRail.git.approvalRequired', 'Approval required - check review panel'));
-      } else {
-        toast.error(result.reason || t('chat:sessionRail.git.pushFailed', 'Failed to push'));
-      }
-    } catch {
-      toast.error(t('chat:sessionRail.git.pushFailed', 'Failed to push'));
-    }
-  }, [activeWorkspaceId, openWorkspacePanel, t]);
-
-  const handleSessionRailCollapsedChange = useCallback((collapsed: boolean) => {
-    setSessionRailCollapsed(collapsed);
-    if (!activeWorkspaceId) return;
-    void saveWorkspaceState({
-      id: activeWorkspaceId,
-      sessionKey: currentSessionKey,
-      state: {
-        chatFooter: { workContextVisible: !collapsed },
-      },
-    });
-  }, [activeWorkspaceId, currentSessionKey, saveWorkspaceState]);
 
   const handleInterruptTerminal = useCallback(async () => {
     openWorkspacePanel({ panel: 'terminal' });
@@ -2681,12 +2577,6 @@ export function Chat() {
       });
     }
   }, [activeWorkspace?.id, composerPaused, currentSessionKey, saveWorkspaceState]);
-  /* The rail reports the turn in flight, so it reads the newest card rather
-   * than folding every card in the transcript — an older run's finished plan is
-   * history, not status. */
-  const latestRunCard = userRunCards.length > 0 ? userRunCards[userRunCards.length - 1] : null;
-  const sessionRailPlan = latestRunCard?.surfaces.plan ?? null;
-  const sessionRailOrchestrations = latestRunCard?.orchestrations ?? EMPTY_ORCHESTRATIONS;
   // Host permission approvals for the run in flight. Rendered inside the turn
   // summary so a blocked run is actionable from the transcript instead of only
   // from the workspace side panels.
@@ -2772,7 +2662,6 @@ export function Chat() {
     && hasRollbackPlanSidebarTrigger(rollbackPlan)
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
     && !rollbackPlanDismissed;
-  const sessionRailVisible = startupPhase === 'ready' && !!activeWorkspaceId;
   const showChatAssistiveRail = canShowChatSideRail
     && chatAssistiveRailVisible
     && !isEmpty
@@ -2781,8 +2670,7 @@ export function Chat() {
   /* The session status rail lives inside the assistive rail column so the chat
    * keeps exactly one session-status sidebar; the column therefore exists
    * whenever the rail is on screen, even before any activity accumulates. */
-  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail || sessionRailVisible;
-  const sessionRailFolded = sessionRailCollapsed || viewportTooNarrowForRail;
+  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -3039,11 +2927,7 @@ export function Chat() {
         data-testid="chat-conversation-column"
         className={cn(
           'flex min-w-0 flex-1 flex-col',
-          // The status rail floats over this column rather than sitting beside
-          // it, so the offset is padding here instead of a flex sibling.
-          sessionRailVisible && 'codex-conversation-inset',
         )}
-        data-rail={sessionRailVisible ? (sessionRailFolded ? 'collapsed' : 'expanded') : undefined}
         style={terminalBottomOpen ? { paddingBottom: terminalBottomHeight } : undefined}
       >
       {/* Toolbar */}
@@ -3458,46 +3342,22 @@ export function Chat() {
           {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
             <QuestionDirectory items={questionDirectoryItems} />
           )}
-          {(showChatAssistiveRail || sessionRailVisible) && (
+          {showChatAssistiveRail && (
             <aside
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
-              {sessionRailVisible && (
-                <SessionStatusRail
-                  inline
-          workspaceId={activeWorkspaceId}
-          sessionKey={currentSessionKey}
-          refreshSignal={refreshSignal}
-          collapsed={sessionRailFolded}
-          onCollapsedChange={handleSessionRailCollapsedChange}
-          planTitle={sessionRailPlan?.title ?? undefined}
-          planTodos={sessionRailPlan?.todos ?? EMPTY_PLAN_TODOS}
-          orchestrations={sessionRailOrchestrations}
-          longTaskControlStatus={longTaskControlStatus}
-          queueDrainBusy={queueDrainBusy}
-          runActive={inputRunActive}
-          showCompactionArtifact={
-            uiDepthMode === 'advanced' &&
-            Boolean(compactionStatus?.lastCompaction?.quality)
-          }
-          onOpenGit={handleOpenGitPanel}
-          onOpenTerminal={handleOpenTerminalPanel}
-          onOpenAgents={handleOpenAgentsPanel}
-          onGitStash={handleGitStash}
-          onGitCommit={handleGitCommit}
-          onGitPush={handleGitPush}
-          onDrainQueuedFollowup={handleDrainQueuedFollowup}
-          onViewCompactionArtifact={handleViewCompactionArtifact}
-                />
-              )}
               {showChatAssistiveRail && visibleSessionActivitySnapshot && (
                 <SessionActivityPanel
                   snapshot={visibleSessionActivitySnapshot}
                   compact
-                  showGit={sessionActivityShowGit && !sessionRailVisible}
-                  showCommands={sessionActivityShowCommands && !sessionRailVisible}
-                  showSubagents={!sessionRailVisible}
+                  showGit={sessionActivityShowGit}
+                  showCommands={sessionActivityShowCommands}
+                  onViewCompactionArtifact={
+                    uiDepthMode === 'advanced' && Boolean(compactionStatus?.lastCompaction?.quality)
+                      ? handleViewCompactionArtifact
+                      : undefined
+                  }
                   onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
                   onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
                 />

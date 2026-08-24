@@ -1,5 +1,8 @@
 {
-  "sensitive": { "bannerTitle": "Обнаружено секретоподобных строк: {{count}}. Проверьте перед отправкой.", "dismiss": "Скрыть" },
+  "sensitive": {
+    "bannerTitle": "Обнаружено секретоподобных строк: {{count}}. Проверьте перед отправкой.",
+    "dismiss": "Скрыть"
+  },
   "gatewayNotRunning": "Шлюз не запущен",
   "retry": "Повторить",
   "gatewayRequired": "Для использования чата требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
@@ -30,30 +33,137 @@
     "brainstormingDesc": "Разделить работу между агентами"
   },
   "sessionActivity": {
+    "viewCompactionArtifact": "Показать артефакт компакции",
     "title": "Состояние сессии",
     "description": "Активность выполнения, задач, Git, целей, процессов, родословной, субагентов и терминалов этого диалога в реальном времени.",
     "openRecovery": "Открыть восстановление сессии",
     "createMemoryDraft": "Сохранить как черновик памяти",
     "duration": "Длительность",
     "notAvailable": "Нет данных",
-    "sections": { "session": "Сессия", "git": "Git рабочей области", "tasks": "Активные задачи", "subagents": "Субагенты", "goals": "Цели и ожидания", "processes": "Процессы", "lineage": "Родословная", "terminals": "Терминалы", "continuity": "Непрерывность", "environment": "Окружение", "plan": "Задачи разработки" },
-    "status": { "idle": "Ожидание", "running": "Выполняется", "waiting_approval": "Ожидает одобрения", "completed": "Завершено", "failed": "Ошибка", "aborted": "Прервано" },
-    "git": { "detached": "Отсоединённый HEAD", "changes": "Изменений: {{count}}", "conflicts": "Конфликты", "clean": "Чисто" },
-    "taskKinds": { "mission": "Миссия", "taskLoop": "Цикл задач", "clawGraph": "ClawGraph", "taskLedger": "Журнал задач" },
-    "taskStatus": { "queued": "В очереди", "running": "Выполняется", "review": "Проверка", "blocked": "Заблокировано", "completed": "Готово", "failed": "Ошибка", "aborted": "Прервано" },
-    "subagents": { "unknown": "Агент", "openTranscript": "Открыть стенограмму {{role}} в рабочей области" },
-    "subagentStatus": { "started": "Выполняется", "completed": "Готово", "error": "Ошибка", "aborted": "Прервано", "verified": "Проверено" },
-    "terminals": { "interactive": "Интерактивный терминал", "agentCommand": "Команда агента", "webPreview": "Сервер Web-просмотра" },
-    "terminalStatus": { "idle": "Ожидание", "starting": "Запускается", "running": "Выполняется", "exited": "Завершён", "blocked": "Заблокирован", "completed": "Готово", "error": "Ошибка" },
-    "continuity": { "queue": "Продолжений в очереди: {{count}}", "context": "Нагрузка контекста: {{pressure}}", "checkpoint": "Доступна точка восстановления", "pressure": { "low": "низкая", "medium": "средняя", "high": "высокая" } },
-    "goalKinds": { "mission": "Миссия", "flow": "Ожидание цели" },
-    "goalStatus": { "queued": "В очереди", "waiting": "Ожидание", "running": "Выполняется", "sleeping": "В спящем режиме", "paused": "Приостановлено", "blocked": "Заблокировано", "completed": "Готово", "failed": "Ошибка", "aborted": "Прервано", "lost": "Потеряно" },
-    "processKinds": { "bash": "Процесс", "supervisor": "Управляемый процесс", "goalOwned": "Процесс цели" },
-    "processStatus": { "queued": "В очереди", "starting": "Запускается", "running": "Выполняется", "exiting": "Завершается", "exited": "Завершён", "completed": "Готово", "failed": "Ошибка", "killed": "Завершён принудительно", "aborted": "Прервано", "lost": "Потеряно" },
-    "lineage": { "parent": "Родительская сессия", "child": "Дочерняя сессия" },
-    "lineageStatus": { "started": "Выполняется", "completed": "Готово", "aborted": "Прервано", "error": "Ошибка" },
+    "sections": {
+      "session": "Сессия",
+      "git": "Git рабочей области",
+      "tasks": "Активные задачи",
+      "subagents": "Субагенты",
+      "goals": "Цели и ожидания",
+      "processes": "Процессы",
+      "lineage": "Родословная",
+      "terminals": "Терминалы",
+      "continuity": "Непрерывность",
+      "environment": "Окружение",
+      "plan": "Задачи разработки"
+    },
+    "status": {
+      "idle": "Ожидание",
+      "running": "Выполняется",
+      "waiting_approval": "Ожидает одобрения",
+      "completed": "Завершено",
+      "failed": "Ошибка",
+      "aborted": "Прервано"
+    },
+    "git": {
+      "detached": "Отсоединённый HEAD",
+      "changes": "Изменений: {{count}}",
+      "conflicts": "Конфликты",
+      "clean": "Чисто"
+    },
+    "taskKinds": {
+      "mission": "Миссия",
+      "taskLoop": "Цикл задач",
+      "clawGraph": "ClawGraph",
+      "taskLedger": "Журнал задач"
+    },
+    "taskStatus": {
+      "queued": "В очереди",
+      "running": "Выполняется",
+      "review": "Проверка",
+      "blocked": "Заблокировано",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "aborted": "Прервано"
+    },
+    "subagents": {
+      "unknown": "Агент",
+      "openTranscript": "Открыть стенограмму {{role}} в рабочей области"
+    },
+    "subagentStatus": {
+      "started": "Выполняется",
+      "completed": "Готово",
+      "error": "Ошибка",
+      "aborted": "Прервано",
+      "verified": "Проверено"
+    },
+    "terminals": {
+      "interactive": "Интерактивный терминал",
+      "agentCommand": "Команда агента",
+      "webPreview": "Сервер Web-просмотра"
+    },
+    "terminalStatus": {
+      "idle": "Ожидание",
+      "starting": "Запускается",
+      "running": "Выполняется",
+      "exited": "Завершён",
+      "blocked": "Заблокирован",
+      "completed": "Готово",
+      "error": "Ошибка"
+    },
+    "continuity": {
+      "queue": "Продолжений в очереди: {{count}}",
+      "context": "Нагрузка контекста: {{pressure}}",
+      "checkpoint": "Доступна точка восстановления",
+      "pressure": {
+        "low": "низкая",
+        "medium": "средняя",
+        "high": "высокая"
+      }
+    },
+    "goalKinds": {
+      "mission": "Миссия",
+      "flow": "Ожидание цели"
+    },
+    "goalStatus": {
+      "queued": "В очереди",
+      "waiting": "Ожидание",
+      "running": "Выполняется",
+      "sleeping": "В спящем режиме",
+      "paused": "Приостановлено",
+      "blocked": "Заблокировано",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "aborted": "Прервано",
+      "lost": "Потеряно"
+    },
+    "processKinds": {
+      "bash": "Процесс",
+      "supervisor": "Управляемый процесс",
+      "goalOwned": "Процесс цели"
+    },
+    "processStatus": {
+      "queued": "В очереди",
+      "starting": "Запускается",
+      "running": "Выполняется",
+      "exiting": "Завершается",
+      "exited": "Завершён",
+      "completed": "Готово",
+      "failed": "Ошибка",
+      "killed": "Завершён принудительно",
+      "aborted": "Прервано",
+      "lost": "Потеряно"
+    },
+    "lineage": {
+      "parent": "Родительская сессия",
+      "child": "Дочерняя сессия"
+    },
+    "lineageStatus": {
+      "started": "Выполняется",
+      "completed": "Готово",
+      "aborted": "Прервано",
+      "error": "Ошибка"
+    },
     "runningCount": "Выполняется: {{count}}",
-    "processes": { "openOutput": "Открыть вывод {{command}}" }
+    "processes": {
+      "openOutput": "Открыть вывод {{command}}"
+    }
   },
   "noLogs": "(Журналы ещё недоступны)",
   "scrollToLatest": "Вернуться вниз",
@@ -1063,7 +1173,10 @@
     }
   },
   "composer": {
-    "longText": { "showInTextbox": "Показать в текстовом поле", "discard": "Удалить длинный текст" },
+    "longText": {
+      "showInTextbox": "Показать в текстовом поле",
+      "discard": "Удалить длинный текст"
+    },
     "attachFiles": "Прикрепить файлы",
     "placeholder": "Сообщение...  / для команд и Skills",
     "pickSkill": "Выбрать Skill",
@@ -1987,72 +2100,6 @@
     "label": "Навигация по вопросам",
     "jumpTo": "Перейти к вопросу {{ordinal}}"
   },
-  "sessionRail": {
-    "title": "Состояние сессии",
-    "collapse": "Свернуть состояние сессии",
-    "expand": "Развернуть состояние сессии",
-    "git": {
-      "title": "Git",
-      "loading": "Чтение состояния репозитория…",
-      "notARepository": "Проект не является Git-репозиторием",
-      "unavailable": "Состояние Git временно недоступно.",
-      "changes": "Изменения",
-      "clean": "Чисто",
-      "noLineStats": "Нет статистики строк",
-      "changeCount": "Изменено файлов: {{count}}",
-      "tracking": "Впереди {{ahead}} · позади {{behind}}",
-      "commitOrPush": "Коммит или push",
-      "stash": "Отложить",
-      "commit": "Коммит",
-      "push": "Отправить",
-      "stashSuccess": "Изменения отложены",
-      "stashFailed": "Не удалось отложить изменения",
-      "commitSuccess": "Изменения закоммичены",
-      "commitFailed": "Не удалось создать коммит",
-      "pushSuccess": "Изменения отправлены",
-      "pushFailed": "Не удалось отправить изменения",
-      "approvalRequired": "Требуется одобрение - проверьте панель проверки",
-      "commitMessagePlaceholder": "Введите сообщение коммита…",
-      "commitMessageRequired": "Введите сообщение коммита"
-    },
-    "process": {
-      "title": "Процесс",
-      "empty": "Пока ничего не выполняется",
-      "planTitle": "План",
-      "ledgerFallback": "Текущая цель не задана",
-      "ledgerCounts": "Активных {{active}} · на проверке {{review}} · заблокировано {{blocked}}",
-      "queued": "В очереди {{count}}",
-      "checkpoint": "Чекпоинт {{trigger}}",
-      "warnings": "Предупреждений {{count}}",
-      "drain": "Отправить сейчас"
-    },
-    "agents": {
-      "title": "Субагенты",
-      "empty": "В этой сессии нет субагентов",
-      "running": "Выполняется: {{count}}",
-      "orchestration": "Оркестрация: воркеров {{workers}} · в ожидании {{pending}} · с ошибкой {{failures}}",
-      "status": {
-        "started": "Выполняется",
-        "completed": "Готово",
-        "error": "Ошибка",
-        "aborted": "Прервано",
-        "verified": "Проверено"
-      }
-    },
-    "terminal": {
-      "title": "Терминал",
-      "idleHint": "Открыть терминал",
-      "unavailable": "Состояние терминала временно недоступно.",
-      "pid": "pid {{pid}}",
-      "state": {
-        "idle": "Простой",
-        "starting": "Запуск",
-        "running": "Выполняется",
-        "exited": "Завершён",
-        "blocked": "Заблокирован"
-      }
-    }
-  },
   "workModePanel": {
     "knowledge": "Знания: {{scope}}",
     "permissionMismatch": "Текущий режим разрешений: {{current}}; для этого режима рекомендуется {{recommended}}.",
@@ -2244,6 +2291,10 @@
     "truncated": "Ранний вывод был обрезан.",
     "waiting": "Ожидание вывода…",
     "noOutput": "Этот процесс не дал вывода.",
-    "status": { "running": "Выполняется", "completed": "Готово", "failed": "Ошибка" }
+    "status": {
+      "running": "Выполняется",
+      "completed": "Готово",
+      "failed": "Ошибка"
+    }
   }
 }
