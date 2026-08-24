@@ -401,7 +401,187 @@ git diff HEAD -- <本 task 文件>                        # 空 = 已复原
 
 ## §R3 每任务改动半径收口门
 
-<!-- owner=lane-2 node=TF-0107 -->
+来源节点：**TF-0107**。本节给出**无累积状态**的每任务收口门：每个 task 收口时由审核者（非实现者，§R1.0.1 保证）执行固定命令组，全部 `git` / `grep` / `wc` 可判，**与执行者身份和历史无关**。
+
+### §R3.0 为什么废除原 BRB 档位
+
+原「执行者累积档位」设计有四个洞，全部无机械判据：档位记录位置是析取式（`execution_hints` 或 ledger 文件 —— 即无唯一位置）；无任何任务负责档位裁决，降档条款是空文；「零返工」无操作定义；且存在**退化均衡** —— 风险规避型执行者的占优策略是永不升档，导致所有 M/L 任务卡在拆分上。
+
+替代设计的三条硬约束（TF-0107 `non_goals`）：**不引入任何累积状态 / 档位账本 / 执行者评分**；**不引入无法机械判定的条款**（如「加强 code review」）；`brb-S/M/L` 语义改为 **`max_brb`（该 task 允许的最大改动半径上限）**，不再表示执行者档位 —— 不存在档位、不存在升降、不存在 ledger。
+
+保留原设计中真正有效的一条：**§D1(a) 不通过 → 只能 `landed-unwired`**。这是状态判定而非身份惩罚，不需要任何账本。
+
+### §R3.1 三条收口命令（审核者执行并原样贴输出）
+
+先确定本 task 的提交集合 —— 这是三条命令共同的输入：
+
+```bash
+TASK=TF-XXXX
+COMMITS=$(git log --format=%H --grep="Task: $TASK" 590588791..HEAD)
+```
+
+**命令 1 —— 改动半径 ≤ `max_brb`**
+
+```bash
+git show --pretty="" --name-only $COMMITS | sort -u | wc -l
+```
+
+**命令 2 —— schema 路径守卫（须为空，除非在 §R3.3 白名单内）**
+
+```bash
+git show --pretty="" --name-only $COMMITS -- \
+  '*zod-schema*' 'shared/dcs/prod-flags-catalog.ts' \
+  'openclaw_runtime/src/config/types.openclaw.ts' | sort -u
+```
+
+**命令 3 —— 默认值守卫（命中且不在 §R3.4 白名单 = 硬 FAIL）**
+
+```bash
+git show $COMMITS -- ':!docs' ':!*.md' \
+  | grep -E "^[+-]" | grep -vE "^(\+\+\+|---)" \
+  | grep -E "\.default\(|defaultValue|DEFAULT_[A-Z_]+\s*[:=]"
+```
+
+> **本节对 TF-0107 requirements 的字面命令做了两处修正，均有实测依据，见 §R3.7。** 直接照抄字面命令会产生假阳性与错误归因。
+
+### §R3.2 `max_brb` 阈值表
+
+| `context_tags` | max_brb（文件数上限） |
+|---|---:|
+| `brb-S` | **5** |
+| `brb-M` | **15** |
+| `brb-L` | **40** |
+| `brb-none` | **0**（无代码半径） |
+| **无 brb-* 标签** | 按 **S=5** 处理（最严），并须补标签 |
+
+`brb-none` 的语义已实测确认：本轮 5 个 `brb-none` 节点全部是**已 deprecated 的被砍 task**（TF-0123/0125/0131/0132）或**纯决策节点**（TF-0136）—— 即「本无代码改动面」，不是「无上限」。**`brb-none` 的 task 若产生任何代码改动即硬 FAIL。**
+
+### §R3.3 schema 白名单（命令 2 的唯一豁免）
+
+只有下列 task 允许命令 2 非空。白名单由 §R4.5 的冲突域登记**派生**，不独立维护：
+
+| task | 允许触碰 | 依据域 |
+|---|---|---|
+| **TF-0109**（已 `done`） | `types.openclaw.ts`、`runtime-feature-leaves.ts` | D07 / D14 |
+| **TF-0112**（T-P0-4） | `zod-schema.ts`、`types.openclaw.ts`、`prod-flags-catalog.ts`、`runtime-feature-leaves.ts` | D02 / D07 / D14 |
+| **TF-0137**（D2） | `prod-flags-catalog.ts` | D02 |
+| **TF-0140**（T-E2） | `prod-flags-catalog.ts` | D02 |
+
+**白名单外任一 task 的命令 2 非空 = 硬 FAIL。** TF-0107（本节点）虽在 D02/D07/D14 登记内，但实际为纯文档 task，命令 2 实测为空 —— **登记允许不等于必须触碰**。
+
+> **待补登记（`zod-schema.ts` 未登记为冲突域）**：命令 2 守卫 `*zod-schema*`，但 §R4.5 的 D01-D14 表**无任何域覆盖 `openclaw_runtime/src/config/zod-schema.ts`**，而 TF-0112 的标题（「factViews 从 schema/type 下架」）明确要求改它。该文件仅由车道 2 的 task 触碰（车道 1 七个独占域不含它），故**无跨车道风险**，但按 §R4.5「新发现的域必须追加」应登记。已记 `TFD-lane2-r3-command-corrections-2026-08-24`；因 §R4 属车道 1 owner 节，**本车道不得跨节编辑**，故由车道 1 在 §R4.5 补 D15 行。
+
+### §R3.4 默认值白名单（**恰好一项**）
+
+本轮默认值白名单**恰好一项**，不是「≤ 一项」—— TF-0146 的成功指标是「本轮默认值改动次数 **= 1**」：
+
+| # | task | 旗标 | 人工 approve 记录（必须存在） |
+|---:|---|---|---|
+| 1 | **TF-0140**（T-E2） | `runtime.contextBlock.tool-registry.enabled` | `docs/dev/context-moat/approvals/TF-0140.md` |
+
+**这是全表。白名单以外任何默认值改动一律硬 FAIL**（§R5 技术-4）。
+
+旗标真实性已核实：`shared/dcs/prod-flags-catalog.ts:76` 的 `key: 'runtime.contextBlock.tool-registry.enabled'`，`runtime-feature-leaves.ts:52` 的 `"tool-registry": { enabled: ... }`。
+
+#### §R3.4.1 `approvals/<task-id>.md` 约定（AC-3）
+
+- **固定路径**：`docs/dev/context-moat/approvals/<task-id>.md`，`grep` 可查。目录已由 S0 建立（当前仅 `.gitkeep`）。
+- **必须先有 approve 记录，才允许改默认值**。顺序不可倒置：先改后补批准 = 硬 FAIL。
+- 审核者的机械判据：
+
+  ```bash
+  test -f docs/dev/context-moat/approvals/TF-0140.md && echo APPROVED || echo BLOCKED
+  ```
+
+- 记录须含：批准人（真人标识）、批准 UTC 时间戳、被批准的**具体旗标全名**、声明的回滚方式（§R2.5）、soak 起点 commit。
+- **TF-0140 另需**：翻正提交落地后立即在同一文件写下 soak 起点 commit 与 UTC 时间戳，并通知另一车道进入 **B3 冻结**（§R4 同步点）。
+
+### §R3.5 超半径处置：拆分或降级，不得放行
+
+超出 `max_brb` 的 task **不得收口**。两条合法出口，无第三条：
+
+1. **拆分**为两个各自在半径内的 task。拆分件**必须共享一份设计说明**，固定路径 `docs/dev/context-moat/designs/<task-id>.md`（`<task-id>` 取拆分后**第一个** task 的 id，其余拆分件在自己的 `reviews/` 记录中引用同一路径）。设计说明须写明：为何原 task 超半径、拆分边界、拆分件之间的接口契约、以及**拆分后两件的 max_brb 之和不得超过原 task 的 max_brb**（否则拆分即成为绕过半径的手段）。
+2. **降级 `landed-unwired`**（§D1 / §R5 过程-10）。
+
+### §R3.6 里程碑级累积半径（补住「拆分不减少总改动量」）
+
+单任务门拦不住累积大改动：把一个大 task 拆成三个小 task，每个都过 S 门，总量却是 3×S。故里程碑收口时另跑：
+
+```bash
+git show --pretty="" --name-only $(git log --format=%H --grep="Task: TF-" <milestone-start>..HEAD) | sort -u | wc -l
+```
+
+与下表预算比较。预算 = 该里程碑**活跃子节点 `max_brb` 之和**，**冻结于 B1**（M0 收口时刻）—— 冻结是关键：否则后续拆分会同步抬高预算，累积门自我失效。
+
+| 里程碑 | 活跃子节点 | max_brb 构成 | **累积预算（文件数）** |
+|---|---:|---|---:|
+| M0 `TF-0103` | 8 | S×8 | **40** |
+| M1 `TF-0108` | 6 | S×6 | **30** |
+| M2 `TF-0115` | 4 | M×2 + S×2 | **40** |
+| M3 `TF-0120` | 4 | M×3 + S×1 | **50** |
+| M4 `TF-0127` | 3 | M×1 + S×2 | **25** |
+| M5 `TF-0133` | 2 | L×1 + S×1 | **45** |
+| **M0..M5 合计** | **27** | — | **230** |
+
+（已排除 4 个 deprecated 被砍 task；M6/TF-0144 不占本轮预算。）
+
+### §R3.7 对 requirements 字面命令的两处修正（实测依据）
+
+TF-0107 的 `requirements` 给出的字面命令有两处在本仓库会**产生错误判定**。照抄会让门失效或误伤，故修正并留证：
+
+#### 修正 1 —— 半径不能用 `<task-start-ref>..HEAD` 区间，必须用「本 task 自己的提交集」
+
+字面命令 `git diff --name-only <task-start-ref>..HEAD | wc -l` 在**双车道交错提交**下会把另一车道的文件算进本 task 半径。实测（TF-0109）：
+
+```
+本 task 自己的提交 (eb532b5c7 f0a82ce04) 并集 = 3 个文件
+  docs/dev/context-moat/reviews/TF-0109.md
+  openclaw_runtime/src/config/runtime-feature-leaves.ts
+  openclaw_runtime/src/config/types.openclaw.ts
+
+字面区间 eb532b5c7^..f0a82ce04 = 5 个文件（多算 2）
+  + docs/dev/context-moat/DEV-PROTOCOL.md      ← 车道 1 的 4a4c91634
+  + docs/dev/context-moat/reviews/TF-0105.md   ← 车道 1 的 4a4c91634
+```
+
+TF-0109 的 `max_brb` = S = 5。**字面命令给出 5/5，恰好卡在上限** —— 车道 1 再提交一次，一个完全合规的 task 就会因**别人的改动**硬 FAIL。故改用 `git show --name-only <本 task 提交> | sort -u | wc -l`。
+
+#### 修正 2 —— 默认值 grep 必须排除文档，否则每个合规 task 都会被误杀
+
+字面命令对整个 diff 做 grep。实测在 TF-0109 上**命中**：
+
+```
+HIT: +| ① 旗标默认值是否为关 | ... `defaultValue:false` ... | **命中反证**：默认关 |
+```
+
+该命中来自 `reviews/TF-0109.md` 的**散文**，TF-0109 未改任何默认值。更严重的是这是**系统性**假阳性：§R1 的 A2 表**要求**每份审核记录记录「① 旗标默认值是否为关」，故**每个合规填表的 task 都会踩中硬 FAIL**。加 `-- ':!docs' ':!*.md'` 后：
+
+- 真阴性：TF-0109 / TF-0142 / TF-0106 三个 task 均**无命中**（实测）。
+- 真阳性：对合成 diff 实测**仍能捕获**两种真实形态 —— `z.boolean().default(false→true)` 与 `DEFAULT_FLAGS = { toolRegistry: false→true }`。
+
+> 真阳性验证不可省：一个只验证「当前不报警」的守卫，与一个永不报警的空守卫无法区分。
+
+### §R3.8 提交归属约定（三条命令的前置）
+
+三条命令都要求「本 task 的提交集」可被机械识别。实测本轮两条车道**约定不一致**，且有提交完全无归属：
+
+| 提交 | 现有归属写法 |
+|---|---|
+| 车道 1（`f005991b7` / `4a4c91634` / `6de7499e5` / `40ffb3814` / `3450a87bc`） | `Node: TF-XXXX` |
+| 车道 2（`eb532b5c7` / `f0a82ce04` / `0f3f95430` / `ef66a1c28` / `f04a5352a` / `be6cdbdd8`） | `Refs TF-XXXX` |
+| `fe469cbff`（车道 1 对 TF-0109 的审核） | **无任何归属** |
+
+且两条车道的 `git` author 相同（`OpenClaw UFTK Pilot`），**author 无法区分车道**。故本节确立：
+
+1. **自本节起，每个提交必须且只能带一个归属 trailer**：`Task: TF-XXXX`。「一提交一 task」本是 §R4 防脏树条款（不允许两个 task 的改动混在一次提交里）的机械形式。
+2. **无归属提交 = §R3 违反**，其改动无法归入任何 task 的半径，因而既不可验收也不可回滚归因。
+3. **向后兼容**：M0 已落地的提交沿用 `Node:` / `Refs`，审核者对 M0 task 用下式匹配：
+
+   ```bash
+   git log --format=%H --grep="\(Task:\|Refs\|Node:\) $TASK" 590588791..HEAD
+   ```
+
+   M1 起只认 `Task:`。`fe469cbff` 的缺归属为**已知既有实例**，不追溯改写历史（§R5 技术-7）。
 
 ## §R4 交付物目录 / 偏差 / 回滚 / pick-next / 并发编排
 
