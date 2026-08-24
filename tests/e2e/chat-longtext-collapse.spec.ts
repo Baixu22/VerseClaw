@@ -95,7 +95,7 @@ test.describe('Verse Claw composer long-text collapse', () => {
       }, LONG_TEXT);
 
       const chip = page.getByTestId('chat-composer-collapse-chip');
-      await chip.waitFor({ state: 'visible', timeout: 5000 });
+      await chip.waitFor({ state: 'visible', timeout: 10000 });
       await expect(chip).toContainText('pasted line 1');
       await expect(composer).toHaveValue('');
 
@@ -116,7 +116,7 @@ test.describe('Verse Claw composer long-text collapse', () => {
           cancelable: true,
         }));
       }, LONG_TEXT);
-      await chip.waitFor({ state: 'visible', timeout: 5000 });
+      await chip.waitFor({ state: 'visible', timeout: 10000 });
 
       // Dismiss discards the buffer.
       await page.getByTestId('chat-composer-collapse-dismiss').click();

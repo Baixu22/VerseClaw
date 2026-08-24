@@ -12,6 +12,17 @@
  * Nothing here invents a new colour.
  */
 
+.codex-session-rail--inline {
+  /* Embedded in the assistive rail column: give up the floating placement so
+     the chat keeps exactly one session-status sidebar. */
+  position: static;
+  top: auto;
+  right: auto;
+  z-index: auto;
+  width: 100%;
+  max-height: none;
+}
+
 .codex-session-rail {
   position: absolute;
   /* Aligned with the toolbar's own action buttons (8px from the page top), so

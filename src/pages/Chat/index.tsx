@@ -2772,13 +2772,16 @@ export function Chat() {
     && hasRollbackPlanSidebarTrigger(rollbackPlan)
     && (!isEmpty || !!longTaskControlStatus || !!compactionStatus)
     && !rollbackPlanDismissed;
+  const sessionRailVisible = startupPhase === 'ready' && !!activeWorkspaceId;
   const showChatAssistiveRail = canShowChatSideRail
     && chatAssistiveRailVisible
     && !isEmpty
     && !questionDirectoryVisible
     && (showSessionActivityRail || showRollbackPlanPanel);
-  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail;
-  const sessionRailVisible = startupPhase === 'ready' && !!activeWorkspaceId;
+  /* The session status rail lives inside the assistive rail column so the chat
+   * keeps exactly one session-status sidebar; the column therefore exists
+   * whenever the rail is on screen, even before any activity accumulates. */
+  const showChatSideRail = questionDirectoryVisible || showChatAssistiveRail || sessionRailVisible;
   const sessionRailFolded = sessionRailCollapsed || viewportTooNarrowForRail;
 
   useEffect(() => {
@@ -3455,17 +3458,46 @@ export function Chat() {
           {chatAssistiveRailVisible && !isEmpty && questionDirectoryVisible && (
             <QuestionDirectory items={questionDirectoryItems} />
           )}
-          {showChatAssistiveRail && (
+          {(showChatAssistiveRail || sessionRailVisible) && (
             <aside
             data-testid="chat-assistive-rail"
             className="flex w-full shrink-0 flex-col gap-3 xl:w-72"
           >
-              {visibleSessionActivitySnapshot && (
+              {sessionRailVisible && (
+                <SessionStatusRail
+                  inline
+          workspaceId={activeWorkspaceId}
+          sessionKey={currentSessionKey}
+          refreshSignal={refreshSignal}
+          collapsed={sessionRailFolded}
+          onCollapsedChange={handleSessionRailCollapsedChange}
+          planTitle={sessionRailPlan?.title ?? undefined}
+          planTodos={sessionRailPlan?.todos ?? EMPTY_PLAN_TODOS}
+          orchestrations={sessionRailOrchestrations}
+          longTaskControlStatus={longTaskControlStatus}
+          queueDrainBusy={queueDrainBusy}
+          runActive={inputRunActive}
+          showCompactionArtifact={
+            uiDepthMode === 'advanced' &&
+            Boolean(compactionStatus?.lastCompaction?.quality)
+          }
+          onOpenGit={handleOpenGitPanel}
+          onOpenTerminal={handleOpenTerminalPanel}
+          onOpenAgents={handleOpenAgentsPanel}
+          onGitStash={handleGitStash}
+          onGitCommit={handleGitCommit}
+          onGitPush={handleGitPush}
+          onDrainQueuedFollowup={handleDrainQueuedFollowup}
+          onViewCompactionArtifact={handleViewCompactionArtifact}
+                />
+              )}
+              {showChatAssistiveRail && visibleSessionActivitySnapshot && (
                 <SessionActivityPanel
                   snapshot={visibleSessionActivitySnapshot}
                   compact
-                  showGit={sessionActivityShowGit}
-                  showCommands={sessionActivityShowCommands}
+                  showGit={sessionActivityShowGit && !sessionRailVisible}
+                  showCommands={sessionActivityShowCommands && !sessionRailVisible}
+                  showSubagents={!sessionRailVisible}
                   onOpenRecovery={() => navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`)}
                   onCreateMemoryDraft={handleOpenRecoveryMemoryDraft}
                 />
@@ -3677,35 +3709,6 @@ export function Chat() {
         </DialogContent>
       </Dialog>
       </div>
-
-      {/* Third column: session status rail */}
-      {sessionRailVisible && (
-        <SessionStatusRail
-          workspaceId={activeWorkspaceId}
-          sessionKey={currentSessionKey}
-          refreshSignal={refreshSignal}
-          collapsed={sessionRailFolded}
-          onCollapsedChange={handleSessionRailCollapsedChange}
-          planTitle={sessionRailPlan?.title ?? undefined}
-          planTodos={sessionRailPlan?.todos ?? EMPTY_PLAN_TODOS}
-          orchestrations={sessionRailOrchestrations}
-          longTaskControlStatus={longTaskControlStatus}
-          queueDrainBusy={queueDrainBusy}
-          runActive={inputRunActive}
-          showCompactionArtifact={
-            uiDepthMode === 'advanced' &&
-            Boolean(compactionStatus?.lastCompaction?.quality)
-          }
-          onOpenGit={handleOpenGitPanel}
-          onOpenTerminal={handleOpenTerminalPanel}
-          onOpenAgents={handleOpenAgentsPanel}
-          onGitStash={handleGitStash}
-          onGitCommit={handleGitCommit}
-          onGitPush={handleGitPush}
-          onDrainQueuedFollowup={handleDrainQueuedFollowup}
-          onViewCompactionArtifact={handleViewCompactionArtifact}
-        />
-      )}
 
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
       {panelOpen && (

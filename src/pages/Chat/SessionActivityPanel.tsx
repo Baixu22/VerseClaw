@@ -13,6 +13,7 @@ type SessionActivityPanelProps = {
   onCreateMemoryDraft?: () => void;
   showGit?: boolean;
   showCommands?: boolean;
+  showSubagents?: boolean;
 };
 
 function formatDuration(startedAt: number | null | undefined, endedAt: number | null | undefined, now: number): string {
@@ -71,6 +72,7 @@ export function SessionActivityPanel({
   onCreateMemoryDraft,
   showGit = true,
   showCommands = true,
+  showSubagents = true,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
   const [now, setNow] = useState(() => Date.now());
@@ -82,7 +84,7 @@ export function SessionActivityPanel({
   }, [runActive, snapshot.session.startedAt]);
   const hasGit = showGit && Boolean(snapshot.git && snapshot.git.isRepository && !snapshot.git.clean);
   const hasTasks = snapshot.tasks.length > 0;
-  const hasSubagents = snapshot.subagents.length > 0;
+  const hasSubagents = showSubagents && snapshot.subagents.length > 0;
   const hasGoals = snapshot.goals.length > 0;
   const hasProcesses = snapshot.processes.length > 0;
   const hasLineage = snapshot.lineage.length > 0;

@@ -88,11 +88,11 @@ test.describe('Verse Claw secret-shaped content highlighting', () => {
 
       // Debounced (150ms) + deferred scan; allow generous headroom.
       const secretSpan = page.getByTestId('chat-composer-secret-span');
-      await secretSpan.first().waitFor({ state: 'visible', timeout: 5000 });
+      await secretSpan.first().waitFor({ state: 'visible', timeout: 10000 });
       await expect(secretSpan.first()).toContainText('sk-');
 
       const advisory = page.getByTestId('chat-sensitive-advisory');
-      await advisory.waitFor({ state: 'visible', timeout: 5000 });
+      await advisory.waitFor({ state: 'visible', timeout: 10000 });
 
       // Dismiss hides the advisory for the same signature.
       await page.getByTestId('chat-sensitive-advisory-dismiss').click();

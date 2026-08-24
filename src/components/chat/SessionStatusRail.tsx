@@ -53,6 +53,8 @@ import {
 } from '@/pages/Chat/use-session-status';
 
 export type SessionStatusRailProps = {
+  /** Render as a static card inside the assistive rail column instead of floating. */
+  inline?: boolean;
   workspaceId?: string | null;
   sessionKey: string;
   refreshSignal?: number;
@@ -643,6 +645,7 @@ const TerminalSection = memo(function TerminalSection({
 type SectionId = 'git' | 'process' | 'agents' | 'terminal';
 
 export function SessionStatusRail({
+  inline = false,
   workspaceId,
   sessionKey,
   refreshSignal,
@@ -680,7 +683,7 @@ export function SessionStatusRail({
   if (collapsed) {
     return (
       <aside
-        className="codex-session-rail codex-session-rail--collapsed"
+        className={inline ? 'codex-session-rail codex-session-rail--collapsed codex-session-rail--inline' : 'codex-session-rail codex-session-rail--collapsed'}
         data-testid="session-status-rail"
         data-collapsed="true"
         aria-label={t('sessionRail.title')}
@@ -707,7 +710,7 @@ export function SessionStatusRail({
 
   return (
     <aside
-      className="codex-session-rail"
+      className={inline ? 'codex-session-rail codex-session-rail--inline' : 'codex-session-rail'}
       data-testid="session-status-rail"
       data-collapsed="false"
       aria-label={t('sessionRail.title')}
