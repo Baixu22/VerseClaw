@@ -112,4 +112,67 @@ test.describe('Plan mode real write challenge', () => {
       await rm(workspaceDir, { recursive: true, force: true });
     }
   });
+
+  test('read-only mode blocks git --output without touching the target file', async ({ launchElectronApp }) => {
+    // `git diff --output=<path>` creates and truncates <path>, and the path is
+    // unconstrained, so a whitelisted read subcommand can overwrite a file
+    // outside the workspace. readOnly mode allows 'read' with no further
+    // checks, so only the classification stops it.
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-readonly-output-'));
+    const outsideDir = await mkdtemp(join(tmpdir(), 'clawx-readonly-outside-'));
+    const victim = join(outsideDir, 'victim.txt');
+    await writeFile(victim, 'original', 'utf8');
+    const createdInside = join(workspaceDir, 'leaked.patch');
+    const app = await launchElectronApp({ skipSetup: true });
+
+    try {
+      await getStableWindow(app);
+      await hostInvoke(app, 'workspaces', 'create', {
+        name: 'Read Only Output Challenge',
+        rootPath: workspaceDir,
+        permissionMode: 'readOnly',
+      });
+
+      const overwrite = await hostInvoke<{ success: boolean; blocked?: boolean }>(
+        app,
+        'terminal',
+        'run',
+        { command: `git diff --output=${victim}` },
+      );
+      expect(overwrite).toMatchObject({ success: false, blocked: true });
+      await expect(readFile(victim, 'utf8')).resolves.toBe('original');
+
+      // The space-separated form is the same vector.
+      const spaced = await hostInvoke<{ success: boolean; blocked?: boolean }>(
+        app,
+        'terminal',
+        'run',
+        { command: `git diff --output ${victim}` },
+      );
+      expect(spaced).toMatchObject({ success: false, blocked: true });
+      await expect(readFile(victim, 'utf8')).resolves.toBe('original');
+
+      const inside = await hostInvoke<{ success: boolean; blocked?: boolean }>(
+        app,
+        'terminal',
+        'run',
+        { command: `git log --output=${createdInside}` },
+      );
+      expect(inside).toMatchObject({ success: false, blocked: true });
+      await expect(pathExists(createdInside)).resolves.toBe(false);
+
+      // Inspection must stay allowed.
+      const plainStatus = await hostInvoke<{ success: boolean; blocked?: boolean }>(
+        app,
+        'terminal',
+        'run',
+        { command: 'git status' },
+      );
+      expect(plainStatus.blocked).not.toBe(true);
+    } finally {
+      await closeElectronApp(app);
+      await rm(workspaceDir, { recursive: true, force: true });
+      await rm(outsideDir, { recursive: true, force: true });
+    }
+  });
 });
