@@ -2170,5 +2170,17 @@
     "to": "TF-0099",
     "type": "related_to",
     "updated_at": "2026-08-23T11:46:04.913782Z"
+  },
+  "TFE-0183": {
+    "blocking": true,
+    "confidence": 0.6,
+    "created_at": "2026-08-24T06:00:49.450683Z",
+    "created_from_session": null,
+    "from": "TF-0075",
+    "id": "TFE-0183",
+    "reason": "CLI add-node --parent",
+    "to": "TF-0094",
+    "type": "child_of",
+    "updated_at": "2026-08-24T06:00:49.450683Z"
   }
 }

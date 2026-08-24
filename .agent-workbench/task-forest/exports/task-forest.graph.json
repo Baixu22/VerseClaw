@@ -1568,6 +1568,18 @@
       "tree_child_edges": [],
       "tree_parent_edge": "TFE-0132"
     },
+    "TF-0075": {
+      "blocking_edges": [
+        "TFE-0183"
+      ],
+      "cross_edges": [],
+      "incoming": [],
+      "outgoing": [
+        "TFE-0183"
+      ],
+      "tree_child_edges": [],
+      "tree_parent_edge": "TFE-0183"
+    },
     "TF-0077": {
       "blocking_edges": [],
       "cross_edges": [
@@ -1906,7 +1918,8 @@
         "TFE-0172",
         "TFE-0174",
         "TFE-0175",
-        "TFE-0176"
+        "TFE-0176",
+        "TFE-0183"
       ],
       "outgoing": [
         "TFE-0171"
@@ -1915,7 +1928,8 @@
         "TFE-0172",
         "TFE-0174",
         "TFE-0175",
-        "TFE-0176"
+        "TFE-0176",
+        "TFE-0183"
       ],
       "tree_parent_edge": "TFE-0171"
     },
@@ -2025,7 +2039,7 @@
     }
   },
   "edge_type_counts": {
-    "child_of": 92,
+    "child_of": 93,
     "clarifies": 0,
     "contributes_to": 7,
     "depends_on": 67,
@@ -4216,10 +4230,22 @@
       "to": "TF-0099",
       "type": "related_to",
       "updated_at": "2026-08-23T11:46:04.913782Z"
+    },
+    "TFE-0183": {
+      "blocking": true,
+      "confidence": 0.6,
+      "created_at": "2026-08-24T06:00:49.450683Z",
+      "created_from_session": null,
+      "from": "TF-0075",
+      "id": "TFE-0183",
+      "reason": "CLI add-node --parent",
+      "to": "TF-0094",
+      "type": "child_of",
+      "updated_at": "2026-08-24T06:00:49.450683Z"
     }
   },
   "event_id": null,
-  "generated_at": "2026-08-23T17:17:06.738636Z",
+  "generated_at": "2026-08-24T06:25:59.349752Z",
   "nodes": {
     "TF-0001": {
       "acceptance_criteria": [
@@ -9890,6 +9916,67 @@
       "title": "DCS、Goal/Loop、SEKB 真实投入使用验收",
       "updated_at": "2026-08-21T00:12:34.906650Z"
     },
+    "TF-0075": {
+      "acceptance_criteria": [
+        "unit: 四种 --output 写盘形式判 write；-o 与 --output-indicator-* 仍判 read",
+        "unit: decideWorkspaceCommand(readOnly) 对 --output 返回 allowed:false",
+        "E2E: readOnly 模式下经真实 terminal.run 拦截，且工作区外受害文件内容未变；git status 仍放行",
+        "反向验证：撤掉修复后新增单测与 E2E 必须失败"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0.0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.9,
+      "context_tags": [],
+      "created_at": "2026-08-24T06:00:49.450683Z",
+      "deprecated_at": null,
+      "derived_progress": 100.0,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "low",
+      "estimate": 45,
+      "estimated_total_minutes": null,
+      "evidence": [
+        "git 2.51 实测：git diff --output=V1.txt / --output V2.txt / git show --output= / git log --output= 四者均写盘；git diff -o 不写；--output-indicator-new=X 不写",
+        "实测覆盖：预置内容为 original 的工作区外文件被 git diff --output 覆盖为 diff 正文",
+        "代码路径：workspace-permissions.ts decideWorkspaceCommand 对 risk==='read' 直接 allowed:true；消费方 terminal-api.ts:264"
+      ],
+      "execution_hints": [],
+      "id": "TF-0075",
+      "kind": "task",
+      "non_goals": [
+        "不动 execpolicy Starlark 层",
+        "不改 READ_ONLY_COMMANDS 白名单本身",
+        "不处理非 git 命令的输出重定向（已由 WRITE_PATTERNS 的 > 覆盖）"
+      ],
+      "primary_parent": "TF-0094",
+      "priority": 1,
+      "progress": 100.0,
+      "progress_source": "manual",
+      "purpose": "关闭一个已实证的权限绕过：只读模式本应只允许检视，实际可通过白名单读子命令写盘",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "只拦真正写盘的形式：--output=<path> 与 --output <path>",
+        "不误捕 -o（实测不写）与 --output-indicator-new/old/context（仅选显示字符）",
+        "不放宽任何现有 destructive/network/write 判定",
+        "修改集中在 classifyWorkspaceCommand，不动 execpolicy Starlark 层"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "git diff/show/log --output=<path> 会创建并截断目标文件且路径无约束，但 classifyWorkspaceCommand 判其为 read，而 readOnly 模式对 read 无条件放行，因此只读模式可覆盖工作区外任意文件",
+      "title": "A5: 只读子命令的 --output 写盘向量",
+      "updated_at": "2026-08-24T06:24:01.519861Z"
+    },
     "TF-0077": {
       "acceptance_criteria": [
         "audit-0.json 至 audit-6.json 均通过 pnpm run runtime-lifecycle-audit --phase all",
@@ -11367,6 +11454,7 @@
       "alignment_records": [],
       "assumptions": [],
       "children": [
+        "TF-0075",
         "TF-0095",
         "TF-0096",
         "TF-0097",
@@ -11376,7 +11464,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 90.0,
       "desired_outcomes": [
         "Agent/UI 可通过 typed hostApi.git.applyPatch 应用/预检/回滚统一 diff 并获得结构化结果",
         "Review Center与会话面板可用 git.diffToBase 自动定位最近远程公共祖先",
@@ -11396,7 +11484,7 @@
       ],
       "primary_parent": "TF-0010",
       "priority": 2,
-      "progress": 0.0,
+      "progress": 90.0,
       "progress_source": "manual",
       "purpose": "把 Codex 对照审计确认的三个结构性差距变成结构化、可验收的 Host API 能力，让 Agent 与 UI 共享同一套受审批约束的 Git 原语",
       "remaining_minutes_max": 600,
@@ -11408,11 +11496,11 @@
         "每个子节点产出当前 HEAD 新鲜证据：focused unit tests + contract:check + 相关 E2E"
       ],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "review_needed",
       "success_metrics": [],
       "summary": "",
       "title": "Git 能力补全：补丁引擎、祖先推导与安全分类器",
-      "updated_at": "2026-08-23T11:46:04.913782Z"
+      "updated_at": "2026-08-24T06:25:45.689872Z"
     },
     "TF-0095": {
       "acceptance_criteria": [
@@ -11435,7 +11523,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 5.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "high",
@@ -11451,7 +11539,7 @@
       ],
       "primary_parent": "TF-0094",
       "priority": 1,
-      "progress": 5.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
@@ -11462,11 +11550,11 @@
         "malformed/truncated patch fail-closed 并返回结构化错误而非部分应用"
       ],
       "source_sessions": [],
-      "status": "in_progress",
+      "status": "done",
       "success_metrics": [],
       "summary": "hostApi.git.applyPatch({patch, mode:'preflight'|'apply'|'revert'}) 返回 applied/skipped/conflicted 路径；借鉴 Codex parse_git_apply_output 解析语义",
       "title": "A1: git.applyPatch 结构化补丁引擎",
-      "updated_at": "2026-08-23T11:47:29.841185Z"
+      "updated_at": "2026-08-24T06:23:49.143321Z"
     },
     "TF-0096": {
       "acceptance_criteria": [
@@ -11489,7 +11577,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
@@ -11504,18 +11592,18 @@
       ],
       "primary_parent": "TF-0094",
       "priority": 2,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
       "summary": "只读 hostApi.git.diffToBase()：分支祖先链 + for-each-ref --contains=HEAD 扫描 remote，取最近公共 SHA 并返回 diff；无远程时 unavailable",
       "title": "A2: git.diffToBase 最近远程祖先推导",
-      "updated_at": "2026-08-23T11:46:04.913782Z"
+      "updated_at": "2026-08-24T06:23:52.273835Z"
     },
     "TF-0097": {
       "acceptance_criteria": [
@@ -11538,7 +11626,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 100.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
@@ -11553,18 +11641,18 @@
       ],
       "primary_parent": "TF-0094",
       "priority": 2,
-      "progress": 0.0,
+      "progress": 100.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "done",
       "success_metrics": [],
       "summary": "替换 READ_ONLY_COMMANDS 字符串前缀匹配为 find_git_subcommand 式解析：跳过合法全局选项定位子命令，显式拒绝 -c/--exec-path/--git-dir/--work-tree 注入向量",
       "title": "A3: shell 安全分类器子命令感知改造",
-      "updated_at": "2026-08-23T11:46:04.913782Z"
+      "updated_at": "2026-08-24T06:23:55.192064Z"
     },
     "TF-0098": {
       "acceptance_criteria": [
@@ -11587,7 +11675,7 @@
       "context_tags": [],
       "created_at": "2026-08-23T11:46:04.913782Z",
       "deprecated_at": null,
-      "derived_progress": 0.0,
+      "derived_progress": 67.0,
       "desired_outcomes": [],
       "deviations": [],
       "difficulty": "medium",
@@ -11600,18 +11688,18 @@
       "non_goals": [],
       "primary_parent": "TF-0094",
       "priority": 3,
-      "progress": 0.0,
+      "progress": 67.0,
       "progress_source": "manual",
       "purpose": "",
       "remaining_minutes_max": null,
       "remaining_minutes_min": null,
       "requirements": [],
       "source_sessions": [],
-      "status": "proposed",
+      "status": "review_needed",
       "success_metrics": [],
       "summary": "三小项合并以控制节点数：(1) 可写根内 .git 目录与指针文件目标 gitdir 进默认只读集；(2) dangerous 审批 reason 附带分级依据（目标分支是否保护、refspec 范围）；(3) fsmonitor 内置 daemon 探测保留",
       "title": "A4: Git 工程卫生合并项（.git 保护/分级理由/fsmonitor）",
-      "updated_at": "2026-08-23T11:46:04.913782Z"
+      "updated_at": "2026-08-24T06:25:42.542676Z"
     },
     "TF-0099": {
       "acceptance_criteria": [
@@ -11796,15 +11884,12 @@
       "TF-0009",
       "TF-0047",
       "TF-0094",
-      "TF-0096",
-      "TF-0097",
       "TF-0007",
       "TF-0010",
       "TF-0021",
       "TF-0025",
       "TF-0028",
       "TF-0066",
-      "TF-0095",
       "TF-0100",
       "TF-0006",
       "TF-0027",
@@ -11890,6 +11975,7 @@
         "TF-0072",
         "TF-0073",
         "TF-0074",
+        "TF-0075",
         "TF-0077",
         "TF-0078",
         "TF-0079",
@@ -11907,6 +11993,9 @@
         "TF-0091",
         "TF-0092",
         "TF-0093",
+        "TF-0095",
+        "TF-0096",
+        "TF-0097",
         "TF-0099"
       ],
       "in_progress": [
@@ -11916,8 +12005,7 @@
         "TF-0025",
         "TF-0028",
         "TF-0029",
-        "TF-0056",
-        "TF-0095"
+        "TF-0056"
       ],
       "proposed": [
         "TF-0026",
@@ -11937,10 +12025,6 @@
         "TF-0067",
         "TF-0068",
         "TF-0069",
-        "TF-0094",
-        "TF-0096",
-        "TF-0097",
-        "TF-0098",
         "TF-0100",
         "TF-0101"
       ],
@@ -11949,7 +12033,9 @@
       ],
       "review_needed": [
         "TF-0009",
-        "TF-0047"
+        "TF-0047",
+        "TF-0094",
+        "TF-0098"
       ]
     },
     "evergreen_open_goals": [
@@ -11989,9 +12075,6 @@
       "TF-0068",
       "TF-0069",
       "TF-0094",
-      "TF-0095",
-      "TF-0096",
-      "TF-0097",
       "TF-0098",
       "TF-0100",
       "TF-0101"
@@ -12001,16 +12084,18 @@
     ],
     "review_needed": [
       "TF-0009",
-      "TF-0047"
+      "TF-0047",
+      "TF-0094",
+      "TF-0098"
     ]
   },
   "summary": {
     "blocked_count": 4,
-    "done_count": 58,
-    "edge_count": 181,
-    "node_count": 99,
-    "open_count": 38,
-    "review_needed_count": 2
+    "done_count": 62,
+    "edge_count": 182,
+    "node_count": 100,
+    "open_count": 35,
+    "review_needed_count": 4
   },
   "tree_edges": [
     "TFE-0001",
@@ -12104,7 +12189,8 @@
     "TFE-0175",
     "TFE-0176",
     "TFE-0178",
-    "TFE-0180"
+    "TFE-0180",
+    "TFE-0183"
   ],
   "workspace_path": "C:\\Users\\27933\\Desktop\\clawx\\ClawX"
 }
