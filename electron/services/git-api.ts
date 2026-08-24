@@ -1,7 +1,7 @@
 import { openExternalSafe } from '../utils/safe-open-external';
 import { execFile } from 'node:child_process';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -9,9 +9,15 @@ import type {
   GitBranch,
   GitChangeBucket,
   GitCommitInfo,
+  GitApplyPatchPayload,
+  GitApplyPatchResult,
+  GitBaseDiffFile,
+  GitDiffToBasePayload,
+  GitDiffToBaseResult,
   GitDiffMode,
   GitFileChange,
   GitOperationResult,
+  GitReflogEntry,
   GitRepositoryStatus,
   GitStashEntry,
   GitWorktree,
@@ -33,6 +39,10 @@ import type {
   GitFetchPayload,
   GitFileDiffPayload,
   GitLogPayload,
+  GitMergePayload,
+  GitRebasePayload,
+  GitResetPayload,
+  GitReflogPayload,
   GitMergeBasePayload,
   GitPathPayload,
   GitPathsPayload,
@@ -389,6 +399,10 @@ function resolveWorkspacePath(ctx: RepoContext, rawPath: string): string {
 
 function isPathInsideRepoSiblingArea(target: string, repoRoot: string): boolean {
   const parent = dirname(repoRoot);
+  // A drive/volume root is never a safe sibling container: every path on the
+  // drive would otherwise pass the relative() check below, letting worktreeAdd
+  // create directories anywhere on the volume without explicit approval.
+  if (parent === resolve(parent, '..')) return false;
   const relativePath = relative(parent, target);
   return Boolean(relativePath) && !relativePath.startsWith('..') && !isAbsolute(relativePath);
 }
@@ -627,6 +641,9 @@ async function enforcePermission(input: {
   approvalId?: string;
   command: string;
   paths?: string[];
+  /** Extra grading facts appended to the approval reason so the dialog explains
+   * why this specific operation is dangerous, not just that it is. */
+  grading?: string[];
 }): Promise<GitOperationResult | null> {
   if (input.risk === 'none') return null;
   const requestHash = createRequestHash(input.action, input.workspace, {
@@ -654,7 +671,10 @@ async function enforcePermission(input: {
       cwd: input.workspace.rootPath,
       paths: input.paths,
       requestHash,
-      reason: 'This Git/GitHub operation can rewrite or publish repository state and requires approval.',
+      reason: [
+        'This Git/GitHub operation can rewrite or publish repository state and requires approval.',
+        ...(input.grading ?? []),
+      ].join(' '),
     });
     return {
       success: false,
@@ -702,7 +722,7 @@ async function withGitOperation(
   action: string,
   risk: GitRisk,
   args: string[],
-  payload: { approvalId?: string; paths?: string[] } = {},
+  payload: { approvalId?: string; paths?: string[]; grading?: string[] } = {},
 ): Promise<GitOperationResult> {
   const ctx = await requireRepoContext();
   const blocked = await enforcePermission({
@@ -712,6 +732,7 @@ async function withGitOperation(
     approvalId: payload.approvalId,
     command: `git ${args.join(' ')}`,
     paths: payload.paths,
+    grading: payload.grading,
   });
   if (blocked) return blocked;
   const result = await git(args, ctx.workspaceRoot);
@@ -743,6 +764,190 @@ function isSafeGitRef(ref: string): boolean {
     && ref.length <= 250;
 }
 
+/** Branches whose history is conventionally shared, so publishing or rewriting
+ * them affects everyone rather than just the local checkout. Used only to
+ * explain the grading in the approval prompt; it never changes the decision. */
+const PROTECTED_BRANCH_NAMES = new Set(['main', 'master', 'develop', 'release', 'trunk']);
+
+function isProtectedBranchName(branch: string): boolean {
+  const leaf = branch.replace(/^refs\/heads\//, '').split('/').pop() ?? '';
+  return PROTECTED_BRANCH_NAMES.has(leaf.toLowerCase())
+    || branch.startsWith('release/')
+    || branch.startsWith('hotfix/');
+}
+
+/** Describe what a push actually targets so the approval prompt states the
+ * blast radius: which branch, and whether that branch is a shared one. */
+function gradePushTarget(params: {
+  remote?: string;
+  branch?: string;
+  currentBranch?: string;
+}): string[] {
+  const grading: string[] = [];
+  const target = params.branch || params.currentBranch;
+  const remote = params.remote || 'the default remote';
+  if (target) {
+    grading.push(`Target: ${remote}/${target}.`);
+    if (isProtectedBranchName(target)) {
+      grading.push(`${target} is a shared branch, so this publishes work others depend on.`);
+    }
+    return grading;
+  }
+  // No explicit branch means git falls back to push.default, which can cover
+  // more refs than the user expects.
+  grading.push(`Target: ${remote} using the configured push default, which may update more than one ref.`);
+  return grading;
+}
+
+
+/** Cap on files reported by diffToBase; a wide branch must not blow up IPC. */
+const MAX_BASE_DIFF_FILES = 200;
+
+/** Cap on remote-tracking refs probed for ancestry. Each candidate costs one
+ * `git rev-list --count`, so a repo with hundreds of stale remote branches must
+ * not turn one base lookup into hundreds of subprocesses. */
+const MAX_BASE_CANDIDATES = 100;
+
+type ResolvedBase =
+  | { resolution: 'explicit' | 'upstream' | 'remote-default' | 'remote-ancestor'; base: string }
+  | { resolution: 'unavailable'; reason: string };
+
+/** Rank a remote by trustworthiness as a comparison base: origin first, then
+ * the order `git remote` reported, then anything whose remote is not
+ * configured at all. Rank outranks distance when picking a base — a nearer
+ * `fork/main` must not displace `origin/main`, because the base is a label the
+ * user reads and provenance matters more than proximity. */
+function rankRemoteName(remote: string, remoteOrder: string[]): number {
+  if (remote === 'origin') return 0;
+  const index = remoteOrder.indexOf(remote);
+  return index >= 0 ? 1 + index : 1 + remoteOrder.length;
+}
+
+/** Derive the nearest remote ancestor to compare HEAD against.
+ * Order: explicit ref, HEAD's upstream, the remote's declared default branch,
+ * then an ordered scan of remote-tracking refs that are ancestors of HEAD.
+ * Returns 'unavailable' with a reason rather than guessing a base, so callers
+ * never present a comparison against a ref the user did not choose. */
+async function resolveDiffBase(ctx: RepoContext, explicit: string): Promise<ResolvedBase> {
+  const verify = async (ref: string): Promise<boolean> => {
+    const result = await git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], ctx.workspaceRoot);
+    return result.exitCode === 0 && result.stdout.trim().length > 0;
+  };
+
+  if (explicit) {
+    if (!isSafeGitRef(explicit)) throw new Error(`Invalid git ref: ${explicit}`);
+    if (!await verify(explicit)) {
+      return { resolution: 'unavailable', reason: `base ref not found: ${explicit}` };
+    }
+    return { resolution: 'explicit', base: explicit };
+  }
+
+  const upstream = await git(
+    ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}'],
+    ctx.workspaceRoot,
+  );
+  const upstreamRef = upstream.exitCode === 0 ? upstream.stdout.trim() : '';
+  if (upstreamRef && isSafeGitRef(upstreamRef) && await verify(upstreamRef)) {
+    return { resolution: 'upstream', base: upstreamRef };
+  }
+
+  // No upstream (detached HEAD or a never-pushed branch): fall back to the
+  // remote's own default branch, which origin/HEAD records locally.
+  const remoteHead = await git(
+    ['symbolic-ref', '--short', '--quiet', 'refs/remotes/origin/HEAD'],
+    ctx.workspaceRoot,
+  );
+  const remoteHeadRef = remoteHead.exitCode === 0 ? remoteHead.stdout.trim() : '';
+  if (remoteHeadRef && isSafeGitRef(remoteHeadRef) && await verify(remoteHeadRef)) {
+    return { resolution: 'remote-default', base: remoteHeadRef };
+  }
+
+  // Still nothing: scan remote-tracking refs for the nearest ancestor of HEAD.
+  // This is the only path that works when the repo has no origin and no remote
+  // declared a default branch — `git remote add upstream … && git fetch` never
+  // creates refs/remotes/upstream/HEAD, so no symbolic-ref probe can find it.
+  //
+  // --merged (not --contains): a base must be an ancestor of HEAD. --contains
+  // asks the opposite and returns nothing whenever HEAD is ahead, which is the
+  // normal state of a feature branch.
+  //
+  // %(refname) (not :short): the short form renders refs/remotes/origin/HEAD as
+  // the bare string "origin", which is not a usable ref.
+  const merged = await git(
+    ['for-each-ref', '--merged', 'HEAD', '--format=%(refname)', 'refs/remotes/'],
+    ctx.workspaceRoot,
+  );
+  const candidates = (merged.exitCode === 0 ? merged.stdout : '')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('refs/remotes/'))
+    .map((line) => line.slice('refs/remotes/'.length))
+    // Drop the */HEAD pseudo-refs: each duplicates the branch it points at, at
+    // an identical distance, so keeping them lets a tie-break pick the alias.
+    .filter((ref) => ref.length > 0 && !ref.endsWith('/HEAD'))
+    .filter((ref) => isSafeGitRef(ref))
+    .slice(0, MAX_BASE_CANDIDATES);
+
+  if (candidates.length === 0) {
+    return {
+      resolution: 'unavailable',
+      reason: 'no upstream branch and no origin/HEAD: cannot derive a remote base',
+    };
+  }
+
+  const remoteList = await git(['remote'], ctx.workspaceRoot);
+  // `git remote` prints alphabetically, not in config order, so origin priority
+  // has to be explicit rather than inherited from this list's ordering.
+  const remoteOrder = (remoteList.exitCode === 0 ? remoteList.stdout : '')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const scored: { ref: string; rank: number; distance: number }[] = [];
+  for (const ref of candidates) {
+    const counted = await git(['rev-list', '--count', `${ref}..HEAD`], ctx.workspaceRoot);
+    if (counted.exitCode !== 0) continue;
+    const distance = parseNum(counted.stdout.trim());
+    if (distance == null) continue;
+    const remoteName = ref.slice(0, ref.indexOf('/'));
+    scored.push({ ref, rank: rankRemoteName(remoteName, remoteOrder), distance });
+  }
+
+  if (scored.length === 0) {
+    return {
+      resolution: 'unavailable',
+      reason: 'no upstream branch and no origin/HEAD: cannot derive a remote base',
+    };
+  }
+
+  // Deterministic ordering: an arbitrary winner among equals is untestable.
+  scored.sort((left, right) => left.rank - right.rank
+    || left.distance - right.distance
+    || left.ref.localeCompare(right.ref));
+  return { resolution: 'remote-ancestor', base: scored[0]!.ref };
+}
+
+/** Parse `git diff --name-status -z A..B` into path + change letter pairs.
+ * The -z form is NUL-delimited, and renames/copies emit three fields
+ * (letter, source, destination) instead of two. */
+function parseNameStatusZ(output: string): { path: string; changeKind: string }[] {
+  const fields = output.split('\0').filter((entry) => entry.length > 0);
+  const entries: { path: string; changeKind: string }[] = [];
+  for (let index = 0; index < fields.length;) {
+    const rawStatus = fields[index] ?? '';
+    const letter = rawStatus.charAt(0);
+    if (!letter) break;
+    // R and C carry a similarity score (R100) and a second path.
+    const isRenameOrCopy = letter === 'R' || letter === 'C';
+    const pathField = fields[index + (isRenameOrCopy ? 2 : 1)];
+    if (typeof pathField !== 'string') break;
+    entries.push({ path: pathField, changeKind: letter });
+    index += isRenameOrCopy ? 3 : 2;
+  }
+  return entries;
+}
+
+
 function parseCommitLog(output: string): GitCommitInfo[] {
   return output.split(/\r?\n/).filter(Boolean).flatMap((line) => {
     const [hash, shortHash, timestamp, author, ...subjectParts] = line.split('\t');
@@ -756,6 +961,74 @@ function parseCommitLog(output: string): GitCommitInfo[] {
       date: seconds == null ? undefined : seconds * 1000,
     }];
   });
+}
+
+function parseReflog(output: string): GitReflogEntry[] {
+  return output.split(/\r?\n/).filter(Boolean).flatMap((line) => {
+    const [hash, shortHash, timestamp, selector, ...subjectParts] = line.split('\t');
+    if (!hash || !shortHash || !selector) return [];
+    const seconds = parseNum(timestamp ?? '');
+    return [{
+      hash,
+      shortHash,
+      selector,
+      subject: subjectParts.join('\t') || '',
+      date: seconds == null ? undefined : seconds * 1000,
+    }];
+  });
+}
+
+/** Parses `git apply --verbose` output into applied/skipped/conflicted path
+ * lists. The line shapes below are git's own (verified against git 2.51):
+ * `Applied patch <path> cleanly.`, `Skipped patch '<path>'.`, and the several
+ * `error: …` forms. A path can appear in more than one list under `--reject`,
+ * where git reports the failed hunk and then applies the rest, so conflicted
+ * wins: the caller must treat that file as not fully applied. */
+function parseGitApplyOutput(stdoutText: string, stderrText: string): {
+  appliedPaths: string[];
+  skippedPaths: string[];
+  conflictedPaths: string[];
+} {
+  const applied = new Set<string>();
+  const skipped = new Set<string>();
+  const conflicted = new Set<string>();
+  const combined = `${stdoutText}\n${stderrText}`;
+  for (const rawLine of combined.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    let match = /^Applied patch (.+?) cleanly\.$/.exec(line);
+    if (match?.[1]) { applied.add(match[1]); continue; }
+    match = /^Skipped patch '(.+?)'\.$/.exec(line);
+    if (match?.[1]) { skipped.add(match[1]); continue; }
+    match = /^error: patch failed: (.+?):\d+$/.exec(line)
+      // Whole-file failures git reports without a line number.
+      || /^error: (.+?): (?:patch does not apply|already exists(?: in working directory)?|does not exist in index|No such file or directory)$/.exec(line);
+    if (match?.[1]) { conflicted.add(match[1]); continue; }
+    // `--reject` partially applies a file whose hunks failed; the earlier
+    // `error: patch failed` line already recorded it as conflicted.
+    match = /^Applying patch (.+?) with \d+ reject/.exec(line);
+    if (match?.[1]) { conflicted.add(match[1]); continue; }
+  }
+  for (const path of conflicted) applied.delete(path);
+  return {
+    appliedPaths: [...applied],
+    skippedPaths: [...skipped],
+    conflictedPaths: [...conflicted],
+  };
+}
+
+/** Extract the paths a patch targets from `git apply --numstat -z`, which is
+ * NUL-delimited and leaves paths unescaped. Used to name the affected files in
+ * the approval prompt, so the user sees what a patch touches before allowing
+ * it rather than approving an opaque blob. */
+function parseApplyNumstatZ(output: string): string[] {
+  const paths: string[] = [];
+  for (const record of output.split('\0')) {
+    if (!record) continue;
+    // Each record is "<added>\t<removed>\t<path>"; counts are '-' for binary.
+    const path = record.slice(record.indexOf('\t', record.indexOf('\t') + 1) + 1);
+    if (path && !path.includes('\t')) paths.push(path);
+  }
+  return paths;
 }
 
 function parseBranches(output: string): GitBranch[] {
@@ -955,6 +1228,220 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         error: result.exitCode === 0 ? undefined : result.stderr,
       };
     },
+    applyPatch: async (payload: GitApplyPatchPayload): Promise<GitApplyPatchResult> => {
+      const patch = typeof payload.patch === 'string' ? payload.patch : '';
+      if (!patch.trim()) throw new Error('patch is required');
+      if (!/^diff --git /m.test(patch)) {
+        throw new Error('patch must be a unified diff (git format)');
+      }
+      const mode: 'preflight' | 'apply' | 'revert' =
+        payload.mode === 'revert' ? 'revert' : payload.mode === 'apply' ? 'apply' : 'preflight';
+      const ctx = await requireRepoContext();
+
+      // Write the patch to a temp file so the diff never crosses a shell or argv.
+      const tempDir = await mkdtemp(join(tmpdir(), 'verse-claw-apply-'));
+      const patchFile = join(tempDir, 'input.patch');
+      try {
+        await writeFile(patchFile, patch, 'utf8');
+
+        // Preflight first so dangerous approval is only requested for patches
+        // that actually parse. Check mode never writes.
+        const checkArgs = ['apply', '--check', '--verbose'];
+        if (mode === 'revert') checkArgs.push('--reverse');
+        const checkResult = await git([...checkArgs, patchFile], ctx.workspaceRoot);
+        const checkParsed = parseGitApplyOutput(checkResult.stdout, checkResult.stderr);
+
+        if (mode === 'preflight') {
+          // Only real paths go in conflictedPaths. A patch can fail before git
+          // attributes the failure to any file (unparsable header, bad binary
+          // hunk); success:false plus stderr carries that, and a synthetic
+          // path would be rendered as a filename by callers.
+          return {
+            success: checkResult.exitCode === 0,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: checkParsed.conflictedPaths,
+            preflight: true,
+            exitCode: checkResult.exitCode,
+            stdout: trimOutput(checkResult.stdout),
+            stderr: trimOutput(checkResult.stderr),
+          };
+        }
+
+        // A patch that fails --check cannot apply, so fail closed here rather
+        // than spending a dangerous approval on an operation that would abort.
+        // git apply without --reject/--3way is all-or-nothing, so nothing was
+        // written either way.
+        if (checkResult.exitCode !== 0) {
+          return {
+            success: false,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: checkParsed.conflictedPaths,
+            preflight: false,
+            exitCode: checkResult.exitCode,
+            stdout: trimOutput(checkResult.stdout),
+            stderr: trimOutput(checkResult.stderr),
+          };
+        }
+
+        // Name the files in the approval prompt so the user is not asked to
+        // allow an opaque patch. numstat runs on the same temp file that
+        // --check just validated, so the list matches what apply will touch.
+        const numstatArgs = mode === 'revert'
+          ? ['apply', '--numstat', '-z', '--reverse']
+          : ['apply', '--numstat', '-z'];
+        const numstat = await git([...numstatArgs, patchFile], ctx.workspaceRoot);
+        const targetPaths = numstat.exitCode === 0 ? parseApplyNumstatZ(numstat.stdout) : [];
+
+        // Apply/revert mutates the working tree: dangerous approval.
+        const runArgs = mode === 'revert'
+          ? ['apply', '--reverse', '--verbose']
+          : ['apply', '--verbose'];
+        // Bind the approval to this exact patch. requestHash is derived from
+        // the command string and paths, so without the digest an approval for
+        // one patch would be reusable for any other patch touching the same
+        // files — including one with entirely different content.
+        const patchDigest = createHash('sha256').update(patch, 'utf8').digest('hex').slice(0, 16);
+        const command = `git ${[...runArgs, `<patch-file sha256:${patchDigest}>`].join(' ')}`;
+        const blocked = await enforcePermission({
+          workspace: ctx.workspace,
+          action: mode === 'revert' ? 'applyRevert' : 'applyPatch',
+          risk: 'dangerous',
+          approvalId: payload.approvalId,
+          command,
+          paths: targetPaths,
+          grading: [
+            targetPaths.length > 0
+              ? `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch to ${targetPaths.length} file(s): ${targetPaths.join(', ')}.`
+              : `${mode === 'revert' ? 'Reverts' : 'Applies'} a patch whose target files could not be enumerated.`,
+          ],
+        });
+        if (blocked) {
+          return {
+            ...blocked,
+            appliedPaths: [],
+            skippedPaths: [],
+            conflictedPaths: [],
+            preflight: false,
+          } as GitApplyPatchResult;
+        }
+
+        const result = await git([...runArgs, patchFile], ctx.workspaceRoot);
+        const parsed = parseGitApplyOutput(result.stdout, result.stderr);
+        return {
+          success: result.exitCode === 0,
+          appliedPaths: parsed.appliedPaths,
+          skippedPaths: parsed.skippedPaths,
+          conflictedPaths: parsed.conflictedPaths,
+          preflight: false,
+          exitCode: result.exitCode,
+          stdout: trimOutput(result.stdout),
+          stderr: trimOutput(result.stderr),
+          status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
+        };
+      } finally {
+        await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+      }
+    },
+    diffToBase: async (payload): Promise<GitDiffToBaseResult> => {
+      const body = (isRecord(payload) ? payload : {}) as GitDiffToBasePayload;
+      const ctx = await requireRepoContext();
+      const resolved = await resolveDiffBase(ctx, normalizeString(body.base) ?? '');
+      if (resolved.resolution === 'unavailable') {
+        return { success: false, resolution: 'unavailable', files: [], reason: resolved.reason };
+      }
+
+      const mergeBaseResult = await git(['merge-base', 'HEAD', resolved.base], ctx.workspaceRoot);
+      const mergeBase = mergeBaseResult.exitCode === 0 ? mergeBaseResult.stdout.trim() : '';
+      if (!mergeBase) {
+        // Unrelated histories: a diff would show every file as added, which
+        // reads as a real changeset. Report unavailable instead.
+        return {
+          success: false,
+          resolution: 'unavailable',
+          base: resolved.base,
+          files: [],
+          reason: `no common ancestor between HEAD and ${resolved.base}`,
+        };
+      }
+
+      const scopedPaths = normalizePaths(body.paths).map((entry) => resolveGitPath(ctx, entry).gitPath);
+      const pathArgs = scopedPaths.length > 0 ? ['--', ...scopedPaths] : ['--'];
+      const nameStatus = await git(
+        ['diff', '--name-status', '-z', '--find-renames', mergeBase, 'HEAD', ...pathArgs],
+        ctx.workspaceRoot,
+      );
+      if (nameStatus.exitCode !== 0) {
+        return {
+          success: false,
+          resolution: resolved.resolution,
+          base: resolved.base,
+          mergeBase,
+          files: [],
+          error: nameStatus.stderr || nameStatus.stdout,
+        };
+      }
+
+      const allEntries = parseNameStatusZ(nameStatus.stdout);
+      const entries = allEntries.slice(0, MAX_BASE_DIFF_FILES);
+
+      // One --numstat call covers every file's line counts. Patches cost one
+      // `git diff` per file, so they are opt-in: a caller rendering a header
+      // needs the counts, not 200 patch bodies.
+      const numstat = await git(
+        ['diff', '--numstat', '-z', '--find-renames', mergeBase, 'HEAD', ...pathArgs],
+        ctx.workspaceRoot,
+      );
+      const stats = numstat.exitCode === 0 ? parseNumstat(numstat.stdout) : new Map<string, DiffStat>();
+
+      const includePatches = body.includePatches === true;
+      const files: GitBaseDiffFile[] = [];
+      let additions = 0;
+      let deletions = 0;
+      for (const entry of entries) {
+        const stat = stats.get(entry.path);
+        if (stat?.additions != null) additions += stat.additions;
+        if (stat?.deletions != null) deletions += stat.deletions;
+
+        if (!includePatches) {
+          files.push({
+            path: entry.path,
+            changeKind: entry.changeKind,
+            patch: '',
+            additions: stat?.additions ?? null,
+            deletions: stat?.deletions ?? null,
+            binary: stat?.binary || undefined,
+          });
+          continue;
+        }
+
+        const patchResult = await git(
+          ['diff', mergeBase, 'HEAD', '--', entry.path],
+          ctx.workspaceRoot,
+        );
+        const tooLarge = patchResult.stdout.length > MAX_PATCH_CHARS;
+        files.push({
+          path: entry.path,
+          changeKind: entry.changeKind,
+          patch: trimOutput(patchResult.stdout, MAX_PATCH_CHARS),
+          additions: stat?.additions ?? null,
+          deletions: stat?.deletions ?? null,
+          tooLarge: tooLarge || undefined,
+          binary: stat?.binary || /Binary files .* differ/.test(patchResult.stdout) || undefined,
+        });
+      }
+
+      return {
+        success: true,
+        resolution: resolved.resolution,
+        base: resolved.base,
+        mergeBase,
+        files,
+        totals: { files: files.length, additions, deletions },
+        truncated: allEntries.length > entries.length || undefined,
+      };
+    },
     stage: async (payload: GitPathsPayload) => {
       const ctx = await requireRepoContext();
       const paths = normalizePaths(payload.paths).map((entry) => resolveGitPath(ctx, entry).gitPath);
@@ -1054,6 +1541,29 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         }
       }
       return { success: true, commits: parseCommitLog(result.stdout), ref, ahead, behind };
+    },
+    reflog: async (payload) => {
+      const ctx = await requireRepoContext();
+      const body = (isRecord(payload) ? payload : {}) as GitReflogPayload;
+      const limit = typeof body.limit === 'number' && Number.isFinite(body.limit)
+        ? Math.max(1, Math.min(Math.floor(body.limit), 500))
+        : 200;
+      // Ask for one extra row so a full page can be reported as truncated
+      // instead of silently hiding older reference movement.
+      const result = await git([
+        'reflog',
+        '--all',
+        `--max-count=${limit + 1}`,
+        '--date=unix',
+        '--format=%H%x09%h%x09%ct%x09%gd%x09%gs',
+      ], ctx.workspaceRoot);
+      const allEntries = result.exitCode === 0 ? parseReflog(result.stdout) : [];
+      return {
+        success: result.exitCode === 0,
+        entries: allEntries.slice(0, limit),
+        truncated: result.exitCode === 0 ? allEntries.length > limit : undefined,
+        error: result.exitCode === 0 ? undefined : result.stderr || result.stdout,
+      };
     },
     mergeBase: async (payload) => {
       const body = (isRecord(payload) ? payload : {}) as GitMergeBasePayload;
@@ -1214,20 +1724,87 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const branch = normalizeString(body.branch);
       if (remote) args.push(remote);
       if (branch) args.push(branch);
-      return withGitOperation('push', 'dangerous', args, { approvalId: body.approvalId });
+      const currentBranch = (await readCurrentGitStatus().catch(() => undefined))?.branch;
+      return withGitOperation('push', 'dangerous', args, {
+        approvalId: body.approvalId,
+        grading: gradePushTarget({ remote, branch, currentBranch }),
+      });
+    },
+    merge: async (payload: GitMergePayload) => {
+      const ref = normalizeString(payload.ref);
+      if (!ref) throw new Error('ref is required');
+      if (!isSafeGitRef(ref)) throw new Error(`Invalid git ref: ${ref}`);
+      const args = ['merge'];
+      if (payload.noFastForward) args.push('--no-ff');
+      args.push(ref);
+      return withGitOperation('merge', 'dangerous', args, { approvalId: payload.approvalId });
+    },
+    rebase: async (payload: GitRebasePayload) => {
+      const ref = normalizeString(payload.ref);
+      if (!ref) throw new Error('ref is required');
+      if (!isSafeGitRef(ref)) throw new Error(`Invalid git ref: ${ref}`);
+      const currentBranch = (await readCurrentGitStatus().catch(() => undefined))?.branch;
+      return withGitOperation('rebase', 'dangerous', ['rebase', ref], {
+        approvalId: payload.approvalId,
+        grading: [
+          `Rebase rewrites ${currentBranch ? `${currentBranch}'s` : 'the current branch'} commits onto ${ref}, so existing commit hashes change.`,
+          ...(currentBranch && isProtectedBranchName(currentBranch)
+            ? [`${currentBranch} is a shared branch; rewriting it diverges from anyone who already pulled it.`]
+            : []),
+        ],
+      });
+    },
+    reset: async (payload) => {
+      const body = (isRecord(payload) ? payload : {}) as GitResetPayload;
+      const ref = normalizeString(body.ref) ?? 'HEAD';
+      const mode = body.mode === 'soft' || body.mode === 'hard' ? body.mode : 'mixed';
+      if (ref !== 'HEAD' && !isSafeGitRef(ref)) throw new Error(`Invalid git ref: ${ref}`);
+      return withGitOperation('reset', 'dangerous', ['reset', `--${mode}`, ref], {
+        approvalId: body.approvalId,
+        grading: mode === 'hard'
+          ? [`Reset --hard to ${ref} discards uncommitted changes in the working tree and index.`]
+          : [`Reset --${mode} to ${ref} moves the branch pointer; working tree files are kept.`],
+      });
     },
     githubAuthStatus: async () => {
       const ctx = await requireRepoContext();
-      const result = await gh(['auth', 'status'], ctx.workspaceRoot);
-      const userMatch = result.stdout.match(/Logged in to .* account ([^\s]+)/i) ?? result.stderr.match(/Logged in to .* account ([^\s]+)/i);
-      const hosts = [...new Set(`${result.stdout}\n${result.stderr}`.match(/github\.[^\s)]+|github\.com/g) ?? [])];
+      // Prefer machine-readable output when the installed gh supports it
+      // (`gh auth status --json`, gh >= 2.32); fall back to parsing the
+      // human-readable text otherwise. Text output is a presentation format,
+      // so unknown fields degrade to undefined instead of guessing.
+      const jsonResult = await gh(['auth', 'status', '--json'], ctx.workspaceRoot);
+      if (jsonResult.exitCode === 0) {
+        const raw = parseJson<Record<string, unknown>>(jsonResult.stdout, {});
+        const hostsRaw = Array.isArray(raw.hosts) ? raw.hosts : [];
+        return {
+          success: true,
+          available: true,
+          authenticated: raw.state === 'logged_in' || Boolean(raw.active),
+          user: normalizeString(isRecord(raw.user) ? raw.user.login : undefined),
+          hosts: hostsRaw.filter((h): h is string => typeof h === 'string' && h.trim().length > 0),
+        };
+      }
+      if (/unknown command|no such flag|not found|ENOENT/i.test(`${jsonResult.stderr}`)) {
+        const result = await gh(['auth', 'status'], ctx.workspaceRoot);
+        const userMatch = result.stdout.match(/Logged in to .* account ([^\s]+)/i)
+          ?? result.stderr.match(/Logged in to .* account ([^\s]+)/i);
+        const hosts = [...new Set(`${result.stdout}\n${result.stderr}`.match(/github\.[^\s)]+|github\.com/g) ?? [])];
+        return {
+          success: true,
+          available: result.exitCode !== 1 || !/not found|ENOENT/i.test(result.stderr),
+          authenticated: result.exitCode === 0,
+          user: userMatch?.[1],
+          hosts,
+          error: result.exitCode === 0 ? undefined : result.stderr || result.stdout,
+        };
+      }
+      // JSON unsupported AND not an old-gh signature: surface as unavailable
       return {
         success: true,
-        available: result.exitCode !== 1 || !/not found|ENOENT/i.test(result.stderr),
-        authenticated: result.exitCode === 0,
-        user: userMatch?.[1],
-        hosts,
-        error: result.exitCode === 0 ? undefined : result.stderr || result.stdout,
+        available: false,
+        authenticated: false,
+        hosts: [],
+        error: jsonResult.stderr || jsonResult.stdout || 'gh auth status failed'
       };
     },
     githubRepo: async () => {

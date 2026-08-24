@@ -69,6 +69,11 @@ function mockExec(handler: (command: string, args: string[]) => { code?: number;
   });
 }
 
+/** requireRepoContext resolves the repo root first; every handler must answer it. */
+function isRepoRootProbe(args: string[]): boolean {
+  return args[0] === 'rev-parse' && args[1] === '--show-toplevel';
+}
+
 describe('git api', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -278,6 +283,65 @@ describe('git api', () => {
       success: true,
       stdout: 'pushed\n',
     });
+  });
+
+  it('explains why a dangerous git operation is graded that way in the approval reason', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    // Push names the target and flags that the branch is shared.
+    const push = await gitApi.push({ remote: 'origin', branch: 'main' });
+    expect(push.approval?.reason).toContain('origin/main');
+    expect(push.approval?.reason).toContain('shared branch');
+
+    // A feature branch is still gated, but is not claimed to be shared.
+    const feature = await gitApi.push({ remote: 'origin', branch: 'feat/x' });
+    expect(feature.approval?.reason).toContain('origin/feat/x');
+    expect(feature.approval?.reason).not.toContain('shared branch');
+
+    // With no explicit branch the reason falls back to the current branch.
+    const bare = await gitApi.push({});
+    expect(bare.approval?.reason).toContain('the default remote/main');
+  });
+
+  it('states the refspec scope when no target branch can be determined', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      // Detached HEAD: porcelain reports no branch name, so the prompt must
+      // describe the configured push default instead of naming a branch.
+      if (args[0] === 'status') return { stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    const bare = await createGitApi().push({});
+    expect(bare.approval?.reason).toContain('push default');
+    expect(bare.approval?.reason).toContain('more than one ref');
+  });
+
+  it('distinguishes reset --hard from reset --soft in the approval reason', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const gitApi = createGitApi();
+
+    const hard = await gitApi.reset({ mode: 'hard', ref: 'origin/main' });
+    expect(hard.approval?.reason).toContain('discards uncommitted changes');
+    expect(hard.approval?.reason).toContain('origin/main');
+
+    const soft = await gitApi.reset({ mode: 'soft', ref: 'origin/main' });
+    expect(soft.approval?.reason).toContain('working tree files are kept');
   });
 
   it('requires approval before reverting a tracked file and restores index plus worktree after approval', async () => {
@@ -596,6 +660,28 @@ describe('git api', () => {
     expect(execFileMock).not.toHaveBeenCalledWith('git', expect.arrayContaining(['add', '-b']), expect.anything(), expect.anything());
   });
 
+  it('treats a drive-root parent as unsafe: custom sibling paths still require approval', async () => {
+    // Simulate a repository directly under a volume root so the sibling-area
+    // heuristic cannot accidentally bless the entire drive.
+    const repoRoot = resolve(process.platform === 'win32' ? 'C:/repo' : '/repo');
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: repoRoot + '\n' };
+      return { stdout: "" };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+
+    await expect(createGitApi().worktreeAdd({
+      branch: 'feature/risky',
+      path: process.platform === 'win32' ? 'D:/outside-worktree' : '/outside-worktree',
+      checkoutNewBranch: true,
+    })).resolves.toMatchObject({
+      success: false,
+      blocked: true,
+      approvalRequired: true,
+    });
+    expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'worktree' && call[1]?.[1] === 'add')).toBe(false);
+  });
+
   it('creates GitHub PRs with explicit base/head/draft args after dangerous approval', async () => {
     const calls: Array<{ command: string; args: string[] }> = [];
     mockExec((command, args) => {
@@ -769,10 +855,554 @@ describe('git api', () => {
     expect(lastCall[1]).toEqual(['merge-base', 'HEAD', 'main']);
   });
 
+  it('returns reflog entries for the complete repository lifecycle', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'reflog') {
+        return {
+          stdout: [
+            'abcdef123456\tabcdef1\t1710000000\tHEAD@{0}\tcheckout: moving from main to feature/demo',
+            '123456abcdef\t123456a\t1709999000\trefs/heads/feature/demo@{1}\tcommit: ship audit timeline',
+            '',
+          ].join('\n'),
+        };
+      }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    await expect(createGitApi().reflog({ limit: 50 })).resolves.toMatchObject({
+      success: true,
+      entries: [
+        expect.objectContaining({ selector: 'HEAD@{0}', shortHash: 'abcdef1', subject: 'checkout: moving from main to feature/demo', date: 1710000000000 }),
+        expect.objectContaining({ selector: 'refs/heads/feature/demo@{1}', subject: 'commit: ship audit timeline' }),
+      ],
+    });
+    const reflogCall = execFileMock.mock.calls.find((call) => call[1]?.[0] === 'reflog');
+    expect(reflogCall?.[1]).toContain('--max-count=51');
+    const reflogResult = await createGitApi().reflog({ limit: 1 });
+    expect(reflogResult.entries).toHaveLength(1);
+    expect(reflogResult.truncated).toBe(true);
+  });
+
+  it('routes merge, rebase, and reset through dangerous Git approval', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: `${process.cwd()}\n` };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    const merge = await api.merge({ ref: 'main' });
+    expect(merge).toMatchObject({ success: false, approvalRequired: true, blocked: true });
+    const approvalId = merge.approval?.id;
+    expect(approvalId).toBeTruthy();
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    await createPermissionsApi().decideApproval({ id: approvalId ?? '', decision: 'approved' });
+    await expect(api.merge({ ref: 'main', approvalId })).resolves.toMatchObject({ success: true });
+    const rebase = await api.rebase({ ref: 'main' });
+    expect(rebase.approval?.id).toBeTruthy();
+    await createPermissionsApi().decideApproval({ id: rebase.approval?.id ?? '', decision: 'approved' });
+    await expect(api.rebase({ ref: 'main', approvalId: rebase.approval?.id })).resolves.toMatchObject({ success: true });
+    const reset = await api.reset({ ref: 'HEAD', mode: 'mixed' });
+    expect(reset.approval?.id).toBeTruthy();
+    await createPermissionsApi().decideApproval({ id: reset.approval?.id ?? '', decision: 'approved' });
+    await expect(api.reset({ ref: 'HEAD', mode: 'mixed', approvalId: reset.approval?.id })).resolves.toMatchObject({ success: true });
+    expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'rebase' && call[1]?.[1] === 'main')).toBe(true);
+    expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'reset' && call[1]?.[1] === '--mixed')).toBe(true);
+  });
+
   it('rejects unsafe or missing refs for merge-base', async () => {
     const { createGitApi } = await import('@electron/services/git-api');
     const api = createGitApi();
     await expect(api.mergeBase({ base: '' })).rejects.toThrow('base is required');
     await expect(api.mergeBase({ base: 'a..b' })).rejects.toThrow(/Invalid git ref/);
   });
+
+  it('applyPatch preflight reports conflicts without approval or writes', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--check')) {
+        // Verbatim git 2.51 output for a patch whose context no longer matches.
+        return {
+          code: 1,
+          stdout: 'Checking patch src/app.ts...\n',
+          stderr: 'error: while searching for:\nold\n\nerror: patch failed: src/app.ts:1\nerror: src/app.ts: patch does not apply\n',
+        };
+      }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().applyPatch({
+      patch: 'diff --git a/src/app.ts b/src/app.ts\n--- a/src/app.ts\n+++ b/src/app.ts\n@@ -1 +1 @@\n-old\n+new',
+      mode: 'preflight',
+    });
+    expect(result.preflight).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.conflictedPaths).toEqual(['src/app.ts']);
+    // No synthetic placeholder may leak into a path list callers render.
+    expect(result.conflictedPaths).not.toContain('__all__');
+    expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'apply' && !call[1]?.includes('--check'))).toBe(false);
+    const store = await import('@electron/services/permissions-api');
+    const approvals = await store.createPermissionsApi().approvals({});
+    expect(approvals.approvals).toHaveLength(0);
+  });
+
+  it('applyPatch apply mode requires dangerous approval then writes', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--numstat')) {
+        return { stdout: '1\t1\tsrc/app.ts\u0000' };
+      }
+      if (args[0] === 'apply' && !args.includes('--check')) {
+        // Verbatim git 2.51 success output: "Applied patch <path> cleanly.",
+        // not "Applied patch to <path>."
+        return { stdout: 'Checking patch src/app.ts...\nApplied patch src/app.ts cleanly.\n' };
+      }
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    const patch = 'diff --git a/src/app.ts b/src/app.ts\n--- a/src/app.ts\n+++ b/src/app.ts\n@@ -1 +1 @@\n-old\n+new';
+
+    const first = await api.applyPatch({ patch, mode: 'apply' });
+    expect(first).toMatchObject({ success: false, blocked: true, approvalRequired: true, preflight: false });
+    // Nothing may be written before approval: --check and --numstat inspect only.
+    const mutatingApply = (args: string[] | undefined): boolean =>
+      args?.[0] === 'apply' && !args.includes('--check') && !args.includes('--numstat');
+    expect(execFileMock.mock.calls.some((call) => mutatingApply(call[1]))).toBe(false);
+    // The prompt must name the files the patch touches, not just the operation.
+    expect(first.approval?.paths).toEqual(['src/app.ts']);
+    expect(first.approval?.reason).toContain('src/app.ts');
+
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const approvalId = first.approval?.id ?? '';
+    await createPermissionsApi().decideApproval({ id: approvalId, decision: 'approved' });
+    const second = await api.applyPatch({ patch, mode: 'apply', approvalId });
+    expect(second.success).toBe(true);
+    expect(second.appliedPaths).toEqual(['src/app.ts']);
+    expect(second.preflight).toBe(false);
+    // approval is single-use
+    const approvalsAfter = await createPermissionsApi().approvals({ includeExpired: true });
+    const consumed = approvalsAfter.approvals.find((a) => a.id === approvalId);
+    expect(consumed?.status).toBe('expired');
+  });
+
+  it('applyPatch reports skipped and applied paths from real git output', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--numstat')) {
+        return { stdout: '1\t1\tsrc/skipped.ts\u0000-\t-\tassets/logo.png\u0000' };
+      }
+      if (args[0] === 'apply' && !args.includes('--check')) {
+        return {
+          stdout: [
+            "Skipped patch 'src/skipped.ts'.",
+            'Applied patch assets/logo.png cleanly.',
+            '',
+          ].join('\n'),
+        };
+      }
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    const patch = 'diff --git a/src/skipped.ts b/src/skipped.ts\n--- a/src/skipped.ts\n+++ b/src/skipped.ts\n@@ -1 +1 @@\n-a\n+b';
+    const first = await api.applyPatch({ patch, mode: 'apply' });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    const result = await api.applyPatch({ patch, mode: 'apply', approvalId: first.approval?.id });
+
+    expect(result.skippedPaths).toEqual(['src/skipped.ts']);
+    expect(result.appliedPaths).toEqual(['assets/logo.png']);
+  });
+
+  it('applyPatch counts a --reject partial apply as conflicted, not applied', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--numstat')) return { stdout: '1\t1\ta.txt\u0000' };
+      if (args[0] === 'apply' && !args.includes('--check')) {
+        // git reports the failed hunk, then applies what it could.
+        return {
+          code: 1,
+          stdout: 'Applying patch a.txt with 1 reject...\nApplied patch a.txt cleanly.\n',
+          stderr: 'error: patch failed: a.txt:1\n',
+        };
+      }
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    const patch = 'diff --git a/a.txt b/a.txt\n--- a/a.txt\n+++ b/a.txt\n@@ -1 +1 @@\n-x\n+y';
+    const first = await api.applyPatch({ patch, mode: 'apply' });
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    await createPermissionsApi().decideApproval({ id: first.approval?.id ?? '', decision: 'approved' });
+    const result = await api.applyPatch({ patch, mode: 'apply', approvalId: first.approval?.id });
+
+    // A file whose hunks were rejected is not fully applied, so it must not be
+    // reported as applied even though git prints both lines for it.
+    expect(result.conflictedPaths).toEqual(['a.txt']);
+    expect(result.appliedPaths).toEqual([]);
+  });
+
+  it('applyPatch fails closed on a conflicting patch without requesting approval', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--check')) {
+        return { code: 1, stderr: 'error: patch failed: src/app.ts:1\nerror: src/app.ts: patch does not apply\n' };
+      }
+      if (args[0] === 'apply') throw new Error('apply must not run after a failed --check');
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().applyPatch({
+      patch: 'diff --git a/src/app.ts b/src/app.ts\n--- a/src/app.ts\n+++ b/src/app.ts\n@@ -1 +1 @@\n-old\n+new',
+      mode: 'apply',
+    });
+
+    expect(result).toMatchObject({ success: false, preflight: false });
+    expect(result.conflictedPaths).toEqual(['src/app.ts']);
+    expect(result.appliedPaths).toEqual([]);
+    // No approval is spent on an operation that cannot succeed.
+    const store = await import('@electron/services/permissions-api');
+    expect((await store.createPermissionsApi().approvals({})).approvals).toHaveLength(0);
+  });
+
+  it('applyPatch approval is bound to the patch content, not just the target files', async () => {
+    mockExec((_command, args) => {
+      if (args[0] === 'rev-parse') return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'apply' && args.includes('--numstat')) return { stdout: '1\t1\tsrc/app.ts\u0000' };
+      if (args[0] === 'apply' && !args.includes('--check')) {
+        return { stdout: 'Applied patch src/app.ts cleanly.\n' };
+      }
+      if (args[0] === 'status') return { stdout: '# branch.head main\u0000' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+    const approvedPatch = 'diff --git a/src/app.ts b/src/app.ts\n--- a/src/app.ts\n+++ b/src/app.ts\n@@ -1 +1 @@\n-old\n+reviewed';
+    // Same file, different content: reusing the approval here would let an
+    // agent swap in unreviewed changes after the user approved a specific diff.
+    const swappedPatch = 'diff --git a/src/app.ts b/src/app.ts\n--- a/src/app.ts\n+++ b/src/app.ts\n@@ -1 +1 @@\n-old\n+swapped';
+
+    const first = await api.applyPatch({ patch: approvedPatch, mode: 'apply' });
+    const approvalId = first.approval?.id ?? '';
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    await createPermissionsApi().decideApproval({ id: approvalId, decision: 'approved' });
+
+    await expect(api.applyPatch({ patch: swappedPatch, mode: 'apply', approvalId }))
+      .resolves.toMatchObject({ success: false, approvalRequired: true });
+    await expect(api.applyPatch({ patch: approvedPatch, mode: 'apply', approvalId }))
+      .resolves.toMatchObject({ success: true });
+  });
+
+  it('applyPatch rejects non-diff input before any git call', async () => {
+    mockExec(() => { throw new Error('git should not be called'); });
+    const { createGitApi } = await import('@electron/services/git-api');
+    await expect(createGitApi().applyPatch({ patch: 'not a diff', mode: 'preflight' })).rejects.toThrow('unified diff');
+  });
+
+  it('diffToBase derives the upstream branch and reports how the base was resolved', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) {
+        return { stdout: 'origin/main\n' };
+      }
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'base999\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) {
+        return { stdout: 'M\u0000src/app.ts\u0000A\u0000src/new.ts\u0000' };
+      }
+      if (args[0] === 'diff') return { stdout: 'diff --git a/x b/x\n@@ -1 +1 @@\n-a\n+b\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.success).toBe(true);
+    expect(result.resolution).toBe('upstream');
+    expect(result.base).toBe('origin/main');
+    expect(result.mergeBase).toBe('base999');
+    expect(result.files.map((file) => [file.path, file.changeKind])).toEqual([
+      ['src/app.ts', 'M'],
+      ['src/new.ts', 'A'],
+    ]);
+  });
+
+  it('diffToBase falls back to origin/HEAD when the branch has no upstream', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { stdout: 'origin/trunk\n' };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'base777\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) return { stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.resolution).toBe('remote-default');
+    expect(result.base).toBe('origin/trunk');
+    expect(result.files).toEqual([]);
+  });
+
+  it('diffToBase reports unavailable instead of guessing when no remote ancestor exists', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.success).toBe(false);
+    expect(result.resolution).toBe('unavailable');
+    expect(result.base).toBeUndefined();
+    expect(result.reason).toContain('cannot derive a remote base');
+  });
+
+  it('diffToBase prefers origin over a nearer non-origin ancestor', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      if (args[0] === 'for-each-ref') {
+        return { stdout: 'refs/remotes/fork/main\nrefs/remotes/origin/main\n' };
+      }
+      if (args[0] === 'remote') return { stdout: 'fork\norigin\n' };
+      // fork/main is nearer (1 commit) than origin/main (3 commits).
+      if (args[0] === 'rev-list') return { stdout: args[2]?.startsWith('fork/') ? '1\n' : '3\n' };
+      if (args[0] === 'merge-base') return { stdout: 'mb1\n' };
+      if (args[0] === 'diff') return { stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    // Provenance beats proximity: a base is a label the user reads, so the
+    // canonical remote wins even though fork/main is fewer commits away.
+    expect(result.resolution).toBe('remote-ancestor');
+    expect(result.base).toBe('origin/main');
+  });
+
+  it('diffToBase falls back to configured remote order when there is no origin', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      if (args[0] === 'for-each-ref') {
+        return { stdout: 'refs/remotes/alpha/main\nrefs/remotes/zzz/main\n' };
+      }
+      // `git remote` prints alphabetically, but this order is what git reports;
+      // zzz listed first must win over the alphabetically earlier alpha.
+      if (args[0] === 'remote') return { stdout: 'zzz\nalpha\n' };
+      if (args[0] === 'rev-list') return { stdout: '2\n' };
+      if (args[0] === 'merge-base') return { stdout: 'mb2\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.resolution).toBe('remote-ancestor');
+    expect(result.base).toBe('zzz/main');
+  });
+
+  it('diffToBase finds a base in a repo whose only remote is not named origin', async () => {
+    // `git remote add upstream <url> && git fetch upstream` never creates
+    // refs/remotes/upstream/HEAD, so no symbolic-ref probe can find a base here
+    // even though refs/remotes/upstream/main plainly exists.
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      if (args[0] === 'for-each-ref') return { stdout: 'refs/remotes/upstream/main\n' };
+      if (args[0] === 'remote') return { stdout: 'upstream\n' };
+      if (args[0] === 'rev-list') return { stdout: '4\n' };
+      if (args[0] === 'merge-base') return { stdout: 'mb3\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.success).toBe(true);
+    expect(result.resolution).toBe('remote-ancestor');
+    expect(result.base).toBe('upstream/main');
+    expect(result.mergeBase).toBe('mb3');
+  });
+
+  it('diffToBase ignores */HEAD pseudo-refs when scanning for a base', async () => {
+    const revListRefs: string[] = [];
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      if (args[0] === 'for-each-ref') {
+        // git emits the pseudo-ref alongside the branch it points at, at an
+        // identical distance, so keeping it lets a tie-break pick the alias.
+        return { stdout: 'refs/remotes/upstream/HEAD\nrefs/remotes/upstream/main\n' };
+      }
+      if (args[0] === 'remote') return { stdout: 'upstream\n' };
+      if (args[0] === 'rev-list') { revListRefs.push(args[2] ?? ''); return { stdout: '1\n' }; }
+      if (args[0] === 'merge-base') return { stdout: 'mb4\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.base).toBe('upstream/main');
+    expect(revListRefs).toEqual(['upstream/main..HEAD']);
+  });
+
+  it('diffToBase skips unsafe scanned refs and reports unavailable when none remain', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args.includes('@{upstream}')) return { code: 128, stderr: 'no upstream' };
+      if (args[0] === 'symbolic-ref') return { code: 1, stderr: 'not a symbolic ref' };
+      if (args[0] === 'for-each-ref') {
+        // '..' and a trailing slash are rejected by isSafeGitRef, so nothing
+        // survives the scan and the result must stay unavailable.
+        return { stdout: 'refs/remotes/evil/a..b\nrefs/remotes/evil/trailing/\n' };
+      }
+      if (args[0] === 'rev-list') throw new Error('unsafe refs must never reach argv');
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase();
+
+    expect(result.success).toBe(false);
+    expect(result.resolution).toBe('unavailable');
+    expect(result.reason).toContain('cannot derive a remote base');
+  });
+
+  it('diffToBase reads line counts from one numstat call and skips per-file diffs', async () => {
+    const perFileDiffs: string[][] = [];
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'mb5\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) {
+        return { stdout: 'M\u0000src/app.ts\u0000A\u0000src/new.ts\u0000' };
+      }
+      if (args[0] === 'diff' && args.includes('--numstat')) {
+        return { stdout: '3\t1\tsrc/app.ts\u00007\t0\tsrc/new.ts\u0000' };
+      }
+      if (args[0] === 'diff') { perFileDiffs.push(args); return { stdout: 'diff --git a/x b/x\n' }; }
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase({ base: 'main' });
+
+    // Default is counts-only: a header consumer must not pay one subprocess
+    // per file just to render a total.
+    expect(perFileDiffs).toEqual([]);
+    expect(result.totals).toEqual({ files: 2, additions: 10, deletions: 1 });
+    expect(result.files.map((file) => [file.path, file.additions, file.deletions])).toEqual([
+      ['src/app.ts', 3, 1],
+      ['src/new.ts', 7, 0],
+    ]);
+    expect(result.files.every((file) => file.patch === '')).toBe(true);
+  });
+
+  it('diffToBase returns patches only when asked, and marks binary files', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'mb6\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) {
+        return { stdout: 'R100\u0000src/old.ts\u0000src/new.ts\u0000A\u0000assets/logo.png\u0000' };
+      }
+      if (args[0] === 'diff' && args.includes('--numstat')) {
+        // Renames emit an empty third field then both paths; binary shows '-'.
+        return { stdout: '0\t0\t\u0000src/old.ts\u0000src/new.ts\u0000-\t-\tassets/logo.png\u0000' };
+      }
+      if (args[0] === 'diff') return { stdout: `patch for ${args[args.length - 1]}` };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase({ base: 'main', includePatches: true });
+
+    expect(result.files.map((file) => file.path)).toEqual(['src/new.ts', 'assets/logo.png']);
+    expect(result.files[0]).toMatchObject({ additions: 0, deletions: 0, patch: 'patch for src/new.ts' });
+    // Binary files have no line counts, so they must report null rather than 0
+    // and must not be summed into the totals.
+    expect(result.files[1]).toMatchObject({ additions: null, deletions: null, binary: true });
+    expect(result.totals).toEqual({ files: 2, additions: 0, deletions: 0 });
+  });
+
+  it('diffToBase reports unavailable when base and HEAD share no common ancestor', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { code: 1, stderr: 'no merge base' };
+      if (args[0] === 'diff') throw new Error('diff must not run without a merge base');
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase({ base: 'release' });
+
+    expect(result.success).toBe(false);
+    expect(result.resolution).toBe('unavailable');
+    expect(result.reason).toContain('no common ancestor');
+  });
+
+  it('diffToBase rejects unsafe explicit base refs and reports a missing ref as unavailable', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { code: 1, stdout: '' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const api = createGitApi();
+
+    await expect(api.diffToBase({ base: 'a..b' })).rejects.toThrow(/Invalid git ref/);
+    const missing = await api.diffToBase({ base: 'nope' });
+    expect(missing.resolution).toBe('unavailable');
+    expect(missing.reason).toContain('base ref not found');
+  });
+
+  it('diffToBase keeps the destination path for renames in name-status output', async () => {
+    mockExec((_command, args) => {
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'base555\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) {
+        return { stdout: 'R100\u0000src/old.ts\u0000src/new.ts\u0000M\u0000src/app.ts\u0000' };
+      }
+      if (args[0] === 'diff') return { stdout: 'diff --git a/x b/x\n' };
+      return { stdout: '' };
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi().diffToBase({ base: 'main' });
+
+    expect(result.resolution).toBe('explicit');
+    expect(result.files.map((file) => [file.path, file.changeKind])).toEqual([
+      ['src/new.ts', 'R'],
+      ['src/app.ts', 'M'],
+    ]);
+  });
+
+  it('diffToBase never writes: no approval is requested and no mutating git runs', async () => {
+    const calls: string[][] = [];
+    mockExec((_command, args) => {
+      calls.push(args);
+      if (isRepoRootProbe(args)) return { stdout: `${process.cwd()}\n` };
+      if (args[0] === 'rev-parse' && args[1] === '--verify') return { stdout: 'abc123\n' };
+      if (args[0] === 'merge-base') return { stdout: 'base111\n' };
+      if (args[0] === 'diff' && args.includes('--name-status')) return { stdout: 'M\u0000src/app.ts\u0000' };
+      if (args[0] === 'diff') return { stdout: 'diff --git a/x b/x\n' };
+      return { stdout: '' };
+    });
+    const store = await import('@electron/services/permissions-api');
+    const { createGitApi } = await import('@electron/services/git-api');
+    await createGitApi().diffToBase({ base: 'main' });
+
+    const approvals = await store.createPermissionsApi().approvals({});
+    expect(approvals.approvals).toHaveLength(0);
+    const mutating = new Set(['apply', 'add', 'restore', 'commit', 'checkout', 'reset', 'clean', 'merge', 'rebase', 'push']);
+    expect(calls.filter((args) => mutating.has(args[0] ?? ''))).toEqual([]);
+  });
+
 });
